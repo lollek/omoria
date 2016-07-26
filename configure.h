@@ -13,7 +13,7 @@
    If USE_MTWIST is 0 then rand() will be used rather than the
    Mersenne Twister library.
 */
-#define USE_MTWIST    1
+#define USE_MTWIST    0
 
 /*
   Keep the path under 60 characters or it will overflow some variables.
@@ -26,7 +26,7 @@
 	    it is run.
 	    
 */
-#define DATA_FILE_PATH "/home/kertes/icmoria"
+#define DATA_FILE_PATH "/opt/imoria"
 
 /*
   Keep this one under 160 characters, it points to the help program...

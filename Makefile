@@ -89,15 +89,15 @@ all:	mtwist imoria
 #MTWIST = mtwist/mtwist.o
 
 #              Library version
-mtwist	::
-	(cd mtwist ; make lib)
-	(cd mtwist ; make install)
-MTWIST = -lmtwist
+#mtwist	::
+#	(cd mtwist ; make lib)
+#	(cd mtwist ; make install)
+#MTWIST = -lmtwist
 
 #              Do not bother version
-#mtwist ::
-#	echo mtwist libary skipped
-#MTWIST = 
+mtwist ::
+	@echo mtwist libary skipped
+MTWIST = 
 
 
 IMORIAOBJS =	bank.o bj.o blow.o casino.o create.o creature.o death.o debug.o desc.o dungeon.o eat.o encrypt.o files.o generate.o help.o horse.o insurance.o inven.o io.o magic.o master.o misc.o monk.o monsters.o moria.o netopen.o pascal.o play.o player.o port.o potions.o prayer.o quest.o random.o river.o rooms.o save.o screen.o scrolls.o sing.o slots.o spells.o staffs.o store.o term.o termdef.o trade.o traps.o treasure.o unix.o wands.o wizard.o
