@@ -1115,6 +1115,7 @@ void mt__amulet(integer x,integer level,integer chance,
     break;
 
   default:
+    break;
   } /* end switch */
 };
 //////////////////////////////////////////////////////////////////////
