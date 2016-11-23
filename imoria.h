@@ -10,7 +10,6 @@
 #include <unistd.h>         /* for ftruncate, usleep */
 
 /*#include <sgtty.h>*/
-#include "mtwist/mtwist.h"  /* random number generation */
 #include "patchlevel.h"
 #include "configure.h"
 #include "constants.h"

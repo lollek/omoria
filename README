@@ -9,10 +9,6 @@ Put a copy of monsters.dat into the DATA_FILE_PATH, and move mhelp.pl
 to the propper place as well.
 
 In the Makefile edit the owner and group to use for the game and data files.
-Also pick how the mtwist library will be linked to imoria, the default is
-as a shared library.  The Makefile has a lot more imormation about this.
-
-run "make mtwist"
 run "make imoria"
 
 the first time you run imoria it should make a bunch of data files and

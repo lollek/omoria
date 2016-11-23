@@ -71,12 +71,6 @@ void game_version()
   PB(" "                                                        ,8,1);
   PB("Terminal, screen_map and (L)ocate taken from umoria 5.5"  ,9,1);
   PB("                                        "                 ,10,1);
-#if USE_MTWIST
-  PB("Imoria uses the `Mersenne Twister' random number library",11,1);
-  PB("Copyright (C) 1997 Makoto Matsumoto and Takuji Nishimura.",12,1);
-  PB("This library is covered by the GNU Library GPL version 2.",13,1);
-  PB("See the file mtwist/COPYING for more information.",14,1);
-#endif  
   pause_game(24);
   draw_cave();
 };

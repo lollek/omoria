@@ -9,12 +9,6 @@
 */
 #define ENABLE_DES    0
 
-/* 
-   If USE_MTWIST is 0 then rand() will be used rather than the
-   Mersenne Twister library.
-*/
-#define USE_MTWIST    0
-
 /*
   Keep the path under 60 characters or it will overflow some variables.
 
