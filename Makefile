@@ -13,7 +13,7 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	$(COPTS) -Wall -g3 -DDO_DEBUG=0
+CFLAGS =	-Wall -Werror -g3 -DDO_DEBUG=0
 LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
 
 #
