@@ -26,7 +26,7 @@
 	    it is run.
 	    
 */
-#define DATA_FILE_PATH "/opt/imoria"
+#define DATA_FILE_PATH "data"
 
 /*
   Keep this one under 160 characters, it points to the help program...
