@@ -11,20 +11,10 @@
 # make privs
 #
 ###############################################################################
-DESTDIR =	/usr/local
-
 CC =		gcc
 
-DEFINES =	-DDO_DEBUG=0
-LIBS =		-lncurses -ltermcap -lm -lgdbm
-
-#COPTS =		-Wall -O2 -g3
-#COPTS =		-Wall -O2
-#COPTS =		-Wall
-COPTS =		-Wall -g3
-
-CFLAGS =	$(COPTS) $(DEFINES)
-LDFLAGS =	
+CFLAGS =	$(COPTS) -Wall -g3 -DDO_DEBUG=0
+LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
 
 #
 # the owner and group for the game and data files
@@ -48,10 +38,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
 imoria: $(OBJFILES)
-	$(CC) $(LDFLAGS) $(OBJFILES) $(LIBS) -o $@
-	chown $(OWNER):$(GROUP) imoria
-	chmod 2711 imoria
-	echo
+	$(CC) $(LDFLAGS) $(OBJFILES) -o $@
 
 privs ::
 	chown $(OWNER):$(GROUP) imoria $(DATAFILES)
@@ -61,9 +48,9 @@ privs ::
 	chmod 755         mhelp.pl
 
 nodata ::
-	rm -f hours.dat moria.dat death.log moriamas.dat moriatop.dat moriatrd.dat moria_gcustom.mst TRADE.DUMP
+	$(RM) data/hours.dat data/moria.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
 
 clean ::
-	rm -f *.o *~ core imoria i2 Debug.out mm
+	$(RM) $(OBJFILES) core imoria
 
 spotless : nodata clean
