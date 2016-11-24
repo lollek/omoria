@@ -5011,19 +5011,12 @@ void view_old_mess()
 //////////////////////////////////////////////////////////////////////
 void d__execute_command(integer *com_val)
 {
-  /*{ Commands are executed in following case statement             }*/
-  /*{ The following keys are used for commands:                     }*/
-  /*{ ^A ^B ^C ^D ^E ^F ^G ^H ^I ^J ^K ^L ^M ^N ^O ^P ^R ^T ^U ^V   }*/
-  /*{ ^W ^X ^Y ^Z ^3 ^_ $ ! + . / 1 2 3 4 5 6 7 8 9 < > ? @         }*/
-  /*{ A B C D E F G H I J K L M N   P Q R S T U V W X      ]        }*/
-  /*{ a b c d e f   h i j   l m   o p q r s t u v w x      |        }*/
-
   integer       i1;
   integer       y,x;
   stat_set      tstat;
-  treas_ptr	trash_ptr;
+  treas_ptr     trash_ptr;
   vtype         out_val, out2, tmp_str;
-  
+
   ENTER("d__execute_command", "d");
 
 #if DO_DEBUG
@@ -5099,6 +5092,20 @@ void d__execute_command(integer *com_val)
 
   case  26:   /*{^Z = suspend  (we never get this, look at signalsuspend) }*/
       reset_flag = true;
+      break;
+
+  case 27: /* ALT */
+      *com_val = inkey();
+      switch (*com_val) {
+        case 'b': move_char(1); break;
+        case 'j': move_char(2); break;
+        case 'n': move_char(3); break;
+        case 'h': move_char(4); break;
+        case 'l': move_char(6); break;
+        case 'y': move_char(7); break;
+        case 'k': move_char(8); break;
+        case 'u': move_char(9); break;
+      }
       break;
 
   case  36:   /* {$  = Shell   }*/
