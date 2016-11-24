@@ -25,8 +25,8 @@ GROUP =	games
 #
 # privs needed on each file depends on if it is for read or write
 #
-READFILES =	hours.dat moria.dat monsters.dat moria_gcustom.mst
-WRITEFILES =	death.log moriamas.dat moriatop.dat moriatrd.dat
+READFILES =	data/hours.dat data/moria.dat data/monsters.dat data/moria_gcustom.mst
+WRITEFILES =	data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
 
 all:	imoria
@@ -45,7 +45,7 @@ privs ::
 	chmod 2711        imoria
 	chmod 640         $(READFILES)
 	chmod 660         $(WRITEFILES)
-	chmod 755         mhelp.pl
+	chmod 755         data/mhelp.pl
 
 nodata ::
 	$(RM) data/hours.dat data/moria.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
