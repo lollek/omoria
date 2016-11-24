@@ -987,7 +987,7 @@ void display_cost(integer store_num,integer pos)
   //with stores[store_num] do;
   i1 = ((pos-1) % 12);
   if (stores[store_num].store_inven[pos].scost < 0) {
-    i2  = abs(stores[store_num].store_inven[pos].scost);
+    i2  = labs(stores[store_num].store_inven[pos].scost);
     i2 += (integer)(i2*chr_adj());
     sprintf(out_val,"%6ld",(i2 div GOLD_VALUE));
   } else {
@@ -1054,7 +1054,7 @@ void display_inventory(integer store_num,integer start)
     prt(out_val2,i1+6,1);
     if (stores[store_num].store_inven[start].scost < 0) {
       /*{quack}*/
-      i2 = abs(stores[store_num].store_inven[start].scost);
+      i2 = labs(stores[store_num].store_inven[start].scost);
       i2 = i2 + trunc(i2*chr_adj());
       sprintf(out_val2,"%6ld",((i2+GOLD_VALUE-1) / GOLD_VALUE));
     } else {

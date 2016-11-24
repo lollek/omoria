@@ -289,7 +289,7 @@ boolean intro_do_hours_file (boolean already_exiting, char * the_file)
           exit_flag = true;
         } else {
           printf("Error in creating %s for output.\n\r",the_file);
-          exit;
+          exit(1);
         } /* end if file1 (writing) */
 
     } /* end if file1 (reading) */  

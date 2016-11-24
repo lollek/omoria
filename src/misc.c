@@ -2244,10 +2244,10 @@ boolean los(integer y1,integer x1,integer y2,integer x2)
 	flag = cave[y2][x2].fopen;
       } while (!((y1 == y2) || !flag));
 
-    } else if (abs(ty) > abs(tx)) {
+    } else if (labs(ty) > labs(tx)) {
 
 //      fprintf(debug_file,"los: ty>tx  stepy = %d\n",stepy);
-      slp = ((real)abs(tx)/(real)abs(ty))*stepx;
+      slp = ((real)labs(tx)/(real)labs(ty))*stepx;
       tmp = x2;
       do {
 	y2  += stepy;
@@ -2265,7 +2265,7 @@ boolean los(integer y1,integer x1,integer y2,integer x2)
     } else {
 
 //      fprintf(debug_file,"los: tx>ty  stepx = %d\n",stepx);
-      slp = ((real)abs(ty)/(real)abs(tx))*stepy;
+      slp = ((real)labs(ty)/(real)labs(tx))*stepy;
       tmp = y2;
       do {
 	x2  += stepx;
@@ -3331,8 +3331,8 @@ integer get_hexdecant(integer dy,integer dx)
 
   ENTER("get_hexdecant", "m")
 
-  ay = abs(dy); 
-  ax = abs(dx);
+  ay = labs(dy); 
+  ax = labs(dx);
 
   if (ay*2.41421 < ax)         { hexdecant = 1; }
   else if (ay < ax)            { hexdecant = 2; }

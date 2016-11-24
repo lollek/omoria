@@ -220,7 +220,7 @@ void sm__winnings()
 
   winning  = 0;
   if ((slotpos[1]==slotpos[2]) && (slotpos[1]==S_CHERRY)) { winning = bet;   }
-  if ((slotpos[1]==S_JACKPOT))                            { winning = bet*2; }
+  if (slotpos[1]==S_JACKPOT)                              { winning = bet*2; }
   if ((slotpos[2]==slotpos[3]) && (slotpos[2]==S_ORANGE)) { winning = 2*bet; }
   if ((slotpos[1]==slotpos[3]) && (slotpos[1]==S_BELL))   { winning = 4*bet; }
   if ((slotpos[2]==slotpos[3]) && (slotpos[2]==S_BAR))    { winning = 4*bet; }

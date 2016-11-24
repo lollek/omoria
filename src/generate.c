@@ -496,8 +496,8 @@ void dr_castle(integer yval,integer xval,integer dy,integer dx, floor_type ft)
 {
   /*{ for castle--changes all in both lines of symmetry }*/
 
-  dx = abs(dx);
-  dy = abs(dy);
+  dx = labs(dx);
+  dy = labs(dy);
 
   do {
     dy = -dy;

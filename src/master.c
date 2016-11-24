@@ -18,7 +18,7 @@ boolean master_file_open(GDBM_FILE *mf)
     priv_switch(1);
     *mf = gdbm_open(MORIA_MAS, 1024, GDBM_WRCREAT, 0, 0);
     priv_switch(0);
-    if ((*mf == NULL)) {
+    if (*mf == NULL) {
       sleep(1);
     }
   }

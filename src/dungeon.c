@@ -2931,7 +2931,7 @@ void d__jamdoor()
               inven_destroy(i1);
             }
             prt_weight() ;
-            t_list[cave[y][x].tptr].p1 = -abs(t_list[cave[y][x].tptr].p1) - 20;
+            t_list[cave[y][x].tptr].p1 = -labs(t_list[cave[y][x].tptr].p1) - 20;
           } else {
             msg_print("But you have no spikes...");
           }                      
@@ -4455,7 +4455,7 @@ void d__bash()
       if (t_list[cave[y][x].tptr].tval == Closed_door) {
 	//with py do;
 	if (test_hit(PM.wt+(PS.c[STR]*PS.c[STR]) div 500,0,0,
-		     abs(t_list[cave[y][x].tptr].p1)+150)){
+		     labs(t_list[cave[y][x].tptr].p1)+150)){
 	  msg_print("You smash into the door! The door crashes open!");
 	  t_list[cave[y][x].tptr] = door_list[DL_OPEN];
 	  t_list[cave[y][x].tptr].p1 = 1;
@@ -5739,7 +5739,7 @@ void dungeon()
     /*{ Increment turn counter			}*/
     turn++;
     
-    if ((PF.speed > 0) || ((turn % (abs(PF.speed) + 1)) == 0)) {
+    if ((PF.speed > 0) || ((turn % (labs(PF.speed) + 1)) == 0)) {
       water_move();
       adv_time(true);	/*{ Increment game time }*/
     }

@@ -52,7 +52,7 @@ void c__change_money()
 {
   int  amount;
 
-  amount = abs(py.misc.money[TOTAL_] - gld)*GOLD_VALUE;
+  amount = labs(py.misc.money[TOTAL_] - gld)*GOLD_VALUE;
   if (gld > py.misc.money[TOTAL_]) {
     add_money(amount);
   } else {

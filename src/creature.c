@@ -1109,7 +1109,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 	    } else if (t_list[cave[newy][newx].tptr].p1 < 0) {
 	      /*{ Stuck doors   }*/
 	      if (randint(m_list[monptr].hp) >
-		  (10+abs(t_list[cave[newy][newx].tptr].p1))) {
+		  (10+labs(t_list[cave[newy][newx].tptr].p1))) {
 		t_list[cave[newy][newx].tptr].p1 = 0;
 	      }
 	    }
@@ -1134,7 +1134,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 	  /*  { Creature can not open doors, must bash them   }*/
 	  switch (t_list[cave[newy][newx].tptr].tval) {
 	  case Closed_door:   /* { Closed doors...       }*/
-	    i2 = abs(t_list[cave[newy][newx].tptr].p1) + 20;
+	    i2 = labs(t_list[cave[newy][newx].tptr].p1) + 20;
 	    if (randint(m_list[monptr].hp) > i2) {
 	      tflag = true;
 	      if (cave[newy][newx].fm) {

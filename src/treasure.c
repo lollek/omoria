@@ -208,7 +208,7 @@ integer mt__m_bonus(integer base,integer max_std,integer level,boolean forceit)
     stand_dev = max_std;
   }
 
-  x = trunc(abs(randnor(0,stand_dev))/10.0) + base;
+  x = trunc(labs(randnor(0,stand_dev))/10.0) + base;
 
   if (x < base) {
     return_value = base;

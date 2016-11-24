@@ -42,7 +42,7 @@ void bi__insure_all_items()
 
   for(ptr = inventory_list ; (ptr != nil) ; ptr = ptr->next ) {
     if ((Insured_bit & ptr->data.flags2) == 0) {
-      temp = abs(ptr->data.cost * ptr->data.number) / 40;
+      temp = labs(ptr->data.cost * ptr->data.number) / 40;
       if (temp < (MITHRIL_VALUE / 10)) {
 	temp = (MITHRIL_VALUE / 10);
       }
@@ -98,7 +98,7 @@ void bi__insure_item(vtype shop_owner)
 
   if (count > 0) {
     if (get_item(&ptr,"Insure which item?",&redraw,count,&trash_char,false,false)) {
-      temp = (int)(abs(ptr->data.cost * ptr->data.number) / 40);
+      temp = (int)(labs(ptr->data.cost * ptr->data.number) / 40);
       if (temp < (MITHRIL_VALUE div 10)) {
 	temp = (MITHRIL_VALUE div 10);
       }
@@ -199,7 +199,7 @@ void bi__insure_all_equip()
     //with equipment[i1]. do;
     if (equipment[i1].tval > 0) {
       if ((Insured_bit & equipment[i1].flags2) == 0) {
-	temp = (int)(abs(equipment[i1].cost * equipment[i1].number) / 40);
+	temp = (int)(labs(equipment[i1].cost * equipment[i1].number) / 40);
 	if (temp < (MITHRIL_VALUE div 10)) {
 	  temp = (MITHRIL_VALUE div 10);
 	}

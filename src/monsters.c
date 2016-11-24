@@ -88,7 +88,7 @@ void alloc_land_monster(obj_set alloc_set, integer num, integer dis,
       } else if (dun_level > MAX_MONS_LEVEL) {
 	i2 = randint(m_level[MAX_MONS_LEVEL]) + m_level[0];
       } else if (randint(mon_nasty) == 1) {
-	i2 = dun_level + abs(randnor(0,4)) + 1;
+	i2 = dun_level + labs(randnor(0,4)) + 1;
 	if (i2 > MAX_MONS_LEVEL) {
 	  i2 = MAX_MONS_LEVEL;
 	}

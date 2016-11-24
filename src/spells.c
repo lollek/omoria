@@ -1529,8 +1529,8 @@ boolean create_food(integer t0,integer t1,integer t2,integer t3,integer t4)
   for (i1 = char_row-2; i1 <= char_row+2; i1++) {
     for (i2 = char_col-2; i2 <= char_col+2; i2++) {
       //with cave[i1][i2]. do;
-      dist = abs(i1-char_row)+abs(i2-char_col);
-      if ((abs(i1-char_row)==2) || (abs(i2-char_col)==2)) {
+      dist = labs(i1-char_row)+labs(i2-char_col);
+      if ((labs(i1-char_row)==2) || (labs(i2-char_col)==2)) {
 	dist++;
       }
 
