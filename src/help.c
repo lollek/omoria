@@ -11,99 +11,54 @@ void help()
 {
   /*{ Help for available commands                                       }*/
 
-  char      command;
+  prt("A       Age of character.     |  h       Hurl an item.",1,1);
+  prt("B <Dir> Bash (object/creature)|  i       Inventory list.",2,1);
+  prt("C       Display character.    |  j <Dir> Jam a door with spike.",3,1);
+  prt("D <Dir> Disarm a trap/chest.  |  l <Dir> Look given direction.",4,1);
+  prt("E       Eat some food.        |  m       Cast a magic spell.",5,1);
+  prt("F       Fill lamp with oil.   |  m       Use a music book.",6,1);
+  prt("G       Game time and date    |  o <Dir> Open a door/chest.",7,1);
+  prt("H       Help                  |  p       Read a prayer.",8,1);
+  prt("I       Inven of one item type|  p       Play an instrument.",9,1);
+  prt("L       Current location.     |  q       Quaff a potion.",10,1);
+  prt("M       Money.                |  r       Read a scroll.",11,1);
+  prt("P       Print map.            |  s       Search for hidden doors.",12,1);
+  prt("R       Rest for a period.    |  t       Take off an item.",13,1);
+  prt("S       Search Mode.          |  u       Use a staff.",14,1);
+  prt("T <Dir> Tunnel.               |  v       Version and credits.",15,1);
+  prt("U       Use miscellaneous item|  w       Wear/Wield an item.",16,1);
+  prt("W       Current time and date |  x       Exchange weapon.",17,1);
+  prt("a       Aim and fire a wand.  |  c <inv> Clean inventory.",18,1);
+  prt("b       Browse a book.        |  $       Shell out of game.",19,1);
+  prt("c <Dir> Close a door.         |  +       Experience for levels.",20,1);
+  prt("d       Drop an item.         |  . <Dir> Move in direction.",21,1);
+  prt("e       Equipment list.       |  /       Identify a character.",22,1);
+  prt("f       Fire Projectile.      |  X       Toggle light source.",23,1);
+  pause_game(24);
+  clear_screen();
 
-  inkey_delay(&command,0);
-  if (command == 0) {
-      clear_screen();
-prt("A       Age of character.     |  h       Hurl an item.",1,1);
-prt("B <Dir> Bash (object/creature)|  i       Inventory list.",2,1);
-prt("C       Display character.    |  j <Dir> Jam a door with spike.",3,1);
-inkey_delay(&command,0);
-if (command == 0) {
-prt("D <Dir> Disarm a trap/chest.  |  l <Dir> Look given direction.",4,1);
-prt("E       Eat some food.        |  m       Cast a magic spell.",5,1);
-prt("F       Fill lamp with oil.   |  m       Use a music book.",6,1);
-inkey_delay(&command,0);
+  prt("<       Go up an up-staircase.|   >      Go down a down-staircase.",1,1);
+  prt("?       Display this panel.   |  ^M      Repeat the last message.",2,1);
+  prt("]       Armor list.           |  ^R      Redraw the screen.",3,1);
+  prt("|       Weapon list.          |  ^C      Quit the game.",4,1);
+  prt("J       Map shown reduced size|  ^Y      Save character and quit.",5,1);
+  prt("Movement:",7,1);
+  prt("          7  8  9",8,1);
+  prt("          4     6    5 = Rest",9,1);
+  prt("          1  2  3",10,1);
+  prt("Directory of Shops:",12,1);
+  prt("     A   Alchemy Shop                M   Magic Shop",13,1);
+  prt("     B   Bank                        P   Trading Post",14,1);
+  prt("     C   Casino                      Q   Questor's Home",15,1);
+  prt("     D   All-Nite Deli               R   Armory",16,1);
+  prt("     G   General Store               T   Temple",17,1);
+  prt("     I   Inn                         U   Music Shop",18,1);
+  prt("     J   Gem Shop                    W   Weapon Smith",19,1);
+  prt("     L   Library                     X   Money Exchange",20,1);
+  prt("     +   Unknown",21,1);
+  pause_game(24);
+  draw_cave();
 }
-if (command == 0) {
-prt("G       Game time and date    |  o <Dir> Open a door/chest.",7,1);
-prt("H       Help                  |  p       Read a prayer.",8,1);
-prt("I       Inven of one item type|  p       Play an instrument.",9,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("L       Current location.     |  q       Quaff a potion.",10,1);
-prt("M       Money.                |  r       Read a scroll.",11,1);
-prt("P       Print map.            |  s       Search for hidden doors.",12,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("R       Rest for a period.    |  t       Take off an item.",13,1);
-prt("S       Search Mode.          |  u       Use a staff.",14,1);
-prt("T <Dir> Tunnel.               |  v       Version and credits.",15,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("U       Use miscellaneous item|  w       Wear/Wield an item.",16,1);
-prt("W       Current time and date |  x       Exchange weapon.",17,1);
-prt("a       Aim and fire a wand.  |  c <inv> Clean inventory.",18,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("b       Browse a book.        |  $       Shell out of game.",19,1);
-prt("c <Dir> Close a door.         |  +       Experience for levels.",20,1);
-prt("d       Drop an item.         |  . <Dir> Move in direction.",21,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("e       Equipment list.       |  /       Identify a character.",22,1);
-prt("f       Fire Projectile.      |  X       Toggle light source.",23,1);
-
-      pause_game(24);
-}
-clear_screen();
-inkey_delay(&command,0);
-if (command == 0) {
-prt("<       Go up an up-staircase.|   >      Go down a down-staircase.",1,1);
-prt("?       Display this panel.   |  ^M      Repeat the last message.",2,1);
-prt("]       Armor list.           |  ^R      Redraw the screen.",3,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("|       Weapon list.          |  ^C      Quit the game.",4,1);
-prt("J       Map shown reduced size|  ^Y      Save character and quit.",5,1);
-prt("Movement:",7,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("          7  8  9",8,1);
-prt("          4     6    5 = Rest",9,1);
-prt("          1  2  3",10,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("Directory of Shops:",12,1);
-prt("     A   Alchemy Shop                M   Magic Shop",13,1);
-prt("     B   Bank                        P   Trading Post",14,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("     C   Casino                      Q   Questor's Home",15,1);
-prt("     D   All-Nite Deli               R   Armory",16,1);
-prt("     G   General Store               T   Temple",17,1);
-inkey_delay(&command,0);
-}
-if (command == 0) {
-prt("     I   Inn                         U   Music Shop",18,1);
-prt("     J   Gem Shop                    W   Weapon Smith",19,1);
-prt("     L   Library                     X   Money Exchange",20,1);
-prt("     +   Unknown",21,1);
-      pause_game(24);
-}
-draw_cave();
-  }
-};
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
