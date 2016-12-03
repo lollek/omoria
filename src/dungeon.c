@@ -5230,8 +5230,6 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 'J': screen_map(); break;
-
   case 'K':   /* {K = Know Quest  }*/
     if (py.flags.quested) {
       sprintf(out_val, "Current quest is to kill a %s",
@@ -5249,12 +5247,7 @@ void d__execute_command(integer *com_val)
     break;
     
 
-  case 'M':       /*{M = money }*/
-    reset_flag = true;
-    if (inven_command('M',&trash_ptr,"")) {
-      draw_cave();
-    }
-    break;
+  case 'M': screen_map(); break;
 
   case 'N':   /* {N = name mstr}*/
     mon_name();
@@ -5263,7 +5256,7 @@ void d__execute_command(integer *com_val)
 
   case 'O':      /*{O = Old Mess }*/
     msg_print("Try 'V'.");
-//  view_old_mess();                       
+//  view_old_mess();
     reset_flag = true;
     break;
     

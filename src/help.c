@@ -21,7 +21,7 @@ void help()
   prt("H       Help                  |  p       Read a prayer.",8,1);
   prt("I       Inven of one item type|  p       Play an instrument.",9,1);
   prt("L       Current location.     |  q       Quaff a potion.",10,1);
-  prt("M       Money.                |  r       Read a scroll.",11,1);
+  prt("M       Map shown reduced size|  r       Read a scroll.",11,1);
   prt("P       Print map.            |  s       Search for hidden doors.",12,1);
   prt("R       Rest for a period.    |  t       Take off an item.",13,1);
   prt("S       Search Mode.          |  u       Use a staff.",14,1);
@@ -41,7 +41,7 @@ void help()
   prt("?       Display this panel.   |  ^M      Repeat the last message.",2,1);
   prt("]       Armor list.           |  ^R      Redraw the screen.",3,1);
   prt("|       Weapon list.          |  ^C      Quit the game.",4,1);
-  prt("J       Map shown reduced size|  ^Y      Save character and quit.",5,1);
+  prt("                              |  ^Y      Save character and quit.",5,1);
   prt("Movement:",7,1);
   prt("          7  8  9",8,1);
   prt("          4     6    5 = Rest",9,1);
