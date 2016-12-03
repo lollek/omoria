@@ -5108,7 +5108,7 @@ void d__execute_command(integer *com_val)
       }
       break;
 
-  case  36:   /* {$  = Shell   }*/
+  case '$':   /* {$  = Shell   }*/
   case '!':
     if (0) {
       shell_out();
@@ -5118,14 +5118,14 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
 
-  case  43:   /*{+ = lvl help }*/
+  case '+':   /*{+ = lvl help }*/
     sprintf(out_val,"Character Classes Experience %4.2f",py.misc.expfact);
     moria_help(out_val);
     draw_cave();
     reset_flag = true;
     break;
     
-  case  46:        /*{. = run / find     }*/
+  case '.':        /*{. = run / find     }*/
     y = char_row;
     x = char_col;
     if (d__get_dir("Which direction?",&dir_val,com_val,&y,&x)) {
@@ -5148,53 +5148,44 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case  47:  /*{/ = identify }*/
+  case '/':  /*{/ = identify }*/
     ident_char();
     reset_flag = true;
     break;
 
-  case  49:        /*{ Move dir 1    }*/
-  case  50:        /*{ Move dir 2    }*/
-  case  51:        /*{ Move dir 3    }*/
-  case  52:        /*{ Move dir 4    }*/
-  case  54:        /*{ Move dir 6    }*/
-  case  55:        /*{ Move dir 7    }*/
-  case  56:        /*{ Move dir 8    }*/
-  case  57:        /*{ Move dir 9    }*/
-    move_char(*com_val - 48);
-    break;
+  case '1': move_char(1); break;
+  case '2': move_char(2); break;
+  case '3': move_char(3); break;
+  case '4': move_char(4); break;
+  case '6': move_char(6); break;
+  case '7': move_char(7); break;
+  case '8': move_char(8); break;
+  case '9': move_char(9); break;
 
-  case  53:        /*{ Rest one turn }*/
-    move_char(*com_val - 48);
+  case '5':        /*{ Rest one turn }*/
+    move_char(5);
     usleep(10);
     flush();
     break;
 
-  case  60:        /*{ < = go up    }*/
-    d__go_up();
-    break;
+  case '<': d__go_up(); break;
+  case '>': d__go_down(); break;
 
-  case  62:        /*{ > = go down  }*/
-    d__go_down();
-    break;
-
-  case  63:        /*{? = help     }*/
+  case '?':        /*{? = help     }*/
     help();
     reset_flag = true;
     break;
 
-  case  65:       /*{A = age, Hours}*/
+  case 'A':       /*{A = age, Hours}*/
     msg_print(show_char_age(out_val));
     sprintf(out_val,"You have been playing for %s",show_play_time(tmp_str));
     msg_print(out_val);
     reset_flag = true;
     break;
 
-  case  66:       /*{B = bash     } */
-    d__bash();
-    break;
+  case 'B': d__bash(); break;
 
-  case  67:    /*{C = character}*/
+  case 'C':    /*{C = character}*/
     if (get_com("Print to file? (Y/N)",&command)) {
       switch (command) {
       case 'y': case 'Y':
@@ -5211,43 +5202,33 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
 
-  case  68:      /*{D = disarm   }*/
-    d__disarm_trap();
-    break;
+  case 'D': d__disarm_trap(); break;
+  case 'E': eat(); break;
+  case 'F': d__refill_lamp(); break;
 
-  case  69:    /* {E = eat      }*/
-    eat();
-    break;
-
-  case  70:       /* {F = refill   }*/
-    d__refill_lamp();
-    break;
-
-  case  71:    /*{G = Game date}*/
+  case 'G':    /*{G = Game date}*/
     sprintf(out_val, "The date is %s",
 	    full_date_string(py.misc.cur_age,out2));
     msg_print(out_val);
     reset_flag = true;
     break;
 
-  case  72:    /*{H = moria hlp}*/
+  case 'H':    /*{H = moria hlp}*/
     moria_help("");
     draw_cave();
     reset_flag = true;
     break;
 
-  case  73:       /*{I = Selected inv}*/
+  case 'I':       /*{I = Selected inv}*/
     reset_flag = true;
     if (inven_command('I',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case 74:       /* J = Screen Map */
-    screen_map();
-    break;
+  case 'J': screen_map(); break;
 
-  case  75:   /* {K = Know Quest  }*/
+  case 'K':   /* {K = Know Quest  }*/
     if (py.flags.quested) {
       sprintf(out_val, "Current quest is to kill a %s",
 	      c_list[py.misc.cur_quest].name);
@@ -5258,31 +5239,31 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
     
-  case  76:    /* {L = location }*/
+  case 'L':    /* {L = location }*/
     show_location();
     reset_flag = true;
     break;
     
 
-  case  77:       /*{M = money }*/
+  case 'M':       /*{M = money }*/
     reset_flag = true;
     if (inven_command('M',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case  78:   /* {N = name mstr}*/
+  case 'N':   /* {N = name mstr}*/
     mon_name();
     reset_flag = true;
     break;
 
-  case  79:      /*{O = Old Mess }*/
+  case 'O':      /*{O = Old Mess }*/
     msg_print("Try 'V'.");
 //  view_old_mess();                       
     reset_flag = true;
     break;
     
-  case  80:     /*{P = print map}*/
+  case 'P':     /*{P = print map}*/
     if ((py.flags.blind > 0) || (no_light())) {
       msg_print("You can't see to draw a map.");
     } else {
@@ -5291,7 +5272,7 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
     
-  case  81:    /* {Q = toggle more}*/
+  case 'Q':    /* {Q = toggle more}*/
     msg_terse =  !msg_terse;
     if (msg_terse) {
       msg_print("Question '-More-' toggled off");
@@ -5303,42 +5284,40 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
     
-  case  82:    /*  {R = rest     }*/
-    rest();
+  case 'R': rest(); break;
+
+  case 'S':                  /*{S = srh mode }*/
+    if (search_flag) {
+      search_off();
+      reset_flag = true;
+    } else if (py.flags.blind > 0) {
+      msg_print("You are incapable of searching while blind.");
+    } else {
+      search_on();
+      reset_flag = true;
+    }
     break;
 
-    case  83:                  /*{S = srh mode }*/
-      if (search_flag) {
-	search_off();
-	reset_flag = true;
-      } else if (py.flags.blind > 0) {
-	msg_print("You are incapable of searching while blind.");
-      } else {
-	search_on();
-	reset_flag = true;
-      }
-      break;
-
-  case  84:       /*  {T = tunnel   }*/
+  case 'T':       /*  {T = tunnel   }*/
     d__tunnel();
     break;
 
-  case  85:       /*  {U = use instr}*/
+  case 'U':       /*  {U = use instr}*/
     blow();
     break;
 
-  case  86:       /*  {V = preVious messages}*/
+  case 'V':       /*  {V = preVious messages}*/
     msg_record("",false);         
     reset_flag = true;
     break;
 
-  case  87:    /* {W = what time}*/
+  case 'W':    /* {W = what time}*/
     sprintf(out_val, "The current time is %s",show_current_time(out2));
     msg_print(out_val);
     reset_flag = true;
     break;
 
-  case  88:    /* {X = toggle light source }*/
+  case 'X':    /* {X = toggle light source }*/
     reset_flag = true;
     if (equipment[Equipment_light].tval > 0) {
       if (equipment[Equipment_light].p1 > 0) {
@@ -5364,60 +5343,47 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case  93:   /* {] = armr help}*/
+  case ']':   /* {] = armr help}*/
     moria_help("Adventuring Armor_Class Armor_List");
     draw_cave();
     reset_flag = true;
     break;
 
-  case  97:   /* {a = aim      }*/
-    aim_wand();
-    break;
+  case 'a': aim_wand(); break;
+  case 'b': d__examine_book(); break;
+  case 'c': d__closeobject(); break;
+  case 'd': d__drop(); break;
 
-  case  98:  /*  {b = browse   }*/
-    d__examine_book();
-    break;
-
-  case  99:       /* {c = close    }*/
-    d__closeobject();
-    break;
-
-  case 100:       /* {d = drop     }*/
-    d__drop();
-    break;
-
-  case 101:       /*  {e = equipment }*/
+  case 'e':       /*  {e = equipment }*/
     reset_flag = true;
     if (inven_command('e',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case 102:      /*  {f = fire } */
+  case 'f':      /*  {f = fire } */
     d__throw_object(true);
     break;
     
-  case 104:     /*  {h = hurlx }*/
+  case 'h':     /*  {h = hurlx }*/
     d__throw_object(false);
     break;
 
-  case 105:       /*{i = inventory }*/
+  case 'i':       /*{i = inventory }*/
     reset_flag = true;
     if (inven_command('i',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case 106:    /*  {j = jam      }*/
-    d__jamdoor();
-    break;
+  case 'j': d__jamdoor(); break;
 
-  case 108:    /*{l = look     }*/
+  case 'l':    /*{l = look     }*/
     d__look();
     reset_flag = true;
     break;
 
-  case 109:    /* m = magick, monk, music */
+  case 'm':    /* m = magick, monk, music */
     if (class[py.misc.pclass].mspell) {
       cast();             /* {m = magick   } */
     } else if (class[py.misc.pclass].mental) {
@@ -5427,11 +5393,9 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 111:    /* {o = open     } */
-    d__openobject();
-    break;
+  case 'o': d__openobject(); break;
 
-  case 112:    /* p = pray, play */
+  case 'p':    /* p = pray, play */
     if (class[py.misc.pclass].pspell) {
       pray();          /*{p = pray     }*/
     } else {
@@ -5439,15 +5403,10 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 113:     /*  {q = quaff    }*/
-    quaff();
-    break;
+  case 'q': quaff(); break;
+  case 'r': read_scroll(); break;
 
-  case 114:     /* {r = read     }*/
-    read_scroll();
-    break;
-
-  case 115:     /* {s = search   }*/
+  case 's':     /* {s = search   }*/
     if (py.flags.blind > 0) {
       msg_print("You are incapable of searching while blind.");
     } else {
@@ -5455,23 +5414,21 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 116:       /*{t = unwear }*/
+  case 't':       /*{t = unwear }*/
     reset_flag = true;
     if (inven_command('t',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case 117:   /*{u = use staff}*/
-    use_staff();
-    break;
+  case 'u': use_staff(); break;
 
-  case 118:   /*  {v = version  }*/
+  case 'v':   /*  {v = version  }*/
     reset_flag = true;
     game_version();
     break;
 
-  case 119:       /*{ w = wear     }*/
+  case 'w':       /*{ w = wear     }*/
     reset_flag = true;
     if (inven_command('w',&trash_ptr,"")) {
       draw_cave();
@@ -5480,14 +5437,14 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 120:       /*{x = exchange }*/
+  case 'x':       /*{x = exchange }*/
     reset_flag = true;
     if (inven_command('x',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case 124:    /*{| = wpn help }*/
+  case '|':    /*{| = wpn help }*/
     moria_help("Adventuring Weapons Weapon_List");
     draw_cave();
     reset_flag = true;
