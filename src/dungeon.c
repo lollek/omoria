@@ -4283,36 +4283,40 @@ boolean d__get_dir(vtype prompt, integer *dir, integer *com_val,
 {
   /*{ Prompts for a direction                               -RAK-   }*/
 
-  vtype      temp_prompt, prompt2;
   char       command;
   boolean    flag = false;
-  boolean    return_value = false;
 
-  sprintf(temp_prompt, "(1 2 3 4 6 7 8 9) %s", prompt);
-  prompt2[0] = 0;
-  
-  do {
-    if (get_com(prompt2,&command)) {
-      *com_val = (integer)command;
-      *dir = *com_val - 48;
-      
-      /*{ Note that '5' is not a valid direction        }*/
-      if ((*dir > 0) && (*dir < 10) && (*dir != 5)) {
-	move_dir(*dir,y,x);
-	flag = true;
-	return_value = true;
-      } else {
-	strcpy(prompt2, temp_prompt);
-      }
-    } else {
+  while (true) {
+    if (!get_com(prompt, &command)) {
       reset_flag = true;
-      return_value = false;
-      flag = true;
+      return false;
     }
-    
-  } while (!flag);
-  
-  return return_value;
+
+    switch (command) {
+      case '1': case '2': case '3': case '4':
+      case '6': case '7': case '8': case '9':
+        *com_val = (integer)command;
+        flag = true;
+        break;
+
+      case 'b': *com_val = '1'; flag = true; break;
+      case 'j': *com_val = '2'; flag = true; break;
+      case 'n': *com_val = '3'; flag = true; break;
+      case 'h': *com_val = '4'; flag = true; break;
+      case 'l': *com_val = '6'; flag = true; break;
+      case 'y': *com_val = '7'; flag = true; break;
+      case 'k': *com_val = '8'; flag = true; break;
+      case 'u': *com_val = '9'; flag = true; break;
+
+      default: break;
+    }
+
+    if (flag) {
+      *dir = *com_val - '0';
+      move_dir(*dir, y, x);
+      return true;
+    }
+  }
 };
 //////////////////////////////////////////////////////////////////////
 void d__quit()
