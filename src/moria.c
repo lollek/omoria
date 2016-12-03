@@ -177,18 +177,25 @@ int	main(int argc, char *argv[], char *envp[])
 
     set_seed(get_seed());
 
-    // { Loop till dead, or exit			}
-    do {
-      //generate = true;
-      if (generate) generate_cave();            // { New level     }
-      dungeon();                                // { Dungeon logic }
-      generate = true;
-    } while (!death);
+    // { Loop till dead, or exit }
+    while (true) {
+      if (generate) { // { New level }
+        generate_cave();
+      }
 
-    upon_death();                         // { Character gets buried }
-  
-    LEAVE("main", "")
-    return 0;
+      // { Dungeon logic }
+      dungeon();
+      generate = true;
+
+      // { Character gets buried, or respawns }
+      if (death) {
+        upon_death();
+        if (death) {
+          LEAVE("main", "")
+          return 0;
+        }
+      }
+    }
 }  /* end main */
 
 /***********************************************************************/

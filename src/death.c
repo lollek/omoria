@@ -159,6 +159,34 @@ integer total_points()
   return return_value;
 };
 //////////////////////////////////////////////////////////////////////
+void respawn()
+{
+  int i;
+
+  /*{ Reset money }*/
+  add_money(PM.money[TOTAL_]);
+
+  /*{ Reset inventory }*/
+  while (inventory_list != nil) {
+    delete_inven_item(&inventory_list[0]);
+  }
+  char_inven_init();
+
+
+  /*{ Restore player }*/
+  py.misc.chp = PM.mhp;
+  prt_hp();
+
+  for (i = 0; i < 6; ++i) {
+    py.stat.l[i] = 0;
+    update_stat(i);
+  }
+  py.flags.foodc = PLAYER_FOOD_FULL;
+  death = false;
+
+  dun_level = 0;
+}
+//////////////////////////////////////////////////////////////////////
 void upon_death()
 {
   /*{ Handles the gravestone and top-twenty routines	-RAK-	}*/
@@ -166,6 +194,12 @@ GDBM_FILE    f2;
 master_key   mkey;
 
   vtype     dstr[20];
+
+  /*{ We get a chance to respawn with a penalty }*/
+  if (get_yes_no("Do you wish to respawn? You will lose all your items")) {
+    respawn();
+    return;
+  }
 
   /*{ What happens upon dying...				-RAK-	}*/
 
