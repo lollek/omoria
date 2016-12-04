@@ -5056,23 +5056,28 @@ void d__execute_command(integer *com_val)
 
   case   3:        /* ^C            */
     /* signalquit in io.c handles this one, it calls d__quit */
-
   case   0:        /* \0            */
   case   '@':      /* duh           */
-  //case  25:      /* ^Y = exit     */  changed to be save
     d__quit();
     reset_flag = true;
     break;
 
-  case  13:        /*  {^M = repeat  }*/
+  case 13: // ^M
+    show_location();
+    reset_flag = true;
+    break;
+
+  case  16: // ^P
     msg_print(old_msg);
     reset_flag = true;
     break;
 
+#if 0
   case  16:        /*{^P = password}*/
     enter_wizard_mode(true);
     reset_flag = true;
     break;
+#endif
 
   case  18:        /* ^R = redraw */
     draw_cave();
@@ -5101,6 +5106,13 @@ void d__execute_command(integer *com_val)
   case 27: /* ALT */
       *com_val = inkey();
       switch (*com_val) {
+        case 'a': /*{ age, hours}*/
+          msg_print(show_char_age(out_val));
+          sprintf(out_val,"You have been playing for %s",show_play_time(tmp_str));
+          msg_print(out_val);
+          reset_flag = true;
+          break;
+
         case 'b': move_char(1); break;
         case 'j': move_char(2); break;
         case 'n': move_char(3); break;
@@ -5111,16 +5123,6 @@ void d__execute_command(integer *com_val)
         case 'u': move_char(9); break;
       }
       break;
-
-  case '$':   /* {$  = Shell   }*/
-  case '!':
-    if (0) {
-      shell_out();
-    } else {
-      msg_print("Use ^Z instead");
-    }
-    reset_flag = true;
-    break;
 
   case '+':   /*{+ = lvl help }*/
     sprintf(out_val,"Character Classes Experience %4.2f",py.misc.expfact);
@@ -5161,16 +5163,17 @@ void d__execute_command(integer *com_val)
   case '2': move_char(2); break;
   case '3': move_char(3); break;
   case '4': move_char(4); break;
-  case '6': move_char(6); break;
-  case '7': move_char(7); break;
-  case '8': move_char(8); break;
-  case '9': move_char(9); break;
 
   case '5':        /*{ Rest one turn }*/
     move_char(5);
     usleep(10);
     flush();
     break;
+
+  case '6': move_char(6); break;
+  case '7': move_char(7); break;
+  case '8': move_char(8); break;
+  case '9': move_char(9); break;
 
   case '<': d__go_up(); break;
   case '>': d__go_down(); break;
@@ -5180,14 +5183,8 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
 
-  case 'A':       /*{A = age, Hours}*/
-    msg_print(show_char_age(out_val));
-    sprintf(out_val,"You have been playing for %s",show_play_time(tmp_str));
-    msg_print(out_val);
-    reset_flag = true;
-    break;
-
-  case 'B': d__bash(); break;
+  case 'A': d__throw_object(false); break;
+  case 'B': d__examine_book(); break;
 
   case 'C':    /*{C = character}*/
     if (get_com("Print to file? (Y/N)",&command)) {
@@ -5241,11 +5238,12 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
     
-  case 'L':    /* {L = location }*/
-    show_location();
+  case 'J': d__jamdoor(); break;
+
+  case 'L':
+    d__look();
     reset_flag = true;
     break;
-    
 
   case 'M': screen_map(); break;
 
@@ -5340,14 +5338,16 @@ void d__execute_command(integer *com_val)
     }
     break;
 
+  case 'Z': use_staff(); break;
+
   case ']':   /* {] = armr help}*/
     moria_help("Adventuring Armor_Class Armor_List");
     draw_cave();
     reset_flag = true;
     break;
 
-  case 'a': aim_wand(); break;
-  case 'b': d__examine_book(); break;
+  case 'a': d__throw_object(true); break;
+  case 'b': move_char(1); break;
   case 'c': d__closeobject(); break;
   case 'd': d__drop(); break;
 
@@ -5358,13 +5358,8 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 'f':      /*  {f = fire } */
-    d__throw_object(true);
-    break;
-    
-  case 'h':     /*  {h = hurlx }*/
-    d__throw_object(false);
-    break;
+  case 'f': d__bash(); break;
+  case 'h': move_char(4); break;
 
   case 'i':       /*{i = inventory }*/
     reset_flag = true;
@@ -5373,12 +5368,9 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 'j': d__jamdoor(); break;
-
-  case 'l':    /*{l = look     }*/
-    d__look();
-    reset_flag = true;
-    break;
+  case 'j': move_char(2); break;
+  case 'k': move_char(8); break;
+  case 'l': move_char(6); break;
 
   case 'm':    /* m = magick, monk, music */
     if (class[py.misc.pclass].mspell) {
@@ -5390,6 +5382,7 @@ void d__execute_command(integer *com_val)
     }
     break;
 
+  case 'n': move_char(3); break;
   case 'o': d__openobject(); break;
 
   case 'p':    /* p = pray, play */
@@ -5418,7 +5411,7 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 'u': use_staff(); break;
+  case 'u': move_char(9); break;
 
   case 'v':   /*  {v = version  }*/
     reset_flag = true;
@@ -5440,6 +5433,10 @@ void d__execute_command(integer *com_val)
       draw_cave();
     }
     break;
+
+  case 'y': move_char(7); break;
+
+  case 'z': aim_wand(); break;
 
   case '|':    /*{| = wpn help }*/
     moria_help("Adventuring Weapons Weapon_List");
