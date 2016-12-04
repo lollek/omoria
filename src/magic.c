@@ -39,6 +39,7 @@ static void mage_spell_effects(integer effect)
     case 6  :  /*{ Find Hidden Traps/Door }*/
 	detect_sdoor();
 	detect_trap();
+	msg_print(" ");
 	break;
 
     case 7  :  /*{ Stinking Cloud }*/
