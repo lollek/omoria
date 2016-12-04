@@ -5054,10 +5054,9 @@ void d__execute_command(integer *com_val)
   //case  27  :    /* ^3 = store maint  W2 */
   //case  31  :    /* ^_                W1 */
 
-  case   3:        /* ^C            */
-    /* signalquit in io.c handles this one, it calls d__quit */
-  case   0:        /* \0            */
-  case   '@':      /* duh           */
+  case   0: // \0
+  case   3: // ^C signalquit in io.c handles this one, it calls d__quit
+  case   '@':
     d__quit();
     reset_flag = true;
     break;
@@ -5131,6 +5130,7 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
     
+  case ' ':
   case '.':        /*{. = run / find     }*/
     y = char_row;
     x = char_col;

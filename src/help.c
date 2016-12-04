@@ -37,10 +37,10 @@ void help()
 
   clear_screen();
   prt("+       Experience for levels | . <Dir> Move in direction", 1, 1);
-  prt("/       Identify a character  | ?       Display this panel", 2, 1);
+  prt("/       Identify a character  |   <Dir> Move in direction", 2, 1);
   prt("<       Go up an up-staircase | >       Go down a down-staircase",3,1);
   prt("]       Armor list            | |       Weapon list", 4, 1);
-  prt("^C      Quit the game         |", 5, 1);
+  prt("^C      Quit the game         | ?       Display this panel", 5, 1);
   prt("^R      Redraw the screen     |", 6, 1);
   prt("^M      Show a zoomed out map |", 7, 1);
   prt("^P      Print the last message|", 8, 1);
