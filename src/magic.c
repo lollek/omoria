@@ -1,18 +1,12 @@
-/* magic.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-void c__mage_spell_effects(integer effect)
+static void mage_spell_effects(integer effect)
 {
     /*{ Spells...                                     }*/
 
     integer      i2,dir;
-    integer      dumy,y_dumy,x_dumy;
+    integer      dumy, y_dumy, x_dumy;
 
     y_dumy = char_row;
     x_dumy = char_col;
@@ -224,11 +218,7 @@ void c__mage_spell_effects(integer effect)
     default:
 	break;
     }
-/*{ End of spells...                              }*/
-    
 };
-//////////////////////////////////////////////////////////////////////
-
 
 void cast()
 {
@@ -243,69 +233,63 @@ void cast()
     reset_flag = true;
     if (py.flags.blind > 0) {
 	msg_print("You can't see to read your spell book!");
-    } else if (no_light()) {
+	return;
+    }
+
+    if (no_light()) {
 	msg_print("You have no light to read by.");
-    } else if (py.flags.confused > 0) {
+	return;
+    }
+    if (py.flags.confused > 0) {
 	msg_print("You are too confused...");
-    } else if (class[py.misc.pclass].mspell) {
-	if (inven_ctr > 0) {
-	    if (find_range(magic_books,false,&i1,&i2)) {
-		redraw = false;
-		if (get_item(&item_ptr,"Use which spell-book?",&redraw,
-			     i2,&trash_char,false,false)) {
-		    
-		    if (cast_spell("Cast which spell?",item_ptr,
-				   &choice,&chance,&redraw)) {
-			
-                        //with magic_spell[py.misc.pclass,choice] do;
-			reset_flag = false;
-			if (randint(100) < chance) {
-			    msg_print("You failed to get the spell off!");
-			} else {
-			    c__mage_spell_effects(choice);
-			    if (!(reset_flag)) {
-				//with py.misc do;
-				PM.exp += magic_spell[PM.pclass][choice].sexp;
-				prt_experience();
-				magic_spell[PM.pclass][choice].sexp = 0;
-			    }
-			}
-			
-			//with py.misc do;
-			if (!(reset_flag)) {
-			    if (magic_spell[PM.pclass][choice].smana > PM.cmana) {
-				msg_print("You faint from the effort!");
-				py.flags.paralysis =
-				    randint(5*trunc(magic_spell[PM.pclass][choice].smana-PM.cmana));
-				PM.cmana = 0;
-				if (randint(3) == 1) {
-				    /*{lower_stat == no sustain}*/
-				    lower_stat(CON,"You have damaged your health!");
-				}
-			    } else {
-				PM.cmana -= magic_spell[PM.pclass][choice].smana;
-			    }
-			    prt_mana();
-			}
-		    } /* end if which spell */
-                    
-		} else {
-                    if (redraw) {
-			draw_cave();
-		    }
-		}	    
-	    } else {
-                msg_print("But you are not carrying any spell-books!");
-	    }            
-	} else {
-            msg_print("But you are not carrying any spell-books!");
-	}
-    } else {
+	return;
+    }
+    if (!class[py.misc.pclass].mspell) {
 	msg_print("You can't cast spells!");
+	return;
+    }
+    if (inven_ctr <= 0 || !find_range(magic_books, false, &i1, &i2)) {
+	msg_print("But you are not carrying any spell-books!");
+	return;
+    }
+
+    redraw = false;
+    if (!get_item(&item_ptr, "Use which spell-book?", &redraw,
+          i2, &trash_char, false, false)) {
+	if (redraw) {
+	    draw_cave();
+	}
+	return;
+    }
+
+    if (!cast_spell("Cast which spell?",item_ptr, &choice, &chance, &redraw)) {
+	return;
+    }
+
+    reset_flag = false;
+    if (randint(100) < chance) {
+	msg_print("You failed to get the spell off!");
+    } else {
+	mage_spell_effects(choice);
+	if (!reset_flag) {
+	    PM.exp += magic_spell[PM.pclass][choice].sexp;
+	    prt_experience();
+	    magic_spell[PM.pclass][choice].sexp = 0;
+	}
+    }
+
+    if (!reset_flag) {
+	if (magic_spell[PM.pclass][choice].smana > PM.cmana) {
+	    msg_print("You faint from the effort!");
+	    py.flags.paralysis =
+		randint(5*trunc(magic_spell[PM.pclass][choice].smana-PM.cmana));
+	  PM.cmana = 0;
+	  if (randint(3) == 1) {
+		lower_stat(CON,"You have damaged your health!");
+	  }
+	} else {
+	  PM.cmana -= magic_spell[PM.pclass][choice].smana;
+	}
+	prt_mana();
     }
 };
-
-/* END FILE  magic.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
