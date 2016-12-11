@@ -5054,42 +5054,42 @@ void d__execute_command(integer *com_val)
   //case  27  :    /* ^3 = store maint  W2 */
   //case  31  :    /* ^_                W1 */
 
-  case   0: // \0
-  case   3: // ^C signalquit in io.c handles this one, it calls d__quit
-  case   '@':
+  case 0: // \0
+  case CTRL_C: // ^C signalquit in io.c handles this one, it calls d__quit
+  case '@':
     d__quit();
     reset_flag = true;
     break;
 
-  case 13: // ^M
+  case CTRL_M:
     show_location();
     reset_flag = true;
     break;
 
-  case  16: // ^P
+  case CTRL_P:
     msg_print(old_msg);
     reset_flag = true;
     break;
 
 #if 0
-  case  16:        /*{^P = password}*/
+  case CTRL: // Password
     enter_wizard_mode(true);
     reset_flag = true;
     break;
 #endif
 
-  case  18:        /* ^R = redraw */
+  case CTRL_R: // redraw
     draw_cave();
     reset_flag = true;
     break;
 
-  case  25:        /* ^Y = (was exit) */
+  case CTRL_Y: // Save and quit
     if (total_winner) {
       msg_print("You are a Total Winner, your character must be retired...");
       msg_print("Use '@' when you are ready to quit.");
     } else {
       if (search_flag) {
-	search_off();
+        search_off();
       }
       py.flags.dead = false;
       save_char(false);
@@ -5098,14 +5098,14 @@ void d__execute_command(integer *com_val)
     reset_flag = true;
     break;
 
-  case  26:   /*{^Z = suspend  (we never get this, look at signalsuspend) }*/
+  case CTRL_Z: // suspend  (we never get this, look at signalsuspend)
       reset_flag = true;
       break;
 
-  case 27: /* ALT */
+  case 27: // ALT
       *com_val = inkey();
       switch (*com_val) {
-        case 'a': /*{ age, hours}*/
+        case 'a': // age, hours
           msg_print(show_char_age(out_val));
           sprintf(out_val,"You have been playing for %s",show_play_time(tmp_str));
           msg_print(out_val);
@@ -5123,38 +5123,38 @@ void d__execute_command(integer *com_val)
       }
       break;
 
-  case '+':   /*{+ = lvl help }*/
+  case '+':  // exp to level up
     sprintf(out_val,"Character Classes Experience %4.2f",py.misc.expfact);
     moria_help(out_val);
     draw_cave();
     reset_flag = true;
     break;
-    
-  case ' ':
-  case '.':        /*{. = run / find     }*/
+
+  case ' ': // Run in a direction
+  case '.':
     y = char_row;
     x = char_col;
     if (d__get_dir("Which direction?",&dir_val,com_val,&y,&x)) {
       if (PF.image == 0) {
-	find_flag = true;
-	move_char(dir_val);
+        find_flag = true;
+        move_char(dir_val);
       } else {
-	/* make them walk it off */
-	switch (randint(25)) {
-	case 1:       msg_print("It touches you.");    break;
-	case 2:       msg_print("It hits you.");       break;
-	case 3:       msg_print("It bites you.");      break;
-	case 4:       msg_print("It crawles on you."); break;
-	case 5:       msg_print("You miss it.");       break;
-	case 6:       msg_print("You hit it.");        break;
-	case 7:       msg_print("You have slain it."); break;
-	default:      move_char(dir_val);              break;
-	}      
+        /* make them walk it off */
+        switch (randint(25)) {
+        case 1:       msg_print("It touches you.");    break;
+        case 2:       msg_print("It hits you.");       break;
+        case 3:       msg_print("It bites you.");      break;
+        case 4:       msg_print("It crawles on you."); break;
+        case 5:       msg_print("You miss it.");       break;
+        case 6:       msg_print("You hit it.");        break;
+        case 7:       msg_print("You have slain it."); break;
+        default:      move_char(dir_val);              break;
+        }
       }
     }
     break;
 
-  case '/':  /*{/ = identify }*/
+  case '/': // identify
     ident_char();
     reset_flag = true;
     break;
@@ -5164,7 +5164,7 @@ void d__execute_command(integer *com_val)
   case '3': move_char(3); break;
   case '4': move_char(4); break;
 
-  case '5':        /*{ Rest one turn }*/
+  case '5': // Rest one turn
     move_char(5);
     usleep(10);
     flush();
@@ -5178,7 +5178,7 @@ void d__execute_command(integer *com_val)
   case '<': d__go_up(); break;
   case '>': d__go_down(); break;
 
-  case '?':        /*{? = help     }*/
+  case '?': // help
     help();
     reset_flag = true;
     break;
@@ -5186,18 +5186,18 @@ void d__execute_command(integer *com_val)
   case 'A': d__throw_object(false); break;
   case 'B': d__examine_book(); break;
 
-  case 'C':    /*{C = character}*/
+  case 'C': // Show character
     if (get_com("Print to file? (Y/N)",&command)) {
       switch (command) {
       case 'y': case 'Y':
-	file_character();
-	break;
+        file_character();
+        break;
       case 'n': case 'N':
-	change_name();
-	draw_cave();
-	break;
+        change_name();
+        draw_cave();
+        break;
       default:
-	break;
+        break;
       }
     }
     reset_flag = true;
@@ -5207,37 +5207,37 @@ void d__execute_command(integer *com_val)
   case 'E': eat(); break;
   case 'F': d__refill_lamp(); break;
 
-  case 'G':    /*{G = Game date}*/
+  case 'G': // Game date
     sprintf(out_val, "The date is %s",
-	    full_date_string(py.misc.cur_age,out2));
+            full_date_string(py.misc.cur_age,out2));
     msg_print(out_val);
     reset_flag = true;
     break;
 
-  case 'H':    /*{H = moria hlp}*/
+  case 'H': // Moria help
     moria_help("");
     draw_cave();
     reset_flag = true;
     break;
 
-  case 'I':       /*{I = Selected inv}*/
+  case 'I': // Selected inv
     reset_flag = true;
     if (inven_command('I',&trash_ptr,"")) {
       draw_cave();
     }
     break;
 
-  case 'K':   /* {K = Know Quest  }*/
+  case 'K': //  Know Quest
     if (py.flags.quested) {
       sprintf(out_val, "Current quest is to kill a %s",
-	      c_list[py.misc.cur_quest].name);
+              c_list[py.misc.cur_quest].name);
       msg_print(out_val);
     } else {
       msg_print("No quest currently.");
     }
     reset_flag = true;
     break;
-    
+
   case 'J': d__jamdoor(); break;
 
   case 'L':
@@ -5247,18 +5247,18 @@ void d__execute_command(integer *com_val)
 
   case 'M': screen_map(); break;
 
-  case 'N':   /* {N = name mstr}*/
+  case 'N': // Name mstr
     mon_name();
     reset_flag = true;
     break;
 
-  case 'O':      /*{O = Old Mess }*/
+  case 'O': // Old Mess
     msg_print("Try 'V'.");
 //  view_old_mess();
     reset_flag = true;
     break;
-    
-  case 'P':     /*{P = print map}*/
+
+  case 'P': // Print map
     if ((py.flags.blind > 0) || (no_light())) {
       msg_print("You can't see to draw a map.");
     } else {
@@ -5266,8 +5266,8 @@ void d__execute_command(integer *com_val)
     }
     reset_flag = true;
     break;
-    
-  case 'Q':    /* {Q = toggle more}*/
+
+  case 'Q': // Toggle -More-
     msg_terse =  !msg_terse;
     if (msg_terse) {
       msg_print("Question '-More-' toggled off");
@@ -5278,10 +5278,10 @@ void d__execute_command(integer *com_val)
     }
     reset_flag = true;
     break;
-    
+
   case 'R': rest(); break;
 
-  case 'S':                  /*{S = srh mode }*/
+  case 'S': // Search mode
     if (search_flag) {
       search_off();
       reset_flag = true;
@@ -5293,45 +5293,43 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 'T':       /*  {T = tunnel   }*/
-    d__tunnel();
-    break;
+  case 'T': d__tunnel(); break;
 
-  case 'U':       /*  {U = use instr}*/
+  case 'U': // Use instrument
     blow();
     break;
 
-  case 'V':       /*  {V = preVious messages}*/
-    msg_record("",false);         
+  case 'V': // PreVious messages
+    msg_record("",false);
     reset_flag = true;
     break;
 
-  case 'W':    /* {W = what time}*/
+  case 'W': // What time
     sprintf(out_val, "The current time is %s",show_current_time(out2));
     msg_print(out_val);
     reset_flag = true;
     break;
 
-  case 'X':    /* {X = toggle light source }*/
+  case 'X': // Toggle light source
     reset_flag = true;
     if (equipment[Equipment_light].tval > 0) {
       if (equipment[Equipment_light].p1 > 0) {
-	if (PF.light_on) {
-	  sprintf(out_val, "Light Off.  %ld turns left.",
-		  equipment[Equipment_light].p1);
-	  PF.light_on    = false;
-	  player_light   = false;
-	} else {
-	  sprintf(out_val, "Light On.  %ld turns left.",
-		  equipment[Equipment_light].p1);
-	  PF.light_on    = true;
-	  player_light   = true;
-	}
-	prt_light_on();
-	msg_print(out_val);
-	move_light(char_row,char_col,char_row,char_col);
+        if (PF.light_on) {
+          sprintf(out_val, "Light Off.  %ld turns left.",
+                  equipment[Equipment_light].p1);
+          PF.light_on    = false;
+          player_light   = false;
+        } else {
+          sprintf(out_val, "Light On.  %ld turns left.",
+                  equipment[Equipment_light].p1);
+          PF.light_on    = true;
+          player_light   = true;
+        }
+        prt_light_on();
+        msg_print(out_val);
+        move_light(char_row,char_col,char_row,char_col);
       } else {
-	msg_print("Your light has gone out!");
+        msg_print("Your light has gone out!");
       }
     } else {
       msg_print("You are not carrying a light.");
@@ -5340,7 +5338,7 @@ void d__execute_command(integer *com_val)
 
   case 'Z': use_staff(); break;
 
-  case ']':   /* {] = armr help}*/
+  case ']': // Armor help
     moria_help("Adventuring Armor_Class Armor_List");
     draw_cave();
     reset_flag = true;
@@ -5351,7 +5349,7 @@ void d__execute_command(integer *com_val)
   case 'c': d__closeobject(); break;
   case 'd': d__drop(); break;
 
-  case 'e':       /*  {e = equipment }*/
+  case 'e': // Equipment
     reset_flag = true;
     if (inven_command('e',&trash_ptr,"")) {
       draw_cave();
@@ -5361,7 +5359,7 @@ void d__execute_command(integer *com_val)
   case 'f': d__bash(); break;
   case 'h': move_char(4); break;
 
-  case 'i':       /*{i = inventory }*/
+  case 'i': // Inventory
     reset_flag = true;
     if (inven_command('i',&trash_ptr,"")) {
       draw_cave();
@@ -5372,31 +5370,31 @@ void d__execute_command(integer *com_val)
   case 'k': move_char(8); break;
   case 'l': move_char(6); break;
 
-  case 'm':    /* m = magick, monk, music */
+  case 'm': // magick, monk, music
     if (class[py.misc.pclass].mspell) {
-      cast();             /* {m = magick   } */
+      cast(); //  magick   } */
     } else if (class[py.misc.pclass].mental) {
-      discipline();       /* {m = monk? :) } */
+      discipline(); // m = monk? :)
     } else {
-      sing();             /* {m = music    } */
+      sing(); // music
     }
     break;
 
   case 'n': move_char(3); break;
   case 'o': d__openobject(); break;
 
-  case 'p':    /* p = pray, play */
+  case 'p': // pray, play */
     if (class[py.misc.pclass].pspell) {
-      pray();          /*{p = pray     }*/
+      pray(); // pray
     } else {
-      play();          /*{p = play     }*/
+      play(); // play
     }
     break;
 
   case 'q': quaff(); break;
   case 'r': read_scroll(); break;
 
-  case 's':     /* {s = search   }*/
+  case 's': // Search
     if (py.flags.blind > 0) {
       msg_print("You are incapable of searching while blind.");
     } else {
@@ -5404,7 +5402,7 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 't':       /*{t = unwear }*/
+  case 't': // take off
     reset_flag = true;
     if (inven_command('t',&trash_ptr,"")) {
       draw_cave();
@@ -5413,12 +5411,12 @@ void d__execute_command(integer *com_val)
 
   case 'u': move_char(9); break;
 
-  case 'v':   /*  {v = version  }*/
+  case 'v': // version
     reset_flag = true;
     game_version();
     break;
 
-  case 'w':       /*{ w = wear     }*/
+  case 'w': // wear
     reset_flag = true;
     if (inven_command('w',&trash_ptr,"")) {
       draw_cave();
@@ -5427,7 +5425,7 @@ void d__execute_command(integer *com_val)
     }
     break;
 
-  case 'x':       /*{x = exchange }*/
+  case 'x': // exchange weapon
     reset_flag = true;
     if (inven_command('x',&trash_ptr,"")) {
       draw_cave();
@@ -5438,7 +5436,7 @@ void d__execute_command(integer *com_val)
 
   case 'z': aim_wand(); break;
 
-  case '|':    /*{| = wpn help }*/
+  case '|': // Weapon help
     moria_help("Adventuring Weapons Weapon_List");
     draw_cave();
     reset_flag = true;
@@ -5458,176 +5456,159 @@ void d__execute_command(integer *com_val)
   default:
     reset_flag = true;
 
-    if (!wizard1) {  /* begin wizard commands */
+    if (!wizard1) {  // begin wizard commands
       prt("Type '?' for help...",1,1);
     } else {
 
       switch (*com_val) {
-	/* wizard commands */
+        // wizard commands
 
-      case   1:  /*    {^A = Cure all} */
-	//with py.flags do;
-	hp_player(1000,"cheating");
-	PM.cmana = PM.mana;
-	if (is_magii) {
-	  prt_mana();
-	}
-	remove_curse();
-	cure_me(&(PF.blind)); cure_me(&(PF.hoarse)); cure_me(&(PF.afraid));
-	cure_me(&(PF.poisoned)); cure_me(&(PF.confused));
+      case CTRL_A:  // Cure all
+        hp_player(1000,"cheating");
+        PM.cmana = PM.mana;
+        if (is_magii) {
+          prt_mana();
+        }
+        remove_curse();
+        cure_me(&(PF.blind)); cure_me(&(PF.hoarse)); cure_me(&(PF.afraid));
+        cure_me(&(PF.poisoned)); cure_me(&(PF.confused));
 
-	for (tstat = STR; tstat <= CHR; tstat++) {
-	  restore_stat(tstat,"");
-	}
+        for (tstat = STR; tstat <= CHR; tstat++) {
+          restore_stat(tstat,"");
+        }
 
-	if (PF.slow > 1) {
-	  PF.slow = 1;
-	}
-	if (PF.image > 1) {
-	  PF.image = 1;
-	}
-	break;
+        if (PF.slow > 1) {
+          PF.slow = 1;
+        }
+        if (PF.image > 1) {
+          PF.image = 1;
+        }
+        break;
 
-      case   2  :     /*{^B = objects }*/
-	print_objects();
-	break;
+      case CTRL_B: print_objects(); break;
 
-      case   4  :    /*{^D = up/down }*/
-	prt("Go to which level (0 -1200) ? ",1,1);
-	if (get_string(tmp_str,1,31,10)) {
-	  i1 = -1;
-	  sscanf(tmp_str,"%ld",&i1);
-	  if (i1 > -1 || !strcmp(tmp_str, "*")) {
-	    dun_level = i1;
-	    if (dun_level > 1200) {
-	      dun_level = 1200;
-	    } else if (dun_level < 0) {
-	      dun_level = py.misc.max_lev;
-	    }
-	    moria_flag = true;
-	  } else {
-	    erase_line(msg_line,msg_line);
-	  }
-	} else {
-	  erase_line(msg_line,msg_line);
-	}
-	break;
+      case CTRL_D: // Change dungeon level
+        prt("Go to which level (0 -1200) ? ",1,1);
+        if (get_string(tmp_str,1,31,10)) {
+          i1 = -1;
+          sscanf(tmp_str,"%ld",&i1);
+          if (i1 > -1 || !strcmp(tmp_str, "*")) {
+            dun_level = i1;
+            if (dun_level > 1200) {
+              dun_level = 1200;
+            } else if (dun_level < 0) {
+              dun_level = py.misc.max_lev;
+            }
+            moria_flag = true;
+          } else {
+            erase_line(msg_line,msg_line);
+          }
+        } else {
+          erase_line(msg_line,msg_line);
+        }
+        break;
 
-      case   8:    /*  {^H = wizhelp }*/
-	wizard_help();
-	break;
+      case CTRL_H: wizard_help(); break;
 
-      case   9:    /* {^I = identify}*/
-	msg_print("Poof!  Your items are all identifed!!!");
-	for (trash_ptr = inventory_list ; trash_ptr != NULL;) {
-	  identify(&(trash_ptr->data));
-	  known2(trash_ptr->data.name);
-	  trash_ptr = trash_ptr->next;
-	}
-	break;
+      case CTRL_I:
+        msg_print("Poof!  Your items are all identifed!!!");
+        for (trash_ptr = inventory_list ; trash_ptr != NULL;) {
+          identify(&(trash_ptr->data));
+          known2(trash_ptr->data.name);
+          trash_ptr = trash_ptr->next;
+        }
+        break;
 
-      case  12:    /*  {^L = wizlight}*/
-	wizard_light();
-	break;
+      case CTRL_L: wizard_light(); break;
+      case CTRL_N: print_monsters(); break;
+      case CTRL_T: teleport(100); break;
 
-      case  14:    /*{^N = mon map }*/
-	print_monsters();
-	break;
+      /* this nukes the current character so I disabled it, use -U or -R
+      case  CTRL_V:
+        restore_char("",false,false);
+        break;
+      */
 
-      case  20:    /*{^T = teleport}*/
-	teleport(100);
-	break;
-
-      case  22:    /*{^V = restore }*/
-	/* this nukes the current character so I disabled it, use -U or -R */
-
-	//restore_char("",false,false);  
-	break;
-
-      case  31:    /* ^_  Can you say security through obscurity? */
-	if (wizard1 && search_flag && PM.cheated) {
-	  py.misc.cheated = false;
-	  msg_print("Cheat flag turned off.");
-	}
-	break;
+      case 31: // ^_  Can you say security through obscurity?
+        if (wizard1 && search_flag && PM.cheated) {
+          py.misc.cheated = false;
+          msg_print("Cheat flag turned off.");
+        }
+        break;
 
       default:
-	if (!wizard2) {
-	  prt("Type '?' for help...",1,1);
-	} else {
+        if (!wizard2) {
+          prt("Type '?' for help...",1,1);
+        } else {
 
-	  switch (*com_val) {
-	    /* wizard2 commands */
+          switch (*com_val) {
+            // wizard2 commands
 
-	  case   5:    /* {^E = wizchar }  */
-	    change_character();                       
-	    break;
+          case CTRL_E: change_character(); break;
 
-	  case   6:  /*   {^F = genocide} */
-	    mass_genocide();
-	    break;
+          case CTRL_F: mass_genocide(); break;
 
-	  case   7:  /*{^G = treasure}*/
-	    alloc_object(floor_set,5,25);
-	    prt_map();
-	    break;
+          case CTRL_G: // Treasure
+            alloc_object(floor_set,5,25);
+            prt_map();
+            break;
 
-	  case  10:  /*{^J = gain exp}*/
-	    if (py.misc.exp == 0) {
-	      py.misc.exp = 1;
-	    } else {
-	      py.misc.exp *= 2;
-	    }
-	    prt_experience();
-	    break;
+          case CTRL_J: // Gain exp
+            if (py.misc.exp == 0) {
+              py.misc.exp = 1;
+            } else {
+              py.misc.exp *= 2;
+            }
+            prt_experience();
+            break;
 
-	  case  11:    /* {^K = summon  }*/
-	    y = char_row;
-	    x = char_col;
-	    if (is_in(cave[y][x].fval, water_set)) {
-	      summon_water_monster(&y,&x,true);
-	    } else {
-	      summon_land_monster(&y,&x,true);
-	    }
-	    creatures(false);
-	    break;
+          case CTRL_K: // Summon monster
+            y = char_row;
+            x = char_col;
+            if (is_in(cave[y][x].fval, water_set)) {
+              summon_water_monster(&y,&x,true);
+            } else {
+              summon_land_monster(&y,&x,true);
+            }
+            creatures(false);
+            break;
 
-	  case  15:    /*{^O = summon  }*/
-	    monster_summon_by_name(char_row,char_col,"",false,true);
-	    creatures(false);
-	    break;
+          case CTRL_O:
+            monster_summon_by_name(char_row,char_col,"",false,true);
+            creatures(false);
+            break;
 
-	  case  21:    /*   {^U = summon  }*/
-	    if (cave[char_row][char_col].tptr == 0) {
-	      summon_item(char_row,char_col,"","",0,false);
-	    } else {
-	      msg_print("You are standing on something!");
-	    }
-	    break;
+          case CTRL_U: // Summon item
+            if (cave[char_row][char_col].tptr == 0) {
+              summon_item(char_row,char_col,"","",0,false);
+            } else {
+              msg_print("You are standing on something!");
+            }
+            break;
 
-	  case  23:   /* {^W = create  }*/
-	    if (cave[char_row][char_col].tptr == 0) {
-	      wizard_create();
-	    } else {
-	      msg_print("You are standing on something!");
-	    }
-	    break;
+          case CTRL_W: // create
+            if (cave[char_row][char_col].tptr == 0) {
+              wizard_create();
+            } else {
+              msg_print("You are standing on something!");
+            }
+            break;
 
-	  case  24 :   /* {^X = ed score}*/
-	    edit_score_file();
-	    break;
+          case CTRL_X:
+            edit_score_file();
+            break;
 
-	  case  27:    /* ^3  Run store_maint */
-	    store_maint();
-	    msg_print("Stores updated.");
-	    break;
+          case 27: // ^3  Run store_maint
+            store_maint();
+            msg_print("Stores updated.");
+            break;
 
-	  default:
-	    prt("Type '?' for help...",1,1);
-	    break;
-	  }
+          default:
+            prt("Type '?' for help...",1,1);
+            break;
+          }
 
-	}
+        }
       }
     }
     break;
