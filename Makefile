@@ -13,14 +13,16 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	-Wall -g3 -DDO_DEBUG=0
+CFLAGS =	-Wall -Wextra -pedantic -std=gnu89 -g3 -DDO_DEBUG=0
 LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
 
 #
 # the owner and group for the game and data files
 #
-OWNER =	games
-GROUP =	games
+#OWNER =	games
+OWNER =	iix
+#GROUP =	games
+GROUP =	iix
 
 #
 # privs needed on each file depends on if it is for read or write
