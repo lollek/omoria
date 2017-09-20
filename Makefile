@@ -55,4 +55,7 @@ nodata ::
 clean ::
 	$(RM) $(OBJFILES) core imoria
 
+ctags:
+	@ctags -R . --exclude .git
+
 spotless : nodata clean
