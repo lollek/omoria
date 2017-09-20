@@ -7,25 +7,30 @@
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-void * safe_malloc(int blocksize, char *message)
-{
-  void * new_pointer;
-
-  if((new_pointer = (void *)malloc(blocksize)) == NULL) {
+void memory_error(int blocksize, char* message)  {
+    endwin();
     printf("\n\r\n\rMemory error (%d bytes)! Ref: %s.\n\r\n\r",blocksize,message);
     printf("malloc calls: %ld\tmalloc bytes: %ld\n\r",malloc_calls,malloc_bytes);
     printf("free   calls: %ld\tfree   bytes: %ld\n\r",free_calls,free_bytes);
     printf("\n\rdelta  calls: %ld\ndelta  bytes: %ld\n\r",
-	   malloc_calls-free_calls,malloc_bytes-free_bytes);
+            malloc_calls-free_calls,malloc_bytes-free_bytes);
     printf("\n\r\n\r");
     exit_game();
+}
+
+void * safe_malloc(int blocksize, char *message)
+{
+  void * new_pointer = malloc(blocksize);
+
+  if (new_pointer == NULL) {
+      memory_error(blocksize, message);
   }
 
   malloc_calls++;
   malloc_bytes += blocksize;
 
   return new_pointer;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

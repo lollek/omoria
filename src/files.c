@@ -297,73 +297,71 @@ boolean intro_do_hours_file (boolean already_exiting, char * the_file)
   return (exit_flag || already_exiting);
 }; /* end intro_do_hours_file */
 
-//////////////////////////////////////////////////////////////////////
-
 boolean intro_do_msg_file(boolean already_exiting, char * the_file, 
 			  boolean write_to_screen)
 {
-//      { Print the introduction message, news, ect...          }
+    // Print the introduction message, news, ect...
 
-  FILE     *file1;
-  int      i1, i2;
-  vtype    in_line;
-  boolean  exit_flag = false;
+    FILE     *file1;
+    int      i1, i2;
+    vtype    in_line;
+    boolean  exit_flag = false;
 
-  file1 = priv_fopen(the_file,"r");
-  if (file1 != NULL)
+    file1 = priv_fopen(the_file,"r");
+    if (file1 != NULL)
     {
-      if (!already_exiting  &&  write_to_screen) {
-        /* print out the MORIA_MOR file, move to upper left */
-	clear_rc(1,1);
-        for (i1 = 1; !feof(file1); i1++) {
-          in_line[0] = 0;
-          fgets(in_line, sizeof(in_line), file1);
-	  if ((i2 = strlen(in_line)) > 0) {
-	    in_line[i2-1] = 0; 
-	    put_buffer(in_line, i1, 1);
-	  }
+        if (!already_exiting  &&  write_to_screen) {
+            /* print out the MORIA_MOR file, move to upper left */
+            clear_rc(1,1);
+            for (i1 = 1; !feof(file1); i1++) {
+                in_line[0] = 0;
+                fgets(in_line, sizeof(in_line), file1);
+                if ((i2 = strlen(in_line)) > 0) {
+                    in_line[i2-1] = 0; 
+                    put_buffer(in_line, i1, 1);
+                }
+            }
+            pause_exit(24,0);
         }
-        pause_exit(24,0);
-      }
-      fclose(file1);
-      
-    } else {
-      /* create a new MORIA_MOR file */
-      file1 = (FILE *)fopen(the_file,"w");
-      if (file1 == NULL)
-        {
-          printf("Error opening %s for writing\n\r",the_file);
-          exit_game();
-        } else {
-          
-fprintf(file1,"                         *********************\n");
-fprintf(file1,"                         **    Moria %4.2f   **\n",CUR_VERSION);
-fprintf(file1,"                         *********************\n");
-fprintf(file1,"                   COPYRIGHT (c) Robert Alan Koeneke\n");
-fprintf(file1,"\n");
-fprintf(file1,"Programers : Robert Alan Koeneke / University of Oklahoma\n");
-fprintf(file1,"             Jimmey Wayne Todd   / University of Oklahoma\n");
-fprintf(file1,"\n");
-fprintf(file1,"Based on University of Washington version 4.8\n");
-fprintf(file1,"\n");
-fprintf(file1,"UW Modifications by : Kenneth Case, Mary Conner,\n");
-fprintf(file1,"                      Robert DeLoura, Dan Flye,\n");
-fprintf(file1,"                      Todd Gardiner, Dave Jungck,\n");
-fprintf(file1,"                      Andy Walker, Dean Yasuda.\n");
-fprintf(file1,"\n");
-fprintf(file1,"Linux port by Stephen Kertes, 1997-2000.\n");
-fprintf(file1,"\n");
-fprintf(file1,"Dungeon Master: This file may contain updates and news.\n");
-
-        printf("Created %s\n\r", the_file);
         fclose(file1);
-        exit_flag = true;
-        } /* end if file1 (writing) */
-      
-    } /* end if file1 (reading) */
 
-  return (exit_flag || already_exiting);
-}; /* end intro_do_msg_file */
+    } else {
+        /* create a new MORIA_MOR file */
+        file1 = (FILE *)fopen(the_file,"w");
+        if (file1 == NULL)
+        {
+            printf("Error opening %s for writing\n\r",the_file);
+            exit_game();
+        } else {
+
+            fprintf(file1,"                *********************\n");
+            fprintf(file1,"                **    Moria %4.2f   **\n",CUR_VERSION);
+            fprintf(file1,"                *********************\n");
+            fprintf(file1,"           COPYRIGHT (c) Robert Alan Koeneke\n");
+            fprintf(file1,"\n");
+            fprintf(file1,"Programers : Robert Alan Koeneke / University of Oklahoma\n");
+            fprintf(file1,"             Jimmey Wayne Todd   / University of Oklahoma\n");
+            fprintf(file1,"\n");
+            fprintf(file1,"Based on University of Washington version 4.8\n");
+            fprintf(file1,"\n");
+            fprintf(file1,"UW Modifications by : Kenneth Case, Mary Conner,\n");
+            fprintf(file1,"                      Robert DeLoura, Dan Flye,\n");
+            fprintf(file1,"                      Todd Gardiner, Dave Jungck,\n");
+            fprintf(file1,"                      Andy Walker, Dean Yasuda.\n");
+            fprintf(file1,"\n");
+            fprintf(file1,"Linux port by Stephen Kertes, 1997-2000.\n");
+            fprintf(file1,"\n");
+            fprintf(file1,"Dungeon Master: This file may contain updates and news.\n");
+
+            printf("Created %s\n\r", the_file);
+            fclose(file1);
+            exit_flag = true;
+        }
+
+    }
+
+    return (exit_flag || already_exiting);
+}
 
 //////////////////////////////////////////////////////////////////////
 boolean intro_do_death_file(boolean already_exiting, char * the_file)
@@ -438,90 +436,84 @@ boolean intro_ensure_file_exists(boolean already_exiting, char * the_file)
   return (exit_flag || already_exiting);
 }; /* end intro_ensure_file_exists */
 
-//////////////////////////////////////////////////////////////////////
-
 void intro(vtype finame, int argc, char *argv[])
 {
-//      { Attempt to open the intro file                        -RAK-   }
+    // Attempt to open the intro file                        -RAK-
 
-  vtype    in_line;
-  FILE     *file1;
-  GDBM_FILE file2;
-  boolean  exit_flag = false;
+    vtype    in_line;
+    FILE     *file1;
+    GDBM_FILE file2;
+    boolean  exit_flag = false;
 
-  /* make sure that various files exist */
-  
-  exit_flag = intro_do_hours_file(exit_flag,      MORIA_HOU);
-  exit_flag = intro_do_msg_file(exit_flag,        MORIA_MOR, false);
-  exit_flag = intro_do_death_file(exit_flag,      MORIA_DTH);
-//exit_flag = intro_do_master_file(exit_flag,     MORIA_MAS);  
-  exit_flag = intro_ensure_file_exists(exit_flag, MORIA_GCST);
-  exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TOP);
+    // make sure that various files exist
+    exit_flag = intro_do_hours_file(exit_flag,      MORIA_HOU);
+    exit_flag = intro_do_msg_file(exit_flag,        MORIA_MOR, false);
+    exit_flag = intro_do_death_file(exit_flag,      MORIA_DTH);
+    //exit_flag = intro_do_master_file(exit_flag,     MORIA_MAS);  
+    exit_flag = intro_ensure_file_exists(exit_flag, MORIA_GCST);
+    exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TOP);
 
-  if (exit_flag) {
-    master_file_open(&file2);
-    master_file_close(&file2);
-    exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TRD);
-    
-    writeln("");
-    writeln("Notice: System IMORIA wizard should set the protection");
-    writeln("        on  files  just created.  See the README file for");
-    writeln("        help on setting protection on the files.");
-    writeln("        Hint: make privs");
-    writeln("");
-    writeln("Notice: File hours.dat may be edited to set operating");
-    writeln("        hours for IMORIA.");
-    writeln("");
-    writeln("Notice: File moria.dat may be edited to contain  news");
-    writeln("        items, etc...");
-    writeln("");
-    exit_game();
-  } /* end if exit_flag */
+    if (exit_flag) {
+        master_file_open(&file2);
+        master_file_close(&file2);
+        exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TRD);
 
-  // { Check the terminal type and see if it is supported}
-  init_curses();
-  termdef();
-  curses_is_running = true;
-
-  if (!exit_flag) {
-    exit_flag = intro_parse_switches(finame, argc, argv);
-  }
-  if (exit_flag) {
-    exit_game();
-  } else {
-    if (!wizard1) {
-      no_controly();
-      if (already_playing()) {
-        writeln ("Hey bub, you're already playing a game.");
+        writeln("");
+        writeln("Notice: System IMORIA wizard should set the protection");
+        writeln("        on  files  just created.  See the README file for");
+        writeln("        help on setting protection on the files.");
+        writeln("        Hint: make privs");
+        writeln("");
+        writeln("Notice: File hours.dat may be edited to set operating");
+        writeln("        hours for IMORIA.");
+        writeln("");
+        writeln("Notice: File moria.dat may be edited to contain  news");
+        writeln("        items, etc...");
+        writeln("");
         exit_game();
-      }
-    } /* end if !wizard1 */
+    }
+
+    // Check the terminal type and see if it is supported
+    init_curses();
+    termdef();
+    curses_is_running = true;
+
+    if (!exit_flag) {
+        exit_flag = intro_parse_switches(finame, argc, argv);
+    }
+
+    if (exit_flag) {
+        exit_game();
+    }
+
+    if (!wizard1) {
+        no_controly();
+        if (already_playing()) {
+            writeln ("Hey bub, you're already playing a game.");
+            exit_game();
+        }
+    }
 
     if (!check_time() && !wizard1) {
-      /* print out the hours file and exit the game */
+        // print out the hours file and exit the game
 
-      file1 = priv_fopen(MORIA_HOU,"r");
-      if (file1 == NULL) {
-        printf("Unable to open %s for reading\n\r", MORIA_HOU);
-      } else {
-        while (!feof(file1)) {
-          in_line[0] = 0;
-          fgets(in_line, sizeof(in_line), file1);
-          printf("%s\r",in_line);
+        file1 = priv_fopen(MORIA_HOU,"r");
+        if (file1 == NULL) {
+            printf("Unable to open %s for reading\n\r", MORIA_HOU);
+        } else {
+            while (!feof(file1)) {
+                in_line[0] = 0;
+                fgets(in_line, sizeof(in_line), file1);
+                printf("%s\r",in_line);
+            }
+            fclose(file1);
         }
-        fclose(file1);
-      }
-      exit_game();
-    } /* end if !check_time and !wizard1 */
+        exit_game();
+    }
 
     intro_do_msg_file(false, MORIA_MOR, true);
+}
 
-  } /* end if !exit_flag */
-
-}; /* end intro */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 void file_character()
 {
   /*{ Print the character to a file or device               -RAK-   }*/

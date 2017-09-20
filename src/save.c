@@ -72,6 +72,7 @@ void sc__open_save_file(FILE **f1, vtype fnam, boolean quick, boolean *flag)
       /*open(f1,file_name:=finam,record_length:=1024,history:=new);*/
     }
   } else {
+    // TODO: Write old save-path here by default (finam)
     prt("Enter Filename:",1,1);
     *flag = false;
 

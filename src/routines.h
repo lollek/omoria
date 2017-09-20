@@ -206,7 +206,7 @@
  extern void priv_switch(integer switch_val); 
  extern void no_controly(); 
  extern void controly(); 
- extern void exit_game(); 
+ extern void exit_game() __attribute__((noreturn));
  extern void init_channel(); 
 /* extern void inkey(char *getchar); */
  extern char inkey();
@@ -766,8 +766,9 @@ extern void gc__build_type3(integer yval, integer xval);
 
 
 // { port.c		}
-extern	void * safe_malloc(int size, char *message);
-extern	void dispose(void *ptr, int size, char *message);
+extern void memory_error(int blocksize, char* message) __attribute__((noreturn));
+extern void * safe_malloc(int size, char *message);
+extern void dispose(void *ptr, int size, char *message);
 extern  char * chomp(char *input_line);
 extern  integer min3(integer i1, integer i2, integer i3);
 

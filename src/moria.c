@@ -1,5 +1,6 @@
 #define __MORIA_C__
 #include "imoria.h"
+#include "menu.h"
 
 int main(int argc, char *argv[], char *envp[])
 {
@@ -67,15 +68,26 @@ int main(int argc, char *argv[], char *envp[])
     // Build the secret wizard and god passwords
     bpswd();
 
-    // Check operating hours
-    // If not wizard then No_Control_Y
-    // Check or create hours.dat, print message
+    /*
+     * Check operating hours
+     * If not wizard then No_Control_Y
+     * Check or create hours.dat, print message
+     */
     intro(finam, argc, argv);
 
     // Init an IO channel for QIO
     /* init_channel(); */
 
     clear_screen();
+
+    /*
+     * If we already have a character from command line,
+     * skip menu and just load it
+     */
+    if (strlen(finam) == 0) {
+        main_menu(finam);
+    }
+
 
     // Generate a character, or retrieve old one...
     if (strlen(finam) > 0) {
@@ -91,7 +103,7 @@ int main(int argc, char *argv[], char *envp[])
     } else {
         // Create character
         is_from_file = false;
-        strncpy(finam,"moriachar.sav",sizeof(vtype));
+        strncpy(finam, "moriachar.sav", sizeof(vtype));
         create_character();
 
         char_inven_init();
@@ -164,6 +176,7 @@ int main(int argc, char *argv[], char *envp[])
             if (death) {
 #if DO_DEBUG
                 leave("main", "");
+                memory_error(0, "DEBUG_ON_EXIT");
 #endif
                 return 0;
             }
