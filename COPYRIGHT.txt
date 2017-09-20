@@ -1,0 +1,21 @@
+{ Moria Version 4.8	COPYRIGHT (c) Robert Alan Koeneke		}
+{                       Public Domain                                   }
+{                                                                       }
+{       I lovingly dedicate this game to hackers and adventurers        }
+{       everywhere...                                                   }
+{                                                                       }
+{                                                                       }
+{       Designer and Programmer : Robert Alan Koeneke                   }
+{                                 University of Oklahoma                }
+{                                                                       }
+{       Assitant Programmers    : Jimmey Wayne Todd                     }
+{                                 University of Oklahoma                }
+{                                                                       }
+{                                 Gary D. McAdoo                        }
+{                                 University of Oklahoma                }
+{                                                                       }
+{       Moria may be copied and modified freely as long as the above    }
+{       credits are retained.  No one who-so-ever may sell or market    }
+{       this software in any form without the expressed written consent }
+{       of the author Robert Alan Koeneke.                              }
+{                                                                       }
