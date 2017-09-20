@@ -13,7 +13,7 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -pedantic -std=gnu89 -g3 -DDO_DEBUG=0
+CFLAGS =	-Wall -Wextra -pedantic -std=gnu99 -g3 -DDO_DEBUG=0
 LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
 
 #
