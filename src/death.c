@@ -166,7 +166,7 @@ static void respawn()
     py.misc.chp = PM.mhp;
     prt_hp();
 
-    for (int8_t i = 0; i < 6; ++i) {
+    for (int i = 0; i < 6; ++i) {
         py.stat.l[i] = 0;
         update_stat(i);
     }
