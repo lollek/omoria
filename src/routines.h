@@ -225,20 +225,11 @@
 		integer col);
  extern void clear_rc(integer row,integer col);
 /* use print */
- extern void Print(
-		char	ch, //	: varying[a] of char;
-		int	row,
-		int     col); 
- extern void print_str(
-		char	*str_buff, //	: varying[a] of char;
-		int	row,
-		int     col); 
+ extern void Print(chtype const ch, int row, int col);
+ extern void print_str(char const* str_buff, int row, int col);
 
 /* use prt */
- extern void Prt(
-		char	*str_buff, //	: varying[a] of char;
-		int	row,
-		int     col); 
+ extern void Prt(char const* str_buff, int row, int col);
  extern void prt2(
 		char	*str_buff1, //	: varying[a] of char;
 		char	*str_buff2,
@@ -781,10 +772,7 @@ extern	void default_signals();
 extern	void init_curses();
 
 /* use put_buffer */
-extern void Put_Buffer(
-		char	*out_str,//	: varying [a] of char;
-		integer row,
-		integer	col);
+extern void Put_Buffer(char const* out_str, integer row, integer col);
 extern void put_buffer_attr(
 		char	*out_str,//	: varying [a] of char;
 		integer row,

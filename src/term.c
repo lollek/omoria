@@ -241,6 +241,18 @@ static int save_local_chars;
 static int curses_on = FALSE;
 static WINDOW *savescr;		/* Spare window for saving the screen. -CJS-*/
 
+static void minor_error(char const* error_message)
+{
+      abort();
+      /* clear msg_flag to avoid problems with unflushed messages */
+      msg_flag = 0;
+      Prt(error_message, 0, 0);
+      bell();
+      /* wait so user can see error */
+      (void) sleep(2);
+}
+
+
 #ifndef MAC
 #ifdef SIGTSTP
 /* suspend()							   -CJS-
@@ -299,7 +311,7 @@ void init_curses()
     }
 
     /* Check we have enough screen. -CJS- */
-    if (LINES < SCREEN_HEIGHT || COLS < SCREEN_WIDTH)
+    if (LINES < 24 || COLS < 80)
     {
         (void) printf("Screen too small for moria.\n\r");
         exit (1);
@@ -422,7 +434,7 @@ void highlite_off()
 #endif
 }
 
-int cool_mvaddch(int row, int col, char ch)
+int cool_mvaddch(int row, int col, chtype const ch)
 {
   if ((ch & 0x80) != 0) {
     highlite_on();
@@ -435,82 +447,72 @@ int cool_mvaddch(int row, int col, char ch)
   return OK;
 }
 
-int cool_mvaddstr(int row, int col, char *printString)
+int cool_mvaddstr(int row, int col, char const* printString)
 {
-  /* search for characters with the high bit set */
+    /* search for characters with the high bit set */
 
-  int   i1;
-  char *s1;
+    int   i1;
+    char *s1; // TODO: Modifies string to print
 
-  for (s1 = printString, i1 = 0 ; s1[i1] ; i1++) {
-    if ( (s1[i1] & 0x80) != 0 ) {
+    for (s1 = printString, i1 = 0 ; s1[i1] ; i1++) {
+        if ( (s1[i1] & 0x80) != 0 ) {
 
-      if (i1 > 0) {
-	mvaddnstr(row, col, s1, i1);
-	col += i1;
-	s1   = &(s1[i1]);
-      }
+            if (i1 > 0) {
+                mvaddnstr(row, col, s1, i1);
+                col += i1;
+                s1   = &(s1[i1]);
+            }
 
-      highlite_on();
-      *s1 &= 0x7F;
-      mvaddnstr(row, col, s1, 1);
-      highlite_off();
-      
-      col++;
-      s1++;
-      i1   = -1;         /* will be 0 when the top of the loop is hit */
+            highlite_on();
+            *s1 &= 0x7F;
+            mvaddnstr(row, col, s1, 1);
+            highlite_off();
+
+            col++;
+            s1++;
+            i1   = -1;         /* will be 0 when the top of the loop is hit */
+        }
     }
-  }
 
-  if (i1 > 0) {
-    mvaddnstr(row, col, s1, i1);
-  }
+    if (i1 > 0) {
+        mvaddnstr(row, col, s1, i1);
+    }
 
-  return OK;
+    return OK;
 }
 
 
 /* Dump IO to buffer					-RAK-	*/
-void Put_Buffer(out_str, row, col)
-char *out_str;
-integer row, col;
-#ifdef MAC
+void Put_Buffer(char const* out_str, integer row, integer col)
 {
-  /* The screen manager handles writes past the edge ok */
-  DSetScreenCursor((int)col, (int)row);
-  DWriteScreenStringAttr(out_str, ATTR_NORMAL);
+    vtype tmp_str;
+
+    //  ENTER("put_buffer","i");
+
+    if (out_str && out_str[0]) {
+
+        /* truncate the string, to make sure that it won't go past right edge of
+           screen */
+        if (col > 80)
+            col = 80;
+        (void) strncpy (tmp_str, out_str, 80 - col);
+        tmp_str [80 - col] = '\0';
+
+        if (cool_mvaddstr((int)row, (int)col, tmp_str) == ERR)
+        {
+            abort();
+            /* clear msg_flag to avoid problems with unflushed messages */
+            msg_flag = 0;
+            (void) sprintf(tmp_str, "error in put_buffer, row = %ld col = %ld\n",
+                    row, col);
+            Prt(tmp_str, 0, 0);
+            bell();
+            /* wait so user can see error */
+            (void) sleep(2);
+        }
+    }
+    //  LEAVE("put_buffer","i");
 }
-#else
-{
-  vtype tmp_str;
-
-//  ENTER("put_buffer","i");
-
-  if (out_str && out_str[0]) {
-
-    /* truncate the string, to make sure that it won't go past right edge of
-       screen */
-    if (col > 80)
-      col = 80;
-    (void) strncpy (tmp_str, out_str, 80 - col);
-    tmp_str [80 - col] = '\0';
-    
-    if (cool_mvaddstr((int)row, (int)col, tmp_str) == ERR)
-      {
-	abort();
-	/* clear msg_flag to avoid problems with unflushed messages */
-	msg_flag = 0;
-	(void) sprintf(tmp_str, "error in put_buffer, row = %ld col = %ld\n",
-		       row, col);
-	Prt(tmp_str, 0, 0);
-	bell();
-	/* wait so user can see error */
-	(void) sleep(2);
-      }
-  }
-//  LEAVE("put_buffer","i");
-}
-#endif
 
 void put_buffer_attr(out_str, row, col, attrs)
 char *out_str;
@@ -1128,52 +1130,27 @@ int row;
 
 /* Outputs a char to a given interpolated y, x position	-RAK-	*/
 /* sign bit of a character used to indicate standout mode. -CJS */
-void Print(ch, row, col)
-char ch;
-int row;
-int col;
-#ifdef MAC
+void Print(chtype const ch, int row, int col)
 {
-  char cnow, anow;
+    vtype tmp_str;
 
-  row -= panel_row_prt;/* Real co-ords convert to screen positions */
-  col -= panel_col_prt;
+    row -= panel_row_prt;/* Real co-ords convert to screen positions */
+    col -= panel_col_prt;
 
-  GetScreenCharAttr(&cnow, &anow, col, row);	/* Check current */
+    used_line[row+1] = true;
 
-  /* If char is already set, ignore op */
-  if ((cnow != ch) || (anow != ATTR_NORMAL))
-    DSetScreenCharAttr(ch & 0x7F,
-		       (ch & 0x80) ? attrReversed : attrNormal,
-		       col, row);
-}
-#else
-{
-  vtype tmp_str;
-
-  row -= panel_row_prt;/* Real co-ords convert to screen positions */
-  col -= panel_col_prt;
-  
-  used_line[row+1] = true;
-
-  /*XXXX*/
-  if (!((row > 24) || (row < 0) || (col > 79) || (col < 0))) {
-
-  if (cool_mvaddch (row, col, ch) == ERR)
+    if ((row > 24) || (row < 0) || (col > 79) || (col < 0))
     {
-      abort();
-      /* clear msg_flag to avoid problems with unflushed messages */
-      msg_flag = 0;
-      (void) sprintf(tmp_str, "error in print, row = %d col = %d\n",
-		     row, col);
-      Prt(tmp_str, 0, 0);
-      bell();
-      /* wait so user can see error */
-      (void) sleep(2);
+        (void) sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
+        minor_error(tmp_str);
     }
-  }
+
+    if (cool_mvaddch (row, col, ch) == ERR)
+    {
+        (void) sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
+        minor_error(tmp_str);
+    }
 }
-#endif
 
 
 /* Moves the cursor to a given interpolated y, x position	-RAK-	*/
@@ -1233,34 +1210,14 @@ int col;
 }
 
 /* Outputs a line to a given y, x position		-RAK-	*/
-void Prt(str_buff, row, col)
-char *str_buff;
-int row;
-int col;
-#ifdef MAC
+void Prt(char const* str_buff, int row, int col)
 {
-  Rect line;
-
-  if (row == MSG_LINE && msg_flag)
-    msg_print("");
-
-  line.left = col;
-  line.top = row;
-  line.right = SCRN_COLS;
-  line.bottom = row + 1;
-  DEraseScreen(&line);
-
-  Put_Buffer(str_buff, row, col);
+    if (row == MSG_LINE && msg_flag)
+        msg_print("");
+    (void) move(row, col);
+    clrtoeol();
+    Put_Buffer(str_buff, row, col);
 }
-#else
-{
-  if (row == MSG_LINE && msg_flag)
-    msg_print("");
-  (void) move(row, col);
-  clrtoeol();
-  Put_Buffer(str_buff, row, col);
-}
-#endif
 
 
 /* move cursor to a given y, x position */
