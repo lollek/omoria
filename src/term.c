@@ -238,19 +238,8 @@ static int save_local_chars;
 #endif
 #endif
 
-#ifndef MAC
 static int curses_on = FALSE;
 static WINDOW *savescr;		/* Spare window for saving the screen. -CJS-*/
-#ifdef VMS
-static WINDOW *tempscr;		/* Spare window for VMS CTRL('R'). */
-#endif
-#endif
-
-#ifdef MAC
-/* Attributes of normal and hilighted characters */
-#define ATTR_NORMAL	attrNormal
-#define ATTR_HILITED	attrReversed
-#endif
 
 #ifndef MAC
 #ifdef SIGTSTP
@@ -296,116 +285,41 @@ int suspend()
 
 /* initializes curses routines */
 void init_curses()
-#ifdef MAC
 {
-  /* Primary initialization is done in mac.c since game is restartable */
-  /* Only need to clear the screen here */
-  Rect scrn;
+    printf("Attempting to start curses...\n");
+    fflush(stdout);
+    /*  int i, y, x;*/
 
-  scrn.left = scrn.top = 0;
-  scrn.right = SCRN_COLS;
-  scrn.bottom = SCRN_ROWS;
-  EraseScreen(&scrn);
-  UpdateScreen();
+    (void) ioctl(0, TCGETA, (char *)&save_termio);
+
+    if (initscr() == NULL)
+    {
+        (void) printf("Error allocating screen in curses package.\n\r");
+        exit(1);
+    }
+
+    /* Check we have enough screen. -CJS- */
+    if (LINES < SCREEN_HEIGHT || COLS < SCREEN_WIDTH)
+    {
+        (void) printf("Screen too small for moria.\n\r");
+        exit (1);
+    }
+
+    (void) signal (SIGTSTP, suspend);
+
+    if (((savescr = newwin (0, 0, 0, 0)) == NULL))
+    {
+        (void) printf ("Out of memory in starting up curses.\n\r");
+        exit_game();
+    }
+    (void) clear();
+    (void) refresh();
+    moriaterm ();
 }
-#else
-{
-  printf("Attempting to start curses...\n");
-  fflush(stdout);
-  /*  int i, y, x;*/
-
-#ifdef AMIGA
-  if (opentimer() == 0)
-    {
-      (void) printf ("Could not open timer device.\n\r");
-      exit (1);
-    }
-#endif
-
-#ifndef USG
-  (void) ioctl(0, TIOCGLTC, (char *)&save_special_chars);
-  (void) ioctl(0, TIOCGETP, (char *)&save_ttyb);
-  (void) ioctl(0, TIOCGETC, (char *)&save_tchars);
-#if !defined(atarist) && !defined(__GNUC__)
-  (void) ioctl(0, TIOCLGET, (char *)&save_local_chars);
-#endif
-#else
-#if !defined(VMS) && !defined(MSDOS) && !defined(ATARI_ST)
-#ifndef AMIGA
-  (void) ioctl(0, TCGETA, (char *)&save_termio);
-#endif
-#endif
-#endif
-
-  /* PC curses returns ERR */
-#if defined(USG) && !defined(PC_CURSES) && !defined(AMIGA)
-  if (initscr() == NULL)
-#else
-  if (initscr() == ERR)
-#endif
-    {
-      (void) printf("Error allocating screen in curses package.\n\r");
-      exit(1);
-    }
-  if (LINES < 24 || COLS < 80)	 /* Check we have enough screen. -CJS- */
-    {
-      (void) printf("Screen too small for moria.\n\r");
-      exit (1);
-    }
-#ifdef SIGTSTP
-#if defined(atarist) && defined(__GNUC__)
-  (void) signal (SIGTSTP, (__Sigfunc)suspend);
-#else
-#ifdef  __386BSD__
-  (void) signal (SIGTSTP, (sig_t)suspend);
-#else
-  (void) signal (SIGTSTP, (void *)suspend);
-#endif
-#endif
-#endif
-  if (((savescr = newwin (0, 0, 0, 0)) == NULL)
-#ifdef VMS
-      || ((tempscr = newwin (0, 0, 0, 0)) == NULL))
-#else
-    )
-#endif
-    {
-      (void) printf ("Out of memory in starting up curses.\n\r");
-      exit_game();
-    }
-  (void) clear();
-  (void) refresh();
-  moriaterm ();
-
-#if 0
-  /* This assumes that the terminal is 80 characters wide, which is not
-     guaranteed to be true.  */
-
-  /* check tab settings, exit with error if they are not 8 spaces apart */
-  (void) move(0, 0);
-  for (i = 1; i < 10; i++)
-    {
-      (void) addch('\t');
-      getyx(stdscr, y, x);
-      if (y != 0 || x != i*8)
-	break;
-    }
-  if (i != 10)
-    {
-      msg_print("Tabs must be set 8 spaces apart.");
-      exit_game();
-    }
-#endif
-}
-#endif
 
 /* Set up the terminal into a suitable state for moria.	 -CJS- */
 void moriaterm()
-#ifdef MAC
-/* Nothing to do on Mac */
-{
-}
-#else
+#if 1
 {
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(VMS)
 #ifndef AMIGA
@@ -500,13 +414,13 @@ void highlite_on()
 #if 1 || USE_CURSES_ATTRS
   attron(A_DIM);
 #endif
-};
+}
 void highlite_off()
 {
 #if 1 || USE_CURSES_ATTRS
   attroff(A_DIM);
 #endif
-};
+}
 
 int cool_mvaddch(int row, int col, char ch)
 {
@@ -1893,7 +1807,7 @@ boolean sl__get_dir(char *prompt, integer *dir)
   }
 
   return return_value;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void show_location()
 {
@@ -1972,7 +1886,7 @@ void show_location()
     }
   }
 #endif
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
