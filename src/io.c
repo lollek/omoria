@@ -434,7 +434,7 @@ boolean get_com(char *prompt, char *command)
 
 
 //////////////////////////////////////////////////////////////////////
-void print_str(char *str_buff,int row,int col)
+void print_str(char const* str_buff,int row,int col)
 {
   row -= panel_row_prt;/*{ Real co-ords convert to screen positions }*/
   col -= panel_col_prt;
