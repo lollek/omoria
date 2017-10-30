@@ -223,7 +223,7 @@ void s__bard_effects(integer effect)
 	break;
     }
     /*{ End of songs...			       }*/
-};
+}
 //////////////////////////////////////////////////////////////////////
 void sing()
 {

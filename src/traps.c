@@ -24,7 +24,7 @@ void place_trap(integer y,integer x,integer typ,integer subval)
   popt(&cur_pos);
   cave[y][x].tptr  = cur_pos;
   t_list[cur_pos]  = cur_trap;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ void change_trap(integer y,integer x)
     pusht(i3);
     lite_spot(y,x);
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ void place_rubble(integer y,integer x)
   cave[y][x].fopen = false;
 
   t_list[cur_pos] = some_rubble;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ void ht__open_pit(integer dam)
   } else {
     take_hit(dam,"an open pit");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__arrow(integer dam)
 {
@@ -81,7 +81,7 @@ void ht__arrow(integer dam)
   } else {
     msg_print("An arrow barely misses you.");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__covered_pit(integer dam, integer y, integer x)
 {
@@ -92,7 +92,7 @@ void ht__covered_pit(integer dam, integer y, integer x)
     take_hit(dam,"a covered pit");
     place_trap(y,x,2,1);
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__trap_door(integer dam)
 {
@@ -105,7 +105,7 @@ void ht__trap_door(integer dam)
   } else {
     take_hit(dam,"a trap door");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__sleep_gas(integer dam)
 {
@@ -119,7 +119,7 @@ void ht__sleep_gas(integer dam)
       py.flags.paralysis += randint(10) + 4;
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__hidden_object(integer dam, integer y, integer x)
 {
@@ -127,7 +127,7 @@ void ht__hidden_object(integer dam, integer y, integer x)
   pusht(cave[y][x].tptr);
   place_object(y,x);
   msg_print("Hmmm, there was something under this rock.");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__str_dart(integer dam)
 {
@@ -140,13 +140,13 @@ void ht__str_dart(integer dam)
   } else {
     msg_print("A small dart barely misses you.");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__teleport(integer dam)
 {
   teleport_flag = true;
   msg_print("You hit a teleport trap!");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__rockfall(integer dam, integer y, integer x)
 {
@@ -154,13 +154,13 @@ void ht__rockfall(integer dam, integer y, integer x)
   pusht(cave[y][x].tptr);
   place_rubble(y,x);
   msg_print("You are hit by falling rock");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__corrode_gas(integer dam)
 {
   corrode_gas("corrosion gas.");
   msg_print("A strange red gas surrounds you.");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__summon_monster(integer dam, integer y, integer x)
 {
@@ -178,37 +178,37 @@ void ht__summon_monster(integer dam, integer y, integer x)
       summon_land_monster(&ty,&tx,false);
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__fire(integer dam)
 {
   fire_dam(dam,"a fire trap.");
   msg_print("You are enveloped in flames!");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__acid(integer dam)
 {
   acid_dam(dam,"an acid trap.");
   msg_print("You are splashed with acid!");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__poison_gas(integer dam)
 {
   poison_gas(dam,"a poison gas trap.");
   msg_print("A pungent green gas surrounds you!");
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__blind_gas(integer dam)
 {
   msg_print("A black gas surrounds you!");
   PF.blind += randint(50) + 50;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__confuse_gas(integer dam)
 {
   msg_print("A gas of scintillating colors surrounds you!");
   PF.confused += randint(15) + 15;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__slow_dart(integer dam)
 {
@@ -219,7 +219,7 @@ void ht__slow_dart(integer dam)
   } else {
     msg_print("A small dart barely misses you.");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__con_dart(integer dam)
 {
@@ -232,12 +232,12 @@ void ht__con_dart(integer dam)
   } else {
     msg_print("A small dart barely misses you.");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__secret_door(integer dam)
 {
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__chute(integer dam)
 {
@@ -250,12 +250,12 @@ void ht__chute(integer dam)
   } else {
     take_hit(dam,"chute landing");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__scare_monster(integer dam)
 {
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__whirlpool(integer dam)
 {
@@ -269,7 +269,7 @@ void ht__whirlpool(integer dam)
       take_hit(dam,"drowning");
     }
   } while (randint(2) != 1);
-};
+}
 //////////////////////////////////////////////////////////////////////
 void ht__house(integer dam, integer y, integer x)
 {
@@ -461,7 +461,7 @@ void ht__house(integer dam, integer y, integer x)
 
   prt_time();
   prt_stat_block();
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -609,7 +609,7 @@ void hit_trap(integer *y,integer *x)
     break;
   }
   
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

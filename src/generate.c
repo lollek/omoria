@@ -34,7 +34,7 @@ void gc__correct_dir(integer *rdir, integer *cdir,
       *cdir = 0;
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__rand_dir(integer *rdir,integer *cdir, 
 		  integer y1, integer x1, integer y2, integer x2,
@@ -54,7 +54,7 @@ void gc__rand_dir(integer *rdir,integer *cdir,
   default :
     gc__correct_dir(rdir,cdir,y1,x1,y2,x2); break;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__blank_cave()
 {
@@ -67,7 +67,7 @@ void gc__blank_cave()
       cave[i1][i2] = blank_floor;
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__fill_cave(floor_type fill)
 {
@@ -84,7 +84,7 @@ void gc__fill_cave(floor_type fill)
       }
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__place_boundry()
 {
@@ -105,7 +105,7 @@ void gc__place_boundry()
     cave[cur_height][i1].fval  = boundry_wall.ftval;
     cave[cur_height][i1].fopen = boundry_wall.ftopen;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__place_streamer(floor_type rock, integer treas_chance)
 {
@@ -146,7 +146,7 @@ void gc__place_streamer(floor_type rock, integer treas_chance)
       flag = true;
     }
   } while (!flag);
-};
+}
 //////////////////////////////////////////////////////////////////////
 //insert gen.c
 //////////////////////////////////////////////////////////////////////
@@ -257,7 +257,7 @@ void gc__tunnel(integer row1,integer col1,integer row2,integer col2,
       }
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean gc__next_to(integer y, integer x)
 {
@@ -279,7 +279,7 @@ boolean gc__next_to(integer y, integer x)
   }
 
   return next_to;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__try_door(integer y, integer x)
 {
@@ -293,7 +293,7 @@ void gc__try_door(integer y, integer x)
     }
   }
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__place_pool(floor_type water)
 {
@@ -306,12 +306,12 @@ void gc__place_pool(floor_type water)
 
   /* XXXX place_pool does nothing useful */
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__all_the_river_stuff()
 {
   all_the_river_stuff(); /* in river.c */
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__cave_gen()
 {
@@ -456,7 +456,7 @@ void gc__cave_gen()
   }
 
   gc__place_boundry();                           /* just to make sure */
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__make_door(integer y, integer x,
 		    integer *cur_pos, integer store_num, integer house_type)
@@ -490,7 +490,7 @@ void gc__make_door(integer y, integer x,
     }
   }
   restore_rand_state(old_seed);
-};
+}
 //////////////////////////////////////////////////////////////////////
 void dr_castle(integer yval,integer xval,integer dy,integer dx, floor_type ft)
 {
@@ -507,13 +507,13 @@ void dr_castle(integer yval,integer xval,integer dy,integer dx, floor_type ft)
     cave[yval+dy][xval+dx].fopen = ft.ftopen;
     cave[yval+dy][xval+dx].fval  = ft.ftval;
   } while (! ((dy >= 0) && (dx >= 0)));
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__blank_square(integer dy, integer dx)
 {
   cave[dy][dx].fopen = dopen_floor.ftopen;
   cave[dy][dx].fval  = dopen_floor.ftval;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__build_store(integer store_num,integer where)
 {
@@ -657,12 +657,12 @@ void gc__build_store(integer store_num,integer where)
       gc__make_door(q1,q2,&cur_pos,S_INSURANCE,house_type);
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__build_house(integer house_num, integer where)
 {
   gc__build_store(house_num+TOT_STORES-1,where);
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__build_fountain (integer where)
 {
@@ -739,7 +739,7 @@ void gc__build_fountain (integer where)
       }
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__mixem(integer rooms[], integer num)
 {
@@ -753,7 +753,7 @@ void gc__mixem(integer rooms[], integer num)
     rooms[i1] = rooms[i2];
     rooms[i2] = i3;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void gc__town_gen()
 {
@@ -879,7 +879,7 @@ void gc__town_gen()
   }
 
   gc__place_boundry();                     /* just to make sure */
-};
+}
 //////////////////////////////////////////////////////////////////////
 void generate_cave()
 {
@@ -920,7 +920,7 @@ void generate_cave()
     panel_col       =  max_panel_cols;
     gc__cave_gen();
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

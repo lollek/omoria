@@ -12,7 +12,7 @@ void bi__display_gold()
   sprintf(out_val,"Gold remaining : %ld",py.misc.money[TOTAL_]);
   prt(out_val,19,18);
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__display_commands()
 {
@@ -20,7 +20,7 @@ void bi__display_commands()
   prt(" i) Insure an item.          a) Insure all items.",22,1);
   prt(" e) Insure all equipment.    p) Insure person.",23,1);
   prt("^R) Redraw the screen.     Esc) Exit from building.",24,1);
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__display_store(vtype shop_owner)
 {
@@ -29,7 +29,7 @@ void bi__display_store(vtype shop_owner)
   prt("(Protects character against most system failures.)",7,15);
   bi__display_commands();
   bi__display_gold();
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__insure_all_items()
 {
@@ -74,7 +74,7 @@ void bi__insure_all_items()
   } else {
     msg_print("You have no inventory that needs to be insured.");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__insure_item(vtype shop_owner)
 {
@@ -132,7 +132,7 @@ void bi__insure_item(vtype shop_owner)
   } else {
     msg_print("None of your items need insurance");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 real bi__death_adj()
 {
@@ -151,7 +151,7 @@ real bi__death_adj()
   PM.premium = (int)(temp);
 
   return temp;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__insure_person()
 {
@@ -186,7 +186,7 @@ void bi__insure_person()
       msg_print("Your person is now insured");
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__insure_all_equip()
 {
@@ -235,7 +235,7 @@ void bi__insure_all_equip()
   } else {
     msg_print("You have no equipment that needs to be insured.");
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void bi__parse_command(boolean *exit_flag, vtype shop_owner)
 {
@@ -281,7 +281,7 @@ void bi__parse_command(boolean *exit_flag, vtype shop_owner)
   } else {
     *exit_flag = true;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void buy_insurance()
 {
@@ -314,7 +314,7 @@ void buy_insurance()
     msg_print("Hmmmm... come back when you are a bit older.");
   }
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

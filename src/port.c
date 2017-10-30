@@ -40,7 +40,7 @@ void dispose(void *ptr, int size, char *message)
   free_bytes += size;
 
   free(ptr);
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -71,19 +71,19 @@ integer min3(integer i1, integer i2, integer i3)
   } else {
     return (i2 < i3) ? i2 : i3;
   }
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 
 void ignore_signals()
 {
-};
+}
 void restore_signals()
 {
-};
+}
 void default_signals()
 {
-};
+}
 
 /* Something happens to disturb the player.		-CJS-
    The first arg indicates a major disturbance, which affects search.

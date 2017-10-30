@@ -17,7 +17,7 @@ void sleep_(unsigned long int_time)
   /*{ NOTE: Int_time is in seconds					}*/
 
   sleep((unsigned int)int_time);
-};
+}
 
 void mini_sleep(unsigned long int_time)
 {
@@ -32,7 +32,7 @@ void init_priv_switch()
   /*  the hope is that imoria is sgid games or something that can write
       to the master and scores files                                    */
   games_gid = getegid();
-};
+}
 
 void priv_switch(integer switch_val)
 {
@@ -47,7 +47,7 @@ void priv_switch(integer switch_val)
     setegid(getgid());
   }
   
-};
+}
 
 void signalexit()
 {
@@ -139,7 +139,7 @@ void signalsuspend()
       break;
     }
   }
-};
+}
 
 void no_controly()
 { 
@@ -179,14 +179,14 @@ void no_controly()
     signal(SIGSYS,(void *)signalexit);
 #endif
     }
-};
+}
 
 void controly()
 {
   // { Turn on Control-Y					-RAK-	}
   /* ok, this is unix not vms, so it turns on ^C and ^Z */
 
-};
+}
 
 void exit_game()
 {
@@ -204,12 +204,12 @@ void exit_game()
 
   fflush(stdout);
   exit(0);      // { exit from game		}
-};
+}
 
 void init_channel() 
 {
   /* XXXX */
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -257,7 +257,7 @@ void msg_record(vtype message, boolean save)
   }
 
   LEAVE("msg_record","i");
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -275,7 +275,7 @@ void inkey_delay(char *getchar,integer delay)
     *getchar = 'a';
   }
 
-};
+}
 
 void inkey_flush(char *x) 
 {
@@ -284,19 +284,19 @@ void inkey_flush(char *x)
 	flush();
       }
       *x = inkey();
-};
+}
 
 void get_message() 
 {
-};
+}
 
 void set_the_trap() 
 {
-};
+}
 
 void disable_the_trap() 
 {
-};
+}
 
 void clear_rc(integer row,integer col) 
 {
@@ -312,7 +312,7 @@ void clear_rc(integer row,integer col)
   clrtobot();
 //  put_buffer(cursor_erp, row, col);
   put_qio(); /* dump the clear sequence */
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -358,7 +358,7 @@ boolean msg_print_pass_one(char *str_buff) // : varying[a] of char;
   
   RETURN("msg_print", "m", 'b',"msg", &return_value);
   return return_value;
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -406,7 +406,7 @@ boolean msg_print(char *str_buff) // : varying[a] of char;
   }
 
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -440,7 +440,7 @@ void print_str(char *str_buff,int row,int col)
   col -= panel_col_prt;
   used_line[row] = true;
   put_buffer(str_buff,row,col);
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean get_yes_no(char *prompt) // : varying[a] of char;
 {
@@ -460,7 +460,7 @@ boolean get_yes_no(char *prompt) // : varying[a] of char;
   }
 
   return return_value;
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -478,19 +478,19 @@ integer get_hex_value(integer row,integer col,integer slen)
   }
 
   return return_value;
-};
+}
 
 void print_hex_value(integer num,integer row,integer col) 
 {
   vtype    out_val;
   sprintf(out_val, "0x%08lx", num);
   prt(out_val, row, col);
-};
+}
 
 void pause_game(integer prt_line) 
 {
   pause_line(prt_line);
-};
+}
 
 void get_paths() 
 {
@@ -525,7 +525,7 @@ void get_paths()
   /*  sprintf(MORIA_HLP,  "%s/moriahlp.hlb",      HELP_FILE_PATH); */
 
   sprintf(MORIA_CST,  "moria_custom.mst");
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

@@ -530,7 +530,7 @@ void rs__scroll_effect(integer effect, boolean *idented,
   /*{ End of Scrolls...					}*/
   
   *idented = ident;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void read_scroll()
 {
@@ -620,7 +620,7 @@ void read_scroll()
   } else {
     msg_print("But you are not carrying anything.");
   }
-};
+}
 /* END FILE  scrolls.c */
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

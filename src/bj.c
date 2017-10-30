@@ -28,7 +28,7 @@ void bj__display_bj()
   prt("You may:",22,2);
   prt(" p) place a bet.                         v) view the rules",23,2);
   prt("^R) Redraw the screen.                 Esc) Exit from building.",24,2);
-};
+}
  
  
 void bj__display_bj_game()
@@ -62,7 +62,7 @@ void bj__opening_screen()
   prt(    "|   A||    |                          X  X X    XX", 14,12);
   prt(     "---- |   J|                               XXXX X X",15,13);
   prt(           "----                                     X  X",16,19);
-};
+}
  
  
  
@@ -99,7 +99,7 @@ void bj__display_rules()
 
   prt("[hit any key to continue]",24,23);
   exit = get_com("",&command);
-};
+}
  
  
  
@@ -125,7 +125,7 @@ void bj__initialize_hand()
     already_split  = false;
     split_flag     = false;
     double_flag    = false;
-};
+}
  
  
  
@@ -159,7 +159,7 @@ void bj__evaluate_pl_hand()
   if ((valp > 21)) {
       bust_flag = true;
   }
-};
+}
  
  
  
@@ -193,7 +193,7 @@ void bj__evaluate_dl_hand(integer index)
     if (vald > 21) {
 	deal_bust = true;
     }
-};
+}
  
  
  
@@ -216,7 +216,7 @@ void bj__hand_save()
       py_index         = 7;
       bust_save        = bust_flag;
       bust_flag        = false;
-};
+}
  
  
  
@@ -249,7 +249,7 @@ void bj__check_exit(boolean *exit_flag)
       msg_print("Now play the hand on the right.");
       *exit_flag = false;
   }
-};
+}
  
  
 void bj__get_first_dealc()
@@ -266,7 +266,7 @@ void bj__get_first_dealc()
     put_buffer(draw,16,8);
     strcpy(draw, " ----");
     put_buffer(draw,17,8);
-};
+}
  
  
 void bj__card_draw (integer index, integer r, vtype card)
@@ -321,7 +321,7 @@ void bj__re_draw()
     } else {
 	bj__display_bj();
     }
-};
+}
  
  
 void bj__get_dealer_card(integer i)
@@ -346,7 +346,7 @@ void bj__get_dealer_card(integer i)
   }
   bj__card_draw(i,13,dummyd[i]);
   bj__evaluate_dl_hand(i);
-};
+}
  
  
  
@@ -370,7 +370,7 @@ void bj__get_player_card(integer i)
   }
   bj__card_draw(i,6,dummy[i]);
   bj__evaluate_pl_hand();
-};
+}
  
  
  
@@ -378,7 +378,7 @@ void bj__get_dealer_hand()
 {
     bj__get_dealer_card(1);
     bj__get_dealer_card(2);
-};
+}
  
  
 void bj__get_player_hand()
@@ -448,7 +448,7 @@ void bj__play_dealer_hand()
 	} while (!stay_flag);
     }
     bj__get_winning();
-};
+}
  
  
  
@@ -458,7 +458,7 @@ void bj__double()
     py_index++;
     bj__get_player_card(py_index);
     double_flag = true;
-};
+}
  
  
  
@@ -470,7 +470,7 @@ void bj__split()
   bj__get_player_card(2);
   bj__get_player_card(7);
   split_flag = true;
-};
+}
  
  
  
@@ -526,7 +526,7 @@ void bj__get_game_command()
 	 break;
        }
     }
-};
+}
  
  
 void bj__play_hand()
@@ -586,7 +586,7 @@ void bj__play_hand()
   }
   clear_rc(21,1);
   bet = 0;
-};
+}
  
  
 void bj__play_bj()
@@ -605,7 +605,7 @@ void bj__play_bj()
     bj__check_exit(&exit_flag);
   } while (!exit_flag);
   bj__play_hand();
-};
+}
 
  
  
@@ -638,7 +638,7 @@ void bj__get_bj_bet()
   }
   gld -= bet;
   c__display_gold();
-};
+}
  
  
  
@@ -680,7 +680,7 @@ void bj__blackjack_commands()
     }
     c__check_casino_kickout();
   } while (!exit_flag);
-};
+}
  
  
 void bj__game_blackjack()
@@ -691,7 +691,7 @@ void bj__game_blackjack()
   bj__opening_screen();
   prt("The dealer awaits your bet.",1,1);
   bj__blackjack_commands();
-};
+}
  
  
  

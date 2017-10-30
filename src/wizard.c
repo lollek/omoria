@@ -73,7 +73,7 @@ void game_version()
   PB("                                        "                 ,10,1);
   pause_game(24);
   draw_cave();
-};
+}
 #undef PB
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ void bpswd()
     set_seed(get_seed());
   }
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ void wizard_light()
    prt_map();
    detect_trap() ;
    detect_sdoor() ;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ void monster_summon_by_name(integer y,integer x,ctype name,boolean present,
 	erase_line(msg_line,msg_line);
     }
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 /////// wizard_moo_item
@@ -343,14 +343,14 @@ void wmi__init_data_list(list_elem_ptr *data_list)
       curse->next = nil;
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void wmi__display_commands()
 {
   prt("You may:",22,1);
   prt(" p) Pick an item.              b) Browse to next page.",23,1);
   prt("^R) Redraw screen.           Esc) Exit.",24,1);
-};
+}
 //////////////////////////////////////////////////////////////////////
 void wmi__display_list(list_elem_ptr start, integer *cur_display_size,
 		       list_elem_ptr cur_display[], list_elem_ptr *blegga,
@@ -384,7 +384,7 @@ void wmi__display_list(list_elem_ptr start, integer *cur_display_size,
   } else {
     *blegga = start;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void wmi__clear_display(integer *cur_display_size, list_elem_ptr cur_display[])
 {
@@ -394,7 +394,7 @@ void wmi__clear_display(integer *cur_display_size, list_elem_ptr cur_display[])
   for (i4 = 1; i4 <= MOO_DISPLAY_SIZE; i4++) {
     cur_display[i4] = nil;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void wmi__display_screen(integer       *cur_display_size, 
 			 list_elem_ptr  cur_display[], 
@@ -406,7 +406,7 @@ void wmi__display_screen(integer       *cur_display_size,
   wmi__clear_display(cur_display_size, cur_display);
   wmi__display_list(cur_top, cur_display_size, cur_display, blegga, data_list);
   wmi__display_commands();
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean wmi__get_list_entry(integer *com_val,vtype pmt, integer i1, integer i2)
 {
@@ -434,7 +434,7 @@ boolean wmi__get_list_entry(integer *com_val,vtype pmt, integer i1, integer i2)
   erase_line(1,1);
   
   return  flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean wmi__parse_command(list_elem_ptr *blegga,
 			   list_elem_ptr *cur_top,
@@ -489,7 +489,7 @@ boolean wmi__parse_command(list_elem_ptr *blegga,
   }
   
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean wizard_moo_item(treasure_type *back)
 {
@@ -516,7 +516,7 @@ boolean wizard_moo_item(treasure_type *back)
   } while (!exit_flag);
   
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 /////// summon_item
@@ -544,7 +544,7 @@ boolean si__get_new_ttype(ttype  s, vtype str, string out_str)
   }
 
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
 				  boolean *found, integer *num_found)
@@ -586,7 +586,7 @@ boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
     }
   }
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean si__narrow(ttype s, integer *num_found, integer moo_cursor[])
 {
@@ -610,7 +610,7 @@ boolean si__narrow(ttype s, integer *num_found, integer moo_cursor[])
   }
 
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
 			   treasure_type moo_item[])
@@ -639,7 +639,7 @@ boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
 
   RETURN("si__narrow_choices", "w",'b',"found:",&flag);
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void si__pesky_stuff(integer *best_value, integer *good_value,
 		     treasure_type *best_pick, treasure_type *good_pick,
@@ -676,7 +676,7 @@ void si__pesky_stuff(integer *best_value, integer *good_value,
   cave[y][x].tptr = *cur_pos;
   t_list[*cur_pos] = blank_treasure;
   sprintf(t_list[*cur_pos].name, "& bogus summoned item %ld", *cur_pos);
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean si__optimize_item(treasure_type *pick, integer *value,
 			  integer optimize, integer cur_pos)
@@ -695,7 +695,7 @@ boolean si__optimize_item(treasure_type *pick, integer *value,
   }
   
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean summon_item(integer y,integer x,ttype name1,ttype name2,
 		    integer count,boolean present)
@@ -807,7 +807,7 @@ boolean summon_item(integer y,integer x,ttype name1,ttype name2,
   
   RETURN("summon_item", "w",'b',"allocated:",&return_value);
   return return_value;
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -833,7 +833,7 @@ void enter_wizard_mode(boolean ask_for_pass)
       }
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -843,7 +843,7 @@ void esf__display_commands()
   prt(" d) Delete an entry.              b) Browse to next page.",22,1);
   prt(" c) Change an entry.",23,1);
   prt(" q) Quit and save changes       Esc) Exit without saving.",24,1);
-};
+}
 //////////////////////////////////////////////////////////////////////
 void esf__display_list(int start, string list[], int n1, int *blegga,
 		       int *cur_display_size)
@@ -873,7 +873,7 @@ void esf__display_list(int start, string list[], int n1, int *blegga,
   } else {
     *blegga = start;
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void esf__display_screen(int cur_top, string list[], int n1, int *blegga,
 			 int *cur_display_size)
@@ -884,7 +884,7 @@ void esf__display_screen(int cur_top, string list[], int n1, int *blegga,
   put_buffer("  ____________ ________ _ ________________________ __ __________ ______________",3,1);
   esf__display_list(cur_top, list, n1, blegga, cur_display_size);
   esf__display_commands();
-};
+}
 //////////////////////////////////////////////////////////////////////
 boolean esf__get_list_entry(int *com_val, vtype pmt, int cur_top,
 			    int i1, int i2)
@@ -913,7 +913,7 @@ boolean esf__get_list_entry(int *com_val, vtype pmt, int cur_top,
 
   erase_line(1,1);
   return flag;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void esf__change_entry(int cur_top, string list[], int n1,
 		       int cur_display_size)
@@ -987,7 +987,7 @@ void esf__change_entry(int cur_top, string list[], int n1,
   } else {
     prt("Score changed.",1,1);
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void esf__delete_entry(int cur_top, string list[], int *n1,
 		       int cur_display_size)
@@ -1004,7 +1004,7 @@ void esf__delete_entry(int cur_top, string list[], int *n1,
       (*n1)--;
     }
   }
-};
+}
 //////////////////////////////////////////////////////////////////////
 void esf__parse_command(string list[], int *cur_top, int *n1, int *blegga,
 			int *cur_display_size,
@@ -1052,7 +1052,7 @@ void esf__parse_command(string list[], int *cur_top, int *n1, int *blegga,
   } else {
     *exit_flag = true;
   }
-};
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -1119,7 +1119,7 @@ void edit_score_file()
   }
 
   draw_cave();
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 boolean cc__input_field(string prompt, integer *num, integer min, 
@@ -1146,7 +1146,7 @@ boolean cc__input_field(string prompt, integer *num, integer min,
   }
 
   return return_value;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void change_character()
 {
@@ -1306,7 +1306,7 @@ void change_character()
 
   erase_line(msg_line,msg_line);
   py_bonuses(&blank_treasure,0);
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -1501,7 +1501,7 @@ void wizard_create()
   move_char(5);
   creatures(false);
 
-};
+}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

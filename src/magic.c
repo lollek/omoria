@@ -219,7 +219,7 @@ static void mage_spell_effects(integer effect)
     default:
 	break;
     }
-};
+}
 
 void cast()
 {
@@ -293,4 +293,4 @@ void cast()
 	}
 	prt_mana();
     }
-};
+}

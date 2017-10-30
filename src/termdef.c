@@ -7,6 +7,6 @@
 void termdef()
 {
   
-};
+}
 
 /* END FILE  termdef.c */

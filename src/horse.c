@@ -166,7 +166,7 @@ void hr__get_horse_stats(integer *num_horse, h_name horse, h_stat hstat,
   for (i1 = 1; i1 <= *num_horse; i1++) {
     true_odds[i1] = 0.95 * (*true_sum_bets)/true_bets[i1] - 1.0;
   }
-};
+}
  
  
 integer hr__move(real amount)
@@ -178,7 +178,7 @@ integer hr__move(real amount)
   if ((amount/1000) >= 1) { return_value = 3; }
 
   return return_value;
-};
+}
  
  
 void hr__list_horses(integer num_horse, h_name horse, statr odds)
@@ -212,7 +212,7 @@ void hr__list_horses(integer num_horse, h_name horse, statr odds)
     clear_rc(2,1);
     hr__display_commands();
   }
-};
+}
 
 
 void hr__print_positions(integer row, integer col, integer horse_bet,
@@ -230,7 +230,7 @@ void hr__print_positions(integer row, integer col, integer horse_bet,
     sprintf(out_val,"%ld  %s",fastest[i1],horse[fastest[i1]]);
     put_buffer(out_val,row-1+i1,col+3);
   }
-};
+}
 
 ///////////////////
 
@@ -250,7 +250,7 @@ void s__start_race(integer num_horse)
   for (i1 = 1; i1 <= num_horse; i1++) {
     put_buffer("  ",3+i1,2);
   }
-};
+}
 
 void s__get_positions(integer num_horse, integer win_count, h_stat dist,
 		      h_stat fastest, h_stat order)
@@ -269,7 +269,7 @@ void s__get_positions(integer num_horse, integer win_count, h_stat dist,
   for (i1 = win_count+1; i1 <= num_horse; i1++) {
     order[fastest[i1]] = i1;
   }
-};
+}
 
  
 boolean s__find_plot(integer horse, integer *row, integer *col, h_stat dist,
@@ -320,7 +320,7 @@ boolean s__find_plot(integer horse, integer *row, integer *col, h_stat dist,
     }
   }
   return  return_value;
-};
+}
 
 void s__predict_order(integer num_horse, statr true_odds, h_stat final_order,
 		      h_stat final_fastest)
@@ -350,7 +350,7 @@ void s__predict_order(integer num_horse, statr true_odds, h_stat final_order,
     final_order[i2]   = i1;
     final_fastest[i1] = i2;
   }
-};
+}
 
 void s__predict_race(integer num_horse, h_stat h_times[], h_stat final_fastest,
 		     h_stat hstat)
@@ -411,7 +411,7 @@ void s__predict_race(integer num_horse, h_stat h_times[], h_stat final_fastest,
     }
     h_times[21][t] = h_times[20][t] + 40;
   }
-};
+}
 
 void hr__start(integer num_horse, integer *screen_high, integer *which_screen,
 	       integer *win_count, integer *new_win_count, integer *screen_low,
@@ -553,7 +553,7 @@ void hr__start(integer num_horse, integer *screen_high, integer *which_screen,
   }
   get_com("",&command);
   clear_screen();
-};
+}
  
 void hr__display_winnings(integer horse_bet, h_stat fastest, statr odds,
 			  char horse_bet_type, h_name horse)
@@ -619,7 +619,7 @@ void hr__display_winnings(integer horse_bet, h_stat fastest, statr odds,
   prt("[hit any key to continue]",23,24);
   get_com("",&command);
   clear_screen();
-};
+}
 
 
 boolean grb__get_bet_type(char *horse_bet_type)
@@ -644,7 +644,7 @@ boolean grb__get_bet_type(char *horse_bet_type)
   } while (!exit_flag);
 
   return return_value;
-};
+}
  
  
 boolean grb__get_bet_horse(integer num_horse, h_name horse, statr odds,
@@ -671,7 +671,7 @@ boolean grb__get_bet_horse(integer num_horse, h_name horse, statr odds,
   hr__display_commands();
 
   return return_value;
-};
+}
 
 boolean hr__get_race_bet(char *horse_bet_type, integer *horse_bet,
 			 integer num_horse, h_name horse, statr odds,
@@ -718,7 +718,7 @@ boolean hr__get_race_bet(char *horse_bet_type, integer *horse_bet,
   }
 
   return return_value;
-};
+}
  
  
 boolean hr__get_horse_command(boolean *exit_flag, char *horse_bet_type,
@@ -758,7 +758,7 @@ boolean hr__get_horse_command(boolean *exit_flag, char *horse_bet_type,
   }
 
   return return_value;
-};
+}
 
 
 
@@ -824,6 +824,6 @@ void hr__game_horse()
       msg_print(" ");
     }
   } while (!exit_flag);
-};
+}
 
 /* END FILE horse.c */

@@ -32,7 +32,7 @@ void sm__display_slot_options()
   prt("You may:",21,1);
   prt(" p) pull lever.                   d) display prizes.",22,2);
   prt("^R) Redraw the screen.          Esc) Return to main menu.",23,2);
-};
+}
  
  
 void sm__position_adjust(integer *c1, integer *c2, integer *c3)
@@ -46,7 +46,7 @@ void sm__position_adjust(integer *c1, integer *c2, integer *c3)
 //  if (slotpos[1] > 1) { *c1 = 14; }
 //  if (slotpos[2] > 1) { *c2 = 28; }
 //  if (slotpos[3] > 1) { *c3 = 42; }
-};
+}
  
  
  
@@ -65,7 +65,7 @@ void sm__display_slots()
    sprintf(out_val,"%s",s_name[slotpos[3]]);
    put_buffer(out_val,7,c3);
    c__display_gold();
-};
+}
  
  
  
@@ -89,7 +89,7 @@ prt(" cherry   cherry    ---          1     2      5     10     25     50",15,1)
 prt("[hit any key to continue]",22,27);
 exit =  get_com("",&command);
 sm__display_slots();
-};
+}
  
  
  
@@ -140,7 +140,7 @@ void sm__get_slots()
   } else if (c >=  1) {
     slotpos[3] = S_CHERRY;
   }
-};
+}
  
  
 void sm__clearslots(integer line)
@@ -153,7 +153,7 @@ void sm__clearslots(integer line)
    put_buffer(killpos,line,15);
    put_buffer(killpos,line,29);
    put_buffer(killpos,line,43);
-};
+}
  
  
 void sm__print_slots()
@@ -204,7 +204,7 @@ void sm__print_slots()
     put_qio();
     usleep(100);
   }
-};
+}
  
 void sm__winnings()
 { 
@@ -259,7 +259,7 @@ void sm__winnings()
     }
     gld += winning;
   }
-};
+}
  
  
  
@@ -289,7 +289,7 @@ void sm__get_slots_bet()
     prt("You have not the gold!",1,1);
     bet = 0;
   }
-};
+}
  
  
 void sm__slot_commands()
@@ -320,7 +320,7 @@ void sm__slot_commands()
     }
     c__check_casino_kickout();
   } while (!exit_flag);
-};
+}
 
 
 

@@ -304,7 +304,7 @@ void q__potion_effect(integer effect, boolean *idented)
   /*{ End of Potions...                                     }*/
   
   *idented = ident;
-};
+}
 //////////////////////////////////////////////////////////////////////
 void quaff()
 {
@@ -376,7 +376,7 @@ void quaff()
   } else {
     msg_print("But you are not carrying anything.");
   }
-};
+}
 
 /* END FILE  potions.c */
 //////////////////////////////////////////////////////////////////////

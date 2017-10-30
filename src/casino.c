@@ -18,7 +18,7 @@ void c__display_gold()
  
   sprintf(out_val, "gold remaining : %ld   ",gld);
   prt( out_val, 19, 22);
-};
+}
 
 
 boolean c__get_response(vtype comment, integer *num)
@@ -46,7 +46,7 @@ boolean c__get_response(vtype comment, integer *num)
   }
   
   return flag;
-};
+}
 
 void c__change_money()
 {
@@ -58,7 +58,7 @@ void c__change_money()
   } else {
     subtract_money(amount,true);
   }
-};
+}
 
 void c__check_casino_kickout()
 {
@@ -76,7 +76,7 @@ void c__check_casino_kickout()
     }
   }
   tics++;
-};
+}
 
 void c__display_casino()
 {
@@ -93,7 +93,7 @@ void c__display_casino()
   prt("You may:",21,1);
   prt(" p) Play a game.                  h) Help on game rules.",22,2);
   prt("^R) Redraw the screen.          Esc) Exit from building.",23,2);
-};
+}
 
 void c__play_game(char game)
 {
@@ -133,7 +133,7 @@ void c__play_game(char game)
       exit_flag = true;
     }
   } while (!exit_flag);
-};
+}
 
 
 void c__parse_command()
@@ -158,7 +158,7 @@ void c__parse_command()
       exit_flag = true;
     }
   } while (!(exit_flag || c_closed));
-};
+}
 
 void c__exit_messages()
 {
@@ -180,7 +180,7 @@ void c__exit_messages()
    msg_print("Bye.");
  }
   //msg_print("");
-};
+}
 
 
 void enter_casino()
@@ -196,6 +196,6 @@ void enter_casino()
   c__exit_messages();
   c__change_money();
   draw_cave();
-};
+}
 
 /* END FILE  casino.c */

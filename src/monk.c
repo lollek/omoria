@@ -88,7 +88,7 @@ void d__monk_effects(integer effect)
 	break;
     }
     /*{ End of Disciplines...}*/
-};
+}
 //////////////////////////////////////////////////////////////////////
 
 void discipline()
