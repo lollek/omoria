@@ -1425,25 +1425,13 @@ int row, column, slen;
   register int start_col, end_col, i;
   char *p;
   int flag, aborted;
-#ifdef MAC
-  Rect area;
-#endif
 
   aborted = FALSE;
   flag	= FALSE;
-#ifdef MAC
-  area.left = column;
-  area.top = row;
-  area.right = column + slen;
-  area.bottom = row + 1;
-  DEraseScreen(&area);
-  DSetScreenCursor(column, row);
-#else
   (void) move(row, column);
   for (i = slen; i > 0; i--)
     (void) addch(' ');
   (void) move(row, column);
-#endif
   start_col = column;
   end_col = column + slen - 1;
   if (end_col > 79)
@@ -1477,12 +1465,7 @@ int row, column, slen;
 	    bell();
 	  else
 	    {
-#ifdef MAC
-	      DSetScreenCursor(column, row);
-	      DWriteScreenCharAttr((char) i, ATTR_NORMAL);
-#else
 	      use_value2 mvaddch(row, column, (char)i);
-#endif
 	      *p++ = i;
 	      column++;
 	    }
