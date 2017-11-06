@@ -183,12 +183,12 @@ void cnv_stat( byteint stat, stat_type out_val)
 //////////////////////////////////////////////////////////////////////
 void prt_num(vtype header, integer num,integer row,integer column)
 {
-  /*	{ Print number with header at given row, column		-RAK-	}*/
+    /*	{ Print number with header at given row, column		-RAK-	}*/
 
-  vtype out_val;
+    vtype out_val;
 
-  sprintf(out_val,"%s%ld  ",header,num);
-  put_buffer(out_val,row,column);
+    sprintf(out_val,"%s%6ld  ",header,num);
+    put_buffer(out_val,row,column);
 
 }
 
@@ -197,38 +197,38 @@ void prt_num(vtype header, integer num,integer row,integer column)
 //////////////////////////////////////////////////////////////////////
 void prt_stat_block()
 {
-  /*{ Prints character-screen info                              -RAK-   }*/
-  prt_field(py.misc.race,                    RACE_ROW,STAT_COLUMN);
-  prt_field(py.misc.tclass,                  CLASS_ROW,STAT_COLUMN);
-  prt_title();
-  prt_6_stats(py.stat.c,py.stat.l,           STR_ROW,STAT_COLUMN);
-  prt_num( "LEV : ",py.misc.lev,             LEVEL_ROW,STAT_COLUMN);
-  prt_num( "EXP : ",py.misc.exp,             EXP_ROW,STAT_COLUMN);
-  if (is_magii) {
-    prt_field("MANA: ",                      MANA_ROW,STAT_COLUMN);
-    prt_mana();
-  }
-  prt_field("HP  : ",                        HP_ROW,STAT_COLUMN);
-  prt_hp();
-  prt_num( "QST : ",py.misc.quests,          QUEST_ROW,STAT_COLUMN);
-  prt_num( "AC  : ",py.misc.dis_ac,          AC_ROW,STAT_COLUMN);
-  prt_num( "GOLD: ",py.misc.money[TOTAL_],   GOLD_ROW,STAT_COLUMN);
-  prt_field("WGHT:",                         WEIGHT_ROW,STAT_COLUMN);
-  prt_field("M_WT:",                         WEIGHT_ROW+1,STAT_COLUMN);
-  prt_weight();
-  prt_time();
-  if (total_winner) {
-    prt_winner();
-  }
-  prt_hunger(); /*{'If' statements here redundant and unnecessary, so}*/
-  prt_blind();  /*{ removed per Dean's suggestion                -MAV}*/
-  prt_confused();
-  prt_afraid();
-  prt_poisoned();
-  prt_search();
-  prt_rest();
-  prt_quested();
-  prt_light_on();
+    /*{ Prints character-screen info                              -RAK-   }*/
+    prt_field(py.misc.race,                    RACE_ROW,STAT_COLUMN);
+    prt_field(py.misc.tclass,                  CLASS_ROW,STAT_COLUMN);
+    prt_title();
+    prt_6_stats(py.stat.c,py.stat.l,           STR_ROW,STAT_COLUMN);
+    prt_num("LVL : ",py.misc.lev,             LEVEL_ROW,STAT_COLUMN);
+    prt_num("EXP : ",py.misc.exp,             EXP_ROW,STAT_COLUMN);
+    if (is_magii) {
+        prt_field("MANA: ",                      MANA_ROW,STAT_COLUMN);
+        prt_mana();
+    }
+    prt_field("HP  : ",                        HP_ROW,STAT_COLUMN);
+    prt_hp();
+    prt_num("QST : ",py.misc.quests,          QUEST_ROW,STAT_COLUMN);
+    prt_num("AC  : ",py.misc.dis_ac,          AC_ROW,STAT_COLUMN);
+    prt_num("GOLD: ",py.misc.money[TOTAL_],   GOLD_ROW,STAT_COLUMN);
+    prt_field("WGHT:",                         WEIGHT_ROW,STAT_COLUMN);
+    prt_field("M_WT:",                         WEIGHT_ROW+1,STAT_COLUMN);
+    prt_weight();
+    prt_time();
+    if (total_winner) {
+        prt_winner();
+    }
+    prt_hunger(); /*{'If' statements here redundant and unnecessary, so}*/
+    prt_blind();  /*{ removed per Dean's suggestion                -MAV}*/
+    prt_confused();
+    prt_afraid();
+    prt_poisoned();
+    prt_search();
+    prt_rest();
+    prt_quested();
+    prt_light_on();
 }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -254,16 +254,23 @@ void prt_title()
 //////////////////////////////////////////////////////////////////////
 void prt_hp()
 {
-  /*{ Prints hit points					-DCJ-	}*/
-  vtype    out_val1, out_val2;
+    /*{ Prints hit points					-DCJ-	}*/
+    vtype    buf;
 
-  sprintf(out_val1,"%d/%d ",(int)(py.misc.chp),(int)(py.misc.mhp));
-  if (strlen(out_val1) < 8) {
-    sprintf(out_val2,"%-8s",out_val1);
-    put_buffer(out_val2,HP_ROW,STAT_COLUMN+6);
-  } else {
-    put_buffer(out_val1,HP_ROW,STAT_COLUMN+6);
-  }
+    sprintf(buf, "%6d  ",(int)(py.misc.chp));
+    if (py.misc.chp == py.misc.mhp) {
+        attron(COLOR_PAIR(COLOR_GREEN));
+        put_buffer(buf, HP_ROW,STAT_COLUMN + 6);
+        attroff(COLOR_PAIR(COLOR_GREEN));
+    } else if (py.misc.chp >= py.misc.mhp / 3) {
+        attron(COLOR_PAIR(COLOR_YELLOW));
+        put_buffer(buf, HP_ROW,STAT_COLUMN + 6);
+        attroff(COLOR_PAIR(COLOR_YELLOW));
+    } else {
+        attron(COLOR_PAIR(COLOR_RED));
+        put_buffer(buf, HP_ROW,STAT_COLUMN + 6);
+        attroff(COLOR_PAIR(COLOR_RED));
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -490,17 +497,23 @@ void prt_experience()
 //////////////////////////////////////////////////////////////////////
 void prt_mana()
 {
-  /*{ Prints player's mana					-DCJ-	}*/
-  vtype   out_val1;
-  vtype   out_val2;
+    /*{ Prints player's mana					-DCJ-	}*/
+    vtype   buf;
 
-  sprintf(out_val1,"%d/%d",(int)(py.misc.cmana),(int)(py.misc.mana));
-  if ( strlen(out_val1) < 8 ) {
-    sprintf(out_val2,"%-8s",out_val1);
-    put_buffer(out_val2,MANA_ROW,STAT_COLUMN+6);
-  } else {
-    put_buffer(out_val1,MANA_ROW,STAT_COLUMN+6);
-  }
+    sprintf(buf, "%6d  ",(int)(py.misc.cmana));
+    if (py.misc.cmana == py.misc.mana) {
+        attron(COLOR_PAIR(COLOR_BLUE));
+        put_buffer(buf, MANA_ROW,STAT_COLUMN + 6);
+        attroff(COLOR_PAIR(COLOR_BLUE));
+    } else if (py.misc.cmana >= py.misc.mana / 3) {
+        attron(COLOR_PAIR(COLOR_CYAN));
+        put_buffer(buf, MANA_ROW,STAT_COLUMN + 6);
+        attroff(COLOR_PAIR(COLOR_CYAN));
+    } else {
+        attron(COLOR_PAIR(COLOR_MAGENTA));
+        put_buffer(buf, MANA_ROW,STAT_COLUMN + 6);
+        attroff(COLOR_PAIR(COLOR_MAGENTA));
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
