@@ -66,8 +66,8 @@ void main_menu(vtype file_name) {
     prt("Press ESCAPE to create a new character", current_row++, 1);
 
     for (;;) {
-        char selection;
-        inkey_flush(&selection);
+        unsigned char selection;
+        inkey_flush((char *)&selection);
 
         if (selection == ESCAPE) {
             break;

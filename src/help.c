@@ -110,7 +110,7 @@ void moria_help(vtype help_level)
     clear_screen();
     put_qio();
     endwin();
-    execlp(HELP_FILE_PATH, "mhelp.pl", help_string, 0);
+    execlp(HELP_FILE_PATH, "mhelp.pl", help_string, (char *)0);
     printf("\n\rUnable to execute: %s\n\r", HELP_FILE_PATH);
     printf("Press return continue.\n\r");
     fflush(stdout);

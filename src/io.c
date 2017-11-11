@@ -9,7 +9,7 @@ void convert_time(
 		  quad_type *bin_time)
 {
   printf("UNIMPLEMENTED convert_time\n\r");
-}; 
+}
 
 void sleep_(unsigned long int_time) 
 {
@@ -25,7 +25,7 @@ void mini_sleep(unsigned long int_time)
 
   usleep(int_time);
 
-}; 
+}
 
 void init_priv_switch()
 {
@@ -429,7 +429,7 @@ boolean get_com(char *prompt, char *command)
 
   return return_value;
 
-}; /* end get_com */
+}
 
 
 

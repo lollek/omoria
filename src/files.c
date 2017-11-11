@@ -54,7 +54,7 @@ void intro_qualifier_help()
       printf("\n\r");
     } /* end if wizard2 */
 
-}; /* end intro_qualifier_help */
+}
 
 //////////////////////////////////////////////////////////////////////
 void print_version_info()
@@ -65,7 +65,7 @@ void print_version_info()
   printf("\n\r");
   
   
-}; /* end print_version_info */
+}
 //////////////////////////////////////////////////////////////////////
 boolean intro_parse_switches(vtype finame, int argc, char *argv[])
 {
@@ -227,7 +227,7 @@ boolean intro_parse_switches(vtype finame, int argc, char *argv[])
   
   return (exit_flag || print_usage);
   
-}; /* end intro_parse_switches */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -295,7 +295,7 @@ boolean intro_do_hours_file (boolean already_exiting, char * the_file)
     } /* end if file1 (reading) */  
 
   return (exit_flag || already_exiting);
-}; /* end intro_do_hours_file */
+}
 
 boolean intro_do_msg_file(boolean already_exiting, char * the_file, 
 			  boolean write_to_screen)
@@ -408,7 +408,7 @@ fprintf(file1," ------------ - -- -- -- ---- ---- ------------------------------
     } /* end if file1 (reading) */
 
   return (exit_flag || already_exiting);
-}; /* end intro_do_death_file */
+}
 //////////////////////////////////////////////////////////////////////
 boolean intro_ensure_file_exists(boolean already_exiting, char * the_file)
 {
@@ -434,7 +434,7 @@ boolean intro_ensure_file_exists(boolean already_exiting, char * the_file)
     } /* end if file1 (reading) */
 
   return (exit_flag || already_exiting);
-}; /* end intro_ensure_file_exists */
+}
 
 void intro(vtype finame, int argc, char *argv[])
 {

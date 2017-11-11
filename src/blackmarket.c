@@ -737,7 +737,7 @@ void soup_up_black_market(integer indx)
   insert_num(t_list[indx].name,"%P5",t_list[indx].p1,false);
   insert_num(t_list[indx].name,"%P6",t_list[indx].ac,false);
   */
-};                                                                    
+}
 
 #if 0
 extern void store_carry( integer store_num, integer *ipos);

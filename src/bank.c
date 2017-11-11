@@ -43,7 +43,7 @@ void eb__display_money()
 
     put_qio();
 
-}; /* end eb__display_money */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -61,7 +61,7 @@ void eb__display_store(vtype shop_owner)
     prt("^R) Redraw the screen.       Esc) Exit from building.",22,1);
     prt(" p) Put item in vault.         r) Remove item from vault.",23,1);
 
-}; /* end eb__display_store */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -94,7 +94,7 @@ boolean eb__get_entry(vtype comment, integer * num)
     } while (!valid);
 
     return return_value;
-}; /* end eb__get_entry */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -123,7 +123,7 @@ void eb__dep_munny(integer mon_type)
 	    eb__display_money();
 	}
     }
-}; /* end eb__dep_munny */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -138,7 +138,7 @@ void eb__deposit_money()
     reset_total_cash();
     eb__display_money();
 
-}; /* end eb__deposit_money */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -218,7 +218,7 @@ void eb__withdraw_money()
 	  eb__display_money();
 	} /* end if deliver */
     } /* end if withdraw */
-}; /* end eb__withdraw_money */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -226,7 +226,7 @@ void eb__safe_deposit(boolean deposit)
 {
     /* XXXX major work. I don't think it ever worked at the U */
     prt("The dwarves are still installing it, sorry.",1,1);
-}; /* end eb__safe_deposit */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -275,7 +275,7 @@ void eb__change_money()
 	  }
       } /* endif change_flag */
 
-}; /* end eb__change_money */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -302,7 +302,7 @@ void eb__parse_command(boolean *exit_flag, vtype shop_owner)
 	*exit_flag = true;
     }
 
-}; /* end eb__parse_command */
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -338,7 +338,7 @@ void enter_bank()
   } while(!exit_flag);
   draw_cave();
   
-}; /* end enter_bank */
+}
 
 
 /* end file bank.c */

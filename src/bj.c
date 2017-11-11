@@ -40,8 +40,9 @@ void bj__display_bj_game()
   prt("You may: ",21,1);
   prt(" s) stand.                             h) hit.",22,2);
   prt(" d) double down.                       /) split.",23,2);
-  prt("^R) Redraw the screen.                 v) view the rules. ",24,2);}
-;
+  prt("^R) Redraw the screen.                 v) view the rules. ",24,2);
+}
+
  
 void bj__opening_screen()
 {
@@ -301,7 +302,7 @@ void bj__card_draw (integer index, integer r, vtype card)
 	    }
 	}
     }
-}; 
+} 
  
  
 void bj__re_draw()
@@ -418,7 +419,7 @@ void bj__get_winning()
 	    gld += bet*2;
 	}
     }
-}; 
+} 
 
 void bj__play_dealer_hand()
 {

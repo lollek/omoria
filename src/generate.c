@@ -297,15 +297,16 @@ void gc__try_door(integer y, integer x)
 //////////////////////////////////////////////////////////////////////
 void gc__place_pool(floor_type water)
 {
-/*{ Place a pool of water, and rough up the edges		-DMF-	}*/
+    /*{ Place a pool of water, and rough up the edges		-DMF-	}*/
+    (void) water;
+    /*
+    integer   y,x;
 
-  integer   y,x;
+    y = (integer)(cur_height/2.0) + 11 - randint(23);
+    x = (integer)(cur_width/2.0)  + 16 - randint(33);
+    */
 
-  y = (integer)(cur_height/2.0) + 11 - randint(23);
-  x = (integer)(cur_width/2.0)  + 16 - randint(33);
-
-  /* XXXX place_pool does nothing useful */
-
+    /* XXXX place_pool does nothing useful */
 }
 //////////////////////////////////////////////////////////////////////
 void gc__all_the_river_stuff()

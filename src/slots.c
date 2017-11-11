@@ -72,7 +72,6 @@ void sm__display_slots()
 void sm__display_prizes()
 {
   char     command;
-  boolean  exit;
 
   clear_screen();
 prt("                                1     2      5     10     25     50 ",4,1);
@@ -87,7 +86,7 @@ prt("  ---    orange   orange         2     4     10     20     50    100",13,1)
 prt(" jackpot   ---      ---          2     4     10     20     50    100",14,1);
 prt(" cherry   cherry    ---          1     2      5     10     25     50",15,1);
 prt("[hit any key to continue]",22,27);
-exit =  get_com("",&command);
+get_com("",&command);
 sm__display_slots();
 }
  

@@ -2,7 +2,7 @@
 #include "imoria.h"
 #include "menu.h"
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[])
 {
     // SYSPRV stays off except when needed
     game_state = GS_LOADING;
