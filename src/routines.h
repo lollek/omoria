@@ -222,7 +222,6 @@ extern void enter_fortress();
 // extern void coder(ntype line);
 // extern void encrypt_line(ntype line);
 // extern void decrypt_line(ntype line);
-extern void data_exception();
 extern boolean save_char(boolean quick);
 extern boolean get_char(vtype fnam, boolean prop);
 extern void restore_char(vtype fnam, boolean present, boolean undead);

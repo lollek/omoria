@@ -640,10 +640,10 @@ void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 				if (player_light) {
 					if (is_in(cave[i1][i2].fval,
 						  pwall_set)) {
-						cave[i1]
-						    [i2].pl = true; /*{ Turn on
-								       perm
-								       light }*/
+						cave[i1][i2].pl =
+						    true; /*{ Turn on
+							     perm
+							     light }*/
 						tmp_char = loc_symbol(i1, i2);
 						flag = true;
 					} else {
@@ -1892,7 +1892,7 @@ void rest()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-void water_move_player() { /* I wonder what was going to go in here... */ }
+void water_move_player() { /* I wonder what was going to go in here... */}
 
 boolean water_move_creature(integer num)
 {
@@ -5685,9 +5685,8 @@ void d__execute_command(integer *com_val)
 				  "be retired...");
 			msg_print("Use '@' when you are ready to quit.");
 		} else {
-			if (search_flag) {
+			if (search_flag)
 				search_off();
-			}
 			py.flags.dead = false;
 			save_char(false);
 			py.flags.dead = true;

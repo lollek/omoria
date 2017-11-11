@@ -945,14 +945,14 @@ void char_inven_init()
 
 	for (i1 = 0; i1 < 5; i1++) {
 		//	  printf("    char_inven_init A%d\n",i1);
-		//fflush(stdout);
+		// fflush(stdout);
 
 		i2 = player_init[py.misc.pclass][i1];
 		inven_temp->data = inventory_init[i2];
 		inven_carry();
 
 		//	  printf("    char_inven_init %d (done)\n",i1);
-		//fflush(stdout);
+		// fflush(stdout);
 	}
 	//	printf("\nEXIT char_inven_init\n\n"); fflush(stdout);
 }
@@ -1049,7 +1049,7 @@ boolean learn_spell(boolean *redraw)
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
 				//	printf("\n\n>>> Got spell %d<<<\n\n",
-				//sn);fflush(stdout);
+				// sn);fflush(stdout);
 				PSPELL(sn).learned = true;
 				return_value = true;
 				if (py.misc.mana == 0) {
@@ -2404,7 +2404,7 @@ boolean los(integer y1, integer x1, integer y2, integer x2)
 			do {
 				x2 += stepx;
 				//	fprintf(debug_file,"los: checking y=[%d]
-				//x=[%d]  %d\n",
+				// x=[%d]  %d\n",
 				//		y2,x2,cave[y2][x2].fopen);
 				flag = cave[y2][x2].fopen;
 			} while (!((x1 == x2) || !flag));
@@ -2416,7 +2416,7 @@ boolean los(integer y1, integer x1, integer y2, integer x2)
 			do {
 				y2 += stepy;
 				//	fprintf(debug_file,"los: checking y=[%d]
-				//x=[%d]  %d\n",
+				// x=[%d]  %d\n",
 				//		y2,x2,cave[y2][x2].fopen);
 				flag = cave[y2][x2].fopen;
 			} while (!((y1 == y2) || !flag));
@@ -2433,12 +2433,12 @@ boolean los(integer y1, integer x1, integer y2, integer x2)
 				p1 = tmp - 0.1 + .5;
 				p2 = tmp + 0.1 + .5;
 				//	fprintf(debug_file,"los: checking y=[%d]
-				//x=[%d]  x=[%d]  %d : %d\n",
+				// x=[%d]  x=[%d]  %d : %d\n",
 				//		y2,p1,p2,cave[y2][p1].fopen,cave[y2][p2].fopen);
 				if (!((cave[y2][p1].fopen) ||
 				      (cave[y2][p2].fopen))) {
 					//	  fprintf(debug_file,"los:
-					//setting ty>tx false\n");
+					// setting ty>tx false\n");
 					flag = false;
 				}
 			} while (!((y1 == y2) || !flag));
@@ -2455,12 +2455,12 @@ boolean los(integer y1, integer x1, integer y2, integer x2)
 				p1 = tmp - 0.1 + .5;
 				p2 = tmp + 0.1 + .5;
 				//	fprintf(debug_file,"los: checking y=[%d]
-				//y=[%d]  x=[%d]  %d : %d\n",
+				// y=[%d]  x=[%d]  %d : %d\n",
 				//		p1,p2,x2,cave[p1][x2].fopen,cave[p2][x2].fopen);
 				if (!((cave[p1][x2].fopen) ||
 				      (cave[p2][x2].fopen))) {
 					//	  fprintf(debug_file,"los:
-					//setting tx>ty false\n");
+					// setting tx>ty false\n");
 					flag = false;
 				}
 			} while (!((x1 == x2) || !flag));

@@ -35,12 +35,12 @@ void prt_map()
 	i3 = 1;		/*{ Used for erasing dirty lines   }*/
 	i4 = 14;	/*{ Erasure starts in this column  }*/
 	for (i1 = panel_row_min; i1 <= panel_row_max; i1++) {
-		i3++;			    /*{ Increment dirty line ctr	}*/
-		if (used_line[i3]) {	/*{ If line is dirty...		}*/
-			erase_line(i3, i4); /*{ erase it.
-					       }*/
-			used_line[i3] =
-			    false; /*{ Now it's a clean line	}*/
+		i3++;			       /*{ Increment dirty line ctr	}*/
+		if (used_line[i3]) {	   /*{ If line is dirty...		}*/
+			erase_line(i3, i4);    /*{ erase it.
+						  }*/
+			used_line[i3] = false; /*{ Now it's a clean line
+						  }*/
 		}
 		floor_str[0] = 0; /*{ Floor_str is string to be printed}*/
 		ypos = i1;	/*{ Save row			}*/

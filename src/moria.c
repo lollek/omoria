@@ -102,8 +102,9 @@ int main(int argc, char *argv[])
 	} else {
 		// Create character
 		is_from_file = false;
-		strncpy(finam, "moriachar.sav", sizeof(vtype));
 		create_character();
+		strcpy(finam, SAVE_FILE_PATH "/");
+		strcat(finam, py.misc.name);
 
 		char_inven_init();
 

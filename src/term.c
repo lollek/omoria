@@ -566,13 +566,9 @@ int attrs;
 /* Dump the IO buffer to terminal			-RAK-	*/
 void put_qio()
 {
-	screen_change =
-	    TRUE; /* Let inven_command know something has changed. */
-#ifdef MAC
-	UpdateScreen();
-#else
-	(void)refresh();
-#endif
+	/* Let inven_command know something has changed. */
+	screen_change = TRUE;
+	refresh();
 }
 
 /* Put the terminal in the original mode.			   -CJS- */
