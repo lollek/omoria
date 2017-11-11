@@ -300,40 +300,38 @@ void init_curses()
 {
     printf("Attempting to start curses...\n");
     fflush(stdout);
-    /*  int i, y, x;*/
 
-    (void) ioctl(0, TCGETA, (char *)&save_termio);
+    ioctl(0, TCGETA, (char *)&save_termio);
 
-    if (initscr() == NULL)
-    {
-        (void) printf("Error allocating screen in curses package.\n\r");
+    if (initscr() == NULL) {
+        fprintf(stderr, "Error allocating screen in curses package.\n\r");
         exit(1);
     }
 
-    /* Check we have enough screen. -CJS- */
-    if (LINES < 24 || COLS < 80)
-    {
-        (void) printf("Screen too small for moria.\n\r");
+    if (LINES < 24 || COLS < 80) {
+        fprintf(stderr, "Screen too small for moria.\n\r");
         exit (1);
     }
 
-    (void) signal (SIGTSTP, suspend);
+    signal (SIGTSTP, suspend);
 
-    if (((savescr = newwin (0, 0, 0, 0)) == NULL))
-    {
-        (void) printf ("Out of memory in starting up curses.\n\r");
+    savescr = newwin (0, 0, 0, 0);
+    if (savescr == NULL) {
+        fprintf(stderr, "Out of memory in starting up curses.\n\r");
         exit_game();
     }
-    (void) clear();
-    (void) refresh();
-    start_color();
 
+    clear();
+    refresh();
+
+    start_color();
     init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
     init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
     init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
+
     moriaterm ();
 }
 
