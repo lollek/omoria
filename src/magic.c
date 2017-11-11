@@ -87,7 +87,7 @@ static void mage_spell_effects(integer effect)
 
 	case 14: /*{ Remove Curse }*/
 		for (i2 = Equipment_min; i2 <= EQUIP_MAX - 1; i2++) {
-			// with equipment[i2] do;
+			/* with equipment[i2] do; */
 			equipment[i2].flags &= 0x7FFFFFFF;
 		}
 		break;

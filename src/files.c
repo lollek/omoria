@@ -4,10 +4,6 @@
 #include "master.h"
 #include "save.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
 FILE *priv_fopen(char *path, char *mode)
 {
 	FILE *f1;
@@ -21,9 +17,6 @@ FILE *priv_fopen(char *path, char *mode)
 
 	return f1;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 void intro_qualifier_help()
 {
@@ -38,13 +31,13 @@ void intro_qualifier_help()
 	printf("  -Q         Quit after checking for data files.\n\r");
 	printf("  -V         Print version info.\n\r");
 
-	//  printf("  /trap=[keep]        (Put all incoming messages on the
-	//  message line)\n\r");
-	//  printf("  /notrap             (Default; let messages appear
-	//  normally)\n\r");
+	/*  printf("  /trap=[keep]        (Put all incoming messages on the */
+	/*  message line)\n\r"); */
+	/*  printf("  /notrap             (Default; let messages appear */
+	/*  normally)\n\r"); */
 
-	//  check_pswd("doublespeak",true); /*XXXX get a passwd from command
-	//  line... */
+	/*  check_pswd("doublespeak",true); XXXX get a passwd from command */
+	/*  line... */
 	if (wizard2 || 1) {
 		printf("\n\r\n\rWizard commands:\n\r");
 		printf("  -Wpassword Enter wizard mode password.\n\r");
@@ -56,7 +49,6 @@ void intro_qualifier_help()
 	} /* end if wizard2 */
 }
 
-//////////////////////////////////////////////////////////////////////
 void print_version_info()
 {
 	printf("\n\r");
@@ -64,7 +56,7 @@ void print_version_info()
 	       PATCH_LEVEL);
 	printf("\n\r");
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean intro_parse_switches(vtype finame, int argc, char *argv[])
 {
 	int x1;
@@ -231,12 +223,10 @@ boolean intro_parse_switches(vtype finame, int argc, char *argv[])
 	return (exit_flag || print_usage);
 }
 
-//////////////////////////////////////////////////////////////////////
-
 boolean intro_do_hours_file(boolean already_exiting, char *the_file)
 {
-	//      { Attempt to read hours.dat.  If it does not exist,     }
-	//      { then create a standard one.                           }
+	/*      { Attempt to read hours.dat.  If it does not exist,     } */
+	/*      { then create a standard one.                           } */
 
 	FILE *file1;
 	vtype in_line;
@@ -308,7 +298,7 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file)
 boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 			  boolean write_to_screen)
 {
-	// Print the introduction message, news, ect...
+	/* Print the introduction message, news, ect... */
 
 	FILE *file1;
 	int i1, i2;
@@ -384,7 +374,6 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 	return (exit_flag || already_exiting);
 }
 
-//////////////////////////////////////////////////////////////////////
 boolean intro_do_death_file(boolean already_exiting, char *the_file)
 {
 	FILE *file1;
@@ -433,7 +422,7 @@ boolean intro_do_death_file(boolean already_exiting, char *the_file)
 
 	return (exit_flag || already_exiting);
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean intro_ensure_file_exists(boolean already_exiting, char *the_file)
 {
 	FILE *file1;
@@ -461,18 +450,18 @@ boolean intro_ensure_file_exists(boolean already_exiting, char *the_file)
 
 void intro(vtype finame, int argc, char *argv[])
 {
-	// Attempt to open the intro file                        -RAK-
+	/* Attempt to open the intro file                        -RAK- */
 
 	vtype in_line;
 	FILE *file1;
 	GDBM_FILE file2;
 	boolean exit_flag = false;
 
-	// make sure that various files exist
+	/* make sure that various files exist */
 	exit_flag = intro_do_hours_file(exit_flag, MORIA_HOU);
 	exit_flag = intro_do_msg_file(exit_flag, MORIA_MOR, false);
 	exit_flag = intro_do_death_file(exit_flag, MORIA_DTH);
-	// exit_flag = intro_do_master_file(exit_flag,     MORIA_MAS);
+	/* exit_flag = intro_do_master_file(exit_flag,     MORIA_MAS); */
 	exit_flag = intro_ensure_file_exists(exit_flag, MORIA_GCST);
 	exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TOP);
 
@@ -500,7 +489,7 @@ void intro(vtype finame, int argc, char *argv[])
 		exit_game();
 	}
 
-	// Check the terminal type and see if it is supported
+	/* Check the terminal type and see if it is supported */
 	init_curses();
 	termdef();
 	curses_is_running = true;
@@ -522,7 +511,7 @@ void intro(vtype finame, int argc, char *argv[])
 	}
 
 	if (!check_time() && !wizard1) {
-		// print out the hours file and exit the game
+		/* print out the hours file and exit the game */
 
 		file1 = priv_fopen(MORIA_HOU, "r");
 		if (file1 == NULL) {
@@ -670,7 +659,7 @@ void file_character()
 
 			fprintf(file1, " \n \n");
 
-			// with PM.birth. do;
+			/* with PM.birth. do; */
 			day_of_week_string(PM.birth.day, 10, out_val);
 
 			for (i1 = 0; out_val[i1];) {
@@ -713,7 +702,7 @@ void file_character()
 				    "  Character has no equipment in use.\n");
 			} else {
 				for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-					// with equipment[i1]. do;
+					/* with equipment[i1]. do; */
 					if (equipment[i1].tval > 0) {
 						switch (i1) {
 						case Equipment_primary:
@@ -881,9 +870,7 @@ void file_character()
 		} /* end if file !NULL */
 	}	 /* end get_string */
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void print_map()
 {
 	/*{ Prints dungeon map to external file                       -RAK- }*/
@@ -972,9 +959,7 @@ void print_map()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void print_objects()
 {
 	/*{ Prints a list of random objects to a file.  Note that   -RAK-  }*/
@@ -1024,7 +1009,7 @@ void print_objects()
 					    level, PLACE_OBJECT_TRIES)];
 					magic_treasure(i2, level, false);
 					inven_temp->data = t_list[i2];
-					// with inven_temp->data. do;
+					/* with inven_temp->data. do; */
 					unquote(inven_temp->data.name);
 					known1(inven_temp->data.name);
 					known2(inven_temp->data.name);
@@ -1040,9 +1025,7 @@ void print_objects()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void print_monsters()
 {
 	/*{ Prints a listing of monsters                              -RAK- }*/
@@ -1065,7 +1048,7 @@ void print_monsters()
 			prt("Writing Monster Dictionary...", 1, 1);
 			put_qio();
 			for (i1 = 1; i1 <= MAX_CREATURES; i1++) {
-				// with c_list[i1]. do;
+				/* with c_list[i1]. do; */
 
 				cmove = c_list[i1].cmove;
 				cdefense = c_list[i1].cdefense;
@@ -1822,9 +1805,7 @@ void print_monsters()
 		} /* end file1 != NULL */
 	}	 /* end get filename */
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean read_top_scores(FILE **f1, char *fnam, string list[], int max_high,
 			int *n1, char *openerr)
 {
@@ -1885,9 +1866,7 @@ boolean read_top_scores(FILE **f1, char *fnam, string list[], int max_high,
 	(*n1)--;
 	return file_flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean write_top_scores(FILE **f1, string list[], int max_high)
 {
 	int i1;
@@ -1907,9 +1886,7 @@ boolean write_top_scores(FILE **f1, string list[], int max_high)
 	encrypt_flush(*f1, &hs_state);
 	return true;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean close_top_scores(FILE **f1)
 {
 	boolean return_value = true;
@@ -1921,9 +1898,7 @@ boolean close_top_scores(FILE **f1)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 char *center(char *in_str, integer str_len, char *out_str)
 {
 	int i, j;
@@ -1940,7 +1915,7 @@ char *center(char *in_str, integer str_len, char *out_str)
 
 	return out_str;
 }
-//////////////////////////////////////////////////////////////////////
+
 char *format_top_score(vtype out_str, char *username, integer score, int diffic,
 		       char *charname, int level, char *race, char *class)
 {
@@ -1957,9 +1932,7 @@ char *format_top_score(vtype out_str, char *username, integer score, int diffic,
 
 	return out_str;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean open_crypt_file(vtype prompt, vtype fnam1, vtype fnam2, FILE **f1,
 			FILE **f2)
 {
@@ -2011,9 +1984,7 @@ boolean open_crypt_file(vtype prompt, vtype fnam1, vtype fnam2, FILE **f1,
 	put_qio();
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void decrypt_file(vtype fnam)
 {
 	encrypt_state cf_state;
@@ -2060,9 +2031,7 @@ void decrypt_file(vtype fnam)
 		fclose(f2);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void encrypt_file(vtype fnam)
 {
 	encrypt_state cf_state;
@@ -2111,9 +2080,3 @@ void encrypt_file(vtype fnam)
 		fclose(f2);
 	}
 }
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  files.c */

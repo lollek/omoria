@@ -114,10 +114,10 @@ int master_file_verify(GDBM_FILE mf, master_key *mkey)
 		}
 	}
 
-	//  if (return_value != MF_CHAR_OK) {
-	//    msg_print("Verify mismatch.");
-	//    msg_print(" ");
-	//  }
+	/*  if (return_value != MF_CHAR_OK) { */
+	/*    msg_print("Verify mismatch."); */
+	/*    msg_print(" "); */
+	/*  } */
 
 	return return_value;
 }

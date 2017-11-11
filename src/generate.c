@@ -3,9 +3,7 @@
 
 #include "imoria.h"
 #include "generate.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void gc__correct_dir(integer *rdir, integer *cdir, integer y1, integer x1,
 		     integer y2, integer x2)
 {
@@ -35,7 +33,7 @@ void gc__correct_dir(integer *rdir, integer *cdir, integer y1, integer x1,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__rand_dir(integer *rdir, integer *cdir, integer y1, integer x1,
 		  integer y2, integer x2, integer chance)
 {
@@ -63,7 +61,7 @@ void gc__rand_dir(integer *rdir, integer *cdir, integer y1, integer x1,
 		break;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__blank_cave()
 {
 	/*{ Blanks out entire cave				-RAK-	}*/
@@ -76,7 +74,7 @@ void gc__blank_cave()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__fill_cave(floor_type fill)
 {
 	/*{ Fills in empty spots with desired rock		-RAK-	}*/
@@ -93,7 +91,7 @@ void gc__fill_cave(floor_type fill)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__place_boundry()
 {
 	/*{ Places indestructable rock around edges of dungeon	-RAK-	}*/
@@ -114,7 +112,7 @@ void gc__place_boundry()
 		cave[cur_height][i1].fopen = boundry_wall.ftopen;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__place_streamer(floor_type rock, integer treas_chance)
 {
 	/*{ Places "streamers" of rock through dungeon		-RAK-	}*/
@@ -155,13 +153,7 @@ void gc__place_streamer(floor_type rock, integer treas_chance)
 		}
 	} while (!flag);
 }
-//////////////////////////////////////////////////////////////////////
-// insert gen.c
-//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
 void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
 		integer *doorptr, coords *doorstk)
 {
@@ -200,7 +192,7 @@ void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
 			tmp_col = col1 + col_dir;
 		}
 
-		// with cave[tmp_row][tmp_col]. do;
+		/* with cave[tmp_row][tmp_col]. do; */
 		if (cave[tmp_row][tmp_col].fval == rock_wall1.ftval) {
 			row1 = tmp_row;
 			col1 = tmp_col;
@@ -212,7 +204,7 @@ void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
 			for (i1 = row1 - 1; i1 <= row1 + 1; i1++) {
 				for (i2 = col1 - 1; i2 <= col1 + 1; i2++) {
 					if (in_bounds(i1, i2)) {
-						// with cave[i1][i2]. do;
+						/* with cave[i1][i2]. do; */
 						if (is_in(cave[i1][i2].fval,
 							  wall_set)) {
 							cave[i1][i2].fval = 9;
@@ -258,7 +250,7 @@ void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
 	}
 
 	for (i1 = 1; i1 <= wallptr; i1++) {
-		// with cave[wallstk[i1].y][wallstk[i1].x]. do;
+		/* with cave[wallstk[i1].y][wallstk[i1].x]. do; */
 		if (cave[wallstk[i1].y][wallstk[i1].x].fval == 9) {
 			if (randint(100) < DUN_TUN_PEN) {
 				place_door(wallstk[i1].y, wallstk[i1].x);
@@ -271,7 +263,7 @@ void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean gc__next_to(integer y, integer x)
 {
 	obj_set corridors = {4, 5, 6, 0};
@@ -293,7 +285,7 @@ boolean gc__next_to(integer y, integer x)
 
 	return next_to;
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__try_door(integer y, integer x)
 {
 	/*{ Places door at y,x position if at least 2 walls found	}*/
@@ -306,7 +298,7 @@ void gc__try_door(integer y, integer x)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__place_pool(floor_type water)
 {
 	/*{ Place a pool of water, and rough up the edges		-DMF-
@@ -321,9 +313,9 @@ void gc__place_pool(floor_type water)
 
 	/* XXXX place_pool does nothing useful */
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__all_the_river_stuff() { all_the_river_stuff(); /* in river.c */ }
-//////////////////////////////////////////////////////////////////////
+
 void gc__cave_gen()
 {
 	/*{ Cave logic flow for generation of new dungeon		}*/
@@ -481,7 +473,7 @@ void gc__cave_gen()
 
 	gc__place_boundry(); /* just to make sure */
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__make_door(integer y, integer x, integer *cur_pos, integer store_num,
 		   integer house_type)
 {
@@ -503,7 +495,7 @@ void gc__make_door(integer y, integer x, integer *cur_pos, integer store_num,
 	old_seed = save_rand_state(NULL);
 	set_seed(get_seed() ^ randint(9999999));
 	if (store_num >= TOT_STORES) {
-		// with t_list[cur_pos] do;
+		/* with t_list[cur_pos] do; */
 		switch (house_type) {
 		case 1:
 			t_list[*cur_pos].p1 = 8 + randint(4);
@@ -526,7 +518,7 @@ void gc__make_door(integer y, integer x, integer *cur_pos, integer store_num,
 	}
 	restore_rand_state(old_seed);
 }
-//////////////////////////////////////////////////////////////////////
+
 void dr_castle(integer yval, integer xval, integer dy, integer dx,
 	       floor_type ft)
 {
@@ -544,13 +536,13 @@ void dr_castle(integer yval, integer xval, integer dy, integer dx,
 		cave[yval + dy][xval + dx].fval = ft.ftval;
 	} while (!((dy >= 0) && (dx >= 0)));
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__blank_square(integer dy, integer dx)
 {
 	cave[dy][dx].fopen = dopen_floor.ftopen;
 	cave[dy][dx].fval = dopen_floor.ftval;
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__build_store(integer store_num, integer where)
 {
 	/*{ Builds a building at a row,column coordinate, and	}*/
@@ -707,12 +699,12 @@ void gc__build_store(integer store_num, integer where)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__build_house(integer house_num, integer where)
 {
 	gc__build_store(house_num + TOT_STORES - 1, where);
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__build_fountain(integer where)
 {
 	/*{ Build a fountain at row, column coordinate	-dmf-	}*/
@@ -789,7 +781,7 @@ void gc__build_fountain(integer where)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__mixem(integer rooms[], integer num)
 {
 	/*{ randomize array[0..num-1] }*/
@@ -803,7 +795,7 @@ void gc__mixem(integer rooms[], integer num)
 		rooms[i2] = i3;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void gc__town_gen()
 {
 	integer i1, i2, i3;
@@ -814,9 +806,9 @@ void gc__town_gen()
 	obj_set allocSet1 = {1, 2, 0};
 	obj_set allocSet2 = {16, 17, 18, 0};
 
-	//  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) {
-	//    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout);
-	//  }
+	/*  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) { */
+	/*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
+	/*  } */
 
 	set_seed(town_seed);
 	for (i1 = 0; i1 < 36; i1++) {
@@ -931,7 +923,7 @@ void gc__town_gen()
 
 	gc__place_boundry(); /* just to make sure */
 }
-//////////////////////////////////////////////////////////////////////
+
 void generate_cave()
 {
 	/*{ Generates a random dungeon level			-RAK-	}*/
@@ -948,9 +940,9 @@ void generate_cave()
 
 	gc__blank_cave();
 
-	//  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) {
-	//    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout);
-	//  }
+	/*  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) { */
+	/*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
+	/*  } */
 
 	if (dun_level == 0) {
 		cur_height = SCREEN_HEIGHT * 2;
@@ -970,8 +962,3 @@ void generate_cave()
 		gc__cave_gen();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  generate.c */

@@ -4,9 +4,6 @@
 
 #include "imoria.h"
 #include "save.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 /* source/io.c: terminal I/O code, uses the curses package
 
@@ -472,7 +469,7 @@ int cool_mvaddstr(int row, int col, char const *printString)
 	/* search for characters with the high bit set */
 
 	int i1;
-	char *s1; // TODO: Modifies string to print
+	char *s1; /* TODO: Modifies string to print */
 
 	for (s1 = printString, i1 = 0; s1[i1]; i1++) {
 		if ((s1[i1] & 0x80) != 0) {
@@ -506,7 +503,7 @@ void Put_Buffer(char const *out_str, integer row, integer col)
 {
 	vtype tmp_str;
 
-	//  ENTER("put_buffer","i");
+	/*  ENTER("put_buffer","i"); */
 
 	if (out_str && out_str[0]) {
 
@@ -533,7 +530,7 @@ void Put_Buffer(char const *out_str, integer row, integer col)
 			(void)sleep(2);
 		}
 	}
-	//  LEAVE("put_buffer","i");
+	/*  LEAVE("put_buffer","i"); */
 }
 
 void put_buffer_attr(out_str, row, col, attrs) char *out_str;
@@ -1389,7 +1386,6 @@ int get_check(prompt) char *prompt;
 	else
 		return FALSE;
 }
-/////////////////////////////////////////////////////////////////
 
 #if 0
 /* Prompts (optional) and returns ord value of input char	*/
@@ -1400,7 +1396,7 @@ char *command;
 {
   int res;
   /*printf("get_com is runningYY\n");*/
-//  if (prompt && prompt[0])
+/*  if (prompt && prompt[0]) */
   Prt(prompt, 1, 1);
   *command = inkey();
   if (*command == ESCAPE)
@@ -1413,7 +1409,7 @@ char *command;
   return(res);
 }
 #endif
-/////////////////////////////////////////////////////////////////
+
 #ifdef MAC
 /* Same as get_com(), but translates direction keys from keypad */
 int get_comdir(prompt, command) char *prompt;
@@ -1560,10 +1556,6 @@ void bell()
 	(void)write(1, "\007", 1);
 #endif
 }
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 /* screen_map code taken from umoria 5.5 */
 
@@ -1722,9 +1714,7 @@ void screen_map()
 	restore_screen();
 	draw_cave();
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean sl__get_dir(char *prompt, integer *dir)
 {
 	char command;
@@ -1744,7 +1734,7 @@ boolean sl__get_dir(char *prompt, integer *dir)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+
 void show_location()
 {
 #ifdef ORIGINAL_IMORIA
@@ -1797,12 +1787,10 @@ void show_location()
 				break;
 			}
 			/** -CJS-
-			  // Should really use the move function, but what the
-			  hell. This
-			  // is nicer, as it moves exactly to the same place in
-			  another
-			  // section. The direction calculation is not
-			  intuitive. Sorry.
+			  * Should really use the move function, but what the
+			  * hell. This is nicer, as it moves exactly to the
+			  * same place in another section. The direction
+			  * calculation is not  intuitive. Sorry.
 			  **/
 			for (;;) {
 				x += ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
@@ -1832,8 +1820,3 @@ void show_location()
 	}
 #endif
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  term.c */

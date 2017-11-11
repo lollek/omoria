@@ -6,10 +6,8 @@
 
 #define LOW_NUM -98765432
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 #define PB(x, y, z) put_buffer((x), (y), (z))
+
 void game_version()
 {
 	/*{ Print Moria credits					-RAK-	}*/
@@ -76,9 +74,7 @@ void game_version()
 	draw_cave();
 }
 #undef PB
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void bpswd()
 {
 	/*{ Builds passwords                                      -RAK-   }*/
@@ -109,15 +105,13 @@ void bpswd()
 		set_seed(get_seed());
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean check_pswd(string passwd, boolean present)
 {
 	integer i1;
 	char x;
 	string tpw; /*  : packed array [1..12] of char;*/
-	// account_type   account;
+	/* account_type   account; */
 	boolean checked_out = false;
 
 	/* perhaps crpyt() should be used?? */
@@ -175,9 +169,6 @@ boolean check_pswd(string passwd, boolean present)
 	return checked_out;
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 void wizard_light()
 {
 	/*{ Light up the dungeon					-RAK-
@@ -211,9 +202,7 @@ void wizard_light()
 	detect_trap();
 	detect_sdoor();
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void monster_summon_by_name(integer y, integer x, ctype name, boolean present,
 			    boolean sleepy)
 {
@@ -306,10 +295,7 @@ void monster_summon_by_name(integer y, integer x, ctype name, boolean present,
 		erase_line(msg_line, msg_line);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-/////// wizard_moo_item
-//////////////////////////////////////////////////////////////////////
+
 void wmi__init_data_list(list_elem_ptr *data_list)
 {
 	/*{ Code streamlined a bit by Dean Yasuda, to eliminate the
@@ -359,14 +345,14 @@ void wmi__init_data_list(list_elem_ptr *data_list)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void wmi__display_commands()
 {
 	prt("You may:", 22, 1);
 	prt(" p) Pick an item.              b) Browse to next page.", 23, 1);
 	prt("^R) Redraw screen.           Esc) Exit.", 24, 1);
 }
-//////////////////////////////////////////////////////////////////////
+
 void wmi__display_list(list_elem_ptr start, integer *cur_display_size,
 		       list_elem_ptr cur_display[], list_elem_ptr *blegga,
 		       list_elem_ptr *data_list)
@@ -401,7 +387,7 @@ void wmi__display_list(list_elem_ptr start, integer *cur_display_size,
 		*blegga = start;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void wmi__clear_display(integer *cur_display_size, list_elem_ptr cur_display[])
 {
 	integer i4;
@@ -411,7 +397,7 @@ void wmi__clear_display(integer *cur_display_size, list_elem_ptr cur_display[])
 		cur_display[i4] = nil;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void wmi__display_screen(integer *cur_display_size, list_elem_ptr cur_display[],
 			 list_elem_ptr cur_top, list_elem_ptr *blegga,
 			 list_elem_ptr *data_list)
@@ -422,7 +408,7 @@ void wmi__display_screen(integer *cur_display_size, list_elem_ptr cur_display[],
 			  data_list);
 	wmi__display_commands();
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean wmi__get_list_entry(integer *com_val, vtype pmt, integer i1, integer i2)
 {
 	char command;
@@ -454,7 +440,7 @@ boolean wmi__get_list_entry(integer *com_val, vtype pmt, integer i1, integer i2)
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean wmi__parse_command(list_elem_ptr *blegga, list_elem_ptr *cur_top,
 			   integer *cur_display_size, boolean *exit_flag,
 			   treasure_type *back, list_elem_ptr cur_display[],
@@ -508,7 +494,7 @@ boolean wmi__parse_command(list_elem_ptr *blegga, list_elem_ptr *cur_top,
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean wizard_moo_item(treasure_type *back)
 {
 	/*{ Wizard routine to pick an item from the entire list, and
@@ -536,10 +522,7 @@ boolean wizard_moo_item(treasure_type *back)
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-/////// summon_item
-//////////////////////////////////////////////////////////////////////
+
 boolean si__get_new_ttype(ttype s, vtype str, string out_str)
 {
 	/*{prompts for new string, <CR> leaves old value}*/
@@ -564,7 +547,7 @@ boolean si__get_new_ttype(ttype s, vtype str, string out_str)
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
 				  boolean *found, integer *num_found)
 {
@@ -617,7 +600,7 @@ boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
 	}
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean si__narrow(ttype s, integer *num_found, integer moo_cursor[])
 {
 	/*{ eliminate all items without string s from array moo_cursor }*/
@@ -642,7 +625,7 @@ boolean si__narrow(ttype s, integer *num_found, integer moo_cursor[])
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
 			   treasure_type moo_item[])
 {
@@ -671,7 +654,7 @@ boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
 	RETURN("si__narrow_choices", "w", 'b', "found:", &flag);
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 void si__pesky_stuff(integer *best_value, integer *good_value,
 		     treasure_type *best_pick, treasure_type *good_pick,
 		     integer *optimize, string out_str, integer *i_summ_count,
@@ -708,7 +691,7 @@ void si__pesky_stuff(integer *best_value, integer *good_value,
 	t_list[*cur_pos] = blank_treasure;
 	sprintf(t_list[*cur_pos].name, "& bogus summoned item %ld", *cur_pos);
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean si__optimize_item(treasure_type *pick, integer *value, integer optimize,
 			  integer cur_pos)
 {
@@ -716,7 +699,7 @@ boolean si__optimize_item(treasure_type *pick, integer *value, integer optimize,
 	integer i1;
 	boolean flag = false;
 
-	// with t_list[cur_pos]. do;
+	/* with t_list[cur_pos]. do; */
 	i1 = optimize * (t_list[cur_pos].cost + t_list[cur_pos].tohit +
 			 t_list[cur_pos].todam + t_list[cur_pos].toac);
 	if (i1 > *value) {
@@ -727,7 +710,7 @@ boolean si__optimize_item(treasure_type *pick, integer *value, integer optimize,
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean summon_item(integer y, integer x, ttype name1, ttype name2,
 		    integer count, boolean present)
 {
@@ -825,7 +808,7 @@ boolean summon_item(integer y, integer x, ttype name1, ttype name2,
 		if (best_value > LOW_NUM) {
 			msg_print("Allocated.");
 			t_list[cur_pos] = best_pick;
-			// with t_list[cur_pos]. do;
+			/* with t_list[cur_pos]. do; */
 			if (t_list[cur_pos].subval > 255) {
 				i2 = t_list[cur_pos].cost;
 				if (i2 < 3) {
@@ -857,9 +840,7 @@ boolean summon_item(integer y, integer x, ttype name1, ttype name2,
 	RETURN("summon_item", "w", 'b', "allocated:", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void enter_wizard_mode(boolean ask_for_pass)
 {
 	if (wizard1) {
@@ -883,9 +864,7 @@ void enter_wizard_mode(boolean ask_for_pass)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void esf__display_commands()
 {
 	prt("You may:", 21, 1);
@@ -893,7 +872,7 @@ void esf__display_commands()
 	prt(" c) Change an entry.", 23, 1);
 	prt(" q) Quit and save changes       Esc) Exit without saving.", 24, 1);
 }
-//////////////////////////////////////////////////////////////////////
+
 void esf__display_list(int start, string list[], int n1, int *blegga,
 		       int *cur_display_size)
 {
@@ -923,7 +902,7 @@ void esf__display_list(int start, string list[], int n1, int *blegga,
 		*blegga = start;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void esf__display_screen(int cur_top, string list[], int n1, int *blegga,
 			 int *cur_display_size)
 {
@@ -938,7 +917,7 @@ void esf__display_screen(int cur_top, string list[], int n1, int *blegga,
 	esf__display_list(cur_top, list, n1, blegga, cur_display_size);
 	esf__display_commands();
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean esf__get_list_entry(int *com_val, vtype pmt, int cur_top, int i1,
 			    int i2)
 {
@@ -970,7 +949,7 @@ boolean esf__get_list_entry(int *com_val, vtype pmt, int cur_top, int i1,
 	erase_line(1, 1);
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+
 void esf__change_entry(int cur_top, string list[], int n1, int cur_display_size)
 {
 	int which, i1;
@@ -1103,7 +1082,7 @@ void esf__change_entry(int cur_top, string list[], int n1, int cur_display_size)
 		prt("Score changed.", 1, 1);
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void esf__delete_entry(int cur_top, string list[], int *n1,
 		       int cur_display_size)
 {
@@ -1120,7 +1099,7 @@ void esf__delete_entry(int cur_top, string list[], int *n1,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void esf__parse_command(string list[], int *cur_top, int *n1, int *blegga,
 			int *cur_display_size, boolean *exit_flag,
 			boolean *want_save)
@@ -1174,8 +1153,6 @@ void esf__parse_command(string list[], int *cur_top, int *n1, int *blegga,
 		*exit_flag = true;
 	}
 }
-
-//////////////////////////////////////////////////////////////////////
 
 void edit_score_file()
 {
@@ -1242,8 +1219,7 @@ void edit_score_file()
 
 	draw_cave();
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean cc__input_field(string prompt, integer *num, integer min, integer max,
 			boolean *ok)
 {
@@ -1269,7 +1245,7 @@ boolean cc__input_field(string prompt, integer *num, integer min, integer max,
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+
 void change_character()
 {
 	/*{ Wizard routine for gaining on stats                   -RAK-   }*/
@@ -1280,7 +1256,7 @@ void change_character()
 	boolean flag = false;
 	boolean abort = false;
 
-	// with py.stat do;
+	/* with py.stat do; */
 	for (tstat = STR; (tstat <= CHR) && !abort; tstat++) {
 		switch (tstat) {
 		case STR:
@@ -1319,7 +1295,7 @@ void change_character()
 		}
 	}
 
-	// with py.misc do;
+	/* with py.misc do; */
 	if (!abort) {
 		tmp_val = PM.mhp;
 		if (cc__input_field("(1-32767) Hit points = ", &tmp_val, 1,
@@ -1451,9 +1427,7 @@ void change_character()
 	erase_line(msg_line, msg_line);
 	py_bonuses(&blank_treasure, 0);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void wizard_create()
 {
 	/*{ Wizard routine for creating objects                   -RAK-   }*/
@@ -1484,7 +1458,7 @@ void wizard_create()
 	msg_print(" ");
 	msg_flag = false;
 
-	// with inven_temp->data do;
+	/* with inven_temp->data do; */
 	prt("Name   : ", 1, 1);
 	if (get_string(tmp_str, 1, 10, 40)) {
 		strcpy(inven_temp->data.name, tmp_str);
@@ -1501,9 +1475,9 @@ void wizard_create()
 
 		switch (tmp_val) {
 
-		// ordinary objects:  added several missing classes:
-		// valuable_gems_wear, maul, sword, gem_helm, bracers,
-		// belt, junk_food, song_book.  --jb 2/5/00
+		/* ordinary objects:  added several missing classes: */
+		/* valuable_gems_wear, maul, sword, gem_helm, bracers, */
+		/* belt, junk_food, song_book.  --jb 2/5/00 */
 		case 1:
 		case 3:
 		case 6:
@@ -1642,11 +1616,11 @@ void wizard_create()
 		}
 	} while (!flag);
 
-	prt("Tchar  : ", 1, 1); // user might want to override the default.
+	prt("Tchar  : ", 1, 1); /* user might want to override the default. */
 	get_string(tmp_str, 1, 10,
-		   10);		    // anything from ' ' on up is printable, so
-	if (tmp_str[0] >= ' ') {    // we'll take it.
-		tchar = tmp_str[0]; // --jb 2/5/2000
+		   10);		 /* anything from ' ' on up is printable, so */
+	if (tmp_str[0] >= ' ') { /* we'll take it. */
+		tchar = tmp_str[0]; /* --jb 2/5/2000 */
 	}
 	inven_temp->data.tchar = tchar;
 	inven_temp->data.tval = tmp_val;
@@ -1715,8 +1689,8 @@ void wizard_create()
 	get_string(tmp_str, 1, 10, 5);
 	strcpy(inven_temp->data.damage, tmp_str);
 
-	prt("Level  : ", 1, 1);		// added code to specify item's
-	get_string(tmp_str, 1, 10, 10); // level.  --jb 2/5/00
+	prt("Level  : ", 1, 1);		/* added code to specify item's */
+	get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
 	tmp_val = 0;
 	sscanf(tmp_str, "%ld", &tmp_val);
 	if (tmp_val < 0)
@@ -1729,7 +1703,7 @@ void wizard_create()
 		case 'Y':
 			popt(&tmp_val);
 			t_list[tmp_val] = inven_temp->data;
-			// with cave[char_row][char_col]. do;
+			/* with cave[char_row][char_col]. do; */
 			if (cave[char_row][char_col].tptr > 0) {
 				delete_object(char_row, char_col);
 			}
@@ -1746,8 +1720,3 @@ void wizard_create()
 	move_char(5);
 	creatures(false);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  wizard.c */

@@ -34,13 +34,13 @@ void init_priv_switch()
 
 void priv_switch(integer switch_val)
 {
-	//	{ Turns SYSPRV off if 0; on if 1;			-RAK-
-	//}
-	//	{ This is needed if image is installed with SYSPRV because
-	//}
-	//	{ user could write on system areas.  By turning the priv off
-	//}
-	//	{ system areas are secure }
+	/*	{ Turns SYSPRV off if 0; on if 1;			-RAK- */
+	/*} */
+	/*	{ This is needed if image is installed with SYSPRV because */
+	/*} */
+	/*	{ user could write on system areas.  By turning the priv off */
+	/*} */
+	/*	{ system areas are secure } */
 
 	if (switch_val) {
 		setegid(games_gid);
@@ -143,7 +143,7 @@ void signalsuspend()
 
 void no_controly()
 {
-	// { Turn off Control-Y					-RAK-	}
+	/* { Turn off Control-Y					-RAK-	} */
 	/* ok, this is unix not vms, so it turns off ^C and ^Z */
 
 	boolean CATCH_SIGNALS = true;
@@ -183,17 +183,17 @@ void no_controly()
 
 void controly()
 {
-	// { Turn on Control-Y					-RAK-	}
+	/* { Turn on Control-Y					-RAK-	} */
 	/* ok, this is unix not vms, so it turns on ^C and ^Z */
 }
 
 void exit_game()
 {
-	//	{ Immediate exit from program }
-	controly(); // { Turn control-Y back on	}
+	/*	{ Immediate exit from program } */
+	controly(); /* { Turn control-Y back on	} */
 
 	if (curses_is_running) {
-		put_qio(); // { Dump any remaining buffer	}
+		put_qio(); /* { Dump any remaining buffer	} */
 
 		/* clean up the terminal */
 		echo();
@@ -202,14 +202,14 @@ void exit_game()
 	}
 
 	fflush(stdout);
-	exit(0); // { exit from game		}
+	exit(0); /* { exit from game		} */
 }
 
 void init_channel() { /* XXXX */}
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 void msg_record(vtype message, boolean save)
 {
@@ -241,7 +241,7 @@ void msg_record(vtype message, boolean save)
 			 * dec(count,4,3),1,1);*/
 			sprintf(fixed_string, "%02d> %s", count,
 				msg_prev[temp_ctr]);
-			// prt(msg_prev[temp_ctr],1,1);
+			/* prt(msg_prev[temp_ctr],1,1); */
 			prt(fixed_string, 1, 1);
 			temp_ctr--;
 			if (temp_ctr < 1) {
@@ -258,9 +258,9 @@ void msg_record(vtype message, boolean save)
 	LEAVE("msg_record", "i");
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 void inkey_delay(char *getchar, integer delay)
 {
@@ -303,15 +303,15 @@ void clear_rc(integer row, integer col)
 	}
 	move(row, col);
 	clrtobot();
-	//  put_buffer(cursor_erp, row, col);
+	/*  put_buffer(cursor_erp, row, col); */
 	put_qio(); /* dump the clear sequence */
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
-boolean msg_print_pass_one(char *str_buff) // : varying[a] of char;
+boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 {
 	boolean return_value = false;
 	integer old_len = 0;
@@ -354,10 +354,10 @@ boolean msg_print_pass_one(char *str_buff) // : varying[a] of char;
 	return return_value;
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-boolean msg_print(char *str_buff) // : varying[a] of char;
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+boolean msg_print(char *str_buff) /* : varying[a] of char; */
 {
 	/*{ Outputs message to top line of screen }*/
 
@@ -401,9 +401,9 @@ boolean msg_print(char *str_buff) // : varying[a] of char;
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 boolean get_com(char *prompt, char *command)
 {
@@ -424,7 +424,7 @@ boolean get_com(char *prompt, char *command)
 	return return_value;
 }
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void print_str(char const *str_buff, int row, int col)
 {
 	row -= panel_row_prt; /*{ Real co-ords convert to screen positions }*/
@@ -432,8 +432,8 @@ void print_str(char const *str_buff, int row, int col)
 	used_line[row] = true;
 	put_buffer(str_buff, row, col);
 }
-//////////////////////////////////////////////////////////////////////
-boolean get_yes_no(char *prompt) // : varying[a] of char;
+/*//////////////////////////////////////////////////////////////////// */
+boolean get_yes_no(char *prompt) /* : varying[a] of char; */
 {
 	/*{ Gets response to a  Y/N question				}*/
 
@@ -455,8 +455,6 @@ boolean get_yes_no(char *prompt) // : varying[a] of char;
 
 	return return_value;
 }
-
-//////////////////////////////////////////////////////////////////////
 
 integer get_hex_value(integer row, integer col, integer slen)
 {
@@ -484,16 +482,16 @@ void pause_game(integer prt_line) { pause_line(prt_line); }
 
 void get_paths()
 {
-	//	{ Returns the image path for Moria			-RAK-
-	//}
-	//	{ Path is returned in a VARYING[80] of char }
+	/*	{ Returns the image path for Moria			-RAK- */
+	/*} */
+	/*	{ Path is returned in a VARYING[80] of char } */
 
 	char *datapath = DATA_FILE_PATH;
 
-	// fill in the MORIA_ names;
+	/* fill in the MORIA_ names; */
 
 	if (strlen(datapath) >
-	    (sizeof(MORIA_HOU) - 20)) { // "moria_gcustom.mst"
+	    (sizeof(MORIA_HOU) - 20)) { /* "moria_gcustom.mst" */
 		printf("Umm, DATA_FILE_PATH is too long (%d chars).\n\r",
 		       strlen(datapath));
 		printf("Keep it under %d chars or change the type\n\r",
@@ -519,8 +517,5 @@ void get_paths()
 
 	sprintf(MORIA_CST, "moria_custom.mst");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 /* END FILE  io.c */

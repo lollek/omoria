@@ -325,7 +325,7 @@ int tilde(file, exp) char *file, *exp;
 		if (*file == '~') {
 			char user[128];
 			struct passwd *pw = NULL;
-			int i = 0;
+			unsigned int i = 0;
 
 			user[0] = '\0';
 			file++;

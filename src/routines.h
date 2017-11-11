@@ -2,10 +2,10 @@
 #define ROUTINES_H
 /**/
 
-// { CASINO.PAS		}
+/* { CASINO.PAS		} */
 extern void enter_casino();
 
-// { CREATE.PAS		}
+/* { CREATE.PAS		} */
 extern void put_character();
 extern void put_stats();
 extern void upd_stats();
@@ -20,7 +20,7 @@ extern void create_character();
 extern void get_ssn();
 extern void set_gem_values();
 
-// { CREATURE.PAS		}
+/* { CREATURE.PAS		} */
 extern void load_monsters();
 extern void mon_name();
 extern integer find_mon(ctype virtual_name);
@@ -28,10 +28,10 @@ extern void check_mon_lite(integer y, integer x);
 extern void multiply_monster(integer y, integer x, integer z, boolean slp);
 extern void creatures(boolean attack);
 
-// debug routine
+/* debug routine */
 extern void print_creature(creature_type *c, int c_num, int style);
 
-// { DEATH.PAS		}
+/* { DEATH.PAS		} */
 extern void upon_death();
 extern void make_tomb(vtype dstr[]);
 extern void replace_name();
@@ -39,19 +39,19 @@ extern void write_tomb(vtype dstr[]);
 extern void print_dead_character();
 extern void top_twenty(integer this_many);
 
-// { DESC.PAS		}
+/* { DESC.PAS		} */
 extern void randes();
-extern void rantitle(char *title); // : varying[a] of char);
+extern void rantitle(char *title); /* : varying[a] of char); */
 extern void magic_init(unsigned long random_seed);
-extern void known1(char *object_str);  // : varying[a] of char);
-extern void known2(char *object_str);  // : varying[a] of char);
-extern void unquote(char *object_str); // : varying[a] of char);
+extern void known1(char *object_str);  /* : varying[a] of char); */
+extern void known2(char *object_str);  /* : varying[a] of char); */
+extern void unquote(char *object_str); /* : varying[a] of char); */
 extern void identify(treasure_type *item);
-extern void objdes(char *out_val, //: varying[a] of char;
-		   treas_ptr ptr, //	: treas_ptr;
-		   boolean pref); //	: boolean);
+extern void objdes(char *out_val, /*: varying[a] of char; */
+		   treas_ptr ptr, /*	: treas_ptr; */
+		   boolean pref); /*	: boolean); */
 
-// { DUNGEON.PAS		}
+/* { DUNGEON.PAS		} */
 extern void move_rec(integer y1, integer x1, integer y2, integer x2);
 extern void update_stat(stat_set tstat);
 extern void change_stat(stat_set tstat, integer amount, integer factor);
@@ -117,7 +117,7 @@ extern void xp_loss(integer amount);
 extern boolean twall(integer y, integer x, integer t1, integer t2);
 extern void dungeon();
 
-// { FILES.PAS		}
+/* { FILES.PAS		} */
 extern void intro(vtype finam, int argc, char *argv[]);
 extern void print_map();
 extern void print_objects();
@@ -134,17 +134,17 @@ extern FILE *priv_fopen(char *path, char *mode);
 extern void encrypt_file(vtype fnam);
 extern void decrypt_file(vtype fnam);
 
-// { GENERATE.PAS		}
+/* { GENERATE.PAS		} */
 extern void generate_cave();
 
-// { HELP.PAS		}
+/* { HELP.PAS		} */
 extern void ident_char();
 extern void help();
 extern void wizard_help();
 extern void moria_help(vtype help_level);
 extern void enter_wizard_mode(boolean ask_for_pass);
 
-// { INVEN.PAS		}
+/* { INVEN.PAS		} */
 extern integer change_all_ok_stats(boolean nok, boolean nin);
 extern char cur_char1();
 extern char cur_char2();
@@ -160,9 +160,9 @@ extern treas_ptr add_inven_item(treasure_type item);
 extern treas_ptr inven_carry();
 extern boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw,
 			integer count, char *choice, boolean mon,
-			boolean no_wait); //	: boolean := false);
+			boolean no_wait); /*	: boolean := false); */
 
-// { IO.PAS		}
+/* { IO.PAS		} */
 extern void convert_time(unsigned long int_time, quad_type *bin_time);
 extern void sleep_(unsigned long int_time);
 extern void mini_sleep(unsigned long int_time);
@@ -190,15 +190,15 @@ extern void print_str(char const *str_buff, int row, int col);
 
 /* use prt */
 extern void Prt(char const *str_buff, int row, int col);
-extern void prt2(char *str_buff1, //	: varying[a] of char;
+extern void prt2(char *str_buff1, /*	: varying[a] of char; */
 		 char *str_buff2, int row, int col);
 
-extern boolean msg_print(char *str_buff); // : varying[a] of char);
-extern boolean get_com(char *prompt,      //	: varying[a] of char;
+extern boolean msg_print(char *str_buff); /* : varying[a] of char); */
+extern boolean get_com(char *prompt,      /*	: varying[a] of char; */
 		       char *command);
-extern boolean get_yes_no(char *prompt); // : varying[a] of char);
+extern boolean get_yes_no(char *prompt); /* : varying[a] of char); */
 					 /* use get_string */
-extern boolean Get_String(char *in_str,  // : varying[a] of char;
+extern boolean Get_String(char *in_str,  /* : varying[a] of char; */
 			  int row, int column, int slen);
 extern integer get_hex_value(integer row, integer col, integer slen);
 extern void print_hex_value(integer num, integer row, integer col);
@@ -207,7 +207,7 @@ extern void pause_game(integer prt_line);
 extern void Pause_Exit(int prt_line, int delay);
 extern void get_paths();
 
-// { PLAYER.PAS		}
+/* { PLAYER.PAS		} */
 extern void find_off();
 extern void search_off();
 extern void search_on();
@@ -216,17 +216,17 @@ extern void take_hit(integer damage, vtype hit_from);
 extern void regenhp(real percent);
 extern void regenmana(real percent);
 
-// { QUEST.PAS		}
+/* { QUEST.PAS		} */
 extern void enter_fortress();
 
-// { encrypt.c }
+/* { encrypt.c } */
 extern void encrypt_init(encrypt_state *state, byteint key[], boolean doit);
 extern void encrypt_write(FILE *f1, encrypt_state *state, ntype line);
 extern void encrypt_flush(FILE *f1, encrypt_state *state);
 extern void read_decrypt(FILE *f1, encrypt_state *state, ntype line,
 			 boolean *got_eof);
 
-// { SCREEN.PAS		}
+/* { SCREEN.PAS		} */
 extern void prt_map();
 extern void prt_stat(vtype stat_name, byteint stat, integer row,
 		     integer column);
@@ -259,7 +259,7 @@ extern void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col);
 extern void prt_stat_block();
 extern void draw_cave();
 
-// { STORE.PAS		}
+/* { STORE.PAS		} */
 extern void prt_comment1();
 extern void prt_comment2(integer offer, integer asking, integer final);
 extern void prt_comment3(integer offer, integer asking, integer final);
@@ -301,10 +301,10 @@ extern void bank_init();
 extern void store_create(integer store_num);
 extern void store_maint();
 
-// { TERMDEF.PAS		}
+/* { TERMDEF.PAS		} */
 extern void termdef();
 
-// { WIZARD.PAS		}
+/* { WIZARD.PAS		}*/
 extern void game_version();
 extern void bpswd();
 extern boolean check_pswd(string passw, boolean present);
@@ -319,7 +319,7 @@ extern void wizard_create();
 
 extern void py_bonuses(treasure_type *tobj, integer factor);
 extern boolean delete_object(integer y, integer x);
-extern char *center(string str, integer len, string result); // was func
+extern char *center(string str, integer len, string result); /* was func */
 extern void eat();
 extern void cast();
 extern void discipline();
@@ -407,36 +407,25 @@ extern integer minmax(integer x, integer y, integer z);
 extern integer bit_pos(unsigned long *test);
 extern integer bit_pos64(unsigned long *high, unsigned long *low);
 extern integer distance(integer y1, integer x1, integer y2, integer x2);
-extern void insert_str(char *object_str,  // : varying[a] of char;
-		       char *mtc_str,     //	: varying[b] of char;
-		       char *insert_str); // : varying[c] of char);
-extern void shell_out(
-    //		command_str	: integer := %immed 0;
-    //		input_file	: integer := %immed 0;
-    //		output_file	: integer := %immed 0;
-    //		flags		: integer := %immed 0;
-    //		process_name	: integer := %immed 0;
-    //		process_id	: integer := %immed 0;
-    //		comp_status	: integer := %immed 0;
-    //		comp_efn	: integer := %immed 0;
-    //		comp_astadr	: integer := %immed 0;
-    //		comp_astprm	: integer := %immed 0
-    );
+extern void insert_str(char *object_str,  /* : varying[a] of char; */
+		       char *mtc_str,     /*	: varying[b] of char; */
+		       char *insert_str); /* : varying[c] of char); */
+extern void shell_out();
 extern integer users();
 extern integer max_users();
-extern boolean get_uw_id(); // was uw_id()
+extern boolean get_uw_id();
 extern boolean net_trade();
 extern void get_account(char *account);
 extern boolean already_playing();
 extern void sys_gettim(quad_type *bin_time);
 extern void sys_numtim(time_type *weird_num, quad_type *bin_time);
-extern void
-sys_asctim(wordint *timlin, //: [reference] wordint := %immed 0;
-	   char *timbuf, //: [class_s] packed array [$l1..$u1:integer] of char;
-	   quad_type *timadr, //: [reference] quad_type := %immed 0;
-	   integer *cvtflg);  //: [reference] integer := %immed 0);
+extern void sys_asctim(
+    wordint *timlin,   /*: [reference] wordint := %immed 0; */
+    char *timbuf,      /*: [class_s] packed array [$l1..$u1:integer] of char; */
+    quad_type *timadr, /*: [reference] quad_type := %immed 0; */
+    integer *cvtflg);  /*: [reference] integer := %immed 0); */
 
-// { MISC.PAS		}
+/* { MISC.PAS		} */
 extern unsigned long get_seed();
 extern void set_seed(unsigned long the_seed);
 extern void *save_rand_state(void *randState);
@@ -508,23 +497,22 @@ extern integer monk_adj();
 extern real chr_adj();
 extern integer con_adj();
 extern integer get_hitdie();
-extern char *place_string(integer num, string result); // was func
-extern char *day_of_week_string(		       // was func
-    integer day, integer wid, string result);
-extern char *month_string(integer mon, string result);		    // was func
-extern char *time_string(integer hour, integer sec, string result); // was func
+extern char *place_string(integer num, string result);
+extern char *day_of_week_string(integer day, integer wid, string result);
+extern char *month_string(integer mon, string result);
+extern char *time_string(integer hour, integer sec, string result);
 extern void time_diff(game_time_type a, game_time_type b, game_time_type *c);
 extern void add_days(game_time_type *ti, integer d);
-extern char *full_date_string(game_time_type time, string result); // was func
+extern char *full_date_string(game_time_type time, string result);
 extern void adv_time(boolean flag);
-extern char *play_time(time_type *t, string result); // was func
+extern char *play_time(time_type *t, string result);
 extern void add_play_time(time_type *res, time_type add);
 extern time_type *convert_seconds_to_time(time_t seconds, time_type *tim);
 extern time_t convert_time_to_seconds(time_type *tim);
-extern char *show_char_age(string result);		// was func
-extern char *show_current_time(string result);		// was func
-extern char *show_play_time(string result);		// was func
-extern char *bag_descrip(treas_ptr bag, string result); // was func
+extern char *show_char_age(string result);
+extern char *show_current_time(string result);
+extern char *show_play_time(string result);
+extern char *bag_descrip(treas_ptr bag, string result);
 extern byteint squish_stat(integer this);
 extern byteint in_statp(byteint stat);
 extern byteint de_statp(byteint stat);
@@ -532,13 +520,13 @@ extern integer tohit_adj();
 extern integer toac_adj();
 extern integer todis_adj();
 extern integer todam_adj();
-extern char *likert(integer x, integer y, btype result); // was func
+extern char *likert(integer x, integer y, btype result);
 extern byteint characters_sex();
 extern wordint max_allowable_weight();
 extern wordint min_allowable_weight();
 extern integer weight_limit();
 extern treas_ptr money_carry();
-extern char *cost_str(integer amt, string result); // was func
+extern char *cost_str(integer amt, string result);
 extern void total_cash();
 extern void reset_total_cash();
 extern void add_money(integer amount);
@@ -555,8 +543,8 @@ extern boolean learn_song(boolean *redraw);
 extern boolean learn_druid();
 extern void gain_mana(integer amount);
 extern void gain_level();
-extern void insert_num(char *object_str, //	: varying[a] of char;
-		       char *mtc_str,    //	: varying[b] of char;
+extern void insert_num(char *object_str, /*	: varying[a] of char; */
+		       char *mtc_str,    /*	: varying[b] of char; */
 		       integer number, boolean show_sign);
 extern integer attack_blows(integer weight, integer *wtohit);
 extern integer critical_blow(integer weight, integer plus, boolean cs_sharp,
@@ -569,22 +557,22 @@ extern void find_monster_name(vtype m_name, integer ptr,
 			      boolean begin_sentence);
 extern void check_kickout_time(integer num, integer check);
 
-// { BANK.INC		}
+/* { BANK.INC		} */
 extern void enter_bank();
 
-// { INSURANCE.INC	}
+/* { INSURANCE.INC	} */
 extern void buy_insurance();
 
-// { river.c }
+/* { river.c } */
 extern void all_the_river_stuff();
 
-// { rooms.c }
+/* { rooms.c } */
 extern void gc__build_room(integer yval, integer xval);
 extern void gc__build_type1(integer yval, integer xval);
 extern void gc__build_type2(integer yval, integer xval);
 extern void gc__build_type3(integer yval, integer xval);
 
-// { port.c		}
+/* { port.c		} */
 extern void memory_error(int blocksize, char *message)
     __attribute__((noreturn));
 extern void *safe_malloc(int size, char *message);
@@ -596,12 +584,12 @@ extern void ignore_signals();
 extern void restore_signals();
 extern void default_signals();
 
-// { term.c		}
+/* { term.c		} */
 extern void init_curses();
 
 /* use put_buffer */
 extern void Put_Buffer(char const *out_str, integer row, integer col);
-extern void put_buffer_attr(char *out_str, //	: varying [a] of char;
+extern void put_buffer_attr(char *out_str, /*	: varying [a] of char; */
 			    integer row, integer col, int attrs);
 extern void put_qio();
 /* use clear_from */
@@ -614,12 +602,8 @@ extern unsigned sleep();
 extern void screen_map();
 extern void show_location();
 
-// { unix.c		}
+/* { unix.c		} */
 extern void user_name(char *buf);
 extern int check_input(int microsec);
 
-// extern long time(long *);
-// extern char * ctime(long *);
-
-/* END FILE  routines.h */
 #endif /* ROUTINES_H */

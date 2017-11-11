@@ -4,9 +4,9 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void lm__read_custom(FILE *file)
 {
 	integer count;
@@ -27,7 +27,7 @@ void lm__read_custom(FILE *file)
 		} while (!feof(file));
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void load_monsters()
 {
 	/*
@@ -57,7 +57,8 @@ void load_monsters()
 	int value;
 	FILE *file;
 
-	//////////////////////////////////////////////////////////////////////
+	/*////////////////////////////////////////////////////////////////////
+	 */
 
 	file = priv_fopen(MORIA_MON, "r");
 	if (file == NULL) {
@@ -67,57 +68,59 @@ void load_monsters()
 	}
 
 	for (count = 1; count <= MAX_CREATURES; count++) {
-		fgets(a, sizeof(ctype), file); //     --- 001 ---
+		fgets(a, sizeof(ctype), file); /*     --- 001 --- */
 
-		fscanf(file, "%d\n", &value); //     aaf
+		fscanf(file, "%d\n", &value); /*     aaf */
 		c_list[count].aaf = (byteint)value;
 
-		fscanf(file, "%d\n", &value); //     ac
+		fscanf(file, "%d\n", &value); /*     ac */
 		c_list[count].ac = (byteint)value;
 
-		fgets(c_list[count].name, sizeof(ctype), file); // name
+		fgets(c_list[count].name, sizeof(ctype), file); /* name */
 		c_list[count].name[strlen(c_list[count].name) - 1] =
-		    0; // strip newline
+		    0; /* strip newline */
 
-		fscanf(file, "%lx", &(c_list[count].cmove)); //     cmove
+		fscanf(file, "%lx", &(c_list[count].cmove)); /*     cmove */
 
-		fscanf(file, "%lx", &(c_list[count].spells)); //     spells
+		fscanf(file, "%lx", &(c_list[count].spells)); /*     spells */
 
-		fscanf(file, "%lx", &(c_list[count].cdefense)); //     cdefense
+		fscanf(file, "%lx",
+		       &(c_list[count].cdefense)); /*     cdefense */
 
-		fscanf(file, "%d\n", &value); //     sleep
+		fscanf(file, "%d\n", &value); /*     sleep */
 		c_list[count].sleep = (worlint)value;
 
-		fscanf(file, "%d\n", &value); //     mexp
+		fscanf(file, "%d\n", &value); /*     mexp */
 		c_list[count].mexp = (integer)value;
 
-		fscanf(file, "%d\n", &value); //     speed
+		fscanf(file, "%d\n", &value); /*     speed */
 		c_list[count].speed = (bytlint)value;
 
-		fscanf(file, "%s\n", a); //     cchar
+		fscanf(file, "%s\n", a); /*     cchar */
 		c_list[count].cchar = a[0];
 
-		fscanf(file, "%s\n", c_list[count].hd); //     hd
+		fscanf(file, "%s\n", c_list[count].hd); /*     hd */
 
-		fgets(c_list[count].damage, sizeof(etype), file); // damage
+		fgets(c_list[count].damage, sizeof(etype), file); /* damage */
 		c_list[count].damage[strlen(c_list[count].damage) - 1] =
-		    0; // strip newline
+		    0; /* strip newline */
 
-		fscanf(file, "%d\n", &value); //     level
+		fscanf(file, "%d\n", &value); /*     level */
 		c_list[count].level = (bytlint)value;
 
-		fscanf(file, "%d\n", &value); //     mr
+		fscanf(file, "%d\n", &value); /*     mr */
 		c_list[count].mr = (byteint)value;
 
-		// print_creature(&(c_list[count]),count,1);
+		/* print_creature(&(c_list[count]),count,1); */
 	} /* end while loop */
 
 	fclose(file);
 
-	//////////////////////////////////////////////////////////////////////
+	/*////////////////////////////////////////////////////////////////////
+	 */
 
-	// try to open the custom creature names files
-	// if they exist, then read in new names for creatures
+	/* try to open the custom creature names files */
+	/* if they exist, then read in new names for creatures */
 
 	/* first load the global custom names */
 	file = priv_fopen(MORIA_GCST, "r");
@@ -128,7 +131,7 @@ void load_monsters()
 		printf(
 		    "\n\rUnable to open custom name file for reading: %s\n\r",
 		    MORIA_GCST);
-		// pause_game(24);
+		/* pause_game(24); */
 	}
 
 	/* now get the users custom names */
@@ -138,15 +141,14 @@ void load_monsters()
 		fclose(file);
 	}
 
-	//  for (count = 1; count < 5; count++) {
-	//    print_creature(&(c_list[count]),count,1);
-	//  }
+	/*  for (count = 1; count < 5; count++) { */
+	/*    print_creature(&(c_list[count]),count,1); */
+	/*  } */
+}
 
-}; /* end load_monsters */
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 void print_creature(creature_type *c, int c_num, int style)
 {
@@ -175,9 +177,9 @@ void print_creature(creature_type *c, int c_num, int style)
 		       c->damage, c->level, c->mr);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 void replace_name()
 {
@@ -198,22 +200,22 @@ void replace_name()
 	for (count = 1; count <= MAX_CREATURES; count++) {
 		s = strstr(c_list[count].name, "<gp>");
 		if (s != NULL) {
-			//      printf ("\n\nOldName =
-			//      >>%s<<\n",c_list[count].name);
+			/*      printf ("\n\nOldName = */
+			/*      >>%s<<\n",c_list[count].name); */
 			insert_str(c_list[count].name, "<gp>", t_str);
-			//      printf ("NewName =
-			//      >>%s<<\n",c_list[count].name);
+			/*      printf ("NewName = */
+			/*      >>%s<<\n",c_list[count].name); */
 		} /* end if */
 	}	 /* end for */
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void check_mon_lite(integer y, integer x)
 {
 	/*{ Makes sure new creature gets lit up                   -RAK-   }*/
 
-	// with cave[y][x]. do;
+	/* with cave[y][x]. do; */
 	if (cave[y][x].cptr > 1) {
 		if (!(m_list[cave[y][x].cptr].ml)) {
 			if ((cave[y][x].tl) || (cave[y][x].pl)) {
@@ -225,9 +227,9 @@ void check_mon_lite(integer y, integer x)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void multiply_monster(integer y, integer x, integer z, boolean slp)
 {
 	/*{ Places creature adjacent to given location            -RAK-   }*/
@@ -242,7 +244,7 @@ void multiply_monster(integer y, integer x, integer z, boolean slp)
 		i3 = x - 2 + randint(3);
 
 		if (in_bounds(i2, i3)) {
-			// with cave[i2,i3] do;
+			/* with cave[i2,i3] do; */
 			if (is_in(cave[i2][i3].fval, floor_set)) {
 				if ((cave[i2][i3].tptr == 0) &&
 				    (cave[i2][i3].cptr != 1)) {
@@ -274,20 +276,20 @@ void multiply_monster(integer y, integer x, integer z, boolean slp)
 		}
 	} while (i1 <= 18);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-/////////////           Begin the insanity               /////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*///////////           Begin the insanity               ///////////// */
 
 void c__update_mon(integer monptr, integer *hear_count)
 {
 	boolean flag;
 	integer h_range, s_range;
 
-	//  ENTER("c__update_mon", "c")
+	/*  ENTER("c__update_mon", "c") */
 
-	// with m_list[monptr]. do;
-	// with cave[MY(monptr)][MX(monptr)]. do;
+	/* with m_list[monptr]. do; */
+	/* with cave[MY(monptr)][MX(monptr)]. do; */
 	flag = false;
 
 	if ((is_in(cave[MY(monptr)][MX(monptr)].fval, water_set)) &&
@@ -305,7 +307,7 @@ void c__update_mon(integer monptr, integer *hear_count)
 			flag = true;
 		} else if ((ML(monptr).cdis <= s_range)) {
 			if (los(char_row, char_col, MY(monptr), MX(monptr))) {
-				// with c_list[mptr] do;
+				/* with c_list[mptr] do; */
 				if ((cave[MY(monptr)][MX(monptr)].pl) ||
 				    (cave[MY(monptr)][MX(monptr)]
 					 .tl)) { /*{can see creature?}*/
@@ -359,9 +361,9 @@ void c__update_mon(integer monptr, integer *hear_count)
 		}
 	}
 
-	//  LEAVE("c__update_mon", "c")
+	/*  LEAVE("c__update_mon", "c") */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void c__monster_eaten_message(char *squash, char *doesit, integer cptr)
 {
 	ntype out_val;
@@ -426,7 +428,7 @@ void c__monster_eaten_message(char *squash, char *doesit, integer cptr)
 
 	LEAVE("c__monster_eaten_message", "c")
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 boolean c__check_for_hit(integer monptr, integer atype)
 {
 	integer level, armor_stuff;
@@ -560,7 +562,7 @@ boolean c__check_for_hit(integer monptr, integer atype)
 	RETURN("c__check_for_hit", "c", 'b', "test hit:", &flag);
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void c__print_attack(integer monptr, integer adesc, char *cdesc)
 {
 	string the_attack;
@@ -728,7 +730,7 @@ void c__print_attack(integer monptr, integer adesc, char *cdesc)
 
 	LEAVE("c__print_attack", "c")
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 {
 	integer dam, level, aning;
@@ -745,7 +747,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 	switch (atype) {
 	case 1: /*{Normal attack  }*/
 		dam = damroll(damstr);
-		// with py.misc do;
+		/* with py.misc do; */
 		dam -= (integer)((((PM.pac + PM.ptoac) / 200.0) * dam) + .5);
 		take_hit(dam, ddesc);
 		prt_hp();
@@ -760,7 +762,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 3: /*{Confusion attack}*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (randint(2) == 1) {
 			if (PF.confused < 1) {
@@ -773,7 +775,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 4: /*{Fear attack    }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (player_spell_saves()) {
 			msg_print("You resist the effects!");
@@ -814,7 +816,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 10: /*{Blindness attack}*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (PF.blind < 1) {
 			PF.blind += 10 + randint(level);
@@ -827,7 +829,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 11: /*{Paralysis attack}*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (player_spell_saves()) {
 			msg_print("You resist the effects!");
@@ -845,7 +847,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 12: /*{Steal Money     }*/
-		// with py.misc do;
+		/* with py.misc do; */
 		if ((randint(256) < py.stat.c[DEX]) &&
 		    (py.flags.paralysis < 1)) {
 			msg_print("You quickly protect your money pouch!");
@@ -868,7 +870,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 13: /*{Steal Object   }*/
-		// with py.stat do;
+		/* with py.stat do; */
 		if ((randint(256) < py.stat.c[DEX]) &&
 		    (py.flags.paralysis < 1)) {
 			msg_print("You grab hold of your backpack!");
@@ -903,7 +905,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 14: /*{Poison         }*/
-		// with py.flags do ;
+		/* with py.flags do ; */
 		take_hit(damroll(damstr), ddesc);
 		prt_hp();
 		msg_print("You feel very sick.");
@@ -911,7 +913,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 15: /*{Lose dexterity }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(DEX, "You feel more clumsy",
 			  "You feel clumsy for a moment, then it passes.");
@@ -919,7 +921,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 16: /*{Lose constitution }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		ident =
 		    lose_stat(CON, "Your health is damaged!",
@@ -928,7 +930,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 17: /*{Lose intelligence }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(
 		    INT, "You feel your memories fading.",
@@ -937,7 +939,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 18: /*{Lose wisdom      }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(WIS, "Your wisdom is drained.",
 			  "Your wisdom is sustained.");
@@ -990,7 +992,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 			break;
 		}
 
-		// with equipment[i1] do;
+		/* with equipment[i1] do; */
 		if (equipment[i1].tohit > 0) {
 			equipment[i1].tohit -=
 			    randint((equipment[i1].tohit == 1) ? 1 : 2);
@@ -1021,7 +1023,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 23: /*{Eat light        }*/
-		// with equipment[Equipment_light] do;
+		/* with equipment[Equipment_light] do; */
 		if (equipment[Equipment_light].p1 > 0) {
 			equipment[Equipment_light].p1 -= 250 + randint(250);
 			if (equipment[Equipment_light].p1 < 1) {
@@ -1039,7 +1041,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 				item_ptr = item_ptr->next;
 			}
 			i4 = level;
-			// with item_ptr^.data do;
+			/* with item_ptr^.data do; */
 			if (is_in(item_ptr->data.tval, staff_rod_or_wand)) {
 				if (item_ptr->data.p1 > 0) {
 					m_list[monptr].hp +=
@@ -1052,7 +1054,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 25: /*{Lose charisma   }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(CHR, "Your skin starts to itch.",
 			  "Your skin starts to itch, but feels better now.");
@@ -1060,12 +1062,12 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 		break;
 
 	case 26: /*{Petrification  }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		petrify(m_list[monptr].hp);
 		break;
 
 	case 27: /*{POISON Poison  }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.poisoned += damroll(damstr);
 		msg_print("You feel very sick.");
 		break;
@@ -1079,7 +1081,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 
 	LEAVE("c__apply_attack", "c")
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void c__make_attack(integer monptr)
 {
 	/*{ Make an attack on the player (chuckle...)             -RAK-   }*/
@@ -1094,8 +1096,8 @@ void c__make_attack(integer monptr)
 	char *achar;
 
 	ENTER("c__make_attack", "c")
-	// with m_list[monptr] do;
-	// with c_list[m_list[monptr].mptr]. do;
+	/* with m_list[monptr] do; */
+	/* with c_list[m_list[monptr].mptr]. do; */
 
 	attstr[0] = 0;
 	attx[0] = 0;
@@ -1164,7 +1166,7 @@ void c__make_attack(integer monptr)
 			acount = 1;
 		}
 
-		// with py.misc do;
+		/* with py.misc do; */
 		for (i5 = 1; i5 <= acount; i5++) {
 
 			flag = c__check_for_hit(monptr, atype);
@@ -1193,7 +1195,7 @@ void c__make_attack(integer monptr)
 
 	LEAVE("c__make_attack", "c")
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 {
 	/*{ Make the move if possible, five choices               -RAK-   }*/
@@ -1215,7 +1217,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 		newy = m_list[monptr].fy;
 		newx = m_list[monptr].fx;
 		move_dir(mm[i1], &newy, &newx);
-		// with cave[newy][newx]. do;
+		/* with cave[newy][newx]. do; */
 		if (cave[newy][newx].fval != boundry_wall.ftval) {
 			tflag = false;
 			if (cave[newy][newx].cptr == 1) {
@@ -1239,8 +1241,8 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 				/*{ Creature can open doors?      }*/
 			} else if (cave[newy][newx].tptr > 0) {
 
-				// with t_list[cave[newy][newx].tptr]. do;
-				// with m_list[monptr]. do;
+				/* with t_list[cave[newy][newx].tptr]. do; */
+				/* with m_list[monptr]. do; */
 				if (uand(movebits, 0x20000) != 0) {
 					/*{ Creature can open doors... }*/
 					switch (t_list[cave[newy][newx].tptr]
@@ -1461,10 +1463,11 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 					 * }*/
 					/* { Monster gets a saving throw... }*/
 					if (py.flags.confuse_monster) {
-						// with m_list[monptr] do;
-						// with
-						// c_list[m_list[monptr].mptr].
-						// do;
+						/* with m_list[monptr] do; */
+						/* with */
+						/* c_list[m_list[monptr].mptr].
+						 */
+						/* do; */
 						msg_print(
 						    "Your hands stop glowing.");
 						py.flags.confuse_monster =
@@ -1545,11 +1548,11 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 
 			/*{ Creature has been allowed move...     }*/
 			if (tflag) {
-				// with m_list[monptr] do
+				/* with m_list[monptr] do */
 
 				/*{ Pick up or eat an object              }*/
 				if (uand(movebits, 0x100000) != 0) {
-					// with cave[newy,newx] do;
+					/* with cave[newy,newx] do; */
 					if (cave[newy][newx].tptr > 0) {
 						if (t_list[cave[newy][newx]
 							       .tptr].tval <
@@ -1576,7 +1579,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 	RETURN("c__make_move", "c", 'b', "moved", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 boolean c__move_confused(integer monptr, mm_type mm, integer *hear_count)
 {
 	boolean return_value;
@@ -1593,7 +1596,7 @@ boolean c__move_confused(integer monptr, mm_type mm, integer *hear_count)
 	RETURN("c__move_confused", "c", 'b', "moved", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void c__get_moves(integer monptr, mm_type *mm)
 {
 	/*{ Choose correct directions for monster movement        -RAK-   }*/
@@ -1622,7 +1625,7 @@ void c__get_moves(integer monptr, mm_type *mm)
 
 	LEAVE("c__get_moves", "c")
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 boolean c__cast_spell(integer monptr, boolean *took_turn)
 {
 	/*{ Creatures can cast spells too.  (Dragon Breath)       -RAK-   }*/
@@ -1639,8 +1642,8 @@ boolean c__cast_spell(integer monptr, boolean *took_turn)
 	boolean return_value;
 
 	ENTER("c__cast_spell", "c")
-	// with m_list[monptr] do;
-	// with c_list[m_list[monptr].mptr] do;
+	/* with m_list[monptr] do; */
+	/* with c_list[m_list[monptr].mptr] do; */
 	chance = (uand(c_list[m_list[monptr].mptr].spells, 0x0000000F));
 	chance2 = (uand(c_list[m_list[monptr].mptr].spells, 0x80000000));
 
@@ -1836,7 +1839,7 @@ boolean c__cast_spell(integer monptr, boolean *took_turn)
 			break;
 
 		case 16: /*{Slow Person  }*/
-			// with py.flags do;
+			/* with py.flags do; */
 			stop_player = true;
 			strcat(cdesc, "casts a spell.");
 			msg_print(cdesc);
@@ -2035,7 +2038,7 @@ boolean c__cast_spell(integer monptr, boolean *took_turn)
 	RETURN("c__cast_spell", "c", 'b', "moved", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 boolean mon_move(integer monptr, integer *hear_count)
 {
 	/*{ Move the critters about the dungeon                   -RAK-   }*/
@@ -2046,7 +2049,7 @@ boolean mon_move(integer monptr, integer *hear_count)
 	boolean return_value = false;
 
 	ENTER("mon_move", "c")
-	// with c_list[m_list[monptr].mptr] do;
+	/* with c_list[m_list[monptr].mptr] do; */
 
 	/*{ Does the creature regenerate?                         }*/
 	if (uand(c_list[ML(monptr).mptr].cdefense, 0x8000) != 0) {
@@ -2061,7 +2064,7 @@ boolean mon_move(integer monptr, integer *hear_count)
 	if (uand(c_list[ML(monptr).mptr].cmove, 0x00200000) != 0) {
 		if (MAX_MON_MULT >= mon_tot_mult) {
 			if ((py.flags.rest % mon_mult_adj) == 0) {
-				// with m_list[monptr] do;
+				/* with m_list[monptr] do; */
 				i3 = 0;
 
 				for (i1 = MY(monptr) - 1; i1 <= MY(monptr) + 1;
@@ -2144,14 +2147,14 @@ boolean mon_move(integer monptr, integer *hear_count)
 	RETURN("mon_move", "c", 'b', "moved", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void c__splash(integer monptr)
 {
 	integer i1, mon_swimming, drown_dam;
 
 	ENTER("c__splash", "c")
-	// with m_list[monptr]. do;
-	// with c_list[m_list[monptr].mptr]. do begin;
+	/* with m_list[monptr]. do; */
+	/* with c_list[m_list[monptr].mptr]. do begin; */
 	mon_swimming = (integer)(
 	    (uand(c_list[m_list[monptr].mptr].cmove, 0x00000700)) / 256);
 	drown_dam = randint(OUT_OF_ENV_DAM);
@@ -2170,13 +2173,13 @@ void c__splash(integer monptr)
 	if (m_list[monptr].hp < 0) {
 		monster_death(m_list[monptr].fy, m_list[monptr].fx,
 			      c_list[m_list[monptr].mptr].cmove);
-		// with cave[fy,fx] do;
+		/* with cave[fy,fx] do; */
 		delete_monster(cave[m_list[monptr].fy][m_list[monptr].fx].cptr);
 	}
 
 	LEAVE("c__splash", "c")
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void creatures(boolean attack)
 {
 	integer i1, i2, i3, moldy, moldx;
@@ -2193,7 +2196,7 @@ void creatures(boolean attack)
 			hear_count = 0;
 			i1 = muptr;
 			do {
-				// with m_list[i1]. do;
+				/* with m_list[i1]. do; */
 				m_list[i1].cdis =
 				    distance(char_row, char_col, m_list[i1].fy,
 					     m_list[i1].fx);
@@ -2316,9 +2319,9 @@ void creatures(boolean attack)
 	}
 	LEAVE("creatures", "c")
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void mn__append_mon(integer mon_num)
 {
 	vtype out_val;
@@ -2335,7 +2338,7 @@ void mn__append_mon(integer mon_num)
 		fclose(f1);
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
 void mon_name()
 {
@@ -2360,9 +2363,9 @@ void mon_name()
 	}
 	msg_print("");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 integer find_mon(ctype virtual_name)
 {
 	/*{returns number of monster in list specified by virtual_name}*/
@@ -2382,8 +2385,8 @@ integer find_mon(ctype virtual_name)
 	}
 	return count;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 /* END FILE  creature.c */

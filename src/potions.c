@@ -1,11 +1,6 @@
-/* potions.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void q__potion_effect(integer effect, boolean *idented)
 {
 	integer i4, i5;
@@ -89,7 +84,7 @@ void q__potion_effect(integer effect, boolean *idented)
 		break;
 
 	case 18: /*{ Gain Experience }*/
-		// with py.misc do;
+		/* with py.misc do; */
 		i5 = (PM.exp div 2) + 10;
 		if (i5 > 100000) {
 			i5 = 100000;
@@ -166,8 +161,8 @@ void q__potion_effect(integer effect, boolean *idented)
 
 	case 32: /*{ Learning }*/ /* 32 is the Cursed_worn_bit value */
 	case 48:		  /*{ Learning }*/
-		// with py.misc do;
-		// with class[pclass] do;
+		/* with py.misc do; */
+		/* with class[pclass] do; */
 		if (class[PM.pclass].mspell) {
 			ident = learn_spell(&redraw);
 			if (redraw) {
@@ -194,7 +189,7 @@ void q__potion_effect(integer effect, boolean *idented)
 		break;
 
 	case 34: /*{ Salt Water }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.poisoned = 0;
 		py.flags.status &= ~IS_POISONED;
 		prt_poisoned();
@@ -253,7 +248,7 @@ void q__potion_effect(integer effect, boolean *idented)
 		break;
 
 	case 45: /*{ Restore Mana }*/
-		// with py.misc do;
+		/* with py.misc do; */
 		if (PM.cmana < PM.mana) {
 			PM.cmana = PM.mana;
 		}
@@ -318,7 +313,7 @@ void q__potion_effect(integer effect, boolean *idented)
 
 	*idented = ident;
 }
-//////////////////////////////////////////////////////////////////////
+
 void quaff()
 {
 	/*{ Potions for the quaffing                              -RAK-   }*/
@@ -337,7 +332,7 @@ void quaff()
 			redraw = false;
 			if (get_item(&item_ptr, "Quaff which potion?", &redraw,
 				     i3, &trash_char, false, false)) {
-				// with item_ptr->data. do;
+				/* with item_ptr->data. do; */
 				if (redraw) {
 					draw_cave();
 				}
@@ -397,8 +392,3 @@ void quaff()
 		msg_print("But you are not carrying anything.");
 	}
 }
-
-/* END FILE  potions.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////

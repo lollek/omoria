@@ -1,11 +1,6 @@
-/* play.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void p__druid_effects(integer effect)
 {
 	/*{ Songs....					}*/
@@ -108,7 +103,7 @@ void p__druid_effects(integer effect)
 
 	case 18: /*{ Remove Curse }*/
 		for (i2 = Equipment_min; i2 <= EQUIP_MAX - 1; i2++) {
-			// with equipment[i2]. do;
+			/* with equipment[i2]. do; */
 			equipment[i2].flags &= 0x7FFFFFFF;
 		}
 		break;
@@ -139,7 +134,7 @@ void p__druid_effects(integer effect)
 		break;
 
 	case 24: /*{ Dispel Magic }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		cure_me(&PF.blind);
 		cure_me(&PF.poisoned);
 		cure_me(&PF.afraid);
@@ -155,7 +150,7 @@ void p__druid_effects(integer effect)
 		break;
 
 	case 26: /*{ Protection from Nature }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.resist_heat += randint(15) + 10;
 		PF.resist_cold += randint(15) + 10;
 		PF.resist_lght += randint(15) + 10;
@@ -231,7 +226,7 @@ void p__druid_effects(integer effect)
 		break;
 
 	case 37: /*{ Resist Charm }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.free_time += randint(10) + py.misc.lev;
 		PF.magic_prot += randint(10) + py.misc.lev;
 		break;
@@ -254,7 +249,7 @@ void p__druid_effects(integer effect)
 	}
 	/*{ End of songs...			       }*/
 }
-//////////////////////////////////////////////////////////////////////
+
 void play()
 {
 	/*{ Play a Druid song					-CAPN/DMF-   }*/
@@ -283,9 +278,10 @@ void play()
 					if (cast_spell("Play which song?",
 						       item_ptr, &choice,
 						       &chance, &redraw)) {
-						// with
-						// magic_spell[py.misc.pclass][choice].
-						// do;
+						/* with */
+						/* magic_spell[py.misc.pclass][choice].
+						 */
+						/* do; */
 						reset_flag = false;
 						if (randint(100) < chance) {
 							switch (randint(5)) {
@@ -329,8 +325,9 @@ void play()
 							p__druid_effects(
 							    choice);
 							if (!(reset_flag)) {
-								// with py.misc
-								// do;
+								/* with py.misc
+								 */
+								/* do; */
 								PM.exp +=
 								    magic_spell
 									[py.misc
@@ -347,7 +344,7 @@ void play()
 							}
 						}
 
-						// with py.misc do;
+						/* with py.misc do; */
 						if (!reset_flag) {
 							if (magic_spell
 								[py.misc.pclass]
@@ -442,7 +439,3 @@ void play()
 		}
 	}
 }
-/* END FILE  play.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////

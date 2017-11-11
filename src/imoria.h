@@ -21,8 +21,8 @@
 
 #include "debug.h"
 
-// moria.c includes the actual declarations of all the variables,
-// everything else just includes the extern stuff
+/* moria.c includes the actual declarations of all the variables, */
+/* everything else just includes the extern stuff */
 
 #ifdef __MORIA_C__
 #include "values.h"

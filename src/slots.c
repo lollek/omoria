@@ -51,9 +51,9 @@ void sm__position_adjust(integer *c1, integer *c2, integer *c3)
 	*c2 = 29;
 	*c3 = 43;
 
-	//  if (slotpos[1] > 1) { *c1 = 14; }
-	//  if (slotpos[2] > 1) { *c2 = 28; }
-	//  if (slotpos[3] > 1) { *c3 = 42; }
+	/*  if (slotpos[1] > 1) { *c1 = 14; } */
+	/*  if (slotpos[2] > 1) { *c2 = 28; } */
+	/*  if (slotpos[3] > 1) { *c3 = 42; } */
 }
 
 void sm__display_slots()

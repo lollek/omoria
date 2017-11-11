@@ -1,11 +1,6 @@
-/* prayer.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void p__prayer_effects(integer effect)
 {
 
@@ -83,13 +78,13 @@ void p__prayer_effects(integer effect)
 
 	case 15: /*{ Remove Curse }*/
 		for (i2 = Equipment_min; i2 <= EQUIP_MAX - 1; i2++) {
-			// with equipment[i2]. do;
+			/* with equipment[i2]. do; */
 			equipment[i2].flags &= 0x7FFFFFFF;
 		}
 		break;
 
 	case 16: /*{ Resist Heat and Cold }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.resist_heat += randint(10) + 10;
 		PF.resist_cold += randint(10) + 10;
 		break;
@@ -210,7 +205,7 @@ void p__prayer_effects(integer effect)
 	}
 	/*{ End of prayers...                             }*/
 }
-//////////////////////////////////////////////////////////////////////
+
 void pray()
 {
 	/*{ Pray like HELL...                                     -RAK-   }*/
@@ -239,9 +234,10 @@ void pray()
 						       item_ptr, &choice,
 						       &chance, &redraw)) {
 
-						// with
-						// magic_spell[PM.pclass][choice].
-						// do
+						/* with */
+						/* magic_spell[PM.pclass][choice].
+						 */
+						/* do */
 						reset_flag = false;
 						if (randint(100) < chance) {
 							msg_print(
@@ -251,8 +247,9 @@ void pray()
 							p__prayer_effects(
 							    choice);
 							if (!reset_flag) {
-								// with py.misc
-								// do;
+								/* with py.misc
+								 */
+								/* do; */
 								PM.exp +=
 								    magic_spell
 									[PM.pclass]
@@ -267,7 +264,7 @@ void pray()
 							}
 						}
 
-						// with py.misc do;
+						/* with py.misc do; */
 						if (!reset_flag) {
 							if (magic_spell
 								[PM.pclass]
@@ -339,7 +336,3 @@ void pray()
 		msg_print("Pray hard enough and your prayers may be answered.");
 	}
 }
-/* END FILE  prayer.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////

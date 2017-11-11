@@ -206,7 +206,7 @@ void c__exit_messages()
 	} else {
 		msg_print("Bye.");
 	}
-	// msg_print("");
+	/* msg_print(""); */
 }
 
 void enter_casino()

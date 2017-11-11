@@ -89,10 +89,10 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 	/*{ Write out the player record.	}*/
 
 	integer i1, inven_ctr;
-	// time_type      tim;
+	/* time_type      tim; */
 	treas_ptr curse;
 	time_t current_time, delta_time;
-	// quad_type      current_time,delta_time;
+	/* quad_type      current_time,delta_time; */
 
 	/*with py.misc do*/
 
@@ -117,16 +117,17 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 		(int)PM.quests, PM.claim_check, (int)PF.light_on);
 	encrypt_write(f1, cf_state, out_rec);
 
-	//    sys_gettim(&current_time);
-	//    sub_quadtime(current_time,start_time,&delta_time);
-	//    sys_numtim(&tim,&delta_time);
-	//    add_play_time(&tim,py.misc.play_tm);
+	/*    sys_gettim(&current_time); */
+	/*    sub_quadtime(current_time,start_time,&delta_time); */
+	/*    sys_numtim(&tim,&delta_time); */
+	/*    add_play_time(&tim,py.misc.play_tm); */
 
 	/*with tim do*/
-	//  sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld",
-	//	  (int)tim.years,(int)tim.months,(int)tim.days,(int)tim.hours,
-	//	  (int)tim.minutes,(int)tim.seconds,(int)tim.hundredths);
-	//  encrypt_write(f1, out_rec);
+	/*  sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld", */
+	/*	  (int)tim.years,(int)tim.months,(int)tim.days,(int)tim.hours,
+	 */
+	/*	  (int)tim.minutes,(int)tim.seconds,(int)tim.hundredths); */
+	/*  encrypt_write(f1, out_rec); */
 
 	current_time = time(NULL);
 	delta_time = current_time - start_time;
@@ -180,8 +181,8 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 		curse = curse->next;
 		inven_ctr++;
 	}
-	//    sprintf(out_rec, "DBG: got some inventory %ld", inven_ctr);
-	//    prt(out_rec,10,10);
+	/*    sprintf(out_rec, "DBG: got some inventory %ld", inven_ctr); */
+	/*    prt(out_rec,10,10); */
 
 	sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld %lu", inven_ctr,
 		inven_weight, equip_ctr, dun_level, missle_ctr, mon_tot_mult,
@@ -213,7 +214,7 @@ static void sc__write_inventory(FILE *f1, encrypt_state *cf_state,
 		sprintf(out_rec, "%s", curse->data.damage);
 		encrypt_write(f1, cf_state, out_rec);
 
-		// with curse->data do;
+		/* with curse->data do; */
 		sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
 			(int)curse->data.tval, (int)curse->data.subval,
 			(int)curse->data.weight, (int)curse->data.number,
@@ -243,7 +244,7 @@ static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 		sprintf(out_rec, "%s", equipment[i1].damage);
 		encrypt_write(f1, cf_state, out_rec);
 
-		// with equipment[i1] do;
+		/* with equipment[i1] do; */
 		sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
 			(int)equipment[i1].tval, (int)equipment[i1].subval,
 			(int)equipment[i1].weight, (int)equipment[i1].number,
@@ -260,7 +261,7 @@ static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 				      ntype out_rec)
 {
-	// with py.stat do
+	/* with py.stat do */
 	sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "
 			 "%d %d %d %d %d %d %d",
 		(int)PS.p[STR], (int)PS.c[STR], (int)PS.m[STR], (int)PS.l[STR],
@@ -271,7 +272,7 @@ static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 		(int)PS.p[CHR], (int)PS.c[CHR], (int)PS.m[CHR], (int)PS.l[CHR]);
 	encrypt_write(f1, cf_state, out_rec);
 
-	// with py.flags do
+	/* with py.flags do */
 	sprintf(out_rec, "%lu %ld %ld %ld %ld %ld %ld %ld %ld %d", PF.status,
 		PF.blind, PF.confused, PF.foodc, PF.food_digested,
 		PF.protection, PF.speed, PF.afraid, PF.poisoned,
@@ -312,7 +313,7 @@ static void sc__write_magic(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 {
 	integer i1;
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		// with magic_spell[py.misc.pclass,i1] do
+		/* with magic_spell[py.misc.pclass,i1] do */
 		sprintf(out_rec, "%d %d", (int)PSPELL(i1).learned,
 			PSPELL(i1).sexp);
 		encrypt_write(f1, cf_state, out_rec);
@@ -334,9 +335,9 @@ static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 
 	tot_treasure = 0;
 	for (i1 = 1; i1 <= cur_height; i1++) {
-		// out_rec = pad(' ',' ',cur_width);
+		/* out_rec = pad(' ',' ',cur_width); */
 		for (i2 = 1; i2 <= cur_width; i2++) {
-			// with cave[i1][i2]. do;
+			/* with cave[i1][i2]. do; */
 			xfloor = cave[i1][i2].fval;
 			if (cave[i1][i2].fopen) {
 				xfloor |= 0x20;
@@ -388,7 +389,7 @@ static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 		for (i2 = 1; i2 <= cur_width; i2++) {
 			if (cave[i1][i2].tptr > 0) {
 				tptr = cave[i1][i2].tptr;
-				// with t_list[tptr]. do;
+				/* with t_list[tptr]. do; */
 				sprintf(out_rec, "%ld %ld", i1, i2);
 				encrypt_write(f1, cf_state, out_rec);
 
@@ -445,7 +446,7 @@ static void sc__write_monsters(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 
 	for (i1 = muptr; i1 > 0; i1 = m_list[i1].nptr) {
 
-		// with m_list[i1] do;
+		/* with m_list[i1] do; */
 		sprintf(out_rec, "%d %d %d %d %d %d %d %d %d", m_list[i1].fy,
 			m_list[i1].fx, m_list[i1].mptr, m_list[i1].hp,
 			m_list[i1].cspeed, m_list[i1].csleep, m_list[i1].cdis,
@@ -469,13 +470,13 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	encrypt_write(f1, cf_state, out_rec);
 
 	for (i1 = 0; i1 < MAX_STORES; i1++) {
-		// with stores[i1]. do;
+		/* with stores[i1]. do; */
 		/*{ Save items...                 }*/
 		sprintf(out_rec, "%d", stores[i1].store_ctr);
 		encrypt_write(f1, cf_state, out_rec);
 
 		for (i2 = 1; i2 <= stores[i1].store_ctr; i2++) {
-			// with stores[i1].store_inven[i2].sitem do;
+			/* with stores[i1].store_inven[i2].sitem do; */
 			sprintf(out_rec, "%ld",
 				stores[i1].store_inven[i2].scost);
 			encrypt_write(f1, cf_state, out_rec);
@@ -505,11 +506,11 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 				stores[i1].store_inven[i2].sitem.level,
 				stores[i1].store_inven[i2].sitem.cost);
 			encrypt_write(f1, cf_state, out_rec);
-			// end with store inven;
-		} // end for i2;
+			/* end with store inven; */
+		} /* end for i2; */
 
-		// with stores[i1].store_inven[i2].store_open. do;
-		// with py.misc do;
+		/* with stores[i1].store_inven[i2].store_open. do; */
+		/* with py.misc do; */
 		st = stores[i1].store_open;
 		if ((PM.cur_age.year > st.year) ||
 		    ((PM.cur_age.year == st.year) &&
@@ -528,12 +529,12 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 			stores[i1].store_open = st;
 		}
 
-		// with store_open do;
+		/* with store_open do; */
 		sprintf(out_rec, "%d %d %ld %d %d %d %d", stores[i1].owner,
 			stores[i1].insult_cur, st.year, st.month, st.day,
 			st.hour, st.secs);
 		encrypt_write(f1, cf_state, out_rec);
-	} // end for i1;
+	} /* end for i1; */
 }
 
 static void sc__write_version(FILE *f1, encrypt_state *cf_state, ntype out_rec)
@@ -554,7 +555,7 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	save_seed ^= randint(9999999);
 	sprintf(out_rec, "%lu %ld %ld %ld", save_seed, py.misc.creation_time,
 		py.misc.save_count, py.misc.deaths);
-	// sprintf(title2,"%lu %s",save_seed,py.misc.ssn);
+	/* sprintf(title2,"%lu %s",save_seed,py.misc.ssn); */
 	set_seed(ENCRYPT_SEED2);
 	encrypt_write(f1, cf_state, out_rec);
 	set_seed(save_seed);
@@ -567,11 +568,12 @@ boolean save_char(boolean quick)
 	ntype out_rec;
 	encrypt_state cf_state;
 	GDBM_FILE f2;
+	boolean flag;
 
 	FILE *f1 = sc__open_save_file();
 	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
 
-	boolean flag = sc__open_master(&f2);
+	flag = sc__open_master(&f2);
 	if (flag) {
 		flag = sc__write_master(f2);
 		master_file_close(&f2);
@@ -644,8 +646,8 @@ static void gc__add_item(treas_ptr *cur_bag)
 		((*cur_bag)->insides)++;
 	}
 
-	//    printf("\n\tgot item: >>>%s<<<\n", ptr->data.name);
-	//    fflush(stdout);
+	/*    printf("\n\tgot item: >>>%s<<<\n", ptr->data.name); */
+	/*    fflush(stdout); */
 }
 
 static void gc__open_save_file(FILE **f1, vtype fnam, boolean *paniced)
@@ -681,7 +683,7 @@ static void gc__read_master(GDBM_FILE f2, boolean *paniced)
 		       "|\n\r");
 		printf("-------------------------------------------------------"
 		       "-\n\r");
-		//    exit_game();
+		/*    exit_game(); */
 
 		*paniced = true;
 	}
@@ -703,12 +705,12 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		*paniced = true;
 	}
 
-	//  strcpy(temp,in_rec+13);
-	//  py.misc.ssn = temp;
+	/*  strcpy(temp,in_rec+13); */
+	/*  py.misc.ssn = temp; */
 
-	//  set_seed(ENCRYPT_SEED1);
-	//  coder(temp);
-	//  temp_id = temp;
+	/*  set_seed(ENCRYPT_SEED1); */
+	/*  coder(temp); */
+	/*  temp_id = temp; */
 
 	set_seed(save_seed);
 }
@@ -793,16 +795,17 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 	PF.light_on = x4;
 	PF.resting_till_full = false;
 
-	//    sys_gettim(&current_time);
-	//    sub_quadtime(current_time,start_time,&delta_time);
-	//    sys_numtim(&tim,&delta_time);
-	//    add_play_time(&tim,py.misc.play_tm);
+	/*    sys_gettim(&current_time); */
+	/*    sub_quadtime(current_time,start_time,&delta_time); */
+	/*    sys_numtim(&tim,&delta_time); */
+	/*    add_play_time(&tim,py.misc.play_tm); */
 
 	/*with tim do*/
-	//  read_decrypt(f1, cf_state, in_rec, paniced);
-	//  sscanf(in_rec, "%ld %ld %ld %ld %ld %ld %ld",
-	//	  (int)tim.years,(int)tim.months,(int)tim.days,(int)tim.hours,
-	//	  (int)tim.minutes,(int)tim.seconds,(int)tim.hundredths);
+	/*  read_decrypt(f1, cf_state, in_rec, paniced); */
+	/*  sscanf(in_rec, "%ld %ld %ld %ld %ld %ld %ld", */
+	/*	  (int)tim.years,(int)tim.months,(int)tim.days,(int)tim.hours,
+	 */
+	/*	  (int)tim.minutes,(int)tim.seconds,(int)tim.hundredths); */
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%ld", &old_time) != 1) {
@@ -870,14 +873,14 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 	}
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	//  sscanf(in_rec, "%ld %ld %f %ld %f %ld %ld %ld %ld %ld %ld %ld %ld
-	//  %ld %ld %ld %ld",
-	//	  &(PM.srh),&(PM.fos),&(PM.stl),&(PM.bth),
-	//	  &x1,
-	//	  &x2, &(PM.cmana), &x3, &(PM.chp),
-	//	  &x4, &x5, &x7, &x7,
-	//	  &x8, &x9, &x10, &x11,
-	//	  &x12, &x13, &x14);
+	/*  sscanf(in_rec, "%ld %ld %f %ld %f %ld %ld %ld %ld %ld %ld %ld %ld */
+	/*  %ld %ld %ld %ld", */
+	/*	  &(PM.srh),&(PM.fos),&(PM.stl),&(PM.bth), */
+	/*	  &x1, */
+	/*	  &x2, &(PM.cmana), &x3, &(PM.chp), */
+	/*	  &x4, &x5, &x7, &x7, */
+	/*	  &x8, &x9, &x10, &x11, */
+	/*	  &x12, &x13, &x14); */
 	if (sscanf(
 		in_rec,
 		"%d %d %d %d %d %d %f %d %f %d %d %d %d %d %d %d %d %d %d %d",
@@ -980,7 +983,7 @@ static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		strncpy(inven_temp->data.damage, in_rec, sizeof(dtype));
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		// with inven_temp->data do;
+		/* with inven_temp->data do; */
 		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
 			   &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8, &x9,
 			   &(inven_temp->data.flags),
@@ -1044,7 +1047,7 @@ static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	lost_equip_count = 0;
 
 	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-		// with inven_temp->data do;
+		/* with inven_temp->data do; */
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		if (strlen(in_rec) > 0) {
 			sscanf(in_rec, "%c", &(inven_temp->data.tchar));
@@ -1148,7 +1151,7 @@ static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 	PS.m[CHR] = x23;
 	PS.l[CHR] = x24;
 
-	// with py.flags do;
+	/* with py.flags do; */
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%lu %ld %ld %ld %ld %ld %ld %ld %ld %d",
 		   &(PF.status), &(PF.blind), &(PF.confused), &(PF.foodc),
@@ -1221,7 +1224,7 @@ static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	int x1, x2;
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		// with magic_spell[py.misc.pclass,i1] do;
+		/* with magic_spell[py.misc.pclass,i1] do; */
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		if (sscanf(in_rec, "%d %d", &x1, &x2) != 2) {
 			*paniced = true;
@@ -1255,7 +1258,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 
 	if (!(*paniced)) {
 		for (i1 = 1; i1 <= cur_height; i1++) {
-			// read_decrypt(f1, cf_state, in_rec, paniced);
+			/* read_decrypt(f1, cf_state, in_rec, paniced); */
 			for (i2 = 1; i2 <= cur_width; i2++) {
 
 				if (count == 0) {
@@ -1268,7 +1271,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 				}
 				count--;
 
-				// with cave[i1][i2]. do;
+				/* with cave[i1][i2]. do; */
 				cave[i1][i2].fval = (xfloor & 0x1f);
 				if (xfloor & 0x20) {
 					cave[i1][i2].fopen = true;
@@ -1297,7 +1300,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 
 		for (i1 = 1; i1 <= tot_treasure; i1++) {
 			popt(&i2);
-			// with t_list[i2] do;
+			/* with t_list[i2] do; */
 
 			read_decrypt(f1, cf_state, in_rec, paniced);
 			if (sscanf(in_rec, "%ld %ld", &i3, &i4) != 2) {
@@ -1373,7 +1376,7 @@ static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		popm(&i2);
 
-		// with m_list[i2] do;
+		/* with m_list[i2] do; */
 		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d", &x1, &x2, &x3,
 			   &x4, &x5, &x6, &x7, &x8, &x9) != 9) {
 			*paniced = true;
@@ -1427,12 +1430,12 @@ static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 
 	for (i1 = 0; i1 < MAX_STORES; i1++) {
-		// with stores[i1]. do;
+		/* with stores[i1]. do; */
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		sscanf(in_rec, "%ld", &i2);
 		stores[i1].store_ctr = i2;
 		for (i3 = 1; i3 <= i2; i3++) {
-			// with stores[i1].store_inven[i3].sitem do;
+			/* with stores[i1].store_inven[i3].sitem do; */
 			read_decrypt(f1, cf_state, in_rec, paniced);
 			if (sscanf(in_rec, "%ld",
 				   &stores[i1].store_inven[i3].scost) != 1) {
@@ -1582,7 +1585,7 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 
 	ntype in_rec;
 	vtype tfnam;
-	// ssn_type   temp_id;
+	/* ssn_type   temp_id; */
 	FILE *f1;
 	GDBM_FILE f2;
 	boolean flag, bleah_flag, exit_flag, paniced;
@@ -1650,7 +1653,7 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 			prt(" ", 2, 1);
 			paniced = true;
 		} else {
-			// rewind(f1);
+			/* rewind(f1); */
 			encrypt_init(&cf_state, saveFileKey,
 				     saveFilesAreEncrypted);
 			set_seed(ENCRYPT_SEED2);
@@ -1658,12 +1661,13 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 			sscanf(in_rec, "%lu %ld %ld %ld", &save_seed,
 			       &creation_time, &save_count, &deaths);
 
-			//      if (!paniced) {
-			//	for ( ; !paniced ; ) {
-			//	  read_decrypt(f1, &cf_state, in_rec, &paniced);
-			//	}
-			//	paniced = false;
-			//      }
+			/*      if (!paniced) { */
+			/*	for ( ; !paniced ; ) { */
+			/*	  read_decrypt(f1, &cf_state, in_rec, &paniced);
+			 */
+			/*	} */
+			/*	paniced = false; */
+			/*      } */
 			fclose(f1);
 		}
 
@@ -1691,8 +1695,8 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 			}
 		}
 
-		// seed := get_seed;
-		// priv_switch(0);
+		/* seed := get_seed; */
+		/* priv_switch(0); */
 	}
 
 	if (undead && !paniced) {

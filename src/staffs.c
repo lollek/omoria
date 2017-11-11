@@ -1,12 +1,6 @@
-/* staffs.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 void us__staff_effect(integer effect, boolean *idented)
 {
 	integer i3, randnum;
@@ -121,7 +115,7 @@ void us__staff_effect(integer effect, boolean *idented)
 		break;
 
 	case 22:
-		// with py.flags do;
+		/* with py.flags do; */
 		ident = cure_me(&(PF.blind));
 		ident |= cure_me(&(PF.poisoned));
 		ident |= cure_me(&(PF.confused));
@@ -150,7 +144,7 @@ void us__staff_effect(integer effect, boolean *idented)
 
 	*idented = ident;
 }
-//////////////////////////////////////////////////////////////////////
+
 void use_staff()
 {
 	/*{ Use a staff...                                        -RAK-   }*/
@@ -170,14 +164,14 @@ void use_staff()
 			redraw = false;
 			if (get_item(&item_ptr, "Use which staff?", &redraw, i3,
 				     &trash_char, false, false)) {
-				// with item_ptr^.data do;
+				/* with item_ptr^.data do; */
 
 				if (redraw) {
 					draw_cave();
 				}
 				reset_flag = false;
 
-				// with py.misc do;
+				/* with py.misc do; */
 				chance = PM.save + PM.lev + spell_adj(INT) -
 					 item_ptr->data.level - 5;
 
@@ -203,7 +197,7 @@ void use_staff()
 					identify(&(item_ptr->data));
 					if (ident) {
 						if (item_ptr->data.flags != 0) {
-							// with py.misc do;
+							/* with py.misc do; */
 							PM.exp +=
 							    (item_ptr->data
 								 .level /
@@ -227,11 +221,3 @@ void use_staff()
 		msg_print("But you are not carrying anything.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  staffs.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////

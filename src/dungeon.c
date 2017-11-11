@@ -6,18 +6,18 @@
 
 /* I got rid of all the ones I think are not "real" globals... */
 
-integer dir_val;	    // { For movement (running)}
-integer old_chp, old_cmana; // { Detect change         }
-real regen_amount;	  // { Regenerate hp and mana}
-char command;		    // { Last command          }
-boolean moria_flag;	 // { Next level when true  }
-boolean reset_flag;	 // { Do not move creatures }
-boolean search_flag;	// { Player is searching   }
-boolean teleport_flag;      // { Handle telport traps  }
-boolean player_light;       // { Player carrying light }
-boolean save_msg_flag;      // { Msg flag after INKEY  }
-ttype s1, s2, s3, s4;       // { Summon item strings   }
-integer i_summ_count;       // { Summon item count	   }
+integer dir_val;	    /* { For movement (running)} */
+integer old_chp, old_cmana; /* { Detect change         } */
+real regen_amount;	  /* { Regenerate hp and mana} */
+char command;		    /* { Last command          } */
+boolean moria_flag;	 /* { Next level when true  } */
+boolean reset_flag;	 /* { Do not move creatures } */
+boolean search_flag;	/* { Player is searching   } */
+boolean teleport_flag;      /* { Handle telport traps  } */
+boolean player_light;       /* { Player carrying light } */
+boolean save_msg_flag;      /* { Msg flag after INKEY  } */
+ttype s1, s2, s3, s4;       /* { Summon item strings   } */
+integer i_summ_count;       /* { Summon item count	   } */
 
 void panel_bounds()
 {
@@ -33,7 +33,7 @@ void panel_bounds()
 	panel_row_prt = panel_row_min - 2;
 	panel_col_prt = panel_col_min - 15;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
 /*  { Figure out what kind of coin is beign asked about }*/
 boolean coin_stuff(char typ, /*{ Initial of coin metal }*/
@@ -68,9 +68,9 @@ boolean coin_stuff(char typ, /*{ Initial of coin metal }*/
 	}
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void get_money_type__prompt_money(vtype astr, string out_val, boolean *commas)
 {
 	if (*commas) {
@@ -80,7 +80,7 @@ void get_money_type__prompt_money(vtype astr, string out_val, boolean *commas)
 	*commas = true;
 }
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
 integer get_money_type(string prompt, boolean *back, boolean no_check)
 {
@@ -148,9 +148,9 @@ integer get_money_type(string prompt, boolean *back, boolean no_check)
 
 	return com_val;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void py_bonuses(treasure_type *tobj, integer factor)
 {
 	/*
@@ -272,19 +272,19 @@ void py_bonuses(treasure_type *tobj, integer factor)
 		py.misc.xtr_wgt += i1 * factor;
 	}
 
-	// with py.misc do;
+	/* with py.misc do; */
 	old_dis_ac = PM.dis_ac;
-	PM.ptohit = tohit_adj(); //{ Real To Hit   }
-	PM.ptodam = todam_adj(); //{ Real To Dam   }
-	PM.ptoac = toac_adj();   //{ Real To AC    }
-	PM.pac = 0;		 //{ Real AC       }
-	PM.dis_th = PM.ptohit;   //{ Display To Hit        }
-	PM.dis_td = PM.ptodam;   //{ Display To Dam        }
-	PM.dis_ac = 0;		 //{ Display To AC         }
-	PM.dis_tac = PM.ptoac;   //{ Display AC            }
+	PM.ptohit = tohit_adj(); /*{ Real To Hit   } */
+	PM.ptodam = todam_adj(); /*{ Real To Dam   } */
+	PM.ptoac = toac_adj();   /*{ Real To AC    } */
+	PM.pac = 0;		 /*{ Real AC       } */
+	PM.dis_th = PM.ptohit;   /*{ Display To Hit        } */
+	PM.dis_td = PM.ptodam;   /*{ Display To Dam        } */
+	PM.dis_ac = 0;		 /*{ Display To AC         } */
+	PM.dis_tac = PM.ptoac;   /*{ Display AC            } */
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
-		// with equipment[i1] do;
+		/* with equipment[i1] do; */
 		if (equipment[i1].tval > 0) {
 			if (uand(Cursed_worn_bit, equipment[i1].flags) == 0) {
 				PM.pac += equipment[i1].ac;
@@ -303,7 +303,7 @@ void py_bonuses(treasure_type *tobj, integer factor)
 	PM.dis_ac += PM.dis_tac;
 
 	/* { Add in temporary spell increases	}*/
-	// with py.flags do;
+	/* with py.flags do; */
 	if (PF.invuln > 0) {
 		PM.pac += 100;
 		PM.dis_ac += 100;
@@ -325,12 +325,12 @@ void py_bonuses(treasure_type *tobj, integer factor)
 	item_flags = 0;
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
-		// with equipment[i1] do;
+		/* with equipment[i1] do; */
 		item_flags = uor(item_flags, equipment[i1].flags);
 		item_flags2 = uor(item_flags2, equipment[i1].flags2);
 	}
 
-	// with py.flags do;
+	/* with py.flags do; */
 	PF.slow_digest = uand(Slow_Digestion_worn_bit, item_flags) != 0;
 	PF.aggravate = uand(Aggravation_worn_bit, item_flags) != 0;
 	PF.teleport = uand(Teleportation_worn_bit, item_flags) != 0;
@@ -345,7 +345,7 @@ void py_bonuses(treasure_type *tobj, integer factor)
 	PF.ffall = uand(Feather_Fall_worn_bit, item_flags) != 0;
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
-		// with equipment[i1] do;
+		/* with equipment[i1] do; */
 		if (uand(Sustain_Stat_worn_bit, equipment[i1].flags) != 0) {
 			if ((equipment[i1].p1 > 0) && (equipment[i1].p1 < 7)) {
 				py.flags.sustain[equipment[i1].p1 - 1] = true;
@@ -353,9 +353,9 @@ void py_bonuses(treasure_type *tobj, integer factor)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void change_stat(stat_set tstat, integer amount, integer factor)
 {
 	/*{ Changes stats up or down for magic items		-RAK-	}*/
@@ -363,9 +363,9 @@ void change_stat(stat_set tstat, integer amount, integer factor)
 	PS.m[(int)tstat] += amount * factor;
 	update_stat(tstat);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void change_speed(integer num)
 {
 	/*
@@ -383,20 +383,20 @@ void change_speed(integer num)
 		m_list[i1].cspeed += num;
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void update_stat(stat_set tstat)
 {
 	PS.c[(int)tstat] = squish_stat(
 	    PS.p[(int)tstat] + 10 * PS.m[(int)tstat] - PS.l[(int)tstat]);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void change_rep(integer amt)
 {
-	// with py.misc do;
+	/* with py.misc do; */
 	if ((amt < 0) ||
 	    (PM.rep + amt <= 0)) { /*{bad deed or make up for sins}*/
 		PM.rep += amt;
@@ -411,9 +411,9 @@ void change_rep(integer amt)
 		    trunc(sqrt((20 + PM.rep) * (20 + PM.rep) + 40 * amt) - 20);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean panel_contains(integer y, integer x)
 {
 	/*{ Tests a given point to see if it is within the screen -RAK-   }*/
@@ -429,9 +429,9 @@ boolean panel_contains(integer y, integer x)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Given two sets of points, draw the block		}*/
@@ -449,19 +449,20 @@ void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	/*{ From uppermost to bottom most lines player was on...  }*/
 	/*{ Points are guaranteed to be on the screen (I hope...) }*/
 
-	// fprintf(debug_file,": draw_block: y1: %d  x1: %d  y2: %d  x2: %d\n",
-	//    y1,x1,y2,x2);
-	// fflush(debug_file);
+	/* fprintf(debug_file,": draw_block: y1: %d  x1: %d  y2: %d  x2: %d\n",
+	 */
+	/*    y1,x1,y2,x2); */
+	/* fflush(debug_file); */
 
 	topp = maxmin(y1, y2, panel_row_min);
 	bott = minmax(y1, y2, panel_row_max);
 	left = maxmin(x1, x2, panel_col_min);
 	righ = minmax(x1, x2, panel_col_max);
 
-	// fprintf(debug_file,": draw_block: topp: %d  bott: %d  left: %d
-	// right: %d\n",
-	//      topp,bott,left,righ);
-	// fflush(debug_file);
+	/* fprintf(debug_file,": draw_block: topp: %d  bott: %d  left: %d */
+	/* right: %d\n", */
+	/*      topp,bott,left,righ); */
+	/* fflush(debug_file); */
 
 	new_topp = y2 - 1; /*{ Margins for new things to appear}*/
 	new_bott = y2 + 1;
@@ -477,11 +478,11 @@ void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 
 		for (i2 = left; i2 <= righ;
 		     i2++) { /*{ Leftmost to rightmost do}*/
-			// with cave[i1,i2] do;
+			/* with cave[i1,i2] do; */
 			if ((cave[i1][i2].pl) || (cave[i1][i2].fm)) {
 				flag = (((i1 == y1) && (i2 == x1)) ||
 					((i1 == y2) && (i2 == x2)));
-				// flag = true;
+				/* flag = true; */
 			} else {
 				flag = true;
 				if (((i1 >= new_topp) && (i1 <= new_bott)) &&
@@ -546,9 +547,9 @@ void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 		}
 
 		floor_str[floor_str_len] = 0;
-		//    fprintf(debug_file,":   floor before if %d:
-		//    |%s|\n",i1,floor_str);
-		//    fflush(debug_file);
+		/*    fprintf(debug_file,":   floor before if %d: */
+		/*    |%s|\n",i1,floor_str); */
+		/*    fflush(debug_file); */
 
 		if (xpos > 0) {
 			i2 = i1; /*{ Var for PRINT cannot be loop index}*/
@@ -566,7 +567,7 @@ void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__draw_block", "m");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Normal movement                                   }*/
@@ -593,7 +594,7 @@ void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__sub1_move_light", "m");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When FIND_FLAG, light only permanent features     }*/
@@ -623,7 +624,7 @@ void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 		save_str_len = 0;
 		xpos = 0;
 		for (i2 = x2 - 1; i2 <= x2 + 1; i2++) {
-			// with cave[i1,i2] do;
+			/* with cave[i1,i2] do; */
 			flag = false;
 			if (!((cave[i1][i2].fm) || (cave[i1][i2].pl))) {
 				tmp_char = ' ';
@@ -669,7 +670,7 @@ void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 					xpos = i2;
 				}
 				if (save_str[0] != 0) {
-					// floor_str := floor_str + save_str;
+					/* floor_str := floor_str + save_str; */
 					floor_str[floor_str_len] = 0;
 					save_str[save_str_len] = 0;
 					strcat(floor_str, save_str);
@@ -691,7 +692,7 @@ void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__sub2_move_light", "m");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When blinded, move only the player symbol...              }*/
@@ -713,7 +714,7 @@ void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__sub3_move_light", "m");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ With no light, movement becomes involved...               }*/
@@ -743,7 +744,7 @@ void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__sub4_move_light", "m");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Package for moving the character's light about the screen     }*/
@@ -760,9 +761,9 @@ void move_light(integer y1, integer x1, integer y2, integer x2)
 		ml__sub1_move_light(y1, x1, y2, x2); /* normal */
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void lite_spot(integer y, integer x)
 {
 	if (panel_contains(y, x)) {
@@ -776,9 +777,9 @@ void unlite_spot(integer y, integer x)
 		print(' ', y, x);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void teleport(integer dis)
 {
 	/*{ Teleport the player to a new location                 -RAK-   }*/
@@ -799,7 +800,7 @@ void teleport(integer dis)
 	move_rec(char_row, char_col, y, x);
 	for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
 		for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
-			// with cave[i1,i2] do;
+			/* with cave[i1,i2] do; */
 			cave[i1][i2].tl = false;
 			if (!(test_light(i1, i2))) {
 				unlite_spot(i1, i2);
@@ -819,9 +820,9 @@ void teleport(integer dis)
 
 	LEAVE("teleport", "d")
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean get_panel(integer y, integer x, boolean forceit)
 {
 	/*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
@@ -865,9 +866,9 @@ boolean get_panel(integer y, integer x, boolean forceit)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void move_rec(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Moves creature record from one space to another       -RAK-   }*/
@@ -879,9 +880,9 @@ void move_rec(integer y1, integer x1, integer y2, integer x2)
 	cave[y1][x1].cptr = 0;
 	cave[y2][x2].cptr = i1;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
 		   integer *count)
 {
@@ -898,10 +899,10 @@ boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
 
 	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
 
-		//    fprintf(debug_file,"find: >%s<\n",ptr->data.name);
-		//    fprintf(debug_file,"find:     %d %d %d %d\n",
-		//	    (integer)ptr->data.tval, (integer)ptr->is_in,
-		//	    (integer)ptr->insides, (integer)ptr->ok);
+		/*    fprintf(debug_file,"find: >%s<\n",ptr->data.name); */
+		/*    fprintf(debug_file,"find:     %d %d %d %d\n", */
+		/*	    (integer)ptr->data.tval, (integer)ptr->is_in, */
+		/*	    (integer)ptr->insides, (integer)ptr->ok); */
 
 		if ((is_in(ptr->data.tval, item_val)) &&
 		    (!(ptr->is_in) || inner) &&
@@ -922,9 +923,9 @@ boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
 	RETURN("find_range", "", 'b', "found", &flag);
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void carry(integer y, integer x)
 {
 	/*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
@@ -943,7 +944,7 @@ void carry(integer y, integer x)
 	money_flag = false;
 	find_flag = false;
 
-	// with cave[y][x]. do;
+	/* with cave[y][x]. do; */
 	inven_temp->data = t_list[cave[y][x].tptr];
 
 	/*{ There's GOLD in them thar hills!      }*/
@@ -1013,9 +1014,9 @@ void carry(integer y, integer x)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 integer react(integer x)
 {
 	/*  returns 0 to 10 -- SD 2.4; */
@@ -1035,9 +1036,9 @@ integer react(integer x)
 
 	return ans;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void battle_game(integer plus, vtype kb_str)
 {
 	integer score, i1, time;
@@ -1048,7 +1049,7 @@ void battle_game(integer plus, vtype kb_str)
 		score = 0;
 		time = 10;
 
-		// with py.misc do;
+		/* with py.misc do; */
 		for (i1 = 1; i1 <= 7; i1++) {
 			if (player_test_hit(PM.bth, PM.lev, plus, 20 * i1,
 					    false)) {
@@ -1106,14 +1107,14 @@ void battle_game(integer plus, vtype kb_str)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void brothel_game()
 {
 	if (get_yes_no("Do you accept?")) {
 		change_rep(-3);
-		// with py.misc do;
+		/* with py.misc do; */
 		if ((PM.disarm + PM.lev + 2 * todis_adj() + spell_adj(INT)) >
 		    randint(100)) {
 			msg_print("Good! You are invited to join the house!");
@@ -1125,9 +1126,9 @@ void brothel_game()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void guild_or_not(boolean passed)
 {
 	if (passed) {
@@ -1147,16 +1148,16 @@ void guild_or_not(boolean passed)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void thief_games()
 {
 	if (randint(2) == 1) {
 		msg_print("The thieves invite you to prove your ability to "
 			  "pick locks.");
 		if (get_yes_no("Do you accept?")) {
-			// with py.misc do;
+			/* with py.misc do; */
 			guild_or_not((PM.disarm + PM.lev + 2 * todis_adj() +
 				      spell_adj(INT)) > randint(100));
 		}
@@ -1167,13 +1168,13 @@ void thief_games()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void kicked_out() { msg_print("The owner kicks you out..."); }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void call_guards(vtype who)
 {
 	vtype out_str;
@@ -1183,17 +1184,17 @@ void call_guards(vtype who)
 	monster_summon_by_name(char_row, char_col, "Town Guard", true, false);
 	monster_summon_by_name(char_row, char_col, "Town Guard", true, false);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void call_wizards()
 {
 	msg_print("The mage calls for a Town Wizard to remove you.");
 	monster_summon_by_name(char_row, char_col, "Town Wizard", true, false);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void eat_the_meal()
 {
 	integer yummers, old_food;
@@ -1249,9 +1250,9 @@ void eat_the_meal()
 		break;
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void invite_for_meal()
 {
 	msg_print("The occupants invite you in for a meal.");
@@ -1259,9 +1260,9 @@ void invite_for_meal()
 		eat_the_meal();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void party()
 {
 	msg_print("The owner invites you to join the party!");
@@ -1303,9 +1304,9 @@ void party()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void spend_the_night(vtype who)
 {
 	vtype out_str;
@@ -1319,9 +1320,9 @@ void spend_the_night(vtype who)
 		eat_the_meal();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void worship()
 {
 	integer preachy, i1;
@@ -1354,7 +1355,7 @@ void worship()
 
 		msg_print("The priest asks for donations for a new church.");
 		if (get_yes_no("Will you give him some money?")) {
-			// with py.misc do;
+			/* with py.misc do; */
 			if (PM.money[TOTAL_] > 0) {
 				msg_print("Bless you, dude!");
 
@@ -1392,9 +1393,9 @@ void worship()
 		change_rep(-5);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void beg_food()
 {
 	/*
@@ -1423,9 +1424,9 @@ void beg_food()
 	     end;
 	     */
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void beg_money()
 {
 	integer i1;
@@ -1433,7 +1434,7 @@ void beg_money()
 	msg_print("The occupants beg you for money.");
 
 	if (get_yes_no("Will you give them some?")) {
-		// with py.misc do;
+		/* with py.misc do; */
 		if (PM.money[TOTAL_] > 0) {
 			msg_print("How kind of you!");
 			spend_time(100, "giving handouts", false);
@@ -1462,9 +1463,9 @@ void beg_money()
 		change_rep(-10); /*{bug fixed here; used to be 10 -- MAV }*/
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean player_test_hit(integer bth, integer level, integer pth, integer ac,
 			boolean was_fired)
 {
@@ -1497,9 +1498,9 @@ boolean player_test_hit(integer bth, integer level, integer pth, integer ac,
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean test_hit(integer bth, integer level, integer pth, integer ac)
 {
 	/*{ Attacker's level and pluses, defender's AC            -RAK-   }*/
@@ -1521,9 +1522,9 @@ boolean test_hit(integer bth, integer level, integer pth, integer ac)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean minus_ac(integer typ_dam)
 {
 	/*{ AC gets worse                                         -RAK-   }*/
@@ -1572,7 +1573,7 @@ boolean minus_ac(integer typ_dam)
 	if (i1 > 0) {
 		i2 = tmp[randint(i1)];
 		inven_temp->data = equipment[i2];
-		// with equipment[i2] do;
+		/* with equipment[i2] do; */
 		if ((equipment[i2].flags & typ_dam) != 0) {
 			objdes(out_val, inven_temp, false);
 			sprintf(out_str, "Your %s resists damage!", out_val);
@@ -1590,9 +1591,9 @@ boolean minus_ac(integer typ_dam)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void fire_dam(integer dam, vtype kb_str)
 {
 	/*{ Burn the fool up...                                   -RAK-   }*/
@@ -1618,9 +1619,9 @@ void fire_dam(integer dam, vtype kb_str)
 		prt_weight();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void cold_dam(integer dam, vtype kb_str)
 {
 	/*{ Freeze him to death...                                -RAK-   }*/
@@ -1643,9 +1644,9 @@ void cold_dam(integer dam, vtype kb_str)
 		prt_weight();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void light_dam(integer dam, vtype kb_str)
 {
 	/*{ Lightning bolt the sucker away...                     -RAK-   }*/
@@ -1661,9 +1662,9 @@ void light_dam(integer dam, vtype kb_str)
 
 	print_stat |= 0x0080;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void acid_dam(integer dam, vtype kb_str)
 {
 	/*{ Throw acid on the hapless victim                      -RAK-   }*/
@@ -1703,9 +1704,9 @@ void acid_dam(integer dam, vtype kb_str)
 		prt_weight();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void xp_loss(integer amount)
 {
 	/*{ Lose experience hack for lose_exp breath              -RAK-   }*/
@@ -1717,7 +1718,7 @@ void xp_loss(integer amount)
 
 	amount = (py.misc.exp / 100) * MON_DRAIN_LIFE; /* passed val?  XXXX */
 
-	// with py.misc do;
+	/* with py.misc do; */
 	msg_print("You feel your life draining away!");
 	if (amount > PM.exp) {
 		PM.exp = 0;
@@ -1746,7 +1747,7 @@ void xp_loss(integer amount)
 			PM.mana = 0;
 		}
 
-		// with class[PM.pclass]. do;
+		/* with class[PM.pclass]. do; */
 		if (class[PM.pclass].mspell || class[PM.pclass].pspell ||
 		    class[PM.pclass].dspell || class[PM.pclass].bspell ||
 		    class[PM.pclass].mental) {
@@ -1793,9 +1794,9 @@ void xp_loss(integer amount)
 	prt_level();
 	prt_title();
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void corrode_gas(vtype kb_str)
 {
 	/*{ Corrode the unsuspecting person's armor               -RAK-   }*/
@@ -1815,9 +1816,9 @@ void corrode_gas(vtype kb_str)
 		prt_weight();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void poison_gas(integer dam, vtype kb_str)
 {
 	/*{ Poison gas the idiot...                               -RAK-   }*/
@@ -1826,16 +1827,16 @@ void poison_gas(integer dam, vtype kb_str)
 	print_stat |= 0x0040;
 	py.flags.poisoned += 12 + randint(dam);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean no_light()
 {
 	/*{ Returns true if player has no light                   -RAK-   }*/
 
 	boolean return_value = false;
 
-	// with cave[char_row,char_col] do;
+	/* with cave[char_row,char_col] do; */
 	if (!(cave[char_row][char_col].tl)) {
 		if (!(cave[char_row][char_col].pl)) {
 			return_value = true;
@@ -1843,9 +1844,9 @@ boolean no_light()
 	}
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void rest()
 {
 	/*{ Resting allows a player to safely restore his hp      -RAK-   }*/
@@ -1879,9 +1880,9 @@ void rest()
 		reset_flag = true;
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void water_move_player() { /* I wonder what was going to go in here... */}
 
 boolean water_move_creature(integer num)
@@ -1896,9 +1897,9 @@ boolean water_move_item(integer row, integer col, integer num)
 	/* I sense a patter about water moves... */
 	return true;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean water_move()
 {
 	integer i1;
@@ -1933,9 +1934,9 @@ boolean water_move()
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void search(integer y, integer x, integer chance)
 {
 	/*{ Searches for hidden things...                         -RAK-   }*/
@@ -1943,7 +1944,7 @@ void search(integer y, integer x, integer chance)
 	integer i1, i2;
 	vtype out_val;
 
-	// with py.flags do;
+	/* with py.flags do; */
 	if (PF.confused + PF.blind > 0) {
 		chance = trunc(chance / 10.0);
 	} else if (no_light()) {
@@ -1955,12 +1956,13 @@ void search(integer y, integer x, integer chance)
 			if (in_bounds(i1, i2)) {
 				if ((i1 != y) || (i2 != x)) {
 					if (randint(100) < chance) {
-						// with cave[i1][i2]. do;
+						/* with cave[i1][i2]. do; */
 
 						/*{ Search for hidden objects
 						 * }*/
 						if (cave[i1][i2].tptr > 0) {
-							// with t_list[tptr] do;
+							/* with t_list[tptr] do;
+							 */
 
 							/*{ Trap on floor? }*/
 							if (t_list[cave[i1][i2]
@@ -2039,9 +2041,9 @@ void search(integer y, integer x, integer chance)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 {
 
@@ -2071,7 +2073,7 @@ void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void light_room(integer y, integer x)
 {
 	/*{ Room is lit, make it appear                           -RAK-   }*/
@@ -2098,7 +2100,7 @@ void light_room(integer y, integer x)
 		floor_str_len = 0;
 		ypos = i1;
 		for (i2 = start_col; i2 <= end_col; i2++) {
-			// with cave[i1,i2] do;
+			/* with cave[i1,i2] do; */
 			if ((cave[i1][i2].pl) || (cave[i1][i2].fm)) {
 				if (floor_str_len == 0) {
 					xpos = i2;
@@ -2119,9 +2121,9 @@ void light_room(integer y, integer x)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean pick_dir(integer dir)
 {
 	/*{ Picks new direction when in find mode                 -RAK-   }*/
@@ -2168,9 +2170,9 @@ boolean pick_dir(integer dir)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void bother(integer num)
 {
 	if (num > 5) {
@@ -2206,9 +2208,9 @@ void bother(integer num)
 
 	msg_print(" ");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void area_affect(integer dir, integer y, integer x)
 {
 	/*        { Turns off Find_flag if something interesting appears  -RAK-
@@ -2256,7 +2258,7 @@ void area_affect(integer dir, integer y, integer x)
 			col = x;
 			if (move_dir(z[i1], &row, &col)) {
 
-				// with cave[row,col] do;
+				/* with cave[row,col] do; */
 
 				/* { Empty doorways        }*/
 				if (cave[row][col].fval == corr_floor2.ftval) {
@@ -2301,9 +2303,10 @@ void area_affect(integer dir, integer y, integer x)
 					    (cave[row][col].pl) ||
 					    (player_light)) {
 						if (cave[row][col].cptr > 1) {
-							// with
-							// m_list[cave[row][col].cptr]
-							// do;
+							/* with */
+							/* m_list[cave[row][col].cptr]
+							 */
+							/* do; */
 							if (m_list
 								[cave[row][col]
 								     .cptr]
@@ -2319,16 +2322,16 @@ void area_affect(integer dir, integer y, integer x)
 		}	 /* end for */
 	}		  /* end if find and not blind */
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean delete_object(integer y, integer x)
 {
 	/*{ Deletes object from given location                    -RAK-   }*/
 
 	boolean return_value = false;
 
-	// with cave[y,x] do;
+	/* with cave[y,x] do; */
 	if (t_list[cave[y][x].tptr].tval == Secret_door) {
 		cave[y][x].fval = corr_floor3.ftval;
 	}
@@ -2345,9 +2348,9 @@ boolean delete_object(integer y, integer x)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 integer mon_take_hit(integer monptr, integer dam)
 {
 	/*{ Decreases monsters hit points and deletes monster if needed.  }*/
@@ -2359,7 +2362,7 @@ integer mon_take_hit(integer monptr, integer dam)
 
 	ENTER("mon_take_hit", "d");
 
-	// with m_list[monptr]. do;
+	/* with m_list[monptr]. do; */
 	m_list[monptr].hp -= dam;
 	m_list[monptr].csleep = 0;
 	if (m_list[monptr].hp < 0) {
@@ -2376,8 +2379,8 @@ integer mon_take_hit(integer monptr, integer dam)
 				  "Arch-Wizard.");
 		}
 
-		// with c_list[m_list[monptr].mptr]. do;
-		// with py.misc do;
+		/* with c_list[m_list[monptr].mptr]. do; */
+		/* with py.misc do; */
 		if (((c_list[m_list[monptr].mptr].cmove & 0x00004000) == 0) &&
 		    (c_list[m_list[monptr].mptr].mexp > 0)) {
 
@@ -2435,9 +2438,9 @@ integer mon_take_hit(integer monptr, integer dam)
 	RETURN("mon_take_hit", "d", 'd', "monval", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void monster_death(integer y, integer x, unsigned long flags)
 {
 	/*{ Allocates objects upon a creatures death              -RAK-   }*/
@@ -2476,9 +2479,9 @@ void monster_death(integer y, integer x, unsigned long flags)
 		msg_print("Use '@' when you are ready to quit.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void summon_object(integer y, integer x, integer num, integer typ)
 {
 	/*{ Creates objects nearby the coordinates given          -RAK-   }*/
@@ -2495,7 +2498,7 @@ void summon_object(integer y, integer x, integer num, integer typ)
 			i3 = x - 3 + randint(5);
 			if (in_bounds(i2, i3)) {
 				if (los(y, x, i2, i3)) { /*{OOK!}*/
-					// with cave[i2][i3]. do;
+					/* with cave[i2][i3]. do; */
 					if (is_in(cave[i2][i3].fval,
 						  floor_set)) {
 						if (cave[i2][i3].tptr == 0) {
@@ -2546,9 +2549,9 @@ void summon_object(integer y, integer x, integer num, integer typ)
 		num--;
 	} while (num != 0);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void delete_monster(integer i2)
 {
 	/*{ Deletes a monster entry from the level                -RAK-   }*/
@@ -2568,10 +2571,10 @@ void delete_monster(integer i2)
 		m_list[i1].nptr = i3;
 	}
 
-	// with m_list[i2]. do;
+	/* with m_list[i2]. do; */
 	cave[m_list[i2].fy][m_list[i2].fx].cptr = 0;
 	if (m_list[i2].ml) {
-		// with cave[fy][fx]. do;
+		/* with cave[fy][fx]. do; */
 		if ((cave[m_list[i2].fy][m_list[i2].fx].pl) ||
 		    (cave[m_list[i2].fy][m_list[i2].fx].tl)) {
 			lite_spot(m_list[i2].fy, m_list[i2].fx);
@@ -2585,9 +2588,9 @@ void delete_monster(integer i2)
 
 	LEAVE("delete_monster", "c");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean py_attack(integer y, integer x)
 {
 	/*{ Player attacks a (poor, defenseless) creature         -RAK-   }*/
@@ -2674,7 +2677,7 @@ boolean py_attack(integer y, integer x)
 
 	/*{ Loop for number of blows, trying to hit the critter...        }*/
 	if (mean_jerk_flag) {
-		// with py.misc do;
+		/* with py.misc do; */
 		do {
 			if (player_test_hit(PM.bth, PM.lev, tot_tohit,
 					    c_list[a_mptr].ac, false)) {
@@ -2685,7 +2688,7 @@ boolean py_attack(integer y, integer x)
 					sprintf(out_val, "You hit %s.", m_name);
 				}
 				msg_print(out_val);
-				// with equipment[Equipment_primary]. do;
+				/* with equipment[Equipment_primary]. do; */
 				/*{ Weapon?       }*/
 				if (equipment[Equipment_primary].tval > 0) {
 					i3 =
@@ -2736,7 +2739,7 @@ boolean py_attack(integer y, integer x)
 					i3 = 0;
 				}
 				/*{ See if we done it in... }*/
-				// with m_list[a_cptr]. do;
+				/* with m_list[a_cptr]. do; */
 				if (mon_take_hit(a_cptr, i3) > 0) {
 					sprintf(out_val, "You have slain %s.",
 						m_name);
@@ -2749,7 +2752,7 @@ boolean py_attack(integer y, integer x)
 								alive...}*/
 				}
 
-				// with equipment[Equipment_primary]. do;
+				/* with equipment[Equipment_primary]. do; */
 				/*{ Use missiles up}*/
 				if (is_in(equipment[Equipment_primary].tval,
 					  catch_this)) {
@@ -2780,9 +2783,9 @@ boolean py_attack(integer y, integer x)
 	RETURN("py_attack", "", 'b', "hit", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 integer tot_dam(treasure_type *item, integer tdam, creature_type *monster)
 {
 	/*{ Special damage due to magical abilities of object     -RAK-   }*/
@@ -2798,9 +2801,9 @@ integer tot_dam(treasure_type *item, integer tdam, creature_type *monster)
 	flags = item->flags;
 	flags2 = item->flags2;
 
-	// with item do;
+	/* with item do; */
 	if (is_in(item->tval, stuff_that_goes_thump)) {
-		// with monster do;
+		/* with monster do; */
 
 		/*{ Slay Dragon   }*/
 		if ((uand(cdefense, 0x0001) != 0) &&
@@ -2850,14 +2853,14 @@ integer tot_dam(treasure_type *item, integer tdam, creature_type *monster)
 
 	return tdam;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void get_player_move_rate()
 {
 	integer cur_swim;
 
-	// with py.flags do;
+	/* with py.flags do; */
 	if (is_in(cave[char_row][char_col].fval, earth_set)) {
 		PF.move_rate = 4;
 	} else {
@@ -2876,9 +2879,9 @@ void get_player_move_rate()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean xor (integer thing1, integer thing2) {
 		    /* with fake boolean values you cant really do a (bool1 !=
 		       bool2)
@@ -2886,7 +2889,7 @@ boolean xor (integer thing1, integer thing2) {
 
 		    return !((thing1 && thing2) || (!thing1 && !thing2));
 	    }
-    //////////////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////////// */
     integer movement_rate(integer cspeed, integer mon)
 {
 	/*{ Given speed, returns number of moves this turn.       -RAK-   }*/
@@ -2898,9 +2901,9 @@ boolean xor (integer thing1, integer thing2) {
 				   _                in wrong element }*/
 	integer return_value;
 
-	// with m_list[mon] do;
-	// with c_list[mptr] do;
-	// with cave[fy,fx] do;
+	/* with m_list[mon] do; */
+	/* with c_list[mptr] do; */
+	/* with cave[fy,fx] do; */
 	if (xor((is_in(cave[MY(mon)][MX(mon)].fval, earth_set) ||
 		 is_in(cave[MY(mon)][MX(mon)].fval, pwall_set)),
 		(uand(c_list[m_list[mon].mptr].cmove, 0x00000010) == 0))) {
@@ -2938,9 +2941,9 @@ boolean xor (integer thing1, integer thing2) {
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void desc_remain(treas_ptr item_ptr)
 {
 	/*{ Describe amount of item remaining...                  -RAK-   }*/
@@ -2949,21 +2952,21 @@ void desc_remain(treas_ptr item_ptr)
 
 	inven_temp->data = item_ptr->data;
 
-	// with inven_temp->data do;
+	/* with inven_temp->data do; */
 
 	inven_temp->data.number--;
 	objdes(out_val, inven_temp, true);
 	sprintf(out_val2, "You have %s.", out_val);
 	msg_print(out_val2);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void add_food(integer num)
 {
 	/*{ Add to the players food time                          -RAK-   }*/
 
-	// with py.flags do;
+	/* with py.flags do; */
 	if (PF.foodc < 0) {
 		PF.foodc = 0;
 	}
@@ -2999,9 +3002,9 @@ void add_food(integer num)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean twall(integer y, integer x, integer t1, integer t2)
 {
 	/*{ Tunneling through real wall: 10,11,12                 -RAK-   }*/
@@ -3010,7 +3013,7 @@ boolean twall(integer y, integer x, integer t1, integer t2)
 	obj_set some_walls = {1, 2, 0};
 	boolean return_value = false;
 
-	// with cave[y][x]. do;
+	/* with cave[y][x]. do; */
 	if (t1 > t2) {
 		if (next_to4(y, x, some_walls) > 0) {
 			cave[y][x].fval = corr_floor2.ftval;
@@ -3036,9 +3039,9 @@ boolean twall(integer y, integer x, integer t1, integer t2)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void desc_charges(treas_ptr item_ptr)
 {
 	/*{ Describe number of remaining charges...               -RAK-   }*/
@@ -3051,9 +3054,9 @@ void desc_charges(treas_ptr item_ptr)
 		msg_print(out_val);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
 		   boolean *redraw)
 {
@@ -3076,7 +3079,7 @@ boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
 		}
 		if (i3 > 0) {
 			i3--;
-			// with magic_spell[py.misc.pclass][i3]. do;
+			/* with magic_spell[py.misc.pclass][i3]. do; */
 			if ((magic_spell[py.misc.pclass][i3].slevel <=
 			     py.misc.lev) &&
 			    (magic_spell[py.misc.pclass][i3].learned)) {
@@ -3100,9 +3103,9 @@ boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
 
 	return flag;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void d__examine_book()
 {
 	/*{ Examine a Book                                        -RAK-   }*/
@@ -3124,7 +3127,7 @@ void d__examine_book()
 	} else if (get_item(&item_ptr, "Which Book?", &redraw, i3, &trash_char,
 			    false, false)) {
 		flag = true;
-		// with item_ptr->data. do;
+		/* with item_ptr->data. do; */
 		if (class[PM.pclass].mspell) {
 			if (item_ptr->data.tval != Magic_Book) {
 				msg_print(
@@ -3167,7 +3170,8 @@ void d__examine_book()
 					i3--;
 				}
 				if (i3 > 0) {
-					// with magic_spell[PM.pclass][i3]. do;
+					/* with magic_spell[PM.pclass][i3]. do;
+					 */
 					i3--;
 					i5++;
 					if (magic_spell[PM.pclass][i3].slevel <
@@ -3201,9 +3205,9 @@ void d__examine_book()
 		draw_cave();
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void d__jamdoor()
 {
 	/*{ Jam a closed door                                     -RAK-   }*/
@@ -3217,16 +3221,16 @@ void d__jamdoor()
 	x = char_col;
 
 	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		// with cave[y][x]. do;
+		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
-			// with t_list[cave[y][x].tptr]. do;
+			/* with t_list[cave[y][x].tptr]. do; */
 			if (t_list[cave[y][x].tptr].tval == Closed_door) {
 				if (cave[y][x].cptr == 0) {
 					if (find_range(pick_a_spike, false, &i1,
 						       &i2)) {
 						msg_print("You jam the door "
 							  "with a spike.");
-						// with i1->data. do;
+						/* with i1->data. do; */
 						if (i1->data.number > 1) {
 							i1->data.number--;
 						} else {
@@ -3258,9 +3262,9 @@ void d__jamdoor()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 /*{ Throw an object across the dungeon...                 -RAK-   }*/
 /*{ Note: Flasks of oil do fire damage                            }*/
@@ -3272,7 +3276,7 @@ void to__inven_throw(treas_ptr item_ptr)
 	inven_temp->data = item_ptr->data;
 	inven_temp->data.number = 1;
 
-	// with item_ptr->data. do;
+	/* with item_ptr->data. do; */
 
 	if ((item_ptr->data.number > 1) && (item_ptr->data.subval > 511)) {
 		item_ptr->data.number--;
@@ -3283,7 +3287,7 @@ void to__inven_throw(treas_ptr item_ptr)
 
 	prt_weight();
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
 obj_set *to__poink(obj_set *ammo_types)
 {
@@ -3317,13 +3321,13 @@ obj_set *to__poink(obj_set *ammo_types)
 	LEAVE("to__poink", "d");
 	return ammo_types;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void to__facts(integer *tbth, integer *tpth, integer *tdam, integer *tdis,
 	       boolean to_be_fired)
 {
 	integer tmp_weight;
 
-	// with inven_temp->data. do;
+	/* with inven_temp->data. do; */
 
 	if (inven_temp->data.weight < 1) {
 		tmp_weight = 1;
@@ -3383,7 +3387,7 @@ void to__facts(integer *tbth, integer *tpth, integer *tdam, integer *tdis,
 		    equipment[Equipment_primary].weight + 5000;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void to__drop_throw(integer y, integer x)
 {
 	integer i1, i2, i3, cur_pos;
@@ -3397,7 +3401,7 @@ void to__drop_throw(integer y, integer x)
 	if (randint(10) > 1) {
 		do {
 			if (in_bounds(i1, i2)) {
-				// with cave[i1][i2]. do;
+				/* with cave[i1][i2]. do; */
 				if (cave[i1][i2].fopen) {
 					if (cave[i1][i2].tptr == 0) {
 						flag = true;
@@ -3425,7 +3429,7 @@ void to__drop_throw(integer y, integer x)
 		msg_print(out_val2);
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__throw_object(boolean to_be_fired)
 {
 	integer tbth, tpth, tdam, tdis, crit_mult;
@@ -3493,7 +3497,7 @@ void d__throw_object(boolean to_be_fired)
 				to__facts(&tbth, &tpth, &tdam, &tdis,
 					  to_be_fired);
 
-				// with inven_temp->data. do;
+				/* with inven_temp->data. do; */
 				flag = false;
 				y = char_row;
 				x = char_col;
@@ -3509,13 +3513,14 @@ void d__throw_object(boolean to_be_fired)
 					if (cur_dis > tdis) {
 						flag = true;
 					}
-					// with cave[y][x]. do;
+					/* with cave[y][x]. do; */
 					if ((cave[y][x].fopen) && (!flag)) {
 						if (cave[y][x].cptr > 1) {
 							flag = true;
-							// with
-							// m_list[cave[y][x].cptr].
-							// do;
+							/* with */
+							/* m_list[cave[y][x].cptr].
+							 */
+							/* do; */
 							tbth -= cur_dis;
 							if (player_test_hit(
 								tbth, PM.lev,
@@ -3555,9 +3560,10 @@ void d__throw_object(boolean to_be_fired)
 								    tdam,
 								    &(c_list
 									  [i1]));
-								// with
-								// inven_temp->data.
-								// do;
+								/* with */
+								/* inven_temp->data.
+								 */
+								/* do; */
 								crit_mult = critical_blow(
 								    inven_temp
 									->data
@@ -3631,9 +3637,9 @@ void d__throw_object(boolean to_be_fired)
 
 	LEAVE("d__throw_object", "d");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void d__look()
 {
 	/*{ Look at an object, trap, or monster                   -RAK-   }*/
@@ -3654,7 +3660,7 @@ void d__look()
 			i1 = 0;
 			do {
 				move_dir(dir, &y, &x);
-				// with cave[y][x]. do;
+				/* with cave[y][x]. do; */
 				if (cave[y][x].cptr > 1) {
 					if (m_list[cave[y][x].cptr].ml) {
 						i2 = m_list[cave[y][x].cptr]
@@ -3757,31 +3763,31 @@ void d__look()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 /* QQQQQQQ */
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void d__set_coords(integer *c_row, integer *c_col)
 {
 	/*{ Set up the character co-ords          }*/
@@ -3798,13 +3804,13 @@ void d__set_coords(integer *c_row, integer *c_col)
 			   (!(is_in(cave[*c_row][*c_col].fval, water_set)))));
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__sun_rise_or_set()
 {
 	integer i1, i2;
 
 	/*{ Sunrise and Sunset on town level	  -KRC-	}*/
-	// with py.misc.cur_age do;
+	/* with py.misc.cur_age do; */
 	if (dun_level == 0) {
 		if ((PM.cur_age.hour == 6) && (PM.cur_age.secs == 0)) {
 			for (i1 = 1; i1 <= cur_height; i1++) {
@@ -3830,7 +3836,7 @@ void d__sun_rise_or_set()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__check_hours()
 {
 	/*{ Check for game hours                          }*/
@@ -3871,7 +3877,7 @@ void d__check_hours()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__print_updated_stats()
 {
 	if (print_stat > 0) {
@@ -3907,11 +3913,11 @@ void d__print_updated_stats()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__check_light_status()
 {
 	/*{ Check light status                            }*/
-	// with equipment[Equipment_light] do;
+	/* with equipment[Equipment_light] do; */
 	ENTER("d__check_light_status", "d");
 	if (player_light) {
 		if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
@@ -3948,14 +3954,14 @@ void d__check_light_status()
 
 	LEAVE("d__check_light_status", "d");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__hunger_interrupt(char *message)
 {
 	msg_print(message);
 	msg_flag = 0;
 	rest_off();
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__check_food()
 {
 	/*{ Check food status             }*/
@@ -4031,7 +4037,7 @@ void d__check_food()
 
 	} /* end if (food < alert) */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__eat_food()
 {
 	/*{ Food consumtion       }*/
@@ -4062,11 +4068,11 @@ void d__eat_food()
 		PF.foodc -= PF.food_digested;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__regenerate()
 {
 	/*{ Regenerate            }*/
-	// with py.misc do;
+	/* with py.misc do; */
 	if (PF.regenerate) {
 		regen_amount *= 1.5;
 	}
@@ -4082,7 +4088,7 @@ void d__regenerate()
 		regenmana(regen_amount);
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_blindness()
 {
 	/*{ Blindness             }*/
@@ -4105,7 +4111,7 @@ void d__update_blindness()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_confusion()
 {
 	/*{ Confusion             }*/
@@ -4125,7 +4131,7 @@ void d__update_confusion()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_resist_lightning()
 {
 	/*{ Resist Lightning }*/
@@ -4133,7 +4139,7 @@ void d__update_resist_lightning()
 		PF.resist_lght--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_monster_protect()
 {
 	/*{ Protection from Monsters }*/
@@ -4141,7 +4147,7 @@ void d__update_monster_protect()
 		PF.protmon--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_fire_ring()
 {
 	/*{ Ring of Fire }*/
@@ -4152,7 +4158,7 @@ void d__update_fire_ring()
 		PF.ring_fire--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_frost_ring()
 {
 
@@ -4163,7 +4169,7 @@ void d__update_frost_ring()
 		PF.ring_ice--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_blade_barrier()
 {
 
@@ -4174,7 +4180,7 @@ void d__update_blade_barrier()
 		PF.blade_ring--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_magic_protect()
 {
 	/*{ Magic protection }*/
@@ -4190,7 +4196,7 @@ void d__update_magic_protect()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_resist_petrfy()
 {
 	/*{Timed resist Petrification}*/
@@ -4198,7 +4204,7 @@ void d__update_resist_petrfy()
 		PF.resist_petri--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_stealth()
 {
 	/*{ Timed Stealth    }*/
@@ -4216,7 +4222,7 @@ void d__update_stealth()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_resist_charm()
 {
 	/*{ Resist Charm }*/
@@ -4233,7 +4239,7 @@ void d__update_resist_charm()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_hoarse()
 {
 	/*{ Hoarse                }*/
@@ -4244,7 +4250,7 @@ void d__update_hoarse()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_fear()
 {
 	/*{ Afraid                }*/
@@ -4275,7 +4281,7 @@ void d__update_fear()
 		    0; /* fix when getting hit with fear while shero or hero */
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_poison()
 {
 	/*{ Poisoned              }*/
@@ -4329,7 +4335,7 @@ void d__update_poison()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_fast()
 {
 
@@ -4354,7 +4360,7 @@ void d__update_fast()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_slow()
 {
 
@@ -4379,7 +4385,7 @@ void d__update_slow()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_resting()
 {
 	/*{ Resting is over?      }*/
@@ -4419,7 +4425,7 @@ void d__update_resting()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_hallucinate()
 {
 	/*{ Hallucinating?  (Random characters appear!)}*/
@@ -4430,12 +4436,12 @@ void d__update_hallucinate()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_petrify()
 {
 	/*{  Petrification wears off slowly  } */
 	if ((turn % 100) == 0) {
-		// with py.flags do;
+		/* with py.flags do; */
 		if (PF.petrification > 100) {
 			PF.petrification--;
 		}
@@ -4474,7 +4480,7 @@ void d__update_petrify()
 	end;
 	*/
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_evil_protect()
 {
 	/*{ Protection from evil counter}*/
@@ -4482,7 +4488,7 @@ void d__update_evil_protect()
 		PF.protevil--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_invulnerable()
 {
 	/*{ Invulnerability        }*/
@@ -4510,7 +4516,7 @@ void d__update_invulnerable()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_heroism()
 {
 	/*{ Heroism       }*/
@@ -4520,7 +4526,7 @@ void d__update_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			// with py.misc do;
+			/* with py.misc do; */
 			PM.mhp += 10;
 			PM.chp += 10;
 			PM.bth += 12;
@@ -4534,7 +4540,7 @@ void d__update_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			// with py.misc do;
+			/* with py.misc do; */
 			PM.mhp -= 10;
 			if (PM.chp > PM.mhp) {
 				PM.chp = PM.mhp;
@@ -4546,7 +4552,7 @@ void d__update_heroism()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_super_heroism()
 {
 	/*{ Super Heroism }*/
@@ -4556,7 +4562,7 @@ void d__update_super_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			// with py.misc do;
+			/* with py.misc do; */
 			PM.mhp += 20;
 			PM.chp += 20;
 			PM.bth += 24;
@@ -4570,7 +4576,7 @@ void d__update_super_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			// with py.misc do;
+			/* with py.misc do; */
 			PM.mhp -= 20;
 			if (PM.chp > PM.mhp) {
 				PM.chp = PM.mhp;
@@ -4582,7 +4588,7 @@ void d__update_super_heroism()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_blessed()
 {
 	/*{ Blessed       }*/
@@ -4592,7 +4598,7 @@ void d__update_blessed()
 			if (find_flag) {
 				move_char(5);
 			}
-			// with py.misc do;
+			/* with py.misc do; */
 			PM.bth += 5;
 			PM.bthb += 5;
 			PM.pac += 5;
@@ -4607,7 +4613,7 @@ void d__update_blessed()
 			if (find_flag) {
 				move_char(5);
 			}
-			// with py.misc do;
+			/* with py.misc do; */
 			PM.bth -= 5;
 			PM.bthb -= 5;
 			PM.pac -= 5;
@@ -4618,7 +4624,7 @@ void d__update_blessed()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_resist_heat()
 {
 	/*{ Resist Heat   }*/
@@ -4626,7 +4632,7 @@ void d__update_resist_heat()
 		PF.resist_heat--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_resist_cold()
 {
 	/*{ Resist Cold   }*/
@@ -4634,7 +4640,7 @@ void d__update_resist_cold()
 		PF.resist_cold--;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_detect_invisible()
 {
 	/*{ Detect Invisible      }*/
@@ -4651,7 +4657,7 @@ void d__update_detect_invisible()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_infra_vision()
 {
 	/*{ Timed infra-vision    }*/
@@ -4668,7 +4674,7 @@ void d__update_infra_vision()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_word_of_recall()
 {
 	/*{ Word-of-Recall  Note: Word-of-Recall is a delayed action      }*/
@@ -4690,11 +4696,11 @@ void d__update_word_of_recall()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__update_hit_points()
 {
 	/*{ Check hit points for adjusting...                     }*/
-	// with py.misc do;
+	/* with py.misc do; */
 	ENTER("d__update_hit_points", "d")
 
 	if (!(find_flag)) {
@@ -4719,8 +4725,8 @@ void d__update_hit_points()
 	}
 	LEAVE("d__update_hit_points", "d")
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 boolean d__get_dir(vtype prompt, integer *dir, integer *com_val, integer *y,
 		   integer *x)
 {
@@ -4792,7 +4798,7 @@ boolean d__get_dir(vtype prompt, integer *dir, integer *com_val, integer *y,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__quit()
 {
 	/* this can be called from signalquit in io.c */
@@ -4823,13 +4829,13 @@ void d__quit()
 	erase_line(1, 1);
 	put_qio();
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__go_up()
 {
 	/*{ Go up one level                                       -RAK-   }*/
 	/*{ Or several, with a steep staircase                    -DMF-   }*/
 
-	// with cave[char_row][char_col]. do;
+	/* with cave[char_row][char_col]. do; */
 	if (cave[char_row][char_col].tptr > 0) {
 		if (t_list[cave[char_row][char_col].tptr].tval ==
 		    Up_staircase) {
@@ -4853,13 +4859,13 @@ void d__go_up()
 		msg_print("I see no up staircase here.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__go_down()
 {
 	/*{ Go down one level                                     -RAK-   }*/
 	/*{ Or several, with a steep staircase                    -DMF-   }*/
 
-	// with cave[char_row][char_col]. do;
+	/* with cave[char_row][char_col]. do; */
 	if (cave[char_row][char_col].tptr > 0) {
 		if (t_list[cave[char_row][char_col].tptr].tval ==
 		    Down_staircase) {
@@ -4880,7 +4886,7 @@ void d__go_down()
 		msg_print("I see no down staircase here.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__bash()
 {
 	/*{ Bash open a door or chest                             -RAK-   }*/
@@ -4893,7 +4899,7 @@ void d__bash()
 	x = char_col;
 
 	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		// with cave[y][x]. do;
+		/* with cave[y][x]. do; */
 		if (cave[y][x].cptr > 1) {
 			if (py.flags.afraid > 0) {
 				msg_print("You are afraid!");
@@ -4905,14 +4911,14 @@ void d__bash()
 				old_bth = py.misc.bth;
 				/*{ Use these values              }*/
 				equipment[Equipment_primary] = blank_treasure;
-				// with equipment[Equipment_primary]. do;
+				/* with equipment[Equipment_primary]. do; */
 				strcpy(equipment[Equipment_primary].damage,
 				       equipment[Equipment_shield].damage);
 				equipment[Equipment_primary].weight =
 				    (py.stat.c[STR] + 20) * 100;
 				equipment[Equipment_primary].tval = 1;
 
-				// with py do;
+				/* with py do; */
 				PM.bth = trunc(((PS.c[STR] + 20)div 5 + PM.wt) /
 					       6.0);
 				PM.ptohit = 0;
@@ -4933,9 +4939,9 @@ void d__bash()
 				}
 			}
 		} else if (cave[y][x].tptr > 0) {
-			// with t_list[cave[y][x].tptr]. do;
+			/* with t_list[cave[y][x].tptr]. do; */
 			if (t_list[cave[y][x].tptr].tval == Closed_door) {
-				// with py do;
+				/* with py do; */
 				if (test_hit(
 					PM.wt + (PS.c[STR] * PS.c[STR])div 500,
 					0, 0, labs(t_list[cave[y][x].tptr].p1) +
@@ -4985,7 +4991,7 @@ void d__bash()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__chest_trap(integer y, integer x)
 {
 	/*{ Chests have traps too...                              -RAK-   }*/
@@ -4996,7 +5002,7 @@ void d__chest_trap(integer y, integer x)
 
 	flags = t_list[cave[y][x].tptr].flags;
 
-	// with t_list[cave[y][x].tptr]. do;
+	/* with t_list[cave[y][x].tptr]. do; */
 
 	if (uand(0x00000010, flags) != 0) {
 		msg_print("A small needle has pricked you!");
@@ -5041,7 +5047,7 @@ void d__chest_trap(integer y, integer x)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__openobject()
 {
 	/*{ Opens a closed door or closed chest...                -RAK-   }*/
@@ -5054,15 +5060,15 @@ void d__openobject()
 	x = char_col;
 
 	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		// with cave[y][x]. do;
+		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
 
 			/*{ Closed door           }*/
 			if (t_list[cave[y][x].tptr].tval == Closed_door) {
-				// with t_list[cave[y][x].tptr]. do;
+				/* with t_list[cave[y][x].tptr]. do; */
 				if (t_list[cave[y][x].tptr].p1 >
 				    0) { /*{ It's locked...        }*/
-					// with py.misc do;
+					/* with py.misc do; */
 					tmp = PM.disarm + PM.lev +
 					      2 * todis_adj() + spell_adj(INT);
 
@@ -5097,11 +5103,11 @@ void d__openobject()
 
 			} else if (t_list[cave[y][x].tptr].tval == chest) {
 				/*{ Open a closed chest...                }*/
-				// with py.misc do;
+				/* with py.misc do; */
 				tmp = PM.disarm + PM.lev + 2 * todis_adj() +
 				      spell_adj(INT);
 
-				// with t_list[tptr] do;
+				/* with t_list[tptr] do; */
 				flag = false;
 				if (uand(0x00000001,
 					 t_list[cave[y][x].tptr].flags) !=
@@ -5209,7 +5215,7 @@ void d__openobject()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__closeobject()
 {
 	/*{ Closes an open door...                                -RAK-   }*/
@@ -5221,7 +5227,7 @@ void d__closeobject()
 	x = char_col;
 
 	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		// with cave[y][x]. do;
+		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
 			if (t_list[cave[y][x].tptr].tval == Open_door) {
 				if (cave[y][x].cptr == 0) {
@@ -5249,7 +5255,7 @@ void d__closeobject()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__disarm_trap()
 {
 	/*{ Disarms a trap                                        -RAK-   }*/
@@ -5262,7 +5268,7 @@ void d__disarm_trap()
 	x = char_col;
 
 	if (d__get_dir("Which direction?", &tdir, &i1, &y, &x)) {
-		// with cave[y][x]. do;
+		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
 			t1 = py.misc.disarm;  /*{ Ability to disarm     }*/
 			t2 = py.misc.lev;     /*{ Level adjustment      }*/
@@ -5284,7 +5290,7 @@ void d__disarm_trap()
 			t5 = t_list[cave[y][x].tptr].level;
 
 			if (i1 == Seen_trap) { /* { Floor trap    } */
-				// with t_list[cave[y][x].tptr]. do;
+				/* with t_list[cave[y][x].tptr]. do; */
 				if ((tot - t5) > randint(100)) {
 					msg_print(
 					    "You have disarmed the trap.");
@@ -5304,7 +5310,7 @@ void d__disarm_trap()
 					move_char(tdir);
 				}
 			} else if (i1 == 2) { /*{ Chest trap    }*/
-				// with t_list[cave[y][x].tptr]. do;
+				/* with t_list[cave[y][x].tptr]. do; */
 				if (strstr(t_list[cave[y][x].tptr].name, "^") !=
 				    NULL) {
 					msg_print("I don't see a trap...");
@@ -5363,7 +5369,7 @@ void d__disarm_trap()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__refill_lamp()
 {
 	/*{ Refill the players lamp                               -RAK-   }*/
@@ -5377,7 +5383,7 @@ void d__refill_lamp()
 	if ((i3 > 0) && (i3 < 10)) {
 		if (find_range(this_be_oil, false, &i1, &i2)) {
 			msg_print("Your lamp is full.");
-			// with equipment[Equipment_light]. do;
+			/* with equipment[Equipment_light]. do; */
 			equipment[Equipment_light].p1 += i1->data.p1;
 			if (equipment[Equipment_light].p1 > OBJ_LAMP_MAX) {
 				equipment[Equipment_light].p1 = OBJ_LAMP_MAX;
@@ -5392,7 +5398,7 @@ void d__refill_lamp()
 		msg_print("But you are not using a lamp.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__tunnel()
 {
 	/*{ Tunnels through rubble and walls                      -RAK-   }*/
@@ -5404,13 +5410,13 @@ void d__tunnel()
 	x = char_col;
 
 	if (d__get_dir("Which direction?", &i1, &i1, &y, &x)) {
-		// with cave[y][x]. do;
+		/* with cave[y][x]. do; */
 
 		/*{ Compute the digging ability of player; based on       }*/
 		/*{ strength, and type of tool used                       }*/
 		tabil = (py.stat.c[STR] + 20)div 5;
 		if (equipment[Equipment_primary].tval > 0) {
-			// with equipment[Equipment_primary] do;
+			/* with equipment[Equipment_primary] do; */
 			if (uand(Tunneling_worn_bit,
 				 equipment[Equipment_primary].flags) != 0) {
 				tabil +=
@@ -5504,7 +5510,7 @@ void d__tunnel()
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__drop()
 {
 	/*{ Drop an object being carried                          -RAK-   }*/
@@ -5519,7 +5525,7 @@ void d__drop()
 
 	reset_flag = true;
 
-	// with py.misc do;
+	/* with py.misc do; */
 	temp = (PM.money[6] + PM.money[5] + PM.money[4] + PM.money[3] +
 		PM.money[2] + PM.money[1]);
 
@@ -5543,7 +5549,7 @@ void d__drop()
 			if (redraw) {
 				draw_cave();
 			}
-			// with cave[char_row][char_col]. do;
+			/* with cave[char_row][char_col]. do; */
 			if (cave[char_row][char_col].tptr > 0) {
 				msg_print("There is something there already.");
 			} else {
@@ -5567,7 +5573,7 @@ void d__drop()
 		msg_print("You are not carrying anything.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void view_old_mess()
 {
 	vtype tmp_str;
@@ -5592,13 +5598,13 @@ void view_old_mess()
 		ptr = ptr->next;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void d__execute_command(integer *com_val)
 {
 	integer i1;
@@ -5613,35 +5619,36 @@ void d__execute_command(integer *com_val)
 	fflush(debug_file);
 #endif
 
-	//      sprintf(out_val, "Key = %d", (int)(*com_val));
-	//      msg_print(out_val);
-	//      msg_print( "" );
+	/*      sprintf(out_val, "Key = %d", (int)(*com_val)); */
+	/*      msg_print(out_val); */
+	/*      msg_print( "" ); */
 
 	switch (*com_val) {
 
-	// case   1  :    /* ^A = Cure all     W1 */
-	// case   2  :    /* ^B = objects      W1 */
-	// case   4  :    /* ^D = up/down      W1 */
-	// case   5  :    /* ^E = wizchar      W2 */
-	// case   6  :    /* ^F = genocide     W2 */
-	// case   7  :    /* ^G = treasure     W2 */
-	// case   8  :    /* ^H = wizhelp      W1 */
-	// case   9  :    /* ^I = identify     W1 */
-	// case  10  :    /* ^J = gain exp     W2 */
-	// case  11  :    /* ^K = summon       W2 */
-	// case  12  :    /* ^L = wizlight     W1 */
-	// case  14  :    /* ^N = mon map      W1 */
-	// case  15  :    /* ^O = summon       W2 */
-	// case  20  :    /* ^T = teleport     W1 */
-	// case  22  :    /* ^V = restore      W1 */
-	// case  21  :    /* ^U = summon       W2 */
-	// case  23  :    /* ^W = create       W2 */
-	// case  24  :    /* ^X = ed score     W2 */
-	// case  27  :    /* ^3 = store maint  W2 */
-	// case  31  :    /* ^_                W1 */
+	/* case   1  :     ^A = Cure all     W1 */
+	/* case   2  :     ^B = objects      W1 */
+	/* case   4  :     ^D = up/down      W1 */
+	/* case   5  :     ^E = wizchar      W2 */
+	/* case   6  :     ^F = genocide     W2 */
+	/* case   7  :     ^G = treasure     W2 */
+	/* case   8  :     ^H = wizhelp      W1 */
+	/* case   9  :     ^I = identify     W1 */
+	/* case  10  :     ^J = gain exp     W2 */
+	/* case  11  :     ^K = summon       W2 */
+	/* case  12  :     ^L = wizlight     W1 */
+	/* case  14  :     ^N = mon map      W1 */
+	/* case  15  :     ^O = summon       W2 */
+	/* case  20  :     ^T = teleport     W1 */
+	/* case  22  :     ^V = restore      W1 */
+	/* case  21  :     ^U = summon       W2 */
+	/* case  23  :     ^W = create       W2 */
+	/* case  24  :     ^X = ed score     W2 */
+	/* case  27  :     ^3 = store maint  W2 */
+	/* case  31  :     ^_                W1 */
 
-	case 0:      // \0
-	case CTRL_C: // ^C signalquit in io.c handles this one, it calls d__quit
+	case 0:      /* \0 */
+	case CTRL_C: /* ^C signalquit in io.c handles this one, it calls d__quit
+			*/
 	case '@':
 		d__quit();
 		reset_flag = true;
@@ -5658,18 +5665,18 @@ void d__execute_command(integer *com_val)
 		break;
 
 #if 0
-  case CTRL: // Password
+  case CTRL: /* Password */
     enter_wizard_mode(true);
     reset_flag = true;
     break;
 #endif
 
-	case CTRL_R: // redraw
+	case CTRL_R: /* redraw */
 		draw_cave();
 		reset_flag = true;
 		break;
 
-	case CTRL_Y: // Save and quit
+	case CTRL_Y: /* Save and quit */
 		if (total_winner) {
 			msg_print("You are a Total Winner, your character must "
 				  "be retired...");
@@ -5684,14 +5691,14 @@ void d__execute_command(integer *com_val)
 		reset_flag = true;
 		break;
 
-	case CTRL_Z: // suspend  (we never get this, look at signalsuspend)
+	case CTRL_Z: /* suspend  (we never get this, look at signalsuspend) */
 		reset_flag = true;
 		break;
 
-	case 27: // ALT
+	case 27: /* ALT */
 		*com_val = inkey();
 		switch (*com_val) {
-		case 'a': // age, hours
+		case 'a': /* age, hours */
 			msg_print(show_char_age(out_val));
 			sprintf(out_val, "You have been playing for %s",
 				show_play_time(tmp_str));
@@ -5726,7 +5733,7 @@ void d__execute_command(integer *com_val)
 		}
 		break;
 
-	case '+': // exp to level up
+	case '+': /* exp to level up */
 		sprintf(out_val, "Character Classes Experience %4.2f",
 			py.misc.expfact);
 		moria_help(out_val);
@@ -5734,7 +5741,7 @@ void d__execute_command(integer *com_val)
 		reset_flag = true;
 		break;
 
-	case ' ': // Run in a direction
+	case ' ': /* Run in a direction */
 	case '.':
 		y = char_row;
 		x = char_col;
@@ -5774,7 +5781,7 @@ void d__execute_command(integer *com_val)
 		}
 		break;
 
-	case '/': // identify
+	case '/': /* identify */
 		ident_char();
 		reset_flag = true;
 		break;
@@ -5792,7 +5799,7 @@ void d__execute_command(integer *com_val)
 		move_char(4);
 		break;
 
-	case '5': // Rest one turn
+	case '5': /* Rest one turn */
 		move_char(5);
 		usleep(10);
 		flush();
@@ -5818,7 +5825,7 @@ void d__execute_command(integer *com_val)
 		d__go_down();
 		break;
 
-	case '?': // help
+	case '?': /* help */
 		help();
 		reset_flag = true;
 		break;
@@ -5830,7 +5837,7 @@ void d__execute_command(integer *com_val)
 		d__examine_book();
 		break;
 
-	case 'C': // Show character
+	case 'C': /* Show character */
 		if (get_com("Print to file? (Y/N)", &command)) {
 			switch (command) {
 			case 'y':
@@ -5859,27 +5866,27 @@ void d__execute_command(integer *com_val)
 		d__refill_lamp();
 		break;
 
-	case 'G': // Game date
+	case 'G': /* Game date */
 		sprintf(out_val, "The date is %s",
 			full_date_string(py.misc.cur_age, out2));
 		msg_print(out_val);
 		reset_flag = true;
 		break;
 
-	case 'H': // Moria help
+	case 'H': /* Moria help */
 		moria_help("");
 		draw_cave();
 		reset_flag = true;
 		break;
 
-	case 'I': // Selected inv
+	case 'I': /* Selected inv */
 		reset_flag = true;
 		if (inven_command('I', &trash_ptr, "")) {
 			draw_cave();
 		}
 		break;
 
-	case 'K': //  Know Quest
+	case 'K': /*  Know Quest */
 		if (py.flags.quested) {
 			sprintf(out_val, "Current quest is to kill a %s",
 				c_list[py.misc.cur_quest].name);
@@ -5903,18 +5910,18 @@ void d__execute_command(integer *com_val)
 		screen_map();
 		break;
 
-	case 'N': // Name mstr
+	case 'N': /* Name mstr */
 		mon_name();
 		reset_flag = true;
 		break;
 
-	case 'O': // Old Mess
+	case 'O': /* Old Mess */
 		msg_print("Try 'V'.");
-		//  view_old_mess();
+		/*  view_old_mess(); */
 		reset_flag = true;
 		break;
 
-	case 'P': // Print map
+	case 'P': /* Print map */
 		if ((py.flags.blind > 0) || (no_light())) {
 			msg_print("You can't see to draw a map.");
 		} else {
@@ -5923,7 +5930,7 @@ void d__execute_command(integer *com_val)
 		reset_flag = true;
 		break;
 
-	case 'Q': // Toggle -More-
+	case 'Q': /* Toggle -More- */
 		msg_terse = !msg_terse;
 		if (msg_terse) {
 			msg_print("Question '-More-' toggled off");
@@ -5939,7 +5946,7 @@ void d__execute_command(integer *com_val)
 		rest();
 		break;
 
-	case 'S': // Search mode
+	case 'S': /* Search mode */
 		if (search_flag) {
 			search_off();
 			reset_flag = true;
@@ -5956,23 +5963,23 @@ void d__execute_command(integer *com_val)
 		d__tunnel();
 		break;
 
-	case 'U': // Use instrument
+	case 'U': /* Use instrument */
 		blow();
 		break;
 
-	case 'V': // PreVious messages
+	case 'V': /* PreVious messages */
 		msg_record("", false);
 		reset_flag = true;
 		break;
 
-	case 'W': // What time
+	case 'W': /* What time */
 		sprintf(out_val, "The current time is %s",
 			show_current_time(out2));
 		msg_print(out_val);
 		reset_flag = true;
 		break;
 
-	case 'X': // Toggle light source
+	case 'X': /* Toggle light source */
 		reset_flag = true;
 		if (equipment[Equipment_light].tval > 0) {
 			if (equipment[Equipment_light].p1 > 0) {
@@ -6005,7 +6012,7 @@ void d__execute_command(integer *com_val)
 		use_staff();
 		break;
 
-	case ']': // Armor help
+	case ']': /* Armor help */
 		moria_help("Adventuring Armor_Class Armor_List");
 		draw_cave();
 		reset_flag = true;
@@ -6024,7 +6031,7 @@ void d__execute_command(integer *com_val)
 		d__drop();
 		break;
 
-	case 'e': // Equipment
+	case 'e': /* Equipment */
 		reset_flag = true;
 		if (inven_command('e', &trash_ptr, "")) {
 			draw_cave();
@@ -6038,7 +6045,7 @@ void d__execute_command(integer *com_val)
 		move_char(4);
 		break;
 
-	case 'i': // Inventory
+	case 'i': /* Inventory */
 		reset_flag = true;
 		if (inven_command('i', &trash_ptr, "")) {
 			draw_cave();
@@ -6055,13 +6062,13 @@ void d__execute_command(integer *com_val)
 		move_char(6);
 		break;
 
-	case 'm': // magick, monk, music
+	case 'm': /* magick, monk, music */
 		if (class[py.misc.pclass].mspell) {
-			cast(); //  magick   } */
+			cast(); /*  magick   } */
 		} else if (class[py.misc.pclass].mental) {
-			discipline(); // m = monk? :)
+			discipline(); /* m = monk? :) */
 		} else {
-			sing(); // music
+			sing(); /* music */
 		}
 		break;
 
@@ -6072,11 +6079,11 @@ void d__execute_command(integer *com_val)
 		d__openobject();
 		break;
 
-	case 'p': // pray, play */
+	case 'p': /* pray, play */
 		if (class[py.misc.pclass].pspell) {
-			pray(); // pray
+			pray(); /* pray */
 		} else {
-			play(); // play
+			play(); /* play */
 		}
 		break;
 
@@ -6087,7 +6094,7 @@ void d__execute_command(integer *com_val)
 		read_scroll();
 		break;
 
-	case 's': // Search
+	case 's': /* Search */
 		if (py.flags.blind > 0) {
 			msg_print(
 			    "You are incapable of searching while blind.");
@@ -6096,7 +6103,7 @@ void d__execute_command(integer *com_val)
 		}
 		break;
 
-	case 't': // take off
+	case 't': /* take off */
 		reset_flag = true;
 		if (inven_command('t', &trash_ptr, "")) {
 			draw_cave();
@@ -6107,12 +6114,12 @@ void d__execute_command(integer *com_val)
 		move_char(9);
 		break;
 
-	case 'v': // version
+	case 'v': /* version */
 		reset_flag = true;
 		game_version();
 		break;
 
-	case 'w': // wear
+	case 'w': /* wear */
 		reset_flag = true;
 		if (inven_command('w', &trash_ptr, "")) {
 			draw_cave();
@@ -6121,7 +6128,7 @@ void d__execute_command(integer *com_val)
 		}
 		break;
 
-	case 'x': // exchange weapon
+	case 'x': /* exchange weapon */
 		reset_flag = true;
 		if (inven_command('x', &trash_ptr, "")) {
 			draw_cave();
@@ -6136,7 +6143,7 @@ void d__execute_command(integer *com_val)
 		aim_wand();
 		break;
 
-	case '|': // Weapon help
+	case '|': /* Weapon help */
 		moria_help("Adventuring Weapons Weapon_List");
 		draw_cave();
 		reset_flag = true;
@@ -6156,14 +6163,14 @@ void d__execute_command(integer *com_val)
 	default:
 		reset_flag = true;
 
-		if (!wizard1) { // begin wizard commands
+		if (!wizard1) { /* begin wizard commands */
 			prt("Type '?' for help...", 1, 1);
 		} else {
 
 			switch (*com_val) {
-			// wizard commands
+			/* wizard commands */
 
-			case CTRL_A: // Cure all
+			case CTRL_A: /* Cure all */
 				hp_player(1000, "cheating");
 				PM.cmana = PM.mana;
 				if (is_magii) {
@@ -6192,7 +6199,7 @@ void d__execute_command(integer *com_val)
 				print_objects();
 				break;
 
-			case CTRL_D: // Change dungeon level
+			case CTRL_D: /* Change dungeon level */
 				prt("Go to which level (0 -1200) ? ", 1, 1);
 				if (get_string(tmp_str, 1, 31, 10)) {
 					i1 = -1;
@@ -6239,7 +6246,8 @@ void d__execute_command(integer *com_val)
 				teleport(100);
 				break;
 
-			case 31: // ^_  Can you say security through obscurity?
+			case 31: /* ^_  Can you say security through obscurity?
+				    */
 				if (wizard1 && search_flag && PM.cheated) {
 					py.misc.cheated = false;
 					msg_print("Cheat flag turned off.");
@@ -6252,7 +6260,7 @@ void d__execute_command(integer *com_val)
 				} else {
 
 					switch (*com_val) {
-					// wizard2 commands
+					/* wizard2 commands */
 
 					case CTRL_E:
 						change_character();
@@ -6262,12 +6270,12 @@ void d__execute_command(integer *com_val)
 						mass_genocide();
 						break;
 
-					case CTRL_G: // Treasure
+					case CTRL_G: /* Treasure */
 						alloc_object(floor_set, 5, 25);
 						prt_map();
 						break;
 
-					case CTRL_J: // Gain exp
+					case CTRL_J: /* Gain exp */
 						if (py.misc.exp == 0) {
 							py.misc.exp = 1;
 						} else {
@@ -6276,7 +6284,7 @@ void d__execute_command(integer *com_val)
 						prt_experience();
 						break;
 
-					case CTRL_K: // Summon monster
+					case CTRL_K: /* Summon monster */
 						y = char_row;
 						x = char_col;
 						if (is_in(cave[y][x].fval,
@@ -6297,7 +6305,7 @@ void d__execute_command(integer *com_val)
 						creatures(false);
 						break;
 
-					case CTRL_U: // Summon item
+					case CTRL_U: /* Summon item */
 						if (cave[char_row][char_col]
 							.tptr == 0) {
 							summon_item(
@@ -6310,7 +6318,7 @@ void d__execute_command(integer *com_val)
 						}
 						break;
 
-					case CTRL_W: // create
+					case CTRL_W: /* create */
 						if (cave[char_row][char_col]
 							.tptr == 0) {
 							wizard_create();
@@ -6325,7 +6333,7 @@ void d__execute_command(integer *com_val)
 						edit_score_file();
 						break;
 
-					case 27: // ^3  Run store_maint
+					case 27: /* ^3  Run store_maint */
 						store_maint();
 						msg_print("Stores updated.");
 						break;
@@ -6344,15 +6352,15 @@ void d__execute_command(integer *com_val)
 
 	LEAVE("d__execute_command", "d");
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 /*ZZZZZZZZZZZZZZZ*/
 void dungeon()
 {
@@ -6433,7 +6441,7 @@ void dungeon()
 		d__check_light_status();
 
 		/*{ Update counters and messages			}*/
-		// with py.flags do;
+		/* with py.flags do; */
 
 		d__check_food();
 		d__eat_food();
@@ -6526,8 +6534,8 @@ void dungeon()
 
 	LEAVE("dungeon", "d")
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 
 /* END FILE  dungeon.c */

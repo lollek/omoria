@@ -14,13 +14,9 @@
 #define uand(xx, yy) ((xx) & (yy))
 #define uxor(xx, yy) ((xx) ^ (yy))
 
-/* pascal routines */
+void writeln(char *out_line);
+integer pindex(char *s1, char c1);
+boolean is_in(integer obj, obj_set oset);
+boolean is_vowel(char a_char);
 
-extern void writeln(char *out_line);
-// extern integer randint(integer maxval);
-extern integer pindex(char *s1, char c1);
-extern boolean is_in(integer obj, obj_set oset);
-extern boolean is_vowel(char a_char);
-
-/* END FILE  pascal.h */
 #endif /* PASCAL_H */

@@ -3,9 +3,9 @@
 
 #include "imoria.h"
 #include "dungeon.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
 void s__bard_effects(integer effect)
 {
 	/*{ Songs....					}*/
@@ -100,7 +100,7 @@ void s__bard_effects(integer effect)
 
 	case 19: /*{ Remove Curse }*/
 		for (i2 = Equipment_min; i2 <= EQUIP_MAX - 1; i2++) {
-			// with equipment[i2] do;
+			/* with equipment[i2] do; */
 			equipment[i2].flags &= 0x7FFFFFFF;
 		}
 		break;
@@ -139,7 +139,7 @@ void s__bard_effects(integer effect)
 		break;
 
 	case 28: /*{ Protection from Nature }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.resist_heat += randint(15) + 10;
 		PF.resist_cold += randint(15) + 10;
 		PF.resist_lght += randint(15) + 10;
@@ -175,7 +175,7 @@ void s__bard_effects(integer effect)
 		break;
 
 	case 34: /*{ Resist Charm }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		PF.free_time += randint(10) + py.misc.lev;
 		PF.magic_prot += randint(10) + py.misc.lev;
 		break;
@@ -229,7 +229,7 @@ void s__bard_effects(integer effect)
 	}
 	/*{ End of songs...			       }*/
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void sing()
 {
 	/*{ Sing a Bard song				       -CAPN/DMF-   }*/
@@ -258,9 +258,10 @@ void sing()
 					if (cast_spell("Play which song?",
 						       item_ptr, &choice,
 						       &chance, &redraw)) {
-						// with
-						// magic_spell[py.misc.pclass][choice].
-						// do;
+						/* with */
+						/* magic_spell[py.misc.pclass][choice].
+						 */
+						/* do; */
 						reset_flag = false;
 						if (randint(100) < chance) {
 							switch (randint(5)) {
@@ -303,8 +304,9 @@ void sing()
 						} else {
 							s__bard_effects(choice);
 							if (!reset_flag) {
-								// with py.misc
-								// do;
+								/* with py.misc
+								 */
+								/* do; */
 								PM.exp +=
 								    magic_spell
 									[py.misc
@@ -320,7 +322,7 @@ void sing()
 								    0;
 							}
 						}
-						// with py.misc do;
+						/* with py.misc do; */
 						if (!reset_flag) {
 							if (magic_spell
 								[py.misc.pclass]
@@ -413,8 +415,8 @@ void sing()
 			break;
 		}
 	}
-};
+}
 /* END FILE sing.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */

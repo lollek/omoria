@@ -3,9 +3,7 @@
 
 #include "imoria.h"
 #include "dungeon.h"
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void b__chime_and_horn_effects(integer effect, boolean *idented)
 {
 	/*{ Chimes...				      }*/
@@ -89,7 +87,7 @@ void b__chime_and_horn_effects(integer effect, boolean *idented)
 		break;
 
 	case 14: /*{ Chime of Curing }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		ident = cure_me(&PF.blind);
 		ident |= cure_me(&PF.poisoned);
 		ident |= cure_me(&PF.confused);
@@ -171,10 +169,10 @@ void b__chime_and_horn_effects(integer effect, boolean *idented)
 		msg_print("glue pours out of the horn!");
 		msg_print("all of your equipment is stuck!");
 		for (i3 = Equipment_primary; i3 <= Equipment_cloak; i3++) {
-			// with equipment[i3] do;
+			/* with equipment[i3] do; */
 			equipment[i3].flags |= 0x80000000;
 		}
-		// with equipment[Equipment_secondary]. do;
+		/* with equipment[Equipment_secondary]. do; */
 		equipment[Equipment_secondary].flags |= 0x80000000;
 		ident = true;
 		break;
@@ -187,7 +185,7 @@ void b__chime_and_horn_effects(integer effect, boolean *idented)
 		break;
 
 	case 28: /*{ Horn of Tritons }*/
-		// with py.flags do;
+		/* with py.flags do; */
 		ident = true;
 		msg_print("All of the seas of the world still (yeah, right)!");
 		msg_print("The gods of the ocean hear you...");
@@ -209,7 +207,7 @@ void b__chime_and_horn_effects(integer effect, boolean *idented)
 
 	*idented = ident;
 }
-//////////////////////////////////////////////////////////////////////
+
 void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
 {
 	integer i3, i4, loss, dur;
@@ -302,7 +300,7 @@ void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
 		break;
 
 	case 11:
-		// with py.stat do;
+		/* with py.stat do; */
 		for (tstat = STR; tstat <= CHR; tstat++) {
 			if (restore_stat(tstat, "X")) {
 				ident = true;
@@ -311,7 +309,7 @@ void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
 		if (hp_player(damroll("6d7"), "a statue.")) {
 			ident = true;
 		}
-		// with py.flags do;
+		/* with py.flags do; */
 		if (PF.slow > 0) {
 			ident = true;
 			PF.slow = 1;
@@ -353,7 +351,7 @@ void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
 		break;
 
 	case 15:
-		// with py.misc do;
+		/* with py.misc do; */
 		loss = 0;
 		for (i3 = 1; i3 <= 6; i3++) {
 			loss += (PM.money[i3] - PM.money[i3] / 2) * COIN_WEIGHT;
@@ -368,7 +366,7 @@ void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
 		break;
 
 	case 16:
-		// with py.misc do;
+		/* with py.misc do; */
 		if (PM.cmana < PM.mana) {
 			PM.cmana = PM.mana;
 			ident = true;
@@ -474,7 +472,6 @@ void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
 
 	*idented = ident;
 }
-//////////////////////////////////////////////////////////////////////
 
 void blow()
 {
@@ -491,12 +488,12 @@ void blow()
 			redraw = false;
 			if (get_item(&item_ptr, "Use which item?", &redraw, i3,
 				     &trash_char, false, false)) {
-				// with item_ptr->data. do;
+				/* with item_ptr->data. do; */
 				if (redraw) {
 					draw_cave();
 				}
 				reset_flag = false;
-				// with py.misc do;
+				/* with py.misc do; */
 				chance = PM.save + PM.lev + bard_adj() -
 					 item_ptr->data.level - 5;
 				if (((py.flags.confused + py.flags.afraid) >
@@ -542,7 +539,7 @@ void blow()
 						}
 						if (inven_temp->data.flags !=
 						    0) {
-							// with py.misc do;
+							/* with py.misc do; */
 							PM.exp +=
 							    (item_ptr->data
 								 .level /
@@ -565,11 +562,3 @@ void blow()
 		msg_print("But you are not carrying anything.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  blow.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////

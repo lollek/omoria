@@ -21,6 +21,7 @@ static char **get_saved_games(int current_row)
 	}
 
 	for (;;) {
+		int string_size;
 		struct dirent *dir_p = readdir(dir);
 		if (dir_p == NULL) {
 			break;
@@ -30,12 +31,12 @@ static char **get_saved_games(int current_row)
 			continue;
 		}
 
-		int string_size = strlen(dir_p->d_name) + sizeof('\0');
+		string_size = strlen(dir_p->d_name) + sizeof('\0');
 		games_list[counter] = safe_malloc(string_size, "games_list");
 		strcpy(games_list[counter], dir_p->d_name);
 		counter++;
 
-		// Currently no support for more than 9 characters
+		/* Currently no support for more than 9 characters */
 		if (counter == 9) {
 			break;
 		}
@@ -48,10 +49,10 @@ static char **get_saved_games(int current_row)
 void main_menu(vtype file_name)
 {
 	int current_row = 1;
-	prt("Existing characters:", current_row++, 1);
-
 	char **saved_games = get_saved_games(current_row);
 	int counter;
+
+	prt("Existing characters:", current_row++, 1);
 	for (counter = 0; saved_games[counter] != NULL; ++counter) {
 		char counter_str[6] = "* 0: ";
 		counter_str[2] = '0' + counter;

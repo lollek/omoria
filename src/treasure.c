@@ -3,13 +3,13 @@
 
 #include "imoria.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-///// magic_treasure code
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*/// magic_treasure code */
 
 void mt__ego_sword(integer x)
 {
-	// with t_list[x] do;
+	/* with t_list[x] do; */
 	switch (randint(5)) {
 
 	case 1: /*{Holy Avenger}*/
@@ -84,10 +84,10 @@ void mt__ego_sword(integer x)
 
 	} /* end switch */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__slaying_sword(integer x)
 {
-	// with t_list[x] do;
+	/* with t_list[x] do; */
 	switch (randint(4)) {
 
 	case 1: /* {Slay Monster}*/
@@ -129,10 +129,10 @@ void mt__slaying_sword(integer x)
 
 	} /* end switch */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__magic_sword(integer x)
 {
-	// with t_list[x] do;
+	/* with t_list[x] do; */
 	switch (randint(4)) {
 
 	case 1: /* {Flame Tongue}*/
@@ -176,14 +176,14 @@ void mt__magic_sword(integer x)
 
 	} /* end switch */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 boolean mt__magik(integer chance)
 {
 	/*{ Boolean : is object enchanted		  -RAK- }*/
 
 	return (randint(150) <= chance); /*{ for deeper dungeon levels }*/
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 integer mt__m_bonus(integer base, integer max_std, integer level,
 		    boolean forceit)
 {
@@ -192,7 +192,7 @@ integer mt__m_bonus(integer base, integer max_std, integer level,
 	integer return_value;
 
 	if (forceit) {
-		//    base += 2;
+		/*    base += 2; */
 	}
 
 	stand_dev = trunc(obj_std_adj * level) + obj_std_min;
@@ -211,7 +211,7 @@ integer mt__m_bonus(integer base, integer max_std, integer level,
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__gems(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -264,7 +264,7 @@ void mt__gems(integer x, integer level, integer chance, integer special,
 
 	t_list[x].p1 = p1;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__misc_usable(integer x, integer level, integer chance, integer special,
 		     integer cursed, boolean forceit)
 {
@@ -383,7 +383,7 @@ void mt__misc_usable(integer x, integer level, integer chance, integer special,
 		}		  /* end special */
 	}			  /* end magic */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__armor_and_shields(integer x, integer level, integer chance,
 			   integer special, integer cursed, boolean forceit)
 {
@@ -469,7 +469,7 @@ void mt__armor_and_shields(integer x, integer level, integer chance,
 		t_list[x].cost = 0;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__weapons(integer x, integer level, integer chance, integer special,
 		 integer cursed, boolean forceit)
 {
@@ -514,7 +514,7 @@ void mt__weapons(integer x, integer level, integer chance, integer special,
 		t_list[x].cost = 0;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__bows_and_slings(integer x, integer level, integer chance,
 			 integer special, integer cursed, boolean forceit)
 {
@@ -532,7 +532,7 @@ void mt__bows_and_slings(integer x, integer level, integer chance,
 		t_list[x].cost = 0;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__pick_or_shovel(integer x, integer level, integer chance,
 			integer special, integer cursed, boolean forceit)
 {
@@ -551,7 +551,7 @@ void mt__pick_or_shovel(integer x, integer level, integer chance,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__gloves_and_gauntlets(integer x, integer level, integer chance,
 			      integer special, integer cursed, boolean forceit)
 {
@@ -635,7 +635,7 @@ void mt__gloves_and_gauntlets(integer x, integer level, integer chance,
 		t_list[x].cost = 0;
 	} /* end if cursed */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__boots(integer x, integer level, integer chance, integer special,
 	       integer cursed, boolean forceit)
 {
@@ -703,7 +703,7 @@ void mt__boots(integer x, integer level, integer chance, integer special,
 		} /* end switch */
 	}	 /* end if cursed */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__helms(integer x, integer level, integer chance, integer special,
 	       integer cursed, boolean forceit)
 {
@@ -877,7 +877,7 @@ void mt__helms(integer x, integer level, integer chance, integer special,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__belt(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -1043,7 +1043,7 @@ void mt__belt(integer x, integer level, integer chance, integer special,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__ring(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -1138,24 +1138,27 @@ void mt__ring(integer x, integer level, integer chance, integer special,
 	case 35: /*   { Speed -10 or worse }*/
 		t_list[x].p1 = -(10 + randint(10));
 		t_list[x].cost += (1000000 * t_list[x].p1);
-		// these rings weren't actually cursed; the original code looks
-		// like it was
-		// trying to check the cursed_worn_bit and clear the
-		// Known_cursed_bit if
-		// the ring was cursed, but it was actually clearing the
-		// cursed_worn bit
-		// (i.e. used flags vs. flags2).  added code to set
-		// cursed_worn_bit (which
-		// wasn't happening anywhere) and to unset Known_cursed_bit for
-		// real.
-		// 2/15/00 JEB
+		/* these rings weren't actually cursed; the original code looks
+		 */
+		/* like it was */
+		/* trying to check the cursed_worn_bit and clear the */
+		/* Known_cursed_bit if */
+		/* the ring was cursed, but it was actually clearing the */
+		/* cursed_worn bit */
+		/* (i.e. used flags vs. flags2).  added code to set */
+		/* cursed_worn_bit (which */
+		/* wasn't happening anywhere) and to unset Known_cursed_bit for
+		 */
+		/* real. */
+		/* 2/15/00 JEB */
 		if (mt__magik(cursed)) {
 			t_list[x].flags |= Cursed_worn_bit;
 			t_list[x].flags2 &= (~Known_cursed_bit);
-			// original code:
-			//    if ((0x80000000 & t_list[x].flags) != 0) {
-			//      t_list[x].flags &= 0x7FFFFFFF; /* XXXX what does
-			//      this bit mean? */
+			/* original code: */
+			/*    if ((0x80000000 & t_list[x].flags) != 0) { */
+			/*      t_list[x].flags &= 0x7FFFFFFF; * XXXX what does
+			 */
+			/*      this bit mean? */
 		}
 		break;
 
@@ -1163,7 +1166,7 @@ void mt__ring(integer x, integer level, integer chance, integer special,
 		break;
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__amulet(integer x, integer level, integer chance, integer special,
 		integer cursed, boolean forceit)
 {
@@ -1200,7 +1203,7 @@ void mt__amulet(integer x, integer level, integer chance, integer special,
 		break;
 	} /* end switch */
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__lamp_or_torch(integer x, integer level, integer chance,
 		       integer special, integer cursed, boolean forceit)
 {
@@ -1211,7 +1214,7 @@ void mt__lamp_or_torch(integer x, integer level, integer chance,
 		t_list[x].p1 = randint(t_list[x].p1);
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__wand(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -1304,7 +1307,7 @@ void mt__wand(integer x, integer level, integer chance, integer special,
 	}
 	t_list[x].p1 = p1;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__staff(integer x, integer level, integer chance, integer special,
 	       integer cursed, boolean forceit)
 {
@@ -1400,7 +1403,7 @@ void mt__staff(integer x, integer level, integer chance, integer special,
 	}
 	t_list[x].p1 = p1;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__chime(integer x, integer level, integer chance, integer special,
 	       integer cursed, boolean forceit)
 {
@@ -1466,7 +1469,7 @@ void mt__chime(integer x, integer level, integer chance, integer special,
 	}
 	t_list[x].p1 = p1;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__horn(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -1523,7 +1526,7 @@ void mt__horn(integer x, integer level, integer chance, integer special,
 	}
 	t_list[x].p1 = p1;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__cloak(integer x, integer level, integer chance, integer special,
 	       integer cursed, boolean forceit)
 {
@@ -1600,7 +1603,7 @@ void mt__cloak(integer x, integer level, integer chance, integer special,
 		} /* end switch */
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__chest(integer x, integer level, integer chance, integer special,
 	       integer cursed, boolean forceit)
 {
@@ -1664,7 +1667,7 @@ void mt__chest(integer x, integer level, integer chance, integer special,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__ammo(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -1762,7 +1765,7 @@ void mt__ammo(integer x, integer level, integer chance, integer special,
 
 	t_list[x].subval = missle_ctr + 512;
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__food(integer x, integer level, integer chance, integer special,
 	      integer cursed, boolean forceit)
 {
@@ -1780,7 +1783,7 @@ void mt__food(integer x, integer level, integer chance, integer special,
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void mt__get_chances(integer level, integer *chance, integer *special,
 		     integer *cursed, boolean forceit)
 {
@@ -1797,7 +1800,7 @@ void mt__get_chances(integer level, integer *chance, integer *special,
 	*special = trunc(*chance / obj_div_special);
 	*cursed = forceit ? 0 : trunc(*chance / obj_div_cursed);
 }
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
 void magic_treasure(integer x, integer level, boolean forceit)
 {
 	integer chance, special, cursed;
@@ -1926,6 +1929,6 @@ void magic_treasure(integer x, integer level, boolean forceit)
 
 	} /* end switch */
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */
+/*//////////////////////////////////////////////////////////////////// */

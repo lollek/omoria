@@ -2,65 +2,65 @@
 #define VALUES_H
 /**/
 
-treas_ptr cur_inven;    // { Current inven page  }
-boolean is_magii;       // { True if has mana    }
-time_t start_time;      // { Time started playing}
-boolean is_from_file;   // { True if restored    }
-money_type bank;	// { Bank's money	 }
-money_type coin_value = // { Copy of money values}
+treas_ptr cur_inven;    /* { Current inven page  } */
+boolean is_magii;       /* { True if has mana    } */
+time_t start_time;      /* { Time started playing} */
+boolean is_from_file;   /* { True if restored    } */
+money_type bank;	/* { Bank's money	 } */
+money_type coin_value = /* { Copy of money values} */
     {0, 1, 4, 20, 240, 960, 12480};
-integer player_max_exp;    // { Max exp possible    }
-unsigned long seed;	// { Contains seed #     }
-unsigned long randes_seed; // { For encoding colors }
-unsigned long town_seed;   // { Seed for town genera}
-integer channel;	   // { I/O channel #       }
-unsigned long pasteb;      // { Pasteboard id       }
-quad_type io_bin_pause;    // { I/O pause time      }
-integer cur_height;	// { Cur dungeon size    }
+integer player_max_exp;    /* { Max exp possible    } */
+unsigned long seed;	/* { Contains seed #     } */
+unsigned long randes_seed; /* { For encoding colors } */
+unsigned long town_seed;   /* { Seed for town genera} */
+integer channel;	   /* { I/O channel #       } */
+unsigned long pasteb;      /* { Pasteboard id       } */
+quad_type io_bin_pause;    /* { I/O pause time      } */
+integer cur_height;	/* { Cur dungeon size    } */
 integer cur_width;
-integer dun_level;      // { Cur dungeon level   }
-integer missle_ctr = 0; // { Counter for missles }
-integer msg_line;       // { Contains message txt}
-boolean msg_flag;       // { Set with first msg  }
+integer dun_level;      /* { Cur dungeon level   } */
+integer missle_ctr = 0; /* { Counter for missles } */
+integer msg_line;       /* { Contains message txt} */
+boolean msg_flag;       /* { Set with first msg  } */
 vtype msg_prev[MAX_MESSAGES + 1];
-integer quest[NUM_QUESTS + 1]; // {quest data}
-vtype old_msg = "bogus msg";   // { Last message	      }
-boolean want_trap;	     // { True = trap messages}
-boolean want_warn;	     // { True = water warning}
-message_ptr caught_message;    // { Message from other  }
-message_ptr old_message;       // { Past messages	      }
-integer old_mess_count;	// { Count of old mess's }
-integer max_mess_keep;	 // { Max old to keep     }
-message_ptr cur_message;       // { Pointer to add mess }
-message_ptr message_cursor;    // { Pointer to read mess}
-integer caught_count;	  //	{ # of mesgs waiting  }
-integer max_score;	     //	{ # of scores to list }
-boolean generate;	      //	{ Generate next level }
-boolean death = false;	 //	{ True if died	      }
-vtype died_from;	       //	{ What killed him     }
-integer turn_counter;	  //	{ Turns ellapsed      }
-boolean find_flag;	     //	{ Used in MORIA	      }
-boolean cave_flag;	     //	{ Used in GET_PANEL   }
-boolean light_flag;	    //	{ Used in MOVE_LIGHT  }
-boolean redraw;		       //	{ For redraw screen   }
-unsigned long print_stat = 0;  //	{ Flag for stats      }
-integer turn = 0;	      //	{ Cur trun of game    }
-boolean wizard1 = false;       //	{ Wizard flag	      }
-boolean wizard2 = false;       //	{ Wizard flag	      }
-boolean used_line[24] =	// 22 of false
+integer quest[NUM_QUESTS + 1]; /* {quest data} */
+vtype old_msg = "bogus msg";   /* { Last message	      } */
+boolean want_trap;	     /* { True = trap messages} */
+boolean want_warn;	     /* { True = water warning} */
+message_ptr caught_message;    /* { Message from other  } */
+message_ptr old_message;       /* { Past messages	      } */
+integer old_mess_count;	/* { Count of old mess's } */
+integer max_mess_keep;	 /* { Max old to keep     } */
+message_ptr cur_message;       /* { Pointer to add mess } */
+message_ptr message_cursor;    /* { Pointer to read mess} */
+integer caught_count;	  /*	{ # of mesgs waiting  } */
+integer max_score;	     /*	{ # of scores to list } */
+boolean generate;	      /*	{ Generate next level } */
+boolean death = false;	 /*	{ True if died	      } */
+vtype died_from;	       /*	{ What killed him     } */
+integer turn_counter;	  /*	{ Turns ellapsed      } */
+boolean find_flag;	     /*	{ Used in MORIA	      } */
+boolean cave_flag;	     /*	{ Used in GET_PANEL   } */
+boolean light_flag;	    /*	{ Used in MOVE_LIGHT  } */
+boolean redraw;		       /*	{ For redraw screen   } */
+unsigned long print_stat = 0;  /*	{ Flag for stats      } */
+integer turn = 0;	      /*	{ Cur trun of game    } */
+boolean wizard1 = false;       /*	{ Wizard flag	      } */
+boolean wizard2 = false;       /*	{ Wizard flag	      } */
+boolean used_line[24] =	/* 22 of false */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 char password1[13];
 char password2[13];
 boolean became_wizard = false;
-unsigned long wdata[2][13] = //  array [1..2,0..12] of unsigned;
+unsigned long wdata[2][13] = /*  array [1..2,0..12] of unsigned; */
     {{31415, 81, 58, 35, 193, 3, 41, 49, 228, 2, 85, 9, 125},
      {92653, 24, 166, 38, 92, 31, 137, 155, 177, 239, 79, 236, 112}};
 
-//	{{31415,'n','a','f','f',0,'w','z','r','i','n','b'},
-//	{92653,'m','o','s','k','a',0,'j','a','u','m','z'}};
+/*	{{31415,'n','a','f','f',0,'w','z','r','i','n','b'}, */
+/*	{92653,'m','o','s','k','a',0,'j','a','u','m','z'}}; */
 
-// { Operating hours for Moria				-RAK-	}
-// {	X = Open; . = Closed					}
+/* { Operating hours for Moria				-RAK-	} */
+/* {	X = Open; . = Closed					} */
 char days[7][30] = {
     "SUN:XXXXXXXXXXXXXXXXXXXXXXXX|", "MON:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "TUE:XXXXXXXXXXXXXXXXXXXXXXXX|", "WED:XXXXXXXXXXXXXXXXXXXXXXXX|",
@@ -78,19 +78,19 @@ char days[7][30] = {
 		"SAT:XXXXXXXXXXXXXXXXXXXXXXXX|"
 		};
 */
-integer closing_flag = 0; // { Used for closing   }
-boolean uw_id;		  //	{ Is this a UW node? }
-			  //{neatness arrays}
-byteint key_of[9] =       //  array [0..8] of byteint;
+integer closing_flag = 0; /* { Used for closing   } */
+boolean uw_id;		  /*	{ Is this a UW node? } */
+			  /*{neatness arrays} */
+byteint key_of[9] =       /*  array [0..8] of byteint; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
-byteint oct_of[10] = //  array [1..9] of byteint;
+byteint oct_of[10] = /*  array [1..9] of byteint; */
     {250, 5, 6, 7, 4, 8, 0, 3, 2, 1};
-bytlint dx_of[10] = //  array [1..9] of bytlint;
+bytlint dx_of[10] = /*  array [1..9] of bytlint; */
     {250, -1, 0, 1, -1, 0, 1, -1, 0, 1};
-bytlint dy_of[10] = //  array [1..9] of bytlint;
+bytlint dy_of[10] = /*  array [1..9] of bytlint; */
     {250, 1, 1, 1, 0, 0, 0, -1, -1, -1};
-//	{ Bit testing array						}
-unsigned long bit_array[33] = //  array [1..32] of unsigned;
+/*	{ Bit testing array						} */
+unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
     {0,		 0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
      0x00000020, 0x00000040, 0x00000080, 0x00000100, 0x00000200, 0x00000400,
      0x00000800, 0x00001000, 0x00002000, 0x00004000, 0x00008000, 0x00010000,
@@ -98,20 +98,20 @@ unsigned long bit_array[33] = //  array [1..32] of unsigned;
      0x00800000, 0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
      0x20000000, 0x40000000, 0x80000000};
 
-//	{ External file names; paths are set in io.c get_paths }
+/*	{ External file names; paths are set in io.c get_paths } */
 vtype MORIA_HOU;
 vtype MORIA_MOR;
 vtype MORIA_MAS;
 vtype MORIA_TOP;
 vtype MORIA_TRD;
-//	vtype		MORIA_HLP;
+/*	vtype		MORIA_HLP; */
 vtype MORIA_LCK;
 vtype MORIA_DTH;
 vtype MORIA_MON;
 vtype MORIA_CST;
 vtype MORIA_GCST;
 
-//	{  following are calculated from max dungeon sizes		}
+/*	{  following are calculated from max dungeon sizes		} */
 integer max_panel_rows, max_panel_cols;
 integer quart_height, quart_width;
 integer panel_row, panel_col;
@@ -119,25 +119,25 @@ integer panel_row_min, panel_row_max;
 integer panel_col_min, panel_col_max;
 integer panel_col_prt, panel_row_prt;
 
-//	{  Following are all floor definitions				}
+/*	{  Following are all floor definitions				} */
 row_floor cave[MAX_HEIGHT + 1];
 cave_type blank_floor = {0, 0, 0, false, false, false, false, false, 0, 0};
-floor_type dopen_floor = {1, true};  //{ Dark open floor	}
-floor_type lopen_floor = {2, true};  //{ Light open floor	}
-floor_type corr_floor1 = {4, true};  //{ Corridor open floor	}
-floor_type corr_floor2 = {5, true};  //{ Room junction marker}
-floor_type corr_floor3 = {6, true};  //{ Door type floor	}
-floor_type corr_floor4 = {7, false}; //{ Secret door type floor}
-//{ Floor values 8 and 9 are used in generate		}
-floor_type rock_wall1 = {10, false};   //{ Granite rock wall	}
-floor_type rock_wall2 = {11, false};   //{ Magma rock wall	}
-floor_type rock_wall3 = {12, false};   //{ Quartz rock wall	}
-floor_type water1 = {16, true};	//{ Water on floor	}
-floor_type water2 = {17, true};	//{ Water on room floor}
-floor_type water3 = {18, true};	//{ Lit water on floor	}
-floor_type boundry_wall = {15, false}; //{ Indestructable wall}
+floor_type dopen_floor = {1, true};  /*{ Dark open floor	} */
+floor_type lopen_floor = {2, true};  /*{ Light open floor	} */
+floor_type corr_floor1 = {4, true};  /*{ Corridor open floor	} */
+floor_type corr_floor2 = {5, true};  /*{ Room junction marker} */
+floor_type corr_floor3 = {6, true};  /*{ Door type floor	} */
+floor_type corr_floor4 = {7, false}; /*{ Secret door type floor} */
+/*{ Floor values 8 and 9 are used in generate		} */
+floor_type rock_wall1 = {10, false};   /*{ Granite rock wall	} */
+floor_type rock_wall2 = {11, false};   /*{ Magma rock wall	} */
+floor_type rock_wall3 = {12, false};   /*{ Quartz rock wall	} */
+floor_type water1 = {16, true};	/*{ Water on floor	} */
+floor_type water2 = {17, true};	/*{ Water on room floor} */
+floor_type water3 = {18, true};	/*{ Lit water on floor	} */
+floor_type boundry_wall = {15, false}; /*{ Indestructable wall} */
 
-//	{  Following are set definitions				}
+/*	{  Following are set definitions				} */
 obj_set floor_set = {1, 2, 4, 5, 6, 7, 16, 17, 18, 0, 0, 0, 0, 0, 0, 0};
 obj_set open_dry_floors = {1, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set wall_set = {10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -165,22 +165,22 @@ obj_set slow_set = {hafted_weapon,  pole_arm,       dagger,   sword,
 obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
 		      0,     0,     0,		0, 0, 0, 0, 0};
 
-//	{ Following are player variables				}
+/*	{ Following are player variables				} */
 player_type py = {
-    // misc
+    /* misc */
     {
      0,
-     0,			    // xtr_wgt, account
-     {0, 0, 0, 0, 0, 0, 0}, // money
-     {0, 0, 0, 0, 0},       // birth
-     {0, 0, 0, 0, 0},       // cur_age
-     {0, 0, 0, 0, 0, 0, 0}, // play_tm
-     3,			    // diffic
+     0,			    /* xtr_wgt, account */
+     {0, 0, 0, 0, 0, 0, 0}, /* money */
+     {0, 0, 0, 0, 0},       /* birth */
+     {0, 0, 0, 0, 0},       /* cur_age */
+     {0, 0, 0, 0, 0, 0, 0}, /* play_tm */
+     3,			    /* diffic */
      /*" ",*/ " ",
      " ",
      " ",
      " ",
-     " ", // ssn,name,race,sex,title,tclass
+     " ", /* ssn,name,race,sex,title,tclass */
      0,
      0,
      0,
@@ -215,20 +215,20 @@ player_type py = {
      0,
      0,
      0,
-     {"", "", "", "", ""}, // history
+     {"", "", "", "", ""}, /* history */
      false,
      0,
      0,
-     0 // mr, quests, cur_quest
+     0 /* mr, quests, cur_quest */
     },
-    // stat
+    /* stat */
     {
-     {0, 0, 0, 0, 0, 0}, // p  permanent
-     {0, 0, 0, 0, 0, 0}, // c  current
-     {0, 0, 0, 0, 0, 0}, // m  net magical adjust
-     {0, 0, 0, 0, 0, 0}  // l  amt lost
+     {0, 0, 0, 0, 0, 0}, /* p  permanent */
+     {0, 0, 0, 0, 0, 0}, /* c  current */
+     {0, 0, 0, 0, 0, 0}, /* m  net magical adjust */
+     {0, 0, 0, 0, 0, 0}  /* l  amt lost */
     },
-    // flags
+    /* flags */
     {false,
      false,
      0,
@@ -274,7 +274,7 @@ player_type py = {
      false,
      false,
      false,
-     {false, false, false, false, false, false}, // sustain
+     {false, false, false, false, false, false}, /* sustain */
      false,
      0,
      0,
@@ -290,10 +290,10 @@ player_type py = {
      false}};
 
 btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
-    //				  array [1..max_class] of
-    //				  array [1..max_player_level] of btype;
+    /*				  array [1..max_class] of */
+    /*				  array [1..max_player_level] of btype; */
     {
-     //{ Warrior	}
+     /*{ Warrior	} */
      {"Novice", "Veteran(1st)", "Veteran(2nd)", "Veteran(3rd)", "Warrior(1st)",
       "Warrior(2nd)", "Warrior(3rd)", "Swordsman-1", "Swordsman-2",
       "Swordsman-3", "Hero", "Swashbuckler", "Myrmidon", "Champion-1",
@@ -302,7 +302,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Guardian Knt", "Chevalier", "Justiciar", "Lord (1st)", "Lord (2nd)",
       "Lord (3rd)", "Lord (4th)", "Lord (5th)", "Lord (6th)", "Lord (7th)",
       "Lord (8th)", "Lord (9th)", "Lord Gallant", "Lord Keeper", "Lord Noble"},
-     //{ Mage	}
+     /*{ Mage	} */
      {"Novice", "Apprentice", "Trickster-1", "Trickster-2", "Trickster-3",
       "Cabalist-1", "Cabalist-2", "Cabalist-3", "Visionist", "Phantasmist",
       "Shadowist", "Spellbinder", "Illusionist", "Evoker (1st)", "Evoker (2nd)",
@@ -312,7 +312,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Wizard (1st)", "Wizard (2nd)", "Wizard (3rd)", "Wizard (4th)",
       "Wizard (5th)", "Wizard (6th)", "Wizard (7th)", "Wizard (8th)",
       "Wizard (9th)", "Wizard Lord"},
-     //{ Priests	}
+     /*{ Priests	} */
      {"Believer", "Acolyte(1st)", "Acolyte(2nd)", "Acolyte(3rd)", "Adept (1st)",
       "Adept (2nd)", "Adept (3rd)", "Priest (1st)", "Priest (2nd)",
       "Priest (3rd)", "Priest (4th)", "Priest (5th)", "Priest (6th)",
@@ -322,7 +322,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Canon (1st)", "Canon (2nd)", "Canon (3rd)", "Canon (4th)", "Canon (5th)",
       "Low Lama", "Lama-1", "Lama-2", "Lama-3", "High Lama", "Great Lama",
       "Patriarch", "High Priest", "Great Priest", "Noble Priest"},
-     //{ Rogues	}
+     /*{ Rogues	} */
      {"Apprentice", "Footpad", "Cutpurse", "Robber", "Burglar", "Filcher",
       "Sharper", "Magsman", "Common Rogue", "Rogue (1st)", "Rogue (2nd)",
       "Rogue (3rd)", "Rogue (4th)", "Rogue (5th)", "Rogue (6th)", "Rogue (7th)",
@@ -332,7 +332,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Thief (7th)", "Thief (8th)", "Thief (9th)", "High Thief", "Master Thief",
       "Executioner", "Low Assassin", "Assassin", "HighAssassin",
       "Guildsmaster"},
-     //{ Rangers	}
+     /*{ Rangers	} */
      {"Runner (1st)", "Runner (2nd)", "Runner (3rd)", "Strider (1st)",
       "Strider (2nd)", "Strider (3rd)", "Scout (1st)", "Scout (2nd)",
       "Scout (3rd)", "Scout (4th)", "Scout (5th)", "Courser (1st)",
@@ -343,7 +343,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Guide (4th)", "Guide (5th)", "Guide (6th)", "Guide (7th)", "Guide (8th)",
       "Guide (9th)", "Pathfinder-1", "Pathfinder-2", "Pathfinder-3", "Ranger",
       "High Ranger", "Ranger Lord"},
-     //{ Paladins	}
+     /*{ Paladins	} */
      {"Gallant", "Keeper (1st)", "Keeper (2nd)", "Keeper (3rd)", "Keeper (4th)",
       "Keeper (5th)", "Keeper (6th)", "Keeper (7th)", "Keeper (8th)",
       "Keeper (9th)", "Protector-1", "Protector-2", "Protector-3",
@@ -353,7 +353,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Warder (3rd)", "Warder (4th)", "Warder (5th)", "Warder (6th)",
       "Warder (7th)", "Warder (8th)", "Warder (9th)", "Gauardian", "Chevalier",
       "Justiciar", "Paladin", "High Lord"},
-     //{ Druids	}
+     /*{ Druids	} */
      {"Aspirant-1", "Aspirant-2", "Ovate (1st)", "Ovate (2nd)", "Ovate(3th)",
       "Initiate-1", "Initiate-2", "1st Cabal", "2nd Cabal", "3rd Cabal",
       "4th Cabal", "5th Cabal", "6th Cabal", "7th Cabal", "8th Cabal",
@@ -363,7 +363,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Master Druid", "Grand Druid", "Lord Druid", "LowHierophant",
       "Hierophant-1", "Hierophant-2", "Hierophant-3", "Hierophant-4",
       "Hierophant-5", "Forest Master"},
-     //{ Bards	}
+     /*{ Bards	} */
      {"Singer", "Rhymer", "Joker", "Lyrist (1st)", "Lyrist (2nd)",
       "Lyrist (3rd)", "Jester (1st)", "Jester (2nd)", "Sonnateer-1",
       "Sonnateer-2", "Sonnateer-3", "Skald (1st)", "Skald (2nd)", "Skald (3rd)",
@@ -373,7 +373,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "Lorist (1st)", "Lorist (2nd)", "Lorist (3rd)", "Initiate Bard",
       "Bard (1st)", "Bard (2nd)", "Bard (3rd)", "Master Bard-1",
       "Master Bard-2", "Master Bard-3", "Bardic Sage"},
-     //{ Adventurer	}
+     /*{ Adventurer	} */
      {"Dimwit", "Beginner", "Amateur", "Flathead", "PileofLeaves", "Novice",
       "Brass Bell", "Orange Cake", "White Unicorn", "Charlatan",
       "CloveofGarlic", "Nasty Knife", "ParlorMgician", "Gaudy Crown",
@@ -383,7 +383,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
       "WizofFrobozz", "Enchanter", "Sorcerer", "Wizard (1st)", "Wizard (2nd)",
       "Wizard (3rd)", "Wizard (4th)", "Wizard (5th)", "Wizard (6th)",
       "Wizard (7th)", "Zorkmid Coin", "DungeonMaster", "Implementer"},
-     //{ Monk	}
+     /*{ Monk	} */
      {"Disciple", "Acolyte(1st)", "Acolyte(2nd)", "Acolyte(3rd)",
       "Neophyte(1st)", "Neophyte(2nd)", "Neophyte(3rd)", "Neophyte(4th)",
       "Adept (1st)", "Adept (2nd)", "Adept (3rd)", "Hermit (1st)",
@@ -397,14 +397,14 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
 
 };
 
-//	{ Base experience levels, may be adjusted up for race and/or class}
+/*	{ Base experience levels, may be adjusted up for race and/or class} */
 integer player_exp[MAX_PLAYER_LEVEL + 1] = {
     0,      10,      25,      45,      70,     100,    140,    200,    280,
     380,    500,     650,     850,     1100,   1400,   1800,   2300,   2900,
     3600,   4400,    5400,    6800,    8400,   10200,  12500,  17500,  25000,
     35000,  50000,   75000,   100000,  150000, 200000, 300000, 400000, 500000,
     750000, 1500000, 2500000, 5000000, 9999999};
-real acc_exp = 0.0; //{ Accumulator for fractional exp}
+real acc_exp = 0.0; /*{ Accumulator for fractional exp} */
 dtype bare_hands = "1d1";
 boolean msg_terse;
 byteint record_ctr = 0;
@@ -664,7 +664,7 @@ race_type race[MAX_RACES] = {{"Human",
 			      -1,
 			      0x2D4}};
 
-//	{ Background information					}
+/*	{ Background information					} */
 background_type background[MAX_BACKGROUND] = {
     {"You are the illegitimate and unacknowledged child ", 10, 1, 2, -25},
     {"You are the illegitimate but acknowledged child ", 20, 1, 2, -15},
@@ -846,37 +846,40 @@ background_type background[MAX_BACKGROUND] = {
 
 };
 
-//	{ Buying and selling adjustments for character race VS store	}
-//	{ owner race							}
-real rgold_adj[MAX_RACES][MAX_RACES] = {
-    //             {  Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr,  Dry
-    //             }
-    /*Human	     */ {0.00, 0.05, 0.05, 0.10, 0.13, 0.15, 0.20, 0.25, 0.20,
+/*	{ Buying and selling adjustments for character race VS store	} */
+/*	{ owner race							} */
+real
+    rgold_adj[MAX_RACES][MAX_RACES] = {
+	/*             {  Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr,
+	   Dry */
+	/*             } */
+	/*Human	     */ {0.00, 0.05, 0.05, 0.10, 0.13, 0.15, 0.20, 0.25,
+			     0.20, 0.05},
+	/*Half-Elf   */ {0.10, 0.00, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.25,
 			 0.05},
-    /*Half-Elf   */ {0.10, 0.00, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.25,
-		     0.05},
-    /*Elf	     */ {0.10, 0.05, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.30,
-			 0.00},
-    /*Halfling   */ {0.15, 0.10, 0.05, -0.05, 0.05, 0.10, 0.15, 0.30, 0.25,
-		     0.05},
-    /*Gnome	     */ {0.15, 0.15, 0.10, 0.05, -0.05, 0.10, 0.15, 0.30, 0.20,
-			 0.15},
-    /*Dwarf	     */ {0.15, 0.20, 0.20, 0.10, 0.10, -0.05, 0.25, 0.35, 0.15,
-			 0.30},
-    /*Half-Orc   */ {0.15, 0.20, 0.25, 0.15, 0.15, 0.30, 0.10, 0.15, 0.15,
-		     0.25},
-    /*Half-Troll */ {0.10, 0.15, 0.15, 0.10, 0.10, 0.30, 0.10, 0.10, 0.15,
-		     0.25},
-    /*Phraint    */ {0.20, 0.25, 0.30, 0.25, 0.20, 0.15, 0.15, 0.15, -0.10,
-		     0.20},
-    /*Dryad	     */ {0.10, 0.05, 0.05, 0.05, 0.15, 0.30, 0.30, 0.25, 0.20,
-			 -0.05}
+	/*Elf	     */ {0.10, 0.05, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30,
+			     0.30, 0.00},
+	/*Halfling   */ {0.15, 0.10, 0.05, -0.05, 0.05, 0.10, 0.15, 0.30, 0.25,
+			 0.05},
+	/*Gnome	     */ {0.15, 0.15, 0.10, 0.05, -0.05, 0.10, 0.15, 0.30,
+			     0.20, 0.15},
+	/*Dwarf	     */ {0.15, 0.20, 0.20, 0.10, 0.10, -0.05, 0.25, 0.35,
+			     0.15, 0.30},
+	/*Half-Orc   */ {0.15, 0.20, 0.25, 0.15, 0.15, 0.30, 0.10, 0.15, 0.15,
+			 0.25},
+	/*Half-Troll */ {0.10, 0.15, 0.15, 0.10, 0.10, 0.30, 0.10, 0.10, 0.15,
+			 0.25},
+	/*Phraint    */ {0.20, 0.25, 0.30, 0.25, 0.20, 0.15, 0.15, 0.15, -0.10,
+			 0.20},
+	/*Dryad	     */ {0.10, 0.05, 0.05, 0.05, 0.15, 0.30, 0.30, 0.25,
+			     0.20, -0.05}
 
 };
 
-//	{ Classes...
-// title, m_exp, adj_hd, mdis, msrh, mstl, mfos, mbth, mbthb, msav,(stat adjs),
-// ??,??,??,??,??,??}
+/*	{ Classes... */
+/* title, m_exp, adj_hd, mdis, msrh, mstl, mfos, mbth, mbthb, msav,(stat adjs),
+ */
+/* ??,??,??,??,??,??} */
 class_type class[MAX_CLASS] = {{"Warrior",
 				0.00,
 				10,
@@ -1048,10 +1051,10 @@ class_type class[MAX_CLASS] = {{"Warrior",
 				true,
 				-5}};
 
-//	{ Each character class has a list of spells they can use.  In	}
-//	{ cases the entire array is blank				}
+/*	{ Each character class has a list of spells they can use.  In	} */
+/*	{ cases the entire array is blank				} */
 spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
-    {// { Warrior	    }
+    {/* { Warrior	    } */
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
@@ -1092,162 +1095,162 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false}},
-    {							  //	{ Mage		}
-     {"Magic Missile", 1, 1, 5, 22, false},		  //{ 1}
-     {"Detect Monsters", 1, 1, 5, 23, false},		  //{ 2}
-     {"Phase Door", 1, 2, 4, 24, false},		  //{ 3}
-     {"Light Area", 1, 2, 4, 26, false},		  //{ 4}
-     {"Cure Light Wounds", 3, 3, 8, 25, false},		  //{ 5}
-     {"Find Hidden Traps/Doors", 3, 3, 6, 55, false},     //{ 6}
-     {"Stinking Cloud", 3, 4, 8, 27, false},		  //{ 7}
-     {"Confusion", 3, 4, 6, 30, false},			  //{ 8}
-     {"Lightning Bolt", 5, 4, 25, 30, false},		  //{ 9}
-     {"Trap/Door Destruction", 5, 5, 30, 30, false},      //{10}
-     {"Sleep I", 5, 5, 20, 30, false},			  //{11}
-     {"Cure Poison", 5, 5, 25, 35, false},		  //{12}
-     {"Shadow Door", 7, 6, 35, 35, false},		  //{13}
-     {"Remove Curse", 7, 6, 40, 50, false},		  //{14}
-     {"Frost Bolt", 7, 6, 50, 40, false},		  //{15}
-     {"Create Food", 7, 6, 50, 40, false},		  //{16}
-     {"Infravision", 7, 6, 50, 40, false},		  //{17}
-     {"Invisibility", 7, 6, 60, 35, false},		  //{18}
-     {"Turn Stone to Mud", 9, 7, 75, 44, false},	  //{19}
-     {"Recharge Item I", 9, 7, 90, 75, false},		  //{20}
-     {"Sleep II", 9, 7, 75, 45, false},			  //{21}
-     {"Phantasmal Force", 11, 7, 80, 50, false},	  //{22}
-     {"Polymorph Other", 11, 7, 100, 45, false},	  //{23}
-     {"Identify", 11, 7, 75, 99, false},		  //{24}
-     {"Ring of Frost", 13, 7, 75, 45, false},		  //{25}
-     {"Sleep III", 13, 7, 90, 50, false},		  //{26}
-     {"Hold Monster", 15, 9, 100, 50, false},		  //{27}
-     {"Fire Bolt", 15, 9, 100, 50, false},		  //{28}
-     {"Slow Creature", 17, 9, 125, 50, false},		  //{29}
-     {"Protection from Magic", 17, 9, 125, 55, false},    //{30}
-     {"Frost Ball", 19, 12, 150, 55, false},		  //{31}
-     {"Death Spell", 19, 18, 200, 55, false},		  //{32}
-     {"Ring of Fire", 21, 12, 175, 60, false},		  //{33}
-     {"Recharge Item II", 21, 12, 175, 90, false},	//{34}
-     {"Teleport Other", 23, 15, 200, 60, false},	  //{35}
-     {"Haste Self", 25, 15, 250, 65, false},		  //{36}
-     {"Fire Ball", 28, 18, 350, 65, false},		  //{37}
-     {"Power Word: Destruction", 31, 21, 500, 80, false}, //{38}
-     {"Power Word: Kill", 34, 25, 600, 80, false},	//{39}
-     {"Genocide", 37, 25, 800, 95, false}		  //{40}
+    {							  /*	{ Mage		} */
+     {"Magic Missile", 1, 1, 5, 22, false},		  /*{ 1} */
+     {"Detect Monsters", 1, 1, 5, 23, false},		  /*{ 2} */
+     {"Phase Door", 1, 2, 4, 24, false},		  /*{ 3} */
+     {"Light Area", 1, 2, 4, 26, false},		  /*{ 4} */
+     {"Cure Light Wounds", 3, 3, 8, 25, false},		  /*{ 5} */
+     {"Find Hidden Traps/Doors", 3, 3, 6, 55, false},     /*{ 6} */
+     {"Stinking Cloud", 3, 4, 8, 27, false},		  /*{ 7} */
+     {"Confusion", 3, 4, 6, 30, false},			  /*{ 8} */
+     {"Lightning Bolt", 5, 4, 25, 30, false},		  /*{ 9} */
+     {"Trap/Door Destruction", 5, 5, 30, 30, false},      /*{10} */
+     {"Sleep I", 5, 5, 20, 30, false},			  /*{11} */
+     {"Cure Poison", 5, 5, 25, 35, false},		  /*{12} */
+     {"Shadow Door", 7, 6, 35, 35, false},		  /*{13} */
+     {"Remove Curse", 7, 6, 40, 50, false},		  /*{14} */
+     {"Frost Bolt", 7, 6, 50, 40, false},		  /*{15} */
+     {"Create Food", 7, 6, 50, 40, false},		  /*{16} */
+     {"Infravision", 7, 6, 50, 40, false},		  /*{17} */
+     {"Invisibility", 7, 6, 60, 35, false},		  /*{18} */
+     {"Turn Stone to Mud", 9, 7, 75, 44, false},	  /*{19} */
+     {"Recharge Item I", 9, 7, 90, 75, false},		  /*{20} */
+     {"Sleep II", 9, 7, 75, 45, false},			  /*{21} */
+     {"Phantasmal Force", 11, 7, 80, 50, false},	  /*{22} */
+     {"Polymorph Other", 11, 7, 100, 45, false},	  /*{23} */
+     {"Identify", 11, 7, 75, 99, false},		  /*{24} */
+     {"Ring of Frost", 13, 7, 75, 45, false},		  /*{25} */
+     {"Sleep III", 13, 7, 90, 50, false},		  /*{26} */
+     {"Hold Monster", 15, 9, 100, 50, false},		  /*{27} */
+     {"Fire Bolt", 15, 9, 100, 50, false},		  /*{28} */
+     {"Slow Creature", 17, 9, 125, 50, false},		  /*{29} */
+     {"Protection from Magic", 17, 9, 125, 55, false},    /*{30} */
+     {"Frost Ball", 19, 12, 150, 55, false},		  /*{31} */
+     {"Death Spell", 19, 18, 200, 55, false},		  /*{32} */
+     {"Ring of Fire", 21, 12, 175, 60, false},		  /*{33} */
+     {"Recharge Item II", 21, 12, 175, 90, false},	/*{34} */
+     {"Teleport Other", 23, 15, 200, 60, false},	  /*{35} */
+     {"Haste Self", 25, 15, 250, 65, false},		  /*{36} */
+     {"Fire Ball", 28, 18, 350, 65, false},		  /*{37} */
+     {"Power Word: Destruction", 31, 21, 500, 80, false}, /*{38} */
+     {"Power Word: Kill", 34, 25, 600, 80, false},	/*{39} */
+     {"Genocide", 37, 25, 800, 95, false}		  /*{40} */
     },
-    {						      //	{ Priest	}
-     {"Detect Evil", 1, 1, 3, 10, false},	     //{ 1}
-     {"Cure Light Wounds", 1, 2, 4, 15, false},       //{ 2}
-     {"Bless", 1, 2, 3, 20, false},		      //{ 3}
-     {"Remove Fear", 1, 2, 3, 25, false},	     //{ 4}
-     {"Call Light", 3, 2, 6, 25, false},	      //{ 5}
-     {"Find Traps", 3, 3, 8, 27, false},	      //{ 6}
-     {"Detect Doors/Stairs", 3, 3, 8, 27, false},     //{ 7}
-     {"Slow Poison", 3, 3, 10, 28, false},	    //{ 8}
-     {"Blind Creature", 5, 4, 16, 29, false},	 //{ 9}
-     {"Portal", 5, 4, 20, 30, false},		      //{10}
-     {"Cure Medium Wounds", 5, 4, 20, 32, false},     //{11}
-     {"Ray of Sanctification", 5, 4, 20, 40, false},  //{12}
-     {"Heroism", 7, 4, 20, 40, false},		      //{13}
-     {"Sanctuary", 7, 5, 30, 36, false},	      //{14}
-     {"Remove Curse", 7, 6, 35, 38, false},	   //{15}
-     {"Resist Heat and Cold", 7, 7, 35, 38, false},   //{16}
-     {"Silence", 9, 7, 40, 40, false},		      //{17}
-     {"Resist Petrification", 9, 7, 40, 40, false},   //{18}
-     {"Neutralize Poison", 9, 7, 40, 38, false},      //{19}
-     {"Cure Serious Wounds", 9, 7, 40, 40, false},    //{20}
-     {"Chant", 11, 8, 20, 34, false},		      //{21}
-     {"Sense Invisible", 11, 8, 40, 42, false},       //{22}
-     {"Protection from Evil", 11, 8, 50, 42, false},  //{23}
-     {"Earthquake", 11, 9, 60, 55, false},	    //{24}
-     {"Create Food and Drink", 13, 9, 30, 38, false}, //{25}
-     {"Sense Surroundings", 13, 10, 60, 45, false},   //{26}
-     {"Orb of Draining", 13, 10, 40, 58, false},      //{27}
-     {"Cure Critical Wounds", 15, 11, 65, 45, false}, //{28}
-     {"Turn Undead", 15, 12, 80, 50, false},	  //{29}
-     {"Holy Prayer", 17, 14, 90, 50, false},	  //{30}
-     {"Dispel Undead", 17, 14, 125, 55, false},       //{31}
-     {"Resist Paralysis", 19, 15, 150, 55, false},    //{32}
-     {"Blade Barrier", 21, 16, 175, 60, false},       //{33}
-     {"Dispel Evil", 23, 18, 200, 70, false},	 //{34}
-     {"Heal", 25, 20, 250, 60, false},		      //{35}
-     {"Resist Magic", 27, 22, 300, 80, false},	//{36}
-     {"Holy of Thunder", 30, 23, 400, 70, false},     //{37}
-     {"Glyph of Warding", 33, 24, 500, 90, false},    //{38}
-     {"Hero's Feast", 35, 28, 600, 95, false},	//{39}
-     {"Holy Word", 39, 32, 800, 99, false}	    //{40}
+    {						      /*	{ Priest	} */
+     {"Detect Evil", 1, 1, 3, 10, false},	     /*{ 1} */
+     {"Cure Light Wounds", 1, 2, 4, 15, false},       /*{ 2} */
+     {"Bless", 1, 2, 3, 20, false},		      /*{ 3} */
+     {"Remove Fear", 1, 2, 3, 25, false},	     /*{ 4} */
+     {"Call Light", 3, 2, 6, 25, false},	      /*{ 5} */
+     {"Find Traps", 3, 3, 8, 27, false},	      /*{ 6} */
+     {"Detect Doors/Stairs", 3, 3, 8, 27, false},     /*{ 7} */
+     {"Slow Poison", 3, 3, 10, 28, false},	    /*{ 8} */
+     {"Blind Creature", 5, 4, 16, 29, false},	 /*{ 9} */
+     {"Portal", 5, 4, 20, 30, false},		      /*{10} */
+     {"Cure Medium Wounds", 5, 4, 20, 32, false},     /*{11} */
+     {"Ray of Sanctification", 5, 4, 20, 40, false},  /*{12} */
+     {"Heroism", 7, 4, 20, 40, false},		      /*{13} */
+     {"Sanctuary", 7, 5, 30, 36, false},	      /*{14} */
+     {"Remove Curse", 7, 6, 35, 38, false},	   /*{15} */
+     {"Resist Heat and Cold", 7, 7, 35, 38, false},   /*{16} */
+     {"Silence", 9, 7, 40, 40, false},		      /*{17} */
+     {"Resist Petrification", 9, 7, 40, 40, false},   /*{18} */
+     {"Neutralize Poison", 9, 7, 40, 38, false},      /*{19} */
+     {"Cure Serious Wounds", 9, 7, 40, 40, false},    /*{20} */
+     {"Chant", 11, 8, 20, 34, false},		      /*{21} */
+     {"Sense Invisible", 11, 8, 40, 42, false},       /*{22} */
+     {"Protection from Evil", 11, 8, 50, 42, false},  /*{23} */
+     {"Earthquake", 11, 9, 60, 55, false},	    /*{24} */
+     {"Create Food and Drink", 13, 9, 30, 38, false}, /*{25} */
+     {"Sense Surroundings", 13, 10, 60, 45, false},   /*{26} */
+     {"Orb of Draining", 13, 10, 40, 58, false},      /*{27} */
+     {"Cure Critical Wounds", 15, 11, 65, 45, false}, /*{28} */
+     {"Turn Undead", 15, 12, 80, 50, false},	  /*{29} */
+     {"Holy Prayer", 17, 14, 90, 50, false},	  /*{30} */
+     {"Dispel Undead", 17, 14, 125, 55, false},       /*{31} */
+     {"Resist Paralysis", 19, 15, 150, 55, false},    /*{32} */
+     {"Blade Barrier", 21, 16, 175, 60, false},       /*{33} */
+     {"Dispel Evil", 23, 18, 200, 70, false},	 /*{34} */
+     {"Heal", 25, 20, 250, 60, false},		      /*{35} */
+     {"Resist Magic", 27, 22, 300, 80, false},	/*{36} */
+     {"Holy of Thunder", 30, 23, 400, 70, false},     /*{37} */
+     {"Glyph of Warding", 33, 24, 500, 90, false},    /*{38} */
+     {"Hero's Feast", 35, 28, 600, 95, false},	/*{39} */
+     {"Holy Word", 39, 32, 800, 99, false}	    /*{40} */
     },
-    {//	{ Rogue	       }
+    {/*	{ Rogue	       } */
      {"Detect Monsters", 3, 2, 6, 35, false},
      {"Battle Song", 3, 2, 7, 35, false},
      {"Blink", 3, 2, 8, 35, false},
      {"Light Area", 5, 4, 8, 35, false},
-     {"Find Hidden Doors/Traps", 5, 5, 10, 45, false}, //{5}
+     {"Find Hidden Doors/Traps", 5, 5, 10, 45, false}, /*{5} */
      {"Magical Jig", 7, 8, 15, 40, false},
      {"Detect Magic", 7, 9, 20, 70, false},
      {"", 99, 99, 0, 0, false},
      {"Battle Dance", 9, 10, 25, 45, false},
-     {"Charm Monsters", 9, 11, 40, 50, false}, //{10}
+     {"Charm Monsters", 9, 11, 40, 50, false}, /*{10} */
      {"Detect Curse", 11, 12, 30, 40, false},
      {"Detect Invisible", 11, 12, 35, 40, false},
      {"Cure Poison", 13, 14, 40, 45, false},
      {"Invisibility", 15, 16, 50, 50, false},
-     {"Shadow Gate", 17, 18, 60, 55, false}, //{15}
+     {"Shadow Gate", 17, 18, 60, 55, false}, /*{15} */
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"Recharge Item", 19, 18, 70, 55, false},
      {"Remove Curse", 21, 20, 50, 90, false},
-     {"Legend Lore", 23, 22, 80, 95, false}, //{20}
+     {"Legend Lore", 23, 22, 80, 95, false}, /*{20} */
      {"", 99, 99, 0, 0, false},
      {"Detect Treasure", 25, 25, 60, 50, false},
      {"Detect Object", 25, 25, 60, 55, false},
      {"", 99, 99, 0, 0, false},
-     {"", 99, 99, 0, 0, false}, //{25}
+     {"", 99, 99, 0, 0, false}, /*{25} */
      {"", 99, 99, 0, 0, false},
      {"Word of Recall", 27, 27, 90, 60, false},
      {"", 99, 99, 0, 0, false},
      {"See Invisible", 29, 29, 100, 65, false},
-     {"Magic Mapping", 31, 30, 110, 70, false}, //{30}
+     {"Magic Mapping", 31, 30, 110, 70, false}, /*{30} */
      {"", 99, 99, 0, 0, false},
      {"Battle Frenzy", 33, 31, 125, 70, false},
      {"", 99, 99, 0, 0, false},
      {"Resist Charm", 35, 32, 150, 70, false},
-     {"Item Lore", 37, 33, 200, 95, false}, //{35}
+     {"Item Lore", 37, 33, 200, 95, false}, /*{35} */
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false}},
-    {//	{ Ranger	}
+    {/*	{ Ranger	} */
      {"Moon Beam", 1, 2, 3, 20, false},
      {"Detect Monster", 1, 2, 5, 33, false},
      {"Battle Song", 2, 3, 8, 35, false},
      {"Light", 2, 3, 13, 35, false},
-     {"Minor Cure", 3, 4, 15, 40, false}, //{5}
+     {"Minor Cure", 3, 4, 15, 40, false}, /*{5} */
      {"Find Safe Path", 4, 5, 10, 45, false},
      {"Magical Jig", 4, 5, 17, 45, false},
      {"Warp Wood", 4, 5, 17, 45, false},
      {"Battle Dance", 5, 5, 25, 40, false},
-     {"Cure Poison", 5, 5, 30, 48, false}, //{10}
+     {"Cure Poison", 5, 5, 30, 48, false}, /*{10} */
      {"Charm", 7, 5, 35, 35, false},
      {"Detect Curse", 7, 6, 40, 45, false},
      {"Summon Insects", 7, 7, 40, 50, false},
      {"Call Lightning", 9, 9, 40, 55, false},
-     {"Magic Resistance", 9, 10, 45, 45, false}, //{15}
+     {"Magic Resistance", 9, 10, 45, 45, false}, /*{15} */
      {"", 99, 99, 0, 0, false},
      {"Create Food", 9, 10, 40, 55, false},
      {"Remove Curse", 11, 10, 50, 45, false},
      {"Infravision", 11, 10, 50, 50, false},
-     {"Major Cure", 11, 11, 55, 50, false}, //{20}
+     {"Major Cure", 11, 11, 55, 50, false}, /*{20} */
      {"Resist Petrification", 13, 11, 60, 55, false},
      {"Transplant", 13, 11, 60, 45, false},
      {"", 99, 99, 0, 0, false},
      {"Dispel Magic", 15, 11, 60, 58, false},
-     {"Fire Stream", 15, 11, 60, 70, false}, //{25}
+     {"Fire Stream", 15, 11, 60, 70, false}, /*{25} */
      {"Protection from Nature", 17, 12, 65, 55, false},
      {"Stone to Mud", 17, 12, 65, 55, false},
      {"Goodberry", 19, 14, 70, 65, false},
      {"Creeping Doom", 37, 21, 120, 65, false},
-     {"Pillar of Fire", 23, 15, 80, 65, false}, //{30}
+     {"Pillar of Fire", 23, 15, 80, 65, false}, /*{30} */
      {"Word of Recall", 25, 15, 85, 50, false},
      {"Lightning Ball", 27, 15, 90, 90, false},
      {"Word of Blindness", 29, 16, 95, 55, false},
@@ -1259,7 +1262,7 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"Dispel Monster", 37, 30, 200, 70, false},
      {"", 99, 99, 0, 0, false}},
 
-    {//	{ Paladin	}
+    {/*	{ Paladin	} */
      {"Detect Evil", 1, 1, 4, 30, false},
      {"Cure Light Wounds", 2, 2, 8, 35, false},
      {"Bless", 3, 3, 12, 35, false},
@@ -1267,7 +1270,7 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"Call Light", 5, 4, 20, 35, false},
      {"Find Traps", 7, 5, 25, 40, false},
      {"Detect Doors/Stairs", 7, 5, 25, 40, false},
-     {"Slow Poison", 9, 7, 30, 40, false}, //{8}
+     {"Slow Poison", 9, 7, 30, 40, false}, /*{8} */
 
      {"Blind Creature", 9, 7, 30, 40, false},
      {"Portal", 9, 8, 30, 40, false},
@@ -1278,7 +1281,7 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"Remove Curse", 13, 11, 50, 45, false},
      {"Resist Heat and Cold", 15, 13, 60, 45, false},
      {"Silence", 15, 13, 60, 45, false},
-     {"Resist Petrification", 15, 13, 60, 50, false}, //{18}
+     {"Resist Petrification", 15, 13, 60, 50, false}, /*{18} */
 
      {"Neutralize Poison", 15, 15, 60, 50, false},
      {"Cure Serious Wounds", 17, 15, 70, 50, false},
@@ -1303,37 +1306,37 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false}},
-    {					//	 { Druid     }
-     {"Moon Beam", 1, 1, 3, 15, false}, //{ 1}
+    {					/*	 { Druid     } */
+     {"Moon Beam", 1, 1, 3, 15, false}, /*{ 1} */
      {"Detect Monster", 1, 1, 4, 15, false},
      {"Battle Song", 1, 2, 4, 20, false},
      {"Light", 1, 2, 4, 25, false},
-     {"Minor Cure", 3, 3, 8, 25, false}, //{ 5}
+     {"Minor Cure", 3, 3, 8, 25, false}, /*{ 5} */
      {"Find Safe Path", 3, 3, 8, 28, false},
      {"Magical Jig", 3, 3, 10, 27, false},
      {"Warp Wood", 3, 4, 12, 29, false},
      {"Battle Dance", 5, 4, 20, 30, false},
-     {"Cure Poison", 5, 4, 25, 30, false}, //{10}
+     {"Cure Poison", 5, 4, 25, 30, false}, /*{10} */
      {"Charm", 5, 5, 35, 45, false},
      {"Detect Curse", 5, 5, 40, 50, false},
      {"Summon Insects", 7, 5, 35, 35, false},
      {"Call Lightning", 7, 5, 35, 38, false},
-     {"Magic Resistance", 7, 6, 45, 40, false}, //{15}
+     {"Magic Resistance", 7, 6, 45, 40, false}, /*{15} */
      {"Starlight", 7, 6, 45, 40, false},
      {"Create Food", 9, 6, 40, 40, false},
      {"Remove Curse", 9, 6, 45, 55, false},
      {"Infravision", 9, 7, 60, 40, false},
-     {"Major Cure", 9, 7, 70, 40, false}, //{20}
+     {"Major Cure", 9, 7, 70, 40, false}, /*{20} */
      {"Resist Petrification", 11, 7, 60, 45, false},
      {"Transplant", 11, 8, 70, 55, false},
      {"Sunray", 11, 9, 70, 60, false},
      {"Dispel Magic", 11, 9, 80, 50, false},
-     {"Fire Stream", 11, 9, 80, 65, false}, //{25}
+     {"Fire Stream", 11, 9, 80, 65, false}, /*{25} */
      {"Protection from Nature", 13, 9, 90, 40, false},
      {"Stone to Mud", 13, 9, 100, 50, false},
      {"Goodberry", 15, 11, 100, 50, false},
      {"Creeping Doom", 33, 17, 200, 65, false},
-     {"Pillar of Fire", 15, 11, 110, 55, false}, //{30}
+     {"Pillar of Fire", 15, 11, 110, 55, false}, /*{30} */
      {"Word of Recall", 17, 11, 100, 60, false},
      {"Lightning Ball", 17, 12, 100, 55, false},
      {"Word of Blindness", 19, 12, 120, 55, false},
@@ -1344,91 +1347,91 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"Battle Frenzy", 29, 23, 300, 70, false},
      {"Dispel Monster", 31, 25, 400, 80, false},
      {"Note of Destruction", 34, 27, 500, 85, false}},
-    {							 //	{ Bards		}
-     {"Detect Monsters", 1, 1, 6, 35, false},		 //{ 1}
-     {"Battle Song", 1, 2, 7, 35, false},		 //{ 2}
-     {"Blink", 1, 2, 8, 35, false},			 //{ 3}
-     {"Light Area", 1, 2, 8, 35, false},		 //{ 4}
-     {"Detect Hidden Doors/Traps", 3, 3, 10, 45, false}, //{ 5}
-     {"Magical Jig", 3, 4, 20, 40, false},		 //{ 6}
-     {"Detect Magic", 3, 4, 50, 60, false},		 //{ 7}
-     {"Minor Cure", 3, 4, 20, 40, false},		 //{ 8}
-     {"Battle Dance", 5, 5, 30, 45, false},		 //{ 9}
-     {"Charm Monsters", 5, 5, 40, 40, false},		 //{10}
-     {"Detect Curse", 5, 9, 60, 50, false},		 //{11}
-     {"Detect Invisible", 7, 8, 40, 45, false},		 //{12}
-     {"Cure Poison", 7, 8, 40, 45, false},		 //{13}
-     {"Invisibility", 7, 11, 60, 55, false},		 //{14}
-     {"Teleport Self", 9, 10, 60, 50, false},		 //{15}
-     {"Infravision", 9, 11, 50, 55, false},		 //{16}
-     {"Physical Humor", 9, 11, 70, 55, false},		 //{17}
-     {"Recharge Item", 11, 11, 60, 85, false},		 //{18}
-     {"Remove Curse", 13, 12, 50, 55, false},		 //{19}
-     {"Legend Lore", 11, 13, 80, 99, false},		 //{20}
-     {"Mass Charm", 11, 12, 70, 55, false},		 //{21}
-     {"Detect Treasure", 13, 11, 60, 80, false},	 //{22}
-     {"Detect Object", 13, 11, 60, 80, false},		 //{23}
-     {"Resist Petrification", 15, 12, 70, 60, false},    //{24}
-     {"Create Food and Drink", 15, 13, 80, 60, false},   //{25}
-     {"Panic", 15, 15, 80, 60, false},			 //{26}
-     {"Word of Recall", 17, 15, 80, 60, false},		 //{27}
-     {"Protection from Nature", 17, 16, 80, 65, false},  //{28}
-     {"See Invisible", 17, 16, 80, 60, false},		 //{29}
-     {"Magic Mapping", 19, 18, 90, 65, false},		 //{30}
-     {"Joke of Death", 19, 18, 80, 60, false},		 //{31}
-     {"Battle Frenzy", 19, 18, 90, 80, false},		 //{32}
-     {"Slow Creature", 21, 19, 100, 65, false},		 //{33}
-     {"Resist Charm", 23, 22, 120, 65, false},		 //{34}
-     {"Item Lore", 25, 20, 110, 90, false},		 //{35}
-     {"Song of Protection", 27, 25, 200, 70, false},     //{36}
-     {"Last Laugh", 29, 23, 150, 70, false},		 //{37}
-     {"Teleport Level", 31, 27, 300, 75, false},	 //{38}
-     {"Clairvoyance", 35, 29, 500, 92, false},		 //{39}
-     {"Song of Power", 39, 32, 800, 97, false}		 //{40}
+    {							 /*	{ Bards		} */
+     {"Detect Monsters", 1, 1, 6, 35, false},		 /*{ 1} */
+     {"Battle Song", 1, 2, 7, 35, false},		 /*{ 2} */
+     {"Blink", 1, 2, 8, 35, false},			 /*{ 3} */
+     {"Light Area", 1, 2, 8, 35, false},		 /*{ 4} */
+     {"Detect Hidden Doors/Traps", 3, 3, 10, 45, false}, /*{ 5} */
+     {"Magical Jig", 3, 4, 20, 40, false},		 /*{ 6} */
+     {"Detect Magic", 3, 4, 50, 60, false},		 /*{ 7} */
+     {"Minor Cure", 3, 4, 20, 40, false},		 /*{ 8} */
+     {"Battle Dance", 5, 5, 30, 45, false},		 /*{ 9} */
+     {"Charm Monsters", 5, 5, 40, 40, false},		 /*{10} */
+     {"Detect Curse", 5, 9, 60, 50, false},		 /*{11} */
+     {"Detect Invisible", 7, 8, 40, 45, false},		 /*{12} */
+     {"Cure Poison", 7, 8, 40, 45, false},		 /*{13} */
+     {"Invisibility", 7, 11, 60, 55, false},		 /*{14} */
+     {"Teleport Self", 9, 10, 60, 50, false},		 /*{15} */
+     {"Infravision", 9, 11, 50, 55, false},		 /*{16} */
+     {"Physical Humor", 9, 11, 70, 55, false},		 /*{17} */
+     {"Recharge Item", 11, 11, 60, 85, false},		 /*{18} */
+     {"Remove Curse", 13, 12, 50, 55, false},		 /*{19} */
+     {"Legend Lore", 11, 13, 80, 99, false},		 /*{20} */
+     {"Mass Charm", 11, 12, 70, 55, false},		 /*{21} */
+     {"Detect Treasure", 13, 11, 60, 80, false},	 /*{22} */
+     {"Detect Object", 13, 11, 60, 80, false},		 /*{23} */
+     {"Resist Petrification", 15, 12, 70, 60, false},    /*{24} */
+     {"Create Food and Drink", 15, 13, 80, 60, false},   /*{25} */
+     {"Panic", 15, 15, 80, 60, false},			 /*{26} */
+     {"Word of Recall", 17, 15, 80, 60, false},		 /*{27} */
+     {"Protection from Nature", 17, 16, 80, 65, false},  /*{28} */
+     {"See Invisible", 17, 16, 80, 60, false},		 /*{29} */
+     {"Magic Mapping", 19, 18, 90, 65, false},		 /*{30} */
+     {"Joke of Death", 19, 18, 80, 60, false},		 /*{31} */
+     {"Battle Frenzy", 19, 18, 90, 80, false},		 /*{32} */
+     {"Slow Creature", 21, 19, 100, 65, false},		 /*{33} */
+     {"Resist Charm", 23, 22, 120, 65, false},		 /*{34} */
+     {"Item Lore", 25, 20, 110, 90, false},		 /*{35} */
+     {"Song of Protection", 27, 25, 200, 70, false},     /*{36} */
+     {"Last Laugh", 29, 23, 150, 70, false},		 /*{37} */
+     {"Teleport Level", 31, 27, 300, 75, false},	 /*{38} */
+     {"Clairvoyance", 35, 29, 500, 92, false},		 /*{39} */
+     {"Song of Power", 39, 32, 800, 97, false}		 /*{40} */
     },
-    {							  //	{ Adventurer	    }
-     {"Magic Missile", 3, 1, 6, 30, false},		  //{ 1}
-     {"Detect Monsters", 3, 2, 6, 35, false},		  //{ 2}
-     {"Phase Door", 3, 2, 8, 35, false},		  //{ 3}
-     {"Light Area", 5, 3, 8, 26, false},		  //{ 4}
-     {"Cure Light Wounds", 5, 3, 8, 25, false},		  //{ 5}
-     {"Find Hidden Traps/Doors", 7, 4, 10, 45, false},    //{ 6}
-     {"Stinking Cloud", 7, 6, 24, 40, false},		  //{ 7}
-     {"Confusion", 9, 6, 20, 40, false},		  //{ 8}
-     {"Lightning Bolt", 9, 7, 30, 40, false},		  //{ 9}
-     {"Trap/Door Destruction", 11, 8, 30, 45, false},     //{10}
-     {"Sleep I", 11, 8, 40, 40, false},			  //{11}
-     {"Cure Poison", 13, 9, 40, 45, false},		  //{12}
-     {"Shadow Door", 13, 10, 50, 45, false},		  //{13}
-     {"Remove Curse", 15, 11, 50, 55, false},		  //{14}
-     {"Frost Bolt", 15, 12, 60, 50, false},		  //{15}
-     {"Create Food", 17, 12, 60, 55, false},		  //{16}
-     {"Infravision", 17, 12, 60, 50, false},		  //{17}
-     {"Invisibility", 17, 13, 60, 50, false},		  //{18}
-     {"Turn Stone to Mud", 19, 15, 70, 50, false},	//{19}
-     {"Recharge Item I", 19, 17, 70, 90, false},	  //{20}
-     {"Sleep II", 21, 17, 70, 55, false},		  //{21}
-     {"Phantasmal Force", 21, 19, 60, 50, false},	 //{22}
-     {"Polymorph Other", 23, 19, 70, 60, false},	  //{23}
-     {"Identify", 23, 25, 70, 95, false},		  //{24}
-     {"Ring of Frost", 25, 19, 80, 60, false},		  //{25}
-     {"Sleep III", 25, 20, 80, 60, false},		  //{26}
-     {"Hold Monster", 27, 20, 80, 50, false},		  //{27}
-     {"Fire Bolt", 27, 20, 80, 60, false},		  //{28}
-     {"Slow Creature", 29, 21, 90, 65, false},		  //{29}
-     {"Protection From Magic", 31, 21, 90, 70, false},    //{30}
-     {"Frost Ball", 31, 21, 90, 65, false},		  //{31}
-     {"Death Spell", 33, 21, 100, 60, false},		  //{32}
-     {"Ring of Fire", 35, 21, 110, 65, false},		  //{33}
-     {"Recharge Item II", 35, 23, 120, 95, false},	//{34}
-     {"Teleport Other", 37, 25, 150, 70, false},	  //{35}
-     {"Haste Self", 37, 25, 200, 75, false},		  //{36}
-     {"Fire Ball", 39, 27, 250, 80, false},		  //{37}
-     {"Power Word: Destruction", 39, 30, 300, 95, false}, //{38}
-     {"", 99, 99, 0, 0, false},				  //{39}
-     {"", 99, 99, 0, 0, false}				  //{40}
+    {						       /*	{ Adventurer	    } */
+     {"Magic Missile", 3, 1, 6, 30, false},	    /*{ 1} */
+     {"Detect Monsters", 3, 2, 6, 35, false},	  /*{ 2} */
+     {"Phase Door", 3, 2, 8, 35, false},	       /*{ 3} */
+     {"Light Area", 5, 3, 8, 26, false},	       /*{ 4} */
+     {"Cure Light Wounds", 5, 3, 8, 25, false},	/*{ 5} */
+     {"Find Hidden Traps/Doors", 7, 4, 10, 45, false}, /*{ 6} */
+     {"Stinking Cloud", 7, 6, 24, 40, false},	  /*{ 7} */
+     {"Confusion", 9, 6, 20, 40, false},	       /*{ 8} */
+     {"Lightning Bolt", 9, 7, 30, 40, false},	  /*{ 9} */
+     {"Trap/Door Destruction", 11, 8, 30, 45, false},  /*{10} */
+     {"Sleep I", 11, 8, 40, 40, false},		       /*{11} */
+     {"Cure Poison", 13, 9, 40, 45, false},	    /*{12} */
+     {"Shadow Door", 13, 10, 50, 45, false},	   /*{13} */
+     {"Remove Curse", 15, 11, 50, 55, false},	  /*{14} */
+     {"Frost Bolt", 15, 12, 60, 50, false},	    /*{15} */
+     {"Create Food", 17, 12, 60, 55, false},	   /*{16} */
+     {"Infravision", 17, 12, 60, 50, false},	   /*{17} */
+     {"Invisibility", 17, 13, 60, 50, false},	  /*{18} */
+     {"Turn Stone to Mud", 19, 15, 70, 50, false},     /*{19} */
+     {"Recharge Item I", 19, 17, 70, 90, false},       /*{20} */
+     {"Sleep II", 21, 17, 70, 55, false},	      /*{21} */
+     {"Phantasmal Force", 21, 19, 60, 50, false},      /*{22} */
+     {"Polymorph Other", 23, 19, 70, 60, false},       /*{23} */
+     {"Identify", 23, 25, 70, 95, false},	      /*{24} */
+     {"Ring of Frost", 25, 19, 80, 60, false},	 /*{25} */
+     {"Sleep III", 25, 20, 80, 60, false},	     /*{26} */
+     {"Hold Monster", 27, 20, 80, 50, false},	  /*{27} */
+     {"Fire Bolt", 27, 20, 80, 60, false},	     /*{28} */
+     {"Slow Creature", 29, 21, 90, 65, false},	 /*{29} */
+     {"Protection From Magic", 31, 21, 90, 70, false}, /*{30} */
+     {"Frost Ball", 31, 21, 90, 65, false},	    /*{31} */
+     {"Death Spell", 33, 21, 100, 60, false},	  /*{32} */
+     {"Ring of Fire", 35, 21, 110, 65, false},	 /*{33} */
+     {"Recharge Item II", 35, 23, 120, 95, false},     /*{34} */
+     {"Teleport Other", 37, 25, 150, 70, false},       /*{35} */
+     {"Haste Self", 37, 25, 200, 75, false},	   /*{36} */
+     {"Fire Ball", 39, 27, 250, 80, false},	    /*{37} */
+     {"Power Word: Destruction", 39, 30, 300, 95, false}, /*{38} */
+     {"", 99, 99, 0, 0, false},				  /*{39} */
+     {"", 99, 99, 0, 0, false}				  /*{40} */
     },
-    {//		{ Monk		}
+    {/*		{ Monk		} */
      {"Self-Healing", 3, 3, 5, 50, false},
      {"Courage", 5, 5, 10, 50, false},
      {"Slow Poison", 7, 7, 10, 50, false},
@@ -1470,84 +1473,87 @@ spell_type magic_spell[MAX_CLASS][MAX_SPELLS] = {
      {"", 99, 99, 0, 0, false},
      {"", 99, 99, 0, 0, false}}};
 
-//	{ Yums -- A numbered array for eatin' purposes! }
-//
-//       some of the food is not good for eating, look in
-//       treasure.c:mt__armor_and_shields for where they are
-//       generated.  (also mt__food in the same file)
+/*	{ Yums -- A numbered array for eatin' purposes! } */
+/* */
+/*       some of the food is not good for eating, look in */
+/*       treasure.c:mt__armor_and_shields for where they are */
+/*       generated.  (also mt__food in the same file) */
 
 treasure_type yums[NUM_YUM + 1] = {
     {"& Bogus Hard Biscuit~", Food, ',', 0x00000000, Nothing_flag, 500, 1, 309,
-     2, 1, 0, 0, 0, 0, "0d0", -1}, //{0}
+     2, 1, 0, 0, 0, 0, "0d0", -1}, /*{0} */
     {"& Hard Biscuit~", Food, ',', 0x00000000, Nothing_flag, 500, 1, 309, 2, 1,
-     0, 0, 0, 0, "0d0", -1}, //{1}
+     0, 0, 0, 0, "0d0", -1}, /*{1} */
     {"& Pint of Fine Wine", Food, ',', 0x00000000, Nothing_flag, 400, 2, 312,
-     10, 1, 0, 0, 0, 0, "0d0", -1}, //{2}
+     10, 1, 0, 0, 0, 0, "0d0", -1}, /*{2} */
     {"& Strip~ of Beef Jerky", Food, ',', 0x00000000, Nothing_flag, 1750, 2,
-     310, 2, 1, 0, 0, 0, 0, "0d0", -1}, //{3}
+     310, 2, 1, 0, 0, 0, 0, "0d0", -1}, /*{3} */
     {"& Piece~ of Elvish Waybread", Food, ',', 0x00000000, 0x21800020, 3500, 10,
-     313, 3, 1, 0, 0, 0, 0, "0d0", -1}, //{4}
+     313, 3, 1, 0, 0, 0, 0, "0d0", -1}, /*{4} */
     {"& Rice-a-Roni~| (The San Francisco Treat!)", Food, 'R', 0x00000000,
-     0x330001C0, 2000, 0, 314, 3, 1, 0, 0, 0, 0, "0d0", -1}, //{5}
+     0x330001C0, 2000, 0, 314, 3, 1, 0, 0, 0, 0, "0d0", -1}, /*{5} */
     {"& Jolly Green Jelly~| (Ho Ho Ho!)", Food, 'J', 0x00000000, 0x22400060,
-     4000, 50, 315, 3, 1, 0, 0, 0, 0, "0d0", -1}, //{6}
+     4000, 50, 315, 3, 1, 0, 0, 0, 0, "0d0", -1}, /*{6} */
     {"& pint~ of fine grade mush", Food, ',', 0x00000000, 0x00000000, 1500, 0,
-     306, 252, 1, 0, 0, 0, 0, "0d0", -1}, //{7}
+     306, 252, 1, 0, 0, 0, 0, "0d0", -1}, /*{7} */
     {"& Slime Mold~", Food, ',', 0x00000000, Nothing_flag, 3000, 2, 308, 5, 1,
-     0, 0, 0, 0, "0d0", -1}, //{8}
+     0, 0, 0, 0, "0d0", -1}, /*{8} */
     {"& Pint of Fine Ale", Food, ',', 0x00000000, Nothing_flag, 500, 1, 311, 10,
-     1, 0, 0, 0, 0, "0d0", -1}, //{9}
+     1, 0, 0, 0, 0, "0d0", -1}, /*{9} */
     {"& Handful~ of Berries| (Smurfberries)", Food, ',', 0x00000000, 0x30400000,
-     1000, 0, 317, 3, 1, 0, 0, 0, 0, "0d0", -1}, //{10}
+     1000, 0, 317, 3, 1, 0, 0, 0, 0, "0d0", -1}, /*{10} */
     {"& Handful~ of Berries| (Goodberries)", Food, ',', 0x00000000, 0x30C00080,
-     1000, 0, 318, 3, 1, 0, 0, 0, 0, "0d0", -1}, //{11}
+     1000, 0, 318, 3, 1, 0, 0, 0, 0, "0d0", -1}, /*{11} */
     {"& Cool Set of Threads^ [%P6,%P4]", soft_armor, '(', 0x00000000,
-     Nothing_flag, 0, 45, 11, 75, 1, -1, 0, 3, 0, "0d0", -1}, //{12}
+     Nothing_flag, 0, 45, 11, 75, 1, -1, 0, 3, 0, "0d0", -1}, /*{12} */
     {"Filthy Naga Hide Armor^ [%P6,%P4]", soft_armor, '(', 0x00000000,
-     Nothing_flag, 0, 45, 12, 300, 1, -1, 0, 9, 0, "0d0", -1}, //{13}
+     Nothing_flag, 0, 45, 12, 300, 1, -1, 0, 9, 0, "0d0", -1}, /*{13} */
     {"Stone Plate Armor^ [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag,
-     0, 45, 14, 600, 1, -6, 0, 10, 0, "2d4", -1}, //{14}
+     0, 45, 14, 600, 1, -6, 0, 10, 0, "2d4", -1}, /*{14} */
     {"Elven Chain Mail^ [%P6,%P4]", soft_armor, '(', 0x00000000, Nothing_flag,
-     0, 900, 13, 160, 1, -1, 0, 17, 0, "1d2", -1}, //{15}
+     0, 900, 13, 160, 1, -1, 0, 17, 0, "1d2", -1}, /*{15} */
     {"Mithril Chain Mail^ [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag,
-     0, 1800, 15, 240, 1, -1, 0, 24, 0, "1d4", -1}, //{16}
+     0, 1800, 15, 240, 1, -1, 0, 24, 0, "1d4", -1}, /*{16} */
     {"Mithril Plate Armor^ [%P6,%P4]", hard_armor, '[', 0x00000000,
-     Nothing_flag, 0, 3600, 16, 400, 1, -1, 0, 32, 0, "2d4", -1}, //{17}
+     Nothing_flag, 0, 3600, 16, 400, 1, -1, 0, 32, 0, "2d4", -1}, /*{17} */
     {"& Eyeball~| of Drong", junk_food, ',', 0x00000000, 0x00000000, 300, 1000,
-     270, 2, 2, 0, 0, 0, 0, "10d12", 20}, //{18}
+     270, 2, 2, 0, 0, 0, 0, "10d12", 20}, /*{18} */
 };
 
-//	{ Create fake book for using monk disciplines		}
+/*	{ Create fake book for using monk disciplines		} */
 treasure_type monk_book = {
     "& Book of Mental Disciplines", miscellaneous_object, '?',   0x00000000,
     0x00003FFF,			    0,			  0,     1,
     10,				    1,			  0,     0,
     0,				    0,			  "0d0", 1};
 
-//	{ Each type of character starts out with a few provisions...	}
-//	{ Note the the entries refer to array elements of INVENTORY_INIT array}
+/*	{ Each type of character starts out with a few provisions...	} */
+/*	{ Note the the entries refer to array elements of INVENTORY_INIT array}
+ */
 byteint player_init[MAX_CLASS][5] = {
-    {1, 104, 42, 7, 33},    //{ Warrior	}
-    {1, 104, 42, 7, 67},    //{ Mage	}
-    {1, 104, 42, 156, 71},  //{ Priest	}
-    {1, 104, 33, 7, 111},   //{ Rogue	}
-    {1, 104, 42, 7, 107},   //{ Ranger	}
-    {1, 104, 42, 7, 71},    //{ Paladin	}
-    {1, 104, 42, 156, 107}, //{ Druid	}
-    {1, 104, 42, 7, 111},   //{ Bard	}
-    {1, 104, 42, 7, 67},    //{ Adventurer	}
-    {1, 104, 42, 28, 43}    //{ Monk	}
+    {1, 104, 42, 7, 33},    /*{ Warrior	} */
+    {1, 104, 42, 7, 67},    /*{ Mage	} */
+    {1, 104, 42, 156, 71},  /*{ Priest	} */
+    {1, 104, 33, 7, 111},   /*{ Rogue	} */
+    {1, 104, 42, 7, 107},   /*{ Ranger	} */
+    {1, 104, 42, 7, 71},    /*{ Paladin	} */
+    {1, 104, 42, 156, 107}, /*{ Druid	} */
+    {1, 104, 42, 7, 111},   /*{ Bard	} */
+    {1, 104, 42, 7, 67},    /*{ Adventurer	} */
+    {1, 104, 42, 28, 43}    /*{ Monk	} */
 };
 
 boolean total_winner = false;
 
-//	{ Following are store definitions				}
+/*	{ Following are store definitions				} */
 store_type stores[MAX_STORES + 1];
 
-//	{ Store owners have different characteristics for pricing and haggling}
-//	{ Note: Store owners should be added in groups, one for each store    }
+/*	{ Store owners have different characteristics for pricing and haggling}
+ */
+/*	{ Note: Store owners should be added in groups, one for each store    }
+ */
 owner_type owners[MAX_OWNERS] = {
-    // {set number one}
+    /* {set number one} */
     {"Erick the Honest       (Human)      General Store", 2500, 0.75, 0.08,
      0.04, 0, 12},
     {"Mauglin the Grumpy     (Dwarf)      Armory", 32000, 1.00, 0.12, 0.04, 5,
@@ -1572,7 +1578,7 @@ owner_type owners[MAX_OWNERS] = {
     {"Ugluk the Ugly        (Orc)          Black Market", 500000, 2.50, 1.5,
      0.01, 6, 6},
 
-    //{set number two}
+    /*{set number two} */
     {"Andy the Friendly      (Halfling)   General Store", 2000, 0.70, 0.08,
      0.05, 3, 15},
     {"Darg-Low the Grim      (Human)      Armory", 10000, 0.90, 0.11, 0.04, 0,
@@ -1597,7 +1603,7 @@ owner_type owners[MAX_OWNERS] = {
     {"Gloin the Fierce       (Dwarf)     Black Market", 500000, 2.5, 1.5, 0.01,
      5, 4},
 
-    //{set number three}
+    /*{set number three} */
     {"Lyar-el the Comely     (Elf)        General Store", 3000, 0.65, 0.07,
      0.06, 2, 18},
     {"Mauglim the Horrible   (Half-Orc)   Armory", 3000, 1.00, 0.13, 0.05, 6,
@@ -1622,7 +1628,7 @@ owner_type owners[MAX_OWNERS] = {
     {"Grima Wormtongue       (Human?)     Black Market", 500000, 2.5, 1.5, 0.01,
      0, 5},
 
-    //{set number four}
+    /*{set number four} */
     {"Felimid mac Fal        (Half-Elf)   General Store", 3500, 1.10, 0.15,
      0.10, 1, 5},
     {"Andre the Dull         (Half-Troll) Armory", 10000, 1.00, 0.08, 0.04, 6,
@@ -1649,7 +1655,7 @@ owner_type owners[MAX_OWNERS] = {
 
 };
 
-//	{ Stores are just special traps			}
+/*	{ Stores are just special traps			} */
 treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
     {"the entrance to the General Store", Entrance_to_store, 'G' + 0x80,
      0x00000000, 0x00000000, 0, 0, 101, 0, 0, 0, 0, 0, 0, "0d0", 0},
@@ -1702,185 +1708,185 @@ treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
 
 };
 
-//{ Note : Raised from 26 to 50 possible choices		-DMF-	}
+/*{ Note : Raised from 26 to 50 possible choices		-DMF-	} */
 integer store_choice[MAX_STORES][STORE_CHOICES] = {
-    //	{ General Store }
+    /*	{ General Store } */
     {105, 104, 103, 102, 105, 104, 42, 105, 27, 26, 5, 4, 3, 3, 2, 102, 103,
      104, 105, 1, 1, 1, 2, 2, 3, 3, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 27, 26, 4, 103, 104, 105},
-    //	{ Armory	}
+    /*	{ Armory	} */
     {30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 47, 30, 33,
      34, 43, 44, 28, 29, 30, 31, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
      43, 44, 45, 46, 47, 28, 29, 30, 31, 30, 32, 35},
-    //	{ Weaponsmith	}
+    /*	{ Weaponsmith	} */
     {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
      6, 7, 23, 25, 23, 25, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
      20, 21, 22, 23, 24, 25, 6, 7, 156, 156},
-    //	{ Temple	}
+    /*	{ Temple	} */
     {59, 59, 77, 79, 80, 81, 84, 85, 13, 14, 15, 96, 97, 98, 100, 79, 79, 80,
      80, 81, 98, 59, 77, 80, 81, 84, 59, 59, 77, 79, 80, 81, 84, 85, 13, 14, 15,
      96, 97, 98, 59, 77, 80, 81, 84, 85, 13, 156, 156, 96},
-    //	{ Alchemy shop	}
+    /*	{ Alchemy shop	} */
     {55, 56, 57, 58, 58, 60, 61, 62, 63, 64, 65, 66, 75, 76, 78, 82, 83, 60, 61,
      62, 63, 64, 98, 99, 98, 98, 62, 63, 64, 65, 66, 75, 76, 78, 82, 83, 60, 61,
      55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66},
-    //	{ Magic shop	}
+    /*	{ Magic shop	} */
     {49, 50, 51, 52, 53, 54, 48, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 86,
      101, 88, 49, 50, 51, 52, 53, 54, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
      86, 101, 49, 50, 51, 52, 53, 54, 48, 86, 87, 88, 89, 90},
-    //	{ Inn		}
+    /*	{ Inn		} */
     {106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106,
      106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 115, 115, 115, 115, 115,
      115, 115, 115, 116, 116, 116, 116, 116, 116, 116, 116, 157, 157, 157, 157,
      157, 157, 157, 157, 157},
-    //	{ Library	}
+    /*	{ Library	} */
     {67, 68, 69, 70, 71, 72, 73, 74, 67, 68, 69, 70, 71, 72, 58, 62, 63, 64, 65,
      68, 67, 71, 68, 72, 67, 68, 69, 70, 71, 72, 73, 74, 68, 58, 62, 63, 64, 65,
      73, 68, 69, 70, 67, 68, 71, 58, 62, 63, 64, 65},
-    //	{ Music Shop	}
+    /*	{ Music Shop	} */
     {107, 108, 109, 110, 111, 112, 113, 114, 114, 107, 108, 109, 110, 111, 112,
      113, 113, 114, 107, 108, 109, 110, 111, 112, 113, 114, 112, 107, 107, 107,
      108, 108, 108, 109, 109, 109, 110, 110, 111, 112, 117, 118, 119, 120, 121,
      117, 118, 119, 120, 121},
-    //	{ Gem Shop	}
+    /*	{ Gem Shop	} */
     {122, 137, 142, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 122,
      124, 125, 126, 126, 127, 127, 134, 129, 130, 133, 131, 135, 133, 122, 134,
      122, 122, 130, 136, 140, 124, 122, 125, 123, 137, 124, 125, 126, 141, 138,
      129, 130, 131, 132, 139},
-    //	{ All-Nite Deli }
+    /*	{ All-Nite Deli } */
     {144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 143, 144, 145,
      146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 143, 144, 145, 146, 147,
      148, 149, 150, 151, 152, 153, 154, 155, 143, 144, 145, 146, 148, 149, 151,
      152, 153, 154, 155, 143},
-    //	{ Black Market }
+    /*	{ Black Market } */
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 
 };
 
-//	{ Each store will buy only certain items, based on TVAL }
+/*	{ Each store will buy only certain items, based on TVAL } */
 obj_set store_buy[MAX_STORES] = {
-    // {General Store	}
+    /* {General Store	} */
     {1, 2, 3, 13, 15, 25, 30, 32, 38, 77, 80, 85, 86, 0, 0, 0},
-    // {Armory		}
+    /* {Armory		} */
     {29, 30, 31, 33, 34, 35, 36, 37, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Weaponsmith	}
+    /* {Weaponsmith	} */
     {10, 11, 12, 20, 21, 22, 23, 24, 26, 0, 0, 0, 0, 0, 0, 0},
-    // {Temple		}
+    /* {Temple		} */
     {21, 70, 71, 75, 76, 91, 94, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Alchemy shop	}
+    /* {Alchemy shop	} */
     {70, 71, 75, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Magic Shop	}
+    /* {Magic Shop	} */
     {1, 3, 6, 40, 45, 55, 60, 65, 90, 0, 0, 0, 0, 0, 0, 0},
-    // {Inn	 	}
+    /* {Inn	 	} */
     {106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Library	}
+    /* {Library	} */
     {71, 70, 90, 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Music Shop	}
+    /* {Music Shop	} */
     {85, 86, 92, 93, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Jewelry Shop	}
+    /* {Jewelry Shop	} */
     {4, 5, 7, 29, 37, 38, 40, 45, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {All-Night Deli }
+    /* {All-Night Deli } */
     {81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // {Black Market }
+    /* {Black Market } */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
-//	{ Hours that a store is open, in two hour increments.
-//		  = Open
-//		N = 'Closed for the night'
-//		W = 'Closed for the weekend'
-//		D = 'Closed for the day'
-//		B = Bribeable
-//					}
+/*	{ Hours that a store is open, in two hour increments. */
+/*		  = Open */
+/*		N = 'Closed for the night' */
+/*		W = 'Closed for the weekend' */
+/*		D = 'Closed for the day' */
+/*		B = Bribeable */
+/*					} */
 htype store_hours[MAX_STORES + MAX_UNNAMED][7] =
-    //		{	Sat		Sun		Mon	Tue
-    //			Wed		Thu		Fri		}
+    /*		{	Sat		Sun		Mon	Tue */
+    /*			Wed		Thu		Fri		} */
     {
-     //{General Store	}
+     /*{General Store	} */
      {"NNB       BN", "NNB       BN", "NNB       BN", "NNB       BN",
       "NNB       BN", "NNB       BN", "NNB       BN"},
-     //{Armory		}
+     /*{Armory		} */
      {"NNNB     WWW", "WWWWWWWWWWWW", "WWWB     NNN", "NNNB     NNN",
       "NNNB     NNN", "NNNB     NNN", "NNNB     NNN"},
-     //{Weapon Smiths	}
+     /*{Weapon Smiths	} */
      {"NNNB     WWW", "WWWWWWWWWWWW", "WWWB     NNN", "NNNB     NNN",
       "NNNB     NNN", "NNNB     NNN", "NNNB     NNN"},
-     //{Temple		}
+     /*{Temple		} */
      {"            ", "            ", "            ", "            ",
       "            ", "            ", "            "},
-     //{Alchemy Shop	}
+     /*{Alchemy Shop	} */
      {"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
       "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
-     //{Magic Shop	}
+     /*{Magic Shop	} */
      {"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
       "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
-     //{Inn		}
+     /*{Inn		} */
      {"            ", "            ", "            ", "            ",
       "            ", "            ", "            "},
-     //{Library	}
+     /*{Library	} */
      {"NNN        N", "NNN        N", "NNN        N", "NNN        N",
       "NNN        N", "NNN        N", "NNN        N"},
-     //{Music Shop 	}
+     /*{Music Shop 	} */
      {"NNNB    BNNN", "NNNB   BNNNN", "NNNB    BNNN", "NNNB    BNNN",
       "NNNB    BNNN", "NNNB    BNNN", "NNNB    BNNN"},
-     //{Gem Store	}
+     /*{Gem Store	} */
      {"NNNB     BNN", "NNNB   BNNNN", "NNNB     BNN", "NNNB     BNN",
       "NNNB     BNN", "NNNB     BNN", "NNNB     BNN"},
-     //{All-Night Deli }
+     /*{All-Night Deli } */
      {"            ", "            ", "            ", "            ",
       "            ", "            ", "            "},
-     //{Black Market }
+     /*{Black Market } */
      {"BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB",
       "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB"},
-     //{Trading Post	}
+     /*{Trading Post	} */
      {"NNNB      BW", "WWWWWWWWWWWW", "WWWB      BN", "NNNB      BN",
       "NNNB      BN", "NNNB      BN", "NNNB      BN"},
-     //{Insurance Shop	}
+     /*{Insurance Shop	} */
      {"BBBB     BBB", "BBBB     BBB", "BBBB     BBB", "BBBB     BBB",
       "BBBB     BBB", "BBBB     BBB", "BBBB     BBB"},
-     //{Bank		}
+     /*{Bank		} */
      {"NNNN   WWWWW", "WWWWWWWWWWWW", "WWWW     NNN", "NNNN     NNN",
       "NNNN     NNN", "NNNN     NNN", "NNNN     WWW"},
-     //{Money Exchange	}
+     /*{Money Exchange	} */
      {"NNNB     BWW", "WWWWWWWWWWWW", "WWWB     BNN", "NNNB     BNN",
       "NNNB     BNN", "NNNB     BNN", "NNNB     BNN"},
-     //{Casino		}
+     /*{Casino		} */
      {"            ", "            ", "   DDDDDD   ", "   DDDDDD   ",
       "   DDDDDD   ", "   DDDDDD   ", "   DDDDDD   "},
-     //{Quest Store    }
+     /*{Quest Store    } */
      {"            ", "            ", "            ", "            ",
       "            ", "            ", "            "}};
 
-//	{ Store owners can be bribed to open up their shop during
-//	  certain hours (so that you can always have the opportunity to
-//	  buy insurance, and suchlike.)					}
+/*	{ Store owners can be bribed to open up their shop during */
+/*	  certain hours (so that you can always have the opportunity to */
+/*	  buy insurance, and suchlike.)					} */
 integer store_bribe[MAX_STORES + MAX_UNNAMED] = {
-    50,  //  0 general
-    150, //  1 armory
-    150, //  2 weapons
-    75,  //  3 temple
-    75,  //  4 alchemy
-    300, //  5 magic
-    25,  //  6 inn
-    100, //  7 library
-    50,  //  8 music
-    75,  //  9 gem
-    0,   // 10 deli
-    100, // 11 black market
-    50,  // 12 trade post
-    100, // 13 insurance
-    100, // 14 bank
-    25,  // 15 money changer
-    100, // 16 casino
-    0    // 17 fortress
+    50,  /*  0 general */
+    150, /*  1 armory */
+    150, /*  2 weapons */
+    75,  /*  3 temple */
+    75,  /*  4 alchemy */
+    300, /*  5 magic */
+    25,  /*  6 inn */
+    100, /*  7 library */
+    50,  /*  8 music */
+    75,  /*  9 gem */
+    0,   /* 10 deli */
+    100, /* 11 black market */
+    50,  /* 12 trade post */
+    100, /* 13 insurance */
+    100, /* 14 bank */
+    25,  /* 15 money changer */
+    100, /* 16 casino */
+    0    /* 17 fortress */
 };
 
-integer mugging_chance; // { Chance page gets mugged}
+integer mugging_chance; /* { Chance page gets mugged} */
 
-//	{ Following are treasure arrays	and variables			}
-//      Search for MAX_OBJECTS to get to the end of the list
+/*	{ Following are treasure arrays	and variables			} */
+/*      Search for MAX_OBJECTS to get to the end of the list */
 
-//	{ Object list[1..max_objects] (All objects must be defined here)}
+/*	{ Object list[1..max_objects] (All objects must be defined here)} */
 treasure_type object_list[MAX_OBJECTS + 1] = {
     {"& %M Bogus Object~| of Doom", Food, ',', 0x00000000, 0x00000001, 500, 0,
      257, 1, 1, 0, 0, 0, 0, "0d0", 7},
@@ -2843,10 +2849,10 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
 
 };
 
-boolean object_ident[MAX_OBJECTS + 1]; //(max_objects of false)
+boolean object_ident[MAX_OBJECTS + 1]; /*(max_objects of false) */
 integer t_level[MAX_OBJ_LEVEL + 1];
 
-//	{ Gold list (All types of gold and gems are defined here)	}
+/*	{ Gold list (All types of gold and gems are defined here)	} */
 treasure_type gold_list[MAX_GOLD] = {
     {"& copper piece~", valuable_metal, '$', 0, 0, 0, 0, 2, 5, 420, 0, 0, 0, 0,
      " ", 2},
@@ -2906,381 +2912,390 @@ treasure_type equipment[EQUIP_MAX];
 treas_ptr inventory_list;
 treas_ptr inven_temp;
 
-//	{ Items which are sold in the stores are different from dungeon }
-//	{ items so that identify works properly.  Note that the players }
-//	{ receive their initial items from this list, so position is	}
-//	{ very important...						}
+/*	{ Items which are sold in the stores are different from dungeon } */
+/*	{ items so that identify works properly.  Note that the players } */
+/*	{ receive their initial items from this list, so position is	} */
+/*	{ very important...						} */
 
 treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"& Bogus Ration~ of Food", Food, ',', 0x00000000, Nothing_flag, 5000, 3,
-     307, 10, 5, 0, 0, 0, 0, "0d0", 0}, //{  0}
+     307, 10, 5, 0, 0, 0, 0, "0d0", 0}, /*{  0} */
     {"& Ration~ of Food", Food, ',', 0x00000000, Nothing_flag, 5000, 3, 307, 10,
-     5, 0, 0, 0, 0, "0d0", 0}, //{  1}
+     5, 0, 0, 0, 0, "0d0", 0}, /*{  1} */
     {"& Hard Biscuit~", Food, ',', 0x00000000, Nothing_flag, 500, 1, 309, 2, 5,
-     0, 0, 0, 0, "0d0", 0}, //{  2}
+     0, 0, 0, 0, "0d0", 0}, /*{  2} */
     {"& Strip~ of Beef Jerky", Food, ',', 0x00000000, Nothing_flag, 1750, 2,
-     310, 2, 5, 0, 0, 0, 0, "0d0", 0}, //{  3}
+     310, 2, 5, 0, 0, 0, 0, "0d0", 0}, /*{  3} */
     {"& Pint of Fine Ale", Food, ',', 0x00000000, Nothing_flag, 500, 1, 311, 10,
-     3, 0, 0, 0, 0, "0d0", 0}, //{  4}
+     3, 0, 0, 0, 0, "0d0", 0}, /*{  4} */
     {"& Pint of Fine Wine", Food, ',', 0x00000000, Nothing_flag, 400, 2, 312,
-     10, 1, 0, 0, 0, 0, "0d0", 0}, //{  5}
+     10, 1, 0, 0, 0, 0, "0d0", 0}, /*{  5} */
     {"& Dagger (Misercorde) (%P2,%P3)", dagger, '|', 0x10000000, Nothing_flag,
-     0, 10, 2, 15, 1, 0, 0, 0, 0, "1d4", 0}, //{  6}
+     0, 10, 2, 15, 1, 0, 0, 0, 0, "1d4", 0}, /*{  6} */
     {"& Dagger (Stiletto) (%P2,%P3)", dagger, '|', 0x10000000, Nothing_flag, 0,
-     10, 3, 12, 1, 0, 0, 0, 0, "1d4", 0}, //{  7}
+     10, 3, 12, 1, 0, 0, 0, 0, "1d4", 0}, /*{  7} */
     {"& Bastard Sword (%P2,%P3)", sword, '|', 0x10000000, Nothing_flag, 0, 350,
-     7, 140, 1, 0, 0, 0, 0, "3d4", 0}, //{  8}
+     7, 140, 1, 0, 0, 0, 0, "3d4", 0}, /*{  8} */
     {"& Broadsword (%P2,%P3)", sword, '|', 0x10000000, Nothing_flag, 0, 255, 10,
-     150, 1, 0, 0, 0, 0, "2d5", 0}, //{  9}
+     150, 1, 0, 0, 0, 0, "2d5", 0}, /*{  9} */
     {"& Longsword (%P2,%P3)", sword, '|', 0x10000000, Nothing_flag, 0, 300, 18,
-     130, 1, 0, 0, 0, 0, "1d10", 0}, //{ 10}
+     130, 1, 0, 0, 0, 0, "1d10", 0}, /*{ 10} */
     {"& Small Sword (%P2,%P3)", dagger, '|', 0x10000000, Nothing_flag, 0, 48,
-     22, 75, 1, 0, 0, 0, 0, "1d6", 0}, //{ 11}
+     22, 75, 1, 0, 0, 0, 0, "1d6", 0}, /*{ 11} */
     {"& Broad Axe (%P2,%P3)", hafted_weapon, '\\', 0x10000000, Nothing_flag, 0,
-     304, 4, 160, 1, 0, 0, 0, 0, "2d5", 0}, //{ 12}
+     304, 4, 160, 1, 0, 0, 0, 0, "2d5", 0}, /*{ 12} */
     {"& Morningstar (%P2,%P3)", maul, '\\', 0x00000000, Nothing_flag, 0, 396, 9,
-     150, 1, 0, 0, 0, 0, "2d6", 0}, //{ 13}
+     150, 1, 0, 0, 0, 0, "2d6", 0}, /*{ 13} */
     {"& Mace (%P2,%P3)", maul, '\\', 0x00000000, Nothing_flag, 0, 130, 10, 120,
-     1, 0, 0, 0, 0, "2d4", 0}, //{ 14}
+     1, 0, 0, 0, 0, "2d4", 0}, /*{ 14} */
     {"& War Hammer (%P2,%P3)", maul, '\\', 0x00000000, Nothing_flag, 0, 225, 11,
-     120, 1, 0, 0, 0, 0, "3d3", 0}, //{ 15}
+     120, 1, 0, 0, 0, 0, "3d3", 0}, /*{ 15} */
     {"& Halberd (%P2,%P3)", pole_arm, '/', 0x10000000, Nothing_flag, 0, 430, 5,
-     190, 1, 0, 0, 0, 0, "3d4", 0}, //{ 16}
+     190, 1, 0, 0, 0, 0, "3d4", 0}, /*{ 16} */
     {"& Pike (%P2,%P3)", pole_arm, '/', 0x10000000, Nothing_flag, 0, 358, 7,
-     160, 1, 0, 0, 0, 0, "2d5", 0}, //{ 17}
+     160, 1, 0, 0, 0, 0, "2d5", 0}, /*{ 17} */
     {"& Spear (%P2,%P3)", pole_arm, '/', 0x10000000, Nothing_flag, 0, 36, 8, 50,
-     1, 0, 0, 0, 0, "1d6", 0}, //{ 18}
+     1, 0, 0, 0, 0, "1d6", 0}, /*{ 18} */
     {"& Short Bow (%P2)", bow_crossbow_or_sling, '}', 0x00000000, Nothing_flag,
-     2, 50, 1, 30, 1, 0, 0, 0, 0, "0d0", 0}, //{ 19}
+     2, 50, 1, 30, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 19} */
     {"& Long Bow (%P2)", bow_crossbow_or_sling, '}', 0x00000000, Nothing_flag,
-     3, 120, 2, 40, 1, 0, 0, 0, 0, "0d0", 0}, //{ 20}
+     3, 120, 2, 40, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 20} */
     {"& Light Crossbow (%P2)", bow_crossbow_or_sling, '}', 0x00000000,
-     Nothing_flag, 5, 160, 10, 110, 1, 0, 0, 0, 0, "0d0", 0}, //{ 21}
+     Nothing_flag, 5, 160, 10, 110, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 21} */
     {"& Sling (%P2)", bow_crossbow_or_sling, '}', 0x00000000, Nothing_flag, 1,
-     5, 20, 5, 1, 0, 0, 0, 0, "0d0", 0}, //{ 22}
+     5, 20, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 22} */
     {"& Arrow~ (%P2,%P3)", arrow, '{', 0x10000000, Nothing_flag, 0, 1, 1, 2, 1,
-     0, 0, 0, 0, "3d4", 0}, //{ 23}
+     0, 0, 0, 0, "3d4", 0}, /*{ 23} */
     {"& Bolt~ (%P2,%P3)", bolt, '{', 0x10000000, Nothing_flag, 0, 2, 1, 3, 1, 0,
-     0, 0, 0, "3d5", 0}, //{ 24}
+     0, 0, 0, "3d5", 0}, /*{ 24} */
     {"& Iron Shot~ (%P2,%P3)", sling_ammo, '{', 0x00000000, Nothing_flag, 0, 2,
-     1, 5, 1, 0, 0, 0, 0, "3d3", 0}, //{ 25}
+     1, 5, 1, 0, 0, 0, 0, "3d3", 0}, /*{ 25} */
     {"& Pick (%P1) (%P2,%P3)", 25, '\\', 0x10000000, Tunneling_worn_bit, 1, 50,
-     1, 150, 1, 0, 0, 0, 0, "1d3", 0}, //{ 26}
+     1, 150, 1, 0, 0, 0, 0, "1d3", 0}, /*{ 26} */
     {"& Shovel (%P1) (%P2,%P3)", 25, '\\', 0x00000000, Tunneling_worn_bit, 0,
-     15, 2, 60, 1, 0, 0, 0, 0, "1d2", 0}, //{ 27}
+     15, 2, 60, 1, 0, 0, 0, 0, "1d2", 0}, /*{ 27} */
     {"& Pair of Soft Leather Boots [%P6,%P4]", boots, ']', 0x00000000,
-     Nothing_flag, 0, 7, 2, 30, 1, 0, 0, 2, 0, "1d1", 0}, //{ 28}
+     Nothing_flag, 0, 7, 2, 30, 1, 0, 0, 2, 0, "1d1", 0}, /*{ 28} */
     {"& Pair of Hard Leather Boots [%P6,%P4]", boots, ']', 0x00000000,
-     Nothing_flag, 0, 12, 3, 40, 1, 0, 0, 3, 0, "1d1", 0}, //{ 29}
+     Nothing_flag, 0, 12, 3, 40, 1, 0, 0, 3, 0, "1d1", 0}, /*{ 29} */
     {"& Hard Leather Cap [%P6,%P4]", helm, ']', 0x00000000, Nothing_flag, 0, 12,
-     2, 15, 1, 0, 0, 2, 0, "0d0", 0}, //{ 30}
+     2, 15, 1, 0, 0, 2, 0, "0d0", 0}, /*{ 30} */
     {"& Metal Cap [%P6,%P4]", helm, ']', 0x00000000, Nothing_flag, 0, 30, 3, 20,
-     1, 0, 0, 3, 0, "1d1", 0}, //{ 31}
+     1, 0, 0, 3, 0, "1d1", 0}, /*{ 31} */
     {"& Iron Helm [%P6,%P4]", helm, ']', 0x00000000, Nothing_flag, 0, 75, 4, 75,
-     1, 0, 0, 5, 0, "1d3", 0}, //{ 32}
+     1, 0, 0, 5, 0, "1d3", 0}, /*{ 32} */
     {"Soft Leather Armor [%P6,%P4]", soft_armor, '(', 0x00000000, Nothing_flag,
-     0, 18, 2, 80, 1, 0, 0, 4, 0, "0d0", 0}, //{ 33}
+     0, 18, 2, 80, 1, 0, 0, 4, 0, "0d0", 0}, /*{ 33} */
     {"Soft Studded Leather [%P6,%P4]", soft_armor, '(', 0x00000000,
-     Nothing_flag, 0, 35, 3, 90, 1, 0, 0, 5, 0, "1d1", 0}, //{ 34}
+     Nothing_flag, 0, 35, 3, 90, 1, 0, 0, 5, 0, "1d1", 0}, /*{ 34} */
     {"Hard Leather Armor [%P6,%P4]", soft_armor, '(', 0x00000000, Nothing_flag,
-     0, 55, 4, 100, 1, -1, 0, 6, 0, "1d1", 0}, //{ 35}
+     0, 55, 4, 100, 1, -1, 0, 6, 0, "1d1", 0}, /*{ 35} */
     {"Hard Studded Leather [%P6,%P4]", soft_armor, '(', 0x00000000,
-     Nothing_flag, 0, 100, 5, 110, 1, -1, 0, 7, 0, "1d2", 0}, //{ 36}
+     Nothing_flag, 0, 100, 5, 110, 1, -1, 0, 7, 0, "1d2", 0}, /*{ 36} */
     {"Leather Scale Mail [%P6,%P4]", soft_armor, '(', 0x00000000, Nothing_flag,
-     0, 330, 9, 140, 1, -1, 0, 11, 0, "1d1", 0}, //{ 37}
+     0, 330, 9, 140, 1, -1, 0, 11, 0, "1d1", 0}, /*{ 37} */
     {"Metal Scale Mail [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag, 0,
-     430, 1, 250, 1, -2, 0, 13, 0, "1d4", 0}, //{ 38}
+     430, 1, 250, 1, -2, 0, 13, 0, "1d4", 0}, /*{ 38} */
     {"Chain Mail [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag, 0, 530,
-     2, 220, 1, -2, 0, 14, 0, "1d4", 0}, //{ 39}
+     2, 220, 1, -2, 0, 14, 0, "1d4", 0}, /*{ 39} */
     {"Partial Plate Armor [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag,
-     0, 900, 9, 260, 1, -3, 0, 22, 0, "1d6", 0}, //{ 40}
+     0, 900, 9, 260, 1, -3, 0, 22, 0, "1d6", 0}, /*{ 40} */
     {"Full Plate Armor [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag, 0,
-     1050, 11, 380, 1, -3, 0, 25, 0, "2d4", 0}, //{ 41}
+     1050, 11, 380, 1, -3, 0, 25, 0, "2d4", 0}, /*{ 41} */
     {"& Cloak [%P6,%P4]", Cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
-     0, 0, 1, 0, "0d0", 0}, //{ 42}
+     0, 0, 1, 0, "0d0", 0}, /*{ 42} */
     {"& Set of Leather Gloves [%P6,%P4]", gloves_and_gauntlets, ']', 0x00000000,
-     Nothing_flag, 0, 3, 1, 5, 1, 0, 0, 1, 0, "0d0", 0}, //{ 43}
+     Nothing_flag, 0, 3, 1, 5, 1, 0, 0, 1, 0, "0d0", 0}, /*{ 43} */
     {"& Set of Gauntlets [%P6,%P4]", gloves_and_gauntlets, ']', 0x00000000,
-     Nothing_flag, 0, 35, 2, 25, 1, 0, 0, 2, 0, "1d1", 0}, //{ 44}
+     Nothing_flag, 0, 35, 2, 25, 1, 0, 0, 2, 0, "1d1", 0}, /*{ 44} */
     {"& Small Leather Shield [%P6,%P4]", shield, ')', 0x00000000, Nothing_flag,
-     0, 30, 1, 50, 1, 0, 0, 2, 0, "1d1", 0}, //{ 45}
+     0, 30, 1, 50, 1, 0, 0, 2, 0, "1d1", 0}, /*{ 45} */
     {"& Medium Leather Shield [%P6,%P4]", shield, ')', 0x00000000, Nothing_flag,
-     0, 60, 2, 75, 1, 0, 0, 3, 0, "1d2", 0}, //{ 46}
+     0, 60, 2, 75, 1, 0, 0, 3, 0, "1d2", 0}, /*{ 46} */
     {"& Small Metal Shield [%P6,%P4]", shield, ')', 0x00000000, Nothing_flag, 0,
-     50, 4, 65, 1, 0, 0, 3, 0, "1d3", 0}, //{ 47}
+     50, 4, 65, 1, 0, 0, 3, 0, "1d3", 0}, /*{ 47} */
     {"& Ring of Resist Fire", ring, '=', 0x00000000, 0x00080000, 0, 250, 11, 2,
-     1, 0, 0, 0, 0, "0d0", 0}, //{ 48}
+     1, 0, 0, 0, 0, "0d0", 0}, /*{ 48} */
     {"& Ring of Resist Cold", ring, '=', 0x00000000, 0x00200000, 0, 250, 12, 2,
-     1, 0, 0, 0, 0, "0d0", 0}, //{ 49}
+     1, 0, 0, 0, 0, "0d0", 0}, /*{ 49} */
     {"& Ring of Feather Falling", ring, '=', 0x00000000, 0x04000000, 0, 250, 13,
-     2, 1, 0, 0, 0, 0, "0d0", 0}, //{ 50}
+     2, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 50} */
     {"& Ring of Protection [%P4]", ring, '=', 0x00000000, Nothing_flag, 0, 100,
-     24, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{ 51}
+     24, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 51} */
     {"& Amulet of Charisma (%P1)", amulet, '"', 0x00000000, 0x00000020, 0, 250,
-     6, 3, 1, 0, 0, 0, 0, "0d0", 0}, //{ 52}
+     6, 3, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 52} */
     {"& Amulet of Slow Digestion", amulet, '"', 0x00000000, 0x00000080, 0, 200,
-     9, 3, 1, 0, 0, 0, 0, "0d0", 0}, //{ 53}
+     9, 3, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 53} */
     {"& Amulet of Resist Acid", amulet, '"', 0x00000000, 0x00100000, 0, 300, 10,
-     3, 1, 0, 0, 0, 0, "0d0", 0}, //{ 54}
+     3, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 54} */
     {"& Scroll~ of Enchant Weapon To-Hit", scroll1, '?', 0x00000000, 0x00000001,
-     0, 125, 300, 5, 1, 0, 0, 0, 0, "0d0", 0}, //{ 55}
+     0, 125, 300, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 55} */
     {"& Scroll~ of Enchant Weapon To-Dam", scroll1, '?', 0x00000000, 0x00000002,
-     0, 125, 301, 5, 1, 0, 0, 0, 0, "0d0", 0}, //{ 56}
+     0, 125, 301, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 56} */
     {"& Scroll~ of Enchant Armor", scroll1, '?', 0x00000000, 0x00000004, 0, 125,
-     302, 5, 1, 0, 0, 0, 0, "0d0", 0}, //{ 57}
+     302, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 57} */
     {"& Scroll~ of Identify", scroll1, '?', 0x00000000, 0x00000008, 0, 50, 303,
-     5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 58}
+     5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 58} */
     {"& Scroll~ of Remove Curse", scroll1, '?', 0x00000000, 0x00000010, 0, 100,
-     304, 5, 1, 0, 0, 0, 0, "0d0", 0}, //{ 59}
+     304, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 59} */
     {"& Scroll~ of Light", scroll1, '?', 0x00000000, 0x00000020, 0, 15, 305, 5,
-     3, 0, 0, 0, 0, "0d0", 0}, //{ 60}
+     3, 0, 0, 0, 0, "0d0", 0}, /*{ 60} */
     {"& Scroll~ of Phase Door", scroll1, '?', 0x00000000, 0x00000080, 0, 15,
-     306, 5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 61}
+     306, 5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 61} */
     {"& Scroll~ of Magic Mapping", scroll1, '?', 0x00000000, 0x00000800, 0, 40,
-     307, 5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 62}
+     307, 5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 62} */
     {"& Scroll~ of Treasure Detection", scroll1, '?', 0x00000000, 0x00004000, 0,
-     15, 308, 5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 63}
+     15, 308, 5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 63} */
     {"& Scroll~ of Object Detection", scroll1, '?', 0x00000000, 0x00008000, 0,
-     15, 309, 5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 64}
+     15, 309, 5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 64} */
     {"& Scroll~ of Detect Invisible", scroll1, '?', 0x00000000, 0x00080000, 0,
-     15, 310, 5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 65}
+     15, 310, 5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 65} */
     {"& Scroll~ of Recharging", scroll1, '?', 0x00000000, 0x01000000, 0, 200,
-     311, 5, 1, 0, 0, 0, 0, "0d0", 0}, //{ 66}
+     311, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 66} */
     {"& Book of Magic Spells [Beginners-Magik]", Magic_Book, '?', 0x00000000,
-     0x0000007F, 0, 25, 257, 60, 1, -100, 0, 0, 0, "1d1", 0}, //{ 67}
+     0x0000007F, 0, 25, 257, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 67} */
     {"& Book of Magic Spells [Magik I]", Magic_Book, '?', 0x00000000,
-     0x0007FF80, 0, 100, 258, 60, 1, -100, 0, 0, 0, "1d1", 0}, //{ 68}
+     0x0007FF80, 0, 100, 258, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 68} */
     {"& Book of Magic Spells [Magik II]", Magic_Book, '?', 0x00000000,
-     0x7FF80000, 0, 400, 259, 60, 1, -100, 0, 0, 0, "1d1", 0}, //{ 69}
+     0x7FF80000, 0, 400, 259, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 69} */
     {"& Book of Magic Spells [Mages Guide to Power]", Magic_Book, '?',
      0x000001FF, 0x00000000, 0, 800, 260, 60, 1, -100, 0, 0, 0, "1d1",
-     0}, //{ 70}
+     0}, /*{ 70} */
     {"& Holy Book of Prayers [Beginners Handbook]", Prayer_Book, '?',
      0x00000000, 0x000000FF, 0, 25, 258, 60, 1, -100, 0, 0, 0, "1d1",
-     0}, //{ 71}
+     0}, /*{ 71} */
     {"& Holy Book of Prayers [Words of Wisdom]", Prayer_Book, '?', 0x00000000,
-     0x0007FF00, 0, 100, 259, 60, 1, -100, 0, 0, 0, "1d1", 0}, //{ 72}
+     0x0007FF00, 0, 100, 259, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 72} */
     {"& Holy Book of Prayers [Chants and Blessings]", Prayer_Book, '?',
      0x00000001, 0x7FF80000, 0, 300, 260, 60, 1, -100, 0, 0, 0, "1d1",
-     0}, //{ 73}
+     0}, /*{ 73} */
     {"& Holy Book of Prayers [Exorcism and Dispelling]", Prayer_Book, '?',
      0x000001FE, 0x00000000, 0, 900, 261, 60, 1, -100, 0, 0, 0, "1d1",
-     0}, //{ 74}
+     0}, /*{ 74} */
     {"& Potion~ of Restore Strength", potion1, '!', 0x00000000, 0x00000004, 0,
-     300, 310, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 75}
+     300, 310, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 75} */
     {"& Potion~ of Restore Intelligence", potion1, '!', 0x00000000, 0x00000020,
-     0, 300, 311, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 76}
+     0, 300, 311, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 76} */
     {"& Potion~ of Restore Wisdom", potion1, '!', 0x00000000, 0x00000100, 0,
-     300, 312, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 77}
+     300, 312, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 77} */
     {"& Potion~ of Restore Charisma", potion1, '!', 0x00000000, 0x00000800, 0,
-     300, 313, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 78}
+     300, 313, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 78} */
     {"& Potion~ of Cure Light Wounds", potion1, '!', 0x00000000, 0x10001000, 50,
-     15, 314, 4, 2, 0, 0, 0, 0, "1d1", 0}, //{ 79}
+     15, 314, 4, 2, 0, 0, 0, 0, "1d1", 0}, /*{ 79} */
     {"& Potion~ of Cure Serious Wounds", potion1, '!', 0x00000000, 0x30002000,
-     100, 40, 315, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 80}
+     100, 40, 315, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 80} */
     {"& Potion~ of Cure Critical Wounds", potion1, '!', 0x00000000, 0x70004000,
-     100, 100, 316, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 81}
+     100, 100, 316, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 81} */
     {"& Potion~ of Restore Dexterity", potion1, '!', 0x00010000, 0x04000000, 0,
-     300, 317, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 82}
+     300, 317, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 82} */
     {"& Potion~ of Restore Constitution", potion1, '!', 0x00000000, 0x68000000,
-     0, 300, 318, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 83}
+     0, 300, 318, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 83} */
     {"& Potion~ of Heroism", potion1, '!', 0x00000008, 0x00000000, 0, 35, 319,
-     4, 2, 0, 0, 0, 0, "1d1", 0}, //{ 84}
+     4, 2, 0, 0, 0, 0, "1d1", 0}, /*{ 84} */
     {"& Potion~ of Boldliness", potion1, '!', 0x00000020, 0x00000000, 0, 10,
-     320, 4, 2, 0, 0, 0, 0, "1d1", 0}, //{ 85}
+     320, 4, 2, 0, 0, 0, 0, "1d1", 0}, /*{ 85} */
     {"& Wand of Light (%P1 charges)", wand, '-', 0x00000000, 0x00000001, 0, 200,
-     1, 10, 1, 0, 0, 0, 0, "1d1", 2}, //{ 86}
+     1, 10, 1, 0, 0, 0, 0, "1d1", 2}, /*{ 86} */
     {"& Wand of Lightning Bolts (%P1 charges)", wand, '-', 0x00000000,
-     0x00000002, 0, 600, 2, 10, 1, 0, 0, 0, 0, "1d1", 6}, //{ 87}
+     0x00000002, 0, 600, 2, 10, 1, 0, 0, 0, 0, "1d1", 6}, /*{ 87} */
     {"& Wand of Magic Missile (%P1 charges)", wand, '-', 0x00000000, 0x00002000,
-     0, 200, 14, 10, 1, 0, 0, 0, 0, "1d1", 2}, //{ 88}
+     0, 200, 14, 10, 1, 0, 0, 0, 0, "1d1", 2}, /*{ 88} */
     {"& Wand of Disarming (%P1 charges)", wand, '-', 0x00000000, 0x00020000, 0,
-     700, 18, 10, 1, 0, 0, 0, 0, "1d1", 12}, //{ 89}
+     700, 18, 10, 1, 0, 0, 0, 0, "1d1", 12}, /*{ 89} */
     {"& Wand of Lightning Balls (%P1 charges)", wand, '-', 0x00000000,
-     0x00040000, 0, 1200, 19, 10, 1, 0, 0, 0, 0, "1d1", 20}, //{ 90}
+     0x00040000, 0, 1200, 19, 10, 1, 0, 0, 0, 0, "1d1", 20}, /*{ 90} */
     {"& Wand of Wonder (%P1 charges)", wand, '-', 0x00000000, 0x00800000, 0,
-     250, 24, 10, 1, 0, 0, 0, 0, "1d1", 10}, //{ 91}
+     250, 24, 10, 1, 0, 0, 0, 0, "1d1", 10}, /*{ 91} */
     {"& Staff of Light (%P1 charges)", staff, '_', 0x00000000, 0x00000001, 0,
-     250, 1, 50, 1, 0, 0, 0, 0, "1d2", 3}, //{ 92}
+     250, 1, 50, 1, 0, 0, 0, 0, "1d2", 3}, /*{ 92} */
     {"& Staff of Door/Stair Location (%P1 charges)", staff, '_', 0x00000000,
-     0x00000002, 0, 350, 2, 50, 1, 0, 0, 0, 0, "1d2", 7}, //{ 93}
+     0x00000002, 0, 350, 2, 50, 1, 0, 0, 0, 0, "1d2", 7}, /*{ 93} */
     {"& Staff of Trap Location (%P1 charges)", staff, '_', 0x00000000,
-     0x00000004, 0, 350, 3, 50, 1, 0, 0, 0, 0, "1d2", 7}, //{ 94}
+     0x00000004, 0, 350, 3, 50, 1, 0, 0, 0, 0, "1d2", 7}, /*{ 94} */
     {"& Staff of Detect Invisible (%P1 charges)", staff, '_', 0x00000000,
-     0x00008000, 0, 200, 16, 50, 1, 0, 0, 0, 0, "1d2", 3}, //{ 95}
+     0x00008000, 0, 200, 16, 50, 1, 0, 0, 0, 0, "1d2", 3}, /*{ 95} */
     {"& Potion~ of Restore Life Levels", potion1, '!', 0x00000040, 0x00000000,
-     0, 400, 321, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{ 96}
+     0, 400, 321, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{ 96} */
     {"& Scroll~ of Blessing", scroll1, '?', 0x00000010, 0x00000000, 0, 15, 312,
-     5, 2, 0, 0, 0, 0, "0d0", 0}, //{ 97}
+     5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 97} */
     {"& Scroll~ of Word-of-Recall", scroll1, '?', 0x00000080, 0x00000000, 0,
-     150, 313, 5, 3, 0, 0, 0, 0, "0d0", 0}, //{ 98}
+     150, 313, 5, 3, 0, 0, 0, 0, "0d0", 0}, /*{ 98} */
     {"& Potion~ of Slow Poison", potion1, '!', 0x00000400, 0x00000000, 0, 25,
-     322, 4, 2, 0, 0, 0, 0, "1d1", 0}, //{ 99}
+     322, 4, 2, 0, 0, 0, 0, "1d1", 0}, /*{ 99} */
     {"& Potion~ of Neutralize Poison", potion1, '!', 0x00000800, 0x00000000, 0,
-     75, 323, 4, 1, 0, 0, 0, 0, "1d1", 0}, //{100}
+     75, 323, 4, 1, 0, 0, 0, 0, "1d1", 0}, /*{100} */
     {"& Wand of Stinking Cloud (%P1 charges)", wand, '-', 0x00000000,
-     0x00200000, 0, 400, 22, 10, 1, 0, 0, 0, 0, "1d1", 5}, //{101}
+     0x00200000, 0, 400, 22, 10, 1, 0, 0, 0, 0, "1d1", 5}, /*{101} */
     {"& Iron Spike~", spike, '~', 0x10000000, Nothing_flag, 0, 1, 1, 10, 1, 0,
-     0, 0, 0, "1d1", 1}, //{102}
+     0, 0, 0, "1d1", 1}, /*{102} */
     {"& Brass Lantern~ with %P5 turns of light", Lamp_or_Torch, '~', 0x00000000,
-     Nothing_flag, 7500, 35, 2, 50, 1, 0, 0, 0, 0, "1d1", 1}, //{103}
+     Nothing_flag, 7500, 35, 2, 50, 1, 0, 0, 0, 0, "1d1", 1}, /*{103} */
     {"& Wooden Torch~ with %P5 turns of light", Lamp_or_Torch, '~', 0x00000000,
-     Nothing_flag, 4000, 2, 270, 30, 5, 0, 0, 0, 0, "1d1", 1}, //{104}
+     Nothing_flag, 4000, 2, 270, 30, 5, 0, 0, 0, 0, "1d1", 1}, /*{104} */
     {"& Flask~ of oil", flask_of_oil, '!', 0x00000000, 0x00040000, 7500, 3, 257,
-     10, 5, 0, 0, 0, 0, "2d6", 1}, //{105}
+     10, 5, 0, 0, 0, 0, "2d6", 1}, /*{105} */
     {"Lodging for one day", lodging_at_inn, '.', 0x00000000, Nothing_flag, 1,
-     50, 300, 3000, 14, 0, 0, 0, 0, "0d0", 0}, //{106}
+     50, 300, 3000, 14, 0, 0, 0, 0, "0d0", 0}, /*{106} */
     {"& Pipes of Peace [Beginners Instruments]", instrument, '%', 0x00000000,
-     0x000003FF, 0, 30, 258, 40, 1, -100, 0, 0, 0, "1d1", 40}, //{107}
+     0x000003FF, 0, 30, 258, 40, 1, -100, 0, 0, 0, "1d1", 40}, /*{107} */
     {"& Lyre of Nature [Instrument I]", instrument, '%', 0x00000000, 0x0007FC00,
-     0, 105, 259, 40, 1, -100, 0, 0, 0, "0d0", 40}, //{108}
+     0, 105, 259, 40, 1, -100, 0, 0, 0, "0d0", 40}, /*{108} */
     {"& Lute of the Woods [Instrument II]", instrument, '%', 0x00000000,
-     0x7FF80000, 0, 320, 260, 40, 1, -100, 0, 0, 0, "0d0", 40}, //{109}
+     0x7FF80000, 0, 320, 260, 40, 1, -100, 0, 0, 0, "0d0", 40}, /*{109} */
     {"& Harp of the Druids [Greater Instrument]", instrument, '%', 0x000001FF,
-     0x00000000, 0, 850, 261, 40, 1, -100, 0, 0, 0, "2d1", 40}, //{110}
+     0x00000000, 0, 850, 261, 40, 1, -100, 0, 0, 0, "2d1", 40}, /*{110} */
     {"& Book of Bard Lyrics [Beginners Song book]", song_book, '%', 0x00000000,
-     0x000007FF, 0, 30, 262, 50, 1, -100, 0, 0, 0, "0d0", 40}, //{111}
+     0x000007FF, 0, 30, 262, 50, 1, -100, 0, 0, 0, "0d0", 40}, /*{111} */
     {"& Songs of Charming [Song Book I]", song_book, '%', 0x00000000,
-     0x000FF800, 0, 105, 263, 60, 1, -100, 0, 0, 0, "1d1", 40}, //{112}
+     0x000FF800, 0, 105, 263, 60, 1, -100, 0, 0, 0, "1d1", 40}, /*{112} */
     {"& Ballads of Knowledge [Song Book II]", song_book, '%', 0x00000000,
-     0x7FF00000, 0, 305, 264, 60, 1, -100, 0, 0, 0, "1d1", 40}, //{113}
+     0x7FF00000, 0, 305, 264, 60, 1, -100, 0, 0, 0, "1d1", 40}, /*{113} */
     {"& Epics of the Bards [Greater Song Book]", song_book, '%', 0x000001FF,
-     0x00000000, 0, 950, 265, 60, 1, -100, 0, 0, 0, "0d0", 40}, //{114}
+     0x00000000, 0, 950, 265, 60, 1, -100, 0, 0, 0, "0d0", 40}, /*{114} */
     {"Lodging for the week", lodging_at_inn, '.', 0, 0, 7, 200, 301, 3000, 1, 0,
-     0, 0, 0, "0d0", 0}, //{115}
+     0, 0, 0, "0d0", 0}, /*{115} */
     {"Lodging for three days", lodging_at_inn, '.', 0, 0, 3, 120, 302, 3000, 1,
-     0, 0, 0, 0, "0d0", 0}, //{116}
+     0, 0, 0, 0, "0d0", 0}, /*{116} */
     {"Chime of Light (%P1 charges)", chime, '%', 0x00000000, 0x00000001, 0, 275,
-     1, 1, 1, 0, 0, 0, 0, "0d0", 10}, //{117}
+     1, 1, 1, 0, 0, 0, 0, "0d0", 10}, /*{117} */
     {"Chime of Detect Doors/Stairs (%P1 charges)", chime, '%', 0x00000000,
-     0x00000002, 0, 375, 2, 1, 1, 0, 0, 0, 0, "0d0", 15}, //{118}
+     0x00000002, 0, 375, 2, 1, 1, 0, 0, 0, 0, "0d0", 15}, /*{118} */
     {"Chime of Remove Curse (%P1 charges)", chime, '%', 0x00000000, 0x00001000,
-     0, 675, 13, 1, 1, 0, 0, 0, 0, "0d0", 47}, //{119}
+     0, 675, 13, 1, 1, 0, 0, 0, 0, "0d0", 47}, /*{119} */
     {"Horn of Soft Sounds (%P1 charges)", horn, '%', 0x00000000, 0x00040000, 0,
-     600, 3, 20, 1, 0, 0, 0, 0, "0d0", 8}, //{120}
+     600, 3, 20, 1, 0, 0, 0, 0, "0d0", 8}, /*{120} */
     {"Horn of Tritons (%P1 charges)", horn, '%', 0x00000000, 0x08000000, 0, 200,
-     12, 20, 1, 0, 0, 0, 0, "0d0", 15}, //{121}
+     12, 20, 1, 0, 0, 0, 0, "0d0", 15}, /*{121} */
     {"& Finely cut Agate~", valuable_gems, '*', 0x00000000, 0x00000000, 0, 50,
-     257, 5, 1, 0, 0, 0, 0, "0d0", 5}, //{122}
+     257, 5, 1, 0, 0, 0, 0, "0d0", 5}, /*{122} */
     {"& Finely cut Diamond~", valuable_gems, '*', 0x00000000, 0x00000000, 0,
-     500, 258, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{123}
+     500, 258, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{123} */
     {"& Rough cut Diamond~", valuable_gems, '*', 0x00000000, 0x00000000, 0, 100,
-     259, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{124}
+     259, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{124} */
     {"& Rough cut Sapphire~", valuable_gems, '*', 0x00000000, 0x00000000, 0, 40,
-     260, 5, 1, 0, 0, 0, 0, "0d0", 5}, //{125}
+     260, 5, 1, 0, 0, 0, 0, "0d0", 5}, /*{125} */
     {"& Finely cut Sapphire~", valuable_gems, '*', 0x00000000, 0x00000000, 0,
-     250, 261, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{126}
+     250, 261, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{126} */
     {"& Small pouch of Diamonds~", valuable_gems, '*', 0x00000000, 0x00000000,
-     0, 1000, 262, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{127}
+     0, 1000, 262, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{127} */
     {"& Finely wrought gold necklace~", valuable_jewelry, '*', 0x00000000,
-     0x00000000, 0, 100, 263, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{128}
+     0x00000000, 0, 100, 263, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{128} */
     {"& Small silver bracelet~", bracers, '*', 0x00000000, 0x00000000, 0, 80,
-     264, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{129}
+     264, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{129} */
     {"& Large mithril garter-belt~", valuable_jewelry, '*', 0x00000000,
-     0x00000000, 0, 1500, 265, 5, 1, 0, 0, 0, 0, "0d0", 20}, //{130}
+     0x00000000, 0, 1500, 265, 5, 1, 0, 0, 0, 0, "0d0", 20}, /*{130} */
     {"& Small silver pendant~", valuable_jewelry, '*', 0x00000000, 0x00000000,
-     0, 60, 266, 5, 1, 0, 0, 0, 0, "0d0", 5}, //{131}
+     0, 60, 266, 5, 1, 0, 0, 0, 0, "0d0", 5}, /*{131} */
     {"& Small gold pendant~", valuable_jewelry, '*', 0x00000000, 0x00000000, 0,
-     90, 267, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{132}
+     90, 267, 5, 1, 0, 0, 0, 0, "0d0", 10}, /*{132} */
     {"& Small mithril pendant~", valuable_jewelry, '*', 0x00000000, 0x00000000,
-     0, 450, 268, 5, 1, 0, 0, 0, 0, "0d0", 15}, //{133}
+     0, 450, 268, 5, 1, 0, 0, 0, 0, "0d0", 15}, /*{133} */
     {"& Finely cut Gem of Detect Monsters (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x00040000, 0, 350, 1, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{134}
+     nothing_flag, 0x00040000, 0, 350, 1, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{134} */
     {"& Finely cut Gem of Dispel Evil (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x00080000, 0, 1200, 2, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{135}
+     nothing_flag, 0x00080000, 0, 1200, 2, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{135} */
     {"& Finely cut Gem of Acid Balls (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x00200000, 0, 1000, 4, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{136}
+     nothing_flag, 0x00200000, 0, 1000, 4, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{136} */
     {"& Finely cut Gem of Detect Invisible (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x00400000, 0, 200, 5, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{137}
+     nothing_flag, 0x00400000, 0, 200, 5, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{137} */
     {"& Finely cut Gem of Identify (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x00800000, 0, 600, 6, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{138}
+     nothing_flag, 0x00800000, 0, 600, 6, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{138} */
     {"& Finely cut Gem of Light (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x01000000, 0, 100, 7, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{139}
+     nothing_flag, 0x01000000, 0, 100, 7, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{139} */
     {"& Finely cut Gem of Remove Curse (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x04000000, 0, 250, 8, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{140}
+     nothing_flag, 0x04000000, 0, 250, 8, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{140} */
     {"& Finely cut Gem of Annihilation (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x08000000, 0, 350, 7, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{141}
+     nothing_flag, 0x08000000, 0, 350, 7, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{141} */
     {"& Finely cut Gem of Recall (%P1 charges)", valuable_gems, '*',
-     nothing_flag, 0x10000000, 0, 1200, 7, 5, 1, 0, 0, 0, 0, "0d0", 10}, //{142}
+     nothing_flag, 0x10000000, 0, 1200, 7, 5, 1, 0, 0, 0, 0, "0d0",
+     10}, /*{142} */
     {"& Box~ of Piranha Crackers", junk_food, ',', 0x00000001, 0x40000000, 1500,
-     4, 257, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{143}
+     4, 257, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{143} */
     {"& Can~ of Orca-Cola", junk_food, ',', 0x00000002, 0x40000000, 500, 4, 258,
-     2, 1, 0, 0, 0, 0, "0d0", 0}, //{144}
+     2, 1, 0, 0, 0, 0, "0d0", 0}, /*{144} */
     {"& Twelve-Pound Troll Burger~", junk_food, ',', 0x00000001, 0x40000000,
-     7500, 15, 259, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{145}
+     7500, 15, 259, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{145} */
     {"& Bag~ of Brontosaurus Chips", junk_food, ',', 0x00000001, 0x40000000,
-     3000, 12, 260, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{146}
+     3000, 12, 260, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{146} */
     {"& Slice~ of Purple Mushroom Pizza", junk_food, ',', 0x00000001,
-     0x40000400, 1500, 8, 261, 2, 1, 0, 0, 0, 0, "2d6", 0}, //{147}
-    //      { This ought to surprise them, Pizza = Oil now }
+     0x40000400, 1500, 8, 261, 2, 1, 0, 0, 0, 0, "2d6", 0}, /*{147} */
+    /*      { This ought to surprise them, Pizza = Oil now } */
     {"& Peanut Butter and Grape Jelly Sandwich~", junk_food, ',', 0x00000001,
-     0x40000000, 1000, 5, 262, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{148}
+     0x40000000, 1000, 5, 262, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{148} */
     {"& Dragon Steak~", junk_food, ',', 0x00000001, 0x50000000, 5000, 15, 263,
-     2, 1, 0, 0, 0, 0, "0d0", 0}, //{149}
+     2, 1, 0, 0, 0, 0, "0d0", 0}, /*{149} */
     {"& Vorpal Bunny Throat Lozenge~", junk_food, ',', 0x00000001, 0x40000000,
-     50, 2, 264, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{150}
+     50, 2, 264, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{150} */
     {"& Deep-Fried Giant Centipede~", junk_food, ',', 0x00000001, 0x40000000,
-     750, 5, 265, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{151}
+     750, 5, 265, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{151} */
     {"& Pint~ of Beetle Juice", junk_food, ',', 0x00000002, 0x40000000, 1000, 4,
-     266, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{152}
+     266, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{152} */
     {"& Bowl~ of Bat Stew", junk_food, ',', 0x00000001, 0x40000000, 2000, 6,
-     267, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{153}
+     267, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{153} */
     {"& Jar~ of Pickled Leeches", junk_food, ',', 0x00000001, 0x40000000, 1500,
-     5, 268, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{154}
+     5, 268, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{154} */
     {"& Pack~ of Kitten McNuggets", junk_food, ',', 0x00000001, 0x40000000,
-     1500, 8, 269, 2, 1, 0, 0, 0, 0, "0d0", 0}, //{155}
+     1500, 8, 269, 2, 1, 0, 0, 0, 0, "0d0", 0}, /*{155} */
     {"& Iron Shod Quarterstaff^ (%P2,%P3)", maul, '\\', 0x00000000,
-     Nothing_flag, 0, 25, 13, 100, 1, 0, 0, 0, 0, "1d5", 0}, //{156}
+     Nothing_flag, 0, 25, 13, 100, 1, 0, 0, 0, 0, "1d5", 0}, /*{156} */
     {"Room and board for one day", lodging_at_inn, '.', 0x00000000,
-     Nothing_flag, 1, 70, 303, 3000, 14, 0, 0, 0, 0, "0d0", 0} //{157}
+     Nothing_flag, 1, 70, 303, 3000, 14, 0, 0, 0, 0, "0d0", 0} /*{157} */
 
 };
 
 treasure_type blank_treasure = {" ", 0, ' ', 0, 0, 0, 0,   0,
 				0,   0, 0,   0, 0, 0, " ", 0};
-integer inven_ctr = 0;    // { Total different obj's}
-integer inven_weight = 0; // { Cur carried weight	}
-integer equip_ctr = 0;    // { Cur equipment ctr	}
-integer tcptr;		  // { Cur treasure heap ptr}
+integer inven_ctr = 0;    /* { Total different obj's} */
+integer inven_weight = 0; /* { Cur carried weight	} */
+integer equip_ctr = 0;    /* { Cur equipment ctr	} */
+integer tcptr;		  /* { Cur treasure heap ptr} */
 
-//	{ Following are variables that change with level of difficulty	}
-//	{ 1/x chance of treasure per magma		}
+/*	{ Following are variables that change with level of difficulty	} */
+/*	{ 1/x chance of treasure per magma		} */
 integer dun_str_mc;
-//	{ 1/x chance of treasure per quartz		}
+/*	{ 1/x chance of treasure per quartz		} */
 integer dun_str_qc;
-//	{ Level/x chance of unusual room		}
+/*	{ Level/x chance of unusual room		} */
 integer dun_unusual;
-//	{ Amount of objects for rooms			}
+/*	{ Amount of objects for rooms			} */
 integer treas_room_alloc;
-//	{ Amount of objects for corridors		}
+/*	{ Amount of objects for corridors		} */
 integer treas_any_alloc;
-//	{ Amount of gold (and gems)			}
+/*	{ Amount of gold (and gems)			} */
 integer treas_gold_alloc;
-//	{ 1/n Chance of item being a Great Item 	}
+/*	{ 1/n Chance of item being a Great Item 	} */
 integer obj_great;
-//	{ Adjust STD per level				}
+/*	{ Adjust STD per level				} */
 real obj_std_adj;
-//	{ Minimum STD					}
+/*	{ Minimum STD					} */
 integer obj_std_min;
-//	{ Town object generation level			}
+/*	{ Town object generation level			} */
 integer obj_town_level;
-//	{ Base amount of magic				}
+/*	{ Base amount of magic				} */
 integer obj_base_magic;
-//	{ Max amount of magic				}
+/*	{ Max amount of magic				} */
 integer obj_base_max;
-//	{ magic_chance/# = special magic		}
+/*	{ magic_chance/# = special magic		} */
 integer obj_div_special;
-//	{ magic_chance/# = cursed items			}
+/*	{ magic_chance/# = cursed items			} */
 real obj_div_cursed;
-//	{ High value slows multiplication		}
+/*	{ High value slows multiplication		} */
 integer mon_mult_adj;
-//	{ Dun_level/x chance of high level creature	}
+/*	{ Dun_level/x chance of high level creature	} */
 integer mon_nasty;
-//
-//	{ Following are feature objects defined for dungeon		}
-//
+/* */
+/*	{ Following are feature objects defined for dungeon		} */
+/* */
 
-//	{ Traps are just Nasty treasures...				}
+/*	{ Traps are just Nasty treasures...				} */
 treasure_type trap_lista[MAX_TRAPA + 1] = {
     {"bogus trap a", Seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
      0, 0, 0, "2d6", -50},
@@ -3323,8 +3338,8 @@ treasure_type trap_lista[MAX_TRAPA + 1] = {
     {"a chute", Unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 20, 0, 0, 0, 0,
      0, 0, "4d8", 20}};
 
-//	{ Traps: Level represents the difficulty of disarming;	}
-//	{ and P1 represents the experienced gained when disarmed}
+/*	{ Traps: Level represents the difficulty of disarming;	} */
+/*	{ and P1 represents the experienced gained when disarmed} */
 treasure_type trap_listb[MAX_TRAPB + 1] = {
     {"bogus trap b", Seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
      0, 0, 0, "2d6", -50},
@@ -3364,7 +3379,7 @@ treasure_type trap_listb[MAX_TRAPB + 1] = {
      0, 0, 0, "1d8", 10},
     {"a dart trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 18, 0, 0, 0,
      0, 0, 0, "1d8", 10},
-    //	{ Special case, see DOOR_LIST below (subvals must agree)	}
+    /*	{ Special case, see DOOR_LIST below (subvals must agree)	} */
     {"a closed door", Closed_door, '+', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
      0, 0, 0, 0, "1d1", 0},
     {"a chute", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 20, 0, 0, 0, 0, 0,
@@ -3372,7 +3387,7 @@ treasure_type trap_listb[MAX_TRAPB + 1] = {
 
 };
 
-treasure_type scare_monster = // { Special trap	}
+treasure_type scare_monster = /* { Special trap	} */
     {"a strange rune", Seen_trap, '^', 0x00000000, 0x00000000, 0, 0,     99,
      0,		       0,	 0,   0,	  0,	  0, "0d0", -90};
 
@@ -3380,8 +3395,8 @@ treasure_type some_rubble = {
     "some rubble", Rubble, ':', 0x00000000, 0x00000000, 0, 0,     1,
     0,		   0,      0,   0,	  0,		0, "0d0", 0};
 
-//	{ Secret door must have same subval as closed door in	}
-//	{ TRAP_LISTB.  See CHANGE_TRAP				}
+/*	{ Secret door must have same subval as closed door in	} */
+/*	{ TRAP_LISTB.  See CHANGE_TRAP				} */
 treasure_type door_list[3] = {
     {"an open door", Open_door, '\'', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
      0, 0, 0, "1d1", 0},
@@ -3409,19 +3424,19 @@ treasure_type down_steep = {
     0,			 1,		       0,     0,	  0,	  0,
     0,			 0,		       "1d1", 0};
 
-//	{ Following are creature arrays and variables			}
+/*	{ Following are creature arrays and variables			} */
 creature_type c_list[MAX_CREATURES + 1];
 monster_type m_list[MAX_MALLOC + 1];
 integer m_level[MAX_MONS_LEVEL + 1];
 
-monster_type blank_monster = // { Blank monster values	}
+monster_type blank_monster = /* { Blank monster values	} */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false};
 
-integer muptr;	// { Cur used monster ptr	}
-integer mfptr;	// { Cur free monster ptr	}
-integer mon_tot_mult; // { # of repro's of creature	}
+integer muptr;	/* { Cur used monster ptr	} */
+integer mfptr;	/* { Cur free monster ptr	} */
+integer mon_tot_mult; /* { # of repro's of creature	} */
 
-//	{ Following are arrays for descriptive pieces			}
+/*	{ Following are arrays for descriptive pieces			} */
 atype colors[MAX_COLORS] = {
     "Amber",	   "Azure",		  "Blue",	    "Blue Speckled",
     "Blue Spotted",    "Black",		  "Black Speckled",  "Black Spotted",
@@ -3487,7 +3502,7 @@ atype rocks[MAX_ROCKS] = {
     "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
     "Topaz",      "Turquoise", "Zircon"};
 
-// sapphire was misspelled as "saphire".  2/15/00 JEB
+/* sapphire was misspelled as "saphire".  2/15/00 JEB */
 atype amulets[MAX_AMULETS] = {
     "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
     "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
@@ -3521,24 +3536,24 @@ atype syllables[MAX_SYLLABLES] = {
     "vly",  "vom",  "wah",  "wed",  "werg", "wex",  "whon", "wlf",  "x",
     "yerg", "yp",   "zun"};
 
-//	vowel_set		:
-//				  char_set;
+/*	vowel_set		: */
+/*				  char_set; */
 
-//	{ Following are variables for the Save Character Routines	}
+/*	{ Following are variables for the Save Character Routines	} */
 vtype finam;
-//	key_type	key_rec;
+/*	key_type	key_rec; */
 
-//	{ Cursor variables, used for cursor positioning			}
-char cursor_r[25][11]; // array [1..24] of varying[10] of
+/*	{ Cursor variables, used for cursor positioning			} */
+char cursor_r[25][11]; /* array [1..24] of varying[10] of */
 integer curlen_r;
-char cursor_c[81][11]; // array [1..80] of varying[10] of
+char cursor_c[81][11]; /* array [1..80] of varying[10] of */
 integer curlen_c;
 integer cursor_l;
 boolean row_first;
-char cursor_erl[11]; //	:  varying[10] of char;
-char cursor_erp[11]; //	:  varying[10] of char;
+char cursor_erl[11]; /*	:  varying[10] of char; */
+char cursor_erp[11]; /*	:  varying[10] of char; */
 
-// new stuff
+/* new stuff */
 integer malloc_calls = 0;
 integer malloc_bytes = 0;
 integer free_calls = 0;

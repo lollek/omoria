@@ -1,12 +1,6 @@
-/* scrolls.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 		       treas_ptr item_ptr)
 {
@@ -23,7 +17,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 	switch (effect) {
 
 	case 1: /*{ Enchant to Hit }*/
-		// with equipment[Equipment_primary]. do;
+		/* with equipment[Equipment_primary]. do; */
 		if (equipment[Equipment_primary].tval > 0) {
 			inven_temp->data = equipment[Equipment_primary];
 			objdes(out_val, inven_temp, false);
@@ -42,7 +36,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 		break;
 
 	case 2: /*{ Enchant to Damage }*/
-		// with equipment[Equipment_primary]. do;
+		/* with equipment[Equipment_primary]. do; */
 		if (equipment[Equipment_primary].tval > 0) {
 			inven_temp->data = equipment[Equipment_primary];
 			objdes(out_val, inven_temp, false);
@@ -128,7 +122,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 		}
 
 		if (i4 > 0) {
-			// with equipment[i4]. do;
+			/* with equipment[i4]. do; */
 			inven_temp->data = equipment[i4];
 			objdes(out_val, inven_temp, false);
 			sprintf(out_val2, "Your %s glows faintly!", out_val);
@@ -297,7 +291,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 
 	case 32: /*{ Enchant Weapon }*/ /* 32 is the Cursed_worn_bit value */
 	case 45:			/*{ Enchant Weapon }*/
-		// with equipment[Equipment_primary]. do;
+		/* with equipment[Equipment_primary]. do; */
 		if (equipment[Equipment_primary].tval > 0) {
 			inven_temp->data = equipment[Equipment_primary];
 			objdes(out_val, inven_temp, false);
@@ -331,7 +325,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 		break;
 
 	case 33: /*{ Curse Weapon }*/
-		// with equipment[Equipment_primary]. do;
+		/* with equipment[Equipment_primary]. do; */
 		if (equipment[Equipment_primary].tval > 0) {
 			inven_temp->data = equipment[Equipment_primary];
 			objdes(out_val, inven_temp, false);
@@ -387,7 +381,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 		}
 
 		if (i3 > 0) {
-			// with equipment[i3]. do;
+			/* with equipment[i3]. do; */
 			inven_temp->data = equipment[i3];
 			objdes(out_val, inven_temp, false);
 			sprintf(out_val2, "Your %s glows brightly!", out_val);
@@ -451,7 +445,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 		}
 
 		if (i3 > 0) {
-			// with equipment[i3]. do;
+			/* with equipment[i3]. do; */
 			inven_temp->data = equipment[i3];
 			objdes(out_val, inven_temp, false);
 			sprintf(out_val2, "Your %s glows black, then fades.",
@@ -584,7 +578,7 @@ void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
 
 	*idented = ident;
 }
-//////////////////////////////////////////////////////////////////////
+
 void read_scroll()
 {
 	/*{ Scrolls for the reading				-RAK-	}*/
@@ -614,7 +608,7 @@ void read_scroll()
 				if (get_item(&item_ptr, "Read which scroll?",
 					     &redraw, i3, &trash_char, false,
 					     false)) {
-					// with item_ptr->data. do;
+					/* with item_ptr->data. do; */
 					if (redraw) {
 						draw_cave();
 					}
@@ -679,8 +673,9 @@ void read_scroll()
 
 							if (item_ptr->data
 								.flags != 0) {
-								// with py.misc
-								// do;
+								/* with py.misc
+								 */
+								/* do; */
 								PM.exp +=
 								    (item_ptr
 									 ->data
@@ -705,7 +700,3 @@ void read_scroll()
 		msg_print("But you are not carrying anything.");
 	}
 }
-/* END FILE  scrolls.c */
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////

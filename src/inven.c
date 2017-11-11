@@ -1,12 +1,6 @@
-/* inven.c */
-/**/
-
 #include "imoria.h"
 #include "dungeon.h"
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 treas_ptr inven_carry()
 {
 	/*	{ Add the item in inven_temp to players inventory.  Return the
@@ -15,9 +9,6 @@ treas_ptr inven_carry()
 	 * }*/
 	return add_inven_item(inven_temp->data);
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 void aii__insert(treas_ptr ptr, integer wgt, treas_ptr new_item)
 {
@@ -36,7 +27,6 @@ void aii__insert(treas_ptr ptr, integer wgt, treas_ptr new_item)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////
 boolean is_players_spell_book(typ)
 {
 	if (class[py.misc.pclass].mspell) { /* cast */
@@ -51,7 +41,6 @@ boolean is_players_spell_book(typ)
 
 	return false;
 }
-//////////////////////////////////////////////////////////////////////
 
 treas_ptr add_inven_item(treasure_type item)
 {
@@ -98,10 +87,11 @@ treas_ptr add_inven_item(treasure_type item)
 			/*      with curse->data do*/
 			if (typ == curse->data.tval) {
 				if (subt == curse->data.subval) {
-					//
-					// Items are of the same type and can be
-					// combined
-					//
+					/* */
+					/* Items are of the same type and can be
+					 */
+					/* combined */
+					/* */
 					if (subt > 255) {
 						curse->data.number += item_num;
 						inven_weight += wgt;
@@ -109,19 +99,19 @@ treas_ptr add_inven_item(treasure_type item)
 						flag = true;
 					}
 				} else if (is_players_spell_book(typ)) {
-					//
-					// Put the users spell books in subt
-					// order sending
-					// duplicate books to the end of the
-					// list.
-					//
+					/* */
+					/* Put the users spell books in subt */
+					/* order sending */
+					/* duplicate books to the end of the */
+					/* list. */
+					/* */
 					if (subt == curse->data.subval) {
-						//
-						// I don't think this ever
-						// happens since the subvals
-						// are probably > 255 so the
-						// books get stacked.
-						//
+						/* */
+						/* I don't think this ever */
+						/* happens since the subvals */
+						/* are probably > 255 so the */
+						/* books get stacked. */
+						/* */
 						duplicate_spell_book = true;
 					}
 
@@ -136,10 +126,11 @@ treas_ptr add_inven_item(treasure_type item)
 					}
 				}
 			} else if (curse->data.tval < typ) {
-				//
-				// This puts new items at the end of the list of
-				// their tval type
-				//
+				/* */
+				/* This puts new items at the end of the list of
+				 */
+				/* their tval type */
+				/* */
 				aii__insert(curse, wgt, new_item);
 				inven_ctr++;
 				inven_weight += wgt;
@@ -147,10 +138,10 @@ treas_ptr add_inven_item(treasure_type item)
 				flag = true;
 			}
 
-			//
-			// move to next item and skip over any items
-			// inside a bag of holding
-			//
+			/* */
+			/* move to next item and skip over any items */
+			/* inside a bag of holding */
+			/* */
 			curse = curse->next;
 			if ((curse != nil) && (curse->is_in)) {
 				while ((curse != nil) && (curse->is_in)) {
@@ -171,20 +162,19 @@ treas_ptr add_inven_item(treasure_type item)
 		}
 	} /* endif inventory_list == nil */
 
-	//  count = 0;
-	//  curse = inventory_list;
-	//  while (curse != NULL) {
-	//    curse = curse->next;
-	//    count++;
-	//  }
-	//  printf("    END add_inven count: %d  real: %d\n",inven_ctr, count);
-	//  fflush(stdout);
+	/*  count = 0; */
+	/*  curse = inventory_list; */
+	/*  while (curse != NULL) { */
+	/*    curse = curse->next; */
+	/*    count++; */
+	/*  } */
+	/*  printf("    END add_inven count: %d  real: %d\n",inven_ctr, count);
+	 */
+	/*  fflush(stdout); */
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 integer change_all_ok_stats(boolean nok, boolean nin)
 {
 	treas_ptr curse;
@@ -208,9 +198,7 @@ integer change_all_ok_stats(boolean nok, boolean nin)
 	RETURN("change_all_ok_stats", "u", 'd', "count", &count)
 	return count;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void ic__clear_display(treas_ptr cur_display[], integer *cur_display_size)
 {
 	integer index;
@@ -224,7 +212,7 @@ void ic__clear_display(treas_ptr cur_display[], integer *cur_display_size)
 
 	LEAVE("ic__clear_display", "iu");
 }
-//////////////////////////////////////////////////////////////////////
+
 integer ic__display_inv(treas_ptr cur_display[], vtype prompt, treas_ptr start,
 			treas_ptr *next_start)
 {
@@ -287,7 +275,7 @@ integer ic__display_inv(treas_ptr cur_display[], vtype prompt, treas_ptr start,
 
 	return count;
 }
-//////////////////////////////////////////////////////////////////////
+
 boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 		       boolean clean_flag, integer *scr_state,
 		       boolean *valid_flag, vtype prompt,
@@ -510,7 +498,7 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 	RETURN("ic__show_inven", "iu", 'b', "picked something", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__show_equip(integer *scr_state, integer r1)
 {
 	/*{ Displays equipment items from r1 to end       -RAK-   }*/
@@ -524,7 +512,7 @@ void ic__show_equip(integer *scr_state, integer r1)
 		i2 = 0;
 		for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 			/*{ Range of equipment }*/
-			// with equipment[i1] do;
+			/* with equipment[i1] do; */
 			if (equipment[i1].tval > 0) {
 				i2++;
 				if (i2 >= r1) { /*{ Display only given range }*/
@@ -621,7 +609,7 @@ void ic__show_equip(integer *scr_state, integer r1)
 		*scr_state = 2;     /*{ Set state of screen   }*/
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 treas_ptr ic__remove(integer item_val)
 {
 	/*{ Remove item from equipment list               -RAK-   }*/
@@ -672,7 +660,7 @@ treas_ptr ic__remove(integer item_val)
 
 	return inven_temp;
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__unwear(integer *scr_state)
 {
 	/*{ Unwear routine, remove a piece of equipment   -RAK-   }*/
@@ -762,7 +750,7 @@ void ic__unwear(integer *scr_state)
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 	      integer *scr_state, boolean *valid_flag)
 {
@@ -883,7 +871,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 			case valuable_gems_wear:
 				if (equipment[Equipment_helm].tval ==
 				    gem_helm) {
-					// with equipment[equipment_helm] do;
+					/* with equipment[equipment_helm] do; */
 					if (equipment[Equipment_helm].p1 > 0) {
 						msg_print("The gem adheres "
 							  "itself to your "
@@ -1023,7 +1011,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 				if (i1 == Equipment_light) {
 					PF.light_on = true;
 				}
-				// with equipment[i1] do;
+				/* with equipment[i1] do; */
 				/*{ Fix for torches       }*/
 				if ((equipment[i1].subval > 255) &&
 				    (equipment[i1].subval < 512)) {
@@ -1083,7 +1071,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 
 	LEAVE("ic__wear", "i2");
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__stats(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 	       integer *scr_state, boolean *valid_flag)
 {
@@ -1332,7 +1320,7 @@ void ic__stats(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 
 	LEAVE("ic__stats", "i2");
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__show_money()
 {
 	/*{ Show players money                            -DMF-   }*/
@@ -1357,20 +1345,20 @@ void ic__show_money()
 	sprintf(prt1, "Total    : %10ld", PM.money[TOTAL_]);
 	prt(prt1, 10, 10);
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__destroy_bag(treas_ptr bag)
 {
 	while ((bag->next != nil) && (bag->next->is_in)) {
 		/* this seems odd, wasn't it already subtracted from   XXXX
 		   inven_weight when it went into the bag?  */
-		// inven_weight -= (bag->next->data.number *
-		// bag->next->data.weight);
+		/* inven_weight -= (bag->next->data.number * */
+		/* bag->next->data.weight); */
 		delete_inven_item(bag->next);
 	}
 	inven_weight -= (bag->data.number * bag->data.weight);
 	delete_inven_item(bag);
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__put_inside()
 {
 	/*        { Put an item inside of another item            -DMF-   }*/
@@ -1479,7 +1467,7 @@ void ic__put_inside()
 
 	cur_inven = inventory_list;
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__take_out()
 {
 	/*{ Take an item out of another item              -DMF-   }*/
@@ -1541,7 +1529,7 @@ void ic__take_out()
 		msg_print("You have nothing to remove.");
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void ic__selective_inven(integer *scr_state, boolean *valid_flag, vtype prompt,
 			 treas_ptr cur_display[], integer *cur_display_size)
 {
@@ -1592,7 +1580,6 @@ void ic__selective_inven(integer *scr_state, boolean *valid_flag, vtype prompt,
 			       prompt, cur_display, cur_display_size);
 	}
 }
-//////////////////////////////////////////////////////////////////////
 
 void ic__switch_weapon(integer *scr_state)
 {
@@ -1644,7 +1631,6 @@ void ic__switch_weapon(integer *scr_state)
 		ic__show_equip(scr_state, 1);
 	}
 }
-//////////////////////////////////////////////////////////////////////
 
 boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 {
@@ -1879,9 +1865,7 @@ boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 char cur_char1()
 {
 	/*{ Returns a '*' for cursed items, a ')' for normal ones -RAK-   }*/
@@ -1889,7 +1873,7 @@ char cur_char1()
 
 	char return_value;
 
-	// with inven_temp->data. do;
+	/* with inven_temp->data. do; */
 	if ((Cursed_worn_bit & inven_temp->data.flags) == 0) {
 		return_value = ')'; /*{ Not cursed...                 }*/
 	} else if ((Known_cursed_bit & inven_temp->data.flags2) != 0) {
@@ -1902,9 +1886,7 @@ char cur_char1()
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 char cur_char2()
 {
 	char return_value;
@@ -1919,9 +1901,7 @@ char cur_char2()
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 char cur_insure()
 {
 	/*{ Returns a ' ' for uninsured items, a '(' for insured ones -DMF-}*/
@@ -1936,9 +1916,7 @@ char cur_insure()
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void inven_destroy(treas_ptr item_ptr)
 {
 	/*{ Destroy an item in the inventory                      -RAK-   }*/
@@ -1947,7 +1925,7 @@ void inven_destroy(treas_ptr item_ptr)
 
 	inven_temp->data = item_ptr->data;
 
-	// with item_ptr->data. do;
+	/* with item_ptr->data. do; */
 	if ((item_ptr->data.number > 1) && (item_ptr->data.subval < 512)) {
 		item_ptr->data.number--;
 		inven_weight -= item_ptr->data.weight;
@@ -1959,9 +1937,7 @@ void inven_destroy(treas_ptr item_ptr)
 
 	LEAVE("inven_destroy", "i");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void delete_inven_item(treas_ptr ptr)
 {
 	/*{ Remove an item from inventory_list                    -DMF-   }*/
@@ -1999,9 +1975,7 @@ void delete_inven_item(treas_ptr ptr)
 
 	LEAVE("delete_inven_item", "i");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean inven_check_weight()
 {
 	/*{ Check inventory for too much weight                   -RAK-   }*/
@@ -2009,7 +1983,7 @@ boolean inven_check_weight()
 	integer item_wgt;
 	boolean return_value;
 
-	// with inven_temp^.data do;
+	/* with inven_temp^.data do; */
 	item_wgt = inven_temp->data.number * inven_temp->data.weight;
 
 	/*{ Current stuff + weight <= max weight }*/
@@ -2018,18 +1992,14 @@ boolean inven_check_weight()
 
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean inven_check_num()
 {
 	/*{ Check to see if he will be carrying too many objects  -RAK-   }*/
 
 	return true;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 integer inven_damage(obj_set typ, integer perc)
 {
 	/*{ Destroys a type of item on a given percent chance     -RAK-   }*/
@@ -2046,7 +2016,7 @@ integer inven_damage(obj_set typ, integer perc)
 		next_curse =
 		    curse->next; /* get now since we may nuke the entry */
 
-		// with curse^.data do;
+		/* with curse^.data do; */
 		if (is_in(curse->data.tval, typ)) {
 			if ((randint(100) < perc) && (!curse->is_in)) {
 				if ((((curse->data.flags2 & Holding_bit) !=
@@ -2065,9 +2035,7 @@ integer inven_damage(obj_set typ, integer perc)
 	RETURN("inven_damage", "i", 'd', "destroyed this many: ", &i2);
 	return i2;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean drop_money(treas_ptr *ptr, boolean *clr)
 {
 	/*{ Drop money onto ground                                -DMF-   }*/
@@ -2090,7 +2058,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 		msg_print("There is something there already.");
 		*clr = true;
 	} else {
-		// with py.misc do begin;
+		/* with py.misc do begin; */
 		com_val = get_money_type("Drop ", &reset_flag, false);
 		reset_flag = (!reset_flag);
 		if (!reset_flag) {
@@ -2177,9 +2145,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 	}
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw, integer count,
 		 char *choice, boolean mon, boolean no_wait)
 {
@@ -2278,7 +2244,7 @@ boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw, integer count,
 				test_flag = true;
 				redraw = false;
 
-				// with py.misc do;
+				/* with py.misc do; */
 				if (PM.money[IRON] + PM.money[COPPER] +
 					PM.money[SILVER] + PM.money[GOLD] +
 					PM.money[PLATINUM] + PM.money[MITHRIL] >
@@ -2384,9 +2350,7 @@ boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw, integer count,
 	RETURN("get_item", "i", 'b', "got an item", &return_value);
 	return return_value;
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
 void inven_drop(treas_ptr item_ptr, integer y, integer x, boolean mon)
 {
 	/*{ Drops an item from inventory to given location        -RAK-   }*/
@@ -2394,7 +2358,7 @@ void inven_drop(treas_ptr item_ptr, integer y, integer x, boolean mon)
 	integer i1;
 	treas_ptr temp_ptr;
 
-	// with cave[y][x]. do;
+	/* with cave[y][x]. do; */
 	if (cave[y][x].tptr > 0) {
 		pusht(cave[y][x].tptr);
 	}
@@ -2410,16 +2374,3 @@ void inven_drop(treas_ptr item_ptr, integer y, integer x, boolean mon)
 	cave[y][x].tptr = i1;
 	dispose(temp_ptr, sizeof(treas_rec), "inven_drop");
 }
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-/* END FILE  inven.c */

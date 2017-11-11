@@ -24,7 +24,8 @@ void dprint(vtype str, integer row)
 
 	prt_str[0] = 0;
 	for (i1 = 0; i1 < slen; i1++) {
-		// printf("\tdo a char: %d >%c<\n",i1,str[i1]); fflush(stdout);
+		/* printf("\tdo a char: %d >%c<\n",i1,str[i1]); fflush(stdout);
+		 */
 		if (str[i1] == ' ') {
 			if (xpos > 0) {
 				nblanks++;
@@ -50,12 +51,12 @@ void dprint(vtype str, integer row)
 	}
 
 	if (xpos > 0) {
-		//    printf("doing final put_buffer >%s<\n",prt_str);
-		//    fflush(stdout);
+		/*    printf("doing final put_buffer >%s<\n",prt_str); */
+		/*    fflush(stdout); */
 		put_buffer(prt_str, row, xpos);
 	}
 }
-//////////////////////////////////////////////////////////////////////
+
 void ud__kingly()
 {
 	/*
@@ -129,8 +130,8 @@ void ud__print_tomb(vtype dstr[])
 					py.misc.max_lev, died_from);
 				fprintf(f1, "%50s %s\n", "",
 					show_current_time(temp));
-				// fprintf(f1," %44s %s\n", py.misc.ssn,
-				// show_current_time(temp));
+				/* fprintf(f1," %44s %s\n", py.misc.ssn, */
+				/* show_current_time(temp)); */
 			}
 			fclose(f1);
 		} /* endif f1 != NULL */
@@ -203,7 +204,7 @@ void upon_death()
 	if (!master_file_open(&f2)) {
 		msg_print(
 		    "ERROR opening file MASTER.  Contact your local wizard.");
-		// msg_print("Status = "+itos(status(f1)));
+		/* msg_print("Status = "+itos(status(f1))); */
 		msg_print(" ");
 	} else {
 		mkey.creation_time = PM.creation_time;
@@ -423,7 +424,7 @@ void make_tomb(vtype dd[])
 
 	clear_from(1);
 	for (i1 = 0; i1 < 20; i1++) {
-		// printf(">%s<\n",dd[i1]);
+		/* printf(">%s<\n",dd[i1]); */
 		dprint(dd[i1], i1 + 1);
 	}
 	flush();

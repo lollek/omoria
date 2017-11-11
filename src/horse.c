@@ -313,8 +313,6 @@ void hr__print_positions(integer row, integer col, integer horse_bet,
 	}
 }
 
-///////////////////
-
 void s__start_race(integer num_horse)
 {
 	integer i1;
@@ -953,7 +951,7 @@ void hr__game_horse()
 
 		c__check_casino_kickout();
 
-		// with py.misc.cur_age do;
+		/* with py.misc.cur_age do; */
 		if (((py.misc.cur_age.day % 7) >= 2) &&
 		    (py.misc.cur_age.hour >= 6) &&
 		    (py.misc.cur_age.hour < 18)) {
