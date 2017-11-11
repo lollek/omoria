@@ -9,93 +9,89 @@
 //////////////////////////////////////////////////////////////////////
 unsigned long get_seed()
 {
-//	{ Use date and time to produce a random seed	-RAK-	}
-  struct timeval tv;
-  unsigned long the_seed;
+	//	{ Use date and time to produce a random seed	-RAK-	}
+	struct timeval tv;
+	unsigned long the_seed;
 
-  ENTER("get_seed","");
+	ENTER("get_seed", "");
 
-  gettimeofday(&tv, NULL);
+	gettimeofday(&tv, NULL);
 
-  the_seed  = tv.tv_usec ^ tv.tv_sec;
+	the_seed = tv.tv_usec ^ tv.tv_sec;
 
-  //  the_seed = 883993667;
+	//  the_seed = 883993667;
 
-  RETURN("get_seed","",'u',"rand seed",&the_seed);
-  return the_seed;
+	RETURN("get_seed", "", 'u', "rand seed", &the_seed);
+	return the_seed;
 }; /* end get_seed */
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 void set_seed(unsigned long the_seed)
 {
-  /* use the_seed to seed the generator */
+/* use the_seed to seed the generator */
 
 #if DO_DEBUG
-  fprintf(debug_file,"set_seed: s= %ld\n",the_seed);
-  fflush(debug_file);
-#endif	  
+	fprintf(debug_file, "set_seed: s= %ld\n", the_seed);
+	fflush(debug_file);
+#endif
 
-  srand(the_seed);
+	srand(the_seed);
 }; /* end get_seed */
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-integer randnor(integer mean,integer stand)
+integer randnor(integer mean, integer stand)
 {
-/*{ Generates a random integer number of NORMAL distribution -RAK-}*/
+	/*{ Generates a random integer number of NORMAL distribution -RAK-}*/
 
-  return (integer)(sqrt(-2.0*log(randint(9999999)/10000000.0))*
-		   cos(6.283*(randint(9999999)/10000000.0))*stand) + mean;
+	return (integer)(sqrt(-2.0 * log(randint(9999999) / 10000000.0)) *
+			 cos(6.283 * (randint(9999999) / 10000000.0)) * stand) +
+	       mean;
 }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 integer rand_rep(integer num, integer die)
 {
-  integer i1, sum=0;
+	integer i1, sum = 0;
 
-  for (i1 = 0; i1 < num; i1++) {
-    sum += randint(die);
-  }
+	for (i1 = 0; i1 < num; i1++) {
+		sum += randint(die);
+	}
 
-  return sum;
+	return sum;
 }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 integer randint(integer maxval)
 {
-/* Generates a random integer x where 1<=X<=MAXVAL	-RAK-	*/
+	/* Generates a random integer x where 1<=X<=MAXVAL	-RAK-	*/
 
-  integer r = 0;
-  
-  if (maxval) {
-    r = ((rand() % maxval) + 1);
-  }
+	integer r = 0;
 
-  /*
-#if DO_DEBUG
-   fprintf(debug_file, "   rand:  %ld\t(%ld)\n", r, maxval);
-   fflush(debug_file);
-#endif	  
-*/
+	if (maxval) {
+		r = ((rand() % maxval) + 1);
+	}
 
-  return r;
+	/*
+      #if DO_DEBUG
+	 fprintf(debug_file, "   rand:  %ld\t(%ld)\n", r, maxval);
+	 fflush(debug_file);
+      #endif
+      */
+
+	return r;
 }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-void *save_rand_state(void *randState)
-{
-  return NULL;
-}
+void *save_rand_state(void *randState) { return NULL; }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-void restore_rand_state(void *randState)
-{
-}
+void restore_rand_state(void *randState) {}
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

@@ -1,13 +1,13 @@
 /* configure.h*/
 /* include file for fun configurable stuff */
 
-/* 
+/*
  * My system has des_crypt.h, some do not.  Set to 0 to disable des encryption
  * in favor of xor against random numbers.  It turns out that it was happier
  * to xor everything against the random numbers even when DES was going to be
  j used, so turning on des is probably major overkill but I do not mind.
 */
-#define ENABLE_DES    0
+#define ENABLE_DES 0
 
 /*
  * Where savegames are put

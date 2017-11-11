@@ -49,31 +49,30 @@ char *_procname = "Moria";
 
 /* Default if not Atari or Mac */
 #if !defined(GEMDOS) && !defined(MAC)
-#  include <curses.h>
+#include <curses.h>
 #endif
 
 /* Macintosh */
 #ifdef MAC
-#  ifdef THINK_C
-#    include "ScrnMgr.h"
-#  else
-#    include <scrnmgr.h>
-#  endif
+#ifdef THINK_C
+#include "ScrnMgr.h"
+#else
+#include <scrnmgr.h>
+#endif
 #endif
 
 /* GEMDOS i.e. Atari ST */
 #if defined(GEMDOS)
-#  include "curses.h"
-  long wgetch();
-#  ifdef ATARIST_TC
-#    include <tos.h>	/* TC */
-#    include <ext.h>
-#  else
-#    include <osbind.h>	/* MWC */
-#  endif
-  char *getenv();
+#include "curses.h"
+long wgetch();
+#ifdef ATARIST_TC
+#include <tos.h> /* TC */
+#include <ext.h>
+#else
+#include <osbind.h> /* MWC */
 #endif
-
+char *getenv();
+#endif
 
 #include <ctype.h>
 
@@ -81,7 +80,10 @@ char *_procname = "Moria";
 /* for AIX, prevent hundreds of unnecessary lint errors, must define before
    signal.h is included */
 #define _h_IEEETRAP
-typedef struct { int stuff; } fpvmach;
+typedef struct
+{
+	int stuff;
+} fpvmach;
 #endif
 
 #if defined(MSDOS)
@@ -145,12 +147,15 @@ typedef struct { int stuff; } fpvmach;
 /*#include "externs.h"*/
 
 #if !defined(VINTR) && !defined(__NetBSD__)
-# include <termios.h>
-/*#include "termbits.h"*/   /* try this one if termios.h does not work */
+#include <termios.h>
+/*#include "termbits.h"*/ /* try this one if termios.h does not work */
 #endif
 
 #if defined(SYS_V) && defined(lint)
-struct screen { int dumb; };
+struct screen
+{
+	int dumb;
+};
 #endif
 
 /* Fooling lint. Unfortunately, c defines all the TIO.	  -CJS-
@@ -164,13 +169,20 @@ struct screen { int dumb; };
 /* Pyramid makes constants greater than 65535 into long! Gakk! -CJS- */
 /*ARGSUSED*/
 /*VARARGS2*/
-static Ioctl(i, l, p) long l; char *p; { return 0; }
+static Ioctl(i, l, p) long l;
+char *p;
+{
+	return 0;
+}
 #else
 /*ARGSUSED*/
 /*VARARGS2*/
-static Ioctl(i, l, p) char *p; { return 0; }
+static Ioctl(i, l, p) char *p;
+{
+	return 0;
+}
 #endif
-#define ioctl	    Ioctl
+#define ioctl Ioctl
 #endif
 
 #if !defined(USG) && defined(lint)
@@ -178,7 +190,7 @@ static Ioctl(i, l, p) char *p; { return 0; }
    but don't shut up about it when you try to tell them (void).	 */
 /* only needed for Berkeley UNIX */
 int Use_value;
-#define use_value   Use_value +=
+#define use_value Use_value +=
 #else
 #define use_value
 #endif
@@ -188,7 +200,7 @@ int Use_value;
    expression, and which say null effect even if you cast to (void). */
 /* only needed for SYS V */
 int Use_value2;
-#define use_value2  Use_value2 +=
+#define use_value2 Use_value2 +=
 #else
 #define use_value2
 #endif
@@ -239,19 +251,18 @@ static int save_local_chars;
 #endif
 
 static int curses_on = FALSE;
-static WINDOW *savescr;		/* Spare window for saving the screen. -CJS-*/
+static WINDOW *savescr; /* Spare window for saving the screen. -CJS-*/
 
-static void minor_error(char const* error_message)
+static void minor_error(char const *error_message)
 {
-      abort();
-      /* clear msg_flag to avoid problems with unflushed messages */
-      msg_flag = 0;
-      Prt(error_message, 0, 0);
-      bell();
-      /* wait so user can see error */
-      (void) sleep(2);
+	abort();
+	/* clear msg_flag to avoid problems with unflushed messages */
+	msg_flag = 0;
+	Prt(error_message, 0, 0);
+	bell();
+	/* wait so user can see error */
+	(void)sleep(2);
 }
-
 
 #ifndef MAC
 #ifdef SIGTSTP
@@ -262,35 +273,35 @@ static void minor_error(char const* error_message)
 int suspend()
 {
 #ifdef USG
-  /* for USG systems with BSDisms that have SIGTSTP defined, but don't
-     actually implement it */
+/* for USG systems with BSDisms that have SIGTSTP defined, but don't
+   actually implement it */
 #else
-  struct sgttyb tbuf;
-  struct ltchars lcbuf;
-  struct tchars cbuf;
-  long time();
+	struct sgttyb tbuf;
+	struct ltchars lcbuf;
+	struct tchars cbuf;
+	long time();
 
-/*  py.misc.male |= 2;*/
-/*  py.misc.male = py.misc.male | 2; XXXX */
-  (void) ioctl(0, TIOCGETP, (char *)&tbuf);
-  (void) ioctl(0, TIOCGETC, (char *)&cbuf);
-  (void) ioctl(0, TIOCGLTC, (char *)&lcbuf);
+	/*  py.misc.male |= 2;*/
+	/*  py.misc.male = py.misc.male | 2; XXXX */
+	(void)ioctl(0, TIOCGETP, (char *)&tbuf);
+	(void)ioctl(0, TIOCGETC, (char *)&cbuf);
+	(void)ioctl(0, TIOCGLTC, (char *)&lcbuf);
 #if !defined(atarist) && !defined(__GNUC__)
-  (void) ioctl(0, TIOCLGET, (char *)&lbuf);
+	(void)ioctl(0, TIOCLGET, (char *)&lbuf);
 #endif
-  restore_term();
-  (void) kill(0, SIGSTOP);
-  curses_on = TRUE;
-  (void) ioctl(0, TIOCSETP, (char *)&tbuf);
-  (void) ioctl(0, TIOCSETC, (char *)&cbuf);
-  (void) ioctl(0, TIOCSLTC, (char *)&lcbuf);
+	restore_term();
+	(void)kill(0, SIGSTOP);
+	curses_on = TRUE;
+	(void)ioctl(0, TIOCSETP, (char *)&tbuf);
+	(void)ioctl(0, TIOCSETC, (char *)&cbuf);
+	(void)ioctl(0, TIOCSLTC, (char *)&lcbuf);
 #if !defined(atarist) && !defined(__GNUC__)
-  (void) ioctl(0, TIOCLSET, (char *)&lbuf);
+	(void)ioctl(0, TIOCLSET, (char *)&lbuf);
 #endif
-  (void) wrefresh(curscr);
+	(void)wrefresh(curscr);
 /*  py.misc.male &= ~2;  XXXX */
 #endif
-  return 0;
+	return 0;
 }
 #endif
 #endif
@@ -298,41 +309,42 @@ int suspend()
 /* initializes curses routines */
 void init_curses()
 {
-    printf("Attempting to start curses...\n");
-    fflush(stdout);
+	printf("Attempting to start curses...\n");
+	fflush(stdout);
 
-    ioctl(0, TCGETA, (char *)&save_termio);
+	ioctl(0, TCGETA, (char *)&save_termio);
 
-    if (initscr() == NULL) {
-        fprintf(stderr, "Error allocating screen in curses package.\n\r");
-        exit(1);
-    }
+	if (initscr() == NULL) {
+		fprintf(stderr,
+			"Error allocating screen in curses package.\n\r");
+		exit(1);
+	}
 
-    if (LINES < 24 || COLS < 80) {
-        fprintf(stderr, "Screen too small for moria.\n\r");
-        exit (1);
-    }
+	if (LINES < 24 || COLS < 80) {
+		fprintf(stderr, "Screen too small for moria.\n\r");
+		exit(1);
+	}
 
-    signal (SIGTSTP, suspend);
+	signal(SIGTSTP, suspend);
 
-    savescr = newwin (0, 0, 0, 0);
-    if (savescr == NULL) {
-        fprintf(stderr, "Out of memory in starting up curses.\n\r");
-        exit_game();
-    }
+	savescr = newwin(0, 0, 0, 0);
+	if (savescr == NULL) {
+		fprintf(stderr, "Out of memory in starting up curses.\n\r");
+		exit_game();
+	}
 
-    clear();
-    refresh();
+	clear();
+	refresh();
 
-    start_color();
-    init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
-    init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
-    init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
-    init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
-    init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
+	start_color();
+	init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
+	init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
+	init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+	init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
+	init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
 
-    moriaterm ();
+	moriaterm();
 }
 
 /* Set up the terminal into a suitable state for moria.	 -CJS- */
@@ -343,86 +355,87 @@ void moriaterm()
 #ifndef AMIGA
 #ifdef USG
 #ifdef __linux__
-  struct termios tbuf;
+	struct termios tbuf;
 #else
-  struct termio tbuf;
+	struct termio tbuf;
 #endif
 #else
-  struct ltchars lbuf;
-  struct tchars buf;
+	struct ltchars lbuf;
+	struct tchars buf;
 #endif
 #endif
 #endif
 
-  curses_on = TRUE;
+	curses_on = TRUE;
 #ifndef BSD4_3
-  use_value crmode();
+	use_value crmode();
 #else
 #ifdef VMS
-  use_value vms_crmode ();
+	use_value vms_crmode();
 #else
-  use_value cbreak();
+	use_value cbreak();
 #endif
 #endif
-  use_value noecho();
-  /* can not use nonl(), because some curses do not handle it correctly */
+	use_value noecho();
+/* can not use nonl(), because some curses do not handle it correctly */
 #ifdef MSDOS
-  msdos_raw();
+	msdos_raw();
 #else
 #ifdef AMIGA
-  init_color (0,   0,   0,   0);	/* pen 0 - black */
-  init_color (1,1000,1000,1000);	/* pen 1 - white */
-  init_color (2,   0, 300, 700);	/* pen 2 - blue */
-  init_color (3,1000, 500,   0);	/* pen 3 - orange */
+	init_color(0, 0, 0, 0);		 /* pen 0 - black */
+	init_color(1, 1000, 1000, 1000); /* pen 1 - white */
+	init_color(2, 0, 300, 700);      /* pen 2 - blue */
+	init_color(3, 1000, 500, 0);     /* pen 3 - orange */
 #else
 #if !defined(ATARI_ST) && !defined(VMS)
 #ifdef USG
-  (void) ioctl(0, TCGETA, (char *)&tbuf);
-  /* disable all of the normal special control characters */
-  tbuf.c_cc[VINTR] = (char)3; /* control-C */
-  tbuf.c_cc[VQUIT] = (char)-1;
-  tbuf.c_cc[VERASE] = (char)-1;
-  tbuf.c_cc[VKILL] = (char)-1;
-  tbuf.c_cc[VEOF] = (char)-1;
+	(void)ioctl(0, TCGETA, (char *)&tbuf);
+	/* disable all of the normal special control characters */
+	tbuf.c_cc[VINTR] = (char)3; /* control-C */
+	tbuf.c_cc[VQUIT] = (char)-1;
+	tbuf.c_cc[VERASE] = (char)-1;
+	tbuf.c_cc[VKILL] = (char)-1;
+	tbuf.c_cc[VEOF] = (char)-1;
 
-  /* don't know what these are for */
-  tbuf.c_cc[VEOL] = (char)-1;
+	/* don't know what these are for */
+	tbuf.c_cc[VEOL] = (char)-1;
 #ifdef VEOL2
-  tbuf.c_cc[VEOL2] = (char)-1;
+	tbuf.c_cc[VEOL2] = (char)-1;
 #endif
 
-  /* stuff needed when !icanon, i.e. cbreak/raw mode */
-  tbuf.c_cc[VMIN] = 1;  /* Input should wait for at least 1 char */
-  tbuf.c_cc[VTIME] = 0; /* no matter how long that takes. */
+	/* stuff needed when !icanon, i.e. cbreak/raw mode */
+	tbuf.c_cc[VMIN] = 1;  /* Input should wait for at least 1 char */
+	tbuf.c_cc[VTIME] = 0; /* no matter how long that takes. */
 
-  (void) ioctl(0, TCSETA, (char *)&tbuf);
+	(void)ioctl(0, TCSETA, (char *)&tbuf);
 #else
-  /* disable all of the special characters except the suspend char, interrupt
-     char, and the control flow start/stop characters */
-  (void) ioctl(0, TIOCGLTC, (char *)&lbuf);
-  lbuf.t_suspc = (char)26; /* control-Z */
-  lbuf.t_dsuspc = (char)-1;
-  lbuf.t_rprntc = (char)-1;
-  lbuf.t_flushc = (char)-1;
-  lbuf.t_werasc = (char)-1;
-  lbuf.t_lnextc = (char)-1;
-  (void) ioctl(0, TIOCSLTC, (char *)&lbuf);
+	/* disable all of the special characters except the suspend char,
+	   interrupt
+	   char, and the control flow start/stop characters */
+	(void)ioctl(0, TIOCGLTC, (char *)&lbuf);
+	lbuf.t_suspc = (char)26; /* control-Z */
+	lbuf.t_dsuspc = (char)-1;
+	lbuf.t_rprntc = (char)-1;
+	lbuf.t_flushc = (char)-1;
+	lbuf.t_werasc = (char)-1;
+	lbuf.t_lnextc = (char)-1;
+	(void)ioctl(0, TIOCSLTC, (char *)&lbuf);
 
-  (void) ioctl (0, TIOCGETC, (char *)&buf);
-  buf.t_intrc = (char)3; /* control-C */
-  buf.t_quitc = (char)-1;
-  buf.t_startc = (char)17; /* control-Q */
-  buf.t_stopc = (char)19; /* control-S */
-  buf.t_eofc = (char)-1;
-  buf.t_brkc = (char)-1;
-  (void) ioctl(0, TIOCSETC, (char *)&buf);
+	(void)ioctl(0, TIOCGETC, (char *)&buf);
+	buf.t_intrc = (char)3; /* control-C */
+	buf.t_quitc = (char)-1;
+	buf.t_startc = (char)17; /* control-Q */
+	buf.t_stopc = (char)19;  /* control-S */
+	buf.t_eofc = (char)-1;
+	buf.t_brkc = (char)-1;
+	(void)ioctl(0, TIOCSETC, (char *)&buf);
 #endif
 #endif
 #endif
 #endif
 
 #ifdef ATARIST_TC
-  raw ();
+	raw();
 #endif
 }
 #endif
@@ -430,411 +443,411 @@ void moriaterm()
 void highlite_on()
 {
 #if 1 || USE_CURSES_ATTRS
-  attron(A_DIM);
+	attron(A_DIM);
 #endif
 }
 void highlite_off()
 {
 #if 1 || USE_CURSES_ATTRS
-  attroff(A_DIM);
+	attroff(A_DIM);
 #endif
 }
 
 int cool_mvaddch(int row, int col, chtype const ch)
 {
-  if ((ch & 0x80) != 0) {
-    highlite_on();
-    mvaddch(row, col, ch & 0x7F);
-    highlite_off();
-  } else {
-    mvaddch(row, col, ch);
-  }
+	if ((ch & 0x80) != 0) {
+		highlite_on();
+		mvaddch(row, col, ch & 0x7F);
+		highlite_off();
+	} else {
+		mvaddch(row, col, ch);
+	}
 
-  return OK;
+	return OK;
 }
 
-int cool_mvaddstr(int row, int col, char const* printString)
+int cool_mvaddstr(int row, int col, char const *printString)
 {
-    /* search for characters with the high bit set */
+	/* search for characters with the high bit set */
 
-    int   i1;
-    char *s1; // TODO: Modifies string to print
+	int i1;
+	char *s1; // TODO: Modifies string to print
 
-    for (s1 = printString, i1 = 0 ; s1[i1] ; i1++) {
-        if ( (s1[i1] & 0x80) != 0 ) {
+	for (s1 = printString, i1 = 0; s1[i1]; i1++) {
+		if ((s1[i1] & 0x80) != 0) {
 
-            if (i1 > 0) {
-                mvaddnstr(row, col, s1, i1);
-                col += i1;
-                s1   = &(s1[i1]);
-            }
+			if (i1 > 0) {
+				mvaddnstr(row, col, s1, i1);
+				col += i1;
+				s1 = &(s1[i1]);
+			}
 
-            highlite_on();
-            *s1 &= 0x7F;
-            mvaddnstr(row, col, s1, 1);
-            highlite_off();
+			highlite_on();
+			*s1 &= 0x7F;
+			mvaddnstr(row, col, s1, 1);
+			highlite_off();
 
-            col++;
-            s1++;
-            i1   = -1;         /* will be 0 when the top of the loop is hit */
-        }
-    }
+			col++;
+			s1++;
+			i1 = -1; /* will be 0 when the top of the loop is hit */
+		}
+	}
 
-    if (i1 > 0) {
-        mvaddnstr(row, col, s1, i1);
-    }
+	if (i1 > 0) {
+		mvaddnstr(row, col, s1, i1);
+	}
 
-    return OK;
+	return OK;
 }
-
 
 /* Dump IO to buffer					-RAK-	*/
-void Put_Buffer(char const* out_str, integer row, integer col)
+void Put_Buffer(char const *out_str, integer row, integer col)
 {
-    vtype tmp_str;
+	vtype tmp_str;
 
-    //  ENTER("put_buffer","i");
+	//  ENTER("put_buffer","i");
 
-    if (out_str && out_str[0]) {
+	if (out_str && out_str[0]) {
 
-        /* truncate the string, to make sure that it won't go past right edge of
-           screen */
-        if (col > 80)
-            col = 80;
-        (void) strncpy (tmp_str, out_str, 80 - col);
-        tmp_str [80 - col] = '\0';
+		/* truncate the string, to make sure that it won't go past right
+		   edge of
+		   screen */
+		if (col > 80)
+			col = 80;
+		(void)strncpy(tmp_str, out_str, 80 - col);
+		tmp_str[80 - col] = '\0';
 
-        if (cool_mvaddstr((int)row, (int)col, tmp_str) == ERR)
-        {
-            abort();
-            /* clear msg_flag to avoid problems with unflushed messages */
-            msg_flag = 0;
-            (void) sprintf(tmp_str, "error in put_buffer, row = %ld col = %ld\n",
-                    row, col);
-            Prt(tmp_str, 0, 0);
-            bell();
-            /* wait so user can see error */
-            (void) sleep(2);
-        }
-    }
-    //  LEAVE("put_buffer","i");
+		if (cool_mvaddstr((int)row, (int)col, tmp_str) == ERR) {
+			abort();
+			/* clear msg_flag to avoid problems with unflushed
+			 * messages */
+			msg_flag = 0;
+			(void)sprintf(
+			    tmp_str,
+			    "error in put_buffer, row = %ld col = %ld\n", row,
+			    col);
+			Prt(tmp_str, 0, 0);
+			bell();
+			/* wait so user can see error */
+			(void)sleep(2);
+		}
+	}
+	//  LEAVE("put_buffer","i");
 }
 
-void put_buffer_attr(out_str, row, col, attrs)
-char *out_str;
+void put_buffer_attr(out_str, row, col, attrs) char *out_str;
 integer row, col;
 int attrs;
 {
 #if USE_CURSES_ATTRS
-  /*
-   * If you are getting an error about attr_get in here then
-   * you might want to change the USE_CURSES_ATTRS setting in
-   * configure.h
-   */
+/*
+ * If you are getting an error about attr_get in here then
+ * you might want to change the USE_CURSES_ATTRS setting in
+ * configure.h
+ */
 #if NCURSES_VERSION_MAJOR == 5
-  attr_t old_attr;
-  short unused_pair, unused_opts;
-  (void)unused_opts;
-  attr_get(&old_attr, &unused_pair, &unused_opts);
+	attr_t old_attr;
+	short unused_pair, unused_opts;
+	(void)unused_opts;
+	attr_get(&old_attr, &unused_pair, &unused_opts);
 #else
-  int old_attr;
-  old_attr = attr_get();
+	int old_attr;
+	old_attr = attr_get();
 #endif
 
-  attrset(attrs);
-  put_buffer(out_str, row, col);
-  attrset(old_attr);
+	attrset(attrs);
+	put_buffer(out_str, row, col);
+	attrset(old_attr);
 #else
-  put_buffer(out_str, row, col);
+	put_buffer(out_str, row, col);
 #endif
 }
 
 /* Dump the IO buffer to terminal			-RAK-	*/
 void put_qio()
 {
-  screen_change = TRUE;	   /* Let inven_command know something has changed. */
+	screen_change =
+	    TRUE; /* Let inven_command know something has changed. */
 #ifdef MAC
-  UpdateScreen();
+	UpdateScreen();
 #else
-  (void) refresh();
+	(void)refresh();
 #endif
 }
 
 /* Put the terminal in the original mode.			   -CJS- */
 void restore_term()
 #ifdef MAC
-/* Nothing to do on Mac */
-{
-}
+/* Nothing to do on Mac */ {}
 #else
 {
 #ifdef AMIGA
-  closetimer ();
+	closetimer();
 #endif
 
-  if (!curses_on)
-    return;
-  put_qio();  /* Dump any remaining buffer */
+	if (!curses_on)
+		return;
+	put_qio();      /* Dump any remaining buffer */
 #ifdef MSDOS
-  (void) sleep(2);   /* And let it be read. */
+	(void)sleep(2); /* And let it be read. */
 #endif
 #ifdef VMS
-  clear_screen();
-  Pause_Line(15);
+	clear_screen();
+	Pause_Line(15);
 #endif
-  /* this moves curses to bottom right corner */
-  mvcur(getcury(stdscr), getcurx(stdscr), LINES-1, 0);
-  endwin();  /* exit curses */
-  (void) fflush (stdout);
+	/* this moves curses to bottom right corner */
+	mvcur(getcury(stdscr), getcurx(stdscr), LINES - 1, 0);
+	endwin(); /* exit curses */
+	(void)fflush(stdout);
 #ifdef MSDOS
-  msdos_noraw();
+	msdos_noraw();
 #endif
-  /* restore the saved values of the special chars */
+/* restore the saved values of the special chars */
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(VMS)
 #ifndef AMIGA
-  (void) ioctl(0, TCSETA, (char *)&save_termio);
+	(void)ioctl(0, TCSETA, (char *)&save_termio);
 #endif
 #endif
 #else
-  (void) ioctl(0, TIOCSLTC, (char *)&save_special_chars);
-  (void) ioctl(0, TIOCSETP, (char *)&save_ttyb);
-  (void) ioctl(0, TIOCSETC, (char *)&save_tchars);
+	(void)ioctl(0, TIOCSLTC, (char *)&save_special_chars);
+	(void)ioctl(0, TIOCSETP, (char *)&save_ttyb);
+	(void)ioctl(0, TIOCSETC, (char *)&save_tchars);
 #if !defined(atarist) && !defined(__GNUC__)
-  (void) ioctl(0, TIOCLSET, (char *)&save_local_chars);
+	(void)ioctl(0, TIOCLSET, (char *)&save_local_chars);
 #endif
 #endif
-  curses_on = FALSE;
+	curses_on = FALSE;
 }
 #endif
 
-
 void shell_out()
 #if defined(atarist) && defined(__GNUC__)
-{ char fail_message[80], arg_list[1], *p;
-  int  escape_code;
+{
+	char fail_message[80], arg_list[1], *p;
+	int escape_code;
 
-  save_screen();
-  clear_screen();
-  use_value nocbreak();         /* Must remember to reset terminal modes   */
-  use_value echo();             /* or shell i/o will be quite messed up!   */
+	save_screen();
+	clear_screen();
+	use_value nocbreak(); /* Must remember to reset terminal modes   */
+	use_value echo();     /* or shell i/o will be quite messed up!   */
 
-  p = (char *)getenv("SHELL");
-  if (p != (char *)NULL)
-    { Put_Buffer("Escaping to Shell\n",0,0);
-      put_qio();
-      arg_list[0]=0;
-      escape_code = Pexec(0,p,arg_list,0);   /* Launch the shell.          */
+	p = (char *)getenv("SHELL");
+	if (p != (char *)NULL) {
+		Put_Buffer("Escaping to Shell\n", 0, 0);
+		put_qio();
+		arg_list[0] = 0;
+		escape_code = Pexec(0, p, arg_list, 0); /* Launch the shell. */
 
-      if (escape_code != 0)
-         { sprintf(fail_message,"Pexec() error code = %d\n",escape_code);
-           Put_Buffer(fail_message,0,0);
-           put_qio();
-	   sleep(5);
-	 }
-    }
-  use_value cbreak();        /* Reset the terminal back to CBREAK/NOECHO   */
-  use_value noecho();
-  clear_screen();            /* Do not want shell data on screen.          */
-  restore_screen();
+		if (escape_code != 0) {
+			sprintf(fail_message, "Pexec() error code = %d\n",
+				escape_code);
+			Put_Buffer(fail_message, 0, 0);
+			put_qio();
+			sleep(5);
+		}
+	}
+	use_value cbreak(); /* Reset the terminal back to CBREAK/NOECHO   */
+	use_value noecho();
+	clear_screen(); /* Do not want shell data on screen.          */
+	restore_screen();
 }
 
 #else
 
 #ifdef MAC
 {
-  alert_error("This command is not implemented on the Macintosh.");
+	alert_error("This command is not implemented on the Macintosh.");
 }
 #else
 #if defined(AMIGA) || defined(ATARIST_TC)
 {
-  Put_Buffer("This command is not implemented.\n", 0, 0);
+	Put_Buffer("This command is not implemented.\n", 0, 0);
 }
 #else
 #ifdef VMS /* TPP */
 {
-  int val, istat;
-  char *str;
+	int val, istat;
+	char *str;
 
-  save_screen();
-  /* clear screen and print 'exit' message */
-  clear_screen();
-  Put_Buffer("[Entering subprocess, type 'EOJ' to resume your game.]\n",
-	     0, 0);
-  put_qio();
+	save_screen();
+	/* clear screen and print 'exit' message */
+	clear_screen();
+	Put_Buffer("[Entering subprocess, type 'EOJ' to resume your game.]\n",
+		   0, 0);
+	put_qio();
 
-  use_value vms_nocrmode();
-  use_value echo();
-  ignore_signals();
+	use_value vms_nocrmode();
+	use_value echo();
+	ignore_signals();
 
-  istat = lib$spawn();
-  if (!istat)
-    lib$signal (istat);
+	istat = lib$spawn();
+	if (!istat)
+		lib$signal(istat);
 
-  restore_signals();
-  use_value vms_crmode();
-  use_value noecho();
-  /* restore the cave to the screen */
-  restore_screen();
-  Put_Buffer("Welcome back to UMoria.\n", 0, 0);
-  save_screen();
-  clear_screen();
-  put_qio();
-  restore_screen();
-  (void) wrefresh(curscr);
+	restore_signals();
+	use_value vms_crmode();
+	use_value noecho();
+	/* restore the cave to the screen */
+	restore_screen();
+	Put_Buffer("Welcome back to UMoria.\n", 0, 0);
+	save_screen();
+	clear_screen();
+	put_qio();
+	restore_screen();
+	(void)wrefresh(curscr);
 }
 #else
 {
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(AMIGA)
 #ifdef __linux__
-  struct termios tbuf;
+	struct termios tbuf;
 #else
-  struct termio tbuf;
+	struct termio tbuf;
 #endif
 #endif
 #else
-  struct sgttyb tbuf;
-  struct ltchars lcbuf;
-  struct tchars cbuf;
-  int lbuf;
+	struct sgttyb tbuf;
+	struct ltchars lcbuf;
+	struct tchars cbuf;
+	int lbuf;
 #endif
 #ifdef MSDOS
-  char	*comspec, key;
+	char *comspec, key;
 #else
 #ifdef ATARI_ST
-  char comstr[80];
-  char *str;
-  extern char **environ;
+	char comstr[80];
+	char *str;
+	extern char **environ;
 #else
-  int val;
-  char *str;
+	int val;
+	char *str;
 #endif
 #endif
 
-  save_screen();
-  /* clear screen and print 'exit' message */
-  clear_screen();
+	save_screen();
+	/* clear screen and print 'exit' message */
+	clear_screen();
 #ifndef ATARI_ST
-  Put_Buffer("[Entering shell, type 'exit' to resume your game.]\n",0,0);
+	Put_Buffer("[Entering shell, type 'exit' to resume your game.]\n", 0,
+		   0);
 #else
-  Put_Buffer("[Escaping to shell]\n",0,0);
+	Put_Buffer("[Escaping to shell]\n", 0, 0);
 #endif
-  put_qio();
+	put_qio();
 
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(AMIGA)
-  (void) ioctl(0, TCGETA, (char *)&tbuf);
+	(void)ioctl(0, TCGETA, (char *)&tbuf);
 #endif
 #else
-  (void) ioctl(0, TIOCGETP, (char *)&tbuf);
-  (void) ioctl(0, TIOCGETC, (char *)&cbuf);
-  (void) ioctl(0, TIOCGLTC, (char *)&lcbuf);
-  (void) ioctl(0, TIOCLGET, (char *)&lbuf);
+	(void)ioctl(0, TIOCGETP, (char *)&tbuf);
+	(void)ioctl(0, TIOCGETC, (char *)&cbuf);
+	(void)ioctl(0, TIOCGLTC, (char *)&lcbuf);
+	(void)ioctl(0, TIOCLGET, (char *)&lbuf);
 #endif
-  /* would call nl() here if could use nl()/nonl(), see moriaterm() */
+/* would call nl() here if could use nl()/nonl(), see moriaterm() */
 #ifndef BSD4_3
-  use_value nocrmode();
+	use_value nocrmode();
 #else
 #ifdef VMS
-  use_value vms_nocrmode ();
+	use_value vms_nocrmode();
 #else
-  use_value nocbreak();
+	use_value nocbreak();
 #endif
 #endif
 #ifdef MSDOS
-  use_value msdos_noraw();
+	use_value msdos_noraw();
 #endif
-  use_value echo();
-  ignore_signals();
-#ifdef MSDOS		/*{*/
-  if ((comspec = getenv("COMSPEC")) == CNIL
-  ||  spawnl(P_WAIT, comspec, comspec, CNIL) < 0) {
-	clear_screen();	/* BOSS key if shell failed */
-	Put_Buffer("M:\\> ", 0, 0);
-	do {
-	  key = inkey();
-	} while (key != '!');
-  }
+	use_value echo();
+	ignore_signals();
+#ifdef MSDOS /*{*/
+	if ((comspec = getenv("COMSPEC")) == CNIL ||
+	    spawnl(P_WAIT, comspec, comspec, CNIL) < 0) {
+		clear_screen(); /* BOSS key if shell failed */
+		Put_Buffer("M:\\> ", 0, 0);
+		do {
+			key = inkey();
+		} while (key != '!');
+	}
 
-#else		/* MSDOS }{*/
+#else /* MSDOS }{*/
 #ifndef ATARI_ST
-  val = fork();
-  if (val == 0)
-    {
+	val = fork();
+	if (val == 0) {
 #endif
-      default_signals();
+		default_signals();
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST) && !defined(AMIGA)
-      (void) ioctl(0, TCSETA, (char *)&save_termio);
+		(void)ioctl(0, TCSETA, (char *)&save_termio);
 #endif
 #else
-      (void) ioctl(0, TIOCSLTC, (char *)&save_special_chars);
-      (void) ioctl(0, TIOCSETP, (char *)&save_ttyb);
-      (void) ioctl(0, TIOCSETC, (char *)&save_tchars);
-      (void) ioctl(0, TIOCLSET, (char *)&save_local_chars);
+	(void)ioctl(0, TIOCSLTC, (char *)&save_special_chars);
+	(void)ioctl(0, TIOCSETP, (char *)&save_ttyb);
+	(void)ioctl(0, TIOCSETC, (char *)&save_tchars);
+	(void)ioctl(0, TIOCLSET, (char *)&save_local_chars);
 #endif
 #ifndef MSDOS
-      /* close scoreboard descriptor */
-      /* it is not open on MSDOS machines */
-      (void) fclose(highscore_fp);
+		/* close scoreboard descriptor */
+		/* it is not open on MSDOS machines */
+		(void)fclose(highscore_fp);
 #endif
-      if ((str = getenv("SHELL")))
+		if ((str = getenv("SHELL")))
 #ifndef ATARI_ST
-	(void) execl(str, str, (char *) 0);
+			(void)execl(str, str, (char *)0);
 #else
-	system(str);
+		system(str);
 #endif
-      else
+		else
 #ifndef ATARI_ST
-	(void) execl("/bin/sh", "sh", (char *) 0);
+			(void)execl("/bin/sh", "sh", (char *)0);
 #endif
-      msg_print("Cannot execute shell.");
+		msg_print("Cannot execute shell.");
 #ifndef ATARI_ST
-      exit(1);
-    }
-  if (val == -1)
-    {
-      msg_print("Fork failed. Try again.");
-      return;
-    }
+		exit(1);
+	}
+	if (val == -1) {
+		msg_print("Fork failed. Try again.");
+		return;
+	}
 #if defined(USG) || defined(__386BSD__) || defined(__NetBSD__)
-  (void) wait((int *) 0);
+	(void)wait((int *)0);
 #else
-  (void) wait((union wait *) 0);
+	(void)wait((union wait *)0);
 #endif
 #endif /* ATARI_ST */
-#endif		 /* MSDOS }*/
-  restore_signals();
-  /* restore the cave to the screen */
-  restore_screen();
+#endif /* MSDOS }*/
+	restore_signals();
+	/* restore the cave to the screen */
+	restore_screen();
 #ifndef BSD4_3
-  use_value crmode();
+	use_value crmode();
 #else
 #ifdef VMS
-  use_value vms_crmode ();
+	use_value vms_crmode();
 #else
-  use_value cbreak();
+	use_value cbreak();
 #endif
 #endif
-  use_value noecho();
-  /* would call nonl() here if could use nl()/nonl(), see moriaterm() */
+	use_value noecho();
+/* would call nonl() here if could use nl()/nonl(), see moriaterm() */
 #ifdef MSDOS
-  msdos_raw();
+	msdos_raw();
 #endif
-  /* disable all of the local special characters except the suspend char */
-  /* have to disable ^Y for tunneling */
+/* disable all of the local special characters except the suspend char */
+/* have to disable ^Y for tunneling */
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARI_ST)
-  (void) ioctl(0, TCSETA, (char *)&tbuf);
+	(void)ioctl(0, TCSETA, (char *)&tbuf);
 #endif
 #else
-  (void) ioctl(0, TIOCSLTC, (char *)&lcbuf);
-  (void) ioctl(0, TIOCSETP, (char *)&tbuf);
-  (void) ioctl(0, TIOCSETC, (char *)&cbuf);
-  (void) ioctl(0, TIOCLSET, (char *)&lbuf);
+	(void)ioctl(0, TIOCSLTC, (char *)&lcbuf);
+	(void)ioctl(0, TIOCSETP, (char *)&tbuf);
+	(void)ioctl(0, TIOCSETC, (char *)&cbuf);
+	(void)ioctl(0, TIOCLSET, (char *)&lbuf);
 #endif
-  (void) wrefresh(curscr);
+	(void)wrefresh(curscr);
 }
 #endif
 #endif
@@ -852,126 +865,155 @@ char inkey()
 /* Just returns their keypad ascii value (e.g. '0'-'9') */
 /* Compare with inkeydir() below */
 {
-  char ch;
-  int dir;
-  int shift_flag, ctrl_flag;
+	char ch;
+	int dir;
+	int shift_flag, ctrl_flag;
 
-  put_qio();
-  command_count = 0;
+	put_qio();
+	command_count = 0;
 
-  do {
-    macgetkey(&ch, FALSE);
-  } while (ch == CTRL_('R'));
+	do {
+		macgetkey(&ch, FALSE);
+	} while (ch == CTRL_('R'));
 
-  dir = extractdir(ch, &shift_flag, &ctrl_flag);
-  if (dir != -1)
-    ch = '0' + dir;
+	dir = extractdir(ch, &shift_flag, &ctrl_flag);
+	if (dir != -1)
+		ch = '0' + dir;
 
-  return(ch);
+	return (ch);
 }
 #else
 {
-  int i;
+	int i;
 #ifdef VMS
-  vtype tmp_str;
+	vtype tmp_str;
 #endif
 
-  put_qio();			/* Dump IO buffer		*/
-  command_count = 0;  /* Just to be safe -CJS- */
-  while (TRUE)
-    {
+	put_qio();	 /* Dump IO buffer		*/
+	command_count = 0; /* Just to be safe -CJS- */
+	while (TRUE) {
 #ifdef MSDOS
-      i = msdos_getch();
+		i = msdos_getch();
 #else
 #ifdef VMS
-      i = vms_getch ();
+		i = vms_getch();
 #else
-      i = getch();
+		i = getch();
 #if defined(atarist) && defined(__GNUC__)
-/* for some reason a keypad number produces an initial negative number. */
-      if (i<0) i = getch();
+		/* for some reason a keypad number produces an initial negative
+		 * number. */
+		if (i < 0)
+			i = getch();
 #endif
 #endif
 #endif
 
 #ifdef VMS
-      if (i == 27) /* if ESCAPE key, then we probably have a keypad key */
-	{
-	  i = vms_getch();
-	  if (i == 'O') /* Now it is definitely a numeric keypad key */
-	    {
-	      i = vms_getch();
-	      switch (i)
+		if (i ==
+		    27) /* if ESCAPE key, then we probably have a keypad key */
 		{
-		  case 'p': i = '0'; break;
-		  case 'q' : i = '1'; break;
-		  case 'r' : i = '2'; break;
-		  case 's' : i = '3'; break;
-		  case 't' : i = '4'; break;
-		  case 'u' : i = '5'; break;
-		  case 'v' : i = '6'; break;
-		  case 'w' : i = '7'; break;
-		  case 'x' : i = '8'; break;
-		  case 'y' : i = '9'; break;
-		  case 'm' : i = '-'; break;
-		  case 'M' : i = 10; break; /* Enter = RETURN */
-		  case 'n' : i = '.'; break;
-		  default : while (kbhit()) (void) vms_getch();
-		  }
-	    }
-	  else
-	    {
-	      while (kbhit())
-		(void) vms_getch();
-	    }
-	}
+			i = vms_getch();
+			if (i ==
+			    'O') /* Now it is definitely a numeric keypad key */
+			{
+				i = vms_getch();
+				switch (i) {
+				case 'p':
+					i = '0';
+					break;
+				case 'q':
+					i = '1';
+					break;
+				case 'r':
+					i = '2';
+					break;
+				case 's':
+					i = '3';
+					break;
+				case 't':
+					i = '4';
+					break;
+				case 'u':
+					i = '5';
+					break;
+				case 'v':
+					i = '6';
+					break;
+				case 'w':
+					i = '7';
+					break;
+				case 'x':
+					i = '8';
+					break;
+				case 'y':
+					i = '9';
+					break;
+				case 'm':
+					i = '-';
+					break;
+				case 'M':
+					i = 10;
+					break; /* Enter = RETURN */
+				case 'n':
+					i = '.';
+					break;
+				default:
+					while (kbhit())
+						(void)vms_getch();
+				}
+			} else {
+				while (kbhit())
+					(void)vms_getch();
+			}
+		}
 #endif /* VMS */
 
-      /* some machines may not sign extend. */
-      if (i == EOF)
-	{
-	  eof_flag++;
-	  /* avoid infinite loops while trying to call inkey() for a -more-
-	     prompt. */
-	  msg_flag = FALSE;
+		/* some machines may not sign extend. */
+		if (i == EOF) {
+			eof_flag++;
+			/* avoid infinite loops while trying to call inkey() for
+			   a -more-
+			   prompt. */
+			msg_flag = FALSE;
 
-	  (void) refresh ();
-	  if (!character_generated || character_saved)
-	    exit_game();
-	  /*  disturb(1, 0);*/
-	  if (eof_flag > 100)
-	    {
-	      /* just in case, to make sure that the process eventually dies */
-	      panic_save = 1;
-	      (void) strcpy(died_from, "(end of input: panic saved)");
-	      if (!save_char(TRUE))
-		{
-		  (void) strcpy(died_from, "panic: unexpected eof");
-		  death = TRUE;
+			(void)refresh();
+			if (!character_generated || character_saved)
+				exit_game();
+			/*  disturb(1, 0);*/
+			if (eof_flag > 100) {
+				/* just in case, to make sure that the process
+				 * eventually dies */
+				panic_save = 1;
+				(void)strcpy(died_from,
+					     "(end of input: panic saved)");
+				if (!save_char(TRUE)) {
+					(void)strcpy(died_from,
+						     "panic: unexpected eof");
+					death = TRUE;
+				}
+				exit_game();
+			}
+			return ESCAPE;
 		}
-	      exit_game();
-	    }
-	  return ESCAPE;
-	}
-      if (i != CTRL_('R')) {
-	msg_flag = false;
-	return (char)i;
-      }
+		if (i != CTRL_('R')) {
+			msg_flag = false;
+			return (char)i;
+		}
 #ifdef VMS
-      /* Refresh does not work right under VMS, so use a brute force. */
-      overwrite (stdscr, tempscr);
-      clear_screen();
-      put_qio();
-      overwrite (tempscr, stdscr);
-      touchwin (stdscr);
-      (void) wrefresh (stdscr);
+		/* Refresh does not work right under VMS, so use a brute force.
+		 */
+		overwrite(stdscr, tempscr);
+		clear_screen();
+		put_qio();
+		overwrite(tempscr, stdscr);
+		touchwin(stdscr);
+		(void)wrefresh(stdscr);
 #endif
-      (void) wrefresh (curscr);
-      moriaterm();
-    }
+		(void)wrefresh(curscr);
+		moriaterm();
+	}
 }
 #endif
-
 
 #ifdef MAC
 char inkeydir()
@@ -979,266 +1021,243 @@ char inkeydir()
 /* This routine translates the direction keys in rogue-like mode */
 /* Compare with inkeydir() below */
 {
-  char ch;
-  int dir;
-  int shift_flag, ctrl_flag;
-  static char tab[9] = {
-	'b',		'j',		'n',
-	'h',		'.',		'l',
-	'y',		'k',		'u'
-  };
-  static char shifttab[9] = {
-	'B',		'J',		'N',
-	'H',		'.',		'L',
-	'Y',		'K',		'U'
-  };
-  static char ctrltab[9] = {
-	CTRL_('B'),	CTRL_('J'),	CTRL_('N'),
-	CTRL_('H'),	'.',		CTRL_('L'),
-	CTRL_('Y'),	CTRL_('K'),	CTRL_('U')
-  };
+	char ch;
+	int dir;
+	int shift_flag, ctrl_flag;
+	static char tab[9] = {'b', 'j', 'n', 'h', '.', 'l', 'y', 'k', 'u'};
+	static char shifttab[9] = {'B', 'J', 'N', 'H', '.', 'L', 'Y', 'K', 'U'};
+	static char ctrltab[9] = {CTRL_('B'), CTRL_('J'), CTRL_('N'),
+				  CTRL_('H'), '.',	CTRL_('L'),
+				  CTRL_('Y'), CTRL_('K'), CTRL_('U')};
 
-  put_qio();
-  command_count = 0;
+	put_qio();
+	command_count = 0;
 
-  do {
-    macgetkey(&ch, FALSE);
-  } while (ch == CTRL_('R'));
+	do {
+		macgetkey(&ch, FALSE);
+	} while (ch == CTRL_('R'));
 
-  dir = extractdir(ch, &shift_flag, &ctrl_flag);
+	dir = extractdir(ch, &shift_flag, &ctrl_flag);
 
-  if (dir != -1) {
-    if (!rogue_like_commands) {
-      ch = '0' + dir;
-    }
-    else {
-      if (ctrl_flag)
-	ch = ctrltab[dir - 1];
-      else if (shift_flag)
-	ch = shifttab[dir - 1];
-      else
-	ch = tab[dir - 1];
-    }
-  }
+	if (dir != -1) {
+		if (!rogue_like_commands) {
+			ch = '0' + dir;
+		} else {
+			if (ctrl_flag)
+				ch = ctrltab[dir - 1];
+			else if (shift_flag)
+				ch = shifttab[dir - 1];
+			else
+				ch = tab[dir - 1];
+		}
+	}
 
-  return(ch);
+	return (ch);
 }
 #endif
-
 
 /* Flush the buffer					-RAK-	*/
 void flush()
 #ifdef MAC
 {
-/* Removed put_qio() call.  Reduces flashing.  Doesn't seem to hurt. */
-  FlushScreenKeys();
+	/* Removed put_qio() call.  Reduces flashing.  Doesn't seem to hurt. */
+	FlushScreenKeys();
 }
 #else
 {
 #if defined(MSDOS)
-  while (kbhit())
-	(void) getch();
+	while (kbhit())
+		(void)getch();
 #else
 #ifdef VMS
-  while (kbhit ())
-    (void) vms_getch();
+	while (kbhit())
+		(void)vms_getch();
 #else
-  /* the code originally used ioctls, TIOCDRAIN, or TIOCGETP/TIOCSETP, or
-     TCGETA/TCSETAF, however this occasionally resulted in loss of output,
-     the happened especially often when rlogin from BSD to SYS_V machine,
-     using check_input makes the desired effect a bit clearer */
-  /* wierd things happen on EOF, don't try to flush input in that case */
-  if (!eof_flag)
-    while (check_input(0));
+	/* the code originally used ioctls, TIOCDRAIN, or TIOCGETP/TIOCSETP, or
+	   TCGETA/TCSETAF, however this occasionally resulted in loss of output,
+	   the happened especially often when rlogin from BSD to SYS_V machine,
+	   using check_input makes the desired effect a bit clearer */
+	/* wierd things happen on EOF, don't try to flush input in that case */
+	if (!eof_flag)
+		while (check_input(0))
+			;
 #endif
 #endif
 
-  /* used to call put_qio() here to drain output, but it is not necessary */
+	/* used to call put_qio() here to drain output, but it is not necessary
+	 */
 }
 #endif
 
-
 /* Clears given line of text				-RAK-	*/
-void Erase_Line(row, col)
-integer row;
+void Erase_Line(row, col) integer row;
 integer col;
 #ifdef MAC
 {
-  Rect line;
+	Rect line;
 
-  if (row == MSG_LINE && msg_flag)
-    msg_print(CNIL);
+	if (row == MSG_LINE && msg_flag)
+		msg_print(CNIL);
 
-  line.left = col;
-  line.top = row;
-  line.right = SCRN_COLS;
-  line.bottom = row + 1;
-  DEraseScreen(&line);
+	line.left = col;
+	line.top = row;
+	line.right = SCRN_COLS;
+	line.bottom = row + 1;
+	DEraseScreen(&line);
 }
 #else
 {
-  if (row == MSG_LINE && msg_flag)
-    msg_print(CNIL);
-  (void) move((int)row, (int)col);
-  clrtoeol();
+	if (row == MSG_LINE && msg_flag)
+		msg_print(CNIL);
+	(void)move((int)row, (int)col);
+	clrtoeol();
 }
 #endif
-
 
 /* Clears screen */
 void clear_screen()
 #ifdef MAC
 {
-  Rect area;
+	Rect area;
 
-  if (msg_flag)
-    msg_print(CNIL);
+	if (msg_flag)
+		msg_print(CNIL);
 
-  area.left = area.top = 0;
-  area.right = SCRN_COLS;
-  area.bottom = SCRN_ROWS;
-  DEraseScreen(&area);
+	area.left = area.top = 0;
+	area.right = SCRN_COLS;
+	area.bottom = SCRN_ROWS;
+	DEraseScreen(&area);
 }
 #else
 {
-  if (msg_flag)
-    msg_print("");
+	if (msg_flag)
+		msg_print("");
 #ifdef VMS
-  /* Clear doesn't work right under VMS, so use brute force. */
-  (void) clearok (stdscr, TRUE);
-  (void) wclear(stdscr);
-  (void) clearok (stdscr, FALSE);
+	/* Clear doesn't work right under VMS, so use brute force. */
+	(void)clearok(stdscr, TRUE);
+	(void)wclear(stdscr);
+	(void)clearok(stdscr, FALSE);
 #else
-  (void) clear();
+	(void)clear();
 #endif
 }
 #endif
 
-void Clear_From (row)
-int row;
+void Clear_From(row) int row;
 #ifdef MAC
 {
-  Rect area;
+	Rect area;
 
-  area.left = 0;
-  area.top = row;
-  area.right = SCRN_COLS;
-  area.bottom = SCRN_ROWS;
-  DEraseScreen(&area);
+	area.left = 0;
+	area.top = row;
+	area.right = SCRN_COLS;
+	area.bottom = SCRN_ROWS;
+	DEraseScreen(&area);
 }
 #else
 {
-  (void) move(row, 0);
-  clrtobot();
+	(void)move(row, 0);
+	clrtobot();
 }
 #endif
-
 
 /* Outputs a char to a given interpolated y, x position	-RAK-	*/
 /* sign bit of a character used to indicate standout mode. -CJS */
 void Print(chtype const ch, int row, int col)
 {
-    vtype tmp_str;
+	vtype tmp_str;
 
-    row -= panel_row_prt;/* Real co-ords convert to screen positions */
-    col -= panel_col_prt;
+	row -= panel_row_prt; /* Real co-ords convert to screen positions */
+	col -= panel_col_prt;
 
-    used_line[row+1] = true;
+	used_line[row + 1] = true;
 
-    if ((row > 24) || (row < 0) || (col > 79) || (col < 0))
-    {
-        (void) sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
-        minor_error(tmp_str);
-    }
+	if ((row > 24) || (row < 0) || (col > 79) || (col < 0)) {
+		(void)sprintf(tmp_str, "error in print, row = %d col = %d\n",
+			      row, col);
+		minor_error(tmp_str);
+	}
 
-    if (cool_mvaddch (row, col, ch) == ERR)
-    {
-        (void) sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
-        minor_error(tmp_str);
-    }
+	if (cool_mvaddch(row, col, ch) == ERR) {
+		(void)sprintf(tmp_str, "error in print, row = %d col = %d\n",
+			      row, col);
+		minor_error(tmp_str);
+	}
 }
 
-
 /* Moves the cursor to a given interpolated y, x position	-RAK-	*/
-void move_cursor_relative(row, col)
-int row;
+void move_cursor_relative(row, col) int row;
 int col;
 #ifdef MAC
 {
-  row -= panel_row_prt;/* Real co-ords convert to screen positions */
-  col -= panel_col_prt;
+	row -= panel_row_prt; /* Real co-ords convert to screen positions */
+	col -= panel_col_prt;
 
-  DSetScreenCursor(col, row);
+	DSetScreenCursor(col, row);
 }
 #else
 {
-  vtype tmp_str;
+	vtype tmp_str;
 
-  row -= panel_row_prt;/* Real co-ords convert to screen positions */
-  col -= panel_col_prt;
-  if (move (row, col) == ERR)
-    {
-      abort();
-      /* clear msg_flag to avoid problems with unflushed messages */
-      msg_flag = 0;
-      (void) sprintf(tmp_str,
-		     "error in move_cursor_relative, row = %d col = %d\n",
-		     row, col);
-      Prt(tmp_str, 0, 0);
-      bell();
-      /* wait so user can see error */
-      (void) sleep(2);
-    }
+	row -= panel_row_prt; /* Real co-ords convert to screen positions */
+	col -= panel_col_prt;
+	if (move(row, col) == ERR) {
+		abort();
+		/* clear msg_flag to avoid problems with unflushed messages */
+		msg_flag = 0;
+		(void)sprintf(
+		    tmp_str,
+		    "error in move_cursor_relative, row = %d col = %d\n", row,
+		    col);
+		Prt(tmp_str, 0, 0);
+		bell();
+		/* wait so user can see error */
+		(void)sleep(2);
+	}
 }
 #endif
 
-
 /* Print a message so as not to interrupt a counted command. -CJS- */
-void count_msg_print(p)
-char *p;
+void count_msg_print(p) char *p;
 {
-  int i;
+	int i;
 
-  i = command_count;
-  msg_print(p);
-  command_count = i;
+	i = command_count;
+	msg_print(p);
+	command_count = i;
 }
 
-void prt2(str_buff1, str_buff2, row, col)
-char *str_buff1;
+void prt2(str_buff1, str_buff2, row, col) char *str_buff1;
 char *str_buff2;
 int row;
 int col;
 {
-  vtype temp;
-  sprintf(temp, "%s%s", str_buff1, str_buff2);
-  prt(temp, row, col);
+	vtype temp;
+	sprintf(temp, "%s%s", str_buff1, str_buff2);
+	prt(temp, row, col);
 }
 
 /* Outputs a line to a given y, x position		-RAK-	*/
-void Prt(char const* str_buff, int row, int col)
+void Prt(char const *str_buff, int row, int col)
 {
-    if (row == MSG_LINE && msg_flag)
-        msg_print("");
-    (void) move(row, col);
-    clrtoeol();
-    Put_Buffer(str_buff, row, col);
+	if (row == MSG_LINE && msg_flag)
+		msg_print("");
+	(void)move(row, col);
+	clrtoeol();
+	Put_Buffer(str_buff, row, col);
 }
 
-
 /* move cursor to a given y, x position */
-void move_cursor(row, col)
-int row, col;
+void move_cursor(row, col) int row, col;
 #ifdef MAC
 {
-  DSetScreenCursor(col, row);
+	DSetScreenCursor(col, row);
 }
 #else
 {
-  (void) move (row, col);
+	(void)move(row, col);
 }
 #endif
-
 
 /****************************************************************/
 #if 0
@@ -1333,48 +1352,45 @@ char *str_buff;
 /****************************************************************/
 
 /* Used to verify a choice - user gets the chance to abort choice.  -CJS- */
-int get_check(prompt)
-char *prompt;
+int get_check(prompt) char *prompt;
 {
-  int res;
+	int res;
 #ifdef MAC
-  long y, x;		/* ??? Should change to int or short.  */
+	long y, x; /* ??? Should change to int or short.  */
 #else
-  int y, x;
+	int y, x;
 #endif
 
-  Prt(prompt, 0, 0);
+	Prt(prompt, 0, 0);
 #ifdef MAC
-  GetScreenCursor(&x, &y);
+	GetScreenCursor(&x, &y);
 #else
-  getyx(stdscr, y, x);
+	getyx(stdscr, y, x);
 #if defined(lint)
-  /* prevent message 'warning: y is unused' */
-  x = y;
+	/* prevent message 'warning: y is unused' */
+	x = y;
 #endif
 #ifdef LINT_ARGS
-  /* prevent message about y never used for MSDOS systems */
-  res = y;
+	/* prevent message about y never used for MSDOS systems */
+	res = y;
 #endif
 #endif
 
-  if (x > 73)
-    (void) move(0, 73);
+	if (x > 73)
+		(void)move(0, 73);
 #ifdef MAC
-  DWriteScreenStringAttr(" [y/n]", ATTR_NORMAL);
+	DWriteScreenStringAttr(" [y/n]", ATTR_NORMAL);
 #else
-  (void) addstr(" [y/n]");
+	(void)addstr(" [y/n]");
 #endif
-  do
-    {
-      res = inkey();
-    }
-  while(res == ' ');
-  Erase_Line(0, 0);
-  if (res == 'Y' || res == 'y')
-    return TRUE;
-  else
-    return FALSE;
+	do {
+		res = inkey();
+	} while (res == ' ');
+	Erase_Line(0, 0);
+	if (res == 'Y' || res == 'y')
+		return TRUE;
+	else
+		return FALSE;
 }
 /////////////////////////////////////////////////////////////////
 
@@ -1403,168 +1419,148 @@ char *command;
 /////////////////////////////////////////////////////////////////
 #ifdef MAC
 /* Same as get_com(), but translates direction keys from keypad */
-int get_comdir(prompt, command)
-char *prompt;
+int get_comdir(prompt, command) char *prompt;
 char *command;
 {
-  int res;
+	int res;
 
-  if (prompt)
-    Prt(prompt, 0, 0);
-  *command = inkeydir();
-  if (*command == ESCAPE)
-    res = FALSE;
-  else
-    res = TRUE;
-  Erase_Line(MSG_LINE, 0);
-  return(res);
+	if (prompt)
+		Prt(prompt, 0, 0);
+	*command = inkeydir();
+	if (*command == ESCAPE)
+		res = FALSE;
+	else
+		res = TRUE;
+	Erase_Line(MSG_LINE, 0);
+	return (res);
 }
 #endif
 
-
 /* Gets a string terminated by <RETURN>		*/
 /* Function returns false if <ESCAPE> is input	*/
-boolean Get_String(in_str, row, column, slen)
-char *in_str;
+boolean Get_String(in_str, row, column, slen) char *in_str;
 int row, column, slen;
 {
-  register int start_col, end_col, i;
-  char *p;
-  int flag, aborted;
+	register int start_col, end_col, i;
+	char *p;
+	int flag, aborted;
 
-  aborted = FALSE;
-  flag	= FALSE;
-  (void) move(row, column);
-  for (i = slen; i > 0; i--)
-    (void) addch(' ');
-  (void) move(row, column);
-  start_col = column;
-  end_col = column + slen - 1;
-  if (end_col > 79)
-    {
-      slen = 80 - column;
-      end_col = 79;
-    }
-  p = in_str;
-  do
-    {
-      i = inkey();
-      switch(i)
-	{
-	case ESCAPE:
-	  aborted = TRUE;
-	  break;
-	case CTRL_('J'): case CTRL_('M'):
-	  flag	= TRUE;
-	  break;
-	case DELETE: case CTRL_('H'):
-	  if (column > start_col)
-	    {
-	      column--;
-	      Put_Buffer(" ", row, column);
-	      move_cursor(row, column);
-	      *--p = '\0';
-	    }
-	  break;
-	default:
-	  if (!isprint(i) || column > end_col)
-	    bell();
-	  else
-	    {
-	      use_value2 mvaddch(row, column, (char)i);
-	      *p++ = i;
-	      column++;
-	    }
-	  break;
+	aborted = FALSE;
+	flag = FALSE;
+	(void)move(row, column);
+	for (i = slen; i > 0; i--)
+		(void)addch(' ');
+	(void)move(row, column);
+	start_col = column;
+	end_col = column + slen - 1;
+	if (end_col > 79) {
+		slen = 80 - column;
+		end_col = 79;
 	}
-    }
-  while ((!flag) && (!aborted));
-  if (aborted)
-    return(FALSE);
-  /* Remove trailing blanks	*/
-  while (p > in_str && p[-1] == ' ')
-    p--;
-  *p = '\0';
-  return(TRUE);
+	p = in_str;
+	do {
+		i = inkey();
+		switch (i) {
+		case ESCAPE:
+			aborted = TRUE;
+			break;
+		case CTRL_('J'):
+		case CTRL_('M'):
+			flag = TRUE;
+			break;
+		case DELETE:
+		case CTRL_('H'):
+			if (column > start_col) {
+				column--;
+				Put_Buffer(" ", row, column);
+				move_cursor(row, column);
+				*--p = '\0';
+			}
+			break;
+		default:
+			if (!isprint(i) || column > end_col)
+				bell();
+			else {
+				use_value2 mvaddch(row, column, (char)i);
+				*p++ = i;
+				column++;
+			}
+			break;
+		}
+	} while ((!flag) && (!aborted));
+	if (aborted)
+		return (FALSE);
+	/* Remove trailing blanks	*/
+	while (p > in_str && p[-1] == ' ')
+		p--;
+	*p = '\0';
+	return (TRUE);
 }
-
 
 /* Pauses for user response before returning		-RAK-	*/
-void Pause_Line(prt_line)
-int prt_line;
+void Pause_Line(prt_line) int prt_line;
 {
-  Prt("[Press any key to continue.]", prt_line, 23);
-  (void) inkey();
-  Erase_Line(prt_line, 0);
+	Prt("[Press any key to continue.]", prt_line, 23);
+	(void)inkey();
+	Erase_Line(prt_line, 0);
 }
-
 
 /* Pauses for user response before returning		-RAK-	*/
 /* NOTE: Delay is for players trying to roll up "perfect"	*/
 /*	characters.  Make them wait a bit.			*/
-void Pause_Exit(prt_line, delay)
-int prt_line;
+void Pause_Exit(prt_line, delay) int prt_line;
 int delay;
 {
-  char dummy;
+	char dummy;
 
-  Prt("[Press any key to continue, or Q to exit.]", prt_line, 10);
-  dummy = inkey();
-  if (dummy == 'Q')
-    {
-      Erase_Line(prt_line, 0);
-#ifndef MSDOS		/* PCs are slow enough as is  -dgk */
-      if (delay > 0)  (void) sleep((unsigned)delay);
+	Prt("[Press any key to continue, or Q to exit.]", prt_line, 10);
+	dummy = inkey();
+	if (dummy == 'Q') {
+		Erase_Line(prt_line, 0);
+#ifndef MSDOS /* PCs are slow enough as is  -dgk */
+		if (delay > 0)
+			(void)sleep((unsigned)delay);
 #else
-      /* prevent message about delay unused */
-      dummy = delay;
+		/* prevent message about delay unused */
+		dummy = delay;
 #endif
 #ifdef MAC
-      enablefilemenu(FALSE);
-      exit_game();
-      enablefilemenu(TRUE);
+		enablefilemenu(FALSE);
+		exit_game();
+		enablefilemenu(TRUE);
 #else
-      exit_game();
+		exit_game();
 #endif
-    }
-  Erase_Line(prt_line, 0);
+	}
+	Erase_Line(prt_line, 0);
 }
 
 #ifdef MAC
-void save_screen()
-{
-  mac_save_screen();
-}
+void save_screen() { mac_save_screen(); }
+
+void restore_screen() { mac_restore_screen(); }
+#else
+void save_screen() { overwrite(stdscr, savescr); }
 
 void restore_screen()
 {
-  mac_restore_screen();
-}
-#else
-void save_screen()
-{
-  overwrite(stdscr, savescr);
-}
-
-void restore_screen()
-{
-  overwrite(savescr, stdscr);
-  /*  touchwin(stdscr); */ /* wtouchln((win), 0, (win)->_maxy + 1, 1) */
+	overwrite(savescr, stdscr);
+	/*  touchwin(stdscr); */ /* wtouchln((win), 0, (win)->_maxy + 1, 1) */
 }
 #endif
 
 void bell()
 {
-  put_qio();
+	put_qio();
 
-  /* The player can turn off beeps if he/she finds them annoying.  */
-  if (! sound_beep_flag)
-    return;
+	/* The player can turn off beeps if he/she finds them annoying.  */
+	if (!sound_beep_flag)
+		return;
 
 #ifdef MAC
-  mac_beep();
+	mac_beep();
 #else
-  (void) write(1, "\007", 1);
+	(void)write(1, "\007", 1);
 #endif
 }
 
@@ -1574,268 +1570,273 @@ void bell()
 
 /* screen_map code taken from umoria 5.5 */
 
-
 /* definitions used by screen_map() */
 /* index into border character array */
-#define TL 0	/* top left */
+#define TL 0 /* top left */
 #define TR 1
 #define BL 2
 #define BR 3
-#define HE 4	/* horizontal edge */
+#define HE 4 /* horizontal edge */
 #define VE 5
 
 /* character set to use */
 #ifdef MSDOS
-# ifdef ANSI
-#   define CH(x)	(ansi ? screen_border[0][x] : screen_border[1][x])
-# else
-#   define CH(x)	(screen_border[1][x])
-# endif
+#ifdef ANSI
+#define CH(x) (ansi ? screen_border[0][x] : screen_border[1][x])
 #else
-#   define CH(x)	(screen_border[0][x])
+#define CH(x) (screen_border[1][x])
+#endif
+#else
+#define CH(x) (screen_border[0][x])
 #endif
 
-  /* Display highest priority object in the RATIO by RATIO area */
-#define	RATIO 3
+/* Display highest priority object in the RATIO by RATIO area */
+#define RATIO 3
 
 void screen_map()
 {
-  register int	i, j;
-  static int8u screen_border[2][6] = {
-    {'+', '+', '+', '+', '-', '|'},	/* normal chars */
-    {201, 187, 200, 188, 205, 186}	/* graphics chars */
-  };
-  int8u map[MAX_WIDTH / RATIO + 1];
-  int8u tmp;
-  int priority[256];
-  int row, orow, col, myrow = 0, mycol = 0;
+	register int i, j;
+	static int8u screen_border[2][6] = {
+	    {'+', '+', '+', '+', '-', '|'}, /* normal chars */
+	    {201, 187, 200, 188, 205, 186}  /* graphics chars */
+	};
+	int8u map[MAX_WIDTH / RATIO + 1];
+	int8u tmp;
+	int priority[256];
+	int row, orow, col, myrow = 0, mycol = 0;
 #ifndef MAC
-  char prntscrnbuf[80];
+	char prntscrnbuf[80];
 #endif
 
-  for (i = 0; i < 256; i++) {
-    priority[i] = 0;
-  }
-  priority['<'] = 5;
-  priority['>'] = 5;
-  priority['@'] = 10;
+	for (i = 0; i < 256; i++) {
+		priority[i] = 0;
+	}
+	priority['<'] = 5;
+	priority['>'] = 5;
+	priority['@'] = 10;
 #ifdef MSDOS
-  priority[wallsym] = -5;
-  priority[floorsym] = -10;
+	priority[wallsym] = -5;
+	priority[floorsym] = -10;
 #else
 #ifndef ATARI_ST
-  priority['#'] = -5;
+	priority['#'] = -5;
 #else
-  priority[(unsigned char)240] = -5;
+	priority[(unsigned char)240] = -5;
 #endif
-  priority['.'] = -10;
+	priority['.'] = -10;
 #endif
-  priority['\''] = -3;
-  priority[' '] = -15;
+	priority['\''] = -3;
+	priority[' '] = -15;
 
-  save_screen();
-  clear_rc(1,1);
+	save_screen();
+	clear_rc(1, 1);
 #ifdef MAC
-  DSetScreenCursor(0, 0);
-  DWriteScreenCharAttr(CH(TL), ATTR_NORMAL);
-  for (i = 0; i < MAX_WIDTH / RATIO; i++)
-    DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
-  DWriteScreenCharAttr(CH(TR), ATTR_NORMAL);
+	DSetScreenCursor(0, 0);
+	DWriteScreenCharAttr(CH(TL), ATTR_NORMAL);
+	for (i = 0; i < MAX_WIDTH / RATIO; i++)
+		DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
+	DWriteScreenCharAttr(CH(TR), ATTR_NORMAL);
 #else
-  use_value2 mvaddch(0, 0, CH(TL));
-  for (i = 0; i < MAX_WIDTH / RATIO; i++) {
-    (void) addch(CH(HE));
-  }
-  (void) addch(CH(TR));
-#endif
-  orow = -1;
-  map[MAX_WIDTH / RATIO] = '\0';
-  for (i = 0; i < MAX_HEIGHT; i++)
-    {
-      row = i / RATIO;
-      if (row != orow)
-	{
-	  if (orow >= 0)
-	    {
-#ifdef MAC
-	      DSetScreenCursor(0, orow+1);
-	      DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-	      DWriteScreenString((char *) map);
-	      DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-#else
-	      /* can not use mvprintw() on ibmpc, because PC-Curses is horribly
-		 written, and mvprintw() causes the fp emulation library to be
-		 linked with PC-Moria, makes the program 10K bigger */
-	      (void) sprintf(prntscrnbuf,"%c%s%c",CH(VE), map, CH(VE));
-	      use_value2 mvaddstr(orow+1, 0, prntscrnbuf);
-#endif
-	    }
-	  for (j = 0; j < MAX_WIDTH / RATIO; j++) {
-	    map[j] = ' ';
-	  }
-	  orow = row;
+	use_value2 mvaddch(0, 0, CH(TL));
+	for (i = 0; i < MAX_WIDTH / RATIO; i++) {
+		(void)addch(CH(HE));
 	}
-      for (j = 0; j < MAX_WIDTH; j++)
-	{
-	  col  = j / RATIO;
-	  tmp  = get_loc_symbol(i+1, j+1);
-	  tmp &= 0x7F;
-	  if (priority[map[col]] < priority[tmp]) {
-	    map[col] = tmp;
-	  }
-	  if (map[col] == '@')
-	    {
-	      mycol = col + 1; /* account for border */
-	      myrow = row + 1;
-	    }
-	}
-    }
-  if (orow >= 0)
-    {
-#ifdef MAC
-      DSetScreenCursor(0, orow+1);
-      DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-      DWriteScreenString((char *) map);
-      DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-#else
-      (void) sprintf(prntscrnbuf,"%c%s%c",CH(VE), map, CH(VE));
-      use_value2 mvaddstr(orow+1, 0, prntscrnbuf);
+	(void)addch(CH(TR));
 #endif
-    }
+	orow = -1;
+	map[MAX_WIDTH / RATIO] = '\0';
+	for (i = 0; i < MAX_HEIGHT; i++) {
+		row = i / RATIO;
+		if (row != orow) {
+			if (orow >= 0) {
 #ifdef MAC
-  DSetScreenCursor(0, orow + 2);
-  DWriteScreenCharAttr(CH(BL), ATTR_NORMAL);
-  for (i = 0; i < MAX_WIDTH / RATIO; i++)
-    DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
-  DWriteScreenCharAttr(CH(BR), ATTR_NORMAL);
+				DSetScreenCursor(0, orow + 1);
+				DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+				DWriteScreenString((char *)map);
+				DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
 #else
-  use_value2 mvaddch(orow + 2, 0, CH(BL));
-  for (i = 0; i < MAX_WIDTH / RATIO; i++) {
-    (void) addch(CH(HE));
-  }
-  (void) addch(CH(BR));
+				/* can not use mvprintw() on ibmpc, because
+				   PC-Curses is horribly
+				   written, and mvprintw() causes the fp
+				   emulation library to be
+				   linked with PC-Moria, makes the program 10K
+				   bigger */
+				(void)sprintf(prntscrnbuf, "%c%s%c", CH(VE),
+					      map, CH(VE));
+				use_value2 mvaddstr(orow + 1, 0, prntscrnbuf);
+#endif
+			}
+			for (j = 0; j < MAX_WIDTH / RATIO; j++) {
+				map[j] = ' ';
+			}
+			orow = row;
+		}
+		for (j = 0; j < MAX_WIDTH; j++) {
+			col = j / RATIO;
+			tmp = get_loc_symbol(i + 1, j + 1);
+			tmp &= 0x7F;
+			if (priority[map[col]] < priority[tmp]) {
+				map[col] = tmp;
+			}
+			if (map[col] == '@') {
+				mycol = col + 1; /* account for border */
+				myrow = row + 1;
+			}
+		}
+	}
+	if (orow >= 0) {
+#ifdef MAC
+		DSetScreenCursor(0, orow + 1);
+		DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+		DWriteScreenString((char *)map);
+		DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+#else
+		(void)sprintf(prntscrnbuf, "%c%s%c", CH(VE), map, CH(VE));
+		use_value2 mvaddstr(orow + 1, 0, prntscrnbuf);
+#endif
+	}
+#ifdef MAC
+	DSetScreenCursor(0, orow + 2);
+	DWriteScreenCharAttr(CH(BL), ATTR_NORMAL);
+	for (i = 0; i < MAX_WIDTH / RATIO; i++)
+		DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
+	DWriteScreenCharAttr(CH(BR), ATTR_NORMAL);
+#else
+	use_value2 mvaddch(orow + 2, 0, CH(BL));
+	for (i = 0; i < MAX_WIDTH / RATIO; i++) {
+		(void)addch(CH(HE));
+	}
+	(void)addch(CH(BR));
 #endif
 
 #ifdef MAC
-  DSetScreenCursor(23, 23);
-  DWriteScreenStringAttr("Hit any key to continue", ATTR_NORMAL);
-  if (mycol > 0) {
-    DSetScreenCursor(mycol, myrow);
-  }
+	DSetScreenCursor(23, 23);
+	DWriteScreenStringAttr("Hit any key to continue", ATTR_NORMAL);
+	if (mycol > 0) {
+		DSetScreenCursor(mycol, myrow);
+	}
 #else
-  use_value2 mvaddstr(23, 23, "Hit any key to continue");
-  if (mycol > 0) {
-    (void) move(myrow, mycol);
-  }
+	use_value2 mvaddstr(23, 23, "Hit any key to continue");
+	if (mycol > 0) {
+		(void)move(myrow, mycol);
+	}
 #endif
-  (void) inkey();
-  restore_screen();
-  draw_cave();
+	(void)inkey();
+	restore_screen();
+	draw_cave();
 }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 boolean sl__get_dir(char *prompt, integer *dir)
 {
-  char      command;
-  boolean   return_value = false;
+	char command;
+	boolean return_value = false;
 
-  for(;;) {
-    if (get_com(prompt, &command)) {
-      if (command >= '1' && command <= '9') {
-	*dir = command - '0';
-	return_value = true;
-	break;
-      }
-    } else {
-      break;
-    }
-  }
+	for (;;) {
+		if (get_com(prompt, &command)) {
+			if (command >= '1' && command <= '9') {
+				*dir = command - '0';
+				return_value = true;
+				break;
+			}
+		} else {
+			break;
+		}
+	}
 
-  return return_value;
+	return return_value;
 }
 //////////////////////////////////////////////////////////////////////
 void show_location()
 {
 #ifdef ORIGINAL_IMORIA
-  vtype out_val;
+	vtype out_val;
 
-  if ((py.flags.blind > 0) || (no_light())) {
-    msg_print("You can't see your map.");
-  } else {
-    sprintf(out_val, "Section [%ld,%ld]; Location = [%ld,%ld]",
-	    ((integer)((char_row-1)/OUTPAGE_HEIGHT)+1),
-	    ((integer)((char_col-1)/OUTPAGE_WIDTH )+1),
-	    char_row,char_col);
-    msg_print(out_val);
-  }
-#else  /* taken from umoria 5.5 */
-
-  /* (W)here are we on the map	(L)ocate on map */
-
-  int      cy, cx, p_y, p_x, y, x;
-  integer  dir_val;
-  ntype    tmp_str, out_val;
-  
-  if ((py.flags.blind > 0) || no_light()) {
-    msg_print("You can't see your map.");
-  } else {
-    y = char_row;
-    x = char_col;
-    if (get_panel(y, x, true)) {
-      prt_map();
-    }
-    cy = panel_row;
-    cx = panel_col;
-    
-    for(;;) {
-      p_y = panel_row;
-      p_x = panel_col;
-      if (p_y == cy && p_x == cx) {
-	tmp_str[0] = '\0';
-      } else {
-	sprintf(tmp_str, "%s%s of",
-		p_y < cy ? " North" : p_y > cy ? " South" : "",
-		p_x < cx ? " West" : p_x > cx ? " East" : "");
-      }
-      sprintf(out_val,
-      "Map sector [%d,%d], which is%s your sector. Look which direction?",
-	      p_y+1, p_x+1, tmp_str);
-      if (!sl__get_dir(out_val, &dir_val)) {
-	break;
-      }
-      /**						      -CJS-
-	// Should really use the move function, but what the hell. This
-	// is nicer, as it moves exactly to the same place in another
-	// section. The direction calculation is not intuitive. Sorry.
-	**/
-      for(;;) {
-	x += ((dir_val-1)%3 - 1) * SCREEN_WIDTH/2;
-	y -= ((dir_val-1)/3 - 1) * SCREEN_HEIGHT/2;
-	if (x < 1 || y < 1 || x >= cur_width || y >= cur_width)
-	  {
-	    msg_print("You've gone past the end of your map.");
-	    msg_print("");
-	    x -= ((dir_val-1)%3 - 1) * SCREEN_WIDTH/2;
-	    y += ((dir_val-1)/3 - 1) * SCREEN_HEIGHT/2;
-	    break;
-	  }
-	if (get_panel(y, x, true)) {
-	  prt_map();
-	  break;
+	if ((py.flags.blind > 0) || (no_light())) {
+		msg_print("You can't see your map.");
+	} else {
+		sprintf(out_val, "Section [%ld,%ld]; Location = [%ld,%ld]",
+			((integer)((char_row - 1) / OUTPAGE_HEIGHT) + 1),
+			((integer)((char_col - 1) / OUTPAGE_WIDTH) + 1),
+			char_row, char_col);
+		msg_print(out_val);
 	}
-      }
-    }
-    /* Move to a new panel - but only if really necessary. */
-    if (get_panel(char_row, char_col, false)) {
-      prt_map();
-    }
-  }
+#else /* taken from umoria 5.5 */
+
+	/* (W)here are we on the map	(L)ocate on map */
+
+	int cy, cx, p_y, p_x, y, x;
+	integer dir_val;
+	ntype tmp_str, out_val;
+
+	if ((py.flags.blind > 0) || no_light()) {
+		msg_print("You can't see your map.");
+	} else {
+		y = char_row;
+		x = char_col;
+		if (get_panel(y, x, true)) {
+			prt_map();
+		}
+		cy = panel_row;
+		cx = panel_col;
+
+		for (;;) {
+			p_y = panel_row;
+			p_x = panel_col;
+			if (p_y == cy && p_x == cx) {
+				tmp_str[0] = '\0';
+			} else {
+				sprintf(tmp_str, "%s%s of",
+					p_y < cy ? " North"
+						 : p_y > cy ? " South" : "",
+					p_x < cx ? " West" : p_x > cx ? " East"
+								      : "");
+			}
+			sprintf(out_val, "Map sector [%d,%d], which is%s your "
+					 "sector. Look which direction?",
+				p_y + 1, p_x + 1, tmp_str);
+			if (!sl__get_dir(out_val, &dir_val)) {
+				break;
+			}
+			/** -CJS-
+			  // Should really use the move function, but what the
+			  hell. This
+			  // is nicer, as it moves exactly to the same place in
+			  another
+			  // section. The direction calculation is not
+			  intuitive. Sorry.
+			  **/
+			for (;;) {
+				x += ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
+				y -=
+				    ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
+				if (x < 1 || y < 1 || x >= cur_width ||
+				    y >= cur_width) {
+					msg_print("You've gone past the end of "
+						  "your map.");
+					msg_print("");
+					x -= ((dir_val - 1) % 3 - 1) *
+					     SCREEN_WIDTH / 2;
+					y += ((dir_val - 1) / 3 - 1) *
+					     SCREEN_HEIGHT / 2;
+					break;
+				}
+				if (get_panel(y, x, true)) {
+					prt_map();
+					break;
+				}
+			}
+		}
+		/* Move to a new panel - but only if really necessary. */
+		if (get_panel(char_row, char_col, false)) {
+			prt_map();
+		}
+	}
 #endif
 }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
 
 /* END FILE  term.c */

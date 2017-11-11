@@ -3,10 +3,6 @@
 
 #include "imoria.h"
 
-
-void termdef()
-{
-  
-}
+void termdef() {}
 
 /* END FILE  termdef.c */

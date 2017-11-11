@@ -7,7 +7,7 @@
 #include <curses.h>
 #include <math.h>
 #include <time.h>
-#include <unistd.h>         /* for ftruncate, usleep */
+#include <unistd.h> /* for ftruncate, usleep */
 
 /*#include <sgtty.h>*/
 #include "patchlevel.h"
@@ -30,9 +30,9 @@
 #endif
 
 #define PSPELL(xx) (magic_spell[py.misc.pclass][(xx)])
-#define PCLASS     (class[py.misc.pclass])
-#define PM         (py.misc)
-#define PS         (py.stat)
-#define PF         (py.flags)
+#define PCLASS (class[py.misc.pclass])
+#define PM (py.misc)
+#define PS (py.stat)
+#define PF (py.flags)
 
 /* END FILE  imoria.h */
