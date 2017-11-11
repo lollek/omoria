@@ -6,9 +6,10 @@
 boolean master_file_open(GDBM_FILE *mf)
 {
 	/* open the master file db, returns true on success */
+	int trys;
 
 	*mf = NULL;
-	for (int trys = 0; (trys < 10) && (*mf == NULL); trys++) {
+	for (trys = 0; (trys < 10) && (*mf == NULL); trys++) {
 		priv_switch(1);
 		*mf = gdbm_open(MORIA_MAS, 1024, GDBM_WRCREAT, 0, 0);
 		priv_switch(0);

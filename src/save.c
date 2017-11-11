@@ -3,6 +3,7 @@
 
 #include "imoria.h"
 #include "master.h"
+#include "save.h"
 
 static void data_exception()
 {

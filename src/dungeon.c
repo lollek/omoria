@@ -1,34 +1,24 @@
-/* dungeon.c */
 /* Here you should find the guts of the game */
 
 #include "imoria.h"
 #include "dungeon.h"
-//////////////////////////////////////////////////////////////////////
+#include "save.h"
 
 /* I got rid of all the ones I think are not "real" globals... */
 
-integer dir_val; // { For movement (running)}
-		 //	integer	y,x,moves;      	// { For movement          }
-		 //	integer	i1,i2,tmp1;      	// { Temporaries           }
+integer dir_val;	    // { For movement (running)}
 integer old_chp, old_cmana; // { Detect change         }
 real regen_amount;	  // { Regenerate hp and mana}
 char command;		    // { Last command          }
-//	vtype	out_val,out2;        	// { For messages          }
-//	vtype	tmp_str;        	// { Temporary             }
-boolean moria_flag;    // { Next level when true  }
-boolean reset_flag;    // { Do not move creatures }
-boolean search_flag;   // { Player is searching   }
-boolean teleport_flag; // { Handle telport traps  }
-boolean player_light;  // { Player carrying light }
-boolean save_msg_flag; // { Msg flag after INKEY  }
-ttype s1, s2, s3, s4;  // { Summon item strings   }
-integer i_summ_count;  // { Summon item count	   }
-//	char		trash_char;
-//	FILE *		f1;
-//	stat_set	tstat;
-//	treas_ptr	trash_ptr;
+boolean moria_flag;	 // { Next level when true  }
+boolean reset_flag;	 // { Do not move creatures }
+boolean search_flag;	// { Player is searching   }
+boolean teleport_flag;      // { Handle telport traps  }
+boolean player_light;       // { Player carrying light }
+boolean save_msg_flag;      // { Msg flag after INKEY  }
+ttype s1, s2, s3, s4;       // { Summon item strings   }
+integer i_summ_count;       // { Summon item count	   }
 
-//////////////////////////////////////////////////////////////////////
 void panel_bounds()
 {
 	/*{ Calculates current boundries				-RAK-
@@ -6248,13 +6238,6 @@ void d__execute_command(integer *com_val)
 			case CTRL_T:
 				teleport(100);
 				break;
-
-			/* this nukes the current character so I disabled it,
-			use -U or -R
-			case  CTRL_V:
-			  restore_char("",false,false);
-			  break;
-			*/
 
 			case 31: // ^_  Can you say security through obscurity?
 				if (wizard1 && search_flag && PM.cheated) {

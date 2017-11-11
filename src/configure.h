@@ -1,4 +1,5 @@
-/* configure.h*/
+#ifndef CONFIGURE_H
+#define CONFIGURE_H
 /* include file for fun configurable stuff */
 
 /*
@@ -47,3 +48,4 @@
 #define USE_CURSES_ATTRS 1
 
 /* END FILE  configure.h */
+#endif /* CONFIGURE_H */

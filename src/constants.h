@@ -1,3 +1,5 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 /* constants.h */
 /* The global constants for imoria */
 
@@ -612,4 +614,4 @@
 #define print_null(r, c)                                                       \
 	(move_cursor((r)-panel_row_prt - 1, (c)-panel_col_prt - 1))
 
-/* END FILE  constants.h */
+#endif /* CONSTANTS_H */

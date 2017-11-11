@@ -16,12 +16,14 @@ void dprint(vtype str, integer row)
 	/* Prints a line to the screen efficiently  -RAK- */
 
 	vtype prt_str;
-	prt_str[0] = 0;
-
 	integer nblanks = 0;
 	integer xpos = 0;
 	integer const slen = strlen(str);
-	for (integer i1 = 0; i1 < slen; i1++) {
+	integer i1 = 0;
+	integer i2 = 0;
+
+	prt_str[0] = 0;
+	for (i1 = 0; i1 < slen; i1++) {
 		// printf("\tdo a char: %d >%c<\n",i1,str[i1]); fflush(stdout);
 		if (str[i1] == ' ') {
 			if (xpos > 0) {
@@ -38,7 +40,7 @@ void dprint(vtype str, integer row)
 				xpos = i1;
 			}
 			if (nblanks > 0) {
-				for (integer i2 = 0; i2 < nblanks; i2++) {
+				for (i2 = 0; i2 < nblanks; i2++) {
 					strcat(prt_str, " ");
 				}
 				nblanks = 0;
@@ -156,6 +158,7 @@ integer total_points()
 static void respawn()
 {
 	/* Respawn the player, with some punishment -OK- */
+	int i;
 
 	/* Clear money */
 	add_money(PM.money[TOTAL_]);
@@ -170,7 +173,7 @@ static void respawn()
 	py.misc.chp = PM.mhp;
 	prt_hp();
 
-	for (int i = 0; i < 6; ++i) {
+	for (i = 0; i < 6; ++i) {
 		py.stat.l[i] = 0;
 		update_stat(i);
 	}

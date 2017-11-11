@@ -1,4 +1,5 @@
-/* horse.h */
+#ifndef HORSE_H
+#define HORSE_H
 /* declarations for the horse racing module in the casino */
 
 #define RACES_PER_DAY 10
@@ -11,4 +12,4 @@ typedef real statr[11];
 
 extern void hr__game_horse();
 
-/* END FILE horse.h */
+#endif /* HORSE_H */

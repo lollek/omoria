@@ -1,4 +1,5 @@
-/* variables.h */
+#ifndef VARIABLES_H
+#define VARIABLES_H
 /* Ever feel the need for more global vars? */
 
 extern treas_ptr cur_inven;       // { Current inven page  }
@@ -278,3 +279,4 @@ extern int game_state;
 extern boolean curses_is_running;
 
 /* END FILE  variables.h */
+#endif /* VARIABLES_H */

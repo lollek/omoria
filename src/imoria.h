@@ -1,4 +1,5 @@
-/* imoria.h */
+#ifndef IMORIA_H
+#define IMORIA_H
 /* include flies for all the modlues */
 
 #include <stdio.h>
@@ -35,4 +36,4 @@
 #define PS (py.stat)
 #define PF (py.flags)
 
-/* END FILE  imoria.h */
+#endif /* IMORIA_H */

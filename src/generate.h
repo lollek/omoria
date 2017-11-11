@@ -1,3 +1,5 @@
+#ifndef GENERATE_H
+#define GENERATE_H
 typedef struct coords
 {
 	integer y;
@@ -44,4 +46,4 @@ typedef struct river_args
 #define S_l_top a->s_l_top
 #define River_mouth a->river_mouth
 
-/* end generate.h */
+#endif /* GENERATE_H */

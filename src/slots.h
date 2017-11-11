@@ -1,4 +1,5 @@
-/* slots.h */
+#ifndef SLOTS_H
+#define SLOTS_H
 /* declarations for the slot machine module in the casino */
 
 #define xS_JACKPOT 1
@@ -19,3 +20,4 @@ typedef stype slot[4]; /* slot  = array[1..3] of stype;*/
 extern void sm__game_slots();
 
 /* END FILE slots.h */
+#endif /* SLOTS_H */

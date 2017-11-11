@@ -1,5 +1,5 @@
-/* pascal.h */
-/**/
+#ifndef PASCAL_H
+#define PASCAL_H
 
 /* Things to save typing when converting pascal to c */
 
@@ -23,3 +23,4 @@ extern boolean is_in(integer obj, obj_set oset);
 extern boolean is_vowel(char a_char);
 
 /* END FILE  pascal.h */
+#endif /* PASCAL_H */

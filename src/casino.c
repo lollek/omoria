@@ -6,6 +6,7 @@
 #include "slots.h"
 #include "horse.h"
 #include "bj.h"
+#include "save.h"
 
 integer bet;
 integer gld;

@@ -3,4 +3,4 @@
 
 void main_menu(vtype file_name);
 
-#endif // MENU_H
+#endif /* MENU_H */

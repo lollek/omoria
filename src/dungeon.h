@@ -1,4 +1,5 @@
-/* dungeon.h */
+#ifndef DUNGEON_H
+#define DUNGEON_H
 /* there were not enough globals in variables.h */
 
 #define DRAW_BOLT_DELAY 50
@@ -60,4 +61,4 @@ extern boolean item_petrify();
 extern boolean xor (integer thing1, integer thing2);
 extern void blow();
 
-/* END FILE dungeon.h */
+#endif /* DUNGEON_H */

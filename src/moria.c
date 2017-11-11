@@ -1,6 +1,7 @@
 #define __MORIA_C__
 #include "imoria.h"
 #include "menu.h"
+#include "save.h"
 
 int main(int argc, char *argv[])
 {

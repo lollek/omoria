@@ -1,4 +1,5 @@
-/* term.h */
+#ifndef TERM_H
+#define TERM_H
 
 typedef unsigned char int8u;
 
@@ -35,3 +36,4 @@ int panic_save;
 FILE *highscore_fp;
 
 /* end file term.h */
+#endif /* TERM_H */

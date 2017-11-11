@@ -1,4 +1,5 @@
-/* routines.h */
+#ifndef ROUTINES_H
+#define ROUTINES_H
 /**/
 
 // { CASINO.PAS		}
@@ -217,14 +218,6 @@ extern void regenmana(real percent);
 
 // { QUEST.PAS		}
 extern void enter_fortress();
-
-// { SAVE.PAS		}
-// extern void coder(ntype line);
-// extern void encrypt_line(ntype line);
-// extern void decrypt_line(ntype line);
-extern boolean save_char(boolean quick);
-extern boolean get_char(vtype fnam, boolean prop);
-extern void restore_char(vtype fnam, boolean present, boolean undead);
 
 // { encrypt.c }
 extern void encrypt_init(encrypt_state *state, byteint key[], boolean doit);
@@ -629,3 +622,4 @@ extern int check_input(int microsec);
 // extern char * ctime(long *);
 
 /* END FILE  routines.h */
+#endif /* ROUTINES_H */

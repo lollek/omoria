@@ -1,4 +1,5 @@
-/* casino.h */
+#ifndef CASINO_H
+#define CASINO_H
 /* common declarations for the casino modules */
 
 extern integer bet;
@@ -11,4 +12,4 @@ extern boolean c__get_response(vtype comment, integer *num);
 extern void c__change_money();
 extern void c__check_casino_kickout();
 
-/* END FILE casino.h */
+#endif /* CASINO_H */

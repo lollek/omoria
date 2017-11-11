@@ -1,5 +1,5 @@
-/* debug.h */
-/**/
+#ifndef DEBUG_H
+#define DEBUG_H
 
 #if DO_DEBUG
 
@@ -12,14 +12,14 @@
 extern FILE *debug_file;
 extern int call_depth;
 
-#else
+#else /* !DO_DEBUG */
 
 #define ENTER(rname, mark)
 #define LEAVE(rname, mark)
 #define RETURN(rname, mark, typestr, desc, valptr)
 #define MSG(str)
 
-#endif
+#endif /* DO_DEBUG */
 
 extern void enter(char *routine_name, char *marker);
 extern void leave(char *routine_name, char *marker);
@@ -27,4 +27,4 @@ extern void return_dbg(char *routine_name, char *marker, char typestr,
 		       char *descript, void *valptr);
 extern void log_msg(char *str);
 
-/* END FILE debug.h */
+#endif /* DEBUG_H */

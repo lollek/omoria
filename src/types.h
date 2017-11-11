@@ -1,4 +1,5 @@
-/* types.h */
+#ifndef TYPES_H
+#define TYPES_H
 /* The global types for imoria */
 
 typedef unsigned char byteint;  // [byte] 0..255
@@ -441,3 +442,4 @@ typedef struct master_entry
 } master_entry;
 
 /* END FILE  types.h */
+#endif /* TYPES_H */

@@ -13,7 +13,7 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -pedantic -std=gnu99 -g3 -DDO_DEBUG=0
+CFLAGS =	-Wall -Wextra -pedantic -std=gnu89 -g3 -DDO_DEBUG=0
 LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
 
 #
@@ -34,6 +34,7 @@ DATAFILES =	$(READFILES) $(WRITEFILES)
 all:	omoria
 
 CFILES = $(wildcard src/*.c)
+HFILES = $(wildcard src/*.h)
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 .c.o:
@@ -57,5 +58,8 @@ clean ::
 
 ctags:
 	@ctags -R . --exclude .git
+
+format:
+	@clang-format -i $(CFILES) $(HFILES)
 
 spotless : nodata clean

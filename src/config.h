@@ -1,3 +1,5 @@
+#ifndef CONFIG_H
+#define CONFIG_H
 /* source/config.h: configuration definitions
 
    This config file was taken from umoria to let term.c and unix.c compile.
@@ -16,7 +18,7 @@
 #ifdef CONSTANT_H_INCLUDED
 Constant.h should always be included after config.h,
     because it uses some of the system defines set up here.
-#endif
+#endif /* CONSTANT_H_INCLUDED */
 
 /* Person to bother if something goes wrong.  */
 /* Recompile files.c and misc2.c if this changes.  */
@@ -64,18 +66,18 @@ Constant.h should always be included after config.h,
 /* If we are in Think C, then we must be on a mac.  */
 #ifdef THINK_C
 #define MAC
-#endif
+#endif /* THINK_C */
 
 /* For Xenix systems, define SYS_V and unix.  */
 #ifdef M_XENIX
 #define SYS_V
 #define unix
-#endif
+#endif /* M_XENIX */
 
 /* If on HP-UX, define the name as we use it. */
 #ifdef __hpux
 #define HPUX
-#endif
+#endif /* __hpux */
 
 /* If you are compiling under VMS, define this.  */
 /* #define VMS */
@@ -297,16 +299,16 @@ Constant.h should always be included after config.h,
 #ifdef MAC
 #ifdef RSRC
 #define MACRSRC /* Defined if we are building the resources.  */
-#else
+#else		/* !RSRC */
 #define MACGAME /* Defined if we are building the game.  */
-#endif
-#endif
+#endif		/* RSRC */
+#endif		/* MAC */
 
 #ifdef MAC
 /* Screen dimensions */
 #define SCRN_ROWS 24
 #define SCRN_COLS 80
-#endif
+#endif /* MAC */
 
 #ifdef VMS
 #define unlink delete
@@ -314,19 +316,19 @@ Constant.h should always be included after config.h,
 #define exit uexit
 /* In constants.h, ESCAPE is defined to be the CTRL-Z key, instead of the
    escape key.  */
-#endif
+#endif /* VMS */
 
 #if defined(SYS_V) && defined(lint)
 /* Define this to prevent <string.h> from including <NLchar.h> on a PC/RT
    running AIX.  This prevents a bunch of lint errors.  */
 #define RTPC_NO_NLS
-#endif
+#endif /* defined(SYS_V) && defined(lint) */
 
 #ifdef SECURE
 extern int PlayerUID;
 #define getuid() PlayerUID
 #define geteuid() PlayerUID
-#endif
+#endif /* SECURE */
 
 #ifdef THINK_C
 /* Apparently, THINK C is only happy if this is defined.  This can not
@@ -335,5 +337,7 @@ extern int PlayerUID;
 /* Check how standard we are: Some code tests value of __STDC__.  */
 #ifndef __STDC__
 #define __STDC__ 0
-#endif
-#endif
+#endif /* __STDC__ */
+#endif /* THINK_C */
+
+#endif /* CONFIG_H */
