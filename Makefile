@@ -11,7 +11,7 @@
 # make privs
 #
 ###############################################################################
-CC =		gcc
+CC =		cc
 
 CFLAGS =	-Wall -Wextra -pedantic -std=gnu99 -g3 -DDO_DEBUG=0
 LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
