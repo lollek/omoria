@@ -1,13 +1,13 @@
 ###############################################################################
-# Makefile for imoria
+# Makefile for omoria
 #
 # A hopefuly helpful list of things that probably need to be done:
 #
 # You should fill in the correct paths and stuff in configure.h
 # Put a copy of monsters.dat into the DATA_FILE_PATH
 # Then pick a uid/gid for the game
-# make imoria
-# run imoria, and it should create a bunch of files and quit
+# make omoria
+# run omoria, and it should create a bunch of files and quit
 # make privs
 #
 ###############################################################################
@@ -31,7 +31,7 @@ READFILES =	data/hours.dat data/moria.dat data/monsters.dat data/moria_gcustom.m
 WRITEFILES =	data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
 
-all:	imoria
+all:	omoria
 
 CFILES = $(wildcard src/*.c)
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
@@ -39,12 +39,12 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
-imoria: $(OBJFILES)
+omoria: $(OBJFILES)
 	$(CC) $(LDFLAGS) $(OBJFILES) -o $@
 
 privs ::
-	chown $(OWNER):$(GROUP) imoria $(DATAFILES)
-	chmod 2711        imoria
+	chown $(OWNER):$(GROUP) omoria $(DATAFILES)
+	chmod 2711        omoria
 	chmod 640         $(READFILES)
 	chmod 660         $(WRITEFILES)
 	chmod 755         data/mhelp.pl
@@ -53,7 +53,7 @@ nodata ::
 	$(RM) data/hours.dat data/moria.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
 
 clean ::
-	$(RM) $(OBJFILES) core imoria
+	$(RM) $(OBJFILES) core omoria
 
 ctags:
 	@ctags -R . --exclude .git

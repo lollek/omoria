@@ -1,6 +1,6 @@
 /save/*
 !/save/.gitkeep
 *.o
-imoria
+omoria
 tags
 /target
