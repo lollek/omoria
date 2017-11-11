@@ -8,19 +8,19 @@
 #include <errno.h>
 #include <string.h>
 
-static char** get_saved_games(int current_row) {
-    char** games_list = safe_malloc(sizeof(char*) * 10, "games_list");
+static char **get_saved_games(int current_row) {
+    char **games_list = safe_malloc(sizeof(char *) * 10, "games_list");
 
     int counter = 0;
 
-    DIR* dir = opendir(SAVE_FILE_PATH);
+    DIR *dir = opendir(SAVE_FILE_PATH);
     if (dir == NULL) {
         prt("Cannot open " SAVE_FILE_PATH, current_row++, 1);
         prt(strerror(errno), current_row++, 1);
     }
 
     for (;;) {
-        struct dirent* dir_p = readdir(dir);
+        struct dirent *dir_p = readdir(dir);
         if (dir_p == NULL) {
             break;
         }
@@ -30,13 +30,9 @@ static char** get_saved_games(int current_row) {
         }
 
 
-        int string_size = sizeof(SAVE_FILE_PATH)
-            + sizeof('/')
-            + strlen(dir_p->d_name)
-            + sizeof('\0');
+        int string_size = strlen(dir_p->d_name) + sizeof('\0');
         games_list[counter] = safe_malloc(string_size, "games_list");
-        strcpy(games_list[counter], SAVE_FILE_PATH "/");
-        strcat(games_list[counter], dir_p->d_name);
+        strcpy(games_list[counter], dir_p->d_name);
         counter++;
 
         // Currently no support for more than 9 characters
@@ -75,7 +71,8 @@ void main_menu(vtype file_name) {
 
         selection -= '0';
         if (0 < selection && selection <= counter) {
-            strcpy(file_name, saved_games[selection]);
+            strcpy(file_name, SAVE_FILE_PATH "/");
+            strcat(file_name, saved_games[selection]);
             break;
         }
     }
@@ -83,5 +80,5 @@ void main_menu(vtype file_name) {
     for (counter = 0; saved_games[counter] != NULL; ++counter) {
         dispose(saved_games[counter], strlen(saved_games[counter]) + 1, "games_list");
     }
-    dispose(saved_games, sizeof(char*) * 10, "games_list");
+    dispose(saved_games, sizeof(char *) * 10, "games_list");
 }
