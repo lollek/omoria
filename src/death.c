@@ -200,11 +200,9 @@ void upon_death()
 	}
 
 	/*  What happens upon dying...    -RAK- */
-
 	if (!master_file_open(&f2)) {
-		msg_print(
-		    "ERROR opening file MASTER.  Contact your local wizard.");
-		/* msg_print("Status = "+itos(status(f1))); */
+		msg_print("ERROR opening file MASTER. "
+		          "Contact your local wizard.");
 		msg_print(" ");
 	} else {
 		mkey.creation_time = PM.creation_time;
@@ -225,12 +223,8 @@ void upon_death()
 void print_dead_character()
 {
 	/* Allow the bozo to print out his dead character... -KRC- */
-	char command;
-
-	if (get_com("Print character sheet to file? (Y/N)", &command)) {
-		if (command == 'y' || command == 'Y') {
-			file_character();
-		}
+	if (get_yes_no("Print character sheet to file?")) {
+		file_character();
 	}
 }
 
