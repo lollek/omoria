@@ -1,5 +1,6 @@
 #include "imoria.h"
 #include "master.h"
+#include "save.h"
 
 static char *ud__fill_str(char *centered_str, char *in_str)
 {
@@ -202,14 +203,14 @@ void upon_death()
 	/*  What happens upon dying...    -RAK- */
 	if (!master_file_open(&f2)) {
 		msg_print("ERROR opening file MASTER. "
-		          "Contact your local wizard.");
+			  "Contact your local wizard.");
 		msg_print(" ");
 	} else {
 		mkey.creation_time = PM.creation_time;
 		master_file_delete(f2, &mkey);
 		master_file_close(&f2);
 	}
-	unlink(finam);
+	save_file_remove();
 
 	if (total_winner) {
 		ud__kingly();

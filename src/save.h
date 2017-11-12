@@ -1,6 +1,11 @@
 #ifndef SAVE_H
 #define SAVE_H
 
+/**
+ * save_file_remove() - Remove the current save game file
+ */
+void save_file_remove(void);
+
 boolean save_char(boolean quick);
 boolean get_char(vtype fnam, boolean prop);
 

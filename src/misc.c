@@ -771,11 +771,10 @@ void add_days(game_time_type *ti, integer d)
 	byteint yrs, mos;
 	yrs = (int)(d / 364); /* yrs = how many years you get from 'd' days */
 	d -= 364 * yrs;       /* d = however many days are left over... */
-	mos =
-	    (int)(d / 28); /* mos = how many months you get from the remaining
-			      days */
-	d -= 28 * mos;     /* d = however many days are left over... */
-	ti->day += d;      /* add the remaining days, months, and years */
+	mos = (int)(d / 28); /* mos = how many months you get from the remaining
+				days */
+	d -= 28 * mos;       /* d = however many days are left over... */
+	ti->day += d;	/* add the remaining days, months, and years */
 	ti->month += mos;
 	ti->year += yrs;
 	if (ti->day > 28) {

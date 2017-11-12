@@ -285,31 +285,31 @@ typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
 typedef struct race_type /* = packed record */
 {
-	vtype trace; /* { Type of race		} */
-	bytlint
-	    adj[STAT_SET_MAX + 1]; /*	: array [stat_set] of bytlint; */
-	wordint b_age;		   /* { Base age of character	} */
-	wordint m_age;		   /* { Maximum age of character} */
-	wordint m_b_ht;		   /* { base height for males	} */
-	wordint m_m_ht;		   /* { mod height for males	} */
-	wordint m_b_wt;		   /* { base weight for males	} */
-	wordint m_m_wt;		   /* { mod weight for males	} */
-	wordint f_b_ht;		   /* { base height females	} */
-	wordint f_m_ht;		   /* { mod height for females	} */
-	wordint f_b_wt;		   /* { base weight for female	} */
-	wordint f_m_wt;		   /* { mod weight for females	} */
-	real b_exp;		   /* { Base experience factor	} */
-	bytlint b_dis;		   /* { base chance to disarm	} */
-	bytlint srh;		   /* { base chance for search	} */
-	bytlint stl;		   /* { Stealth of character	} */
-	bytlint fos;		   /* { frequency of auto search} */
-	bytlint bth;		   /* { adj base chance to hit	} */
-	bytlint bthb;		   /* { adj base to hit with bows} */
-	bytlint bsav;		   /* { Race base for saving throw} */
-	bytlint bhitdie;	   /* { Base hit points for race} */
-	bytlint infra;		   /* { See infra-red		} */
-	bytlint swim;		   /* { Race base for swim speed} */
-	unsigned long tclass;      /* { Bit field for class types} */
+	vtype trace;		       /* { Type of race		} */
+	bytlint adj[STAT_SET_MAX + 1]; /*	: array [stat_set] of bytlint;
+					  */
+	wordint b_age;		       /* { Base age of character	} */
+	wordint m_age;		       /* { Maximum age of character} */
+	wordint m_b_ht;		       /* { base height for males	} */
+	wordint m_m_ht;		       /* { mod height for males	} */
+	wordint m_b_wt;		       /* { base weight for males	} */
+	wordint m_m_wt;		       /* { mod weight for males	} */
+	wordint f_b_ht;		       /* { base height females	} */
+	wordint f_m_ht;		       /* { mod height for females	} */
+	wordint f_b_wt;		       /* { base weight for female	} */
+	wordint f_m_wt;		       /* { mod weight for females	} */
+	real b_exp;		       /* { Base experience factor	} */
+	bytlint b_dis;		       /* { base chance to disarm	} */
+	bytlint srh;		       /* { base chance for search	} */
+	bytlint stl;		       /* { Stealth of character	} */
+	bytlint fos;		       /* { frequency of auto search} */
+	bytlint bth;		       /* { adj base chance to hit	} */
+	bytlint bthb;		       /* { adj base to hit with bows} */
+	bytlint bsav;		       /* { Race base for saving throw} */
+	bytlint bhitdie;	       /* { Base hit points for race} */
+	bytlint infra;		       /* { See infra-red		} */
+	bytlint swim;		       /* { Race base for swim speed} */
+	unsigned long tclass;	  /* { Bit field for class types} */
 } race_type;
 
 typedef struct class_type

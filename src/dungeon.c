@@ -4,8 +4,6 @@
 #include "dungeon.h"
 #include "save.h"
 
-/* I got rid of all the ones I think are not "real" globals... */
-
 integer dir_val;	    /* { For movement (running)} */
 integer old_chp, old_cmana; /* { Detect change         } */
 real regen_amount;	  /* { Regenerate hp and mana} */
@@ -19,11 +17,12 @@ boolean save_msg_flag;      /* { Msg flag after INKEY  } */
 ttype s1, s2, s3, s4;       /* { Summon item strings   } */
 integer i_summ_count;       /* { Summon item count	   } */
 
-void panel_bounds()
+/**
+ * -RAK-
+ * s__panel_bounds() - Calculates current boundries
+ */
+static void s__panel_bounds()
 {
-	/*{ Calculates current boundries				-RAK-
-	 * }*/
-
 	panel_row_min = (trunc(panel_row * (SCREEN_HEIGHT / 2)) + 1);
 	panel_row_max = panel_row_min + SCREEN_HEIGHT - 1;
 
@@ -33,11 +32,8 @@ void panel_bounds()
 	panel_row_prt = panel_row_min - 2;
 	panel_col_prt = panel_col_min - 15;
 }
-/*//////////////////////////////////////////////////////////////////// */
 
-/*  { Figure out what kind of coin is beign asked about }*/
-boolean coin_stuff(char typ, /*{ Initial of coin metal }*/
-		   integer *type_num)
+boolean coin_stuff(char typ, integer *type_num)
 {
 	boolean return_value;
 
@@ -68,10 +64,9 @@ boolean coin_stuff(char typ, /*{ Initial of coin metal }*/
 	}
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void get_money_type__prompt_money(vtype astr, string out_val, boolean *commas)
+
+static void s__get_money_type__prompt_money(vtype astr, string out_val,
+					    boolean *commas)
 {
 	if (*commas) {
 		strcat(out_val, ", ");
@@ -80,13 +75,8 @@ void get_money_type__prompt_money(vtype astr, string out_val, boolean *commas)
 	*commas = true;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-
 integer get_money_type(string prompt, boolean *back, boolean no_check)
 {
-	/*	{ Prompt for what type of money to use			-DMF-
-	 * }*/
-
 	boolean comma_flag = false;
 	boolean test_flag = false;
 	string out_val;
@@ -95,18 +85,21 @@ integer get_money_type(string prompt, boolean *back, boolean no_check)
 	strncpy(out_val, prompt, sizeof(string));
 
 	if ((py.misc.money[6] > 0) || (no_check))
-		get_money_type__prompt_money("<m>ithril", out_val, &comma_flag);
+		s__get_money_type__prompt_money("<m>ithril", out_val,
+						&comma_flag);
 	if ((py.misc.money[5] > 0) || (no_check))
-		get_money_type__prompt_money("<p>latinum", out_val,
-					     &comma_flag);
+		s__get_money_type__prompt_money("<p>latinum", out_val,
+						&comma_flag);
 	if ((py.misc.money[4] > 0) || (no_check))
-		get_money_type__prompt_money("<g>old", out_val, &comma_flag);
+		s__get_money_type__prompt_money("<g>old", out_val, &comma_flag);
 	if ((py.misc.money[3] > 0) || (no_check))
-		get_money_type__prompt_money("<s>ilver", out_val, &comma_flag);
+		s__get_money_type__prompt_money("<s>ilver", out_val,
+						&comma_flag);
 	if ((py.misc.money[2] > 0) || (no_check))
-		get_money_type__prompt_money("<c>opper", out_val, &comma_flag);
+		s__get_money_type__prompt_money("<c>opper", out_val,
+						&comma_flag);
 	if ((py.misc.money[1] > 0) || (no_check))
-		get_money_type__prompt_money("<i>ron", out_val, &comma_flag);
+		s__get_money_type__prompt_money("<i>ron", out_val, &comma_flag);
 
 	prt(out_val, 1, 1);
 	*back = true;
@@ -148,9 +141,7 @@ integer get_money_type(string prompt, boolean *back, boolean no_check)
 
 	return com_val;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void py_bonuses(treasure_type *tobj, integer factor)
 {
 	/*
@@ -353,9 +344,7 @@ void py_bonuses(treasure_type *tobj, integer factor)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void change_stat(stat_set tstat, integer amount, integer factor)
 {
 	/*{ Changes stats up or down for magic items		-RAK-	}*/
@@ -363,9 +352,7 @@ void change_stat(stat_set tstat, integer amount, integer factor)
 	PS.m[(int)tstat] += amount * factor;
 	update_stat(tstat);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void change_speed(integer num)
 {
 	/*
@@ -383,17 +370,13 @@ void change_speed(integer num)
 		m_list[i1].cspeed += num;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void update_stat(stat_set tstat)
 {
 	PS.c[(int)tstat] = squish_stat(
 	    PS.p[(int)tstat] + 10 * PS.m[(int)tstat] - PS.l[(int)tstat]);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void change_rep(integer amt)
 {
 	/* with py.misc do; */
@@ -411,9 +394,7 @@ void change_rep(integer amt)
 		    trunc(sqrt((20 + PM.rep) * (20 + PM.rep) + 40 * amt) - 20);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean panel_contains(integer y, integer x)
 {
 	/*{ Tests a given point to see if it is within the screen -RAK-   }*/
@@ -567,7 +548,7 @@ void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__draw_block", "m");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Normal movement                                   }*/
@@ -594,7 +575,7 @@ void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__sub1_move_light", "m");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When FIND_FLAG, light only permanent features     }*/
@@ -857,7 +838,7 @@ boolean get_panel(integer y, integer x, boolean forceit)
 	if ((prow != panel_row) || (pcol != panel_col) || !(cave_flag)) {
 		panel_row = prow;
 		panel_col = pcol;
-		panel_bounds();
+		s__panel_bounds();
 		cave_flag = true;
 		return_value = true;
 	} else {
@@ -1880,21 +1861,27 @@ void rest()
 		reset_flag = true;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void water_move_player() { /* I wonder what was going to go in here... */}
 
-boolean water_move_creature(integer num)
+/**
+ * water_move_player() - I wonder what was going to go in here...
+ */
+void water_move_player(void) {}
+
+/**
+ * water_move_creature() - Gee, another cool routine
+ */
+static boolean water_move_creature(__attribute__((unused)) integer num)
 {
-	/* Gee, another cool routine... */
-
 	return true;
 }
 
-boolean water_move_item(integer row, integer col, integer num)
+/**
+ * water_move_item() - I sense a patter about water moves...
+ */
+boolean water_move_item(__attribute__((unused)) integer row,
+			__attribute__((unused)) integer col,
+			__attribute__((unused)) integer num)
 {
-	/* I sense a patter about water moves... */
 	return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -2047,7 +2034,10 @@ void search(integer y, integer x, integer chance)
 void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 {
 
-	integer i1, i2, i3, i4;
+	integer i1;
+	integer i2;
+	integer i3;
+	integer i4;
 	obj_set room_floors = {dopen_floor.ftval, lopen_floor.ftval,
 			       water2.ftval, 0};
 
@@ -3103,19 +3093,18 @@ boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
 
 	return flag;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void d__examine_book()
-{
-	/*{ Examine a Book                                        -RAK-   }*/
 
+/**
+ * -RAK-
+ * d__examine_book() - Examine a book
+ */
+static void d__examine_book()
+{
 	unsigned long i2, i4;
 	integer i3, i5;
 	treas_ptr i1, item_ptr;
 	char trash_char;
 	boolean redraw, flag;
-	char dummy;
 	vtype out_val;
 	obj_set some_books = {Magic_Book, Prayer_Book, Instrument, Song_Book,
 			      0};
@@ -3197,7 +3186,7 @@ void d__examine_book()
 				}
 			} while (!((i2 == 0) && (i4 == 0)));
 			prt("[Press any key to continue]", 24, 20);
-			dummy = inkey();
+			inkey();
 		}
 	}
 
@@ -4815,7 +4804,7 @@ void d__quit()
 				death = true;
 			} else {
 				if (is_from_file) {
-					unlink(finam);
+					save_file_remove();
 				}
 				clear_from(1);
 				exit_game();

@@ -1,6 +1,8 @@
 /* save.c */
 /* code for saving and loading characters */
 
+#include <unistd.h> /* unlink */
+
 #include "imoria.h"
 #include "master.h"
 #include "save.h"
@@ -561,6 +563,8 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	set_seed(save_seed);
 }
 
+void save_file_remove(void) { unlink(sc__get_file_name()); }
+
 boolean save_char(boolean quick)
 {
 	/* Actual save procedure -RAK- & -JWT- */
@@ -715,7 +719,7 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	set_seed(save_seed);
 }
 
-static void gc__display_status(vtype fnam, ntype in_rec)
+static void gc__display_status(void)
 {
 	prt("Restoring Character...", 1, 1);
 	put_qio();
@@ -984,7 +988,7 @@ static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		/* with inven_temp->data do; */
-		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
+		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %lu %lu %d %ld",
 			   &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8, &x9,
 			   &(inven_temp->data.flags),
 			   &(inven_temp->data.flags2), &x10,
@@ -1065,7 +1069,7 @@ static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		strncpy(inven_temp->data.damage, in_rec, sizeof(dtype));
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
+		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %lu %lu %d %ld",
 			   &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8, &x9,
 			   &(inven_temp->data.flags),
 			   &(inven_temp->data.flags2), &x10,
@@ -1264,7 +1268,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 				if (count == 0) {
 					read_decrypt(f1, cf_state, in_rec,
 						     paniced);
-					if (sscanf(in_rec, "%ld %ld", &xfloor,
+					if (sscanf(in_rec, "%lu %ld", &xfloor,
 						   &count) == 1) {
 						count = 1;
 					}
@@ -1419,7 +1423,7 @@ static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 
 	/*{ Restore the town level stores 	}*/
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	if (sscanf(in_rec, "%ld", &town_seed) != 1) {
+	if (sscanf(in_rec, "%lu", &town_seed) != 1) {
 		*paniced = true;
 	}
 
@@ -1516,7 +1520,7 @@ boolean get_char(vtype fnam, boolean prop)
 	} else {
 		gc__read_seeds(f1, &cf_state, in_rec, &paniced);
 		if (!paniced)
-			gc__display_status(fnam, in_rec);
+			gc__display_status();
 		if (!paniced)
 			gc__read_version(f1, &cf_state, in_rec, &paniced,
 					 &save_version);

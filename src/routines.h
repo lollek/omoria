@@ -66,7 +66,6 @@ extern void light_room(integer y, integer x);
 extern void lite_spot(integer y, integer x);
 extern void unlite_spot(integer y, integer x);
 extern boolean pick_dir(integer dir);
-extern void panel_bounds();
 extern boolean panel_contains(integer y, integer x);
 extern boolean no_light();
 extern void change_trap(integer y, integer x);
@@ -107,8 +106,19 @@ extern boolean player_test_hit(integer bth, integer level, integer pth,
 extern boolean test_hit(integer bth, integer level, integer pth, integer ac);
 extern void delete_monster(integer i2);
 extern void summon_object(integer y, integer x, integer num, integer typ);
-extern integer get_money_type(string prompt, boolean *back, boolean no_check);
-extern boolean coin_stuff(char typ, integer *type_num);
+
+/**
+ * -DMF-
+ * get_money_type() - Prompt for what type of money to use
+ */
+integer get_money_type(string prompt, boolean *back, boolean no_check);
+
+/**
+ * coin_stuff() - Figure out what kind of coin is beign asked about
+ * @typ: Initial of coin metal
+ * @type_num: ???
+ */
+boolean coin_stuff(char typ, integer *type_num);
 extern boolean set_money(char typ, integer coin_num);
 
 extern integer movement_rate(integer cspeed, integer mon);
