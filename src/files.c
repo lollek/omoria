@@ -57,7 +57,7 @@ void print_version_info()
 	printf("\n\r");
 }
 
-boolean intro_parse_switches(vtype finame, int argc, char *argv[])
+static boolean intro_parse_switches(int argc, char *argv[])
 {
 	int x1;
 	boolean exit_flag = false;
@@ -66,7 +66,6 @@ boolean intro_parse_switches(vtype finame, int argc, char *argv[])
 	boolean show_version = false;
 
 	/* so far there is no filename to open */
-	finame[0] = 0;
 	max_score = 20;
 
 	/* parse the command line arguments */
@@ -86,7 +85,7 @@ boolean intro_parse_switches(vtype finame, int argc, char *argv[])
 		/* filename of character to load */
 		case 'f':
 			if (--argc) {
-				strncpy(finame, (++argv)[0], sizeof(vtype));
+				save_file_name_set((++argv)[0]);
 			} else {
 				printf("Missing <filename> for -f\n\r");
 				print_usage = true;
@@ -201,7 +200,7 @@ boolean intro_parse_switches(vtype finame, int argc, char *argv[])
 	}
 
 	if (argc > 0) {
-		strncpy(finame, argv[0], sizeof(vtype));
+		save_file_name_set(argv[0]);
 	}
 
 	if (show_version) {
@@ -448,7 +447,7 @@ boolean intro_ensure_file_exists(boolean already_exiting, char *the_file)
 	return (exit_flag || already_exiting);
 }
 
-void intro(vtype finame, int argc, char *argv[])
+void intro(int argc, char *argv[])
 {
 	/* Attempt to open the intro file                        -RAK- */
 
@@ -495,7 +494,7 @@ void intro(vtype finame, int argc, char *argv[])
 	curses_is_running = true;
 
 	if (!exit_flag) {
-		exit_flag = intro_parse_switches(finame, argc, argv);
+		exit_flag = intro_parse_switches(argc, argv);
 	}
 
 	if (exit_flag) {

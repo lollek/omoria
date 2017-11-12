@@ -128,7 +128,7 @@ extern boolean twall(integer y, integer x, integer t1, integer t2);
 extern void dungeon();
 
 /* { FILES.PAS		} */
-extern void intro(vtype finam, int argc, char *argv[]);
+extern void intro(int argc, char *argv[]);
 extern void print_map();
 extern void print_objects();
 extern void print_monsters();

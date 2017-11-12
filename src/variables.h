@@ -238,10 +238,6 @@ extern atype syllables[MAX_SYLLABLES];
 /*	vowel_set		: */
 /*				  char_set; */
 
-/*	{ Following are variables for the Save Character Routines	} */
-extern vtype finam;
-/*	key_type	key_rec; */
-
 /*	{ Cursor variables, used for cursor positioning			} */
 extern char cursor_r[25][11]; /* array [1..24] of varying[10] of */
 extern integer curlen_r;

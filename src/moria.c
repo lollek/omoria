@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	 * If not wizard then No_Control_Y
 	 * Check or create hours.dat, print message
 	 */
-	intro(finam, argc, argv);
+	intro(argc, argv);
 
 	// Init an IO channel for QIO
 	/* init_channel(); */
@@ -85,15 +85,15 @@ int main(int argc, char *argv[])
 	 * If we already have a character from command line,
 	 * skip menu and just load it
 	 */
-	if (strlen(finam) == 0) {
-		main_menu(finam);
+	if (!save_file_name_is_set()) {
+		main_menu();
 	}
 
 	// Generate a character, or retrieve old one...
-	if (strlen(finam) > 0) {
+	if (save_file_name_is_set()) {
 		// Retrieve character
 		game_state = GS_IGNORE_CTRL_C;
-		generate = get_char(finam, true);
+		generate = get_char(true);
 		py.flags.dead = true;
 		is_from_file = true;
 		save_char(false);
@@ -101,11 +101,13 @@ int main(int argc, char *argv[])
 		magic_init(randes_seed);
 
 	} else {
+		vtype save_file_name;
 		// Create character
 		is_from_file = false;
 		create_character();
-		strcpy(finam, SAVE_FILE_PATH "/");
-		strcat(finam, py.misc.name);
+		strcpy(save_file_name, SAVE_FILE_PATH "/");
+		strcat(save_file_name, py.misc.name);
+		save_file_name_set(save_file_name);
 
 		char_inven_init();
 

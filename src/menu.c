@@ -1,5 +1,6 @@
 #include "imoria.h"
 #include "menu.h"
+#include "save.h"
 
 #include <stdio.h>
 #include <dirent.h>
@@ -46,7 +47,7 @@ static char **get_saved_games(int current_row)
 	return games_list;
 }
 
-void main_menu(vtype file_name)
+void main_menu()
 {
 	int current_row = 1;
 	char **saved_games = get_saved_games(current_row);
@@ -73,8 +74,10 @@ void main_menu(vtype file_name)
 
 		selection -= '0';
 		if (selection <= counter) {
+			vtype file_name;
 			strcpy(file_name, SAVE_FILE_PATH "/");
 			strcat(file_name, saved_games[selection]);
+			save_file_name_set(file_name);
 			break;
 		}
 	}

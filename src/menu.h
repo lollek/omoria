@@ -1,6 +1,10 @@
 #ifndef MENU_H
 #define MENU_H
 
-void main_menu(vtype file_name);
+/**
+ * -OK-
+ *  main_menu() - Shows a menu for seleting save game to load
+ */
+void main_menu(void);
 
 #endif /* MENU_H */

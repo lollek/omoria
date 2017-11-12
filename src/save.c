@@ -2,10 +2,13 @@
 /* code for saving and loading characters */
 
 #include <unistd.h> /* unlink */
+#include <string.h> /* strncpy */
 
 #include "imoria.h"
 #include "master.h"
 #include "save.h"
+
+static vtype finam = "";
 
 static void data_exception()
 {
@@ -565,6 +568,10 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 
 void save_file_remove(void) { unlink(sc__get_file_name()); }
 
+void save_file_name_set(vtype path) { strncpy(finam, path, sizeof(vtype)); }
+
+boolean save_file_name_is_set(void) { return finam[0] != '\0'; }
+
 boolean save_char(boolean quick)
 {
 	/* Actual save procedure -RAK- & -JWT- */
@@ -654,7 +661,7 @@ static void gc__add_item(treas_ptr *cur_bag)
 	/*    fflush(stdout); */
 }
 
-static void gc__open_save_file(FILE **f1, vtype fnam, boolean *paniced)
+static void gc__open_save_file(FILE **f1, char const *fnam, boolean *paniced)
 {
 	vtype out_str;
 
@@ -1495,7 +1502,7 @@ static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 }
 
-boolean get_char(vtype fnam, boolean prop)
+boolean get_char(boolean prop)
 {
 	/*{ Restore a saved game				-RAK- & -JWT-
 	 * }*/
@@ -1512,7 +1519,7 @@ boolean get_char(vtype fnam, boolean prop)
 	dun_flag = false;
 	paniced = false;
 
-	gc__open_save_file(&f1, fnam, &paniced);
+	gc__open_save_file(&f1, sc__get_file_name(), &paniced);
 	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
 
 	if (paniced) {
@@ -1704,7 +1711,8 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 	}
 
 	if (undead && !paniced) {
-		get_char(tfnam, false);
+		strncpy(finam, tfnam, sizeof(vtype));
+		get_char(false);
 		py.flags.dead = false;
 		strcpy(finam, tfnam);
 		save_char(false); /* this probably will not return */

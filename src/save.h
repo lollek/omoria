@@ -2,12 +2,26 @@
 #define SAVE_H
 
 /**
+ * -OK-
  * save_file_remove() - Remove the current save game file
  */
 void save_file_remove(void);
 
+/**
+ * -OK-
+ *  save_file_name_set() - Set file to save to
+ *  @path: path to save file
+ */
+void save_file_name_set(vtype path);
+
+/**
+ * -OK-
+ *  save_file_name_is_set() - Is there a save file?
+ */
+boolean save_file_name_is_set(void);
+
 boolean save_char(boolean quick);
-boolean get_char(vtype fnam, boolean prop);
+boolean get_char(boolean prop);
 
 /**
  * restore_char() - Wizard command for restoring or reviving a character
