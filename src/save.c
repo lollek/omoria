@@ -8,7 +8,7 @@
 #include "master.h"
 #include "save.h"
 
-static vtype finam = "";
+static vtype filename = "";
 
 static void data_exception()
 {
@@ -23,7 +23,7 @@ static void data_exception()
 	exit_game();
 }
 
-static char const *sc__get_file_name(void) { return finam; }
+static char const *sc__get_file_name(void) { return filename; }
 
 static FILE *sc__open_save_file(void)
 {
@@ -568,9 +568,9 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 
 void save_file_remove(void) { unlink(sc__get_file_name()); }
 
-void save_file_name_set(vtype path) { strncpy(finam, path, sizeof(vtype)); }
+void save_file_name_set(vtype path) { strncpy(filename, path, sizeof(vtype)); }
 
-boolean save_file_name_is_set(void) { return finam[0] != '\0'; }
+boolean save_file_name_is_set(void) { return filename[0] != '\0'; }
 
 boolean save_char(boolean quick)
 {
@@ -1653,7 +1653,7 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 
 	if (flag) {
 		if (tfnam[0] == 0) {
-			strcpy(tfnam, finam);
+			strcpy(tfnam, filename);
 		}
 
 		f1 = (FILE *)fopen(tfnam, "r");
@@ -1711,10 +1711,10 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 	}
 
 	if (undead && !paniced) {
-		strncpy(finam, tfnam, sizeof(vtype));
+		save_file_name_set(tfnam);
 		get_char(false);
 		py.flags.dead = false;
-		strcpy(finam, tfnam);
+		save_file_name_set(tfnam);
 		save_char(false); /* this probably will not return */
 	}
 
