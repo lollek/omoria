@@ -2,7 +2,6 @@
 
 void draw_cave()
 {
-	/*{ Draws entire screen					-RAK-	}*/
 	clear_screen();
 	/* clear_rc(1,1); */
 	prt_stat_block();
@@ -14,9 +13,6 @@ void draw_cave()
 
 void prt_map()
 {
-	/*	{ Prints the map of the dungeon				-RAK-
-	 * }*/
-
 	integer i1, i2, i3, i4, i5;
 	integer ypos, xpos = 0, isp;
 	vtype floor_str;
@@ -117,8 +113,6 @@ void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col)
 void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
 		   integer column)
 {
-	/* { Print character stat in given row, column		-RAK-	}*/
-
 	stat_s_type out_val1;
 
 	if (loss == 0) {
@@ -132,8 +126,6 @@ void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
 
 void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
 {
-	/* { Print character stat in given row, column		-RAK-	}*/
-
 	stat_s_type out_val1;
 	vtype out_val2;
 
@@ -159,9 +151,6 @@ void cnv_stat(byteint stat, stat_type out_val)
 
 void prt_num(vtype header, integer num, integer row, integer column)
 {
-	/*	{ Print number with header at given row, column		-RAK-
-	 * }*/
-
 	vtype out_val;
 
 	sprintf(out_val, "%s%6ld  ", header, num);
@@ -170,7 +159,6 @@ void prt_num(vtype header, integer num, integer row, integer column)
 
 void prt_stat_block()
 {
-	/*{ Prints character-screen info                              -RAK- }*/
 	prt_field(py.misc.race, RACE_ROW, STAT_COLUMN);
 	prt_field(py.misc.tclass, CLASS_ROW, STAT_COLUMN);
 	prt_title();
@@ -206,7 +194,6 @@ void prt_stat_block()
 
 void prt_field(vtype info, integer row, integer column)
 {
-	/*{ Print character info in given row, column		-RAK-	}*/
 	vtype out_val1;
 
 	sprintf(out_val1, "%-14s", info);
@@ -215,13 +202,11 @@ void prt_field(vtype info, integer row, integer column)
 
 void prt_title()
 {
-	/*{ Prints title of character's level			-RAK-	}*/
 	prt_field(py.misc.title, TITLE_ROW, STAT_COLUMN);
 }
 
 void prt_hp()
 {
-	/*{ Prints hit points					-DCJ-	}*/
 	vtype buf;
 
 	sprintf(buf, "%6d  ", (int)(py.misc.chp));
@@ -242,28 +227,22 @@ void prt_hp()
 
 void prt_pac()
 {
-	/*{ Prints current AC					-RAK-	}*/
 	prt_num("", py.misc.dis_ac, AC_ROW, STAT_COLUMN + 6);
 }
 
 void prt_gold()
 {
-	/*{ Prints current gold					-RAK-	}*/
-
 	prt_num("", py.misc.money[TOTAL_], GOLD_ROW, STAT_COLUMN + 6);
 }
 
 void prt_weight()
 {
-	/*{ Prints current inventory weight			-DCJ-	}*/
 	prt_num("", inven_weight div 100, WEIGHT_ROW, STAT_COLUMN + 6);
 	prt_num("", weight_limit(), WEIGHT_ROW + 1, STAT_COLUMN + 6);
 }
 
 void prt_time()
 {
-	/*{ Print time of game day				-DMF-	}*/
-
 	vtype s1, s2, s3;
 	vtype out_val;
 
@@ -287,7 +266,6 @@ void prt_light_on()
 
 void prt_depth()
 {
-	/*{ Prints depth in stat area				-RAK-	}*/
 	vtype depths;
 	integer depth;
 
@@ -305,7 +283,6 @@ void prt_depth()
 
 void prt_hunger()
 {
-	/*{ Prints status of hunger				-RAK-	}*/
 	if ((IS_WEAK & py.flags.status) != 0) {
 		put_buffer_attr("Weak    ", STATUS_ROW, HUNGER_COLUMN,
 				A_BOLD | A_BLINK);
@@ -318,8 +295,6 @@ void prt_hunger()
 
 void prt_blind()
 {
-	/*{ Prints Blind status					-RAK-	}*/
-
 	if ((IS_BLIND & py.flags.status) != 0) {
 		put_buffer_attr("Blind  ", STATUS_ROW, BLIND_COLUMN, A_BOLD);
 	} else {
@@ -329,7 +304,6 @@ void prt_blind()
 
 void prt_confused()
 {
-	/*{ Prints Confusion status				-RAK-	}*/
 	if ((IS_CONFUSED & py.flags.status) != 0) {
 		put_buffer_attr("Confused  ", STATUS_ROW, CONFUSED_COLUMN,
 				A_BOLD);
@@ -340,8 +314,6 @@ void prt_confused()
 
 void prt_afraid()
 {
-	/*{ Prints Fear status					-RAK-	}*/
-
 	if ((IS_AFRAID & py.flags.status) != 0) {
 		put_buffer_attr("Afraid  ", STATUS_ROW, AFRAID_COLUMN, A_BOLD);
 	} else {
@@ -351,8 +323,6 @@ void prt_afraid()
 
 void prt_poisoned()
 {
-	/*{ Prints Poisoned status				-RAK-	}*/
-
 	if ((IS_POISONED & py.flags.status) != 0) {
 		put_buffer_attr("Poisoned  ", STATUS_ROW, POISONED_COLUMN,
 				A_BOLD);
@@ -363,8 +333,6 @@ void prt_poisoned()
 
 void prt_search()
 {
-	/*{ Prints Searching status				-RAK-	}*/
-
 	if ((IS_SEARCHING & py.flags.status) != 0) {
 		put_buffer("Searching", STATUS_ROW, SEARCHING_COLUMN);
 	} else {
@@ -374,8 +342,6 @@ void prt_search()
 
 void prt_rest()
 {
-	/*{ Prints Resting status					-RAK-
-	 * }*/
 
 	if ((IS_RESTING & py.flags.status) != 0) {
 		put_buffer("Resting  ", STATUS_ROW, RESTING_COLUMN);
@@ -386,8 +352,6 @@ void prt_rest()
 
 void prt_quested()
 {
-	/*{ Prints Quested status					-RAD-
-	 * }*/
 	if (py.flags.quested) {
 		put_buffer(" Quest  ", STATUS_ROW, QUESTED_COLUMN);
 	} else if (py.misc.cur_quest > 0) {
@@ -399,14 +363,11 @@ void prt_quested()
 
 void prt_winner()
 {
-	/*{ Prints winner status on display			-RAK-	}*/
-
 	put_buffer("*Winner*", WINNER_ROW, WINNER_COLUMN);
 }
 
 void prt_experience()
 {
-
 	/*      with py.misc do*/
 	if (py.misc.exp > player_max_exp) {
 		py.misc.exp = player_max_exp;
@@ -428,8 +389,6 @@ void prt_experience()
 
 void prt_mana()
 {
-	/*{ Prints player's mana					-DCJ-
-	 * }*/
 	vtype buf;
 
 	sprintf(buf, "%6d  ", (int)(py.misc.cmana));
@@ -450,9 +409,6 @@ void prt_mana()
 
 void prt_level()
 {
-	/*{ Prints level						-RAK-
-	 * }*/
-
 	prt_num("", py.misc.lev, LEVEL_ROW, STAT_COLUMN + 6);
 }
 
