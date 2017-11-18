@@ -208,7 +208,8 @@ static void b__chime_and_horn_effects(integer effect, boolean *idented)
 	*idented = ident;
 }
 
-static void b__misc_effects(integer effect, boolean *idented, treas_ptr item_ptr)
+static void b__misc_effects(integer effect, boolean *idented,
+			    treas_ptr item_ptr)
 {
 	integer i3, i4, loss, dur;
 	integer dumy, y_dumy, x_dumy;

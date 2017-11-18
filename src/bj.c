@@ -746,4 +746,3 @@ void bj__game_blackjack()
 	prt("The dealer awaits your bet.", 1, 1);
 	bj__blackjack_commands();
 }
-

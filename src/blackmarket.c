@@ -4,13 +4,15 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-static void bm__add_tohit(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_tohit(integer a, integer b, integer c, integer i,
+			  integer *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].tohit = *r;
 }
 
-static void bm__add_todam(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_todam(integer a, integer b, integer c, integer i,
+			  integer *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].todam = *r;
@@ -34,7 +36,8 @@ static void bm__add_p1(integer a, integer b, integer c, integer i, integer *r)
 	t_list[i].p1 = *r;
 }
 
-static void bm__add_p1_rods(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_p1_rods(integer a, integer b, integer c, integer i,
+			    integer *r)
 {
 	*r = a + randint(b) + c;
 	t_list[i].p1 = *r;
