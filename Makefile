@@ -31,7 +31,7 @@ READFILES =	data/hours.dat data/moria.dat data/monsters.dat data/moria_gcustom.m
 WRITEFILES =	data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
 
-all:	omoria
+all:	omoria ctags
 
 CFILES = $(wildcard src/*.c)
 HFILES = $(wildcard src/*.h)
