@@ -5,22 +5,31 @@
 #include "casino.h"
 #include "bj.h"
 
-boolean deal_bust;
-boolean card5_save, card5;
-drawcard dummy, dummyd;
-hand dealerh, playerh;
-integer vald, valp, save;
-boolean bust_flag, bust_save;
-boolean split_flag, already_split;
-integer py_index;
-integer hand_start;
-boolean win_draw;
-boolean blackjack, blackjack_save;
-boolean pl_stay_flag;
-boolean dl_ace_flag;
-boolean double_flag, double_flag_save;
+static boolean deal_bust;
+static boolean card5_save;
+static boolean card5;
+static drawcard dummy;
+static drawcard dummyd;
+static hand dealerh;
+static hand playerh;
+static integer vald;
+static integer valp;
+static integer save;
+static boolean bust_flag;
+static boolean bust_save;
+static boolean split_flag;
+static boolean already_split;
+static integer py_index;
+static integer hand_start;
+static boolean win_draw;
+static boolean blackjack;
+static boolean blackjack_save;
+static boolean pl_stay_flag;
+static boolean dl_ace_flag;
+static boolean double_flag;
+static boolean double_flag_save;
 
-void bj__display_bj()
+static void bj__display_bj()
 {
 	clear_rc(21, 1);
 	c__display_gold();
@@ -31,7 +40,7 @@ void bj__display_bj()
 	    24, 2);
 }
 
-void bj__display_bj_game()
+static void bj__display_bj_game()
 {
 	clear_rc(21, 1);
 	prt("Your hand: ", 5, 1);
@@ -44,7 +53,7 @@ void bj__display_bj_game()
 	    2);
 }
 
-void bj__opening_screen()
+static void bj__opening_screen()
 {
 	/*     1         2         3         4         5         6 */
 	/*   890123456789012345678901234567890123456789012345678901234567890 */
@@ -65,10 +74,9 @@ void bj__opening_screen()
 	prt("----                                     X  X", 16, 19);
 }
 
-void bj__display_rules()
+static void bj__display_rules()
 {
 	char command;
-	boolean exit;
 
 	clear_screen();
 	prt("MORIA   BLACKJACK   RULES ", 2, 21);
@@ -98,7 +106,7 @@ void bj__display_rules()
 	prt("original hand.  Splitting is only allowed once per hand.", 21, 2);
 
 	prt("[hit any key to continue]", 24, 23);
-	exit = get_com("", &command);
+	get_com("", &command);
 
 	clear_rc(2, 1);
 	prt("A natural pays  3/2  times your bet, unless the dealer also has",
@@ -111,10 +119,10 @@ void bj__display_rules()
 	prt("win, regardless of the dealer's hand.", 8, 2);
 
 	prt("[hit any key to continue]", 24, 23);
-	exit = get_com("", &command);
+	get_com("", &command);
 }
 
-void bj__initialize_hand()
+static void bj__initialize_hand()
 {
 	integer i;
 
@@ -137,7 +145,7 @@ void bj__initialize_hand()
 	double_flag = false;
 }
 
-void bj__evaluate_pl_hand()
+static void bj__evaluate_pl_hand()
 {
 	integer i;
 	boolean py_ace_flag;
@@ -167,7 +175,7 @@ void bj__evaluate_pl_hand()
 	}
 }
 
-void bj__evaluate_dl_hand(integer index)
+static void bj__evaluate_dl_hand(integer index)
 {
 	integer i;
 
@@ -199,7 +207,7 @@ void bj__evaluate_dl_hand(integer index)
 	}
 }
 
-void bj__hand_save()
+static void bj__hand_save()
 {
 	save = valp;
 	bj__evaluate_pl_hand();
@@ -220,7 +228,7 @@ void bj__hand_save()
 	bust_flag = false;
 }
 
-void bj__check_exit(boolean *exit_flag)
+static void bj__check_exit(boolean *exit_flag)
 {
 	if (double_flag) {
 		*exit_flag = true;
@@ -251,7 +259,7 @@ void bj__check_exit(boolean *exit_flag)
 	}
 }
 
-void bj__get_first_dealc()
+static void bj__get_first_dealc()
 {
 	vtype draw;
 
@@ -267,7 +275,7 @@ void bj__get_first_dealc()
 	put_buffer(draw, 17, 8);
 }
 
-void bj__card_draw(integer index, integer r, vtype card)
+static void bj__card_draw(integer index, integer r, vtype card)
 {
 	integer c;
 	vtype draw;
@@ -301,7 +309,7 @@ void bj__card_draw(integer index, integer r, vtype card)
 	}
 }
 
-void bj__re_draw()
+static void bj__re_draw()
 {
 	integer i;
 
@@ -319,7 +327,7 @@ void bj__re_draw()
 	}
 }
 
-void bj__get_dealer_card(integer i)
+static void bj__get_dealer_card(integer i)
 {
 
 	dealerh[i] = randint(13) + 1;
@@ -369,7 +377,7 @@ void bj__get_dealer_card(integer i)
 	bj__evaluate_dl_hand(i);
 }
 
-void bj__get_player_card(integer i)
+static void bj__get_player_card(integer i)
 {
 	playerh[i] = randint(13) + 1;
 	switch (playerh[i]) {
@@ -417,20 +425,20 @@ void bj__get_player_card(integer i)
 	bj__evaluate_pl_hand();
 }
 
-void bj__get_dealer_hand()
+static void bj__get_dealer_hand()
 {
 	bj__get_dealer_card(1);
 	bj__get_dealer_card(2);
 }
 
-void bj__get_player_hand()
+static void bj__get_player_hand()
 {
 	bj__get_player_card(1);
 	py_index = 2;
 	bj__get_player_card(2);
 }
 
-void bj__get_winning()
+static void bj__get_winning()
 {
 
 	if (deal_bust) {
@@ -475,7 +483,7 @@ void bj__get_winning()
 	}
 }
 
-void bj__play_dealer_hand()
+static void bj__play_dealer_hand()
 {
 	integer i;
 	boolean stay_flag;
@@ -504,7 +512,7 @@ void bj__play_dealer_hand()
 	bj__get_winning();
 }
 
-void bj__double()
+static void bj__double()
 {
 	bet *= 2;
 	py_index++;
@@ -512,7 +520,7 @@ void bj__double()
 	double_flag = true;
 }
 
-void bj__split()
+static void bj__split()
 {
 	playerh[6] = playerh[1];
 	strcpy(dummy[6], dummy[1]);
@@ -522,7 +530,7 @@ void bj__split()
 	split_flag = true;
 }
 
-void bj__get_game_command()
+static void bj__get_game_command()
 {
 	char command;
 	integer com_val = 0;
@@ -575,7 +583,7 @@ void bj__get_game_command()
 	}
 }
 
-void bj__play_hand()
+static void bj__play_hand()
 {
 	integer num, i;
 
@@ -640,7 +648,7 @@ void bj__play_hand()
 	bet = 0;
 }
 
-void bj__play_bj()
+static void bj__play_bj()
 {
 	boolean exit_flag = false;
 
@@ -658,7 +666,7 @@ void bj__play_bj()
 	bj__play_hand();
 }
 
-void bj__get_bj_bet()
+static void bj__get_bj_bet()
 {
 	vtype comment;
 	integer num;
@@ -689,7 +697,7 @@ void bj__get_bj_bet()
 	c__display_gold();
 }
 
-void bj__blackjack_commands()
+static void bj__blackjack_commands()
 {
 	char command;
 	boolean exit_flag = false;
@@ -739,4 +747,3 @@ void bj__game_blackjack()
 	bj__blackjack_commands();
 }
 
-/* END FILE bj.c */

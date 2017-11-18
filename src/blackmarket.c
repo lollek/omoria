@@ -4,47 +4,42 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void bm__add_tohit(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_tohit(integer a, integer b, integer c, integer i, integer *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].tohit = *r;
 }
-/*//////////////////////////////////////////////////////////////////// */
-void bm__add_todam(integer a, integer b, integer c, integer i, integer *r)
+
+static void bm__add_todam(integer a, integer b, integer c, integer i, integer *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].todam = *r;
 }
-/*//////////////////////////////////////////////////////////////////// */
-void bm__add_ac(integer a, integer b, integer c, integer i, integer *r)
+
+static void bm__add_ac(integer a, integer b, integer c, integer i, integer *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].ac = *r;
 }
-/*//////////////////////////////////////////////////////////////////// */
-void bm__add_toac(integer a, integer b, integer c, integer i, integer *r)
+
+static void bm__add_toac(integer a, integer b, integer c, integer i, integer *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].toac = *r;
 }
-/*//////////////////////////////////////////////////////////////////// */
-void bm__add_p1(integer a, integer b, integer c, integer i, integer *r)
+
+static void bm__add_p1(integer a, integer b, integer c, integer i, integer *r)
 {
 	*r = a + randint(b) + randint(c);
 	t_list[i].p1 = *r;
 }
-/*//////////////////////////////////////////////////////////////////// */
-void bm__add_p1_rods(integer a, integer b, integer c, integer i, integer *r)
+
+static void bm__add_p1_rods(integer a, integer b, integer c, integer i, integer *r)
 {
 	*r = a + randint(b) + c;
 	t_list[i].p1 = *r;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void soup_up_black_market(integer indx)
 {
 	/*{ Soup-up the Black Market inventory - mwk}*/
@@ -815,8 +810,5 @@ void Opusii_vomit(integer percentage)
   }
 }
 #endif
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 /* END FILE  store.c */

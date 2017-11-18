@@ -1,6 +1,6 @@
 #include "imoria.h"
 
-void eb__display_money()
+static void eb__display_money()
 {
 	vtype out_val;
 
@@ -37,7 +37,7 @@ void eb__display_money()
 	put_qio();
 }
 
-void eb__display_store(vtype shop_owner)
+static void eb__display_store(vtype shop_owner)
 {
 	/* Clear the screen and display the bank. */
 
@@ -51,7 +51,7 @@ void eb__display_store(vtype shop_owner)
 	prt(" p) Put item in vault.         r) Remove item from vault.", 23, 1);
 }
 
-boolean eb__get_entry(vtype comment, integer *num)
+static boolean eb__get_entry(vtype comment, integer *num)
 {
 	/*
 	* Returns true if a number >= 0 is entered, false if escaped,
@@ -84,7 +84,7 @@ boolean eb__get_entry(vtype comment, integer *num)
 	return return_value;
 }
 
-void eb__dep_munny(integer mon_type)
+static void eb__dep_munny(integer mon_type)
 {
 	integer deposit;
 	vtype out_val;
@@ -115,7 +115,7 @@ void eb__dep_munny(integer mon_type)
 	}
 }
 
-void eb__deposit_money()
+static void eb__deposit_money()
 {
 	/*
 	* Deposit a given number of mithril, platinum, and gold in the bank,
@@ -129,7 +129,7 @@ void eb__deposit_money()
 	eb__display_money();
 }
 
-void eb__withdraw_money()
+static void eb__withdraw_money()
 {
 	/*
 	 * Withdraw a given amount, in gold pieces, teller makes change.
@@ -228,15 +228,13 @@ void eb__withdraw_money()
 	}	 /* end if withdraw */
 }
 
-void eb__safe_deposit(boolean deposit)
+static void eb__safe_deposit(__attribute__((unused)) boolean deposit)
 {
 	/* XXXX major work. I don't think it ever worked at the U */
 	prt("The dwarves are still installing it, sorry.", 1, 1);
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-
-void eb__change_money()
+static void eb__change_money()
 {
 	/* Changes money of one type to money of another type.        -JPS- */
 
@@ -287,7 +285,7 @@ void eb__change_money()
 	} /* endif change_flag */
 }
 
-void eb__parse_command(boolean *exit_flag, vtype shop_owner)
+static void eb__parse_command(boolean *exit_flag, vtype shop_owner)
 {
 	char command;
 
@@ -326,8 +324,6 @@ void eb__parse_command(boolean *exit_flag, vtype shop_owner)
 		*exit_flag = true;
 	}
 }
-
-/*//////////////////////////////////////////////////////////////////// */
 
 void enter_bank()
 {
