@@ -21,14 +21,7 @@
 
 #include "debug.h"
 
-/* moria.c includes the actual declarations of all the variables, */
-/* everything else just includes the extern stuff */
-
-#ifdef __MORIA_C__
-#include "values.h"
-#else
 #include "variables.h"
-#endif
 
 #define PSPELL(xx) (magic_spell[py.misc.pclass][(xx)])
 #define PCLASS (class[py.misc.pclass])

@@ -1,4 +1,3 @@
-#define __MORIA_C__
 #include "imoria.h"
 #include "menu.h"
 #include "save.h"

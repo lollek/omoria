@@ -376,6 +376,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 	}
 #endif
 
+	insert_str(tmp_val, "%P0", ptr->data.damage);
 	insert_num(tmp_val, "%P1", ptr->data.p1, true);
 	insert_num(tmp_val, "%P2", ptr->data.tohit, true);
 	insert_num(tmp_val, "%P3", ptr->data.todam, true);
