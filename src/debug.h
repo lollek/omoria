@@ -2,6 +2,8 @@
 #define DEBUG_H
 
 #if DO_DEBUG
+extern boolean const do_debug_objdes;
+extern boolean const do_debug_funcall;
 
 #define ENTER(rname, mark) enter((rname), (mark));
 #define LEAVE(rname, mark) leave((rname), (mark));
@@ -21,10 +23,11 @@ extern int call_depth;
 
 #endif /* DO_DEBUG */
 
-extern void enter(char *routine_name, char *marker);
-extern void leave(char *routine_name, char *marker);
-extern void return_dbg(char *routine_name, char *marker, char typestr,
+void init_debug(void);
+void enter(char *routine_name, char *marker);
+void leave(char *routine_name, char *marker);
+void return_dbg(char *routine_name, char *marker, char typestr,
 		       char *descript, void *valptr);
-extern void log_msg(char *str);
+void log_msg(char *str);
 
 #endif /* DEBUG_H */

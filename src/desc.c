@@ -319,45 +319,62 @@ void unquote(char *object_str)
 		sprintf(object_str, "%s%s", str1, str2);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/**
+ * objdes() - Returns a description of item for inventory
+ * @out_val: Where to put the return string
+ * @ptr: Pointer to the object to describe
+ * @pref: ???
+ */
 void objdes(char *out_val, treas_ptr ptr, boolean pref)
 {
-	/*{ Returns a description of item for inventory			}*/
-
 	char *cpos;
 	vtype tmp_val;
 
 	ENTER("objdes", "i");
 
-	/* with ptr->data. do; */
 	strcpy(tmp_val, ptr->data.name);
 
-	/*  fprintf(debug_file,": obj start: >%s<\n",tmp_val); */
+#if DO_DEBUG
+	if (do_debug_objdes) {
+		fprintf(debug_file,": obj start: >%s<\n",tmp_val);
+	}
+#endif
 
 	cpos = strstr(tmp_val, "|");
 	if (cpos != NULL) {
-		*cpos = 0;
+		*cpos = '\0';
 	}
 
-	/*  fprintf(debug_file,": obj thmp1: >%s<\n",tmp_val); */
+#if DO_DEBUG
+	if (do_debug_objdes) {
+		fprintf(debug_file,": obj thmp1: >%s<\n",tmp_val);
+	}
+#endif
 
 	cpos = strstr(tmp_val, "^");
 	if (cpos != NULL) {
-		*cpos = 0;
+		*cpos = '\0';
 	}
 
-	/*  fprintf(debug_file,": obj thmp2: >%s<\n",tmp_val); */
+#if DO_DEBUG
+	if (do_debug_objdes) {
+		fprintf(debug_file,": obj thmp2: >%s<\n",tmp_val);
+	}
+#endif
 
-	if (!(pref)) {
+	if (!pref) {
 		cpos = strstr(tmp_val, " (");
 		if (cpos != NULL) {
-			*cpos = 0;
+			*cpos = '\0';
 		}
 	}
 
-	/*  fprintf(debug_file,": obj thmp3: >%s<\n",tmp_val); */
+#if DO_DEBUG
+	if (do_debug_objdes) {
+		fprintf(debug_file,": obj thmp3: >%s<\n",tmp_val);
+	}
+#endif
 
 	insert_num(tmp_val, "%P1", ptr->data.p1, true);
 	insert_num(tmp_val, "%P2", ptr->data.tohit, true);
@@ -366,7 +383,11 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 	insert_num(tmp_val, "%P5", ptr->data.p1, false);
 	insert_num(tmp_val, "%P6", ptr->data.ac, false);
 
-	/*  fprintf(debug_file,": obj thmp4: >%s<\n",tmp_val); */
+#if DO_DEBUG
+	if (do_debug_objdes) {
+		fprintf(debug_file,": obj thmp4: >%s<\n",tmp_val);
+	}
+#endif
 
 	if (ptr->data.number != 1) {
 		insert_str(tmp_val, "ch~", "ches");
@@ -376,7 +397,11 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 		insert_str(tmp_val, "~", "");
 	}
 
-	/*  fprintf(debug_file,": obj thmp5: >%s<\n",tmp_val); */
+#if DO_DEBUG
+	if (do_debug_objdes) {
+		fprintf(debug_file,": obj thmp5: >%s<\n",tmp_val);
+	}
+#endif
 
 	if (pref) {
 		if (strstr(tmp_val, "&") != NULL) {
@@ -407,14 +432,14 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 	}
 
 #if DO_DEBUG
-	fprintf(debug_file, ": obj final: >%s<\n", out_val);
+	if (do_debug_objdes) {
+		fprintf(debug_file, ": obj final: >%s<\n", out_val);
+	}
 #endif
 
 	LEAVE("objdes", "i");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 char *bag_descrip(treas_ptr bag, string result) /* was func */
 {
 	/*{ Return description about the contents of a bag	-DMF-	}*/

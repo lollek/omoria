@@ -4,38 +4,39 @@
 #include "imoria.h"
 
 #if DO_DEBUG
+/* Toggleables */
+boolean const do_debug_objdes = false;
+boolean const do_debug_funcall = false;
+
+/* Debug variables */
 FILE *debug_file = NULL;
 int call_depth = 0;
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+void init_debug(void)
+{
+	debug_file = (FILE *)fopen("Debug.out", "w");
+}
+
 void enter(char *routine_name, char *marker)
 {
-	if (debug_file == NULL) {
-		debug_file = (FILE *)fopen("Debug.out", "w");
-	}
+	if (!do_debug_funcall)
+		return;
 
 	call_depth++;
 
-	if (debug_file != NULL) {
-		fprintf(debug_file, ":::%4d: ENTER %s | %s |\n", call_depth,
+	fprintf(debug_file, ":::%4d: ENTER %s | %s |\n", call_depth,
 			routine_name, marker);
 
-		/*  fprintf(debug_file,":  In    %ld */
-		/*  %ld\n",panel_row_min,panel_row_max); */
+	/*  fprintf(debug_file,":  In    %ld */
+	/*  %ld\n",panel_row_min,panel_row_max); */
 
-		fflush(debug_file);
-	}
+	fflush(debug_file);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void leave(char *routine_name, char *marker)
 {
-	if (debug_file == NULL) {
+	if (!do_debug_funcall)
 		return;
-	}
 
 	/*  fprintf(debug_file,":  Out   %ld */
 	/*  %ld\n",panel_row_min,panel_row_max); */
@@ -47,16 +48,12 @@ void leave(char *routine_name, char *marker)
 
 	call_depth--;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
 		void *valptr)
 {
-
-	if (debug_file == NULL) {
+	if (!do_debug_funcall)
 		return;
-	}
 
 	/*  fprintf(debug_file,":  Ret   %ld */
 	/*  %ld\n",panel_row_min,panel_row_max); */
@@ -103,20 +100,10 @@ void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
 
 	call_depth--;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void log_msg(char *str)
 {
-	if (debug_file == NULL) {
-		return;
-	}
-
 	fprintf(debug_file, ">            %s\n", str);
 	fflush(debug_file);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 #endif
-/* END FILE debug.c */

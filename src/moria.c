@@ -11,8 +11,9 @@ int main(int argc, char *argv[])
 	priv_switch(0);
 
 #if DO_DEBUG
-	enter("main", "");
+	init_debug();
 #endif
+	ENTER("main", "");
 
 	/* Get the time player entered game */
 	start_time = time(NULL);
@@ -177,8 +178,8 @@ int main(int argc, char *argv[])
 		if (death) {
 			upon_death();
 			if (death) {
+				LEAVE("main", "");
 #if DO_DEBUG
-				leave("main", "");
 				memory_error(0, "DEBUG_ON_EXIT");
 #endif
 				return 0;

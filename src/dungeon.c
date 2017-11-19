@@ -5602,9 +5602,9 @@ void d__execute_command(integer *com_val)
 	treas_ptr trash_ptr;
 	vtype out_val, out2, tmp_str;
 
+	ENTER("d__execute_command", "d");
 #if DO_DEBUG
-	enter("d__execute_command", "d");
-	fprintf(debug_file, ": command: %ld\n", *com_val);
+	fprintf(debug_file, ": command: %ld '%c'\n", *com_val, *com_val);
 	fflush(debug_file);
 #endif
 

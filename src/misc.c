@@ -1659,9 +1659,9 @@ void insert_num(char *object_str, char *mtc_str, integer number,
 		boolean show_sign)
 {
 	vtype numstr;
+	char const *sign = number > 0 && show_sign ? "+" : "";
 
-	sprintf(numstr, "%s%ld", (((number > 0) && show_sign) ? "+" : ""),
-		number);
+	sprintf(numstr, "%s%ld", sign, number);
 	/*  strcat(object_str, " "); */
 
 	insert_str(object_str, mtc_str, numstr);
