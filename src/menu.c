@@ -66,11 +66,13 @@ void main_menu()
 
 	for (;;) {
 		unsigned char selection;
-		inkey_flush((char *)&selection);
 
-		if (selection == ESCAPE) {
+		if (counter == 0)
+			break; /* No characters to load */
+
+		inkey_flush((char *)&selection);
+		if (selection == ESCAPE)
 			break;
-		}
 
 		selection -= '0';
 		if (selection <= counter) {
