@@ -12,7 +12,7 @@ void help()
 	prt("B       Browse a book         | c <Dir> Close a door", 3, 1);
 	prt("C       Display character     | c <inv> Clean inventory", 4, 1);
 	prt("D <Dir> Disarm a trap/chest   | d       Drop an item", 5, 1);
-	prt("E       Eat some food         | e       Equipment list", 6, 1);
+	prt("E       Eat some food         | ", 6, 1);
 	prt("F       Fill lamp with oil    | f <Dir> Force / bash something", 7,
 	    1);
 	prt("G       Game time and date    | i       Inventory list", 8, 1);

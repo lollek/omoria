@@ -172,6 +172,15 @@ extern boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw,
 			integer count, char *choice, boolean mon,
 			boolean no_wait); /*	: boolean := false); */
 
+/**
+ * -OK-
+ *  inv__equip_pos_string() - Returns a string describing equipment
+ *  @out_val: Where the text will be put
+ *  @equip_pos: Which equipment position to describe
+ *  @counter: Counter position, will be a), b), c), etc
+ */
+void inv__equip_pos_string(vtype out_val, integer equip_pos, integer counter);
+
 /* { IO.PAS		} */
 extern void convert_time(unsigned long int_time, quad_type *bin_time);
 extern void sleep_(unsigned long int_time);

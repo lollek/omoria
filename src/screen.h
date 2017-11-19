@@ -2,6 +2,22 @@
 #define SCREEN_H
 
 /**
+ * -OK-
+ *  prt_equipment() - Draws equipment screen on the right
+ */
+void prt_equipment(void);
+
+/**
+ * -OK-
+ *  prt_equipment_args() - Helper function for drawing equipment screen
+ *  @y: Y position to start printing
+ *  @x: X position to start printing
+ *  @start: Equpment number to start from (1 = first)
+ *  @clear: Clear the line after last equipment
+ */
+void prt_equipment_args(integer y, integer x, integer start, boolean clear);
+
+/**
  * -RAK-
  * prt_map() - Prints the map of the dungeon
  */

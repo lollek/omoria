@@ -6019,28 +6019,18 @@ void d__execute_command(integer *com_val)
 	case 'd':
 		d__drop();
 		break;
-
-	case 'e': /* Equipment */
-		reset_flag = true;
-		if (inven_command('e', &trash_ptr, "")) {
-			draw_cave();
-		}
-		break;
-
 	case 'f':
 		d__bash();
 		break;
 	case 'h':
 		move_char(4);
 		break;
-
 	case 'i': /* Inventory */
 		reset_flag = true;
 		if (inven_command('i', &trash_ptr, "")) {
 			draw_cave();
 		}
 		break;
-
 	case 'j':
 		move_char(2);
 		break;
@@ -6050,7 +6040,6 @@ void d__execute_command(integer *com_val)
 	case 'l':
 		move_char(6);
 		break;
-
 	case 'm': /* magick, monk, music */
 		if (class[py.misc.pclass].mspell) {
 			cast(); /*  magick   } */
@@ -6060,14 +6049,12 @@ void d__execute_command(integer *com_val)
 			sing(); /* music */
 		}
 		break;
-
 	case 'n':
 		move_char(3);
 		break;
 	case 'o':
 		d__openobject();
 		break;
-
 	case 'p': /* pray, play */
 		if (class[py.misc.pclass].pspell) {
 			pray(); /* pray */
@@ -6075,14 +6062,12 @@ void d__execute_command(integer *com_val)
 			play(); /* play */
 		}
 		break;
-
 	case 'q':
 		quaff();
 		break;
 	case 'r':
 		read_scroll();
 		break;
-
 	case 's': /* Search */
 		if (py.flags.blind > 0) {
 			msg_print(
@@ -6091,23 +6076,19 @@ void d__execute_command(integer *com_val)
 			search(char_row, char_col, py.misc.srh);
 		}
 		break;
-
 	case 't': /* take off */
 		reset_flag = true;
 		if (inven_command('t', &trash_ptr, "")) {
 			draw_cave();
 		}
 		break;
-
 	case 'u':
 		move_char(9);
 		break;
-
 	case 'v': /* version */
 		reset_flag = true;
 		game_version();
 		break;
-
 	case 'w': /* wear */
 		reset_flag = true;
 		if (inven_command('w', &trash_ptr, "")) {
@@ -6116,22 +6097,18 @@ void d__execute_command(integer *com_val)
 			prt_weight();
 		}
 		break;
-
 	case 'x': /* exchange weapon */
 		reset_flag = true;
 		if (inven_command('x', &trash_ptr, "")) {
 			draw_cave();
 		}
 		break;
-
 	case 'y':
 		move_char(7);
 		break;
-
 	case 'z':
 		aim_wand();
 		break;
-
 	case '|': /* Weapon help */
 		moria_help("Adventuring Weapons Weapon_List");
 		draw_cave();
@@ -6426,7 +6403,7 @@ void dungeon()
 
 		/*{ Screen may need updating, used mostly for stats}*/
 		d__print_updated_stats();
-
+		prt_equipment();
 		d__check_light_status();
 
 		/*{ Update counters and messages			}*/

@@ -499,113 +499,88 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 	return return_value;
 }
 
+/**
+ * -OK-
+ *  ic__equip_print_prefix() - Returns prefix for printing equipment
+ *  @position: Which equipment slot to prefix
+ */
+static char const *ic__equip_print_prefix(integer position)
+{
+	switch (position) {
+		case Equipment_primary:
+			return " You are wielding   : ";
+			break;
+		case Equipment_helm:
+			return " Worn on head       : ";
+			break;
+		case Equipment_amulet:
+			return " Worn around neck   : ";
+			break;
+		case Equipment_armor:
+			return " Worn on body       : ";
+			break;
+		case Equipment_belt:
+			return " Worn at waist      : ";
+			break;
+		case Equipment_shield:
+			return " Worn on arm        : ";
+			break;
+		case Equipment_gloves:
+			return " Worn on hands      : ";
+			break;
+		case Equipment_bracers:
+			return " Worn on wrists     : ";
+			break;
+		case Equipment_right_ring:
+			return " Worn on right hand : ";
+			break;
+		case Equipment_left_ring:
+			return " Worn on left hand  : ";
+			break;
+		case Equipment_boots:
+			return " Worn on feet       : ";
+			break;
+		case Equipment_cloak:
+			return " Worn about body    : ";
+			break;
+		case Equipment_light:
+			if (PF.light_on && (equipment[position].p1 > 0)) {
+				return " Light source (On)  : ";
+			} else {
+				return " Light source (Off) : ";
+			}
+			break;
+		case Equipment_secondary:
+			return " Secondary weapon   : ";
+			break;
+		default:
+			return " Unknown value      : ";
+			break;
+	}
+}
+
+void inv__equip_pos_string(vtype out_val, integer equip_pos, integer counter)
+{
+	vtype tmp_buf;
+
+	inven_temp->data = equipment[equip_pos];
+	objdes(tmp_buf, inven_temp, true);
+	sprintf(out_val, "%c%c%c%s%s",
+			cur_insure(),
+			('a' + counter - 1),
+			cur_char2(),
+			ic__equip_print_prefix(equip_pos),
+			tmp_buf);
+}
+
 void ic__show_equip(integer *scr_state, integer r1)
 {
 	/*{ Displays equipment items from r1 to end       -RAK-   }*/
 
-	integer i1, i2;
-	vtype prt1, prt2, out_val;
-
 	if (r1 > equip_ctr) { /*{ Last item gone                }*/
 		prt("", equip_ctr + 3, 1);
 	} else if (r1 > 0) { /*{ R1 = 0 dummy call             }*/
-		i2 = 0;
-		for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
-			/*{ Range of equipment }*/
-			/* with equipment[i1] do; */
-			if (equipment[i1].tval > 0) {
-				i2++;
-				if (i2 >= r1) { /*{ Display only given range }*/
-					switch (i1) { /*{ Get position }*/
-					case Equipment_primary:
-						strcpy(
-						    prt1,
-						    " You are wielding   : ");
-						break;
-					case Equipment_helm:
-						strcpy(
-						    prt1,
-						    " Worn on head       : ");
-						break;
-					case Equipment_amulet:
-						strcpy(
-						    prt1,
-						    " Worn around neck   : ");
-						break;
-					case Equipment_armor:
-						strcpy(
-						    prt1,
-						    " Worn on body       : ");
-						break;
-					case Equipment_belt:
-						strcpy(
-						    prt1,
-						    " Worn at waist      : ");
-						break;
-					case Equipment_shield:
-						strcpy(
-						    prt1,
-						    " Worn on arm        : ");
-						break;
-					case Equipment_gloves:
-						strcpy(
-						    prt1,
-						    " Worn on hands      : ");
-						break;
-					case Equipment_bracers:
-						strcpy(
-						    prt1,
-						    " Worn on wrists     : ");
-						break;
-					case Equipment_right_ring:
-						strcpy(
-						    prt1,
-						    " Worn on right hand : ");
-						break;
-					case Equipment_left_ring:
-						strcpy(
-						    prt1,
-						    " Worn on left hand  : ");
-						break;
-					case Equipment_boots:
-						strcpy(
-						    prt1,
-						    " Worn on feet       : ");
-						break;
-					case Equipment_cloak:
-						strcpy(
-						    prt1,
-						    " Worn about body    : ");
-						break;
-					case Equipment_light:
-						sprintf(prt1,
-							" Light source %s : ",
-							(PF.light_on &&
-							 (equipment[i1].p1 > 0))
-							    ? "(On) "
-							    : "(Off)");
-						break;
-					case Equipment_secondary:
-						strcpy(
-						    prt1,
-						    " Secondary weapon   : ");
-						break;
-					default:
-						strcpy(
-						    prt1,
-						    " Unknown value      : ");
-						break;
-					}
-					inven_temp->data = equipment[i1];
-					objdes(prt2, inven_temp, true);
-					sprintf(out_val, "%c%c%c%s%s",
-						cur_insure(), ((int)i2 + 96),
-						cur_char2(), prt1, prt2);
-					prt(out_val, i2 + 2, 1);
-				}   /* end if i2 */
-			}	   /* end if tval > 0 */
-		}		    /* end for i1 */
-		prt("", i2 + 3, 1); /*{ Clear last line       }*/
+		prt_equipment_args(2, 1, r1, true);
 		*scr_state = 2;     /*{ Set state of screen   }*/
 	}
 }

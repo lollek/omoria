@@ -1,13 +1,41 @@
 #include "imoria.h"
 
+static integer win_equip_x = 81;
+static integer win_equip_y = 1;
+
+void prt_equipment(void)
+{
+	prt_equipment_args(win_equip_y, win_equip_x, 1, false);
+}
+
+void prt_equipment_args(integer y, integer x, integer start, boolean clear)
+{
+	integer i;
+	integer counter = 0;
+	vtype tmp_buf;
+
+	for (i = Equipment_min; i < EQUIP_MAX - 1; ++i) {
+		if (!equipment[i].tval)
+			continue;
+		++counter;
+		if (counter < start)
+			continue;
+		inv__equip_pos_string(tmp_buf, i, counter);
+		prt(tmp_buf, y + counter, x);
+	}
+	if (clear) {
+		prt("", y + counter + 1, x);
+	}
+}
+
 void draw_cave()
 {
 	clear_screen();
-	/* clear_rc(1,1); */
 	prt_stat_block();
 	prt_map();
 	prt_depth();
 	prt_search();
+	prt_equipment();
 	put_qio();
 }
 

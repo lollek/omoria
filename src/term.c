@@ -464,35 +464,36 @@ int cool_mvaddch(int row, int col, chtype const ch)
 	return OK;
 }
 
-int cool_mvaddstr(int row, int col, char const *printString)
+int cool_mvaddstr(int row, int col, char const *str)
 {
 	/* search for characters with the high bit set */
 
 	int i1;
-	char *s1; /* TODO: Modifies string to print */
+	char *tmp_buf = alloca(strlen(str) + 1);
+	strcpy(tmp_buf, str);
 
-	for (s1 = printString, i1 = 0; s1[i1]; i1++) {
-		if ((s1[i1] & 0x80) != 0) {
+	for (i1 = 0; tmp_buf[i1]; i1++) {
+		if ((tmp_buf[i1] & 0x80) != 0) {
 
 			if (i1 > 0) {
-				mvaddnstr(row, col, s1, i1);
+				mvaddnstr(row, col, tmp_buf, i1);
 				col += i1;
-				s1 = &(s1[i1]);
+				tmp_buf = &(tmp_buf[i1]);
 			}
 
 			highlite_on();
-			*s1 &= 0x7F;
-			mvaddnstr(row, col, s1, 1);
+			*tmp_buf &= 0x7F;
+			mvaddnstr(row, col, tmp_buf, 1);
 			highlite_off();
 
 			col++;
-			s1++;
+			tmp_buf++;
 			i1 = -1; /* will be 0 when the top of the loop is hit */
 		}
 	}
 
 	if (i1 > 0) {
-		mvaddnstr(row, col, s1, i1);
+		mvaddnstr(row, col, tmp_buf, i1);
 	}
 
 	return OK;
@@ -501,36 +502,25 @@ int cool_mvaddstr(int row, int col, char const *printString)
 /* Dump IO to buffer					-RAK-	*/
 void Put_Buffer(char const *out_str, integer row, integer col)
 {
-	vtype tmp_str;
-
-	/*  ENTER("put_buffer","i"); */
+	ENTER("put_buffer","i");
 
 	if (out_str && out_str[0]) {
-
-		/* truncate the string, to make sure that it won't go past right
-		   edge of
-		   screen */
-		if (col > 80)
-			col = 80;
-		(void)strncpy(tmp_str, out_str, 80 - col);
-		tmp_str[80 - col] = '\0';
-
-		if (cool_mvaddstr((int)row, (int)col, tmp_str) == ERR) {
+		if (cool_mvaddstr((int)row, (int)col, out_str) == ERR) {
 			abort();
 			/* clear msg_flag to avoid problems with unflushed
 			 * messages */
 			msg_flag = 0;
 			(void)sprintf(
-			    tmp_str,
+			    out_str,
 			    "error in put_buffer, row = %ld col = %ld\n", row,
 			    col);
-			Prt(tmp_str, 0, 0);
+			Prt(out_str, 0, 0);
 			bell();
 			/* wait so user can see error */
 			(void)sleep(2);
 		}
 	}
-	/*  LEAVE("put_buffer","i"); */
+	LEAVE("put_buffer","i");
 }
 
 void put_buffer_attr(out_str, row, col, attrs) char *out_str;
@@ -1052,12 +1042,6 @@ char inkeydir()
 
 /* Flush the buffer					-RAK-	*/
 void flush()
-#ifdef MAC
-{
-	/* Removed put_qio() call.  Reduces flashing.  Doesn't seem to hurt. */
-	FlushScreenKeys();
-}
-#else
 {
 #if defined(MSDOS)
 	while (kbhit())
@@ -1081,48 +1065,19 @@ void flush()
 	/* used to call put_qio() here to drain output, but it is not necessary
 	 */
 }
-#endif
 
 /* Clears given line of text				-RAK-	*/
 void Erase_Line(row, col) integer row;
 integer col;
-#ifdef MAC
-{
-	Rect line;
-
-	if (row == MSG_LINE && msg_flag)
-		msg_print(CNIL);
-
-	line.left = col;
-	line.top = row;
-	line.right = SCRN_COLS;
-	line.bottom = row + 1;
-	DEraseScreen(&line);
-}
-#else
 {
 	if (row == MSG_LINE && msg_flag)
 		msg_print(CNIL);
 	(void)move((int)row, (int)col);
 	clrtoeol();
 }
-#endif
 
 /* Clears screen */
 void clear_screen()
-#ifdef MAC
-{
-	Rect area;
-
-	if (msg_flag)
-		msg_print(CNIL);
-
-	area.left = area.top = 0;
-	area.right = SCRN_COLS;
-	area.bottom = SCRN_ROWS;
-	DEraseScreen(&area);
-}
-#else
 {
 	if (msg_flag)
 		msg_print("");
@@ -1135,7 +1090,6 @@ void clear_screen()
 	(void)clear();
 #endif
 }
-#endif
 
 void Clear_From(row) int row;
 #ifdef MAC

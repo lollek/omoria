@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-	// SYSPRV stays off except when needed
+	/* SYSPRV stays off except when needed */
 	game_state = GS_LOADING;
 	init_priv_switch();
 	priv_switch(0);
@@ -14,23 +14,23 @@ int main(int argc, char *argv[])
 	enter("main", "");
 #endif
 
-	// Get the time player entered game
+	/* Get the time player entered game */
 	start_time = time(NULL);
 
-	// Get the directory location of the image
+	/* Get the directory location of the image */
 	get_paths();
 
-	// Here comes the monsters....
+	/* Here comes the monsters.... */
 	load_monsters();
 
-	// Check to see if an update is in progress -DMF-
+	/* Check to see if an update is in progress -DMF- */
 	if (check_kickout()) {
 		writeln("Imoria is locked . . . Try playing conquest.");
 		writeln("Who knows *how* long this might take?");
 		exit_game();
 	}
 
-	// Some necessary initializations
+	/* Some necessary initializations */
 	msg_line = 1;
 	quart_height = trunc(SCREEN_HEIGHT / 4);
 	quart_width = trunc(SCREEN_WIDTH / 4);
@@ -46,17 +46,17 @@ int main(int argc, char *argv[])
 	old_mess_count = 0;
 	turn_counter = 100000;
 
-	// Grab a random seed from the clock
+	/* Grab a random seed from the clock */
 	seed = get_seed();
 
-	// Sort the objects by level
+	/* Sort the objects by level */
 	sort_objects();
 
-	// Init monster and treasure levels for allocate
+	/* Init monster and treasure levels for allocate */
 	init_m_level();
 	init_t_level();
 
-	// Init the store inventories
+	/* Init the store inventories */
 	store_init();
 	if (COST_ADJ != 1.00) {
 		price_adjust();
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	}
 	bank_init();
 
-	// Build the secret wizard and god passwords
+	/* Build the secret wizard and god passwords */
 	bpswd();
 
 	/*
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	 */
 	intro(argc, argv);
 
-	// Init an IO channel for QIO
+	/* Init an IO channel for QIO */
 	/* init_channel(); */
 
 	clear_screen();
@@ -89,9 +89,9 @@ int main(int argc, char *argv[])
 		main_menu();
 	}
 
-	// Generate a character, or retrieve old one...
+	/* Generate a character, or retrieve old one... */
 	if (save_file_name_is_set()) {
-		// Retrieve character
+		/* Retrieve character */
 		game_state = GS_IGNORE_CTRL_C;
 		generate = get_char(true);
 		py.flags.dead = true;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
 	} else {
 		vtype save_file_name;
-		// Create character
+		/* Create character */
 		is_from_file = false;
 		create_character();
 		strcpy(save_file_name, SAVE_FILE_PATH "/");
@@ -112,29 +112,29 @@ int main(int argc, char *argv[])
 		char_inven_init();
 
 		if (class[py.misc.pclass].mspell) {
-			// { Magic realm   }
+			/* { Magic realm   } */
 			learn_spell(&msg_flag);
 			gain_mana(spell_adj(INT));
 		} else if (class[py.misc.pclass].pspell) {
-			// { Clerical realm}
+			/* { Clerical realm} */
 			learn_prayer();
 			gain_mana(spell_adj(WIS));
 		} else if (class[py.misc.pclass].dspell) {
-			// { Druidical realm }
+			/* { Druidical realm } */
 			learn_druid();
 			gain_mana(druid_adj());
 		} else if (class[py.misc.pclass].bspell) {
-			// { Bardic realm }
+			/* { Bardic realm } */
 			learn_song(&msg_flag);
 			gain_mana(bard_adj());
 		}
 		py.misc.cmana = py.misc.mana;
-		randes_seed = seed; // Description seed
-		town_seed = seed;   // Town generation seed
+		randes_seed = seed; /* Description seed */
+		town_seed = seed;   /* Town generation seed */
 		magic_init(randes_seed);
 		generate = true;
 
-	} // end if (load/create character)
+	} /* end if (load/create character) */
 
 	if (py.misc.pclass == C_MONK) {
 		strcpy(bare_hands, "2d2");
@@ -148,32 +148,32 @@ int main(int argc, char *argv[])
 		is_magii = false;
 	}
 
-	// Begin the game
+	/* Begin the game */
 	replace_name();
 	set_gem_values();
 
-	set_difficulty(py.misc.diffic); // Set difficulty of game
+	set_difficulty(py.misc.diffic); /* Set difficulty of game */
 	player_max_exp =
 	    (integer)(player_exp[MAX_PLAYER_LEVEL - 1] * py.misc.expfact);
 	clear_from(1);
 	prt_stat_block();
 
-	// Turn on message trapping, if requested
-	//    if (want_trap) set_the_trap();
+	/* Turn on message trapping, if requested */
+	/*    if (want_trap) set_the_trap(); */
 
 	set_seed(get_seed());
 
-	// Loop till dead, or exit
+	/* Loop till dead, or exit */
 	while (true) {
-		if (generate) { // New level
+		if (generate) { /* New level */
 			generate_cave();
 		}
 
-		// Dungeon logic
+		/* Dungeon logic */
 		dungeon();
 		generate = true;
 
-		// Character gets buried, or respawns
+		/* Character gets buried, or respawns */
 		if (death) {
 			upon_death();
 			if (death) {
