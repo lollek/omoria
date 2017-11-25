@@ -5643,15 +5643,46 @@ void d__execute_command(integer *com_val)
 		reset_flag = true;
 		break;
 
+	case CTRL_B:
+		find_flag = true;
+		move_char(1);
+		break;
+
+	case CTRL_H:
+		find_flag = true;
+		move_char(4);
+		break;
+	case CTRL_I:
+		blow();
+		break;
+	case CTRL_J:
+		find_flag = true;
+		move_char(2);
+		break;
+	case CTRL_K:
+		find_flag = true;
+		move_char(8);
+		break;
+	case CTRL_L:
+		find_flag = true;
+		move_char(6);
+		break;
+
+
 	case CTRL_M:
 		show_location();
 		reset_flag = true;
+		break;
+	case CTRL_N:
+		find_flag = true;
+		move_char(3);
 		break;
 
 	case CTRL_P:
 		msg_print(old_msg);
 		reset_flag = true;
 		break;
+
 
 #if 0
   case CTRL: /* Password */
@@ -5664,22 +5695,23 @@ void d__execute_command(integer *com_val)
 		draw_cave();
 		reset_flag = true;
 		break;
-
-	case CTRL_Y: /* Save and quit */
-		if (total_winner) {
-			msg_print("You are a Total Winner, your character must "
-				  "be retired...");
-			msg_print("Use '@' when you are ready to quit.");
-		} else {
-			if (search_flag)
-				search_off();
-			py.flags.dead = false;
-			save_char(false);
-			py.flags.dead = true;
-		}
-		reset_flag = true;
+	case CTRL_S:
+		d__jamdoor();
 		break;
 
+	case CTRL_U:
+		find_flag = true;
+		move_char(9);
+		break;
+
+	case CTRL_X:
+		d__look();
+		reset_flag = true;
+		break;
+	case CTRL_Y:
+		find_flag = true;
+		move_char(7);
+		break;
 	case CTRL_Z: /* suspend  (we never get this, look at signalsuspend) */
 		reset_flag = true;
 		break;
@@ -5687,86 +5719,101 @@ void d__execute_command(integer *com_val)
 	case 27: /* ALT */
 		*com_val = inkey();
 		switch (*com_val) {
-		case 'a': /* age, hours */
+		case 'a': /* Armor help */
+			moria_help("Adventuring Armor_Class Armor_List");
+			draw_cave();
+			reset_flag = true;
+			break;
+		case 'b':
+			move_char(1);
+			break;
+		case 'c':
 			msg_print(show_char_age(out_val));
 			sprintf(out_val, "You have been playing for %s",
 				show_play_time(tmp_str));
 			msg_print(out_val);
 			reset_flag = true;
 			break;
+		case 'd':
+			sprintf(out_val, "The date is %s",
+				full_date_string(py.misc.cur_age, out2));
+			msg_print(out_val);
+			reset_flag = true;
+			break;
+		case 'e':
+			sprintf(out_val, "Character Classes Experience %4.2f",
+				py.misc.expfact);
+			moria_help(out_val);
+			draw_cave();
+			reset_flag = true;
+			break;
 
-		case 'b':
-			move_char(1);
-			break;
-		case 'j':
-			move_char(2);
-			break;
-		case 'n':
-			move_char(3);
-			break;
 		case 'h':
 			move_char(4);
 			break;
-		case 'l':
-			move_char(6);
-			break;
-		case 'y':
-			move_char(7);
+
+		case 'j':
+			move_char(2);
 			break;
 		case 'k':
 			move_char(8);
 			break;
+		case 'l':
+			move_char(6);
+			break;
+		case 'm':
+			moria_help("");
+			draw_cave();
+			reset_flag = true;
+			break;
+		case 'n':
+			move_char(3);
+			break;
+
+		case 'r':
+			msg_terse = !msg_terse;
+			if (msg_terse) {
+				msg_print("Question '-More-' toggled off");
+				msg_terse = true; /* try to only use true and false */
+			} else {
+				msg_print("Question '-More-' toggled on");
+				msg_terse = false;
+			}
+			reset_flag = true;
+			break;
+		case 's': /* Save and quit */
+			if (total_winner) {
+				msg_print("You are a Total Winner, your character must "
+					  "be retired...");
+				msg_print("Use '@' when you are ready to quit.");
+			} else {
+				if (search_flag)
+					search_off();
+				py.flags.dead = false;
+				save_char(false);
+				py.flags.dead = true;
+			}
+			reset_flag = true;
+			break;
+		case 't':
+			sprintf(out_val, "The current time is %s",
+				show_current_time(out2));
+			msg_print(out_val);
+			reset_flag = true;
+			break;
 		case 'u':
 			move_char(9);
 			break;
-		}
-		break;
 
-	case '+': /* exp to level up */
-		sprintf(out_val, "Character Classes Experience %4.2f",
-			py.misc.expfact);
-		moria_help(out_val);
-		draw_cave();
-		reset_flag = true;
-		break;
+		case 'w':
+			moria_help("Adventuring Weapons Weapon_List");
+			draw_cave();
+			reset_flag = true;
+			break;
 
-	case ' ': /* Run in a direction */
-	case '.':
-		y = char_row;
-		x = char_col;
-		if (d__get_dir("Which direction?", &dir_val, com_val, &y, &x)) {
-			if (PF.image == 0) {
-				find_flag = true;
-				move_char(dir_val);
-			} else {
-				/* make them walk it off */
-				switch (randint(25)) {
-				case 1:
-					msg_print("It touches you.");
-					break;
-				case 2:
-					msg_print("It hits you.");
-					break;
-				case 3:
-					msg_print("It bites you.");
-					break;
-				case 4:
-					msg_print("It crawles on you.");
-					break;
-				case 5:
-					msg_print("You miss it.");
-					break;
-				case 6:
-					msg_print("You hit it.");
-					break;
-				case 7:
-					msg_print("You have slain it.");
-					break;
-				default:
-					move_char(dir_val);
-					break;
-				}
-			}
+		case 'y':
+			move_char(7);
+			break;
 		}
 		break;
 
@@ -5823,9 +5870,9 @@ void d__execute_command(integer *com_val)
 		d__throw_object(false);
 		break;
 	case 'B':
-		d__examine_book();
+		find_flag = true;
+		move_char(1);
 		break;
-
 	case 'C': /* Show character */
 		if (get_com("Print to file? (Y/N)", &command)) {
 			switch (command) {
@@ -5844,7 +5891,6 @@ void d__execute_command(integer *com_val)
 		}
 		reset_flag = true;
 		break;
-
 	case 'D':
 		d__disarm_trap();
 		break;
@@ -5855,27 +5901,40 @@ void d__execute_command(integer *com_val)
 		d__refill_lamp();
 		break;
 
-	case 'G': /* Game date */
-		sprintf(out_val, "The date is %s",
-			full_date_string(py.misc.cur_age, out2));
-		msg_print(out_val);
-		reset_flag = true;
+	case 'H':
+		find_flag = true;
+		move_char(4);
 		break;
-
-	case 'H': /* Moria help */
-		moria_help("");
-		draw_cave();
-		reset_flag = true;
-		break;
-
 	case 'I': /* Selected inv */
 		reset_flag = true;
 		if (inven_command('I', &trash_ptr, "")) {
 			draw_cave();
 		}
 		break;
+	case 'J':
+		find_flag = true;
+		move_char(2);
+		break;
+	case 'K':
+		find_flag = true;
+		move_char(8);
+		break;
+	case 'L':
+		find_flag = true;
+		move_char(6);
+		break;
+	case 'M':
+		screen_map();
+		break;
+	case 'N':
+		find_flag = true;
+		move_char(3);
+		break;
 
-	case 'K': /*  Know Quest */
+	case 'P':
+		d__examine_book();
+		break;
+	case 'Q':
 		if (py.flags.quested) {
 			sprintf(out_val, "Current quest is to kill a %s",
 				c_list[py.misc.cur_quest].name);
@@ -5885,56 +5944,9 @@ void d__execute_command(integer *com_val)
 		}
 		reset_flag = true;
 		break;
-
-	case 'J':
-		d__jamdoor();
-		break;
-
-	case 'L':
-		d__look();
-		reset_flag = true;
-		break;
-
-	case 'M':
-		screen_map();
-		break;
-
-	case 'N': /* Name mstr */
-		mon_name();
-		reset_flag = true;
-		break;
-
-	case 'O': /* Old Mess */
-		msg_print("Try 'V'.");
-		/*  view_old_mess(); */
-		reset_flag = true;
-		break;
-
-	case 'P': /* Print map */
-		if ((py.flags.blind > 0) || (no_light())) {
-			msg_print("You can't see to draw a map.");
-		} else {
-			print_map();
-		}
-		reset_flag = true;
-		break;
-
-	case 'Q': /* Toggle -More- */
-		msg_terse = !msg_terse;
-		if (msg_terse) {
-			msg_print("Question '-More-' toggled off");
-			msg_terse = true; /* try to only use true and false */
-		} else {
-			msg_print("Question '-More-' toggled on");
-			msg_terse = false;
-		}
-		reset_flag = true;
-		break;
-
 	case 'R':
 		rest();
 		break;
-
 	case 'S': /* Search mode */
 		if (search_flag) {
 			search_off();
@@ -5947,24 +5959,15 @@ void d__execute_command(integer *com_val)
 			reset_flag = true;
 		}
 		break;
-
 	case 'T':
 		d__tunnel();
 		break;
-
-	case 'U': /* Use instrument */
-		blow();
+	case 'U':
+		find_flag = true;
+		move_char(9);
 		break;
-
-	case 'V': /* PreVious messages */
+	case 'V':
 		msg_record("", false);
-		reset_flag = true;
-		break;
-
-	case 'W': /* What time */
-		sprintf(out_val, "The current time is %s",
-			show_current_time(out2));
-		msg_print(out_val);
 		reset_flag = true;
 		break;
 
@@ -5996,15 +5999,12 @@ void d__execute_command(integer *com_val)
 			msg_print("You are not carrying a light.");
 		}
 		break;
-
+	case 'Y':
+		find_flag = true;
+		move_char(7);
+		break;
 	case 'Z':
 		use_staff();
-		break;
-
-	case ']': /* Armor help */
-		moria_help("Adventuring Armor_Class Armor_List");
-		draw_cave();
-		reset_flag = true;
 		break;
 
 	case 'a':
@@ -6109,23 +6109,6 @@ void d__execute_command(integer *com_val)
 	case 'z':
 		aim_wand();
 		break;
-	case '|': /* Weapon help */
-		moria_help("Adventuring Weapons Weapon_List");
-		draw_cave();
-		reset_flag = true;
-		break;
-
-	case 'g':
-		if (PM.cur_age.hour > 10) {
-			PM.cur_age.hour = 5;
-			PM.cur_age.secs = 290;
-		} else {
-			PM.cur_age.hour = 17;
-			PM.cur_age.secs = 290;
-		}
-		reset_flag = true;
-		break;
-
 	default:
 		reset_flag = true;
 

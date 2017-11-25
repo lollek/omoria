@@ -7,56 +7,98 @@ void help()
 	/*{ Help for available commands }*/
 
 	clear_screen();
-	prt(" Movement: Keypad (1-9) or roguelike (hjkl)", 1, 1);
-	prt("A       Aim (throw) an item   | a       Aim projectile", 2, 1);
-	prt("B       Browse a book         | c <Dir> Close a door", 3, 1);
-	prt("C       Display character     | c <inv> Clean inventory", 4, 1);
-	prt("D <Dir> Disarm a trap/chest   | d       Drop an item", 5, 1);
-	prt("E       Eat some food         | ", 6, 1);
-	prt("F       Fill lamp with oil    | f <Dir> Force / bash something", 7,
-	    1);
-	prt("G       Game time and date    | i       Inventory list", 8, 1);
-	prt("H       Help                  | m       Cast a magic spell", 9, 1);
-	prt("I       Inven of one item type| m       Use a music book", 10, 1);
-	prt("J <Dir> Jam a door with spike | o <Dir> Open a door/chest", 11, 1);
-	prt("L <Dir> Look in a direction   | p       Read a prayer", 12, 1);
-	prt("M       Show a minimap        | p       Play an instrument", 13,
-	    1);
-	prt("P       Print map             | q       Quaff a potion", 14, 1);
-	prt("R       Rest for a period     | r       Read a scroll", 15, 1);
-	prt("S       Search Mode           | s       Search for hidden doors",
-	    16, 1);
-	prt("T <Dir> Tunnel                | t       Take off an item", 17, 1);
-	prt("U       Use miscellaneous item| v       Version and credits", 18,
-	    1);
-	prt("W       Current time and date | w       Wear/Wield an item", 19,
-	    1);
-	prt("X       Toggle light source   | x       Exchange weapon", 20, 1);
-	prt("Z       Zap (use) a staff     | z       Zap (use) a wand", 21, 1);
+	prt(" Movement: Keypad (1-9) or roguelike (hjklyubn)."
+	    " ~ means a direction. Hold shift with roguelike keys to run   ", 1, 1);
+
+	prt(" a     Aim projectile         |"
+	    " A     Aim (throw) an item    |"
+	    "^A     (Nothing)              |"
+	    "M-A    Armor (manual)         ", 4, 1);
+	prt(" c ~   Close a door           |"
+	    " C     Display character      |"
+	    "^C     Quit the game          |"
+	    "M-C    Character age          ", 5, 1);
+	prt(" d     Drop an item           |"
+	    " D ~   Disarm a trap/chest    |"
+	    "^D     Show game date         |"
+	    "M-D    (Nothing)              ", 6, 1);
+	prt(" e     (Nothing)              |"
+	    " E     Eat some food          |"
+	    "^E     (Nothing               |"
+	    "M-E    Experience (manual)    ", 7, 1);
+	prt(" f ~   Force / bash           |"
+	    " F     Fill lamp with oil     |"
+	    "^F     (Nothing               |"
+	    "M-F    (Nothing)              ", 8, 1);
+	prt(" g     (Nothing)              |"
+	    " G     (Nothing)              |"
+	    "^G     (Nothing               |"
+	    "M-G    (Nothing)              ", 9, 1);
+	prt(" i     Inventory list         |"
+	    " I     Inven of one item type |"
+	    "^I     Use instrument         |"
+	    "M-I    (Nothing)              ", 10, 1);
+	prt(" m     Magic / Music / Monk   |"
+	    " M     Show a minimap         |"
+	    "^M     Show a zoomed out map  |"
+	    "M-M    Show manual            ", 11, 1);
+	prt(" o ~   Open a door or chest   |"
+	    " O     (Nothing)              |"
+	    "^O     (Nothing               |"
+	    "M-O    (Nothing)              ", 12, 1);
+	prt(" p     Prayer / Play          |"
+	    " P     Peruse a book          |"
+	    "^P     Print last message     |"
+	    "M-P    (Nothing)              ", 13, 1);
+	prt(" q     Quaff a potion         |"
+	    " Q     See current quest      |"
+	    "^Q     (Nothing               |"
+	    "M-Q    (Nothing)              ", 14, 1);
+	prt(" r     Read a scroll          |"
+	    " R     Rest for a while       |"
+	    "^R     Redraw the screen      |"
+	    "M-R    Toggle terse mode      ", 15, 1);
+	prt(" s     Search for hidden doors|"
+	    " S     Search mode            |"
+	    "^S ~   Spike a door           |"
+	    "M-S    Save and quit          ", 16, 1);
+	prt(" t     Take off an item       |"
+	    " T ~   Tunnel                 |"
+	    "^T     (Nothing)              |"
+	    "M-T    Show real world time   ", 17, 1);
+	prt(" v     Version and credits    |"
+	    " V     Previous messages      |"
+	    "^V     (Nothing               |"
+	    "M-V    (Nothing)              ", 18, 1);
+	prt(" w     Wear/Wield an item     |"
+	    " W     (Nothing)              |"
+	    "^W     (Nothing               |"
+	    "M-W    Weapons (manual)       ", 19, 1);
+	prt(" x     Exchange weapon        |"
+	    " X     Toggle light source    |"
+	    "^X     Examine a direction    |"
+	    "M-X    (Nothing)              ", 20, 1);
+	prt(" z     Zap a wand             |"
+	    " Z     Zap a staff            |"
+	    "^Z     (Nothing               |"
+	    "M-Z    (Nothing)              ", 21, 1);
+	prt(" <     Go up an up-staircase  |"
+	    " >     Go down a down-staircase",22, 1);
+	prt(" /     Identify a character   |"
+	    " ?     Display this panel      ",23, 1);
 	pause_game(24);
 
 	clear_screen();
-	prt("+       Experience for levels | . <Dir> Move in direction", 1, 1);
-	prt("/       Identify a character  |   <Dir> Move in direction", 2, 1);
-	prt("<       Go up an up-staircase | >       Go down a down-staircase",
-	    3, 1);
-	prt("]       Armor list            | |       Weapon list", 4, 1);
-	prt("^C      Quit the game         | ?       Display this panel", 5, 1);
-	prt("^R      Redraw the screen     |", 6, 1);
-	prt("^M      Show a zoomed out map |", 7, 1);
-	prt("^P      Print the last message|", 8, 1);
-	prt("^Y      Save and quit         |", 9, 1);
-	prt("M-a     Age of character      |", 10, 1);
-	prt("Directory of Shops:", 14, 1);
-	prt("     A   Alchemy Shop                M   Magic Shop", 15, 1);
-	prt("     B   Bank                        P   Trading Post", 16, 1);
-	prt("     C   Casino                      Q   Questor's Home", 17, 1);
-	prt("     D   All-Nite Deli               R   Armory", 18, 1);
-	prt("     G   General Store               T   Temple", 19, 1);
-	prt("     I   Inn                         U   Music Shop", 20, 1);
-	prt("     J   Gem Shop                    W   Weapon Smith", 21, 1);
-	prt("     L   Library                     X   Money Exchange", 22, 1);
-	prt("     +   Unknown", 23, 1);
+	prt("Directory of Shops:                                ", 1, 1);
+	prt("     A   Alchemy Shop                M   Magic Shop", 3, 1);
+	prt("     B   Bank                        P   Trading Post", 4, 1);
+	prt("     C   Casino                      Q   Questor's Home", 5, 1);
+	prt("     D   All-Nite Deli               R   Armory", 6, 1);
+	prt("     G   General Store               T   Temple", 7, 1);
+	prt("     I   Inn                         U   Music Shop", 8, 1);
+	prt("     J   Gem Shop                    W   Weapon Smith", 9, 1);
+	prt("     L   Library                     X   Money Exchange", 10, 1);
+	prt("     +   Unknown", 11, 1);
 	pause_game(24);
 	draw_cave();
 }
