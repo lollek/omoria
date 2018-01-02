@@ -1300,40 +1300,21 @@ char *str_buff;
 /****************************************************************/
 
 /* Used to verify a choice - user gets the chance to abort choice.  -CJS- */
-int get_check(prompt) char *prompt;
+int get_check(char const *prompt)
 {
 	int res;
-#ifdef MAC
-	long y, x; /* ??? Should change to int or short.  */
-#else
 	int y, x;
-#endif
 
 	Prt(prompt, 0, 0);
-#ifdef MAC
-	GetScreenCursor(&x, &y);
-#else
 	getyx(stdscr, y, x);
-#if defined(lint)
-	/* prevent message 'warning: y is unused' */
-	x = y;
-#endif
-#ifdef LINT_ARGS
-	/* prevent message about y never used for MSDOS systems */
-	res = y;
-#endif
-#endif
 
 	if (x > 73)
-		(void)move(0, 73);
-#ifdef MAC
-	DWriteScreenStringAttr(" [y/n]", ATTR_NORMAL);
-#else
-	(void)addstr(" [y/n]");
-#endif
+		(void) move(0, 73);
+	(void) addstr(" [y/n]");
 	do {
 		res = inkey();
-	} while (res == ' ');
+	} while (res != 'y' && res != 'Y' && res != 'n' && res != 'N');
+
 	Erase_Line(0, 0);
 	if (res == 'Y' || res == 'y')
 		return TRUE;

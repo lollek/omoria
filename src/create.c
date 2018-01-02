@@ -87,24 +87,16 @@ void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 {
 	/*	{ Get minimum stats the character wants			-DMF-
 	 * } */
-	string yes_no;
-
-	prt("Do you wish to try for minimum statistics? ", 1, 1);
-	if (get_string(yes_no, 1, 44, 1)) {
-		if ((yes_no[0] == 'y') || (yes_no[0] == 'Y')) {
-			*minning = true;
-			user[STR] = cc__get_min_stat("STR", max_r[STR]);
-			user[INT] = cc__get_min_stat("INT", max_r[INT]);
-			user[WIS] = cc__get_min_stat("WIS", max_r[WIS]);
-			user[DEX] = cc__get_min_stat("DEX", max_r[DEX]);
-			user[CON] = cc__get_min_stat("CON", max_r[CON]);
-			user[CHR] = cc__get_min_stat("CHR", max_r[CHR]);
-			prt("Printing Stats...", 1, 1);
-			prt_6_stats(user, NULL, 3, 65);
-		}
+	if (get_check("Do you wish to try for minimum statistics?")) {
+		*minning = true;
+		user[STR] = cc__get_min_stat("STR", max_r[STR]);
+		user[INT] = cc__get_min_stat("INT", max_r[INT]);
+		user[WIS] = cc__get_min_stat("WIS", max_r[WIS]);
+		user[DEX] = cc__get_min_stat("DEX", max_r[DEX]);
+		user[CON] = cc__get_min_stat("CON", max_r[CON]);
+		user[CHR] = cc__get_min_stat("CHR", max_r[CHR]);
+		prt_6_stats(user, NULL, 3, 65);
 	}
-	erase_line(1, 1);
-	/*	printf("\n\nexit get_mins\n\n"); fflush(stdout); */
 }
 /*//////////////////////////////////////////////////////////////////// */
 integer cc__get_stat()
@@ -226,6 +218,7 @@ boolean cc__choose_race()
 	exit_flag = false;
 
 	do {
+		move(3, 14);
 		inkey_flush(&s);
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= MAX_RACES) && (i2 >= 1)) {
@@ -291,8 +284,10 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 	boolean return_value = false;
 
 	if (!*minning) {
-		/* figure out what the current bonuses are so the player has a
-		 * clue */
+		/*
+                 * Figure out what the current bonuses are
+                 * so the player has a clue
+                 */
 		py.misc.dis_th = tohit_adj();
 		py.misc.dis_td = todam_adj();
 		py.misc.dis_tac = toac_adj();
@@ -302,7 +297,7 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 			put_misc1();
 			put_stats();
 
-			prt("Press <LF> to reroll, any other key to continue:",
+			prt("Press 'R' to reroll, <RETURN> to continue:",
 			    21, 3);
 			*printed_once = true;
 		} else {
@@ -311,8 +306,10 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 			prt("", 21, 51);
 		} /* endif printed_once */
 
-		inkey_flush(&s);
-		return_value = (s != 10);
+		while (s != 10 && s != 'R') {
+			inkey_flush(&s);
+			return_value = (s != 'R');
+		}
 
 	} else { /* minning */
 
@@ -528,6 +525,7 @@ boolean cc__get_sex()
 		prt("m) Male       f) Female", 22, 3);
 		prt("", 21, 29);
 		do {
+			move(4, 14);
 			inkey_flush(&s);
 			if (s == 'f') {
 				strcpy(py.misc.sex, "Female");
@@ -636,6 +634,7 @@ boolean cc__get_class()
 	exit_flag = false;
 
 	do {
+		move(5, 14);
 		inkey_flush(&s);
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= i3) && (i2 >= 1)) {

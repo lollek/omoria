@@ -64,7 +64,7 @@ void main_menu()
 	current_row++;
 
 	prt("Select character to load it. ", current_row++, 1);
-	prt("Press ESCAPE to create a new character", current_row++, 1);
+	prt("Press 'N' to create a new character", current_row++, 1);
 
 	for (;;) {
 		unsigned char selection;
@@ -73,7 +73,7 @@ void main_menu()
 			break; /* No characters to load */
 
 		inkey_flush((char *)&selection);
-		if (selection == ESCAPE)
+		if (selection == 'N')
 			break;
 
 		selection -= '0';
