@@ -5668,7 +5668,6 @@ void d__execute_command(integer *com_val)
 		move_char(6);
 		break;
 
-
 	case CTRL_M:
 		show_location();
 		reset_flag = true;
@@ -5682,7 +5681,6 @@ void d__execute_command(integer *com_val)
 		msg_print(old_msg);
 		reset_flag = true;
 		break;
-
 
 #if 0
   case CTRL: /* Password */
@@ -5719,8 +5717,9 @@ void d__execute_command(integer *com_val)
 	case 27: /* ALT */
 		*com_val = inkey();
 #if DO_DEBUG
-	fprintf(debug_file, ": command: %ld '%c'\n", *com_val, *com_val);
-	fflush(debug_file);
+		fprintf(debug_file, ": command: %ld '%c'\n", *com_val,
+			*com_val);
+		fflush(debug_file);
 #endif
 		switch (*com_val) {
 		case 'a': /* Armor help */
@@ -5778,7 +5777,8 @@ void d__execute_command(integer *com_val)
 			msg_terse = !msg_terse;
 			if (msg_terse) {
 				msg_print("Question '-More-' toggled off");
-				msg_terse = true; /* try to only use true and false */
+				msg_terse =
+				    true; /* try to only use true and false */
 			} else {
 				msg_print("Question '-More-' toggled on");
 				msg_terse = false;
@@ -5787,9 +5787,11 @@ void d__execute_command(integer *com_val)
 			break;
 		case 's': /* Save and quit */
 			if (total_winner) {
-				msg_print("You are a Total Winner, your character must "
+				msg_print("You are a Total Winner, your "
+					  "character must "
 					  "be retired...");
-				msg_print("Use '@' when you are ready to quit.");
+				msg_print(
+				    "Use '@' when you are ready to quit.");
 			} else {
 				if (search_flag)
 					search_off();

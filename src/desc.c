@@ -340,7 +340,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file,": obj start: >%s<\n",tmp_val);
+		fprintf(debug_file, ": obj start: >%s<\n", tmp_val);
 	}
 #endif
 
@@ -351,7 +351,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file,": obj thmp1: >%s<\n",tmp_val);
+		fprintf(debug_file, ": obj thmp1: >%s<\n", tmp_val);
 	}
 #endif
 
@@ -362,7 +362,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file,": obj thmp2: >%s<\n",tmp_val);
+		fprintf(debug_file, ": obj thmp2: >%s<\n", tmp_val);
 	}
 #endif
 
@@ -375,7 +375,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file,": obj thmp3: >%s<\n",tmp_val);
+		fprintf(debug_file, ": obj thmp3: >%s<\n", tmp_val);
 	}
 #endif
 
@@ -389,7 +389,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file,": obj thmp4: >%s<\n",tmp_val);
+		fprintf(debug_file, ": obj thmp4: >%s<\n", tmp_val);
 	}
 #endif
 
@@ -403,7 +403,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file,": obj thmp5: >%s<\n",tmp_val);
+		fprintf(debug_file, ": obj thmp5: >%s<\n", tmp_val);
 	}
 #endif
 

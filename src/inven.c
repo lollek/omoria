@@ -507,55 +507,55 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 static char const *ic__equip_print_prefix(integer position)
 {
 	switch (position) {
-		case Equipment_primary:
-			return " You are wielding   : ";
-			break;
-		case Equipment_helm:
-			return " Worn on head       : ";
-			break;
-		case Equipment_amulet:
-			return " Worn around neck   : ";
-			break;
-		case Equipment_armor:
-			return " Worn on body       : ";
-			break;
-		case Equipment_belt:
-			return " Worn at waist      : ";
-			break;
-		case Equipment_shield:
-			return " Worn on arm        : ";
-			break;
-		case Equipment_gloves:
-			return " Worn on hands      : ";
-			break;
-		case Equipment_bracers:
-			return " Worn on wrists     : ";
-			break;
-		case Equipment_right_ring:
-			return " Worn on right hand : ";
-			break;
-		case Equipment_left_ring:
-			return " Worn on left hand  : ";
-			break;
-		case Equipment_boots:
-			return " Worn on feet       : ";
-			break;
-		case Equipment_cloak:
-			return " Worn about body    : ";
-			break;
-		case Equipment_light:
-			if (PF.light_on && (equipment[position].p1 > 0)) {
-				return " Light source (On)  : ";
-			} else {
-				return " Light source (Off) : ";
-			}
-			break;
-		case Equipment_secondary:
-			return " Secondary weapon   : ";
-			break;
-		default:
-			return " Unknown value      : ";
-			break;
+	case Equipment_primary:
+		return " You are wielding   : ";
+		break;
+	case Equipment_helm:
+		return " Worn on head       : ";
+		break;
+	case Equipment_amulet:
+		return " Worn around neck   : ";
+		break;
+	case Equipment_armor:
+		return " Worn on body       : ";
+		break;
+	case Equipment_belt:
+		return " Worn at waist      : ";
+		break;
+	case Equipment_shield:
+		return " Worn on arm        : ";
+		break;
+	case Equipment_gloves:
+		return " Worn on hands      : ";
+		break;
+	case Equipment_bracers:
+		return " Worn on wrists     : ";
+		break;
+	case Equipment_right_ring:
+		return " Worn on right hand : ";
+		break;
+	case Equipment_left_ring:
+		return " Worn on left hand  : ";
+		break;
+	case Equipment_boots:
+		return " Worn on feet       : ";
+		break;
+	case Equipment_cloak:
+		return " Worn about body    : ";
+		break;
+	case Equipment_light:
+		if (PF.light_on && (equipment[position].p1 > 0)) {
+			return " Light source (On)  : ";
+		} else {
+			return " Light source (Off) : ";
+		}
+		break;
+	case Equipment_secondary:
+		return " Secondary weapon   : ";
+		break;
+	default:
+		return " Unknown value      : ";
+		break;
 	}
 }
 
@@ -565,12 +565,8 @@ void inv__equip_pos_string(vtype out_val, integer equip_pos, integer counter)
 
 	inven_temp->data = equipment[equip_pos];
 	objdes(tmp_buf, inven_temp, true);
-	sprintf(out_val, "%c%c%c%s%s",
-			cur_insure(),
-			('a' + counter - 1),
-			cur_char2(),
-			ic__equip_print_prefix(equip_pos),
-			tmp_buf);
+	sprintf(out_val, "%c%c%c%s%s", cur_insure(), ('a' + counter - 1),
+		cur_char2(), ic__equip_print_prefix(equip_pos), tmp_buf);
 }
 
 void ic__show_equip(integer *scr_state, integer r1)
@@ -581,7 +577,7 @@ void ic__show_equip(integer *scr_state, integer r1)
 		prt("", equip_ctr + 3, 1);
 	} else if (r1 > 0) { /*{ R1 = 0 dummy call             }*/
 		prt_equipment_args(2, 1, r1, true);
-		*scr_state = 2;     /*{ Set state of screen   }*/
+		*scr_state = 2; /*{ Set state of screen   }*/
 	}
 }
 

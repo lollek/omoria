@@ -26,8 +26,8 @@ extern int call_depth;
 void init_debug(void);
 void enter(char *routine_name, char *marker);
 void leave(char *routine_name, char *marker);
-void return_dbg(char *routine_name, char *marker, char typestr,
-		       char *descript, void *valptr);
+void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
+		void *valptr);
 void log_msg(char *str);
 
 #endif /* DEBUG_H */

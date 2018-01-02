@@ -228,10 +228,7 @@ void prt_field(vtype info, integer row, integer column)
 	put_buffer(out_val1, row, column);
 }
 
-void prt_title()
-{
-	prt_field(py.misc.title, TITLE_ROW, STAT_COLUMN);
-}
+void prt_title() { prt_field(py.misc.title, TITLE_ROW, STAT_COLUMN); }
 
 void prt_hp()
 {
@@ -253,10 +250,7 @@ void prt_hp()
 	}
 }
 
-void prt_pac()
-{
-	prt_num("", py.misc.dis_ac, AC_ROW, STAT_COLUMN + 6);
-}
+void prt_pac() { prt_num("", py.misc.dis_ac, AC_ROW, STAT_COLUMN + 6); }
 
 void prt_gold()
 {
@@ -389,10 +383,7 @@ void prt_quested()
 	}
 }
 
-void prt_winner()
-{
-	put_buffer("*Winner*", WINNER_ROW, WINNER_COLUMN);
-}
+void prt_winner() { put_buffer("*Winner*", WINNER_ROW, WINNER_COLUMN); }
 
 void prt_experience()
 {
@@ -435,10 +426,7 @@ void prt_mana()
 	}
 }
 
-void prt_level()
-{
-	prt_num("", py.misc.lev, LEVEL_ROW, STAT_COLUMN + 6);
-}
+void prt_level() { prt_num("", py.misc.lev, LEVEL_ROW, STAT_COLUMN + 6); }
 
 void prt_a_stat(stat_set tstat)
 {

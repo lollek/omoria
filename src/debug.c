@@ -12,10 +12,7 @@ boolean const do_debug_funcall = true;
 FILE *debug_file = NULL;
 int call_depth = 0;
 
-void init_debug(void)
-{
-	debug_file = (FILE *)fopen("debug.out", "w");
-}
+void init_debug(void) { debug_file = (FILE *)fopen("debug.out", "w"); }
 
 void enter(char *routine_name, char *marker)
 {
@@ -25,7 +22,7 @@ void enter(char *routine_name, char *marker)
 	call_depth++;
 
 	fprintf(debug_file, ":::%4d: ENTER %s | %s |\n", call_depth,
-			routine_name, marker);
+		routine_name, marker);
 
 	/*  fprintf(debug_file,":  In    %ld */
 	/*  %ld\n",panel_row_min,panel_row_max); */

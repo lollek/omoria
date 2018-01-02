@@ -285,9 +285,9 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 
 	if (!*minning) {
 		/*
-                 * Figure out what the current bonuses are
-                 * so the player has a clue
-                 */
+		 * Figure out what the current bonuses are
+		 * so the player has a clue
+		 */
 		py.misc.dis_th = tohit_adj();
 		py.misc.dis_td = todam_adj();
 		py.misc.dis_tac = toac_adj();
@@ -297,8 +297,8 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 			put_misc1();
 			put_stats();
 
-			prt("Press 'R' to reroll, <RETURN> to continue:",
-			    21, 3);
+			prt("Press 'R' to reroll, <RETURN> to continue:", 21,
+			    3);
 			*printed_once = true;
 		} else {
 			upd_misc1();

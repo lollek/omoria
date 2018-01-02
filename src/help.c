@@ -8,84 +8,105 @@ void help()
 
 	clear_screen();
 	prt(" Movement: Keypad (1-9) or roguelike (hjklyubn)."
-	    " ~ means a direction. Hold shift with roguelike keys to run   ", 1, 1);
+	    " ~ means a direction. Hold shift with roguelike keys to run   ",
+	    1, 1);
 
 	prt(" a     Aim projectile         |"
 	    " A     Aim (throw) an item    |"
 	    "^A     (Nothing)              |"
-	    "M-A    Armor (manual)         ", 4, 1);
+	    "M-A    Armor (manual)         ",
+	    4, 1);
 	prt(" c ~   Close a door           |"
 	    " C     Display character      |"
 	    "^C     Quit the game          |"
-	    "M-C    Character age          ", 5, 1);
+	    "M-C    Character age          ",
+	    5, 1);
 	prt(" d     Drop an item           |"
 	    " D ~   Disarm a trap/chest    |"
 	    "^D     Show game date         |"
-	    "M-D    (Nothing)              ", 6, 1);
+	    "M-D    (Nothing)              ",
+	    6, 1);
 	prt(" e     (Nothing)              |"
 	    " E     Eat some food          |"
 	    "^E     (Nothing               |"
-	    "M-E    Experience (manual)    ", 7, 1);
+	    "M-E    Experience (manual)    ",
+	    7, 1);
 	prt(" f ~   Force / bash           |"
 	    " F     Fill lamp with oil     |"
 	    "^F     (Nothing               |"
-	    "M-F    (Nothing)              ", 8, 1);
+	    "M-F    (Nothing)              ",
+	    8, 1);
 	prt(" g     (Nothing)              |"
 	    " G     (Nothing)              |"
 	    "^G     (Nothing               |"
-	    "M-G    (Nothing)              ", 9, 1);
+	    "M-G    (Nothing)              ",
+	    9, 1);
 	prt(" i     Inventory list         |"
 	    " I     Inven of one item type |"
 	    "^I     Use instrument         |"
-	    "M-I    (Nothing)              ", 10, 1);
+	    "M-I    (Nothing)              ",
+	    10, 1);
 	prt(" m     Magic / Music / Monk   |"
 	    " M     Show a minimap         |"
 	    "^M     Show a zoomed out map  |"
-	    "M-M    Show manual            ", 11, 1);
+	    "M-M    Show manual            ",
+	    11, 1);
 	prt(" o ~   Open a door or chest   |"
 	    " O     (Nothing)              |"
 	    "^O     (Nothing               |"
-	    "M-O    (Nothing)              ", 12, 1);
+	    "M-O    (Nothing)              ",
+	    12, 1);
 	prt(" p     Prayer / Play          |"
 	    " P     Peruse a book          |"
 	    "^P     Print last message     |"
-	    "M-P    (Nothing)              ", 13, 1);
+	    "M-P    (Nothing)              ",
+	    13, 1);
 	prt(" q     Quaff a potion         |"
 	    " Q     See current quest      |"
 	    "^Q     (Nothing               |"
-	    "M-Q    (Nothing)              ", 14, 1);
+	    "M-Q    (Nothing)              ",
+	    14, 1);
 	prt(" r     Read a scroll          |"
 	    " R     Rest for a while       |"
 	    "^R     Redraw the screen      |"
-	    "M-R    Toggle terse mode      ", 15, 1);
+	    "M-R    Toggle terse mode      ",
+	    15, 1);
 	prt(" s     Search for hidden doors|"
 	    " S     Search mode            |"
 	    "^S ~   Spike a door           |"
-	    "M-S    Save and quit          ", 16, 1);
+	    "M-S    Save and quit          ",
+	    16, 1);
 	prt(" t     Take off an item       |"
 	    " T ~   Tunnel                 |"
 	    "^T     (Nothing)              |"
-	    "M-T    Show real world time   ", 17, 1);
+	    "M-T    Show real world time   ",
+	    17, 1);
 	prt(" v     Version and credits    |"
 	    " V     Previous messages      |"
 	    "^V     (Nothing               |"
-	    "M-V    (Nothing)              ", 18, 1);
+	    "M-V    (Nothing)              ",
+	    18, 1);
 	prt(" w     Wear/Wield an item     |"
 	    " W     (Nothing)              |"
 	    "^W     (Nothing               |"
-	    "M-W    Weapons (manual)       ", 19, 1);
+	    "M-W    Weapons (manual)       ",
+	    19, 1);
 	prt(" x     Exchange weapon        |"
 	    " X     Toggle light source    |"
 	    "^X     Examine a direction    |"
-	    "M-X    (Nothing)              ", 20, 1);
+	    "M-X    (Nothing)              ",
+	    20, 1);
 	prt(" z     Zap a wand             |"
 	    " Z     Zap a staff            |"
 	    "^Z     (Nothing               |"
-	    "M-Z    (Nothing)              ", 21, 1);
+	    "M-Z    (Nothing)              ",
+	    21, 1);
 	prt(" <     Go up an up-staircase  |"
-	    " >     Go down a down-staircase",22, 1);
+	    " >     Go down a down-staircase",
+	    22, 1);
 	prt(" /     Identify a character   |"
-	    " ?     Display this panel      ",23, 1);
+	    " ?     Display this panel      ",
+	    23, 1);
 	pause_game(24);
 
 	clear_screen();

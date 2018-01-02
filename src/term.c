@@ -502,7 +502,7 @@ int cool_mvaddstr(int row, int col, char const *str)
 /* Dump IO to buffer					-RAK-	*/
 void Put_Buffer(char const *out_str, integer row, integer col)
 {
-	ENTER("put_buffer","i");
+	ENTER("put_buffer", "i");
 
 	if (out_str && out_str[0]) {
 		if (cool_mvaddstr((int)row, (int)col, out_str) == ERR) {
@@ -520,7 +520,7 @@ void Put_Buffer(char const *out_str, integer row, integer col)
 			(void)sleep(2);
 		}
 	}
-	LEAVE("put_buffer","i");
+	LEAVE("put_buffer", "i");
 }
 
 void put_buffer_attr(out_str, row, col, attrs) char *out_str;
@@ -1309,8 +1309,8 @@ int get_check(char const *prompt)
 	getyx(stdscr, y, x);
 
 	if (x > 73)
-		(void) move(0, 73);
-	(void) addstr(" [y/n]");
+		(void)move(0, 73);
+	(void)addstr(" [y/n]");
 	do {
 		res = inkey();
 	} while (res != 'y' && res != 'Y' && res != 'n' && res != 'N');
