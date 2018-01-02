@@ -6,7 +6,7 @@
 #if DO_DEBUG
 /* Toggleables */
 boolean const do_debug_objdes = false;
-boolean const do_debug_funcall = false;
+boolean const do_debug_funcall = true;
 
 /* Debug variables */
 FILE *debug_file = NULL;
@@ -14,7 +14,7 @@ int call_depth = 0;
 
 void init_debug(void)
 {
-	debug_file = (FILE *)fopen("Debug.out", "w");
+	debug_file = (FILE *)fopen("debug.out", "w");
 }
 
 void enter(char *routine_name, char *marker)

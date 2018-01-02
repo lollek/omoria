@@ -5718,6 +5718,10 @@ void d__execute_command(integer *com_val)
 
 	case 27: /* ALT */
 		*com_val = inkey();
+#if DO_DEBUG
+	fprintf(debug_file, ": command: %ld '%c'\n", *com_val, *com_val);
+	fflush(debug_file);
+#endif
 		switch (*com_val) {
 		case 'a': /* Armor help */
 			moria_help("Adventuring Armor_Class Armor_List");

@@ -759,6 +759,8 @@ void create_character()
 	  { expensive CPU wise.						}
 	*/
 
+	ENTER("create_character", "");
+
 	for (tstat = STR; tstat <= CHR; tstat++) {
 		best[(int)tstat] = 3;
 	}
@@ -805,6 +807,8 @@ void create_character()
 	get_name();
 	/*	get_ssn(); */
 	pause_exit(24, PLAYER_EXIT_PAUSE);
+
+	LEAVE("create_character", "");
 }
 
 /*//////////////////////////////////////////////////////////////////// */
@@ -1027,6 +1031,8 @@ void set_gem_values()
 {
 	integer count;
 
+	ENTER("set_gem_values", "");
+
 	for (count = 1; count <= MAX_OBJECTS; count++) {
 		/*with object_list[count] do*/
 		if ((strstr(object_list[count].name, "Finely cut") != NULL) &&
@@ -1228,6 +1234,8 @@ void set_gem_values()
 			}
 		} /* end if (finely cut) */
 	}	 /* end for */
+
+	LEAVE("set_gem_values", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

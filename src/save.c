@@ -20,6 +20,9 @@ static void data_exception()
 	clear_from(1);
 	prt("Data Corruption Error.", 1, 1);
 	prt(" ", 2, 1);
+
+	/* We'll put it in the debug log as well */
+	MSG("Data Corruption Error");
 	exit_game();
 }
 
@@ -580,8 +583,11 @@ boolean save_char(boolean quick)
 	encrypt_state cf_state;
 	GDBM_FILE f2;
 	boolean flag;
+	FILE *f1;
 
-	FILE *f1 = sc__open_save_file();
+	ENTER("save_char", "");
+
+	f1 = sc__open_save_file();
 	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
 
 	flag = sc__open_master(&f2);
@@ -623,6 +629,7 @@ boolean save_char(boolean quick)
 
 	set_seed(get_seed());
 
+	LEAVE("save_char", "");
 	return flag;
 }
 
@@ -1516,9 +1523,10 @@ boolean get_char(boolean prop)
 	encrypt_state cf_state;
 	integer check_time;
 
+	ENTER("get_char", "");
+
 	dun_flag = false;
 	paniced = false;
-
 	gc__open_save_file(&f1, sc__get_file_name(), &paniced);
 	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
 
@@ -1544,7 +1552,6 @@ boolean get_char(boolean prop)
 		if (was_dead) {
 			/* nuke claim_check entry, they are lucky to be alive */
 			PM.claim_check = 0;
-
 			msg_print(" ");
 		}
 
@@ -1587,8 +1594,9 @@ boolean get_char(boolean prop)
 	if (paniced)
 		data_exception();
 
+	LEAVE("get_char", "");
 	return dun_flag;
-} /* end get_char */
+}
 
 void restore_char(vtype fnam, boolean present, boolean undead)
 {
@@ -1609,6 +1617,8 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 	integer deaths;
 	master_key mkey;
 	master_entry mentry;
+
+	ENTER("restore_char", "");
 
 	exit_flag = false;
 	bleah_flag = true;
@@ -1720,5 +1730,6 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 
 	put_qio();
 	printf("\n\r\n\r");
+	LEAVE("restore_char", "");
 	exit_game();
 }

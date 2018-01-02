@@ -304,6 +304,8 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 	vtype in_line;
 	boolean exit_flag = false;
 
+	ENTER("intro_do_msg_file", "");
+
 	file1 = priv_fopen(the_file, "r");
 	if (file1 != NULL) {
 		if (!already_exiting && write_to_screen) {
@@ -370,6 +372,7 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 		}
 	}
 
+	LEAVE("intro_do_msg_file", "");
 	return (exit_flag || already_exiting);
 }
 
@@ -456,6 +459,8 @@ void intro(int argc, char *argv[])
 	GDBM_FILE file2;
 	boolean exit_flag = false;
 
+	ENTER("intro", "");
+
 	/* make sure that various files exist */
 	exit_flag = intro_do_hours_file(exit_flag, MORIA_HOU);
 	exit_flag = intro_do_msg_file(exit_flag, MORIA_MOR, false);
@@ -527,6 +532,7 @@ void intro(int argc, char *argv[])
 	}
 
 	intro_do_msg_file(false, MORIA_MOR, true);
+	LEAVE("intro", "");
 }
 
 void file_character()

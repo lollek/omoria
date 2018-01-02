@@ -56,6 +56,7 @@ void load_monsters()
 
 	/*////////////////////////////////////////////////////////////////////
 	 */
+	ENTER("load_monsters", "");
 
 	file = priv_fopen(MORIA_MON, "r");
 	if (file == NULL) {
@@ -141,6 +142,7 @@ void load_monsters()
 	/*  for (count = 1; count < 5; count++) { */
 	/*    print_creature(&(c_list[count]),count,1); */
 	/*  } */
+	LEAVE("load_monsters", "");
 }
 
 void print_creature(creature_type *c, int c_num, int style)
@@ -179,6 +181,8 @@ void replace_name()
 	vtype t_str;
 	char *s;
 
+	ENTER("replace_name", "");
+
 	strcpy(t_str, py.misc.name);
 	if (t_str[0] == 0) {
 		strcpy(t_str, "Dead Guy");
@@ -197,6 +201,8 @@ void replace_name()
 			/*      >>%s<<\n",c_list[count].name); */
 		} /* end if */
 	}	 /* end for */
+
+	LEAVE("replace_name", "");
 }
 
 void check_mon_lite(integer y, integer x)

@@ -53,6 +53,8 @@ void main_menu()
 	char **saved_games = get_saved_games(current_row);
 	int counter;
 
+	ENTER("main_menu", "");
+
 	prt("Existing characters:", current_row++, 1);
 	for (counter = 0; saved_games[counter] != NULL; ++counter) {
 		char counter_str[6] = "* 0: ";
@@ -89,4 +91,5 @@ void main_menu()
 			"games_list");
 	}
 	dispose(saved_games, sizeof(char *) * 10, "games_list");
+	LEAVE("main_menu", "");
 }

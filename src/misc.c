@@ -13,6 +13,8 @@ boolean check_kickout()
 	boolean return_value = false;
 	FILE *kick;
 
+	ENTER("check_kickout", "");
+
 	kick = priv_fopen(MORIA_LCK, "r");
 
 	if (kick != NULL) {
@@ -20,6 +22,7 @@ boolean check_kickout()
 		return_value = true;
 	}
 
+	LEAVE("check_kickout", "");
 	return return_value;
 }
 
@@ -32,6 +35,8 @@ void sort_objects()
 	/*} */
 	integer i1, i2, i3, gap;
 	treasure_type tmp;
+
+	ENTER("sort_objects", "");
 
 	gap = MAX_OBJECTS / 2;
 	while (gap > 0) {
@@ -62,6 +67,7 @@ void sort_objects()
 	/*      } */
 	/*      i2 = object_list[i1].level; */
 	/*    } */
+	LEAVE("sort_objects", "");
 }
 
 /*//////////////////////////////////////////////////////////////////// */
@@ -75,6 +81,8 @@ void init_m_level()
 	int i1 = 1;
 	int i2 = 0;
 	int i3 = MAX_CREATURES - WIN_MON_TOT;
+
+	ENTER("init_m_level", "");
 
 	do {
 		m_level[i2] = 0;
@@ -92,6 +100,7 @@ void init_m_level()
 	/*  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) { */
 	/*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
 	/*  } */
+	LEAVE("init_m_level", "");
 }
 
 /*//////////////////////////////////////////////////////////////////// */
@@ -104,6 +113,8 @@ void init_t_level()
 	/*} */
 	int i1 = 1;
 	int i2 = 0;
+
+	ENTER("init_t_level", "");
 
 	do {
 		while ((i1 <= MAX_OBJECTS) && (object_list[i1].level == i2)) {
@@ -118,6 +129,7 @@ void init_t_level()
 	for (i1 = 1; i1 <= MAX_OBJ_LEVEL; i1++) {
 		t_level[i1] += t_level[i1 - 1];
 	}
+	LEAVE("init_t_level", "");
 }
 
 /*//////////////////////////////////////////////////////////////////// */
@@ -941,6 +953,7 @@ void char_inven_init()
 
 	integer i1, i2;
 
+	ENTER("char_inven_init", "");
 	/*	printf("\nENTER char_inven_init\n\n"); fflush(stdout); */
 
 	inventory_list = nil;
@@ -960,6 +973,7 @@ void char_inven_init()
 		/* fflush(stdout); */
 	}
 	/*	printf("\nEXIT char_inven_init\n\n"); fflush(stdout); */
+	LEAVE("char_inven_init", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1018,6 +1032,8 @@ boolean learn_spell(boolean *redraw)
 
 	boolean return_value = false;
 
+	ENTER("learn_spell", "");
+
 	i1 = 0;
 	spell_flag = 0;
 	spell_flag2 = 0;
@@ -1070,6 +1086,7 @@ boolean learn_spell(boolean *redraw)
 		new_spells--;
 	} /* end while new_spells > 0 */
 
+	LEAVE("learn_spell", "");
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1083,6 +1100,8 @@ boolean learn_prayer()
 	unsigned long spell_flag, spell_flag2;
 	treas_ptr curse;
 	boolean return_value = false;
+
+	ENTER("learn_prayer", "");
 
 	i1 = 0;
 	spell_flag = 0;
@@ -1144,6 +1163,7 @@ boolean learn_prayer()
 		return_value = false;
 	}
 
+	LEAVE("learn_prayer", "");
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1230,6 +1250,8 @@ boolean learn_song(boolean *redraw)
 
 	boolean return_value = false;
 
+	ENTER("learn_song", "");
+
 	i1 = 0;
 	spell_flag = 0;
 	spell_flag2 = 0;
@@ -1280,6 +1302,7 @@ boolean learn_song(boolean *redraw)
 		new_spells--;
 	} /* end while new_spells > 0 */
 
+	LEAVE("learn_song", "");
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1294,6 +1317,8 @@ boolean learn_druid()
 	unsigned long spell_flag, spell_flag2;
 	treas_ptr curse;
 	boolean return_value = false;
+
+	ENTER("learn_druid", "");
 
 	i1 = 0;
 	spell_flag = 0;
@@ -1355,6 +1380,7 @@ boolean learn_druid()
 		return_value = false;
 	}
 
+	LEAVE("learn_druid", "");
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1366,6 +1392,8 @@ void gain_mana(integer amount)
 
 	integer i1, new_mana;
 	boolean knows_spell = false;
+
+	ENTER("gain_mana", "");
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
 		if (PSPELL(i1).learned) {
@@ -1429,6 +1457,7 @@ void gain_mana(integer amount)
 		py.misc.mana += new_mana;
 		py.misc.cmana += new_mana;
 	}
+	LEAVE("gain_mana", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1531,6 +1560,8 @@ integer num_new_spells(integer smarts)
 {
 	integer return_value;
 
+	ENTER("num_new_spells", "");
+
 	switch (smarts) {
 	case 1:
 	case 2:
@@ -1552,6 +1583,7 @@ integer num_new_spells(integer smarts)
 		break;
 	}
 
+	LEAVE("num_new_spells", "");
 	return return_value;
 }
 
@@ -1676,6 +1708,8 @@ void set_difficulty(integer diff)
 	      game chosen.						-DMF-
 	   }*/
 
+	ENTER("set_difficulty", "");
+
 	switch (diff) {
 	case 1: /*{ Brain-dead	}*/
 		dun_str_mc = 75;
@@ -1770,6 +1804,8 @@ void set_difficulty(integer diff)
 		mon_mult_adj = 3;
 		break;
 	} /* end switch */
+
+	LEAVE("set_difficulty", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

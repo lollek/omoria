@@ -51,11 +51,16 @@ void priv_switch(integer switch_val)
 
 void signalexit()
 {
+	ENTER("signalexit", "");
+	MSG("Sorry, caught a core-dump signal.");
+
 	priv_switch(0);
 	msg_print("Sorry, caught a core-dump signal.");
 	py.flags.dead = false;
 	save_char(true);
 	exit_game(0);
+
+	LEAVE("signalexit", "");
 }
 
 extern void d__quit();
@@ -148,6 +153,8 @@ void no_controly()
 
 	boolean CATCH_SIGNALS = true;
 
+	ENTER("no_controly", "");
+
 #ifdef SIGINT
 	signal(SIGINT, (void *)signalquit);
 #endif
@@ -179,6 +186,7 @@ void no_controly()
 		signal(SIGSYS, (void *)signalexit);
 #endif
 	}
+	LEAVE("no_controly", "");
 }
 
 void controly()
@@ -487,7 +495,7 @@ void get_paths()
 	/*	{ Path is returned in a VARYING[80] of char } */
 
 	char *datapath = DATA_FILE_PATH;
-
+	ENTER("get_paths", "");
 	/* fill in the MORIA_ names; */
 
 	if (strlen(datapath) >
@@ -516,6 +524,7 @@ void get_paths()
 	/*  sprintf(MORIA_HLP,  "%s/moriahlp.hlb",      HELP_FILE_PATH); */
 
 	sprintf(MORIA_CST, "moria_custom.mst");
+	LEAVE("get_paths", "");
 }
 
 /* END FILE  io.c */

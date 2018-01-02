@@ -14,6 +14,8 @@ void magic_init(unsigned long random_seed)
 	integer i1, tmpv;
 	vtype tmps;
 
+	ENTER("magic-init", "");
+
 	set_seed(random_seed);
 	randes();
 
@@ -151,6 +153,7 @@ void magic_init(unsigned long random_seed)
 	}
 	fflush(debug_file);
 #endif
+	LEAVE("magic-init", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
