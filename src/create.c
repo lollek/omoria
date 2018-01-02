@@ -2,11 +2,6 @@
 /* Ever want to create the perfect character? Here is where you can cheat. */
 
 #include "imoria.h"
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* create_character code */
 
 byteint cc__old_stat(integer new_guy)
 {
@@ -20,7 +15,7 @@ byteint cc__old_stat(integer new_guy)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 byteint cc__new_stat(integer old_guy)
 {
 	byteint return_value;
@@ -33,7 +28,7 @@ byteint cc__new_stat(integer old_guy)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 integer cc__get_min_stat(string prompt, byteint max)
 {
 	integer abil = 0;
@@ -82,7 +77,7 @@ integer cc__get_min_stat(string prompt, byteint max)
 
 	return abil;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 {
 	/*	{ Get minimum stats the character wants			-DMF-
@@ -98,7 +93,7 @@ void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 		prt_6_stats(user, NULL, 3, 65);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 integer cc__get_stat()
 {
 	/*	{ Generates character's stats				-JWT-
@@ -108,7 +103,7 @@ integer cc__get_stat()
 	i = randint(4) + randint(4) + randint(4) + 5; /* 8..17 */
 	return (i - 3) * 10;			      /* 50..140 */
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 integer cc__change_stat(integer cur_stat, integer amount)
 {
 	/*	{ Changes stats by given amount				-JWT-
@@ -127,7 +122,7 @@ integer cc__change_stat(integer cur_stat, integer amount)
 
 	return cur_stat;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 byteint cc__max_in_statp(byteint stat)
 {
 	if (stat < 150) {
@@ -143,7 +138,6 @@ byteint cc__max_in_statp(byteint stat)
 	return stat;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
 byteint cc__max_de_statp(byteint stat)
 {
 	if (stat < 11) {
@@ -161,7 +155,6 @@ byteint cc__max_de_statp(byteint stat)
 	return stat;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
 integer cc__max_stat(integer cur_stat, integer amount)
 {
 	integer i;
@@ -179,7 +172,6 @@ integer cc__max_stat(integer cur_stat, integer amount)
 	return cur_stat;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
 boolean cc__choose_race()
 {
 	/*	{ Allows player to select a race			-JWT-
@@ -238,7 +230,7 @@ boolean cc__choose_race()
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void cc__print_try_count(int try_count)
 {
 	string out_str;
@@ -246,7 +238,7 @@ void cc__print_try_count(int try_count)
 	put_buffer(out_str, 21, 60);
 	put_qio();
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 integer cc__next_best_stats(stat_s_type this, stat_s_type user,
 			    stat_s_type best, integer best_min)
 {
@@ -270,7 +262,6 @@ integer cc__next_best_stats(stat_s_type this, stat_s_type user,
 		return best_min;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
 
 boolean cc__satisfied(boolean *minning, boolean *printed_once,
 		      integer *best_min, integer *try_count, stat_s_type best,
@@ -351,7 +342,6 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 	return return_value;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
 void cc__get_stats()
 {
 	/*	{ Get the statistics for this bozo			-KRC-
@@ -385,7 +375,7 @@ void cc__get_stats()
 	py.flags.see_infra = race[prace].infra;
 	py.flags.swim = race[prace].swim;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void cc__print_history()
 {
 	/*	{ Will print the history of a character			-JWT-
@@ -400,7 +390,6 @@ void cc__print_history()
 	}
 }
 
-/*//////////////////////////////////////////////////////////////////// */
 /*
 	{ Get the racial history, determines social class	-RAK-	}
 	{ Assumtions:	Each race has init history beginning at 	}
@@ -503,7 +492,6 @@ void cc__get_history()
 
 } /* end cc__get_history */
 
-/*//////////////////////////////////////////////////////////////////// */
 boolean cc__get_sex()
 {
 	/*	{ Gets the character's sex				-JWT-
@@ -548,7 +536,6 @@ boolean cc__get_sex()
 	return return_value;
 } /* end cc__get_sex */
 
-/*//////////////////////////////////////////////////////////////////// */
 void cc__get_ahw()
 {
 	/*	{ Computes character's age, height, and weight		-JWT-
@@ -588,7 +575,7 @@ void cc__get_ahw()
 	py.misc.disarm = race[i1].b_dis + todis_adj();
 
 } /* end cc__get_ahw */
-/*//////////////////////////////////////////////////////////////////// */
+
 /*	{ Gets a character class				-JWT-	}*/
 boolean cc__get_class()
 {
@@ -689,8 +676,6 @@ boolean cc__get_class()
 	return return_value;
 } /* end cc__get_class */
 
-/*//////////////////////////////////////////////////////////////////// */
-
 void cc__get_money()
 {
 
@@ -712,30 +697,6 @@ void cc__get_money()
 	add_money(i1);
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*
-	{ Get social security number				-KRC-	}
-[global,psect(create$code)] procedure get_ssn;
-
-    [external] procedure lib$date_time	(
-			%DESCR time : vtype
-					); external;
-
-    var
-
-	account				: packed array [1..8] of char;
-	time				: vtype;
-
-    begin
-
-      lib$date_time( time );
-      get_account( account );
-      py.misc.ssn := '$ < ' + account + ' > - # ' + time + ' # ' + py.misc.name;
-
-    end;
-*/
-/*//////////////////////////////////////////////////////////////////// */
-
 void create_character()
 {
 	stat_s_type best, user, max_r;
@@ -746,10 +707,10 @@ void create_character()
 	stat_set tstat;
 
 	/*
-	  { This delay may be reduced, but is recomended to keep players
-	  }
-	  { from continuously rolling up characters, which can be VERY	}
-	  { expensive CPU wise.						}
+	 * This delay may be reduced, but is recomended to keep players
+	 *
+	 * from continuously rolling up characters, which can be VERY
+	 * expensive CPU wise.
 	*/
 
 	ENTER("create_character", "");
@@ -804,9 +765,6 @@ void create_character()
 	LEAVE("create_character", "");
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void put_character()
 {
 	/*{ Prints the following information on the screen.	-JWT-	}*/
@@ -817,9 +775,7 @@ void put_character()
 	prt2("Sex       : ", py.misc.sex, 5, 3);
 	prt2("Class     : ", py.misc.tclass, 6, 3);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void put_stats()
 {
 
@@ -832,9 +788,7 @@ void put_stats()
 	prt_num("+ To AC    : ", py.misc.dis_tac, 12, 4);
 	prt_num("  Total AC : ", py.misc.dis_ac, 13, 4);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void upd_stats()
 {
 
@@ -850,9 +804,7 @@ void upd_stats()
 	prt_num("", py.misc.dis_tac, 12, 17);
 	prt_num("", py.misc.dis_ac, 13, 17);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void put_misc1()
 {
 	/*	{ Prints age, height, weight, and SC			-JWT-
@@ -864,9 +816,6 @@ void put_misc1()
 	prt_num("Social Class : ", py.misc.sc, 6, 40);
 	prt_num("Difficulty   : ", py.misc.diffic, 7, 40);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 void put_misc2()
 {
@@ -884,9 +833,6 @@ void put_misc2()
 	prt_num("Cur Mana       : ", (integer)(py.misc.cmana), 13, 54);
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void put_misc3()
 {
 
@@ -941,9 +887,6 @@ void put_misc3()
 	put_buffer(tmp2, 20, 2);
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void upd_misc1()
 {
 	/*{ Updates age, height, weight, and SC (amazing, huh?)	-KRC-	}*/
@@ -953,9 +896,7 @@ void upd_misc1()
 	prt_num("", py.misc.wt, 5, 55);
 	prt_num("", py.misc.sc, 6, 55);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void display_char()
 {
 
@@ -969,9 +910,6 @@ void display_char()
 	put_misc3();
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void get_name()
 {
 
@@ -982,9 +920,6 @@ void get_name()
 	get_string(py.misc.name, 3, 15, 24);
 	clear_from(21);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 void change_name()
 {
@@ -1017,9 +952,7 @@ void change_name()
 
 	} while (!flag);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void set_gem_values()
 {
 	integer count;
@@ -1230,8 +1163,4 @@ void set_gem_values()
 
 	LEAVE("set_gem_values", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
-/* End FILE  create.c */
