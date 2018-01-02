@@ -137,7 +137,6 @@ extern vtype sex_type;
 extern race_type race[MAX_RACES];
 extern background_type background[MAX_BACKGROUND];
 extern real rgold_adj[MAX_RACES][MAX_RACES];
-extern class_type class[MAX_CLASS];
 extern spell_type magic_spell[MAX_CLASS][MAX_SPELLS];
 extern treasure_type yums[NUM_YUM + 1];
 extern treasure_type monk_book;

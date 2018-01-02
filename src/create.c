@@ -617,7 +617,7 @@ boolean cc__get_class()
 		if (race[i1].tclass & bit_array[i2 + 1]) {
 			i3++;
 			sprintf(out_str, "%c) %s", (int)i3 + 96,
-				class[i2].title);
+				class_title_get(i2));
 			put_buffer(out_str, i5, i4);
 			cl[i3] = i2;
 			i4 += 15;
@@ -638,32 +638,26 @@ boolean cc__get_class()
 		inkey_flush(&s);
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= i3) && (i2 >= 1)) {
-			strcpy(py.misc.tclass, class[cl[i2]].title);
+			strcpy(py.misc.tclass, class_title_get(cl[i2]));
 			py.misc.pclass = cl[i2];
 			aclass = py.misc.pclass;
 			exit_flag = true;
 			return_value = true;
 			clear_from(21);
 			put_buffer(py.misc.tclass, 6, 15);
-			py.misc.hitdie += class[aclass].adj_hd;
+			py.misc.hitdie += class_extra_health_get(aclass);
 			py.misc.mhp = con_adj() + py.misc.hitdie;
 			py.misc.chp = py.misc.mhp;
-			py.misc.bth += class[aclass].mbth * 5 + 20;
-			py.misc.bthb += class[aclass].mbthb * 5 + 20;
-			py.misc.srh += class[aclass].msrh;
-			py.misc.disarm += class[aclass].mdis;
-			py.misc.fos += class[aclass].mfos;
-			py.misc.stl += class[aclass].mstl;
-			py.misc.save += class[aclass].msav;
-			py.misc.expfact += class[aclass].m_exp;
+			py.misc.bth += class_melee_bonus_get(aclass) * 5 + 20;
+			py.misc.bthb += class_ranged_bonus_get(aclass) * 5 + 20;
+			py.misc.srh += class_search_mod_get(aclass);
+			py.misc.disarm += class_disarm_mod_get(aclass);
+			py.misc.fos += class_search_freq_get(aclass);
+			py.misc.stl += class_stealth_mod_get(aclass);
+			py.misc.save += class_save_mod_get(aclass);
+			py.misc.expfact += class_expfactor_get(aclass);
 			strcpy(py.misc.title, player_title[aclass][0]);
-			if (aclass == C_WARRIOR) {
-				py.misc.mr = -10;
-			} else if ((aclass == C_MAGE) || (aclass == C_PRIEST)) {
-				py.misc.mr = 0;
-			} else {
-				py.misc.mr = -5;
-			}
+			py.misc.mr = class_magic_resist_get(aclass);
 
 			/* { Adjust the stats for the class adjustment
 			 * -RAK-	}*/
@@ -671,7 +665,7 @@ boolean cc__get_class()
 			for (tstat = STR; tstat <= CHR; tstat++) {
 				py.stat.p[(int)tstat] = cc__change_stat(
 				    py.stat.p[(int)tstat],
-				    class[py.misc.pclass].madj[(int)tstat]);
+				    class_stats_get(aclass)[(int)tstat]);
 				py.stat.c[(int)tstat] = py.stat.p[(int)tstat];
 			}
 

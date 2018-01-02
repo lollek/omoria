@@ -1463,9 +1463,9 @@ boolean player_test_hit(integer bth, integer level, integer pth, integer ac,
 	i1 = bth + pth * BTH_PLUS_ADJ;
 
 	if (was_fired) {
-		i1 += (level * class[py.misc.pclass].mbthb)div 2;
+		i1 += (level * class_ranged_bonus_get(py.misc.pclass)) / 2;
 	} else {
-		i1 += (level * class[py.misc.pclass].mbth)div 2;
+		i1 += (level * class_melee_bonus_get(py.misc.pclass)) / 2;
 	}
 
 	if (randint(i1) > ac) {
@@ -1728,10 +1728,11 @@ void xp_loss(integer amount)
 			PM.mana = 0;
 		}
 
-		/* with class[PM.pclass]. do; */
-		if (class[PM.pclass].mspell || class[PM.pclass].pspell ||
-		    class[PM.pclass].dspell || class[PM.pclass].bspell ||
-		    class[PM.pclass].mental) {
+		if (class_arcane_spellcaster_get(PM.pclass) ||
+		    class_priest_spellcaster_get(PM.pclass) ||
+		    class_druid_spellcaster_get(PM.pclass) ||
+		    class_bard_spellcaster_get(PM.pclass) ||
+		    class_monk_discipline_get(PM.pclass)) {
 			i1 = 32;
 			flag = false;
 			do {
@@ -1742,13 +1743,15 @@ void xp_loss(integer amount)
 			} while (!((flag) || (i1 < 2)));
 			if (flag) {
 				magic_spell[pclass][i1].learned = false;
-				if (class[PM.pclass].mspell) {
+				if (class_arcane_spellcaster_get(PM.pclass)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class[PM.pclass].pspell) {
+				} else if (class_priest_spellcaster_get(
+					       PM.pclass)) {
 					msg_print(
 					    "You have forgotten a prayer!");
-				} else if (class[PM.pclass].bspell) {
+				} else if (class_bard_spellcaster_get(
+					       PM.pclass)) {
 					msg_print("You have forgotten a song!");
 				} else {
 					msg_print(
@@ -3117,24 +3120,24 @@ static void d__examine_book()
 			    false, false)) {
 		flag = true;
 		/* with item_ptr->data. do; */
-		if (class[PM.pclass].mspell) {
+		if (class_arcane_spellcaster_get(PM.pclass)) {
 			if (item_ptr->data.tval != Magic_Book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class[PM.pclass].pspell) {
+		} else if (class_priest_spellcaster_get(PM.pclass)) {
 			if (item_ptr->data.tval != Prayer_Book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class[PM.pclass].dspell) {
+		} else if (class_druid_spellcaster_get(PM.pclass)) {
 			if (item_ptr->data.tval != Instrument) {
 				msg_print("You do not posses the talent.");
 				flag = false;
 			}
-		} else if (class[PM.pclass].bspell) {
+		} else if (class_bard_spellcaster_get(PM.pclass)) {
 			if (item_ptr->data.tval != Song_Book) {
 				msg_print("You can not read the music.");
 				flag = false;
@@ -6047,9 +6050,9 @@ void d__execute_command(integer *com_val)
 		move_char(6);
 		break;
 	case 'm': /* magick, monk, music */
-		if (class[py.misc.pclass].mspell) {
+		if (class_arcane_spellcaster_get(py.misc.pclass)) {
 			cast(); /*  magick   } */
-		} else if (class[py.misc.pclass].mental) {
+		} else if (class_monk_discipline_get(py.misc.pclass)) {
 			discipline(); /* m = monk? :) */
 		} else {
 			sing(); /* music */
@@ -6062,7 +6065,7 @@ void d__execute_command(integer *com_val)
 		d__openobject();
 		break;
 	case 'p': /* pray, play */
-		if (class[py.misc.pclass].pspell) {
+		if (class_priest_spellcaster_get(py.misc.pclass)) {
 			pray(); /* pray */
 		} else {
 			play(); /* play */

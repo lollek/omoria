@@ -265,7 +265,7 @@ void cast()
 		msg_print("You are too confused...");
 		return;
 	}
-	if (!class[py.misc.pclass].mspell) {
+	if (!class_priest_spellcaster_get(py.misc.pclass)) {
 		msg_print("You can't cast spells!");
 		return;
 	}

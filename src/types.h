@@ -312,27 +312,6 @@ typedef struct race_type /* = packed record */
 	unsigned long tclass;	  /* { Bit field for class types} */
 } race_type;
 
-typedef struct class_type
-{
-	vtype title;    /* { type of class		} */
-	real m_exp;     /* { Class experience factor	} */
-	bytlint adj_hd; /* { Adjust hit points	} */
-	bytlint mdis;   /* { mod disarming traps	} */
-	bytlint msrh;   /* { modifier to searching	} */
-	bytlint mstl;   /* { modifier to stealth	} */
-	bytlint mfos;   /* { modifier to freq-of-search	} */
-	bytlint mbth;   /* { modifier to base to hit/2 levels } */
-	bytlint mbthb;  /*{modifier to base to hit - bows/2 levels} */
-	bytlint msav;   /* { Class modifier to save	} */
-	bytlint madj[STAT_SET_MAX + 1]; /*	: array[stat_set] of bytlint; */
-	boolean pspell;			/* { class use priest spells	} */
-	boolean mspell;			/* { class use mage spells	} */
-	boolean dspell;			/* { class use druid spells	} */
-	boolean bspell;			/* { class use bardic spells	} */
-	boolean mental;			/* { class use Monk disciplines } */
-	integer mr;			/* { mag.res.class.delta        } */
-} class_type;
-
 typedef struct background_type
 {
 	vtype info;    /* { History information	} */

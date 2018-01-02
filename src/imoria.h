@@ -18,13 +18,13 @@
 #include "pascal.h"
 #include "routines.h"
 #include "term.h"
+#include "classes.h"
 
 #include "debug.h"
 
 #include "variables.h"
 
 #define PSPELL(xx) (magic_spell[py.misc.pclass][(xx)])
-#define PCLASS (class[py.misc.pclass])
 #define PM (py.misc)
 #define PS (py.stat)
 #define PF (py.flags)

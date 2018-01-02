@@ -248,7 +248,7 @@ void sing()
 		msg_print("You are too scared to play music!");
 	} else if (py.flags.confused > 0) {
 		msg_print("You are too confused...");
-	} else if (class[py.misc.pclass].bspell) {
+	} else if (class_bard_spellcaster_get(py.misc.pclass)) {
 		if (inven_ctr > 0) {
 			if (find_range(song_books, false, &i1, &i2)) {
 				redraw = false;

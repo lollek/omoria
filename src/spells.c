@@ -912,9 +912,10 @@ void lose_exp(integer amount)
 			PM.mana = 0;
 		}
 
-		/* with class[pclass] do; */
-		if ((class[PM.pclass].mspell) || (class[PM.pclass].pspell) ||
-		    (class[PM.pclass].dspell) || (class[PM.pclass].bspell)) {
+		if (class_arcane_spellcaster_get(PM.pclass) ||
+		    class_priest_spellcaster_get(PM.pclass) ||
+		    class_druid_spellcaster_get(PM.pclass) ||
+		    class_bard_spellcaster_get(PM.pclass)) {
 			i1 = 32;
 			flag = false;
 
@@ -927,10 +928,11 @@ void lose_exp(integer amount)
 
 			if (flag) {
 				magic_spell[PM.pclass][i1].learned = false;
-				if (class[PM.pclass].mspell) {
+				if (class_arcane_spellcaster_get(PM.pclass)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class[PM.pclass].pspell) {
+				} else if (class_priest_spellcaster_get(
+					       PM.pclass)) {
 					msg_print(
 					    "You have forgotten a prayer!");
 				} else {
