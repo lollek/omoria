@@ -931,8 +931,7 @@ void lose_exp(integer amount)
 				if (class_uses_arcane_magic(PM.pclass)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_priest_magic(
-					       PM.pclass)) {
+				} else if (class_uses_priest_magic(PM.pclass)) {
 					msg_print(
 					    "You have forgotten a prayer!");
 				} else {

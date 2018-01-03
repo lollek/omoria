@@ -1156,4 +1156,3 @@ void set_gem_values()
 
 	LEAVE("set_gem_values", "");
 }
-

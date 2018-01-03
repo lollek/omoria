@@ -2048,14 +2048,16 @@ wordint max_allowable_weight()
 {
 	boolean is_male = characters_sex() == MALE;
 
-	return race_weight_base(py.misc.prace, is_male) + 4 * race_weight_modifier(py.misc.prace, is_male);
+	return race_weight_base(py.misc.prace, is_male) +
+	       4 * race_weight_modifier(py.misc.prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
 wordint min_allowable_weight()
 {
 	boolean is_male = characters_sex() == MALE;
 
-	return race_weight_base(py.misc.prace, is_male) - 4 * race_weight_modifier(py.misc.prace, is_male);
+	return race_weight_base(py.misc.prace, is_male) -
+	       4 * race_weight_modifier(py.misc.prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

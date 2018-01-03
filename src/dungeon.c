@@ -1746,12 +1746,10 @@ void xp_loss(integer amount)
 				if (class_uses_arcane_magic(PM.pclass)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_priest_magic(
-					       PM.pclass)) {
+				} else if (class_uses_priest_magic(PM.pclass)) {
 					msg_print(
 					    "You have forgotten a prayer!");
-				} else if (class_uses_bard_magic(
-					       PM.pclass)) {
+				} else if (class_uses_bard_magic(PM.pclass)) {
 					msg_print("You have forgotten a song!");
 				} else {
 					msg_print(
