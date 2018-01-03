@@ -221,15 +221,17 @@ static void _cast(enum magic_t magic_type)
 
 	/* Check book users for books */
 	if (magic_books[0] != 0) {
-		if (inven_ctr <= 0 || !find_range(magic_books, false, &i1, &i2)) {
-			sprintf(msg_buf, "But you are not carrying any %ss!", magic_book_name);
+		if (inven_ctr <= 0 ||
+		    !find_range(magic_books, false, &i1, &i2)) {
+			sprintf(msg_buf, "But you are not carrying any %ss!",
+				magic_book_name);
 			msg_print(msg_buf);
 			return;
 		}
 
 		sprintf(msg_buf, "Use which %s?", magic_book_name);
-		if (!get_item(&item_ptr, msg_buf, &redraw, i2,
-			      &trash_char, false, false)) {
+		if (!get_item(&item_ptr, msg_buf, &redraw, i2, &trash_char,
+			      false, false)) {
 			if (redraw)
 				draw_cave();
 			return;
@@ -249,21 +251,20 @@ static void _cast(enum magic_t magic_type)
 		}
 	}
 
-
 	switch (magic_type) {
-		case M_ARCANE:
-			strcpy(msg_buf, "Cast which spell?");
-			break;
-		case M_DIVINE:
-			strcpy(msg_buf, "Recite which prayer?");
-			break;
-		case M_NATURE:
-		case M_SONG:
-			strcpy(msg_buf, "Play which song?");
-			break;
-		case M_CHAKRA:
-			strcpy(msg_buf, "Use which disciplines!");
-			break;
+	case M_ARCANE:
+		strcpy(msg_buf, "Cast which spell?");
+		break;
+	case M_DIVINE:
+		strcpy(msg_buf, "Recite which prayer?");
+		break;
+	case M_NATURE:
+	case M_SONG:
+		strcpy(msg_buf, "Play which song?");
+		break;
+	case M_CHAKRA:
+		strcpy(msg_buf, "Use which disciplines!");
+		break;
 	}
 	if (!cast_spell(msg_buf, item_ptr, &choice, &chance, &redraw)) {
 		return;
@@ -336,8 +337,9 @@ static void _cast(enum magic_t magic_type)
 
 		} else if (magic_type == M_NATURE || magic_type == M_SONG) {
 			msg_print("You lose your voice attempting the song!");
-			py.flags.hoarse = randint(
-			    5 * (magic_spell[PM.pclass][choice].smana - PM.cmana));
+			py.flags.hoarse =
+			    randint(5 * (magic_spell[PM.pclass][choice].smana -
+					 PM.cmana));
 			PM.cmana = 0;
 			if (randint(3) == 1)
 				lower_stat(CHR, "You have damaged your voice!");

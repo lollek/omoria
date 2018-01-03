@@ -249,4 +249,3 @@ void nature_spell_effects(integer effect)
 	}
 	/*{ End of songs...			       }*/
 }
-
