@@ -1106,8 +1106,7 @@ boolean learn_prayer()
 
 	ENTER("learn_prayer", "");
 
-	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next)
-	{
+	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
 		if (ptr->data.tval == Prayer_Book) {
 			spell_flag |= ptr->data.flags;
 			spell_flag2 |= ptr->data.flags2;
@@ -1127,7 +1126,6 @@ boolean learn_prayer()
 		}
 	}
 
-
 	num_spells_to_learn = num_new_spells(spell_adj(WIS));
 	new_spell = 0;
 
@@ -1141,7 +1139,7 @@ boolean learn_prayer()
 			test_array[i4] = test_array[i4 + 1];
 		}
 
-		learnable_spells--; /*{ One less spell to learn	}*/
+		learnable_spells--;    /*{ One less spell to learn	}*/
 		num_spells_to_learn--; /*{ Learned one			}*/
 	}
 
