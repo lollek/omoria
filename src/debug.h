@@ -2,8 +2,9 @@
 #define DEBUG_H
 
 #if DO_DEBUG
-extern boolean const do_debug_objdes;
 extern boolean const do_debug_funcall;
+extern boolean const do_debug_objdes;
+extern boolean const do_debug_magic_cast;
 
 #define ENTER(rname, mark) enter((rname), (mark));
 #define LEAVE(rname, mark) leave((rname), (mark));

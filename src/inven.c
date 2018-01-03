@@ -10,7 +10,7 @@ treas_ptr inven_carry()
 	return add_inven_item(inven_temp->data);
 }
 
-void aii__insert(treas_ptr ptr, integer wgt, treas_ptr new_item)
+static void aii__insert(treas_ptr ptr, treas_ptr new_item)
 {
 	treas_ptr cur;
 
@@ -27,15 +27,15 @@ void aii__insert(treas_ptr ptr, integer wgt, treas_ptr new_item)
 	}
 }
 
-boolean is_players_spell_book(typ)
+static boolean is_players_spell_book(integer typ)
 {
-	if (class_uses_arcane_magic(py.misc.pclass)) { /* cast */
+	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
 		return (typ == Magic_Book) ? true : false;
-	} else if (class_uses_bard_magic(py.misc.pclass)) { /* sing */
+	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
 		return (typ == Song_Book) ? true : false;
-	} else if (class_uses_druid_magic(py.misc.pclass)) { /* play */
+	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
 		return (typ == Instrument) ? true : false;
-	} else if (class_uses_priest_magic(py.misc.pclass)) { /* pray */
+	} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
 		return (typ == Prayer_Book) ? true : false;
 	}
 
@@ -117,8 +117,7 @@ treas_ptr add_inven_item(treasure_type item)
 
 					if (!duplicate_spell_book &&
 					    (subt < curse->data.subval)) {
-						aii__insert(curse, wgt,
-							    new_item);
+						aii__insert(curse, new_item);
 						inven_ctr++;
 						inven_weight += wgt;
 						return_value = new_item;
@@ -131,7 +130,7 @@ treas_ptr add_inven_item(treasure_type item)
 				 */
 				/* their tval type */
 				/* */
-				aii__insert(curse, wgt, new_item);
+				aii__insert(curse, new_item);
 				inven_ctr++;
 				inven_weight += wgt;
 				return_value = new_item;

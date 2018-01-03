@@ -84,38 +84,11 @@ signed char const *class_stats(int class);
 
 /**
  * -OK-
- *  class_uses_priest_magic() - Can the class cast priest spells?
- *  @class Class name, e.g. C_WARRIOR
+ *  class_uses_magic() - Can the class cast spells of a given type?
+ *  @class: Class name, e.g. C_WARRIOR
+ *  @magic_type: Type of magic, e.g. M_ARCANE
  */
-boolean class_uses_priest_magic(int class);
-
-/**
- * -OK-
- *  class_uses_arcane_magic() - Can the class cast arcane spells?
- *  @class Class name, e.g. C_WARRIOR
- */
-boolean class_uses_arcane_magic(int class);
-
-/**
- * -OK-
- *  class_uses_druid_magic() - Can the class cast druid spells?
- *  @class Class name, e.g. C_WARRIOR
- */
-boolean class_uses_druid_magic(int class);
-
-/**
- * -OK-
- *  class_uses_bard_magic() - Can the class cast bard spells?
- *  @class Class name, e.g. C_WARRIOR
- */
-boolean class_uses_bard_magic(int class);
-
-/**
- * -OK-
- *  class_uses_monk_discipline() - Can the class use monk disciplines?
- *  @class Class name, e.g. C_WARRIOR
- */
-boolean class_uses_monk_discipline(int class);
+boolean class_uses_magic(int class, enum magic_t magic_type);
 
 /**
  * -OK-

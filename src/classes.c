@@ -329,148 +329,19 @@ signed char const *class_stats(int class)
 	}
 }
 
-boolean class_uses_priest_magic(int class)
+boolean class_uses_magic(int class, enum magic_t magic_type)
 {
-	switch (class) {
-	case C_WARRIOR:
-		return false;
-	case C_MAGE:
-		return false;
-	case C_PRIEST:
-		return true;
-	case C_ROGUE:
-		return false;
-	case C_RANGER:
-		return false;
-	case C_PALADIN:
-		return true;
-	case C_DRUID:
-		return false;
-	case C_BARD:
-		return false;
-	case C_ADVENTURER:
-		return false;
-	case C_MONK:
-		return false;
-	default:
-		MSG("Logic error in class_uses_priest_magic")
-		return false;
-	}
-}
-
-boolean class_uses_arcane_magic(int class)
-{
-	switch (class) {
-	case C_WARRIOR:
-		return false;
-	case C_MAGE:
-		return true;
-	case C_PRIEST:
-		return false;
-	case C_ROGUE:
-		return false;
-	case C_RANGER:
-		return false;
-	case C_PALADIN:
-		return false;
-	case C_DRUID:
-		return false;
-	case C_BARD:
-		return false;
-	case C_ADVENTURER:
-		return true;
-	case C_MONK:
-		return false;
-	default:
-		MSG("Logic error in class_uses_arcane_magic")
-		return false;
-	}
-}
-
-boolean class_uses_druid_magic(int class)
-{
-	switch (class) {
-	case C_WARRIOR:
-		return false;
-	case C_MAGE:
-		return false;
-	case C_PRIEST:
-		return false;
-	case C_ROGUE:
-		return false;
-	case C_RANGER:
-		return true;
-	case C_PALADIN:
-		return false;
-	case C_DRUID:
-		return true;
-	case C_BARD:
-		return false;
-	case C_ADVENTURER:
-		return false;
-	case C_MONK:
-		return false;
-	default:
-		MSG("Logic error in class_uses_druid_magic")
-		return false;
-	}
-}
-
-boolean class_uses_bard_magic(int class)
-{
-	switch (class) {
-	case C_WARRIOR:
-		return false;
-	case C_MAGE:
-		return false;
-	case C_PRIEST:
-		return false;
-	case C_ROGUE:
-		return true;
-	case C_RANGER:
-		return false;
-	case C_PALADIN:
-		return false;
-	case C_DRUID:
-		return false;
-	case C_BARD:
-		return true;
-	case C_ADVENTURER:
-		return false;
-	case C_MONK:
-		return false;
-	default:
-		MSG("Logic error in class_uses_bard_magic")
-		return false;
-	}
-}
-
-boolean class_uses_monk_discipline(int class)
-{
-	switch (class) {
-	case C_WARRIOR:
-		return false;
-	case C_MAGE:
-		return false;
-	case C_PRIEST:
-		return false;
-	case C_ROGUE:
-		return false;
-	case C_RANGER:
-		return false;
-	case C_PALADIN:
-		return false;
-	case C_DRUID:
-		return false;
-	case C_BARD:
-		return false;
-	case C_ADVENTURER:
-		return false;
-	case C_MONK:
-		return true;
-	default:
-		MSG("Logic error in class_uses_monk_discipline")
-		return false;
+	switch (magic_type) {
+	case M_ARCANE:
+		return class == C_MAGE || class == C_ADVENTURER;
+	case M_DIVINE:
+		return class == C_PRIEST || class == C_PALADIN;
+	case M_NATURE:
+		return class == C_RANGER || class == C_DRUID;
+	case M_SONG:
+		return class == C_ROGUE || class == C_BARD;
+	case M_CHAKRA:
+		return class == C_MONK;
 	}
 }
 

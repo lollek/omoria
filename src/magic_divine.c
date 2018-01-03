@@ -1,7 +1,7 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void p__prayer_effects(integer effect)
+void divine_spell_effects(integer effect)
 {
 
 	/*{ Prayers...                                    }*/
@@ -204,75 +204,4 @@ void p__prayer_effects(integer effect)
 		break;
 	}
 	/*{ End of prayers...                             }*/
-}
-
-void pray()
-{
-	/*{ Pray like HELL...                                     -RAK-   }*/
-
-	treas_ptr i1, item_ptr;
-	integer choice, chance, i2;
-	char trash_char;
-	boolean redraw;
-	obj_set good_book = {Prayer_Book, 0};
-
-	reset_flag = true;
-	if (py.flags.confused > 0) {
-		msg_print("You are too confused...");
-		return;
-	} else if (py.flags.blind > 0) {
-		msg_print("You can't see to read your prayer!");
-		return;
-	} else if (no_light()) {
-		msg_print("You have no light to read by.");
-		return;
-	} else if (!class_uses_priest_magic(py.misc.pclass)) {
-		msg_print("You pray briefly");
-		return;
-	} else if (inven_ctr <= 0 || !find_range(good_book, false, &i1, &i2)) {
-		msg_print("But you are not carrying any Holy Books!");
-		return;
-	}
-
-	redraw = false;
-	if (!get_item(&item_ptr, "Use which Holy Book?", &redraw, i2,
-		      &trash_char, false, false))
-		return;
-
-	if (!cast_spell("Recite which prayer?", item_ptr, &choice, &chance,
-			&redraw))
-		return;
-
-	reset_flag = false;
-	if (randint(100) < chance) {
-		msg_print("You lost your concentration!");
-	} else {
-		p__prayer_effects(choice);
-		if (!reset_flag) {
-			PM.exp += magic_spell[PM.pclass][choice].sexp;
-			prt_experience();
-			magic_spell[PM.pclass][choice].sexp = 0;
-		}
-	}
-
-	if (!reset_flag) {
-		if (magic_spell[PM.pclass][choice].smana > PM.cmana) {
-			msg_print("You faint from fatigue!");
-			py.flags.paralysis =
-			    randint(5 * (magic_spell[PM.pclass][choice].smana -
-					 PM.cmana));
-			PM.cmana = 0;
-			if (randint(3) == 1) {
-				/* does not check for sustain */
-				lower_stat(CON,
-					   "You have damaged your health!");
-			}
-		} else {
-			PM.cmana -= magic_spell[PM.pclass][choice].smana;
-		}
-		prt_mana();
-	} else {
-		if (redraw)
-			draw_cave();
-	}
 }

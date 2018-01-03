@@ -109,20 +109,16 @@ int main(int argc, char *argv[])
 
 		char_inven_init();
 
-		if (class_uses_arcane_magic(py.misc.pclass)) {
-			/* { Magic realm   } */
+		if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
 			learn_spell(&msg_flag);
 			gain_mana(spell_adj(INT));
-		} else if (class_uses_priest_magic(py.misc.pclass)) {
-			/* { Clerical realm} */
+		} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
 			learn_prayer();
 			gain_mana(spell_adj(WIS));
-		} else if (class_uses_druid_magic(py.misc.pclass)) {
-			/* { Druidical realm } */
+		} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
 			learn_druid();
 			gain_mana(druid_adj());
-		} else if (class_uses_bard_magic(py.misc.pclass)) {
-			/* { Bardic realm } */
+		} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
 			learn_song(&msg_flag);
 			gain_mana(bard_adj());
 		}
@@ -138,11 +134,11 @@ int main(int argc, char *argv[])
 		strcpy(bare_hands, "2d2");
 	}
 
-	if (class_uses_arcane_magic(py.misc.pclass) ||
-	    class_uses_priest_magic(py.misc.pclass) ||
-	    class_uses_druid_magic(py.misc.pclass) ||
-	    class_uses_bard_magic(py.misc.pclass) ||
-	    class_uses_monk_discipline(py.misc.pclass)) {
+	if (class_uses_magic(py.misc.pclass, M_ARCANE) ||
+	    class_uses_magic(py.misc.pclass, M_DIVINE) ||
+	    class_uses_magic(py.misc.pclass, M_NATURE) ||
+	    class_uses_magic(py.misc.pclass, M_SONG) ||
+	    class_uses_magic(py.misc.pclass, M_CHAKRA)) {
 		is_magii = true;
 	} else {
 		is_magii = false;

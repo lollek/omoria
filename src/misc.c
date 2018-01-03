@@ -1601,11 +1601,11 @@ void spell_chance(spl_rec *spell)
 	spell->splchn = PSPELL(spell->splnum).sfail -
 			3 * (py.misc.lev - PSPELL(spell->splnum).slevel);
 
-	if (class_uses_arcane_magic(py.misc.pclass)) {
+	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
 		spell->splchn -= 3 * (spell_adj(INT) - 1);
-	} else if (class_uses_bard_magic(py.misc.pclass)) {
+	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
 		spell->splchn -= 3 * (bard_adj() - 1);
-	} else if (class_uses_druid_magic(py.misc.pclass)) {
+	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
 		spell->splchn -= 3 * (druid_adj() - 1);
 	} else {
 		spell->splchn -= 3 * (spell_adj(WIS) - 1);
@@ -1980,7 +1980,7 @@ void gain_level()
 	prt_hp();
 	prt_level();
 	prt_title();
-	if (class_uses_arcane_magic(py.misc.pclass)) {
+	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
 		redraw = false;
 		learn_spell(&redraw);
 		if (redraw) {
@@ -1988,11 +1988,11 @@ void gain_level()
 		}
 		gain_mana(spell_adj(INT));
 		prt_mana();
-	} else if (class_uses_druid_magic(py.misc.pclass)) {
+	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
 		learn_druid();
 		gain_mana(druid_adj());
 		prt_mana();
-	} else if (class_uses_bard_magic(py.misc.pclass)) {
+	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
 		redraw = false;
 		learn_song(&redraw);
 		if (redraw) {
@@ -2000,11 +2000,11 @@ void gain_level()
 		}
 		gain_mana(bard_adj());
 		prt_mana();
-	} else if (class_uses_priest_magic(py.misc.pclass)) {
+	} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
 		learn_prayer();
 		gain_mana(spell_adj(WIS));
 		prt_mana();
-	} else if (class_uses_monk_discipline(py.misc.pclass)) {
+	} else if (class_uses_magic(py.misc.pclass, M_CHAKRA)) {
 		learn_discipline();
 		gain_mana(monk_adj());
 		prt_mana();

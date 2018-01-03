@@ -15,6 +15,7 @@
 #include "configure.h"
 #include "constants.h"
 #include "types.h"
+#include "magic.h"
 #include "pascal.h"
 #include "routines.h"
 #include "term.h"

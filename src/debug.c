@@ -5,8 +5,9 @@
 
 #if DO_DEBUG
 /* Toggleables */
-boolean const do_debug_objdes = false;
 boolean const do_debug_funcall = true;
+boolean const do_debug_objdes = false;
+boolean const do_debug_magic_cast = true;
 
 /* Debug variables */
 FILE *debug_file = NULL;

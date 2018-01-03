@@ -1728,11 +1728,11 @@ void xp_loss(integer amount)
 			PM.mana = 0;
 		}
 
-		if (class_uses_arcane_magic(PM.pclass) ||
-		    class_uses_priest_magic(PM.pclass) ||
-		    class_uses_druid_magic(PM.pclass) ||
-		    class_uses_bard_magic(PM.pclass) ||
-		    class_uses_monk_discipline(PM.pclass)) {
+		if (class_uses_magic(PM.pclass, M_ARCANE) ||
+		    class_uses_magic(PM.pclass, M_DIVINE) ||
+		    class_uses_magic(PM.pclass, M_NATURE) ||
+		    class_uses_magic(PM.pclass, M_SONG) ||
+		    class_uses_magic(PM.pclass, M_CHAKRA)) {
 			i1 = 32;
 			flag = false;
 			do {
@@ -1743,13 +1743,13 @@ void xp_loss(integer amount)
 			} while (!((flag) || (i1 < 2)));
 			if (flag) {
 				magic_spell[pclass][i1].learned = false;
-				if (class_uses_arcane_magic(PM.pclass)) {
+				if (class_uses_magic(PM.pclass, M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_priest_magic(PM.pclass)) {
+				} else if (class_uses_magic(PM.pclass, M_DIVINE)) {
 					msg_print(
 					    "You have forgotten a prayer!");
-				} else if (class_uses_bard_magic(PM.pclass)) {
+				} else if (class_uses_magic(PM.pclass, M_SONG)) {
 					msg_print("You have forgotten a song!");
 				} else {
 					msg_print(
@@ -3118,24 +3118,24 @@ static void d__examine_book()
 			    false, false)) {
 		flag = true;
 		/* with item_ptr->data. do; */
-		if (class_uses_arcane_magic(PM.pclass)) {
+		if (class_uses_magic(PM.pclass, M_ARCANE)) {
 			if (item_ptr->data.tval != Magic_Book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class_uses_priest_magic(PM.pclass)) {
+		} else if (class_uses_magic(PM.pclass, M_DIVINE)) {
 			if (item_ptr->data.tval != Prayer_Book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class_uses_druid_magic(PM.pclass)) {
+		} else if (class_uses_magic(PM.pclass, M_NATURE)) {
 			if (item_ptr->data.tval != Instrument) {
 				msg_print("You do not posses the talent.");
 				flag = false;
 			}
-		} else if (class_uses_bard_magic(PM.pclass)) {
+		} else if (class_uses_magic(PM.pclass, M_SONG)) {
 			if (item_ptr->data.tval != Song_Book) {
 				msg_print("You can not read the music.");
 				flag = false;
@@ -6048,12 +6048,12 @@ void d__execute_command(integer *com_val)
 		move_char(6);
 		break;
 	case 'm': /* magick, monk, music */
-		if (class_uses_arcane_magic(py.misc.pclass)) {
-			cast(); /*  magick   } */
-		} else if (class_uses_monk_discipline(py.misc.pclass)) {
-			discipline(); /* m = monk? :) */
+		if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
+			cast(M_ARCANE); /*  magick   } */
+		} else if (class_uses_magic(py.misc.pclass, M_CHAKRA)) {
+			cast(M_CHAKRA); /* m = monk? :) */
 		} else {
-			sing(); /* music */
+			cast(M_SONG); /* music */
 		}
 		break;
 	case 'n':
@@ -6063,10 +6063,10 @@ void d__execute_command(integer *com_val)
 		d__openobject();
 		break;
 	case 'p': /* pray, play */
-		if (class_uses_priest_magic(py.misc.pclass)) {
-			pray(); /* pray */
+		if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
+			cast(M_DIVINE); /* pray */
 		} else {
-			play(); /* play */
+			cast(M_NATURE); /* play */
 		}
 		break;
 	case 'q':

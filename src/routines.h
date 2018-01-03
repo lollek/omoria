@@ -310,7 +310,6 @@ extern void py_bonuses(treasure_type *tobj, integer factor);
 extern boolean delete_object(integer y, integer x);
 extern char *center(string str, integer len, string result); /* was func */
 extern void eat();
-extern void cast();
 extern void discipline();
 extern void move_char(integer dir);
 extern void quaff();
