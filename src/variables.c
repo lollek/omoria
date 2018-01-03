@@ -3061,7 +3061,6 @@ atype rocks[MAX_ROCKS] = {
     "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
     "Topaz",      "Turquoise", "Zircon"};
 
-/* sapphire was misspelled as "saphire".  2/15/00 JEB */
 atype amulets[MAX_AMULETS] = {
     "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
     "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
@@ -3097,16 +3096,6 @@ atype syllables[MAX_SYLLABLES] = {
 
 /*	vowel_set		: */
 /*				  char_set; */
-
-/*	{ Cursor variables, used for cursor positioning			} */
-char cursor_r[25][11]; /* array [1..24] of varying[10] of */
-integer curlen_r;
-char cursor_c[81][11]; /* array [1..80] of varying[10] of */
-integer curlen_c;
-integer cursor_l;
-boolean row_first;
-char cursor_erl[11]; /*	:  varying[10] of char; */
-char cursor_erp[11]; /*	:  varying[10] of char; */
 
 /* new stuff */
 integer malloc_calls = 0;

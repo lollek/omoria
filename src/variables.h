@@ -227,16 +227,6 @@ extern atype syllables[MAX_SYLLABLES];
 /*	vowel_set		: */
 /*				  char_set; */
 
-/*	{ Cursor variables, used for cursor positioning			} */
-extern char cursor_r[25][11]; /* array [1..24] of varying[10] of */
-extern integer curlen_r;
-extern char cursor_c[81][11]; /* array [1..80] of varying[10] of */
-extern integer curlen_c;
-extern integer cursor_l;
-extern boolean row_first;
-extern char cursor_erl[11]; /*	:  varying[10] of char; */
-extern char cursor_erp[11]; /*	:  varying[10] of char; */
-
 /* new stuff */
 extern integer malloc_calls;
 extern integer malloc_bytes;
