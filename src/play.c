@@ -267,7 +267,7 @@ void play()
 		msg_print("You are too scared to play music!");
 	} else if (py.flags.confused > 0) {
 		msg_print("You are too confused...");
-	} else if (class_druid_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_druid_magic(py.misc.pclass)) {
 		if (inven_ctr > 0) {
 			if (find_range(playable_things, false, &i1, &i2)) {
 

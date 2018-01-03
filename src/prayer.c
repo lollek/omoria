@@ -223,7 +223,7 @@ void pray()
 		msg_print("You have no light to read by.");
 	} else if (py.flags.confused > 0) {
 		msg_print("You are too confused...");
-	} else if (class_priest_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_priest_magic(py.misc.pclass)) {
 		if (inven_ctr > 0) {
 			if (find_range(good_book, false, &i1, &i2)) {
 				redraw = false;

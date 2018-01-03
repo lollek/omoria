@@ -29,13 +29,13 @@ void aii__insert(treas_ptr ptr, integer wgt, treas_ptr new_item)
 
 boolean is_players_spell_book(typ)
 {
-	if (class_arcane_spellcaster_get(py.misc.pclass)) { /* cast */
+	if (class_uses_arcane_magic(py.misc.pclass)) { /* cast */
 		return (typ == Magic_Book) ? true : false;
-	} else if (class_bard_spellcaster_get(py.misc.pclass)) { /* sing */
+	} else if (class_uses_bard_magic(py.misc.pclass)) { /* sing */
 		return (typ == Song_Book) ? true : false;
-	} else if (class_druid_spellcaster_get(py.misc.pclass)) { /* play */
+	} else if (class_uses_druid_magic(py.misc.pclass)) { /* play */
 		return (typ == Instrument) ? true : false;
-	} else if (class_priest_spellcaster_get(py.misc.pclass)) { /* pray */
+	} else if (class_uses_priest_magic(py.misc.pclass)) { /* pray */
 		return (typ == Prayer_Book) ? true : false;
 	}
 

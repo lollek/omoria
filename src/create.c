@@ -597,7 +597,7 @@ boolean cc__get_class()
 		if (race_class_field(i1) & bit_array[i2 + 1]) {
 			i3++;
 			sprintf(out_str, "%c) %s", (int)i3 + 96,
-				class_title_get(i2));
+				class_title(i2));
 			put_buffer(out_str, i5, i4);
 			cl[i3] = i2;
 			i4 += 15;
@@ -618,26 +618,26 @@ boolean cc__get_class()
 		inkey_flush(&s);
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= i3) && (i2 >= 1)) {
-			strcpy(py.misc.tclass, class_title_get(cl[i2]));
+			strcpy(py.misc.tclass, class_title(cl[i2]));
 			py.misc.pclass = cl[i2];
 			aclass = py.misc.pclass;
 			exit_flag = true;
 			return_value = true;
 			clear_from(21);
 			put_buffer(py.misc.tclass, 6, 15);
-			py.misc.hitdie += class_extra_health_get(aclass);
+			py.misc.hitdie += class_extra_health(aclass);
 			py.misc.mhp = con_adj() + py.misc.hitdie;
 			py.misc.chp = py.misc.mhp;
-			py.misc.bth += class_melee_bonus_get(aclass) * 5 + 20;
-			py.misc.bthb += class_ranged_bonus_get(aclass) * 5 + 20;
-			py.misc.srh += class_search_mod_get(aclass);
-			py.misc.disarm += class_disarm_mod_get(aclass);
-			py.misc.fos += class_search_freq_get(aclass);
-			py.misc.stl += class_stealth_mod_get(aclass);
-			py.misc.save += class_save_mod_get(aclass);
-			py.misc.expfact += class_expfactor_get(aclass);
+			py.misc.bth += class_melee_bonus(aclass) * 5 + 20;
+			py.misc.bthb += class_ranged_bonus(aclass) * 5 + 20;
+			py.misc.srh += class_search_mod(aclass);
+			py.misc.disarm += class_disarm_mod(aclass);
+			py.misc.fos += class_search_freq(aclass);
+			py.misc.stl += class_stealth_mod(aclass);
+			py.misc.save += class_save_mod(aclass);
+			py.misc.expfact += class_expfactor(aclass);
 			strcpy(py.misc.title, player_title[aclass][0]);
-			py.misc.mr = class_magic_resist_get(aclass);
+			py.misc.mr = class_magic_resist(aclass);
 
 			/* { Adjust the stats for the class adjustment
 			 * -RAK-	}*/
@@ -645,7 +645,7 @@ boolean cc__get_class()
 			for (tstat = STR; tstat <= CHR; tstat++) {
 				py.stat.p[(int)tstat] = cc__change_stat(
 				    py.stat.p[(int)tstat],
-				    class_stats_get(aclass)[(int)tstat]);
+				    class_stats(aclass)[(int)tstat]);
 				py.stat.c[(int)tstat] = py.stat.p[(int)tstat];
 			}
 

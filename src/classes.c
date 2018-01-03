@@ -1,6 +1,6 @@
 #include "imoria.h"
 
-char const *class_title_get(int class)
+char const *class_title(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -24,12 +24,12 @@ char const *class_title_get(int class)
 	case C_MONK:
 		return "Monk";
 	default:
-		MSG("Logic error in class_title_get")
+		MSG("Logic error in class_title")
 		return "???";
 	}
 }
 
-float class_expfactor_get(int class)
+float class_expfactor(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -53,12 +53,12 @@ float class_expfactor_get(int class)
 	case C_MONK:
 		return 0.10;
 	default:
-		MSG("Logic error in class_expfactor_get")
+		MSG("Logic error in class_expfactor")
 		return 1000.00;
 	}
 }
 
-signed char class_extra_health_get(int class)
+signed char class_extra_health(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -82,12 +82,12 @@ signed char class_extra_health_get(int class)
 	case C_MONK:
 		return 4;
 	default:
-		MSG("Logic error in class_extra_health_get")
+		MSG("Logic error in class_extra_health")
 		return -100;
 	}
 }
 
-signed char class_disarm_mod_get(int class)
+signed char class_disarm_mod(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -111,12 +111,12 @@ signed char class_disarm_mod_get(int class)
 	case C_MONK:
 		return 45;
 	default:
-		MSG("Logic error in class_disarm_mod_get")
+		MSG("Logic error in class_disarm_mod")
 		return -100;
 	}
 }
 
-signed char class_search_mod_get(int class)
+signed char class_search_mod(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -140,12 +140,12 @@ signed char class_search_mod_get(int class)
 	case C_MONK:
 		return 24;
 	default:
-		MSG("Logic error in class_search_mod_get")
+		MSG("Logic error in class_search_mod")
 		return -100;
 	}
 }
 
-signed char class_stealth_mod_get(int class)
+signed char class_stealth_mod(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -169,12 +169,12 @@ signed char class_stealth_mod_get(int class)
 	case C_MONK:
 		return 3;
 	default:
-		MSG("Logic error in class_stealth_mod_get")
+		MSG("Logic error in class_stealth_mod")
 		return -100;
 	}
 }
 
-signed char class_search_freq_get(int class)
+signed char class_search_freq(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -198,12 +198,12 @@ signed char class_search_freq_get(int class)
 	case C_MONK:
 		return 24;
 	default:
-		MSG("Logic error in class_search_freq_get")
+		MSG("Logic error in class_search_freq")
 		return -100;
 	}
 }
 
-signed char class_melee_bonus_get(int class)
+signed char class_melee_bonus(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -227,12 +227,12 @@ signed char class_melee_bonus_get(int class)
 	case C_MONK:
 		return 8;
 	default:
-		MSG("Logic error in class_melee_bonus_get")
+		MSG("Logic error in class_melee_bonus")
 		return -100;
 	}
 }
 
-signed char class_ranged_bonus_get(int class)
+signed char class_ranged_bonus(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -256,12 +256,12 @@ signed char class_ranged_bonus_get(int class)
 	case C_MONK:
 		return 6;
 	default:
-		MSG("Logic error in class_ranged_bonus_get")
+		MSG("Logic error in class_ranged_bonus")
 		return -100;
 	}
 }
 
-signed char class_save_mod_get(int class)
+signed char class_save_mod(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -285,12 +285,12 @@ signed char class_save_mod_get(int class)
 	case C_MONK:
 		return 25;
 	default:
-		MSG("Logic error in class_save_mod_get")
+		MSG("Logic error in class_save_mod")
 		return -100;
 	}
 }
 
-signed char const *class_stats_get(int class)
+signed char const *class_stats(int class)
 {
 	static signed char const warrior_stats[] = {5, -2, -2, 2, 2, 1};
 	static signed char const mage_stats[] = {-5, 3, 0, 0, -2, 0};
@@ -324,12 +324,12 @@ signed char const *class_stats_get(int class)
 	case C_MONK:
 		return monk_stats;
 	default:
-		MSG("Logic error in class_stats_get")
+		MSG("Logic error in class_stats")
 		return NULL;
 	}
 }
 
-boolean class_priest_spellcaster_get(int class)
+boolean class_uses_priest_magic(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -353,12 +353,12 @@ boolean class_priest_spellcaster_get(int class)
 	case C_MONK:
 		return false;
 	default:
-		MSG("Logic error in class_priest_spellcaster_get")
+		MSG("Logic error in class_uses_priest_magic")
 		return false;
 	}
 }
 
-boolean class_arcane_spellcaster_get(int class)
+boolean class_uses_arcane_magic(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -382,12 +382,12 @@ boolean class_arcane_spellcaster_get(int class)
 	case C_MONK:
 		return false;
 	default:
-		MSG("Logic error in class_arcane_spellcaster_get")
+		MSG("Logic error in class_uses_arcane_magic")
 		return false;
 	}
 }
 
-boolean class_druid_spellcaster_get(int class)
+boolean class_uses_druid_magic(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -411,12 +411,12 @@ boolean class_druid_spellcaster_get(int class)
 	case C_MONK:
 		return false;
 	default:
-		MSG("Logic error in class_druid_spellcaster_get")
+		MSG("Logic error in class_uses_druid_magic")
 		return false;
 	}
 }
 
-boolean class_bard_spellcaster_get(int class)
+boolean class_uses_bard_magic(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -440,12 +440,12 @@ boolean class_bard_spellcaster_get(int class)
 	case C_MONK:
 		return false;
 	default:
-		MSG("Logic error in class_bard_spellcaster_get")
+		MSG("Logic error in class_uses_bard_magic")
 		return false;
 	}
 }
 
-boolean class_monk_discipline_get(int class)
+boolean class_uses_monk_discipline(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -469,12 +469,12 @@ boolean class_monk_discipline_get(int class)
 	case C_MONK:
 		return true;
 	default:
-		MSG("Logic error in class_monk_discipline_get")
+		MSG("Logic error in class_uses_monk_discipline")
 		return false;
 	}
 }
 
-signed char class_magic_resist_get(int class)
+signed char class_magic_resist(int class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -498,7 +498,7 @@ signed char class_magic_resist_get(int class)
 	case C_MONK:
 		return -5;
 	default:
-		MSG("Logic error in class_magic_resist_get")
+		MSG("Logic error in class_magic_resist")
 		return 0;
 	}
 }

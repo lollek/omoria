@@ -1602,11 +1602,11 @@ void spell_chance(spl_rec *spell)
 	spell->splchn = PSPELL(spell->splnum).sfail -
 			3 * (py.misc.lev - PSPELL(spell->splnum).slevel);
 
-	if (class_arcane_spellcaster_get(py.misc.pclass)) {
+	if (class_uses_arcane_magic(py.misc.pclass)) {
 		spell->splchn -= 3 * (spell_adj(INT) - 1);
-	} else if (class_bard_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_bard_magic(py.misc.pclass)) {
 		spell->splchn -= 3 * (bard_adj() - 1);
-	} else if (class_druid_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_druid_magic(py.misc.pclass)) {
 		spell->splchn -= 3 * (druid_adj() - 1);
 	} else {
 		spell->splchn -= 3 * (spell_adj(WIS) - 1);
@@ -1981,7 +1981,7 @@ void gain_level()
 	prt_hp();
 	prt_level();
 	prt_title();
-	if (class_arcane_spellcaster_get(py.misc.pclass)) {
+	if (class_uses_arcane_magic(py.misc.pclass)) {
 		redraw = false;
 		learn_spell(&redraw);
 		if (redraw) {
@@ -1989,11 +1989,11 @@ void gain_level()
 		}
 		gain_mana(spell_adj(INT));
 		prt_mana();
-	} else if (class_druid_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_druid_magic(py.misc.pclass)) {
 		learn_druid();
 		gain_mana(druid_adj());
 		prt_mana();
-	} else if (class_bard_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_bard_magic(py.misc.pclass)) {
 		redraw = false;
 		learn_song(&redraw);
 		if (redraw) {
@@ -2001,11 +2001,11 @@ void gain_level()
 		}
 		gain_mana(bard_adj());
 		prt_mana();
-	} else if (class_priest_spellcaster_get(py.misc.pclass)) {
+	} else if (class_uses_priest_magic(py.misc.pclass)) {
 		learn_prayer();
 		gain_mana(spell_adj(WIS));
 		prt_mana();
-	} else if (class_monk_discipline_get(py.misc.pclass)) {
+	} else if (class_uses_monk_discipline(py.misc.pclass)) {
 		learn_discipline();
 		gain_mana(monk_adj());
 		prt_mana();
@@ -3559,7 +3559,7 @@ integer attack_blows(integer weight, integer *wtohit)
 		}
 
 		lev_skill =
-		    class_melee_bonus_get(py.misc.pclass) * (py.misc.lev + 10);
+		    class_melee_bonus(py.misc.pclass) * (py.misc.lev + 10);
 
 		/*{warriors 100-500, paladin 80-400, priest 60-300, mage
 		 * 40-200}*/
@@ -3609,9 +3609,9 @@ integer critical_blow(integer weight, integer plus, boolean cs_sharp,
 
 	/* with py.misc do; */
 	if (is_fired) {
-		py_crit = class_ranged_bonus_get(pclass);
+		py_crit = class_ranged_bonus(pclass);
 	} else {
-		py_crit = class_melee_bonus_get(pclass);
+		py_crit = class_melee_bonus(pclass);
 
 		if (pclass == C_MONK) { /*{ monks are crit specialists }*/
 			py_crit *= 2;

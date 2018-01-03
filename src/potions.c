@@ -163,19 +163,19 @@ void q__potion_effect(integer effect, boolean *idented)
 	case 48:		  /*{ Learning }*/
 		/* with py.misc do; */
 		/* with class[pclass] do; */
-		if (class_arcane_spellcaster_get(PM.pclass)) {
+		if (class_uses_arcane_magic(PM.pclass)) {
 			ident = learn_spell(&redraw);
 			if (redraw) {
 				draw_cave();
 			}
-		} else if (class_bard_spellcaster_get(PM.pclass)) {
+		} else if (class_uses_bard_magic(PM.pclass)) {
 			ident = learn_song(&redraw);
 			if (redraw) {
 				draw_cave();
 			}
-		} else if (class_priest_spellcaster_get(PM.pclass)) {
+		} else if (class_uses_priest_magic(PM.pclass)) {
 			ident = learn_prayer();
-		} else if (class_druid_spellcaster_get(PM.pclass)) {
+		} else if (class_uses_druid_magic(PM.pclass)) {
 			ident = learn_druid();
 		}
 		break;
