@@ -15,9 +15,6 @@ integer player_max_exp;    /* { Max exp possible    } */
 unsigned long seed;	/* { Contains seed #     } */
 unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
-integer channel;	   /* { I/O channel #       } */
-unsigned long pasteb;      /* { Pasteboard id       } */
-quad_type io_bin_pause;    /* { I/O pause time      } */
 integer cur_height;	/* { Cur dungeon size    } */
 integer cur_width;
 integer dun_level;      /* { Cur dungeon level   } */
@@ -29,13 +26,8 @@ integer quest[NUM_QUESTS + 1]; /* {quest data} */
 vtype old_msg = "bogus msg";   /* { Last message	      } */
 boolean want_trap;	     /* { True = trap messages} */
 boolean want_warn;	     /* { True = water warning} */
-message_ptr caught_message;    /* { Message from other  } */
 message_ptr old_message;       /* { Past messages	      } */
-integer old_mess_count;	/* { Count of old mess's } */
 integer max_mess_keep;	 /* { Max old to keep     } */
-message_ptr cur_message;       /* { Pointer to add mess } */
-message_ptr message_cursor;    /* { Pointer to read mess} */
-integer caught_count;	  /*	{ # of mesgs waiting  } */
 integer max_score;	     /*	{ # of scores to list } */
 boolean generate;	      /*	{ Generate next level } */
 boolean death = false;	 /*	{ True if died	      } */
@@ -61,27 +53,18 @@ unsigned long wdata[2][13] = /*  array [1..2,0..12] of unsigned; */
 /*	{{31415,'n','a','f','f',0,'w','z','r','i','n','b'}, */
 /*	{92653,'m','o','s','k','a',0,'j','a','u','m','z'}}; */
 
-/* { Operating hours for Moria				-RAK-	} */
-/* {	X = Open; . = Closed					} */
+/**
+ * -RAK-
+ *  Operating hours for Moria
+ *  X = Open
+ *  . = Closed
+ */
 char days[7][30] = {
     "SUN:XXXXXXXXXXXXXXXXXXXXXXXX|", "MON:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "TUE:XXXXXXXXXXXXXXXXXXXXXXXX|", "WED:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "THU:XXXXXXXXXXXXXXXXXXXXXXXX|", "FRI:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "SAT:XXXXXXXXXXXXXXXXXXXXXXXX|"};
-/*
-	char		days[7][30] =
-		{
-		"SUN:XXXXXXXXXXXXXXXXXXXXXXXX|",
-		"MON:XXXXXXXX.........XXXXXXX|",
-		"TUE:XXXXXXXX.........XXXXXXX|",
-		"WED:XXXXXXXX.........XXXXXXX|",
-		"THU:XXXXXXXX.........XXXXXXX|",
-		"FRI:XXXXXXXX.........XXXXXXX|",
-		"SAT:XXXXXXXXXXXXXXXXXXXXXXXX|"
-		};
-*/
 integer closing_flag = 0; /* { Used for closing   } */
-boolean uw_id;		  /*	{ Is this a UW node? } */
 			  /*{neatness arrays} */
 byteint key_of[9] =       /*  array [0..8] of byteint; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
@@ -415,256 +398,6 @@ integer char_col = 0;
 integer com_val;
 integer pclass = 0;
 vtype sex_type = "FemaleMale  ";
-/*
-	{Race	(STR,INT,WIS,DEX,CON,CHR),
-		age,,mht,,mwt,,fht,,fwt,,bxp,
-	Racial: dis,srh,stl,fos,bth,bthb,bsav,HD,infra,swim,classes}
-
-	ALLOWED CLASSES:
-	{ For choice-classes, the bits run in reverse order, with adventurer
-	  on the left, and fighter on the right. (classes allowed by race)
-Monk, Adventurer, Bard, Druid, Paladin, Ranger, Rogue, Priest, Mage, Warrior }
-*/
-race_type race[MAX_RACES] = {{"Human",
-			      {0, 0, 0, 0, 0, 0},
-			      14,
-			      6,
-			      72,
-			      6,
-			      180,
-			      25,
-			      66,
-			      4,
-			      120,
-			      20,
-			      1.00,
-			      0,
-			      0,
-			      0,
-			      0,
-			      0,
-			      0,
-			      0,
-			      10,
-			      0,
-			      0,
-			      0x3FF},
-			     {"Half-Elf",
-			      {-1, 1, 0, 1, -1, 1},
-			      24,
-			      16,
-			      66,
-			      6,
-			      130,
-			      15,
-			      62,
-			      6,
-			      100,
-			      10,
-			      1.10,
-			      2,
-			      6,
-			      1,
-			      -1,
-			      0,
-			      5,
-			      3,
-			      9,
-			      0,
-			      1,
-			      0x3FF},
-			     {"Elf",
-			      {-1, 2, 1, 1, -2, 1},
-			      75,
-			      75,
-			      60,
-			      4,
-			      100,
-			      6,
-			      54,
-			      4,
-			      80,
-			      6,
-			      1.20,
-			      5,
-			      8,
-			      1,
-			      -2,
-			      -5,
-			      15,
-			      6,
-			      8,
-			      0,
-			      2,
-			      0x1DF},
-			     {"Halfling",
-			      {-2, 2, 1, 3, 1, 1},
-			      21,
-			      12,
-			      36,
-			      3,
-			      60,
-			      3,
-			      33,
-			      3,
-			      50,
-			      3,
-			      1.10,
-			      15,
-			      12,
-			      4,
-			      -5,
-			      -10,
-			      20,
-			      18,
-			      6,
-			      4,
-			      -2,
-			      0x2BA},
-			     {"Gnome",
-			      {-1, 2, 0, 2, 1, -2},
-			      50,
-			      40,
-			      42,
-			      3,
-			      90,
-			      6,
-			      39,
-			      3,
-			      75,
-			      3,
-			      1.25,
-			      10,
-			      6,
-			      3,
-			      -3,
-			      -8,
-			      12,
-			      12,
-			      7,
-			      3,
-			      -1,
-			      0x04E},
-			     {"Dwarf",
-			      {2, -3, 1, -2, 2, -3},
-			      35,
-			      15,
-			      48,
-			      3,
-			      150,
-			      10,
-			      46,
-			      3,
-			      120,
-			      10,
-			      1.20,
-			      2,
-			      7,
-			      0,
-			      0,
-			      15,
-			      0,
-			      9,
-			      9,
-			      5,
-			      -2,
-			      0x045},
-			     {"Half-Orc",
-			      {2, -1, 0, 0, 1, -4},
-			      11,
-			      4,
-			      66,
-			      1,
-			      150,
-			      5,
-			      62,
-			      1,
-			      120,
-			      5,
-			      1.10,
-			      -3,
-			      0,
-			      -1,
-			      3,
-			      12,
-			      -5,
-			      -3,
-			      10,
-			      3,
-			      0,
-			      0x20D},
-			     {"Half-Troll",
-			      {4, -4, -3, -4, 4, -6},
-			      20,
-			      10,
-			      96,
-			      10,
-			      300,
-			      50,
-			      84,
-			      8,
-			      260,
-			      40,
-			      1.20,
-			      -5,
-			      -1,
-			      -2,
-			      5,
-			      20,
-			      -10,
-			      -9,
-			      12,
-			      3,
-			      2,
-			      0x005},
-			     {"Phraint",
-			      {0, 0, -4, 5, 0, -3},
-			      15,
-			      10,
-			      96,
-			      24,
-			      100,
-			      20,
-			      84,
-			      12,
-			      95,
-			      16,
-			      1.20,
-			      15,
-			      10,
-			      5,
-			      4,
-			      3,
-			      5,
-			      -3,
-			      8,
-			      5,
-			      -1,
-			      0x39B},
-			     {"Dryad",
-			      {-1, 0, 3, 0, -2, 3},
-			      75,
-			      75,
-			      60,
-			      4,
-			      85,
-			      6,
-			      40,
-			      4,
-			      70,
-			      6,
-			      1.20,
-			      2,
-			      6,
-			      1,
-			      -1,
-			      0,
-			      5,
-			      3,
-			      7,
-			      3,
-			      -1,
-			      0x2D4}};
 
 /*	{ Background information					} */
 background_type background[MAX_BACKGROUND] = {

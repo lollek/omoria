@@ -12,9 +12,6 @@ extern integer player_max_exp;    /* { Max exp possible    } */
 extern unsigned long seed;	/* { Contains seed #     } */
 extern unsigned long randes_seed; /* { For encoding colors } */
 extern unsigned long town_seed;   /* { Seed for town genera} */
-extern integer channel;		  /* { I/O channel #       } */
-extern unsigned long pasteb;      /* { Pasteboard id       } */
-extern quad_type io_bin_pause;    /* { I/O pause time      } */
 extern integer cur_height;	/* { Cur dungeon size    } */
 extern integer cur_width;
 extern integer dun_level;  /* { Cur dungeon level   } */
@@ -26,13 +23,8 @@ extern integer quest[NUM_QUESTS + 1]; /* {quest data} */
 extern vtype old_msg;		      /* { Last message	      } */
 extern boolean want_trap;	     /* { True = trap messages} */
 extern boolean want_warn;	     /* { True = water warning} */
-extern message_ptr caught_message;    /* { Message from other  } */
 extern message_ptr old_message;       /* { Past messages	      } */
-extern integer old_mess_count;	/* { Count of old mess's } */
 extern integer max_mess_keep;	 /* { Max old to keep     } */
-extern message_ptr cur_message;       /* { Pointer to add mess } */
-extern message_ptr message_cursor;    /* { Pointer to read mess} */
-extern integer caught_count;	  /*	{ # of mesgs waiting  } */
 extern integer max_score;	     /*	{ # of scores to list } */
 extern boolean generate;	      /*	{ Generate next level } */
 extern boolean death;		      /*	{ True if died	      } */
@@ -53,7 +45,6 @@ extern boolean became_wizard;
 extern unsigned long wdata[2][13]; /*  array [1..2,0..12] of unsigned; */
 extern char days[7][30];
 extern integer closing_flag; /* { Used for closing   } */
-extern boolean uw_id;	/*	{ Is this a UW node? } */
 /*{neatness arrays} */
 extern byteint key_of[9];  /*  array [0..8] of byteint; */
 extern byteint oct_of[10]; /*  array [1..9] of byteint; */
@@ -134,7 +125,6 @@ extern integer char_col;
 extern integer com_val;
 extern integer pclass;
 extern vtype sex_type;
-extern race_type race[MAX_RACES];
 extern background_type background[MAX_BACKGROUND];
 extern real rgold_adj[MAX_RACES][MAX_RACES];
 extern spell_type magic_spell[MAX_CLASS][MAX_SPELLS];

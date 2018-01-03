@@ -2046,32 +2046,16 @@ boolean in_bounds(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 wordint max_allowable_weight()
 {
-	wordint return_value;
+	boolean is_male = characters_sex() == MALE;
 
-	if (characters_sex() == FEMALE) {
-		return_value =
-		    race[py.misc.prace].f_b_wt + 4 * race[py.misc.prace].f_m_wt;
-	} else {
-		return_value =
-		    race[py.misc.prace].m_b_wt + 4 * race[py.misc.prace].m_m_wt;
-	}
-
-	return return_value;
+	return race_weight_base(py.misc.prace, is_male) + 4 * race_weight_modifier(py.misc.prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
 wordint min_allowable_weight()
 {
-	wordint return_value;
+	boolean is_male = characters_sex() == MALE;
 
-	if (characters_sex() == FEMALE) {
-		return_value =
-		    race[py.misc.prace].f_b_wt - 4 * race[py.misc.prace].f_m_wt;
-	} else {
-		return_value =
-		    race[py.misc.prace].m_b_wt - 4 * race[py.misc.prace].m_m_wt;
-	}
-
-	return return_value;
+	return race_weight_base(py.misc.prace, is_male) - 4 * race_weight_modifier(py.misc.prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

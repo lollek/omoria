@@ -41,9 +41,7 @@ int main(int argc, char *argv[])
 	inven_temp->insides = 0;
 	inven_temp->next = nil;
 	inven_temp->is_in = false;
-	caught_message = nil;
 	old_message = nil;
-	old_mess_count = 0;
 	turn_counter = 100000;
 
 	/* Grab a random seed from the clock */

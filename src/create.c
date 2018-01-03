@@ -192,7 +192,7 @@ boolean cc__choose_race()
 	clear_from(21);
 	prt("Choose a race (? for Help):", 21, 3);
 	do {
-		sprintf(out_val, " %c) %s", (int)i3 + 96, race[i2].trace);
+		sprintf(out_val, " %c) %s", (int)i3 + 96, race_name(i2));
 		put_buffer(out_val, i5, i4);
 		i3++;
 		i4 += 15;
@@ -215,7 +215,7 @@ boolean cc__choose_race()
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= MAX_RACES) && (i2 >= 1)) {
 			py.misc.prace = i2 - 1;
-			strcpy(py.misc.race, race[i2 - 1].trace);
+			strcpy(py.misc.race, race_name(i2 - 1));
 			exit_flag = true;
 			return_value = true;
 			put_buffer(py.misc.race, 4, 15);
@@ -354,26 +354,26 @@ void cc__get_stats()
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
 		py.stat.p[(int)tstat] = cc__change_stat(
-		    cc__get_stat(), race[prace].adj[(int)tstat]);
+		    cc__get_stat(), race_stats(prace)[(int)tstat]);
 		py.stat.c[(int)tstat] = py.stat.p[(int)tstat];
 	}
 
 	py.misc.rep = 0;
-	py.misc.srh = race[prace].srh;
-	py.misc.bth = race[prace].bth;
-	py.misc.bthb = race[prace].bthb;
-	py.misc.fos = race[prace].fos;
-	py.misc.stl = race[prace].stl;
-	py.misc.save = race[prace].bsav;
-	py.misc.hitdie = race[prace].bhitdie;
+	py.misc.srh = race_search_mod(prace);
+	py.misc.bth = race_melee_bonus(prace);
+	py.misc.bthb = race_ranged_bonus(prace);
+	py.misc.fos = race_search_freq(prace);
+	py.misc.stl = race_stealth_mod(prace);
+	py.misc.save = race_save_mod(prace);
+	py.misc.hitdie = race_health_bonus(prace);
 	py.misc.lev = 1;
 	py.misc.ptodam = todam_adj();
 	py.misc.ptohit = tohit_adj();
 	py.misc.ptoac = 0;
 	py.misc.pac = toac_adj();
-	py.misc.expfact = race[prace].b_exp;
-	py.flags.see_infra = race[prace].infra;
-	py.flags.swim = race[prace].swim;
+	py.misc.expfact = race_expfactor(prace);
+	py.flags.see_infra = race_infravision(prace);
+	py.flags.swim = race_swim_speed(prace);
 }
 
 void cc__print_history()
@@ -544,7 +544,7 @@ void cc__get_ahw()
 	integer i1;
 
 	i1 = py.misc.prace;
-	py.misc.age = race[i1].b_age + randint(race[i1].m_age);
+	py.misc.age = race_rand_starting_age(i1);
 
 	py.misc.birth.year = 500 + randint(50);
 	py.misc.birth.month = randint(13);
@@ -563,16 +563,9 @@ void cc__get_ahw()
 	}
 	py.misc.cur_age.hour = 7;
 	py.misc.cur_age.secs = 300 + randint(99);
-
-	if (characters_sex() == FEMALE) {
-		py.misc.ht = randnor(race[i1].f_b_ht, race[i1].f_m_ht);
-		py.misc.wt = randnor(race[i1].f_b_wt, race[i1].f_m_wt);
-	} else {
-		py.misc.ht = randnor(race[i1].m_b_ht, race[i1].m_m_ht);
-		py.misc.wt = randnor(race[i1].m_b_wt, race[i1].m_m_wt);
-	}
-
-	py.misc.disarm = race[i1].b_dis + todis_adj();
+	py.misc.ht = race_rand_starting_height(i1, characters_sex() == MALE);
+	py.misc.wt = race_rand_starting_weight(i1, characters_sex() == MALE);
+	py.misc.disarm = race_disarm_mod(i1) + todis_adj();
 
 } /* end cc__get_ahw */
 
@@ -601,7 +594,7 @@ boolean cc__get_class()
 	prt("Choose a class (? for Help):", 21, 3);
 
 	do {
-		if (race[i1].tclass & bit_array[i2 + 1]) {
+		if (race_class_field(i1) & bit_array[i2 + 1]) {
 			i3++;
 			sprintf(out_str, "%c) %s", (int)i3 + 96,
 				class_title_get(i2));
@@ -730,7 +723,7 @@ void create_character()
 	printed_once = false;
 	for (tstat = STR; tstat <= CHR; tstat++) {
 		max_r[(int)tstat] =
-		    cc__max_stat(140, race[py.misc.prace].adj[(int)tstat]);
+		    cc__max_stat(140, race_stats(py.misc.prace)[(int)tstat]);
 	}
 
 	cc__get_minimums(user, &minning, max_r);
