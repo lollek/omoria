@@ -1095,53 +1095,54 @@ boolean learn_spell(boolean *redraw)
 boolean learn_prayer()
 {
 	/*{ Learn some prayers (Priest)				-RAK-	}*/
-	integer i1, i2, i3, i4, new_spell;
+	integer learnable_spells;
+	integer num_spells_to_learn;
+	integer new_spell;
 	integer test_array[33]; /*	: array [1..32] of integer;*/
-	unsigned long spell_flag, spell_flag2;
-	treas_ptr curse;
+	unsigned long spell_flag = 0;
+	unsigned long spell_flag2 = 0;
+	treas_ptr ptr;
 	boolean return_value = false;
 
 	ENTER("learn_prayer", "");
 
-	i1 = 0;
-	spell_flag = 0;
-	spell_flag2 = 0;
-	curse = inventory_list;
-	while (curse != nil) {
-		if (curse->data.tval == Prayer_Book) {
-			spell_flag |= curse->data.flags;
-			spell_flag2 |= curse->data.flags2;
+	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next)
+	{
+		if (ptr->data.tval == Prayer_Book) {
+			spell_flag |= ptr->data.flags;
+			spell_flag2 |= ptr->data.flags2;
 		}
-		curse = curse->next;
 	}
 
-	i1 = 0; /* btw, we only use test_array[1..32] */
-	while ((spell_flag > 0) || (spell_flag2 > 0)) {
-		i2 = bit_pos64(&spell_flag2, &spell_flag);
+	learnable_spells = 0; /* btw, we only use test_array[1..32] */
+	while (spell_flag > 0 || spell_flag2 > 0) {
+		integer i2 = bit_pos64(&spell_flag2, &spell_flag);
 		if (i2 > 31) {
 			i2--;
 		}
 		if (PSPELL(i2).slevel <= py.misc.lev) {
 			if (!PSPELL(i2).learned) {
-				test_array[i1++] = i2;
+				test_array[learnable_spells++] = i2;
 			}
 		}
 	}
 
-	i2 = num_new_spells(spell_adj(WIS));
+
+	num_spells_to_learn = num_new_spells(spell_adj(WIS));
 	new_spell = 0;
 
-	while ((i1 > 0) && (i2 > 0)) {
-		i3 = randint(i1);
+	while (learnable_spells > 0 && num_spells_to_learn > 0) {
+		integer i3 = randint(learnable_spells);
+		integer i4;
 		PSPELL(test_array[i3]).learned = true;
 		new_spell++;
 
-		for (i4 = i3; i4 < i1; i4++) {
+		for (i4 = i3; i4 < learnable_spells; i4++) {
 			test_array[i4] = test_array[i4 + 1];
 		}
 
-		i1--; /*{ One less spell to learn	}*/
-		i2--; /*{ Learned one			}*/
+		learnable_spells--; /*{ One less spell to learn	}*/
+		num_spells_to_learn--; /*{ Learned one			}*/
 	}
 
 	if (new_spell > 0) {
