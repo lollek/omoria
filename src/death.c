@@ -195,7 +195,7 @@ void upon_death()
 	/* We get a chance to respawn with a penalty */
 	if (!total_winner &&
 	    get_yes_no(
-		"Do you wish to respawn? You will lose all your items")) {
+		"Do you wish to reincarnate? You will lose all your items")) {
 		respawn();
 		return;
 	}

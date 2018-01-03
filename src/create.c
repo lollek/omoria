@@ -33,8 +33,8 @@ integer cc__get_min_stat(string prompt, byteint max)
 {
 	integer abil = 0;
 	integer perc;
-	string tmp_str;
-	string out_str;
+	string tmp_str = "";
+	string out_str = "";
 
 	if (max == 250) {
 		sprintf(out_str, "Min %s (racial max 18/00) : ", prompt);
@@ -48,7 +48,8 @@ integer cc__get_min_stat(string prompt, byteint max)
 
 	prt(out_str, 1, 1);
 
-	get_string(tmp_str, 1, strlen(out_str) + 1, 10);
+	while (tmp_str[0] == '\0')
+		get_string(tmp_str, 1, strlen(out_str) + 1, 10);
 	if (pindex(tmp_str, '/') > 0) {
 		/* player is asking for an 18/xx, 17/00 is left a 0 here, bummer
 		 */
@@ -905,12 +906,12 @@ void display_char()
 
 void get_name()
 {
-
-	/*	{ Gets a name for the character				-JWT-
-	 * }*/
+	/* Gets a name for the character    -JWT- */
 
 	prt("Enter your player's name  [press <RETURN> when finished]", 22, 3);
-	get_string(py.misc.name, 3, 15, 24);
+	py.misc.name[0] = '\0';
+	while (py.misc.name[0] == '\0')
+		get_string(py.misc.name, 3, 15, 24);
 	clear_from(21);
 }
 
