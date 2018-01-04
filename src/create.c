@@ -285,6 +285,7 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once,
 		py.misc.dis_tac = toac_adj();
 
 		if (!*printed_once) {
+			erase_line(1, 1);
 			clear_from(21);
 			put_misc1();
 			put_stats();
