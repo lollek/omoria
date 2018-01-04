@@ -921,13 +921,13 @@ void lose_exp(integer amount)
 
 			do {
 				i1--;
-				if (magic_spell[PM.pclass][i1].learned) {
+				if (class_spell(PM.pclass, i1)->learned) {
 					flag = true;
 				}
 			} while (!((flag) || (i1 < 2)));
 
 			if (flag) {
-				magic_spell[PM.pclass][i1].learned = false;
+				class_spell(PM.pclass, i1)->learned = false;
 				if (class_uses_magic(PM.pclass, M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");

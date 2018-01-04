@@ -321,9 +321,9 @@ static void sc__write_magic(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 {
 	integer i1;
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		/* with magic_spell[py.misc.pclass,i1] do */
-		sprintf(out_rec, "%d %d", (int)PSPELL(i1).learned,
-			PSPELL(i1).sexp);
+		sprintf(out_rec, "%d %d",
+			(int)class_spell(PM.pclass, i1)->learned,
+			class_spell(PM.pclass, i1)->sexp);
 		encrypt_write(f1, cf_state, out_rec);
 	}
 }
@@ -1247,8 +1247,8 @@ static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		if (sscanf(in_rec, "%d %d", &x1, &x2) != 2) {
 			*paniced = true;
 		}
-		PSPELL(i1).learned = x1;
-		PSPELL(i1).sexp = x2;
+		class_spell(PM.pclass, i1)->learned = x1;
+		class_spell(PM.pclass, i1)->sexp = x2;
 	}
 }
 

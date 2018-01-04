@@ -1737,12 +1737,12 @@ void xp_loss(integer amount)
 			flag = false;
 			do {
 				i1--;
-				if (magic_spell[pclass][i1].learned) {
+				if (class_spell(pclass, i1)->learned) {
 					flag = true;
 				}
 			} while (!((flag) || (i1 < 2)));
 			if (flag) {
-				magic_spell[pclass][i1].learned = false;
+				class_spell(pclass, i1)->learned = false;
 				if (class_uses_magic(PM.pclass, M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
@@ -3072,10 +3072,9 @@ boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
 		}
 		if (i3 > 0) {
 			i3--;
-			/* with magic_spell[py.misc.pclass][i3]. do; */
-			if ((magic_spell[py.misc.pclass][i3].slevel <=
+			if ((class_spell(py.misc.pclass, i3)->slevel <=
 			     py.misc.lev) &&
-			    (magic_spell[py.misc.pclass][i3].learned)) {
+			    (class_spell(py.misc.pclass, i3)->learned)) {
 				aspell[i1++].splnum = i3;
 				num = i1;
 			} else {
@@ -3162,26 +3161,24 @@ static void d__examine_book()
 					i3--;
 				}
 				if (i3 > 0) {
-					/* with magic_spell[PM.pclass][i3]. do;
-					 */
 					i3--;
 					i5++;
-					if (magic_spell[PM.pclass][i3].slevel <
+					if (class_spell(PM.pclass, i3)->slevel <
 					    99) {
-						sprintf(
-						    out_val, "%c) %-30s%2d     "
-							     " %2d   %s",
-						    (char)(96 + i5),
-						    magic_spell[PM.pclass][i3]
-							.sname,
-						    magic_spell[PM.pclass][i3]
-							.slevel,
-						    magic_spell[PM.pclass][i3]
-							.smana,
-						    magic_spell[PM.pclass][i3]
-							    .learned
-							? "true"
-							: "false");
+						sprintf(out_val,
+							"%c) %-30s%2d     "
+							" %2d   %s",
+							(char)(96 + i5),
+							class_spell(PM.pclass,
+								    i3)->sname,
+							class_spell(PM.pclass,
+								    i3)->slevel,
+							class_spell(PM.pclass,
+								    i3)->smana,
+							class_spell(PM.pclass,
+								    i3)->learned
+							    ? "true"
+							    : "false");
 						prt(out_val, i5 + 1, 1);
 					} else {
 						prt("", i5 + 1, 1);

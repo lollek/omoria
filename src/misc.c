@@ -1058,8 +1058,8 @@ boolean learn_spell(boolean *redraw)
 			if (i3 > 31) {
 				i3--;
 			}
-			if (PSPELL(i3).slevel <= py.misc.lev) {
-				if (!(PSPELL(i3).learned)) {
+			if (class_spell(PM.pclass, i3)->slevel <= py.misc.lev) {
+				if (!(class_spell(PM.pclass, i3)->learned)) {
 					spell[i1++].splnum = i3;
 				}
 			}
@@ -1071,7 +1071,7 @@ boolean learn_spell(boolean *redraw)
 				      redraw)) {
 				/*	printf("\n\n>>> Got spell %d<<<\n\n", */
 				/* sn);fflush(stdout); */
-				PSPELL(sn).learned = true;
+				class_spell(PM.pclass, sn)->learned = true;
 				return_value = true;
 				if (py.misc.mana == 0) {
 					py.misc.mana = 1;
@@ -1119,8 +1119,8 @@ boolean learn_prayer()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (PSPELL(i2).slevel <= py.misc.lev) {
-			if (!PSPELL(i2).learned) {
+		if (class_spell(PM.pclass, i2)->slevel <= py.misc.lev) {
+			if (!class_spell(PM.pclass, i2)->learned) {
 				test_array[learnable_spells++] = i2;
 			}
 		}
@@ -1132,7 +1132,7 @@ boolean learn_prayer()
 	while (learnable_spells > 0 && num_spells_to_learn > 0) {
 		integer i3 = randint(learnable_spells);
 		integer i4;
-		PSPELL(test_array[i3]).learned = true;
+		class_spell(PM.pclass, test_array[i3])->learned = true;
 		new_spell++;
 
 		for (i4 = i3; i4 < learnable_spells; i4++) {
@@ -1189,8 +1189,8 @@ boolean learn_discipline()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (PSPELL(i2).slevel <= py.misc.lev) {
-			if (!PSPELL(i2).learned) {
+		if (class_spell(PM.pclass, i2)->slevel <= py.misc.lev) {
+			if (!class_spell(PM.pclass, i2)->learned) {
 				i1++;
 				test_array[i1] = i2;
 			}
@@ -1202,7 +1202,7 @@ boolean learn_discipline()
 
 	while ((i1 > 0) && (i2 > 0)) {
 		i3 = randint(i1);
-		PSPELL(test_array[i3]).learned = true;
+		class_spell(PM.pclass, test_array[i3])->learned = true;
 		new_spell++;
 
 		for (i4 = i3; i4 < i1; i4++) {
@@ -1275,8 +1275,8 @@ boolean learn_song(boolean *redraw)
 			if (i3 > 31) {
 				i3--;
 			}
-			if (PSPELL(i3).slevel <= py.misc.lev) {
-				if (!(PSPELL(i3).learned)) {
+			if (class_spell(PM.pclass, i3)->slevel <= py.misc.lev) {
+				if (!(class_spell(PM.pclass, i3)->learned)) {
 					spell[i1++].splnum = i3;
 				}
 			}
@@ -1286,7 +1286,7 @@ boolean learn_song(boolean *redraw)
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
-				PSPELL(sn).learned = true;
+				class_spell(PM.pclass, sn)->learned = true;
 				return_value = true;
 				if (py.misc.mana == 0) {
 					py.misc.mana = 1;
@@ -1337,8 +1337,8 @@ boolean learn_druid()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (PSPELL(i2).slevel <= py.misc.lev) {
-			if (!PSPELL(i2).learned) {
+		if (class_spell(PM.pclass, i2)->slevel <= py.misc.lev) {
+			if (!class_spell(PM.pclass, i2)->learned) {
 				test_array[i1++] = i2;
 			}
 		}
@@ -1349,7 +1349,7 @@ boolean learn_druid()
 
 	while ((i1 > 0) && (i2 > 0)) {
 		i3 = randint(i1);
-		PSPELL(test_array[i3]).learned = true;
+		class_spell(PM.pclass, test_array[i3])->learned = true;
 		new_spell++;
 
 		for (i4 = i3; i4 < i1; i4++) {
@@ -1395,7 +1395,7 @@ void gain_mana(integer amount)
 	ENTER("gain_mana", "");
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		if (PSPELL(i1).learned) {
+		if (class_spell(PM.pclass, i1)->learned) {
 			knows_spell = true;
 		}
 	}
@@ -1484,9 +1484,12 @@ void print_new_spells(spl_type spell, integer num, boolean *redraw)
 				sprintf(out_val,
 					"%c) %-30s %3d    %3d      %2ld",
 					97 + (int)i1,
-					PSPELL(spell[i1].splnum).sname,
-					PSPELL(spell[i1].splnum).slevel,
-					PSPELL(spell[i1].splnum).smana,
+					class_spell(PM.pclass, spell[i1].splnum)
+					    ->sname,
+					class_spell(PM.pclass, spell[i1].splnum)
+					    ->slevel,
+					class_spell(PM.pclass, spell[i1].splnum)
+					    ->smana,
 					spell[i1].splchn);
 			}
 			prt(out_val, 3 + i1, 1);
@@ -1598,8 +1601,9 @@ void spell_chance(spl_rec *spell)
 	/*	with magic_spell[py.misc.pclass,spell.splnum] do*/
 	/*	  with spell do                                 */
 
-	spell->splchn = PSPELL(spell->splnum).sfail -
-			3 * (py.misc.lev - PSPELL(spell->splnum).slevel);
+	spell->splchn =
+	    class_spell(PM.pclass, spell->splnum)->sfail -
+	    3 * (py.misc.lev - class_spell(PM.pclass, spell->splnum)->slevel);
 
 	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
 		spell->splchn -= 3 * (spell_adj(INT) - 1);
@@ -1611,9 +1615,10 @@ void spell_chance(spl_rec *spell)
 		spell->splchn -= 3 * (spell_adj(WIS) - 1);
 	}
 
-	if (PSPELL(spell->splnum).smana > py.misc.cmana) {
+	if (class_spell(PM.pclass, spell->splnum)->smana > py.misc.cmana) {
 		spell->splchn +=
-		    5 * (int)(PSPELL(spell->splnum).smana - py.misc.cmana);
+		    5 * (int)(class_spell(PM.pclass, spell->splnum)->smana -
+			      py.misc.cmana);
 	}
 
 	if (spell->splchn > 95) {

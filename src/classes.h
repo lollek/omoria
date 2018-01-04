@@ -99,4 +99,12 @@ boolean class_uses_magic(int class, enum magic_t magic_type);
  */
 signed char class_magic_resist(int class);
 
+/**
+ * -OK-
+ *  class_spell() - Get spell by class and slot
+ *  @class: Class name, e.g. C_WARRIOR
+ *  @slot: Spell slot, currently in range [0-40[
+ */
+spell_t *class_spell(int class, int slot);
+
 #endif /* CLASSES_H */

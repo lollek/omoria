@@ -26,7 +26,6 @@
 
 #include "variables.h"
 
-#define PSPELL(xx) (magic_spell[py.misc.pclass][(xx)])
 #define PM (py.misc)
 #define PS (py.stat)
 #define PF (py.flags)

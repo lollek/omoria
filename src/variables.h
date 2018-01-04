@@ -127,7 +127,6 @@ extern integer pclass;
 extern vtype sex_type;
 extern background_type background[MAX_BACKGROUND];
 extern real rgold_adj[MAX_RACES][MAX_RACES];
-extern spell_type magic_spell[MAX_CLASS][MAX_SPELLS];
 extern treasure_type yums[NUM_YUM + 1];
 extern treasure_type monk_book;
 extern byteint player_init[MAX_CLASS][5];

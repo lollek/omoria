@@ -265,7 +265,7 @@ typedef struct player_type
 	p_flags flags;
 } player_type;
 
-typedef struct spell_type
+typedef struct spell_t
 {
 	ctype sname;
 	byteint slevel;
@@ -273,7 +273,7 @@ typedef struct spell_type
 	wordint sexp;
 	byteint sfail;
 	boolean learned;
-} spell_type;
+} spell_t;
 
 typedef struct spl_rec
 {
