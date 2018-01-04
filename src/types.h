@@ -37,6 +37,19 @@ typedef byteint
 typedef integer
     money_type[MITHRIL + 1]; /* = array[total$..mithril] of integer; */
 
+enum class_t {
+	C_WARRIOR = 0,
+	C_MAGE = 1,
+	C_PRIEST = 2,
+	C_ROGUE = 3,
+	C_RANGER = 4,
+	C_PALADIN = 5,
+	C_DRUID = 6,
+	C_BARD = 7,
+	C_ADVENTURER = 8,
+	C_MONK = 9
+};
+
 typedef struct game_time_type
 {
 	integer year;
@@ -168,7 +181,7 @@ typedef struct p_misc
 	worlint disarm;		/* { % to Disarm	} */
 	worlint save;		/* { Saving throw	} */
 	worlint sc;		/* { Social Class	} */
-	byteint pclass;		/* { # of class	} */
+	enum class_t pclass;    /* { # of class	} */
 	byteint prace;		/* { # of race	} */
 	byteint hitdie;		/* { Char hit die	} */
 	byteint stl;		/* { Stealth factor} */

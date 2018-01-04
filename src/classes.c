@@ -1,6 +1,6 @@
 #include "imoria.h"
 
-char const *class_title(int class)
+char const *class_title(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -29,7 +29,7 @@ char const *class_title(int class)
 	}
 }
 
-float class_expfactor(int class)
+float class_expfactor(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -58,7 +58,7 @@ float class_expfactor(int class)
 	}
 }
 
-signed char class_extra_health(int class)
+signed char class_extra_health(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -87,7 +87,7 @@ signed char class_extra_health(int class)
 	}
 }
 
-signed char class_disarm_mod(int class)
+signed char class_disarm_mod(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -116,7 +116,7 @@ signed char class_disarm_mod(int class)
 	}
 }
 
-signed char class_search_mod(int class)
+signed char class_search_mod(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -145,7 +145,7 @@ signed char class_search_mod(int class)
 	}
 }
 
-signed char class_stealth_mod(int class)
+signed char class_stealth_mod(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -174,7 +174,7 @@ signed char class_stealth_mod(int class)
 	}
 }
 
-signed char class_search_freq(int class)
+signed char class_search_freq(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -203,7 +203,7 @@ signed char class_search_freq(int class)
 	}
 }
 
-signed char class_melee_bonus(int class)
+signed char class_melee_bonus(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -232,7 +232,7 @@ signed char class_melee_bonus(int class)
 	}
 }
 
-signed char class_ranged_bonus(int class)
+signed char class_ranged_bonus(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -261,7 +261,7 @@ signed char class_ranged_bonus(int class)
 	}
 }
 
-signed char class_save_mod(int class)
+signed char class_save_mod(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -290,7 +290,7 @@ signed char class_save_mod(int class)
 	}
 }
 
-signed char const *class_stats(int class)
+signed char const *class_stats(enum class_t class)
 {
 	static signed char const warrior_stats[] = {5, -2, -2, 2, 2, 1};
 	static signed char const mage_stats[] = {-5, 3, 0, 0, -2, 0};
@@ -329,7 +329,7 @@ signed char const *class_stats(int class)
 	}
 }
 
-boolean class_uses_magic(int class, enum magic_t magic_type)
+boolean class_uses_magic(enum class_t class, enum magic_t magic_type)
 {
 	switch (magic_type) {
 	case M_ARCANE:
@@ -347,7 +347,7 @@ boolean class_uses_magic(int class, enum magic_t magic_type)
 	}
 }
 
-signed char class_magic_resist(int class)
+signed char class_magic_resist(enum class_t class)
 {
 	switch (class) {
 	case C_WARRIOR:
@@ -376,7 +376,7 @@ signed char class_magic_resist(int class)
 	}
 }
 
-spell_t *class_spell(int class, int slot)
+spell_t *class_spell(enum class_t class, int slot)
 {
 	static spell_t no_spell = {"", 99, 99, 0, 0, false};
 

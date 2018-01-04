@@ -6,7 +6,7 @@
  *  class_title() - Get title for class
  *  @class Class name, e.g. C_WARRIOR
  */
-char const *class_title(int class);
+char const *class_title(enum class_t class);
 
 /**
  * -OK-
@@ -15,63 +15,63 @@ char const *class_title(int class);
  *
  *  Experience factor adds how much experience a player needs to level up
  */
-float class_expfactor(int class);
+float class_expfactor(enum class_t class);
 
 /**
  * -OK-
  *  class_extra_health() - Get starting health bonus for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_extra_health(int class);
+signed char class_extra_health(enum class_t class);
 
 /**
  * -OK-
  *  class_disarm_mod() - Get disarm modifier for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_disarm_mod(int class);
+signed char class_disarm_mod(enum class_t class);
 
 /**
  * -OK-
  *  class_search_mod() - Get search modifier for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_search_mod(int class);
+signed char class_search_mod(enum class_t class);
 
 /**
  * -OK-
  *  class_stealth_mod() - Get stealth modifier for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_stealth_mod(int class);
+signed char class_stealth_mod(enum class_t class);
 
 /**
  * -OK-
  *  class_search_freq() - Get search frequency for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_search_freq(int class);
+signed char class_search_freq(enum class_t class);
 
 /**
  * -OK-
  *  class_melee_bonus() - Get melee hit bonus for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_melee_bonus(int class);
+signed char class_melee_bonus(enum class_t class);
 
 /**
  * -OK-
  *  class_ranged_bonus() - Get ranged hit bonus for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_ranged_bonus(int class);
+signed char class_ranged_bonus(enum class_t class);
 
 /**
  * -OK-
  *  class_save_mod() - Get save modifier for class
  *  @class Class name, e.g. C_WARRIOR
  */
-signed char class_save_mod(int class);
+signed char class_save_mod(enum class_t class);
 
 /**
  * -OK-
@@ -80,7 +80,7 @@ signed char class_save_mod(int class);
  *
  *  returns an array containing all 6 stats
  */
-signed char const *class_stats(int class);
+signed char const *class_stats(enum class_t class);
 
 /**
  * -OK-
@@ -88,7 +88,7 @@ signed char const *class_stats(int class);
  *  @class: Class name, e.g. C_WARRIOR
  *  @magic_type: Type of magic, e.g. M_ARCANE
  */
-boolean class_uses_magic(int class, enum magic_t magic_type);
+boolean class_uses_magic(enum class_t class, enum magic_t magic_type);
 
 /**
  * -OK-
@@ -97,7 +97,7 @@ boolean class_uses_magic(int class, enum magic_t magic_type);
  *
  *  This seems to affect the class' ability to pierce magic resistance?
  */
-signed char class_magic_resist(int class);
+signed char class_magic_resist(enum class_t class);
 
 /**
  * -OK-
@@ -105,6 +105,6 @@ signed char class_magic_resist(int class);
  *  @class: Class name, e.g. C_WARRIOR
  *  @slot: Spell slot, currently in range [0-40[
  */
-spell_t *class_spell(int class, int slot);
+spell_t *class_spell(enum class_t class, int slot);
 
 #endif /* CLASSES_H */

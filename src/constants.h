@@ -529,17 +529,6 @@
 #define R_PHRAINT 8
 #define R_DRYAD 9
 
-#define C_WARRIOR 0
-#define C_MAGE 1
-#define C_PRIEST 2
-#define C_ROGUE 3
-#define C_RANGER 4
-#define C_PALADIN 5
-#define C_DRUID 6
-#define C_BARD 7
-#define C_ADVENTURER 8
-#define C_MONK 9
-
 #define S_GENERAL 0
 #define S_ARMORY 1
 #define S_WEAPONS 2
