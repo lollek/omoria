@@ -593,6 +593,9 @@
 #define GS_HELP 4
 
 /* the unix code I took starts at 0,0 and the vms code starts at 1,1 */
+/* If you change here, also edit:
+ * print_chstr()
+ */
 #define prt(s, r, c) Prt((s), (r)-1, (c)-1)
 #define put_buffer(s, r, c) Put_Buffer((s), (r)-1, (c)-1)
 #define erase_line(r, c) Erase_Line((r)-1, (c)-1)

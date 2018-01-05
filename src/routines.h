@@ -206,6 +206,7 @@ extern void clear_rc(integer row, integer col);
 /* use print */
 extern void Print(chtype const ch, int row, int col);
 extern void print_str(char const *str_buff, int row, int col);
+extern void print_chstr(chtype const *str_buff, int row, int col);
 
 /* use prt */
 extern void Prt(char const *str_buff, int row, int col);
@@ -437,8 +438,8 @@ extern void tlink();
 extern void mlink();
 extern integer damroll(dtype dice);
 extern boolean los(integer y1, integer x1, integer y2, integer x2);
-extern char get_loc_symbol(integer y, integer x);
-extern char loc_symbol(integer y, integer x);
+extern chtype get_loc_symbol(integer y, integer x);
+extern chtype loc_symbol(integer y, integer x);
 extern boolean test_light(integer y, integer x);
 extern void validate_monsters();
 extern void compact_monsters();

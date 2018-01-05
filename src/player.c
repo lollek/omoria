@@ -134,8 +134,8 @@ static void _move_char(integer dir)
 
 		/* In doorway of light-room? */
 	} else if ((cave[test_row][test_col].fval == corr_floor2.ftval ||
-		   cave[test_row][test_col].fval == corr_floor3.ftval) &&
-		       py.flags.blind < 1) {
+		    cave[test_row][test_col].fval == corr_floor3.ftval) &&
+		   py.flags.blind < 1) {
 		for (i1 = test_row - 1; i1 <= test_row + 1; i1++) {
 			for (i2 = test_col - 1; i2 <= test_col + 1; i2++) {
 				if (in_bounds(i1, i2) &&

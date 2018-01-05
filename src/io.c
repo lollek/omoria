@@ -440,6 +440,17 @@ void print_str(char const *str_buff, int row, int col)
 	used_line[row] = true;
 	put_buffer(str_buff, row, col);
 }
+
+void print_chstr(chtype const *str_buff, int row, int col)
+{
+	/* Real co-ords convert to screen positions */
+	row -= panel_row_prt;
+	col -= panel_col_prt;
+	used_line[row] = true;
+
+	/* Remove 1 like put_buffer does */
+	mvaddchstr(row - 1, col - 1, str_buff);
+}
 /*//////////////////////////////////////////////////////////////////// */
 boolean get_yes_no(char *prompt) /* : varying[a] of char; */
 {

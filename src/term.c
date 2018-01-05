@@ -1121,14 +1121,14 @@ void Print(chtype const ch, int row, int col)
 	used_line[row + 1] = true;
 
 	if ((row > 24) || (row < 0) || (col > 79) || (col < 0)) {
-		(void)sprintf(tmp_str, "error in print, row = %d col = %d\n",
-			      row, col);
+		sprintf(tmp_str, "error in print, row = %d col = %d\n", row,
+			col);
 		minor_error(tmp_str);
 	}
 
-	if (cool_mvaddch(row, col, ch) == ERR) {
-		(void)sprintf(tmp_str, "error in print, row = %d col = %d\n",
-			      row, col);
+	if (mvaddch(row, col, ch) == ERR) {
+		sprintf(tmp_str, "error in print, row = %d col = %d\n", row,
+			col);
 		minor_error(tmp_str);
 	}
 }
@@ -1528,9 +1528,7 @@ void screen_map()
 	int8u tmp;
 	int priority[256];
 	int row, orow, col, myrow = 0, mycol = 0;
-#ifndef MAC
 	char prntscrnbuf[80];
-#endif
 
 	for (i = 0; i < 256; i++) {
 		priority[i] = 0;
@@ -1538,47 +1536,28 @@ void screen_map()
 	priority['<'] = 5;
 	priority['>'] = 5;
 	priority['@'] = 10;
-#ifdef MSDOS
-	priority[wallsym] = -5;
-	priority[floorsym] = -10;
-#else
 #ifndef ATARI_ST
 	priority['#'] = -5;
 #else
 	priority[(unsigned char)240] = -5;
 #endif
 	priority['.'] = -10;
-#endif
 	priority['\''] = -3;
 	priority[' '] = -15;
 
 	save_screen();
 	clear_rc(1, 1);
-#ifdef MAC
-	DSetScreenCursor(0, 0);
-	DWriteScreenCharAttr(CH(TL), ATTR_NORMAL);
-	for (i = 0; i < MAX_WIDTH / RATIO; i++)
-		DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
-	DWriteScreenCharAttr(CH(TR), ATTR_NORMAL);
-#else
 	use_value2 mvaddch(0, 0, CH(TL));
 	for (i = 0; i < MAX_WIDTH / RATIO; i++) {
 		(void)addch(CH(HE));
 	}
 	(void)addch(CH(TR));
-#endif
 	orow = -1;
 	map[MAX_WIDTH / RATIO] = '\0';
 	for (i = 0; i < MAX_HEIGHT; i++) {
 		row = i / RATIO;
 		if (row != orow) {
 			if (orow >= 0) {
-#ifdef MAC
-				DSetScreenCursor(0, orow + 1);
-				DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-				DWriteScreenString((char *)map);
-				DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-#else
 				/* can not use mvprintw() on ibmpc, because
 				   PC-Curses is horribly
 				   written, and mvprintw() causes the fp
@@ -1588,7 +1567,6 @@ void screen_map()
 				(void)sprintf(prntscrnbuf, "%c%s%c", CH(VE),
 					      map, CH(VE));
 				use_value2 mvaddstr(orow + 1, 0, prntscrnbuf);
-#endif
 			}
 			for (j = 0; j < MAX_WIDTH / RATIO; j++) {
 				map[j] = ' ';
@@ -1609,42 +1587,19 @@ void screen_map()
 		}
 	}
 	if (orow >= 0) {
-#ifdef MAC
-		DSetScreenCursor(0, orow + 1);
-		DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-		DWriteScreenString((char *)map);
-		DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
-#else
 		(void)sprintf(prntscrnbuf, "%c%s%c", CH(VE), map, CH(VE));
 		use_value2 mvaddstr(orow + 1, 0, prntscrnbuf);
-#endif
 	}
-#ifdef MAC
-	DSetScreenCursor(0, orow + 2);
-	DWriteScreenCharAttr(CH(BL), ATTR_NORMAL);
-	for (i = 0; i < MAX_WIDTH / RATIO; i++)
-		DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
-	DWriteScreenCharAttr(CH(BR), ATTR_NORMAL);
-#else
 	use_value2 mvaddch(orow + 2, 0, CH(BL));
 	for (i = 0; i < MAX_WIDTH / RATIO; i++) {
 		(void)addch(CH(HE));
 	}
 	(void)addch(CH(BR));
-#endif
 
-#ifdef MAC
-	DSetScreenCursor(23, 23);
-	DWriteScreenStringAttr("Hit any key to continue", ATTR_NORMAL);
-	if (mycol > 0) {
-		DSetScreenCursor(mycol, myrow);
-	}
-#else
 	use_value2 mvaddstr(23, 23, "Hit any key to continue");
 	if (mycol > 0) {
 		(void)move(myrow, mycol);
 	}
-#endif
 	(void)inkey();
 	restore_screen();
 	draw_cave();

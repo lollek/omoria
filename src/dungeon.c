@@ -419,132 +419,93 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Given two sets of points, draw the block		}*/
 
-	integer i1, i2, xpos, xmax = 0;
-	integer topp, bott, left, righ;
-	integer new_topp, new_bott, new_left, new_righ;
-	vtype floor_str, save_str;
-	integer floor_str_len = 0;
-	char tmp_char;
-	boolean flag;
+	integer const topp = maxmin(y1, y2, panel_row_min);
+	integer const bott = minmax(y1, y2, panel_row_max);
+	integer const left = maxmin(x1, x2, panel_col_min);
+	integer const right = minmax(x1, x2, panel_col_max);
+	integer const new_topp = y2 - 1; /*{ Margins for new things to appear}*/
+	integer const new_bott = y2 + 1;
+	integer const new_left = x2 - 1;
+	integer const new_righ = x2 + 1;
+
+	integer y;
+	integer xmax = 0;
 
 	ENTER("ml__draw_block", "m");
 
 	/*{ From uppermost to bottom most lines player was on...  }*/
 	/*{ Points are guaranteed to be on the screen (I hope...) }*/
 
-	/* fprintf(debug_file,": draw_block: y1: %d  x1: %d  y2: %d  x2: %d\n",
-	 */
-	/*    y1,x1,y2,x2); */
-	/* fflush(debug_file); */
-
-	topp = maxmin(y1, y2, panel_row_min);
-	bott = minmax(y1, y2, panel_row_max);
-	left = maxmin(x1, x2, panel_col_min);
-	righ = minmax(x1, x2, panel_col_max);
-
-	/* fprintf(debug_file,": draw_block: topp: %d  bott: %d  left: %d */
-	/* right: %d\n", */
-	/*      topp,bott,left,righ); */
-	/* fflush(debug_file); */
-
-	new_topp = y2 - 1; /*{ Margins for new things to appear}*/
-	new_bott = y2 + 1;
-	new_left = x2 - 1;
-	new_righ = x2 + 1;
-
-	for (i1 = topp; i1 <= bott; i1++) {
+	for (y = topp; y <= bott; y++) {
+		integer x;
+		integer xpos = 0;
+		chtype floor_str[82];
+		integer floor_str_len = 0;
 
 		floor_str[0] = 0; /*{ Null out print string         }*/
 		floor_str_len = 0;
-		save_str[0] = 0;
-		xpos = 0;
 
-		for (i2 = left; i2 <= righ;
-		     i2++) { /*{ Leftmost to rightmost do}*/
-			/* with cave[i1,i2] do; */
-			if ((cave[i1][i2].pl) || (cave[i1][i2].fm)) {
-				flag = (((i1 == y1) && (i2 == x1)) ||
-					((i1 == y2) && (i2 == x2)));
+		/*{ Leftmost to rightmost do}*/
+		for (x = left; x <= right; x++) {
+			chtype tmp_char = ' ';
+			boolean flag;
+
+			if (cave[y][x].pl || cave[y][x].fm) {
+				flag = ((y == y1 && x == x1) ||
+					(y == y2 && x == x2));
 				/* flag = true; */
 			} else {
 				flag = true;
-				if (((i1 >= new_topp) && (i1 <= new_bott)) &&
-				    ((i2 >= new_left) && (i2 <= new_righ))) {
-					if (cave[i1][i2].tl) {
-						if (is_in(cave[i1][i2].fval,
-							  pwall_set)) {
-							cave[i1][i2].pl = true;
-						} else if (cave[i1][i2].tptr >
-							   0) {
-							if (is_in(
-								t_list
-								    [cave[i1][i2]
-									 .tptr]
-									.tval,
-								light_set)) {
-								if (!(cave[i1][i2]
-									  .fm)) {
-									cave[i1][i2]
-									    .fm =
-									    true;
-								}
-							}
-						}
+				if ((y >= new_topp && y <= new_bott) &&
+				    (x >= new_left && x <= new_righ) &&
+				    cave[y][x].tl) {
+					if (is_in(cave[y][x].fval, pwall_set)) {
+						cave[y][x].pl = true;
+					} else if (cave[y][x].tptr > 0 &&
+						   is_in(t_list[cave[y][x].tptr]
+							     .tval,
+							 light_set) &&
+						   !(cave[y][x].fm)) {
+						cave[y][x].fm = true;
 					}
 				}
 			}
 
-			if ((cave[i1][i2].pl) || (cave[i1][i2].tl) ||
-			    (cave[i1][i2].fm)) {
-				tmp_char = loc_symbol(i1, i2);
-			} else {
-				tmp_char = ' ';
-			}
-
-			if (py.flags.image > 0) {
-				if (randint(12) == 1) {
-					tmp_char = (char)(randint(95) + 31);
-				}
-			}
+			if (cave[y][x].pl || cave[y][x].tl || cave[y][x].fm)
+				tmp_char = loc_symbol(y, x);
+			if (py.flags.image > 0 && randint(12) == 1)
+				tmp_char = (char)(randint(95) + 31);
 
 			if (flag) {
-				if (xpos == 0) {
-					xpos = i2;
-				}
-				xmax = i2;
+				if (xpos == 0)
+					xpos = x;
+				xmax = x;
 			}
 
 			if (xpos > 0) {
-				if (floor_str_len > 80) {
+				if (floor_str_len > 80)
 					MSG(": ERROR draw_block floor_str_len "
 					    "too big\n");
-				}
-
 				floor_str[floor_str_len++] = tmp_char;
 			}
 
-		} /* end for  i2 */
+		} /* end for  x */
 
-		if (floor_str_len > 80) {
+		if (floor_str_len > 80)
 			MSG(": ERROR draw_block floor_str_len too big\n");
-		}
 
 		floor_str[floor_str_len] = 0;
-		/*    fprintf(debug_file,":   floor before if %d: */
-		/*    |%s|\n",i1,floor_str); */
-		/*    fflush(debug_file); */
 
 		if (xpos > 0) {
-			i2 = i1; /*{ Var for PRINT cannot be loop index}*/
-			/*print(substr(floor_str,1,1+xmax-xpos),i2,xpos);*/
+			integer const y2 =
+			    y; /*{ Var for PRINT cannot be loop index}*/
+			/*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
 
-			if (((1 + xmax - xpos + 1) > 80) ||
-			    ((1 + xmax - xpos + 1) < 0)) {
+			if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
 				MSG(": ERROR draw_block xmax-xpos is bad\n");
-			}
 
 			floor_str[1 + xmax - xpos + 1] = 0;
-			print_str(floor_str, i2, xpos);
+			print_chstr(floor_str, y2, xpos);
 		}
 	}
 
@@ -561,17 +522,14 @@ static void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	light_flag = true;
 
-	for (i1 = y1 - 1; i1 <= y1 + 1; i1++) { /*{ Turn off lamp light   }*/
-		for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
+	/* Turn off lamp light */
+	for (i1 = y1 - 1; i1 <= y1 + 1; i1++)
+		for (i2 = x1 - 1; i2 <= x1 + 1; i2++)
 			cave[i1][i2].tl = false;
-		}
-	}
 
-	for (i1 = y2 - 1; i1 <= y2 + 1; i1++) {
-		for (i2 = x2 - 1; i2 <= x2 + 1; i2++) {
+	for (i1 = y2 - 1; i1 <= y2 + 1; i1++)
+		for (i2 = x2 - 1; i2 <= x2 + 1; i2++)
 			cave[i1][i2].tl = true;
-		}
-	}
 
 	ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
 
@@ -582,82 +540,59 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When FIND_FLAG, light only permanent features     }*/
 
-	integer i1, i2, xpos;
-	vtype floor_str, save_str;
-	integer floor_str_len, save_str_len;
-	char tmp_char;
-	boolean flag;
+	integer y;
+	integer x;
 
 	ENTER("ml__sub2_move_light", "m");
 
 	if (light_flag) {
-		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
-				cave[i1][i2].tl = false;
-			}
-		}
+		for (y = y1 - 1; y <= y1 + 1; y++)
+			for (x = x1 - 1; x <= x1 + 1; x++)
+				cave[y][x].tl = false;
 		ml__draw_block(y1, x1, y1, x1);
 		light_flag = false;
 	}
 
-	for (i1 = y2 - 1; i1 <= y2 + 1; i1++) {
+	for (y = y2 - 1; y <= y2 + 1; y++) {
+		chtype floor_str[82];
+		chtype save_str[82];
+		integer floor_str_len = 0;
+		integer save_str_len = 0;
+		integer xpos = 0;
+		chtype tmp_char;
+
 		floor_str[0] = 0;
 		save_str[0] = 0;
-		floor_str_len = 0;
-		save_str_len = 0;
-		xpos = 0;
-		for (i2 = x2 - 1; i2 <= x2 + 1; i2++) {
-			/* with cave[i1,i2] do; */
-			flag = false;
-			if (!((cave[i1][i2].fm) || (cave[i1][i2].pl))) {
+		for (x = x2 - 1; x <= x2 + 1; x++) {
+			boolean flag = false;
+			if (!(cave[y][x].fm || (cave[y][x].pl))) {
 				tmp_char = ' ';
 				if (player_light) {
-					if (is_in(cave[i1][i2].fval,
+					if (is_in(cave[y][x].fval,
 						  pwall_set)) {
-						cave[i1][i2].pl =
-						    true; /*{ Turn on
-							     perm
-							     light }*/
-						tmp_char = loc_symbol(i1, i2);
+						/* Turn on perm light */
+						cave[y][x].pl = true;
+						tmp_char = loc_symbol(y, x);
 						flag = true;
-					} else {
-						if (cave[i1][i2].tptr > 0) {
-							if (is_in(
-								t_list
-								    [cave[i1][i2]
-									 .tptr]
-									.tval,
-								light_set)) {
-								cave[i1][i2]
-								    .fm =
-								    true; /*{
-									     Turn
-									     on
-									     field
-									     marker
-									     }*/
-								tmp_char =
-								    loc_symbol(
-									i1, i2);
-								flag = true;
-							}
-						}
+					} else if (cave[y][x].tptr > 0 &&
+							is_in(t_list[cave[y][x].tptr].tval, light_set)) {
+							/* Turn on field marker */
+							cave[y][x].fm = true;
+							tmp_char = loc_symbol(y, x);
+							flag = true;
 					}
 				}
 			} else {
-				tmp_char = loc_symbol(i1, i2);
+				tmp_char = loc_symbol(y, x);
 			}
 
 			if (flag) {
-				if (xpos == 0) {
-					xpos = i2;
-				}
+				if (xpos == 0)
+					xpos = x;
 				if (save_str[0] != 0) {
-					/* floor_str := floor_str + save_str; */
-					floor_str[floor_str_len] = 0;
-					save_str[save_str_len] = 0;
-					strcat(floor_str, save_str);
-					floor_str_len += save_str_len;
+					integer i;
+					for (i = 0; i < save_str_len; ++i)
+						floor_str[floor_str_len++] = save_str[i];
 					save_str[0] = 0;
 					save_str_len = 0;
 				}
@@ -665,13 +600,14 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 			} else if (xpos > 0) {
 				save_str[save_str_len++] = tmp_char;
 			}
-		} /* end for i2 */
+		} /* end for x */
+
 		if (xpos > 0) {
-			i2 = i1;
+			integer const tmp_y = y;
 			floor_str[floor_str_len] = 0;
-			print_str(floor_str, i2, xpos);
+			print_chstr(floor_str, tmp_y, xpos);
 		}
-	} /* end for i1 */
+	} /* end for y */
 
 	LEAVE("ml__sub2_move_light", "m");
 }

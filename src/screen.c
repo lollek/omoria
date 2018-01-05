@@ -30,6 +30,7 @@ void prt_equipment_args(integer y, integer x, integer start, boolean clear)
 
 void draw_cave()
 {
+	ENTER("draw_cave", "");
 	clear_screen();
 	prt_stat_block();
 	prt_map();
@@ -37,90 +38,85 @@ void draw_cave()
 	prt_search();
 	prt_equipment();
 	put_qio();
+	LEAVE("draw_cave", "");
 }
 
 void prt_map()
 {
-	integer i1, i2, i3, i4, i5;
-	integer ypos, xpos = 0, isp;
-	vtype floor_str;
-	char tmp_char;
-	boolean flag;
+	integer y;
+	integer panel_y = 1;	 /* Used for erasing dirty lines */
+	integer const panel_x0 = 14; /*{ Erasure starts in this column  }*/
+
+	ENTER("prt_map", "");
 
 	redraw = false; /*{ Screen has been redrawn	   }*/
-	i3 = 1;		/*{ Used for erasing dirty lines   }*/
-	i4 = 14;	/*{ Erasure starts in this column  }*/
-	for (i1 = panel_row_min; i1 <= panel_row_max; i1++) {
-		i3++;			       /*{ Increment dirty line ctr	}*/
-		if (used_line[i3]) {	   /*{ If line is dirty...		}*/
-			erase_line(i3, i4);    /*{ erase it.
-						  }*/
-			used_line[i3] = false; /*{ Now it's a clean line
-						  }*/
-		}
-		floor_str[0] = 0; /*{ Floor_str is string to be printed}*/
-		ypos = i1;	/*{ Save row			}*/
-		flag = false;     /*{ False until floor_str <> ''	}*/
-		isp = 0;	  /*{ Number of blanks encountered}*/
-		for (i2 = panel_col_min; i2 <= panel_col_max; i2++) {
-			/* printf ("\n\t>>(row, col) = (%d, %d)", i1,i2); */
-			/* fflush(stdout); */
-			/* with cave[i1,i2] do; */
+	for (y = panel_row_min; y <= panel_row_max; y++) {
+		chtype floor_str[82]; /* floor_str is string to be printed */
+		integer floor_str_len = 0; /* floor_str length counter */
+		integer isp = 0;	   /* Number of blanks encountered */
+		boolean flag = false;      /* False until floor_str <> '' */
+		integer xpos = 0;
+		integer x;
 
-			/*{ Get character for location	}*/
-			if (test_light(i1, i2)) {
-				tmp_char = loc_symbol(i1, i2);
-			} else if ((cave[i1][i2].cptr == 1) && (!find_flag)) {
+		floor_str[0] = 0;
+
+		/* Clean line if dirty */
+		panel_y++;
+		if (used_line[panel_y]) {
+			erase_line(panel_y, panel_x0);
+			used_line[panel_y] = false;
+		}
+
+		for (x = panel_col_min; x <= panel_col_max; x++) {
+			chtype tmp_char =
+			    ' '; /* Get character for x, y location */
+			if (test_light(y, x))
+				tmp_char = loc_symbol(y, x);
+			else if ((cave[y][x].cptr == 1) && (!find_flag))
 				tmp_char = '@';
-			} else if (cave[i1][i2].cptr > 1) {
-				if (m_list[cave[i1][i2].cptr].ml) {
-					tmp_char = loc_symbol(i1, i2);
-				} else {
-					tmp_char = ' ';
-				}
-			} else {
-				tmp_char = ' ';
-			}
+			else if (cave[y][x].cptr > 1 &&
+				 m_list[cave[y][x].cptr].ml)
+				tmp_char = loc_symbol(y, x);
 
 			if (tmp_char == ' ') {
-
 				if (flag) {
 					isp++;
 					if (isp > 3) {
-						print_str(floor_str, ypos,
-							  xpos);
+						floor_str[floor_str_len] = 0;
+						print_chstr(floor_str, y, xpos);
 						flag = false;
 						isp = 0;
 					}
 				}
 
-			} else {
-
-				if (flag) {
-					if (isp > 0) {
-						for (i5 = 0; i5 < isp; i5++) {
-							strcat(floor_str, " ");
-						}
-						isp = 0;
-					}
-					floor_str[strlen(floor_str) + 1] = 0;
-					floor_str[strlen(floor_str)] = tmp_char;
-				} else {
-					xpos = i2;
-					flag = true;
-					floor_str[1] = 0;
-					floor_str[0] = tmp_char;
+			} else if (flag) {
+				if (isp > 0) {
+					integer i5;
+					for (i5 = 0; i5 < isp; i5++)
+						floor_str[floor_str_len++] =
+						    ' ';
+					isp = 0;
 				}
+				floor_str[floor_str_len++] = tmp_char;
+
+			} else {
+				xpos = x;
+				flag = true;
+				floor_str_len = 0;
+				floor_str[floor_str_len++] = tmp_char;
 			}
 		}
 		if (flag) {
-			print_str(floor_str, ypos, xpos);
+			floor_str[floor_str_len] = 0;
+			print_chstr(floor_str, y, xpos);
 		}
 	}
+	LEAVE("prt_map", "");
 }
 
 void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col)
 {
+	ENTER("prt_6_stats", "");
 	if (l != NULL) {
 		prt_stat_attr("STR : ", p[STR], l[STR], row, col);
 		prt_stat_attr("INT : ", p[INT], l[INT], row + 1, col);
@@ -136,12 +132,15 @@ void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col)
 		prt_stat("CON : ", p[CON], row + 4, col);
 		prt_stat("CHR : ", p[CHR], row + 5, col);
 	}
+	LEAVE("prt_6_stats", "");
 }
 
 void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
 		   integer column)
 {
 	stat_s_type out_val1;
+
+	ENTER("prt_stat_attr", "");
 
 	if (loss == 0) {
 		prt_stat(stat_name, stat, row, column);
@@ -150,6 +149,8 @@ void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
 		put_buffer_attr(stat_name, row, column, A_DIM);
 		put_buffer(out_val1, row, column + strlen(stat_name));
 	}
+
+	LEAVE("prt_stat_attr", "");
 }
 
 void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
@@ -157,9 +158,13 @@ void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
 	stat_s_type out_val1;
 	vtype out_val2;
 
+	ENTER("prt_stat", "");
+
 	cnv_stat(stat, out_val1);
 	sprintf(out_val2, "%s%s", stat_name, out_val1);
 	put_buffer(out_val2, row, column);
+
+	LEAVE("prt_stat", "");
 }
 
 void cnv_stat(byteint stat, stat_type out_val)
@@ -187,6 +192,7 @@ void prt_num(vtype header, integer num, integer row, integer column)
 
 void prt_stat_block()
 {
+	ENTER("prt_stat_block", "");
 	prt_field(py.misc.race, RACE_ROW, STAT_COLUMN);
 	prt_field(py.misc.tclass, CLASS_ROW, STAT_COLUMN);
 	prt_title();
@@ -218,6 +224,7 @@ void prt_stat_block()
 	prt_rest();
 	prt_quested();
 	prt_light_on();
+	LEAVE("prt_stat_block", "");
 }
 
 void prt_field(vtype info, integer row, integer column)

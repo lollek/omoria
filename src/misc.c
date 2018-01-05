@@ -329,43 +329,29 @@ void check_kickout_time(integer num, integer check)
 	}
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-char get_loc_symbol(integer y, integer x)
+chtype get_loc_symbol(integer y, integer x)
 {
 	/* check lights and stuff before calling loc_symbol */
 
-	char tmp_char = ' ';
-
-	if (test_light(y, x)) {
-		tmp_char = loc_symbol(y, x);
-	} else if ((cave[y][x].cptr == 1) && (!find_flag)) {
-		tmp_char = '@';
-	} else if (cave[y][x].cptr > 1) {
-		if (m_list[cave[y][x].cptr].ml) {
-			tmp_char = loc_symbol(y, x);
-		} else {
-			tmp_char = ' ';
-		}
-	} else {
-		tmp_char = ' ';
-	}
-
-	return tmp_char;
+	if (test_light(y, x))
+		return loc_symbol(y, x);
+	else if ((cave[y][x].cptr == 1) && (!find_flag))
+		return '@';
+	else if (cave[y][x].cptr > 1)
+		return m_list[cave[y][x].cptr].ml ? loc_symbol(y, x) : ' ';
+	else
+		return ' ';
 }
-/*//////////////////////////////////////////////////////////////////// */
-char loc_symbol(integer y, integer x)
+
+chtype loc_symbol(integer y, integer x)
 {
-	char sym;
-	byteint cptr, tptr, fval;
+	byteint const cptr = cave[y][x].cptr;
+	byteint const tptr = cave[y][x].tptr;
+	byteint const fval = cave[y][x].fval;
 
-	wordint mptr;
+	chtype sym;
 
-	cptr = cave[y][x].cptr;
-	fval = cave[y][x].fval;
-	tptr = cave[y][x].tptr;
-
-	/* with cave[y,x] do; */
-	if ((cptr == 1) && (!find_flag)) {
+	if (cptr == 1 && !find_flag) {
 		sym = '@';
 	} else if (py.flags.blind > 0) {
 		sym = ' ';
@@ -374,7 +360,7 @@ char loc_symbol(integer y, integer x)
 		if (cptr > 1) {
 
 			/* with m_list[cptr] do; */
-			mptr = m_list[cptr].mptr;
+			wordint const mptr = m_list[cptr].mptr;
 			if ((m_list[cptr].ml) &&
 			    (!is_in(fval, water_set) ||
 			     (is_in(fval, water_set) &&
@@ -391,10 +377,10 @@ char loc_symbol(integer y, integer x)
 			} else if (is_in(fval, pwall_set)) {
 				sym = '#';
 			} else if (is_in(fval, water_set)) {
-				sym = '`' + 0x80;
+				sym = '`' | COLOR_PAIR(COLOR_BLUE);
 			} else {
 				/* unknown terrain type */
-				sym = '.' + 0x80;
+				sym = '.' | A_DIM;
 			}
 
 		} else if (tptr > 0) {
@@ -406,7 +392,7 @@ char loc_symbol(integer y, integer x)
 				     (los(char_row, char_col, y, x)))) {
 					sym = t_list[tptr].tchar;
 				} else {
-					sym = '`' + 0x80;
+					sym = '`' | COLOR_PAIR(COLOR_BLUE);
 				}
 			} else {
 				sym = t_list[tptr].tchar;
@@ -418,15 +404,15 @@ char loc_symbol(integer y, integer x)
 		} else if (is_in(fval, pwall_set)) {
 			sym = '#';
 		} else if (is_in(fval, water_set)) {
-			sym = '`' + 0x80;
+			sym = '`' | COLOR_PAIR(COLOR_BLUE);
 		} else {
 			/* unknown terrain type */
-			sym = '.' + 0x80;
+			sym = '.' | A_DIM;
 		}
 	}
 
 #if DO_DEBUG
-	if ((((int)sym & 0x7F) < 32) || (((int)sym & 0x7F) > 126)) {
+	if ((sym & 0x7F) < 32 || (sym & 0x7F) > 126) {
 		fprintf(debug_file, ": ERROR in loc_sym: (%ld, %ld) = %ld   "
 				    "cptr=%ld tptr=%ld fval=%ld\n",
 			x, y, (integer)sym, (integer)cptr, (integer)tptr,
