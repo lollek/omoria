@@ -4,6 +4,8 @@
 #include "dungeon.h"
 #include "save.h"
 
+static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
+
 integer dir_val;	    /* { For movement (running)} */
 integer old_chp, old_cmana; /* { Detect change         } */
 real regen_amount;	  /* { Regenerate hp and mana} */
@@ -413,7 +415,7 @@ boolean panel_contains(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
+static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Given two sets of points, draw the block		}*/
 
@@ -549,7 +551,7 @@ void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__draw_block", "m");
 }
 
-void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Normal movement                                   }*/
 
@@ -576,7 +578,7 @@ void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub1_move_light", "m");
 }
 
-void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When FIND_FLAG, light only permanent features     }*/
 
@@ -674,7 +676,7 @@ void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub2_move_light", "m");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When blinded, move only the player symbol...              }*/
 
@@ -696,7 +698,7 @@ void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub3_move_light", "m");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ With no light, movement becomes involved...               }*/
 
@@ -725,7 +727,7 @@ void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	LEAVE("ml__sub4_move_light", "m");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ Package for moving the character's light about the screen     }*/

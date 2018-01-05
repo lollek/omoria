@@ -33,188 +33,129 @@ void rest_off()
 	prt_rest();
 }
 
-void move_char(integer dir)
+static void _move_char(integer dir)
 {
 	/*{ Moves player from one space to another...		-RAK-	}*/
 
-	integer test_row, test_col;
-	integer i1, i2;
+	integer test_row = char_row;
+	integer test_col = char_col;
+	integer i1;
+	integer i2;
 
-	ENTER("move_char", "m");
+	if (dir == 5)
+		find_flag = false;
 
-	test_row = char_row;
-	test_col = char_col;
-
-	if (dir == 5) {
+	/* Confused causes random movement 75% of the time */
+	if (py.flags.confused > 0 && dir != 5 && randint(4) > 1) {
+		dir = randint(9);
 		find_flag = false;
 	}
 
-	if (py.flags.confused > 0) {    /*{ Confused?             }*/
-		if (randint(4) > 1) {   /*{ 75% random movement   }*/
-			if (dir != 5) { /*{ Never random if sitting}*/
-				dir = randint(9);
-				find_flag = false;
+	/* Legal move? */
+	if (!move_dir(dir, &test_row, &test_col))
+		return;
+
+	/* Creature in the way? Attack! */
+	if (cave[test_row][test_col].cptr >= 2) {
+		if (find_flag) {
+			find_flag = false;
+			move_light(char_row, char_col, char_row, char_col);
+		}
+		/* ..if we dare */
+		if (py.flags.afraid < 1) {
+			py_attack(test_row, test_col);
+		} else {
+			msg_print("You are too afraid!");
+		}
+		return;
+	}
+
+	/* Can't move onto floor space? */
+	if (!cave[test_row][test_col].fopen) {
+		/* Try a new direction if in find mode */
+		if (pick_dir(dir))
+			return;
+
+		if (find_flag) {
+			find_flag = false;
+			move_char(5);
+			return;
+		}
+
+		reset_flag = true;
+		if (cave[test_row][test_col].tptr <= 0)
+			return;
+
+		if (t_list[cave[test_row][test_col].tptr].tval == Rubble)
+			msg_print("There is rubble blocking your way.");
+		else if (t_list[cave[test_row][test_col].tptr].tval ==
+			 Closed_door)
+			msg_print("There is a closed door blocking your way.");
+		return;
+	}
+
+	/* Open floor spot */
+	if (find_flag && (is_in(cave[char_row][char_col].fval, earth_set) ==
+			  is_in(cave[test_row][test_col].fval, water_set))) {
+		find_flag = false;
+		move_char(5);
+		return;
+	}
+
+	/* Move character record (-1) */
+	move_rec(char_row, char_col, test_row, test_col);
+
+	/* Check for new panel */
+	if (get_panel(test_row, test_col, false))
+		prt_map();
+
+	/* Check to see if he should stop */
+	if (find_flag)
+		area_affect(dir, test_row, test_col);
+
+	/* Check to see if he notices something */
+	if (py.flags.blind < 1 && (randint(py.misc.fos) == 1 || search_flag))
+		search(test_row, test_col, py.misc.srh);
+
+	/* An object is beneath him? */
+	if (cave[test_row][test_col].tptr > 0)
+		carry(test_row, test_col);
+
+	/* Move the light source */
+	move_light(char_row, char_col, test_row, test_col);
+
+	/* A room of light should be lit... */
+	if (cave[test_row][test_col].fval == lopen_floor.ftval) {
+		if (py.flags.blind < 1) {
+			if (!(cave[test_row][test_col].pl)) {
+				light_room(test_row, test_col);
+			}
+		}
+
+		/* In doorway of light-room? */
+	} else if ((cave[test_row][test_col].fval == corr_floor2.ftval ||
+		   cave[test_row][test_col].fval == corr_floor3.ftval) &&
+		       py.flags.blind < 1) {
+		for (i1 = test_row - 1; i1 <= test_row + 1; i1++) {
+			for (i2 = test_col - 1; i2 <= test_col + 1; i2++) {
+				if (in_bounds(i1, i2) &&
+				    cave[i1][i2].fval == lopen_floor.ftval &&
+				    !cave[i1][i2].pl) {
+					light_room(i1, i2);
+				}
 			}
 		}
 	}
 
-	if (move_dir(dir, &test_row, &test_col)) { /*{ Legal move?           }*/
-		/* with cave[test_row][test_col] do; */
-		if (cave[test_row][test_col].cptr < 2) { /*{ No creature? }*/
-			if (cave[test_row][test_col]
-				.fopen) { /*{ Open floor spot       }*/
-				if ((find_flag) &&
-				    ((is_in(cave[char_row][char_col].fval,
-					    earth_set)) ==
-				     (is_in(cave[test_row][test_col].fval,
-					    water_set)))) {
-					find_flag = false;
-					move_char(5);
-				} else {
+	/* Make final assignments of char co-ords */
+	char_row = test_row;
+	char_col = test_col;
+}
 
-					/*{ Move character record (-1) }*/
-					move_rec(char_row, char_col, test_row,
-						 test_col);
-					/*{ Check for new panel }*/
-					if (get_panel(test_row, test_col,
-						      false)) {
-						prt_map();
-					}
-					/*{ Check to see if he should stop }*/
-					if (find_flag) {
-						area_affect(dir, test_row,
-							    test_col);
-					}
-					/*{ Check to see if he notices something
-					 * }*/
-					if (py.flags.blind < 1) {
-						if ((randint(py.misc.fos) ==
-						     1) ||
-						    (search_flag)) {
-							search(test_row,
-							       test_col,
-							       py.misc.srh);
-						}
-					}
-					/*{ An object is beneath him... }*/
-
-					if (cave[test_row][test_col].tptr > 0) {
-						carry(test_row, test_col);
-					}
-
-					/*{ Move the light source }*/
-					move_light(char_row, char_col, test_row,
-						   test_col);
-
-					/*{ A room of light should be lit... }*/
-					if (cave[test_row][test_col].fval ==
-					    lopen_floor.ftval) {
-						if (py.flags.blind < 1) {
-							if (!(cave[test_row]
-								  [test_col]
-								      .pl)) {
-								light_room(
-								    test_row,
-								    test_col);
-							}
-						}
-						/*{ In doorway of light-room?
-						 * }*/
-					} else if ((cave[test_row][test_col]
-							.fval ==
-						    corr_floor2.ftval) ||
-						   (cave[test_row][test_col]
-							.fval ==
-						    corr_floor3.ftval)) {
-						if (py.flags.blind < 1) {
-							for (i1 =
-								 (test_row - 1);
-							     i1 <=
-								 (test_row + 1);
-							     i1++) {
-								for (
-								    i2 =
-									(test_col -
-									 1);
-								    i2 <=
-									(test_col +
-									 1);
-								    i2++) {
-									if (in_bounds(
-										i1,
-										i2)) {
-										/* with cave[i1][i2] do; */
-										if (cave[i1][i2]
-											.fval ==
-										    lopen_floor
-											.ftval) {
-											if (!(cave[i1][i2]
-												  .pl)) {
-												light_room(
-												    i1,
-												    i2);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					/*{ Make final assignments of char
-					 * co-ords}*/
-					char_row = test_row;
-					char_col = test_col;
-				}
-			} else {
-				/*{ Can't move onto floor space }*/
-				/*{ Try a new direction if in find mode   }*/
-				if (!(pick_dir(dir))) {
-					if (find_flag) {
-						find_flag = false;
-						move_char(5);
-					} else if (cave[test_row][test_col]
-						       .tptr > 0) {
-						reset_flag = true;
-						if (t_list[cave[test_row]
-							       [test_col].tptr]
-							.tval == Rubble) {
-							msg_print("There is "
-								  "rubble "
-								  "blocking "
-								  "your way.");
-						} else if (t_list[cave[test_row]
-								      [test_col]
-									  .tptr]
-							       .tval ==
-							   Closed_door) {
-							msg_print("There is a "
-								  "closed door "
-								  "blocking "
-								  "your way.");
-						}
-					} else {
-						reset_flag = true;
-					}
-				} /* end if pick_dir */
-			}
-
-		} else { /*{ Attacking a creature! }*/
-
-			if (find_flag) {
-				find_flag = false;
-				move_light(char_row, char_col, char_row,
-					   char_col);
-			}
-
-			if (py.flags.afraid < 1) { /*{ Coward?       }*/
-				py_attack(test_row, test_col);
-			} else { /*{ Coward!       }*/
-				msg_print("You are too afraid!");
-			}
-
-		} /* end if attacing */
-	}	 /* end if legal move */
-
+void move_char(integer dir)
+{
+	ENTER("move_char", "m");
+	_move_char(dir);
 	LEAVE("move_char", "m");
 }
 

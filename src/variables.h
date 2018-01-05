@@ -32,7 +32,6 @@ extern vtype died_from;		      /*	{ What killed him     } */
 extern integer turn_counter;	  /*	{ Turns ellapsed      } */
 extern boolean find_flag;	     /*	{ Used in MORIA	      } */
 extern boolean cave_flag;	     /*	{ Used in GET_PANEL   } */
-extern boolean light_flag;	    /*	{ Used in MOVE_LIGHT  } */
 extern boolean redraw;		      /*	{ For redraw screen   } */
 extern unsigned long print_stat;      /*	{ Flag for stats      } */
 extern integer turn;		      /*	{ Cur trun of game    } */

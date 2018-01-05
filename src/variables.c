@@ -35,7 +35,6 @@ vtype died_from;	       /*	{ What killed him     } */
 integer turn_counter;	  /*	{ Turns ellapsed      } */
 boolean find_flag;	     /*	{ Used in MORIA	      } */
 boolean cave_flag;	     /*	{ Used in GET_PANEL   } */
-boolean light_flag;	    /*	{ Used in MOVE_LIGHT  } */
 boolean redraw;		       /*	{ For redraw screen   } */
 unsigned long print_stat = 0;  /*	{ Flag for stats      } */
 integer turn = 0;	      /*	{ Cur trun of game    } */
