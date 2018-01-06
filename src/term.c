@@ -268,7 +268,7 @@ static void minor_error(char const *error_message)
    Handle the stop and start signals. This ensures that the log
    is up to date, and that the terminal is fully reset and
    restored.  */
-int suspend()
+void suspend()
 {
 #ifdef USG
 /* for USG systems with BSDisms that have SIGTSTP defined, but don't
@@ -299,7 +299,6 @@ int suspend()
 	(void)wrefresh(curscr);
 /*  py.misc.male &= ~2;  XXXX */
 #endif
-	return 0;
 }
 #endif
 #endif
@@ -451,75 +450,17 @@ void highlite_off()
 #endif
 }
 
-int cool_mvaddch(int row, int col, chtype const ch)
-{
-	if ((ch & 0x80) != 0) {
-		highlite_on();
-		mvaddch(row, col, ch & 0x7F);
-		highlite_off();
-	} else {
-		mvaddch(row, col, ch);
-	}
-
-	return OK;
-}
-
-int cool_mvaddstr(int row, int col, char const *str)
-{
-	/* search for characters with the high bit set */
-
-	int i1;
-	char *tmp_buf = alloca(strlen(str) + 1);
-	strcpy(tmp_buf, str);
-
-	for (i1 = 0; tmp_buf[i1]; i1++) {
-		if ((tmp_buf[i1] & 0x80) != 0) {
-
-			if (i1 > 0) {
-				mvaddnstr(row, col, tmp_buf, i1);
-				col += i1;
-				tmp_buf = &(tmp_buf[i1]);
-			}
-
-			highlite_on();
-			*tmp_buf &= 0x7F;
-			mvaddnstr(row, col, tmp_buf, 1);
-			highlite_off();
-
-			col++;
-			tmp_buf++;
-			i1 = -1; /* will be 0 when the top of the loop is hit */
-		}
-	}
-
-	if (i1 > 0) {
-		mvaddnstr(row, col, tmp_buf, i1);
-	}
-
-	return OK;
-}
-
 /* Dump IO to buffer					-RAK-	*/
 void Put_Buffer(char const *out_str, integer row, integer col)
 {
 	/* ENTER("put_buffer", "i"); */
 
-	if (out_str && out_str[0]) {
-		if (cool_mvaddstr((int)row, (int)col, out_str) == ERR) {
-			abort();
-			/* clear msg_flag to avoid problems with unflushed
-			 * messages */
-			msg_flag = 0;
-			(void)sprintf(
-			    out_str,
-			    "error in put_buffer, row = %ld col = %ld\n", row,
-			    col);
-			Prt(out_str, 0, 0);
-			bell();
-			/* wait so user can see error */
-			(void)sleep(2);
-		}
-	}
+	if (!out_str || out_str[0] == '\0')
+		return;
+
+	if (mvaddstr((int)row, (int)col, out_str) == ERR)
+		MSG("ERROR: Put_Buffer mvaddstr returned ERR");
+
 	/* LEAVE("put_buffer", "i"); */
 }
 

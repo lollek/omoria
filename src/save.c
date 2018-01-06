@@ -211,8 +211,8 @@ static void sc__write_inventory(FILE *f1, encrypt_state *cf_state,
 
 	curse = inventory_list;
 	while (curse != NULL) {
-
-		sprintf(out_rec, "%c %s", curse->data.tchar, curse->data.name);
+		unsigned long const chtype_buf = curse->data.tchar;
+		sprintf(out_rec, "%lu %s", chtype_buf, curse->data.name);
 		encrypt_write(f1, cf_state, out_rec);
 
 		sprintf(out_rec, "%d %d", (int)curse->is_in,
@@ -244,9 +244,8 @@ static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 
 	integer i1;
 	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-
-		sprintf(out_rec, "%c %s", equipment[i1].tchar,
-			equipment[i1].name);
+		unsigned long const chtype_buf = equipment[i1].tchar;
+		sprintf(out_rec, "%lu %s", chtype_buf, equipment[i1].name);
 		encrypt_write(f1, cf_state, out_rec);
 
 		sprintf(out_rec, "%s", equipment[i1].damage);
@@ -396,12 +395,14 @@ static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	for (i1 = 1; i1 <= cur_height; i1++) {
 		for (i2 = 1; i2 <= cur_width; i2++) {
 			if (cave[i1][i2].tptr > 0) {
+				unsigned long chtype_buf;
 				tptr = cave[i1][i2].tptr;
 				/* with t_list[tptr]. do; */
 				sprintf(out_rec, "%ld %ld", i1, i2);
 				encrypt_write(f1, cf_state, out_rec);
 
-				sprintf(out_rec, "%c %s", t_list[tptr].tchar,
+				chtype_buf = t_list[tptr].tchar;
+				sprintf(out_rec, "%lu %s", chtype_buf,
 					t_list[tptr].name);
 				encrypt_write(f1, cf_state, out_rec);
 
@@ -484,13 +485,14 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 		encrypt_write(f1, cf_state, out_rec);
 
 		for (i2 = 1; i2 <= stores[i1].store_ctr; i2++) {
+			unsigned long chtype_buf;
 			/* with stores[i1].store_inven[i2].sitem do; */
 			sprintf(out_rec, "%ld",
 				stores[i1].store_inven[i2].scost);
 			encrypt_write(f1, cf_state, out_rec);
 
-			sprintf(out_rec, "%c %s",
-				stores[i1].store_inven[i2].sitem.tchar,
+			chtype_buf = stores[i1].store_inven[i2].sitem.tchar;
+			sprintf(out_rec, "%lu %s", chtype_buf,
 				stores[i1].store_inven[i2].sitem.name);
 			encrypt_write(f1, cf_state, out_rec);
 
@@ -978,17 +980,10 @@ static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	cur_bag = nil;
 
 	for (i1 = 0; i1 < inven_ctr; i1++) {
+		unsigned long chtype_buf;
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		if (sscanf(in_rec, "%c", &(inven_temp->data.tchar)) != 1) {
-			*paniced = true;
-		}
-		if (strlen(in_rec) > 2) {
-			strncpy(inven_temp->data.name, in_rec + 2,
-				sizeof(ttype));
-		} else {
-			strncpy(inven_temp->data.name, "unknown object",
-				sizeof(ttype));
-		}
+		sscanf(in_rec, "%lu %[^\n]", &chtype_buf, inven_temp->data.name);
+		inven_temp->data.tchar = chtype_buf;
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		if (sscanf(in_rec, "%d %d", &x2, &x1) != 2) {
@@ -1065,19 +1060,11 @@ static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	lost_equip_count = 0;
 
 	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-		/* with inven_temp->data do; */
+		unsigned long chtype_buf;
+
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		if (strlen(in_rec) > 0) {
-			sscanf(in_rec, "%c", &(inven_temp->data.tchar));
-		} else {
-			inven_temp->data.tchar = 0;
-		}
-		if (strlen(in_rec) > 2) {
-			strncpy(inven_temp->data.name, in_rec + 2,
-				sizeof(ttype));
-		} else {
-			inven_temp->data.name[0] = 0;
-		}
+		sscanf(in_rec, "%lu %[^\n]", &chtype_buf, inven_temp->data.name);
+		inven_temp->data.tchar = chtype_buf;
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		strncpy(inven_temp->data.damage, in_rec, sizeof(dtype));
@@ -1317,6 +1304,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		}
 
 		for (i1 = 1; i1 <= tot_treasure; i1++) {
+			unsigned long chtype_buf;
 			popt(&i2);
 			/* with t_list[i2] do; */
 
@@ -1327,8 +1315,8 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 			cave[i3][i4].tptr = i2;
 
 			read_decrypt(f1, cf_state, in_rec, paniced);
-			t_list[i2].tchar = in_rec[0];
-			strcpy(t_list[i2].name, &in_rec[2]);
+			sscanf(in_rec, "%lu %[^\n]", &chtype_buf, t_list[i2].name);
+			t_list[i2].tchar = chtype_buf;
 
 			read_decrypt(f1, cf_state, in_rec, paniced);
 			strcpy(t_list[i2].damage, in_rec);
@@ -1453,6 +1441,7 @@ static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		sscanf(in_rec, "%ld", &i2);
 		stores[i1].store_ctr = i2;
 		for (i3 = 1; i3 <= i2; i3++) {
+			unsigned long chtype_buf;
 			/* with stores[i1].store_inven[i3].sitem do; */
 			read_decrypt(f1, cf_state, in_rec, paniced);
 			if (sscanf(in_rec, "%ld",
@@ -1461,9 +1450,9 @@ static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 			}
 
 			read_decrypt(f1, cf_state, in_rec, paniced);
-			stores[i1].store_inven[i3].sitem.tchar = in_rec[0];
-			strcpy(stores[i1].store_inven[i3].sitem.name,
-			       &in_rec[2]);
+			sscanf(in_rec, "%lu %[^\n]", &chtype_buf,
+					stores[i1].store_inven[i3].sitem.name);
+			stores[i1].store_inven[i3].sitem.tchar = (chtype)chtype_buf;
 
 			read_decrypt(f1, cf_state, in_rec, paniced);
 			strcpy(stores[i1].store_inven[i3].sitem.damage, in_rec);

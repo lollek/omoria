@@ -1240,7 +1240,7 @@ void ic__stats(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 			}
 
 			prt(out_val, 4, 15);
-			sprintf(out_val, "'%c'", (int)item_ptr->data.tchar);
+			sprintf(out_val, "'%lu'", item_ptr->data.tchar);
 			prt(out_val, 5, 15);
 			print_hex_value((item_ptr->data.flags), 6, 15);
 			print_hex_value((item_ptr->data.flags2), 7, 15);
@@ -1516,8 +1516,8 @@ void ic__selective_inven(integer *scr_state, boolean *valid_flag, vtype prompt,
 	*(--out_pos) = 0;
 
 	while (ptr != nil) {
-		if (strchr(out_pos, ptr->data.tchar) == NULL) {
-			*(--out_pos) = ptr->data.tchar;
+		if (strchr(out_pos, (char)ptr->data.tchar) == NULL) {
+			*(--out_pos) = (char)ptr->data.tchar;
 		}
 		ptr = ptr->next;
 	}
@@ -1536,7 +1536,7 @@ void ic__selective_inven(integer *scr_state, boolean *valid_flag, vtype prompt,
 		ptr = inventory_list;
 
 		while (ptr != nil) {
-			if (ptr->data.tchar == command) {
+			if ((char)ptr->data.tchar == command) {
 				ptr->ok = true;
 			}
 			ptr = ptr->next;

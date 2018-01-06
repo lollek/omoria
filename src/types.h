@@ -111,7 +111,7 @@ typedef struct treasure_type
 {
 	ttype name;	   /* Object name		*/
 	byteint tval;	 /* Catagory number	*/
-	char tchar;	   /* Character representation */
+	chtype tchar;	   /* Character representation */
 	unsigned long flags2; /*: unsigned;	 { MORE Special flags	} */
 	unsigned long flags;  /*: unsigned;	 { Special flags	} */
 	integer p1;	   /* { Misc. use variable	} */
