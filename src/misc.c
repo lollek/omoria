@@ -300,7 +300,7 @@ chtype get_loc_symbol(integer y, integer x)
 
 	if (test_light(y, x))
 		return loc_symbol(y, x);
-	else if ((cave[y][x].cptr == 1) && (!find_flag))
+	else if (cave[y][x].cptr == 1 && !find_flag)
 		return '@';
 	else if (cave[y][x].cptr > 1)
 		return m_list[cave[y][x].cptr].ml ? loc_symbol(y, x) : ' ';

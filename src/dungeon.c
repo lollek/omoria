@@ -439,11 +439,8 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	for (y = topp; y <= bott; y++) {
 		integer x;
 		integer xpos = 0;
-		chtype floor_str[82];
+		chtype floor_str[82] = { 0 };
 		integer floor_str_len = 0;
-
-		floor_str[0] = 0; /*{ Null out print string         }*/
-		floor_str_len = 0;
 
 		/*{ Leftmost to rightmost do}*/
 		for (x = left; x <= right; x++) {
@@ -497,8 +494,8 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 		floor_str[floor_str_len] = 0;
 
 		if (xpos > 0) {
-			integer const y2 =
-			    y; /*{ Var for PRINT cannot be loop index}*/
+			/*{ Var for PRINT cannot be loop index}*/
+			integer const y2 = y;
 			/*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
 
 			if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
@@ -554,15 +551,13 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 	}
 
 	for (y = y2 - 1; y <= y2 + 1; y++) {
-		chtype floor_str[82];
-		chtype save_str[82];
+		chtype floor_str[82] = { 0 };
+		chtype save_str[82] = { 0 };
 		integer floor_str_len = 0;
 		integer save_str_len = 0;
 		integer xpos = 0;
 		chtype tmp_char;
 
-		floor_str[0] = 0;
-		save_str[0] = 0;
 		for (x = x2 - 1; x <= x2 + 1; x++) {
 			boolean flag = false;
 			if (!(cave[y][x].fm || (cave[y][x].pl))) {
@@ -618,12 +613,12 @@ static void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When blinded, move only the player symbol...              }*/
 
-	integer i1, i2;
-
 	ENTER("ml__sub3_move_light", "m");
 
 	if (light_flag) {
+		integer i1;
 		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
+			integer i2;
 			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
 				cave[i1][i2].tl = false;
 			}
@@ -640,20 +635,19 @@ static void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ With no light, movement becomes involved...               }*/
 
-	integer i1, i2;
-
 	ENTER("ml__sub4_move_light", "m");
 
 	light_flag = true;
 	if (cave[y1][x1].tl) {
+		integer i1;
 		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
+			integer i2;
 			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
 				cave[i1][i2].tl = false;
-				if (test_light(i1, i2)) {
+				if (test_light(i1, i2))
 					lite_spot(i1, i2);
-				} else {
+				else
 					unlite_spot(i1, i2);
-				}
 			}
 		}
 	} else if (test_light(y1, x1)) {
@@ -2007,42 +2001,35 @@ void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void light_room(integer y, integer x)
+void light_room(integer param_y, integer param_x)
 {
 	/*{ Room is lit, make it appear                           -RAK-   }*/
 
-	integer tmp1, tmp2;
-	integer start_row, start_col;
-	integer end_row, end_col;
-	integer i1, i2;
-	integer ypos, xpos = 0;
-	vtype floor_str;
-	integer floor_str_len;
-
-	tmp1 = (integer)(SCREEN_HEIGHT / 2);
-	tmp2 = (integer)(SCREEN_WIDTH / 2);
-	start_row = (integer)(y / tmp1) * tmp1 + 1;
-	start_col = (integer)(x / tmp2) * tmp2 + 1;
-	end_row = start_row + tmp1 - 1;
-	end_col = start_col + tmp2 - 1;
+	integer const half_height = (integer)(SCREEN_HEIGHT / 2);
+	integer const half_width = (integer)(SCREEN_WIDTH / 2);
+	integer const start_row = (integer)(param_y / half_height) * half_height + 1;
+	integer const start_col = (integer)(param_x / half_width) * half_width + 1;
+	integer const end_row = start_row + half_height - 1;
+	integer const end_col = start_col + half_width - 1;
+	integer y;
+	integer xpos = 0;
 
 	lr__find_light(start_row, start_col, end_row, end_col);
 
-	for (i1 = start_row; i1 <= end_row; i1++) {
-		floor_str[0] = 0;
-		floor_str_len = 0;
-		ypos = i1;
-		for (i2 = start_col; i2 <= end_col; i2++) {
-			/* with cave[i1,i2] do; */
-			if ((cave[i1][i2].pl) || (cave[i1][i2].fm)) {
-				if (floor_str_len == 0) {
-					xpos = i2;
-				}
-				floor_str[floor_str_len++] = loc_symbol(i1, i2);
+	for (y = start_row; y <= end_row; y++) {
+		chtype floor_str[82] = { 0 };
+		integer floor_str_len = 0;
+		integer x;
+		integer const ypos = y;
+		for (x = start_col; x <= end_col; x++) {
+			if (cave[y][x].pl || cave[y][x].fm) {
+				if (floor_str_len == 0)
+					xpos = x;
+				floor_str[floor_str_len++] = loc_symbol(y, x);
 			} else {
 				if (floor_str_len > 0) {
 					floor_str[floor_str_len] = 0;
-					print_str(floor_str, ypos, xpos);
+					print_chstr(floor_str, ypos, xpos);
 					floor_str[0] = 0;
 					floor_str_len = 0;
 				}
@@ -2050,7 +2037,7 @@ void light_room(integer y, integer x)
 		}
 		if (floor_str_len > 0) {
 			floor_str[floor_str_len] = 0;
-			print_str(floor_str, ypos, xpos);
+			print_chstr(floor_str, ypos, xpos);
 		}
 	}
 }
@@ -5544,7 +5531,7 @@ void d__execute_command(integer *com_val)
 
 	ENTER("d__execute_command", "d");
 #if DO_DEBUG
-	fprintf(debug_file, ": command: %ld '%c'\n", *com_val, *com_val);
+	fprintf(debug_file, ": command: %d '%c'\n", (int)*com_val, (int)*com_val);
 	fflush(debug_file);
 #endif
 
@@ -5657,8 +5644,8 @@ void d__execute_command(integer *com_val)
 	case 27: /* ALT */
 		*com_val = inkey();
 #if DO_DEBUG
-		fprintf(debug_file, ": command: %ld '%c'\n", *com_val,
-			*com_val);
+		fprintf(debug_file, ": command: %d '%c'\n", (int)*com_val,
+			(int)*com_val);
 		fflush(debug_file);
 #endif
 		switch (*com_val) {

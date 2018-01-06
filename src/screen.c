@@ -51,14 +51,12 @@ void prt_map()
 
 	redraw = false; /*{ Screen has been redrawn	   }*/
 	for (y = panel_row_min; y <= panel_row_max; y++) {
-		chtype floor_str[82]; /* floor_str is string to be printed */
+		chtype floor_str[82] = { 0 }; /* string to be printed */
 		integer floor_str_len = 0; /* floor_str length counter */
 		integer isp = 0;	   /* Number of blanks encountered */
 		boolean flag = false;      /* False until floor_str <> '' */
 		integer xpos = 0;
 		integer x;
-
-		floor_str[0] = 0;
 
 		/* Clean line if dirty */
 		panel_y++;
@@ -68,8 +66,7 @@ void prt_map()
 		}
 
 		for (x = panel_col_min; x <= panel_col_max; x++) {
-			chtype tmp_char =
-			    ' '; /* Get character for x, y location */
+			chtype tmp_char = ' ';
 			if (test_light(y, x))
 				tmp_char = loc_symbol(y, x);
 			else if ((cave[y][x].cptr == 1) && (!find_flag))

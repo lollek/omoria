@@ -193,16 +193,6 @@ int Use_value;
 #define use_value
 #endif
 
-#if defined(SYS_V) && defined(lint)
-/* This use_value2 hack is for curses macros which use a conditional
-   expression, and which say null effect even if you cast to (void). */
-/* only needed for SYS V */
-int Use_value2;
-#define use_value2 Use_value2 +=
-#else
-#define use_value2
-#endif
-
 #endif
 
 #ifndef MAC
@@ -1327,7 +1317,7 @@ int row, column, slen;
 			if (!isprint(i) || column > end_col)
 				bell();
 			else {
-				use_value2 mvaddch(row, column, (char)i);
+				mvaddch(row, column, (char)i);
 				*p++ = i;
 				column++;
 			}
@@ -1403,99 +1393,62 @@ void bell()
 	if (!sound_beep_flag)
 		return;
 
-#ifdef MAC
-	mac_beep();
-#else
-	(void)write(1, "\007", 1);
-#endif
+	write(1, "\007", 1);
 }
 
 /* screen_map code taken from umoria 5.5 */
-
-/* definitions used by screen_map() */
-/* index into border character array */
-#define TL 0 /* top left */
-#define TR 1
-#define BL 2
-#define BR 3
-#define HE 4 /* horizontal edge */
-#define VE 5
-
-/* character set to use */
-#ifdef MSDOS
-#ifdef ANSI
-#define CH(x) (ansi ? screen_border[0][x] : screen_border[1][x])
-#else
-#define CH(x) (screen_border[1][x])
-#endif
-#else
-#define CH(x) (screen_border[0][x])
-#endif
 
 /* Display highest priority object in the RATIO by RATIO area */
 #define RATIO 3
 
 void screen_map()
 {
-	register int i, j;
-	static int8u screen_border[2][6] = {
-	    {'+', '+', '+', '+', '-', '|'}, /* normal chars */
-	    {201, 187, 200, 188, 205, 186}  /* graphics chars */
-	};
-	int8u map[MAX_WIDTH / RATIO + 1];
-	int8u tmp;
+	int i;
+	chtype map[MAX_WIDTH / RATIO + 1];
 	int priority[256];
-	int row, orow, col, myrow = 0, mycol = 0;
-	char prntscrnbuf[80];
+	int orow = -1;
+	int myrow = 0;
+	int mycol = 0;
 
-	for (i = 0; i < 256; i++) {
-		priority[i] = 0;
-	}
-	priority['<'] = 5;
-	priority['>'] = 5;
-	priority['@'] = 10;
-#ifndef ATARI_ST
-	priority['#'] = -5;
-#else
-	priority[(unsigned char)240] = -5;
-#endif
-	priority['.'] = -10;
-	priority['\''] = -3;
-	priority[' '] = -15;
+	memset(priority, 0, sizeof(priority));
+	priority['@'] =   10;
+	priority['<'] =    5;
+	priority['>'] =    5;
+	priority['\''] =  -3;
+	priority['#'] =   -5;
+	priority['.'] =  -10;
+	priority[' '] =  -15;
 
 	save_screen();
 	clear_rc(1, 1);
-	use_value2 mvaddch(0, 0, CH(TL));
-	for (i = 0; i < MAX_WIDTH / RATIO; i++) {
-		(void)addch(CH(HE));
-	}
-	(void)addch(CH(TR));
-	orow = -1;
+
+	/* Add top border */
+	mvaddch(0, 0, '+');
+	for (i = 0; i < MAX_WIDTH / RATIO; i++)
+		addch('-');
+	addch('+');
+
 	map[MAX_WIDTH / RATIO] = '\0';
 	for (i = 0; i < MAX_HEIGHT; i++) {
-		row = i / RATIO;
+		int const row = i / RATIO;
+		int j;
+
 		if (row != orow) {
 			if (orow >= 0) {
-				/* can not use mvprintw() on ibmpc, because
-				   PC-Curses is horribly
-				   written, and mvprintw() causes the fp
-				   emulation library to be
-				   linked with PC-Moria, makes the program 10K
-				   bigger */
-				(void)sprintf(prntscrnbuf, "%c%s%c", CH(VE),
-					      map, CH(VE));
-				use_value2 mvaddstr(orow + 1, 0, prntscrnbuf);
+				mvaddch(orow + 1, 0, '|');
+				mvaddchstr(orow + 1, 1, map);
+				mvaddch(orow + 1, MAX_WIDTH / RATIO + 1, '|');
 			}
-			for (j = 0; j < MAX_WIDTH / RATIO; j++) {
+			for (j = 0; j < MAX_WIDTH / RATIO; j++)
 				map[j] = ' ';
-			}
 			orow = row;
 		}
 		for (j = 0; j < MAX_WIDTH; j++) {
-			col = j / RATIO;
-			tmp = get_loc_symbol(i + 1, j + 1);
-			tmp &= 0x7F;
-			if (priority[map[col]] < priority[tmp]) {
+			int const col = j / RATIO;
+			chtype const tmp = get_loc_symbol(i + 1, j + 1);
+
+			if (priority[(unsigned char)map[col]] <
+					priority[(unsigned char)tmp]) {
 				map[col] = tmp;
 			}
 			if (map[col] == '@') {
@@ -1505,20 +1458,20 @@ void screen_map()
 		}
 	}
 	if (orow >= 0) {
-		(void)sprintf(prntscrnbuf, "%c%s%c", CH(VE), map, CH(VE));
-		use_value2 mvaddstr(orow + 1, 0, prntscrnbuf);
+		mvaddch(orow + 1, 0, '|');
+		mvaddchstr(orow + 1, 1, map);
+		mvaddch(orow + 1, MAX_WIDTH / RATIO + 1, '|');
 	}
-	use_value2 mvaddch(orow + 2, 0, CH(BL));
+	mvaddch(orow + 2, 0, '+');
 	for (i = 0; i < MAX_WIDTH / RATIO; i++) {
-		(void)addch(CH(HE));
+		addch('-');
 	}
-	(void)addch(CH(BR));
+	addch('+');
 
-	use_value2 mvaddstr(23, 23, "Hit any key to continue");
-	if (mycol > 0) {
-		(void)move(myrow, mycol);
-	}
-	(void)inkey();
+	mvaddstr(23, 23, "Hit any key to continue");
+	if (mycol > 0)
+		move(myrow, mycol);
+	inkey();
 	restore_screen();
 	draw_cave();
 }
