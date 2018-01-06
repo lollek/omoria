@@ -45,7 +45,7 @@ boolean is_in(integer obj, obj_set oset)
 				fprintf(debug_file, "%d  ", oset[i1]);
 			}
 			fprintf(debug_file, "\n");
-			exit(0);
+			abort();
 		}
 		tmp = oset[i1];
 	}
