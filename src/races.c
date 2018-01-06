@@ -31,16 +31,17 @@ char const *race_name(int race)
 
 signed char const *race_stats(int race)
 {
-	static signed char const human_stats[] = {0, 0, 0, 0, 0, 0};
-	static signed char const halfelf_stats[] = {-1, 1, 0, 1, -1, 1};
-	static signed char const elf_stats[] = {-1, 2, 1, 1, -2, 1};
-	static signed char const halfling_stats[] = {-2, 2, 1, 3, 1, 1};
-	static signed char const gnome_stats[] = {-1, 2, 0, 2, 1, -2};
-	static signed char const dwarf_stats[] = {2, -3, 1, -2, 2, -3};
-	static signed char const halforc_stats[] = {2, -1, 0, 0, 1, -4};
-	static signed char const halftroll_stats[] = {4, -4, -3, -4, 4, -6};
-	static signed char const phraint_stats[] = {0, 0, -4, 5, 0, -3};
-	static signed char const dryad_stats[] = {-1, 0, 3, 0, -2, 3};
+							/*S, I, W, D,CO,CH */
+	static signed char const human_stats[] =	{ 0, 0, 0, 0, 0, 0};
+	static signed char const halfelf_stats[] =	{-1, 1, 0, 1,-1, 1};
+	static signed char const elf_stats[] =		{-1, 2, 1, 1,-2, 1};
+	static signed char const halfling_stats[] =	{-2, 2, 1, 3, 1, 1};
+	static signed char const gnome_stats[] =	{-1, 2, 0, 2, 1,-2};
+	static signed char const dwarf_stats[] =	{ 2,-3, 1,-2, 2,-3};
+	static signed char const halforc_stats[] =	{ 2,-1, 0, 0, 1,-4};
+	static signed char const halftroll_stats[] =	{ 4,-4,-3,-4, 4,-6};
+	static signed char const phraint_stats[] =	{ 0, 0,-4, 5, 0,-3};
+	static signed char const dryad_stats[] =	{-1, 0, 3, 0,-2, 3};
 	switch (race) {
 	case R_HUMAN:
 		return human_stats;
