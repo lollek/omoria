@@ -10,16 +10,6 @@ void restore_screen();
 void restore_term();
 void bell();
 
-/**
- * -CJS-
- *  get_check() - Ask a yes/no question
- *  @prompt: Question to write to player (may be shortened)
- *
- *  Ask a yes/no question to the player, which adds a question to the end of the
- *  prompt. Will not return until player pressed 'y' or 'n'.
- */
-int get_check(char const *prompt);
-
 /* Dungeon size parameters					*/
 #define MAX_HEIGHT 66 /* Multiple of 11; >= 22 */
 #define MAX_WIDTH 198 /* Multiple of 33; >= 66 */

@@ -371,7 +371,7 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean get_com(char *prompt, char *command)
+boolean get_com(char const *prompt, char *command)
 {
 	boolean return_value;
 	integer com_val;
@@ -410,27 +410,26 @@ void print_chstr(chtype const *str_buff, int row, int col)
 	mvaddchstr(row - 1, col - 1, str_buff);
 }
 
-boolean get_yes_no(char *prompt)
+boolean get_yes_no(char const *prompt)
 {
 	/*{ Gets response to a  Y/N question				}*/
+	char const *question_suffix = " (y/n) ";
+	char *buf = alloca(strlen(prompt) + strlen(question_suffix) + 1);
+	sprintf(buf, "%s%s", prompt, question_suffix);
 
-	char command;
-	vtype out_str;
-	boolean return_value = false;
-
-	msg_print(" ");
-
-	sprintf(out_str, "%s (Y/N) ", prompt);
-
-	get_com(out_str, &command);
-	switch (command) {
-	case 'y':
-	case 'Y':
-		return_value = true;
-		break;
+	for (;;) {
+		char command;
+		msg_print(" ");
+		get_com(buf, &command);
+		switch (command) {
+		case 'y':
+		case 'Y':
+			return true;
+		case 'n':
+		case 'N':
+			return false;
+		}
 	}
-
-	return return_value;
 }
 
 integer get_hex_value(integer row, integer col, integer slen)

@@ -1299,29 +1299,6 @@ char *str_buff;
 #endif
 /****************************************************************/
 
-/* Used to verify a choice - user gets the chance to abort choice.  -CJS- */
-int get_check(char const *prompt)
-{
-	int res;
-	int y, x;
-
-	Prt(prompt, 0, 0);
-	getyx(stdscr, y, x);
-
-	if (x > 73)
-		(void)move(0, 73);
-	(void)addstr(" [y/n]");
-	do {
-		res = inkey();
-	} while (res != 'y' && res != 'Y' && res != 'n' && res != 'N');
-
-	Erase_Line(0, 0);
-	if (res == 'Y' || res == 'y')
-		return TRUE;
-	else
-		return FALSE;
-}
-
 #if 0
 /* Prompts (optional) and returns ord value of input char	*/
 /* Function returns false if <ESCAPE> is input	*/

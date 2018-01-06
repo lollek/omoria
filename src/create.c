@@ -83,7 +83,7 @@ void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 {
 	/*	{ Get minimum stats the character wants			-DMF-
 	 * } */
-	if (get_check("Do you wish to try for minimum statistics?")) {
+	if (get_yes_no("Do you wish to try for minimum statistics?")) {
 		*minning = true;
 		user[STR] = cc__get_min_stat("STR", max_r[STR]);
 		user[INT] = cc__get_min_stat("INT", max_r[INT]);

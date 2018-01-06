@@ -271,7 +271,7 @@ static void _cast(enum magic_t magic_type)
 	}
 
 	if (class_spell(PM.pclass, choice)->smana > PM.cmana &&
-	    !get_check("You are low on mana, are you sure?"))
+	    !get_yes_no("You are low on mana, are you sure?"))
 		return;
 
 	reset_flag = false;

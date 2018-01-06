@@ -207,9 +207,17 @@ extern void prt2(char *str_buff1, /*	: varying[a] of char; */
 		 char *str_buff2, int row, int col);
 
 extern boolean msg_print(char *str_buff); /* : varying[a] of char); */
-extern boolean get_com(char *prompt,      /*	: varying[a] of char; */
-		       char *command);
-extern boolean get_yes_no(char *prompt); /* : varying[a] of char); */
+extern boolean get_com(char const *prompt, char *command);
+
+/**
+ *  get_yes_no() - Ask a yes/no question
+ *  @prompt: Question to write to player
+ *
+ *  Ask a yes/no question to the player, which adds a question to the end of the
+ *  prompt. Will not return until player pressed 'y' or 'n'.
+ */
+extern boolean get_yes_no(char const *prompt);
+
 					 /* use get_string */
 extern boolean Get_String(char *in_str,  /* : varying[a] of char; */
 			  int row, int column, int slen);
