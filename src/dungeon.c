@@ -568,18 +568,19 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 			if (!(cave[y][x].fm || (cave[y][x].pl))) {
 				tmp_char = ' ';
 				if (player_light) {
-					if (is_in(cave[y][x].fval,
-						  pwall_set)) {
+					if (is_in(cave[y][x].fval, pwall_set)) {
 						/* Turn on perm light */
 						cave[y][x].pl = true;
 						tmp_char = loc_symbol(y, x);
 						flag = true;
 					} else if (cave[y][x].tptr > 0 &&
-							is_in(t_list[cave[y][x].tptr].tval, light_set)) {
-							/* Turn on field marker */
-							cave[y][x].fm = true;
-							tmp_char = loc_symbol(y, x);
-							flag = true;
+						   is_in(t_list[cave[y][x].tptr]
+							     .tval,
+							 light_set)) {
+						/* Turn on field marker */
+						cave[y][x].fm = true;
+						tmp_char = loc_symbol(y, x);
+						flag = true;
 					}
 				}
 			} else {
@@ -592,7 +593,8 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 				if (save_str[0] != 0) {
 					integer i;
 					for (i = 0; i < save_str_len; ++i)
-						floor_str[floor_str_len++] = save_str[i];
+						floor_str[floor_str_len++] =
+						    save_str[i];
 					save_str[0] = 0;
 					save_str_len = 0;
 				}

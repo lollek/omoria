@@ -218,8 +218,8 @@ extern boolean get_com(char const *prompt, char *command);
  */
 extern boolean get_yes_no(char const *prompt);
 
-					 /* use get_string */
-extern boolean Get_String(char *in_str,  /* : varying[a] of char; */
+/* use get_string */
+extern boolean Get_String(char *in_str, /* : varying[a] of char; */
 			  int row, int column, int slen);
 extern integer get_hex_value(integer row, integer col, integer slen);
 extern void print_hex_value(integer num, integer row, integer col);
