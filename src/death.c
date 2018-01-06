@@ -166,8 +166,10 @@ static void respawn()
 	add_money(PM.money[TOTAL_]);
 
 	/* Clear inventory */
+	for (i = Equipment_min; i < EQUIP_MAX; i++)
+		ic__remove(i, false);
 	while (inventory_list != nil) {
-		delete_inven_item(&inventory_list[0]);
+		inven_destroy(&inventory_list[0]);
 	}
 	char_inven_init();
 

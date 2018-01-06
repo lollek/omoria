@@ -171,6 +171,7 @@ extern treas_ptr inven_carry();
 extern boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw,
 			integer count, char *choice, boolean mon,
 			boolean no_wait); /*	: boolean := false); */
+treas_ptr ic__remove(integer item_val, boolean show_message);
 
 /**
  * -OK-

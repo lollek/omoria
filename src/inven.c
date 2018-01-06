@@ -580,7 +580,7 @@ void ic__show_equip(integer *scr_state, integer r1)
 	}
 }
 
-treas_ptr ic__remove(integer item_val)
+treas_ptr ic__remove(integer item_val, boolean show_message)
 {
 	/*{ Remove item from equipment list               -RAK-   }*/
 
@@ -596,32 +596,34 @@ treas_ptr ic__remove(integer item_val)
 	equipment[item_val] = blank_treasure;
 	equip_ctr--;
 
-	switch (typ) {
-	case sling_ammo:
-	case bolt:
-	case arrow:
-	case bow_crossbow_or_sling:
-	case hafted_weapon:
-	case pole_arm:
-	case sword:
-	case dagger:
-	case maul:
-	case pick_or_shovel:
-		strcat(prt1, "Was wielding ");
-		break;
+	if (show_message) {
+		switch (typ) {
+		case sling_ammo:
+		case bolt:
+		case arrow:
+		case bow_crossbow_or_sling:
+		case hafted_weapon:
+		case pole_arm:
+		case sword:
+		case dagger:
+		case maul:
+		case pick_or_shovel:
+			strcat(prt1, "Was wielding ");
+			break;
 
-	case Lamp_or_Torch:
-		strcat(prt1, "Light source was ");
-		break;
+		case Lamp_or_Torch:
+			strcat(prt1, "Light source was ");
+			break;
 
-	default:
-		strcat(prt1, "Was wearing ");
-		break;
+		default:
+			strcat(prt1, "Was wearing ");
+			break;
+		}
+
+		objdes(prt2, inven_temp, true);
+		sprintf(out_val, "%s%s", prt1, prt2);
+		msg_print(out_val);
 	}
-
-	objdes(prt2, inven_temp, true);
-	sprintf(out_val, "%s%s", prt1, prt2);
-	msg_print(out_val);
 
 	if (item_val !=
 	    Equipment_secondary) { /* Secondary weapon already off */
@@ -696,7 +698,7 @@ void ic__unwear(integer *scr_state)
 				msg_print("Hmmm, it seems to be cursed...");
 				com_val = 0;
 			} else {
-				ic__remove(i2);
+				ic__remove(i2, true);
 			}
 		}
 
@@ -998,7 +1000,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 				py_bonuses(&(equipment[i1]), 1);
 				if (unwear_obj.tval > 0) {
 					equipment[EQUIP_MAX - 1] = unwear_obj;
-					ic__remove(EQUIP_MAX - 1);
+					ic__remove(EQUIP_MAX - 1, true);
 				}
 
 				switch (i1) {
@@ -1604,11 +1606,11 @@ void ic__switch_weapon(integer *scr_state)
 
 boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 {
-	/*{ Comprehensive function block to handle all inventory	-RAK-
-	 * }*/
-	/*{ and equipment routines.  Five kinds of calls can take place. }*/
-	/*{ Note that '?' is a special call for other routines to display }*/
-	/*{ only a portion of the inventory, and take no other action. }*/
+	/* Comprehensive function block to handle all inventory      -RAK-
+	 * and equipment routines.  Five kinds of calls can take place.
+	 * Note that '?' is a special call for other routines to display
+	 * only a portion of the inventory, and take no other action.
+	 */
 
 	integer scr_state = 0;
 	boolean exit_flag, test_flag;
@@ -1691,8 +1693,8 @@ boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 			if (equip_ctr == 0) {
 				msg_print("You are not using any equipment.");
 			} else {
-				ic__unwear(
-				    &scr_state); /*{ May set scr_state to 2 }*/
+				/*{ May set scr_state to 2 }*/
+				ic__unwear(&scr_state);
 			}
 			break;
 
