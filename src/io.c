@@ -3,28 +3,6 @@
 #include "imoria.h"
 #include "save.h"
 
-void convert_time(unsigned long int_time, quad_type *bin_time)
-{
-	printf("UNIMPLEMENTED convert_time\n\r");
-}
-
-void sleep_(unsigned long int_time)
-{
-	/*{ Sleep for given time					-RAK-
-	 * }*/
-	/*{ NOTE: Int_time is in seconds }*/
-
-	sleep((unsigned int)int_time);
-}
-
-void mini_sleep(unsigned long int_time)
-{
-	/*{ Sleep for short time					-DMF-
-	 * }*/
-
-	usleep(int_time);
-}
-
 void init_priv_switch()
 {
 	/*  the hope is that imoria is sgid games or something that can write
@@ -67,7 +45,7 @@ extern void d__quit();
 void signalquit()
 {
 	priv_switch(0);
-	signal(SIGINT, (void *)signalquit);
+	signal(SIGINT, signalquit);
 	switch (game_state) {
 
 	case GS_GET_COMMAND:
@@ -96,7 +74,7 @@ void signalsave()
 void signalsuspend()
 {
 	if (game_state == GS_HELP) {
-		signal(SIGTSTP, (void *)signalsuspend);
+		signal(SIGTSTP, signalsuspend);
 	} else {
 
 		priv_switch(0);
@@ -121,7 +99,7 @@ void signalsuspend()
 #endif
 
 		kill(getpid(), SIGTSTP);
-		signal(SIGTSTP, (void *)signalsuspend);
+		signal(SIGTSTP, signalsuspend);
 
 #if DO_DEBUG
 		fprintf(debug_file, ": ...resuming\n");
@@ -156,34 +134,34 @@ void no_controly()
 	ENTER("no_controly", "");
 
 #ifdef SIGINT
-	signal(SIGINT, (void *)signalquit);
+	signal(SIGINT, signalquit);
 #endif
 #ifdef SIGHUP
-	signal(SIGHUP, (void *)signalsave);
+	signal(SIGHUP, signalsave);
 #endif
 
 	if (CATCH_SIGNALS) {
-		signal(SIGTSTP, (void *)signalsuspend);
+		signal(SIGTSTP, signalsuspend);
 		/*signal(SIGTSTP,SIG_IGN);*/
-		signal(SIGQUIT, (void *)signalexit);
-		signal(SIGILL, (void *)signalexit);
-		signal(SIGTRAP, (void *)signalexit);
-		signal(SIGFPE, (void *)signalexit);
-		signal(SIGSEGV, (void *)signalexit);
+		signal(SIGQUIT, signalexit);
+		signal(SIGILL, signalexit);
+		signal(SIGTRAP, signalexit);
+		signal(SIGFPE, signalexit);
+		signal(SIGSEGV, signalexit);
 #ifdef SIGIOT
-		signal(SIGIOT, (void *)signalexit);
+		signal(SIGIOT, signalexit);
 #endif
 #ifdef SIGABRT
-		signal(SIGABRT, (void *)signalexit);
+		signal(SIGABRT, signalexit);
 #endif
 #ifdef SIGEMT
-		signal(SIGEMT, (void *)signalexit);
+		signal(SIGEMT, signalexit);
 #endif
 #ifdef SIGBUS
-		signal(SIGBUS, (void *)signalexit);
+		signal(SIGBUS, signalexit);
 #endif
 #ifdef SIGSYS
-		signal(SIGSYS, (void *)signalexit);
+		signal(SIGSYS, signalexit);
 #endif
 	}
 	LEAVE("no_controly", "");
@@ -212,12 +190,6 @@ void exit_game()
 	fflush(stdout);
 	exit(0); /* { exit from game		} */
 }
-
-void init_channel() { /* XXXX */}
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 void msg_record(vtype message, boolean save)
 {
@@ -266,10 +238,6 @@ void msg_record(vtype message, boolean save)
 	LEAVE("msg_record", "i");
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
 void inkey_delay(char *getchar, integer delay)
 {
 	/* XXXX check_input consumes the input, so we never actually get data */
@@ -292,12 +260,6 @@ void inkey_flush(char *x)
 	*x = inkey();
 }
 
-void get_message() {}
-
-void set_the_trap() {}
-
-void disable_the_trap() {}
-
 void clear_rc(integer row, integer col)
 {
 	/*	{ Clears screen at given row, column }*/
@@ -314,10 +276,6 @@ void clear_rc(integer row, integer col)
 	/*  put_buffer(cursor_erp, row, col); */
 	put_qio(); /* dump the clear sequence */
 }
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 {
@@ -451,8 +409,8 @@ void print_chstr(chtype const *str_buff, int row, int col)
 	/* Remove 1 like put_buffer does */
 	mvaddchstr(row - 1, col - 1, str_buff);
 }
-/*//////////////////////////////////////////////////////////////////// */
-boolean get_yes_no(char *prompt) /* : varying[a] of char; */
+
+boolean get_yes_no(char *prompt)
 {
 	/*{ Gets response to a  Y/N question				}*/
 
@@ -511,9 +469,9 @@ void get_paths()
 
 	if (strlen(datapath) >
 	    (sizeof(MORIA_HOU) - 20)) { /* "moria_gcustom.mst" */
-		printf("Umm, DATA_FILE_PATH is too long (%d chars).\n\r",
+		printf("Umm, DATA_FILE_PATH is too long (%lu chars).\n\r",
 		       strlen(datapath));
-		printf("Keep it under %d chars or change the type\n\r",
+		printf("Keep it under %lu chars or change the type\n\r",
 		       sizeof(MORIA_HOU) - 20);
 		printf("of MORIA_HOU and friends in variables.h.\n\r");
 		printf(

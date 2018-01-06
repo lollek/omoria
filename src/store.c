@@ -812,7 +812,7 @@ void spend_time(integer days_spent, vtype place, boolean whole_days)
 	turn_counter += QUEST_DELAY;
 
 	if (new_screen) {
-		sleep_(1);
+		sleep(1);
 	}
 
 	/* with py.flags do; */

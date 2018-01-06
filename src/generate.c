@@ -490,7 +490,7 @@ void gc__make_door(integer y, integer x, integer *cur_pos, integer store_num,
 		t_list[*cur_pos] = store_door[TOT_STORES];
 	}
 
-	mini_sleep(5);
+	usleep(5);
 
 	old_seed = save_rand_state(NULL);
 	set_seed(get_seed() ^ randint(9999999));
@@ -765,7 +765,7 @@ void gc__build_fountain(integer where)
 			case 3:
 				cave[i1][i2].fval = water1.ftval;
 				cave[i1][i2].fopen = water1.ftopen;
-				mini_sleep(5);
+				usleep(5);
 				old_seed = save_rand_state(NULL);
 				set_seed(get_seed() ^ randint(9999999));
 				if (randint(12) == 1) {

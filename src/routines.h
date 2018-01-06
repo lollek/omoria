@@ -182,24 +182,17 @@ extern boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw,
 void inv__equip_pos_string(vtype out_val, integer equip_pos, integer counter);
 
 /* { IO.PAS		} */
-extern void convert_time(unsigned long int_time, quad_type *bin_time);
-extern void sleep_(unsigned long int_time);
-extern void mini_sleep(unsigned long int_time);
 extern void init_priv_switch();
 extern void priv_switch(integer switch_val);
 extern void no_controly();
 extern void controly();
 extern void exit_game() __attribute__((noreturn));
-extern void init_channel();
 /* extern void inkey(char *getchar); */
 extern char inkey();
 extern void msg_record(vtype message, boolean save);
 extern void inkey_delay(char *getchar, integer delay);
 extern void flush();
 extern void inkey_flush(char *x);
-extern void get_message();
-extern void set_the_trap();
-extern void disable_the_trap();
 /* use erase_line */
 extern void Erase_Line(integer row, integer col);
 extern void clear_rc(integer row, integer col);
