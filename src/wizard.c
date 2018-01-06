@@ -1697,25 +1697,19 @@ void wizard_create()
 		tmp_val = 0;
 	inven_temp->data.level = tmp_val;
 
-	if (get_com("Allocate? (Y/N)", &command)) {
-		switch (command) {
-		case 'y':
-		case 'Y':
-			popt(&tmp_val);
-			t_list[tmp_val] = inven_temp->data;
-			/* with cave[char_row][char_col]. do; */
-			if (cave[char_row][char_col].tptr > 0) {
-				delete_object(char_row, char_col);
-			}
-			cave[char_row][char_col].tptr = tmp_val;
-			msg_print("Allocated...");
-			break;
-
-		default:
-			msg_print("Aborted...");
-			break;
+	if (get_yes_no("Allocate?")) {
+		popt(&tmp_val);
+		t_list[tmp_val] = inven_temp->data;
+		/* with cave[char_row][char_col]. do; */
+		if (cave[char_row][char_col].tptr > 0) {
+			delete_object(char_row, char_col);
 		}
+		cave[char_row][char_col].tptr = tmp_val;
+		msg_print("Allocated...");
+	} else {
+		msg_print("Aborted...");
 	}
+
 	inven_temp->data = blank_treasure;
 	move_char(5);
 	creatures(false);

@@ -5820,20 +5820,11 @@ void d__execute_command(integer *com_val)
 		move_char(1);
 		break;
 	case 'C': /* Show character */
-		if (get_com("Print to file? (Y/N)", &command)) {
-			switch (command) {
-			case 'y':
-			case 'Y':
-				file_character();
-				break;
-			case 'n':
-			case 'N':
-				change_name();
-				draw_cave();
-				break;
-			default:
-				break;
-			}
+		if (get_yes_no("Print to file?")) {
+			file_character();
+		} else {
+			change_name();
+			draw_cave();
 		}
 		reset_flag = true;
 		break;

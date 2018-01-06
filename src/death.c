@@ -429,38 +429,36 @@ void write_tomb(vtype dstr[])
 {
 	vtype out_str;
 	vtype fnam;
-	char command;
 	FILE *f1;
 	integer i1;
 	boolean flag;
 
-	if (get_com("Print to file? (Y/N)", &command)) {
-		if (command == 'y' || command == 'Y') {
-			prt("Enter Filename:", 1, 1);
-			flag = false;
-			do {
-				if (get_string(fnam, 1, 17, 60)) {
-					if (strlen(fnam) == 0) {
-						strcpy(fnam, "MORIACHR.DIE");
-					}
-					f1 = (FILE *)fopen(fnam, "w");
-					if (f1 == NULL) {
-						sprintf(out_str,
-							"Error creating> %s",
-							fnam);
-						prt(out_str, 2, 1);
-					} else {
-						flag = true;
-						for (i1 = 0; i1 < 20; i1++) {
-							fprintf(f1, "%s\n",
-								dstr[i1]);
-						}
-					}
-					fclose(f1);
-				} else {
-					flag = true;
+	if (!get_yes_no("Print to file?"))
+		return;
+
+	prt("Enter Filename:", 1, 1);
+	flag = false;
+	do {
+		if (get_string(fnam, 1, 17, 60)) {
+			if (strlen(fnam) == 0) {
+				strcpy(fnam, "MORIACHR.DIE");
+			}
+			f1 = (FILE *)fopen(fnam, "w");
+			if (f1 == NULL) {
+				sprintf(out_str,
+					"Error creating> %s",
+					fnam);
+				prt(out_str, 2, 1);
+			} else {
+				flag = true;
+				for (i1 = 0; i1 < 20; i1++) {
+					fprintf(f1, "%s\n",
+						dstr[i1]);
 				}
-			} while (!flag);
+			}
+			fclose(f1);
+		} else {
+			flag = true;
 		}
-	}
+	} while (!flag);
 }
