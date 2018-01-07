@@ -51,10 +51,10 @@ void prt_map()
 
 	redraw = false; /*{ Screen has been redrawn	   }*/
 	for (y = panel_row_min; y <= panel_row_max; y++) {
-		chtype floor_str[82] = { 0 }; /* string to be printed */
-		integer floor_str_len = 0; /* floor_str length counter */
-		integer isp = 0;	   /* Number of blanks encountered */
-		boolean flag = false;      /* False until floor_str <> '' */
+		chtype floor_str[82] = {0}; /* string to be printed */
+		integer floor_str_len = 0;  /* floor_str length counter */
+		integer isp = 0;	    /* Number of blanks encountered */
+		boolean flag = false;       /* False until floor_str <> '' */
 		integer xpos = 0;
 		integer x;
 

@@ -447,15 +447,12 @@ void write_tomb(vtype dstr[])
 			}
 			f1 = (FILE *)fopen(fnam, "w");
 			if (f1 == NULL) {
-				sprintf(out_str,
-					"Error creating> %s",
-					fnam);
+				sprintf(out_str, "Error creating> %s", fnam);
 				prt(out_str, 2, 1);
 			} else {
 				flag = true;
 				for (i1 = 0; i1 < 20; i1++) {
-					fprintf(f1, "%s\n",
-						dstr[i1]);
+					fprintf(f1, "%s\n", dstr[i1]);
 				}
 			}
 			fclose(f1);

@@ -439,7 +439,7 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	for (y = topp; y <= bott; y++) {
 		integer x;
 		integer xpos = 0;
-		chtype floor_str[82] = { 0 };
+		chtype floor_str[82] = {0};
 		integer floor_str_len = 0;
 
 		/*{ Leftmost to rightmost do}*/
@@ -551,8 +551,8 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 	}
 
 	for (y = y2 - 1; y <= y2 + 1; y++) {
-		chtype floor_str[82] = { 0 };
-		chtype save_str[82] = { 0 };
+		chtype floor_str[82] = {0};
+		chtype save_str[82] = {0};
 		integer floor_str_len = 0;
 		integer save_str_len = 0;
 		integer xpos = 0;
@@ -2007,8 +2007,10 @@ void light_room(integer param_y, integer param_x)
 
 	integer const half_height = (integer)(SCREEN_HEIGHT / 2);
 	integer const half_width = (integer)(SCREEN_WIDTH / 2);
-	integer const start_row = (integer)(param_y / half_height) * half_height + 1;
-	integer const start_col = (integer)(param_x / half_width) * half_width + 1;
+	integer const start_row =
+	    (integer)(param_y / half_height) * half_height + 1;
+	integer const start_col =
+	    (integer)(param_x / half_width) * half_width + 1;
 	integer const end_row = start_row + half_height - 1;
 	integer const end_col = start_col + half_width - 1;
 	integer y;
@@ -2017,7 +2019,7 @@ void light_room(integer param_y, integer param_x)
 	lr__find_light(start_row, start_col, end_row, end_col);
 
 	for (y = start_row; y <= end_row; y++) {
-		chtype floor_str[82] = { 0 };
+		chtype floor_str[82] = {0};
 		integer floor_str_len = 0;
 		integer x;
 		integer const ypos = y;
@@ -5531,7 +5533,8 @@ void d__execute_command(integer *com_val)
 
 	ENTER("d__execute_command", "d");
 #if DO_DEBUG
-	fprintf(debug_file, ": command: %d '%c'\n", (int)*com_val, (int)*com_val);
+	fprintf(debug_file, ": command: %d '%c'\n", (int)*com_val,
+		(int)*com_val);
 	fflush(debug_file);
 #endif
 

@@ -1411,13 +1411,13 @@ void screen_map()
 	int mycol = 0;
 
 	memset(priority, 0, sizeof(priority));
-	priority['@'] =   10;
-	priority['<'] =    5;
-	priority['>'] =    5;
-	priority['\''] =  -3;
-	priority['#'] =   -5;
-	priority['.'] =  -10;
-	priority[' '] =  -15;
+	priority['@'] = 10;
+	priority['<'] = 5;
+	priority['>'] = 5;
+	priority['\''] = -3;
+	priority['#'] = -5;
+	priority['.'] = -10;
+	priority[' '] = -15;
 
 	save_screen();
 	clear_rc(1, 1);
@@ -1448,7 +1448,7 @@ void screen_map()
 			chtype const tmp = get_loc_symbol(i + 1, j + 1);
 
 			if (priority[(unsigned char)map[col]] <
-					priority[(unsigned char)tmp]) {
+			    priority[(unsigned char)tmp]) {
 				map[col] = tmp;
 			}
 			if (map[col] == '@') {
