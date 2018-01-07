@@ -297,6 +297,7 @@ extern void store_maint();
 extern void termdef();
 
 /* { WIZARD.PAS		}*/
+extern void wizard_command(void);
 extern void game_version();
 extern void bpswd();
 extern boolean check_pswd(string passw, boolean present);

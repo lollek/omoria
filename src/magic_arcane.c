@@ -5,11 +5,11 @@ void arcane_spell_effects(integer effect)
 {
 	/*{ Spells...                                     }*/
 
-	integer i2, dir;
-	integer dumy, y_dumy, x_dumy;
-
-	y_dumy = char_row;
-	x_dumy = char_col;
+	integer i2;
+	integer dir;
+	integer dumy;
+	integer y_dumy = char_row;
+	integer x_dumy = char_col;
 
 	switch (effect + 1) {
 

@@ -78,32 +78,13 @@ void game_version()
 void bpswd()
 {
 	/*{ Builds passwords                                      -RAK-   }*/
-
 	/*  Do remember that the passwords are max 12 chars plus a null. */
 
-	integer i1;
-
+	/* lesser op password */
 	strcpy(password1, "fragrance");
+
+	/* full op password */
 	strcpy(password2, "mopwillow");
-
-	if (1) {
-
-		/* lesser op password */
-		set_seed(wdata[0][0]);
-		for (i1 = 1; i1 <= 12; i1++) {
-			password1[i1 - 1] = wdata[0][i1] ^ randint(255);
-		}
-		password1[12] = 0;
-
-		/* full op password */
-		set_seed(wdata[1][0]);
-		for (i1 = 1; i1 <= 12; i1++) {
-			password2[i1 - 1] = wdata[1][i1] ^ randint(255);
-		}
-		password2[12] = 0;
-
-		set_seed(get_seed());
-	}
 }
 
 boolean check_pswd(string passwd, boolean present)
@@ -115,6 +96,7 @@ boolean check_pswd(string passwd, boolean present)
 	boolean checked_out = false;
 
 	/* perhaps crpyt() should be used?? */
+	ENTER("check_pswd", "");
 
 	if (present) {
 		strcpy(tpw, passwd);
@@ -136,6 +118,8 @@ boolean check_pswd(string passwd, boolean present)
 		tpw[i1] = 0;
 	}
 
+	MSG("Login attempt:")
+	MSG(tpw)
 	if (!(strcmp(tpw, password1))) {
 		checked_out = true;
 		wizard1 = true;
@@ -165,6 +149,8 @@ boolean check_pswd(string passwd, boolean present)
 
 	py.misc.cheated |= checked_out;
 	became_wizard = checked_out;
+
+	LEAVE("check_pswd", "");
 
 	return checked_out;
 }
@@ -1713,4 +1699,188 @@ void wizard_create()
 	inven_temp->data = blank_treasure;
 	move_char(5);
 	creatures(false);
+}
+
+void wizard_help()
+{
+	/*{ Help for available wizard commands                            }*/
+
+	clear_screen();
+	prt(" ? -  Wizard Help.", 1, 1);
+	prt(" a -  Remove Curse and Cure all maladies.", 2, 1);
+	prt(" b -  Print random objects sample.", 3, 1);
+	prt(" d -  Down/Up n levels.", 4, 1);
+	prt(" e - *Change character.", 5, 1);
+	prt(" f - *Delete monsters.", 6, 1);
+	prt(" g - *Allocate treasures.", 7, 1);
+	prt(" i -  Identify.", 8, 1);
+	prt(" j - *Gain experience.", 9, 1);
+	prt(" k - *Summon monster.", 10, 1);
+	prt(" l -  Wizard light.", 11, 1);
+	prt(" n -  Print monster dictionary.", 12, 1);
+	prt(" o - *Summon monster by its name.", 13, 1);
+	prt(" p -  Wizard password on/off.", 14, 1);
+	prt(" s - *Statistics on item (in inventory screen).", 15, 1);
+	prt(" t -  Teleport player.", 16, 1);
+	prt(" u - *Roll up an item.", 17, 1);
+	prt(" v -  Restore lost character.", 18, 1);
+	prt(" w - *Create any object *CAN CAUSE FATAL ERROR*", 19, 1);
+	prt(" x - *Edit high score file", 20, 1);
+	pause_game(24);
+	draw_cave();
+}
+
+void wizard_command(void)
+{
+	vtype tmp_str;
+	stat_set tstat;
+	treas_ptr trash_ptr;
+	integer y, x;
+
+	prt("Wizard command: ", 1, 1);
+	switch (inkey()) {
+	case 'a':
+		hp_player(1000, "cheating");
+		PM.cmana = PM.mana;
+		if (is_magii)
+			prt_mana();
+		remove_curse();
+		cure_me(&(PF.blind));
+		cure_me(&(PF.hoarse));
+		cure_me(&(PF.afraid));
+		cure_me(&(PF.poisoned));
+		cure_me(&(PF.confused));
+		for (tstat = STR; tstat <= CHR; tstat++)
+			restore_stat(tstat, "");
+		if (PF.slow > 1)
+			PF.slow = 1;
+		if (PF.image > 1)
+			PF.image = 1;
+		break;
+	case 'b':
+		print_objects();
+		break;
+
+	case 'd': /* Change dungeon level */
+		prt("Go to which level (0 -1200) ? ", 1, 1);
+		if (get_string(tmp_str, 1, 31, 10)) {
+			integer i1 = -1;
+			sscanf(tmp_str, "%ld", &i1);
+			if (i1 > -1 || !strcmp(tmp_str, "*")) {
+				dun_level = i1;
+				if (dun_level > 1200) {
+					dun_level = 1200;
+				} else if (dun_level < 0) {
+					dun_level =
+					    py.misc.max_lev;
+				}
+				moria_flag = true;
+			} else {
+				erase_line(msg_line, msg_line);
+			}
+		} else {
+			erase_line(msg_line, msg_line);
+		}
+		break;
+	case 'e':
+		change_character();
+		break;
+	case 'f':
+		mass_genocide();
+		break;
+	case 'g': /* Treasure */
+		alloc_object(floor_set, 5, 25);
+		prt_map();
+		break;
+	case 'i':
+		msg_print(
+		    "Poof!  Your items are all identifed!!!");
+		for (trash_ptr = inventory_list;
+		     trash_ptr != NULL;) {
+			identify(&(trash_ptr->data));
+			known2(trash_ptr->data.name);
+			trash_ptr = trash_ptr->next;
+		}
+		break;
+	case 'j': /* Gain exp */
+		if (py.misc.exp == 0) {
+			py.misc.exp = 1;
+		} else {
+			py.misc.exp *= 2;
+		}
+		prt_experience();
+		break;
+	case 'k': /* Summon monster */
+		y = char_row;
+		x = char_col;
+		if (is_in(cave[y][x].fval,
+			  water_set)) {
+			summon_water_monster(
+			    &y, &x, true);
+		} else {
+			summon_land_monster(
+			    &y, &x, true);
+		}
+		creatures(false);
+		break;
+	case 'l':
+		wizard_light();
+		break;
+	case 'n':
+		print_monsters();
+		break;
+
+	case 'o':
+		monster_summon_by_name(
+		    char_row, char_col, "",
+		    false, true);
+		creatures(false);
+		break;
+	case 't':
+		teleport(100);
+		break;
+
+	case 'u': /* Summon item */
+		if (cave[char_row][char_col]
+			.tptr == 0) {
+			summon_item(
+			    char_row, char_col,
+			    "", "", 0, false);
+		} else {
+			msg_print("You are "
+				  "standing on "
+				  "something!");
+		}
+		break;
+
+	case 'w': /* create */
+		if (cave[char_row][char_col]
+			.tptr == 0) {
+			wizard_create();
+		} else {
+			msg_print("You are "
+				  "standing on "
+				  "something!");
+		}
+		break;
+	case 'x':
+		edit_score_file();
+		break;
+
+	case 27: /* ^3  Run store_maint */
+		store_maint();
+		msg_print("Stores updated.");
+		break;
+	case 31: /* ^_  Can you say security through obscurity?
+		    */
+		if (wizard1 && search_flag && PM.cheated) {
+			py.misc.cheated = false;
+			msg_print("Cheat flag turned off.");
+		}
+		break;
+
+	case '?':
+		wizard_help();
+		break;
+	}
 }

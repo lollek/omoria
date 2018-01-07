@@ -1118,6 +1118,7 @@ boolean learn_discipline()
 	boolean return_value = false;
 
 	/*  printf("\n\n  ^^^ENTER learn_discip^^^\n\n");fflush(stdout); */
+	ENTER("learn_discipline", "");
 
 	i1 = 0; /* btw, we only use test_array[1..32] */
 	spell_flag = 0x00003FFF;
@@ -1169,6 +1170,8 @@ boolean learn_discipline()
 	} else {
 		return_value = false;
 	}
+
+	LEAVE("learn_discipline", "");
 
 	return return_value;
 }
@@ -1901,6 +1904,8 @@ void gain_level()
 {
 	/*{ Increases hit points and level			-RAK-	}*/
 
+	ENTER("gain_level", "");
+
 	integer nhp, dif_exp, need_exp;
 	boolean redraw;
 	vtype out_val;
@@ -1955,6 +1960,8 @@ void gain_level()
 		gain_mana(monk_adj());
 		prt_mana();
 	}
+
+	LEAVE("gain_level", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

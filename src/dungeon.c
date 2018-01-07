@@ -5612,13 +5612,6 @@ void d__execute_command(integer *com_val)
 		reset_flag = true;
 		break;
 
-#if 0
-  case CTRL: /* Password */
-    enter_wizard_mode(true);
-    reset_flag = true;
-    break;
-#endif
-
 	case CTRL_R: /* redraw */
 		draw_cave();
 		reset_flag = true;
@@ -5630,6 +5623,14 @@ void d__execute_command(integer *com_val)
 	case CTRL_U:
 		find_flag = true;
 		move_char(9);
+		break;
+
+	case CTRL_W: /* Password */
+		if (!wizard1)
+			enter_wizard_mode(true);
+		else
+			wizard_command();
+		reset_flag = true;
 		break;
 
 	case CTRL_X:
@@ -6038,190 +6039,7 @@ void d__execute_command(integer *com_val)
 		break;
 	default:
 		reset_flag = true;
-
-		if (!wizard1) { /* begin wizard commands */
-			prt("Type '?' for help...", 1, 1);
-		} else {
-
-			switch (*com_val) {
-			/* wizard commands */
-
-			case CTRL_A: /* Cure all */
-				hp_player(1000, "cheating");
-				PM.cmana = PM.mana;
-				if (is_magii) {
-					prt_mana();
-				}
-				remove_curse();
-				cure_me(&(PF.blind));
-				cure_me(&(PF.hoarse));
-				cure_me(&(PF.afraid));
-				cure_me(&(PF.poisoned));
-				cure_me(&(PF.confused));
-
-				for (tstat = STR; tstat <= CHR; tstat++) {
-					restore_stat(tstat, "");
-				}
-
-				if (PF.slow > 1) {
-					PF.slow = 1;
-				}
-				if (PF.image > 1) {
-					PF.image = 1;
-				}
-				break;
-
-			case CTRL_B:
-				print_objects();
-				break;
-
-			case CTRL_D: /* Change dungeon level */
-				prt("Go to which level (0 -1200) ? ", 1, 1);
-				if (get_string(tmp_str, 1, 31, 10)) {
-					i1 = -1;
-					sscanf(tmp_str, "%ld", &i1);
-					if (i1 > -1 || !strcmp(tmp_str, "*")) {
-						dun_level = i1;
-						if (dun_level > 1200) {
-							dun_level = 1200;
-						} else if (dun_level < 0) {
-							dun_level =
-							    py.misc.max_lev;
-						}
-						moria_flag = true;
-					} else {
-						erase_line(msg_line, msg_line);
-					}
-				} else {
-					erase_line(msg_line, msg_line);
-				}
-				break;
-
-			case CTRL_H:
-				wizard_help();
-				break;
-
-			case CTRL_I:
-				msg_print(
-				    "Poof!  Your items are all identifed!!!");
-				for (trash_ptr = inventory_list;
-				     trash_ptr != NULL;) {
-					identify(&(trash_ptr->data));
-					known2(trash_ptr->data.name);
-					trash_ptr = trash_ptr->next;
-				}
-				break;
-
-			case CTRL_L:
-				wizard_light();
-				break;
-			case CTRL_N:
-				print_monsters();
-				break;
-			case CTRL_T:
-				teleport(100);
-				break;
-
-			case 31: /* ^_  Can you say security through obscurity?
-				    */
-				if (wizard1 && search_flag && PM.cheated) {
-					py.misc.cheated = false;
-					msg_print("Cheat flag turned off.");
-				}
-				break;
-
-			default:
-				if (!wizard2) {
-					prt("Type '?' for help...", 1, 1);
-				} else {
-
-					switch (*com_val) {
-					/* wizard2 commands */
-
-					case CTRL_E:
-						change_character();
-						break;
-
-					case CTRL_F:
-						mass_genocide();
-						break;
-
-					case CTRL_G: /* Treasure */
-						alloc_object(floor_set, 5, 25);
-						prt_map();
-						break;
-
-					case CTRL_J: /* Gain exp */
-						if (py.misc.exp == 0) {
-							py.misc.exp = 1;
-						} else {
-							py.misc.exp *= 2;
-						}
-						prt_experience();
-						break;
-
-					case CTRL_K: /* Summon monster */
-						y = char_row;
-						x = char_col;
-						if (is_in(cave[y][x].fval,
-							  water_set)) {
-							summon_water_monster(
-							    &y, &x, true);
-						} else {
-							summon_land_monster(
-							    &y, &x, true);
-						}
-						creatures(false);
-						break;
-
-					case CTRL_O:
-						monster_summon_by_name(
-						    char_row, char_col, "",
-						    false, true);
-						creatures(false);
-						break;
-
-					case CTRL_U: /* Summon item */
-						if (cave[char_row][char_col]
-							.tptr == 0) {
-							summon_item(
-							    char_row, char_col,
-							    "", "", 0, false);
-						} else {
-							msg_print("You are "
-								  "standing on "
-								  "something!");
-						}
-						break;
-
-					case CTRL_W: /* create */
-						if (cave[char_row][char_col]
-							.tptr == 0) {
-							wizard_create();
-						} else {
-							msg_print("You are "
-								  "standing on "
-								  "something!");
-						}
-						break;
-
-					case CTRL_X:
-						edit_score_file();
-						break;
-
-					case 27: /* ^3  Run store_maint */
-						store_maint();
-						msg_print("Stores updated.");
-						break;
-
-					default:
-						prt("Type '?' for help...", 1,
-						    1);
-						break;
-					}
-				}
-			}
-		}
+		prt("Type '?' for help...", 1, 1);
 		break;
 
 	} /* end com_val switch */

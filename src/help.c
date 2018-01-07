@@ -124,35 +124,6 @@ void help()
 	draw_cave();
 }
 
-void wizard_help()
-{
-	/*{ Help for available wizard commands                            }*/
-
-	clear_screen();
-	prt("^A -  Remove Curse and Cure all maladies.", 1, 1);
-	prt("^B -  Print random objects sample.", 2, 1);
-	prt("^D -  Down/Up n levels.", 3, 1);
-	prt("^E - *Change character.", 4, 1);
-	prt("^F - *Delete monsters.", 5, 1);
-	prt("^G - *Allocate treasures.", 6, 1);
-	prt("^H -  Wizard Help.", 7, 1);
-	prt("^I -  Identify.", 8, 1);
-	prt("^J - *Gain experience.", 9, 1);
-	prt("^K - *Summon monster.", 10, 1);
-	prt("^L -  Wizard light.", 11, 1);
-	prt("^N -  Print monster dictionary.", 12, 1);
-	prt("^O - *Summon monster by its name.", 13, 1);
-	prt("^P -  Wizard password on/off.", 14, 1);
-	prt(" s - *Statistics on item (in inventory screen).", 15, 1);
-	prt("^T -  Teleport player.", 16, 1);
-	prt("^U - *Roll up an item.", 17, 1);
-	prt("^V -  Restore lost character.", 18, 1);
-	prt("^W - *Create any object *CAN CAUSE FATAL ERROR*", 19, 1);
-	prt("^X - *Edit high score file", 20, 1);
-	pause_game(24);
-	draw_cave();
-}
-
 void moria_help(vtype help_level)
 {
 	ntype help_string;
