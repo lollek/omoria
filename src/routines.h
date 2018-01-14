@@ -481,7 +481,7 @@ extern integer get_obj_num(integer level, integer tries);
 extern void place_object(integer y, integer x);
 extern void alloc_object(obj_set alloc_set, integer typ, integer num);
 extern void random_object(integer y, integer x, integer num);
-extern void cnv_stat(byteint stat, stat_type out_val);
+extern void cnv_stat(byteint stat, stat_s_type out_val);
 extern integer spell_adj(stat_set attr);
 extern integer bard_adj();
 extern integer druid_adj();

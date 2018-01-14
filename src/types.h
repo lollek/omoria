@@ -28,7 +28,6 @@ typedef char mtype[190 + 2];
 typedef char ntype[1024 + 2];
 typedef char ttype[68 + 2];
 typedef char vtype[80 + 2];
-typedef char stat_type[6 + 2]; /*	= packed array [1..6] of char; */
 typedef char account_type[10 + 2];
 typedef byteint obj_set[MAX_OBJ_SET]; /* = set of 0..255; */
 typedef char stat_set;		      /* = 0..5; */

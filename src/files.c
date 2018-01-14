@@ -546,7 +546,7 @@ void file_character()
 	vtype out_val, filename1, prt1, prt2;
 	char new_page = 12;
 	stat_set tstat;
-	stat_type
+	stat_s_type
 	    out_c[STAT_SET_MAX + 1]; /*  : array [stat_set] of stat_type;*/
 	treas_ptr curse;
 	vtype s1, s2, s3;

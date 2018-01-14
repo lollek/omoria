@@ -1771,8 +1771,7 @@ void wizard_command(void)
 				if (dun_level > 1200) {
 					dun_level = 1200;
 				} else if (dun_level < 0) {
-					dun_level =
-					    py.misc.max_lev;
+					dun_level = py.misc.max_lev;
 				}
 				moria_flag = true;
 			} else {
@@ -1793,10 +1792,8 @@ void wizard_command(void)
 		prt_map();
 		break;
 	case 'i':
-		msg_print(
-		    "Poof!  Your items are all identifed!!!");
-		for (trash_ptr = inventory_list;
-		     trash_ptr != NULL;) {
+		msg_print("Poof!  Your items are all identifed!!!");
+		for (trash_ptr = inventory_list; trash_ptr != NULL;) {
 			identify(&(trash_ptr->data));
 			known2(trash_ptr->data.name);
 			trash_ptr = trash_ptr->next;
@@ -1813,13 +1810,10 @@ void wizard_command(void)
 	case 'k': /* Summon monster */
 		y = char_row;
 		x = char_col;
-		if (is_in(cave[y][x].fval,
-			  water_set)) {
-			summon_water_monster(
-			    &y, &x, true);
+		if (is_in(cave[y][x].fval, water_set)) {
+			summon_water_monster(&y, &x, true);
 		} else {
-			summon_land_monster(
-			    &y, &x, true);
+			summon_land_monster(&y, &x, true);
 		}
 		creatures(false);
 		break;
@@ -1831,9 +1825,7 @@ void wizard_command(void)
 		break;
 
 	case 'o':
-		monster_summon_by_name(
-		    char_row, char_col, "",
-		    false, true);
+		monster_summon_by_name(char_row, char_col, "", false, true);
 		creatures(false);
 		break;
 	case 't':
@@ -1841,11 +1833,8 @@ void wizard_command(void)
 		break;
 
 	case 'u': /* Summon item */
-		if (cave[char_row][char_col]
-			.tptr == 0) {
-			summon_item(
-			    char_row, char_col,
-			    "", "", 0, false);
+		if (cave[char_row][char_col].tptr == 0) {
+			summon_item(char_row, char_col, "", "", 0, false);
 		} else {
 			msg_print("You are "
 				  "standing on "
@@ -1854,8 +1843,7 @@ void wizard_command(void)
 		break;
 
 	case 'w': /* create */
-		if (cave[char_row][char_col]
-			.tptr == 0) {
+		if (cave[char_row][char_col].tptr == 0) {
 			wizard_create();
 		} else {
 			msg_print("You are "

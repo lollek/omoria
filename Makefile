@@ -13,8 +13,9 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -pedantic -Werror=implicit-function-declaration -std=gnu89 -g3 -DDO_DEBUG=1
-LDFLAGS =	-lncurses -ltermcap -lm -lgdbm
+CFLAGS =	-Wall -Wextra -pedantic -Werror=implicit-function-declaration -std=gnu89 -g3 -DDO_DEBUG=1 -fsanitize=address -fno-omit-frame-pointer
+LDFLAGS =	-lncurses -ltermcap -lm -lgdbm -fsanitize=address -fno-omit-frame-pointer
+
 
 #
 # the owner and group for the game and data files

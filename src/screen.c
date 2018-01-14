@@ -164,11 +164,9 @@ void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
 	LEAVE("prt_stat", "");
 }
 
-void cnv_stat(byteint stat, stat_type out_val)
+void cnv_stat(byteint stat, stat_s_type out_val)
 {
 	integer part1, part2;
-
-	sprintf(out_val, "      ");
 
 	if (stat > 150) {
 		part1 = 18;
