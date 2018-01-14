@@ -101,19 +101,19 @@ static void _cast(enum magic_t magic_type)
 	memset(magic_books, 0, sizeof(magic_books));
 	switch (magic_type) {
 	case M_ARCANE:
-		magic_books[0] = Magic_Book;
+		magic_books[0] = magic_book;
 		magic_book_name = "spell-book";
 		break;
 	case M_DIVINE:
-		magic_books[0] = Prayer_Book;
+		magic_books[0] = prayer_book;
 		magic_book_name = "Holy Book";
 		break;
 	case M_NATURE:
-		magic_books[0] = Instrument;
+		magic_books[0] = instrument;
 		magic_book_name = "instrument";
 		break;
 	case M_SONG:
-		magic_books[0] = Song_Book;
+		magic_books[0] = song_book;
 		magic_book_name = "instrument";
 		break;
 	case M_CHAKRA:

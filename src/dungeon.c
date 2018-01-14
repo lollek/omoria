@@ -807,7 +807,7 @@ boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
 	ENTER("find_range", "");
 
 	*count = 0;
-	*first = nil;
+	*first = NULL;
 	flag = false;
 
 	change_all_ok_stats(false, false);
@@ -855,6 +855,8 @@ void carry(integer y, integer x)
 	treas_ptr tmp_ptr;
 	integer count;
 	boolean money_flag;
+
+	ENTER("carry", "");
 
 	money_flag = false;
 	find_flag = false;
@@ -928,6 +930,7 @@ void carry(integer y, integer x)
 			msg_print("You can't carry that many items.");
 		}
 	}
+	LEAVE("carry", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1515,7 +1518,7 @@ void fire_dam(integer dam, vtype kb_str)
 
 	obj_set things_that_burn = {
 	    arrow,   bow_crossbow_or_sling, hafted_weapon, pole_arm,   maul,
-	    boots,   gloves_and_gauntlets,  Cloak,	 soft_armor, staff,
+	    boots,   gloves_and_gauntlets,  cloak,	 soft_armor, staff,
 	    scroll1, scroll2,		    0};
 
 	if (py.flags.fire_resist) {
@@ -1588,7 +1591,7 @@ void acid_dam(integer dam, vtype kb_str)
 	obj_set things_that_dilute = {
 	    miscellaneous_object,  chest,	 bolt,       arrow,
 	    bow_crossbow_or_sling, hafted_weapon, pole_arm,   boots,
-	    gloves_and_gauntlets,  Cloak,	 soft_armor, 0};
+	    gloves_and_gauntlets,  cloak,	 soft_armor, 0};
 
 	if (minus_ac(Resist_Acid_worn_bit)) {
 		flag = 1;
@@ -1892,7 +1895,7 @@ void search(integer y, integer x, integer chance)
 							if (t_list[cave[i1][i2]
 								       .tptr]
 								.tval ==
-							    Unseen_trap) {
+							    unseen_trap) {
 								sprintf(
 								    out_val,
 								    "You have "
@@ -1914,7 +1917,7 @@ void search(integer y, integer x, integer chance)
 								       [cave[i1][i2]
 									    .tptr]
 									   .tval ==
-								   Secret_door) {
+								   secret_door) {
 								msg_print(
 								    "You have "
 								    "found a "
@@ -2144,7 +2147,7 @@ void area_affect(integer dir, integer y, integer x)
 	integer z[4]; /*: array [1..3] of integer;*/
 	integer i1, row, col;
 	obj_set corridors = {4, 5, 6, 0};
-	obj_set some_hidden_stuff = {Unseen_trap, Secret_door, 0};
+	obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
 
 	if (cave[y][x].fval == corr_floor1.ftval) {
 		i1 = 0;
@@ -2254,7 +2257,7 @@ boolean delete_object(integer y, integer x)
 	boolean return_value = false;
 
 	/* with cave[y,x] do; */
-	if (t_list[cave[y][x].tptr].tval == Secret_door) {
+	if (t_list[cave[y][x].tptr].tval == secret_door) {
 		cave[y][x].fval = corr_floor3.ftval;
 	}
 	cave[y][x].fopen = true;
@@ -3037,7 +3040,7 @@ static void d__examine_book()
 	char trash_char;
 	boolean redraw, flag;
 	vtype out_val;
-	obj_set some_books = {Magic_Book, Prayer_Book, Instrument, Song_Book,
+	obj_set some_books = {magic_book, prayer_book, instrument, song_book,
 			      0};
 
 	redraw = false;
@@ -3049,24 +3052,24 @@ static void d__examine_book()
 		flag = true;
 		/* with item_ptr->data. do; */
 		if (class_uses_magic(PM.pclass, M_ARCANE)) {
-			if (item_ptr->data.tval != Magic_Book) {
+			if (item_ptr->data.tval != magic_book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
 		} else if (class_uses_magic(PM.pclass, M_DIVINE)) {
-			if (item_ptr->data.tval != Prayer_Book) {
+			if (item_ptr->data.tval != prayer_book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
 		} else if (class_uses_magic(PM.pclass, M_NATURE)) {
-			if (item_ptr->data.tval != Instrument) {
+			if (item_ptr->data.tval != instrument) {
 				msg_print("You do not posses the talent.");
 				flag = false;
 			}
 		} else if (class_uses_magic(PM.pclass, M_SONG)) {
-			if (item_ptr->data.tval != Song_Book) {
+			if (item_ptr->data.tval != song_book) {
 				msg_print("You can not read the music.");
 				flag = false;
 			}
@@ -3142,7 +3145,7 @@ void d__jamdoor()
 		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
 			/* with t_list[cave[y][x].tptr]. do; */
-			if (t_list[cave[y][x].tptr].tval == Closed_door) {
+			if (t_list[cave[y][x].tptr].tval == closed_door) {
 				if (cave[y][x].cptr == 0) {
 					if (find_range(pick_a_spike, false, &i1,
 						       &i2)) {
@@ -3170,7 +3173,7 @@ void d__jamdoor()
 					strcat(m_name, " is in your way!");
 					msg_print(m_name);
 				}
-			} else if (t_list[cave[y][x].tptr].tval == Open_door) {
+			} else if (t_list[cave[y][x].tptr].tval == open_door) {
 				msg_print("The door must be closed first.");
 			} else {
 				msg_print("That isn't a door!");
@@ -3604,14 +3607,14 @@ void d__look()
 				    (cave[y][x].fm)) {
 					if (cave[y][x].tptr > 0) {
 						if (t_list[cave[y][x].tptr]
-							.tval == Secret_door) {
+							.tval == secret_door) {
 							msg_print("You see a "
 								  "granite "
 								  "wall.");
 						} else if (t_list[cave[y][x]
 								      .tptr]
 							       .tval !=
-							   Unseen_trap) {
+							   unseen_trap) {
 							inven_temp->data =
 							    t_list[cave[y][x]
 								       .tptr];
@@ -4756,13 +4759,13 @@ void d__go_up()
 	/* with cave[char_row][char_col]. do; */
 	if (cave[char_row][char_col].tptr > 0) {
 		if (t_list[cave[char_row][char_col].tptr].tval ==
-		    Up_staircase) {
+		    up_staircase) {
 			dun_level--;
 			moria_flag = true;
 			msg_print("You enter a maze of up staircases.");
 			msg_print("You pass through a one-way door.");
 		} else if (t_list[cave[char_row][char_col].tptr].tval ==
-			   Up_steep_staircase) {
+			   up_steep_staircase) {
 			dun_level -= randint(3) + 1;
 			if (dun_level < 0) {
 				dun_level = 0;
@@ -4786,13 +4789,13 @@ void d__go_down()
 	/* with cave[char_row][char_col]. do; */
 	if (cave[char_row][char_col].tptr > 0) {
 		if (t_list[cave[char_row][char_col].tptr].tval ==
-		    Down_staircase) {
+		    down_staircase) {
 			dun_level++;
 			moria_flag = true;
 			msg_print("You enter a maze of down staircases.");
 			msg_print("You pass through a one-way door.");
 		} else if (t_list[cave[char_row][char_col].tptr].tval ==
-			   Down_steep_staircase) {
+			   down_steep_staircase) {
 			dun_level += randint(3) + 1;
 			moria_flag = true;
 			msg_print("You enter a long maze of down staircases.");
@@ -4858,7 +4861,7 @@ void d__bash()
 			}
 		} else if (cave[y][x].tptr > 0) {
 			/* with t_list[cave[y][x].tptr]. do; */
-			if (t_list[cave[y][x].tptr].tval == Closed_door) {
+			if (t_list[cave[y][x].tptr].tval == closed_door) {
 				/* with py do; */
 				if (test_hit(
 					PM.wt + (PS.c[STR] * PS.c[STR])div 500,
@@ -4982,7 +4985,7 @@ void d__openobject()
 		if (cave[y][x].tptr > 0) {
 
 			/*{ Closed door           }*/
-			if (t_list[cave[y][x].tptr].tval == Closed_door) {
+			if (t_list[cave[y][x].tptr].tval == closed_door) {
 				/* with t_list[cave[y][x].tptr]. do; */
 				if (t_list[cave[y][x].tptr].p1 >
 				    0) { /*{ It's locked...        }*/
@@ -5147,7 +5150,7 @@ void d__closeobject()
 	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
 		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
-			if (t_list[cave[y][x].tptr].tval == Open_door) {
+			if (t_list[cave[y][x].tptr].tval == open_door) {
 				if (cave[y][x].cptr == 0) {
 					if (t_list[cave[y][x].tptr].p1 == 0) {
 						t_list[cave[y][x].tptr] =
@@ -5207,7 +5210,7 @@ void d__disarm_trap()
 			i1 = t_list[cave[y][x].tptr].tval;
 			t5 = t_list[cave[y][x].tptr].level;
 
-			if (i1 == Seen_trap) { /* { Floor trap    } */
+			if (i1 == seen_trap) { /* { Floor trap    } */
 				/* with t_list[cave[y][x].tptr]. do; */
 				if ((tot - t5) > randint(100)) {
 					msg_print(
@@ -5387,7 +5390,7 @@ void d__tunnel()
 			if (cave[y][x].tptr > 0) {
 
 				/*{ Rubble...     }*/
-				if (t_list[cave[y][x].tptr].tval == Rubble) {
+				if (t_list[cave[y][x].tptr].tval == rubble) {
 					if (tabil > randint(180)) {
 						pusht(cave[y][x].tptr);
 						cave[y][x].tptr = 0;
@@ -5413,7 +5416,7 @@ void d__tunnel()
 
 					/*{ Secret doors...}*/
 				} else if (t_list[cave[y][x].tptr].tval ==
-					   Secret_door) {
+					   secret_door) {
 					msg_print("You tunnel into the granite "
 						  "wall.");
 					search(char_row, char_col, py.misc.srh);

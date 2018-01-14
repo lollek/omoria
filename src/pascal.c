@@ -30,7 +30,8 @@ integer pindex(char *s1, char c1)
 /*//////////////////////////////////////////////////////////////////// */
 boolean is_in(integer obj, obj_set oset)
 {
-	integer i1, tmp;
+	integer i1;
+        integer tmp;
 	boolean return_value = false;
 
 /*    ENTER("is_in","m"); */

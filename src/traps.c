@@ -34,7 +34,7 @@ void change_trap(integer y, integer x)
 	/*{ Note: Secret doors are handled here                           }*/
 
 	integer i3;
-	obj_set little_things = {Unseen_trap, Secret_door, 0};
+	obj_set little_things = {unseen_trap, secret_door, 0};
 
 	/* with cave[y,x] do; */
 	if (is_in(t_list[cave[y][x].tptr].tval, little_things)) {
@@ -593,6 +593,8 @@ void hit_trap(integer *y, integer *x)
 
 	integer dam;
 
+	ENTER("hit_trap", "");
+
 	change_trap(*y, *x);
 	lite_spot(char_row, char_col);
 	find_flag = false;
@@ -787,6 +789,8 @@ void hit_trap(integer *y, integer *x)
 		msg_print("You got lucky: unknown trap value.");
 		break;
 	}
+
+	LEAVE("hit_trap", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

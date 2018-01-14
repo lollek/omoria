@@ -1236,7 +1236,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 					/*{ Creature can open doors... }*/
 					switch (t_list[cave[newy][newx].tptr]
 						    .tval) {
-					case Closed_door: /*{ Closed doors...
+					case closed_door: /*{ Closed doors...
 							     }*/
 						if (t_list[cave[newy][newx]
 							       .tptr].p1 ==
@@ -1305,7 +1305,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 						}
 						break;
 
-					case Secret_door: /*{ Secret doors...
+					case secret_door: /*{ Secret doors...
 							     }*/
 						tflag = true;
 						if (cave[newy][newx].fm) {
@@ -1335,7 +1335,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 					 * bash them   }*/
 					switch (t_list[cave[newy][newx].tptr]
 						    .tval) {
-					case Closed_door: /* { Closed doors...
+					case closed_door: /* { Closed doors...
 							     }*/
 						i2 =
 						    labs(t_list[cave[newy][newx]
@@ -1376,7 +1376,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 						}
 						break;
 
-					case Secret_door: /* { Secret doors...
+					case secret_door: /* { Secret doors...
 							     }*/
 						break;
 
@@ -1390,7 +1390,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 			if (tflag) {
 				if (cave[newy][newx].tptr > 0) {
 					if (t_list[cave[newy][newx].tptr]
-						.tval == Seen_trap) {
+						.tval == seen_trap) {
 						if (t_list[cave[newy][newx]
 							       .tptr].subval ==
 						    99) {

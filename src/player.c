@@ -86,10 +86,10 @@ static void _move_char(integer dir)
 		if (cave[test_row][test_col].tptr <= 0)
 			return;
 
-		if (t_list[cave[test_row][test_col].tptr].tval == Rubble)
+		if (t_list[cave[test_row][test_col].tptr].tval == rubble)
 			msg_print("There is rubble blocking your way.");
 		else if (t_list[cave[test_row][test_col].tptr].tval ==
-			 Closed_door)
+			 closed_door)
 			msg_print("There is a closed door blocking your way.");
 		return;
 	}

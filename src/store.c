@@ -308,6 +308,8 @@ boolean store_check_num(integer store_num)
 	integer i1;
 	boolean return_value = false;
 
+	ENTER("store_check_num", "");
+
 	/* with stores[store_num] do; */
 	if (stores[store_num].store_ctr < STORE_INVEN_MAX) {
 		return_value = true;
@@ -326,6 +328,7 @@ boolean store_check_num(integer store_num)
 			}
 		} /* end for */
 	}
+	LEAVE("store_check_num", "");
 	return return_value;
 }
 
@@ -401,7 +404,7 @@ integer item_value(treasure_type *item)
 	case boots:
 	case gloves_and_gauntlets:
 	case gem_helm:
-	case Cloak:
+	case cloak:
 	case helm:
 	case shield:
 	case hard_armor:
@@ -615,6 +618,8 @@ boolean check_store_hours(integer st, integer sh)
 	boolean flag;
 	boolean return_value = false;
 
+	ENTER("check_store_hours", "");
+
 	if (sh != -1) {
 		/* with stores[sh].store_open do; */
 		/* with py.misc do; */
@@ -705,6 +710,7 @@ boolean check_store_hours(integer st, integer sh)
 		msg_print("The doors are locked.");
 	}
 
+	LEAVE("check_store_hours", "");
 	return return_value;
 }
 
@@ -715,9 +721,11 @@ void check_store_hours_and_enter(integer st, integer sh, integer store_num)
 	 * up)*/
 	/* store_num should probably always be the same as st */
 
+	ENTER("check_store_hours_and_enter", "");
 	if (check_store_hours(st, sh)) {
 		enter_store(store_num);
 	}
+	LEAVE("check_store_hours_and_enter", "");
 }
 
 void st__reset_flag(integer time_spent, integer *flag)
@@ -943,6 +951,8 @@ void enter_store(integer store_num)
 	char command;
 	boolean exit_flag;
 
+	ENTER("enter_store", "");
+
 	tics = 1;
 	/* with stores[store_num] do; */
 	exit_flag = false;
@@ -958,12 +968,12 @@ void enter_store(integer store_num)
 			switch (com_val) {
 			case 18:
 				display_store(store_num, cur_top);
-			case 73: /*{ Selective Inventory   }*/
+			case 'I': /*{ Selective Inventory   }*/
 				if (inven_command('I', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
 				}
 				break;
-			case 32:
+			case ' ':
 				if (cur_top == 1) {
 					if (stores[store_num].store_ctr > 12) {
 						cur_top = 13;
@@ -979,44 +989,44 @@ void enter_store(integer store_num)
 					display_inventory(store_num, cur_top);
 				}
 				break;
-			case 101: /*{ Equipment List        }*/
+			case 'e': /*{ Equipment List        }*/
 				if (inven_command('e', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
 				}
 				break;
-			case 105: /*{ Inventory             }*/
+			case 'i': /*{ Inventory             }*/
 				if (inven_command('i', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
 				}
 				break;
-			case 116: /*{ Take off              }*/
+			case 't': /*{ Take off              }*/
 				if (inven_command('t', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
 				}
 				break;
-			case 119: /*{ Wear                  }*/
+			case 'w': /*{ Wear                  }*/
 				if (inven_command('w', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
 				}
 				break;
-			case 120: /*{ Switch weapon         }*/
+			case 'x': /*{ Switch weapon         }*/
 				if (inven_command('x', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
 				}
 				break;
-			case 112:
+			case 'p':
 				exit_flag =
 				    store_purchase(store_num, &cur_top, false);
 				break;
-			case 80:
+			case 'P':
 				exit_flag =
 				    store_purchase(store_num, &cur_top, true);
 				break;
-			case 115:
+			case 's':
 				exit_flag =
 				    store_sell(store_num, cur_top, false);
 				break;
-			case 83:
+			case 'S':
 				exit_flag =
 				    store_sell(store_num, cur_top, true);
 				break;
@@ -1038,11 +1048,14 @@ void enter_store(integer store_num)
 	} else {
 		draw_cave();
 	}
+
+	LEAVE("enter_store", "");
 }
 
 void display_store(integer store_num, integer cur_top)
 {
 	/*{ Displays store					-RAK-	}*/
+	ENTER("display_store", "");
 
 	/* with stores[store_num] do; */
 	clear_screen();
@@ -1052,6 +1065,8 @@ void display_store(integer store_num, integer cur_top)
 	store_prt_gold();
 	display_commands();
 	display_inventory(store_num, cur_top);
+
+	LEAVE("display_store", "");
 }
 
 void store_prt_gold()
@@ -1060,9 +1075,12 @@ void store_prt_gold()
 	 * }*/
 
 	vtype out_val;
+	ENTER("store_prt_gold", "");
 
 	sprintf(out_val, "Gold Remaining : %ld", py.misc.money[TOTAL_]);
 	prt(out_val, 19, 18);
+
+	LEAVE("store_prt_gold", "");
 }
 
 void display_cost(integer store_num, integer pos)
@@ -1091,6 +1109,8 @@ void display_commands()
 {
 	/*{ Displays the set of commands				-RAK-
 	 * }*/
+	ENTER("display_commands", "");
+
 	prt("You may:", 21, 1);
 	prt(" p/P) Purchase an item.          <space> browse store's "
 	    "inventory.",
@@ -1099,6 +1119,8 @@ void display_commands()
 	    "Lists.",
 	    23, 1);
 	prt(" ^R) Redraw the screen.        Esc) Exit from building.", 24, 1);
+
+	LEAVE("display_commands", "");
 }
 
 void haggle_commands(integer typ)
@@ -1122,6 +1144,8 @@ void display_inventory(integer store_num, integer start)
 
 	integer i1, i2, stop;
 	vtype out_val1, out_val2;
+
+	ENTER("display_inventory", "");
 
 	/* with stores[store_num] do; */
 	i1 = ((start - 1) % 12);
@@ -1161,6 +1185,8 @@ void display_inventory(integer store_num, integer start)
 			prt("", i2 + i1 + 5, 1);
 		}
 	}
+
+	LEAVE("display_inventory", "");
 }
 
 boolean store_purchase(integer store_num, integer *cur_top, boolean blitz)
@@ -1380,13 +1406,15 @@ boolean store_sell(integer store_num, integer cur_top, boolean blitz)
 {
 	/*{ Sell an item to the store                             -RAK-   }*/
 
-	integer count;
-	treas_ptr item_ptr;
+	integer count = 0;
+	treas_ptr item_ptr = NULL;
 	integer item_pos, price;
 	vtype out_val, foo, out2;
 	char trash_char;
 	boolean redraw;
 	boolean return_value = false;
+
+	ENTER("store_sell", "");
 
 	if (blitz) {
 		strcpy(foo, "BLITZ-SELLING item? ");
@@ -1396,7 +1424,7 @@ boolean store_sell(integer store_num, integer cur_top, boolean blitz)
 
 	/* with stores[store_num] do; */
 	redraw = false;
-	if (!(find_range(store_buy[store_num], false, &item_ptr, &count))) {
+	if (!find_range(store_buy[store_num], false, &item_ptr, &count)) {
 		msg_print("You have nothing the store wishes to buy.");
 	} else if (get_item(&item_ptr, foo, &redraw, count, &trash_char, false,
 			    false)) {
@@ -1477,6 +1505,7 @@ boolean store_sell(integer store_num, integer cur_top, boolean blitz)
 		display_store(store_num, cur_top);
 	}
 
+	LEAVE("store_sell", "");
 	return return_value;
 }
 

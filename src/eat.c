@@ -52,7 +52,7 @@ void eat()
 	boolean redraw, ident;
 	integer dam_pts = 0;
 
-	obj_set things_to_eat = {Food, Junk_food, 0};
+	obj_set things_to_eat = {Food, junk_food, 0};
 
 	reset_flag = true;
 

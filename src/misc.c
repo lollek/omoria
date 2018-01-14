@@ -771,6 +771,8 @@ void add_money(integer amount)
 	string out_val, out2;
 	integer type_num;
 
+	ENTER("add_money", "");
+
 	to_bank = 0;
 	wl = weight_limit();
 	/* with py.misc do; */
@@ -819,6 +821,8 @@ void add_money(integer amount)
 			    "You cannot carry the change, so it is lost.");
 		}
 	}
+
+	LEAVE("add_money", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -980,7 +984,7 @@ boolean learn_spell(boolean *redraw)
 	new_spells = num_new_spells(spell_adj(INT));
 
 	while (curse != nil) {
-		if (curse->data.tval == Magic_Book) {
+		if (curse->data.tval == magic_book) {
 			spell_flag |= curse->data.flags;
 			spell_flag2 |= curse->data.flags2;
 		}
@@ -1046,7 +1050,7 @@ boolean learn_prayer()
 	ENTER("learn_prayer", "");
 
 	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
-		if (ptr->data.tval == Prayer_Book) {
+		if (ptr->data.tval == prayer_book) {
 			spell_flag |= ptr->data.flags;
 			spell_flag2 |= ptr->data.flags2;
 		}
@@ -1200,7 +1204,7 @@ boolean learn_song(boolean *redraw)
 	new_spells = num_new_spells(bard_adj());
 
 	while (curse != nil) {
-		if (curse->data.tval == Song_Book) {
+		if (curse->data.tval == song_book) {
 			spell_flag |= curse->data.flags;
 			spell_flag2 |= curse->data.flags2;
 		}
@@ -1266,7 +1270,7 @@ boolean learn_druid()
 	spell_flag2 = 0;
 	curse = inventory_list;
 	while (curse != nil) {
-		if (curse->data.tval == Instrument) {
+		if (curse->data.tval == instrument) {
 			spell_flag |= curse->data.flags;
 			spell_flag2 |= curse->data.flags2;
 		}
@@ -2246,7 +2250,7 @@ void compact_objects()
 						switch (
 						    t_list[cave[i1][i2].tptr]
 							.tval) {
-						case Seen_trap:
+						case seen_trap:
 							if (is_in(
 								t_list
 								    [cave[i1][i2]

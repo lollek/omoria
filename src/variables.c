@@ -128,12 +128,12 @@ obj_set wall_set = {10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set pwall_set = {10, 11, 12, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set corr_set = {4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set trap_set = {
-    Unseen_trap, Seen_trap, Secret_door, Entrance_to_store, 0, 0, 0, 0,
+    unseen_trap, seen_trap, secret_door, entrance_to_store, 0, 0, 0, 0,
     0,		 0,	 0,		 0,		    0, 0, 0, 0};
 obj_set light_set = {
-    Seen_trap,		Rubble,		      Open_door,   Closed_door,
-    Up_staircase,       Down_staircase,       Secret_door, Entrance_to_store,
-    Up_steep_staircase, Down_steep_staircase, 0,	   0,
+    seen_trap,		rubble,		      open_door,   closed_door,
+    up_staircase,       down_staircase,       secret_door, entrance_to_store,
+    up_steep_staircase, down_steep_staircase, 0,	   0,
     0,			0,		      0,	   0};
 obj_set water_set = {16, 17, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set earth_set = {1, 2, 4, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -793,53 +793,53 @@ owner_type owners[MAX_OWNERS] = {
 
 /*	{ Stores are just special traps			} */
 treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
-    {"the entrance to the General Store", Entrance_to_store, 'G' | A_BOLD,
+    {"the entrance to the General Store", entrance_to_store, 'G' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 101, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Armory", Entrance_to_store, 'R' | A_BOLD, 0x00000000,
+    {"the entrance to the Armory", entrance_to_store, 'R' | A_BOLD, 0x00000000,
      0x00000000, 0, 0, 102, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Weapon Smiths", Entrance_to_store, 'W' | A_BOLD,
+    {"the entrance to the Weapon Smiths", entrance_to_store, 'W' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 103, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Temple", Entrance_to_store, 'T' | A_BOLD, 0x00000000,
+    {"the entrance to the Temple", entrance_to_store, 'T' | A_BOLD, 0x00000000,
      0x00000000, 0, 0, 104, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Alchemy Shop", Entrance_to_store, 'A' | A_BOLD,
+    {"the entrance to the Alchemy Shop", entrance_to_store, 'A' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 105, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Magic Shop", Entrance_to_store, 'M' | A_BOLD,
+    {"the entrance to the Magic Shop", entrance_to_store, 'M' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 106, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Inn", Entrance_to_store, 'I' | A_BOLD, 0x00000000,
+    {"the entrance to the Inn", entrance_to_store, 'I' | A_BOLD, 0x00000000,
      0x00000000, 0, 0, 107, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Library", Entrance_to_store, 'L' | A_BOLD, 0x00000000,
+    {"the entrance to the Library", entrance_to_store, 'L' | A_BOLD, 0x00000000,
      0x00000000, 0, 0, 109, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Music Shop", Entrance_to_store, 'U' | A_BOLD,
+    {"the entrance to the Music Shop", entrance_to_store, 'U' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 110, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Gem Store", Entrance_to_store, 'J' | A_BOLD,
+    {"the entrance to the Gem Store", entrance_to_store, 'J' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 113, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the All-Nite Deli", Entrance_to_store, 'D' | A_BOLD,
+    {"the entrance to the All-Nite Deli", entrance_to_store, 'D' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 116, 0, 0, 0, 0, 0, 0, "0d0", 0},
     /* this is the black market, it looks like a normal door */
-    {"the entrance to a building", Entrance_to_store, '+', 0x00000000,
+    {"the entrance to a building", entrance_to_store, '+', 0x00000000,
      0x00000000, 0, 0, 118, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Trading Post", Entrance_to_store, 'P' | A_BOLD,
+    {"the entrance to the Trading Post", entrance_to_store, 'P' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 108, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Insurance Shop", Entrance_to_store, 'N' | A_BOLD,
+    {"the entrance to the Insurance Shop", entrance_to_store, 'N' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 111, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Bank", Entrance_to_store, 'B' | A_BOLD, 0x00000000,
+    {"the entrance to the Bank", entrance_to_store, 'B' | A_BOLD, 0x00000000,
      0x00000000, 0, 0, 112, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Money Exchange", Entrance_to_store, 'X' | A_BOLD,
+    {"the entrance to the Money Exchange", entrance_to_store, 'X' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 114, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to the Casino", Entrance_to_store, 'C' | A_BOLD, 0x00000000,
+    {"the entrance to the Casino", entrance_to_store, 'C' | A_BOLD, 0x00000000,
      0x00000000, 0, 0, 115, 0, 0, 0, 0, 0, 0, "0d0", 0},
 
-    {"the entrance to a strange building", Entrance_to_store, 'Q' | A_BOLD,
+    {"the entrance to a strange building", entrance_to_store, 'Q' | A_BOLD,
      0x00000000, 0x00000000, 0, 0, 117, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to a building", Entrance_to_store, '+', 0x00000000,
+    {"the entrance to a building", entrance_to_store, '+', 0x00000000,
      0x00000000, 0, 0, 120, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to a building", Entrance_to_store, '+', 0x00000000,
+    {"the entrance to a building", entrance_to_store, '+', 0x00000000,
      0x00000000, 0, 0, 121, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to a building", Entrance_to_store, '+', 0x00000000,
+    {"the entrance to a building", entrance_to_store, '+', 0x00000000,
      0x00000000, 0, 0, 122, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to a building", Entrance_to_store, '+', 0x00000000,
+    {"the entrance to a building", entrance_to_store, '+', 0x00000000,
      0x00000000, 0, 0, 123, 0, 0, 0, 0, 0, 0, "0d0", 0},
-    {"the entrance to a building", Entrance_to_store, '+', 0x00000000,
+    {"the entrance to a building", entrance_to_store, '+', 0x00000000,
      0x00000000, 0, 0, 124, 0, 0, 0, 0, 0, 0, "0d0", 0}
 
 };
@@ -1208,13 +1208,13 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      1, 5, 1, 0, 0, 0, 0, "3d3", 3},
     {"& Iron Spike~^", spike, '~', 0x10000000, Nothing_flag, 0, 1, 1, 10, 1, 0,
      0, 0, 0, "1d1", 1},
-    {"& Magic Lantern^ (%P5 turns left)", Lamp_or_Torch, '~', 0x00000000,
+    {"& Magic Lantern^ (%P5 turns left)", lamp_or_torch, '~', 0x00000000,
      Nothing_flag, 20000, 200, 17, 45, 1, 0, 0, 0, 0, "1d8", 20},
-    {"& Magic Torch^ (%P5 turns left)", Lamp_or_Torch, '~', 0x00000000,
+    {"& Magic Torch^ (%P5 turns left)", lamp_or_torch, '~', 0x00000000,
      Nothing_flag, 9000, 30, 15, 1, 1, 0, 0, 0, 0, "2d6", 10},
-    {"& Brass Lantern~ with %P5 turns of light", Lamp_or_Torch, '~', 0x00000000,
+    {"& Brass Lantern~ with %P5 turns of light", lamp_or_torch, '~', 0x00000000,
      Nothing_flag, 7500, 35, 1, 50, 1, 0, 0, 0, 0, "1d1", 1},
-    {"& Wooden Torch~ with %P5 turns of light", Lamp_or_Torch, '~', 0x00000000,
+    {"& Wooden Torch~ with %P5 turns of light", lamp_or_torch, '~', 0x00000000,
      Nothing_flag, 4000, 2, 13, 30, 1, 0, 0, 0, 0, "1d1", 1},
     {"& Orcish Pick^ (%P1) (%P2,%P3)", 25, '\\', 0x10000000, Tunneling_worn_bit,
      2, 500, 2, 180, 1, 0, 0, 0, 0, "1d3", 20},
@@ -1318,9 +1318,9 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      0, 1050, 11, 380, 1, -3, 0, 25, 0, "2d4", 48},
     {"Ribbed Plate Armor^ [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag,
      0, 1200, 12, 380, 1, -3, 0, 28, 0, "2d4", 50},
-    {"& Cloak^ [%P6,%P4]", Cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
+    {"& Cloak^ [%P6,%P4]", cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
      0, 0, 1, 0, "0d0", 1},
-    {"& Cloak^ [%P6,%P4]", Cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
+    {"& Cloak^ [%P6,%P4]", cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
      0, 0, 1, 0, "0d0", 1},
     {"& Set of Leather Gloves^ [%P6,%P4]", gloves_and_gauntlets, ']',
      0x00000000, Nothing_flag, 0, 3, 1, 5, 1, 0, 0, 1, 0, "0d0", 1},
@@ -1760,21 +1760,21 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      0x01000000, 0, 0, 25, 50, 1, 0, 0, 0, 0, "1d2", 5},
     {"& %W Staff| of Identify^ (%P1 charges)", staff, '_', 0x00000000,
      0x02000000, 0, 1500, 26, 50, 1, 0, 0, 0, 0, "1d2", 20},
-    {"& Book of Magic Spells [Beginners-Magik]", Magic_Book, '?', 0x00000000,
+    {"& Book of Magic Spells [Beginners-Magik]", magic_book, '?', 0x00000000,
      0x0000007F, 0, 25, 257, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Book of Magic Spells [Magik I]", Magic_Book, '?', 0x00000000,
+    {"& Book of Magic Spells [Magik I]", magic_book, '?', 0x00000000,
      0x0007FF80, 0, 100, 258, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Book of Magic Spells [Magik II]", Magic_Book, '?', 0x00000000,
+    {"& Book of Magic Spells [Magik II]", magic_book, '?', 0x00000000,
      0x7FF80000, 0, 400, 259, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Book of Magic Spells [The Mages Guide to Power]", Magic_Book, '?',
+    {"& Book of Magic Spells [The Mages Guide to Power]", magic_book, '?',
      0x000001FF, 0x00000000, 0, 800, 261, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Holy Book of Prayers [Beginners Handbook]", Prayer_Book, '?',
+    {"& Holy Book of Prayers [Beginners Handbook]", prayer_book, '?',
      0x00000000, 0x000000FF, 0, 25, 258, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Holy Book of Prayers [Words of Wisdom]", Prayer_Book, '?', 0x00000000,
+    {"& Holy Book of Prayers [Words of Wisdom]", prayer_book, '?', 0x00000000,
      0x0007FF00, 0, 100, 259, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Holy Book of Prayers [Chants and Blessings]", Prayer_Book, '?',
+    {"& Holy Book of Prayers [Chants and Blessings]", prayer_book, '?',
      0x00000001, 0x7FF80000, 0, 300, 260, 60, 1, -100, 0, 0, 0, "1d1", 40},
-    {"& Holy Book of Prayers [Exorcism and Dispelling]", Prayer_Book, '?',
+    {"& Holy Book of Prayers [Exorcism and Dispelling]", prayer_book, '?',
      0x000001FE, 0x00000000, 0, 900, 261, 60, 1, -100, 0, 0, 0, "1d1", 40},
     {"& Small wooden chest", chest, '&', 0x00000000, 0x0F000000, 0, 300, 1, 250,
      1, 0, 0, 0, 0, "2d3", 7},
@@ -1798,31 +1798,31 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      150000, 7000, 3, 300, 1, 0, 0, 0, 0, "0d0", 50},
     {"& %N Bag| of Devouring", bag_or_sack, '~', 0x0C000000, 0x00000000, 150000,
      0, 4, 100, 1, 0, 0, 0, 0, "0d0", 20},
-    {"& Rat Skeleton", Miscellaneous_Object, 's', 0x00000000, Nothing_flag, 0,
+    {"& Rat Skeleton", miscellaneous_object, 's', 0x00000000, Nothing_flag, 0,
      0, 1, 10, 1, 0, 0, 0, 0, "1d1", 1},
-    {"& Giant Centipede Skeleton", Miscellaneous_Object, 's', 0x00000000,
+    {"& Giant Centipede Skeleton", miscellaneous_object, 's', 0x00000000,
      Nothing_flag, 0, 0, 2, 25, 1, 0, 0, 0, 0, "1d1", 1},
     {"Some filthy rags^ [%P6,%P4]", soft_armor, '~', 0x00000000, Nothing_flag,
      0, 0, 99, 20, 1, 0, 0, 1, 0, "0d0", 0},
-    {"& empty bottle^", Miscellaneous_Object, '!', 0x00000000, Nothing_flag, 0,
+    {"& empty bottle^", miscellaneous_object, '!', 0x00000000, Nothing_flag, 0,
      0, 4, 2, 1, 0, 0, 0, 0, "1d1", 0},
-    {"Some shards of pottery^", Miscellaneous_Object, '~', 0x00000000,
+    {"Some shards of pottery^", miscellaneous_object, '~', 0x00000000,
      Nothing_flag, 0, 0, 5, 5, 1, 0, 0, 0, 0, "1d1", 0},
-    {"& Human Skeleton", Miscellaneous_Object, 's', 0x00000000, Nothing_flag, 0,
+    {"& Human Skeleton", miscellaneous_object, 's', 0x00000000, Nothing_flag, 0,
      0, 7, 50, 1, 0, 0, 0, 0, "1d1", 1},
-    {"& Dwarf Skeleton", Miscellaneous_Object, 's', 0x00000000, Nothing_flag, 0,
+    {"& Dwarf Skeleton", miscellaneous_object, 's', 0x00000000, Nothing_flag, 0,
      0, 8, 60, 1, 0, 0, 0, 0, "1d1", 1},
-    {"& Elf Skeleton", Miscellaneous_Object, 's', 0x00000000, Nothing_flag, 0,
+    {"& Elf Skeleton", miscellaneous_object, 's', 0x00000000, Nothing_flag, 0,
      0, 9, 40, 1, 0, 0, 0, 0, "1d1", 1},
-    {"& Gnome Skeleton", Miscellaneous_Object, 's', 0x00000000, Nothing_flag, 0,
+    {"& Gnome Skeleton", miscellaneous_object, 's', 0x00000000, Nothing_flag, 0,
      0, 10, 25, 1, 0, 0, 0, 0, "1d1", 1},
-    {"& broken set of teeth^", Miscellaneous_Object, 's', 0x00000000,
+    {"& broken set of teeth^", miscellaneous_object, 's', 0x00000000,
      Nothing_flag, 0, 0, 11, 3, 1, 0, 0, 0, 0, "1d1", 0},
-    {"& large broken bone^", Miscellaneous_Object, 's', 0x00000000,
+    {"& large broken bone^", miscellaneous_object, 's', 0x00000000,
      Nothing_flag, 0, 0, 12, 2, 1, 0, 0, 0, 0, "1d1", 0},
     {"& dead human body", chest, 'z', 0x00000000, 0x0F000000, 0, 0, 5, 50, 1, 0,
      0, 0, 0, "1d1", 7},
-    {"& broken stick^", Miscellaneous_Object, '~', 0x00000000, Nothing_flag, 0,
+    {"& broken stick^", miscellaneous_object, '~', 0x00000000, Nothing_flag, 0,
      0, 13, 3, 1, 0, 0, 0, 0, "1d1", 0},
     {"& broken set of teeth^", misc_usable, 's', nothing_flag, Nothing_flag, 0,
      0, 15, 3, 1, 0, 0, 0, 0, "1d1", 0},
@@ -2138,7 +2138,7 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
      0, 900, 9, 260, 1, -3, 0, 22, 0, "1d6", 0}, /*{ 40} */
     {"Full Plate Armor [%P6,%P4]", hard_armor, '[', 0x00000000, Nothing_flag, 0,
      1050, 11, 380, 1, -3, 0, 25, 0, "2d4", 0}, /*{ 41} */
-    {"& Cloak [%P6,%P4]", Cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
+    {"& Cloak [%P6,%P4]", cloak, '(', 0x00000000, Nothing_flag, 0, 3, 1, 10, 1,
      0, 0, 1, 0, "0d0", 0}, /*{ 42} */
     {"& Set of Leather Gloves [%P6,%P4]", gloves_and_gauntlets, ']', 0x00000000,
      Nothing_flag, 0, 3, 1, 5, 1, 0, 0, 1, 0, "0d0", 0}, /*{ 43} */
@@ -2188,24 +2188,24 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
      15, 310, 5, 2, 0, 0, 0, 0, "0d0", 0}, /*{ 65} */
     {"& Scroll~ of Recharging", scroll1, '?', 0x00000000, 0x01000000, 0, 200,
      311, 5, 1, 0, 0, 0, 0, "0d0", 0}, /*{ 66} */
-    {"& Book of Magic Spells [Beginners-Magik]", Magic_Book, '?', 0x00000000,
+    {"& Book of Magic Spells [Beginners-Magik]", magic_book, '?', 0x00000000,
      0x0000007F, 0, 25, 257, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 67} */
-    {"& Book of Magic Spells [Magik I]", Magic_Book, '?', 0x00000000,
+    {"& Book of Magic Spells [Magik I]", magic_book, '?', 0x00000000,
      0x0007FF80, 0, 100, 258, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 68} */
-    {"& Book of Magic Spells [Magik II]", Magic_Book, '?', 0x00000000,
+    {"& Book of Magic Spells [Magik II]", magic_book, '?', 0x00000000,
      0x7FF80000, 0, 400, 259, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 69} */
-    {"& Book of Magic Spells [Mages Guide to Power]", Magic_Book, '?',
+    {"& Book of Magic Spells [Mages Guide to Power]", magic_book, '?',
      0x000001FF, 0x00000000, 0, 800, 260, 60, 1, -100, 0, 0, 0, "1d1",
      0}, /*{ 70} */
-    {"& Holy Book of Prayers [Beginners Handbook]", Prayer_Book, '?',
+    {"& Holy Book of Prayers [Beginners Handbook]", prayer_book, '?',
      0x00000000, 0x000000FF, 0, 25, 258, 60, 1, -100, 0, 0, 0, "1d1",
      0}, /*{ 71} */
-    {"& Holy Book of Prayers [Words of Wisdom]", Prayer_Book, '?', 0x00000000,
+    {"& Holy Book of Prayers [Words of Wisdom]", prayer_book, '?', 0x00000000,
      0x0007FF00, 0, 100, 259, 60, 1, -100, 0, 0, 0, "1d1", 0}, /*{ 72} */
-    {"& Holy Book of Prayers [Chants and Blessings]", Prayer_Book, '?',
+    {"& Holy Book of Prayers [Chants and Blessings]", prayer_book, '?',
      0x00000001, 0x7FF80000, 0, 300, 260, 60, 1, -100, 0, 0, 0, "1d1",
      0}, /*{ 73} */
-    {"& Holy Book of Prayers [Exorcism and Dispelling]", Prayer_Book, '?',
+    {"& Holy Book of Prayers [Exorcism and Dispelling]", prayer_book, '?',
      0x000001FE, 0x00000000, 0, 900, 261, 60, 1, -100, 0, 0, 0, "1d1",
      0}, /*{ 74} */
     {"& Potion~ of Restore Strength", potion1, '!', 0x00000000, 0x00000004, 0,
@@ -2264,9 +2264,9 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
      0x00200000, 0, 400, 22, 10, 1, 0, 0, 0, 0, "1d1", 5}, /*{101} */
     {"& Iron Spike~", spike, '~', 0x10000000, Nothing_flag, 0, 1, 1, 10, 1, 0,
      0, 0, 0, "1d1", 1}, /*{102} */
-    {"& Brass Lantern~ with %P5 turns of light", Lamp_or_Torch, '~', 0x00000000,
+    {"& Brass Lantern~ with %P5 turns of light", lamp_or_torch, '~', 0x00000000,
      Nothing_flag, 7500, 35, 2, 50, 1, 0, 0, 0, 0, "1d1", 1}, /*{103} */
-    {"& Wooden Torch~ with %P5 turns of light", Lamp_or_Torch, '~', 0x00000000,
+    {"& Wooden Torch~ with %P5 turns of light", lamp_or_torch, '~', 0x00000000,
      Nothing_flag, 4000, 2, 270, 30, 5, 0, 0, 0, 0, "1d1", 1}, /*{104} */
     {"& Flask~ of oil", flask_of_oil, '!', 0x00000000, 0x00040000, 7500, 3, 257,
      10, 5, 0, 0, 0, 0, "2d6", 1}, /*{105} */
@@ -2433,130 +2433,130 @@ integer mon_nasty;
 
 /*	{ Traps are just Nasty treasures...				} */
 treasure_type trap_lista[MAX_TRAPA + 1] = {
-    {"bogus trap a", Seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
+    {"bogus trap a", seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
      0, 0, 0, "2d6", -50},
-    {"an open pit", Seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0,
+    {"an open pit", seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0,
      0, 0, "2d6", -50},
-    {"an arrow trap", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 2, 0, 0,
+    {"an arrow trap", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 2, 0, 0,
      0, 0, 0, 0, "1d8", 0},
-    {"a covered pit", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 3, 0, 0,
+    {"a covered pit", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 3, 0, 0,
      0, 0, 0, 0, "2d6", 0},
-    {"a trap door", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 4, 0, 0, 0,
+    {"a trap door", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 4, 0, 0, 0,
      0, 0, 0, "2d8", 0},
-    {"a gas trap", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 5, 0, 0, 0,
+    {"a gas trap", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 5, 0, 0, 0,
      0, 0, 0, "1d4", 0},
-    {"a loose rock", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 6, 0, 0, 0,
+    {"a loose rock", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 6, 0, 0, 0,
      0, 0, 0, "0d0", 0},
-    {"a dart trap", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 7, 0, 0, 0,
+    {"a dart trap", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 7, 0, 0, 0,
      0, 0, 0, "1d4", 0},
-    {"a strange rune", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 8, 0, 0,
+    {"a strange rune", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 8, 0, 0,
      0, 0, 0, 0, "0d0", 0},
-    {"some loose rock", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 9, 0, 0,
+    {"some loose rock", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 9, 0, 0,
      0, 0, 0, 0, "2d6", 0},
-    {"a gas trap", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 10, 0, 0, 0,
+    {"a gas trap", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 10, 0, 0, 0,
      0, 0, 0, "1d4", 0},
-    {"a strange rune", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 11, 0, 0,
+    {"a strange rune", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 11, 0, 0,
      0, 0, 0, 0, "0d0", 0},
-    {"a blackened spot", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 12, 0,
+    {"a blackened spot", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 12, 0,
      0, 0, 0, 0, 0, "4d6", 0},
-    {"some corroded rock", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 13,
+    {"some corroded rock", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 13,
      0, 0, 0, 0, 0, 0, "4d6", 0},
-    {"a gas trap", Unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 14, 0, 0, 0,
+    {"a gas trap", unseen_trap, '.', 0x00000000, 0x00000000, 0, 0, 14, 0, 0, 0,
      0, 0, 0, "2d6", 0},
-    {"a gas trap", Unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 15, 0, 0, 0,
+    {"a gas trap", unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 15, 0, 0, 0,
      0, 0, 0, "1d4", 10},
-    {"a gas trap", Unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 16, 0, 0, 0,
+    {"a gas trap", unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 16, 0, 0, 0,
      0, 0, 0, "1d8", 5},
-    {"a dart trap", Unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 17, 0, 0, 0,
+    {"a dart trap", unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 17, 0, 0, 0,
      0, 0, 0, "1d8", 10},
-    {"a dart trap", Unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 18, 0, 0, 0,
+    {"a dart trap", unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 18, 0, 0, 0,
      0, 0, 0, "1d8", 10},
-    {"a chute", Unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 20, 0, 0, 0, 0,
+    {"a chute", unseen_trap, '.', 0x00000000, 0x00000000, 5, 0, 20, 0, 0, 0, 0,
      0, 0, "4d8", 20}};
 
 /*	{ Traps: Level represents the difficulty of disarming;	} */
 /*	{ and P1 represents the experienced gained when disarmed} */
 treasure_type trap_listb[MAX_TRAPB + 1] = {
-    {"bogus trap b", Seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
+    {"bogus trap b", seen_trap, ' ', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
      0, 0, 0, "2d6", -50},
-    {"an open pit", Seen_trap, ' ', 0x00000000, 0x00000000, 1, 0, 1, 0, 0, 0, 0,
+    {"an open pit", seen_trap, ' ', 0x00000000, 0x00000000, 1, 0, 1, 0, 0, 0, 0,
      0, 0, "2d6", -50},
-    {"an arrow trap", Seen_trap, '^', 0x00000000, 0x00000000, 3, 0, 2, 0, 0, 0,
+    {"an arrow trap", seen_trap, '^', 0x00000000, 0x00000000, 3, 0, 2, 0, 0, 0,
      0, 0, 0, "1d8", -10},
-    {"a covered pit", Seen_trap, '^', 0x00000000, 0x00000000, 2, 0, 3, 0, 0, 0,
+    {"a covered pit", seen_trap, '^', 0x00000000, 0x00000000, 2, 0, 3, 0, 0, 0,
      0, 0, 0, "2d6", -40},
-    {"a trap door", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 4, 0, 0, 0, 0,
+    {"a trap door", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 4, 0, 0, 0, 0,
      0, 0, "2d8", -25},
-    {"a gas trap", Seen_trap, '^', 0x00000000, 0x00000000, 3, 0, 5, 0, 0, 0, 0,
+    {"a gas trap", seen_trap, '^', 0x00000000, 0x00000000, 3, 0, 5, 0, 0, 0, 0,
      0, 0, "1d4", 5},
-    {"a loose rock", Seen_trap, ';', 0x00000000, 0x00000000, 0, 0, 6, 0, 0, 0,
+    {"a loose rock", seen_trap, ';', 0x00000000, 0x00000000, 0, 0, 6, 0, 0, 0,
      0, 0, 0, "0d0", -90},
-    {"a dart trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 7, 0, 0, 0, 0,
+    {"a dart trap", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 7, 0, 0, 0, 0,
      0, 0, "1d4", 10},
-    {"a strange rune", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 8, 0, 0, 0,
+    {"a strange rune", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 8, 0, 0, 0,
      0, 0, 0, "0d0", -10},
-    {"some loose rock", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 9, 0, 0,
+    {"some loose rock", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 9, 0, 0,
      0, 0, 0, 0, "2d6", -10},
-    {"a gas trap", Seen_trap, '^', 0x00000000, 0x00000000, 10, 0, 10, 0, 0, 0,
+    {"a gas trap", seen_trap, '^', 0x00000000, 0x00000000, 10, 0, 10, 0, 0, 0,
      0, 0, 0, "1d4", 5},
-    {"a strange rune", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 11, 0, 0,
+    {"a strange rune", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 11, 0, 0,
      0, 0, 0, 0, "0d0", -10},
-    {"a blackened spot", Seen_trap, '^', 0x00000000, 0x00000000, 10, 0, 12, 0,
+    {"a blackened spot", seen_trap, '^', 0x00000000, 0x00000000, 10, 0, 12, 0,
      0, 0, 0, 0, 0, "4d6", 10},
-    {"some corroded rock", Seen_trap, '^', 0x00000000, 0x00000000, 10, 0, 13, 0,
+    {"some corroded rock", seen_trap, '^', 0x00000000, 0x00000000, 10, 0, 13, 0,
      0, 0, 0, 0, 0, "4d6", 10},
-    {"a gas trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 14, 0, 0, 0, 0,
+    {"a gas trap", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 14, 0, 0, 0, 0,
      0, 0, "2d6", 5},
-    {"a gas trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 15, 0, 0, 0, 0,
+    {"a gas trap", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 15, 0, 0, 0, 0,
      0, 0, "1d4", 10},
-    {"a gas trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 16, 0, 0, 0, 0,
+    {"a gas trap", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 16, 0, 0, 0, 0,
      0, 0, "1d8", 5},
-    {"a dart trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 17, 0, 0, 0,
+    {"a dart trap", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 17, 0, 0, 0,
      0, 0, 0, "1d8", 10},
-    {"a dart trap", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 18, 0, 0, 0,
+    {"a dart trap", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 18, 0, 0, 0,
      0, 0, 0, "1d8", 10},
     /*	{ Special case, see DOOR_LIST below (subvals must agree)	} */
-    {"a closed door", Closed_door, '+', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
+    {"a closed door", closed_door, '+', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
      0, 0, 0, 0, "1d1", 0},
-    {"a chute", Seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 20, 0, 0, 0, 0, 0,
+    {"a chute", seen_trap, '^', 0x00000000, 0x00000000, 5, 0, 20, 0, 0, 0, 0, 0,
      0, "4d8", 20}
 
 };
 
 treasure_type scare_monster = /* { Special trap	} */
-    {"a strange rune", Seen_trap, '^', 0x00000000, 0x00000000, 0, 0,     99,
+    {"a strange rune", seen_trap, '^', 0x00000000, 0x00000000, 0, 0,     99,
      0,		       0,	 0,   0,	  0,	  0, "0d0", -90};
 
 treasure_type some_rubble = {
-    "some rubble", Rubble, ':', 0x00000000, 0x00000000, 0, 0,     1,
+    "some rubble", rubble, ':', 0x00000000, 0x00000000, 0, 0,     1,
     0,		   0,      0,   0,	  0,		0, "0d0", 0};
 
 /*	{ Secret door must have same subval as closed door in	} */
 /*	{ TRAP_LISTB.  See CHANGE_TRAP				} */
 treasure_type door_list[3] = {
-    {"an open door", Open_door, '\'', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
+    {"an open door", open_door, '\'', 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0,
      0, 0, 0, "1d1", 0},
-    {"a closed door", Closed_door, '+', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
+    {"a closed door", closed_door, '+', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
      0, 0, 0, 0, "1d1", 0},
-    {"a secret door", Secret_door, '#', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
+    {"a secret door", secret_door, '#', 0x00000000, 0x00000000, 0, 0, 19, 0, 0,
      0, 0, 0, 0, "1d1", 0}};
 
 treasure_type up_stair = {
-    "an up staircase", Up_staircase, '<', 0x00000000, 0x00000000, 0, 0,     1,
+    "an up staircase", up_staircase, '<', 0x00000000, 0x00000000, 0, 0,     1,
     0,		       0,	    0,   0,	  0,	  0, "1d1", 0};
 
 treasure_type down_stair = {
-    "a down staircase", Down_staircase, '>',   0x00000000, 0x00000000, 0,
+    "a down staircase", down_staircase, '>',   0x00000000, 0x00000000, 0,
     0,			1,		0,     0,	  0,	  0,
     0,			0,		"1d1", 0};
 
 treasure_type up_steep = {
-    "a steep staircase", Up_steep_staircase, '<',   0x00000000, 0x00000000, 0,
+    "a steep staircase", up_steep_staircase, '<',   0x00000000, 0x00000000, 0,
     0,			 1,		     0,     0,		0,	  0,
     0,			 0,		     "1d1", 0};
 
 treasure_type down_steep = {
-    "a steep staircase", Down_steep_staircase, '>',   0x00000000, 0x00000000, 0,
+    "a steep staircase", down_steep_staircase, '>',   0x00000000, 0x00000000, 0,
     0,			 1,		       0,     0,	  0,	  0,
     0,			 0,		       "1d1", 0};
 
@@ -2695,7 +2695,7 @@ obj_set destroyed_by_acid = {
     arrow,      bow_crossbow_or_sling, hafted_weapon, pole_arm, gem_helm,
     boots,      gloves_and_gauntlets,  cloak,	 helm,     shield,
     hard_armor, soft_armor,	    staff,	 scroll1,  scroll2,
-    Food,       Open_door,	     Closed_door,   0};
+    Food,       open_door,	     closed_door,   0};
 
 obj_set destroyed_by_cold = {potion1, potion2, 0};
 
@@ -2703,7 +2703,7 @@ obj_set destroyed_by_fire = {
     arrow,   bow_crossbow_or_sling, hafted_weapon, pole_arm,
     boots,   gloves_and_gauntlets,  cloak,	 soft_armor,
     staff,   scroll1,		    scroll2,       potion1,
-    potion2, Food,		    Open_door,     Closed_door,
+    potion2, Food,		    open_door,     closed_door,
     0};
 
 obj_set destroyed_by_petrify = {boots, soft_armor, potion1, potion2, Food, 0};

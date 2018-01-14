@@ -30,13 +30,13 @@ static void aii__insert(treas_ptr ptr, treas_ptr new_item)
 static boolean is_players_spell_book(integer typ)
 {
 	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
-		return (typ == Magic_Book) ? true : false;
+		return (typ == magic_book) ? true : false;
 	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
-		return (typ == Song_Book) ? true : false;
+		return (typ == song_book) ? true : false;
 	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
-		return (typ == Instrument) ? true : false;
+		return (typ == instrument) ? true : false;
 	} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
-		return (typ == Prayer_Book) ? true : false;
+		return (typ == prayer_book) ? true : false;
 	}
 
 	return false;
@@ -176,20 +176,19 @@ treas_ptr add_inven_item(treasure_type item)
 
 integer change_all_ok_stats(boolean nok, boolean nin)
 {
-	treas_ptr curse;
-	integer count;
+	treas_rec *ptr;
+	integer count = 0;
 
 	ENTER("change_all_ok_stats", "u")
 
-	count = 0;
-	for (curse = inventory_list; curse != nil; curse = curse->next) {
-		if (curse->is_in) {
-			curse->ok = nin;
+	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
+		if (ptr->is_in) {
+			ptr->ok = nin;
 		} else {
-			curse->ok = nok;
+			ptr->ok = nok;
 		}
 
-		if (curse->ok) {
+		if (ptr->ok) {
 			count++;
 		}
 	}
@@ -611,7 +610,7 @@ treas_ptr ic__remove(integer item_val, boolean show_message)
 			strcat(prt1, "Was wielding ");
 			break;
 
-		case Lamp_or_Torch:
+		case lamp_or_torch:
 			strcat(prt1, "Light source was ");
 			break;
 
@@ -776,7 +775,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 			test_flag = true;
 			switch (
 			    item_ptr->data.tval) { /*{ Slot for equipment    }*/
-			case Lamp_or_Torch:
+			case lamp_or_torch:
 				i1 = Equipment_light;
 				break;
 			case bow_crossbow_or_sling:
@@ -806,7 +805,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 			case gloves_and_gauntlets:
 				i1 = Equipment_gloves;
 				break;
-			case Cloak:
+			case cloak:
 				i1 = Equipment_cloak;
 				break;
 			case helm:
@@ -1131,7 +1130,7 @@ void ic__stats(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 			case spike:
 				strcpy(out_val, "Spike");
 				break;
-			case Lamp_or_Torch:
+			case lamp_or_torch:
 				strcpy(out_val, "Lamp or torch");
 				break;
 			case bow_crossbow_or_sling:
@@ -1164,7 +1163,7 @@ void ic__stats(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 			case gloves_and_gauntlets:
 				strcpy(out_val, "Gloves or gauntlets");
 				break;
-			case Cloak:
+			case cloak:
 				strcpy(out_val, "Cloak");
 				break;
 			case helm:

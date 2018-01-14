@@ -1190,7 +1190,7 @@ boolean detect_trap()
 			/* with cave[i1][i2]. do; */
 			if (cave[i1][i2].tptr > 0) {
 				if (t_list[cave[i1][i2].tptr].tval ==
-				    Unseen_trap) {
+				    unseen_trap) {
 					change_trap(i1, i2);
 					cave[i1][i2].fm = true;
 					flag = true;
@@ -1213,7 +1213,7 @@ boolean detect_sdoor()
 	/*{ Locates and displays all secret doors on current panel -RAK-  }*/
 
 	integer i1, i2;
-	obj_set pick_a_stair = {Up_staircase, Down_staircase,
+	obj_set pick_a_stair = {up_staircase, down_staircase,
 				up_steep_staircase, down_steep_staircase, 0};
 
 	boolean flag = false;
@@ -1224,7 +1224,7 @@ boolean detect_sdoor()
 			if (cave[i1][i2].tptr > 0) {
 				/*{ Secret doors  }*/
 				if (t_list[cave[i1][i2].tptr].tval ==
-				    Secret_door) {
+				    secret_door) {
 					cave[i1][i2].fval = corr_floor3.ftval;
 					change_trap(i1, i2);
 					cave[i1][i2].fm = true;
@@ -1635,8 +1635,8 @@ boolean td_destroy()
 	/*{ Destroys any adjacent door(s)/trap(s)                 -RAK-   }*/
 
 	integer i1, i2;
-	obj_set pick_a_door = {Unseen_trap, Seen_trap,   Open_door,
-			       Closed_door, Secret_door, 0};
+	obj_set pick_a_door = {unseen_trap, seen_trap,   open_door,
+			       closed_door, secret_door, 0};
 
 	boolean flag = false;
 
@@ -2619,8 +2619,8 @@ boolean td_destroy2(integer dir, integer y, integer x)
 {
 	/*{ Destroy all traps and doors in a given direction      -RAK-   }*/
 
-	obj_set thump_stuff = {chest,       Unseen_trap, Seen_trap,
-			       Closed_door, Secret_door, 0};
+	obj_set thump_stuff = {chest,       unseen_trap, seen_trap,
+			       closed_door, secret_door, 0};
 	boolean flag = false;
 
 	do {
@@ -2758,13 +2758,13 @@ boolean disarm_all(integer dir, integer y, integer x)
 		if (cave[y][x].tptr > 0) {
 			/* with t_list[tptr] do; */
 			tval = t_list[cave[y][x].tptr].tval;
-			if ((tval == Unseen_trap) || (tval == Seen_trap)) {
+			if ((tval == unseen_trap) || (tval == seen_trap)) {
 				if (delete_object(y, x)) {
 					flag = true;
 				}
-			} else if (tval == Closed_door) {
+			} else if (tval == closed_door) {
 				t_list[cave[y][x].tptr].p1 = 0;
-			} else if (tval == Secret_door) {
+			} else if (tval == secret_door) {
 				cave[y][x].fval = corr_floor3.ftval;
 				change_trap(y, x);
 				cave[y][x].fm = true;

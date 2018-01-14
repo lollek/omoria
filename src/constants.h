@@ -352,9 +352,7 @@
 #define Equipment_light (Equipment_cloak + 1)	  /* 12 */
 #define Equipment_secondary (Equipment_light + 1)      /* 13 */
 
-/*	{ tval constants					-DCJ-	} */
-
-#define Miscellaneous_Object 1
+/* .tval constants -DCJ- */
 #define miscellaneous_object 1
 #define chest 2
 #define misc_usable 3
@@ -366,7 +364,6 @@
 #define bolt 11
 #define arrow 12
 #define spike 13
-#define Lamp_or_Torch 15
 #define lamp_or_torch 15
 #define bow_crossbow_or_sling 20
 #define hafted_weapon 21
@@ -378,7 +375,6 @@
 #define gem_helm 29
 #define boots 30
 #define gloves_and_gauntlets 31
-#define Cloak 32
 #define cloak 32
 #define helm 33
 #define shield 34
@@ -397,43 +393,26 @@
 #define potion2 76
 #define flask_of_oil 77
 #define Food 80
-#define Junk_food 81
 #define junk_food 81
 #define chime 85
 #define horn 86
-#define Magic_Book 90
 #define magic_book 90
-#define Prayer_Book 91
 #define prayer_book 91
-#define Instrument 92
 #define instrument 92
-#define Song_Book 93
 #define song_book 93
 #define lodging_at_inn 95
 #define valuable_metal 100 /* look in detect_item for limit */
-#define Unseen_trap 101
 #define unseen_trap 101
-#define Seen_trap 102
 #define seen_trap 102
-#define Rubble 103
 #define rubble 103
-#define Open_door 104
 #define open_door 104
-#define Closed_door 105
 #define closed_door 105
-#define Up_staircase 107
 #define up_staircase 107
-#define Down_staircase 108
 #define down_staircase 108
-#define Secret_door 109
 #define secret_door 109
-#define Entrance_to_store 110
 #define entrance_to_store 110
-#define Up_steep_staircase 111
 #define up_steep_staircase 111
-#define Down_steep_staircase 112
 #define down_steep_staircase 112
-#define Whirlpool 113
 #define whirlpool 113
 
 /* fields in py.flags.status */
