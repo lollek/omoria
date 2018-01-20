@@ -258,7 +258,7 @@ void py_bonuses(treasure_type *tobj, integer factor)
 			i1 = 6000;
 			break;
 		default:
-			MSG("Increase carry worn value (p1) out of range");
+			MSG(("Increase carry worn value (p1) out of range"));
 			i1 = 500;
 			break;
 		}
@@ -481,15 +481,17 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 
 			if (xpos > 0) {
 				if (floor_str_len > 80)
-					MSG(": ERROR draw_block floor_str_len "
-					    "too big\n");
+					MSG((": ERROR draw_block floor_str_len "
+					     "too big: %d",
+					     floor_str_len));
 				floor_str[floor_str_len++] = tmp_char;
 			}
 
 		} /* end for  x */
 
 		if (floor_str_len > 80)
-			MSG(": ERROR draw_block floor_str_len too big\n");
+			MSG((": ERROR draw_block floor_str_len too big: %d",
+			     floor_str_len));
 
 		floor_str[floor_str_len] = 0;
 
@@ -499,7 +501,7 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 			/*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
 
 			if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
-				MSG(": ERROR draw_block xmax-xpos is bad\n");
+				MSG((": ERROR draw_block xmax-xpos is bad\n"));
 
 			floor_str[1 + xmax - xpos + 1] = 0;
 			print_chstr(floor_str, y2, xpos);

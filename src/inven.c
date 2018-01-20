@@ -2094,8 +2094,8 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 						pos = MITHRIL_POS;
 						break;
 					default:
-						MSG("Unknown mon_type in "
-						    "drop_money");
+						MSG(("Unknown mon_type in "
+						     "drop_money"));
 						pos = IRON_POS;
 						break;
 					}

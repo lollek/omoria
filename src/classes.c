@@ -24,7 +24,7 @@ char const *class_title(enum class_t class)
 	case C_MONK:
 		return "Monk";
 	default:
-		MSG("Logic error in class_title")
+		MSG(("Unknown class: %d", class));
 		return "???";
 	}
 }
@@ -53,7 +53,7 @@ float class_expfactor(enum class_t class)
 	case C_MONK:
 		return 0.10;
 	default:
-		MSG("Logic error in class_expfactor")
+		MSG(("Unknown class: %d", class));
 		return 1000.00;
 	}
 }
@@ -82,7 +82,7 @@ signed char class_extra_health(enum class_t class)
 	case C_MONK:
 		return 4;
 	default:
-		MSG("Logic error in class_extra_health")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -111,7 +111,7 @@ signed char class_disarm_mod(enum class_t class)
 	case C_MONK:
 		return 45;
 	default:
-		MSG("Logic error in class_disarm_mod")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -140,7 +140,7 @@ signed char class_search_mod(enum class_t class)
 	case C_MONK:
 		return 24;
 	default:
-		MSG("Logic error in class_search_mod")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -169,7 +169,7 @@ signed char class_stealth_mod(enum class_t class)
 	case C_MONK:
 		return 3;
 	default:
-		MSG("Logic error in class_stealth_mod")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -198,7 +198,7 @@ signed char class_search_freq(enum class_t class)
 	case C_MONK:
 		return 24;
 	default:
-		MSG("Logic error in class_search_freq")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -227,7 +227,7 @@ signed char class_melee_bonus(enum class_t class)
 	case C_MONK:
 		return 8;
 	default:
-		MSG("Logic error in class_melee_bonus")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -256,7 +256,7 @@ signed char class_ranged_bonus(enum class_t class)
 	case C_MONK:
 		return 6;
 	default:
-		MSG("Logic error in class_ranged_bonus")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -285,7 +285,7 @@ signed char class_save_mod(enum class_t class)
 	case C_MONK:
 		return 25;
 	default:
-		MSG("Logic error in class_save_mod")
+		MSG(("Unknown class: %d", class));
 		return -100;
 	}
 }
@@ -324,7 +324,7 @@ signed char const *class_stats(enum class_t class)
 	case C_MONK:
 		return monk_stats;
 	default:
-		MSG("Logic error in class_stats")
+		MSG(("Unknown class: %d", class));
 		return NULL;
 	}
 }
@@ -371,7 +371,7 @@ signed char class_magic_resist(enum class_t class)
 	case C_MONK:
 		return -5;
 	default:
-		MSG("Logic error in class_magic_resist")
+		MSG(("Unknown class: %d", class));
 		return 0;
 	}
 }
@@ -761,6 +761,9 @@ spell_t *class_spell(enum class_t class, int slot)
 	    {"", 99, 99, 0, 0, false},
 	    {"", 99, 99, 0, 0, false}};
 
+	ENTER("class_spell", "");
+	MSG(("class: %d, slot: %d", class, slot));
+
 	switch (class) {
 	default:
 	case C_WARRIOR:
@@ -784,4 +787,5 @@ spell_t *class_spell(enum class_t class, int slot)
 	case C_MONK:
 		return &monk_spells[slot];
 	}
+	LEAVE("class_spell", "");
 }

@@ -1,6 +1,9 @@
 /* debug.c */
 /**/
 
+#include <stdarg.h>
+#include <stdio.h>
+
 #include "imoria.h"
 
 #if DO_DEBUG
@@ -99,9 +102,14 @@ void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
 	call_depth--;
 }
 
-void log_msg(char *str)
+void log_msg(char const *fmt, ...)
 {
-	fprintf(debug_file, ">            %s\n", str);
+	va_list args;
+	va_start(args, fmt);
+	fprintf(debug_file, ">            ");
+	vfprintf(debug_file, fmt, args);
+	fprintf(debug_file, "\n");
+	va_end(args);
 	fflush(debug_file);
 }
 #endif

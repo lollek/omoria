@@ -118,8 +118,7 @@ boolean check_pswd(string passwd, boolean present)
 		tpw[i1] = 0;
 	}
 
-	MSG("Login attempt:")
-	MSG(tpw)
+	MSG(("Login attempt: %s", tpw));
 	if (!(strcmp(tpw, password1))) {
 		checked_out = true;
 		wizard1 = true;

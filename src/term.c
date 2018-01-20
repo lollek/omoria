@@ -449,7 +449,7 @@ void Put_Buffer(char const *out_str, integer row, integer col)
 		return;
 
 	if (mvaddstr((int)row, (int)col, out_str) == ERR)
-		MSG("ERROR: Put_Buffer mvaddstr returned ERR");
+		MSG(("ERROR: Put_Buffer mvaddstr returned ERR"));
 
 	/* LEAVE("put_buffer", "i"); */
 }

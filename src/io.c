@@ -30,7 +30,7 @@ void priv_switch(integer switch_val)
 void signalexit()
 {
 	ENTER("signalexit", "");
-	MSG("Sorry, caught a core-dump signal.");
+	MSG(("Sorry, caught a core-dump signal."));
 
 	priv_switch(0);
 	msg_print("Sorry, caught a core-dump signal.");

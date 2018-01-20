@@ -10,7 +10,7 @@ extern boolean const do_debug_magic_cast;
 #define LEAVE(rname, mark) leave((rname), (mark));
 #define RETURN(rname, mark, typestr, desc, valptr)                             \
 	return_dbg((rname), (mark), (typestr), (desc), (valptr));
-#define MSG(str) log_msg(str);
+#define MSG(args) log_msg args
 
 extern FILE *debug_file;
 extern int call_depth;
@@ -29,6 +29,6 @@ void enter(char *routine_name, char *marker);
 void leave(char *routine_name, char *marker);
 void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
 		void *valptr);
-void log_msg(char *str);
+void log_msg(char const *fmt, ...);
 
 #endif /* DEBUG_H */

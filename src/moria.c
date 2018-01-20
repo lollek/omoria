@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 	set_seed(get_seed());
 
 	/* Loop till dead, or exit */
-	MSG("Entering main loop")
+	MSG(("Entering main loop"));
 	while (true) {
 		if (generate) { /* New level */
 			generate_cave();

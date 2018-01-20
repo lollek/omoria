@@ -24,7 +24,7 @@ char const *race_name(int race)
 	case R_DRYAD:
 		return "Dryad";
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return "???";
 	}
 }
@@ -63,7 +63,7 @@ signed char const *race_stats(int race)
 	case R_DRYAD:
 		return dryad_stats;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return NULL;
 	}
 }
@@ -92,7 +92,7 @@ unsigned race_rand_starting_age(int race)
 	case R_DRYAD:
 		return 75 + randint(75);
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -1000;
 	}
 }
@@ -121,7 +121,7 @@ unsigned race_rand_starting_height(int race, boolean male)
 	case R_DRYAD:
 		return male ? randnor(60, 4) : randnor(40, 4);
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -150,7 +150,7 @@ unsigned race_weight_base(int race, boolean male)
 	case R_DRYAD:
 		return male ? 85 : 70;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -179,7 +179,7 @@ unsigned race_weight_modifier(int race, boolean male)
 	case R_DRYAD:
 		return 6;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -214,7 +214,7 @@ float race_expfactor(int race)
 	case R_DRYAD:
 		return 1.20;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -243,7 +243,7 @@ signed char race_disarm_mod(int race)
 	case R_DRYAD:
 		return 2;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -272,7 +272,7 @@ signed char race_search_mod(int race)
 	case R_DRYAD:
 		return 6;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -301,7 +301,7 @@ signed char race_stealth_mod(int race)
 	case R_DRYAD:
 		return 1;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -330,7 +330,7 @@ signed char race_search_freq(int race)
 	case R_DRYAD:
 		return -1;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -359,7 +359,7 @@ signed char race_melee_bonus(int race)
 	case R_DRYAD:
 		return 0;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -388,7 +388,7 @@ signed char race_ranged_bonus(int race)
 	case R_DRYAD:
 		return 5;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -417,7 +417,7 @@ signed char race_save_mod(int race)
 	case R_DRYAD:
 		return 3;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -446,7 +446,7 @@ signed char race_health_bonus(int race)
 	case R_DRYAD:
 		return 7;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return -100;
 	}
 }
@@ -475,7 +475,7 @@ signed char race_infravision(int race)
 	case R_DRYAD:
 		return 3;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return 0;
 	}
 }
@@ -504,7 +504,7 @@ signed char race_swim_speed(int race)
 	case R_DRYAD:
 		return -1;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return 0;
 	}
 }
@@ -533,7 +533,7 @@ unsigned long race_class_field(int race)
 	case R_DRYAD:
 		return 0x2D4;
 	default:
-		MSG("Unknown race");
+		MSG(("Unknown race: %d", race));
 		return 0;
 	}
 }

@@ -252,12 +252,8 @@ void mt__gems(integer x, integer level, integer chance, integer special,
 		p1 = randint(6) + 4;
 		break;
 	default:
-#if DO_DEBUG
-		MSG("Unknown subval in mt__gems");
-		fprintf(debug_file, "   sub:  %ld  %s\n", t_list[x].subval,
-			t_list[x].name);
-		fflush(debug_file);
-#endif
+		MSG(("Unknown subval in mt__gems: %ld  %s", t_list[x].subval,
+		     t_list[x].name));
 		p1 = 0;
 		break;
 	}
@@ -1297,7 +1293,8 @@ void mt__wand(integer x, integer level, integer chance, integer special,
 		p1 = randint(20) + 10;
 		break;
 	default:
-		MSG("Unknown subval in mt__wand");
+		MSG(("Unknown subval in mt__wand: %ld  %s", t_list[x].subval,
+		     t_list[x].name));
 		p1 = 0;
 		break;
 	}
@@ -1393,7 +1390,8 @@ void mt__staff(integer x, integer level, integer chance, integer special,
 		p1 = randint(6) + 6;
 		break;
 	default:
-		MSG("Unknown subval in mt__staff");
+		MSG(("Unknown subval in mt__staff: %ld  %s", t_list[x].subval,
+		     t_list[x].name));
 		p1 = 0;
 		break;
 	}
@@ -1459,7 +1457,8 @@ void mt__chime(integer x, integer level, integer chance, integer special,
 		p1 = randint(10) + 6;
 		break;
 	default:
-		MSG("Unknown subval in mt__chime");
+		MSG(("Unknown subval in mt__chime: %ld  %s", t_list[x].subval,
+		     t_list[x].name));
 		p1 = 0;
 		break;
 	}
@@ -1516,7 +1515,8 @@ void mt__horn(integer x, integer level, integer chance, integer special,
 		p1 = randint(8) + 1;
 		break;
 	default:
-		MSG("Unknown subval in mt__horn");
+		MSG(("Unknown subval in mt__horn: %ld  %s", t_list[x].subval,
+		     t_list[x].name));
 		p1 = 0;
 		break;
 	}

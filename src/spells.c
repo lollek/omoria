@@ -1088,7 +1088,7 @@ boolean detect_creatures(integer typ)
 					 c_list[m_list[i1].mptr].cmove) != 0;
 				break;
 			default:
-				MSG("Unknown typ in detect_creatures");
+				MSG(("Unknown typ in detect_creatures"));
 				found = false;
 				break;
 			}

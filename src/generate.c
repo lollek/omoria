@@ -687,8 +687,8 @@ void gc__build_store(integer store_num, integer where)
 			q2 = randint(x_right - x_left) + x_left - 1;
 			break;
 		default:
-			MSG("randint returned something other than 1-4 in "
-			    "gc__build_store");
+			MSG(("randint returned something other than 1-4 in "
+			     "gc__build_store"));
 			i1 = i2 = q1 = q2 = 0;
 			break;
 		}

@@ -974,10 +974,8 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 			i1 = Equipment_helm;
 			break;
 		default:
-#if DO_DEBUG
-			MSG("randint returned an out of range value in "
-			    "c__apply_attack");
-#endif
+			MSG(("ERROR: randint returned an out of range value in "
+			     "c__apply_attack"));
 			i1 = Equipment_primary;
 			break;
 		}

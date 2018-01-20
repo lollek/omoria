@@ -22,7 +22,7 @@ static void data_exception()
 	prt(" ", 2, 1);
 
 	/* We'll put it in the debug log as well */
-	MSG("Data Corruption Error");
+	MSG(("Data Corruption Error"));
 	exit_game();
 }
 
