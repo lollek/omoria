@@ -860,7 +860,7 @@ boolean sm__sub_munny(integer *amt, integer *wt, integer type_num)
 	py.misc.money[type_num] = coin_num - trans;
 	(*amt) -= trans * coin_value[type_num];
 
-	return_value = (amt > 0);
+	return_value = *amt > 0;
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -966,38 +966,29 @@ boolean learn_spell(boolean *redraw)
 {
 	/*{ Learn some magic spells (Mage)			-RAK-	}*/
 
-	unsigned long i2, i4;
-	integer i1, i3, sn, sc;
-	integer new_spells;
-	unsigned long spell_flag, spell_flag2;
+	unsigned long spell_flag = 0;
+	unsigned long spell_flag2 = 0;
 	spl_type spell;
-	treas_ptr curse;
-
+	integer new_spells = num_new_spells(spell_adj(INT));
 	boolean return_value = false;
+	treas_ptr ptr;
 
 	ENTER("learn_spell", "");
 
-	i1 = 0;
-	spell_flag = 0;
-	spell_flag2 = 0;
-	curse = inventory_list;
-	new_spells = num_new_spells(spell_adj(INT));
-
-	while (curse != nil) {
-		if (curse->data.tval == magic_book) {
-			spell_flag |= curse->data.flags;
-			spell_flag2 |= curse->data.flags2;
+	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
+		if (ptr->data.tval == magic_book) {
+			spell_flag |= ptr->data.flags;
+			spell_flag2 |= ptr->data.flags2;
 		}
-		curse = curse->next;
 	}
 
 	while ((new_spells > 0) && ((spell_flag > 0) || (spell_flag2 > 0))) {
-		i1 = 0;
-		i2 = spell_flag;
-		i4 = spell_flag2;
+		unsigned long i1 = 0;
+		unsigned long i2 = spell_flag;
+		unsigned long i4 = spell_flag2;
 
 		do {
-			i3 = bit_pos64(&i4, &i2);
+			unsigned long i3 = bit_pos64(&i4, &i2);
 			if (i3 > 31) {
 				i3--;
 			}
@@ -1009,11 +1000,11 @@ boolean learn_spell(boolean *redraw)
 		} while ((i2 != 0) || (i4 != 0));
 
 		if (i1 > 0) {
+			integer sn;
+			integer sc;
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
-				/*	printf("\n\n>>> Got spell %d<<<\n\n", */
-				/* sn);fflush(stdout); */
 				class_spell(PM.pclass, sn)->learned = true;
 				return_value = true;
 				if (py.misc.mana == 0) {
@@ -1038,60 +1029,30 @@ boolean learn_spell(boolean *redraw)
 boolean learn_prayer()
 {
 	/*{ Learn some prayers (Priest)				-RAK-	}*/
-	integer learnable_spells;
-	integer num_spells_to_learn;
-	integer new_spell;
-	integer test_array[33]; /*	: array [1..32] of integer;*/
-	unsigned long spell_flag = 0;
-	unsigned long spell_flag2 = 0;
-	treas_ptr ptr;
+
+	unsigned long new_spells_to_learn = num_new_spells(spell_adj(WIS));
 	boolean return_value = false;
 
 	ENTER("learn_prayer", "");
 
-	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
-		if (ptr->data.tval == prayer_book) {
-			spell_flag |= ptr->data.flags;
-			spell_flag2 |= ptr->data.flags2;
-		}
-	}
+	if (new_spells_to_learn > 0) {
+		unsigned spells_learned = 0;
+		unsigned long i;
 
-	learnable_spells = 0; /* btw, we only use test_array[1..32] */
-	while (spell_flag > 0 || spell_flag2 > 0) {
-		integer i2 = bit_pos64(&spell_flag2, &spell_flag);
-		if (i2 > 31) {
-			i2--;
-		}
-		if (class_spell(PM.pclass, i2)->slevel <= py.misc.lev) {
-			if (!class_spell(PM.pclass, i2)->learned) {
-				test_array[learnable_spells++] = i2;
-			}
-		}
-	}
+		for (i = 0; i < MAX_SPELLS; ++i) {
+			if (class_spell(PM.pclass, i)->slevel > py.misc.lev)
+				continue;
+			if (!class_spell(PM.pclass, i)->learned)
+				continue;
 
-	num_spells_to_learn = num_new_spells(spell_adj(WIS));
-	new_spell = 0;
+			class_spell(PM.pclass, i)->learned = true;
+			spells_learned++;
+			return_value = true;
 
-	while (learnable_spells > 0 && num_spells_to_learn > 0) {
-		integer i3 = randint(learnable_spells);
-		integer i4;
-		class_spell(PM.pclass, test_array[i3])->learned = true;
-		new_spell++;
-
-		for (i4 = i3; i4 < learnable_spells; i4++) {
-			test_array[i4] = test_array[i4 + 1];
+			if (--new_spells_to_learn == 0)
+				break;
 		}
 
-		learnable_spells--;    /*{ One less spell to learn	}*/
-		num_spells_to_learn--; /*{ Learned one			}*/
-	}
-
-	if (new_spell > 0) {
-		if (new_spell > 1) {
-			msg_print("You learned new prayers!");
-		} else {
-			msg_print("You learned a new prayer!");
-		}
 		if (py.misc.exp == 0) {
 			msg_print(" ");
 		}
@@ -1099,10 +1060,11 @@ boolean learn_prayer()
 			py.misc.mana = 1;
 			py.misc.cmana = 1;
 		}
-		return_value = true;
-
-	} else {
-		return_value = false;
+		if (spells_learned > 0) {
+			msg_print(spells_learned > 1
+					? "You learned new prayers!"
+					: "You learned a new prayer!");
+		}
 	}
 
 	LEAVE("learn_prayer", "");
@@ -1412,8 +1374,7 @@ void gain_mana(integer amount)
 void print_new_spells(spl_type spell, integer num, boolean *redraw)
 {
 
-	/*{ Print list of spells					-RAK-
-	 * }*/
+	/* Print list of spells     -RAK- */
 
 	integer i1;
 	vtype out_val;
@@ -1587,10 +1548,11 @@ integer bit_pos(unsigned long *test)
 	/* Returns position of first set bit			-RAK-	*/
 	/*     and clears that bit */
 
-	register int i;
-	register unsigned long mask = 0x1;
+	const unsigned size = sizeof(*test) * 8;
+	unsigned long mask = 0x1;
+	unsigned i;
 
-	for (i = 0; i < sizeof(*test) * 8; i++) {
+	for (i = 0; i < size; i++) {
 		if (*test & mask) {
 			*test &= ~mask;
 			return (i);
@@ -1762,7 +1724,7 @@ void set_difficulty(integer diff)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *day_of_week_string(integer day, integer wid, string result)
+char *day_of_week_string(integer day, unsigned wid, string result)
 {
 	/*{ Return first X characters of day of week		-DMF-	}*/
 	switch (day % 7) {
@@ -1907,12 +1869,11 @@ char *place_string(integer num, string result)
 void gain_level()
 {
 	/*{ Increases hit points and level			-RAK-	}*/
-
-	ENTER("gain_level", "");
-
 	integer nhp, dif_exp, need_exp;
 	boolean redraw;
 	vtype out_val;
+
+	ENTER("gain_level", "");
 
 	nhp = get_hitdie();
 	py.misc.mhp += nhp;
@@ -2723,23 +2684,20 @@ integer next_to8(integer y, integer x, obj_set group_set)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer max_hp(dtype hp_str)
+integer max_hp(dtype const hp_str)
 {
-	/*{ Gives Max hit points					-RAK-
-	 * }*/
+	/* Gives Max hit points    -RAK- */
 
-	integer i1, num = 0, die = 0;
+	integer num;
+	integer die;
 	dtype hp_copy;
 	integer return_value;
+	char *ptr;
 
 	strcpy(hp_copy, hp_str);
-
-	for (i1 = 0; i1 < strlen(hp_copy); i1++) {
-		if (hp_copy[i1] == 'd') {
-			hp_copy[i1] = ' ';
-		}
-	}
-
+	ptr = strchr(hp_copy, 'd');
+	if (ptr != NULL)
+		*ptr = ' ';
 	sscanf(hp_copy, "%ld %ld", &num, &die);
 	return_value = num * die;
 
@@ -2748,26 +2706,23 @@ integer max_hp(dtype hp_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer damroll(dtype dice)
+integer damroll(dtype const dice)
 {
 	/*{ Converts input string into a dice roll		-RAK-	}*/
 	/*{	Normal input string will look like '2d6', '3d8'... etc. }*/
 
-	integer i1;
 	dtype dice_copy;
-	integer num = 0, sides = 0;
+	integer num = 0;
+	integer sides = 0;
 	integer return_value = 0;
+	char *ptr;
 
 	ENTER("damroll", "m")
 
 	strcpy(dice_copy, dice);
-
-	for (i1 = 0; i1 < strlen(dice_copy); i1++) {
-		if (dice_copy[i1] == 'd') {
-			dice_copy[i1] = ' ';
-		}
-	}
-
+	ptr = strchr(dice_copy, 'd');
+	if (ptr != NULL)
+		*ptr = ' ';
 	sscanf(dice_copy, "%ld %ld", &num, &sides);
 	return_value = rand_rep(num, sides);
 
