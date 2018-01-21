@@ -762,7 +762,11 @@ spell_t *class_spell(enum class_t class, int slot)
 	    {"", 99, 99, 0, 0, false}};
 
 	ENTER("class_spell", "");
-	MSG(("class: %d, slot: %d", class, slot));
+	if (slot < 0 || MAX_SPELLS <= slot) {
+		MSG(("ERROR: spell out of bounds, class: %d, slot: %d", class, slot));
+		abort();
+		return &no_spell;
+	}
 
 	switch (class) {
 	default:
