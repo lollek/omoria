@@ -1060,8 +1060,8 @@ boolean learn_prayer()
 		}
 		if (spells_learned > 0) {
 			msg_print(spells_learned > 1
-					? "You learned new prayers!"
-					: "You learned a new prayer!");
+				      ? "You learned new prayers!"
+				      : "You learned a new prayer!");
 		}
 	}
 
