@@ -1034,15 +1034,16 @@ boolean learn_prayer()
 	boolean return_value = false;
 
 	ENTER("learn_prayer", "");
+	MSG(("new spells: %d", new_spells_to_learn));
 
 	if (new_spells_to_learn > 0) {
 		unsigned spells_learned = 0;
 		unsigned long i;
 
 		for (i = 0; i < MAX_SPELLS; ++i) {
-			if (class_spell(PM.pclass, i)->slevel > py.misc.lev)
+			if (class_spell(PM.pclass, i)->slevel > PM.lev)
 				continue;
-			if (!class_spell(PM.pclass, i)->learned)
+			if (class_spell(PM.pclass, i)->learned)
 				continue;
 
 			class_spell(PM.pclass, i)->learned = true;
@@ -1053,9 +1054,6 @@ boolean learn_prayer()
 				break;
 		}
 
-		if (py.misc.exp == 0) {
-			msg_print(" ");
-		}
 		if (py.misc.mana == 0) {
 			py.misc.mana = 1;
 			py.misc.cmana = 1;
