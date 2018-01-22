@@ -50,7 +50,7 @@
 
 /*	{ Screen placement parameters					} */
 #define STAT_COLUMN 1
-#define RACE_ROW 2
+#define RACE_ROW (STAT_COLUMN + 1)
 #define CLASS_ROW (RACE_ROW + 1)
 #define TITLE_ROW (CLASS_ROW + 1)
 #define STR_ROW (TITLE_ROW + 2)
@@ -83,7 +83,6 @@
 #define DEPTH_COLUMN 62
 #define LIGHT_ON_COLUMN 62
 
-/*	sr = 0;	iq = 1;	ws = 2;	dx = 3;	cn = 4;	ca = 5; */
 #define STR 0
 #define INT 1
 #define WIS 2
@@ -466,47 +465,36 @@
 
 #define COIN_WEIGHT 5
 
-#define CTRL_A 1  /* chr(1); */
-#define CTRL_B 2  /* chr(2); */
-#define CTRL_C 3  /* chr(3); */
-#define CTRL_D 4  /* chr(4); */
-#define CTRL_E 5  /* chr(5); */
-#define CTRL_F 6  /* chr(6); */
-#define CTRL_G 7  /* chr(7); */
-#define CTRL_H 8  /* chr(8); */
-#define CTRL_I 9  /* chr(9); */
-#define CTRL_J 10 /* chr(10); */
-#define CTRL_K 11 /* chr(11); */
-#define CTRL_L 12 /* chr(12); */
-#define CTRL_M 13 /* chr(13); */
-#define CTRL_N 14 /* chr(14); */
-#define CTRL_O 15 /* chr(15); */
-#define CTRL_P 16 /* chr(16); */
-#define CTRL_Q 17 /* chr(17); */
-#define CTRL_R 18 /* chr(18); */
-#define CTRL_S 19 /* chr(19); */
-#define CTRL_T 20 /* chr(20); */
-#define CTRL_U 21 /* chr(21); */
-#define CTRL_V 22 /* chr(22); */
-#define CTRL_W 23 /* chr(23); */
-#define CTRL_X 24 /* chr(24); */
-#define CTRL_Y 25 /* chr(25); */
-#define CTRL_Z 26 /* chr(26); */
+#define CTRL_A 1
+#define CTRL_B 2
+#define CTRL_C 3
+#define CTRL_D 4
+#define CTRL_E 5
+#define CTRL_F 6
+#define CTRL_G 7
+#define CTRL_H 8
+#define CTRL_I 9
+#define CTRL_J 10
+#define CTRL_K 11
+#define CTRL_L 12
+#define CTRL_M 13
+#define CTRL_N 14
+#define CTRL_O 15
+#define CTRL_P 16
+#define CTRL_Q 17
+#define CTRL_R 18
+#define CTRL_S 19
+#define CTRL_T 20
+#define CTRL_U 21
+#define CTRL_V 22
+#define CTRL_W 23
+#define CTRL_X 24
+#define CTRL_Y 25
+#define CTRL_Z 26
 
 #define STAT_SET_MAX 5  /* type stat_set is supposed to be 0..5 */
 #define OBJ_SET_MAX 255 /* type obj_set is supposed to be 0..255 */
 #define MAX_OBJ_SET 25  /* max items allowed in an obj_set[] */
-
-#define R_HUMAN 0
-#define R_HALF_ELF 1
-#define R_ELF 2
-#define R_HALFLING 3
-#define R_GNOME 4
-#define R_DWARF 5
-#define R_HALF_ORC 6
-#define R_HALF_TROLL 7
-#define R_PHRAINT 8
-#define R_DRYAD 9
 
 #define S_GENERAL 0
 #define S_ARMORY 1

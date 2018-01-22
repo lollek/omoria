@@ -1,6 +1,6 @@
 #include "imoria.h"
 
-char const *race_name(int race)
+char const *race_name(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -24,12 +24,13 @@ char const *race_name(int race)
 	case R_DRYAD:
 		return "Dryad";
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return "???";
 	}
 }
 
-signed char const *race_stats(int race)
+signed char const *race_stats(enum race_t race)
 {
 	static signed char const human_stats[] = {0, 0, 0, 0, 0, 0};
 	static signed char const halfelf_stats[] = {-1, 1, 0, 1, -1, 1};
@@ -63,12 +64,13 @@ signed char const *race_stats(int race)
 	case R_DRYAD:
 		return dryad_stats;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return NULL;
 	}
 }
 
-unsigned race_rand_starting_age(int race)
+unsigned race_rand_starting_age(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -92,12 +94,13 @@ unsigned race_rand_starting_age(int race)
 	case R_DRYAD:
 		return 75 + randint(75);
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -1000;
 	}
 }
 
-unsigned race_rand_starting_height(int race, boolean male)
+unsigned race_rand_starting_height(enum race_t race, boolean male)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -121,12 +124,13 @@ unsigned race_rand_starting_height(int race, boolean male)
 	case R_DRYAD:
 		return male ? randnor(60, 4) : randnor(40, 4);
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-unsigned race_weight_base(int race, boolean male)
+unsigned race_weight_base(enum race_t race, boolean male)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -150,12 +154,13 @@ unsigned race_weight_base(int race, boolean male)
 	case R_DRYAD:
 		return male ? 85 : 70;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-unsigned race_weight_modifier(int race, boolean male)
+unsigned race_weight_modifier(enum race_t race, boolean male)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -179,18 +184,19 @@ unsigned race_weight_modifier(int race, boolean male)
 	case R_DRYAD:
 		return 6;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-unsigned race_rand_starting_weight(int race, boolean male)
+unsigned race_rand_starting_weight(enum race_t race, boolean male)
 {
 	return randnor(race_weight_base(race, male),
 		       race_weight_modifier(race, male));
 }
 
-float race_expfactor(int race)
+float race_expfactor(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -214,12 +220,13 @@ float race_expfactor(int race)
 	case R_DRYAD:
 		return 1.20;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_disarm_mod(int race)
+signed char race_disarm_mod(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -243,12 +250,13 @@ signed char race_disarm_mod(int race)
 	case R_DRYAD:
 		return 2;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_search_mod(int race)
+signed char race_search_mod(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -272,12 +280,13 @@ signed char race_search_mod(int race)
 	case R_DRYAD:
 		return 6;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_stealth_mod(int race)
+signed char race_stealth_mod(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -301,12 +310,13 @@ signed char race_stealth_mod(int race)
 	case R_DRYAD:
 		return 1;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_search_freq(int race)
+signed char race_search_freq(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -330,12 +340,13 @@ signed char race_search_freq(int race)
 	case R_DRYAD:
 		return -1;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_melee_bonus(int race)
+signed char race_melee_bonus(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -359,12 +370,13 @@ signed char race_melee_bonus(int race)
 	case R_DRYAD:
 		return 0;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_ranged_bonus(int race)
+signed char race_ranged_bonus(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -388,12 +400,13 @@ signed char race_ranged_bonus(int race)
 	case R_DRYAD:
 		return 5;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_save_mod(int race)
+signed char race_save_mod(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -417,12 +430,13 @@ signed char race_save_mod(int race)
 	case R_DRYAD:
 		return 3;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_health_bonus(int race)
+signed char race_health_bonus(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -446,12 +460,13 @@ signed char race_health_bonus(int race)
 	case R_DRYAD:
 		return 7;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return -100;
 	}
 }
 
-signed char race_infravision(int race)
+signed char race_infravision(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -475,12 +490,13 @@ signed char race_infravision(int race)
 	case R_DRYAD:
 		return 3;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return 0;
 	}
 }
 
-signed char race_swim_speed(int race)
+signed char race_swim_speed(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -504,12 +520,13 @@ signed char race_swim_speed(int race)
 	case R_DRYAD:
 		return -1;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return 0;
 	}
 }
 
-unsigned long race_class_field(int race)
+unsigned long race_class_field(enum race_t race)
 {
 	switch (race) {
 	case R_HUMAN:
@@ -533,7 +550,8 @@ unsigned long race_class_field(int race)
 	case R_DRYAD:
 		return 0x2D4;
 	default:
-		MSG(("Unknown race: %d", race));
+		MSG(("ERROR: Unknown race: %d", race));
+		abort();
 		return 0;
 	}
 }
