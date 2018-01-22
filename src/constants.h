@@ -269,8 +269,6 @@
 #define BTH_HIT 12     /*{ Automatic hit; 1/bth_hit		} */
 
 /*	{ Misc								} */
-#define NULL_CHAR 0 /* null = chr(0); */
-
 #define Nothing_flag 0x00000000
 #define nothing_flag 0x00000000
 #define Everything_flag 0xFFFFFFFF
