@@ -14,7 +14,6 @@ enum race_t {
 	R_DRYAD = 9
 };
 
-
 /**
  * -OK-
  *  race_name() - What a race is called in game
