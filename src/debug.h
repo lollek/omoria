@@ -6,7 +6,7 @@ extern boolean const do_debug_funcall;
 extern boolean const do_debug_objdes;
 extern boolean const do_debug_magic_cast;
 
-#define ENTER(rname, mark) enter((rname), (mark));
+#define ENTER(args) enter args;
 #define LEAVE(rname, mark) leave((rname), (mark));
 #define RETURN(rname, mark, typestr, desc, valptr)                             \
 	return_dbg((rname), (mark), (typestr), (desc), (valptr));
@@ -17,7 +17,7 @@ extern int call_depth;
 
 #else /* !DO_DEBUG */
 
-#define ENTER(rname, mark)
+#define ENTER(args)
 #define LEAVE(rname, mark)
 #define RETURN(rname, mark, typestr, desc, valptr)
 #define MSG(str)
@@ -25,7 +25,7 @@ extern int call_depth;
 #endif /* DO_DEBUG */
 
 void init_debug(void);
-void enter(char *routine_name, char *marker);
+void enter(char const *routine_name, char const *fmt, ...);
 void leave(char *routine_name, char *marker);
 void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
 		void *valptr);

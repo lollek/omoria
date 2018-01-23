@@ -179,7 +179,7 @@ integer change_all_ok_stats(boolean nok, boolean nin)
 	treas_rec *ptr;
 	integer count = 0;
 
-	ENTER("change_all_ok_stats", "u")
+	ENTER(("change_all_ok_stats", "%d, %d", nok, nin))
 
 	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
 		if (ptr->is_in) {
@@ -201,7 +201,7 @@ void ic__clear_display(treas_ptr cur_display[], integer *cur_display_size)
 {
 	integer index;
 
-	ENTER("ic__clear_display", "iu");
+	ENTER(("ic__clear_display", "iu"));
 
 	cur_display_size = 0;
 	for (index = 1; index <= DISPLAY_SIZE; index++) {
@@ -294,7 +294,7 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 	obj_set stuff_to_fire = {sling_ammo, bolt, arrow, 0};
 	boolean return_value = false;
 
-	ENTER("ic__show_inven", "iu");
+	ENTER(("ic__show_inven", "iu"));
 
 	exit_flag = false;
 	num_choices =
@@ -745,7 +745,7 @@ void ic__wear(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 	    0,			0,		0,
 	    0};
 
-	ENTER("ic__wear", "i2");
+	ENTER(("ic__wear", "i2"));
 
 	exit_flag = false;
 	listed = false;
@@ -1053,7 +1053,7 @@ void ic__stats(treas_ptr cur_display[], integer *cur_display_size, vtype prompt,
 	boolean exit_flag, test_flag;
 	char trash;
 
-	ENTER("ic__stats", "i2");
+	ENTER(("ic__stats", "i2"));
 
 	exit_flag = false;
 
@@ -1619,7 +1619,7 @@ boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 	vtype prompt;
 	boolean return_value = false;
 
-	ENTER("inven_command", "i");
+	ENTER(("inven_command", "i"));
 
 	strcpy(prompt, sprompt); /* prompt gets modified from time to time,
 				    constants get passed to inven_command... */
@@ -1892,7 +1892,7 @@ void inven_destroy(treas_ptr item_ptr)
 {
 	/*{ Destroy an item in the inventory                      -RAK-   }*/
 
-	ENTER("inven_destroy", "i");
+	ENTER(("inven_destroy", "i"));
 
 	inven_temp->data = item_ptr->data;
 
@@ -1915,7 +1915,7 @@ void delete_inven_item(treas_ptr ptr)
 
 	treas_ptr temp_ptr, curse;
 
-	ENTER("delete_inven_item", "i");
+	ENTER(("delete_inven_item", "i"));
 
 	if (cur_inven == ptr) {
 		cur_inven = cur_inven->next;
@@ -1978,7 +1978,7 @@ integer inven_damage(obj_set typ, integer perc)
 	integer i2;
 	treas_ptr curse, next_curse;
 
-	ENTER("inven_damage", "i");
+	ENTER(("inven_damage", "i"));
 
 	i2 = 0;
 	curse = inventory_list;
@@ -2131,7 +2131,7 @@ boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw, integer count,
 	boolean only_money;
 	boolean return_value = false;
 
-	ENTER("get_item", "i");
+	ENTER(("get_item", "i"));
 
 	only_money = false;
 	stay = false;

@@ -53,7 +53,7 @@ void main_menu()
 	char **saved_games = get_saved_games(current_row);
 	int counter;
 
-	ENTER("main_menu", "");
+	ENTER(("main_menu", ""));
 
 	prt("Existing characters:", current_row++, 1);
 	for (counter = 0; saved_games[counter] != NULL; ++counter) {

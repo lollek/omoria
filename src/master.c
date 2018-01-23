@@ -36,36 +36,36 @@ boolean master_file_read(GDBM_FILE mf, master_key *mkey, master_entry *mentry)
 	/* fetch a db entry, returns true if the entry was found */
 
 	boolean return_value = false;
-	datum key, data;
+	datum key;
+	datum data;
 
 	key.dptr = (char *)mkey;
 	key.dsize = sizeof(master_key);
 
-	if (mf != NULL) {
-		data = gdbm_fetch(mf, key);
+	if (mf == NULL)
+		return false;
 
-		if (data.dptr != NULL) {
-			/* Will read from data that is bigger than expected, but
-			 * not smaller. */
-			/* If more data is added to entries without fixing the
-			 * database then  */
-			/* handle that case here! */
-			if (data.dsize >= sizeof(master_entry)) {
-				memcpy(mentry, data.dptr, sizeof(master_entry));
-				return_value = true;
-			}
-			free(data.dptr);
+	data = gdbm_fetch(mf, key);
+	if (data.dptr != NULL) {
+		/*
+		 * Will read from data that is bigger than expected, but
+		 * not smaller. If more data is added to entries without
+		 * fixing the database then handle that case here!
+		 */
+		if (data.dsize >= (int)sizeof(master_entry)) {
+			memcpy(mentry, data.dptr, sizeof(master_entry));
+			return_value = true;
 		}
-	} else {
-		/* no open db file, that isn't good */
+		free(data.dptr);
 	}
 	return return_value;
 }
 
 boolean master_file_write(GDBM_FILE mf, master_key *mkey, master_entry *mentry)
 {
-	datum key, data;
-	int result;
+	datum key;
+	datum data;
+	int result; /* TODO: Should this affect return value? */
 
 	key.dptr = (char *)mkey;
 	key.dsize = sizeof(master_key);

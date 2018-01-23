@@ -11,7 +11,7 @@ boolean check_kickout()
 	boolean return_value = false;
 	FILE *kick;
 
-	ENTER("check_kickout", "");
+	ENTER(("check_kickout", ""));
 
 	kick = priv_fopen(MORIA_LCK, "r");
 
@@ -31,7 +31,7 @@ void sort_objects()
 	integer i1, i2, i3, gap;
 	treasure_type tmp;
 
-	ENTER("sort_objects", "");
+	ENTER(("sort_objects", ""));
 
 	gap = MAX_OBJECTS / 2;
 	while (gap > 0) {
@@ -73,7 +73,7 @@ void init_m_level()
 	int i2 = 0;
 	int i3 = MAX_CREATURES - WIN_MON_TOT;
 
-	ENTER("init_m_level", "");
+	ENTER(("init_m_level", ""));
 
 	do {
 		m_level[i2] = 0;
@@ -101,7 +101,7 @@ void init_t_level()
 	int i1 = 1;
 	int i2 = 0;
 
-	ENTER("init_t_level", "");
+	ENTER(("init_t_level", ""));
 
 	do {
 		while ((i1 <= MAX_OBJECTS) && (object_list[i1].level == i2)) {
@@ -378,11 +378,10 @@ chtype loc_symbol(integer y, integer x)
 
 #if DO_DEBUG
 	if ((sym & 0x7F) < 32 || (sym & 0x7F) > 126) {
-		fprintf(debug_file, ": ERROR in loc_sym: (%ld, %ld) = %ld   "
-				    "cptr=%ld tptr=%ld fval=%ld\n",
-			x, y, (integer)sym, (integer)cptr, (integer)tptr,
-			(integer)fval);
-		fflush(debug_file);
+		MSG(("ERROR: loc_sym: (%ld, %ld) = %ld   "
+		     "cptr=%ld tptr=%ld fval=%ld\n",
+		     x, y, (integer)sym, (integer)cptr, (integer)tptr,
+		     (integer)fval));
 	}
 #endif
 
@@ -771,7 +770,7 @@ void add_money(integer amount)
 	string out_val, out2;
 	integer type_num;
 
-	ENTER("add_money", "");
+	ENTER(("add_money", ""));
 
 	to_bank = 0;
 	wl = weight_limit();
@@ -896,7 +895,7 @@ void char_inven_init()
 
 	integer i1, i2;
 
-	ENTER("char_inven_init", "");
+	ENTER(("char_inven_init", ""));
 	/*	printf("\nENTER char_inven_init\n\n"); fflush(stdout); */
 
 	inventory_list = nil;
@@ -973,7 +972,7 @@ boolean learn_spell(boolean *redraw)
 	boolean return_value = false;
 	treas_ptr ptr;
 
-	ENTER("learn_spell", "");
+	ENTER(("learn_spell", ""));
 
 	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
 		if (ptr->data.tval == magic_book) {
@@ -1033,7 +1032,7 @@ boolean learn_prayer()
 	unsigned long new_spells_to_learn = num_new_spells(spell_adj(WIS));
 	boolean return_value = false;
 
-	ENTER("learn_prayer", "");
+	ENTER(("learn_prayer", ""));
 	MSG(("new spells: %d", new_spells_to_learn));
 
 	if (new_spells_to_learn > 0) {
@@ -1082,7 +1081,7 @@ boolean learn_discipline()
 	boolean return_value = false;
 
 	/*  printf("\n\n  ^^^ENTER learn_discip^^^\n\n");fflush(stdout); */
-	ENTER("learn_discipline", "");
+	ENTER(("learn_discipline", ""));
 
 	i1 = 0; /* btw, we only use test_array[1..32] */
 	spell_flag = 0x00003FFF;
@@ -1155,7 +1154,7 @@ boolean learn_song(boolean *redraw)
 
 	boolean return_value = false;
 
-	ENTER("learn_song", "");
+	ENTER(("learn_song", ""));
 
 	i1 = 0;
 	spell_flag = 0;
@@ -1223,7 +1222,7 @@ boolean learn_druid()
 	treas_ptr curse;
 	boolean return_value = false;
 
-	ENTER("learn_druid", "");
+	ENTER(("learn_druid", ""));
 
 	i1 = 0;
 	spell_flag = 0;
@@ -1299,7 +1298,7 @@ void gain_mana(integer amount)
 	integer new_mana;
 	boolean knows_spell = false;
 
-	ENTER("gain_mana", "");
+	ENTER(("gain_mana", ""));
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
 		if (class_spell(PM.pclass, i1)->learned) {
@@ -1469,7 +1468,7 @@ integer num_new_spells(integer smarts)
 {
 	integer return_value;
 
-	ENTER("num_new_spells", "");
+	ENTER(("num_new_spells", ""));
 
 	switch (smarts) {
 	case 1:
@@ -1620,7 +1619,7 @@ void set_difficulty(integer diff)
 	      game chosen.						-DMF-
 	   }*/
 
-	ENTER("set_difficulty", "");
+	ENTER(("set_difficulty", ""));
 
 	switch (diff) {
 	case 1: /*{ Brain-dead	}*/
@@ -1871,7 +1870,7 @@ void gain_level()
 	boolean redraw;
 	vtype out_val;
 
-	ENTER("gain_level", "");
+	ENTER(("gain_level", ""));
 
 	nhp = get_hitdie();
 	py.misc.mhp += nhp;
@@ -2715,7 +2714,7 @@ integer damroll(dtype const dice)
 	integer return_value = 0;
 	char *ptr;
 
-	ENTER("damroll", "m")
+	ENTER(("damroll", "m"))
 
 	strcpy(dice_copy, dice);
 	ptr = strchr(dice_copy, 'd');
@@ -3594,7 +3593,7 @@ integer get_hexdecant(integer dy, integer dx)
 	integer hexdecant;
 	integer return_value;
 
-	ENTER("get_hexdecant", "m")
+	ENTER(("get_hexdecant", "m"))
 
 	ay = labs(dy);
 	ax = labs(dx);

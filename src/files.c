@@ -304,7 +304,7 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 	vtype in_line;
 	boolean exit_flag = false;
 
-	ENTER("intro_do_msg_file", "");
+	ENTER(("intro_do_msg_file", ""));
 
 	file1 = priv_fopen(the_file, "r");
 	if (file1 != NULL) {
@@ -459,7 +459,7 @@ void intro(int argc, char *argv[])
 	GDBM_FILE file2;
 	boolean exit_flag = false;
 
-	ENTER("intro", "");
+	ENTER(("intro", ""));
 
 	/* make sure that various files exist */
 	exit_flag = intro_do_hours_file(exit_flag, MORIA_HOU);

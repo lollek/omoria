@@ -2322,7 +2322,7 @@ boolean light_line(integer dir, integer y, integer x, integer power)
 	integer i1, i2;
 	vtype out_val;
 
-	ENTER("light_line", "s");
+	ENTER(("light_line", "%d, %d, %d, %d", dir, y, x, power));
 
 	for (; cave[y][x].fopen;) {
 		/* with cave[y][x]. do; */

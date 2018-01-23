@@ -708,7 +708,7 @@ void create_character()
 	 * expensive CPU wise.
 	*/
 
-	ENTER("create_character", "");
+	ENTER(("create_character", ""));
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
 		best[(int)tstat] = 3;
@@ -952,7 +952,7 @@ void set_gem_values()
 {
 	integer count;
 
-	ENTER("set_gem_values", "");
+	ENTER(("set_gem_values", ""));
 
 	for (count = 1; count <= MAX_OBJECTS; count++) {
 		/*with object_list[count] do*/

@@ -96,7 +96,7 @@ boolean check_pswd(string passwd, boolean present)
 	boolean checked_out = false;
 
 	/* perhaps crpyt() should be used?? */
-	ENTER("check_pswd", "");
+	ENTER(("check_pswd", ""));
 
 	if (present) {
 		strcpy(tpw, passwd);
@@ -619,7 +619,7 @@ boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
 	integer i1;
 	boolean flag = false;
 
-	ENTER("si__narrow_choices", "w");
+	ENTER(("si__narrow_choices", "w"));
 
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
 		moo_cursor[i1] = i1;
@@ -668,6 +668,7 @@ void si__pesky_stuff(integer *best_value, integer *good_value,
 	if (*i_summ_count == 0) {
 		*i_summ_count = omax;
 	}
+	/* TODO: Maybe this pointer should be deferefenced? */
 	if (i_summ_count <= 0) {
 		*i_summ_count = 1;
 	}
@@ -714,7 +715,7 @@ boolean summon_item(integer y, integer x, ttype name1, ttype name2,
 	integer moo_cursor[MAX_OBJECTS + 1];
 	boolean return_value = false;
 
-	ENTER("summon_item", "w");
+	ENTER(("summon_item", "w"));
 
 	found = false;
 	done = false;

@@ -56,7 +56,7 @@ void load_monsters()
 
 	/*////////////////////////////////////////////////////////////////////
 	 */
-	ENTER("load_monsters", "");
+	ENTER(("load_monsters", ""));
 
 	file = priv_fopen(MORIA_MON, "r");
 	if (file == NULL) {
@@ -181,7 +181,7 @@ void replace_name()
 	vtype t_str;
 	char *s;
 
-	ENTER("replace_name", "");
+	ENTER(("replace_name", ""));
 
 	strcpy(t_str, py.misc.name);
 	if (t_str[0] == 0) {
@@ -360,7 +360,7 @@ void c__monster_eaten_message(char *squash, char *doesit, integer cptr)
 {
 	ntype out_val;
 
-	ENTER("c__monster_eaten_message", "c")
+	ENTER(("c__monster_eaten_message", "c"))
 
 	switch (randint(10)) {
 	case 1:
@@ -426,7 +426,7 @@ boolean c__check_for_hit(integer monptr, integer atype)
 	integer level, armor_stuff;
 	boolean flag = false;
 
-	ENTER("c__check_for_hit", "c")
+	ENTER(("c__check_for_hit", "c"))
 
 	level = c_list[m_list[monptr].mptr].level;
 	armor_stuff = PM.pac + PM.ptoac;
@@ -560,12 +560,8 @@ void c__print_attack(integer monptr, integer adesc, char *cdesc)
 	string the_attack;
 	boolean no_print = false;
 
-	ENTER("c__print_attack", "c");
-#if DO_DEBUG
-	fprintf(debug_file, ":   cdesc m %ld a %ld len: %d >%s<\n", monptr,
-		adesc, strlen(cdesc), cdesc);
-	fflush(debug_file);
-#endif
+	ENTER(("c__print_attack", "%ld, %ld,len: %d >%s<", monptr, adesc,
+	       strlen(cdesc), cdesc));
 	strcpy(the_attack, cdesc);
 
 	switch (adesc) {
@@ -732,7 +728,7 @@ void c__apply_attack(integer monptr, integer atype, vtype ddesc, char *damstr)
 	obj_set food_stuffs = {Food, 0};
 	obj_set staff_rod_or_wand = {staff, rod, wand, 0};
 
-	ENTER("c__apply_attack", "c")
+	ENTER(("c__apply_attack", "c"))
 
 	level = c_list[m_list[monptr].mptr].level;
 
@@ -1083,7 +1079,7 @@ void c__make_attack(integer monptr)
 	etype damstr;
 	char *achar;
 
-	ENTER("c__make_attack", "c")
+	ENTER(("c__make_attack", "c"))
 	/* with m_list[monptr] do; */
 	/* with c_list[m_list[monptr].mptr]. do; */
 
@@ -1193,7 +1189,7 @@ boolean c__make_move(integer monptr, mm_type mm, integer *hear_count)
 	vtype out_val;
 	boolean return_value = false;
 
-	ENTER("c__make_move", "c")
+	ENTER(("c__make_move", "c"))
 
 	i1 = 1;
 	flag = false;
@@ -1571,7 +1567,7 @@ boolean c__move_confused(integer monptr, mm_type mm, integer *hear_count)
 {
 	boolean return_value;
 
-	ENTER("c__move_confused", "c")
+	ENTER(("c__move_confused", "c"))
 
 	mm[1] = randint(9);
 	mm[2] = randint(9);
@@ -1591,7 +1587,7 @@ void c__get_moves(integer monptr, mm_type *mm)
 	integer y, x;
 	integer move_val, octant_side;
 
-	ENTER("c__get_moves", "c")
+	ENTER(("c__get_moves", "c"))
 	/*{ octant_side = +/-1 }*/
 
 	if (m_list[monptr].csleep != 0) {
@@ -1628,7 +1624,7 @@ boolean c__cast_spell(integer monptr, boolean *took_turn)
 	boolean stop_player;
 	boolean return_value;
 
-	ENTER("c__cast_spell", "c")
+	ENTER(("c__cast_spell", "c"))
 	/* with m_list[monptr] do; */
 	/* with c_list[m_list[monptr].mptr] do; */
 	chance = (uand(c_list[m_list[monptr].mptr].spells, 0x0000000F));
@@ -1998,14 +1994,11 @@ boolean c__cast_spell(integer monptr, boolean *took_turn)
 			msg_print("Lucky you, creature casts unknown spell.");
 			cdesc[0] = 0;
 
-#if DO_DEBUG
-			fprintf(debug_file, ": cast bad spell: i3 = %ld "
-					    "spell_choice[i3] = %ld\n       "
-					    "monster = >%s<\n",
-				i3, spell_choice[i3],
-				c_list[m_list[monptr].mptr].name);
-			fflush(debug_file);
-#endif
+			MSG(("ERROR: cast bad spell: i3 = %ld "
+			     "spell_choice[i3] = %ld\n       "
+			     "monster = >%s<\n",
+			     i3, spell_choice[i3],
+			     c_list[m_list[monptr].mptr].name));
 			break;
 		}
 
@@ -2035,7 +2028,7 @@ boolean mon_move(integer monptr, integer *hear_count)
 	boolean move_test;
 	boolean return_value = false;
 
-	ENTER("mon_move", "c")
+	ENTER(("mon_move", "c"))
 	/* with c_list[m_list[monptr].mptr] do; */
 
 	/*{ Does the creature regenerate?                         }*/
@@ -2139,7 +2132,7 @@ void c__splash(integer monptr)
 {
 	integer i1, mon_swimming, drown_dam;
 
-	ENTER("c__splash", "c")
+	ENTER(("c__splash", "c"))
 	/* with m_list[monptr]. do; */
 	/* with c_list[m_list[monptr].mptr]. do begin; */
 	mon_swimming = (integer)(
@@ -2172,7 +2165,7 @@ void creatures(boolean attack)
 	integer i1, i2, i3, moldy, moldx;
 	integer hear_count;
 
-	ENTER("creatures", "c")
+	ENTER(("creatures", "c"))
 	/*{ Main procedure for creatures                              -RAK- }*/
 	if (1) {
 		get_player_move_rate();

@@ -18,19 +18,20 @@ int call_depth = 0;
 
 void init_debug(void) { debug_file = (FILE *)fopen("debug.out", "w"); }
 
-void enter(char *routine_name, char *marker)
+void enter(char const *routine_name, char const *fmt, ...)
 {
+	va_list args;
+
 	if (!do_debug_funcall)
 		return;
 
 	call_depth++;
 
-	fprintf(debug_file, ":::%4d: ENTER %s | %s |\n", call_depth,
-		routine_name, marker);
-
-	/*  fprintf(debug_file,":  In    %ld */
-	/*  %ld\n",panel_row_min,panel_row_max); */
-
+	va_start(args, fmt);
+	fprintf(debug_file, ":::%4d: ENTER | %s", call_depth, routine_name);
+	vfprintf(debug_file, fmt, args);
+	fprintf(debug_file, "\n");
+	va_end(args);
 	fflush(debug_file);
 }
 

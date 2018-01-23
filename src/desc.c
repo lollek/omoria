@@ -14,7 +14,7 @@ void magic_init(unsigned long random_seed)
 	integer i1, tmpv;
 	vtype tmps;
 
-	ENTER("magic-init", "");
+	ENTER(("magic-init", ""));
 
 	set_seed(random_seed);
 	randes();
@@ -148,10 +148,8 @@ void magic_init(unsigned long random_seed)
 
 #if DO_DEBUG && 0
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-		fprintf(debug_file, ": object_list[%ld] = %s\n", i1,
-			object_list[i1].name);
+		MSG(("object_list[%ld] = %s\n", i1, object_list[i1].name));
 	}
-	fflush(debug_file);
 #endif
 	LEAVE("magic-init", "");
 }
@@ -168,9 +166,8 @@ void r__randdesloop(atype str_array[], int count)
 		i2 = randint(count) - 1;
 		if (i1 != i2) {
 #if DO_DEBUG && 0
-			fprintf(debug_file,
-				"%2ld:%2ld \"%s\" swapped with \"%s\"\n", i1,
-				i2, str_array[i1], str_array[i2]);
+			MSG(("%2ld:%2ld \"%s\" swapped with \"%s\"\n", i1, i2,
+			     str_array[i1], str_array[i2]));
 #endif
 			strcpy(tmp, str_array[i1]);
 			strcpy(str_array[i1], str_array[i2]);
@@ -334,13 +331,13 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 	char *cpos;
 	vtype tmp_val;
 
-	ENTER("objdes", "i");
+	ENTER(("objdes", "i"));
 
 	strcpy(tmp_val, ptr->data.name);
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj start: >%s<\n", tmp_val);
+		MSG(("obj start: >%s<\n", tmp_val));
 	}
 #endif
 
@@ -351,7 +348,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj thmp1: >%s<\n", tmp_val);
+		MSG(("obj thmp1: >%s<\n", tmp_val));
 	}
 #endif
 
@@ -362,7 +359,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj thmp2: >%s<\n", tmp_val);
+		MSG(("obj thmp2: >%s<\n", tmp_val));
 	}
 #endif
 
@@ -375,7 +372,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj thmp3: >%s<\n", tmp_val);
+		MSG(("obj thmp3: >%s<\n", tmp_val));
 	}
 #endif
 
@@ -389,7 +386,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj thmp4: >%s<\n", tmp_val);
+		MSG(("obj thmp4: >%s<\n", tmp_val));
 	}
 #endif
 
@@ -403,7 +400,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj thmp5: >%s<\n", tmp_val);
+		MSG(("obj thmp5: >%s<\n", tmp_val));
 	}
 #endif
 
@@ -437,7 +434,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 
 #if DO_DEBUG
 	if (do_debug_objdes) {
-		fprintf(debug_file, ": obj final: >%s<\n", out_val);
+		MSG(("obj final: >%s<\n", out_val));
 	}
 #endif
 

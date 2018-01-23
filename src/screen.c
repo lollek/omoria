@@ -30,7 +30,7 @@ void prt_equipment_args(integer y, integer x, integer start, boolean clear)
 
 void draw_cave()
 {
-	ENTER("draw_cave", "");
+	ENTER(("draw_cave", ""));
 	clear_screen();
 	prt_stat_block();
 	prt_map();
@@ -47,7 +47,7 @@ void prt_map()
 	integer panel_y = 1;	 /* Used for erasing dirty lines */
 	integer const panel_x0 = 14; /*{ Erasure starts in this column  }*/
 
-	ENTER("prt_map", "");
+	ENTER(("prt_map", ""));
 
 	redraw = false; /*{ Screen has been redrawn	   }*/
 	for (y = panel_row_min; y <= panel_row_max; y++) {
@@ -113,7 +113,7 @@ void prt_map()
 
 void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col)
 {
-	ENTER("prt_6_stats", "");
+	ENTER(("prt_6_stats", ""));
 	if (l != NULL) {
 		prt_stat_attr("STR : ", p[STR], l[STR], row, col);
 		prt_stat_attr("INT : ", p[INT], l[INT], row + 1, col);
@@ -137,7 +137,7 @@ void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
 {
 	stat_s_type out_val1;
 
-	ENTER("prt_stat_attr", "");
+	ENTER(("prt_stat_attr", ""));
 
 	if (loss == 0) {
 		prt_stat(stat_name, stat, row, column);
@@ -155,7 +155,7 @@ void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
 	stat_s_type out_val1;
 	vtype out_val2;
 
-	ENTER("prt_stat", "");
+	ENTER(("prt_stat", ""));
 
 	cnv_stat(stat, out_val1);
 	sprintf(out_val2, "%s%s", stat_name, out_val1);
@@ -187,7 +187,7 @@ void prt_num(vtype header, integer num, integer row, integer column)
 
 void prt_stat_block()
 {
-	ENTER("prt_stat_block", "");
+	ENTER(("prt_stat_block", ""));
 	prt_field(py.misc.race, RACE_ROW, STAT_COLUMN);
 	prt_field(py.misc.tclass, CLASS_ROW, STAT_COLUMN);
 	prt_title();

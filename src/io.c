@@ -29,7 +29,7 @@ void priv_switch(integer switch_val)
 
 void signalexit()
 {
-	ENTER("signalexit", "");
+	ENTER(("signalexit", ""));
 	MSG(("Sorry, caught a core-dump signal."));
 
 	priv_switch(0);
@@ -93,18 +93,12 @@ void signalsuspend()
 			break;
 		}
 
-#if DO_DEBUG
-		fprintf(debug_file, ": suspending...\n");
-		fflush(debug_file);
-#endif
+		MSG(("suspending..."));
 
 		kill(getpid(), SIGTSTP);
 		signal(SIGTSTP, signalsuspend);
 
-#if DO_DEBUG
-		fprintf(debug_file, ": ...resuming\n");
-		fflush(debug_file);
-#endif
+		MSG(("...resuming"));
 
 		cbreak();
 		noecho();
@@ -131,7 +125,7 @@ void no_controly()
 
 	boolean CATCH_SIGNALS = true;
 
-	ENTER("no_controly", "");
+	ENTER(("no_controly", ""));
 
 #ifdef SIGINT
 	signal(SIGINT, signalquit);
@@ -198,7 +192,7 @@ void msg_record(vtype message, boolean save)
 	char ic;
 	string fixed_string;
 
-	ENTER("msg_record", "i");
+	ENTER(("msg_record", "%s, %d", message, save));
 
 	if (save) {
 		record_ctr++;
@@ -283,7 +277,7 @@ boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 	integer old_len = 0;
 	char ic = 0;
 
-	ENTER("msg_print", "m");
+	ENTER(("msg_print", "%s", str_buff));
 
 	if ((msg_flag) && (!msg_terse)) {
 		old_len = strlen(old_msg) + 1;
@@ -439,7 +433,6 @@ integer get_hex_value(integer row, integer col, integer slen)
 
 	if (get_string(tmp_str, row, col, slen)) {
 		if (strlen(tmp_str) <= 8) {
-
 			sscanf(tmp_str, "%lx", &return_value);
 		}
 	}
@@ -463,7 +456,7 @@ void get_paths()
 	/*	{ Path is returned in a VARYING[80] of char } */
 
 	char *datapath = DATA_FILE_PATH;
-	ENTER("get_paths", "");
+	ENTER(("get_paths", ""));
 	/* fill in the MORIA_ names; */
 
 	if (strlen(datapath) >

@@ -431,7 +431,7 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	integer y;
 	integer xmax = 0;
 
-	ENTER("ml__draw_block", "m");
+	ENTER(("ml__draw_block", "%d, %d, %d, %d", y1, x2, y2, x2));
 
 	/*{ From uppermost to bottom most lines player was on...  }*/
 	/*{ Points are guaranteed to be on the screen (I hope...) }*/
@@ -517,7 +517,7 @@ static void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	integer i1, i2;
 
-	ENTER("ml__sub1_move_light", "m");
+	ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
 	light_flag = true;
 
@@ -542,7 +542,7 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 	integer y;
 	integer x;
 
-	ENTER("ml__sub2_move_light", "m");
+	ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
 	if (light_flag) {
 		for (y = y1 - 1; y <= y1 + 1; y++)
@@ -615,7 +615,7 @@ static void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ When blinded, move only the player symbol...              }*/
 
-	ENTER("ml__sub3_move_light", "m");
+	ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
 	if (light_flag) {
 		integer i1;
@@ -637,7 +637,7 @@ static void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 {
 	/*{ With no light, movement becomes involved...               }*/
 
-	ENTER("ml__sub4_move_light", "m");
+	ENTER(("ml__sub4_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
 	light_flag = true;
 	if (cave[y1][x1].tl) {
@@ -703,7 +703,7 @@ void teleport(integer dis)
 
 	integer y, x, i1, i2;
 
-	ENTER("teleport", "d");
+	ENTER(("teleport", "%d", dis));
 
 	do {
 		y = randint(cur_height);
@@ -800,13 +800,13 @@ void move_rec(integer y1, integer x1, integer y2, integer x2)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
+boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 		   integer *count)
 {
 	boolean flag;
 	treas_ptr ptr;
 
-	ENTER("find_range", "");
+	ENTER(("find_range", ""));
 
 	*count = 0;
 	*first = NULL;
@@ -833,9 +833,7 @@ boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
 		}
 	}
 
-#if DO_DEBUG
-	fprintf(debug_file, "find: count=%ld\n", *count);
-#endif
+	MSG(("find: count=%ld\n", *count));
 
 	RETURN("find_range", "", 'b', "found", &flag);
 	return flag;
@@ -858,7 +856,7 @@ void carry(integer y, integer x)
 	integer count;
 	boolean money_flag;
 
-	ENTER("carry", "");
+	ENTER(("carry", "%d, %d", y, x));
 
 	money_flag = false;
 	find_flag = false;
@@ -1975,32 +1973,34 @@ void search(integer y, integer x, integer chance)
 /*//////////////////////////////////////////////////////////////////// */
 void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 {
-
+	obj_set room_floors;
 	integer i1;
-	integer i2;
-	integer i3;
-	integer i4;
-	obj_set room_floors = {dopen_floor.ftval, lopen_floor.ftval,
-			       water2.ftval, 0};
+
+	room_floors[0] = dopen_floor.ftval;
+	room_floors[1] = lopen_floor.ftval;
+	room_floors[2] = water2.ftval;
+	room_floors[3] = 0;
 
 	for (i1 = y1; i1 <= y2; i1++) {
+		integer i2;
 		for (i2 = x1; i2 <= x2; i2++) {
-			if (is_in(cave[i1][i2].fval, room_floors)) {
-				for (i3 = i1 - 1; i3 <= i1 + 1; i3++) {
-					for (i4 = i2 - 1; i4 <= i2 + 1; i4++) {
-						cave[i3][i4].pl = true;
-					}
-				}
-				if (cave[i1][i2].fval ==
-				    water2.ftval) { /* water on room floor */
-					cave[i1][i2].fval =
-					    water3.ftval; /* lit rm water on
-							     floor */
-				} else {
-					cave[i1][i2].fval =
-					    lopen_floor
-						.ftval; /* lit rm floor */
-				}
+			integer i3;
+			if (!is_in(cave[i1][i2].fval, room_floors))
+				continue;
+
+			for (i3 = i1 - 1; i3 <= i1 + 1; i3++) {
+				integer i4;
+				for (i4 = i2 - 1; i4 <= i2 + 1; i4++)
+					cave[i3][i4].pl = true;
+			}
+
+			if (cave[i1][i2].fval == water2.ftval) {
+				/* water on room floor */
+				cave[i1][i2].fval = water3.ftval;
+				/* lit rm water on floor */
+			} else {
+				cave[i1][i2].fval = lopen_floor.ftval;
+				/* lit rm floor */
 			}
 		}
 	}
@@ -2287,7 +2287,7 @@ integer mon_take_hit(integer monptr, integer dam)
 	integer i1 = 0;
 	integer return_value = 0;
 
-	ENTER("mon_take_hit", "d");
+	ENTER(("mon_take_hit", "%d, %d", monptr, dam));
 
 	/* with m_list[monptr]. do; */
 	m_list[monptr].hp -= dam;
@@ -2485,7 +2485,7 @@ void delete_monster(integer i2)
 
 	integer i1, i3;
 
-	ENTER("delete_monster", "c");
+	ENTER(("delete_monster", "%d", i2));
 
 	i3 = m_list[i2].nptr;
 	if (muptr == i2) {
@@ -2535,7 +2535,7 @@ boolean py_attack(integer y, integer x)
 
 	boolean return_value = false;
 
-	ENTER("py_attack", "d");
+	ENTER(("py_attack", "%d, %d", y, x));
 
 	a_cptr = cave[y][x].cptr;
 	a_mptr = m_list[a_cptr].mptr;
@@ -3214,7 +3214,7 @@ void to__inven_throw(treas_ptr item_ptr)
 
 obj_set *to__poink(obj_set *ammo_types)
 {
-	ENTER("to__poink", "d");
+	ENTER(("to__poink", "d"));
 
 	if (equipment[Equipment_primary].tval == bow_crossbow_or_sling) {
 		(*ammo_types)[1] =
@@ -3364,7 +3364,7 @@ void d__throw_object(boolean to_be_fired)
 	treas_ptr item_ptr, i7;
 	obj_set ammo_types = {0};
 
-	ENTER("d__throw_object", "d");
+	ENTER(("d__throw_object", "%d", to_be_fired));
 
 	redraw = false;
 
@@ -3841,7 +3841,7 @@ void d__check_light_status()
 {
 	/*{ Check light status                            }*/
 	/* with equipment[Equipment_light] do; */
-	ENTER("d__check_light_status", "d");
+	ENTER(("d__check_light_status", "d"));
 	if (player_light) {
 		if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
 			equipment[Equipment_light].p1--;
@@ -4624,7 +4624,7 @@ void d__update_hit_points()
 {
 	/*{ Check hit points for adjusting...                     }*/
 	/* with py.misc do; */
-	ENTER("d__update_hit_points", "d")
+	ENTER(("d__update_hit_points", "d"))
 
 	if (!(find_flag)) {
 		if (py.flags.rest < 1) {
@@ -5530,22 +5530,12 @@ void view_old_mess()
 /*//////////////////////////////////////////////////////////////////// */
 void d__execute_command(integer *com_val)
 {
-	integer i1;
-	integer y, x;
-	stat_set tstat;
 	treas_ptr trash_ptr;
-	vtype out_val, out2, tmp_str;
+	vtype out_val;
+	vtype out2;
+	vtype tmp_str;
 
-	ENTER("d__execute_command", "d");
-#if DO_DEBUG
-	fprintf(debug_file, ": command: %d '%c'\n", (int)*com_val,
-		(int)*com_val);
-	fflush(debug_file);
-#endif
-
-	/*      sprintf(out_val, "Key = %d", (int)(*com_val)); */
-	/*      msg_print(out_val); */
-	/*      msg_print( "" ); */
+	ENTER(("d__execute_command", "%d, '%c'", *com_val, *com_val));
 
 	switch (*com_val) {
 
@@ -5652,11 +5642,7 @@ void d__execute_command(integer *com_val)
 
 	case 27: /* ALT */
 		*com_val = inkey();
-#if DO_DEBUG
-		fprintf(debug_file, ": command: %d '%c'\n", (int)*com_val,
-			(int)*com_val);
-		fflush(debug_file);
-#endif
+		MSG(("command: %d '%c'\n", (int)*com_val, (int)*com_val));
 		switch (*com_val) {
 		case 'a': /* Armor help */
 			moria_help("Adventuring Armor_Class Armor_List");
@@ -6063,7 +6049,7 @@ void d__execute_command(integer *com_val)
 /*ZZZZZZZZZZZZZZZ*/
 void dungeon()
 {
-	ENTER("dungeon", "d")
+	ENTER(("dungeon", "d"))
 
 	s1[0] = 0;
 	s2[0] = 0;

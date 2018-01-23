@@ -16,7 +16,7 @@
 
 void writeln(char *out_line);
 integer pindex(char *s1, char c1);
-boolean is_in(integer obj, obj_set oset);
+boolean is_in(integer const obj, obj_set const oset);
 boolean is_vowel(char a_char);
 
 #endif /* PASCAL_H */

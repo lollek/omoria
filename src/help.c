@@ -151,30 +151,19 @@ void moria_help(vtype help_level)
 		/* parent process on failure */
 		msg_print("Fork failed.");
 	} else {
-/* parent process on success */
+		/* parent process on success */
 
-#if DO_DEBUG
-		fprintf(debug_file, ": child: %d  watiting...\n", help_pid);
-		fflush(debug_file);
-#endif
+		MSG(("child: %d  watiting...\n", help_pid));
 
-		waitpid(help_pid, &status,
-			0); /* mhelp.pl catches ^Z and exits */
+		/* mhelp.pl catches ^Z and exits */
+		waitpid(help_pid, &status, 0);
 
-#if DO_DEBUG
-		fprintf(debug_file, ": child: %d  status 1: %d\n", help_pid,
-			status);
-		fflush(debug_file);
-#endif
+		MSG(("child: %d  status 1: %d\n", help_pid, status));
 
-		waitpid(help_pid, &status,
-			0); /* mhelp.pl catches ^Z and exits */
+		/* mhelp.pl catches ^Z and exits */
+		waitpid(help_pid, &status, 0);
 
-#if DO_DEBUG
-		fprintf(debug_file, ": child: %d  status 2: %d\n", help_pid,
-			status);
-		fflush(debug_file);
-#endif
+		MSG(("child: %d  status 2: %d\n", help_pid, status));
 
 		cbreak();
 		noecho();

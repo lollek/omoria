@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 #if DO_DEBUG
 	init_debug();
 #endif
-	ENTER("main", "");
+	ENTER(("main", ""));
 
 	/* Get the time player entered game */
 	start_time = time(NULL);

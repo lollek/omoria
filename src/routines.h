@@ -99,8 +99,8 @@ extern integer mon_take_hit(integer monptr, integer dam);
 extern integer tot_dam(treasure_type *item, integer tdam,
 		       creature_type *monster);
 extern boolean py_attack(integer y, integer x);
-extern boolean find_range(obj_set item_val, boolean inner, treas_ptr *first,
-			  integer *count);
+extern boolean find_range(obj_set const item_val, boolean inner,
+			  treas_ptr *first, integer *count);
 extern boolean player_test_hit(integer bth, integer level, integer pth,
 			       integer ac, boolean was_fired);
 extern boolean test_hit(integer bth, integer level, integer pth, integer ac);

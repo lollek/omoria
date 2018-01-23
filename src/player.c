@@ -154,7 +154,7 @@ static void _move_char(integer dir)
 
 void move_char(integer dir)
 {
-	ENTER("move_char", "m");
+	ENTER(("move_char", "%d", dir));
 	_move_char(dir);
 	LEAVE("move_char", "m");
 }
@@ -177,7 +177,7 @@ void take_hit(integer damage, vtype hit_from)
 {
 	/*{ Decreases players hit points and sets death flag if neccessary}*/
 
-	ENTER("take_hit", "");
+	ENTER(("take_hit", "%d, %s", damage, hit_from));
 
 	if (py.flags.invuln > 0) {
 		damage = 0;

@@ -28,7 +28,7 @@ integer pindex(char *s1, char c1)
 	return (c2 - s1 + 1);
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean is_in(integer obj, obj_set oset)
+boolean is_in(integer const obj, obj_set const oset)
 {
 	integer i1;
 	integer tmp;
@@ -41,9 +41,9 @@ boolean is_in(integer obj, obj_set oset)
 	for (i1 = 0; i1 < MAX_OBJ_SET; i1++) {
 		if ((tmp > oset[i1]) && (oset[i1] > 0)) {
 			printf("bad obj_set i1 = %ld\n\r", i1);
-			fprintf(debug_file, "bad obj_set: %d", oset[i1]);
+			MSG(("bad obj_set: %d", oset[i1]));
 			for (i1 = 0; i1 < MAX_OBJ_SET; i1++) {
-				fprintf(debug_file, "%d  ", oset[i1]);
+				MSG(("%d  ", oset[i1]));
 			}
 			fprintf(debug_file, "\n");
 			abort();

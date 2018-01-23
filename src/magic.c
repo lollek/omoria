@@ -362,7 +362,7 @@ static void _cast(enum magic_t magic_type)
 
 void cast(enum magic_t magic_type)
 {
-	ENTER("cast", "");
+	ENTER(("cast", ""));
 	_cast(magic_type);
 	LEAVE("cast", "");
 }

@@ -10,7 +10,7 @@ void store_init()
 	/*} */
 	int i1, i2, i3;
 
-	ENTER("store_init", "s");
+	ENTER(("store_init", ""));
 
 	i1 = MAX_OWNERS / MAX_STORES;
 	for (i2 = 0; i2 < MAX_STORES; i2++) {
@@ -308,7 +308,7 @@ boolean store_check_num(integer store_num)
 	integer i1;
 	boolean return_value = false;
 
-	ENTER("store_check_num", "");
+	ENTER(("store_check_num", ""));
 
 	/* with stores[store_num] do; */
 	if (stores[store_num].store_ctr < STORE_INVEN_MAX) {
@@ -618,7 +618,7 @@ boolean check_store_hours(integer st, integer sh)
 	boolean flag;
 	boolean return_value = false;
 
-	ENTER("check_store_hours", "");
+	ENTER(("check_store_hours", ""));
 
 	if (sh != -1) {
 		/* with stores[sh].store_open do; */
@@ -721,7 +721,7 @@ void check_store_hours_and_enter(integer st, integer sh, integer store_num)
 	 * up)*/
 	/* store_num should probably always be the same as st */
 
-	ENTER("check_store_hours_and_enter", "");
+	ENTER(("check_store_hours_and_enter", ""));
 	if (check_store_hours(st, sh)) {
 		enter_store(store_num);
 	}
@@ -951,7 +951,7 @@ void enter_store(integer store_num)
 	char command;
 	boolean exit_flag;
 
-	ENTER("enter_store", "");
+	ENTER(("enter_store", ""));
 
 	tics = 1;
 	/* with stores[store_num] do; */
@@ -1055,7 +1055,7 @@ void enter_store(integer store_num)
 void display_store(integer store_num, integer cur_top)
 {
 	/*{ Displays store					-RAK-	}*/
-	ENTER("display_store", "");
+	ENTER(("display_store", ""));
 
 	/* with stores[store_num] do; */
 	clear_screen();
@@ -1075,7 +1075,7 @@ void store_prt_gold()
 	 * }*/
 
 	vtype out_val;
-	ENTER("store_prt_gold", "");
+	ENTER(("store_prt_gold", ""));
 
 	sprintf(out_val, "Gold Remaining : %ld", py.misc.money[TOTAL_]);
 	prt(out_val, 19, 18);
@@ -1109,7 +1109,7 @@ void display_commands()
 {
 	/*{ Displays the set of commands				-RAK-
 	 * }*/
-	ENTER("display_commands", "");
+	ENTER(("display_commands", ""));
 
 	prt("You may:", 21, 1);
 	prt(" p/P) Purchase an item.          <space> browse store's "
@@ -1145,7 +1145,7 @@ void display_inventory(integer store_num, integer start)
 	integer i1, i2, stop;
 	vtype out_val1, out_val2;
 
-	ENTER("display_inventory", "");
+	ENTER(("display_inventory", ""));
 
 	/* with stores[store_num] do; */
 	i1 = ((start - 1) % 12);
@@ -1414,7 +1414,7 @@ boolean store_sell(integer store_num, integer cur_top, boolean blitz)
 	boolean redraw;
 	boolean return_value = false;
 
-	ENTER("store_sell", "");
+	ENTER(("store_sell", ""));
 
 	if (blitz) {
 		strcpy(foo, "BLITZ-SELLING item? ");
@@ -1614,7 +1614,7 @@ integer sell_haggle(integer store_num, integer *price, treasure_type *item,
 	vtype comment, out_val;
 	integer return_value = 0;
 
-	ENTER("sell_haggle", "s");
+	ENTER(("sell_haggle", "s"));
 
 	flag = false;
 	*price = 0;
@@ -1977,7 +1977,7 @@ boolean ro__get_haggle(vtype comment, integer *num)
 	vtype out_val;
 	boolean flag = true;
 
-	ENTER("ro__get_haggle", "s");
+	ENTER(("ro__get_haggle", "s"));
 
 	i1 = 0;
 	clen = strlen(comment) + 1;
@@ -2009,7 +2009,7 @@ integer receive_offer(integer store_num, vtype comment, integer *new_offer,
 	boolean flag;
 	integer return_value = 0;
 
-	ENTER("receive_offer", "i");
+	ENTER(("receive_offer", "i"));
 
 	flag = false;
 

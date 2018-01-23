@@ -13,7 +13,7 @@ boolean r__move_this(river_args *a, integer dir, coords *this, coords *that)
 
 	boolean return_value = false;
 
-	ENTER("r__move_this", "r");
+	ENTER(("r__move_this", "r"));
 
 	that->y = this->y + dy_of[dir];
 	that->x = this->x + dx_of[dir];
@@ -39,7 +39,7 @@ void r__remove_this(river_args *a, coords *this)
 
 	s_l_type last;
 
-	ENTER("r__remove_this", "r");
+	ENTER(("r__remove_this", "r"));
 
 	/* with Gup[this->y][this->x]. do; */
 	if (Gup[this->y][this->x].pos <= Num_left) {
@@ -65,7 +65,7 @@ void r__plot_water(integer y, integer x, integer font, integer tdir)
 	coords dots[6]; /*: array [1..5] of coords;*/
 	integer i1;
 
-	ENTER("r__plot_water", "r");
+	ENTER(("r__plot_water", "r"));
 
 	dots[1].y = y;
 	dots[1].x = x;
@@ -134,7 +134,7 @@ integer pr__figure_out_path_of_water(integer y, integer x, integer oy,
 	obj_set odds = {1, 3, 5, 7, 0};
 	integer return_value;
 
-	ENTER("pr__figure_out_path_of_water", "r");
+	ENTER(("pr__figure_out_path_of_water", "r"));
 
 	target_dy = y - oy;
 	target_dx = x - ox;
@@ -199,7 +199,7 @@ void r__place_river(river_args *a, integer dir, integer next_dir, coords this,
 	integer overflow;
 	obj_set even_nums = {2, 4, 6, 8, 0};
 
-	ENTER("r__place_river", "r");
+	ENTER(("r__place_river", "r"));
 
 	r__move_this(a, dir, &this, &up1); /*{up1 is upstream end of segment}*/
 	r__move_this(a, next_dir, &up1,
@@ -275,7 +275,7 @@ integer cr__choose_stream_dirs(river_args *a, coords *this, integer dir,
 	boolean done;
 	integer return_value = 0;
 
-	ENTER("cr__choose_stream_dirs", "r");
+	ENTER(("cr__choose_stream_dirs", "r"));
 
 	*this = S_list[S_l_top].loc;
 	dir = Gup[this->y][this->x].out;
@@ -331,7 +331,7 @@ boolean cr__dequeue_s_list(river_args *a)
 
 	boolean return_value;
 
-	ENTER("cr__dequeue_s_list", "r");
+	ENTER(("cr__dequeue_s_list", "r"));
 
 	for (; ((S_l_top > Num_left) && (!S_list[S_l_top].is_active));) {
 		S_l_top--;
@@ -361,7 +361,7 @@ void r__chart_river(river_args *a)
 	boolean that_chosen[4];
 	boolean starting_river = true;
 
-	ENTER("r__chart_river", "r");
+	ENTER(("r__chart_river", "r"));
 
 	r__remove_this(a, &(S_list[randint(Num_left)].loc));
 	/*{element is now S_l_top}*/
@@ -467,7 +467,7 @@ void r__draw_river(river_args *a)
 	integer first_dir;
 	coords wiggle, that;
 
-	ENTER("r__draw_river", "r");
+	ENTER(("r__draw_river", "r"));
 
 	wiggle.y = randint(3) - 2;
 	wiggle.x = randint(3) - 2;
@@ -495,7 +495,7 @@ void all_the_river_stuff()
 	river_args a;
 	integer i1, i2;
 
-	ENTER("all_the_river_stuff", "r");
+	ENTER(("all_the_river_stuff", "r"));
 
 	a.max_wet = randint(RIVER_TOTAL_SIZE) - 50;
 

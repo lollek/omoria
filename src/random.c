@@ -10,7 +10,7 @@ unsigned long get_seed()
 	struct timeval tv;
 	unsigned long the_seed;
 
-	ENTER("get_seed", "");
+	ENTER(("get_seed", ""));
 
 	gettimeofday(&tv, NULL);
 
@@ -24,13 +24,8 @@ unsigned long get_seed()
 
 void set_seed(unsigned long the_seed)
 {
-/* use the_seed to seed the generator */
-
-#if DO_DEBUG
-	fprintf(debug_file, "set_seed: s= %ld\n", the_seed);
-	fflush(debug_file);
-#endif
-
+	/* use the_seed to seed the generator */
+	MSG(("set_seed: s= %ld\n", the_seed));
 	srand(the_seed);
 }
 
@@ -63,13 +58,6 @@ integer randint(integer maxval)
 	if (maxval) {
 		r = ((rand() % maxval) + 1);
 	}
-
-	/*
-      #if DO_DEBUG
-	 fprintf(debug_file, "   rand:  %ld\t(%ld)\n", r, maxval);
-	 fflush(debug_file);
-      #endif
-      */
 
 	return r;
 }

@@ -587,7 +587,7 @@ boolean save_char(boolean quick)
 	boolean flag;
 	FILE *f1;
 
-	ENTER("save_char", "");
+	ENTER(("save_char", "%d", quick));
 
 	f1 = sc__open_save_file();
 	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
@@ -1516,7 +1516,7 @@ boolean get_char(boolean prop)
 	encrypt_state cf_state;
 	integer check_time;
 
-	ENTER("get_char", "");
+	ENTER(("get_char", "%d", prop));
 
 	dun_flag = false;
 	paniced = false;
@@ -1611,7 +1611,7 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 	master_key mkey;
 	master_entry mentry;
 
-	ENTER("restore_char", "");
+	ENTER(("restore_char", "%s, %d, %d", fnam, present, undead));
 
 	exit_flag = false;
 	bleah_flag = true;

@@ -593,7 +593,7 @@ void hit_trap(integer *y, integer *x)
 
 	integer dam;
 
-	ENTER("hit_trap", "");
+	ENTER(("hit_trap", ""));
 
 	change_trap(*y, *x);
 	lite_spot(char_row, char_col);
