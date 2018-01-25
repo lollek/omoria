@@ -1976,10 +1976,10 @@ void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 	obj_set room_floors;
 	integer i1;
 
+	memset(room_floors, 0, sizeof(room_floors));
 	room_floors[0] = dopen_floor.ftval;
 	room_floors[1] = lopen_floor.ftval;
 	room_floors[2] = water2.ftval;
-	room_floors[3] = 0;
 
 	for (i1 = y1; i1 <= y2; i1++) {
 		integer i2;
@@ -2021,6 +2021,8 @@ void light_room(integer param_y, integer param_x)
 	integer y;
 	integer xpos = 0;
 
+	ENTER(("light_room", "%d, %d", param_y, param_x));
+
 	lr__find_light(start_row, start_col, end_row, end_col);
 
 	for (y = start_row; y <= end_row; y++) {
@@ -2047,6 +2049,8 @@ void light_room(integer param_y, integer param_x)
 			print_chstr(floor_str, ypos, xpos);
 		}
 	}
+
+	LEAVE("light_room", "");
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

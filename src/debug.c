@@ -28,9 +28,9 @@ void enter(char const *routine_name, char const *fmt, ...)
 	call_depth++;
 
 	va_start(args, fmt);
-	fprintf(debug_file, ":::%4d: ENTER | %s", call_depth, routine_name);
+	fprintf(debug_file, ":::%4d: ENTER | %s | ", call_depth, routine_name);
 	vfprintf(debug_file, fmt, args);
-	fprintf(debug_file, "\n");
+	fprintf(debug_file, "|\n");
 	va_end(args);
 	fflush(debug_file);
 }
