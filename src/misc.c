@@ -2678,13 +2678,13 @@ long next_to8(long y, long x, obj_set group_set)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-long max_hp(dtype const hp_str)
+long max_hp(char const *hp_str)
 {
 	/* Gives Max hit points    -RAK- */
 
 	long num;
 	long die;
-	dtype hp_copy;
+	char hp_copy[7];
 	long return_value;
 	char *ptr;
 
@@ -2700,12 +2700,12 @@ long max_hp(dtype const hp_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-long damroll(dtype const dice)
+long damroll(char const *dice)
 {
 	/*{ Converts input string into a dice roll		-RAK-	}*/
 	/*{	Normal input string will look like '2d6', '3d8'... etc. }*/
 
-	dtype dice_copy;
+	char dice_copy[7];
 	long num = 0;
 	long sides = 0;
 	long return_value = 0;

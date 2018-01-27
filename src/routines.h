@@ -432,7 +432,7 @@ extern long rotate_dir(long dir, long rot);
 extern long get_hexdecant(long dy, long dx);
 extern void tlink();
 extern void mlink();
-extern long damroll(dtype const dice);
+extern long damroll(char const *dice);
 extern boolean los(long y1, long x1, long y2, long x2);
 extern chtype get_loc_symbol(long y, long x);
 extern chtype loc_symbol(long y, long x);
@@ -441,7 +441,7 @@ extern void validate_monsters();
 extern void compact_monsters();
 extern void popm(long *x);
 extern void pushm(long x);
-extern long max_hp(dtype const hp_str);
+extern long max_hp(char const *hp_str);
 extern void place_monster(long y, long x, long z, boolean slp);
 extern void place_win_monster();
 extern void alloc_land_monster(obj_set alloc_set, long num, long dis,
