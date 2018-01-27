@@ -116,7 +116,7 @@ extern char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1];
 
 extern long player_exp[MAX_PLAYER_LEVEL + 1];
 extern float acc_exp; /*{ Accumulator for fractional exp} */
-extern char const *bare_hands;
+extern char bare_hands[7];
 extern boolean msg_terse;
 extern unsigned char record_ctr;
 extern long char_row;
