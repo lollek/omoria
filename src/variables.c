@@ -68,11 +68,11 @@ long closing_flag = 0;    /* { Used for closing   } */
 unsigned char key_of[9] = /*  array [0..8] of unsigned char; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
 unsigned char oct_of[10] = /*  array [1..9] of unsigned char; */
-    {250, 5, 6, 7, 4, 8, 0, 3, 2, 1};
+    {0, 5, 6, 7, 4, 8, 0, 3, 2, 1};
 signed char dx_of[10] = /*  array [1..9] of signed char; */
-    {250, -1, 0, 1, -1, 0, 1, -1, 0, 1};
+    {0, -1, 0, 1, -1, 0, 1, -1, 0, 1};
 signed char dy_of[10] = /*  array [1..9] of signed char; */
-    {250, 1, 1, 1, 0, 0, 0, -1, -1, -1};
+    {0, 1, 1, 1, 0, 0, 0, -1, -1, -1};
 /*	{ Bit testing array						} */
 unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
     {0,		 0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
@@ -153,57 +153,22 @@ obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
 player_type py = {
     /* misc */
     {
-     0,
-     0,			    /* xtr_wgt, account */
+     0, 0,			    /* xtr_wgt, account */
      {0, 0, 0, 0, 0, 0, 0}, /* money */
      {0, 0, 0, 0, 0},       /* birth */
      {0, 0, 0, 0, 0},       /* cur_age */
      {0, 0, 0, 0, 0, 0, 0}, /* play_tm */
      3,			    /* diffic */
-     /*" ",*/ " ",
-     " ",
-     " ",
-     " ",
-     " ", /* ssn,name,race,sex,title,tclass */
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
+     " ", " ", " ", " ", " ", /* ssn,name,race,sex,title,tclass */
+     0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0,
      {"", "", "", "", ""}, /* history */
      false,
-     0,
-     0,
-     0 /* mr, quests, cur_quest */
+     0, 0, 0, /* mr, quests, cur_quest */
+     0, 0, 0
     },
     /* stat */
     {
@@ -213,65 +178,22 @@ player_type py = {
      {0, 0, 0, 0, 0, 0}  /* l  amt lost */
     },
     /* flags */
-    {false,
+    {false, false,
+     0, 0, 0, 0, 0,
+     7500, 2,
+     0, 0, 0,
      false,
-     0,
-     0,
-     0,
-     0,
-     0,
-     7500,
-     2,
-     0,
-     0,
-     0,
-     false,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
-     false,
+     0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0,
+     false, false, false, false, false,
+     false, false, false, false, false,
+     false, false,
      {false, false, false, false, false, false}, /* sustain */
      false,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     false,
-     false}};
+     0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0,
+     false, false, false, false}};
 
 char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
     /*				  array [1..max_class] of */
