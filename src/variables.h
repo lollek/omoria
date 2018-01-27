@@ -112,7 +112,8 @@ extern player_type py;
 
 extern char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1];
 /*				  array [1..max_class] of */
-/*				  array [1..max_player_level] of char const *; */
+/*				  array [1..max_player_level] of char const *;
+ */
 
 extern long player_exp[MAX_PLAYER_LEVEL + 1];
 extern float acc_exp; /*{ Accumulator for fractional exp} */

@@ -64,7 +64,7 @@ void place_rubble(long y, long x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void ht__open_pit(long dam)
+static void ht__open_pit(long dam)
 {
 	msg_print("You fell into a pit!");
 	if (py.flags.ffall) {
@@ -74,7 +74,7 @@ void ht__open_pit(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__arrow(long dam)
+static void ht__arrow(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		take_hit(dam, "an arrow trap");
@@ -84,7 +84,7 @@ void ht__arrow(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__covered_pit(long dam, long y, long x)
+static void ht__covered_pit(long dam, long y, long x)
 {
 	msg_print("You fell into a covered pit.");
 	if (py.flags.ffall) {
@@ -95,7 +95,7 @@ void ht__covered_pit(long dam, long y, long x)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__trap_door(long dam)
+static void ht__trap_door(long dam)
 {
 	msg_print("You fell through a trap door!");
 	msg_print(" ");
@@ -108,7 +108,7 @@ void ht__trap_door(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__sleep_gas(long dam)
+static void ht__sleep_gas(void)
 {
 
 	if (py.flags.paralysis == 0) {
@@ -122,7 +122,7 @@ void ht__sleep_gas(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__hidden_object(long dam, long y, long x)
+static void ht__hidden_object(long y, long x)
 {
 	cave[y][x].fm = false;
 	pusht(cave[y][x].tptr);
@@ -130,7 +130,7 @@ void ht__hidden_object(long dam, long y, long x)
 	msg_print("Hmmm, there was something under this rock.");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__str_dart(long dam)
+static void ht__str_dart(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		if (lose_stat(STR, "", "A small dart hits you.")) {
@@ -143,13 +143,13 @@ void ht__str_dart(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__teleport(long dam)
+static void ht__teleport(void)
 {
 	teleport_flag = true;
 	msg_print("You hit a teleport trap!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__rockfall(long dam, long y, long x)
+static void ht__rockfall(long dam, long y, long x)
 {
 	take_hit(dam, "falling rock");
 	pusht(cave[y][x].tptr);
@@ -157,13 +157,13 @@ void ht__rockfall(long dam, long y, long x)
 	msg_print("You are hit by falling rock");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__corrode_gas(long dam)
+static void ht__corrode_gas(void)
 {
 	corrode_gas("corrosion gas.");
 	msg_print("A strange red gas surrounds you.");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__summon_monster(long dam, long y, long x)
+static void ht__summon_monster(long y, long x)
 {
 	long i1, ty, tx;
 
@@ -181,37 +181,37 @@ void ht__summon_monster(long dam, long y, long x)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__fire(long dam)
+static void ht__fire(long dam)
 {
 	fire_dam(dam, "a fire trap.");
 	msg_print("You are enveloped in flames!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__acid(long dam)
+static void ht__acid(long dam)
 {
 	acid_dam(dam, "an acid trap.");
 	msg_print("You are splashed with acid!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__poison_gas(long dam)
+static void ht__poison_gas(long dam)
 {
 	poison_gas(dam, "a poison gas trap.");
 	msg_print("A pungent green gas surrounds you!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__blind_gas(long dam)
+static void ht__blind_gas(void)
 {
 	msg_print("A black gas surrounds you!");
 	PF.blind += randint(50) + 50;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__confuse_gas(long dam)
+static void ht__confuse_gas(void)
 {
 	msg_print("A gas of scintillating colors surrounds you!");
 	PF.confused += randint(15) + 15;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__slow_dart(long dam)
+static void ht__slow_dart(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		take_hit(dam, "a dart trap");
@@ -222,7 +222,7 @@ void ht__slow_dart(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__con_dart(long dam)
+static void ht__con_dart(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		if (lose_stat(CON, "", "A small dart hits you.")) {
@@ -235,9 +235,9 @@ void ht__con_dart(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__secret_door(long dam) {}
+static void ht__secret_door(void) {}
 /*//////////////////////////////////////////////////////////////////// */
-void ht__chute(long dam)
+static void ht__chute(long dam)
 {
 	msg_print("You fell down a chute!");
 	msg_print(" ");
@@ -250,9 +250,9 @@ void ht__chute(long dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__scare_monster(long dam) {}
+static void ht__scare_monster(void) {}
 /*//////////////////////////////////////////////////////////////////// */
-void ht__whirlpool(long dam)
+static void ht__whirlpool(long dam)
 {
 	msg_print("You are swept into a whirlpool!");
 	msg_print(" ");
@@ -266,7 +266,7 @@ void ht__whirlpool(long dam)
 	} while (randint(2) != 1);
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__house(long dam, long y, long x)
+static void ht__house(long y, long x)
 {
 	switch (t_list[cave[y][x].tptr].p1) {
 	case 1:
@@ -623,11 +623,11 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 5:
-		ht__sleep_gas(dam);
+		ht__sleep_gas();
 		break;
 
 	case 6:
-		ht__hidden_object(dam, *y, *x);
+		ht__hidden_object(*y, *x);
 		break;
 
 	case 7:
@@ -635,7 +635,7 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 8:
-		ht__teleport(dam);
+		ht__teleport();
 		break;
 
 	case 9:
@@ -643,11 +643,11 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 10:
-		ht__corrode_gas(dam);
+		ht__corrode_gas();
 		break;
 
 	case 11:
-		ht__summon_monster(dam, *y, *x);
+		ht__summon_monster(*y, *x);
 		break;
 
 	case 12:
@@ -663,11 +663,11 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 15:
-		ht__blind_gas(dam);
+		ht__blind_gas();
 		break;
 
 	case 16:
-		ht__confuse_gas(dam);
+		ht__confuse_gas();
 		break;
 
 	case 17:
@@ -679,7 +679,7 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 19:
-		ht__secret_door(dam);
+		ht__secret_door();
 		break;
 
 	case 20:
@@ -687,7 +687,7 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 99:
-		ht__scare_monster(dam);
+		ht__scare_monster();
 		break;
 
 	/*{ Town level traps are special, the stores...   }*/
@@ -778,7 +778,7 @@ void hit_trap(long *y, long *x)
 	case 120:
 	case 121:
 	case 122: /* { House      } */
-		ht__house(dam, *y, *x);
+		ht__house(*y, *x);
 		break;
 
 	case 123:

@@ -714,129 +714,79 @@ boolean breath(long typ, long y, long x, long dam_hp, vtype ddesc)
 	get_flags(typ, &weapon_type, &harm_type, &destroy);
 	for (i1 = y - 2; i1 <= y + 2; i1++) {
 		for (i2 = x - 2; i2 <= x + 2; i2++) {
-			if (in_bounds(i1, i2)) {
-				if (distance(y, x, i1, i2) <= max_dis) {
-					/* with cave[i1][i2]. do; */
-					if (cave[i1][i2].tptr > 0) {
-						if (is_in(
-							t_list[cave[i1][i2]
-								   .tptr].tval,
-							*destroy)) {
-							delete_object(i1, i2);
-						}
-					}
-					if (fopen) {
-						if (panel_contains(i1, i2)) {
-							print('*', i1, i2);
-							put_qio();
-							usleep(DRAW_BOLT_DELAY);
-						}
-						if (cave[i1][i2].cptr > 1) {
-							/* with */
-							/* m_list[cave[i1][i2].cptr].
-							 */
-							/* do; */
-							/* with */
-							/* c_list[m_list[cave[i1][i2].cptr].mptr].
-							 */
-							/* do; */
-							dam = dam_hp;
-							if (uand(
-								harm_type,
-								c_list
-								    [m_list
-									 [cave[i1][i2]
-									      .cptr]
-									     .mptr]
-									.cdefense) !=
-							    0) {
-								dam *= 2;
-							} else if (uand(
-								       weapon_type,
-								       c_list
-									   [m_list
-										[cave[i1][i2]
-										     .cptr]
-										    .mptr]
-									       .spells) !=
-								   0) {
-								dam = trunc(
-								    dam / 4.0);
-							}
-							dam =
-							    (long)(dam /
-								   (distance(
-									i1, i2,
-									y, x) +
-								    1));
-							if (!mon_resists(
-								cave[i1][i2]
-								    .cptr)) {
-								m_list
-								    [cave[i1][i2]
-									 .cptr]
-									.hp -=
-								    dam;
-							}
-							m_list[cave[i1][i2]
-								   .cptr]
-							    .csleep = 0;
-							if (m_list[cave[i1][i2]
-								       .cptr]
-								.hp < 0) {
-								monster_death(
-								    m_list
-									[cave[i1][i2]
-									     .cptr]
-									    .fy,
-								    m_list
-									[cave[i1][i2]
-									     .cptr]
-									    .fx,
-								    c_list
-									[m_list
-									     [cave[i1][i2]
-										  .cptr]
-										 .mptr]
-									    .cmove);
-								delete_monster(
-								    cave[i1][i2]
-									.cptr);
-							}
-						} else if (cave[i1][i2].cptr ==
-							   1) {
-							dam = trunc(
-							    dam_hp /
-							    (distance(i1, i2, y,
-								      x) +
-							     1));
-							switch (typ) {
-							case c_lightning:
-								light_dam(
-								    dam, ddesc);
-								break;
-							case c_gas:
-								poison_gas(
-								    dam, ddesc);
-								break;
-							case c_acid:
-								acid_dam(dam,
-									 ddesc);
-								break;
-							case c_cold:
-								cold_dam(dam,
-									 ddesc);
-								break;
-							case c_fire:
-								fire_dam(dam,
-									 ddesc);
-								break;
-							case c_evil:
-								xp_loss(dam);
-								break;
-							}
-						}
-					}
+			if (!in_bounds(i1, i2))
+				continue;
+			if (distance(y, x, i1, i2) > max_dis)
+				continue;
+
+			if (cave[i1][i2].tptr > 0 &&
+			    is_in(t_list[cave[i1][i2].tptr].tval, *destroy))
+				delete_object(i1, i2);
+
+			if (!fopen) /* ??? What is this ??? */
+				continue;
+
+			if (panel_contains(i1, i2)) {
+				print('*', i1, i2);
+				put_qio();
+				usleep(DRAW_BOLT_DELAY);
+			}
+
+			if (cave[i1][i2].cptr > 1) {
+				/* with */
+				/* m_list[cave[i1][i2].cptr].
+				 */
+				/* do; */
+				/* with */
+				/* c_list[m_list[cave[i1][i2].cptr].mptr].
+				 */
+				/* do; */
+				dam = dam_hp;
+				if (uand(harm_type, c_list[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
+					dam *= 2;
+				} else if (uand(weapon_type, c_list[m_list[cave[i1][i2].cptr].mptr].spells) != 0) {
+					dam = trunc(dam / 4.0);
+				}
+				dam = (long)(dam / (distance(i1, i2, y, x) + 1));
+				if (!mon_resists(cave[i1][i2].cptr)) {
+					m_list[cave[i1][i2].cptr].hp -= dam;
+				}
+				m_list[cave[i1][i2].cptr].csleep = 0;
+				if (m_list[cave[i1][i2].cptr].hp < 0) {
+					monster_death(
+					    m_list[cave[i1][i2].cptr]
+						.fy,
+					    m_list[cave[i1][i2].cptr]
+						.fx,
+					    c_list[m_list[cave[i1][i2]
+							      .cptr]
+						       .mptr].cmove);
+					delete_monster(
+					    cave[i1][i2].cptr);
+				}
+			} else if (cave[i1][i2].cptr == 1) {
+				dam =
+				    trunc(dam_hp /
+					  (distance(i1, i2, y, x) + 1));
+				switch (typ) {
+				case c_lightning:
+					light_dam(dam, ddesc);
+					break;
+				case c_gas:
+					poison_gas(dam, ddesc);
+					break;
+				case c_acid:
+					acid_dam(dam, ddesc);
+					break;
+				case c_cold:
+					cold_dam(dam, ddesc);
+					break;
+				case c_fire:
+					fire_dam(dam, ddesc);
+					break;
+				case c_evil:
+					xp_loss(dam);
+					break;
 				}
 			}
 		}
@@ -844,31 +794,25 @@ boolean breath(long typ, long y, long x, long dam_hp, vtype ddesc)
 
 	for (i1 = (y - 2); i1 <= (y + 2); i1++) {
 		for (i2 = (x - 2); i2 <= (x + 2); i2++) {
-			if (in_bounds(i1, i2)) {
-				if (panel_contains(i1, i2)) {
-					if (distance(y, x, i1, i2) <= max_dis) {
-						/* with cave[i1][i2]. do; */
-						if (test_light(i1, i2)) {
-							lite_spot(i1, i2);
-						} else if (cave[i1][i2].cptr ==
-							   1) {
-							lite_spot(i1, i2);
-						} else if (cave[i1][i2].cptr >
-							   1) {
-							if (m_list[cave[i1][i2]
-								       .cptr]
-								.ml) {
-								lite_spot(i1,
-									  i2);
-							} else {
-								unlite_spot(i1,
-									    i2);
-							}
-						} else {
-							unlite_spot(i1, i2);
-						}
-					}
+			if (!in_bounds(i1, i2))
+				continue;
+			if (!panel_contains(i1, i2))
+				continue;
+			if (distance(y, x, i1, i2) > max_dis)
+				continue;
+
+			if (test_light(i1, i2)) {
+				lite_spot(i1, i2);
+			} else if (cave[i1][i2].cptr == 1) {
+				lite_spot(i1, i2);
+			} else if (cave[i1][i2].cptr > 1) {
+				if (m_list[cave[i1][i2].cptr].ml) {
+					lite_spot(i1, i2);
+				} else {
+					unlite_spot(i1, i2);
 				}
+			} else {
+				unlite_spot(i1, i2);
 			}
 		}
 	}
@@ -1949,7 +1893,7 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ)
 	return hmm && (!mon_resists(monptr));
 }
 /*//////////////////////////////////////////////////////////////////// */
-void za__yes_it_did(long monptr, long cflag, long dmge, long typ, long i1)
+void za__yes_it_did(long monptr, long dmge, long typ)
 {
 	vtype out_val;
 
@@ -2018,7 +1962,7 @@ void za__yes_it_did(long monptr, long cflag, long dmge, long typ, long i1)
 	} /* end switch */
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean za__no_it_didnt(long monptr, long cflag, long dmge, long typ)
+boolean za__no_it_didnt(long monptr, long dmge, long typ)
 {
 	vtype out_val;
 	obj_set some_stuff = {c_sleep, c_confuse, c_speed, c_hold, c_joke, 0};
@@ -2057,9 +2001,9 @@ boolean zap_area(long cflag, long dmge, long typ)
 		/* with c_list[m_list[i1].mptr] do; */
 		if (m_list[i1].ml) {
 			if (za__did_it_work(i1, cflag, dmge, typ)) {
-				za__yes_it_did(i1, cflag, dmge, typ, i1);
+				za__yes_it_did(i1, dmge, typ);
 				flag = true;
-			} else if (za__no_it_didnt(i1, cflag, dmge, typ)) {
+			} else if (za__no_it_didnt(i1, dmge, typ)) {
 				flag = true;
 			}
 		}
@@ -2933,8 +2877,10 @@ boolean zap_monster(long dir, long y, long x, long aux, long zaptype)
 	  damage
 	  or speed change if used.}*/
 
-	long cptr, mptr;
-	vtype str1, str2;
+	long cptr;
+	long mptr;
+	vtype str1;
+	vtype str2;
 	boolean flag = false;
 
 	if (move_to_creature(dir, &y, &x)) {
@@ -3102,7 +3048,8 @@ boolean detect_magic()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean create_water(long y, long x)
+boolean create_water(__attribute__((unused)) long y,
+		     __attribute__((unused)) long x)
 {
 	/*{ Creates an area of water on open floor                -Cap'n- }*/
 	/* XXXX no code existed */
@@ -3111,7 +3058,8 @@ boolean create_water(long y, long x)
 }
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean destroy_water(long y, long x)
+boolean destroy_water(__attribute__((unused)) long y,
+		      __attribute((unused)) long x)
 {
 	/*{ Makes an area of water into open floor                -Cap'n- }*/
 	/* XXXX no code existed */

@@ -152,24 +152,60 @@ obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
 /*	{ Following are player variables				} */
 player_type py = {
     /* misc */
-    {
-     0, 0,			    /* xtr_wgt, account */
+    {0,
+     0,			    /* xtr_wgt, account */
      {0, 0, 0, 0, 0, 0, 0}, /* money */
      {0, 0, 0, 0, 0},       /* birth */
      {0, 0, 0, 0, 0},       /* cur_age */
      {0, 0, 0, 0, 0, 0, 0}, /* play_tm */
      3,			    /* diffic */
-     " ", " ", " ", " ", " ", /* ssn,name,race,sex,title,tclass */
-     0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0,
+     " ",
+     " ",
+     " ",
+     " ",
+     " ", /* ssn,name,race,sex,title,tclass */
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
      {"", "", "", "", ""}, /* history */
      false,
-     0, 0, 0, /* mr, quests, cur_quest */
-     0, 0, 0
-    },
+     0,
+     0,
+     0, /* mr, quests, cur_quest */
+     0,
+     0,
+     0},
     /* stat */
     {
      {0, 0, 0, 0, 0, 0}, /* p  permanent */
@@ -178,22 +214,67 @@ player_type py = {
      {0, 0, 0, 0, 0, 0}  /* l  amt lost */
     },
     /* flags */
-    {false, false,
-     0, 0, 0, 0, 0,
-     7500, 2,
-     0, 0, 0,
+    {false,
      false,
-     0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0,
-     false, false, false, false, false,
-     false, false, false, false, false,
-     false, false,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7500,
+     2,
+     0,
+     0,
+     0,
+     false,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
      {false, false, false, false, false, false}, /* sustain */
      false,
-     0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0,
-     false, false, false, false}};
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     false,
+     false,
+     false,
+     false}};
 
 char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
     /*				  array [1..max_class] of */
@@ -2543,9 +2624,9 @@ char const *metals[MAX_METALS] = {
     "Steel Plated",  "Tin Plated",  "Zinc Plated",      "Uranium"};
 
 char const *horns[MAX_HORNS] = {"Bag Pipes", "Bugle", "Conch Shell", "Fife",
-			  "Harmonica", "Horn",  "Picolo",      "Pipes",
-			  "Recorder",  "Reed",  "Trumpet",     "Tuba",
-			  "Whistle"};
+				"Harmonica", "Horn",  "Picolo",      "Pipes",
+				"Recorder",  "Reed",  "Trumpet",     "Tuba",
+				"Whistle"};
 
 char const *rocks[MAX_ROCKS] = {
     "Amber",      "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
@@ -2570,8 +2651,8 @@ char const *amulets[MAX_AMULETS] = {
     "Tiger eye", "Topaz",    "Turquoise"};
 
 char const *cloths[MAX_CLOTHS] = {"Burlap",     "Cotton",     "Wool",
-			    "Sack-cloth", "Rabbit-fur", "Lizard-skin",
-			    "Goat-skin"};
+				  "Sack-cloth", "Rabbit-fur", "Lizard-skin",
+				  "Goat-skin"};
 
 char const *syllables[MAX_SYLLABLES] = {
     "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",

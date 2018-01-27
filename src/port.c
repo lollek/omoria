@@ -85,7 +85,7 @@ void default_signals() {}
    The first arg indicates a major disturbance, which affects search.
    The second arg indicates a light change. */
 /* see moria1.c from umoria */
-void disturb(s, l) int s, l;
+void disturb(__attribute__((unused)) int s, __attribute__((unused)) int l)
 {
 #if 0
   command_count = 0;

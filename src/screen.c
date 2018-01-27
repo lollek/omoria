@@ -145,7 +145,7 @@ void prt_stat_attr(vtype stat_name, unsigned char stat, unsigned char loss,
 	} else {
 		cnv_stat(stat, out_val1);
 		put_buffer_attr(stat_name, row, column, A_DIM);
-		put_buffer(out_val1, row, column + strlen(stat_name));
+		put_buffer((char *)out_val1, row, column + strlen(stat_name));
 	}
 
 	LEAVE("prt_stat_attr", "");
@@ -167,14 +167,15 @@ void prt_stat(vtype stat_name, unsigned char stat, long row, long column)
 
 void cnv_stat(unsigned char stat, stat_s_type out_val)
 {
-	long part1, part2;
+	long part1;
+	long part2;
 
 	if (stat > 150) {
 		part1 = 18;
 		part2 = stat - 150;
-		sprintf(out_val, "%2ld/%-2ld", part1, part2);
+		sprintf((char *)out_val, "%2ld/%-2ld", part1, part2);
 	} else {
-		sprintf(out_val, "%2d   ", 3 + (stat div 10));
+		sprintf((char *)out_val, "%2d   ", 3 + (stat div 10));
 	}
 }
 
