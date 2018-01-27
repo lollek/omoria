@@ -505,7 +505,7 @@ extern long tohit_adj();
 extern long toac_adj();
 extern long todis_adj();
 extern long todam_adj();
-extern char *likert(long x, long y, btype result);
+extern char *likert(long x, long y, char *result);
 extern unsigned char characters_sex();
 extern unsigned short max_allowable_weight();
 extern unsigned short min_allowable_weight();

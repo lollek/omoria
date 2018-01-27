@@ -273,9 +273,9 @@ player_type py = {
      false,
      false}};
 
-btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
+char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
     /*				  array [1..max_class] of */
-    /*				  array [1..max_player_level] of btype; */
+    /*				  array [1..max_player_level] of char const*; */
     {
      /*{ Warrior	} */
      {"Novice", "Veteran(1st)", "Veteran(2nd)", "Veteran(3rd)", "Warrior(1st)",

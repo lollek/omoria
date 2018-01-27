@@ -10,7 +10,6 @@ typedef struct quad_type
 	unsigned short l1;
 } quad_type;
 
-typedef char btype[14 + 2];
 typedef char ctype[26 + 2];
 typedef char dtype[5 + 2];
 typedef char etype[34 + 2];
