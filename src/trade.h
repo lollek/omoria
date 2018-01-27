@@ -27,33 +27,33 @@ typedef struct trade_account_type
 {
 	uid_t uid;
 	char username[13];
-	integer master_id;
-	integer claim_check;
+	long master_id;
+	long claim_check;
 } trade_account_type;
 
 typedef struct profit_record
 {
-	integer trade_type;
-	integer time;
-	integer money;
+	long trade_type;
+	long time;
+	long money;
 } profit_record;
 
 typedef struct for_sale_record
 {
-	integer trade_type;
-	integer time;
+	long trade_type;
+	long time;
 	treasure_type object;
 	trade_account_type seller;
-	integer bid_time;
-	integer best_bid;
+	long bid_time;
+	long best_bid;
 	trade_account_type best_bidder;
 } for_sale_record;
 
 typedef struct cash_record
 {
-	integer trade_type;
-	integer time;
-	integer amount;
+	long trade_type;
+	long time;
+	long amount;
 	trade_account_type owner;
 } cash_record;
 
@@ -73,7 +73,7 @@ typedef struct pinven_record
 
 typedef pinven_record *pinven_ptr;
 
-#define ROUND(x) ((integer)((x)+.5))
+#define ROUND(x) ((long)((x)+.5))
 
 extern boolean trade_file_open(FILE **tf, boolean *busy, boolean create);
 extern void trade_file_close(FILE **tf);

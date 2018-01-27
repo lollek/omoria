@@ -229,7 +229,7 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file)
 
 	FILE *file1;
 	vtype in_line;
-	integer i1;
+	long i1;
 	boolean exit_flag = false;
 
 	file1 = priv_fopen(the_file, "r");
@@ -539,8 +539,8 @@ void file_character()
 {
 	/*{ Print the character to a file or device               -RAK-   }*/
 
-	integer i1, i2, xbth, xbthb, xfos, xsrh, xstl, xdis;
-	integer xsave, xdev, xswm, xrep;
+	long i1, i2, xbth, xbthb, xfos, xsrh, xstl, xdis;
+	long xsave, xdev, xswm, xrep;
 	vtype xinfra;
 	FILE *file1;
 	vtype out_val, filename1, prt1, prt2;
@@ -880,7 +880,7 @@ void print_map()
 {
 	/*{ Prints dungeon map to external file                       -RAK- }*/
 
-	integer i1, i2, i3, i4, i5, i6, i7, i8;
+	long i1, i2, i3, i4, i5, i6, i7, i8;
 	char dun_line[OUTPAGE_WIDTH + 10];
 	char filename1[81];
 	char tmp;
@@ -971,7 +971,7 @@ void print_objects()
 	/*{ the objects produced is a sampling of objects which            }*/
 	/*{ be expected to appear on that level.                           }*/
 
-	integer nobj, i1, i2, level;
+	long nobj, i1, i2, level;
 	vtype filename1, tmp_str;
 	FILE *file1;
 
@@ -1035,7 +1035,7 @@ void print_monsters()
 {
 	/*{ Prints a listing of monsters                              -RAK- }*/
 
-	integer i1, atype, adesc, acount, i5;
+	long i1, atype, adesc, acount, i5;
 	vtype out_val, filename1;
 	vtype attstr, attx, s1;
 	char *achar;
@@ -1904,7 +1904,7 @@ boolean close_top_scores(FILE **f1)
 	return return_value;
 }
 
-char *center(char *in_str, integer str_len, char *out_str)
+char *center(char *in_str, long str_len, char *out_str)
 {
 	int i, j;
 
@@ -1921,7 +1921,7 @@ char *center(char *in_str, integer str_len, char *out_str)
 	return out_str;
 }
 
-char *format_top_score(vtype out_str, char *username, integer score, int diffic,
+char *format_top_score(vtype out_str, char *username, long score, int diffic,
 		       char *charname, int level, char *race, char *class)
 {
 	vtype s1, s2, s3, s4;

@@ -15,7 +15,7 @@ void prt_equipment(void);
  *  @start: Equpment number to start from (1 = first)
  *  @clear: Clear the line after last equipment
  */
-void prt_equipment_args(integer y, integer x, integer start, boolean clear);
+void prt_equipment_args(long y, long x, long start, boolean clear);
 
 /**
  * -RAK-
@@ -27,27 +27,27 @@ extern void prt_map();
  * -RAK-
  *  prt_stat() - Print character stat in given row, column
  */
-extern void prt_stat(vtype stat_name, byteint stat, integer row,
-		     integer column);
+extern void prt_stat(vtype stat_name, unsigned char stat, long row,
+		     long column);
 
 /**
  * -RAK-
  * prt_stat_attr() - Print character stat in a given row, column
  */
-extern void prt_stat_attr(vtype stat_name, byteint stat, byteint loss,
-			  integer row, integer column);
+extern void prt_stat_attr(vtype stat_name, unsigned char stat,
+			  unsigned char loss, long row, long column);
 
 /**
  * -RAK-
  *  prt_field() - Print character info in a given row, column
  */
-extern void prt_field(vtype info, integer row, integer column);
+extern void prt_field(vtype info, long row, long column);
 
 /**
  * -RAK-
  *  prt_num() - Print number with header at given row, column
  */
-extern void prt_num(vtype header, integer num, integer row, integer column);
+extern void prt_num(vtype header, long num, long row, long column);
 
 /**
  * -RAK-
@@ -175,7 +175,8 @@ extern void prt_experience();
 /**
  * prt_6_stats()
  */
-extern void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col);
+extern void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
+			unsigned char col);
 
 /**
  * -RAK-

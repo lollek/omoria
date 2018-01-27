@@ -28,7 +28,7 @@ void sort_objects()
 {
 	/*	{ Order the treasure list by level			-RAK- */
 	/*} */
-	integer i1, i2, i3, gap;
+	long i1, i2, i3, gap;
 	treasure_type tmp;
 
 	ENTER(("sort_objects", ""));
@@ -121,7 +121,7 @@ void init_t_level()
 
 void price_adjust()
 {
-	integer i1;
+	long i1;
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
 		object_list[i1].cost =
 		    trunc(object_list[i1].cost * COST_ADJ + 0.99);
@@ -135,7 +135,7 @@ void price_adjust()
 
 void item_weight_adjust()
 {
-	integer i1;
+	long i1;
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
 		object_list[i1].weight *= WEIGHT_ADJ;
 	}
@@ -153,8 +153,8 @@ boolean check_time()
 	/* default hours are defined in values.h, in the days array */
 
 	struct tm now;
-	integer cur_time;
-	integer day, hour;
+	long cur_time;
+	long day, hour;
 	boolean return_value = false;
 
 	/*{ Returns the day number; 1=Sunday...7=Saturday         -RAK-   }*/
@@ -178,11 +178,11 @@ boolean already_playing()
 	return false;
 }
 
-char *cost_str(integer amt, string result)
+char *cost_str(long amt, string result)
 {
 	/*{ Return string describing how much the amount is worth	-DMF-
 	 * }*/
-	integer amtd9 = amt div 9;
+	long amtd9 = amt div 9;
 
 	if (amtd9 >= MITHRIL_VALUE) {
 		sprintf(result, "%ld mithril",
@@ -210,7 +210,7 @@ void reset_total_cash()
 {
 	/*{ recomputes cash totals for player and bank }*/
 
-	integer i1;
+	long i1;
 
 	py.misc.money[TOTAL_] = 0;
 	for (i1 = IRON; i1 <= MITHRIL; i1++) {
@@ -225,11 +225,11 @@ void reset_total_cash()
 	bank[TOTAL_] = bank[TOTAL_] div GOLD_VALUE;
 }
 
-integer weight_limit()
+long weight_limit()
 {
 	/*	{ Computes current weight limit				-RAK-
 	 * }*/
-	integer weight_cap;
+	long weight_cap;
 
 	weight_cap = (py.stat.c[STR] + 30) * PLAYER_WEIGHT_CAP + py.misc.wt;
 	if (weight_cap > 3000) {
@@ -273,7 +273,7 @@ void adv_time(boolean flag)
 	}
 }
 
-void check_kickout_time(integer num, integer check)
+void check_kickout_time(long num, long check)
 {
 	/*{ Check for kicking people out of the game              -DMF-   }*/
 
@@ -294,7 +294,7 @@ void check_kickout_time(integer num, integer check)
 	}
 }
 
-chtype get_loc_symbol(integer y, integer x)
+chtype get_loc_symbol(long y, long x)
 {
 	/* check lights and stuff before calling loc_symbol */
 
@@ -308,11 +308,11 @@ chtype get_loc_symbol(integer y, integer x)
 		return ' ';
 }
 
-chtype loc_symbol(integer y, integer x)
+chtype loc_symbol(long y, long x)
 {
-	byteint const cptr = cave[y][x].cptr;
-	byteint const tptr = cave[y][x].tptr;
-	byteint const fval = cave[y][x].fval;
+	unsigned char const cptr = cave[y][x].cptr;
+	unsigned char const tptr = cave[y][x].tptr;
+	unsigned char const fval = cave[y][x].fval;
 
 	chtype sym;
 
@@ -325,7 +325,7 @@ chtype loc_symbol(integer y, integer x)
 		if (cptr > 1) {
 
 			/* with m_list[cptr] do; */
-			wordint const mptr = m_list[cptr].mptr;
+			unsigned short const mptr = m_list[cptr].mptr;
 			if ((m_list[cptr].ml) &&
 			    (!is_in(fval, water_set) ||
 			     (is_in(fval, water_set) &&
@@ -380,8 +380,7 @@ chtype loc_symbol(integer y, integer x)
 	if ((sym & 0x7F) < 32 || (sym & 0x7F) > 126) {
 		MSG(("ERROR: loc_sym: (%ld, %ld) = %ld   "
 		     "cptr=%ld tptr=%ld fval=%ld\n",
-		     x, y, (integer)sym, (integer)cptr, (integer)tptr,
-		     (integer)fval));
+		     x, y, (long)sym, (long)cptr, (long)tptr, (long)fval));
 	}
 #endif
 
@@ -390,7 +389,7 @@ chtype loc_symbol(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-byteint squish_stat(integer this)
+unsigned char squish_stat(long this)
 {
 	if (this > 250) {
 		return 250;
@@ -404,13 +403,13 @@ byteint squish_stat(integer this)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-byteint de_statp(byteint stat)
+unsigned char de_statp(unsigned char stat)
 {
 	/*	{ Decreases a stat by one randomized level		-RAK-
 	 * }*/
 
-	byteint duh;
-	byteint return_value;
+	unsigned char duh;
+	unsigned char return_value;
 
 	if (stat < 11) {
 		return_value = stat;
@@ -431,12 +430,12 @@ byteint de_statp(byteint stat)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-byteint in_statp(byteint stat)
+unsigned char in_statp(unsigned char stat)
 {
 	/*	{ Increases a stat by one randomized level		-RAK-
 	 * }*/
 
-	byteint return_value;
+	unsigned char return_value;
 
 	if (stat < 150) {
 		return_value = 10;
@@ -455,12 +454,12 @@ byteint in_statp(byteint stat)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer todam_adj()
+long todam_adj()
 {
 	/*	{ Returns a character's adjustment to damage		-JWT-
 	 * }*/
-	integer return_value;
-	integer str;
+	long return_value;
+	long str;
 
 	str = py.stat.c[STR];
 
@@ -490,12 +489,12 @@ integer todam_adj()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer todis_adj()
+long todis_adj()
 {
 	/*	{ Returns a character's adjustment to disarm		-RAK-
 	 * }*/
-	integer return_value;
-	integer dex;
+	long return_value;
+	long dex;
 
 	dex = py.stat.c[DEX];
 
@@ -530,13 +529,13 @@ integer todis_adj()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer con_adj()
+long con_adj()
 {
 	/*	{ Returns a character's adjustment to hit points	-JWT-
 	 * }*/
 
-	integer con;
-	integer return_value;
+	long con;
+	long return_value;
 
 	con = py.stat.c[CON];
 
@@ -565,12 +564,12 @@ integer con_adj()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-real chr_adj()
+float chr_adj()
 {
 	/*{ Adjustment for charisma				-RAK-	}*/
 	/*{ Percent decrease or increase in price of goods		}*/
 
-	real return_value;
+	float return_value;
 
 	/* with py.stat do; */
 	if (PS.c[CHR] > 249) {
@@ -594,13 +593,13 @@ real chr_adj()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer tohit_adj()
+long tohit_adj()
 {
 	/*	{ Returns a character's adjustment to hit.		-JWT-
 	 * }*/
 
-	integer total;
-	integer dex, str;
+	long total;
+	long dex, str;
 
 	dex = py.stat.c[DEX];
 	str = py.stat.c[STR];
@@ -648,13 +647,13 @@ integer tohit_adj()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer toac_adj()
+long toac_adj()
 {
 	/*	{ Returns a character's adjustment to armor class	-JWT-
 	 * }*/
 
-	integer dex;
-	integer return_value;
+	long dex;
+	long return_value;
 
 	dex = py.stat.c[DEX];
 
@@ -685,7 +684,7 @@ integer toac_adj()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-byteint characters_sex()
+unsigned char characters_sex()
 {
 	/*	{ Determine character's sex				-DCJ-
 	 * }*/
@@ -697,7 +696,7 @@ byteint characters_sex()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void add_days(game_time_type *ti, integer d)
+void add_days(game_time_type *ti, long d)
 {
 	/* Add days to the current date -DMF-
 	 *  ti->day++;
@@ -719,8 +718,8 @@ void add_days(game_time_type *ti, integer d)
 	 * 28 days each), which i've kept:
 	 */
 
-	byteint yrs;
-	byteint mos;
+	unsigned char yrs;
+	unsigned char mos;
 
 	yrs = (int)(d / 364); /* how many years you get from 'd' days */
 	d -= 364 * yrs;       /* d = however many days are left over... */
@@ -740,11 +739,10 @@ void add_days(game_time_type *ti, integer d)
 	}
 }
 
-void am__add_munny(integer *amount, integer *to_bank, integer wl,
-		   integer type_num)
+void am__add_munny(long *amount, long *to_bank, long wl, long type_num)
 {
-	integer trans, w_max;
-	integer coin_num;
+	long trans, w_max;
+	long coin_num;
 
 	coin_num = py.misc.money[type_num];
 	trans = *amount div coin_value[type_num];
@@ -761,14 +759,14 @@ void am__add_munny(integer *amount, integer *to_bank, integer wl,
 	*amount = *amount % coin_value[type_num];
 }
 /*//////////////////////////////////////////////////////////////////// */
-void add_money(integer amount)
+void add_money(long amount)
 {
 	/*	{ Add money in the lightest possible amounts.
 	 * -DMF-/DY}*/
 
-	integer to_bank, wl, i1;
+	long to_bank, wl, i1;
 	string out_val, out2;
-	integer type_num;
+	long type_num;
 
 	ENTER(("add_money", ""));
 
@@ -845,9 +843,9 @@ treas_ptr money_carry()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean sm__sub_munny(integer *amt, integer *wt, integer type_num)
+boolean sm__sub_munny(long *amt, long *wt, long type_num)
 {
-	integer trans, coin_num;
+	long trans, coin_num;
 	boolean return_value;
 
 	coin_num = py.misc.money[type_num];
@@ -863,12 +861,12 @@ boolean sm__sub_munny(integer *amt, integer *wt, integer type_num)
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void subtract_money(integer amount, boolean make_change)
+void subtract_money(long amount, boolean make_change)
 {
 	/*{ Give money to store, but can give back change	 -DMF-/DY}*/
 
-	integer amt, wt;
-	integer type_num;
+	long amt, wt;
+	long type_num;
 
 	amt = amount;
 	wt = 0;
@@ -893,7 +891,7 @@ void char_inven_init()
 	/*	{ Init players with some belongings			-RAK-
 	 * }*/
 
-	integer i1, i2;
+	long i1, i2;
 
 	ENTER(("char_inven_init", ""));
 	/*	printf("\nENTER char_inven_init\n\n"); fflush(stdout); */
@@ -920,10 +918,10 @@ void char_inven_init()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer spell_adj(stat_set attr)
+long spell_adj(stat_set attr)
 {
-	integer statval;
-	integer return_value;
+	long statval;
+	long return_value;
 
 	statval = py.stat.c[(int)attr];
 
@@ -949,15 +947,15 @@ integer spell_adj(stat_set attr)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer bard_adj() { return (spell_adj(CHR) + spell_adj(DEX) + 1)div 2; }
+long bard_adj() { return (spell_adj(CHR) + spell_adj(DEX) + 1)div 2; }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer druid_adj() { return (spell_adj(CHR) + spell_adj(WIS) + 1)div 2; }
+long druid_adj() { return (spell_adj(CHR) + spell_adj(WIS) + 1)div 2; }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer monk_adj() { return (spell_adj(INT) + spell_adj(WIS) + 1)div 2; }
+long monk_adj() { return (spell_adj(INT) + spell_adj(WIS) + 1)div 2; }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -968,7 +966,7 @@ boolean learn_spell(boolean *redraw)
 	unsigned long spell_flag = 0;
 	unsigned long spell_flag2 = 0;
 	spl_type spell;
-	integer new_spells = num_new_spells(spell_adj(INT));
+	long new_spells = num_new_spells(spell_adj(INT));
 	boolean return_value = false;
 	treas_ptr ptr;
 
@@ -999,8 +997,8 @@ boolean learn_spell(boolean *redraw)
 		} while ((i2 != 0) || (i4 != 0));
 
 		if (i1 > 0) {
-			integer sn;
-			integer sc;
+			long sn;
+			long sc;
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
@@ -1075,8 +1073,8 @@ boolean learn_discipline()
 	/*{ Learn some disciplines (Monk)				-RAK-
 	 * }*/
 
-	integer i1, i2, i3, i4, new_spell;
-	integer test_array[33]; /*	: array [1..32] of integer;*/
+	long i1, i2, i3, i4, new_spell;
+	long test_array[33]; /*	: array [1..32] of long;*/
 	unsigned long spell_flag, spell_flag2;
 	boolean return_value = false;
 
@@ -1146,8 +1144,8 @@ boolean learn_song(boolean *redraw)
 	/*{ Learn some magic songs (Bard)			-Cap'n-	}*/
 
 	unsigned long i2, i4;
-	integer i1, i3, sn, sc;
-	integer new_spells;
+	long i1, i3, sn, sc;
+	long new_spells;
 	unsigned long spell_flag, spell_flag2;
 	spl_type spell;
 	treas_ptr curse;
@@ -1216,8 +1214,8 @@ boolean learn_druid()
 {
 	/*{ Learn some druid spells (Druid)			-Cap'n-	}*/
 
-	integer i1, i2, i3, i4, new_spell;
-	integer test_array[33]; /*	: array [1..32] of integer;*/
+	long i1, i2, i3, i4, new_spell;
+	long test_array[33]; /*	: array [1..32] of long;*/
 	unsigned long spell_flag, spell_flag2;
 	treas_ptr curse;
 	boolean return_value = false;
@@ -1290,12 +1288,12 @@ boolean learn_druid()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void gain_mana(integer amount)
+void gain_mana(long amount)
 {
 	/*{ Gain some mana if you know at least one spell 	-RAK-	}*/
 
-	integer i1;
-	integer new_mana;
+	long i1;
+	long new_mana;
 	boolean knows_spell = false;
 
 	ENTER(("gain_mana", ""));
@@ -1368,12 +1366,12 @@ void gain_mana(integer amount)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void print_new_spells(spl_type spell, integer num, boolean *redraw)
+void print_new_spells(spl_type spell, long num, boolean *redraw)
 {
 
 	/* Print list of spells     -RAK- */
 
-	integer i1;
+	long i1;
 	vtype out_val;
 
 	*redraw = true;
@@ -1406,8 +1404,8 @@ void print_new_spells(spl_type spell, integer num, boolean *redraw)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean get_spell(spl_type spell, integer num, integer *sn, integer *sc,
-		  vtype prompt, boolean *redraw)
+boolean get_spell(spl_type spell, long num, long *sn, long *sc, vtype prompt,
+		  boolean *redraw)
 {
 	/*{ Returns spell pointer					-RAK-
 	 * }*/
@@ -1464,9 +1462,9 @@ boolean get_spell(spl_type spell, integer num, integer *sn, integer *sc,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer num_new_spells(integer smarts)
+long num_new_spells(long smarts)
 {
-	integer return_value;
+	long return_value;
 
 	ENTER(("num_new_spells", ""));
 
@@ -1540,7 +1538,7 @@ void spell_chance(spl_rec *spell)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer bit_pos(unsigned long *test)
+long bit_pos(unsigned long *test)
 {
 	/* Returns position of first set bit			-RAK-	*/
 	/*     and clears that bit */
@@ -1563,11 +1561,11 @@ integer bit_pos(unsigned long *test)
 
 /*//////////////////////////////////////////////////////////////////// */
 
-integer bit_pos64(unsigned long *high, unsigned long *low)
+long bit_pos64(unsigned long *high, unsigned long *low)
 {
 	/*!	This is the 64-bit version of bit_pos */
 
-	integer pos;
+	long pos;
 
 	pos = bit_pos(low);
 	if (pos == -1) {
@@ -1598,8 +1596,7 @@ void insert_str(char *object_str, char *mtc_str, char *insert_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void insert_num(char *object_str, char *mtc_str, integer number,
-		boolean show_sign)
+void insert_num(char *object_str, char *mtc_str, long number, boolean show_sign)
 {
 	vtype numstr;
 	char const *sign = number > 0 && show_sign ? "+" : "";
@@ -1612,7 +1609,7 @@ void insert_num(char *object_str, char *mtc_str, integer number,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void set_difficulty(integer diff)
+void set_difficulty(long diff)
 {
 
 	/*	{ Set up the variables that depend upon the difficulty of
@@ -1721,7 +1718,7 @@ void set_difficulty(integer diff)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *day_of_week_string(integer day, unsigned wid, string result)
+char *day_of_week_string(long day, unsigned wid, string result)
 {
 	/*{ Return first X characters of day of week		-DMF-	}*/
 	switch (day % 7) {
@@ -1757,7 +1754,7 @@ char *day_of_week_string(integer day, unsigned wid, string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *month_string(integer mon, string result)
+char *month_string(long mon, string result)
 {
 	/*{ Return the name of a numbered month			-DMF-	}*/
 	switch (mon) {
@@ -1807,11 +1804,11 @@ char *month_string(integer mon, string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *time_string(integer hour, integer sec, string result)
+char *time_string(long hour, long sec, string result)
 {
 	/*{ Return the time in the format HH:MM			-DMF-	}*/
 
-	integer min;
+	long min;
 
 	min = (sec * 0.15);
 	sprintf(result, "%02ld:%02ld", hour, min);
@@ -1822,7 +1819,7 @@ char *time_string(integer hour, integer sec, string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *place_string(integer num, string result)
+char *place_string(long num, string result)
 {
 	/*{ Return the ending to a number string (1st, 2nd, etc)	-DMF-
 	 * }*/
@@ -1866,7 +1863,7 @@ char *place_string(integer num, string result)
 void gain_level()
 {
 	/*{ Increases hit points and level			-RAK-	}*/
-	integer nhp, dif_exp, need_exp;
+	long nhp, dif_exp, need_exp;
 	boolean redraw;
 	vtype out_val;
 
@@ -1928,11 +1925,11 @@ void gain_level()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer get_hitdie()
+long get_hitdie()
 {
 	/*{ Calculates hit points for each level that is gained.	-RAK-
 	 * }*/
-	integer return_value;
+	long return_value;
 
 	return_value = randint(py.misc.hitdie) + con_adj();
 
@@ -1942,7 +1939,7 @@ integer get_hitdie()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean in_bounds(integer y, integer x)
+boolean in_bounds(long y, long x)
 {
 	/*{ Checks a co-ordinate for in bounds status		-RAK-	}*/
 	boolean return_value;
@@ -1958,7 +1955,7 @@ boolean in_bounds(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-wordint max_allowable_weight()
+unsigned short max_allowable_weight()
 {
 	boolean is_male = characters_sex() == MALE;
 
@@ -1966,7 +1963,7 @@ wordint max_allowable_weight()
 	       4 * race_weight_modifier(py.misc.prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
-wordint min_allowable_weight()
+unsigned short min_allowable_weight()
 {
 	boolean is_male = characters_sex() == MALE;
 
@@ -1976,11 +1973,11 @@ wordint min_allowable_weight()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean move_dir(integer dir, integer *y, integer *x) /* was move */
+boolean move_dir(long dir, long *y, long *x) /* was move */
 {
 	/*{ Given direction 'dir', returns new row, column location -RAK- }*/
 
-	integer new_row, new_col;
+	long new_row, new_col;
 	boolean return_value = false;
 
 	new_row = *y + dy_of[dir];
@@ -1997,7 +1994,7 @@ boolean move_dir(integer dir, integer *y, integer *x) /* was move */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void popm(integer *x)
+void popm(long *x)
 {
 	/*{ Returns a pointer to next free space			-RAK-
 	 * }*/
@@ -2013,7 +2010,7 @@ void popm(integer *x)
 	m_list[*x].nptr = 0;
 }
 
-void pushm(integer x)
+void pushm(long x)
 {
 	/*{ Pushs a record back onto free space list		-RAK-	}*/
 
@@ -2105,7 +2102,7 @@ void validate_monsters()
 /*//////////////////////////////////////////////////////////////////// */
 void compact_monsters()
 {
-	integer i1, i2, i3, ctr, cur_dis;
+	long i1, i2, i3, ctr, cur_dis;
 	boolean delete_1, delete_any;
 
 	validate_monsters();
@@ -2158,7 +2155,7 @@ void compact_monsters()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void popt(integer *x)
+void popt(long *x)
 {
 	/*{ Gives pointer to next free space			-RAK-	}*/
 
@@ -2170,7 +2167,7 @@ void popt(integer *x)
 	tcptr = t_list[*x].p1;
 }
 
-void pusht(integer x)
+void pusht(long x)
 {
 	/*{ Pushs a record back onto free space list		-RAK-	}*/
 
@@ -2186,7 +2183,7 @@ void compact_objects()
 	/*{ If too many objects on floor level, delete some of them-RAK-
 	 * }*/
 
-	integer i1, i2, ctr, cur_dis;
+	long i1, i2, ctr, cur_dis;
 	boolean flag;
 	obj_set fragile_stuff = {1, 6, 9,
 				 0}; /* open pit, loose rock, loose rock */
@@ -2277,7 +2274,7 @@ void compact_objects()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean test_light(integer y, integer x)
+boolean test_light(long y, long x)
 {
 	/*{ Tests a spot for light or field mark status		-RAK-	}*/
 	return ((cave[y][x].pl) || (cave[y][x].fm) || (cave[y][x].tl));
@@ -2286,7 +2283,7 @@ boolean test_light(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer distance(integer y1, integer x1, integer y2, integer x2)
+long distance(long y1, long x1, long y2, long x2)
 {
 	register int dy, dx;
 
@@ -2312,12 +2309,12 @@ integer distance(integer y1, integer x1, integer y2, integer x2)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean los(integer y1, integer x1, integer y2, integer x2)
+boolean los(long y1, long x1, long y2, long x2)
 {
 	/*{ Returns true if no obstructions between two given points -RAK-}*/
 
-	integer ty, tx, stepy, stepx, p1, p2;
-	real slp, tmp;
+	long ty, tx, stepy, stepx, p1, p2;
+	float slp, tmp;
 	boolean flag = true;
 
 	/*  ENTER("los", "m") */
@@ -2369,7 +2366,7 @@ boolean los(integer y1, integer x1, integer y2, integer x2)
 
 			/*      fprintf(debug_file,"los: ty>tx  stepy = */
 			/*      %d\n",stepy); */
-			slp = ((real)labs(tx) / (real)labs(ty)) * stepx;
+			slp = ((float)labs(tx) / (float)labs(ty)) * stepx;
 			tmp = x2;
 			do {
 				y2 += stepy;
@@ -2393,7 +2390,7 @@ boolean los(integer y1, integer x1, integer y2, integer x2)
 
 			/*      fprintf(debug_file,"los: tx>ty  stepx = */
 			/*      %d\n",stepx); */
-			slp = ((real)labs(ty) / (real)labs(tx)) * stepy;
+			slp = ((float)labs(ty) / (float)labs(tx)) * stepy;
 			tmp = y2;
 			do {
 				x2 += stepx;
@@ -2426,7 +2423,7 @@ void tlink()
 	/*{ Link all free space in treasure list together
 	 * }*/
 
-	integer i1;
+	long i1;
 
 	for (i1 = 0; i1 <= MAX_TALLOC; i1++) {
 		t_list[i1] = blank_treasure;
@@ -2441,7 +2438,7 @@ void mlink()
 	/*{ Link all free space in monster list together
 	 * }*/
 
-	integer i1;
+	long i1;
 
 	for (i1 = 0; i1 <= MAX_MALLOC; i1++) {
 		m_list[i1] = blank_monster;
@@ -2455,11 +2452,11 @@ void mlink()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_gold(integer y, integer x)
+void place_gold(long y, long x)
 {
 	/*{ Places a treasure (Gold or Gems) at given row, column -RAK-	}*/
 
-	integer cur_pos, i1;
+	long cur_pos, i1;
 
 	popt(&cur_pos);
 	i1 = (2 + randint(dun_level + 4) + randint(dun_level + 4))div 4;
@@ -2481,11 +2478,11 @@ void place_gold(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_a_staircase(integer y, integer x, integer typ)
+void place_a_staircase(long y, long x, long typ)
 {
 	/*{ Place an up staircase at given y,x			-RAK-	}*/
 
-	integer cur_pos;
+	long cur_pos;
 
 	if (cave[y][x].tptr != 0) {
 		pusht(cave[y][x].tptr);
@@ -2513,11 +2510,11 @@ void place_a_staircase(integer y, integer x, integer typ)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_stairs(integer typ, integer num, integer walls)
+void place_stairs(long typ, long num, long walls)
 {
 	/*{ Places a staircase 1=up, 2=down			-RAK-	}*/
 
-	integer i1, i2, y1, x1, y2, x2;
+	long i1, i2, y1, x1, y2, x2;
 	boolean flag;
 
 	for (i1 = 0; i1 < num; i1++) {
@@ -2562,7 +2559,7 @@ void place_stairs(integer typ, integer num, integer walls)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer get_obj_num(integer level, integer tries)
+long get_obj_num(long level, long tries)
 {
 	/*{ Returns the array number of a random object		-RAK-	}*/
 
@@ -2576,7 +2573,7 @@ integer get_obj_num(integer level, integer tries)
 	   makes a level n objects occur approx 2/n% of the time on level n,
 	   and 1/2n are 0th level. */
 
-	integer i1, i2, i3, i4;
+	long i1, i2, i3, i4;
 
 	if (level > MAX_OBJ_LEVEL) {
 		level = MAX_OBJ_LEVEL;
@@ -2610,10 +2607,10 @@ integer get_obj_num(integer level, integer tries)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-void place_object(integer y, integer x)
+void place_object(long y, long x)
 {
 	/*{ Places an object at given row, column co-ordinate	-RAK-	}*/
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 	cave[y][x].tptr = cur_pos;
@@ -2624,11 +2621,11 @@ void place_object(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer next_to4(integer y, integer x, obj_set group_set)
+long next_to4(long y, long x, obj_set group_set)
 {
 	/*{ Checks points north, south, east, and west for a type -RAK-	}*/
 
-	integer i1;
+	long i1;
 
 	i1 = 0;
 
@@ -2659,11 +2656,11 @@ integer next_to4(integer y, integer x, obj_set group_set)
 	return i1;
 }
 
-integer next_to8(integer y, integer x, obj_set group_set)
+long next_to8(long y, long x, obj_set group_set)
 {
 	/*{ Checks all adjacent spots for elements		-RAK-	*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 
 	i1 = 0;
 	for (i2 = (y - 1); i2 <= (y + 1); i2++) {
@@ -2681,14 +2678,14 @@ integer next_to8(integer y, integer x, obj_set group_set)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer max_hp(dtype const hp_str)
+long max_hp(dtype const hp_str)
 {
 	/* Gives Max hit points    -RAK- */
 
-	integer num;
-	integer die;
+	long num;
+	long die;
 	dtype hp_copy;
-	integer return_value;
+	long return_value;
 	char *ptr;
 
 	strcpy(hp_copy, hp_str);
@@ -2703,15 +2700,15 @@ integer max_hp(dtype const hp_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer damroll(dtype const dice)
+long damroll(dtype const dice)
 {
 	/*{ Converts input string into a dice roll		-RAK-	}*/
 	/*{	Normal input string will look like '2d6', '3d8'... etc. }*/
 
 	dtype dice_copy;
-	integer num = 0;
-	integer sides = 0;
-	integer return_value = 0;
+	long num = 0;
+	long sides = 0;
+	long return_value = 0;
 	char *ptr;
 
 	ENTER(("damroll", "m"))
@@ -2732,19 +2729,19 @@ integer damroll(dtype const dice)
 #define max(xx, yy) (((xx) > (yy)) ? (xx) : (yy))
 #define min(xx, yy) (((xx) < (yy)) ? (xx) : (yy))
 
-integer maxmin(integer x, integer y, integer z)
+long maxmin(long x, long y, long z)
 {
 	/* return max( min(x,y) - 1, z ) */
-	integer i1;
+	long i1;
 
 	i1 = min(x, y) - 1;
 	return max(i1, z);
 }
 
-integer minmax(integer x, integer y, integer z)
+long minmax(long x, long y, long z)
 {
 	/* return min( max(x,y) + 1, z ) */
-	integer i1;
+	long i1;
 
 	i1 = max(x, y) + 1;
 	return min(i1, z);
@@ -2752,11 +2749,11 @@ integer minmax(integer x, integer y, integer z)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean summon_land_monster(integer *y, integer *x, boolean slp)
+boolean summon_land_monster(long *y, long *x, boolean slp)
 {
 	/*{ Places land creature adjacent to given location	-RAK-	}*/
 
-	integer i1, i2, i3, i4, i5, count;
+	long i1, i2, i3, i4, i5, count;
 	boolean flag;
 	boolean return_value = false;
 
@@ -2836,11 +2833,11 @@ boolean summon_land_monster(integer *y, integer *x, boolean slp)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean summon_water_monster(integer *y, integer *x, boolean slp)
+boolean summon_water_monster(long *y, long *x, boolean slp)
 {
 	/*{ Places water creature adjacent to given location  -DMF-   }*/
 
-	integer i1, i2, i3, i4, i5, count;
+	long i1, i2, i3, i4, i5, count;
 	boolean flag;
 	boolean return_value = false;
 
@@ -2921,11 +2918,11 @@ boolean summon_water_monster(integer *y, integer *x, boolean slp)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean summon_undead(integer *y, integer *x)
+boolean summon_undead(long *y, long *x)
 {
 	/*{ Places undead adjacent to given location          -RAK-   }*/
 
-	integer i1, i2, i3, i4, i5, ctr;
+	long i1, i2, i3, i4, i5, ctr;
 	obj_set undead_set = {1, 2, 4, 5, 0};
 	boolean return_value = false;
 
@@ -2974,11 +2971,11 @@ boolean summon_undead(integer *y, integer *x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean summon_demon(integer *y, integer *x)
+boolean summon_demon(long *y, long *x)
 {
 	/*{ Places demon adjacent to given location           -RAK-   }*/
 
-	integer i1, i2, i3, i4, i5, ctr;
+	long i1, i2, i3, i4, i5, ctr;
 	obj_set demon_set = {1, 2, 4, 5, 0};
 	boolean return_value = false;
 
@@ -3029,11 +3026,11 @@ boolean summon_demon(integer *y, integer *x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean summon_breed(integer *y, integer *x)
+boolean summon_breed(long *y, long *x)
 {
 	/*{ Places breeding monster adjacent to given location }*/
 
-	integer i1, i2, i3, i4, i5, ctr;
+	long i1, i2, i3, i4, i5, ctr;
 	/*  obj_set   breed_set = {1,2,4,5,0}; */
 	boolean return_value = false;
 
@@ -3117,7 +3114,7 @@ boolean summon_breed(integer *y, integer *x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean player_saves(integer adjust)
+boolean player_saves(long adjust)
 {
 	/*{ Saving throws for player character... 		-RAK-	}*/
 	boolean return_value;
@@ -3137,10 +3134,10 @@ boolean player_spell_saves()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void sp__takey_munny(integer coin_value, integer *bank_assets, integer *to_bank,
-		     integer *from_bank)
+void sp__takey_munny(long coin_value, long *bank_assets, long *to_bank,
+		     long *from_bank)
 {
-	integer trans;
+	long trans;
 
 	trans = (*to_bank * GOLD_VALUE) / coin_value;
 	if (*bank_assets < trans) {
@@ -3152,12 +3149,12 @@ void sp__takey_munny(integer coin_value, integer *bank_assets, integer *to_bank,
 	py.misc.account -= (trans * coin_value) / GOLD_VALUE;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean send_page(integer to_bank)
+boolean send_page(long to_bank)
 {
 	/*{ Send a page to the bank to fetch money		-DMF-	}*/
 
 	boolean back;
-	integer from_bank;
+	long from_bank;
 	string out_val;
 
 	back = false;
@@ -3412,9 +3409,9 @@ char *show_current_time(char *result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer rotate_dir(integer dir, integer rot)
+long rotate_dir(long dir, long rot)
 {
-	integer return_value;
+	long return_value;
 
 	/*  ENTER("rotate_dir", "m") */
 	if (dir == 5) {
@@ -3431,12 +3428,12 @@ integer rotate_dir(integer dir, integer rot)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer attack_blows(integer weight, integer *wtohit)
+long attack_blows(long weight, long *wtohit)
 {
 	/*{ Weapon weight VS strength and dexterity               -RAK-   }*/
 
-	integer max_wield, adj_weight, blows, lev_skill;
-	integer a_dex;
+	long max_wield, adj_weight, blows, lev_skill;
+	long a_dex;
 
 	blows = 1;
 	*wtohit = 0;
@@ -3474,12 +3471,12 @@ integer attack_blows(integer weight, integer *wtohit)
 		/*{warriors 100-500, paladin 80-400, priest 60-300, mage
 		 * 40-200}*/
 		blows =
-		    trunc(0.8 + (real)blows / 3.0 + (real)lev_skill / 350.0);
+		    trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
 
 		/*{usually 3 for 18+ dex, 5 max except 6 for high level
 		 * warriors}*/
 		adj_weight =
-		    (integer)((real)PS.c[STR] / (real)(weight div 100) * 2.5);
+		    (long)((float)PS.c[STR] / (float)(weight div 100) * 2.5);
 
 		if (adj_weight < 1) {
 			blows = 1;
@@ -3501,13 +3498,12 @@ integer attack_blows(integer weight, integer *wtohit)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer critical_blow(integer weight, integer plus, boolean cs_sharp,
-		      boolean is_fired)
+long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 {
 	/*{ Critical hits, Nasty way to die...                    -RAK-   }*/
 
-	integer randomthing, py_crit;
-	integer return_value = 0;
+	long randomthing, py_crit;
+	long return_value = 0;
 
 	weight = weight div 100;
 	if (cs_sharp) {
@@ -3559,9 +3555,9 @@ integer critical_blow(integer weight, integer plus, boolean cs_sharp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void find_monster_name(vtype m_name, integer ptr, boolean begin_sentence)
+void find_monster_name(vtype m_name, long ptr, boolean begin_sentence)
 {
-	integer i2;
+	long i2;
 
 	i2 = m_list[ptr].mptr;
 
@@ -3584,14 +3580,14 @@ void find_monster_name(vtype m_name, integer ptr, boolean begin_sentence)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer get_hexdecant(integer dy, integer dx)
+long get_hexdecant(long dy, long dx)
 {
 	/*{ Returns hexdecant of dy,dx                    }*/
 	/*{ 0,1 = ea 2,3 = ne, 4,5 = n ... 14,15 = se     }*/
 
-	integer ay, ax;
-	integer hexdecant;
-	integer return_value;
+	long ay, ax;
+	long hexdecant;
+	long return_value;
 
 	ENTER(("get_hexdecant", "m"))
 
@@ -3624,7 +3620,7 @@ integer get_hexdecant(integer dy, integer dx)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void petrify(integer amt)
+void petrify(long amt)
 {
 	PF.petrification += randint(amt);
 
@@ -3651,8 +3647,8 @@ void place_win_monster()
 {
 	/*{ Places a monster at given location                    -RAK-   }*/
 
-	integer cur_pos;
-	integer y, x;
+	long cur_pos;
+	long y, x;
 
 	if (!total_winner) {
 		popm(&cur_pos);
@@ -3691,11 +3687,11 @@ void place_win_monster()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void alloc_object(obj_set alloc_set, integer typ, integer num)
+void alloc_object(obj_set alloc_set, long typ, long num)
 {
 	/*{ Allocates an object for tunnels and rooms             -RAK-   }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 
 	for (i3 = 1; i3 <= num; i3++) {
 		do {
@@ -3726,9 +3722,9 @@ void alloc_object(obj_set alloc_set, integer typ, integer num)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_open_door(integer y, integer x)
+void place_open_door(long y, long x)
 {
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -3740,9 +3736,9 @@ void place_open_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_broken_door(integer y, integer x)
+void place_broken_door(long y, long x)
 {
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -3755,9 +3751,9 @@ void place_broken_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_closed_door(integer y, integer x)
+void place_closed_door(long y, long x)
 {
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -3769,9 +3765,9 @@ void place_closed_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_locked_door(integer y, integer x)
+void place_locked_door(long y, long x)
 {
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -3784,9 +3780,9 @@ void place_locked_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_stuck_door(integer y, integer x)
+void place_stuck_door(long y, long x)
 {
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -3799,9 +3795,9 @@ void place_stuck_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_secret_door(integer y, integer x)
+void place_secret_door(long y, long x)
 {
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -3813,7 +3809,7 @@ void place_secret_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_door(integer y, integer x)
+void place_door(long y, long x)
 {
 
 	switch (randint(3)) {
@@ -3851,11 +3847,11 @@ void place_door(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void random_object(integer y, integer x, integer num)
+void random_object(long y, long x, long num)
 {
 	/*{ Creates objects nearby the coordinates given          -RAK-   }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 
 	do {
 		i1 = 0;
@@ -3882,7 +3878,7 @@ void random_object(integer y, integer x, integer num)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *likert(integer x, integer y, btype out_str)
+char *likert(long x, long y, btype out_str)
 {
 	/*{ Returns a rating of x depending on y                  -JWT-   }*/
 

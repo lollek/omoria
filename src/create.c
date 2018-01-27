@@ -3,9 +3,9 @@
 
 #include "imoria.h"
 
-byteint cc__old_stat(integer new_guy)
+unsigned char cc__old_stat(long new_guy)
 {
-	byteint return_value;
+	unsigned char return_value;
 
 	if (new_guy < 150) {
 		return_value = (squish_stat(new_guy) + 30)div 10;
@@ -16,9 +16,9 @@ byteint cc__old_stat(integer new_guy)
 	return return_value;
 }
 
-byteint cc__new_stat(integer old_guy)
+unsigned char cc__new_stat(long old_guy)
 {
-	byteint return_value;
+	unsigned char return_value;
 
 	if (old_guy < 18) {
 		return_value = squish_stat(old_guy * 10 - 30);
@@ -29,10 +29,10 @@ byteint cc__new_stat(integer old_guy)
 	return return_value;
 }
 
-integer cc__get_min_stat(string prompt, byteint max)
+long cc__get_min_stat(string prompt, unsigned char max)
 {
-	integer abil = 0;
-	integer perc;
+	long abil = 0;
+	long perc;
 	string tmp_str = "";
 	string out_str = "";
 
@@ -95,21 +95,21 @@ void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 	}
 }
 
-integer cc__get_stat()
+long cc__get_stat()
 {
 	/*	{ Generates character's stats				-JWT-
 	 * } */
-	integer i;
+	long i;
 
 	i = randint(4) + randint(4) + randint(4) + 5; /* 8..17 */
 	return (i - 3) * 10;			      /* 50..140 */
 }
 
-integer cc__change_stat(integer cur_stat, integer amount)
+long cc__change_stat(long cur_stat, long amount)
 {
 	/*	{ Changes stats by given amount				-JWT-
 	 * }*/
-	integer i;
+	long i;
 
 	if (amount < 0) {
 		for (i = -1; i >= amount; i--) {
@@ -124,7 +124,7 @@ integer cc__change_stat(integer cur_stat, integer amount)
 	return cur_stat;
 }
 
-byteint cc__max_in_statp(byteint stat)
+unsigned char cc__max_in_statp(unsigned char stat)
 {
 	if (stat < 150) {
 		stat += 10;
@@ -139,7 +139,7 @@ byteint cc__max_in_statp(byteint stat)
 	return stat;
 }
 
-byteint cc__max_de_statp(byteint stat)
+unsigned char cc__max_de_statp(unsigned char stat)
 {
 	if (stat < 11) {
 		stat = 0;
@@ -156,9 +156,9 @@ byteint cc__max_de_statp(byteint stat)
 	return stat;
 }
 
-integer cc__max_stat(integer cur_stat, integer amount)
+long cc__max_stat(long cur_stat, long amount)
 {
-	integer i;
+	long i;
 
 	if (amount < 0) {
 		for (i = -1; i >= amount; i--) {
@@ -178,7 +178,7 @@ boolean cc__choose_race()
 	/*	{ Allows player to select a race			-JWT-
 	 * }*/
 
-	integer i2, i3, i4, i5;
+	long i2, i3, i4, i5;
 	char s;
 	boolean exit_flag;
 	vtype out_val;
@@ -240,11 +240,11 @@ void cc__print_try_count(int try_count)
 	put_qio();
 }
 
-integer cc__next_best_stats(stat_s_type this, stat_s_type user,
-			    stat_s_type best, integer best_min)
+long cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best,
+			 long best_min)
 {
-	integer below_sum = 0;
-	integer below;
+	long below_sum = 0;
+	long below;
 	int tstat;
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
@@ -264,9 +264,8 @@ integer cc__next_best_stats(stat_s_type this, stat_s_type user,
 	}
 }
 
-boolean cc__satisfied(boolean *minning, boolean *printed_once,
-		      integer *best_min, integer *try_count, stat_s_type best,
-		      stat_s_type user)
+boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
+		      long *try_count, stat_s_type best, stat_s_type user)
 {
 	/*	{ What does it take to satisfy the guy?!		-KRC-
 	 * }*/
@@ -350,7 +349,7 @@ void cc__get_stats()
 	 * }*/
 
 	stat_set tstat;
-	integer prace;
+	long prace;
 
 	prace = py.misc.prace;
 
@@ -383,7 +382,7 @@ void cc__print_history()
 	/*	{ Will print the history of a character			-JWT-
 	 * }*/
 
-	integer i1;
+	long i1;
 
 	clear_from(14);
 	put_buffer("Character Background", 14, 28);
@@ -401,9 +400,9 @@ void cc__print_history()
 void cc__get_history()
 {
 
-	integer hist_ptr, cur_ptr, test_roll;
-	integer start_pos, end_pos, cur_len;
-	integer line_ctr, new_start = 0, social_class;
+	long hist_ptr, cur_ptr, test_roll;
+	long start_pos, end_pos, cur_len;
+	long line_ctr, new_start = 0, social_class;
 	char history_block[400];
 	boolean flag;
 
@@ -543,7 +542,7 @@ void cc__get_ahw()
 	/*	{ Computes character's age, height, and weight		-JWT-
 	 * }*/
 
-	integer i1;
+	long i1;
 
 	i1 = py.misc.prace;
 	py.misc.age = race_rand_starting_age(i1);
@@ -574,9 +573,9 @@ void cc__get_ahw()
 /*	{ Gets a character class				-JWT-	}*/
 boolean cc__get_class()
 {
-	integer i1, i2, i3, i4, i5;
-	integer cl[MAX_CLASS + 1];
-	integer aclass;
+	long i1, i2, i3, i4, i5;
+	long cl[MAX_CLASS + 1];
+	long aclass;
 	char s;
 	boolean exit_flag;
 	string out_str;
@@ -674,7 +673,7 @@ boolean cc__get_class()
 void cc__get_money()
 {
 
-	integer tmp, i1;
+	long tmp, i1;
 	stat_set tstat;
 
 	tmp = 0;
@@ -697,8 +696,8 @@ void create_character()
 	stat_s_type best, user, max_r;
 	boolean minning = false;
 	boolean printed_once = false;
-	integer try_count = 0;
-	integer best_min = 99999999;
+	long try_count = 0;
+	long best_min = 99999999;
 	stat_set tstat;
 
 	/*
@@ -823,9 +822,9 @@ void put_misc2()
 	prt_num("Gold       : ", py.misc.money[TOTAL_], 12, 31);
 	prt_num("Account    : ", py.misc.account, 13, 31);
 	prt_num("Max Hit Points : ", py.misc.mhp, 10, 54);
-	prt_num("Cur Hit Points : ", (integer)(py.misc.chp), 11, 54);
+	prt_num("Cur Hit Points : ", (long)(py.misc.chp), 11, 54);
 	prt_num("Max Mana       : ", py.misc.mana, 12, 54);
-	prt_num("Cur Mana       : ", (integer)(py.misc.cmana), 13, 54);
+	prt_num("Cur Mana       : ", (long)(py.misc.cmana), 13, 54);
 }
 
 void put_misc3()
@@ -833,8 +832,8 @@ void put_misc3()
 
 	/*	{ Prints ratings on certain abilities			-RAK-
 	 * }*/
-	integer xbth, xbthb, xfos, xsrh, xstl, xdis;
-	integer xsave, xdev, xswm, xrep;
+	long xbth, xbthb, xfos, xsrh, xstl, xdis;
+	long xsave, xdev, xswm, xrep;
 	vtype xinfra;
 	vtype tmp_str, tmp2;
 
@@ -950,7 +949,7 @@ void change_name()
 
 void set_gem_values()
 {
-	integer count;
+	long count;
 
 	ENTER(("set_gem_values", ""));
 

@@ -10,7 +10,7 @@ void init_priv_switch()
 	games_gid = getegid();
 }
 
-void priv_switch(integer switch_val)
+void priv_switch(long switch_val)
 {
 	/*	{ Turns SYSPRV off if 0; on if 1;			-RAK- */
 	/*} */
@@ -187,8 +187,8 @@ void exit_game()
 
 void msg_record(vtype message, boolean save)
 {
-	byteint count;
-	byteint temp_ctr;
+	unsigned char count;
+	unsigned char temp_ctr;
 	char ic;
 	string fixed_string;
 
@@ -232,7 +232,7 @@ void msg_record(vtype message, boolean save)
 	LEAVE("msg_record", "i");
 }
 
-void inkey_delay(char *getchar, integer delay)
+void inkey_delay(char *getchar, long delay)
 {
 	/* XXXX check_input consumes the input, so we never actually get data */
 
@@ -254,10 +254,10 @@ void inkey_flush(char *x)
 	*x = inkey();
 }
 
-void clear_rc(integer row, integer col)
+void clear_rc(long row, long col)
 {
 	/*	{ Clears screen at given row, column }*/
-	integer i1;
+	long i1;
 
 	row--;
 	col--;
@@ -274,7 +274,7 @@ void clear_rc(integer row, integer col)
 boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 {
 	boolean return_value = false;
-	integer old_len = 0;
+	long old_len = 0;
 	char ic = 0;
 
 	ENTER(("msg_print", "%s", str_buff));
@@ -321,7 +321,7 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
 {
 	/*{ Outputs message to top line of screen }*/
 
-	integer old_len;
+	long old_len;
 	char in_char = 0;
 	obj_set big_set = {3, 10, 13, 25, 26, 27, 32, 0};
 	obj_set small_set = {3, 25, 26, 27, 0};
@@ -368,13 +368,13 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
 boolean get_com(char const *prompt, char *command)
 {
 	boolean return_value;
-	integer com_val;
+	long com_val;
 
 	if (strlen(prompt) > 1) {
 		prt(prompt, 1, 1);
 	}
 	*command = inkey();
-	com_val = (integer)*command;
+	com_val = (long)*command;
 
 	return_value = !(com_val == 3 || com_val == 25 || com_val == 27);
 
@@ -426,9 +426,9 @@ boolean get_yes_no(char const *prompt)
 	}
 }
 
-integer get_hex_value(integer row, integer col, integer slen)
+long get_hex_value(long row, long col, long slen)
 {
-	integer return_value = 0;
+	long return_value = 0;
 	vtype tmp_str;
 
 	if (get_string(tmp_str, row, col, slen)) {
@@ -440,14 +440,14 @@ integer get_hex_value(integer row, integer col, integer slen)
 	return return_value;
 }
 
-void print_hex_value(integer num, integer row, integer col)
+void print_hex_value(long num, long row, long col)
 {
 	vtype out_val;
 	sprintf(out_val, "0x%08lx", num);
 	prt(out_val, row, col);
 }
 
-void pause_game(integer prt_line) { pause_line(prt_line); }
+void pause_game(long prt_line) { pause_line(prt_line); }
 
 void get_paths()
 {

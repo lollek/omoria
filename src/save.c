@@ -96,7 +96,7 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 {
 	/*{ Write out the player record.	}*/
 
-	integer i1, inven_ctr;
+	long i1, inven_ctr;
 	/* time_type      tim; */
 	treas_ptr curse;
 	time_t current_time, delta_time;
@@ -242,7 +242,7 @@ static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 {
 	/*{ Write out the equipment records.	}*/
 
-	integer i1;
+	long i1;
 	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
 		unsigned long const chtype_buf = equipment[i1].tchar;
 		sprintf(out_rec, "%lu %s", chtype_buf, equipment[i1].name);
@@ -318,7 +318,7 @@ static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 
 static void sc__write_magic(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 {
-	integer i1;
+	long i1;
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
 		sprintf(out_rec, "%d %d",
 			(int)class_spell(PM.pclass, i1)->learned,
@@ -331,7 +331,7 @@ static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 {
 	/*{ Write the important dungeon info and floor	-RAK-	}*/
 
-	integer i1, i2, tot_treasure, tptr, count = 0;
+	long i1, i2, tot_treasure, tptr, count = 0;
 	unsigned long xfloor, prevFloor = 999999;
 
 	sprintf(out_rec, "%ld %ld %ld %ld", cur_height, cur_width,
@@ -428,7 +428,7 @@ static void sc__write_identified(FILE *f1, encrypt_state *cf_state,
 				 ntype out_rec)
 {
 	/*{ Save identified list			}*/
-	integer i1;
+	long i1;
 
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
 		if (object_ident[i1]) {
@@ -444,7 +444,7 @@ static void sc__write_identified(FILE *f1, encrypt_state *cf_state,
 static void sc__write_monsters(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 {
 	/*{ Save the Monster List 		}*/
-	integer i1, tot_monsters;
+	long i1, tot_monsters;
 
 	for (i1 = muptr, tot_monsters = 0; i1 > 0; i1 = m_list[i1].nptr) {
 		tot_monsters++;
@@ -468,7 +468,7 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 {
 	/*{ Save the town level stores		}*/
 
-	integer i1, i2;
+	long i1, i2;
 	game_time_type st;
 
 	sprintf(out_rec, "%ld", town_seed);
@@ -742,7 +742,7 @@ static void gc__display_status(void)
 }
 
 static void gc__read_version(FILE *f1, encrypt_state *cf_state, ntype in_rec,
-			     boolean *paniced, real *save_version)
+			     boolean *paniced, float *save_version)
 {
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%f", save_version) != 1) {
@@ -769,7 +769,7 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 {
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15,
 	    x16, x17, x18;
-	integer i1;
+	long i1;
 	time_t old_time;
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
@@ -968,10 +968,10 @@ static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 {
 	/* { Read in the inventory records.	}*/
 
-	integer lost_inven_count;
+	long lost_inven_count;
 	boolean bag_lost;
 	treas_ptr ptr, cur_bag;
-	integer i1;
+	long i1;
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10;
 
 	inventory_list = nil;
@@ -1054,8 +1054,8 @@ static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 {
 	/*{ Read in the equipment records.	}*/
 
-	integer i1;
-	integer lost_equip_count;
+	long i1;
+	long lost_equip_count;
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10;
 
 	lost_equip_count = 0;
@@ -1227,7 +1227,7 @@ static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 			   boolean *paniced)
 {
-	integer i1;
+	long i1;
 	int x1, x2;
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
@@ -1244,9 +1244,9 @@ static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 			     boolean *paniced)
 {
-	integer i1, i2, i3, i4, tot_treasure;
-	integer x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13;
-	integer count = 0;
+	long i1, i2, i3, i4, tot_treasure;
+	long x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13;
+	long count = 0;
 	unsigned long xfloor;
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
@@ -1352,7 +1352,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 static void gc__read_identified(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 				boolean *paniced)
 {
-	integer i1;
+	long i1;
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
@@ -1370,7 +1370,7 @@ static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 			      boolean *paniced)
 {
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9;
-	integer i1, i2, i3, tot_monsters;
+	long i1, i2, i3, tot_monsters;
 
 	muptr = 0;
 	mlink();
@@ -1422,8 +1422,8 @@ static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 			  boolean *paniced)
 {
-	integer x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13;
-	integer i1, i2, i3;
+	long x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13;
+	long i1, i2, i3;
 	game_time_type st;
 
 	/*{ Restore the town level stores 	}*/
@@ -1507,14 +1507,14 @@ boolean get_char(boolean prop)
 	/*{ Restore a saved game				-RAK- & -JWT-
 	 * }*/
 
-	real save_version;
+	float save_version;
 	ntype in_rec;
 	FILE *f1 = NULL;
 	GDBM_FILE f2 = NULL;
 	boolean dun_flag;
 	boolean was_dead, paniced;
 	encrypt_state cf_state;
-	integer check_time;
+	long check_time;
 
 	ENTER(("get_char", "%d", prop));
 
@@ -1606,8 +1606,8 @@ void restore_char(vtype fnam, boolean present, boolean undead)
 	encrypt_state cf_state;
 	unsigned long save_seed;
 	time_t creation_time;
-	integer save_count;
-	integer deaths;
+	long save_count;
+	long deaths;
 	master_key mkey;
 	master_entry mentry;
 

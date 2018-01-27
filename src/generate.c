@@ -4,8 +4,7 @@
 #include "imoria.h"
 #include "generate.h"
 
-void gc__correct_dir(integer *rdir, integer *cdir, integer y1, integer x1,
-		     integer y2, integer x2)
+void gc__correct_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2)
 {
 	/*{ Always picks a correct direction		}*/
 
@@ -34,8 +33,8 @@ void gc__correct_dir(integer *rdir, integer *cdir, integer y1, integer x1,
 	}
 }
 
-void gc__rand_dir(integer *rdir, integer *cdir, integer y1, integer x1,
-		  integer y2, integer x2, integer chance)
+void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
+		  long chance)
 {
 	/*{ Chance of wandering direction			}*/
 
@@ -66,7 +65,7 @@ void gc__blank_cave()
 {
 	/*{ Blanks out entire cave				-RAK-	}*/
 
-	integer i1, i2;
+	long i1, i2;
 
 	for (i1 = 0; i1 <= MAX_HEIGHT; i1++) {
 		for (i2 = 0; i2 <= MAX_WIDTH; i2++) {
@@ -80,7 +79,7 @@ void gc__fill_cave(floor_type fill)
 	/*{ Fills in empty spots with desired rock		-RAK-	}*/
 	/*{ Note: 9 is a temporary value.				}*/
 
-	integer i1, i2;
+	long i1, i2;
 
 	for (i1 = 2; i1 <= cur_height - 1; i1++) {
 		for (i2 = 2; i2 <= cur_width - 1; i2++) {
@@ -96,7 +95,7 @@ void gc__place_boundry()
 {
 	/*{ Places indestructable rock around edges of dungeon	-RAK-	}*/
 
-	integer i1;
+	long i1;
 
 	for (i1 = 1; i1 <= cur_height; i1++) {
 		cave[i1][1].fval = boundry_wall.ftval;
@@ -113,11 +112,11 @@ void gc__place_boundry()
 	}
 }
 
-void gc__place_streamer(floor_type rock, integer treas_chance)
+void gc__place_streamer(floor_type rock, long treas_chance)
 {
 	/*{ Places "streamers" of rock through dungeon		-RAK-	}*/
 
-	integer i1, y, x, dir, ty, tx, t1, t2;
+	long i1, y, x, dir, ty, tx, t1, t2;
 	boolean flag;
 
 	/*{ Choose starting point and direction		}*/
@@ -154,18 +153,18 @@ void gc__place_streamer(floor_type rock, integer treas_chance)
 	} while (!flag);
 }
 
-void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
-		integer *doorptr, coords *doorstk)
+void gc__tunnel(long row1, long col1, long row2, long col2, long *doorptr,
+		coords *doorstk)
 {
 	/*{ Constructs a tunnel between two points		}*/
 
-	integer tmp_row, tmp_col;
-	integer row_dir, col_dir;
-	integer i1, i2;
+	long tmp_row, tmp_col;
+	long row_dir, col_dir;
+	long i1, i2;
 	coords tunstk[1001];
 	coords wallstk[1001];
-	integer tunptr;
-	integer wallptr;
+	long tunptr;
+	long wallptr;
 	boolean stop_flag, door_flag;
 
 	/*{ Note: 9 is a temporary value		}*/
@@ -264,7 +263,7 @@ void gc__tunnel(integer row1, integer col1, integer row2, integer col2,
 	}
 }
 
-boolean gc__next_to(integer y, integer x)
+boolean gc__next_to(long y, long x)
 {
 	obj_set corridors = {4, 5, 6, 0};
 	boolean next_to = false;
@@ -286,7 +285,7 @@ boolean gc__next_to(integer y, integer x)
 	return next_to;
 }
 
-void gc__try_door(integer y, integer x)
+void gc__try_door(long y, long x)
 {
 	/*{ Places door at y,x position if at least 2 walls found	}*/
 
@@ -305,10 +304,10 @@ void gc__place_pool(floor_type water)
 	 * }*/
 	(void)water;
 	/*
-	integer   y,x;
+	long   y,x;
 
-	y = (integer)(cur_height/2.0) + 11 - randint(23);
-	x = (integer)(cur_width/2.0)  + 16 - randint(33);
+	y = (long)(cur_height/2.0) + 11 - randint(23);
+	x = (long)(cur_width/2.0)  + 16 - randint(33);
 	*/
 
 	/* XXXX place_pool does nothing useful */
@@ -322,22 +321,22 @@ void gc__cave_gen()
 	/*
 	    type
 	      spot_type = record
-		      endx	: integer;
-		      endy	: integer;
+		      endx	: long;
+		      endy	: long;
 	      end;
 	      room_type = array [1..20,1..20] of boolean;
       */
 	coords doorstk[101];
 	boolean room_map[21][21]; /*: room_type;*/
-	integer i1, i2, i3, i4;
-	integer y1, x1, y2, x2;
-	integer pick1, pick2;
-	integer row_rooms, col_rooms;
-	integer doorptr = 0;
-	integer alloc_level;
-	integer roomCount;
-	worlint yloc[401]; /*: array [1..400] of worlint;*/
-	worlint xloc[401]; /*: array [1..400] of worlint;*/
+	long i1, i2, i3, i4;
+	long y1, x1, y2, x2;
+	long pick1, pick2;
+	long row_rooms, col_rooms;
+	long doorptr = 0;
+	long alloc_level;
+	long roomCount;
+	short yloc[401]; /*: array [1..400] of short;*/
+	short xloc[401]; /*: array [1..400] of short;*/
 
 	obj_set allocSet1 = {1, 2, 0};       /* land mosnters */
 	obj_set allocSet2 = {16, 17, 18, 0}; /* land mosnters */
@@ -348,8 +347,8 @@ void gc__cave_gen()
 	set_seed(get_seed());
 	i3 = 0;
 
-	row_rooms = 2 * (integer)(cur_height / SCREEN_HEIGHT);
-	col_rooms = 2 * (integer)(cur_width / SCREEN_WIDTH);
+	row_rooms = 2 * (long)(cur_height / SCREEN_HEIGHT);
+	col_rooms = 2 * (long)(cur_width / SCREEN_WIDTH);
 
 	for (i1 = 1; i1 <= row_rooms; i1++) {
 		for (i2 = 1; i2 <= col_rooms; i2++) {
@@ -474,8 +473,8 @@ void gc__cave_gen()
 	gc__place_boundry(); /* just to make sure */
 }
 
-void gc__make_door(integer y, integer x, integer *cur_pos, integer store_num,
-		   integer house_type)
+void gc__make_door(long y, long x, long *cur_pos, long store_num,
+		   long house_type)
 {
 	void *old_seed;
 
@@ -519,8 +518,7 @@ void gc__make_door(integer y, integer x, integer *cur_pos, integer store_num,
 	restore_rand_state(old_seed);
 }
 
-void dr_castle(integer yval, integer xval, integer dy, integer dx,
-	       floor_type ft)
+void dr_castle(long yval, long xval, long dy, long dx, floor_type ft)
 {
 	/*{ for castle--changes all in both lines of symmetry }*/
 
@@ -537,21 +535,21 @@ void dr_castle(integer yval, integer xval, integer dy, integer dx,
 	} while (!((dy >= 0) && (dx >= 0)));
 }
 
-void gc__blank_square(integer dy, integer dx)
+void gc__blank_square(long dy, long dx)
 {
 	cave[dy][dx].fopen = dopen_floor.ftopen;
 	cave[dy][dx].fval = dopen_floor.ftval;
 }
 
-void gc__build_store(integer store_num, integer where)
+void gc__build_store(long store_num, long where)
 {
 	/*{ Builds a building at a row,column coordinate, and	}*/
 	/*{ set up the initial contents by setting p1 to	}*/
 	/*{ whatever inside type is desired			}*/
 
-	integer yval, y_height, y_depth;
-	integer xval, x_left, x_right;
-	integer i1, i2, q1, q2, cur_pos, house_type;
+	long yval, y_height, y_depth;
+	long xval, x_left, x_right;
+	long i1, i2, q1, q2, cur_pos, house_type;
 
 	yval = 10 * (where div 9) + 6;
 	xval = 14 * (where % 9) + 11;
@@ -700,20 +698,20 @@ void gc__build_store(integer store_num, integer where)
 	}
 }
 
-void gc__build_house(integer house_num, integer where)
+void gc__build_house(long house_num, long where)
 {
 	gc__build_store(house_num + TOT_STORES - 1, where);
 }
 
-void gc__build_fountain(integer where)
+void gc__build_fountain(long where)
 {
 	/*{ Build a fountain at row, column coordinate	-dmf-	}*/
 
-	integer yval, y_height, y_depth;
-	integer xval, x_left, x_right;
-	integer i1, i2;
-	integer count;
-	integer flr[36]; /*: array [1..35] of integer;*/
+	long yval, y_height, y_depth;
+	long xval, x_left, x_right;
+	long i1, i2;
+	long count;
+	long flr[36]; /*: array [1..35] of long;*/
 	void *old_seed;
 
 	yval = (10 * (int)(where div 9)) + 4 + randint(3);
@@ -782,11 +780,11 @@ void gc__build_fountain(integer where)
 	}
 }
 
-void gc__mixem(integer rooms[], integer num)
+void gc__mixem(long rooms[], long num)
 {
 	/*{ randomize array[0..num-1] }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 
 	for (i1 = 0; i1 < num; i1++) {
 		i2 = i1 - 1 + randint(num - i1);
@@ -798,10 +796,10 @@ void gc__mixem(integer rooms[], integer num)
 
 void gc__town_gen()
 {
-	integer i1, i2, i3;
-	integer rooms[36];    /* array [0..35] of integer;*/
+	long i1, i2, i3;
+	long rooms[36];       /* array [0..35] of long;*/
 	boolean roomdone[36]; /* array [0..35] of boolean;*/
-	integer center;
+	long center;
 
 	obj_set allocSet1 = {1, 2, 0};
 	obj_set allocSet2 = {16, 17, 18, 0};

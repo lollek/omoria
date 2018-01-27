@@ -8,11 +8,11 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-void gc__vault_trap(integer y, integer x, integer yd, integer xd, integer num)
+void gc__vault_trap(long y, long x, long yd, long xd, long num)
 {
 	/*{ Place a trap with a given displacement of point	-RAK-	}*/
 
-	integer count, y1, x1, i1;
+	long count, y1, x1, i1;
 	boolean flag;
 
 	for (i1 = 1; i1 <= num; i1++) {
@@ -37,10 +37,10 @@ void gc__vault_trap(integer y, integer x, integer yd, integer xd, integer num)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void gc__vault_monster(integer y, integer x, integer num)
+void gc__vault_monster(long y, long x, long num)
 {
 	/*{ Place a trap with a given displacement of point	-RAK-	}*/
-	integer i1, y1, x1;
+	long i1, y1, x1;
 
 	for (i1 = 1; i1 <= num; i1++) {
 		y1 = y;
@@ -51,13 +51,13 @@ void gc__vault_monster(integer y, integer x, integer num)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void gc__build_room(integer yval, integer xval)
+void gc__build_room(long yval, long xval)
 {
 	/*{ Builds a room at a row,column coordinate		-RAK-	}*/
 
-	integer y_height, y_depth;
-	integer x_left, x_right;
-	integer i1, i2;
+	long y_height, y_depth;
+	long x_left, x_right;
+	long i1, i2;
 	floor_type cur_floor;
 
 	if (dun_level <= randint(25)) {
@@ -95,16 +95,16 @@ void gc__build_room(integer yval, integer xval)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void gc__build_type1(integer yval, integer xval)
+void gc__build_type1(long yval, long xval)
 {
 	/*	{ Builds a room at a row,column coordinate		-RAK-
 	 * }*/
 	/*	{ Type 1 unusual rooms are several overlapping rectangular ones
 	 * }*/
 
-	integer y_height, y_depth;
-	integer x_left, x_right;
-	integer i0, i1, i2;
+	long y_height, y_depth;
+	long x_left, x_right;
+	long i0, i1, i2;
 	floor_type cur_floor;
 
 	if (dun_level <= randint(25)) {
@@ -161,7 +161,7 @@ void gc__build_type1(integer yval, integer xval)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void gc__build_type2(integer yval, integer xval)
+void gc__build_type2(long yval, long xval)
 {
 	/*	{ Builds an unusual room at a row,column coordinate	-RAK-
 	 * }*/
@@ -175,9 +175,9 @@ void gc__build_type2(integer yval, integer xval)
 	/*	{   4 - Inner room has a maze }*/
 	/*	{   5 - A set of four inner rooms }*/
 
-	integer y_height, y_depth;
-	integer x_left, x_right;
-	integer i1, i2;
+	long y_height, y_depth;
+	long x_left, x_right;
+	long i1, i2;
 	floor_type cur_floor;
 
 	if (dun_level <= randint(30)) {
@@ -481,14 +481,14 @@ void gc__build_type2(integer yval, integer xval)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void gc__build_type3(integer yval, integer xval)
+void gc__build_type3(long yval, long xval)
 {
 	/*{ Builds a room at a row,column coordinate		-RAK-	}*/
 	/*{ Type 3 unusual rooms are cross shaped			}*/
 
-	integer y_height, y_depth;
-	integer x_left, x_right;
-	integer i0, i1, i2;
+	long y_height, y_depth;
+	long x_left, x_right;
+	long i0, i1, i2;
 	floor_type cur_floor;
 
 	if (dun_level <= randint(25)) {

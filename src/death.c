@@ -12,16 +12,16 @@ static char *ud__fill_str(char *centered_str, char *in_str)
 	return centered_str;
 }
 
-void dprint(vtype str, integer row)
+void dprint(vtype str, long row)
 {
 	/* Prints a line to the screen efficiently  -RAK- */
 
 	vtype prt_str;
-	integer nblanks = 0;
-	integer xpos = 0;
-	integer const slen = strlen(str);
-	integer i1 = 0;
-	integer i2 = 0;
+	long nblanks = 0;
+	long xpos = 0;
+	long const slen = strlen(str);
+	long i1 = 0;
+	long i2 = 0;
 
 	prt_str[0] = 0;
 	for (i1 = 0; i1 < slen; i1++) {
@@ -141,7 +141,7 @@ void ud__print_tomb(vtype dstr[])
 	write_tomb(dstr);
 }
 
-integer total_points()
+long total_points()
 {
 	/*
 	 * Calculates the total number of points earned  -JWT-
@@ -233,13 +233,13 @@ void print_dead_character()
 	}
 }
 
-void top_twenty(integer this_many)
+void top_twenty(long this_many)
 {
 	/*  Enters a players name on the top twenty list  -JWT- */
 
 	string list[MAX_HIGH_SCORES + 2];
-	integer players_line = 0;
-	integer i1, i2, i3, i4;
+	long players_line = 0;
+	long i1, i2, i3, i4;
 	int n1;
 	vtype o1, s1;
 	FILE *f1;
@@ -378,7 +378,7 @@ void make_tomb(vtype dd[])
 {
 	vtype str1, str2, str3, str4, str5, str6, str7, str8;
 	vtype temp;
-	integer i1;
+	long i1;
 	char day[11];
 
 	date(day);
@@ -434,7 +434,7 @@ void write_tomb(vtype dstr[])
 	vtype out_str;
 	vtype fnam;
 	FILE *f1;
-	integer i1;
+	long i1;
 	boolean flag;
 
 	if (!get_yes_no("Print to file?"))

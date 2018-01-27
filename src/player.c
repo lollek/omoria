@@ -33,14 +33,14 @@ void rest_off()
 	prt_rest();
 }
 
-static void _move_char(integer dir)
+static void _move_char(long dir)
 {
 	/*{ Moves player from one space to another...		-RAK-	}*/
 
-	integer test_row = char_row;
-	integer test_col = char_col;
-	integer i1;
-	integer i2;
+	long test_row = char_row;
+	long test_col = char_col;
+	long i1;
+	long i2;
 
 	if (dir == 5)
 		find_flag = false;
@@ -152,28 +152,28 @@ static void _move_char(integer dir)
 	char_col = test_col;
 }
 
-void move_char(integer dir)
+void move_char(long dir)
 {
 	ENTER(("move_char", "%d", dir));
 	_move_char(dir);
 	LEAVE("move_char", "m");
 }
 
-void regenhp(real percent)
+void regenhp(float percent)
 {
 	/*{ Regenerate hit points		-RAK-	}*/
 
 	PM.chp += PM.mhp * percent + PLAYER_REGEN_HPBASE;
 }
 
-void regenmana(real percent)
+void regenmana(float percent)
 {
 	/*{ Regenerate mana points		-RAK-	}*/
 
 	PM.cmana += PM.mana * percent + PLAYER_REGEN_MNBASE;
 }
 
-void take_hit(integer damage, vtype hit_from)
+void take_hit(long damage, vtype hit_from)
 {
 	/*{ Decreases players hit points and sets death flag if neccessary}*/
 

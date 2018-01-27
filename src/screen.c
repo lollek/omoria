@@ -1,17 +1,17 @@
 #include "imoria.h"
 
-static integer win_equip_x = 81;
-static integer win_equip_y = 1;
+static long win_equip_x = 81;
+static long win_equip_y = 1;
 
 void prt_equipment(void)
 {
 	prt_equipment_args(win_equip_y, win_equip_x, 1, false);
 }
 
-void prt_equipment_args(integer y, integer x, integer start, boolean clear)
+void prt_equipment_args(long y, long x, long start, boolean clear)
 {
-	integer i;
-	integer counter = 0;
+	long i;
+	long counter = 0;
 	vtype tmp_buf;
 
 	for (i = Equipment_min; i < EQUIP_MAX - 1; ++i) {
@@ -43,20 +43,20 @@ void draw_cave()
 
 void prt_map()
 {
-	integer y;
-	integer panel_y = 1;	 /* Used for erasing dirty lines */
-	integer const panel_x0 = 14; /*{ Erasure starts in this column  }*/
+	long y;
+	long panel_y = 1;	 /* Used for erasing dirty lines */
+	long const panel_x0 = 14; /*{ Erasure starts in this column  }*/
 
 	ENTER(("prt_map", ""));
 
 	redraw = false; /*{ Screen has been redrawn	   }*/
 	for (y = panel_row_min; y <= panel_row_max; y++) {
 		chtype floor_str[82] = {0}; /* string to be printed */
-		integer floor_str_len = 0;  /* floor_str length counter */
-		integer isp = 0;	    /* Number of blanks encountered */
+		long floor_str_len = 0;     /* floor_str length counter */
+		long isp = 0;		    /* Number of blanks encountered */
 		boolean flag = false;       /* False until floor_str <> '' */
-		integer xpos = 0;
-		integer x;
+		long xpos = 0;
+		long x;
 
 		/* Clean line if dirty */
 		panel_y++;
@@ -88,7 +88,7 @@ void prt_map()
 
 			} else if (flag) {
 				if (isp > 0) {
-					integer i5;
+					long i5;
 					for (i5 = 0; i5 < isp; i5++)
 						floor_str[floor_str_len++] =
 						    ' ';
@@ -111,7 +111,8 @@ void prt_map()
 	LEAVE("prt_map", "");
 }
 
-void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col)
+void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
+		 unsigned char col)
 {
 	ENTER(("prt_6_stats", ""));
 	if (l != NULL) {
@@ -132,8 +133,8 @@ void prt_6_stats(stat_s_type p, stat_s_type l, byteint row, byteint col)
 	LEAVE("prt_6_stats", "");
 }
 
-void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
-		   integer column)
+void prt_stat_attr(vtype stat_name, unsigned char stat, unsigned char loss,
+		   long row, long column)
 {
 	stat_s_type out_val1;
 
@@ -150,7 +151,7 @@ void prt_stat_attr(vtype stat_name, byteint stat, byteint loss, integer row,
 	LEAVE("prt_stat_attr", "");
 }
 
-void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
+void prt_stat(vtype stat_name, unsigned char stat, long row, long column)
 {
 	stat_s_type out_val1;
 	vtype out_val2;
@@ -164,9 +165,9 @@ void prt_stat(vtype stat_name, byteint stat, integer row, integer column)
 	LEAVE("prt_stat", "");
 }
 
-void cnv_stat(byteint stat, stat_s_type out_val)
+void cnv_stat(unsigned char stat, stat_s_type out_val)
 {
-	integer part1, part2;
+	long part1, part2;
 
 	if (stat > 150) {
 		part1 = 18;
@@ -177,7 +178,7 @@ void cnv_stat(byteint stat, stat_s_type out_val)
 	}
 }
 
-void prt_num(vtype header, integer num, integer row, integer column)
+void prt_num(vtype header, long num, long row, long column)
 {
 	vtype out_val;
 
@@ -222,7 +223,7 @@ void prt_stat_block()
 	LEAVE("prt_stat_block", "");
 }
 
-void prt_field(vtype info, integer row, integer column)
+void prt_field(vtype info, long row, long column)
 {
 	vtype out_val1;
 
@@ -291,7 +292,7 @@ void prt_light_on()
 void prt_depth()
 {
 	vtype depths;
-	integer depth;
+	long depth;
 
 	depth = dun_level * 50;
 	if (depth == 0) {

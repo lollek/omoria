@@ -4,13 +4,13 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-static void b__chime_and_horn_effects(integer effect, boolean *idented)
+static void b__chime_and_horn_effects(long effect, boolean *idented)
 {
 	/*{ Chimes...				      }*/
 
 	boolean ident;
-	integer y, x;
-	integer i3;
+	long y, x;
+	long i3;
 
 	ident = *idented;
 
@@ -208,12 +208,11 @@ static void b__chime_and_horn_effects(integer effect, boolean *idented)
 	*idented = ident;
 }
 
-static void b__misc_effects(integer effect, boolean *idented,
-			    treas_ptr item_ptr)
+static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 {
-	integer i3, i4, loss, dur;
-	integer dumy, y_dumy, x_dumy;
-	integer y, x;
+	long i3, i4, loss, dur;
+	long dumy, y_dumy, x_dumy;
+	long y, x;
 	stat_set tstat;
 	boolean ident;
 	char dir;
@@ -251,7 +250,7 @@ static void b__misc_effects(integer effect, boolean *idented,
 		msg_print("'Which stat would you like to raise?'");
 		ident = (get_com("1=str 2=int 3=wis 4=dex 5=con 6=cha", &dir));
 		if ((dir > '0') && (dir < '7')) {
-			tstat = (integer)dir - 49;
+			tstat = (long)dir - 49;
 			ident = gain_stat(tstat, "X");
 			ident = gain_stat(tstat, " and x2, too!");
 		} else {
@@ -477,7 +476,7 @@ static void b__misc_effects(integer effect, boolean *idented,
 void blow()
 {
 	unsigned long i1;
-	integer i3, chance, i5;
+	long i3, chance, i5;
 	treas_ptr i2, item_ptr;
 	char trash_char;
 	boolean redraw, ident;
@@ -544,7 +543,7 @@ void blow()
 							PM.exp +=
 							    (item_ptr->data
 								 .level /
-							     (real)PM.lev) +
+							     (float)PM.lev) +
 							    .5;
 							prt_experience();
 						}

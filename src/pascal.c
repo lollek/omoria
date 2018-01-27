@@ -9,7 +9,7 @@ void writeln(char *out_line) { printf("%s\n\r", out_line); }
 
 /*//////////////////////////////////////////////////////////////////// */
 
-integer pindex(char *s1, char c1)
+long pindex(char *s1, char c1)
 {
 	/*
 	  pascal index function, return position of c1 in s1
@@ -28,10 +28,10 @@ integer pindex(char *s1, char c1)
 	return (c2 - s1 + 1);
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean is_in(integer const obj, obj_set const oset)
+boolean is_in(long const obj, obj_set const oset)
 {
-	integer i1;
-	integer tmp;
+	long i1;
+	long tmp;
 	boolean return_value = false;
 
 /*    ENTER("is_in","m"); */

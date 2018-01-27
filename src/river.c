@@ -7,7 +7,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean r__move_this(river_args *a, integer dir, coords *this, coords *that)
+boolean r__move_this(river_args *a, long dir, coords *this, coords *that)
 {
 	/*{ returns position of (this + dir) in gup or this if out of bounds }*/
 
@@ -59,11 +59,11 @@ void r__remove_this(river_args *a, coords *this)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void r__plot_water(integer y, integer x, integer font, integer tdir)
+void r__plot_water(long y, long x, long font, long tdir)
 {
-	integer num_dots;
+	long num_dots;
 	coords dots[6]; /*: array [1..5] of coords;*/
-	integer i1;
+	long i1;
 
 	ENTER(("r__plot_water", "r"));
 
@@ -124,15 +124,14 @@ void r__plot_water(integer y, integer x, integer font, integer tdir)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer pr__figure_out_path_of_water(integer y, integer x, integer oy,
-				     integer ox)
+long pr__figure_out_path_of_water(long y, long x, long oy, long ox)
 {
-	integer target_dy, target_dx, dist_squared;
-	integer i1, dot_product, rand_num, chance;
-	integer start[9]; /*: array [0..8] of integer;*/
+	long target_dy, target_dx, dist_squared;
+	long i1, dot_product, rand_num, chance;
+	long start[9]; /*: array [0..8] of long;*/
 	boolean flag;
 	obj_set odds = {1, 3, 5, 7, 0};
-	integer return_value;
+	long return_value;
 
 	ENTER(("pr__figure_out_path_of_water", "r"));
 
@@ -185,18 +184,18 @@ integer pr__figure_out_path_of_water(integer y, integer x, integer oy,
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void r__place_river(river_args *a, integer dir, integer next_dir, coords this,
+void r__place_river(river_args *a, long dir, long next_dir, coords this,
 		    coords wiggle)
 {
 
 	/*{ A recursive procedure, starting at river mouth and moving upstream;
 	  connects the dots laid out by chart_river. }*/
 
-	integer i1, i2, y, x, oy, ox;
-	integer temp_dir, done_first; /*{ compute next direction }*/
+	long i1, i2, y, x, oy, ox;
+	long temp_dir, done_first; /*{ compute next direction }*/
 	coords up1, up2;
-	integer tflow;
-	integer overflow;
+	long tflow;
+	long overflow;
 	obj_set even_nums = {2, 4, 6, 8, 0};
 
 	ENTER(("r__place_river", "r"));
@@ -263,17 +262,17 @@ void r__place_river(river_args *a, integer dir, integer next_dir, coords this,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer cr__choose_stream_dirs(river_args *a, coords *this, integer dir,
-			       integer that_dir[], boolean that_ok[],
-			       coords that[], boolean that_chosen[])
+long cr__choose_stream_dirs(river_args *a, coords *this, long dir,
+			    long that_dir[], boolean that_ok[], coords that[],
+			    boolean that_chosen[])
 {
 	/*{determines next point(s) upstream depending on coordinates (this),
 	  previous direction (Gup[this].out), and available positions. outputs
 	  # of branches}*/
 
-	integer i1;
+	long i1;
 	boolean done;
-	integer return_value = 0;
+	long return_value = 0;
 
 	ENTER(("cr__choose_stream_dirs", "r"));
 
@@ -352,12 +351,12 @@ void r__chart_river(river_args *a)
 {
 	/*{ recursively charts basic path of stream upstream }*/
 
-	integer i1, i2, dir, branches;
-	integer out_flow, in_flow;
+	long i1, i2, dir, branches;
+	long out_flow, in_flow;
 	coords this, thing;
-	coords that[4];      /*     : array [1..3] of coords;*/
-	integer that_dir[4]; /*     : array [1..3] of integer;*/
-	boolean that_ok[4];  /*     : array [1..3] of boolean;*/
+	coords that[4];     /*     : array [1..3] of coords;*/
+	long that_dir[4];   /*     : array [1..3] of long;*/
+	boolean that_ok[4]; /*     : array [1..3] of boolean;*/
 	boolean that_chosen[4];
 	boolean starting_river = true;
 
@@ -464,7 +463,7 @@ void r__chart_river(river_args *a)
 /*//////////////////////////////////////////////////////////////////// */
 void r__draw_river(river_args *a)
 {
-	integer first_dir;
+	long first_dir;
 	coords wiggle, that;
 
 	ENTER(("r__draw_river", "r"));
@@ -493,7 +492,7 @@ void r__draw_river(river_args *a)
 void all_the_river_stuff()
 {
 	river_args a;
-	integer i1, i2;
+	long i1, i2;
 
 	ENTER(("all_the_river_stuff", "r"));
 

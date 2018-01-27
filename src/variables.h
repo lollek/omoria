@@ -8,47 +8,47 @@ extern time_t start_time;	 /* { Time started playing} */
 extern boolean is_from_file;      /* { True if restored    } */
 extern money_type bank;		  /* { Bank's money	 } */
 extern money_type coin_value;     /* { Copy of money values} */
-extern integer player_max_exp;    /* { Max exp possible    } */
+extern long player_max_exp;       /* { Max exp possible    } */
 extern unsigned long seed;	/* { Contains seed #     } */
 extern unsigned long randes_seed; /* { For encoding colors } */
 extern unsigned long town_seed;   /* { Seed for town genera} */
-extern integer cur_height;	/* { Cur dungeon size    } */
-extern integer cur_width;
-extern integer dun_level;  /* { Cur dungeon level   } */
-extern integer missle_ctr; /* { Counter for missles } */
-extern integer msg_line;   /* { Contains message txt} */
-extern boolean msg_flag;   /* { Set with first msg  } */
+extern long cur_height;		  /* { Cur dungeon size    } */
+extern long cur_width;
+extern long dun_level;   /* { Cur dungeon level   } */
+extern long missle_ctr;  /* { Counter for missles } */
+extern long msg_line;    /* { Contains message txt} */
+extern boolean msg_flag; /* { Set with first msg  } */
 extern vtype msg_prev[MAX_MESSAGES + 1];
-extern integer quest[NUM_QUESTS + 1]; /* {quest data} */
-extern vtype old_msg;		      /* { Last message	      } */
-extern boolean want_trap;	     /* { True = trap messages} */
-extern boolean want_warn;	     /* { True = water warning} */
-extern message_ptr old_message;       /* { Past messages	      } */
-extern integer max_mess_keep;	 /* { Max old to keep     } */
-extern integer max_score;	     /*	{ # of scores to list } */
-extern boolean generate;	      /*	{ Generate next level } */
-extern boolean death;		      /*	{ True if died	      } */
-extern vtype died_from;		      /*	{ What killed him     } */
-extern integer turn_counter;	  /*	{ Turns ellapsed      } */
-extern boolean find_flag;	     /*	{ Used in MORIA	      } */
-extern boolean cave_flag;	     /*	{ Used in GET_PANEL   } */
-extern boolean redraw;		      /*	{ For redraw screen   } */
-extern unsigned long print_stat;      /*	{ Flag for stats      } */
-extern integer turn;		      /*	{ Cur trun of game    } */
-extern boolean wizard1;		      /*	{ Wizard flag	      } */
-extern boolean wizard2;		      /*	{ Wizard flag	      } */
-extern boolean used_line[24];	 /* array [2..23] of boolean; */
+extern long quest[NUM_QUESTS + 1]; /* {quest data} */
+extern vtype old_msg;		   /* { Last message	      } */
+extern boolean want_trap;	  /* { True = trap messages} */
+extern boolean want_warn;	  /* { True = water warning} */
+extern message_ptr old_message;    /* { Past messages	      } */
+extern long max_mess_keep;	 /* { Max old to keep     } */
+extern long max_score;		   /*	{ # of scores to list } */
+extern boolean generate;	   /*	{ Generate next level } */
+extern boolean death;		   /*	{ True if died	      } */
+extern vtype died_from;		   /*	{ What killed him     } */
+extern long turn_counter;	  /*	{ Turns ellapsed      } */
+extern boolean find_flag;	  /*	{ Used in MORIA	      } */
+extern boolean cave_flag;	  /*	{ Used in GET_PANEL   } */
+extern boolean redraw;		   /*	{ For redraw screen   } */
+extern unsigned long print_stat;   /*	{ Flag for stats      } */
+extern long turn;		   /*	{ Cur trun of game    } */
+extern boolean wizard1;		   /*	{ Wizard flag	      } */
+extern boolean wizard2;		   /*	{ Wizard flag	      } */
+extern boolean used_line[24];      /* array [2..23] of boolean; */
 extern char password1[13];
 extern char password2[13];
 extern boolean became_wizard;
 extern unsigned long wdata[2][13]; /*  array [1..2,0..12] of unsigned; */
 extern char days[7][30];
-extern integer closing_flag; /* { Used for closing   } */
+extern long closing_flag; /* { Used for closing   } */
 /*{neatness arrays} */
-extern byteint key_of[9];  /*  array [0..8] of byteint; */
-extern byteint oct_of[10]; /*  array [1..9] of byteint; */
-extern bytlint dx_of[10];  /*  array [1..9] of bytlint; */
-extern bytlint dy_of[10];  /*  array [1..9] of bytlint; */
+extern unsigned char key_of[9];  /*  array [0..8] of unsigned char; */
+extern unsigned char oct_of[10]; /*  array [1..9] of unsigned char; */
+extern signed char dx_of[10];    /*  array [1..9] of signed char; */
+extern signed char dy_of[10];    /*  array [1..9] of signed char; */
 
 /*	{ Bit testing array						} */
 extern unsigned long bit_array[33]; /*  array [1..32] of unsigned; */
@@ -67,12 +67,12 @@ extern mtype MORIA_CST;
 extern mtype MORIA_GCST;
 
 /*	{  following are calculated from max dungeon sizes		} */
-extern integer max_panel_rows, max_panel_cols;
-extern integer quart_height, quart_width;
-extern integer panel_row, panel_col;
-extern integer panel_row_min, panel_row_max;
-extern integer panel_col_min, panel_col_max;
-extern integer panel_col_prt, panel_row_prt;
+extern long max_panel_rows, max_panel_cols;
+extern long quart_height, quart_width;
+extern long panel_row, panel_col;
+extern long panel_row_min, panel_row_max;
+extern long panel_col_min, panel_col_max;
+extern long panel_col_prt, panel_row_prt;
 
 /*	{  Following are all floor definitions				} */
 extern row_floor cave[MAX_HEIGHT + 1];
@@ -114,38 +114,38 @@ extern btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1];
 /*				  array [1..max_class] of */
 /*				  array [1..max_player_level] of btype; */
 
-extern integer player_exp[MAX_PLAYER_LEVEL + 1];
-extern real acc_exp; /*{ Accumulator for fractional exp} */
+extern long player_exp[MAX_PLAYER_LEVEL + 1];
+extern float acc_exp; /*{ Accumulator for fractional exp} */
 extern dtype bare_hands;
 extern boolean msg_terse;
-extern byteint record_ctr;
-extern integer char_row;
-extern integer char_col;
-extern integer com_val;
-extern integer pclass;
+extern unsigned char record_ctr;
+extern long char_row;
+extern long char_col;
+extern long com_val;
+extern long pclass;
 extern vtype sex_type;
 extern background_type background[MAX_BACKGROUND];
-extern real rgold_adj[MAX_RACES][MAX_RACES];
+extern float rgold_adj[MAX_RACES][MAX_RACES];
 extern treasure_type yums[NUM_YUM + 1];
 extern treasure_type monk_book;
-extern byteint player_init[MAX_CLASS][5];
+extern unsigned char player_init[MAX_CLASS][5];
 extern boolean total_winner;
 
 /*	{ Following are store definitions				} */
 extern owner_type owners[MAX_OWNERS];
 extern store_type stores[MAX_STORES + 1];
 extern treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1];
-extern integer store_choice[MAX_STORES][STORE_CHOICES];
+extern long store_choice[MAX_STORES][STORE_CHOICES];
 extern obj_set store_buy[MAX_STORES];
 /*	  array [1..max_stores] of obj_set; */
 extern htype store_hours[MAX_STORES + MAX_UNNAMED][7];
-extern integer store_bribe[MAX_STORES + MAX_UNNAMED];
-extern integer mugging_chance; /* { Chance page gets mugged} */
+extern long store_bribe[MAX_STORES + MAX_UNNAMED];
+extern long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Following are treasure arrays	and variables			} */
 extern treasure_type object_list[MAX_OBJECTS + 1];
 extern boolean object_ident[MAX_OBJECTS + 1];
-extern integer t_level[MAX_OBJ_LEVEL + 1];
+extern long t_level[MAX_OBJ_LEVEL + 1];
 extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];
 extern treasure_type equipment[EQUIP_MAX];
@@ -153,44 +153,44 @@ extern treas_ptr inventory_list;
 extern treas_ptr inven_temp;
 extern treasure_type inventory_init[INVEN_INIT_MAX + 1];
 extern treasure_type blank_treasure;
-extern integer inven_ctr;    /* { Total different obj's	} */
-extern integer inven_weight; /* { Cur carried weight	} */
-extern integer equip_ctr;    /* { Cur equipment ctr	} */
-extern integer tcptr;	/* { Cur treasure heap ptr	} */
+extern long inven_ctr;    /* { Total different obj's	} */
+extern long inven_weight; /* { Cur carried weight	} */
+extern long equip_ctr;    /* { Cur equipment ctr	} */
+extern long tcptr;	/* { Cur treasure heap ptr	} */
 
 /*	{ Following are variables that change with level of difficulty	} */
 /*	{ 1/x chance of treasure per magma		} */
-extern integer dun_str_mc;
+extern long dun_str_mc;
 /*	{ 1/x chance of treasure per quartz		} */
-extern integer dun_str_qc;
+extern long dun_str_qc;
 /*	{ Level/x chance of unusual room		} */
-extern integer dun_unusual;
+extern long dun_unusual;
 /*	{ Amount of objects for rooms			} */
-extern integer treas_room_alloc;
+extern long treas_room_alloc;
 /*	{ Amount of objects for corridors		} */
-extern integer treas_any_alloc;
+extern long treas_any_alloc;
 /*	{ Amount of gold (and gems)			} */
-extern integer treas_gold_alloc;
+extern long treas_gold_alloc;
 /*	{ 1/n Chance of item being a Great Item 	} */
-extern integer obj_great;
+extern long obj_great;
 /*	{ Adjust STD per level				} */
-extern real obj_std_adj;
+extern float obj_std_adj;
 /*	{ Minimum STD					} */
-extern integer obj_std_min;
+extern long obj_std_min;
 /*	{ Town object generation level			} */
-extern integer obj_town_level;
+extern long obj_town_level;
 /*	{ Base amount of magic				} */
-extern integer obj_base_magic;
+extern long obj_base_magic;
 /*	{ Max amount of magic				} */
-extern integer obj_base_max;
+extern long obj_base_max;
 /*	{ magic_chance/# = special magic		} */
-extern integer obj_div_special;
+extern long obj_div_special;
 /*	{ magic_chance/# = cursed items			} */
-extern real obj_div_cursed;
+extern float obj_div_cursed;
 /*	{ High value slows multiplication		} */
-extern integer mon_mult_adj;
+extern long mon_mult_adj;
 /*	{ Dun_level/x chance of high level creature	} */
-extern integer mon_nasty;
+extern long mon_nasty;
 
 /*	{ Following are feature objects defined for dungeon		} */
 extern treasure_type trap_lista[MAX_TRAPA + 1];
@@ -206,11 +206,11 @@ extern treasure_type down_steep;
 /*	{ Following are creature arrays and variables			} */
 extern creature_type c_list[MAX_CREATURES + 1];
 extern monster_type m_list[MAX_MALLOC + 1];
-extern integer m_level[MAX_MONS_LEVEL + 1];
+extern long m_level[MAX_MONS_LEVEL + 1];
 extern monster_type blank_monster; /* { Blank monster values	} */
-extern integer muptr;		   /* { Cur used monster ptr	} */
-extern integer mfptr;		   /* { Cur free monster ptr	} */
-extern integer mon_tot_mult;       /* { # of repro's of creature	} */
+extern long muptr;		   /* { Cur used monster ptr	} */
+extern long mfptr;		   /* { Cur free monster ptr	} */
+extern long mon_tot_mult;	  /* { # of repro's of creature	} */
 
 /*	{ Following are arrays for descriptive pieces			} */
 extern atype colors[MAX_COLORS];
@@ -226,10 +226,10 @@ extern atype syllables[MAX_SYLLABLES];
 /*				  char_set; */
 
 /* new stuff */
-extern integer malloc_calls;
-extern integer malloc_bytes;
-extern integer free_calls;
-extern integer free_bytes;
+extern long malloc_calls;
+extern long malloc_bytes;
+extern long free_calls;
+extern long free_bytes;
 extern vtype coin_name[MITHRIL + 1];
 extern obj_set blank_floor_set;
 
@@ -245,8 +245,8 @@ extern gid_t games_gid;
 extern boolean scoresAreEncrypted;
 extern boolean saveFilesAreEncrypted;
 
-extern byteint highScoreKey[8];
-extern byteint saveFileKey[8];
+extern unsigned char highScoreKey[8];
+extern unsigned char saveFileKey[8];
 
 extern int game_state;
 extern boolean curses_is_running;

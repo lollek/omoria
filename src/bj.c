@@ -12,15 +12,15 @@ static drawcard dummy;
 static drawcard dummyd;
 static hand dealerh;
 static hand playerh;
-static integer vald;
-static integer valp;
-static integer save;
+static long vald;
+static long valp;
+static long save;
 static boolean bust_flag;
 static boolean bust_save;
 static boolean split_flag;
 static boolean already_split;
-static integer py_index;
-static integer hand_start;
+static long py_index;
+static long hand_start;
 static boolean win_draw;
 static boolean blackjack;
 static boolean blackjack_save;
@@ -124,7 +124,7 @@ static void bj__display_rules()
 
 static void bj__initialize_hand()
 {
-	integer i;
+	long i;
 
 	for (i = 1; i <= 10; i++) {
 		dealerh[i] = 0;
@@ -147,7 +147,7 @@ static void bj__initialize_hand()
 
 static void bj__evaluate_pl_hand()
 {
-	integer i;
+	long i;
 	boolean py_ace_flag;
 
 	bust_flag = false;
@@ -175,9 +175,9 @@ static void bj__evaluate_pl_hand()
 	}
 }
 
-static void bj__evaluate_dl_hand(integer index)
+static void bj__evaluate_dl_hand(long index)
 {
-	integer i;
+	long i;
 
 	deal_bust = false;
 	dl_ace_flag = false;
@@ -275,9 +275,9 @@ static void bj__get_first_dealc()
 	put_buffer(draw, 17, 8);
 }
 
-static void bj__card_draw(integer index, integer r, vtype card)
+static void bj__card_draw(long index, long r, vtype card)
 {
-	integer c;
+	long c;
 	vtype draw;
 
 	if (strcmp(card, " ")) {
@@ -311,7 +311,7 @@ static void bj__card_draw(integer index, integer r, vtype card)
 
 static void bj__re_draw()
 {
-	integer i;
+	long i;
 
 	clear_screen();
 	prt("Your hand:", 5, 1);
@@ -327,7 +327,7 @@ static void bj__re_draw()
 	}
 }
 
-static void bj__get_dealer_card(integer i)
+static void bj__get_dealer_card(long i)
 {
 
 	dealerh[i] = randint(13) + 1;
@@ -377,7 +377,7 @@ static void bj__get_dealer_card(integer i)
 	bj__evaluate_dl_hand(i);
 }
 
-static void bj__get_player_card(integer i)
+static void bj__get_player_card(long i)
 {
 	playerh[i] = randint(13) + 1;
 	switch (playerh[i]) {
@@ -485,7 +485,7 @@ static void bj__get_winning()
 
 static void bj__play_dealer_hand()
 {
-	integer i;
+	long i;
 	boolean stay_flag;
 
 	stay_flag = false;
@@ -533,7 +533,7 @@ static void bj__split()
 static void bj__get_game_command()
 {
 	char command;
-	integer com_val = 0;
+	long com_val = 0;
 
 	if (get_com("", &command)) {
 		com_val = command;
@@ -585,7 +585,7 @@ static void bj__get_game_command()
 
 static void bj__play_hand()
 {
-	integer num, i;
+	long num, i;
 
 	num = 1;
 	if (split_flag) {
@@ -669,7 +669,7 @@ static void bj__play_bj()
 static void bj__get_bj_bet()
 {
 	vtype comment;
-	integer num;
+	long num;
 	boolean exit_flag = false;
 
 	strcpy(comment, "How much would you like to bet(50 to 1000 gp)? ");

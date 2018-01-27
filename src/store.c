@@ -40,7 +40,7 @@ void bank_init()
 {
 	/*	{ Initialize the bank					-DMF- */
 	/*} */
-	integer starting;
+	long starting;
 
 	starting = (randint(2000) + 1000) * 1000;
 	bank[IRON] = starting div 8;
@@ -58,7 +58,7 @@ void bank_init()
 	/*  } */
 }
 
-void sm__rndcash(integer *amt, integer target)
+void sm__rndcash(long *amt, long target)
 {
 	*amt = (199 * (*amt) + randint(2 * target))div 200;
 }
@@ -68,7 +68,7 @@ void store_maint()
 	/*{ Initialize and up-keep the store's inventory.		-RAK-
 	 * }*/
 
-	integer i1, i2, cnt, store_ctr;
+	long i1, i2, cnt, store_ctr;
 
 	/*printf ("\n         enter store_maint\n");  fflush(stdout);*/
 
@@ -133,11 +133,11 @@ void store_maint()
 	/*  printf ("\n         exit store_maint\n");  fflush(stdout); */
 }
 
-void store_create(integer store_num)
+void store_create(long store_num)
 {
 	/*{ Creates an item and inserts it into store's inven	-RAK-	}*/
 
-	integer i1, tries, cur_pos, dummy;
+	long i1, tries, cur_pos, dummy;
 
 	/*  printf ("\n           enter  store_create (%ld)",store_num); */
 	/*  fflush(stdout); */
@@ -186,12 +186,12 @@ void store_create(integer store_num)
 	/*  printf ("\n           exit  store_create");  fflush(stdout); */
 }
 
-void store_destroy(integer store_num, integer item_val, boolean one_of)
+void store_destroy(long store_num, long item_val, boolean one_of)
 {
 	/*{ Destroy an item in the stores inventory.  Note that if	}*/
 	/*{ 'one_of' is false, an entire slot is destroyed	-RAK-	}*/
 
-	integer i2, store_ctr;
+	long i2, store_ctr;
 
 	/* with stores[store_num] do; */
 	inven_temp->data = stores[store_num].store_inven[item_val].sitem;
@@ -213,11 +213,11 @@ void store_destroy(integer store_num, integer item_val, boolean one_of)
 	}
 }
 
-void sc__insert(integer store_num, integer pos, integer icost)
+void sc__insert(long store_num, long pos, long icost)
 {
 	/*{ Insert INVEN_MAX at given location	}*/
 
-	integer i1;
+	long i1;
 
 	/* with stores[store_num] do; */
 	for (i1 = stores[store_num].store_ctr; i1 >= pos; i1--) {
@@ -230,12 +230,12 @@ void sc__insert(integer store_num, integer pos, integer icost)
 	stores[store_num].store_ctr++;
 }
 
-void store_carry(integer store_num, integer *ipos)
+void store_carry(long store_num, long *ipos)
 {
 	/*{ Add the item in INVEN_MAX to stores inventory.	-RAK-	}*/
 
-	integer item_num, item_val;
-	integer typ, subt, icost, dummy;
+	long item_num, item_val;
+	long typ, subt, icost, dummy;
 	boolean flag;
 
 	/*{ Store_carry routine			}*/
@@ -300,12 +300,12 @@ void store_carry(integer store_num, integer *ipos)
 	} /* end if icost */
 }
 
-boolean store_check_num(integer store_num)
+boolean store_check_num(long store_num)
 {
 	/*{ Check to see if he will be carrying too many objects	-RAK-
 	 * }*/
 
-	integer i1;
+	long i1;
 	boolean return_value = false;
 
 	ENTER(("store_check_num", ""));
@@ -332,13 +332,12 @@ boolean store_check_num(integer store_num)
 	return return_value;
 }
 
-integer sell_price(integer snum, integer *max_sell, integer *min_sell,
-		   treasure_type *item)
+long sell_price(long snum, long *max_sell, long *min_sell, treasure_type *item)
 {
 	/*{ Asking price for an item				-RAK-	}*/
 
-	integer i1;
-	integer return_value = 0;
+	long i1;
+	long return_value = 0;
 
 	/* with stores[snum] do; */
 	i1 = item_value(item);
@@ -365,9 +364,9 @@ integer sell_price(integer snum, integer *max_sell, integer *min_sell,
 	return return_value;
 }
 
-integer iv__search_list(integer x1, integer x2)
+long iv__search_list(long x1, long x2)
 {
-	integer i1, i2;
+	long i1, i2;
 
 	i1 = 0;
 	i2 = 0;
@@ -383,10 +382,10 @@ integer iv__search_list(integer x1, integer x2)
 	return (i2 div GOLD_VALUE);
 }
 
-integer item_value(treasure_type *item)
+long item_value(treasure_type *item)
 {
 	/*{ Returns the value for any given object		-RAK-	}*/
-	integer return_value;
+	long return_value;
 
 	/* with item do; */
 	return_value = item->cost div GOLD_VALUE;
@@ -604,7 +603,7 @@ integer item_value(treasure_type *item)
 	return return_value;
 }
 
-boolean check_store_hours(integer st, integer sh)
+boolean check_store_hours(long st, long sh)
 {
 	/*{ Check to see if a store is open, message when closed  -DMF-   }*/
 
@@ -714,7 +713,7 @@ boolean check_store_hours(integer st, integer sh)
 	return return_value;
 }
 
-void check_store_hours_and_enter(integer st, integer sh, integer store_num)
+void check_store_hours_and_enter(long st, long sh, long store_num)
 {
 	/* st is the S_GENERAL or whatever store it is */
 	/* sh is the same as st, or -1 for the unnamed stores (S_TRADE_POST and
@@ -728,7 +727,7 @@ void check_store_hours_and_enter(integer st, integer sh, integer store_num)
 	LEAVE("check_store_hours_and_enter", "");
 }
 
-void st__reset_flag(integer time_spent, integer *flag)
+void st__reset_flag(long time_spent, long *flag)
 {
 	if (*flag > 1) {
 		(*flag) -= time_spent;
@@ -738,12 +737,12 @@ void st__reset_flag(integer time_spent, integer *flag)
 	}
 }
 
-void spend_time(integer days_spent, vtype place, boolean whole_days)
+void spend_time(long days_spent, vtype place, boolean whole_days)
 {
 	/*{ if not whole_days then it is actually turns... }*/
 
-	integer mornings, time_spent, turns_today, t2, i1;
-	real regen_percent;
+	long mornings, time_spent, turns_today, t2, i1;
+	float regen_percent;
 	boolean new_screen;
 	vtype out_val;
 
@@ -942,11 +941,11 @@ void spend_time(integer days_spent, vtype place, boolean whole_days)
 	}
 }
 
-void enter_store(integer store_num)
+void enter_store(long store_num)
 {
 	/*{ Entering a store					-RAK-	}*/
 
-	integer com_val, cur_top, tics;
+	long com_val, cur_top, tics;
 	treas_ptr trash_ptr;
 	char command;
 	boolean exit_flag;
@@ -963,7 +962,7 @@ void enter_store(integer store_num)
 	do {
 		if (get_com("", &command)) {
 			msg_flag = false;
-			com_val = (integer)(command);
+			com_val = (long)(command);
 
 			switch (com_val) {
 			case 18:
@@ -1052,7 +1051,7 @@ void enter_store(integer store_num)
 	LEAVE("enter_store", "");
 }
 
-void display_store(integer store_num, integer cur_top)
+void display_store(long store_num, long cur_top)
 {
 	/*{ Displays store					-RAK-	}*/
 	ENTER(("display_store", ""));
@@ -1083,18 +1082,18 @@ void store_prt_gold()
 	LEAVE("store_prt_gold", "");
 }
 
-void display_cost(integer store_num, integer pos)
+void display_cost(long store_num, long pos)
 {
 	/*{ Re-displays only a single cost                        -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	vtype out_val;
 
 	/* with stores[store_num] do; */
 	i1 = ((pos - 1) % 12);
 	if (stores[store_num].store_inven[pos].scost < 0) {
 		i2 = labs(stores[store_num].store_inven[pos].scost);
-		i2 += (integer)(i2 * chr_adj());
+		i2 += (long)(i2 * chr_adj());
 		sprintf(out_val, "%6ld", (i2 div GOLD_VALUE));
 	} else {
 		sprintf(
@@ -1123,7 +1122,7 @@ void display_commands()
 	LEAVE("display_commands", "");
 }
 
-void haggle_commands(integer typ)
+void haggle_commands(long typ)
 {
 	/*{ Displays the set of commands				-RAK-
 	 * }*/
@@ -1137,12 +1136,12 @@ void haggle_commands(integer typ)
 	prt("", 24, 1);
 }
 
-void display_inventory(integer store_num, integer start)
+void display_inventory(long store_num, long start)
 {
 	/*{ Displays a store's inventory				-RAK-
 	 * }*/
 
-	integer i1, i2, stop;
+	long i1, i2, stop;
 	vtype out_val1, out_val2;
 
 	ENTER(("display_inventory", ""));
@@ -1189,14 +1188,14 @@ void display_inventory(integer store_num, integer start)
 	LEAVE("display_inventory", "");
 }
 
-boolean store_purchase(integer store_num, integer *cur_top, boolean blitz)
+boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 {
 	/*{ Buy an item from a store                              -RAK-   }*/
 
-	integer i1, item_val, price, to_bank;
-	integer choice;
+	long i1, item_val, price, to_bank;
+	long choice;
 	treas_ptr item_new;
-	integer save_number;
+	long save_number;
 	vtype out_val, foo, out2;
 	boolean flag;
 	boolean return_value = false;
@@ -1402,13 +1401,13 @@ boolean store_purchase(integer store_num, integer *cur_top, boolean blitz)
 	return return_value;
 }
 
-boolean store_sell(integer store_num, integer cur_top, boolean blitz)
+boolean store_sell(long store_num, long cur_top, boolean blitz)
 {
 	/*{ Sell an item to the store                             -RAK-   }*/
 
-	integer count = 0;
+	long count = 0;
 	treas_ptr item_ptr = NULL;
-	integer item_pos, price;
+	long item_pos, price;
 	vtype out_val, foo, out2;
 	char trash_char;
 	boolean redraw;
@@ -1509,7 +1508,7 @@ boolean store_sell(integer store_num, integer cur_top, boolean blitz)
 	return return_value;
 }
 
-boolean increase_insults(integer store_num)
+boolean increase_insults(long store_num)
 {
 	/*{ Increase the insult counter and get pissed if too many -RAK-  }*/
 	boolean return_value = false;
@@ -1527,7 +1526,7 @@ boolean increase_insults(integer store_num)
 	return return_value;
 }
 
-void decrease_insults(integer store_num)
+void decrease_insults(long store_num)
 {
 	/* with stores[store_num] do; */
 	stores[store_num].insult_cur -= 2;
@@ -1536,7 +1535,7 @@ void decrease_insults(integer store_num)
 	}
 }
 
-void shut_store(integer store_num)
+void shut_store(long store_num)
 {
 	/* with stores[store_num] do; */
 	/* with py.misc.cur_age do; */
@@ -1562,7 +1561,7 @@ void shut_store(integer store_num)
 	}
 }
 
-boolean get_store_item(integer *com_val, vtype pmt, integer i1, integer i2)
+boolean get_store_item(long *com_val, vtype pmt, long i1, long i2)
 {
 	/*{ Get the ID of a store item and return its value       -RAK-   }*/
 
@@ -1577,7 +1576,7 @@ boolean get_store_item(integer *com_val, vtype pmt, integer i1, integer i2)
 	while (((*com_val < i1) || (*com_val > i2)) && (flag)) {
 		prt(out_val, 1, 1);
 		command = inkey();
-		*com_val = (integer)(command);
+		*com_val = (long)(command);
 		switch (*com_val) {
 		case 3:
 		case 25:
@@ -1597,22 +1596,22 @@ boolean get_store_item(integer *com_val, vtype pmt, integer i1, integer i2)
 	return flag;
 }
 
-integer sell_haggle(integer store_num, integer *price, treasure_type *item,
-		    boolean blitz)
+long sell_haggle(long store_num, long *price, treasure_type *item,
+		 boolean blitz)
 {
 	/*{ Haggling routine                                      -RAK-   }*/
 	/*{ Return value shows the result of the haggling:                 */
 	/*    0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy }         */
 
-	integer max_sell = 1, max_buy = 1, min_buy = 1;
-	integer cost, cur_ask, final_ask, min_offer;
-	integer last_offer, new_offer, final_flag, x3;
-	integer max_gold = 0, delta;
-	real x1, x2;
-	real min_per = 1.0, max_per = 1.0;
+	long max_sell = 1, max_buy = 1, min_buy = 1;
+	long cost, cur_ask, final_ask, min_offer;
+	long last_offer, new_offer, final_flag, x3;
+	long max_gold = 0, delta;
+	float x1, x2;
+	float min_per = 1.0, max_per = 1.0;
 	boolean flag, loop_flag;
 	vtype comment, out_val;
-	integer return_value = 0;
+	long return_value = 0;
 
 	ENTER(("sell_haggle", "s"));
 
@@ -1631,9 +1630,8 @@ integer sell_haggle(integer store_num, integer *price, treasure_type *item,
 		flag = true;
 	} else {
 		/* with owners[owner] do; */
-		cost =
-		    cost - (integer)(cost * chr_adj()) -
-		    (integer)(cost * rgold_adj[owners[stores[store_num].owner]
+		cost = cost - (long)(cost * chr_adj()) -
+		       (long)(cost * rgold_adj[owners[stores[store_num].owner]
 						   .owner_race][py.misc.prace]);
 		if (cost < 1) {
 			cost = 1;
@@ -1726,8 +1724,8 @@ integer sell_haggle(integer store_num, integer *price, treasure_type *item,
 
 				if (!(flag)) {
 					msg_flag = false;
-					x1 = (real)(last_offer - new_offer) /
-					     (real)(last_offer - cur_ask);
+					x1 = (float)(last_offer - new_offer) /
+					     (float)(last_offer - cur_ask);
 
 					if (x1 < min_per) {
 						flag =
@@ -1801,20 +1799,20 @@ integer sell_haggle(integer store_num, integer *price, treasure_type *item,
 	return return_value;
 }
 
-integer purchase_haggle(integer store_num, integer *price, treasure_type *item,
-			boolean blitz)
+long purchase_haggle(long store_num, long *price, treasure_type *item,
+		     boolean blitz)
 {
 	/*{ Haggling routine                                      -RAK-   }*/
 
-	integer max_sell, min_sell, max_buy;
-	integer cost, cur_ask, final_ask, min_offer;
-	integer last_offer, new_offer, final_flag, x3;
-	integer delta;
-	real x1, x2;
-	real min_per, max_per;
+	long max_sell, min_sell, max_buy;
+	long cost, cur_ask, final_ask, min_offer;
+	long last_offer, new_offer, final_flag, x3;
+	long delta;
+	float x1, x2;
+	float min_per, max_per;
 	boolean flag, loop_flag;
 	vtype out_val, comment;
-	integer return_value = 0;
+	long return_value = 0;
 
 	flag = false;
 	*price = 0;
@@ -1890,8 +1888,8 @@ integer purchase_haggle(integer store_num, integer *price, treasure_type *item,
 
 			if (!(flag)) {
 
-				x1 = (real)(new_offer - last_offer) /
-				     (real)(cur_ask - last_offer);
+				x1 = (float)(new_offer - last_offer) /
+				     (float)(cur_ask - last_offer);
 				if (x1 < min_per) {
 					flag = haggle_insults(store_num);
 					if (flag) {
@@ -1905,9 +1903,9 @@ integer purchase_haggle(integer store_num, integer *price, treasure_type *item,
 						}
 					}
 					x2 = (x1 + (randint(5) - 3) / 100.0);
-					x3 = (integer)((cur_ask - new_offer) *
-						       x2) +
-					     1;
+					x3 =
+					    (long)((cur_ask - new_offer) * x2) +
+					    1;
 					cur_ask -= x3;
 					if (cur_ask < final_ask) {
 						cur_ask = final_ask;
@@ -1956,7 +1954,7 @@ integer purchase_haggle(integer store_num, integer *price, treasure_type *item,
 	return return_value;
 }
 
-boolean haggle_insults(integer store_num)
+boolean haggle_insults(long store_num)
 {
 	/*{ Have insulted while haggling                          -RAK-   }*/
 
@@ -1971,9 +1969,9 @@ boolean haggle_insults(integer store_num)
 	return return_value;
 }
 
-boolean ro__get_haggle(vtype comment, integer *num)
+boolean ro__get_haggle(vtype comment, long *num)
 {
-	integer i1, clen;
+	long i1, clen;
 	vtype out_val;
 	boolean flag = true;
 
@@ -2003,11 +2001,11 @@ boolean ro__get_haggle(vtype comment, integer *num)
 	return flag;
 }
 
-integer receive_offer(integer store_num, vtype comment, integer *new_offer,
-		      integer last_offer, integer factor)
+long receive_offer(long store_num, vtype comment, long *new_offer,
+		   long last_offer, long factor)
 {
 	boolean flag;
-	integer return_value = 0;
+	long return_value = 0;
 
 	ENTER(("receive_offer", "i"));
 
@@ -2085,7 +2083,7 @@ void prt_comment1()
 	}
 }
 
-void prt_comment2(integer offer, integer asking, integer final)
+void prt_comment2(long offer, long asking, long final)
 {
 	/*{ %A1 is offer, %A2 is asking...                }*/
 
@@ -2183,7 +2181,7 @@ void prt_comment2(integer offer, integer asking, integer final)
 	}
 }
 
-void prt_comment3(integer offer, integer asking, integer final)
+void prt_comment3(long offer, long asking, long final)
 {
 	vtype comment;
 

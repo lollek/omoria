@@ -165,9 +165,9 @@ void tp__display_commands()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__clear_display(integer *cur_display_size, pinven_ptr cur_display[])
+void tp__clear_display(long *cur_display_size, pinven_ptr cur_display[])
 {
-	integer index;
+	long index;
 
 	*cur_display_size = 0;
 	for (index = 1; index <= T_DISPLAY_SIZE; index++) {
@@ -241,7 +241,7 @@ void tp__read_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 /*//////////////////////////////////////////////////////////////////// */
 void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 		   pinven_ptr *blegga, trade_record_type *profits,
-		   integer *cur_display_size, pinven_ptr cur_display[])
+		   long *cur_display_size, pinven_ptr cur_display[])
 {
 	boolean panic = false;
 	vtype out_val;
@@ -287,9 +287,9 @@ void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
-		     integer *cur_display_size, pinven_ptr cur_display[])
+		     long *cur_display_size, pinven_ptr cur_display[])
 {
-	integer count, old_display_size;
+	long count, old_display_size;
 	vtype out_val1, out_val2;
 
 	old_display_size = *cur_display_size;
@@ -344,7 +344,7 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__display_store(vtype shop_owner, pinven_ptr *inv, pinven_ptr *blegga,
-		       pinven_ptr *cur_top, integer *cur_display_size,
+		       pinven_ptr *cur_top, long *cur_display_size,
 		       pinven_ptr cur_display[])
 
 {
@@ -387,7 +387,7 @@ boolean tp__find_money_order(trade_account_type *owner, pinven_ptr *item,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__send_money(trade_account_type *owner, integer amount, pinven_ptr *inv)
+void tp__send_money(trade_account_type *owner, long amount, pinven_ptr *inv)
 {
 	pinven_ptr item = NULL;
 
@@ -410,9 +410,9 @@ void tp__send_money(trade_account_type *owner, integer amount, pinven_ptr *inv)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__made_profit(integer amount, trade_record_type *profits)
+void tp__made_profit(long amount, trade_record_type *profits)
 {
-	/*{ Try to trap so there isn't INTEGER overflow }*/
+	/*{ Try to trap so there isn't long overflow }*/
 
 	if ((999999999 - profits->pr.money) < amount) {
 		profits->pr.money = 999999999;
@@ -451,10 +451,9 @@ void tp__delete_item(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean tp__enough_time(integer sale_time, integer waiting_days,
-			integer waiting_hours)
+boolean tp__enough_time(long sale_time, long waiting_days, long waiting_hours)
 {
-	integer cur_time;
+	long cur_time;
 	double delta_time;
 	double wait_time;
 	boolean return_value;
@@ -614,7 +613,7 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean tp__get_store_item(integer *com_val, vtype pmt, integer i1, integer i2)
+boolean tp__get_store_item(long *com_val, vtype pmt, long i1, long i2)
 {
 	/*{ Get the ID of a store item and return it's value      -RAK-   }*/
 
@@ -713,12 +712,12 @@ void tp__dump(vtype filename, pinven_ptr *inv)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__bid(integer *cur_display_size, trade_account_type *cur_player,
+void tp__bid(long *cur_display_size, trade_account_type *cur_player,
 	     pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 	     pinven_ptr cur_display[], trade_record_type *profits,
 	     boolean *exit_flag)
 {
-	integer offer, to_bank, which;
+	long offer, to_bank, which;
 	vtype out_val;
 	pinven_ptr item = NULL;
 	boolean flag;
@@ -796,14 +795,14 @@ void tp__bid(integer *cur_display_size, trade_account_type *cur_player,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
-	      trade_account_type *cur_player, integer *cur_display_size,
+	      trade_account_type *cur_player, long *cur_display_size,
 	      pinven_ptr cur_display[], vtype shop_owner)
 {
 	treas_ptr item_ptr = NULL;
 	boolean redraw;
 	pinven_ptr item = NULL;
 	vtype response;
-	integer wgt;
+	long wgt;
 	treas_ptr temp_ptr = NULL;
 	char trash_char;
 
@@ -887,10 +886,10 @@ void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
-		   integer *cur_display_size, pinven_ptr cur_display[],
+		   long *cur_display_size, pinven_ptr cur_display[],
 		   trade_record_type *profits)
 {
-	integer which;
+	long which;
 	char command;
 
 	if (cur_display_size > 0) {
@@ -949,10 +948,10 @@ void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__get_info(pinven_ptr *inv, pinven_ptr *blegga, pinven_ptr *cur_top,
-		  integer *cur_display_size, pinven_ptr cur_display[])
+		  long *cur_display_size, pinven_ptr cur_display[])
 {
 	vtype out_val;
-	integer which;
+	long which;
 
 	if (*cur_display_size > 0) {
 		if (tp__get_store_item(&which, "Info on which?", 1,
@@ -998,12 +997,12 @@ void tp__get_info(pinven_ptr *inv, pinven_ptr *blegga, pinven_ptr *cur_top,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
-		       integer *cur_display_size, pinven_ptr cur_display[],
+		       long *cur_display_size, pinven_ptr cur_display[],
 		       trade_record_type *profits, vtype shop_owner,
 		       trade_account_type *cur_player, boolean *exit_flag)
 {
 	char command;
-	integer com_val;
+	long com_val;
 	vtype out_val;
 	treas_ptr trash_ptr = NULL;
 
@@ -1181,8 +1180,8 @@ void enter_trading_post()
 	pinven_ptr cur_top = NULL;
 	pinven_ptr blegga = NULL;
 	pinven_ptr cur_display[T_DISPLAY_SIZE + 1];
-	integer tics = 1;
-	integer cur_display_size;
+	long tics = 1;
+	long cur_display_size;
 	vtype shop_owner;
 	boolean exit_flag, entered = false;
 

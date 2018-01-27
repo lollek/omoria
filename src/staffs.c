@@ -1,10 +1,10 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void us__staff_effect(integer effect, boolean *idented)
+void us__staff_effect(long effect, boolean *idented)
 {
-	integer i3, randnum;
-	integer y, x;
+	long i3, randnum;
+	long y, x;
 	boolean ident;
 
 	ident = *idented;
@@ -150,7 +150,7 @@ void use_staff()
 	/*{ Use a staff...                                        -RAK-   }*/
 
 	unsigned long i1;
-	integer i3, chance, i4;
+	long i3, chance, i4;
 	treas_ptr i2, item_ptr;
 	char trash_char;
 	boolean redraw, ident;
@@ -201,7 +201,7 @@ void use_staff()
 							PM.exp +=
 							    (item_ptr->data
 								 .level /
-							     (real)PM.lev) +
+							     (float)PM.lev) +
 							    .5;
 							prt_experience();
 						}

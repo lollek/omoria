@@ -11,7 +11,7 @@ void magic_init(unsigned long random_seed)
 	/*	{ Initialize all potions, wands, staves, scrolls, etc...
 	 * }*/
 
-	integer i1, tmpv;
+	long i1, tmpv;
 	vtype tmps;
 
 	ENTER(("magic-init", ""));
@@ -159,7 +159,7 @@ void magic_init(unsigned long random_seed)
 
 void r__randdesloop(atype str_array[], int count)
 {
-	integer i1, i2;
+	long i1, i2;
 	vtype tmp;
 
 	for (i1 = 0; i1 < count; i1++) {
@@ -199,7 +199,7 @@ void rantitle(char *title)
 {
 	/*{ Return random title						}*/
 
-	integer i1, i2, i3, i4;
+	long i1, i2, i3, i4;
 
 	i3 = randint(2) + 1; /* two or three words */
 	strcpy(title, "Titled \"");
@@ -223,7 +223,7 @@ void identify(treasure_type *item)
 {
 	/*{ Something has been identified }*/
 
-	integer i1, x1, x2;
+	long i1, x1, x2;
 	treas_ptr curse;
 
 	x1 = item->tval;
@@ -304,7 +304,7 @@ void unquote(char *object_str)
 {
 	/*	{ Return string without quoted portion }*/
 
-	integer pos0, pos1, pos2, olen;
+	long pos0, pos1, pos2, olen;
 	vtype str1, str2;
 
 	pos0 = pindex(object_str, '"');
@@ -445,7 +445,7 @@ char *bag_descrip(treas_ptr bag, string result) /* was func */
 {
 	/*{ Return description about the contents of a bag	-DMF-	}*/
 
-	integer count, wgt;
+	long count, wgt;
 	treas_ptr ptr;
 
 	if ((bag->next == nil) || (bag->next->is_in == false)) {

@@ -441,7 +441,7 @@ void highlite_off()
 }
 
 /* Dump IO to buffer					-RAK-	*/
-void Put_Buffer(char const *out_str, integer row, integer col)
+void Put_Buffer(char const *out_str, long row, long col)
 {
 	/* ENTER("put_buffer", "i"); */
 
@@ -455,7 +455,7 @@ void Put_Buffer(char const *out_str, integer row, integer col)
 }
 
 void put_buffer_attr(out_str, row, col, attrs) char *out_str;
-integer row, col;
+long row, col;
 int attrs;
 {
 #if USE_CURSES_ATTRS
@@ -998,8 +998,8 @@ void flush()
 }
 
 /* Clears given line of text				-RAK-	*/
-void Erase_Line(row, col) integer row;
-integer col;
+void Erase_Line(row, col) long row;
+long col;
 {
 	if (row == MSG_LINE && msg_flag)
 		msg_print(CNIL);
@@ -1476,7 +1476,7 @@ void screen_map()
 	draw_cave();
 }
 
-boolean sl__get_dir(char *prompt, integer *dir)
+boolean sl__get_dir(char *prompt, long *dir)
 {
 	char command;
 	boolean return_value = false;
@@ -1505,9 +1505,9 @@ void show_location()
 		msg_print("You can't see your map.");
 	} else {
 		sprintf(out_val, "Section [%ld,%ld]; Location = [%ld,%ld]",
-			((integer)((char_row - 1) / OUTPAGE_HEIGHT) + 1),
-			((integer)((char_col - 1) / OUTPAGE_WIDTH) + 1),
-			char_row, char_col);
+			((long)((char_row - 1) / OUTPAGE_HEIGHT) + 1),
+			((long)((char_col - 1) / OUTPAGE_WIDTH) + 1), char_row,
+			char_col);
 		msg_print(out_val);
 	}
 #else /* taken from umoria 5.5 */
@@ -1515,7 +1515,7 @@ void show_location()
 	/* (W)here are we on the map	(L)ocate on map */
 
 	int cy, cx, p_y, p_x, y, x;
-	integer dir_val;
+	long dir_val;
 	ntype tmp_str, out_val;
 
 	if ((py.flags.blind > 0) || no_light()) {

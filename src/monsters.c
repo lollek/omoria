@@ -6,11 +6,11 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_monster(integer y, integer x, integer z, boolean slp)
+void place_monster(long y, long x, long z, boolean slp)
 {
 	/*{ Places a monster at given location			-RAK-	}*/
 
-	integer cur_pos;
+	long cur_pos;
 
 	/*  printf ("\n     Enter place_monster: %d (%d,%d)",z,x,y); */
 	/*  fflush(stdout); */
@@ -59,13 +59,13 @@ void place_monster(integer y, integer x, integer z, boolean slp)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void alloc_land_monster(obj_set alloc_set, integer num, integer dis,
-			boolean slp, boolean water)
+void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
+			boolean water)
 {
 	/*{ Allocates a random land monster			-RAK-	}*/
 
-	integer y, x, i1, i2, i3, count;
-	integer count2;
+	long y, x, i1, i2, i3, count;
+	long count2;
 	boolean flag;
 
 	/*  printf ("\n         Enter alloc land monster\n");  fflush(stdout);

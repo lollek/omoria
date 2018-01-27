@@ -4,50 +4,47 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-static void bm__add_tohit(integer a, integer b, integer c, integer i,
-			  integer *r)
+static void bm__add_tohit(long a, long b, long c, long i, long *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].tohit = *r;
 }
 
-static void bm__add_todam(integer a, integer b, integer c, integer i,
-			  integer *r)
+static void bm__add_todam(long a, long b, long c, long i, long *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].todam = *r;
 }
 
-static void bm__add_ac(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_ac(long a, long b, long c, long i, long *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].ac = *r;
 }
 
-static void bm__add_toac(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_toac(long a, long b, long c, long i, long *r)
 {
 	*r = randint(a) + randint(b) + randint(c);
 	t_list[i].toac = *r;
 }
 
-static void bm__add_p1(integer a, integer b, integer c, integer i, integer *r)
+static void bm__add_p1(long a, long b, long c, long i, long *r)
 {
 	*r = a + randint(b) + randint(c);
 	t_list[i].p1 = *r;
 }
 
-static void bm__add_p1_rods(integer a, integer b, integer c, integer i,
-			    integer *r)
+static void bm__add_p1_rods(long a, long b, long c, long i, long *r)
 {
 	*r = a + randint(b) + c;
 	t_list[i].p1 = *r;
 }
 
-void soup_up_black_market(integer indx)
+void soup_up_black_market(long indx)
 {
 	/*{ Soup-up the Black Market inventory - mwk}*/
 
-	integer r1, r2, r3, r4, r5;
+	long r1, r2, r3, r4, r5;
 
 	/* with t_list[indx]. do; */
 	switch (t_list[indx].tval) {
@@ -770,13 +767,13 @@ void soup_up_black_market(integer indx)
 }
 
 #if 0
-extern void store_carry( integer store_num, integer *ipos);
+extern void store_carry( long store_num, long *ipos);
 
 /*{Add Black Market items to the inventory}*/
 
 void do_black_market()
 {
-  integer    indx,iptr,inven_num;
+  long    indx,iptr,inven_num;
 
    inven_num = 0;
    store[S_BLACK_MARKET].store_ctr = 0;
@@ -803,7 +800,7 @@ void do_black_market()
   store[S_BLACK_MARKET].store_ctr--;
 }
                                  
-void Opusii_vomit(integer percentage)
+void Opusii_vomit(long percentage)
 {
   if (randint(100) < percentage) {
     /*with py.flags do; */

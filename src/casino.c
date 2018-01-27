@@ -8,9 +8,9 @@
 #include "bj.h"
 #include "save.h"
 
-integer bet;
-integer gld;
-integer tics;
+long bet;
+long gld;
+long tics;
 boolean c_closed;
 
 void c__display_gold()
@@ -21,9 +21,9 @@ void c__display_gold()
 	prt(out_val, 19, 22);
 }
 
-boolean c__get_response(vtype comment, integer *num)
+boolean c__get_response(vtype comment, long *num)
 {
-	integer i1, clen;
+	long i1, clen;
 	vtype out_val;
 	boolean flag;
 

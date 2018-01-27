@@ -1,7 +1,7 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void chakra_spell_effects(integer effect)
+void chakra_spell_effects(long effect)
 {
 	/*{ Disciplines....}*/
 	switch (effect + 1) {

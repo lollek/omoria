@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
 
 	set_difficulty(py.misc.diffic); /* Set difficulty of game */
 	player_max_exp =
-	    (integer)(player_exp[MAX_PLAYER_LEVEL - 1] * py.misc.expfact);
+	    (long)(player_exp[MAX_PLAYER_LEVEL - 1] * py.misc.expfact);
 	clear_from(1);
 	prt_stat_block();
 

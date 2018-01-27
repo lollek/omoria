@@ -52,7 +52,7 @@ void dispose(void *ptr, int size, char *message)
 char *chomp(char *input_line)
 {
 	/* remove \n from the end of a string if there is one */
-	integer x;
+	long x;
 
 	x = strlen(input_line);
 	if (x && (input_line[x - 1] == '\n')) {
@@ -66,7 +66,7 @@ char *chomp(char *input_line)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-integer min3(integer i1, integer i2, integer i3)
+long min3(long i1, long i2, long i3)
 {
 	if (i1 < i2) {
 		return (i1 < i3) ? i1 : i3;

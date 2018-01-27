@@ -1,15 +1,15 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void arcane_spell_effects(integer effect)
+void arcane_spell_effects(long effect)
 {
 	/*{ Spells...                                     }*/
 
-	integer i2;
-	integer dir;
-	integer dumy;
-	integer y_dumy = char_row;
-	integer x_dumy = char_col;
+	long i2;
+	long dir;
+	long dumy;
+	long y_dumy = char_row;
+	long x_dumy = char_col;
 
 	switch (effect + 1) {
 

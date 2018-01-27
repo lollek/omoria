@@ -126,7 +126,7 @@ boolean restore_stat(stat_set tstat, vtype msg1)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean cure_me(integer *what_flag)
+boolean cure_me(long *what_flag)
 {
 	boolean return_value = false;
 
@@ -146,7 +146,7 @@ boolean remove_curse()
 {
 	/*{ Removes curses from items in inventory		-RAK-	}*/
 
-	integer i1;
+	long i1;
 	boolean return_value = false;
 
 	for (i1 = Equipment_primary; i1 <= Equipment_cloak; i1++) {
@@ -163,7 +163,7 @@ boolean remove_curse()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean hp_player(integer num, vtype kind)
+boolean hp_player(long num, vtype kind)
 {
 	/*{ Change players hit points in some manner		-RAK-	}*/
 
@@ -184,7 +184,7 @@ boolean hp_player(integer num, vtype kind)
 		}
 		prt_hp();
 
-		switch ((integer)(num / 5)) {
+		switch ((long)(num / 5)) {
 		case 0:
 			msg_print("You feel a little better.");
 			break;
@@ -210,14 +210,14 @@ boolean hp_player(integer num, vtype kind)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean aggravate_monster(integer dis_affect)
+boolean aggravate_monster(long dis_affect)
 {
 	/*{ Get all the monsters on the level pissed off...	-RAK-	}*/
 
 	/* I'm guessing that this was supposed to only return true if any
 	   monsters were in range of the effect, it used to always be true */
 
-	integer i1;
+	long i1;
 	boolean return_value = false;
 
 	i1 = muptr;
@@ -238,12 +238,11 @@ boolean aggravate_monster(integer dis_affect)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean explode(integer typ, integer y, integer x, integer dam_hp,
-		ctype descrip)
+boolean explode(long typ, long y, long x, long dam_hp, ctype descrip)
 {
-	integer i1, i2;
-	integer dam, max_dis, thit, tkill;
-	integer weapon_type, harm_type;
+	long i1, i2;
+	long dam, max_dis, thit, tkill;
+	long weapon_type, harm_type;
 	obj_set *destroy;
 	vtype out_val;
 	boolean return_value = true;
@@ -342,12 +341,14 @@ boolean explode(integer typ, integer y, integer x, integer dam_hp,
 									    4;
 								}
 
-								dam = (integer)(
-								    dam /
-								    (distance(
-									 i1, i2,
-									 y, x) +
-								     1));
+								dam =
+								    (long)(dam /
+									   (distance(
+										i1,
+										i2,
+										y,
+										x) +
+									    1));
 
 								if ((dam > 0) &&
 								    (!mon_resists(
@@ -452,8 +453,7 @@ boolean explode(integer typ, integer y, integer x, integer dam_hp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void get_flags(integer typ, integer *weapon_type, integer *harm_type,
-	       obj_set **destroy)
+void get_flags(long typ, long *weapon_type, long *harm_type, obj_set **destroy)
 {
 	/*{ Return flags for given type area affect               -RAK-   }*/
 
@@ -522,9 +522,9 @@ void get_flags(integer typ, integer *weapon_type, integer *harm_type,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mon_save(integer a_cptr, integer bonus, integer spell_class)
+boolean mon_save(long a_cptr, long bonus, long spell_class)
 {
-	integer mon_level;
+	long mon_level;
 	boolean return_value;
 
 	mon_level = c_list[m_list[a_cptr].mptr].level;
@@ -553,10 +553,10 @@ boolean mon_save(integer a_cptr, integer bonus, integer spell_class)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mon_resists(byteint a_cptr)
+boolean mon_resists(unsigned char a_cptr)
 {
-	integer res_chance;
-	integer delta_lev;
+	long res_chance;
+	long delta_lev;
 	vtype out_val;
 	boolean return_value;
 
@@ -589,9 +589,9 @@ boolean mon_resists(byteint a_cptr)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean do_stun(byteint a_cptr, integer save_bonus, integer time)
+boolean do_stun(unsigned char a_cptr, long save_bonus, long time)
 {
-	integer held;
+	long held;
 	vtype m_name, out_val;
 	boolean return_value = false; /* was true, but that seemed odd */
 
@@ -615,11 +615,11 @@ boolean do_stun(byteint a_cptr, integer save_bonus, integer time)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean teleport_away(integer monptr, integer dis)
+boolean teleport_away(long monptr, long dis)
 {
 	/*{ Move the creature record to a new location            -RAK-   }*/
 
-	integer yn, xn, ctr;
+	long yn, xn, ctr;
 	boolean return_value = false;
 
 	/* with m_list[monptr] do; */
@@ -654,11 +654,11 @@ boolean teleport_away(integer monptr, integer dis)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean teleport_to(integer ny, integer nx)
+boolean teleport_to(long ny, long nx)
 {
 	/*{ Teleport player to spell casting creature             -RAK-   }*/
 
-	integer dis, ctr, y, x, i1, i2;
+	long dis, ctr, y, x, i1, i2;
 	boolean return_value = true;
 
 	dis = 1;
@@ -699,14 +699,14 @@ boolean teleport_to(integer ny, integer nx)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean breath(integer typ, integer y, integer x, integer dam_hp, vtype ddesc)
+boolean breath(long typ, long y, long x, long dam_hp, vtype ddesc)
 {
 	/*{ Breath weapon works like a fire_ball, but affects the player. }*/
 	/*{ Note the area affect....                              -RAK-   }*/
 
-	integer i1, i2;
-	integer dam, max_dis;
-	integer weapon_type, harm_type;
+	long i1, i2;
+	long dam, max_dis;
+	long weapon_type, harm_type;
 	obj_set *destroy;
 	boolean return_value = true;
 
@@ -763,11 +763,12 @@ boolean breath(integer typ, integer y, integer x, integer dam_hp, vtype ddesc)
 								dam = trunc(
 								    dam / 4.0);
 							}
-							dam = (integer)(
-							    dam /
-							    (distance(i1, i2, y,
-								      x) +
-							     1));
+							dam =
+							    (long)(dam /
+								   (distance(
+									i1, i2,
+									y, x) +
+								    1));
 							if (!mon_resists(
 								cave[i1][i2]
 								    .cptr)) {
@@ -877,13 +878,13 @@ boolean breath(integer typ, integer y, integer x, integer dam_hp, vtype ddesc)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void lose_exp(integer amount)
+void lose_exp(long amount)
 {
 	/*{ Lose experience                                       -RAK-   }*/
 
-	integer i1, i2;
-	integer av_hp, lose_hp;
-	integer av_mn, lose_mn;
+	long i1, i2;
+	long av_hp, lose_hp;
+	long av_mn, lose_mn;
 	boolean flag;
 
 	/* with py.misc do; */
@@ -962,7 +963,7 @@ void lose_exp(integer amount)
 /*//////////////////////////////////////////////////////////////////// */
 boolean gain_stat(stat_set tstat, vtype msg1)
 {
-	integer i1;
+	long i1;
 	boolean return_value = true;
 
 	i1 = in_statp(PS.p[(int)tstat] - PS.l[(int)tstat]);
@@ -1030,10 +1031,10 @@ boolean restore_level()
 {
 	/*{ Restores any drained experience                       -RAK-   }*/
 
-	byteint max_level = 1;
+	unsigned char max_level = 1;
 	boolean return_value = false;
 
-	while ((integer)(player_exp[max_level] * py.misc.expfact) <=
+	while ((long)(player_exp[max_level] * py.misc.expfact) <=
 	       py.misc.max_exp) {
 		max_level++;
 	}
@@ -1057,11 +1058,11 @@ boolean restore_level()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_creatures(integer typ)
+boolean detect_creatures(long typ)
 {
 	/*{ Display evil creatures on current panel               -RAK-   }*/
 
-	integer i1;
+	long i1;
 	boolean flag, found;
 
 	flag = false;
@@ -1127,7 +1128,7 @@ boolean detect_creatures(integer typ)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_inv2(integer amount)
+boolean detect_inv2(long amount)
 {
 	/*{ Detect Invisible for period of time                   -RAK-   }*/
 
@@ -1138,11 +1139,11 @@ boolean detect_inv2(integer amount)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_item(integer typ)
+boolean detect_item(long typ)
 {
 	/*{ Detect treasure or object on current panel    -Steven-}*/
 
-	integer i1, i2;
+	long i1, i2;
 	boolean show_it;
 	obj_set treasures = {valuable_jewelry, valuable_gems, valuable_metal,
 			     0};
@@ -1182,7 +1183,7 @@ boolean detect_trap()
 {
 	/*{ Locates and displays traps on current panel           -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	boolean flag = false;
 
 	for (i1 = panel_row_min; i1 <= panel_row_max; i1++) {
@@ -1212,7 +1213,7 @@ boolean detect_sdoor()
 {
 	/*{ Locates and displays all secret doors on current panel -RAK-  }*/
 
-	integer i1, i2;
+	long i1, i2;
 	obj_set pick_a_stair = {up_staircase, down_staircase,
 				up_steep_staircase, down_steep_staircase, 0};
 
@@ -1248,11 +1249,11 @@ boolean detect_sdoor()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean enchant(worlint *pluses)
+boolean enchant(short *pluses)
 {
 	/*{ Enchants a plus onto an item...                       -RAK-   }*/
 
-	integer chance = 0;
+	long chance = 0;
 	boolean return_value = false;
 
 	if (*pluses > 0) {
@@ -1300,7 +1301,7 @@ boolean enchant(worlint *pluses)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean bless(integer amount)
+boolean bless(long amount)
 {
 	/*{ Bless                                                 -RAK-   }*/
 
@@ -1319,7 +1320,7 @@ boolean ident_spell()
 	vtype out_val;
 	char trash_char;
 	treas_ptr ptr;
-	integer count = 0;
+	long count = 0;
 	boolean redraw = false;
 	boolean return_value = false;
 
@@ -1361,12 +1362,12 @@ boolean ident_spell()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean light_area(integer y, integer x)
+boolean light_area(long y, long x)
 {
 	/*{ Light an area: 1.  If corridor then light immediate area -RAK-}*/
 	/*{                2.  If room then light entire room.            }*/
 
-	integer i1, i2;
+	long i1, i2;
 	obj_set room_floors = {1, 2, 17, 18, 0};
 	boolean flag = true;
 
@@ -1392,13 +1393,13 @@ boolean light_area(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean unlight_area(integer y, integer x)
+boolean unlight_area(long y, long x)
 {
 	/*{ Darken an area, opposite of light area                -RAK-   }*/
 
-	integer i1, i2, i3, tmp1, tmp2, ov_len;
-	integer start_row, start_col;
-	integer end_row, end_col;
+	long i1, i2, i3, tmp1, tmp2, ov_len;
+	long start_row, start_col;
+	long end_row, end_col;
 	vtype out_val;
 	obj_set room_floors = {1, 2, 17, 18, 0};
 	obj_set doors_and_corridors = {4, 5, 6, 0};
@@ -1480,7 +1481,7 @@ boolean map_area()
 {
 	/*{ Map the current area plus some                        -RAK-   }*/
 
-	integer i1, i2, i3, i4, i5, i6, i7, i8;
+	long i1, i2, i3, i4, i5, i6, i7, i8;
 
 	i1 = panel_row_min - randint(10);
 	i2 = panel_row_max + randint(10);
@@ -1529,11 +1530,11 @@ boolean map_area()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean sleep_monsters1(integer y, integer x)
+boolean sleep_monsters1(long y, long x)
 {
 	/*{ Sleep creatures adjacent to player                    -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	vtype out_val;
 	boolean flag = false;
 
@@ -1579,7 +1580,7 @@ boolean trap_creation()
 {
 	/*{ Surround the fool with traps (chuckle)                -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 
 	for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
 		for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
@@ -1602,7 +1603,7 @@ boolean door_creation()
 {
 	/*{ Surround the player with doors...                     -RAK-   }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 	boolean flag = true;
 
 	for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
@@ -1634,7 +1635,7 @@ boolean td_destroy()
 {
 	/*{ Destroys any adjacent door(s)/trap(s)                 -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	obj_set pick_a_door = {unseen_trap, seen_trap,   open_door,
 			       closed_door, secret_door, 0};
 
@@ -1663,7 +1664,7 @@ boolean warding_glyph()
 {
 	/*{ Leave a glyph of warding... Creatures will not pass over! -RAK-}*/
 
-	integer i1;
+	long i1;
 
 	/* with cave[char_row][char_col]. do; */
 	if (cave[char_row][char_col].tptr == 0) {
@@ -1688,7 +1689,7 @@ boolean protect_evil()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean recharge(integer num)
+boolean recharge(long num)
 {
 	/*{ Recharge a wand, staff, or rod.  Sometimes the item breaks. -RAK-}*/
 
@@ -1774,7 +1775,7 @@ boolean mass_genocide()
 	/*{ Delete all creatures within MAX_SIGHT distance        -RAK-   }*/
 	/*{ NOTE : Winning creatures cannot be genocided                  }*/
 
-	integer i1, i2;
+	long i1, i2;
 	boolean flag = false;
 
 	i1 = muptr; /* what happens if there are no monsters in the world? */
@@ -1803,7 +1804,7 @@ boolean genocide()
 	/*{ Delete all creatures of a given type from level.      -RAK-   }*/
 	/*{ This does not keep creatures of type from appearing later.    }*/
 
-	integer i1, i2;
+	long i1, i2;
 	char typ;
 	vtype out_val;
 	boolean flag = true;
@@ -1836,11 +1837,11 @@ boolean genocide()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean create_food(integer t0, integer t1, integer t2, integer t3, integer t4)
+boolean create_food(long t0, long t1, long t2, long t3, long t4)
 {
 	/*{ Create food for the player.           -RAK-   }*/
 
-	integer i1, i2, i3, this_one, dist;
+	long i1, i2, i3, this_one, dist;
 
 	for (i1 = char_row - 2; i1 <= char_row + 2; i1++) {
 		for (i2 = char_col - 2; i2 <= char_col + 2; i2++) {
@@ -1904,8 +1905,7 @@ boolean create_food(integer t0, integer t1, integer t2, integer t3, integer t4)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean za__did_it_work(integer monptr, integer cflag, integer dmge,
-			integer typ)
+boolean za__did_it_work(long monptr, long cflag, long dmge, long typ)
 {
 	boolean hmm = false;
 
@@ -1949,12 +1949,11 @@ boolean za__did_it_work(integer monptr, integer cflag, integer dmge,
 	return hmm && (!mon_resists(monptr));
 }
 /*//////////////////////////////////////////////////////////////////// */
-void za__yes_it_did(integer monptr, integer cflag, integer dmge, integer typ,
-		    integer i1)
+void za__yes_it_did(long monptr, long cflag, long dmge, long typ, long i1)
 {
 	vtype out_val;
 
-	integer mptr = m_list[monptr].mptr; /* monster might get deleted */
+	long mptr = m_list[monptr].mptr; /* monster might get deleted */
 
 	/* with m_list[i1]. do; */
 
@@ -2019,8 +2018,7 @@ void za__yes_it_did(integer monptr, integer cflag, integer dmge, integer typ,
 	} /* end switch */
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean za__no_it_didnt(integer monptr, integer cflag, integer dmge,
-			integer typ)
+boolean za__no_it_didnt(long monptr, long cflag, long dmge, long typ)
 {
 	vtype out_val;
 	obj_set some_stuff = {c_sleep, c_confuse, c_speed, c_hold, c_joke, 0};
@@ -2046,9 +2044,9 @@ boolean za__no_it_didnt(integer monptr, integer cflag, integer dmge,
 	return flag;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zap_area(integer cflag, integer dmge, integer typ)
+boolean zap_area(long cflag, long dmge, long typ)
 {
-	integer i1, m_next;
+	long i1, m_next;
 	boolean flag = false;
 
 	i1 = muptr; /* what if no monsters? */
@@ -2073,7 +2071,7 @@ boolean zap_area(integer cflag, integer dmge, integer typ)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void da__replace_spot(integer y, integer x, integer typ)
+void da__replace_spot(long y, long x, long typ)
 {
 	/* with cave[y][x]. do; */
 	switch (typ) {
@@ -2118,14 +2116,14 @@ void da__replace_spot(integer y, integer x, integer typ)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean destroy_area(integer y, integer x)
+boolean destroy_area(long y, long x)
 {
 	/*{ The spell of destruction...                           -RAK-   }*/
 	/*{ NOTE : Winning creatures that are deleted will be considered  }*/
 	/*{        as teleporting to another level.  This will NOT win the}*/
 	/*{        game...                                                }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 
 	if (dun_level > 0) {
 		for (i1 = (y - 15); i1 <= (y + 15); i1++) {
@@ -2161,7 +2159,7 @@ boolean earthquake()
 	/*{ turn them into open spots.  Pick some open spots and turn     }*/
 	/*{ them into walls.  An "Earthquake" effect...           -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	obj_set room_floors = {1, 2, 0};
 
 	for (i1 = char_row - 8; i1 <= char_row + 8; i1++) {
@@ -2282,7 +2280,7 @@ boolean mass_poly()
 	/*{ Polymorph any creature that player can see...         -RAK-   }*/
 	/*{ NOTE: cannot polymorph a winning creature (BALROG)            }*/
 
-	integer i1, i2, y, x;
+	long i1, i2, y, x;
 	boolean flag = false;
 
 	i1 = muptr;
@@ -2314,12 +2312,12 @@ boolean mass_poly()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean light_line(integer dir, integer y, integer x, integer power)
+boolean light_line(long dir, long y, long x, long power)
 {
 	/*{ Leave a line of light in given dir, blue light can sometimes  }*/
 	/*{ hurt creatures...                                     -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	vtype out_val;
 
 	ENTER(("light_line", "%d, %d, %d, %d", dir, y, x, power));
@@ -2391,11 +2389,11 @@ boolean light_line(integer dir, integer y, integer x, integer power)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean starlite(integer y, integer x)
+boolean starlite(long y, long x)
 {
 	/*{ Light line in all directions                          -RAK-   }*/
 
-	integer i1;
+	long i1;
 
 	for (i1 = 1; i1 <= 9; i1++) {
 		if (i1 != 5) {
@@ -2409,10 +2407,9 @@ boolean starlite(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean fb__ill_joke(integer a_cptr, integer typ, integer dam, char *str,
-		     char *str2)
+boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2)
 {
-	integer i2;
+	long i2;
 	vtype out_val;
 
 	find_monster_name(str, a_cptr, false);
@@ -2460,13 +2457,12 @@ boolean fb__ill_joke(integer a_cptr, integer typ, integer dam, char *str,
 	return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_bolt(integer typ, integer dir, integer y, integer x, integer dam,
-		  ctype bolt_typ)
+boolean fire_bolt(long typ, long dir, long y, long x, long dam, ctype bolt_typ)
 {
 	/*{ Shoot a bolt in a given direction                     -RAK-   }*/
 
-	integer dist, cptr, mptr;
-	integer weapon_type, harm_type;
+	long dist, cptr, mptr;
+	long weapon_type, harm_type;
 	obj_set *dummy;
 	vtype str, str2, out_val;
 
@@ -2514,13 +2510,13 @@ boolean fire_bolt(integer typ, integer dir, integer y, integer x, integer dam,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_ball(integer typ, integer dir, integer y, integer x,
-		  integer dam_hp, ctype descrip)
+boolean fire_ball(long typ, long dir, long y, long x, long dam_hp,
+		  ctype descrip)
 {
 	/*{ Shoot a ball in a given direction.  Note that balls have an   }*/
 	/*{ area affect....                                       -RAK-   }*/
 
-	integer dist = 0;
+	long dist = 0;
 	boolean flag = false;
 
 	if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
@@ -2535,11 +2531,11 @@ boolean fire_ball(integer typ, integer dir, integer y, integer x,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean wall_to_mud(integer dir, integer y, integer x)
+boolean wall_to_mud(long dir, long y, long x)
 {
 	/*{ Turn stone to mud, delete wall....                    -RAK-   }*/
 
-	integer i1, cptr, mptr;
+	long i1, cptr, mptr;
 	vtype out_val, out_val2;
 	boolean flag = false;
 	boolean return_value = false;
@@ -2615,7 +2611,7 @@ boolean wall_to_mud(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean td_destroy2(integer dir, integer y, integer x)
+boolean td_destroy2(long dir, long y, long x)
 {
 	/*{ Destroy all traps and doors in a given direction      -RAK-   }*/
 
@@ -2644,14 +2640,14 @@ boolean td_destroy2(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean poly_monster(integer dir, integer y, integer x)
+boolean poly_monster(long dir, long y, long x)
 {
 	/*{ Polymorph a monster                                   -RAK-   }*/
 	/*{ NOTE: cannot polymorph a winning creature (BALROG)            }*/
 
 	vtype out_val;
-	integer cptr;
-	integer dist = 0;
+	long cptr;
+	long dist = 0;
 	boolean flag = false;
 	boolean return_value = false;
 
@@ -2690,11 +2686,11 @@ boolean poly_monster(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean build_wall(integer dir, integer y, integer x)
+boolean build_wall(long dir, long y, long x)
 {
 	/*{ Create a wall...                                      -RAK-   }*/
 
-	integer i1 = 0;
+	long i1 = 0;
 	boolean flag = false;
 
 	move_dir(dir, &y, &x);
@@ -2722,7 +2718,7 @@ boolean build_wall(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean clone_monster(integer dir, integer y, integer x)
+boolean clone_monster(long dir, long y, long x)
 {
 	/*{ Replicate a creature                                  -RAK-   }*/
 
@@ -2745,11 +2741,11 @@ boolean clone_monster(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean disarm_all(integer dir, integer y, integer x)
+boolean disarm_all(long dir, long y, long x)
 {
 	/*{ Disarms all traps/chests in a given direction         -RAK-   }*/
 
-	integer oldy, oldx, tval;
+	long oldy, oldx, tval;
 	char *achar;
 	boolean flag = false;
 
@@ -2798,7 +2794,7 @@ boolean disarm_all(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean teleport_monster(integer dir, integer y, integer x)
+boolean teleport_monster(long dir, long y, long x)
 {
 	/*{ Teleport all creatures in a given direction away      -RAK-   }*/
 
@@ -2814,7 +2810,7 @@ boolean teleport_monster(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean zm__did_it_work(integer zaptype, integer cptr, integer aux)
+boolean zm__did_it_work(long zaptype, long cptr, long aux)
 {
 	boolean flag;
 
@@ -2851,10 +2847,9 @@ boolean zm__did_it_work(integer zaptype, integer cptr, integer aux)
 }
 
 /*//////////////////////////////////////////////////////////////////// */
-void zm__yes_it_did(integer zaptype, integer cptr, integer aux, char *str1,
-		    char *str2)
+void zm__yes_it_did(long zaptype, long cptr, long aux, char *str1, char *str2)
 {
-	integer i1;
+	long i1;
 	vtype out_val;
 
 	/* with cave[y,x] do; */
@@ -2913,7 +2908,7 @@ void zm__yes_it_did(integer zaptype, integer cptr, integer aux, char *str1,
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zm__no_it_didnt(integer zaptype, char *str1)
+boolean zm__no_it_didnt(long zaptype, char *str1)
 {
 	/*{ returns true for item idents }*/
 
@@ -2931,15 +2926,14 @@ boolean zm__no_it_didnt(integer zaptype, char *str1)
 	return flag;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zap_monster(integer dir, integer y, integer x, integer aux,
-		    integer zaptype)
+boolean zap_monster(long dir, long y, long x, long aux, long zaptype)
 {
 	/*{ Contains all aimed spell effects that stop at first victim.  New
 	  spell effects should be put into constants.inc.  Aux is used for
 	  damage
 	  or speed change if used.}*/
 
-	integer cptr, mptr;
+	long cptr, mptr;
 	vtype str1, str2;
 	boolean flag = false;
 
@@ -2965,11 +2959,11 @@ boolean zap_monster(integer dir, integer y, integer x, integer aux,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean bolt_to_creature(integer dir, integer *y, integer *x, integer *dist,
-			 integer max_dist, boolean visable)
+boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
+			 boolean visable)
 {
 	boolean hit_creature = false;
-	integer oldx, oldy;
+	long oldx, oldy;
 
 	do {
 		oldy = *y;
@@ -3005,10 +2999,10 @@ boolean bolt_to_creature(integer dir, integer *y, integer *x, integer *dist,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean move_to_creature(integer dir, integer *y, integer *x)
+boolean move_to_creature(long dir, long *y, long *x)
 {
 	boolean hit_creature;
-	integer dist = 0;
+	long dist = 0;
 
 	hit_creature = bolt_to_creature(dir, y, x, &dist, 999, false);
 	return hit_creature;
@@ -3108,7 +3102,7 @@ boolean detect_magic()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean create_water(integer y, integer x)
+boolean create_water(long y, long x)
 {
 	/*{ Creates an area of water on open floor                -Cap'n- }*/
 	/* XXXX no code existed */
@@ -3117,7 +3111,7 @@ boolean create_water(integer y, integer x)
 }
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean destroy_water(integer y, integer x)
+boolean destroy_water(long y, long x)
 {
 	/*{ Makes an area of water into open floor                -Cap'n- }*/
 	/* XXXX no code existed */
@@ -3135,13 +3129,13 @@ boolean item_petrify()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean creeping_doom(integer dir, integer y, integer x, integer dam_hp,
-		      integer range, ctype ddesc)
+boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
+		      ctype ddesc)
 {
 	/*{ Creeping doom type spells, a missile, but with a set range    }*/
 
-	integer dist;
-	integer cptr, mptr;
+	long dist;
+	long cptr, mptr;
 	vtype out_val;
 
 	dist = 0;
@@ -3175,14 +3169,14 @@ boolean creeping_doom(integer dir, integer y, integer x, integer dam_hp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_line(integer typ, integer dir, integer y, integer x,
-		  integer dam_hp, ctype descrip)
+boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
+		  ctype descrip)
 {
 	/*{ Fire a spell that affects a line of monsters                  }*/
 
-	integer dist;
-	integer weapon_type, harm_type;
-	integer cptr, mptr;
+	long dist;
+	long weapon_type, harm_type;
+	long cptr, mptr;
 	obj_set *dummy;
 	vtype out_val;
 

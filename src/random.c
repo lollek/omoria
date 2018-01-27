@@ -29,18 +29,18 @@ void set_seed(unsigned long the_seed)
 	srand(the_seed);
 }
 
-integer randnor(integer mean, integer stand)
+long randnor(long mean, long stand)
 {
 	/*{ Generates a random integer number of NORMAL distribution -RAK-}*/
 
-	return (integer)(sqrt(-2.0 * log(randint(9999999) / 10000000.0)) *
-			 cos(6.283 * (randint(9999999) / 10000000.0)) * stand) +
+	return (long)(sqrt(-2.0 * log(randint(9999999) / 10000000.0)) *
+		      cos(6.283 * (randint(9999999) / 10000000.0)) * stand) +
 	       mean;
 }
 
-integer rand_rep(integer num, integer die)
+long rand_rep(long num, long die)
 {
-	integer i1, sum = 0;
+	long i1, sum = 0;
 
 	for (i1 = 0; i1 < num; i1++) {
 		sum += randint(die);
@@ -49,11 +49,11 @@ integer rand_rep(integer num, integer die)
 	return sum;
 }
 
-integer randint(integer maxval)
+long randint(long maxval)
 {
 	/* Generates a random integer x where 1<=X<=MAXVAL	-RAK-	*/
 
-	integer r = 0;
+	long r = 0;
 
 	if (maxval) {
 		r = ((rand() % maxval) + 1);

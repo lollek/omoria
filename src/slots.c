@@ -43,7 +43,7 @@ void sm__display_slot_options()
 	prt("^R) Redraw the screen.          Esc) Return to main menu.", 23, 2);
 }
 
-void sm__position_adjust(integer *c1, integer *c2, integer *c3)
+void sm__position_adjust(long *c1, long *c2, long *c3)
 {
 	/*  Centers slots in middle of box */
 
@@ -59,7 +59,7 @@ void sm__position_adjust(integer *c1, integer *c2, integer *c3)
 void sm__display_slots()
 {
 	vtype out_val;
-	integer c1, c2, c3;
+	long c1, c2, c3;
 
 	clear_screen();
 	sm__display_slot_options();
@@ -118,7 +118,7 @@ void sm__display_prizes()
 
 void sm__get_slots()
 {
-	integer c;
+	long c;
 
 	/*  Wheel one  */
 	c = randint(20);
@@ -163,7 +163,7 @@ void sm__get_slots()
 	}
 }
 
-void sm__clearslots(integer line)
+void sm__clearslots(long line)
 {
 	/*  clears a line of slots */
 
@@ -179,8 +179,8 @@ void sm__print_slots()
 {
 	/* Simulates wheel spinning  */
 
-	integer i;
-	integer c1, c2, c3;
+	long i;
+	long c1, c2, c3;
 	vtype out_val;
 
 	sm__get_slots(); /*  {get new slots}  */
@@ -233,7 +233,7 @@ void sm__winnings()
 
 	vtype out_val;
 	vtype comment, comment1;
-	integer winning;
+	long winning;
 
 	strcpy(comment, "You have won ");
 	strcpy(comment1, " gold pieces!");
@@ -328,7 +328,7 @@ void sm__winnings()
 void sm__get_slots_bet()
 {
 	vtype comment;
-	integer num;
+	long num;
 	boolean exit_flag = false;
 
 	strcpy(comment, "Which machine (1 to 10000 gp)? ");

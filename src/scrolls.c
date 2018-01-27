@@ -1,12 +1,12 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void rs__scroll_effect(integer effect, boolean *idented, boolean *first,
+void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 		       treas_ptr item_ptr)
 {
-	integer i2, i3, i4, randy;
-	integer y, x;
-	integer tmp[9]; /*: array [1..8] of integer;*/
+	long i2, i3, i4, randy;
+	long y, x;
+	long tmp[9]; /*: array [1..8] of long;*/
 	vtype out_val, out_val2, str1, str2;
 	boolean ident, flag;
 	vtype dstr[20];
@@ -584,7 +584,7 @@ void read_scroll()
 	/*{ Scrolls for the reading				-RAK-	}*/
 
 	unsigned long q1, q2;
-	integer i3, i5;
+	long i3, i5;
 	treas_ptr i2, item_ptr;
 	char trash_char;
 	boolean redraw, ident, first;
@@ -680,7 +680,7 @@ void read_scroll()
 								    (item_ptr
 									 ->data
 									 .level /
-								     (real)
+								     (float)
 								     PM.lev) +
 								    .5;
 								prt_experience();

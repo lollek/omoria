@@ -6,8 +6,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void aw__wand_effects(integer effect, boolean *idented, integer dir, integer i3,
-		      integer i4)
+void aw__wand_effects(long effect, boolean *idented, long dir, long i3, long i4)
 {
 	boolean ident;
 
@@ -146,10 +145,10 @@ void aim_wand()
 	/*{ Wands for the aiming...				}*/
 
 	unsigned long i1;
-	integer i3, i4, chance, i5;
-	integer dir;
+	long i3, i4, chance, i5;
+	long dir;
 	treas_ptr i2, item_ptr;
-	integer dumy, y_dumy, x_dumy;
+	long dumy, y_dumy, x_dumy;
 	char trash_char;
 	boolean redraw, ident;
 	obj_set give_me_a_wand = {wand, 0};
@@ -215,7 +214,7 @@ void aim_wand()
 							PM.exp +=
 							    (item_ptr->data
 								 .level /
-							     (real)PM.lev) +
+							     (float)PM.lev) +
 							    .5;
 							prt_experience();
 						}

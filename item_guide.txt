@@ -39,7 +39,7 @@ make sure it is listed in all the relevant lists.
 typedef struct treasure_type
 {
   ttype   name;   // the object's name.  see below for rules on names.
-  byteint tval;   // the object's type.  this, literally, is what kind of
+  unsigned char tval;   // the object's type.  this, literally, is what kind of
                      object it is.
   char    tchar;  // the character drawn on the screen for this object.  there
                      is no direct correlation here between character and tval,
@@ -52,29 +52,29 @@ typedef struct treasure_type
                              with more than 32 different properties for some
                              item types (e.g. potions) and so they had to give
                              items a second flag member to hold them all.
-  integer p1;     // a catch-all member for associating some value of interest
+  long p1;     // a catch-all member for associating some value of interest
                      with a particular item.  e.g. for wands, staves, gems,
 		     it's the number of charges, while for certain magical
 		     weapons, it can be a damage multiplier.
-  integer cost;   // the item's nominal cost in iron pieces.
-  integer subval; // a sub-category value.  the semantics of subval also depend
+  long cost;   // the item's nominal cost in iron pieces.
+  long subval; // a sub-category value.  the semantics of subval also depend
                      in part on the value of tval.
-  wordint weight; // weight in some ill-defined unit, possibly gold pieces, but
+  unsigned short weight; // weight in some ill-defined unit, possibly gold pieces, but
                      possibly in fifths of a gold piece.
-  wordint number; // for countable items (arrows, scrolls, etc), how many of
+  unsigned short number; // for countable items (arrows, scrolls, etc), how many of
                      them you have.
 
   // the next four all apply to items that can be worn or wielded (i.e. weapons
   and armor)
-  worlint tohit;  // an item's magical + to hit
-  worlint todam;  // an item's magical + to damage
-  worlint ac;     // an item's normal armor class value.
-  worlint toac;   // an item's magical + to AC.
+  short tohit;  // an item's magical + to hit
+  short todam;  // an item's magical + to damage
+  short ac;     // an item's normal armor class value.
+  short toac;   // an item's magical + to AC.
 
   dtype   damage; // the amount of damage an item does to monster.  everything
                      should have a damage value, even if it's just "0d0".
 
-  bytlint level;  // a vague measurement of how strong an item's magic is.
+  signed char level;  // a vague measurement of how strong an item's magic is.
 
 } treasure_type;
 

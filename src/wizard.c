@@ -89,7 +89,7 @@ void bpswd()
 
 boolean check_pswd(string passwd, boolean present)
 {
-	integer i1;
+	long i1;
 	char x;
 	string tpw; /*  : packed array [1..12] of char;*/
 	/* account_type   account; */
@@ -159,7 +159,7 @@ void wizard_light()
 	/*{ Light up the dungeon					-RAK-
 	 * }*/
 
-	integer i1, i2, i3, i4;
+	long i1, i2, i3, i4;
 	boolean flag;
 
 	if (cave[char_row][char_col].pl) {
@@ -188,12 +188,12 @@ void wizard_light()
 	detect_sdoor();
 }
 
-void monster_summon_by_name(integer y, integer x, ctype name, boolean present,
+void monster_summon_by_name(long y, long x, ctype name, boolean present,
 			    boolean sleepy)
 {
 	/*{ Wizard routine for summoning a specific monster       -RAD-   }*/
 
-	integer i1 = 0, i2, i3, i4;
+	long i1 = 0, i2, i3, i4;
 	ctype monster;
 	boolean junk;
 
@@ -289,7 +289,7 @@ void wmi__init_data_list(list_elem_ptr *data_list)
 
 	list_elem_ptr curse;
 	treasure_type temp_ray[MAX_OBJECTS + 1];
-	integer i1, i2, i3, gap;
+	long i1, i2, i3, gap;
 	treasure_type tmp;
 
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
@@ -338,11 +338,11 @@ void wmi__display_commands()
 	prt("^R) Redraw screen.           Esc) Exit.", 24, 1);
 }
 
-void wmi__display_list(list_elem_ptr start, integer *cur_display_size,
+void wmi__display_list(list_elem_ptr start, long *cur_display_size,
 		       list_elem_ptr cur_display[], list_elem_ptr *blegga,
 		       list_elem_ptr *data_list)
 {
-	integer count, old_display_size;
+	long count, old_display_size;
 	string temp;
 
 	old_display_size = *cur_display_size;
@@ -373,9 +373,9 @@ void wmi__display_list(list_elem_ptr start, integer *cur_display_size,
 	}
 }
 
-void wmi__clear_display(integer *cur_display_size, list_elem_ptr cur_display[])
+void wmi__clear_display(long *cur_display_size, list_elem_ptr cur_display[])
 {
-	integer i4;
+	long i4;
 
 	*cur_display_size = 0;
 	for (i4 = 1; i4 <= MOO_DISPLAY_SIZE; i4++) {
@@ -383,7 +383,7 @@ void wmi__clear_display(integer *cur_display_size, list_elem_ptr cur_display[])
 	}
 }
 
-void wmi__display_screen(integer *cur_display_size, list_elem_ptr cur_display[],
+void wmi__display_screen(long *cur_display_size, list_elem_ptr cur_display[],
 			 list_elem_ptr cur_top, list_elem_ptr *blegga,
 			 list_elem_ptr *data_list)
 {
@@ -394,7 +394,7 @@ void wmi__display_screen(integer *cur_display_size, list_elem_ptr cur_display[],
 	wmi__display_commands();
 }
 
-boolean wmi__get_list_entry(integer *com_val, vtype pmt, integer i1, integer i2)
+boolean wmi__get_list_entry(long *com_val, vtype pmt, long i1, long i2)
 {
 	char command;
 	string temp;
@@ -407,7 +407,7 @@ boolean wmi__get_list_entry(integer *com_val, vtype pmt, integer i1, integer i2)
 	for (; (((*com_val < i1) || (*com_val > i2)) && (flag));) {
 		prt(temp, 1, 1);
 		command = inkey();
-		*com_val = (integer)command;
+		*com_val = (long)command;
 		switch (*com_val) {
 		case 3:
 		case 25:
@@ -427,17 +427,17 @@ boolean wmi__get_list_entry(integer *com_val, vtype pmt, integer i1, integer i2)
 }
 
 boolean wmi__parse_command(list_elem_ptr *blegga, list_elem_ptr *cur_top,
-			   integer *cur_display_size, boolean *exit_flag,
+			   long *cur_display_size, boolean *exit_flag,
 			   treasure_type *back, list_elem_ptr cur_display[],
 			   list_elem_ptr *data_list)
 
 {
 	char command;
-	integer com_val, which;
+	long com_val, which;
 	boolean flag = false;
 
 	if (get_com("", &command)) {
-		com_val = (integer)command;
+		com_val = (long)command;
 		switch (com_val) {
 
 		case 18: /*{^R}*/
@@ -489,7 +489,7 @@ boolean wizard_moo_item(treasure_type *back)
 	list_elem_ptr cur_top;
 	list_elem_ptr blegga;
 	list_elem_ptr cur_display[MOO_DISPLAY_SIZE + 1];
-	integer cur_display_size;
+	long cur_display_size;
 	boolean exit_flag = false;
 	boolean flag = false;
 
@@ -534,7 +534,7 @@ boolean si__get_new_ttype(ttype s, vtype str, string out_str)
 }
 
 boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
-				  boolean *found, integer *num_found)
+				  boolean *found, long *num_found)
 {
 	/*{ask wizard for item information/Moo!, Moo./Moo?}*/
 	boolean ook;
@@ -586,10 +586,10 @@ boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
 	return flag;
 }
 
-boolean si__narrow(ttype s, integer *num_found, integer moo_cursor[])
+boolean si__narrow(ttype s, long *num_found, long moo_cursor[])
 {
 	/*{ eliminate all items without string s from array moo_cursor }*/
-	integer i1, i2;
+	long i1, i2;
 	boolean flag = false;
 
 	i2 = 1;
@@ -611,12 +611,12 @@ boolean si__narrow(ttype s, integer *num_found, integer moo_cursor[])
 	return flag;
 }
 
-boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
+boolean si__narrow_choices(long *num_found, long moo_cursor[],
 			   treasure_type moo_item[])
 {
 	/*{ use 3 substrings to narrow down specify possible items }*/
 
-	integer i1;
+	long i1;
 	boolean flag = false;
 
 	ENTER(("si__narrow_choices", "w"));
@@ -640,14 +640,14 @@ boolean si__narrow_choices(integer *num_found, integer moo_cursor[],
 	return flag;
 }
 
-void si__pesky_stuff(integer *best_value, integer *good_value,
+void si__pesky_stuff(long *best_value, long *good_value,
 		     treasure_type *best_pick, treasure_type *good_pick,
-		     integer *optimize, string out_str, integer *i_summ_count,
-		     integer *cur_pos, integer x, integer y)
+		     long *optimize, string out_str, long *i_summ_count,
+		     long *cur_pos, long x, long y)
 {
 	/*{init variables, see if optimizing (1=best, -1= worst); find # of
 	 * tries }*/
-	integer omax;
+	long omax;
 
 	*best_value = LOW_NUM;
 	*good_value = LOW_NUM;
@@ -678,11 +678,11 @@ void si__pesky_stuff(integer *best_value, integer *good_value,
 	sprintf(t_list[*cur_pos].name, "& bogus summoned item %ld", *cur_pos);
 }
 
-boolean si__optimize_item(treasure_type *pick, integer *value, integer optimize,
-			  integer cur_pos)
+boolean si__optimize_item(treasure_type *pick, long *value, long optimize,
+			  long cur_pos)
 {
 	/*{ formula for comparing value of items}*/
-	integer i1;
+	long i1;
 	boolean flag = false;
 
 	/* with t_list[cur_pos]. do; */
@@ -697,22 +697,22 @@ boolean si__optimize_item(treasure_type *pick, integer *value, integer optimize,
 	return flag;
 }
 
-boolean summon_item(integer y, integer x, ttype name1, ttype name2,
-		    integer count, boolean present)
+boolean summon_item(long y, long x, ttype name1, ttype name2, long count,
+		    boolean present)
 {
 	/*{ Wizard routine to summon a random item by substring(s) of its }*/
 	/*{ name, with a maximum # of tries			-DMF-	    }*/
 
-	integer i1, i2, num_found;
-	integer optimize;
-	integer best_value, good_value;
+	long i1, i2, num_found;
+	long optimize;
+	long best_value, good_value;
 	treasure_type best_pick, good_pick;
 	boolean flag, done, found;
 	string out_str;
-	integer cur_pos;
+	long cur_pos;
 	char command;
 	treasure_type moo_item[MAX_OBJECTS + 1];
-	integer moo_cursor[MAX_OBJECTS + 1];
+	long moo_cursor[MAX_OBJECTS + 1];
 	boolean return_value = false;
 
 	ENTER(("summon_item", "w"));
@@ -862,7 +862,7 @@ void esf__display_commands()
 void esf__display_list(int start, string list[], int n1, int *blegga,
 		       int *cur_display_size)
 {
-	integer count, old_display_size;
+	long count, old_display_size;
 	string out_val;
 
 	old_display_size = *cur_display_size;
@@ -941,7 +941,7 @@ void esf__change_entry(int cur_top, string list[], int n1, int cur_display_size)
 	int which, i1;
 	string user, score, name, level;
 	string race, class, diffic;
-	integer sc, lvl, diff, i4;
+	long sc, lvl, diff, i4;
 	boolean flag, aborted = true;
 
 	if (cur_display_size > 0) {
@@ -1165,10 +1165,10 @@ void edit_score_file()
 		blegga          : list_elem_ptr;
 		curse           : list_elem_ptr;
 		cur_display     : array [1..display_size] of list_elem_ptr;
-		cur_display_size: integer;
+		cur_display_size: long;
 		blank           : packed array [1..13] of char;
-		i1,i2,i3,i4     : integer;
-		trys            : integer;
+		i1,i2,i3,i4     : long;
+		trys            : long;
 		f1              : text;
 		flag,file_flag  : boolean;
 		exit_flag       : boolean;
@@ -1206,11 +1206,11 @@ void edit_score_file()
 	draw_cave();
 }
 
-boolean cc__input_field(string prompt, integer *num, integer min, integer max,
+boolean cc__input_field(string prompt, long *num, long min, long max,
 			boolean *ok)
 {
 	string out_val;
-	integer len;
+	long len;
 	boolean return_value = false;
 
 	sprintf(out_val, "Current = %ld, %s", *num, prompt);
@@ -1236,7 +1236,7 @@ void change_character()
 {
 	/*{ Wizard routine for gaining on stats                   -RAK-   }*/
 
-	integer tmp_val;
+	long tmp_val;
 	vtype tmp_str;
 	stat_set tstat;
 	boolean flag = false;
@@ -1435,7 +1435,7 @@ void wizard_create()
 	   2/5/00 JEB
 	*/
 
-	integer tmp_val;
+	long tmp_val;
 	vtype tmp_str;
 	boolean flag;
 	char tchar;
@@ -1735,7 +1735,7 @@ void wizard_command(void)
 	vtype tmp_str;
 	stat_set tstat;
 	treas_ptr trash_ptr;
-	integer y, x;
+	long y, x;
 
 	prt("Wizard command: ", 1, 1);
 	switch (inkey()) {
@@ -1764,7 +1764,7 @@ void wizard_command(void)
 	case 'd': /* Change dungeon level */
 		prt("Go to which level (0 -1200) ? ", 1, 1);
 		if (get_string(tmp_str, 1, 31, 10)) {
-			integer i1 = -1;
+			long i1 = -1;
 			sscanf(tmp_str, "%ld", &i1);
 			if (i1 > -1 || !strcmp(tmp_str, "*")) {
 				dun_level = i1;

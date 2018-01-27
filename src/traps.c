@@ -8,11 +8,11 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_trap(integer y, integer x, integer typ, integer subval)
+void place_trap(long y, long x, long typ, long subval)
 {
 	/*{ Places a particular trap at location y,x		-RAK-	}*/
 
-	integer cur_pos;
+	long cur_pos;
 	treasure_type cur_trap;
 
 	if (typ == 1) {
@@ -28,12 +28,12 @@ void place_trap(integer y, integer x, integer typ, integer subval)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void change_trap(integer y, integer x)
+void change_trap(long y, long x)
 {
 	/*{ Change a trap from invisible to visible               -RAK-   }*/
 	/*{ Note: Secret doors are handled here                           }*/
 
-	integer i3;
+	long i3;
 	obj_set little_things = {unseen_trap, secret_door, 0};
 
 	/* with cave[y,x] do; */
@@ -47,12 +47,12 @@ void change_trap(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_rubble(integer y, integer x)
+void place_rubble(long y, long x)
 {
 	/*{ Places rubble at location y,x				-RAK-
 	 * }*/
 
-	integer cur_pos;
+	long cur_pos;
 
 	popt(&cur_pos);
 
@@ -64,7 +64,7 @@ void place_rubble(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void ht__open_pit(integer dam)
+void ht__open_pit(long dam)
 {
 	msg_print("You fell into a pit!");
 	if (py.flags.ffall) {
@@ -74,7 +74,7 @@ void ht__open_pit(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__arrow(integer dam)
+void ht__arrow(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		take_hit(dam, "an arrow trap");
@@ -84,7 +84,7 @@ void ht__arrow(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__covered_pit(integer dam, integer y, integer x)
+void ht__covered_pit(long dam, long y, long x)
 {
 	msg_print("You fell into a covered pit.");
 	if (py.flags.ffall) {
@@ -95,7 +95,7 @@ void ht__covered_pit(integer dam, integer y, integer x)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__trap_door(integer dam)
+void ht__trap_door(long dam)
 {
 	msg_print("You fell through a trap door!");
 	msg_print(" ");
@@ -108,7 +108,7 @@ void ht__trap_door(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__sleep_gas(integer dam)
+void ht__sleep_gas(long dam)
 {
 
 	if (py.flags.paralysis == 0) {
@@ -122,7 +122,7 @@ void ht__sleep_gas(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__hidden_object(integer dam, integer y, integer x)
+void ht__hidden_object(long dam, long y, long x)
 {
 	cave[y][x].fm = false;
 	pusht(cave[y][x].tptr);
@@ -130,7 +130,7 @@ void ht__hidden_object(integer dam, integer y, integer x)
 	msg_print("Hmmm, there was something under this rock.");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__str_dart(integer dam)
+void ht__str_dart(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		if (lose_stat(STR, "", "A small dart hits you.")) {
@@ -143,13 +143,13 @@ void ht__str_dart(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__teleport(integer dam)
+void ht__teleport(long dam)
 {
 	teleport_flag = true;
 	msg_print("You hit a teleport trap!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__rockfall(integer dam, integer y, integer x)
+void ht__rockfall(long dam, long y, long x)
 {
 	take_hit(dam, "falling rock");
 	pusht(cave[y][x].tptr);
@@ -157,15 +157,15 @@ void ht__rockfall(integer dam, integer y, integer x)
 	msg_print("You are hit by falling rock");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__corrode_gas(integer dam)
+void ht__corrode_gas(long dam)
 {
 	corrode_gas("corrosion gas.");
 	msg_print("A strange red gas surrounds you.");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__summon_monster(integer dam, integer y, integer x)
+void ht__summon_monster(long dam, long y, long x)
 {
-	integer i1, ty, tx;
+	long i1, ty, tx;
 
 	cave[y][x].fm = false; /*{ Rune disappears...    }*/
 	pusht(cave[y][x].tptr);
@@ -181,37 +181,37 @@ void ht__summon_monster(integer dam, integer y, integer x)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__fire(integer dam)
+void ht__fire(long dam)
 {
 	fire_dam(dam, "a fire trap.");
 	msg_print("You are enveloped in flames!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__acid(integer dam)
+void ht__acid(long dam)
 {
 	acid_dam(dam, "an acid trap.");
 	msg_print("You are splashed with acid!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__poison_gas(integer dam)
+void ht__poison_gas(long dam)
 {
 	poison_gas(dam, "a poison gas trap.");
 	msg_print("A pungent green gas surrounds you!");
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__blind_gas(integer dam)
+void ht__blind_gas(long dam)
 {
 	msg_print("A black gas surrounds you!");
 	PF.blind += randint(50) + 50;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__confuse_gas(integer dam)
+void ht__confuse_gas(long dam)
 {
 	msg_print("A gas of scintillating colors surrounds you!");
 	PF.confused += randint(15) + 15;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__slow_dart(integer dam)
+void ht__slow_dart(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		take_hit(dam, "a dart trap");
@@ -222,7 +222,7 @@ void ht__slow_dart(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__con_dart(integer dam)
+void ht__con_dart(long dam)
 {
 	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
 		if (lose_stat(CON, "", "A small dart hits you.")) {
@@ -235,9 +235,9 @@ void ht__con_dart(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__secret_door(integer dam) {}
+void ht__secret_door(long dam) {}
 /*//////////////////////////////////////////////////////////////////// */
-void ht__chute(integer dam)
+void ht__chute(long dam)
 {
 	msg_print("You fell down a chute!");
 	msg_print(" ");
@@ -250,9 +250,9 @@ void ht__chute(integer dam)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__scare_monster(integer dam) {}
+void ht__scare_monster(long dam) {}
 /*//////////////////////////////////////////////////////////////////// */
-void ht__whirlpool(integer dam)
+void ht__whirlpool(long dam)
 {
 	msg_print("You are swept into a whirlpool!");
 	msg_print(" ");
@@ -266,7 +266,7 @@ void ht__whirlpool(integer dam)
 	} while (randint(2) != 1);
 }
 /*//////////////////////////////////////////////////////////////////// */
-void ht__house(integer dam, integer y, integer x)
+void ht__house(long dam, long y, long x)
 {
 	switch (t_list[cave[y][x].tptr].p1) {
 	case 1:
@@ -587,11 +587,11 @@ void ht__house(integer dam, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void hit_trap(integer *y, integer *x)
+void hit_trap(long *y, long *x)
 {
 	/*{ Player hit a trap...  (Chuckle)                       -RAK-   }*/
 
-	integer dam;
+	long dam;
 
 	ENTER(("hit_trap", ""));
 

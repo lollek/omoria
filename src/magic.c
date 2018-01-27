@@ -89,9 +89,9 @@ static void _cast(enum magic_t magic_type)
 {
 	treas_ptr i1;
 	treas_ptr item_ptr = inven_temp;
-	integer choice;
-	integer chance;
-	integer i2;
+	long choice;
+	long chance;
+	long i2;
 	char trash_char;
 	boolean redraw;
 	obj_set magic_books;

@@ -156,12 +156,11 @@ static void mt__magic_sword(treasure_type *treasure_ptr)
 	}
 }
 
-static integer mt__m_bonus(integer base, integer max_std, integer level,
-			   boolean forceit)
+static long mt__m_bonus(long base, long max_std, long level, boolean forceit)
 {
 	/*{ Enchant a bonus based on degree desired -RAK- }*/
-	integer x, stand_dev;
-	integer return_value;
+	long x, stand_dev;
+	long return_value;
 
 	if (forceit) {
 		/*    base += 2; */
@@ -186,7 +185,7 @@ static integer mt__m_bonus(integer base, integer max_std, integer level,
 
 static void mt__gems(treasure_type *treasure_ptr)
 {
-	integer p1;
+	long p1;
 
 	switch (treasure_ptr->subval) {
 	case 1:
@@ -333,7 +332,7 @@ static void mt__misc_usable(treasure_type *treasure_ptr)
 	}
 }
 
-static void mt__armor_and_shields(treasure_type *treasure_ptr, integer level,
+static void mt__armor_and_shields(treasure_type *treasure_ptr, long level,
 				  boolean is_magic, boolean is_special,
 				  boolean is_cursed, boolean forceit)
 {
@@ -423,11 +422,11 @@ static void mt__armor_and_shields(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__weapons(treasure_type *treasure_ptr, integer level,
+static void mt__weapons(treasure_type *treasure_ptr, long level,
 			boolean is_magic, boolean is_special, boolean is_cursed,
 			boolean forceit)
 {
-	integer wpn_type;
+	long wpn_type;
 
 	if (is_magic) {
 		treasure_ptr->tohit = mt__m_bonus(0, 40, level, forceit);
@@ -471,7 +470,7 @@ static void mt__weapons(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__bows_and_slings(treasure_type *treasure_ptr, integer level,
+static void mt__bows_and_slings(treasure_type *treasure_ptr, long level,
 				boolean is_magic, boolean is_special,
 				boolean is_cursed, boolean forceit)
 {
@@ -490,7 +489,7 @@ static void mt__bows_and_slings(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__pick_or_shovel(treasure_type *treasure_ptr, integer level,
+static void mt__pick_or_shovel(treasure_type *treasure_ptr, long level,
 			       boolean is_magic, boolean forceit)
 {
 	if (is_magic) {
@@ -509,7 +508,7 @@ static void mt__pick_or_shovel(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr, integer level,
+static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr, long level,
 				     boolean is_magic, boolean is_special,
 				     boolean is_cursed, boolean forceit)
 {
@@ -597,9 +596,8 @@ static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__boots(treasure_type *treasure_ptr, integer level,
-		      boolean is_magic, boolean is_special, boolean is_cursed,
-		      boolean forceit)
+static void mt__boots(treasure_type *treasure_ptr, long level, boolean is_magic,
+		      boolean is_special, boolean is_cursed, boolean forceit)
 {
 	if (is_magic) {
 		treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
@@ -668,9 +666,8 @@ static void mt__boots(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__helms(treasure_type *treasure_ptr, integer level,
-		      boolean is_magic, boolean is_special, boolean is_cursed,
-		      boolean forceit)
+static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
+		      boolean is_special, boolean is_cursed, boolean forceit)
 {
 	if (is_magic) {
 		treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
@@ -853,9 +850,8 @@ static void mt__helms(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__belt(treasure_type *treasure_ptr, integer level,
-		     boolean is_magic, boolean is_special, boolean is_cursed,
-		     boolean forceit)
+static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
+		     boolean is_special, boolean is_cursed, boolean forceit)
 {
 	if (is_magic) {
 		treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
@@ -1025,7 +1021,7 @@ static void mt__belt(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__ring(treasure_type *treasure_ptr, integer level,
+static void mt__ring(treasure_type *treasure_ptr, long level,
 		     boolean is_special, boolean is_cursed, boolean forceit)
 {
 	switch (treasure_ptr->subval) {
@@ -1122,7 +1118,7 @@ static void mt__ring(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__amulet(treasure_type *treasure_ptr, integer level,
+static void mt__amulet(treasure_type *treasure_ptr, long level,
 		       boolean is_cursed, boolean forceit)
 {
 	switch (treasure_ptr->subval) {
@@ -1171,7 +1167,7 @@ static void mt__lamp_or_torch(treasure_type *treasure_ptr)
 
 static void mt__wand(treasure_type *treasure_ptr, boolean forceit)
 {
-	integer p1;
+	long p1;
 
 	switch (treasure_ptr->subval) {
 	case 1:
@@ -1264,7 +1260,7 @@ static void mt__wand(treasure_type *treasure_ptr, boolean forceit)
 
 static void mt__staff(treasure_type *treasure_ptr, boolean forceit)
 {
-	integer p1;
+	long p1;
 
 	switch (treasure_ptr->subval) {
 	case 1:
@@ -1360,7 +1356,7 @@ static void mt__staff(treasure_type *treasure_ptr, boolean forceit)
 
 static void mt__chime(treasure_type *treasure_ptr, boolean forceit)
 {
-	integer p1;
+	long p1;
 
 	switch (treasure_ptr->subval) {
 	case 1:
@@ -1426,7 +1422,7 @@ static void mt__chime(treasure_type *treasure_ptr, boolean forceit)
 
 static void mt__horn(treasure_type *treasure_ptr, boolean forceit)
 {
-	integer p1;
+	long p1;
 
 	switch (treasure_ptr->subval) {
 	case 1:
@@ -1481,9 +1477,8 @@ static void mt__horn(treasure_type *treasure_ptr, boolean forceit)
 	treasure_ptr->p1 = p1;
 }
 
-static void mt__cloak(treasure_type *treasure_ptr, integer level,
-		      boolean is_magic, boolean is_special, boolean is_cursed,
-		      boolean forceit)
+static void mt__cloak(treasure_type *treasure_ptr, long level, boolean is_magic,
+		      boolean is_special, boolean is_cursed, boolean forceit)
 {
 	if (is_magic) {
 		if (is_special) {
@@ -1564,7 +1559,7 @@ static void mt__cloak(treasure_type *treasure_ptr, integer level,
 	}
 }
 
-static void mt__chest(treasure_type *treasure_ptr, integer level)
+static void mt__chest(treasure_type *treasure_ptr, long level)
 {
 	/*
 	 * Items inside the chest will be created as if
@@ -1629,11 +1624,10 @@ static void mt__chest(treasure_type *treasure_ptr, integer level)
 	}
 }
 
-static void mt__ammo(treasure_type *treasure_ptr, integer level,
-		     boolean is_magic, boolean is_special, boolean is_cursed,
-		     boolean forceit)
+static void mt__ammo(treasure_type *treasure_ptr, long level, boolean is_magic,
+		     boolean is_special, boolean is_cursed, boolean forceit)
 {
-	integer i1;
+	long i1;
 
 	if (treasure_ptr->tval == bolt || treasure_ptr->tval == arrow) {
 		if (is_magic) {
@@ -1741,17 +1735,16 @@ static void mt__food(treasure_type *treasure_ptr, boolean is_special,
 	}
 }
 
-static void mt__get_chances(integer level, boolean *is_magic,
-			    boolean *is_special, boolean *is_cursed,
-			    boolean forceit)
+static void mt__get_chances(long level, boolean *is_magic, boolean *is_special,
+			    boolean *is_cursed, boolean forceit)
 {
 	/* Chance of treasure having magic abilities		-RAK-	*/
 	/* Chance increases with each dungeon level			*/
 
-	integer magic =
+	long magic =
 	    obj_base_magic + (level * (obj_base_max - obj_base_magic)) / 100;
-	integer special;
-	integer cursed;
+	long special;
+	long cursed;
 
 	if (magic > obj_base_max)
 		magic = obj_base_max;
@@ -1768,7 +1761,7 @@ static void mt__get_chances(integer level, boolean *is_magic,
 		*is_cursed = false;
 }
 
-void magic_treasure(integer x, integer level, boolean forceit)
+void magic_treasure(long x, long level, boolean forceit)
 {
 	treasure_type *treasure_ptr = &t_list[x];
 	boolean is_magic;   /* Positive enchantment */

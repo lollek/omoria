@@ -28,7 +28,7 @@ void q__display_gold()
 }
 */
 
-void q__reward_money(integer reward)
+void q__reward_money(long reward)
 {
 	vtype out_val;
 
@@ -39,21 +39,21 @@ void q__reward_money(integer reward)
 	py.misc.account += reward;
 }
 
-void q__reward_item(integer target)
+void q__reward_item(long target)
 {
 /* alloc several items, plus the money; */
 
 #define QUEST_ITEMS 9
 #define QUEST_ITEM_FREQUENCY 10
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 	treasure_type rewards[QUEST_ITEMS];
 	char command;
 	vtype reward_names[QUEST_ITEMS], out_val;
 	boolean flag;
 
-	integer q1 = 15;			/* allocs to attempt */
-	integer q2 = PLACE_OBJECT_TRIES;	/* const for alloc  */
+	long q1 = 15;				/* allocs to attempt */
+	long q2 = PLACE_OBJECT_TRIES;		/* const for alloc  */
 	float q3 = (0.8 * target * GOLD_VALUE); /* value to stop at */
 	float q4 = (1.2 * target * GOLD_VALUE); /* value to stop at */
 
@@ -156,7 +156,7 @@ void q__reward_item(integer target)
 
 void q__reward_quest()
 {
-	integer reward;
+	long reward;
 	vtype out_val;
 	boolean redraw = false;
 
@@ -196,11 +196,11 @@ void q__reward_quest()
 	    "Have a good day.  Perhaps you should rest a night at the inn.");
 }
 
-integer q__select_quest()
+long q__select_quest()
 {
-	integer count = 0;
+	long count = 0;
 	boolean exit_flag = false;
-	integer tmp_select = 0;
+	long tmp_select = 0;
 
 	do {
 		count++;
@@ -229,7 +229,7 @@ integer q__select_quest()
 void q__draw_fortress(boolean enter_flag)
 {
 	vtype shop_owner, out_val;
-	integer count, count2, count3;
+	long count, count2, count3;
 	boolean exit_flag;
 
 	if (!enter_flag) {

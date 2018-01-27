@@ -11,36 +11,36 @@ boolean is_from_file;   /* { True if restored    } */
 money_type bank;	/* { Bank's money	 } */
 money_type coin_value = /* { Copy of money values} */
     {0, 1, 4, 20, 240, 960, 12480};
-integer player_max_exp;    /* { Max exp possible    } */
+long player_max_exp;       /* { Max exp possible    } */
 unsigned long seed;	/* { Contains seed #     } */
 unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
-integer cur_height;	/* { Cur dungeon size    } */
-integer cur_width;
-integer dun_level;      /* { Cur dungeon level   } */
-integer missle_ctr = 0; /* { Counter for missles } */
-integer msg_line;       /* { Contains message txt} */
-boolean msg_flag;       /* { Set with first msg  } */
+long cur_height;	   /* { Cur dungeon size    } */
+long cur_width;
+long dun_level;      /* { Cur dungeon level   } */
+long missle_ctr = 0; /* { Counter for missles } */
+long msg_line;       /* { Contains message txt} */
+boolean msg_flag;    /* { Set with first msg  } */
 vtype msg_prev[MAX_MESSAGES + 1];
-integer quest[NUM_QUESTS + 1]; /* {quest data} */
-vtype old_msg = "bogus msg";   /* { Last message	      } */
-boolean want_trap;	     /* { True = trap messages} */
-boolean want_warn;	     /* { True = water warning} */
-message_ptr old_message;       /* { Past messages	      } */
-integer max_mess_keep;	 /* { Max old to keep     } */
-integer max_score;	     /*	{ # of scores to list } */
-boolean generate;	      /*	{ Generate next level } */
-boolean death = false;	 /*	{ True if died	      } */
-vtype died_from;	       /*	{ What killed him     } */
-integer turn_counter;	  /*	{ Turns ellapsed      } */
-boolean find_flag;	     /*	{ Used in MORIA	      } */
-boolean cave_flag;	     /*	{ Used in GET_PANEL   } */
-boolean redraw;		       /*	{ For redraw screen   } */
-unsigned long print_stat = 0;  /*	{ Flag for stats      } */
-integer turn = 0;	      /*	{ Cur trun of game    } */
-boolean wizard1 = false;       /*	{ Wizard flag	      } */
-boolean wizard2 = false;       /*	{ Wizard flag	      } */
-boolean used_line[24] =	/* 22 of false */
+long quest[NUM_QUESTS + 1];   /* {quest data} */
+vtype old_msg = "bogus msg";  /* { Last message	      } */
+boolean want_trap;	    /* { True = trap messages} */
+boolean want_warn;	    /* { True = water warning} */
+message_ptr old_message;      /* { Past messages	      } */
+long max_mess_keep;	   /* { Max old to keep     } */
+long max_score;		      /*	{ # of scores to list } */
+boolean generate;	     /*	{ Generate next level } */
+boolean death = false;	/*	{ True if died	      } */
+vtype died_from;	      /*	{ What killed him     } */
+long turn_counter;	    /*	{ Turns ellapsed      } */
+boolean find_flag;	    /*	{ Used in MORIA	      } */
+boolean cave_flag;	    /*	{ Used in GET_PANEL   } */
+boolean redraw;		      /*	{ For redraw screen   } */
+unsigned long print_stat = 0; /*	{ Flag for stats      } */
+long turn = 0;		      /*	{ Cur trun of game    } */
+boolean wizard1 = false;      /*	{ Wizard flag	      } */
+boolean wizard2 = false;      /*	{ Wizard flag	      } */
+boolean used_line[24] =       /* 22 of false */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 char password1[13];
 char password2[13];
@@ -63,15 +63,15 @@ char days[7][30] = {
     "TUE:XXXXXXXXXXXXXXXXXXXXXXXX|", "WED:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "THU:XXXXXXXXXXXXXXXXXXXXXXXX|", "FRI:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "SAT:XXXXXXXXXXXXXXXXXXXXXXXX|"};
-integer closing_flag = 0; /* { Used for closing   } */
+long closing_flag = 0;    /* { Used for closing   } */
 			  /*{neatness arrays} */
-byteint key_of[9] =       /*  array [0..8] of byteint; */
+unsigned char key_of[9] = /*  array [0..8] of unsigned char; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
-byteint oct_of[10] = /*  array [1..9] of byteint; */
+unsigned char oct_of[10] = /*  array [1..9] of unsigned char; */
     {250, 5, 6, 7, 4, 8, 0, 3, 2, 1};
-bytlint dx_of[10] = /*  array [1..9] of bytlint; */
+signed char dx_of[10] = /*  array [1..9] of signed char; */
     {250, -1, 0, 1, -1, 0, 1, -1, 0, 1};
-bytlint dy_of[10] = /*  array [1..9] of bytlint; */
+signed char dy_of[10] = /*  array [1..9] of signed char; */
     {250, 1, 1, 1, 0, 0, 0, -1, -1, -1};
 /*	{ Bit testing array						} */
 unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
@@ -96,12 +96,12 @@ vtype MORIA_CST;
 vtype MORIA_GCST;
 
 /*	{  following are calculated from max dungeon sizes		} */
-integer max_panel_rows, max_panel_cols;
-integer quart_height, quart_width;
-integer panel_row, panel_col;
-integer panel_row_min, panel_row_max;
-integer panel_col_min, panel_col_max;
-integer panel_col_prt, panel_row_prt;
+long max_panel_rows, max_panel_cols;
+long quart_height, quart_width;
+long panel_row, panel_col;
+long panel_row_min, panel_row_max;
+long panel_col_min, panel_col_max;
+long panel_col_prt, panel_row_prt;
 
 /*	{  Following are all floor definitions				} */
 row_floor cave[MAX_HEIGHT + 1];
@@ -382,20 +382,20 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
 };
 
 /*	{ Base experience levels, may be adjusted up for race and/or class} */
-integer player_exp[MAX_PLAYER_LEVEL + 1] = {
+long player_exp[MAX_PLAYER_LEVEL + 1] = {
     0,      10,      25,      45,      70,     100,    140,    200,    280,
     380,    500,     650,     850,     1100,   1400,   1800,   2300,   2900,
     3600,   4400,    5400,    6800,    8400,   10200,  12500,  17500,  25000,
     35000,  50000,   75000,   100000,  150000, 200000, 300000, 400000, 500000,
     750000, 1500000, 2500000, 5000000, 9999999};
-real acc_exp = 0.0; /*{ Accumulator for fractional exp} */
+float acc_exp = 0.0; /*{ Accumulator for fractional exp} */
 dtype bare_hands = "1d1";
 boolean msg_terse;
-byteint record_ctr = 0;
-integer char_row = 0;
-integer char_col = 0;
-integer com_val;
-integer pclass = 0;
+unsigned char record_ctr = 0;
+long char_row = 0;
+long char_col = 0;
+long com_val;
+long pclass = 0;
 vtype sex_type = "FemaleMale  ";
 
 /*	{ Background information					} */
@@ -582,7 +582,7 @@ background_type background[MAX_BACKGROUND] = {
 
 /*	{ Buying and selling adjustments for character race VS store	} */
 /*	{ owner race							} */
-real rgold_adj[MAX_RACES][MAX_RACES] = {
+float rgold_adj[MAX_RACES][MAX_RACES] = {
     /*             {  Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr,
        Dry */
     /*             } */
@@ -666,7 +666,7 @@ treasure_type monk_book = {
 /*	{ Each type of character starts out with a few provisions...	} */
 /*	{ Note the the entries refer to array elements of INVENTORY_INIT array}
  */
-byteint player_init[MAX_CLASS][5] = {
+unsigned char player_init[MAX_CLASS][5] = {
     {1, 104, 42, 7, 33},    /*{ Warrior	} */
     {1, 104, 42, 7, 67},    /*{ Mage	} */
     {1, 104, 42, 156, 71},  /*{ Priest	} */
@@ -845,7 +845,7 @@ treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
 };
 
 /*{ Note : Raised from 26 to 50 possible choices		-DMF-	} */
-integer store_choice[MAX_STORES][STORE_CHOICES] = {
+long store_choice[MAX_STORES][STORE_CHOICES] = {
     /*	{ General Store } */
     {105, 104, 103, 102, 105, 104, 42, 105, 27, 26, 5, 4, 3, 3, 2, 102, 103,
      104, 105, 1, 1, 1, 2, 2, 3, 3, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -996,7 +996,7 @@ htype store_hours[MAX_STORES + MAX_UNNAMED][7] =
 /*	{ Store owners can be bribed to open up their shop during */
 /*	  certain hours (so that you can always have the opportunity to */
 /*	  buy insurance, and suchlike.)					} */
-integer store_bribe[MAX_STORES + MAX_UNNAMED] = {
+long store_bribe[MAX_STORES + MAX_UNNAMED] = {
     50,  /*  0 general */
     150, /*  1 armory */
     150, /*  2 weapons */
@@ -1017,7 +1017,7 @@ integer store_bribe[MAX_STORES + MAX_UNNAMED] = {
     0    /* 17 fortress */
 };
 
-integer mugging_chance; /* { Chance page gets mugged} */
+long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Following are treasure arrays	and variables			} */
 /*      Search for MAX_OBJECTS to get to the end of the list */
@@ -1986,7 +1986,7 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
 };
 
 boolean object_ident[MAX_OBJECTS + 1]; /*(max_objects of false) */
-integer t_level[MAX_OBJ_LEVEL + 1];
+long t_level[MAX_OBJ_LEVEL + 1];
 
 /*	{ Gold list (All types of gold and gems are defined here)	} */
 treasure_type gold_list[MAX_GOLD] = {
@@ -2389,44 +2389,44 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
 
 treasure_type blank_treasure = {" ", 0, ' ', 0, 0, 0, 0,   0,
 				0,   0, 0,   0, 0, 0, " ", 0};
-integer inven_ctr = 0;    /* { Total different obj's} */
-integer inven_weight = 0; /* { Cur carried weight	} */
-integer equip_ctr = 0;    /* { Cur equipment ctr	} */
-integer tcptr;		  /* { Cur treasure heap ptr} */
+long inven_ctr = 0;    /* { Total different obj's} */
+long inven_weight = 0; /* { Cur carried weight	} */
+long equip_ctr = 0;    /* { Cur equipment ctr	} */
+long tcptr;	    /* { Cur treasure heap ptr} */
 
 /*	{ Following are variables that change with level of difficulty	} */
 /*	{ 1/x chance of treasure per magma		} */
-integer dun_str_mc;
+long dun_str_mc;
 /*	{ 1/x chance of treasure per quartz		} */
-integer dun_str_qc;
+long dun_str_qc;
 /*	{ Level/x chance of unusual room		} */
-integer dun_unusual;
+long dun_unusual;
 /*	{ Amount of objects for rooms			} */
-integer treas_room_alloc;
+long treas_room_alloc;
 /*	{ Amount of objects for corridors		} */
-integer treas_any_alloc;
+long treas_any_alloc;
 /*	{ Amount of gold (and gems)			} */
-integer treas_gold_alloc;
+long treas_gold_alloc;
 /*	{ 1/n Chance of item being a Great Item 	} */
-integer obj_great;
+long obj_great;
 /*	{ Adjust STD per level				} */
-real obj_std_adj;
+float obj_std_adj;
 /*	{ Minimum STD					} */
-integer obj_std_min;
+long obj_std_min;
 /*	{ Town object generation level			} */
-integer obj_town_level;
+long obj_town_level;
 /*	{ Base amount of magic				} */
-integer obj_base_magic;
+long obj_base_magic;
 /*	{ Max amount of magic				} */
-integer obj_base_max;
+long obj_base_max;
 /*	{ magic_chance/# = special magic		} */
-integer obj_div_special;
+long obj_div_special;
 /*	{ magic_chance/# = cursed items			} */
-real obj_div_cursed;
+float obj_div_cursed;
 /*	{ High value slows multiplication		} */
-integer mon_mult_adj;
+long mon_mult_adj;
 /*	{ Dun_level/x chance of high level creature	} */
-integer mon_nasty;
+long mon_nasty;
 /* */
 /*	{ Following are feature objects defined for dungeon		} */
 /* */
@@ -2563,14 +2563,14 @@ treasure_type down_steep = {
 /*	{ Following are creature arrays and variables			} */
 creature_type c_list[MAX_CREATURES + 1];
 monster_type m_list[MAX_MALLOC + 1];
-integer m_level[MAX_MONS_LEVEL + 1];
+long m_level[MAX_MONS_LEVEL + 1];
 
 monster_type blank_monster = /* { Blank monster values	} */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false};
 
-integer muptr;	/* { Cur used monster ptr	} */
-integer mfptr;	/* { Cur free monster ptr	} */
-integer mon_tot_mult; /* { # of repro's of creature	} */
+long muptr;	/* { Cur used monster ptr	} */
+long mfptr;	/* { Cur free monster ptr	} */
+long mon_tot_mult; /* { # of repro's of creature	} */
 
 /*	{ Following are arrays for descriptive pieces			} */
 atype colors[MAX_COLORS] = {
@@ -2675,10 +2675,10 @@ atype syllables[MAX_SYLLABLES] = {
 /*				  char_set; */
 
 /* new stuff */
-integer malloc_calls = 0;
-integer malloc_bytes = 0;
-integer free_calls = 0;
-integer free_bytes = 0;
+long malloc_calls = 0;
+long malloc_bytes = 0;
+long free_calls = 0;
+long free_bytes = 0;
 
 vtype coin_name[MITHRIL + 1] = {"total", "iron",     "copper", "silver",
 				"gold",  "platinum", "mithril"};
@@ -2715,8 +2715,8 @@ gid_t games_gid;
 boolean scoresAreEncrypted = true;
 boolean saveFilesAreEncrypted = true;
 
-byteint highScoreKey[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-byteint saveFileKey[8] = {8, 7, 6, 5, 4, 3, 2, 1};
+unsigned char highScoreKey[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+unsigned char saveFileKey[8] = {8, 7, 6, 5, 4, 3, 2, 1};
 
 int game_state;
 boolean curses_is_running = false;

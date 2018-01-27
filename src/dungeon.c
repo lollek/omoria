@@ -6,18 +6,18 @@
 
 static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
 
-integer dir_val;	    /* { For movement (running)} */
-integer old_chp, old_cmana; /* { Detect change         } */
-real regen_amount;	  /* { Regenerate hp and mana} */
-char command;		    /* { Last command          } */
-boolean moria_flag;	 /* { Next level when true  } */
-boolean reset_flag;	 /* { Do not move creatures } */
-boolean search_flag;	/* { Player is searching   } */
-boolean teleport_flag;      /* { Handle telport traps  } */
-boolean player_light;       /* { Player carrying light } */
-boolean save_msg_flag;      /* { Msg flag after INKEY  } */
-ttype s1, s2, s3, s4;       /* { Summon item strings   } */
-integer i_summ_count;       /* { Summon item count	   } */
+long dir_val;		 /* { For movement (running)} */
+long old_chp, old_cmana; /* { Detect change         } */
+float regen_amount;      /* { Regenerate hp and mana} */
+char command;		 /* { Last command          } */
+boolean moria_flag;      /* { Next level when true  } */
+boolean reset_flag;      /* { Do not move creatures } */
+boolean search_flag;     /* { Player is searching   } */
+boolean teleport_flag;   /* { Handle telport traps  } */
+boolean player_light;    /* { Player carrying light } */
+boolean save_msg_flag;   /* { Msg flag after INKEY  } */
+ttype s1, s2, s3, s4;    /* { Summon item strings   } */
+long i_summ_count;       /* { Summon item count	   } */
 
 /**
  * -RAK-
@@ -35,7 +35,7 @@ static void s__panel_bounds()
 	panel_col_prt = panel_col_min - 15;
 }
 
-boolean coin_stuff(char typ, integer *type_num)
+boolean coin_stuff(char typ, long *type_num)
 {
 	boolean return_value;
 
@@ -77,12 +77,12 @@ static void s__get_money_type__prompt_money(vtype astr, string out_val,
 	*commas = true;
 }
 
-integer get_money_type(string prompt, boolean *back, boolean no_check)
+long get_money_type(string prompt, boolean *back, boolean no_check)
 {
 	boolean comma_flag = false;
 	boolean test_flag = false;
 	string out_val;
-	integer com_val;
+	long com_val;
 
 	strncpy(out_val, prompt, sizeof(string));
 
@@ -108,7 +108,7 @@ integer get_money_type(string prompt, boolean *back, boolean no_check)
 
 	do {
 		command = inkey();
-		com_val = (integer)(command);
+		com_val = (long)(command);
 		switch (com_val) {
 		case 0:
 		case 3:
@@ -144,7 +144,7 @@ integer get_money_type(string prompt, boolean *back, boolean no_check)
 	return com_val;
 }
 
-void py_bonuses(treasure_type *tobj, integer factor)
+void py_bonuses(treasure_type *tobj, long factor)
 {
 	/*
 	      { Player bonuses					-RAK-	}
@@ -153,7 +153,7 @@ void py_bonuses(treasure_type *tobj, integer factor)
 	*/
 
 	unsigned long item_flags, item_flags2;
-	integer i1, old_dis_ac;
+	long i1, old_dis_ac;
 	stat_set tstat;
 
 	PF.see_inv = false;
@@ -347,7 +347,7 @@ void py_bonuses(treasure_type *tobj, integer factor)
 	}
 }
 
-void change_stat(stat_set tstat, integer amount, integer factor)
+void change_stat(stat_set tstat, long amount, long factor)
 {
 	/*{ Changes stats up or down for magic items		-RAK-	}*/
 
@@ -355,7 +355,7 @@ void change_stat(stat_set tstat, integer amount, integer factor)
 	update_stat(tstat);
 }
 
-void change_speed(integer num)
+void change_speed(long num)
 {
 	/*
 	  { Changes speed of monsters relative to player		-RAK-
@@ -364,7 +364,7 @@ void change_speed(integer num)
 	  {       change the speed of all the monsters.  This greatly     }
 	  {       simplified the logic...                                 }
 	*/
-	integer i1;
+	long i1;
 
 	py.flags.speed += num;
 
@@ -379,7 +379,7 @@ void update_stat(stat_set tstat)
 	    PS.p[(int)tstat] + 10 * PS.m[(int)tstat] - PS.l[(int)tstat]);
 }
 
-void change_rep(integer amt)
+void change_rep(long amt)
 {
 	/* with py.misc do; */
 	if ((amt < 0) ||
@@ -397,7 +397,7 @@ void change_rep(integer amt)
 	}
 }
 
-boolean panel_contains(integer y, integer x)
+boolean panel_contains(long y, long x)
 {
 	/*{ Tests a given point to see if it is within the screen -RAK-   }*/
 	/*{ boundries.                                                    }*/
@@ -415,21 +415,21 @@ boolean panel_contains(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
+static void ml__draw_block(long y1, long x1, long y2, long x2)
 {
 	/*{ Given two sets of points, draw the block		}*/
 
-	integer const topp = maxmin(y1, y2, panel_row_min);
-	integer const bott = minmax(y1, y2, panel_row_max);
-	integer const left = maxmin(x1, x2, panel_col_min);
-	integer const right = minmax(x1, x2, panel_col_max);
-	integer const new_topp = y2 - 1; /*{ Margins for new things to appear}*/
-	integer const new_bott = y2 + 1;
-	integer const new_left = x2 - 1;
-	integer const new_righ = x2 + 1;
+	long const topp = maxmin(y1, y2, panel_row_min);
+	long const bott = minmax(y1, y2, panel_row_max);
+	long const left = maxmin(x1, x2, panel_col_min);
+	long const right = minmax(x1, x2, panel_col_max);
+	long const new_topp = y2 - 1; /*{ Margins for new things to appear}*/
+	long const new_bott = y2 + 1;
+	long const new_left = x2 - 1;
+	long const new_righ = x2 + 1;
 
-	integer y;
-	integer xmax = 0;
+	long y;
+	long xmax = 0;
 
 	ENTER(("ml__draw_block", "%d, %d, %d, %d", y1, x2, y2, x2));
 
@@ -437,10 +437,10 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	/*{ Points are guaranteed to be on the screen (I hope...) }*/
 
 	for (y = topp; y <= bott; y++) {
-		integer x;
-		integer xpos = 0;
+		long x;
+		long xpos = 0;
 		chtype floor_str[82] = {0};
-		integer floor_str_len = 0;
+		long floor_str_len = 0;
 
 		/*{ Leftmost to rightmost do}*/
 		for (x = left; x <= right; x++) {
@@ -497,7 +497,7 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 
 		if (xpos > 0) {
 			/*{ Var for PRINT cannot be loop index}*/
-			integer const y2 = y;
+			long const y2 = y;
 			/*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
 
 			if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
@@ -511,11 +511,11 @@ static void ml__draw_block(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__draw_block", "m");
 }
 
-static void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub1_move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ Normal movement                                   }*/
 
-	integer i1, i2;
+	long i1, i2;
 
 	ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
@@ -535,12 +535,12 @@ static void ml__sub1_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub1_move_light", "m");
 }
 
-static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub2_move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ When FIND_FLAG, light only permanent features     }*/
 
-	integer y;
-	integer x;
+	long y;
+	long x;
 
 	ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
@@ -555,9 +555,9 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 	for (y = y2 - 1; y <= y2 + 1; y++) {
 		chtype floor_str[82] = {0};
 		chtype save_str[82] = {0};
-		integer floor_str_len = 0;
-		integer save_str_len = 0;
-		integer xpos = 0;
+		long floor_str_len = 0;
+		long save_str_len = 0;
+		long xpos = 0;
 		chtype tmp_char;
 
 		for (x = x2 - 1; x <= x2 + 1; x++) {
@@ -588,7 +588,7 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 				if (xpos == 0)
 					xpos = x;
 				if (save_str[0] != 0) {
-					integer i;
+					long i;
 					for (i = 0; i < save_str_len; ++i)
 						floor_str[floor_str_len++] =
 						    save_str[i];
@@ -602,7 +602,7 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 		} /* end for x */
 
 		if (xpos > 0) {
-			integer const tmp_y = y;
+			long const tmp_y = y;
 			floor_str[floor_str_len] = 0;
 			print_chstr(floor_str, tmp_y, xpos);
 		}
@@ -611,16 +611,16 @@ static void ml__sub2_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub2_move_light", "m");
 }
 /*//////////////////////////////////////////////////////////////////// */
-static void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub3_move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ When blinded, move only the player symbol...              }*/
 
 	ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
 	if (light_flag) {
-		integer i1;
+		long i1;
 		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-			integer i2;
+			long i2;
 			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
 				cave[i1][i2].tl = false;
 			}
@@ -633,7 +633,7 @@ static void ml__sub3_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub3_move_light", "m");
 }
 /*//////////////////////////////////////////////////////////////////// */
-static void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
+static void ml__sub4_move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ With no light, movement becomes involved...               }*/
 
@@ -641,9 +641,9 @@ static void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 
 	light_flag = true;
 	if (cave[y1][x1].tl) {
-		integer i1;
+		long i1;
 		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-			integer i2;
+			long i2;
 			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
 				cave[i1][i2].tl = false;
 				if (test_light(i1, i2))
@@ -662,7 +662,7 @@ static void ml__sub4_move_light(integer y1, integer x1, integer y2, integer x2)
 	LEAVE("ml__sub4_move_light", "m");
 }
 
-void move_light(integer y1, integer x1, integer y2, integer x2)
+void move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ Package for moving the character's light about the screen     }*/
 	/*{ Three cases : Normal, Finding, and Blind              -RAK-   }*/
@@ -681,14 +681,14 @@ void move_light(integer y1, integer x1, integer y2, integer x2)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void lite_spot(integer y, integer x)
+void lite_spot(long y, long x)
 {
 	if (panel_contains(y, x)) {
 		print(loc_symbol(y, x), y, x);
 	}
 }
 
-void unlite_spot(integer y, integer x)
+void unlite_spot(long y, long x)
 {
 	if (panel_contains(y, x)) {
 		print(' ', y, x);
@@ -697,11 +697,11 @@ void unlite_spot(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void teleport(integer dis)
+void teleport(long dis)
 {
 	/*{ Teleport the player to a new location                 -RAK-   }*/
 
-	integer y, x, i1, i2;
+	long y, x, i1, i2;
 
 	ENTER(("teleport", "%d", dis));
 
@@ -740,14 +740,14 @@ void teleport(integer dis)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean get_panel(integer y, integer x, boolean forceit)
+boolean get_panel(long y, long x, boolean forceit)
 {
 	/*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
 	/*{ when a move off the screen has occurred and figures new borders}*/
 	/* forceit forcses the panel bounds to be recalculated (show_location).
 	 */
 
-	integer prow, pcol;
+	long prow, pcol;
 	boolean return_value;
 
 	prow = panel_row;
@@ -786,12 +786,12 @@ boolean get_panel(integer y, integer x, boolean forceit)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void move_rec(integer y1, integer x1, integer y2, integer x2)
+void move_rec(long y1, long x1, long y2, long x2)
 {
 	/*{ Moves creature record from one space to another       -RAK-   }*/
 	/* (x1,y1) might equal (x2,y2) so use a temp var */
 
-	byteint i1;
+	unsigned char i1;
 
 	i1 = cave[y1][x1].cptr;
 	cave[y1][x1].cptr = 0;
@@ -801,7 +801,7 @@ void move_rec(integer y1, integer x1, integer y2, integer x2)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
-		   integer *count)
+		   long *count)
 {
 	boolean flag;
 	treas_ptr ptr;
@@ -818,8 +818,8 @@ boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 
 		/*    fprintf(debug_file,"find: >%s<\n",ptr->data.name); */
 		/*    fprintf(debug_file,"find:     %d %d %d %d\n", */
-		/*	    (integer)ptr->data.tval, (integer)ptr->is_in, */
-		/*	    (integer)ptr->insides, (integer)ptr->ok); */
+		/*	    (long)ptr->data.tval, (long)ptr->is_in, */
+		/*	    (long)ptr->insides, (long)ptr->ok); */
 
 		if ((is_in(ptr->data.tval, item_val)) &&
 		    (!(ptr->is_in) || inner) &&
@@ -841,7 +841,7 @@ boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void carry(integer y, integer x)
+void carry(long y, long x)
 {
 	/*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
 	/*{ on the TVAL of the object.  Traps are set off, money and most }*/
@@ -853,7 +853,7 @@ void carry(integer y, integer x)
 	char page_char;
 	char inv_char;
 	treas_ptr tmp_ptr;
-	integer count;
+	long count;
 	boolean money_flag;
 
 	ENTER(("carry", "%d, %d", y, x));
@@ -935,12 +935,12 @@ void carry(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer react(integer x)
+long react(long x)
 {
 	/*  returns 0 to 10 -- SD 2.4; */
 	/*  x is average reaction for a 0 SC ugly half-troll*/
 
-	integer ans;
+	long ans;
 
 	ans = (py.stat.c[CHR] + PM.rep * 2 + randint(200) + randint(200) +
 	       randint(200))div 50 +
@@ -957,9 +957,9 @@ integer react(integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void battle_game(integer plus, vtype kb_str)
+void battle_game(long plus, vtype kb_str)
 {
-	integer score, i1, time;
+	long score, i1, time;
 	vtype out_val;
 
 	if (get_yes_no("Do you accept their invitation?")) {
@@ -1115,7 +1115,7 @@ void call_wizards()
 /*//////////////////////////////////////////////////////////////////// */
 void eat_the_meal()
 {
-	integer yummers, old_food;
+	long yummers, old_food;
 
 	old_food = py.flags.foodc;
 
@@ -1243,7 +1243,7 @@ void spend_the_night(vtype who)
 /*//////////////////////////////////////////////////////////////////// */
 void worship()
 {
-	integer preachy, i1;
+	long preachy, i1;
 
 	msg_print("The priest invites you to participate in the service.");
 
@@ -1317,7 +1317,7 @@ void worship()
 void beg_food()
 {
 	/*
-	     var      i2              : integer;
+	     var      i2              : long;
 		      item_ptr        : treas_ptr;
 	     begin
 	      if (find_range([food],false,item_ptr,i2)) then
@@ -1347,7 +1347,7 @@ void beg_food()
 /*//////////////////////////////////////////////////////////////////// */
 void beg_money()
 {
-	integer i1;
+	long i1;
 
 	msg_print("The occupants beg you for money.");
 
@@ -1384,10 +1384,10 @@ void beg_money()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean player_test_hit(integer bth, integer level, integer pth, integer ac,
+boolean player_test_hit(long bth, long level, long pth, long ac,
 			boolean was_fired)
 {
-	integer i1;
+	long i1;
 	boolean return_value;
 
 	if (search_flag) {
@@ -1419,11 +1419,11 @@ boolean player_test_hit(integer bth, integer level, integer pth, integer ac,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean test_hit(integer bth, integer level, integer pth, integer ac)
+boolean test_hit(long bth, long level, long pth, long ac)
 {
 	/*{ Attacker's level and pluses, defender's AC            -RAK-   }*/
 
-	integer i1;
+	long i1;
 	boolean return_value;
 
 	if (search_flag) {
@@ -1443,14 +1443,14 @@ boolean test_hit(integer bth, integer level, integer pth, integer ac)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean minus_ac(integer typ_dam)
+boolean minus_ac(long typ_dam)
 {
 	/*{ AC gets worse                                         -RAK-   }*/
 	/*{ Note: This routine affects magical AC bonuse so that stores   }*/
 	/*{       can detect the damage.                                  }*/
 
-	integer i1, i2;
-	integer tmp[9]; /*  : array [1..8] of integer;*/
+	long i1, i2;
+	long tmp[9]; /*  : array [1..8] of long;*/
 	vtype out_str, out_val;
 	boolean return_value = false;
 
@@ -1512,7 +1512,7 @@ boolean minus_ac(integer typ_dam)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void fire_dam(integer dam, vtype kb_str)
+void fire_dam(long dam, vtype kb_str)
 {
 	/*{ Burn the fool up...                                   -RAK-   }*/
 
@@ -1540,7 +1540,7 @@ void fire_dam(integer dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void cold_dam(integer dam, vtype kb_str)
+void cold_dam(long dam, vtype kb_str)
 {
 	/*{ Freeze him to death...                                -RAK-   }*/
 
@@ -1565,7 +1565,7 @@ void cold_dam(integer dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void light_dam(integer dam, vtype kb_str)
+void light_dam(long dam, vtype kb_str)
 {
 	/*{ Lightning bolt the sucker away...                     -RAK-   }*/
 
@@ -1583,11 +1583,11 @@ void light_dam(integer dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void acid_dam(integer dam, vtype kb_str)
+void acid_dam(long dam, vtype kb_str)
 {
 	/*{ Throw acid on the hapless victim                      -RAK-   }*/
 
-	integer flag = 0;
+	long flag = 0;
 	obj_set things_that_dilute = {
 	    miscellaneous_object,  chest,	 bolt,       arrow,
 	    bow_crossbow_or_sling, hafted_weapon, pole_arm,   boots,
@@ -1625,13 +1625,13 @@ void acid_dam(integer dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void xp_loss(integer amount)
+void xp_loss(long amount)
 {
 	/*{ Lose experience hack for lose_exp breath              -RAK-   }*/
 
-	integer i1, i2;
-	integer av_hp, lose_hp;
-	integer av_mn, lose_mn;
+	long i1, i2;
+	long av_hp, lose_hp;
+	long av_mn, lose_mn;
 	boolean flag;
 
 	amount = (py.misc.exp / 100) * MON_DRAIN_LIFE; /* passed val?  XXXX */
@@ -1644,7 +1644,7 @@ void xp_loss(integer amount)
 		PM.exp -= amount;
 	}
 
-	for (i1 = 1; (integer)(player_exp[i1] * PM.expfact) <= PM.exp;) {
+	for (i1 = 1; (long)(player_exp[i1] * PM.expfact) <= PM.exp;) {
 		i1++;
 	}
 	i2 = PM.lev - i1;
@@ -1740,7 +1740,7 @@ void corrode_gas(vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void poison_gas(integer dam, vtype kb_str)
+void poison_gas(long dam, vtype kb_str)
 {
 	/*{ Poison gas the idiot...                               -RAK-   }*/
 
@@ -1772,7 +1772,7 @@ void rest()
 {
 	/*{ Resting allows a player to safely restore his hp      -RAK-   }*/
 
-	integer rest_num;
+	long rest_num;
 	vtype rest_str;
 
 	prt("Rest for how long (or *) ? ", 1, 1);
@@ -1810,7 +1810,7 @@ void water_move_player(void) {}
 /**
  * water_move_creature() - Gee, another cool routine
  */
-static boolean water_move_creature(__attribute__((unused)) integer num)
+static boolean water_move_creature(__attribute__((unused)) long num)
 {
 	return true;
 }
@@ -1818,9 +1818,9 @@ static boolean water_move_creature(__attribute__((unused)) integer num)
 /**
  * water_move_item() - I sense a patter about water moves...
  */
-boolean water_move_item(__attribute__((unused)) integer row,
-			__attribute__((unused)) integer col,
-			__attribute__((unused)) integer num)
+boolean water_move_item(__attribute__((unused)) long row,
+			__attribute__((unused)) long col,
+			__attribute__((unused)) long num)
 {
 	return true;
 }
@@ -1829,7 +1829,7 @@ boolean water_move_item(__attribute__((unused)) integer row,
 /*//////////////////////////////////////////////////////////////////// */
 boolean water_move()
 {
-	integer i1;
+	long i1;
 	boolean flag = false;
 
 	/*  this was all commented out, so I left it that way XXXX
@@ -1864,18 +1864,18 @@ boolean water_move()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void search(integer y, integer x, integer chance)
+void search(long y, long x, long chance)
 {
 	/*{ Searches for hidden things...                         -RAK-   }*/
 
-	integer i1, i2;
+	long i1, i2;
 	vtype out_val;
 
 	/* with py.flags do; */
 	if (PF.confused + PF.blind > 0) {
 		chance = trunc(chance / 10.0);
 	} else if (no_light()) {
-		chance = (integer)(chance / 5.0);
+		chance = (long)(chance / 5.0);
 	}
 
 	for (i1 = (y - 1); i1 <= (y + 1); i1++) {
@@ -1971,10 +1971,10 @@ void search(integer y, integer x, integer chance)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void lr__find_light(integer y1, integer x1, integer y2, integer x2)
+void lr__find_light(long y1, long x1, long y2, long x2)
 {
 	obj_set room_floors;
-	integer i1;
+	long i1;
 
 	memset(room_floors, 0, sizeof(room_floors));
 	room_floors[0] = dopen_floor.ftval;
@@ -1982,14 +1982,14 @@ void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 	room_floors[2] = water2.ftval;
 
 	for (i1 = y1; i1 <= y2; i1++) {
-		integer i2;
+		long i2;
 		for (i2 = x1; i2 <= x2; i2++) {
-			integer i3;
+			long i3;
 			if (!is_in(cave[i1][i2].fval, room_floors))
 				continue;
 
 			for (i3 = i1 - 1; i3 <= i1 + 1; i3++) {
-				integer i4;
+				long i4;
 				for (i4 = i2 - 1; i4 <= i2 + 1; i4++)
 					cave[i3][i4].pl = true;
 			}
@@ -2006,20 +2006,18 @@ void lr__find_light(integer y1, integer x1, integer y2, integer x2)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void light_room(integer param_y, integer param_x)
+void light_room(long param_y, long param_x)
 {
 	/*{ Room is lit, make it appear                           -RAK-   }*/
 
-	integer const half_height = (integer)(SCREEN_HEIGHT / 2);
-	integer const half_width = (integer)(SCREEN_WIDTH / 2);
-	integer const start_row =
-	    (integer)(param_y / half_height) * half_height + 1;
-	integer const start_col =
-	    (integer)(param_x / half_width) * half_width + 1;
-	integer const end_row = start_row + half_height - 1;
-	integer const end_col = start_col + half_width - 1;
-	integer y;
-	integer xpos = 0;
+	long const half_height = (long)(SCREEN_HEIGHT / 2);
+	long const half_width = (long)(SCREEN_WIDTH / 2);
+	long const start_row = (long)(param_y / half_height) * half_height + 1;
+	long const start_col = (long)(param_x / half_width) * half_width + 1;
+	long const end_row = start_row + half_height - 1;
+	long const end_col = start_col + half_width - 1;
+	long y;
+	long xpos = 0;
 
 	ENTER(("light_room", "%d, %d", param_y, param_x));
 
@@ -2027,9 +2025,9 @@ void light_room(integer param_y, integer param_x)
 
 	for (y = start_row; y <= end_row; y++) {
 		chtype floor_str[82] = {0};
-		integer floor_str_len = 0;
-		integer x;
-		integer const ypos = y;
+		long floor_str_len = 0;
+		long x;
+		long const ypos = y;
 		for (x = start_col; x <= end_col; x++) {
 			if (cave[y][x].pl || cave[y][x].fm) {
 				if (floor_str_len == 0)
@@ -2055,12 +2053,12 @@ void light_room(integer param_y, integer param_x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean pick_dir(integer dir)
+boolean pick_dir(long dir)
 {
 	/*{ Picks new direction when in find mode                 -RAK-   }*/
 
-	integer z[3]; /*   : array [1..2] of integer;*/
-	integer i1, y, x;
+	long z[3]; /*   : array [1..2] of long;*/
+	long i1, y, x;
 	boolean return_value;
 
 	if ((find_flag) && (next_to4(char_row, char_col, corr_set) == 2)) {
@@ -2104,7 +2102,7 @@ boolean pick_dir(integer dir)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void bother(integer num)
+void bother(long num)
 {
 	if (num > 5) {
 		msg_print("Your sword screams insults at passing monsters!");
@@ -2142,7 +2140,7 @@ void bother(integer num)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void area_affect(integer dir, integer y, integer x)
+void area_affect(long dir, long y, long x)
 {
 	/*        { Turns off Find_flag if something interesting appears  -RAK-
 	 * }*/
@@ -2150,8 +2148,8 @@ void area_affect(integer dir, integer y, integer x)
 	 * want }*/
 	/*        {      to add a lot of checking for such a minor detail }*/
 
-	integer z[4]; /*: array [1..3] of integer;*/
-	integer i1, row, col;
+	long z[4]; /*: array [1..3] of long;*/
+	long i1, row, col;
 	obj_set corridors = {4, 5, 6, 0};
 	obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
 
@@ -2256,7 +2254,7 @@ void area_affect(integer dir, integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean delete_object(integer y, integer x)
+boolean delete_object(long y, long x)
 {
 	/*{ Deletes object from given location                    -RAK-   }*/
 
@@ -2282,14 +2280,14 @@ boolean delete_object(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer mon_take_hit(integer monptr, integer dam)
+long mon_take_hit(long monptr, long dam)
 {
 	/*{ Decreases monsters hit points and deletes monster if needed.  }*/
 	/*{ (Picking on my babies...)                             -RAK-   }*/
 
-	real acc_tmp;
-	integer i1 = 0;
-	integer return_value = 0;
+	float acc_tmp;
+	long i1 = 0;
+	long return_value = 0;
 
 	ENTER(("mon_take_hit", "%d, %d", monptr, dam));
 
@@ -2317,8 +2315,8 @@ integer mon_take_hit(integer monptr, integer dam)
 
 			acc_tmp = (c_list[m_list[monptr].mptr].mexp *
 				   ((c_list[m_list[monptr].mptr].level + 0.1) /
-				    (real)PM.lev));
-			i1 = (integer)(acc_tmp);
+				    (float)PM.lev));
+			i1 = (long)(acc_tmp);
 			acc_exp += (acc_tmp - i1);
 			if (acc_exp > 1) {
 				i1++;
@@ -2372,15 +2370,15 @@ integer mon_take_hit(integer monptr, integer dam)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void monster_death(integer y, integer x, unsigned long flags)
+void monster_death(long y, long x, unsigned long flags)
 {
 	/*{ Allocates objects upon a creatures death              -RAK-   }*/
 	/*{ Oh well, another creature bites the dust...  Reward the victor}*/
 	/*{ based on flags set in the main creature record                }*/
 
-	integer i1;
+	long i1;
 
-	i1 = (integer)((flags & 0x03000000) / (0x01000000));
+	i1 = (long)((flags & 0x03000000) / (0x01000000));
 
 	if (uand(flags, 0x04000000) != 0) {
 		if (randint(100) < 60) {
@@ -2413,14 +2411,14 @@ void monster_death(integer y, integer x, unsigned long flags)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void summon_object(integer y, integer x, integer num, integer typ)
+void summon_object(long y, long x, long num, long typ)
 {
 	/*{ Creates objects nearby the coordinates given          -RAK-   }*/
 	/*{ BUG: Because of the range, objects can actually be placed into}*/
 	/*{      areas closed off to the player, this is rarely noticable,}*/
 	/*{      and never a problem to the game.                         }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 
 	do {
 		i1 = 0;
@@ -2483,11 +2481,11 @@ void summon_object(integer y, integer x, integer num, integer typ)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void delete_monster(integer i2)
+void delete_monster(long i2)
 {
 	/*{ Deletes a monster entry from the level                -RAK-   }*/
 
-	integer i1, i3;
+	long i1, i3;
 
 	ENTER(("delete_monster", "%d", i2));
 
@@ -2522,11 +2520,11 @@ void delete_monster(integer i2)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean py_attack(integer y, integer x)
+boolean py_attack(long y, long x)
 {
 	/*{ Player attacks a (poor, defenseless) creature         -RAK-   }*/
 
-	integer a_cptr, a_mptr, i3, blows, tot_tohit, crit_mult;
+	long a_cptr, a_mptr, i3, blows, tot_tohit, crit_mult;
 	vtype m_name, out_val;
 	boolean mean_jerk_flag, is_sharp;
 	boolean backstab_flag;
@@ -2717,7 +2715,7 @@ boolean py_attack(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-integer tot_dam(treasure_type *item, integer tdam, creature_type *monster)
+long tot_dam(treasure_type *item, long tdam, creature_type *monster)
 {
 	/*{ Special damage due to magical abilities of object     -RAK-   }*/
 
@@ -2789,7 +2787,7 @@ integer tot_dam(treasure_type *item, integer tdam, creature_type *monster)
 /*//////////////////////////////////////////////////////////////////// */
 void get_player_move_rate()
 {
-	integer cur_swim;
+	long cur_swim;
 
 	/* with py.flags do; */
 	if (is_in(cave[char_row][char_col].fval, earth_set)) {
@@ -2813,7 +2811,7 @@ void get_player_move_rate()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean xor (integer thing1, integer thing2) {
+boolean xor (long thing1, long thing2) {
 		    /* with fake boolean values you cant really do a (bool1 !=
 		       bool2)
 		       and expect it to work.  */
@@ -2821,16 +2819,16 @@ boolean xor (integer thing1, integer thing2) {
 		    return !((thing1 && thing2) || (!thing1 && !thing2));
 	    }
     /*//////////////////////////////////////////////////////////////////// */
-    integer movement_rate(integer cspeed, integer mon)
+    long movement_rate(long cspeed, long mon)
 {
 	/*{ Given speed, returns number of moves this turn.       -RAK-   }*/
 	/*{ NOTE: Player must always move at least once per iteration,    }*/
 	/*{       a slowed player is handled by moving monsters faster    }*/
 
-	integer final_rate;      /*{ final speed as integer }*/
-	integer c_rate, py_rate; /*{ rate (0,1,2,3) = (0,1/4,1/2,1)
+	long final_rate;      /*{ final speed as long }*/
+	long c_rate, py_rate; /*{ rate (0,1,2,3) = (0,1/4,1/2,1)
 				   _                in wrong element }*/
-	integer return_value;
+	long return_value;
 
 	/* with m_list[mon] do; */
 	/* with c_list[mptr] do; */
@@ -2838,8 +2836,8 @@ boolean xor (integer thing1, integer thing2) {
 	if (xor((is_in(cave[MY(mon)][MX(mon)].fval, earth_set) ||
 		 is_in(cave[MY(mon)][MX(mon)].fval, pwall_set)),
 		(uand(c_list[m_list[mon].mptr].cmove, 0x00000010) == 0))) {
-		c_rate = (integer)(
-		    uand(c_list[m_list[mon].mptr].cmove, 0x00000300) div 256);
+		c_rate = (long)(uand(c_list[m_list[mon].mptr].cmove, 0x00000300)
+				div 256);
 	} else {
 		c_rate = 3;
 	}
@@ -2893,7 +2891,7 @@ void desc_remain(treas_ptr item_ptr)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void add_food(integer num)
+void add_food(long num)
 {
 	/*{ Add to the players food time                          -RAK-   }*/
 
@@ -2936,7 +2934,7 @@ void add_food(integer num)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean twall(integer y, integer x, integer t1, integer t2)
+boolean twall(long y, long x, long t1, long t2)
 {
 	/*{ Tunneling through real wall: 10,11,12                 -RAK-   }*/
 	/*{ Used by TUNNEL and WALL_TO_MUD                                }*/
@@ -2988,13 +2986,13 @@ void desc_charges(treas_ptr item_ptr)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
+boolean cast_spell(vtype prompt, treas_ptr item_ptr, long *sn, long *sc,
 		   boolean *redraw)
 {
 	/*{ Return spell number and failure chance                -RAK-   }*/
 
 	unsigned long i2, i4;
-	integer i1, i3, num;
+	long i1, i3, num;
 	spl_type aspell;
 	boolean flag = false;
 
@@ -3041,7 +3039,7 @@ boolean cast_spell(vtype prompt, treas_ptr item_ptr, integer *sn, integer *sc,
 static void d__examine_book()
 {
 	unsigned long i2, i4;
-	integer i3, i5;
+	long i3, i5;
 	treas_ptr i1, item_ptr;
 	char trash_char;
 	boolean redraw, flag;
@@ -3140,7 +3138,7 @@ void d__jamdoor()
 	/*{ Jam a closed door                                     -RAK-   }*/
 
 	treas_ptr i1;
-	integer y, x, i2, tmp;
+	long y, x, i2, tmp;
 	vtype m_name;
 	obj_set pick_a_spike = {spike, 0};
 
@@ -3249,10 +3247,10 @@ obj_set *to__poink(obj_set *ammo_types)
 	return ammo_types;
 }
 /*//////////////////////////////////////////////////////////////////// */
-void to__facts(integer *tbth, integer *tpth, integer *tdam, integer *tdis,
+void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 	       boolean to_be_fired)
 {
-	integer tmp_weight;
+	long tmp_weight;
 
 	/* with inven_temp->data. do; */
 
@@ -3315,9 +3313,9 @@ void to__facts(integer *tbth, integer *tpth, integer *tdam, integer *tdis,
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void to__drop_throw(integer y, integer x)
+void to__drop_throw(long y, long x)
 {
-	integer i1, i2, i3, cur_pos;
+	long i1, i2, i3, cur_pos;
 	boolean flag = false;
 	vtype out_val, out_val2;
 
@@ -3359,9 +3357,9 @@ void to__drop_throw(integer y, integer x)
 /*//////////////////////////////////////////////////////////////////// */
 void d__throw_object(boolean to_be_fired)
 {
-	integer tbth, tpth, tdam, tdis, crit_mult;
-	integer y_dumy, x_dumy, dumy, i1;
-	integer y, x, oldy, oldx, dir, cur_dis, count;
+	long tbth, tpth, tdam, tdis, crit_mult;
+	long y_dumy, x_dumy, dumy, i1;
+	long y, x, oldy, oldx, dir, cur_dis, count;
 	char trash_char;
 	boolean redraw, flag;
 	vtype out_val, out_val2, m_name;
@@ -3572,8 +3570,8 @@ void d__look()
 	/*{ Look at an object, trap, or monster                   -RAK-   }*/
 	/*{ Note: Looking is a free move, see where invoked...            }*/
 
-	integer i1, i2, y, x;
-	integer dir, dummy;
+	long i1, i2, y, x;
+	long dir, dummy;
 	boolean flag = false;
 	vtype out_val, out_val2;
 
@@ -3715,7 +3713,7 @@ void d__look()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void d__set_coords(integer *c_row, integer *c_col)
+void d__set_coords(long *c_row, long *c_col)
 {
 	/*{ Set up the character co-ords          }*/
 	if ((*c_row == -1) || (*c_col == -1)) {
@@ -3734,7 +3732,7 @@ void d__set_coords(integer *c_row, integer *c_col)
 /*//////////////////////////////////////////////////////////////////// */
 void d__sun_rise_or_set()
 {
-	integer i1, i2;
+	long i1, i2;
 
 	/*{ Sunrise and Sunset on town level	  -KRC-	}*/
 	/* with py.misc.cur_age do; */
@@ -4632,7 +4630,7 @@ void d__update_hit_points()
 
 	if (!(find_flag)) {
 		if (py.flags.rest < 1) {
-			if (old_chp != (integer)(PM.chp)) {
+			if (old_chp != (long)(PM.chp)) {
 				if (PM.chp > PM.mhp) {
 					PM.chp = PM.mhp;
 				}
@@ -4654,8 +4652,7 @@ void d__update_hit_points()
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean d__get_dir(vtype prompt, integer *dir, integer *com_val, integer *y,
-		   integer *x)
+boolean d__get_dir(vtype prompt, long *dir, long *com_val, long *y, long *x)
 {
 	/*{ Prompts for a direction                               -RAK-   }*/
 
@@ -4677,7 +4674,7 @@ boolean d__get_dir(vtype prompt, integer *dir, integer *com_val, integer *y,
 		case '7':
 		case '8':
 		case '9':
-			*com_val = (integer)command;
+			*com_val = (long)command;
 			flag = true;
 			break;
 
@@ -4819,8 +4816,8 @@ void d__bash()
 	/*{ Bash open a door or chest                             -RAK-   }*/
 	/*{ Note: Affected by strength and weight of character            }*/
 
-	integer y, x, tmp;
-	integer old_ptodam, old_ptohit, old_bth;
+	long y, x, tmp;
+	long old_ptodam, old_ptohit, old_bth;
 
 	y = char_row;
 	x = char_col;
@@ -4919,12 +4916,12 @@ void d__bash()
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void d__chest_trap(integer y, integer x)
+void d__chest_trap(long y, long x)
 {
 	/*{ Chests have traps too...                              -RAK-   }*/
 	/*{ Note: Chest traps are based on the FLAGS value                }*/
 
-	integer i1, i2, i3;
+	long i1, i2, i3;
 	unsigned long flags;
 
 	flags = t_list[cave[y][x].tptr].flags;
@@ -4979,7 +4976,7 @@ void d__openobject()
 {
 	/*{ Opens a closed door or closed chest...                -RAK-   }*/
 
-	integer y, x, tmp, temp_dun_level;
+	long y, x, tmp, temp_dun_level;
 	boolean flag;
 	char *tmpc;
 
@@ -5147,7 +5144,7 @@ void d__closeobject()
 {
 	/*{ Closes an open door...                                -RAK-   }*/
 
-	integer y, x, tmp;
+	long y, x, tmp;
 	vtype m_name;
 
 	y = char_row;
@@ -5187,8 +5184,8 @@ void d__disarm_trap()
 {
 	/*{ Disarms a trap                                        -RAK-   }*/
 
-	integer y, x, i1, tdir;
-	integer tot, t1, t2, t3, t4, t5;
+	long y, x, i1, tdir;
+	long tot, t1, t2, t3, t4, t5;
 	char *tmpc;
 
 	y = char_row;
@@ -5301,7 +5298,7 @@ void d__refill_lamp()
 {
 	/*{ Refill the players lamp                               -RAK-   }*/
 
-	integer i2, i3;
+	long i2, i3;
 	treas_ptr i1;
 	obj_set this_be_oil = {flask_of_oil, 0};
 
@@ -5331,7 +5328,7 @@ void d__tunnel()
 	/*{ Tunnels through rubble and walls                      -RAK-   }*/
 	/*{ Must take into account: secret doors, special tools           }*/
 
-	integer y, x, i1, tabil;
+	long y, x, i1, tabil;
 
 	y = char_row;
 	x = char_col;
@@ -5447,8 +5444,8 @@ void d__drop()
 	boolean redraw;
 	char trash_char;
 	vtype out_val, out_val2;
-	integer temp;
-	integer count;
+	long temp;
+	long count;
 
 	reset_flag = true;
 
@@ -5532,7 +5529,7 @@ void view_old_mess()
 /*//////////////////////////////////////////////////////////////////// */
 
 /*//////////////////////////////////////////////////////////////////// */
-void d__execute_command(integer *com_val)
+void d__execute_command(long *com_val)
 {
 	treas_ptr trash_ptr;
 	vtype out_val;
@@ -6195,7 +6192,7 @@ void dungeon()
 					if (save_msg_flag) {
 						erase_line(msg_line, msg_line);
 					}
-					com_val = (integer)command;
+					com_val = (long)command;
 				}
 
 				d__execute_command(&com_val);

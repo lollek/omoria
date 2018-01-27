@@ -2,16 +2,16 @@
 #define GENERATE_H
 typedef struct coords
 {
-	integer y;
-	integer x;
+	long y;
+	long x;
 } coords;
 
 typedef struct river_deal
 {
-	integer in1, in2, out; /*{ (keypad) directions; in is upstream }*/
-	integer flow;	  /*{ water flow out of this river spot }*/
-	integer pos;	   /*{ in array of s_l_type; if > num_left then }*/
-			       /*{ spot is no longer available }*/
+	long in1, in2, out; /*{ (keypad) directions; in is upstream }*/
+	long flow;	  /*{ water flow out of this river spot }*/
+	long pos;	   /*{ in array of s_l_type; if > num_left then }*/
+			    /*{ spot is no longer available }*/
 } river_deal;
 
 typedef struct s_l_type
@@ -33,8 +33,8 @@ typedef struct river_args
 	s_l_type s_list[RIVER_TOTAL_SIZE + 1];
 	/*: array [1..RIVER_TOTAL_SIZE] of s_l_type;*/
 
-	integer max_wet; /*{ # of river or next-to-river }*/
-	integer num_left, s_l_top;
+	long max_wet; /*{ # of river or next-to-river }*/
+	long num_left, s_l_top;
 	coords river_mouth;
 
 } river_args;

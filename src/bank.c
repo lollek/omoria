@@ -51,7 +51,7 @@ static void eb__display_store(vtype shop_owner)
 	prt(" p) Put item in vault.         r) Remove item from vault.", 23, 1);
 }
 
-static boolean eb__get_entry(vtype comment, integer *num)
+static boolean eb__get_entry(vtype comment, long *num)
 {
 	/*
 	* Returns true if a number >= 0 is entered, false if escaped,
@@ -84,9 +84,9 @@ static boolean eb__get_entry(vtype comment, integer *num)
 	return return_value;
 }
 
-static void eb__dep_munny(integer mon_type)
+static void eb__dep_munny(long mon_type)
 {
-	integer deposit;
+	long deposit;
 	vtype out_val;
 
 	if (py.misc.money[mon_type] > 0) {
@@ -137,8 +137,8 @@ static void eb__withdraw_money()
 	 */
 
 	boolean deliver, is_some;
-	integer amt_given[MITHRIL + 1];
-	integer mon_type, withdraw, weight_left;
+	long amt_given[MITHRIL + 1];
+	long mon_type, withdraw, weight_left;
 	string out_val;
 
 	/* get amount to withdraw */
@@ -238,12 +238,12 @@ static void eb__change_money()
 {
 	/* Changes money of one type to money of another type.        -JPS- */
 
-	boolean change_flag;      /*{ Did they enter a valid entry? }*/
-	integer amount_from;      /*{ Amount before changing. }*/
-	integer amount_to;	/*{ Amount remaining after changing. }*/
-	char key_in;		  /*{ input character }*/
-	integer typ_from, typ_to; /*   { Types of money }*/
-	string prompt;		  /*{ Prompt used.}*/
+	boolean change_flag;   /*{ Did they enter a valid entry? }*/
+	long amount_from;      /*{ Amount before changing. }*/
+	long amount_to;	/*{ Amount remaining after changing. }*/
+	char key_in;	   /*{ input character }*/
+	long typ_from, typ_to; /*   { Types of money }*/
+	string prompt;	 /*{ Prompt used.}*/
 
 	key_in =
 	    (char)get_money_type("Change what coin? ", &change_flag, false);
@@ -328,7 +328,7 @@ static void eb__parse_command(boolean *exit_flag, vtype shop_owner)
 void enter_bank()
 {
 	boolean exit_flag = false;
-	integer tics = 1;
+	long tics = 1;
 	vtype shop_owner;
 
 	switch (randint(7)) {

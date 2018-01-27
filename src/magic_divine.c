@@ -1,12 +1,12 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void divine_spell_effects(integer effect)
+void divine_spell_effects(long effect)
 {
 
 	/*{ Prayers...                                    }*/
-	integer i2, dir;
-	integer dumy, y_dumy, x_dumy;
+	long i2, dir;
+	long dumy, y_dumy, x_dumy;
 
 	y_dumy = char_row;
 	x_dumy = char_col;

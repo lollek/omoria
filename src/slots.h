@@ -14,7 +14,7 @@
 #define S_BELL 3
 #define S_BAR 4
 
-typedef integer stype; /* stype = (jackpot,cherry,orange,bell,bar);*/
+typedef long stype;    /* stype = (jackpot,cherry,orange,bell,bar);*/
 typedef stype slot[4]; /* slot  = array[1..3] of stype;*/
 
 extern void sm__game_slots();

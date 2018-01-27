@@ -2,14 +2,7 @@
 #define TYPES_H
 /* The global types for imoria */
 
-typedef unsigned char byteint;  /* [byte] 0..255 */
-typedef signed char bytlint;    /* [byte] -128..127; */
-typedef unsigned short wordint; /* [word] 0..65535; */
-typedef short worlint;		/* [word] -32768..32767; */
-
 typedef unsigned char boolean;
-typedef long integer;
-typedef float real;
 
 typedef struct quad_type
 {
@@ -29,12 +22,11 @@ typedef char ntype[1024 + 2];
 typedef char ttype[68 + 2];
 typedef char vtype[80 + 2];
 typedef char account_type[10 + 2];
-typedef byteint obj_set[MAX_OBJ_SET]; /* = set of 0..255; */
-typedef char stat_set;		      /* = 0..5; */
-typedef byteint
-    stat_s_type[STAT_SET_MAX + 1]; /* = array [stat_set] of byteint; */
-typedef integer
-    money_type[MITHRIL + 1]; /* = array[total$..mithril] of integer; */
+typedef unsigned char obj_set[MAX_OBJ_SET]; /* = set of 0..255; */
+typedef char stat_set;			    /* = 0..5; */
+typedef unsigned char
+    stat_s_type[STAT_SET_MAX + 1];    /* = array [stat_set] of unsigned char; */
+typedef long money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 
 enum class_t {
 	C_WARRIOR = 0,
@@ -51,86 +43,86 @@ enum class_t {
 
 typedef struct game_time_type
 {
-	integer year;
-	byteint month;
-	byteint day;
-	byteint hour;
-	wordint secs;
+	long year;
+	unsigned char month;
+	unsigned char day;
+	unsigned char hour;
+	unsigned short secs;
 } game_time_type;
 
 typedef struct time_type
 {
-	wordint years;
-	wordint months;
-	wordint days;
-	wordint hours;
-	wordint minutes;
-	wordint seconds;
-	wordint hundredths;
+	unsigned short years;
+	unsigned short months;
+	unsigned short days;
+	unsigned short hours;
+	unsigned short minutes;
+	unsigned short seconds;
+	unsigned short hundredths;
 } time_type;
 
 typedef struct creature_type
 {
-	byteint aaf;	  /*: [bit(7),pos(0)] 0..127; Area affect radius */
-	byteint ac;	   /*: [bit(7),pos(8)] 0..127;	 AC */
+	unsigned char aaf;    /*: [bit(7),pos(0)] 0..127; Area affect radius */
+	unsigned char ac;     /*: [bit(7),pos(8)] 0..127;	 AC */
 	ctype name;	   /* Descrip of creature */
 	unsigned long cmove;  /*: unsigned;	Bit field */
 	unsigned long spells; /*: unsigned;	Creature spells	 */
 	unsigned long cdefense; /*: unsigned;	Bit field */
-	worlint sleep;		/* Inactive counter */
-	integer mexp;		/* Exp value for kill */
-	bytlint speed;		/* Movement speed */
+	short sleep;		/* Inactive counter */
+	long mexp;		/* Exp value for kill */
+	signed char speed;      /* Movement speed */
 	char cchar;		/* Character rep. */
 	dtype hd;		/* Creatures hit die */
 	etype damage;		/* Type attack and damage */
-	bytlint level;		/* Level of creature */
-	byteint mr;		/* Magic Resistance */
+	signed char level;      /* Level of creature */
+	unsigned char mr;       /* Magic Resistance */
 } creature_type;
 
 typedef struct monster_type
 {
-	worlint hp;     /* Hit points		*/
-	worlint csleep; /* Inactive counter	*/
-	worlint cdis;   /* Cur dis from player	*/
-	wordint mptr;   /* Pointer into creature	*/
-	wordint nptr;   /* Pointer to next block	*/
-	bytlint cspeed; /* Movement speed	*/
+	short hp;	    /* Hit points		*/
+	short csleep;	/* Inactive counter	*/
+	short cdis;	  /* Cur dis from player	*/
+	unsigned short mptr; /* Pointer into creature	*/
+	unsigned short nptr; /* Pointer to next block	*/
+	signed char cspeed;  /* Movement speed	*/
 
 	/* Note: FY and FX constrain dungeon size to 255 */
-	byteint fy; /* Y Pointer into map	 */
-	byteint fx; /* X Pointer into map	 */
+	unsigned char fy; /* Y Pointer into map	 */
+	unsigned char fx; /* X Pointer into map	 */
 
-	bytlint stunned;  /* [bit(6),pos(104)] -32..31; Rounds stunned */
-	boolean ml;       /* [bit(1),pos(110)] boolean; On if shown   */
-	boolean confused; /* [bit(1),pos(111)] boolean; On if confused */
-	boolean moved;    /* [bit(1),pos(112)] boolean; On if water-moved */
+	signed char stunned; /* [bit(6),pos(104)] -32..31; Rounds stunned */
+	boolean ml;	  /* [bit(1),pos(110)] boolean; On if shown   */
+	boolean confused;    /* [bit(1),pos(111)] boolean; On if confused */
+	boolean moved;       /* [bit(1),pos(112)] boolean; On if water-moved */
 } monster_type;
 
 typedef struct treasure_type
 {
-	ttype name;	   /* Object name		*/
-	byteint tval;	 /* Catagory number	*/
-	chtype tchar;	 /* Character representation */
-	unsigned long flags2; /*: unsigned;	 { MORE Special flags	} */
-	unsigned long flags;  /*: unsigned;	 { Special flags	} */
-	integer p1;	   /* { Misc. use variable	} */
-	integer cost;	 /* { Cost of item		} */
-	integer subval;       /* { Sub-catagory number	} */
-	wordint weight;       /* { Weight in gp's	} */
-	wordint number;       /* { Number of items	} */
-	worlint tohit;	/* { Pluses to hit		} */
-	worlint todam;	/* { Pluses to damage	} */
-	worlint ac;	   /* { Normal AC		} */
-	worlint toac;	 /* { Pluses to AC		} */
-	dtype damage;	 /* { Damage when hits	}*/
-	bytlint level;	/* { Level item found	} */
+	ttype name;	    /* Object name		*/
+	unsigned char tval;    /* Catagory number	*/
+	chtype tchar;	  /* Character representation */
+	unsigned long flags2;  /*: unsigned;	 { MORE Special flags	} */
+	unsigned long flags;   /*: unsigned;	 { Special flags	} */
+	long p1;	       /* { Misc. use variable	} */
+	long cost;	     /* { Cost of item		} */
+	long subval;	   /* { Sub-catagory number	} */
+	unsigned short weight; /* { Weight in gp's	} */
+	unsigned short number; /* { Number of items	} */
+	short tohit;	   /* { Pluses to hit		} */
+	short todam;	   /* { Pluses to damage	} */
+	short ac;	      /* { Normal AC		} */
+	short toac;	    /* { Pluses to AC		} */
+	dtype damage;	  /* { Damage when hits	}*/
+	signed char level;     /* { Level item found	} */
 } treasure_type;
 
 typedef struct treas_rec
 {
 	treasure_type data;
 	boolean ok;
-	wordint insides;
+	unsigned short insides;
 	boolean is_in;
 	struct treas_rec *next;
 } treas_rec;
@@ -141,129 +133,131 @@ typedef treas_rec *treas_ptr;
 
 typedef struct p_misc
 {
-	integer xtr_wgt;	/* { Extra weight limit	} */
-	integer account;	/* { Money in the bank	} */
-	money_type money;       /* { Money on person	} */
-	game_time_type birth;   /* {Date of char's birth} */
-	game_time_type cur_age; /* {Current game date	} */
-	time_type play_tm;      /* { Time spent in game	} */
-	byteint diffic;		/* { Difficulty of game	} */
-	vtype name;		/* { Name of character	} */
-	vtype race;		/* { Race of character	} */
-	vtype sex;		/* { Sex of character	} */
-	vtype title;		/* { Character's title	} */
-	vtype tclass;		/* { Character's class	} */
-	integer max_exp;	/* { Max experience} */
-	integer exp;		/* { Cur experienc	} */
-	integer rep;		/* { XP from good creatures } */
-	integer deaths;		/* {Number of insured restores} */
-	integer premium;	/* {Base cost to restore } */
-	wordint age;		/* { Characters age} */
-	wordint ht;		/* { Height	} */
-	wordint wt;		/* { Weight	} */
-	wordint lev;		/* { Level		} */
-	wordint max_lev;	/* { Max level explored} */
-	worlint srh;		/* { Chance in search} */
-	worlint fos;		/* { Frenq of search} */
-	worlint bth;		/* { Base to hit	} */
-	worlint bthb;		/* { BTH with bows	} */
-	worlint mana;		/* { Mana points	} */
-	worlint mhp;		/* { Max hit pts	} */
-	worlint ptohit;		/* { Pluses to hit	} */
-	worlint ptodam;		/* { Pluses to dam	} */
-	worlint pac;		/* { Total AC	} */
-	worlint ptoac;		/* { Magical AC	} */
-	worlint dis_th;		/* { Display +ToHit} */
-	worlint dis_td;		/* { Display +ToDam} */
-	worlint dis_ac;		/* { Display +ToAC } */
-	worlint dis_tac;	/* { Display +ToTAC} */
-	worlint disarm;		/* { % to Disarm	} */
-	worlint save;		/* { Saving throw	} */
-	worlint sc;		/* { Social Class	} */
-	enum class_t pclass;    /* { # of class	} */
-	byteint prace;		/* { # of race	} */
-	byteint hitdie;		/* { Char hit die	} */
-	byteint stl;		/* { Stealth factor} */
-	real expfact;		/* { Experience factor} */
-	real cmana;		/* { Cur mana pts  } */
-	real chp;		/* { Cur hit pts	} */
-	vtype history[5];       /* array [1..5] of vtype;{ History record} */
-	boolean cheated;	/*{ gone into wizard or god mode} */
-	integer mr;		/* { mag.res.lev.delta } */
-	byteint quests;		/* { # completed } {FUBAR} */
-	wordint cur_quest;      /* { creature # of quest } {FUBAR} */
-	time_t creation_time;   /* used as key in master file */
-	integer save_count;     /* compared to master file value */
-	integer claim_check;    /* used to track trading post */
+	long xtr_wgt;		  /* { Extra weight limit	} */
+	long account;		  /* { Money in the bank	} */
+	money_type money;	 /* { Money on person	} */
+	game_time_type birth;     /* {Date of char's birth} */
+	game_time_type cur_age;   /* {Current game date	} */
+	time_type play_tm;	/* { Time spent in game	} */
+	unsigned char diffic;     /* { Difficulty of game	} */
+	vtype name;		  /* { Name of character	} */
+	vtype race;		  /* { Race of character	} */
+	vtype sex;		  /* { Sex of character	} */
+	vtype title;		  /* { Character's title	} */
+	vtype tclass;		  /* { Character's class	} */
+	long max_exp;		  /* { Max experience} */
+	long exp;		  /* { Cur experienc	} */
+	long rep;		  /* { XP from good creatures } */
+	long deaths;		  /* {Number of insured restores} */
+	long premium;		  /* {Base cost to restore } */
+	unsigned short age;       /* { Characters age} */
+	unsigned short ht;	/* { Height	} */
+	unsigned short wt;	/* { Weight	} */
+	unsigned short lev;       /* { Level		} */
+	unsigned short max_lev;   /* { Max level explored} */
+	short srh;		  /* { Chance in search} */
+	short fos;		  /* { Frenq of search} */
+	short bth;		  /* { Base to hit	} */
+	short bthb;		  /* { BTH with bows	} */
+	short mana;		  /* { Mana points	} */
+	short mhp;		  /* { Max hit pts	} */
+	short ptohit;		  /* { Pluses to hit	} */
+	short ptodam;		  /* { Pluses to dam	} */
+	short pac;		  /* { Total AC	} */
+	short ptoac;		  /* { Magical AC	} */
+	short dis_th;		  /* { Display +ToHit} */
+	short dis_td;		  /* { Display +ToDam} */
+	short dis_ac;		  /* { Display +ToAC } */
+	short dis_tac;		  /* { Display +ToTAC} */
+	short disarm;		  /* { % to Disarm	} */
+	short save;		  /* { Saving throw	} */
+	short sc;		  /* { Social Class	} */
+	enum class_t pclass;      /* { # of class	} */
+	unsigned char prace;      /* { # of race	} */
+	unsigned char hitdie;     /* { Char hit die	} */
+	unsigned char stl;	/* { Stealth factor} */
+	float expfact;		  /* { Experience factor} */
+	float cmana;		  /* { Cur mana pts  } */
+	float chp;		  /* { Cur hit pts	} */
+	vtype history[5];	 /* array [1..5] of vtype;{ History record} */
+	boolean cheated;	  /*{ gone into wizard or god mode} */
+	long mr;		  /* { mag.res.lev.delta } */
+	unsigned char quests;     /* { # completed } {FUBAR} */
+	unsigned short cur_quest; /* { creature # of quest } {FUBAR} */
+	time_t creation_time;     /* used as key in master file */
+	long save_count;	  /* compared to master file value */
+	long claim_check;	 /* used to track trading post */
 } p_misc;
 
 typedef struct p_stat
 {
-	byteint p[STAT_SET_MAX + 1]; /* array[stat_set] of {permanent} */
-	byteint c[STAT_SET_MAX + 1]; /* array[stat_set] of {current=p-l+m*10} */
-	bytlint m[STAT_SET_MAX + 1]; /* array[stat_set] of {net magical adj} */
-	byteint l[STAT_SET_MAX + 1]; /* array[stat_set] of {amt lost} */
+	unsigned char p[STAT_SET_MAX + 1]; /* array[stat_set] of {permanent} */
+	unsigned char
+	    c[STAT_SET_MAX + 1]; /* array[stat_set] of {current=p-l+m*10} */
+	signed char
+	    m[STAT_SET_MAX + 1]; /* array[stat_set] of {net magical adj} */
+	unsigned char l[STAT_SET_MAX + 1]; /* array[stat_set] of {amt lost} */
 } p_stat;
 
 typedef struct p_flags
 {
-	boolean insured;       /* { Character insured   } */
-	boolean dead;	  /* { Currently restored  } */
-	unsigned long status;  /* { Status of player    } */
-	integer rest;	  /* { Rest counter	 } */
-	integer blind;	 /* { Blindness counter   } */
-	integer paralysis;     /* { Paralysis counter   } */
-	integer confused;      /* { Confusion counter   } */
-	integer foodc;	 /* { Food counter        } (was just food) */
-	integer food_digested; /* { Food per round      } */
-	integer protection;    /* { Protection fr. evil } */
-	integer speed;	 /* { Cur speed adjust    } */
-	integer speed_paral;   /* { Slow speed adjust   } */
-	boolean speed_flag;    /* { On if reset speed   } */
-	integer paral_init;    /* { Init val for slow   } */
-	integer move_rate;     /* { move_rate	         } */
-	integer swim;	  /* { Cur swim adjust     } */
-	integer fast;	  /* { Temp speed change   } */
-	integer slow;	  /* { Temp speed change   } */
-	integer petrification; /* { Amount Petrified    } */
-	integer afraid;	/* { Fear                } */
-	integer poisoned;      /* { Poisoned            } */
-	integer image;	 /* { Hallucinate         } */
-	integer protevil;      /* { Protect VS evil     } */
-	integer invuln;	/* { Increases AC        } */
-	integer hero;	  /* { Heroism	         } */
-	integer shero;	 /* { Super Heroism	 } */
-	integer blessed;       /* { Blessed	         } */
-	integer resist_heat;   /* { Timed heat resist   } */
-	integer resist_cold;   /* { Timed cold resist   } */
-	integer detect_inv;    /* { Timed see invisible } */
-	integer word_recall;   /* { Timed teleport level} */
-	integer see_infra;     /* { See warm creatures  } */
-	integer tim_infra;     /* { Timed infra vision  } */
-	boolean see_inv;       /* { Can see invisible   } */
-	boolean teleport;      /* { Random teleportation} */
-	boolean free_act;      /* { Never paralyzed     } */
-	boolean slow_digest;   /* { Lower food needs    } */
-	boolean aggravate;     /* { Agravate monsters   } */
-	boolean fire_resist;   /* { Resistance to fire  } */
-	boolean cold_resist;   /* { Resistance to cold  } */
-	boolean acid_resist;   /* { Resistance to acid  } */
-	boolean hunger_item;   /* { Resets food counter } */
-	boolean regenerate;    /* { Regenerate hit pts  } */
-	boolean lght_resist;   /* { Resistance to light } */
-	boolean ffall;	 /* { No damage falling   } */
+	boolean insured;      /* { Character insured   } */
+	boolean dead;	 /* { Currently restored  } */
+	unsigned long status; /* { Status of player    } */
+	long rest;	    /* { Rest counter	 } */
+	long blind;	   /* { Blindness counter   } */
+	long paralysis;       /* { Paralysis counter   } */
+	long confused;	/* { Confusion counter   } */
+	long foodc;	   /* { Food counter        } (was just food) */
+	long food_digested;   /* { Food per round      } */
+	long protection;      /* { Protection fr. evil } */
+	long speed;	   /* { Cur speed adjust    } */
+	long speed_paral;     /* { Slow speed adjust   } */
+	boolean speed_flag;   /* { On if reset speed   } */
+	long paral_init;      /* { Init val for slow   } */
+	long move_rate;       /* { move_rate	         } */
+	long swim;	    /* { Cur swim adjust     } */
+	long fast;	    /* { Temp speed change   } */
+	long slow;	    /* { Temp speed change   } */
+	long petrification;   /* { Amount Petrified    } */
+	long afraid;	  /* { Fear                } */
+	long poisoned;	/* { Poisoned            } */
+	long image;	   /* { Hallucinate         } */
+	long protevil;	/* { Protect VS evil     } */
+	long invuln;	  /* { Increases AC        } */
+	long hero;	    /* { Heroism	         } */
+	long shero;	   /* { Super Heroism	 } */
+	long blessed;	 /* { Blessed	         } */
+	long resist_heat;     /* { Timed heat resist   } */
+	long resist_cold;     /* { Timed cold resist   } */
+	long detect_inv;      /* { Timed see invisible } */
+	long word_recall;     /* { Timed teleport level} */
+	long see_infra;       /* { See warm creatures  } */
+	long tim_infra;       /* { Timed infra vision  } */
+	boolean see_inv;      /* { Can see invisible   } */
+	boolean teleport;     /* { Random teleportation} */
+	boolean free_act;     /* { Never paralyzed     } */
+	boolean slow_digest;  /* { Lower food needs    } */
+	boolean aggravate;    /* { Agravate monsters   } */
+	boolean fire_resist;  /* { Resistance to fire  } */
+	boolean cold_resist;  /* { Resistance to cold  } */
+	boolean acid_resist;  /* { Resistance to acid  } */
+	boolean hunger_item;  /* { Resets food counter } */
+	boolean regenerate;   /* { Regenerate hit pts  } */
+	boolean lght_resist;  /* { Resistance to light } */
+	boolean ffall;	/* { No damage falling   } */
 	boolean sustain[STAT_SET_MAX + 1]; /* { keep characteristic } */
 	boolean confuse_monster;	   /* { Glowing hands...    } */
-	integer resist_lght;		   /* { Timed lighting rst  } */
-	integer free_time;		   /* { Timed free action   } */
-	integer ring_fire;		   /* { Timed fire spell    } */
-	integer protmon;		   /* { Timed monst prot    } */
-	integer hoarse;			   /* { Timed no-bard spells} */
-	integer magic_prot;		   /* { Timed magic prot    } */
-	integer ring_ice;		   /* { Timed cold spell    } */
-	integer temp_stealth;		   /* { Timed stealth       } */
-	integer resist_petri;		   /* { Timed resist petrify} */
-	integer blade_ring;		   /* { Timed blade spell   } */
+	long resist_lght;		   /* { Timed lighting rst  } */
+	long free_time;			   /* { Timed free action   } */
+	long ring_fire;			   /* { Timed fire spell    } */
+	long protmon;			   /* { Timed monst prot    } */
+	long hoarse;			   /* { Timed no-bard spells} */
+	long magic_prot;		   /* { Timed magic prot    } */
+	long ring_ice;			   /* { Timed cold spell    } */
+	long temp_stealth;		   /* { Timed stealth       } */
+	long resist_petri;		   /* { Timed resist petrify} */
+	long blade_ring;		   /* { Timed blade spell   } */
 	boolean petri_resist;		   /* { Resist Petrification} */
 	boolean quested;		   /* { Performing a Quest  } {FUBAR} */
 	boolean light_on;		   /* { Light source is active } */
@@ -280,48 +274,48 @@ typedef struct player_type
 typedef struct spell_t
 {
 	ctype sname;
-	byteint slevel;
-	byteint smana;
-	wordint sexp;
-	byteint sfail;
+	unsigned char slevel;
+	unsigned char smana;
+	unsigned short sexp;
+	unsigned char sfail;
 	boolean learned;
 } spell_t;
 
 typedef struct spl_rec
 {
-	integer splnum;
-	integer splchn;
+	long splnum;
+	long splchn;
 } spl_rec;
 
 typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
 typedef struct background_type
 {
-	vtype info;    /* { History information	} */
-	byteint roll;  /* { Die roll needed for history} */
-	byteint chart; /* { Table number		} */
-	bytlint next;  /* { Pointer to next table	} */
-	bytlint bonus; /* { Bonus to the Social Class	} */
+	vtype info;	  /* { History information	} */
+	unsigned char roll;  /* { Die roll needed for history} */
+	unsigned char chart; /* { Table number		} */
+	signed char next;    /* { Pointer to next table	} */
+	signed char bonus;   /* { Bonus to the Social Class	} */
 } background_type;
 
 typedef struct floor_type
 {
-	byteint ftval;  /*: [bit(7),pos(0)] 0..127; */
-	boolean ftopen; /*: [bit(1),pos(7)] boolean; */
+	unsigned char ftval; /*: [bit(7),pos(0)] 0..127; */
+	boolean ftopen;      /*: [bit(1),pos(7)] boolean; */
 } floor_type;
 
 typedef struct cave_type
 {
-	byteint cptr;  /*	: byteint; */
-	byteint tptr;  /*	: byteint; */
-	byteint fval;  /*	: [bit(7),pos(16)] 0..127; */
-	boolean fopen; /*	: [bit(1),pos(23)] boolean; */
-	boolean fm;    /*	: [bit(1),pos(24)] boolean; */
-	boolean pl;    /*	: [bit(1),pos(25)] boolean; */
-	boolean tl;    /*	: [bit(1),pos(26)] boolean; */
-	boolean moved; /*	: [bit(1),pos(27)] boolean; */
-	byteint oct;   /*	: [bit(3),pos(28)] 0..7; { octant direction } */
-	byteint h2o;   /*	: [bit(4),pos(31)] 0..15; */
+	unsigned char cptr; /*	: unsigned char; */
+	unsigned char tptr; /*	: unsigned char; */
+	unsigned char fval; /*	: [bit(7),pos(16)] 0..127; */
+	boolean fopen;      /*	: [bit(1),pos(23)] boolean; */
+	boolean fm;	 /*	: [bit(1),pos(24)] boolean; */
+	boolean pl;	 /*	: [bit(1),pos(25)] boolean; */
+	boolean tl;	 /*	: [bit(1),pos(26)] boolean; */
+	boolean moved;      /*	: [bit(1),pos(27)] boolean; */
+	unsigned char oct;  /*	: [bit(3),pos(28)] 0..7; { octant direction } */
+	unsigned char h2o;  /*	: [bit(4),pos(31)] 0..15; */
 } cave_type;
 
 typedef cave_type
@@ -330,26 +324,26 @@ typedef cave_type
 typedef struct owner_type
 {
 	vtype owner_name;
-	integer max_cost;
-	real max_inflate;
-	real min_inflate;
-	real haggle_per;
-	byteint owner_race;
-	byteint insult_max;
+	long max_cost;
+	float max_inflate;
+	float min_inflate;
+	float haggle_per;
+	unsigned char owner_race;
+	unsigned char insult_max;
 } owner_type;
 
 typedef struct inven_record
 {
-	integer scost;
+	long scost;
 	treasure_type sitem;
 } inven_record;
 
 typedef struct store_type
 {
 	game_time_type store_open;
-	byteint owner;
-	bytlint insult_cur;
-	byteint store_ctr;
+	unsigned char owner;
+	signed char insult_cur;
+	unsigned char store_ctr;
 	inven_record store_inven[STORE_INVEN_MAX + 1];
 	/* : array [1..store_inven_max] of inven_record; */
 } store_type;
@@ -374,8 +368,8 @@ typedef list_elem *list_elem_ptr;
 #define ENCRYPT_STAT_BUF_SIZE 1024
 typedef struct encrypt_state
 {
-	byteint des_key[8];
-	byteint des_ivec[8];
+	unsigned char des_key[8];
+	unsigned char des_ivec[8];
 	boolean doit;
 
 	boolean got_eof; /* out of bytes and hit eof         */
@@ -391,8 +385,8 @@ typedef struct master_key
 
 typedef struct master_entry
 {
-	integer save_count;
-	integer deaths;
+	long save_count;
+	long deaths;
 	time_t updated;
 } master_entry;
 

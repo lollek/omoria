@@ -32,7 +32,7 @@ void bi__display_store(vtype shop_owner)
 /*//////////////////////////////////////////////////////////////////// */
 void bi__insure_all_items()
 {
-	integer tot_cost, temp;
+	long tot_cost, temp;
 	treas_ptr ptr;
 	boolean flag;
 	string out, out2;
@@ -80,7 +80,7 @@ void bi__insure_all_items()
 void bi__insure_item(vtype shop_owner)
 {
 	treas_ptr ptr;
-	integer count, temp;
+	long count, temp;
 	boolean redraw, flag;
 	string out, out2;
 	vtype out_val;
@@ -142,13 +142,13 @@ void bi__insure_item(vtype shop_owner)
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-real bi__death_adj()
+float bi__death_adj()
 {
 	/* Returns the rate to rape the character at for insurance,
 	   based on the number of times they have been restored in the past.
 	   Change this after seeing how bad ppl get screwed           -DMF- */
 
-	real temp;
+	float temp;
 
 	/* with py.misc do; */
 	PM.premium = PM.exp;
@@ -163,7 +163,7 @@ real bi__death_adj()
 /*//////////////////////////////////////////////////////////////////// */
 void bi__insure_person()
 {
-	integer tot_cost;
+	long tot_cost;
 	boolean flag;
 	string out, out2;
 
@@ -200,7 +200,7 @@ void bi__insure_person()
 /*//////////////////////////////////////////////////////////////////// */
 void bi__insure_all_equip()
 {
-	integer i1, tot_cost, temp;
+	long i1, tot_cost, temp;
 	boolean flag;
 	string out, out2;
 
@@ -302,8 +302,8 @@ void buy_insurance()
 {
 	boolean exit_flag = false;
 	vtype shop_owner;
-	integer tics = 1;
-	integer starting_money;
+	long tics = 1;
+	long starting_money;
 
 	starting_money = PM.money[TOTAL_];
 

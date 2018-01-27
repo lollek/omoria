@@ -3,7 +3,7 @@
 
 void e__eyeball_of_drong(boolean *ident)
 {
-	integer i1;
+	long i1;
 
 	i1 = damroll("10d8") + 100;
 	take_hit(i1, "the Wrath of Ned");
@@ -45,7 +45,7 @@ void eat()
 {
 	/* { Eat some food...					-RAK-	}*/
 
-	integer i3;
+	long i3;
 	treas_ptr i2;
 	treas_ptr item_ptr;
 	char trash_char;
@@ -82,7 +82,7 @@ void eat()
 	if (item_ptr->data.tval == junk_food && item_ptr->data.subval == 270) {
 		e__eyeball_of_drong(&ident);
 	} else {
-		integer dam_pts = 0;
+		long dam_pts = 0;
 		unsigned long i1;
 		for (i1 = item_ptr->data.flags; i1 > 0;) {
 			/*{ Foods }*/
@@ -290,7 +290,8 @@ void eat()
 	if (item_ptr->data.flags != 0) {
 		if (item_ptr->data.level > 0) {
 			PM.exp +=
-			    (((real)item_ptr->data.level / (real)PM.lev) + .5);
+			    (((float)item_ptr->data.level / (float)PM.lev) +
+			     .5);
 			prt_experience();
 		}
 	}

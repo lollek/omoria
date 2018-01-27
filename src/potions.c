@@ -1,9 +1,9 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-void q__potion_effect(integer effect, boolean *idented)
+void q__potion_effect(long effect, boolean *idented)
 {
-	integer i4, i5;
+	long i4, i5;
 	boolean redraw = false;
 	boolean ident = false;
 
@@ -319,7 +319,7 @@ void quaff()
 	/*{ Potions for the quaffing                              -RAK-   }*/
 
 	unsigned long q1, q2;
-	integer i3, i6;
+	long i3, i6;
 	treas_ptr i2, item_ptr;
 	char trash_char;
 	boolean redraw, ident;
@@ -370,7 +370,7 @@ void quaff()
 
 				if (item_ptr->data.flags != 0) {
 					PM.exp += (item_ptr->data.level /
-						   (real)PM.lev) +
+						   (float)PM.lev) +
 						  .5;
 					prt_experience();
 				}

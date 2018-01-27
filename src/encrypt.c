@@ -9,7 +9,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void encrypt_init(encrypt_state *state, byteint key[], boolean doit)
+void encrypt_init(encrypt_state *state, unsigned char key[], boolean doit)
 {
 /* called by before using encrypt_write or read_decrypt */
 
@@ -234,7 +234,7 @@ void read_decrypt(FILE *f1, encrypt_state *state, ntype line, boolean *got_eof)
 	   are no nulls!  (or newlines, since we break things into lines)    */
 
 	int i1;
-	byteint i2;
+	unsigned char i2;
 	boolean exit;
 
 	line[0] = 0;
