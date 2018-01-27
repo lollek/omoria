@@ -2573,7 +2573,7 @@ long mfptr;	/* { Cur free monster ptr	} */
 long mon_tot_mult; /* { # of repro's of creature	} */
 
 /*	{ Following are arrays for descriptive pieces			} */
-atype colors[MAX_COLORS] = {
+char const *colors[MAX_COLORS] = {
     "Amber",	   "Azure",		  "Blue",	    "Blue Speckled",
     "Blue Spotted",    "Black",		  "Black Speckled",  "Black Spotted",
     "Brown",	   "Brown Speckled",  "Brown Spotted",   "Bubbling",
@@ -2592,14 +2592,14 @@ atype colors[MAX_COLORS] = {
     "Turquoise",       "Violet",	  "Vermilion",       "White",
     "White Speckled",  "White Spotted",   "Yellow",	  "Daggy"};
 
-atype mushrooms[MAX_MUSH] = {
+char const *mushrooms[MAX_MUSH] = {
     "Blue",	"Black",     "Brown",    "Copper",  "Crimson", "Dark blue",
     "Dark green",  "Dark red",  "Gold",     "Green",   "Grey",    "Light Blue",
     "Light Green", "Orange",    "Pink",     "Plaid",   "Purple",  "Red",
     "Tan",	 "Turquoise", "Violet",   "White",   "Yellow",  "Wrinkled",
     "Wooden",      "Slimey",    "Speckled", "Spotted", "Furry"};
 
-atype woods[MAX_WOODS] = {
+char const *woods[MAX_WOODS] = {
     "Applewood",  "Ashen",      "Aspen",     "Avocado wood", "Balsa",
     "Banyan",     "Birch",      "Cedar",     "Cherrywood",   "Cinnibar",
     "Cottonwood", "Cypress",    "Dogwood",   "Driftwood",    "Ebony",
@@ -2610,7 +2610,7 @@ atype woods[MAX_WOODS] = {
     "Spruce",     "Sumac",      "Sycamore",  "Teak",	 "Walnut",
     "Zebra wood"};
 
-atype metals[MAX_METALS] = {
+char const *metals[MAX_METALS] = {
     "Aluminium",     "Bone",	"Brass",		"Bronze",
     "Cast Iron",     "Chromium",    "Copper",		"Gold",
     "Iron",	  "Lead",	"Magnesium",	"Molybdenum",
@@ -2620,12 +2620,12 @@ atype metals[MAX_METALS] = {
     "Copper Plated", "Gold Plated", "Nickel Plated",    "Silver Plated",
     "Steel Plated",  "Tin Plated",  "Zinc Plated",      "Uranium"};
 
-atype horns[MAX_HORNS] = {"Bag Pipes", "Bugle", "Conch Shell", "Fife",
+char const *horns[MAX_HORNS] = {"Bag Pipes", "Bugle", "Conch Shell", "Fife",
 			  "Harmonica", "Horn",  "Picolo",      "Pipes",
 			  "Recorder",  "Reed",  "Trumpet",     "Tuba",
 			  "Whistle"};
 
-atype rocks[MAX_ROCKS] = {
+char const *rocks[MAX_ROCKS] = {
     "Amber",      "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
     "Aquamarine", "Argentite", "Azurite",     "Beryl",	"Bloodstone",
     "Calcite",    "Carnelian", "Coral",       "Corundum",     "Cryolite",
@@ -2638,7 +2638,7 @@ atype rocks[MAX_ROCKS] = {
     "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
     "Topaz",      "Turquoise", "Zircon"};
 
-atype amulets[MAX_AMULETS] = {
+char const *amulets[MAX_AMULETS] = {
     "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
     "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
     "Rosewood",  "Walnut",   "Aluminium", "Bone",      "Brass",    "Bronze",
@@ -2647,11 +2647,11 @@ atype amulets[MAX_AMULETS] = {
     "Onyx",      "Opal",     "Pearl",     "Quartz",    "Ruby",     "Sapphire",
     "Tiger eye", "Topaz",    "Turquoise"};
 
-atype cloths[MAX_CLOTHS] = {"Burlap",     "Cotton",     "Wool",
+char const *cloths[MAX_CLOTHS] = {"Burlap",     "Cotton",     "Wool",
 			    "Sack-cloth", "Rabbit-fur", "Lizard-skin",
 			    "Goat-skin"};
 
-atype syllables[MAX_SYLLABLES] = {
+char const *syllables[MAX_SYLLABLES] = {
     "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",
     "arze", "ash",  "aus",  "ban",  "bar",  "bat",  "bek",  "bie",  "bin",
     "bit",  "bjor", "blu",  "brd",  "bu",   "byt",  "comp", "con",  "cos",

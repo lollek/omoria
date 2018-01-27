@@ -213,15 +213,15 @@ extern long mfptr;		   /* { Cur free monster ptr	} */
 extern long mon_tot_mult;	  /* { # of repro's of creature	} */
 
 /*	{ Following are arrays for descriptive pieces			} */
-extern atype colors[MAX_COLORS];
-extern atype mushrooms[MAX_MUSH];
-extern atype woods[MAX_WOODS];
-extern atype metals[MAX_METALS];
-extern atype horns[MAX_HORNS];
-extern atype rocks[MAX_ROCKS];
-extern atype amulets[MAX_AMULETS];
-extern atype cloths[MAX_CLOTHS];
-extern atype syllables[MAX_SYLLABLES];
+extern char const *colors[MAX_COLORS];
+extern char const *mushrooms[MAX_MUSH];
+extern char const *woods[MAX_WOODS];
+extern char const *metals[MAX_METALS];
+extern char const *horns[MAX_HORNS];
+extern char const *rocks[MAX_ROCKS];
+extern char const *amulets[MAX_AMULETS];
+extern char const *cloths[MAX_CLOTHS];
+extern char const *syllables[MAX_SYLLABLES];
 /*	vowel_set		: */
 /*				  char_set; */
 

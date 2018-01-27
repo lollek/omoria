@@ -393,8 +393,8 @@ extern long bit_pos(unsigned long *test);
 extern long bit_pos64(unsigned long *high, unsigned long *low);
 extern long distance(long y1, long x1, long y2, long x2);
 extern void insert_str(char *object_str,  /* : varying[a] of char; */
-		       char *mtc_str,     /*	: varying[b] of char; */
-		       char *insert_str); /* : varying[c] of char); */
+		       char const *mtc_str,     /*	: varying[b] of char; */
+		       char const *insert_str); /* : varying[c] of char); */
 extern void shell_out();
 extern long users();
 extern long max_users();
