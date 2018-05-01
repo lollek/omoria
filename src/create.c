@@ -314,7 +314,7 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 		}
 
 		*best_min =
-		    cc__next_best_stats(py.stat.p, user, best, *best_min);
+		    cc__next_best_stats(player_stats_perm, user, best, *best_min);
 		(*try_count)++;
 		if ((*try_count % 250) == 0) {
 			cc__print_try_count(*try_count);
@@ -325,8 +325,8 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 			*minning = false;
 			*printed_once = false;
 			for (tstat = STR; tstat <= CHR; tstat++) {
-				py.stat.p[(int)tstat] = best[(int)tstat];
-				py.stat.c[(int)tstat] = best[(int)tstat];
+				player_stats_perm[(int)tstat] = best[(int)tstat];
+				player_stats_curr[(int)tstat] = best[(int)tstat];
 			}
 			return_value =
 			    cc__satisfied(minning, printed_once, best_min,
@@ -353,9 +353,9 @@ static void cc__get_stats()
 	int tstat;
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
-		py.stat.p[tstat] = cc__change_stat(
+		player_stats_perm[tstat] = cc__change_stat(
 		    cc__get_stat(), race_stats(prace)[tstat]);
-		py.stat.c[tstat] = py.stat.p[tstat];
+		player_stats_curr[tstat] = player_stats_perm[tstat];
 	}
 
 	cc__get_stats_();
@@ -645,10 +645,10 @@ static boolean cc__get_class()
 			 * -RAK-	}*/
 
 			for (tstat = STR; tstat <= CHR; tstat++) {
-				py.stat.p[(int)tstat] = cc__change_stat(
-				    py.stat.p[(int)tstat],
+				player_stats_perm[(int)tstat] = cc__change_stat(
+				    player_stats_perm[(int)tstat],
 				    class_stats(aclass)[(int)tstat]);
-				py.stat.c[(int)tstat] = py.stat.p[(int)tstat];
+				player_stats_curr[(int)tstat] = player_stats_perm[(int)tstat];
 			}
 
 			py.misc.ptodam = todam_adj(); /*{ Real values	}*/
@@ -679,12 +679,12 @@ static void cc__get_money()
 
 	tmp = 0;
 	for (tstat = STR; tstat <= CHR; tstat++) {
-		tmp += cc__old_stat(py.stat.c[(int)tstat]);
+		tmp += cc__old_stat(player_stats_curr[(int)tstat]);
 	}
 
 	i1 = py.misc.sc * 6 + randint(25) + 325; /*{ Social Class adj	} */
 	i1 -= tmp;				 /*{ Stat adj		} */
-	i1 += cc__old_stat(py.stat.c[CHR]);      /*{ Charisma adj	} */
+	i1 += cc__old_stat(player_stats_curr[CHR]);      /*{ Charisma adj	} */
 	if (i1 < 80) {
 		i1 = 80;
 	} /*{ Minimum		} */
@@ -777,7 +777,7 @@ void put_stats()
 	/*	{ Prints the following information on the screen.	-JWT-
 	 * }*/
 
-	prt_6_stats(py.stat.c, NULL, 3, 65);
+	prt_6_stats(player_stats_curr, NULL, 3, 65);
 	prt_num("+ To Hit   : ", py.misc.dis_th, 10, 4);
 	prt_num("+ To Damage: ", py.misc.dis_td, 11, 4);
 	prt_num("+ To AC    : ", py.misc.dis_tac, 12, 4);
@@ -792,7 +792,7 @@ void upd_stats()
 	stat_set tstat;
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
-		prt_stat("", py.stat.c[(int)tstat], 3 + tstat, 71);
+		prt_stat("", player_stats_curr[(int)tstat], 3 + tstat, 71);
 	}
 	prt_num("", py.misc.dis_th, 10, 17);
 	prt_num("", py.misc.dis_td, 11, 17);

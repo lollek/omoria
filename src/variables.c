@@ -206,13 +206,6 @@ player_type py = {
      0,
      0,
      0},
-    /* stat */
-    {
-     {0, 0, 0, 0, 0, 0}, /* p  permanent */
-     {0, 0, 0, 0, 0, 0}, /* c  current */
-     {0, 0, 0, 0, 0, 0}, /* m  net magical adjust */
-     {0, 0, 0, 0, 0, 0}  /* l  amt lost */
-    },
     /* flags */
     {false,
      false,

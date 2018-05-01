@@ -178,7 +178,7 @@ static void respawn()
 	prt_hp();
 
 	for (i = 0; i < 6; ++i) {
-		py.stat.l[i] = 0;
+		player_stats_lost[i] = 0;
 		update_stat(i);
 	}
 	memset(&py.flags, 0, sizeof(py.flags));

@@ -27,7 +27,6 @@
 #include "variables.h"
 
 #define PM (py.misc)
-#define PS (py.stat)
 #define PF (py.flags)
 
 #endif /* IMORIA_H */

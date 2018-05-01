@@ -252,5 +252,7 @@ extern unsigned char saveFileKey[8];
 extern int game_state;
 extern boolean curses_is_running;
 
+#include "player.h"
+
 /* END FILE  variables.h */
 #endif /* VARIABLES_H */

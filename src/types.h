@@ -187,14 +187,6 @@ typedef struct p_misc
 	int64_t claim_check;	 /* used to track trading post */
 } p_misc;
 
-typedef struct p_stat
-{
-	uint8_t p[STAT_SET_MAX + 1]; /* array[stat_set] of {permanent} */
-	uint8_t c[STAT_SET_MAX + 1]; /* array[stat_set] of {current=p-l+m*10} */
-	int8_t m[STAT_SET_MAX + 1]; /* array[stat_set] of {net magical adj} */
-	uint8_t l[STAT_SET_MAX + 1]; /* array[stat_set] of {amt lost} */
-} p_stat;
-
 typedef struct p_flags
 {
 	boolean insured;      /* { Character insured   } */
@@ -263,7 +255,6 @@ typedef struct p_flags
 typedef struct player_type
 {
 	p_misc misc;
-	p_stat stat;
 	p_flags flags;
 } player_type;
 

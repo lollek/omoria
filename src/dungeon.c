@@ -351,7 +351,7 @@ void change_stat(stat_set tstat, long amount, long factor)
 {
 	/*{ Changes stats up or down for magic items		-RAK-	}*/
 
-	PS.m[(int)tstat] += amount * factor;
+	player_stats_mod[(int)tstat] += amount * factor;
 	update_stat(tstat);
 }
 
@@ -375,8 +375,8 @@ void change_speed(long num)
 
 void update_stat(stat_set tstat)
 {
-	PS.c[(int)tstat] = squish_stat(
-	    PS.p[(int)tstat] + 10 * PS.m[(int)tstat] - PS.l[(int)tstat]);
+	player_stats_curr[(int)tstat] = squish_stat(
+	    player_stats_perm[(int)tstat] + 10 * player_stats_mod[(int)tstat] - player_stats_lost[(int)tstat]);
 }
 
 void change_rep(long amt)
@@ -942,7 +942,7 @@ long react(long x)
 
 	long ans;
 
-	ans = (py.stat.c[CHR] + PM.rep * 2 + randint(200) + randint(200) +
+	ans = (player_stats_curr[CHR] + PM.rep * 2 + randint(200) + randint(200) +
 	       randint(200))div 50 +
 	      x - 4;
 
@@ -3265,7 +3265,7 @@ void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 	*tdam = damroll(inven_temp->data.damage) + inven_temp->data.todam;
 	*tbth = trunc(py.misc.bthb * 0.75);
 	*tpth = py.misc.ptohit + inven_temp->data.tohit;
-	*tdis = trunc((py.stat.c[STR] + 100) * 200 / tmp_weight);
+	*tdis = trunc((player_stats_curr[STR] + 100) * 200 / tmp_weight);
 
 	if (*tdis > 10) {
 		*tdis = 10;
@@ -4839,11 +4839,11 @@ void d__bash()
 				strcpy(equipment[Equipment_primary].damage,
 				       equipment[Equipment_shield].damage);
 				equipment[Equipment_primary].weight =
-				    (py.stat.c[STR] + 20) * 100;
+				    (player_stats_curr[STR] + 20) * 100;
 				equipment[Equipment_primary].tval = 1;
 
 				/* with py do; */
-				PM.bth = trunc(((PS.c[STR] + 20)div 5 + PM.wt) /
+				PM.bth = trunc(((player_stats_curr[STR] + 20)div 5 + PM.wt) /
 					       6.0);
 				PM.ptohit = 0;
 				PM.ptodam = trunc(PM.wt / 75.0) + 1;
@@ -4857,7 +4857,7 @@ void d__bash()
 				py.misc.ptohit = old_ptohit;
 				py.misc.ptodam = old_ptodam;
 				py.misc.bth = old_bth;
-				if (randint(300) > py.stat.c[DEX]) {
+				if (randint(300) > player_stats_curr[DEX]) {
 					msg_print("You are off-balance.");
 					py.flags.paralysis = randint(3);
 				}
@@ -4867,7 +4867,7 @@ void d__bash()
 			if (t_list[cave[y][x].tptr].tval == closed_door) {
 				/* with py do; */
 				if (test_hit(
-					PM.wt + (PS.c[STR] * PS.c[STR])div 500,
+					PM.wt + (player_stats_curr[STR] * player_stats_curr[STR])div 500,
 					0, 0, labs(t_list[cave[y][x].tptr].p1) +
 						  150)) {
 					msg_print("You smash into the door! "
@@ -5338,7 +5338,7 @@ void d__tunnel()
 
 		/*{ Compute the digging ability of player; based on       }*/
 		/*{ strength, and type of tool used                       }*/
-		tabil = (py.stat.c[STR] + 20)div 5;
+		tabil = (player_stats_curr[STR] + 20)div 5;
 		if (equipment[Equipment_primary].tval > 0) {
 			/* with equipment[Equipment_primary] do; */
 			if (uand(Tunneling_worn_bit,

@@ -1274,8 +1274,8 @@ void change_character()
 			sscanf(tmp_str, "%ld", &tmp_val);
 			if (tmp_val != -999) {
 				tmp_val = squish_stat(tmp_val);
-				PS.p[(int)tstat] = tmp_val;
-				PS.c[(int)tstat] = tmp_val;
+				player_stats_perm[(int)tstat] = tmp_val;
+				player_stats_curr[(int)tstat] = tmp_val;
 				prt_a_stat(tstat);
 			}
 		}

@@ -271,12 +271,18 @@ static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 	/* with py.stat do */
 	sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "
 			 "%d %d %d %d %d %d %d",
-		(int)PS.p[STR], (int)PS.c[STR], (int)PS.m[STR], (int)PS.l[STR],
-		(int)PS.p[INT], (int)PS.c[INT], (int)PS.m[INT], (int)PS.l[INT],
-		(int)PS.p[WIS], (int)PS.c[WIS], (int)PS.m[WIS], (int)PS.l[WIS],
-		(int)PS.p[DEX], (int)PS.c[DEX], (int)PS.m[DEX], (int)PS.l[DEX],
-		(int)PS.p[CON], (int)PS.c[CON], (int)PS.m[CON], (int)PS.l[CON],
-		(int)PS.p[CHR], (int)PS.c[CHR], (int)PS.m[CHR], (int)PS.l[CHR]);
+		(int)player_stats_perm[STR], (int)player_stats_curr[STR],
+		(int)player_stats_mod[STR], (int)player_stats_lost[STR],
+		(int)player_stats_perm[INT], (int)player_stats_curr[INT],
+		(int)player_stats_mod[INT], (int)player_stats_lost[INT],
+		(int)player_stats_perm[WIS], (int)player_stats_curr[WIS],
+		(int)player_stats_mod[WIS], (int)player_stats_lost[WIS],
+		(int)player_stats_perm[DEX], (int)player_stats_curr[DEX],
+		(int)player_stats_mod[DEX], (int)player_stats_lost[DEX],
+		(int)player_stats_perm[CON], (int)player_stats_curr[CON],
+		(int)player_stats_mod[CON], (int)player_stats_lost[CON],
+		(int)player_stats_perm[CHR], (int)player_stats_curr[CHR],
+		(int)player_stats_mod[CHR], (int)player_stats_lost[CHR]);
 	encrypt_write(f1, cf_state, out_rec);
 
 	/* with py.flags do */
@@ -1133,30 +1139,30 @@ static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 		*paniced = true;
 	}
 
-	PS.p[STR] = x1;
-	PS.c[STR] = x2;
-	PS.m[STR] = x3;
-	PS.l[STR] = x4;
-	PS.p[INT] = x5;
-	PS.c[INT] = x6;
-	PS.m[INT] = x7;
-	PS.l[INT] = x8;
-	PS.p[WIS] = x9;
-	PS.c[WIS] = x10;
-	PS.m[WIS] = x11;
-	PS.l[WIS] = x12;
-	PS.p[DEX] = x13;
-	PS.c[DEX] = x14;
-	PS.m[DEX] = x15;
-	PS.l[DEX] = x16;
-	PS.p[CON] = x17;
-	PS.c[CON] = x18;
-	PS.m[CON] = x19;
-	PS.l[CON] = x20;
-	PS.p[CHR] = x21;
-	PS.c[CHR] = x22;
-	PS.m[CHR] = x23;
-	PS.l[CHR] = x24;
+	player_stats_perm[STR] = x1;
+	player_stats_curr[STR] = x2;
+	player_stats_mod[STR] = x3;
+	player_stats_lost[STR] = x4;
+	player_stats_perm[INT] = x5;
+	player_stats_curr[INT] = x6;
+	player_stats_mod[INT] = x7;
+	player_stats_lost[INT] = x8;
+	player_stats_perm[WIS] = x9;
+	player_stats_curr[WIS] = x10;
+	player_stats_mod[WIS] = x11;
+	player_stats_lost[WIS] = x12;
+	player_stats_perm[DEX] = x13;
+	player_stats_curr[DEX] = x14;
+	player_stats_mod[DEX] = x15;
+	player_stats_lost[DEX] = x16;
+	player_stats_perm[CON] = x17;
+	player_stats_curr[CON] = x18;
+	player_stats_mod[CON] = x19;
+	player_stats_lost[CON] = x20;
+	player_stats_perm[CHR] = x21;
+	player_stats_curr[CHR] = x22;
+	player_stats_mod[CHR] = x23;
+	player_stats_lost[CHR] = x24;
 
 	/* with py.flags do; */
 	read_decrypt(f1, cf_state, in_rec, paniced);

@@ -560,7 +560,7 @@ void file_character()
 			prt("Writing character sheet...", 1, 1);
 			put_qio();
 			for (tstat = STR; tstat <= CHR; tstat++) {
-				cnv_stat(py.stat.c[(int)tstat],
+				cnv_stat(player_stats_curr[(int)tstat],
 					 out_c[(int)tstat]);
 			}
 

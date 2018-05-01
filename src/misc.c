@@ -231,7 +231,7 @@ long weight_limit()
 	 * }*/
 	long weight_cap;
 
-	weight_cap = (py.stat.c[STR] + 30) * PLAYER_WEIGHT_CAP + py.misc.wt;
+	weight_cap = (player_stats_curr[STR] + 30) * PLAYER_WEIGHT_CAP + py.misc.wt;
 	if (weight_cap > 3000) {
 		weight_cap = 3000;
 	}
@@ -451,7 +451,7 @@ long todam_adj()
 	long return_value;
 	long str;
 
-	str = py.stat.c[STR];
+	str = player_stats_curr[STR];
 
 	if (str < 10) {
 		return_value = -2;
@@ -486,7 +486,7 @@ long todis_adj()
 	long return_value;
 	long dex;
 
-	dex = py.stat.c[DEX];
+	dex = player_stats_curr[DEX];
 
 	if (dex < 10) {
 		return_value = -8;
@@ -527,7 +527,7 @@ long con_adj()
 	long con;
 	long return_value;
 
-	con = py.stat.c[CON];
+	con = player_stats_curr[CON];
 
 	if (con < 10) {
 		return_value = -4;
@@ -562,20 +562,20 @@ float chr_adj()
 	float return_value;
 
 	/* with py.stat do; */
-	if (PS.c[CHR] > 249) {
+	if (player_stats_curr[CHR] > 249) {
 		return_value = -0.10;
-	} else if (PS.c[CHR] > 239) {
+	} else if (player_stats_curr[CHR] > 239) {
 		return_value = -0.08;
-	} else if (PS.c[CHR] > 219) {
+	} else if (player_stats_curr[CHR] > 219) {
 		return_value = -0.06;
-	} else if (PS.c[CHR] > 199) {
+	} else if (player_stats_curr[CHR] > 199) {
 		return_value = -0.04;
-	} else if (PS.c[CHR] > 150) {
+	} else if (player_stats_curr[CHR] > 150) {
 		return_value = -0.02;
-	} else if (PS.c[CHR] >= 100) {
-		return_value = 0.15 - (PS.c[CHR] div 10) / 100;
+	} else if (player_stats_curr[CHR] >= 100) {
+		return_value = 0.15 - (player_stats_curr[CHR] div 10) / 100;
 	} else {
-		return_value = 0.25 - (PS.c[CHR] div 10) / 50;
+		return_value = 0.25 - (player_stats_curr[CHR] div 10) / 50;
 	}
 
 	return return_value;
@@ -591,8 +591,8 @@ long tohit_adj()
 	long total;
 	long dex, str;
 
-	dex = py.stat.c[DEX];
-	str = py.stat.c[STR];
+	dex = player_stats_curr[DEX];
+	str = player_stats_curr[STR];
 
 	if (dex < 10) {
 		total = -3;
@@ -645,7 +645,7 @@ long toac_adj()
 	long dex;
 	long return_value;
 
-	dex = py.stat.c[DEX];
+	dex = player_stats_curr[DEX];
 
 	if (dex < 10) {
 		return_value = -4;
@@ -913,7 +913,7 @@ long spell_adj(stat_set attr)
 	long statval;
 	long return_value;
 
-	statval = py.stat.c[(int)attr];
+	statval = player_stats_curr[(int)attr];
 
 	if (statval > 249) {
 		return_value = 7;
@@ -3435,7 +3435,7 @@ long attack_blows(long weight, long *wtohit)
 		 * -DCJ-}*/
 		*wtohit = max_wield - (weight div 100);
 	} else {
-		a_dex = PS.c[DEX];
+		a_dex = player_stats_curr[DEX];
 
 		if (a_dex < 70) {
 			blows = 3;
@@ -3466,7 +3466,7 @@ long attack_blows(long weight, long *wtohit)
 		/*{usually 3 for 18+ dex, 5 max except 6 for high level
 		 * warriors}*/
 		adj_weight =
-		    (long)((float)PS.c[STR] / (float)(weight div 100) * 2.5);
+		    (long)((float)player_stats_curr[STR] / (float)(weight div 100) * 2.5);
 
 		if (adj_weight < 1) {
 			blows = 1;

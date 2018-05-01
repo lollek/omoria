@@ -162,8 +162,8 @@ void q__reward_quest()
 
 	reward = c_list[py.misc.cur_quest].mexp * (randint(3) + 5) +
 		 py.misc.lev * (randint(2) * 100) +
-		 (randint(100) + py.stat.c[CHR]) * 2 +
-		 py.stat.c[INT] * randint(50) + 200;
+		 (randint(100) + player_stats_curr[CHR]) * 2 +
+		 player_stats_curr[INT] * randint(50) + 200;
 
 	sprintf(out_val, "Ah... %s, I was expecting you.", py.misc.name);
 	msg_print(out_val);

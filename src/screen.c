@@ -193,7 +193,7 @@ void prt_stat_block()
 	prt_field(py.misc.race, RACE_ROW, STAT_COLUMN);
 	prt_field(py.misc.tclass, CLASS_ROW, STAT_COLUMN);
 	prt_title();
-	prt_6_stats(py.stat.c, py.stat.l, STR_ROW, STAT_COLUMN);
+	prt_6_stats(player_stats_curr, player_stats_lost, STR_ROW, STAT_COLUMN);
 	prt_num("LVL : ", py.misc.lev, LEVEL_ROW, STAT_COLUMN);
 	prt_num("EXP : ", py.misc.exp, EXP_ROW, STAT_COLUMN);
 	if (is_magii) {
@@ -437,6 +437,6 @@ void prt_a_stat(stat_set tstat)
 	char *stat_names[STAT_SET_MAX + 1] = {"STR : ", "INT : ", "WIS : ",
 					      "DEX : ", "CON : ", "CHR : "};
 
-	prt_stat_attr(stat_names[(int)tstat], py.stat.c[(int)tstat],
-		      py.stat.l[(int)tstat], STR_ROW + tstat, STAT_COLUMN);
+	prt_stat_attr(stat_names[(int)tstat], player_stats_curr[(int)tstat],
+		      player_stats_lost[(int)tstat], STR_ROW + tstat, STAT_COLUMN);
 }
