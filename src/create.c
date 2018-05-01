@@ -343,6 +343,7 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 	return return_value;
 }
 
+extern void cc__get_stats_(); /* rust */
 static void cc__get_stats()
 {
 	/*	{ Get the statistics for this bozo			-KRC-
@@ -356,6 +357,8 @@ static void cc__get_stats()
 		    cc__get_stat(), race_stats(prace)[tstat]);
 		py.stat.c[tstat] = py.stat.p[tstat];
 	}
+
+	cc__get_stats_();
 
 	py.misc.rep = 0;
 	py.misc.srh = race_search_mod(prace);

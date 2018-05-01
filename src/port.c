@@ -40,6 +40,7 @@ void *safe_malloc(int blocksize, char *message)
 /*//////////////////////////////////////////////////////////////////// */
 void dispose(void *ptr, int size, char *message)
 {
+	(void)message;
 	free_calls++;
 	free_bytes += size;
 

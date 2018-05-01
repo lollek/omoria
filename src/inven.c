@@ -204,6 +204,7 @@ void ic__clear_display(treas_ptr cur_display[], long *cur_display_size)
 	ENTER(("ic__clear_display", "iu"));
 
 	cur_display_size = 0;
+        (void)cur_display_size;
 	for (index = 1; index <= DISPLAY_SIZE; index++) {
 		cur_display[index] = 0;
 	}
@@ -563,7 +564,7 @@ void inv__equip_pos_string(vtype out_val, long equip_pos, long counter)
 
 	inven_temp->data = equipment[equip_pos];
 	objdes(tmp_buf, inven_temp, true);
-	sprintf(out_val, "%c%c%c%s%s", cur_insure(), ('a' + counter - 1),
+	sprintf(out_val, "%c%c%c%s%s", cur_insure(), (char)('a' + counter - 1),
 		cur_char2(), ic__equip_print_prefix(equip_pos), tmp_buf);
 }
 
@@ -730,7 +731,7 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 	long com_val, i1, i2, i3;
 	vtype out_val, out_val_tmp, prt1, prt2;
 	treasure_type unwear_obj;
-	boolean exit_flag, test_flag, listed;
+	boolean exit_flag, test_flag;
 	long count, factor;
 	treas_ptr ptr, item_ptr;
 
@@ -748,7 +749,6 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 	ENTER(("ic__wear", "i2"));
 
 	exit_flag = false;
-	listed = false;
 	cur_inven = inventory_list;
 
 	do {
@@ -1050,8 +1050,7 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 
 	vtype out_val;
 	treas_ptr item_ptr;
-	boolean exit_flag, test_flag;
-	char trash;
+	boolean exit_flag;
 
 	ENTER(("ic__stats", "i2"));
 
@@ -1068,7 +1067,6 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 					     valid_flag, prompt, cur_display,
 					     cur_display_size));
 		if (item_ptr != NULL) {
-			test_flag = true;
 			clear_rc(1, 1);
 			prt("Name        : ", 1, 1);
 			prt("Description : ", 2, 1);
@@ -1241,7 +1239,7 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 			}
 
 			prt(out_val, 4, 15);
-			sprintf(out_val, "'%lu'", item_ptr->data.tchar);
+			sprintf(out_val, "'%u'", item_ptr->data.tchar);
 			prt(out_val, 5, 15);
 			print_hex_value((item_ptr->data.flags), 6, 15);
 			print_hex_value((item_ptr->data.flags2), 7, 15);
@@ -1285,7 +1283,7 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 				    : "false");
 			prt(out_val, 20, 15);
 			prt("Hit any key to continue", 22, 29);
-			trash = inkey();
+			inkey();
 		}
 	} while (!exit_flag);
 
@@ -1446,7 +1444,6 @@ void ic__take_out()
 	treas_ptr from_ptr, temp_ptr, curse;
 	long count;
 	boolean redraw, flag;
-	long old_ctr;
 	char trash_char;
 
 	count = change_all_ok_stats(false, true);
@@ -1482,7 +1479,6 @@ void ic__take_out()
 				}
 				curse->next = from_ptr->next;
 				inven_temp->data = from_ptr->data;
-				old_ctr = inven_ctr;
 				inven_carry(); /* XXXX is this a memory leak? */
 				/*{change to next line by Dean; used to begin
 				  with
@@ -1660,6 +1656,7 @@ boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 					       &valid_flag, prompt, cur_display,
 					       &cur_display_size);
 			}
+			break;
 
 		case 'e': /*{ Equipment     }*/
 			if (equip_ctr == 0) {

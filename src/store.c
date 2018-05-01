@@ -967,6 +967,7 @@ void enter_store(long store_num)
 			switch (com_val) {
 			case 18:
 				display_store(store_num, cur_top);
+				break;
 			case 'I': /*{ Selective Inventory   }*/
 				if (inven_command('I', &trash_ptr, "")) {
 					display_store(store_num, cur_top);
