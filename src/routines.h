@@ -498,7 +498,7 @@ extern char *show_char_age(string result);
 extern char *show_current_time(string result);
 extern char *show_play_time(string result);
 extern char *bag_descrip(treas_ptr bag, string result);
-extern unsigned char squish_stat(long this);
+extern uint8_t squish_stat(int32_t stat);
 extern unsigned char in_statp(unsigned char stat);
 extern unsigned char de_statp(unsigned char stat);
 extern long tohit_adj();

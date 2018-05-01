@@ -182,23 +182,23 @@ char *cost_str(long amt, string result)
 {
 	/*{ Return string describing how much the amount is worth	-DMF-
 	 * }*/
-	long amtd9 = amt div 9;
+	long amtd9 = amt / 9;
 
 	if (amtd9 >= MITHRIL_VALUE) {
 		sprintf(result, "%ld mithril",
-			((amt + MITHRIL_VALUE - 1)div MITHRIL_VALUE));
+			((amt + MITHRIL_VALUE - 1) / MITHRIL_VALUE));
 	} else if (amtd9 >= PLATINUM_VALUE) {
 		sprintf(result, "%ld platinum",
-			((amt + PLATINUM_VALUE - 1)div PLATINUM_VALUE));
+			((amt + PLATINUM_VALUE - 1) / PLATINUM_VALUE));
 	} else if (amtd9 >= GOLD_VALUE) {
 		sprintf(result, "%ld gold",
-			((amt + GOLD_VALUE - 1)div GOLD_VALUE));
+			((amt + GOLD_VALUE - 1) / GOLD_VALUE));
 	} else if (amtd9 >= SILVER_VALUE) {
 		sprintf(result, "%ld silver",
-			((amt + SILVER_VALUE - 1)div SILVER_VALUE));
+			((amt + SILVER_VALUE - 1) / SILVER_VALUE));
 	} else if (amtd9 >= COPPER_VALUE) {
 		sprintf(result, "%ld copper",
-			((amt + COPPER_VALUE - 1)div COPPER_VALUE));
+			((amt + COPPER_VALUE - 1) / COPPER_VALUE));
 	} else {
 		sprintf(result, "%ld iron", amt);
 	}
@@ -389,16 +389,6 @@ chtype loc_symbol(long y, long x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-unsigned char squish_stat(long this)
-{
-	if (this > 250) {
-		return 250;
-	} else if (this < 0) {
-		return 0;
-	} else {
-		return this;
-	}
-}
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

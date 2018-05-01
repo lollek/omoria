@@ -3,7 +3,7 @@
 
 #include "imoria.h"
 
-unsigned char cc__old_stat(long new_guy)
+static unsigned char cc__old_stat(long new_guy)
 {
 	unsigned char return_value;
 
@@ -16,7 +16,7 @@ unsigned char cc__old_stat(long new_guy)
 	return return_value;
 }
 
-unsigned char cc__new_stat(long old_guy)
+static unsigned char cc__new_stat(long old_guy)
 {
 	unsigned char return_value;
 
@@ -29,7 +29,7 @@ unsigned char cc__new_stat(long old_guy)
 	return return_value;
 }
 
-long cc__get_min_stat(string prompt, unsigned char max)
+static long cc__get_min_stat(string prompt, unsigned char max)
 {
 	long abil = 0;
 	long perc;
@@ -79,7 +79,7 @@ long cc__get_min_stat(string prompt, unsigned char max)
 	return abil;
 }
 
-void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
+static void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 {
 	/*	{ Get minimum stats the character wants			-DMF-
 	 * } */
@@ -95,7 +95,7 @@ void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
 	}
 }
 
-long cc__get_stat()
+static long cc__get_stat()
 {
 	/*	{ Generates character's stats				-JWT-
 	 * } */
@@ -105,7 +105,7 @@ long cc__get_stat()
 	return (i - 3) * 10;			      /* 50..140 */
 }
 
-long cc__change_stat(long cur_stat, long amount)
+static long cc__change_stat(long cur_stat, long amount)
 {
 	/*	{ Changes stats by given amount				-JWT-
 	 * }*/
@@ -124,7 +124,7 @@ long cc__change_stat(long cur_stat, long amount)
 	return cur_stat;
 }
 
-unsigned char cc__max_in_statp(unsigned char stat)
+static unsigned char cc__max_in_statp(unsigned char stat)
 {
 	if (stat < 150) {
 		stat += 10;
@@ -139,7 +139,7 @@ unsigned char cc__max_in_statp(unsigned char stat)
 	return stat;
 }
 
-unsigned char cc__max_de_statp(unsigned char stat)
+static unsigned char cc__max_de_statp(unsigned char stat)
 {
 	if (stat < 11) {
 		stat = 0;
@@ -156,7 +156,7 @@ unsigned char cc__max_de_statp(unsigned char stat)
 	return stat;
 }
 
-long cc__max_stat(long cur_stat, long amount)
+static long cc__max_stat(long cur_stat, long amount)
 {
 	long i;
 
@@ -173,7 +173,7 @@ long cc__max_stat(long cur_stat, long amount)
 	return cur_stat;
 }
 
-boolean cc__choose_race()
+static boolean cc__choose_race()
 {
 	/*	{ Allows player to select a race			-JWT-
 	 * }*/
@@ -232,7 +232,7 @@ boolean cc__choose_race()
 	return return_value;
 }
 
-void cc__print_try_count(int try_count)
+static void cc__print_try_count(int try_count)
 {
 	string out_str;
 	sprintf(out_str, "Try = %10d", try_count);
@@ -240,7 +240,7 @@ void cc__print_try_count(int try_count)
 	put_qio();
 }
 
-long cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best,
+static long cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best,
 			 long best_min)
 {
 	long below_sum = 0;
@@ -264,7 +264,7 @@ long cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best,
 	}
 }
 
-boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
+static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
 		      long *try_count, stat_s_type best, stat_s_type user)
 {
 	/*	{ What does it take to satisfy the guy?!		-KRC-
@@ -343,20 +343,18 @@ boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
 	return return_value;
 }
 
-void cc__get_stats()
+static void cc__get_stats()
 {
 	/*	{ Get the statistics for this bozo			-KRC-
 	 * }*/
 
-	stat_set tstat;
-	long prace;
-
-	prace = py.misc.prace;
+	const int32_t prace = py.misc.prace;
+	int tstat;
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
-		py.stat.p[(int)tstat] = cc__change_stat(
-		    cc__get_stat(), race_stats(prace)[(int)tstat]);
-		py.stat.c[(int)tstat] = py.stat.p[(int)tstat];
+		py.stat.p[tstat] = cc__change_stat(
+		    cc__get_stat(), race_stats(prace)[tstat]);
+		py.stat.c[tstat] = py.stat.p[tstat];
 	}
 
 	py.misc.rep = 0;
@@ -377,7 +375,7 @@ void cc__get_stats()
 	py.flags.swim = race_swim_speed(prace);
 }
 
-void cc__print_history()
+static void cc__print_history()
 {
 	/*	{ Will print the history of a character			-JWT-
 	 * }*/
@@ -397,7 +395,7 @@ void cc__print_history()
 	{		(race)*3 + 1					}
 	{		All history parts are in ascending order	}
 */
-void cc__get_history()
+static void cc__get_history()
 {
 
 	long hist_ptr, cur_ptr, test_roll;
@@ -493,7 +491,7 @@ void cc__get_history()
 
 } /* end cc__get_history */
 
-boolean cc__get_sex()
+static boolean cc__get_sex()
 {
 	/*	{ Gets the character's sex				-JWT-
 	 * }*/
@@ -537,7 +535,7 @@ boolean cc__get_sex()
 	return return_value;
 } /* end cc__get_sex */
 
-void cc__get_ahw()
+static void cc__get_ahw()
 {
 	/*	{ Computes character's age, height, and weight		-JWT-
 	 * }*/
@@ -571,11 +569,11 @@ void cc__get_ahw()
 } /* end cc__get_ahw */
 
 /*	{ Gets a character class				-JWT-	}*/
-boolean cc__get_class()
+static boolean cc__get_class()
 {
 	long i1, i2, i3, i4, i5;
 	long cl[MAX_CLASS + 1];
-	long aclass;
+	int32_t aclass;
 	char s;
 	boolean exit_flag;
 	string out_str;
@@ -670,7 +668,7 @@ boolean cc__get_class()
 	return return_value;
 } /* end cc__get_class */
 
-void cc__get_money()
+static void cc__get_money()
 {
 
 	long tmp, i1;
