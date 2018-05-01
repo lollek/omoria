@@ -4,3 +4,6 @@
 omoria
 tags
 debug.out
+
+/target
+**/*.rs.bk

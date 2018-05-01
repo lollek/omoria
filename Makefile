@@ -13,9 +13,8 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -pedantic -Werror=implicit-function-declaration -std=gnu89 -g3 -DDO_DEBUG=1 -fsanitize=address -fno-omit-frame-pointer
-LDFLAGS =	-lncurses -ltermcap -lm -lgdbm -fsanitize=address -fno-omit-frame-pointer
-
+CFLAGS =	-Wall -Wextra -pedantic -Werror=implicit-function-declaration -std=gnu89 -g3 -DDO_DEBUG=1
+LDFLAGS =	-lncurses -ltermcap -lm -lgdbm -Wl,--gc-sections -lpthread -ldl
 
 #
 # the owner and group for the game and data files
@@ -42,7 +41,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
 omoria: $(OBJFILES)
-	$(CC) $(LDFLAGS) $(OBJFILES) -o $@
+	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libclasses.a
 
 privs ::
 	chown $(OWNER):$(GROUP) omoria $(DATAFILES)

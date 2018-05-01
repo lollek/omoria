@@ -1,0 +1,11 @@
+[package]
+name = "omoria"
+version = "0.1.0"
+authors = ["Olle Kvarnström <olle+git@iix.se>"]
+
+[dependencies]
+
+[lib]
+name = "classes"
+crate-type = ["staticlib"]
+path = "src/classes.rs"
