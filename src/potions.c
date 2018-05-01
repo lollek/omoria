@@ -77,19 +77,19 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 17: /*{ Gain Con }*/
-		py.misc.mhp++;
-		py.misc.chp += py.misc.mhp;
+		player_mhp++;
+		player_chp += player_mhp;
 		ident = gain_stat(CON, "X");
 		prt_hp();
 		break;
 
 	case 18: /*{ Gain Experience }*/
-		/* with py.misc do; */
-		i5 = (PM.exp div 2) + 10;
+		/* with player_do; */
+		i5 = (player_exp div 2) + 10;
 		if (i5 > 100000) {
 			i5 = 100000;
 		}
-		PM.exp += i5;
+		player_exp += i5;
 		msg_print("You feel more experienced.");
 		prt_experience();
 		ident = true;
@@ -161,21 +161,21 @@ void q__potion_effect(long effect, boolean *idented)
 
 	case 32: /*{ Learning }*/ /* 32 is the Cursed_worn_bit value */
 	case 48:		  /*{ Learning }*/
-		/* with py.misc do; */
+		/* with player_do; */
 		/* with class[pclass] do; */
-		if (class_uses_magic(PM.pclass, M_ARCANE)) {
+		if (class_uses_magic(player_pclass, M_ARCANE)) {
 			ident = learn_spell(&redraw);
 			if (redraw) {
 				draw_cave();
 			}
-		} else if (class_uses_magic(PM.pclass, M_SONG)) {
+		} else if (class_uses_magic(player_pclass, M_SONG)) {
 			ident = learn_song(&redraw);
 			if (redraw) {
 				draw_cave();
 			}
-		} else if (class_uses_magic(PM.pclass, M_DIVINE)) {
+		} else if (class_uses_magic(player_pclass, M_DIVINE)) {
 			ident = learn_prayer();
-		} else if (class_uses_magic(PM.pclass, M_NATURE)) {
+		} else if (class_uses_magic(player_pclass, M_NATURE)) {
 			ident = learn_druid();
 		}
 		break;
@@ -183,7 +183,7 @@ void q__potion_effect(long effect, boolean *idented)
 	case 33: /*{ Lose Memories }*/
 		msg_print("You feel your memories fade...");
 		msg_print("");
-		i4 = trunc(py.misc.exp / 5.0);
+		i4 = trunc(player_exp / 5.0);
 		lose_exp(randint(i4) + i4);
 		ident = true;
 		break;
@@ -248,9 +248,9 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 45: /*{ Restore Mana }*/
-		/* with py.misc do; */
-		if (PM.cmana < PM.mana) {
-			PM.cmana = PM.mana;
+		/* with player_do; */
+		if (player_cmana < player_mana) {
+			player_cmana = player_mana;
 		}
 		ident = true;
 		msg_print("Your feel your head clear...");
@@ -369,8 +369,8 @@ void quaff()
 				}
 
 				if (item_ptr->data.flags != 0) {
-					PM.exp += (item_ptr->data.level /
-						   (float)PM.lev) +
+					player_exp += (item_ptr->data.level /
+						   (float)player_lev) +
 						  .5;
 					prt_experience();
 				}

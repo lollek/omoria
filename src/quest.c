@@ -8,8 +8,8 @@ void q__change_money()
 {
   int amount;
 
-  amount = abs(py.misc.money[TOTAL_] - gld)*GOLD_VALUE;
-  if (gld > py.misc.money[TOTAL_]) {
+  amount = abs(player_money[TOTAL_] - gld)*GOLD_VALUE;
+  if (gld > player_money[TOTAL_]) {
     add_money(amount);
   } else {
     subtract_money(amount,true);
@@ -36,7 +36,7 @@ void q__reward_money(long reward)
 	sprintf(out_val, "He deposited %ld gold pieces under your name.",
 		reward);
 	msg_print(out_val);
-	py.misc.account += reward;
+	player_account += reward;
 }
 
 void q__reward_item(long target)
@@ -89,9 +89,9 @@ void q__reward_item(long target)
 		for (i3 = 0; (i3 < q1) && (rewards[i2].cost < q3);) {
 
 			t_list[i1] =
-			    object_list[get_obj_num(PM.max_lev + 10, q2)];
+			    object_list[get_obj_num(player_max_lev + 10, q2)];
 			if (is_in(t_list[i1].tval, *toys[i2])) {
-				magic_treasure(i1, PM.max_lev + 10, true);
+				magic_treasure(i1, player_max_lev + 10, true);
 
 				if (rewards[i2].cost < t_list[i1].cost) {
 					if (t_list[i1].cost < q4) {
@@ -160,29 +160,29 @@ void q__reward_quest()
 	vtype out_val;
 	boolean redraw = false;
 
-	reward = c_list[py.misc.cur_quest].mexp * (randint(3) + 5) +
-		 py.misc.lev * (randint(2) * 100) +
+	reward = c_list[player_cur_quest].mexp * (randint(3) + 5) +
+		 player_lev * (randint(2) * 100) +
 		 (randint(100) + player_stats_curr[CHR]) * 2 +
 		 player_stats_curr[INT] * randint(50) + 200;
 
-	sprintf(out_val, "Ah... %s, I was expecting you.", py.misc.name);
+	sprintf(out_val, "Ah... %s, I was expecting you.", player_name);
 	msg_print(out_val);
 	sprintf(out_val, "I see you've killed the %s.  That's good.",
-		c_list[py.misc.cur_quest].name);
+		c_list[player_cur_quest].name);
 	msg_print(out_val);
 
-	if (((py.misc.quests % QUEST_ITEM_FREQUENCY) == 0)) {
+	if (((player_quests % QUEST_ITEM_FREQUENCY) == 0)) {
 		q__reward_item(reward);
 		redraw = true;
 	} else {
 		q__reward_money(reward);
 	}
 
-	py.misc.rep += randint(5) + 2;
-	if (py.misc.rep > 50) {
-		py.misc.rep = 50;
+	player_rep += randint(5) + 2;
+	if (player_rep > 50) {
+		player_rep = 50;
 	}
-	py.misc.cur_quest = 0;
+	player_cur_quest = 0;
 	py.flags.quested = false;
 	turn_counter = QUEST_DELAY;
 	prt_quested();
@@ -205,7 +205,7 @@ long q__select_quest()
 	do {
 		count++;
 
-		if (c_list[count].level > py.misc.lev) {
+		if (c_list[count].level > player_lev) {
 			exit_flag = true;
 			do {
 				tmp_select = count + randint(80);
@@ -270,9 +270,9 @@ boolean q__completed_quest()
 {
 	boolean return_value = false;
 
-	if ((!py.flags.quested) && (py.misc.cur_quest != 0)) {
+	if ((!py.flags.quested) && (player_cur_quest != 0)) {
 		py.flags.quested = false; /* { not under quest          } */
-		py.misc.quests++;	 /* { one more is now complete } */
+		player_quests++;	 /* { one more is now complete } */
 		return_value = true;
 	}
 
@@ -283,7 +283,7 @@ boolean q__evaluate_char()
 {
 	boolean return_value;
 
-	if ((py.flags.quested) || (py.misc.lev > py.misc.quests)) {
+	if ((py.flags.quested) || (player_lev > player_quests)) {
 		return_value = true;
 	} else {
 		return_value = false;
@@ -313,7 +313,7 @@ void q__reject_char()
 
 boolean q__new_victim()
 {
-	return ((py.misc.cur_quest == 0) && (py.misc.quests == 0) &&
+	return ((player_cur_quest == 0) && (player_quests == 0) &&
 		(!py.flags.quested));
 }
 
@@ -368,7 +368,7 @@ void q__repeat_quest()
 
 	msg_print("Hmmm. . .  I see you haven't completed your quest.");
 	msg_print("Have you forgotten it already?");
-	sprintf(out_val, "Go kill a %s!", c_list[py.misc.cur_quest].name);
+	sprintf(out_val, "Go kill a %s!", c_list[player_cur_quest].name);
 	msg_print(out_val);
 	msg_print("");
 }
@@ -401,7 +401,7 @@ void q__parse_command(boolean enter_flag)
 							  "turn_counter.");
 						msg_print(" ");
 					}
-					py.misc.cur_quest = quest[command - 96];
+					player_cur_quest = quest[command - 96];
 					py.flags.quested = true;
 					exit_flag = true;
 				}
@@ -437,9 +437,9 @@ void enter_fortress()
 	boolean enter_flag = false;
 
 	seed = get_seed();
-	/*{gld = py.misc.money[TOTAL_];}*/
+	/*{gld = player_money[TOTAL_];}*/
 	msg_line = 1;
-	if (py.misc.quests <= MAX_QUESTS) {
+	if (player_quests <= MAX_QUESTS) {
 		if (q__evaluate_char()) {
 			if (q__completed_quest()) {
 				q__reward_quest();
@@ -449,7 +449,7 @@ void enter_fortress()
 					q__explain_quests();
 				}
 				if ((q__new_victim()) ||
-				    (py.misc.cur_quest < 1)) {
+				    (player_cur_quest < 1)) {
 					q__draw_fortress(enter_flag);
 					enter_flag = true;
 					q__parse_command(enter_flag);

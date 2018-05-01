@@ -9,7 +9,7 @@ void bi__display_gold()
 {
 	vtype out_val;
 
-	sprintf(out_val, "Gold remaining : %ld", py.misc.money[TOTAL_]);
+	sprintf(out_val, "Gold remaining : %ld", player_money[TOTAL_]);
 	prt(out_val, 19, 18);
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -56,7 +56,7 @@ void bi__insure_all_items()
 			cost_str(tot_cost, out2));
 
 		if (get_yes_no(out)) {
-			if ((py.misc.money[TOTAL_] * GOLD_VALUE) >= tot_cost) {
+			if ((player_money[TOTAL_] * GOLD_VALUE) >= tot_cost) {
 				subtract_money(tot_cost, true);
 				flag = true;
 			} else {
@@ -110,7 +110,7 @@ void bi__insure_item(vtype shop_owner)
 			sprintf(out, "Do you wish to pay %s?",
 				cost_str(temp, out2));
 			if (get_yes_no(out)) {
-				if ((py.misc.money[TOTAL_] * GOLD_VALUE) >=
+				if ((player_money[TOTAL_] * GOLD_VALUE) >=
 				    temp) {
 					subtract_money(temp, true);
 					flag = true;
@@ -150,13 +150,13 @@ float bi__death_adj()
 
 	float temp;
 
-	/* with py.misc do; */
-	PM.premium = PM.exp;
-	if (PM.premium < 100) {
-		PM.premium = 100;
+	/* with player_do; */
+	player_premium = player_exp;
+	if (player_premium < 100) {
+		player_premium = 100;
 	}
-	temp = 100 * sqrt(PM.premium) + PM.premium * PM.deaths;
-	PM.premium = (int)(temp);
+	temp = 100 * sqrt(player_premium) + player_premium * player_deaths;
+	player_premium = (int)(temp);
 
 	return temp;
 }
@@ -169,7 +169,7 @@ void bi__insure_person()
 
 	if (py.flags.insured) {
 		msg_print("Your person is already insured.");
-	} else if (py.misc.deaths > 7) {
+	} else if (player_deaths > 7) {
 		msg_print(
 		    "You are deemed a security risk.  We will not insure you.");
 	} else {
@@ -182,7 +182,7 @@ void bi__insure_person()
 		sprintf(out, "Do you wish to pay %s?",
 			cost_str(tot_cost, out2));
 		if (get_yes_no(out)) {
-			if ((py.misc.money[TOTAL_] * GOLD_VALUE) >= tot_cost) {
+			if ((player_money[TOTAL_] * GOLD_VALUE) >= tot_cost) {
 				subtract_money(tot_cost, true);
 				flag = true;
 			} else {
@@ -226,7 +226,7 @@ void bi__insure_all_equip()
 			cost_str(tot_cost, out2));
 
 		if (get_yes_no(out)) {
-			if ((py.misc.money[TOTAL_] * GOLD_VALUE) >= tot_cost) {
+			if ((player_money[TOTAL_] * GOLD_VALUE) >= tot_cost) {
 				subtract_money(tot_cost, true);
 				flag = true;
 			} else {
@@ -305,9 +305,9 @@ void buy_insurance()
 	long tics = 1;
 	long starting_money;
 
-	starting_money = PM.money[TOTAL_];
+	starting_money = player_money[TOTAL_];
 
-	if (py.misc.max_exp > 30 + randint(30)) {
+	if (player_max_exp > 30 + randint(30)) {
 
 		strcpy(shop_owner,
 		       "Mangy Dragon Flye        (Scum)       Insurance");
@@ -322,7 +322,7 @@ void buy_insurance()
 
 		clear_screen();
 		draw_cave();
-		if (PM.money[TOTAL_] != starting_money) {
+		if (player_money[TOTAL_] != starting_money) {
 			msg_print("Be sure to save your character for your "
 				  "insurance to begin.");
 		}

@@ -116,12 +116,12 @@ static boolean intro_parse_switches(int argc, char *argv[])
 		case 'd':
 			if (--argc) {
 				sscanf((++argv)[0], "%d", &x1);
-				PM.diffic = x1;
-				if (py.misc.diffic > 5) {
-					py.misc.diffic = 5;
+				player_diffic = x1;
+				if (player_diffic > 5) {
+					player_diffic = 5;
 				}
-				if (py.misc.diffic < 1) {
-					py.misc.diffic = 1;
+				if (player_diffic < 1) {
+					player_diffic = 1;
 				}
 			} else {
 				printf("Missing <num> for -d\n\r");
@@ -273,7 +273,7 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file)
 		file1 = (FILE *)fopen(the_file, "w");
 		if (file1 != NULL) {
 			fprintf(file1, "    Moria operating hours are:\n");
-			fprintf(file1, "    |    AM     |    PM     |\n");
+			fprintf(file1, "    |    AM     |    player_    |\n");
 			fprintf(file1, "    1         111         111\n");
 			fprintf(file1, "    2123456789012123456789012\n");
 			for (i1 = 0; i1 < 7; i1++) {
@@ -567,23 +567,23 @@ void file_character()
 			fprintf(file1, " \n \n \n");
 			fprintf(file1, "  Name  : %24s  Age         :%4d     "
 				       "Strength     : %6s\n",
-				py.misc.name, py.misc.age, out_c[STR]);
+				player_name, player_age, out_c[STR]);
 
 			fprintf(file1, "  Race  : %24s  Height      :%4d     "
 				       "Intelligence : %6s\n",
-				py.misc.race, py.misc.ht, out_c[INT]);
+				player_race, player_ht, out_c[INT]);
 
 			fprintf(file1, "  Sex   : %24s  Weight      :%4d     "
 				       "Wisdom       : %6s\n",
-				py.misc.sex, py.misc.wt, out_c[WIS]);
+				player_sex, player_wt, out_c[WIS]);
 
 			fprintf(file1, "  Class : %24s  Social Class:%4d     "
 				       "Dexterity    : %6s\n",
-				py.misc.tclass, py.misc.sc, out_c[DEX]);
+				player_tclass, player_sc, out_c[DEX]);
 
 			fprintf(file1, "  Title : %24s  Difficulty  :%4d     "
 				       "Constitution : %6s\n",
-				py.misc.title, py.misc.diffic, out_c[CON]);
+				player_title, player_diffic, out_c[CON]);
 
 			fprintf(file1, "          %24s              %4s      "
 				       "Charisma     : %6s\n",
@@ -593,39 +593,39 @@ void file_character()
 
 			fprintf(file1, "  + To Hit    :%3d        Level      "
 				       ":%9d     Max Hit Points :%4d\n",
-				py.misc.dis_th, py.misc.lev, py.misc.mhp);
+				player_dis_th, player_lev, player_mhp);
 
 			fprintf(file1, "  + To Damage :%3d        Experience "
 				       ":%9ld     Cur Hit Points :%4d\n",
-				py.misc.dis_td, py.misc.exp, (int)py.misc.chp);
+				player_dis_td, player_exp, (int)player_chp);
 
 			fprintf(file1, "  + To AC     :%3d        Gold       "
 				       ":%9ld     Max Mana       :%4d\n",
-				py.misc.dis_tac, py.misc.money[TOTAL_],
-				py.misc.mana);
+				player_dis_tac, player_money[TOTAL_],
+				player_mana);
 
 			fprintf(file1, "    Total AC  :%3d        Account    "
 				       ":%9ld     Cur Mana       :%4d\n",
-				py.misc.dis_ac, py.misc.account, py.misc.mana);
+				player_dis_ac, player_account, player_mana);
 
 			fprintf(file1, " \n \n");
 
-			xbth = PM.bth + PM.lev * BTH_LEV_ADJ +
-			       PM.ptohit * BTH_PLUS_ADJ;
-			xbthb = PM.bthb + PM.lev * BTH_LEV_ADJ +
-				PM.ptohit * BTH_PLUS_ADJ;
-			xfos = 27 - PM.fos;
+			xbth = player_bth + player_lev * BTH_LEV_ADJ +
+			       player_ptohit * BTH_PLUS_ADJ;
+			xbthb = player_bthb + player_lev * BTH_LEV_ADJ +
+				player_ptohit * BTH_PLUS_ADJ;
+			xfos = 27 - player_fos;
 			if (xfos < 0) {
 				xfos = 0;
 			}
-			xsrh = PM.srh + spell_adj(INT);
-			xstl = PM.stl;
-			xdis = PM.disarm + PM.lev + 2 * todis_adj() +
+			xsrh = player_srh + spell_adj(INT);
+			xstl = player_stl;
+			xdis = player_disarm + player_lev + 2 * todis_adj() +
 			       spell_adj(INT);
-			xsave = PM.save + PM.lev + spell_adj(WIS);
-			xdev = PM.save + PM.lev + spell_adj(INT);
+			xsave = player_save + player_lev + spell_adj(WIS);
+			xdev = player_save + player_lev + spell_adj(INT);
 			xswm = PF.swim + 4;
-			xrep = 6 + PM.rep / 25;
+			xrep = 6 + player_rep / 25;
 			sprintf(xinfra, "%ld feet", PF.see_infra);
 
 			fprintf(file1, "\n");
@@ -656,15 +656,15 @@ void file_character()
 
 			fprintf(file1, " \n \n%45s\n", "Character Background");
 			for (i1 = 0; i1 < 5; i1++) {
-				fprintf(file1, "   %s\n", py.misc.history[i1]);
+				fprintf(file1, "   %s\n", player_history[i1]);
 			}
 
 			/*{ Write out the time stats              }*/
 
 			fprintf(file1, " \n \n");
 
-			/* with PM.birth. do; */
-			day_of_week_string(PM.birth.day, 10, out_val);
+			/* with player_birth. do; */
+			day_of_week_string(player_birth.day, 10, out_val);
 
 			for (i1 = 0; out_val[i1];) {
 				if (out_val[i1] == ' ') {
@@ -677,13 +677,13 @@ void file_character()
 			fprintf(
 			    file1,
 			    "  You were born at %s on %s, %s the %s, %ld AH.\n",
-			    time_string(PM.birth.hour, PM.birth.secs, s1),
-			    out_val, month_string(PM.birth.month, s2),
-			    place_string(PM.birth.day, s3), PM.birth.year);
+			    time_string(player_birth.hour, player_birth.secs, s1),
+			    out_val, month_string(player_birth.month, s2),
+			    place_string(player_birth.day, s3), player_birth.year);
 
 			fprintf(file1, "  %s\n", show_char_age(s1));
 			fprintf(file1, "  The current time is %s.\n",
-				full_date_string(PM.cur_age, s1));
+				full_date_string(player_cur_age, s1));
 			fprintf(file1, "  You have been playing for %s.\n",
 				show_play_time(s1));
 			if (py.flags.dead) {
@@ -693,7 +693,7 @@ void file_character()
 				    died_from, dun_level);
 			}
 			fprintf(file1, "  Maximum depth was %d feet.\n",
-				py.misc.max_lev * 50);
+				player_max_lev * 50);
 
 			/*{ Write out the equipment list...       }*/
 			fprintf(file1,

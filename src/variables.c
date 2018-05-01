@@ -151,61 +151,6 @@ obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
 
 /*	{ Following are player variables				} */
 player_type py = {
-    /* misc */
-    {0,
-     0,			    /* xtr_wgt, account */
-     {0, 0, 0, 0, 0, 0, 0}, /* money */
-     {0, 0, 0, 0, 0},       /* birth */
-     {0, 0, 0, 0, 0},       /* cur_age */
-     {0, 0, 0, 0, 0, 0, 0}, /* play_tm */
-     3,			    /* diffic */
-     " ",
-     " ",
-     " ",
-     " ",
-     " ", /* ssn,name,race,sex,title,tclass */
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     0,
-     {"", "", "", "", ""}, /* history */
-     false,
-     0,
-     0,
-     0, /* mr, quests, cur_quest */
-     0,
-     0,
-     0},
     /* flags */
     {false,
      false,
@@ -269,7 +214,7 @@ player_type py = {
      false,
      false}};
 
-char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
+char const *player_titles[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
     /*				  array [1..max_class] of */
     /*				  array [1..max_player_level] of char const*; */
     {
@@ -378,7 +323,7 @@ char const *player_title[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
 };
 
 /*	{ Base experience levels, may be adjusted up for race and/or class} */
-long player_exp[MAX_PLAYER_LEVEL + 1] = {
+long exp_per_level[MAX_PLAYER_LEVEL + 1] = {
     0,      10,      25,      45,      70,     100,    140,    200,    280,
     380,    500,     650,     850,     1100,   1400,   1800,   2300,   2900,
     3600,   4400,    5400,    6800,    8400,   10200,  12500,  17500,  25000,

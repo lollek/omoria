@@ -74,7 +74,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 15: /*{ Teleport Self }*/
-		teleport(py.misc.lev * 6);
+		teleport(player_lev * 6);
 		break;
 
 	case 16: /*{ Infravision }*/
@@ -171,8 +171,8 @@ void song_spell_effects(long effect)
 
 	case 34: /*{ Resist Charm }*/
 		/* with py.flags do; */
-		PF.free_time += randint(10) + py.misc.lev;
-		PF.magic_prot += randint(10) + py.misc.lev;
+		PF.free_time += randint(10) + player_lev;
+		PF.magic_prot += randint(10) + player_lev;
 		break;
 
 	case 35: /*{ Item Lore }*/
@@ -180,7 +180,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 36: /*{ Song of Protection }*/
-		py.flags.protmon = (randint(20) + py.misc.lev);
+		py.flags.protmon = (randint(20) + player_lev);
 		protect_evil();
 		bless(randint(24) + 24);
 		break;
@@ -213,7 +213,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 40: /*{ Song of Power }*/
-		zap_area(0x0006, 4 * py.misc.lev, c_hp);
+		zap_area(0x0006, 4 * player_lev, c_hp);
 		cure_me(&(py.flags.poisoned));
 		hp_player(300, "a spell");
 		cure_me(&py.flags.blind);

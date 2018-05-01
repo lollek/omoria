@@ -82,7 +82,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 13: /*{ Shadow Door }*/
-		teleport(py.misc.lev * 5);
+		teleport(player_lev * 5);
 		break;
 
 	case 14: /*{ Remove Curse }*/
@@ -190,7 +190,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 32: /*{ Death Spell }*/
-		zap_area(0, py.misc.lev div 2 + damroll("4d8"), c_drain);
+		zap_area(0, player_lev div 2 + damroll("4d8"), c_drain);
 		break;
 
 	case 33: /*{ Ring of Fire }*/
@@ -209,7 +209,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 36: /*{ Haste Self }*/
-		PF.fast += randint(20) + py.misc.lev;
+		PF.fast += randint(20) + player_lev;
 		break;
 
 	case 37: /*{ Fire Ball }*/

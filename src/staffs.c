@@ -171,8 +171,8 @@ void use_staff()
 				}
 				reset_flag = false;
 
-				/* with py.misc do; */
-				chance = PM.save + PM.lev + spell_adj(INT) -
+				/* with player_do; */
+				chance = player_save + player_lev + spell_adj(INT) -
 					 item_ptr->data.level - 5;
 
 				if (py.flags.confused > 0) {
@@ -197,11 +197,11 @@ void use_staff()
 					identify(&(item_ptr->data));
 					if (ident) {
 						if (item_ptr->data.flags != 0) {
-							/* with py.misc do; */
-							PM.exp +=
+							/* with player_do; */
+							player_exp +=
 							    (item_ptr->data
 								 .level /
-							     (float)PM.lev) +
+							     (float)player_lev) +
 							    .5;
 							prt_experience();
 						}

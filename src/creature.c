@@ -183,7 +183,7 @@ void replace_name()
 
 	ENTER(("replace_name", ""));
 
-	strcpy(t_str, py.misc.name);
+	strcpy(t_str, player_name);
 	if (t_str[0] == 0) {
 		strcpy(t_str, "Dead Guy");
 	}
@@ -429,7 +429,7 @@ boolean c__check_for_hit(long monptr, long atype)
 	ENTER(("c__check_for_hit", "c"))
 
 	level = c_list[m_list[monptr].mptr].level;
-	armor_stuff = PM.pac + PM.ptoac;
+	armor_stuff = player_pac + player_ptoac;
 
 	switch (atype) {
 	case 1: /*{Normal attack  }*/
@@ -477,12 +477,12 @@ boolean c__check_for_hit(long monptr, long atype)
 		break;
 
 	case 12: /*{Steal Money    }*/
-		flag = test_hit(5, level, 0, py.misc.lev) &&
-		       (py.misc.money[TOTAL_] > 0);
+		flag = test_hit(5, level, 0, player_lev) &&
+		       (player_money[TOTAL_] > 0);
 		break;
 
 	case 13: /*{Steal Object   }*/
-		flag = test_hit(2, level, 0, py.misc.lev) && (inven_ctr > 0);
+		flag = test_hit(2, level, 0, player_lev) && (inven_ctr > 0);
 		break;
 
 	case 14: /*{Poison         }*/
@@ -735,8 +735,8 @@ void c__apply_attack(long monptr, long atype, vtype ddesc, char *damstr)
 	switch (atype) {
 	case 1: /*{Normal attack  }*/
 		dam = damroll(damstr);
-		/* with py.misc do; */
-		dam -= (long)((((PM.pac + PM.ptoac) / 200.0) * dam) + .5);
+		/* with player_do; */
+		dam -= (long)((((player_pac + player_ptoac) / 200.0) * dam) + .5);
 		take_hit(dam, ddesc);
 		prt_hp();
 		break;
@@ -834,13 +834,13 @@ void c__apply_attack(long monptr, long atype, vtype ddesc, char *damstr)
 		break;
 
 	case 12: /*{Steal Money     }*/
-		/* with py.misc do; */
+		/* with player_do; */
 		if ((randint(256) < player_stats_curr[DEX]) &&
 		    (py.flags.paralysis < 1)) {
 			msg_print("You quickly protect your money pouch!");
 		} else {
-			if (PM.money[TOTAL_] > 0) {
-				subtract_money(randint(5) * (PM.money[TOTAL_] *
+			if (player_money[TOTAL_] > 0) {
+				subtract_money(randint(5) * (player_money[TOTAL_] *
 							     GOLD_VALUE)div 100,
 					       false);
 				msg_print("Your purse feels lighter.");
@@ -934,7 +934,7 @@ void c__apply_attack(long monptr, long atype, vtype ddesc, char *damstr)
 
 	case 19: /*{Lose experience  }*/
 		msg_print("You feel your life draining away!");
-		i1 = damroll(damstr) + (py.misc.exp div 100) * MON_DRAIN_LIFE;
+		i1 = damroll(damstr) + (player_exp div 100) * MON_DRAIN_LIFE;
 		lose_exp(i1);
 		break;
 
@@ -1122,7 +1122,7 @@ void c__make_attack(long monptr)
 		if (py.flags.protevil > 0) {
 			if (uand(c_list[m_list[monptr].mptr].cdefense,
 				 0x0004) != 0) {
-				if ((py.misc.lev + 1) >
+				if ((player_lev + 1) >
 				    c_list[m_list[monptr].mptr].level) {
 					atype = 99;
 					adesc = 99;
@@ -1133,7 +1133,7 @@ void c__make_attack(long monptr)
 		if (py.flags.protmon > 0) {
 			if (uand(c_list[m_list[monptr].mptr].cdefense,
 				 0x0002) != 0) {
-				if ((py.misc.lev + 1) >
+				if ((player_lev + 1) >
 				    c_list[m_list[monptr].mptr].level) {
 					atype = 99;
 					adesc = 99;
@@ -1149,7 +1149,7 @@ void c__make_attack(long monptr)
 			acount = 1;
 		}
 
-		/* with py.misc do; */
+		/* with player_do; */
 		for (i5 = 1; i5 <= acount; i5++) {
 
 			flag = c__check_for_hit(monptr, atype);
@@ -1839,7 +1839,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			break;
 
 		case 17:
-			if (trunc(py.misc.cmana) > 0) { /*{Drain Mana   }*/
+			if (trunc(player_cmana) > 0) { /*{Drain Mana   }*/
 				stop_player = true;
 				sprintf(outval,
 					"%sdraws psychic energy from you!",
@@ -1851,10 +1851,10 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 				r1 = (randint(c_list[m_list[monptr].mptr].level)
 				      div 2) +
 				     1;
-				if (r1 > py.misc.cmana) {
-					r1 = py.misc.cmana;
+				if (r1 > player_cmana) {
+					r1 = player_cmana;
 				}
-				py.misc.cmana -= r1;
+				player_cmana -= r1;
 				m_list[monptr].hp += 6 * trunc(r1);
 			}
 			break;
@@ -1870,7 +1870,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 				       "breathes black vapors around you!");
 			}
 			msg_print(cdesc);
-			i1 = (py.misc.exp div 100) * MON_DRAIN_LIFE;
+			i1 = (player_exp div 100) * MON_DRAIN_LIFE;
 			breath(c_evil, char_row, char_col, 1, ddesc);
 
 			break;
@@ -2202,8 +2202,7 @@ void creatures(boolean attack)
 										   1) {
 										if (randint(
 											10) >
-										    py.misc
-											.stl) {
+										    player_stl) {
 											m_list[i1]
 											    .csleep -=
 											    (long)(75.0 /

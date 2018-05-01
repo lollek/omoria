@@ -180,8 +180,8 @@ void aim_wand()
 					i1 = item_ptr->data.flags;
 					ident = false;
 
-					/* with py.misc do; */
-					chance = PM.save + PM.lev +
+					/* with player_do; */
+					chance = player_save + player_lev +
 						 spell_adj(INT) -
 						 item_ptr->data.level;
 
@@ -210,11 +210,11 @@ void aim_wand()
 							    &(item_ptr->data));
 						}
 						if (item_ptr->data.flags != 0) {
-							/* with py.misc do; */
-							PM.exp +=
+							/* with player_do; */
+							player_exp +=
 							    (item_ptr->data
 								 .level /
-							     (float)PM.lev) +
+							     (float)player_lev) +
 							    .5;
 							prt_experience();
 						}

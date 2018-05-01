@@ -344,7 +344,7 @@ long sell_price(long snum, long *max_sell, long *min_sell, treasure_type *item)
 
 	if (item->cost > 0) {
 		i1 += trunc(i1 * rgold_adj[owners[stores[snum].owner]
-					       .owner_race][py.misc.prace]);
+					       .owner_race][player_prace]);
 		if (i1 < 1) {
 			i1 = 1;
 		}
@@ -621,17 +621,17 @@ boolean check_store_hours(long st, long sh)
 
 	if (sh != -1) {
 		/* with stores[sh].store_open do; */
-		/* with py.misc do; */
+		/* with player_do; */
 		flag =
-		    ((PM.cur_age.year > stores[sh].store_open.year) ||
-		     ((PM.cur_age.year == stores[sh].store_open.year) &&
-		      ((PM.cur_age.month > stores[sh].store_open.month) ||
-		       ((PM.cur_age.month == stores[sh].store_open.month) &&
-			((PM.cur_age.day > stores[sh].store_open.day) ||
-			 ((PM.cur_age.day == stores[sh].store_open.day) &&
-			  ((PM.cur_age.hour > stores[sh].store_open.hour) ||
-			   ((PM.cur_age.hour == stores[sh].store_open.hour) &&
-			    ((PM.cur_age.secs >
+		    ((player_cur_age.year > stores[sh].store_open.year) ||
+		     ((player_cur_age.year == stores[sh].store_open.year) &&
+		      ((player_cur_age.month > stores[sh].store_open.month) ||
+		       ((player_cur_age.month == stores[sh].store_open.month) &&
+			((player_cur_age.day > stores[sh].store_open.day) ||
+			 ((player_cur_age.day == stores[sh].store_open.day) &&
+			  ((player_cur_age.hour > stores[sh].store_open.hour) ||
+			   ((player_cur_age.hour == stores[sh].store_open.hour) &&
+			    ((player_cur_age.secs >
 			      stores[sh].store_open.secs))))))))));
 	} else {
 		flag = true;
@@ -641,8 +641,8 @@ boolean check_store_hours(long st, long sh)
 	if (flag) {
 		strcpy(name, store_door[st].name);
 		insert_str(name, "the entrance to the ", "");
-		ope = store_hours[sh][PM.cur_age.day % 7 + 0] /* was + 1 */
-				 [PM.cur_age.hour div 2 + 0]; /* was + 1 */
+		ope = store_hours[sh][player_cur_age.day % 7 + 0] /* was + 1 */
+				 [player_cur_age.hour div 2 + 0]; /* was + 1 */
 		switch (ope) {
 		case ' ':
 			return_value = true;
@@ -682,7 +682,7 @@ boolean check_store_hours(long st, long sh)
 			    "Do you wish to play %ld gold to bribe the owner?",
 			    store_bribe[st]);
 			if (get_yes_no(prop)) {
-				if (py.misc.money[TOTAL_] >= store_bribe[st]) {
+				if (player_money[TOTAL_] >= store_bribe[st]) {
 					subtract_money(store_bribe[st] *
 							   GOLD_VALUE,
 						       false);
@@ -746,8 +746,8 @@ void spend_time(long days_spent, vtype place, boolean whole_days)
 	boolean new_screen;
 	vtype out_val;
 
-	/* with py.misc.cur_age do; */
-	turns_today = PM.cur_age.hour * 400 + PM.cur_age.secs;
+	/* with player_cur_age do; */
+	turns_today = player_cur_age.hour * 400 + player_cur_age.secs;
 
 	if (!whole_days) {
 		time_spent = days_spent; /*{if a 6:00 threshold is passed}*/
@@ -766,30 +766,30 @@ void spend_time(long days_spent, vtype place, boolean whole_days)
 
 	switch (days_spent) {
 	case 0:
-		PM.cur_age.secs += time_spent;
-		PM.cur_age.hour += PM.cur_age.secs div 400;
-		PM.cur_age.secs = PM.cur_age.secs % 400;
-		add_days(&(PM.cur_age), PM.cur_age.hour div 24);
-		PM.cur_age.hour = PM.cur_age.hour % 24;
+		player_cur_age.secs += time_spent;
+		player_cur_age.hour += player_cur_age.secs div 400;
+		player_cur_age.secs = player_cur_age.secs % 400;
+		add_days(&(player_cur_age), player_cur_age.hour div 24);
+		player_cur_age.hour = player_cur_age.hour % 24;
 		break;
 
 	case 1:
-		if (PM.cur_age.hour < 6) {
+		if (player_cur_age.hour < 6) {
 			sprintf(out_val,
 				"You spend the remainder of the night %s",
 				place);
 			msg_print(out_val);
-			PM.cur_age.hour = 8; /*{why get up before shops open?}*/
-			PM.cur_age.secs = randint(400) - 1;
+			player_cur_age.hour = 8; /*{why get up before shops open?}*/
+			player_cur_age.secs = randint(400) - 1;
 			time_spent = (time_spent - DAY_LENGTH +
-				      400 * PM.cur_age.hour + PM.cur_age.secs);
+				      400 * player_cur_age.hour + player_cur_age.secs);
 		} else {
 			sprintf(out_val, "You spend the night %s", place);
 			msg_print(out_val);
-			PM.cur_age.hour = 8;
-			add_days(&(PM.cur_age), 1);
-			PM.cur_age.secs = randint(400) - 1;
-			time_spent += 400 * PM.cur_age.hour + PM.cur_age.secs;
+			player_cur_age.hour = 8;
+			add_days(&(player_cur_age), 1);
+			player_cur_age.secs = randint(400) - 1;
+			time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
 		}
 		break;
 
@@ -798,19 +798,19 @@ void spend_time(long days_spent, vtype place, boolean whole_days)
 		/* 10/26/00 --JEB.  what the hell was "28+randint(3)" doing in
 		 */
 		/* this context? */
-		/*    add_days(&(PM.cur_age),28+randint(3)); */
-		add_days(&(PM.cur_age), 3);
-		PM.cur_age.hour = 8 + randint(4);
-		PM.cur_age.secs = randint(400) - 1;
-		time_spent += 400 * PM.cur_age.hour + PM.cur_age.secs;
+		/*    add_days(&(player_cur_age),28+randint(3)); */
+		add_days(&(player_cur_age), 3);
+		player_cur_age.hour = 8 + randint(4);
+		player_cur_age.secs = randint(400) - 1;
+		time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
 		break;
 
 	case 7:
 		msg_print("You spend the week in the inn.");
-		add_days(&(PM.cur_age), 7);
-		PM.cur_age.hour = 8 + randint(4);
-		PM.cur_age.secs = randint(400) - 1;
-		time_spent += 400 * PM.cur_age.hour + PM.cur_age.secs;
+		add_days(&(player_cur_age), 7);
+		player_cur_age.hour = 8 + randint(4);
+		player_cur_age.secs = randint(400) - 1;
+		time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
 		break;
 	}
 
@@ -917,22 +917,22 @@ void spend_time(long days_spent, vtype place, boolean whole_days)
 		store_maint();
 	}
 
-	/* with py.misc do; */
+	/* with player_do; */
 	regen_percent = regen_amount * 2 * time_spent;
 	if (regen_percent > 1.00) {
 		regen_percent = 1.00;
 	}
-	if (PM.chp < PM.mhp) {
+	if (player_chp < player_mhp) {
 		regenhp(regen_percent);
 	}
-	if (PM.chp > PM.mhp) {
-		PM.chp = PM.mhp;
+	if (player_chp > player_mhp) {
+		player_chp = player_mhp;
 	}
-	if (PM.cmana < PM.mana) {
+	if (player_cmana < player_mana) {
 		regenmana(regen_percent);
 	}
-	if (PM.cmana > PM.mana) {
-		PM.cmana = PM.mana;
+	if (player_cmana > player_mana) {
+		player_cmana = player_mana;
 	}
 
 	if (new_screen) {
@@ -1077,7 +1077,7 @@ void store_prt_gold()
 	vtype out_val;
 	ENTER(("store_prt_gold", ""));
 
-	sprintf(out_val, "Gold Remaining : %ld", py.misc.money[TOTAL_]);
+	sprintf(out_val, "Gold Remaining : %ld", player_money[TOTAL_]);
 	prt(out_val, 19, 18);
 
 	LEAVE("store_prt_gold", "");
@@ -1254,15 +1254,15 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 				switch (choice) {
 
 				case 0:
-					/* with py.misc do; */
+					/* with player_do; */
 					flag = false;
-					if (PM.money[TOTAL_] >= price) {
+					if (player_money[TOTAL_] >= price) {
 						subtract_money(
 						    price * GOLD_VALUE, true);
 						flag = true;
 					} else {
 						to_bank =
-						    price - PM.money[TOTAL_];
+						    price - player_money[TOTAL_];
 						flag = send_page(to_bank);
 					}
 
@@ -1539,12 +1539,12 @@ void decrease_insults(long store_num)
 void shut_store(long store_num)
 {
 	/* with stores[store_num] do; */
-	/* with py.misc.cur_age do; */
-	stores[store_num].store_open.year = PM.cur_age.year;
-	stores[store_num].store_open.month = PM.cur_age.month;
-	stores[store_num].store_open.day = PM.cur_age.day;
-	stores[store_num].store_open.hour = PM.cur_age.hour;
-	stores[store_num].store_open.secs = PM.cur_age.secs;
+	/* with player_cur_age do; */
+	stores[store_num].store_open.year = player_cur_age.year;
+	stores[store_num].store_open.month = player_cur_age.month;
+	stores[store_num].store_open.day = player_cur_age.day;
+	stores[store_num].store_open.hour = player_cur_age.hour;
+	stores[store_num].store_open.secs = player_cur_age.secs;
 
 	/* with store_open do; */
 
@@ -1633,7 +1633,7 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 		/* with owners[owner] do; */
 		cost = cost - (long)(cost * chr_adj()) -
 		       (long)(cost * rgold_adj[owners[stores[store_num].owner]
-						   .owner_race][py.misc.prace]);
+						   .owner_race][player_prace]);
 		if (cost < 1) {
 			cost = 1;
 		}

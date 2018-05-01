@@ -4,24 +4,24 @@ static void eb__display_money()
 {
 	vtype out_val;
 
-	sprintf(out_val, " Gold remaining : %ld", py.misc.money[TOTAL_]);
+	sprintf(out_val, " Gold remaining : %ld", player_money[TOTAL_]);
 	prt(out_val, 18, 18);
-	sprintf(out_val, " Account : %ld", py.misc.account);
+	sprintf(out_val, " Account : %ld", player_account);
 	prt(out_val, 16, 20);
 
 	sprintf(out_val, "You have ");
 	put_buffer(out_val, 6, 25);
-	sprintf(out_val, "Mithril  : %10ld", py.misc.money[MITHRIL]);
+	sprintf(out_val, "Mithril  : %10ld", player_money[MITHRIL]);
 	put_buffer(out_val, 8, 25);
-	sprintf(out_val, "Platinum : %10ld", py.misc.money[PLATINUM]);
+	sprintf(out_val, "Platinum : %10ld", player_money[PLATINUM]);
 	put_buffer(out_val, 9, 25);
-	sprintf(out_val, "Gold     : %10ld", py.misc.money[GOLD]);
+	sprintf(out_val, "Gold     : %10ld", player_money[GOLD]);
 	put_buffer(out_val, 10, 25);
-	sprintf(out_val, "Silver   : %10ld", py.misc.money[SILVER]);
+	sprintf(out_val, "Silver   : %10ld", player_money[SILVER]);
 	put_buffer(out_val, 12, 25);
-	sprintf(out_val, "Copper   : %10ld", py.misc.money[COPPER]);
+	sprintf(out_val, "Copper   : %10ld", player_money[COPPER]);
 	put_buffer(out_val, 13, 25);
-	sprintf(out_val, "Iron     : %10ld", py.misc.money[IRON]);
+	sprintf(out_val, "Iron     : %10ld", player_money[IRON]);
 	put_buffer(out_val, 14, 25);
 
 	if (wizard2) {
@@ -89,25 +89,25 @@ static void eb__dep_munny(long mon_type)
 	long deposit;
 	vtype out_val;
 
-	if (py.misc.money[mon_type] > 0) {
+	if (player_money[mon_type] > 0) {
 		do {
 			sprintf(out_val, "How much %s to deposit?",
 				coin_name[mon_type]);
 			if (eb__get_entry(out_val, &deposit)) {
-				if (deposit > py.misc.money[mon_type]) {
+				if (deposit > player_money[mon_type]) {
 					sprintf(out_val,
 						"You do not have that much %s!",
 						coin_name[mon_type]);
 					msg_print(out_val);
 				}
 			}
-		} while (deposit > py.misc.money[mon_type]);
+		} while (deposit > player_money[mon_type]);
 
 		if (deposit > 0) {
 			bank[mon_type] += deposit;
-			py.misc.money[mon_type] -= deposit;
+			player_money[mon_type] -= deposit;
 			inven_weight -= COIN_WEIGHT * deposit;
-			py.misc.account +=
+			player_account +=
 			    trunc(deposit * BANK_SKIM * coin_value[mon_type])
 			    div GOLD_VALUE;
 			eb__display_money();
@@ -145,13 +145,13 @@ static void eb__withdraw_money()
 	do {
 		if (eb__get_entry("How much money to withdraw (in gold)?",
 				  &withdraw)) {
-			if (withdraw > py.misc.account) {
+			if (withdraw > player_account) {
 				msg_print("You do not have that much!");
 				msg_print("You should keep better track of "
 					  "your account!");
 			}
 		}
-	} while (withdraw > py.misc.account);
+	} while (withdraw > player_account);
 
 	/*
 	 * The amount actually given is the minimum of how much the user wants,
@@ -213,10 +213,10 @@ static void eb__withdraw_money()
 						    ? ""
 						    : "s");
 					msg_print(out_val);
-					py.misc.money[mon_type] +=
+					player_money[mon_type] +=
 					    amt_given[mon_type];
 					bank[mon_type] -= amt_given[mon_type];
-					py.misc.account -=
+					player_account -=
 					    amt_given[mon_type] *
 					    coin_value[mon_type] div GOLD_VALUE;
 				}
@@ -255,7 +255,7 @@ static void eb__change_money()
 	if (change_flag) {
 		coin_stuff(key_in, &typ_to);
 		sprintf(prompt, "Number of coins to change? (1-%ld)",
-			py.misc.money[typ_from]);
+			player_money[typ_from]);
 		change_flag = eb__get_entry(prompt, &amount_from);
 	}
 	if (change_flag) {
@@ -267,16 +267,16 @@ static void eb__change_money()
 		} else if (amount_to > bank[typ_to]) {
 			msg_print("The bank doesn't have enough of that kind "
 				  "of coin!");
-		} else if (py.misc.money[typ_from] < amount_from) {
+		} else if (player_money[typ_from] < amount_from) {
 			msg_print("You don't have enough of that coin!");
 		} else if ((inven_weight +
 			    COIN_WEIGHT * (amount_to - amount_from)) >
 			   weight_limit() * 100) {
 			msg_print("You can't carry that much weight.");
 		} else {
-			py.misc.money[typ_from] -= amount_from;
+			player_money[typ_from] -= amount_from;
 			bank[typ_from] += amount_from;
-			py.misc.money[typ_to] += amount_to;
+			player_money[typ_to] += amount_to;
 			bank[typ_to] -= amount_to;
 			inven_weight += COIN_WEIGHT * (amount_to - amount_from);
 			msg_print("The money changer hands you your money.");

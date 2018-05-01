@@ -53,7 +53,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 10: /*{ Portal }*/
-		teleport(py.misc.lev * 3);
+		teleport(player_lev * 3);
 		break;
 
 	case 11: /*{ Cure Medium Wounds }*/
@@ -133,7 +133,7 @@ void divine_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_ball(c_good, dir, char_row, char_col,
-				  damroll("3d6") + py.misc.lev, "Black Sphere");
+				  damroll("3d6") + player_lev, "Black Sphere");
 		}
 		break;
 
@@ -150,7 +150,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 31: /*{ Dispell Undead }*/
-		zap_area(0x0008, 3 * py.misc.lev, c_hp);
+		zap_area(0x0008, 3 * player_lev, c_hp);
 		break;
 
 	case 32: /*{ Resist Paralysis }*/
@@ -162,7 +162,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 34: /*{ Dispell Evil }*/
-		zap_area(0x0004, 3 * py.misc.lev, c_hp);
+		zap_area(0x0004, 3 * player_lev, c_hp);
 		break;
 
 	case 35: /*{ Heal }*/
@@ -194,7 +194,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 40: /*{ Holy Word }*/
-		zap_area(0x0004, 6 * py.misc.lev, c_holy_word);
+		zap_area(0x0004, 6 * player_lev, c_holy_word);
 		cure_me(&py.flags.afraid);
 		cure_me(&py.flags.poisoned);
 		hp_player(1000, "a prayer.");

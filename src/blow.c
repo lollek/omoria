@@ -351,11 +351,11 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		break;
 
 	case 15:
-		/* with py.misc do; */
+		/* with player_do; */
 		loss = 0;
 		for (i3 = 1; i3 <= 6; i3++) {
-			loss += (PM.money[i3] - PM.money[i3] / 2) * COIN_WEIGHT;
-			PM.money[i3] /= 2;
+			loss += (player_money[i3] - player_money[i3] / 2) * COIN_WEIGHT;
+			player_money[i3] /= 2;
 		}
 		inven_weight -= loss;
 		reset_total_cash();
@@ -366,9 +366,9 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		break;
 
 	case 16:
-		/* with py.misc do; */
-		if (PM.cmana < PM.mana) {
-			PM.cmana = PM.mana;
+		/* with player_do; */
+		if (player_cmana < player_mana) {
+			player_cmana = player_mana;
 			ident = true;
 			msg_print("Your feel your head clear...");
 		}
@@ -493,8 +493,8 @@ void blow()
 					draw_cave();
 				}
 				reset_flag = false;
-				/* with py.misc do; */
-				chance = PM.save + PM.lev + bard_adj() -
+				/* with player_do; */
+				chance = player_save + player_lev + bard_adj() -
 					 item_ptr->data.level - 5;
 				if (((py.flags.confused + py.flags.afraid) >
 				     0) &&
@@ -539,11 +539,11 @@ void blow()
 						}
 						if (inven_temp->data.flags !=
 						    0) {
-							/* with py.misc do; */
-							PM.exp +=
+							/* with player_do; */
+							player_exp +=
 							    (item_ptr->data
 								 .level /
-							     (float)PM.lev) +
+							     (float)player_lev) +
 							    .5;
 							prt_experience();
 						}

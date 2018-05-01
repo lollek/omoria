@@ -74,7 +74,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_bolt(0, dir, char_row, char_col,
-				  damroll("1d6") + py.misc.lev div 3 * 2,
+				  damroll("1d6") + player_lev div 3 * 2,
 				  "Insect Swarm");
 		}
 		break;
@@ -83,7 +83,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_bolt(1, dir, char_row, char_col,
-				  damroll("2d8") + py.misc.lev div 2,
+				  damroll("2d8") + player_lev div 2,
 				  "Lightning Bolt");
 		}
 		break;
@@ -122,7 +122,7 @@ void nature_spell_effects(long effect)
 
 	case 22: /*{ Transplant }*/
 		msg_print("You step into a nearby patch of fungus...");
-		teleport(py.misc.lev * 6);
+		teleport(player_lev * 6);
 		break;
 
 	case 23: /*{ Sunray }*/
@@ -144,7 +144,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_line(5, dir, char_row, char_col,
-				  damroll("3d4") + py.misc.lev div 2,
+				  damroll("3d4") + player_lev div 2,
 				  "Stream of Fire");
 		}
 		break;
@@ -170,8 +170,8 @@ void nature_spell_effects(long effect)
 	case 29: /*{ Creeping Doom }   */
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
-			creeping_doom(dir, char_row, char_col, py.misc.lev * 3,
-				      py.misc.lev div 4, "Creeping Doom");
+			creeping_doom(dir, char_row, char_col, player_lev * 3,
+				      player_lev div 4, "Creeping Doom");
 		}
 		break;
 
@@ -179,7 +179,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_bolt(5, dir, char_row, char_col,
-				  damroll("5d8") + py.misc.lev div 3,
+				  damroll("5d8") + player_lev div 3,
 				  "Pillar of Fire");
 		}
 		break;
@@ -191,7 +191,7 @@ void nature_spell_effects(long effect)
 	case 32: /*{ Lightning Ball }*/
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
-			fire_ball(1, dir, char_row, char_col, py.misc.lev,
+			fire_ball(1, dir, char_row, char_col, player_lev,
 				  "Lightning Ball");
 		}
 		break;
@@ -203,7 +203,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 34: /*{ Protection from Monsters }*/
-		py.flags.protmon = (randint(20) + py.misc.lev);
+		py.flags.protmon = (randint(20) + player_lev);
 		break;
 
 	case 35: /*{ Control Temperature }*/
@@ -227,8 +227,8 @@ void nature_spell_effects(long effect)
 
 	case 37: /*{ Resist Charm }*/
 		/* with py.flags do; */
-		PF.free_time += randint(10) + py.misc.lev;
-		PF.magic_prot += randint(10) + py.misc.lev;
+		PF.free_time += randint(10) + player_lev;
+		PF.magic_prot += randint(10) + player_lev;
 		break;
 
 	case 38: /*{ Battle Frenzy }*/
@@ -237,7 +237,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 39: /*{ Dispel Monster }*/
-		zap_area(0x0002, 3 * py.misc.lev, c_hp);
+		zap_area(0x0002, 3 * player_lev, c_hp);
 		break;
 
 	case 40: /*{ Note of Destruction }*/

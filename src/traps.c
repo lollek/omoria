@@ -76,7 +76,7 @@ static void ht__open_pit(long dam)
 /*//////////////////////////////////////////////////////////////////// */
 static void ht__arrow(long dam)
 {
-	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
+	if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
 		take_hit(dam, "an arrow trap");
 		msg_print("An arrow hits you.");
 	} else {
@@ -132,7 +132,7 @@ static void ht__hidden_object(long y, long x)
 /*//////////////////////////////////////////////////////////////////// */
 static void ht__str_dart(long dam)
 {
-	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
+	if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
 		if (lose_stat(STR, "", "A small dart hits you.")) {
 			take_hit(dam, "a dart trap");
 			print_stat |= 0x0001;
@@ -213,7 +213,7 @@ static void ht__confuse_gas(void)
 /*//////////////////////////////////////////////////////////////////// */
 static void ht__slow_dart(long dam)
 {
-	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
+	if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
 		take_hit(dam, "a dart trap");
 		msg_print("A small dart hits you!");
 		PF.slow += randint(20) + 10;
@@ -224,7 +224,7 @@ static void ht__slow_dart(long dam)
 /*//////////////////////////////////////////////////////////////////// */
 static void ht__con_dart(long dam)
 {
-	if (test_hit(125, 0, 0, PM.pac + PM.ptoac)) {
+	if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
 		if (lose_stat(CON, "", "A small dart hits you.")) {
 			take_hit(dam, "a dart trap");
 			print_stat |= 0x0004;
@@ -352,7 +352,7 @@ static void ht__house(long y, long x)
 		default:
 			msg_print(
 			    "They ask you to demonstrate your fighting skill.");
-			battle_game(py.misc.ptohit, "some drunken fighters");
+			battle_game(player_ptohit, "some drunken fighters");
 			break;
 		}
 		break;
@@ -600,7 +600,7 @@ void hit_trap(long *y, long *x)
 	find_flag = false;
 
 	/* with cave[*y][*x]. do; */
-	/* with py.misc do; */
+	/* with player_do; */
 
 	dam = damroll(t_list[cave[*y][*x].tptr].damage);
 

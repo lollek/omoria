@@ -129,64 +129,6 @@ typedef treas_rec *treas_ptr;
 
 /* various player fields */
 
-typedef struct p_misc
-{
-	int64_t xtr_wgt;	  /* { Extra weight limit	} */
-	int64_t account;		  /* { Money in the bank	} */
-	money_type money;	 /* { Money on person	} */
-	game_time_type birth;     /* {Date of char's birth} */
-	game_time_type cur_age;   /* {Current game date	} */
-	time_type play_tm;	/* { Time spent in game	} */
-	uint8_t diffic;     /* { Difficulty of game	} */
-	vtype name;		  /* { Name of character	} */
-	vtype race;		  /* { Race of character	} */
-	vtype sex;		  /* { Sex of character	} */
-	vtype title;		  /* { Character's title	} */
-	vtype tclass;		  /* { Character's class	} */
-	int64_t max_exp;		  /* { Max experience} */
-	int64_t exp;		  /* { Cur experienc	} */
-	int64_t rep;		  /* { XP from good creatures } */
-	int64_t deaths;		  /* {Number of insured restores} */
-	int64_t premium;		  /* {Base cost to restore } */
-	uint16_t age;       /* { Characters age} */
-	uint16_t ht;	/* { Height	} */
-	uint16_t wt;	/* { Weight	} */
-	uint16_t lev;       /* { Level		} */
-	uint16_t max_lev;   /* { Max level explored} */
-	int16_t srh;		  /* { Chance in search} */
-	int16_t fos;		  /* { Frenq of search} */
-	int16_t bth;		  /* { Base to hit	} */
-	int16_t bthb;		  /* { BTH with bows	} */
-	int16_t mana;		  /* { Mana points	} */
-	int16_t mhp;		  /* { Max hit pts	} */
-	int16_t ptohit;		  /* { Pluses to hit	} */
-	int16_t ptodam;		  /* { Pluses to dam	} */
-	int16_t pac;		  /* { Total AC	} */
-	int16_t ptoac;		  /* { Magical AC	} */
-	int16_t dis_th;		  /* { Display +ToHit} */
-	int16_t dis_td;		  /* { Display +ToDam} */
-	int16_t dis_ac;		  /* { Display +ToAC } */
-	int16_t dis_tac;		  /* { Display +ToTAC} */
-	int16_t disarm;		  /* { % to Disarm	} */
-	int16_t save;		  /* { Saving throw	} */
-	int16_t sc;		  /* { Social Class	} */
-	enum class_t pclass;      /* { # of class	} */
-	uint8_t prace;      /* { # of race	} */
-	uint8_t hitdie;     /* { Char hit die	} */
-	uint8_t stl;	/* { Stealth factor} */
-	float expfact;		  /* { Experience factor} */
-	float cmana;		  /* { Cur mana pts  } */
-	float chp;		  /* { Cur hit pts	} */
-	vtype history[5];	 /* array [1..5] of vtype;{ History record} */
-	boolean cheated;	  /*{ gone into wizard or god mode} */
-	int64_t  mr;		  /* { mag.res.lev.delta } */
-	uint8_t quests;     /* { # completed } {FUBAR} */
-	uint16_t cur_quest; /* { creature # of quest } {FUBAR} */
-	time_t creation_time;     /* used as key in master file */
-	int64_t save_count;	  /* compared to master file value */
-	int64_t claim_check;	 /* used to track trading post */
-} p_misc;
-
 typedef struct p_flags
 {
 	boolean insured;      /* { Character insured   } */
@@ -254,7 +196,6 @@ typedef struct p_flags
 
 typedef struct player_type
 {
-	p_misc misc;
 	p_flags flags;
 } player_type;
 

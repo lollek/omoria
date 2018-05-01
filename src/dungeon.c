@@ -86,21 +86,21 @@ long get_money_type(string prompt, boolean *back, boolean no_check)
 
 	strncpy(out_val, prompt, sizeof(string));
 
-	if ((py.misc.money[6] > 0) || (no_check))
+	if ((player_money[6] > 0) || (no_check))
 		s__get_money_type__prompt_money("<m>ithril", out_val,
 						&comma_flag);
-	if ((py.misc.money[5] > 0) || (no_check))
+	if ((player_money[5] > 0) || (no_check))
 		s__get_money_type__prompt_money("<p>latinum", out_val,
 						&comma_flag);
-	if ((py.misc.money[4] > 0) || (no_check))
+	if ((player_money[4] > 0) || (no_check))
 		s__get_money_type__prompt_money("<g>old", out_val, &comma_flag);
-	if ((py.misc.money[3] > 0) || (no_check))
+	if ((player_money[3] > 0) || (no_check))
 		s__get_money_type__prompt_money("<s>ilver", out_val,
 						&comma_flag);
-	if ((py.misc.money[2] > 0) || (no_check))
+	if ((player_money[2] > 0) || (no_check))
 		s__get_money_type__prompt_money("<c>opper", out_val,
 						&comma_flag);
-	if ((py.misc.money[1] > 0) || (no_check))
+	if ((player_money[1] > 0) || (no_check))
 		s__get_money_type__prompt_money("<i>ron", out_val, &comma_flag);
 
 	prt(out_val, 1, 1);
@@ -120,23 +120,23 @@ long get_money_type(string prompt, boolean *back, boolean no_check)
 			break;
 		case 109:
 			test_flag =
-			    ((py.misc.money[MITHRIL] > 0) || (no_check));
+			    ((player_money[MITHRIL] > 0) || (no_check));
 			break;
 		case 112:
 			test_flag =
-			    ((py.misc.money[PLATINUM] > 0) || (no_check));
+			    ((player_money[PLATINUM] > 0) || (no_check));
 			break;
 		case 103:
-			test_flag = ((py.misc.money[GOLD] > 0) || (no_check));
+			test_flag = ((player_money[GOLD] > 0) || (no_check));
 			break;
 		case 115:
-			test_flag = ((py.misc.money[SILVER] > 0) || (no_check));
+			test_flag = ((player_money[SILVER] > 0) || (no_check));
 			break;
 		case 99:
-			test_flag = ((py.misc.money[COPPER] > 0) || (no_check));
+			test_flag = ((player_money[COPPER] > 0) || (no_check));
 			break;
 		case 105:
-			test_flag = ((py.misc.money[IRON] > 0) || (no_check));
+			test_flag = ((player_money[IRON] > 0) || (no_check));
 			break;
 		} /* end switch */
 	} while (!test_flag);
@@ -177,7 +177,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 		print_stat = uor(0x0001, print_stat);
 	}
 	if (uand(Magic_proof_worn_bit, tobj->flags2) != 0) {
-		py.misc.save += (25 * factor);
+		player_save += (25 * factor);
 	}
 	if (uand(Bad_repute_worn_bit, tobj->flags2) != 0) {
 		change_rep(
@@ -185,7 +185,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 		    factor); /*{XXX hey!  this is bad! new variable!-ste}*/
 	}
 	if (uand(Disarm_worn_bit, tobj->flags2) != 0) {
-		py.misc.disarm += (tobj->p1 * factor);
+		player_disarm += (tobj->p1 * factor);
 	}
 	if (uand(Dexterity_worn_bit, tobj->flags) != 0) {
 		change_stat(DEX, tobj->p1, factor);
@@ -208,11 +208,11 @@ void py_bonuses(treasure_type *tobj, long factor)
 		print_stat = uor(0x0020, print_stat);
 	}
 	if (uand(Searching_worn_bit, tobj->flags) != 0) {
-		py.misc.srh += (tobj->p1 * factor);
-		py.misc.fos -= (tobj->p1 * factor);
+		player_srh += (tobj->p1 * factor);
+		player_fos -= (tobj->p1 * factor);
 	}
 	if (uand(Stealth_worn_bit, tobj->flags) != 0) {
-		py.misc.stl += (tobj->p1 * factor) + factor;
+		player_stl += (tobj->p1 * factor) + factor;
 	}
 	if (uand(Speed_worn_bit, tobj->flags) != 0) {
 		i1 = tobj->p1 * factor;
@@ -262,48 +262,48 @@ void py_bonuses(treasure_type *tobj, long factor)
 			i1 = 500;
 			break;
 		}
-		py.misc.xtr_wgt += i1 * factor;
+		player_xtr_wgt += i1 * factor;
 	}
 
-	/* with py.misc do; */
-	old_dis_ac = PM.dis_ac;
-	PM.ptohit = tohit_adj(); /*{ Real To Hit   } */
-	PM.ptodam = todam_adj(); /*{ Real To Dam   } */
-	PM.ptoac = toac_adj();   /*{ Real To AC    } */
-	PM.pac = 0;		 /*{ Real AC       } */
-	PM.dis_th = PM.ptohit;   /*{ Display To Hit        } */
-	PM.dis_td = PM.ptodam;   /*{ Display To Dam        } */
-	PM.dis_ac = 0;		 /*{ Display To AC         } */
-	PM.dis_tac = PM.ptoac;   /*{ Display AC            } */
+	/* with player_do; */
+	old_dis_ac = player_dis_ac;
+	player_ptohit = tohit_adj(); /*{ Real To Hit   } */
+	player_ptodam = todam_adj(); /*{ Real To Dam   } */
+	player_ptoac = toac_adj();   /*{ Real To AC    } */
+	player_pac = 0;		 /*{ Real AC       } */
+	player_dis_th = player_ptohit;   /*{ Display To Hit        } */
+	player_dis_td = player_ptodam;   /*{ Display To Dam        } */
+	player_dis_ac = 0;		 /*{ Display To AC         } */
+	player_dis_tac = player_ptoac;   /*{ Display AC            } */
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 		/* with equipment[i1] do; */
 		if (equipment[i1].tval > 0) {
 			if (uand(Cursed_worn_bit, equipment[i1].flags) == 0) {
-				PM.pac += equipment[i1].ac;
-				PM.dis_ac += equipment[i1].ac;
+				player_pac += equipment[i1].ac;
+				player_dis_ac += equipment[i1].ac;
 			}
-			PM.ptohit += equipment[i1].tohit;
-			PM.ptodam += equipment[i1].todam;
-			PM.ptoac += equipment[i1].toac;
+			player_ptohit += equipment[i1].tohit;
+			player_ptodam += equipment[i1].todam;
+			player_ptoac += equipment[i1].toac;
 			if (strstr(equipment[i1].name, "^") == NULL) {
-				PM.dis_th += equipment[i1].tohit;
-				PM.dis_td += equipment[i1].todam;
-				PM.dis_tac += equipment[i1].toac;
+				player_dis_th += equipment[i1].tohit;
+				player_dis_td += equipment[i1].todam;
+				player_dis_tac += equipment[i1].toac;
 			}
 		}
 	}
-	PM.dis_ac += PM.dis_tac;
+	player_dis_ac += player_dis_tac;
 
 	/* { Add in temporary spell increases	}*/
 	/* with py.flags do; */
 	if (PF.invuln > 0) {
-		PM.pac += 100;
-		PM.dis_ac += 100;
+		player_pac += 100;
+		player_dis_ac += 100;
 	}
 	if (PF.blessed > 0) {
-		PM.pac += 5;
-		PM.dis_ac += 5;
+		player_pac += 5;
+		player_dis_ac += 5;
 	}
 	if (PF.detect_inv > 0) {
 		PF.see_inv =
@@ -311,7 +311,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 			     you are going to lose magic detect_inv ? */
 	}
 
-	if (old_dis_ac != PM.dis_ac) {
+	if (old_dis_ac != player_dis_ac) {
 		print_stat = uor(0x0040, print_stat);
 	}
 	item_flags2 = 0;
@@ -381,19 +381,19 @@ void update_stat(stat_set tstat)
 
 void change_rep(long amt)
 {
-	/* with py.misc do; */
+	/* with player_do; */
 	if ((amt < 0) ||
-	    (PM.rep + amt <= 0)) { /*{bad deed or make up for sins}*/
-		PM.rep += amt;
+	    (player_rep + amt <= 0)) { /*{bad deed or make up for sins}*/
+		player_rep += amt;
 	} else { /*{ good deed that puts char into positive reputation }*/
 		 /*{ good characters progress slowly -- past 0 it costs 2, past
 		  * 20 costs 3...}*/
-		if (PM.rep < 0) { /*{ go from bad to good }*/
-			amt += PM.rep;
-			PM.rep = 0;
+		if (player_rep < 0) { /*{ go from bad to good }*/
+			amt += player_rep;
+			player_rep = 0;
 		} /*{increase goodness}*/
-		PM.rep =
-		    trunc(sqrt((20 + PM.rep) * (20 + PM.rep) + 40 * amt) - 20);
+		player_rep =
+		    trunc(sqrt((20 + player_rep) * (20 + player_rep) + 40 * amt) - 20);
 	}
 }
 
@@ -942,7 +942,7 @@ long react(long x)
 
 	long ans;
 
-	ans = (player_stats_curr[CHR] + PM.rep * 2 + randint(200) + randint(200) +
+	ans = (player_stats_curr[CHR] + player_rep * 2 + randint(200) + randint(200) +
 	       randint(200))div 50 +
 	      x - 4;
 
@@ -967,9 +967,9 @@ void battle_game(long plus, vtype kb_str)
 		score = 0;
 		time = 10;
 
-		/* with py.misc do; */
+		/* with player_do; */
 		for (i1 = 1; i1 <= 7; i1++) {
-			if (player_test_hit(PM.bth, PM.lev, plus, 20 * i1,
+			if (player_test_hit(player_bth, player_lev, plus, 20 * i1,
 					    false)) {
 				score++;
 				time = time * 2 + 10;
@@ -1010,7 +1010,7 @@ void battle_game(long plus, vtype kb_str)
 			msg_print("You handle them all with ease!");
 			msg_print(
 			    "'Thanks for the workout! Come back anytime!!'");
-			py.misc.exp += 10;
+			player_exp += 10;
 			change_rep(5);
 			break;
 
@@ -1032,11 +1032,11 @@ void brothel_game()
 {
 	if (get_yes_no("Do you accept?")) {
 		change_rep(-3);
-		/* with py.misc do; */
-		if ((PM.disarm + PM.lev + 2 * todis_adj() + spell_adj(INT)) >
+		/* with player_do; */
+		if ((player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT)) >
 		    randint(100)) {
 			msg_print("Good! You are invited to join the house!");
-			PM.exp += 5;
+			player_exp += 5;
 			spend_time(600, "putting out for peasants", false);
 		} else {
 			msg_print("You fail to please your customers.");
@@ -1052,7 +1052,7 @@ void guild_or_not(boolean passed)
 	if (passed) {
 		spend_time(600, "showing off your skills", false);
 		msg_print("Good! You are invited to join the guild!");
-		py.misc.exp += 5;
+		player_exp += 5;
 		change_rep(-3);
 	} else {
 		spend_time(400, "or lack thereof", false);
@@ -1075,14 +1075,14 @@ void thief_games()
 		msg_print("The thieves invite you to prove your ability to "
 			  "pick locks.");
 		if (get_yes_no("Do you accept?")) {
-			/* with py.misc do; */
-			guild_or_not((PM.disarm + PM.lev + 2 * todis_adj() +
+			/* with player_do; */
+			guild_or_not((player_disarm + player_lev + 2 * todis_adj() +
 				      spell_adj(INT)) > randint(100));
 		}
 	} else {
 		msg_print("The thieves invite you to show your stealthiness.");
 		if (get_yes_no("Do you accept?")) {
-			guild_or_not(py.misc.stl > randint(12));
+			guild_or_not(player_stl > randint(12));
 		}
 	}
 }
@@ -1150,7 +1150,7 @@ void eat_the_meal()
 
 	default:
 		if ((yummers > 0) ||
-		    player_saves(py.misc.lev + 5 * spell_adj(CON))) {
+		    player_saves(player_lev + 5 * spell_adj(CON))) {
 			msg_print(
 			    "It was a boring meal, and you eat very little.");
 			py.flags.foodc = old_food;
@@ -1273,16 +1273,16 @@ void worship()
 
 		msg_print("The priest asks for donations for a new church.");
 		if (get_yes_no("Will you give him some money?")) {
-			/* with py.misc do; */
-			if (PM.money[TOTAL_] > 0) {
+			/* with player_do; */
+			if (player_money[TOTAL_] > 0) {
 				msg_print("Bless you, dude!");
 
-				i1 = ((randint(12) * PM.money[TOTAL_])div 1000 +
+				i1 = ((randint(12) * player_money[TOTAL_])div 1000 +
 				      20) *
 				     GOLD_VALUE;
-				if (i1 > PM.money[TOTAL_] * GOLD_VALUE div 2) {
+				if (i1 > player_money[TOTAL_] * GOLD_VALUE div 2) {
 					i1 =
-					    PM.money[TOTAL_] * GOLD_VALUE div 2;
+					    player_money[TOTAL_] * GOLD_VALUE div 2;
 				}
 
 				subtract_money(i1, false);
@@ -1352,14 +1352,14 @@ void beg_money()
 	msg_print("The occupants beg you for money.");
 
 	if (get_yes_no("Will you give them some?")) {
-		/* with py.misc do; */
-		if (PM.money[TOTAL_] > 0) {
+		/* with player_do; */
+		if (player_money[TOTAL_] > 0) {
 			msg_print("How kind of you!");
 			spend_time(100, "giving handouts", false);
-			i1 = ((randint(12) * PM.money[TOTAL_])div 1000 + 20) *
+			i1 = ((randint(12) * player_money[TOTAL_])div 1000 + 20) *
 			     GOLD_VALUE;
-			if (i1 > PM.money[TOTAL_] * GOLD_VALUE div 2) {
-				i1 = PM.money[TOTAL_] * GOLD_VALUE div 2;
+			if (i1 > player_money[TOTAL_] * GOLD_VALUE div 2) {
+				i1 = player_money[TOTAL_] * GOLD_VALUE div 2;
 			}
 			subtract_money(i1, false);
 			prt_weight();
@@ -1400,9 +1400,9 @@ boolean player_test_hit(long bth, long level, long pth, long ac,
 	i1 = bth + pth * BTH_PLUS_ADJ;
 
 	if (was_fired) {
-		i1 += (level * class_ranged_bonus(py.misc.pclass)) / 2;
+		i1 += (level * class_ranged_bonus(player_pclass)) / 2;
 	} else {
-		i1 += (level * class_melee_bonus(py.misc.pclass)) / 2;
+		i1 += (level * class_melee_bonus(player_pclass)) / 2;
 	}
 
 	if (randint(i1) > ac) {
@@ -1634,42 +1634,42 @@ void xp_loss(long amount)
 	long av_mn, lose_mn;
 	boolean flag;
 
-	amount = (py.misc.exp / 100) * MON_DRAIN_LIFE; /* passed val?  XXXX */
+	amount = (player_exp / 100) * MON_DRAIN_LIFE; /* passed val?  XXXX */
 
-	/* with py.misc do; */
+	/* with player_do; */
 	msg_print("You feel your life draining away!");
-	if (amount > PM.exp) {
-		PM.exp = 0;
+	if (amount > player_exp) {
+		player_exp = 0;
 	} else {
-		PM.exp -= amount;
+		player_exp -= amount;
 	}
 
-	for (i1 = 1; (long)(player_exp[i1] * PM.expfact) <= PM.exp;) {
+	for (i1 = 1; (long)(exp_per_level[i1] * player_expfact) <= player_exp;) {
 		i1++;
 	}
-	i2 = PM.lev - i1;
+	i2 = player_lev - i1;
 
 	for (; i2 > 0;) {
-		av_hp = (PM.mhp / PM.lev);
-		av_mn = (PM.mana / PM.lev);
-		PM.lev--;
+		av_hp = (player_mhp / player_lev);
+		av_mn = (player_mana / player_lev);
+		player_lev--;
 		i2--;
 		lose_hp = randint(av_hp * 2 - 1);
 		lose_mn = randint(av_mn * 2 - 1);
-		PM.mhp -= lose_hp;
-		PM.mana -= lose_mn;
-		if (PM.mhp < 1) {
-			PM.mhp = 1;
+		player_mhp -= lose_hp;
+		player_mana -= lose_mn;
+		if (player_mhp < 1) {
+			player_mhp = 1;
 		}
-		if (PM.mana < 0) {
-			PM.mana = 0;
+		if (player_mana < 0) {
+			player_mana = 0;
 		}
 
-		if (class_uses_magic(PM.pclass, M_ARCANE) ||
-		    class_uses_magic(PM.pclass, M_DIVINE) ||
-		    class_uses_magic(PM.pclass, M_NATURE) ||
-		    class_uses_magic(PM.pclass, M_SONG) ||
-		    class_uses_magic(PM.pclass, M_CHAKRA)) {
+		if (class_uses_magic(player_pclass, M_ARCANE) ||
+		    class_uses_magic(player_pclass, M_DIVINE) ||
+		    class_uses_magic(player_pclass, M_NATURE) ||
+		    class_uses_magic(player_pclass, M_SONG) ||
+		    class_uses_magic(player_pclass, M_CHAKRA)) {
 			i1 = 32;
 			flag = false;
 			do {
@@ -1680,14 +1680,14 @@ void xp_loss(long amount)
 			} while (!((flag) || (i1 < 2)));
 			if (flag) {
 				class_spell(pclass, i1)->learned = false;
-				if (class_uses_magic(PM.pclass, M_ARCANE)) {
+				if (class_uses_magic(player_pclass, M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_magic(PM.pclass,
+				} else if (class_uses_magic(player_pclass,
 							    M_DIVINE)) {
 					msg_print(
 					    "You have forgotten a prayer!");
-				} else if (class_uses_magic(PM.pclass,
+				} else if (class_uses_magic(player_pclass,
 							    M_SONG)) {
 					msg_print("You have forgotten a song!");
 				} else {
@@ -1698,14 +1698,14 @@ void xp_loss(long amount)
 		}
 	}
 
-	if (PM.chp > PM.mhp) {
-		PM.chp = PM.mhp;
+	if (player_chp > player_mhp) {
+		player_chp = player_mhp;
 	}
-	if (PM.cmana > PM.mana) {
-		PM.cmana = PM.mana;
+	if (player_cmana > player_mana) {
+		player_cmana = player_mana;
 	}
 
-	strcpy(PM.title, player_title[PM.pclass][PM.lev]);
+	strcpy(player_title, player_titles[player_pclass][player_lev]);
 
 	prt_experience();
 	prt_hp();
@@ -2299,7 +2299,7 @@ long mon_take_hit(long monptr, long dam)
 		monster_death(m_list[monptr].fy, m_list[monptr].fx,
 			      c_list[m_list[monptr].mptr].cmove);
 
-		if ((m_list[monptr].mptr == py.misc.cur_quest) &&
+		if ((m_list[monptr].mptr == player_cur_quest) &&
 		    (PF.quested)) {
 			PF.quested = false;
 			prt_quested();
@@ -2309,35 +2309,35 @@ long mon_take_hit(long monptr, long dam)
 		}
 
 		/* with c_list[m_list[monptr].mptr]. do; */
-		/* with py.misc do; */
+		/* with player_do; */
 		if (((c_list[m_list[monptr].mptr].cmove & 0x00004000) == 0) &&
 		    (c_list[m_list[monptr].mptr].mexp > 0)) {
 
 			acc_tmp = (c_list[m_list[monptr].mptr].mexp *
 				   ((c_list[m_list[monptr].mptr].level + 0.1) /
-				    (float)PM.lev));
+				    (float)player_lev));
 			i1 = (long)(acc_tmp);
 			acc_exp += (acc_tmp - i1);
 			if (acc_exp > 1) {
 				i1++;
 				acc_exp -= 1.0;
 			}
-			PM.exp += i1;
+			player_exp += i1;
 
 		} else if (c_list[m_list[monptr].mptr].mexp > 0) {
 
 			change_rep(-c_list[m_list[monptr].mptr].mexp);
-			if (py.misc.rep > -250) {
+			if (player_rep > -250) {
 				msg_print("The townspeople look at you sadly.");
 				msg_print("They shake their heads at the "
 					  "needless violence.");
-			} else if (py.misc.rep > -1000) {
+			} else if (player_rep > -1000) {
 				monster_summon_by_name(char_row, char_col,
 						       "Town Guard", true,
 						       false);
 				msg_print(
 				    "The townspeople call for the guards!");
-			} else if (py.misc.rep > -2500) {
+			} else if (player_rep > -2500) {
 				monster_summon_by_name(char_row, char_col,
 						       "Town Wizard", true,
 						       false);
@@ -2542,7 +2542,7 @@ boolean py_attack(long y, long x)
 	a_cptr = cave[y][x].cptr;
 	a_mptr = m_list[a_cptr].mptr;
 
-	if ((PM.pclass == C_ROGUE) && (m_list[a_cptr].csleep != 0)) {
+	if ((player_pclass == C_ROGUE) && (m_list[a_cptr].csleep != 0)) {
 		backstab_flag = true;
 	} else {
 		backstab_flag = false;
@@ -2555,7 +2555,7 @@ boolean py_attack(long y, long x)
 		blows = attack_blows(equipment[Equipment_primary].weight,
 				     &tot_tohit);
 	} else { /*{ Bare hands?   }*/
-		if (PM.pclass == C_MONK) {
+		if (player_pclass == C_MONK) {
 			blows = attack_blows(12000, &tot_tohit) +
 				1; /* a bit heavy handed... */
 			tot_tohit = 0;
@@ -2566,26 +2566,26 @@ boolean py_attack(long y, long x)
 	}
 
 	if (backstab_flag) {
-		tot_tohit += (PM.lev / 4);
+		tot_tohit += (player_lev / 4);
 	}
 
 	/*{ Adjust weapons for class }*/
-	if (PM.pclass == C_WARRIOR) {
-		tot_tohit += 1 + (PM.lev / 2);
+	if (player_pclass == C_WARRIOR) {
+		tot_tohit += 1 + (player_lev / 2);
 
-	} else if ((PM.pclass == C_MAGE) &&
+	} else if ((player_pclass == C_MAGE) &&
 		   (is_in(equipment[Equipment_primary].tval, mages_suck))) {
 		tot_tohit -= 5;
 
-	} else if ((PM.pclass == C_PRIEST) &&
+	} else if ((player_pclass == C_PRIEST) &&
 		   (is_in(equipment[Equipment_primary].tval, priests_suck))) {
 		tot_tohit -= 4;
 
-	} else if ((PM.pclass == C_DRUID) &&
+	} else if ((player_pclass == C_DRUID) &&
 		   (is_in(equipment[Equipment_primary].tval, druids_suck))) {
 		tot_tohit -= 4;
 
-	} else if ((PM.pclass == C_MONK) &&
+	} else if ((player_pclass == C_MONK) &&
 		   (is_in(equipment[Equipment_primary].tval, monks_suck))) {
 		tot_tohit -= 3;
 	}
@@ -2594,11 +2594,11 @@ boolean py_attack(long y, long x)
 	if (is_in(equipment[Equipment_primary].tval, catch_this)) {
 		blows = 1;
 	}
-	tot_tohit += PM.ptohit;
+	tot_tohit += player_ptohit;
 
 	/*{ stopped from killing town creatures?? }*/
 	if (((c_list[a_mptr].cmove & 0x00004000) == 0) ||
-	    (randint(100) < -PM.rep)) {
+	    (randint(100) < -player_rep)) {
 		mean_jerk_flag = true;
 	} else {
 		mean_jerk_flag = get_yes_no("Are you sure you want to?");
@@ -2606,9 +2606,9 @@ boolean py_attack(long y, long x)
 
 	/*{ Loop for number of blows, trying to hit the critter...        }*/
 	if (mean_jerk_flag) {
-		/* with py.misc do; */
+		/* with player_do; */
 		do {
-			if (player_test_hit(PM.bth, PM.lev, tot_tohit,
+			if (player_test_hit(player_bth, player_lev, tot_tohit,
 					    c_list[a_mptr].ac, false)) {
 				if (backstab_flag) {
 					sprintf(out_val, "You backstab %s!",
@@ -2637,17 +2637,17 @@ boolean py_attack(long y, long x)
 					    equipment[Equipment_primary].weight,
 					    tot_tohit, is_sharp, false);
 					if (backstab_flag) {
-						i3 *= ((PM.lev div 7) + 1);
+						i3 *= ((player_lev div 7) + 1);
 					}
-					if (PM.pclass == C_WARRIOR) {
-						i3 += (PM.lev div 3);
+					if (player_pclass == C_WARRIOR) {
+						i3 += (player_lev div 3);
 					}
 					i3 += (i3 + 5) * crit_mult;
 
 				} else { /*{ Bare hands!?  }*/
-					if (PM.pclass == C_MONK) {
+					if (player_pclass == C_MONK) {
 						i3 = randint(
-						    (4 + 2 * PM.lev)div 3);
+						    (4 + 2 * player_lev)div 3);
 						crit_mult = critical_blow(
 						    12000, 0, false, false);
 						if (randint(crit_mult + 2) >
@@ -2663,7 +2663,7 @@ boolean py_attack(long y, long x)
 					}
 				}
 
-				i3 += PM.ptodam;
+				i3 += player_ptodam;
 				if (i3 < 0) {
 					i3 = 0;
 				}
@@ -2908,8 +2908,8 @@ void add_food(long num)
 	if (PF.foodc > PLAYER_FOOD_MAX) {
 		msg_print("You're getting fat from eating so much.");
 		PF.foodc = PLAYER_FOOD_MAX;
-		py.misc.wt += trunc(py.misc.wt * 0.1);
-		if (py.misc.wt > max_allowable_weight()) {
+		player_wt += trunc(player_wt * 0.1);
+		if (player_wt > max_allowable_weight()) {
 			msg_print("Oh no...  Now you've done it.");
 			death = true;
 			moria_flag = true;
@@ -3008,9 +3008,9 @@ boolean cast_spell(vtype prompt, treas_ptr item_ptr, long *sn, long *sc,
 		}
 		if (i3 > 0) {
 			i3--;
-			if ((class_spell(py.misc.pclass, i3)->slevel <=
-			     py.misc.lev) &&
-			    (class_spell(py.misc.pclass, i3)->learned)) {
+			if ((class_spell(player_pclass, i3)->slevel <=
+			     player_lev) &&
+			    (class_spell(player_pclass, i3)->learned)) {
 				aspell[i1++].splnum = i3;
 				num = i1;
 			} else {
@@ -3055,24 +3055,24 @@ static void d__examine_book()
 			    false, false)) {
 		flag = true;
 		/* with item_ptr->data. do; */
-		if (class_uses_magic(PM.pclass, M_ARCANE)) {
+		if (class_uses_magic(player_pclass, M_ARCANE)) {
 			if (item_ptr->data.tval != magic_book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class_uses_magic(PM.pclass, M_DIVINE)) {
+		} else if (class_uses_magic(player_pclass, M_DIVINE)) {
 			if (item_ptr->data.tval != prayer_book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class_uses_magic(PM.pclass, M_NATURE)) {
+		} else if (class_uses_magic(player_pclass, M_NATURE)) {
 			if (item_ptr->data.tval != instrument) {
 				msg_print("You do not posses the talent.");
 				flag = false;
 			}
-		} else if (class_uses_magic(PM.pclass, M_SONG)) {
+		} else if (class_uses_magic(player_pclass, M_SONG)) {
 			if (item_ptr->data.tval != song_book) {
 				msg_print("You can not read the music.");
 				flag = false;
@@ -3099,19 +3099,19 @@ static void d__examine_book()
 				if (i3 > 0) {
 					i3--;
 					i5++;
-					if (class_spell(PM.pclass, i3)->slevel <
+					if (class_spell(player_pclass, i3)->slevel <
 					    99) {
 						sprintf(out_val,
 							"%c) %-30s%2d     "
 							" %2d   %s",
 							(char)(96 + i5),
-							class_spell(PM.pclass,
+							class_spell(player_pclass,
 								    i3)->sname,
-							class_spell(PM.pclass,
+							class_spell(player_pclass,
 								    i3)->slevel,
-							class_spell(PM.pclass,
+							class_spell(player_pclass,
 								    i3)->smana,
-							class_spell(PM.pclass,
+							class_spell(player_pclass,
 								    i3)->learned
 							    ? "true"
 							    : "false");
@@ -3263,8 +3263,8 @@ void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 	/*{ Throwing objects                      }*/
 
 	*tdam = damroll(inven_temp->data.damage) + inven_temp->data.todam;
-	*tbth = trunc(py.misc.bthb * 0.75);
-	*tpth = py.misc.ptohit + inven_temp->data.tohit;
+	*tbth = trunc(player_bthb * 0.75);
+	*tpth = player_ptohit + inven_temp->data.tohit;
 	*tdis = trunc((player_stats_curr[STR] + 100) * 200 / tmp_weight);
 
 	if (*tdis > 10) {
@@ -3306,7 +3306,7 @@ void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 			break;
 		}
 
-		*tbth = py.misc.bthb;
+		*tbth = player_bthb;
 		*tpth += equipment[Equipment_primary].tohit;
 		inven_temp->data.weight +=
 		    equipment[Equipment_primary].weight + 5000;
@@ -3448,7 +3448,7 @@ void d__throw_object(boolean to_be_fired)
 							/* do; */
 							tbth -= cur_dis;
 							if (player_test_hit(
-								tbth, PM.lev,
+								tbth, player_lev,
 								tpth,
 								c_list
 								    [m_list
@@ -3735,9 +3735,9 @@ void d__sun_rise_or_set()
 	long i1, i2;
 
 	/*{ Sunrise and Sunset on town level	  -KRC-	}*/
-	/* with py.misc.cur_age do; */
+	/* with player_cur_age do; */
 	if (dun_level == 0) {
-		if ((PM.cur_age.hour == 6) && (PM.cur_age.secs == 0)) {
+		if ((player_cur_age.hour == 6) && (player_cur_age.secs == 0)) {
 			for (i1 = 1; i1 <= cur_height; i1++) {
 				for (i2 = 1; i2 <= cur_width; i2++) {
 					cave[i1][i2].pl = true;
@@ -3745,7 +3745,7 @@ void d__sun_rise_or_set()
 			}
 			store_maint();
 			draw_cave();
-		} else if ((PM.cur_age.hour == 18) && (PM.cur_age.secs == 0)) {
+		} else if ((player_cur_age.hour == 18) && (player_cur_age.secs == 0)) {
 			for (i1 = 1; i1 <= cur_height; i1++) {
 				for (i2 = 1; i2 <= cur_width; i2++) {
 					if (cave[i1][i2].fval !=
@@ -3914,10 +3914,10 @@ void d__check_food()
 					move_char(5);
 				}
 				prt_hunger();
-				py.misc.wt -= trunc(py.misc.wt * 0.015);
+				player_wt -= trunc(player_wt * 0.015);
 				d__hunger_interrupt(
 				    "Your clothes seem to be getting loose.");
-				if (py.misc.wt < min_allowable_weight()) {
+				if (player_wt < min_allowable_weight()) {
 					msg_print(
 					    "Oh no...  Now you've done it.");
 					death = true;
@@ -3997,7 +3997,7 @@ void d__eat_food()
 void d__regenerate()
 {
 	/*{ Regenerate            }*/
-	/* with py.misc do; */
+	/* with player_do; */
 	if (PF.regenerate) {
 		regen_amount *= 1.5;
 	}
@@ -4005,11 +4005,11 @@ void d__regenerate()
 		regen_amount *= 2;
 	}
 	if (py.flags.poisoned < 1) {
-		if (PM.chp < PM.mhp) {
+		if (player_chp < player_mhp) {
 			regenhp(regen_amount);
 		}
 	}
-	if (PM.cmana < PM.mana) {
+	if (player_cmana < player_mana) {
 		regenmana(regen_amount);
 	}
 }
@@ -4100,7 +4100,7 @@ void d__update_blade_barrier()
 
 	/*{ Blade Barrier }*/
 	if (PF.blade_ring > 0) {
-		explode(c_null, char_row, char_col, 12 + randint(py.misc.lev),
+		explode(c_null, char_row, char_col, 12 + randint(player_lev),
 			"Blade Barrier");
 		PF.blade_ring--;
 	}
@@ -4112,11 +4112,11 @@ void d__update_magic_protect()
 	if (PF.magic_prot > 0) {
 		if ((IS_MAGIC_PROTECED & PF.status) == 0) {
 			PF.status |= IS_MAGIC_PROTECED;
-			py.misc.save += 25;
+			player_save += 25;
 		}
 		PF.magic_prot--;
 		if (PF.magic_prot == 0) {
-			py.misc.save -= 25;
+			player_save -= 25;
 			PF.status &= ~IS_MAGIC_PROTECED;
 		}
 	}
@@ -4136,12 +4136,12 @@ void d__update_stealth()
 	if (PF.temp_stealth > 0) {
 		if ((IS_STEALTHY & PF.status) == 0) {
 			PF.status |= IS_STEALTHY;
-			py.misc.stl += 3;
+			player_stl += 3;
 		}
 		PF.temp_stealth--;
 		if (PF.temp_stealth == 0) {
 			PF.status &= ~IS_STEALTHY;
-			py.misc.stl -= 3;
+			player_stl -= 3;
 			msg_print("The monsters can once again detect you with "
 				  "ease.");
 		}
@@ -4339,7 +4339,7 @@ void d__update_resting()
 		/*if (want_trap) { dump_ast_mess; XXXX}*/
 		if (PF.rest == 0) { /*{ Resting over          }*/
 			if (PF.resting_till_full &&
-			    (PM.cmana < PM.mana || PM.chp < PM.mhp)) {
+			    (player_cmana < player_mana || player_chp < player_mhp)) {
 				PF.rest = 20;
 				turn_counter += PF.rest;
 			} else {
@@ -4424,8 +4424,8 @@ void d__update_invulnerable()
 				move_char(5);
 			}
 			msg_print("Your skin turns into steel!");
-			py.misc.pac += 100;
-			py.misc.dis_ac += 100;
+			player_pac += 100;
+			player_dis_ac += 100;
 			prt_pac();
 		}
 		PF.invuln--;
@@ -4435,8 +4435,8 @@ void d__update_invulnerable()
 				move_char(5);
 			}
 			msg_print("Your skin returns to normal...");
-			py.misc.pac -= 100;
-			py.misc.dis_ac -= 100;
+			player_pac -= 100;
+			player_dis_ac -= 100;
 			prt_pac();
 		}
 	}
@@ -4451,11 +4451,11 @@ void d__update_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			/* with py.misc do; */
-			PM.mhp += 10;
-			PM.chp += 10;
-			PM.bth += 12;
-			PM.bthb += 12;
+			/* with player_do; */
+			player_mhp += 10;
+			player_chp += 10;
+			player_bth += 12;
+			player_bthb += 12;
 			msg_print("You feel like a HERO!");
 			prt_hp();
 		}
@@ -4465,13 +4465,13 @@ void d__update_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			/* with py.misc do; */
-			PM.mhp -= 10;
-			if (PM.chp > PM.mhp) {
-				PM.chp = PM.mhp;
+			/* with player_do; */
+			player_mhp -= 10;
+			if (player_chp > player_mhp) {
+				player_chp = player_mhp;
 			}
-			PM.bth -= 12;
-			PM.bthb -= 12;
+			player_bth -= 12;
+			player_bthb -= 12;
 			msg_print("The heroism wears off.");
 			prt_hp();
 		}
@@ -4487,11 +4487,11 @@ void d__update_super_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			/* with py.misc do; */
-			PM.mhp += 20;
-			PM.chp += 20;
-			PM.bth += 24;
-			PM.bthb += 24;
+			/* with player_do; */
+			player_mhp += 20;
+			player_chp += 20;
+			player_bth += 24;
+			player_bthb += 24;
 			msg_print("You feel like a SUPER HERO!");
 			prt_hp();
 		}
@@ -4501,13 +4501,13 @@ void d__update_super_heroism()
 			if (find_flag) {
 				move_char(5);
 			}
-			/* with py.misc do; */
-			PM.mhp -= 20;
-			if (PM.chp > PM.mhp) {
-				PM.chp = PM.mhp;
+			/* with player_do; */
+			player_mhp -= 20;
+			if (player_chp > player_mhp) {
+				player_chp = player_mhp;
 			}
-			PM.bth -= 24;
-			PM.bthb -= 24;
+			player_bth -= 24;
+			player_bthb -= 24;
 			msg_print("The super heroism wears off.");
 			prt_hp();
 		}
@@ -4523,11 +4523,11 @@ void d__update_blessed()
 			if (find_flag) {
 				move_char(5);
 			}
-			/* with py.misc do; */
-			PM.bth += 5;
-			PM.bthb += 5;
-			PM.pac += 5;
-			PM.dis_ac += 5;
+			/* with player_do; */
+			player_bth += 5;
+			player_bthb += 5;
+			player_pac += 5;
+			player_dis_ac += 5;
 			msg_print("You feel righteous!");
 			prt_hp();
 			prt_pac();
@@ -4538,11 +4538,11 @@ void d__update_blessed()
 			if (find_flag) {
 				move_char(5);
 			}
-			/* with py.misc do; */
-			PM.bth -= 5;
-			PM.bthb -= 5;
-			PM.pac -= 5;
-			PM.dis_ac -= 5;
+			/* with player_do; */
+			player_bth -= 5;
+			player_bthb -= 5;
+			player_pac -= 5;
+			player_dis_ac -= 5;
 			msg_print("The prayer has expired.");
 			prt_hp();
 			prt_pac();
@@ -4608,10 +4608,10 @@ void d__update_word_of_recall()
 			if (dun_level > 0) {
 				msg_print("You feel yourself yanked upwards!");
 				dun_level = 0;
-			} else if (py.misc.max_lev > 0) {
+			} else if (player_max_lev > 0) {
 				msg_print(
 				    "You feel yourself yanked downwards!");
-				dun_level = py.misc.max_lev;
+				dun_level = player_max_lev;
 			}
 			moria_flag = true;
 			PF.paralysis++;
@@ -4625,26 +4625,26 @@ void d__update_word_of_recall()
 void d__update_hit_points()
 {
 	/*{ Check hit points for adjusting...                     }*/
-	/* with py.misc do; */
+	/* with player_do; */
 	ENTER(("d__update_hit_points", "d"))
 
 	if (!(find_flag)) {
 		if (py.flags.rest < 1) {
-			if (old_chp != (long)(PM.chp)) {
-				if (PM.chp > PM.mhp) {
-					PM.chp = PM.mhp;
+			if (old_chp != (long)(player_chp)) {
+				if (player_chp > player_mhp) {
+					player_chp = player_mhp;
 				}
 				prt_hp();
-				old_chp = trunc(PM.chp);
+				old_chp = trunc(player_chp);
 			}
-			if (old_cmana != trunc(PM.cmana)) {
-				if (PM.cmana > PM.mana) {
-					PM.cmana = PM.mana;
+			if (old_cmana != trunc(player_cmana)) {
+				if (player_cmana > player_mana) {
+					player_cmana = player_mana;
 				}
 				if (is_magii) {
 					prt_mana();
 				}
-				old_cmana = trunc(PM.cmana);
+				old_cmana = trunc(player_cmana);
 			}
 		}
 	}
@@ -4830,9 +4830,9 @@ void d__bash()
 			} else {
 				/*{ Save old values of attacking  }*/
 				inven_temp->data = equipment[Equipment_primary];
-				old_ptohit = py.misc.ptohit;
-				old_ptodam = py.misc.ptodam;
-				old_bth = py.misc.bth;
+				old_ptohit = player_ptohit;
+				old_ptodam = player_ptodam;
+				old_bth = player_bth;
 				/*{ Use these values              }*/
 				equipment[Equipment_primary] = blank_treasure;
 				/* with equipment[Equipment_primary]. do; */
@@ -4843,10 +4843,10 @@ void d__bash()
 				equipment[Equipment_primary].tval = 1;
 
 				/* with py do; */
-				PM.bth = trunc(((player_stats_curr[STR] + 20)div 5 + PM.wt) /
+				player_bth = trunc(((player_stats_curr[STR] + 20)div 5 + player_wt) /
 					       6.0);
-				PM.ptohit = 0;
-				PM.ptodam = trunc(PM.wt / 75.0) + 1;
+				player_ptohit = 0;
+				player_ptodam = trunc(player_wt / 75.0) + 1;
 
 				if (py_attack(y, x)) {
 					do_stun(cave[y][x].cptr, -10, 2);
@@ -4854,9 +4854,9 @@ void d__bash()
 
 				/*{ Restore old values            }*/
 				equipment[Equipment_primary] = inven_temp->data;
-				py.misc.ptohit = old_ptohit;
-				py.misc.ptodam = old_ptodam;
-				py.misc.bth = old_bth;
+				player_ptohit = old_ptohit;
+				player_ptodam = old_ptodam;
+				player_bth = old_bth;
 				if (randint(300) > player_stats_curr[DEX]) {
 					msg_print("You are off-balance.");
 					py.flags.paralysis = randint(3);
@@ -4867,7 +4867,7 @@ void d__bash()
 			if (t_list[cave[y][x].tptr].tval == closed_door) {
 				/* with py do; */
 				if (test_hit(
-					PM.wt + (player_stats_curr[STR] * player_stats_curr[STR])div 500,
+					player_wt + (player_stats_curr[STR] * player_stats_curr[STR])div 500,
 					0, 0, labs(t_list[cave[y][x].tptr].p1) +
 						  150)) {
 					msg_print("You smash into the door! "
@@ -4992,8 +4992,8 @@ void d__openobject()
 				/* with t_list[cave[y][x].tptr]. do; */
 				if (t_list[cave[y][x].tptr].p1 >
 				    0) { /*{ It's locked...        }*/
-					/* with py.misc do; */
-					tmp = PM.disarm + PM.lev +
+					/* with player_do; */
+					tmp = player_disarm + player_lev +
 					      2 * todis_adj() + spell_adj(INT);
 
 					if (py.flags.confused > 0) {
@@ -5005,7 +5005,7 @@ void d__openobject()
 							.p1) > randint(100)) {
 						msg_print("You have picked the "
 							  "lock.");
-						py.misc.exp++;
+						player_exp++;
 						prt_experience();
 						t_list[cave[y][x].tptr].p1 = 0;
 					} else {
@@ -5027,8 +5027,8 @@ void d__openobject()
 
 			} else if (t_list[cave[y][x].tptr].tval == chest) {
 				/*{ Open a closed chest...                }*/
-				/* with py.misc do; */
-				tmp = PM.disarm + PM.lev + 2 * todis_adj() +
+				/* with player_do; */
+				tmp = player_disarm + player_lev + 2 * todis_adj() +
 				      spell_adj(INT);
 
 				/* with t_list[tptr] do; */
@@ -5048,7 +5048,7 @@ void d__openobject()
 						msg_print("You have picked the "
 							  "lock.");
 						flag = true;
-						py.misc.exp +=
+						player_exp +=
 						    t_list[cave[y][x].tptr]
 							.level;
 						prt_experience();
@@ -5194,8 +5194,8 @@ void d__disarm_trap()
 	if (d__get_dir("Which direction?", &tdir, &i1, &y, &x)) {
 		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
-			t1 = py.misc.disarm;  /*{ Ability to disarm     }*/
-			t2 = py.misc.lev;     /*{ Level adjustment      }*/
+			t1 = player_disarm;  /*{ Ability to disarm     }*/
+			t2 = player_lev;     /*{ Level adjustment      }*/
 			t3 = 2 * todis_adj(); /*{ Dexterity adjustment  }*/
 			t4 = spell_adj(INT);  /*{ Intelligence adjustment}*/
 			tot = t1 + t2 + t3 + t4;
@@ -5218,7 +5218,7 @@ void d__disarm_trap()
 				if ((tot - t5) > randint(100)) {
 					msg_print(
 					    "You have disarmed the trap.");
-					py.misc.exp +=
+					player_exp +=
 					    t_list[cave[y][x].tptr].p1;
 					cave[y][x].fm = false;
 					pusht(cave[y][x].tptr);
@@ -5269,7 +5269,7 @@ void d__disarm_trap()
 							  "the chest.");
 						known2(t_list[cave[y][x].tptr]
 							   .name);
-						py.misc.exp += t5;
+						player_exp += t5;
 						prt_experience();
 					} else if (randint(tot) > 5) {
 						msg_print("You failed to "
@@ -5422,7 +5422,7 @@ void d__tunnel()
 					   secret_door) {
 					msg_print("You tunnel into the granite "
 						  "wall.");
-					search(char_row, char_col, py.misc.srh);
+					search(char_row, char_col, player_srh);
 				} else {
 					msg_print(
 					    "You can't tunnel through that.");
@@ -5449,9 +5449,9 @@ void d__drop()
 
 	reset_flag = true;
 
-	/* with py.misc do; */
-	temp = (PM.money[6] + PM.money[5] + PM.money[4] + PM.money[3] +
-		PM.money[2] + PM.money[1]);
+	/* with player_do; */
+	temp = (player_money[6] + player_money[5] + player_money[4] + player_money[3] +
+		player_money[2] + player_money[1]);
 
 	if ((inven_ctr > 0) || (temp > 0)) {
 		count = change_all_ok_stats(true, false);
@@ -5662,13 +5662,13 @@ void d__execute_command(long *com_val)
 			break;
 		case 'd':
 			sprintf(out_val, "The date is %s",
-				full_date_string(py.misc.cur_age, out2));
+				full_date_string(player_cur_age, out2));
 			msg_print(out_val);
 			reset_flag = true;
 			break;
 		case 'e':
 			sprintf(out_val, "Character Classes Experience %4.2f",
-				py.misc.expfact);
+				player_expfact);
 			moria_help(out_val);
 			draw_cave();
 			reset_flag = true;
@@ -5857,7 +5857,7 @@ void d__execute_command(long *com_val)
 	case 'Q':
 		if (py.flags.quested) {
 			sprintf(out_val, "Current quest is to kill a %s",
-				c_list[py.misc.cur_quest].name);
+				c_list[player_cur_quest].name);
 			msg_print(out_val);
 		} else {
 			msg_print("No quest currently.");
@@ -5961,9 +5961,9 @@ void d__execute_command(long *com_val)
 		move_char(6);
 		break;
 	case 'm': /* magick, monk, music */
-		if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
+		if (class_uses_magic(player_pclass, M_ARCANE)) {
 			cast(M_ARCANE); /*  magick   } */
-		} else if (class_uses_magic(py.misc.pclass, M_CHAKRA)) {
+		} else if (class_uses_magic(player_pclass, M_CHAKRA)) {
 			cast(M_CHAKRA); /* m = monk? :) */
 		} else {
 			cast(M_SONG); /* music */
@@ -5976,7 +5976,7 @@ void d__execute_command(long *com_val)
 		d__openobject();
 		break;
 	case 'p': /* pray, play */
-		if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
+		if (class_uses_magic(player_pclass, M_DIVINE)) {
 			cast(M_DIVINE); /* pray */
 		} else {
 			cast(M_NATURE); /* play */
@@ -5993,7 +5993,7 @@ void d__execute_command(long *com_val)
 			msg_print(
 			    "You are incapable of searching while blind.");
 		} else {
-			search(char_row, char_col, py.misc.srh);
+			search(char_row, char_col, player_srh);
 		}
 		break;
 	case 't': /* take off */
@@ -6068,8 +6068,8 @@ void dungeon()
 	}
 
 	/*{ Check for a maximum level             }*/
-	if (dun_level > py.misc.max_lev) {
-		py.misc.max_lev = dun_level;
+	if (dun_level > player_max_lev) {
+		player_max_lev = dun_level;
 	}
 
 	d__set_coords(&char_row, &char_col);
@@ -6082,8 +6082,8 @@ void dungeon()
 	teleport_flag = false;
 	mon_tot_mult = 0;
 	cave[char_row][char_col].cptr = 1;
-	old_chp = trunc(py.misc.chp);
-	old_cmana = trunc(py.misc.cmana);
+	old_chp = trunc(player_chp);
+	old_cmana = trunc(player_cmana);
 
 	/*{ Light up the area around character    }*/
 	move_char(5);

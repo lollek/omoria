@@ -146,7 +146,7 @@ boolean check_pswd(string passwd, boolean present)
 		erase_line(msg_line, msg_line);
 	}
 
-	py.misc.cheated |= checked_out;
+	player_cheated |= checked_out;
 	became_wizard = checked_out;
 
 	LEAVE("check_pswd", "");
@@ -1281,14 +1281,14 @@ void change_character()
 		}
 	}
 
-	/* with py.misc do; */
+	/* with player_do; */
 	if (!abort) {
-		tmp_val = PM.mhp;
+		tmp_val = player_mhp;
 		if (cc__input_field("(1-32767) Hit points = ", &tmp_val, 1,
 				    32767, &flag)) {
 			if (flag) {
-				PM.mhp = tmp_val;
-				PM.chp = PM.mhp;
+				player_mhp = tmp_val;
+				player_chp = player_mhp;
 				prt_hp();
 			}
 		} else {
@@ -1297,13 +1297,13 @@ void change_character()
 	}
 
 	if (!abort) {
-		tmp_val = PM.mana;
+		tmp_val = player_mana;
 		if (is_magii) {
 			if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0,
 					    32767, &flag)) {
 				if (flag) {
-					PM.mana = tmp_val;
-					PM.cmana = PM.mana;
+					player_mana = tmp_val;
+					player_cmana = player_mana;
 					prt_mana();
 				}
 			} else {
@@ -1313,72 +1313,72 @@ void change_character()
 	}
 
 	if (!abort) {
-		tmp_val = PM.srh;
+		tmp_val = player_srh;
 		if (cc__input_field("(0-200) Searching = ", &tmp_val, 0, 200,
 				    &flag)) {
-			PM.srh = tmp_val;
+			player_srh = tmp_val;
 		} else {
 			abort = true;
 		}
 	}
 
 	if (!abort) {
-		tmp_val = PM.stl;
+		tmp_val = player_stl;
 		if (cc__input_field("(0-10) Stealth = ", &tmp_val, 0, 10,
 				    &flag)) {
-			PM.stl = tmp_val;
+			player_stl = tmp_val;
 		} else {
 			abort = true;
 		}
 	}
 
 	if (!abort) {
-		tmp_val = PM.disarm;
+		tmp_val = player_disarm;
 		if (cc__input_field("(0-200) Disarming = ", &tmp_val, 0, 200,
 				    &flag)) {
-			PM.disarm = tmp_val;
+			player_disarm = tmp_val;
 		} else {
 			abort = true;
 		}
 	}
 
 	if (!abort) {
-		tmp_val = PM.save;
+		tmp_val = player_save;
 		if (cc__input_field("(0-100) Save = ", &tmp_val, 0, 100,
 				    &flag)) {
-			PM.save = tmp_val;
+			player_save = tmp_val;
 		} else {
 			abort = true;
 		}
 	}
 
 	if (!abort) {
-		tmp_val = PM.bth;
+		tmp_val = player_bth;
 		if (cc__input_field("(0-200) Base to hit = ", &tmp_val, 0, 200,
 				    &flag)) {
-			PM.bth = tmp_val;
+			player_bth = tmp_val;
 		} else {
 			abort = true;
 		}
 	}
 
 	if (!abort) {
-		tmp_val = PM.bthb;
+		tmp_val = player_bthb;
 		if (cc__input_field("(0-200) Bows/Throwing = ", &tmp_val, 0,
 				    200, &flag)) {
-			PM.bthb = tmp_val;
+			player_bthb = tmp_val;
 		} else {
 			abort = true;
 		}
 	}
 
 	if (!abort) {
-		tmp_val = PM.money[TOTAL_];
+		tmp_val = player_money[TOTAL_];
 		if (cc__input_field("Player Gold = ", &tmp_val, 0, 100000000,
 				    &flag)) {
 			if (flag) {
 				tmp_val =
-				    (tmp_val - PM.money[TOTAL_]) * GOLD_VALUE;
+				    (tmp_val - player_money[TOTAL_]) * GOLD_VALUE;
 				if (tmp_val > 0) {
 					add_money(tmp_val);
 				} else {
@@ -1393,7 +1393,7 @@ void change_character()
 	}
 
 	if (!abort) {
-		if (!cc__input_field("Account Gold = ", &PM.account, 0,
+		if (!cc__input_field("Account Gold = ", &player_account, 0,
 				     1000000000, &flag)) {
 			abort = true;
 		}
@@ -1741,7 +1741,7 @@ void wizard_command(void)
 	switch (inkey()) {
 	case 'a':
 		hp_player(1000, "cheating");
-		PM.cmana = PM.mana;
+		player_cmana = player_mana;
 		if (is_magii)
 			prt_mana();
 		remove_curse();
@@ -1771,7 +1771,7 @@ void wizard_command(void)
 				if (dun_level > 1200) {
 					dun_level = 1200;
 				} else if (dun_level < 0) {
-					dun_level = py.misc.max_lev;
+					dun_level = player_max_lev;
 				}
 				moria_flag = true;
 			} else {
@@ -1800,10 +1800,10 @@ void wizard_command(void)
 		}
 		break;
 	case 'j': /* Gain exp */
-		if (py.misc.exp == 0) {
-			py.misc.exp = 1;
+		if (player_exp == 0) {
+			player_exp = 1;
 		} else {
-			py.misc.exp *= 2;
+			player_exp *= 2;
 		}
 		prt_experience();
 		break;
@@ -1861,8 +1861,8 @@ void wizard_command(void)
 		break;
 	case 31: /* ^_  Can you say security through obscurity?
 		    */
-		if (wizard1 && search_flag && PM.cheated) {
-			py.misc.cheated = false;
+		if (wizard1 && search_flag && player_cheated) {
+			player_cheated = false;
 			msg_print("Cheat flag turned off.");
 		}
 		break;

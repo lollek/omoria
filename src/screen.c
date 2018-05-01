@@ -190,21 +190,21 @@ void prt_num(vtype header, long num, long row, long column)
 void prt_stat_block()
 {
 	ENTER(("prt_stat_block", ""));
-	prt_field(py.misc.race, RACE_ROW, STAT_COLUMN);
-	prt_field(py.misc.tclass, CLASS_ROW, STAT_COLUMN);
+	prt_field(player_race, RACE_ROW, STAT_COLUMN);
+	prt_field(player_tclass, CLASS_ROW, STAT_COLUMN);
 	prt_title();
 	prt_6_stats(player_stats_curr, player_stats_lost, STR_ROW, STAT_COLUMN);
-	prt_num("LVL : ", py.misc.lev, LEVEL_ROW, STAT_COLUMN);
-	prt_num("EXP : ", py.misc.exp, EXP_ROW, STAT_COLUMN);
+	prt_num("LVL : ", player_lev, LEVEL_ROW, STAT_COLUMN);
+	prt_num("EXP : ", player_exp, EXP_ROW, STAT_COLUMN);
 	if (is_magii) {
 		prt_field("MANA: ", MANA_ROW, STAT_COLUMN);
 		prt_mana();
 	}
 	prt_field("HP  : ", HP_ROW, STAT_COLUMN);
 	prt_hp();
-	prt_num("QST : ", py.misc.quests, QUEST_ROW, STAT_COLUMN);
-	prt_num("AC  : ", py.misc.dis_ac, AC_ROW, STAT_COLUMN);
-	prt_num("GOLD: ", py.misc.money[TOTAL_], GOLD_ROW, STAT_COLUMN);
+	prt_num("QST : ", player_quests, QUEST_ROW, STAT_COLUMN);
+	prt_num("AC  : ", player_dis_ac, AC_ROW, STAT_COLUMN);
+	prt_num("GOLD: ", player_money[TOTAL_], GOLD_ROW, STAT_COLUMN);
 	prt_field("WGHT:", WEIGHT_ROW, STAT_COLUMN);
 	prt_field("M_WT:", WEIGHT_ROW + 1, STAT_COLUMN);
 	prt_weight();
@@ -232,18 +232,18 @@ void prt_field(vtype info, long row, long column)
 	put_buffer(out_val1, row, column);
 }
 
-void prt_title() { prt_field(py.misc.title, TITLE_ROW, STAT_COLUMN); }
+void prt_title() { prt_field(player_title, TITLE_ROW, STAT_COLUMN); }
 
 void prt_hp()
 {
 	vtype buf;
 
-	sprintf(buf, "%6d  ", (int)(py.misc.chp));
-	if (py.misc.chp == py.misc.mhp) {
+	sprintf(buf, "%6d  ", (int)(player_chp));
+	if (player_chp == player_mhp) {
 		attron(COLOR_PAIR(COLOR_GREEN));
 		put_buffer(buf, HP_ROW, STAT_COLUMN + 6);
 		attroff(COLOR_PAIR(COLOR_GREEN));
-	} else if (py.misc.chp >= py.misc.mhp / 3) {
+	} else if (player_chp >= player_mhp / 3) {
 		attron(COLOR_PAIR(COLOR_YELLOW));
 		put_buffer(buf, HP_ROW, STAT_COLUMN + 6);
 		attroff(COLOR_PAIR(COLOR_YELLOW));
@@ -254,11 +254,11 @@ void prt_hp()
 	}
 }
 
-void prt_pac() { prt_num("", py.misc.dis_ac, AC_ROW, STAT_COLUMN + 6); }
+void prt_pac() { prt_num("", player_dis_ac, AC_ROW, STAT_COLUMN + 6); }
 
 void prt_gold()
 {
-	prt_num("", py.misc.money[TOTAL_], GOLD_ROW, STAT_COLUMN + 6);
+	prt_num("", player_money[TOTAL_], GOLD_ROW, STAT_COLUMN + 6);
 }
 
 void prt_weight()
@@ -273,9 +273,9 @@ void prt_time()
 	vtype out_val;
 
 	sprintf(out_val, "%s %s %s",
-		time_string(py.misc.cur_age.hour, py.misc.cur_age.secs, s1),
-		day_of_week_string(py.misc.cur_age.day, 2, s2),
-		place_string(py.misc.cur_age.day, s3));
+		time_string(player_cur_age.hour, player_cur_age.secs, s1),
+		day_of_week_string(player_cur_age.day, 2, s2),
+		place_string(player_cur_age.day, s3));
 
 	put_buffer(out_val, TIME_ROW, STAT_COLUMN);
 }
@@ -380,7 +380,7 @@ void prt_quested()
 {
 	if (py.flags.quested) {
 		put_buffer(" Quest  ", STATUS_ROW, QUESTED_COLUMN);
-	} else if (py.misc.cur_quest > 0) {
+	} else if (player_cur_quest > 0) {
 		put_buffer("  Done  ", STATUS_ROW, QUESTED_COLUMN);
 	} else {
 		put_buffer("        ", STATUS_ROW, QUESTED_COLUMN);
@@ -391,35 +391,35 @@ void prt_winner() { put_buffer("*Winner*", WINNER_ROW, WINNER_COLUMN); }
 
 void prt_experience()
 {
-	/*      with py.misc do*/
-	if (py.misc.exp > player_max_exp) {
-		py.misc.exp = player_max_exp;
+	/*      with player_do*/
+	if (player_exp > player_max_exp) {
+		player_exp = player_max_exp;
 	}
 
-	if (py.misc.lev < MAX_PLAYER_LEVEL) {
-		while ((player_exp[py.misc.lev] * py.misc.expfact) <=
-		       py.misc.exp) {
+	if (player_lev < MAX_PLAYER_LEVEL) {
+		while ((exp_per_level[player_lev] * player_expfact) <=
+		       player_exp) {
 			gain_level();
 		}
 
-		if (py.misc.exp > py.misc.max_exp) {
-			py.misc.max_exp = py.misc.exp;
+		if (player_exp > player_max_exp) {
+			player_max_exp = player_exp;
 		}
 	}
 
-	prt_num("", py.misc.exp, EXP_ROW, STAT_COLUMN + 6);
+	prt_num("", player_exp, EXP_ROW, STAT_COLUMN + 6);
 }
 
 void prt_mana()
 {
 	vtype buf;
 
-	sprintf(buf, "%6d  ", (int)(py.misc.cmana));
-	if (py.misc.cmana == py.misc.mana) {
+	sprintf(buf, "%6d  ", (int)(player_cmana));
+	if (player_cmana == player_mana) {
 		attron(COLOR_PAIR(COLOR_BLUE));
 		put_buffer(buf, MANA_ROW, STAT_COLUMN + 6);
 		attroff(COLOR_PAIR(COLOR_BLUE));
-	} else if (py.misc.cmana >= py.misc.mana / 3) {
+	} else if (player_cmana >= player_mana / 3) {
 		attron(COLOR_PAIR(COLOR_CYAN));
 		put_buffer(buf, MANA_ROW, STAT_COLUMN + 6);
 		attroff(COLOR_PAIR(COLOR_CYAN));
@@ -430,7 +430,7 @@ void prt_mana()
 	}
 }
 
-void prt_level() { prt_num("", py.misc.lev, LEVEL_ROW, STAT_COLUMN + 6); }
+void prt_level() { prt_num("", player_lev, LEVEL_ROW, STAT_COLUMN + 6); }
 
 void prt_a_stat(stat_set tstat)
 {

@@ -52,8 +52,8 @@ void c__change_money()
 {
 	int amount;
 
-	amount = labs(py.misc.money[TOTAL_] - gld) * GOLD_VALUE;
-	if (gld > py.misc.money[TOTAL_]) {
+	amount = labs(player_money[TOTAL_] - gld) * GOLD_VALUE;
+	if (gld > player_money[TOTAL_]) {
 		add_money(amount);
 	} else {
 		subtract_money(amount, true);
@@ -175,7 +175,7 @@ void c__parse_command()
 
 void c__exit_messages()
 {
-	if (gld > 2 * py.misc.money[TOTAL_] + 1000) {
+	if (gld > 2 * player_money[TOTAL_] + 1000) {
 		switch (randint(3)) {
 		case 1:
 			msg_print("Quitting while you're ahead, huh?");
@@ -188,7 +188,7 @@ void c__exit_messages()
 				  "the door.");
 			break;
 		}
-	} else if (gld < py.misc.money[TOTAL_] - 1000) {
+	} else if (gld < player_money[TOTAL_] - 1000) {
 		switch (randint(4)) {
 		case 1:
 			msg_print("KC thanks you for your patronage.");
@@ -215,7 +215,7 @@ void enter_casino()
 	tics = 1;
 	seed = get_seed();
 	set_seed(seed);
-	gld = py.misc.money[TOTAL_];
+	gld = player_money[TOTAL_];
 	msg_line = 1;
 	c__display_casino();
 	c__parse_command();

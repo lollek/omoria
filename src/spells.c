@@ -169,18 +169,18 @@ boolean hp_player(long num, vtype kind)
 
 	boolean return_value = false;
 
-	/* with py.misc do; */
+	/* with player_do; */
 	if (num < 0) {
 		take_hit(num, kind);
-		if (PM.chp < 0) {
+		if (player_chp < 0) {
 			msg_print("You feel your life slipping away!");
 			msg_print(" ");
 		}
 		return_value = true;
-	} else if (PM.chp < PM.mhp) {
-		PM.chp += num;
-		if (PM.chp > PM.mhp) {
-			PM.chp = PM.mhp;
+	} else if (player_chp < player_mhp) {
+		player_chp += num;
+		if (player_chp > player_mhp) {
+			player_chp = player_mhp;
 		}
 		prt_hp();
 
@@ -547,7 +547,7 @@ boolean mon_save(long a_cptr, long bonus, long spell_class)
 	}
 
 	return_value = ((20 + mon_level + randint(mon_level) + 5 * bonus) >
-			(randint(80) + randint(py.misc.lev)));
+			(randint(80) + randint(player_lev)));
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -565,7 +565,7 @@ boolean mon_resists(unsigned char a_cptr)
 
 	res_chance = c_list[m_list[a_cptr].mptr].mr;
 
-	delta_lev = (py.misc.lev + py.misc.mr);
+	delta_lev = (player_lev + player_mr);
 	if (delta_lev < 0) {
 		delta_lev = 0;
 	}
@@ -831,52 +831,52 @@ void lose_exp(long amount)
 	long av_mn, lose_mn;
 	boolean flag;
 
-	/* with py.misc do; */
-	if (amount > PM.exp) {
-		PM.exp = 0;
+	/* with player_do; */
+	if (amount > player_exp) {
+		player_exp = 0;
 	} else {
-		PM.exp -= amount;
+		player_exp -= amount;
 	}
 
-	for (i1 = 1; trunc(player_exp[i1] * PM.expfact) <= PM.exp; i1++) {
+	for (i1 = 1; trunc(exp_per_level[i1] * player_expfact) <= player_exp; i1++) {
 	}
 
-	for (i2 = PM.lev - i1; i2 > 0;) {
+	for (i2 = player_lev - i1; i2 > 0;) {
 		i2--;
-		PM.lev--;
-		av_hp = trunc(PM.mhp / PM.lev);
-		av_mn = trunc(PM.mana / PM.lev);
+		player_lev--;
+		av_hp = trunc(player_mhp / player_lev);
+		av_mn = trunc(player_mana / player_lev);
 		lose_hp = randint(av_hp * 2 - 1);
 		lose_mn = randint(av_mn * 2 - 1);
-		PM.mhp -= lose_hp;
-		PM.mana -= lose_mn;
-		if (PM.mhp < 1) {
-			PM.mhp = 1;
+		player_mhp -= lose_hp;
+		player_mana -= lose_mn;
+		if (player_mhp < 1) {
+			player_mhp = 1;
 		}
-		if (PM.mana < 0) {
-			PM.mana = 0;
+		if (player_mana < 0) {
+			player_mana = 0;
 		}
 
-		if (class_uses_magic(PM.pclass, M_ARCANE) ||
-		    class_uses_magic(PM.pclass, M_DIVINE) ||
-		    class_uses_magic(PM.pclass, M_NATURE) ||
-		    class_uses_magic(PM.pclass, M_SONG)) {
+		if (class_uses_magic(player_pclass, M_ARCANE) ||
+		    class_uses_magic(player_pclass, M_DIVINE) ||
+		    class_uses_magic(player_pclass, M_NATURE) ||
+		    class_uses_magic(player_pclass, M_SONG)) {
 			i1 = 32;
 			flag = false;
 
 			do {
 				i1--;
-				if (class_spell(PM.pclass, i1)->learned) {
+				if (class_spell(player_pclass, i1)->learned) {
 					flag = true;
 				}
 			} while (!((flag) || (i1 < 2)));
 
 			if (flag) {
-				class_spell(PM.pclass, i1)->learned = false;
-				if (class_uses_magic(PM.pclass, M_ARCANE)) {
+				class_spell(player_pclass, i1)->learned = false;
+				if (class_uses_magic(player_pclass, M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_magic(PM.pclass,
+				} else if (class_uses_magic(player_pclass,
 							    M_DIVINE)) {
 					msg_print(
 					    "You have forgotten a prayer!");
@@ -887,13 +887,13 @@ void lose_exp(long amount)
 		}
 	} /* end for */
 
-	if (PM.chp > PM.mhp) {
-		PM.chp = PM.mhp;
+	if (player_chp > player_mhp) {
+		player_chp = player_mhp;
 	}
-	if (PM.cmana > PM.mana) {
-		PM.cmana = PM.mana;
+	if (player_cmana > player_mana) {
+		player_cmana = player_mana;
 	}
-	strcpy(PM.title, player_title[PM.pclass][PM.lev]);
+	strcpy(player_title, player_titles[player_pclass][player_lev]);
 	prt_experience();
 	prt_hp();
 	if (is_magii) {
@@ -978,18 +978,18 @@ boolean restore_level()
 	unsigned char max_level = 1;
 	boolean return_value = false;
 
-	while ((long)(player_exp[max_level] * py.misc.expfact) <=
-	       py.misc.max_exp) {
+	while ((long)(exp_per_level[max_level] * player_expfact) <=
+	       player_max_exp) {
 		max_level++;
 	}
 
-	if (randint(100) > (max_level - py.misc.lev) * 2.25) {
+	if (randint(100) > (max_level - player_lev) * 2.25) {
 
-		/* with py.misc do; */
+		/* with player_do; */
 		return_value = true;
 		msg_print("You feel your life energies returning...");
-		for (; PM.exp < PM.max_exp;) {
-			PM.exp = PM.max_exp;
+		for (; player_exp < player_max_exp;) {
+			player_exp = player_max_exp;
 			prt_experience();
 		}
 
@@ -1626,7 +1626,7 @@ boolean protect_evil()
 {
 	/*{ Evil creatures don't like this...                     -RAK-   }*/
 
-	PF.protevil += randint(25) + 3 * py.misc.lev;
+	PF.protevil += randint(25) + 3 * player_lev;
 
 	return true;
 }
@@ -2949,7 +2949,7 @@ boolean move_to_creature(long dir, long *y, long *x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean am_i_dumb() { return py.misc.lev < randint(randint(50)); }
+boolean am_i_dumb() { return player_lev < randint(randint(50)); }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

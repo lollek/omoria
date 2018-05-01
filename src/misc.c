@@ -158,7 +158,7 @@ boolean check_time()
 	boolean return_value = false;
 
 	/*{ Returns the day number; 1=Sunday...7=Saturday         -RAK-   }*/
-	/*{ Returns the hour number; 0=midnight...23=11 PM        -RAK-   }*/
+	/*{ Returns the hour number; 0=midnight...23=11 player_       -RAK-   }*/
 
 	cur_time = time(NULL);
 	now = *localtime(&cur_time);
@@ -212,11 +212,11 @@ void reset_total_cash()
 
 	long i1;
 
-	py.misc.money[TOTAL_] = 0;
+	player_money[TOTAL_] = 0;
 	for (i1 = IRON; i1 <= MITHRIL; i1++) {
-		py.misc.money[TOTAL_] += py.misc.money[i1] * coin_value[i1];
+		player_money[TOTAL_] += player_money[i1] * coin_value[i1];
 	}
-	py.misc.money[TOTAL_] = py.misc.money[TOTAL_] div GOLD_VALUE;
+	player_money[TOTAL_] = player_money[TOTAL_] div GOLD_VALUE;
 
 	bank[TOTAL_] = 0;
 	for (i1 = GOLD; i1 <= MITHRIL; i1++) {
@@ -231,11 +231,11 @@ long weight_limit()
 	 * }*/
 	long weight_cap;
 
-	weight_cap = (player_stats_curr[STR] + 30) * PLAYER_WEIGHT_CAP + py.misc.wt;
+	weight_cap = (player_stats_curr[STR] + 30) * PLAYER_WEIGHT_CAP + player_wt;
 	if (weight_cap > 3000) {
 		weight_cap = 3000;
 	}
-	weight_cap += py.misc.xtr_wgt;
+	weight_cap += player_xtr_wgt;
 
 	return weight_cap;
 }
@@ -244,27 +244,27 @@ void adv_time(boolean flag)
 {
 	/*{ Advance the game clock by one 'second'		-DMF-	}*/
 
-	/* with py.misc.cur_age do; */
-	PM.cur_age.secs++;
+	/* with player_cur_age do; */
+	player_cur_age.secs++;
 
-	if (PM.cur_age.secs > 399) {
-		PM.cur_age.hour++;
-		PM.cur_age.secs = 0;
-		if (PM.cur_age.hour == 24) {
-			PM.cur_age.day++;
-			PM.cur_age.hour = 0;
-			if (PM.cur_age.day == 29) {
-				PM.cur_age.month++;
-				PM.cur_age.day = 1;
-				if (PM.cur_age.month == 14) {
-					PM.cur_age.month = 1;
-					PM.cur_age.year++;
+	if (player_cur_age.secs > 399) {
+		player_cur_age.hour++;
+		player_cur_age.secs = 0;
+		if (player_cur_age.hour == 24) {
+			player_cur_age.day++;
+			player_cur_age.hour = 0;
+			if (player_cur_age.day == 29) {
+				player_cur_age.month++;
+				player_cur_age.day = 1;
+				if (player_cur_age.month == 14) {
+					player_cur_age.month = 1;
+					player_cur_age.year++;
 				}
 			}
 		}
 	}
 
-	if ((flag) && ((PM.cur_age.secs % 100) == 0)) {
+	if ((flag) && ((player_cur_age.secs % 100) == 0)) {
 		prt_hp();
 		if (is_magii) {
 			prt_mana();
@@ -678,10 +678,10 @@ unsigned char characters_sex()
 {
 	/*	{ Determine character's sex				-DCJ-
 	 * }*/
-	/*	  characters_sex := trunc((index(sex_type,py.misc.sex)+5)/6) ;
+	/*	  characters_sex := trunc((index(sex_type,player_sex)+5)/6) ;
 	 */
 
-	return ((py.misc.sex[0] == 'F') ? FEMALE : MALE);
+	return ((player_sex[0] == 'F') ? FEMALE : MALE);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -734,7 +734,7 @@ void am__add_munny(long *amount, long *to_bank, long wl, long type_num)
 	long trans, w_max;
 	long coin_num;
 
-	coin_num = py.misc.money[type_num];
+	coin_num = player_money[type_num];
 	trans = *amount div coin_value[type_num];
 	w_max = (wl * 100 - inven_weight)div COIN_WEIGHT;
 	if (w_max < -coin_num) {
@@ -745,7 +745,7 @@ void am__add_munny(long *amount, long *to_bank, long wl, long type_num)
 		trans = w_max;
 	}
 	inven_weight += COIN_WEIGHT * trans;
-	PM.money[type_num] = coin_num + trans;
+	player_money[type_num] = coin_num + trans;
 	*amount = *amount % coin_value[type_num];
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -762,7 +762,7 @@ void add_money(long amount)
 
 	to_bank = 0;
 	wl = weight_limit();
-	/* with py.misc do; */
+	/* with player_do; */
 
 	for (type_num = MITHRIL; type_num >= IRON; type_num--) {
 		am__add_munny(&amount, &to_bank, wl, type_num);
@@ -788,7 +788,7 @@ void add_money(long amount)
 					msg_print(out_val);
 				} else {
 					bank[GOLD] += i1;
-					py.misc.account += i1;
+					player_account += i1;
 					bank[TOTAL_] =
 					    ((bank[MITHRIL] *
 						  coin_value[MITHRIL] +
@@ -818,10 +818,10 @@ treas_ptr money_carry()
 {
 	/*{ Pick up some money	-DMF-	}*/
 
-	/* with py.misc do; */
+	/* with player_do; */
 	/* with inven_temp^.data do; */
 
-	PM.money[inven_temp->data.level] += inven_temp->data.number;
+	player_money[inven_temp->data.level] += inven_temp->data.number;
 	reset_total_cash();
 	inven_weight += inven_temp->data.number * inven_temp->data.weight;
 
@@ -838,13 +838,13 @@ boolean sm__sub_munny(long *amt, long *wt, long type_num)
 	long trans, coin_num;
 	boolean return_value;
 
-	coin_num = py.misc.money[type_num];
+	coin_num = player_money[type_num];
 	trans = (*amt + coin_value[type_num] - 1)div coin_value[type_num];
 	if (coin_num < trans) {
 		trans = coin_num;
 	}
 	(*wt) += COIN_WEIGHT * trans;
-	py.misc.money[type_num] = coin_num - trans;
+	player_money[type_num] = coin_num - trans;
 	(*amt) -= trans * coin_value[type_num];
 
 	return_value = *amt > 0;
@@ -895,7 +895,7 @@ void char_inven_init()
 		/*	  printf("    char_inven_init A%d\n",i1); */
 		/* fflush(stdout); */
 
-		i2 = player_init[py.misc.pclass][i1];
+		i2 = player_init[player_pclass][i1];
 		inven_temp->data = inventory_init[i2];
 		inven_carry();
 
@@ -979,8 +979,8 @@ boolean learn_spell(boolean *redraw)
 			if (i3 > 31) {
 				i3--;
 			}
-			if (class_spell(PM.pclass, i3)->slevel <= py.misc.lev) {
-				if (!(class_spell(PM.pclass, i3)->learned)) {
+			if (class_spell(player_pclass, i3)->slevel <= player_lev) {
+				if (!(class_spell(player_pclass, i3)->learned)) {
 					spell[i1++].splnum = i3;
 				}
 			}
@@ -992,11 +992,11 @@ boolean learn_spell(boolean *redraw)
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
-				class_spell(PM.pclass, sn)->learned = true;
+				class_spell(player_pclass, sn)->learned = true;
 				return_value = true;
-				if (py.misc.mana == 0) {
-					py.misc.mana = 1;
-					py.misc.cmana = 1;
+				if (player_mana == 0) {
+					player_mana = 1;
+					player_cmana = 1;
 				}
 			} else {
 				new_spells = 0;
@@ -1028,12 +1028,12 @@ boolean learn_prayer()
 		unsigned long i;
 
 		for (i = 0; i < MAX_SPELLS; ++i) {
-			if (class_spell(PM.pclass, i)->slevel > PM.lev)
+			if (class_spell(player_pclass, i)->slevel > player_lev)
 				continue;
-			if (class_spell(PM.pclass, i)->learned)
+			if (class_spell(player_pclass, i)->learned)
 				continue;
 
-			class_spell(PM.pclass, i)->learned = true;
+			class_spell(player_pclass, i)->learned = true;
 			spells_learned++;
 			return_value = true;
 
@@ -1041,9 +1041,9 @@ boolean learn_prayer()
 				break;
 		}
 
-		if (py.misc.mana == 0) {
-			py.misc.mana = 1;
-			py.misc.cmana = 1;
+		if (player_mana == 0) {
+			player_mana = 1;
+			player_cmana = 1;
 		}
 		if (spells_learned > 0) {
 			msg_print(spells_learned > 1
@@ -1080,8 +1080,8 @@ boolean learn_discipline()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (class_spell(PM.pclass, i2)->slevel <= py.misc.lev) {
-			if (!class_spell(PM.pclass, i2)->learned) {
+		if (class_spell(player_pclass, i2)->slevel <= player_lev) {
+			if (!class_spell(player_pclass, i2)->learned) {
 				i1++;
 				test_array[i1] = i2;
 			}
@@ -1093,7 +1093,7 @@ boolean learn_discipline()
 
 	while ((i1 > 0) && (i2 > 0)) {
 		i3 = randint(i1);
-		class_spell(PM.pclass, test_array[i3])->learned = true;
+		class_spell(player_pclass, test_array[i3])->learned = true;
 		new_spell++;
 
 		for (i4 = i3; i4 < i1; i4++) {
@@ -1109,12 +1109,12 @@ boolean learn_discipline()
 		} else {
 			msg_print("You learned a new discipline!");
 		}
-		if (py.misc.exp == 0) {
+		if (player_exp == 0) {
 			msg_print(" ");
 		}
-		if (py.misc.mana == 0) {
-			py.misc.mana = 1;
-			py.misc.cmana = 1;
+		if (player_mana == 0) {
+			player_mana = 1;
+			player_cmana = 1;
 		}
 		return_value = true;
 
@@ -1168,8 +1168,8 @@ boolean learn_song(boolean *redraw)
 			if (i3 > 31) {
 				i3--;
 			}
-			if (class_spell(PM.pclass, i3)->slevel <= py.misc.lev) {
-				if (!(class_spell(PM.pclass, i3)->learned)) {
+			if (class_spell(player_pclass, i3)->slevel <= player_lev) {
+				if (!(class_spell(player_pclass, i3)->learned)) {
 					spell[i1++].splnum = i3;
 				}
 			}
@@ -1179,11 +1179,11 @@ boolean learn_song(boolean *redraw)
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
-				class_spell(PM.pclass, sn)->learned = true;
+				class_spell(player_pclass, sn)->learned = true;
 				return_value = true;
-				if (py.misc.mana == 0) {
-					py.misc.mana = 1;
-					py.misc.cmana = 1;
+				if (player_mana == 0) {
+					player_mana = 1;
+					player_cmana = 1;
 				}
 			} else {
 				new_spells = 0;
@@ -1230,8 +1230,8 @@ boolean learn_druid()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (class_spell(PM.pclass, i2)->slevel <= py.misc.lev) {
-			if (!class_spell(PM.pclass, i2)->learned) {
+		if (class_spell(player_pclass, i2)->slevel <= player_lev) {
+			if (!class_spell(player_pclass, i2)->learned) {
 				test_array[i1++] = i2;
 			}
 		}
@@ -1242,7 +1242,7 @@ boolean learn_druid()
 
 	while ((i1 > 0) && (i2 > 0)) {
 		i3 = randint(i1);
-		class_spell(PM.pclass, test_array[i3])->learned = true;
+		class_spell(player_pclass, test_array[i3])->learned = true;
 		new_spell++;
 
 		for (i4 = i3; i4 < i1; i4++) {
@@ -1259,12 +1259,12 @@ boolean learn_druid()
 		} else {
 			msg_print("You learned a new song!");
 		}
-		if (py.misc.exp == 0) {
+		if (player_exp == 0) {
 			msg_print(" ");
 		}
-		if (py.misc.mana == 0) {
-			py.misc.mana = 1;
-			py.misc.cmana = 1;
+		if (player_mana == 0) {
+			player_mana = 1;
+			player_cmana = 1;
 		}
 		return_value = true;
 
@@ -1289,14 +1289,14 @@ void gain_mana(long amount)
 	ENTER(("gain_mana", ""));
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		if (class_spell(PM.pclass, i1)->learned) {
+		if (class_spell(player_pclass, i1)->learned) {
 			knows_spell = true;
 			break;
 		}
 	}
 
 	if (knows_spell) {
-		if (py.misc.lev & 1) {
+		if (player_lev & 1) {
 
 			switch (amount) {
 			case 0:
@@ -1348,8 +1348,8 @@ void gain_mana(long amount)
 				break;
 			}
 		}
-		py.misc.mana += new_mana;
-		py.misc.cmana += new_mana;
+		player_mana += new_mana;
+		player_cmana += new_mana;
 	}
 	LEAVE("gain_mana", "");
 }
@@ -1368,7 +1368,7 @@ void print_new_spells(spl_type spell, long num, boolean *redraw)
 	clear_from(1);
 	prt("   Name                          Level  Mana  %Failure", 2, 1);
 	for (i1 = 0; i1 < num; i1++) {
-		/*with magic_spell[py.misc.pclass,spell[i1].splnum] do*/
+		/*with magic_spell[player_pclass,spell[i1].splnum] do*/
 		if (i1 < 23) {
 			if (spell[i1].splnum == -1) {
 				out_val[0] =
@@ -1378,11 +1378,11 @@ void print_new_spells(spl_type spell, long num, boolean *redraw)
 				sprintf(out_val,
 					"%c) %-30s %3d    %3d      %2ld",
 					97 + (int)i1,
-					class_spell(PM.pclass, spell[i1].splnum)
+					class_spell(player_pclass, spell[i1].splnum)
 					    ->sname,
-					class_spell(PM.pclass, spell[i1].splnum)
+					class_spell(player_pclass, spell[i1].splnum)
 					    ->slevel,
-					class_spell(PM.pclass, spell[i1].splnum)
+					class_spell(player_pclass, spell[i1].splnum)
 					    ->smana,
 					spell[i1].splchn);
 			}
@@ -1492,27 +1492,27 @@ void spell_chance(spl_rec *spell)
 	/*	{ Returns spell chance of failure for spell		-RAK-
 	 * }*/
 
-	/*	with magic_spell[py.misc.pclass,spell.splnum] do*/
+	/*	with magic_spell[player_pclass,spell.splnum] do*/
 	/*	  with spell do                                 */
 
 	spell->splchn =
-	    class_spell(PM.pclass, spell->splnum)->sfail -
-	    3 * (py.misc.lev - class_spell(PM.pclass, spell->splnum)->slevel);
+	    class_spell(player_pclass, spell->splnum)->sfail -
+	    3 * (player_lev - class_spell(player_pclass, spell->splnum)->slevel);
 
-	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
+	if (class_uses_magic(player_pclass, M_ARCANE)) {
 		spell->splchn -= 3 * (spell_adj(INT) - 1);
-	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
+	} else if (class_uses_magic(player_pclass, M_SONG)) {
 		spell->splchn -= 3 * (bard_adj() - 1);
-	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
+	} else if (class_uses_magic(player_pclass, M_NATURE)) {
 		spell->splchn -= 3 * (druid_adj() - 1);
 	} else {
 		spell->splchn -= 3 * (spell_adj(WIS) - 1);
 	}
 
-	if (class_spell(PM.pclass, spell->splnum)->smana > py.misc.cmana) {
+	if (class_spell(player_pclass, spell->splnum)->smana > player_cmana) {
 		spell->splchn +=
-		    5 * (int)(class_spell(PM.pclass, spell->splnum)->smana -
-			      py.misc.cmana);
+		    5 * (int)(class_spell(player_pclass, spell->splnum)->smana -
+			      player_cmana);
 	}
 
 	if (spell->splchn > 95) {
@@ -1860,27 +1860,27 @@ void gain_level()
 	ENTER(("gain_level", ""));
 
 	nhp = get_hitdie();
-	py.misc.mhp += nhp;
-	py.misc.chp += nhp;
-	if (py.misc.mhp < 1) {
-		py.misc.mhp = 1;
-		py.misc.chp = 1;
+	player_mhp += nhp;
+	player_chp += nhp;
+	if (player_mhp < 1) {
+		player_mhp = 1;
+		player_chp = 1;
 	}
-	py.misc.lev++;
-	need_exp = trunc(player_exp[py.misc.lev] * py.misc.expfact);
-	if (py.misc.exp > need_exp) {
-		dif_exp = py.misc.exp - need_exp;
-		py.misc.exp = need_exp + (dif_exp div 2);
+	player_lev++;
+	need_exp = trunc(exp_per_level[player_lev] * player_expfact);
+	if (player_exp > need_exp) {
+		dif_exp = player_exp - need_exp;
+		player_exp = need_exp + (dif_exp div 2);
 	}
-	strcpy(py.misc.title, player_title[py.misc.pclass][py.misc.lev]);
-	sprintf(out_val, "Welcome to level %d.", py.misc.lev);
+	strcpy(player_title, player_titles[player_pclass][player_lev]);
+	sprintf(out_val, "Welcome to level %d.", player_lev);
 	msg_print(out_val);
 	msg_print(" ");
 	msg_flag = false;
 	prt_hp();
 	prt_level();
 	prt_title();
-	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
+	if (class_uses_magic(player_pclass, M_ARCANE)) {
 		redraw = false;
 		learn_spell(&redraw);
 		if (redraw) {
@@ -1888,11 +1888,11 @@ void gain_level()
 		}
 		gain_mana(spell_adj(INT));
 		prt_mana();
-	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
+	} else if (class_uses_magic(player_pclass, M_NATURE)) {
 		learn_druid();
 		gain_mana(druid_adj());
 		prt_mana();
-	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
+	} else if (class_uses_magic(player_pclass, M_SONG)) {
 		redraw = false;
 		learn_song(&redraw);
 		if (redraw) {
@@ -1900,11 +1900,11 @@ void gain_level()
 		}
 		gain_mana(bard_adj());
 		prt_mana();
-	} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
+	} else if (class_uses_magic(player_pclass, M_DIVINE)) {
 		learn_prayer();
 		gain_mana(spell_adj(WIS));
 		prt_mana();
-	} else if (class_uses_magic(py.misc.pclass, M_CHAKRA)) {
+	} else if (class_uses_magic(player_pclass, M_CHAKRA)) {
 		learn_discipline();
 		gain_mana(monk_adj());
 		prt_mana();
@@ -1921,7 +1921,7 @@ long get_hitdie()
 	 * }*/
 	long return_value;
 
-	return_value = randint(py.misc.hitdie) + con_adj();
+	return_value = randint(player_hitdie) + con_adj();
 
 	return return_value;
 }
@@ -1949,16 +1949,16 @@ unsigned short max_allowable_weight()
 {
 	boolean is_male = characters_sex() == MALE;
 
-	return race_weight_base(py.misc.prace, is_male) +
-	       4 * race_weight_modifier(py.misc.prace, is_male);
+	return race_weight_base(player_prace, is_male) +
+	       4 * race_weight_modifier(player_prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
 unsigned short min_allowable_weight()
 {
 	boolean is_male = characters_sex() == MALE;
 
-	return race_weight_base(py.misc.prace, is_male) -
-	       4 * race_weight_modifier(py.misc.prace, is_male);
+	return race_weight_base(player_prace, is_male) -
+	       4 * race_weight_modifier(player_prace, is_male);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -3109,7 +3109,7 @@ boolean player_saves(long adjust)
 	/*{ Saving throws for player character... 		-RAK-	}*/
 	boolean return_value;
 	return_value =
-	    (randint(100) <= py.misc.save + adjust) && (randint(20) != 1);
+	    (randint(100) <= player_save + adjust) && (randint(20) != 1);
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -3118,7 +3118,7 @@ boolean player_saves(long adjust)
 boolean player_spell_saves()
 {
 	boolean return_value;
-	return_value = player_saves(py.misc.lev + 5 * spell_adj(WIS));
+	return_value = player_saves(player_lev + 5 * spell_adj(WIS));
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -3136,7 +3136,7 @@ void sp__takey_munny(long coin_value, long *bank_assets, long *to_bank,
 	*bank_assets -= trans;
 	*from_bank += (trans * coin_value) / GOLD_VALUE;
 	*to_bank -= (trans * coin_value) / GOLD_VALUE;
-	py.misc.account -= (trans * coin_value) / GOLD_VALUE;
+	player_account -= (trans * coin_value) / GOLD_VALUE;
 }
 /*//////////////////////////////////////////////////////////////////// */
 boolean send_page(long to_bank)
@@ -3150,7 +3150,7 @@ boolean send_page(long to_bank)
 	back = false;
 	if (get_yes_no("Do you wish to send a page to the bank for money?")) {
 		from_bank = 0;
-		if (py.misc.account < to_bank) {
+		if (player_account < to_bank) {
 			msg_print("The page returns and says that your balance "
 				  "is too low.");
 		} else if (bank[TOTAL_] < to_bank) {
@@ -3177,7 +3177,7 @@ boolean send_page(long to_bank)
 				    from_bank);
 				msg_print(out_val);
 				subtract_money(
-				    py.misc.money[TOTAL_] * GOLD_VALUE, false);
+				    player_money[TOTAL_] * GOLD_VALUE, false);
 				back = true;
 			}
 		}
@@ -3232,7 +3232,7 @@ char *show_char_age(string result)
 	game_time_type dif;
 	vtype out_val;
 
-	time_diff(py.misc.cur_age, py.misc.birth, &dif);
+	time_diff(player_cur_age, player_birth, &dif);
 
 	sprintf(result,
 		"You are %ld years, %d months, %d days, and %s hours old.",
@@ -3348,7 +3348,7 @@ char *show_play_time(string result)
 
 	play_time(convert_seconds_to_time(
 		      time(NULL) - start_time +
-			  convert_time_to_seconds(&py.misc.play_tm),
+			  convert_time_to_seconds(&player_play_tm),
 		      &tim),
 		  result);
 
@@ -3456,7 +3456,7 @@ long attack_blows(long weight, long *wtohit)
 		}
 
 		lev_skill =
-		    class_melee_bonus(py.misc.pclass) * (py.misc.lev + 10);
+		    class_melee_bonus(player_pclass) * (player_lev + 10);
 
 		/*{warriors 100-500, paladin 80-400, priest 60-300, mage
 		 * 40-200}*/
@@ -3503,7 +3503,7 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 	/*{ Weight of weapon, pluses to hit, and character level all      }*/
 	/*{ contribute to the chance of a critical                        }*/
 
-	/* with py.misc do; */
+	/* with player_do; */
 	if (is_fired) {
 		py_crit = class_ranged_bonus(pclass);
 	} else {
@@ -3514,7 +3514,7 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 		}
 	}
 
-	if (randint(5000) <= (weight + 6 * plus + py_crit * (PM.lev + 10))) {
+	if (randint(5000) <= (weight + 6 * plus + py_crit * (player_lev + 10))) {
 		randomthing = randint(300 + randint(weight));
 		if (randomthing <= 150) {
 			return_value = 1;

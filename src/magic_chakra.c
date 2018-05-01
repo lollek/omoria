@@ -58,11 +58,11 @@ void chakra_spell_effects(long effect)
 		break;
 
 	case 13: /*{ Free Action } */
-		py.flags.free_time += (randint(10) + py.misc.lev);
+		py.flags.free_time += (randint(10) + player_lev);
 		break;
 
 	case 14: /*{ Improved Speed }*/
-		PF.fast += randint(20) + py.misc.lev;
+		PF.fast += randint(20) + player_lev;
 		break;
 
 	default:

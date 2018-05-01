@@ -950,10 +950,10 @@ void hr__game_horse()
 
 		c__check_casino_kickout();
 
-		/* with py.misc.cur_age do; */
-		if (((py.misc.cur_age.day % 7) >= 2) &&
-		    (py.misc.cur_age.hour >= 6) &&
-		    (py.misc.cur_age.hour < 18)) {
+		/* with player_cur_age do; */
+		if (((player_cur_age.day % 7) >= 2) &&
+		    (player_cur_age.hour >= 6) &&
+		    (player_cur_age.hour < 18)) {
 
 			c_closed = true;
 			exit_flag = true;

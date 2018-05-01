@@ -108,7 +108,7 @@ void tp__open_trade_file(FILE **sales, boolean *exit_flag)
 	} else if (busy) {
 		msg_print("but the storekeeper is helping someone else.");
 	} else {
-		if (py.misc.max_exp < 30 + randint(30)) {
+		if (player_max_exp < 30 + randint(30)) {
 			trade_file_close(sales);
 			msg_print("`Hmmmm...we don't need no novice "
 				  "adventurers hanging around here...'");
@@ -133,12 +133,12 @@ void tp__set_player(trade_account_type *cur_player)
 	strncpy(cur_player->username, thename, 12);
 
 	cur_player->uid = getuid();
-	cur_player->master_id = PM.creation_time;
-	cur_player->claim_check = PM.claim_check;
+	cur_player->master_id = player_creation_time;
+	cur_player->claim_check = player_claim_check;
 
 	if (!cur_player->claim_check) {
 		sleep(2);
-		cur_player->claim_check = PM.claim_check = time(NULL);
+		cur_player->claim_check = player_claim_check = time(NULL);
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -147,7 +147,7 @@ void tp__set_player(trade_account_type *cur_player)
 void tp__display_gold()
 {
 	vtype out_val;
-	sprintf(out_val, "Gold Remaining : %ld", py.misc.money[TOTAL_]);
+	sprintf(out_val, "Gold Remaining : %ld", player_money[TOTAL_]);
 	prt(out_val, 19, 18);
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -316,10 +316,10 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
 						    &(start->data.fsr.object)));
 					prt(out_val2, count + 5, 71);
 				} else if (start->data.fsr.seller.claim_check ==
-					   PM.claim_check) {
+					   player_claim_check) {
 					prt("your sale!", count + 5, 71);
 				} else if (start->data.fsr.best_bidder
-					       .claim_check == PM.claim_check) {
+					       .claim_check == player_claim_check) {
 					prt("your bid!", count + 5, 71);
 				}
 			}
@@ -559,7 +559,7 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
 		} else if (item->data.fsr.trade_type == TT_FOR_SALE) {
 
 			if ((item->data.fsr.best_bidder.claim_check ==
-			     PM.claim_check) &&
+			     player_claim_check) &&
 			    (tp__enough_time(item->data.fsr.time,
 					     T_BID_WAIT_DAYS,
 					     T_BID_WAIT_HOURS))) {
@@ -738,13 +738,13 @@ void tp__bid(long *cur_display_size, trade_account_type *cur_player,
 						  "than that!");
 				} else {
 					flag = false;
-					if (py.misc.money[TOTAL_] >= offer) {
+					if (player_money[TOTAL_] >= offer) {
 						subtract_money(
 						    offer * GOLD_VALUE, true);
 						flag = true;
 					} else {
 						to_bank = offer -
-							  py.misc.money[TOTAL_];
+							  player_money[TOTAL_];
 						flag = send_page(to_bank);
 					}
 
@@ -1105,7 +1105,7 @@ void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 			break;
 
 		case 112:
-			if (PM.cheated) {
+			if (player_cheated) {
 				msg_print("Cheaters are not allowed to buy "
 					  "things here!");
 			} else if (total_winner) {
@@ -1119,7 +1119,7 @@ void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 			break;
 
 		case 115:
-			if (PM.cheated) {
+			if (player_cheated) {
 				msg_print("Cheaters are not allowed to sell "
 					  "things here!");
 			} else if (total_winner) {

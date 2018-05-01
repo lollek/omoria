@@ -104,25 +104,25 @@ int main(int argc, char *argv[])
 		is_from_file = false;
 		create_character();
 		strcpy(save_file_name, SAVE_FILE_PATH "/");
-		strcat(save_file_name, py.misc.name);
+		strcat(save_file_name, player_name);
 		save_file_name_set(save_file_name);
 
 		char_inven_init();
 
-		if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
+		if (class_uses_magic(player_pclass, M_ARCANE)) {
 			learn_spell(&msg_flag);
 			gain_mana(spell_adj(INT));
-		} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
+		} else if (class_uses_magic(player_pclass, M_DIVINE)) {
 			learn_prayer();
 			gain_mana(spell_adj(WIS));
-		} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
+		} else if (class_uses_magic(player_pclass, M_NATURE)) {
 			learn_druid();
 			gain_mana(druid_adj());
-		} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
+		} else if (class_uses_magic(player_pclass, M_SONG)) {
 			learn_song(&msg_flag);
 			gain_mana(bard_adj());
 		}
-		py.misc.cmana = py.misc.mana;
+		player_cmana = player_mana;
 		randes_seed = seed; /* Description seed */
 		town_seed = seed;   /* Town generation seed */
 		magic_init(randes_seed);
@@ -130,15 +130,15 @@ int main(int argc, char *argv[])
 
 	} /* end if (load/create character) */
 
-	if (py.misc.pclass == C_MONK) {
+	if (player_pclass == C_MONK) {
 		strcpy(bare_hands, "2d2");
 	}
 
-	if (class_uses_magic(py.misc.pclass, M_ARCANE) ||
-	    class_uses_magic(py.misc.pclass, M_DIVINE) ||
-	    class_uses_magic(py.misc.pclass, M_NATURE) ||
-	    class_uses_magic(py.misc.pclass, M_SONG) ||
-	    class_uses_magic(py.misc.pclass, M_CHAKRA)) {
+	if (class_uses_magic(player_pclass, M_ARCANE) ||
+	    class_uses_magic(player_pclass, M_DIVINE) ||
+	    class_uses_magic(player_pclass, M_NATURE) ||
+	    class_uses_magic(player_pclass, M_SONG) ||
+	    class_uses_magic(player_pclass, M_CHAKRA)) {
 		is_magii = true;
 	} else {
 		is_magii = false;
@@ -148,9 +148,9 @@ int main(int argc, char *argv[])
 	replace_name();
 	set_gem_values();
 
-	set_difficulty(py.misc.diffic); /* Set difficulty of game */
+	set_difficulty(player_diffic); /* Set difficulty of game */
 	player_max_exp =
-	    (long)(player_exp[MAX_PLAYER_LEVEL - 1] * py.misc.expfact);
+	    (long)(exp_per_level[MAX_PLAYER_LEVEL - 1] * player_expfact);
 	clear_from(1);
 	prt_stat_block();
 

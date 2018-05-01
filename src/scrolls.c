@@ -676,12 +676,12 @@ void read_scroll()
 								/* with py.misc
 								 */
 								/* do; */
-								PM.exp +=
+								player_exp +=
 								    (item_ptr
 									 ->data
 									 .level /
 								     (float)
-								     PM.lev) +
+								     player_lev) +
 								    .5;
 								prt_experience();
 							}

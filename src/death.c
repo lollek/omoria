@@ -70,17 +70,17 @@ void ud__kingly()
 	strcpy(died_from, "Ripe Old Age");
 
 	if (characters_sex() == MALE) {
-		strcpy(PM.title, "Magnificent");
-		strcat(PM.tclass, " King");
+		strcpy(player_title, "Magnificent");
+		strcat(player_tclass, " King");
 	} else {
-		strcpy(PM.title, "Beautiful");
-		strcat(PM.tclass, " Queen");
+		strcpy(player_title, "Beautiful");
+		strcat(player_tclass, " Queen");
 	}
 
-	PM.lev += MAX_PLAYER_LEVEL;
-	PM.account += 250000;
-	PM.max_exp += 5000000;
-	PM.exp = PM.max_exp;
+	player_lev += MAX_PLAYER_LEVEL;
+	player_account += 250000;
+	player_max_exp += 5000000;
+	player_exp = player_max_exp;
 
 	/* Let the player know that he did good...  */
 	clear_from(1);
@@ -109,29 +109,29 @@ void ud__print_tomb(vtype dstr[])
 	vtype user, temp;
 	FILE *f1;
 
-	if (py.misc.lev > 10) {
+	if (player_lev > 10) {
 		user_name(user);
 		user[12] = 0;
 		f1 = priv_fopen(MORIA_DTH, "r+");
 		if (f1 != NULL) {
 			fseek(f1, 0, SEEK_END);
-			if (py.misc.cheated) {
+			if (player_cheated) {
 				fprintf(f1,
 					"*%-12s %1d %2d %2d %2d %4ld %4d %s\n",
-					user, py.misc.diffic, py.misc.prace,
-					py.misc.pclass, py.misc.lev, dun_level,
-					py.misc.max_lev, died_from);
+					user, player_diffic, player_prace,
+					player_pclass, player_lev, dun_level,
+					player_max_lev, died_from);
 				fprintf(f1, "%50s %s\n", "",
 					show_current_time(temp));
 			} else {
 				fprintf(f1,
 					" %-12s %1d %2d %2d %2d %4ld %4d %s\n",
-					user, py.misc.diffic, py.misc.prace,
-					py.misc.pclass, py.misc.lev, dun_level,
-					py.misc.max_lev, died_from);
+					user, player_diffic, player_prace,
+					player_pclass, player_lev, dun_level,
+					player_max_lev, died_from);
 				fprintf(f1, "%50s %s\n", "",
 					show_current_time(temp));
-				/* fprintf(f1," %44s %s\n", py.misc.ssn, */
+				/* fprintf(f1," %44s %s\n", player_ssn, */
 				/* show_current_time(temp)); */
 			}
 			fclose(f1);
@@ -150,10 +150,10 @@ long total_points()
 	 * modifier classes like warriors   -Cap'n-
 	 */
 
-	if (PM.expfact == 0) {
-		return PM.max_exp + (100 * PM.max_lev);
+	if (player_expfact == 0) {
+		return player_max_exp + (100 * player_max_lev);
 	} else {
-		return trunc(PM.max_exp / PM.expfact) + (100 * PM.max_lev);
+		return trunc(player_max_exp / player_expfact) + (100 * player_max_lev);
 	}
 }
 
@@ -163,7 +163,7 @@ static void respawn()
 	int i;
 
 	/* Clear money */
-	add_money(PM.money[TOTAL_]);
+	add_money(player_money[TOTAL_]);
 
 	/* Clear inventory */
 	for (i = Equipment_min; i < EQUIP_MAX; i++)
@@ -174,7 +174,7 @@ static void respawn()
 	char_inven_init();
 
 	/* Restore player hp and statuses */
-	py.misc.chp = PM.mhp;
+	player_chp = player_mhp;
 	prt_hp();
 
 	for (i = 0; i < 6; ++i) {
@@ -210,7 +210,7 @@ void upon_death()
 			  "Contact your local wizard.");
 		msg_print(" ");
 	} else {
-		mkey.creation_time = PM.creation_time;
+		mkey.creation_time = player_creation_time;
 		master_file_delete(f2, &mkey);
 		master_file_close(&f2);
 	}
@@ -246,7 +246,7 @@ void top_twenty(long this_many)
 	boolean flag;
 	char ch;
 
-	if (py.misc.cheated) {
+	if (player_cheated) {
 		exit_game();
 	}
 	clear_screen();
@@ -283,8 +283,8 @@ void top_twenty(long this_many)
 
 			user_name(o1);
 
-			format_top_score(list[i1], o1, i3, PM.diffic, PM.name,
-					 PM.lev, PM.race, PM.tclass);
+			format_top_score(list[i1], o1, i3, player_diffic, player_name,
+					 player_lev, player_race, player_tclass);
 
 			if (n1 < MAX_HIGH_SCORES) {
 				n1++;
@@ -382,14 +382,14 @@ void make_tomb(vtype dd[])
 	char day[11];
 
 	date(day);
-	ud__fill_str(str1, py.misc.name);
-	ud__fill_str(str2, py.misc.title);
-	ud__fill_str(str3, py.misc.tclass);
-	sprintf(temp, "Level : %d", py.misc.lev);
+	ud__fill_str(str1, player_name);
+	ud__fill_str(str2, player_title);
+	ud__fill_str(str3, player_tclass);
+	sprintf(temp, "Level : %d", player_lev);
 	ud__fill_str(str4, temp);
-	sprintf(temp, "%ld Exp", py.misc.exp);
+	sprintf(temp, "%ld Exp", player_exp);
 	ud__fill_str(str5, temp);
-	sprintf(temp, "%ld Au", (py.misc.account + py.misc.money[TOTAL_]));
+	sprintf(temp, "%ld Au", (player_account + player_money[TOTAL_]));
 	ud__fill_str(str6, temp);
 	sprintf(temp, "Died on Level : %ld", dun_level);
 	ud__fill_str(str7, temp);

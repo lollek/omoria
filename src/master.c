@@ -106,7 +106,7 @@ int master_file_verify(GDBM_FILE mf, master_key *mkey)
 		foundit = master_file_read(mf, mkey, &mentry);
 
 		if (foundit) {
-			if (py.misc.save_count == mentry.save_count) {
+			if (player_save_count == mentry.save_count) {
 				return_value = MF_CHAR_OK;
 			} else {
 				return_value = MF_CHAR_MISMATCH;

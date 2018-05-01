@@ -53,21 +53,21 @@ static boolean sc__write_master(GDBM_FILE f2)
 	master_entry mentry;
 	boolean result;
 
-	mkey.creation_time = PM.creation_time;
-	mentry.save_count = PM.save_count + 1;
-	mentry.deaths = PM.deaths;
+	mkey.creation_time = player_creation_time;
+	mentry.save_count = player_save_count + 1;
+	mentry.deaths = player_deaths;
 
-	if (PM.save_count == 0) {
+	if (player_save_count == 0) {
 		result = master_file_write_new(f2, &mkey, &mentry);
-		PM.creation_time = mkey.creation_time;
-		PM.save_count++;
+		player_creation_time = mkey.creation_time;
+		player_save_count++;
 	} else {
 		i2 = master_file_verify(f2, &mkey);
 		if (i2 == MF_CHAR_MISMATCH) {
 			result = false;
 		} else {
 			result = master_file_write(f2, &mkey, &mentry);
-			PM.save_count++;
+			player_save_count++;
 		}
 	}
 
@@ -102,33 +102,33 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 	time_t current_time, delta_time;
 	/* quad_type      current_time,delta_time; */
 
-	/*with py.misc do*/
+	/*with player_do*/
 
-	sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %d", PM.xtr_wgt,
-		PM.account, PM.money[0], PM.money[6], PM.money[5], PM.money[4],
-		PM.money[3], PM.money[2], PM.money[1], (int)PM.diffic);
+	sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %d", player_xtr_wgt,
+		player_account, player_money[0], player_money[6], player_money[5], player_money[4],
+		player_money[3], player_money[2], player_money[1], (int)player_diffic);
 	encrypt_write(f1, cf_state, out_rec);
 
-	/*with py.misc.birth do*/
-	sprintf(out_rec, "%ld %d %d %d %d", PM.birth.year, (int)PM.birth.month,
-		(int)PM.birth.day, (int)PM.birth.hour, (int)PM.birth.secs);
+	/*with player_birth do*/
+	sprintf(out_rec, "%ld %d %d %d %d", player_birth.year, (int)player_birth.month,
+		(int)player_birth.day, (int)player_birth.hour, (int)player_birth.secs);
 	encrypt_write(f1, cf_state, out_rec);
 
-	/*with py.misc.cur_age do*/
-	sprintf(out_rec, "%ld %d %d %d %d", PM.cur_age.year,
-		(int)PM.cur_age.month, (int)PM.cur_age.day,
-		(int)PM.cur_age.hour, (int)PM.cur_age.secs);
+	/*with player_cur_age do*/
+	sprintf(out_rec, "%ld %d %d %d %d", player_cur_age.year,
+		(int)player_cur_age.month, (int)player_cur_age.day,
+		(int)player_cur_age.hour, (int)player_cur_age.secs);
 	encrypt_write(f1, cf_state, out_rec);
 
 	/*{FUBAR modification for quests}*/
-	sprintf(out_rec, "%d %d %d %ld %d", (int)PF.quested, (int)PM.cur_quest,
-		(int)PM.quests, PM.claim_check, (int)PF.light_on);
+	sprintf(out_rec, "%d %d %d %ld %d", (int)PF.quested, (int)player_cur_quest,
+		(int)player_quests, player_claim_check, (int)PF.light_on);
 	encrypt_write(f1, cf_state, out_rec);
 
 	/*    sys_gettim(&current_time); */
 	/*    sub_quadtime(current_time,start_time,&delta_time); */
 	/*    sys_numtim(&tim,&delta_time); */
-	/*    add_play_time(&tim,py.misc.play_tm); */
+	/*    add_play_time(&tim,player_play_tm); */
 
 	/*with tim do*/
 	/*  sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld", */
@@ -140,45 +140,45 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 	current_time = time(NULL);
 	delta_time = current_time - start_time;
 	sprintf(out_rec, "%ld",
-		convert_time_to_seconds(&py.misc.play_tm) + delta_time);
+		convert_time_to_seconds(&player_play_tm) + delta_time);
 	encrypt_write(f1, cf_state, out_rec);
 
-	sprintf(out_rec, "%s", py.misc.name);
+	sprintf(out_rec, "%s", player_name);
 	encrypt_write(f1, cf_state, out_rec);
 
-	sprintf(out_rec, "%s", py.misc.race);
+	sprintf(out_rec, "%s", player_race);
 	encrypt_write(f1, cf_state, out_rec);
 
-	sprintf(out_rec, "%s", py.misc.sex);
+	sprintf(out_rec, "%s", player_sex);
 	encrypt_write(f1, cf_state, out_rec);
 
-	sprintf(out_rec, "%s", py.misc.tclass);
+	sprintf(out_rec, "%s", player_tclass);
 	encrypt_write(f1, cf_state, out_rec);
 
-	sprintf(out_rec, "%s", py.misc.title);
+	sprintf(out_rec, "%s", player_title);
 	encrypt_write(f1, cf_state, out_rec);
 
 	for (i1 = 0; i1 < 5; i1++) {
-		strcpy(out_rec, py.misc.history[i1]);
+		strcpy(out_rec, player_history[i1]);
 		encrypt_write(f1, cf_state, out_rec);
 	}
 
-	sprintf(out_rec, "%d", (int)py.misc.cheated);
+	sprintf(out_rec, "%d", (int)player_cheated);
 	encrypt_write(f1, cf_state, out_rec);
 
 	sprintf(out_rec, "%ld %ld %d %d %d %d %d %d %d %ld %ld %ld %d %d %f",
-		char_row, char_col, (int)PM.pclass, (int)PM.prace, (int)PM.age,
-		(int)PM.ht, (int)PM.wt, (int)PM.sc, (int)PM.max_exp, PM.exp,
-		PM.rep, PM.premium, (int)PM.lev, (int)PM.max_lev, PM.expfact);
+		char_row, char_col, (int)player_pclass, (int)player_prace, (int)player_age,
+		(int)player_ht, (int)player_wt, (int)player_sc, (int)player_max_exp, player_exp,
+		player_rep, player_premium, (int)player_lev, (int)player_max_lev, player_expfact);
 	encrypt_write(f1, cf_state, out_rec);
 
 	sprintf(out_rec,
 		"%d %d %d %d %d %d %f %d %f %d %d %d %d %d %d %d %d %d %d %d",
-		(int)PM.srh, (int)PM.fos, (int)PM.stl, (int)PM.bth,
-		(int)PM.bthb, (int)PM.mana, PM.cmana, (int)PM.mhp, PM.chp,
-		(int)PM.ptohit, (int)PM.ptodam, (int)PM.pac, (int)PM.ptoac,
-		(int)PM.dis_th, (int)PM.dis_td, (int)PM.dis_ac, (int)PM.dis_tac,
-		(int)PM.disarm, (int)PM.save, (int)PM.hitdie);
+		(int)player_srh, (int)player_fos, (int)player_stl, (int)player_bth,
+		(int)player_bthb, (int)player_mana, player_cmana, (int)player_mhp, player_chp,
+		(int)player_ptohit, (int)player_ptodam, (int)player_pac, (int)player_ptoac,
+		(int)player_dis_th, (int)player_dis_td, (int)player_dis_ac, (int)player_dis_tac,
+		(int)player_disarm, (int)player_save, (int)player_hitdie);
 	encrypt_write(f1, cf_state, out_rec);
 
 	/*change by Dean--inven_ctr calculated from scratch to*/
@@ -196,7 +196,7 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 		inven_weight, equip_ctr, dun_level, missle_ctr, mon_tot_mult,
 		uand(0xF, turn), randes_seed);
 	encrypt_write(f1, cf_state, out_rec);
-	/*end with py.misc*/
+	/*end with player*/
 
 	/*with py.flags do*/
 	sprintf(out_rec, "%d %d", (int)PF.insured, (int)PF.dead);
@@ -327,8 +327,8 @@ static void sc__write_magic(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	long i1;
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
 		sprintf(out_rec, "%d %d",
-			(int)class_spell(PM.pclass, i1)->learned,
-			class_spell(PM.pclass, i1)->sexp);
+			(int)class_spell(player_pclass, i1)->learned,
+			class_spell(player_pclass, i1)->sexp);
 		encrypt_write(f1, cf_state, out_rec);
 	}
 }
@@ -526,17 +526,17 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 		} /* end for i2; */
 
 		/* with stores[i1].store_inven[i2].store_open. do; */
-		/* with py.misc do; */
+		/* with player_do; */
 		st = stores[i1].store_open;
-		if ((PM.cur_age.year > st.year) ||
-		    ((PM.cur_age.year == st.year) &&
-		     ((PM.cur_age.month > st.month) ||
-		      ((PM.cur_age.month == st.month) &&
-		       ((PM.cur_age.day > st.day) ||
-			((PM.cur_age.day == st.day) &&
-			 ((PM.cur_age.hour > st.hour) ||
-			  ((PM.cur_age.hour == st.hour) ||
-			   ((PM.cur_age.secs > st.secs)))))))))) {
+		if ((player_cur_age.year > st.year) ||
+		    ((player_cur_age.year == st.year) &&
+		     ((player_cur_age.month > st.month) ||
+		      ((player_cur_age.month == st.month) &&
+		       ((player_cur_age.day > st.day) ||
+			((player_cur_age.day == st.day) &&
+			 ((player_cur_age.hour > st.hour) ||
+			  ((player_cur_age.hour == st.hour) ||
+			   ((player_cur_age.secs > st.secs)))))))))) {
 			st.year = 0;
 			st.month = 0;
 			st.day = 0;
@@ -569,9 +569,9 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 
 	save_seed = get_seed();
 	save_seed ^= randint(9999999);
-	sprintf(out_rec, "%lu %ld %ld %ld", save_seed, py.misc.creation_time,
-		py.misc.save_count, py.misc.deaths);
-	/* sprintf(title2,"%lu %s",save_seed,py.misc.ssn); */
+	sprintf(out_rec, "%lu %ld %ld %ld", save_seed, player_creation_time,
+		player_save_count, player_deaths);
+	/* sprintf(title2,"%lu %s",save_seed,player_ssn); */
 	set_seed(ENCRYPT_SEED2);
 	encrypt_write(f1, cf_state, out_rec);
 	set_seed(save_seed);
@@ -620,7 +620,7 @@ boolean save_char(boolean quick)
 		sc__write_monsters(f1, &cf_state, out_rec);
 		sc__write_town(f1, &cf_state, out_rec);
 
-		sprintf(out_rec, "%ld", PM.creation_time);
+		sprintf(out_rec, "%ld", player_creation_time);
 		encrypt_write(f1, &cf_state, out_rec);
 
 		encrypt_flush(f1, &cf_state);
@@ -696,7 +696,7 @@ static void gc__read_master(GDBM_FILE f2, boolean *paniced)
 	int result;
 	master_key mkey;
 
-	mkey.creation_time = PM.creation_time;
+	mkey.creation_time = player_creation_time;
 
 	result = master_file_verify(f2, &mkey);
 
@@ -726,13 +726,13 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	set_seed(ENCRYPT_SEED2);
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%lu %ld %ld %ld", &save_seed,
-		   &py.misc.creation_time, &py.misc.save_count,
-		   &py.misc.deaths) != 4) {
+		   &player_creation_time, &player_save_count,
+		   &player_deaths) != 4) {
 		*paniced = true;
 	}
 
 	/*  strcpy(temp,in_rec+13); */
-	/*  py.misc.ssn = temp; */
+	/*  player_ssn = temp; */
 
 	/*  set_seed(ENCRYPT_SEED1); */
 	/*  coder(temp); */
@@ -780,51 +780,51 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %d",
-		   &PM.xtr_wgt, &PM.account, &PM.money[0], &PM.money[6],
-		   &PM.money[5], &PM.money[4], &PM.money[3], &PM.money[2],
-		   &PM.money[1], &x1) != 10) {
+		   &player_xtr_wgt, &player_account, &player_money[0], &player_money[6],
+		   &player_money[5], &player_money[4], &player_money[3], &player_money[2],
+		   &player_money[1], &x1) != 10) {
 		*paniced = true;
 	}
-	PM.diffic = x1;
+	player_diffic = x1;
 
-	/*with py.misc.birth do*/
+	/*with player_birth do*/
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	if (sscanf(in_rec, "%ld %d %d %d %d", &PM.birth.year, &x1, &x2, &x3,
+	if (sscanf(in_rec, "%ld %d %d %d %d", &player_birth.year, &x1, &x2, &x3,
 		   &x4) != 5) {
 		*paniced = true;
 	}
-	PM.birth.month = x1;
-	PM.birth.day = x2;
-	PM.birth.hour = x3;
-	PM.birth.secs = x4;
+	player_birth.month = x1;
+	player_birth.day = x2;
+	player_birth.hour = x3;
+	player_birth.secs = x4;
 
-	/*with py.misc.cur_age do*/
+	/*with player_cur_age do*/
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	if (sscanf(in_rec, "%ld %d %d %d %d", &PM.cur_age.year, &x1, &x2, &x3,
+	if (sscanf(in_rec, "%ld %d %d %d %d", &player_cur_age.year, &x1, &x2, &x3,
 		   &x4) != 5) {
 		*paniced = true;
 	}
-	PM.cur_age.month = x1;
-	PM.cur_age.day = x2;
-	PM.cur_age.hour = x3;
-	PM.cur_age.secs = x4;
+	player_cur_age.month = x1;
+	player_cur_age.day = x2;
+	player_cur_age.hour = x3;
+	player_cur_age.secs = x4;
 
 	/*{FUBAR modification for quests}*/
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	if (sscanf(in_rec, "%d %d %d %ld %d", &x1, &x2, &x3, &PM.claim_check,
+	if (sscanf(in_rec, "%d %d %d %ld %d", &x1, &x2, &x3, &player_claim_check,
 		   &x4) != 5) {
 		*paniced = true;
 	}
 	PF.quested = x1;
-	PM.cur_quest = x2;
-	PM.quests = x3;
+	player_cur_quest = x2;
+	player_quests = x3;
 	PF.light_on = x4;
 	PF.resting_till_full = false;
 
 	/*    sys_gettim(&current_time); */
 	/*    sub_quadtime(current_time,start_time,&delta_time); */
 	/*    sys_numtim(&tim,&delta_time); */
-	/*    add_play_time(&tim,py.misc.play_tm); */
+	/*    add_play_time(&tim,player_play_tm); */
 
 	/*with tim do*/
 	/*  read_decrypt(f1, cf_state, in_rec, paniced); */
@@ -837,102 +837,102 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 	if (sscanf(in_rec, "%ld", &old_time) != 1) {
 		*paniced = true;
 	}
-	convert_seconds_to_time(old_time, &py.misc.play_tm);
+	convert_seconds_to_time(old_time, &player_play_tm);
 	start_time = time(NULL);
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(py.misc.name, in_rec, sizeof(vtype));
+	strncpy(player_name, in_rec, sizeof(vtype));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(py.misc.race, in_rec, sizeof(vtype));
+	strncpy(player_race, in_rec, sizeof(vtype));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(py.misc.sex, in_rec, sizeof(vtype));
+	strncpy(player_sex, in_rec, sizeof(vtype));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(py.misc.tclass, in_rec, sizeof(vtype));
+	strncpy(player_tclass, in_rec, sizeof(vtype));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(py.misc.title, in_rec, sizeof(vtype));
+	strncpy(player_title, in_rec, sizeof(vtype));
 
 	for (i1 = 0; i1 < 5; i1++) {
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		strncpy(py.misc.history[i1], in_rec, sizeof(vtype));
+		strncpy(player_history[i1], in_rec, sizeof(vtype));
 	}
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%d", &x1) != 1) {
 		*paniced = true;
 	}
-	py.misc.cheated |= x1;
+	player_cheated |= x1;
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%ld %ld %d %d %d %d %d %d %d %ld %ld %ld %d %d %f",
 		   &char_row, &char_col, &x1, &x2, &x3, &x4, &x5, &x6, &x7,
-		   &PM.exp, &PM.rep, &PM.premium, &x8, &x9,
-		   &PM.expfact) != 15) {
+		   &player_exp, &player_rep, &player_premium, &x8, &x9,
+		   &player_expfact) != 15) {
 		*paniced = true;
 	}
 
-	PM.pclass = x1;
-	PM.prace = x2;
-	PM.age = x3;
-	PM.ht = x4;
-	PM.wt = x5;
-	PM.sc = x6;
-	PM.max_exp = x7;
-	PM.lev = x8;
-	PM.max_lev = x9;
+	player_pclass = x1;
+	player_prace = x2;
+	player_age = x3;
+	player_ht = x4;
+	player_wt = x5;
+	player_sc = x6;
+	player_max_exp = x7;
+	player_lev = x8;
+	player_max_lev = x9;
 
-	if (PM.wt > max_allowable_weight()) {
-		PM.wt = (0.9 * max_allowable_weight());
-	} else if (PM.wt < min_allowable_weight()) {
-		PM.wt = (1.10 * min_allowable_weight());
+	if (player_wt > max_allowable_weight()) {
+		player_wt = (0.9 * max_allowable_weight());
+	} else if (player_wt < min_allowable_weight()) {
+		player_wt = (1.10 * min_allowable_weight());
 	}
 
-	if (py.misc.pclass == C_WARRIOR) {
-		py.misc.mr = -10;
-	} else if ((py.misc.pclass == C_MAGE) || (py.misc.pclass == C_PRIEST)) {
-		py.misc.mr = 0;
+	if (player_pclass == C_WARRIOR) {
+		player_mr = -10;
+	} else if ((player_pclass == C_MAGE) || (player_pclass == C_PRIEST)) {
+		player_mr = 0;
 	} else {
-		py.misc.mr = -5;
+		player_mr = -5;
 	}
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	/*  sscanf(in_rec, "%ld %ld %f %ld %f %ld %ld %ld %ld %ld %ld %ld %ld */
 	/*  %ld %ld %ld %ld", */
-	/*	  &(PM.srh),&(PM.fos),&(PM.stl),&(PM.bth), */
+	/*	  &(player_srh),&(player_fos),&(player_stl),&(player_bth), */
 	/*	  &x1, */
-	/*	  &x2, &(PM.cmana), &x3, &(PM.chp), */
+	/*	  &x2, &(player_cmana), &x3, &(player_chp), */
 	/*	  &x4, &x5, &x7, &x7, */
 	/*	  &x8, &x9, &x10, &x11, */
 	/*	  &x12, &x13, &x14); */
 	if (sscanf(
 		in_rec,
 		"%d %d %d %d %d %d %f %d %f %d %d %d %d %d %d %d %d %d %d %d",
-		&x1, &x2, &x3, &x4, &x5, &x6, &(PM.cmana), &x7, &(PM.chp), &x8,
+		&x1, &x2, &x3, &x4, &x5, &x6, &(player_cmana), &x7, &(player_chp), &x8,
 		&x9, &x10, &x11, &x12, &x13, &x14, &x15, &x16, &x17,
 		&x18) != 20) {
 		*paniced = true;
 	}
-	PM.srh = x1;
-	PM.fos = x2;
-	PM.stl = x3;
-	PM.bth = x4;
-	PM.bthb = x5;
-	PM.mana = x6;
-	PM.mhp = x7;
-	PM.ptohit = x8;
-	PM.ptodam = x9;
-	PM.pac = x10;
-	PM.ptoac = x11;
-	PM.dis_th = x12;
-	PM.dis_td = x13;
-	PM.dis_ac = x14;
-	PM.dis_tac = x15;
-	PM.disarm = x16;
-	PM.save = x17;
-	PM.hitdie = x18;
+	player_srh = x1;
+	player_fos = x2;
+	player_stl = x3;
+	player_bth = x4;
+	player_bthb = x5;
+	player_mana = x6;
+	player_mhp = x7;
+	player_ptohit = x8;
+	player_ptodam = x9;
+	player_pac = x10;
+	player_ptoac = x11;
+	player_dis_th = x12;
+	player_dis_td = x13;
+	player_dis_ac = x14;
+	player_dis_tac = x15;
+	player_disarm = x16;
+	player_save = x17;
+	player_hitdie = x18;
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%ld %ld %ld %ld %ld %ld %ld %lu", &inven_ctr,
@@ -940,7 +940,7 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 		   &mon_tot_mult, &turn, &randes_seed) != 8) {
 		*paniced = true;
 	}
-	/*end with py.misc*/
+	/*end with player*/
 
 	/*with py.flags do*/
 	read_decrypt(f1, cf_state, in_rec, paniced);
@@ -956,7 +956,7 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 		msg_print("Hmmm, it would appear that you are dead.");
 		if (PF.insured) {
 			msg_print("Luckily, your insurance is paid up!");
-			py.misc.deaths++;
+			player_deaths++;
 			PF.insured = false;
 		} else {
 			msg_print(
@@ -1237,13 +1237,13 @@ static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	int x1, x2;
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		/* with magic_spell[py.misc.pclass,i1] do; */
+		/* with magic_spell[player_pclass,i1] do; */
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		if (sscanf(in_rec, "%d %d", &x1, &x2) != 2) {
 			*paniced = true;
 		}
-		class_spell(PM.pclass, i1)->learned = x1;
-		class_spell(PM.pclass, i1)->sexp = x2;
+		class_spell(player_pclass, i1)->learned = x1;
+		class_spell(player_pclass, i1)->sexp = x2;
 	}
 }
 
@@ -1550,7 +1550,7 @@ boolean get_char(boolean prop)
 
 		if (was_dead) {
 			/* nuke claim_check entry, they are lucky to be alive */
-			PM.claim_check = 0;
+			player_claim_check = 0;
 			msg_print(" ");
 		}
 
@@ -1573,7 +1573,7 @@ boolean get_char(boolean prop)
 		if (!paniced) {
 			read_decrypt(f1, &cf_state, in_rec, &paniced);
 			sscanf(in_rec, "%ld", &check_time);
-			if (PM.creation_time != check_time) {
+			if (player_creation_time != check_time) {
 				paniced = true;
 			}
 		}

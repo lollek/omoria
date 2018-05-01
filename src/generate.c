@@ -879,7 +879,7 @@ void gc__town_gen()
 
 	gc__place_boundry();
 
-	if ((py.misc.cur_age.hour > 17) || (py.misc.cur_age.hour < 6)) {
+	if ((player_cur_age.hour > 17) || (player_cur_age.hour < 6)) {
 		/*{ Night	}*/
 
 		mugging_chance = NIGHT_MUGGING;

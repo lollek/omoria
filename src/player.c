@@ -1,10 +1,67 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+/* P_STATS */
 uint8_t player_stats_perm[] = {0, 0, 0, 0, 0, 0};
 uint8_t player_stats_curr[] = {0, 0, 0, 0, 0, 0};
 int8_t  player_stats_mod[] = {0, 0, 0, 0, 0, 0};
 uint8_t player_stats_lost[] = {0, 0, 0, 0, 0, 0};
+
+/* P_MISC */
+int64_t player_xtr_wgt = 0;
+int64_t player_account = 0;
+money_type player_money = {0, 0, 0, 0, 0, 0, 0};
+game_time_type player_birth = {0, 0, 0, 0, 0};
+game_time_type player_cur_age = {0, 0, 0, 0, 0};
+time_type player_play_tm = {0, 0, 0, 0, 0, 0, 0};
+uint8_t player_diffic = 3;
+vtype player_name = " ";
+vtype player_race = " ";
+vtype player_sex = " ";
+vtype player_title = " ";
+vtype player_tclass = " ";
+int64_t player_max_exp = 0;
+int64_t player_exp = 0;
+int64_t player_rep = 0;
+int64_t player_deaths = 0;
+int64_t player_premium = 0;
+uint16_t player_age = 0;
+uint16_t player_ht = 0;
+uint16_t player_wt = 0;
+uint16_t player_lev = 0;
+uint16_t player_max_lev = 0;
+int16_t player_srh = 0;
+int16_t player_fos = 0;
+int16_t player_bth = 0;
+int16_t player_bthb = 0;
+int16_t player_mana = 0;
+int16_t player_mhp = 0;
+int16_t player_ptohit = 0;
+int16_t player_ptodam = 0;
+int16_t player_pac = 0;
+int16_t player_ptoac = 0;
+int16_t player_dis_th = 0;
+int16_t player_dis_td = 0;
+int16_t player_dis_ac = 0;
+int16_t player_dis_tac = 0;
+int16_t player_disarm = 0;
+int16_t player_save = 0;
+int16_t player_sc = 0;
+enum class_t player_pclass = 0;
+uint8_t player_prace = 0;
+uint8_t player_hitdie = 0;
+uint8_t player_stl = 0;
+float player_expfact = 0;
+float player_cmana = 0;
+float player_chp = 0;
+vtype player_history[] = {"", "", "", "", ""};
+boolean player_cheated = false;
+int64_t  player_mr = 0;
+uint8_t player_quests = 0;
+uint16_t player_cur_quest = 0;
+time_t player_creation_time = 0;
+int64_t player_save_count = 0;
+int64_t player_claim_check = 0;
 
 void search_off()
 {
@@ -119,8 +176,8 @@ static void _move_char(long dir)
 		area_affect(dir, test_row, test_col);
 
 	/* Check to see if he notices something */
-	if (py.flags.blind < 1 && (randint(py.misc.fos) == 1 || search_flag))
-		search(test_row, test_col, py.misc.srh);
+	if (py.flags.blind < 1 && (randint(player_fos) == 1 || search_flag))
+		search(test_row, test_col, player_srh);
 
 	/* An object is beneath him? */
 	if (cave[test_row][test_col].tptr > 0)
@@ -168,14 +225,14 @@ void regenhp(float percent)
 {
 	/*{ Regenerate hit points		-RAK-	}*/
 
-	PM.chp += PM.mhp * percent + PLAYER_REGEN_HPBASE;
+	player_chp += player_mhp * percent + PLAYER_REGEN_HPBASE;
 }
 
 void regenmana(float percent)
 {
 	/*{ Regenerate mana points		-RAK-	}*/
 
-	PM.cmana += PM.mana * percent + PLAYER_REGEN_MNBASE;
+	player_cmana += player_mana * percent + PLAYER_REGEN_MNBASE;
 }
 
 void take_hit(long damage, vtype hit_from)
@@ -188,7 +245,7 @@ void take_hit(long damage, vtype hit_from)
 		damage = 0;
 	}
 
-	py.misc.chp -= damage;
+	player_chp -= damage;
 
 	if (search_flag) {
 		search_off();
@@ -200,7 +257,7 @@ void take_hit(long damage, vtype hit_from)
 
 	flush();
 
-	if (py.misc.chp <= -1) {
+	if (player_chp <= -1) {
 		if (!death) {
 			/*{ Hee, hee... Ain't I mean?     }*/
 			death = true;

@@ -218,7 +218,7 @@ void ident_char()
 					prt("> - A down staircase.", 1, 1);
 					break;
 				case '@':
-					prt(py.misc.name, 1, 1);
+					prt(player_name, 1, 1);
 					break;
 				case 'p':
 					prt("p - A townsperson.", 1, 1);
@@ -358,7 +358,7 @@ void ident_char()
 					prt("? - A scroll.", 1, 1);
 					break;
 				case '@':
-					prt(py.misc.name, 1, 1);
+					prt(player_name, 1, 1);
 					break;
 				case 'A':
 					prt("A - Giant Ant Lion.", 1, 1);

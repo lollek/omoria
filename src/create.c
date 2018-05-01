@@ -206,7 +206,7 @@ static boolean cc__choose_race()
 
 	/*  printf("    choose_race done with do\n"); fflush(stdout); */
 
-	py.misc.race[0] = 0;
+	player_race[0] = 0;
 	put_buffer("", 21, 30);
 	exit_flag = false;
 
@@ -215,11 +215,11 @@ static boolean cc__choose_race()
 		inkey_flush(&s);
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= MAX_RACES) && (i2 >= 1)) {
-			py.misc.prace = i2 - 1;
-			strcpy(py.misc.race, race_name(i2 - 1));
+			player_prace = i2 - 1;
+			strcpy(player_race, race_name(i2 - 1));
 			exit_flag = true;
 			return_value = true;
-			put_buffer(py.misc.race, 4, 15);
+			put_buffer(player_race, 4, 15);
 		} else if (s == '?') {
 			moria_help("Character Races");
 			exit_flag = true;
@@ -279,9 +279,9 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 		 * Figure out what the current bonuses are
 		 * so the player has a clue
 		 */
-		py.misc.dis_th = tohit_adj();
-		py.misc.dis_td = todam_adj();
-		py.misc.dis_tac = toac_adj();
+		player_dis_th = tohit_adj();
+		player_dis_td = todam_adj();
+		player_dis_tac = toac_adj();
 
 		if (!*printed_once) {
 			erase_line(1, 1);
@@ -349,7 +349,7 @@ static void cc__get_stats()
 	/*	{ Get the statistics for this bozo			-KRC-
 	 * }*/
 
-	const int32_t prace = py.misc.prace;
+	const int32_t prace = player_prace;
 	int tstat;
 
 	for (tstat = STR; tstat <= CHR; tstat++) {
@@ -360,20 +360,20 @@ static void cc__get_stats()
 
 	cc__get_stats_();
 
-	py.misc.rep = 0;
-	py.misc.srh = race_search_mod(prace);
-	py.misc.bth = race_melee_bonus(prace);
-	py.misc.bthb = race_ranged_bonus(prace);
-	py.misc.fos = race_search_freq(prace);
-	py.misc.stl = race_stealth_mod(prace);
-	py.misc.save = race_save_mod(prace);
-	py.misc.hitdie = race_health_bonus(prace);
-	py.misc.lev = 1;
-	py.misc.ptodam = todam_adj();
-	py.misc.ptohit = tohit_adj();
-	py.misc.ptoac = 0;
-	py.misc.pac = toac_adj();
-	py.misc.expfact = race_expfactor(prace);
+	player_rep = 0;
+	player_srh = race_search_mod(prace);
+	player_bth = race_melee_bonus(prace);
+	player_bthb = race_ranged_bonus(prace);
+	player_fos = race_search_freq(prace);
+	player_stl = race_stealth_mod(prace);
+	player_save = race_save_mod(prace);
+	player_hitdie = race_health_bonus(prace);
+	player_lev = 1;
+	player_ptodam = todam_adj();
+	player_ptohit = tohit_adj();
+	player_ptoac = 0;
+	player_pac = toac_adj();
+	player_expfact = race_expfactor(prace);
 	py.flags.see_infra = race_infravision(prace);
 	py.flags.swim = race_swim_speed(prace);
 }
@@ -388,7 +388,7 @@ static void cc__print_history()
 	clear_from(14);
 	put_buffer("Character Background", 14, 28);
 	for (i1 = 0; i1 < 5; i1++) {
-		put_buffer(py.misc.history[i1], i1 + 1 + 14, 5);
+		put_buffer(player_history[i1], i1 + 1 + 14, 5);
 	}
 }
 
@@ -408,7 +408,7 @@ static void cc__get_history()
 	boolean flag;
 
 	/*	{ Get a block of history text				}*/
-	hist_ptr = (py.misc.prace) * 3 + 1;
+	hist_ptr = (player_prace) * 3 + 1;
 	history_block[0] = 0;
 	social_class = randint(4);
 	cur_ptr = -1;
@@ -471,15 +471,15 @@ static void cc__get_history()
 		} else {
 			flag = true;
 		}
-		strncpy(py.misc.history[line_ctr], &(history_block[start_pos]),
+		strncpy(player_history[line_ctr], &(history_block[start_pos]),
 			cur_len);
-		py.misc.history[line_ctr][cur_len] = 0;
+		player_history[line_ctr][cur_len] = 0;
 		line_ctr++;
 		start_pos = new_start;
 	} while (!flag);
 
 	for (; line_ctr < 5; line_ctr++) {
-		py.misc.history[line_ctr][0] = 0;
+		player_history[line_ctr][0] = 0;
 	}
 
 	/*	{ Compute social class for player			}*/
@@ -489,8 +489,8 @@ static void cc__get_history()
 		social_class = 1;
 	}
 
-	py.misc.rep = 50 - social_class;
-	py.misc.sc = social_class;
+	player_rep = 50 - social_class;
+	player_sc = social_class;
 
 } /* end cc__get_history */
 
@@ -503,13 +503,13 @@ static boolean cc__get_sex()
 	boolean exit_flag = false;
 	boolean return_value = false;
 
-	if (py.misc.prace == R_DRYAD) {
-		strcpy(py.misc.sex, "Female");
+	if (player_prace == R_DRYAD) {
+		strcpy(player_sex, "Female");
 		return_value = true;
 		exit_flag = true;
-		prt(py.misc.sex, 5, 15);
+		prt(player_sex, 5, 15);
 	} else {
-		py.misc.sex[0] = 0;
+		player_sex[0] = 0;
 		clear_from(21);
 		prt("Choose a sex (? for Help):", 21, 3);
 		prt("m) Male       f) Female", 22, 3);
@@ -518,13 +518,13 @@ static boolean cc__get_sex()
 			move(4, 14);
 			inkey_flush(&s);
 			if (s == 'f') {
-				strcpy(py.misc.sex, "Female");
-				prt(py.misc.sex, 5, 15);
+				strcpy(player_sex, "Female");
+				prt(player_sex, 5, 15);
 				exit_flag = true;
 				return_value = true;
 			} else if (s == 'm') {
-				strcpy(py.misc.sex, "Male");
-				prt(py.misc.sex, 5, 15);
+				strcpy(player_sex, "Male");
+				prt(player_sex, 5, 15);
 				exit_flag = true;
 				return_value = true;
 			} else if (s == '?') {
@@ -545,29 +545,29 @@ static void cc__get_ahw()
 
 	long i1;
 
-	i1 = py.misc.prace;
-	py.misc.age = race_rand_starting_age(i1);
+	i1 = player_prace;
+	player_age = race_rand_starting_age(i1);
 
-	py.misc.birth.year = 500 + randint(50);
-	py.misc.birth.month = randint(13);
-	py.misc.birth.day = randint(28);
-	py.misc.birth.hour = randint(24) - 1;
-	py.misc.birth.secs = randint(400) - 1;
+	player_birth.year = 500 + randint(50);
+	player_birth.month = randint(13);
+	player_birth.day = randint(28);
+	player_birth.hour = randint(24) - 1;
+	player_birth.secs = randint(400) - 1;
 
-	py.misc.cur_age.year = py.misc.age + py.misc.birth.year;
-	py.misc.cur_age.month = py.misc.birth.month;
-	py.misc.cur_age.day = py.misc.birth.day + 1;
-	if ((py.misc.cur_age.day % 7) == 0) {
-		add_days(&py.misc.cur_age, 2);
+	player_cur_age.year = player_age + player_birth.year;
+	player_cur_age.month = player_birth.month;
+	player_cur_age.day = player_birth.day + 1;
+	if ((player_cur_age.day % 7) == 0) {
+		add_days(&player_cur_age, 2);
 	}
-	if ((py.misc.cur_age.day % 7) == 1) {
-		add_days(&py.misc.cur_age, 1);
+	if ((player_cur_age.day % 7) == 1) {
+		add_days(&player_cur_age, 1);
 	}
-	py.misc.cur_age.hour = 7;
-	py.misc.cur_age.secs = 300 + randint(99);
-	py.misc.ht = race_rand_starting_height(i1, characters_sex() == MALE);
-	py.misc.wt = race_rand_starting_weight(i1, characters_sex() == MALE);
-	py.misc.disarm = race_disarm_mod(i1) + todis_adj();
+	player_cur_age.hour = 7;
+	player_cur_age.secs = 300 + randint(99);
+	player_ht = race_rand_starting_height(i1, characters_sex() == MALE);
+	player_wt = race_rand_starting_weight(i1, characters_sex() == MALE);
+	player_disarm = race_disarm_mod(i1) + todis_adj();
 
 } /* end cc__get_ahw */
 
@@ -587,7 +587,7 @@ static boolean cc__get_class()
 		cl[i2] = 0;
 	}
 
-	i1 = py.misc.prace;
+	i1 = player_prace;
 	i2 = 0;
 	i3 = 0;
 	i4 = 3;
@@ -611,7 +611,7 @@ static boolean cc__get_class()
 		i2++;
 	} while (i2 < MAX_CLASS);
 
-	py.misc.pclass = 0;
+	player_pclass = 0;
 	put_buffer("", 21, 31);
 	exit_flag = false;
 
@@ -620,26 +620,26 @@ static boolean cc__get_class()
 		inkey_flush(&s);
 		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
 		if ((i2 <= i3) && (i2 >= 1)) {
-			strcpy(py.misc.tclass, class_title(cl[i2]));
-			py.misc.pclass = cl[i2];
-			aclass = py.misc.pclass;
+			strcpy(player_tclass, class_title(cl[i2]));
+			player_pclass = cl[i2];
+			aclass = player_pclass;
 			exit_flag = true;
 			return_value = true;
 			clear_from(21);
-			put_buffer(py.misc.tclass, 6, 15);
-			py.misc.hitdie += class_extra_health(aclass);
-			py.misc.mhp = con_adj() + py.misc.hitdie;
-			py.misc.chp = py.misc.mhp;
-			py.misc.bth += class_melee_bonus(aclass) * 5 + 20;
-			py.misc.bthb += class_ranged_bonus(aclass) * 5 + 20;
-			py.misc.srh += class_search_mod(aclass);
-			py.misc.disarm += class_disarm_mod(aclass);
-			py.misc.fos += class_search_freq(aclass);
-			py.misc.stl += class_stealth_mod(aclass);
-			py.misc.save += class_save_mod(aclass);
-			py.misc.expfact += class_expfactor(aclass);
-			strcpy(py.misc.title, player_title[aclass][0]);
-			py.misc.mr = class_magic_resist(aclass);
+			put_buffer(player_tclass, 6, 15);
+			player_hitdie += class_extra_health(aclass);
+			player_mhp = con_adj() + player_hitdie;
+			player_chp = player_mhp;
+			player_bth += class_melee_bonus(aclass) * 5 + 20;
+			player_bthb += class_ranged_bonus(aclass) * 5 + 20;
+			player_srh += class_search_mod(aclass);
+			player_disarm += class_disarm_mod(aclass);
+			player_fos += class_search_freq(aclass);
+			player_stl += class_stealth_mod(aclass);
+			player_save += class_save_mod(aclass);
+			player_expfact += class_expfactor(aclass);
+			strcpy(player_title, player_titles[aclass][0]);
+			player_mr = class_magic_resist(aclass);
 
 			/* { Adjust the stats for the class adjustment
 			 * -RAK-	}*/
@@ -651,15 +651,15 @@ static boolean cc__get_class()
 				player_stats_curr[(int)tstat] = player_stats_perm[(int)tstat];
 			}
 
-			py.misc.ptodam = todam_adj(); /*{ Real values	}*/
-			py.misc.ptohit = tohit_adj();
-			py.misc.ptoac = toac_adj();
-			py.misc.pac = 0;
-			py.misc.dis_td =
-			    py.misc.ptodam; /*{ Displayed values	}*/
-			py.misc.dis_th = py.misc.ptohit;
-			py.misc.dis_tac = py.misc.ptoac;
-			py.misc.dis_ac = py.misc.pac;
+			player_ptodam = todam_adj(); /*{ Real values	}*/
+			player_ptohit = tohit_adj();
+			player_ptoac = toac_adj();
+			player_pac = 0;
+			player_dis_td =
+			    player_ptodam; /*{ Displayed values	}*/
+			player_dis_th = player_ptohit;
+			player_dis_tac = player_ptoac;
+			player_dis_ac = player_pac;
 
 		} else if (s == '?') {
 			moria_help("Character Classes");
@@ -682,7 +682,7 @@ static void cc__get_money()
 		tmp += cc__old_stat(player_stats_curr[(int)tstat]);
 	}
 
-	i1 = py.misc.sc * 6 + randint(25) + 325; /*{ Social Class adj	} */
+	i1 = player_sc * 6 + randint(25) + 325; /*{ Social Class adj	} */
 	i1 -= tmp;				 /*{ Stat adj		} */
 	i1 += cc__old_stat(player_stats_curr[CHR]);      /*{ Charisma adj	} */
 	if (i1 < 80) {
@@ -725,7 +725,7 @@ void create_character()
 	printed_once = false;
 	for (tstat = STR; tstat <= CHR; tstat++) {
 		max_r[(int)tstat] =
-		    cc__max_stat(140, race_stats(py.misc.prace)[(int)tstat]);
+		    cc__max_stat(140, race_stats(player_prace)[(int)tstat]);
 	}
 
 	cc__get_minimums(user, &minning, max_r);
@@ -744,9 +744,9 @@ void create_character()
 		put_stats();
 	}
 
-	py.misc.creation_time = time(NULL);
-	py.misc.save_count = 0;
-	py.misc.claim_check = 0;
+	player_creation_time = time(NULL);
+	player_save_count = 0;
+	player_claim_check = 0;
 	py.flags.light_on = false;
 
 	cc__get_money();
@@ -765,10 +765,10 @@ void put_character()
 	/*{ Prints the following information on the screen.	-JWT-	}*/
 
 	clear_from(1);
-	prt2("Name      : ", py.misc.name, 3, 3);
-	prt2("Race      : ", py.misc.race, 4, 3);
-	prt2("Sex       : ", py.misc.sex, 5, 3);
-	prt2("Class     : ", py.misc.tclass, 6, 3);
+	prt2("Name      : ", player_name, 3, 3);
+	prt2("Race      : ", player_race, 4, 3);
+	prt2("Sex       : ", player_sex, 5, 3);
+	prt2("Class     : ", player_tclass, 6, 3);
 }
 
 void put_stats()
@@ -778,10 +778,10 @@ void put_stats()
 	 * }*/
 
 	prt_6_stats(player_stats_curr, NULL, 3, 65);
-	prt_num("+ To Hit   : ", py.misc.dis_th, 10, 4);
-	prt_num("+ To Damage: ", py.misc.dis_td, 11, 4);
-	prt_num("+ To AC    : ", py.misc.dis_tac, 12, 4);
-	prt_num("  Total AC : ", py.misc.dis_ac, 13, 4);
+	prt_num("+ To Hit   : ", player_dis_th, 10, 4);
+	prt_num("+ To Damage: ", player_dis_td, 11, 4);
+	prt_num("+ To AC    : ", player_dis_tac, 12, 4);
+	prt_num("  Total AC : ", player_dis_ac, 13, 4);
 }
 
 void upd_stats()
@@ -794,10 +794,10 @@ void upd_stats()
 	for (tstat = STR; tstat <= CHR; tstat++) {
 		prt_stat("", player_stats_curr[(int)tstat], 3 + tstat, 71);
 	}
-	prt_num("", py.misc.dis_th, 10, 17);
-	prt_num("", py.misc.dis_td, 11, 17);
-	prt_num("", py.misc.dis_tac, 12, 17);
-	prt_num("", py.misc.dis_ac, 13, 17);
+	prt_num("", player_dis_th, 10, 17);
+	prt_num("", player_dis_td, 11, 17);
+	prt_num("", player_dis_tac, 12, 17);
+	prt_num("", player_dis_ac, 13, 17);
 }
 
 void put_misc1()
@@ -805,11 +805,11 @@ void put_misc1()
 	/*	{ Prints age, height, weight, and SC			-JWT-
 	 * }*/
 
-	prt_num("Age          : ", py.misc.age, 3, 40);
-	prt_num("Height       : ", py.misc.ht, 4, 40);
-	prt_num("Weight       : ", py.misc.wt, 5, 40);
-	prt_num("Social Class : ", py.misc.sc, 6, 40);
-	prt_num("Difficulty   : ", py.misc.diffic, 7, 40);
+	prt_num("Age          : ", player_age, 3, 40);
+	prt_num("Height       : ", player_ht, 4, 40);
+	prt_num("Weight       : ", player_wt, 5, 40);
+	prt_num("Social Class : ", player_sc, 6, 40);
+	prt_num("Difficulty   : ", player_diffic, 7, 40);
 }
 
 void put_misc2()
@@ -818,14 +818,14 @@ void put_misc2()
 	/*	{ Prints the following information on the screen.	-JWT-
 	 * }*/
 
-	prt_num("Level      : ", py.misc.lev, 10, 31);
-	prt_num("Experience : ", py.misc.exp, 11, 31);
-	prt_num("Gold       : ", py.misc.money[TOTAL_], 12, 31);
-	prt_num("Account    : ", py.misc.account, 13, 31);
-	prt_num("Max Hit Points : ", py.misc.mhp, 10, 54);
-	prt_num("Cur Hit Points : ", (long)(py.misc.chp), 11, 54);
-	prt_num("Max Mana       : ", py.misc.mana, 12, 54);
-	prt_num("Cur Mana       : ", (long)(py.misc.cmana), 13, 54);
+	prt_num("Level      : ", player_lev, 10, 31);
+	prt_num("Experience : ", player_exp, 11, 31);
+	prt_num("Gold       : ", player_money[TOTAL_], 12, 31);
+	prt_num("Account    : ", player_account, 13, 31);
+	prt_num("Max Hit Points : ", player_mhp, 10, 54);
+	prt_num("Cur Hit Points : ", (long)(player_chp), 11, 54);
+	prt_num("Max Mana       : ", player_mana, 12, 54);
+	prt_num("Cur Mana       : ", (long)(player_cmana), 13, 54);
 }
 
 void put_misc3()
@@ -840,21 +840,21 @@ void put_misc3()
 
 	clear_from(14);
 
-	xbth = py.misc.bth + py.misc.lev * BTH_LEV_ADJ +
-	       py.misc.ptohit * BTH_PLUS_ADJ;
-	xbthb = py.misc.bthb + py.misc.lev * BTH_LEV_ADJ +
-		py.misc.ptohit * BTH_PLUS_ADJ;
-	xfos = 27 - py.misc.fos;
+	xbth = player_bth + player_lev * BTH_LEV_ADJ +
+	       player_ptohit * BTH_PLUS_ADJ;
+	xbthb = player_bthb + player_lev * BTH_LEV_ADJ +
+		player_ptohit * BTH_PLUS_ADJ;
+	xfos = 27 - player_fos;
 	if (xfos < 0) {
 		xfos = 0;
 	}
-	xsrh = py.misc.srh + spell_adj(INT);
-	xstl = py.misc.stl;
-	xdis = py.misc.disarm + py.misc.lev + 2 * todis_adj() + spell_adj(INT);
-	xsave = py.misc.save + py.misc.lev + spell_adj(WIS);
-	xdev = py.misc.save + py.misc.lev + spell_adj(INT);
+	xsrh = player_srh + spell_adj(INT);
+	xstl = player_stl;
+	xdis = player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT);
+	xsave = player_save + player_lev + spell_adj(WIS);
+	xdev = player_save + player_lev + spell_adj(INT);
 	xswm = py.flags.swim + 4;
-	xrep = 6 + py.misc.rep div 25;
+	xrep = 6 + player_rep div 25;
 	sprintf(xinfra, "%ld feet", py.flags.see_infra * 10);
 
 	prt("(Miscellaneous Abilities)", 16, 24);
@@ -886,10 +886,10 @@ void upd_misc1()
 {
 	/*{ Updates age, height, weight, and SC (amazing, huh?)	-KRC-	}*/
 
-	prt_num("", py.misc.age, 3, 55);
-	prt_num("", py.misc.ht, 4, 55);
-	prt_num("", py.misc.wt, 5, 55);
-	prt_num("", py.misc.sc, 6, 55);
+	prt_num("", player_age, 3, 55);
+	prt_num("", player_ht, 4, 55);
+	prt_num("", player_wt, 5, 55);
+	prt_num("", player_sc, 6, 55);
 }
 
 void display_char()
@@ -910,9 +910,9 @@ void get_name()
 	/* Gets a name for the character    -JWT- */
 
 	prt("Enter your player's name  [press <RETURN> when finished]", 22, 3);
-	py.misc.name[0] = '\0';
-	while (py.misc.name[0] == '\0')
-		get_string(py.misc.name, 3, 15, 24);
+	player_name[0] = '\0';
+	while (player_name[0] == '\0')
+		get_string(player_name, 3, 15, 24);
 	clear_from(21);
 }
 

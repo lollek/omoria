@@ -29,13 +29,13 @@ static void aii__insert(treas_ptr ptr, treas_ptr new_item)
 
 static boolean is_players_spell_book(long typ)
 {
-	if (class_uses_magic(py.misc.pclass, M_ARCANE)) {
+	if (class_uses_magic(player_pclass, M_ARCANE)) {
 		return (typ == magic_book) ? true : false;
-	} else if (class_uses_magic(py.misc.pclass, M_SONG)) {
+	} else if (class_uses_magic(player_pclass, M_SONG)) {
 		return (typ == song_book) ? true : false;
-	} else if (class_uses_magic(py.misc.pclass, M_NATURE)) {
+	} else if (class_uses_magic(player_pclass, M_NATURE)) {
 		return (typ == instrument) ? true : false;
-	} else if (class_uses_magic(py.misc.pclass, M_DIVINE)) {
+	} else if (class_uses_magic(player_pclass, M_DIVINE)) {
 		return (typ == prayer_book) ? true : false;
 	}
 
@@ -1299,19 +1299,19 @@ void ic__show_money()
 	clear_rc(1, 1);
 
 	prt("You are carrying -", 1, 1);
-	sprintf(prt1, "Mithril  : %10ld", PM.money[MITHRIL]);
+	sprintf(prt1, "Mithril  : %10ld", player_money[MITHRIL]);
 	prt(prt1, 3, 10);
-	sprintf(prt1, "Platinum : %10ld", PM.money[PLATINUM]);
+	sprintf(prt1, "Platinum : %10ld", player_money[PLATINUM]);
 	prt(prt1, 4, 10);
-	sprintf(prt1, "Gold     : %10ld", PM.money[GOLD]);
+	sprintf(prt1, "Gold     : %10ld", player_money[GOLD]);
 	prt(prt1, 5, 10);
-	sprintf(prt1, "Silver   : %10ld", PM.money[SILVER]);
+	sprintf(prt1, "Silver   : %10ld", player_money[SILVER]);
 	prt(prt1, 6, 10);
-	sprintf(prt1, "Copper   : %10ld", PM.money[COPPER]);
+	sprintf(prt1, "Copper   : %10ld", player_money[COPPER]);
 	prt(prt1, 7, 10);
-	sprintf(prt1, "Iron     : %10ld", PM.money[IRON]);
+	sprintf(prt1, "Iron     : %10ld", player_money[IRON]);
 	prt(prt1, 8, 10);
-	sprintf(prt1, "Total    : %10ld", PM.money[TOTAL_]);
+	sprintf(prt1, "Total    : %10ld", player_money[TOTAL_]);
 	prt(prt1, 10, 10);
 }
 
@@ -2026,7 +2026,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 		msg_print("There is something there already.");
 		*clr = true;
 	} else {
-		/* with py.misc do begin; */
+		/* with player_do begin; */
 		com_val = get_money_type("Drop ", &reset_flag, false);
 		reset_flag = (!reset_flag);
 		if (!reset_flag) {
@@ -2053,7 +2053,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 			}
 
 			coin_stuff((char)com_val, &mon_type);
-			max = PM.money[mon_type];
+			max = player_money[mon_type];
 			sprintf(out_val2, "%ld", max);
 			sprintf(out_val,
 				"Drop how much %s (1-%ld), Esc to exit : ",
@@ -2069,7 +2069,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 					    "You don't have that much money.");
 					*clr = true;
 				} else {
-					PM.money[mon_type] -= amt;
+					player_money[mon_type] -= amt;
 
 					switch (mon_type) {
 					case 1:
@@ -2212,10 +2212,10 @@ boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw, long count,
 				test_flag = true;
 				redraw = false;
 
-				/* with py.misc do; */
-				if (PM.money[IRON] + PM.money[COPPER] +
-					PM.money[SILVER] + PM.money[GOLD] +
-					PM.money[PLATINUM] + PM.money[MITHRIL] >
+				/* with player_do; */
+				if (player_money[IRON] + player_money[COPPER] +
+					player_money[SILVER] + player_money[GOLD] +
+					player_money[PLATINUM] + player_money[MITHRIL] >
 				    0) {
 					return_value =
 					    drop_money(com_ptr, &stay);

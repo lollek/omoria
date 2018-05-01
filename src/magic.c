@@ -201,7 +201,7 @@ static void _cast(enum magic_t magic_type)
 		}
 	}
 
-	if (!class_uses_magic(py.misc.pclass, magic_type)) {
+	if (!class_uses_magic(player_pclass, magic_type)) {
 		switch (magic_type) {
 		case M_ARCANE:
 			msg_print("You can't cast spells!");
@@ -240,7 +240,7 @@ static void _cast(enum magic_t magic_type)
 		boolean knows_magic = false;
 		int i;
 		for (i = 0; i < 40; ++i) {
-			if (class_spell(py.misc.pclass, i)->learned) {
+			if (class_spell(player_pclass, i)->learned) {
 				knows_magic = true;
 				break;
 			}
@@ -270,7 +270,7 @@ static void _cast(enum magic_t magic_type)
 		return;
 	}
 
-	if (class_spell(PM.pclass, choice)->smana > PM.cmana &&
+	if (class_spell(player_pclass, choice)->smana > player_cmana &&
 	    !get_yes_no("You are low on mana, are you sure?"))
 		return;
 
@@ -312,9 +312,9 @@ static void _cast(enum magic_t magic_type)
 			break;
 		}
 		if (!reset_flag) {
-			PM.exp += class_spell(PM.pclass, choice)->sexp;
+			player_exp += class_spell(player_pclass, choice)->sexp;
 			prt_experience();
-			class_spell(PM.pclass, choice)->sexp = 0;
+			class_spell(player_pclass, choice)->sexp = 0;
 		}
 	}
 
@@ -324,13 +324,13 @@ static void _cast(enum magic_t magic_type)
 		return;
 	}
 
-	if (class_spell(PM.pclass, choice)->smana > PM.cmana) {
+	if (class_spell(player_pclass, choice)->smana > player_cmana) {
 		if (magic_type == M_ARCANE || magic_type == M_DIVINE) {
 			msg_print("You faint from fatigue!");
 			py.flags.paralysis = randint(
-			    5 * trunc(class_spell(PM.pclass, choice)->smana -
-				      PM.cmana));
-			PM.cmana = 0;
+			    5 * trunc(class_spell(player_pclass, choice)->smana -
+				      player_cmana));
+			player_cmana = 0;
 			if (randint(3) == 1)
 				lower_stat(CON,
 					   "You have damaged your health!");
@@ -338,24 +338,24 @@ static void _cast(enum magic_t magic_type)
 		} else if (magic_type == M_NATURE || magic_type == M_SONG) {
 			msg_print("You lose your voice attempting the song!");
 			py.flags.hoarse =
-			    randint(5 * (class_spell(PM.pclass, choice)->smana -
-					 PM.cmana));
-			PM.cmana = 0;
+			    randint(5 * (class_spell(player_pclass, choice)->smana -
+					 player_cmana));
+			player_cmana = 0;
 			if (randint(3) == 1)
 				lower_stat(CHR, "You have damaged your voice!");
 
 		} else if (magic_type == M_CHAKRA) {
 			msg_print("You faint from fatigue!");
 			py.flags.paralysis = randint(
-			    5 * trunc(class_spell(PM.pclass, choice)->smana -
-				      PM.cmana));
-			PM.cmana = 0;
+			    5 * trunc(class_spell(player_pclass, choice)->smana -
+				      player_cmana));
+			player_cmana = 0;
 			if (randint(3) == 1)
 				lower_stat(CON,
 					   "You have damaged your health!");
 		}
 	} else {
-		PM.cmana -= class_spell(PM.pclass, choice)->smana;
+		player_cmana -= class_spell(player_pclass, choice)->smana;
 	}
 	prt_mana();
 }
