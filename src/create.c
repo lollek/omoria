@@ -29,12 +29,12 @@ static unsigned char cc__new_stat(long old_guy)
 	return return_value;
 }
 
-static long cc__get_min_stat(string prompt, unsigned char max)
+static long cc__get_min_stat(char prompt[134], unsigned char max)
 {
 	long abil = 0;
 	long perc;
-	string tmp_str = "";
-	string out_str = "";
+	char tmp_str[134] = "";
+	char out_str[134] = "";
 
 	if (max == 250) {
 		sprintf(out_str, "Min %s (racial max 18/00) : ", prompt);
@@ -181,7 +181,7 @@ static boolean cc__choose_race()
 	long i2, i3, i4, i5;
 	char s;
 	boolean exit_flag;
-	vtype out_val;
+	char out_val[82];
 	boolean return_value = false;
 
 	/*	printf("enter choose_race \n"); fflush(stdout); */
@@ -234,7 +234,7 @@ static boolean cc__choose_race()
 
 static void cc__print_try_count(int try_count)
 {
-	string out_str;
+	char out_str[134];
 	sprintf(out_str, "Try = %10d", try_count);
 	put_buffer(out_str, 21, 60);
 	put_qio();
@@ -579,7 +579,7 @@ static boolean cc__get_class()
 	int32_t aclass;
 	char s;
 	boolean exit_flag;
-	string out_str;
+	char out_str[134];
 	stat_set tstat;
 	boolean return_value = false;
 
@@ -835,8 +835,8 @@ void put_misc3()
 	 * }*/
 	long xbth, xbthb, xfos, xsrh, xstl, xdis;
 	long xsave, xdev, xswm, xrep;
-	vtype xinfra;
-	vtype tmp_str, tmp2;
+	char xinfra[82];
+	char tmp_str[82], tmp2[82];
 
 	clear_from(14);
 

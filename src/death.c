@@ -12,11 +12,11 @@ static char *ud__fill_str(char *centered_str, char *in_str)
 	return centered_str;
 }
 
-void dprint(vtype str, long row)
+void dprint(char str[82], long row)
 {
 	/* Prints a line to the screen efficiently  -RAK- */
 
-	vtype prt_str;
+	char prt_str[82];
 	long nblanks = 0;
 	long xpos = 0;
 	long const slen = strlen(str);
@@ -103,10 +103,10 @@ void ud__kingly()
 	pause_game(24);
 }
 
-void ud__print_tomb(vtype dstr[])
+void ud__print_tomb(char dstr[][82])
 {
 	/*  Prints the gravestone of the character  -RAK-  */
-	vtype user, temp;
+	char user[82], temp[82];
 	FILE *f1;
 
 	if (player_lev > 10) {
@@ -194,7 +194,7 @@ void upon_death()
 	/*  Handles the gravestone and top-twenty routines -RAK-  */
 	GDBM_FILE f2;
 	master_key mkey;
-	vtype dstr[20];
+	char dstr[20][82];
 
 	/* We get a chance to respawn with a penalty */
 	if (!total_winner &&
@@ -237,11 +237,11 @@ void top_twenty(long this_many)
 {
 	/*  Enters a players name on the top twenty list  -JWT- */
 
-	string list[MAX_HIGH_SCORES + 2];
+	char list[MAX_HIGH_SCORES + 2][134];
 	long players_line = 0;
 	long i1, i2, i3, i4;
 	int n1;
-	vtype o1, s1;
+	char o1[82], s1[82];
 	FILE *f1;
 	boolean flag;
 	char ch;
@@ -374,10 +374,10 @@ static void date(char *day)
 	(void)strcpy(day, tmp);
 }
 
-void make_tomb(vtype dd[])
+void make_tomb(char dd[][82])
 {
-	vtype str1, str2, str3, str4, str5, str6, str7, str8;
-	vtype temp;
+	char str1[82], str2[82], str3[82], str4[82], str5[82], str6[82], str7[82], str8[82];
+	char temp[82];
 	long i1;
 	char day[11];
 
@@ -429,10 +429,10 @@ void make_tomb(vtype dd[])
 	flush();
 }
 
-void write_tomb(vtype dstr[])
+void write_tomb(char dstr[][82])
 {
-	vtype out_str;
-	vtype fnam;
+	char out_str[82];
+	char fnam[82];
 	FILE *f1;
 	long i1;
 	boolean flag;

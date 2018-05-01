@@ -185,12 +185,12 @@ void exit_game()
 	exit(0); /* { exit from game		} */
 }
 
-void msg_record(vtype message, boolean save)
+void msg_record(char message[82], boolean save)
 {
 	unsigned char count;
 	unsigned char temp_ctr;
 	char ic;
-	string fixed_string;
+	char fixed_string[134];
 
 	ENTER(("msg_record", "%s, %d", message, save));
 
@@ -295,7 +295,7 @@ boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 		/* put_buffer(cursor_erl+str_buff,msg_line,msg_line);*/
 		erase_line(msg_line, msg_line);
 		put_buffer(str_buff, msg_line, msg_line);
-		strncpy(old_msg, str_buff, sizeof(vtype));
+		strncpy(old_msg, str_buff, sizeof(char[82]));
 		msg_record(str_buff, true);
 
 		if (ic == 3 || ic == 25 || ic == 26 || ic == 27) {
@@ -429,7 +429,7 @@ boolean get_yes_no(char const *prompt)
 long get_hex_value(long row, long col, long slen)
 {
 	long return_value = 0;
-	vtype tmp_str;
+	char tmp_str[82];
 
 	if (get_string(tmp_str, row, col, slen)) {
 		if (strlen(tmp_str) <= 8) {
@@ -442,7 +442,7 @@ long get_hex_value(long row, long col, long slen)
 
 void print_hex_value(long num, long row, long col)
 {
-	vtype out_val;
+	char out_val[82];
 	sprintf(out_val, "0x%08lx", num);
 	prt(out_val, row, col);
 }

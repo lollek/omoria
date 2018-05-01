@@ -178,7 +178,7 @@ boolean already_playing()
 	return false;
 }
 
-char *cost_str(long amt, string result)
+char *cost_str(long amt, char result[134])
 {
 	/*{ Return string describing how much the amount is worth	-DMF-
 	 * }*/
@@ -755,7 +755,7 @@ void add_money(long amount)
 	 * -DMF-/DY}*/
 
 	long to_bank, wl, i1;
-	string out_val, out2;
+	char out_val[134], out2[134];
 	long type_num;
 
 	ENTER(("add_money", ""));
@@ -1362,7 +1362,7 @@ void print_new_spells(spl_type spell, long num, boolean *redraw)
 	/* Print list of spells     -RAK- */
 
 	long i1;
-	vtype out_val;
+	char out_val[82];
 
 	*redraw = true;
 	clear_from(1);
@@ -1394,7 +1394,7 @@ void print_new_spells(spl_type spell, long num, boolean *redraw)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean get_spell(spl_type spell, long num, long *sn, long *sc, vtype prompt,
+boolean get_spell(spl_type spell, long num, long *sn, long *sc, char prompt[82],
 		  boolean *redraw)
 {
 	/*{ Returns spell pointer					-RAK-
@@ -1402,7 +1402,7 @@ boolean get_spell(spl_type spell, long num, long *sn, long *sc, vtype prompt,
 
 	boolean flag = true;
 	char choice;
-	vtype out_val1;
+	char out_val1[82];
 
 	*sn = -1;
 
@@ -1588,7 +1588,7 @@ void insert_str(char *object_str, char const *mtc_str, char const *insert_str)
 /*//////////////////////////////////////////////////////////////////// */
 void insert_num(char *object_str, char *mtc_str, long number, boolean show_sign)
 {
-	vtype numstr;
+	char numstr[82];
 	char const *sign = number > 0 && show_sign ? "+" : "";
 
 	sprintf(numstr, "%s%ld", sign, number);
@@ -1708,7 +1708,7 @@ void set_difficulty(long diff)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *day_of_week_string(long day, unsigned wid, string result)
+char *day_of_week_string(long day, unsigned wid, char result[134])
 {
 	/*{ Return first X characters of day of week		-DMF-	}*/
 	switch (day % 7) {
@@ -1744,7 +1744,7 @@ char *day_of_week_string(long day, unsigned wid, string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *month_string(long mon, string result)
+char *month_string(long mon, char result[134])
 {
 	/*{ Return the name of a numbered month			-DMF-	}*/
 	switch (mon) {
@@ -1794,7 +1794,7 @@ char *month_string(long mon, string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *time_string(long hour, long sec, string result)
+char *time_string(long hour, long sec, char result[134])
 {
 	/*{ Return the time in the format HH:MM			-DMF-	}*/
 
@@ -1809,7 +1809,7 @@ char *time_string(long hour, long sec, string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *place_string(long num, string result)
+char *place_string(long num, char result[134])
 {
 	/*{ Return the ending to a number string (1st, 2nd, etc)	-DMF-
 	 * }*/
@@ -1855,7 +1855,7 @@ void gain_level()
 	/*{ Increases hit points and level			-RAK-	}*/
 	long nhp, dif_exp, need_exp;
 	boolean redraw;
-	vtype out_val;
+	char out_val[82];
 
 	ENTER(("gain_level", ""));
 
@@ -3145,7 +3145,7 @@ boolean send_page(long to_bank)
 
 	boolean back;
 	long from_bank;
-	string out_val;
+	char out_val[134];
 
 	back = false;
 	if (get_yes_no("Do you wish to send a page to the bank for money?")) {
@@ -3225,12 +3225,12 @@ void time_diff(game_time_type a, game_time_type b, game_time_type *c)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *show_char_age(string result)
+char *show_char_age(char result[134])
 {
 	/*{ Return string for the age of the character            -DMF-   }*/
 
 	game_time_type dif;
-	vtype out_val;
+	char out_val[82];
 
 	time_diff(player_cur_age, player_birth, &dif);
 
@@ -3338,7 +3338,7 @@ time_t convert_time_to_seconds(time_type *tim)
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *show_play_time(string result)
+char *show_play_time(char result[134])
 {
 	/*{ Return string for amount of play time                 -DMF-   }*/
 
@@ -3357,11 +3357,11 @@ char *show_play_time(string result)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *full_date_string(game_time_type time, string result)
+char *full_date_string(game_time_type time, char result[134])
 {
 	/*{ Return string with entire date/time                   -DMF-   }*/
 
-	string out1, out2, out3, out4;
+	char out1[134], out2[134], out3[134], out4[134];
 	char *pos;
 
 	day_of_week_string(time.day, 10, out1);
@@ -3545,7 +3545,7 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void find_monster_name(vtype m_name, const long ptr, boolean begin_sentence)
+void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence)
 {
 	long i2;
 

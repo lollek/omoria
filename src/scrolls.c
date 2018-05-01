@@ -7,9 +7,9 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 	long i2, i3, i4, randy;
 	long y, x;
 	long tmp[9]; /*: array [1..8] of long;*/
-	vtype out_val, out_val2, str1, str2;
+	char out_val[82], out_val2[82], str1[82], str2[82];
 	boolean ident, flag;
-	vtype dstr[20];
+	char dstr[20][82];
 
 	ident = *idented;
 

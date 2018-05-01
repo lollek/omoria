@@ -27,27 +27,27 @@ extern void prt_map();
  * -RAK-
  *  prt_stat() - Print character stat in given row, column
  */
-extern void prt_stat(vtype stat_name, unsigned char stat, long row,
+extern void prt_stat(char stat_name[82], unsigned char stat, long row,
 		     long column);
 
 /**
  * -RAK-
  * prt_stat_attr() - Print character stat in a given row, column
  */
-extern void prt_stat_attr(vtype stat_name, unsigned char stat,
+extern void prt_stat_attr(char stat_name[82], unsigned char stat,
 			  unsigned char loss, long row, long column);
 
 /**
  * -RAK-
  *  prt_field() - Print character info in a given row, column
  */
-extern void prt_field(vtype info, long row, long column);
+extern void prt_field(char info[82], long row, long column);
 
 /**
  * -RAK-
  *  prt_num() - Print number with header at given row, column
  */
-extern void prt_num(vtype header, long num, long row, long column);
+extern void prt_num(char header[82], long num, long row, long column);
 
 /**
  * -RAK-

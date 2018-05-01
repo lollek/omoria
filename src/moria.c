@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		magic_init(randes_seed);
 
 	} else {
-		vtype save_file_name;
+		char save_file_name[82];
 		/* Create character */
 		is_from_file = false;
 		create_character();

@@ -18,9 +18,9 @@ extern long dun_level;   /* { Cur dungeon level   } */
 extern long missle_ctr;  /* { Counter for missles } */
 extern long msg_line;    /* { Contains message txt} */
 extern boolean msg_flag; /* { Set with first msg  } */
-extern vtype msg_prev[MAX_MESSAGES + 1];
+extern char msg_prev[MAX_MESSAGES + 1][82];
 extern long quest[NUM_QUESTS + 1]; /* {quest data} */
-extern vtype old_msg;		   /* { Last message	      } */
+extern char old_msg[82];		   /* { Last message	      } */
 extern boolean want_trap;	  /* { True = trap messages} */
 extern boolean want_warn;	  /* { True = water warning} */
 extern message_ptr old_message;    /* { Past messages	      } */
@@ -28,7 +28,7 @@ extern long max_mess_keep;	 /* { Max old to keep     } */
 extern long max_score;		   /*	{ # of scores to list } */
 extern boolean generate;	   /*	{ Generate next level } */
 extern boolean death;		   /*	{ True if died	      } */
-extern vtype died_from;		   /*	{ What killed him     } */
+extern char died_from[82];		   /*	{ What killed him     } */
 extern long turn_counter;	  /*	{ Turns ellapsed      } */
 extern boolean find_flag;	  /*	{ Used in MORIA	      } */
 extern boolean cave_flag;	  /*	{ Used in GET_PANEL   } */
@@ -54,17 +54,17 @@ extern signed char dy_of[10];    /*  array [1..9] of signed char; */
 extern unsigned long bit_array[33]; /*  array [1..32] of unsigned; */
 
 /*	{ External file names; are all located in directory with image	} */
-extern mtype MORIA_HOU;
-extern mtype MORIA_MOR;
-extern mtype MORIA_MAS;
-extern mtype MORIA_TOP;
-extern mtype MORIA_TRD;
-extern mtype MORIA_HLP;
-extern mtype MORIA_LCK;
-extern mtype MORIA_DTH;
-extern mtype MORIA_MON;
-extern mtype MORIA_CST;
-extern mtype MORIA_GCST;
+extern char MORIA_HOU[192];
+extern char MORIA_MOR[192];
+extern char MORIA_MAS[192];
+extern char MORIA_TOP[192];
+extern char MORIA_TRD[192];
+extern char MORIA_HLP[192];
+extern char MORIA_LCK[192];
+extern char MORIA_DTH[192];
+extern char MORIA_MON[192];
+extern char MORIA_CST[192];
+extern char MORIA_GCST[192];
 
 /*	{  following are calculated from max dungeon sizes		} */
 extern long max_panel_rows, max_panel_cols;
@@ -124,7 +124,7 @@ extern long char_row;
 extern long char_col;
 extern long com_val;
 extern long pclass;
-extern vtype sex_type;
+extern char sex_type[82];
 extern background_type background[MAX_BACKGROUND];
 extern float rgold_adj[MAX_RACES][MAX_RACES];
 extern treasure_type yums[NUM_YUM + 1];
@@ -139,7 +139,7 @@ extern treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1];
 extern long store_choice[MAX_STORES][STORE_CHOICES];
 extern obj_set store_buy[MAX_STORES];
 /*	  array [1..max_stores] of obj_set; */
-extern htype store_hours[MAX_STORES + MAX_UNNAMED][7];
+extern char store_hours[MAX_STORES + MAX_UNNAMED][7][14];
 extern long store_bribe[MAX_STORES + MAX_UNNAMED];
 extern long mugging_chance; /* { Chance page gets mugged} */
 
@@ -231,7 +231,7 @@ extern long malloc_calls;
 extern long malloc_bytes;
 extern long free_calls;
 extern long free_bytes;
-extern vtype coin_name[MITHRIL + 1];
+extern char coin_name[MITHRIL + 1][82];
 extern obj_set blank_floor_set;
 
 extern obj_set null_obj_set;

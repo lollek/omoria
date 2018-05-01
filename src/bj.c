@@ -261,7 +261,7 @@ static void bj__check_exit(boolean *exit_flag)
 
 static void bj__get_first_dealc()
 {
-	vtype draw;
+	char draw[82];
 
 	strcpy(draw, " ____");
 	put_buffer(draw, 13, 8);
@@ -275,10 +275,10 @@ static void bj__get_first_dealc()
 	put_buffer(draw, 17, 8);
 }
 
-static void bj__card_draw(long index, long r, vtype card)
+static void bj__card_draw(long index, long r, char card[82])
 {
 	long c;
-	vtype draw;
+	char draw[82];
 
 	if (strcmp(card, " ")) {
 		if ((r == 13) && (index == 1) && (!win_draw)) {
@@ -668,7 +668,7 @@ static void bj__play_bj()
 
 static void bj__get_bj_bet()
 {
-	vtype comment;
+	char comment[82];
 	long num;
 	boolean exit_flag = false;
 

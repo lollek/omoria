@@ -12,7 +12,7 @@ void prt_equipment_args(long y, long x, long start, boolean clear)
 {
 	long i;
 	long counter = 0;
-	vtype tmp_buf;
+	char tmp_buf[82];
 
 	for (i = Equipment_min; i < EQUIP_MAX - 1; ++i) {
 		if (!equipment[i].tval)
@@ -133,7 +133,7 @@ void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
 	LEAVE("prt_6_stats", "");
 }
 
-void prt_stat_attr(vtype stat_name, unsigned char stat, unsigned char loss,
+void prt_stat_attr(char stat_name[82], unsigned char stat, unsigned char loss,
 		   long row, long column)
 {
 	stat_s_type out_val1;
@@ -151,10 +151,10 @@ void prt_stat_attr(vtype stat_name, unsigned char stat, unsigned char loss,
 	LEAVE("prt_stat_attr", "");
 }
 
-void prt_stat(vtype stat_name, unsigned char stat, long row, long column)
+void prt_stat(char stat_name[82], unsigned char stat, long row, long column)
 {
 	stat_s_type out_val1;
-	vtype out_val2;
+	char out_val2[82];
 
 	ENTER(("prt_stat", ""));
 
@@ -179,9 +179,9 @@ void cnv_stat(unsigned char stat, stat_s_type out_val)
 	}
 }
 
-void prt_num(vtype header, long num, long row, long column)
+void prt_num(char header[82], long num, long row, long column)
 {
-	vtype out_val;
+	char out_val[82];
 
 	sprintf(out_val, "%s%6ld  ", header, num);
 	put_buffer(out_val, row, column);
@@ -224,9 +224,9 @@ void prt_stat_block()
 	LEAVE("prt_stat_block", "");
 }
 
-void prt_field(vtype info, long row, long column)
+void prt_field(char info[82], long row, long column)
 {
-	vtype out_val1;
+	char out_val1[82];
 
 	sprintf(out_val1, "%-14s", info);
 	put_buffer(out_val1, row, column);
@@ -236,7 +236,7 @@ void prt_title() { prt_field(player_title, TITLE_ROW, STAT_COLUMN); }
 
 void prt_hp()
 {
-	vtype buf;
+	char buf[82];
 
 	sprintf(buf, "%6d  ", (int)(player_chp));
 	if (player_chp == player_mhp) {
@@ -269,8 +269,8 @@ void prt_weight()
 
 void prt_time()
 {
-	vtype s1, s2, s3;
-	vtype out_val;
+	char s1[82], s2[82], s3[82];
+	char out_val[82];
 
 	sprintf(out_val, "%s %s %s",
 		time_string(player_cur_age.hour, player_cur_age.secs, s1),
@@ -292,7 +292,7 @@ void prt_light_on()
 
 void prt_depth()
 {
-	vtype depths;
+	char depths[82];
 	long depth;
 
 	depth = dun_level * 50;
@@ -412,7 +412,7 @@ void prt_experience()
 
 void prt_mana()
 {
-	vtype buf;
+	char buf[82];
 
 	sprintf(buf, "%6d  ", (int)(player_cmana));
 	if (player_cmana == player_mana) {

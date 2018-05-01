@@ -2,7 +2,7 @@
 
 static void eb__display_money()
 {
-	vtype out_val;
+	char out_val[82];
 
 	sprintf(out_val, " Gold remaining : %ld", player_money[TOTAL_]);
 	prt(out_val, 18, 18);
@@ -37,7 +37,7 @@ static void eb__display_money()
 	put_qio();
 }
 
-static void eb__display_store(vtype shop_owner)
+static void eb__display_store(char shop_owner[82])
 {
 	/* Clear the screen and display the bank. */
 
@@ -51,7 +51,7 @@ static void eb__display_store(vtype shop_owner)
 	prt(" p) Put item in vault.         r) Remove item from vault.", 23, 1);
 }
 
-static boolean eb__get_entry(vtype comment, long *num)
+static boolean eb__get_entry(char comment[82], long *num)
 {
 	/*
 	* Returns true if a number >= 0 is entered, false if escaped,
@@ -60,7 +60,7 @@ static boolean eb__get_entry(vtype comment, long *num)
 
 	boolean return_value = false;
 	boolean valid;
-	vtype in_val;
+	char in_val[82];
 
 	*num = -1;
 	do {
@@ -87,7 +87,7 @@ static boolean eb__get_entry(vtype comment, long *num)
 static void eb__dep_munny(long mon_type)
 {
 	long deposit;
-	vtype out_val;
+	char out_val[82];
 
 	if (player_money[mon_type] > 0) {
 		do {
@@ -139,7 +139,7 @@ static void eb__withdraw_money()
 	boolean deliver, is_some;
 	long amt_given[MITHRIL + 1];
 	long mon_type, withdraw, weight_left;
-	string out_val;
+	char out_val[134];
 
 	/* get amount to withdraw */
 	do {
@@ -243,7 +243,7 @@ static void eb__change_money()
 	long amount_to;	/*{ Amount remaining after changing. }*/
 	char key_in;	   /*{ input character }*/
 	long typ_from, typ_to; /*   { Types of money }*/
-	string prompt;	 /*{ Prompt used.}*/
+	char prompt[134];	 /*{ Prompt used.}*/
 
 	key_in =
 	    (char)get_money_type("Change what coin? ", &change_flag, false);
@@ -285,7 +285,7 @@ static void eb__change_money()
 	} /* endif change_flag */
 }
 
-static void eb__parse_command(boolean *exit_flag, vtype shop_owner)
+static void eb__parse_command(boolean *exit_flag, char shop_owner[82])
 {
 	char command;
 
@@ -329,7 +329,7 @@ void enter_bank()
 {
 	boolean exit_flag = false;
 	long tics = 1;
-	vtype shop_owner;
+	char shop_owner[82];
 
 	switch (randint(7)) {
 	case 1:

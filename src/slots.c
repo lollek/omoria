@@ -58,7 +58,7 @@ void sm__position_adjust(long *c1, long *c2, long *c3)
 
 void sm__display_slots()
 {
-	vtype out_val;
+	char out_val[82];
 	long c1, c2, c3;
 
 	clear_screen();
@@ -167,7 +167,7 @@ void sm__clearslots(long line)
 {
 	/*  clears a line of slots */
 
-	vtype killpos;
+	char killpos[82];
 
 	strcpy(killpos, "        ");
 	put_buffer(killpos, line, 15);
@@ -181,7 +181,7 @@ void sm__print_slots()
 
 	long i;
 	long c1, c2, c3;
-	vtype out_val;
+	char out_val[82];
 
 	sm__get_slots(); /*  {get new slots}  */
 
@@ -231,8 +231,8 @@ void sm__winnings()
 	/* calculates the amount won */ /* Currently, odds slightly favor  */
 					/* the user.   Return of 101%      */
 
-	vtype out_val;
-	vtype comment, comment1;
+	char out_val[82];
+	char comment[82], comment1[82];
 	long winning;
 
 	strcpy(comment, "You have won ");
@@ -327,7 +327,7 @@ void sm__winnings()
 
 void sm__get_slots_bet()
 {
-	vtype comment;
+	char comment[82];
 	long num;
 	boolean exit_flag = false;
 

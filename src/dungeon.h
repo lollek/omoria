@@ -21,7 +21,7 @@ extern boolean search_flag;   /* { Player is searching   } */
 extern boolean teleport_flag; /* { Handle telport traps  } */
 extern boolean player_light;  /* { Player carrying light } */
 extern boolean save_msg_flag; /* { Msg flag after INKEY  } */
-extern ttype s1, s2, s3, s4;  /* { Summon item strings   } */
+extern char s1[70], s2[70], s3[70], s4[70];  /* { Summon item strings   } */
 extern long i_summ_count;     /* { Summon item count	   } */
 /* extern	char		trash_char; */
 /* extern	FILE *		f1; */
@@ -47,11 +47,11 @@ extern void desc_charges(treas_ptr item_ptr);
 extern boolean move_to_creature(long dir, long *y, long *x);
 extern boolean bolt_to_creature(long dir, long *y, long *x, long *dist,
 				long max_dist, boolean visable);
-extern boolean cast_spell(vtype prompt, treas_ptr item_ptr, long *sn, long *sc,
+extern boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 			  boolean *redraw);
-extern boolean d__get_dir(vtype prompt, long *dir, long *com_val, long *y,
+extern boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
 			  long *x);
-extern boolean explode(long typ, long y, long x, long dam_hp, ctype descrip);
+extern boolean explode(long typ, long y, long x, long dam_hp, const char *descrip);
 extern void teleport(long dis);
 extern boolean create_water(long y, long x);
 extern boolean destroy_water(long y, long x);

@@ -228,7 +228,7 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file)
 	/*      { then create a standard one.                           } */
 
 	FILE *file1;
-	vtype in_line;
+	char in_line[82];
 	long i1;
 	boolean exit_flag = false;
 
@@ -301,7 +301,7 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 
 	FILE *file1;
 	int i1, i2;
-	vtype in_line;
+	char in_line[82];
 	boolean exit_flag = false;
 
 	ENTER(("intro_do_msg_file", ""));
@@ -454,7 +454,7 @@ void intro(int argc, char *argv[])
 {
 	/* Attempt to open the intro file                        -RAK- */
 
-	vtype in_line;
+	char in_line[82];
 	FILE *file1;
 	GDBM_FILE file2;
 	boolean exit_flag = false;
@@ -540,15 +540,15 @@ void file_character()
 
 	long i1, i2, xbth, xbthb, xfos, xsrh, xstl, xdis;
 	long xsave, xdev, xswm, xrep;
-	vtype xinfra;
+	char xinfra[82];
 	FILE *file1;
-	vtype out_val, filename1, prt1, prt2;
+	char out_val[82], filename1[82], prt1[82], prt2[82];
 	char new_page = 12;
 	stat_set tstat;
 	stat_s_type
 	    out_c[STAT_SET_MAX + 1]; /*  : array [stat_set] of stat_type;*/
 	treas_ptr curse;
-	vtype s1, s2, s3;
+	char s1[82], s2[82], s3[82];
 
 	prt("File name: ", 1, 1);
 	if (get_string(filename1, 1, 12, 64)) {
@@ -971,7 +971,7 @@ void print_objects()
 	/*{ be expected to appear on that level.                           }*/
 
 	long nobj, i1, i2, level;
-	vtype filename1, tmp_str;
+	char filename1[82], tmp_str[82];
 	FILE *file1;
 
 	level = 0;
@@ -1035,10 +1035,10 @@ void print_monsters()
 	/*{ Prints a listing of monsters                              -RAK- }*/
 
 	long i1, atype, adesc, acount, i5;
-	vtype out_val, filename1;
-	vtype attstr, attx, s1;
+	char out_val[82], filename1[82];
+	char attstr[82], attx[82], s1[82];
 	char *achar;
-	etype damstr;
+	char damstr[36];
 	FILE *file1;
 	unsigned long cmove, cdefense, spells;
 
@@ -1810,7 +1810,7 @@ void print_monsters()
 	}	 /* end get filename */
 }
 
-boolean read_top_scores(FILE **f1, char *fnam, string list[], int max_high,
+boolean read_top_scores(FILE **f1, char *fnam, char list[][134], int max_high,
 			int *n1, char *openerr)
 {
 	/* list[] should be declared string list[max_high+1] */
@@ -1818,7 +1818,7 @@ boolean read_top_scores(FILE **f1, char *fnam, string list[], int max_high,
 
 	boolean file_flag = false;
 	boolean paniced;
-	ntype temp;
+	char temp[1026];
 	int i1, trys;
 
 	encrypt_state hs_state;
@@ -1871,10 +1871,10 @@ boolean read_top_scores(FILE **f1, char *fnam, string list[], int max_high,
 	return file_flag;
 }
 
-boolean write_top_scores(FILE **f1, string list[], int max_high)
+boolean write_top_scores(FILE **f1, char list[][134], int max_high)
 {
 	int i1;
-	vtype temp;
+	char temp[82];
 	encrypt_state hs_state;
 
 	rewind(*f1);
@@ -1920,10 +1920,10 @@ char *center(char *in_str, long str_len, char *out_str)
 	return out_str;
 }
 
-char *format_top_score(vtype out_str, char *username, long score, int diffic,
+char *format_top_score(char out_str[82], char *username, long score, int diffic,
 		       char *charname, int level, char *race, char *class)
 {
-	vtype s1, s2, s3, s4;
+	char s1[82], s2[82], s3[82], s4[82];
 
 	strcpy(s4, username);
 	if (strlen(s4) > 12) {
@@ -1937,10 +1937,10 @@ char *format_top_score(vtype out_str, char *username, long score, int diffic,
 	return out_str;
 }
 
-boolean open_crypt_file(vtype prompt, vtype fnam1, vtype fnam2, FILE **f1,
+boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82], FILE **f1,
 			FILE **f2)
 {
-	ntype out_str;
+	char out_str[1026];
 	boolean flag = true;
 
 	if (fnam1[0] == 0) {
@@ -1989,12 +1989,12 @@ boolean open_crypt_file(vtype prompt, vtype fnam1, vtype fnam2, FILE **f1,
 	return flag;
 }
 
-void decrypt_file(vtype fnam)
+void decrypt_file(char fnam[82])
 {
 	encrypt_state cf_state;
 	FILE *f1, *f2;
-	vtype fnam1, fnam2;
-	ntype save_line;
+	char fnam1[82], fnam2[82];
+	char save_line[1026];
 	unsigned long save_seed;
 	boolean flag;
 
@@ -2036,12 +2036,12 @@ void decrypt_file(vtype fnam)
 	}
 }
 
-void encrypt_file(vtype fnam)
+void encrypt_file(char fnam[82])
 {
 	encrypt_state cf_state;
 	FILE *f1, *f2;
-	vtype fnam1, fnam2;
-	ntype save_line;
+	char fnam1[82], fnam2[82];
+	char save_line[1026];
 	unsigned long save_seed;
 	boolean flag;
 
@@ -2058,7 +2058,7 @@ void encrypt_file(vtype fnam)
 		encrypt_init(&cf_state, saveFileKey, true);
 		set_seed(ENCRYPT_SEED2);
 
-		if ((fgets(save_line, sizeof(ntype), f1)) != NULL) {
+		if ((fgets(save_line, sizeof(char[1026]), f1)) != NULL) {
 			sscanf(save_line, "%lu", &save_seed);
 			save_line[strlen(save_line) - 1] =
 			    0; /* strip newline */
@@ -2067,7 +2067,7 @@ void encrypt_file(vtype fnam)
 
 			for (flag = false; !flag;) {
 
-				if ((fgets(save_line, sizeof(ntype), f1)) ==
+				if ((fgets(save_line, sizeof(char[1026]), f1)) ==
 				    NULL) {
 					flag = true;
 				} else {

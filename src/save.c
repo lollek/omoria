@@ -8,7 +8,7 @@
 #include "master.h"
 #include "save.h"
 
-static vtype filename = "";
+static char filename[82] = "";
 
 static void data_exception()
 {
@@ -78,7 +78,7 @@ static boolean sc__write_master(GDBM_FILE f2)
 	return result;
 }
 
-static void sc__display_status(boolean quick, ntype out_rec)
+static void sc__display_status(boolean quick, char out_rec[1026])
 {
 	/*{ Message to player on what is happening}*/
 	if (!py.flags.dead) {
@@ -92,7 +92,7 @@ static void sc__display_status(boolean quick, ntype out_rec)
 }
 
 static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
-				    ntype out_rec)
+				    char out_rec[1026])
 {
 	/*{ Write out the player record.	}*/
 
@@ -204,7 +204,7 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 }
 
 static void sc__write_inventory(FILE *f1, encrypt_state *cf_state,
-				ntype out_rec)
+				char out_rec[1026])
 {
 	/*{ Write out the inventory records.	}*/
 	treas_ptr curse;
@@ -238,7 +238,7 @@ static void sc__write_inventory(FILE *f1, encrypt_state *cf_state,
 }
 
 static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
-				ntype out_rec)
+				char out_rec[1026])
 {
 	/*{ Write out the equipment records.	}*/
 
@@ -266,7 +266,7 @@ static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 }
 
 static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
-				      ntype out_rec)
+				      char out_rec[1026])
 {
 	/* with py.stat do */
 	sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "
@@ -322,7 +322,7 @@ static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 	/* end with py.flags */
 }
 
-static void sc__write_magic(FILE *f1, encrypt_state *cf_state, ntype out_rec)
+static void sc__write_magic(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	long i1;
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
@@ -333,7 +333,7 @@ static void sc__write_magic(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	}
 }
 
-static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, ntype out_rec)
+static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/*{ Write the important dungeon info and floor	-RAK-	}*/
 
@@ -431,7 +431,7 @@ static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 }
 
 static void sc__write_identified(FILE *f1, encrypt_state *cf_state,
-				 ntype out_rec)
+				 char out_rec[1026])
 {
 	/*{ Save identified list			}*/
 	long i1;
@@ -447,7 +447,7 @@ static void sc__write_identified(FILE *f1, encrypt_state *cf_state,
 	encrypt_write(f1, cf_state, out_rec);
 }
 
-static void sc__write_monsters(FILE *f1, encrypt_state *cf_state, ntype out_rec)
+static void sc__write_monsters(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/*{ Save the Monster List 		}*/
 	long i1, tot_monsters;
@@ -470,7 +470,7 @@ static void sc__write_monsters(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	}
 }
 
-static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
+static void sc__write_town(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/*{ Save the town level stores		}*/
 
@@ -553,14 +553,14 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 	} /* end for i1; */
 }
 
-static void sc__write_version(FILE *f1, encrypt_state *cf_state, ntype out_rec)
+static void sc__write_version(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/*{ Version number of Moria               }*/
 	sprintf(out_rec, "%3.2f", CUR_VERSION);
 	encrypt_write(f1, cf_state, out_rec);
 }
 
-static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
+static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/* creation_time, save_count and deaths are in the master file, be sure
 	   to fix up char_restore if you move more onto this line */
@@ -579,7 +579,7 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, ntype out_rec)
 
 void save_file_remove(void) { unlink(sc__get_file_name()); }
 
-void save_file_name_set(vtype path) { strncpy(filename, path, sizeof(vtype)); }
+void save_file_name_set(char path[82]) { strncpy(filename, path, sizeof(char[82])); }
 
 boolean save_file_name_is_set(void) { return filename[0] != '\0'; }
 
@@ -587,7 +587,7 @@ boolean save_char(boolean quick)
 {
 	/* Actual save procedure -RAK- & -JWT- */
 
-	ntype out_rec;
+	char out_rec[1026];
 	encrypt_state cf_state;
 	GDBM_FILE f2;
 	boolean flag;
@@ -678,7 +678,7 @@ static void gc__add_item(treas_ptr *cur_bag)
 
 static void gc__open_save_file(FILE **f1, char const *fnam, boolean *paniced)
 {
-	vtype out_str;
+	char out_str[82];
 
 	*f1 = (FILE *)fopen(fnam, "r");
 	if (*f1 == NULL) {
@@ -715,7 +715,7 @@ static void gc__read_master(GDBM_FILE f2, boolean *paniced)
 	}
 }
 
-static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			   boolean *paniced)
 {
 	/* creation_time, save_count and deaths are in the master file, be sure
@@ -747,7 +747,7 @@ static void gc__display_status(void)
 	put_qio();
 }
 
-static void gc__read_version(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_version(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			     boolean *paniced, float *save_version)
 {
 	read_decrypt(f1, cf_state, in_rec, paniced);
@@ -770,7 +770,7 @@ static void gc__read_version(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 }
 
 static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
-				   ntype in_rec, boolean *paniced, boolean prop,
+				   char in_rec[1026], boolean *paniced, boolean prop,
 				   boolean *was_dead)
 {
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15,
@@ -841,23 +841,23 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 	start_time = time(NULL);
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(player_name, in_rec, sizeof(vtype));
+	strncpy(player_name, in_rec, sizeof(char[82]));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(player_race, in_rec, sizeof(vtype));
+	strncpy(player_race, in_rec, sizeof(char[82]));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(player_sex, in_rec, sizeof(vtype));
+	strncpy(player_sex, in_rec, sizeof(char[82]));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(player_tclass, in_rec, sizeof(vtype));
+	strncpy(player_tclass, in_rec, sizeof(char[82]));
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
-	strncpy(player_title, in_rec, sizeof(vtype));
+	strncpy(player_title, in_rec, sizeof(char[82]));
 
 	for (i1 = 0; i1 < 5; i1++) {
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		strncpy(player_history[i1], in_rec, sizeof(vtype));
+		strncpy(player_history[i1], in_rec, sizeof(char[82]));
 	}
 
 	read_decrypt(f1, cf_state, in_rec, paniced);
@@ -969,7 +969,7 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 	}
 }
 
-static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			       boolean *paniced, boolean *was_dead)
 {
 	/* { Read in the inventory records.	}*/
@@ -1000,7 +1000,7 @@ static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		inven_temp->insides = x1;
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		strncpy(inven_temp->data.damage, in_rec, sizeof(dtype));
+		strncpy(inven_temp->data.damage, in_rec, sizeof(char[7]));
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		/* with inven_temp->data do; */
@@ -1055,7 +1055,7 @@ static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 }
 
-static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			       boolean *paniced, boolean *was_dead)
 {
 	/*{ Read in the equipment records.	}*/
@@ -1075,7 +1075,7 @@ static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 		inven_temp->data.tchar = chtype_buf;
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		strncpy(inven_temp->data.damage, in_rec, sizeof(dtype));
+		strncpy(inven_temp->data.damage, in_rec, sizeof(char[7]));
 
 		read_decrypt(f1, cf_state, in_rec, paniced);
 		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %lu %lu %d %ld",
@@ -1125,7 +1125,7 @@ static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 }
 
 static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
-				     ntype in_rec, boolean *paniced)
+				     char in_rec[1026], boolean *paniced)
 {
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12;
 	int x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24;
@@ -1230,7 +1230,7 @@ static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 	/* end with py.flags */
 }
 
-static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_magic(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			   boolean *paniced)
 {
 	long i1;
@@ -1247,7 +1247,7 @@ static void gc__read_magic(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 }
 
-static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			     boolean *paniced)
 {
 	long i1, i2, i3, i4, tot_treasure;
@@ -1355,7 +1355,7 @@ static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 }
 
-static void gc__read_identified(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_identified(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 				boolean *paniced)
 {
 	long i1;
@@ -1372,7 +1372,7 @@ static void gc__read_identified(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 }
 
-static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			      boolean *paniced)
 {
 	int x1, x2, x3, x4, x5, x6, x7, x8, x9;
@@ -1425,7 +1425,7 @@ static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, ntype in_rec,
 	}
 }
 
-static void gc__read_town(FILE *f1, encrypt_state *cf_state, ntype in_rec,
+static void gc__read_town(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			  boolean *paniced)
 {
 	long x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13;
@@ -1514,7 +1514,7 @@ boolean get_char(boolean prop)
 	 * }*/
 
 	float save_version;
-	ntype in_rec;
+	char in_rec[1026];
 	FILE *f1 = NULL;
 	GDBM_FILE f2 = NULL;
 	boolean dun_flag;
@@ -1597,12 +1597,12 @@ boolean get_char(boolean prop)
 	return dun_flag;
 }
 
-void restore_char(vtype fnam, boolean present, boolean undead)
+void restore_char(char fnam[82], boolean present, boolean undead)
 {
 	/*{ Wizard command for restoring character                -RAK-   }*/
 
-	ntype in_rec;
-	vtype tfnam;
+	char in_rec[1026];
+	char tfnam[82];
 	/* ssn_type   temp_id; */
 	FILE *f1;
 	GDBM_FILE f2;

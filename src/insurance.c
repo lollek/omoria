@@ -7,7 +7,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 void bi__display_gold()
 {
-	vtype out_val;
+	char out_val[82];
 
 	sprintf(out_val, "Gold remaining : %ld", player_money[TOTAL_]);
 	prt(out_val, 19, 18);
@@ -21,7 +21,7 @@ void bi__display_commands()
 	prt("^R) Redraw the screen.     Esc) Exit from building.", 24, 1);
 }
 /*//////////////////////////////////////////////////////////////////// */
-void bi__display_store(vtype shop_owner)
+void bi__display_store(char shop_owner[82])
 {
 	clear_screen();
 	prt(shop_owner, 4, 10);
@@ -35,7 +35,7 @@ void bi__insure_all_items()
 	long tot_cost, temp;
 	treas_ptr ptr;
 	boolean flag;
-	string out, out2;
+	char out[134], out2[134];
 
 	tot_cost = 0;
 
@@ -77,13 +77,13 @@ void bi__insure_all_items()
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void bi__insure_item(vtype shop_owner)
+void bi__insure_item(char shop_owner[82])
 {
 	treas_ptr ptr;
 	long count, temp;
 	boolean redraw, flag;
-	string out, out2;
-	vtype out_val;
+	char out[134], out2[134];
+	char out_val[82];
 	char trash_char;
 
 	count = 0;
@@ -165,7 +165,7 @@ void bi__insure_person()
 {
 	long tot_cost;
 	boolean flag;
-	string out, out2;
+	char out[134], out2[134];
 
 	if (py.flags.insured) {
 		msg_print("Your person is already insured.");
@@ -202,7 +202,7 @@ void bi__insure_all_equip()
 {
 	long i1, tot_cost, temp;
 	boolean flag;
-	string out, out2;
+	char out[134], out2[134];
 
 	tot_cost = 0;
 	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
@@ -251,7 +251,7 @@ void bi__insure_all_equip()
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
-void bi__parse_command(boolean *exit_flag, vtype shop_owner)
+void bi__parse_command(boolean *exit_flag, char shop_owner[82])
 {
 	char command;
 
@@ -301,7 +301,7 @@ void bi__parse_command(boolean *exit_flag, vtype shop_owner)
 void buy_insurance()
 {
 	boolean exit_flag = false;
-	vtype shop_owner;
+	char shop_owner[82];
 	long tics = 1;
 	long starting_money;
 

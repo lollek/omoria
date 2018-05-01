@@ -21,9 +21,9 @@ long dun_level;      /* { Cur dungeon level   } */
 long missle_ctr = 0; /* { Counter for missles } */
 long msg_line;       /* { Contains message txt} */
 boolean msg_flag;    /* { Set with first msg  } */
-vtype msg_prev[MAX_MESSAGES + 1];
+char msg_prev[MAX_MESSAGES + 1][82];
 long quest[NUM_QUESTS + 1];   /* {quest data} */
-vtype old_msg = "bogus msg";  /* { Last message	      } */
+char old_msg[82] = "bogus msg";  /* { Last message	      } */
 boolean want_trap;	    /* { True = trap messages} */
 boolean want_warn;	    /* { True = water warning} */
 message_ptr old_message;      /* { Past messages	      } */
@@ -31,7 +31,7 @@ long max_mess_keep;	   /* { Max old to keep     } */
 long max_score;		      /*	{ # of scores to list } */
 boolean generate;	     /*	{ Generate next level } */
 boolean death = false;	/*	{ True if died	      } */
-vtype died_from;	      /*	{ What killed him     } */
+char died_from[82];	      /*	{ What killed him     } */
 long turn_counter;	    /*	{ Turns ellapsed      } */
 boolean find_flag;	    /*	{ Used in MORIA	      } */
 boolean cave_flag;	    /*	{ Used in GET_PANEL   } */
@@ -83,17 +83,17 @@ unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
      0x20000000, 0x40000000, 0x80000000};
 
 /*	{ External file names; paths are set in io.c get_paths } */
-vtype MORIA_HOU;
-vtype MORIA_MOR;
-vtype MORIA_MAS;
-vtype MORIA_TOP;
-vtype MORIA_TRD;
+char MORIA_HOU[192];
+char MORIA_MOR[192];
+char MORIA_MAS[192];
+char MORIA_TOP[192];
+char MORIA_TRD[192];
 /*	vtype		MORIA_HLP; */
-vtype MORIA_LCK;
-vtype MORIA_DTH;
-vtype MORIA_MON;
-vtype MORIA_CST;
-vtype MORIA_GCST;
+char MORIA_LCK[192];
+char MORIA_DTH[192];
+char MORIA_MON[192];
+char MORIA_CST[192];
+char MORIA_GCST[192];
 
 /*	{  following are calculated from max dungeon sizes		} */
 long max_panel_rows, max_panel_cols;
@@ -337,7 +337,7 @@ long char_row = 0;
 long char_col = 0;
 long com_val;
 long pclass = 0;
-vtype sex_type = "FemaleMale  ";
+char sex_type[82] = "FemaleMale  ";
 
 /*	{ Background information					} */
 background_type background[MAX_BACKGROUND] = {
@@ -875,7 +875,7 @@ obj_set store_buy[MAX_STORES] = {
 /*		D = 'Closed for the day' */
 /*		B = Bribeable */
 /*					} */
-htype store_hours[MAX_STORES + MAX_UNNAMED][7] =
+char store_hours[MAX_STORES + MAX_UNNAMED][7][14] =
     /*		{	Sat		Sun		Mon	Tue */
     /*			Wed		Thu		Fri		} */
     {
@@ -2621,7 +2621,7 @@ long malloc_bytes = 0;
 long free_calls = 0;
 long free_bytes = 0;
 
-vtype coin_name[MITHRIL + 1] = {"total", "iron",     "copper", "silver",
+char coin_name[MITHRIL + 1][82] = {"total", "iron",     "copper", "silver",
 				"gold",  "platinum", "mithril"};
 
 /* used in gc__fill_cave, not really objects but I don't care */

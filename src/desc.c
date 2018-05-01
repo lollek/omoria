@@ -12,7 +12,7 @@ void magic_init(unsigned long random_seed)
 	 * }*/
 
 	long i1, tmpv;
-	vtype tmps;
+	char tmps[82];
 
 	ENTER(("magic-init", ""));
 
@@ -303,7 +303,7 @@ void unquote(char *object_str)
 	/*	{ Return string without quoted portion }*/
 
 	long pos0, pos1, pos2, olen;
-	vtype str1, str2;
+	char str1[82], str2[82];
 
 	pos0 = pindex(object_str, '"');
 	if (pos0 > 0) {
@@ -327,7 +327,7 @@ void unquote(char *object_str)
 void objdes(char *out_val, treas_ptr ptr, boolean pref)
 {
 	char *cpos;
-	vtype tmp_val;
+	char tmp_val[82];
 
 	ENTER(("objdes", "i"));
 
@@ -439,7 +439,7 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref)
 	LEAVE("objdes", "i");
 }
 
-char *bag_descrip(treas_ptr bag, string result) /* was func */
+char *bag_descrip(treas_ptr bag, char result[134]) /* was func */
 {
 	/*{ Return description about the contents of a bag	-DMF-	}*/
 

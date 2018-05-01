@@ -265,7 +265,7 @@ void hr__list_horses(long num_horse, h_name horse, statr odds)
 {
 	/*  list horses + odds for the next race */
 	long i1;
-	vtype out_val;
+	char out_val[82];
 	char command;
 
 	clear_rc(2, 1);
@@ -299,7 +299,7 @@ void hr__list_horses(long num_horse, h_name horse, statr odds)
 void hr__print_positions(long row, long col, long horse_bet, h_name horse,
 			 h_stat fastest)
 {
-	vtype out_val;
+	char out_val[82];
 	long i1;
 
 	for (i1 = 1; i1 <= 4; i1++) {
@@ -316,7 +316,7 @@ void hr__print_positions(long row, long col, long horse_bet, h_name horse,
 void s__start_race(long num_horse)
 {
 	long i1;
-	vtype out_val;
+	char out_val[82];
 
 	for (i1 = 1; i1 <= num_horse; i1++) {
 		sprintf(out_val, "%ld", i1);
@@ -518,7 +518,7 @@ void hr__start(long num_horse, long *screen_high, long *which_screen,
 	long count;
 	h_bool still_racing;
 	char command;
-	vtype out_val;
+	char out_val[82];
 
 	*which_screen = 1;
 	*screen_high = 0;
@@ -670,7 +670,7 @@ void hr__display_winnings(long horse_bet, h_stat fastest, statr odds,
 {
 	/*  displays the amount paid per $2 bet  */
 	float win1, win2, win3, show3, place2, place3, earnings;
-	vtype out_val;
+	char out_val[82];
 	char command;
 
 	win1 = odds[fastest[1]] * 2 + 2;
@@ -782,7 +782,7 @@ boolean grb__get_bet_horse(long num_horse, h_name horse, statr odds,
 			   long *horse_bet)
 {
 	boolean exit_flag = false;
-	vtype comment;
+	char comment[82];
 	long i1;
 	boolean return_value = true;
 
@@ -807,7 +807,7 @@ boolean grb__get_bet_horse(long num_horse, h_name horse, statr odds,
 boolean hr__get_race_bet(char *horse_bet_type, long *horse_bet, long num_horse,
 			 h_name horse, statr odds, h_stat bets, long *sum_bets)
 {
-	vtype comment;
+	char comment[82];
 	long i1;
 	boolean exit_flag = false;
 	boolean return_value = false;

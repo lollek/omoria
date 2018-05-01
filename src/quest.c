@@ -30,7 +30,7 @@ void q__display_gold()
 
 void q__reward_money(long reward)
 {
-	vtype out_val;
+	char out_val[82];
 
 	msg_print("I've sent your reward with a page to the bank.");
 	sprintf(out_val, "He deposited %ld gold pieces under your name.",
@@ -49,7 +49,7 @@ void q__reward_item(long target)
 	long i1, i2, i3;
 	treasure_type rewards[QUEST_ITEMS];
 	char command;
-	vtype reward_names[QUEST_ITEMS], out_val;
+	char reward_names[QUEST_ITEMS][82], out_val[82];
 	boolean flag;
 
 	long q1 = 15;				/* allocs to attempt */
@@ -157,7 +157,7 @@ void q__reward_item(long target)
 void q__reward_quest()
 {
 	long reward;
-	vtype out_val;
+	char out_val[82];
 	boolean redraw = false;
 
 	reward = c_list[player_cur_quest].mexp * (randint(3) + 5) +
@@ -228,7 +228,7 @@ long q__select_quest()
 
 void q__draw_fortress(boolean enter_flag)
 {
-	vtype shop_owner, out_val;
+	char shop_owner[82], out_val[82];
 	long count, count2, count3;
 	boolean exit_flag;
 
@@ -299,13 +299,17 @@ void q__reject_char()
 	case 1:
 		msg_print(
 		    "'M'lord, the Arch-Mage does not wish to be disturbed.'");
+                break;
 	case 2:
 		msg_print(
 		    "'My master has other business at the present time.'");
+                break;
 	case 3:
 		msg_print("'Piss off you inexperienced peon.'");
+                break;
 	case 4:
 		msg_print("'You have yet to prove yourself worthy.'");
+                break;
 	}
 	msg_print("The guard escorts you back outside and locks the door.");
 	msg_print("");
@@ -364,7 +368,7 @@ void q__explain_quests()
 
 void q__repeat_quest()
 {
-	vtype out_val;
+	char out_val[82];
 
 	msg_print("Hmmm. . .  I see you haven't completed your quest.");
 	msg_print("Have you forgotten it already?");

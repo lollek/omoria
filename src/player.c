@@ -15,11 +15,11 @@ game_time_type player_birth = {0, 0, 0, 0, 0};
 game_time_type player_cur_age = {0, 0, 0, 0, 0};
 time_type player_play_tm = {0, 0, 0, 0, 0, 0, 0};
 uint8_t player_diffic = 3;
-vtype player_name = " ";
-vtype player_race = " ";
-vtype player_sex = " ";
-vtype player_title = " ";
-vtype player_tclass = " ";
+char player_name[82] = " ";
+char player_race[82] = " ";
+char player_sex[82] = " ";
+char player_title[82] = " ";
+char player_tclass[82] = " ";
 int64_t player_max_exp = 0;
 int64_t player_exp = 0;
 int64_t player_rep = 0;
@@ -54,7 +54,7 @@ uint8_t player_stl = 0;
 float player_expfact = 0;
 float player_cmana = 0;
 float player_chp = 0;
-vtype player_history[] = {"", "", "", "", ""};
+char player_history[][82] = {"", "", "", "", ""};
 boolean player_cheated = false;
 int64_t  player_mr = 0;
 uint8_t player_quests = 0;
@@ -235,7 +235,7 @@ void regenmana(float percent)
 	player_cmana += player_mana * percent + PLAYER_REGEN_MNBASE;
 }
 
-void take_hit(long damage, vtype hit_from)
+void take_hit(long damage, char hit_from[82])
 {
 	/*{ Decreases players hit points and sets death flag if neccessary}*/
 

@@ -212,13 +212,13 @@ void ic__clear_display(treas_ptr cur_display[], long *cur_display_size)
 	LEAVE("ic__clear_display", "iu");
 }
 
-long ic__display_inv(treas_ptr cur_display[], vtype prompt, treas_ptr start,
+long ic__display_inv(treas_ptr cur_display[], char prompt[82], treas_ptr start,
 		     treas_ptr *next_start)
 {
 	/*{ start changes into start of next page; returns # items in page}*/
 
 	long count, i1;
-	vtype out_val, out_val2, out_val3;
+	char out_val[82], out_val2[82], out_val3[82];
 	char *t;
 
 	for (count = 0; (start != NULL) && (count < DISPLAY_SIZE);) {
@@ -277,7 +277,7 @@ long ic__display_inv(treas_ptr cur_display[], vtype prompt, treas_ptr start,
 
 boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 		       boolean clean_flag, long *scr_state, boolean *valid_flag,
-		       vtype prompt, treas_ptr cur_display[],
+		       char prompt[82], treas_ptr cur_display[],
 		       long *cur_display_size)
 {
 	/*  { Displays inventory items, returns chosen item if want_back. }*/
@@ -290,7 +290,7 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 	treas_ptr temp_ptr;
 	long wgt;
 	long count, count2;
-	vtype out_str;
+	char out_str[82];
 	boolean caps_flag;
 	obj_set stuff_to_fire = {sling_ammo, bolt, arrow, 0};
 	boolean return_value = false;
@@ -558,9 +558,9 @@ static char const *ic__equip_print_prefix(long position)
 	}
 }
 
-void inv__equip_pos_string(vtype out_val, long equip_pos, long counter)
+void inv__equip_pos_string(char out_val[82], long equip_pos, long counter)
 {
-	vtype tmp_buf;
+	char tmp_buf[82];
 
 	inven_temp->data = equipment[equip_pos];
 	objdes(tmp_buf, inven_temp, true);
@@ -585,7 +585,7 @@ treas_ptr ic__remove(long item_val, boolean show_message)
 	/*{ Remove item from equipment list               -RAK-   }*/
 
 	long typ;
-	vtype out_val, prt1, prt2;
+	char out_val[82], prt1[82], prt2[82];
 
 	prt1[0] = 0;
 
@@ -640,7 +640,7 @@ void ic__unwear(long *scr_state)
 	long i1, i2, com_val;
 	boolean exit_flag, test_flag;
 	char command;
-	vtype out_val;
+	char out_val[82];
 
 	if (*scr_state == 1) {
 		clear_rc(1, 1);
@@ -723,13 +723,13 @@ void ic__unwear(long *scr_state)
 	}
 }
 
-void ic__wear(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
+void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 	      long *scr_state, boolean *valid_flag)
 {
 	/*{ Wear routine, wear or wield an item           -RAK-   }*/
 
 	long com_val, i1, i2, i3;
-	vtype out_val, out_val_tmp, prt1, prt2;
+	char out_val[82], out_val_tmp[82], prt1[82], prt2[82];
 	treasure_type unwear_obj;
 	boolean exit_flag, test_flag;
 	long count, factor;
@@ -1043,12 +1043,12 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
 	LEAVE("ic__wear", "i2");
 }
 
-void ic__stats(treas_ptr cur_display[], long *cur_display_size, vtype prompt,
+void ic__stats(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 	       long *scr_state, boolean *valid_flag)
 {
 	/*{ Statistics routine, get wizard info on an item        -DMF-   }*/
 
-	vtype out_val;
+	char out_val[82];
 	treas_ptr item_ptr;
 	boolean exit_flag;
 
@@ -1294,7 +1294,7 @@ void ic__show_money()
 {
 	/*{ Show players money                            -DMF-   }*/
 
-	vtype prt1;
+	char prt1[82];
 
 	clear_rc(1, 1);
 
@@ -1497,13 +1497,13 @@ void ic__take_out()
 	}
 }
 
-void ic__selective_inven(long *scr_state, boolean *valid_flag, vtype prompt,
+void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
 			 treas_ptr cur_display[], long *cur_display_size)
 {
 	/*{ Inventory of selective items, picked by character     -DMF-   }*/
 
 	treas_ptr ptr;
-	string out, out_str;
+	char out[134], out_str[134];
 	boolean exit_flag = false;
 	char command;
 	char *out_pos;
@@ -1552,7 +1552,7 @@ void ic__switch_weapon(long *scr_state)
 {
 	/*{ Switch primary and secondary weapons          -RAK-   }*/
 
-	vtype prt1, prt2, out_val;
+	char prt1[82], prt2[82], out_val[82];
 	treasure_type tmp_obj;
 
 	if ((Cursed_worn_bit & equipment[Equipment_primary].flags) != 0) {
@@ -1599,7 +1599,7 @@ void ic__switch_weapon(long *scr_state)
 	}
 }
 
-boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
+boolean inven_command(char command, treas_ptr *item_ptr, char sprompt[82])
 {
 	/* Comprehensive function block to handle all inventory      -RAK-
 	 * and equipment routines.  Five kinds of calls can take place.
@@ -1612,7 +1612,7 @@ boolean inven_command(char command, treas_ptr *item_ptr, vtype sprompt)
 	treas_ptr cur_display[DISPLAY_SIZE + 1];
 	long cur_display_size;
 	boolean valid_flag = false;
-	vtype prompt;
+	char prompt[82];
 	boolean return_value = false;
 
 	ENTER(("inven_command", "i"));
@@ -2008,12 +2008,12 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 {
 	/*{ Drop money onto ground                                -DMF-   }*/
 
-	vtype out_val;
-	vtype out_val2;
+	char out_val[82];
+	char out_val2[82];
 	int com_val;
 	boolean reset_flag;
 	long max;
-	vtype mon_name;
+	char mon_name[82];
 	long amt;
 	long pos;
 	long mon_type;
@@ -2114,13 +2114,13 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 	return return_value;
 }
 
-boolean get_item(treas_ptr *com_ptr, vtype pmt, boolean *redraw, long count,
+boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 		 char *choice, boolean mon, boolean no_wait)
 {
 	/*{ Get the ID of an item and return the CTR value of it  -RAK-   }*/
 
 	char command;
-	vtype out_val;
+	char out_val[82];
 	char char_str[2];
 	boolean test_flag;
 	long i1;

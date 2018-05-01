@@ -12,7 +12,7 @@ void save_file_remove(void);
  *  save_file_name_set() - Set file to save to
  *  @path: path to save file
  */
-void save_file_name_set(vtype path);
+void save_file_name_set(char path[82]);
 
 /**
  * -OK-
@@ -32,6 +32,6 @@ boolean get_char(boolean prop);
  * This function seems to revive the character in a given path.
  * If fnam is not set, it will try a default one.
  */
-void restore_char(vtype fnam, boolean present, boolean undead);
+void restore_char(char fnam[82], boolean present, boolean undead);
 
 #endif /* SAVE_H */

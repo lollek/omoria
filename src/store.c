@@ -611,8 +611,8 @@ boolean check_store_hours(long st, long sh)
 	/* sh is the same as st, or -1 for the unnamed stores (S_TRADE_POST and
 	 * up)*/
 
-	string name, prop;
-	vtype out_val;
+	char name[134], prop[134];
+	char out_val[82];
 	char ope;
 	boolean flag;
 	boolean return_value = false;
@@ -737,14 +737,14 @@ void st__reset_flag(long time_spent, long *flag)
 	}
 }
 
-void spend_time(long days_spent, vtype place, boolean whole_days)
+void spend_time(long days_spent, char place[82], boolean whole_days)
 {
 	/*{ if not whole_days then it is actually turns... }*/
 
 	long mornings, time_spent, turns_today, t2, i1;
 	float regen_percent;
 	boolean new_screen;
-	vtype out_val;
+	char out_val[82];
 
 	/* with player_cur_age do; */
 	turns_today = player_cur_age.hour * 400 + player_cur_age.secs;
@@ -1074,7 +1074,7 @@ void store_prt_gold()
 	/*{ Displays players gold					-RAK-
 	 * }*/
 
-	vtype out_val;
+	char out_val[82];
 	ENTER(("store_prt_gold", ""));
 
 	sprintf(out_val, "Gold Remaining : %ld", player_money[TOTAL_]);
@@ -1088,7 +1088,7 @@ void display_cost(long store_num, long pos)
 	/*{ Re-displays only a single cost                        -RAK-   }*/
 
 	long i1, i2;
-	vtype out_val;
+	char out_val[82];
 
 	/* with stores[store_num] do; */
 	i1 = ((pos - 1) % 12);
@@ -1143,7 +1143,7 @@ void display_inventory(long store_num, long start)
 	 * }*/
 
 	long i1, i2, stop;
-	vtype out_val1, out_val2;
+	char out_val1[82], out_val2[82];
 
 	ENTER(("display_inventory", ""));
 
@@ -1197,7 +1197,7 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 	long choice;
 	treas_ptr item_new;
 	long save_number;
-	vtype out_val, foo, out2;
+	char out_val[82], foo[82], out2[82];
 	boolean flag;
 	boolean return_value = false;
 
@@ -1409,7 +1409,7 @@ boolean store_sell(long store_num, long cur_top, boolean blitz)
 	long count = 0;
 	treas_ptr item_ptr = NULL;
 	long item_pos, price;
-	vtype out_val, foo, out2;
+	char out_val[82], foo[82], out2[82];
 	char trash_char;
 	boolean redraw;
 	boolean return_value = false;
@@ -1562,12 +1562,12 @@ void shut_store(long store_num)
 	}
 }
 
-boolean get_store_item(long *com_val, vtype pmt, long i1, long i2)
+boolean get_store_item(long *com_val, char pmt[82], long i1, long i2)
 {
 	/*{ Get the ID of a store item and return its value       -RAK-   }*/
 
 	char command;
-	vtype out_val;
+	char out_val[82];
 	boolean flag = true;
 
 	*com_val = 0;
@@ -1611,7 +1611,7 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 	float x1, x2;
 	float min_per = 1.0, max_per = 1.0;
 	boolean flag, loop_flag;
-	vtype comment, out_val;
+	char comment[82], out_val[82];
 	long return_value = 0;
 
 	ENTER(("sell_haggle", "s"));
@@ -1812,7 +1812,7 @@ long purchase_haggle(long store_num, long *price, treasure_type *item,
 	float x1, x2;
 	float min_per, max_per;
 	boolean flag, loop_flag;
-	vtype out_val, comment;
+	char out_val[82], comment[82];
 	long return_value = 0;
 
 	flag = false;
@@ -1970,10 +1970,10 @@ boolean haggle_insults(long store_num)
 	return return_value;
 }
 
-boolean ro__get_haggle(vtype comment, long *num)
+boolean ro__get_haggle(char comment[82], long *num)
 {
 	long i1, clen;
-	vtype out_val;
+	char out_val[82];
 	boolean flag = true;
 
 	ENTER(("ro__get_haggle", "s"));
@@ -2002,7 +2002,7 @@ boolean ro__get_haggle(vtype comment, long *num)
 	return flag;
 }
 
-long receive_offer(long store_num, vtype comment, long *new_offer,
+long receive_offer(long store_num, char comment[82], long *new_offer,
 		   long last_offer, long factor)
 {
 	boolean flag;
@@ -2088,7 +2088,7 @@ void prt_comment2(long offer, long asking, long final)
 {
 	/*{ %A1 is offer, %A2 is asking...                }*/
 
-	vtype comment;
+	char comment[82];
 
 	if (final > 0) {
 		switch (randint(3)) {
@@ -2184,7 +2184,7 @@ void prt_comment2(long offer, long asking, long final)
 
 void prt_comment3(long offer, long asking, long final)
 {
-	vtype comment;
+	char comment[82];
 
 	if (final > 0) {
 		switch (randint(3)) {

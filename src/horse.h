@@ -6,7 +6,7 @@
 #define MAX_HORSE_NAMES 55
 
 typedef long h_stat[MAX_HORSE_NAMES + 1];
-typedef vtype h_name[MAX_HORSE_NAMES + 1];
+typedef char h_name[MAX_HORSE_NAMES + 1][82];
 typedef boolean h_bool[MAX_HORSE_NAMES + 1];
 typedef float statr[11];
 

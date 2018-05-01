@@ -15,16 +15,16 @@ boolean c_closed;
 
 void c__display_gold()
 {
-	vtype out_val;
+	char out_val[82];
 
 	sprintf(out_val, "gold remaining : %ld   ", gld);
 	prt(out_val, 19, 22);
 }
 
-boolean c__get_response(vtype comment, long *num)
+boolean c__get_response(char comment[82], long *num)
 {
 	long i1, clen;
-	vtype out_val;
+	char out_val[82];
 	boolean flag;
 
 	flag = true;
@@ -82,7 +82,7 @@ void c__check_casino_kickout()
 
 void c__display_casino()
 {
-	vtype shop_owner;
+	char shop_owner[82];
 
 	clear_screen();
 	strcpy(shop_owner,

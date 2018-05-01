@@ -206,7 +206,7 @@ char inkey()
 {
 	int i;
 #ifdef VMS
-	vtype tmp_str;
+	char tmp_str[82];
 #endif
 
 	put_qio();	 /* Dump IO buffer		*/
@@ -418,7 +418,7 @@ void Clear_From(row) int row;
 /* sign bit of a character used to indicate standout mode. -CJS */
 void Print(chtype const ch, int row, int col)
 {
-	vtype tmp_str;
+	char tmp_str[82];
 
 	row -= panel_row_prt; /* Real co-ords convert to screen positions */
 	col -= panel_col_prt;
@@ -441,7 +441,7 @@ void Print(chtype const ch, int row, int col)
 /* Moves the cursor to a given interpolated y, x position	-RAK-	*/
 void move_cursor_relative(int row, int col)
 {
-	vtype tmp_str;
+	char tmp_str[82];
 
 	row -= panel_row_prt; /* Real co-ords convert to screen positions */
 	col -= panel_col_prt;
@@ -470,7 +470,7 @@ void count_msg_print(p) char *p;
 
 void prt2(char *str_buff1, char *str_buff2, int row, int col)
 {
-	vtype temp;
+	char temp[82];
 	sprintf(temp, "%s%s", str_buff1, str_buff2);
 	prt(temp, row, col);
 }
@@ -823,7 +823,7 @@ boolean sl__get_dir(char *prompt, long *dir)
 void show_location()
 {
 #ifdef ORIGINAL_IMORIA
-	vtype out_val;
+	char out_val[82];
 
 	if ((py.flags.blind > 0) || (no_light())) {
 		msg_print("You can't see your map.");
@@ -840,7 +840,7 @@ void show_location()
 
 	int cy, cx, p_y, p_x, y, x;
 	long dir_val;
-	ntype tmp_str, out_val;
+	char tmp_str[1026], out_val[1026];
 
 	if ((py.flags.blind > 0) || no_light()) {
 		msg_print("You can't see your map.");

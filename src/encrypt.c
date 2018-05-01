@@ -184,7 +184,7 @@ void encrypt_flush(FILE *f1, encrypt_state *state)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void encrypt_write(FILE *f1, encrypt_state *state, ntype line)
+void encrypt_write(FILE *f1, encrypt_state *state, char line[1026])
 {
 	/* this is ment to encrypt ascii, when decrypting a null in the
 	   plaintext marks the end of the file.  so, you can use it with
@@ -226,7 +226,7 @@ void encrypt_write(FILE *f1, encrypt_state *state, ntype line)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void read_decrypt(FILE *f1, encrypt_state *state, ntype line, boolean *got_eof)
+void read_decrypt(FILE *f1, encrypt_state *state, char line[1026], boolean *got_eof)
 {
 	/* this is ment to decrypt ascii, a null in the plaintext marks the
 	   end of the file.  so, you can use it with binary data as long as
@@ -242,7 +242,7 @@ void read_decrypt(FILE *f1, encrypt_state *state, ntype line, boolean *got_eof)
 	if (!(state->doit)) {
 		/* file is not encrypted */
 
-		if ((fgets(line, sizeof(ntype), f1)) == NULL) {
+		if ((fgets(line, sizeof(char[1026]), f1)) == NULL) {
 			*got_eof = true;
 			/* printf("Yikes!  EOF on f1: %p\n",f1); fflush(stdout);
 			 */

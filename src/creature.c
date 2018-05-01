@@ -7,18 +7,18 @@
 void lm__read_custom(FILE *file)
 {
 	long count;
-	ctype a;
+	char a[28];
 
 	if (!feof(file)) {
 		do {
 			a[0] = 0;
-			fgets(a, sizeof(ctype), file); /* new name */
+			fgets(a, sizeof(char[28]), file); /* new name */
 			if ((count = strlen(a)) > 1) {
 				a[count - 1] = 0; /* strip newline */
 				fscanf(file, "%ld\n", &count);
 				if ((count <= MAX_CREATURES) && (count > 0)) {
 					strncpy(c_list[count].name, a,
-						sizeof(ctype) - 1);
+						sizeof(char[28]) - 1);
 				}
 			}
 		} while (!feof(file));
@@ -50,7 +50,7 @@ void load_monsters()
 	  */
 
 	long count;
-	ctype a;
+	char a[28];
 	int value;
 	FILE *file;
 
@@ -66,7 +66,7 @@ void load_monsters()
 	}
 
 	for (count = 1; count <= MAX_CREATURES; count++) {
-		fgets(a, sizeof(ctype), file); /*     --- 001 --- */
+		fgets(a, sizeof(char[28]), file); /*     --- 001 --- */
 
 		fscanf(file, "%d\n", &value); /*     aaf */
 		c_list[count].aaf = (unsigned char)value;
@@ -74,7 +74,7 @@ void load_monsters()
 		fscanf(file, "%d\n", &value); /*     ac */
 		c_list[count].ac = (unsigned char)value;
 
-		fgets(c_list[count].name, sizeof(ctype), file); /* name */
+		fgets(c_list[count].name, sizeof(char[28]), file); /* name */
 		c_list[count].name[strlen(c_list[count].name) - 1] =
 		    0; /* strip newline */
 
@@ -99,7 +99,7 @@ void load_monsters()
 
 		fscanf(file, "%s\n", c_list[count].hd); /*     hd */
 
-		fgets(c_list[count].damage, sizeof(etype), file); /* damage */
+		fgets(c_list[count].damage, sizeof(char[36]), file); /* damage */
 		c_list[count].damage[strlen(c_list[count].damage) - 1] =
 		    0; /* strip newline */
 
@@ -178,7 +178,7 @@ void replace_name()
 	/*{ replace <gp> for game players name }*/
 
 	long count;
-	vtype t_str;
+	char t_str[82];
 	char *s;
 
 	ENTER(("replace_name", ""));
@@ -358,7 +358,7 @@ void c__update_mon(long monptr, long *hear_count)
 
 void c__monster_eaten_message(char *squash, char *doesit, long cptr)
 {
-	ntype out_val;
+	char out_val[1026];
 
 	ENTER(("c__monster_eaten_message", "c"))
 
@@ -557,7 +557,7 @@ boolean c__check_for_hit(long monptr, long atype)
 
 void c__print_attack(long monptr, long adesc, char *cdesc)
 {
-	string the_attack;
+	char the_attack[134];
 	boolean no_print = false;
 
 	ENTER(("c__print_attack", "%ld, %ld,len: %d >%s<", monptr, adesc,
@@ -719,7 +719,7 @@ void c__print_attack(long monptr, long adesc, char *cdesc)
 	LEAVE("c__print_attack", "c")
 }
 
-void c__apply_attack(long monptr, long atype, vtype ddesc, char *damstr)
+void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 {
 	long dam, level, aning;
 	long i1, i2, i4;
@@ -1073,10 +1073,10 @@ void c__make_attack(long monptr)
 	long atype, adesc; /*,dam;*/
 	long acount;
 	long i5;
-	vtype attstr, attx;
-	vtype cdesc, ddesc, s1, theattack;
+	char attstr[82], attx[82];
+	char cdesc[82], ddesc[82], s1[82], theattack[82];
 	boolean flag;
-	etype damstr;
+	char damstr[36];
 	char *achar;
 
 	ENTER(("c__make_attack", "c"))
@@ -1186,7 +1186,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 	long i1, i2, newy, newx;
 	unsigned long movebits;
 	boolean flag, tflag;
-	vtype out_val;
+	char out_val[82];
 	boolean return_value = false;
 
 	ENTER(("c__make_move", "c"))
@@ -1620,7 +1620,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 	long chance, thrown_spell;
 	float r1;
 	long spell_choice[32]; /* [1..31] of long;*/
-	vtype cdesc, ddesc, outval;
+	char cdesc[82], ddesc[82], outval[82];
 	boolean stop_player;
 	boolean return_value;
 
@@ -2298,7 +2298,7 @@ void creatures(boolean attack)
 
 void mn__append_mon(long mon_num)
 {
-	vtype out_val;
+	char out_val[82];
 	FILE *f1;
 
 	f1 = (FILE *)fopen(MORIA_CST, "a");
@@ -2317,7 +2317,7 @@ void mon_name()
 {
 	/*{name any monster you wish [currently virtual]}*/
 
-	ctype virtual_name;
+	char virtual_name[28];
 	long mon_num;
 
 	prt("Monster to rename:", 1, 1);
@@ -2337,7 +2337,7 @@ void mon_name()
 	msg_print("");
 }
 
-long find_mon(ctype virtual_name)
+long find_mon(const char *virtual_name)
 {
 	/*{returns number of monster in list specified by virtual_name}*/
 

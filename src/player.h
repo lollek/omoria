@@ -21,11 +21,11 @@ extern game_time_type player_birth;     /* {Date of char's birth} */
 extern game_time_type player_cur_age;   /* {Current game date	} */
 extern time_type player_play_tm;	/* { Time spent in game	} */
 extern uint8_t player_diffic;     /* { Difficulty of game	} */
-extern vtype player_name;		  /* { Name of character	} */
-extern vtype player_race;		  /* { Race of character	} */
-extern vtype player_sex;		  /* { Sex of character	} */
-extern vtype player_title;		  /* { Character's title	} */
-extern vtype player_tclass;		  /* { Character's class	} */
+extern char player_name[82];		  /* { Name of character	} */
+extern char player_race[82];		  /* { Race of character	} */
+extern char player_sex[82];		  /* { Sex of character	} */
+extern char player_title[82];		  /* { Character's title	} */
+extern char player_tclass[82];		  /* { Character's class	} */
 extern int64_t player_max_exp;		  /* { Max experience} */
 extern int64_t player_exp;		  /* { Cur experienc	} */
 extern int64_t player_rep;		  /* { XP from good creatures } */
@@ -60,7 +60,7 @@ extern uint8_t player_stl;	/* { Stealth factor} */
 extern float player_expfact;		  /* { Experience factor} */
 extern float player_cmana;		  /* { Cur mana pts  } */
 extern float player_chp;		  /* { Cur hit pts	} */
-extern vtype player_history[5];	 /* ;{ History record} */
+extern char player_history[5][82];	 /* ;{ History record} */
 extern boolean player_cheated;	  /*{ gone into wizard or god mode} */
 extern int64_t  player_mr;		  /* { mag.res.lev.delta } */
 extern uint8_t player_quests;     /* { # completed } {FUBAR} */

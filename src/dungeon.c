@@ -16,7 +16,7 @@ boolean search_flag;     /* { Player is searching   } */
 boolean teleport_flag;   /* { Handle telport traps  } */
 boolean player_light;    /* { Player carrying light } */
 boolean save_msg_flag;   /* { Msg flag after INKEY  } */
-ttype s1, s2, s3, s4;    /* { Summon item strings   } */
+char s1[70], s2[70], s3[70], s4[70];    /* { Summon item strings   } */
 long i_summ_count;       /* { Summon item count	   } */
 
 /**
@@ -67,7 +67,7 @@ boolean coin_stuff(char typ, long *type_num)
 	return return_value;
 }
 
-static void s__get_money_type__prompt_money(vtype astr, string out_val,
+static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
 					    boolean *commas)
 {
 	if (*commas) {
@@ -77,14 +77,14 @@ static void s__get_money_type__prompt_money(vtype astr, string out_val,
 	*commas = true;
 }
 
-long get_money_type(string prompt, boolean *back, boolean no_check)
+long get_money_type(char prompt[134], boolean *back, boolean no_check)
 {
 	boolean comma_flag = false;
 	boolean test_flag = false;
-	string out_val;
+	char out_val[134];
 	long com_val;
 
-	strncpy(out_val, prompt, sizeof(string));
+	strncpy(out_val, prompt, sizeof(char[134]));
 
 	if ((player_money[6] > 0) || (no_check))
 		s__get_money_type__prompt_money("<m>ithril", out_val,
@@ -849,7 +849,7 @@ void carry(long y, long x)
 	/*{ sit there...                                                  }*/
 
 	treas_ptr item_ptr;
-	vtype out_val, out2;
+	char out_val[82], out2[82];
 	char page_char;
 	char inv_char;
 	treas_ptr tmp_ptr;
@@ -957,10 +957,10 @@ long react(long x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void battle_game(long plus, vtype kb_str)
+void battle_game(long plus, char kb_str[82])
 {
 	long score, i1, time;
-	vtype out_val;
+	char out_val[82];
 
 	if (get_yes_no("Do you accept their invitation?")) {
 		msg_print("Good for you!");
@@ -1093,9 +1093,9 @@ void kicked_out() { msg_print("The owner kicks you out..."); }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void call_guards(vtype who)
+void call_guards(char who[82])
 {
-	vtype out_str;
+	char out_str[82];
 
 	sprintf(out_str, "The %s call(s) for the Town Guards!", who);
 	msg_print(out_str);
@@ -1225,9 +1225,9 @@ void party()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void spend_the_night(vtype who)
+void spend_the_night(char who[82])
 {
-	vtype out_str;
+	char out_str[82];
 
 	msg_print("The occupant(s) invite you to rest in his house.");
 	if (get_yes_no("Do you accept?")) {
@@ -1451,7 +1451,7 @@ boolean minus_ac(long typ_dam)
 
 	long i1, i2;
 	long tmp[9]; /*  : array [1..8] of long;*/
-	vtype out_str, out_val;
+	char out_str[82], out_val[82];
 	boolean return_value = false;
 
 	i1 = 0;
@@ -1512,7 +1512,7 @@ boolean minus_ac(long typ_dam)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void fire_dam(long dam, vtype kb_str)
+void fire_dam(long dam, char kb_str[82])
 {
 	/*{ Burn the fool up...                                   -RAK-   }*/
 
@@ -1540,7 +1540,7 @@ void fire_dam(long dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void cold_dam(long dam, vtype kb_str)
+void cold_dam(long dam, char kb_str[82])
 {
 	/*{ Freeze him to death...                                -RAK-   }*/
 
@@ -1565,7 +1565,7 @@ void cold_dam(long dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void light_dam(long dam, vtype kb_str)
+void light_dam(long dam, char kb_str[82])
 {
 	/*{ Lightning bolt the sucker away...                     -RAK-   }*/
 
@@ -1583,7 +1583,7 @@ void light_dam(long dam, vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void acid_dam(long dam, vtype kb_str)
+void acid_dam(long dam, char kb_str[82])
 {
 	/*{ Throw acid on the hapless victim                      -RAK-   }*/
 
@@ -1718,7 +1718,7 @@ void xp_loss(long amount)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void corrode_gas(vtype kb_str)
+void corrode_gas(char kb_str[82])
 {
 	/*{ Corrode the unsuspecting person's armor               -RAK-   }*/
 
@@ -1740,7 +1740,7 @@ void corrode_gas(vtype kb_str)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void poison_gas(long dam, vtype kb_str)
+void poison_gas(long dam, char kb_str[82])
 {
 	/*{ Poison gas the idiot...                               -RAK-   }*/
 
@@ -1773,7 +1773,7 @@ void rest()
 	/*{ Resting allows a player to safely restore his hp      -RAK-   }*/
 
 	long rest_num;
-	vtype rest_str;
+	char rest_str[82];
 
 	prt("Rest for how long (or *) ? ", 1, 1);
 	get_string(rest_str, 1, 28, 10);
@@ -1869,7 +1869,7 @@ void search(long y, long x, long chance)
 	/*{ Searches for hidden things...                         -RAK-   }*/
 
 	long i1, i2;
-	vtype out_val;
+	char out_val[86];
 
 	/* with py.flags do; */
 	if (PF.confused + PF.blind > 0) {
@@ -2525,7 +2525,7 @@ boolean py_attack(long y, long x)
 	/*{ Player attacks a (poor, defenseless) creature         -RAK-   }*/
 
 	long a_cptr, a_mptr, i3, blows, tot_tohit, crit_mult;
-	vtype m_name, out_val;
+	char m_name[82], out_val[82];
 	boolean mean_jerk_flag, is_sharp;
 	boolean backstab_flag;
 
@@ -2877,7 +2877,7 @@ void desc_remain(treas_ptr item_ptr)
 {
 	/*{ Describe amount of item remaining...                  -RAK-   }*/
 
-	vtype out_val, out_val2;
+	char out_val[82], out_val2[82];
 
 	inven_temp->data = item_ptr->data;
 
@@ -2975,7 +2975,7 @@ void desc_charges(treas_ptr item_ptr)
 {
 	/*{ Describe number of remaining charges...               -RAK-   }*/
 
-	vtype out_val;
+	char out_val[82];
 
 	if (strstr(item_ptr->data.name, "^") == NULL) {
 		sprintf(out_val, "You have %ld charges remaining.",
@@ -2986,7 +2986,7 @@ void desc_charges(treas_ptr item_ptr)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean cast_spell(vtype prompt, treas_ptr item_ptr, long *sn, long *sc,
+boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 		   boolean *redraw)
 {
 	/*{ Return spell number and failure chance                -RAK-   }*/
@@ -3043,7 +3043,7 @@ static void d__examine_book()
 	treas_ptr i1, item_ptr;
 	char trash_char;
 	boolean redraw, flag;
-	vtype out_val;
+	char out_val[82];
 	obj_set some_books = {magic_book, prayer_book, instrument, song_book,
 			      0};
 
@@ -3139,7 +3139,7 @@ void d__jamdoor()
 
 	treas_ptr i1;
 	long y, x, i2, tmp;
-	vtype m_name;
+	char m_name[82];
 	obj_set pick_a_spike = {spike, 0};
 
 	y = char_row;
@@ -3317,7 +3317,7 @@ void to__drop_throw(long y, long x)
 {
 	long i1, i2, i3, cur_pos;
 	boolean flag = false;
-	vtype out_val, out_val2;
+	char out_val[82], out_val2[82];
 
 	i1 = y;
 	i2 = x;
@@ -3362,7 +3362,7 @@ void d__throw_object(boolean to_be_fired)
 	long y, x, oldy, oldx, dir, cur_dis, count;
 	char trash_char;
 	boolean redraw, flag;
-	vtype out_val, out_val2, m_name;
+	char out_val[82], out_val2[82], m_name[82];
 	treas_ptr item_ptr, i7;
 	obj_set ammo_types = {0};
 
@@ -3573,7 +3573,7 @@ void d__look()
 	long i1, i2, y, x;
 	long dir, dummy;
 	boolean flag = false;
-	vtype out_val, out_val2;
+	char out_val[82], out_val2[82];
 
 	y = char_row;
 	x = char_col;
@@ -4652,7 +4652,7 @@ void d__update_hit_points()
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean d__get_dir(vtype prompt, long *dir, long *com_val, long *y, long *x)
+boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x)
 {
 	/*{ Prompts for a direction                               -RAK-   }*/
 
@@ -5145,7 +5145,7 @@ void d__closeobject()
 	/*{ Closes an open door...                                -RAK-   }*/
 
 	long y, x, tmp;
-	vtype m_name;
+	char m_name[82];
 
 	y = char_row;
 	x = char_col;
@@ -5443,7 +5443,7 @@ void d__drop()
 	treas_ptr com_ptr;
 	boolean redraw;
 	char trash_char;
-	vtype out_val, out_val2;
+	char out_val[82], out_val2[82];
 	long temp;
 	long count;
 
@@ -5500,16 +5500,16 @@ void d__drop()
 /*//////////////////////////////////////////////////////////////////// */
 void view_old_mess()
 {
-	vtype tmp_str;
+	char tmp_str[82];
 	boolean done = false;
 	message_ptr ptr;
-	string out_mess;
-	string tmp2;
+	char out_mess[134];
+	char tmp2[134];
 
 	ptr = old_message;
 
 	for (; (ptr != nil) && !done;) {
-		strncpy(out_mess, ptr->data, sizeof(string));
+		strncpy(out_mess, ptr->data, sizeof(char[134]));
 		if (strlen(out_mess) > 71) {
 			for (; strlen(out_mess) > 71;) {
 				strncpy(tmp_str, out_mess, 71);
@@ -5532,9 +5532,9 @@ void view_old_mess()
 void d__execute_command(long *com_val)
 {
 	treas_ptr trash_ptr;
-	vtype out_val;
-	vtype out2;
-	vtype tmp_str;
+	char out_val[82];
+	char out2[82];
+	char tmp_str[82];
 
 	ENTER(("d__execute_command", "%d, '%c'", *com_val, *com_val));
 

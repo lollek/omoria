@@ -14,7 +14,7 @@ void game_version()
 
 	/* why is this in the wizard code? */
 
-	vtype tmp_str;
+	char tmp_str[82];
 
 	clear_from(1);
 
@@ -87,11 +87,11 @@ void bpswd()
 	strcpy(password2, "mopwillow");
 }
 
-boolean check_pswd(string passwd, boolean present)
+boolean check_pswd(char passwd[134], boolean present)
 {
 	long i1;
 	char x;
-	string tpw; /*  : packed array [1..12] of char;*/
+	char tpw[134]; /*  : packed array [1..12] of char;*/
 	/* account_type   account; */
 	boolean checked_out = false;
 
@@ -188,13 +188,13 @@ void wizard_light()
 	detect_sdoor();
 }
 
-void monster_summon_by_name(long y, long x, ctype name, boolean present,
+void monster_summon_by_name(long y, long x, char name[28], boolean present,
 			    boolean sleepy)
 {
 	/*{ Wizard routine for summoning a specific monster       -RAD-   }*/
 
 	long i1 = 0, i2, i3, i4;
-	ctype monster;
+	char monster[28];
 	boolean junk;
 
 	if (!present) {
@@ -343,7 +343,7 @@ void wmi__display_list(list_elem_ptr start, long *cur_display_size,
 		       list_elem_ptr *data_list)
 {
 	long count, old_display_size;
-	string temp;
+	char temp[134];
 
 	old_display_size = *cur_display_size;
 	count = 0;
@@ -394,10 +394,10 @@ void wmi__display_screen(long *cur_display_size, list_elem_ptr cur_display[],
 	wmi__display_commands();
 }
 
-boolean wmi__get_list_entry(long *com_val, vtype pmt, long i1, long i2)
+boolean wmi__get_list_entry(long *com_val, char pmt[82], long i1, long i2)
 {
 	char command;
-	string temp;
+	char temp[134];
 	boolean flag = true;
 
 	*com_val = 0;
@@ -508,10 +508,10 @@ boolean wizard_moo_item(treasure_type *back)
 	return flag;
 }
 
-boolean si__get_new_ttype(ttype s, vtype str, string out_str)
+boolean si__get_new_ttype(char s[70], char str[82], char out_str[134])
 {
 	/*{prompts for new string, <CR> leaves old value}*/
-	ttype os;
+	char os[70];
 	boolean flag = false;
 
 	if (strlen(s) > 0) {
@@ -533,7 +533,7 @@ boolean si__get_new_ttype(ttype s, vtype str, string out_str)
 	return flag;
 }
 
-boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
+boolean si__get_item_descriptions(char out_str[134], treasure_type moo_item[],
 				  boolean *found, long *num_found)
 {
 	/*{ask wizard for item information/Moo!, Moo./Moo?}*/
@@ -586,7 +586,7 @@ boolean si__get_item_descriptions(string out_str, treasure_type moo_item[],
 	return flag;
 }
 
-boolean si__narrow(ttype s, long *num_found, long moo_cursor[])
+boolean si__narrow(char s[70], long *num_found, long moo_cursor[])
 {
 	/*{ eliminate all items without string s from array moo_cursor }*/
 	long i1, i2;
@@ -642,7 +642,7 @@ boolean si__narrow_choices(long *num_found, long moo_cursor[],
 
 void si__pesky_stuff(long *best_value, long *good_value,
 		     treasure_type *best_pick, treasure_type *good_pick,
-		     long *optimize, string out_str, long *i_summ_count,
+		     long *optimize, char out_str[134], long *i_summ_count,
 		     long *cur_pos, long x, long y)
 {
 	/*{init variables, see if optimizing (1=best, -1= worst); find # of
@@ -697,7 +697,7 @@ boolean si__optimize_item(treasure_type *pick, long *value, long optimize,
 	return flag;
 }
 
-boolean summon_item(long y, long x, ttype name1, ttype name2, long count,
+boolean summon_item(long y, long x, char name1[70], char name2[70], long count,
 		    boolean present)
 {
 	/*{ Wizard routine to summon a random item by substring(s) of its }*/
@@ -708,7 +708,7 @@ boolean summon_item(long y, long x, ttype name1, ttype name2, long count,
 	long best_value, good_value;
 	treasure_type best_pick, good_pick;
 	boolean flag, done, found;
-	string out_str;
+	char out_str[134];
 	long cur_pos;
 	char command;
 	treasure_type moo_item[MAX_OBJECTS + 1];
@@ -859,11 +859,11 @@ void esf__display_commands()
 	prt(" q) Quit and save changes       Esc) Exit without saving.", 24, 1);
 }
 
-void esf__display_list(int start, string list[], int n1, int *blegga,
+void esf__display_list(int start, char list[][134], int n1, int *blegga,
 		       int *cur_display_size)
 {
 	long count, old_display_size;
-	string out_val;
+	char out_val[134];
 
 	old_display_size = *cur_display_size;
 
@@ -889,7 +889,7 @@ void esf__display_list(int start, string list[], int n1, int *blegga,
 	}
 }
 
-void esf__display_screen(int cur_top, string list[], int n1, int *blegga,
+void esf__display_screen(int cur_top, char list[][134], int n1, int *blegga,
 			 int *cur_display_size)
 {
 	clear_screen();
@@ -904,10 +904,10 @@ void esf__display_screen(int cur_top, string list[], int n1, int *blegga,
 	esf__display_commands();
 }
 
-boolean esf__get_list_entry(int *com_val, vtype pmt, int cur_top, int i1,
+boolean esf__get_list_entry(int *com_val, char pmt[82], int cur_top, int i1,
 			    int i2)
 {
-	vtype out_val;
+	char out_val[82];
 	boolean flag = true;
 
 	*com_val = 0;
@@ -936,11 +936,11 @@ boolean esf__get_list_entry(int *com_val, vtype pmt, int cur_top, int i1,
 	return flag;
 }
 
-void esf__change_entry(int cur_top, string list[], int n1, int cur_display_size)
+void esf__change_entry(int cur_top, char list[][134], int n1, int cur_display_size)
 {
 	int which, i1;
-	string user, score, name, level;
-	string race, class, diffic;
+	char user[134], score[134], name[134], level[134];
+	char race[134], class[134], diffic[134];
 	long sc, lvl, diff, i4;
 	boolean flag, aborted = true;
 
@@ -1069,7 +1069,7 @@ void esf__change_entry(int cur_top, string list[], int n1, int cur_display_size)
 	}
 }
 
-void esf__delete_entry(int cur_top, string list[], int *n1,
+void esf__delete_entry(int cur_top, char list[][134], int *n1,
 		       int cur_display_size)
 {
 	int which, i1;
@@ -1086,7 +1086,7 @@ void esf__delete_entry(int cur_top, string list[], int *n1,
 	}
 }
 
-void esf__parse_command(string list[], int *cur_top, int *n1, int *blegga,
+void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
 			int *cur_display_size, boolean *exit_flag,
 			boolean *want_save)
 {
@@ -1144,11 +1144,11 @@ void edit_score_file()
 {
 	/*{ Wizard routine to edit high score file                -DMF-   }*/
 
-	string list[MAX_HIGH_SCORES + 2];
+	char list[MAX_HIGH_SCORES + 2][134];
 	boolean want_save, exit_flag;
 	int n1, cur_top, blegga, cur_display_size = 0;
 	FILE *f1;
-	vtype s1;
+	char s1[82];
 
 	/*
 	    const
@@ -1206,10 +1206,10 @@ void edit_score_file()
 	draw_cave();
 }
 
-boolean cc__input_field(string prompt, long *num, long min, long max,
+boolean cc__input_field(char prompt[134], long *num, long min, long max,
 			boolean *ok)
 {
-	string out_val;
+	char out_val[134];
 	long len;
 	boolean return_value = false;
 
@@ -1237,7 +1237,7 @@ void change_character()
 	/*{ Wizard routine for gaining on stats                   -RAK-   }*/
 
 	long tmp_val;
-	vtype tmp_str;
+	char tmp_str[82];
 	stat_set tstat;
 	boolean flag = false;
 	boolean abort = false;
@@ -1436,7 +1436,7 @@ void wizard_create()
 	*/
 
 	long tmp_val;
-	vtype tmp_str;
+	char tmp_str[82];
 	boolean flag;
 	char tchar;
 
@@ -1732,7 +1732,7 @@ void wizard_help()
 
 void wizard_command(void)
 {
-	vtype tmp_str;
+	char tmp_str[82];
 	stat_set tstat;
 	treas_ptr trash_ptr;
 	long y, x;

@@ -124,9 +124,9 @@ void help()
 	draw_cave();
 }
 
-void moria_help(vtype help_level)
+void moria_help(char help_level[82])
 {
-	ntype help_string;
+	char help_string[1026];
 	pid_t help_pid;
 	int status;
 

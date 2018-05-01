@@ -10,20 +10,10 @@ typedef struct quad_type
 	uint16_t l1;
 } quad_type;
 
-typedef char ctype[26 + 2];
-typedef char dtype[5 + 2];
-typedef char etype[34 + 2];
-typedef char htype[12 + 2];
-typedef char string[132 + 2];
-typedef char mtype[190 + 2];
-typedef char ntype[1024 + 2];
-typedef char ttype[68 + 2];
-typedef char vtype[80 + 2];
 typedef char account_type[10 + 2];
 typedef uint8_t obj_set[MAX_OBJ_SET]; /* = set of 0..255; */
 typedef char stat_set;			    /* = 0..5; */
-typedef uint8_t
-    stat_s_type[STAT_SET_MAX + 1];    /* = array [stat_set] of unsigned char; */
+typedef uint8_t stat_s_type[STAT_SET_MAX + 1];    /* = array [stat_set] of unsigned char; */
 typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 
 enum class_t {
@@ -63,7 +53,7 @@ typedef struct creature_type
 {
 	uint8_t aaf;    /*: [bit(7),pos(0)] 0..127; Area affect radius */
 	uint8_t ac;     /*: [bit(7),pos(8)] 0..127;	 AC */
-	ctype name;	   /* Descrip of creature */
+	char name[28];	   /* Descrip of creature */
 	uint64_t cmove;  /*: unsigned;	Bit field */
 	uint64_t spells; /*: unsigned;	Creature spells	 */
 	uint64_t cdefense; /*: unsigned;	Bit field */
@@ -71,8 +61,8 @@ typedef struct creature_type
 	int64_t mexp;		/* Exp value for kill */
 	int8_t speed;      /* Movement speed */
 	char cchar;		/* Character rep. */
-	dtype hd;		/* Creatures hit die */
-	etype damage;		/* Type attack and damage */
+	char hd[7];		/* Creatures hit die */
+	char damage[36];		/* Type attack and damage */
 	int8_t level;      /* Level of creature */
 	uint8_t mr;       /* Magic Resistance */
 } creature_type;
@@ -98,7 +88,7 @@ typedef struct monster_type
 
 typedef struct treasure_type
 {
-	ttype name;	    /* Object name		*/
+	char name[70];	    /* Object name		*/
 	uint8_t tval;    /* Catagory number	*/
 	chtype tchar;	  /* Character representation */
 	uint64_t flags2;  /*: unsigned;	 { MORE Special flags	} */
@@ -112,7 +102,7 @@ typedef struct treasure_type
 	int16_t todam;	   /* { Pluses to damage	} */
 	int16_t ac;	      /* { Normal AC		} */
 	int16_t toac;	    /* { Pluses to AC		} */
-	dtype damage;	  /* { Damage when hits	}*/
+	char damage[7];	  /* { Damage when hits	}*/
 	int8_t level;     /* { Level item found	} */
 } treasure_type;
 
@@ -201,7 +191,7 @@ typedef struct player_type
 
 typedef struct spell_t
 {
-	ctype sname;
+	char sname[28];
 	uint8_t slevel;
 	uint8_t smana;
 	uint16_t sexp;
@@ -219,7 +209,7 @@ typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
 typedef struct background_type
 {
-	vtype info;	  /* { History information	} */
+	char info[82];	  /* { History information	} */
 	uint8_t roll;  /* { Die roll needed for history} */
 	uint8_t chart; /* { Table number		} */
 	int8_t next;    /* { Pointer to next table	} */
@@ -251,7 +241,7 @@ typedef cave_type
 
 typedef struct owner_type
 {
-	vtype owner_name;
+	char owner_name[82];
 	int64_t max_cost;
 	float max_inflate;
 	float min_inflate;
@@ -278,7 +268,7 @@ typedef struct store_type
 
 typedef struct message_record
 {
-	string data;
+	char data[134];
 	struct message_record *next;
 } message_record;
 
