@@ -538,7 +538,7 @@ extern boolean move_dir(long dir, long *y, long *x); /* was move */
 extern boolean player_saves(long adjust);
 extern boolean player_spell_saves();
 extern void char_inven_init();
-extern void find_monster_name(vtype m_name, long ptr, boolean begin_sentence);
+extern void find_monster_name(vtype m_name, const long ptr, boolean begin_sentence);
 extern void check_kickout_time(long num, long check);
 
 /* { BANK.INC		} */

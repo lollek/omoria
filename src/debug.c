@@ -90,6 +90,7 @@ void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
 		fprintf(debug_file, ":::%4d: RETUR %s | %s | %s = %ld\n",
 			call_depth, routine_name, marker, descript,
 			(long)(*((signed char *)valptr)));
+		break;
 
 	default:
 		fprintf(debug_file,

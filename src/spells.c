@@ -2877,19 +2877,12 @@ boolean zap_monster(long dir, long y, long x, long aux, long zaptype)
 	  damage
 	  or speed change if used.}*/
 
-	long cptr;
-	long mptr;
-	vtype str1;
-	vtype str2;
 	boolean flag = false;
 
 	if (move_to_creature(dir, &y, &x)) {
-		/* with cave[y][x]. do; */
-		/* with m_list[cave[y][x].cptr]. do; */
-		/* with c_list[m_list[cave[y][x].cptr].mptr] do; */
-
-		cptr = cave[y][x].cptr;
-		mptr = m_list[cptr].mptr;
+		long cptr = cave[y][x].cptr;
+		vtype str1;
+		vtype str2;
 
 		find_monster_name(str1, cptr, true);
 		find_monster_name(str2, cptr, false);
