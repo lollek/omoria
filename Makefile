@@ -41,7 +41,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
 omoria: $(OBJFILES)
-	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libclasses.a
+	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libomoria.a
 
 privs ::
 	chown $(OWNER):$(GROUP) omoria $(DATAFILES)

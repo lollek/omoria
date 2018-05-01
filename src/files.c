@@ -495,7 +495,6 @@ void intro(int argc, char *argv[])
 
 	/* Check the terminal type and see if it is supported */
 	init_curses();
-	termdef();
 	curses_is_running = true;
 
 	if (!exit_flag) {

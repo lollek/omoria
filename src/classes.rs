@@ -1,5 +1,3 @@
-#![crate_type = "staticlib"]
-
 #[derive(PartialEq)]
 pub enum Class {
     Warrior = 0,
