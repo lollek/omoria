@@ -3,36 +3,17 @@
 
 #include "imoria.h"
 
-static unsigned char cc__old_stat(long new_guy)
+int64_t cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best, int64_t best_min);
+uint8_t cc__max_de_statp(uint8_t stat);
+uint8_t cc__max_in_statp(uint8_t stat);
+uint8_t cc__max_stat(uint8_t cur_stat, int8_t amount);
+uint8_t cc__new_stat(uint8_t old_guy);
+uint8_t cc__old_stat(uint8_t stat);
+
+static uint8_t cc__get_min_stat(char const *prompt, uint8_t max)
 {
-	unsigned char return_value;
-
-	if (new_guy < 150) {
-		return_value = (squish_stat(new_guy) + 30)div 10;
-	} else {
-		return_value = squish_stat(new_guy) - 132;
-	}
-
-	return return_value;
-}
-
-static unsigned char cc__new_stat(long old_guy)
-{
-	unsigned char return_value;
-
-	if (old_guy < 18) {
-		return_value = squish_stat(old_guy * 10 - 30);
-	} else {
-		return_value = squish_stat(old_guy + 132);
-	}
-
-	return return_value;
-}
-
-static long cc__get_min_stat(char prompt[134], unsigned char max)
-{
-	long abil = 0;
-	long perc;
+	uint32_t abil = 0;
+	uint32_t perc = 0;
 	char tmp_str[134] = "";
 	char out_str[134] = "";
 
@@ -55,7 +36,7 @@ static long cc__get_min_stat(char prompt[134], unsigned char max)
 		 */
 
 		*strchr(tmp_str, '/') = ' ';
-		sscanf(tmp_str, "%ld %ld", &abil, &perc);
+		sscanf(tmp_str, "%u %u", &abil, &perc);
 		if (abil == 18) {
 			if (perc == 0) {
 				abil = 250;
@@ -66,7 +47,7 @@ static long cc__get_min_stat(char prompt[134], unsigned char max)
 	} else {
 		/* player is asking for something less than 18/xx */
 
-		sscanf(tmp_str, "%ld", &abil);
+		sscanf(tmp_str, "%u", &abil);
 		if (abil < 3) {
 			abil = 3;
 		} else if (abil > 18) {
@@ -124,54 +105,8 @@ static long cc__change_stat(long cur_stat, long amount)
 	return cur_stat;
 }
 
-static unsigned char cc__max_in_statp(unsigned char stat)
-{
-	if (stat < 150) {
-		stat += 10;
-	} else if (stat < 220) {
-		stat += 25;
-	} else if (stat < 240) {
-		stat += 10;
-	} else if (stat < 250) {
-		stat += 1;
-	}
 
-	return stat;
-}
 
-static unsigned char cc__max_de_statp(unsigned char stat)
-{
-	if (stat < 11) {
-		stat = 0;
-	} else if (stat < 151) {
-		stat -= 10;
-	} else if (stat < 241) {
-		stat -= 6;
-		if (stat < 150)
-			stat = 150;
-	} else {
-		stat -= 1;
-	}
-
-	return stat;
-}
-
-static long cc__max_stat(long cur_stat, long amount)
-{
-	long i;
-
-	if (amount < 0) {
-		for (i = -1; i >= amount; i--) {
-			cur_stat = cc__max_de_statp(cur_stat);
-		}
-	} else {
-		for (i = 1; i <= amount; i++) {
-			cur_stat = cc__max_in_statp(cur_stat);
-		}
-	}
-
-	return cur_stat;
-}
 
 static boolean cc__choose_race()
 {
@@ -240,29 +175,6 @@ static void cc__print_try_count(int try_count)
 	put_qio();
 }
 
-static long cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best,
-			 long best_min)
-{
-	long below_sum = 0;
-	long below;
-	int tstat;
-
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		if (this[tstat] < user[tstat]) {
-			below = user[tstat] - this[tstat];
-			below_sum = below_sum + ((below * (below + 1))div 2);
-		}
-	}
-
-	if (below_sum < best_min) {
-		for (tstat = STR; tstat <= CHR; tstat++) {
-			best[tstat] = this[tstat];
-		}
-		return below_sum;
-	} else {
-		return best_min;
-	}
-}
 
 static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
 		      long *try_count, stat_s_type best, stat_s_type user)
@@ -343,7 +255,6 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 	return return_value;
 }
 
-extern void cc__get_stats_(); /* rust */
 static void cc__get_stats()
 {
 	/*	{ Get the statistics for this bozo			-KRC-
@@ -357,8 +268,6 @@ static void cc__get_stats()
 		    cc__get_stat(), race_stats(prace)[tstat]);
 		player_stats_curr[tstat] = player_stats_perm[tstat];
 	}
-
-	cc__get_stats_();
 
 	player_rep = 0;
 	player_srh = race_search_mod(prace);
