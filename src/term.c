@@ -124,20 +124,6 @@ void moriaterm()
 void highlite_on() { attron(A_DIM); }
 void highlite_off() { attroff(A_DIM); }
 
-/* Dump IO to buffer					-RAK-	*/
-void Put_Buffer(char const *out_str, long row, long col)
-{
-	/* ENTER("put_buffer", "i"); */
-
-	if (!out_str || out_str[0] == '\0')
-		return;
-
-	if (mvaddstr((int)row, (int)col, out_str) == ERR)
-		MSG(("ERROR: Put_Buffer mvaddstr returned ERR"));
-
-	/* LEAVE("put_buffer", "i"); */
-}
-
 void put_buffer_attr(char *out_str, long row, long col, int attrs)
 {
 	attr_t old_attr;
@@ -482,7 +468,7 @@ void Prt(char const *str_buff, int row, int col)
 		msg_print("");
 	(void)move(row, col);
 	clrtoeol();
-	Put_Buffer(str_buff, row, col);
+	put_buffer_(str_buff, row, col);
 }
 
 /* move cursor to a given y, x position */
@@ -520,7 +506,7 @@ char *str_buff;
 	  /* ensure that the complete -more- message is visible. */
 	  if (old_len > 73)
 	    old_len = 73;
-	  Put_Buffer(" -more-", MSG_LINE, old_len);
+	  put_buffer_(" -more-", MSG_LINE, old_len);
 	  /* let sigint handler know that we are waiting for a space */
 	  wait_for_more = 1;
 	  do
@@ -560,13 +546,13 @@ char *str_buff;
       
       if (combine_messages)
 	{
-	  Put_Buffer (str_buff, MSG_LINE, old_len + 2);
+	  put_buffer_(str_buff, MSG_LINE, old_len + 2);
 	  strcat (old_msg[last_msg], "  ");
 	  strcat (old_msg[last_msg], str_buff);
 	}
       else
 	{
-	  Put_Buffer(str_buff, MSG_LINE, 0);
+	  put_buffer_(str_buff, MSG_LINE, 0);
 	  last_msg++;
 	  if (last_msg >= MAX_SAVE_MSG)
 	    last_msg = 0;
@@ -639,7 +625,7 @@ int row, column, slen;
 		case CTRL_('H'):
 			if (column > start_col) {
 				column--;
-				Put_Buffer(" ", row, column);
+				put_buffer_(" ", row, column);
 				move_cursor(row, column);
 				*--p = '\0';
 			}

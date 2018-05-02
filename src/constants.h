@@ -537,7 +537,7 @@
  * print_chstr()
  */
 #define prt(s, r, c) Prt((s), (r)-1, (c)-1)
-#define put_buffer(s, r, c) Put_Buffer((s), (r)-1, (c)-1)
+#define put_buffer(s, r, c) put_buffer_((s), (r)-1, (c)-1)
 #define erase_line(r, c) Erase_Line((r)-1, (c)-1)
 #define clear_from(r) Clear_From((r)-1)
 #define print(s, r, c) Print((s), (r)-1, (c)-1)
