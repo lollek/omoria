@@ -200,8 +200,12 @@ extern void Print(chtype const ch, int row, int col);
 extern void print_str(char const *str_buff, int row, int col);
 extern void print_chstr(chtype const *str_buff, int row, int col);
 
+extern void put_buffer(char const *str_buff, int row, int col);
+extern void put_buffer_(char const *str_buff, int row, int col);
+
 /* use prt */
-extern void Prt(char const *str_buff, int row, int col);
+extern void prt(char const *str_buff, int row, int col);
+extern void prt_(char const *str_buff, int row, int col);
 extern void prt2(char *str_buff1, /*	: varying[a] of char; */
 		 char *str_buff2, int row, int col);
 

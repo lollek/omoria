@@ -1,55 +1,7 @@
 #include "imoria.h"
 
-static void eb__display_money()
-{
-	char out_val[82];
-
-	sprintf(out_val, " Gold remaining : %ld", player_money[TOTAL_]);
-	prt(out_val, 18, 18);
-	sprintf(out_val, " Account : %ld", player_account);
-	prt(out_val, 16, 20);
-
-	sprintf(out_val, "You have ");
-	put_buffer(out_val, 6, 25);
-	sprintf(out_val, "Mithril  : %10ld", player_money[MITHRIL]);
-	put_buffer(out_val, 8, 25);
-	sprintf(out_val, "Platinum : %10ld", player_money[PLATINUM]);
-	put_buffer(out_val, 9, 25);
-	sprintf(out_val, "Gold     : %10ld", player_money[GOLD]);
-	put_buffer(out_val, 10, 25);
-	sprintf(out_val, "Silver   : %10ld", player_money[SILVER]);
-	put_buffer(out_val, 12, 25);
-	sprintf(out_val, "Copper   : %10ld", player_money[COPPER]);
-	put_buffer(out_val, 13, 25);
-	sprintf(out_val, "Iron     : %10ld", player_money[IRON]);
-	put_buffer(out_val, 14, 25);
-
-	if (wizard2) {
-		put_buffer("Bank has ", 6, 50);
-		sprintf(out_val, "%10ld", bank[MITHRIL]);
-		put_buffer(out_val, 8, 50);
-		sprintf(out_val, "%10ld", bank[PLATINUM]);
-		put_buffer(out_val, 9, 50);
-		sprintf(out_val, "%10ld", bank[GOLD]);
-		put_buffer(out_val, 10, 50);
-	}
-
-	put_qio();
-}
-
-static void eb__display_store(char shop_owner[82])
-{
-	/* Clear the screen and display the bank. */
-
-	clear_screen();
-	prt(shop_owner, 4, 10);
-	eb__display_money();
-	prt("You may:", 19, 1);
-	prt(" d) Deposit money.             w) Withdraw money.", 20, 1);
-	prt(" c) Change small currency.     i) Buy insurance.", 21, 1);
-	prt("^R) Redraw the screen.       Esc) Exit from building.", 22, 1);
-	prt(" p) Put item in vault.         r) Remove item from vault.", 23, 1);
-}
+void eb__display_money(void);
+void eb__display_store(const char *shop_owner);
 
 static boolean eb__get_entry(char comment[82], long *num)
 {

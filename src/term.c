@@ -36,7 +36,7 @@ static void minor_error(char const *error_message)
 	abort();
 	/* clear msg_flag to avoid problems with unflushed messages */
 	msg_flag = 0;
-	Prt(error_message, 0, 0);
+	prt_(error_message, 0, 0);
 	bell();
 	/* wait so user can see error */
 	(void)sleep(2);
@@ -386,14 +386,6 @@ void Erase_Line(long row, long col)
 	clrtoeol();
 }
 
-/* Clears screen */
-void clear_screen()
-{
-	if (msg_flag)
-		msg_print("");
-	(void)clear();
-}
-
 void Clear_From(row) int row;
 {
 	(void)move(row, 0);
@@ -439,7 +431,7 @@ void move_cursor_relative(int row, int col)
 		    tmp_str,
 		    "error in move_cursor_relative, row = %d col = %d\n", row,
 		    col);
-		Prt(tmp_str, 0, 0);
+		prt_(tmp_str, 0, 0);
 		bell();
 		/* wait so user can see error */
 		(void)sleep(2);
@@ -459,16 +451,6 @@ void prt2(char *str_buff1, char *str_buff2, int row, int col)
 	char temp[82];
 	sprintf(temp, "%s%s", str_buff1, str_buff2);
 	prt(temp, row, col);
-}
-
-/* Outputs a line to a given y, x position		-RAK-	*/
-void Prt(char const *str_buff, int row, int col)
-{
-	if (row == MSG_LINE && msg_flag)
-		msg_print("");
-	(void)move(row, col);
-	clrtoeol();
-	put_buffer_(str_buff, row, col);
 }
 
 /* move cursor to a given y, x position */
@@ -576,7 +558,7 @@ char *command;
   int res;
   /*printf("get_com is runningYY\n");*/
 /*  if (prompt && prompt[0]) */
-  Prt(prompt, 1, 1);
+  prt_(prompt, 1, 1);
   *command = inkey();
   if (*command == ESCAPE)
     res = FALSE;
@@ -653,7 +635,7 @@ int row, column, slen;
 /* Pauses for user response before returning		-RAK-	*/
 void Pause_Line(prt_line) int prt_line;
 {
-	Prt("[Press any key to continue.]", prt_line, 23);
+	prt_("[Press any key to continue.]", prt_line, 23);
 	(void)inkey();
 	Erase_Line(prt_line, 0);
 }
@@ -665,7 +647,7 @@ void Pause_Exit(int prt_line, int delay)
 {
 	char dummy;
 
-	Prt("[Press any key to continue, or Q to exit.]", prt_line, 10);
+	prt_("[Press any key to continue, or Q to exit.]", prt_line, 10);
 	dummy = inkey();
 	if (dummy == 'Q') {
 		Erase_Line(prt_line, 0);
