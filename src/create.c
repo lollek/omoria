@@ -105,9 +105,6 @@ static long cc__change_stat(long cur_stat, long amount)
 	return cur_stat;
 }
 
-
-
-
 static boolean cc__choose_race()
 {
 	/*	{ Allows player to select a race			-JWT-
@@ -175,6 +172,126 @@ static void cc__print_try_count(int try_count)
 	put_qio();
 }
 
+static void cc__put_stats()
+{
+
+	/*	{ Prints the following information on the screen.	-JWT-
+	 * }*/
+
+	prt_6_stats(player_stats_curr, NULL, 3, 65);
+	prt_num("+ To Hit   : ", player_dis_th, 10, 4);
+	prt_num("+ To Damage: ", player_dis_td, 11, 4);
+	prt_num("+ To AC    : ", player_dis_tac, 12, 4);
+	prt_num("  Total AC : ", player_dis_ac, 13, 4);
+}
+
+static void cc__put_misc1()
+{
+	/*	{ Prints age, height, weight, and SC			-JWT-
+	 * }*/
+
+	prt_num("Age          : ", player_age, 3, 40);
+	prt_num("Height       : ", player_ht, 4, 40);
+	prt_num("Weight       : ", player_wt, 5, 40);
+	prt_num("Social Class : ", player_sc, 6, 40);
+	prt_num("Difficulty   : ", player_diffic, 7, 40);
+}
+
+static void cc__put_misc2()
+{
+
+	/*	{ Prints the following information on the screen.	-JWT-
+	 * }*/
+
+	prt_num("Level      : ", player_lev, 10, 31);
+	prt_num("Experience : ", player_exp, 11, 31);
+	prt_num("Gold       : ", player_money[TOTAL_], 12, 31);
+	prt_num("Account    : ", player_account, 13, 31);
+	prt_num("Max Hit Points : ", player_mhp, 10, 54);
+	prt_num("Cur Hit Points : ", (long)(player_chp), 11, 54);
+	prt_num("Max Mana       : ", player_mana, 12, 54);
+	prt_num("Cur Mana       : ", (long)(player_cmana), 13, 54);
+}
+
+static void cc__put_misc3()
+{
+
+	/*	{ Prints ratings on certain abilities			-RAK-
+	 * }*/
+	long xbth, xbthb, xfos, xsrh, xstl, xdis;
+	long xsave, xdev, xswm, xrep;
+	char xinfra[82];
+	char tmp_str[82], tmp2[82];
+
+	clear_from(14);
+
+	xbth = player_bth + player_lev * BTH_LEV_ADJ +
+	       player_ptohit * BTH_PLUS_ADJ;
+	xbthb = player_bthb + player_lev * BTH_LEV_ADJ +
+		player_ptohit * BTH_PLUS_ADJ;
+	xfos = 27 - player_fos;
+	if (xfos < 0) {
+		xfos = 0;
+	}
+	xsrh = player_srh + spell_adj(INT);
+	xstl = player_stl;
+	xdis = player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT);
+	xsave = player_save + player_lev + spell_adj(WIS);
+	xdev = player_save + player_lev + spell_adj(INT);
+	xswm = py.flags.swim + 4;
+	xrep = 6 + player_rep div 25;
+	sprintf(xinfra, "%ld feet", py.flags.see_infra * 10);
+
+	prt("(Miscellaneous Abilities)", 16, 24);
+	sprintf(tmp2, "%s%s", "Fighting    : ", likert(xbth, 12, tmp_str));
+	put_buffer(tmp2, 17, 2);
+	sprintf(tmp2, "%s%s", "Bows/Throw  : ", likert(xbthb, 12, tmp_str));
+	put_buffer(tmp2, 18, 2);
+	sprintf(tmp2, "%s%s", "Saving Throw: ", likert(xsave, 6, tmp_str));
+	put_buffer(tmp2, 19, 2);
+	sprintf(tmp2, "%s%s", "Stealth     : ", likert(xstl, 1, tmp_str));
+	put_buffer(tmp2, 17, 27);
+	sprintf(tmp2, "%s%s", "Disarming   : ", likert(xdis, 8, tmp_str));
+	put_buffer(tmp2, 18, 27);
+	sprintf(tmp2, "%s%s", "Magic Device: ", likert(xdev, 7, tmp_str));
+	put_buffer(tmp2, 19, 27);
+	sprintf(tmp2, "%s%s", "Perception  : ", likert(xfos, 3, tmp_str));
+	put_buffer(tmp2, 17, 52);
+	sprintf(tmp2, "%s%s", "Searching   : ", likert(xsrh, 6, tmp_str));
+	put_buffer(tmp2, 18, 52);
+	sprintf(tmp2, "%s%s", "Infra-Vision: ", xinfra);
+	put_buffer(tmp2, 19, 52);
+	sprintf(tmp2, "%s%s", "Swimming    : ", likert(xswm, 1, tmp_str));
+	put_buffer(tmp2, 20, 52);
+	sprintf(tmp2, "%s%s", "Reputation  : ", likert(xrep, 1, tmp_str));
+	put_buffer(tmp2, 20, 2);
+}
+
+static void cc__upd_stats()
+{
+
+	/*	{ Updates the following information on the screen. (wow)-KRC-
+	 * }*/
+	stat_set tstat;
+
+	for (tstat = STR; tstat <= CHR; tstat++) {
+		prt_stat("", player_stats_curr[(int)tstat], 3 + tstat, 71);
+	}
+	prt_num("", player_dis_th, 10, 17);
+	prt_num("", player_dis_td, 11, 17);
+	prt_num("", player_dis_tac, 12, 17);
+	prt_num("", player_dis_ac, 13, 17);
+}
+
+static void cc__upd_misc1()
+{
+	/*{ Updates age, height, weight, and SC (amazing, huh?)	-KRC-	}*/
+
+	prt_num("", player_age, 3, 55);
+	prt_num("", player_ht, 4, 55);
+	prt_num("", player_wt, 5, 55);
+	prt_num("", player_sc, 6, 55);
+}
 
 static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
 		      long *try_count, stat_s_type best, stat_s_type user)
@@ -198,15 +315,15 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 		if (!*printed_once) {
 			erase_line(1, 1);
 			clear_from(21);
-			put_misc1();
-			put_stats();
+			cc__put_misc1();
+			cc__put_stats();
 
 			prt("Press 'R' to reroll, <RETURN> to continue:", 21,
 			    3);
 			*printed_once = true;
 		} else {
-			upd_misc1();
-			upd_stats();
+			cc__upd_misc1();
+			cc__upd_stats();
 			prt("", 21, 51);
 		} /* endif printed_once */
 
@@ -246,8 +363,8 @@ static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best
 		} else {
 			return_value = (*best_min == 0);
 			if (*best_min == 0) {
-				put_misc1();
-				put_stats();
+				cc__put_misc1();
+				cc__put_stats();
 			}
 		} /* endif s || try_count */
 	}	 /* endif minning */
@@ -601,6 +718,28 @@ static void cc__get_money()
 	add_money(i1);
 }
 
+static void cc__put_character()
+{
+	/*{ Prints the following information on the screen.	-JWT-	}*/
+
+	clear_from(1);
+	prt2("Name      : ", player_name, 3, 3);
+	prt2("Race      : ", player_race, 4, 3);
+	prt2("Sex       : ", player_sex, 5, 3);
+	prt2("Class     : ", player_tclass, 6, 3);
+}
+
+void cc__get_name()
+{
+	/* Gets a name for the character    -JWT- */
+
+	prt("Enter your player's name  [press <RETURN> when finished]", 22, 3);
+	player_name[0] = '\0';
+	while (player_name[0] == '\0')
+		get_string(player_name, 3, 15, 24);
+	clear_from(21);
+}
+
 void create_character()
 {
 	stat_s_type best, user, max_r;
@@ -624,11 +763,11 @@ void create_character()
 	}
 
 	do {
-		put_character();
+		cc__put_character();
 	} while (!cc__choose_race());
 
 	while (!cc__get_sex()) {
-		put_character();
+		cc__put_character();
 	}
 
 	printed_once = false;
@@ -647,10 +786,10 @@ void create_character()
 
 	cc__print_history();
 	while (!cc__get_class()) {
-		put_character();
+		cc__put_character();
 		cc__print_history();
-		put_misc1();
-		put_stats();
+		cc__put_misc1();
+		cc__put_stats();
 	}
 
 	player_creation_time = time(NULL);
@@ -659,170 +798,27 @@ void create_character()
 	py.flags.light_on = false;
 
 	cc__get_money();
-	put_stats();
-	put_misc2();
-	put_misc3();
-	get_name();
+	cc__put_stats();
+	cc__put_misc2();
+	cc__put_misc3();
+	cc__get_name();
 	/*	get_ssn(); */
 	pause_exit(24, PLAYER_EXIT_PAUSE);
 
 	LEAVE("create_character", "");
 }
 
-void put_character()
-{
-	/*{ Prints the following information on the screen.	-JWT-	}*/
-
-	clear_from(1);
-	prt2("Name      : ", player_name, 3, 3);
-	prt2("Race      : ", player_race, 4, 3);
-	prt2("Sex       : ", player_sex, 5, 3);
-	prt2("Class     : ", player_tclass, 6, 3);
-}
-
-void put_stats()
-{
-
-	/*	{ Prints the following information on the screen.	-JWT-
-	 * }*/
-
-	prt_6_stats(player_stats_curr, NULL, 3, 65);
-	prt_num("+ To Hit   : ", player_dis_th, 10, 4);
-	prt_num("+ To Damage: ", player_dis_td, 11, 4);
-	prt_num("+ To AC    : ", player_dis_tac, 12, 4);
-	prt_num("  Total AC : ", player_dis_ac, 13, 4);
-}
-
-void upd_stats()
-{
-
-	/*	{ Updates the following information on the screen. (wow)-KRC-
-	 * }*/
-	stat_set tstat;
-
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		prt_stat("", player_stats_curr[(int)tstat], 3 + tstat, 71);
-	}
-	prt_num("", player_dis_th, 10, 17);
-	prt_num("", player_dis_td, 11, 17);
-	prt_num("", player_dis_tac, 12, 17);
-	prt_num("", player_dis_ac, 13, 17);
-}
-
-void put_misc1()
-{
-	/*	{ Prints age, height, weight, and SC			-JWT-
-	 * }*/
-
-	prt_num("Age          : ", player_age, 3, 40);
-	prt_num("Height       : ", player_ht, 4, 40);
-	prt_num("Weight       : ", player_wt, 5, 40);
-	prt_num("Social Class : ", player_sc, 6, 40);
-	prt_num("Difficulty   : ", player_diffic, 7, 40);
-}
-
-void put_misc2()
-{
-
-	/*	{ Prints the following information on the screen.	-JWT-
-	 * }*/
-
-	prt_num("Level      : ", player_lev, 10, 31);
-	prt_num("Experience : ", player_exp, 11, 31);
-	prt_num("Gold       : ", player_money[TOTAL_], 12, 31);
-	prt_num("Account    : ", player_account, 13, 31);
-	prt_num("Max Hit Points : ", player_mhp, 10, 54);
-	prt_num("Cur Hit Points : ", (long)(player_chp), 11, 54);
-	prt_num("Max Mana       : ", player_mana, 12, 54);
-	prt_num("Cur Mana       : ", (long)(player_cmana), 13, 54);
-}
-
-void put_misc3()
-{
-
-	/*	{ Prints ratings on certain abilities			-RAK-
-	 * }*/
-	long xbth, xbthb, xfos, xsrh, xstl, xdis;
-	long xsave, xdev, xswm, xrep;
-	char xinfra[82];
-	char tmp_str[82], tmp2[82];
-
-	clear_from(14);
-
-	xbth = player_bth + player_lev * BTH_LEV_ADJ +
-	       player_ptohit * BTH_PLUS_ADJ;
-	xbthb = player_bthb + player_lev * BTH_LEV_ADJ +
-		player_ptohit * BTH_PLUS_ADJ;
-	xfos = 27 - player_fos;
-	if (xfos < 0) {
-		xfos = 0;
-	}
-	xsrh = player_srh + spell_adj(INT);
-	xstl = player_stl;
-	xdis = player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT);
-	xsave = player_save + player_lev + spell_adj(WIS);
-	xdev = player_save + player_lev + spell_adj(INT);
-	xswm = py.flags.swim + 4;
-	xrep = 6 + player_rep div 25;
-	sprintf(xinfra, "%ld feet", py.flags.see_infra * 10);
-
-	prt("(Miscellaneous Abilities)", 16, 24);
-	sprintf(tmp2, "%s%s", "Fighting    : ", likert(xbth, 12, tmp_str));
-	put_buffer(tmp2, 17, 2);
-	sprintf(tmp2, "%s%s", "Bows/Throw  : ", likert(xbthb, 12, tmp_str));
-	put_buffer(tmp2, 18, 2);
-	sprintf(tmp2, "%s%s", "Saving Throw: ", likert(xsave, 6, tmp_str));
-	put_buffer(tmp2, 19, 2);
-	sprintf(tmp2, "%s%s", "Stealth     : ", likert(xstl, 1, tmp_str));
-	put_buffer(tmp2, 17, 27);
-	sprintf(tmp2, "%s%s", "Disarming   : ", likert(xdis, 8, tmp_str));
-	put_buffer(tmp2, 18, 27);
-	sprintf(tmp2, "%s%s", "Magic Device: ", likert(xdev, 7, tmp_str));
-	put_buffer(tmp2, 19, 27);
-	sprintf(tmp2, "%s%s", "Perception  : ", likert(xfos, 3, tmp_str));
-	put_buffer(tmp2, 17, 52);
-	sprintf(tmp2, "%s%s", "Searching   : ", likert(xsrh, 6, tmp_str));
-	put_buffer(tmp2, 18, 52);
-	sprintf(tmp2, "%s%s", "Infra-Vision: ", xinfra);
-	put_buffer(tmp2, 19, 52);
-	sprintf(tmp2, "%s%s", "Swimming    : ", likert(xswm, 1, tmp_str));
-	put_buffer(tmp2, 20, 52);
-	sprintf(tmp2, "%s%s", "Reputation  : ", likert(xrep, 1, tmp_str));
-	put_buffer(tmp2, 20, 2);
-}
-
-void upd_misc1()
-{
-	/*{ Updates age, height, weight, and SC (amazing, huh?)	-KRC-	}*/
-
-	prt_num("", player_age, 3, 55);
-	prt_num("", player_ht, 4, 55);
-	prt_num("", player_wt, 5, 55);
-	prt_num("", player_sc, 6, 55);
-}
-
-void display_char()
+static void cc__display_char()
 {
 
 	/*	{ Used to display the character on the screen.		-RAK-
 	 * }*/
 
-	put_character();
-	put_misc1();
-	put_stats();
-	put_misc2();
-	put_misc3();
-}
-
-void get_name()
-{
-	/* Gets a name for the character    -JWT- */
-
-	prt("Enter your player's name  [press <RETURN> when finished]", 22, 3);
-	player_name[0] = '\0';
-	while (player_name[0] == '\0')
-		get_string(player_name, 3, 15, 24);
-	clear_from(21);
+	cc__put_character();
+	cc__put_misc1();
+	cc__put_stats();
+	cc__put_misc2();
+	cc__put_misc3();
 }
 
 void change_name()
@@ -834,7 +830,7 @@ void change_name()
 	char c;
 	boolean flag = false;
 
-	display_char();
+	cc__display_char();
 	do {
 		prt("<c>hange character name.     <ESCAPE> to continue.", 22,
 		    3);
@@ -843,7 +839,7 @@ void change_name()
 
 		switch (c) {
 		case 99:
-			get_name();
+			cc__get_name();
 			break;
 		case 0:
 		case 3:

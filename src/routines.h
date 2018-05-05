@@ -6,18 +6,8 @@
 extern void enter_casino();
 
 /* { CREATE.PAS		} */
-extern void put_character();
-extern void put_stats();
-extern void upd_stats();
-extern void put_misc1();
-extern void upd_misc1();
-extern void put_misc2();
-extern void put_misc3();
-extern void display_char();
-extern void get_name();
 extern void change_name();
 extern void create_character();
-extern void get_ssn();
 extern void set_gem_values();
 
 /* { CREATURE.PAS		} */
