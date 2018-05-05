@@ -1832,7 +1832,6 @@ boolean read_top_scores(FILE **f1, char *fnam, char list[][134], int max_high,
 
 	*f1 = priv_fopen(fnam, "r+");
 	encrypt_init(&hs_state, highScoreKey, scoresAreEncrypted);
-	set_seed(ENCRYPT_SEED1);
 
 	if (*f1 == NULL) {
 		sprintf(openerr, "Error opening> %s", fnam);
@@ -1880,7 +1879,6 @@ boolean write_top_scores(FILE **f1, char list[][134], int max_high)
 	rewind(*f1);
 	ftruncate((int)fileno(*f1), 0);
 	encrypt_init(&hs_state, highScoreKey, scoresAreEncrypted);
-	set_seed(ENCRYPT_SEED1);
 
 	for (i1 = 1; i1 <= max_high; i1++) {
 		strcpy(temp, list[i1]);
@@ -2011,12 +2009,11 @@ void decrypt_file(char fnam[82])
 		encrypt_init(&cf_state, saveFileKey, true);
 
 		flag = false;
-		set_seed(ENCRYPT_SEED2);
 		read_decrypt(f1, &cf_state, save_line, &flag);
 		if (!flag) {
 			sscanf(save_line, "%lu", &save_seed);
 			fprintf(f2, "%s\n", save_line);
-			set_seed(save_seed);
+			/* set_seed(save_seed); -- Removed */
 
 			for (flag = false; !flag;) {
 				read_decrypt(f1, &cf_state, save_line, &flag);
@@ -2056,14 +2053,13 @@ void encrypt_file(char fnam[82])
 	if (flag) {
 
 		encrypt_init(&cf_state, saveFileKey, true);
-		set_seed(ENCRYPT_SEED2);
 
 		if ((fgets(save_line, sizeof(char[1026]), f1)) != NULL) {
 			sscanf(save_line, "%lu", &save_seed);
 			save_line[strlen(save_line) - 1] =
 			    0; /* strip newline */
 			encrypt_write(f2, &cf_state, save_line);
-			set_seed(save_seed);
+			/* set_seed(save_seed); -- removed */
 
 			for (flag = false; !flag;) {
 

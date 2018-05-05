@@ -44,9 +44,6 @@ int main(int argc, char *argv[])
 	old_message = nil;
 	turn_counter = 100000;
 
-	/* Grab a random seed from the clock */
-	seed = get_seed();
-
 	/* Sort the objects by level */
 	sort_objects();
 
@@ -156,8 +153,6 @@ int main(int argc, char *argv[])
 
 	/* Turn on message trapping, if requested */
 	/*    if (want_trap) set_the_trap(); */
-
-	set_seed(get_seed());
 
 	/* Loop till dead, or exit */
 	MSG(("Entering main loop"));

@@ -565,16 +565,12 @@ static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, char out_rec[1026
 	/* creation_time, save_count and deaths are in the master file, be sure
 	   to fix up char_restore if you move more onto this line */
 
-	unsigned long save_seed;
+	unsigned long save_seed = 0;
 
-	save_seed = get_seed();
-	save_seed ^= randint(9999999);
 	sprintf(out_rec, "%lu %ld %ld %ld", save_seed, player_creation_time,
 		player_save_count, player_deaths);
 	/* sprintf(title2,"%lu %s",save_seed,player_ssn); */
-	set_seed(ENCRYPT_SEED2);
 	encrypt_write(f1, cf_state, out_rec);
-	set_seed(save_seed);
 }
 
 void save_file_remove(void) { unlink(sc__get_file_name()); }
@@ -634,8 +630,6 @@ boolean save_char(boolean quick)
 		prt(out_rec, 2, 1);
 		exit_game();
 	}
-
-	set_seed(get_seed());
 
 	LEAVE("save_char", "");
 	return flag;
@@ -721,9 +715,8 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 	/* creation_time, save_count and deaths are in the master file, be sure
 	   to fix up char_restore if you move more onto this line */
 
-	unsigned long save_seed;
+	unsigned long save_seed = 0;
 
-	set_seed(ENCRYPT_SEED2);
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%lu %ld %ld %ld", &save_seed,
 		   &player_creation_time, &player_save_count,
@@ -738,7 +731,6 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 	/*  coder(temp); */
 	/*  temp_id = temp; */
 
-	set_seed(save_seed);
 }
 
 static void gc__display_status(void)
@@ -1583,7 +1575,7 @@ boolean get_char(boolean prop)
 	} /* endif !paniced */
 
 	if (!paniced)
-		seed = get_seed();
+		seed = 0;
 	if (!paniced)
 		paniced = !sc__open_master(&f2);
 	if (!paniced) {
@@ -1676,7 +1668,6 @@ void restore_char(char fnam[82], boolean present, boolean undead)
 			/* rewind(f1); */
 			encrypt_init(&cf_state, saveFileKey,
 				     saveFilesAreEncrypted);
-			set_seed(ENCRYPT_SEED2);
 			read_decrypt(f1, &cf_state, in_rec, &paniced);
 			sscanf(in_rec, "%lu %ld %ld %ld", &save_seed,
 			       &creation_time, &save_count, &deaths);

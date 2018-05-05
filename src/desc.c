@@ -6,7 +6,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void magic_init(unsigned long random_seed)
+void magic_init(__attribute__((unused)) unsigned long random_seed)
 {
 	/*	{ Initialize all potions, wands, staves, scrolls, etc...
 	 * }*/
@@ -16,7 +16,6 @@ void magic_init(unsigned long random_seed)
 
 	ENTER(("magic-init", ""));
 
-	set_seed(random_seed);
 	randes();
 
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {

@@ -5,6 +5,7 @@ authors = ["Olle Kvarnström <olle+git@iix.se>"]
 
 [dependencies]
 libc = "0.2"
+rand = "0.4"
 
 [lib]
 name = "omoria"

@@ -1,4 +1,19 @@
+use std::ops::Range;
+
 use misc::squish_stat;
+
+pub enum Stat {
+    Strength = 0,
+    Intelligence = 1,
+    Wisdom = 2,
+    Dexterity = 3,
+    Constitution = 4,
+    Charisma = 5,
+}
+
+pub fn stats_iter() -> Range<usize> {
+    (Stat::Strength as usize)..(Stat::Charisma as usize + 1)
+}
 
 #[no_mangle]
 pub extern fn cc__old_stat(stat: u8) -> u8 {
@@ -70,7 +85,7 @@ pub extern fn cc__next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6
                                   best_min: i64) -> i64 {
     let mut below_sum: i64 = 0;
 
-    for tstat in 0..6 {
+    for tstat in stats_iter() {
         if this[tstat] < user[tstat] {
             let below = user[tstat] - this[tstat];
             below_sum = below_sum + ((below * (below + 1)) / 2) as i64;
@@ -78,7 +93,7 @@ pub extern fn cc__next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6
     }
 
     if below_sum < best_min {
-        for tstat in 0..6 {
+        for tstat in stats_iter() {
             best[tstat] = this[tstat];
         }
         return below_sum

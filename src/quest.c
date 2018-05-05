@@ -440,7 +440,6 @@ void enter_fortress()
 	boolean complete_flag = false;
 	boolean enter_flag = false;
 
-	seed = get_seed();
 	/*{gld = player_money[TOTAL_];}*/
 	msg_line = 1;
 	if (player_quests <= MAX_QUESTS) {

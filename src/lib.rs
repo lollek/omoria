@@ -8,4 +8,5 @@ pub mod create;
 pub mod misc;
 pub mod ncurses;
 pub mod races;
+pub mod random;
 pub mod term;

@@ -389,6 +389,8 @@ extern boolean remove_curse();
 extern boolean restore_level();
 extern void use();
 extern void aim_wand();
+
+/* Generates a random integer x where 1<=X<=MAXVAL	-RAK-	*/
 extern long randint(long maxval);
 extern long rand_rep(long num, long die);
 extern long maxmin(long x, long y, long z);
@@ -415,10 +417,6 @@ extern void sys_asctim(
     long *cvtflg);     /*: [reference] long := %immed 0); */
 
 /* { MISC.PAS		} */
-extern unsigned long get_seed();
-extern void set_seed(unsigned long the_seed);
-extern void *save_rand_state(void *randState);
-extern void restore_rand_state(void *randState);
 extern void init_m_level();
 extern void init_t_level();
 extern void price_adjust();
@@ -517,6 +515,8 @@ extern long weight_limit();
 extern treas_ptr money_carry();
 extern char *cost_str(long amt, char result[134]);
 extern void total_cash();
+
+/*{ recomputes cash totals for player and bank }*/
 extern void reset_total_cash();
 extern void add_money(long amount);
 extern void subtract_money(long amount, boolean make_change);

@@ -206,25 +206,6 @@ char *cost_str(long amt, char result[134])
 	return result;
 }
 
-void reset_total_cash()
-{
-	/*{ recomputes cash totals for player and bank }*/
-
-	long i1;
-
-	player_money[TOTAL_] = 0;
-	for (i1 = IRON; i1 <= MITHRIL; i1++) {
-		player_money[TOTAL_] += player_money[i1] * coin_value[i1];
-	}
-	player_money[TOTAL_] = player_money[TOTAL_] div GOLD_VALUE;
-
-	bank[TOTAL_] = 0;
-	for (i1 = GOLD; i1 <= MITHRIL; i1++) {
-		bank[TOTAL_] += bank[i1] * coin_value[i1];
-	}
-	bank[TOTAL_] = bank[TOTAL_] div GOLD_VALUE;
-}
-
 long weight_limit()
 {
 	/*	{ Computes current weight limit				-RAK-

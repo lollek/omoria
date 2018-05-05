@@ -344,7 +344,6 @@ void gc__cave_gen()
 	obj_set allocSet4 = {1, 2, 0};       /* treasure things */
 	obj_set allocSet5 = {1, 2, 4, 0};    /* treasure things */
 
-	set_seed(get_seed());
 	i3 = 0;
 
 	row_rooms = 2 * (long)(cur_height / SCREEN_HEIGHT);
@@ -476,8 +475,6 @@ void gc__cave_gen()
 void gc__make_door(long y, long x, long *cur_pos, long store_num,
 		   long house_type)
 {
-	void *old_seed;
-
 	cave[y][x].fval = corr_floor3.ftval;
 	cave[y][x].fopen = corr_floor3.ftopen;
 	popt(cur_pos);
@@ -491,8 +488,6 @@ void gc__make_door(long y, long x, long *cur_pos, long store_num,
 
 	usleep(5);
 
-	old_seed = save_rand_state(NULL);
-	set_seed(get_seed() ^ randint(9999999));
 	if (store_num >= TOT_STORES) {
 		/* with t_list[cur_pos] do; */
 		switch (house_type) {
@@ -515,7 +510,6 @@ void gc__make_door(long y, long x, long *cur_pos, long store_num,
 			break;
 		}
 	}
-	restore_rand_state(old_seed);
 }
 
 void dr_castle(long yval, long xval, long dy, long dx, floor_type ft)
@@ -712,7 +706,6 @@ void gc__build_fountain(long where)
 	long i1, i2;
 	long count;
 	long flr[36]; /*: array [1..35] of long;*/
-	void *old_seed;
 
 	yval = (10 * (int)(where div 9)) + 4 + randint(3);
 	xval = 14 * (where % 9) + 9 + randint(3);
@@ -764,12 +757,9 @@ void gc__build_fountain(long where)
 				cave[i1][i2].fval = water1.ftval;
 				cave[i1][i2].fopen = water1.ftopen;
 				usleep(5);
-				old_seed = save_rand_state(NULL);
-				set_seed(get_seed() ^ randint(9999999));
 				if (randint(12) == 1) {
 					place_gold(i1, i2);
 				}
-				restore_rand_state(old_seed);
 				break;
 			case 4:
 				cave[i1][i2].fval = rock_wall2.ftval;
@@ -808,7 +798,6 @@ void gc__town_gen()
 	/*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
 	/*  } */
 
-	set_seed(town_seed);
 	for (i1 = 0; i1 < 36; i1++) {
 		roomdone[i1] = false;
 	}
@@ -894,7 +883,6 @@ void gc__town_gen()
 
 		place_stairs(down_staircase, 2, 0);
 		place_stairs(down_steep_staircase, 1, 0);
-		set_seed(get_seed());
 
 		alloc_land_monster(allocSet1, MIN_MALLOC_TN, 3, true, false);
 		alloc_land_monster(allocSet2, 7, 0, true, true);
@@ -912,7 +900,6 @@ void gc__town_gen()
 
 		place_stairs(down_staircase, 2, 0);
 		place_stairs(down_steep_staircase, 1, 0);
-		set_seed(get_seed());
 
 		alloc_land_monster(allocSet1, MIN_MALLOC_TD, 3, true, false);
 		alloc_land_monster(allocSet2, 7, 0, true, true);

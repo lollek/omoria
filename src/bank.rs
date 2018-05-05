@@ -1,8 +1,17 @@
+use std::ops::Range;
+
 use term::put_buffer_r;
 use term::prt;
 use term::prt_r;
 use term::refresh_screen;
 use term::clear_screen;
+
+extern {
+    static player_account: i64;
+    static mut player_money: [i64; 7];
+    static mut bank: [i64; 7];
+    static wizard2: i8;
+}
 
 enum Currency {
     Total = 0,
@@ -14,11 +23,10 @@ enum Currency {
     Mithril = 6,
 }
 
-extern {
-    static player_account: i64;
-    static player_money: [i64; 7];
-    static bank: [i64; 7];
-    static wizard2: i8;
+pub const COIN_VALUE: [i64; 7] = [0, 1, 4, 20, 240, 960, 12480];
+
+pub fn currencies_iter() -> Range<usize> {
+    (Currency::Iron as usize)..(Currency::Mithril as usize) + 1
 }
 
 #[no_mangle]
@@ -61,4 +69,23 @@ pub extern fn eb__display_store(shop_owner: *const u8) {
     prt_r(" c) Change small currency.     i) Buy insurance.", 21, 1);
     prt_r("^R) Redraw the screen.       Esc) Exit from building.", 22, 1);
     prt_r(" p) Put item in vault.         r) Remove item from vault.", 23, 1);
+}
+
+#[no_mangle]
+pub extern fn reset_total_cash() {
+    unsafe {
+        let total = Currency::Total as usize;
+
+        player_money[total] = 0;
+        for i in currencies_iter() {
+            player_money[total] += player_money[i] * COIN_VALUE[i];
+        }
+        player_money[total] /= COIN_VALUE[Currency::Gold as usize];
+
+        bank[total] = 0;
+        for i in currencies_iter() {
+            bank[total] += bank[i] * COIN_VALUE[i];
+        }
+        bank[total] /= COIN_VALUE[Currency::Gold as usize];
+    }
 }

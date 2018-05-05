@@ -213,8 +213,6 @@ void enter_casino()
 {
 	c_closed = false;
 	tics = 1;
-	seed = get_seed();
-	set_seed(seed);
 	gld = player_money[TOTAL_];
 	msg_line = 1;
 	c__display_casino();
