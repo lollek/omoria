@@ -42,6 +42,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 omoria: $(OBJFILES)
 	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libomoria.a
+.PHONY: omoria
 
 privs ::
 	chown $(OWNER):$(GROUP) omoria $(DATAFILES)
@@ -55,11 +56,15 @@ nodata ::
 
 clean ::
 	$(RM) $(OBJFILES) core omoria
+.PHONY: clean
 
 ctags:
 	@ctags -R . --exclude .git
+.PHONY: ctags
 
 format:
 	@clang-format -i $(CFILES) $(HFILES)
+.PHONY: format
 
 spotless : nodata clean
+.PHONY: spotless
