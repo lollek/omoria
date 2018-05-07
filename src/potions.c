@@ -96,9 +96,9 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 19: /*{ Sleep }*/
-		if (!(py.flags.free_act)) {
+		if (!(player_flags.free_act)) {
 			msg_print("You fall asleep.");
-			py.flags.paralysis += randint(4) + 4;
+			player_flags.paralysis += randint(4) + 4;
 			ident = true;
 		}
 		break;
@@ -122,12 +122,12 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 23: /*{ Haste Self }*/
-		py.flags.fast += randint(25) + 15;
+		player_flags.fast += randint(25) + 15;
 		ident = true;
 		break;
 
 	case 24: /*{ Slowness }*/
-		py.flags.slow += randint(25) + 15;
+		player_flags.slow += randint(25) + 15;
 		ident = true;
 		break;
 
@@ -148,15 +148,15 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 29: /*{ Cure Blindness }*/
-		cure_me(&py.flags.blind);
+		cure_me(&player_flags.blind);
 		break;
 
 	case 30: /*{ Cure Confusion }*/
-		cure_me(&py.flags.confused);
+		cure_me(&player_flags.confused);
 		break;
 
 	case 31: /*{ Cure Poison }*/
-		cure_me(&py.flags.poisoned);
+		cure_me(&player_flags.poisoned);
 		break;
 
 	case 32: /*{ Learning }*/ /* 32 is the Cursed_worn_bit value */
@@ -189,9 +189,9 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 34: /*{ Salt Water }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.poisoned = 0;
-		py.flags.status &= ~IS_POISONED;
+		player_flags.status &= ~IS_POISONED;
 		prt_poisoned();
 		if (PF.foodc > 150) {
 			PF.foodc = 150;
@@ -202,28 +202,28 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 35: /*{ Invulnerability }*/
-		py.flags.invuln += randint(10) + 10;
+		player_flags.invuln += randint(10) + 10;
 		ident = true;
 		break;
 
 	case 36: /*{ Heroism }*/
-		py.flags.hero += randint(25) + 25;
+		player_flags.hero += randint(25) + 25;
 		ident = true;
 		break;
 
 	case 37: /*{ Super-Heroism }*/
-		py.flags.shero += randint(25) + 25;
+		player_flags.shero += randint(25) + 25;
 		ident = true;
 		break;
 
 	case 38: /*{ Remove Fear }*/
-		ident = cure_me(&py.flags.afraid);
+		ident = cure_me(&player_flags.afraid);
 		break;
 
 	case 39: /*{ Restore Level }*/
 		ident = restore_level();
 		add_food(5000);
-		py.flags.status &= ~(IS_WEAK | IS_HUNGERY);
+		player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
 		prt_hunger();
 		break;
 
@@ -244,7 +244,7 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 44: /*{ Cure Poison }*/
-		ident = cure_me(&py.flags.poisoned);
+		ident = cure_me(&player_flags.poisoned);
 		break;
 
 	case 45: /*{ Restore Mana }*/
@@ -265,7 +265,7 @@ void q__potion_effect(long effect, boolean *idented)
 	case 47: /* cure hallucination */
 		msg_print("Pretty colors!");
 		PF.confused += randint(5) + 5;
-		ident = cure_me(&py.flags.image);
+		ident = cure_me(&player_flags.image);
 		break;
 
 	/* case 48 moved up to 32 */

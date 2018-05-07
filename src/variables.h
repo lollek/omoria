@@ -106,7 +106,7 @@ extern obj_set slow_set;
 extern obj_set stable_set;
 
 /*	{ Following are player variables				} */
-extern player_type py;
+extern p_flags player_flags;
 
 /*	{ Class titles for different levels				} */
 

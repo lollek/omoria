@@ -26,7 +26,7 @@ static HALFTROLL_STRING: &'static [u8] = b"Half-Troll\0";
 static PHRAINT_STRING: &'static [u8] = b"Phraint\0";
 static DRYAD_STRING: &'static [u8] = b"Dryad\0";
 
-static RACE_STATS: &'static [[i8; 6]] = &[
+pub static RACE_STATS: &'static [[i8; 6]] = &[
     [ 0,  0,  0,  0,  0,  0],   // Human
     [-1,  1,  0,  1, -1,  1],   // Half-Elf
     [-1,  2,  1,  1, -2,  1],   // Elf
@@ -38,6 +38,17 @@ static RACE_STATS: &'static [[i8; 6]] = &[
     [ 0,  0, -4,  5,  0, -3],   // Phraint
     [-1,  0,  3,  0, -2,  3],   // Dryad
 ];
+
+pub const SEARCH_MOD: [i8; 10] = [0, 6, 8, 12, 6, 7, 0, -1, 10, 6];
+pub const MELEE_BONUS: [i8; 10] = [0, 0, -5, -10, -8, 15, 12, 20, 3, 0];
+pub const RANGED_BONUS: [i8; 10] = [0, 5, 15, 20, 12, 0, -5, -10, 5, 5];
+pub const SEARCH_FREQ: [i8; 10] = [0, -1, -1, -5, -3, 0, 3, 5, 3, -1];
+pub const STEALTH_MOD: [i8; 10] = [0, 1, 1, 4, 3, 0, -1, -2, 5, 1];
+pub const SAVE_MOD: [i8; 10] = [0, 3, 6, 18, 12, 9, -3, -9, -3, 3];
+pub const HEALTH_BONUS: [u8; 10] = [10, 9, 8, 6, 7, 9, 10, 12, 8, 7];
+pub const EXPFACTOR: [f32; 10] = [1.00, 1.10, 1.20, 1.10, 1.25, 1.20, 1.10, 1.20, 1.20, 1.20];
+pub const INFRAVISION: [i8; 10] = [0, 0, 0, 4, 3, 5, 3, 3, 5, 3];
+pub const SWIM_SPEED: [i8; 10] = [0, 1, 2, -2, -1, -2, 0, 2, -1, -1];
 
 #[no_mangle]
 pub extern fn race_name(race: i32) -> *const u8 {
@@ -61,24 +72,6 @@ pub extern fn race_stats(race: i32) -> *const i8 {
     RACE_STATS[race as usize].as_ptr()
 }
 
-
-#[no_mangle]
-pub extern fn race_expfactor(race: i32) -> f32 {
-    match race {
-        x if x == Race::Human as i32 => 1.00,
-        x if x == Race::HalfElf as i32 => 1.10,
-        x if x == Race::Elf as i32 => 1.20,
-        x if x == Race::Halfling as i32 => 1.10,
-        x if x == Race::Gnome as i32 => 1.25,
-        x if x == Race::Dwarf as i32 => 1.20,
-        x if x == Race::HalfOrc as i32 => 1.10,
-        x if x == Race::HalfTroll as i32 => 1.20,
-        x if x == Race::Phraint as i32 => 1.20,
-        x if x == Race::Dryad as i32 => 1.20,
-        _ => panic!("Unknown race received"),
-    }
-}
-
 #[no_mangle]
 pub extern fn race_disarm_mod(race: i32) -> i8 {
     match race {
@@ -97,156 +90,18 @@ pub extern fn race_disarm_mod(race: i32) -> i8 {
 }
 
 #[no_mangle]
-pub extern fn race_search_mod(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 6,
-        x if x == Race::Elf as i32 => 8,
-        x if x == Race::Halfling as i32 => 12,
-        x if x == Race::Gnome as i32 => 6,
-        x if x == Race::Dwarf as i32 => 7,
-        x if x == Race::HalfOrc as i32 => 0,
-        x if x == Race::HalfTroll as i32 => -1,
-        x if x == Race::Phraint as i32 => 10,
-        x if x == Race::Dryad as i32 => 6,
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
 pub extern fn race_stealth_mod(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 1,
-        x if x == Race::Elf as i32 => 1,
-        x if x == Race::Halfling as i32 => 4,
-        x if x == Race::Gnome as i32 => 3,
-        x if x == Race::Dwarf as i32 => 0,
-        x if x == Race::HalfOrc as i32 => -1,
-        x if x == Race::HalfTroll as i32 => -2,
-        x if x == Race::Phraint as i32 => 5,
-        x if x == Race::Dryad as i32 => 1,
-        _ => panic!("Unknown race received"),
-    }
+    STEALTH_MOD[race as usize]
 }
 
 #[no_mangle]
 pub extern fn race_search_freq(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => -1,
-        x if x == Race::Elf as i32 => -1,
-        x if x == Race::Halfling as i32 => -5,
-        x if x == Race::Gnome as i32 => -3,
-        x if x == Race::Dwarf as i32 => 0,
-        x if x == Race::HalfOrc as i32 => 3,
-        x if x == Race::HalfTroll as i32 => 5,
-        x if x == Race::Phraint as i32 => 3,
-        x if x == Race::Dryad as i32 => -1,
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
-pub extern fn race_melee_bonus(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 0,
-        x if x == Race::Elf as i32 => -5,
-        x if x == Race::Halfling as i32 => -10,
-        x if x == Race::Gnome as i32 => -8,
-        x if x == Race::Dwarf as i32 => 15,
-        x if x == Race::HalfOrc as i32 => 12,
-        x if x == Race::HalfTroll as i32 => 20,
-        x if x == Race::Phraint as i32 => 3,
-        x if x == Race::Dryad as i32 => -0,
-        _ => panic!("Unknown race received"),
-    }
+    SEARCH_FREQ[race as usize]
 }
 
 #[no_mangle]
 pub extern fn race_ranged_bonus(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 5,
-        x if x == Race::Elf as i32 => 15,
-        x if x == Race::Halfling as i32 => 20,
-        x if x == Race::Gnome as i32 => 12,
-        x if x == Race::Dwarf as i32 => 0,
-        x if x == Race::HalfOrc as i32 => -5,
-        x if x == Race::HalfTroll as i32 => -10,
-        x if x == Race::Phraint as i32 => 5,
-        x if x == Race::Dryad as i32 => 5,
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
-pub extern fn race_save_mod(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 3,
-        x if x == Race::Elf as i32 => 6,
-        x if x == Race::Halfling as i32 => 18,
-        x if x == Race::Gnome as i32 => 12,
-        x if x == Race::Dwarf as i32 => 9,
-        x if x == Race::HalfOrc as i32 => -3,
-        x if x == Race::HalfTroll as i32 => -9,
-        x if x == Race::Phraint as i32 => -3,
-        x if x == Race::Dryad as i32 => 3,
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
-pub extern fn race_health_bonus(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 10,
-        x if x == Race::HalfElf as i32 => 9,
-        x if x == Race::Elf as i32 => 8,
-        x if x == Race::Halfling as i32 => 6,
-        x if x == Race::Gnome as i32 => 7,
-        x if x == Race::Dwarf as i32 => 9,
-        x if x == Race::HalfOrc as i32 => 10,
-        x if x == Race::HalfTroll as i32 => 12,
-        x if x == Race::Phraint as i32 => 8,
-        x if x == Race::Dryad as i32 => 7,
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
-pub extern fn race_infravision(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 0,
-        x if x == Race::Elf as i32 => 0,
-        x if x == Race::Halfling as i32 => 4,
-        x if x == Race::Gnome as i32 => 3,
-        x if x == Race::Dwarf as i32 => 5,
-        x if x == Race::HalfOrc as i32 => 3,
-        x if x == Race::HalfTroll as i32 => 3,
-        x if x == Race::Phraint as i32 => 5,
-        x if x == Race::Dryad as i32 => 3,
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
-pub extern fn race_swim_speed(race: i32) -> i8 {
-    match race {
-        x if x == Race::Human as i32 => 0,
-        x if x == Race::HalfElf as i32 => 1,
-        x if x == Race::Elf as i32 => 2,
-        x if x == Race::Halfling as i32 => -2,
-        x if x == Race::Gnome as i32 => -1,
-        x if x == Race::Dwarf as i32 => -2,
-        x if x == Race::HalfOrc as i32 => 0,
-        x if x == Race::HalfTroll as i32 => 2,
-        x if x == Race::Phraint as i32 => -1,
-        x if x == Race::Dryad as i32 => -1,
-        _ => panic!("Unknown race received"),
-    }
+    RANGED_BONUS[race as usize]
 }
 
 #[no_mangle]

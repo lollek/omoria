@@ -87,7 +87,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 		break;
 
 	case 14: /*{ Chime of Curing }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		ident = cure_me(&PF.blind);
 		ident |= cure_me(&PF.poisoned);
 		ident |= cure_me(&PF.confused);
@@ -105,7 +105,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 
 	case 17: /*{ Horn of Bubbles }*/
 		msg_print("Bubbles stream forth and surround you!");
-		py.flags.blind += (randint(20) + 5);
+		player_flags.blind += (randint(20) + 5);
 		ident = unlight_area(char_row, char_col);
 		break;
 
@@ -143,11 +143,11 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 	case 23: /*{ Horn of Gas }*/
 		msg_print("Gas streams out ...!");
 		ident = zap_area(0x0040, 60, c_hp);
-		py.flags.poisoned += randint(10);
+		player_flags.poisoned += randint(10);
 		break;
 
 	case 24: /*{ Horn of Recall }*/
-		py.flags.word_recall = (randint(20) + 20);
+		player_flags.word_recall = (randint(20) + 20);
 		ident = true;
 		break;
 
@@ -185,7 +185,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 		break;
 
 	case 28: /*{ Horn of Tritons }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		ident = true;
 		msg_print("All of the seas of the world still (yeah, right)!");
 		msg_print("The gods of the ocean hear you...");
@@ -265,7 +265,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		for (i3 = 1; i3 <= 4; i3++) {
 			summon_demon(&x, &y);
 		}
-		py.flags.paralysis += 2;
+		player_flags.paralysis += 2;
 		strcat(item_ptr->data.name, "(Empty)");
 		ident = true;
 		break;
@@ -285,7 +285,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		for (i3 = 1; i3 <= 8; i3++) {
 			ident = summon_undead(&x, &y);
 		}
-		py.flags.paralysis += 2;
+		player_flags.paralysis += 2;
 		break;
 
 	case 10:
@@ -295,7 +295,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		for (i3 = 1; i3 <= 8; i3++) {
 			ident = summon_demon(&x, &y);
 		}
-		py.flags.paralysis += 2;
+		player_flags.paralysis += 2;
 		ident = true;
 		break;
 
@@ -309,7 +309,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		if (hp_player(damroll("6d7"), "a statue.")) {
 			ident = true;
 		}
-		/* with py.flags do; */
+		/* with player_flags do; */
 		if (PF.slow > 0) {
 			ident = true;
 			PF.slow = 1;
@@ -446,14 +446,14 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		break;
 
 	case 29:
-		py.flags.word_recall = 10 + randint(10);
+		player_flags.word_recall = 10 + randint(10);
 		msg_print("You feel dizzy for a moment...");
 		ident = true;
 		break;
 
 	case 30:
 		msg_print("The teeth flare into flames.");
-		py.flags.ring_fire += 3 + randint(3);
+		player_flags.ring_fire += 3 + randint(3);
 		ident = true;
 		break;
 
@@ -496,7 +496,7 @@ void blow()
 				/* with player_do; */
 				chance = player_save + player_lev + bard_adj() -
 					 item_ptr->data.level - 5;
-				if (((py.flags.confused + py.flags.afraid) >
+				if (((player_flags.confused + player_flags.afraid) >
 				     0) &&
 				    ((item_ptr->data.tval == chime) ||
 				     (item_ptr->data.tval == horn))) {

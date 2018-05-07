@@ -6,6 +6,7 @@
 extern void enter_casino();
 
 /* { CREATE.PAS		} */
+/*	{ Chances the name of the character			-JWT- * } */
 extern void change_name();
 extern void create_character();
 extern void set_gem_values();

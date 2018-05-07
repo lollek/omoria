@@ -194,7 +194,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 
 	case 11: /*{ Confuse Monster }*/
 		msg_print("Your hands begin to glow.");
-		py.flags.confuse_monster = true;
+		player_flags.confuse_monster = true;
 		ident = true;
 		break;
 
@@ -482,7 +482,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 
 	case 40: /*{ Word Of Recall }*/
 		ident = true;
-		py.flags.word_recall = 25 + randint(30);
+		player_flags.word_recall = 25 + randint(30);
 		msg_print("The air about you becomes charged...");
 		break;
 
@@ -525,7 +525,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 		print_dead_character();
 		draw_cave();
 		msg_print("Huh?  What happened???");
-		py.flags.confused += randint(5) + 3;
+		player_flags.confused += randint(5) + 3;
 		ident = true;
 		break;
 
@@ -595,11 +595,11 @@ void read_scroll()
 
 	if (inven_ctr > 0) {
 		if (find_range(stuff_to_read, false, &i2, &i3)) {
-			if (py.flags.blind > 0) {
+			if (player_flags.blind > 0) {
 				msg_print("You can't see to read the scroll.");
 			} else if (no_light()) {
 				msg_print("You have no light to read by.");
-			} else if (py.flags.confused > 0) {
+			} else if (player_flags.confused > 0) {
 				msg_print(
 				    "The text seems to swim about the page!");
 				msg_print("You are too confused to read...");

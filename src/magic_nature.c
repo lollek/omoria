@@ -54,12 +54,12 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 9: /*{ Battle Dance }*/
-		py.flags.hero += (randint(10) + 5);
+		player_flags.hero += (randint(10) + 5);
 		bless(randint(20) + 20);
 		break;
 
 	case 10: /*{ Cure Poison }*/
-		cure_me(&py.flags.poisoned);
+		cure_me(&player_flags.poisoned);
 		break;
 
 	case 11: /*{ Charm }*/
@@ -89,7 +89,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 15:					/*{ Magic Res. }*/
-		py.flags.magic_prot = randint(15) + 10; /* not cumulitive */
+		player_flags.magic_prot = randint(15) + 10; /* not cumulitive */
 		break;
 
 	case 16: /*{ Starlight }*/
@@ -109,7 +109,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 19: /*{ Infravision }*/
-		py.flags.tim_infra += randint(30) + 30;
+		player_flags.tim_infra += randint(30) + 30;
 		break;
 
 	case 20: /*{ Major Cure }*/
@@ -117,7 +117,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 21: /*{ Resist Petrification }*/
-		py.flags.resist_petri += randint(15) + 10;
+		player_flags.resist_petri += randint(15) + 10;
 		break;
 
 	case 22: /*{ Transplant }*/
@@ -134,7 +134,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 24: /*{ Dispel Magic }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		cure_me(&PF.blind);
 		cure_me(&PF.poisoned);
 		cure_me(&PF.afraid);
@@ -150,7 +150,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 26: /*{ Protection from Nature }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.resist_heat += randint(15) + 10;
 		PF.resist_cold += randint(15) + 10;
 		PF.resist_lght += randint(15) + 10;
@@ -185,7 +185,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 31: /*{ Word of Recall }*/
-		py.flags.word_recall = randint(20) + 20;
+		player_flags.word_recall = randint(20) + 20;
 		break;
 
 	case 32: /*{ Lightning Ball }*/
@@ -203,7 +203,7 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 34: /*{ Protection from Monsters }*/
-		py.flags.protmon = (randint(20) + player_lev);
+		player_flags.protmon = (randint(20) + player_lev);
 		break;
 
 	case 35: /*{ Control Temperature }*/
@@ -222,18 +222,18 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 36: /*{ Ring of Fire }*/
-		py.flags.ring_fire += randint(4) + 1;
+		player_flags.ring_fire += randint(4) + 1;
 		break;
 
 	case 37: /*{ Resist Charm }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.free_time += randint(10) + player_lev;
 		PF.magic_prot += randint(10) + player_lev;
 		break;
 
 	case 38: /*{ Battle Frenzy }*/
 		bless(randint(30) + 30);
-		py.flags.shero = (randint(20) + 20); /* not cumulitive */
+		player_flags.shero = (randint(20) + 20); /* not cumulitive */
 		break;
 
 	case 39: /*{ Dispel Monster }*/

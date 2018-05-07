@@ -67,7 +67,7 @@ void place_rubble(long y, long x)
 static void ht__open_pit(long dam)
 {
 	msg_print("You fell into a pit!");
-	if (py.flags.ffall) {
+	if (player_flags.ffall) {
 		msg_print("You gently float down.");
 	} else {
 		take_hit(dam, "an open pit");
@@ -87,7 +87,7 @@ static void ht__arrow(long dam)
 static void ht__covered_pit(long dam, long y, long x)
 {
 	msg_print("You fell into a covered pit.");
-	if (py.flags.ffall) {
+	if (player_flags.ffall) {
 		msg_print("You gently float down.");
 	} else {
 		take_hit(dam, "a covered pit");
@@ -101,7 +101,7 @@ static void ht__trap_door(long dam)
 	msg_print(" ");
 	moria_flag = true;
 	dun_level++;
-	if (py.flags.ffall) {
+	if (player_flags.ffall) {
 		msg_print("You gently float down.");
 	} else {
 		take_hit(dam, "a trap door");
@@ -111,13 +111,13 @@ static void ht__trap_door(long dam)
 static void ht__sleep_gas(void)
 {
 
-	if (py.flags.paralysis == 0) {
+	if (player_flags.paralysis == 0) {
 		msg_print("A strange white mist surrounds you!");
-		if (py.flags.free_act) {
+		if (player_flags.free_act) {
 			msg_print("You are unaffected.");
 		} else {
 			msg_print("You fall asleep.");
-			py.flags.paralysis += randint(10) + 4;
+			player_flags.paralysis += randint(10) + 4;
 		}
 	}
 }
@@ -243,7 +243,7 @@ static void ht__chute(long dam)
 	msg_print(" ");
 	moria_flag = true;
 	dun_level += randint(6);
-	if (py.flags.ffall) {
+	if (player_flags.ffall) {
 		msg_print("You gently slide down.");
 	} else {
 		take_hit(dam, "chute landing");
@@ -259,7 +259,7 @@ static void ht__whirlpool(long dam)
 	moria_flag = true;
 	do {
 		dun_level++;
-		if (!(py.flags.ffall)) { /*{XXX...swimming_worn}*/
+		if (!(player_flags.ffall)) { /*{XXX...swimming_worn}*/
 			msg_print("You are drowning!");
 			take_hit(dam, "drowning");
 		}

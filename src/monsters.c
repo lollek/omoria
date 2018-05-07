@@ -36,7 +36,7 @@ void place_monster(long y, long x, long z, boolean slp)
 	m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
 	/*  printf ("\n     cdis: %d)",m_list[cur_pos].cdis);  fflush(stdout);
 	 */
-	m_list[cur_pos].cspeed = c_list[z].speed + py.flags.speed;
+	m_list[cur_pos].cspeed = c_list[z].speed + player_flags.speed;
 	m_list[cur_pos].stunned = 0;
 
 	if (slp) {

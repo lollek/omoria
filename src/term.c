@@ -386,7 +386,7 @@ void Erase_Line(long row, long col)
 	clrtoeol();
 }
 
-void Clear_From(row) int row;
+void Clear_From(int row)
 {
 	(void)move(row, 0);
 	clrtobot();
@@ -573,8 +573,7 @@ char *command;
 
 /* Gets a string terminated by <RETURN>		*/
 /* Function returns false if <ESCAPE> is input	*/
-boolean Get_String(in_str, row, column, slen) char *in_str;
-int row, column, slen;
+boolean Get_String(char *in_str, int row, int column, int slen)
 {
 	register int start_col, end_col, i;
 	char *p;
@@ -793,7 +792,7 @@ void show_location()
 #ifdef ORIGINAL_IMORIA
 	char out_val[82];
 
-	if ((py.flags.blind > 0) || (no_light())) {
+	if ((player_flags.blind > 0) || (no_light())) {
 		msg_print("You can't see your map.");
 	} else {
 		sprintf(out_val, "Section [%ld,%ld]; Location = [%ld,%ld]",
@@ -810,7 +809,7 @@ void show_location()
 	long dir_val;
 	char tmp_str[1026], out_val[1026];
 
-	if ((py.flags.blind > 0) || no_light()) {
+	if ((player_flags.blind > 0) || no_light()) {
 		msg_print("You can't see your map.");
 	} else {
 		y = char_row;

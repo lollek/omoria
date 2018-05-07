@@ -90,12 +90,12 @@ void us__staff_effect(long effect, boolean *idented)
 		break;
 
 	case 17:
-		py.flags.fast += randint(30) + 15;
+		player_flags.fast += randint(30) + 15;
 		ident = true;
 		break;
 
 	case 18:
-		py.flags.slow += randint(30) + 15;
+		player_flags.slow += randint(30) + 15;
 		ident = true;
 		break;
 
@@ -115,7 +115,7 @@ void us__staff_effect(long effect, boolean *idented)
 		break;
 
 	case 22:
-		/* with py.flags do; */
+		/* with player_flags do; */
 		ident = cure_me(&(PF.blind));
 		ident |= cure_me(&(PF.poisoned));
 		ident |= cure_me(&(PF.confused));
@@ -175,7 +175,7 @@ void use_staff()
 				chance = player_save + player_lev + spell_adj(INT) -
 					 item_ptr->data.level - 5;
 
-				if (py.flags.confused > 0) {
+				if (player_flags.confused > 0) {
 					chance /= 2;
 				}
 				if (chance < 0) {

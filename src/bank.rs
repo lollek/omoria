@@ -13,7 +13,7 @@ extern {
     static wizard2: i8;
 }
 
-enum Currency {
+pub enum Currency {
     Total = 0,
     Iron = 1,
     Copper = 2,

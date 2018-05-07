@@ -119,11 +119,11 @@ void eat()
 				break;
 
 			case 6:
-				ident = cure_me(&py.flags.poisoned);
+				ident = cure_me(&player_flags.poisoned);
 				break;
 
 			case 7:
-				ident = cure_me(&py.flags.blind);
+				ident = cure_me(&player_flags.blind);
 				break;
 
 			case 8:
@@ -134,7 +134,7 @@ void eat()
 				break;
 
 			case 9:
-				ident = cure_me(&py.flags.confused);
+				ident = cure_me(&player_flags.confused);
 				break;
 
 			case 10:
@@ -217,12 +217,12 @@ void eat()
 				break;
 
 			case 29:
-				ident = cure_me(&py.flags.hoarse);
+				ident = cure_me(&player_flags.hoarse);
 				break;
 
 			/* fill player to full, then adds food value */
 			case 30:
-				py.flags.foodc = PLAYER_FOOD_FULL;
+				player_flags.foodc = PLAYER_FOOD_FULL;
 				msg_print("Yum!");
 				break;
 
@@ -297,7 +297,7 @@ void eat()
 	}
 
 	add_food(item_ptr->data.p1);
-	py.flags.status &= ~(IS_HUNGERY | IS_WEAK);
+	player_flags.status &= ~(IS_HUNGERY | IS_WEAK);
 	prt_hunger();
 	desc_remain(item_ptr);
 	inven_destroy(item_ptr);

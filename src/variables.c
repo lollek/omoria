@@ -150,9 +150,8 @@ obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
 		      0,     0,     0,		0, 0, 0, 0, 0};
 
 /*	{ Following are player variables				} */
-player_type py = {
-    /* flags */
-    {false,
+p_flags player_flags = {
+    false,
      false,
      0,
      0,
@@ -212,7 +211,7 @@ player_type py = {
      false,
      false,
      false,
-     false}};
+     false};
 
 char const *player_titles[MAX_CLASS][MAX_PLAYER_LEVEL + 1] =
     /*				  array [1..max_class] of */

@@ -220,16 +220,16 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 	if (uand(Blindness_worn_bit, tobj->flags) != 0) {
 		if (factor > 0) {
-			py.flags.blind += 1000;
+			player_flags.blind += 1000;
 		}
 	}
 	if (uand(Timidness_worn_bit, tobj->flags) != 0) {
 		if (factor > 0) {
-			py.flags.afraid += 50;
+			player_flags.afraid += 50;
 		}
 	}
 	if (uand(Infra_Vision_worn_bit, tobj->flags) != 0) {
-		py.flags.see_infra += (tobj->p1 * factor);
+		player_flags.see_infra += (tobj->p1 * factor);
 	}
 	if (uand(Swimming_worn_bit, tobj->flags2) != 0) {
 		i1 = tobj->p1 * factor; /* XXX what does this do? */
@@ -296,7 +296,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 	player_dis_ac += player_dis_tac;
 
 	/* { Add in temporary spell increases	}*/
-	/* with py.flags do; */
+	/* with player_flags do; */
 	if (PF.invuln > 0) {
 		player_pac += 100;
 		player_dis_ac += 100;
@@ -323,7 +323,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 		item_flags2 = uor(item_flags2, equipment[i1].flags2);
 	}
 
-	/* with py.flags do; */
+	/* with player_flags do; */
 	PF.slow_digest = uand(Slow_Digestion_worn_bit, item_flags) != 0;
 	PF.aggravate = uand(Aggravation_worn_bit, item_flags) != 0;
 	PF.teleport = uand(Teleportation_worn_bit, item_flags) != 0;
@@ -341,7 +341,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 		/* with equipment[i1] do; */
 		if (uand(Sustain_Stat_worn_bit, equipment[i1].flags) != 0) {
 			if ((equipment[i1].p1 > 0) && (equipment[i1].p1 < 7)) {
-				py.flags.sustain[equipment[i1].p1 - 1] = true;
+				player_flags.sustain[equipment[i1].p1 - 1] = true;
 			}
 		}
 	}
@@ -366,7 +366,7 @@ void change_speed(long num)
 	*/
 	long i1;
 
-	py.flags.speed += num;
+	player_flags.speed += num;
 
 	for (i1 = muptr; i1 != 0; i1 = m_list[i1].nptr) {
 		m_list[i1].cspeed += num;
@@ -470,7 +470,7 @@ static void ml__draw_block(long y1, long x1, long y2, long x2)
 
 			if (cave[y][x].pl || cave[y][x].tl || cave[y][x].fm)
 				tmp_char = loc_symbol(y, x);
-			if (py.flags.image > 0 && randint(12) == 1)
+			if (player_flags.image > 0 && randint(12) == 1)
 				tmp_char = (char)(randint(95) + 31);
 
 			if (flag) {
@@ -668,7 +668,7 @@ void move_light(long y1, long x1, long y2, long x2)
 	/*{ Three cases : Normal, Finding, and Blind              -RAK-   }*/
 	/* (so what is that sub4 thing?) */
 
-	if (py.flags.blind > 0) {
+	if (player_flags.blind > 0) {
 		ml__sub3_move_light(y1, x1, y2, x2); /* blind */
 	} else if (find_flag) {
 		ml__sub2_move_light(y1, x1, y2, x2); /* searching */
@@ -1020,7 +1020,7 @@ void battle_game(long plus, char kb_str[82])
 				  "into the street!");
 			take_hit(damroll("2d4"), kb_str);
 			change_rep(-5);
-			py.flags.confused += 5 + randint(5);
+			player_flags.confused += 5 + randint(5);
 			break;
 		}
 	}
@@ -1117,7 +1117,7 @@ void eat_the_meal()
 {
 	long yummers, old_food;
 
-	old_food = py.flags.foodc;
+	old_food = player_flags.foodc;
 
 	yummers = react(randint(8) - 2);
 	if ((yummers == 10) && (randint(2) == 1)) {
@@ -1130,8 +1130,8 @@ void eat_the_meal()
 	case 15:
 		msg_print(
 		    "It is a sumptuous banquet, and you feel quite stuffed.");
-		py.flags.foodc = PLAYER_FOOD_MAX;
-		py.flags.status &= ~(IS_WEAK | IS_HUNGERY);
+		player_flags.foodc = PLAYER_FOOD_MAX;
+		player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
 		prt_hunger();
 		change_rep(3);
 		break;
@@ -1142,8 +1142,8 @@ void eat_the_meal()
 	case 9:
 	case 10:
 		msg_print("It is an ample meal, and you feel full.");
-		py.flags.foodc = PLAYER_FOOD_FULL;
-		py.flags.status &= ~(IS_WEAK | IS_HUNGERY);
+		player_flags.foodc = PLAYER_FOOD_FULL;
+		player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
 		prt_hunger();
 		change_rep(1);
 		break;
@@ -1153,16 +1153,16 @@ void eat_the_meal()
 		    player_saves(player_lev + 5 * spell_adj(CON))) {
 			msg_print(
 			    "It was a boring meal, and you eat very little.");
-			py.flags.foodc = old_food;
+			player_flags.foodc = old_food;
 			prt_hunger();
 		} else {
 			msg_print("Yuk!  That meal was AWFUL!");
 			msg_print("You throw up!");
-			if (py.flags.foodc > 150) {
-				py.flags.foodc = 150;
+			if (player_flags.foodc > 150) {
+				player_flags.foodc = 150;
 			}
 			msg_print("You get food poisoning.");
-			py.flags.poisoned += randint(10) + 5;
+			player_flags.poisoned += randint(10) + 5;
 			change_rep(-2);
 		}
 		break;
@@ -1191,24 +1191,24 @@ void party()
 		case 1:
 			msg_print("Someone must have spiked the punch!");
 			msg_print("Oh, your aching head!");
-			py.flags.confused += 25 + randint(25);
+			player_flags.confused += 25 + randint(25);
 			break;
 
 		case 2:
 			msg_print(
 			    "Gee, those brownies were awfully unusual....");
 			msg_print("You feel a little strange now.");
-			py.flags.image += 200 + randint(100);
+			player_flags.image += 200 + randint(100);
 			break;
 
 		case 3:
 			msg_print("You smoked something strange at the party.");
 			switch (randint(2)) {
 			case 1:
-				py.flags.hero += 25 + randint(25);
+				player_flags.hero += 25 + randint(25);
 				break;
 			case 2:
-				py.flags.afraid += 25 + randint(25);
+				player_flags.afraid += 25 + randint(25);
 				break;
 			}
 			break;
@@ -1393,7 +1393,7 @@ boolean player_test_hit(long bth, long level, long pth, long ac,
 	if (search_flag) {
 		search_off();
 	}
-	if (py.flags.rest > 0) {
+	if (player_flags.rest > 0) {
 		rest_off();
 	}
 
@@ -1429,7 +1429,7 @@ boolean test_hit(long bth, long level, long pth, long ac)
 	if (search_flag) {
 		search_off();
 	}
-	if (py.flags.rest > 0) {
+	if (player_flags.rest > 0) {
 		rest_off();
 	}
 
@@ -1521,10 +1521,10 @@ void fire_dam(long dam, char kb_str[82])
 	    boots,   gloves_and_gauntlets,  cloak,	 soft_armor, staff,
 	    scroll1, scroll2,		    0};
 
-	if (py.flags.fire_resist) {
+	if (player_flags.fire_resist) {
 		dam /= 3;
 	}
-	if (py.flags.resist_heat > 0) {
+	if (player_flags.resist_heat > 0) {
 		dam /= 3;
 	}
 
@@ -1546,10 +1546,10 @@ void cold_dam(long dam, char kb_str[82])
 
 	obj_set things_that_freeze = {potion1, potion2, 0};
 
-	if (py.flags.cold_resist) {
+	if (player_flags.cold_resist) {
 		dam /= 3;
 	}
-	if (py.flags.resist_cold > 0) {
+	if (player_flags.resist_cold > 0) {
 		dam /= 3;
 	}
 
@@ -1569,10 +1569,10 @@ void light_dam(long dam, char kb_str[82])
 {
 	/*{ Lightning bolt the sucker away...                     -RAK-   }*/
 
-	if (py.flags.lght_resist) {
+	if (player_flags.lght_resist) {
 		dam /= 3;
 	}
-	if (py.flags.resist_lght > 0) {
+	if (player_flags.resist_lght > 0) {
 		dam /= 3;
 	}
 
@@ -1596,7 +1596,7 @@ void acid_dam(long dam, char kb_str[82])
 	if (minus_ac(Resist_Acid_worn_bit)) {
 		flag = 1;
 	}
-	if (py.flags.acid_resist) {
+	if (player_flags.acid_resist) {
 		flag += 2;
 	}
 
@@ -1746,7 +1746,7 @@ void poison_gas(long dam, char kb_str[82])
 
 	take_hit(dam, kb_str);
 	print_stat |= 0x0040;
-	py.flags.poisoned += 12 + randint(dam);
+	player_flags.poisoned += 12 + randint(dam);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1790,9 +1790,9 @@ void rest()
 		if (search_flag) {
 			search_off();
 		}
-		py.flags.rest = rest_num;
+		player_flags.rest = rest_num;
 		turn_counter += rest_num;
-		py.flags.status |= IS_RESTING;
+		player_flags.status |= IS_RESTING;
 		prt_rest();
 		msg_print("Press any key to wake up...");
 		put_qio();
@@ -1871,7 +1871,7 @@ void search(long y, long x, long chance)
 	long i1, i2;
 	char out_val[86];
 
-	/* with py.flags do; */
+	/* with player_flags do; */
 	if (PF.confused + PF.blind > 0) {
 		chance = trunc(chance / 10.0);
 	} else if (no_light()) {
@@ -2160,7 +2160,7 @@ void area_affect(long dir, long y, long x)
 		}
 	}
 
-	if ((find_flag) && (py.flags.blind < 1)) {
+	if ((find_flag) && (player_flags.blind < 1)) {
 
 		switch (dir) {
 		case 1:
@@ -2789,7 +2789,7 @@ void get_player_move_rate()
 {
 	long cur_swim;
 
-	/* with py.flags do; */
+	/* with player_flags do; */
 	if (is_in(cave[char_row][char_col].fval, earth_set)) {
 		PF.move_rate = 4;
 	} else {
@@ -2847,7 +2847,7 @@ boolean xor (long thing1, long thing2) {
 		    4; /* I wish I knew why they did this... rounding up? */
 	}
 
-	py_rate = py.flags.move_rate;
+	py_rate = player_flags.move_rate;
 
 	if (cspeed > 0) {
 		c_rate *= cspeed;
@@ -2862,7 +2862,7 @@ boolean xor (long thing1, long thing2) {
 	}
 
 	/* { if player resting, max monster move = 1 } */
-	if ((final_rate > 1) && (py.flags.rest > 0)) {
+	if ((final_rate > 1) && (player_flags.rest > 0)) {
 		return_value = 1;
 	} else {
 		return_value = final_rate;
@@ -2895,7 +2895,7 @@ void add_food(long num)
 {
 	/*{ Add to the players food time                          -RAK-   }*/
 
-	/* with py.flags do; */
+	/* with player_flags do; */
 	if (PF.foodc < 0) {
 		PF.foodc = 0;
 	}
@@ -3411,7 +3411,7 @@ void d__throw_object(boolean to_be_fired)
 				reset_flag = false;
 				desc_remain(item_ptr);
 
-				if (py.flags.confused > 0) {
+				if (player_flags.confused > 0) {
 					msg_print("You are confused...");
 					do {
 						dir = randint(9);
@@ -3579,7 +3579,7 @@ void d__look()
 	x = char_col;
 
 	if (d__get_dir("Look which direction?", &dir, &dummy, &y, &x)) {
-		if (py.flags.blind < 1) {
+		if (player_flags.blind < 1) {
 			y = char_row;
 			x = char_col;
 			i1 = 0;
@@ -3772,7 +3772,7 @@ void d__check_hours()
 					if (search_flag) {
 						search_off();
 					}
-					if (py.flags.rest > 0) {
+					if (player_flags.rest > 0) {
 						rest_off();
 					}
 					find_flag = false;
@@ -3780,14 +3780,14 @@ void d__check_hours()
 						  "closed.");
 					msg_print(" ");
 					do {
-						py.flags.dead = false;
+						player_flags.dead = false;
 						save_char(true);
 					} while (true);
 				} else {
 					if (search_flag) {
 						search_off();
 					}
-					if (py.flags.rest > 0) {
+					if (player_flags.rest > 0) {
 						rest_off();
 					}
 					move_char(5);
@@ -4004,7 +4004,7 @@ void d__regenerate()
 	if (PF.rest > 0) {
 		regen_amount *= 2;
 	}
-	if (py.flags.poisoned < 1) {
+	if (player_flags.poisoned < 1) {
 		if (player_chp < player_mhp) {
 			regenhp(regen_amount);
 		}
@@ -4366,7 +4366,7 @@ void d__update_petrify()
 {
 	/*{  Petrification wears off slowly  } */
 	if ((turn % 100) == 0) {
-		/* with py.flags do; */
+		/* with player_flags do; */
 		if (PF.petrification > 100) {
 			PF.petrification--;
 		}
@@ -4629,7 +4629,7 @@ void d__update_hit_points()
 	ENTER(("d__update_hit_points", "d"))
 
 	if (!(find_flag)) {
-		if (py.flags.rest < 1) {
+		if (player_flags.rest < 1) {
 			if (old_chp != (long)(player_chp)) {
 				if (player_chp > player_mhp) {
 					player_chp = player_mhp;
@@ -4825,7 +4825,7 @@ void d__bash()
 	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
 		/* with cave[y][x]. do; */
 		if (cave[y][x].cptr > 1) {
-			if (py.flags.afraid > 0) {
+			if (player_flags.afraid > 0) {
 				msg_print("You are afraid!");
 			} else {
 				/*{ Save old values of attacking  }*/
@@ -4859,7 +4859,7 @@ void d__bash()
 				player_bth = old_bth;
 				if (randint(300) > player_stats_curr[DEX]) {
 					msg_print("You are off-balance.");
-					py.flags.paralysis = randint(3);
+					player_flags.paralysis = randint(3);
 				}
 			}
 		} else if (cave[y][x].tptr > 0) {
@@ -4880,7 +4880,7 @@ void d__bash()
 				} else {
 					msg_print("You smash into the door! "
 						  "The door holds firm.");
-					py.flags.paralysis = 2;
+					player_flags.paralysis = 2;
 				}
 
 			} else if (t_list[cave[y][x].tptr].tval == chest) {
@@ -4940,16 +4940,16 @@ void d__chest_trap(long y, long x)
 	if (uand(0x00000020, flags) != 0) {
 		msg_print("A small needle has pricked you!");
 		take_hit(damroll("1d6"), "a poison needle.");
-		py.flags.poisoned += 10 + randint(20);
+		player_flags.poisoned += 10 + randint(20);
 	}
 
 	if (uand(0x00000040, flags) != 0) {
 		msg_print("A puff of yellow gas surrounds you!");
-		if (py.flags.free_act) {
+		if (player_flags.free_act) {
 			msg_print("You are unaffected.");
 		} else {
 			msg_print("You choke and pass out.");
-			py.flags.paralysis = 10 + randint(20);
+			player_flags.paralysis = 10 + randint(20);
 		}
 	}
 
@@ -4996,7 +4996,7 @@ void d__openobject()
 					tmp = player_disarm + player_lev +
 					      2 * todis_adj() + spell_adj(INT);
 
-					if (py.flags.confused > 0) {
+					if (player_flags.confused > 0) {
 						msg_print("You are too "
 							  "confused to pick "
 							  "the lock.");
@@ -5036,7 +5036,7 @@ void d__openobject()
 				if (uand(0x00000001,
 					 t_list[cave[y][x].tptr].flags) !=
 				    0) { /* locked? */
-					if (py.flags.confused > 0) {
+					if (player_flags.confused > 0) {
 						msg_print("You are too "
 							  "confused to pick "
 							  "the lock.");
@@ -5200,13 +5200,13 @@ void d__disarm_trap()
 			t4 = spell_adj(INT);  /*{ Intelligence adjustment}*/
 			tot = t1 + t2 + t3 + t4;
 
-			if (py.flags.blind > 0) {
+			if (player_flags.blind > 0) {
 				tot /= 5;
 			} else if (no_light()) {
 				tot /= 2;
 			}
 
-			if (py.flags.confused > 0) {
+			if (player_flags.confused > 0) {
 				tot /= 3;
 			}
 
@@ -5718,9 +5718,9 @@ void d__execute_command(long *com_val)
 			} else {
 				if (search_flag)
 					search_off();
-				py.flags.dead = false;
+				player_flags.dead = false;
 				save_char(false);
-				py.flags.dead = true;
+				player_flags.dead = true;
 			}
 			reset_flag = true;
 			break;
@@ -5855,7 +5855,7 @@ void d__execute_command(long *com_val)
 		d__examine_book();
 		break;
 	case 'Q':
-		if (py.flags.quested) {
+		if (player_flags.quested) {
 			sprintf(out_val, "Current quest is to kill a %s",
 				c_list[player_cur_quest].name);
 			msg_print(out_val);
@@ -5871,7 +5871,7 @@ void d__execute_command(long *com_val)
 		if (search_flag) {
 			search_off();
 			reset_flag = true;
-		} else if (py.flags.blind > 0) {
+		} else if (player_flags.blind > 0) {
 			msg_print(
 			    "You are incapable of searching while blind.");
 		} else {
@@ -5989,7 +5989,7 @@ void d__execute_command(long *com_val)
 		read_scroll();
 		break;
 	case 's': /* Search */
-		if (py.flags.blind > 0) {
+		if (player_flags.blind > 0) {
 			msg_print(
 			    "You are incapable of searching while blind.");
 		} else {
@@ -6127,7 +6127,7 @@ void dungeon()
 		d__check_light_status();
 
 		/*{ Update counters and messages			}*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 
 		d__check_food();
 		d__eat_food();
@@ -6163,8 +6163,8 @@ void dungeon()
 		d__update_word_of_recall();
 		d__update_hit_points();
 
-		if ((py.flags.paralysis < 1) && /*{ Accept a command?     }*/
-		    (py.flags.rest < 1) && (!(death))) {
+		if ((player_flags.paralysis < 1) && /*{ Accept a command?     }*/
+		    (player_flags.rest < 1) && (!(death))) {
 
 			/*{ Accept a command and execute it }*/
 			do {
@@ -6176,7 +6176,7 @@ void dungeon()
 				}
 
 				/*{ Random teleportation  }*/
-				if (py.flags.teleport) {
+				if (player_flags.teleport) {
 					if (randint(100) == 1) {
 						find_flag = false;
 						teleport(40);

@@ -26,6 +26,6 @@
 
 #include "variables.h"
 
-#define PF (py.flags)
+#define PF (player_flags)
 
 #endif /* IMORIA_H */

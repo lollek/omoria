@@ -49,7 +49,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 9: /*{ Battle Dance }*/
-		py.flags.hero += (randint(10) + 5);
+		player_flags.hero += (randint(10) + 5);
 		bless(randint(20) + 20);
 		break;
 
@@ -66,11 +66,11 @@ void song_spell_effects(long effect)
 		break;
 
 	case 13: /*{ Cure Poison }*/
-		cure_me(&(py.flags.poisoned));
+		cure_me(&(player_flags.poisoned));
 		break;
 
 	case 14: /*{ Invisibility }*/
-		py.flags.temp_stealth += randint(15) + 10;
+		player_flags.temp_stealth += randint(15) + 10;
 		break;
 
 	case 15: /*{ Teleport Self }*/
@@ -78,7 +78,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 16: /*{ Infravision }*/
-		py.flags.tim_infra += randint(50) + 50;
+		player_flags.tim_infra += randint(50) + 50;
 		break;
 
 	case 17: /*{ Physical Humor }*/
@@ -117,7 +117,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 24: /*{ Resist Petrification }*/
-		py.flags.resist_petri += randint(15) + 10;
+		player_flags.resist_petri += randint(15) + 10;
 		break;
 
 	case 25: /*{ Create Food and Drink }*/
@@ -130,11 +130,11 @@ void song_spell_effects(long effect)
 		break;
 
 	case 27: /*{ Word of Recall }*/
-		py.flags.word_recall = randint(20) + 20;
+		player_flags.word_recall = randint(20) + 20;
 		break;
 
 	case 28: /*{ Protection from Nature }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.resist_heat += randint(15) + 10;
 		PF.resist_cold += randint(15) + 10;
 		PF.resist_lght += randint(15) + 10;
@@ -158,8 +158,8 @@ void song_spell_effects(long effect)
 
 	case 32: /*{ Battle Frenzy }*/
 		bless(randint(30) + 30);
-		py.flags.hero = randint(30) + 30;
-		py.flags.shero = randint(30) + 30;
+		player_flags.hero = randint(30) + 30;
+		player_flags.shero = randint(30) + 30;
 		break;
 
 	case 33: /*{ Slow Creature }*/
@@ -170,7 +170,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 34: /*{ Resist Charm }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.free_time += randint(10) + player_lev;
 		PF.magic_prot += randint(10) + player_lev;
 		break;
@@ -180,7 +180,7 @@ void song_spell_effects(long effect)
 		break;
 
 	case 36: /*{ Song of Protection }*/
-		py.flags.protmon = (randint(20) + player_lev);
+		player_flags.protmon = (randint(20) + player_lev);
 		protect_evil();
 		bless(randint(24) + 24);
 		break;
@@ -214,9 +214,9 @@ void song_spell_effects(long effect)
 
 	case 40: /*{ Song of Power }*/
 		zap_area(0x0006, 4 * player_lev, c_hp);
-		cure_me(&(py.flags.poisoned));
+		cure_me(&(player_flags.poisoned));
 		hp_player(300, "a spell");
-		cure_me(&py.flags.blind);
+		cure_me(&player_flags.blind);
 		break;
 
 	default:

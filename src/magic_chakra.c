@@ -11,7 +11,7 @@ void chakra_spell_effects(long effect)
 		break;
 
 	case 2: /*{ Courage } */
-		cure_me(&py.flags.afraid);
+		cure_me(&player_flags.afraid);
 		break;
 
 	case 3: /*{ Slow Poison } */
@@ -19,8 +19,8 @@ void chakra_spell_effects(long effect)
 		break;
 
 	case 4: /*{ Negate Hunger } */
-		py.flags.foodc = PLAYER_FOOD_FULL + 4000;
-		py.flags.status &= ~(IS_HUNGERY | IS_WEAK);
+		player_flags.foodc = PLAYER_FOOD_FULL + 4000;
+		player_flags.status &= ~(IS_HUNGERY | IS_WEAK);
 		prt_hunger();
 		msg_print("You are full.");
 		break;
@@ -34,11 +34,11 @@ void chakra_spell_effects(long effect)
 		break;
 
 	case 7: /*{ Night Vision }*/
-		py.flags.tim_infra += randint(25) + 25;
+		player_flags.tim_infra += randint(25) + 25;
 		break;
 
 	case 8: /*{ Poison Immunity }*/
-		cure_me(&(py.flags.poisoned));
+		cure_me(&(player_flags.poisoned));
 		break;
 
 	case 9: /*{ See Invisible } */
@@ -50,15 +50,15 @@ void chakra_spell_effects(long effect)
 		break;
 
 	case 11: /*{ Resist Petrification }*/
-		py.flags.resist_petri += randint(15) + 10;
+		player_flags.resist_petri += randint(15) + 10;
 		break;
 
 	case 12: /*{ Stealth }*/
-		py.flags.temp_stealth += randint(15) + 10;
+		player_flags.temp_stealth += randint(15) + 10;
 		break;
 
 	case 13: /*{ Free Action } */
-		py.flags.free_time += (randint(10) + player_lev);
+		player_flags.free_time += (randint(10) + player_lev);
 		break;
 
 	case 14: /*{ Improved Speed }*/

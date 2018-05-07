@@ -92,7 +92,7 @@ void disturb(__attribute__((unused)) int s, __attribute__((unused)) int l)
   command_count = 0;
   if (s && search_flag)
     search_off();
-  if (py.flags.rest > 0)
+  if (player_flags.rest > 0)
     rest_off();
   if (l || find_flag)
     {

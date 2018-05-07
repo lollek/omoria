@@ -170,7 +170,7 @@ void aim_wand()
 				x_dumy = char_col;
 				if (d__get_dir("Which direction?", &dir, &dumy,
 					       &y_dumy, &x_dumy)) {
-					if (py.flags.confused > 0) {
+					if (player_flags.confused > 0) {
 						msg_print(
 						    "You are confused...");
 						do {
@@ -185,7 +185,7 @@ void aim_wand()
 						 spell_adj(INT) -
 						 item_ptr->data.level;
 
-					if (py.flags.confused > 0) {
+					if (player_flags.confused > 0) {
 						chance /= 2;
 					}
 					if (chance < 0) {

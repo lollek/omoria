@@ -309,10 +309,10 @@ void prt_depth()
 
 void prt_hunger()
 {
-	if ((IS_WEAK & py.flags.status) != 0) {
+	if ((IS_WEAK & player_flags.status) != 0) {
 		put_buffer_attr("Weak    ", STATUS_ROW, HUNGER_COLUMN,
 				A_BOLD | A_BLINK);
-	} else if ((IS_HUNGERY & py.flags.status) != 0) {
+	} else if ((IS_HUNGERY & player_flags.status) != 0) {
 		put_buffer_attr("Hungry  ", STATUS_ROW, HUNGER_COLUMN, A_BOLD);
 	} else {
 		put_buffer("        ", STATUS_ROW, HUNGER_COLUMN);
@@ -321,7 +321,7 @@ void prt_hunger()
 
 void prt_blind()
 {
-	if ((IS_BLIND & py.flags.status) != 0) {
+	if ((IS_BLIND & player_flags.status) != 0) {
 		put_buffer_attr("Blind  ", STATUS_ROW, BLIND_COLUMN, A_BOLD);
 	} else {
 		put_buffer("       ", STATUS_ROW, BLIND_COLUMN);
@@ -330,7 +330,7 @@ void prt_blind()
 
 void prt_confused()
 {
-	if ((IS_CONFUSED & py.flags.status) != 0) {
+	if ((IS_CONFUSED & player_flags.status) != 0) {
 		put_buffer_attr("Confused  ", STATUS_ROW, CONFUSED_COLUMN,
 				A_BOLD);
 	} else {
@@ -340,7 +340,7 @@ void prt_confused()
 
 void prt_afraid()
 {
-	if ((IS_AFRAID & py.flags.status) != 0) {
+	if ((IS_AFRAID & player_flags.status) != 0) {
 		put_buffer_attr("Afraid  ", STATUS_ROW, AFRAID_COLUMN, A_BOLD);
 	} else {
 		put_buffer("        ", STATUS_ROW, AFRAID_COLUMN);
@@ -349,7 +349,7 @@ void prt_afraid()
 
 void prt_poisoned()
 {
-	if ((IS_POISONED & py.flags.status) != 0) {
+	if ((IS_POISONED & player_flags.status) != 0) {
 		put_buffer_attr("Poisoned  ", STATUS_ROW, POISONED_COLUMN,
 				A_BOLD);
 	} else {
@@ -359,7 +359,7 @@ void prt_poisoned()
 
 void prt_search()
 {
-	if ((IS_SEARCHING & py.flags.status) != 0) {
+	if ((IS_SEARCHING & player_flags.status) != 0) {
 		put_buffer("Searching", STATUS_ROW, SEARCHING_COLUMN);
 	} else {
 		put_buffer("         ", STATUS_ROW, SEARCHING_COLUMN);
@@ -369,7 +369,7 @@ void prt_search()
 void prt_rest()
 {
 
-	if ((IS_RESTING & py.flags.status) != 0) {
+	if ((IS_RESTING & player_flags.status) != 0) {
 		put_buffer("Resting  ", STATUS_ROW, RESTING_COLUMN);
 	} else {
 		put_buffer("         ", STATUS_ROW, RESTING_COLUMN);
@@ -378,7 +378,7 @@ void prt_rest()
 
 void prt_quested()
 {
-	if (py.flags.quested) {
+	if (player_flags.quested) {
 		put_buffer(" Quest  ", STATUS_ROW, QUESTED_COLUMN);
 	} else if (player_cur_quest > 0) {
 		put_buffer("  Done  ", STATUS_ROW, QUESTED_COLUMN);

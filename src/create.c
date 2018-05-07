@@ -9,84 +9,11 @@ uint8_t cc__max_in_statp(uint8_t stat);
 uint8_t cc__max_stat(uint8_t cur_stat, int8_t amount);
 uint8_t cc__new_stat(uint8_t old_guy);
 uint8_t cc__old_stat(uint8_t stat);
+uint8_t cc__get_min_stat(char const *prompt, uint8_t max);
+uint8_t cc__get_minimums(stat_s_type user, stat_s_type max_r);
+int64_t cc__get_stat();
 
-static uint8_t cc__get_min_stat(char const *prompt, uint8_t max)
-{
-	uint32_t abil = 0;
-	uint32_t perc = 0;
-	char tmp_str[134] = "";
-	char out_str[134] = "";
-
-	if (max == 250) {
-		sprintf(out_str, "Min %s (racial max 18/00) : ", prompt);
-	} else if (max > 150) {
-		sprintf(out_str, "Min %s (racial max 18/%d) : ", prompt,
-			max - 150);
-	} else {
-		sprintf(out_str, "Min %s (racial max %d) : ", prompt,
-			cc__old_stat(max));
-	}
-
-	prt(out_str, 1, 1);
-
-	while (tmp_str[0] == '\0')
-		get_string(tmp_str, 1, strlen(out_str) + 1, 10);
-	if (pindex(tmp_str, '/') > 0) {
-		/* player is asking for an 18/xx, 17/00 is left a 0 here, bummer
-		 */
-
-		*strchr(tmp_str, '/') = ' ';
-		sscanf(tmp_str, "%u %u", &abil, &perc);
-		if (abil == 18) {
-			if (perc == 0) {
-				abil = 250;
-			} else {
-				abil = 150 + perc;
-			}
-		}
-	} else {
-		/* player is asking for something less than 18/xx */
-
-		sscanf(tmp_str, "%u", &abil);
-		if (abil < 3) {
-			abil = 3;
-		} else if (abil > 18) {
-			abil = 18;
-		}
-
-		abil = cc__new_stat(abil);
-	}
-
-	return abil;
-}
-
-static void cc__get_minimums(stat_s_type user, boolean *minning, stat_s_type max_r)
-{
-	/*	{ Get minimum stats the character wants			-DMF-
-	 * } */
-	if (get_yes_no("Do you wish to try for minimum statistics?")) {
-		*minning = true;
-		user[STR] = cc__get_min_stat("STR", max_r[STR]);
-		user[INT] = cc__get_min_stat("INT", max_r[INT]);
-		user[WIS] = cc__get_min_stat("WIS", max_r[WIS]);
-		user[DEX] = cc__get_min_stat("DEX", max_r[DEX]);
-		user[CON] = cc__get_min_stat("CON", max_r[CON]);
-		user[CHR] = cc__get_min_stat("CHR", max_r[CHR]);
-		prt_6_stats(user, NULL, 3, 65);
-	}
-}
-
-static long cc__get_stat()
-{
-	/*	{ Generates character's stats				-JWT-
-	 * } */
-	long i;
-
-	i = randint(4) + randint(4) + randint(4) + 5; /* 8..17 */
-	return (i - 3) * 10;			      /* 50..140 */
-}
-
-static long cc__change_stat(long cur_stat, long amount)
+long cc__change_stat(long cur_stat, long amount)
 {
 	/*	{ Changes stats by given amount				-JWT-
 	 * }*/
@@ -105,7 +32,7 @@ static long cc__change_stat(long cur_stat, long amount)
 	return cur_stat;
 }
 
-static boolean cc__choose_race()
+boolean cc__choose_race()
 {
 	/*	{ Allows player to select a race			-JWT-
 	 * }*/
@@ -164,56 +91,7 @@ static boolean cc__choose_race()
 	return return_value;
 }
 
-static void cc__print_try_count(int try_count)
-{
-	char out_str[134];
-	sprintf(out_str, "Try = %10d", try_count);
-	put_buffer(out_str, 21, 60);
-	put_qio();
-}
-
-static void cc__put_stats()
-{
-
-	/*	{ Prints the following information on the screen.	-JWT-
-	 * }*/
-
-	prt_6_stats(player_stats_curr, NULL, 3, 65);
-	prt_num("+ To Hit   : ", player_dis_th, 10, 4);
-	prt_num("+ To Damage: ", player_dis_td, 11, 4);
-	prt_num("+ To AC    : ", player_dis_tac, 12, 4);
-	prt_num("  Total AC : ", player_dis_ac, 13, 4);
-}
-
-static void cc__put_misc1()
-{
-	/*	{ Prints age, height, weight, and SC			-JWT-
-	 * }*/
-
-	prt_num("Age          : ", player_age, 3, 40);
-	prt_num("Height       : ", player_ht, 4, 40);
-	prt_num("Weight       : ", player_wt, 5, 40);
-	prt_num("Social Class : ", player_sc, 6, 40);
-	prt_num("Difficulty   : ", player_diffic, 7, 40);
-}
-
-static void cc__put_misc2()
-{
-
-	/*	{ Prints the following information on the screen.	-JWT-
-	 * }*/
-
-	prt_num("Level      : ", player_lev, 10, 31);
-	prt_num("Experience : ", player_exp, 11, 31);
-	prt_num("Gold       : ", player_money[TOTAL_], 12, 31);
-	prt_num("Account    : ", player_account, 13, 31);
-	prt_num("Max Hit Points : ", player_mhp, 10, 54);
-	prt_num("Cur Hit Points : ", (long)(player_chp), 11, 54);
-	prt_num("Max Mana       : ", player_mana, 12, 54);
-	prt_num("Cur Mana       : ", (long)(player_cmana), 13, 54);
-}
-
-static void cc__put_misc3()
+void cc__put_misc3()
 {
 
 	/*	{ Prints ratings on certain abilities			-RAK-
@@ -238,9 +116,9 @@ static void cc__put_misc3()
 	xdis = player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT);
 	xsave = player_save + player_lev + spell_adj(WIS);
 	xdev = player_save + player_lev + spell_adj(INT);
-	xswm = py.flags.swim + 4;
+	xswm = player_flags.swim + 4;
 	xrep = 6 + player_rep div 25;
-	sprintf(xinfra, "%ld feet", py.flags.see_infra * 10);
+	sprintf(xinfra, "%ld feet", player_flags.see_infra * 10);
 
 	prt("(Miscellaneous Abilities)", 16, 24);
 	sprintf(tmp2, "%s%s", "Fighting    : ", likert(xbth, 12, tmp_str));
@@ -267,144 +145,8 @@ static void cc__put_misc3()
 	put_buffer(tmp2, 20, 2);
 }
 
-static void cc__upd_stats()
-{
 
-	/*	{ Updates the following information on the screen. (wow)-KRC-
-	 * }*/
-	stat_set tstat;
-
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		prt_stat("", player_stats_curr[(int)tstat], 3 + tstat, 71);
-	}
-	prt_num("", player_dis_th, 10, 17);
-	prt_num("", player_dis_td, 11, 17);
-	prt_num("", player_dis_tac, 12, 17);
-	prt_num("", player_dis_ac, 13, 17);
-}
-
-static void cc__upd_misc1()
-{
-	/*{ Updates age, height, weight, and SC (amazing, huh?)	-KRC-	}*/
-
-	prt_num("", player_age, 3, 55);
-	prt_num("", player_ht, 4, 55);
-	prt_num("", player_wt, 5, 55);
-	prt_num("", player_sc, 6, 55);
-}
-
-static boolean cc__satisfied(boolean *minning, boolean *printed_once, long *best_min,
-		      long *try_count, stat_s_type best, stat_s_type user)
-{
-	/*	{ What does it take to satisfy the guy?!		-KRC-
-	 * }*/
-
-	char s;
-	stat_set tstat;
-	boolean return_value = false;
-
-	if (!*minning) {
-		/*
-		 * Figure out what the current bonuses are
-		 * so the player has a clue
-		 */
-		player_dis_th = tohit_adj();
-		player_dis_td = todam_adj();
-		player_dis_tac = toac_adj();
-
-		if (!*printed_once) {
-			erase_line(1, 1);
-			clear_from(21);
-			cc__put_misc1();
-			cc__put_stats();
-
-			prt("Press 'R' to reroll, <RETURN> to continue:", 21,
-			    3);
-			*printed_once = true;
-		} else {
-			cc__upd_misc1();
-			cc__upd_stats();
-			prt("", 21, 51);
-		} /* endif printed_once */
-
-		while (s != 10 && s != 'R') {
-			inkey_flush(&s);
-			return_value = (s != 'R');
-		}
-
-	} else { /* minning */
-
-		if (!*printed_once) {
-			clear_from(21);
-			prt("Press any key to give up (50000 rolls max): ", 21,
-			    3);
-			put_qio();
-			*printed_once = true;
-		}
-
-		*best_min =
-		    cc__next_best_stats(player_stats_perm, user, best, *best_min);
-		(*try_count)++;
-		if ((*try_count % 250) == 0) {
-			cc__print_try_count(*try_count);
-		}
-
-		inkey_delay(&s, 0);
-		if ((s != 0) || (*try_count == 50000)) {
-			*minning = false;
-			*printed_once = false;
-			for (tstat = STR; tstat <= CHR; tstat++) {
-				player_stats_perm[(int)tstat] = best[(int)tstat];
-				player_stats_curr[(int)tstat] = best[(int)tstat];
-			}
-			return_value =
-			    cc__satisfied(minning, printed_once, best_min,
-					  try_count, best, user);
-		} else {
-			return_value = (*best_min == 0);
-			if (*best_min == 0) {
-				cc__put_misc1();
-				cc__put_stats();
-			}
-		} /* endif s || try_count */
-	}	 /* endif minning */
-
-	return return_value;
-}
-
-static void cc__get_stats()
-{
-	/*	{ Get the statistics for this bozo			-KRC-
-	 * }*/
-
-	const int32_t prace = player_prace;
-	int tstat;
-
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		player_stats_perm[tstat] = cc__change_stat(
-		    cc__get_stat(), race_stats(prace)[tstat]);
-		player_stats_curr[tstat] = player_stats_perm[tstat];
-	}
-
-	player_rep = 0;
-	player_srh = race_search_mod(prace);
-	player_bth = race_melee_bonus(prace);
-	player_bthb = race_ranged_bonus(prace);
-	player_fos = race_search_freq(prace);
-	player_stl = race_stealth_mod(prace);
-	player_save = race_save_mod(prace);
-	player_hitdie = race_health_bonus(prace);
-	player_lev = 1;
-	player_ptodam = todam_adj();
-	player_ptohit = tohit_adj();
-	player_ptoac = 0;
-	player_pac = toac_adj();
-	player_expfact = race_expfactor(prace);
-	py.flags.see_infra = race_infravision(prace);
-	py.flags.swim = race_swim_speed(prace);
-}
-
-static void cc__print_history()
+void cc__print_history()
 {
 	/*	{ Will print the history of a character			-JWT-
 	 * }*/
@@ -424,7 +166,7 @@ static void cc__print_history()
 	{		(race)*3 + 1					}
 	{		All history parts are in ascending order	}
 */
-static void cc__get_history()
+void cc__get_history()
 {
 
 	long hist_ptr, cur_ptr, test_roll;
@@ -520,7 +262,7 @@ static void cc__get_history()
 
 } /* end cc__get_history */
 
-static boolean cc__get_sex()
+boolean cc__get_sex()
 {
 	/*	{ Gets the character's sex				-JWT-
 	 * }*/
@@ -564,7 +306,7 @@ static boolean cc__get_sex()
 	return return_value;
 } /* end cc__get_sex */
 
-static void cc__get_ahw()
+void cc__get_ahw()
 {
 	/*	{ Computes character's age, height, and weight		-JWT-
 	 * }*/
@@ -598,7 +340,7 @@ static void cc__get_ahw()
 } /* end cc__get_ahw */
 
 /*	{ Gets a character class				-JWT-	}*/
-static boolean cc__get_class()
+boolean cc__get_class()
 {
 	long i1, i2, i3, i4, i5;
 	long cl[MAX_CLASS + 1];
@@ -697,38 +439,6 @@ static boolean cc__get_class()
 	return return_value;
 } /* end cc__get_class */
 
-static void cc__get_money()
-{
-
-	long tmp, i1;
-	stat_set tstat;
-
-	tmp = 0;
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		tmp += cc__old_stat(player_stats_curr[(int)tstat]);
-	}
-
-	i1 = player_sc * 6 + randint(25) + 325; /*{ Social Class adj	} */
-	i1 -= tmp;				 /*{ Stat adj		} */
-	i1 += cc__old_stat(player_stats_curr[CHR]);      /*{ Charisma adj	} */
-	if (i1 < 80) {
-		i1 = 80;
-	} /*{ Minimum		} */
-	i1 = (i1 * GOLD_VALUE) + randint(GOLD_VALUE);
-	add_money(i1);
-}
-
-static void cc__put_character()
-{
-	/*{ Prints the following information on the screen.	-JWT-	}*/
-
-	clear_from(1);
-	prt2("Name      : ", player_name, 3, 3);
-	prt2("Race      : ", player_race, 4, 3);
-	prt2("Sex       : ", player_sex, 5, 3);
-	prt2("Class     : ", player_tclass, 6, 3);
-}
-
 void cc__get_name()
 {
 	/* Gets a name for the character    -JWT- */
@@ -738,119 +448,6 @@ void cc__get_name()
 	while (player_name[0] == '\0')
 		get_string(player_name, 3, 15, 24);
 	clear_from(21);
-}
-
-void create_character()
-{
-	stat_s_type best, user, max_r;
-	boolean minning = false;
-	boolean printed_once = false;
-	long try_count = 0;
-	long best_min = 99999999;
-	stat_set tstat;
-
-	/*
-	 * This delay may be reduced, but is recomended to keep players
-	 *
-	 * from continuously rolling up characters, which can be VERY
-	 * expensive CPU wise.
-	*/
-
-	ENTER(("create_character", ""));
-
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		best[(int)tstat] = 3;
-	}
-
-	do {
-		cc__put_character();
-	} while (!cc__choose_race());
-
-	while (!cc__get_sex()) {
-		cc__put_character();
-	}
-
-	printed_once = false;
-	for (tstat = STR; tstat <= CHR; tstat++) {
-		max_r[(int)tstat] =
-		    cc__max_stat(140, race_stats(player_prace)[(int)tstat]);
-	}
-
-	cc__get_minimums(user, &minning, max_r);
-	do {
-		cc__get_stats();
-		cc__get_history();
-		cc__get_ahw();
-	} while (!cc__satisfied(&minning, &printed_once, &best_min, &try_count,
-				best, user));
-
-	cc__print_history();
-	while (!cc__get_class()) {
-		cc__put_character();
-		cc__print_history();
-		cc__put_misc1();
-		cc__put_stats();
-	}
-
-	player_creation_time = time(NULL);
-	player_save_count = 0;
-	player_claim_check = 0;
-	py.flags.light_on = false;
-
-	cc__get_money();
-	cc__put_stats();
-	cc__put_misc2();
-	cc__put_misc3();
-	cc__get_name();
-	/*	get_ssn(); */
-	pause_exit(24, PLAYER_EXIT_PAUSE);
-
-	LEAVE("create_character", "");
-}
-
-static void cc__display_char()
-{
-
-	/*	{ Used to display the character on the screen.		-RAK-
-	 * }*/
-
-	cc__put_character();
-	cc__put_misc1();
-	cc__put_stats();
-	cc__put_misc2();
-	cc__put_misc3();
-}
-
-void change_name()
-{
-
-	/*	{ Chances the name of the character			-JWT-
-	 * } */
-
-	char c;
-	boolean flag = false;
-
-	cc__display_char();
-	do {
-		prt("<c>hange character name.     <ESCAPE> to continue.", 22,
-		    3);
-
-		c = inkey();
-
-		switch (c) {
-		case 99:
-			cc__get_name();
-			break;
-		case 0:
-		case 3:
-		case 25:
-		case 26:
-		case 27:
-			flag = true;
-			break;
-		}
-
-	} while (!flag);
 }
 
 void set_gem_values()

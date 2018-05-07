@@ -167,7 +167,7 @@ void bi__insure_person()
 	boolean flag;
 	char out[134], out2[134];
 
-	if (py.flags.insured) {
+	if (player_flags.insured) {
 		msg_print("Your person is already insured.");
 	} else if (player_deaths > 7) {
 		msg_print(
@@ -192,7 +192,7 @@ void bi__insure_person()
 
 		if (flag) {
 			bi__display_gold();
-			py.flags.insured = true;
+			player_flags.insured = true;
 			msg_print("Your person is now insured");
 		}
 	}
@@ -266,7 +266,7 @@ void bi__parse_command(boolean *exit_flag, char shop_owner[82])
 			break;
 
 		case 97:
-			if (py.flags.insured) {
+			if (player_flags.insured) {
 				bi__insure_all_items();
 			} else {
 				prt("Insure your body first.", 1, 1);
@@ -274,7 +274,7 @@ void bi__parse_command(boolean *exit_flag, char shop_owner[82])
 			break;
 
 		case 105:
-			if (py.flags.insured) {
+			if (player_flags.insured) {
 				bi__insure_item(shop_owner);
 			} else {
 				prt("Insure your body first.", 1, 1);
@@ -282,7 +282,7 @@ void bi__parse_command(boolean *exit_flag, char shop_owner[82])
 			break;
 
 		case 101:
-			if (py.flags.insured) {
+			if (player_flags.insured) {
 				bi__insure_all_equip();
 			} else {
 				prt("Insure your body first.", 1, 1);

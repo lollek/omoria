@@ -184,11 +184,6 @@ typedef struct p_flags
 	boolean resting_till_full;
 } p_flags;
 
-typedef struct player_type
-{
-	p_flags flags;
-} player_type;
-
 typedef struct spell_t
 {
 	char sname[28];

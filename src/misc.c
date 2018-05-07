@@ -268,7 +268,7 @@ void check_kickout_time(long num, long check)
 			msg_print("And then try to run the game.");
 			msg_print("");
 			do {
-				py.flags.dead = false;
+				player_flags.dead = false;
 				save_char(true);
 			} while (true);
 		}
@@ -299,7 +299,7 @@ chtype loc_symbol(long y, long x)
 
 	if (cptr == 1 && !find_flag) {
 		sym = '@';
-	} else if (py.flags.blind > 0) {
+	} else if (player_flags.blind > 0) {
 		sym = ' ';
 	} else {
 
@@ -313,7 +313,7 @@ chtype loc_symbol(long y, long x)
 			      ((uand(c_list[mptr].cmove, 0x00800000) != 0) ||
 			       (distance(char_row, char_col, y, x) <= 5)))) &&
 			    ((uand(c_list[mptr].cmove, 0x00010000) == 0) ||
-			     (py.flags.see_inv))) {
+			     (player_flags.see_inv))) {
 				sym = c_list[mptr].cchar;
 			} else if (tptr > 0) {
 				sym = t_list[tptr].tchar;
@@ -3533,8 +3533,8 @@ void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence)
 	i2 = m_list[ptr].mptr;
 
 	/*{ Does the player know what he's fighting?      }*/
-	if (((uand(0x10000, c_list[i2].cmove) != 0) && (!(py.flags.see_inv))) ||
-	    (py.flags.blind > 0) || (!(m_list[ptr].ml))) {
+	if (((uand(0x10000, c_list[i2].cmove) != 0) && (!(player_flags.see_inv))) ||
+	    (player_flags.blind > 0) || (!(m_list[ptr].ml))) {
 		if (begin_sentence) {
 			strcpy(m_name, "It");
 		} else {

@@ -1372,7 +1372,7 @@ void ic__put_inside()
 					ic__destroy_bag(put_ptr);
 					ic__destroy_bag(into_ptr);
 				} else {
-					py.flags.paralysis++;
+					player_flags.paralysis++;
 					reset_flag = false;
 
 					if (put_ptr == inventory_list) {
@@ -1451,7 +1451,7 @@ void ic__take_out()
 	if (count > 0) {
 		if (get_item(&from_ptr, "Remove which item?", &redraw, count,
 			     &trash_char, false, true)) {
-			py.flags.paralysis += 2;
+			player_flags.paralysis += 2;
 			reset_flag = false;
 			temp_ptr = inventory_list;
 

@@ -69,7 +69,7 @@ void search_off()
 	find_flag = false;
 	move_char(5);
 	change_speed(-1);
-	py.flags.status &= ~IS_SEARCHING;
+	player_flags.status &= ~IS_SEARCHING;
 	prt_search();
 }
 
@@ -79,16 +79,16 @@ void search_on()
 
 	search_flag = true;
 	change_speed(+1);
-	py.flags.status |= IS_SEARCHING;
+	player_flags.status |= IS_SEARCHING;
 	prt_search();
-	/* with py.flags do; */
+	/* with player_flags do; */
 }
 
 void rest_off()
 {
-	py.flags.rest = 0;
-	py.flags.status &= ~IS_RESTING;
-	py.flags.resting_till_full = false;
+	player_flags.rest = 0;
+	player_flags.status &= ~IS_RESTING;
+	player_flags.resting_till_full = false;
 	if (msg_flag) {
 		erase_line(1, 1);
 	}
@@ -108,7 +108,7 @@ static void _move_char(long dir)
 		find_flag = false;
 
 	/* Confused causes random movement 75% of the time */
-	if (py.flags.confused > 0 && dir != 5 && randint(4) > 1) {
+	if (player_flags.confused > 0 && dir != 5 && randint(4) > 1) {
 		dir = randint(9);
 		find_flag = false;
 	}
@@ -124,7 +124,7 @@ static void _move_char(long dir)
 			move_light(char_row, char_col, char_row, char_col);
 		}
 		/* ..if we dare */
-		if (py.flags.afraid < 1) {
+		if (player_flags.afraid < 1) {
 			py_attack(test_row, test_col);
 		} else {
 			msg_print("You are too afraid!");
@@ -176,7 +176,7 @@ static void _move_char(long dir)
 		area_affect(dir, test_row, test_col);
 
 	/* Check to see if he notices something */
-	if (py.flags.blind < 1 && (randint(player_fos) == 1 || search_flag))
+	if (player_flags.blind < 1 && (randint(player_fos) == 1 || search_flag))
 		search(test_row, test_col, player_srh);
 
 	/* An object is beneath him? */
@@ -188,7 +188,7 @@ static void _move_char(long dir)
 
 	/* A room of light should be lit... */
 	if (cave[test_row][test_col].fval == lopen_floor.ftval) {
-		if (py.flags.blind < 1) {
+		if (player_flags.blind < 1) {
 			if (!(cave[test_row][test_col].pl)) {
 				light_room(test_row, test_col);
 			}
@@ -197,7 +197,7 @@ static void _move_char(long dir)
 		/* In doorway of light-room? */
 	} else if ((cave[test_row][test_col].fval == corr_floor2.ftval ||
 		    cave[test_row][test_col].fval == corr_floor3.ftval) &&
-		   py.flags.blind < 1) {
+		   player_flags.blind < 1) {
 		for (i1 = test_row - 1; i1 <= test_row + 1; i1++) {
 			for (i2 = test_col - 1; i2 <= test_col + 1; i2++) {
 				if (in_bounds(i1, i2) &&
@@ -241,7 +241,7 @@ void take_hit(long damage, char hit_from[82])
 
 	ENTER(("take_hit", "%d, %s", damage, hit_from));
 
-	if (py.flags.invuln > 0) {
+	if (player_flags.invuln > 0) {
 		damage = 0;
 	}
 
@@ -251,7 +251,7 @@ void take_hit(long damage, char hit_from[82])
 		search_off();
 	}
 
-	if (py.flags.rest > 0) {
+	if (player_flags.rest > 0) {
 		rest_off();
 	}
 

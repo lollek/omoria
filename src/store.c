@@ -822,7 +822,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 		sleep(1);
 	}
 
-	/* with py.flags do; */
+	/* with player_flags do; */
 	for (t2 = time_spent; (PF.poisoned > 0) && (t2 > 0);) {
 		PF.poisoned--;
 		time_spent--;
@@ -1308,9 +1308,9 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 								    "buckwheat "
 								    "cakes and "
 								    "bacon.");
-								py.flags.foodc =
+								player_flags.foodc =
 								    PLAYER_FOOD_FULL;
-								py.flags
+								player_flags
 								    .status &= ~(
 								    IS_WEAK |
 								    IS_HUNGERY);

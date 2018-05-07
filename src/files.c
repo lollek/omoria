@@ -686,7 +686,7 @@ void file_character()
 				full_date_string(player_cur_age, s1));
 			fprintf(file1, "  You have been playing for %s.\n",
 				show_play_time(s1));
-			if (py.flags.dead) {
+			if (player_flags.dead) {
 				fprintf(
 				    file1,
 				    "  You were killed by %s on level %ld.\n",

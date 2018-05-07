@@ -81,7 +81,7 @@ static boolean sc__write_master(GDBM_FILE f2)
 static void sc__display_status(boolean quick, char out_rec[1026])
 {
 	/*{ Message to player on what is happening}*/
-	if (!py.flags.dead) {
+	if (!player_flags.dead) {
 		clear_from(1);
 		if (!quick)
 			put_qio();
@@ -198,7 +198,7 @@ static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 	encrypt_write(f1, cf_state, out_rec);
 	/*end with player*/
 
-	/*with py.flags do*/
+	/*with player_flags do*/
 	sprintf(out_rec, "%d %d", (int)PF.insured, (int)PF.dead);
 	encrypt_write(f1, cf_state, out_rec);
 }
@@ -285,7 +285,7 @@ static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 		(int)player_stats_mod[CHR], (int)player_stats_lost[CHR]);
 	encrypt_write(f1, cf_state, out_rec);
 
-	/* with py.flags do */
+	/* with player_flags do */
 	sprintf(out_rec, "%lu %ld %ld %ld %ld %ld %ld %ld %ld %d", PF.status,
 		PF.blind, PF.confused, PF.foodc, PF.food_digested,
 		PF.protection, PF.speed, PF.afraid, PF.poisoned,
@@ -319,7 +319,7 @@ static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 		PF.hoarse, PF.magic_prot, PF.ring_ice, PF.temp_stealth,
 		PF.resist_petri, PF.blade_ring);
 	encrypt_write(f1, cf_state, out_rec);
-	/* end with py.flags */
+	/* end with player_flags */
 }
 
 static void sc__write_magic(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
@@ -624,7 +624,7 @@ boolean save_char(boolean quick)
 
 	} /* endif flag */
 
-	if (flag && !py.flags.dead) {
+	if (flag && !player_flags.dead) {
 		sprintf(out_rec, "Character saved. [Moria Version %3.2f]\n",
 			CUR_VERSION);
 		prt(out_rec, 2, 1);
@@ -934,7 +934,7 @@ static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
 	}
 	/*end with player*/
 
-	/*with py.flags do*/
+	/*with player_flags do*/
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%d %d", &x1, &x2) != 2) {
 		*paniced = true;
@@ -1156,7 +1156,7 @@ static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 	player_stats_mod[CHR] = x23;
 	player_stats_lost[CHR] = x24;
 
-	/* with py.flags do; */
+	/* with player_flags do; */
 	read_decrypt(f1, cf_state, in_rec, paniced);
 	if (sscanf(in_rec, "%lu %ld %ld %ld %ld %ld %ld %ld %ld %d",
 		   &(PF.status), &(PF.blind), &(PF.confused), &(PF.foodc),
@@ -1219,7 +1219,7 @@ static void gc__read_stats_and_flags(FILE *f1, encrypt_state *cf_state,
 		*paniced = true;
 	}
 
-	/* end with py.flags */
+	/* end with player_flags */
 }
 
 static void gc__read_magic(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
@@ -1713,7 +1713,7 @@ void restore_char(char fnam[82], boolean present, boolean undead)
 	if (undead && !paniced) {
 		save_file_name_set(tfnam);
 		get_char(false);
-		py.flags.dead = false;
+		player_flags.dead = false;
 		save_file_name_set(tfnam);
 		save_char(false); /* this probably will not return */
 	}

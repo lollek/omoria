@@ -78,7 +78,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 12: /*{ Cure Poison }*/
-		cure_me(&(py.flags.poisoned));
+		cure_me(&(player_flags.poisoned));
 		break;
 
 	case 13: /*{ Shadow Door }*/
@@ -105,11 +105,11 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 17: /*{ Infravision }*/
-		py.flags.tim_infra += 50 + randint(50);
+		player_flags.tim_infra += 50 + randint(50);
 		break;
 
 	case 18: /*{ Invisibility }*/
-		py.flags.temp_stealth += randint(15) + 10;
+		player_flags.temp_stealth += randint(15) + 10;
 		break;
 
 	case 19: /*{ Turn Stone to Mud }*/
@@ -147,7 +147,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 25: /*{ Ring of Frost }*/
-		py.flags.ring_ice += 3 + randint(3);
+		player_flags.ring_ice += 3 + randint(3);
 		break;
 
 	case 26: /*{ Sleep III }*/
@@ -178,7 +178,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 30: /*{ Protection From Magic }*/
-		py.flags.magic_prot += 20 + randint(20);
+		player_flags.magic_prot += 20 + randint(20);
 		break;
 
 	case 31: /*{ Frost Ball }*/
@@ -194,7 +194,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 33: /*{ Ring of Fire }*/
-		py.flags.ring_fire += 3 + randint(3);
+		player_flags.ring_fire += 3 + randint(3);
 		break;
 
 	case 34: /*{ Recharge Item II }*/

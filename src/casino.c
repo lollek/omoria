@@ -72,7 +72,7 @@ void c__check_casino_kickout()
 			msg_print("");
 			c__change_money();
 			do {
-				py.flags.dead = false;
+				player_flags.dead = false;
 				save_char(true);
 			} while (!false);
 		}

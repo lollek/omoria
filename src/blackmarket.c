@@ -803,7 +803,7 @@ void do_black_market()
 void Opusii_vomit(long percentage)
 {
   if (randint(100) < percentage) {
-    /*with py.flags do; */
+    /*with player_flags do; */
     PF.foodc     -= 500;
     PF.paralysis  = 4;
     msg_print("You feel your insides heave!");

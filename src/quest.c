@@ -183,7 +183,7 @@ void q__reward_quest()
 		player_rep = 50;
 	}
 	player_cur_quest = 0;
-	py.flags.quested = false;
+	player_flags.quested = false;
 	turn_counter = QUEST_DELAY;
 	prt_quested();
 
@@ -270,8 +270,8 @@ boolean q__completed_quest()
 {
 	boolean return_value = false;
 
-	if ((!py.flags.quested) && (player_cur_quest != 0)) {
-		py.flags.quested = false; /* { not under quest          } */
+	if ((!player_flags.quested) && (player_cur_quest != 0)) {
+		player_flags.quested = false; /* { not under quest          } */
 		player_quests++;	 /* { one more is now complete } */
 		return_value = true;
 	}
@@ -283,7 +283,7 @@ boolean q__evaluate_char()
 {
 	boolean return_value;
 
-	if ((py.flags.quested) || (player_lev > player_quests)) {
+	if ((player_flags.quested) || (player_lev > player_quests)) {
 		return_value = true;
 	} else {
 		return_value = false;
@@ -318,7 +318,7 @@ void q__reject_char()
 boolean q__new_victim()
 {
 	return ((player_cur_quest == 0) && (player_quests == 0) &&
-		(!py.flags.quested));
+		(!player_flags.quested));
 }
 
 void q__explain_quests()
@@ -406,7 +406,7 @@ void q__parse_command(boolean enter_flag)
 						msg_print(" ");
 					}
 					player_cur_quest = quest[command - 96];
-					py.flags.quested = true;
+					player_flags.quested = true;
 					exit_flag = true;
 				}
 

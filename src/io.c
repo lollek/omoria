@@ -34,7 +34,7 @@ void signalexit()
 
 	priv_switch(0);
 	msg_print("Sorry, caught a core-dump signal.");
-	py.flags.dead = false;
+	player_flags.dead = false;
 	save_char(true);
 	exit_game(0);
 
@@ -65,9 +65,9 @@ void signalquit()
 void signalsave()
 {
 	priv_switch(0);
-	py.flags.dead = false;
+	player_flags.dead = false;
 	save_char(true);
-	py.flags.dead = true;
+	player_flags.dead = true;
 	exit_game();
 }
 

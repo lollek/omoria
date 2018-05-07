@@ -26,7 +26,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 4: /*{ Remove Fear }*/
-		cure_me(&py.flags.afraid);
+		cure_me(&player_flags.afraid);
 		break;
 
 	case 5: /*{ Call Light }*/
@@ -69,7 +69,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 13: /*{ Heroism }*/
-		py.flags.hero += randint(24) + 48;
+		player_flags.hero += randint(24) + 48;
 		break;
 
 	case 14: /*{ Sanctuary }*/
@@ -84,7 +84,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 16: /*{ Resist Heat and Cold }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.resist_heat += randint(10) + 10;
 		PF.resist_cold += randint(10) + 10;
 		break;
@@ -98,7 +98,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 19: /*{ Neutralize Poison }*/
-		cure_me(&py.flags.poisoned);
+		cure_me(&player_flags.poisoned);
 		break;
 
 	case 20: /*{ Cure Serious Wounds }*/
@@ -146,7 +146,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 30:				   /*{ Prayer }*/
-		py.flags.shero = 24 + randint(48); /* XXXX not cumulitive */
+		player_flags.shero = 24 + randint(48); /* XXXX not cumulitive */
 		break;
 
 	case 31: /*{ Dispell Undead }*/
@@ -154,11 +154,11 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 32: /*{ Resist Paralysis }*/
-		py.flags.free_time += (randint(20) + 15);
+		player_flags.free_time += (randint(20) + 15);
 		break;
 
 	case 33: /*{ Blade Barrier }*/
-		py.flags.blade_ring += 3 + randint(3);
+		player_flags.blade_ring += 3 + randint(3);
 		break;
 
 	case 34: /*{ Dispell Evil }*/
@@ -170,7 +170,7 @@ void divine_spell_effects(long effect)
 		break;
 
 	case 36: /*{ Resist Magic }*/
-		py.flags.magic_prot += 40 + randint(40);
+		player_flags.magic_prot += 40 + randint(40);
 		break;
 
 	case 37: /*{ Holy Thunder }*/
@@ -184,19 +184,19 @@ void divine_spell_effects(long effect)
 
 	case 39: /*{ Hero's Feast }*/
 		msg_print("You have a marvelous meal!");
-		py.flags.foodc = PLAYER_FOOD_FULL + 4000;
+		player_flags.foodc = PLAYER_FOOD_FULL + 4000;
 		prt_hunger();
 		hp_player(200, "a prayer.");
 		create_food(6, 4, 3, 2, 1);
-		py.flags.status &= ~(IS_WEAK | IS_HUNGERY);
+		player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
 		prt_hunger();
 		msg_print("You are full.");
 		break;
 
 	case 40: /*{ Holy Word }*/
 		zap_area(0x0004, 6 * player_lev, c_holy_word);
-		cure_me(&py.flags.afraid);
-		cure_me(&py.flags.poisoned);
+		cure_me(&player_flags.afraid);
+		cure_me(&player_flags.poisoned);
 		hp_player(1000, "a prayer.");
 		break;
 

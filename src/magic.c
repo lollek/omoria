@@ -125,12 +125,12 @@ static void _cast(enum magic_t magic_type)
 	reset_flag = true;
 	redraw = false;
 
-	if (py.flags.confused > 0) {
+	if (player_flags.confused > 0) {
 		msg_print("You are too confused...");
 		return;
 	}
 
-	if (py.flags.blind > 0) {
+	if (player_flags.blind > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
 			msg_print("You can't see to read your spell book!");
@@ -161,7 +161,7 @@ static void _cast(enum magic_t magic_type)
 		return;
 	}
 
-	if (py.flags.hoarse > 0) {
+	if (player_flags.hoarse > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
 		case M_DIVINE:
@@ -174,7 +174,7 @@ static void _cast(enum magic_t magic_type)
 		}
 	}
 
-	if (py.flags.afraid > 0) {
+	if (player_flags.afraid > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
 		case M_DIVINE:
@@ -187,7 +187,7 @@ static void _cast(enum magic_t magic_type)
 		}
 	}
 
-	if (py.flags.image > 0) {
+	if (player_flags.image > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
 		case M_DIVINE:
@@ -327,7 +327,7 @@ static void _cast(enum magic_t magic_type)
 	if (class_spell(player_pclass, choice)->smana > player_cmana) {
 		if (magic_type == M_ARCANE || magic_type == M_DIVINE) {
 			msg_print("You faint from fatigue!");
-			py.flags.paralysis = randint(
+			player_flags.paralysis = randint(
 			    5 * trunc(class_spell(player_pclass, choice)->smana -
 				      player_cmana));
 			player_cmana = 0;
@@ -337,7 +337,7 @@ static void _cast(enum magic_t magic_type)
 
 		} else if (magic_type == M_NATURE || magic_type == M_SONG) {
 			msg_print("You lose your voice attempting the song!");
-			py.flags.hoarse =
+			player_flags.hoarse =
 			    randint(5 * (class_spell(player_pclass, choice)->smana -
 					 player_cmana));
 			player_cmana = 0;
@@ -346,7 +346,7 @@ static void _cast(enum magic_t magic_type)
 
 		} else if (magic_type == M_CHAKRA) {
 			msg_print("You faint from fatigue!");
-			py.flags.paralysis = randint(
+			player_flags.paralysis = randint(
 			    5 * trunc(class_spell(player_pclass, choice)->smana -
 				      player_cmana));
 			player_cmana = 0;

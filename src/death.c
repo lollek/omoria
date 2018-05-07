@@ -181,9 +181,9 @@ static void respawn()
 		player_stats_lost[i] = 0;
 		update_stat(i);
 	}
-	memset(&py.flags, 0, sizeof(py.flags));
-	py.flags.foodc = PLAYER_FOOD_FULL;
-	py.flags.food_digested = 2;
+	memset(&player_flags, 0, sizeof(player_flags));
+	player_flags.foodc = PLAYER_FOOD_FULL;
+	player_flags.food_digested = 2;
 	death = false;
 
 	dun_level = 0;

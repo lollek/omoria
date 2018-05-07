@@ -41,6 +41,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
 omoria: $(OBJFILES)
+	cargo build
 	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libomoria.a
 .PHONY: omoria
 

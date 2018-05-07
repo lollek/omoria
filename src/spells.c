@@ -130,7 +130,7 @@ boolean cure_me(long *what_flag)
 {
 	boolean return_value = false;
 
-	/*{py.flags:  confused, blind, poisoned, hoarse, afraid, image}*/
+	/*{player_flags:  confused, blind, poisoned, hoarse, afraid, image}*/
 
 	if (*what_flag > 1) {
 		*what_flag = 1;
@@ -2090,7 +2090,7 @@ boolean destroy_area(long y, long x)
 	}
 
 	msg_print("There is a searing blast of light!");
-	py.flags.blind += 10 + randint(10);
+	player_flags.blind += 10 + randint(10);
 
 	return true;
 }

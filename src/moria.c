@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 		/* Retrieve character */
 		game_state = GS_IGNORE_CTRL_C;
 		generate = get_char(true);
-		py.flags.dead = true;
+		player_flags.dead = true;
 		is_from_file = true;
 		save_char(false);
 		change_name();
@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
 		/* Create character */
 		is_from_file = false;
 		create_character();
+		player_flags.light_on = false;
 		strcpy(save_file_name, SAVE_FILE_PATH "/");
 		strcat(save_file_name, player_name);
 		save_file_name_set(save_file_name);

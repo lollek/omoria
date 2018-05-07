@@ -294,7 +294,7 @@ void c__update_mon(long monptr, long *hear_count)
 		s_range = MAX_SIGHT;
 	}
 
-	if ((py.flags.blind < 1) && panel_contains(MY(monptr), MX(monptr))) {
+	if ((player_flags.blind < 1) && panel_contains(MY(monptr), MX(monptr))) {
 		if (wizard2) {
 			flag = true;
 		} else if ((ML(monptr).cdis <= s_range)) {
@@ -303,14 +303,14 @@ void c__update_mon(long monptr, long *hear_count)
 				if ((cave[MY(monptr)][MX(monptr)].pl) ||
 				    (cave[MY(monptr)][MX(monptr)]
 					 .tl)) { /*{can see creature?}*/
-					flag = (py.flags.see_inv ||
+					flag = (player_flags.see_inv ||
 						(uand(0x10000,
 						      c_list[ML(monptr).mptr]
 							  .cmove) == 0));
-				} else if (py.flags.see_infra >
+				} else if (player_flags.see_infra >
 					   0) { /*{infravision?}*/
 					flag = ((ML(monptr).cdis <=
-						 py.flags.see_infra) &&
+						 player_flags.see_infra) &&
 						(uand(0x2000,
 						      c_list[ML(monptr).mptr]
 							  .cdefense) != 0));
@@ -333,7 +333,7 @@ void c__update_mon(long monptr, long *hear_count)
 			if (search_flag) {
 				search_off();
 			}
-			if (py.flags.rest > 0) {
+			if (player_flags.rest > 0) {
 				rest_off();
 			}
 			flush();
@@ -749,7 +749,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 3: /*{Confusion attack}*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (randint(2) == 1) {
 			if (PF.confused < 1) {
@@ -762,7 +762,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 4: /*{Fear attack    }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (player_spell_saves()) {
 			msg_print("You resist the effects!");
@@ -803,7 +803,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 10: /*{Blindness attack}*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (PF.blind < 1) {
 			PF.blind += 10 + randint(level);
@@ -816,7 +816,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 11: /*{Paralysis attack}*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (player_spell_saves()) {
 			msg_print("You resist the effects!");
@@ -836,7 +836,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 	case 12: /*{Steal Money     }*/
 		/* with player_do; */
 		if ((randint(256) < player_stats_curr[DEX]) &&
-		    (py.flags.paralysis < 1)) {
+		    (player_flags.paralysis < 1)) {
 			msg_print("You quickly protect your money pouch!");
 		} else {
 			if (player_money[TOTAL_] > 0) {
@@ -859,7 +859,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 	case 13: /*{Steal Object   }*/
 		/* with py.stat do; */
 		if ((randint(256) < player_stats_curr[DEX]) &&
-		    (py.flags.paralysis < 1)) {
+		    (player_flags.paralysis < 1)) {
 			msg_print("You grab hold of your backpack!");
 		} else {
 			item_ptr = inventory_list;
@@ -892,7 +892,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 14: /*{Poison         }*/
-		/* with py.flags do ; */
+		/* with player_flags do ; */
 		take_hit(damroll(damstr), ddesc);
 		prt_hp();
 		msg_print("You feel very sick.");
@@ -900,7 +900,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 15: /*{Lose dexterity }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(DEX, "You feel more clumsy",
 			  "You feel clumsy for a moment, then it passes.");
@@ -908,7 +908,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 16: /*{Lose constitution }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(CON, "Your health is damaged!",
 			  "Your body resists the effects of the disease.");
@@ -916,7 +916,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 17: /*{Lose intelligence }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(
 		    INT, "You feel your memories fading.",
@@ -925,7 +925,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 18: /*{Lose wisdom      }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(WIS, "Your wisdom is drained.",
 			  "Your wisdom is sustained.");
@@ -1038,7 +1038,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 25: /*{Lose charisma   }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(CHR, "Your skin starts to itch.",
 			  "Your skin starts to itch, but feels better now.");
@@ -1046,12 +1046,12 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		break;
 
 	case 26: /*{Petrification  }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		petrify(m_list[monptr].hp);
 		break;
 
 	case 27: /*{POISON Poison  }*/
-		/* with py.flags do; */
+		/* with player_flags do; */
 		PF.poisoned += damroll(damstr);
 		msg_print("You feel very sick.");
 		break;
@@ -1119,7 +1119,7 @@ void c__make_attack(long monptr)
 
 		sscanf(attx, "%ld %ld %s", &atype, &adesc, damstr);
 
-		if (py.flags.protevil > 0) {
+		if (player_flags.protevil > 0) {
 			if (uand(c_list[m_list[monptr].mptr].cdefense,
 				 0x0004) != 0) {
 				if ((player_lev + 1) >
@@ -1130,7 +1130,7 @@ void c__make_attack(long monptr)
 			}
 		}
 
-		if (py.flags.protmon > 0) {
+		if (player_flags.protmon > 0) {
 			if (uand(c_list[m_list[monptr].mptr].cdefense,
 				 0x0002) != 0) {
 				if ((player_lev + 1) >
@@ -1445,7 +1445,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 					/* { Player has read a Confuse Monster?
 					 * }*/
 					/* { Monster gets a saving throw... }*/
-					if (py.flags.confuse_monster) {
+					if (player_flags.confuse_monster) {
 						/* with m_list[monptr] do; */
 						/* with */
 						/* c_list[m_list[monptr].mptr].
@@ -1453,7 +1453,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 						/* do; */
 						msg_print(
 						    "Your hands stop glowing.");
-						py.flags.confuse_monster =
+						player_flags.confuse_monster =
 						    false;
 						if (mon_save(monptr, 0,
 							     c_sc_mental)) {
@@ -1761,10 +1761,10 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			if (player_spell_saves()) {
 				msg_print(
 				    "You resist the affects of the spell.");
-			} else if (py.flags.blind > 0) {
-				py.flags.blind += 6;
+			} else if (player_flags.blind > 0) {
+				player_flags.blind += 6;
 			} else {
-				py.flags.blind = 12 + randint(3);
+				player_flags.blind = 12 + randint(3);
 				msg_print(" ");
 			}
 			break;
@@ -1776,10 +1776,10 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			if (player_spell_saves()) {
 				msg_print(
 				    "You resist the affects of the spell.");
-			} else if (py.flags.confused > 0) {
-				py.flags.confused += 2;
+			} else if (player_flags.confused > 0) {
+				player_flags.confused += 2;
 			} else {
-				py.flags.confused = randint(5) + 3;
+				player_flags.confused = randint(5) + 3;
 			}
 			break;
 
@@ -1790,10 +1790,10 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			if (player_spell_saves()) {
 				msg_print(
 				    "You resist the affects of the spell.");
-			} else if (py.flags.afraid > 0) {
-				py.flags.afraid += 2;
+			} else if (player_flags.afraid > 0) {
+				player_flags.afraid += 2;
 			} else {
-				py.flags.afraid = randint(5) + 3;
+				player_flags.afraid = randint(5) + 3;
 			}
 			break;
 
@@ -1822,7 +1822,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			break;
 
 		case 16: /*{Slow Person  }*/
-			/* with py.flags do; */
+			/* with player_flags do; */
 			stop_player = true;
 			strcat(cdesc, "casts a spell.");
 			msg_print(cdesc);
@@ -1948,10 +1948,10 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			if (player_spell_saves()) {
 				msg_print(
 				    "You resist the affects of the spell.");
-			} else if (py.flags.image > 0) {
-				py.flags.image += 2;
+			} else if (player_flags.image > 0) {
+				player_flags.image += 2;
 			} else {
-				py.flags.image = randint(20) + 10;
+				player_flags.image = randint(20) + 10;
 			}
 			break;
 
@@ -2041,7 +2041,7 @@ boolean mon_move(long monptr, long *hear_count)
 	/*{ Does the critter multiply?                            }*/
 	if (uand(c_list[ML(monptr).mptr].cmove, 0x00200000) != 0) {
 		if (MAX_MON_MULT >= mon_tot_mult) {
-			if ((py.flags.rest % mon_mult_adj) == 0) {
+			if ((player_flags.rest % mon_mult_adj) == 0) {
 				/* with m_list[monptr] do; */
 				i3 = 0;
 
@@ -2192,12 +2192,12 @@ void creatures(boolean attack)
 								if (m_list[i1]
 									.csleep >
 								    0) {
-									if (py.flags
+									if (player_flags
 										.aggravate) {
 										m_list[i1]
 										    .csleep =
 										    0;
-									} else if (py.flags
+									} else if (player_flags
 										       .rest <
 										   1) {
 										if (randint(

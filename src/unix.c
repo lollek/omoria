@@ -142,7 +142,7 @@ static Ioctl(i, l, p) char *p;
    certain point, sleep for a second. There would need to be a
    way of resetting the count, with a call made for commands like
    run or rest. */
-int check_input(microsec) int microsec;
+int check_input(int microsec)
 {
 #if defined(USG) && !defined(M_XENIX) && !defined(__linux__)
 	int arg, result;
