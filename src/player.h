@@ -3,6 +3,8 @@
 
 #include "imoria.h"
 
+extern p_flags player_flags;
+
 /* P_STATS */
 /* array[stat_set] of {permanent} */
 extern uint8_t player_stats_perm[STAT_SET_MAX + 1];

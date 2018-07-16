@@ -15,14 +15,14 @@ extern "C" {
 pub extern fn put_buffer_r(out_str: &str, row: i32, col: i32) {
     match CString::new(out_str) {
         Ok(cstr) => put_buffer(cstr.as_ptr() as *const u8, row, col),
-        Err(_e) => (), //panic!(e),
+        Err(e) => panic!(e),
     }
 }
 
 pub extern fn prt_r(str_buff: &str, row: i32, col: i32) {
     match CString::new(str_buff) {
         Ok(cstr) => prt(cstr.as_ptr() as *const u8, row, col),
-        Err(_e) => (), //panic!(e),
+        Err(e) => panic!(e),
     }
 }
 
@@ -37,7 +37,7 @@ fn msg_print_nothing() {
     unsafe {
         match CString::new("") {
             Ok(cstr) => msg_print(cstr.as_ptr() as *const u8),
-            Err(_e) => (), //panic!(e),
+            Err(e) => panic!(e),
         }
     }
 }
@@ -51,8 +51,7 @@ pub extern fn put_buffer(out_str: *const u8, row: i32, col: i32) {
 #[no_mangle]
 pub extern fn put_buffer_(out_str: *const u8, row: i32, col: i32) {
     if out_str.is_null() {
-        //panic!("Null string received");
-        return;
+        panic!("Null string received");
     }
 
     move_print(row, col, out_str);
@@ -60,11 +59,17 @@ pub extern fn put_buffer_(out_str: *const u8, row: i32, col: i32) {
 
 #[no_mangle]
 pub extern fn prt(str_buff: *const u8, row: i32, col: i32) {
+    if str_buff.is_null() {
+        panic!("Null string received");
+    }
     prt_(str_buff, row - 1, col - 1)
 }
 
 #[no_mangle]
 pub extern fn prt_(str_buff: *const u8, row: i32, col: i32) {
+    if str_buff.is_null() {
+        panic!("Null string received");
+    }
     unsafe {
         if row == -1 && msg_flag != 0 {
             msg_print_nothing();

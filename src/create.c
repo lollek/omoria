@@ -3,16 +3,6 @@
 
 #include "imoria.h"
 
-int64_t cc__next_best_stats(stat_s_type this, stat_s_type user, stat_s_type best, int64_t best_min);
-uint8_t cc__max_de_statp(uint8_t stat);
-uint8_t cc__max_in_statp(uint8_t stat);
-uint8_t cc__max_stat(uint8_t cur_stat, int8_t amount);
-uint8_t cc__new_stat(uint8_t old_guy);
-uint8_t cc__old_stat(uint8_t stat);
-uint8_t cc__get_min_stat(char const *prompt, uint8_t max);
-uint8_t cc__get_minimums(stat_s_type user, stat_s_type max_r);
-int64_t cc__get_stat();
-
 long cc__change_stat(long cur_stat, long amount)
 {
 	/*	{ Changes stats by given amount				-JWT-

@@ -1,6 +1,8 @@
 use std::ops::Range;
 use std::ptr::null;
 use std::ffi::CStr;
+use std::cmp::max;
+use std::str;
 
 use libc::sscanf;
 use libc::time;
@@ -83,8 +85,7 @@ fn erase_line(row: i32, col: i32) {
     unsafe { Erase_Line(row -1, col -1) }
 }
 
-#[no_mangle]
-pub extern fn cc__old_stat(stat: u8) -> u8 {
+fn old_stat(stat: u8) -> u8 {
     if stat < 150 {
         (squish_stat(stat as i32) + 30) / 10
     } else {
@@ -92,8 +93,7 @@ pub extern fn cc__old_stat(stat: u8) -> u8 {
     }
 }
 
-#[no_mangle]
-pub extern fn cc__new_stat(stat: u8) -> u8 {
+fn new_stat(stat: u8) -> u8 {
     if stat < 18 {
         squish_stat(((stat * 10) - 30) as i32)
     } else {
@@ -101,8 +101,7 @@ pub extern fn cc__new_stat(stat: u8) -> u8 {
     }
 }
 
-#[no_mangle]
-pub extern fn cc__max_in_statp(stat: u8) -> u8 {
+fn max_in_statp(stat: u8) -> u8 {
     if stat < 150 {
         stat + 10
     } else if stat < 220 {
@@ -116,8 +115,7 @@ pub extern fn cc__max_in_statp(stat: u8) -> u8 {
     }
 }
 
-#[no_mangle]
-pub extern fn cc__max_de_statp(stat: u8) -> u8 {
+fn max_de_statp(stat: u8) -> u8 {
     if stat < 11 {
         0
     } else if stat < 151 {
@@ -131,23 +129,21 @@ pub extern fn cc__max_de_statp(stat: u8) -> u8 {
     }
 }
 
-#[no_mangle]
-pub extern fn cc__max_stat(mut stat: u8, amount: i8) -> u8 {
+fn max_stat(mut stat: u8, amount: i8) -> u8 {
     if amount < 0 {
         for _ in amount..0 {
-            stat = cc__max_de_statp(stat);
+            stat = max_de_statp(stat);
         }
     } else {
         for _ in 1..(amount+1) {
-            stat = cc__max_in_statp(stat);
+            stat = max_in_statp(stat);
         }
     }
 
     stat
 }
 
-#[no_mangle]
-pub extern fn cc__next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6],
+fn next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6],
                                   best_min: i64) -> i64 {
     let mut below_sum: i64 = 0;
 
@@ -168,15 +164,14 @@ pub extern fn cc__next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6
     }
 }
 
-#[no_mangle]
-pub extern fn cc__get_min_stat(stat: &str, max: u8) -> u8 {
+fn get_min_stat(stat: &str, max: u8) -> u8 {
     let out_str =
         if max == 250 {
             format!("Min {} (racial max 18/00) : ", stat)
         } else if max > 150 {
             format!("Min {} (racial max 18/{}) : ", stat, max - 150)
         } else {
-            format!("Min {} (racial max {}) : ", stat, cc__old_stat(max))
+            format!("Min {} (racial max {}) : ", stat, old_stat(max))
         };
 
     prt_r(&out_str, 1, 1);
@@ -204,7 +199,7 @@ pub extern fn cc__get_min_stat(stat: &str, max: u8) -> u8 {
             150 + perc as u8
         }
     } else {
-        cc__new_stat(
+        new_stat(
             if abil < 3 {
                 3
             } else if abil > 18 {
@@ -215,27 +210,25 @@ pub extern fn cc__get_min_stat(stat: &str, max: u8) -> u8 {
     }
 }
 
-#[no_mangle]
-pub extern fn cc__get_minimums(mut user: [u8; 6], max_r: [u8; 6]) -> u8 {
+fn get_minimums(mut user: [u8; 6], max_r: [u8; 6]) -> u8 {
     let yn: u8 = unsafe {
         get_yes_no("Do you wish to try for minimum statistics?\0".as_ptr())
         //get_yes_no(format!("{}, {}, {}, {}, {}, {}?\0", max_r[0], max_r[1], max_r[2], max_r[3], max_r[4], max_r[5]).as_ptr())
     };
 
     if yn != 0 {
-        user[0] = cc__get_min_stat("STR", max_r[0]);
-        user[1] = cc__get_min_stat("INT", max_r[1]);
-        user[2] = cc__get_min_stat("WIS", max_r[2]);
-        user[3] = cc__get_min_stat("DEX", max_r[3]);
-        user[4] = cc__get_min_stat("CON", max_r[4]);
-        user[5] = cc__get_min_stat("CHR", max_r[5]);
+        user[0] = get_min_stat("STR", max_r[0]);
+        user[1] = get_min_stat("INT", max_r[1]);
+        user[2] = get_min_stat("WIS", max_r[2]);
+        user[3] = get_min_stat("DEX", max_r[3]);
+        user[4] = get_min_stat("CON", max_r[4]);
+        user[5] = get_min_stat("CHR", max_r[5]);
         unsafe { prt_6_stats(user, null(), 3, 65); }
     }
     yn
 }
 
-#[no_mangle]
-pub extern fn cc__get_stat() -> i64 {
+fn get_stat() -> i64 {
     (randint(4) + randint(4) + randint(4) + 2) * 10 // [50, 140]
 }
 
@@ -256,17 +249,15 @@ fn get_money() {
         + unsafe { player_sc } as i64 * 6
         // Stat adj
         - stats_iter().fold(0, |sum: i64, tstat| unsafe {
-            sum + cc__old_stat(player_stats_curr[tstat]) as i64
+            sum + old_stat(player_stats_curr[tstat]) as i64
         })
         // Charisma adj
         + unsafe {
-            cc__old_stat(player_stats_curr[Stat::Charisma as usize]) as i64
+            old_stat(player_stats_curr[Stat::Charisma as usize]) as i64
         };
 
     // Minimum
-    if amount < 80 {
-        amount = 80;
-    }
+    amount = max(amount, 80);
 
     let gold_value = COIN_VALUE[Currency::Gold as usize];
     unsafe { add_money((amount * gold_value) + randint(gold_value)) };
@@ -313,7 +304,7 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         }
 
         unsafe {
-            *best_min = cc__next_best_stats(player_stats_perm, user, best, *best_min);
+            *best_min = next_best_stats(player_stats_perm, user, best, *best_min);
         }
         *try_count += 1;
         if (*try_count % 250) == 0 {
@@ -351,7 +342,7 @@ fn get_stats() {
 
     for tstat in stats_iter() {
         unsafe {
-            let new_stat: u8 = cc__change_stat(cc__get_stat(), RACE_STATS[race][tstat] as i64) as u8;
+            let new_stat: u8 = cc__change_stat(get_stat(), RACE_STATS[race][tstat] as i64) as u8;
             player_stats_perm[tstat] = new_stat;
             player_stats_curr[tstat] = new_stat;
         }
@@ -429,73 +420,80 @@ pub extern fn change_name() {
 
 #[no_mangle]
 pub extern fn create_character() {
-        /*
-         * This delay may be reduced, but is recomended to keep players
-         *
-         * from continuously rolling up characters, which can be VERY
-         * expensive CPU wise.
-         */
+    /*
+     * This delay may be reduced, but is recomended to keep players
+     *
+     * from continuously rolling up characters, which can be VERY
+     * expensive CPU wise.
+     */
 
-        let best: [u8; 6] = [3; 6];
-        unsafe {
-            loop {
-                put_character();
-                if cc__choose_race() == 0 {
-                    break;
-                }
-            }
+    println!("1");
 
-            while cc__get_sex() == 0 {
-                put_character();
-            }
-        }
-
-        let mut is_printed_once: bool = true;
-        let mut max_r: [u8; 6] = [0; 6];
-        for tstat in stats_iter() {
-            unsafe {
-                max_r[tstat] = cc__max_stat(140, RACE_STATS[player_prace as usize][tstat]);
-            }
-        }
-
-        let user: [u8; 6] = [0; 6];
-        let mut is_minning: bool = cc__get_minimums(user, max_r) != 0;
+    let best: [u8; 6] = [3; 6];
+    unsafe {
+        println!("12");
         loop {
-            get_stats();
-            unsafe {
-                cc__get_history();
-                cc__get_ahw();
-            }
-
-            let mut try_count: i64 = 0;
-            let mut best_min: i64 = 99999999;
-            if satisfied(&mut is_minning, &mut is_printed_once, &mut best_min, &mut try_count, best, user) {
+            println!("13");
+            put_character();
+            if cc__choose_race() == 0 {
+                println!("14");
                 break;
             }
         }
 
+        while cc__get_sex() == 0 {
+            println!("15");
+            put_character();
+        }
+    }
+    println!("2");
+
+    let mut is_printed_once: bool = true;
+    let mut max_r: [u8; 6] = [0; 6];
+    for tstat in stats_iter() {
         unsafe {
+            max_r[tstat] = max_stat(140, RACE_STATS[player_prace as usize][tstat]);
+        }
+    }
+
+    let user: [u8; 6] = [0; 6];
+    let mut is_minning: bool = get_minimums(user, max_r) != 0;
+    loop {
+        get_stats();
+        unsafe {
+            cc__get_history();
+            cc__get_ahw();
+        }
+
+        let mut try_count: i64 = 0;
+        let mut best_min: i64 = 99999999;
+        if satisfied(&mut is_minning, &mut is_printed_once, &mut best_min, &mut try_count, best, user) {
+            break;
+        }
+    }
+
+    unsafe {
+        cc__print_history();
+        while cc__get_class() == 0 {
+            put_character();
             cc__print_history();
-            while cc__get_class() == 0 {
-                put_character();
-                cc__print_history();
-                put_misc1();
-                put_stats();
-            }
-        }
-
-        unsafe {
-            player_creation_time = time(null::<time_t>() as *mut i64);
-            player_save_count = 0;
-            player_claim_check = 0;
-        }
-
-        get_money();
-        unsafe {
+            put_misc1();
             put_stats();
-            put_misc2();
-            cc__put_misc3();
-            cc__get_name();
-            pause_exit(24, PLAYER_EXIT_PAUSE);
         }
+    }
+
+    unsafe {
+        player_creation_time = time(null::<time_t>() as *mut i64);
+        player_save_count = 0;
+        player_claim_check = 0;
+    }
+
+    get_money();
+    unsafe {
+        put_stats();
+        put_misc2();
+        cc__put_misc3();
+        cc__get_name();
+        pause_exit(24, PLAYER_EXIT_PAUSE);
+    }
 }

@@ -105,9 +105,6 @@ extern obj_set float_set;
 extern obj_set slow_set;
 extern obj_set stable_set;
 
-/*	{ Following are player variables				} */
-extern p_flags player_flags;
-
 /*	{ Class titles for different levels				} */
 
 extern char const *player_titles[MAX_CLASS][MAX_PLAYER_LEVEL + 1];

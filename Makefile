@@ -45,6 +45,9 @@ omoria: $(OBJFILES)
 	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libomoria.a
 .PHONY: omoria
 
+run: omoria ctags
+	RUST_BACKTRACE=1 ./omoria
+
 privs ::
 	chown $(OWNER):$(GROUP) omoria $(DATAFILES)
 	chmod 2711        omoria

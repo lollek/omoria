@@ -108,3 +108,4 @@ extern "C" {
     pub static mut player_stats_perm: [u8; 6];
     pub static mut player_stats_curr: [u8; 6];
 }
+
