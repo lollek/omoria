@@ -1,6 +1,6 @@
 use libc::{time_t};
 use std::ffi::CStr;
-use types::{StatBlock, stats_iter};
+use types::{StatBlock, stats_iter, Wallet, currencies_iter};
 
 #[repr(C)]
 pub struct p_flags {
@@ -69,10 +69,10 @@ pub struct p_flags {
 
 extern "C" {
     pub static mut player_flags: p_flags;
-    pub static mut player_name: [u8; 82];
-    pub static mut player_race: [u8; 82];
-    pub static mut player_sex: [u8; 82];
-    pub static mut player_tclass: [u8; 82];
+    static mut player_name: [u8; 82];
+    static mut player_race: [u8; 82];
+    static mut player_sex: [u8; 82];
+    static mut player_tclass: [u8; 82];
     pub static mut player_prace: u8;
     pub static mut player_stl: u8;
     pub static mut player_sc: i16;
@@ -100,7 +100,6 @@ extern "C" {
     pub static mut player_account: i64;
     pub static mut player_rep: i64;
     pub static mut player_dis_ac: i16;
-    pub static mut player_money: [i64; 7];
     pub static mut player_dis_th: i16;
     pub static mut player_dis_td: i16;
     pub static mut player_dis_tac: i16;
@@ -109,6 +108,8 @@ extern "C" {
     pub static mut player_creation_time: time_t;
     static mut player_stats_perm: [u8; 6];
     static mut player_stats_curr: [u8; 6];
+    static mut player_money: [i64; 7];
+    static mut bank: [i64; 7];
 }
 
 fn c_array_to_rust_string(array: [u8; 82]) -> String {
@@ -161,3 +162,24 @@ pub fn set_curr_stats(block: &StatBlock) {
         unsafe { player_stats_curr[stat] = block.get_pos(stat) };
     }
 }
+
+pub fn wallet() -> Wallet {
+    Wallet::from(unsafe { player_money })
+}
+
+pub fn set_wallet(wallet: &Wallet) {
+    for currency in currencies_iter() {
+        unsafe { player_money[currency] = wallet.get_pos(currency) };
+    }
+}
+
+pub fn bank_wallet() -> Wallet {
+    Wallet::from(unsafe { bank })
+}
+
+pub fn set_bank_wallet(wallet: &Wallet) {
+    for currency in currencies_iter() {
+        unsafe { bank[currency] = wallet.get_pos(currency) };
+    }
+}
+

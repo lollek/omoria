@@ -12,10 +12,8 @@ use random;
 use screen;
 use term;
 
-use types::{Stat, StatBlock, stats_iter};
+use types::{Stat, StatBlock, stats_iter, Currency, currency_value};
 
-use bank::Currency;
-use bank::COIN_VALUE;
 use races::RACE_STATS;
 use races::SEARCH_MOD;
 use races::MELEE_BONUS;
@@ -258,7 +256,7 @@ fn get_money() {
     // Minimum
     amount = max(amount, 80);
 
-    let gold_value = COIN_VALUE[Currency::Gold as usize];
+    let gold_value = currency_value(Currency::Gold);
     unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
     debug::leave("get_money");
 }
@@ -389,7 +387,7 @@ fn put_misc2() {
     debug::enter("put_misc2");
     term::prt_r(&format!("Level      : {}", unsafe { player::player_lev }), 10, 31);
     term::prt_r(&format!("Experience : {}", unsafe { player::player_exp }), 11, 31);
-    term::prt_r(&format!("Gold       : {}", unsafe { player::player_money[Currency::Total as usize] }), 12, 31);
+    term::prt_r(&format!("Gold       : {}", player::wallet().total), 12, 31);
     term::prt_r(&format!("Account    : {}", unsafe { player::player_account }), 13, 31);
     term::prt_r(&format!("Max Hit Points : {}", unsafe { player::player_mhp }), 10, 54);
     term::prt_r(&format!("Cur Hit Points : {}", unsafe { player::player_chp }), 11, 54);
