@@ -133,7 +133,7 @@ void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
 	LEAVE("prt_6_stats", "");
 }
 
-void prt_stat_attr(char stat_name[82], unsigned char stat, unsigned char loss,
+void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char loss,
 		   long row, long column)
 {
 	stat_s_type out_val1;
@@ -151,7 +151,7 @@ void prt_stat_attr(char stat_name[82], unsigned char stat, unsigned char loss,
 	LEAVE("prt_stat_attr", "");
 }
 
-void prt_stat(char stat_name[82], unsigned char stat, long row, long column)
+void prt_stat(const char stat_name[82], unsigned char stat, long row, long column)
 {
 	stat_s_type out_val1;
 	char out_val2[82];

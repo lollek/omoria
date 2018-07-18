@@ -1,6 +1,5 @@
 use std::ops::Range;
 use std::ptr::null;
-use std::ffi::CStr;
 use std::cmp::max;
 use std::str;
 
@@ -8,12 +7,15 @@ use libc::sscanf;
 use libc::time;
 use libc::time_t;
 
+use debug;
+use io;
+use misc;
+use player;
+use random;
+use term;
+
 use bank::Currency;
 use bank::COIN_VALUE;
-use io::inkey_delay;
-use io::inkey_flush;
-use misc::squish_stat;
-use player::*;
 use races::RACE_STATS;
 use races::SEARCH_MOD;
 use races::MELEE_BONUS;
@@ -25,9 +27,6 @@ use races::HEALTH_BONUS;
 use races::EXPFACTOR;
 use races::INFRAVISION;
 use races::SWIM_SPEED;
-use random::randint;
-use term::prt_r;
-use term::refresh_screen;
 
 pub enum Stat {
     Strength = 0,
@@ -50,7 +49,6 @@ extern "C" {
     fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
     fn prt_6_stats(p: [u8; 6], l: *const u8, row: u32, col: u32);
-    fn get_yes_no(prompt: *const u8) -> u8;
     fn add_money(amount: i64);
     fn inkey() -> u8;
 
@@ -87,17 +85,17 @@ fn erase_line(row: i32, col: i32) {
 
 fn old_stat(stat: u8) -> u8 {
     if stat < 150 {
-        (squish_stat(stat as i32) + 30) / 10
+        (misc::squish_stat(stat as i32) + 30) / 10
     } else {
-        squish_stat(stat as i32) - 132
+        misc::squish_stat(stat as i32) - 132
     }
 }
 
 fn new_stat(stat: u8) -> u8 {
     if stat < 18 {
-        squish_stat(((stat * 10) - 30) as i32)
+        misc::squish_stat(((stat * 10) - 30) as i32)
     } else {
-        squish_stat((stat + 132) as i32)
+        misc::squish_stat((stat + 132) as i32)
     }
 }
 
@@ -174,7 +172,7 @@ fn get_min_stat(stat: &str, max: u8) -> u8 {
             format!("Min {} (racial max {}) : ", stat, old_stat(max))
         };
 
-    prt_r(&out_str, 1, 1);
+    term::prt_r(&out_str, 1, 1);
 
     let mut tmp_str: [u8; 134] = [0; 134];
     while tmp_str[0] == b'\0' {
@@ -210,57 +208,37 @@ fn get_min_stat(stat: &str, max: u8) -> u8 {
     }
 }
 
-fn get_minimums(mut user: [u8; 6], max_r: [u8; 6]) -> u8 {
-    let yn: u8 = unsafe {
-        get_yes_no("Do you wish to try for minimum statistics?\0".as_ptr())
-        //get_yes_no(format!("{}, {}, {}, {}, {}, {}?\0", max_r[0], max_r[1], max_r[2], max_r[3], max_r[4], max_r[5]).as_ptr())
-    };
-
-    if yn != 0 {
-        user[0] = get_min_stat("STR", max_r[0]);
-        user[1] = get_min_stat("INT", max_r[1]);
-        user[2] = get_min_stat("WIS", max_r[2]);
-        user[3] = get_min_stat("DEX", max_r[3]);
-        user[4] = get_min_stat("CON", max_r[4]);
-        user[5] = get_min_stat("CHR", max_r[5]);
-        unsafe { prt_6_stats(user, null(), 3, 65); }
-    }
-    yn
-}
-
 fn get_stat() -> i64 {
-    (randint(4) + randint(4) + randint(4) + 2) * 10 // [50, 140]
+    (random::randint(4) + random::randint(4) + random::randint(4) + 2) * 10 // [50, 140]
 }
 
- fn put_character() {
-    unsafe {
-        clear_from(1);
-        prt_r(&format!("Name      : {}", CStr::from_ptr(player_name).to_str().unwrap()), 3, 3);
-        prt_r(&format!("Race      : {}", CStr::from_ptr(player_race).to_str().unwrap()), 4, 3);
-        prt_r(&format!("Sex       : {}", CStr::from_ptr(player_sex).to_str().unwrap()), 5, 3);
-        prt_r(&format!("Class     : {}", CStr::from_ptr(player_tclass).to_str().unwrap()), 6, 3);
-    }
+fn put_character() {
+    clear_from(1);
+    term::prt_r(&format!("Name      : {}", player::name()), 3, 3);
+    term::prt_r(&format!("Race      : {}", player::race_string()), 4, 3);
+    term::prt_r(&format!("Sex       : {}", player::sex_string()), 5, 3);
+    term::prt_r(&format!("Class     : {}", player::class_string()), 6, 3);
 }
 
 fn get_money() {
     let mut amount: i64 =
-        325 + randint(25)
+        325 + random::randint(25)
         // Social Class adj
-        + unsafe { player_sc } as i64 * 6
+        + unsafe { player::player_sc } as i64 * 6
         // Stat adj
         - stats_iter().fold(0, |sum: i64, tstat| unsafe {
-            sum + old_stat(player_stats_curr[tstat]) as i64
+            sum + old_stat(player::player_stats_curr[tstat]) as i64
         })
         // Charisma adj
         + unsafe {
-            old_stat(player_stats_curr[Stat::Charisma as usize]) as i64
+            old_stat(player::player_stats_curr[Stat::Charisma as usize]) as i64
         };
 
     // Minimum
     amount = max(amount, 80);
 
     let gold_value = COIN_VALUE[Currency::Gold as usize];
-    unsafe { add_money((amount * gold_value) + randint(gold_value)) };
+    unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
 }
 
 fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
@@ -273,9 +251,9 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
          * so the player has a clue
          */
         unsafe {
-            player_dis_th = tohit_adj() as i16;
-            player_dis_td = todam_adj() as i16;
-            player_dis_tac = toac_adj() as i16;
+            player::player_dis_th = tohit_adj() as i16;
+            player::player_dis_td = todam_adj() as i16;
+            player::player_dis_tac = toac_adj() as i16;
         }
 
         erase_line(1, 1);
@@ -283,11 +261,11 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         put_misc1();
         put_stats();
 
-        prt_r("Press 'R' to reroll, <RETURN> to continue:", 21, 3);
+        term::prt_r("Press 'R' to reroll, <RETURN> to continue:", 21, 3);
         *printed_once = true;
 
         loop {
-            let s: u8 = inkey_flush();
+            let s: u8 = io::inkey_flush();
             is_satisfied = s != 'R' as u8;
             if s == 10 || s == 'R' as u8 {
                 break;
@@ -298,28 +276,28 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
 
         if !*printed_once {
             clear_from(21);
-            prt_r("Press any key to give up (50000 rolls max): ", 21, 3);
-            refresh_screen();
+            term::prt_r("Press any key to give up (50000 rolls max): ", 21, 3);
+            term::refresh_screen();
             *printed_once = true;
         }
 
         unsafe {
-            *best_min = next_best_stats(player_stats_perm, user, best, *best_min);
+            *best_min = next_best_stats(player::player_stats_perm, user, best, *best_min);
         }
         *try_count += 1;
         if (*try_count % 250) == 0 {
-            prt_r(&format!("Try = {:10}", try_count), 21, 60);
-            refresh_screen();
+            term::prt_r(&format!("Try = {:10}", try_count), 21, 60);
+            term::refresh_screen();
         }
 
-        let s: u8 = inkey_delay(0);
+        let s: u8 = io::inkey_delay(0);
         if s != 0 || *try_count == 50000 {
             *minning = false;
             *printed_once = false;
             for tstat in stats_iter() {
                 unsafe {
-                    player_stats_perm[tstat] = best[tstat];
-                    player_stats_curr[tstat] = best[tstat];
+                    player::player_stats_perm[tstat] = best[tstat];
+                    player::player_stats_curr[tstat] = best[tstat];
                 }
             }
             is_satisfied =
@@ -338,61 +316,61 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
 }
 
 fn get_stats() {
-    let race = unsafe { player_prace as usize };
+    let race = unsafe { player::player_prace as usize };
 
     for tstat in stats_iter() {
         unsafe {
             let new_stat: u8 = cc__change_stat(get_stat(), RACE_STATS[race][tstat] as i64) as u8;
-            player_stats_perm[tstat] = new_stat;
-            player_stats_curr[tstat] = new_stat;
+            player::player_stats_perm[tstat] = new_stat;
+            player::player_stats_curr[tstat] = new_stat;
         }
     }
 
     unsafe {
-        player_rep = 0;
-        player_srh = SEARCH_MOD[race] as i16;
-        player_bth = MELEE_BONUS[race] as i16;
-        player_bthb = RANGED_BONUS[race] as i16;
-        player_fos = SEARCH_FREQ[race] as i16;
-        player_stl = STEALTH_MOD[race] as u8; // TODO BUG! overflows for some races
-        player_save = SAVE_MOD[race] as i16;
-        player_hitdie = HEALTH_BONUS[race];
-        player_lev = 1;
-        player_ptodam = todam_adj() as i16;
-        player_ptohit = tohit_adj() as i16;
-        player_ptoac = 0;
-        player_pac = toac_adj() as i16;
-        player_expfact = EXPFACTOR[race];
-        player_flags.see_infra = INFRAVISION[race] as i64;
-        player_flags.swim = SWIM_SPEED[race] as i64;
+        player::player_rep = 0;
+        player::player_srh = SEARCH_MOD[race] as i16;
+        player::player_bth = MELEE_BONUS[race] as i16;
+        player::player_bthb = RANGED_BONUS[race] as i16;
+        player::player_fos = SEARCH_FREQ[race] as i16;
+        player::player_stl = STEALTH_MOD[race] as u8; // TODO BUG! overflows for some races
+        player::player_save = SAVE_MOD[race] as i16;
+        player::player_hitdie = HEALTH_BONUS[race];
+        player::player_lev = 1;
+        player::player_ptodam = todam_adj() as i16;
+        player::player_ptohit = tohit_adj() as i16;
+        player::player_ptoac = 0;
+        player::player_pac = toac_adj() as i16;
+        player::player_expfact = EXPFACTOR[race];
+        player::player_flags.see_infra = INFRAVISION[race] as i64;
+        player::player_flags.swim = SWIM_SPEED[race] as i64;
     }
 }
 
 fn put_stats() {
-    unsafe { prt_6_stats(player_stats_curr, null(), 3, 65) };
-    prt_r(&format!("+ To Hit   : {}", unsafe { player_dis_th }), 10, 4);
-    prt_r(&format!("+ To Damage: {}", unsafe { player_dis_td }), 11, 4);
-    prt_r(&format!("+ To AC    : {}", unsafe { player_dis_tac }), 12, 4);
-    prt_r(&format!("  Total AC : {}", unsafe { player_dis_ac }), 13, 4);
+    unsafe { prt_6_stats(player::player_stats_curr, null(), 3, 65) };
+    term::prt_r(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
+    term::prt_r(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);
+    term::prt_r(&format!("+ To AC    : {}", unsafe { player::player_dis_tac }), 12, 4);
+    term::prt_r(&format!("  Total AC : {}", unsafe { player::player_dis_ac }), 13, 4);
 }
 
 fn put_misc1() {
-    prt_r(&format!("Age          : {}", unsafe { player_age }), 3, 40);
-    prt_r(&format!("Height       : {}", unsafe { player_ht }), 4, 40);
-    prt_r(&format!("Weight       : {}", unsafe { player_wt }), 5, 40);
-    prt_r(&format!("Social Class : {}", unsafe { player_sc }), 6, 40);
-    prt_r(&format!("Difficulty   : {}", unsafe { player_diffic }), 7, 40);
+    term::prt_r(&format!("Age          : {}", unsafe { player::player_age }), 3, 40);
+    term::prt_r(&format!("Height       : {}", unsafe { player::player_ht }), 4, 40);
+    term::prt_r(&format!("Weight       : {}", unsafe { player::player_wt }), 5, 40);
+    term::prt_r(&format!("Social Class : {}", unsafe { player::player_sc }), 6, 40);
+    term::prt_r(&format!("Difficulty   : {}", unsafe { player::player_diffic }), 7, 40);
 }
 
 fn put_misc2() {
-    prt_r(&format!("Level      : {}", unsafe { player_lev }), 10, 31);
-    prt_r(&format!("Experience : {}", unsafe { player_exp }), 11, 31);
-    prt_r(&format!("Gold       : {}", unsafe { player_money[Currency::Total as usize] }), 12, 31);
-    prt_r(&format!("Account    : {}", unsafe { player_account }), 13, 31);
-    prt_r(&format!("Max Hit Points : {}", unsafe { player_mhp }), 10, 54);
-    prt_r(&format!("Cur Hit Points : {}", unsafe { player_chp }), 11, 54);
-    prt_r(&format!("Max Mana       : {}", unsafe { player_mana }), 12, 54);
-    prt_r(&format!("Cur Mana       : {}", unsafe { player_cmana }), 13, 54);
+    term::prt_r(&format!("Level      : {}", unsafe { player::player_lev }), 10, 31);
+    term::prt_r(&format!("Experience : {}", unsafe { player::player_exp }), 11, 31);
+    term::prt_r(&format!("Gold       : {}", unsafe { player::player_money[Currency::Total as usize] }), 12, 31);
+    term::prt_r(&format!("Account    : {}", unsafe { player::player_account }), 13, 31);
+    term::prt_r(&format!("Max Hit Points : {}", unsafe { player::player_mhp }), 10, 54);
+    term::prt_r(&format!("Cur Hit Points : {}", unsafe { player::player_chp }), 11, 54);
+    term::prt_r(&format!("Max Mana       : {}", unsafe { player::player_mana }), 12, 54);
+    term::prt_r(&format!("Cur Mana       : {}", unsafe { player::player_cmana }), 13, 54);
 }
 
 // Display character on screen -RAK-
@@ -408,7 +386,7 @@ fn display_char() {
 pub extern fn change_name() {
     display_char();
     loop {
-        prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
+        term::prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
         match unsafe { inkey() } {
             99 => unsafe { cc__get_name() },
             0 | 3 | 25 | 26 | 27 => break,
@@ -418,46 +396,29 @@ pub extern fn change_name() {
     }
 }
 
-#[no_mangle]
-pub extern fn create_character() {
-    /*
-     * This delay may be reduced, but is recomended to keep players
-     *
-     * from continuously rolling up characters, which can be VERY
-     * expensive CPU wise.
-     */
+fn choose_stats() {
+    let player_race: u8 = unsafe { player::player_prace };
 
-    println!("1");
+    let max_stats: Vec<u8> = stats_iter()
+        .map(|stat| max_stat(140, RACE_STATS[player_race as usize][stat]))
+        .collect();
+
+
+    let mut is_minning = io::get_yes_no("Do you wish to try for minimum statistics?");
+    let mut user: [u8; 6] = [0; 6];
+    if is_minning {
+        user[0] = get_min_stat("STR", max_stats[0]);
+        user[1] = get_min_stat("INT", max_stats[1]);
+        user[2] = get_min_stat("WIS", max_stats[2]);
+        user[3] = get_min_stat("DEX", max_stats[3]);
+        user[4] = get_min_stat("CON", max_stats[4]);
+        user[5] = get_min_stat("CHR", max_stats[5]);
+        unsafe { prt_6_stats(user, null(), 3, 65); }
+    }
 
     let best: [u8; 6] = [3; 6];
-    unsafe {
-        println!("12");
-        loop {
-            println!("13");
-            put_character();
-            if cc__choose_race() == 0 {
-                println!("14");
-                break;
-            }
-        }
-
-        while cc__get_sex() == 0 {
-            println!("15");
-            put_character();
-        }
-    }
-    println!("2");
-
     let mut is_printed_once: bool = true;
-    let mut max_r: [u8; 6] = [0; 6];
-    for tstat in stats_iter() {
-        unsafe {
-            max_r[tstat] = max_stat(140, RACE_STATS[player_prace as usize][tstat]);
-        }
-    }
 
-    let user: [u8; 6] = [0; 6];
-    let mut is_minning: bool = get_minimums(user, max_r) != 0;
     loop {
         get_stats();
         unsafe {
@@ -465,12 +426,37 @@ pub extern fn create_character() {
             cc__get_ahw();
         }
 
+        /*
+         * This delay may be reduced, but is recomended to keep players
+         *
+         * from continuously rolling up characters, which can be VERY
+         * expensive CPU wise.
+         */
+
         let mut try_count: i64 = 0;
         let mut best_min: i64 = 99999999;
         if satisfied(&mut is_minning, &mut is_printed_once, &mut best_min, &mut try_count, best, user) {
             break;
         }
     }
+
+}
+
+#[no_mangle]
+pub extern fn create_character() {
+
+    loop {
+        put_character();
+        if unsafe { cc__choose_race() } != 0 {
+            break;
+        }
+    }
+
+    while unsafe { cc__get_sex() } == 0 {
+        put_character();
+    }
+
+    choose_stats();
 
     unsafe {
         cc__print_history();
@@ -483,9 +469,9 @@ pub extern fn create_character() {
     }
 
     unsafe {
-        player_creation_time = time(null::<time_t>() as *mut i64);
-        player_save_count = 0;
-        player_claim_check = 0;
+        player::player_creation_time = time(null::<time_t>() as *mut i64);
+        player::player_save_count = 0;
+        player::player_claim_check = 0;
     }
 
     get_money();

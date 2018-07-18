@@ -568,7 +568,7 @@ extern void init_curses();
 
 /* use put_buffer */
 extern void put_buffer_(char const *out_str, int32_t row, int32_t col);
-extern void put_buffer_attr(char *out_str, /*	: varying [a] of char; */
+extern void put_buffer_attr(const char *out_str, /*	: varying [a] of char; */
 			    long row, long col, int attrs);
 extern void put_qio();
 /* use clear_from */

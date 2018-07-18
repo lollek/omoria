@@ -124,7 +124,7 @@ void moriaterm()
 void highlite_on() { attron(A_DIM); }
 void highlite_off() { attroff(A_DIM); }
 
-void put_buffer_attr(char *out_str, long row, long col, int attrs)
+void put_buffer_attr(const char *out_str, long row, long col, int attrs)
 {
 	attr_t old_attr;
 	short unused_pair;

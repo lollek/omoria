@@ -1,0 +1,68 @@
+use std::fs;
+use std::io::Write;
+use std::error;
+
+// todo: Make this toggle-able
+static DEBUG_ENABLED: bool = true;
+const FILENAME: &'static str = "debug2.out";
+
+#[derive(Debug)]
+enum DebugLevel {
+    INFO,
+    WARN,
+    ERR,
+    FATAL,
+}
+
+fn debug(level: DebugLevel, msg: &str) {
+    fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(FILENAME)
+        .expect("Failed to open debug file for writing")
+        .write_all(&format!("{:?}: {}\n", level, msg).into_bytes())
+        .expect("Failed to write to debug file");
+}
+
+pub fn info(msg: &str) {
+    if DEBUG_ENABLED {
+        debug(DebugLevel::INFO, msg);
+    }
+}
+
+pub fn warn(msg: &str) {
+    if DEBUG_ENABLED {
+        debug(DebugLevel::WARN, msg);
+    }
+}
+
+pub fn err(msg: &str) {
+    if DEBUG_ENABLED {
+        debug(DebugLevel::ERR, msg);
+    }
+}
+
+pub fn fatal(msg: &str) -> ! {
+    if DEBUG_ENABLED {
+        debug(DebugLevel::FATAL, msg);
+    }
+    panic!("{}", msg);
+}
+
+fn log_error(e: &error::Error) {
+    debug(DebugLevel::FATAL, &format!("{}", e));
+    match e.cause() {
+        Some(cause) => log_error(cause),
+        None => ()
+    }
+}
+
+pub fn fatal2(msg: &str, e: &error::Error) -> ! {
+    if DEBUG_ENABLED {
+        debug(DebugLevel::FATAL, msg);
+        debug(DebugLevel::FATAL, "!!BEGIN STACKTRACE!!");
+        log_error(e);
+        debug(DebugLevel::FATAL, "!!END STACKTRACE!!");
+    }
+    panic!("{}: {}", msg, e);
+}

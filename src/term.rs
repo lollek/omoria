@@ -12,21 +12,21 @@ extern "C" {
     fn msg_print(str_buff: *const u8);
 }
 
-pub extern fn put_buffer_r(out_str: &str, row: i32, col: i32) {
+pub fn put_buffer_r(out_str: &str, row: i32, col: i32) {
     match CString::new(out_str) {
         Ok(cstr) => put_buffer(cstr.as_ptr() as *const u8, row, col),
         Err(e) => panic!(e),
     }
 }
 
-pub extern fn prt_r(str_buff: &str, row: i32, col: i32) {
+pub fn prt_r(str_buff: &str, row: i32, col: i32) {
     match CString::new(str_buff) {
         Ok(cstr) => prt(cstr.as_ptr() as *const u8, row, col),
         Err(e) => panic!(e),
     }
 }
 
-pub extern fn refresh_screen() {
+pub fn refresh_screen() {
     unsafe {
         screen_change = <i32>::max_value();
     }

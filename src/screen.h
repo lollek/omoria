@@ -27,14 +27,14 @@ extern void prt_map();
  * -RAK-
  *  prt_stat() - Print character stat in given row, column
  */
-extern void prt_stat(char stat_name[82], unsigned char stat, long row,
+extern void prt_stat(const char stat_name[82], unsigned char stat, long row,
 		     long column);
 
 /**
  * -RAK-
  * prt_stat_attr() - Print character stat in a given row, column
  */
-extern void prt_stat_attr(char stat_name[82], unsigned char stat,
+extern void prt_stat_attr(const char stat_name[82], unsigned char stat,
 			  unsigned char loss, long row, long column);
 
 /**

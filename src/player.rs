@@ -1,4 +1,5 @@
-use libc::time_t;
+use libc::{time_t};
+use std::ffi::CStr;
 
 #[repr(C)]
 pub struct p_flags {
@@ -67,10 +68,10 @@ pub struct p_flags {
 
 extern "C" {
     pub static mut player_flags: p_flags;
-    pub static mut player_name: *const i8;
-    pub static mut player_race: *const i8;
-    pub static mut player_sex: *const i8;
-    pub static mut player_tclass: *const i8;
+    pub static mut player_name: [u8; 82];
+    pub static mut player_race: [u8; 82];
+    pub static mut player_sex: [u8; 82];
+    pub static mut player_tclass: [u8; 82];
     pub static mut player_prace: u8;
     pub static mut player_stl: u8;
     pub static mut player_sc: i16;
@@ -109,3 +110,33 @@ extern "C" {
     pub static mut player_stats_curr: [u8; 6];
 }
 
+fn c_array_to_rust_string(array: [u8; 82]) -> String {
+    let safe_array = array.to_owned()
+        .iter_mut()
+        .take_while(|i| i != &&0u8)
+        .chain([0u8].iter_mut())
+        .map(|i| i.to_owned())
+        .collect::<Vec<u8>>();
+
+    CStr::from_bytes_with_nul(&safe_array)
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
+}
+
+pub fn name() -> String {
+    c_array_to_rust_string(unsafe { player_name })
+}
+
+pub fn race_string() -> String {
+    c_array_to_rust_string(unsafe { player_race })
+}
+
+pub fn sex_string() -> String {
+    c_array_to_rust_string(unsafe { player_sex })
+}
+
+pub fn class_string() -> String {
+    c_array_to_rust_string(unsafe { player_tclass })
+}
