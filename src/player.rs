@@ -1,6 +1,7 @@
 use libc::{time_t};
-use std::ffi::CStr;
 use types::{StatBlock, stats_iter, Wallet, currencies_iter};
+
+use misc;
 
 #[repr(C)]
 pub struct p_flags {
@@ -112,35 +113,20 @@ extern "C" {
     static mut bank: [i64; 7];
 }
 
-fn c_array_to_rust_string(array: [u8; 82]) -> String {
-    let safe_array = array.to_owned()
-        .iter_mut()
-        .take_while(|i| i != &&0u8)
-        .chain([0u8].iter_mut())
-        .map(|i| i.to_owned())
-        .collect::<Vec<u8>>();
-
-    CStr::from_bytes_with_nul(&safe_array)
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string()
-}
-
 pub fn name() -> String {
-    c_array_to_rust_string(unsafe { player_name })
+    misc::c_array_to_rust_string(unsafe { player_name.to_vec() })
 }
 
 pub fn race_string() -> String {
-    c_array_to_rust_string(unsafe { player_race })
+    misc::c_array_to_rust_string(unsafe { player_race.to_vec() })
 }
 
 pub fn sex_string() -> String {
-    c_array_to_rust_string(unsafe { player_sex })
+    misc::c_array_to_rust_string(unsafe { player_sex.to_vec() })
 }
 
 pub fn class_string() -> String {
-    c_array_to_rust_string(unsafe { player_tclass })
+    misc::c_array_to_rust_string(unsafe { player_tclass.to_vec() })
 }
 
 pub fn perm_stats() -> StatBlock {

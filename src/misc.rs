@@ -1,3 +1,5 @@
+use std::ffi::CStr;
+
 use random;
 
 #[no_mangle]
@@ -44,3 +46,19 @@ pub extern fn in_statp(stat: u8) -> u8 {
         0
     }
 }
+
+pub fn c_array_to_rust_string(array: Vec<u8>) -> String {
+    let safe_array = array.to_owned()
+        .iter_mut()
+        .take_while(|i| i != &&0u8)
+        .chain([0u8].iter_mut())
+        .map(|i| i.to_owned())
+        .collect::<Vec<u8>>();
+
+    CStr::from_bytes_with_nul(&safe_array)
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
+}
+

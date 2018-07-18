@@ -2,7 +2,7 @@ use std::ptr::null;
 use std::cmp::max;
 use std::str;
 
-use libc::{sscanf, time, time_t};
+use libc::{time, time_t};
 
 use debug;
 use io;
@@ -29,7 +29,6 @@ use races::SWIM_SPEED;
 const PLAYER_EXIT_PAUSE: i32 = 0;
 
 extern "C" {
-    fn Get_String(in_str: *const u8, row: i32, col: i32, slen: i32) -> u8;
     fn Clear_From(row: i32);
     fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
@@ -48,13 +47,6 @@ extern "C" {
     fn cc__get_history();
     fn cc__get_ahw();
     fn cc__get_sex() -> u8;
-}
-
-fn get_string(in_str: *const u8, row: i32, col: i32, slen: i32) -> u8 {
-    debug::enter("get_string");
-    let result = unsafe { Get_String(in_str, row - 1, col - 1, slen) };
-    debug::leave("get_string");
-    result
 }
 
 fn clear_from(row: i32) {
@@ -153,74 +145,90 @@ fn max_stat(mut stat: u8, amount: i8) -> u8 {
 }
 
 fn next_best_stats(curr: &StatBlock, user: &StatBlock, best: &mut StatBlock,
-                                  best_min: i64) -> i64 {
+                   best_min: i64) -> i64 {
     debug::enter("next_best_stats");
     let mut below_sum: i64 = 0;
 
     for tstat in stats_iter() {
         if curr.get_pos(tstat) < user.get_pos(tstat) {
-            let below = user.get_pos(tstat) - curr.get_pos(tstat);
-            below_sum = below_sum + ((below * (below + 1)) / 2) as i64;
+            let below: i64 = (user.get_pos(tstat) - curr.get_pos(tstat)) as i64;
+            below_sum += (below * (below + 1)) / 2;
+            debug::info(&format!("curr: {}, user: {}, below: {}, below_sum: {}",
+                                 curr.get_pos(tstat), user.get_pos(tstat),
+                                 below, below_sum));
         }
     }
 
-    let result = if below_sum < best_min {
-        for tstat in stats_iter() {
-            best.set_pos(tstat, curr.get_pos(tstat));
-        }
-        below_sum
-    } else {
-        best_min
-    };
+    let result =
+        if below_sum < best_min {
+            for tstat in stats_iter() {
+                best.set_pos(tstat, curr.get_pos(tstat));
+            }
+            below_sum
+        } else {
+            best_min
+        };
     debug::leave("next_best_stats");
     result
 }
 
-fn get_min_stat(stat: &str, max: u8) -> u8 {
+fn get_min_stat(stat: &str, race_max: u8) -> u8 {
     debug::enter("get_min_stat");
     let out_str =
-        if max == 250 {
+        if race_max >= 250 {
             format!("Min {} (racial max 18/00) : ", stat)
-        } else if max > 150 {
-            format!("Min {} (racial max 18/{}) : ", stat, max - 150)
+        } else if race_max > 150 {
+            format!("Min {} (racial max 18/{}) : ", stat, race_max - 150)
         } else {
-            format!("Min {} (racial max {}) : ", stat, old_stat(max))
+            format!("Min {} (racial max {}) : ", stat, old_stat(race_max))
         };
 
     term::prt_r(&out_str, 1, 1);
 
-    let mut tmp_str: [u8; 134] = [0; 134];
-    while tmp_str[0] == b'\0' {
-        get_string(tmp_str.as_ptr(), 1, out_str.len() as i32 + 1, 10);
-    }
-
-    // 18/xx -> 18 xx. Might be needed for sscanf?
-    match tmp_str.iter().position(|&x| x == b'/') {
-        Some(pos) => tmp_str[pos] = b' ',
-        None => (),
-    }
-
-    let abil: u32 = 0;
-    let perc: u32 = 0;
-    unsafe {
-        sscanf(tmp_str.as_ptr() as *const i8, "%u %u\0".as_ptr() as *const i8, &abil, &perc);
-    }
-    let result = if abil == 18 {
-        if perc == 0 {
-            250 as u8
-        } else {
-            150 + perc as u8
+    let abil: u32;
+    let mut perc: u32;
+    loop {
+        let tmp_str = term::get_string(1, out_str.len() as i32 + 1, 10);
+        if tmp_str.is_empty() {
+            continue;
         }
-    } else {
-        new_stat(
-            if abil < 3 {
-                3
-            } else if abil > 18 {
-                18
+
+        let parts: Vec<&str> = tmp_str.split("/").collect();
+
+        perc = 0;
+        if parts.len() > 1 {
+            if let Ok(new_perc) = parts[1].parse::<u32>() {
+                perc = max(new_perc, 100);
+            }
+        }
+
+        if parts.len() > 0 {
+            if let Ok(new_abil) = parts[0].parse::<u32>() {
+                abil = new_abil;
+                break;
+            }
+        }
+    }
+
+    debug::info(&format!("abil: {}, perc: {}", abil, perc));
+
+    let result =
+        if abil == 18 {
+            if perc == 0 {
+                250 as u8
             } else {
-                abil as u8
-            })
-    };
+                150 + perc as u8
+            }
+        } else {
+            if abil < 3 {
+                new_stat(3)
+            } else if abil > 18 {
+                new_stat(18)
+            } else {
+                new_stat(abil as u8)
+            }
+        };
+    debug::info(&format!("result: {}", result));
     debug::leave("get_min_stat");
     result
 }
@@ -264,7 +272,7 @@ fn get_money() {
 fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
                  try_count: &mut i64, mut best: &mut StatBlock, user: &StatBlock) -> bool {
     debug::enter("satisfied");
-    let mut is_satisfied: bool = false;
+    let mut is_satisfied: bool;
 
     if !*minning {
         /*
