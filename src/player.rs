@@ -1,5 +1,6 @@
 use libc::{time_t};
 use std::ffi::CStr;
+use types::{StatBlock, stats_iter};
 
 #[repr(C)]
 pub struct p_flags {
@@ -106,8 +107,8 @@ extern "C" {
     pub static mut player_claim_check: i64;
     pub static mut player_save_count: i64;
     pub static mut player_creation_time: time_t;
-    pub static mut player_stats_perm: [u8; 6];
-    pub static mut player_stats_curr: [u8; 6];
+    static mut player_stats_perm: [u8; 6];
+    static mut player_stats_curr: [u8; 6];
 }
 
 fn c_array_to_rust_string(array: [u8; 82]) -> String {
@@ -139,4 +140,24 @@ pub fn sex_string() -> String {
 
 pub fn class_string() -> String {
     c_array_to_rust_string(unsafe { player_tclass })
+}
+
+pub fn perm_stats() -> StatBlock {
+    StatBlock::from(unsafe { player_stats_perm })
+}
+
+pub fn set_perm_stats(block: &StatBlock) {
+    for stat in stats_iter() {
+        unsafe { player_stats_perm[stat] = block.get_pos(stat) };
+    }
+}
+
+pub fn curr_stats() -> StatBlock {
+    StatBlock::from(unsafe { player_stats_curr })
+}
+
+pub fn set_curr_stats(block: &StatBlock) {
+    for stat in stats_iter() {
+        unsafe { player_stats_curr[stat] = block.get_pos(stat) };
+    }
 }

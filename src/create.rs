@@ -1,11 +1,8 @@
-use std::ops::Range;
 use std::ptr::null;
 use std::cmp::max;
 use std::str;
 
-use libc::sscanf;
-use libc::time;
-use libc::time_t;
+use libc::{sscanf, time, time_t};
 
 use debug;
 use io;
@@ -14,6 +11,8 @@ use player;
 use random;
 use screen;
 use term;
+
+use types::{Stat, StatBlock, stats_iter};
 
 use bank::Currency;
 use bank::COIN_VALUE;
@@ -28,19 +27,6 @@ use races::HEALTH_BONUS;
 use races::EXPFACTOR;
 use races::INFRAVISION;
 use races::SWIM_SPEED;
-
-pub enum Stat {
-    Strength = 0,
-    Intelligence = 1,
-    Wisdom = 2,
-    Dexterity = 3,
-    Constitution = 4,
-    Charisma = 5,
-}
-
-pub fn stats_iter() -> Range<usize> {
-    (Stat::Strength as usize)..(Stat::Charisma as usize + 1)
-}
 
 const PLAYER_EXIT_PAUSE: i32 = 0;
 
@@ -168,21 +154,21 @@ fn max_stat(mut stat: u8, amount: i8) -> u8 {
     stat
 }
 
-fn next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6],
+fn next_best_stats(curr: &StatBlock, user: &StatBlock, best: &mut StatBlock,
                                   best_min: i64) -> i64 {
     debug::enter("next_best_stats");
     let mut below_sum: i64 = 0;
 
     for tstat in stats_iter() {
-        if this[tstat] < user[tstat] {
-            let below = user[tstat] - this[tstat];
+        if curr.get_pos(tstat) < user.get_pos(tstat) {
+            let below = user.get_pos(tstat) - curr.get_pos(tstat);
             below_sum = below_sum + ((below * (below + 1)) / 2) as i64;
         }
     }
 
     let result = if below_sum < best_min {
         for tstat in stats_iter() {
-            best[tstat] = this[tstat];
+            best.set_pos(tstat, curr.get_pos(tstat));
         }
         below_sum
     } else {
@@ -258,18 +244,16 @@ fn put_character() {
 
 fn get_money() {
     debug::enter("get_money");
+    let player_stats = player::curr_stats();
     let mut amount: i64 =
         325 + random::randint(25)
         // Social Class adj
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
-        - stats_iter().fold(0, |sum: i64, tstat| unsafe {
-            sum + old_stat(player::player_stats_curr[tstat]) as i64
-        })
+        - stats_iter().fold(0, |sum: i64, tstat|
+            sum + old_stat(player_stats.get_pos(tstat)) as i64)
         // Charisma adj
-        + unsafe {
-            old_stat(player::player_stats_curr[Stat::Charisma as usize]) as i64
-        };
+        + old_stat(player_stats.get(Stat::Charisma)) as i64;
 
     // Minimum
     amount = max(amount, 80);
@@ -280,7 +264,7 @@ fn get_money() {
 }
 
 fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
-                 try_count: &mut i64, best: [u8; 6], user: [u8; 6]) -> bool {
+                 try_count: &mut i64, mut best: &mut StatBlock, user: &StatBlock) -> bool {
     debug::enter("satisfied");
     let mut is_satisfied: bool = false;
 
@@ -301,7 +285,6 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         put_stats();
 
         term::prt_r("Press 'R' to reroll, <RETURN> to continue:", 21, 3);
-        debug::info("5!");
         *printed_once = true;
 
         loop {
@@ -321,9 +304,8 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
             *printed_once = true;
         }
 
-        unsafe {
-            *best_min = next_best_stats(player::player_stats_perm, user, best, *best_min);
-        }
+        *best_min = next_best_stats(&player::perm_stats(), &user, &mut best, *best_min);
+
         *try_count += 1;
         if (*try_count % 250) == 0 {
             term::prt_r(&format!("Try = {:10}", try_count), 21, 60);
@@ -334,12 +316,8 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         if s != 0 || *try_count == 50000 {
             *minning = false;
             *printed_once = false;
-            for tstat in stats_iter() {
-                unsafe {
-                    player::player_stats_perm[tstat] = best[tstat];
-                    player::player_stats_curr[tstat] = best[tstat];
-                }
-            }
+            player::set_perm_stats(&best);
+            player::set_curr_stats(&best);
             is_satisfied =
                 satisfied(minning, printed_once, best_min,
                               try_count, best, user);
@@ -360,13 +338,11 @@ fn get_stats() {
     debug::enter("get_stats");
     let race = unsafe { player::player_prace } as usize;
 
-    for tstat in stats_iter() {
-        let new_stat: u8 = change_stat(random_stat(), RACE_STATS[race][tstat] as i64) as u8;
-        unsafe {
-            player::player_stats_perm[tstat] = new_stat;
-            player::player_stats_curr[tstat] = new_stat;
-        }
-    }
+    let new_stats = StatBlock::from(stats_iter()
+        .map(|stat| change_stat(random_stat(), RACE_STATS[race][stat] as i64) as u8)
+        .collect::<Vec<u8>>());
+    player::set_perm_stats(&new_stats);
+    player::set_curr_stats(&new_stats);
 
     unsafe {
         player::player_rep = 0;
@@ -391,7 +367,7 @@ fn get_stats() {
 
 fn put_stats() {
     debug::enter("put_stats");
-    screen::prt_6_stats(unsafe { player::player_stats_curr }, 3, 65);
+    screen::prt_6_stats(&player::curr_stats(), 3, 65);
     term::prt_r(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
     term::prt_r(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);
     term::prt_r(&format!("+ To AC    : {}", unsafe { player::player_dis_tac }), 12, 4);
@@ -459,18 +435,18 @@ fn choose_stats() {
 
 
     let mut is_minning = io::get_yes_no("Do you wish to try for minimum statistics?");
-    let mut user: [u8; 6] = [0; 6];
+    let mut user: StatBlock = StatBlock::new(0);
     if is_minning {
-        user[0] = get_min_stat("STR", max_stats[0]);
-        user[1] = get_min_stat("INT", max_stats[1]);
-        user[2] = get_min_stat("WIS", max_stats[2]);
-        user[3] = get_min_stat("DEX", max_stats[3]);
-        user[4] = get_min_stat("CON", max_stats[4]);
-        user[5] = get_min_stat("CHR", max_stats[5]);
-        screen::prt_6_stats(user, 3, 65);
+        user.strength = get_min_stat("STR", max_stats[0]);
+        user.intelligence = get_min_stat("INT", max_stats[1]);
+        user.wisdom = get_min_stat("WIS", max_stats[2]);
+        user.dexterity = get_min_stat("DEX", max_stats[3]);
+        user.constitution = get_min_stat("CON", max_stats[4]);
+        user.charisma = get_min_stat("CHR", max_stats[5]);
+        screen::prt_6_stats(&user, 3, 65);
     }
 
-    let best: [u8; 6] = [3; 6];
+    let mut best: StatBlock = StatBlock::new(3);
     let mut is_printed_once: bool = true;
 
     loop {
@@ -489,7 +465,7 @@ fn choose_stats() {
 
         let mut try_count: i64 = 0;
         let mut best_min: i64 = 99999999;
-        if satisfied(&mut is_minning, &mut is_printed_once, &mut best_min, &mut try_count, best, user) {
+        if satisfied(&mut is_minning, &mut is_printed_once, &mut best_min, &mut try_count, &mut best, &user) {
             break;
         }
     }
