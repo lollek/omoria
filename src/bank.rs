@@ -1,3 +1,5 @@
+use libc::c_char;
+
 use player;
 use term;
 
@@ -35,7 +37,7 @@ pub extern fn eb__display_money() {
 }
 
 #[no_mangle]
-pub extern fn eb__display_store(shop_owner: *const u8) {
+pub extern fn eb__display_store(shop_owner: *const c_char) {
     term::clear_screen();
     term::prt(shop_owner, 4, 10);
     eb__display_money();

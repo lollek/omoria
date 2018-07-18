@@ -1,64 +1,51 @@
 use std::ffi::CString;
+use libc::c_char;
 
-use ncurses::move_print;
-use ncurses::move_cursor;
-use ncurses::clear_line;
-use ncurses::refresh_screen as ncurses_refresh_screen;
-use ncurses::clear_screen as ncurses_clear_screen;
+use ncurses;
 
 extern "C" {
-    static mut screen_change: i32;
-    static msg_flag: u8;
-    fn msg_print(str_buff: *const u8);
+    #[link_name="screen_change"]
+    static mut C_screen_change: i32;
+    #[link_name="msg_flag"]
+    static C_msg_flag: u8;
+    #[link_name="msg_print"]
+    fn C_msg_print(str_buff: *const c_char);
 }
 
 pub fn put_buffer_r(out_str: &str, row: i32, col: i32) {
-    match CString::new(out_str) {
-        Ok(cstr) => put_buffer(cstr.as_ptr() as *const u8, row, col),
-        Err(e) => panic!(e),
-    }
+    put_buffer(CString::new(out_str).unwrap().as_ptr(), row, col)
 }
 
 pub fn prt_r(str_buff: &str, row: i32, col: i32) {
-    match CString::new(str_buff) {
-        Ok(cstr) => prt(cstr.as_ptr() as *const u8, row, col),
-        Err(e) => panic!(e),
-    }
+    prt(CString::new(str_buff).unwrap().as_ptr(), row, col)
 }
 
 pub fn refresh_screen() {
-    unsafe {
-        screen_change = <i32>::max_value();
-    }
-    ncurses_refresh_screen();
+    unsafe { C_screen_change = <i32>::max_value(); }
+    ncurses::refresh_screen();
 }
 
-fn msg_print_nothing() {
-    unsafe {
-        match CString::new("") {
-            Ok(cstr) => msg_print(cstr.as_ptr() as *const u8),
-            Err(e) => panic!(e),
-        }
-    }
+pub fn msg_print(out_str: &str) {
+    unsafe { C_msg_print(CString::new(out_str).unwrap().as_ptr()) }
 }
 
 
 #[no_mangle]
-pub extern fn put_buffer(out_str: *const u8, row: i32, col: i32) {
+pub extern fn put_buffer(out_str: *const c_char, row: i32, col: i32) {
     put_buffer_(out_str, row - 1, col - 1)
 }
 
 #[no_mangle]
-pub extern fn put_buffer_(out_str: *const u8, row: i32, col: i32) {
+pub extern fn put_buffer_(out_str: *const c_char, row: i32, col: i32) {
     if out_str.is_null() {
         panic!("Null string received");
     }
 
-    move_print(row, col, out_str);
+    ncurses::move_print(row, col, out_str);
 }
 
 #[no_mangle]
-pub extern fn prt(str_buff: *const u8, row: i32, col: i32) {
+pub extern fn prt(str_buff: *const c_char, row: i32, col: i32) {
     if str_buff.is_null() {
         panic!("Null string received");
     }
@@ -66,26 +53,24 @@ pub extern fn prt(str_buff: *const u8, row: i32, col: i32) {
 }
 
 #[no_mangle]
-pub extern fn prt_(str_buff: *const u8, row: i32, col: i32) {
+pub extern fn prt_(str_buff: *const c_char, row: i32, col: i32) {
     if str_buff.is_null() {
         panic!("Null string received");
     }
-    unsafe {
-        if row == -1 && msg_flag != 0 {
-            msg_print_nothing();
-        }
+    let has_msg_flag = unsafe { C_msg_flag != 0 };
+    if row == -1 && has_msg_flag {
+        msg_print("");
     }
-    move_cursor(row, col);
-    clear_line();
+    ncurses::move_cursor(row, col);
+    ncurses::clear_line();
     put_buffer_(str_buff, row, col);
 }
 
 #[no_mangle]
 pub extern fn clear_screen() {
-    unsafe {
-        if msg_flag != 0 {
-            msg_print_nothing();
-        }
-        ncurses_clear_screen();
+    let has_msg_flag = unsafe { C_msg_flag != 0 };
+    if has_msg_flag {
+        msg_print("");
     }
+    ncurses::clear_screen();
 }

@@ -12,7 +12,7 @@ use random;
 use screen;
 use term;
 
-use types::{Stat, StatBlock, stats_iter, Currency, currency_value};
+use types::{Stat, StatBlock, stats_iter, Currency};
 
 use races::RACE_STATS;
 use races::SEARCH_MOD;
@@ -256,7 +256,7 @@ fn get_money() {
     // Minimum
     amount = max(amount, 80);
 
-    let gold_value = currency_value(Currency::Gold);
+    let gold_value = Currency::Gold.value();
     unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
     debug::leave("get_money");
 }
