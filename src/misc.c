@@ -374,54 +374,6 @@ chtype loc_symbol(long y, long x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-unsigned char de_statp(unsigned char stat)
-{
-	/*	{ Decreases a stat by one randomized level		-RAK-
-	 * }*/
-
-	unsigned char duh;
-	unsigned char return_value;
-
-	if (stat < 11) {
-		return_value = stat;
-	} else if (stat < 151) {
-		return_value = 10;
-	} else if (stat < 241) {
-		duh = randint(10) + 5;
-		if (stat - duh < 150) {
-			duh = stat - 150;
-		}
-		return_value = duh;
-	} else {
-		return_value = randint(3);
-	}
-
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-unsigned char in_statp(unsigned char stat)
-{
-	/*	{ Increases a stat by one randomized level		-RAK-
-	 * }*/
-
-	unsigned char return_value;
-
-	if (stat < 150) {
-		return_value = 10;
-	} else if (stat < 220) {
-		return_value = randint(25);
-	} else if (stat < 240) {
-		return_value = randint(10);
-	} else if (stat < 250) {
-		return_value = 1;
-	} else {
-		return_value = 0;
-	}
-
-	return return_value;
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

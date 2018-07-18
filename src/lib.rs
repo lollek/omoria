@@ -10,6 +10,7 @@ pub mod io;
 pub mod misc;
 pub mod ncurses;
 pub mod player;
+pub mod screen;
 pub mod races;
 pub mod random;
 pub mod term;

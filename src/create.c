@@ -3,6 +3,7 @@
 
 #include "imoria.h"
 
+/* See also create::change_stat */
 long cc__change_stat(long cur_stat, long amount)
 {
 	/*	{ Changes stats by given amount				-JWT-

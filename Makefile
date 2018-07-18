@@ -46,6 +46,7 @@ omoria: $(OBJFILES)
 .PHONY: omoria
 
 run: omoria ctags
+	>debug2.out
 	RUST_BACKTRACE=1 ./omoria
 
 privs ::

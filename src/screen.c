@@ -111,6 +111,7 @@ void prt_map()
 	LEAVE("prt_map", "");
 }
 
+// RUST
 void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
 		 unsigned char col)
 {
@@ -133,6 +134,7 @@ void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
 	LEAVE("prt_6_stats", "");
 }
 
+// RUST
 void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char loss,
 		   long row, long column)
 {
@@ -151,6 +153,7 @@ void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char l
 	LEAVE("prt_stat_attr", "");
 }
 
+// RUST
 void prt_stat(const char stat_name[82], unsigned char stat, long row, long column)
 {
 	stat_s_type out_val1;

@@ -12,6 +12,7 @@ use io;
 use misc;
 use player;
 use random;
+use screen;
 use term;
 
 use bank::Currency;
@@ -48,7 +49,6 @@ extern "C" {
     fn Clear_From(row: i32);
     fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
-    fn prt_6_stats(p: [u8; 6], l: *const u8, row: u32, col: u32);
     fn add_money(amount: i64);
     fn inkey() -> u8;
 
@@ -56,7 +56,6 @@ extern "C" {
     fn todam_adj() -> i64;
     fn toac_adj() -> i64;
 
-    fn cc__change_stat(cur_stat: i64, amount: i64) -> i64;
     fn cc__get_name();
     fn cc__choose_race() -> u8;
     fn cc__put_misc3();
@@ -68,19 +67,31 @@ extern "C" {
 }
 
 fn get_string(in_str: *const u8, row: i32, col: i32, slen: i32) -> u8 {
-    unsafe { Get_String(in_str, row - 1, col - 1, slen) }
+    debug::enter("get_string");
+    let result = unsafe { Get_String(in_str, row - 1, col - 1, slen) };
+    debug::leave("get_string");
+    result
 }
 
 fn clear_from(row: i32) {
-    unsafe { Clear_From(row - 1) }
+    debug::enter("clear_from");
+    let result = unsafe { Clear_From(row - 1) };
+    debug::leave("clear_from");
+    result
 }
 
 fn pause_exit(prt_line: i32, delay: i32) {
-    unsafe { Pause_Exit(prt_line -1, delay) }
+    debug::enter("pause_exit");
+    let result = unsafe { Pause_Exit(prt_line -1, delay) };
+    debug::leave("pause_exit");
+    result
 }
 
 fn erase_line(row: i32, col: i32) {
-    unsafe { Erase_Line(row -1, col -1) }
+    debug::enter("erase_line");
+    let result = unsafe { Erase_Line(row -1, col -1) };
+    debug::leave("erase_line");
+    result
 }
 
 fn old_stat(stat: u8) -> u8 {
@@ -127,7 +138,23 @@ fn max_de_statp(stat: u8) -> u8 {
     }
 }
 
+fn change_stat(mut cur_stat: u8, amount: i64) -> u8 {
+    debug::enter("change_stat");
+    if amount < 0 {
+        for _ in amount..0 {
+            cur_stat -= misc::squish_stat(misc::de_statp(cur_stat) as i32);
+        }
+    } else {
+        for _ in 1..(amount+1) {
+            cur_stat += misc::squish_stat(misc::in_statp(cur_stat) as i32);
+        }
+    }
+    debug::leave("change_stat");
+    cur_stat
+}
+
 fn max_stat(mut stat: u8, amount: i8) -> u8 {
+    debug::enter("max_stat");
     if amount < 0 {
         for _ in amount..0 {
             stat = max_de_statp(stat);
@@ -137,12 +164,13 @@ fn max_stat(mut stat: u8, amount: i8) -> u8 {
             stat = max_in_statp(stat);
         }
     }
-
+    debug::leave("max_stat");
     stat
 }
 
 fn next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6],
                                   best_min: i64) -> i64 {
+    debug::enter("next_best_stats");
     let mut below_sum: i64 = 0;
 
     for tstat in stats_iter() {
@@ -152,17 +180,20 @@ fn next_best_stats(this: [u8; 6], user: [u8; 6], mut best: [u8; 6],
         }
     }
 
-    if below_sum < best_min {
+    let result = if below_sum < best_min {
         for tstat in stats_iter() {
             best[tstat] = this[tstat];
         }
-        return below_sum
+        below_sum
     } else {
-        return best_min
-    }
+        best_min
+    };
+    debug::leave("next_best_stats");
+    result
 }
 
 fn get_min_stat(stat: &str, max: u8) -> u8 {
+    debug::enter("get_min_stat");
     let out_str =
         if max == 250 {
             format!("Min {} (racial max 18/00) : ", stat)
@@ -190,7 +221,7 @@ fn get_min_stat(stat: &str, max: u8) -> u8 {
     unsafe {
         sscanf(tmp_str.as_ptr() as *const i8, "%u %u\0".as_ptr() as *const i8, &abil, &perc);
     }
-    if abil == 18 {
+    let result = if abil == 18 {
         if perc == 0 {
             250 as u8
         } else {
@@ -205,22 +236,28 @@ fn get_min_stat(stat: &str, max: u8) -> u8 {
             } else {
                 abil as u8
             })
-    }
+    };
+    debug::leave("get_min_stat");
+    result
 }
 
-fn get_stat() -> i64 {
-    (random::randint(4) + random::randint(4) + random::randint(4) + 2) * 10 // [50, 140]
+// returns [50, 140]
+fn random_stat() -> u8 {
+    (random::randint(4) + random::randint(4) + random::randint(4) + 2) as u8 * 10
 }
 
 fn put_character() {
+    debug::enter("put_character");
     clear_from(1);
     term::prt_r(&format!("Name      : {}", player::name()), 3, 3);
     term::prt_r(&format!("Race      : {}", player::race_string()), 4, 3);
     term::prt_r(&format!("Sex       : {}", player::sex_string()), 5, 3);
     term::prt_r(&format!("Class     : {}", player::class_string()), 6, 3);
+    debug::leave("put_character");
 }
 
 fn get_money() {
+    debug::enter("get_money");
     let mut amount: i64 =
         325 + random::randint(25)
         // Social Class adj
@@ -239,10 +276,12 @@ fn get_money() {
 
     let gold_value = COIN_VALUE[Currency::Gold as usize];
     unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
+    debug::leave("get_money");
 }
 
 fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
                  try_count: &mut i64, best: [u8; 6], user: [u8; 6]) -> bool {
+    debug::enter("satisfied");
     let mut is_satisfied: bool = false;
 
     if !*minning {
@@ -262,6 +301,7 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         put_stats();
 
         term::prt_r("Press 'R' to reroll, <RETURN> to continue:", 21, 3);
+        debug::info("5!");
         *printed_once = true;
 
         loop {
@@ -312,15 +352,17 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         } /* endif s || try_count */
     }	 /* endif minning */
 
+    debug::leave("satisfied");
     is_satisfied
 }
 
 fn get_stats() {
-    let race = unsafe { player::player_prace as usize };
+    debug::enter("get_stats");
+    let race = unsafe { player::player_prace } as usize;
 
     for tstat in stats_iter() {
+        let new_stat: u8 = change_stat(random_stat(), RACE_STATS[race][tstat] as i64) as u8;
         unsafe {
-            let new_stat: u8 = cc__change_stat(get_stat(), RACE_STATS[race][tstat] as i64) as u8;
             player::player_stats_perm[tstat] = new_stat;
             player::player_stats_curr[tstat] = new_stat;
         }
@@ -344,25 +386,31 @@ fn get_stats() {
         player::player_flags.see_infra = INFRAVISION[race] as i64;
         player::player_flags.swim = SWIM_SPEED[race] as i64;
     }
+    debug::leave("get_stats");
 }
 
 fn put_stats() {
-    unsafe { prt_6_stats(player::player_stats_curr, null(), 3, 65) };
+    debug::enter("put_stats");
+    screen::prt_6_stats(unsafe { player::player_stats_curr }, 3, 65);
     term::prt_r(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
     term::prt_r(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);
     term::prt_r(&format!("+ To AC    : {}", unsafe { player::player_dis_tac }), 12, 4);
     term::prt_r(&format!("  Total AC : {}", unsafe { player::player_dis_ac }), 13, 4);
+    debug::leave("put_stats");
 }
 
 fn put_misc1() {
+    debug::enter("put_misc1");
     term::prt_r(&format!("Age          : {}", unsafe { player::player_age }), 3, 40);
     term::prt_r(&format!("Height       : {}", unsafe { player::player_ht }), 4, 40);
     term::prt_r(&format!("Weight       : {}", unsafe { player::player_wt }), 5, 40);
     term::prt_r(&format!("Social Class : {}", unsafe { player::player_sc }), 6, 40);
     term::prt_r(&format!("Difficulty   : {}", unsafe { player::player_diffic }), 7, 40);
+    debug::leave("put_misc1");
 }
 
 fn put_misc2() {
+    debug::enter("put_misc2");
     term::prt_r(&format!("Level      : {}", unsafe { player::player_lev }), 10, 31);
     term::prt_r(&format!("Experience : {}", unsafe { player::player_exp }), 11, 31);
     term::prt_r(&format!("Gold       : {}", unsafe { player::player_money[Currency::Total as usize] }), 12, 31);
@@ -371,19 +419,23 @@ fn put_misc2() {
     term::prt_r(&format!("Cur Hit Points : {}", unsafe { player::player_chp }), 11, 54);
     term::prt_r(&format!("Max Mana       : {}", unsafe { player::player_mana }), 12, 54);
     term::prt_r(&format!("Cur Mana       : {}", unsafe { player::player_cmana }), 13, 54);
+    debug::leave("put_misc2");
 }
 
 // Display character on screen -RAK-
 fn display_char() {
+    debug::enter("display_char");
     put_character();
     put_misc1();
     put_stats();
     put_misc2();
     unsafe { cc__put_misc3() };
+    debug::leave("display_char");
 }
 
 #[no_mangle]
 pub extern fn change_name() {
+    debug::enter("change_name");
     display_char();
     loop {
         term::prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
@@ -394,13 +446,15 @@ pub extern fn change_name() {
         }
 
     }
+    debug::leave("change_name");
 }
 
 fn choose_stats() {
-    let player_race: u8 = unsafe { player::player_prace };
+    debug::enter("choose_stats");
+    let player_race = unsafe { player::player_prace } as usize;
 
     let max_stats: Vec<u8> = stats_iter()
-        .map(|stat| max_stat(140, RACE_STATS[player_race as usize][stat]))
+        .map(|stat| max_stat(140, RACE_STATS[player_race][stat]))
         .collect();
 
 
@@ -413,7 +467,7 @@ fn choose_stats() {
         user[3] = get_min_stat("DEX", max_stats[3]);
         user[4] = get_min_stat("CON", max_stats[4]);
         user[5] = get_min_stat("CHR", max_stats[5]);
-        unsafe { prt_6_stats(user, null(), 3, 65); }
+        screen::prt_6_stats(user, 3, 65);
     }
 
     let best: [u8; 6] = [3; 6];
@@ -440,10 +494,12 @@ fn choose_stats() {
         }
     }
 
+    debug::leave("choose_stats");
 }
 
 #[no_mangle]
 pub extern fn create_character() {
+    debug::enter("create_character");
 
     loop {
         put_character();
@@ -475,11 +531,12 @@ pub extern fn create_character() {
     }
 
     get_money();
+    put_stats();
+    put_misc2();
     unsafe {
-        put_stats();
-        put_misc2();
         cc__put_misc3();
         cc__get_name();
         pause_exit(24, PLAYER_EXIT_PAUSE);
     }
+    debug::leave("create_character");
 }

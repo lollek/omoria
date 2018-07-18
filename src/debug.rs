@@ -5,6 +5,7 @@ use std::error;
 // todo: Make this toggle-able
 static DEBUG_ENABLED: bool = true;
 const FILENAME: &'static str = "debug2.out";
+static mut DEPTH: i32 = 0;
 
 #[derive(Debug)]
 enum DebugLevel {
@@ -65,4 +66,18 @@ pub fn fatal2(msg: &str, e: &error::Error) -> ! {
         debug(DebugLevel::FATAL, "!!END STACKTRACE!!");
     }
     panic!("{}: {}", msg, e);
+}
+
+pub fn enter(function: &str) {
+    unsafe {
+        DEPTH += 1;
+        info(&format!("{}: ENTER {}", DEPTH, function));
+    }
+}
+
+pub fn leave(function: &str) {
+    unsafe {
+        DEPTH -= 1;
+        info(&format!("{}: LEAVE {}", DEPTH, function));
+    }
 }
