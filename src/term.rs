@@ -14,7 +14,16 @@ extern "C" {
     fn C_msg_print(str_buff: *const c_char);
     #[link_name="Get_String"]
     fn C_Get_String(in_str: *const c_char, row: c_int, col: c_int, slen: c_int) -> c_char;
+    #[link_name="Clear_From"]
+    fn C_Clear_From(row: c_int);
 }
+
+pub fn clear_from(row: i32) {
+    debug::enter("clear_from");
+    unsafe { C_Clear_From(row - 1) };
+    debug::leave("clear_from");
+}
+
 
 pub fn put_buffer_r(out_str: &str, row: i32, col: i32) {
     debug::enter("put_buffer_r");
@@ -56,16 +65,20 @@ pub fn get_string(row: i32, col: i32, slen: i32) -> String {
 
 #[no_mangle]
 pub extern fn put_buffer(out_str: *const c_char, row: i32, col: i32) {
-    put_buffer_(out_str, row - 1, col - 1)
+    debug::enter("put_buffer");
+    put_buffer_(out_str, row - 1, col - 1);
+    debug::leave("put_buffer");
 }
 
 #[no_mangle]
 pub extern fn put_buffer_(out_str: *const c_char, row: i32, col: i32) {
+    debug::enter("put_buffer_");
     if out_str.is_null() {
         panic!("Null string received");
     }
 
     ncurses::move_print(row, col, out_str);
+    debug::leave("put_buffer_");
 }
 
 #[no_mangle]

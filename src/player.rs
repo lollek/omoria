@@ -1,7 +1,10 @@
-use libc::{time_t};
-use types::{StatBlock, stats_iter, Wallet, currencies_iter};
+use libc::{c_char, time_t, strcpy};
+use types::{StatBlock, stats_iter, Wallet, currencies_iter, Sex};
+use std::ffi::CString;
 
+use debug;
 use misc;
+use races;
 
 #[repr(C)]
 pub struct p_flags {
@@ -71,8 +74,8 @@ pub struct p_flags {
 extern "C" {
     pub static mut player_flags: p_flags;
     static mut player_name: [u8; 82];
-    static mut player_race: [u8; 82];
-    static mut player_sex: [u8; 82];
+    static mut player_race: [c_char; 82];
+    static mut player_sex: [c_char; 82];
     static mut player_tclass: [u8; 82];
     pub static mut player_prace: u8;
     pub static mut player_stl: u8;
@@ -117,12 +120,38 @@ pub fn name() -> String {
     misc::c_array_to_rust_string(unsafe { player_name.to_vec() })
 }
 
-pub fn race_string() -> String {
-    misc::c_array_to_rust_string(unsafe { player_race.to_vec() })
+pub fn race() -> races::Race {
+    debug::enter("player::race");
+    let result = races::Race::from(unsafe { player_prace } as usize);
+    debug::leave("player::race");
+    result
 }
 
-pub fn sex_string() -> String {
-    misc::c_array_to_rust_string(unsafe { player_sex.to_vec() })
+pub fn set_race(race: races::Race) {
+    debug::enter("player::set_race");
+    unsafe {
+        player_prace = race as u8;
+        strcpy(player_race.as_mut_ptr(), CString::new(race.name()).unwrap().as_ptr());
+    }
+    debug::leave("player::set_race");
+}
+
+pub fn race_string() -> &'static str {
+    race().name()
+}
+
+pub fn sex() -> Sex {
+    Sex::from(unsafe { player_sex[0] as u8 as char })
+}
+
+pub fn set_sex(sex: Sex) {
+    unsafe {
+        strcpy(player_sex.as_mut_ptr(), CString::new(sex.to_string()).unwrap().as_ptr());
+    }
+}
+
+pub fn sex_string() -> &'static str {
+    sex().to_string()
 }
 
 pub fn class_string() -> String {

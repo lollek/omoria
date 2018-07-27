@@ -23,65 +23,6 @@ long cc__change_stat(long cur_stat, long amount)
 	return cur_stat;
 }
 
-boolean cc__choose_race()
-{
-	/*	{ Allows player to select a race			-JWT-
-	 * }*/
-
-	long i2, i3, i4, i5;
-	char s;
-	boolean exit_flag;
-	char out_val[82];
-	boolean return_value = false;
-
-	/*	printf("enter choose_race \n"); fflush(stdout); */
-
-	i2 = 0;
-	i3 = 1;
-	i4 = 3;
-	i5 = 22;
-	clear_from(21);
-	prt("Choose a race (? for Help):", 21, 3);
-	do {
-		sprintf(out_val, " %c) %s", (int)i3 + 96, race_name(i2));
-		put_buffer(out_val, i5, i4);
-		i3++;
-		i4 += 15;
-		if (i4 > 70) {
-			i4 = 3;
-			i5++;
-		}
-		i2++;
-	} while (i2 < MAX_RACES);
-
-	/*  printf("    choose_race done with do\n"); fflush(stdout); */
-
-	player_race[0] = 0;
-	put_buffer("", 21, 30);
-	exit_flag = false;
-
-	do {
-		move(3, 14);
-		inkey_flush(&s);
-		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
-		if ((i2 <= MAX_RACES) && (i2 >= 1)) {
-			player_prace = i2 - 1;
-			strcpy(player_race, race_name(i2 - 1));
-			exit_flag = true;
-			return_value = true;
-			put_buffer(player_race, 4, 15);
-		} else if (s == '?') {
-			moria_help("Character Races");
-			exit_flag = true;
-			return_value = false;
-		}
-	} while (!exit_flag);
-
-	/*	printf("exit choose_race \n"); fflush(stdout); */
-
-	return return_value;
-}
-
 void cc__put_misc3()
 {
 
@@ -252,50 +193,6 @@ void cc__get_history()
 	player_sc = social_class;
 
 } /* end cc__get_history */
-
-boolean cc__get_sex()
-{
-	/*	{ Gets the character's sex				-JWT-
-	 * }*/
-
-	char s;
-	boolean exit_flag = false;
-	boolean return_value = false;
-
-	if (player_prace == R_DRYAD) {
-		strcpy(player_sex, "Female");
-		return_value = true;
-		exit_flag = true;
-		prt(player_sex, 5, 15);
-	} else {
-		player_sex[0] = 0;
-		clear_from(21);
-		prt("Choose a sex (? for Help):", 21, 3);
-		prt("m) Male       f) Female", 22, 3);
-		prt("", 21, 29);
-		do {
-			move(4, 14);
-			inkey_flush(&s);
-			if (s == 'f') {
-				strcpy(player_sex, "Female");
-				prt(player_sex, 5, 15);
-				exit_flag = true;
-				return_value = true;
-			} else if (s == 'm') {
-				strcpy(player_sex, "Male");
-				prt(player_sex, 5, 15);
-				exit_flag = true;
-				return_value = true;
-			} else if (s == '?') {
-				moria_help("Character Sex");
-				exit_flag = true;
-				return_value = false;
-			}
-		} while (!exit_flag);
-	} /* endif prace */
-
-	return return_value;
-} /* end cc__get_sex */
 
 void cc__get_ahw()
 {

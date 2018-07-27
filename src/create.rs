@@ -1,18 +1,21 @@
 use std::ptr::null;
 use std::cmp::max;
 use std::str;
+use std::ffi::CString;
 
-use libc::{time, time_t};
+use libc::{c_char, time, time_t};
 
 use debug;
 use io;
 use misc;
 use player;
+use ncurses;
 use random;
+use races;
 use screen;
 use term;
 
-use types::{Stat, StatBlock, stats_iter, Currency};
+use types::{Stat, StatBlock, stats_iter, Currency, Sex};
 
 use races::RACE_STATS;
 use races::SEARCH_MOD;
@@ -29,7 +32,6 @@ use races::SWIM_SPEED;
 const PLAYER_EXIT_PAUSE: i32 = 0;
 
 extern "C" {
-    fn Clear_From(row: i32);
     fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
     fn add_money(amount: i64);
@@ -40,20 +42,14 @@ extern "C" {
     fn toac_adj() -> i64;
 
     fn cc__get_name();
-    fn cc__choose_race() -> u8;
     fn cc__put_misc3();
     fn cc__get_class() -> u8;
     fn cc__print_history();
     fn cc__get_history();
     fn cc__get_ahw();
-    fn cc__get_sex() -> u8;
-}
 
-fn clear_from(row: i32) {
-    debug::enter("clear_from");
-    let result = unsafe { Clear_From(row - 1) };
-    debug::leave("clear_from");
-    result
+    #[link_name = "moria_help"]
+    fn C_moria_help(what: *const c_char);
 }
 
 fn pause_exit(prt_line: i32, delay: i32) {
@@ -238,13 +234,23 @@ fn random_stat() -> u8 {
     (random::randint(4) + random::randint(4) + random::randint(4) + 2) as u8 * 10
 }
 
-fn put_character() {
+fn put_character(show_values: bool) {
     debug::enter("put_character");
-    clear_from(1);
-    term::prt_r(&format!("Name      : {}", player::name()), 3, 3);
-    term::prt_r(&format!("Race      : {}", player::race_string()), 4, 3);
-    term::prt_r(&format!("Sex       : {}", player::sex_string()), 5, 3);
-    term::prt_r(&format!("Class     : {}", player::class_string()), 6, 3);
+
+    term::clear_from(1);
+
+    term::prt_r("Name      : ", 3, 3);
+    term::prt_r("Race      : ", 4, 3);
+    term::prt_r("Sex       : ", 5, 3);
+    term::prt_r("Class     : ", 6, 3);
+
+    if show_values {
+        term::prt_r(&player::name(), 3, 15);
+        term::prt_r(&player::race_string(), 4, 15);
+        term::prt_r(&player::sex_string(), 5, 15);
+        term::prt_r(&player::class_string(), 6, 15);
+    }
+
     debug::leave("put_character");
 }
 
@@ -286,7 +292,7 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
         }
 
         erase_line(1, 1);
-        clear_from(21);
+        term::clear_from(21);
         put_misc1();
         put_stats();
 
@@ -304,7 +310,7 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
     } else { /* minning */
 
         if !*printed_once {
-            clear_from(21);
+            term::clear_from(21);
             term::prt_r("Press any key to give up (50000 rolls max): ", 21, 3);
             term::refresh_screen();
             *printed_once = true;
@@ -407,7 +413,7 @@ fn put_misc2() {
 // Display character on screen -RAK-
 fn display_char() {
     debug::enter("display_char");
-    put_character();
+    put_character(true);
     put_misc1();
     put_stats();
     put_misc2();
@@ -429,6 +435,91 @@ pub extern fn change_name() {
 
     }
     debug::leave("change_name");
+}
+
+/*	{ Allows player to select a race			-JWT- }*/
+fn choose_race() -> bool {
+    debug::enter("choose_race");
+    term::clear_from(21);
+    term::prt_r("Choose a race (? for Help):", 21, 3);
+
+    let start_x = 3;
+
+    let mut x = start_x;
+    let mut y = 22;
+    for i in races::races_iter() {
+        let race = races::Race::from(i);
+        let char_visual = ('a' as u8 + i as u8) as char;
+        let race_string = format!("{}) {}", char_visual, race.name());
+
+        term::put_buffer_r(&race_string, y, x);
+        x += 15;
+        if x > 70 {
+            x = start_x;
+            y += 1;
+        }
+    }
+
+    term::put_buffer_r("", 21, 30);
+
+    loop {
+        ncurses::move_cursor(3, 14);
+        let key = io::inkey_flush();
+        let selection = (key as u8 - 'a' as u8) as usize;
+
+        if let Some(_) = races::races_iter().find(|&i| i == selection) {
+            let race_pos = selection;
+            let race = races::Race::from(race_pos);
+            player::set_race(race);
+            debug::leave("choose_race");
+            return true;
+        }
+
+        if selection as u8 as char == '?' {
+            unsafe { C_moria_help(CString::new("Character Races").unwrap().as_ptr()) };
+            debug::leave("choose_race");
+            return false;
+        }
+    }
+}
+
+/*	{ Gets the character's sex				-JWT- }*/
+fn choose_sex() -> bool {
+    debug::enter("choose_sex");
+
+    if player::race() == races::Race::Dryad {
+        player::set_sex(Sex::Female);
+        debug::leave("choose_sex");
+        return true;
+    }
+
+    term::clear_from(21);
+    term::prt_r("Choose a sex (? for Help):", 21, 3);
+    term::prt_r("m) Male       f) Female", 22, 3);
+    term::prt_r("", 21, 29);
+
+    loop {
+        ncurses::move_cursor(4, 14);
+        let key = io::inkey_flush() as char;
+
+        if key == 'f' {
+            player::set_sex(Sex::Female);
+            debug::leave("choose_sex");
+            return true;
+        }
+
+        if key == 'm' {
+            player::set_sex(Sex::Male);
+            debug::leave("choose_sex");
+            return true;
+        }
+
+        if key == '?' {
+            unsafe { C_moria_help(CString::new("Character Sex").unwrap().as_ptr()) };
+            debug::leave("choose_sex");
+            return false;
+        }
+    }
 }
 
 fn choose_stats() {
@@ -483,23 +574,27 @@ fn choose_stats() {
 pub extern fn create_character() {
     debug::enter("create_character");
 
+    put_character(false);
     loop {
-        put_character();
-        if unsafe { cc__choose_race() } != 0 {
+        if choose_race() {
             break;
         }
     }
+    term::put_buffer_r(&player::race().name(), 4, 15);
 
-    while unsafe { cc__get_sex() } == 0 {
-        put_character();
+    loop {
+        if choose_sex() {
+            break;
+        }
     }
+    term::put_buffer_r(&player::sex().to_string(), 5, 15);
 
     choose_stats();
 
     unsafe {
         cc__print_history();
         while cc__get_class() == 0 {
-            put_character();
+            //put_character();
             cc__print_history();
             put_misc1();
             put_stats();
