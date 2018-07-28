@@ -77,7 +77,7 @@ extern "C" {
     static mut player_race: [c_char; 82];
     static mut player_sex: [c_char; 82];
     static mut player_tclass: [u8; 82];
-    pub static mut player_prace: u8;
+    static mut player_prace: u8;
     pub static mut player_stl: u8;
     pub static mut player_sc: i16;
     pub static mut player_age: u16;
@@ -164,7 +164,7 @@ pub fn perm_stats() -> StatBlock {
 
 pub fn set_perm_stats(block: &StatBlock) {
     for stat in stats_iter() {
-        unsafe { player_stats_perm[stat] = block.get_pos(stat) };
+        unsafe { player_stats_perm[stat] = block.get_pos(stat) as u8 };
     }
 }
 
@@ -174,7 +174,7 @@ pub fn curr_stats() -> StatBlock {
 
 pub fn set_curr_stats(block: &StatBlock) {
     for stat in stats_iter() {
-        unsafe { player_stats_curr[stat] = block.get_pos(stat) };
+        unsafe { player_stats_curr[stat] = block.get_pos(stat) as u8 };
     }
 }
 

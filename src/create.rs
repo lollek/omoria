@@ -17,18 +17,6 @@ use term;
 
 use types::{Stat, StatBlock, stats_iter, Currency, Sex};
 
-use races::RACE_STATS;
-use races::SEARCH_MOD;
-use races::MELEE_BONUS;
-use races::RANGED_BONUS;
-use races::SEARCH_FREQ;
-use races::STEALTH_MOD;
-use races::SAVE_MOD;
-use races::HEALTH_BONUS;
-use races::EXPFACTOR;
-use races::INFRAVISION;
-use races::SWIM_SPEED;
-
 const PLAYER_EXIT_PAUSE: i32 = 0;
 
 extern "C" {
@@ -125,7 +113,7 @@ fn change_stat(mut cur_stat: u8, amount: i64) -> u8 {
     cur_stat
 }
 
-fn max_stat(mut stat: u8, amount: i8) -> u8 {
+fn max_stat(mut stat: u8, amount: i16) -> u8 {
     debug::enter("max_stat");
     if amount < 0 {
         for _ in amount..0 {
@@ -263,9 +251,9 @@ fn get_money() {
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
         - stats_iter().fold(0, |sum: i64, tstat|
-            sum + old_stat(player_stats.get_pos(tstat)) as i64)
+            sum + old_stat(player_stats.get_pos(tstat) as u8) as i64)
         // Charisma adj
-        + old_stat(player_stats.get(Stat::Charisma)) as i64;
+        + old_stat(player_stats.get(Stat::Charisma) as u8) as i64;
 
     // Minimum
     amount = max(amount, 80);
@@ -348,31 +336,32 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
 
 fn get_stats() {
     debug::enter("get_stats");
-    let race = unsafe { player::player_prace } as usize;
+    let race = player::race();
+    let race_stats = race.stat_block();
 
     let new_stats = StatBlock::from(stats_iter()
-        .map(|stat| change_stat(random_stat(), RACE_STATS[race][stat] as i64) as u8)
-        .collect::<Vec<u8>>());
+        .map(|stat| change_stat(random_stat(), race_stats.get_pos(stat) as i64) as i16)
+        .collect::<Vec<i16>>());
     player::set_perm_stats(&new_stats);
     player::set_curr_stats(&new_stats);
 
     unsafe {
         player::player_rep = 0;
-        player::player_srh = SEARCH_MOD[race] as i16;
-        player::player_bth = MELEE_BONUS[race] as i16;
-        player::player_bthb = RANGED_BONUS[race] as i16;
-        player::player_fos = SEARCH_FREQ[race] as i16;
-        player::player_stl = STEALTH_MOD[race] as u8; // TODO BUG! overflows for some races
-        player::player_save = SAVE_MOD[race] as i16;
-        player::player_hitdie = HEALTH_BONUS[race];
+        player::player_srh = race.search_mod() as i16;
+        player::player_bth = race.melee_bonus() as i16;
+        player::player_bthb = race.ranged_bonus() as i16;
+        player::player_fos = race.search_freq() as i16;
+        player::player_stl = race.stealth_mod() as u8; // TODO BUG! overflows for some races
+        player::player_save = race.save_mod() as i16;
+        player::player_hitdie = race.health_bonus() as u8;
         player::player_lev = 1;
         player::player_ptodam = todam_adj() as i16;
         player::player_ptohit = tohit_adj() as i16;
         player::player_ptoac = 0;
         player::player_pac = toac_adj() as i16;
-        player::player_expfact = EXPFACTOR[race];
-        player::player_flags.see_infra = INFRAVISION[race] as i64;
-        player::player_flags.swim = SWIM_SPEED[race] as i64;
+        player::player_expfact = race.expfactor();
+        player::player_flags.see_infra = race.infravision() as i64;
+        player::player_flags.swim = race.swim_speed() as i64;
     }
     debug::leave("get_stats");
 }
@@ -524,22 +513,23 @@ fn choose_sex() -> bool {
 
 fn choose_stats() {
     debug::enter("choose_stats");
-    let player_race = unsafe { player::player_prace } as usize;
+    let player_race = player::race();
+    let race_stats = player_race.stat_block();
 
     let max_stats: Vec<u8> = stats_iter()
-        .map(|stat| max_stat(140, RACE_STATS[player_race][stat]))
+        .map(|stat| max_stat(140, race_stats.get_pos(stat)))
         .collect();
 
 
     let mut is_minning = io::get_yes_no("Do you wish to try for minimum statistics?");
     let mut user: StatBlock = StatBlock::new(0);
     if is_minning {
-        user.strength = get_min_stat("STR", max_stats[0]);
-        user.intelligence = get_min_stat("INT", max_stats[1]);
-        user.wisdom = get_min_stat("WIS", max_stats[2]);
-        user.dexterity = get_min_stat("DEX", max_stats[3]);
-        user.constitution = get_min_stat("CON", max_stats[4]);
-        user.charisma = get_min_stat("CHR", max_stats[5]);
+        user.strength = get_min_stat("STR", max_stats[0]) as i16;
+        user.intelligence = get_min_stat("INT", max_stats[1]) as i16;
+        user.wisdom = get_min_stat("WIS", max_stats[2]) as i16;
+        user.dexterity = get_min_stat("DEX", max_stats[3]) as i16;
+        user.constitution = get_min_stat("CON", max_stats[4]) as i16;
+        user.charisma = get_min_stat("CHR", max_stats[5]) as i16;
         screen::prt_6_stats(&user, 3, 65);
     }
 

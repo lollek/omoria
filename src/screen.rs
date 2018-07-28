@@ -4,7 +4,11 @@ use term;
 use types::StatBlock;
 
 // Stat -> String
-fn cnv_stat(stat: u8) -> String {
+fn cnv_stat(stat: i16) -> String {
+    if stat < 0 || stat > 250 {
+        panic!(stat)
+    }
+
     if stat > 150 {
         format!("18/{:-2}", stat - 150)
     } else {
@@ -12,7 +16,7 @@ fn cnv_stat(stat: u8) -> String {
     }
 }
 
-fn prt_stat(stat_name: &str, stat: u8, row: u8, column: u8) {
+fn prt_stat(stat_name: &str, stat: i16, row: u8, column: u8) {
     debug::enter("prt_stat");
     term::put_buffer_r(&format!("{}{}", stat_name, cnv_stat(stat)), row as i32, column as i32);
     debug::leave("prt_stat");

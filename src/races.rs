@@ -2,6 +2,8 @@ use std::ops::Range;
 
 use random;
 
+use types::StatBlock;
+
 #[derive(PartialEq, Clone, Copy)]
 pub enum Race {
     Human = 0,
@@ -31,6 +33,171 @@ impl Race {
             Race::Dryad => "Dryad"
         }
     }
+
+    pub fn search_mod(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 6,
+            Race::Elf => 8,
+            Race::Halfling => 12,
+            Race::Gnome => 6,
+            Race::Dwarf => 7,
+            Race::HalfOrc => 0,
+            Race::HalfTroll => -1,
+            Race::Phraint => 10,
+            Race::Dryad => 6,
+        }
+    }
+
+    pub fn melee_bonus(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 0,
+            Race::Elf => -5,
+            Race::Halfling => -10,
+            Race::Gnome => -8,
+            Race::Dwarf => 15,
+            Race::HalfOrc => 12,
+            Race::HalfTroll => 20,
+            Race::Phraint => 3,
+            Race::Dryad => 0,
+        }
+    }
+
+    pub fn ranged_bonus(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 5,
+            Race::Elf => 15,
+            Race::Halfling => 20,
+            Race::Gnome => 12,
+            Race::Dwarf => 0,
+            Race::HalfOrc => -5,
+            Race::HalfTroll => -10,
+            Race::Phraint => 5,
+            Race::Dryad => 5,
+        }
+    }
+
+    pub fn search_freq(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => -1,
+            Race::Elf => -1,
+            Race::Halfling => -5,
+            Race::Gnome => -3,
+            Race::Dwarf => 0,
+            Race::HalfOrc => 3,
+            Race::HalfTroll => 5,
+            Race::Phraint => 3,
+            Race::Dryad => -1,
+        }
+    }
+
+    pub fn stealth_mod(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 1,
+            Race::Elf => 1,
+            Race::Halfling => 4,
+            Race::Gnome => 3,
+            Race::Dwarf => 0,
+            Race::HalfOrc => -1,
+            Race::HalfTroll => -2,
+            Race::Phraint => 5,
+            Race::Dryad => 1,
+        }
+    }
+
+    pub fn save_mod(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 3,
+            Race::Elf => 6,
+            Race::Halfling => 18,
+            Race::Gnome => 12,
+            Race::Dwarf => 9,
+            Race::HalfOrc => -3,
+            Race::HalfTroll => -9,
+            Race::Phraint => -3,
+            Race::Dryad => 3,
+        }
+    }
+
+    pub fn health_bonus(&self) -> i8 {
+        match self {
+            Race::Human => 10,
+            Race::HalfElf => 9,
+            Race::Elf => 8,
+            Race::Halfling => 6,
+            Race::Gnome => 7,
+            Race::Dwarf => 9,
+            Race::HalfOrc => 10,
+            Race::HalfTroll => 12,
+            Race::Phraint => 8,
+            Race::Dryad => 7,
+        }
+    }
+
+    pub fn expfactor(&self) -> f32 {
+        match self {
+            Race::Human => 1.00,
+            Race::HalfElf => 1.10,
+            Race::Elf => 1.20,
+            Race::Halfling => 1.10,
+            Race::Gnome => 1.25,
+            Race::Dwarf => 1.20,
+            Race::HalfOrc => 1.10,
+            Race::HalfTroll => 1.20,
+            Race::Phraint => 1.20,
+            Race::Dryad => 1.20,
+        }
+    }
+
+    pub fn infravision(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 0,
+            Race::Elf => 0,
+            Race::Halfling => 4,
+            Race::Gnome => 3,
+            Race::Dwarf => 5,
+            Race::HalfOrc => 3,
+            Race::HalfTroll => 3,
+            Race::Phraint => 5,
+            Race::Dryad => 3,
+        }
+    }
+
+    pub fn swim_speed(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 1,
+            Race::Elf => 2,
+            Race::Halfling => -2,
+            Race::Gnome => -1,
+            Race::Dwarf => -2,
+            Race::HalfOrc => 0,
+            Race::HalfTroll => 2,
+            Race::Phraint => -1,
+            Race::Dryad => -1,
+        }
+    }
+
+    pub fn stat_block(&self) -> StatBlock {
+        match self {
+            Race::Human => StatBlock::from([0i16, 0i16, 0i16, 0i16, 0i16, 0i16]),
+            Race::HalfElf => StatBlock::from([-116, 1i16, 0i16, 1i16, -1i16, 1i16]),
+            Race::Elf => StatBlock::from([-1i16, 2i16, 1i16, 1i16, -2i16, 1i16]),
+            Race::Halfling => StatBlock::from([-2i16, 2i16, 1i16, 3i16, 1i16, 1i16]),
+            Race::Gnome => StatBlock::from([-1i16, 2i16, 0i16, 2i16, 1i16, -2i16]),
+            Race::Dwarf => StatBlock::from([2i16, -3i16, 1i16, -2i16, 2i16, -3i16]),
+            Race::HalfOrc => StatBlock::from([2i16, -1i16, 0i16, 0i16, 1i16, -4i16]),
+            Race::HalfTroll => StatBlock::from([ 4i16, -4i16, -3i16, -4i16,  4i16, -6i16]),
+            Race::Phraint => StatBlock::from([ 0i16,  0i16, -4i16,  5i16,  0i16, -3i16]),
+            Race::Dryad => StatBlock::from([-1i16,  0i16,  3i16,  0i16, -2i16,  3i16]),
+        }
+    }
 }
 
 impl From<usize> for Race {
@@ -55,52 +222,6 @@ pub fn races_iter() -> Range<usize> {
     (Race::Human as usize)..(Race::Dryad as usize + 1)
 }
 
-pub static RACE_STATS: &'static [[i8; 6]] = &[
-    [ 0,  0,  0,  0,  0,  0],   // Human
-    [-1,  1,  0,  1, -1,  1],   // Half-Elf
-    [-1,  2,  1,  1, -2,  1],   // Elf
-    [-2,  2,  1,  3,  1,  1],   // Halfling
-    [-1,  2,  0,  2,  1, -2],   // Gnome
-    [ 2, -3,  1, -2,  2, -3],   // Dwarf
-    [ 2, -1,  0,  0,  1, -4],   // Half-Orc
-    [ 4, -4, -3, -4,  4, -6],   // Half-Troll
-    [ 0,  0, -4,  5,  0, -3],   // Phraint
-    [-1,  0,  3,  0, -2,  3],   // Dryad
-];
-
-pub const SEARCH_MOD: [i8; 10] = [0, 6, 8, 12, 6, 7, 0, -1, 10, 6];
-pub const MELEE_BONUS: [i8; 10] = [0, 0, -5, -10, -8, 15, 12, 20, 3, 0];
-pub const RANGED_BONUS: [i8; 10] = [0, 5, 15, 20, 12, 0, -5, -10, 5, 5];
-pub const SEARCH_FREQ: [i8; 10] = [0, -1, -1, -5, -3, 0, 3, 5, 3, -1];
-pub const STEALTH_MOD: [i8; 10] = [0, 1, 1, 4, 3, 0, -1, -2, 5, 1];
-pub const SAVE_MOD: [i8; 10] = [0, 3, 6, 18, 12, 9, -3, -9, -3, 3];
-pub const HEALTH_BONUS: [u8; 10] = [10, 9, 8, 6, 7, 9, 10, 12, 8, 7];
-pub const EXPFACTOR: [f32; 10] = [1.00, 1.10, 1.20, 1.10, 1.25, 1.20, 1.10, 1.20, 1.20, 1.20];
-pub const INFRAVISION: [i8; 10] = [0, 0, 0, 4, 3, 5, 3, 3, 5, 3];
-pub const SWIM_SPEED: [i8; 10] = [0, 1, 2, -2, -1, -2, 0, 2, -1, -1];
-
-#[no_mangle]
-pub extern fn race_name(race: i32) -> *const u8 {
-    match race {
-        x if x == Race::Human as i32 => b"Human\0".as_ptr(),
-        x if x == Race::HalfElf as i32 => b"Half-Elf\0".as_ptr(),
-        x if x == Race::Elf as i32 => b"Elf\0".as_ptr(),
-        x if x == Race::Halfling as i32 => b"Halfling\0".as_ptr(),
-        x if x == Race::Gnome as i32 => b"Gnome\0".as_ptr(),
-        x if x == Race::Dwarf as i32 => b"Dwarf\0".as_ptr(),
-        x if x == Race::HalfOrc as i32 => b"Half-Orc\0".as_ptr(),
-        x if x == Race::HalfTroll as i32 => b"Half-Troll\0".as_ptr(),
-        x if x == Race::Phraint as i32 => b"Phraint\0".as_ptr(),
-        x if x == Race::Dryad as i32 => b"Dryad\0".as_ptr(),
-        _ => panic!("Unknown race received"),
-    }
-}
-
-#[no_mangle]
-pub extern fn race_stats(race: i32) -> *const i8 {
-    RACE_STATS[race as usize].as_ptr()
-}
-
 #[no_mangle]
 pub extern fn race_disarm_mod(race: i32) -> i8 {
     match race {
@@ -116,21 +237,6 @@ pub extern fn race_disarm_mod(race: i32) -> i8 {
         x if x == Race::Dryad as i32 => 2,
         _ => panic!("Unknown race received"),
     }
-}
-
-#[no_mangle]
-pub extern fn race_stealth_mod(race: i32) -> i8 {
-    STEALTH_MOD[race as usize]
-}
-
-#[no_mangle]
-pub extern fn race_search_freq(race: i32) -> i8 {
-    SEARCH_FREQ[race as usize]
-}
-
-#[no_mangle]
-pub extern fn race_ranged_bonus(race: i32) -> i8 {
-    RANGED_BONUS[race as usize]
 }
 
 #[no_mangle]

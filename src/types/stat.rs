@@ -14,16 +14,16 @@ pub fn stats_iter() -> Range<usize> {
 }
 
 pub struct StatBlock {
-    pub strength: u8,
-    pub intelligence: u8,
-    pub wisdom: u8,
-    pub dexterity: u8,
-    pub constitution: u8,
-    pub charisma: u8,
+    pub strength: i16,
+    pub intelligence: i16,
+    pub wisdom: i16,
+    pub dexterity: i16,
+    pub constitution: i16,
+    pub charisma: i16,
 }
 
 impl StatBlock {
-    pub fn new(initial_value: u8) -> StatBlock {
+    pub fn new(initial_value: i16) -> StatBlock {
         StatBlock {
             strength:       initial_value,
             intelligence:   initial_value,
@@ -34,7 +34,7 @@ impl StatBlock {
         }
     }
 
-    pub fn get(&self, stat: Stat) -> u8 {
+    pub fn get(&self, stat: Stat) -> i16 {
         match stat {
             Stat::Strength => self.strength,
             Stat::Intelligence => self.intelligence,
@@ -44,7 +44,7 @@ impl StatBlock {
             Stat::Charisma => self.charisma,
         }
     }
-    pub fn get_pos(&self, stat: usize) -> u8 {
+    pub fn get_pos(&self, stat: usize) -> i16 {
         match stat {
             0 => self.strength,
             1 => self.intelligence,
@@ -55,7 +55,7 @@ impl StatBlock {
             _ => panic!(),
         }
     }
-    pub fn set_pos(&mut self, stat: usize, new_value: u8) {
+    pub fn set_pos(&mut self, stat: usize, new_value: i16) {
         match stat {
             0 => self.strength = new_value,
             1 => self.intelligence = new_value,
@@ -68,8 +68,8 @@ impl StatBlock {
     }
 }
 
-impl From<[u8; 6]> for StatBlock {
-    fn from(array: [u8; 6]) -> Self {
+impl From<[i16; 6]> for StatBlock {
+    fn from(array: [i16; 6]) -> Self {
         StatBlock {
             strength:       array[0],
             intelligence:   array[1],
@@ -81,8 +81,21 @@ impl From<[u8; 6]> for StatBlock {
     }
 }
 
-impl From<Vec<u8>> for StatBlock {
-    fn from(array: Vec<u8>) -> Self {
+impl From<[u8; 6]> for StatBlock {
+    fn from(array: [u8; 6]) -> Self {
+        StatBlock {
+            strength:       array[0] as i16,
+            intelligence:   array[1] as i16,
+            wisdom:         array[2] as i16,
+            dexterity:      array[3] as i16,
+            constitution:   array[4] as i16,
+            charisma:       array[5] as i16,
+        }
+    }
+}
+
+impl From<Vec<i16>> for StatBlock {
+    fn from(array: Vec<i16>) -> Self {
         assert!(array.len() == 6);
         StatBlock {
             strength:       array[0],

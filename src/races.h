@@ -16,20 +16,6 @@ enum race_t {
 
 /**
  * -OK-
- *  race_name() - What a race is called in game
- *  @race: race enum, e.g. R_HUMAN
- */
-char const *race_name(enum race_t race);
-
-/**
- * -OK-
- *  race_stats() - Return stats array for race
- *  @race: race enum, e.g. R_HUMAN
- */
-signed char const *race_stats(enum race_t race);
-
-/**
- * -OK-
  *  race_rand_starting_age() - Generate starting age for player of a given race
  *  @race: race enum, e.g. R_HUMAN
  */
@@ -90,31 +76,10 @@ signed char race_search_mod(enum race_t race);
 
 /**
  * -OK-
- *  race_stealth_mod() - Racial stealth modifier
- *  @race: race enum, e.g. R_HUMAN
- */
-signed char race_stealth_mod(enum race_t race);
-
-/**
- * -OK-
- *  race_search_freq() - Racial search frequency
- *  @race: race enum, e.g. R_HUMAN
- */
-signed char race_search_freq(enum race_t race);
-
-/**
- * -OK-
  *  race_melee_bonus() - Racial melee bonus to hit
  *  @race: race enum, e.g. R_HUMAN
  */
 signed char race_melee_bonus(enum race_t race);
-
-/**
- * -OK-
- *  race_ranged_bonus() - Racial ranged bonus to hit
- *  @race: race enum, e.g. R_HUMAN
- */
-signed char race_ranged_bonus(enum race_t race);
 
 /**
  * -OK-
