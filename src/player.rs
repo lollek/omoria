@@ -1,8 +1,9 @@
 use libc::{c_char, time_t, strcpy};
-use types::{StatBlock, stats_iter, Wallet, currencies_iter, Sex, Stat};
+use types::{
+    Class, StatBlock, stats_iter, Wallet, currencies_iter, Sex, Stat
+};
 use std::ffi::CString;
 
-use classes;
 use debug;
 use misc;
 use races;
@@ -156,14 +157,14 @@ pub fn set_sex(sex: Sex) {
     }
 }
 
-pub fn class() -> classes::Class {
+pub fn class() -> Class {
     debug::enter("player::class");
-    let result = classes::Class::from(unsafe { player_pclass } as usize);
+    let result = Class::from(unsafe { player_pclass } as usize);
     debug::enter("player::class");
     result
 }
 
-pub fn set_class(class: classes::Class) {
+pub fn set_class(class: Class) {
     debug::enter("player::set_class");
     unsafe {
         player_pclass = class as i32;

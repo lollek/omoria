@@ -1,9 +1,8 @@
 use std::ops::Range;
 
 use random;
-use classes;
 
-use types::StatBlock;
+use types::{StatBlock, Class};
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum Race {
@@ -200,58 +199,45 @@ impl Race {
         }
     }
 
-    pub fn available_classes(&self) -> Vec<classes::Class> {
+    pub fn available_classes(&self) -> Vec<Class> {
         match self {
             Race::Human => vec![
-                classes::Class::Warrior, classes::Class::Mage,
-                classes::Class::Priest, classes::Class::Rogue,
-                classes::Class::Ranger, classes::Class::Paladin,
-                classes::Class::Druid, classes::Class::Bard,
-                classes::Class::Adventurer, classes::Class::Monk,
+                Class::Warrior, Class::Mage, Class::Priest, Class::Rogue,
+                Class::Ranger, Class::Paladin, Class::Druid, Class::Bard,
+                Class::Adventurer, Class::Monk,
             ],
             Race::HalfElf => vec![
-                classes::Class::Warrior, classes::Class::Mage,
-                classes::Class::Priest, classes::Class::Rogue,
-                classes::Class::Ranger, classes::Class::Paladin,
-                classes::Class::Druid, classes::Class::Bard,
-                classes::Class::Adventurer, classes::Class::Monk,
+                Class::Warrior, Class::Mage, Class::Priest, Class::Rogue,
+                Class::Ranger, Class::Paladin, Class::Druid, Class::Bard,
+                Class::Adventurer, Class::Monk,
             ],
             Race::Elf => vec![
-                classes::Class::Warrior, classes::Class::Mage,
-                classes::Class::Priest, classes::Class::Rogue,
-                classes::Class::Ranger, classes::Class::Druid,
-                classes::Class::Bard, classes::Class::Adventurer,
+                Class::Warrior, Class::Mage, Class::Priest, Class::Rogue,
+                Class::Ranger, Class::Druid, Class::Bard, Class::Adventurer,
             ],
             Race::Halfling => vec![
-                classes::Class::Rogue, classes::Class::Druid,
-                classes::Class::Bard, classes::Class::Adventurer,
-                classes::Class::Monk,
+                Class::Rogue, Class::Druid, Class::Bard, Class::Adventurer,
+                Class::Monk,
             ],
             Race::Gnome => vec![
-                classes::Class::Mage, classes::Class::Priest,
-                classes::Class::Rogue, classes::Class::Druid,
+                Class::Mage, Class::Priest, Class::Rogue, Class::Druid,
             ],
             Race::Dwarf => vec![
-                classes::Class::Warrior, classes::Class::Priest,
-                classes::Class::Druid,
+                Class::Warrior, Class::Priest, Class::Druid,
             ],
             Race::HalfOrc => vec![
-                classes::Class::Warrior, classes::Class::Priest,
-                classes::Class::Rogue, classes::Class::Monk,
+                Class::Warrior, Class::Priest, Class::Rogue, Class::Monk,
             ],
             Race::HalfTroll => vec![
-                classes::Class::Warrior, classes::Class::Priest,
+                Class::Warrior, Class::Priest,
             ],
             Race::Phraint => vec![
-                classes::Class::Warrior, classes::Class::Mage,
-                classes::Class::Rogue, classes::Class::Ranger,
-                classes::Class::Bard, classes::Class::Adventurer,
-                classes::Class::Monk,
+                Class::Warrior, Class::Mage, Class::Rogue, Class::Ranger,
+                Class::Bard, Class::Adventurer, Class::Monk,
             ],
             Race::Dryad => vec![
-                classes::Class::Priest, classes::Class::Ranger,
-                classes::Class::Druid, classes::Class::Bard,
-                classes::Class::Monk,
+                Class::Priest, Class::Ranger, Class::Druid, Class::Bard,
+                Class::Monk,
             ],
         }
     }

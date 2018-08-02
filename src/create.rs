@@ -5,7 +5,6 @@ use std::ffi::CString;
 
 use libc::{c_char, time, time_t};
 
-use classes;
 use debug;
 use io;
 use misc;
@@ -16,7 +15,7 @@ use races;
 use screen;
 use term;
 
-use types::{Stat, StatBlock, stats_iter, Currency, Sex};
+use types::{Class, Stat, StatBlock, stats_iter, Currency, Sex};
 
 const PLAYER_EXIT_PAUSE: i32 = 0;
 
@@ -520,7 +519,7 @@ fn choose_class() -> bool {
         let selection = (key as u8 - 'a' as u8) as usize;
 
         if available_classes_i.contains(&selection) {
-            player::set_class(classes::Class::from(selection));
+            player::set_class(Class::from(selection));
             debug::leave("choose_class");
             return true;
         }
