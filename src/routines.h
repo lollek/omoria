@@ -474,7 +474,6 @@ extern long druid_adj();
 extern long monk_adj();
 extern float chr_adj();
 extern long con_adj();
-extern long get_hitdie();
 extern char *place_string(long num, char result[134]);
 extern char *day_of_week_string(long day, unsigned wid, char result[134]);
 extern char *month_string(long mon, char result[134]);

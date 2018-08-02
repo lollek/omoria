@@ -5,6 +5,7 @@ use std::ffi::CString;
 
 use libc::{c_char, time, time_t};
 
+use classes;
 use debug;
 use io;
 use misc;
@@ -29,9 +30,7 @@ extern "C" {
     fn todam_adj() -> i64;
     fn toac_adj() -> i64;
 
-    fn cc__get_name();
     fn cc__put_misc3();
-    fn cc__get_class() -> u8;
     fn cc__print_history();
     fn cc__get_history();
     fn cc__get_ahw();
@@ -54,23 +53,23 @@ fn erase_line(row: i32, col: i32) {
     result
 }
 
-fn old_stat(stat: u8) -> u8 {
+fn old_stat(stat: i16) -> i16 {
     if stat < 150 {
-        (misc::squish_stat(stat as i32) + 30) / 10
+        (misc::squish_stat(stat as i32) as i16 + 30) / 10
     } else {
-        misc::squish_stat(stat as i32) - 132
+        misc::squish_stat(stat as i32) as i16 - 132
     }
 }
 
-fn new_stat(stat: u8) -> u8 {
+fn new_stat(stat: i16) -> i16 {
     if stat < 18 {
-        misc::squish_stat(((stat * 10) - 30) as i32)
+        misc::squish_stat(((stat * 10) - 30) as i32) as i16
     } else {
-        misc::squish_stat((stat + 132) as i32)
+        misc::squish_stat((stat + 132) as i32) as i16
     }
 }
 
-fn max_in_statp(stat: u8) -> u8 {
+fn max_in_statp(stat: i16) -> i16 {
     if stat < 150 {
         stat + 10
     } else if stat < 220 {
@@ -84,7 +83,7 @@ fn max_in_statp(stat: u8) -> u8 {
     }
 }
 
-fn max_de_statp(stat: u8) -> u8 {
+fn max_de_statp(stat: i16) -> i16 {
     if stat < 11 {
         0
     } else if stat < 151 {
@@ -98,22 +97,22 @@ fn max_de_statp(stat: u8) -> u8 {
     }
 }
 
-fn change_stat(mut cur_stat: u8, amount: i64) -> u8 {
+fn change_stat(mut cur_stat: i16, amount: i16) -> i16 {
     debug::enter("change_stat");
     if amount < 0 {
         for _ in amount..0 {
-            cur_stat -= misc::squish_stat(misc::de_statp(cur_stat) as i32);
+            cur_stat -= misc::squish_stat(misc::de_statp(cur_stat as u8) as i32) as i16;
         }
     } else {
         for _ in 1..(amount+1) {
-            cur_stat += misc::squish_stat(misc::in_statp(cur_stat) as i32);
+            cur_stat += misc::squish_stat(misc::in_statp(cur_stat as u8) as i32) as i16;
         }
     }
     debug::leave("change_stat");
     cur_stat
 }
 
-fn max_stat(mut stat: u8, amount: i16) -> u8 {
+fn max_stat(mut stat: i16, amount: i16) -> i16 {
     debug::enter("max_stat");
     if amount < 0 {
         for _ in amount..0 {
@@ -156,7 +155,7 @@ fn next_best_stats(curr: &StatBlock, user: &StatBlock, best: &mut StatBlock,
     result
 }
 
-fn get_min_stat(stat: &str, race_max: u8) -> u8 {
+fn get_min_stat(stat: &str, race_max: i16) -> i16 {
     debug::enter("get_min_stat");
     let out_str =
         if race_max >= 250 {
@@ -199,9 +198,9 @@ fn get_min_stat(stat: &str, race_max: u8) -> u8 {
     let result =
         if abil == 18 {
             if perc == 0 {
-                250 as u8
+                250 as i16
             } else {
-                150 + perc as u8
+                150 + perc as i16
             }
         } else {
             if abil < 3 {
@@ -209,7 +208,7 @@ fn get_min_stat(stat: &str, race_max: u8) -> u8 {
             } else if abil > 18 {
                 new_stat(18)
             } else {
-                new_stat(abil as u8)
+                new_stat(abil as i16)
             }
         };
     debug::info(&format!("result: {}", result));
@@ -218,8 +217,8 @@ fn get_min_stat(stat: &str, race_max: u8) -> u8 {
 }
 
 // returns [50, 140]
-fn random_stat() -> u8 {
-    (random::randint(4) + random::randint(4) + random::randint(4) + 2) as u8 * 10
+fn random_stat() -> i16 {
+    (random::randint(4) + random::randint(4) + random::randint(4) + 2) as i16 * 10
 }
 
 fn put_character(show_values: bool) {
@@ -234,9 +233,9 @@ fn put_character(show_values: bool) {
 
     if show_values {
         term::prt_r(&player::name(), 3, 15);
-        term::prt_r(&player::race_string(), 4, 15);
-        term::prt_r(&player::sex_string(), 5, 15);
-        term::prt_r(&player::class_string(), 6, 15);
+        term::prt_r(&player::race().name(), 4, 15);
+        term::prt_r(&player::sex().to_string(), 5, 15);
+        term::prt_r(&player::class().name(), 6, 15);
     }
 
     debug::leave("put_character");
@@ -251,9 +250,9 @@ fn get_money() {
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
         - stats_iter().fold(0, |sum: i64, tstat|
-            sum + old_stat(player_stats.get_pos(tstat) as u8) as i64)
+            sum + old_stat(player_stats.get_pos(tstat)) as i64)
         // Charisma adj
-        + old_stat(player_stats.get(Stat::Charisma) as u8) as i64;
+        + old_stat(player_stats.get(Stat::Charisma)) as i64;
 
     // Minimum
     amount = max(amount, 80);
@@ -340,7 +339,7 @@ fn get_stats() {
     let race_stats = race.stat_block();
 
     let new_stats = StatBlock::from(stats_iter()
-        .map(|stat| change_stat(random_stat(), race_stats.get_pos(stat) as i64) as i16)
+        .map(|stat| change_stat(random_stat(), race_stats.get_pos(stat)) as i16)
         .collect::<Vec<i16>>());
     player::set_perm_stats(&new_stats);
     player::set_curr_stats(&new_stats);
@@ -353,7 +352,6 @@ fn get_stats() {
         player::player_fos = race.search_freq() as i16;
         player::player_stl = race.stealth_mod() as u8; // TODO BUG! overflows for some races
         player::player_save = race.save_mod() as i16;
-        player::player_hitdie = race.health_bonus() as u8;
         player::player_lev = 1;
         player::player_ptodam = todam_adj() as i16;
         player::player_ptohit = tohit_adj() as i16;
@@ -399,6 +397,48 @@ fn put_misc2() {
     debug::leave("put_misc2");
 }
 
+fn apply_stats_from_class() {
+    unsafe {
+        player::player_mhp = (player::hitdie() as i8 + player::hp_from_con()).into();
+        player::player_chp = player::player_mhp.into();
+        player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
+        player::player_bthb += ((player::class().ranged_bonus() * 5) + 20) as i16;
+        player::player_srh += player::class().search_mod() as i16;
+        player::player_disarm += player::class().disarm_mod() as i16;
+        player::player_fos += player::class().search_freq() as i16;
+        player::player_stl += player::class().stealth_mod() as u8;
+        player::player_save += player::class().save_mod() as i16;
+        player::player_expfact += player::class().expfactor();
+        player::refresh_title();
+        player::player_mr = player::class().magic_resist().into();
+    }
+
+    let mut player_stat_block = player::perm_stats();
+    let class_stat_block = player::class().stat_block();
+    for stat in stats_iter() {
+        let new_stat = change_stat(
+            player_stat_block.get_pos(stat),
+            class_stat_block.get_pos(stat));
+        player_stat_block.set_pos(stat, new_stat as i16);
+    }
+    player::set_perm_stats(&player_stat_block);
+    player::set_curr_stats(&player_stat_block);
+
+    unsafe {
+        // Real values
+        player::player_ptodam = player::dmg_from_str() as i16;
+        player::player_ptohit = player::tohit_from_stats() as i16;
+        player::player_ptoac = player::ac_from_dex() as i16;
+        player::player_pac = 0;
+
+        // Displayed values
+        player::player_dis_td = player::player_ptodam;
+        player::player_dis_th = player::player_ptohit;
+        player::player_dis_tac = player::player_ptoac;
+        player::player_dis_ac = player::player_pac;
+    }
+}
+
 // Display character on screen -RAK-
 fn display_char() {
     debug::enter("display_char");
@@ -417,7 +457,7 @@ pub extern fn change_name() {
     loop {
         term::prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
         match unsafe { inkey() } {
-            99 => unsafe { cc__get_name() },
+            99 => choose_name(),
             0 | 3 | 25 | 26 | 27 => break,
             _ => (),
         }
@@ -426,9 +466,77 @@ pub extern fn change_name() {
     debug::leave("change_name");
 }
 
+/* Gets a name for the character    -JWT- */
+fn choose_name() {
+    debug::enter("choose_name");
+
+    term::prt_r("Enter your player's name  [press <RETURN> when finished]", 22, 3);
+    loop {
+        let new_name = term::get_string(3, 15, 24);
+        if !new_name.is_empty() {
+            player::set_name(&new_name);
+            break;
+        }
+    }
+    term::clear_from(21);
+
+    debug::leave("choose_name");
+}
+
+/*	{ Gets a character class				-JWT-	}*/
+fn choose_class() -> bool {
+    debug::enter("choose_class");
+
+    term::clear_from(21);
+    term::prt_r("Choose a class (? for Help):", 21, 3);
+
+    let start_x = 3;
+
+    let mut x = start_x;
+    let mut y = 22;
+    let available_classes = player::race().available_classes();
+    let available_classes_i: Vec<usize> = available_classes.iter()
+        .map(|&i| i as usize)
+        .collect();
+
+    for class in available_classes {
+        let i = class.to_owned() as usize;
+        let char_visual = ('a' as u8 + i as u8) as char;
+        let class_string = format!("{}) {}", char_visual, class.name());
+
+        term::put_buffer_r(&class_string, y, x);
+        x += 15;
+        if x > 70 {
+            x = start_x;
+            y += 1;
+        }
+    }
+
+    term::put_buffer_r("", 21, 30);
+
+    loop {
+        ncurses::move_cursor(5, 14);
+        let key = io::inkey_flush();
+        let selection = (key as u8 - 'a' as u8) as usize;
+
+        if available_classes_i.contains(&selection) {
+            player::set_class(classes::Class::from(selection));
+            debug::leave("choose_class");
+            return true;
+        }
+
+        if selection as u8 as char == '?' {
+            unsafe { C_moria_help(CString::new("Character Classes").unwrap().as_ptr()) };
+            debug::leave("choose_class");
+            return false;
+        }
+    }
+}
+
 /*	{ Allows player to select a race			-JWT- }*/
 fn choose_race() -> bool {
     debug::enter("choose_race");
+
     term::clear_from(21);
     term::prt_r("Choose a race (? for Help):", 21, 3);
 
@@ -457,9 +565,7 @@ fn choose_race() -> bool {
         let selection = (key as u8 - 'a' as u8) as usize;
 
         if let Some(_) = races::races_iter().find(|&i| i == selection) {
-            let race_pos = selection;
-            let race = races::Race::from(race_pos);
-            player::set_race(race);
+            player::set_race(races::Race::from(selection));
             debug::leave("choose_race");
             return true;
         }
@@ -516,7 +622,7 @@ fn choose_stats() {
     let player_race = player::race();
     let race_stats = player_race.stat_block();
 
-    let max_stats: Vec<u8> = stats_iter()
+    let max_stats: Vec<i16> = stats_iter()
         .map(|stat| max_stat(140, race_stats.get_pos(stat)))
         .collect();
 
@@ -524,12 +630,12 @@ fn choose_stats() {
     let mut is_minning = io::get_yes_no("Do you wish to try for minimum statistics?");
     let mut user: StatBlock = StatBlock::new(0);
     if is_minning {
-        user.strength = get_min_stat("STR", max_stats[0]) as i16;
-        user.intelligence = get_min_stat("INT", max_stats[1]) as i16;
-        user.wisdom = get_min_stat("WIS", max_stats[2]) as i16;
-        user.dexterity = get_min_stat("DEX", max_stats[3]) as i16;
-        user.constitution = get_min_stat("CON", max_stats[4]) as i16;
-        user.charisma = get_min_stat("CHR", max_stats[5]) as i16;
+        user.strength = get_min_stat("STR", max_stats[0]);
+        user.intelligence = get_min_stat("INT", max_stats[1]);
+        user.wisdom = get_min_stat("WIS", max_stats[2]);
+        user.dexterity = get_min_stat("DEX", max_stats[3]);
+        user.constitution = get_min_stat("CON", max_stats[4]);
+        user.charisma = get_min_stat("CHR", max_stats[5]);
         screen::prt_6_stats(&user, 3, 65);
     }
 
@@ -580,16 +686,21 @@ pub extern fn create_character() {
     term::put_buffer_r(&player::sex().to_string(), 5, 15);
 
     choose_stats();
+    unsafe { cc__print_history() }
 
-    unsafe {
-        cc__print_history();
-        while cc__get_class() == 0 {
-            //put_character();
-            cc__print_history();
-            put_misc1();
-            put_stats();
+    loop {
+        if choose_class() {
+            break;
         }
     }
+
+    term::clear_from(21);
+    term::put_buffer_r(&player::class().name(), 6, 15);
+    apply_stats_from_class();
+
+    unsafe { cc__print_history() };
+    put_misc1();
+    put_stats();
 
     unsafe {
         player::player_creation_time = time(null::<time_t>() as *mut i64);
@@ -602,7 +713,7 @@ pub extern fn create_character() {
     put_misc2();
     unsafe {
         cc__put_misc3();
-        cc__get_name();
+        choose_name();
         pause_exit(24, PLAYER_EXIT_PAUSE);
     }
     debug::leave("create_character");

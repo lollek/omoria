@@ -68,6 +68,19 @@ impl StatBlock {
     }
 }
 
+impl From<[i32; 6]> for StatBlock {
+    fn from(array: [i32; 6]) -> Self {
+        StatBlock {
+            strength:       array[0] as i16,
+            intelligence:   array[1] as i16,
+            wisdom:         array[2] as i16,
+            dexterity:      array[3] as i16,
+            constitution:   array[4] as i16,
+            charisma:       array[5] as i16,
+        }
+    }
+}
+
 impl From<[i16; 6]> for StatBlock {
     fn from(array: [i16; 6]) -> Self {
         StatBlock {

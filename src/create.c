@@ -3,29 +3,8 @@
 
 #include "imoria.h"
 
-/* See also create::change_stat */
-long cc__change_stat(long cur_stat, long amount)
-{
-	/*	{ Changes stats by given amount				-JWT-
-	 * }*/
-	long i;
-
-	if (amount < 0) {
-		for (i = -1; i >= amount; i--) {
-			cur_stat -= squish_stat(de_statp(cur_stat));
-		}
-	} else {
-		for (i = 1; i <= amount; i++) {
-			cur_stat += squish_stat(in_statp(cur_stat));
-		}
-	}
-
-	return cur_stat;
-}
-
 void cc__put_misc3()
 {
-
 	/*	{ Prints ratings on certain abilities			-RAK-
 	 * }*/
 	long xbth, xbthb, xfos, xsrh, xstl, xdis;
@@ -226,117 +205,6 @@ void cc__get_ahw()
 	player_disarm = race_disarm_mod(i1) + todis_adj();
 
 } /* end cc__get_ahw */
-
-/*	{ Gets a character class				-JWT-	}*/
-boolean cc__get_class()
-{
-	long i1, i2, i3, i4, i5;
-	long cl[MAX_CLASS + 1];
-	int32_t aclass;
-	char s;
-	boolean exit_flag;
-	char out_str[134];
-	stat_set tstat;
-	boolean return_value = false;
-
-	for (i2 = 0; i2 < MAX_CLASS; i2++) {
-		cl[i2] = 0;
-	}
-
-	i1 = player_prace;
-	i2 = 0;
-	i3 = 0;
-	i4 = 3;
-	i5 = 22;
-	clear_from(21);
-	prt("Choose a class (? for Help):", 21, 3);
-
-	do {
-		if (race_class_field(i1) & bit_array[i2 + 1]) {
-			i3++;
-			sprintf(out_str, "%c) %s", (int)i3 + 96,
-				class_title(i2));
-			put_buffer(out_str, i5, i4);
-			cl[i3] = i2;
-			i4 += 15;
-			if (i4 > 70) {
-				i4 = 3;
-				i5++;
-			}
-		} /* endif class bit set */
-		i2++;
-	} while (i2 < MAX_CLASS);
-
-	player_pclass = 0;
-	put_buffer("", 21, 31);
-	exit_flag = false;
-
-	do {
-		move(5, 14);
-		inkey_flush(&s);
-		i2 = pindex("abcdefghijklmnopqrstuvwxyz", s);
-		if ((i2 <= i3) && (i2 >= 1)) {
-			strcpy(player_tclass, class_title(cl[i2]));
-			player_pclass = cl[i2];
-			aclass = player_pclass;
-			exit_flag = true;
-			return_value = true;
-			clear_from(21);
-			put_buffer(player_tclass, 6, 15);
-			player_hitdie += class_extra_health(aclass);
-			player_mhp = con_adj() + player_hitdie;
-			player_chp = player_mhp;
-			player_bth += class_melee_bonus(aclass) * 5 + 20;
-			player_bthb += class_ranged_bonus(aclass) * 5 + 20;
-			player_srh += class_search_mod(aclass);
-			player_disarm += class_disarm_mod(aclass);
-			player_fos += class_search_freq(aclass);
-			player_stl += class_stealth_mod(aclass);
-			player_save += class_save_mod(aclass);
-			player_expfact += class_expfactor(aclass);
-			strcpy(player_title, player_titles[aclass][0]);
-			player_mr = class_magic_resist(aclass);
-
-			/* { Adjust the stats for the class adjustment
-			 * -RAK-	}*/
-
-			for (tstat = STR; tstat <= CHR; tstat++) {
-				player_stats_perm[(int)tstat] = cc__change_stat(
-				    player_stats_perm[(int)tstat],
-				    class_stats(aclass)[(int)tstat]);
-				player_stats_curr[(int)tstat] = player_stats_perm[(int)tstat];
-			}
-
-			player_ptodam = todam_adj(); /*{ Real values	}*/
-			player_ptohit = tohit_adj();
-			player_ptoac = toac_adj();
-			player_pac = 0;
-			player_dis_td =
-			    player_ptodam; /*{ Displayed values	}*/
-			player_dis_th = player_ptohit;
-			player_dis_tac = player_ptoac;
-			player_dis_ac = player_pac;
-
-		} else if (s == '?') {
-			moria_help("Character Classes");
-			exit_flag = true;
-			return_value = false;
-		}
-	} while (!exit_flag);
-
-	return return_value;
-} /* end cc__get_class */
-
-void cc__get_name()
-{
-	/* Gets a name for the character    -JWT- */
-
-	prt("Enter your player's name  [press <RETURN> when finished]", 22, 3);
-	player_name[0] = '\0';
-	while (player_name[0] == '\0')
-		get_string(player_name, 3, 15, 24);
-	clear_from(21);
-}
 
 void set_gem_values()
 {

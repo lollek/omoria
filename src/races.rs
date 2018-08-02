@@ -1,6 +1,7 @@
 use std::ops::Range;
 
 use random;
+use classes;
 
 use types::StatBlock;
 
@@ -124,7 +125,7 @@ impl Race {
         }
     }
 
-    pub fn health_bonus(&self) -> i8 {
+    pub fn health_bonus(&self) -> u8 {
         match self {
             Race::Human => 10,
             Race::HalfElf => 9,
@@ -186,16 +187,72 @@ impl Race {
 
     pub fn stat_block(&self) -> StatBlock {
         match self {
-            Race::Human => StatBlock::from([0i16, 0i16, 0i16, 0i16, 0i16, 0i16]),
-            Race::HalfElf => StatBlock::from([-116, 1i16, 0i16, 1i16, -1i16, 1i16]),
-            Race::Elf => StatBlock::from([-1i16, 2i16, 1i16, 1i16, -2i16, 1i16]),
-            Race::Halfling => StatBlock::from([-2i16, 2i16, 1i16, 3i16, 1i16, 1i16]),
-            Race::Gnome => StatBlock::from([-1i16, 2i16, 0i16, 2i16, 1i16, -2i16]),
-            Race::Dwarf => StatBlock::from([2i16, -3i16, 1i16, -2i16, 2i16, -3i16]),
-            Race::HalfOrc => StatBlock::from([2i16, -1i16, 0i16, 0i16, 1i16, -4i16]),
-            Race::HalfTroll => StatBlock::from([ 4i16, -4i16, -3i16, -4i16,  4i16, -6i16]),
-            Race::Phraint => StatBlock::from([ 0i16,  0i16, -4i16,  5i16,  0i16, -3i16]),
-            Race::Dryad => StatBlock::from([-1i16,  0i16,  3i16,  0i16, -2i16,  3i16]),
+            Race::Human => StatBlock::from([0, 0, 0, 0, 0, 0]),
+            Race::HalfElf => StatBlock::from([-116, 1, 0, 1, -1, 1]),
+            Race::Elf => StatBlock::from([-1, 2, 1, 1, -2, 1]),
+            Race::Halfling => StatBlock::from([-2, 2, 1, 3, 1, 1]),
+            Race::Gnome => StatBlock::from([-1, 2, 0, 2, 1, -2]),
+            Race::Dwarf => StatBlock::from([2, -3, 1, -2, 2, -3]),
+            Race::HalfOrc => StatBlock::from([2, -1, 0, 0, 1, -4]),
+            Race::HalfTroll => StatBlock::from([ 4, -4, -3, -4,  4, -6]),
+            Race::Phraint => StatBlock::from([ 0,  0, -4,  5,  0, -3]),
+            Race::Dryad => StatBlock::from([-1,  0,  3,  0, -2,  3]),
+        }
+    }
+
+    pub fn available_classes(&self) -> Vec<classes::Class> {
+        match self {
+            Race::Human => vec![
+                classes::Class::Warrior, classes::Class::Mage,
+                classes::Class::Priest, classes::Class::Rogue,
+                classes::Class::Ranger, classes::Class::Paladin,
+                classes::Class::Druid, classes::Class::Bard,
+                classes::Class::Adventurer, classes::Class::Monk,
+            ],
+            Race::HalfElf => vec![
+                classes::Class::Warrior, classes::Class::Mage,
+                classes::Class::Priest, classes::Class::Rogue,
+                classes::Class::Ranger, classes::Class::Paladin,
+                classes::Class::Druid, classes::Class::Bard,
+                classes::Class::Adventurer, classes::Class::Monk,
+            ],
+            Race::Elf => vec![
+                classes::Class::Warrior, classes::Class::Mage,
+                classes::Class::Priest, classes::Class::Rogue,
+                classes::Class::Ranger, classes::Class::Druid,
+                classes::Class::Bard, classes::Class::Adventurer,
+            ],
+            Race::Halfling => vec![
+                classes::Class::Rogue, classes::Class::Druid,
+                classes::Class::Bard, classes::Class::Adventurer,
+                classes::Class::Monk,
+            ],
+            Race::Gnome => vec![
+                classes::Class::Mage, classes::Class::Priest,
+                classes::Class::Rogue, classes::Class::Druid,
+            ],
+            Race::Dwarf => vec![
+                classes::Class::Warrior, classes::Class::Priest,
+                classes::Class::Druid,
+            ],
+            Race::HalfOrc => vec![
+                classes::Class::Warrior, classes::Class::Priest,
+                classes::Class::Rogue, classes::Class::Monk,
+            ],
+            Race::HalfTroll => vec![
+                classes::Class::Warrior, classes::Class::Priest,
+            ],
+            Race::Phraint => vec![
+                classes::Class::Warrior, classes::Class::Mage,
+                classes::Class::Rogue, classes::Class::Ranger,
+                classes::Class::Bard, classes::Class::Adventurer,
+                classes::Class::Monk,
+            ],
+            Race::Dryad => vec![
+                classes::Class::Priest, classes::Class::Ranger,
+                classes::Class::Druid, classes::Class::Bard,
+                classes::Class::Monk,
+            ],
         }
     }
 }
@@ -345,19 +402,3 @@ pub extern fn race_rand_starting_weight(race: i32, male: u8) -> u32 {
         ) as u32
 }
 
-#[no_mangle]
-pub extern fn race_class_field(race: i32) -> u64 {
-    (match race {
-        x if x == Race::Human as i32 => 0x3FF,
-        x if x == Race::HalfElf as i32 => 0x3FF,
-        x if x == Race::Elf as i32 => 0x1DF,
-        x if x == Race::Halfling as i32 => 0x2BA,
-        x if x == Race::Gnome as i32 => 0x04E,
-        x if x == Race::Dwarf as i32 => 0x045,
-        x if x == Race::HalfOrc as i32 => 0x20D,
-        x if x == Race::HalfTroll as i32 => 0x005,
-        x if x == Race::Phraint as i32 => 0x39B,
-        x if x == Race::Dryad as i32 => 0x2D4,
-        _ => panic!("Unknown race received"),
-    }) as u64
-}

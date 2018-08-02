@@ -2,6 +2,7 @@ use std::ffi::CStr;
 
 use random;
 
+// Squish the stat into allowed limits
 #[no_mangle]
 pub extern fn squish_stat(stat: i32) -> u8 {
     if stat > 250 {

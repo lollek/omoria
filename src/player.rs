@@ -1,7 +1,8 @@
 use libc::{c_char, time_t, strcpy};
-use types::{StatBlock, stats_iter, Wallet, currencies_iter, Sex};
+use types::{StatBlock, stats_iter, Wallet, currencies_iter, Sex, Stat};
 use std::ffi::CString;
 
+use classes;
 use debug;
 use misc;
 use races;
@@ -73,11 +74,13 @@ pub struct p_flags {
 
 extern "C" {
     pub static mut player_flags: p_flags;
+    static mut player_title: [c_char; 82];
     static mut player_name: [u8; 82];
     static mut player_race: [c_char; 82];
-    static mut player_sex: [c_char; 82];
-    static mut player_tclass: [u8; 82];
     static mut player_prace: u8;
+    static mut player_sex: [c_char; 82];
+    static mut player_tclass: [c_char; 82];
+    static mut player_pclass: i32;
     pub static mut player_stl: u8;
     pub static mut player_sc: i16;
     pub static mut player_age: u16;
@@ -96,12 +99,13 @@ extern "C" {
     pub static mut player_ptohit: i16;
     pub static mut player_ptodam: i16;
     pub static mut player_save: i16;
+    pub static mut player_disarm: i16;
     pub static mut player_cmana: f32;
     pub static mut player_diffic: u8;
-    pub static mut player_hitdie: u8;
     pub static mut player_exp: i64;
     pub static mut player_expfact: f32;
     pub static mut player_account: i64;
+    pub static mut player_mr: i64;
     pub static mut player_rep: i64;
     pub static mut player_dis_ac: i16;
     pub static mut player_dis_th: i16;
@@ -120,6 +124,12 @@ pub fn name() -> String {
     misc::c_array_to_rust_string(unsafe { player_name.to_vec() })
 }
 
+pub fn set_name(new_name: &str) {
+    unsafe {
+        strcpy(player_name.as_mut_ptr() as *mut i8, CString::new(new_name).unwrap().as_ptr());
+    }
+}
+
 pub fn race() -> races::Race {
     debug::enter("player::race");
     let result = races::Race::from(unsafe { player_prace } as usize);
@@ -136,10 +146,6 @@ pub fn set_race(race: races::Race) {
     debug::leave("player::set_race");
 }
 
-pub fn race_string() -> &'static str {
-    race().name()
-}
-
 pub fn sex() -> Sex {
     Sex::from(unsafe { player_sex[0] as u8 as char })
 }
@@ -150,12 +156,20 @@ pub fn set_sex(sex: Sex) {
     }
 }
 
-pub fn sex_string() -> &'static str {
-    sex().to_string()
+pub fn class() -> classes::Class {
+    debug::enter("player::class");
+    let result = classes::Class::from(unsafe { player_pclass } as usize);
+    debug::enter("player::class");
+    result
 }
 
-pub fn class_string() -> String {
-    misc::c_array_to_rust_string(unsafe { player_tclass.to_vec() })
+pub fn set_class(class: classes::Class) {
+    debug::enter("player::set_class");
+    unsafe {
+        player_pclass = class as i32;
+        strcpy(player_tclass.as_mut_ptr(), CString::new(class.name()).unwrap().as_ptr());
+    }
+    debug::leave("player::set_class");
 }
 
 pub fn perm_stats() -> StatBlock {
@@ -198,3 +212,88 @@ pub fn set_bank_wallet(wallet: &Wallet) {
     }
 }
 
+pub fn refresh_title() {
+    let new_title = class().title(unsafe { player_lev } as u8);
+    unsafe {
+        strcpy(player_title.as_mut_ptr(), CString::new(new_title).unwrap().as_ptr());
+    }
+}
+
+pub fn ac_from_dex() -> i8 {
+    match curr_stats().get(Stat::Dexterity) {
+        dex if dex < 10 => -4,
+        dex if dex < 20 => -3,
+        dex if dex < 30 => -2,
+        dex if dex < 40 => -1,
+        dex if dex < 120 => 0,
+        dex if dex < 150 => 1,
+        dex if dex < 191 => 2,
+        dex if dex < 226 => 3,
+        dex if dex < 249 => 4,
+        _ => 5,
+    }
+}
+
+pub fn tohit_from_stats() -> i8 {
+    fn tohit_from_dex() -> i8 {
+        match curr_stats().get(Stat::Dexterity) {
+            dex if dex < 10 => -3,
+            dex if dex < 30 => -2,
+            dex if dex < 50 => -1,
+            dex if dex < 130 => 0,
+            dex if dex < 140 => 1,
+            dex if dex < 150 => 2,
+            dex if dex < 201 => 3,
+            dex if dex < 250 => 4,
+            _ => 5,
+        }
+    }
+
+    fn tohit_from_str() -> i8 {
+        match curr_stats().get(Stat::Strength) {
+            str if str < 10 => -3,
+            str if str < 20 => -2,
+            str if str < 40 => -1,
+            str if str < 150 => 0,
+            str if str < 226 => 1,
+            str if str < 241 => 2,
+            str if str < 249 => 3,
+            _ => 4,
+        }
+    }
+
+    tohit_from_dex() + tohit_from_str()
+}
+
+pub fn dmg_from_str() -> i8 {
+    match curr_stats().get(Stat::Strength) {
+        str if str < 10 => -2,
+        str if str < 20 => -1,
+        str if str < 130 => 0,
+        str if str < 140 => 1,
+        str if str < 150 => 2,
+        str if str < 226 => 3,
+        str if str < 241 => 4,
+        str if str < 249 => 5,
+        _ => 6,
+    }
+}
+
+pub fn hp_from_con() -> i8 {
+    match curr_stats().get(Stat::Constitution) {
+        con if con < 10 => -4,
+        con if con < 20 => -3,
+        con if con < 30 => -2,
+        con if con < 40 => -1,
+        con if con < 140 => 0,
+        con if con < 150 => 1,
+        con if con < 226 => 2,
+        con if con < 299 => 3,
+        _ => 4,
+    }
+}
+
+// Max amount of health to gain each level up
+pub fn hitdie() -> u8 {
+    class().health_bonus() + race().health_bonus()
+}
