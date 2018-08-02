@@ -1,12 +1,11 @@
 use libc::{c_char, time_t, strcpy};
 use types::{
-    Class, StatBlock, stats_iter, Wallet, currencies_iter, Sex, Stat
+    Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat
 };
 use std::ffi::CString;
 
 use debug;
 use misc;
-use races;
 
 #[repr(C)]
 pub struct p_flags {
@@ -131,14 +130,14 @@ pub fn set_name(new_name: &str) {
     }
 }
 
-pub fn race() -> races::Race {
+pub fn race() -> Race {
     debug::enter("player::race");
-    let result = races::Race::from(unsafe { player_prace } as usize);
+    let result = Race::from(unsafe { player_prace } as usize);
     debug::leave("player::race");
     result
 }
 
-pub fn set_race(race: races::Race) {
+pub fn set_race(race: Race) {
     debug::enter("player::set_race");
     unsafe {
         player_prace = race as u8;

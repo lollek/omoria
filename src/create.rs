@@ -11,11 +11,10 @@ use misc;
 use player;
 use ncurses;
 use random;
-use races;
 use screen;
 use term;
 
-use types::{Class, Stat, StatBlock, stats_iter, Currency, Sex};
+use types::{Class, Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
 
 const PLAYER_EXIT_PAUSE: i32 = 0;
 
@@ -543,8 +542,8 @@ fn choose_race() -> bool {
 
     let mut x = start_x;
     let mut y = 22;
-    for i in races::races_iter() {
-        let race = races::Race::from(i);
+    for i in races_iter() {
+        let race = Race::from(i);
         let char_visual = ('a' as u8 + i as u8) as char;
         let race_string = format!("{}) {}", char_visual, race.name());
 
@@ -563,8 +562,8 @@ fn choose_race() -> bool {
         let key = io::inkey_flush();
         let selection = (key as u8 - 'a' as u8) as usize;
 
-        if let Some(_) = races::races_iter().find(|&i| i == selection) {
-            player::set_race(races::Race::from(selection));
+        if let Some(_) = races_iter().find(|&i| i == selection) {
+            player::set_race(Race::from(selection));
             debug::leave("choose_race");
             return true;
         }
@@ -581,7 +580,7 @@ fn choose_race() -> bool {
 fn choose_sex() -> bool {
     debug::enter("choose_sex");
 
-    if player::race() == races::Race::Dryad {
+    if player::race() == Race::Dryad {
         player::set_sex(Sex::Female);
         debug::leave("choose_sex");
         return true;
