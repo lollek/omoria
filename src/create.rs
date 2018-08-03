@@ -23,7 +23,6 @@ extern "C" {
     fn Erase_Line(row: i32, col: i32);
     fn add_money(amount: i64);
 
-    fn cc__print_history();
     fn cc__get_history();
     fn cc__get_ahw();
 
@@ -431,6 +430,17 @@ fn put_misc3() {
     debug::leave("put_misc3");
 }
 
+fn print_history() {
+    term::clear_from(14);
+    term::put_buffer_r("Character Background", 14, 28);
+    for i in 0..5 {
+        let c_hist = unsafe { player::player_history[i].to_vec() };
+        let hist = misc::c_array_to_rust_string(c_hist);
+        term::put_buffer_r(&hist, i as i32 + 15, 5);
+    }
+}
+
+
 
 fn apply_stats_from_class() {
     unsafe {
@@ -721,7 +731,7 @@ pub extern fn create_character() {
     term::put_buffer_r(&player::sex().to_string(), 5, 15);
 
     choose_stats();
-    unsafe { cc__print_history() }
+    print_history();
 
     loop {
         if choose_class() {
@@ -733,7 +743,7 @@ pub extern fn create_character() {
     term::put_buffer_r(&player::class().name(), 6, 15);
     apply_stats_from_class();
 
-    unsafe { cc__print_history() };
+    print_history();
     put_misc1();
     put_stats();
 

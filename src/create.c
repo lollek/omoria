@@ -3,20 +3,6 @@
 
 #include "imoria.h"
 
-void cc__print_history()
-{
-	/*	{ Will print the history of a character			-JWT-
-	 * }*/
-
-	long i1;
-
-	clear_from(14);
-	put_buffer("Character Background", 14, 28);
-	for (i1 = 0; i1 < 5; i1++) {
-		put_buffer(player_history[i1], i1 + 1 + 14, 5);
-	}
-}
-
 /*
 	{ Get the racial history, determines social class	-RAK-	}
 	{ Assumtions:	Each race has init history beginning at 	}

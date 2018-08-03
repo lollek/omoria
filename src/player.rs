@@ -74,6 +74,7 @@ pub struct p_flags {
 
 extern "C" {
     pub static mut player_flags: p_flags;
+    pub static mut player_history: [[u8; 82]; 5];
     static mut player_title: [c_char; 82];
     static mut player_name: [u8; 82];
     static mut player_race: [c_char; 82];
