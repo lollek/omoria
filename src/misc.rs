@@ -1,6 +1,26 @@
 use std::ffi::CStr;
 
+use player;
 use random;
+
+use types::Stat;
+
+pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
+pub const BTH_PLUS_ADJ: i16 = 3; // Adjust BTH per plus-to-hit
+
+// Returns a rating of x depending on y -JWT-
+pub fn mod_to_string(x: i64, y: i64) -> &'static str {
+    match x / y {
+        i if i < 0  => "Very Bad",
+        0|1         => "Bad",
+        2           => "Poor",
+        3|4         => "Fair",
+        5           => "Good",
+        6           => "Very Good",
+        7|8         => "Suberb",
+        _           => "Excellent",
+    }
+}
 
 // Squish the stat into allowed limits
 #[no_mangle]
@@ -63,3 +83,15 @@ pub fn c_array_to_rust_string(array: Vec<u8>) -> String {
         .to_string()
 }
 
+pub fn mod_from_stat(stat: Stat) -> u8 {
+    match player::curr_stats().get(stat) {
+        statval if statval > 249 => 7,
+        statval if statval > 239 => 6,
+        statval if statval > 219 => 5,
+        statval if statval > 199 => 4,
+        statval if statval > 149 => 3,
+        statval if statval > 109 => 2,
+        statval if statval > 39 => 1,
+        _ => 0,
+    }
+}

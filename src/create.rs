@@ -22,13 +22,7 @@ extern "C" {
     fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
     fn add_money(amount: i64);
-    fn inkey() -> u8;
 
-    fn tohit_adj() -> i64;
-    fn todam_adj() -> i64;
-    fn toac_adj() -> i64;
-
-    fn cc__put_misc3();
     fn cc__print_history();
     fn cc__get_history();
     fn cc__get_ahw();
@@ -271,9 +265,9 @@ fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
          * so the player has a clue
          */
         unsafe {
-            player::player_dis_th = tohit_adj() as i16;
-            player::player_dis_td = todam_adj() as i16;
-            player::player_dis_tac = toac_adj() as i16;
+            player::player_dis_th = player::tohit_from_stats().into();
+            player::player_dis_td = player::dmg_from_str().into();
+            player::player_dis_tac = player::ac_from_dex().into();
         }
 
         erase_line(1, 1);
@@ -351,10 +345,10 @@ fn get_stats() {
         player::player_stl = race.stealth_mod() as u8; // TODO BUG! overflows for some races
         player::player_save = race.save_mod() as i16;
         player::player_lev = 1;
-        player::player_ptodam = todam_adj() as i16;
-        player::player_ptohit = tohit_adj() as i16;
+        player::player_ptodam = player::dmg_from_str() as i16;
+        player::player_ptohit = player::tohit_from_stats() as i16;
         player::player_ptoac = 0;
-        player::player_pac = toac_adj() as i16;
+        player::player_pac = player::ac_from_dex() as i16;
         player::player_expfact = race.expfactor();
         player::player_flags.see_infra = race.infravision() as i64;
         player::player_flags.swim = race.swim_speed() as i64;
@@ -394,6 +388,49 @@ fn put_misc2() {
     term::prt_r(&format!("Cur Mana       : {}", unsafe { player::player_cmana }), 13, 54);
     debug::leave("put_misc2");
 }
+
+fn put_misc3() {
+    debug::enter("put_misc3");
+
+    term::clear_from(14);
+
+    let xbth: i64 = player::melee_tohit().into();
+    let xbthb: i64 = player::ranged_tohit().into();
+
+    let xfos: i64 = max(27 - unsafe { player::player_fos }, 0).into();
+    let xsrh: i64 = unsafe { player::player_srh } as i64 +
+        misc::mod_from_stat(Stat::Intelligence) as i64;
+    let xstl: i64 = unsafe { player::player_stl }.into();
+    let xdis: i64 = unsafe { player::player_disarm } as i64 +
+        unsafe { player::player_lev } as i64 +
+            (2 * player::disarm_from_dex()) as i64 +
+                misc::mod_from_stat(Stat::Intelligence) as i64;
+    let xsave: i64 = unsafe { player::player_save } as i64 +
+        unsafe { player::player_lev } as i64 +
+        misc::mod_from_stat(Stat::Wisdom) as i64;
+    let xdev: i64 = unsafe { player::player_save } as i64 +
+        unsafe { player::player_lev } as i64 +
+        misc::mod_from_stat(Stat::Intelligence) as i64;
+    let xswm: i64 = unsafe { player::player_flags.swim } + 4;
+    let xrep: i64 = 6 + (unsafe { player::player_rep } / 25);
+    let xinf: i64 = unsafe { player::player_flags.see_infra } * 10;
+
+    term::prt_r("(Miscellaneous Abilities)", 16, 24);
+    term::put_buffer_r(&format!("Fighting    : {}", misc::mod_to_string(xbth, 12)), 17, 2);
+    term::put_buffer_r(&format!("Bows/Throw  : {}", misc::mod_to_string(xbthb, 12)), 18, 2);
+    term::put_buffer_r(&format!("Saving Throw: {}", misc::mod_to_string(xsave, 6)), 19, 2);
+    term::put_buffer_r(&format!("Stealth     : {}", misc::mod_to_string(xstl, 1)), 17, 27);
+    term::put_buffer_r(&format!("Disarming   : {}", misc::mod_to_string(xdis, 8)), 18, 27);
+    term::put_buffer_r(&format!("Magic Device: {}", misc::mod_to_string(xdev, 7)), 19, 27);
+    term::put_buffer_r(&format!("Perception  : {}", misc::mod_to_string(xfos, 3)), 17, 52);
+    term::put_buffer_r(&format!("Searching   : {}", misc::mod_to_string(xsrh, 6)), 18, 52);
+    term::put_buffer_r(&format!("Infra-Vision: {} feet", xinf), 19, 52);
+    term::put_buffer_r(&format!("Swimming    : {}", misc::mod_to_string(xswm, 1)), 20, 52);
+    term::put_buffer_r(&format!("Reputation  : {}", misc::mod_to_string(xrep, 1)), 20, 2);
+
+    debug::leave("put_misc3");
+}
+
 
 fn apply_stats_from_class() {
     unsafe {
@@ -444,7 +481,7 @@ fn display_char() {
     put_misc1();
     put_stats();
     put_misc2();
-    unsafe { cc__put_misc3() };
+    put_misc3();
     debug::leave("display_char");
 }
 
@@ -454,7 +491,7 @@ pub extern fn change_name() {
     display_char();
     loop {
         term::prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
-        match unsafe { inkey() } {
+        match io::inkey_flush() {
             99 => choose_name(),
             0 | 3 | 25 | 26 | 27 => break,
             _ => (),
@@ -709,10 +746,8 @@ pub extern fn create_character() {
     get_money();
     put_stats();
     put_misc2();
-    unsafe {
-        cc__put_misc3();
-        choose_name();
-        pause_exit(24, PLAYER_EXIT_PAUSE);
-    }
+    put_misc3();
+    choose_name();
+    pause_exit(24, PLAYER_EXIT_PAUSE);
     debug::leave("create_character");
 }

@@ -293,7 +293,40 @@ pub fn hp_from_con() -> i8 {
     }
 }
 
+pub fn disarm_from_dex() -> i8 {
+    match curr_stats().get(Stat::Dexterity) {
+        dex if dex < 10 => -8,
+        dex if dex < 20 => -6,
+        dex if dex < 30 => -4,
+        dex if dex < 40 => -2,
+        dex if dex < 50 => -1,
+        dex if dex < 100 => 0,
+        dex if dex < 130 => 1,
+        dex if dex < 150 => 2,
+        dex if dex < 191 => 4,
+        dex if dex < 226 => 5,
+        dex if dex < 249 => 6,
+        _ => 8,
+    }
+}
+
 // Max amount of health to gain each level up
 pub fn hitdie() -> u8 {
     class().health_bonus() + race().health_bonus()
+}
+
+pub fn melee_tohit() -> i16 {
+    unsafe {
+        player_bth +
+            (player_lev as i16 * misc::BTH_LEV_ADJ) +
+            (player_ptohit * misc::BTH_PLUS_ADJ)
+    }
+}
+
+pub fn ranged_tohit() -> i16 {
+    unsafe {
+        player_bthb +
+            (player_lev as i16 * misc::BTH_LEV_ADJ) +
+            (player_ptohit * misc::BTH_PLUS_ADJ)
+    }
 }

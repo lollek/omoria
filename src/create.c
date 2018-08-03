@@ -3,60 +3,6 @@
 
 #include "imoria.h"
 
-void cc__put_misc3()
-{
-	/*	{ Prints ratings on certain abilities			-RAK-
-	 * }*/
-	long xbth, xbthb, xfos, xsrh, xstl, xdis;
-	long xsave, xdev, xswm, xrep;
-	char xinfra[82];
-	char tmp_str[82], tmp2[82];
-
-	clear_from(14);
-
-	xbth = player_bth + player_lev * BTH_LEV_ADJ +
-	       player_ptohit * BTH_PLUS_ADJ;
-	xbthb = player_bthb + player_lev * BTH_LEV_ADJ +
-		player_ptohit * BTH_PLUS_ADJ;
-	xfos = 27 - player_fos;
-	if (xfos < 0) {
-		xfos = 0;
-	}
-	xsrh = player_srh + spell_adj(INT);
-	xstl = player_stl;
-	xdis = player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT);
-	xsave = player_save + player_lev + spell_adj(WIS);
-	xdev = player_save + player_lev + spell_adj(INT);
-	xswm = player_flags.swim + 4;
-	xrep = 6 + player_rep div 25;
-	sprintf(xinfra, "%ld feet", player_flags.see_infra * 10);
-
-	prt("(Miscellaneous Abilities)", 16, 24);
-	sprintf(tmp2, "%s%s", "Fighting    : ", likert(xbth, 12, tmp_str));
-	put_buffer(tmp2, 17, 2);
-	sprintf(tmp2, "%s%s", "Bows/Throw  : ", likert(xbthb, 12, tmp_str));
-	put_buffer(tmp2, 18, 2);
-	sprintf(tmp2, "%s%s", "Saving Throw: ", likert(xsave, 6, tmp_str));
-	put_buffer(tmp2, 19, 2);
-	sprintf(tmp2, "%s%s", "Stealth     : ", likert(xstl, 1, tmp_str));
-	put_buffer(tmp2, 17, 27);
-	sprintf(tmp2, "%s%s", "Disarming   : ", likert(xdis, 8, tmp_str));
-	put_buffer(tmp2, 18, 27);
-	sprintf(tmp2, "%s%s", "Magic Device: ", likert(xdev, 7, tmp_str));
-	put_buffer(tmp2, 19, 27);
-	sprintf(tmp2, "%s%s", "Perception  : ", likert(xfos, 3, tmp_str));
-	put_buffer(tmp2, 17, 52);
-	sprintf(tmp2, "%s%s", "Searching   : ", likert(xsrh, 6, tmp_str));
-	put_buffer(tmp2, 18, 52);
-	sprintf(tmp2, "%s%s", "Infra-Vision: ", xinfra);
-	put_buffer(tmp2, 19, 52);
-	sprintf(tmp2, "%s%s", "Swimming    : ", likert(xswm, 1, tmp_str));
-	put_buffer(tmp2, 20, 52);
-	sprintf(tmp2, "%s%s", "Reputation  : ", likert(xrep, 1, tmp_str));
-	put_buffer(tmp2, 20, 2);
-}
-
-
 void cc__print_history()
 {
 	/*	{ Will print the history of a character			-JWT-

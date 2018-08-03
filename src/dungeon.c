@@ -1397,6 +1397,7 @@ boolean player_test_hit(long bth, long level, long pth, long ac,
 		rest_off();
 	}
 
+	/* compare player::melee_tohit()  and player::ranged_tohit() */
 	i1 = bth + pth * BTH_PLUS_ADJ;
 
 	if (was_fired) {
