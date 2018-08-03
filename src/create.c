@@ -105,39 +105,6 @@ void cc__get_history()
 
 } /* end cc__get_history */
 
-void cc__get_ahw()
-{
-	/*	{ Computes character's age, height, and weight		-JWT-
-	 * }*/
-
-	long i1;
-
-	i1 = player_prace;
-	player_age = race_rand_starting_age(i1);
-
-	player_birth.year = 500 + randint(50);
-	player_birth.month = randint(13);
-	player_birth.day = randint(28);
-	player_birth.hour = randint(24) - 1;
-	player_birth.secs = randint(400) - 1;
-
-	player_cur_age.year = player_age + player_birth.year;
-	player_cur_age.month = player_birth.month;
-	player_cur_age.day = player_birth.day + 1;
-	if ((player_cur_age.day % 7) == 0) {
-		add_days(&player_cur_age, 2);
-	}
-	if ((player_cur_age.day % 7) == 1) {
-		add_days(&player_cur_age, 1);
-	}
-	player_cur_age.hour = 7;
-	player_cur_age.secs = 300 + randint(99);
-	player_ht = race_rand_starting_height(i1, characters_sex() == MALE);
-	player_wt = race_rand_starting_weight(i1, characters_sex() == MALE);
-	player_disarm = race_disarm_mod(i1) + todis_adj();
-
-} /* end cc__get_ahw */
-
 void set_gem_values()
 {
 	long count;

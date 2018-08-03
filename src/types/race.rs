@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use types::{StatBlock, Class};
+use types::{Class, Sex, StatBlock};
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum Race {
@@ -122,6 +122,21 @@ impl Race {
         }
     }
 
+    pub fn disarm_mod(&self) -> i8 {
+        match self {
+            Race::Human => 0,
+            Race::HalfElf => 2,
+            Race::Elf => 5,
+            Race::Halfling => 15,
+            Race::Gnome => 10,
+            Race::Dwarf => 2,
+            Race::HalfOrc => -3,
+            Race::HalfTroll => -5,
+            Race::Phraint => 15,
+            Race::Dryad => 2,
+        }
+    }
+
     pub fn health_bonus(&self) -> u8 {
         match self {
             Race::Human => 10,
@@ -237,6 +252,96 @@ impl Race {
                 Class::Priest, Class::Ranger, Class::Druid, Class::Bard,
                 Class::Monk,
             ],
+        }
+    }
+
+    pub fn weight_base(&self, player_sex: Sex) -> u16 {
+        match self {
+            Race::Human =>
+                match player_sex {
+                    Sex::Male => 180,
+                    Sex::Female => 120,
+                }
+            Race::HalfElf =>
+                match player_sex {
+                    Sex::Male => 130,
+                    Sex::Female => 100,
+                }
+            Race::Elf =>
+                match player_sex {
+                    Sex::Male => 100,
+                    Sex::Female => 80,
+                }
+            Race::Halfling =>
+                match player_sex {
+                    Sex::Male => 60,
+                    Sex::Female => 50,
+                }
+            Race::Gnome =>
+                match player_sex {
+                    Sex::Male => 90,
+                    Sex::Female => 75,
+                }
+            Race::Dwarf =>
+                match player_sex {
+                    Sex::Male => 150,
+                    Sex::Female => 120,
+                }
+            Race::HalfOrc =>
+                match player_sex {
+                    Sex::Male => 150,
+                    Sex::Female => 120,
+                }
+            Race::HalfTroll =>
+                match player_sex {
+                    Sex::Male => 300,
+                    Sex::Female => 260,
+                }
+            Race::Phraint =>
+                match player_sex {
+                    Sex::Male => 100,
+                    Sex::Female => 95,
+                }
+            Race::Dryad =>
+                match player_sex {
+                    Sex::Male => 85,
+                    Sex::Female => 70,
+                }
+        }
+    }
+
+    pub fn weight_modifier(&self, player_sex: Sex) -> u16 {
+        match self {
+            Race::Human =>
+                match player_sex {
+                    Sex::Male => 25,
+                    Sex::Female => 20,
+                }
+            Race::HalfElf =>
+                match player_sex {
+                    Sex::Male => 15,
+                    Sex::Female => 10,
+                }
+            Race::Elf => 6,
+            Race::Halfling => 3,
+            Race::Gnome =>
+                match player_sex {
+                    Sex::Male => 6,
+                    Sex::Female => 3,
+                }
+            Race::Dwarf => 10,
+            Race::HalfOrc => 5,
+            Race::HalfTroll =>
+                match player_sex {
+                    Sex::Male => 50,
+                    Sex::Female => 40,
+                }
+            Race::Phraint =>
+                match player_sex {
+                    Sex::Male => 20,
+                    Sex::Female => 16,
+                }
+            Race::Dryad => 6,
         }
     }
 }

@@ -1,4 +1,5 @@
 
+#[derive(PartialEq, Clone, Copy)]
 pub enum Sex {
     Female,
     Male,

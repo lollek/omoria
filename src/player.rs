@@ -8,6 +8,15 @@ use debug;
 use misc;
 
 #[repr(C)]
+pub struct GameTime {
+    pub year: i64,
+    pub month: u8,
+    pub day: u8,
+    pub hour: u8,
+    pub secs: u16,
+}
+
+#[repr(C)]
 pub struct p_flags {
     pub insured: u8 ,      /* { Character insured   } */
     pub dead: u8 ,	 /* { Currently restored  } */
@@ -73,6 +82,8 @@ pub struct p_flags {
 }
 
 extern "C" {
+    pub static mut player_birth: GameTime;     /* {Date of char's birth} */
+    pub static mut player_cur_age: GameTime;   /* {Current game date	} */
     pub static mut player_flags: p_flags;
     pub static mut player_history: [[u8; 82]; 5];
     static mut player_title: [c_char; 82];

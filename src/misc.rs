@@ -8,18 +8,22 @@ use types::Stat;
 pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
 pub const BTH_PLUS_ADJ: i16 = 3; // Adjust BTH per plus-to-hit
 
-// Returns a rating of x depending on y -JWT-
-pub fn mod_to_string(x: i64, y: i64) -> &'static str {
-    match x / y {
-        i if i < 0  => "Very Bad",
-        0|1         => "Bad",
-        2           => "Poor",
-        3|4         => "Fair",
-        5           => "Good",
-        6           => "Very Good",
-        7|8         => "Suberb",
-        _           => "Excellent",
-    }
+#[no_mangle]
+pub extern fn max_allowable_weight() -> u16 {
+    let player_race = player::race();
+    let player_sex = player::sex();
+
+    player_race.weight_base(player_sex) +
+        4 * player_race.weight_modifier(player_sex)
+}
+
+#[no_mangle]
+pub extern fn min_allowable_weight() -> u16 {
+    let player_race = player::race();
+    let player_sex = player::sex();
+
+    player_race.weight_base(player_sex) -
+        4 * player_race.weight_modifier(player_sex)
 }
 
 // Squish the stat into allowed limits
@@ -93,5 +97,19 @@ pub fn mod_from_stat(stat: Stat) -> u8 {
         statval if statval > 109 => 2,
         statval if statval > 39 => 1,
         _ => 0,
+    }
+}
+
+// Returns a rating of x depending on y -JWT-
+pub fn mod_to_string(x: i64, y: i64) -> &'static str {
+    match x / y {
+        i if i < 0  => "Very Bad",
+        0|1         => "Bad",
+        2           => "Poor",
+        3|4         => "Fair",
+        5           => "Good",
+        6           => "Very Good",
+        7|8         => "Suberb",
+        _           => "Excellent",
     }
 }

@@ -24,7 +24,6 @@ extern "C" {
     fn add_money(amount: i64);
 
     fn cc__get_history();
-    fn cc__get_ahw();
 
     #[link_name = "moria_help"]
     fn C_moria_help(what: *const c_char);
@@ -484,20 +483,139 @@ fn apply_stats_from_class() {
     }
 }
 
+fn generate_player_age(player_race: Race) -> u16 {
+    match player_race {
+        Race::Human => 12 + random::randint(6) as u16,
+        Race::HalfElf => 24 + random::randint(16) as u16,
+        Race::Elf => 75 + random::randint(75) as u16,
+        Race::Halfling  => 21 + random::randint(12) as u16,
+        Race::Gnome => 50 + random::randint(40) as u16,
+        Race::Dwarf => 35 + random::randint(15) as u16,
+        Race::HalfOrc => 11 + random::randint(4) as u16,
+        Race::HalfTroll => 20 + random::randint(10) as u16,
+        Race::Phraint => 15 + random::randint(10) as u16,
+        Race::Dryad => 75 + random::randint(75) as u16,
+    }
+}
+
+fn generate_player_height(player_race: Race, player_sex: Sex) -> u16 {
+    match player_race {
+        Race::Human =>
+            match player_sex {
+                Sex::Male => random::randnor(72, 6) as u16,
+                Sex::Female => random::randnor(66, 4) as u16,
+            }
+        Race::HalfElf =>
+            match player_sex {
+                Sex::Male => random::randnor(66, 6) as u16,
+                Sex::Female => random::randnor(62, 6) as u16,
+            }
+        Race::Elf =>
+            match player_sex {
+                Sex::Male => random::randnor(60, 4) as u16,
+                Sex::Female => random::randnor(54, 4) as u16,
+            }
+        Race::Halfling =>
+            match player_sex {
+                Sex::Male => random::randnor(36, 3) as u16,
+                Sex::Female => random::randnor(33, 3) as u16,
+            }
+        Race::Gnome =>
+            match player_sex {
+                Sex::Male => random::randnor(42, 3) as u16,
+                Sex::Female => random::randnor(39, 3) as u16,
+            }
+        Race::Dwarf =>
+            match player_sex {
+                Sex::Male => random::randnor(48, 3) as u16,
+                Sex::Female => random::randnor(46, 3) as u16,
+            }
+        Race::HalfOrc =>
+            match player_sex {
+                Sex::Male => random::randnor(66, 1) as u16,
+                Sex::Female => random::randnor(62, 3) as u16,
+            }
+        Race::HalfTroll =>
+            match player_sex {
+                Sex::Male => random::randnor(96, 10) as u16,
+                Sex::Female => random::randnor(84, 12) as u16,
+            }
+        Race::Phraint =>
+            match player_sex {
+                Sex::Male => random::randnor(96, 24) as u16,
+                Sex::Female => random::randnor(84, 12) as u16,
+            }
+        Race::Dryad =>
+            match player_sex {
+                Sex::Male => random::randnor(60, 4) as u16,
+                Sex::Female => random::randnor(40, 4) as u16,
+            }
+    }
+}
+
+fn generate_player_weight(race: Race, sex: Sex) -> u16 {
+    random::randnor(
+        race.weight_base(sex) as i64,
+        race.weight_modifier(sex) as i64
+        ) as u16
+}
+
+// Computes character's age, height, and weight -JWT-
+fn generate_ahw() {
+    debug::enter("generate_ahw");
+
+    let player_race = player::race();
+    let player_sex = player::sex();
+
+    unsafe {
+        player::player_age = generate_player_age(player_race);
+
+        player::player_birth.year = 500 + random::randint(50);
+        player::player_birth.month = random::randint(13) as u8;
+        player::player_birth.day = random::randint(28) as u8;
+        player::player_birth.hour = (random::randint(24) - 1) as u8;
+        player::player_birth.secs = (random::randint(400) - 1) as u16;
+
+        player::player_cur_age.year = player::player_age as i64 + player::player_birth.year;
+        player::player_cur_age.month = player::player_birth.month as u8;
+        player::player_cur_age.day = (player::player_birth.day + 1) as u8;
+        /*
+           if player_cur_age.day % 7 == 0 {
+           add_days(&player_cur_age, 2);
+           }
+           if player_cur_age.day % 7 == 1 {
+           add_days(&player_cur_age, 1);
+           }
+           */
+        player::player_cur_age.hour = 7 as u8;
+        player::player_cur_age.secs = (300 + random::randint(99)) as u16;
+
+        player::player_ht = generate_player_height(player_race, player_sex);
+        player::player_wt = generate_player_weight(player_race, player_sex);
+
+        player::player_disarm = (player_race.disarm_mod() + player::disarm_from_dex()).into();
+    }
+
+    debug::leave("generate_ahw");
+}
+
 // Display character on screen -RAK-
 fn display_char() {
     debug::enter("display_char");
+
     put_character(true);
     put_misc1();
     put_stats();
     put_misc2();
     put_misc3();
+
     debug::leave("display_char");
 }
 
 #[no_mangle]
 pub extern fn change_name() {
     debug::enter("change_name");
+
     display_char();
     loop {
         term::prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
@@ -508,6 +626,7 @@ pub extern fn change_name() {
         }
 
     }
+
     debug::leave("change_name");
 }
 
@@ -691,7 +810,7 @@ fn choose_stats() {
         get_stats();
         unsafe {
             cc__get_history();
-            cc__get_ahw();
+            generate_ahw();
         }
 
         /*
