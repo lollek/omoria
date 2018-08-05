@@ -7,7 +7,7 @@ use types::StatBlock;
 fn prt_stat(stat_name: &str, stat: i16, row: u8, column: u8) {
     debug::enter("prt_stat");
     let str = format!("{}{}", stat_name, misc::stat_to_string(stat));
-    term::put_buffer_r(&str, row as i32, column as i32);
+    term::put_buffer_r(&str, row.into(), column.into());
     debug::leave("prt_stat");
 }
 

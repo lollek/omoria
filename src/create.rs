@@ -147,16 +147,19 @@ fn put_stats() {
 
 fn put_misc1() {
     debug::enter("put_misc1");
+
     term::prt_r(&format!("Age          : {}", unsafe { player::player_age }), 3, 40);
     term::prt_r(&format!("Height       : {}", unsafe { player::player_ht }), 4, 40);
     term::prt_r(&format!("Weight       : {}", unsafe { player::player_wt }), 5, 40);
     term::prt_r(&format!("Social Class : {}", unsafe { player::player_sc }), 6, 40);
     term::prt_r(&format!("Difficulty   : {}", unsafe { player::player_diffic }), 7, 40);
+
     debug::leave("put_misc1");
 }
 
 fn put_misc2() {
     debug::enter("put_misc2");
+
     term::prt_r(&format!("Level      : {}", unsafe { player::player_lev }), 10, 31);
     term::prt_r(&format!("Experience : {}", unsafe { player::player_exp }), 11, 31);
     term::prt_r(&format!("Gold       : {}", player::wallet().total), 12, 31);
@@ -165,6 +168,7 @@ fn put_misc2() {
     term::prt_r(&format!("Cur Hit Points : {}", unsafe { player::player_chp }), 11, 54);
     term::prt_r(&format!("Max Mana       : {}", unsafe { player::player_mana }), 12, 54);
     term::prt_r(&format!("Cur Mana       : {}", unsafe { player::player_cmana }), 13, 54);
+
     debug::leave("put_misc2");
 }
 
