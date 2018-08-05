@@ -114,3 +114,16 @@ pub fn mod_to_string(stat: i64, base: i64) -> &'static str {
         _           => "Excellent",
     }
 }
+
+pub fn stat_to_string(stat: i16) -> String {
+    if stat < 0 || stat > 250 {
+        panic!(stat)
+    }
+
+    if stat > 150 {
+        format!("18/{:-2}", stat - 150)
+    } else {
+        format!("{:2}   ", 3 + stat / 10)
+    }
+}
+

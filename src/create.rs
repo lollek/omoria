@@ -17,18 +17,10 @@ use term;
 use types::{Class, Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
 
 extern "C" {
-    fn Erase_Line(row: i32, col: i32);
     fn add_money(amount: i64);
 
     #[link_name = "moria_help"]
     fn C_moria_help(what: *const c_char);
-}
-
-fn erase_line(row: i32, col: i32) {
-    debug::enter("erase_line");
-    let result = unsafe { Erase_Line(row -1, col -1) };
-    debug::leave("erase_line");
-    result
 }
 
 fn old_stat(stat: i16) -> i16 {
@@ -36,42 +28,6 @@ fn old_stat(stat: i16) -> i16 {
         (misc::squish_stat(stat as i32) as i16 + 30) / 10
     } else {
         misc::squish_stat(stat as i32) as i16 - 132
-    }
-}
-
-fn new_stat(stat: i16) -> i16 {
-    if stat < 18 {
-        misc::squish_stat(((stat * 10) - 30) as i32) as i16
-    } else {
-        misc::squish_stat((stat + 132) as i32) as i16
-    }
-}
-
-fn max_in_statp(stat: i16) -> i16 {
-    if stat < 150 {
-        stat + 10
-    } else if stat < 220 {
-        stat + 25
-    } else if stat < 240 {
-        stat + 10
-    } else if stat < 250 {
-        stat + 1
-    } else {
-        stat
-    }
-}
-
-fn max_de_statp(stat: i16) -> i16 {
-    if stat < 11 {
-        0
-    } else if stat < 151 {
-        stat - 10
-    } else if stat < 156 {
-        150
-    } else if stat < 241 {
-        stat - 6
-    } else {
-        stat - 1
     }
 }
 
@@ -90,113 +46,16 @@ fn change_stat(mut cur_stat: i16, amount: i16) -> i16 {
     cur_stat
 }
 
-fn max_stat(mut stat: i16, amount: i16) -> i16 {
-    debug::enter("max_stat");
-    if amount < 0 {
-        for _ in amount..0 {
-            stat = max_de_statp(stat);
-        }
-    } else {
-        for _ in 1..(amount+1) {
-            stat = max_in_statp(stat);
-        }
-    }
-    debug::leave("max_stat");
-    stat
-}
-
-fn next_best_stats(curr: &StatBlock, user: &StatBlock, best: &mut StatBlock,
-                   best_min: i64) -> i64 {
-    debug::enter("next_best_stats");
-    let mut below_sum: i64 = 0;
-
-    for tstat in stats_iter() {
-        if curr.get_pos(tstat) < user.get_pos(tstat) {
-            let below: i64 = (user.get_pos(tstat) - curr.get_pos(tstat)) as i64;
-            below_sum += (below * (below + 1)) / 2;
-            debug::info(&format!("curr: {}, user: {}, below: {}, below_sum: {}",
-                                 curr.get_pos(tstat), user.get_pos(tstat),
-                                 below, below_sum));
-        }
-    }
-
-    let result =
-        if below_sum < best_min {
-            for tstat in stats_iter() {
-                best.set_pos(tstat, curr.get_pos(tstat));
-            }
-            below_sum
-        } else {
-            best_min
-        };
-    debug::leave("next_best_stats");
-    result
-}
-
-fn get_min_stat(stat: &str, race_max: i16) -> i16 {
-    debug::enter("get_min_stat");
-    let out_str =
-        if race_max >= 250 {
-            format!("Min {} (racial max 18/00) : ", stat)
-        } else if race_max > 150 {
-            format!("Min {} (racial max 18/{}) : ", stat, race_max - 150)
-        } else {
-            format!("Min {} (racial max {}) : ", stat, old_stat(race_max))
-        };
-
-    term::prt_r(&out_str, 1, 1);
-
-    let abil: u32;
-    let mut perc: u32;
-    loop {
-        let tmp_str = term::get_string(1, out_str.len() as i32 + 1, 10);
-        if tmp_str.is_empty() {
-            continue;
-        }
-
-        let parts: Vec<&str> = tmp_str.split("/").collect();
-
-        perc = 0;
-        if parts.len() > 1 {
-            if let Ok(new_perc) = parts[1].parse::<u32>() {
-                perc = max(new_perc, 100);
-            }
-        }
-
-        if parts.len() > 0 {
-            if let Ok(new_abil) = parts[0].parse::<u32>() {
-                abil = new_abil;
-                break;
-            }
-        }
-    }
-
-    debug::info(&format!("abil: {}, perc: {}", abil, perc));
-
-    let result =
-        if abil == 18 {
-            if perc == 0 {
-                250 as i16
-            } else {
-                150 + perc as i16
-            }
-        } else {
-            if abil < 3 {
-                new_stat(3)
-            } else if abil > 18 {
-                new_stat(18)
-            } else {
-                new_stat(abil as i16)
-            }
-        };
-    debug::info(&format!("result: {}", result));
-    debug::leave("get_min_stat");
-    result
-}
-
-// returns [50, 140]
+// returns [30, 150]
 fn random_stat() -> i16 {
-    (random::randint(4) + random::randint(4) + random::randint(4) + 2) as i16 * 10
+    let mut stats = vec! [
+        random::randint(5),
+        random::randint(5),
+        random::randint(5),
+        random::randint(5),
+    ];
+    stats.sort();
+    stats.iter().skip(1).fold(0, |sum, i| sum + i) as i16 * 10
 }
 
 fn put_character(show_values: bool) {
@@ -240,79 +99,9 @@ fn get_money() {
     debug::leave("get_money");
 }
 
-fn satisfied(minning: &mut bool,  printed_once: &mut bool, best_min: &mut i64,
-                 try_count: &mut i64, mut best: &mut StatBlock, user: &StatBlock) -> bool {
-    debug::enter("satisfied");
-    let mut is_satisfied: bool;
-
-    if !*minning {
-        /*
-         * Figure out what the current bonuses are
-         * so the player has a clue
-         */
-        unsafe {
-            player::player_dis_th = player::tohit_from_stats().into();
-            player::player_dis_td = player::dmg_from_str().into();
-            player::player_dis_tac = player::ac_from_dex().into();
-        }
-
-        erase_line(1, 1);
-        term::clear_from(21);
-        put_misc1();
-        put_stats();
-
-        term::prt_r("Press 'R' to reroll, <RETURN> to continue:", 21, 3);
-        *printed_once = true;
-
-        loop {
-            let s: u8 = io::inkey_flush();
-            is_satisfied = s != 'R' as u8;
-            if s == 10 || s == 'R' as u8 {
-                break;
-            }
-        }
-
-    } else { /* minning */
-
-        if !*printed_once {
-            term::clear_from(21);
-            term::prt_r("Press any key to give up (50000 rolls max): ", 21, 3);
-            term::refresh_screen();
-            *printed_once = true;
-        }
-
-        *best_min = next_best_stats(&player::perm_stats(), &user, &mut best, *best_min);
-
-        *try_count += 1;
-        if (*try_count % 250) == 0 {
-            term::prt_r(&format!("Try = {:10}", try_count), 21, 60);
-            term::refresh_screen();
-        }
-
-        let s: u8 = io::inkey_delay(0);
-        if s != 0 || *try_count == 50000 {
-            *minning = false;
-            *printed_once = false;
-            player::set_perm_stats(&best);
-            player::set_curr_stats(&best);
-            is_satisfied =
-                satisfied(minning, printed_once, best_min,
-                              try_count, best, user);
-        } else {
-            is_satisfied = *best_min == 0i64;
-            if *best_min == 0i64 {
-                put_misc1();
-                put_stats();
-            }
-        } /* endif s || try_count */
-    }	 /* endif minning */
-
-    debug::leave("satisfied");
-    is_satisfied
-}
-
 fn get_stats() {
     debug::enter("get_stats");
+
     let race = player::race();
     let race_stats = race.stat_block();
 
@@ -339,16 +128,20 @@ fn get_stats() {
         player::player_flags.see_infra = race.infravision() as i64;
         player::player_flags.swim = race.swim_speed() as i64;
     }
+
     debug::leave("get_stats");
 }
 
 fn put_stats() {
     debug::enter("put_stats");
+
     screen::prt_6_stats(&player::curr_stats(), 3, 65);
+
     term::prt_r(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
     term::prt_r(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);
     term::prt_r(&format!("+ To AC    : {}", unsafe { player::player_dis_tac }), 12, 4);
     term::prt_r(&format!("  Total AC : {}", unsafe { player::player_dis_ac }), 13, 4);
+
     debug::leave("put_stats");
 }
 
@@ -587,10 +380,7 @@ fn generate_ahw() {
     debug::leave("generate_ahw");
 }
 
-// Get the racial history, determines social class
-// Assumtions: Each race has init history beginning at
-// (race)*3 + 1
-// All history parts are in ascending order
+// Get the racial history, and determines social class
 fn generate_history() {
     let human_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
         vec![
@@ -1085,7 +875,6 @@ fn choose_name() {
     debug::leave("choose_name");
 }
 
-/*	{ Gets a character class				-JWT-	}*/
 fn choose_class() -> bool {
     debug::enter("choose_class");
 
@@ -1138,7 +927,6 @@ fn choose_class() -> bool {
     }
 }
 
-/*	{ Allows player to select a race			-JWT- }*/
 fn choose_race() -> bool {
     debug::enter("choose_race");
 
@@ -1186,7 +974,6 @@ fn choose_race() -> bool {
     }
 }
 
-/*	{ Gets the character's sex				-JWT- }*/
 fn choose_sex() -> bool {
     debug::enter("choose_sex");
 
@@ -1227,49 +1014,35 @@ fn choose_sex() -> bool {
 
 fn choose_stats() {
     debug::enter("choose_stats");
-    let player_race = player::race();
-    let race_stats = player_race.stat_block();
-
-    let max_stats: Vec<i16> = stats_iter()
-        .map(|stat| max_stat(140, race_stats.get_pos(stat)))
-        .collect();
-
-
-    let mut is_minning = io::get_yes_no("Do you wish to try for minimum statistics?");
-    let mut user: StatBlock = StatBlock::new(0);
-    if is_minning {
-        user.strength = get_min_stat("STR", max_stats[0]);
-        user.intelligence = get_min_stat("INT", max_stats[1]);
-        user.wisdom = get_min_stat("WIS", max_stats[2]);
-        user.dexterity = get_min_stat("DEX", max_stats[3]);
-        user.constitution = get_min_stat("CON", max_stats[4]);
-        user.charisma = get_min_stat("CHR", max_stats[5]);
-        screen::prt_6_stats(&user, 3, 65);
-    }
-
-    let mut best: StatBlock = StatBlock::new(3);
-    let mut is_printed_once: bool = true;
 
     loop {
         get_stats();
         generate_history();
         generate_ahw();
 
-        /*
-         * This delay may be reduced, but is recomended to keep players
-         *
-         * from continuously rolling up characters, which can be VERY
-         * expensive CPU wise.
-         */
+        unsafe {
+            player::player_dis_th = player::tohit_from_stats().into();
+            player::player_dis_td = player::dmg_from_str().into();
+            player::player_dis_tac = player::ac_from_dex().into();
+        }
 
-        let mut try_count: i64 = 0;
-        let mut best_min: i64 = 99999999;
-        if satisfied(&mut is_minning, &mut is_printed_once, &mut best_min, &mut try_count, &mut best, &user) {
-            break;
+        term::clear_from(21);
+        put_misc1();
+        put_stats();
+
+        term::prt_r("Press 'R' to reroll stats, <RETURN> to continue:", 21, 3);
+
+        loop {
+            let s: u8 = io::inkey_flush();
+            if s == 10 as u8 {
+                debug::leave("choose_stats");
+                return;
+            }
+            if s == 'R' as u8 {
+                break;
+            }
         }
     }
-
-    debug::leave("choose_stats");
 }
 
 #[no_mangle]
@@ -1301,6 +1074,7 @@ pub extern fn create_character() {
     }
 
     term::clear_from(21);
+    term::clear_screen();
     term::put_buffer_r(&player::class().name(), 6, 15);
     apply_stats_from_class();
 

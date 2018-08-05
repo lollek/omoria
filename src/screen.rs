@@ -1,30 +1,20 @@
 use debug;
 use term;
+use misc;
 
 use types::StatBlock;
 
-// Stat -> String
-fn cnv_stat(stat: i16) -> String {
-    if stat < 0 || stat > 250 {
-        panic!(stat)
-    }
-
-    if stat > 150 {
-        format!("18/{:-2}", stat - 150)
-    } else {
-        format!("{:2}   ", 3 + stat / 10)
-    }
-}
-
 fn prt_stat(stat_name: &str, stat: i16, row: u8, column: u8) {
     debug::enter("prt_stat");
-    term::put_buffer_r(&format!("{}{}", stat_name, cnv_stat(stat)), row as i32, column as i32);
+    let str = format!("{}{}", stat_name, misc::stat_to_string(stat));
+    term::put_buffer_r(&str, row as i32, column as i32);
     debug::leave("prt_stat");
 }
 
 // TODO: Not whole function is copied from C
 pub fn prt_6_stats(p: &StatBlock, row: u8, col: u8) {
     debug::enter("prt_6_stats");
+
     prt_stat("STR : ", p.strength, row, col);
     prt_stat("INT : ", p.intelligence, row + 1, col);
     prt_stat("WIS : ", p.wisdom, row + 2, col);

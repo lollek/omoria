@@ -26,7 +26,7 @@ pub fn clear_from(row: i32) {
 
 
 pub fn put_buffer_r(out_str: &str, row: i32, col: i32) {
-    debug::enter("put_buffer_r");
+    debug::enter(&format!("put_buffer_r: '{}'. y: {}. x: {}", out_str, row, col));
     put_buffer(CString::new(out_str).unwrap().as_ptr(), row, col);
     debug::leave("put_buffer_r");
 }
