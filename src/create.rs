@@ -1078,7 +1078,6 @@ pub extern fn create_character() {
     }
 
     term::clear_from(21);
-    term::clear_screen();
     term::put_buffer_r(&player::class().name(), 6, 15);
     apply_stats_from_class();
 
