@@ -639,34 +639,6 @@ void Pause_Line(prt_line) int prt_line;
 	Erase_Line(prt_line, 0);
 }
 
-/* Pauses for user response before returning		-RAK-	*/
-/* NOTE: Delay is for players trying to roll up "perfect"	*/
-/*	characters.  Make them wait a bit.			*/
-void Pause_Exit(int prt_line, int delay)
-{
-	char dummy;
-
-	prt_("[Press any key to continue, or Q to exit.]", prt_line, 10);
-	dummy = inkey();
-	if (dummy == 'Q') {
-		Erase_Line(prt_line, 0);
-#ifndef MSDOS /* PCs are slow enough as is  -dgk */
-		if (delay > 0)
-			(void)sleep((unsigned)delay);
-#else
-		/* prevent message about delay unused */
-		dummy = delay;
-#endif
-#ifdef MAC
-		enablefilemenu(FALSE);
-		exit_game();
-		enablefilemenu(TRUE);
-#else
-		exit_game();
-#endif
-	}
-	Erase_Line(prt_line, 0);
-}
 
 void save_screen() { overwrite(stdscr, savescr); }
 

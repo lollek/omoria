@@ -219,7 +219,6 @@ extern long get_hex_value(long row, long col, long slen);
 extern void print_hex_value(long num, long row, long col);
 extern void pause_game(long prt_line);
 /* use pause_exit */
-extern void Pause_Exit(int prt_line, int delay);
 extern void get_paths();
 
 /* { PLAYER.PAS		} */

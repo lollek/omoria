@@ -540,7 +540,6 @@
 #define print(s, r, c) Print((s), (r)-1, (c)-1)
 #define get_string(s, r, c, l) Get_String((s), (r)-1, (c)-1, (l))
 #define pause_line(r) Pause_Line((r)-1)
-#define pause_exit(r, d) Pause_Exit((r)-1, (d))
 #define print_null(r, c)                                                       \
 	(move_cursor((r)-panel_row_prt - 1, (c)-panel_col_prt - 1))
 

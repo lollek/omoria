@@ -319,7 +319,9 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 					put_buffer(in_line, i1, 1);
 				}
 			}
-			pause_exit(24, 0);
+			prt_("[Press any key to continue.]", 24, 10);
+			(void)inkey();
+			Erase_Line(24, 10);
 		}
 		fclose(file1);
 

@@ -16,22 +16,12 @@ use term;
 
 use types::{Class, Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
 
-const PLAYER_EXIT_PAUSE: i32 = 0;
-
 extern "C" {
-    fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
     fn add_money(amount: i64);
 
     #[link_name = "moria_help"]
     fn C_moria_help(what: *const c_char);
-}
-
-fn pause_exit(prt_line: i32, delay: i32) {
-    debug::enter("pause_exit");
-    let result = unsafe { Pause_Exit(prt_line -1, delay) };
-    debug::leave("pause_exit");
-    result
 }
 
 fn erase_line(row: i32, col: i32) {
@@ -1329,6 +1319,9 @@ pub extern fn create_character() {
     put_misc2();
     put_misc3();
     choose_name();
-    pause_exit(24, PLAYER_EXIT_PAUSE);
+
+    term::prt_r("[Press any key to continue, or Q to exit.]", 24, 11);
+    io::inkey_flush();
+
     debug::leave("create_character");
 }
