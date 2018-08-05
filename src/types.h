@@ -202,15 +202,6 @@ typedef struct spl_rec
 
 typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
-typedef struct background_type
-{
-	char info[82];	  /* { History information	} */
-	uint8_t roll;  /* { Die roll needed for history} */
-	uint8_t chart; /* { Table number		} */
-	int8_t next;    /* { Pointer to next table	} */
-	uint8_t bonus;   /* { Bonus to the Social Class	} */
-} background_type;
-
 typedef struct floor_type
 {
 	uint8_t ftval; /*: [bit(7),pos(0)] 0..127; */

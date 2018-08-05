@@ -2,6 +2,7 @@ extern crate rand;
 
 use random::rand::Rng;
 
+// Returns [1, maxval]
 #[no_mangle]
 pub extern fn randint(maxval: i64) -> i64 {
     if maxval > 0 {

@@ -38,7 +38,7 @@ pub extern fn squish_stat(stat: i32) -> u8 {
     }
 }
 
-/*	{ Decreases a stat by one randomized level		-RAK- }*/
+// Decreases a stat by one randomized level
 #[no_mangle]
 pub extern fn de_statp(stat: u8) -> u8 {
     if stat < 11 {
@@ -56,7 +56,7 @@ pub extern fn de_statp(stat: u8) -> u8 {
     }
 }
 
-	/*	{ Increases a stat by one randomized level		-RAK- }*/
+// Increases a stat by one randomized level
 #[no_mangle]
 pub extern fn in_statp(stat: u8) -> u8 {
     if stat < 150 {
@@ -72,6 +72,7 @@ pub extern fn in_statp(stat: u8) -> u8 {
     }
 }
 
+// Hack for converting c-array of chars to rust string
 pub fn c_array_to_rust_string(array: Vec<u8>) -> String {
     let safe_array = array.to_owned()
         .iter_mut()
@@ -100,9 +101,9 @@ pub fn mod_from_stat(stat: Stat) -> u8 {
     }
 }
 
-// Returns a rating of x depending on y -JWT-
-pub fn mod_to_string(x: i64, y: i64) -> &'static str {
-    match x / y {
+// Returns a rating of stat depending on base
+pub fn mod_to_string(stat: i64, base: i64) -> &'static str {
+    match stat / base {
         i if i < 0  => "Very Bad",
         0|1         => "Bad",
         2           => "Poor",

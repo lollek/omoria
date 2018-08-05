@@ -1,9 +1,9 @@
 use std::ptr::null;
-use std::cmp::max;
+use std::cmp::{max, min};
 use std::str;
 use std::ffi::CString;
 
-use libc::{c_char, time, time_t};
+use libc::{c_char, time, time_t, strcpy};
 
 use debug;
 use io;
@@ -22,8 +22,6 @@ extern "C" {
     fn Pause_Exit(prt_line: i32, delay: i32);
     fn Erase_Line(row: i32, col: i32);
     fn add_money(amount: i64);
-
-    fn cc__get_history();
 
     #[link_name = "moria_help"]
     fn C_moria_help(what: *const c_char);
@@ -599,6 +597,456 @@ fn generate_ahw() {
     debug::leave("generate_ahw");
 }
 
+// Get the racial history, determines social class
+// Assumtions: Each race has init history beginning at
+// (race)*3 + 1
+// All history parts are in ascending order
+fn generate_history() {
+    let human_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are the illegitimate and unacknowledged child ", 10, -25),
+            ("You are the illegitimate but acknowledged child ", 20, -15),
+            ("You are one of several children ", 95, -5),
+            ("You are the 1st child ", 100, 0),
+        ], vec![
+            ("of a Serf.  ", 40, 15),
+            ("of a Yeoman.  ", 65, 30),
+            ("of a Townsman.  ", 80, 40),
+            ("of a Guildsman.  ", 90, 55),
+            ("of a Landed Knight.  ", 96, 70),
+            ("of a Titled Noble.  ", 99, 80),
+            ("of a Royal Blood Line.  ", 100, 90),
+        ], vec![
+            ("You are the black sheep of the family.  ", 20, -30),
+            ("You are a credit to the family.  ", 80, 5),
+            ("You are a well liked child.  ", 100, 10),
+        ], vec![
+            ("You have dark brown eyes, ", 20, 0),
+            ("You have brown eyes, ", 60, 0),
+            ("You have hazel eyes, ", 70, 0),
+            ("You have green eyes, ", 80, 0),
+            ("You have blue eyes, ", 90, 0),
+            ("You have blue-gray eyes, ", 100, 0),
+        ], vec![
+            ("straight ", 70, 0),
+            ("wavey ", 90, 0),
+            ("curly ", 100, 0),
+        ], vec![
+            ("black hair, ", 30, 0),
+            ("brown hair, ", 70, 0),
+            ("auburn hair, ", 80, 0),
+            ("red hair, ", 90, 0),
+            ("blonde hair, ", 100, 0),
+        ], vec![
+            ("and a very dark complexion.", 10, 0),
+            ("and a dark complexion.", 30, 0),
+            ("and an average complexion.", 80, 0),
+            ("and a fair complexion.", 90, 0),
+            ("and a very fair complexion.", 100, 0),
+        ],
+    ];
+    let halfelf_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("Your mother was a Green-Elf.  ", 40, 0),
+            ("Your father was a Green-Elf.  ", 75, 5),
+            ("Your mother was a Grey-Elf.  ", 90, 5),
+            ("Your father was a Grey-Elf.  ", 95, 10),
+            ("Your mother was a High-Elf.  ", 98, 15),
+            ("Your father was a High-Elf.  ", 100, 20),
+        ],
+    ];
+    let elf_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are one of several children ", 60, 0),
+            ("You are the only child ", 100, 5),
+        ], vec![
+            ("of a Green-Elf ", 75, 0),
+            ("of a Grey-Elf ", 95, 5),
+            ("of a High-Elf ", 100, 10),
+        ], vec! [
+            ("Ranger.  ", 40, 30),
+            ("Archer.  ", 70, 40),
+            ("Warrior.  ", 87, 60),
+            ("Mage.  ", 95, 75),
+            ("Prince.  ", 99, 90),
+            ("King.  ", 100, 95),
+        ], vec! [
+            ("You have light grey eyes, ", 85, 0),
+            ("You have light violet eyes, ", 90, 0),
+            ("You have light blue eyes, ", 95, 0),
+            ("You have light green eyes, ", 98, 2),
+            ("You have light golden colored eyes, ", 100, 5),
+        ], vec! [
+            ("straight ", 75, 0),
+            ("wavey ", 100, 0),
+        ], vec! [
+            ("jet black hair, and a fair complexion.", 75, 0),
+            ("light brown hair, and a fair complexion.", 85, 0),
+            ("blonde hair, and a fair complexion.", 95, 0),
+            ("silver hair, and a fair complexion.", 98, 1),
+            ("hair the color of spun gold and pale skin.", 100, 5),
+        ],
+    ];
+    let halfling_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are one of several children of a Halfling ", 85, -5),
+            ("You are the only child of a Halfling ", 100, 5),
+        ], vec![
+            ("Bum.  ", 20, 5),
+            ("Tavern Owner.  ", 30, 30),
+            ("Miller.  ", 40, 40),
+            ("Home Owner.  ", 50, 50),
+            ("Burglar.  ", 80, 60),
+            ("Monk.  ", 95, 65),
+            ("Clan Elder.  ", 100, 90),
+        ], vec![
+            ("You are the black sheep of the family.  ", 20, -30),
+            ("You are a credit to the family.  ", 80, 5),
+            ("You are a well liked child.  ", 100, 10),
+        ], vec![
+            ("You have dark brown eyes, ", 20, 0),
+            ("You have brown eyes, ", 60, 0),
+            ("You have hazel eyes, ", 70, 0),
+            ("You have green eyes, ", 80, 0),
+            ("You have blue eyes, ", 90, 0),
+            ("You have blue-gray eyes, ", 100, 0),
+        ], vec![
+            ("straight ", 70, 0),
+            ("wavey ", 90, 0),
+            ("curly ", 100, 0),
+        ], vec![
+            ("black hair, ", 30, 0),
+            ("brown hair, ", 70, 0),
+            ("auburn hair, ", 80, 0),
+            ("red hair, ", 90, 0),
+            ("blonde hair, ", 100, 0),
+        ], vec![
+            ("and a very dark complexion.", 10, 0),
+            ("and a dark complexion.", 30, 0),
+            ("and an average complexion.", 80, 0),
+            ("and a fair complexion.", 90, 0),
+            ("and a very fair complexion.", 100, 0),
+        ],
+    ];
+    let gnome_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are one of several children of a Gnome ", 85, -5),
+            ("You are the only child of a Gnome ", 100, 5),
+        ], vec![
+            ("Beggar.  ", 20,  5),
+            ("Bragart.  ", 50,  20),
+            ("Prankster.  ", 75,  35),
+            ("Druid.  ", 95,  50),
+            ("Mage.  ", 100,  75),
+        ], vec![
+            ("You are the black sheep of the family.  ", 20, -30),
+            ("You are a credit to the family.  ", 80, 5),
+            ("You are a well liked child.  ", 100, 10),
+        ], vec![
+            ("You have dark brown eyes, ", 20, 0),
+            ("You have brown eyes, ", 60, 0),
+            ("You have hazel eyes, ", 70, 0),
+            ("You have green eyes, ", 80, 0),
+            ("You have blue eyes, ", 90, 0),
+            ("You have blue-gray eyes, ", 100, 0),
+        ], vec![
+            ("straight ", 70, 0),
+            ("wavey ", 90, 0),
+            ("curly ", 100, 0),
+        ], vec![
+            ("black hair, ", 30, 0),
+            ("brown hair, ", 70, 0),
+            ("auburn hair, ", 80, 0),
+            ("red hair, ", 90, 0),
+            ("blonde hair, ", 100, 0),
+        ], vec![
+            ("and a very dark complexion.", 10, 0),
+            ("and a dark complexion.", 30, 0),
+            ("and an average complexion.", 80, 0),
+            ("and a fair complexion.", 90, 0),
+            ("and a very fair complexion.", 100, 0),
+        ],
+    ];
+    let dwarf_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are one of two children of a Dwarven ", 25, -10),
+            ("You are the only child of a Dwarven ", 100, 0),
+        ], vec![
+            ("Thief.  ", 10, 10),
+            ("Prison Guard.  ", 25, 25),
+            ("Miner.  ", 75, 40),
+            ("Warrior.  ", 90, 60),
+            ("Priest.  ", 99, 80),
+            ("King.  ", 100, 100),
+        ], vec![
+            ("You are the black sheep of the family.  ", 15, -40),
+            ("You are a credit to the family.  ", 85, 0),
+            ("You are a well liked child.  ", 100, 5),
+        ], vec![
+            ("You have dark brown eyes, ", 99, 0),
+            ("You have glowing red eyes, ", 100, 10),
+        ], vec![
+            ("straight ", 90, 0),
+            ("wavey ", 100, 0),
+        ], vec![
+            ("black hair, ", 75, 0),
+            ("brown hair, ", 100, 0),
+        ], vec![
+            ("a one foot beard, ", 25, 0),
+            ("a two foot beard, ", 60, 1),
+            ("a three foot beard, ", 90, 3),
+            ("a four foot beard, ", 100, 5),
+        ], vec![
+            ("and a dark complexion.", 100, 0),
+        ],
+    ];
+    let halforc_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("Your mother was an Orc, but it is unacknowledged.  ", 25, -25),
+            ("Your father was an Orc, but it is unacknowledged.  ", 100, -25),
+        ], vec![
+            ("You are the adopted child ", 100, 0),
+        ], vec![
+            ("of a Serf.  ", 40, 15),
+            ("of a Yeoman.  ", 65, 30),
+            ("of a Townsman.  ", 80, 40),
+            ("of a Guildsman.  ", 90, 55),
+            ("of a Landed Knight.  ", 96, 70),
+            ("of a Titled Noble.  ", 99, 80),
+            ("of a Royal Blood Line.  ", 100, 90),
+        ], vec![
+            ("You are the black sheep of the family.  ", 20, -30),
+            ("You are a credit to the family.  ", 80, 5),
+            ("You are a well liked child.  ", 100, 10),
+        ], vec![
+            ("You have dark brown eyes, ", 20, 0),
+            ("You have brown eyes, ", 60, 0),
+            ("You have hazel eyes, ", 70, 0),
+            ("You have green eyes, ", 80, 0),
+            ("You have blue eyes, ", 90, 0),
+            ("You have blue-gray eyes, ", 100, 0),
+        ], vec![
+            ("straight ", 70, 0),
+            ("wavey ", 90, 0),
+            ("curly ", 100, 0),
+        ], vec![
+            ("black hair, ", 30, 0),
+            ("brown hair, ", 70, 0),
+            ("auburn hair, ", 80, 0),
+            ("red hair, ", 90, 0),
+            ("blonde hair, ", 100, 0),
+        ], vec![
+            ("and a very dark complexion.", 10, 0),
+            ("and a dark complexion.", 30, 0),
+            ("and an average complexion.", 80, 0),
+            ("and a fair complexion.", 90, 0),
+            ("and a very fair complexion.", 100, 0),
+        ],
+    ];
+    let halftroll_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("Your mother was a Cave-Troll ", 30, -30),
+            ("Your father was a Cave-Troll ", 60, -25),
+            ("Your mother was a Hill-Troll ", 75, -20),
+            ("Your father was a Hill-Troll ", 90, -15),
+            ("Your mother was a Water-Troll ", 95, -10),
+            ("Your father was a Water-Troll ", 100, -5),
+        ], vec![
+            ("Cook.  ", 5, 10),
+            ("Warrior.  ", 95, 5),
+            ("Shaman.  ", 99, 15),
+            ("Clan Chief.  ", 100, 30),
+        ], vec![
+            ("You have slime green eyes, ", 60, 0),
+            ("You have puke yellow eyes, ", 85, 0),
+            ("You have blue-bloodshot eyes, ", 99, 0),
+            ("You have glowing red eyes, ", 100, 5),
+        ], vec![
+            ("dirty ", 33, 0),
+            ("mangy ", 66, 0),
+            ("oily ", 100, 0),
+        ], vec![
+            ("sea-weed green hair, ", 33, 0),
+            ("bright red hair, ", 66, 0),
+            ("dark purple hair, ", 100, 0),
+        ], vec![
+            ("and green ", 25, 0),
+            ("and blue ", 50, 0),
+            ("and white ", 75, 0),
+            ("and black ", 100, 0),
+        ], vec![
+            ("ulcerous skin.", 33, 0),
+            ("scabby skin.", 66, 0),
+            ("leprous skin.", 100, 0)
+        ],
+    ];
+    let phraint_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are one of many illegitimate children ", 5, -30),
+            ("You are one of several illegitimate children ", 10, -25),
+            ("You are one of many children ", 50, -10),
+            ("You are one of several children ", 75, -5),
+            ("You are the 2nd child ", 95, 0),
+            ("You are the only child ", 100, 5),
+        ], vec![
+            ("of a Worker.  ", 50, 15),
+            ("of a Warrior.  ", 75, 30),
+            ("of an Elite Warrior.  ", 90, 50),
+            ("of the Hive Mother.  ", 100, 100),
+        ], vec![
+            ("You are the outcast of the hive.  ", 5, -50),
+            ("You are the black sheep of the hive.  ", 20, -30),
+            ("You are a credit to the hive.  ", 80, 5),
+            ("You are a well liked child.  ", 100, 10),
+        ], vec![
+            ("You have small ", 40, 0),
+            ("You have large ", 70, 0),
+            ("You have very large ", 100, 0),
+        ], vec![
+            ("buggy green eyes, ", 10, 0),
+            ("buggy silver eyes, ", 30, 0),
+            ("iridescent eyes, ", 70, 0),
+            ("glowing eyes, ", 100, 0),
+        ], vec![
+            ("straight feelers, ", 10, 0),
+            ("curved feelers, ", 30, 0),
+            ("bent feelers, ", 80, 0),
+            ("very long feelers, ", 100, 0),
+        ], vec![
+            ("and dull brown chiton. ", 10, 0),
+            ("and shiny brown chiton. ", 60, 0),
+            ("and shiny black chiton. ", 90, 0),
+            ("and polished silver chiton. ", 100, 0),
+        ],
+    ];
+        let dryad_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+            vec![
+                ("You are the Dryad of a sickly ", 15, -20),
+                ("You are the Dryad of a large ", 40, 0),
+                ("You are the Dryad of a rich, green ", 60, 0),
+                ("You are the Dryad of a magnificent ", 90, 10),
+            ], vec![
+                ("pine tree", 30, 5),
+                ("birch tree", 40, 15),
+                ("ash tree", 50, 30),
+                ("cedar tree", 70, 50),
+                ("willow tree", 90, 70),
+                ("oak tree", 100, 90),
+            ], vec![
+                (", but the elven community avoids your forest.  ", 10, -30),
+                (" in a small glade.  ", 40, -5),
+                (" and you are a fine upholder of the woodlands.  ", 60, 5),
+                (" and Humans and Half-Elves hold your tree sacred.  ", 88, 20),
+                (" where the Elves hold yearly ceremonies.  ", 90, 25),
+                (" that all races hold in reverence.  ", 100, 30),
+            ], vec![
+                ("You have light grey eyes, ", 85, 0),
+                ("You have light violet eyes, ", 90, 0),
+                ("You have light blue eyes, ", 95, 0),
+                ("You have light green eyes, ", 98, 2),
+                ("You have light golden colored eyes, ", 100, 5),
+            ], vec![
+                ("straight ", 75, 0),
+                ("wavey ", 100, 0),
+            ], vec![
+                ("jet black hair, and a fair complexion.", 75, 0),
+                ("light brown hair, and a fair complexion.", 85, 0),
+                ("blonde hair, and a fair complexion.", 95, 0),
+                ("silver hair, and a fair complexion.", 98, 1),
+                ("hair the color of spun gold and pale skin.", 100, 5),
+            ],
+    ];
+    fn generate_history (
+            history: &mut String,
+            social_class: &mut i16,
+            history_list: Vec<Vec<(&'static str, u8, i16)>>) {
+        for list in history_list.iter() {
+            let roll = random::randint(100) as u8;
+            for triple in list {
+                if triple.1 >= roll {
+                    *history += triple.0;
+                    *social_class += triple.2;
+                    break;
+                }
+            }
+        }
+    }
+
+    let mut history: String = String::new();
+    let mut social_class: i16 = 0;
+
+    match player::race() {
+        Race::Human => {
+            generate_history(&mut history, &mut social_class, human_history);
+        },
+        Race::HalfElf => {
+            generate_history(&mut history, &mut social_class, halfelf_history);
+            generate_history(&mut history, &mut social_class, human_history);
+        },
+        Race::Elf => {
+            generate_history(&mut history, &mut social_class, elf_history);
+        },
+        Race::Halfling => {
+            generate_history(&mut history, &mut social_class, halfling_history);
+        },
+        Race::Gnome => {
+            generate_history(&mut history, &mut social_class, gnome_history);
+        },
+        Race::Dwarf => {
+            generate_history(&mut history, &mut social_class, dwarf_history);
+        },
+        Race::HalfOrc => {
+            generate_history(&mut history, &mut social_class, halforc_history);
+        },
+        Race::HalfTroll => {
+            generate_history(&mut history, &mut social_class, halftroll_history);
+        },
+        Race::Phraint => {
+            generate_history(&mut history, &mut social_class, phraint_history);
+        },
+        Race::Dryad => {
+            generate_history(&mut history, &mut social_class, dryad_history);
+        },
+    };
+
+    // Process block of history text for pretty output
+    for i in 0..5 {
+        unsafe { player::player_history[i][0] = '\0' as u8 };
+    }
+
+    let mut i: usize = 0;
+    let mut tmp_str :String = String::new();
+    let mut history_words_iter = history.split_whitespace();
+    while let Some(word) = history_words_iter.next() {
+        let tmp_str_len = tmp_str.len();
+        let word_len = word.len();
+
+        if tmp_str_len + word_len > 70 {
+            unsafe {
+                strcpy(player::player_history[i].as_mut_ptr() as *mut i8,
+                       CString::new(tmp_str).unwrap().as_ptr());
+            }
+            i += 1;
+            tmp_str = String::new();
+        }
+        tmp_str += word;
+        tmp_str += " ";
+    }
+
+    unsafe {
+        strcpy(player::player_history[i].as_mut_ptr() as *mut i8,
+               CString::new(tmp_str).unwrap().as_ptr());
+    }
+
+    social_class = min(max(social_class, 1), 100);
+
+    unsafe {
+        player::player_rep = (50 - social_class).into();
+        player::player_sc = social_class;
+    }
+}
+
+
 // Display character on screen -RAK-
 fn display_char() {
     debug::enter("display_char");
@@ -681,6 +1129,9 @@ fn choose_class() -> bool {
     loop {
         ncurses::move_cursor(5, 14);
         let key = io::inkey_flush();
+        if key < 'a' as u8 || key > 'z' as u8 {
+            continue;
+        }
         let selection = (key as u8 - 'a' as u8) as usize;
 
         if available_classes_i.contains(&selection) {
@@ -726,6 +1177,9 @@ fn choose_race() -> bool {
     loop {
         ncurses::move_cursor(3, 14);
         let key = io::inkey_flush();
+        if key < 'a' as u8 || key > 'z' as u8 {
+            continue;
+        }
         let selection = (key as u8 - 'a' as u8) as usize;
 
         if let Some(_) = races_iter().find(|&i| i == selection) {
@@ -808,10 +1262,8 @@ fn choose_stats() {
 
     loop {
         get_stats();
-        unsafe {
-            cc__get_history();
-            generate_ahw();
-        }
+        generate_history();
+        generate_ahw();
 
         /*
          * This delay may be reduced, but is recomended to keep players

@@ -122,7 +122,6 @@ extern long char_col;
 extern long com_val;
 extern long pclass;
 extern char sex_type[82];
-extern background_type background[MAX_BACKGROUND];
 extern float rgold_adj[MAX_RACES][MAX_RACES];
 extern treasure_type yums[NUM_YUM + 1];
 extern treasure_type monk_book;
