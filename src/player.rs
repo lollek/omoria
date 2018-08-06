@@ -163,9 +163,8 @@ pub fn name() -> String {
 }
 
 pub fn set_name(new_name: &str) {
-    unsafe {
-        libc::strcpy(player_name.as_mut_ptr() as *mut i8, CString::new(new_name).unwrap().as_ptr());
-    }
+    let cstr = CString::new(new_name).unwrap();
+    unsafe { libc::strcpy(player_name.as_mut_ptr() as *mut i8, cstr.as_ptr()); }
 }
 
 pub fn race() -> Race {
@@ -177,9 +176,11 @@ pub fn race() -> Race {
 
 pub fn set_race(race: Race) {
     debug::enter("player::set_race");
+
+    let cstr = CString::new(race.name()).unwrap();
     unsafe {
         player_prace = race as u8;
-        libc::strcpy(player_race.as_mut_ptr(), CString::new(race.name()).unwrap().as_ptr());
+        libc::strcpy(player_race.as_mut_ptr(), cstr.as_ptr());
     }
     debug::leave("player::set_race");
 }
@@ -189,9 +190,8 @@ pub fn sex() -> Sex {
 }
 
 pub fn set_sex(sex: Sex) {
-    unsafe {
-        libc::strcpy(player_sex.as_mut_ptr(), CString::new(sex.to_string()).unwrap().as_ptr());
-    }
+    let cstr = CString::new(sex.to_string()).unwrap();
+    unsafe { libc::strcpy(player_sex.as_mut_ptr(), cstr.as_ptr()); }
 }
 
 pub fn class() -> Class {
@@ -203,9 +203,10 @@ pub fn class() -> Class {
 
 pub fn set_class(class: Class) {
     debug::enter("player::set_class");
+    let cstr = CString::new(class.name()).unwrap();
     unsafe {
         player_pclass = class as i32;
-        libc::strcpy(player_tclass.as_mut_ptr(), CString::new(class.name()).unwrap().as_ptr());
+        libc::strcpy(player_tclass.as_mut_ptr(), cstr.as_ptr());
     }
     debug::leave("player::set_class");
 }
@@ -252,8 +253,9 @@ pub fn set_bank_wallet(wallet: &Wallet) {
 
 pub fn refresh_title() {
     let new_title = class().title(unsafe { player_lev } as u8);
+    let cstr = CString::new(new_title).unwrap();
     unsafe {
-        libc::strcpy(player_title.as_mut_ptr(), CString::new(new_title).unwrap().as_ptr());
+        libc::strcpy(player_title.as_mut_ptr(), cstr.as_ptr());
     }
 }
 

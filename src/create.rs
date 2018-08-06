@@ -808,10 +808,8 @@ fn generate_history() {
         let word_len = word.len();
 
         if tmp_str_len + word_len > 70 {
-            unsafe {
-                strcpy(player::player_history[i].as_mut_ptr() as *mut i8,
-                       CString::new(tmp_str).unwrap().as_ptr());
-            }
+            let cstr = CString::new(tmp_str).unwrap();
+            unsafe { strcpy(player::player_history[i].as_mut_ptr(), cstr.as_ptr()); }
             i += 1;
             tmp_str = String::new();
         }
@@ -819,10 +817,8 @@ fn generate_history() {
         tmp_str += " ";
     }
 
-    unsafe {
-        strcpy(player::player_history[i].as_mut_ptr() as *mut i8,
-               CString::new(tmp_str).unwrap().as_ptr());
-    }
+    let cstr = CString::new(tmp_str).unwrap();
+    unsafe { strcpy(player::player_history[i].as_mut_ptr(), cstr.as_ptr()); }
 
     social_class = min(max(social_class, 1), 100);
 
@@ -926,7 +922,8 @@ fn choose_class() -> bool {
         }
 
         if selection as u8 as char == '?' {
-            unsafe { C_moria_help(CString::new("Character Classes").unwrap().as_ptr()) };
+            let cstr = CString::new("Character Classes").unwrap();
+            unsafe { C_moria_help(cstr.as_ptr()) };
             debug::leave("choose_class");
             return false;
         }
@@ -973,7 +970,8 @@ fn choose_race() -> bool {
         }
 
         if selection as u8 as char == '?' {
-            unsafe { C_moria_help(CString::new("Character Races").unwrap().as_ptr()) };
+            let cstr = CString::new("Character Races").unwrap();
+            unsafe { C_moria_help(cstr.as_ptr()) };
             debug::leave("choose_race");
             return false;
         }
@@ -1011,7 +1009,8 @@ fn choose_sex() -> bool {
         }
 
         if key == '?' {
-            unsafe { C_moria_help(CString::new("Character Sex").unwrap().as_ptr()) };
+            let cstr = CString::new("Character Sex").unwrap();
+            unsafe { C_moria_help(cstr.as_ptr()) };
             debug::leave("choose_sex");
             return false;
         }

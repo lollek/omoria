@@ -27,13 +27,15 @@ pub fn clear_from(row: i32) {
 
 pub fn put_buffer_r(out_str: &str, row: i32, col: i32) {
     debug::enter(&format!("put_buffer_r: '{}'. y: {}. x: {}", out_str, row, col));
-    put_buffer(CString::new(out_str).unwrap().as_ptr(), row, col);
+    let cstr = CString::new(out_str).unwrap();
+    put_buffer(cstr.as_ptr(), row, col);
     debug::leave("put_buffer_r");
 }
 
 pub fn prt_r(str_buff: &str, row: i32, col: i32) {
     debug::enter("prt_r");
-    prt(CString::new(str_buff).unwrap().as_ptr(), row, col);
+    let cstr = CString::new(str_buff).unwrap();
+    prt(cstr.as_ptr(), row, col);
     debug::leave("prt_r");
 }
 
@@ -46,7 +48,8 @@ pub fn refresh_screen() {
 
 pub fn msg_print(out_str: &str) {
     debug::enter("msg_print");
-    unsafe { C_msg_print(CString::new(out_str).unwrap().as_ptr()) }
+    let cstr = CString::new(out_str).unwrap();
+    unsafe { C_msg_print(cstr.as_ptr()) }
     debug::leave("msg_print");
 }
 
