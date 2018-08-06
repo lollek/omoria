@@ -218,7 +218,9 @@ fn print_history() {
     term::clear_from(14);
     term::put_buffer_r("Character Background", 14, 28);
     for i in 0..5 {
-        let c_hist = unsafe { player::player_history[i].to_vec() };
+        let c_hist: Vec<u8> = unsafe { player::player_history[i]}.iter()
+            .map(|&i| i as u8)
+            .collect();
         let hist = misc::c_array_to_rust_string(c_hist);
         term::put_buffer_r(&hist, i as i32 + 15, 5);
     }
@@ -795,7 +797,7 @@ fn generate_history() {
 
     // Process block of history text for pretty output
     for i in 0..5 {
-        unsafe { player::player_history[i][0] = '\0' as u8 };
+        unsafe { player::player_history[i][0] = '\0' as i8 };
     }
 
     let mut i: usize = 0;

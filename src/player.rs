@@ -1,144 +1,170 @@
-use libc::{c_char, time_t, strcpy};
+use libc;
+use std::ffi::CString;
+
 use types::{
     Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat
 };
-use std::ffi::CString;
 
 use debug;
 use misc;
 
 #[repr(C)]
 pub struct GameTime {
-    pub year: i64,
-    pub month: u8,
-    pub day: u8,
-    pub hour: u8,
-    pub secs: u16,
+    pub year: libc::int64_t,
+    pub month: libc::uint8_t,
+    pub day: libc::uint8_t,
+    pub hour: libc::uint8_t,
+    pub secs: libc::uint16_t,
+}
+
+#[repr(C)]
+pub struct Time {
+    pub years: libc::uint16_t,
+    pub months: libc::uint16_t,
+    pub days: libc::uint16_t,
+    pub hours: libc::uint16_t,
+    pub minutes: libc::uint16_t,
+    pub seconds: libc::uint16_t ,
+    pub hundredths: libc::uint16_t,
 }
 
 #[repr(C)]
 pub struct p_flags {
-    pub insured: u8 ,      /* { Character insured   } */
-    pub dead: u8 ,	 /* { Currently restored  } */
-    pub status: u64, /* { Status of player    } */
-    pub rest: i64 ,	    /* { Rest counter	 } */
-    pub blind: i64 ,	   /* { Blindness counter   } */
-    pub paralysis: i64 ,       /* { Paralysis counter   } */
-    pub confused: i64 ,	/* { Confusion counter   } */
-    pub foodc: i64 ,	   /* { Food counter        } (was just food) */
-    pub food_digested: i64 ,   /* { Food per round      } */
-    pub protection: i64 ,      /* { Protection fr. evil } */
-    pub speed: i64 ,	   /* { Cur speed adjust    } */
-    pub speed_paral: i64 ,     /* { Slow speed adjust   } */
-    pub speed_flag: u8 ,   /* { On if reset speed   } */
-    pub paral_init: i64 ,      /* { Init val for slow   } */
-    pub move_rate: i64 ,       /* { move_rate	         } */
-    pub swim: i64 ,	    /* { Cur swim adjust     } */
-    pub fast: i64 ,	    /* { Temp speed change   } */
-    pub slow: i64 ,	    /* { Temp speed change   } */
-    pub petrification: i64 ,   /* { Amount Petrified    } */
-    pub afraid: i64 ,	  /* { Fear                } */
-    pub poisoned: i64 ,	/* { Poisoned            } */
-    pub image: i64 ,	   /* { Hallucinate         } */
-    pub protevil: i64 ,	/* { Protect VS evil     } */
-    pub invuln: i64 ,	  /* { Increases AC        } */
-    pub hero: i64 ,	    /* { Heroism	         } */
-    pub shero: i64 ,	   /* { Super Heroism	 } */
-    pub blessed: i64 ,	 /* { Blessed	         } */
-    pub resist_heat: i64 ,     /* { Timed heat resist   } */
-    pub resist_cold: i64 ,     /* { Timed cold resist   } */
-    pub detect_inv: i64 ,      /* { Timed see invisible } */
-    pub word_recall: i64 ,     /* { Timed teleport level} */
-    pub see_infra: i64 ,       /* { See warm creatures  } */
-    pub tim_infra: i64 ,       /* { Timed infra vision  } */
-    pub see_inv: u8 ,      /* { Can see invisible   } */
-    pub teleport: u8 ,     /* { Random teleportation} */
-    pub free_act: u8 ,     /* { Never paralyzed     } */
-    pub slow_digest: u8 ,  /* { Lower food needs    } */
-    pub aggravate: u8 ,    /* { Agravate monsters   } */
-    pub fire_resist: u8 ,  /* { Resistance to fire  } */
-    pub cold_resist: u8 ,  /* { Resistance to cold  } */
-    pub acid_resist: u8 ,  /* { Resistance to acid  } */
-    pub hunger_item: u8 ,  /* { Resets food counter } */
-    pub regenerate: u8 ,   /* { Regenerate hit pts  } */
-    pub lght_resist: u8 ,  /* { Resistance to light } */
-    pub ffall: u8 ,	/* { No damage falling   } */
-    pub sustain: [u8; 6], /* { keep characteristic } */
-    pub confuse_monster: u8 ,	   /* { Glowing hands...    } */
-    pub resist_lght: i64 ,		   /* { Timed lighting rst  } */
-    pub free_time: i64 ,			   /* { Timed free action   } */
-    pub ring_fire: i64 ,			   /* { Timed fire spell    } */
-    pub protmon: i64 ,			   /* { Timed monst prot    } */
-    pub hoarse: i64 ,			   /* { Timed no-bard spells} */
-    pub magic_prot: i64 ,		   /* { Timed magic prot    } */
-    pub ring_ice: i64 ,			   /* { Timed cold spell    } */
-    pub temp_stealth: i64 ,		   /* { Timed stealth       } */
-    pub resist_petri: i64 ,		   /* { Timed resist petrify} */
-    pub blade_ring: i64 ,		   /* { Timed blade spell   } */
-    pub petri_resist: u8 ,		   /* { Resist Petrification} */
-    pub quested: u8 ,		   /* { Performing a Quest  } {FUBAR} */
-    pub light_on: u8 ,		   /* { Light source is active } */
-    pub resting_till_full: u8 ,
+    pub insured: libc::uint8_t,      /* { Character insured   } */
+    pub dead: libc::uint8_t,  /* { Currently restored  } */
+    pub status: libc::uint64_t, /* { Status of player    } */
+    pub rest: libc::int64_t,     /* { Rest counter  } */
+    pub blind: libc::int64_t,    /* { Blindness counter   } */
+    pub paralysis: libc::int64_t,       /* { Paralysis counter   } */
+    pub confused: libc::int64_t, /* { Confusion counter   } */
+    pub foodc: libc::int64_t,    /* { Food counter        } (was just food) */
+    pub food_digested: libc::int64_t,   /* { Food per round      } */
+    pub protection: libc::int64_t,      /* { Protection fr. evil } */
+    pub speed: libc::int64_t,    /* { Cur speed adjust    } */
+    pub speed_paral: libc::int64_t,     /* { Slow speed adjust   } */
+    pub speed_flag: libc::uint8_t,   /* { On if reset speed   } */
+    pub paral_init: libc::int64_t,      /* { Init val for slow   } */
+    pub move_rate: libc::int64_t,       /* { move_rate          } */
+    pub swim: libc::int64_t,     /* { Cur swim adjust     } */
+    pub fast: libc::int64_t,     /* { Temp speed change   } */
+    pub slow: libc::int64_t,     /* { Temp speed change   } */
+    pub petrification: libc::int64_t,   /* { Amount Petrified    } */
+    pub afraid: libc::int64_t,   /* { Fear                } */
+    pub poisoned: libc::int64_t, /* { Poisoned            } */
+    pub image: libc::int64_t,    /* { Hallucinate         } */
+    pub protevil: libc::int64_t, /* { Protect VS evil     } */
+    pub invuln: libc::int64_t,   /* { Increases AC        } */
+    pub hero: libc::int64_t,     /* { Heroism          } */
+    pub shero: libc::int64_t,    /* { Super Heroism  } */
+    pub blessed: libc::int64_t,  /* { Blessed          } */
+    pub resist_heat: libc::int64_t,     /* { Timed heat resist   } */
+    pub resist_cold: libc::int64_t,     /* { Timed cold resist   } */
+    pub detect_inv: libc::int64_t,      /* { Timed see invisible } */
+    pub word_recall: libc::int64_t,     /* { Timed teleport level} */
+    pub see_infra: libc::int64_t,       /* { See warm creatures  } */
+    pub tim_infra: libc::int64_t,       /* { Timed infra vision  } */
+    pub see_inv: libc::uint8_t,      /* { Can see invisible   } */
+    pub teleport: libc::uint8_t,     /* { Random teleportation} */
+    pub free_act: libc::uint8_t,     /* { Never paralyzed     } */
+    pub slow_digest: libc::uint8_t,  /* { Lower food needs    } */
+    pub aggravate: libc::uint8_t,    /* { Agravate monsters   } */
+    pub fire_resist: libc::uint8_t,  /* { Resistance to fire  } */
+    pub cold_resist: libc::uint8_t,  /* { Resistance to cold  } */
+    pub acid_resist: libc::uint8_t,  /* { Resistance to acid  } */
+    pub hunger_item: libc::uint8_t,  /* { Resets food counter } */
+    pub regenerate: libc::uint8_t,   /* { Regenerate hit pts  } */
+    pub lght_resist: libc::uint8_t,  /* { Resistance to light } */
+    pub ffall: libc::uint8_t, /* { No damage falling   } */
+    pub sustain: [libc::uint8_t; 6], /* { keep characteristic } */
+    pub confuse_monster: libc::uint8_t,    /* { Glowing hands...    } */
+    pub resist_lght: libc::int64_t,     /* { Timed lighting rst  } */
+    pub free_time: libc::int64_t,      /* { Timed free action   } */
+    pub ring_fire: libc::int64_t,      /* { Timed fire spell    } */
+    pub protmon: libc::int64_t,      /* { Timed monst prot    } */
+    pub hoarse: libc::int64_t,      /* { Timed no-bard spells} */
+    pub magic_prot: libc::int64_t,     /* { Timed magic prot    } */
+    pub ring_ice: libc::int64_t,      /* { Timed cold spell    } */
+    pub temp_stealth: libc::int64_t,     /* { Timed stealth       } */
+    pub resist_petri: libc::int64_t,     /* { Timed resist petrify} */
+    pub blade_ring: libc::int64_t,     /* { Timed blade spell   } */
+    pub petri_resist: libc::uint8_t,     /* { Resist Petrification} */
+    pub quested: libc::uint8_t,     /* { Performing a Quest  } {FUBAR} */
+    pub light_on: libc::uint8_t,     /* { Light source is active } */
+    pub resting_till_full: libc::uint8_t,
 }
 
 extern "C" {
+    pub static mut player_xtr_wgt: libc::int64_t ;	  /* { Extra weight limit	} */
+    pub static mut player_money: [libc::int64_t; 7] ;	 /* { Money on person	} */
+    pub static mut player_play_tm: Time ;	/* { Time spent in game	} */
+    pub static mut player_max_exp: libc::int64_t ;		  /* { Max experience} */
+    pub static mut player_deaths: libc::int64_t ;		  /* {Number of insured restores} */
+    pub static mut player_premium: libc::int64_t ;		  /* {Base cost to restore } */
+    pub static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
+    pub static mut player_srh: libc::int16_t ;		  /* { Chance in search} */
+    pub static mut player_chp: libc::c_float ;		  /* { Cur hit pts	} */
+    pub static mut player_cheated: libc::uint8_t ;	  /*{ gone into wizard or god mode} */
+    pub static mut player_quests: libc::uint8_t ;     /* { # completed } {FUBAR} */
+    pub static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
     pub static mut player_birth: GameTime;     /* {Date of char's birth} */
     pub static mut player_cur_age: GameTime;   /* {Current game date	} */
     pub static mut player_flags: p_flags;
-    pub static mut player_history: [[u8; 82]; 5];
-    static mut player_title: [c_char; 82];
-    static mut player_name: [u8; 82];
-    static mut player_race: [c_char; 82];
-    static mut player_prace: u8;
-    static mut player_sex: [c_char; 82];
-    static mut player_tclass: [c_char; 82];
-    static mut player_pclass: i32;
-    pub static mut player_stl: u8;
-    pub static mut player_sc: i16;
-    pub static mut player_age: u16;
-    pub static mut player_ht: u16;
-    pub static mut player_wt: u16;
-    pub static mut player_lev: u16;
-    pub static mut player_mhp: i16;
-    pub static mut player_fos: i16;
-    pub static mut player_bth: i16;
-    pub static mut player_bthb: i16;
-    pub static mut player_srh: i16;
-    pub static mut player_chp: f32;
-    pub static mut player_mana: i16;
-    pub static mut player_pac: i16;
-    pub static mut player_ptoac: i16;
-    pub static mut player_ptohit: i16;
-    pub static mut player_ptodam: i16;
-    pub static mut player_save: i16;
-    pub static mut player_disarm: i16;
-    pub static mut player_cmana: f32;
-    pub static mut player_diffic: u8;
-    pub static mut player_exp: i64;
-    pub static mut player_expfact: f32;
-    pub static mut player_account: i64;
-    pub static mut player_mr: i64;
-    pub static mut player_rep: i64;
-    pub static mut player_dis_ac: i16;
-    pub static mut player_dis_th: i16;
-    pub static mut player_dis_td: i16;
-    pub static mut player_dis_tac: i16;
-    pub static mut player_claim_check: i64;
-    pub static mut player_save_count: i64;
-    pub static mut player_creation_time: time_t;
-    static mut player_stats_perm: [u8; 6];
-    static mut player_stats_curr: [u8; 6];
-    static mut player_money: [i64; 7];
-    static mut bank: [i64; 7];
+    pub static mut player_history: [[libc::c_char; 82]; 5];
+    static mut player_title: [libc::c_char; 82];
+    static mut player_name: [libc::c_char; 82];
+    static mut player_race: [libc::c_char; 82];
+    static mut player_prace: libc::uint8_t;
+    static mut player_sex: [libc::c_char; 82];
+    static mut player_tclass: [libc::c_char; 82];
+    static mut player_pclass: libc::c_int;
+    pub static mut player_stl: libc::uint8_t;
+    pub static mut player_sc: libc::int16_t ;		  /* { Social Class	} */
+    pub static mut player_age: libc::uint16_t ;       /* { Characters age} */
+    pub static mut player_ht: libc::uint16_t ;	/* { Height	} */
+    pub static mut player_wt: libc::uint16_t ;	/* { Weight	} */
+    pub static mut player_lev: libc::uint16_t ;       /* { Level		} */
+    pub static mut player_mhp: libc::int16_t ;		  /* { Max hit pts	} */
+    pub static mut player_fos: libc::int16_t ;		  /* { Frenq of search} */
+    pub static mut player_bth: libc::int16_t ;		  /* { Base to hit	} */
+    pub static mut player_bthb: libc::int16_t ;		  /* { BTH with bows	} */
+    pub static mut player_mana: libc::int16_t ;		  /* { Mana points	} */
+    pub static mut player_ptohit: libc::int16_t ;		  /* { Pluses to hit	} */
+    pub static mut player_ptodam: libc::int16_t ;		  /* { Pluses to dam	} */
+    pub static mut player_pac: libc::int16_t ;		  /* { Total AC	} */
+    pub static mut player_ptoac: libc::int16_t ;		  /* { Magical AC	} */
+    pub static mut player_dis_th: libc::int16_t ;		  /* { Display +ToHit} */
+    pub static mut player_dis_td: libc::int16_t ;		  /* { Display +ToDam} */
+    pub static mut player_dis_ac: libc::int16_t ;		  /* { Display +ToAC } */
+    pub static mut player_dis_tac: libc::int16_t ;		  /* { Display +ToTAC} */
+    pub static mut player_disarm: libc::int16_t ;		  /* { % to Disarm	} */
+    pub static mut player_save: libc::int16_t ;		  /* { Saving throw	} */
+    pub static mut player_hitdie: libc::uint8_t ;     /* { Char hit die	} */
+    pub static mut player_expfact: libc::c_float ;		  /* { Experience factor} */
+    pub static mut player_cmana: libc::c_float ;		  /* { Cur mana pts  } */
+    pub static mut player_diffic: libc::uint8_t ;     /* { Difficulty of game	} */
+    pub static mut player_exp: libc::int64_t ;		  /* { Cur experienc	} */
+    pub static mut player_account: libc::int64_t ;		  /* { Money in the bank	} */
+    pub static mut player_mr: libc::int64_t  ;		  /* { mag.res.lev.delta } */
+    pub static mut player_rep: libc::int64_t ;		  /* { XP from good creatures } */
+    pub static mut player_claim_check: libc::int64_t ;	 /* used to track trading post */
+    pub static mut player_save_count: libc::int64_t ;	  /* compared to master file value */
+    pub static mut player_creation_time: libc::time_t ;     /* used as key in master file */
+    static mut player_stats_perm: [libc::uint8_t; 6];
+    static mut player_stats_curr: [libc::uint8_t; 6];
+    pub static mut player_stats_mod: [libc::int8_t; 6];
+    pub static mut player_stats_lost: [libc::uint8_t; 6];
+
+    static mut bank: [libc::int64_t; 7];
 }
 
 pub fn name() -> String {
-    misc::c_array_to_rust_string(unsafe { player_name.to_vec() })
+    let string: Vec<u8> = unsafe { player_name }.iter().map(|&i| i as u8).collect();
+    misc::c_array_to_rust_string(string)
 }
 
 pub fn set_name(new_name: &str) {
     unsafe {
-        strcpy(player_name.as_mut_ptr() as *mut i8, CString::new(new_name).unwrap().as_ptr());
+        libc::strcpy(player_name.as_mut_ptr() as *mut i8, CString::new(new_name).unwrap().as_ptr());
     }
 }
 
@@ -153,7 +179,7 @@ pub fn set_race(race: Race) {
     debug::enter("player::set_race");
     unsafe {
         player_prace = race as u8;
-        strcpy(player_race.as_mut_ptr(), CString::new(race.name()).unwrap().as_ptr());
+        libc::strcpy(player_race.as_mut_ptr(), CString::new(race.name()).unwrap().as_ptr());
     }
     debug::leave("player::set_race");
 }
@@ -164,7 +190,7 @@ pub fn sex() -> Sex {
 
 pub fn set_sex(sex: Sex) {
     unsafe {
-        strcpy(player_sex.as_mut_ptr(), CString::new(sex.to_string()).unwrap().as_ptr());
+        libc::strcpy(player_sex.as_mut_ptr(), CString::new(sex.to_string()).unwrap().as_ptr());
     }
 }
 
@@ -179,7 +205,7 @@ pub fn set_class(class: Class) {
     debug::enter("player::set_class");
     unsafe {
         player_pclass = class as i32;
-        strcpy(player_tclass.as_mut_ptr(), CString::new(class.name()).unwrap().as_ptr());
+        libc::strcpy(player_tclass.as_mut_ptr(), CString::new(class.name()).unwrap().as_ptr());
     }
     debug::leave("player::set_class");
 }
@@ -227,7 +253,7 @@ pub fn set_bank_wallet(wallet: &Wallet) {
 pub fn refresh_title() {
     let new_title = class().title(unsafe { player_lev } as u8);
     unsafe {
-        strcpy(player_title.as_mut_ptr(), CString::new(new_title).unwrap().as_ptr());
+        libc::strcpy(player_title.as_mut_ptr(), CString::new(new_title).unwrap().as_ptr());
     }
 }
 
