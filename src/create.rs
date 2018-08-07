@@ -705,42 +705,42 @@ fn generate_history() {
             ("and polished silver chiton. ", 100, 0),
         ],
     ];
-        let dryad_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
-            vec![
-                ("You are the Dryad of a sickly ", 15, -20),
-                ("You are the Dryad of a large ", 40, 0),
-                ("You are the Dryad of a rich, green ", 60, 0),
-                ("You are the Dryad of a magnificent ", 90, 10),
-            ], vec![
-                ("pine tree", 30, 5),
-                ("birch tree", 40, 15),
-                ("ash tree", 50, 30),
-                ("cedar tree", 70, 50),
-                ("willow tree", 90, 70),
-                ("oak tree", 100, 90),
-            ], vec![
-                (", but the elven community avoids your forest.  ", 10, -30),
-                (" in a small glade.  ", 40, -5),
-                (" and you are a fine upholder of the woodlands.  ", 60, 5),
-                (" and Humans and Half-Elves hold your tree sacred.  ", 88, 20),
-                (" where the Elves hold yearly ceremonies.  ", 90, 25),
-                (" that all races hold in reverence.  ", 100, 30),
-            ], vec![
-                ("You have light grey eyes, ", 85, 0),
-                ("You have light violet eyes, ", 90, 0),
-                ("You have light blue eyes, ", 95, 0),
-                ("You have light green eyes, ", 98, 2),
-                ("You have light golden colored eyes, ", 100, 5),
-            ], vec![
-                ("straight ", 75, 0),
-                ("wavey ", 100, 0),
-            ], vec![
-                ("jet black hair, and a fair complexion.", 75, 0),
-                ("light brown hair, and a fair complexion.", 85, 0),
-                ("blonde hair, and a fair complexion.", 95, 0),
-                ("silver hair, and a fair complexion.", 98, 1),
-                ("hair the color of spun gold and pale skin.", 100, 5),
-            ],
+    let dryad_history: Vec<Vec<(&'static str, u8, i16)>> = vec![
+        vec![
+            ("You are the Dryad of a sickly ", 15, -20),
+            ("You are the Dryad of a large ", 40, 0),
+            ("You are the Dryad of a rich, green ", 60, 0),
+            ("You are the Dryad of a magnificent ", 90, 10),
+        ], vec![
+            ("pine tree", 30, 5),
+            ("birch tree", 40, 15),
+            ("ash tree", 50, 30),
+            ("cedar tree", 70, 50),
+            ("willow tree", 90, 70),
+            ("oak tree", 100, 90),
+        ], vec![
+            (", but the elven community avoids your forest.  ", 10, -30),
+            (" in a small glade.  ", 40, -5),
+            (" and you are a fine upholder of the woodlands.  ", 60, 5),
+            (" and Humans and Half-Elves hold your tree sacred.  ", 88, 20),
+            (" where the Elves hold yearly ceremonies.  ", 90, 25),
+            (" that all races hold in reverence.  ", 100, 30),
+        ], vec![
+            ("You have light grey eyes, ", 85, 0),
+            ("You have light violet eyes, ", 90, 0),
+            ("You have light blue eyes, ", 95, 0),
+            ("You have light green eyes, ", 98, 2),
+            ("You have light golden colored eyes, ", 100, 5),
+        ], vec![
+            ("straight ", 75, 0),
+            ("wavey ", 100, 0),
+        ], vec![
+            ("jet black hair, and a fair complexion.", 75, 0),
+            ("light brown hair, and a fair complexion.", 85, 0),
+            ("blonde hair, and a fair complexion.", 95, 0),
+            ("silver hair, and a fair complexion.", 98, 1),
+            ("hair the color of spun gold and pale skin.", 100, 5),
+        ],
     ];
     fn generate_history (
             history: &mut String,
