@@ -61,8 +61,6 @@ fn random_stat() -> i16 {
 fn put_character(show_values: bool) {
     debug::enter("put_character");
 
-    term::clear_from(1);
-
     term::prt_r("Name      : ", 3, 3);
     term::prt_r("Race      : ", 4, 3);
     term::prt_r("Sex       : ", 5, 3);
@@ -910,6 +908,13 @@ fn choose_class() -> bool {
     loop {
         ncurses::move_cursor(5, 14);
         let key = io::inkey_flush();
+        if key as char == '?' {
+            let cstr = CString::new("Character Classes").unwrap();
+            unsafe { C_moria_help(cstr.as_ptr()) };
+            debug::leave("choose_class");
+            return false;
+        }
+
         if key < 'a' as u8 || key > 'z' as u8 {
             continue;
         }
@@ -921,12 +926,6 @@ fn choose_class() -> bool {
             return true;
         }
 
-        if selection as u8 as char == '?' {
-            let cstr = CString::new("Character Classes").unwrap();
-            unsafe { C_moria_help(cstr.as_ptr()) };
-            debug::leave("choose_class");
-            return false;
-        }
     }
 }
 
@@ -953,11 +952,17 @@ fn choose_race() -> bool {
         }
     }
 
-    term::put_buffer_r("", 21, 30);
-
     loop {
         ncurses::move_cursor(3, 14);
         let key = io::inkey_flush();
+
+        if key as char == '?' {
+            let cstr = CString::new("Character Races").unwrap();
+            unsafe { C_moria_help(cstr.as_ptr()) };
+            debug::leave("choose_race");
+            return false;
+        }
+
         if key < 'a' as u8 || key > 'z' as u8 {
             continue;
         }
@@ -969,12 +974,6 @@ fn choose_race() -> bool {
             return true;
         }
 
-        if selection as u8 as char == '?' {
-            let cstr = CString::new("Character Races").unwrap();
-            unsafe { C_moria_help(cstr.as_ptr()) };
-            debug::leave("choose_race");
-            return false;
-        }
     }
 }
 
@@ -1053,6 +1052,8 @@ fn choose_stats() {
 #[no_mangle]
 pub extern fn create_character() {
     debug::enter("create_character");
+
+    term::clear_screen();
 
     put_character(false);
     loop {
