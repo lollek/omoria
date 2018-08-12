@@ -1776,7 +1776,6 @@ void gain_level()
 	/*{ Increases hit points and level			-RAK-	}*/
 	long nhp, dif_exp, need_exp;
 	boolean redraw;
-	char out_val[82];
 
 	ENTER(("gain_level", ""));
 
@@ -1794,8 +1793,7 @@ void gain_level()
 		player_exp = need_exp + (dif_exp / 2);
 	}
 	strcpy(player_title, player_titles[player_pclass][player_lev]);
-	sprintf(out_val, "Welcome to level %d.", player_lev);
-	msg_print(out_val);
+	msg_print("Your skills have improved.");
 	msg_print(" ");
 	msg_flag = false;
 	prt_hp();
