@@ -61,7 +61,7 @@ static void eb__dep_munny(long mon_type)
 			inven_weight -= COIN_WEIGHT * deposit;
 			player_account +=
 			    trunc(deposit * BANK_SKIM * coin_value[mon_type])
-			    div GOLD_VALUE;
+			    / GOLD_VALUE;
 			eb__display_money();
 		}
 	}
@@ -113,11 +113,11 @@ static void eb__withdraw_money()
 		weight_left = (weight_limit() * 100) - inven_weight;
 		for (mon_type = MITHRIL; mon_type >= GOLD; mon_type--) {
 			amt_given[mon_type] = min3(
-			    (withdraw * GOLD_VALUE)div coin_value[mon_type],
-			    bank[mon_type], weight_left div COIN_WEIGHT);
+			    (withdraw * GOLD_VALUE)/ coin_value[mon_type],
+			    bank[mon_type], weight_left / COIN_WEIGHT);
 			weight_left -= amt_given[mon_type] * COIN_WEIGHT;
 			withdraw -= amt_given[mon_type] *
-				    (coin_value[mon_type] div GOLD_VALUE);
+				    (coin_value[mon_type] / GOLD_VALUE);
 		} /* end for mon_type */
 
 		deliver = true;
@@ -170,7 +170,7 @@ static void eb__withdraw_money()
 					bank[mon_type] -= amt_given[mon_type];
 					player_account -=
 					    amt_given[mon_type] *
-					    coin_value[mon_type] div GOLD_VALUE;
+					    coin_value[mon_type] / GOLD_VALUE;
 				}
 			} /* end for */
 			inven_weight = weight_limit() * 100 - weight_left;
@@ -212,7 +212,7 @@ static void eb__change_money()
 	}
 	if (change_flag) {
 		amount_to = (amount_from * coin_value[typ_from])
-		    div coin_value[typ_to]; /*{NO surcharge}*/
+		    / coin_value[typ_to]; /*{NO surcharge}*/
 		if (amount_to == 0) {
 			msg_print("You don't have enough to trade for that "
 				  "type of coin!");

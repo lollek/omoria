@@ -178,7 +178,7 @@ void cnv_stat(unsigned char stat, stat_s_type out_val)
 		part2 = stat - 150;
 		sprintf((char *)out_val, "%2ld/%-2ld", part1, part2);
 	} else {
-		sprintf((char *)out_val, "%2d   ", 3 + (stat div 10));
+		sprintf((char *)out_val, "%2d   ", 3 + (stat / 10));
 	}
 }
 
@@ -266,7 +266,7 @@ void prt_gold()
 
 void prt_weight()
 {
-	prt_num("", inven_weight div 100, WEIGHT_ROW, STAT_COLUMN + 6);
+	prt_num("", inven_weight / 100, WEIGHT_ROW, STAT_COLUMN + 6);
 	prt_num("", weight_limit(), WEIGHT_ROW + 1, STAT_COLUMN + 6);
 }
 

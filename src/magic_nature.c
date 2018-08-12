@@ -74,7 +74,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_bolt(0, dir, char_row, char_col,
-				  damroll("1d6") + player_lev div 3 * 2,
+				  damroll("1d6") + player_lev / 3 * 2,
 				  "Insect Swarm");
 		}
 		break;
@@ -83,7 +83,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_bolt(1, dir, char_row, char_col,
-				  damroll("2d8") + player_lev div 2,
+				  damroll("2d8") + player_lev / 2,
 				  "Lightning Bolt");
 		}
 		break;
@@ -144,7 +144,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_line(5, dir, char_row, char_col,
-				  damroll("3d4") + player_lev div 2,
+				  damroll("3d4") + player_lev / 2,
 				  "Stream of Fire");
 		}
 		break;
@@ -171,7 +171,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			creeping_doom(dir, char_row, char_col, player_lev * 3,
-				      player_lev div 4, "Creeping Doom");
+				      player_lev / 4, "Creeping Doom");
 		}
 		break;
 
@@ -179,7 +179,7 @@ void nature_spell_effects(long effect)
 		if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
 			       &x_dumy)) {
 			fire_bolt(5, dir, char_row, char_col,
-				  damroll("5d8") + player_lev div 3,
+				  damroll("5d8") + player_lev / 3,
 				  "Pillar of Fire");
 		}
 		break;

@@ -909,15 +909,15 @@ void carry(long y, long x)
 							 item_ptr->next);
 					}
 
-					if ((count div 20) > 9) {
+					if ((count / 20) > 9) {
 						page_char = '*';
 						inv_char = '*';
 					} else {
 						page_char =
-						    ((count div 20) + 49);
+						    ((count / 20) + 49);
 						inv_char =
 						    (count -
-						     (count div 20) * 20 + 97);
+						     (count / 20) * 20 + 97);
 					}
 				}
 				sprintf(out2, "You have %s. (%c%c)", out_val,
@@ -943,7 +943,7 @@ long react(long x)
 	long ans;
 
 	ans = (player_stats_curr[CHR] + player_rep * 2 + randint(200) + randint(200) +
-	       randint(200))div 50 +
+	       randint(200))/ 50 +
 	      x - 4;
 
 	if (ans < 0) {
@@ -1277,12 +1277,12 @@ void worship()
 			if (player_money[TOTAL_] > 0) {
 				msg_print("Bless you, dude!");
 
-				i1 = ((randint(12) * player_money[TOTAL_])div 1000 +
+				i1 = ((randint(12) * player_money[TOTAL_])/ 1000 +
 				      20) *
 				     GOLD_VALUE;
-				if (i1 > player_money[TOTAL_] * GOLD_VALUE div 2) {
+				if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
 					i1 =
-					    player_money[TOTAL_] * GOLD_VALUE div 2;
+					    player_money[TOTAL_] * GOLD_VALUE / 2;
 				}
 
 				subtract_money(i1, false);
@@ -1293,7 +1293,7 @@ void worship()
 					change_rep(5);
 				} else {
 					change_rep((i1 + 5 * GOLD_VALUE -
-						    1)div(5 * GOLD_VALUE));
+						    1)/(5 * GOLD_VALUE));
 				}
 
 			} else {
@@ -1356,10 +1356,10 @@ void beg_money()
 		if (player_money[TOTAL_] > 0) {
 			msg_print("How kind of you!");
 			spend_time(100, "giving handouts", false);
-			i1 = ((randint(12) * player_money[TOTAL_])div 1000 + 20) *
+			i1 = ((randint(12) * player_money[TOTAL_])/ 1000 + 20) *
 			     GOLD_VALUE;
-			if (i1 > player_money[TOTAL_] * GOLD_VALUE div 2) {
-				i1 = player_money[TOTAL_] * GOLD_VALUE div 2;
+			if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
+				i1 = player_money[TOTAL_] * GOLD_VALUE / 2;
 			}
 			subtract_money(i1, false);
 			prt_weight();
@@ -1368,7 +1368,7 @@ void beg_money()
 				change_rep(5);
 			} else {
 				change_rep((i1 + 5 * GOLD_VALUE -
-					    1)div(5 * GOLD_VALUE));
+					    1)/(5 * GOLD_VALUE));
 			}
 			prt_weight();
 			prt_gold();
@@ -2638,17 +2638,17 @@ boolean py_attack(long y, long x)
 					    equipment[Equipment_primary].weight,
 					    tot_tohit, is_sharp, false);
 					if (backstab_flag) {
-						i3 *= ((player_lev div 7) + 1);
+						i3 *= ((player_lev / 7) + 1);
 					}
 					if (player_pclass == C_WARRIOR) {
-						i3 += (player_lev div 3);
+						i3 += (player_lev / 3);
 					}
 					i3 += (i3 + 5) * crit_mult;
 
 				} else { /*{ Bare hands!?  }*/
 					if (player_pclass == C_MONK) {
 						i3 = randint(
-						    (4 + 2 * player_lev)div 3);
+						    (4 + 2 * player_lev)/ 3);
 						crit_mult = critical_blow(
 						    12000, 0, false, false);
 						if (randint(crit_mult + 2) >
@@ -2838,7 +2838,7 @@ boolean xor (long thing1, long thing2) {
 		 is_in(cave[MY(mon)][MX(mon)].fval, pwall_set)),
 		(uand(c_list[m_list[mon].mptr].cmove, 0x00000010) == 0))) {
 		c_rate = (long)(uand(c_list[m_list[mon].mptr].cmove, 0x00000300)
-				div 256);
+				/ 256);
 	} else {
 		c_rate = 3;
 	}
@@ -4844,7 +4844,7 @@ void d__bash()
 				equipment[Equipment_primary].tval = 1;
 
 				/* with py do; */
-				player_bth = trunc(((player_stats_curr[STR] + 20)div 5 + player_wt) /
+				player_bth = trunc(((player_stats_curr[STR] + 20)/ 5 + player_wt) /
 					       6.0);
 				player_ptohit = 0;
 				player_ptodam = trunc(player_wt / 75.0) + 1;
@@ -4868,7 +4868,7 @@ void d__bash()
 			if (t_list[cave[y][x].tptr].tval == closed_door) {
 				/* with py do; */
 				if (test_hit(
-					player_wt + (player_stats_curr[STR] * player_stats_curr[STR])div 500,
+					player_wt + (player_stats_curr[STR] * player_stats_curr[STR])/ 500,
 					0, 0, labs(t_list[cave[y][x].tptr].p1) +
 						  150)) {
 					msg_print("You smash into the door! "
@@ -5339,7 +5339,7 @@ void d__tunnel()
 
 		/*{ Compute the digging ability of player; based on       }*/
 		/*{ strength, and type of tool used                       }*/
-		tabil = (player_stats_curr[STR] + 20)div 5;
+		tabil = (player_stats_curr[STR] + 20)/ 5;
 		if (equipment[Equipment_primary].tval > 0) {
 			/* with equipment[Equipment_primary] do; */
 			if (uand(Tunneling_worn_bit,

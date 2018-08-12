@@ -190,7 +190,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 32: /*{ Death Spell }*/
-		zap_area(0, player_lev div 2 + damroll("4d8"), c_drain);
+		zap_area(0, player_lev / 2 + damroll("4d8"), c_drain);
 		break;
 
 	case 33: /*{ Ring of Fire }*/

@@ -102,8 +102,8 @@ void bi__insure_item(char shop_owner[82])
 			     &trash_char, false, false)) {
 			temp =
 			    (int)(labs(ptr->data.cost * ptr->data.number) / 40);
-			if (temp < (MITHRIL_VALUE div 10)) {
-				temp = (MITHRIL_VALUE div 10);
+			if (temp < (MITHRIL_VALUE / 10)) {
+				temp = (MITHRIL_VALUE / 10);
 			}
 
 			flag = false;
@@ -212,8 +212,8 @@ void bi__insure_all_equip()
 				temp = (int)(labs(equipment[i1].cost *
 						  equipment[i1].number) /
 					     40);
-				if (temp < (MITHRIL_VALUE div 10)) {
-					temp = (MITHRIL_VALUE div 10);
+				if (temp < (MITHRIL_VALUE / 10)) {
+					temp = (MITHRIL_VALUE / 10);
 				}
 				tot_cost += temp;
 			}

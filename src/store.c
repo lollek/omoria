@@ -43,14 +43,14 @@ void bank_init()
 	long starting;
 
 	starting = (randint(2000) + 1000) * 1000;
-	bank[IRON] = starting div 8;
-	bank[COPPER] = starting div 30;
-	bank[SILVER] = starting div 50;
-	bank[GOLD] = starting div 250;
-	bank[PLATINUM] = starting div 5000;
-	bank[MITHRIL] = starting div 100000;
+	bank[IRON] = starting / 8;
+	bank[COPPER] = starting / 30;
+	bank[SILVER] = starting / 50;
+	bank[GOLD] = starting / 250;
+	bank[PLATINUM] = starting / 5000;
+	bank[MITHRIL] = starting / 100000;
 	bank[TOTAL_] = (bank[MITHRIL] * coin_value[MITHRIL] +
-			bank[PLATINUM] * coin_value[PLATINUM])div GOLD_VALUE +
+			bank[PLATINUM] * coin_value[PLATINUM])/ GOLD_VALUE +
 		       bank[GOLD];
 
 	/*  for(starting = TOTAL_; starting <= MITHRIL; starting++) { */
@@ -60,7 +60,7 @@ void bank_init()
 
 void sm__rndcash(long *amt, long target)
 {
-	*amt = (199 * (*amt) + randint(2 * target))div 200;
+	*amt = (199 * (*amt) + randint(2 * target))/ 200;
 }
 
 void store_maint()
@@ -127,7 +127,7 @@ void store_maint()
 	sm__rndcash(&(bank[PLATINUM]), 5000);
 	sm__rndcash(&(bank[MITHRIL]), 1000);
 	bank[TOTAL_] = (bank[MITHRIL] * MITHRIL_VALUE +
-			bank[PLATINUM] * PLATINUM_VALUE)div GOLD_VALUE +
+			bank[PLATINUM] * PLATINUM_VALUE)/ GOLD_VALUE +
 		       bank[GOLD];
 
 	/*  printf ("\n         exit store_maint\n");  fflush(stdout); */
@@ -379,7 +379,7 @@ long iv__search_list(long x1, long x2)
 		}
 	} while (!((i1 == MAX_OBJECTS) || (i2 > 0)));
 
-	return (i2 div GOLD_VALUE);
+	return (i2 / GOLD_VALUE);
 }
 
 long item_value(treasure_type *item)
@@ -388,7 +388,7 @@ long item_value(treasure_type *item)
 	long return_value;
 
 	/* with item do; */
-	return_value = item->cost div GOLD_VALUE;
+	return_value = item->cost / GOLD_VALUE;
 
 	switch (item->tval) {
 
@@ -429,7 +429,7 @@ long item_value(treasure_type *item)
 					return_value = 0;
 				} else {
 					return_value =
-					    ((item->cost div GOLD_VALUE +
+					    ((item->cost / GOLD_VALUE +
 					      (item->tohit + item->todam +
 					       item->toac) *
 						  100) *
@@ -442,7 +442,7 @@ long item_value(treasure_type *item)
 					return_value = 0;
 				} else {
 					return_value =
-					    ((item->cost div GOLD_VALUE +
+					    ((item->cost / GOLD_VALUE +
 					      item->toac * 100) *
 					     item->number);
 				}
@@ -470,7 +470,7 @@ long item_value(treasure_type *item)
 				return_value = 0;
 			} else {
 				return_value =
-				    ((item->cost div GOLD_VALUE +
+				    ((item->cost / GOLD_VALUE +
 				      (item->tohit + item->todam + item->toac) *
 					  10) *
 				     (item->number));
@@ -521,11 +521,11 @@ long item_value(treasure_type *item)
 			}
 		} else if (strstr(item->name, "^") != NULL) {
 			return_value =
-			    (item->cost > 0) ? (item->cost div GOLD_VALUE) : 0;
+			    (item->cost > 0) ? (item->cost / GOLD_VALUE) : 0;
 		} else {
 			return_value =
 			    (item->cost > 0)
-				? ((item->cost div GOLD_VALUE) +
+				? ((item->cost / GOLD_VALUE) +
 				   trunc(item->cost / COST_ADJ / 20.0) *
 				       (item->tohit + item->todam + item->toac +
 					2 * item->p1))
@@ -549,7 +549,7 @@ long item_value(treasure_type *item)
 			}
 		} else if (strstr(item->name, "^") == NULL) {
 			return_value =
-			    ((item->cost div GOLD_VALUE) +
+			    ((item->cost / GOLD_VALUE) +
 			     trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
 		}
 		break;
@@ -574,7 +574,7 @@ long item_value(treasure_type *item)
 			}
 		} else if (strstr(item->name, "^") == NULL) {
 			return_value =
-			    ((item->cost div GOLD_VALUE) +
+			    ((item->cost / GOLD_VALUE) +
 			     trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
 		}
 		break;
@@ -594,7 +594,7 @@ long item_value(treasure_type *item)
 				break;
 			}
 		} else if (strstr(item->name, "^") == NULL) {
-			return_value = (item->cost div GOLD_VALUE);
+			return_value = (item->cost / GOLD_VALUE);
 		}
 		break;
 
@@ -642,7 +642,7 @@ boolean check_store_hours(long st, long sh)
 		strcpy(name, store_door[st].name);
 		insert_str(name, "the entrance to the ", "");
 		ope = store_hours[sh][player_cur_age.day % 7 + 0] /* was + 1 */
-				 [player_cur_age.hour div 2 + 0]; /* was + 1 */
+				 [player_cur_age.hour / 2 + 0]; /* was + 1 */
 		switch (ope) {
 		case ' ':
 			return_value = true;
@@ -752,11 +752,11 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 	if (!whole_days) {
 		time_spent = days_spent; /*{if a 6:00 threshold is passed}*/
 
-		new_screen = ((turns_today + time_spent + 2400)div 4800) >
-			     ((turns_today + 2400)div 4800);
+		new_screen = ((turns_today + time_spent + 2400)/ 4800) >
+			     ((turns_today + 2400)/ 4800);
 
-		mornings = (turns_today + time_spent - 2400)div 9600 -
-			   (turns_today - 2400)div 9600;
+		mornings = (turns_today + time_spent - 2400)/ 9600 -
+			   (turns_today - 2400)/ 9600;
 		days_spent = 0;
 	} else {
 		time_spent = DAY_LENGTH * days_spent - turns_today;
@@ -767,9 +767,9 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 	switch (days_spent) {
 	case 0:
 		player_cur_age.secs += time_spent;
-		player_cur_age.hour += player_cur_age.secs div 400;
+		player_cur_age.hour += player_cur_age.secs / 400;
 		player_cur_age.secs = player_cur_age.secs % 400;
-		add_days(&(player_cur_age), player_cur_age.hour div 24);
+		add_days(&(player_cur_age), player_cur_age.hour / 24);
 		player_cur_age.hour = player_cur_age.hour % 24;
 		break;
 
@@ -1095,11 +1095,11 @@ void display_cost(long store_num, long pos)
 	if (stores[store_num].store_inven[pos].scost < 0) {
 		i2 = labs(stores[store_num].store_inven[pos].scost);
 		i2 += (long)(i2 * chr_adj());
-		sprintf(out_val, "%6ld", (i2 div GOLD_VALUE));
+		sprintf(out_val, "%6ld", (i2 / GOLD_VALUE));
 	} else {
 		sprintf(
 		    out_val, "%6ld [FIXED]",
-		    (stores[store_num].store_inven[pos].scost div GOLD_VALUE));
+		    (stores[store_num].store_inven[pos].scost / GOLD_VALUE));
 	}
 
 	prt(out_val, i1 + 6, 60);
@@ -1149,7 +1149,7 @@ void display_inventory(long store_num, long start)
 
 	/* with stores[store_num] do; */
 	i1 = ((start - 1) % 12);
-	stop = (((start - 1)div 12) + 1) * 12;
+	stop = (((start - 1)/ 12) + 1) * 12;
 
 	if (stop > stores[store_num].store_ctr) {
 		stop = stores[store_num].store_ctr;
@@ -1243,7 +1243,7 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 					.scost > 0) {
 					price = stores[store_num]
 						    .store_inven[item_val]
-						    .scost div GOLD_VALUE;
+						    .scost / GOLD_VALUE;
 					choice = 0;
 				} else {
 					choice = purchase_haggle(
@@ -1653,7 +1653,7 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 
 	if (blitz) {
 		delta = (min_buy - max_buy);
-		last_offer = min_buy - (delta div 7);
+		last_offer = min_buy - (delta / 7);
 		/* with stores[store_num] do; */
 		*price =
 		    last_offer - ((stores[store_num].insult_cur * delta) /
@@ -1845,7 +1845,7 @@ long purchase_haggle(long store_num, long *price, treasure_type *item,
 
 	if (blitz) {
 		delta = (max_sell - min_sell);
-		last_offer = min_sell + (delta div 4);
+		last_offer = min_sell + (delta / 4);
 		/* with stores[store_num]. do; */
 		*price =
 		    last_offer + ((stores[store_num].insult_cur * delta) /

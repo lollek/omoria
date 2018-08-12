@@ -545,7 +545,7 @@ void gc__build_store(long store_num, long where)
 	long xval, x_left, x_right;
 	long i1, i2, q1, q2, cur_pos, house_type;
 
-	yval = 10 * (where div 9) + 6;
+	yval = 10 * (where / 9) + 6;
 	xval = 14 * (where % 9) + 11;
 
 	if (store_num == S_FORTRESS) {
@@ -707,7 +707,7 @@ void gc__build_fountain(long where)
 	long count;
 	long flr[36]; /*: array [1..35] of long;*/
 
-	yval = (10 * (int)(where div 9)) + 4 + randint(3);
+	yval = (10 * (int)(where / 9)) + 4 + randint(3);
 	xval = 14 * (where % 9) + 9 + randint(3);
 
 	for (i1 = 1; i1 <= 35; i1++) {

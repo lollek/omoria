@@ -1828,7 +1828,7 @@ boolean create_food(long t0, long t1, long t2, long t3, long t4)
 							      (-this_one) +
 							  randint(
 							      STORE_CHOICES) +
-							  3)div 5 -
+							  3)/ 5 -
 							 1];
 						t_list[cave[i1][i2].tptr] =
 						    inventory_init[i3];
@@ -1975,7 +1975,7 @@ boolean za__no_it_didnt(long monptr, long dmge, long typ)
 			sprintf(out_val, "The %s appears offended...",
 				c_list[m_list[monptr].mptr].name);
 			msg_print(out_val);
-			if (mon_take_hit(monptr, randint(dmge) div 4) > 0) {
+			if (mon_take_hit(monptr, randint(dmge) / 4) > 0) {
 				msg_print("and dies from disgust!!!");
 			}
 		} else {
@@ -2391,7 +2391,7 @@ boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2)
 			find_monster_name(str, a_cptr, true);
 			sprintf(out_val, "%s appears offended....", str);
 			msg_print(out_val);
-			if (mon_take_hit(a_cptr, dam div 4) > 0) {
+			if (mon_take_hit(a_cptr, dam / 4) > 0) {
 				msg_print(
 				    "but your joke still knocks it dead!");
 			}

@@ -7,7 +7,6 @@
 #define false 0
 #define true 1
 
-#define div /
 #define trunc(xx) (xx)
 
 #define uor(xx, yy) ((xx) | (yy))

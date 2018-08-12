@@ -841,7 +841,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		} else {
 			if (player_money[TOTAL_] > 0) {
 				subtract_money(randint(5) * (player_money[TOTAL_] *
-							     GOLD_VALUE)div 100,
+							     GOLD_VALUE)/ 100,
 					       false);
 				msg_print("Your purse feels lighter.");
 				prt_weight();
@@ -934,7 +934,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 
 	case 19: /*{Lose experience  }*/
 		msg_print("You feel your life draining away!");
-		i1 = damroll(damstr) + (player_exp div 100) * MON_DRAIN_LIFE;
+		i1 = damroll(damstr) + (player_exp / 100) * MON_DRAIN_LIFE;
 		lose_exp(i1);
 		break;
 
@@ -1849,7 +1849,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 					cdesc);
 				msg_print(outval);
 				r1 = (randint(c_list[m_list[monptr].mptr].level)
-				      div 2) +
+				      / 2) +
 				     1;
 				if (r1 > player_cmana) {
 					r1 = player_cmana;
@@ -1870,7 +1870,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 				       "breathes black vapors around you!");
 			}
 			msg_print(cdesc);
-			i1 = (player_exp div 100) * MON_DRAIN_LIFE;
+			i1 = (player_exp / 100) * MON_DRAIN_LIFE;
 			breath(c_evil, char_row, char_col, 1, ddesc);
 
 			break;
@@ -2142,7 +2142,7 @@ void c__splash(long monptr)
 	  rounding procedure }*/
 	for (i1 = 1; i1 <= mon_swimming; i1++) {
 		drown_dam = (drown_dam +
-			     (randint(3) - 1))div 3; /* kinda large for a 2 */
+			     (randint(3) - 1))/ 3; /* kinda large for a 2 */
 	}
 
 	m_list[monptr].hp -= drown_dam;

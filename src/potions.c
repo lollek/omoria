@@ -85,7 +85,7 @@ void q__potion_effect(long effect, boolean *idented)
 
 	case 18: /*{ Gain Experience }*/
 		/* with player_do; */
-		i5 = (player_exp div 2) + 10;
+		i5 = (player_exp / 2) + 10;
 		if (i5 > 100000) {
 			i5 = 100000;
 		}

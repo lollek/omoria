@@ -204,7 +204,7 @@ void r__place_river(river_args *a, long dir, long next_dir, coords this,
 	r__move_this(a, next_dir, &up1,
 		     &up2); /*{up2 is upstream end of next segment}*/
 
-	tflow = (Gup[up2.y][up2.x].flow - 1)div 2; /*{river size}*/
+	tflow = (Gup[up2.y][up2.x].flow - 1)/ 2; /*{river size}*/
 
 	/*{aim (y,x) toward upstream end of segment, randomize slightly}*/
 	oy = RIVER_SEGMENT_SIZE * this.y + wiggle.y;

@@ -502,9 +502,9 @@ float chr_adj()
 	} else if (player_stats_curr[CHR] > 150) {
 		return_value = -0.02;
 	} else if (player_stats_curr[CHR] >= 100) {
-		return_value = 0.15 - (player_stats_curr[CHR] div 10) / 100;
+		return_value = 0.15 - (player_stats_curr[CHR] / 10) / 100;
 	} else {
-		return_value = 0.25 - (player_stats_curr[CHR] div 10) / 50;
+		return_value = 0.25 - (player_stats_curr[CHR] / 10) / 50;
 	}
 
 	return return_value;
@@ -616,9 +616,9 @@ void add_days(game_time_type *ti, long d)
 {
 	/* Add days to the current date -DMF-
 	 *  ti->day++;
-	 *  ti->month += (ti->day-1) div 28;
+	 *  ti->month += (ti->day-1) / 28;
 	 *  ti->day    = ((ti->day-1) % 28) + 1;
-	 *  ti->year  += (ti->month-1) div 13;
+	 *  ti->year  += (ti->month-1) / 13;
 	 *  ti->month  = ((ti->month-1) % 13) + 1;
 	 */
 
@@ -661,8 +661,8 @@ void am__add_munny(long *amount, long *to_bank, long wl, long type_num)
 	long coin_num;
 
 	coin_num = player_money[type_num];
-	trans = *amount div coin_value[type_num];
-	w_max = (wl * 100 - inven_weight)div COIN_WEIGHT;
+	trans = *amount / coin_value[type_num];
+	w_max = (wl * 100 - inven_weight)/ COIN_WEIGHT;
 	if (w_max < -coin_num) {
 		w_max = -coin_num;
 	}
@@ -702,7 +702,7 @@ void add_money(long amount)
 		msg_print(out_val);
 		if (get_yes_no("Do you wish to send a page to the bank with "
 			       "the excess money?")) {
-			i1 = (((95 * to_bank)div 100)div GOLD_VALUE);
+			i1 = (((95 * to_bank)/ 100)/ GOLD_VALUE);
 			if (i1 < 5) {
 				msg_print("The page cannot be moved by such "
 					  "paltry sums of gold.");
@@ -720,7 +720,7 @@ void add_money(long amount)
 						  coin_value[MITHRIL] +
 					      bank[PLATINUM] *
 						  coin_value[PLATINUM])
-					     div GOLD_VALUE +
+					     / GOLD_VALUE +
 					     bank[GOLD]);
 					sprintf(out_val, "The page deposits "
 							 "%ld gold at the bank "
@@ -765,7 +765,7 @@ boolean sm__sub_munny(long *amt, long *wt, long type_num)
 	boolean return_value;
 
 	coin_num = player_money[type_num];
-	trans = (*amt + coin_value[type_num] - 1)div coin_value[type_num];
+	trans = (*amt + coin_value[type_num] - 1)/ coin_value[type_num];
 	if (coin_num < trans) {
 		trans = coin_num;
 	}
@@ -864,15 +864,15 @@ long spell_adj(stat_set attr)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-long bard_adj() { return (spell_adj(CHR) + spell_adj(DEX) + 1)div 2; }
+long bard_adj() { return (spell_adj(CHR) + spell_adj(DEX) + 1) / 2; }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-long druid_adj() { return (spell_adj(CHR) + spell_adj(WIS) + 1)div 2; }
+long druid_adj() { return (spell_adj(CHR) + spell_adj(WIS) + 1) / 2; }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-long monk_adj() { return (spell_adj(INT) + spell_adj(WIS) + 1)div 2; }
+long monk_adj() { return (spell_adj(INT) + spell_adj(WIS) + 1) / 2; }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1797,7 +1797,7 @@ void gain_level()
 	need_exp = trunc(exp_per_level[player_lev] * player_expfact);
 	if (player_exp > need_exp) {
 		dif_exp = player_exp - need_exp;
-		player_exp = need_exp + (dif_exp div 2);
+		player_exp = need_exp + (dif_exp / 2);
 	}
 	strcpy(player_title, player_titles[player_pclass][player_lev]);
 	sprintf(out_val, "Welcome to level %d.", player_lev);
@@ -2350,7 +2350,7 @@ void place_gold(long y, long x)
 	long cur_pos, i1;
 
 	popt(&cur_pos);
-	i1 = (2 + randint(dun_level + 4) + randint(dun_level + 4))div 4;
+	i1 = (2 + randint(dun_level + 4) + randint(dun_level + 4))/ 4;
 	if (randint(obj_great) == 1) {
 		i1 += randint(dun_level);
 	}
@@ -2363,7 +2363,7 @@ void place_gold(long y, long x)
 
 	if (t_list[cur_pos].tval == valuable_metal) {
 		t_list[cur_pos].number = randint(t_list[cur_pos].number) +
-					 t_list[cur_pos].number div 2;
+					 t_list[cur_pos].number / 2;
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -3331,10 +3331,10 @@ long attack_blows(long weight, long *wtohit)
 
 	/* with py.stat do; */
 	max_wield = weight_limit() / 10;
-	if (max_wield < (weight div 100)) {
+	if (max_wield < (weight / 100)) {
 		/*{ make to-hit drop off gradually instead of being so abrupt
 		 * -DCJ-}*/
-		*wtohit = max_wield - (weight div 100);
+		*wtohit = max_wield - (weight / 100);
 	} else {
 		a_dex = player_stats_curr[DEX];
 
@@ -3367,7 +3367,7 @@ long attack_blows(long weight, long *wtohit)
 		/*{usually 3 for 18+ dex, 5 max except 6 for high level
 		 * warriors}*/
 		adj_weight =
-		    (long)((float)player_stats_curr[STR] / (float)(weight div 100) * 2.5);
+		    (long)((float)player_stats_curr[STR] / (float)(weight / 100) * 2.5);
 
 		if (adj_weight < 1) {
 			blows = 1;
@@ -3396,7 +3396,7 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 	long randomthing, py_crit;
 	long return_value = 0;
 
-	weight = weight div 100;
+	weight = weight / 100;
 	if (cs_sharp) {
 		weight += 600;
 	}

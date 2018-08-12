@@ -634,7 +634,7 @@ static void bj__play_hand()
 						  "You push.");
 					gld += bet;
 				} else {
-					gld += 2 * bet + bet div 2;
+					gld += 2 * bet + bet / 2;
 				}
 			}
 		}
