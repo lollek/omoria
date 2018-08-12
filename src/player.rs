@@ -239,6 +239,7 @@ pub fn set_wallet(wallet: &Wallet) {
     for currency in currencies_iter() {
         unsafe { player_money[currency] = wallet.get_pos(currency) };
     }
+    unsafe { player_money[0] = wallet.total };
 }
 
 pub fn bank_wallet() -> Wallet {
@@ -249,6 +250,7 @@ pub fn set_bank_wallet(wallet: &Wallet) {
     for currency in currencies_iter() {
         unsafe { bank[currency] = wallet.get_pos(currency) };
     }
+    unsafe { bank[0] = wallet.total };
 }
 
 pub fn refresh_title() {
