@@ -509,10 +509,6 @@ void intro(int argc, char *argv[])
 
 	if (!wizard1) {
 		no_controly();
-		if (already_playing()) {
-			writeln("Hey bub, you're already playing a game.");
-			exit_game();
-		}
 	}
 
 	if (!check_time() && !wizard1) {

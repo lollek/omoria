@@ -179,12 +179,6 @@ boolean check_time()
 	return return_value;
 }
 
-boolean already_playing()
-{
-	/* XXXX check already playing */
-	return false;
-}
-
 char *cost_str(long amt, char result[134])
 {
 	/*{ Return string describing how much the amount is worth	-DMF-

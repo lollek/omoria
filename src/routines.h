@@ -397,7 +397,6 @@ extern long max_users();
 extern boolean get_uw_id();
 extern boolean net_trade();
 extern void get_account(char *account);
-extern boolean already_playing();
 extern void sys_gettim(quad_type *bin_time);
 extern void sys_numtim(time_type *weird_num, quad_type *bin_time);
 extern void sys_asctim(

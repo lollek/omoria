@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
 
 	/* Some necessary initializations */
 	msg_line = 1;
-	quart_height = trunc(SCREEN_HEIGHT / 4);
-	quart_width = trunc(SCREEN_WIDTH / 4);
+	quart_height = SCREEN_HEIGHT / 4;
+	quart_width = SCREEN_WIDTH / 4;
 	dun_level = 0;
-	inven_temp = (treas_ptr)safe_malloc(sizeof(treas_rec), "inven_temp");
+	inven_temp = safe_malloc(sizeof(treas_rec), "inven_temp");
 	inven_temp->data = blank_treasure;
 	inven_temp->ok = false;
 	inven_temp->insides = 0;
