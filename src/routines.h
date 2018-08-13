@@ -2,6 +2,10 @@
 #define ROUTINES_H
 /**/
 
+/* From rust */
+extern boolean C_master_record_death(int64_t uid);
+extern int64_t C_master_add_character();
+
 /* { CASINO.PAS		} */
 extern void enter_casino();
 
@@ -29,6 +33,7 @@ extern void replace_name();
 extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
 extern void top_twenty(long this_many);
+extern long total_points();
 
 /* { DESC.PAS		} */
 extern void randes();

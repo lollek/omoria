@@ -458,7 +458,6 @@ void intro(int argc, char *argv[])
 
 	char in_line[82];
 	FILE *file1;
-	GDBM_FILE file2;
 	boolean exit_flag = false;
 
 	ENTER(("intro", ""));
@@ -472,8 +471,6 @@ void intro(int argc, char *argv[])
 	exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TOP);
 
 	if (exit_flag) {
-		master_file_open(&file2);
-		master_file_close(&file2);
 		exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TRD);
 
 		writeln("");

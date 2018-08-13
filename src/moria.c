@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
 		strcpy(save_file_name, SAVE_FILE_PATH "/");
 		strcat(save_file_name, player_name);
 		save_file_name_set(save_file_name);
+		player_uid = C_master_add_character();
 
 		char_inven_init();
 

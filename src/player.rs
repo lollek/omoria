@@ -28,6 +28,7 @@ pub struct Time {
     pub hundredths: libc::uint16_t,
 }
 
+#[derive(Serialize, Deserialize)]
 #[repr(C)]
 pub struct p_flags {
     pub insured: libc::uint8_t,      /* { Character insured   } */
@@ -149,12 +150,16 @@ extern "C" {
     pub static mut player_claim_check: libc::int64_t ;	 /* used to track trading post */
     pub static mut player_save_count: libc::int64_t ;	  /* compared to master file value */
     pub static mut player_creation_time: libc::time_t ;     /* used as key in master file */
+    static mut player_uid: libc::int64_t;	/* Used in master file */
+
     static mut player_stats_perm: [libc::uint8_t; 6];
     static mut player_stats_curr: [libc::uint8_t; 6];
     pub static mut player_stats_mod: [libc::int8_t; 6];
     pub static mut player_stats_lost: [libc::uint8_t; 6];
 
     static mut bank: [libc::int64_t; 7];
+
+    fn total_points() -> libc::int64_t;
 }
 
 pub fn name() -> String {
@@ -259,6 +264,11 @@ pub fn refresh_title() {
     unsafe {
         libc::strcpy(player_title.as_mut_ptr(), cstr.as_ptr());
     }
+}
+
+pub fn title() -> String {
+    let string: Vec<u8> = unsafe { player_title }.iter().map(|&i| i as u8).collect();
+    misc::c_array_to_rust_string(string)
 }
 
 pub fn ac_from_dex() -> i8 {
@@ -371,4 +381,16 @@ pub fn ranged_tohit() -> i16 {
             (player_lev as i16 * misc::BTH_LEV_ADJ) +
             (player_ptohit * misc::BTH_PLUS_ADJ)
     }
+}
+
+pub fn calc_total_points() -> i64 {
+    unsafe { total_points() }
+}
+
+pub fn level() -> u8 {
+    (unsafe { player_lev }) as u8
+}
+
+pub fn uid() -> i64 {
+    unsafe { player_uid }
 }

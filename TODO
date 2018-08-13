@@ -1,0 +1,7 @@
+* Saving
+* Water is not remembered on the map after leaving fov
+* Ground near water is not remembered on themap after leaving fov
+* High scores seem to add 500000 or so?
+* High scores with -s
+
+* save player_uid

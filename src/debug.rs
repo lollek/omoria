@@ -37,7 +37,7 @@ pub fn warn(msg: &str) {
     }
 }
 
-pub fn err(msg: &str) {
+pub fn error(msg: &str) {
     if DEBUG_ENABLED {
         debug(DebugLevel::ERR, msg);
     }

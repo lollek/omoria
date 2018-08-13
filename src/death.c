@@ -192,8 +192,6 @@ static void respawn()
 void upon_death()
 {
 	/*  Handles the gravestone and top-twenty routines -RAK-  */
-	GDBM_FILE f2;
-	master_key mkey;
 	char dstr[20][82];
 
 	/* We get a chance to respawn with a penalty */
@@ -205,14 +203,10 @@ void upon_death()
 	}
 
 	/*  What happens upon dying...    -RAK- */
-	if (!master_file_open(&f2)) {
+	if (!C_master_record_death(player_uid)) {
 		msg_print("ERROR opening file MASTER. "
 			  "Contact your local wizard.");
 		msg_print(" ");
-	} else {
-		mkey.creation_time = player_creation_time;
-		master_file_delete(f2, &mkey);
-		master_file_close(&f2);
 	}
 	save_file_remove();
 
