@@ -8,6 +8,7 @@ use types::{
 use debug;
 use misc;
 
+#[derive(Serialize, Deserialize)]
 #[repr(C)]
 pub struct GameTime {
     pub year: libc::int64_t,
@@ -17,6 +18,7 @@ pub struct GameTime {
     pub secs: libc::uint16_t,
 }
 
+#[derive(Serialize, Deserialize)]
 #[repr(C)]
 pub struct Time {
     pub years: libc::uint16_t,
@@ -259,7 +261,7 @@ pub fn set_bank_wallet(wallet: &Wallet) {
 }
 
 pub fn refresh_title() {
-    let new_title = class().title(unsafe { player_lev } as u8);
+    let new_title = class().title(level());
     let cstr = CString::new(new_title).unwrap();
     unsafe {
         libc::strcpy(player_title.as_mut_ptr(), cstr.as_ptr());
