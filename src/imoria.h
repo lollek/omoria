@@ -10,8 +10,6 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-/*#include <sgtty.h>*/
-#include "patchlevel.h"
 #include "configure.h"
 #include "constants.h"
 #include "types.h"

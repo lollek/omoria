@@ -32,19 +32,6 @@ static FILE *sc__open_save_file(void)
 	return fopen(sc__get_file_name(), "w");
 }
 
-static void sc__display_status(boolean quick, char out_rec[1026])
-{
-	/*{ Message to player on what is happening}*/
-	if (!player_flags.dead) {
-		clear_from(1);
-		if (!quick)
-			put_qio();
-		sprintf(out_rec, "Saving character in %s...",
-			sc__get_file_name());
-		prt(out_rec, 1, 1);
-	}
-}
-
 static void sc__write_player_record(FILE *f1, encrypt_state *cf_state,
 				    char out_rec[1026])
 {
@@ -217,63 +204,6 @@ static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 		encrypt_write(f1, cf_state, out_rec);
 
 	} /* end for i1 */
-}
-
-static void sc__write_stats_and_flags(FILE *f1, encrypt_state *cf_state,
-				      char out_rec[1026])
-{
-	/* with py.stat do */
-	sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "
-			 "%d %d %d %d %d %d %d",
-		(int)player_stats_perm[STR], (int)player_stats_curr[STR],
-		(int)player_stats_mod[STR], (int)player_stats_lost[STR],
-		(int)player_stats_perm[INT], (int)player_stats_curr[INT],
-		(int)player_stats_mod[INT], (int)player_stats_lost[INT],
-		(int)player_stats_perm[WIS], (int)player_stats_curr[WIS],
-		(int)player_stats_mod[WIS], (int)player_stats_lost[WIS],
-		(int)player_stats_perm[DEX], (int)player_stats_curr[DEX],
-		(int)player_stats_mod[DEX], (int)player_stats_lost[DEX],
-		(int)player_stats_perm[CON], (int)player_stats_curr[CON],
-		(int)player_stats_mod[CON], (int)player_stats_lost[CON],
-		(int)player_stats_perm[CHR], (int)player_stats_curr[CHR],
-		(int)player_stats_mod[CHR], (int)player_stats_lost[CHR]);
-	encrypt_write(f1, cf_state, out_rec);
-
-	/* with player_flags do */
-	sprintf(out_rec, "%lu %ld %ld %ld %ld %ld %ld %ld %ld %d", PF.status,
-		PF.blind, PF.confused, PF.foodc, PF.food_digested,
-		PF.protection, PF.speed, PF.afraid, PF.poisoned,
-		(int)PF.see_inv);
-	encrypt_write(f1, cf_state, out_rec);
-
-	sprintf(out_rec, "%ld %ld %ld %d %d %d %ld", PF.fast, PF.slow,
-		PF.protevil, (int)PF.teleport, (int)PF.free_act,
-		(int)PF.slow_digest, PF.petrification);
-	encrypt_write(f1, cf_state, out_rec);
-
-	sprintf(out_rec, "%d %d %d %d %d %d %d", (int)PF.aggravate,
-		(int)PF.sustain[STR], (int)PF.sustain[INT],
-		(int)PF.sustain[WIS], (int)PF.sustain[CON],
-		(int)PF.sustain[DEX], (int)PF.sustain[CHR]);
-	encrypt_write(f1, cf_state, out_rec);
-
-	sprintf(out_rec, "%d %d %d %d %d %d %d", (int)PF.fire_resist,
-		(int)PF.cold_resist, (int)PF.acid_resist, (int)PF.regenerate,
-		(int)PF.lght_resist, (int)PF.ffall, (int)PF.confuse_monster);
-	encrypt_write(f1, cf_state, out_rec);
-
-	sprintf(out_rec, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld",
-		PF.image, PF.invuln, PF.hero, PF.shero, PF.blessed,
-		PF.resist_heat, PF.resist_cold, PF.detect_inv, PF.word_recall,
-		PF.see_infra, PF.tim_infra);
-	encrypt_write(f1, cf_state, out_rec);
-
-	sprintf(out_rec, "%d %ld %ld %ld %ld %ld %ld %ld %ld %ld",
-		(int)PF.resist_lght, PF.free_time, PF.ring_fire, PF.protmon,
-		PF.hoarse, PF.magic_prot, PF.ring_ice, PF.temp_stealth,
-		PF.resist_petri, PF.blade_ring);
-	encrypt_write(f1, cf_state, out_rec);
-	/* end with player_flags */
 }
 
 static void sc__write_magic(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
@@ -507,26 +437,6 @@ static void sc__write_town(FILE *f1, encrypt_state *cf_state, char out_rec[1026]
 	} /* end for i1; */
 }
 
-static void sc__write_version(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
-{
-	/*{ Version number of Moria               }*/
-	sprintf(out_rec, "%3.2f", CUR_VERSION);
-	encrypt_write(f1, cf_state, out_rec);
-}
-
-static void sc__write_seeds(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
-{
-	/* creation_time, save_count and deaths are in the master file, be sure
-	   to fix up char_restore if you move more onto this line */
-
-	unsigned long save_seed = 0;
-
-	sprintf(out_rec, "%lu %ld %ld %ld", save_seed, player_creation_time,
-		player_save_count, player_deaths);
-	/* sprintf(title2,"%lu %s",save_seed,player_ssn); */
-	encrypt_write(f1, cf_state, out_rec);
-}
-
 void save_file_remove(void) { unlink(sc__get_file_name()); }
 
 void save_file_name_set(char path[82]) { strncpy(filename, path, sizeof(char[82])); }
@@ -540,13 +450,20 @@ boolean save_char(boolean quick)
 
 	ENTER(("save_char", "%d", quick));
 
+	/*{ Message to player on what is happening}*/
+	if (!player_flags.dead) {
+		clear_from(1);
+		prt("Saving character...", 1, 1);
+		put_qio();
+	}
+
 	if (flag) flag = C_master_update_character(player_uid);
 	if (flag) flag = C_save_character();
 
 	if (flag && !player_flags.dead) {
 		char out_rec[1026];
-		sprintf(out_rec, "Character saved. [Moria Version %3.2f]\n",
-			CUR_VERSION);
+		sprintf(out_rec, "Character saved. [Moria Version %s]\n",
+			omoria_version());
 		prt(out_rec, 2, 1);
 		exit_game();
 	}
@@ -627,34 +544,6 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 	/*  coder(temp); */
 	/*  temp_id = temp; */
 
-}
-
-static void gc__display_status(void)
-{
-	prt("Restoring Character...", 1, 1);
-	put_qio();
-}
-
-static void gc__read_version(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
-			     boolean *paniced, float *save_version)
-{
-	read_decrypt(f1, cf_state, in_rec, paniced);
-	if (sscanf(in_rec, "%f", save_version) != 1) {
-		*paniced = true;
-	}
-
-	if ((int)(*save_version * 100.0) != (int)(CUR_VERSION * 100.0)) {
-		prt("Save file is incompatible with this version.", 2, 1);
-		sprintf(in_rec, "  [Save file version %3.2f]", *save_version);
-		prt(in_rec, 3, 1);
-		sprintf(in_rec, "  [Moria version     %3.2f]", CUR_VERSION);
-		prt(in_rec, 4, 1);
-
-		exit_game();
-
-		prt("Updating character for newer version...", 5, 1);
-		pause_game(24);
-	}
 }
 
 static void gc__read_player_record(FILE *f1, encrypt_state *cf_state,
@@ -1435,6 +1324,9 @@ boolean get_char(boolean prop)
 	boolean paniced = false;
 
 	ENTER(("get_char", "%d", prop));
+
+	prt("Restoring Character...", 1, 1);
+	put_qio();
 
 	if (!paniced) paniced = !parse_filename();
 

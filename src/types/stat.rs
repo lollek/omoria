@@ -13,6 +13,7 @@ pub fn stats_iter() -> Range<usize> {
     (Stat::Strength as usize)..(Stat::Charisma as usize + 1)
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct StatBlock {
     pub strength: i16,
     pub intelligence: i16,
@@ -90,6 +91,19 @@ impl From<[i16; 6]> for StatBlock {
             dexterity:      array[3],
             constitution:   array[4],
             charisma:       array[5],
+        }
+    }
+}
+
+impl From<[i8; 6]> for StatBlock {
+    fn from(array: [i8; 6]) -> Self {
+        StatBlock {
+            strength:       array[0].into(),
+            intelligence:   array[1].into(),
+            wisdom:         array[2].into(),
+            dexterity:      array[3].into(),
+            constitution:   array[4].into(),
+            charisma:       array[5].into(),
         }
     }
 }

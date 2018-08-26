@@ -413,7 +413,9 @@ extern void sys_asctim(
     quad_type *timadr, /*: [reference] quad_type := %immed 0; */
     long *cvtflg);     /*: [reference] long := %immed 0); */
 
-/* { MISC.PAS		} */
+/* MISC */
+const char *imoria_version();
+const char *omoria_version();
 extern void init_m_level();
 extern void init_t_level();
 extern void price_adjust();

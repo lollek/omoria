@@ -30,9 +30,9 @@ pub struct Time {
     pub hundredths: libc::uint16_t,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Copy)]
 #[repr(C)]
-pub struct p_flags {
+pub struct PlayerFlags {
     pub insured: libc::uint8_t,      /* { Character insured   } */
     pub dead: libc::uint8_t,  /* { Currently restored  } */
     pub status: libc::uint64_t, /* { Status of player    } */
@@ -99,57 +99,62 @@ pub struct p_flags {
 #[derive(Serialize, Deserialize)]
 #[repr(C)]
 pub struct PlayerRecord {
-    pub player_uid: libc::int64_t,
-    pub player_save_count: libc::int64_t,
-    pub player_deaths: libc::int64_t,
-    pub player_xtr_wgt: libc::int64_t,
-    pub player_account: libc::int64_t,
-    pub player_money: Wallet,
-    pub player_diffic: libc::uint8_t,
-    pub player_birth: GameTime,
-    pub player_cur_age: GameTime,
-    pub player_cur_quest: libc::uint16_t,
-    pub player_quests: libc::uint8_t,
-    pub player_claim_check: libc::int64_t,
-    pub player_play_tm: Time,
-    pub player_name: String,
-    pub player_race: Race,
-    pub player_sex: Sex,
-    pub player_class: Class,
-    pub player_title: String,
-    pub player_history: Vec<String>,
-    pub player_cheated: libc::uint8_t,
-    pub player_age: libc::uint16_t,
-    pub player_ht: libc::uint16_t,
-    pub player_wt: libc::uint16_t,
-    pub player_sc: libc::int16_t,
-    pub player_max_exp: libc::int64_t,
-    pub player_exp: libc::int64_t,
-    pub player_rep: libc::int64_t,
-    pub player_premium: libc::int64_t,
-    pub player_lev: libc::uint16_t,
-    pub player_max_lev: libc::uint16_t,
-    pub player_expfact: libc::c_float,
-    pub player_srh: libc::int16_t,
-    pub player_fos: libc::int16_t,
-    pub player_stl: libc::uint8_t,
-    pub player_bth: libc::int16_t,
-    pub player_bthb: libc::int16_t,
-    pub player_mana: libc::int16_t,
-    pub player_cmana: libc::c_float,
-    pub player_mhp: libc::int16_t,
-    pub player_chp: libc::c_float,
-    pub player_ptohit: libc::int16_t,
-    pub player_ptodam: libc::int16_t,
-    pub player_pac: libc::int16_t,
-    pub player_ptoac: libc::int16_t,
-    pub player_dis_th: libc::int16_t,
-    pub player_dis_td: libc::int16_t,
-    pub player_dis_ac: libc::int16_t,
-    pub player_dis_tac: libc::int16_t,
-    pub player_disarm: libc::int16_t,
-    pub player_save: libc::int16_t,
-    pub player_hitdie: libc::uint8_t,
+    pub uid: libc::int64_t,
+    pub save_count: libc::int64_t,
+    pub deaths: libc::int64_t,
+    pub xtr_wgt: libc::int64_t,
+    pub account: libc::int64_t,
+    pub money: Wallet,
+    pub diffic: libc::uint8_t,
+    pub birth: GameTime,
+    pub cur_age: GameTime,
+    pub cur_quest: libc::uint16_t,
+    pub quests: libc::uint8_t,
+    pub claim_check: libc::int64_t,
+    pub play_tm: Time,
+    pub name: String,
+    pub race: Race,
+    pub sex: Sex,
+    pub class: Class,
+    pub title: String,
+    pub history: Vec<String>,
+    pub cheated: libc::uint8_t,
+    pub age: libc::uint16_t,
+    pub ht: libc::uint16_t,
+    pub wt: libc::uint16_t,
+    pub sc: libc::int16_t,
+    pub max_exp: libc::int64_t,
+    pub exp: libc::int64_t,
+    pub rep: libc::int64_t,
+    pub premium: libc::int64_t,
+    pub lev: libc::uint16_t,
+    pub max_lev: libc::uint16_t,
+    pub expfact: libc::c_float,
+    pub srh: libc::int16_t,
+    pub fos: libc::int16_t,
+    pub stl: libc::uint8_t,
+    pub bth: libc::int16_t,
+    pub bthb: libc::int16_t,
+    pub mana: libc::int16_t,
+    pub cmana: libc::c_float,
+    pub mhp: libc::int16_t,
+    pub chp: libc::c_float,
+    pub ptohit: libc::int16_t,
+    pub ptodam: libc::int16_t,
+    pub pac: libc::int16_t,
+    pub ptoac: libc::int16_t,
+    pub dis_th: libc::int16_t,
+    pub dis_td: libc::int16_t,
+    pub dis_ac: libc::int16_t,
+    pub dis_tac: libc::int16_t,
+    pub disarm: libc::int16_t,
+    pub save: libc::int16_t,
+    pub hitdie: libc::uint8_t,
+    pub perm_stats: StatBlock,
+    pub curr_stats: StatBlock,
+    pub mod_stats: StatBlock,
+    pub lost_stats: StatBlock,
+    pub flags: PlayerFlags,
 }
 
 extern "C" {
@@ -167,7 +172,7 @@ extern "C" {
     pub static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
     pub static mut player_birth: GameTime;     /* {Date of char's birth} */
     pub static mut player_cur_age: GameTime;   /* {Current game date	} */
-    pub static mut player_flags: p_flags;
+    pub static mut player_flags: PlayerFlags;
     pub static mut player_history: [[libc::c_char; 82]; 5];
     static mut player_title: [libc::c_char; 82];
     static mut player_name: [libc::c_char; 82];
@@ -291,6 +296,26 @@ pub fn curr_stats() -> StatBlock {
 pub fn set_curr_stats(block: &StatBlock) {
     for stat in stats_iter() {
         unsafe { player_stats_curr[stat] = block.get_pos(stat) as u8 };
+    }
+}
+
+pub fn mod_stats() -> StatBlock {
+    StatBlock::from(unsafe { player_stats_mod })
+}
+
+pub fn set_mod_stats(block: &StatBlock) {
+    for stat in stats_iter() {
+        unsafe { player_stats_mod[stat] = block.get_pos(stat) as i8 };
+    }
+}
+
+pub fn lost_stats() -> StatBlock {
+    StatBlock::from(unsafe { player_stats_lost })
+}
+
+pub fn set_lost_stats(block: &StatBlock) {
+    for stat in stats_iter() {
+        unsafe { player_stats_lost[stat] = block.get_pos(stat) as u8 };
     }
 }
 
@@ -461,131 +486,149 @@ pub fn is_dead() -> bool {
     unsafe { player_flags.dead != 0 }
 }
 
+pub fn increase_save_counter() {
+    unsafe { player_save_count += 1 };
+}
+
 pub fn player_record() -> PlayerRecord {
     PlayerRecord {
-        player_uid: uid(),
-        player_save_count: unsafe { player_save_count },
-        player_deaths: unsafe { player_deaths },
-        player_xtr_wgt: unsafe { player_xtr_wgt },
-        player_account: unsafe { player_account },
-        player_money: wallet(),
-        player_diffic: unsafe { player_diffic },
-        player_birth: unsafe { player_birth },
-        player_cur_age: unsafe { player_cur_age },
-        player_cur_quest: unsafe { player_cur_quest },
-        player_quests: unsafe { player_quests },
-        player_claim_check: unsafe { player_claim_check },
-        player_play_tm: unsafe { player_play_tm },
-        player_name: name(),
-        player_race: race(),
-        player_sex: sex(),
-        player_class: class(),
-        player_title: title(),
-        player_history: unsafe { player_history }.iter()
+        uid: uid(),
+        save_count: unsafe { player_save_count },
+        deaths: unsafe { player_deaths },
+        xtr_wgt: unsafe { player_xtr_wgt },
+        account: unsafe { player_account },
+        money: wallet(),
+        diffic: unsafe { player_diffic },
+        birth: unsafe { player_birth },
+        cur_age: unsafe { player_cur_age },
+        cur_quest: unsafe { player_cur_quest },
+        quests: unsafe { player_quests },
+        claim_check: unsafe { player_claim_check },
+        play_tm: unsafe { player_play_tm },
+        name: name(),
+        race: race(),
+        sex: sex(),
+        class: class(),
+        title: title(),
+        history: unsafe { player_history }.iter()
             .map(|i| misc::c_i8_array_to_rust_string(i.to_vec()))
             .collect(),
-        player_cheated: unsafe { player_cheated },
-        player_age: unsafe { player_age },
-        player_ht: unsafe { player_ht },
-        player_wt: unsafe { player_wt },
-        player_sc: unsafe { player_sc },
-        player_max_exp: unsafe { player_max_exp },
-        player_exp: unsafe { player_exp },
-        player_rep: unsafe { player_rep },
-        player_premium: unsafe { player_premium },
-        player_lev: level().into(),
-        player_max_lev: unsafe { player_max_lev },
-        player_expfact: unsafe { player_expfact },
-        player_srh: unsafe { player_srh },
-        player_fos: unsafe { player_fos },
-        player_stl: unsafe { player_stl },
-        player_bth: unsafe { player_bth },
-        player_bthb: unsafe { player_bthb },
-        player_mana: unsafe { player_mana },
-        player_cmana: unsafe { player_cmana },
-        player_mhp: unsafe { player_mhp },
-        player_chp: unsafe { player_chp },
-        player_ptohit: unsafe { player_ptohit },
-        player_ptodam: unsafe { player_ptodam },
-        player_pac: unsafe { player_pac },
-        player_ptoac: unsafe { player_ptoac },
-        player_dis_th: unsafe { player_dis_th },
-        player_dis_td: unsafe { player_dis_td },
-        player_dis_ac: unsafe { player_dis_ac },
-        player_dis_tac: unsafe { player_dis_tac },
-        player_disarm: unsafe { player_disarm },
-        player_save: unsafe { player_save },
-        player_hitdie: unsafe { player_hitdie },
+        cheated: unsafe { player_cheated },
+        age: unsafe { player_age },
+        ht: unsafe { player_ht },
+        wt: unsafe { player_wt },
+        sc: unsafe { player_sc },
+        max_exp: unsafe { player_max_exp },
+        exp: unsafe { player_exp },
+        rep: unsafe { player_rep },
+        premium: unsafe { player_premium },
+        lev: level().into(),
+        max_lev: unsafe { player_max_lev },
+        expfact: unsafe { player_expfact },
+        srh: unsafe { player_srh },
+        fos: unsafe { player_fos },
+        stl: unsafe { player_stl },
+        bth: unsafe { player_bth },
+        bthb: unsafe { player_bthb },
+        mana: unsafe { player_mana },
+        cmana: unsafe { player_cmana },
+        mhp: unsafe { player_mhp },
+        chp: unsafe { player_chp },
+        ptohit: unsafe { player_ptohit },
+        ptodam: unsafe { player_ptodam },
+        pac: unsafe { player_pac },
+        ptoac: unsafe { player_ptoac },
+        dis_th: unsafe { player_dis_th },
+        dis_td: unsafe { player_dis_td },
+        dis_ac: unsafe { player_dis_ac },
+        dis_tac: unsafe { player_dis_tac },
+        disarm: unsafe { player_disarm },
+        save: unsafe { player_save },
+        hitdie: unsafe { player_hitdie },
+        perm_stats: perm_stats(),
+        curr_stats: curr_stats(),
+        mod_stats: mod_stats(),
+        lost_stats: lost_stats(),
+        flags: unsafe { player_flags }.to_owned()
     }
 }
 
 pub fn set_player_record(record: PlayerRecord) {
     unsafe {
-        player_save_count = record.player_save_count;
-        player_deaths = record.player_deaths;
-        player_xtr_wgt = record.player_xtr_wgt;
-        player_account = record.player_account;
+        player_save_count = record.save_count;
+        player_deaths = record.deaths;
+        player_xtr_wgt = record.xtr_wgt;
+        player_account = record.account;
     }
 
-    set_wallet(&record.player_money);
+    set_wallet(&record.money);
 
     unsafe {
-        player_diffic = record.player_diffic;
-        player_birth = record.player_birth;
-        player_cur_age = record.player_cur_age;
-        player_cur_quest = record.player_cur_quest;
-        player_quests = record.player_quests;
-        player_claim_check = record.player_claim_check;
-        player_play_tm = record.player_play_tm;
+        player_diffic = record.diffic;
+        player_birth = record.birth;
+        player_cur_age = record.cur_age;
+        player_cur_quest = record.cur_quest;
+        player_quests = record.quests;
+        player_claim_check = record.claim_check;
+        player_play_tm = record.play_tm;
     }
 
-    set_name(&record.player_name);
-    set_race(record.player_race);
-    set_sex(record.player_sex);
-    set_class(record.player_class);
+    set_name(&record.name);
+    set_race(record.race);
+    set_sex(record.sex);
+    set_class(record.class);
     refresh_title();
 
-    for (i, line) in record.player_history.iter().enumerate() {
+    for (i, line) in record.history.iter().enumerate() {
         let cstr = CString::new(line.to_string()).unwrap();
         unsafe { libc::strcpy(player_history[i].as_mut_ptr(), cstr.as_ptr()); }
     }
 
     unsafe {
-        player_cheated = record.player_cheated;
-        player_age = record.player_age;
-        player_ht = record.player_ht;
-        player_wt = record.player_wt;
-        player_sc = record.player_sc;
-        player_max_exp = record.player_max_exp;
-        player_exp = record.player_exp;
-        player_rep = record.player_rep;
-        player_premium = record.player_premium;
+        player_cheated = record.cheated;
+        player_age = record.age;
+        player_ht = record.ht;
+        player_wt = record.wt;
+        player_sc = record.sc;
+        player_max_exp = record.max_exp;
+        player_exp = record.exp;
+        player_rep = record.rep;
+        player_premium = record.premium;
     }
 
-    set_level(record.player_lev as u8);
+    set_level(record.lev as u8);
 
     unsafe {
-        player_max_lev = record.player_max_lev;
-        player_expfact = record.player_expfact;
-        player_srh = record.player_srh;
-        player_fos = record.player_fos;
-        player_stl = record.player_stl;
-        player_bth = record.player_bth;
-        player_bthb = record.player_bthb;
-        player_mana = record.player_mana;
-        player_cmana = record.player_cmana;
-        player_mhp = record.player_mhp;
-        player_chp = record.player_chp;
-        player_ptohit = record.player_ptohit;
-        player_ptodam = record.player_ptodam;
-        player_pac = record.player_pac;
-        player_ptoac = record.player_ptoac;
-        player_dis_th = record.player_dis_th;
-        player_dis_td = record.player_dis_td;
-        player_dis_ac = record.player_dis_ac;
-        player_dis_tac = record.player_dis_tac;
-        player_disarm = record.player_disarm;
-        player_save = record.player_save;
-        player_hitdie = record.player_hitdie;
+        player_max_lev = record.max_lev;
+        player_expfact = record.expfact;
+        player_srh = record.srh;
+        player_fos = record.fos;
+        player_stl = record.stl;
+        player_bth = record.bth;
+        player_bthb = record.bthb;
+        player_mana = record.mana;
+        player_cmana = record.cmana;
+        player_mhp = record.mhp;
+        player_chp = record.chp;
+        player_ptohit = record.ptohit;
+        player_ptodam = record.ptodam;
+        player_pac = record.pac;
+        player_ptoac = record.ptoac;
+        player_dis_th = record.dis_th;
+        player_dis_td = record.dis_td;
+        player_dis_ac = record.dis_ac;
+        player_dis_tac = record.dis_tac;
+        player_disarm = record.disarm;
+        player_save = record.save;
+        player_hitdie = record.hitdie;
+    }
+
+    set_perm_stats(&record.perm_stats);
+    set_curr_stats(&record.curr_stats);
+    set_mod_stats(&record.mod_stats);
+    set_lost_stats(&record.lost_stats);
+
+    unsafe {
+        player_flags = record.flags;
     }
 }

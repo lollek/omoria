@@ -16,19 +16,14 @@ struct SaveRecord {
 
     /* sc__write_inventory */
     /* sc__write_equipment */
-    /* sc__write_stats_and_flags */
     /* sc__write_magic */
     /* sc__write_dungeon */
     /* sc__write_identified */
     /* sc__write_monsters */
     /* sc__write_town */
     /* sc__write_version */
-    /* sc__write_seeds */
 
     /*
-		sc__write_seeds(f1, &cf_state, out_rec);
-		sc__display_status(quick, out_rec);
-
 		sc__write_version(f1, &cf_state, out_rec);
 		sc__write_player_record(f1, &cf_state, out_rec);
 		sc__write_inventory(f1, &cf_state, out_rec);
@@ -169,6 +164,8 @@ pub fn load_character() -> Option<()> {
 
 pub fn save_character() -> Option<()> {
     debug::enter("save_character");
+
+    player::increase_save_counter();
 
     let file = open_savefile(true)?;
     write_save(&file, &SaveRecord{

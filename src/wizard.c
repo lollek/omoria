@@ -59,8 +59,7 @@ void game_version()
 	pause_game(24);
 	clear_rc(1, 1);
 
-	sprintf(tmp_str, "          Linux Imoria Version %3.2f, patch level %d",
-		CUR_VERSION, PATCH_LEVEL);
+	sprintf(tmp_str, "          Linux Imoria Version %s", imoria_version());
 	PB(tmp_str, 1, 1);
 	PB("Version 4.85 : 06/25/98        Finished porting from pascal", 3, 1);
 	PB(" ", 4, 1);

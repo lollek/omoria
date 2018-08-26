@@ -51,8 +51,7 @@ void intro_qualifier_help()
 void print_version_info()
 {
 	printf("\n\r");
-	printf("Linux Imoria Version %3.2f, patch level %d\n\r", CUR_VERSION,
-	       PATCH_LEVEL);
+	printf("Linux Omoria Version %s\n\r", omoria_version());
 	printf("\n\r");
 }
 
@@ -335,8 +334,8 @@ boolean intro_do_msg_file(boolean already_exiting, char *the_file,
 			fprintf(file1,
 				"                *********************\n");
 			fprintf(file1,
-				"                **    Moria %4.2f   **\n",
-				CUR_VERSION);
+				"                **   Omoria %s  **\n",
+				omoria_version());
 			fprintf(file1,
 				"                *********************\n");
 			fprintf(

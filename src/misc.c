@@ -9,6 +9,15 @@ static long get_hitdie()
 	return randint(player_hitdie) + con_adj();
 }
 
+const char *imoria_version() {
+    return "4.85.22";
+}
+
+const char *omoria_version() {
+    /* MAJOR.MINOR.PATCH.COMMENT */
+    return "5.0.0.pre-alpha";
+}
+
 
 boolean check_kickout()
 {
