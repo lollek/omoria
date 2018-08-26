@@ -1,5 +1,4 @@
 #include "imoria.h"
-#include "master.h"
 #include "save.h"
 
 static char *ud__fill_str(char *centered_str, char *in_str)

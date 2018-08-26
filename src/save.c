@@ -5,7 +5,6 @@
 #include <string.h> /* strncpy */
 
 #include "imoria.h"
-#include "master.h"
 #include "save.h"
 
 static char filename[82] = "";
@@ -31,51 +30,6 @@ static char const *sc__get_file_name(void) { return filename; }
 static FILE *sc__open_save_file(void)
 {
 	return fopen(sc__get_file_name(), "w");
-}
-
-static boolean sc__open_master(GDBM_FILE *f2)
-{
-	if (master_file_open(f2)) {
-		return TRUE;
-	} else {
-		msg_print("Error saving character (open MASTER), contact MORIA "
-			  "Wizard.");
-		return FALSE;
-	}
-}
-
-static boolean sc__write_master(GDBM_FILE f2)
-{
-	/*{ Write key to MASTER		-KRC-	}*/
-
-	int i2;
-	master_key mkey;
-	master_entry mentry;
-	boolean result;
-
-	mkey.creation_time = player_creation_time;
-	mentry.save_count = player_save_count + 1;
-	mentry.deaths = player_deaths;
-
-	if (player_save_count == 0) {
-		result = master_file_write_new(f2, &mkey, &mentry);
-		player_creation_time = mkey.creation_time;
-		player_save_count++;
-	} else {
-		i2 = master_file_verify(f2, &mkey);
-		if (i2 == MF_CHAR_MISMATCH) {
-			result = false;
-		} else {
-			result = master_file_write(f2, &mkey, &mentry);
-			player_save_count++;
-		}
-	}
-
-	if (!result) {
-		msg_print("Error in writing to MASTER.");
-	}
-
-	return result;
 }
 
 static void sc__display_status(boolean quick, char out_rec[1026])
@@ -648,30 +602,6 @@ static void gc__open_save_file(FILE **f1, char const *fnam, boolean *paniced)
 		*paniced = true;
 	} else {
 		rewind(*f1);
-	}
-}
-
-static void gc__read_master(GDBM_FILE f2, boolean *paniced)
-{
-	int result;
-	master_key mkey;
-
-	mkey.creation_time = player_creation_time;
-
-	result = master_file_verify(f2, &mkey);
-
-	if (result != MF_CHAR_OK) {
-		printf("\n\r---------------------------------------------------"
-		       "-----\n\r");
-		printf("| There was a data corruption error with the character "
-		       "|\n\r");
-		printf("| Terminating IMORIA now.                              "
-		       "|\n\r");
-		printf("-------------------------------------------------------"
-		       "-\n\r");
-		/*    exit_game(); */
-
-		*paniced = true;
 	}
 }
 
@@ -1530,7 +1460,6 @@ void restore_char(char fnam[82], boolean present, boolean undead)
 	char tfnam[82];
 	/* ssn_type   temp_id; */
 	FILE *f1;
-	GDBM_FILE f2;
 	boolean flag, bleah_flag, exit_flag, paniced;
 	char command;
 
@@ -1539,8 +1468,6 @@ void restore_char(char fnam[82], boolean present, boolean undead)
 	time_t creation_time;
 	long save_count;
 	long deaths;
-	master_key mkey;
-	master_entry mentry;
 
 	ENTER(("restore_char", "%s, %d, %d", fnam, present, undead));
 
@@ -1617,26 +1544,7 @@ void restore_char(char fnam[82], boolean present, boolean undead)
 
 		if (!paniced) {
 			/*{ Check to see if master is openable   -JPS- }*/
-
-			if (!master_file_open(&f2)) {
-				msg_print("MASTER could not be opened.");
-			} else {
-				/*{ Reset the character in the master file.
-				 * -JPS- }*/
-
-				mkey.creation_time = creation_time;
-				mentry.save_count = save_count;
-				mentry.deaths = deaths;
-
-				if (master_file_write(f2, &mkey, &mentry)) {
-					msg_print("Character restored...");
-				} else {
-					msg_print(
-					    "Could not write ID in MASTER.");
-				}
-
-				master_file_close(&f2);
-			}
+			/* TODO: Not yet implemented for new master */
 		}
 
 		/* seed := get_seed; */

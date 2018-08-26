@@ -1,7 +1,6 @@
 #include <sys/file.h> /* for flock     */
 
 #include "imoria.h"
-#include "master.h"
 #include "save.h"
 
 FILE *priv_fopen(char *path, char *mode)
