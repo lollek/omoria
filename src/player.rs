@@ -8,7 +8,7 @@ use types::{
 use debug;
 use misc;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Copy)]
 #[repr(C)]
 pub struct GameTime {
     pub year: libc::int64_t,
@@ -18,7 +18,7 @@ pub struct GameTime {
     pub secs: libc::uint16_t,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Copy)]
 #[repr(C)]
 pub struct Time {
     pub years: libc::uint16_t,
@@ -94,6 +94,62 @@ pub struct p_flags {
     pub quested: libc::uint8_t,     /* { Performing a Quest  } {FUBAR} */
     pub light_on: libc::uint8_t,     /* { Light source is active } */
     pub resting_till_full: libc::uint8_t,
+}
+
+#[derive(Serialize, Deserialize)]
+#[repr(C)]
+pub struct PlayerRecord {
+    pub player_uid: libc::int64_t,
+    pub player_save_count: libc::int64_t,
+    pub player_deaths: libc::int64_t,
+    pub player_xtr_wgt: libc::int64_t,
+    pub player_account: libc::int64_t,
+    pub player_money: Wallet,
+    pub player_diffic: libc::uint8_t,
+    pub player_birth: GameTime,
+    pub player_cur_age: GameTime,
+    pub player_cur_quest: libc::uint16_t,
+    pub player_quests: libc::uint8_t,
+    pub player_claim_check: libc::int64_t,
+    pub player_play_tm: Time,
+    pub player_name: String,
+    pub player_race: Race,
+    pub player_sex: Sex,
+    pub player_class: Class,
+    pub player_title: String,
+    pub player_history: Vec<String>,
+    pub player_cheated: libc::uint8_t,
+    pub player_age: libc::uint16_t,
+    pub player_ht: libc::uint16_t,
+    pub player_wt: libc::uint16_t,
+    pub player_sc: libc::int16_t,
+    pub player_max_exp: libc::int64_t,
+    pub player_exp: libc::int64_t,
+    pub player_rep: libc::int64_t,
+    pub player_premium: libc::int64_t,
+    pub player_lev: libc::uint16_t,
+    pub player_max_lev: libc::uint16_t,
+    pub player_expfact: libc::c_float,
+    pub player_srh: libc::int16_t,
+    pub player_fos: libc::int16_t,
+    pub player_stl: libc::uint8_t,
+    pub player_bth: libc::int16_t,
+    pub player_bthb: libc::int16_t,
+    pub player_mana: libc::int16_t,
+    pub player_cmana: libc::c_float,
+    pub player_mhp: libc::int16_t,
+    pub player_chp: libc::c_float,
+    pub player_ptohit: libc::int16_t,
+    pub player_ptodam: libc::int16_t,
+    pub player_pac: libc::int16_t,
+    pub player_ptoac: libc::int16_t,
+    pub player_dis_th: libc::int16_t,
+    pub player_dis_td: libc::int16_t,
+    pub player_dis_ac: libc::int16_t,
+    pub player_dis_tac: libc::int16_t,
+    pub player_disarm: libc::int16_t,
+    pub player_save: libc::int16_t,
+    pub player_hitdie: libc::uint8_t,
 }
 
 extern "C" {
@@ -204,7 +260,7 @@ pub fn set_sex(sex: Sex) {
 pub fn class() -> Class {
     debug::enter("player::class");
     let result = Class::from(unsafe { player_pclass } as usize);
-    debug::enter("player::class");
+    debug::leave("player::class");
     result
 }
 
@@ -395,4 +451,66 @@ pub fn level() -> u8 {
 
 pub fn uid() -> i64 {
     unsafe { player_uid }
+}
+
+pub fn is_dead() -> bool {
+    unsafe { player_flags.dead != 0 }
+}
+
+pub fn player_record() -> PlayerRecord {
+    PlayerRecord {
+        player_uid: uid(),
+        player_save_count: unsafe { player_save_count },
+        player_deaths: unsafe { player_deaths },
+        player_xtr_wgt: unsafe { player_xtr_wgt },
+        player_account: unsafe { player_account },
+        player_money: wallet(),
+        player_diffic: unsafe { player_diffic },
+        player_birth: unsafe { player_birth },
+        player_cur_age: unsafe { player_cur_age },
+        player_cur_quest: unsafe { player_cur_quest },
+        player_quests: unsafe { player_quests },
+        player_claim_check: unsafe { player_claim_check },
+        player_play_tm: unsafe { player_play_tm },
+        player_name: name(),
+        player_race: race(),
+        player_sex: sex(),
+        player_class: class(),
+        player_title: title(),
+        player_history: unsafe { player_history }.iter()
+            .map(|i| misc::c_i8_array_to_rust_string(i.to_vec()))
+            .collect(),
+        player_cheated: unsafe { player_cheated },
+        player_age: unsafe { player_age },
+        player_ht: unsafe { player_ht },
+        player_wt: unsafe { player_wt },
+        player_sc: unsafe { player_sc },
+        player_max_exp: unsafe { player_max_exp },
+        player_exp: unsafe { player_exp },
+        player_rep: unsafe { player_rep },
+        player_premium: unsafe { player_premium },
+        player_lev: level().into(),
+        player_max_lev: unsafe { player_max_lev },
+        player_expfact: unsafe { player_expfact },
+        player_srh: unsafe { player_srh },
+        player_fos: unsafe { player_fos },
+        player_stl: unsafe { player_stl },
+        player_bth: unsafe { player_bth },
+        player_bthb: unsafe { player_bthb },
+        player_mana: unsafe { player_mana },
+        player_cmana: unsafe { player_cmana },
+        player_mhp: unsafe { player_mhp },
+        player_chp: unsafe { player_chp },
+        player_ptohit: unsafe { player_ptohit },
+        player_ptodam: unsafe { player_ptodam },
+        player_pac: unsafe { player_pac },
+        player_ptoac: unsafe { player_ptoac },
+        player_dis_th: unsafe { player_dis_th },
+        player_dis_td: unsafe { player_dis_td },
+        player_dis_ac: unsafe { player_dis_ac },
+        player_dis_tac: unsafe { player_dis_tac },
+        player_disarm: unsafe { player_disarm },
+        player_save: unsafe { player_save },
+        player_hitdie: unsafe { player_hitdie },
+    }
 }

@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use types::{Class, Sex, StatBlock};
 
-#[derive(PartialEq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Race {
     Human = 0,
     HalfElf = 1,

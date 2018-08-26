@@ -203,7 +203,7 @@ void upon_death()
 	}
 
 	/*  What happens upon dying...    -RAK- */
-	if (!C_master_record_death(player_uid)) {
+	if (!C_master_update_character(player_uid)) {
 		msg_print("ERROR opening file MASTER. "
 			  "Contact your local wizard.");
 		msg_print(" ");

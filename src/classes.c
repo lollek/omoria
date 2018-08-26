@@ -385,35 +385,37 @@ spell_t *class_spell(enum class_t class, int slot)
 	    {"", 99, 99, 0, 0, false},
 	    {"", 99, 99, 0, 0, false}};
 
+	spell_t *result = NULL;
+
 	ENTER(("class_spell", "%d, %d", class, slot));
 	if (slot < 0 || MAX_SPELLS <= slot) {
 		MSG(("ERROR: spell out of bounds"));
 		abort();
-		return &no_spell;
 	}
 
 	switch (class) {
 	default:
 	case C_WARRIOR:
-		return &no_spell;
+		result = &no_spell; break;
 	case C_MAGE:
-		return &mage_spells[slot];
+		result = &mage_spells[slot]; break;
 	case C_PRIEST:
-		return &priest_spells[slot];
+		result = &priest_spells[slot]; break;
 	case C_ROGUE:
-		return &rogue_spells[slot];
+		result = &rogue_spells[slot]; break;
 	case C_RANGER:
-		return &ranger_spells[slot];
+		result = &ranger_spells[slot]; break;
 	case C_PALADIN:
-		return &paladin_spells[slot];
+		result = &paladin_spells[slot]; break;
 	case C_DRUID:
-		return &druid_spells[slot];
+		result = &druid_spells[slot]; break;
 	case C_BARD:
-		return &bard_spells[slot];
+		result = &bard_spells[slot]; break;
 	case C_ADVENTURER:
-		return &adventurer_spells[slot];
+		result = &adventurer_spells[slot]; break;
 	case C_MONK:
-		return &monk_spells[slot];
+		result = &monk_spells[slot]; break;
 	}
 	LEAVE("class_spell", "");
+	return result;
 }

@@ -2,6 +2,7 @@ use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::{Read, Write, Seek};
 
+use libc;
 use serde_json;
 
 use debug;
@@ -10,11 +11,39 @@ use player;
 
 #[derive(Serialize, Deserialize)]
 struct SaveRecord {
+    player_record: player::PlayerRecord,
+    /* Player record */
 
+    /* sc__write_inventory */
+    /* sc__write_equipment */
+    /* sc__write_stats_and_flags */
+    /* sc__write_magic */
+    /* sc__write_dungeon */
+    /* sc__write_identified */
+    /* sc__write_monsters */
+    /* sc__write_town */
+    /* sc__write_version */
+    /* sc__write_seeds */
+
+    /*
+		sc__write_seeds(f1, &cf_state, out_rec);
+		sc__display_status(quick, out_rec);
+
+		sc__write_version(f1, &cf_state, out_rec);
+		sc__write_player_record(f1, &cf_state, out_rec);
+		sc__write_inventory(f1, &cf_state, out_rec);
+		sc__write_equipment(f1, &cf_state, out_rec);
+		sc__write_stats_and_flags(f1, &cf_state, out_rec);
+		sc__write_magic(f1, &cf_state, out_rec);
+		sc__write_dungeon(f1, &cf_state, out_rec);
+		sc__write_identified(f1, &cf_state, out_rec);
+		sc__write_monsters(f1, &cf_state, out_rec);
+		sc__write_town(f1, &cf_state, out_rec);
+    */
 }
 
 fn savefile_name() -> String {
-    format!("{}-{}.json", player::name(), player::uid())
+    format!("save/{}-{}.json", player::name(), player::uid())
 }
 
 fn open_savefile() -> Option<File> {
@@ -77,8 +106,17 @@ pub fn save_character() -> Option<()> {
 
     let mut file = open_savefile()?;
     let records = write_save(&file, &SaveRecord{
+        player_record: player::player_record(),
     })?;
 
     debug::leave("save_character");
     Some(())
+}
+
+#[no_mangle]
+pub extern fn C_save_character() -> libc::uint8_t {
+    match save_character() {
+        Some(_) => 255,
+        None => 0,
+    }
 }

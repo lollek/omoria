@@ -22,7 +22,7 @@ struct MasterRecord {
     class: String,
 }
 
-const MASTER_FILE: &'static str = "data/moria_master.json";
+const MASTER_FILE: &'static str = "save/moria_master.json";
 
 // TODO: Consider flocking (https://stackoverflow.com/a/32743299)
 // Will probably never to this since I'm the only intended user for this program
@@ -73,7 +73,7 @@ fn write_master(mut f: &File, data: &Vec<MasterRecord>) -> Option<()> {
     Some(())
 }
 
-pub fn master_record_death(uid: i64) -> Option<()> {
+pub fn master_update_character(uid: i64) -> Option<()> {
     debug::enter("master_record_death");
 
     let mut file = open_master()?;
@@ -88,7 +88,14 @@ pub fn master_record_death(uid: i64) -> Option<()> {
             },
         };
 
-    records.get_mut(pos).unwrap().alive = false;
+    {
+        let record = records.get_mut(pos).unwrap();
+        record.character_name = player::name();
+        record.points = player::calc_total_points();
+        record.title = player::title();
+        record.alive = player::is_dead();
+        record.level = player::level();
+    }
 
     let result = write_master(&mut file, &records);
 
@@ -129,8 +136,8 @@ pub fn master_add_character() -> Option<i64> {
 }
 
 #[no_mangle]
-pub extern fn C_master_record_death(uid: libc::int64_t) -> libc::uint8_t {
-    match master_record_death(uid) {
+pub extern fn C_master_update_character(uid: libc::int64_t) -> libc::uint8_t {
+    match master_update_character(uid) {
         Some(_) => 255,
         None => 0,
     }

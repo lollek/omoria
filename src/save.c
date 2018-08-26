@@ -586,43 +586,13 @@ boolean save_char(boolean quick)
 	char out_rec[1026];
 	encrypt_state cf_state;
 	GDBM_FILE f2;
-	boolean flag;
+	boolean flag = true;
 	FILE *f1;
 
 	ENTER(("save_char", "%d", quick));
 
-	f1 = sc__open_save_file();
-	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
-
-	flag = sc__open_master(&f2);
-	if (flag) {
-		flag = sc__write_master(f2);
-		master_file_close(&f2);
-	}
-
-	/* If ID was written to MASTER, continue saving          -RAK-   */
-	if (flag) {
-		sc__write_seeds(f1, &cf_state, out_rec);
-		sc__display_status(quick, out_rec);
-
-		sc__write_version(f1, &cf_state, out_rec);
-		sc__write_player_record(f1, &cf_state, out_rec);
-		sc__write_inventory(f1, &cf_state, out_rec);
-		sc__write_equipment(f1, &cf_state, out_rec);
-		sc__write_stats_and_flags(f1, &cf_state, out_rec);
-		sc__write_magic(f1, &cf_state, out_rec);
-		sc__write_dungeon(f1, &cf_state, out_rec);
-		sc__write_identified(f1, &cf_state, out_rec);
-		sc__write_monsters(f1, &cf_state, out_rec);
-		sc__write_town(f1, &cf_state, out_rec);
-
-		sprintf(out_rec, "%ld", player_creation_time);
-		encrypt_write(f1, &cf_state, out_rec);
-
-		encrypt_flush(f1, &cf_state);
-		fclose(f1);
-
-	} /* endif flag */
+	if (flag) flag = C_master_update_character(player_uid);
+	if (flag) flag = C_save_character();
 
 	if (flag && !player_flags.dead) {
 		sprintf(out_rec, "Character saved. [Moria Version %3.2f]\n",

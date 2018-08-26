@@ -73,6 +73,15 @@ pub extern fn in_statp(stat: u8) -> u8 {
 }
 
 // Hack for converting c-array of chars to rust string
+pub fn c_i8_array_to_rust_string(array: Vec<i8>) -> String {
+    let safe_array = array.to_owned()
+        .iter_mut()
+        .map(|i| i.to_owned() as u8)
+        .collect::<Vec<u8>>();
+    c_array_to_rust_string(safe_array)
+}
+
+// Hack for converting c-array of chars to rust string
 pub fn c_array_to_rust_string(array: Vec<u8>) -> String {
     let safe_array = array.to_owned()
         .iter_mut()

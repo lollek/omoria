@@ -3,8 +3,9 @@
 /**/
 
 /* From rust */
-extern boolean C_master_record_death(int64_t uid);
+extern boolean C_master_update_character(int64_t uid);
 extern int64_t C_master_add_character();
+extern boolean C_save_character();
 
 /* { CASINO.PAS		} */
 extern void enter_casino();
