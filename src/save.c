@@ -582,12 +582,7 @@ boolean save_file_name_is_set(void) { return filename[0] != '\0'; }
 boolean save_char(boolean quick)
 {
 	/* Actual save procedure -RAK- & -JWT- */
-
-	char out_rec[1026];
-	encrypt_state cf_state;
-	GDBM_FILE f2;
 	boolean flag = true;
-	FILE *f1;
 
 	ENTER(("save_char", "%d", quick));
 
@@ -595,6 +590,7 @@ boolean save_char(boolean quick)
 	if (flag) flag = C_save_character();
 
 	if (flag && !player_flags.dead) {
+		char out_rec[1026];
 		sprintf(out_rec, "Character saved. [Moria Version %3.2f]\n",
 			CUR_VERSION);
 		prt(out_rec, 2, 1);
@@ -1470,93 +1466,60 @@ static void gc__read_town(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 	}
 }
 
+boolean parse_filename() {
+	const char *pname;
+	const char *puid;
+	char *ptr;
+	
+	if (player_name[0] != '\0')
+		return true; /* already parsed */
+
+	ptr = strchr(filename, '-');
+	if (ptr == NULL) {
+		MSG(("Malformed filename (Error 1)"));
+		return false;
+	}
+	*ptr = '\0';
+
+	pname = filename;
+	puid = &ptr[1];
+
+	ptr = strchr(&ptr[1], '.');
+	if (ptr == NULL) {
+		MSG(("Malformed filename (Error 2)"));
+		return false;
+	}
+	*ptr = '\0';
+
+	strncpy(player_name, pname, sizeof(player_name));
+	player_uid = atol(puid);
+
+	return true;
+}
+
 boolean get_char(boolean prop)
 {
 	/*{ Restore a saved game				-RAK- & -JWT-
 	 * }*/
 
-	float save_version;
-	char in_rec[1026];
-	FILE *f1 = NULL;
-	GDBM_FILE f2 = NULL;
-	boolean dun_flag;
-	boolean was_dead, paniced;
-	encrypt_state cf_state;
-	long check_time;
+	boolean paniced = false;
 
 	ENTER(("get_char", "%d", prop));
 
-	dun_flag = false;
-	paniced = false;
-	gc__open_save_file(&f1, sc__get_file_name(), &paniced);
-	encrypt_init(&cf_state, saveFileKey, saveFilesAreEncrypted);
+	if (!paniced) paniced = !parse_filename();
 
-	if (paniced) {
-		exit_game();
-	} else {
-		gc__read_seeds(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__display_status();
-		if (!paniced)
-			gc__read_version(f1, &cf_state, in_rec, &paniced,
-					 &save_version);
-		if (!paniced)
-			gc__read_player_record(f1, &cf_state, in_rec, &paniced,
-					       prop, &was_dead);
-		if (!paniced)
-			gc__read_inventory(f1, &cf_state, in_rec, &paniced,
-					   &was_dead);
-		if (!paniced)
-			gc__read_equipment(f1, &cf_state, in_rec, &paniced,
-					   &was_dead);
+	MSG(("name: %s, uid: %ld", player_name, player_uid));
 
-		if (was_dead) {
-			/* nuke claim_check entry, they are lucky to be alive */
-			player_claim_check = 0;
-			msg_print(" ");
-		}
-
-		if (!paniced)
-			gc__read_stats_and_flags(f1, &cf_state, in_rec,
-						 &paniced);
-		if (!paniced)
-			gc__read_magic(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_dungeon(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_identified(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_monsters(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_town(f1, &cf_state, in_rec, &paniced);
-
-		/* odds are we would have paniced by this time if an
-		   encrypted file has been tampered with, but just in case... */
-		if (!paniced) {
-			read_decrypt(f1, &cf_state, in_rec, &paniced);
-			sscanf(in_rec, "%ld", &check_time);
-			if (player_creation_time != check_time) {
-				paniced = true;
-			}
-		}
-
-		fclose(f1);
-
-	} /* endif !paniced */
-
-	if (!paniced)
-		seed = 0;
-	if (!paniced)
-		paniced = !sc__open_master(&f2);
-	if (!paniced) {
-		gc__read_master(f2, &paniced);
-		master_file_close(&f2);
+	if (!paniced && !C_master_character_exists(player_uid)) {
+		MSG(("Character does not exist in master!"));
+		paniced = true;
 	}
-	if (paniced)
-		data_exception();
+	if (!paniced) paniced = !C_load_character();
+
+	if (paniced) data_exception();
 
 	LEAVE("get_char", "");
-	return dun_flag;
+	return false;
 }
 
 void restore_char(char fnam[82], boolean present, boolean undead)

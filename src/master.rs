@@ -1,6 +1,5 @@
 use std::fs::{File, OpenOptions};
-use std::io;
-use std::io::{Read, Write, Seek};
+use std::io::{Read, Write};
 
 use libc;
 use serde_json;
@@ -26,12 +25,12 @@ const MASTER_FILE: &'static str = "save/moria_master.json";
 
 // TODO: Consider flocking (https://stackoverflow.com/a/32743299)
 // Will probably never to this since I'm the only intended user for this program
-fn open_master() -> Option<File> {
+fn open_master(to_write: bool) -> Option<File> {
     match OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
+        .read(!to_write)
+        .write(to_write)
+        .create(to_write)
+        .truncate(to_write)
         .append(false)
         .open(MASTER_FILE) {
             Ok(file) => Some(file),
@@ -42,10 +41,11 @@ fn open_master() -> Option<File> {
         }
 }
 
-fn read_master(mut f: &File) -> Option<Vec<MasterRecord>> {
+fn read_master() -> Option<Vec<MasterRecord>> {
     let mut buffer = String::new();
 
-    if let Err(e) = f.read_to_string(&mut buffer) {
+    let mut file = open_master(false)?;
+    if let Err(e) = file.read_to_string(&mut buffer) {
         debug::warn(&format!("Either master was empty, or corrupt, (err: {})", e));
         return Some(vec![]);
     }
@@ -59,14 +59,9 @@ fn read_master(mut f: &File) -> Option<Vec<MasterRecord>> {
     }
 }
 
-fn write_master(mut f: &File, data: &Vec<MasterRecord>) -> Option<()> {
-    if data.len() > 1 {
-        if let Err(e) = f.seek(io::SeekFrom::Start(0)) {
-            debug::error(&format!("Failed during seek: {}", e));
-            return None;
-        }
-    }
-    if let Err(e) = f.write_all(&serde_json::to_string(data).unwrap().into_bytes()) {
+fn write_master(data: &Vec<MasterRecord>) -> Option<()> {
+    let mut file = open_master(true)?;
+    if let Err(e) = file.write_all(&serde_json::to_string(data).unwrap().into_bytes()) {
         debug::error(&format!("Failed to write file: {}", e));
         return None;
     }
@@ -74,10 +69,9 @@ fn write_master(mut f: &File, data: &Vec<MasterRecord>) -> Option<()> {
 }
 
 pub fn master_update_character(uid: i64) -> Option<()> {
-    debug::enter("master_record_death");
+    debug::enter("master_update_character");
 
-    let mut file = open_master()?;
-    let mut records = read_master(&file)?;
+    let mut records = read_master()?;
 
     let pos = match records.iter()
         .position(|ref i| i.uid == uid) {
@@ -97,17 +91,16 @@ pub fn master_update_character(uid: i64) -> Option<()> {
         record.level = player::level();
     }
 
-    let result = write_master(&mut file, &records);
+    let result = write_master(&records);
 
-    debug::leave("master_record_death");
+    debug::leave("master_update_character");
     result
 }
 
 pub fn master_add_character() -> Option<i64> {
     debug::enter("master_add_character");
 
-    let mut file = open_master()?;
-    let mut records = read_master(&file)?;
+    let mut records = read_master()?;
 
     let mut new_uid;
     loop {
@@ -129,10 +122,28 @@ pub fn master_add_character() -> Option<i64> {
         class: player::class().name().to_string(),
     });
 
-    write_master(&mut file, &records)?;
+    write_master(&records)?;
 
     debug::leave("master_add_character");
     Some(new_uid)
+}
+
+pub fn master_character_exists(uid: i64) -> Option<()> {
+    debug::enter("master_character_exists");
+
+    let records = read_master()?;
+
+    let result = match records.iter()
+        .position(|ref i| i.uid == uid) {
+            Some(_) => Some(()),
+            None => {
+                debug::warn("Master file did not contain the player");
+                None
+            },
+        };
+
+    debug::leave("master_character_exists");
+    result
 }
 
 #[no_mangle]
@@ -147,6 +158,14 @@ pub extern fn C_master_update_character(uid: libc::int64_t) -> libc::uint8_t {
 pub extern fn C_master_add_character() -> libc::int64_t {
     match master_add_character() {
         Some(uid) => uid,
+        None => 0,
+    }
+}
+
+#[no_mangle]
+pub extern fn C_master_character_exists(uid: libc::int64_t) -> libc::uint8_t {
+    match master_character_exists(uid) {
+        Some(_) => 255,
         None => 0,
     }
 }

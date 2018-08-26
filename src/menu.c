@@ -79,8 +79,7 @@ void main_menu()
 		selection -= '0';
 		if (selection <= counter) {
 			char file_name[82];
-			strcpy(file_name, SAVE_FILE_PATH "/");
-			strcat(file_name, saved_games[selection]);
+			strncpy(file_name, saved_games[selection], sizeof(file_name));
 			save_file_name_set(file_name);
 			break;
 		}

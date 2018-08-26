@@ -445,6 +445,10 @@ pub fn calc_total_points() -> i64 {
     unsafe { total_points() }
 }
 
+pub fn set_level(level: u8) {
+    unsafe { player_lev = level.into() }
+}
+
 pub fn level() -> u8 {
     (unsafe { player_lev }) as u8
 }
@@ -512,5 +516,76 @@ pub fn player_record() -> PlayerRecord {
         player_disarm: unsafe { player_disarm },
         player_save: unsafe { player_save },
         player_hitdie: unsafe { player_hitdie },
+    }
+}
+
+pub fn set_player_record(record: PlayerRecord) {
+    unsafe {
+        player_save_count = record.player_save_count;
+        player_deaths = record.player_deaths;
+        player_xtr_wgt = record.player_xtr_wgt;
+        player_account = record.player_account;
+    }
+
+    set_wallet(&record.player_money);
+
+    unsafe {
+        player_diffic = record.player_diffic;
+        player_birth = record.player_birth;
+        player_cur_age = record.player_cur_age;
+        player_cur_quest = record.player_cur_quest;
+        player_quests = record.player_quests;
+        player_claim_check = record.player_claim_check;
+        player_play_tm = record.player_play_tm;
+    }
+
+    set_name(&record.player_name);
+    set_race(record.player_race);
+    set_sex(record.player_sex);
+    set_class(record.player_class);
+    refresh_title();
+
+    for (i, line) in record.player_history.iter().enumerate() {
+        let cstr = CString::new(line.to_string()).unwrap();
+        unsafe { libc::strcpy(player_history[i].as_mut_ptr(), cstr.as_ptr()); }
+    }
+
+    unsafe {
+        player_cheated = record.player_cheated;
+        player_age = record.player_age;
+        player_ht = record.player_ht;
+        player_wt = record.player_wt;
+        player_sc = record.player_sc;
+        player_max_exp = record.player_max_exp;
+        player_exp = record.player_exp;
+        player_rep = record.player_rep;
+        player_premium = record.player_premium;
+    }
+
+    set_level(record.player_lev as u8);
+
+    unsafe {
+        player_max_lev = record.player_max_lev;
+        player_expfact = record.player_expfact;
+        player_srh = record.player_srh;
+        player_fos = record.player_fos;
+        player_stl = record.player_stl;
+        player_bth = record.player_bth;
+        player_bthb = record.player_bthb;
+        player_mana = record.player_mana;
+        player_cmana = record.player_cmana;
+        player_mhp = record.player_mhp;
+        player_chp = record.player_chp;
+        player_ptohit = record.player_ptohit;
+        player_ptodam = record.player_ptodam;
+        player_pac = record.player_pac;
+        player_ptoac = record.player_ptoac;
+        player_dis_th = record.player_dis_th;
+        player_dis_td = record.player_dis_td;
+        player_dis_ac = record.player_dis_ac;
+        player_dis_tac = record.player_dis_tac;
+        player_disarm = record.player_disarm;
+        player_save = record.player_save;
+        player_hitdie = record.player_hitdie;
     }
 }
