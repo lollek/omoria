@@ -189,7 +189,6 @@ typedef struct spell_t
 	char sname[28];
 	uint8_t slevel;
 	uint8_t smana;
-	uint16_t sexp;
 	uint8_t sfail;
 	boolean learned;
 } spell_t;

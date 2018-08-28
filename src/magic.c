@@ -311,11 +311,6 @@ static void _cast(enum magic_t magic_type)
 			chakra_spell_effects(choice);
 			break;
 		}
-		if (!reset_flag) {
-			player_exp += class_spell(player_pclass, choice)->sexp;
-			prt_experience();
-			class_spell(player_pclass, choice)->sexp = 0;
-		}
 	}
 
 	if (reset_flag) {

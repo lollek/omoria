@@ -210,9 +210,7 @@ static void sc__write_magic(FILE *f1, encrypt_state *cf_state, char out_rec[1026
 {
 	long i1;
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		sprintf(out_rec, "%d %d",
-			(int)class_spell(player_pclass, i1)->learned,
-			class_spell(player_pclass, i1)->sexp);
+		sprintf(out_rec, "%d", (int)class_spell(player_pclass, i1)->learned);
 		encrypt_write(f1, cf_state, out_rec);
 	}
 }
@@ -1011,16 +1009,15 @@ static void gc__read_magic(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			   boolean *paniced)
 {
 	long i1;
-	int x1, x2;
+	int x1;
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
 		/* with magic_spell[player_pclass,i1] do; */
 		read_decrypt(f1, cf_state, in_rec, paniced);
-		if (sscanf(in_rec, "%d %d", &x1, &x2) != 2) {
+		if (sscanf(in_rec, "%d", &x1) != 2) {
 			*paniced = true;
 		}
 		class_spell(player_pclass, i1)->learned = x1;
-		class_spell(player_pclass, i1)->sexp = x2;
 	}
 }
 
