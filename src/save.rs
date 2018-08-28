@@ -16,7 +16,6 @@ struct SaveRecord {
 
     /* sc__write_inventory */
     /* sc__write_equipment */
-    /* sc__write_magic */
     /* sc__write_dungeon */
     /* sc__write_identified */
     /* sc__write_monsters */
@@ -29,7 +28,6 @@ struct SaveRecord {
 		sc__write_inventory(f1, &cf_state, out_rec);
 		sc__write_equipment(f1, &cf_state, out_rec);
 		sc__write_stats_and_flags(f1, &cf_state, out_rec);
-		sc__write_magic(f1, &cf_state, out_rec);
 		sc__write_dungeon(f1, &cf_state, out_rec);
 		sc__write_identified(f1, &cf_state, out_rec);
 		sc__write_monsters(f1, &cf_state, out_rec);

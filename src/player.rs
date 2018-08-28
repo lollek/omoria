@@ -2,7 +2,7 @@ use libc;
 use std::ffi::CString;
 
 use types::{
-    Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat
+    Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat, Spell
 };
 
 use debug;
@@ -155,6 +155,7 @@ pub struct PlayerRecord {
     pub mod_stats: StatBlock,
     pub lost_stats: StatBlock,
     pub flags: PlayerFlags,
+    pub spells_known: Vec<usize>,
 }
 
 extern "C" {
@@ -222,7 +223,10 @@ extern "C" {
 
     static mut bank: [libc::int64_t; 7];
 
-    fn total_points() -> libc::int64_t;
+    #[link_name = "total_points"]
+    fn C_total_points() -> libc::int64_t;
+    #[link_name = "class_spell"]
+    fn C_class_spell(class: libc::c_int, slot: libc::c_int) -> *mut Spell;
 }
 
 pub fn name() -> String {
@@ -467,7 +471,7 @@ pub fn ranged_tohit() -> i16 {
 }
 
 pub fn calc_total_points() -> i64 {
-    unsafe { total_points() }
+    unsafe { C_total_points() }
 }
 
 pub fn set_level(level: u8) {
@@ -488,6 +492,18 @@ pub fn is_dead() -> bool {
 
 pub fn increase_save_counter() {
     unsafe { player_save_count += 1 };
+}
+
+fn spell(i: &usize) -> *mut Spell {
+    unsafe { C_class_spell(class() as libc::c_int, *i as libc::c_int) }
+}
+
+pub fn spell_learned(i: &usize) -> bool {
+    unsafe { (*spell(i)).learned() }
+}
+
+pub fn set_spell_learned(i: &usize, yn: bool) {
+    unsafe { (*spell(i)).set_learned(yn) }
 }
 
 pub fn player_record() -> PlayerRecord {
@@ -549,7 +565,8 @@ pub fn player_record() -> PlayerRecord {
         curr_stats: curr_stats(),
         mod_stats: mod_stats(),
         lost_stats: lost_stats(),
-        flags: unsafe { player_flags }.to_owned()
+        flags: unsafe { player_flags }.to_owned(),
+        spells_known: (0..21).filter(|i| spell_learned(i)).collect(),
     }
 }
 
@@ -630,5 +647,9 @@ pub fn set_player_record(record: PlayerRecord) {
 
     unsafe {
         player_flags = record.flags;
+    }
+
+    for i in record.spells_known.iter() {
+        set_spell_learned(i, true);
     }
 }
