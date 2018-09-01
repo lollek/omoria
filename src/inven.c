@@ -29,14 +29,14 @@ static void aii__insert(treas_ptr ptr, treas_ptr new_item)
 
 static boolean is_players_spell_book(long typ)
 {
-	if (class_uses_magic(player_pclass, M_ARCANE)) {
-		return (typ == magic_book) ? true : false;
-	} else if (class_uses_magic(player_pclass, M_SONG)) {
-		return (typ == song_book) ? true : false;
-	} else if (class_uses_magic(player_pclass, M_NATURE)) {
-		return (typ == instrument) ? true : false;
-	} else if (class_uses_magic(player_pclass, M_DIVINE)) {
-		return (typ == prayer_book) ? true : false;
+	if (C_player_uses_magic(M_ARCANE)) {
+		return typ == magic_book;
+	} else if (C_player_uses_magic(M_SONG)) {
+		return typ == song_book;
+	} else if (C_player_uses_magic(M_NATURE)) {
+		return typ == instrument;
+	} else if (C_player_uses_magic(M_DIVINE)) {
+		return typ == prayer_book;
 	}
 
 	return false;

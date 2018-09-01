@@ -857,27 +857,26 @@ void lose_exp(long amount)
 			player_mana = 0;
 		}
 
-		if (class_uses_magic(player_pclass, M_ARCANE) ||
-		    class_uses_magic(player_pclass, M_DIVINE) ||
-		    class_uses_magic(player_pclass, M_NATURE) ||
-		    class_uses_magic(player_pclass, M_SONG)) {
+		if (C_player_uses_magic(M_ARCANE) ||
+		    C_player_uses_magic(M_DIVINE) ||
+		    C_player_uses_magic(M_NATURE) ||
+		    C_player_uses_magic(M_SONG)) {
 			i1 = 32;
 			flag = false;
 
 			do {
 				i1--;
-				if (class_spell(player_pclass, i1)->learned) {
+				if (C_player_knows_spell(i1)) {
 					flag = true;
 				}
 			} while (!((flag) || (i1 < 2)));
 
 			if (flag) {
-				class_spell(player_pclass, i1)->learned = false;
-				if (class_uses_magic(player_pclass, M_ARCANE)) {
+				C_player_set_knows_spell(i1, false);
+				if (C_player_uses_magic(M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_magic(player_pclass,
-							    M_DIVINE)) {
+				} else if (C_player_uses_magic(M_DIVINE)) {
 					msg_print(
 					    "You have forgotten a prayer!");
 				} else {

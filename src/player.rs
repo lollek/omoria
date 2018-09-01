@@ -1,12 +1,16 @@
 use libc;
+use std::mem;
+
 use std::ffi::CString;
+use std::sync::RwLock;
 
 use types::{
-    Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat, Spell
+    Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat,
+    Magic
 };
 
-use debug;
 use misc;
+use debug;
 
 #[derive(Serialize, Deserialize, Clone, Copy)]
 #[repr(C)]
@@ -96,6 +100,19 @@ pub struct PlayerFlags {
     pub resting_till_full: libc::uint8_t,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Player {
+    pub spells_known: Vec<bool>
+}
+
+impl Player {
+    pub fn new() -> Player {
+        Player {
+            spells_known: [false; 40].to_vec(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 #[repr(C)]
 pub struct PlayerRecord {
@@ -155,7 +172,7 @@ pub struct PlayerRecord {
     pub mod_stats: StatBlock,
     pub lost_stats: StatBlock,
     pub flags: PlayerFlags,
-    pub spells_known: Vec<usize>,
+    pub player: Player,
 }
 
 extern "C" {
@@ -225,8 +242,10 @@ extern "C" {
 
     #[link_name = "total_points"]
     fn C_total_points() -> libc::int64_t;
-    #[link_name = "class_spell"]
-    fn C_class_spell(class: libc::c_int, slot: libc::c_int) -> *mut Spell;
+}
+
+lazy_static! {
+    static ref PLAYER: RwLock<Player> = RwLock::new(Player::new());
 }
 
 pub fn name() -> String {
@@ -494,18 +513,6 @@ pub fn increase_save_counter() {
     unsafe { player_save_count += 1 };
 }
 
-fn spell(i: &usize) -> *mut Spell {
-    unsafe { C_class_spell(class() as libc::c_int, *i as libc::c_int) }
-}
-
-pub fn spell_learned(i: &usize) -> bool {
-    unsafe { (*spell(i)).learned() }
-}
-
-pub fn set_spell_learned(i: &usize, yn: bool) {
-    unsafe { (*spell(i)).set_learned(yn) }
-}
-
 pub fn player_record() -> PlayerRecord {
     PlayerRecord {
         uid: uid(),
@@ -566,9 +573,18 @@ pub fn player_record() -> PlayerRecord {
         mod_stats: mod_stats(),
         lost_stats: lost_stats(),
         flags: unsafe { player_flags }.to_owned(),
-        spells_known: (0..21).filter(|i| spell_learned(i)).collect(),
+        player: PLAYER.read().unwrap().clone(),
     }
 }
+
+pub fn knows_spell(slot: usize) -> bool {
+    PLAYER.read().unwrap().spells_known[slot].clone()
+}
+
+pub fn set_knows_spell(slot: usize, yn: bool) {
+    PLAYER.write().unwrap().spells_known[slot] = yn;
+}
+
 
 pub fn set_player_record(record: PlayerRecord) {
     unsafe {
@@ -649,7 +665,39 @@ pub fn set_player_record(record: PlayerRecord) {
         player_flags = record.flags;
     }
 
-    for i in record.spells_known.iter() {
-        set_spell_learned(i, true);
+    mem::replace(&mut *PLAYER.write().unwrap(), record.player);
+}
+
+
+#[no_mangle]
+pub extern fn C_player_knows_spell(slot: libc::int32_t) -> libc::uint8_t {
+    match knows_spell(slot as usize) {
+        true => 255,
+        false => 0,
     }
 }
+
+#[no_mangle]
+pub extern fn C_player_set_knows_spell(slot: libc::int32_t, yn: libc::uint8_t) {
+    set_knows_spell(slot as usize, yn != 0);
+}
+
+pub fn uses_magic(magic: Magic) -> bool {
+    match class() {
+        Class::Mage | Class::Adventurer => magic == Magic::Arcane,
+        Class::Priest | Class::Paladin => magic == Magic::Divine,
+        Class::Druid | Class::Ranger => magic == Magic::Nature,
+        Class::Bard | Class::Rogue => magic == Magic::Song,
+        Class::Monk => magic == Magic::Chakra,
+        Class::Warrior => false,
+    }
+}
+
+#[no_mangle]
+pub extern fn C_player_uses_magic(magic_type: libc::int32_t) -> libc::uint8_t {
+    match uses_magic(Magic::from(magic_type)) {
+        true => 255,
+        false => 0
+    }
+}
+

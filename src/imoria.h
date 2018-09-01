@@ -17,7 +17,6 @@
 #include "pascal.h"
 #include "routines.h"
 #include "term.h"
-#include "classes.h"
 
 #include "debug.h"
 

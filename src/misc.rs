@@ -1,7 +1,10 @@
+use libc;
 use std::ffi::CStr;
 
 use player;
 use random;
+use term;
+use magic;
 
 use types::Stat;
 
@@ -70,6 +73,38 @@ pub extern fn in_statp(stat: u8) -> u8 {
     } else {
         0
     }
+}
+
+// Utility function for dungeon.c::d__examine_book to use rust-strings
+#[no_mangle]
+pub extern fn C_print_new_spell_line2(i: libc::c_long, slot: libc::c_long) {
+    let spell = magic::spell(slot as usize);
+    term::prt_r(&format!("{}) {:30}{:2}      {:2}   {}",
+            (('a' as u8) + i as u8 -1) as char,
+            spell.name,
+            spell.level,
+            spell.mana,
+            if player::knows_spell(slot as usize) { "true" } else { "false" }),
+            (3 + i) as i32,
+            1);
+}
+
+// Utility function for misc.c::print_new_spells to use rust-strings
+#[no_mangle]
+pub extern fn C_print_new_spell_line(i: libc::uint8_t, slot: libc::c_long, failchance: libc::c_long) {
+    let to_print = if slot < 0 {
+        "".to_owned() // leave gaps for unknown spells
+    } else {
+        let spell = magic::spell(i as usize);
+        format!("{}) {:30} {:3}    {:3}      {:2}",
+            (('a' as u8) + i) as char,
+            spell.name,
+            spell.level,
+            spell.mana,
+            failchance)
+    };
+
+    term::prt_r(&to_print, (3 + i) as i32, 1);
 }
 
 // Hack for converting c-array of chars to rust string

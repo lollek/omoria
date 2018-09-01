@@ -1401,9 +1401,9 @@ boolean player_test_hit(long bth, long level, long pth, long ac,
 	i1 = bth + pth * BTH_PLUS_ADJ;
 
 	if (was_fired) {
-		i1 += (level * class_ranged_bonus(player_pclass)) / 2;
+		i1 += (level * C_class_ranged_bonus(player_pclass)) / 2;
 	} else {
-		i1 += (level * class_melee_bonus(player_pclass)) / 2;
+		i1 += (level * C_class_melee_bonus(player_pclass)) / 2;
 	}
 
 	if (randint(i1) > ac) {
@@ -1666,30 +1666,28 @@ void xp_loss(long amount)
 			player_mana = 0;
 		}
 
-		if (class_uses_magic(player_pclass, M_ARCANE) ||
-		    class_uses_magic(player_pclass, M_DIVINE) ||
-		    class_uses_magic(player_pclass, M_NATURE) ||
-		    class_uses_magic(player_pclass, M_SONG) ||
-		    class_uses_magic(player_pclass, M_CHAKRA)) {
+		if (C_player_uses_magic(M_ARCANE) ||
+		    C_player_uses_magic(M_DIVINE) ||
+		    C_player_uses_magic(M_NATURE) ||
+		    C_player_uses_magic(M_SONG) ||
+		    C_player_uses_magic(M_CHAKRA)) {
 			i1 = 32;
 			flag = false;
 			do {
 				i1--;
-				if (class_spell(pclass, i1)->learned) {
+				if (C_player_knows_spell(i1)) {
 					flag = true;
 				}
 			} while (!((flag) || (i1 < 2)));
 			if (flag) {
-				class_spell(pclass, i1)->learned = false;
-				if (class_uses_magic(player_pclass, M_ARCANE)) {
+				C_player_set_knows_spell(i1, false);
+				if (C_player_uses_magic(M_ARCANE)) {
 					msg_print("You have forgotten a magic "
 						  "spell!");
-				} else if (class_uses_magic(player_pclass,
-							    M_DIVINE)) {
+				} else if (C_player_uses_magic(M_DIVINE)) {
 					msg_print(
 					    "You have forgotten a prayer!");
-				} else if (class_uses_magic(player_pclass,
-							    M_SONG)) {
+				} else if (C_player_uses_magic(M_SONG)) {
 					msg_print("You have forgotten a song!");
 				} else {
 					msg_print(
@@ -3009,9 +3007,8 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 		}
 		if (i3 > 0) {
 			i3--;
-			if ((class_spell(player_pclass, i3)->slevel <=
-			     player_lev) &&
-			    (class_spell(player_pclass, i3)->learned)) {
+			if ((C_magic_spell_level(i3) <= player_lev) &&
+			    (C_player_knows_spell(i3))) {
 				aspell[i1++].splnum = i3;
 				num = i1;
 			} else {
@@ -3037,6 +3034,7 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
  * -RAK-
  * d__examine_book() - Examine a book
  */
+void C_print_new_spell_line2(long i, long slot);
 static void d__examine_book()
 {
 	unsigned long i2, i4;
@@ -3056,24 +3054,24 @@ static void d__examine_book()
 			    false, false)) {
 		flag = true;
 		/* with item_ptr->data. do; */
-		if (class_uses_magic(player_pclass, M_ARCANE)) {
+		if (C_player_uses_magic(M_ARCANE)) {
 			if (item_ptr->data.tval != magic_book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class_uses_magic(player_pclass, M_DIVINE)) {
+		} else if (C_player_uses_magic(M_DIVINE)) {
 			if (item_ptr->data.tval != prayer_book) {
 				msg_print(
 				    "You do not understand the language.");
 				flag = false;
 			}
-		} else if (class_uses_magic(player_pclass, M_NATURE)) {
+		} else if (C_player_uses_magic(M_NATURE)) {
 			if (item_ptr->data.tval != instrument) {
 				msg_print("You do not posses the talent.");
 				flag = false;
 			}
-		} else if (class_uses_magic(player_pclass, M_SONG)) {
+		} else if (C_player_uses_magic(M_SONG)) {
 			if (item_ptr->data.tval != song_book) {
 				msg_print("You can not read the music.");
 				flag = false;
@@ -3100,23 +3098,8 @@ static void d__examine_book()
 				if (i3 > 0) {
 					i3--;
 					i5++;
-					if (class_spell(player_pclass, i3)->slevel <
-					    99) {
-						sprintf(out_val,
-							"%c) %-30s%2d     "
-							" %2d   %s",
-							(char)(96 + i5),
-							class_spell(player_pclass,
-								    i3)->sname,
-							class_spell(player_pclass,
-								    i3)->slevel,
-							class_spell(player_pclass,
-								    i3)->smana,
-							class_spell(player_pclass,
-								    i3)->learned
-							    ? "true"
-							    : "false");
-						prt(out_val, i5 + 1, 1);
+					if (C_magic_spell_level(i3) < 99) {
+						C_print_new_spell_line2(i5, i3);
 					} else {
 						prt("", i5 + 1, 1);
 					}
@@ -5962,9 +5945,9 @@ void d__execute_command(long *com_val)
 		move_char(6);
 		break;
 	case 'm': /* magick, monk, music */
-		if (class_uses_magic(player_pclass, M_ARCANE)) {
+		if (C_player_uses_magic(M_ARCANE)) {
 			cast(M_ARCANE); /*  magick   } */
-		} else if (class_uses_magic(player_pclass, M_CHAKRA)) {
+		} else if (C_player_uses_magic(M_CHAKRA)) {
 			cast(M_CHAKRA); /* m = monk? :) */
 		} else {
 			cast(M_SONG); /* music */
@@ -5977,7 +5960,7 @@ void d__execute_command(long *com_val)
 		d__openobject();
 		break;
 	case 'p': /* pray, play */
-		if (class_uses_magic(player_pclass, M_DIVINE)) {
+		if (C_player_uses_magic(M_DIVINE)) {
 			cast(M_DIVINE); /* pray */
 		} else {
 			cast(M_NATURE); /* play */

@@ -85,6 +85,182 @@ static void song_failure(void)
 	}
 }
 
+static void init_magic_books(enum magic_t magic_type, obj_set *magic_books,
+		char const** book_name) {
+
+	memset(*magic_books, 0, sizeof(*magic_books));
+	switch (magic_type) {
+	case M_ARCANE:
+		(*magic_books)[0] = magic_book;
+		*book_name = "spell-book";
+		break;
+	case M_DIVINE:
+		(*magic_books)[0] = prayer_book;
+		*book_name = "Holy Book";
+		break;
+	case M_NATURE:
+		(*magic_books)[0] = instrument;
+		*book_name = "instrument";
+		break;
+	case M_SONG:
+		(*magic_books)[0] = song_book;
+		*book_name = "instrument";
+		break;
+	case M_CHAKRA:
+		(*magic_books)[0] = 0;
+		*book_name = "discipline";
+		break;
+	}
+}
+
+static boolean blind_check(enum magic_t magic_type) {
+	if (player_flags.blind > 0) {
+		switch (magic_type) {
+		case M_ARCANE:
+			msg_print("You can't see to read your spell book!");
+			return false;
+		case M_DIVINE:
+			msg_print("You can't see to read your prayer!");
+			return false;
+		case M_SONG:
+			msg_print("You are too scared to play music!");
+			return false;
+		case M_NATURE:
+		case M_CHAKRA:
+			break;
+		}
+	}
+	return true;
+}
+
+static boolean light_check(enum magic_t magic_type) {
+	if (no_light()) {
+		switch (magic_type) {
+		case M_ARCANE:
+		case M_DIVINE:
+			msg_print("You have no light to read by.");
+			return false;
+		case M_NATURE:
+		case M_SONG:
+		case M_CHAKRA:
+			break;
+		}
+	}
+	return true;
+}
+
+static boolean hoarse_check(enum magic_t magic_type) {
+	if (player_flags.hoarse > 0) {
+		switch (magic_type) {
+		case M_ARCANE:
+		case M_DIVINE:
+		case M_CHAKRA:
+			break;
+		case M_NATURE:
+		case M_SONG:
+			msg_print("You are too hoarse to sing!");
+			return false;
+		}
+	}
+	return true;
+}
+
+static boolean scared_check(enum magic_t magic_type) {
+	if (player_flags.afraid > 0) {
+		switch (magic_type) {
+		case M_ARCANE:
+		case M_DIVINE:
+		case M_CHAKRA:
+			break;
+		case M_NATURE:
+		case M_SONG:
+			msg_print("You are too scared to play music!");
+			return false;
+		}
+	}
+	return true;
+}
+
+static boolean hallucinate_check(enum magic_t magic_type) {
+	if (player_flags.image > 0) {
+		switch (magic_type) {
+		case M_ARCANE:
+		case M_DIVINE:
+		case M_NATURE:
+		case M_SONG:
+			break;
+		case M_CHAKRA:
+			msg_print("Colors and images run through your head, "
+				  "distracting you.");
+			return false;
+		}
+	}
+	return true;
+}
+
+static boolean knowledge_check(enum magic_t magic_type) {
+	if (C_player_uses_magic(magic_type))
+		return true;
+
+	switch (magic_type) {
+	case M_ARCANE:
+		msg_print("You can't cast spells!");
+		break;
+	case M_DIVINE:
+		msg_print("You pray briefly");
+		break;
+	case M_NATURE:
+	case M_SONG:
+		nonmagic_song();
+		break;
+	case M_CHAKRA:
+		msg_print("You don't know any disciplines!");
+		break;
+	}
+	return false;
+}
+
+static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost) {
+	player_cmana = 0;
+
+	switch (magic_type) {
+	case M_ARCANE:
+	case M_DIVINE:
+		msg_print("You faint from fatigue!");
+		player_flags.paralysis =
+			randint(5 * (mana_cost - player_cmana));
+		if (randint(3) == 1)
+			lower_stat(CON, "You have damaged your health!");
+		break;
+
+	case M_NATURE:
+	case M_SONG:
+		msg_print("You lose your voice attempting the song!");
+		player_flags.hoarse =
+			randint(5 * (mana_cost - player_cmana));
+		if (randint(3) == 1)
+			lower_stat(CHR, "You have damaged your voice!");
+		break;
+
+	case M_CHAKRA:
+		msg_print("You faint from fatigue!");
+		player_flags.paralysis =
+			randint(5 * mana_cost - player_cmana);
+		if (randint(3) == 1)
+			lower_stat(CON, "You have damaged your health!");
+		break;
+	}
+}
+
+static void drain_mana(enum magic_t magic_type, long choice) {
+	uint8_t mana_cost = C_magic_spell_mana(choice);
+	if (mana_cost <= player_cmana)
+		player_cmana -= mana_cost;
+	else
+		drain_mana_failed(magic_type, mana_cost);
+	prt_mana();
+}
+
 static void _cast(enum magic_t magic_type)
 {
 	treas_ptr i1;
@@ -98,126 +274,28 @@ static void _cast(enum magic_t magic_type)
 	char const *magic_book_name = "???";
 	char msg_buf[80];
 
-	memset(magic_books, 0, sizeof(magic_books));
-	switch (magic_type) {
-	case M_ARCANE:
-		magic_books[0] = magic_book;
-		magic_book_name = "spell-book";
-		break;
-	case M_DIVINE:
-		magic_books[0] = prayer_book;
-		magic_book_name = "Holy Book";
-		break;
-	case M_NATURE:
-		magic_books[0] = instrument;
-		magic_book_name = "instrument";
-		break;
-	case M_SONG:
-		magic_books[0] = song_book;
-		magic_book_name = "instrument";
-		break;
-	case M_CHAKRA:
-		magic_books[0] = 0;
-		magic_book_name = "discipline";
-		break;
-	}
+	init_magic_books(magic_type, &magic_books, &magic_book_name);
 
 	reset_flag = true;
 	redraw = false;
 
+	if (!knowledge_check(magic_type))
+		return;
 	if (player_flags.confused > 0) {
 		msg_print("You are too confused...");
 		return;
 	}
-
-	if (player_flags.blind > 0) {
-		switch (magic_type) {
-		case M_ARCANE:
-			msg_print("You can't see to read your spell book!");
-			return;
-		case M_DIVINE:
-			msg_print("You can't see to read your prayer!");
-			return;
-		case M_SONG:
-			msg_print("You are too scared to play music!");
-			return;
-		case M_NATURE:
-		case M_CHAKRA:
-			break;
-		}
-	}
-
-	if (no_light()) {
-		switch (magic_type) {
-		case M_ARCANE:
-		case M_DIVINE:
-			msg_print("You have no light to read by.");
-			return;
-		case M_NATURE:
-		case M_SONG:
-		case M_CHAKRA:
-			break;
-		}
+	if (!blind_check(magic_type))
 		return;
-	}
+	if (!light_check(magic_type))
+		return;
+	if (!hoarse_check(magic_type))
+		return;
+	if (!scared_check(magic_type))
+		return;
+	if (!hallucinate_check(magic_type))
+		return;
 
-	if (player_flags.hoarse > 0) {
-		switch (magic_type) {
-		case M_ARCANE:
-		case M_DIVINE:
-		case M_CHAKRA:
-			break;
-		case M_NATURE:
-		case M_SONG:
-			msg_print("You are too hoarse to sing!");
-			return;
-		}
-	}
-
-	if (player_flags.afraid > 0) {
-		switch (magic_type) {
-		case M_ARCANE:
-		case M_DIVINE:
-		case M_CHAKRA:
-			break;
-		case M_NATURE:
-		case M_SONG:
-			msg_print("You are too scared to play music!");
-			return;
-		}
-	}
-
-	if (player_flags.image > 0) {
-		switch (magic_type) {
-		case M_ARCANE:
-		case M_DIVINE:
-		case M_NATURE:
-		case M_SONG:
-			break;
-		case M_CHAKRA:
-			msg_print("Colors and images run through your head, "
-				  "distracting you.");
-			return;
-		}
-	}
-
-	if (!class_uses_magic(player_pclass, magic_type)) {
-		switch (magic_type) {
-		case M_ARCANE:
-			msg_print("You can't cast spells!");
-			return;
-		case M_DIVINE:
-			msg_print("You pray briefly");
-			return;
-		case M_NATURE:
-		case M_SONG:
-			nonmagic_song();
-			return;
-		case M_CHAKRA:
-			msg_print("You don't know any disciplines!");
-			return;
-		}
-	}
 
 	/* Check book users for books */
 	if (magic_books[0] != 0) {
@@ -240,7 +318,7 @@ static void _cast(enum magic_t magic_type)
 		boolean knows_magic = false;
 		int i;
 		for (i = 0; i < 40; ++i) {
-			if (class_spell(player_pclass, i)->learned) {
+			if (C_player_knows_spell(i)) {
 				knows_magic = true;
 				break;
 			}
@@ -270,7 +348,7 @@ static void _cast(enum magic_t magic_type)
 		return;
 	}
 
-	if (class_spell(player_pclass, choice)->smana > player_cmana &&
+	if (C_magic_spell_mana(choice) > player_cmana &&
 	    !get_yes_no("You are low on mana, are you sure?"))
 		return;
 
@@ -319,40 +397,7 @@ static void _cast(enum magic_t magic_type)
 		return;
 	}
 
-	if (class_spell(player_pclass, choice)->smana > player_cmana) {
-		if (magic_type == M_ARCANE || magic_type == M_DIVINE) {
-			msg_print("You faint from fatigue!");
-			player_flags.paralysis = randint(
-			    5 * trunc(class_spell(player_pclass, choice)->smana -
-				      player_cmana));
-			player_cmana = 0;
-			if (randint(3) == 1)
-				lower_stat(CON,
-					   "You have damaged your health!");
-
-		} else if (magic_type == M_NATURE || magic_type == M_SONG) {
-			msg_print("You lose your voice attempting the song!");
-			player_flags.hoarse =
-			    randint(5 * (class_spell(player_pclass, choice)->smana -
-					 player_cmana));
-			player_cmana = 0;
-			if (randint(3) == 1)
-				lower_stat(CHR, "You have damaged your voice!");
-
-		} else if (magic_type == M_CHAKRA) {
-			msg_print("You faint from fatigue!");
-			player_flags.paralysis = randint(
-			    5 * trunc(class_spell(player_pclass, choice)->smana -
-				      player_cmana));
-			player_cmana = 0;
-			if (randint(3) == 1)
-				lower_stat(CON,
-					   "You have damaged your health!");
-		}
-	} else {
-		player_cmana -= class_spell(player_pclass, choice)->smana;
-	}
-	prt_mana();
+	drain_mana(magic_type, choice);
 }
 
 void cast(enum magic_t magic_type)

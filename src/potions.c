@@ -163,19 +163,19 @@ void q__potion_effect(long effect, boolean *idented)
 	case 48:		  /*{ Learning }*/
 		/* with player_do; */
 		/* with class[pclass] do; */
-		if (class_uses_magic(player_pclass, M_ARCANE)) {
+		if (C_player_uses_magic(M_ARCANE)) {
 			ident = learn_spell(&redraw);
 			if (redraw) {
 				draw_cave();
 			}
-		} else if (class_uses_magic(player_pclass, M_SONG)) {
+		} else if (C_player_uses_magic(M_SONG)) {
 			ident = learn_song(&redraw);
 			if (redraw) {
 				draw_cave();
 			}
-		} else if (class_uses_magic(player_pclass, M_DIVINE)) {
+		} else if (C_player_uses_magic(M_DIVINE)) {
 			ident = learn_prayer();
-		} else if (class_uses_magic(player_pclass, M_NATURE)) {
+		} else if (C_player_uses_magic(M_NATURE)) {
 			ident = learn_druid();
 		}
 		break;

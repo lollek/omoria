@@ -2,12 +2,26 @@
 #define ROUTINES_H
 /**/
 
-/* From rust */
-extern boolean C_master_update_character(int64_t uid);
-extern boolean C_master_character_exists(int64_t uid);
-extern int64_t C_master_add_character();
-extern boolean C_save_character();
-extern boolean C_load_character();
+/* START - FROM RUST */
+boolean C_master_update_character(int64_t uid);
+boolean C_master_character_exists(int64_t uid);
+int64_t C_master_add_character();
+
+boolean C_save_character();
+boolean C_load_character();
+
+boolean C_player_knows_spell(int32_t slot);
+void C_player_set_knows_spell(int32_t slot, boolean yn);
+boolean C_player_uses_magic(enum magic_t magic_type);
+
+signed char C_class_melee_bonus(enum class_t class);
+signed char C_class_ranged_bonus(enum class_t class);
+
+uint8_t C_magic_spell_level(int32_t slot);
+uint8_t C_magic_spell_mana(int32_t slot);
+uint8_t C_magic_spell_failchance(int32_t slot);
+
+/* END - FROM RUST */
 
 /* { CASINO.PAS		} */
 extern void enter_casino();

@@ -909,8 +909,8 @@ boolean learn_spell(boolean *redraw)
 			if (i3 > 31) {
 				i3--;
 			}
-			if (class_spell(player_pclass, i3)->slevel <= player_lev) {
-				if (!(class_spell(player_pclass, i3)->learned)) {
+			if (C_magic_spell_level(i3) <= player_lev) {
+				if (!C_player_knows_spell(i3)) {
 					spell[i1++].splnum = i3;
 				}
 			}
@@ -922,7 +922,7 @@ boolean learn_spell(boolean *redraw)
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
-				class_spell(player_pclass, sn)->learned = true;
+				C_player_set_knows_spell(sn, true);
 				return_value = true;
 				if (player_mana == 0) {
 					player_mana = 1;
@@ -958,12 +958,12 @@ boolean learn_prayer()
 		unsigned long i;
 
 		for (i = 0; i < MAX_SPELLS; ++i) {
-			if (class_spell(player_pclass, i)->slevel > player_lev)
+			if (C_magic_spell_level(i) > player_lev)
 				continue;
-			if (class_spell(player_pclass, i)->learned)
+			if (C_player_knows_spell(i))
 				continue;
 
-			class_spell(player_pclass, i)->learned = true;
+			C_player_set_knows_spell(i, true);
 			spells_learned++;
 			return_value = true;
 
@@ -1010,8 +1010,8 @@ boolean learn_discipline()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (class_spell(player_pclass, i2)->slevel <= player_lev) {
-			if (!class_spell(player_pclass, i2)->learned) {
+		if (C_magic_spell_level(i2) <= player_lev) {
+			if (!C_player_knows_spell(i2)) {
 				i1++;
 				test_array[i1] = i2;
 			}
@@ -1023,7 +1023,7 @@ boolean learn_discipline()
 
 	while ((i1 > 0) && (i2 > 0)) {
 		i3 = randint(i1);
-		class_spell(player_pclass, test_array[i3])->learned = true;
+		C_player_set_knows_spell(test_array[i3], true);
 		new_spell++;
 
 		for (i4 = i3; i4 < i1; i4++) {
@@ -1098,8 +1098,8 @@ boolean learn_song(boolean *redraw)
 			if (i3 > 31) {
 				i3--;
 			}
-			if (class_spell(player_pclass, i3)->slevel <= player_lev) {
-				if (!(class_spell(player_pclass, i3)->learned)) {
+			if (C_magic_spell_level(i3) <= player_lev) {
+				if (!(C_player_knows_spell(i3))) {
 					spell[i1++].splnum = i3;
 				}
 			}
@@ -1109,7 +1109,7 @@ boolean learn_song(boolean *redraw)
 			print_new_spells(spell, i1, redraw);
 			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
 				      redraw)) {
-				class_spell(player_pclass, sn)->learned = true;
+				C_player_set_knows_spell(sn, true);
 				return_value = true;
 				if (player_mana == 0) {
 					player_mana = 1;
@@ -1160,8 +1160,8 @@ boolean learn_druid()
 		if (i2 > 31) {
 			i2--;
 		}
-		if (class_spell(player_pclass, i2)->slevel <= player_lev) {
-			if (!class_spell(player_pclass, i2)->learned) {
+		if (C_magic_spell_level(i2) <= player_lev) {
+			if (!C_player_knows_spell(i2)) {
 				test_array[i1++] = i2;
 			}
 		}
@@ -1172,7 +1172,7 @@ boolean learn_druid()
 
 	while ((i1 > 0) && (i2 > 0)) {
 		i3 = randint(i1);
-		class_spell(player_pclass, test_array[i3])->learned = true;
+		C_player_set_knows_spell(test_array[i3], true);
 		new_spell++;
 
 		for (i4 = i3; i4 < i1; i4++) {
@@ -1219,7 +1219,7 @@ void gain_mana(long amount)
 	ENTER(("gain_mana", ""));
 
 	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		if (class_spell(player_pclass, i1)->learned) {
+		if (C_player_knows_spell(i1)) {
 			knows_spell = true;
 			break;
 		}
@@ -1286,39 +1286,28 @@ void gain_mana(long amount)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
+void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 void print_new_spells(spl_type spell, long num, boolean *redraw)
 {
-
 	/* Print list of spells     -RAK- */
 
-	long i1;
-	char out_val[82];
+	uint8_t i;
+
+	ENTER(("print_new_spells", "%ld, %d", num, *redraw));
 
 	*redraw = true;
 	clear_from(1);
+	if (num >= 23)
+		num = 22;
+
 	prt("   Name                          Level  Mana  %Failure", 2, 1);
-	for (i1 = 0; i1 < num; i1++) {
-		/*with magic_spell[player_pclass,spell[i1].splnum] do*/
-		if (i1 < 23) {
-			if (spell[i1].splnum == -1) {
-				out_val[0] =
-				    0; /* leave gaps for unknown spells */
-			} else {
-				spell_chance(&(spell[i1]));
-				sprintf(out_val,
-					"%c) %-30s %3d    %3d      %2ld",
-					97 + (int)i1,
-					class_spell(player_pclass, spell[i1].splnum)
-					    ->sname,
-					class_spell(player_pclass, spell[i1].splnum)
-					    ->slevel,
-					class_spell(player_pclass, spell[i1].splnum)
-					    ->smana,
-					spell[i1].splchn);
-			}
-			prt(out_val, 3 + i1, 1);
-		}
+	for (i = 0; i < num; i++) {
+		if (spell[i].splnum != -1)
+			spell_chance(&spell[i]);
+		C_print_new_spell_line(i, spell[i].splnum, spell[i].splchn);
 	}
+
+	LEAVE("print_new_spells", "");
 }
 
 /*//////////////////////////////////////////////////////////////////// */
@@ -1426,23 +1415,22 @@ void spell_chance(spl_rec *spell)
 	/*	  with spell do                                 */
 
 	spell->splchn =
-	    class_spell(player_pclass, spell->splnum)->sfail -
-	    3 * (player_lev - class_spell(player_pclass, spell->splnum)->slevel);
+	    C_magic_spell_failchance(spell->splnum) -
+	    3 * (player_lev - C_magic_spell_level(spell->splnum));
 
-	if (class_uses_magic(player_pclass, M_ARCANE)) {
+	if (C_player_uses_magic(M_ARCANE)) {
 		spell->splchn -= 3 * (spell_adj(INT) - 1);
-	} else if (class_uses_magic(player_pclass, M_SONG)) {
+	} else if (C_player_uses_magic(M_SONG)) {
 		spell->splchn -= 3 * (bard_adj() - 1);
-	} else if (class_uses_magic(player_pclass, M_NATURE)) {
+	} else if (C_player_uses_magic(M_NATURE)) {
 		spell->splchn -= 3 * (druid_adj() - 1);
 	} else {
 		spell->splchn -= 3 * (spell_adj(WIS) - 1);
 	}
 
-	if (class_spell(player_pclass, spell->splnum)->smana > player_cmana) {
+	if (C_magic_spell_mana(spell->splnum) > player_cmana) {
 		spell->splchn +=
-		    5 * (int)(class_spell(player_pclass, spell->splnum)->smana -
-			      player_cmana);
+		    5 * (int)(C_magic_spell_mana(spell->splnum) - player_cmana);
 	}
 
 	if (spell->splchn > 95) {
@@ -1808,7 +1796,7 @@ void gain_level()
 	prt_hp();
 	prt_level();
 	prt_title();
-	if (class_uses_magic(player_pclass, M_ARCANE)) {
+	if (C_player_uses_magic(M_ARCANE)) {
 		redraw = false;
 		learn_spell(&redraw);
 		if (redraw) {
@@ -1816,11 +1804,11 @@ void gain_level()
 		}
 		gain_mana(spell_adj(INT));
 		prt_mana();
-	} else if (class_uses_magic(player_pclass, M_NATURE)) {
+	} else if (C_player_uses_magic(M_NATURE)) {
 		learn_druid();
 		gain_mana(druid_adj());
 		prt_mana();
-	} else if (class_uses_magic(player_pclass, M_SONG)) {
+	} else if (C_player_uses_magic(M_SONG)) {
 		redraw = false;
 		learn_song(&redraw);
 		if (redraw) {
@@ -1828,11 +1816,11 @@ void gain_level()
 		}
 		gain_mana(bard_adj());
 		prt_mana();
-	} else if (class_uses_magic(player_pclass, M_DIVINE)) {
+	} else if (C_player_uses_magic(M_DIVINE)) {
 		learn_prayer();
 		gain_mana(spell_adj(WIS));
 		prt_mana();
-	} else if (class_uses_magic(player_pclass, M_CHAKRA)) {
+	} else if (C_player_uses_magic(M_CHAKRA)) {
 		learn_discipline();
 		gain_mana(monk_adj());
 		prt_mana();
@@ -3358,7 +3346,7 @@ long attack_blows(long weight, long *wtohit)
 		}
 
 		lev_skill =
-		    class_melee_bonus(player_pclass) * (player_lev + 10);
+		    C_class_melee_bonus(player_pclass) * (player_lev + 10);
 
 		/*{warriors 100-500, paladin 80-400, priest 60-300, mage
 		 * 40-200}*/
@@ -3407,9 +3395,9 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 
 	/* with player_do; */
 	if (is_fired) {
-		py_crit = class_ranged_bonus(pclass);
+		py_crit = C_class_ranged_bonus(pclass);
 	} else {
-		py_crit = class_melee_bonus(pclass);
+		py_crit = C_class_melee_bonus(pclass);
 
 		if (pclass == C_MONK) { /*{ monks are crit specialists }*/
 			py_crit *= 2;

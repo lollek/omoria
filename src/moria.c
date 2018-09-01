@@ -108,16 +108,16 @@ int main(int argc, char *argv[])
 
 		char_inven_init();
 
-		if (class_uses_magic(player_pclass, M_ARCANE)) {
+		if (C_player_uses_magic(M_ARCANE)) {
 			learn_spell(&msg_flag);
 			gain_mana(spell_adj(INT));
-		} else if (class_uses_magic(player_pclass, M_DIVINE)) {
+		} else if (C_player_uses_magic(M_DIVINE)) {
 			learn_prayer();
 			gain_mana(spell_adj(WIS));
-		} else if (class_uses_magic(player_pclass, M_NATURE)) {
+		} else if (C_player_uses_magic(M_NATURE)) {
 			learn_druid();
 			gain_mana(druid_adj());
-		} else if (class_uses_magic(player_pclass, M_SONG)) {
+		} else if (C_player_uses_magic(M_SONG)) {
 			learn_song(&msg_flag);
 			gain_mana(bard_adj());
 		}
@@ -133,11 +133,11 @@ int main(int argc, char *argv[])
 		strcpy(bare_hands, "2d2");
 	}
 
-	if (class_uses_magic(player_pclass, M_ARCANE) ||
-	    class_uses_magic(player_pclass, M_DIVINE) ||
-	    class_uses_magic(player_pclass, M_NATURE) ||
-	    class_uses_magic(player_pclass, M_SONG) ||
-	    class_uses_magic(player_pclass, M_CHAKRA)) {
+	if (C_player_uses_magic(M_ARCANE) ||
+	    C_player_uses_magic(M_DIVINE) ||
+	    C_player_uses_magic(M_NATURE) ||
+	    C_player_uses_magic(M_SONG) ||
+	    C_player_uses_magic(M_CHAKRA)) {
 		is_magii = true;
 	} else {
 		is_magii = false;

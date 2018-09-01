@@ -1,6 +1,9 @@
 #![crate_type = "staticlib"]
 
 #[macro_use]
+extern crate lazy_static;
+
+#[macro_use]
 extern crate serde_derive;
 
 extern crate libc;
@@ -13,6 +16,7 @@ pub mod create;
 pub mod debug;
 pub mod io;
 pub mod master;
+pub mod magic;
 pub mod misc;
 pub mod ncurses;
 pub mod player;
