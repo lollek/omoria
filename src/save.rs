@@ -1,4 +1,5 @@
 use std::fs::{File, OpenOptions};
+use std::fs;
 use std::io;
 use std::io::{Read, Write, Seek};
 
@@ -20,19 +21,25 @@ struct SaveRecord {
     /* sc__write_identified */
     /* sc__write_monsters */
     /* sc__write_town */
-    /* sc__write_version */
 
     /*
-		sc__write_version(f1, &cf_state, out_rec);
-		sc__write_player_record(f1, &cf_state, out_rec);
+     *
 		sc__write_inventory(f1, &cf_state, out_rec);
 		sc__write_equipment(f1, &cf_state, out_rec);
-		sc__write_stats_and_flags(f1, &cf_state, out_rec);
 		sc__write_dungeon(f1, &cf_state, out_rec);
 		sc__write_identified(f1, &cf_state, out_rec);
 		sc__write_monsters(f1, &cf_state, out_rec);
 		sc__write_town(f1, &cf_state, out_rec);
     */
+    /*
+     * inven_ctr (player_record -> inventory)
+     * missile_ctr (player_record -> inventory/equipment)
+     * equip_ctr (player_record -> equipment)
+     * dun_level (player_record -> dungeon)
+     * mon_tot_mult (player_record -> ???)
+     * turn (player_record -> ???)
+     * randes_seed (player_record -> ???)
+     */
 }
 
 fn savefile_name() -> String {
@@ -172,6 +179,21 @@ pub fn save_character() -> Option<()> {
 
     debug::leave("save_character");
     Some(())
+}
+
+pub fn delete_character() -> Option<()> {
+    match fs::remove_file(savefile_name()) {
+        Ok(_) => Some(()),
+        Err(e) => {
+            debug::error(&format!("Failed to delete save (err: {})", e));
+            None
+        },
+    }
+}
+
+#[no_mangle]
+pub extern fn C_delete_character() {
+    delete_character();
 }
 
 #[no_mangle]

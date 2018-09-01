@@ -137,59 +137,6 @@ static boolean intro_parse_switches(int argc, char *argv[])
 			}
 			break;
 
-		/* restore an invalid character (fix master file entry) */
-		case 'R':
-			if (!wizard1) {
-				check_pswd("", false);
-			}
-			if (wizard1) {
-				if (argv[0][2] == 0) {
-					restore_char("", false, false);
-				} else {
-					restore_char(&(argv[0][2]), true,
-						     false);
-				}
-			}
-			break;
-
-		/* bring a character back from the dead (and fix master file) */
-		case 'U':
-			if (!wizard1) {
-				check_pswd("", false);
-			}
-			if (wizard1) {
-				if (argv[0][2] == 0) {
-					restore_char("", false, true);
-				} else {
-					restore_char(&(argv[0][2]), true, true);
-				}
-			}
-			break;
-
-		/* encrypt a save file */
-		case 'E':
-			if (!wizard1) {
-				check_pswd("", false);
-			}
-			if (wizard1) {
-				encrypt_file(&(argv[0][2]));
-				printf("\n\r\n\r");
-				exit_game();
-			}
-			break;
-
-		/* decrypt a save file */
-		case 'D':
-			if (!wizard1) {
-				check_pswd("", false);
-			}
-			if (wizard1) {
-				decrypt_file(&(argv[0][2]));
-				printf("\n\r\n\r");
-				exit_game();
-			}
-			break;
-
 		default:
 			printf("Unknown switch \"%s\"\n\r", argv[0]);
 			print_usage = true;
@@ -1824,7 +1771,6 @@ boolean read_top_scores(FILE **f1, char *fnam, char list[][134], int max_high,
 	*n1 = 0;
 
 	*f1 = priv_fopen(fnam, "r+");
-	encrypt_init(&hs_state, highScoreKey, scoresAreEncrypted);
 
 	if (*f1 == NULL) {
 		sprintf(openerr, "Error opening> %s", fnam);
@@ -1871,7 +1817,6 @@ boolean write_top_scores(FILE **f1, char list[][134], int max_high)
 
 	rewind(*f1);
 	ftruncate((int)fileno(*f1), 0);
-	encrypt_init(&hs_state, highScoreKey, scoresAreEncrypted);
 
 	for (i1 = 1; i1 <= max_high; i1++) {
 		strcpy(temp, list[i1]);
@@ -1978,98 +1923,4 @@ boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82], FILE **
 	}
 	put_qio();
 	return flag;
-}
-
-void decrypt_file(char fnam[82])
-{
-	encrypt_state cf_state;
-	FILE *f1, *f2;
-	char fnam1[82], fnam2[82];
-	char save_line[1026];
-	unsigned long save_seed;
-	boolean flag;
-
-	if (strlen(fnam) > 80) {
-		fnam[80] = 0;
-	}
-	strcpy(fnam1, fnam);
-
-	flag = open_crypt_file("Name of file to be decrypted: ", fnam1, fnam2,
-			       &f1, &f2);
-
-	if (flag) {
-
-		encrypt_init(&cf_state, saveFileKey, true);
-
-		flag = false;
-		read_decrypt(f1, &cf_state, save_line, &flag);
-		if (!flag) {
-			sscanf(save_line, "%lu", &save_seed);
-			fprintf(f2, "%s\n", save_line);
-			/* set_seed(save_seed); -- Removed */
-
-			for (flag = false; !flag;) {
-				read_decrypt(f1, &cf_state, save_line, &flag);
-				if (!flag) {
-					fprintf(f2, "%s\n", save_line);
-				}
-			}
-		} else {
-			printf("\nDecrypt failed on first line.\n"
-			       "Is the file actually encrypted?\n");
-			printf("\nBtw, saveFilesAreEncrypted = %s\n",
-			       saveFilesAreEncrypted ? "true" : "false");
-		}
-
-		fclose(f1);
-		fclose(f2);
-	}
-}
-
-void encrypt_file(char fnam[82])
-{
-	encrypt_state cf_state;
-	FILE *f1, *f2;
-	char fnam1[82], fnam2[82];
-	char save_line[1026];
-	unsigned long save_seed;
-	boolean flag;
-
-	if (strlen(fnam) > 80) {
-		fnam[80] = 0;
-	}
-	strcpy(fnam1, fnam);
-
-	flag = open_crypt_file("Name of file to be encrypted: ", fnam1, fnam2,
-			       &f1, &f2);
-
-	if (flag) {
-
-		encrypt_init(&cf_state, saveFileKey, true);
-
-		if ((fgets(save_line, sizeof(char[1026]), f1)) != NULL) {
-			sscanf(save_line, "%lu", &save_seed);
-			save_line[strlen(save_line) - 1] =
-			    0; /* strip newline */
-			encrypt_write(f2, &cf_state, save_line);
-			/* set_seed(save_seed); -- removed */
-
-			for (flag = false; !flag;) {
-
-				if ((fgets(save_line, sizeof(char[1026]), f1)) ==
-				    NULL) {
-					flag = true;
-				} else {
-					save_line[strlen(save_line) - 1] =
-					    0; /* strip newline */
-					encrypt_write(f2, &cf_state, save_line);
-				}
-			}
-		}
-
-		encrypt_flush(f2, &cf_state);
-
-		fclose(f1);
-		fclose(f2);
-	}
 }

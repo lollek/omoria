@@ -167,6 +167,7 @@ pub struct PlayerRecord {
     pub disarm: libc::int16_t,
     pub save: libc::int16_t,
     pub hitdie: libc::uint8_t,
+    pub inven_weight: libc::c_long,
     pub perm_stats: StatBlock,
     pub curr_stats: StatBlock,
     pub mod_stats: StatBlock,
@@ -230,6 +231,7 @@ extern "C" {
     pub static mut player_rep: libc::int64_t ;		  /* { XP from good creatures } */
     pub static mut player_claim_check: libc::int64_t ;	 /* used to track trading post */
     pub static mut player_save_count: libc::int64_t ;	  /* compared to master file value */
+    pub static mut inven_weight: libc::c_long; /* Inventory carry weight */
     pub static mut player_creation_time: libc::time_t ;     /* used as key in master file */
     static mut player_uid: libc::int64_t;	/* Used in master file */
 
@@ -568,6 +570,7 @@ pub fn player_record() -> PlayerRecord {
         disarm: unsafe { player_disarm },
         save: unsafe { player_save },
         hitdie: unsafe { player_hitdie },
+        inven_weight: unsafe { inven_weight },
         perm_stats: perm_stats(),
         curr_stats: curr_stats(),
         mod_stats: mod_stats(),
@@ -654,6 +657,7 @@ pub fn set_player_record(record: PlayerRecord) {
         player_disarm = record.disarm;
         player_save = record.save;
         player_hitdie = record.hitdie;
+        inven_weight = record.inven_weight;
     }
 
     set_perm_stats(&record.perm_stats);
