@@ -51,9 +51,9 @@ treas_ptr add_inven_item(treasure_type item)
 	boolean flag = false;
 	boolean duplicate_spell_book = false;
 	treas_ptr curse, new_item;
-	treas_ptr return_value = nil;
+	treas_ptr return_value = NULL;
 
-	if (inventory_list == nil) {
+	if (inventory_list == NULL) {
 		inventory_list =
 		    (treas_ptr)safe_malloc(sizeof(treas_rec), "add_inven_item");
 
@@ -61,7 +61,7 @@ treas_ptr add_inven_item(treasure_type item)
 		inventory_list->ok = false;
 		inventory_list->insides = 0;
 		inventory_list->is_in = false;
-		inventory_list->next = nil;
+		inventory_list->next = NULL;
 		inven_weight += item.number * item.weight;
 		return_value = inventory_list;
 		inven_ctr++;
@@ -80,7 +80,7 @@ treas_ptr add_inven_item(treasure_type item)
 		new_item->ok = false;
 		new_item->insides = 0;
 		new_item->is_in = false;
-		new_item->next = nil;
+		new_item->next = NULL;
 
 		curse = inventory_list;
 		do {
@@ -142,16 +142,16 @@ treas_ptr add_inven_item(treasure_type item)
 			/* inside a bag of holding */
 			/* */
 			curse = curse->next;
-			if ((curse != nil) && (curse->is_in)) {
-				while ((curse != nil) && (curse->is_in)) {
+			if ((curse != NULL) && (curse->is_in)) {
+				while ((curse != NULL) && (curse->is_in)) {
 					curse = curse->next;
 				}
 			}
-		} while (!(flag || (curse == nil)));
+		} while (!(flag || (curse == NULL)));
 
 		if (!flag) {
 			curse = inventory_list;
-			while (curse->next != nil) {
+			while (curse->next != NULL) {
 				curse = curse->next;
 			}
 			curse->next = new_item;
@@ -159,7 +159,7 @@ treas_ptr add_inven_item(treasure_type item)
 			inven_ctr++;
 			inven_weight += wgt;
 		}
-	} /* endif inventory_list == nil */
+	} /* endif inventory_list == NULL */
 
 	/*  count = 0; */
 	/*  curse = inventory_list; */
@@ -221,7 +221,7 @@ long ic__display_inv(treas_ptr cur_display[], char prompt[82], treas_ptr start,
 	char out_val[82], out_val2[82], out_val3[82];
 	char *t;
 
-	for (count = 0; (start != NULL) && (count < DISPLAY_SIZE);) {
+	for (count = 0; start != NULL && count < DISPLAY_SIZE;) {
 		if (start->ok) {
 			count++;
 			if (cur_display[count] != start) {
@@ -341,20 +341,20 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 			case 57:
 				cur_inven = inventory_list;
 				count = 0;
-				if (!((cur_inven->next == nil) ||
+				if (!((cur_inven->next == NULL) ||
 				      (count >= (com_val - 49) * 20))) {
 					do {
 						count++;
 						cur_inven = cur_inven->next;
-						if (cur_inven->next == nil) {
+						if (cur_inven->next == NULL) {
 							exit_flag = true;
 						}
 					} while (
-					    !((cur_inven->next == nil) ||
+					    !((cur_inven->next == NULL) ||
 					      (count >= (com_val - 49) * 20)));
 				}
 
-				if ((cur_inven->next == nil) &&
+				if ((cur_inven->next == NULL) &&
 				    (count != (com_val - 49) * 20)) {
 					prt("Entire inventory displayed.", 1,
 					    1);
@@ -404,7 +404,7 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 							    0) {
 								while (
 								    (temp_ptr !=
-								     nil) &&
+								     NULL) &&
 								    (temp_ptr
 									 ->is_in)) {
 									wgt +=
@@ -1317,7 +1317,7 @@ void ic__show_money()
 
 void ic__destroy_bag(treas_ptr bag)
 {
-	while ((bag->next != nil) && (bag->next->is_in)) {
+	while ((bag->next != NULL) && (bag->next->is_in)) {
 		/* this seems odd, wasn't it already subtracted from   XXXX
 		   inven_weight when it went into the bag?  */
 		/* inven_weight -= (bag->next->data.number * */
@@ -1347,7 +1347,7 @@ void ic__put_inside()
 		temp_ptr = inventory_list;
 		count = 0;
 
-		while (temp_ptr != nil) {
+		while (temp_ptr != NULL) {
 			if ((temp_ptr->data.flags2 & Holding_bit) != 0) {
 				temp_ptr->ok = true;
 				count++;
@@ -1410,7 +1410,7 @@ void ic__put_inside()
 
 					wgt = 0;
 					temp_ptr = into_ptr->next;
-					while ((temp_ptr != nil) &&
+					while ((temp_ptr != NULL) &&
 					       (temp_ptr->is_in)) {
 						wgt += (temp_ptr->data.weight *
 							temp_ptr->data.number);
@@ -1455,7 +1455,7 @@ void ic__take_out()
 			reset_flag = false;
 			temp_ptr = inventory_list;
 
-			while ((temp_ptr != nil) && (temp_ptr != from_ptr)) {
+			while ((temp_ptr != NULL) && (temp_ptr != from_ptr)) {
 				if ((temp_ptr->data.flags2 & Holding_bit) !=
 				    0) {
 					curse = temp_ptr;
@@ -1512,7 +1512,7 @@ void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
 	out_pos = &(out[sizeof(out)]);
 	*(--out_pos) = 0;
 
-	while (ptr != nil) {
+	while (ptr != NULL) {
 		if (strchr(out_pos, (char)ptr->data.tchar) == NULL) {
 			*(--out_pos) = (char)ptr->data.tchar;
 		}
@@ -1532,7 +1532,7 @@ void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
 		change_all_ok_stats(false, false);
 		ptr = inventory_list;
 
-		while (ptr != nil) {
+		while (ptr != NULL) {
 			if ((char)ptr->data.tchar == command) {
 				ptr->ok = true;
 			}
@@ -1927,7 +1927,7 @@ void delete_inven_item(treas_ptr ptr)
 
 	} else {
 
-		if (cur_inven == nil) {
+		if (cur_inven == NULL) {
 			cur_inven = inventory_list;
 		}
 
@@ -1980,7 +1980,7 @@ long inven_damage(obj_set typ, long perc)
 	i2 = 0;
 	curse = inventory_list;
 
-	for (curse = inventory_list; curse != nil;) {
+	for (curse = inventory_list; curse != NULL;) {
 		next_curse =
 		    curse->next; /* get now since we may nuke the entry */
 
@@ -2248,7 +2248,7 @@ boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 				*com_ptr = inventory_list;
 				count = 0;
 
-				if (!(((*com_ptr)->next == nil) ||
+				if (!(((*com_ptr)->next == NULL) ||
 				      (count >= (com_val - 49) * 20 +
 						    (long)(*choice) - 97))) {
 
@@ -2259,12 +2259,12 @@ boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 							count++;
 						}
 						(*com_ptr) = (*com_ptr)->next;
-					} while (!(((*com_ptr)->next == nil) ||
+					} while (!(((*com_ptr)->next == NULL) ||
 						   (count ==
 						    (com_val - 49) * 20 +
 							(long)(choice) - 97)));
 
-					if (((*com_ptr)->next == nil) &&
+					if (((*com_ptr)->next == NULL) &&
 					    (count !=
 					     (com_val - 49) * 20 +
 						 (long)(choice) - 97)) {

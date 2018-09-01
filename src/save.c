@@ -25,40 +25,6 @@ static void data_exception()
 	exit_game();
 }
 
-static void sc__write_inventory(FILE *f1, encrypt_state *cf_state,
-				char out_rec[1026])
-{
-	/*{ Write out the inventory records.	}*/
-	treas_ptr curse;
-
-	curse = inventory_list;
-	while (curse != NULL) {
-		unsigned long const chtype_buf = curse->data.tchar;
-		sprintf(out_rec, "%lu %s", chtype_buf, curse->data.name);
-		encrypt_write(f1, cf_state, out_rec);
-
-		sprintf(out_rec, "%d %d", (int)curse->is_in,
-			(int)curse->insides);
-		encrypt_write(f1, cf_state, out_rec);
-
-		sprintf(out_rec, "%s", curse->data.damage);
-		encrypt_write(f1, cf_state, out_rec);
-
-		/* with curse->data do; */
-		sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
-			(int)curse->data.tval, (int)curse->data.subval,
-			(int)curse->data.weight, (int)curse->data.number,
-			(int)curse->data.tohit, (int)curse->data.todam,
-			(int)curse->data.ac, (int)curse->data.toac,
-			(int)curse->data.p1, curse->data.flags,
-			curse->data.flags2, (int)curse->data.level,
-			curse->data.cost);
-		encrypt_write(f1, cf_state, out_rec);
-		curse = curse->next;
-
-	} /* end while curse */
-}
-
 static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
 				char out_rec[1026])
 {
@@ -346,56 +312,6 @@ boolean save_char(boolean quick)
 	return flag;
 }
 
-static void gc__add_item(treas_ptr *cur_bag)
-{
-	treas_ptr ptr, curse;
-
-	/* {Extensive clarifications and bug fixes here by Dean}*/
-	ptr = (treas_ptr)safe_malloc(sizeof(treas_rec), "gc__add_item");
-
-	if (inventory_list == nil) {
-		inventory_list = ptr;
-	} else {
-		curse = inventory_list;
-		while (curse->next != nil) {
-			curse = curse->next;
-		}
-		curse->next = ptr;
-	}
-
-	ptr->data = inven_temp->data;
-	ptr->is_in = inven_temp->is_in;
-	ptr->insides = inven_temp->insides;
-	ptr->ok = false;
-	ptr->next = nil;
-
-	if (ptr->data.tval == bag_or_sack) {
-		*cur_bag = ptr;
-	}
-
-	if (ptr->is_in && (*cur_bag != nil)) {
-		((*cur_bag)->insides)++;
-	}
-
-	/*    printf("\n\tgot item: >>>%s<<<\n", ptr->data.name); */
-	/*    fflush(stdout); */
-}
-
-static void gc__open_save_file(FILE **f1, char const *fnam, boolean *paniced)
-{
-	char out_str[82];
-
-	*f1 = (FILE *)fopen(fnam, "r");
-	if (*f1 == NULL) {
-		sprintf(out_str, "Error Opening> %s", fnam);
-		prt(out_str, 1, 1);
-		prt("", 2, 1);
-		*paniced = true;
-	} else {
-		rewind(*f1);
-	}
-}
-
 static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			   boolean *paniced)
 {
@@ -420,91 +336,6 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 
 }
 
-static void gc__read_inventory(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
-			       boolean *paniced, boolean *was_dead)
-{
-	/* { Read in the inventory records.	}*/
-
-	long lost_inven_count;
-	boolean bag_lost;
-	treas_ptr ptr, cur_bag;
-	long i1;
-	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10;
-
-	inventory_list = nil;
-	lost_inven_count = 0;
-	bag_lost = false;
-	cur_bag = nil;
-
-	for (i1 = 0; i1 < inven_ctr; i1++) {
-		unsigned long chtype_buf;
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		sscanf(in_rec, "%lu %[^\n]", &chtype_buf,
-		       inven_temp->data.name);
-		inven_temp->data.tchar = chtype_buf;
-
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		if (sscanf(in_rec, "%d %d", &x2, &x1) != 2) {
-			*paniced = true;
-		}
-		inven_temp->is_in = x2;
-		inven_temp->insides = x1;
-
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		strncpy(inven_temp->data.damage, in_rec, sizeof(char[7]));
-
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		/* with inven_temp->data do; */
-		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %lu %lu %d %ld",
-			   &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8, &x9,
-			   &(inven_temp->data.flags),
-			   &(inven_temp->data.flags2), &x10,
-			   &(inven_temp->data.cost)) != 13) {
-			*paniced = true;
-		}
-
-		inven_temp->data.tval = x1;
-		inven_temp->data.subval = x2;
-		inven_temp->data.weight = x3;
-		inven_temp->data.number = x4;
-		inven_temp->data.tohit = x5;
-		inven_temp->data.todam = x6;
-		inven_temp->data.ac = x7;
-		inven_temp->data.toac = x8;
-		inven_temp->data.p1 = x9;
-		inven_temp->data.level = x10;
-
-		if ((*was_dead) &&
-		    ((inven_temp->data.flags2 & Insured_bit) == 0)) {
-			if (inven_temp->data.tval == bag_or_sack) {
-				bag_lost = true;
-			}
-			lost_inven_count++;
-			inven_weight -=
-			    (inven_temp->data.number * inven_temp->data.weight);
-		} else if (bag_lost && inven_temp->is_in) {
-			lost_inven_count++;
-		} else {
-			if (*was_dead) {
-				inven_temp->data.flags2 &= ~Insured_bit;
-				inven_temp->data.flags2 |= Blackmarket_bit;
-			}
-			gc__add_item(&cur_bag);
-			bag_lost = false;
-		}
-	} /* end for i1 */
-
-	for (inven_ctr = 0, ptr = inventory_list; ptr != nil;) {
-		ptr = ptr->next;
-		inven_ctr++;
-	}
-
-	if (lost_inven_count == 1) {
-		msg_print("You lost an item that wasn't insured.");
-	} else if (lost_inven_count > 1) {
-		msg_print("You lost several items that weren't insured.");
-	}
-}
 
 static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 			       boolean *paniced, boolean *was_dead)

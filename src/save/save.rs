@@ -8,23 +8,17 @@ use serde_json;
 
 use debug;
 use player;
+use save;
+
+use save::inventory::TreasureRecJson;
 
 
 #[derive(Serialize, Deserialize)]
 struct SaveRecord {
-    player_record: player::PlayerRecord,
-    /* Player record */
-
-    /* sc__write_inventory */
-    /* sc__write_equipment */
-    /* sc__write_dungeon */
-    /* sc__write_identified */
-    /* sc__write_monsters */
-    /* sc__write_town */
+    player: player::PlayerRecord,
+    inventory: Vec<TreasureRecJson>,
 
     /*
-     *
-		sc__write_inventory(f1, &cf_state, out_rec);
 		sc__write_equipment(f1, &cf_state, out_rec);
 		sc__write_dungeon(f1, &cf_state, out_rec);
 		sc__write_identified(f1, &cf_state, out_rec);
@@ -32,7 +26,6 @@ struct SaveRecord {
 		sc__write_town(f1, &cf_state, out_rec);
     */
     /*
-     * inven_ctr (player_record -> inventory)
      * missile_ctr (player_record -> inventory/equipment)
      * equip_ctr (player_record -> equipment)
      * dun_level (player_record -> dungeon)
@@ -96,7 +89,8 @@ pub fn load_character() -> Option<()> {
 
     let file = open_savefile(false)?;
     let records = read_save(&file)?;
-    player::set_player_record(records.player_record);
+    player::set_record(records.player);
+    save::inventory::set_record(records.inventory);
 
 
     /*
@@ -174,7 +168,8 @@ pub fn save_character() -> Option<()> {
 
     let file = open_savefile(true)?;
     write_save(&file, &SaveRecord{
-        player_record: player::player_record(),
+        player: player::record(),
+        inventory: save::inventory::record(),
     })?;
 
     debug::leave("save_character");

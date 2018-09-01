@@ -515,7 +515,7 @@ pub fn increase_save_counter() {
     unsafe { player_save_count += 1 };
 }
 
-pub fn player_record() -> PlayerRecord {
+pub fn record() -> PlayerRecord {
     PlayerRecord {
         uid: uid(),
         save_count: unsafe { player_save_count },
@@ -589,7 +589,7 @@ pub fn set_knows_spell(slot: usize, yn: bool) {
 }
 
 
-pub fn set_player_record(record: PlayerRecord) {
+pub fn set_record(record: PlayerRecord) {
     unsafe {
         player_save_count = record.save_count;
         player_deaths = record.deaths;
