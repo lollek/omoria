@@ -1,0 +1,106 @@
+use std::mem;
+
+use libc;
+
+use debug;
+
+use save::types::*;
+
+pub const MAX_HEIGHT: usize = 66;
+pub const MAX_WIDTH: usize = 198;
+pub const MAX_TALLOC: usize = 225;
+
+extern "C" {
+    #[link_name="tlink"] fn C_tlink();
+    #[link_name="popt"] fn C_popt(index: *mut libc::c_long);
+
+    static mut cur_height: libc::c_long;
+    static mut cur_width: libc::c_long;
+    static mut max_panel_rows: libc::c_long;
+    static mut max_panel_cols: libc::c_long;
+    static mut cave: [[Cave; MAX_WIDTH + 1]; MAX_HEIGHT + 1];
+    static mut t_list: [TreasureType; MAX_TALLOC + 1];
+}
+
+fn save_cave() -> Vec<Cave> {
+    let height = unsafe { cur_height } + 1;
+    let width = unsafe { cur_width } + 1;
+    let mut vec = Vec::new();
+    for y in 1..height {
+        for x in 1..width {
+            vec.push(unsafe { cave[y as usize][x as usize] }.to_owned());
+        }
+    }
+    vec
+}
+
+fn load_cave(data: Vec<Cave>) {
+    let height = unsafe { cur_height } + 1;
+    let width = unsafe { cur_width } + 1;
+
+    let mut i = 0;
+    for y in 1..height {
+        for x in 1..width {
+            mem::replace(unsafe { &mut cave[y as usize][x as usize] }, data[i]);
+            i += 1;
+        }
+    }
+
+    if data.len() != 0 {
+        debug::fatal(&format!("load_cave: leftover data: {}", data.len()))
+    }
+}
+
+fn save_treasure() -> Vec<TreasureAndCoordinate> {
+    let height = unsafe { cur_height } + 1;
+    let width = unsafe { cur_width } + 1;
+    let mut vec = Vec::new();
+    for y in 1..height {
+        for x in 1..width {
+            let tile = unsafe { cave[y as usize][x as usize] };
+            if tile.tptr > 0 {
+                vec.push(TreasureAndCoordinate {
+                    treasure: unsafe { t_list[tile.tptr as usize] }.to_owned(),
+                    y: y,
+                    x: x,
+                });
+            }
+        }
+    }
+    vec
+}
+
+fn load_treasure(data: Vec<TreasureAndCoordinate>) {
+    unsafe { C_tlink() };
+
+    for item in data.into_iter() {
+        let mut index: libc::c_long = 0;
+        unsafe {
+            C_popt(&mut index);
+            cave[item.y as usize][item.x as usize].tptr = index as u8;
+            mem::replace(&mut t_list[index as usize], item.treasure);
+        }
+    }
+}
+
+pub fn record() -> DungeonRecord {
+    DungeonRecord {
+        cur_height: unsafe { cur_height }.to_owned(),
+        cur_width: unsafe { cur_width }.to_owned(),
+        max_panel_rows: unsafe { max_panel_rows }.to_owned(),
+        max_panel_cols: unsafe { max_panel_cols }.to_owned(),
+        cave: save_cave(),
+        treasure: save_treasure(),
+    }
+}
+
+pub fn set_record(record: DungeonRecord) {
+    unsafe {
+        cur_height = record.cur_height;
+        cur_width = record.cur_width;
+        max_panel_rows = record.max_panel_rows;
+        max_panel_cols = record.max_panel_cols;
+    }
+    load_cave(record.cave);
+    load_treasure(record.treasure);
+}

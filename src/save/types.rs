@@ -40,26 +40,64 @@ pub struct TreasureRec {
     pub next: *mut TreasureRec,     // Linked list next
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct TreasureAndCoordinate {
+    pub treasure: TreasureType,
+    pub y: libc::c_long,
+    pub x: libc::c_long,
+}
+
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct InvenRecord {
-    scost: libc::int64_t,
-    sitem: TreasureType,
+    pub scost: libc::int64_t,
+    pub sitem: TreasureType,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Store {
-    store_open: GameTime,
-    owner: libc::uint8_t,
-    insult_cur: libc::int8_t,
-    store_ctr: libc::uint8_t,
-    store_inven: [InvenRecord; STORE_INVEN_MAX + 1],
+    pub store_open: GameTime,
+    pub owner: libc::uint8_t,
+    pub insult_cur: libc::int8_t,
+    pub store_ctr: libc::uint8_t,
+    pub store_inven: [InvenRecord; STORE_INVEN_MAX + 1],
 }
 
+#[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
+pub struct Cave {
+    #[serde(skip_serializing, default)]
+    pub cptr: libc::uint8_t,
+    #[serde(skip_serializing, default)]
+    pub tptr: libc::uint8_t,
+    pub fval: libc::uint8_t,
+    pub fopen: libc::uint8_t,
+    pub fm: libc::uint8_t,
+    pub pl: libc::uint8_t,
+    #[serde(skip_serializing, default)]
+    pub tl: libc::uint8_t,
+    #[serde(skip_serializing, default)]
+    pub moved: libc::uint8_t,
+    #[serde(skip_serializing, default)]
+    pub oct: libc::uint8_t,
+    #[serde(skip_serializing, default)]
+    pub h2o: libc::uint8_t,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct TownRecord {
     pub town_seed: libc::c_ulong,
     pub bank: [libc::int64_t; 7],
     pub stores: [Store; MAX_STORES + 1],
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct DungeonRecord {
+    pub cur_height: libc::c_long,
+    pub cur_width: libc::c_long,
+    pub max_panel_rows: libc::c_long,
+    pub max_panel_cols: libc::c_long,
+    pub cave: Vec<Cave>,
+    pub treasure: Vec<TreasureAndCoordinate>,
 }

@@ -19,12 +19,11 @@ struct SaveRecord {
     inventory: Vec<TreasureRec>,
     equipment: Vec<TreasureType>,
     town: TownRecord,
+    dungeon: DungeonRecord,
 
     /*
-		sc__write_dungeon(f1, &cf_state, out_rec);
 		sc__write_identified(f1, &cf_state, out_rec);
 		sc__write_monsters(f1, &cf_state, out_rec);
-		sc__write_town(f1, &cf_state, out_rec);
     */
     /*
      * missile_ctr (player_record -> inventory/equipment)
@@ -93,6 +92,7 @@ pub fn load_character() -> Option<()> {
     save::inventory::set_record(records.inventory);
     save::equipment::set_record(records.equipment);
     save::town::set_record(records.town);
+    save::dungeon::set_record(records.dungeon);
 
 
     /*
@@ -174,6 +174,7 @@ pub fn save_character() -> Option<()> {
         inventory: save::inventory::record(),
         equipment: save::equipment::record(),
         town: save::town::record(),
+        dungeon: save::dungeon::record(),
     })?;
 
     debug::leave("save_character");
