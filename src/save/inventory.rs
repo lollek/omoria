@@ -3,74 +3,11 @@ use libc;
 use std::ptr;
 use std::mem;
 
-use misc;
+use save::types::*;
 
 extern "C" {
     static mut inventory_list: *mut TreasureRec;
     static mut inven_ctr: libc::c_long;
-}
-
-#[derive(Serialize, Deserialize)]
-struct TreasureTypeJson {
-    name: String,               // Object name
-    tval: libc::uint8_t,        // Catagory number
-    tchar: libc::c_long,        // Character representation
-    flags2: libc::uint64_t,     // MORE Special flags
-    flags: libc::uint64_t,      // Special flags
-    p1: libc::int64_t,          // Misc. use variable
-    cost: libc::int64_t,        // Cost of item
-    subval: libc::int64_t,      // Sub-category number
-    weight: libc::uint16_t,     // Weight in gp's
-    number: libc::uint16_t,     // Number of intems
-    tohit: libc::int16_t,       // Pluses to hit
-    todam: libc::int16_t,       // Pluses to damage
-    ac: libc::int16_t,          // Normal AC
-    toac: libc::int16_t,        // Pluses to AC
-    damage: [libc::c_char; 7],  // Damage when it hits
-    level: libc::int8_t,        // Dungeon level item found
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct TreasureRecJson {
-    data: TreasureTypeJson,
-    ok: libc::uint8_t,
-    insides: libc::uint16_t,
-    is_in: libc::uint8_t,
-}
-
-#[repr(C)]
-struct TreasureType {
-    name: [libc::c_char; 70],   // Object name
-    tval: libc::uint8_t,        // Catagory number
-    tchar: libc::c_long,        // Character representation
-    flags2: libc::uint64_t,     // MORE Special flags
-    flags: libc::uint64_t,      // Special flags
-    p1: libc::int64_t,          // Misc. use variable
-    cost: libc::int64_t,        // Cost of item
-    subval: libc::int64_t,      // Sub-category number
-    weight: libc::uint16_t,     // Weight in gp's
-    number: libc::uint16_t,     // Number of intems
-    tohit: libc::int16_t,       // Pluses to hit
-    todam: libc::int16_t,       // Pluses to damage
-    ac: libc::int16_t,          // Normal AC
-    toac: libc::int16_t,        // Pluses to AC
-    damage: [libc::c_char; 7],  // Damage when it hits
-    level: libc::int8_t,        // Dungeon level item found
-}
-
-impl TreasureType {
-    pub fn name_as_string(&self) -> String {
-        misc::c_i8_array_to_rust_string(self.name.to_vec())
-    }
-}
-
-#[repr(C)]
-struct TreasureRec {
-    data: TreasureType,
-    ok: libc::uint8_t,
-    insides: libc::uint16_t,
-    is_in: libc::uint8_t,
-    next: *mut TreasureRec,
 }
 
 pub fn record() -> Vec<TreasureRecJson> {

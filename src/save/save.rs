@@ -10,7 +10,7 @@ use debug;
 use player;
 use save;
 
-use save::inventory::TreasureRecJson;
+use save::types::*;
 
 
 #[derive(Serialize, Deserialize)]
