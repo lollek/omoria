@@ -24,6 +24,31 @@ pub struct TreasureTypeJson {
     pub level: libc::int8_t,        // Dungeon level item found
 }
 
+impl From<TreasureType> for TreasureTypeJson {
+    fn from(data: TreasureType) -> Self {
+        let name = misc::c_i8_array_to_rust_string(data.name.to_vec());
+
+        TreasureTypeJson {
+            name: name,
+            tval: data.tval,
+            tchar: data.tchar,
+            flags2: data.flags2,
+            flags: data.flags,
+            p1: data.p1,
+            cost: data.cost,
+            subval: data.subval,
+            weight: data.weight,
+            number: data.number,
+            tohit: data.tohit,
+            todam: data.todam,
+            ac: data.ac,
+            toac: data.toac,
+            damage: data.damage,
+            level: data.level,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct TreasureRecJson {
     pub data: TreasureTypeJson,
@@ -34,27 +59,8 @@ pub struct TreasureRecJson {
 
 impl From<TreasureRec> for TreasureRecJson {
     fn from(other: TreasureRec) -> Self {
-        let name = misc::c_i8_array_to_rust_string(other.data.name.to_vec());
-
         TreasureRecJson {
-            data: TreasureTypeJson {
-                name: name,
-                tval: other.data.tval,
-                tchar: other.data.tchar,
-                flags2: other.data.flags2,
-                flags: other.data.flags,
-                p1: other.data.p1,
-                cost: other.data.cost,
-                subval: other.data.subval,
-                weight: other.data.weight,
-                number: other.data.number,
-                tohit: other.data.tohit,
-                todam: other.data.todam,
-                ac: other.data.ac,
-                toac: other.data.toac,
-                damage: other.data.damage,
-                level: other.data.level,
-            },
+            data: TreasureTypeJson::from(other.data),
             ok: other.ok,
             insides: other.insides,
             is_in: other.is_in,
@@ -83,6 +89,35 @@ pub struct TreasureType {
     pub level: libc::int8_t,        // Dungeon level item found
 }
 
+impl From<TreasureTypeJson> for TreasureType {
+    fn from(data: TreasureTypeJson) -> Self {
+        let mut name_array: [i8; 70] = [0; 70];
+        data.name.as_bytes()
+            .iter()
+            .enumerate()
+            .for_each(|(i, x)| name_array[i] = *x as i8);
+
+        TreasureType {
+            name: name_array,
+            tval: data.tval,
+            tchar: data.tchar,
+            flags2: data.flags2,
+            flags: data.flags,
+            p1: data.p1,
+            cost: data.cost,
+            subval: data.subval,
+            weight: data.weight,
+            number: data.number,
+            tohit: data.tohit,
+            todam: data.todam,
+            ac: data.ac,
+            toac: data.toac,
+            damage: data.damage,
+            level: data.level,
+        }
+    }
+}
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct TreasureRec {
@@ -95,31 +130,8 @@ pub struct TreasureRec {
 
 impl From<TreasureRecJson> for TreasureRec {
     fn from(src: TreasureRecJson) -> Self {
-        let mut name_array: [i8; 70] = [0; 70];
-        src.data.name.as_bytes()
-            .iter()
-            .enumerate()
-            .for_each(|(i, x)| name_array[i] = *x as i8);
-
         TreasureRec {
-            data: TreasureType {
-                name: name_array,
-                tval: src.data.tval,
-                tchar: src.data.tchar,
-                flags2: src.data.flags2,
-                flags: src.data.flags,
-                p1: src.data.p1,
-                cost: src.data.cost,
-                subval: src.data.subval,
-                weight: src.data.weight,
-                number: src.data.number,
-                tohit: src.data.tohit,
-                todam: src.data.todam,
-                ac: src.data.ac,
-                toac: src.data.toac,
-                damage: src.data.damage,
-                level: src.data.level,
-            },
+            data: TreasureType::from(src.data),
             ok: src.ok,
             insides: src.insides,
             is_in: src.is_in,

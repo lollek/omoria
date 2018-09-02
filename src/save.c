@@ -25,34 +25,6 @@ static void data_exception()
 	exit_game();
 }
 
-static void sc__write_equipment(FILE *f1, encrypt_state *cf_state,
-				char out_rec[1026])
-{
-	/*{ Write out the equipment records.	}*/
-
-	long i1;
-	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-		unsigned long const chtype_buf = equipment[i1].tchar;
-		sprintf(out_rec, "%lu %s", chtype_buf, equipment[i1].name);
-		encrypt_write(f1, cf_state, out_rec);
-
-		sprintf(out_rec, "%s", equipment[i1].damage);
-		encrypt_write(f1, cf_state, out_rec);
-
-		/* with equipment[i1] do; */
-		sprintf(out_rec, "%d %d %d %d %d %d %d %d %d %ld %ld %d %ld",
-			(int)equipment[i1].tval, (int)equipment[i1].subval,
-			(int)equipment[i1].weight, (int)equipment[i1].number,
-			(int)equipment[i1].tohit, (int)equipment[i1].todam,
-			(int)equipment[i1].ac, (int)equipment[i1].toac,
-			(int)equipment[i1].p1, equipment[i1].flags,
-			equipment[i1].flags2, (int)equipment[i1].level,
-			equipment[i1].cost);
-		encrypt_write(f1, cf_state, out_rec);
-
-	} /* end for i1 */
-}
-
 static void sc__write_dungeon(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/*{ Write the important dungeon info and floor	-RAK-	}*/
@@ -334,76 +306,6 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 	/*  coder(temp); */
 	/*  temp_id = temp; */
 
-}
-
-
-static void gc__read_equipment(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
-			       boolean *paniced, boolean *was_dead)
-{
-	/*{ Read in the equipment records.	}*/
-
-	long i1;
-	long lost_equip_count;
-	int x1, x2, x3, x4, x5, x6, x7, x8, x9, x10;
-
-	lost_equip_count = 0;
-
-	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-		unsigned long chtype_buf;
-
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		sscanf(in_rec, "%lu %[^\n]", &chtype_buf,
-		       inven_temp->data.name);
-		inven_temp->data.tchar = chtype_buf;
-
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		strncpy(inven_temp->data.damage, in_rec, sizeof(char[7]));
-
-		read_decrypt(f1, cf_state, in_rec, paniced);
-		if (sscanf(in_rec, "%d %d %d %d %d %d %d %d %d %lu %lu %d %ld",
-			   &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8, &x9,
-			   &(inven_temp->data.flags),
-			   &(inven_temp->data.flags2), &x10,
-			   &(inven_temp->data.cost)) != 13) {
-			*paniced = true;
-		}
-
-		inven_temp->data.tval = x1;
-		inven_temp->data.subval = x2;
-		inven_temp->data.weight = x3;
-		inven_temp->data.number = x4;
-		inven_temp->data.tohit = x5;
-		inven_temp->data.todam = x6;
-		inven_temp->data.ac = x7;
-		inven_temp->data.toac = x8;
-		inven_temp->data.p1 = x9;
-		inven_temp->data.level = x10;
-
-		if ((*was_dead) && (inven_temp->data.tval > 0) &&
-		    (uand(inven_temp->data.flags2, Insured_bit) == 0)) {
-			lost_equip_count++;
-			equipment[i1] = blank_treasure;
-			inven_weight -=
-			    inven_temp->data.number * inven_temp->data.weight;
-			if (i1 != EQUIP_MAX - 1) {
-				py_bonuses(&(inven_temp->data), -1);
-			}
-		} else {
-			if (*was_dead) {
-				inven_temp->data.flags2 =
-				    uand(inven_temp->data.flags2, 0xBFFFFFFF);
-			}
-			equipment[i1] = inven_temp->data;
-		}
-	} /* end for f1 */
-
-	equip_ctr -= lost_equip_count;
-	if (lost_equip_count == 1) {
-		msg_print("You lost a piece of equipment that wasn't insured.");
-	} else if (lost_equip_count > 1) {
-		msg_print("You lost several pieces of equipment that weren't "
-			  "insured.");
-	}
 }
 
 static void gc__read_dungeon(FILE *f1, encrypt_state *cf_state, char in_rec[1026],

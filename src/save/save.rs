@@ -17,9 +17,9 @@ use save::types::*;
 struct SaveRecord {
     player: player::PlayerRecord,
     inventory: Vec<TreasureRecJson>,
+    equipment: Vec<TreasureTypeJson>,
 
     /*
-		sc__write_equipment(f1, &cf_state, out_rec);
 		sc__write_dungeon(f1, &cf_state, out_rec);
 		sc__write_identified(f1, &cf_state, out_rec);
 		sc__write_monsters(f1, &cf_state, out_rec);
@@ -27,7 +27,6 @@ struct SaveRecord {
     */
     /*
      * missile_ctr (player_record -> inventory/equipment)
-     * equip_ctr (player_record -> equipment)
      * dun_level (player_record -> dungeon)
      * mon_tot_mult (player_record -> ???)
      * turn (player_record -> ???)
@@ -91,6 +90,7 @@ pub fn load_character() -> Option<()> {
     let records = read_save(&file)?;
     player::set_record(records.player);
     save::inventory::set_record(records.inventory);
+    save::equipment::set_record(records.equipment);
 
 
     /*
@@ -170,6 +170,7 @@ pub fn save_character() -> Option<()> {
     write_save(&file, &SaveRecord{
         player: player::record(),
         inventory: save::inventory::record(),
+        equipment: save::equipment::record(),
     })?;
 
     debug::leave("save_character");
