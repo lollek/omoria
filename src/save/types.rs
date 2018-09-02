@@ -6,6 +6,8 @@ use types::{ GameTime };
 pub const STORE_INVEN_MAX: usize = 24;
 pub const MAX_STORES: usize = 12;
 pub const MAX_OBJECTS: usize = 473;
+pub const MAX_HEIGHT: usize = 66;
+pub const MAX_WIDTH: usize = 198;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -85,6 +87,27 @@ pub struct Cave {
     pub h2o: libc::uint8_t,
 }
 
+#[repr(C)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
+pub struct Monster {
+    pub hp: libc::int16_t,      // Hit points
+    pub csleep: libc::int16_t,  // Inactive counter
+    pub cdis: libc::int16_t,    // Cur dis from player
+    pub mptr: libc::uint16_t,   // Pointer into creature
+    #[serde(skip_serializing, default)]
+    pub nptr: libc::uint16_t,   // Pointer to next block
+    pub cspeed: libc::int8_t,   // Movement speed
+
+    // Note: FY and FX constrain dungeon size to 255
+    pub fy: libc::uint8_t,      // Y Pointer into map
+    pub fx: libc::uint8_t,      // X Pointer into map
+
+    pub stunned: libc::int8_t,  // Rounds stunned
+    pub ml: libc::uint8_t,      // On if shown
+    pub confused: libc::uint8_t,// On if confused
+    pub moved: libc::uint8_t,   // On if water-moved
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct TownRecord {
     pub town_seed: libc::c_ulong,
@@ -107,3 +130,9 @@ pub struct IdentifiedRecord {
     #[serde(with = "BigArray")]
     pub list: [libc::uint8_t; MAX_OBJECTS + 1],
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct MonsterRecord {
+    pub monsters: Vec<Monster>,
+}
+

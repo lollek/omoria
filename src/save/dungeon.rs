@@ -6,8 +6,6 @@ use debug;
 
 use save::types::*;
 
-pub const MAX_HEIGHT: usize = 66;
-pub const MAX_WIDTH: usize = 198;
 pub const MAX_TALLOC: usize = 225;
 
 extern "C" {

@@ -21,10 +21,8 @@ struct SaveRecord {
     town: TownRecord,
     dungeon: DungeonRecord,
     identified: IdentifiedRecord,
+    monsters: MonsterRecord,
 
-    /*
-		sc__write_monsters(f1, &cf_state, out_rec);
-    */
     /*
      * missile_ctr (player_record -> inventory/equipment)
      * dun_level (player_record -> dungeon)
@@ -94,71 +92,7 @@ pub fn load_character() -> Option<()> {
     save::town::set_record(records.town);
     save::dungeon::set_record(records.dungeon);
     save::identified::set_record(records.identified);
-
-
-    /*
-	if (paniced) {
-		exit_game();
-	} else {
-		gc__read_seeds(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__display_status();
-		if (!paniced)
-			gc__read_version(f1, &cf_state, in_rec, &paniced,
-					 &save_version);
-		if (!paniced)
-			gc__read_player_record(f1, &cf_state, in_rec, &paniced,
-					       prop, &was_dead);
-		if (!paniced)
-			gc__read_inventory(f1, &cf_state, in_rec, &paniced,
-					   &was_dead);
-		if (!paniced)
-			gc__read_equipment(f1, &cf_state, in_rec, &paniced,
-					   &was_dead);
-
-		if (was_dead) {
-			/* nuke claim_check entry, they are lucky to be alive */
-			player_claim_check = 0;
-			msg_print(" ");
-		}
-
-		if (!paniced)
-			gc__read_stats_and_flags(f1, &cf_state, in_rec,
-						 &paniced);
-		if (!paniced)
-			gc__read_magic(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_dungeon(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_identified(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_monsters(f1, &cf_state, in_rec, &paniced);
-		if (!paniced)
-			gc__read_town(f1, &cf_state, in_rec, &paniced);
-
-		/* odds are we would have paniced by this time if an
-		   encrypted file has been tampered with, but just in case... */
-		if (!paniced) {
-			read_decrypt(f1, &cf_state, in_rec, &paniced);
-			sscanf(in_rec, "%ld", &check_time);
-			if (player_creation_time != check_time) {
-				paniced = true;
-			}
-		}
-
-		fclose(f1);
-
-	} /* endif !paniced */
-
-	if (!paniced)
-		seed = 0;
-	if (!paniced)
-		paniced = !sc__open_master(&f2);
-	if (!paniced) {
-		gc__read_master(f2, &paniced);
-		master_file_close(&f2);
-	}
-    */
+    save::monsters::set_record(records.monsters);
 
     debug::leave("load_character");
     Some(())
@@ -177,6 +111,7 @@ pub fn save_character() -> Option<()> {
         town: save::town::record(),
         dungeon: save::dungeon::record(),
         identified: save::identified::record(),
+        monsters: save::monsters::record(),
     })?;
 
     debug::leave("save_character");
