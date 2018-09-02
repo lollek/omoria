@@ -10,6 +10,7 @@ extern crate libc;
 extern crate serde;
 extern crate serde_json;
 
+pub mod thirdparty;
 pub mod bank;
 pub mod classes;
 pub mod create;

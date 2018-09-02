@@ -1,8 +1,14 @@
 use std::ptr;
 
 use libc;
+use thirdparty::serde::BigArray;
 
 use misc;
+
+//use types::{ Wallet, GameTime };
+
+const STORE_INVEN_MAX: usize = 24;
+const MAX_STORES: usize = 12;
 
 #[derive(Serialize, Deserialize)]
 pub struct TreasureTypeJson {
@@ -69,8 +75,9 @@ impl From<TreasureRec> for TreasureRecJson {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct TreasureType {
+    #[serde(with = "BigArray")]
     pub name: [libc::c_char; 70],   // Object name
     pub tval: libc::uint8_t,        // Catagory number
     pub tchar: libc::c_long,        // Character representation
@@ -139,3 +146,61 @@ impl From<TreasureRecJson> for TreasureRec {
         }
     }
 }
+
+/*
+
+#[derive(Serialize, Deserialize)]
+pub struct InvenRecordJson {
+    scost: libc::int64_t,
+    sitem: TreasureTypeJson,
+}
+
+impl From<InvenRecord> for InvenRecordJson {
+    fn from(other: InvenRecord) -> Self {
+        InvenRecordJson {
+            scost: other.scost,
+            sitem: TreasureTypeJson::from(other.sitem),
+        }
+    }
+}
+
+#[repr(C)]
+pub struct InvenRecord {
+    scost: libc::int64_t,
+    sitem: TreasureType,
+}
+
+impl From<InvenRecordJson> for InvenRecord {
+    fn from(other: InvenRecordJson) -> Self {
+        InvenRecord {
+            scost: other.scost,
+            sitem: TreasureType::from(other.sitem),
+        }
+    }
+}
+
+#[repr(C)]
+pub struct Store {
+    store_open: GameTime,
+    owner: libc::uint8_t,
+    insult_cur: libc::int8_t,
+    store_ctr: libc::uint8_t,
+    store_inven: [InvenRecord; STORE_INVEN_MAX + 1],
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct StoreJson {
+    store_open: GameTime,
+    owner: libc::uint8_t,
+    insult_cur: libc::int8_t,
+    store_ctr: libc::uint8_t,
+    store_inven: [InvenRecordJson; STORE_INVEN_MAX + 1],
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TownRecord {
+    pub town_seed: libc::c_ulong,
+    pub bank: Wallet,
+    pub stores: [Store; MAX_STORES + 1],
+}
+*/

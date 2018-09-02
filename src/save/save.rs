@@ -18,6 +18,7 @@ struct SaveRecord {
     player: player::PlayerRecord,
     inventory: Vec<TreasureRecJson>,
     equipment: Vec<TreasureTypeJson>,
+    //town: TownRecord,
 
     /*
 		sc__write_dungeon(f1, &cf_state, out_rec);
@@ -91,6 +92,7 @@ pub fn load_character() -> Option<()> {
     player::set_record(records.player);
     save::inventory::set_record(records.inventory);
     save::equipment::set_record(records.equipment);
+    //save::town::set_record(records.town);
 
 
     /*
@@ -171,6 +173,7 @@ pub fn save_character() -> Option<()> {
         player: player::record(),
         inventory: save::inventory::record(),
         equipment: save::equipment::record(),
+        //town: save::town::record(),
     })?;
 
     debug::leave("save_character");
