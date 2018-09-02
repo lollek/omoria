@@ -111,7 +111,10 @@ pub fn record() -> Vec<TreasureRecJson> {
 pub fn set_record(record: Vec<TreasureRecJson>) {
     fn set_treasure_rec(dest: &mut TreasureRec, src: &TreasureRecJson) {
         let mut name_array: [i8; 70] = [0; 70];
-        src.data.name.as_bytes().iter().enumerate().for_each(|(i, x)| name_array[i] = *x as i8);
+        src.data.name.as_bytes()
+            .iter()
+            .enumerate()
+            .for_each(|(i, x)| name_array[i] = *x as i8);
 
         dest.data = TreasureType {
             name: name_array,
@@ -141,8 +144,10 @@ pub fn set_record(record: Vec<TreasureRecJson>) {
     }
 
     if record.len() == 0 {
-        unsafe { inventory_list = ptr::null_mut() };
-        unsafe { inven_ctr = 0 };
+        unsafe {
+            inventory_list = ptr::null_mut();
+            inven_ctr = 0;
+        }
         return;
     }
     let size = record.len();
