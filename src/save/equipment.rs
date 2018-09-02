@@ -13,13 +13,13 @@ extern "C" {
     static mut equip_ctr: libc::c_long;
 }
 
-pub fn record() -> Vec<TreasureTypeJson> {
+pub fn record() -> Vec<TreasureType> {
     (0..EQUIP_MAX)
-        .map(|i| TreasureTypeJson::from(unsafe { equipment[i] }.to_owned()))
+        .map(|i| unsafe { equipment[i] }.to_owned())
         .collect()
 }
 
-pub fn set_record(record: Vec<TreasureTypeJson>) {
+pub fn set_record(record: Vec<TreasureType>) {
     if record.len() != EQUIP_MAX {
         debug::fatal(&format!("equipment.len and EQUIP_MAX differ!: {} vs {}",
                               record.len(), EQUIP_MAX));
@@ -30,6 +30,6 @@ pub fn set_record(record: Vec<TreasureTypeJson>) {
         if item.tval != 0 {
             unsafe { equip_ctr += 1 };
         }
-        mem::replace(unsafe { &mut equipment[i] }, TreasureType::from(item));
+        mem::replace(unsafe { &mut equipment[i] }, item);
     }
 }

@@ -16,8 +16,8 @@ use save::types::*;
 #[derive(Serialize, Deserialize)]
 struct SaveRecord {
     player: player::PlayerRecord,
-    inventory: Vec<TreasureRecJson>,
-    equipment: Vec<TreasureTypeJson>,
+    inventory: Vec<TreasureRec>,
+    equipment: Vec<TreasureType>,
     //town: TownRecord,
 
     /*

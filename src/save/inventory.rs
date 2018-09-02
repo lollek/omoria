@@ -10,19 +10,19 @@ extern "C" {
     static mut inven_ctr: libc::c_long;
 }
 
-pub fn record() -> Vec<TreasureRecJson> {
+pub fn record() -> Vec<TreasureRec> {
     let mut ptr = unsafe { inventory_list };
     let mut vec = Vec::new();
 
     while !ptr.is_null() {
         let elem = unsafe { &*ptr };
-        vec.push(TreasureRecJson::from(elem.to_owned()));
+        vec.push(elem.to_owned());
         ptr = elem.next;
     }
     vec
 }
 
-pub fn set_record(record: Vec<TreasureRecJson>) {
+pub fn set_record(record: Vec<TreasureRec>) {
     fn mallocfn() -> *mut TreasureRec {
         unsafe { libc::malloc(mem::size_of::<TreasureRec>()) as *mut TreasureRec }
     }
@@ -39,7 +39,7 @@ pub fn set_record(record: Vec<TreasureRecJson>) {
     let mut ptr = unsafe { inventory_list };
 
     for (i, item) in record.into_iter().enumerate() {
-        mem::replace(unsafe { &mut *ptr }, TreasureRec::from(item));
+        mem::replace(unsafe { &mut *ptr }, item);
         if i != size -1 {
             unsafe {
                 let next = mallocfn();
