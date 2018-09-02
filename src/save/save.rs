@@ -22,14 +22,6 @@ struct SaveRecord {
     dungeon: DungeonRecord,
     identified: IdentifiedRecord,
     monsters: MonsterRecord,
-
-    /*
-     * missile_ctr (player_record -> inventory/equipment)
-     * dun_level (player_record -> dungeon)
-     * mon_tot_mult (player_record -> ???)
-     * turn (player_record -> ???)
-     * randes_seed (player_record -> ???)
-     */
 }
 
 fn savefile_name() -> String {

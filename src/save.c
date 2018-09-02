@@ -9,22 +9,6 @@
 
 static char filename[82] = "";
 
-static void data_exception()
-{
-	/* -RAK-
-	 * Data Corruption means character is dead, or save file was screwed
-	 * with. Keep them guessing as to what is actually wrong
-	 */
-
-	clear_from(1);
-	prt("Data Corruption Error.", 1, 1);
-	prt(" ", 2, 1);
-
-	/* We'll put it in the debug log as well */
-	MSG(("Data Corruption Error"));
-	exit_game();
-}
-
 void C_delete_character(void);
 void save_file_remove(void)
 {
@@ -62,30 +46,6 @@ boolean save_char(boolean quick)
 
 	LEAVE("save_char", "");
 	return flag;
-}
-
-static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
-			   boolean *paniced)
-{
-	/* creation_time, save_count and deaths are in the master file, be sure
-	   to fix up char_restore if you move more onto this line */
-
-	unsigned long save_seed = 0;
-
-	read_decrypt(f1, cf_state, in_rec, paniced);
-	if (sscanf(in_rec, "%lu %ld %ld %ld", &save_seed,
-		   &player_creation_time, &player_save_count,
-		   &player_deaths) != 4) {
-		*paniced = true;
-	}
-
-	/*  strcpy(temp,in_rec+13); */
-	/*  player_ssn = temp; */
-
-	/*  set_seed(ENCRYPT_SEED1); */
-	/*  coder(temp); */
-	/*  temp_id = temp; */
-
 }
 
 boolean parse_filename() {
@@ -141,7 +101,15 @@ boolean get_char(boolean prop)
 	}
 	if (!paniced) paniced = !C_load_character();
 
-	if (paniced) data_exception();
+	if (paniced) {
+		clear_from(1);
+		prt("Data Corruption Error.", 1, 1);
+		prt(" ", 2, 1);
+
+		/* We'll put it in the debug log as well */
+		MSG(("Data Corruption Error"));
+		exit_game();
+	}
 
 	LEAVE("get_char", "");
 	return false;

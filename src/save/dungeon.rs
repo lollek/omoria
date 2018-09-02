@@ -18,6 +18,10 @@ extern "C" {
     static mut max_panel_cols: libc::c_long;
     static mut cave: [[Cave; MAX_WIDTH + 1]; MAX_HEIGHT + 1];
     static mut t_list: [TreasureType; MAX_TALLOC + 1];
+    static mut dun_level: libc::c_long;
+    static mut mon_tot_mult: libc::c_long;
+    static mut turn: libc::c_long;
+    static mut randes_seed: libc::c_long;
 }
 
 fn save_cave() -> Vec<Cave> {
@@ -89,6 +93,10 @@ pub fn record() -> DungeonRecord {
         max_panel_cols: unsafe { max_panel_cols }.to_owned(),
         cave: save_cave(),
         treasure: save_treasure(),
+        dun_level: unsafe { dun_level },
+        mon_tot_mult: unsafe { mon_tot_mult },
+        turn: unsafe { turn },
+        randes_seed: unsafe { randes_seed },
     }
 }
 
@@ -101,4 +109,10 @@ pub fn set_record(record: DungeonRecord) {
     }
     load_cave(record.cave);
     load_treasure(record.treasure);
+    unsafe {
+        dun_level = record.dun_level;
+        mon_tot_mult = record.mon_tot_mult;
+        turn = record.turn;
+        randes_seed = record.randes_seed;
+    }
 }
