@@ -164,6 +164,8 @@ pub struct PlayerRecord {
     pub lost_stats: StatBlock,
     pub flags: PlayerFlags,
     pub player: Player,
+    pub char_row: libc::c_long,
+    pub char_col: libc::c_long,
 }
 
 extern "C" {
@@ -229,6 +231,9 @@ extern "C" {
     static mut player_stats_curr: [libc::uint8_t; 6];
     pub static mut player_stats_mod: [libc::int8_t; 6];
     pub static mut player_stats_lost: [libc::uint8_t; 6];
+
+    pub static mut char_row: libc::c_long;
+    pub static mut char_col: libc::c_long;
 
     static mut bank: [libc::int64_t; 7];
 
@@ -567,6 +572,8 @@ pub fn record() -> PlayerRecord {
         lost_stats: lost_stats(),
         flags: unsafe { player_flags }.to_owned(),
         player: PLAYER.read().unwrap().clone(),
+        char_row: unsafe { char_row },
+        char_col: unsafe { char_col },
     }
 }
 
@@ -660,6 +667,11 @@ pub fn set_record(record: PlayerRecord) {
     }
 
     mem::replace(&mut *PLAYER.write().unwrap(), record.player);
+
+    unsafe {
+        char_row = record.char_row;
+        char_col = record.char_col;
+    }
 }
 
 
