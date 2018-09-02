@@ -20,9 +20,9 @@ struct SaveRecord {
     equipment: Vec<TreasureType>,
     town: TownRecord,
     dungeon: DungeonRecord,
+    identified: IdentifiedRecord,
 
     /*
-		sc__write_identified(f1, &cf_state, out_rec);
 		sc__write_monsters(f1, &cf_state, out_rec);
     */
     /*
@@ -93,6 +93,7 @@ pub fn load_character() -> Option<()> {
     save::equipment::set_record(records.equipment);
     save::town::set_record(records.town);
     save::dungeon::set_record(records.dungeon);
+    save::identified::set_record(records.identified);
 
 
     /*
@@ -175,6 +176,7 @@ pub fn save_character() -> Option<()> {
         equipment: save::equipment::record(),
         town: save::town::record(),
         dungeon: save::dungeon::record(),
+        identified: save::identified::record(),
     })?;
 
     debug::leave("save_character");

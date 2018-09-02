@@ -5,7 +5,7 @@ use types::{ GameTime };
 
 pub const STORE_INVEN_MAX: usize = 24;
 pub const MAX_STORES: usize = 12;
-
+pub const MAX_OBJECTS: usize = 473;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -100,4 +100,10 @@ pub struct DungeonRecord {
     pub max_panel_cols: libc::c_long,
     pub cave: Vec<Cave>,
     pub treasure: Vec<TreasureAndCoordinate>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct IdentifiedRecord {
+    #[serde(with = "BigArray")]
+    pub list: [libc::uint8_t; MAX_OBJECTS + 1],
 }

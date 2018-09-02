@@ -25,23 +25,6 @@ static void data_exception()
 	exit_game();
 }
 
-static void sc__write_identified(FILE *f1, encrypt_state *cf_state,
-				 char out_rec[1026])
-{
-	/*{ Save identified list			}*/
-	long i1;
-
-	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-		if (object_ident[i1]) {
-			out_rec[i1 - 1] = 'T';
-		} else {
-			out_rec[i1 - 1] = 'F';
-		}
-	}
-	out_rec[MAX_OBJECTS] = 0;
-	encrypt_write(f1, cf_state, out_rec);
-}
-
 static void sc__write_monsters(FILE *f1, encrypt_state *cf_state, char out_rec[1026])
 {
 	/*{ Save the Monster List 		}*/
@@ -126,23 +109,6 @@ static void gc__read_seeds(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
 	/*  coder(temp); */
 	/*  temp_id = temp; */
 
-}
-
-static void gc__read_identified(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
-				boolean *paniced)
-{
-	long i1;
-
-	read_decrypt(f1, cf_state, in_rec, paniced);
-	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-		if (in_rec[i1 - 1] == 'T') {
-			identify(&(object_list[i1]));
-		} else if (in_rec[i1 - 1] == 'F') {
-			object_ident[i1] = false;
-		} else {
-			*paniced = true;
-		}
-	}
 }
 
 static void gc__read_monsters(FILE *f1, encrypt_state *cf_state, char in_rec[1026],
