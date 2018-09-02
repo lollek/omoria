@@ -6,21 +6,11 @@ use std::sync::RwLock;
 
 use types::{
     Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat,
-    Magic
+    Magic, GameTime,
 };
 
 use misc;
 use debug;
-
-#[derive(Serialize, Deserialize, Clone, Copy)]
-#[repr(C)]
-pub struct GameTime {
-    pub year: libc::int64_t,
-    pub month: libc::uint8_t,
-    pub day: libc::uint8_t,
-    pub hour: libc::uint8_t,
-    pub secs: libc::uint16_t,
-}
 
 #[derive(Serialize, Deserialize, Clone, Copy)]
 #[repr(C)]

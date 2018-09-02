@@ -1,6 +1,6 @@
 use types::{Currency, currencies_iter};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Wallet {
     pub total: i64,
     pub iron: i64,
