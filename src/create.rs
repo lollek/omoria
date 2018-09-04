@@ -150,7 +150,6 @@ fn put_misc1() {
     term::prt_r(&format!("Height       : {}", unsafe { player::player_ht }), 4, 40);
     term::prt_r(&format!("Weight       : {}", unsafe { player::player_wt }), 5, 40);
     term::prt_r(&format!("Social Class : {}", unsafe { player::player_sc }), 6, 40);
-    term::prt_r(&format!("Difficulty   : {}", unsafe { player::player_diffic }), 7, 40);
 
     debug::leave("put_misc1");
 }

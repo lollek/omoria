@@ -147,7 +147,6 @@ int main(int argc, char *argv[])
 	replace_name();
 	set_gem_values();
 
-	set_difficulty(player_diffic); /* Set difficulty of game */
 	player_max_exp =
 	    (long)(exp_per_level[MAX_PLAYER_LEVEL - 1] * player_expfact);
 	clear_from(1);

@@ -424,4 +424,7 @@ help-page for insurance:
 Changed how scores are calculated. Now deepest level * 1000 + experience. But
 will tweak this more later.
 
+Removed manually setting difficulty to 1-5. No longer needed since I will only
+use one difficulty always.
+
 /* end progress */

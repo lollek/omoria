@@ -148,9 +148,6 @@ extern boolean read_top_scores(FILE **f1, char *fnam, char list[][134],
 			       int max_high, int *n1, char *openerr);
 extern boolean write_top_scores(FILE **f1, char list[][134], int max_high);
 extern boolean close_top_scores(FILE **f1);
-extern char *format_top_score(char out_str[82], char *username, long score,
-			      int diffic, char *charname, int level, char *race,
-			      char *class);
 extern FILE *priv_fopen(char *path, char *mode);
 extern void encrypt_file(char fnam[82]);
 extern void decrypt_file(char fnam[82]);
@@ -434,7 +431,6 @@ extern void init_m_level();
 extern void init_t_level();
 extern void price_adjust();
 extern void item_weight_adjust();
-extern void set_difficulty(long diff);
 extern long day_num();
 extern long hour_num();
 extern boolean check_kickout();

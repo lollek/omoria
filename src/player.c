@@ -14,7 +14,6 @@ money_type player_money = {0, 0, 0, 0, 0, 0, 0};
 game_time_type player_birth = {0, 0, 0, 0, 0};
 game_time_type player_cur_age = {0, 0, 0, 0, 0};
 time_type player_play_tm = {0, 0, 0, 0, 0, 0, 0};
-uint8_t player_diffic = 3;
 char player_name[82] = "";
 char player_race[82] = "";
 char player_sex[82] = "";

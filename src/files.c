@@ -22,7 +22,6 @@ void intro_qualifier_help()
 	printf("\n\r");
 	printf("Invalid Moria option!  Valid qualifiers are:\n\r");
 	printf("  -f file    Load saved character in file.\n\r");
-	printf("  -d num     Set difficulity from 1-5, default is 3.\n\r");
 	printf("  -w         Warn about hearing things in water.\n\r");
 	printf("  -s         List top 20 high scores.\n\r");
 	printf(
@@ -108,24 +107,6 @@ static boolean intro_parse_switches(int argc, char *argv[])
 		/* warn about things in the water */
 		case 'w':
 			want_warn = true;
-			break;
-
-		/* game difficulty */
-		case 'd':
-			if (--argc) {
-				sscanf((++argv)[0], "%d", &x1);
-				player_diffic = x1;
-				if (player_diffic > 5) {
-					player_diffic = 5;
-				}
-				if (player_diffic < 1) {
-					player_diffic = 1;
-				}
-			} else {
-				printf("Missing <num> for -d\n\r");
-				print_usage = true;
-			}
-
 			break;
 
 		/* kick into wizard mode */
@@ -521,9 +502,9 @@ void file_character()
 				       "Dexterity    : %6s\n",
 				player_tclass, player_sc, out_c[DEX]);
 
-			fprintf(file1, "  Title : %24s  Difficulty  :%4d     "
+			fprintf(file1, "  Title : %24s                       "
 				       "Constitution : %6s\n",
-				player_title, player_diffic, out_c[CON]);
+				player_title, out_c[CON]);
 
 			fprintf(file1, "          %24s              %4s      "
 				       "Charisma     : %6s\n",
@@ -1852,23 +1833,6 @@ char *center(char *in_str, long str_len, char *out_str)
 		sprintf(out_str, "%*s%s%*s", j, "", in_str,
 			(int)str_len - i - j, "");
 	}
-
-	return out_str;
-}
-
-char *format_top_score(char out_str[82], char *username, long score, int diffic,
-		       char *charname, int level, char *race, char *class)
-{
-	char s1[82], s2[82], s3[82], s4[82];
-
-	strcpy(s4, username);
-	if (strlen(s4) > 12) {
-		s4[12] = 0;
-	}
-
-	sprintf(out_str, "%-13s%8ld %d %s %2d %s %s", s4, score, diffic,
-		center(charname, 24, s1), level, center(race, 10, s2),
-		center(class, 16, s3));
 
 	return out_str;
 }

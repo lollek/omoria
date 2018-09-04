@@ -116,16 +116,16 @@ void ud__print_tomb(char dstr[][82])
 			fseek(f1, 0, SEEK_END);
 			if (player_cheated) {
 				fprintf(f1,
-					"*%-12s %1d %2d %2d %2d %4ld %4d %s\n",
-					user, player_diffic, player_prace,
+					"*%-12s %2d %2d %2d %4ld %4d %s\n",
+					user, player_prace,
 					player_pclass, player_lev, dun_level,
 					player_max_lev, died_from);
 				fprintf(f1, "%50s %s\n", "",
 					show_current_time(temp));
 			} else {
 				fprintf(f1,
-					" %-12s %1d %2d %2d %2d %4ld %4d %s\n",
-					user, player_diffic, player_prace,
+					" %-12s %2d %2d %2d %4ld %4d %s\n",
+					user, player_prace,
 					player_pclass, player_lev, dun_level,
 					player_max_lev, died_from);
 				fprintf(f1, "%50s %s\n", "",

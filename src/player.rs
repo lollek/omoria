@@ -112,7 +112,6 @@ pub struct PlayerRecord {
     pub xtr_wgt: libc::int64_t,
     pub account: libc::int64_t,
     pub money: Wallet,
-    pub diffic: libc::uint8_t,
     pub birth: GameTime,
     pub cur_age: GameTime,
     pub cur_quest: libc::uint16_t,
@@ -216,7 +215,6 @@ extern "C" {
     pub static mut player_hitdie: libc::uint8_t ;     /* { Char hit die	} */
     pub static mut player_expfact: libc::c_float ;		  /* { Experience factor} */
     pub static mut player_cmana: libc::c_float ;		  /* { Cur mana pts  } */
-    pub static mut player_diffic: libc::uint8_t ;     /* { Difficulty of game	} */
     pub static mut player_exp: libc::int64_t ;		  /* { Cur experienc	} */
     pub static mut player_account: libc::int64_t ;		  /* { Money in the bank	} */
     pub static mut player_mr: libc::int64_t  ;		  /* { mag.res.lev.delta } */
@@ -527,7 +525,6 @@ pub fn record() -> PlayerRecord {
         xtr_wgt: unsafe { player_xtr_wgt },
         account: unsafe { player_account },
         money: wallet(),
-        diffic: unsafe { player_diffic },
         birth: unsafe { player_birth },
         cur_age: unsafe { player_cur_age },
         cur_quest: unsafe { player_cur_quest },
@@ -606,7 +603,6 @@ pub fn set_record(record: PlayerRecord) {
     set_wallet(&record.money);
 
     unsafe {
-        player_diffic = record.diffic;
         player_birth = record.birth;
         player_cur_age = record.cur_age;
         player_cur_quest = record.cur_quest;

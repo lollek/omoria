@@ -22,7 +22,6 @@ extern money_type player_money;	 /* { Money on person	} */
 extern game_time_type player_birth;     /* {Date of char's birth} */
 extern game_time_type player_cur_age;   /* {Current game date	} */
 extern time_type player_play_tm;	/* { Time spent in game	} */
-extern uint8_t player_diffic;     /* { Difficulty of game	} */
 extern char player_name[82];		  /* { Name of character	} */
 extern char player_race[82];		  /* { Race of character	} */
 extern char player_sex[82];		  /* { Sex of character	} */

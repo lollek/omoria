@@ -157,37 +157,37 @@ extern long tcptr;	/* { Cur treasure heap ptr	} */
 
 /*	{ Following are variables that change with level of difficulty	} */
 /*	{ 1/x chance of treasure per magma		} */
-extern long dun_str_mc;
+extern const long dun_str_mc;
 /*	{ 1/x chance of treasure per quartz		} */
-extern long dun_str_qc;
+extern const long dun_str_qc;
 /*	{ Level/x chance of unusual room		} */
-extern long dun_unusual;
+extern const long dun_unusual;
 /*	{ Amount of objects for rooms			} */
-extern long treas_room_alloc;
+extern const long treas_room_alloc;
 /*	{ Amount of objects for corridors		} */
-extern long treas_any_alloc;
+extern const long treas_any_alloc;
 /*	{ Amount of gold (and gems)			} */
-extern long treas_gold_alloc;
+extern const long treas_gold_alloc;
 /*	{ 1/n Chance of item being a Great Item 	} */
-extern long obj_great;
+extern const long obj_great;
 /*	{ Adjust STD per level				} */
-extern float obj_std_adj;
+extern const float obj_std_adj;
 /*	{ Minimum STD					} */
-extern long obj_std_min;
+extern const long obj_std_min;
 /*	{ Town object generation level			} */
-extern long obj_town_level;
+extern const long obj_town_level;
 /*	{ Base amount of magic				} */
-extern long obj_base_magic;
+extern const long obj_base_magic;
 /*	{ Max amount of magic				} */
-extern long obj_base_max;
+extern const long obj_base_max;
 /*	{ magic_chance/# = special magic		} */
-extern long obj_div_special;
+extern const long obj_div_special;
 /*	{ magic_chance/# = cursed items			} */
-extern float obj_div_cursed;
+extern const float obj_div_cursed;
 /*	{ High value slows multiplication		} */
-extern long mon_mult_adj;
+extern const long mon_mult_adj;
 /*	{ Dun_level/x chance of high level creature	} */
-extern long mon_nasty;
+extern const long mon_nasty;
 
 /*	{ Following are feature objects defined for dungeon		} */
 extern treasure_type trap_lista[MAX_TRAPA + 1];
