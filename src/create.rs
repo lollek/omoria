@@ -1098,7 +1098,7 @@ pub extern fn create_character() {
     put_misc3();
     choose_name();
 
-    term::prt_r("[Press any key to continue, or Q to exit.]", 24, 11);
+    term::prt_r("[Press any key to continue.]", 24, 11);
     io::inkey_flush();
 
     debug::leave("create_character");
