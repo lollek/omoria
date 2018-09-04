@@ -140,50 +140,10 @@ void ud__print_tomb(char dstr[][82])
 	write_tomb(dstr);
 }
 
-static void respawn()
-{
-	/* Respawn the player, with some punishment -OK- */
-	int i;
-
-	/* Clear money */
-	add_money(player_money[TOTAL_]);
-
-	/* Clear inventory */
-	for (i = Equipment_min; i < EQUIP_MAX; i++)
-		ic__remove(i, false);
-	while (inventory_list != nil) {
-		inven_destroy(&inventory_list[0]);
-	}
-	char_inven_init();
-
-	/* Restore player hp and statuses */
-	player_chp = player_mhp;
-	prt_hp();
-
-	for (i = 0; i < 6; ++i) {
-		player_stats_lost[i] = 0;
-		update_stat(i);
-	}
-	memset(&player_flags, 0, sizeof(player_flags));
-	player_flags.foodc = PLAYER_FOOD_FULL;
-	player_flags.food_digested = 2;
-	death = false;
-
-	dun_level = 0;
-}
-
 void upon_death()
 {
 	/*  Handles the gravestone and top-twenty routines -RAK-  */
 	char dstr[20][82];
-
-	/* We get a chance to respawn with a penalty */
-	if (!total_winner &&
-	    get_yes_no(
-		"Do you wish to reincarnate? You will lose all your items")) {
-		respawn();
-		return;
-	}
 
 	/*  What happens upon dying...    -RAK- */
 	if (!C_master_update_character(player_uid)) {
