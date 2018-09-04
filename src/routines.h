@@ -51,7 +51,6 @@ extern void make_tomb(char dstr[][82]);
 extern void replace_name();
 extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
-extern long total_points();
 
 /* { DESC.PAS		} */
 extern void randes();

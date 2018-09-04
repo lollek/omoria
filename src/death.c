@@ -140,22 +140,6 @@ void ud__print_tomb(char dstr[][82])
 	write_tomb(dstr);
 }
 
-long total_points()
-{
-	/*
-	 * Calculates the total number of points earned  -JWT-
-	 *
-	 * The formula was changed to reflect the difficulty of low exp.
-	 * modifier classes like warriors   -Cap'n-
-	 */
-
-	if (player_expfact == 0) {
-		return player_max_exp + (100 * player_max_lev);
-	} else {
-		return trunc(player_max_exp / player_expfact) + (100 * player_max_lev);
-	}
-}
-
 static void respawn()
 {
 	/* Respawn the player, with some punishment -OK- */

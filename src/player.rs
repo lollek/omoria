@@ -236,9 +236,6 @@ extern "C" {
     pub static mut char_col: libc::c_long;
 
     static mut bank: [libc::int64_t; 7];
-
-    #[link_name = "total_points"]
-    fn C_total_points() -> libc::int64_t;
 }
 
 lazy_static! {
@@ -487,7 +484,7 @@ pub fn ranged_tohit() -> i16 {
 }
 
 pub fn calc_total_points() -> i64 {
-    unsafe { C_total_points() }
+    (1000 * deepest_level() as i64) + exp()
 }
 
 pub fn set_level(level: u8) {
@@ -508,6 +505,18 @@ pub fn is_dead() -> bool {
 
 pub fn increase_save_counter() {
     unsafe { player_save_count += 1 };
+}
+
+pub fn max_exp() -> i64 {
+    unsafe { player_max_exp }
+}
+
+pub fn exp() -> i64 {
+    unsafe { player_exp }
+}
+
+pub fn deepest_level() -> u8 {
+    (unsafe { player_max_lev }) as u8
 }
 
 pub fn record() -> PlayerRecord {

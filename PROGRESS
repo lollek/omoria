@@ -421,4 +421,7 @@ help-page for insurance:
       character back.  Note the insurance  will only work when you save
       the character after buying it.
 
+Changed how scores are calculated. Now deepest level * 1000 + experience. But
+will tweak this more later.
+
 /* end progress */
