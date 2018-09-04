@@ -220,90 +220,6 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file)
 	return (exit_flag || already_exiting);
 }
 
-boolean intro_do_msg_file(boolean already_exiting, char *the_file,
-			  boolean write_to_screen)
-{
-	/* Print the introduction message, news, ect... */
-
-	FILE *file1;
-	int i1, i2;
-	char in_line[82];
-	boolean exit_flag = false;
-
-	ENTER(("intro_do_msg_file", ""));
-
-	file1 = priv_fopen(the_file, "r");
-	if (file1 != NULL) {
-		if (!already_exiting && write_to_screen) {
-			/* print out the MORIA_MOR file, move to upper left */
-			clear_rc(1, 1);
-			for (i1 = 1; !feof(file1); i1++) {
-				in_line[0] = 0;
-				fgets(in_line, sizeof(in_line), file1);
-				if ((i2 = strlen(in_line)) > 0) {
-					in_line[i2 - 1] = 0;
-					put_buffer(in_line, i1, 1);
-				}
-			}
-			prt_("[Press any key to continue.]", 24, 10);
-			(void)inkey();
-			Erase_Line(24, 10);
-		}
-		fclose(file1);
-
-	} else {
-		/* create a new MORIA_MOR file */
-		file1 = (FILE *)fopen(the_file, "w");
-		if (file1 == NULL) {
-			printf("Error opening %s for writing\n\r", the_file);
-			exit_game();
-		} else {
-
-			fprintf(file1,
-				"                *********************\n");
-			fprintf(file1,
-				"                **   Omoria %s  **\n",
-				omoria_version());
-			fprintf(file1,
-				"                *********************\n");
-			fprintf(
-			    file1,
-			    "           COPYRIGHT (c) Robert Alan Koeneke\n");
-			fprintf(file1, "\n");
-			fprintf(file1, "Programers : Robert Alan Koeneke / "
-				       "University of Oklahoma\n");
-			fprintf(file1, "             Jimmey Wayne Todd   / "
-				       "University of Oklahoma\n");
-			fprintf(file1, "\n");
-			fprintf(
-			    file1,
-			    "Based on University of Washington version 4.8\n");
-			fprintf(file1, "\n");
-			fprintf(file1, "UW Modifications by : Kenneth Case, "
-				       "Mary Conner,\n");
-			fprintf(file1, "                      Robert DeLoura, "
-				       "Dan Flye,\n");
-			fprintf(file1, "                      Todd Gardiner, "
-				       "Dave Jungck,\n");
-			fprintf(file1, "                      Andy Walker, "
-				       "Dean Yasuda.\n");
-			fprintf(file1, "\n");
-			fprintf(file1,
-				"Linux port by Stephen Kertes, 1997-2000.\n");
-			fprintf(file1, "\n");
-			fprintf(file1, "Dungeon Master: This file may contain "
-				       "updates and news.\n");
-
-			printf("Created %s\n\r", the_file);
-			fclose(file1);
-			exit_flag = true;
-		}
-	}
-
-	LEAVE("intro_do_msg_file", "");
-	return (exit_flag || already_exiting);
-}
-
 boolean intro_do_death_file(boolean already_exiting, char *the_file)
 {
 	FILE *file1;
@@ -390,7 +306,6 @@ void intro(int argc, char *argv[])
 
 	/* make sure that various files exist */
 	exit_flag = intro_do_hours_file(exit_flag, MORIA_HOU);
-	exit_flag = intro_do_msg_file(exit_flag, MORIA_MOR, false);
 	exit_flag = intro_do_death_file(exit_flag, MORIA_DTH);
 	/* exit_flag = intro_do_master_file(exit_flag,     MORIA_MAS); */
 	exit_flag = intro_ensure_file_exists(exit_flag, MORIA_GCST);
@@ -448,10 +363,33 @@ void intro(int argc, char *argv[])
 			}
 			fclose(file1);
 		}
-		exit_game();
-	}
+                exit_game();
+        }
 
-	intro_do_msg_file(false, MORIA_MOR, true);
+	put_buffer("*************************************************************", 1, 1);
+	put_buffer("*                Omoria                                     *", 2, 1);
+	put_buffer(omoria_version(), 2, 25);
+	put_buffer("*************************************************************", 3, 1);
+	put_buffer("*                                                           *", 4, 1);
+	put_buffer("*           COPYRIGHT (c) Robert Alan Koeneke               *", 5, 1);
+	put_buffer("*                                                           *", 6, 1);
+	put_buffer("* Programers : Robert Alan Koeneke / University of Oklahoma *", 7, 1);
+	put_buffer("*              Jimmey Wayne Todd   / University of Oklahoma *", 8, 1);
+	put_buffer("*                                                           *", 9, 1);
+	put_buffer("* Based on University of Washington version 4.8             *", 10, 1);
+	put_buffer("*                                                           *", 11, 1);
+	put_buffer("* UW Modifications by : Kenneth Case, Mary Conner,          *", 12, 1);
+	put_buffer("*                       Robert DeLoura, Dan Flye,           *", 13, 1);
+	put_buffer("*                       Todd Gardiner, Dave Jungck,         *", 14, 1);
+	put_buffer("*                       Andy Walker, Dean Yasuda.           *", 15, 1);
+	put_buffer("*                                                           *", 16, 1);
+	put_buffer("* Linux port by Stephen Kertes, 1997-2000.                  *", 17, 1);
+	put_buffer("*                                                           *", 18, 1);
+	put_buffer("* Updates by Olle Kvarnstrom, 2018.                         *", 19, 1);
+
+	prt_("[Press any key to continue.]", 24, 10);
+	inkey();
+
 	LEAVE("intro", "");
 }
 

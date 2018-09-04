@@ -55,7 +55,6 @@ extern unsigned long bit_array[33]; /*  array [1..32] of unsigned; */
 
 /*	{ External file names; are all located in directory with image	} */
 extern char MORIA_HOU[192];
-extern char MORIA_MOR[192];
 extern char MORIA_MAS[192];
 extern char MORIA_TOP[192];
 extern char MORIA_TRD[192];

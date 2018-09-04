@@ -475,7 +475,6 @@ void get_paths()
 	sprintf(MORIA_LCK, "%s/morialock.lock", datapath);
 	sprintf(MORIA_MON, "%s/monsters.dat", datapath);
 
-	sprintf(MORIA_MOR, "%s/moria.dat", datapath);
 	sprintf(MORIA_DTH, "%s/death.log", datapath);
 	sprintf(MORIA_MAS, "%s/moriamas.dat", datapath);
 	sprintf(MORIA_GCST, "%s/moria_gcustom.mst", datapath);
