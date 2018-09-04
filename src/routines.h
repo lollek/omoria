@@ -21,6 +21,8 @@ uint8_t C_magic_spell_level(int32_t slot);
 uint8_t C_magic_spell_mana(int32_t slot);
 uint8_t C_magic_spell_failchance(int32_t slot);
 
+void C_highscore(uint8_t max_highscores);
+
 /* END - FROM RUST */
 
 /* { CASINO.PAS		} */
@@ -49,7 +51,6 @@ extern void make_tomb(char dstr[][82]);
 extern void replace_name();
 extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
-extern void top_twenty(long this_many);
 extern long total_points();
 
 /* { DESC.PAS		} */

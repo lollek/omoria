@@ -15,6 +15,7 @@ pub mod bank;
 pub mod classes;
 pub mod create;
 pub mod debug;
+pub mod highscore;
 pub mod io;
 pub mod master;
 pub mod magic;

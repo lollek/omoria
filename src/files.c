@@ -155,7 +155,7 @@ static boolean intro_parse_switches(int argc, char *argv[])
 	}
 
 	if (show_highs) {
-		top_twenty(max_score);
+		C_highscore(max_score);
 		exit_game();
 	}
 

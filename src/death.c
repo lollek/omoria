@@ -214,7 +214,7 @@ void upon_death()
 	}
 	ud__print_tomb(dstr);
 	print_dead_character();
-	top_twenty(max_score);
+	C_highscore(max_score);
 	exit_game();
 }
 
@@ -224,132 +224,6 @@ void print_dead_character()
 	if (get_yes_no("Print character sheet to file?")) {
 		file_character();
 	}
-}
-
-void top_twenty(long this_many)
-{
-	/*  Enters a players name on the top twenty list  -JWT- */
-
-	char list[MAX_HIGH_SCORES + 2][134];
-	long players_line = 0;
-	long i1, i2, i3, i4;
-	int n1;
-	char o1[82], s1[82];
-	FILE *f1;
-	boolean flag;
-	char ch;
-
-	if (player_cheated) {
-		exit_game();
-	}
-	clear_screen();
-
-	if (!read_top_scores(&f1, MORIA_TOP, list, MAX_HIGH_SCORES, &n1, s1)) {
-		prt(s1, 2, 1);
-		prt("", 3, 1);
-	} else {
-
-		i3 = total_points();
-		flag = false;
-
-		if (i3 == 0) {
-			i1 = n1;
-		} else {
-			for (i1 = 1;
-			     (i1 <= n1) &&
-				 !flag;) { /* XXXX check for corruption */
-				sscanf(&(list[i1][13]), "%ld", &i4);
-				if (i4 < i3) {
-					flag = true;
-				} else {
-					i1++;
-				}
-			}
-		}
-
-		if ((i3 > 0) &&
-		    ((flag) || (n1 == 0) || (n1 < MAX_HIGH_SCORES))) {
-
-			for (i2 = MAX_HIGH_SCORES - 1; i2 >= i1; i2--) {
-				strcpy(list[i2 + 1], list[i2]);
-			}
-
-			user_name(o1);
-
-			format_top_score(list[i1], o1, i3, player_diffic, player_name,
-					 player_lev, player_race, player_tclass);
-
-			if (n1 < MAX_HIGH_SCORES) {
-				n1++;
-			}
-
-			max_score = n1;
-			players_line = i1;
-			flag = false;
-
-			write_top_scores(&f1, list, n1);
-
-		} else {
-			/* did not get a high score */
-			max_score = 20;
-		}
-
-		if (!close_top_scores(&f1)) {
-			prt("Error unlocking score file.", 2, 1);
-			prt("", 3, 1);
-		}
-
-		put_buffer("Username     Points  Diff    Character name    "
-			   "Level  Race         Class",
-			   1, 1);
-		put_buffer("____________ ________ _ ________________________ "
-			   "__ __________ ________________",
-			   2, 1);
-
-		i2 = 3;
-		if (max_score > n1) {
-			max_score = n1;
-		}
-
-		if (this_many > 0) {
-			if (this_many > MAX_HIGH_SCORES) {
-				max_score = MAX_HIGH_SCORES;
-			} else {
-				max_score = this_many;
-			}
-		}
-		for (i1 = 1; i1 <= max_score; i1++) {
-			/*insert_str(list[i1],chr(7),''); XXXX  why? */
-			if (i1 == players_line) {
-				put_buffer_attr(list[i1], i2, 1, A_REVERSE);
-			} else {
-				put_buffer(list[i1], i2, 1);
-			}
-			if ((i1 != 1) && ((i1 % 20) == 0) &&
-			    (i1 != max_score)) {
-				prt("[Press any key to continue, or "
-				    "<Control>-Z to exit]",
-				    24, 1);
-				ch = inkey();
-				switch (ch) {
-				case 3:
-				case 25:
-				case 26:
-					erase_line(24, 1);
-					put_buffer(" ", 23, 13);
-					exit_game();
-					break;
-				}
-				clear_rc(3, 1);
-				i2 = 2;
-			}
-			i2++;
-		} /* end for */
-
-		erase_line(23, 1);
-		put_qio();
-
-	} /* end if read_top_scores */
 }
 
 static void sc(char *out_str, char *in_str) { strcpy(out_str, in_str); }

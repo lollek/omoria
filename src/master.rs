@@ -9,16 +9,16 @@ use player;
 use random;
 
 #[derive(Serialize, Deserialize)]
-struct MasterRecord {
-    uid: i64,
-    user_name: String,
-    character_name: String,
-    points: i64,
-    title: String,
-    alive: bool,
-    level: u8,
-    race: String,
-    class: String,
+pub struct MasterRecord {
+    pub uid: i64,
+    pub user_name: String,
+    pub character_name: String,
+    pub points: i64,
+    pub title: String,
+    pub alive: bool,
+    pub level: u8,
+    pub race: String,
+    pub class: String,
 }
 
 const MASTER_FILE: &'static str = "save/moria_master.json";
@@ -41,7 +41,7 @@ fn open_master(to_write: bool) -> Option<File> {
         }
 }
 
-fn read_master() -> Option<Vec<MasterRecord>> {
+pub fn read_master() -> Option<Vec<MasterRecord>> {
     let mut buffer = String::new();
 
     let mut file = open_master(false)?;
