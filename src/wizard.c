@@ -999,72 +999,6 @@ void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
 	}
 }
 
-void edit_score_file()
-{
-	/*{ Wizard routine to edit high score file                -DMF-   }*/
-
-	char list[MAX_HIGH_SCORES + 2][134];
-	boolean want_save, exit_flag;
-	int n1, cur_top, blegga, cur_display_size = 0;
-	FILE *f1;
-	char s1[82];
-
-	/*
-	    const
-		display_size    = 15;
-	    type
-		list_elem = record
-			data    : string;
-			next    : ^list_elem;
-		end;
-		list_elem_ptr = ^list_elem;
-	    var
-		data_list       : list_elem_ptr;
-		cur_top         : list_elem_ptr;
-		blegga          : list_elem_ptr;
-		curse           : list_elem_ptr;
-		cur_display     : array [1..display_size] of list_elem_ptr;
-		cur_display_size: long;
-		blank           : packed array [1..13] of char;
-		i1,i2,i3,i4     : long;
-		trys            : long;
-		f1              : text;
-		flag,file_flag  : boolean;
-		exit_flag       : boolean;
-		temp,temp2      : ntype;
-		ch              : char;
-	*/
-
-	/*{ Wizard routine to edit high score file                -DMF-   }*/
-
-	if (!read_top_scores(&f1, MORIA_TOP, list, MAX_HIGH_SCORES, &n1, s1)) {
-		prt(s1, 2, 1);
-		prt("", 3, 1);
-	} else {
-
-		want_save = false;
-		cur_top = 1;
-
-		esf__display_screen(cur_top, list, n1, &blegga,
-				    &cur_display_size);
-		for (exit_flag = false; !exit_flag;) {
-			esf__parse_command(list, &cur_top, &n1, &blegga,
-					   &cur_display_size, &exit_flag,
-					   &want_save);
-		}
-
-		if (want_save) {
-			write_top_scores(&f1, list, n1);
-			msg_print("Changes saved.");
-		} else {
-			msg_print("Changes not saved.");
-		}
-		close_top_scores(&f1);
-	}
-
-	draw_cave();
-}
-
 boolean cc__input_field(char prompt[134], long *num, long min, long max,
 			boolean *ok)
 {
@@ -1710,10 +1644,6 @@ void wizard_command(void)
 				  "something!");
 		}
 		break;
-	case 'x':
-		edit_score_file();
-		break;
-
 	case 27: /* ^3  Run store_maint */
 		store_maint();
 		msg_print("Stores updated.");

@@ -477,7 +477,6 @@ void get_paths()
 
 	sprintf(MORIA_DTH, "%s/death.log", datapath);
 	sprintf(MORIA_GCST, "%s/moria_gcustom.mst", datapath);
-	sprintf(MORIA_TOP, "%s/moriatop.dat", datapath);
 	sprintf(MORIA_TRD, "%s/moriatrd.dat", datapath);
 
 	/*  sprintf(MORIA_HLP,  "%s/moriahlp.hlb",      HELP_FILE_PATH); */
