@@ -6,11 +6,11 @@ use std::mem;
 use save::types::*;
 
 extern "C" {
-    static mut inventory_list: *mut TreasureRec;
+    static mut inventory_list: *mut InventoryItem;
     static mut inven_ctr: libc::c_long;
 }
 
-pub fn record() -> Vec<TreasureRec> {
+pub fn record() -> Vec<InventoryItem> {
     let mut ptr = unsafe { inventory_list };
     let mut vec = Vec::new();
 
@@ -22,9 +22,9 @@ pub fn record() -> Vec<TreasureRec> {
     vec
 }
 
-pub fn set_record(record: Vec<TreasureRec>) {
-    fn mallocfn() -> *mut TreasureRec {
-        unsafe { libc::malloc(mem::size_of::<TreasureRec>()) as *mut TreasureRec }
+pub fn set_record(record: Vec<InventoryItem>) {
+    fn mallocfn() -> *mut InventoryItem {
+        unsafe { libc::malloc(mem::size_of::<InventoryItem>()) as *mut InventoryItem }
     }
 
     let size = record.len();

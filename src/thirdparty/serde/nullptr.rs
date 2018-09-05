@@ -4,7 +4,7 @@ use std::fmt;
 use serde::ser::{Serializer};
 use serde::de::{Deserializer, Visitor, Error};
 
-use save::types::TreasureRec;
+use save::types::InventoryItem;
 
 struct UnitVisitor;
 
@@ -30,7 +30,7 @@ pub trait NullPtr<'de>: Sized {
         where D: Deserializer<'de>;
 }
 
-impl <'de> NullPtr<'de> for *mut TreasureRec {
+impl <'de> NullPtr<'de> for *mut InventoryItem {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {

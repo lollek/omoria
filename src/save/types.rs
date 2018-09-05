@@ -33,13 +33,13 @@ pub struct Item { // treasure_type
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
-pub struct TreasureRec {
+pub struct InventoryItem { //treas_rec
     pub data: Item,                 // Real item
-    pub ok: libc::uint8_t,          // ??
+    pub ok: libc::uint8_t,          // Transient for sorting usable items
     pub insides: libc::uint16_t,    // Something with bags?
     pub is_in: libc::uint8_t,       // Something with bags?
     #[serde(with = "NullPtr")]
-    pub next: *mut TreasureRec,     // Linked list next
+    pub next: *mut InventoryItem,   // Linked list next
 }
 
 #[derive(Serialize, Deserialize)]
