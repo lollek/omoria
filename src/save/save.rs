@@ -17,7 +17,7 @@ use save::types::*;
 struct SaveRecord {
     player: player::PlayerRecord,
     inventory: Vec<TreasureRec>,
-    equipment: Vec<TreasureType>,
+    equipment: Vec<Item>,
     town: TownRecord,
     dungeon: DungeonRecord,
     identified: IdentifiedRecord,

@@ -17,7 +17,7 @@ extern "C" {
     static mut max_panel_rows: libc::c_long;
     static mut max_panel_cols: libc::c_long;
     static mut cave: [[Cave; MAX_WIDTH + 1]; MAX_HEIGHT + 1];
-    static mut t_list: [TreasureType; MAX_TALLOC + 1];
+    static mut t_list: [Item; MAX_TALLOC + 1];
     static mut dun_level: libc::c_long;
     static mut mon_tot_mult: libc::c_long;
     static mut turn: libc::c_long;

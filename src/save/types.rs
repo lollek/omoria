@@ -11,7 +11,7 @@ pub const MAX_WIDTH: usize = 198;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
-pub struct TreasureType {
+pub struct Item { // treasure_type
     #[serde(with = "BigArray")]
     pub name: [libc::c_char; 70],   // Object name
     pub tval: libc::uint8_t,        // Catagory number
@@ -34,7 +34,7 @@ pub struct TreasureType {
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct TreasureRec {
-    pub data: TreasureType,         // Real item
+    pub data: Item,                 // Real item
     pub ok: libc::uint8_t,          // ??
     pub insides: libc::uint16_t,    // Something with bags?
     pub is_in: libc::uint8_t,       // Something with bags?
@@ -44,7 +44,7 @@ pub struct TreasureRec {
 
 #[derive(Serialize, Deserialize)]
 pub struct TreasureAndCoordinate {
-    pub treasure: TreasureType,
+    pub treasure: Item,
     pub y: libc::c_long,
     pub x: libc::c_long,
 }
@@ -53,7 +53,7 @@ pub struct TreasureAndCoordinate {
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct InvenRecord {
     pub scost: libc::int64_t,
-    pub sitem: TreasureType,
+    pub sitem: Item,
 }
 
 #[repr(C)]
