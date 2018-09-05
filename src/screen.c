@@ -112,29 +112,6 @@ void prt_map()
 }
 
 /* RUST */
-void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
-		 unsigned char col)
-{
-	ENTER(("prt_6_stats", ""));
-	if (l != NULL) {
-		prt_stat_attr("STR : ", p[STR], l[STR], row, col);
-		prt_stat_attr("INT : ", p[INT], l[INT], row + 1, col);
-		prt_stat_attr("WIS : ", p[WIS], l[WIS], row + 2, col);
-		prt_stat_attr("DEX : ", p[DEX], l[DEX], row + 3, col);
-		prt_stat_attr("CON : ", p[CON], l[CON], row + 4, col);
-		prt_stat_attr("CHR : ", p[CHR], l[CHR], row + 5, col);
-	} else {
-		prt_stat("STR : ", p[STR], row, col);
-		prt_stat("INT : ", p[INT], row + 1, col);
-		prt_stat("WIS : ", p[WIS], row + 2, col);
-		prt_stat("DEX : ", p[DEX], row + 3, col);
-		prt_stat("CON : ", p[CON], row + 4, col);
-		prt_stat("CHR : ", p[CHR], row + 5, col);
-	}
-	LEAVE("prt_6_stats", "");
-}
-
-/* RUST */
 void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char loss,
 		   long row, long column)
 {
@@ -190,24 +167,13 @@ void prt_num(char header[82], long num, long row, long column)
 	put_buffer(out_val, row, column);
 }
 
+extern void C_print_stat_block();
 void prt_stat_block()
 {
 	ENTER(("prt_stat_block", ""));
 
-	prt_field(player_race, RACE_ROW, STAT_COLUMN);
-	prt_field(player_tclass, CLASS_ROW, STAT_COLUMN);
-	prt_title();
-	prt_6_stats(player_stats_curr, player_stats_lost, STR_ROW, STAT_COLUMN);
-	prt_num("LVL : ", player_lev, LEVEL_ROW, STAT_COLUMN);
-	prt_num("EXP : ", player_exp, EXP_ROW, STAT_COLUMN);
+	C_print_stat_block();
 
-	if (is_magii) {
-		prt_field("MANA: ", MANA_ROW, STAT_COLUMN);
-		prt_mana();
-	}
-
-	prt_field("HP  : ", HP_ROW, STAT_COLUMN);
-	prt_hp();
 	prt_num("QST : ", player_quests, QUEST_ROW, STAT_COLUMN);
 	prt_num("AC  : ", player_dis_ac, AC_ROW, STAT_COLUMN);
 	prt_num("GOLD: ", player_money[TOTAL_], GOLD_ROW, STAT_COLUMN);
@@ -239,28 +205,6 @@ void prt_field(char info[82], long row, long column)
 
 	sprintf(out_val1, "%-14s", info);
 	put_buffer(out_val1, row, column);
-}
-
-void prt_title() { prt_field(player_title, TITLE_ROW, STAT_COLUMN); }
-
-void prt_hp()
-{
-	char buf[82];
-
-	sprintf(buf, "%6d  ", (int)(player_chp));
-	if (player_chp == player_mhp) {
-		attron(COLOR_PAIR(COLOR_GREEN));
-		put_buffer(buf, HP_ROW, STAT_COLUMN + 6);
-		attroff(COLOR_PAIR(COLOR_GREEN));
-	} else if (player_chp >= player_mhp / 3) {
-		attron(COLOR_PAIR(COLOR_YELLOW));
-		put_buffer(buf, HP_ROW, STAT_COLUMN + 6);
-		attroff(COLOR_PAIR(COLOR_YELLOW));
-	} else {
-		attron(COLOR_PAIR(COLOR_RED));
-		put_buffer(buf, HP_ROW, STAT_COLUMN + 6);
-		attroff(COLOR_PAIR(COLOR_RED));
-	}
 }
 
 void prt_pac() { prt_num("", player_dis_ac, AC_ROW, STAT_COLUMN + 6); }
@@ -417,35 +361,4 @@ void prt_experience()
 	}
 
 	prt_num("", player_exp, EXP_ROW, STAT_COLUMN + 6);
-}
-
-void prt_mana()
-{
-	char buf[82];
-
-	sprintf(buf, "%6d  ", (int)(player_cmana));
-	if (player_cmana == player_mana) {
-		attron(COLOR_PAIR(COLOR_BLUE));
-		put_buffer(buf, MANA_ROW, STAT_COLUMN + 6);
-		attroff(COLOR_PAIR(COLOR_BLUE));
-	} else if (player_cmana >= player_mana / 3) {
-		attron(COLOR_PAIR(COLOR_CYAN));
-		put_buffer(buf, MANA_ROW, STAT_COLUMN + 6);
-		attroff(COLOR_PAIR(COLOR_CYAN));
-	} else {
-		attron(COLOR_PAIR(COLOR_MAGENTA));
-		put_buffer(buf, MANA_ROW, STAT_COLUMN + 6);
-		attroff(COLOR_PAIR(COLOR_MAGENTA));
-	}
-}
-
-void prt_level() { prt_num("", player_lev, LEVEL_ROW, STAT_COLUMN + 6); }
-
-void prt_a_stat(stat_set tstat)
-{
-	char *stat_names[STAT_SET_MAX + 1] = {"STR : ", "INT : ", "WIS : ",
-					      "DEX : ", "CON : ", "CHR : "};
-
-	prt_stat_attr(stat_names[(int)tstat], player_stats_curr[(int)tstat],
-		      player_stats_lost[(int)tstat], STR_ROW + tstat, STAT_COLUMN);
 }

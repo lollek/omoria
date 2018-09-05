@@ -738,14 +738,14 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		/* with player_do; */
 		dam -= (long)((((player_pac + player_ptoac) / 200.0) * dam) + .5);
 		take_hit(dam, ddesc);
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 2: /*{Poison Strength}*/
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(STR, "You feel weaker.",
 			  "You feel weaker for a moment, then it passes.");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 3: /*{Confusion attack}*/
@@ -758,7 +758,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 			}
 			PF.confused += 3;
 		}
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 4: /*{Fear attack    }*/
@@ -772,7 +772,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		} else {
 			PF.afraid += 3;
 		}
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 5: /*{Fire attack    }*/
@@ -799,7 +799,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		msg_print("A stinging red gas swirls about you.");
 		corrode_gas(ddesc);
 		take_hit(damroll(damstr), ddesc);
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 10: /*{Blindness attack}*/
@@ -812,7 +812,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		}
 		PF.blind +=
 		    5; /* blind the first time is worse than cumulitave blind */
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 11: /*{Paralysis attack}*/
@@ -830,7 +830,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 				msg_print("You are paralyzed.");
 			}
 		}
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 12: /*{Steal Money     }*/
@@ -894,7 +894,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 	case 14: /*{Poison         }*/
 		/* with player_flags do ; */
 		take_hit(damroll(damstr), ddesc);
-		prt_hp();
+		prt_stat_block();
 		msg_print("You feel very sick.");
 		PF.poisoned += randint(level) + 5;
 		break;
@@ -904,7 +904,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(DEX, "You feel more clumsy",
 			  "You feel clumsy for a moment, then it passes.");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 16: /*{Lose constitution }*/
@@ -912,7 +912,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(CON, "Your health is damaged!",
 			  "Your body resists the effects of the disease.");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 17: /*{Lose intelligence }*/
@@ -921,7 +921,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		lose_stat(
 		    INT, "You feel your memories fading.",
 		    "You feel your memories fade, then they are restored!");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 18: /*{Lose wisdom      }*/
@@ -929,7 +929,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(WIS, "Your wisdom is drained.",
 			  "Your wisdom is sustained.");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 19: /*{Lose experience  }*/
@@ -1042,7 +1042,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		lose_stat(CHR, "Your skin starts to itch.",
 			  "Your skin starts to itch, but feels better now.");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 26: /*{Petrification  }*/

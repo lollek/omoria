@@ -690,3 +690,23 @@ pub fn uses_magic(magic: Magic) -> bool {
         Class::Warrior => false,
     }
 }
+
+pub fn current_hp() -> i16 {
+    (unsafe { player_chp }) as i16
+}
+
+pub fn max_hp() -> i16 {
+    unsafe { player_mhp }
+}
+
+pub fn current_mp() -> i16 {
+    (unsafe { player_cmana }) as i16
+}
+
+pub fn max_mp() -> i16 {
+    unsafe { player_mana }
+}
+
+pub fn uses_mana() -> bool {
+    class() != Class::Warrior
+}

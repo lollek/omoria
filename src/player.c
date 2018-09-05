@@ -266,7 +266,7 @@ void take_hit(long damage, char hit_from[82])
 		}
 		moria_flag = true;
 	} else {
-		prt_hp();
+                prt_stat_block();
 	}
 
 	LEAVE("take_hit", "");

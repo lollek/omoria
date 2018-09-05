@@ -133,13 +133,7 @@ fn get_stats() {
 fn put_stats() {
     debug::enter("put_stats");
 
-    let p = player::curr_stats();
-    screen::prt_stat("STR : ", p.strength, 3, 65);
-    screen::prt_stat("DEX : ", p.dexterity, 4, 65);
-    screen::prt_stat("CON : ", p.constitution, 5, 65);
-    screen::prt_stat("INT : ", p.intelligence, 6, 65);
-    screen::prt_stat("WIS : ", p.wisdom, 7, 65);
-    screen::prt_stat("CHR : ", p.charisma, 8, 65);
+    screen::print_stats(3, 65);
 
     term::prt(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
     term::prt(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);

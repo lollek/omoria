@@ -174,7 +174,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 
 	if (uand(Strength_worn_bit, tobj->flags) != 0) {
 		change_stat(STR, tobj->p1, factor);
-		print_stat = uor(0x0001, print_stat);
+		print_stat = 1;
 	}
 	if (uand(Magic_proof_worn_bit, tobj->flags2) != 0) {
 		player_save += (25 * factor);
@@ -189,23 +189,23 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 	if (uand(Dexterity_worn_bit, tobj->flags) != 0) {
 		change_stat(DEX, tobj->p1, factor);
-		print_stat = uor(0x0002, print_stat);
+		print_stat = 1;
 	}
 	if (uand(Constitution_worn_bit, tobj->flags) != 0) {
 		change_stat(CON, tobj->p1, factor);
-		print_stat = uor(0x0004, print_stat);
+		print_stat = 1;
 	}
 	if (uand(Intelligence_worn_bit, tobj->flags) != 0) {
 		change_stat(INT, tobj->p1, factor);
-		print_stat = uor(0x0008, print_stat);
+		print_stat = 1;
 	}
 	if (uand(Wisdom_worn_bit, tobj->flags) != 0) {
 		change_stat(WIS, tobj->p1, factor);
-		print_stat = uor(0x0010, print_stat);
+		print_stat = 1;
 	}
 	if (uand(Charisma_worn_bit, tobj->flags) != 0) {
 		change_stat(CHR, tobj->p1, factor);
-		print_stat = uor(0x0020, print_stat);
+		print_stat = 1;
 	}
 	if (uand(Searching_worn_bit, tobj->flags) != 0) {
 		player_srh += (tobj->p1 * factor);
@@ -312,7 +312,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 
 	if (old_dis_ac != player_dis_ac) {
-		print_stat = uor(0x0040, print_stat);
+		print_stat = 1;
 	}
 	item_flags2 = 0;
 	item_flags = 0;
@@ -1063,7 +1063,7 @@ void guild_or_not(boolean passed)
 			msg_print(
 			    "You are stabbed by one of them before you escape");
 			take_hit(randint(randint(16)), "Thieves Guild Member");
-			prt_hp();
+			prt_stat_block();
 		}
 	}
 }
@@ -1532,7 +1532,7 @@ void fire_dam(long dam, char kb_str[82])
 
 	take_hit(dam, kb_str);
 
-	print_stat |= 0x0080;
+	print_stat = 1 ;
 
 	if (inven_damage(things_that_burn, 3) > 0) {
 		msg_print("There is smoke coming from your pack!");
@@ -1557,7 +1557,7 @@ void cold_dam(long dam, char kb_str[82])
 
 	take_hit(dam, kb_str);
 
-	print_stat |= 0x0080;
+	print_stat = 1;
 
 	if (inven_damage(things_that_freeze, 5) > 0) {
 		msg_print("Something shatters inside your pack!");
@@ -1580,7 +1580,7 @@ void light_dam(long dam, char kb_str[82])
 
 	take_hit(dam, kb_str);
 
-	print_stat |= 0x0080;
+	print_stat = 1;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1617,7 +1617,7 @@ void acid_dam(long dam, char kb_str[82])
 		break;
 	}
 
-	print_stat |= 0x00C0;
+	print_stat = 1;
 
 	if (inven_damage(things_that_dilute, 3) > 0) {
 		msg_print("There is an acrid smell coming from your pack!");
@@ -1707,13 +1707,7 @@ void xp_loss(long amount)
 
 	strcpy(player_title, player_titles[player_pclass][player_lev]);
 
-	prt_experience();
-	prt_hp();
-	if (is_magii) {
-		prt_mana();
-	}
-	prt_level();
-	prt_title();
+	prt_stat_block();
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1730,7 +1724,7 @@ void corrode_gas(char kb_str[82])
 		take_hit(randint(8), kb_str);
 	}
 
-	print_stat |= 0x0040;
+	print_stat = 1;
 
 	if (inven_damage(things_that_corrode, 5) > 0) {
 		msg_print("There is an acrid smell coming from your pack.");
@@ -1745,7 +1739,7 @@ void poison_gas(long dam, char kb_str[82])
 	/*{ Poison gas the idiot...                               -RAK-   }*/
 
 	take_hit(dam, kb_str);
-	print_stat |= 0x0040;
+	print_stat = 1;
 	player_flags.poisoned += 12 + randint(dam);
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -3790,37 +3784,8 @@ void d__check_hours()
 /*//////////////////////////////////////////////////////////////////// */
 void d__print_updated_stats()
 {
-	if (print_stat > 0) {
-		if ((0x0001 & print_stat) != 0) {
-			prt_a_stat(STR);
-		}
-		if ((0x0002 & print_stat) != 0) {
-			prt_a_stat(DEX);
-		}
-		if ((0x0004 & print_stat) != 0) {
-			prt_a_stat(CON);
-		}
-		if ((0x0008 & print_stat) != 0) {
-			prt_a_stat(INT);
-		}
-		if ((0x0010 & print_stat) != 0) {
-			prt_a_stat(WIS);
-		}
-		if ((0x0020 & print_stat) != 0) {
-			prt_a_stat(CHR);
-		}
-		if ((0x0040 & print_stat) != 0) {
-			prt_pac();
-		}
-		if ((0x0100 & print_stat) != 0) {
-			prt_hp();
-		}
-		if ((0x0200 & print_stat) != 0) {
-			prt_title();
-		}
-		if ((0x0400 & print_stat) != 0) {
-			prt_level();
-		}
+	if (print_stat != 0) {
+		prt_stat_block();
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -4442,7 +4407,7 @@ void d__update_heroism()
 			player_bth += 12;
 			player_bthb += 12;
 			msg_print("You feel like a HERO!");
-			prt_hp();
+			prt_stat_block();
 		}
 		PF.hero--;
 		if (PF.hero == 0) {
@@ -4458,7 +4423,7 @@ void d__update_heroism()
 			player_bth -= 12;
 			player_bthb -= 12;
 			msg_print("The heroism wears off.");
-			prt_hp();
+			prt_stat_block();
 		}
 	}
 }
@@ -4478,7 +4443,7 @@ void d__update_super_heroism()
 			player_bth += 24;
 			player_bthb += 24;
 			msg_print("You feel like a SUPER HERO!");
-			prt_hp();
+			prt_stat_block();
 		}
 		PF.shero--;
 		if (PF.shero == 0) {
@@ -4494,7 +4459,7 @@ void d__update_super_heroism()
 			player_bth -= 24;
 			player_bthb -= 24;
 			msg_print("The super heroism wears off.");
-			prt_hp();
+			prt_stat_block();
 		}
 	}
 }
@@ -4514,8 +4479,7 @@ void d__update_blessed()
 			player_pac += 5;
 			player_dis_ac += 5;
 			msg_print("You feel righteous!");
-			prt_hp();
-			prt_pac();
+			prt_stat_block();
 		}
 		PF.blessed--;
 		if (PF.blessed == 0) {
@@ -4529,8 +4493,7 @@ void d__update_blessed()
 			player_pac -= 5;
 			player_dis_ac -= 5;
 			msg_print("The prayer has expired.");
-			prt_hp();
-			prt_pac();
+			prt_stat_block();
 		}
 	}
 }
@@ -4619,19 +4582,16 @@ void d__update_hit_points()
 				if (player_chp > player_mhp) {
 					player_chp = player_mhp;
 				}
-				prt_hp();
 				old_chp = trunc(player_chp);
 			}
 			if (old_cmana != trunc(player_cmana)) {
 				if (player_cmana > player_mana) {
 					player_cmana = player_mana;
 				}
-				if (is_magii) {
-					prt_mana();
-				}
 				old_cmana = trunc(player_cmana);
 			}
 		}
+		prt_stat_block();
 	}
 	LEAVE("d__update_hit_points", "d")
 }
@@ -4917,7 +4877,7 @@ void d__chest_trap(long y, long x)
 		msg_print("A small needle has pricked you!");
 		if (lose_stat(STR, "", "You are unaffected.")) {
 			take_hit(damroll("1d4"), "a poison needle");
-			print_stat |= 0x0001;
+			print_stat = 1;
 			msg_print("You feel weakened!");
 		}
 	}

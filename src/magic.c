@@ -258,7 +258,7 @@ static void drain_mana(enum magic_t magic_type, long choice) {
 		player_cmana -= mana_cost;
 	else
 		drain_mana_failed(magic_type, mana_cost);
-	prt_mana();
+	prt_stat_block();
 }
 
 static void _cast(enum magic_t magic_type)

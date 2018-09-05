@@ -1069,7 +1069,7 @@ void change_character()
 				tmp_val = squish_stat(tmp_val);
 				player_stats_perm[(int)tstat] = tmp_val;
 				player_stats_curr[(int)tstat] = tmp_val;
-				prt_a_stat(tstat);
+				prt_stat_block();
 			}
 		}
 	}
@@ -1082,7 +1082,7 @@ void change_character()
 			if (flag) {
 				player_mhp = tmp_val;
 				player_chp = player_mhp;
-				prt_hp();
+				prt_stat_block();
 			}
 		} else {
 			abort = true;
@@ -1097,7 +1097,7 @@ void change_character()
 				if (flag) {
 					player_mana = tmp_val;
 					player_cmana = player_mana;
-					prt_mana();
+					prt_stat_block();
 				}
 			} else {
 				abort = true;
@@ -1535,8 +1535,7 @@ void wizard_command(void)
 	case 'a':
 		hp_player(1000, "cheating");
 		player_cmana = player_mana;
-		if (is_magii)
-			prt_mana();
+		prt_stat_block();
 		remove_curse();
 		cure_me(&(PF.blind));
 		cure_me(&(PF.hoarse));

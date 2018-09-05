@@ -36,7 +36,7 @@ void lower_stat(stat_set tstat, char msg1[82])
 	} else if (strlen(msg1) != 0) {
 		msg_print(msg1);
 	}
-	prt_a_stat(tstat);
+	prt_stat_block();
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -118,7 +118,7 @@ boolean restore_stat(stat_set tstat, char msg1[82])
 		} else if (strlen(msg1) != 0) {
 			msg_print(msg1);
 		}
-		prt_a_stat(tstat);
+		prt_stat_block();
 	}
 
 	return return_value;
@@ -182,7 +182,7 @@ boolean hp_player(long num, char kind[82])
 		if (player_chp > player_mhp) {
 			player_chp = player_mhp;
 		}
-		prt_hp();
+		prt_stat_block();
 
 		switch ((long)(num / 5)) {
 		case 0:
@@ -893,13 +893,7 @@ void lose_exp(long amount)
 		player_cmana = player_mana;
 	}
 	strcpy(player_title, player_titles[player_pclass][player_lev]);
-	prt_experience();
-	prt_hp();
-	if (is_magii) {
-		prt_mana();
-	}
-	prt_level();
-	prt_title();
+	prt_stat_block();
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -944,7 +938,7 @@ boolean gain_stat(stat_set tstat, char msg1[82])
 		msg_print(msg1);
 	}
 
-	prt_a_stat(tstat);
+	prt_stat_block();
 
 	return return_value;
 }

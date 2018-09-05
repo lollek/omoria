@@ -80,7 +80,7 @@ void q__potion_effect(long effect, boolean *idented)
 		player_mhp++;
 		player_chp += player_mhp;
 		ident = gain_stat(CON, "X");
-		prt_hp();
+		prt_stat_block();
 		break;
 
 	case 18: /*{ Gain Experience }*/

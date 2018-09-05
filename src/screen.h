@@ -50,33 +50,10 @@ extern void prt_field(char info[82], long row, long column);
 extern void prt_num(char header[82], long num, long row, long column);
 
 /**
- * -RAK-
- *  prt_title() - Prints title of character's level
- */
-extern void prt_title();
-
-/**
- * prt_a_stat()
- */
-extern void prt_a_stat(stat_set tstat);
-
-/**
- * -RAK-
- *  prt_level() - Prints level
- */
-extern void prt_level();
-
-/**
  * -DJC-
  *  prt_mana() - Prints player's mana
  */
 extern void prt_mana();
-
-/**
- * -DCJ-
- *  prt_hp() - Prints hit points
- */
-extern void prt_hp();
 
 /**
  * -RAK-
@@ -171,12 +148,6 @@ extern void prt_winner();
  * prt_experience()
  */
 extern void prt_experience();
-
-/**
- * prt_6_stats()
- */
-extern void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
-			unsigned char col);
 
 /**
  * -RAK-

@@ -256,10 +256,7 @@ void adv_time(boolean flag)
 	}
 
 	if ((flag) && ((player_cur_age.secs % 100) == 0)) {
-		prt_hp();
-		if (is_magii) {
-			prt_mana();
-		}
+		prt_stat_block();
 		prt_time();
 	}
 }
@@ -1684,9 +1681,6 @@ void gain_level()
 	msg_print("Your skills have improved.");
 	msg_print(" ");
 	msg_flag = false;
-	prt_hp();
-	prt_level();
-	prt_title();
 	if (C_player_uses_magic(M_ARCANE)) {
 		redraw = false;
 		learn_spell(&redraw);
@@ -1694,11 +1688,9 @@ void gain_level()
 			draw_cave();
 		}
 		gain_mana(spell_adj(INT));
-		prt_mana();
 	} else if (C_player_uses_magic(M_NATURE)) {
 		learn_druid();
 		gain_mana(druid_adj());
-		prt_mana();
 	} else if (C_player_uses_magic(M_SONG)) {
 		redraw = false;
 		learn_song(&redraw);
@@ -1706,16 +1698,15 @@ void gain_level()
 			draw_cave();
 		}
 		gain_mana(bard_adj());
-		prt_mana();
 	} else if (C_player_uses_magic(M_DIVINE)) {
 		learn_prayer();
 		gain_mana(spell_adj(WIS));
-		prt_mana();
 	} else if (C_player_uses_magic(M_CHAKRA)) {
 		learn_discipline();
 		gain_mana(monk_adj());
-		prt_mana();
 	}
+
+	prt_stat_block();
 
 	LEAVE("gain_level", "");
 }
