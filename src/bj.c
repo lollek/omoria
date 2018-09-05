@@ -78,7 +78,7 @@ static void bj__display_rules()
 {
 	char command;
 
-	clear_screen();
+	C_clear_screen();
 	prt("MORIA   BLACKJACK   RULES ", 2, 21);
 	prt("The object, of course, is to get as close as you can to 21 "
 	    "without",
@@ -313,7 +313,7 @@ static void bj__re_draw()
 {
 	long i;
 
-	clear_screen();
+	C_clear_screen();
 	prt("Your hand:", 5, 1);
 	prt("Dealer's hand: ", 12, 1);
 	for (i = 1; i <= 10; i++) {
@@ -652,7 +652,7 @@ static void bj__play_bj()
 {
 	boolean exit_flag = false;
 
-	clear_screen();
+	C_clear_screen();
 	bj__display_bj_game();
 	bj__initialize_hand();
 	bj__get_dealer_hand();
@@ -722,7 +722,7 @@ static void bj__blackjack_commands()
 				break;
 
 			case 18:
-				clear_screen();
+				C_clear_screen();
 				bj__re_draw();
 				break;
 
@@ -739,7 +739,7 @@ static void bj__blackjack_commands()
 
 void bj__game_blackjack()
 {
-	clear_screen();
+	C_clear_screen();
 	bj__display_bj();
 	bj__initialize_hand();
 	bj__opening_screen();

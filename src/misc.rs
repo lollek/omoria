@@ -1,18 +1,14 @@
-use libc;
 use std::ffi::CStr;
 
 use player;
 use random;
-use term;
-use magic;
 
 use types::Stat;
 
 pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
 pub const BTH_PLUS_ADJ: i16 = 3; // Adjust BTH per plus-to-hit
 
-#[no_mangle]
-pub extern fn max_allowable_weight() -> u16 {
+pub fn max_allowable_weight() -> u16 {
     let player_race = player::race();
     let player_sex = player::sex();
 
@@ -20,8 +16,7 @@ pub extern fn max_allowable_weight() -> u16 {
         4 * player_race.weight_modifier(player_sex)
 }
 
-#[no_mangle]
-pub extern fn min_allowable_weight() -> u16 {
+pub fn min_allowable_weight() -> u16 {
     let player_race = player::race();
     let player_sex = player::sex();
 
@@ -30,20 +25,16 @@ pub extern fn min_allowable_weight() -> u16 {
 }
 
 // Squish the stat into allowed limits
-#[no_mangle]
-pub extern fn squish_stat(stat: i32) -> u8 {
-    if stat > 250 {
-        250
-    } else if stat < 0 {
-        0
-    } else {
-        stat as u8
+pub fn squish_stat(stat: i32) -> u8 {
+    match stat {
+        x if x > 250 => 250,
+        x if x < 0 => 0,
+        _ => stat as u8,
     }
 }
 
 // Decreases a stat by one randomized level
-#[no_mangle]
-pub extern fn de_statp(stat: u8) -> u8 {
+pub fn de_statp(stat: u8) -> u8 {
     if stat < 11 {
         stat
     } else if stat < 151 {
@@ -60,8 +51,7 @@ pub extern fn de_statp(stat: u8) -> u8 {
 }
 
 // Increases a stat by one randomized level
-#[no_mangle]
-pub extern fn in_statp(stat: u8) -> u8 {
+pub fn in_statp(stat: u8) -> u8 {
     if stat < 150 {
         10
     } else if stat < 220 {
@@ -73,38 +63,6 @@ pub extern fn in_statp(stat: u8) -> u8 {
     } else {
         0
     }
-}
-
-// Utility function for dungeon.c::d__examine_book to use rust-strings
-#[no_mangle]
-pub extern fn C_print_new_spell_line2(i: libc::c_long, slot: libc::c_long) {
-    let spell = magic::spell(slot as usize);
-    term::prt_r(&format!("{}) {:30}{:2}      {:2}   {}",
-            (('a' as u8) + i as u8 -1) as char,
-            spell.name,
-            spell.level,
-            spell.mana,
-            if player::knows_spell(slot as usize) { "true" } else { "false" }),
-            (3 + i) as i32,
-            1);
-}
-
-// Utility function for misc.c::print_new_spells to use rust-strings
-#[no_mangle]
-pub extern fn C_print_new_spell_line(i: libc::uint8_t, slot: libc::c_long, failchance: libc::c_long) {
-    let to_print = if slot < 0 {
-        "".to_owned() // leave gaps for unknown spells
-    } else {
-        let spell = magic::spell(i as usize);
-        format!("{}) {:30} {:3}    {:3}      {:2}",
-            (('a' as u8) + i) as char,
-            spell.name,
-            spell.level,
-            spell.mana,
-            failchance)
-    };
-
-    term::prt_r(&to_print, (3 + i) as i32, 1);
 }
 
 // Hack for converting c-array of chars to rust string

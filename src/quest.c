@@ -111,7 +111,7 @@ void q__reward_item(long target)
 
 	pusht(i1);
 
-	clear_screen();
+	C_clear_screen();
 
 	for (i2 = 0; i2 < QUEST_ITEMS; i2++) {
 		sprintf(out_val, "%c)     %s", (char)(i2 + 97),
@@ -252,7 +252,7 @@ void q__draw_fortress(boolean enter_flag)
 		}
 	}
 
-	clear_screen();
+	C_clear_screen();
 	strcpy(shop_owner, "Leckin           (Arch-Mage)            Quests");
 	prt(shop_owner, 4, 10);
 	for (count = 1; count <= NUM_QUESTS; count++) {
@@ -323,7 +323,7 @@ boolean q__new_victim()
 
 void q__explain_quests()
 {
-	clear_screen();
+	C_clear_screen();
 	prt("Home of Leckin the Arch-Mage", 2, 26);
 	prt("Greetings, adventurer, and welcome to my humble quarters.", 6, 10);
 	prt("I see that you have come, like many before you, in an effort to",
@@ -351,7 +351,7 @@ void q__explain_quests()
 	prt("[Hit space to continue]", 24, 28);
 	inkey();
 
-	clear_screen();
+	C_clear_screen();
 	prt("Home of Leckin the Arch-Mage", 2, 26);
 	prt("I will give you a cash reward for the completion of each quest,",
 	    6, 10);

@@ -3,7 +3,6 @@ use std::fs;
 use std::io;
 use std::io::{Read, Write, Seek};
 
-use libc;
 use serde_json;
 
 use debug;
@@ -117,26 +116,5 @@ pub fn delete_character() -> Option<()> {
             debug::error(&format!("Failed to delete save (err: {})", e));
             None
         },
-    }
-}
-
-#[no_mangle]
-pub extern fn C_delete_character() {
-    delete_character();
-}
-
-#[no_mangle]
-pub extern fn C_save_character() -> libc::uint8_t {
-    match save_character() {
-        Some(_) => 255,
-        None => 0,
-    }
-}
-
-#[no_mangle]
-pub extern fn C_load_character() -> libc::uint8_t {
-    match load_character() {
-        Some(_) => 255,
-        None => 0,
     }
 }

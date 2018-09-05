@@ -6,7 +6,7 @@ void help()
 {
 	/*{ Help for available commands }*/
 
-	clear_screen();
+	C_clear_screen();
 	prt(" Movement: Keypad (1-9) or roguelike (hjklyubn)."
 	    " ~ means a direction. Hold shift with roguelike keys to run   ",
 	    1, 1);
@@ -109,7 +109,7 @@ void help()
 	    23, 1);
 	pause_game(24);
 
-	clear_screen();
+	C_clear_screen();
 	prt("Directory of Shops:                                ", 1, 1);
 	prt("     A   Alchemy Shop                M   Magic Shop", 3, 1);
 	prt("     B   Bank                        P   Trading Post", 4, 1);
@@ -138,7 +138,7 @@ void moria_help(char help_level[82])
 		/* child process */
 		echo();
 		nocbreak();
-		clear_screen();
+		C_clear_screen();
 		put_qio();
 		endwin();
 		execlp(HELP_FILE_PATH, "mhelp.pl", help_string, (char *)0);
@@ -167,7 +167,7 @@ void moria_help(char help_level[82])
 
 		cbreak();
 		noecho();
-		clear_screen();
+		C_clear_screen();
 		draw_cave();
 	}
 

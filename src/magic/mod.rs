@@ -12,3 +12,4 @@ pub mod rogue;
 pub mod ranger;
 pub mod paladin;
 
+pub mod magic_extern;

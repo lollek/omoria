@@ -61,16 +61,16 @@ fn random_stat() -> i16 {
 fn put_character(show_values: bool) {
     debug::enter("put_character");
 
-    term::prt_r("Name      : ", 3, 3);
-    term::prt_r("Race      : ", 4, 3);
-    term::prt_r("Sex       : ", 5, 3);
-    term::prt_r("Class     : ", 6, 3);
+    term::prt("Name      : ", 3, 3);
+    term::prt("Race      : ", 4, 3);
+    term::prt("Sex       : ", 5, 3);
+    term::prt("Class     : ", 6, 3);
 
     if show_values {
-        term::prt_r(&player::name(), 3, 15);
-        term::prt_r(&player::race().name(), 4, 15);
-        term::prt_r(&player::sex().to_string(), 5, 15);
-        term::prt_r(&player::class().name(), 6, 15);
+        term::prt(&player::name(), 3, 15);
+        term::prt(&player::race().name(), 4, 15);
+        term::prt(&player::sex().to_string(), 5, 15);
+        term::prt(&player::class().name(), 6, 15);
     }
 
     debug::leave("put_character");
@@ -133,12 +133,18 @@ fn get_stats() {
 fn put_stats() {
     debug::enter("put_stats");
 
-    screen::prt_6_stats(&player::curr_stats(), 3, 65);
+    let p = player::curr_stats();
+    screen::prt_stat("STR : ", p.strength, 3, 65);
+    screen::prt_stat("DEX : ", p.dexterity, 4, 65);
+    screen::prt_stat("CON : ", p.constitution, 5, 65);
+    screen::prt_stat("INT : ", p.intelligence, 6, 65);
+    screen::prt_stat("WIS : ", p.wisdom, 7, 65);
+    screen::prt_stat("CHR : ", p.charisma, 8, 65);
 
-    term::prt_r(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
-    term::prt_r(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);
-    term::prt_r(&format!("+ To AC    : {}", unsafe { player::player_dis_tac }), 12, 4);
-    term::prt_r(&format!("  Total AC : {}", unsafe { player::player_dis_ac }), 13, 4);
+    term::prt(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 10, 4);
+    term::prt(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 11, 4);
+    term::prt(&format!("+ To AC    : {}", unsafe { player::player_dis_tac }), 12, 4);
+    term::prt(&format!("  Total AC : {}", unsafe { player::player_dis_ac }), 13, 4);
 
     debug::leave("put_stats");
 }
@@ -146,10 +152,10 @@ fn put_stats() {
 fn put_misc1() {
     debug::enter("put_misc1");
 
-    term::prt_r(&format!("Age          : {}", unsafe { player::player_age }), 3, 40);
-    term::prt_r(&format!("Height       : {}", unsafe { player::player_ht }), 4, 40);
-    term::prt_r(&format!("Weight       : {}", unsafe { player::player_wt }), 5, 40);
-    term::prt_r(&format!("Social Class : {}", unsafe { player::player_sc }), 6, 40);
+    term::prt(&format!("Age          : {}", unsafe { player::player_age }), 3, 40);
+    term::prt(&format!("Height       : {}", unsafe { player::player_ht }), 4, 40);
+    term::prt(&format!("Weight       : {}", unsafe { player::player_wt }), 5, 40);
+    term::prt(&format!("Social Class : {}", unsafe { player::player_sc }), 6, 40);
 
     debug::leave("put_misc1");
 }
@@ -157,14 +163,14 @@ fn put_misc1() {
 fn put_misc2() {
     debug::enter("put_misc2");
 
-    term::prt_r(&format!("Level      : {}", unsafe { player::player_lev }), 10, 31);
-    term::prt_r(&format!("Experience : {}", unsafe { player::player_exp }), 11, 31);
-    term::prt_r(&format!("Gold       : {}", player::wallet().total), 12, 31);
-    term::prt_r(&format!("Account    : {}", unsafe { player::player_account }), 13, 31);
-    term::prt_r(&format!("Max Hit Points : {}", unsafe { player::player_mhp }), 10, 54);
-    term::prt_r(&format!("Cur Hit Points : {}", unsafe { player::player_chp }), 11, 54);
-    term::prt_r(&format!("Max Mana       : {}", unsafe { player::player_mana }), 12, 54);
-    term::prt_r(&format!("Cur Mana       : {}", unsafe { player::player_cmana }), 13, 54);
+    term::prt(&format!("Level      : {}", unsafe { player::player_lev }), 10, 31);
+    term::prt(&format!("Experience : {}", unsafe { player::player_exp }), 11, 31);
+    term::prt(&format!("Gold       : {}", player::wallet().total), 12, 31);
+    term::prt(&format!("Account    : {}", unsafe { player::player_account }), 13, 31);
+    term::prt(&format!("Max Hit Points : {}", unsafe { player::player_mhp }), 10, 54);
+    term::prt(&format!("Cur Hit Points : {}", unsafe { player::player_chp }), 11, 54);
+    term::prt(&format!("Max Mana       : {}", unsafe { player::player_mana }), 12, 54);
+    term::prt(&format!("Cur Mana       : {}", unsafe { player::player_cmana }), 13, 54);
 
     debug::leave("put_misc2");
 }
@@ -195,31 +201,31 @@ fn put_misc3() {
     let xrep: i64 = 6 + (unsafe { player::player_rep } / 25);
     let xinf: i64 = unsafe { player::player_flags.see_infra } * 10;
 
-    term::prt_r("(Miscellaneous Abilities)", 16, 24);
-    term::put_buffer_r(&format!("Fighting    : {}", misc::mod_to_string(xbth, 12)), 17, 2);
-    term::put_buffer_r(&format!("Bows/Throw  : {}", misc::mod_to_string(xbthb, 12)), 18, 2);
-    term::put_buffer_r(&format!("Saving Throw: {}", misc::mod_to_string(xsave, 6)), 19, 2);
-    term::put_buffer_r(&format!("Stealth     : {}", misc::mod_to_string(xstl, 1)), 17, 27);
-    term::put_buffer_r(&format!("Disarming   : {}", misc::mod_to_string(xdis, 8)), 18, 27);
-    term::put_buffer_r(&format!("Magic Device: {}", misc::mod_to_string(xdev, 7)), 19, 27);
-    term::put_buffer_r(&format!("Perception  : {}", misc::mod_to_string(xfos, 3)), 17, 52);
-    term::put_buffer_r(&format!("Searching   : {}", misc::mod_to_string(xsrh, 6)), 18, 52);
-    term::put_buffer_r(&format!("Infra-Vision: {} feet", xinf), 19, 52);
-    term::put_buffer_r(&format!("Swimming    : {}", misc::mod_to_string(xswm, 1)), 20, 52);
-    term::put_buffer_r(&format!("Reputation  : {}", misc::mod_to_string(xrep, 1)), 20, 2);
+    term::prt("(Miscellaneous Abilities)", 16, 24);
+    term::put_buffer(&format!("Fighting    : {}", misc::mod_to_string(xbth, 12)), 17, 2);
+    term::put_buffer(&format!("Bows/Throw  : {}", misc::mod_to_string(xbthb, 12)), 18, 2);
+    term::put_buffer(&format!("Saving Throw: {}", misc::mod_to_string(xsave, 6)), 19, 2);
+    term::put_buffer(&format!("Stealth     : {}", misc::mod_to_string(xstl, 1)), 17, 27);
+    term::put_buffer(&format!("Disarming   : {}", misc::mod_to_string(xdis, 8)), 18, 27);
+    term::put_buffer(&format!("Magic Device: {}", misc::mod_to_string(xdev, 7)), 19, 27);
+    term::put_buffer(&format!("Perception  : {}", misc::mod_to_string(xfos, 3)), 17, 52);
+    term::put_buffer(&format!("Searching   : {}", misc::mod_to_string(xsrh, 6)), 18, 52);
+    term::put_buffer(&format!("Infra-Vision: {} feet", xinf), 19, 52);
+    term::put_buffer(&format!("Swimming    : {}", misc::mod_to_string(xswm, 1)), 20, 52);
+    term::put_buffer(&format!("Reputation  : {}", misc::mod_to_string(xrep, 1)), 20, 2);
 
     debug::leave("put_misc3");
 }
 
 fn print_history() {
     term::clear_from(14);
-    term::put_buffer_r("Character Background", 14, 28);
+    term::put_buffer("Character Background", 14, 28);
     for i in 0..5 {
         let c_hist: Vec<u8> = unsafe { player::player_history[i]}.iter()
             .map(|&i| i as u8)
             .collect();
         let hist = misc::c_array_to_rust_string(c_hist);
-        term::put_buffer_r(&hist, i as i32 + 15, 5);
+        term::put_buffer(&hist, i as i32 + 15, 5);
     }
 }
 
@@ -839,13 +845,12 @@ fn display_char() {
     debug::leave("display_char");
 }
 
-#[no_mangle]
-pub extern fn change_name() {
+pub fn change_name() {
     debug::enter("change_name");
 
     display_char();
     loop {
-        term::prt_r("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
+        term::prt("<c>hange character name.     <ESCAPE> to continue.", 22, 3);
         match io::inkey_flush() {
             99 => choose_name(),
             0 | 3 | 25 | 26 | 27 => break,
@@ -861,7 +866,7 @@ pub extern fn change_name() {
 fn choose_name() {
     debug::enter("choose_name");
 
-    term::prt_r("Enter your player's name  [press <RETURN> when finished]", 22, 3);
+    term::prt("Enter your player's name  [press <RETURN> when finished]", 22, 3);
     loop {
         let new_name = term::get_string(3, 15, 24);
         if !new_name.is_empty() {
@@ -878,7 +883,7 @@ fn choose_class() -> bool {
     debug::enter("choose_class");
 
     term::clear_from(21);
-    term::prt_r("Choose a class (? for Help):", 21, 3);
+    term::prt("Choose a class (? for Help):", 21, 3);
 
     let start_x = 3;
 
@@ -894,7 +899,7 @@ fn choose_class() -> bool {
         let char_visual = ('a' as u8 + i as u8) as char;
         let class_string = format!("{}) {}", char_visual, class.name());
 
-        term::put_buffer_r(&class_string, y, x);
+        term::put_buffer(&class_string, y, x);
         x += 15;
         if x > 70 {
             x = start_x;
@@ -902,10 +907,10 @@ fn choose_class() -> bool {
         }
     }
 
-    term::put_buffer_r("", 21, 30);
+    term::put_buffer("", 21, 30);
 
     loop {
-        ncurses::move_cursor(5, 14);
+        ncurses::mov(5, 14);
         let key = io::inkey_flush();
         if key as char == '?' {
             let cstr = CString::new("Character Classes").unwrap();
@@ -932,7 +937,7 @@ fn choose_race() -> bool {
     debug::enter("choose_race");
 
     term::clear_from(21);
-    term::prt_r("Choose a race (? for Help):", 21, 3);
+    term::prt("Choose a race (? for Help):", 21, 3);
 
     let start_x = 3;
 
@@ -943,7 +948,7 @@ fn choose_race() -> bool {
         let char_visual = ('a' as u8 + i as u8) as char;
         let race_string = format!("{}) {}", char_visual, race.name());
 
-        term::put_buffer_r(&race_string, y, x);
+        term::put_buffer(&race_string, y, x);
         x += 15;
         if x > 70 {
             x = start_x;
@@ -952,7 +957,7 @@ fn choose_race() -> bool {
     }
 
     loop {
-        ncurses::move_cursor(3, 14);
+        ncurses::mov(3, 14);
         let key = io::inkey_flush();
 
         if key as char == '?' {
@@ -986,12 +991,12 @@ fn choose_sex() -> bool {
     }
 
     term::clear_from(21);
-    term::prt_r("Choose a sex (? for Help):", 21, 3);
-    term::prt_r("m) Male       f) Female", 22, 3);
-    term::prt_r("", 21, 29);
+    term::prt("Choose a sex (? for Help):", 21, 3);
+    term::prt("m) Male       f) Female", 22, 3);
+    term::prt("", 21, 29);
 
     loop {
-        ncurses::move_cursor(4, 14);
+        ncurses::mov(4, 14);
         let key = io::inkey_flush() as char;
 
         if key == 'f' {
@@ -1033,7 +1038,7 @@ fn choose_stats() {
         put_misc1();
         put_stats();
 
-        term::prt_r("Press 'R' to reroll stats, <RETURN> to continue:", 21, 3);
+        term::prt("Press 'R' to reroll stats, <RETURN> to continue:", 21, 3);
 
         loop {
             let s: u8 = io::inkey_flush();
@@ -1048,8 +1053,7 @@ fn choose_stats() {
     }
 }
 
-#[no_mangle]
-pub extern fn create_character() {
+pub fn create_character() {
     debug::enter("create_character");
 
     term::clear_screen();
@@ -1060,14 +1064,14 @@ pub extern fn create_character() {
             break;
         }
     }
-    term::put_buffer_r(&player::race().name(), 4, 15);
+    term::put_buffer(&player::race().name(), 4, 15);
 
     loop {
         if choose_sex() {
             break;
         }
     }
-    term::put_buffer_r(&player::sex().to_string(), 5, 15);
+    term::put_buffer(&player::sex().to_string(), 5, 15);
 
     choose_stats();
     print_history();
@@ -1079,7 +1083,7 @@ pub extern fn create_character() {
     }
 
     term::clear_from(21);
-    term::put_buffer_r(&player::class().name(), 6, 15);
+    term::put_buffer(&player::class().name(), 6, 15);
     apply_stats_from_class();
 
     print_history();
@@ -1098,7 +1102,7 @@ pub extern fn create_character() {
     put_misc3();
     choose_name();
 
-    term::prt_r("[Press any key to continue.]", 24, 11);
+    term::prt("[Press any key to continue.]", 24, 11);
     io::inkey_flush();
 
     debug::leave("create_character");

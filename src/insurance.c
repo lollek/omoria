@@ -23,7 +23,7 @@ void bi__display_commands()
 /*//////////////////////////////////////////////////////////////////// */
 void bi__display_store(char shop_owner[82])
 {
-	clear_screen();
+	C_clear_screen();
 	prt(shop_owner, 4, 10);
 	prt("(Protects character against most system failures.)", 7, 15);
 	bi__display_commands();
@@ -320,7 +320,7 @@ void buy_insurance()
 			check_kickout_time(tics, 2);
 		} while (!exit_flag);
 
-		clear_screen();
+		C_clear_screen();
 		draw_cave();
 		if (player_money[TOTAL_] != starting_money) {
 			msg_print("Be sure to save your character for your "

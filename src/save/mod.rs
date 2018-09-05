@@ -8,3 +8,5 @@ pub mod monsters;
 pub mod save;
 pub mod town;
 pub mod types;
+
+pub mod save_extern;

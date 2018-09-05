@@ -31,7 +31,7 @@ void prt_equipment_args(long y, long x, long start, boolean clear)
 void draw_cave()
 {
 	ENTER(("draw_cave", ""));
-	clear_screen();
+	C_clear_screen();
 	prt_stat_block();
 	prt_map();
 	prt_depth();
@@ -111,7 +111,7 @@ void prt_map()
 	LEAVE("prt_map", "");
 }
 
-// RUST
+/* RUST */
 void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
 		 unsigned char col)
 {
@@ -134,7 +134,7 @@ void prt_6_stats(stat_s_type p, stat_s_type l, unsigned char row,
 	LEAVE("prt_6_stats", "");
 }
 
-// RUST
+/* RUST */
 void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char loss,
 		   long row, long column)
 {
@@ -153,7 +153,7 @@ void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char l
 	LEAVE("prt_stat_attr", "");
 }
 
-// RUST
+/* RUST */
 void prt_stat(const char stat_name[82], unsigned char stat, long row, long column)
 {
 	stat_s_type out_val1;

@@ -61,7 +61,7 @@ void sm__display_slots()
 	char out_val[82];
 	long c1, c2, c3;
 
-	clear_screen();
+	C_clear_screen();
 	sm__display_slot_options();
 	sm__position_adjust(&c1, &c2, &c3);
 	sprintf(out_val, "%s", s_name[slotpos[1]]);
@@ -77,7 +77,7 @@ void sm__display_prizes()
 {
 	char command;
 
-	clear_screen();
+	C_clear_screen();
 	prt("                                1     2      5     10     25     "
 	    "50 ",
 	    4, 1);
@@ -393,7 +393,7 @@ void sm__slot_commands()
 
 void sm__game_slots()
 {
-	clear_screen();
+	C_clear_screen();
 	slotpos[1] = S_JACKPOT;
 	slotpos[2] = S_JACKPOT;
 	slotpos[3] = S_JACKPOT;

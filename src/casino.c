@@ -84,7 +84,7 @@ void c__display_casino()
 {
 	char shop_owner[82];
 
-	clear_screen();
+	C_clear_screen();
 	strcpy(shop_owner,
 	       "Darkon           (Master-Hacker)            Casino");
 	prt(shop_owner, 4, 10);

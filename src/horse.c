@@ -16,7 +16,7 @@ void hr__display_commands()
 
 void hr__display_track3()
 {
-	clear_screen();
+	C_clear_screen();
 	put_buffer("-- -- -- -- -- -- -- -- -- -- -- -- -- -- __ __", 3, 1);
 	put_buffer("-_", 4, 51);
 	put_buffer("-_", 5, 55);
@@ -51,7 +51,7 @@ void hr__display_track3()
 
 void hr__display_track2()
 {
-	clear_screen();
+	C_clear_screen();
 	put_buffer("_", 2, 46);
 	put_buffer("_", 3, 46);
 	put_buffer("_", 4, 45);
@@ -86,7 +86,7 @@ void hr__display_track2()
 
 void hr__display_track4()
 {
-	clear_screen();
+	C_clear_screen();
 	put_buffer("__ __ -- -- -- -- -- -- -- -- -- -- -- -- -- -- --", 3, 29);
 	put_buffer("_-", 4, 25);
 	put_buffer("_-", 5, 22);
@@ -121,7 +121,7 @@ void hr__display_track4()
 
 void hr__display_track5()
 {
-	clear_screen();
+	C_clear_screen();
 	put_buffer("_", 2, 3);
 	put_buffer("_", 3, 3);
 	put_buffer("_", 4, 3);
@@ -156,7 +156,7 @@ void hr__display_track5()
 
 void hr__display_track1()
 {
-	clear_screen();
+	C_clear_screen();
 	put_buffer("__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __",
 		   2, 1);
 	put_buffer("__ __ __ __ __ __ __", 2, 58);
@@ -662,7 +662,7 @@ void hr__start(long num_horse, long *screen_high, long *which_screen,
 		fastest[i1] = final_fastest[i1];
 	}
 	get_com("", &command);
-	clear_screen();
+	C_clear_screen();
 }
 
 void hr__display_winnings(long horse_bet, h_stat fastest, statr odds,
@@ -749,7 +749,7 @@ void hr__display_winnings(long horse_bet, h_stat fastest, statr odds,
 	put_buffer(out_val, 12, 64);
 	prt("[hit any key to continue]", 23, 24);
 	get_com("", &command);
-	clear_screen();
+	C_clear_screen();
 }
 
 boolean grb__get_bet_type(char *horse_bet_type)
@@ -798,7 +798,7 @@ boolean grb__get_bet_horse(long num_horse, h_name horse, statr odds,
 	} while (!exit_flag);
 
 	*horse_bet = i1;
-	clear_screen();
+	C_clear_screen();
 	hr__display_commands();
 
 	return return_value;
@@ -868,7 +868,7 @@ boolean hr__get_horse_command(boolean *exit_flag, char *horse_bet_type,
 			    bets, sum_bets);
 			break;
 		case 18: /*(*^R*)*/
-			clear_screen();
+			C_clear_screen();
 			hr__display_commands();
 			break;
 		case 118:
@@ -909,7 +909,7 @@ void hr__game_horse()
 
 	boolean exit_flag;
 
-	clear_screen();
+	C_clear_screen();
 
 	exit_flag = false;
 

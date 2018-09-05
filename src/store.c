@@ -1058,7 +1058,7 @@ void display_store(long store_num, long cur_top)
 	ENTER(("display_store", ""));
 
 	/* with stores[store_num] do; */
-	clear_screen();
+	C_clear_screen();
 	prt(owners[stores[store_num].owner].owner_name, 4, 10);
 	prt("   Item", 5, 1);
 	prt("Asking Price", 5, 61);

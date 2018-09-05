@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	/* Init an IO channel for QIO */
 	/* init_channel(); */
 
-	clear_screen();
+	C_clear_screen();
 
 	/*
 	 * If we already have a character from command line,

@@ -891,7 +891,7 @@ void esf__display_list(int start, char list[][134], int n1, int *blegga,
 void esf__display_screen(int cur_top, char list[][134], int n1, int *blegga,
 			 int *cur_display_size)
 {
-	clear_screen();
+	C_clear_screen();
 	*cur_display_size = 0;
 	put_buffer("  Username     Points  Diff    Character name    Level  "
 		   "Race         Class",
@@ -1498,7 +1498,7 @@ void wizard_help()
 {
 	/*{ Help for available wizard commands                            }*/
 
-	clear_screen();
+	C_clear_screen();
 	prt(" ? -  Wizard Help.", 1, 1);
 	prt(" a -  Remove Curse and Cure all maladies.", 2, 1);
 	prt(" b -  Print random objects sample.", 3, 1);

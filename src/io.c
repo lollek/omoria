@@ -83,12 +83,12 @@ void signalsuspend()
 
 		switch (game_state) {
 		case GS_GET_COMMAND:
-			clear_screen();
+			C_clear_screen();
 			put_qio();
 			break;
 		default:
 			save_screen();
-			clear_screen();
+			C_clear_screen();
 			put_qio();
 			break;
 		}
@@ -105,11 +105,11 @@ void signalsuspend()
 
 		switch (game_state) {
 		case GS_GET_COMMAND:
-			clear_screen();
+			C_clear_screen();
 			draw_cave();
 			break;
 		default:
-			clear_screen();
+			C_clear_screen();
 			put_qio();
 			restore_screen();
 			wrefresh(stdscr);

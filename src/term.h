@@ -4,7 +4,6 @@
 typedef unsigned char int8u;
 
 void moriaterm();
-void clear_screen();
 void save_screen();
 void restore_screen();
 void restore_term();

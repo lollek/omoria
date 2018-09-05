@@ -680,19 +680,6 @@ pub fn set_record(record: PlayerRecord) {
 }
 
 
-#[no_mangle]
-pub extern fn C_player_knows_spell(slot: libc::int32_t) -> libc::uint8_t {
-    match knows_spell(slot as usize) {
-        true => 255,
-        false => 0,
-    }
-}
-
-#[no_mangle]
-pub extern fn C_player_set_knows_spell(slot: libc::int32_t, yn: libc::uint8_t) {
-    set_knows_spell(slot as usize, yn != 0);
-}
-
 pub fn uses_magic(magic: Magic) -> bool {
     match class() {
         Class::Mage | Class::Adventurer => magic == Magic::Arcane,
@@ -703,12 +690,3 @@ pub fn uses_magic(magic: Magic) -> bool {
         Class::Warrior => false,
     }
 }
-
-#[no_mangle]
-pub extern fn C_player_uses_magic(magic_type: libc::int32_t) -> libc::uint8_t {
-    match uses_magic(Magic::from(magic_type)) {
-        true => 255,
-        false => 0
-    }
-}
-

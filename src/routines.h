@@ -23,6 +23,8 @@ uint8_t C_magic_spell_failchance(int32_t slot);
 
 void C_highscore(uint8_t max_highscores);
 
+void C_clear_screen();
+
 /* END - FROM RUST */
 
 /* { CASINO.PAS		} */
@@ -517,8 +519,8 @@ extern long todis_adj();
 extern long todam_adj();
 extern char *likert(long x, long y, char *result);
 extern unsigned char characters_sex();
-extern unsigned short max_allowable_weight();
-extern unsigned short min_allowable_weight();
+extern uint16_t max_allowable_weight();
+extern uint16_t min_allowable_weight();
 extern long weight_limit();
 extern treas_ptr money_carry();
 extern char *cost_str(long amt, char result[134]);

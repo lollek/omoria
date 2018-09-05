@@ -20,42 +20,54 @@ extern "C" {
     fn C_move(y: libc::c_int, x: libc::c_int) -> libc::c_int;
 }
 
-pub extern fn refresh_screen() {
-    debug::enter("ncurses::refresh_screen");
+pub extern fn refresh() {
+    debug::enter("ncurses::refresh");
+
     if unsafe { C_refresh() } != 0 {
         panic!("refresh returned ERR");
     }
-    debug::leave("ncurses::refresh_screen");
+
+    debug::leave("ncurses::refresh");
 }
 
-pub extern fn move_print(row: i32, col: i32, out_str: *const libc::c_char) {
-    debug::enter("ncurses::move_print");
-    if unsafe { C_mvaddstr(row as libc::c_int, col as libc::c_int, out_str) } != 0 {
+// Use term::put_buffer instead of this directly
+pub extern fn mvaddstr(row: libc::c_int, col: libc::c_int, out_str: *const libc::c_char) {
+    debug::enter("ncurses::mvaddstr");
+
+    if unsafe { C_mvaddstr(row, col, out_str) } != 0 {
         panic!("mvaddstr returned ERR");
     }
-    debug::leave("ncurses::move_print");
+
+    debug::leave("ncurses::mvaddstr");
 }
 
-pub extern fn clear_line() {
-    debug::enter("ncurses::clear_line");
+pub extern fn clrtoeol() {
+    debug::enter("ncurses::clrtoeol");
+
     if unsafe { C_clrtoeol() } != 0 {
         panic!("clrtoeol returned ERR");
     }
-    debug::leave("ncurses::clear_line");
+
+    debug::leave("ncurses::clrtoeol");
 }
 
-pub extern fn move_cursor(row: i32, col: i32) {
-    debug::enter("ncurses::move_curseor");
-    if unsafe { C_move(row as libc::c_int, col as libc::c_int) } != 0 {
+pub extern fn mov(row: libc::c_int, col: libc::c_int) {
+    debug::enter("ncurses::mov");
+
+    if unsafe { C_move(row, col) } != 0 {
         panic!("move returned ERR");
     }
-    debug::leave("ncurses::move_curseor");
+
+    debug::leave("ncurses::mov");
 }
 
-pub extern fn clear_screen() {
-    debug::enter("ncurses::clear_screen");
+// Use term::clear_screen instead
+pub extern fn clear() {
+    debug::enter("ncurses::clear");
+
     if unsafe { C_clear() } != 0 {
         panic!("clear returned ERR");
     }
-    debug::leave("ncurses::clear_screen");
+
+    debug::leave("ncurses::clear");
 }
