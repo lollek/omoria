@@ -198,12 +198,12 @@ void use_staff()
 					if (ident) {
 						if (item_ptr->data.flags != 0) {
 							/* with player_do; */
-							player_exp +=
+							C_player_add_exp(
 							    (item_ptr->data
 								 .level /
 							     (float)player_lev) +
-							    .5;
-							prt_experience();
+							    .5);
+							prt_stat_block();
 						}
 					}
 					desc_charges(item_ptr);

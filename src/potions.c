@@ -89,9 +89,9 @@ void q__potion_effect(long effect, boolean *idented)
 		if (i5 > 100000) {
 			i5 = 100000;
 		}
-		player_exp += i5;
+		C_player_add_exp(i5);
 		msg_print("You feel more experienced.");
-		prt_experience();
+		prt_stat_block();
 		ident = true;
 		break;
 
@@ -369,10 +369,10 @@ void quaff()
 				}
 
 				if (item_ptr->data.flags != 0) {
-					player_exp += (item_ptr->data.level /
+					C_player_add_exp((item_ptr->data.level /
 						   (float)player_lev) +
-						  .5;
-					prt_experience();
+						  .5);
+					prt_stat_block();
 				}
 
 				add_food(item_ptr->data.p1);

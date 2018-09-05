@@ -17,9 +17,7 @@ const MANA_ROW: u8 = 6;
 
 const STAT_ROW: u8 = 8; // -> 13
 
-//const LEVEL_ROW: u8 = 12;
-//const EXP_ROW: u8 = 13;
-//const QUEST_ROW: u8 = 16;
+const QUEST_ROW: u8 = 16;
 //const AC_ROW: u8 = 17;
 //const GOLD_ROW: u8 = 18;
 //const WEIGHT_ROW: u8 = 19;
@@ -148,7 +146,7 @@ pub fn print_stat_block() {
 
     print_stats(STAT_ROW, STAT_COL);
 
-    //prunt_field("EXP : ", player_exp, EXP_ROW, STAT_COL);
+    print_field(&format!("QST : {:>6}", player::quests()), QUEST_ROW, STAT_COL);
 
     debug::leave("print_stat_block");
 }

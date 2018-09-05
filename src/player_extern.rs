@@ -24,3 +24,7 @@ pub extern fn C_player_uses_magic(magic_type: libc::int32_t) -> libc::uint8_t {
     }
 }
 
+#[no_mangle]
+pub extern fn C_player_add_exp(num: libc::c_long) {
+    player::add_experience(num);
+}

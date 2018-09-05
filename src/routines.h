@@ -13,6 +13,7 @@ boolean C_load_character();
 boolean C_player_knows_spell(int32_t slot);
 void C_player_set_knows_spell(int32_t slot, boolean yn);
 boolean C_player_uses_magic(enum magic_t magic_type);
+void C_player_add_exp(long num);
 
 signed char C_class_melee_bonus(enum class_t class);
 signed char C_class_ranged_bonus(enum class_t class);
@@ -487,7 +488,6 @@ extern long get_obj_num(long level, long tries);
 extern void place_object(long y, long x);
 extern void alloc_object(obj_set alloc_set, long typ, long num);
 extern void random_object(long y, long x, long num);
-extern void cnv_stat(unsigned char stat, stat_s_type out_val);
 extern long spell_adj(stat_set attr);
 extern long bard_adj();
 extern long druid_adj();

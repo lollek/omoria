@@ -111,54 +111,6 @@ void prt_map()
 	LEAVE("prt_map", "");
 }
 
-/* RUST */
-void prt_stat_attr(const char stat_name[82], unsigned char stat, unsigned char loss,
-		   long row, long column)
-{
-	stat_s_type out_val1;
-
-	ENTER(("prt_stat_attr", ""));
-
-	if (loss == 0) {
-		prt_stat(stat_name, stat, row, column);
-	} else {
-		cnv_stat(stat, out_val1);
-		put_buffer_attr(stat_name, row, column, A_DIM);
-		put_buffer((char *)out_val1, row, column + strlen(stat_name));
-	}
-
-	LEAVE("prt_stat_attr", "");
-}
-
-/* RUST */
-void prt_stat(const char stat_name[82], unsigned char stat, long row, long column)
-{
-	stat_s_type out_val1;
-	char out_val2[82];
-
-	ENTER(("prt_stat", ""));
-
-	cnv_stat(stat, out_val1);
-	sprintf(out_val2, "%s%s", stat_name, out_val1);
-	put_buffer(out_val2, row, column);
-
-	LEAVE("prt_stat", "");
-}
-
-void cnv_stat(unsigned char stat, stat_s_type out_val)
-{
-	long part1;
-	long part2;
-
-	if (stat > 150) {
-		part1 = 18;
-		part2 = stat - 150;
-		sprintf((char *)out_val, "%2ld/%-2ld", part1, part2);
-	} else {
-		sprintf((char *)out_val, "%2d   ", 3 + (stat / 10));
-	}
-}
-
 void prt_num(char header[82], long num, long row, long column)
 {
 	char out_val[82];
@@ -174,8 +126,8 @@ void prt_stat_block()
 
 	C_print_stat_block();
 
-	prt_num("QST : ", player_quests, QUEST_ROW, STAT_COLUMN);
 	prt_num("AC  : ", player_dis_ac, AC_ROW, STAT_COLUMN);
+	prt_pac();
 	prt_num("GOLD: ", player_money[TOTAL_], GOLD_ROW, STAT_COLUMN);
 	prt_field("WGHT:", WEIGHT_ROW, STAT_COLUMN);
 	prt_field("M_WT:", WEIGHT_ROW + 1, STAT_COLUMN);
@@ -341,24 +293,3 @@ void prt_quested()
 }
 
 void prt_winner() { put_buffer("*Winner*", WINNER_ROW, WINNER_COLUMN); }
-
-void prt_experience()
-{
-	/*      with player_do*/
-	if (player_exp > player_max_exp) {
-		player_exp = player_max_exp;
-	}
-
-	if (player_lev < MAX_PLAYER_LEVEL) {
-		while ((exp_per_level[player_lev] * player_expfact) <=
-		       player_exp) {
-			gain_level();
-		}
-
-		if (player_exp > player_max_exp) {
-			player_max_exp = player_exp;
-		}
-	}
-
-	prt_num("", player_exp, EXP_ROW, STAT_COLUMN + 6);
-}

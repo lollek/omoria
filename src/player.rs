@@ -12,6 +12,8 @@ use types::{
 use misc;
 use debug;
 
+const MAX_PLAYER_LEVEL: usize = 40;
+
 #[derive(Serialize, Deserialize, Clone, Copy)]
 #[repr(C)]
 pub struct Time {
@@ -234,6 +236,9 @@ extern "C" {
     pub static mut char_col: libc::c_long;
 
     static mut bank: [libc::int64_t; 7];
+    static exp_per_level: [libc::c_long; MAX_PLAYER_LEVEL + 1];
+    #[link_name = "gain_level"]
+    fn C_gain_level();
 }
 
 lazy_static! {
@@ -709,4 +714,27 @@ pub fn max_mp() -> i16 {
 
 pub fn uses_mana() -> bool {
     class() != Class::Warrior
+}
+
+pub fn expfact() -> f32 {
+    unsafe { player_expfact }
+}
+
+pub fn exp_to_next_level() -> i64 {
+    if exp() >= max_exp() {
+        <i64>::max_value()
+    } else {
+        (unsafe { exp_per_level[level() as usize] } as f64 * expfact() as f64) as i64 - exp()
+    }
+}
+
+pub fn add_experience(num: i64) {
+    unsafe { player_exp += num };
+    if exp_to_next_level() <= 0 {
+        unsafe { C_gain_level() };
+    }
+}
+
+pub fn quests() -> u8 {
+    unsafe { player_quests }
 }

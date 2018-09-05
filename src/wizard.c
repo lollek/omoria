@@ -1593,11 +1593,11 @@ void wizard_command(void)
 		break;
 	case 'j': /* Gain exp */
 		if (player_exp == 0) {
-			player_exp = 1;
+			C_player_add_exp(1);
 		} else {
-			player_exp *= 2;
+			C_player_add_exp(player_exp);
 		}
-		prt_experience();
+		prt_stat_block();
 		break;
 	case 'k': /* Summon monster */
 		y = char_row;

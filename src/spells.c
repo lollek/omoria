@@ -983,7 +983,7 @@ boolean restore_level()
 		msg_print("You feel your life energies returning...");
 		for (; player_exp < player_max_exp;) {
 			player_exp = player_max_exp;
-			prt_experience();
+			prt_stat_block();
 		}
 
 	} else {

@@ -1011,7 +1011,7 @@ void battle_game(long plus, char kb_str[82])
 			msg_print("You handle them all with ease!");
 			msg_print(
 			    "'Thanks for the workout! Come back anytime!!'");
-			player_exp += 10;
+			C_player_add_exp(10);
 			change_rep(5);
 			break;
 
@@ -1037,7 +1037,7 @@ void brothel_game()
 		if ((player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT)) >
 		    randint(100)) {
 			msg_print("Good! You are invited to join the house!");
-			player_exp += 5;
+			C_player_add_exp(5);
 			spend_time(600, "putting out for peasants", false);
 		} else {
 			msg_print("You fail to please your customers.");
@@ -1053,7 +1053,7 @@ void guild_or_not(boolean passed)
 	if (passed) {
 		spend_time(600, "showing off your skills", false);
 		msg_print("Good! You are invited to join the guild!");
-		player_exp += 5;
+		C_player_add_exp(5);
 		change_rep(-3);
 	} else {
 		spend_time(400, "or lack thereof", false);
@@ -2316,7 +2316,7 @@ long mon_take_hit(long monptr, long dam)
 				i1++;
 				acc_exp -= 1.0;
 			}
-			player_exp += i1;
+			C_player_add_exp(i1);
 
 		} else if (c_list[m_list[monptr].mptr].mexp > 0) {
 
@@ -2351,7 +2351,7 @@ long mon_take_hit(long monptr, long dam)
 		delete_monster(monptr);
 
 		if (i1 > 0) {
-			prt_experience();
+			prt_stat_block();
 		}
 
 	} else {
@@ -4950,8 +4950,8 @@ void d__openobject()
 							.p1) > randint(100)) {
 						msg_print("You have picked the "
 							  "lock.");
-						player_exp++;
-						prt_experience();
+						C_player_add_exp(1);
+						prt_stat_block();
 						t_list[cave[y][x].tptr].p1 = 0;
 					} else {
 						msg_print("You failed to pick "
@@ -4993,10 +4993,10 @@ void d__openobject()
 						msg_print("You have picked the "
 							  "lock.");
 						flag = true;
-						player_exp +=
+						C_player_add_exp(
 						    t_list[cave[y][x].tptr]
-							.level;
-						prt_experience();
+							.level);
+						prt_stat_block();
 					} else {
 						msg_print("You failed to pick "
 							  "the lock.");
@@ -5163,14 +5163,14 @@ void d__disarm_trap()
 				if ((tot - t5) > randint(100)) {
 					msg_print(
 					    "You have disarmed the trap.");
-					player_exp +=
-					    t_list[cave[y][x].tptr].p1;
+					C_player_add_exp(
+					    t_list[cave[y][x].tptr].p1);
 					cave[y][x].fm = false;
 					pusht(cave[y][x].tptr);
 					cave[y][x].tptr = 0;
 					move_char(tdir);
 					lite_spot(y, x);
-					prt_experience();
+					prt_stat_block();
 				} else if (randint(tot) > 5) {
 					msg_print(
 					    "You failed to disarm the trap.");
@@ -5214,8 +5214,8 @@ void d__disarm_trap()
 							  "the chest.");
 						known2(t_list[cave[y][x].tptr]
 							   .name);
-						player_exp += t5;
-						prt_experience();
+						C_player_add_exp(t5);
+						prt_stat_block();
 					} else if (randint(tot) > 5) {
 						msg_print("You failed to "
 							  "disarm the chest.");

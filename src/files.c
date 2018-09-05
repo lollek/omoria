@@ -391,6 +391,20 @@ void intro(int argc, char *argv[])
 	LEAVE("intro", "");
 }
 
+static void cnv_stat(unsigned char stat, stat_s_type out_val)
+{
+	long part1;
+	long part2;
+
+	if (stat > 150) {
+		part1 = 18;
+		part2 = stat - 150;
+		sprintf((char *)out_val, "%2ld/%-2ld", part1, part2);
+	} else {
+		sprintf((char *)out_val, "%2d   ", 3 + (stat / 10));
+	}
+}
+
 void file_character()
 {
 	/*{ Print the character to a file or device               -RAK-   }*/

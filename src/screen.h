@@ -32,13 +32,6 @@ extern void prt_stat(const char stat_name[82], unsigned char stat, long row,
 
 /**
  * -RAK-
- * prt_stat_attr() - Print character stat in a given row, column
- */
-extern void prt_stat_attr(const char stat_name[82], unsigned char stat,
-			  unsigned char loss, long row, long column);
-
-/**
- * -RAK-
  *  prt_field() - Print character info in a given row, column
  */
 extern void prt_field(char info[82], long row, long column);
@@ -48,12 +41,6 @@ extern void prt_field(char info[82], long row, long column);
  *  prt_num() - Print number with header at given row, column
  */
 extern void prt_num(char header[82], long num, long row, long column);
-
-/**
- * -DJC-
- *  prt_mana() - Prints player's mana
- */
-extern void prt_mana();
 
 /**
  * -RAK-
