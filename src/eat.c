@@ -45,8 +45,8 @@ void eat()
 {
 	/* { Eat some food...					-RAK-	}*/
 
-	long i3;
-	treas_ptr i2;
+	long count;
+	treas_ptr first;
 	treas_ptr item_ptr;
 	char trash_char;
 	boolean redraw;
@@ -55,18 +55,18 @@ void eat()
 
 	reset_flag = true;
 
-	if (!(inven_ctr > 0)) {
+	if (inven_ctr <= 0) {
 		msg_print("But you are not carrying anything.");
 		return;
 	}
 
-	if (find_range(things_to_eat, false, &i2, &i3)) {
+	if (!find_range(things_to_eat, false, &first, &count)) {
 		msg_print("You are not carrying any food.");
 		return;
 	}
 
 	redraw = false;
-	if (!get_item(&item_ptr, "Eat what?", &redraw, i3, &trash_char, false,
+	if (!get_item(&item_ptr, "Eat what?", &redraw, count, &trash_char, false,
 		      false)) {
 		if (redraw)
 			draw_cave();

@@ -803,14 +803,12 @@ void move_rec(long y1, long x1, long y2, long x2)
 boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 		   long *count)
 {
-	boolean flag;
 	treas_ptr ptr;
 
 	ENTER(("find_range", ""));
 
 	*count = 0;
 	*first = NULL;
-	flag = false;
 
 	change_all_ok_stats(false, false);
 
@@ -821,22 +819,25 @@ boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 		/*	    (long)ptr->data.tval, (long)ptr->is_in, */
 		/*	    (long)ptr->insides, (long)ptr->ok); */
 
-		if ((is_in(ptr->data.tval, item_val)) &&
-		    (!(ptr->is_in) || inner) &&
-		    ((ptr->insides == 0) || (ptr->data.tval != bag_or_sack))) {
-			if (!flag) {
-				flag = true;
-				*first = ptr;
-			}
-			ptr->ok = true;
-			(*count)++;
-		}
+		/* Filter */
+		if (!is_in(ptr->data.tval, item_val))
+			continue;
+		if (ptr->is_in && !inner)
+			continue;
+		if (ptr->data.tval == bag_or_sack && ptr->insides > 0)
+			continue;
+
+		/* Do */
+		if (*count == 0)
+			*first = ptr;
+		ptr->ok = true;
+		(*count)++;
 	}
 
 	MSG(("find: count=%ld\n", *count));
 
-	RETURN("find_range", "", 'b', "found", &flag);
-	return flag;
+	LEAVE("find_range", "");
+	return *count > 0;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
