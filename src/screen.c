@@ -193,16 +193,19 @@ void prt_num(char header[82], long num, long row, long column)
 void prt_stat_block()
 {
 	ENTER(("prt_stat_block", ""));
+
 	prt_field(player_race, RACE_ROW, STAT_COLUMN);
 	prt_field(player_tclass, CLASS_ROW, STAT_COLUMN);
 	prt_title();
 	prt_6_stats(player_stats_curr, player_stats_lost, STR_ROW, STAT_COLUMN);
 	prt_num("LVL : ", player_lev, LEVEL_ROW, STAT_COLUMN);
 	prt_num("EXP : ", player_exp, EXP_ROW, STAT_COLUMN);
+
 	if (is_magii) {
 		prt_field("MANA: ", MANA_ROW, STAT_COLUMN);
 		prt_mana();
 	}
+
 	prt_field("HP  : ", HP_ROW, STAT_COLUMN);
 	prt_hp();
 	prt_num("QST : ", player_quests, QUEST_ROW, STAT_COLUMN);
@@ -212,11 +215,13 @@ void prt_stat_block()
 	prt_field("M_WT:", WEIGHT_ROW + 1, STAT_COLUMN);
 	prt_weight();
 	prt_time();
+
 	if (total_winner) {
 		prt_winner();
 	}
-	prt_hunger(); /*{'If' statements here redundant and unnecessary, so}*/
-	prt_blind();  /*{ removed per Dean's suggestion                -MAV}*/
+
+	prt_hunger();
+	prt_blind();
 	prt_confused();
 	prt_afraid();
 	prt_poisoned();
@@ -224,6 +229,7 @@ void prt_stat_block()
 	prt_rest();
 	prt_quested();
 	prt_light_on();
+
 	LEAVE("prt_stat_block", "");
 }
 
