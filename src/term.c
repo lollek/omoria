@@ -32,7 +32,7 @@ static void minor_error(char const *error_message)
 	prt_(error_message, 0, 0);
 	bell();
 	/* wait so user can see error */
-	(void)sleep(2);
+	sleep(2);
 }
 
 /* initializes curses routines */
@@ -41,11 +41,8 @@ void init_curses()
 	printf("Attempting to start curses...\n");
 	fflush(stdout);
 
-	/* ioctl(0, TCGETA, (char *)&save_termio); */
-
 	if (initscr() == NULL) {
-		fprintf(stderr,
-			"Error allocating screen in curses package.\n\r");
+		fprintf(stderr, "Error allocating screen in curses package.\n\r");
 		exit(1);
 	}
 
@@ -106,7 +103,7 @@ char inkey()
 			   prompt. */
 			msg_flag = FALSE;
 
-			(void)refresh();
+			refresh();
 			if (!character_generated || character_saved)
 				exit_game();
 			/*  disturb(1, 0);*/
@@ -114,11 +111,9 @@ char inkey()
 				/* just in case, to make sure that the process
 				 * eventually dies */
 				panic_save = 1;
-				(void)strcpy(died_from,
-					     "(end of input: panic saved)");
+				strcpy(died_from, "(end of input: panic saved)");
 				if (!save_char(TRUE)) {
-					(void)strcpy(died_from,
-						     "panic: unexpected eof");
+					strcpy(died_from, "panic: unexpected eof");
 					death = TRUE;
 				}
 				exit_game();
