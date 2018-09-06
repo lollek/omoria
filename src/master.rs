@@ -3,6 +3,7 @@ use std::io::{Read, Write};
 
 use serde_json;
 
+use constants;
 use debug;
 use player;
 use random;
@@ -20,8 +21,6 @@ pub struct MasterRecord {
     pub class: String,
 }
 
-const MASTER_FILE: &'static str = "save/moria_master.json";
-
 // TODO: Consider flocking (https://stackoverflow.com/a/32743299)
 // Will probably never to this since I'm the only intended user for this program
 fn open_master(to_write: bool) -> Option<File> {
@@ -31,7 +30,7 @@ fn open_master(to_write: bool) -> Option<File> {
         .create(to_write)
         .truncate(to_write)
         .append(false)
-        .open(MASTER_FILE) {
+        .open(format!("{}/moria_master.json", constants::DATA_FOLDER)) {
             Ok(file) => Some(file),
             Err(e) => {
                 debug::error(&format!("failed to open master: {}", e));

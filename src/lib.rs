@@ -10,6 +10,7 @@ extern crate libc;
 extern crate serde;
 extern crate serde_json;
 
+pub mod constants;
 pub mod create;
 pub mod debug;
 pub mod highscore;

@@ -5,6 +5,7 @@ use std::io::{Read, Write, Seek};
 
 use serde_json;
 
+use constants;
 use debug;
 use player;
 use save;
@@ -24,7 +25,7 @@ struct SaveRecord {
 }
 
 fn savefile_name() -> String {
-    format!("save/{}-{}.json", player::name(), player::uid())
+    format!("{}/{}-{}.json", constants::SAVE_FOLDER, player::name(), player::uid())
 }
 
 fn open_savefile(to_write: bool) -> Option<File> {
