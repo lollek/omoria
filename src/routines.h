@@ -508,7 +508,6 @@ extern time_type *convert_seconds_to_time(time_t seconds, time_type *tim);
 extern time_t convert_time_to_seconds(time_type *tim);
 extern char *show_char_age(char result[134]);
 extern char *show_current_time(char result[134]);
-extern char *show_play_time(char result[134]);
 extern char *bag_descrip(treas_ptr bag, char result[134]);
 extern uint8_t squish_stat(int32_t stat);
 extern unsigned char in_statp(unsigned char stat);

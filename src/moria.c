@@ -14,9 +14,6 @@ int main(int argc, char *argv[])
 #endif
 	ENTER(("main", ""));
 
-	/* Get the time player entered game */
-	start_time = time(NULL);
-
 	/* Get the directory location of the image */
 	get_paths();
 

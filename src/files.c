@@ -555,8 +555,6 @@ void file_character()
 			fprintf(file1, "  %s\n", show_char_age(s1));
 			fprintf(file1, "  The current time is %s.\n",
 				full_date_string(player_cur_age, s1));
-			fprintf(file1, "  You have been playing for %s.\n",
-				show_play_time(s1));
 			if (player_flags.dead) {
 				fprintf(
 				    file1,

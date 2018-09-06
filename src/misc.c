@@ -3110,25 +3110,6 @@ time_t convert_time_to_seconds(time_type *tim)
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *show_play_time(char result[134])
-{
-	/*{ Return string for amount of play time                 -DMF-   }*/
-
-	time_type tim;
-
-	/*  strcpy(result, "way to long."); */
-
-	play_time(convert_seconds_to_time(
-		      time(NULL) - start_time +
-			  convert_time_to_seconds(&player_play_tm),
-		      &tim),
-		  result);
-
-	return result;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 char *full_date_string(game_time_type time, char result[134])
 {
 	/*{ Return string with entire date/time                   -DMF-   }*/

@@ -5,7 +5,6 @@
 #include "imoria.h"
 
 treas_ptr cur_inven;    /* { Current inven page  } */
-time_t start_time;      /* { Time started playing} */
 boolean is_from_file;   /* { True if restored    } */
 money_type bank;	/* { Bank's money	 } */
 money_type coin_value = /* { Copy of money values} */

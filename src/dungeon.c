@@ -5598,13 +5598,6 @@ void d__execute_command(long *com_val)
 		case 'b':
 			move_char(1);
 			break;
-		case 'c':
-			msg_print(show_char_age(out_val));
-			sprintf(out_val, "You have been playing for %s",
-				show_play_time(tmp_str));
-			msg_print(out_val);
-			reset_flag = true;
-			break;
 		case 'd':
 			sprintf(out_val, "The date is %s",
 				full_date_string(player_cur_age, out2));
