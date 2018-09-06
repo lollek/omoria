@@ -133,7 +133,7 @@ fn get_stats() {
 fn put_stats() {
     debug::enter("put_stats");
 
-    screen::print_stats(3, 65);
+    screen::print_stats(2, 64);
 
     term::prt(&format!("+ To Hit   : {}", unsafe { player::player_dis_th }), 9, 3);
     term::prt(&format!("+ To Damage: {}", unsafe { player::player_dis_td }), 10, 3);
@@ -239,20 +239,7 @@ fn apply_stats_from_class() {
         player::player_expfact += player::class().expfactor();
         player::refresh_title();
         player::player_mr = player::class().magic_resist().into();
-    }
 
-    let mut player_stat_block = player::perm_stats();
-    let class_stat_block = player::class().stat_block();
-    for stat in stats_iter() {
-        let new_stat = change_stat(
-            player_stat_block.get_pos(stat),
-            class_stat_block.get_pos(stat));
-        player_stat_block.set_pos(stat, new_stat as i16);
-    }
-    player::set_perm_stats(&player_stat_block);
-    player::set_curr_stats(&player_stat_block);
-
-    unsafe {
         // Real values
         player::player_ptodam = player::dmg_from_str() as i16;
         player::player_ptohit = player::tohit_from_stats() as i16;

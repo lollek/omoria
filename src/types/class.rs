@@ -1,7 +1,5 @@
 use std::ops::Range;
 
-use types::StatBlock;
-
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Class {
     Warrior = 0,
@@ -416,22 +414,6 @@ impl Class {
                 },
         }
     }
-
-    pub fn stat_block(&self) -> StatBlock {
-        match self {
-            Class::Warrior => StatBlock::from([5, -2, -2, 2, 2, 1]),
-            Class::Mage => StatBlock::from([-5, 3, 0, 0, -2, 0]),
-            Class::Priest => StatBlock::from([0, -3, 3, -1, 1, 2]),
-            Class::Rogue => StatBlock::from([2, 0, -2, 3, 1, 1]),
-            Class::Ranger => StatBlock::from([2, 0, 1, 1, 1, 2]),
-            Class::Paladin => StatBlock::from([3, -3, 1, 0, 2, 2]),
-            Class::Druid => StatBlock::from([-1, -1, 2, 0, 0, 3]),
-            Class::Bard => StatBlock::from([2, 1, -1, 2, 0, 3]),
-            Class::Adventurer => StatBlock::from([2, 2, -1, 1, 1, 0]),
-            Class::Monk => StatBlock::from([2, 0, 2, 3, 1, 1]),
-        }
-    }
-
 }
 
 pub fn classes_iter() -> Range<usize> {

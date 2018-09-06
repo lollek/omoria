@@ -110,6 +110,7 @@ boolean get_char(boolean prop)
 		MSG(("Data Corruption Error"));
 		exit_game();
 	}
+	clear();
 
 	LEAVE("get_char", "");
 	return false;
