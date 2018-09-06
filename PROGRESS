@@ -427,4 +427,6 @@ will tweak this more later.
 Removed manually setting difficulty to 1-5. No longer needed since I will only
 use one difficulty always.
 
+There is now a GUI menu when starting the game
+
 /* end progress */

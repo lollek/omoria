@@ -14,6 +14,8 @@ pub struct Character {
 }
 
 fn print_banner() {
+    debug::enter("main_menu::print_banner");
+
     term::put_buffer("*************************************************************", 0, 0);
     term::put_buffer("* Omoria                                                    *", 1, 0);
     term::put_buffer(constants::OMORIA_VERSION, 1, 9);
@@ -41,10 +43,14 @@ fn print_banner() {
     term::put_buffer("*************************************************************", 23, 0);
     io::inkey_flush();
     term::clear_screen();
+
+    debug::leave("main_menu::print_banner");
 }
 
 fn load_characters() -> Vec<Character> {
-    fs::read_dir(constants::SAVE_FOLDER)
+    debug::enter("main_menu::load_characters");
+
+    let res = fs::read_dir(constants::SAVE_FOLDER)
         .unwrap()
         .map(|it| it.unwrap()
              .file_name()
@@ -60,10 +66,15 @@ fn load_characters() -> Vec<Character> {
                 uid: uid[1..uid.len()].to_string(),
             }
         })
-    .collect()
+    .collect();
+
+    debug::leave("main_menu::load_characters");
+    res
 }
 
 fn redraw(characters: &Vec<Character>, selected: i8) {
+    debug::enter("main_menu::redraw");
+
     term::put_buffer("*************************************************************", 0, 0);
     term::put_buffer("* Select your adventurer                                    *", 1, 0);
     term::put_buffer("*************************************************************", 2, 0);
@@ -83,10 +94,12 @@ fn redraw(characters: &Vec<Character>, selected: i8) {
     term::put_buffer("*************************************************************",21, 0);
     term::put_buffer("*                         j=down, k=up, enter=select, n=new *",22, 0);
     term::put_buffer("*************************************************************",23, 0);
+
+    debug::leave("main_menu::redraw");
 }
 
 pub fn main_menu() -> Option<Character> {
-    debug::enter("main_menu");
+    debug::enter("main_menu::main_menu");
 
     print_banner();
 
@@ -110,6 +123,6 @@ pub fn main_menu() -> Option<Character> {
 
     term::clear_screen();
 
-    debug::leave("main_menu");
+    debug::leave("main_menu::main_menu");
     retval
 }
