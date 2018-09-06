@@ -35,38 +35,6 @@ static void minor_error(char const *error_message)
 	sleep(2);
 }
 
-/* initializes curses routines */
-void init_curses()
-{
-	printf("Attempting to start curses...\n");
-	fflush(stdout);
-
-	if (initscr() == NULL) {
-		fprintf(stderr, "Error allocating screen in curses package.\n\r");
-		exit(1);
-	}
-
-	if (LINES < 24 || COLS < 80) {
-		fprintf(stderr, "Screen too small for moria.\n\r");
-		exit(1);
-	}
-
-	clear();
-	refresh();
-
-	start_color();
-	init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
-	init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
-	init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
-	init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
-	init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
-
-	crmode();
-	noecho();
-	nonl();
-}
-
 void highlite_on() { attron(A_DIM); }
 void highlite_off() { attroff(A_DIM); }
 

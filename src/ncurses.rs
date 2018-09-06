@@ -1,6 +1,14 @@
+use std::process;
+use std::cell::RefCell;
+
 use libc;
+use pancurses;
 
 use debug;
+
+thread_local! {
+    static STDSCR: RefCell<Option<pancurses::Window>> = RefCell::new(None);
+}
 
 extern "C" {
     #[link_name = "mvaddstr"]
@@ -20,6 +28,40 @@ extern "C" {
     fn C_move(y: libc::c_int, x: libc::c_int) -> libc::c_int;
 
     fn C_chattr(attr: libc::c_int, on: libc::uint8_t) -> libc::c_int;
+}
+
+pub fn init_curses() {
+    println!("Attempting to start curses...");
+
+    let window = pancurses::initscr();
+
+    if window.get_max_y() < 24 || window.get_max_x() < 80 {
+        pancurses::endwin();
+        println!("Screen is too small for moria!");
+        process::exit(1);
+    }
+
+    window.clear();
+    window.refresh();
+    STDSCR.with(|stdscr| stdscr.replace(Some(window)));
+
+    pancurses::start_color();
+    pancurses::init_pair(pancurses::COLOR_RED,
+                         pancurses::COLOR_RED, pancurses::COLOR_BLACK);
+    pancurses::init_pair(pancurses::COLOR_GREEN,
+                         pancurses::COLOR_GREEN, pancurses::COLOR_BLACK);
+    pancurses::init_pair(pancurses::COLOR_YELLOW,
+                         pancurses::COLOR_YELLOW, pancurses::COLOR_BLACK);
+    pancurses::init_pair(pancurses::COLOR_BLUE,
+                         pancurses::COLOR_BLUE, pancurses::COLOR_BLACK);
+    pancurses::init_pair(pancurses::COLOR_MAGENTA,
+                         pancurses::COLOR_MAGENTA, pancurses::COLOR_BLACK);
+    pancurses::init_pair(pancurses::COLOR_CYAN,
+                         pancurses::COLOR_CYAN, pancurses::COLOR_BLACK);
+
+    pancurses::cbreak();
+    pancurses::noecho();
+    pancurses::nonl();
 }
 
 pub fn refresh() {

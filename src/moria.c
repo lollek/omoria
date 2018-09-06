@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 	 */
 	intro(argc, argv);
 
-	init_curses();
+	C_init_curses();
 	curses_is_running = true;
 
 	print_banner();

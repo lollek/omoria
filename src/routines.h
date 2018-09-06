@@ -26,6 +26,8 @@ void C_highscore(uint8_t max_highscores);
 
 void C_clear_screen();
 
+extern void C_init_curses();
+
 /* END - FROM RUST */
 
 /* { CASINO.PAS		} */
@@ -577,8 +579,6 @@ extern void dispose(void *ptr, int size, char *message);
 extern char *chomp(char *input_line);
 extern long min3(long i1, long i2, long i3);
 
-/* { term.c		} */
-extern void init_curses();
 
 /* use put_buffer */
 extern void put_buffer_(char const *out_str, int32_t row, int32_t col);
