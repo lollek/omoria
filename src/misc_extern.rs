@@ -66,8 +66,8 @@ pub extern fn C_print_new_spell_line2(i: libc::c_long, slot: libc::c_long) {
             spell.level,
             spell.mana,
             if player::knows_spell(slot as usize) { "true" } else { "false" }),
-            (3 + i) as i32,
-            1);
+            (2 + i) as i32,
+            0);
 }
 
 // Utility function for misc.c::print_new_spells to use rust-strings
@@ -85,5 +85,5 @@ pub extern fn C_print_new_spell_line(i: libc::uint8_t, slot: libc::c_long, failc
             failchance)
     };
 
-    term::prt(&to_print, (3 + i) as i32, 1);
+    term::prt(&to_print, (2 + i) as i32, 0);
 }

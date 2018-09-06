@@ -8,9 +8,9 @@ pub fn highscore(max: u8) {
     let mut master = master::read_master().unwrap();
     master.sort_unstable_by(|a, b| b.points.cmp(&a.points));
     term::put_buffer(
-        "Username     Points   Alive    Character name    Level  Race         Class", 1, 1);
+        "Username     Points   Alive    Character name    Level  Race         Class", 0, 0);
     term::put_buffer(
-        "____________ ________ _____ ________________________ __ __________ ________________", 2, 1);
+        "____________ ________ _____ ________________________ __ __________ ________________", 1, 0);
     master.iter()
         .take(max as usize)
         .enumerate()
@@ -22,6 +22,6 @@ pub fn highscore(max: u8) {
                 line.character_name,
                 line.level,
                 line.race,
-                line.class), (3 + i) as i32, 1));
+                line.class), (2 + i) as i32, 0));
     term::refresh_screen();
 }
