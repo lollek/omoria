@@ -133,16 +133,6 @@ int main(int argc, char *argv[])
 		strcpy(bare_hands, "2d2");
 	}
 
-	if (C_player_uses_magic(M_ARCANE) ||
-	    C_player_uses_magic(M_DIVINE) ||
-	    C_player_uses_magic(M_NATURE) ||
-	    C_player_uses_magic(M_SONG) ||
-	    C_player_uses_magic(M_CHAKRA)) {
-		is_magii = true;
-	} else {
-		is_magii = false;
-	}
-
 	/* Begin the game */
 	replace_name();
 	set_gem_values();

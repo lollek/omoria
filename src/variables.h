@@ -3,7 +3,6 @@
 /* Ever feel the need for more global vars? */
 
 extern treas_ptr cur_inven;       /* { Current inven page  } */
-extern boolean is_magii;	  /* { True if has mana    } */
 extern time_t start_time;	 /* { Time started playing} */
 extern boolean is_from_file;      /* { True if restored    } */
 extern money_type bank;		  /* { Bank's money	 } */

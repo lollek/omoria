@@ -1091,17 +1091,15 @@ void change_character()
 
 	if (!abort) {
 		tmp_val = player_mana;
-		if (is_magii) {
-			if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0,
-					    32767, &flag)) {
-				if (flag) {
-					player_mana = tmp_val;
-					player_cmana = player_mana;
-					prt_stat_block();
-				}
-			} else {
-				abort = true;
+		if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0,
+					32767, &flag)) {
+			if (flag) {
+				player_mana = tmp_val;
+				player_cmana = player_mana;
+				prt_stat_block();
 			}
+		} else {
+			abort = true;
 		}
 	}
 
