@@ -4,5 +4,6 @@ pub use self::create_character::change_name;
 
 pub mod main;
 pub mod create_character;
+mod helpers;
 
 pub mod mod_extern;

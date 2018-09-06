@@ -1037,8 +1037,8 @@ fn choose_stats() {
 pub fn create_character() {
     debug::enter("create_character");
 
-    term::clear_screen();
-
+    choose_race();
+    /*
     put_character(false);
     loop {
         if choose_race() {
@@ -1046,6 +1046,7 @@ pub fn create_character() {
         }
     }
     term::put_buffer(&player::race().name(), 3, 14);
+    */
 
     loop {
         if choose_sex() {
