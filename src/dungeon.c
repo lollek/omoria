@@ -4684,7 +4684,7 @@ void d__quit()
 				death = true;
 			} else {
 				if (is_from_file) {
-					save_file_remove();
+					C_delete_character();
 				}
 				clear_from(1);
 				exit_game();

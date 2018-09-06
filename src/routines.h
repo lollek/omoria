@@ -9,6 +9,7 @@ int64_t C_master_add_character();
 
 boolean C_save_character();
 boolean C_load_character();
+void C_delete_character();
 
 boolean C_player_knows_spell(int32_t slot);
 void C_player_set_knows_spell(int32_t slot, boolean yn);

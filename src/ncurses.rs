@@ -117,7 +117,12 @@ pub fn clear() {
 }
 
 pub enum CursesAttr {
-    Dim = 1,
+    Standout = 1,
+    Underline = 2,
+    Reverse = 3,
+    Blink = 4,
+    Dim = 5,
+    Bold = 6,
     ColorGreen = 10,
     ColorYellow = 11,
     ColorRed = 12,

@@ -151,7 +151,7 @@ void upon_death()
 			  "Contact your local wizard.");
 		msg_print(" ");
 	}
-	save_file_remove();
+        C_delete_character();
 
 	if (total_winner) {
 		ud__kingly();

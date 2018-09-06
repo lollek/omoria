@@ -1,33 +1,7 @@
 #include "imoria.h"
-#include "menu.h"
 #include "save.h"
 
-static void print_banner() {
-	put_buffer("*************************************************************", 1, 1);
-	put_buffer("*                Omoria                                     *", 2, 1);
-	put_buffer(omoria_version(), 2, 25);
-	put_buffer("*************************************************************", 3, 1);
-	put_buffer("*                                                           *", 4, 1);
-	put_buffer("*           COPYRIGHT (c) Robert Alan Koeneke               *", 5, 1);
-	put_buffer("*                                                           *", 6, 1);
-	put_buffer("* Programers : Robert Alan Koeneke / University of Oklahoma *", 7, 1);
-	put_buffer("*              Jimmey Wayne Todd   / University of Oklahoma *", 8, 1);
-	put_buffer("*                                                           *", 9, 1);
-	put_buffer("* Based on University of Washington version 4.8             *", 10, 1);
-	put_buffer("*                                                           *", 11, 1);
-	put_buffer("* UW Modifications by : Kenneth Case, Mary Conner,          *", 12, 1);
-	put_buffer("*                       Robert DeLoura, Dan Flye,           *", 13, 1);
-	put_buffer("*                       Todd Gardiner, Dave Jungck,         *", 14, 1);
-	put_buffer("*                       Andy Walker, Dean Yasuda.           *", 15, 1);
-	put_buffer("*                                                           *", 16, 1);
-	put_buffer("* Linux port by Stephen Kertes, 1997-2000.                  *", 17, 1);
-	put_buffer("*                                                           *", 18, 1);
-	put_buffer("* Updates by Olle Kvarnstrom, 2018.                         *", 19, 1);
-
-	prt_("[Press any key to continue.]", 24, 10);
-	inkey();
-}
-
+void C_main_menu();
 int main(int argc, char *argv[])
 {
 	/* SYSPRV stays off except when needed */
@@ -97,19 +71,10 @@ int main(int argc, char *argv[])
 	C_init_curses();
 	curses_is_running = true;
 
-	print_banner();
-	C_clear_screen();
-
-	/*
-	 * If we already have a character from command line,
-	 * skip menu and just load it
-	 */
-	if (!save_file_name_is_set()) {
-		main_menu();
-	}
+	C_main_menu();
 
 	/* Generate a character, or retrieve old one... */
-	if (save_file_name_is_set()) {
+	if (player_name[0] != '\0') {
 		/* Retrieve character */
 		game_state = GS_IGNORE_CTRL_C;
 		generate = get_char(true);
@@ -127,7 +92,6 @@ int main(int argc, char *argv[])
 		player_flags.light_on = false;
 		strcpy(save_file_name, SAVE_FILE_PATH "/");
 		strcat(save_file_name, player_name);
-		save_file_name_set(save_file_name);
 		player_uid = C_master_add_character();
 
 		char_inven_init();

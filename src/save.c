@@ -7,18 +7,6 @@
 #include "imoria.h"
 #include "save.h"
 
-static char filename[82] = "";
-
-void C_delete_character(void);
-void save_file_remove(void)
-{
-	C_delete_character();
-}
-
-void save_file_name_set(char path[82]) { strncpy(filename, path, sizeof(char[82])); }
-
-boolean save_file_name_is_set(void) { return filename[0] != '\0'; }
-
 boolean save_char(boolean quick)
 {
 	/* Actual save procedure -RAK- & -JWT- */
@@ -48,37 +36,6 @@ boolean save_char(boolean quick)
 	return flag;
 }
 
-boolean parse_filename() {
-	const char *pname;
-	const char *puid;
-	char *ptr;
-	
-	if (player_name[0] != '\0')
-		return true; /* already parsed */
-
-	ptr = strchr(filename, '-');
-	if (ptr == NULL) {
-		MSG(("Malformed filename (Error 1)"));
-		return false;
-	}
-	*ptr = '\0';
-
-	pname = filename;
-	puid = &ptr[1];
-
-	ptr = strchr(&ptr[1], '.');
-	if (ptr == NULL) {
-		MSG(("Malformed filename (Error 2)"));
-		return false;
-	}
-	*ptr = '\0';
-
-	strncpy(player_name, pname, sizeof(player_name));
-	player_uid = atol(puid);
-
-	return true;
-}
-
 boolean get_char(boolean prop)
 {
 	/*{ Restore a saved game				-RAK- & -JWT-
@@ -90,8 +47,6 @@ boolean get_char(boolean prop)
 
 	prt("Restoring Character...", 1, 1);
 	refresh();
-
-	if (!paniced) paniced = !parse_filename();
 
 	MSG(("name: %s, uid: %ld", player_name, player_uid));
 

@@ -21,11 +21,9 @@ void intro_qualifier_help()
 {
 	printf(		"\n\r"
 			"Invalid Moria option!  Valid qualifiers are:\n\r"
-			"  -f file    Load saved character in file.\n\r"
 			"  -w         Warn about hearing things in water.\n\r"
 			"  -s         List top 20 high scores.\n\r"
 			"  -t num     List <num> high scores after death or for -s.\n\r"
-			"  -Q         Quit after checking for data files.\n\r"
 			"  -V         Print version info.\n\r"
 			"\n\r"
 			"\n\r");
@@ -62,24 +60,9 @@ static void intro_parse_switches(int argc, char *argv[])
 	for (--argc, ++argv; (argc > 0) && (argv[0][0] == '-');
 	     --argc, ++argv) {
 		switch (argv[0][1]) {
-		case 'Q':
-			printf("Data files already exist, exiting.\n\r");
-			exit_flag = true;
-			break;
-
 		case 'V':
 			/* version info */
 			show_version = true;
-			break;
-
-		/* filename of character to load */
-		case 'f':
-			if (--argc) {
-				save_file_name_set((++argv)[0]);
-			} else {
-				printf("Missing <filename> for -f\n\r");
-				print_usage = true;
-			}
 			break;
 
 		/* print the high scores */
@@ -116,10 +99,6 @@ static void intro_parse_switches(int argc, char *argv[])
 			print_usage = true;
 			break;
 		}
-	}
-
-	if (argc > 0) {
-		save_file_name_set(argv[0]);
 	}
 
 	if (show_version) {

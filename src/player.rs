@@ -498,6 +498,10 @@ pub fn level() -> u8 {
     (unsafe { player_lev }) as u8
 }
 
+pub fn set_uid(val: i64) {
+    unsafe { player_uid = val };
+}
+
 pub fn uid() -> i64 {
     unsafe { player_uid }
 }
