@@ -16,7 +16,7 @@ boolean const do_debug_magic_cast = true;
 FILE *debug_file = NULL;
 int call_depth = 0;
 
-void init_debug(void) { debug_file = (FILE *)fopen("debug.out", "w"); }
+void init_debug(void) { debug_file = fopen("debug.out", "w"); }
 
 void enter(char const *routine_name, char const *fmt, ...)
 {
