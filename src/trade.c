@@ -96,7 +96,7 @@ void tp__open_trade_file(FILE **sales, boolean *exit_flag)
 	*exit_flag = true;
 
 	msg_print("You knock on the door to the Trading Post. . . ");
-	put_qio();
+	refresh();
 
 	if (!trade_file_open(sales, &busy, false)) {
 		if (wizard1) {
@@ -1211,7 +1211,7 @@ void enter_trading_post()
 		tp__write_inv(sales, &inv, &cur_top, &blegga, &profits,
 			      &cur_display_size, cur_display);
 		msg_print("The storekeeper says `Come again. . .'");
-		put_qio();
+		refresh();
 		trade_file_close(&sales);
 		if (entered) {
 			draw_cave();

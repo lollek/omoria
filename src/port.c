@@ -78,10 +78,6 @@ long min3(long i1, long i2, long i3)
 
 /*//////////////////////////////////////////////////////////////////// */
 
-void ignore_signals() {}
-void restore_signals() {}
-void default_signals() {}
-
 /* Something happens to disturb the player.		-CJS-
    The first arg indicates a major disturbance, which affects search.
    The second arg indicates a light change. */

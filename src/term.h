@@ -4,9 +4,6 @@
 typedef unsigned char int8u;
 
 void moriaterm();
-void save_screen();
-void restore_screen();
-void restore_term();
 void bell();
 
 /* Dungeon size parameters					*/
@@ -26,7 +23,6 @@ void bell();
 /* number of messages to save in a buffer */
 #define MAX_SAVE_MSG 22 /* How many messages to save -CJS- */
 
-int screen_change;
 int command_count;
 int eof_flag;
 int character_generated, character_saved;

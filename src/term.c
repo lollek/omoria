@@ -14,9 +14,6 @@
    included in all such copies. */
 
 #include <stdio.h>
-#ifndef STDIO_LOADED
-#define STDIO_LOADED
-#endif
 
 #include "config.h"
 
@@ -26,10 +23,6 @@
 #include <signal.h>
 #include <string.h>
 #include <termios.h>
-
-static struct termios save_termio;
-static int curses_on = FALSE;
-static WINDOW *savescr; /* Spare window for saving the screen. -CJS-*/
 
 static void minor_error(char const *error_message)
 {
@@ -42,23 +35,13 @@ static void minor_error(char const *error_message)
 	(void)sleep(2);
 }
 
-/* suspend()							   -CJS-
-   Handle the stop and start signals. This ensures that the log
-   is up to date, and that the terminal is fully reset and
-   restored.  */
-void suspend()
-{
-	/* for USG systems with BSDisms that have SIGTSTP defined, but don't
-	   actually implement it */
-}
-
 /* initializes curses routines */
 void init_curses()
 {
 	printf("Attempting to start curses...\n");
 	fflush(stdout);
 
-	ioctl(0, TCGETA, (char *)&save_termio);
+	/* ioctl(0, TCGETA, (char *)&save_termio); */
 
 	if (initscr() == NULL) {
 		fprintf(stderr,
@@ -69,14 +52,6 @@ void init_curses()
 	if (LINES < 24 || COLS < 80) {
 		fprintf(stderr, "Screen too small for moria.\n\r");
 		exit(1);
-	}
-
-	signal(SIGTSTP, suspend);
-
-	savescr = newwin(0, 0, 0, 0);
-	if (savescr == NULL) {
-		fprintf(stderr, "Out of memory in starting up curses.\n\r");
-		exit_game();
 	}
 
 	clear();
@@ -90,35 +65,9 @@ void init_curses()
 	init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
 	init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
 
-	moriaterm();
-}
-
-/* Set up the terminal into a suitable state for moria.	 -CJS- */
-void moriaterm()
-{
-	struct termios tbuf;
-	curses_on = TRUE;
 	crmode();
 	noecho();
-
-	/* can not use nonl(), because some curses do not handle it correctly */
-	(void)ioctl(0, TCGETA, (char *)&tbuf);
-	/* disable all of the normal special control characters */
-	tbuf.c_cc[VINTR] = (char)3; /* control-C */
-	tbuf.c_cc[VQUIT] = (char)-1;
-	tbuf.c_cc[VERASE] = (char)-1;
-	tbuf.c_cc[VKILL] = (char)-1;
-	tbuf.c_cc[VEOF] = (char)-1;
-
-	/* don't know what these are for */
-	tbuf.c_cc[VEOL] = (char)-1;
-	tbuf.c_cc[VEOL2] = (char)-1;
-
-	/* stuff needed when !icanon, i.e. cbreak/raw mode */
-	tbuf.c_cc[VMIN] = 1;  /* Input should wait for at least 1 char */
-	tbuf.c_cc[VTIME] = 0; /* no matter how long that takes. */
-
-	(void)ioctl(0, TCSETA, (char *)&tbuf);
+	nonl();
 }
 
 void highlite_on() { attron(A_DIM); }
@@ -137,143 +86,18 @@ void put_buffer_attr(const char *out_str, long row, long col, int attrs)
 	attrset(old_attr);
 }
 
-/* Dump the IO buffer to terminal			-RAK-	*/
-void put_qio()
-{
-	/* Let inven_command know something has changed. */
-	screen_change = TRUE;
-	refresh();
-}
-
-/* Put the terminal in the original mode.			   -CJS- */
-void restore_term()
-{
-	if (!curses_on)
-		return;
-	put_qio(); /* Dump any remaining buffer */
-	/* this moves curses to bottom right corner */
-	mvcur(getcury(stdscr), getcurx(stdscr), LINES - 1, 0);
-	endwin(); /* exit curses */
-	(void)fflush(stdout);
-	/* restore the saved values of the special chars */
-	(void)ioctl(0, TCSETA, (char *)&save_termio);
-	curses_on = FALSE;
-}
-
 /* Returns a single character input from the terminal.	This silently -CJS-
    consumes ^R to redraw the screen and reset the terminal, so that this
    operation can always be performed at any input prompt.  inkey() never
    returns ^R.	*/
 char inkey()
-#ifdef MAC
-/* The Mac does not need ^R, so it just consumes it */
-/* This routine does nothing special with direction keys */
-/* Just returns their keypad ascii value (e.g. '0'-'9') */
-/* Compare with inkeydir() below */
-{
-	char ch;
-	int dir;
-	int shift_flag, ctrl_flag;
-
-	put_qio();
-	command_count = 0;
-
-	do {
-		macgetkey(&ch, FALSE);
-	} while (ch == CTRL_('R'));
-
-	dir = extractdir(ch, &shift_flag, &ctrl_flag);
-	if (dir != -1)
-		ch = '0' + dir;
-
-	return (ch);
-}
-#else
 {
 	int i;
-#ifdef VMS
-	char tmp_str[82];
-#endif
 
-	put_qio();	 /* Dump IO buffer		*/
+	refresh();	 /* Dump IO buffer		*/
 	command_count = 0; /* Just to be safe -CJS- */
 	while (TRUE) {
-#ifdef MSDOS
-		i = msdos_getch();
-#else
-#ifdef VMS
-		i = vms_getch();
-#else
 		i = getch();
-#if defined(atarist) && defined(__GNUC__)
-		/* for some reason a keypad number produces an initial negative
-		 * number. */
-		if (i < 0)
-			i = getch();
-#endif
-#endif
-#endif
-
-#ifdef VMS
-		if (i ==
-		    27) /* if ESCAPE key, then we probably have a keypad key */
-		{
-			i = vms_getch();
-			if (i ==
-			    'O') /* Now it is definitely a numeric keypad key */
-			{
-				i = vms_getch();
-				switch (i) {
-				case 'p':
-					i = '0';
-					break;
-				case 'q':
-					i = '1';
-					break;
-				case 'r':
-					i = '2';
-					break;
-				case 's':
-					i = '3';
-					break;
-				case 't':
-					i = '4';
-					break;
-				case 'u':
-					i = '5';
-					break;
-				case 'v':
-					i = '6';
-					break;
-				case 'w':
-					i = '7';
-					break;
-				case 'x':
-					i = '8';
-					break;
-				case 'y':
-					i = '9';
-					break;
-				case 'm':
-					i = '-';
-					break;
-				case 'M':
-					i = 10;
-					break; /* Enter = RETURN */
-				case 'n':
-					i = '.';
-					break;
-				default:
-					while (kbhit())
-						(void)vms_getch();
-				}
-			} else {
-				while (kbhit())
-					(void)vms_getch();
-			}
-		}
-#endif /* VMS */
-
 		/* some machines may not sign extend. */
 		if (i == EOF) {
 			eof_flag++;
@@ -305,62 +129,9 @@ char inkey()
 			msg_flag = false;
 			return (char)i;
 		}
-#ifdef VMS
-		/* Refresh does not work right under VMS, so use a brute force.
-		 */
-		overwrite(stdscr, tempscr);
-		clear_screen();
-		put_qio();
-		overwrite(tempscr, stdscr);
-		touchwin(stdscr);
-		(void)wrefresh(stdscr);
-#endif
-		(void)wrefresh(curscr);
-		moriaterm();
+		refresh();
 	}
 }
-#endif
-
-#ifdef MAC
-char inkeydir()
-/* The Mac does not need ^R, so it just consumes it */
-/* This routine translates the direction keys in rogue-like mode */
-/* Compare with inkeydir() below */
-{
-	char ch;
-	int dir;
-	int shift_flag, ctrl_flag;
-	static char tab[9] = {'b', 'j', 'n', 'h', '.', 'l', 'y', 'k', 'u'};
-	static char shifttab[9] = {'B', 'J', 'N', 'H', '.', 'L', 'Y', 'K', 'U'};
-	static char ctrltab[9] = {CTRL_('B'), CTRL_('J'), CTRL_('N'),
-				  CTRL_('H'), '.',	CTRL_('L'),
-				  CTRL_('Y'), CTRL_('K'), CTRL_('U')};
-
-	put_qio();
-	command_count = 0;
-
-	do {
-		macgetkey(&ch, FALSE);
-	} while (ch == CTRL_('R'));
-
-	dir = extractdir(ch, &shift_flag, &ctrl_flag);
-
-	if (dir != -1) {
-		if (!rogue_like_commands) {
-			ch = '0' + dir;
-		} else {
-			if (ctrl_flag)
-				ch = ctrltab[dir - 1];
-			else if (shift_flag)
-				ch = shifttab[dir - 1];
-			else
-				ch = tab[dir - 1];
-		}
-	}
-
-	return (ch);
-}
-#endif
 
 /* Flush the buffer					-RAK-	*/
 void flush()
@@ -373,7 +144,7 @@ void flush()
 	if (!eof_flag)
 		while (check_input(0))
 			;
-	/* used to call put_qio() here to drain output, but it is not necessary
+	/* used to call refresh() here to drain output, but it is not necessary
 	 */
 }
 
@@ -456,121 +227,6 @@ void prt2(char *str_buff1, char *str_buff2, int row, int col)
 /* move cursor to a given y, x position */
 void move_cursor(int row, int col) { (void)move(row, col); }
 
-/****************************************************************/
-#if 0
-/* Outputs message to top line of screen				*/
-/* These messages are kept for later reference.	 */
-void msg_print(str_buff)
-char *str_buff;
-{
-  register int old_len, new_len;
-  int combine_messages = FALSE;
-  char in_char;
-#ifdef MAC
-  Rect line;
-#endif
-
-  if (msg_flag)
-    {
-      old_len = strlen(old_msg[last_msg]) + 1;
-
-      /* If the new message and the old message are short enough, we want
-	 display them together on the same line.  So we don't flush the old
-	 message in this case.  */
-	 
-      if (str_buff)
-	new_len = strlen (str_buff);
-      else
-	new_len = 0;
-
-      if (! str_buff || (new_len + old_len + 2 >= 73))
-	{
-	  /* ensure that the complete -more- message is visible. */
-	  if (old_len > 73)
-	    old_len = 73;
-	  put_buffer_(" -more-", MSG_LINE, old_len);
-	  /* let sigint handler know that we are waiting for a space */
-	  wait_for_more = 1;
-	  do
-	    {
-	      in_char = inkey();
-	    }
-	  while ((in_char != ' ') && (in_char != ESCAPE) && (in_char != '\n')
-		 && (in_char != '\r'));
-	  wait_for_more = 0;
-	}
-      else
-	combine_messages = TRUE;
-    }
-
-  if (! combine_messages)
-    {
-#ifdef MAC
-      line.left = 0;
-      line.top = MSG_LINE;
-      line.right = SCRN_COLS;
-      line.bottom = MSG_LINE+1;
-      DEraseScreen(&line);
-#else
-      (void) move(MSG_LINE, 0);
-      clrtoeol();
-#endif
-    }
-
-  /* Make the null string a special case.  -CJS- */
-  if (str_buff)
-    {
-      command_count = 0;
-      msg_flag = TRUE;
-
-      /* If the new message and the old message are short enough, display
-	 them on the same line.  */
-      
-      if (combine_messages)
-	{
-	  put_buffer_(str_buff, MSG_LINE, old_len + 2);
-	  strcat (old_msg[last_msg], "  ");
-	  strcat (old_msg[last_msg], str_buff);
-	}
-      else
-	{
-	  put_buffer_(str_buff, MSG_LINE, 0);
-	  last_msg++;
-	  if (last_msg >= MAX_SAVE_MSG)
-	    last_msg = 0;
-	  (void) strncpy(old_msg[last_msg], str_buff, VTYPESIZ);
-	  old_msg[last_msg][VTYPESIZ - 1] = '\0';
-	}
-    }
-  else
-    msg_flag = FALSE;
-}
-#endif
-/****************************************************************/
-
-#if 0
-/* Prompts (optional) and returns ord value of input char	*/
-/* Function returns false if <ESCAPE> is input	*/
-boolean get_com(prompt, command)
-char *prompt;
-char *command;
-{
-  int res;
-  /*printf("get_com is runningYY\n");*/
-/*  if (prompt && prompt[0]) */
-  prt_(prompt, 1, 1);
-  *command = inkey();
-  if (*command == ESCAPE)
-    res = FALSE;
-  else
-    res = TRUE;
-  Erase_Line(MSG_LINE, 0);
-  msg_flag = false;
-  /*printf("get_com is exitingXX\n");*/
-  return(res);
-}
-#endif
-
 /* Gets a string terminated by <RETURN>		*/
 /* Function returns false if <ESCAPE> is input	*/
 boolean Get_String(char *in_str, int row, int column, int slen)
@@ -639,18 +295,9 @@ void Pause_Line(prt_line) int prt_line;
 	Erase_Line(prt_line, 0);
 }
 
-
-void save_screen() { overwrite(stdscr, savescr); }
-
-void restore_screen()
-{
-	overwrite(savescr, stdscr);
-	/*  touchwin(stdscr); */ /* wtouchln((win), 0, (win)->_maxy + 1, 1) */
-}
-
 void bell()
 {
-	put_qio();
+	refresh();
 
 	/* The player can turn off beeps if he/she finds them annoying.  */
 	if (!sound_beep_flag)
@@ -682,7 +329,6 @@ void screen_map()
 	priority['.'] = -10;
 	priority[' '] = -15;
 
-	save_screen();
 	clear_rc(1, 1);
 
 	/* Add top border */
@@ -735,7 +381,6 @@ void screen_map()
 	if (mycol > 0)
 		move(myrow, mycol);
 	inkey();
-	restore_screen();
 	draw_cave();
 }
 
@@ -761,19 +406,7 @@ boolean sl__get_dir(char *prompt, long *dir)
 
 void show_location()
 {
-#ifdef ORIGINAL_IMORIA
-	char out_val[82];
-
-	if ((player_flags.blind > 0) || (no_light())) {
-		msg_print("You can't see your map.");
-	} else {
-		sprintf(out_val, "Section [%ld,%ld]; Location = [%ld,%ld]",
-			((long)((char_row - 1) / OUTPAGE_HEIGHT) + 1),
-			((long)((char_col - 1) / OUTPAGE_WIDTH) + 1), char_row,
-			char_col);
-		msg_print(out_val);
-	}
-#else /* taken from umoria 5.5 */
+/* taken from umoria 5.5 */
 
 	/* (W)here are we on the map	(L)ocate on map */
 
@@ -842,5 +475,4 @@ void show_location()
 			prt_map();
 		}
 	}
-#endif
 }

@@ -494,7 +494,7 @@ static void bj__play_dealer_hand()
 	i = 3;
 	if (((vald == 17) && (dl_ace_flag)) || (vald < 17)) {
 		do {
-			put_qio();
+			refresh();
 			sleep(1);
 			bj__get_dealer_card(i);
 			i++;

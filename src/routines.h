@@ -577,10 +577,6 @@ extern void dispose(void *ptr, int size, char *message);
 extern char *chomp(char *input_line);
 extern long min3(long i1, long i2, long i3);
 
-extern void ignore_signals();
-extern void restore_signals();
-extern void default_signals();
-
 /* { term.c		} */
 extern void init_curses();
 
@@ -588,7 +584,6 @@ extern void init_curses();
 extern void put_buffer_(char const *out_str, int32_t row, int32_t col);
 extern void put_buffer_attr(const char *out_str, /*	: varying [a] of char; */
 			    long row, long col, int attrs);
-extern void put_qio();
 /* use clear_from */
 extern void Clear_From(int row);
 extern void move_cursor_relative(int row, int col);

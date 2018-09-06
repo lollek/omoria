@@ -30,7 +30,7 @@ boolean save_char(boolean quick)
 	if (!player_flags.dead) {
 		clear_from(1);
 		prt("Saving character...", 1, 1);
-		put_qio();
+		refresh();
 	}
 
 	if (flag) flag = C_master_update_character(player_uid);
@@ -89,7 +89,7 @@ boolean get_char(boolean prop)
 	ENTER(("get_char", "%d", prop));
 
 	prt("Restoring Character...", 1, 1);
-	put_qio();
+	refresh();
 
 	if (!paniced) paniced = !parse_filename();
 

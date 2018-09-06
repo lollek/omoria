@@ -1789,7 +1789,7 @@ void rest()
 		player_flags.status |= IS_RESTING;
 		prt_rest();
 		msg_print("Press any key to wake up...");
-		put_qio();
+		refresh();
 	} else {
 		erase_line(msg_line, msg_line);
 		reset_flag = true;
@@ -4696,7 +4696,7 @@ void d__quit()
 	}
 
 	erase_line(1, 1);
-	put_qio();
+	refresh();
 }
 /*//////////////////////////////////////////////////////////////////// */
 void d__go_up()

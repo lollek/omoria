@@ -37,7 +37,7 @@ void draw_cave()
 	prt_depth();
 	prt_search();
 	prt_equipment();
-	put_qio();
+	refresh();
 	LEAVE("draw_cave", "");
 }
 

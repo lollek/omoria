@@ -54,13 +54,13 @@ void des_encrypt_write(FILE *f1, encrypt_state *state)
 
 		if (result != DESERR_NONE) {
 			prt("Error calling cbc_crypt to encrypt.", 1, 1);
-			put_qio();
+			refresh();
 		}
 
 		if (write((int)fileno(f1), state->data_buf, state->buf_pos) !=
 		    state->buf_pos) {
 			prt("Error writing line to file.", 1, 1);
-			put_qio();
+			refresh();
 		}
 
 		state->buf_pos = 0;
@@ -77,7 +77,7 @@ void rand_encrypt_write(FILE *f1, encrypt_state *state)
 		if (write((int)fileno(f1), state->data_buf, state->buf_pos) !=
 		    state->buf_pos) {
 			prt("Error writing line to file.", 1, 1);
-			put_qio();
+			refresh();
 		}
 
 		state->buf_pos = 0;
@@ -114,7 +114,7 @@ void des_read_decrypt(FILE *f1, encrypt_state *state)
 			} else if (state->buf_size & 0x07) {
 				prt("Error read not a multiple of 8 bytes.", 1,
 				    1);
-				put_qio();
+				refresh();
 				state->got_eof = true;
 				state->buf_size = 0;
 			} else {
@@ -127,7 +127,7 @@ void des_read_decrypt(FILE *f1, encrypt_state *state)
 					prt("Error calling cbc_crypt to "
 					    "decrypt.",
 					    1, 1);
-					put_qio();
+					refresh();
 				}
 			}
 		}

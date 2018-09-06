@@ -746,7 +746,7 @@ boolean summon_item(long y, long x, char name1[70], char name2[70], long count,
 		if (found) {
 			if (!present) {
 				msg_print("Press any key to abort...");
-				put_qio();
+				refresh();
 			}
 
 			for (i1 = 0; (i1 < i_summ_count) && (!done); i1++) {

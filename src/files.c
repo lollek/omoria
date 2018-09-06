@@ -19,42 +19,35 @@ FILE *priv_fopen(char *path, char *mode)
 
 void intro_qualifier_help()
 {
-	printf("\n\r");
-	printf("Invalid Moria option!  Valid qualifiers are:\n\r");
-	printf("  -f file    Load saved character in file.\n\r");
-	printf("  -w         Warn about hearing things in water.\n\r");
-	printf("  -s         List top 20 high scores.\n\r");
-	printf(
-	    "  -t num     List <num> high scores after death or for -s.\n\r");
-	printf("  -Q         Quit after checking for data files.\n\r");
-	printf("  -V         Print version info.\n\r");
-
-	/*  printf("  /trap=[keep]        (Put all incoming messages on the */
-	/*  message line)\n\r"); */
-	/*  printf("  /notrap             (Default; let messages appear */
-	/*  normally)\n\r"); */
-
-	/*  check_pswd("doublespeak",true); XXXX get a passwd from command */
-	/*  line... */
-	if (wizard2 || 1) {
-		printf("\n\r\n\rWizard commands:\n\r");
-		printf("  -Wpassword Enter wizard mode password.\n\r");
-		printf("  -Rfile     Restore character in master file.\n\r");
-		printf("  -Ufile     Change the dead flag in save file.\n\r");
-		printf("  -Efile     Encrpyt a character file.\n\r");
-		printf("  -Dfile     Decrypt a character file.\n\r");
-		printf("\n\r");
-	} /* end if wizard2 */
+	printf(		"\n\r"
+			"Invalid Moria option!  Valid qualifiers are:\n\r"
+			"  -f file    Load saved character in file.\n\r"
+			"  -w         Warn about hearing things in water.\n\r"
+			"  -s         List top 20 high scores.\n\r"
+			"  -t num     List <num> high scores after death or for -s.\n\r"
+			"  -Q         Quit after checking for data files.\n\r"
+			"  -V         Print version info.\n\r"
+			"\n\r"
+			"\n\r");
+	printf(		"Wizard commands:\n\r"
+			"  -Wpassword Enter wizard mode password.\n\r"
+			"  -Rfile     Restore character in master file.\n\r"
+			"  -Ufile     Change the dead flag in save file.\n\r"
+			"  -Efile     Encrpyt a character file.\n\r"
+			"  -Dfile     Decrypt a character file.\n\r"
+			"\n\r");
 }
 
 void print_version_info()
 {
-	printf("\n\r");
-	printf("Linux Omoria Version %s\n\r", omoria_version());
-	printf("\n\r");
+	printf(
+			"\n\r"
+			"Linux Omoria Version %s\n\r"
+			"\n\r"
+			, omoria_version());
 }
 
-static boolean intro_parse_switches(int argc, char *argv[])
+static void intro_parse_switches(int argc, char *argv[])
 {
 	int x1;
 	boolean exit_flag = false;
@@ -145,7 +138,9 @@ static boolean intro_parse_switches(int argc, char *argv[])
 		exit_game();
 	}
 
-	return (exit_flag || print_usage);
+	if (exit_flag) {
+		exit_game();
+	}
 }
 
 boolean intro_do_hours_file(boolean already_exiting, char *the_file)
@@ -311,37 +306,22 @@ void intro(int argc, char *argv[])
 
 	if (exit_flag) {
 		exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TRD);
-
-		writeln("");
-		writeln(
-		    "Notice: System IMORIA wizard should set the protection");
-		writeln("        on  files  just created.  See the README file "
-			"for");
-		writeln("        help on setting protection on the files.");
-		writeln("        Hint: make privs");
-		writeln("");
-		writeln(
-		    "Notice: File hours.dat may be edited to set operating");
-		writeln("        hours for IMORIA.");
-		writeln("");
-		writeln(
-		    "Notice: File moria.dat may be edited to contain  news");
-		writeln("        items, etc...");
-		writeln("");
+		printf("\r\n"
+			"Notice: System IMORIA wizard should set the protection\r\n"
+			"        on  files  just created.  See the README file for\r\n"
+			"        help on setting protection on the files.\r\n"
+			"        Hint: make privs\r\n"
+			"\r\n"
+			"Notice: File hours.dat may be edited to set operating\r\n"
+			"        hours for IMORIA.\r\n"
+			"\r\n"
+			"Notice: File moria.dat may be edited to contain  news\r\n"
+			"        items, etc...\r\n"
+			"\r\n");
 		exit_game();
 	}
 
-	/* Check the terminal type and see if it is supported */
-	init_curses();
-	curses_is_running = true;
-
-	if (!exit_flag) {
-		exit_flag = intro_parse_switches(argc, argv);
-	}
-
-	if (exit_flag) {
-		exit_game();
-	}
+	intro_parse_switches(argc, argv);
 
 	if (!wizard1) {
 		no_controly();
@@ -362,31 +342,7 @@ void intro(int argc, char *argv[])
 			fclose(file1);
 		}
                 exit_game();
-        }
-
-	put_buffer("*************************************************************", 1, 1);
-	put_buffer("*                Omoria                                     *", 2, 1);
-	put_buffer(omoria_version(), 2, 25);
-	put_buffer("*************************************************************", 3, 1);
-	put_buffer("*                                                           *", 4, 1);
-	put_buffer("*           COPYRIGHT (c) Robert Alan Koeneke               *", 5, 1);
-	put_buffer("*                                                           *", 6, 1);
-	put_buffer("* Programers : Robert Alan Koeneke / University of Oklahoma *", 7, 1);
-	put_buffer("*              Jimmey Wayne Todd   / University of Oklahoma *", 8, 1);
-	put_buffer("*                                                           *", 9, 1);
-	put_buffer("* Based on University of Washington version 4.8             *", 10, 1);
-	put_buffer("*                                                           *", 11, 1);
-	put_buffer("* UW Modifications by : Kenneth Case, Mary Conner,          *", 12, 1);
-	put_buffer("*                       Robert DeLoura, Dan Flye,           *", 13, 1);
-	put_buffer("*                       Todd Gardiner, Dave Jungck,         *", 14, 1);
-	put_buffer("*                       Andy Walker, Dean Yasuda.           *", 15, 1);
-	put_buffer("*                                                           *", 16, 1);
-	put_buffer("* Linux port by Stephen Kertes, 1997-2000.                  *", 17, 1);
-	put_buffer("*                                                           *", 18, 1);
-	put_buffer("* Updates by Olle Kvarnstrom, 2018.                         *", 19, 1);
-
-	prt_("[Press any key to continue.]", 24, 10);
-	inkey();
+	}
 
 	LEAVE("intro", "");
 }
@@ -429,7 +385,7 @@ void file_character()
 		file1 = (FILE *)fopen(filename1, "w");
 		if (file1 != NULL) {
 			prt("Writing character sheet...", 1, 1);
-			put_qio();
+			refresh();
 			for (tstat = STR; tstat <= CHR; tstat++) {
 				cnv_stat(player_stats_curr[(int)tstat],
 					 out_c[(int)tstat]);
@@ -762,7 +718,7 @@ void print_map()
 		file1 = (FILE *)fopen(filename1, "w");
 		if (file1 != NULL) {
 			prt("Writing Moria Dungeon Map...", 1, 1);
-			put_qio();
+			refresh();
 			i1 = 1;
 			i7 = 0;
 			do {
@@ -869,7 +825,7 @@ void print_objects()
 					"%ld random objects being produced...",
 					nobj);
 				prt(tmp_str, 1, 1);
-				put_qio();
+				refresh();
 
 				fprintf(file1, "*** Random Object Sampling:\n");
 				fprintf(file1, "*** %ld objects\n", nobj);
@@ -919,7 +875,7 @@ void print_monsters()
 		file1 = (FILE *)fopen(filename1, "w");
 		if (file1 != NULL) {
 			prt("Writing Monster Dictionary...", 1, 1);
-			put_qio();
+			refresh();
 			for (i1 = 1; i1 <= MAX_CREATURES; i1++) {
 				/* with c_list[i1]. do; */
 
@@ -1833,6 +1789,6 @@ boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82], FILE **
 			}
 		}
 	}
-	put_qio();
+	refresh();
 	return flag;
 }

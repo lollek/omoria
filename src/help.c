@@ -139,7 +139,7 @@ void moria_help(char help_level[82])
 		echo();
 		nocbreak();
 		C_clear_screen();
-		put_qio();
+		refresh();
 		endwin();
 		execlp(HELP_FILE_PATH, "mhelp.pl", help_string, (char *)0);
 		printf("\n\rUnable to execute: %s\n\r", HELP_FILE_PATH);

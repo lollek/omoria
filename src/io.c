@@ -44,6 +44,7 @@ void signalexit()
 extern void d__quit();
 void signalquit()
 {
+	ENTER(("signalquit", ""));
 	priv_switch(0);
 	signal(SIGINT, signalquit);
 	switch (game_state) {
@@ -60,6 +61,7 @@ void signalquit()
 		exit_game();
 		break;
 	}
+	LEAVE("signalquit", "");
 }
 
 void signalsave()
@@ -71,93 +73,25 @@ void signalsave()
 	exit_game();
 }
 
-void signalsuspend()
-{
-	if (game_state == GS_HELP) {
-		signal(SIGTSTP, signalsuspend);
-	} else {
-
-		priv_switch(0);
-		echo();
-		nocbreak();
-
-		switch (game_state) {
-		case GS_GET_COMMAND:
-			C_clear_screen();
-			put_qio();
-			break;
-		default:
-			save_screen();
-			C_clear_screen();
-			put_qio();
-			break;
-		}
-
-		MSG(("suspending..."));
-
-		kill(getpid(), SIGTSTP);
-		signal(SIGTSTP, signalsuspend);
-
-		MSG(("...resuming"));
-
-		cbreak();
-		noecho();
-
-		switch (game_state) {
-		case GS_GET_COMMAND:
-			C_clear_screen();
-			draw_cave();
-			break;
-		default:
-			C_clear_screen();
-			put_qio();
-			restore_screen();
-			wrefresh(stdscr);
-			break;
-		}
-	}
-}
-
 void no_controly()
 {
 	/* { Turn off Control-Y					-RAK-	} */
 	/* ok, this is unix not vms, so it turns off ^C and ^Z */
 
-	boolean CATCH_SIGNALS = true;
-
 	ENTER(("no_controly", ""));
 
-#ifdef SIGINT
 	signal(SIGINT, signalquit);
-#endif
-#ifdef SIGHUP
 	signal(SIGHUP, signalsave);
-#endif
-
-	if (CATCH_SIGNALS) {
-		signal(SIGTSTP, signalsuspend);
-		/*signal(SIGTSTP,SIG_IGN);*/
-		signal(SIGQUIT, signalexit);
-		signal(SIGILL, signalexit);
-		signal(SIGTRAP, signalexit);
-		signal(SIGFPE, signalexit);
-		signal(SIGSEGV, signalexit);
-#ifdef SIGIOT
-		signal(SIGIOT, signalexit);
-#endif
-#ifdef SIGABRT
-		signal(SIGABRT, signalexit);
-#endif
-#ifdef SIGEMT
-		signal(SIGEMT, signalexit);
-#endif
-#ifdef SIGBUS
-		signal(SIGBUS, signalexit);
-#endif
-#ifdef SIGSYS
-		signal(SIGSYS, signalexit);
-#endif
-	}
+	signal(SIGTSTP, SIG_IGN);
+	signal(SIGQUIT, signalexit);
+	signal(SIGILL, signalexit);
+	signal(SIGTRAP, signalexit);
+	signal(SIGFPE, signalexit);
+	signal(SIGSEGV, signalexit);
+	signal(SIGIOT, signalexit);
+	signal(SIGABRT, signalexit);
+	signal(SIGBUS, signalexit);
+	signal(SIGSYS, signalexit);
 	LEAVE("no_controly", "");
 }
 
@@ -173,7 +107,7 @@ void exit_game()
 	controly(); /* { Turn control-Y back on	} */
 
 	if (curses_is_running) {
-		put_qio(); /* { Dump any remaining buffer	} */
+		refresh(); /* { Dump any remaining buffer	} */
 
 		/* clean up the terminal */
 		echo();
@@ -236,7 +170,7 @@ void inkey_delay(char *getchar, long delay)
 {
 	/* XXXX check_input consumes the input, so we never actually get data */
 
-	put_qio(); /*{ Dump the IO buffer		}*/
+	refresh(); /*{ Dump the IO buffer		}*/
 
 	*getchar = 0;
 
@@ -247,7 +181,7 @@ void inkey_delay(char *getchar, long delay)
 
 void inkey_flush(char *x)
 {
-	put_qio(); /*{ Dup the IO buffer	}*/
+	refresh(); /*{ Dup the IO buffer	}*/
 	if (!(wizard1)) {
 		flush();
 	}
@@ -268,7 +202,7 @@ void clear_rc(long row, long col)
 	move(row, col);
 	clrtobot();
 	/*  put_buffer(cursor_erp, row, col); */
-	put_qio(); /* dump the clear sequence */
+	refresh(); /* dump the clear sequence */
 }
 
 boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */

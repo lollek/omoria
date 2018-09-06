@@ -19,7 +19,6 @@ extern "C" {
     #[link_name = "move"]
     fn C_move(y: libc::c_int, x: libc::c_int) -> libc::c_int;
 
-    #[link_name = "chattr"]
     fn C_chattr(attr: libc::c_int, on: libc::uint8_t) -> libc::c_int;
 }
 

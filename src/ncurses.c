@@ -11,7 +11,7 @@
 #define CYAN 14
 #define MAGENTA 15
 
-int chattr(int attr, uint32_t on) {
+int C_chattr(int attr, uint32_t on) {
 	switch(attr) {
 		case DIM:
 			if (on) return attron(A_DIM);
@@ -36,12 +36,4 @@ int chattr(int attr, uint32_t on) {
 			else	return attroff(COLOR_PAIR(COLOR_MAGENTA));
 	}
 	return ERR;
-}
-
-int attron_dim() {
-	return attron(A_DIM);
-}
-
-int attroff_dim() {
-	return attroff(A_DIM);
 }

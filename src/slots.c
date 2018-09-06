@@ -206,10 +206,10 @@ void sm__print_slots()
 		sprintf(out_val, "%s", s_name[slotpos[3]]);
 		put_buffer(out_val, 6, c3);
 
-		put_qio();
+		refresh();
 		usleep(50);
 		sm__clearslots(6); /*{clear top row}*/
-		put_qio();
+		refresh();
 		usleep(50);
 		sm__clearslots(8); /*{clear bottom row}*/
 
@@ -221,7 +221,7 @@ void sm__print_slots()
 		sprintf(out_val, "%s", s_name[slotpos[3]]);
 		put_buffer(out_val, 7, c3);
 
-		put_qio();
+		refresh();
 		usleep(100);
 	}
 }

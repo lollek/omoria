@@ -46,7 +46,7 @@ void hr__display_track3()
 	put_buffer("_", 21, 77);
 	put_buffer("_", 22, 77);
 	put_buffer("_", 23, 77);
-	put_qio();
+	refresh();
 }
 
 void hr__display_track2()
@@ -81,7 +81,7 @@ void hr__display_track2()
 	put_buffer("_-", 20, 53);
 	put_buffer("_-", 21, 49);
 	put_buffer("__ __ __ __ __ __ __ __ __ __ __ __ __ -- -- --", 22, 1);
-	put_qio();
+	refresh();
 }
 
 void hr__display_track4()
@@ -116,7 +116,7 @@ void hr__display_track4()
 	put_buffer("_", 21, 2);
 	put_buffer("_", 22, 2);
 	put_buffer("_", 23, 2);
-	put_qio();
+	refresh();
 }
 
 void hr__display_track5()
@@ -151,7 +151,7 @@ void hr__display_track5()
 	put_buffer("-_", 20, 25);
 	put_buffer("-_", 21, 29);
 	put_buffer("-- -- __ __ __ __ __ __ __ __ __ __ __ __ __", 22, 34);
-	put_qio();
+	refresh();
 }
 
 void hr__display_track1()
@@ -163,7 +163,7 @@ void hr__display_track1()
 	put_buffer("__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __",
 		   16, 1);
 	put_buffer("__ __ __ __ __ __ __", 16, 58);
-	put_qio();
+	refresh();
 }
 
 void hr__get_horse_stats(long *num_horse, h_name horse, h_stat hstat,

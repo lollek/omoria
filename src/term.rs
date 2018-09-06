@@ -6,9 +6,6 @@ use misc;
 use ncurses;
 
 extern "C" {
-    #[link_name="screen_change"]
-    static mut C_screen_change: libc::c_int;
-
     #[link_name="msg_flag"]
     static C_msg_flag: libc::uint8_t;
 
@@ -37,7 +34,6 @@ pub fn clear_from(row: i32) {
 pub fn refresh_screen() {
     debug::enter("refresh_screen");
 
-    unsafe { C_screen_change = <i32>::max_value(); }
     ncurses::refresh();
 
     debug::leave("refresh_screen");

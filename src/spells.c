@@ -276,7 +276,7 @@ boolean explode(long typ, long y, long x, long dam_hp, const char *descrip)
 								i1, i2)) {
 								print('*', i1,
 								      i2);
-								put_qio();
+								refresh();
 								usleep(
 								    DRAW_BALL_DELAY);
 							}
@@ -728,7 +728,7 @@ boolean breath(long typ, long y, long x, long dam_hp, char ddesc[82])
 
 			if (panel_contains(i1, i2)) {
 				print('*', i1, i2);
-				put_qio();
+				refresh();
 				usleep(DRAW_BOLT_DELAY);
 			}
 
@@ -2917,7 +2917,7 @@ boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
 					if (panel_contains(*y, *x)) {
 						print('*', *y,
 						      *x); /*{ draw bolt }*/
-						put_qio();
+						refresh();
 						usleep(DRAW_BOLT_DELAY);
 					}
 				}

@@ -814,7 +814,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 		break;
 	}
 
-	put_qio();
+	refresh();
 	turn += time_spent;
 	turn_counter += QUEST_DELAY;
 
@@ -864,7 +864,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 		if (PF.poisoned == 0) {
 			PF.status &= ~IS_POISONED;
 			msg_print("You feel better.");
-			put_qio();
+			refresh();
 		}
 	} /* end for */
 
