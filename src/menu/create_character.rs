@@ -3,25 +3,21 @@ use std::cmp::{max, min};
 use std::str;
 use std::ffi::CString;
 
-use libc::{c_char, time, time_t, strcpy};
+use libc::{time, time_t, strcpy};
 
 use debug;
 use io;
 use misc;
 use player;
-use ncurses;
 use random;
 use screen;
 use term;
 use menu::helpers;
 
-use types::{Class, Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
+use types::{Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
 
 extern "C" {
     fn add_money(amount: i64);
-
-    #[link_name = "moria_help"]
-    fn C_moria_help(what: *const c_char);
 }
 
 fn old_stat(stat: i16) -> i16 {
@@ -863,57 +859,36 @@ fn choose_name() {
     debug::leave("choose_name");
 }
 
-fn choose_class() -> bool {
+fn choose_class() {
     debug::enter("choose_class");
 
-    term::clear_from(21);
-    term::prt("Choose a class (? for Help):", 20, 2);
-
-    let start_x = 2;
-
-    let mut x = start_x;
-    let mut y = 21;
-    let available_classes = player::race().available_classes();
-    let available_classes_i: Vec<usize> = available_classes.iter()
-        .map(|&i| i as usize)
+    let classes = player::race()
+        .available_classes();
+    let class_strings = classes
+        .iter()
+        .map(|it| it.name())
         .collect();
-
-    for class in available_classes {
-        let i = class.to_owned() as usize;
-        let char_visual = ('a' as u8 + i as u8) as char;
-        let class_string = format!("{}) {}", char_visual, class.name());
-
-        term::put_buffer(&class_string, y, x);
-        x += 15;
-        if x > 70 {
-            x = start_x;
-            y += 1;
-        }
-    }
-
-    term::put_buffer("", 20, 29);
+    let mut index = 0;
 
     loop {
-        ncurses::mov(5, 14);
-        let key = io::inkey_flush();
-        if key as char == '?' {
-            let cstr = CString::new("Character Classes").unwrap();
-            unsafe { C_moria_help(cstr.as_ptr()) };
-            debug::leave("choose_class");
-            return false;
+        helpers::draw_menu(
+            "Choose your class",
+            &class_strings,
+            "j=up, k=down, enter=select, ?=info",
+            index);
+        match io::inkey_flush() as char {
+            'k' => index = if index == 0 { 0 } else { index - 1 },
+            'j' => index = min(classes.len() as u8 -1, index + 1),
+            '\r' => {
+                player::set_class(classes[index as usize]);
+                debug::leave("choose_class");
+                return;
+            },
+            '?' => helpers::draw_help(
+                classes[index as usize].name(),
+                &classes[index as usize].info()),
+            _ => {},
         }
-
-        if key < 'a' as u8 || key > 'z' as u8 {
-            continue;
-        }
-        let selection = (key as u8 - 'a' as u8) as usize;
-
-        if available_classes_i.contains(&selection) {
-            player::set_class(Class::from(selection));
-            debug::leave("choose_class");
-            return true;
-        }
-
     }
 }
 
@@ -1049,12 +1024,7 @@ pub fn create_character() {
     choose_sex();
     choose_stats();
     print_history();
-
-    loop {
-        if choose_class() {
-            break;
-        }
-    }
+    choose_class();
 
     term::clear_from(21);
     term::put_buffer(&player::class().name(), 5, 14);
