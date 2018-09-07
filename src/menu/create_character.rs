@@ -13,6 +13,7 @@ use ncurses;
 use random;
 use screen;
 use term;
+use menu::helpers;
 
 use types::{Class, Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
 
@@ -785,7 +786,7 @@ fn generate_history() {
     }
 
     let mut i: usize = 0;
-    let mut tmp_str :String = String::new();
+    let mut tmp_str: String = String::new();
     let mut history_words_iter = history.split_whitespace();
     while let Some(word) = history_words_iter.next() {
         let tmp_str_len = tmp_str.len();
@@ -917,48 +918,31 @@ fn choose_class() -> bool {
 fn choose_race() -> bool {
     debug::enter("choose_race");
 
-    term::clear_from(21);
-    term::prt("Choose a race (? for Help):", 20, 2);
-
-    let start_x = 2;
-
-    let mut x = start_x;
-    let mut y = 21;
-    for i in races_iter() {
-        let race = Race::from(i);
-        let char_visual = ('a' as u8 + i as u8) as char;
-        let race_string = format!("{}) {}", char_visual, race.name());
-
-        term::put_buffer(&race_string, y, x);
-        x += 15;
-        if x > 70 {
-            x = start_x;
-            y += 1;
-        }
-    }
+    let races = races_iter()
+        .map(|i| Race::from(i))
+        .map(|it| it.name())
+        .collect();
+    let mut index = 0;
 
     loop {
-        ncurses::mov(3, 14);
-        let key = io::inkey_flush();
+        helpers::draw_menu(
+            "Choose your race",
+            &races,
+            "j=up, k=down, enter=select, ?=info",
+            index);
 
-        if key as char == '?' {
-            let cstr = CString::new("Character Races").unwrap();
-            unsafe { C_moria_help(cstr.as_ptr()) };
-            debug::leave("choose_race");
-            return false;
+        match io::inkey_flush() as char {
+            'k' => index = if index == 0 { 0 } else { index - 1 },
+            'j' => index = min(races.len() as u8 -1, index + 1),
+            '\r' => {
+                player::set_race(Race::from(index as usize));
+                debug::leave("choose_race");
+            },
+            '?' => helpers::draw_help(
+                races[index as usize],
+                &Race::from(index as usize).info()),
+            _ => {},
         }
-
-        if key < 'a' as u8 || key > 'z' as u8 {
-            continue;
-        }
-        let selection = (key as u8 - 'a' as u8) as usize;
-
-        if let Some(_) = races_iter().find(|&i| i == selection) {
-            player::set_race(Race::from(selection));
-            debug::leave("choose_race");
-            return true;
-        }
-
     }
 }
 
@@ -1038,15 +1022,6 @@ pub fn create_character() {
     debug::enter("create_character");
 
     choose_race();
-    /*
-    put_character(false);
-    loop {
-        if choose_race() {
-            break;
-        }
-    }
-    term::put_buffer(&player::race().name(), 3, 14);
-    */
 
     loop {
         if choose_sex() {

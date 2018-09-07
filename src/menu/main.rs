@@ -1,8 +1,7 @@
 use std::fs;
-use std::cmp::{min, max};
+use std::cmp::min;
 
 use constants;
-use ncurses;
 use debug;
 use term;
 use io;
@@ -77,13 +76,14 @@ pub fn main_menu() -> Option<Character> {
     print_banner();
 
     let characters = load_characters();
+    let char_names = characters.iter().map(|it| it.name.as_str()).collect();
     let mut index = 0;
     let mut retval = None;
 
     loop {
         helpers::draw_menu(
             "Select your adventurer",
-            &characters.iter().map(|it| it.name.as_str()).collect(),
+            &char_names,
             "j=down, k=up, enter=select, n=new",
             index);
 
