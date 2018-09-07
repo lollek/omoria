@@ -47,6 +47,30 @@ impl Race {
         }
     }
 
+    pub fn stats_info(&self) -> Vec<String> {
+        let stats = self.stat_block();
+        vec![
+            format!("Melee bonus:       {}", self.melee_bonus()),
+            format!("Ranged bonus:      {}", self.ranged_bonus()),
+            format!("Health bonus:      {}", self.health_bonus()),
+            format!("Experience factor: {}", self.expfactor()),
+            format!("Search frequence:  {}", self.search_freq()),
+            format!("Search modifier:   {}", self.search_mod()),
+            format!("Stealth modifier:  {}", self.stealth_mod()),
+            format!("Save modifier:     {}", self.save_mod()),
+            format!("Disarm modifier:   {}", self.disarm_mod()),
+            format!("Infravision:       {}", self.infravision()),
+            format!("Swim speed:        {}", self.swim_speed()),
+            "ATTRIBUTES:".to_owned(),
+            format!("Strength:          {}", stats.strength),
+            format!("Dexterity:         {}", stats.dexterity),
+            format!("Constituton:       {}", stats.constitution),
+            format!("Intelligence:      {}", stats.intelligence),
+            format!("Wisdom:            {}", stats.wisdom),
+            format!("Charisma:          {}", stats.charisma),
+        ]
+    }
+
     pub fn search_mod(&self) -> i8 {
         match self {
             Race::Human => 0,
@@ -215,7 +239,7 @@ impl Race {
     pub fn stat_block(&self) -> StatBlock {
         match self {
             Race::Human => StatBlock::from([0, 0, 0, 0, 0, 0]),
-            Race::HalfElf => StatBlock::from([-116, 1, 0, 1, -1, 1]),
+            Race::HalfElf => StatBlock::from([-1, 1, 0, 1, -1, 1]),
             Race::Elf => StatBlock::from([-1, 2, 1, 1, -2, 1]),
             Race::Halfling => StatBlock::from([-2, 2, 1, 3, 1, 1]),
             Race::Gnome => StatBlock::from([-1, 2, 0, 2, 1, -2]),

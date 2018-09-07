@@ -37,20 +37,7 @@ pub fn draw_menu(title: &str, items: &Vec<&str>, commands: &str, selected: u8) {
     term::put_buffer(&format!("{:*<width$}", "", width=WIDTH - 1), HEIGHT as i32 - 1, 0);
 }
 
-pub fn draw_help(title: &str, msg: &str) {
-    let mut lines = vec![String::new()];
-    let mut msg_iter = msg.split_whitespace();
-    while let Some(word) = msg_iter.next() {
-        if lines.last().unwrap().len() + word.len() >= MAX_X {
-            lines.push(String::new());
-        }
-        let mut last = lines.last_mut().unwrap();
-        if last.len() > 0 {
-            last.push_str(" ");
-        }
-        last.push_str(word);
-    }
-
+pub fn draw_help_vec(title: &str, lines: &Vec<&str>) {
     let commands =
         if lines.len() <= MAX_Y {
             "ESC=close"
@@ -61,10 +48,10 @@ pub fn draw_help(title: &str, msg: &str) {
     let mut page = 0;
 
     loop {
-        let visible_lines = lines.iter()
+        let visible_lines: Vec<&str> = lines.iter()
             .skip(page * MAX_Y)
             .take(MAX_Y)
-            .map(|it| it.as_str())
+            .map(|it| it.to_owned())
             .collect();
 
         draw_menu(
@@ -88,4 +75,21 @@ pub fn draw_help(title: &str, msg: &str) {
             _ => {}
         }
     }
+}
+
+pub fn draw_help(title: &str, msg: &str) {
+    let mut lines = vec![String::new()];
+    let mut msg_iter = msg.split_whitespace();
+    while let Some(word) = msg_iter.next() {
+        if lines.last().unwrap().len() + word.len() >= MAX_X {
+            lines.push(String::new());
+        }
+        let mut last = lines.last_mut().unwrap();
+        if last.len() > 0 {
+            last.push_str(" ");
+        }
+        last.push_str(word);
+    }
+
+    draw_help_vec(title, &lines.iter().map(|it| it.as_str()).collect());
 }

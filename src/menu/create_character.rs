@@ -928,7 +928,7 @@ fn choose_race() -> bool {
         helpers::draw_menu(
             "Choose your race",
             &races,
-            "j=up, k=down, enter=select, ?=info",
+            "j=up, k=down, enter=select, ?=info, s=stats, c=classes",
             index);
 
         match io::inkey_flush() as char {
@@ -941,6 +941,20 @@ fn choose_race() -> bool {
             '?' => helpers::draw_help(
                 races[index as usize],
                 &Race::from(index as usize).info()),
+            's' => helpers::draw_help_vec(
+                races[index as usize],
+                &Race::from(index as usize)
+                .stats_info()
+                .iter()
+                .map(|it| it.as_str())
+                .collect()),
+            'c' => helpers::draw_help_vec(
+                races[index as usize],
+                &Race::from(index as usize)
+                .available_classes()
+                .iter()
+                .map(|it| it.name())
+                .collect()),
             _ => {},
         }
     }
