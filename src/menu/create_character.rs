@@ -213,15 +213,17 @@ fn put_misc3() {
 }
 
 fn print_history() {
-    term::clear_from(14);
-    term::put_buffer("Character Background", 13, 27);
-    for i in 0..5 {
-        let c_hist: Vec<u8> = unsafe { player::player_history[i]}.iter()
-            .map(|&i| i as u8)
-            .collect();
-        let hist = misc::c_array_to_rust_string(c_hist);
-        term::put_buffer(&hist, i as i32 + 14, 4);
-    }
+    let history: String = (0..5)
+        .map(|i| {
+            let c_hist: Vec<u8> = unsafe { player::player_history[i]}.iter()
+                .map(|&i| i as u8)
+                .collect();
+            misc::c_array_to_rust_string(c_hist)
+        })
+    .collect::<Vec<String>>()
+    .join(" ");
+
+    helpers::draw_help("Your background", &history);
 }
 
 
@@ -1046,7 +1048,6 @@ pub fn create_character() {
     choose_race();
     choose_sex();
     choose_stats();
-
     print_history();
 
     loop {
