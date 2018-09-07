@@ -828,6 +828,7 @@ fn display_char() {
 pub fn change_name() {
     debug::enter("change_name");
 
+    term::clear_screen();
     display_char();
     loop {
         term::prt("<c>hange character name.     <ESCAPE> to continue.", 21, 2);
