@@ -997,7 +997,7 @@ fn choose_sex() {
 fn choose_stats() {
     debug::enter("choose_stats");
 
-    loop {
+    fn roll_stats() {
         get_stats();
         generate_history();
         generate_ahw();
@@ -1007,23 +1007,36 @@ fn choose_stats() {
             player::player_dis_td = player::dmg_from_str().into();
             player::player_dis_tac = player::ac_from_dex().into();
         }
+    }
 
-        term::clear_from(21);
-        put_misc1();
-        put_stats();
+    roll_stats();
+    loop {
+        let stats = player::curr_stats();
 
-        term::prt("Press 'R' to reroll stats, <RETURN> to continue:", 20, 2);
-
-        loop {
-            let s: u8 = io::inkey_flush();
-            if s == 13 as u8 {
-                debug::leave("choose_stats");
-                return;
-            }
-            if s == 'R' as u8 {
-                break;
-            }
+        helpers::draw_menu(
+            "Roll up your stats",
+            &vec![
+                format!("Age:           {}", unsafe { player::player_age }),
+                format!("Height:        {}", unsafe { player::player_ht }),
+                format!("Weight:        {}", unsafe { player::player_wt }),
+                format!("Social Class:  {}", unsafe { player::player_sc }),
+                "".to_string(),
+                "ATTRIBUTES:".to_owned(),
+                format!("Strength:      {}", misc::stat_to_string(stats.strength)),
+                format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
+                format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
+                format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
+                format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
+                format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
+            ].iter().map(|it| it.as_str()).collect(),
+            "r=reroll stats, enter=confirm",
+            255);
+        match io::inkey_flush() as char {
+            'r' => roll_stats(),
+            '\r' => return,
+            _ => {},
         }
+        put_misc1();
     }
 }
 
@@ -1032,8 +1045,8 @@ pub fn create_character() {
 
     choose_race();
     choose_sex();
-
     choose_stats();
+
     print_history();
 
     loop {
