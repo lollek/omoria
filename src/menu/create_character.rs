@@ -915,7 +915,7 @@ fn choose_class() -> bool {
     }
 }
 
-fn choose_race() -> bool {
+fn choose_race() {
     debug::enter("choose_race");
 
     let races = races_iter()
@@ -937,6 +937,7 @@ fn choose_race() -> bool {
             '\r' => {
                 player::set_race(Race::from(index as usize));
                 debug::leave("choose_race");
+                return;
             },
             '?' => helpers::draw_help(
                 races[index as usize],
@@ -960,41 +961,35 @@ fn choose_race() -> bool {
     }
 }
 
-fn choose_sex() -> bool {
+fn choose_sex() {
     debug::enter("choose_sex");
 
     if player::race() == Race::Dryad {
         player::set_sex(Sex::Female);
         debug::leave("choose_sex");
-        return true;
+        return;
     }
 
-    term::clear_from(21);
-    term::prt("Choose a sex (? for Help):", 20, 2);
-    term::prt("m) Male       f) Female", 21, 2);
-    term::prt("", 20, 28);
-
+    let mut index = 0;
     loop {
-        ncurses::mov(4, 14);
-        let key = io::inkey_flush() as char;
+        helpers::draw_menu(
+            "Choose your sex",
+            &vec![
+                "Male",
+                "Female",
+            ],
+            "j=up, k=down, enter=select",
+            index);
 
-        if key == 'f' {
-            player::set_sex(Sex::Female);
-            debug::leave("choose_sex");
-            return true;
-        }
-
-        if key == 'm' {
-            player::set_sex(Sex::Male);
-            debug::leave("choose_sex");
-            return true;
-        }
-
-        if key == '?' {
-            let cstr = CString::new("Character Sex").unwrap();
-            unsafe { C_moria_help(cstr.as_ptr()) };
-            debug::leave("choose_sex");
-            return false;
+        match io::inkey_flush() as char {
+            'k' => index = 0,
+            'j' => index = 1,
+            '\r' => {
+                player::set_sex(if index == 0 { Sex::Male } else { Sex::Female });
+                debug::leave("choose_sex");
+                return;
+            },
+            _ => {},
         }
     }
 }
@@ -1036,13 +1031,7 @@ pub fn create_character() {
     debug::enter("create_character");
 
     choose_race();
-
-    loop {
-        if choose_sex() {
-            break;
-        }
-    }
-    term::put_buffer(&player::sex().to_string(), 4, 14);
+    choose_sex();
 
     choose_stats();
     print_history();
