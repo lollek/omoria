@@ -998,7 +998,7 @@ fn choose_stats() {
                 format!("Weight:        {}", unsafe { player::player_wt }),
                 format!("Social Class:  {}", unsafe { player::player_sc }),
                 "".to_string(),
-                "ATTRIBUTES:".to_owned(),
+                "(Attributes):".to_owned(),
                 format!("Strength:      {}", misc::stat_to_string(stats.strength)),
                 format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
                 format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
@@ -1017,6 +1017,45 @@ fn choose_stats() {
     }
 }
 
+fn confirm_character() {
+    debug::enter("confirm_character");
+
+    let stats = player::curr_stats();
+    let lines = vec![
+        "Name: ".to_string(),
+        format!("Race:          {}", player::race().name()),
+        format!("Sex:           {}", player::sex().to_string()),
+        format!("Class:         {}", player::class().name()),
+        "".to_string(),
+        format!("Hit Points     {}", unsafe { player::player_mhp }),
+        format!("Mana           {}", unsafe { player::player_mana }),
+        "".to_string(),
+        "(Attributes):".to_owned(),
+        format!("Strength:      {}", misc::stat_to_string(stats.strength)),
+        format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
+        format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
+        format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
+        format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
+        format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
+    ];
+
+    helpers::draw_menu(
+        "Confirm your character",
+        &lines.iter().map(|it| it.as_str()).collect(),
+        "Enter your name, finish with enter",
+        255);
+
+    loop {
+        let new_name = term::get_string(4, 18, 24);
+        if !new_name.is_empty() {
+            player::set_name(&new_name);
+            break;
+        }
+    }
+
+    debug::leave("confirm_character");
+}
+
 pub fn create_character() {
     debug::enter("create_character");
 
@@ -1025,14 +1064,7 @@ pub fn create_character() {
     choose_stats();
     print_history();
     choose_class();
-
-    term::clear_from(21);
-    term::put_buffer(&player::class().name(), 5, 14);
     apply_stats_from_class();
-
-    print_history();
-    put_misc1();
-    put_stats();
 
     unsafe {
         player::player_creation_time = time(null::<time_t>() as *mut i64);
@@ -1041,13 +1073,8 @@ pub fn create_character() {
     }
 
     get_money();
-    put_stats();
-    put_misc2();
-    put_misc3();
-    choose_name();
 
-    term::prt("[Press any key to continue.]", 23, 10);
-    io::inkey_flush();
+    confirm_character(); // And choose name
 
     debug::leave("create_character");
 }
