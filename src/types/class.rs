@@ -2,9 +2,9 @@ use std::ops::Range;
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Class {
-    Warrior = 0,
-    Mage = 1,
-    Priest = 2,
+    Fighter = 0,
+    Wizard = 1,
+    Cleric = 2,
     Rogue = 3,
     Ranger = 4,
     Paladin = 5,
@@ -17,9 +17,9 @@ pub enum Class {
 impl Class {
     pub fn name(&self) -> &'static str {
         match self {
-            Class::Warrior => "Warrior",
-            Class::Mage => "Mage",
-            Class::Priest => "Priest",
+            Class::Fighter => "Fighter",
+            Class::Wizard => "Wizard",
+            Class::Cleric => "Cleric",
             Class::Rogue => "Rogue",
             Class::Ranger => "Ranger",
             Class::Paladin => "Paladin",
@@ -32,9 +32,9 @@ impl Class {
 
     pub fn info(&self) -> &'static str {
         match self {
-            Class::Warrior => "Some take up arms for glory, wealth, or revenge. Others do battle to prove themselves, to protect others, or because they know nothing else. Still others learn the ways of weaponcraft to hone their bodies in battle and prove their mettle in the forge of war. Lords of the battlefield, fighters are a disparate lot, training with many weapons or just one, perfecting the uses of armor, learning the fighting techniques of exotic masters, and studying the art of combat, all to shape themselves into living weapons. Far more than mere thugs, these skilled warriors reveal the true deadliness of their weapons, turning hunks of metal into arms capable of taming kingdoms, slaughtering monsters, and rousing the hearts of armies.  Soldiers, knights, hunters, and artists of war, fighters are unparalleled champions, and woe to those who dare stand against them.",
-            Class::Mage => "Beyond the veil of the mundane hide the secrets of absolute power. The works of beings beyond mortals, the legends of realms where gods and spirits tread, the lore of creations both wondrous and terrible—such mysteries call to those with the ambition and the intellect to rise above the common folk to grasp true might. Such is the path of the wizard. These shrewd magic-users seek, collect, and covet esoteric knowledge, drawing on cultic arts to work wonders beyond the abilities of mere mortals. While some might choose a particular field of magical study and become masters of such powers, others embrace versatility, reveling in the unbounded wonders of all magic. In either case, wizards prove a cunning and potent lot, capable of smiting their foes, empowering their allies, and shaping the world to their every desire.",
-            Class::Priest => "In faith and the miracles of the divine, many find a greater purpose. Called to serve powers beyond most mortal understanding, all priests preach wonders and provide for the spiritual needs of their people. Clerics are more than mere priests, though; these emissaries of the divine work are the will of their deities through strength of arms and the magic of their gods. Devoted to the tenets of the religions and philosophies that inspire them, these ecclesiastics quest to spread the knowledge and inf luence of their faith. Yet while they might share similar abilities, clerics prove as different from one another as the divinities they serve, with some offering healing and redemption, others judging law and truth, and still others spreading conflict and corruption. The ways of the cleric are varied, yet all who tread these paths walk with the mightiest of allies and bear the arms of the gods themselves.",
+            Class::Fighter => "Some take up arms for glory, wealth, or revenge. Others do battle to prove themselves, to protect others, or because they know nothing else. Still others learn the ways of weaponcraft to hone their bodies in battle and prove their mettle in the forge of war. Lords of the battlefield, fighters are a disparate lot, training with many weapons or just one, perfecting the uses of armor, learning the fighting techniques of exotic masters, and studying the art of combat, all to shape themselves into living weapons. Far more than mere thugs, these skilled warriors reveal the true deadliness of their weapons, turning hunks of metal into arms capable of taming kingdoms, slaughtering monsters, and rousing the hearts of armies.  Soldiers, knights, hunters, and artists of war, fighters are unparalleled champions, and woe to those who dare stand against them.",
+            Class::Wizard => "Beyond the veil of the mundane hide the secrets of absolute power. The works of beings beyond mortals, the legends of realms where gods and spirits tread, the lore of creations both wondrous and terrible—such mysteries call to those with the ambition and the intellect to rise above the common folk to grasp true might. Such is the path of the wizard. These shrewd magic-users seek, collect, and covet esoteric knowledge, drawing on cultic arts to work wonders beyond the abilities of mere mortals. While some might choose a particular field of magical study and become masters of such powers, others embrace versatility, reveling in the unbounded wonders of all magic. In either case, wizards prove a cunning and potent lot, capable of smiting their foes, empowering their allies, and shaping the world to their every desire.",
+            Class::Cleric => "In faith and the miracles of the divine, many find a greater purpose. Called to serve powers beyond most mortal understanding, all priests preach wonders and provide for the spiritual needs of their people. Clerics are more than mere priests, though; these emissaries of the divine work are the will of their deities through strength of arms and the magic of their gods. Devoted to the tenets of the religions and philosophies that inspire them, these ecclesiastics quest to spread the knowledge and inf luence of their faith. Yet while they might share similar abilities, clerics prove as different from one another as the divinities they serve, with some offering healing and redemption, others judging law and truth, and still others spreading conflict and corruption. The ways of the cleric are varied, yet all who tread these paths walk with the mightiest of allies and bear the arms of the gods themselves.",
             Class::Rogue => "Life is an endless adventure for those who live by their wits. Ever just one step ahead of danger, rogues bank on their cunning, skill, and charm to bend fate to their favor. Never knowing what to expect, they prepare for everything, becoming masters of a wide variety of skills, training themselves to be adept manipulators, agile acrobats, shadowy stalkers, or masters of any of dozens of other professions or talents. Thieves and gamblers, fast talkers and diplomats, bandits and bounty hunters, and explorers and investigators all might be considered rogues, as well as countless other professions that rely upon wits, prowess, or luck. Although many rogues favor cities and the innumerable opportunities of civilization, some embrace lives on the road, journeying far, meeting exotic people, and facing fantastic danger in pursuit of equally fantastic riches. In the end, any who desire to shape their fates and live life on their own terms might come to be called rogues.",
             Class::Ranger => "For those who relish the thrill of the hunt, there are only predators and prey. Be they scouts, trackers, or bounty hunters, rangers share much in common: unique mastery of specialized weapons, skill at stalking even the most elusive game, and the expertise to defeat a wide range of quarries. Knowledgeable, patient, and skilled hunters, these rangers hound man, beast, and monster alike, gaining insight into the way of the predator, skill in varied environments, and ever more lethal martial prowess. While some track man-eating creatures to protect the frontier, others pursue more cunning game- even fugitives among their own people.",
             Class::Paladin => "Through a select, worthy few shines the power of the divine.  Called paladins, these noble souls dedicate their swords and lives to the battle against evil. Knights, crusaders, and law-bringers, paladins seek not just to spread divine justice but to embody the teachings of the virtuous deities they serve.  In pursuit of their lofty goals, they adhere to ironclad laws of morality and discipline. As reward for their righteousness, these holy champions are blessed with boons to aid them in their quests: powers to banish evil, heal the innocent, and inspire the faithful. Although their convictions might lead them into conflict with the very souls they would save, paladins weather endless challenges of faith and dark temptations, risking their lives to do right and fighting to bring about a brighter future.",
@@ -47,9 +47,9 @@ impl Class {
 
     pub fn health_bonus(&self) -> u8 {
         match self {
-            Class::Warrior => 10,
-            Class::Mage => 0,
-            Class::Priest => 3,
+            Class::Fighter => 10,
+            Class::Wizard => 0,
+            Class::Cleric => 3,
             Class::Rogue => 6,
             Class::Ranger => 4,
             Class::Paladin => 6,
@@ -62,9 +62,9 @@ impl Class {
 
     pub fn melee_bonus(&self) -> i8 {
         match self {
-            Class::Warrior => 10,
-            Class::Mage => 4,
-            Class::Priest => 6,
+            Class::Fighter => 10,
+            Class::Wizard => 4,
+            Class::Cleric => 6,
             Class::Rogue => 6,
             Class::Ranger => 6,
             Class::Paladin => 8,
@@ -77,9 +77,9 @@ impl Class {
 
     pub fn ranged_bonus(&self) -> i8 {
         match self {
-            Class::Warrior => 8,
-            Class::Mage => 4,
-            Class::Priest => 5,
+            Class::Fighter => 8,
+            Class::Wizard => 4,
+            Class::Cleric => 5,
             Class::Rogue => 10,
             Class::Ranger => 10,
             Class::Paladin => 6,
@@ -92,9 +92,9 @@ impl Class {
 
     pub fn search_mod(&self) -> i8 {
         match self {
-            Class::Warrior => 14,
-            Class::Mage => 16,
-            Class::Priest => 16,
+            Class::Fighter => 14,
+            Class::Wizard => 16,
+            Class::Cleric => 16,
             Class::Rogue => 32,
             Class::Ranger => 24,
             Class::Paladin => 12,
@@ -107,9 +107,9 @@ impl Class {
 
     pub fn disarm_mod(&self) -> i8 {
         match self {
-            Class::Warrior => 25,
-            Class::Mage => 30,
-            Class::Priest => 25,
+            Class::Fighter => 25,
+            Class::Wizard => 30,
+            Class::Cleric => 25,
             Class::Rogue => 45,
             Class::Ranger => 30,
             Class::Paladin => 20,
@@ -122,9 +122,9 @@ impl Class {
 
     pub fn stealth_mod(&self) -> i8 {
         match self {
-            Class::Warrior => 1,
-            Class::Mage => 2,
-            Class::Priest => 2,
+            Class::Fighter => 1,
+            Class::Wizard => 2,
+            Class::Cleric => 2,
             Class::Rogue => 4,
             Class::Ranger => 3,
             Class::Paladin => 1,
@@ -137,9 +137,9 @@ impl Class {
 
     pub fn search_freq(&self) -> i8 {
         match self {
-            Class::Warrior => 38,
-            Class::Mage => 36,
-            Class::Priest => 32,
+            Class::Fighter => 38,
+            Class::Wizard => 36,
+            Class::Cleric => 32,
             Class::Rogue => 16,
             Class::Ranger => 24,
             Class::Paladin => 38,
@@ -152,9 +152,9 @@ impl Class {
 
     pub fn save_mod(&self) -> i8 {
         match self {
-            Class::Warrior => 10,
-            Class::Mage => 25,
-            Class::Priest => 20,
+            Class::Fighter => 10,
+            Class::Wizard => 25,
+            Class::Cleric => 20,
             Class::Rogue => 15,
             Class::Ranger => 20,
             Class::Paladin => 15,
@@ -167,9 +167,9 @@ impl Class {
 
     pub fn magic_resist(&self) -> i8 {
         match self {
-            Class::Warrior => -10,
-            Class::Mage => 0,
-            Class::Priest => 0,
+            Class::Fighter => -10,
+            Class::Wizard => 0,
+            Class::Cleric => 0,
             Class::Rogue => -5,
             Class::Ranger => -5,
             Class::Paladin => -5,
@@ -182,9 +182,9 @@ impl Class {
 
     pub fn expfactor(&self) -> f32 {
         match self {
-            Class::Warrior => 0.0,
-            Class::Mage => 0.3,
-            Class::Priest => 0.2,
+            Class::Fighter => 0.0,
+            Class::Wizard => 0.3,
+            Class::Cleric => 0.2,
             Class::Rogue => 0.1,
             Class::Ranger => 0.3,
             Class::Paladin => 0.35,
@@ -197,7 +197,7 @@ impl Class {
 
     pub fn title(&self, level: u8) -> &'static str {
         match self {
-            Class::Warrior =>
+            Class::Fighter =>
                 match level {
                     0 => "Novice",          1 => "Veteran(1st)",
                     2 => "Veteran(2nd)",    3 => "Veteran(3rd)",
@@ -220,7 +220,7 @@ impl Class {
                    36 => "Lord (9th)",     37 => "Lord Gallant",
                    38 => "Lord Keeper",    _ => "Lord Noble",
                 },
-            Class::Mage =>
+            Class::Wizard =>
                 match level {
                     0 => "Novice",          1 => "Apprentice",
                     2 => "Trickster-1",     3 => "Trickster-2",
@@ -243,7 +243,7 @@ impl Class {
                    36 => "Wizard (7th)",   37 => "Wizard (8th)",
                    38 => "Wizard (9th)",    _ => "Wizard Lord",
                 },
-            Class::Priest =>
+            Class::Cleric =>
                 match level {
                     0 => "Believer",        1 => "Acolyte(1st)",
                     2 => "Acolyte(2nd)",    3 => "Acolyte(3rd)",
@@ -432,15 +432,15 @@ impl Class {
 }
 
 pub fn classes_iter() -> Range<usize> {
-    (Class::Warrior as usize)..(Class::Monk as usize + 1)
+    (Class::Fighter as usize)..(Class::Monk as usize + 1)
 }
 
 impl From<usize> for Class {
     fn from(pos: usize) -> Self {
         match pos {
-            0 => Class::Warrior,
-            1 => Class::Mage,
-            2 => Class::Priest,
+            0 => Class::Fighter,
+            1 => Class::Wizard,
+            2 => Class::Cleric,
             3 => Class::Rogue,
             4 => Class::Ranger,
             5 => Class::Paladin,

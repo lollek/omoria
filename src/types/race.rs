@@ -254,17 +254,17 @@ impl Race {
     pub fn available_classes(&self) -> Vec<Class> {
         match self {
             Race::Human => vec![
-                Class::Warrior, Class::Mage, Class::Priest, Class::Rogue,
+                Class::Fighter, Class::Wizard, Class::Cleric, Class::Rogue,
                 Class::Ranger, Class::Paladin, Class::Druid, Class::Bard,
                 Class::Adventurer, Class::Monk,
             ],
             Race::HalfElf => vec![
-                Class::Warrior, Class::Mage, Class::Priest, Class::Rogue,
+                Class::Fighter, Class::Wizard, Class::Cleric, Class::Rogue,
                 Class::Ranger, Class::Paladin, Class::Druid, Class::Bard,
                 Class::Adventurer, Class::Monk,
             ],
             Race::Elf => vec![
-                Class::Warrior, Class::Mage, Class::Priest, Class::Rogue,
+                Class::Fighter, Class::Wizard, Class::Cleric, Class::Rogue,
                 Class::Ranger, Class::Druid, Class::Bard, Class::Adventurer,
             ],
             Race::Halfling => vec![
@@ -272,23 +272,23 @@ impl Race {
                 Class::Monk,
             ],
             Race::Gnome => vec![
-                Class::Mage, Class::Priest, Class::Rogue, Class::Druid,
+                Class::Wizard, Class::Cleric, Class::Rogue, Class::Druid,
             ],
             Race::Dwarf => vec![
-                Class::Warrior, Class::Priest, Class::Druid,
+                Class::Fighter, Class::Cleric, Class::Druid,
             ],
             Race::HalfOrc => vec![
-                Class::Warrior, Class::Priest, Class::Rogue, Class::Monk,
+                Class::Fighter, Class::Cleric, Class::Rogue, Class::Monk,
             ],
             Race::HalfTroll => vec![
-                Class::Warrior, Class::Priest,
+                Class::Fighter, Class::Cleric,
             ],
             Race::Phraint => vec![
-                Class::Warrior, Class::Mage, Class::Rogue, Class::Ranger,
+                Class::Fighter, Class::Wizard, Class::Rogue, Class::Ranger,
                 Class::Bard, Class::Adventurer, Class::Monk,
             ],
             Race::Dryad => vec![
-                Class::Priest, Class::Ranger, Class::Druid, Class::Bard,
+                Class::Cleric, Class::Ranger, Class::Druid, Class::Bard,
                 Class::Monk,
             ],
         }

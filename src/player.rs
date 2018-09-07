@@ -691,12 +691,12 @@ pub fn set_record(record: PlayerRecord) {
 
 pub fn uses_magic(magic: Magic) -> bool {
     match class() {
-        Class::Mage | Class::Adventurer => magic == Magic::Arcane,
-        Class::Priest | Class::Paladin => magic == Magic::Divine,
+        Class::Wizard | Class::Adventurer => magic == Magic::Arcane,
+        Class::Cleric | Class::Paladin => magic == Magic::Divine,
         Class::Druid | Class::Ranger => magic == Magic::Nature,
         Class::Bard | Class::Rogue => magic == Magic::Song,
         Class::Monk => magic == Magic::Chakra,
-        Class::Warrior => false,
+        Class::Fighter => false,
     }
 }
 
@@ -717,7 +717,7 @@ pub fn max_mp() -> i16 {
 }
 
 pub fn uses_mana() -> bool {
-    class() != Class::Warrior
+    class() != Class::Fighter
 }
 
 pub fn expfact() -> f32 {
