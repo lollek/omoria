@@ -887,7 +887,7 @@ void carry(long y, long x)
 					item_ptr = inven_carry();
 				}
 
-				prt_weight();
+				prt_stat_block();
 				objdes(out_val, item_ptr, true);
 
 				if (money_flag) {
@@ -1287,8 +1287,7 @@ void worship()
 				}
 
 				subtract_money(i1, false);
-				prt_weight();
-				prt_gold();
+				prt_stat_block();
 
 				if (i1 > 20 * GOLD_VALUE) {
 					change_rep(5);
@@ -1330,7 +1329,7 @@ void beg_food()
 		      msg_print("How kind of you!");
 		      inven_destroy(item_ptr);
 		      change_rep(5);
-		      prt_weight();
+		      prt_stat_block();
 		    end
 		  else
 		    begin
@@ -1363,16 +1362,13 @@ void beg_money()
 				i1 = player_money[TOTAL_] * GOLD_VALUE / 2;
 			}
 			subtract_money(i1, false);
-			prt_weight();
-			prt_gold();
 			if (i1 > 20 * GOLD_VALUE) {
 				change_rep(5);
 			} else {
 				change_rep((i1 + 5 * GOLD_VALUE -
 					    1)/(5 * GOLD_VALUE));
 			}
-			prt_weight();
-			prt_gold();
+			prt_stat_block();
 		} else {
 			msg_print(
 			    "They are disappointed because you have no money.");
@@ -1536,7 +1532,7 @@ void fire_dam(long dam, char kb_str[82])
 
 	if (inven_damage(things_that_burn, 3) > 0) {
 		msg_print("There is smoke coming from your pack!");
-		prt_weight();
+		prt_stat_block();
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1561,7 +1557,7 @@ void cold_dam(long dam, char kb_str[82])
 
 	if (inven_damage(things_that_freeze, 5) > 0) {
 		msg_print("Something shatters inside your pack!");
-		prt_weight();
+		prt_stat_block();
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1621,7 +1617,7 @@ void acid_dam(long dam, char kb_str[82])
 
 	if (inven_damage(things_that_dilute, 3) > 0) {
 		msg_print("There is an acrid smell coming from your pack!");
-		prt_weight();
+		prt_stat_block();
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -1728,7 +1724,7 @@ void corrode_gas(char kb_str[82])
 
 	if (inven_damage(things_that_corrode, 5) > 0) {
 		msg_print("There is an acrid smell coming from your pack.");
-		prt_weight();
+		prt_stat_block();
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -2397,7 +2393,6 @@ void monster_death(long y, long x, unsigned long flags)
 	}
 	if (uand(flags, 0x80000000) != 0) {
 		total_winner = true;
-		prt_winner();
 		msg_print("*** CONGRATULATIONS *** You have won the game...");
 		msg_print("Use '@' when you are ready to quit.");
 	}
@@ -2685,7 +2680,7 @@ boolean py_attack(long y, long x)
 						inven_weight -=
 						    equipment[Equipment_primary]
 							.weight;
-						prt_weight();
+						prt_stat_block();
 						equip_ctr--;
 						inven_temp->data = equipment
 						    [Equipment_primary];
@@ -3140,7 +3135,7 @@ void d__jamdoor()
 						} else {
 							inven_destroy(i1);
 						}
-						prt_weight();
+						prt_stat_block();
 						t_list[cave[y][x].tptr].p1 =
 						    -labs(
 							t_list[cave[y][x].tptr]
@@ -3189,7 +3184,7 @@ void to__inven_throw(treas_ptr item_ptr)
 		inven_destroy(item_ptr);
 	}
 
-	prt_weight();
+	prt_stat_block();
 }
 /*//////////////////////////////////////////////////////////////////// */
 
@@ -4376,7 +4371,6 @@ void d__update_invulnerable()
 			msg_print("Your skin turns into steel!");
 			player_pac += 100;
 			player_dis_ac += 100;
-			prt_pac();
 		}
 		PF.invuln--;
 		if (PF.invuln == 0) {
@@ -4387,8 +4381,8 @@ void d__update_invulnerable()
 			msg_print("Your skin returns to normal...");
 			player_pac -= 100;
 			player_dis_ac -= 100;
-			prt_pac();
 		}
+		prt_stat_block();
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -5259,7 +5253,7 @@ void d__refill_lamp()
 			}
 			desc_remain(i1);
 			inven_destroy(i1);
-			prt_weight();
+			prt_stat_block();
 		} else {
 			msg_print("You have no oil.");
 		}
@@ -5429,7 +5423,7 @@ void d__drop()
 					inven_drop(com_ptr, char_row, char_col,
 						   false);
 				}
-				prt_weight();
+				prt_stat_block();
 				objdes(out_val, inven_temp, true);
 				sprintf(out_val2, "Dropped %s.", out_val);
 				msg_print(out_val2);
@@ -5952,7 +5946,7 @@ void d__execute_command(long *com_val)
 		if (inven_command('w', &trash_ptr, "")) {
 			draw_cave();
 		} else {
-			prt_weight();
+			prt_stat_block();
 		}
 		break;
 	case 'x': /* exchange weapon */

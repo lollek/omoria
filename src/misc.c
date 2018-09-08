@@ -206,6 +206,7 @@ char *cost_str(long amt, char result[134])
 	return result;
 }
 
+/* player::max_bulk */
 long weight_limit()
 {
 	/*	{ Computes current weight limit				-RAK-
@@ -245,9 +246,8 @@ void adv_time(boolean flag)
 		}
 	}
 
-	if ((flag) && ((player_cur_age.secs % 100) == 0)) {
+	if (flag && (player_cur_age.secs % 100) == 0) {
 		prt_stat_block();
-		prt_time();
 	}
 }
 
@@ -740,9 +740,7 @@ treas_ptr money_carry()
 	player_money[inven_temp->data.level] += inven_temp->data.number;
 	reset_total_cash();
 	inven_weight += inven_temp->data.number * inven_temp->data.weight;
-
-	prt_gold();
-	prt_weight();
+	prt_stat_block();
 
 	return inven_temp;
 }

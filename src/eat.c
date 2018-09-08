@@ -297,5 +297,5 @@ void eat()
 	prt_hunger();
 	desc_remain(item_ptr);
 	inven_destroy(item_ptr);
-	prt_weight();
+	prt_stat_block();
 }

@@ -1699,7 +1699,7 @@ boolean recharge(long num)
 		/*msg_print(" ");*/
 		draw_cave();
 	} else {
-		prt_weight();
+		prt_stat_block();
 	}
 
 	return return_value;

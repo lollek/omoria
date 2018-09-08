@@ -580,7 +580,6 @@ static void ht__house(long y, long x)
 
 	t_list[cave[y][x].tptr].p1 = 1;
 
-	prt_time();
 	prt_stat_block();
 }
 /*//////////////////////////////////////////////////////////////////// */

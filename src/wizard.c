@@ -1175,8 +1175,7 @@ void change_character()
 				} else {
 					subtract_money(-tmp_val, true);
 				}
-				prt_weight();
-				prt_gold();
+				prt_stat_block();
 			}
 		} else {
 			abort = true;
@@ -1195,7 +1194,7 @@ void change_character()
 		if (cc__input_field("Current Weight (100/unit weight) = ",
 				    &tmp_val, 0, 900000, &flag)) {
 			inven_weight = tmp_val;
-			prt_weight();
+			prt_stat_block();
 		} else {
 			abort = true;
 		}

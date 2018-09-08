@@ -126,18 +126,6 @@ void prt_stat_block()
 
 	C_print_stat_block();
 
-	prt_num("AC  : ", player_dis_ac, AC_ROW, STAT_COLUMN);
-	prt_pac();
-	prt_num("GOLD: ", player_money[TOTAL_], GOLD_ROW, STAT_COLUMN);
-	prt_field("WGHT:", WEIGHT_ROW, STAT_COLUMN);
-	prt_field("M_WT:", WEIGHT_ROW + 1, STAT_COLUMN);
-	prt_weight();
-	prt_time();
-
-	if (total_winner) {
-		prt_winner();
-	}
-
 	prt_hunger();
 	prt_blind();
 	prt_confused();
@@ -157,32 +145,6 @@ void prt_field(char info[82], long row, long column)
 
 	sprintf(out_val1, "%-14s", info);
 	put_buffer(out_val1, row, column);
-}
-
-void prt_pac() { prt_num("", player_dis_ac, AC_ROW, STAT_COLUMN + 6); }
-
-void prt_gold()
-{
-	prt_num("", player_money[TOTAL_], GOLD_ROW, STAT_COLUMN + 6);
-}
-
-void prt_weight()
-{
-	prt_num("", inven_weight / 100, WEIGHT_ROW, STAT_COLUMN + 6);
-	prt_num("", weight_limit(), WEIGHT_ROW + 1, STAT_COLUMN + 6);
-}
-
-void prt_time()
-{
-	char s1[82], s2[82], s3[82];
-	char out_val[82];
-
-	sprintf(out_val, "%s %s %s",
-		time_string(player_cur_age.hour, player_cur_age.secs, s1),
-		day_of_week_string(player_cur_age.day, 2, s2),
-		place_string(player_cur_age.day, s3));
-
-	put_buffer(out_val, TIME_ROW, STAT_COLUMN);
 }
 
 void prt_light_on()
@@ -291,5 +253,3 @@ void prt_quested()
 		put_buffer("        ", STATUS_ROW, QUESTED_COLUMN);
 	}
 }
-
-void prt_winner() { put_buffer("*Winner*", WINNER_ROW, WINNER_COLUMN); }

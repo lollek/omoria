@@ -116,6 +116,7 @@ pub fn clear() {
     debug::leave("ncurses::clear");
 }
 
+#[derive(Copy, Clone)]
 pub enum CursesAttr {
     Standout = 1,
     Underline = 2,

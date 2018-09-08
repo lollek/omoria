@@ -378,7 +378,7 @@ void quaff()
 				add_food(item_ptr->data.p1);
 				desc_remain(item_ptr);
 				inven_destroy(item_ptr);
-				prt_weight();
+				prt_stat_block();
 
 			} else {
 				if (redraw) {

@@ -17,11 +17,12 @@ const MANA_ROW: u8 = 6;
 
 const STAT_ROW: u8 = 8; // -> 13
 
-const QUEST_ROW: u8 = 16;
-//const AC_ROW: u8 = 17;
-//const GOLD_ROW: u8 = 18;
-//const WEIGHT_ROW: u8 = 19;
-//const TIME_ROW: u8 = 21;
+const QUEST_ROW: u8 = 15;
+const AC_ROW: u8 = 16;
+const GOLD_ROW: u8 = 17;
+const CURR_WEIGHT_ROW: u8 = 18;
+const MAX_WEIGHT_ROW: u8 = 19;
+const TIME_ROW: u8 = 21;
 //const WINNER_ROW: u8 = 22;
 
 fn prt_lost_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
@@ -81,30 +82,25 @@ pub fn print_stats(row: u8, col: u8) {
 }
 
 fn print_field(msg: &str, row: u8, col: u8) {
-    term::put_buffer(&format!("{:<width$}", msg, width=STAT_BLOCK_WIDTH), row.into(), col.into());
+    let msg_formatted = &format!("{:<width$}", msg, width=STAT_BLOCK_WIDTH);
+    term::put_buffer(msg_formatted, row.into(), col.into());
 }
 
 fn print_hp(row: u8, col: u8) {
     let current = player::current_hp();
     let max = player::max_hp();
+    let color =
+        if current >= max {
+            ncurses::CursesAttr::ColorGreen
+        } else if current >= max / 3 {
+            ncurses::CursesAttr::ColorYellow
+        } else {
+            ncurses::CursesAttr::ColorRed
+        };
 
-    let hpstr = &format!("HP  : {:>6}", current);
-
-    if current >= max {
-        ncurses::chattr(ncurses::CursesAttr::ColorGreen, true);
-        term::put_buffer(hpstr, row.into(), col.into());
-        ncurses::chattr(ncurses::CursesAttr::ColorGreen, false);
-
-    } else if current >= max / 3 {
-        ncurses::chattr(ncurses::CursesAttr::ColorYellow, true);
-        term::put_buffer(hpstr, row.into(), col.into());
-        ncurses::chattr(ncurses::CursesAttr::ColorYellow, false);
-
-    } else {
-        ncurses::chattr(ncurses::CursesAttr::ColorRed, true);
-        term::put_buffer(hpstr, row.into(), col.into());
-        ncurses::chattr(ncurses::CursesAttr::ColorRed, false);
-    }
+    ncurses::chattr(color.to_owned(), true);
+    term::put_buffer(&format!("HP  : {:>6}", current), row.into(), col.into());
+    ncurses::chattr(color.to_owned(), false);
 }
 
 fn print_mana(row: u8, col: u8) {
@@ -114,24 +110,33 @@ fn print_mana(row: u8, col: u8) {
 
     let current = player::current_mp();
     let max = player::max_mp();
+    let color =
+        if current >= max {
+            ncurses::CursesAttr::ColorBlue
+        } else if current >= max / 3 {
+            ncurses::CursesAttr::ColorCyan
+        } else {
+            ncurses::CursesAttr::ColorMagenta
+        };
 
-    let hpstr = &format!("MANA: {:>6}", current);
+    ncurses::chattr(color.to_owned(), true);
+    term::put_buffer(&format!("MANA: {:>6}", current), row.into(), col.into());
+    ncurses::chattr(color.to_owned(), false);
+}
 
-    if current >= max {
-        ncurses::chattr(ncurses::CursesAttr::ColorBlue, true);
-        term::put_buffer(hpstr, row.into(), col.into());
-        ncurses::chattr(ncurses::CursesAttr::ColorBlue, false);
-
-    } else if current >= max / 3 {
-        ncurses::chattr(ncurses::CursesAttr::ColorCyan, true);
-        term::put_buffer(hpstr, row.into(), col.into());
-        ncurses::chattr(ncurses::CursesAttr::ColorCyan, false);
-
-    } else {
-        ncurses::chattr(ncurses::CursesAttr::ColorMagenta, true);
-        term::put_buffer(hpstr, row.into(), col.into());
-        ncurses::chattr(ncurses::CursesAttr::ColorMagenta, false);
-    }
+fn print_time(row: u8, col: u8) {
+    let min = unsafe { player::player_cur_age.secs } / 60;
+    let hour = unsafe { player::player_cur_age.hour };
+    let dow = match unsafe { player::player_cur_age.day } % 7 {
+        0 => "Moonday",
+        1 => "Toilday",
+        2 => "Wealday",
+        3 => "Oathday",
+        4 => "Fireday",
+        5 => "Starday",
+        _ => "Sunday",
+    };
+    print_field(&format!("{:>7} {:02}:{:02}", dow, hour, min), row, col);
 }
 
 pub fn print_stat_block() {
@@ -147,6 +152,12 @@ pub fn print_stat_block() {
     print_stats(STAT_ROW, STAT_COL);
 
     print_field(&format!("QST : {:>6}", player::quests()), QUEST_ROW, STAT_COL);
+    print_field(&format!("AC  : {:>6}", unsafe { player::player_dis_ac }), AC_ROW, STAT_COL);
+    print_field(&format!("GOLD: {:>6}", player::wallet().total), GOLD_ROW, STAT_COL);
+    print_field(&format!("WGHT: {:>6}", player::current_bulk()), CURR_WEIGHT_ROW, STAT_COL);
+    print_field(&format!("M_WT: {:>6}", player::max_bulk()), MAX_WEIGHT_ROW, STAT_COL);
+
+    print_time(TIME_ROW, STAT_COL);
 
     debug::leave("print_stat_block");
 }

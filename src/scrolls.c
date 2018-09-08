@@ -669,7 +669,7 @@ void read_scroll()
 						if (!first) {
 							desc_remain(item_ptr);
 							inven_destroy(item_ptr);
-							prt_weight();
+							prt_stat_block();
 
 							if (item_ptr->data
 								.flags != 0) {

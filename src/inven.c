@@ -2103,7 +2103,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 					return_value = true;
 					inven_weight -= COIN_WEIGHT * amt;
 					reset_total_cash();
-					prt_gold();
+					prt_stat_block();
 				}
 
 			} else {

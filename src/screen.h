@@ -44,12 +44,6 @@ extern void prt_num(char header[82], long num, long row, long column);
 
 /**
  * -RAK-
- *  prt_pac() - Prints current AC
- */
-extern void prt_pac();
-
-/**
- * -RAK-
  *  prt_gold() - Prints current gold
  */
 extern void prt_gold();

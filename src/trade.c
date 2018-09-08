@@ -595,12 +595,8 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
 	}
 
 	if (*exit_flag) {
-		if (weight_changed) {
-			prt_weight();
-		}
-		if (gold_changed) {
-			prt_gold();
-		}
+		if (weight_changed || gold_changed)
+			prt_stat_block();
 	} else {
 		if (redisplay) {
 			*cur_top = *inv;

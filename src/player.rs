@@ -1,5 +1,6 @@
 use libc;
 use std::mem;
+use std::cmp::min;
 
 use std::ffi::CString;
 use std::sync::RwLock;
@@ -741,4 +742,17 @@ pub fn add_experience(num: i64) {
 
 pub fn quests() -> u8 {
     unsafe { player_quests }
+}
+
+pub fn current_weight() -> u16 {
+    unsafe { player_wt }
+}
+
+pub fn current_bulk() -> u16 {
+    (unsafe { inven_weight }) as u16 / 100
+}
+
+pub fn max_bulk() -> u16 {
+    min((curr_stats().strength + 30) as u16 * 13 + current_weight(), 3000)
+        + unsafe { player_xtr_wgt } as u16
 }

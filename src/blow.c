@@ -360,8 +360,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		inven_weight -= loss;
 		reset_total_cash();
 		msg_print("most of your money turns to dust!");
-		prt_gold();
-		prt_weight();
+		prt_stat_block();
 		ident = true;
 		break;
 

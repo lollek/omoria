@@ -844,8 +844,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 							     GOLD_VALUE)/ 100,
 					       false);
 				msg_print("Your purse feels lighter.");
-				prt_weight();
-				prt_gold();
+				prt_stat_block();
 			}
 		}
 		if (randint(2) == 1) {
@@ -880,7 +879,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 			} else {
 				inven_destroy(item_ptr);
 			}
-			prt_weight();
+			prt_stat_block();
 			msg_print("Your backpack feels lighter.");
 		}
 
@@ -1002,7 +1001,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 	case 22: /*{Eat food         }*/
 		if (find_range(food_stuffs, false, &item_ptr, &i2)) {
 			inven_destroy(item_ptr);
-			prt_weight();
+			prt_stat_block();
 		}
 		break;
 
