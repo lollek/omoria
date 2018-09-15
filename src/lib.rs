@@ -13,6 +13,7 @@ extern crate pancurses;
 
 pub mod constants;
 pub mod debug;
+pub mod equipment;
 pub mod highscore;
 pub mod io;
 pub mod magic;

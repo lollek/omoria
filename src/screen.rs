@@ -1,8 +1,9 @@
 use debug;
-use term;
+use equipment;
 use misc;
-use player;
 use ncurses;
+use player;
+use term;
 
 const STAT_BLOCK_WIDTH: usize = 14;
 const STAT_COL: u8 = 0;
@@ -23,7 +24,9 @@ const GOLD_ROW: u8 = 17;
 const CURR_WEIGHT_ROW: u8 = 18;
 const MAX_WEIGHT_ROW: u8 = 19;
 const TIME_ROW: u8 = 21;
-//const WINNER_ROW: u8 = 22;
+
+const EQUIP_COL: u8 = 0;
+const EQUIP_ROW: u8 = 80;
 
 fn prt_lost_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
     debug::enter("prt_lost_stat");
@@ -137,6 +140,16 @@ fn print_time(row: u8, col: u8) {
         _ => "Sunday",
     };
     print_field(&format!("{:>7} {:02}:{:02}", dow, hour, min), row, col);
+}
+
+fn print_equipment(row: u8, col: u8) {
+    for (index, slot_i) in equipment::slots_iter().enumerate() {
+        let slot = equipment::Slot::from(slot_i);
+        let index_char = ('a' as u8 + index as u8) as char;
+        let item_name = equipment::get_name(slot);
+        let msg = &format!("{}) {:>10}: {}", index_char, slot.name(), item_name);
+        term::prt(msg, (EQUIP_ROW + row + index as u8).into(), (EQUIP_COL + col).into());
+    }
 }
 
 pub fn print_stat_block() {

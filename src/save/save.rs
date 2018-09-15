@@ -9,6 +9,7 @@ use constants;
 use debug;
 use player;
 use save;
+use types::Item;
 
 use save::types::*;
 

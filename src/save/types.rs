@@ -1,35 +1,13 @@
 use libc;
 use thirdparty::serde::{ BigArray, NullPtr };
 
-use types::{ GameTime };
+use types::{ GameTime, Item };
 
 pub const STORE_INVEN_MAX: usize = 24;
 pub const MAX_STORES: usize = 12;
 pub const MAX_OBJECTS: usize = 473;
 pub const MAX_HEIGHT: usize = 66;
 pub const MAX_WIDTH: usize = 198;
-
-#[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize)]
-pub struct Item { // treasure_type
-    #[serde(with = "BigArray")]
-    pub name: [libc::c_char; 70],   // Object name
-    pub tval: libc::uint8_t,        // Catagory number
-    pub tchar: libc::c_long,        // Character representation
-    pub flags2: libc::uint64_t,     // MORE Special flags
-    pub flags: libc::uint64_t,      // Special flags
-    pub p1: libc::int64_t,          // Misc. use variable
-    pub cost: libc::int64_t,        // Cost of item
-    pub subval: libc::int64_t,      // Sub-category number
-    pub weight: libc::uint16_t,     // Weight in gp's
-    pub number: libc::uint16_t,     // Number of intems
-    pub tohit: libc::int16_t,       // Pluses to hit
-    pub todam: libc::int16_t,       // Pluses to damage
-    pub ac: libc::int16_t,          // Normal AC
-    pub toac: libc::int16_t,        // Pluses to AC
-    pub damage: [libc::c_char; 7],  // Damage when it hits
-    pub level: libc::int8_t,        // Dungeon level item found
-}
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]

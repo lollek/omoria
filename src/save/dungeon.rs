@@ -3,6 +3,7 @@ use std::mem;
 use libc;
 
 use debug;
+use types::Item;
 
 use save::types::*;
 

@@ -1,10 +1,8 @@
 use std::mem;
 
 use libc;
-
 use debug;
-
-use save::types::*;
+use types::Item;
 
 const EQUIP_MAX: usize = 15;
 
