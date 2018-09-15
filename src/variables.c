@@ -690,18 +690,17 @@ obj_set store_buy[MAX_STORES] = {
 /*		B = Bribeable */
 /*					} */
 char store_hours[MAX_STORES + MAX_UNNAMED][7][14] =
-    /*		{	Sat		Sun		Mon	Tue */
-    /*			Wed		Thu		Fri		} */
+    /* Mon, Tue, Wed, Thu, Fri, Sat, Sun */
     {
      /*{General Store	} */
      {"NNB       BN", "NNB       BN", "NNB       BN", "NNB       BN",
       "NNB       BN", "NNB       BN", "NNB       BN"},
      /*{Armory		} */
-     {"NNNB     WWW", "WWWWWWWWWWWW", "WWWB     NNN", "NNNB     NNN",
-      "NNNB     NNN", "NNNB     NNN", "NNNB     NNN"},
+     {"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
+      "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
      /*{Weapon Smiths	} */
-     {"NNNB     WWW", "WWWWWWWWWWWW", "WWWB     NNN", "NNNB     NNN",
-      "NNNB     NNN", "NNNB     NNN", "NNNB     NNN"},
+     {"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
+      "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
      /*{Temple		} */
      {"            ", "            ", "            ", "            ",
       "            ", "            ", "            "},
@@ -730,17 +729,17 @@ char store_hours[MAX_STORES + MAX_UNNAMED][7][14] =
      {"BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB",
       "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB"},
      /*{Trading Post	} */
-     {"NNNB      BW", "WWWWWWWWWWWW", "WWWB      BN", "NNNB      BN",
-      "NNNB      BN", "NNNB      BN", "NNNB      BN"},
+     {"NNNB      BN", "NNNB      BN", "WWWB      BN", "NNNB      BN",
+      "NNNB      BN", "NNNB      BW", "WWWWWWWWWWWW"},
      /*{Insurance Shop	} */
      {"BBBB     BBB", "BBBB     BBB", "BBBB     BBB", "BBBB     BBB",
       "BBBB     BBB", "BBBB     BBB", "BBBB     BBB"},
      /*{Bank		} */
-     {"NNNN   WWWWW", "WWWWWWWWWWWW", "WWWW     NNN", "NNNN     NNN",
-      "NNNN     NNN", "NNNN     NNN", "NNNN     WWW"},
+     {"NNNN     NNN", "NNNN     NNN", "WWWW     NNN", "NNNN     NNN",
+      "NNNN     NNN", "NNNN    WWWW", "WWWWWWWWWWWW"},
      /*{Money Exchange	} */
-     {"NNNB     BWW", "WWWWWWWWWWWW", "WWWB     BNN", "NNNB     BNN",
-      "NNNB     BNN", "NNNB     BNN", "NNNB     BNN"},
+     {"NNNB     BNN", "NNNB     BNN", "WWWB     BNN", "NNNB     BNN",
+      "NNNB     BNN", "NNNB     BWW", "WWWWWWWWWWWW"},
      /*{Casino		} */
      {"            ", "            ", "   DDDDDD   ", "   DDDDDD   ",
       "   DDDDDD   ", "   DDDDDD   ", "   DDDDDD   "},
