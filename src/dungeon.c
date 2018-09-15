@@ -3372,167 +3372,120 @@ void d__throw_object(boolean to_be_fired)
 		} else {
 			msg_print("But you have nothing to throw.");
 		}
-	} else {
-		if (get_item(&item_ptr, out_val, &redraw, count, &trash_char,
-			     false, false)) {
-			if (redraw) {
-				draw_cave();
-			}
-			y_dumy = char_row;
-			x_dumy = char_col;
-			if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy,
-				       &x_dumy)) {
-				reset_flag = false;
-				desc_remain(item_ptr);
-
-				if (player_flags.confused > 0) {
-					msg_print("You are confused...");
-					do {
-						dir = randint(9);
-					} while (dir == 5);
-				}
-
-				to__inven_throw(item_ptr);
-				to__facts(&tbth, &tpth, &tdam, &tdis,
-					  to_be_fired);
-
-				/* with inven_temp->data. do; */
-				flag = false;
-				y = char_row;
-				x = char_col;
-				oldy = char_row;
-				oldx = char_col;
-				cur_dis = 0;
-				do {
-					move_dir(dir, &y, &x);
-					cur_dis++;
-					if (test_light(oldy, oldx)) {
-						lite_spot(oldy, oldx);
-					}
-					if (cur_dis > tdis) {
-						flag = true;
-					}
-					/* with cave[y][x]. do; */
-					if ((cave[y][x].fopen) && (!flag)) {
-						if (cave[y][x].cptr > 1) {
-							flag = true;
-							/* with */
-							/* m_list[cave[y][x].cptr].
-							 */
-							/* do; */
-							tbth -= cur_dis;
-							if (player_test_hit(
-								tbth, player_lev,
-								tpth,
-								c_list
-								    [m_list
-									 [cave[y][x]
-									      .cptr]
-									     .mptr]
-									.ac,
-								to_be_fired)) {
-								i1 =
-								    m_list
-									[cave[y][x]
-									     .cptr]
-									    .mptr;
-								objdes(
-								    out_val,
-								    inven_temp,
-								    false);
-								find_monster_name(
-								    m_name,
-								    cave[y][x]
-									.cptr,
-								    false);
-								sprintf(
-								    out_val2,
-								    "The %s "
-								    "hits %s.",
-								    out_val,
-								    m_name);
-								msg_print(
-								    out_val2);
-								tdam = tot_dam(
-								    &(inven_temp
-									  ->data),
-								    tdam,
-								    &(c_list
-									  [i1]));
-								/* with */
-								/* inven_temp->data.
-								 */
-								/* do; */
-								crit_mult = critical_blow(
-								    inven_temp
-									->data
-									.weight,
-								    tpth,
-								    (equipment
-									 [Equipment_primary]
-									     .flags2 &
-								     Sharp_worn_bit) !=
-									0,
-								    to_be_fired);
-								tdam +=
-								    (5 + tdam) *
-								    crit_mult;
-
-								if (mon_take_hit(
-									cave[y][x]
-									    .cptr,
-									tdam) >
-								    0) {
-									sprintf(
-									    out_val2,
-									    "Yo"
-									    "u "
-									    "ha"
-									    "ve"
-									    " k"
-									    "il"
-									    "le"
-									    "d "
-									    "%s"
-									    ".",
-									    m_name);
-									msg_print(
-									    out_val2);
-								}
-							} else {
-								to__drop_throw(
-								    oldy, oldx);
-							}
-						} else {
-							if (panel_contains(y,
-									   x)) {
-								if (test_light(
-									y, x)) {
-									print(
-									    inven_temp
-										->data
-										.tchar,
-									    y,
-									    x);
-								}
-							}
-						}
-					} else {
-						flag = true;
-						to__drop_throw(oldy, oldx);
-					}
-
-					oldy = y;
-					oldx = x;
-				} while (!flag);
-			}
-
-		} else {
-			if (redraw) {
-				draw_cave();
-			}
-		}
+		LEAVE("d__throw_object", "d");
+		return;
 	}
+
+	if (!get_item(&item_ptr, out_val, &redraw, count, &trash_char, false, false)) {
+		if (redraw) {
+			draw_cave();
+		}
+		LEAVE("d__throw_object", "d");
+		return;
+	}
+
+	if (redraw) {
+		draw_cave();
+	}
+
+	y_dumy = char_row;
+	x_dumy = char_col;
+	if (!d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
+		LEAVE("d__throw_object", "d");
+		return;
+	}
+
+	reset_flag = false;
+	desc_remain(item_ptr);
+
+	if (player_flags.confused > 0) {
+		msg_print("You are confused...");
+		do {
+			dir = randint(9);
+		} while (dir == 5);
+	}
+
+	to__inven_throw(item_ptr);
+	to__facts(&tbth, &tpth, &tdam, &tdis, to_be_fired);
+
+	/* with inven_temp->data. do; */
+	flag = false;
+	y = char_row;
+	x = char_col;
+	oldy = char_row;
+	oldx = char_col;
+	cur_dis = 0;
+	do {
+		move_dir(dir, &y, &x);
+		cur_dis++;
+		if (test_light(oldy, oldx)) {
+			lite_spot(oldy, oldx);
+		}
+
+		if (cur_dis > tdis) {
+			flag = true;
+		}
+
+		/* with cave[y][x]. do; */
+		if ((cave[y][x].fopen) && (!flag)) {
+			if (cave[y][x].cptr > 1) {
+				flag = true;
+				/* with */
+				/* m_list[cave[y][x].cptr].
+				*/
+				/* do; */
+				tbth -= cur_dis;
+				if (player_test_hit(
+							tbth, player_lev,
+							tpth,
+							c_list
+							[m_list
+							[cave[y][x]
+							.cptr]
+							.mptr]
+							.ac,
+							to_be_fired)) {
+					i1 = m_list[cave[y][x].cptr].mptr;
+					objdes(out_val, inven_temp, false);
+					find_monster_name(m_name, cave[y][x].cptr, false);
+					sprintf(out_val2, "The %s hits %s.", out_val, m_name);
+					msg_print(out_val2);
+					tdam = tot_dam(&(inven_temp->data), tdam, &(c_list[i1]));
+					/* with */
+					/* inven_temp->data.
+					*/
+					/* do; */
+					crit_mult = critical_blow(
+							inven_temp
+							->data
+							.weight,
+							tpth,
+							(equipment
+							 [Equipment_primary]
+							 .flags2 &
+							 Sharp_worn_bit) !=
+							0,
+							to_be_fired);
+					tdam += (5 + tdam) * crit_mult;
+
+					if (mon_take_hit(cave[y][x].cptr, tdam) > 0) {
+						sprintf(out_val2, "You have killed %s.", m_name);
+						msg_print(out_val2);
+					}
+				} else {
+					to__drop_throw(oldy, oldx);
+				}
+			} else if (panel_contains(y, x) && test_light(y, x)) {
+				print(inven_temp ->data.tchar, y, x);
+			}
+		} else {
+			flag = true;
+			to__drop_throw(oldy, oldx);
+		}
+
+		oldy = y;
+		oldx = x;
+	} while (!flag);
 
 	LEAVE("d__throw_object", "d");
 }
