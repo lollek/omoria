@@ -97,7 +97,12 @@ impl ItemType {
                     _ => panic!(),
                 }
             }.into(),
-            ItemType::Chest => '&'.into(),
+            ItemType::Chest => {
+                match subval {
+                    5 => 'z',   // Dead human body
+                    _ => '&',
+                }
+            }.into(),
             ItemType::MiscUsable => {
                 match subval {
                     14 => '~', // Statue
@@ -177,7 +182,8 @@ impl ItemType {
 
             ItemType::Food => {
                 match subval {
-                    2000 => 'J', // Jolly Green Jelly
+                    2000 => 'R', // Rice-a-Roni
+                    4000 => 'J', // Jolly Green Jelly
                     _ => ',',
                 }
             }.into(),

@@ -1208,27 +1208,9 @@ void wizard_create()
 {
 	/*{ Wizard routine for creating objects                   -RAK-   }*/
 
-	/* this routine was full of bugs.  worst off, missing support for
-	   several
-	   tvals.  next, failure to allow wizard to specify an item's tchar or
-	   level.  finally, asking for the data items in an order other than the
-	   order of treasure_type's members.  so, i added the missing tvals,
-	   added
-	   code to specify tchar and level, and re-ordered the input blocks to
-	   match
-	   treasure_type's structure.  this way it's much easier to create a
-	   one-off
-	   item from something in values.h; you just type in the parts you want
-	   to
-	   leave alone, in order, and change the one or two you want to mess
-	   with.
-	   2/5/00 JEB
-	*/
-
 	long tmp_val;
 	char tmp_str[82];
 	boolean flag;
-	char tchar;
 
 	msg_print("Warning: This routine can cause fatal error.");
 	msg_print(" ");
@@ -1249,156 +1231,8 @@ void wizard_create()
 		sscanf(tmp_str, "%ld", &tmp_val);
 		flag = true;
 
-		switch (tmp_val) {
-
-		/* ordinary objects:  added several missing classes: */
-		/* valuable_gems_wear, maul, sword, gem_helm, bracers, */
-		/* belt, junk_food, song_book.  --jb 2/5/00 */
-		case 1:
-		case 3:
-		case 6:
-		case 13:
-		case 15:
-			tchar = '~';
-			break;
-		case 4:
-		case 5:
-		case 7:
-			tchar = '*';
-			break;
-		case 2:
-			tchar = '&';
-			break;
-		case 10:
-		case 11:
-		case 12:
-			tchar = '{';
-			break;
-		case 20:
-			tchar = '}';
-			break;
-		case 21:
-			tchar = '/';
-			break;
-		case 22:
-		case 25:
-		case 26:
-			tchar = '\\';
-			break;
-		case 23:
-		case 24:
-			tchar = '|';
-			break;
-		case 29:
-		case 30:
-		case 31:
-		case 33:
-		case 37:
-			tchar = ']';
-			break;
-		case 32:
-		case 36:
-		case 38:
-			tchar = '(';
-			break;
-		case 34:
-			tchar = ')';
-			break;
-		case 35:
-			tchar = '[';
-			break;
-		case 40:
-			tchar = '"';
-			break;
-		case 45:
-			tchar = '=';
-			break;
-		case 55:
-			tchar = '_';
-			break;
-		case 60:
-		case 65:
-			tchar = '-';
-			break;
-		case 70:
-		case 71:
-		case 90:
-		case 91:
-			tchar = '?';
-			break;
-		case 75:
-		case 76:
-		case 77:
-			tchar = '!';
-			break;
-		case 80:
-		case 81:
-			tchar = ',';
-			break;
-		case 85:
-		case 86:
-		case 92:
-		case 93:
-			tchar = '%';
-			break;
-
-		/* traps.  yes, i know it's weird to be able to create a trap.
-		   but they're just special item types, and the wizard is
-		   already
-		   warned that they might crash the game, so let 'em...
-		   --jb, 2/5/2000
-		*/
-		case 101:
-			tchar = '.';
-			break;
-		case 102:
-			tchar = '^';
-			break;
-		case 103:
-			tchar = ':';
-			break;
-		case 104:
-			tchar = '\'';
-			break;
-		case 105:
-			tchar = '+';
-			break;
-		case 107:
-			tchar = '<';
-			break;
-		case 108:
-			tchar = '>';
-			break;
-		case 109:
-			tchar = '#';
-			break;
-		case 110:
-			tchar = '+';
-			break;
-		case 111:
-			tchar = '<';
-			break;
-		case 112:
-			tchar = '>';
-			break;
-		case 113:
-			tchar = '`';
-			break;
-
-		default:
-			tchar = '?';
-			flag = false;
-			break;
-		}
 	} while (!flag);
 
-	prt("Tchar  : ", 1, 1); /* user might want to override the default. */
-	get_string(tmp_str, 1, 10,
-		   10);		 /* anything from ' ' on up is printable, so */
-	if (tmp_str[0] >= ' ') { /* we'll take it. */
-		tchar = tmp_str[0]; /* --jb 2/5/2000 */
-	}
-	inven_temp->data.tchar = tchar;
 	inven_temp->data.tval = tmp_val;
 
 	prt("Flags  (In HEX): ", 1, 1);

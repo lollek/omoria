@@ -41,10 +41,6 @@ typedef struct treasure_type
   ttype   name;   // the object's name.  see below for rules on names.
   unsigned char tval;   // the object's type.  this, literally, is what kind of
                      object it is.
-  char    tchar;  // the character drawn on the screen for this object.  there
-                     is no direct correlation here between character and tval,
-                     although there probably should be.  you could have a
-                     potion show up a 'B' if you wanted...
   unsigned long   flags2; // flags define an item's properties.  the meaning
   unsigned long   flags;  // of flag values can depend on the item's tval.
                              note that the original game designers decided to
@@ -87,7 +83,6 @@ name:   & Blue Potion~ of Flea Bile         <-- name
 desc:   2 Blue Potions of Flea Bile
 value:  75                                  <-- tval
 type:   Potion
-char:   '!'                                 <-- tchar
 flags:  0x00000000                          <-- flags
 flags2: 0x00004000                          <-- flags2
 P1:     0                                   <-- p1

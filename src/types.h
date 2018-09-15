@@ -90,7 +90,6 @@ typedef struct treasure_type
 {
 	char name[70];	    /* Object name		*/
 	uint8_t tval;    /* Catagory number	*/
-	chtype tchar;	  /* Character representation */
 	uint64_t flags2;  /*: unsigned;	 { MORE Special flags	} */
 	uint64_t flags;   /*: unsigned;	 { Special flags	} */
 	int64_t p1;	       /* { Misc. use variable	} */
