@@ -3476,7 +3476,7 @@ void d__throw_object(boolean to_be_fired)
 					to__drop_throw(oldy, oldx);
 				}
 			} else if (panel_contains(y, x) && test_light(y, x)) {
-				print(inven_temp ->data.tchar, y, x);
+				print(C_item_get_tchar(&inven_temp ->data), y, x);
 			}
 		} else {
 			flag = true;

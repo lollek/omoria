@@ -1239,7 +1239,7 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 			}
 
 			prt(out_val, 4, 15);
-			sprintf(out_val, "'%u'", item_ptr->data.tchar);
+			sprintf(out_val, "'%u'", C_item_get_tchar(&item_ptr->data));
 			prt(out_val, 5, 15);
 			print_hex_value((item_ptr->data.flags), 6, 15);
 			print_hex_value((item_ptr->data.flags2), 7, 15);
@@ -1513,8 +1513,8 @@ void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
 	*(--out_pos) = 0;
 
 	while (ptr != NULL) {
-		if (strchr(out_pos, (char)ptr->data.tchar) == NULL) {
-			*(--out_pos) = (char)ptr->data.tchar;
+		if (strchr(out_pos, (char)C_item_get_tchar(&ptr->data)) == NULL) {
+			*(--out_pos) = (char)C_item_get_tchar(&ptr->data);
 		}
 		ptr = ptr->next;
 	}
@@ -1533,7 +1533,7 @@ void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
 		ptr = inventory_list;
 
 		while (ptr != NULL) {
-			if ((char)ptr->data.tchar == command) {
+			if ((char)C_item_get_tchar(&ptr->data) == command) {
 				ptr->ok = true;
 			}
 			ptr = ptr->next;

@@ -313,7 +313,7 @@ chtype loc_symbol(long y, long x)
 			     (player_flags.see_inv))) {
 				sym = c_list[mptr].cchar;
 			} else if (tptr > 0) {
-				sym = t_list[tptr].tchar;
+				sym = C_item_get_tchar(&t_list[tptr]);
 			} else if (is_in(fval, earth_set)) { /* 0, 3, 8 and 9
 								were here too */
 				sym = '.';
@@ -333,16 +333,16 @@ chtype loc_symbol(long y, long x)
 				    ((distance(char_row, char_col, y, x) <=
 				      5) &&
 				     (los(char_row, char_col, y, x)))) {
-					sym = t_list[tptr].tchar;
+					sym = C_item_get_tchar(&t_list[tptr]);
 				} else {
 					sym = '`' | COLOR_PAIR(COLOR_BLUE);
 				}
 			} else {
-				sym = t_list[tptr].tchar;
+				sym = C_item_get_tchar(&t_list[tptr]);
 			}
 
-		} else if (is_in(fval,
-				 earth_set)) { /* 0, 3, 8 and 9 were here too */
+		/* 0, 3, 8 and 9 were here too */
+		} else if (is_in(fval, earth_set)) {
 			sym = '.';
 		} else if (is_in(fval, pwall_set)) {
 			sym = '#';

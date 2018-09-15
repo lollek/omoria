@@ -27,6 +27,8 @@ void C_highscore(uint8_t max_highscores);
 
 void C_clear_screen();
 
+chtype C_item_get_tchar(const treasure_type *item);
+
 extern void C_init_curses();
 
 /* END - FROM RUST */
