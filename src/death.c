@@ -151,14 +151,13 @@ void upon_death()
 			  "Contact your local wizard.");
 		msg_print(" ");
 	}
-        C_delete_character();
+	C_delete_character();
 
 	if (total_winner) {
 		ud__kingly();
 	}
 	ud__print_tomb(dstr);
 	print_dead_character();
-	C_highscore(max_score);
 	exit_game();
 }
 

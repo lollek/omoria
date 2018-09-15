@@ -101,11 +101,7 @@ void controly()
 	/* ok, this is unix not vms, so it turns on ^C and ^Z */
 }
 
-void exit_game()
-{
-	/*	{ Immediate exit from program } */
-	controly(); /* { Turn control-Y back on	} */
-
+void exit_curses() {
 	if (curses_is_running) {
 		refresh(); /* { Dump any remaining buffer	} */
 
@@ -114,7 +110,13 @@ void exit_game()
 		nocbreak();
 		endwin();
 	}
+}
 
+void exit_game()
+{
+	/*	{ Immediate exit from program } */
+	controly(); /* { Turn control-Y back on	} */
+        exit_curses();
 	fflush(stdout);
 	exit(0); /* { exit from game		} */
 }
