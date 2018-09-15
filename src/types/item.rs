@@ -1,4 +1,5 @@
 use libc;
+use pancurses;
 
 use thirdparty::serde::BigArray;
 
@@ -17,7 +18,7 @@ pub struct Item { // treasure_type
     // is no direct correlation here between character and tval,
     // although there probably should be.  you could have
     // a potion show up a 'B' if you wanted...
-    pub tchar: libc::c_long,
+    pub tchar: pancurses::chtype,
 
     // Flags define an item's properties. the meaning of flag values can
     // depend on the item's tval.  note that the original game designers
