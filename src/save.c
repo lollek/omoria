@@ -7,12 +7,27 @@
 #include "imoria.h"
 #include "save.h"
 
-boolean save_char(boolean quick)
+boolean save_and_quit(void)
+{
+	boolean flag = save_char();
+
+	if (flag) {
+		char out_rec[1026];
+		sprintf(out_rec, "Character saved. [Moria Version %s]\n",
+				omoria_version());
+		prt(out_rec, 2, 1);
+		exit_game();
+	}
+
+	return flag;
+}
+
+boolean save_char(void)
 {
 	/* Actual save procedure -RAK- & -JWT- */
 	boolean flag = true;
 
-	ENTER(("save_char", "%d", quick));
+	ENTER(("save_char", ""));
 
 	/*{ Message to player on what is happening}*/
 	if (!player_flags.dead) {
@@ -22,15 +37,7 @@ boolean save_char(boolean quick)
 	}
 
 	if (flag) flag = C_master_update_character(player_uid);
-	if (flag) flag = C_save_character();
-
-	if (flag && !player_flags.dead) {
-		char out_rec[1026];
-		sprintf(out_rec, "Character saved. [Moria Version %s]\n",
-			omoria_version());
-		prt(out_rec, 2, 1);
-		exit_game();
-	}
+	flag = C_save_character();
 
 	LEAVE("save_char", "");
 	return flag;

@@ -265,8 +265,7 @@ void check_kickout_time(long num, long check)
 			msg_print("And then try to run the game.");
 			msg_print("");
 			do {
-				player_flags.dead = false;
-				save_char(true);
+				save_and_quit();
 			} while (true);
 		}
 	}

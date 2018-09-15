@@ -66,7 +66,7 @@ fn write_master(data: &Vec<MasterRecord>) -> Option<()> {
     Some(())
 }
 
-pub fn master_update_character(uid: i64) -> Option<()> {
+pub fn update_character(uid: i64) -> Option<()> {
     debug::enter("master_update_character");
 
     let mut records = read_master()?;
@@ -85,7 +85,7 @@ pub fn master_update_character(uid: i64) -> Option<()> {
         record.character_name = player::name();
         record.points = player::calc_total_points();
         record.title = player::title();
-        record.alive = player::is_dead();
+        record.alive = !player::is_dead();
         record.level = player::level();
     }
 
@@ -95,7 +95,7 @@ pub fn master_update_character(uid: i64) -> Option<()> {
     result
 }
 
-pub fn master_add_character() -> Option<i64> {
+pub fn add_character() -> Option<i64> {
     debug::enter("master_add_character");
 
     let mut records = read_master()?;
@@ -126,7 +126,7 @@ pub fn master_add_character() -> Option<i64> {
     Some(new_uid)
 }
 
-pub fn master_character_exists(uid: i64) -> Option<()> {
+pub fn character_exists(uid: i64) -> Option<()> {
     debug::enter("master_character_exists");
 
     let records = read_master()?;

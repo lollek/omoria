@@ -7,6 +7,7 @@ use serde_json;
 
 use constants;
 use debug;
+use master;
 use player;
 use save;
 use types::Item;
@@ -94,6 +95,7 @@ pub fn load_character() -> Option<()> {
 pub fn save_character() -> Option<()> {
     debug::enter("save_character");
 
+    master::update_character(player::uid());
     player::increase_save_counter();
 
     let file = open_savefile(true)?;

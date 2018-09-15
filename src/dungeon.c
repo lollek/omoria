@@ -3701,8 +3701,7 @@ void d__check_hours()
 						  "closed.");
 					msg_print(" ");
 					do {
-						player_flags.dead = false;
-						save_char(true);
+						save_and_quit();
 					} while (true);
 				} else {
 					if (search_flag) {
@@ -5597,9 +5596,7 @@ void d__execute_command(long *com_val)
 			} else {
 				if (search_flag)
 					search_off();
-				player_flags.dead = false;
-				save_char(false);
-				player_flags.dead = true;
+				save_and_quit();
 			}
 			reset_flag = true;
 			break;

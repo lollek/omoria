@@ -145,6 +145,8 @@ void upon_death()
 	/*  Handles the gravestone and top-twenty routines -RAK-  */
 	char dstr[20][82];
 
+	player_flags.dead = true;
+
 	/*  What happens upon dying...    -RAK- */
 	if (!C_master_update_character(player_uid)) {
 		msg_print("ERROR opening file MASTER. "
@@ -152,6 +154,8 @@ void upon_death()
 		msg_print(" ");
 	}
 	C_delete_character();
+
+	player_flags.dead = false;
 
 	if (total_winner) {
 		ud__kingly();

@@ -78,9 +78,8 @@ int main(int argc, char *argv[])
 		/* Retrieve character */
 		game_state = GS_IGNORE_CTRL_C;
 		generate = get_char(true);
-		player_flags.dead = true;
 		is_from_file = true;
-		save_char(false);
+		save_char();
 		change_name();
 		magic_init(randes_seed);
 

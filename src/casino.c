@@ -72,8 +72,7 @@ void c__check_casino_kickout()
 			msg_print("");
 			c__change_money();
 			do {
-				player_flags.dead = false;
-				save_char(true);
+				save_and_quit();
 			} while (!false);
 		}
 	}

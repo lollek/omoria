@@ -80,7 +80,7 @@ char inkey()
 				 * eventually dies */
 				panic_save = 1;
 				strcpy(died_from, "(end of input: panic saved)");
-				if (!save_char(TRUE)) {
+				if (!save_and_quit()) {
 					strcpy(died_from, "panic: unexpected eof");
 					death = TRUE;
 				}

@@ -34,8 +34,7 @@ void signalexit()
 
 	priv_switch(0);
 	msg_print("Sorry, caught a core-dump signal.");
-	player_flags.dead = false;
-	save_char(true);
+	save_and_quit();
 	exit_game(0);
 
 	LEAVE("signalexit", "");
@@ -67,9 +66,7 @@ void signalquit()
 void signalsave()
 {
 	priv_switch(0);
-	player_flags.dead = false;
-	save_char(true);
-	player_flags.dead = true;
+	save_and_quit();
 	exit_game();
 }
 
