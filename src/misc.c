@@ -870,7 +870,7 @@ boolean learn_spell(boolean *redraw)
 
 	unsigned long spell_flag = 0;
 	unsigned long spell_flag2 = 0;
-	spl_type spell;
+	spl_type spells_to_choose_from;
 	long new_spells = num_new_spells(spell_adj(INT));
 	boolean return_value = false;
 	treas_ptr ptr;
@@ -884,41 +884,44 @@ boolean learn_spell(boolean *redraw)
 		}
 	}
 
-	while ((new_spells > 0) && ((spell_flag > 0) || (spell_flag2 > 0))) {
-		unsigned long i1 = 0;
-		unsigned long i2 = spell_flag;
-		unsigned long i4 = spell_flag2;
+	while (new_spells > 0 && (spell_flag > 0 || spell_flag2 > 0)) {
+		unsigned long spell_counter = 0;
+		unsigned long flag1 = spell_flag;
+		unsigned long flag2 = spell_flag2;
+		long selected;
+		long trash;
 
 		do {
-			unsigned long i3 = bit_pos64(&i4, &i2);
-			if (i3 > 31) {
-				i3--;
-			}
-			if (C_magic_spell_level(i3) <= player_lev) {
-				if (!C_player_knows_spell(i3)) {
-					spell[i1++].splnum = i3;
-				}
-			}
-		} while ((i2 != 0) || (i4 != 0));
+			unsigned long spell_index = bit_pos64(&flag2, &flag1);
+			if (spell_index > 31)
+				spell_index--;
 
-		if (i1 > 0) {
-			long sn;
-			long sc;
-			print_new_spells(spell, i1, redraw);
-			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
-				      redraw)) {
-				C_player_set_knows_spell(sn, true);
-				return_value = true;
-				if (player_mana == 0) {
-					player_mana = 1;
-					player_cmana = 1;
-				}
-			} else {
-				new_spells = 0;
+			if (C_magic_spell_level(spell_index) > player_lev)
+				continue;
+
+			if (C_player_knows_spell(spell_index))
+				continue;
+
+			spells_to_choose_from[spell_counter++].splnum = spell_index;
+
+		} while (flag1 != 0 || flag2 != 0);
+
+		if (spell_counter == 0)
+			break; /* No spells to learn */
+
+		print_new_spells(spells_to_choose_from, spell_counter, redraw);
+		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
+					"Learn which spell?", redraw)) {
+			C_player_set_knows_spell(selected, true);
+			return_value = true;
+			if (player_mana == 0) {
+				player_mana = 1;
+				player_cmana = 1;
 			}
 		} else {
 			new_spells = 0;
 		}
+
 		new_spells--;
 	} /* end while new_spells > 0 */
 

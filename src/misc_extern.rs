@@ -76,7 +76,7 @@ pub extern fn C_print_new_spell_line(i: libc::uint8_t, slot: libc::c_long, failc
     let to_print = if slot < 0 {
         "".to_owned() // leave gaps for unknown spells
     } else {
-        let spell = magic::spell(i as usize);
+        let spell = magic::spell(slot as usize);
         format!("{}) {:30} {:3}    {:3}      {:2}",
             (('a' as u8) + i) as char,
             spell.name,
