@@ -92,6 +92,9 @@ pub fn main_menu() -> Option<Character> {
             'j' => index = min(characters.len() as u8 -1, index + 1),
             'n' | 'N' => break,
             '\r' => {
+                if characters.is_empty() {
+                    continue;
+                }
                 retval = Some(characters[index as usize].to_owned());
                 break;
             },
