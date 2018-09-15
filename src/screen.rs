@@ -33,7 +33,7 @@ fn prt_lost_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
 
     ncurses::chattr(ncurses::CursesAttr::Dim, true);
 
-    let str = format!("{}{}", stat_name, misc::stat_to_string(stat));
+    let str = format!("{}{:<6}", stat_name, misc::stat_to_string(stat));
     term::put_buffer(&str, row.into(), col.into());
 
     ncurses::chattr(ncurses::CursesAttr::Dim, false);
