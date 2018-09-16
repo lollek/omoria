@@ -1,5 +1,6 @@
 use std::ffi::CString;
 use libc;
+use std::borrow::Cow;
 
 use debug;
 use misc;
@@ -39,7 +40,9 @@ pub fn refresh_screen() {
     debug::leave("refresh_screen");
 }
 
-pub fn msg_print(out_str: &str) {
+pub fn msg_print<S>(out_str: S)
+    where S: Into<Vec<u8>>
+{
     debug::enter("msg_print");
 
     let cstr = CString::new(out_str).unwrap();
