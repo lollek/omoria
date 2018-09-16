@@ -37,12 +37,12 @@ extern "C" {
 fn prt_lost_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
     debug::enter("prt_lost_stat");
 
-    ncurses::chattr(ncurses::CursesAttr::Dim, true);
+    ncurses::attron(ncurses::A_DIM);
 
     let str = format!("{}{:<6}", stat_name, misc::stat_to_string(stat));
     term::put_buffer(&str, row.into(), col.into());
 
-    ncurses::chattr(ncurses::CursesAttr::Dim, false);
+    ncurses::attroff(ncurses::A_DIM);
 
     debug::leave("prt_lost_stat");
 }
@@ -100,16 +100,16 @@ fn print_hp(row: u8, col: u8) {
     let max = player::max_hp();
     let color =
         if current >= max {
-            ncurses::CursesAttr::ColorGreen
+            ncurses::color_pair(ncurses::COLOR_GREEN)
         } else if current >= max / 3 {
-            ncurses::CursesAttr::ColorYellow
+            ncurses::color_pair(ncurses::COLOR_YELLOW)
         } else {
-            ncurses::CursesAttr::ColorRed
+            ncurses::color_pair(ncurses::COLOR_RED)
         };
 
-    ncurses::chattr(color.to_owned(), true);
+    ncurses::attron(color);
     term::put_buffer(&format!("HP  : {:>6}", current), row.into(), col.into());
-    ncurses::chattr(color.to_owned(), false);
+    ncurses::attroff(color);
 }
 
 fn print_mana(row: u8, col: u8) {
@@ -121,16 +121,16 @@ fn print_mana(row: u8, col: u8) {
     let max = player::max_mp();
     let color =
         if current >= max {
-            ncurses::CursesAttr::ColorBlue
+            ncurses::color_pair(ncurses::COLOR_BLUE)
         } else if current >= max / 3 {
-            ncurses::CursesAttr::ColorCyan
+            ncurses::color_pair(ncurses::COLOR_CYAN)
         } else {
-            ncurses::CursesAttr::ColorMagenta
+            ncurses::color_pair(ncurses::COLOR_MAGENTA)
         };
 
-    ncurses::chattr(color.to_owned(), true);
+    ncurses::attron(color);
     term::put_buffer(&format!("MANA: {:>6}", current), row.into(), col.into());
-    ncurses::chattr(color.to_owned(), false);
+    ncurses::attroff(color);
 }
 
 fn print_time(row: u8, col: u8) {

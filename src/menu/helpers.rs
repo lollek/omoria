@@ -22,12 +22,12 @@ pub fn draw_menu(title: &str, items: &Vec<&str>, commands: &str, selected: u8) {
     for (index, item) in items.iter().enumerate() {
         let reverse = selected == index as u8;
         if reverse {
-            ncurses::chattr(ncurses::CursesAttr::Reverse, true);
+            ncurses::attron(ncurses::A_REVERSE);
         }
         term::put_buffer(item, index as i32 + 3, 2);
 
         if reverse {
-            ncurses::chattr(ncurses::CursesAttr::Reverse, false);
+            ncurses::attroff(ncurses::A_REVERSE);
         }
     }
 

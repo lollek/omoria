@@ -1,6 +1,5 @@
 use std::ffi::CString;
 use libc;
-use std::borrow::Cow;
 
 use debug;
 use misc;
@@ -85,9 +84,7 @@ pub fn prt(msg: &str, row: i32, col: i32) {
 pub fn put_buffer(msg: &str, row: i32, col: i32) {
     debug::enter(&format!("put_buffer_r: '{}'. y: {}. x: {}", msg, row, col));
 
-    let cstr = CString::new(msg).unwrap();
-    let cptr = cstr.as_ptr();
-    ncurses::mvaddstr(row, col, cptr);
+    ncurses::mvaddstr(row, col, msg);
 
     debug::leave("put_buffer_r");
 }

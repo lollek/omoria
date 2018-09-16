@@ -1,8 +1,12 @@
 use std::process;
 use std::cell::RefCell;
 
-use libc;
 use pancurses;
+pub use pancurses::{
+    COLOR_BLACK, COLOR_BLUE, COLOR_GREEN, COLOR_RED, COLOR_YELLOW,
+    COLOR_MAGENTA, COLOR_CYAN,
+    A_REVERSE, A_DIM
+};
 
 use debug;
 
@@ -10,24 +14,19 @@ thread_local! {
     static STDSCR: RefCell<Option<pancurses::Window>> = RefCell::new(None);
 }
 
-extern "C" {
-    #[link_name = "mvaddstr"]
-    fn C_mvaddstr(y: libc::c_int, x: libc::c_int, str: *const libc::c_char)
-        -> libc::c_int;
+fn with_stdscr<S>(fun: S)
+    where S: Fn(&pancurses::Window)
+{
+    STDSCR.with(|stdscr_wrapper| {
+        match *stdscr_wrapper.borrow() {
+            Some(ref stdscr) => fun(stdscr),
+            None => panic!("stdscr not initialized?"),
+        }
+    });
+}
 
-    #[link_name = "refresh"]
-    fn C_refresh() -> libc::c_int;
-
-    #[link_name = "clrtoeol"]
-    fn C_clrtoeol() -> libc::c_int;
-
-    #[link_name = "clear"]
-    fn C_clear() -> libc::c_int;
-
-    #[link_name = "move"]
-    fn C_move(y: libc::c_int, x: libc::c_int) -> libc::c_int;
-
-    fn C_chattr(attr: libc::c_int, on: libc::uint8_t) -> libc::c_int;
+pub fn color_pair(pair: i16) -> pancurses::chtype {
+    pancurses::COLOR_PAIR(pair as pancurses::chtype)
 }
 
 pub fn init_curses() {
@@ -67,20 +66,24 @@ pub fn init_curses() {
 pub fn refresh() {
     debug::enter("ncurses::refresh");
 
-    if unsafe { C_refresh() } != 0 {
-        panic!("refresh returned ERR");
-    }
+    with_stdscr(|stdscr| {
+        if stdscr.refresh() != 0 {
+            panic!("refresh returned ERR");
+        }
+    });
 
     debug::leave("ncurses::refresh");
 }
 
 // Use term::put_buffer instead of this directly
-pub fn mvaddstr(row: libc::c_int, col: libc::c_int, out_str: *const libc::c_char) {
+pub fn mvaddstr(row: i32, col: i32, out_str: &str) {
     debug::enter("ncurses::mvaddstr");
 
-    if unsafe { C_mvaddstr(row, col, out_str) } != 0 {
-        panic!("mvaddstr returned ERR");
-    }
+    with_stdscr(|stdscr| {
+        if stdscr.mvaddstr(row, col, out_str) != 0 {
+            panic!("mvaddstr returned ERR");
+        }
+    });
 
     debug::leave("ncurses::mvaddstr");
 }
@@ -88,19 +91,23 @@ pub fn mvaddstr(row: libc::c_int, col: libc::c_int, out_str: *const libc::c_char
 pub fn clrtoeol() {
     debug::enter("ncurses::clrtoeol");
 
-    if unsafe { C_clrtoeol() } != 0 {
-        panic!("clrtoeol returned ERR");
-    }
+    with_stdscr(|stdscr| {
+        if stdscr.clrtoeol() != 0 {
+            panic!("clrtoeol returned ERR");
+        }
+    });
 
     debug::leave("ncurses::clrtoeol");
 }
 
-pub fn mov(row: libc::c_int, col: libc::c_int) {
+pub fn mov(row: i32, col: i32) {
     debug::enter("ncurses::mov");
 
-    if unsafe { C_move(row, col) } != 0 {
-        panic!("move returned ERR");
-    }
+    with_stdscr(|stdscr| {
+        if stdscr.mv(row, col) != 0 {
+            panic!("move returned ERR");
+        }
+    });
 
     debug::leave("ncurses::mov");
 }
@@ -109,9 +116,11 @@ pub fn mov(row: libc::c_int, col: libc::c_int) {
 pub fn clear() {
     debug::enter("ncurses::clear");
 
-    if unsafe { C_clear() } != 0 {
-        panic!("clear returned ERR");
-    }
+    with_stdscr(|stdscr| {
+        if stdscr.clear() != 0 {
+            panic!("clear returned ERR");
+        }
+    });
 
     debug::leave("ncurses::clear");
 }
@@ -132,12 +141,26 @@ pub enum CursesAttr {
     ColorMagenta = 15,
 }
 
-pub fn chattr(attr: CursesAttr, on: bool) {
-    debug::enter("ncurses::chattr");
+pub fn attron(attr: pancurses::chtype) {
+    debug::enter("ncurses::attron");
 
-    if unsafe { C_chattr(attr as i32, if on {1} else {0}) } != 0 {
-        panic!("chattr returned ERR");
-    }
+    with_stdscr(|stdscr| {
+        if stdscr.attron(attr) != 0 {
+            panic!("attron returned ERR");
+        }
+    });
 
-    debug::leave("ncurses::chattr");
+    debug::leave("ncurses::attron");
+}
+
+pub fn attroff(attr: pancurses::chtype) {
+    debug::enter("ncurses::attroff");
+
+    with_stdscr(|stdscr| {
+        if stdscr.attroff(attr) != 0 {
+            panic!("attroff returned ERR");
+        }
+    });
+
+    debug::leave("ncurses::attroff");
 }
