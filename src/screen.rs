@@ -34,24 +34,28 @@ extern "C" {
     static dun_level: libc::c_long;
 }
 
-fn prt_lost_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
+fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
+    where S: AsRef<str>
+{
     debug::enter("prt_lost_stat");
 
     ncurses::attron(ncurses::A_DIM);
 
-    let str = format!("{}{:<6}", stat_name, misc::stat_to_string(stat));
-    term::put_buffer(&str, row.into(), col.into());
+    let str = format!("{}{:<6}", stat_name.as_ref(), misc::stat_to_string(stat));
+    term::put_buffer(str, row.into(), col.into());
 
     ncurses::attroff(ncurses::A_DIM);
 
     debug::leave("prt_lost_stat");
 }
 
-pub fn prt_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
+pub fn prt_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
+    where S: AsRef<str>
+{
     debug::enter("prt_stat");
 
-    let str = format!("{}{}", stat_name, misc::stat_to_string(stat));
-    term::put_buffer(&str, row.into(), col.into());
+    let str = format!("{}{}", stat_name.as_ref(), misc::stat_to_string(stat));
+    term::put_buffer(str, row.into(), col.into());
 
     debug::leave("prt_stat");
 }
@@ -90,8 +94,10 @@ pub fn print_stats(row: u8, col: u8) {
     debug::leave("print_stats");
 }
 
-fn print_field(msg: &str, row: u8, col: u8) {
-    let msg_formatted = &format!("{:<width$}", msg, width=STAT_BLOCK_WIDTH);
+fn print_field<S>(msg: S, row: u8, col: u8)
+    where S: AsRef<str>
+{
+    let msg_formatted = format!("{:<width$}", msg.as_ref(), width=STAT_BLOCK_WIDTH);
     term::put_buffer(msg_formatted, row.into(), col.into());
 }
 
@@ -108,7 +114,7 @@ fn print_hp(row: u8, col: u8) {
         };
 
     ncurses::attron(color);
-    term::put_buffer(&format!("HP  : {:>6}", current), row.into(), col.into());
+    term::put_buffer(format!("HP  : {:>6}", current), row.into(), col.into());
     ncurses::attroff(color);
 }
 
@@ -129,7 +135,7 @@ fn print_mana(row: u8, col: u8) {
         };
 
     ncurses::attron(color);
-    term::put_buffer(&format!("MANA: {:>6}", current), row.into(), col.into());
+    term::put_buffer(format!("MANA: {:>6}", current), row.into(), col.into());
     ncurses::attroff(color);
 }
 
@@ -145,7 +151,7 @@ fn print_time(row: u8, col: u8) {
         5 => "Starday",
         _ => "Sunday",
     };
-    print_field(&format!("{:>7} {:02}:{:02}", dow, hour, min), row, col);
+    print_field(format!("{:>7} {:02}:{:02}", dow, hour, min), row, col);
 }
 
 fn print_depth(row: u8, col: u8) {
@@ -155,7 +161,7 @@ fn print_depth(row: u8, col: u8) {
             0 => Cow::from("Town Level      "),
             _ => Cow::from(format!("Depth: {} (feet)", depth)),
         };
-    term::prt(&string, row.into(), col.into());
+    term::prt(string, row.into(), col.into());
 
 }
 
@@ -164,7 +170,7 @@ fn print_equipment(row: u8, col: u8) {
         let slot = equipment::Slot::from(slot_i);
         let index_char = ('a' as u8 + index as u8) as char;
         let item_name = equipment::get_name(slot);
-        let msg = &format!("{}) {:>10}: {}", index_char, slot.name(), item_name);
+        let msg = format!("{}) {:>10}: {}", index_char, slot.name(), item_name);
         term::prt(msg, (EQUIP_ROW + row + index as u8).into(), (EQUIP_COL + col).into());
     }
 }
@@ -174,20 +180,20 @@ pub fn print_stat_block() {
 
     print_field(player::race().name(), RACE_ROW, STAT_COL);
     print_field(player::class().name(), CLASS_ROW, STAT_COL);
-    print_field(&player::title(), TITLE_ROW, STAT_COL);
+    print_field(player::title(), TITLE_ROW, STAT_COL);
 
     print_hp(HP_ROW, STAT_COL);
     print_mana(MANA_ROW, STAT_COL);
 
     print_stats(STAT_ROW, STAT_COL);
 
-    print_field(&format!("QST : {:>6}", player::quests()),
+    print_field(format!("QST : {:>6}", player::quests()),
                 QUEST_ROW, STAT_COL);
-    print_field(&format!("AC  : {:>6}", unsafe { player::player_dis_ac }),
+    print_field(format!("AC  : {:>6}", unsafe { player::player_dis_ac }),
                 AC_ROW, STAT_COL);
-    print_field(&format!("Gold: {:>6}", player::wallet().total),
+    print_field(format!("Gold: {:>6}", player::wallet().total),
                 GOLD_ROW, STAT_COL);
-    print_field(&format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
+    print_field(format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
                 BULK_ROW, STAT_COL);
 
     print_time(TIME_ROW, STAT_COL);

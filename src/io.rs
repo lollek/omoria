@@ -23,8 +23,10 @@ pub fn inkey_flush() -> u8 {
 }
 
 // Gets response to a  Y/N question
-pub fn get_yes_no(prompt: &str) -> bool {
-    let prompt_yn = CString::new(format!("{} (y/n) ", prompt)).unwrap();
+pub fn get_yes_no<S>(prompt: S) -> bool
+    where S: AsRef<str>
+{
+    let prompt_yn = CString::new(format!("{} (y/n) ", prompt.as_ref())).unwrap();
     let ref mut command: c_char = 0;
     loop {
         term::msg_print(" ");
