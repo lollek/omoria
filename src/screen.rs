@@ -26,8 +26,8 @@ const BULK_ROW: u8 = 18;
 const TIME_ROW: u8 = 20;
 
 // Equipment Column
-const EQUIP_COL: u8 = 0;
-const EQUIP_ROW: u8 = 80;
+const EQUIP_COL: u8 = 81;
+const EQUIP_ROW: u8 = 8;//1;
 
 // Status Row
 const STATUS_ROW: u8 = 23;
@@ -169,13 +169,15 @@ fn print_depth(row: u8, col: u8) {
 }
 
 fn print_equipment(row: u8, col: u8) {
+    debug::enter("print_equipment");
     for (index, slot_i) in equipment::slots_iter().enumerate() {
         let slot = equipment::Slot::from(slot_i);
         let index_char = ('a' as u8 + index as u8) as char;
         let item_name = equipment::get_name(slot);
-        let msg = format!("{}) {:>10}: {}", index_char, slot.name(), item_name);
-        term::prt(msg, (EQUIP_ROW + row + index as u8).into(), (EQUIP_COL + col).into());
+        let msg = format!("{}) {:<13}: {}", index_char, slot.name(), item_name);
+        term::prt(msg, (row + index as u8).into(), col.into());
     }
+    debug::leave("print_equipment");
 }
 
 fn print_stats_column() {
@@ -211,4 +213,8 @@ pub fn print_stat_block() {
     print_status_row();
 
     debug::leave("print_stat_block");
+}
+
+pub fn print_equipment_block() {
+    print_equipment(EQUIP_ROW, EQUIP_COL);
 }

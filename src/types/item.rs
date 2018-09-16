@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use libc;
 
 use thirdparty::serde::BigArray;
@@ -58,16 +59,18 @@ pub struct Item { // treasure_type
 }
 
 impl Item {
-    fn number_of(&self) -> String {
+    fn number_of<'a>(&self) -> Cow<'a, str> {
         match self.number {
-            0 => "no more".to_string(),
-            1 => "".to_string(),
-            _ => self.number.to_string(),
+            0 => Cow::from("no more"),
+            1 => Cow::from(""),
+            _ => Cow::from(self.number.to_string()),
         }
     }
 
-    fn subtype_name(&self) -> String {
-        String::new()
+    fn subtype_name(&self) -> &'static str {
+        match self.tval {
+            _ => "",
+        }
     }
 
     // In progress..
