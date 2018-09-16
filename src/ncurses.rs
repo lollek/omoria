@@ -76,11 +76,13 @@ pub fn refresh() {
 }
 
 // Use term::put_buffer instead of this directly
-pub fn mvaddstr(row: i32, col: i32, out_str: &str) {
+pub fn mvaddstr<'a, S>(row: i32, col: i32, msg: S)
+    where S: AsRef<str>
+{
     debug::enter("ncurses::mvaddstr");
 
     with_stdscr(|stdscr| {
-        if stdscr.mvaddstr(row, col, out_str) != 0 {
+        if stdscr.mvaddstr(row, col, msg.as_ref()) != 0 {
             panic!("mvaddstr returned ERR");
         }
     });

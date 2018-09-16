@@ -67,7 +67,9 @@ pub fn get_string(row: i32, col: i32, slen: i32) -> String {
 
 
 // put_buffer which clears the line first
-pub fn prt(msg: &str, row: i32, col: i32) {
+pub fn prt<S>(msg: S, row: i32, col: i32)
+    where S: AsRef<str>
+{
     debug::enter("prt");
 
     if row == -1 && has_msg_flag() {
@@ -81,8 +83,10 @@ pub fn prt(msg: &str, row: i32, col: i32) {
 }
 
 // Output text to coordinate. Basically a wrapper around ncurses::move_print
-pub fn put_buffer(msg: &str, row: i32, col: i32) {
-    debug::enter(&format!("put_buffer_r: '{}'. y: {}. x: {}", msg, row, col));
+pub fn put_buffer<S>(msg: S, row: i32, col: i32)
+    where S: AsRef<str>
+{
+    debug::enter(&format!("put_buffer_r: '{}'. y: {}. x: {}", msg.as_ref(), row, col));
 
     ncurses::mvaddstr(row, col, msg);
 

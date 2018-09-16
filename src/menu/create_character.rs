@@ -865,7 +865,7 @@ fn choose_class() {
 
     let classes = player::race()
         .available_classes();
-    let class_strings = classes
+    let class_strings: Vec<&str> = classes
         .iter()
         .map(|it| it.name())
         .collect();
@@ -896,7 +896,7 @@ fn choose_class() {
 fn choose_race() {
     debug::enter("choose_race");
 
-    let races = races_iter()
+    let races: Vec<&str> = races_iter()
         .map(|i| Race::from(i))
         .map(|it| it.name())
         .collect();
@@ -925,15 +925,15 @@ fn choose_race() {
                 &Race::from(index as usize)
                 .stats_info()
                 .iter()
-                .map(|it| it.as_str())
-                .collect()),
+                .map(|it| it.as_ref())
+                .collect::<Vec<&str>>()),
             'c' => helpers::draw_help_vec(
                 races[index as usize],
                 &Race::from(index as usize)
                 .available_classes()
                 .iter()
                 .map(|it| it.name())
-                .collect()),
+                .collect::<Vec<&str>>()),
             _ => {},
         }
     }
@@ -1006,7 +1006,7 @@ fn choose_stats() {
                 format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
                 format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
                 format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
-            ].iter().map(|it| it.as_str()).collect(),
+            ].iter().map(|it| it.as_ref()).collect::<Vec<&str>>(),
             "r=reroll stats, enter=confirm",
             255);
         match io::inkey_flush() as char {
@@ -1022,27 +1022,26 @@ fn confirm_character() {
     debug::enter("confirm_character");
 
     let stats = player::curr_stats();
-    let lines = vec![
-        "Name: ".to_string(),
-        format!("Race:          {}", player::race().name()),
-        format!("Sex:           {}", player::sex().to_string()),
-        format!("Class:         {}", player::class().name()),
-        "".to_string(),
-        format!("Hit Points     {}", unsafe { player::player_mhp }),
-        format!("Mana           {}", unsafe { player::player_mana }),
-        "".to_string(),
-        "(Attributes):".to_owned(),
-        format!("Strength:      {}", misc::stat_to_string(stats.strength)),
-        format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
-        format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
-        format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
-        format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
-        format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
-    ];
 
     helpers::draw_menu(
         "Confirm your character",
-        &lines.iter().map(|it| it.as_str()).collect(),
+        &vec![
+            "Name: ".to_string(),
+            format!("Race:          {}", player::race().name()),
+            format!("Sex:           {}", player::sex().to_string()),
+            format!("Class:         {}", player::class().name()),
+            "".to_string(),
+            format!("Hit Points     {}", unsafe { player::player_mhp }),
+            format!("Mana           {}", unsafe { player::player_mana }),
+            "".to_string(),
+            "(Attributes):".to_string(),
+            format!("Strength:      {}", misc::stat_to_string(stats.strength)),
+            format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
+            format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
+            format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
+            format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
+            format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
+        ].iter().map(|it| it.as_ref()).collect::<Vec<&str>>(),
         "Enter your name, finish with enter",
         255);
 

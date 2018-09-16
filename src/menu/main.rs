@@ -17,7 +17,7 @@ fn print_banner() {
     debug::enter("main_menu::print_banner");
 
     helpers::draw_menu(
-        &format!("Omoria {}", constants::OMORIA_VERSION),
+        format!("Omoria {}", constants::OMORIA_VERSION),
         &vec![
         "",
         "COPYRIGHT (c) Robert Alan Koeneke",
@@ -76,7 +76,7 @@ pub fn main_menu() -> Option<Character> {
     print_banner();
 
     let characters = load_characters();
-    let char_names = characters.iter().map(|it| it.name.as_str()).collect();
+    let char_names: Vec<&str> = characters.iter().map(|it| it.name.as_str()).collect();
     let mut index = 0;
     let mut retval = None;
 

@@ -7,10 +7,14 @@ const MAX_X: usize = WIDTH - 5;
 const HEIGHT: usize = 24;
 const MAX_Y: usize = HEIGHT - 6;
 
-pub fn draw_menu(title: &str, items: &Vec<&str>, commands: &str, selected: u8) {
+pub fn draw_menu<S1, S2>(title: S1, items: &[&str], commands: S2, selected: u8)
+    where S1: AsRef<str>,
+          S2: AsRef<str>,
+{
     // Title
+    let title_s = title.as_ref();
     term::put_buffer(&format!("{:*<width$}", "", width=WIDTH - 1), 0, 0);
-    term::put_buffer(&format!("* {}{:<width$} *", title, "", width=MAX_X - title.len()) , 1, 0);
+    term::put_buffer(&format!("* {}{:<width$} *", title_s, "", width=MAX_X - title_s.len()) , 1, 0);
     term::put_buffer(&format!("{:*<width$}", "", width=WIDTH - 1), 2, 0);
 
     // Side markers
@@ -19,7 +23,7 @@ pub fn draw_menu(title: &str, items: &Vec<&str>, commands: &str, selected: u8) {
     }
 
     // Items
-    for (index, item) in items.iter().enumerate() {
+    for (index, item) in items.as_ref().iter().enumerate() {
         let reverse = selected == index as u8;
         if reverse {
             ncurses::attron(ncurses::A_REVERSE);
@@ -32,12 +36,15 @@ pub fn draw_menu(title: &str, items: &Vec<&str>, commands: &str, selected: u8) {
     }
 
     // Bottom
+    let commands_s = commands.as_ref();
     term::put_buffer(&format!("{:*<width$}", "", width=WIDTH - 1), HEIGHT as i32 - 3, 0);
-    term::put_buffer(&format!("* {:<width$}{} *", "", commands, width=MAX_X - commands.len()) , HEIGHT as i32 - 2, 0);
+    term::put_buffer(&format!("* {:<width$}{} *", "", commands_s, width=MAX_X - commands_s.len()) , HEIGHT as i32 - 2, 0);
     term::put_buffer(&format!("{:*<width$}", "", width=WIDTH - 1), HEIGHT as i32 - 1, 0);
 }
 
-pub fn draw_help_vec(title: &str, lines: &Vec<&str>) {
+pub fn draw_help_vec<S1>(title: S1, lines: &[&str])
+    where S1: AsRef<str>,
+{
     let commands =
         if lines.len() <= MAX_Y {
             "ESC=close"
@@ -51,11 +58,11 @@ pub fn draw_help_vec(title: &str, lines: &Vec<&str>) {
         let visible_lines: Vec<&str> = lines.iter()
             .skip(page * MAX_Y)
             .take(MAX_Y)
-            .map(|it| it.to_owned())
+            .map(|it| it.as_ref())
             .collect();
 
         draw_menu(
-            title,
+            title.as_ref(),
             &visible_lines,
             commands,
             255);
@@ -77,9 +84,12 @@ pub fn draw_help_vec(title: &str, lines: &Vec<&str>) {
     }
 }
 
-pub fn draw_help(title: &str, msg: &str) {
+pub fn draw_help<S1, S2>(title: S1, msg: S2)
+    where S1: AsRef<str>,
+          S2: AsRef<str>,
+{
     let mut lines = vec![String::new()];
-    let mut msg_iter = msg.split_whitespace();
+    let mut msg_iter = msg.as_ref().split_whitespace();
     while let Some(word) = msg_iter.next() {
         if lines.last().unwrap().len() + word.len() >= MAX_X {
             lines.push(String::new());
@@ -91,5 +101,5 @@ pub fn draw_help(title: &str, msg: &str) {
         last.push_str(word);
     }
 
-    draw_help_vec(title, &lines.iter().map(|it| it.as_str()).collect());
+    draw_help_vec(title, &lines.iter().map(|it| it.as_ref()).collect::<Vec<&str>>());
 }
