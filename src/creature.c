@@ -66,51 +66,69 @@ void load_monsters()
 	}
 
 	for (count = 1; count <= MAX_CREATURES; count++) {
-		fgets(a, sizeof(char[28]), file); /*     --- 001 --- */
+		/* --- 001 --- */
+		if (fgets(a, sizeof(char[28]), file) == NULL) {
+			count--;
+			break;
+		}
 
-		fscanf(file, "%d\n", &value); /*     aaf */
+		/* aaf */
+		fscanf(file, "%d\n", &value);
 		c_list[count].aaf = (unsigned char)value;
 
-		fscanf(file, "%d\n", &value); /*     ac */
+		/* ac */
+		fscanf(file, "%d\n", &value); 
 		c_list[count].ac = (unsigned char)value;
 
-		fgets(c_list[count].name, sizeof(char[28]), file); /* name */
-		c_list[count].name[strlen(c_list[count].name) - 1] =
-		    0; /* strip newline */
+		/* name */
+		fgets(c_list[count].name, sizeof(char[28]), file);
+		/* strip newline */
+		c_list[count].name[strlen(c_list[count].name) - 1] = 0;
 
-		fscanf(file, "%lx", &(c_list[count].cmove)); /*     cmove */
+		/* cmove */
+		fscanf(file, "%lx", &(c_list[count].cmove));
 
-		fscanf(file, "%lx", &(c_list[count].spells)); /*     spells */
+		/* spells */
+		fscanf(file, "%lx", &(c_list[count].spells));
 
-		fscanf(file, "%lx",
-		       &(c_list[count].cdefense)); /*     cdefense */
+		/* cdefense */
+		fscanf(file, "%lx", &(c_list[count].cdefense));
 
-		fscanf(file, "%d\n", &value); /*     sleep */
+		/* sleep */
+		fscanf(file, "%d\n", &value);
 		c_list[count].sleep = (short)value;
 
-		fscanf(file, "%d\n", &value); /*     mexp */
+		/* mexp */
+		fscanf(file, "%d\n", &value);
 		c_list[count].mexp = (long)value;
 
-		fscanf(file, "%d\n", &value); /*     speed */
+		/* speed */
+		fscanf(file, "%d\n", &value);
 		c_list[count].speed = (signed char)value;
 
-		fscanf(file, "%s\n", a); /*     cchar */
+		/* cchar */
+		fscanf(file, "%s\n", a);
 		c_list[count].cchar = a[0];
 
-		fscanf(file, "%s\n", c_list[count].hd); /*     hd */
+		/* hd */
+		fscanf(file, "%s\n", c_list[count].hd);
 
-		fgets(c_list[count].damage, sizeof(char[36]), file); /* damage */
-		c_list[count].damage[strlen(c_list[count].damage) - 1] =
-		    0; /* strip newline */
+		/* damage */
+		fgets(c_list[count].damage, sizeof(char[36]), file);
+		/* strip newline */
+		c_list[count].damage[strlen(c_list[count].damage) - 1] = 0;
 
-		fscanf(file, "%d\n", &value); /*     level */
+		/* level */
+		fscanf(file, "%d\n", &value);
 		c_list[count].level = (signed char)value;
 
-		fscanf(file, "%d\n", &value); /*     mr */
+		/* mr */
+		fscanf(file, "%d\n", &value);
 		c_list[count].mr = (unsigned char)value;
 
 		/* print_creature(&(c_list[count]),count,1); */
 	} /* end while loop */
+	MSG(("load_monsters: loaded %d of max %d", count, MAX_CREATURES));
 
 	fclose(file);
 
