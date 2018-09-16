@@ -34,7 +34,6 @@ void draw_cave()
 	C_clear_screen();
 	prt_stat_block();
 	prt_map();
-	prt_depth();
 	prt_search();
 	prt_equipment();
 	refresh();
@@ -155,23 +154,6 @@ void prt_light_on()
 		put_buffer_attr("Light Off", STATUS_ROW + 1, LIGHT_ON_COLUMN,
 				A_DIM);
 	}
-}
-
-void prt_depth()
-{
-	char depths[82];
-	long depth;
-
-	depth = dun_level * 50;
-	if (depth == 0) {
-		strcpy(depths, "Town level");
-	} else if (depth < 10000) {
-		sprintf(depths, "Depth: %ld (feet)", depth);
-	} else {
-		sprintf(depths, "Depth: %ld   ", depth);
-	}
-
-	prt(depths, STATUS_ROW, DEPTH_COLUMN);
 }
 
 void prt_hunger()

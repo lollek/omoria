@@ -5967,9 +5967,6 @@ void dungeon()
 	/*{ Light, but do not move critters       }*/
 	creatures(false);
 
-	/*{ Print the depth                       }*/
-	prt_depth();
-
 	/*{ Loop until dead, or new level 		}*/
 	do {
 		/*{ Check for the AST's			-DMF-	}*/

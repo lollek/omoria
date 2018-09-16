@@ -1,3 +1,6 @@
+use libc;
+use std::borrow::Cow;
+
 use debug;
 use equipment;
 use misc;
@@ -5,28 +8,31 @@ use ncurses;
 use player;
 use term;
 
+// Stats Column
 const STAT_BLOCK_WIDTH: usize = 14;
 const STAT_COL: u8 = 0;
-//const WINNER_COL: u8 = 0;
 
 const RACE_ROW: u8 = 1;
 const CLASS_ROW: u8 = 2;
 const TITLE_ROW: u8 = 3;
-
 const HP_ROW: u8 = 5;
 const MANA_ROW: u8 = 6;
-
 const STAT_ROW: u8 = 8; // -> 13
 
 const QUEST_ROW: u8 = 15;
 const AC_ROW: u8 = 16;
 const GOLD_ROW: u8 = 17;
-const CURR_WEIGHT_ROW: u8 = 18;
-const MAX_WEIGHT_ROW: u8 = 19;
-const TIME_ROW: u8 = 21;
+const BULK_ROW: u8 = 18;
+const TIME_ROW: u8 = 20;
+const DEPTH_ROW: u8 = 21;
 
+// Equipment Column
 const EQUIP_COL: u8 = 0;
 const EQUIP_ROW: u8 = 80;
+
+extern "C" {
+    static dun_level: libc::c_long;
+}
 
 fn prt_lost_stat(stat_name: &str, stat: i16, row: u8, col: u8) {
     debug::enter("prt_lost_stat");
@@ -142,6 +148,17 @@ fn print_time(row: u8, col: u8) {
     print_field(&format!("{:>7} {:02}:{:02}", dow, hour, min), row, col);
 }
 
+fn print_depth(row: u8, col: u8) {
+    let depth = unsafe { dun_level } * 50;
+    let string =
+        match depth {
+            0 => Cow::from("Town Level      "),
+            _ => Cow::from(format!("Depth: {} (feet)", depth)),
+        };
+    term::prt(&string, row.into(), col.into());
+
+}
+
 fn print_equipment(row: u8, col: u8) {
     for (index, slot_i) in equipment::slots_iter().enumerate() {
         let slot = equipment::Slot::from(slot_i);
@@ -164,13 +181,17 @@ pub fn print_stat_block() {
 
     print_stats(STAT_ROW, STAT_COL);
 
-    print_field(&format!("QST : {:>6}", player::quests()), QUEST_ROW, STAT_COL);
-    print_field(&format!("AC  : {:>6}", unsafe { player::player_dis_ac }), AC_ROW, STAT_COL);
-    print_field(&format!("GOLD: {:>6}", player::wallet().total), GOLD_ROW, STAT_COL);
-    print_field(&format!("WGHT: {:>6}", player::current_bulk()), CURR_WEIGHT_ROW, STAT_COL);
-    print_field(&format!("M_WT: {:>6}", player::max_bulk()), MAX_WEIGHT_ROW, STAT_COL);
+    print_field(&format!("QST : {:>6}", player::quests()),
+                QUEST_ROW, STAT_COL);
+    print_field(&format!("AC  : {:>6}", unsafe { player::player_dis_ac }),
+                AC_ROW, STAT_COL);
+    print_field(&format!("Gold: {:>6}", player::wallet().total),
+                GOLD_ROW, STAT_COL);
+    print_field(&format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
+                BULK_ROW, STAT_COL);
 
     print_time(TIME_ROW, STAT_COL);
+    print_depth(DEPTH_ROW, STAT_COL);
 
     debug::leave("print_stat_block");
 }
