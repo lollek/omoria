@@ -24,11 +24,14 @@ const AC_ROW: u8 = 16;
 const GOLD_ROW: u8 = 17;
 const BULK_ROW: u8 = 18;
 const TIME_ROW: u8 = 20;
-const DEPTH_ROW: u8 = 21;
 
 // Equipment Column
 const EQUIP_COL: u8 = 0;
 const EQUIP_ROW: u8 = 80;
+
+// Status Row
+const STATUS_ROW: u8 = 23;
+const DEPTH_COL: u8 = 61;
 
 extern "C" {
     static dun_level: libc::c_long;
@@ -161,7 +164,7 @@ fn print_depth(row: u8, col: u8) {
             0 => Cow::from("Town Level      "),
             _ => Cow::from(format!("Depth: {} (feet)", depth)),
         };
-    term::prt(string, row.into(), col.into());
+    term::put_buffer(string, row.into(), col.into());
 
 }
 
@@ -175,9 +178,7 @@ fn print_equipment(row: u8, col: u8) {
     }
 }
 
-pub fn print_stat_block() {
-    debug::enter("print_stat_block");
-
+fn print_stats_column() {
     print_field(player::race().name(), RACE_ROW, STAT_COL);
     print_field(player::class().name(), CLASS_ROW, STAT_COL);
     print_field(player::title(), TITLE_ROW, STAT_COL);
@@ -197,7 +198,17 @@ pub fn print_stat_block() {
                 BULK_ROW, STAT_COL);
 
     print_time(TIME_ROW, STAT_COL);
-    print_depth(DEPTH_ROW, STAT_COL);
+}
+
+fn print_status_row() {
+    print_depth(STATUS_ROW, DEPTH_COL);
+}
+
+pub fn print_stat_block() {
+    debug::enter("print_stat_block");
+
+    print_stats_column();
+    print_status_row();
 
     debug::leave("print_stat_block");
 }
