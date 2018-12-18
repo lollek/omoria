@@ -71,11 +71,50 @@ impl Item {
         }
     }
 
-    fn subtype_name(&self) -> &'static str {
+    fn subtype_name<'a>(&self) -> Cow<'a, str> {
+        let plural_s = || if self.number == 1 { "s" } else { "" };
+
         match ItemType::from(self.tval) {
-            ItemType::Food => "",
+            ItemType::Food =>
+                Cow::from(match self.subval {
+                    257 => format!("&M Mushroom{} of Poison", plural_s()),
+                    258 => format!("%M Mushroom{} of Blindness", plural_s()),
+                    259 => format!("%M Mushroom{} of Paranoia", plural_s()),
+                    260 => format!("%M Mushroom{} of Confusion", plural_s()),
+                    261 => format!("%M Mushroom{} of Hallucination", plural_s()),
+                    262 => format!("%M Mushroom{} of Cure Poison", plural_s()),
+                    263 => format!("%M Mushroom{} of Cure Blindness", plural_s()),
+                    264 => format!("%M Mushroom{} of Cure Paranoia", plural_s()),
+                    265 => format!("%M Mushroom{} of Cure Confusion", plural_s()),
+                    266 => format!("%M Mushroom{} of Weakness", plural_s()),
+                    267 => format!("%M Mushroom{} of Unhealth", plural_s()),
+                    268 => format!("%M Mushroom{} of Restore Constitution", plural_s()),
+                    269 => format!("%M Mushroom{} of First Aid", plural_s()),
+                    270 => format!("%M Mushroom{} of Minor Cures", plural_s()),
+                    271 => format!("%M Mushroom{} of Light Cures", plural_s()),
+                    272 => format!("%M Mushroom{} of Restoring", plural_s()),
+                    273 => format!("Hairy %M Mold{} of Poison", plural_s()),
+                    274 => format!("Hairy %M Mold{} of Hallucination", plural_s()),
+                    275 => format!("Hairy %M Mold{} of Cure Poison", plural_s()),
+                    276 => format!("Hairy %M Mold{} of Unhealth", plural_s()),
+                    277 => format!("Hairy %M Mold{} of Cure Serious Wounds", plural_s()),
+                    307 => format!("Ration{} of Food", plural_s()),
+                    308 => format!("Slime Mold{}", plural_s()),
+                    309 => format!("Hard Biscuit{}", plural_s()),
+                    310 => format!("Strip{} of Beef Jerky", plural_s()),
+                    311 => format!("Pint{} of Fine Ale", plural_s()),
+                    312 => format!("Pint{} of Fine Wine", plural_s()),
+                    313 => format!("Piece{} of Elvish Waybread", plural_s()),
+                    314 => format!("Rice-a-Roni{}", plural_s()),
+                    315 => format!("Jolly Green Jelly{}", plural_s()),
+                    316 => format!("Handful{} of Berries (Poisonous)", plural_s()),
+                    317 => format!("Handful{} of Berries (Smurfberries)", plural_s()),
+                    319 => format!("Eyeball{} of Ned", plural_s()),
+                    252 => format!("Pint{} of Fine Grade Mush", plural_s()),
+                    _ => "Alien Food".to_string(),
+                }),
             ItemType::Dagger =>
-                match self.subval {
+                Cow::from(match self.subval {
                     1 => "Main Gauche",
                     2 => "Misercorde",
                     3 => "Stiletto",
@@ -88,9 +127,9 @@ impl Item {
                     22 => "Small Sword",
                     //5 => "Cat-O-Nine Tails",
                     _ => "Alien Dagger",
-                },
+                }),
             ItemType::Sword =>
-                match self.subval {
+                Cow::from(match self.subval {
                     6 => "Backsword",
                     7 => "Bastard Sword",
                     10 => "Broadsword",
@@ -106,16 +145,16 @@ impl Item {
                     23 => "Zweihander",
                     24 => "Broken Sword",
                     _ => "Alien Sword",
-                },
+                }),
                 ItemType::HaftedWeapon =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Balestarius",
                         3 => "Battle Axe",
                         4 => "Broad Axe",
-                        _ => "Alien Hafted Weapon"
-                    },
+                        _ => "Alien Hafted Weapon",
+                    }),
                 ItemType::Maul =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         2 => "Ball and Chain",
                         6 => "Wooden Club",
                         7 => "Flail",
@@ -126,9 +165,9 @@ impl Item {
                         12 => "Lead Filled Mace",
                         13 => "Iron Shod Quarterstaff",
                         _ => "Alien Maul",
-                    },
+                    }),
                 ItemType::PoleArm =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Awl-Pike",
                         2 => "Beaked Axe",
                         3 => "Fauchard",
@@ -140,9 +179,9 @@ impl Item {
                         9 => "Lance",
                         10 => "Javelin",
                         _ => "Alien Polearm",
-                    },
+                    }),
                 ItemType::RangedWeapon =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Short Bow",
                         2 => "Long Bow",
                         3 => "Composite Bow",
@@ -150,47 +189,21 @@ impl Item {
                         11 => "Heavy Crossbow",
                         20 => "Sling",
                         _ => "Alien Ranged Weapon",
-                    },
-                ItemType::Arrow =>
-                    match self.number {
-                        1 => "Arrow",
-                        _ => "Arrows",
-                    },
-                ItemType::Bolt =>
-                    match self.number {
-                        1 => "Bolt",
-                        _ => "Bolts",
-                    },
-                ItemType::SlingAmmo =>
-                    match self.subval {
-                        1 => match self.number {
-                            1 => "Rounded Pebble",
-                            _ => "Rounded Pebbles",
-                        },
-                        //1 => Iron Shot
-                        _ => "Alien Pebble(s)",
-                    },
-                ItemType::Spike =>
-                    match self.number {
-                        1 => "Iron Spike",
-                        _ => "Iron Spikes",
-                    },
+                    }),
+                ItemType::Arrow => Cow::from(format!("Arrow{}", plural_s())),
+                ItemType::Bolt => Cow::from(format!("Bolt{}", plural_s())),
+                ItemType::SlingAmmo => Cow::from(format!("Rounded Pebble{}", plural_s())),
+                ItemType::Spike => Cow::from(format!("Iron Spike{}", plural_s())),
                 ItemType::LightSource =>
                     match self.subval {
-                        1 => match self.number {
-                            1 => "Brass Lantern",
-                            _ => "Brass Lanterns",
-                        },
-                        13 => match self.number {
-                            1 => "Wooden Torch",
-                            _ => "Wooden Torches",
-                        },
-                        17 => "Magic Lantern",
-                        15 => "Magic Torch",
-                        _ => "Alien Lightsource",
+                        1 =>  Cow::from(format!("Brass Lantern{}", plural_s())),
+                        13 => Cow::from(format!("Wooden Lantern{}", plural_s())),
+                        17 => Cow::from("Magic Lantern"),
+                        15 => Cow::from("Magic Torch"),
+                        _ => Cow::from("Alien Lightsource"),
                     },
                 ItemType::Pick =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Pick",
                         2 => "Shovel",
                         //2 => "Orcish Pick",
@@ -199,17 +212,17 @@ impl Item {
                         6 => "Dwarven Shovel",
                         7 => "Orcish Pick",
                         _ => "Alien Pick",
-                    },
+                    }),
                 ItemType::Boots =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Pair of Soft Leather Shoes",
                         2 => "Pair of Soft Leather Boots",
                         3 => "Pair of Hard Leather Boots",
                         4 => "Pair of Sandals",
                         _ => "Alien Boots",
-                    },
+                    }),
                 ItemType::Helm =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Soft Leather Cap",
                         2 => "Hard Leather Cap",
                         3 => "Metal Cap",
@@ -220,17 +233,16 @@ impl Item {
                         8 => "Jewel Encrusted Crown",
                         11 => "Cloth Hat",
                         _ => "Alien Helm",
-                    },
+                    }),
                 ItemType::GemHelm =>
-                    match self.subval {
-                        // if type is identified -> ...of Gems
-                        9 => "Iron Helm",
-                        10 => "Steel Helm",
-                        _ => "Alien Helm",
-                    },
+                    Cow::from(match self.subval {
+                        9 => "Iron Helm of Gems",
+                        10 => "Steel Helm of Gems",
+                        _ => "Alien Helm of Gems",
+                    }),
                 ItemType::WearableGem =>
                     // if !is_identified "Finely cut %R"
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Finely cut %R of Teleportation",
                         2 => "Finely cut %R of Resist Cold",
                         3 => "Finely cut %R of Resist Acid",
@@ -239,9 +251,9 @@ impl Item {
                         6 => "Finely cut %R of Slow Digestation",
                         7 => "Finely cut %R of Lordly Protection (FIRE)",
                         _ => "Alient Gem",
-                    },
+                    }),
                 ItemType::SoftArmor =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Robe",
                         2 => "Soft Leather Armor",
                         3 => "Soft Studded Leather",
@@ -257,9 +269,9 @@ impl Item {
                         13 => "Elven Chain Mail",
                         99 => "Some filthy rags",
                         _ => "Alien Soft Armor",
-                    },
+                    }),
                 ItemType::HardArmor =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Metal Scale Mail",
                         2 => "Chain Mail",
                         3 => "Rusty Chain Mail",
@@ -277,53 +289,41 @@ impl Item {
                         15 => "Mithril Chain Mail",
                         16 => "Mithril Plate Armor",
                         _ => "Alien Hard Armor",
-                    },
-                ItemType::Cloak => "Cloak",
+                    }),
+                ItemType::Cloak => Cow::from("Cloak"),
                 ItemType::Gloves =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Set of Leather Gloves",
                         2 => "Set of Gauntlets",
                         5 => "Set of Cloth Gloves",
                         _ => "Alien Gloves",
-                    },
+                    }),
                 ItemType::Bracers =>
                     match self.subval {
                         // if !type_is_identified -> "Set of Bracers"
-                        1 => "Set of Bracers of Protection",
-                        2 => "Set of Bracers of Defence",
-                        3 => "Set of Bracers of Shielding",
-                        4 => "Set of Mithril Bracers",
-                        5 => "Set of Adamantite Bracers",
-                        6 => "Set of Bracers of Weapon Attraction",
-                        7 => "Small Silver Bracelet of Warding",
-                        264 => match self.number {
-                            1 => "Small Silver Bracelet",
-                            _ => "Small Silver Bracelets",
-                        },
-                        271 => match self.number {
-                            1 => "Small Silver Bracelet",
-                            _ => "Small Silver Bracelets",
-                        },
-                        272 => match self.number {
-                            1 => "Small Gold Bracelet",
-                            _ => "Small Gold Bracelets",
-                        },
-                        273 => match self.number {
-                            1 => "Small Platinum Bracelet",
-                            _ => "Small Platinum Bracelets",
-                        },
-                        _ => "Alien Bracers",
+                        1 => Cow::from("Set of Bracers of Protection"),
+                        2 => Cow::from("Set of Bracers of Defence"),
+                        3 => Cow::from("Set of Bracers of Shielding"),
+                        4 => Cow::from("Set of Mithril Bracers"),
+                        5 => Cow::from("Set of Adamantite Bracers"),
+                        6 => Cow::from("Set of Bracers of Weapon Attraction"),
+                        7 => Cow::from("Small Silver Bracelet of Warding"),
+                        264 => Cow::from(format!("Small Bronze Bracelet{}", plural_s())),
+                        271 => Cow::from(format!("Small Silver Bracelet{}", plural_s())),
+                        272 => Cow::from(format!("Small Gold Bracelet{}", plural_s())),
+                        273 => Cow::from(format!("Small Platinum Bracelet{}", plural_s())),
+                        _ => Cow::from("Alien Bracers"),
                     },
                 ItemType::Belt =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Girdle",
                         10 => "Silver Belt Buckle",
                         11 => "Gold Belt Buckle",
                         13 => "Leather Belt",
                         _ => "Alien Belt",
-                    },
+                    }),
                 ItemType::Shield =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         1 => "Small Leather Shield",
                         2 => "Medium Leather Shield",
                         3 => "Large Leather Shield",
@@ -331,9 +331,9 @@ impl Item {
                         5 => "Medium Metal Shield",
                         6 => "Large Metal Shield",
                         _ => "Alien Shield",
-                    },
+                    }),
                 ItemType::Ring =>
-                    match self.subval {
+                    Cow::from(match self.subval {
                         // !is_identified -> %R Ring
                         1 => "%R Ring of Gain Strength",
                         2 => "%R Ring of Gain Dexterity",
@@ -369,35 +369,92 @@ impl Item {
                         34 => "%R Ring of Gnomekind",
                         35 => "%R Ring of Speed",
                         _ => "Alien Ring",
-                    },
+                    }),
                 ItemType::Amulet =>
                     match self.subval {
                         // !is_identified -> "%A Amulet"
-                        5 => "Amulet of Wisdom",
-                        6 => "Amulet of Charisma",
-                        7 => "Amulet of Searching",
-                        8 => "Amulet of Teleportation",
-                        9 => "Amulet of Slow Digestation",
-                        10 => "Amulet of Resist Acid",
-                        11 => "Amulet of Adornment",
-                        12 => "Amulet of Adornment",
-                        13 => "Amulet of the Magi",
-                        14 => "Amulet of DOOM",
-                        268 => match self.number {
-                            1 => "Finely Wrought Silver Necklace",
-                            _ => "Finely Wrought Silver Necklaces",
-                        },
-                        269 => match self.number {
-                            1 => "Finely Wrought Gold Necklace",
-                            _ => "Finely Wrought Gold Necklaces",
-                        },
-                        270 => match self.number {
-                            1 => "Finely Wrought Mithril Necklace",
-                            _ => "Finely Wrought Mithril Necklaces",
-                        },
-                        _ => "Alien Amulet",
+                        5 => Cow::from("Amulet of Wisdom"),
+                        6 => Cow::from("Amulet of Charisma"),
+                        7 => Cow::from("Amulet of Searching"),
+                        8 => Cow::from("Amulet of Teleportation"),
+                        9 => Cow::from("Amulet of Slow Digestation"),
+                        10 => Cow::from("Amulet of Resist Acid"),
+                        11 => Cow::from("Amulet of Adornment"),
+                        12 => Cow::from("Amulet of Adornment"),
+                        13 => Cow::from("Amulet of the Magi"),
+                        14 => Cow::from("Amulet of DOOM"),
+                        268 => Cow::from(format!("Finely Wrought Silver Necklace{}", plural_s())),
+                        269 => Cow::from(format!("Finely Wrought Gold Necklace{}", plural_s())),
+                        270 => Cow::from(format!("Finely Wrought Mithril Necklace{}", plural_s())),
+                        _ => Cow::from("Alien Amulet"),
                     },
-            _ => "Something alien",
+                ItemType::MiscUsable =>
+                    Cow::from(match self.subval {
+                        14 => "%A Statue",
+                        15 => "Broken Set of Teeth",
+                        16 => "Silver Cross",
+                        17 => "Gold Cross",
+                        18 => "Mithril Cross",
+                        19 => "%M Cross",
+                        20 => "%M Cross",
+                        21 => "Corked Bottle",
+                        22 => "Holy Hand Grenade of Antioch",
+                        _ => "Alien Thing",
+                    }),
+                ItemType::Chime =>
+                    Cow::from(match self.subval {
+                        1 => "%M Chime of Light",
+                        2 => "%M Chime of Detect Doors/Stairs",
+                        3 => "%M Chime of Detect Traps",
+                        4 => "%M Chime of Teleportation",
+                        5 => "%M Chime of Thunderblasts",
+                        6 => "%M Chime of Summon Monster",
+                        7 => "%M Chime of Disarming",
+                        8 => "%M Chime of Aggravation",
+                        9 => "%M Chime of Slow Monster",
+                        10 => "%M Chime of Soothe Monster",
+                        11 => "%M Chime of Cure Light Wound",
+                        12 => "%M Chime of Changing",
+                        13 => "%M Chime of Remove Curse",
+                        14 => "%M Chime of Curing",
+                        15 => "%M Chime of Dispel Evil",
+                        16 => "%M Chime of Darkness",
+                        _ => "Alien %M Chime",
+                    }),
+                ItemType::Horn =>
+                    Cow::from(match self.subval {
+                        1 => "%H of Bubbles",
+                        2 => "%H of Calling",
+                        3 => "%H of Soft Sounds",
+                        4 => "%H of *Blasting*",
+                        5 => "%H of Cold",
+                        6 => "%H of Heat",
+                        7 => "%H of Gas",
+                        8 => "%H of Recall",
+                        9 => "%H of *Chaos*",
+                        10 => "%H of Glue",
+                        11 => "%H of Valhalla",
+                        12 => "%H of Tritons",
+                        13 => "%H of Fog",
+                        _ => "Alien %H",
+                    }),
+                ItemType::Instrument =>
+                    Cow::from(match self.subval {
+                        258 => "Pipes of Peace [Beginners Instrument]",
+                        259 => "Lyre of Nature [Instrument I]",
+                        260 => "Lute of the Woods [Instrument II]",
+                        261 => "Harp of the Druids [Greater Instrument]",
+                        _ => "Alien instrument",
+                    }),
+                ItemType::SongBook =>
+                    Cow::from(match self.subval {
+                        262 => "Book of Bard Lyrics [Beginners Handbook]",
+                        263 => "Songs of Charming [Song Book I]",
+                        264 => "Ballads of Knowledge [Song Book II]",
+                        265 => "Epics of the Bards [Greater Song Book]",
+                        _ => "Alien book",
+                    }),
+            _ => Cow::from("Something alien"),
         }
     }
 
