@@ -1552,16 +1552,15 @@ void ic__switch_weapon(long *scr_state)
 {
 	/*{ Switch primary and secondary weapons          -RAK-   }*/
 
-	char prt1[82], prt2[82], out_val[82];
-	treasure_type tmp_obj;
-
 	if ((Cursed_worn_bit & equipment[Equipment_primary].flags) != 0) {
+		char prt1[82], prt2[82];
 		inven_temp->data = equipment[Equipment_primary];
 		objdes(prt1, inven_temp, false);
 		sprintf(prt2, "The %s you are wielding appears to be cursed.",
 			prt1);
 		msg_print(prt2);
 	} else {
+		treasure_type tmp_obj;
 		/*{ Switch weapons        }*/
 		reset_flag = false;
 		tmp_obj = equipment[Equipment_secondary];
@@ -1574,21 +1573,7 @@ void ic__switch_weapon(long *scr_state)
 		/*{ Add bonuses           }*/
 		py_bonuses(&(equipment[Equipment_primary]), 1);
 
-		if (equipment[Equipment_primary].tval > 0) {
-			strcpy(prt1, "Primary weapon   : ");
-			inven_temp->data = equipment[Equipment_primary];
-			objdes(prt2, inven_temp, true);
-			sprintf(out_val, "%s%s", prt1, prt2);
-			msg_print(out_val);
-		}
-
-		if (equipment[Equipment_secondary].tval > 0) {
-			strcpy(prt1, "Secondary weapon : ");
-			inven_temp->data = equipment[Equipment_secondary];
-			objdes(prt2, inven_temp, true);
-			sprintf(out_val, "%s%s", prt1, prt2);
-			msg_print(out_val);
-		}
+		msg_print("Swapped main hand with backup");
 	}
 
 	if (*scr_state != 0) {
