@@ -727,42 +727,42 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 	      long *scr_state, boolean *valid_flag)
 {
 	/*{ Wear routine, wear or wield an item           -RAK-   }*/
+	long com_val;
+	long i1;
+	char out_val[82];
+	boolean exit_flag = false;
 
-	long com_val, i1, i2, i3;
-	char out_val[82], out_val_tmp[82], prt1[82], prt2[82];
-	treasure_type unwear_obj;
-	boolean exit_flag, test_flag;
-	long count, factor;
-	treas_ptr ptr, item_ptr;
-
-	obj_set massive_pile_of_stuff = {
-	    valuable_gems_wear, lamp_or_torch,  bow_crossbow_or_sling,
-	    hafted_weapon,      pole_arm,       dagger,
-	    sword,		pick_or_shovel, maul,
-	    gem_helm,		boots,		gloves_and_gauntlets,
-	    cloak,		helm,		shield,
-	    hard_armor,		soft_armor,     bracers,
-	    belt,		amulet,		ring,
-	    0,			0,		0,
-	    0};
 
 	ENTER(("ic__wear", "i2"));
 
-	exit_flag = false;
 	cur_inven = inventory_list;
 
 	do {
+		treas_ptr item_ptr;
+		boolean test_flag;
+
 		ic__clear_display(cur_display, cur_display_size);
 		change_all_ok_stats(true, false);
 
-		find_range(massive_pile_of_stuff, false, &ptr, &count);
+		{ /* Filter item types before we show the list */
+			const obj_set massive_pile_of_stuff = {
+				valuable_gems_wear, lamp_or_torch,
+				bow_crossbow_or_sling, hafted_weapon,
+				pole_arm, dagger, sword, pick_or_shovel,
+				maul, gem_helm, boots, gloves_and_gauntlets,
+				cloak, helm, shield, hard_armor, soft_armor,
+				bracers, belt, amulet, ring, 0, 0, 0, 0
+			};
+			treas_rec *ptr;
+			long count;
+			find_range(massive_pile_of_stuff, false, &ptr, &count);
+		}
 
-		item_ptr = inventory_list;
-		test_flag = false;
 		sprintf(prompt, "Items a-%%N, space for next page, Esc to "
 				"exit) Wear/Wield which one?");
-
 		clear_rc(2, 1);
+
+		item_ptr = inventory_list;
 		test_flag = ic__show_inven(&item_ptr, true, false, scr_state,
 					   valid_flag, prompt, cur_display,
 					   cur_display_size);
@@ -770,7 +770,7 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 		/*{ The above is a STUPID comment. }*/
 		/* That second comment helps a lot. */
 		exit_flag = !test_flag;
-		if (!(exit_flag)) { /*{ Main logic for wearing        }*/
+		if (!exit_flag) { /*{ Main logic for wearing        }*/
 			reset_flag = false; /*{ Player turn   }*/
 			test_flag = true;
 			switch (
@@ -840,8 +840,8 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 				break;
 
 			case valuable_gems_wear:
-				if (equipment[Equipment_helm].tval ==
-				    gem_helm) {
+				if (equipment[Equipment_helm].tval == gem_helm) {
+					long factor;
 					/* with equipment[equipment_helm] do; */
 					if (equipment[Equipment_helm].p1 > 0) {
 						msg_print("The gem adheres "
@@ -944,57 +944,47 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 				break;
 			} /* end switch */
 
-			if (test_flag) {
-				if (equipment[i1].tval > 0) {
-					if ((Cursed_worn_bit &
-					     equipment[i1].flags) != 0) {
-						inven_temp->data =
-						    equipment[i1];
-						objdes(out_val, inven_temp,
-						       false);
-						strcpy(out_val_tmp, out_val);
-						sprintf(out_val,
-							"The %s you are ",
-							out_val_tmp);
-						switch (i1) {
-						case Equipment_primary:
-							strcat(out_val,
-							       "wielding "
-							       "appears to be "
-							       "cursed.");
-							break;
-						default:
-							strcat(out_val,
-							       "wearing "
-							       "appears to be "
-							       "cursed.");
-							break;
-						}
-						test_flag = false;
-						com_val = 0;
-					}
+			if (test_flag && equipment[i1].tval > 0 &&
+					(Cursed_worn_bit & equipment[i1].flags) != 0) {
+				char out_val_tmp[82];
+				inven_temp->data = equipment[i1];
+				objdes(out_val, inven_temp, false);
+				strcpy(out_val_tmp, out_val);
+				sprintf(out_val, "The %s you are ", out_val_tmp);
+				switch (i1) {
+					case Equipment_primary:
+						strcat(out_val,
+								"wielding "
+								"appears to be "
+								"cursed.");
+						break;
+					default:
+						strcat(out_val,
+								"wearing "
+								"appears to be "
+								"cursed.");
+						break;
 				}
+				test_flag = false;
+				com_val = 0;
 			}
 
 			if (test_flag) {
-				unwear_obj = equipment[i1];
+				long i2;
+				long i3;
+				char prt1[82];
+				char prt2[82];
+				treasure_type unwear_obj = equipment[i1];
 				equipment[i1] = item_ptr->data;
 				if (i1 == Equipment_light) {
 					PF.light_on = true;
-				}
-				/* with equipment[i1] do; */
-				/*{ Fix for torches       }*/
-				if ((equipment[i1].subval > 255) &&
-				    (equipment[i1].subval < 512)) {
-					equipment[i1].number = 1;
-					equipment[i1].subval -= 255;
 				}
 				/*{ Fix for weight        }*/
 				inven_weight +=
 				    equipment[i1].weight * equipment[i1].number;
 
-				inven_destroy(
-				    item_ptr); /*{ Subtracts weight      }*/
+				/*{ Subtracts weight      }*/
+				inven_destroy(item_ptr);
 				equip_ctr++;
 				py_bonuses(&(equipment[i1]), 1);
 				if (unwear_obj.tval > 0) {
