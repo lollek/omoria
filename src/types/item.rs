@@ -63,7 +63,7 @@ pub struct Item { // treasure_type
 }
 
 impl Item {
-    fn number_of<'a>(&self) -> Cow<'a, str> {
+    fn number_of_string<'a>(&self) -> Cow<'a, str> {
         match self.number {
             0 => Cow::from("no more "),
             1 => Cow::from(""),
@@ -664,23 +664,41 @@ impl Item {
         }
     }
 
-    fn damage(&self) -> String {
+    fn damage_string<'a>(&self) -> Cow<'a, str> {
         let raw_string = self.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
         let damage_string = misc::c_array_to_rust_string(raw_string);
         if damage_string != "0d0" {
-            format!(" ({})", damage_string)
+            Cow::from(format!(" ({})", damage_string))
         } else {
-            "".to_string()
+            Cow::from("")
         }
+    }
+
+    fn attack_enchantment_string<'a>(&self) -> Cow<'a, str> {
+        let tohit_sign = if self.tohit > 0 { "+" } else if self.tohit < 0 { "-" } else {""};
+        let todam_sign = if self.todam > 0 { "+" } else if self.todam < 0 { "-" } else {""};
+        Cow::from(format!(" ({}{},{}{})", tohit_sign, self.tohit, todam_sign, self.todam))
+    }
+
+    pub fn item_type(&self) -> ItemType {
+        ItemType::from(self.tval)
+    }
+
+    pub fn is_identified(&self) -> bool {
+        true // TODO: Implement this
     }
 
     // In progress..
     pub fn equipment_name(&self) -> String {
-        let is_identified = true;
-        if is_identified {
-            format!("{}{}{}", self.number_of(), self.subtype_name(), self.damage())
-        } else {
-            format!("{}{}{}", self.number_of(), self.subtype_name(), self.damage())
+        let mut parts = Vec::new();
+        parts.push(self.number_of_string());
+        parts.push(self.subtype_name());
+        if self.item_type().is_weapon() {
+            parts.push(self.damage_string());
+            if self.is_identified() {
+                parts.push(self.attack_enchantment_string());
+            }
         }
+        parts.join("")
     }
 }

@@ -1,7 +1,7 @@
 #include "imoria.h"
 
-static long win_equip_x = 81;
-static long win_equip_y = 1;
+static long win_equip_x = 1;
+static long win_equip_y = 26;
 
 void C_print_equipment_block();
 void prt_equipment(void)

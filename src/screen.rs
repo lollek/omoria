@@ -27,7 +27,7 @@ const TIME_ROW: u8 = 20;
 
 // Equipment Column
 const EQUIP_COL: u8 = 81;
-const EQUIP_ROW: u8 = 8;//1;
+const EQUIP_ROW: u8 = 1;
 
 // Status Row
 const STATUS_ROW: u8 = 23;

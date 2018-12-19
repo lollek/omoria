@@ -76,7 +76,7 @@ pub fn slots_iter() -> Range<usize> {
 pub fn get_name(slot: Slot) -> String {
     let item = unsafe { equipment[slot as usize] };
     match item.tval {
-        0 => "(Nothing)".to_string(),
+        0 => "".to_string(),
         _ => item.equipment_name(),
     }
 }

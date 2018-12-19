@@ -81,6 +81,16 @@ pub enum ItemType {
 }
 
 impl ItemType {
+    pub fn is_weapon(&self) -> bool {
+        match self {
+            ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow | ItemType::Spike
+                | ItemType::RangedWeapon | ItemType::HaftedWeapon | ItemType::PoleArm
+                | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Maul
+                => true,
+            _ => false,
+        }
+    }
+
     pub fn symbol(&self, subval: i64) -> chtype {
         match self {
             ItemType::MiscObject => {
