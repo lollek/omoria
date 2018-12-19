@@ -698,11 +698,11 @@ impl Item {
         let mut parts = Vec::new();
         parts.push(self.number_of_string());
         parts.push(self.subtype_name());
-        if self.item_type().is_weapon() {
+        if self.item_type().has_damage() {
             parts.push(self.damage_string());
-            if self.is_identified() {
-                parts.push(self.attack_enchantment_string());
-            }
+        }
+        if self.item_type().has_attack_enhancement() && self.is_identified() {
+            parts.push(self.attack_enchantment_string());
         }
         parts.push(self.armor_string());
         parts.join("")

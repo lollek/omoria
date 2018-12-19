@@ -81,7 +81,17 @@ pub enum ItemType {
 }
 
 impl ItemType {
-    pub fn is_weapon(&self) -> bool {
+    pub fn has_damage(&self) -> bool {
+        match self {
+            ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow | ItemType::Spike
+                | ItemType::HaftedWeapon | ItemType::PoleArm
+                | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Maul
+                => true,
+            _ => false,
+        }
+    }
+
+    pub fn has_attack_enhancement(&self) -> bool {
         match self {
             ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow | ItemType::Spike
                 | ItemType::RangedWeapon | ItemType::HaftedWeapon | ItemType::PoleArm
