@@ -667,17 +667,22 @@ impl Item {
     fn damage_string<'a>(&self) -> Cow<'a, str> {
         let raw_string = self.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
         let damage_string = misc::c_array_to_rust_string(raw_string);
-        if damage_string != "0d0" {
-            Cow::from(format!(" ({})", damage_string))
-        } else {
-            Cow::from("")
-        }
+        Cow::from(format!(" ({})", damage_string))
     }
 
     fn attack_enchantment_string<'a>(&self) -> Cow<'a, str> {
         let tohit_sign = if self.tohit > 0 { "+" } else if self.tohit < 0 { "-" } else {""};
         let todam_sign = if self.todam > 0 { "+" } else if self.todam < 0 { "-" } else {""};
         Cow::from(format!(" ({}{},{}{})", tohit_sign, self.tohit, todam_sign, self.todam))
+    }
+
+    fn armor_string<'a>(&self) -> Cow<'a, str> {
+        if self.toac == 0 && self.ac == 0 {
+            Cow::from("")
+        } else {
+            let toac_sign = if self.toac > 0 { "+" } else if self.toac < 0 { "-" } else {""};
+            Cow::from(format!(" [{},{}{}]", self.ac, toac_sign, self.toac))
+        }
     }
 
     pub fn item_type(&self) -> ItemType {
@@ -699,6 +704,7 @@ impl Item {
                 parts.push(self.attack_enchantment_string());
             }
         }
+        parts.push(self.armor_string());
         parts.join("")
     }
 }
