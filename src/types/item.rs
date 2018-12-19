@@ -198,8 +198,8 @@ impl Item {
                     match self.subval {
                         1 =>  Cow::from(format!("Brass Lantern{}", plural_s())),
                         13 => Cow::from(format!("Wooden Lantern{}", plural_s())),
-                        17 => Cow::from("Magic Lantern"),
                         15 => Cow::from("Magic Torch"),
+                        17 => Cow::from("Magic Lantern"),
                         _ => Cow::from("Alien Lightsource"),
                     },
                 ItemType::Pick =>
@@ -698,6 +698,11 @@ impl Item {
         let mut parts = Vec::new();
         parts.push(self.number_of_string());
         parts.push(self.subtype_name());
+        if self.item_type() == ItemType::LightSource {
+            let plural_s = if self.p1 == 0 { "" } else { "s" };
+            parts.push(Cow::from(format!(" with {} turn{} of light", self.p1, plural_s)));
+        }
+
         if self.item_type().has_damage() {
             parts.push(self.damage_string());
         }

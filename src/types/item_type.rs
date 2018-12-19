@@ -1,6 +1,6 @@
 use pancurses::{chtype, A_BOLD};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ItemType {
     MiscObject = 1,
     Chest = 2,
