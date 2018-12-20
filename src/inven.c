@@ -283,214 +283,140 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 	/*  { Displays inventory items, returns chosen item if want_back. }*/
 	/*{ boolean returns if chosen }*/
 
-	char command;
-	long com_val, num_choices;
-	boolean exit_flag;
+	long num_choices;
+	boolean exit_flag = false;
 	treas_ptr next_inven;
-	treas_ptr temp_ptr;
-	long wgt;
-	long count, count2;
+	long count;
+	long count2;
 	char out_str[82];
-	boolean caps_flag;
 	obj_set stuff_to_fire = {sling_ammo, bolt, arrow, 0};
 	boolean return_value = false;
+	long wgt = 0;
 
 	ENTER(("ic__show_inven", "iu"));
 
-	exit_flag = false;
-	num_choices =
-	    ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
+	num_choices = ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
 
-	do {
-		if (get_com("", &command)) {
-			com_val = (long)(command);
-			caps_flag = false;
+	while (!exit_flag) {
+		boolean caps_flag = false;
+		char command;
+		if (!get_com("", &command)) {
+			*valid_flag = false;
+			exit_flag = true;
+			continue;
+		}
 
-			switch (com_val) {
+		if (command == 22 || command == 32) {
+			if (cur_inven == next_inven) {
+				prt("Entire inventory displayed.", 1, 1);
+				num_choices = 0;
+			} else {
+				cur_inven = next_inven;
+				num_choices = ic__display_inv(
+						cur_display, prompt, cur_inven,
+						&next_inven);
+			}
+			continue;
+		}
 
-			case 22:
-			case 32:
-				if (cur_inven == next_inven) {
-					prt("Entire inventory displayed.", 1,
-					    1);
-					num_choices = 0;
-				} else {
-					cur_inven = next_inven;
-					num_choices = ic__display_inv(
-					    cur_display, prompt, cur_inven,
-					    &next_inven);
-				}
-				break;
+		if (command == 3 || command == 25 || command == 26 || command == 27) {
+			*valid_flag = false;
+			exit_flag = true;
+			continue;
+		}
 
-			case 3:
-			case 25:
-			case 26:
-			case 27:
-				*valid_flag = false;
-				exit_flag = true;
-				break;
-
-			case 49:
-			case 50:
-			case 51:
-			case 52:
-			case 53:
-			case 54:
-			case 55:
-			case 56:
-			case 57:
-				cur_inven = inventory_list;
-				count = 0;
-				if (!((cur_inven->next == NULL) ||
-				      (count >= (com_val - 49) * 20))) {
-					do {
-						count++;
-						cur_inven = cur_inven->next;
-						if (cur_inven->next == NULL) {
-							exit_flag = true;
-						}
-					} while (
-					    !((cur_inven->next == NULL) ||
-					      (count >= (com_val - 49) * 20)));
-				}
-
-				if ((cur_inven->next == NULL) &&
-				    (count != (com_val - 49) * 20)) {
-					prt("Entire inventory displayed.", 1,
-					    1);
-					cur_inven = inventory_list;
-				} else {
-					next_inven = cur_inven;
-					num_choices = ic__display_inv(
-					    cur_display, prompt, cur_inven,
-					    &next_inven);
-				}
-				sprintf(out_str, ": %c", (int)com_val);
-				prt(out_str, 1, 75);
-				break;
-
-			default:
-				if (want_back) {
-
-					if (clean_flag) {
-						if ((com_val <= ('Z')) &&
-						    (com_val >= ('A'))) {
-							caps_flag = true;
-						}
-						if (caps_flag) {
-							com_val -= 64;
-						} else {
-							com_val -= 96;
-						}
-					} else {
-						com_val -= 96;
-					}
-
-					if ((com_val < 1) ||
-					    (com_val > num_choices)) {
-						prt("Invalid selection.", 1, 1);
-						*valid_flag = false;
+		if ('1' <= command && command <= '9') {
+			cur_inven = inventory_list;
+			count = 0;
+			if (!(cur_inven->next == NULL || count >= (command - '1') * 20)) {
+				do {
+					count++;
+					cur_inven = cur_inven->next;
+					if (cur_inven->next == NULL) {
 						exit_flag = true;
-					} else {
-						if (clean_flag) {
-							*ret_ptr = cur_display
-							    [com_val];
-							temp_ptr =
-							    (*ret_ptr)->next;
-							wgt = 0;
-							if (((*ret_ptr)
-								 ->data.flags2 &
-							     Holding_bit) !=
-							    0) {
-								while (
-								    (temp_ptr !=
-								     NULL) &&
-								    (temp_ptr
-									 ->is_in)) {
-									wgt +=
-									    temp_ptr
-										->data
-										.weight *
-									    temp_ptr
-										->data
-										.number;
-									temp_ptr =
-									    temp_ptr
-										->next;
-								}
-							}
-							if ((!((*ret_ptr)
-								   ->is_in)) &&
-							    (wgt == 0)) {
-								if ((caps_flag) &&
-								    (!(is_in(
-									(*ret_ptr)
-									    ->data
-									    .tval,
-									stuff_to_fire)))) {
-									count =
-									    (*ret_ptr)
-										->data
-										.number;
-								} else {
-									count =
-									    1;
-								}
-								for (count2 = 1;
-								     count2 <=
-									 count;
-								     count2++) {
-									inven_destroy(
-									    *ret_ptr);
-								}
-								ic__clear_display(
-								    cur_display,
-								    cur_display_size);
-								num_choices = ic__display_inv(
-								    cur_display,
-								    prompt,
-								    cur_inven,
-								    &next_inven);
-							} else {
-								msg_print(
-								    "You must "
-								    "empty the "
-								    "bag of "
-								    "holding "
-								    "first.");
-							}
-							if (num_choices == 0) {
-								prt("No items "
-								    "in "
-								    "inventory"
-								    ".",
-								    1, 1);
-								*valid_flag =
-								    false;
-								exit_flag =
-								    true;
-							}
-						} else {
-							*ret_ptr = cur_display
-							    [com_val];
-							cur_display[com_val] =
-							    NULL;
-							exit_flag = true;
-							return_value = true;
-						}
 					}
-				} else {
-					*valid_flag = false;
-					exit_flag = true;
-				}
-				break;
+				} while (!(cur_inven->next == NULL || count >= (command - '1') * 20));
+			}
 
-			} /* end switch */
-		} else {  /* end if command */
+			if (cur_inven->next == NULL && count != (command - '1') * 20) {
+				prt("Entire inventory displayed.", 1, 1);
+				cur_inven = inventory_list;
+			} else {
+				next_inven = cur_inven;
+				num_choices = ic__display_inv(
+						cur_display, prompt, cur_inven,
+						&next_inven);
+			}
+			sprintf(out_str, ": %c", (int)command);
+			prt(out_str, 1, 75);
+			continue;
+		}
+
+		if (!want_back) {
+			*valid_flag = false;
+			exit_flag = true;
+			continue;
+		}
+
+		if (clean_flag) {
+			if (command <= 'Z' && command >= 'A') {
+				caps_flag = true;
+			}
+			command -= caps_flag ? 64 : 96;
+		} else {
+			command -= 96;
+		}
+
+		if (command < 1 || command > num_choices) {
+			prt("Invalid selection.", 1, 1);
+			*valid_flag = false;
+			exit_flag = true;
+			continue;
+		}
+
+		*ret_ptr = cur_display[(int)command];
+		if (!clean_flag) {
+			cur_display[(int)command] = NULL;
+			exit_flag = true;
+			return_value = true;
+			continue;
+		}
+
+		wgt = 0;
+		if ((*ret_ptr)->data.flags2 & Holding_bit) {
+			treas_ptr temp_ptr = (*ret_ptr)->next;
+			while ((temp_ptr != NULL) && (temp_ptr ->is_in)) {
+				wgt += temp_ptr->data.weight * temp_ptr->data.number;
+				temp_ptr = temp_ptr->next;
+			}
+		}
+
+		if (!((*ret_ptr)->is_in) && wgt == 0) {
+			if (caps_flag &&
+					!(is_in((*ret_ptr)->data.tval,
+							stuff_to_fire))) {
+				count = (*ret_ptr)->data.number;
+			} else {
+				count = 1;
+			}
+			for (count2 = 1; count2 <= count; count2++) {
+				inven_destroy(*ret_ptr);
+			}
+			ic__clear_display(cur_display, cur_display_size);
+			num_choices = ic__display_inv(cur_display,
+					prompt,
+					cur_inven,
+					&next_inven);
+		} else {
+			msg_print("You must empty the bag of holding first.");
+		}
+
+		if (num_choices == 0) {
+			prt("No items in inventory.", 1, 1);
 			*valid_flag = false;
 			exit_flag = true;
 		}
-	} while (!exit_flag);
+	}
 
 	*scr_state = 1;
 
@@ -770,11 +696,13 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 		/*{ The above is a STUPID comment. }*/
 		/* That second comment helps a lot. */
 		exit_flag = !test_flag;
-		if (!exit_flag) { /*{ Main logic for wearing        }*/
-			reset_flag = false; /*{ Player turn   }*/
+		/*{ Main logic for wearing        }*/
+		if (!exit_flag) {
+			/*{ Player turn   }*/
+			reset_flag = false;
 			test_flag = true;
-			switch (
-			    item_ptr->data.tval) { /*{ Slot for equipment    }*/
+			/*{ Slot for equipment    }*/
+			switch (item_ptr->data.tval) {
 			case lamp_or_torch:
 				i1 = Equipment_light;
 				break;
@@ -847,10 +775,7 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 						msg_print("The gem adheres "
 							  "itself to your "
 							  "helm!");
-						py_bonuses(
-						    &(equipment
-							  [Equipment_helm]),
-						    -1);
+						py_bonuses(&(equipment[Equipment_helm]), -1);
 						if ((item_ptr->data.flags2 &
 						     Negative_gem_bit) != 0) {
 							item_ptr->data.flags2 &=
@@ -879,34 +804,21 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 								.flags2;
 							factor = 1;
 						}
-						equipment[Equipment_helm]
-						    .cost +=
-						    factor *
-						    item_ptr->data.cost;
-						equipment[Equipment_helm]
-						    .weight +=
-						    factor *
-						    item_ptr->data.weight;
-						equipment[Equipment_helm]
-						    .tohit +=
-						    factor *
-						    item_ptr->data.tohit;
-						equipment[Equipment_helm]
-						    .todam +=
-						    factor *
-						    item_ptr->data.todam;
+						equipment[Equipment_helm].cost +=
+						    factor * item_ptr->data.cost;
+						equipment[Equipment_helm].weight +=
+						    factor * item_ptr->data.weight;
+						equipment[Equipment_helm].tohit +=
+						    factor * item_ptr->data.tohit;
+						equipment[Equipment_helm].todam +=
+						    factor * item_ptr->data.todam;
 						equipment[Equipment_helm].ac +=
 						    factor * item_ptr->data.ac;
-						equipment[Equipment_helm]
-						    .toac +=
-						    factor *
-						    item_ptr->data.toac;
+						equipment[Equipment_helm].toac +=
+						    factor * item_ptr->data.toac;
 						equipment[Equipment_helm].p1--;
 						inven_destroy(item_ptr);
-						py_bonuses(
-						    &(equipment
-							  [Equipment_helm]),
-						    1);
+						py_bonuses(&(equipment [Equipment_helm]), 1);
 					} else {
 						msg_print("There is no more "
 							  "room on the helm.");
@@ -979,6 +891,8 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 				if (i1 == Equipment_light) {
 					PF.light_on = true;
 				}
+				equipment[i1].number = 1;
+
 				/*{ Fix for weight        }*/
 				inven_weight +=
 				    equipment[i1].weight * equipment[i1].number;
