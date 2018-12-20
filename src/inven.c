@@ -47,10 +47,6 @@ treas_ptr add_inven_item(treasure_type item)
 	/*	{ Add item to inventory_list				-DMF-
 	 * }*/
 
-	long item_num, wgt, typ, subt;
-	boolean flag = false;
-	boolean duplicate_spell_book = false;
-	treas_ptr curse, new_item;
 	treas_ptr return_value = NULL;
 
 	if (inventory_list == NULL) {
@@ -67,13 +63,14 @@ treas_ptr add_inven_item(treasure_type item)
 		inven_ctr++;
 
 	} else {
-
-		item_num = item.number;
-		typ = item.tval;
-		subt = item.subval;
-		wgt = item.number * item.weight;
-
-		new_item =
+		long item_num = item.number;
+		long typ = item.tval;
+		long subt = item.subval;
+		long wgt = item.number * item.weight;
+		boolean flag = false;
+		boolean duplicate_spell_book = false;
+		treas_ptr curse = inventory_list;
+		treas_ptr new_item =
 		    (treas_ptr)safe_malloc(sizeof(treas_rec), "add_inven_item");
 
 		new_item->data = item;
@@ -82,9 +79,7 @@ treas_ptr add_inven_item(treasure_type item)
 		new_item->is_in = false;
 		new_item->next = NULL;
 
-		curse = inventory_list;
 		do {
-			/*      with curse->data do*/
 			if (typ == curse->data.tval) {
 				if (subt == curse->data.subval) {
 					/* */
