@@ -6,9 +6,11 @@ static long win_equip_y = 26;
 void C_print_equipment_block();
 void prt_equipment(void)
 {
-	C_print_equipment_block();
 #if DO_DEBUG
+	C_print_equipment_block();
 	prt_equipment_args(win_equip_y, win_equip_x, 1, false);
+#else
+	prt_equipment_args(1, 81, 1, false);
 #endif
 }
 
