@@ -7,7 +7,9 @@ void C_print_equipment_block();
 void prt_equipment(void)
 {
 	C_print_equipment_block();
+#if DO_DEBUG
 	prt_equipment_args(win_equip_y, win_equip_x, 1, false);
+#endif
 }
 
 void prt_equipment_args(long y, long x, long start, boolean clear)
