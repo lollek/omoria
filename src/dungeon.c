@@ -4619,16 +4619,9 @@ void d__quit()
 		switch (command) {
 		case 'q':
 		case 'Q':
-			if (total_winner) {
-				moria_flag = true;
-				death = true;
-			} else {
-				if (is_from_file) {
-					C_delete_character();
-				}
-				clear_from(1);
-				exit_game();
-			}
+			strcpy(died_from, "Ripe Old Age");
+			moria_flag = true;
+			death = true;
 			break;
 		default:
 			break;
