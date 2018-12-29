@@ -163,7 +163,7 @@ impl Item {
                         10 => "Mace",
                         11 => "War Hammer",
                         12 => "Lead Filled Mace",
-                        13 => "Iron Shod Quarterstaff",
+                        13 => "Iron-Shod Quarterstaff",
                         _ => "Alien Maul",
                     }),
                 ItemType::PoleArm =>
