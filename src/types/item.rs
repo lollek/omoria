@@ -196,8 +196,10 @@ impl Item {
                 ItemType::Spike => Cow::from(format!("Iron Spike{}", plural_s())),
                 ItemType::LightSource =>
                     match self.subval {
-                        1 =>  Cow::from(format!("Brass Lantern{}", plural_s())),
-                        13 => Cow::from(format!("Wooden Lantern{}", plural_s())),
+                        1 =>  Cow::from("Brass Lantern"),
+                        2 =>  Cow::from("Brass Lantern"),
+                        13 => Cow::from("Wooden Lantern"),
+                        14 => Cow::from("Wooden Torch"),
                         15 => Cow::from("Magic Torch"),
                         17 => Cow::from("Magic Lantern"),
                         _ => Cow::from("Alien Lightsource"),

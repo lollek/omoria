@@ -2021,7 +2021,7 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"& Brass Lantern~ with %P5 turns of light", lamp_or_torch, 0x00000000,
      Nothing_flag, 7500, 35, 2, 50, 1, 0, 0, 0, 0, "1d1", 1}, /*{103} */
     {"& Wooden Torch~ with %P5 turns of light", lamp_or_torch, 0x00000000,
-     Nothing_flag, 4000, 2, 270, 30, 5, 0, 0, 0, 0, "1d1", 1}, /*{104} */
+     Nothing_flag, 4000, 2, 14, 30, 1, 0, 0, 0, 0, "1d1", 1}, /*{104} */
     {"& Flask~ of oil", flask_of_oil, 0x00000000, 0x00040000, 7500, 3, 257,
      10, 5, 0, 0, 0, 0, "2d6", 1}, /*{105} */
     {"Lodging for one day", lodging_at_inn, 0x00000000, Nothing_flag, 1,
