@@ -8,9 +8,8 @@ the PROGRESS-file.
 
 * WIP - Begun work on a new way of displaying item names. Will make names more
   easy to understand without resorting to the manual.
-* Torches are no longer stackable - Feels more natural and balanced to me, but
-  should at the same time barely make a gameplay difference as better light
-  sources are easy to come by at the moment. I would like resource management 
+* Some things are no longer stackable (Torches, valuable jewelry, amulets)
+  This feels more natural and balanced to me, and I would like resource management
   to be a bigger part of the game, which this is a step towards.
 
 ### Unknown date

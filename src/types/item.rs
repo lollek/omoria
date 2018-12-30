@@ -8,7 +8,6 @@ use thirdparty::serde::BigArray;
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
 // For more info. Se item_guide.txt
-// TODO: Add bit for is_identified
 // TODO: tval + subval needs bit for is_identified
 pub struct Item { // treasure_type
     // Object name. See below for rules on names.
@@ -79,43 +78,53 @@ impl Item {
 
         match ItemType::from(self.tval) {
             ItemType::Food =>
+                if 255 < self.subval && self.subval < 300 {
+                    // Mushrooms
+                    let attribute = match self.subval {
+                        256 => "",
+                        257 => " of poison",
+                        258 => " of blindness",
+                        259 => " of paranoia",
+                        260 => " of confusion",
+                        261 => " of hallucination",
+                        262 => " of cure poison",
+                        263 => " of cure blindness",
+                        264 => " of cure paranoia",
+                        265 => " of cure confusion",
+                        266 => " of weakness",
+                        267 => " of unhealth",
+                        268 => " of restore constitution",
+                        269 => " of first aid",
+                        270 => " of minor cures",
+                        271 => " of light cures",
+                        272 => " of restoring",
+                        273 => " of poison",
+                        274 => " of hallucination",
+                        275 => " of cure poison",
+                        276 => " of unhealth",
+                        277 => " of cure serious wounds",
+                        _ => "of ???",
+                    };
+                    Cow::from(
+                        format!("%M mushroom{}{}", plural_s(), if self.is_identified() {
+                            attribute } else {""} ))
+                } else {
                 Cow::from(match self.subval {
-                    257 => format!("&M Mushroom{} of poison", plural_s()),
-                    258 => format!("%M Mushroom{} of blindness", plural_s()),
-                    259 => format!("%M Mushroom{} of paranoia", plural_s()),
-                    260 => format!("%M Mushroom{} of confusion", plural_s()),
-                    261 => format!("%M Mushroom{} of hallucination", plural_s()),
-                    262 => format!("%M Mushroom{} of cure poison", plural_s()),
-                    263 => format!("%M Mushroom{} of cure blindness", plural_s()),
-                    264 => format!("%M Mushroom{} of cure paranoia", plural_s()),
-                    265 => format!("%M Mushroom{} of cure confusion", plural_s()),
-                    266 => format!("%M Mushroom{} of weakness", plural_s()),
-                    267 => format!("%M Mushroom{} of unhealth", plural_s()),
-                    268 => format!("%M Mushroom{} of restore constitution", plural_s()),
-                    269 => format!("%M Mushroom{} of first aid", plural_s()),
-                    270 => format!("%M Mushroom{} of minor cures", plural_s()),
-                    271 => format!("%M Mushroom{} of light cures", plural_s()),
-                    272 => format!("%M Mushroom{} of restoring", plural_s()),
-                    273 => format!("Hairy %M Mold{} of poison", plural_s()),
-                    274 => format!("Hairy %M Mold{} of hallucination", plural_s()),
-                    275 => format!("Hairy %M Mold{} of cure poison", plural_s()),
-                    276 => format!("Hairy %M Mold{} of unhealth", plural_s()),
-                    277 => format!("Hairy %M Mold{} of cure serious wounds", plural_s()),
                     307 => format!("Ration{} of food", plural_s()),
-                    308 => format!("Slime mold{}", plural_s()),
                     309 => format!("Hard biscuit{}", plural_s()),
                     310 => format!("Strip{} of beef jerky", plural_s()),
                     311 => format!("Pint{} of fine ale", plural_s()),
                     312 => format!("Pint{} of fine wine", plural_s()),
                     313 => format!("Piece{} of elvish waybread", plural_s()),
-                    314 => format!("Rice-a-roni{}", plural_s()),
-                    315 => format!("Jolly green jelly{}", plural_s()),
+                    314 => format!("Stew{}", plural_s()),
+                    315 => format!("Green jelly{}", plural_s()),
                     316 => format!("Handful{} of berries (poisonous)", plural_s()),
                     317 => format!("Handful{} of berries (smurfberries)", plural_s()),
                     319 => format!("Eyeball{} of Ned", plural_s()),
                     252 => format!("Pint{} of fine grade mush", plural_s()),
                     _ => "Alien food".to_string(),
-                }),
+                })
+                },
             ItemType::Dagger =>
                 Cow::from(match self.subval {
                     1 => "Main gauche",
@@ -239,24 +248,30 @@ impl Item {
                         11 => "Cloth hat",
                         _ => "Alien helm",
                     }),
-                ItemType::GemHelm =>
-                    Cow::from(match self.subval {
-                        9 => "Iron helm of gems",
-                        10 => "Steel helm of gems",
-                        _ => "Alien helm of gems",
-                    }),
-                ItemType::WearableGem =>
-                    // if !is_identified "Finely cut %R"
-                    Cow::from(match self.subval {
-                        1 => "Finely cut %R of teleportation",
-                        2 => "Finely cut %R of resist cold",
-                        3 => "Finely cut %R of resist acid",
-                        4 => "Finely cut %R of see invisible",
-                        5 => "Finely cut %R of stealth",
-                        6 => "Finely cut %R of slow digestation",
-                        7 => "Finely cut %R of lordly protection (FIRE)",
-                        _ => "Alient gem",
-                    }),
+                ItemType::GemHelm => {
+                    let material = match self.subval {
+                        9 => "Iron helm",
+                        10 => "Steel helm",
+                        _ => "Alien helm",
+                    };
+                    Cow::from(format!("{}{}", material,
+                                      if self.is_identified() {
+                                          "of gems" } else { "" }))
+                },
+                ItemType::WearableGem => {
+                    let attribute = match self.subval {
+                        1 => "of teleportation",
+                        2 => "of resist cold",
+                        3 => "of resist acid",
+                        4 => "of see invisible",
+                        5 => "of stealth",
+                        6 => "of slow digestation",
+                        7 => "of lordly protection (FIRE)",
+                        _ => "of ???",
+                    };
+                    Cow::from(format!("Finely cut %R{}", if self.is_identified() {
+                        attribute} else {""}))
+                },
                 ItemType::SoftArmor =>
                     Cow::from(match self.subval {
                         1 => "Robe",
@@ -305,18 +320,26 @@ impl Item {
                     }),
                 ItemType::Bracers =>
                     match self.subval {
-                        // if !type_is_identified -> "Set of Bracers"
-                        1 => Cow::from("Set of bracers of protection"),
-                        2 => Cow::from("Set of bracers of defence"),
-                        3 => Cow::from("Set of bracers of shielding"),
+                        1 => Cow::from(
+                            format!("Set of bracers{}", if self.is_identified() {
+                                        " of protection" } else { "" })),
+                        2 => Cow::from(
+                            format!("Set of bracers{}", if self.is_identified() {
+                                        " of defence" } else { "" })),
+                        3 => Cow::from(
+                            format!("Set of bracers{}", if self.is_identified() {
+                                        " of shielding" } else { "" })),
                         4 => Cow::from("Set of mithril bracers"),
                         5 => Cow::from("Set of adamantite bracers"),
-                        6 => Cow::from("Set of bracers of weapon attraction"),
-                        7 => Cow::from("Small silver bracelet of warding"),
-                        264 => Cow::from(format!("Small bronze bracelet{}", plural_s())),
-                        271 => Cow::from(format!("Small silver bracelet{}", plural_s())),
-                        272 => Cow::from(format!("Small gold bracelet{}", plural_s())),
-                        273 => Cow::from(format!("Small platinum bracelet{}", plural_s())),
+                        6 => Cow::from(
+                            format!("Set of bracers{}", if self.is_identified() {
+                                        " of weapon attraction" } else { "" })),
+                        30 => Cow::from("Small silver bracelet"),
+                        31 => Cow::from(
+                            format!("Small silver bracelet{}", if self.is_identified() {
+                                        " of warding" } else { "" })),
+                        40 => Cow::from("Small gold bracelet"),
+                        50 => Cow::from("Small platinum bracelet"),
                         _ => Cow::from("Alien bracers"),
                     },
                 ItemType::Belt =>
@@ -337,61 +360,85 @@ impl Item {
                         6 => "Large metal shield",
                         _ => "Alien shield",
                     }),
-                ItemType::Ring =>
-                    Cow::from(match self.subval {
-                        // !is_identified -> %R Ring
-                        1 => "%R Ring of gain strength",
-                        2 => "%R Ring of gain dexterity",
-                        3 => "%R Ring of gain constitution",
-                        4 => "%R Ring of gain intelligence",
-                        7 => "%R Ring of speed",
-                        8 => "%R Ring of searching",
-                        9 => "%R Ring of teleportation",
-                        10 => "%R Ring of slow digestion",
-                        11 => "%R Ring of resist fire",
-                        12 => "%R Ring of resist cold",
-                        13 => "%R Ring of feather falling",
-                        14 => "%R Ring of adornment",
-                        15 => "%R Ring of adornment",
-                        16 => "%R Ring of weakness",
-                        17 => "%R Ring of lordly protection (FIRE)",
-                        18 => "%R Ring of lordly protection (ACID)",
-                        19 => "%R Ring of lordly protection (COLD)",
-                        20 => "%R Ring of WOE",
-                        21 => "%R Ring of stupidity",
-                        22 => "%R Ring of increase damage",
-                        23 => "%R Ring of increase to-hit",
-                        24 => "%R Ring of protection",
-                        25 => "%R Ring of aggravate monster",
-                        26 => "%R Ring of see invisible",
-                        27 => "%R Ring of sustain strength",
-                        28 => "%R Ring of sustain intelligence",
-                        29 => "%R Ring of sustain wisdom",
-                        30 => "%R Ring of sustain constitution",
-                        31 => "%R Ring of sustain dexterity",
-                        32 => "%R Ring of sustain charisma",
-                        33 => "%R Ring of slaying",
-                        34 => "%R Ring of gnomekind",
-                        35 => "%R Ring of speed",
-                        _ => "Alien ring",
-                    }),
+                ItemType::Ring => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            1 => " of gain strength",
+                            2 => " of gain dexterity",
+                            3 => " of gain constitution",
+                            4 => " of gain intelligence",
+                            7 => " of speed",
+                            8 => " of searching",
+                            9 => " of teleportation",
+                            10 => " of slow digestion",
+                            11 => " of resist fire",
+                            12 => " of resist cold",
+                            13 => " of feather falling",
+                            14 => " of adornment",
+                            15 => " of adornment",
+                            16 => " of weakness",
+                            17 => " of lordly protection (FIRE)",
+                            18 => " of lordly protection (ACID)",
+                            19 => " of lordly protection (COLD)",
+                            20 => " of WOE",
+                            21 => " of stupidity",
+                            22 => " of increase damage",
+                            23 => " of increase to-hit",
+                            24 => " of protection",
+                            25 => " of aggravate monster",
+                            26 => " of see invisible",
+                            27 => " of sustain strength",
+                            28 => " of sustain intelligence",
+                            29 => " of sustain wisdom",
+                            30 => " of sustain constitution",
+                            31 => " of sustain dexterity",
+                            32 => " of sustain charisma",
+                            33 => " of slaying",
+                            34 => " of gnomekind",
+                            35 => " of speed",
+                            _ => " of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("%R Ring{}", attribute))
+                },
                 ItemType::Amulet =>
                     match self.subval {
-                        // !is_identified -> "%A Amulet"
-                        5 => Cow::from("Amulet of wisdom"),
-                        6 => Cow::from("Amulet of charisma"),
-                        7 => Cow::from("Amulet of searching"),
-                        8 => Cow::from("Amulet of teleportation"),
-                        9 => Cow::from("Amulet of slow digestation"),
-                        10 => Cow::from("Amulet of resist acid"),
-                        11 => Cow::from("Amulet of adornment"),
-                        12 => Cow::from("Amulet of adornment"),
-                        13 => Cow::from("Amulet of the magi"),
-                        14 => Cow::from("Amulet of DOOM"),
-                        268 => Cow::from(format!("Finely wrought silver necklace{}", plural_s())),
-                        269 => Cow::from(format!("Finely wrought gold necklace{}", plural_s())),
-                        270 => Cow::from(format!("Finely wrought mithril necklace{}", plural_s())),
-                        _ => Cow::from("Alien amulet"),
+                        5 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of wisdom"} else {""})),
+                        6 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of charisma"} else {""})),
+                        7 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of searching"} else {""})),
+                        8 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of teleportation"} else {""})),
+                        9 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of slow digestation"} else {""})),
+                        10 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of resist acid"} else {""})),
+                        11 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of adornment"} else {""})),
+                        12 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of adornment"} else {""})),
+                        13 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of the magi"} else {""})),
+                        14 => Cow::from(
+                            format!("%A amulet{}", if self.is_identified() {
+                                "of DOOM"} else {""})),
+                        30 => Cow::from("Finely wrought silver necklace"),
+                        40 => Cow::from("Finely wrought gold necklace"),
+                        60 => Cow::from("Finely wrought mithril necklace"),
+                        _ => Cow::from("%A Alien amulet"),
                     },
                 ItemType::MiscUsable =>
                     Cow::from(match self.subval {
@@ -406,43 +453,55 @@ impl Item {
                         22 => "Holy hand grenade of Antioch",
                         _ => "Alien thing",
                     }),
-                ItemType::Chime =>
-                    Cow::from(match self.subval {
-                        1 => "%M chime of light",
-                        2 => "%m chime of detect doors/stairs",
-                        3 => "%M chime of detect traps",
-                        4 => "%M chime of teleportation",
-                        5 => "%M chime of thunderblasts",
-                        6 => "%M chime of summon monster",
-                        7 => "%M chime of disarming",
-                        8 => "%M chime of aggravation",
-                        9 => "%M chime of slow monster",
-                        10 => "%M chime of soothe monster",
-                        11 => "%M chime of cure light wound",
-                        12 => "%M chime of changing",
-                        13 => "%M chime of remove curse",
-                        14 => "%M chime of curing",
-                        15 => "%M chime of dispel evil",
-                        16 => "%M chime of darkness",
-                        _ => "Alien %M chime",
-                    }),
-                ItemType::Horn =>
-                    Cow::from(match self.subval {
-                        1 => "%H of bubbles",
-                        2 => "%H of calling",
-                        3 => "%H of soft sounds",
-                        4 => "%H of *Blasting*",
-                        5 => "%H of cold",
-                        6 => "%H of heat",
-                        7 => "%H of gas",
-                        8 => "%H of recall",
-                        9 => "%H of *Chaos*",
-                        10 => "%H of glue",
-                        11 => "%H of valhalla",
-                        12 => "%H of tritons",
-                        13 => "%H of fog",
-                        _ => "Alien %H",
-                    }),
+                ItemType::Chime => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            1 => " of light",
+                            2 => " of detect doors/stairs",
+                            3 => " of detect traps",
+                            4 => " of teleportation",
+                            5 => " of thunderblasts",
+                            6 => " of summon monster",
+                            7 => " of disarming",
+                            8 => " of aggravation",
+                            9 => " of slow monster",
+                            10 => " of soothe monster",
+                            11 => " of cure light wound",
+                            12 => " of changing",
+                            13 => " of remove curse",
+                            14 => " of curing",
+                            15 => " of dispel evil",
+                            16 => " of darkness",
+                            _ => " of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("%M chime{}", attribute))
+                },
+                ItemType::Horn => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            1 => " of bubbles",
+                            2 => " of calling",
+                            3 => " of soft sounds",
+                            4 => " of *Blasting*",
+                            5 => " of cold",
+                            6 => " of heat",
+                            7 => " of gas",
+                            8 => " of recall",
+                            9 => " of *Chaos*",
+                            10 => " of glue",
+                            11 => " of valhalla",
+                            12 => " of tritons",
+                            13 => " of fog",
+                            _ => " of ???H",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("%H{}", attribute))
+                },
                 ItemType::Instrument =>
                     Cow::from(match self.subval {
                         258 => "Pipes of Peace [Beginners Instrument]",
@@ -459,177 +518,225 @@ impl Item {
                         265 => "Epics of the Bards [Greater Song Book]",
                         _ => "Alien book",
                     }),
-                ItemType::Scroll1 =>
-                    Cow::from(match self.subval {
-                        257 => format!("Scroll{} of Enchant Weapon To-Hit", plural_s()),
-                        258 => format!("Scroll{} of Enchant Weapon To-Dam", plural_s()),
-                        259 => format!("Scroll{} of Enchant Armor", plural_s()),
-                        260 => format!("Scroll{} of Identify", plural_s()),
-                        261 => format!("Scroll{} of Remove Curse", plural_s()),
-                        262 => format!("Scroll{} of Light", plural_s()),
-                        263 => format!("Scroll{} of Summon Monster", plural_s()),
-                        264 => format!("Scroll{} of Phase Door", plural_s()),
-                        265 => format!("Scroll{} of Teleport", plural_s()),
-                        266 => format!("Scroll{} of Teleport Level", plural_s()),
-                        267 => format!("Scroll{} of Monster Confusion", plural_s()),
-                        268 => format!("Scroll{} of Magic Mapping", plural_s()),
-                        269 => format!("Scroll{} of Sleep Monster", plural_s()),
-                        270 => format!("Scroll{} of Rune of Protection", plural_s()),
-                        271 => format!("Scroll{} of Treasure Detection", plural_s()),
-                        272 => format!("Scroll{} of Object Detection", plural_s()),
-                        273 => format!("Scroll{} of Trap Detection", plural_s()),
-                        274 => format!("Scroll{} of Door/Stair Location", plural_s()),
-                        275 => format!("Scroll{} of Mass Genocide", plural_s()),
-                        276 => format!("Scroll{} of Detect Invisible", plural_s()),
-                        277 => format!("Scroll{} of Aggravate Monster", plural_s()),
-                        278 => format!("Scroll{} of Trap Creation", plural_s()),
-                        279 => format!("Scroll{} of Trap/Door Destruction", plural_s()),
-                        280 => format!("Scroll{} of Door Creation", plural_s()),
-                        281 => format!("Scroll{} of Recharging", plural_s()),
-                        282 => format!("Scroll{} of Genocide", plural_s()),
-                        283 => format!("Scroll{} of Darkness", plural_s()),
-                        284 => format!("Scroll{} of Protection from Evil", plural_s()),
-                        285 => format!("Scroll{} of Create Food", plural_s()),
-                        286 => format!("Scroll{} of Dispel Undead", plural_s()),
-                        /*257 => format!("Scroll{} of *Enchant Weapon*", plural_s()),
-                        258 => format!("Scroll{} of Curse Weapon", plural_s()),
-                        259 => format!("Scroll{} of *Enchant Armor*", plural_s()),
-                        260 => format!("Scroll{} of Curse Armor", plural_s()),
-                        261 => format!("Scroll{} of Summon Undead", plural_s()),
-                        262 => format!("Scroll{} of Blessing", plural_s()),
-                        263 => format!("Scroll{} of Holy Chant", plural_s()),
-                        264 => format!("Scroll{} of Holy Prayer", plural_s()),
-                        265 => format!("Scroll{} of Word-of-Recall", plural_s()),
-                        266 => format!("Scroll{} of *Destruction*", plural_s()),
-                        267 => format!("Scroll{} of Wishing", plural_s()),
-                        268 => format!("Scroll{} of Feign Death", plural_s()),
-                        269 => format!("Scroll{} of Make Munchies", plural_s()),*/
-                        _ => format!("Alien potion{}", plural_s()),
-                    }),
-                ItemType::Potion1 =>
-                    Cow::from(match self.subval {
-                        257 => format!("%C Potion{} of Gain Strength", plural_s()),
-                        258 => format!("%C Potion{} of Poison", plural_s()),
-                        259 => format!("%C Potion{} of Restore Strength", plural_s()),
-                        260 => format!("%C Potion{} of Gain Intelligence", plural_s()),
-                        261 => format!("%C Potion{} of Lose Intelligence", plural_s()),
-                        262 => format!("%C Potion{} of Restore Intelligence", plural_s()),
-                        263 => format!("%C Potion{} of Gain Wisdom", plural_s()),
-                        264 => format!("%C Potion{} of Lose Wisdom", plural_s()),
-                        265 => format!("%C Potion{} of Restore Wisdom", plural_s()),
-                        266 => format!("%C Potion{} of Charisma", plural_s()),
-                        267 => format!("%C Potion{} of Ugliness", plural_s()),
-                        268 => format!("%C Potion{} of Restore Charisma", plural_s()),
-                        269 => format!("%C Potion{} of Cure Light Wounds", plural_s()),
-                        270 => format!("%C Potion{} of Cure Serious Wounds", plural_s()),
-                        271 => format!("%C Potion{} of Cure Critical Wounds", plural_s()),
-                        272 => format!("%C Potion{} of Healing", plural_s()),
-                        273 => format!("%C Potion{} of Gain Constitution", plural_s()),
-                        274 => format!("%C Potion{} of Gain Experience", plural_s()),
-                        275 => format!("%C Potion{} of Sleep", plural_s()),
-                        276 => format!("%C Potion{} of Blindness", plural_s()),
-                        277 => format!("%C Potion{} of Confusion", plural_s()),
-                        278 => format!("%C Potion{} of Poison", plural_s()),
-                        279 => format!("%C Potion{} of Haste Self", plural_s()),
-                        280 => format!("%C Potion{} of Slowness", plural_s()),
-                        281 => format!("Icky Green Potion{} of Slime Mold Juice", plural_s()),
-                        282 => format!("Light Brown Potion{} of Apple Juice", plural_s()),
-                        283 => format!("Clear Potion{} of Water", plural_s()),
-                        284 => format!("%C Potion{} of Gain Dexterity", plural_s()),
-                        285 => format!("%C Potion{} of Restore Dexterity", plural_s()),
-                        286 => format!("%C Potion{} of Restore Constitution", plural_s()),
-                        287 => format!("%C Potion{} of Learning", plural_s()),
-                        288 => format!("%C Potion{} of Lose Memories", plural_s()),
-                        289 => format!("%C Potion{} of Salt Water", plural_s()),
-                        290 => format!("%C Potion{} of Invulnerability", plural_s()),
-                        291 => format!("%C Potion{} of Heroism", plural_s()),
-                        292 => format!("%C Potion{} of Super Heroism", plural_s()),
-                        293 => format!("%C Potion{} of Boldliness", plural_s()),
-                        294 => format!("%C Potion{} of Restore Life Levels", plural_s()),
-                        295 => format!("%C Potion{} of Resist Heat", plural_s()),
-                        296 => format!("%C Potion{} of Resist Cold", plural_s()),
-                        297 => format!("%C Potion{} of Detect Invisible", plural_s()),
-                        298 => format!("%C Potion{} of Slow Poison", plural_s()),
-                        299 => format!("%C Potion{} of Neutralize Poison", plural_s()),
-                        300 => format!("%C Potion{} of Restore Mana", plural_s()),
-                        301 => format!("%C Potion{} of Infra-Vision", plural_s()),
-                        302 => format!("%C Potion{} of Flea Bile", plural_s()),
-                        _ => format!("Alien Potion{}", plural_s()),
-                    }),
+                ItemType::Scroll1 => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            257 => " of Enchant Weapon To-Hit",
+                            258 => " of Enchant Weapon To-Dam",
+                            259 => " of Enchant Armor",
+                            260 => " of Identify",
+                            261 => " of Remove Curse",
+                            262 => " of Light",
+                            263 => " of Summon Monster",
+                            264 => " of Phase Door",
+                            265 => " of Teleport",
+                            266 => " of Teleport Level",
+                            267 => " of Monster Confusion",
+                            268 => " of Magic Mapping",
+                            269 => " of Sleep Monster",
+                            270 => " of Rune of Protection",
+                            271 => " of Treasure Detection",
+                            272 => " of Object Detection",
+                            273 => " of Trap Detection",
+                            274 => " of Door/Stair Location",
+                            275 => " of Mass Genocide",
+                            276 => " of Detect Invisible",
+                            277 => " of Aggravate Monster",
+                            278 => " of Trap Creation",
+                            279 => " of Trap/Door Destruction",
+                            280 => " of Door Creation",
+                            281 => " of Recharging",
+                            282 => " of Genocide",
+                            283 => " of Darkness",
+                            284 => " of Protection from Evil",
+                            285 => " of Create Food",
+                            286 => " of Dispel Undead",
+                            /* 257 => " of *Enchant Weapon*",
+                               258 => " of Curse Weapon",
+                               259 => " of *Enchant Armor*",
+                               260 => " of Curse Armor",
+                               261 => " of Summon Undead",
+                               262 => " of Blessing",
+                               263 => " of Holy Chant",
+                               264 => " of Holy Prayer",
+                               265 => " of Word-of-Recall",
+                               266 => " of *Destruction*",
+                               267 => " of Wishing",
+                               268 => " of Feign Death",
+                               269 => " of Make Munchies", */
+                            _ => "of ??",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("Scroll{}{}", plural_s(), attribute))
+                },
+                ItemType::Potion1 => {
+                    let material = match self.subval {
+                        281 => "Icky green",
+                        282 => "Light brown",
+                        283 => "Clear",
+                        _ => "%C",
+                    };
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            257 => " of Gain Strength",
+                            258 => " of Poison",
+                            259 => " of Restore Strength",
+                            260 => " of Gain Intelligence",
+                            261 => " of Lose Intelligence",
+                            262 => " of Restore Intelligence",
+                            263 => " of Gain Wisdom",
+                            264 => " of Lose Wisdom",
+                            265 => " of Restore Wisdom",
+                            266 => " of Charisma",
+                            267 => " of Ugliness",
+                            268 => " of Restore Charisma",
+                            269 => " of Cure Light Wounds",
+                            270 => " of Cure Serious Wounds",
+                            271 => " of Cure Critical Wounds",
+                            272 => " of Healing",
+                            273 => " of Gain Constitution",
+                            274 => " of Gain Experience",
+                            275 => " of Sleep",
+                            276 => " of Blindness",
+                            277 => " of Confusion",
+                            278 => " of Poison",
+                            279 => " of Haste Self",
+                            280 => " of Slowness",
+                            281 => " of Slime Mold Juice",
+                            282 => " of Apple Juice",
+                            283 => " of Water",
+                            284 => " of Gain Dexterity",
+                            285 => " of Restore Dexterity",
+                            286 => " of Restore Constitution",
+                            287 => " of Learning",
+                            288 => " of Lose Memories",
+                            289 => " of Salt Water",
+                            290 => " of Invulnerability",
+                            291 => " of Heroism",
+                            292 => " of Super Heroism",
+                            293 => " of Boldliness",
+                            294 => " of Restore Life Levels",
+                            295 => " of Resist Heat",
+                            296 => " of Resist Cold",
+                            297 => " of Detect Invisible",
+                            298 => " of Slow Poison",
+                            299 => " of Neutralize Poison",
+                            300 => " of Restore Mana",
+                            301 => " of Infra-Vision",
+                            302 => " of Flea Bile",
+                            _ => " of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("{} potion{}{}", material, plural_s(), attribute))
+                },
                 ItemType::FlaskOfOil => Cow::from(format!("Flask{} of Oil", plural_s())),
-                ItemType::Wand =>
-                    Cow::from(match self.subval {
-                        1 => format!("%M Wand{} of Light (%P1 charges)", plural_s()),
-                        2 => format!("%M Wand{} of Lightning Bolts (%P1 charges)", plural_s()),
-                        3 => format!("%M Wand{} of Frost Bolts (%P1 charges)", plural_s()),
-                        4 => format!("%M Wand{} of Fire Bolts (%P1 charges)", plural_s()),
-                        5 => format!("%M Wand{} of Stone-to-Mud (%P1 charges)", plural_s()),
-                        6 => format!("%M Wand{} of Polymorph (%P1 charges)", plural_s()),
-                        7 => format!("%M Wand{} of Heal Monster (%P1 charges)", plural_s()),
-                        8 => format!("%M Wand{} of Haste Monster (%P1 charges)", plural_s()),
-                        9 => format!("%M Wand{} of Slow Monster (%P1 charges)", plural_s()),
-                        10 => format!("%M Wand{} of Confuse Monster (%P1 charges)", plural_s()),
-                        11 => format!("%M Wand{} of Sleep Monster (%P1 charges)", plural_s()),
-                        12 => format!("%M Wand{} of Drain Life (%P1 charges)", plural_s()),
-                        13 => format!("%M Wand{} of Trap/Door destruction (%P1 charges)", plural_s()),
-                        14 => format!("%M Wand{} of Magic Missile (%P1 charges)", plural_s()),
-                        15 => format!("%M Wand{} of Wall Building (%P1 charges)", plural_s()),
-                        16 => format!("%M Wand{} of Clone Monster (%P1 charges)", plural_s()),
-                        17 => format!("%M Wand{} of Teleport Away (%P1 charges)", plural_s()),
-                        18 => format!("%M Wand{} of Disarming (%P1 charges)", plural_s()),
-                        19 => format!("%M Wand{} of Lightning Balls (%P1 charges)", plural_s()),
-                        20 => format!("%M Wand{} of Cold Balls (%P1 charges)", plural_s()),
-                        21 => format!("%M Wand{} of Fire Balls (%P1 charges)", plural_s()),
-                        22 => format!("%M Wand{} of Stinking Cloud (%P1 charges)", plural_s()),
-                        23 => format!("%M Wand{} of Acid Balls (%P1 charges)", plural_s()),
-                        24 => format!("%M Wand{} of Wonder (%P1 charges)", plural_s()),
-                        25 => format!("%M Wand{} of Probing (%P1 charges)", plural_s()),
-                        _ => format!("Alien wand{}", plural_s()),
-                    }),
-                ItemType::Staff =>
-                    Cow::from(match self.subval {
-                        1 => "%W Staff of Light (%P1 charges)",
-                        2 => "%W Staff of Door/Stair Location (%P1 charges)",
-                        3 => "%W Staff of Trap Location (%P1 charges)",
-                        4 => "%W Staff of Treasure Location (%P1 charges)",
-                        5 => "%W Staff of Object Location (%P1 charges)",
-                        6 => "%W Staff of Teleportation (%P1 charges)",
-                        7 => "%W Staff of Earthquakes (%P1 charges)",
-                        8 => "%W Staff of Summoning (%P1 charges)",
-                        10 => "%W Staff of *Destruction* (%P1 charges)",
-                        11 => "%W Staff of Starlite (%P1 charges)",
-                        12 => "%W Staff of Haste Monsters (%P1 charges)",
-                        13 => "%W Staff of Slow Monsters (%P1 charges)",
-                        14 => "%W Staff of Sleep Monsters (%P1 charges)",
-                        15 => "%W Staff of Cure Light Wounds (%P1 charges)",
-                        16 => "%W Staff of Detect Invisible (%P1 charges)",
-                        17 => "%W Staff of Speed (%P1 charges)",
-                        18 => "%W Staff of Slowness (%P1 charges)",
-                        19 => "%W Staff of Mass Polymorph (%P1 charges)",
-                        20 => "%W Staff of Remove Curse (%P1 charges)",
-                        21 => "%W Staff of Detect Evil (%P1 charges)",
-                        22 => "%W Staff of Curing (%P1 charges)",
-                        23 => "%W Staff of Dispel Evil (%P1 charges)",
-                        25 => "%W Staff of Darkness (%P1 charges)",
-                        26 => "%W Staff of Identify (%P1 charges)",
-                        _ => "Alien staff{}",
-                    }),
-                ItemType::MagicBook =>
-                    Cow::from(match self.subval {
-                        257 => format!("Book{} of Magic Spells [Beginners-Magik]", plural_s()),
-                        258 => format!("Book{} of Magic Spells [Magik I]", plural_s()),
-                        259 => format!("Book{} of Magic Spells [Magik II]", plural_s()),
-                        261 => format!("Book{} of Magic Spells [The Mages Guide to Power]", plural_s()),
-                        _ => format!("Alien magic book{}", plural_s()),
-                    }),
-                ItemType::PrayerBook =>
-                    Cow::from(match self.subval {
-                        258 => format!("Holy Book{} of Prayers [Beginners Handbook]", plural_s()),
-                        259 => format!("Holy Book{} of Prayers [Words of Wisdom]", plural_s()),
-                        260 => format!("Holy Book{} of Prayers [Chants and Blessings]", plural_s()),
-                        261 => format!("Holy Book{} of Prayers [Exorcism and Dispelling]", plural_s()),
-                        _ => format!("Alien holy book{}", plural_s()),
-                    }),
+                ItemType::Wand => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            1 => " of Light",
+                            2 => " of Lightning Bolts",
+                            3 => " of Frost Bolts",
+                            4 => " of Fire Bolts",
+                            5 => " of Stone-to-Mud",
+                            6 => " of Polymorph",
+                            7 => " of Heal Monster",
+                            8 => " of Haste Monster",
+                            9 => " of Slow Monster",
+                            10 => " of Confuse Monster",
+                            11 => " of Sleep Monster",
+                            12 => " of Drain Life",
+                            13 => " of Trap/Door destruction",
+                            14 => " of Magic Missile",
+                            15 => " of Wall Building",
+                            16 => " of Clone Monster",
+                            17 => " of Teleport Away",
+                            18 => " of Disarming",
+                            19 => " of Lightning Balls",
+                            20 => " of Cold Balls",
+                            21 => " of Fire Balls",
+                            22 => " of Stinking Cloud",
+                            23 => " of Acid Balls",
+                            24 => " of Wonder",
+                            25 => " of Probing",
+                            _ => "of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    let charges = if self.is_identified() {
+                        " (%P1 charges)"
+                    } else { "" };
+                    Cow::from(format!("%M wand{}{}", attribute, charges))
+                },
+                ItemType::Staff => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            1 => " of Light",
+                            2 => " of Door/Stair Location",
+                            3 => " of Trap Location",
+                            4 => " of Treasure Location",
+                            5 => " of Object Location",
+                            6 => " of Teleportation",
+                            7 => " of Earthquakes",
+                            8 => " of Summoning",
+                            10 => " of *Destruction*",
+                            11 => " of Starlite",
+                            12 => " of Haste Monsters",
+                            13 => " of Slow Monsters",
+                            14 => " of Sleep Monsters",
+                            15 => " of Cure Light Wounds",
+                            16 => " of Detect Invisible",
+                            17 => " of Speed",
+                            18 => " of Slowness",
+                            19 => " of Mass Polymorph",
+                            20 => " of Remove Curse",
+                            21 => " of Detect Evil",
+                            22 => " of Curing",
+                            23 => " of Dispel Evil",
+                            25 => " of Darkness",
+                            26 => " of Identify",
+                            _ => "of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    let charges = if self.is_identified() {
+                        " (%P1 charges)"
+                    } else { "" };
+                    Cow::from(format!("%W wand{}{}", attribute, charges))
+                },
+                ItemType::MagicBook => {
+                    let name = if self.is_identified() {
+                        match self.subval {
+                            257 => " of Magic Spells [Beginners-Magik]",
+                            258 => " of Magic Spells [Magik I]",
+                            259 => " of Magic Spells [Magik II]",
+                            261 => " of Magic Spells [The Mages Guide to Power]",
+                            _ => " of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("Book{}{}", plural_s(), name))
+                },
+                ItemType::PrayerBook => {
+                    let name = if self.is_identified() {
+                        match self.subval {
+                        258 => " of Prayers [Beginners Handbook]",
+                        259 => " of Prayers [Words of Wisdom]",
+                        260 => " of Prayers [Chants and Blessings]",
+                        261 => " of Prayers [Exorcism and Dispelling]",
+                            _ => " of ???",
+                        }
+                    } else {
+                        ""
+                    };
+                    Cow::from(format!("Holy Book{}{}", plural_s(), name))
+                },
                 ItemType::Chest =>
                     Cow::from(match self.subval {
                         1 => "Small wooden chest",
@@ -695,7 +802,7 @@ impl Item {
     }
 
     pub fn is_identified(&self) -> bool {
-        true // TODO: Implement this
+        self.identified != 0
     }
 
     // In progress..

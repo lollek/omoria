@@ -381,13 +381,13 @@ treasure_type yums[NUM_YUM + 1] = {
      310, 2, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{3} */
     {"& Piece~ of Elvish Waybread", Food, 0x00000000, 0x21800020, 3500, 10,
      313, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{4} */
-    {"& Rice-a-Roni~| (The San Francisco Treat!)", Food, 0x00000000,
+    {"& Stew~", Food, 0x00000000,
      0x330001C0, 2000, 0, 314, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{5} */
-    {"& Jolly Green Jelly~| (Ho Ho Ho!)", Food, 0x00000000, 0x22400060,
+    {"& Green Jelly~", Food, 0x00000000, 0x22400060,
      4000, 50, 315, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{6} */
     {"& pint~ of fine grade mush", Food, 0x00000000, 0x00000000, 1500, 0,
      306, 252, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{7} */
-    {"& Slime Mold~", Food, 0x00000000, Nothing_flag, 3000, 2, 308, 5, 1,
+    {"& Mushroom~", Food, 0x00000000, Nothing_flag, 3000, 2, 308, 5, 1,
      0, 0, 0, 0, "0d0", -1, 0}, /*{8} */
     {"& Pint of Fine Ale", Food, 0x00000000, Nothing_flag, 500, 1, 311, 10,
      1, 0, 0, 0, 0, "0d0", -1, 0}, /*{9} */
@@ -812,15 +812,15 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      30, 271, 1, 1, 0, 0, 0, 0, "0d0", 10, 0},
     {"& %M Mushroom~| of Restoring", Food, 0x00000000, 0x001F8040, 500,
      1000, 272, 1, 1, 0, 0, 0, 0, "0d0", 30, 0},
-    {"& Hairy %M Mold~| of Poison", Food, 0x00000000, 0x00000001, 1200, 0,
+    {"& %M Mushroom~| of Poison", Food, 0x00000000, 0x00000001, 1200, 0,
      273, 1, 1, 0, 0, 0, 0, "0d0", 15, 0},
-    {"& Hairy %M Mold~| of Hallucinations", Food, 0x00000000, 0x00000010,
+    {"& %M Mushroom~| of Hallucinations", Food, 0x00000000, 0x00000010,
      1200, 0, 274, 1, 1, 0, 0, 0, 0, "0d0", 18, 0},
-    {"& Hairy %M Mold~| of Cure Poison", Food, 0x00000000, 0x00000020,
+    {"& %M Mushroom~| of Cure Poison", Food, 0x00000000, 0x00000020,
      1200, 75, 275, 1, 1, 0, 0, 0, 0, "0d0", 19, 0},
-    {"& Hairy %M Mold~| of Unhealth", Food, 0x00000000, 0x00000400, 1200,
+    {"& %M Mushroom~| of Unhealth", Food, 0x00000000, 0x00000400, 1200,
      25, 276, 1, 1, 0, 0, 0, 0, "6d8", 28, 0},
-    {"& Hairy %M Mold~| of Cure Serious Wounds", Food, 0x00000000,
+    {"& %M Mushroom~| of Cure Serious Wounds", Food, 0x00000000,
      0x01800000, 1200, 75, 277, 2, 1, 0, 0, 0, 0, "0d0", 16, 0},
     {"& Ration~ of Food^", Food, 0x00000000, Nothing_flag, 5000, 3, 307,
      10, 1, 0, 0, 0, 0, "0d0", 0, 0},
@@ -828,7 +828,7 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      10, 1, 0, 0, 0, 0, "0d0", 5, 0},
     {"& Ration~ of Food^", Food, 0x00000000, Nothing_flag, 5000, 3, 307,
      10, 1, 0, 0, 0, 0, "0d0", 10, 0},
-    {"& Slime Mold~^", Food, 0x00000000, Nothing_flag, 3000, 2, 308, 5, 1,
+    {"& Mushroom~^", Food, 0x00000000, Nothing_flag, 3000, 2, 256, 5, 1,
      0, 0, 0, 0, "0d0", 1, 0},
     {"& Piece~ of Elvish Waybread^", Food, 0x00000000, 0x21800020, 3500,
      10, 313, 3, 1, 0, 0, 0, 0, "0d0", 6, 0},
@@ -1103,7 +1103,7 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
     {"& Set of Bracers^ of Weapon Attraction", bracers, 0x00000000,
      0x80000000, 0, -1200, 6, 125, 1, -6, 0, -6, 0, "0d0", 30, 0},
     {"& Small silver Bracelet^ of Warding (R)", bracers, 0x00000010,
-     0x02380000, 1, 10000, 7, 5, 1, 0, 0, 5, 0, "0d0", 50, 0},
+     0x02380000, 1, 10000, 31, 5, 1, 0, 0, 5, 0, "0d0", 50, 0},
     {"& Small Leather Shield^ [%P6,%P4]", shield, 0x00000000, Nothing_flag,
      0, 30, 1, 50, 1, 0, 0, 2, 0, "1d1", 3, 0},
     {"& Medium Leather Shield^ [%P6,%P4]", shield, 0x00000000,
@@ -1631,17 +1631,17 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
     {"& Large pouch~ of Diamonds^", valuable_gems, 
      0x00000000, 0x00000000, 0, 2000, 267, 5, 1, 0, 0, 0, 0, "0d0", 65, 0},
     {"& Finely wrought silver necklace~^", amulet, 0x00000000, 0x00000000,
-     0, 50, 268, 5, 1, 0, 0, 0, 0, "0d0", 1, 0},
+     0, 50, 30, 5, 1, 0, 0, 0, 0, "0d0", 1, 0},
     {"& Finely wrought gold necklace~^", amulet, 0x00000000, 0x00000000, 0,
-     100, 269, 5, 1, 0, 0, 0, 0, "0d0", 7, 0},
+     100, 40, 5, 1, 0, 0, 0, 0, "0d0", 7, 0},
     {"& Finely wrought mithril necklace~^", amulet, 0x00000000, 0x00000000,
-     0, 400, 270, 5, 1, 0, 0, 0, 0, "0d0", 9, 0},
+     0, 400, 60, 5, 1, 0, 0, 0, 0, "0d0", 9, 0},
     {"& Small silver Bracelet~^", bracers, 0x00000000, 0x00000000, 0, 25,
-     271, 5, 1, 0, 0, 0, 0, "0d0", 2, 0},
+     30, 5, 1, 0, 0, 0, 0, "0d0", 2, 0},
     {"& Small gold Bracelet~^", bracers, 0x00000000, 0x00000000, 0, 50,
-     272, 5, 1, 0, 0, 0, 0, "0d0", 5, 0},
+     40, 5, 1, 0, 0, 0, 0, "0d0", 5, 0},
     {"& Small platinum bracelet~^", bracers, 0x00000000, 0x00000000, 0,
-     100, 273, 5, 1, 0, 0, 0, 0, "0d0", 8, 0},
+     100, 50, 5, 1, 0, 0, 0, 0, "0d0", 8, 0},
     {"& Small gold pendant~^", valuable_gems, 0x00000000, 0x00000000, 0,
      75, 274, 5, 1, 0, 0, 0, 0, "0d0", 5, 0},
     {"& Small mithril pendant~^", valuable_gems, 0x00000000, 0x00000000, 0,
@@ -2069,9 +2069,9 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"& Small pouch of Diamonds~", valuable_gems, 0x00000000, 0x00000000,
      0, 1000, 262, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{127} */
     {"& Finely wrought gold necklace~", valuable_jewelry, 0x00000000,
-     0x00000000, 0, 100, 263, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{128} */
+     0x00000000, 0, 100, 40, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{128} */
     {"& Small silver bracelet~", bracers, 0x00000000, 0x00000000, 0, 80,
-     264, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{129} */
+     30, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{129} */
     {"& Large mithril garter-belt~", valuable_jewelry, 0x00000000,
      0x00000000, 0, 1500, 265, 5, 1, 0, 0, 0, 0, "0d0", 20, 1}, /*{130} */
     {"& Small silver pendant~", valuable_jewelry, 0x00000000, 0x00000000,
