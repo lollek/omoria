@@ -723,8 +723,10 @@ boolean breath(long typ, long y, long x, long dam_hp, char ddesc[82])
 			    is_in(t_list[cave[i1][i2].tptr].tval, *destroy))
 				delete_object(i1, i2);
 
-			if (!fopen) /* ??? What is this ??? */
+			/* ??? What is this?
+			if (!fopen)
 				continue;
+			*/
 
 			if (panel_contains(i1, i2)) {
 				print('*', i1, i2);

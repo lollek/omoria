@@ -60,6 +60,9 @@ pub struct Item { // treasure_type
 
     // a vague measurement of how strong an item's magic is.
     pub level: libc::int8_t,
+
+    // is this item identified?
+    pub identified: libc::uint8_t,
 }
 
 impl Item {

@@ -47,7 +47,6 @@ void print_version_info()
 
 static void intro_parse_switches(int argc, char *argv[])
 {
-	int x1;
 	boolean exit_flag = false;
 	boolean print_usage = false;
 	boolean show_highs = false;

@@ -667,8 +667,7 @@ void si__pesky_stuff(long *best_value, long *good_value,
 	if (*i_summ_count == 0) {
 		*i_summ_count = omax;
 	}
-	/* TODO: Maybe this pointer should be deferefenced? */
-	if (i_summ_count <= 0) {
+	if (*i_summ_count <= 0) {
 		*i_summ_count = 1;
 	}
 	popt(cur_pos);

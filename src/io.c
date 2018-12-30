@@ -366,7 +366,7 @@ long get_hex_value(long row, long col, long slen)
 
 	if (get_string(tmp_str, row, col, slen)) {
 		if (strlen(tmp_str) <= 8) {
-			sscanf(tmp_str, "%lx", &return_value);
+			sscanf(tmp_str, "%ld", &return_value);
 		}
 	}
 

@@ -262,8 +262,6 @@ extern void regenmana(float percent);
 extern void enter_fortress();
 
 /* { encrypt.c } */
-extern void encrypt_init(encrypt_state *state, unsigned char key[],
-			 boolean doit);
 extern void encrypt_write(FILE *f1, encrypt_state *state, char line[1026]);
 extern void encrypt_flush(FILE *f1, encrypt_state *state);
 extern void read_decrypt(FILE *f1, encrypt_state *state, char line[1026],

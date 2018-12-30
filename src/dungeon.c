@@ -5412,7 +5412,6 @@ void d__execute_command(long *com_val)
 	treas_ptr trash_ptr;
 	char out_val[82];
 	char out2[82];
-	char tmp_str[82];
 
 	ENTER(("d__execute_command", "%d, '%c'", *com_val, *com_val));
 

@@ -5,6 +5,76 @@
 #include "trade.h"
 #include <sys/file.h> /* for flock     */
 
+#define ROUND(x) ((long)((x)+.5))
+
+#define T_DISPLAY_SIZE 12
+#define T_ACCEPTABLE_ITEM_PRICE 50
+#define T_PROFIT_FROM_BID 0.05
+#define T_PROFIT_FROM_SALE 0.25
+#define T_REFUND_ON_BID (1.00 - T_PROFIT_FROM_BID)
+#define T_REFUND_ON_SALE (1.00 - T_PROFIT_FROM_SALE)
+#define T_BID_INCREMENT_FACTOR 1.05
+#define T_TAKE_THE_MONEY_AND_RUN 0.90
+#define T_BID_WAIT_DAYS 0
+#define T_BID_WAIT_HOURS 6
+#define T_EXPIRE_TIME_DAYS 4
+#define T_EXPIRE_TIME_HOURS 0
+
+#define TT_PROFIT 0
+#define TT_FOR_SALE 1
+#define TT_CASH 2
+
+typedef struct trade_account_type
+{
+	uid_t uid;
+	char username[13];
+	long master_id;
+	long claim_check;
+} trade_account_type;
+
+typedef struct profit_record
+{
+	long trade_type;
+	long time;
+	long money;
+} profit_record;
+
+typedef struct for_sale_record
+{
+	long trade_type;
+	long time;
+	treasure_type object;
+	trade_account_type seller;
+	long bid_time;
+	long best_bid;
+	trade_account_type best_bidder;
+} for_sale_record;
+
+typedef struct cash_record
+{
+	long trade_type;
+	long time;
+	long amount;
+	trade_account_type owner;
+} cash_record;
+
+typedef union trade_record_type
+{
+	struct profit_record pr;
+	struct for_sale_record fsr;
+	struct cash_record cr;
+} trade_record_type;
+
+typedef struct pinven_record
+{
+	struct pinven_record *prev;
+	struct pinven_record *next;
+	trade_record_type data;
+} pinven_record;
+
+typedef pinven_record *pinven_ptr;
+
+
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -43,7 +113,7 @@ void check_list(pinven_ptr *inv, pinven_ptr *item)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean trade_file_open(FILE **tf, boolean *busy, boolean create)
+boolean trade_file_open(FILE **tf, boolean *busy)
 {
 	/* open the tradeing post db, returns true if file could be opened.
 	   if busy is true then the flock failed (tf will be null) */
@@ -98,13 +168,9 @@ void tp__open_trade_file(FILE **sales, boolean *exit_flag)
 	msg_print("You knock on the door to the Trading Post. . . ");
 	refresh();
 
-	if (!trade_file_open(sales, &busy, false)) {
-		if (wizard1) {
-			trade_file_open(sales, &busy, true);
-		} else {
-			msg_print("and the doors are locked. Only a moria "
-				  "wizard can open them.");
-		}
+	if (!trade_file_open(sales, &busy)) {
+		msg_print("and the doors are locked. Only a moria "
+				"wizard can open them.");
 	} else if (busy) {
 		msg_print("but the storekeeper is helping someone else.");
 	} else {
@@ -888,7 +954,7 @@ void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 	long which;
 	char command;
 
-	if (cur_display_size > 0) {
+	if (*cur_display_size > 0) {
 		if (tp__get_store_item(&which, "Delete which one?", 1,
 				       *cur_display_size)) {
 			if (get_com("Refund money? (Y/N)", &command)) {

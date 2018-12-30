@@ -103,6 +103,7 @@ typedef struct treasure_type
 	int16_t toac;	    /* { Pluses to AC		} */
 	char damage[7];	  /* { Damage when hits	}*/
 	int8_t level;     /* { Level item found	} */
+	uint8_t identified;
 } treasure_type;
 
 typedef struct treas_rec

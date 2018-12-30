@@ -7,7 +7,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean r__move_this(river_args *a, long dir, coords *this, coords *that)
+boolean r__move_this(long dir, coords *this, coords *that)
 {
 	/*{ returns position of (this + dir) in gup or this if out of bounds }*/
 
@@ -200,8 +200,8 @@ void r__place_river(river_args *a, long dir, long next_dir, coords this,
 
 	ENTER(("r__place_river", "r"));
 
-	r__move_this(a, dir, &this, &up1); /*{up1 is upstream end of segment}*/
-	r__move_this(a, next_dir, &up1,
+	r__move_this(dir, &this, &up1); /*{up1 is upstream end of segment}*/
+	r__move_this(next_dir, &up1,
 		     &up2); /*{up2 is upstream end of next segment}*/
 
 	tflow = (Gup[up2.y][up2.x].flow - 1)/ 2; /*{river size}*/
@@ -281,7 +281,7 @@ long cr__choose_stream_dirs(river_args *a, coords *this, long dir,
 
 	for (i1 = 1; i1 <= 3; i1++) { /*{left,straight,right}*/
 		that_dir[i1] = rotate_dir(dir, 2 - i1);
-		that_ok[i1] = r__move_this(a, that_dir[i1], this, &(that[i1]));
+		that_ok[i1] = r__move_this(that_dir[i1], this, &(that[i1]));
 		if (that_ok[i1]) {
 			that_ok[i1] =
 			    Gup[that[i1].y][that[i1].x].pos <= Num_left;
@@ -381,7 +381,7 @@ void r__chart_river(river_args *a)
 			dir = 9;
 		}
 		i1++;
-		if (r__move_this(a, dir, &this, &(that[2]))) {
+		if (r__move_this(dir, &this, &(that[2]))) {
 			that_chosen[2] =
 			    Gup[that[2].y][that[2].x].pos <= Num_left;
 		}
@@ -401,22 +401,22 @@ void r__chart_river(river_args *a)
 		}
 
 		for (i1 = 1; i1 <= 9; i1++) {
-			if (r__move_this(a, i1, &this, &thing)) {
+			if (r__move_this(i1, &this, &thing)) {
 				r__remove_this(a, &thing);
 			}
 		}
 
 		if (that_chosen[1]) { /*{ No sharp left turns }*/
-			r__move_this(a, rotate_dir(dir, 1), &this, &thing);
-			if (r__move_this(a, rotate_dir(dir, 2), &thing,
+			r__move_this(rotate_dir(dir, 1), &this, &thing);
+			if (r__move_this(rotate_dir(dir, 2), &thing,
 					 &thing)) {
 				r__remove_this(a, &thing);
 			}
 		}
 
 		if (that_chosen[3]) { /*{ No sharp right turns }*/
-			r__move_this(a, rotate_dir(dir, -1), &this, &thing);
-			if (r__move_this(a, rotate_dir(dir, -2), &thing,
+			r__move_this(rotate_dir(dir, -1), &this, &thing);
+			if (r__move_this(rotate_dir(dir, -2), &thing,
 					 &thing)) {
 				r__remove_this(a, &thing);
 			}
@@ -474,7 +474,7 @@ void r__draw_river(river_args *a)
 	/*{XXX place whirlpool at RIVER_SEGMENT_SIZE*river + wiggle}*/
 
 	first_dir = Gup[River_mouth.y][River_mouth.x].in1;
-	r__move_this(a, first_dir, &(River_mouth), &that);
+	r__move_this(first_dir, &(River_mouth), &that);
 
 	/* with Gup[that.y][that.x]. do; */
 	if (Gup[that.y][that.x].in1 != 5) {

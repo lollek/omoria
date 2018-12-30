@@ -13,7 +13,7 @@
 ###############################################################################
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -pedantic -Werror=implicit-function-declaration -std=gnu89 -g3 -DDO_DEBUG=1
+CFLAGS =	-Wall -Wextra -Werror -pedantic -Werror=implicit-function-declaration -std=gnu89 -g3 -DDO_DEBUG=1
 LDFLAGS =	-lncurses -ltermcap -lm -Wl,--gc-sections -lpthread -ldl
 
 #
