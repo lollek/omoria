@@ -748,15 +748,19 @@ impl Item {
                         16 => "Large steel chest",
                         _ => "Alien chest",
                     }),
-                ItemType::Bag =>
-                    Cow::from(match self.subval {
-                        1 => "%N Bag of Holding (250)",
-                        2 => "%N Bag of Holding (500)",
-                        3 => "%N Bag of Holding (1000)",
-                        //3 => "%N Bag of Holding (1500)",
-                        4 => "%N Bag of Devouring",
-                        _ => "Alien bag",
-                }),
+                ItemType::Bag => {
+                    let attribute = if self.is_identified() {
+                        match self.subval {
+                            1 => " of Holding (250)",
+                            2 => " of Holding (500)",
+                            3 => " of Holding (1000)",
+                            //3 => "%N Bag of Holding (1500)",
+                            4 => " of Devouring",
+                            _ => " of ???",
+                        }
+                    } else { "" };
+                    Cow::from(format!("%N Bag{}", attribute))
+                },
                 ItemType::MiscObject =>
                     Cow::from(match self.subval {
                         1 => "Rat skeleton",
