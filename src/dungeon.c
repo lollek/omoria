@@ -5672,12 +5672,8 @@ void d__execute_command(long *com_val)
 		move_char(1);
 		break;
 	case 'C': /* Show character */
-		if (get_yes_no("Print to file?")) {
-			file_character();
-		} else {
-			change_name();
-			draw_cave();
-		}
+		change_name();
+		draw_cave();
 		reset_flag = true;
 		break;
 	case 'D':
