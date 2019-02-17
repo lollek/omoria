@@ -799,7 +799,6 @@ void tp__bid(long *cur_display_size, trade_account_type *cur_player,
 					msg_print("You'll have to do better "
 						  "than that!");
 				} else {
-					flag = false;
 					if (player_money[TOTAL_] >= offer) {
 						subtract_money(
 						    offer * GOLD_VALUE, true);
