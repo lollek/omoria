@@ -232,7 +232,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 		player_flags.see_infra += (tobj->p1 * factor);
 	}
 	if (uand(Swimming_worn_bit, tobj->flags2) != 0) {
-		i1 = tobj->p1 * factor; /* XXX what does this do? */
+		tobj->p1 * factor; /* XXX what does this do? */
 	}
 	if (uand(Increase_carry_worn_bit, tobj->flags2) != 0) {
 		switch (tobj->p1) {
