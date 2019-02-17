@@ -63,20 +63,14 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 			boolean water)
 {
 	/*{ Allocates a random land monster			-RAK-	}*/
+	long count = 0;
+	long count2 = 0;
+	long i;
 
-	long y, x, i1, i2, i3, count;
-	long count2;
-	boolean flag;
-
-	/*  printf ("\n         Enter alloc land monster\n");  fflush(stdout);
-	 */
-
-	for (i1 = 0; i1 < num; i1++) {
-		/*    printf ("\n             Doing a monster"); fflush(stdout);
-		 */
-		flag = false;
-		count = 0;
-		count2 = 0;
+	for (i = 0; i < num; i++) {
+		boolean flag;
+		long y;
+		long x;
 		do {
 			y = randint(cur_height - 2) + 1;
 			x = randint(cur_width - 2) + 1;
@@ -86,18 +80,15 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 			    (distance(y, x, char_row, char_col) > dis)) ||
 			   (count2 > 7500)));
 
-		/*    printf ("\n             got me coords (%d, %d)",x,y); */
-		/*    fflush(stdout); */
-
 		do {
+			long i2;
 			if (dun_level == 0) {
-				/* printf ("\n             doing dun_level: */
-				/* %d",m_level[0]);  fflush(stdout); */
 				i2 = randint(m_level[0]);
 			} else if (dun_level > MAX_MONS_LEVEL) {
 				i2 = randint(m_level[MAX_MONS_LEVEL]) +
 				     m_level[0];
 			} else if (randint(mon_nasty) == 1) {
+				long i3;
 				i2 = dun_level + labs(randnor(0, 4)) + 1;
 				if (i2 > MAX_MONS_LEVEL) {
 					i2 = MAX_MONS_LEVEL;
@@ -107,9 +98,6 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 			} else {
 				i2 = randint(m_level[dun_level]) + m_level[0];
 			}
-
-			/*      printf ("\n             got me i2 (%d)",i2); */
-			/*      fflush(stdout); */
 
 			if (!water) {
 				flag =
@@ -122,10 +110,6 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 				    (((c_list[i2].cmove & 0x00008000) == 0) &&
 				     ((c_list[i2].cmove & 0x00000010) != 0));
 			}
-
-			/*      printf ("\n             got me flag (%d)",flag);
-			 */
-			/*      fflush(stdout); */
 
 			if (flag) {
 				if (count2 < 7500) {
@@ -141,10 +125,8 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 			}
 
 			count++;
-		} while (!((flag) || (count > 10)));
+		} while (!(flag || count > 10));
 	} /* end for */
-
-	/*  printf ("\n         Exit alloc land monster\n");  fflush(stdout); */
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
