@@ -1333,59 +1333,61 @@ void ic__take_out()
 {
 	/*{ Take an item out of another item              -DMF-   }*/
 
-	treas_ptr from_ptr, temp_ptr, curse;
-	long count;
-	boolean redraw, flag;
+	treas_ptr from_ptr;
+	treas_ptr temp_ptr;
+	treas_ptr curse;
+	boolean redraw;
+	boolean flag;
 	char trash_char;
+	long count = change_all_ok_stats(false, true);
 
-	count = change_all_ok_stats(false, true);
-
-	if (count > 0) {
-		if (get_item(&from_ptr, "Remove which item?", &redraw, count,
-			     &trash_char, false, true)) {
-			player_flags.paralysis += 2;
-			reset_flag = false;
-			temp_ptr = inventory_list;
-
-			while ((temp_ptr != NULL) && (temp_ptr != from_ptr)) {
-				if ((temp_ptr->data.flags2 & Holding_bit) !=
-				    0) {
-					curse = temp_ptr;
-				}
-				temp_ptr = temp_ptr->next;
-			}
-
-			if ((curse->data.flags2 & Swallowing_bit) != 0) {
-				/* bag of devouring */
-				flag = (randint(100) < 6);
-			} else {
-				/* bag of holding */
-				flag = true;
-			}
-
-			if (flag) {
-				(curse->insides)--;
-				curse = inventory_list;
-				while (curse->next != from_ptr) {
-					curse = curse->next;
-				}
-				curse->next = from_ptr->next;
-				inven_temp->data = from_ptr->data;
-				inven_carry(); /* XXXX is this a memory leak? */
-				/*{change to next line by Dean; used to begin
-				  with
-				  if (inven_ctr=old_ctr) then}*/
-				inven_ctr--;
-				msg_print("You remove the item");
-
-			} else {
-				msg_print("You make several attempts, but "
-					  "cannot seem to get a grip on it.");
-				cur_inven = inventory_list;
-			}
-		}
-	} else {
+	if (count <= 0) {
 		msg_print("You have nothing to remove.");
+		return;
+	}
+
+	if (get_item(&from_ptr, "Remove which item?", &redraw, count,
+				&trash_char, false, true)) {
+		player_flags.paralysis += 2;
+		reset_flag = false;
+		temp_ptr = inventory_list;
+
+		while ((temp_ptr != NULL) && (temp_ptr != from_ptr)) {
+			if ((temp_ptr->data.flags2 & Holding_bit) !=
+					0) {
+				curse = temp_ptr;
+			}
+			temp_ptr = temp_ptr->next;
+		}
+
+		if ((curse->data.flags2 & Swallowing_bit) != 0) {
+			/* bag of devouring */
+			flag = (randint(100) < 6);
+		} else {
+			/* bag of holding */
+			flag = true;
+		}
+
+		if (flag) {
+			(curse->insides)--;
+			curse = inventory_list;
+			while (curse->next != from_ptr) {
+				curse = curse->next;
+			}
+			curse->next = from_ptr->next;
+			inven_temp->data = from_ptr->data;
+			inven_carry(); /* XXXX is this a memory leak? */
+			/*{change to next line by Dean; used to begin
+			  with
+			  if (inven_ctr=old_ctr) then}*/
+			inven_ctr--;
+			msg_print("You remove the item");
+
+		} else {
+			msg_print("You make several attempts, but "
+					"cannot seem to get a grip on it.");
+			cur_inven = inventory_list;
+		}
 	}
 }
 
