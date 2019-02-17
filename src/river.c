@@ -222,8 +222,6 @@ void r__place_river(river_args *a, long dir, long next_dir, coords this,
 		wiggle.x = dx_of[i2] + (randint(3) - 2);
 	}
 
-	i1 = 0;
-
 	/*{y,x=(upstream) destination of river}*/
 	y = RIVER_SEGMENT_SIZE * up1.y + wiggle.y;
 	x = RIVER_SEGMENT_SIZE * up1.x + wiggle.x;
