@@ -1129,7 +1129,6 @@ boolean learn_druid()
 
 	ENTER(("learn_druid", ""));
 
-	i1 = 0;
 	spell_flag = 0;
 	spell_flag2 = 0;
 	curse = inventory_list;
