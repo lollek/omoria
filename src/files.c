@@ -283,7 +283,7 @@ void intro(int argc, char *argv[])
 	exit_flag = intro_ensure_file_exists(exit_flag, MORIA_GCST);
 
 	if (exit_flag) {
-		exit_flag = intro_ensure_file_exists(exit_flag, MORIA_TRD);
+		intro_ensure_file_exists(exit_flag, MORIA_TRD);
 		printf("\r\n"
 			"Notice: System IMORIA wizard should set the protection\r\n"
 			"        on  files  just created.  See the README file for\r\n"
