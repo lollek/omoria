@@ -5393,7 +5393,7 @@ void view_old_mess()
 				strncpy(tmp_str, out_mess, 71);
 				strcpy(tmp2, &(out_mess[71]));
 				strcpy(out_mess, tmp2);
-				done = msg_print(tmp_str);
+				msg_print(tmp_str);
 			}
 		}
 		done = msg_print(out_mess);
