@@ -4,6 +4,9 @@ the PROGRESS-file.
 
 ## 5.0.0.pre-alpha
 
+### February 2019
+* Lots of cleanup of small stuff
+
 ### December 2018
 
 * WIP - Begun work on a new way of displaying item names. Will make names more
