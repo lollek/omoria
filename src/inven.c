@@ -648,7 +648,6 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 	      long *scr_state, boolean *valid_flag)
 {
 	/*{ Wear routine, wear or wield an item           -RAK-   }*/
-	long com_val;
 	long i1;
 	char out_val[82];
 	boolean exit_flag = false;
@@ -840,14 +839,13 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 					msg_print("");
 				}
 				test_flag = false;
-				com_val = 0;
 				break; /* end of gem */
 
 			default:
 				msg_print("I don't see how you can use that.");
 				msg_print("");
 				test_flag = false;
-				i1 = com_val = 0;
+				i1 = 0;
 				break;
 			} /* end switch */
 
@@ -873,7 +871,6 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 						break;
 				}
 				test_flag = false;
-				com_val = 0;
 			}
 
 			if (test_flag) {
