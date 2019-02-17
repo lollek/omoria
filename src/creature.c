@@ -880,25 +880,28 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 			msg_print("You grab hold of your backpack!");
 		} else {
 			item_ptr = inventory_list;
-			i1 = randint(inven_ctr) - 1;
-			for (; (item_ptr != nil) && (i1 > 0);) {
+			for (i1 = randint(inven_ctr) - 1; i1 > 0; --i1) {
 				item_ptr = item_ptr->next;
-				i1--;
+				if (item_ptr != NULL) {
+					break;
+				}
 			}
-			if (!item_ptr->is_in) {
-				if (uand(item_ptr->data.flags2, Holding_bit) !=
-				    0) {
-					if (item_ptr->insides == 0) {
+			if (item_ptr != NULL) {
+				if (!item_ptr->is_in) {
+					if (uand(item_ptr->data.flags2, Holding_bit) !=
+							0) {
+						if (item_ptr->insides == 0) {
+							inven_destroy(item_ptr);
+						}
+					} else {
 						inven_destroy(item_ptr);
 					}
 				} else {
 					inven_destroy(item_ptr);
 				}
-			} else {
-				inven_destroy(item_ptr);
+				prt_stat_block();
+				msg_print("Your backpack feels lighter.");
 			}
-			prt_stat_block();
-			msg_print("Your backpack feels lighter.");
 		}
 
 		if (randint(2) == 1) {
