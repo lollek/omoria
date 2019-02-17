@@ -152,8 +152,9 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 		break;
 
 	case 25: /*{ Horn of *Chaos* }*/
-		ident = earthquake();
-		ident = unlight_area(char_row, char_col);
+		ident = true;
+		earthquake();
+		unlight_area(char_row, char_col);
 		for (i3 = 1; i3 <= randint(4); i3++) {
 			y = char_row;
 			x = char_col;
