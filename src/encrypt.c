@@ -233,7 +233,6 @@ void read_decrypt(FILE *f1, encrypt_state *state, char line[1026], boolean *got_
 
 				if (state->buf_size == 0) {
 					exit = true;
-					i2 = 0;
 				} else {
 					i2 = state->data_buf[state->buf_pos++] ^
 					     (randint(256) - 1);

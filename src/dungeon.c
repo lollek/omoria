@@ -231,9 +231,11 @@ void py_bonuses(treasure_type *tobj, long factor)
 	if (uand(Infra_Vision_worn_bit, tobj->flags) != 0) {
 		player_flags.see_infra += (tobj->p1 * factor);
 	}
+	/* This has no effect, what was it supposed to do?
 	if (uand(Swimming_worn_bit, tobj->flags2) != 0) {
-		tobj->p1 * factor; /* XXX what does this do? */
+		i1 = tobj->p1 * factor;
 	}
+	*/
 	if (uand(Increase_carry_worn_bit, tobj->flags2) != 0) {
 		switch (tobj->p1) {
 		case 1:
