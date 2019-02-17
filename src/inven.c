@@ -1226,20 +1226,19 @@ void ic__put_inside()
 {
 	/*        { Put an item inside of another item            -DMF-   }*/
 
-	treas_ptr put_ptr, into_ptr, temp_ptr;
-	treas_ptr curse;
-	long count, wgt;
-	boolean redraw, blooey;
+	treas_ptr put_ptr;
+	boolean redraw;
+	boolean blooey = false;
 	char trash_char;
 
-	blooey = false;
 	change_all_ok_stats(true, true);
 
 	if (get_item(&put_ptr, "Put which item?", &redraw, inven_ctr,
 		     &trash_char, false, true)) {
+		treas_ptr temp_ptr;
+		long count = 0;
 		change_all_ok_stats(false, false);
 		temp_ptr = inventory_list;
-		count = 0;
 
 		while (temp_ptr != NULL) {
 			if ((temp_ptr->data.flags2 & Holding_bit) != 0) {
@@ -1252,6 +1251,7 @@ void ic__put_inside()
 		if (count == 0) {
 			msg_print("You have nothing to put it into.");
 		} else {
+			treas_ptr into_ptr;
 			clear_rc(2, 1);
 			if (get_item(&into_ptr, "Into which item?", &redraw,
 				     inven_ctr, &trash_char, false, true)) {
@@ -1266,6 +1266,8 @@ void ic__put_inside()
 					ic__destroy_bag(put_ptr);
 					ic__destroy_bag(into_ptr);
 				} else {
+					long wgt;
+					treas_ptr curse;
 					player_flags.paralysis++;
 					reset_flag = false;
 
