@@ -1255,7 +1255,6 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 
 				case 0:
 					/* with player_do; */
-					flag = false;
 					if (player_money[TOTAL_] >= price) {
 						subtract_money(
 						    price * GOLD_VALUE, true);
