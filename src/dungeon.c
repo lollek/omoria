@@ -2144,7 +2144,6 @@ void area_affect(long dir, long y, long x)
 	obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
 
 	if (cave[y][x].fval == corr_floor1.ftval) {
-		i1 = 0;
 		if (next_to4(y, x, corridors) > 2) {
 			find_flag = false;
 		}
