@@ -51,8 +51,6 @@ boolean is_in(long const obj, obj_set const oset)
 		tmp = oset[i1];
 	}
 #endif
-
-	tmp = 0;
 	for (i1 = 0; (i1 < MAX_OBJ_SET) && (oset[i1] <= obj) && (!return_value);
 	     i1++) {
 		/*for (i1=0;(i1<MAX_OBJ_SET) && (!return_value); i1++) {*/
