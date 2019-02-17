@@ -207,6 +207,7 @@ boolean Get_String(char *in_str, int row, int column, int slen)
 	start_col = column;
 	end_col = column + slen - 1;
 	if (end_col > 79) {
+		/* TODO: slen below is unused. Should it be? */
 		slen = 80 - column;
 		end_col = 79;
 	}
