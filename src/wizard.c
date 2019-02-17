@@ -1194,8 +1194,6 @@ void change_character()
 				    &tmp_val, 0, 900000, &flag)) {
 			inven_weight = tmp_val;
 			prt_stat_block();
-		} else {
-			abort = true;
 		}
 	}
 
