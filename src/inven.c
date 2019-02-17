@@ -953,8 +953,6 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 
 	ENTER(("ic__stats", "i2"));
 
-	exit_flag = false;
-
 	do {
 		sprintf(prompt, "(Items a-%%N, space for next page, Esc to "
 				"exit) Statistics on which one ?");
