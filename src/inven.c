@@ -1275,14 +1275,12 @@ void ic__put_inside()
 					reset_flag = false;
 
 					if (put_ptr == inventory_list) {
-						temp_ptr = inventory_list;
 						inventory_list = put_ptr->next;
 					} else {
 						curse = inventory_list;
 						while (curse->next != put_ptr) {
 							curse = curse->next;
 						}
-						temp_ptr = put_ptr;
 						curse->next = put_ptr->next;
 					}
 
