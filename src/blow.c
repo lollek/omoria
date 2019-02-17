@@ -293,10 +293,9 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		x = char_row;
 		y = char_col;
 		for (i3 = 1; i3 <= 8; i3++) {
-			ident = summon_demon(&x, &y);
+			ident = ident || summon_demon(&x, &y);
 		}
 		player_flags.paralysis += 2;
-		ident = true;
 		break;
 
 	case 11:
