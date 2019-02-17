@@ -1856,13 +1856,11 @@ long inven_damage(obj_set typ, long perc)
 {
 	/*{ Destroys a type of item on a given percent chance     -RAK-   }*/
 
-	long i2;
-	treas_ptr curse, next_curse;
+	long i2 = 0;
+	treas_ptr curse;
+	treas_ptr next_curse;
 
 	ENTER(("inven_damage", "i"));
-
-	i2 = 0;
-	curse = inventory_list;
 
 	for (curse = inventory_list; curse != NULL;) {
 		next_curse =
