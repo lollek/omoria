@@ -1050,10 +1050,15 @@ boolean learn_song(boolean *redraw)
 {
 	/*{ Learn some magic songs (Bard)			-Cap'n-	}*/
 
-	unsigned long i2, i4;
-	long i1, i3, sn, sc;
+	unsigned long i2;
+	unsigned long i4;
+	long i1;
+	long i3;
+	long sn;
+	long sc;
 	long new_spells;
-	unsigned long spell_flag, spell_flag2;
+	unsigned long spell_flag = 0;
+	unsigned long spell_flag2 = 0;
 	spl_type spell;
 	treas_ptr curse;
 
@@ -1061,9 +1066,6 @@ boolean learn_song(boolean *redraw)
 
 	ENTER(("learn_song", ""));
 
-	i1 = 0;
-	spell_flag = 0;
-	spell_flag2 = 0;
 	curse = inventory_list;
 	new_spells = num_new_spells(bard_adj());
 
