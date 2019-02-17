@@ -170,7 +170,6 @@ long pr__figure_out_path_of_water(long y, long x, long oy, long ox)
 	/*{choose random directions; chances partitioned by start[]}*/
 	rand_num = randint(start[8] - 1);
 
-	flag = false;
 	i1 = -1;
 	do {
 		i1++;
