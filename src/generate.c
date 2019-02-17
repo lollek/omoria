@@ -549,6 +549,7 @@ void gc__build_store(long store_num, long where)
 	xval = 14 * (where % 9) + 11;
 
 	if (store_num == S_FORTRESS) {
+		/* whats this? 5 and 1 ? */
 		house_type = 5;
 		house_type = 1;
 	} else if (store_num == S_BLACK_MARKET) {
