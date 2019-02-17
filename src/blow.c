@@ -248,11 +248,12 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		msg_print("He grants you a wish...");
 		msg_print("'I will raise one of your stats by two...'");
 		msg_print("'Which stat would you like to raise?'");
-		ident = (get_com("1=str 2=int 3=wis 4=dex 5=con 6=cha", &dir));
-		if ((dir > '0') && (dir < '7')) {
+		ident = true;
+		get_com("1=str 2=int 3=wis 4=dex 5=con 6=cha", &dir);
+		if ('0' < dir && dir < '7') {
 			tstat = (long)dir - 49;
-			ident = gain_stat(tstat, "X");
-			ident = gain_stat(tstat, " and x2, too!");
+			gain_stat(tstat, "X");
+			gain_stat(tstat, " and x2, too!");
 		} else {
 			msg_print("Oh well, maybe next time.");
 		}

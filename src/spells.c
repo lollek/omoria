@@ -902,10 +902,7 @@ void lose_exp(long amount)
 /*//////////////////////////////////////////////////////////////////// */
 boolean gain_stat(stat_set tstat, char msg1[82])
 {
-	long i1;
-	boolean return_value = true;
-
-	i1 = in_statp(player_stats_perm[(int)tstat] - player_stats_lost[(int)tstat]);
+	long i1 = in_statp(player_stats_perm[(int)tstat] - player_stats_lost[(int)tstat]);
 	if (i1 < player_stats_lost[(int)tstat]) {
 		player_stats_lost[(int)tstat] -= i1;
 	} else {
@@ -942,7 +939,7 @@ boolean gain_stat(stat_set tstat, char msg1[82])
 
 	prt_stat_block();
 
-	return return_value;
+	return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
