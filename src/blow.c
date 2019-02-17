@@ -196,9 +196,10 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 
 	case 29: /*{ Horn of Fog }*/
 		msg_print("Thick fog billows out...");
-		ident = unlight_area(char_row, char_col);
+		unlight_area(char_row, char_col);
 		msg_print("The nearby creatures are confused");
-		ident = zap_area(0, 0, c_confuse);
+		zap_area(0, 0, c_confuse);
+		ident = true;
 		break;
 
 	default:
