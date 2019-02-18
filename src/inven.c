@@ -671,7 +671,7 @@ static void ic__wear__gem(treas_rec *gem) {
 
 	msg_print("The gem adheres itself to your helm!");
 	py_bonuses(worn_helm, -1);
-	if ((gem->data.flags2 & Negative_gem_bit) != 0) {
+	if (gem->data.flags2 & Negative_gem_bit) {
 		gem->data.flags2 &= 0xFF7FFFFF;
 		worn_helm->flags ^= gem->data.flags;
 		worn_helm->flags2 ^= gem->data.flags2;
