@@ -5,7 +5,7 @@ the PROGRESS-file.
 ## 5.0.0.pre-alpha
 
 ### February 2019
-* Lots of cleanup of small stuff
+* Lots of code cleanup, A.K.A introducing bugs
 
 ### December 2018
 

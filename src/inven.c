@@ -644,28 +644,77 @@ void ic__unwear(long *scr_state)
 	}
 }
 
+static void ic__wear__gem(treas_rec *gem) {
+	long factor;
+	treasure_type *const worn_helm = &equipment[Equipment_helm];
+
+	if (worn_helm->tval != gem_helm) {
+		msg_print("I don't see how you can use that.");
+		msg_print("");
+		return;
+	}
+
+	if (worn_helm->p1 <= 0) {
+		msg_print("There is no more room on the helm.");
+		if (randint(2) == 1) {
+			msg_print("You lose your grip and the gem "
+					"falls to the floor.");
+			msg_print("The gem shatters!");
+			msg_print("");
+			inven_destroy(gem);
+		} else {
+			msg_print("You catch the gem in mid air");
+			msg_print("");
+		}
+		return;
+	}
+
+	msg_print("The gem adheres itself to your helm!");
+	py_bonuses(worn_helm, -1);
+	if ((gem->data.flags2 & Negative_gem_bit) != 0) {
+		gem->data.flags2 &= 0xFF7FFFFF;
+		worn_helm->flags ^= gem->data.flags;
+		worn_helm->flags2 ^= gem->data.flags2;
+		factor = -1;
+	} else {
+		worn_helm->flags |= gem->data.flags;
+		worn_helm->flags2 |= gem->data.flags2;
+		factor = 1;
+	}
+
+	worn_helm->cost += factor * gem->data.cost;
+	worn_helm->weight += factor * gem->data.weight;
+	worn_helm->tohit += factor * gem->data.tohit;
+	worn_helm->todam += factor * gem->data.todam;
+	worn_helm->ac += factor * gem->data.ac;
+	worn_helm->toac += factor * gem->data.toac;
+	worn_helm->p1--;
+	inven_destroy(gem);
+	py_bonuses(worn_helm, 1);
+}
+
 void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 	      long *scr_state, boolean *valid_flag)
 {
 	/*{ Wear routine, wear or wield an item           -RAK-   }*/
-	long i1;
-	char out_val[82];
 	boolean exit_flag = false;
-
 
 	ENTER(("ic__wear", "i2"));
 
 	cur_inven = inventory_list;
 
-	do {
-		treas_ptr item_ptr;
-		boolean test_flag;
+	while (!exit_flag) {
+		long i1;
+		boolean equip_cursed_item;
+		char out_val[82];
+		treas_ptr selected_item;
+		boolean item_was_selected;
 
 		ic__clear_display(cur_display, cur_display_size);
 		change_all_ok_stats(true, false);
 
 		{ /* Filter item types before we show the list */
-			const obj_set massive_pile_of_stuff = {
+			const obj_set wearables = {
 				valuable_gems_wear, lamp_or_torch,
 				bow_crossbow_or_sling, hafted_weapon,
 				pole_arm, dagger, sword, pick_or_shovel,
@@ -675,262 +724,169 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 			};
 			treas_rec *ptr;
 			long count;
-			find_range(massive_pile_of_stuff, false, &ptr, &count);
+			find_range(wearables, false, &ptr, &count);
 		}
 
 		sprintf(prompt, "Items a-%%N, space for next page, Esc to "
 				"exit) Wear/Wield which one?");
 		clear_rc(2, 1);
 
-		item_ptr = inventory_list;
-		test_flag = ic__show_inven(&item_ptr, true, false, scr_state,
+		selected_item = inventory_list;
+		item_was_selected = ic__show_inven(&selected_item, true, false, scr_state,
 					   valid_flag, prompt, cur_display,
 					   cur_display_size);
-		/*{ Somewhere among the pointers is a bug. }*/
-		/*{ The above is a STUPID comment. }*/
-		/* That second comment helps a lot. */
-		exit_flag = !test_flag;
-		/*{ Main logic for wearing        }*/
-		if (!exit_flag) {
-			/*{ Player turn   }*/
-			reset_flag = false;
-			test_flag = true;
-			/*{ Slot for equipment    }*/
-			switch (item_ptr->data.tval) {
-			case lamp_or_torch:
-				i1 = Equipment_light;
-				break;
-			case bow_crossbow_or_sling:
-				i1 = Equipment_primary;
-				break;
-			case hafted_weapon:
-				i1 = Equipment_primary;
-				break;
-			case pole_arm:
-				i1 = Equipment_primary;
-				break;
-			case sword:
-				i1 = Equipment_primary;
-				break;
-			case dagger:
-				i1 = Equipment_primary;
-				break;
-			case maul:
-				i1 = Equipment_primary;
-				break;
-			case pick_or_shovel:
-				i1 = Equipment_primary;
-				break;
-			case boots:
-				i1 = Equipment_boots;
-				break;
-			case gloves_and_gauntlets:
-				i1 = Equipment_gloves;
-				break;
-			case cloak:
-				i1 = Equipment_cloak;
-				break;
-			case helm:
-			case gem_helm:
-				i1 = Equipment_helm;
-				break;
-			case shield:
-				i1 = Equipment_shield;
-				break;
-			case hard_armor:
-				i1 = Equipment_armor;
-				break;
-			case soft_armor:
-				i1 = Equipment_armor;
-				break;
-			case amulet:
-				i1 = Equipment_amulet;
-				break;
-			case bracers:
-				i1 = Equipment_bracers;
-				break;
-			case belt:
-				i1 = Equipment_belt;
-				break;
+		if (!item_was_selected) {
+			break;
+		}
 
-			case ring:
-				if (equipment[Equipment_right_ring].tval == 0) {
-					i1 = Equipment_right_ring;
-				} else {
-					i1 = Equipment_left_ring;
-				}
+		/*{ Player turn   }*/
+		reset_flag = false;
+
+		/*{ Slot for equipment    }*/
+		switch (selected_item->data.tval) {
+		case lamp_or_torch:
+			i1 = Equipment_light;
+			break;
+
+		case bow_crossbow_or_sling:
+		case hafted_weapon:
+		case pole_arm:
+		case sword:
+		case dagger:
+		case maul:
+		case pick_or_shovel:
+			i1 = Equipment_primary;
+			break;
+
+		case boots:
+			i1 = Equipment_boots;
+			break;
+
+		case gloves_and_gauntlets:
+			i1 = Equipment_gloves;
+			break;
+
+		case cloak:
+			i1 = Equipment_cloak;
+			break;
+
+		case helm:
+		case gem_helm:
+			i1 = Equipment_helm;
+			break;
+
+		case shield:
+			i1 = Equipment_shield;
+			break;
+
+		case hard_armor:
+		case soft_armor:
+			i1 = Equipment_armor;
+			break;
+
+		case amulet:
+			i1 = Equipment_amulet;
+			break;
+
+		case bracers:
+			i1 = Equipment_bracers;
+			break;
+
+		case belt:
+			i1 = Equipment_belt;
+			break;
+
+		case ring:
+			i1 = equipment[Equipment_right_ring].tval == 0
+				? Equipment_right_ring
+				: Equipment_left_ring;
+			break;
+
+		case valuable_gems_wear:
+			ic__wear__gem(selected_item);
+			item_was_selected = false;
+			break;
+
+		default:
+			msg_print("I don't see how you can use that.");
+			msg_print("");
+			item_was_selected = false;
+			i1 = 0;
+			break;
+		} /* end switch */
+
+		equip_cursed_item = item_was_selected &&
+				equipment[i1].tval > 0 &&
+				Cursed_worn_bit & equipment[i1].flags;
+		if (equip_cursed_item) {
+			char const * const equip_way = i1 == Equipment_primary
+				? "wielding"
+				: "wearing";
+			char out_val_tmp[82];
+			inven_temp->data = equipment[i1];
+			objdes(out_val, inven_temp, false);
+			strcpy(out_val_tmp, out_val);
+			sprintf(out_val, "The %s you are %s appears to be cursed", out_val_tmp, equip_way);
+			item_was_selected = false;
+		}
+
+		if (item_was_selected) {
+			long i2;
+			long i3;
+			char prt1[82];
+			char prt2[82];
+			treasure_type unwear_obj = equipment[i1];
+			equipment[i1] = selected_item->data;
+			if (i1 == Equipment_light) {
+				PF.light_on = true;
+			}
+			equipment[i1].number = 1;
+
+			/*{ Fix for weight        }*/
+			inven_weight +=
+			    equipment[i1].weight * equipment[i1].number;
+
+			/*{ Subtracts weight      }*/
+			inven_destroy(selected_item);
+			equip_ctr++;
+			py_bonuses(&(equipment[i1]), 1);
+			if (unwear_obj.tval > 0) {
+				equipment[EQUIP_MAX - 1] = unwear_obj;
+				ic__remove(EQUIP_MAX - 1, true);
+			}
+
+			switch (i1) {
+			case Equipment_primary:
+				strcpy(prt1, "You are wielding ");
 				break;
-
-			case valuable_gems_wear:
-				if (equipment[Equipment_helm].tval == gem_helm) {
-					long factor;
-					/* with equipment[equipment_helm] do; */
-					if (equipment[Equipment_helm].p1 > 0) {
-						msg_print("The gem adheres "
-							  "itself to your "
-							  "helm!");
-						py_bonuses(&(equipment[Equipment_helm]), -1);
-						if ((item_ptr->data.flags2 &
-						     Negative_gem_bit) != 0) {
-							item_ptr->data.flags2 &=
-							    0xFF7FFFFF;
-							equipment
-							    [Equipment_helm]
-								.flags ^=
-							    item_ptr->data
-								.flags;
-							equipment
-							    [Equipment_helm]
-								.flags2 ^=
-							    item_ptr->data
-								.flags2;
-							factor = -1;
-						} else {
-							equipment
-							    [Equipment_helm]
-								.flags |=
-							    item_ptr->data
-								.flags;
-							equipment
-							    [Equipment_helm]
-								.flags2 |=
-							    item_ptr->data
-								.flags2;
-							factor = 1;
-						}
-						equipment[Equipment_helm].cost +=
-						    factor * item_ptr->data.cost;
-						equipment[Equipment_helm].weight +=
-						    factor * item_ptr->data.weight;
-						equipment[Equipment_helm].tohit +=
-						    factor * item_ptr->data.tohit;
-						equipment[Equipment_helm].todam +=
-						    factor * item_ptr->data.todam;
-						equipment[Equipment_helm].ac +=
-						    factor * item_ptr->data.ac;
-						equipment[Equipment_helm].toac +=
-						    factor * item_ptr->data.toac;
-						equipment[Equipment_helm].p1--;
-						inven_destroy(item_ptr);
-						py_bonuses(&(equipment [Equipment_helm]), 1);
-					} else {
-						msg_print("There is no more "
-							  "room on the helm.");
-						if (randint(2) == 1) {
-							msg_print("You lose "
-								  "your grip "
-								  "and the gem "
-								  "falls to "
-								  "the floor.");
-							msg_print("The gem "
-								  "shatters!");
-							msg_print("");
-							inven_destroy(item_ptr);
-						} else {
-							msg_print("You catch "
-								  "the gem in "
-								  "mid air");
-							msg_print("");
-						}
-					}
-				} else {
-					msg_print("I don't see how you can use "
-						  "that.");
-					msg_print("");
-				}
-				test_flag = false;
-				break; /* end of gem */
-
+			case Equipment_light:
+				strcpy(prt1, "Your light source is ");
+				break;
 			default:
-				msg_print("I don't see how you can use that.");
-				msg_print("");
-				test_flag = false;
-				i1 = 0;
+				strcpy(prt1, "You are wearing ");
 				break;
-			} /* end switch */
-
-			if (test_flag && equipment[i1].tval > 0 &&
-					(Cursed_worn_bit & equipment[i1].flags) != 0) {
-				char out_val_tmp[82];
-				inven_temp->data = equipment[i1];
-				objdes(out_val, inven_temp, false);
-				strcpy(out_val_tmp, out_val);
-				sprintf(out_val, "The %s you are ", out_val_tmp);
-				switch (i1) {
-					case Equipment_primary:
-						strcat(out_val,
-								"wielding "
-								"appears to be "
-								"cursed.");
-						break;
-					default:
-						strcat(out_val,
-								"wearing "
-								"appears to be "
-								"cursed.");
-						break;
-				}
-				test_flag = false;
 			}
-
-			if (test_flag) {
-				long i2;
-				long i3;
-				char prt1[82];
-				char prt2[82];
-				treasure_type unwear_obj = equipment[i1];
-				equipment[i1] = item_ptr->data;
-				if (i1 == Equipment_light) {
-					PF.light_on = true;
+			inven_temp->data = equipment[i1];
+			objdes(prt2, inven_temp, true);
+			i2 = 0;
+			i3 = Equipment_min - 1;
+			do { /*{ Get the right letter of equipment }*/
+				i3++;
+				if (equipment[i3].tval > 0) {
+					i2++;
 				}
-				equipment[i1].number = 1;
-
-				/*{ Fix for weight        }*/
-				inven_weight +=
-				    equipment[i1].weight * equipment[i1].number;
-
-				/*{ Subtracts weight      }*/
-				inven_destroy(item_ptr);
-				equip_ctr++;
-				py_bonuses(&(equipment[i1]), 1);
-				if (unwear_obj.tval > 0) {
-					equipment[EQUIP_MAX - 1] = unwear_obj;
-					ic__remove(EQUIP_MAX - 1, true);
-				}
-
-				switch (i1) {
-				case Equipment_primary:
-					strcpy(prt1, "You are wielding ");
-					break;
-				case Equipment_light:
-					strcpy(prt1, "Your light source is ");
-					break;
-				default:
-					strcpy(prt1, "You are wearing ");
-					break;
-				}
-				inven_temp->data = equipment[i1];
-				objdes(prt2, inven_temp, true);
-				i2 = 0;
-				i3 = Equipment_min - 1;
-				do { /*{ Get the right letter of equipment }*/
-					i3++;
-					if (equipment[i3].tval > 0) {
-						i2++;
-					}
-				} while (!(i3 == i1));
-				sprintf(out_val, "%s%s (%c%c", prt1, prt2,
-					(int)i2 + 96, (int)cur_char2());
-				msg_print(out_val);
-			}
-		} /* end if !exit_flag */
+			} while (!(i3 == i1));
+			sprintf(out_val, "%s%s (%c%c", prt1, prt2,
+				(int)i2 + 96, (int)cur_char2());
+			msg_print(out_val);
+		}
 
 		if (*scr_state == 0) {
 			exit_flag = true;
 		} else if (inven_ctr == 0) {
 			exit_flag = true;
 		}
-	} while (!exit_flag);
+	}
 
 	if (*scr_state != 0) {
 		prt("You are currently carrying -", 1, 1);
