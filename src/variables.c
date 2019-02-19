@@ -330,7 +330,6 @@ unsigned char record_ctr = 0;
 long char_row = 0;
 long char_col = 0;
 long com_val;
-long pclass = 0;
 char sex_type[82] = "FemaleMale  ";
 
 /*	{ Background information					} */

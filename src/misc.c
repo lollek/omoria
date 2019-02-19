@@ -3249,11 +3249,11 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 
 	/* with player_do; */
 	if (is_fired) {
-		py_crit = C_class_ranged_bonus(pclass);
+		py_crit = C_class_ranged_bonus(player_pclass);
 	} else {
-		py_crit = C_class_melee_bonus(pclass);
+		py_crit = C_class_melee_bonus(player_pclass);
 
-		if (pclass == C_MONK) { /*{ monks are crit specialists }*/
+		if (player_pclass == C_MONK) { /*{ monks are crit specialists }*/
 			py_crit *= 2;
 		}
 	}

@@ -115,7 +115,6 @@ extern unsigned char record_ctr;
 extern long char_row;
 extern long char_col;
 extern long com_val;
-extern long pclass;
 extern char sex_type[82];
 extern float rgold_adj[MAX_RACES][MAX_RACES];
 extern treasure_type yums[NUM_YUM + 1];
