@@ -738,6 +738,10 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 		if (!item_was_selected) {
 			break;
 		}
+		if (!C_class_can_use_item(player_pclass, &selected_item->data)) {
+			msg_print("You cannot wear that item type!");
+			return;
+		}
 
 		/*{ Player turn   }*/
 		reset_flag = false;

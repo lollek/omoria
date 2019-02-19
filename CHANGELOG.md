@@ -5,11 +5,19 @@ the PROGRESS-file.
 ## 5.0.0.pre-alpha
 
 ### February 2019
+
+## Major stuff
+* Add restrictions on what druids can wear:
+- Weapons: Club, Dagger, Quarterstaff, Sling
+- Armor, Shields, Misc: Only stuff without large amounts of metal in it
+
+## Minor stuff
 * Fix crash on displaying skeletons
 * Lots of code cleanup, A.K.A introducing bugs
 
 ### December 2018
 
+## Major stuff
 * WIP - Begun work on a new way of displaying item names. Will make names more
   easy to understand without resorting to the manual.
 * Some things are no longer stackable (Torches, valuable jewelry, amulets)

@@ -76,7 +76,7 @@ impl Item {
     fn subtype_name<'a>(&self) -> Cow<'a, str> {
         let plural_s = || if self.number == 1 { "s" } else { "" };
 
-        match ItemType::from(self.tval) {
+        match self.item_type() {
             ItemType::Food =>
                 if 255 < self.subval && self.subval < 300 {
                     // Mushrooms

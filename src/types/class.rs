@@ -1,5 +1,8 @@
 use std::ops::Range;
 
+use types::item::Item;
+use types::item_type::ItemType;
+
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Class {
     Fighter = 0,
@@ -427,6 +430,51 @@ impl Class {
                    36 => "Hi-YA Man",      37 => "Baby Buddha",
                    38 => "BuddingBuddha",   _ => "Buddha"
                 },
+        }
+    }
+
+    pub fn can_use_item(&self, item: &Item) -> bool {
+        match self {
+            Class::Druid => {
+                /* Weapons:
+                 * club, dagger, dart, quarterstaff, scimitar, scythe, sickle, shortspear, sling,
+                 * spear
+                 *
+                 * Armor:
+                 * light / medium. No major metal.
+                 *
+                 * Shields:
+                 * small / medium. No major metal.
+                 *
+                 * Need more: shortspear, spear, scimitar
+                 */
+                match item.item_type() {
+                    // Utility:
+                    ItemType::LightSource => true,
+                    ItemType::Staff => true,
+
+                    // Weapons:
+                    ItemType::RangedWeapon => item.subval == 20, // Sling
+                    ItemType::PoleArm => item.subval == 36,
+                    ItemType::Dagger => true,
+                    ItemType::HaftedWeapon => false, // No spears
+                    ItemType::Sword => false, // No scimitar
+                    ItemType::Maul => item.subval == 6 || item.subval == 13,
+
+                    // Armor
+                    ItemType::GemHelm => false, // Only metal atm
+                    ItemType::Boots => true,
+                    ItemType::Gloves => item.subval != 2,
+                    ItemType::Cloak => true,
+                    ItemType::Helm => item.subval == 1,
+                    ItemType::Shield => item.subval <= 3,
+                    ItemType::SoftArmor => item.subval <= 6,
+                    ItemType::Bracers => item.subval <= 3,
+                    ItemType::Belt => true,
+                    _ => false,
+                }
+            },
+            _ => true
         }
     }
 }
