@@ -106,13 +106,15 @@ impl ItemType {
             ItemType::MiscObject => {
                 match subval {
                     // Skeletons
-                    1|2|11|12|25|40|50|60 => 's',
+                    1|2|7|8|9|10|11|12 => 's',
 
                     // Empty bottle
                     4 => '!',
 
                     // Broken garbage
                     5|13 => '~',
+
+                    99 => '(',
 
                     _ => panic!(),
                 }

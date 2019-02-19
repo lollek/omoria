@@ -5,6 +5,7 @@ the PROGRESS-file.
 ## 5.0.0.pre-alpha
 
 ### February 2019
+* Fix crash on displaying skeletons
 * Lots of code cleanup, A.K.A introducing bugs
 
 ### December 2018
