@@ -366,11 +366,8 @@ long sell_price(long snum, long *max_sell, long *min_sell, treasure_type *item)
 
 long iv__search_list(long x1, long x2)
 {
-	long i1, i2;
-
-	i1 = 0;
-	i2 = 0;
-
+	long i1 = 0;
+	long i2 = 0;
 	do {
 		i1++;
 		if ((object_list[i1].tval == x1) &&
