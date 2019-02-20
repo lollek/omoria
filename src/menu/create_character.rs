@@ -871,7 +871,7 @@ fn choose_class() {
         helpers::draw_menu(
             "Choose your class",
             &class_strings,
-            "j=up, k=down, enter=select, ?=info",
+            "j=up, k=down, enter=select, ?=info, r=restrictions",
             index);
         match io::inkey_flush() as char {
             'k' => index = if index == 0 { 0 } else { index - 1 },
@@ -884,6 +884,9 @@ fn choose_class() {
             '?' => helpers::draw_help(
                 classes[index as usize].name(),
                 classes[index as usize].info()),
+            'r' => helpers::draw_help(
+                classes[index as usize].name(),
+                classes[index as usize].restriction_info()),
             _ => {},
         }
     }

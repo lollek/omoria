@@ -48,6 +48,13 @@ impl Class {
         }
     }
 
+    pub fn restriction_info(&self) -> &'static str {
+        match self {
+            Class::Druid => "Can only use the following weapons: Club, Dagger, Dart, Quarterstaff, Scimitar, Scythe, Sickle, Shortspear, Sling, Spear. For armor, shields and Misc. items: Cannot wear anything consisting of a lot of metal. Can also not use any large shields",
+            _ => "No restrictions!",
+        }
+    }
+
     pub fn health_bonus(&self) -> u8 {
         match self {
             Class::Fighter => 10,
