@@ -455,9 +455,9 @@ impl Class {
 
                     // Weapons:
                     ItemType::RangedWeapon => item.subval == 20, // Sling
-                    ItemType::PoleArm => item.subval == 36,
+                    ItemType::PoleArm => item.subval == 8,
                     ItemType::Dagger => true,
-                    ItemType::HaftedWeapon => false, // No spears
+                    ItemType::HaftedWeapon => false,
                     ItemType::Sword => false, // No scimitar
                     ItemType::Maul => item.subval == 6 || item.subval == 13,
 
