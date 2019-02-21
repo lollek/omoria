@@ -396,7 +396,7 @@
 #define horn 86
 #define magic_book 90
 #define prayer_book 91
-#define instrument 92
+#define instrument 92 /* Not in use */
 #define song_book 93
 #define lodging_at_inn 95
 #define valuable_metal 100 /* look in detect_item for limit */

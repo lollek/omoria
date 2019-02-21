@@ -1719,14 +1719,16 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      12, 20, 1, 0, 0, 0, 0, "0d0", 15, 0},
     {"& %H| of Fog^ (%P1 charges)", horn, 0x00000000, 0x10000000, 0, 500, 13,
      20, 1, 0, 0, 0, 0, "0d0", 25, 0},
-    {"& Pipes of Peace [Beginners Instrument]", instrument, 0x00000000, 0x000003FF,
+    /* Instruments are not in use */
+    {"& Pipes of Peace", instrument, 0x00000000, 0x000003FF,
      0, 30, 258, 40, 1, -100, 0, 0, 0, "1d1", 40, 0},
-    {"& Lyre of Nature [Instrument I]", instrument, 0x00000000, 0x000FFC00, 0, 105,
+    {"& Lyre of Nature", instrument, 0x00000000, 0x000FFC00, 0, 105,
      259, 40, 1, -100, 0, 0, 0, "0d0", 40, 0},
-    {"& Lute of the Woods [Instrument II]", instrument, 0x00000000, 0x7FF00000, 0,
+    {"& Lute of the Woods", instrument, 0x00000000, 0x7FF00000, 0,
      320, 260, 40, 1, -100, 0, 0, 0, "0d0", 40, 0},
-    {"& Harp of the Druids [Greater Instrument]", instrument, 0x000001FF,
+    {"& Harp of the Druids", instrument, 0x000001FF,
      0x00000000, 0, 850, 261, 40, 1, -100, 0, 0, 0, "2d1", 40, 0},
+
     {"& Book of Bard Lyrics [Beginners Handbook]", song_book, 0x00000000,
      0x000007FF, 0, 30, 262, 50, 1, -100, 0, 0, 0, "0d0", 40, 0},
     {"& Songs of Charming [Song Book I]", song_book, 0x00000000, 0x000FF800, 0,
@@ -2025,14 +2027,16 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
      10, 5, 0, 0, 0, 0, "2d6", 1, 1}, /*{105} */
     {"Lodging for one day", lodging_at_inn, 0x00000000, Nothing_flag, 1,
      50, 300, 3000, 14, 0, 0, 0, 0, "0d0", 0, 1}, /*{106} */
-    {"& Pipes of Peace [Beginners Instruments]", instrument, 0x00000000,
+    /* Instruments are not in use */
+    {"& Pipes of Peace", instrument, 0x00000000,
      0x000003FF, 0, 30, 258, 40, 1, -100, 0, 0, 0, "1d1", 40, 1}, /*{107} */
-    {"& Lyre of Nature [Instrument I]", instrument, 0x00000000, 0x0007FC00,
+    {"& Lyre of Nature", instrument, 0x00000000, 0x0007FC00,
      0, 105, 259, 40, 1, -100, 0, 0, 0, "0d0", 40, 1}, /*{108} */
-    {"& Lute of the Woods [Instrument II]", instrument, 0x00000000,
+    {"& Lute of the Woods", instrument, 0x00000000,
      0x7FF80000, 0, 320, 260, 40, 1, -100, 0, 0, 0, "0d0", 40, 1}, /*{109} */
-    {"& Harp of the Druids [Greater Instrument]", instrument, 0x000001FF,
+    {"& Harp of the Druids", instrument, 0x000001FF,
      0x00000000, 0, 850, 261, 40, 1, -100, 0, 0, 0, "2d1", 40, 1}, /*{110} */
+
     {"& Book of Bard Lyrics [Beginners Song book]", song_book, 0x00000000,
      0x000007FF, 0, 30, 262, 50, 1, -100, 0, 0, 0, "0d0", 40, 1}, /*{111} */
     {"& Songs of Charming [Song Book I]", song_book, 0x00000000,

@@ -1123,71 +1123,46 @@ boolean learn_druid()
 {
 	/*{ Learn some druid spells (Druid)			-Cap'n-	}*/
 
-	long i1, i2, i3, i4, new_spell;
-	long test_array[33]; /*	: array [1..32] of long;*/
-	unsigned long spell_flag, spell_flag2;
-	treas_ptr curse;
+	int i;
+	long num_spells_to_learn = num_new_spells(druid_adj());
+	spl_type spells_to_choose_from;
+	int spell_counter = 0;
 	boolean return_value = false;
 
 	ENTER(("learn_druid", ""));
 
-	spell_flag = 0;
-	spell_flag2 = 0;
-	curse = inventory_list;
-	while (curse != nil) {
-		if (curse->data.tval == instrument) {
-			spell_flag |= curse->data.flags;
-			spell_flag2 |= curse->data.flags2;
-		}
-		curse = curse->next;
+	for (i = 0; i < MAX_SPELLS; ++i) {
+		if (C_magic_spell_level(i) > player_lev)
+			continue;
+		if (C_player_knows_spell(i))
+			continue;
+		spells_to_choose_from[spell_counter++].splnum = i;
 	}
 
-	i1 = 0; /* btw, we only use test_array[1..32] */
-	while ((spell_flag > 0) || (spell_flag2 > 0)) {
-		i2 = bit_pos64(&spell_flag2, &spell_flag);
-		if (i2 > 31) {
-			i2--;
-		}
-		if (C_magic_spell_level(i2) <= player_lev) {
-			if (!C_player_knows_spell(i2)) {
-				test_array[i1++] = i2;
+	for (i = 0; i < num_spells_to_learn; ++i) {
+		long selected;
+		long trash;
+		print_new_spells(spells_to_choose_from, spell_counter, &redraw);
+		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
+					"Learn which spell?", &redraw)) {
+			int j;
+			C_player_set_knows_spell(selected, true);
+			return_value = true;
+			if (player_mana == 0) {
+				player_mana = 1;
+				player_cmana = 1;
 			}
+			/* Remove selected value from list */
+			for (j = 0; j < spell_counter; ++j) {
+				if (spells_to_choose_from[j].splnum == selected) {
+					break;
+				}
+			}
+			for (;j < spell_counter; ++j) {
+				spells_to_choose_from[j].splnum = spells_to_choose_from[j+1].splnum;
+			}
+			spell_counter--;
 		}
-	}
-
-	i2 = num_new_spells(druid_adj());
-	new_spell = 0;
-
-	while ((i1 > 0) && (i2 > 0)) {
-		i3 = randint(i1);
-		C_player_set_knows_spell(test_array[i3], true);
-		new_spell++;
-
-		for (i4 = i3; i4 < i1; i4++) {
-			test_array[i4] = test_array[i4 + 1];
-		}
-
-		i1--; /*{ One less spell to learn	}*/
-		i2--; /*{ Learned one			}*/
-	}
-
-	if (new_spell > 0) {
-		if (new_spell > 1) {
-			msg_print("You learned new songs!");
-		} else {
-			msg_print("You learned a new song!");
-		}
-		if (player_exp == 0) {
-			msg_print(" ");
-		}
-		if (player_mana == 0) {
-			player_mana = 1;
-			player_cmana = 1;
-		}
-		return_value = true;
-
-	} else {
-		return_value = false;
 	}
 
 	LEAVE("learn_druid", "");

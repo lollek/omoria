@@ -504,10 +504,10 @@ impl Item {
                 },
                 ItemType::Instrument =>
                     Cow::from(match self.subval {
-                        258 => "Pipes of Peace [Beginners Instrument]",
-                        259 => "Lyre of Nature [Instrument I]",
-                        260 => "Lute of the Woods [Instrument II]",
-                        261 => "Harp of the Druids [Greater Instrument]",
+                        258 => "Pipes of Peace",
+                        259 => "Lyre of Nature",
+                        260 => "Lute of the Woods",
+                        261 => "Harp of the Druids",
                         _ => "Alien instrument",
                     }),
                 ItemType::SongBook =>
