@@ -5830,7 +5830,9 @@ void d__execute_command(long *com_val)
 		move_char(6);
 		break;
 	case 'm': /* magick, monk, music */
-		if (C_player_uses_magic(M_ARCANE)) {
+		if (C_player_uses_magic(M_NATURE)) {
+			cast(M_NATURE); /* play */
+		} else if (C_player_uses_magic(M_ARCANE)) {
 			cast(M_ARCANE); /*  magick   } */
 		} else if (C_player_uses_magic(M_CHAKRA)) {
 			cast(M_CHAKRA); /* m = monk? :) */
@@ -5844,11 +5846,11 @@ void d__execute_command(long *com_val)
 	case 'o':
 		d__openobject();
 		break;
-	case 'p': /* pray, play */
+	case 'p': /* pray */
 		if (C_player_uses_magic(M_DIVINE)) {
-			cast(M_DIVINE); /* pray */
+			cast(M_DIVINE);
 		} else {
-			cast(M_NATURE); /* play */
+			msg_print("You pray for a moment");
 		}
 		break;
 	case 'q':

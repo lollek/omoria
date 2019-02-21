@@ -7,9 +7,10 @@ the PROGRESS-file.
 ### February 2019
 
 ## Major stuff
-* Add restrictions on what druids can wear:
+* Add restrictions on what druids can wear (Can be seen through Alt-C)
 - Weapons: Club, Dagger, Quarterstaff, Sling
 - Armor, Shields, Misc: Only stuff without large amounts of metal in it
+* Moved druid magic from 'p' to 'm'
 
 ## Minor stuff
 * Fix crash on displaying skeletons
