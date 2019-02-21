@@ -40,23 +40,25 @@ extern long i_summ_count;     /* { Summon item count	   } */
 #define MY(mmm) (m_list[(mmm)].fy)
 #define MX(mmm) (m_list[(mmm)].fx)
 
-extern boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
-extern void desc_remain(treas_ptr item_ptr);
-extern void add_food(long num);
-extern void desc_charges(treas_ptr item_ptr);
-extern boolean move_to_creature(long dir, long *y, long *x);
-extern boolean bolt_to_creature(long dir, long *y, long *x, long *dist,
-				long max_dist, boolean visable);
-extern boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
-			  boolean *redraw);
-extern boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
-			  long *x);
-extern boolean explode(long typ, long y, long x, long dam_hp, const char *descrip);
-extern void teleport(long dis);
-extern boolean create_water(long y, long x);
-extern boolean destroy_water(long y, long x);
-extern boolean item_petrify();
-extern boolean xor (long thing1, long thing2);
-extern void blow();
+boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
+void desc_remain(treas_ptr item_ptr);
+void add_food(long num);
+void desc_charges(treas_ptr item_ptr);
+boolean move_to_creature(long dir, long *y, long *x);
+boolean bolt_to_creature(long dir, long *y, long *x, long *dist,
+		long max_dist, boolean visable);
+boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
+		boolean *redraw);
+boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
+		long *x);
+boolean explode(long typ, long y, long x, long dam_hp, const char *descrip);
+void teleport(long dis);
+boolean create_water(long y, long x);
+boolean destroy_water(long y, long x);
+boolean item_petrify();
+boolean xor (long thing1, long thing2);
+void blow();
+
+void C_dungeon_show_class_restrictions();
 
 #endif /* DUNGEON_H */

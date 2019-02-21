@@ -13,6 +13,7 @@ extern crate pancurses;
 
 pub mod constants;
 pub mod debug;
+pub mod dungeon;
 pub mod equipment;
 pub mod highscore;
 pub mod io;
@@ -32,6 +33,7 @@ pub mod types;
 pub mod bank_extern;
 pub mod constants_extern;
 pub mod classes_extern;
+pub mod dungeon_extern;
 pub mod highscore_extern;
 pub mod master_extern;
 pub mod misc_extern;

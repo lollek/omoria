@@ -5531,6 +5531,10 @@ void d__execute_command(long *com_val)
 		case 'b':
 			move_char(1);
 			break;
+		case 'c':
+			C_dungeon_show_class_restrictions();
+			draw_cave();
+			break;
 		case 'd':
 			sprintf(out_val, "The date is %s",
 				full_date_string(player_cur_age, out2));

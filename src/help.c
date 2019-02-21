@@ -19,7 +19,7 @@ void help()
 	prt(" c ~   Close a door           |"
 	    " C     Display character      |"
 	    "^C     Quit the game          |"
-	    "M-C    (Nothing)              ",
+	    "M-C    Class restrictions     ",
 	    5, 1);
 	prt(" d     Drop an item           |"
 	    " D ~   Disarm a trap/chest    |"
