@@ -4,6 +4,8 @@
 #include "dungeon.h"
 #include "save.h"
 
+void C_print_known_spells();
+
 static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
 
 long dir_val;		 /* { For movement (running)} */
@@ -3021,84 +3023,6 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 	return flag;
 }
 
-/**
- * -RAK-
- * d__examine_book() - Examine a book
- */
-void C_print_new_spell_line2(long i, long slot);
-static void d__examine_book()
-{
-	long i3;
-	treas_ptr i1;
-	treas_ptr item_ptr;
-	char trash_char;
-	const obj_set some_books = {
-		magic_book, prayer_book, instrument, song_book, 0
-	};
-
-	if (!find_range(some_books, false, &i1, &i3)) {
-		msg_print("You are not carrying any books.");
-		return;
-	}
-
-	if (!get_item(&item_ptr, "Which Book?", &redraw, i3, &trash_char,
-			    false, false)) {
-		return;
-	}
-
-	if (C_player_uses_magic(M_ARCANE)) {
-		if (item_ptr->data.tval != magic_book) {
-			msg_print(
-					"You do not understand the language.");
-			return;
-		}
-	} else if (C_player_uses_magic(M_DIVINE)) {
-		if (item_ptr->data.tval != prayer_book) {
-			msg_print(
-					"You do not understand the language.");
-			return;
-		}
-	} else if (C_player_uses_magic(M_NATURE)) {
-		if (item_ptr->data.tval != instrument) {
-			msg_print("You do not posses the talent.");
-			return;
-		}
-	} else if (C_player_uses_magic(M_SONG)) {
-		if (item_ptr->data.tval != song_book) {
-			msg_print("You can not read the music.");
-			return;
-		}
-	} else {
-		msg_print("You do not understand the language.");
-		return;
-	}
-
-	{
-		long index = 0;
-		unsigned long flags1 = item_ptr->data.flags;
-		unsigned long flags2 = item_ptr->data.flags2;
-		clear_from(1);
-		prt("   Name                         Level  Mana   Known", 1, 1);
-		do {
-			i3 = bit_pos64(&flags2, &flags1) + 1;
-			if (i3 > 31) {
-				i3--;
-			}
-			if (i3 > 0) {
-				i3--;
-				index++;
-				if (C_magic_spell_level(i3) < 99) {
-					C_print_new_spell_line2(index, i3);
-				} else {
-					prt("", 1 + index, 1);
-				}
-			}
-		} while (flags1 != 0 || flags2 != 0);
-	}
-	prt("[Press any key to continue]", 24, 20);
-	inkey();
-	draw_cave();
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -5721,7 +5645,8 @@ void d__execute_command(long *com_val)
 		break;
 
 	case 'P':
-		d__examine_book();
+		C_print_known_spells();
+		draw_cave();
 		break;
 	case 'Q':
 		if (player_flags.quested) {

@@ -57,7 +57,7 @@ void help()
 	    "M-O    (Nothing)              ",
 	    12, 1);
 	prt(" p     Prayer / Play          |"
-	    " P     Peruse a book          |"
+	    " P     Print spell list       |"
 	    "^P     Print last message     |"
 	    "M-P    (Nothing)              ",
 	    13, 1);

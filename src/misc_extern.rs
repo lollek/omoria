@@ -3,7 +3,6 @@ use libc;
 use debug;
 use magic;
 use misc;
-use player;
 use term;
 
 #[no_mangle]
@@ -56,18 +55,11 @@ pub extern fn in_statp(stat: libc::c_uchar) -> libc::c_uchar {
     res
 }
 
-// Utility function for dungeon.c::d__examine_book to use rust-strings
 #[no_mangle]
-pub extern fn C_print_new_spell_line2(i: libc::c_long, slot: libc::c_long) {
-    let spell = magic::spell(slot as usize);
-    term::prt(&format!("{}) {:30}{:2}      {:2}   {}",
-            (('a' as u8) + i as u8 -1) as char,
-            spell.name,
-            spell.level,
-            spell.mana,
-            if player::knows_spell(slot as usize) { "true" } else { "false" }),
-            (2 + i) as i32,
-            0);
+pub extern fn C_print_known_spells() {
+    debug::enter("misc_extern::print_known_spells");
+    misc::print_known_spells();
+    debug::leave("misc_extern::print_known_spells");
 }
 
 // Utility function for misc.c::print_new_spells to use rust-strings

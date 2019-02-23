@@ -593,6 +593,10 @@ pub fn record() -> PlayerRecord {
     }
 }
 
+pub fn knows_any_spell() -> bool {
+    PLAYER.read().unwrap().spells_known.iter().any(|&known| known)
+}
+
 pub fn knows_spell(slot: usize) -> bool {
     PLAYER.read().unwrap().spells_known[slot].clone()
 }
@@ -713,8 +717,17 @@ pub fn current_mp() -> i16 {
     (unsafe { player_cmana }) as i16
 }
 
+pub fn modify_current_mp(amount: f32) {
+    unsafe { player_cmana += amount };
+}
+
 pub fn max_mp() -> i16 {
     unsafe { player_mana }
+}
+
+pub fn modify_max_mp(amount: i16) {
+    unsafe { player_mana += amount };
+    modify_current_mp(amount as f32);
 }
 
 pub fn uses_mana() -> bool {

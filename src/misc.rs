@@ -1,7 +1,10 @@
 use std::ffi::CStr;
 
+use io;
+use magic;
 use player;
 use random;
+use term;
 
 use types::Stat;
 
@@ -127,5 +130,27 @@ pub fn stat_to_string(stat: i16) -> String {
     } else {
         format!("{:2}   ", 3 + stat / 10)
     }
+}
+
+pub fn print_known_spells() {
+    term::clear_from(1);
+    term::prt("   Name                         Level  Mana   Known", 1, 1);
+    for i in magic::spells_iter() {
+        let spell = magic::spell(i);
+        let player_knows_spell = if player::knows_spell(i) {
+            "true"
+        } else {
+            "false"
+        };
+        term::prt(&format!("    {:30}{:2}      {:2}   {}",
+        spell.name,
+        spell.level,
+        spell.mana,
+        player_knows_spell),
+        (2 + i) as i32,
+        0);
+    }
+    term::prt("[Press any key to continue]", 42, 20);
+    io::inkey_flush();
 }
 

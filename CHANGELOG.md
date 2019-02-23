@@ -11,6 +11,7 @@ the PROGRESS-file.
 - Weapons: Club, Dagger, Quarterstaff, Sling
 - Armor, Shields, Misc: Only stuff without large amounts of metal in it
 * Moved druid magic from 'p' to 'm'
+* Changes to how 'P' is displayed
 
 ## Minor stuff
 * Fix crash on displaying skeletons

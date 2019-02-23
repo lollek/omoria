@@ -326,81 +326,6 @@ static boolean learn_druid(boolean *redraw)
 	return return_value;
 }
 
-/*{ Gain some mana if you know at least one spell 	-RAK-	}*/
-static void gain_mana(long amount)
-{
-	long i1;
-	long new_mana;
-	boolean knows_spell = false;
-
-	ENTER(("gain_mana", ""));
-
-	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		if (C_player_knows_spell(i1)) {
-			knows_spell = true;
-			break;
-		}
-	}
-
-	if (knows_spell) {
-		if (player_lev & 1) {
-
-			switch (amount) {
-			case 0:
-				new_mana = 0;
-				break;
-			case 1:
-			case 2:
-			case 3:
-				new_mana = 1;
-				break;
-			case 4:
-			case 5:
-				new_mana = 2;
-				break;
-			case 6:
-				new_mana = 3;
-				break;
-			case 7:
-				new_mana = 4;
-				break;
-			default:
-				new_mana = 0;
-				break;
-			}
-
-		} else {
-
-			switch (amount) {
-			case 0:
-				new_mana = 0;
-				break;
-			case 1:
-			case 2:
-				new_mana = 1;
-				break;
-			case 3:
-			case 4:
-				new_mana = 2;
-				break;
-			case 5:
-			case 6:
-				new_mana = 3;
-				break;
-			case 7:
-				new_mana = 4;
-				break;
-			default:
-				new_mana = 0;
-				break;
-			}
-		}
-		player_mana += new_mana;
-		player_cmana += new_mana;
-	}
-	LEAVE("gain_mana", "");
-}
-
 boolean check_kickout()
 {
 	/*{ Check to see if everyone should be kicked out of the game,	}*/
@@ -1630,28 +1555,46 @@ void gain_level()
 	LEAVE("gain_level", "");
 }
 
+void C_gain_mana(int16_t amount);
 void learn_magic(boolean redraw_now) {
+	const boolean player_is_at_even_level = (player_lev & 1) == 0;
+	long adj_from_stats = 0;
+	int16_t mana_increase = 0;
+
 	redraw = false;
 	if (C_player_uses_magic(M_ARCANE)) {
 		learn_spell(&redraw);
-		gain_mana(spell_adj(INT));
+		adj_from_stats = spell_adj(INT);
 	}
 	if (C_player_uses_magic(M_NATURE)) {
 		learn_druid(&redraw);
-		gain_mana(druid_adj());
+		adj_from_stats = druid_adj();
 	}
 	if (C_player_uses_magic(M_SONG)) {
 		learn_song(&redraw);
-		gain_mana(bard_adj());
+		adj_from_stats = bard_adj();
 	}
 	if (C_player_uses_magic(M_DIVINE)) {
 		learn_prayer();
-		gain_mana(spell_adj(WIS));
+		adj_from_stats = spell_adj(WIS);
 	}
 	if (C_player_uses_magic(M_CHAKRA)) {
 		learn_discipline();
-		gain_mana(monk_adj());
+		adj_from_stats = monk_adj();
 	}
+
+	if (player_is_at_even_level)
+		adj_from_stats += 1;
+	switch (adj_from_stats) {
+		case 1: case 2: case 3: mana_increase = 1; break;
+		case 4: case 5: mana_increase = 2; break;
+		case 6: mana_increase = 3; break;
+		case 7: case 8: mana_increase = 4; break;
+		default: break;
+	}
+
+	C_gain_mana(mana_increase);
+
 	if (redraw && redraw_now) {
 		draw_cave();
 	}

@@ -3,6 +3,10 @@ use magic;
 
 use types::{ Class, Spell };
 
+pub fn spells_iter() -> impl Iterator<Item=usize> {
+    0..40
+}
+
 pub fn spell(slot: usize) -> Spell {
     match player::class() {
         Class::Adventurer => magic::adventurer::spell(slot),
@@ -18,7 +22,6 @@ pub fn spell(slot: usize) -> Spell {
     }
 }
 
-
 pub fn empty_spell() -> Spell {
     Spell {
         name: "",
@@ -26,4 +29,12 @@ pub fn empty_spell() -> Spell {
         mana: 99,
         fail: 0,
     }
+}
+
+pub fn gain_mana(amount: i16) {
+    if !player::knows_any_spell() || amount <= 0 {
+        return;
+    }
+
+    player::modify_max_mp(amount);
 }
