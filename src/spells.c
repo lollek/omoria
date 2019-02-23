@@ -2253,7 +2253,8 @@ boolean light_line(long dir, long y, long x, long power)
 	/*{ Leave a line of light in given dir, blue light can sometimes  }*/
 	/*{ hurt creatures...                                     -RAK-   }*/
 
-	long i1, i2;
+	long i1;
+	long i2;
 	char out_val[82];
 
 	ENTER(("light_line", "%d, %d, %d, %d", dir, y, x, power));

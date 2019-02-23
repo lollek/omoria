@@ -3,12 +3,11 @@
 
 void nature_spell_effects(long effect)
 {
-	/*{ Songs....					}*/
-	long i2, dir;
-	long dumy, y_dumy, x_dumy;
-
-	y_dumy = char_row;
-	x_dumy = char_col;
+	long i;
+	long dir;
+	long dumy;
+	long y_dumy = char_row;
+	long x_dumy = char_col;
 
 	switch (effect + 1) {
 
@@ -102,9 +101,8 @@ void nature_spell_effects(long effect)
 		break;
 
 	case 18: /*{ Remove Curse }*/
-		for (i2 = Equipment_min; i2 <= EQUIP_MAX - 1; i2++) {
-			/* with equipment[i2]. do; */
-			equipment[i2].flags &= 0x7FFFFFFF;
+		for (i = Equipment_min; i <= EQUIP_MAX - 1; i++) {
+			equipment[i].flags &= 0x7FFFFFFF;
 		}
 		break;
 
