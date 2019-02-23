@@ -787,8 +787,8 @@ impl Item {
     }
 
     fn attack_enchantment_string<'a>(&self) -> Cow<'a, str> {
-        let tohit_sign = if self.tohit > 0 { "+" } else if self.tohit < 0 { "-" } else {""};
-        let todam_sign = if self.todam > 0 { "+" } else if self.todam < 0 { "-" } else {""};
+        let tohit_sign = if self.tohit > 0 { "+" } else {""};
+        let todam_sign = if self.todam > 0 { "+" } else {""};
         Cow::from(format!(" ({}{},{}{})", tohit_sign, self.tohit, todam_sign, self.todam))
     }
 
@@ -796,7 +796,7 @@ impl Item {
         if self.toac == 0 && self.ac == 0 {
             Cow::from("")
         } else {
-            let toac_sign = if self.toac > 0 { "+" } else if self.toac < 0 { "-" } else {""};
+            let toac_sign = if self.toac > 0 { "+" } else {""};
             Cow::from(format!(" [{},{}{}]", self.ac, toac_sign, self.toac))
         }
     }
