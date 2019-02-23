@@ -95,19 +95,7 @@ int main(int argc, char *argv[])
 
 		char_inven_init();
 
-		if (C_player_uses_magic(M_ARCANE)) {
-			learn_spell(&msg_flag);
-			gain_mana(spell_adj(INT));
-		} else if (C_player_uses_magic(M_DIVINE)) {
-			learn_prayer();
-			gain_mana(spell_adj(WIS));
-		} else if (C_player_uses_magic(M_NATURE)) {
-			learn_druid();
-			gain_mana(druid_adj());
-		} else if (C_player_uses_magic(M_SONG)) {
-			learn_song(&msg_flag);
-			gain_mana(bard_adj());
-		}
+		learn_magic(false);
 		player_cmana = player_mana;
 		randes_seed = seed; /* Description seed */
 		town_seed = seed;   /* Town generation seed */

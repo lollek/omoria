@@ -536,15 +536,10 @@ extern void add_money(long amount);
 extern void subtract_money(long amount, boolean make_change);
 extern boolean send_page(long to_bank);
 extern void spell_chance(spl_rec *spell);
-extern void print_new_spells(spl_type spell, long num, boolean *redraw);
 extern boolean get_spell(spl_type spell, long num, long *sn, long *sc,
 			 char prompt[82], boolean *redraw);
 extern long num_new_spells(long smarts);
-extern boolean learn_spell(boolean *redraw);
-extern boolean learn_prayer();
-extern boolean learn_song(boolean *redraw);
-extern boolean learn_druid();
-extern void gain_mana(long amount);
+void learn_magic(boolean redraw);
 extern void gain_level();
 extern void insert_num(char *object_str, /*	: varying[a] of char; */
 		       char *mtc_str,    /*	: varying[b] of char; */

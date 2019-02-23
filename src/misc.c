@@ -9,6 +9,398 @@ static long get_hitdie()
 	return randint(player_hitdie) + con_adj();
 }
 
+void C_print_new_spell_line(uint8_t i, long slot, long failchance);
+/* Print list of spells     -RAK- */
+static void print_new_spells(spl_type spell, long num, boolean *redraw)
+{
+
+	uint8_t i;
+
+	ENTER(("print_new_spells", "%ld, %d", num, *redraw));
+
+	*redraw = true;
+	clear_from(1);
+	if (num >= 23)
+		num = 22;
+
+	prt("   Name                          Level  Mana  %Failure", 2, 1);
+	for (i = 0; i < num; i++) {
+		if (spell[i].splnum != -1)
+			spell_chance(&spell[i]);
+		C_print_new_spell_line(i, spell[i].splnum, spell[i].splchn);
+	}
+
+	LEAVE("print_new_spells", "");
+}
+
+/* Learn some magic spells (Mage)			-RAK-	*/
+static boolean learn_spell(boolean *redraw)
+{
+	unsigned long spell_flag = 0;
+	unsigned long spell_flag2 = 0;
+	spl_type spells_to_choose_from;
+	long new_spells = num_new_spells(spell_adj(INT));
+	boolean return_value = false;
+	treas_ptr ptr;
+
+	ENTER(("learn_spell", ""));
+
+	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
+		if (ptr->data.tval == magic_book) {
+			spell_flag |= ptr->data.flags;
+			spell_flag2 |= ptr->data.flags2;
+		}
+	}
+
+	while (new_spells > 0 && (spell_flag > 0 || spell_flag2 > 0)) {
+		unsigned long spell_counter = 0;
+		unsigned long flag1 = spell_flag;
+		unsigned long flag2 = spell_flag2;
+		long selected;
+		long trash;
+
+		do {
+			unsigned long spell_index = bit_pos64(&flag2, &flag1);
+			if (spell_index > 31)
+				spell_index--;
+
+			if (C_magic_spell_level(spell_index) > player_lev)
+				continue;
+
+			if (C_player_knows_spell(spell_index))
+				continue;
+
+			spells_to_choose_from[spell_counter++].splnum = spell_index;
+
+		} while (flag1 != 0 || flag2 != 0);
+
+		if (spell_counter == 0)
+			break; /* No spells to learn */
+
+		print_new_spells(spells_to_choose_from, spell_counter, redraw);
+		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
+					"Learn which spell?", redraw)) {
+			C_player_set_knows_spell(selected, true);
+			return_value = true;
+			if (player_mana == 0) {
+				player_mana = 1;
+				player_cmana = 1;
+			}
+		} else {
+			new_spells = 0;
+		}
+
+		new_spells--;
+	} /* end while new_spells > 0 */
+
+	LEAVE("learn_spell", "");
+	return return_value;
+}
+
+/*{ Learn some prayers (Priest)				-RAK-	}*/
+static boolean learn_prayer()
+{
+
+	unsigned long new_spells_to_learn = num_new_spells(spell_adj(WIS));
+	boolean return_value = false;
+
+	ENTER(("learn_prayer", ""));
+	MSG(("new spells: %d", new_spells_to_learn));
+
+	if (new_spells_to_learn > 0) {
+		unsigned spells_learned = 0;
+		unsigned long i;
+
+		for (i = 0; i < MAX_SPELLS; ++i) {
+			if (C_magic_spell_level(i) > player_lev)
+				continue;
+			if (C_player_knows_spell(i))
+				continue;
+
+			C_player_set_knows_spell(i, true);
+			spells_learned++;
+			return_value = true;
+
+			if (--new_spells_to_learn == 0)
+				break;
+		}
+
+		if (player_mana == 0) {
+			player_mana = 1;
+			player_cmana = 1;
+		}
+		if (spells_learned > 0) {
+			msg_print(spells_learned > 1
+				      ? "You learned new prayers!"
+				      : "You learned a new prayer!");
+		}
+	}
+
+	LEAVE("learn_prayer", "");
+	return return_value;
+}
+
+/* Learn some disciplines (Monk)				-RAK-*/
+static boolean learn_discipline()
+{
+	long i1, i2, i3, i4, new_spell;
+	long test_array[33]; /*	: array [1..32] of long;*/
+	unsigned long spell_flag, spell_flag2;
+	boolean return_value = false;
+
+	/*  printf("\n\n  ^^^ENTER learn_discip^^^\n\n");fflush(stdout); */
+	ENTER(("learn_discipline", ""));
+
+	i1 = 0; /* btw, we only use test_array[1..32] */
+	spell_flag = 0x00003FFF;
+	spell_flag2 = 0x00000000;
+
+	while ((spell_flag > 0) || (spell_flag2 > 0)) {
+		i2 = bit_pos64(&spell_flag2, &spell_flag);
+		if (i2 > 31) {
+			i2--;
+		}
+		if (C_magic_spell_level(i2) <= player_lev) {
+			if (!C_player_knows_spell(i2)) {
+				i1++;
+				test_array[i1] = i2;
+			}
+		}
+	}
+
+	i2 = num_new_spells(spell_adj(WIS));
+	new_spell = 0;
+
+	while ((i1 > 0) && (i2 > 0)) {
+		i3 = randint(i1);
+		C_player_set_knows_spell(test_array[i3], true);
+		new_spell++;
+
+		for (i4 = i3; i4 < i1; i4++) {
+			test_array[i4] = test_array[i4 + 1];
+		}
+
+		i1--; /*{ One less spell to learn	}*/
+		i2--; /*{ Learned one			}*/
+	}
+	if (new_spell > 0) {
+		if (new_spell > 1) {
+			msg_print("You learned new disciplines!");
+		} else {
+			msg_print("You learned a new discipline!");
+		}
+		if (player_exp == 0) {
+			msg_print(" ");
+		}
+		if (player_mana == 0) {
+			player_mana = 1;
+			player_cmana = 1;
+		}
+		return_value = true;
+
+	} else {
+		return_value = false;
+	}
+
+	LEAVE("learn_discipline", "");
+
+	return return_value;
+}
+/*{ Learn some magic songs (Bard)			-Cap'n-	}*/
+static boolean learn_song(boolean *redraw)
+{
+	unsigned long i2;
+	unsigned long i4;
+	long i1;
+	long i3;
+	long sn;
+	long sc;
+	long new_spells;
+	unsigned long spell_flag = 0;
+	unsigned long spell_flag2 = 0;
+	spl_type spell;
+	treas_ptr curse;
+
+	boolean return_value = false;
+
+	ENTER(("learn_song", ""));
+
+	curse = inventory_list;
+	new_spells = num_new_spells(bard_adj());
+
+	while (curse != nil) {
+		if (curse->data.tval == song_book) {
+			spell_flag |= curse->data.flags;
+			spell_flag2 |= curse->data.flags2;
+		}
+		curse = curse->next;
+	}
+
+	while ((new_spells > 0) && ((spell_flag > 0) || (spell_flag2 > 0))) {
+		i1 = 0;
+		i2 = spell_flag;
+		i4 = spell_flag2;
+
+		do {
+			i3 = bit_pos64(&i4, &i2);
+			if (i3 > 31) {
+				i3--;
+			}
+			if (C_magic_spell_level(i3) <= player_lev) {
+				if (!(C_player_knows_spell(i3))) {
+					spell[i1++].splnum = i3;
+				}
+			}
+		} while ((i2 != 0) || (i4 != 0));
+
+		if (i1 > 0) {
+			print_new_spells(spell, i1, redraw);
+			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
+				      redraw)) {
+				C_player_set_knows_spell(sn, true);
+				return_value = true;
+				if (player_mana == 0) {
+					player_mana = 1;
+					player_cmana = 1;
+				}
+			} else {
+				new_spells = 0;
+			}
+		} else {
+			new_spells = 0;
+		}
+		new_spells--;
+	} /* end while new_spells > 0 */
+
+	LEAVE("learn_song", "");
+	return return_value;
+}
+
+/*{ Learn some druid spells (Druid)			-Cap'n-	}*/
+static boolean learn_druid(boolean *redraw)
+{
+
+	int i;
+	long num_spells_to_learn = num_new_spells(druid_adj());
+	spl_type spells_to_choose_from;
+	int spell_counter = 0;
+	boolean return_value = false;
+
+	ENTER(("learn_druid", ""));
+
+	for (i = 0; i < MAX_SPELLS; ++i) {
+		if (C_magic_spell_level(i) > player_lev)
+			continue;
+		if (C_player_knows_spell(i))
+			continue;
+		spells_to_choose_from[spell_counter++].splnum = i;
+	}
+
+	for (i = 0; i < num_spells_to_learn; ++i) {
+		long selected;
+		long trash;
+		print_new_spells(spells_to_choose_from, spell_counter, redraw);
+		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
+					"Learn which spell?", redraw)) {
+			int j;
+			C_player_set_knows_spell(selected, true);
+			return_value = true;
+			if (player_mana == 0) {
+				player_mana = 1;
+				player_cmana = 1;
+			}
+			/* Remove selected value from list */
+			for (j = 0; j < spell_counter; ++j) {
+				if (spells_to_choose_from[j].splnum == selected) {
+					break;
+				}
+			}
+			for (;j < spell_counter; ++j) {
+				spells_to_choose_from[j].splnum = spells_to_choose_from[j+1].splnum;
+			}
+			spell_counter--;
+		}
+	}
+
+	LEAVE("learn_druid", "");
+	return return_value;
+}
+
+/*{ Gain some mana if you know at least one spell 	-RAK-	}*/
+static void gain_mana(long amount)
+{
+	long i1;
+	long new_mana;
+	boolean knows_spell = false;
+
+	ENTER(("gain_mana", ""));
+
+	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
+		if (C_player_knows_spell(i1)) {
+			knows_spell = true;
+			break;
+		}
+	}
+
+	if (knows_spell) {
+		if (player_lev & 1) {
+
+			switch (amount) {
+			case 0:
+				new_mana = 0;
+				break;
+			case 1:
+			case 2:
+			case 3:
+				new_mana = 1;
+				break;
+			case 4:
+			case 5:
+				new_mana = 2;
+				break;
+			case 6:
+				new_mana = 3;
+				break;
+			case 7:
+				new_mana = 4;
+				break;
+			default:
+				new_mana = 0;
+				break;
+			}
+
+		} else {
+
+			switch (amount) {
+			case 0:
+				new_mana = 0;
+				break;
+			case 1:
+			case 2:
+				new_mana = 1;
+				break;
+			case 3:
+			case 4:
+				new_mana = 2;
+				break;
+			case 5:
+			case 6:
+				new_mana = 3;
+				break;
+			case 7:
+				new_mana = 4;
+				break;
+			default:
+				new_mana = 0;
+				break;
+			}
+		}
+		player_mana += new_mana;
+		player_cmana += new_mana;
+	}
+	LEAVE("gain_mana", "");
+}
+
 boolean check_kickout()
 {
 	/*{ Check to see if everyone should be kicked out of the game,	}*/
@@ -848,430 +1240,16 @@ long spell_adj(stat_set attr)
 	}
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long bard_adj() { return (spell_adj(CHR) + spell_adj(DEX) + 1) / 2; }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long druid_adj() { return (spell_adj(CHR) + spell_adj(WIS) + 1) / 2; }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long monk_adj() { return (spell_adj(INT) + spell_adj(WIS) + 1) / 2; }
+
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean learn_spell(boolean *redraw)
-{
-	/*{ Learn some magic spells (Mage)			-RAK-	}*/
-
-	unsigned long spell_flag = 0;
-	unsigned long spell_flag2 = 0;
-	spl_type spells_to_choose_from;
-	long new_spells = num_new_spells(spell_adj(INT));
-	boolean return_value = false;
-	treas_ptr ptr;
-
-	ENTER(("learn_spell", ""));
-
-	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
-		if (ptr->data.tval == magic_book) {
-			spell_flag |= ptr->data.flags;
-			spell_flag2 |= ptr->data.flags2;
-		}
-	}
-
-	while (new_spells > 0 && (spell_flag > 0 || spell_flag2 > 0)) {
-		unsigned long spell_counter = 0;
-		unsigned long flag1 = spell_flag;
-		unsigned long flag2 = spell_flag2;
-		long selected;
-		long trash;
-
-		do {
-			unsigned long spell_index = bit_pos64(&flag2, &flag1);
-			if (spell_index > 31)
-				spell_index--;
-
-			if (C_magic_spell_level(spell_index) > player_lev)
-				continue;
-
-			if (C_player_knows_spell(spell_index))
-				continue;
-
-			spells_to_choose_from[spell_counter++].splnum = spell_index;
-
-		} while (flag1 != 0 || flag2 != 0);
-
-		if (spell_counter == 0)
-			break; /* No spells to learn */
-
-		print_new_spells(spells_to_choose_from, spell_counter, redraw);
-		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
-					"Learn which spell?", redraw)) {
-			C_player_set_knows_spell(selected, true);
-			return_value = true;
-			if (player_mana == 0) {
-				player_mana = 1;
-				player_cmana = 1;
-			}
-		} else {
-			new_spells = 0;
-		}
-
-		new_spells--;
-	} /* end while new_spells > 0 */
-
-	LEAVE("learn_spell", "");
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean learn_prayer()
-{
-	/*{ Learn some prayers (Priest)				-RAK-	}*/
-
-	unsigned long new_spells_to_learn = num_new_spells(spell_adj(WIS));
-	boolean return_value = false;
-
-	ENTER(("learn_prayer", ""));
-	MSG(("new spells: %d", new_spells_to_learn));
-
-	if (new_spells_to_learn > 0) {
-		unsigned spells_learned = 0;
-		unsigned long i;
-
-		for (i = 0; i < MAX_SPELLS; ++i) {
-			if (C_magic_spell_level(i) > player_lev)
-				continue;
-			if (C_player_knows_spell(i))
-				continue;
-
-			C_player_set_knows_spell(i, true);
-			spells_learned++;
-			return_value = true;
-
-			if (--new_spells_to_learn == 0)
-				break;
-		}
-
-		if (player_mana == 0) {
-			player_mana = 1;
-			player_cmana = 1;
-		}
-		if (spells_learned > 0) {
-			msg_print(spells_learned > 1
-				      ? "You learned new prayers!"
-				      : "You learned a new prayer!");
-		}
-	}
-
-	LEAVE("learn_prayer", "");
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean learn_discipline()
-{
-	/*{ Learn some disciplines (Monk)				-RAK-
-	 * }*/
-
-	long i1, i2, i3, i4, new_spell;
-	long test_array[33]; /*	: array [1..32] of long;*/
-	unsigned long spell_flag, spell_flag2;
-	boolean return_value = false;
-
-	/*  printf("\n\n  ^^^ENTER learn_discip^^^\n\n");fflush(stdout); */
-	ENTER(("learn_discipline", ""));
-
-	i1 = 0; /* btw, we only use test_array[1..32] */
-	spell_flag = 0x00003FFF;
-	spell_flag2 = 0x00000000;
-
-	while ((spell_flag > 0) || (spell_flag2 > 0)) {
-		i2 = bit_pos64(&spell_flag2, &spell_flag);
-		if (i2 > 31) {
-			i2--;
-		}
-		if (C_magic_spell_level(i2) <= player_lev) {
-			if (!C_player_knows_spell(i2)) {
-				i1++;
-				test_array[i1] = i2;
-			}
-		}
-	}
-
-	i2 = num_new_spells(spell_adj(WIS));
-	new_spell = 0;
-
-	while ((i1 > 0) && (i2 > 0)) {
-		i3 = randint(i1);
-		C_player_set_knows_spell(test_array[i3], true);
-		new_spell++;
-
-		for (i4 = i3; i4 < i1; i4++) {
-			test_array[i4] = test_array[i4 + 1];
-		}
-
-		i1--; /*{ One less spell to learn	}*/
-		i2--; /*{ Learned one			}*/
-	}
-	if (new_spell > 0) {
-		if (new_spell > 1) {
-			msg_print("You learned new disciplines!");
-		} else {
-			msg_print("You learned a new discipline!");
-		}
-		if (player_exp == 0) {
-			msg_print(" ");
-		}
-		if (player_mana == 0) {
-			player_mana = 1;
-			player_cmana = 1;
-		}
-		return_value = true;
-
-	} else {
-		return_value = false;
-	}
-
-	LEAVE("learn_discipline", "");
-
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean learn_song(boolean *redraw)
-{
-	/*{ Learn some magic songs (Bard)			-Cap'n-	}*/
-
-	unsigned long i2;
-	unsigned long i4;
-	long i1;
-	long i3;
-	long sn;
-	long sc;
-	long new_spells;
-	unsigned long spell_flag = 0;
-	unsigned long spell_flag2 = 0;
-	spl_type spell;
-	treas_ptr curse;
-
-	boolean return_value = false;
-
-	ENTER(("learn_song", ""));
-
-	curse = inventory_list;
-	new_spells = num_new_spells(bard_adj());
-
-	while (curse != nil) {
-		if (curse->data.tval == song_book) {
-			spell_flag |= curse->data.flags;
-			spell_flag2 |= curse->data.flags2;
-		}
-		curse = curse->next;
-	}
-
-	while ((new_spells > 0) && ((spell_flag > 0) || (spell_flag2 > 0))) {
-		i1 = 0;
-		i2 = spell_flag;
-		i4 = spell_flag2;
-
-		do {
-			i3 = bit_pos64(&i4, &i2);
-			if (i3 > 31) {
-				i3--;
-			}
-			if (C_magic_spell_level(i3) <= player_lev) {
-				if (!(C_player_knows_spell(i3))) {
-					spell[i1++].splnum = i3;
-				}
-			}
-		} while ((i2 != 0) || (i4 != 0));
-
-		if (i1 > 0) {
-			print_new_spells(spell, i1, redraw);
-			if (get_spell(spell, i1, &sn, &sc, "Learn which spell?",
-				      redraw)) {
-				C_player_set_knows_spell(sn, true);
-				return_value = true;
-				if (player_mana == 0) {
-					player_mana = 1;
-					player_cmana = 1;
-				}
-			} else {
-				new_spells = 0;
-			}
-		} else {
-			new_spells = 0;
-		}
-		new_spells--;
-	} /* end while new_spells > 0 */
-
-	LEAVE("learn_song", "");
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean learn_druid()
-{
-	/*{ Learn some druid spells (Druid)			-Cap'n-	}*/
-
-	int i;
-	long num_spells_to_learn = num_new_spells(druid_adj());
-	spl_type spells_to_choose_from;
-	int spell_counter = 0;
-	boolean return_value = false;
-
-	ENTER(("learn_druid", ""));
-
-	for (i = 0; i < MAX_SPELLS; ++i) {
-		if (C_magic_spell_level(i) > player_lev)
-			continue;
-		if (C_player_knows_spell(i))
-			continue;
-		spells_to_choose_from[spell_counter++].splnum = i;
-	}
-
-	for (i = 0; i < num_spells_to_learn; ++i) {
-		long selected;
-		long trash;
-		print_new_spells(spells_to_choose_from, spell_counter, &redraw);
-		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
-					"Learn which spell?", &redraw)) {
-			int j;
-			C_player_set_knows_spell(selected, true);
-			return_value = true;
-			if (player_mana == 0) {
-				player_mana = 1;
-				player_cmana = 1;
-			}
-			/* Remove selected value from list */
-			for (j = 0; j < spell_counter; ++j) {
-				if (spells_to_choose_from[j].splnum == selected) {
-					break;
-				}
-			}
-			for (;j < spell_counter; ++j) {
-				spells_to_choose_from[j].splnum = spells_to_choose_from[j+1].splnum;
-			}
-			spell_counter--;
-		}
-	}
-
-	LEAVE("learn_druid", "");
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void gain_mana(long amount)
-{
-	/*{ Gain some mana if you know at least one spell 	-RAK-	}*/
-
-	long i1;
-	long new_mana;
-	boolean knows_spell = false;
-
-	ENTER(("gain_mana", ""));
-
-	for (i1 = 0; i1 < MAX_SPELLS; i1++) {
-		if (C_player_knows_spell(i1)) {
-			knows_spell = true;
-			break;
-		}
-	}
-
-	if (knows_spell) {
-		if (player_lev & 1) {
-
-			switch (amount) {
-			case 0:
-				new_mana = 0;
-				break;
-			case 1:
-			case 2:
-			case 3:
-				new_mana = 1;
-				break;
-			case 4:
-			case 5:
-				new_mana = 2;
-				break;
-			case 6:
-				new_mana = 3;
-				break;
-			case 7:
-				new_mana = 4;
-				break;
-			default:
-				new_mana = 0;
-				break;
-			}
-
-		} else {
-
-			switch (amount) {
-			case 0:
-				new_mana = 0;
-				break;
-			case 1:
-			case 2:
-				new_mana = 1;
-				break;
-			case 3:
-			case 4:
-				new_mana = 2;
-				break;
-			case 5:
-			case 6:
-				new_mana = 3;
-				break;
-			case 7:
-				new_mana = 4;
-				break;
-			default:
-				new_mana = 0;
-				break;
-			}
-		}
-		player_mana += new_mana;
-		player_cmana += new_mana;
-	}
-	LEAVE("gain_mana", "");
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void C_print_new_spell_line(uint8_t i, long slot, long failchance);
-void print_new_spells(spl_type spell, long num, boolean *redraw)
-{
-	/* Print list of spells     -RAK- */
-
-	uint8_t i;
-
-	ENTER(("print_new_spells", "%ld, %d", num, *redraw));
-
-	*redraw = true;
-	clear_from(1);
-	if (num >= 23)
-		num = 22;
-
-	prt("   Name                          Level  Mana  %Failure", 2, 1);
-	for (i = 0; i < num; i++) {
-		if (spell[i].splnum != -1)
-			spell_chance(&spell[i]);
-		C_print_new_spell_line(i, spell[i].splnum, spell[i].splchn);
-	}
-
-	LEAVE("print_new_spells", "");
-}
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1626,8 +1604,6 @@ void gain_level()
 {
 	/*{ Increases hit points and level			-RAK-	}*/
 	long nhp, dif_exp, need_exp;
-	boolean redraw;
-
 	ENTER(("gain_level", ""));
 
 	nhp = get_hitdie();
@@ -1646,42 +1622,41 @@ void gain_level()
 	strcpy(player_title, player_titles[player_pclass][player_lev]);
 	msg_print("Your skills have improved.");
 	msg_print(" ");
+	learn_magic(true);
 	msg_flag = false;
-	if (C_player_uses_magic(M_ARCANE)) {
-		redraw = false;
-		learn_spell(&redraw);
-		if (redraw) {
-			draw_cave();
-		}
-		gain_mana(spell_adj(INT));
-	} else if (C_player_uses_magic(M_NATURE)) {
-		learn_druid();
-		gain_mana(druid_adj());
-	} else if (C_player_uses_magic(M_SONG)) {
-		redraw = false;
-		learn_song(&redraw);
-		if (redraw) {
-			draw_cave();
-		}
-		gain_mana(bard_adj());
-	} else if (C_player_uses_magic(M_DIVINE)) {
-		learn_prayer();
-		gain_mana(spell_adj(WIS));
-	} else if (C_player_uses_magic(M_CHAKRA)) {
-		learn_discipline();
-		gain_mana(monk_adj());
-	}
 
 	prt_stat_block();
 
 	LEAVE("gain_level", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+void learn_magic(boolean redraw_now) {
+	redraw = false;
+	if (C_player_uses_magic(M_ARCANE)) {
+		learn_spell(&redraw);
+		gain_mana(spell_adj(INT));
+	}
+	if (C_player_uses_magic(M_NATURE)) {
+		learn_druid(&redraw);
+		gain_mana(druid_adj());
+	}
+	if (C_player_uses_magic(M_SONG)) {
+		learn_song(&redraw);
+		gain_mana(bard_adj());
+	}
+	if (C_player_uses_magic(M_DIVINE)) {
+		learn_prayer();
+		gain_mana(spell_adj(WIS));
+	}
+	if (C_player_uses_magic(M_CHAKRA)) {
+		learn_discipline();
+		gain_mana(monk_adj());
+	}
+	if (redraw && redraw_now) {
+		draw_cave();
+	}
+}
+
 boolean in_bounds(long y, long x)
 {
 	/*{ Checks a co-ordinate for in bounds status		-RAK-	}*/

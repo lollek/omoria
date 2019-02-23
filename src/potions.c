@@ -4,7 +4,6 @@
 void q__potion_effect(long effect, boolean *idented)
 {
 	long i4, i5;
-	boolean redraw = false;
 	boolean ident = false;
 
 	/*{ Potions                                               }*/
@@ -161,23 +160,7 @@ void q__potion_effect(long effect, boolean *idented)
 
 	case 32: /*{ Learning }*/ /* 32 is the Cursed_worn_bit value */
 	case 48:		  /*{ Learning }*/
-		/* with player_do; */
-		/* with class[pclass] do; */
-		if (C_player_uses_magic(M_ARCANE)) {
-			ident = learn_spell(&redraw);
-			if (redraw) {
-				draw_cave();
-			}
-		} else if (C_player_uses_magic(M_SONG)) {
-			ident = learn_song(&redraw);
-			if (redraw) {
-				draw_cave();
-			}
-		} else if (C_player_uses_magic(M_DIVINE)) {
-			ident = learn_prayer();
-		} else if (C_player_uses_magic(M_NATURE)) {
-			ident = learn_druid();
-		}
+		learn_magic(true);
 		break;
 
 	case 33: /*{ Lose Memories }*/
