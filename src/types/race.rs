@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 use types::{Class, Sex, StatBlock};
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
@@ -403,7 +401,7 @@ impl From<usize> for Race {
     }
 }
 
-pub fn races_iter() -> Range<usize> {
+pub fn races_iter() -> impl Iterator<Item=usize> {
     (Race::Human as usize)..(Race::Dryad as usize + 1)
 }
 

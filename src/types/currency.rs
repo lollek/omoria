@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 pub enum Currency {
     Total = 0,
     Iron = 1,
@@ -38,7 +36,7 @@ impl From<usize> for Currency {
     }
 }
 
-pub fn currencies_iter() -> Range<usize> {
+pub fn currencies_iter() -> impl Iterator<Item=usize> {
     (Currency::Iron as usize)..(Currency::Mithril as usize) + 1
 }
 

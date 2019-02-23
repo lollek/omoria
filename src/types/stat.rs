@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 pub enum Stat {
     Strength = 0,
     Intelligence = 1,
@@ -9,7 +7,7 @@ pub enum Stat {
     Charisma = 5,
 }
 
-pub fn stats_iter() -> Range<usize> {
+pub fn stats_iter() -> impl Iterator<Item=usize> {
     (Stat::Strength as usize)..(Stat::Charisma as usize + 1)
 }
 

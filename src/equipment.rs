@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 use types::Item;
 
 pub const EQUIP_MAX: usize = 15;
@@ -69,7 +67,7 @@ impl From<usize> for Slot {
     }
 }
 
-pub fn slots_iter() -> Range<usize> {
+pub fn slots_iter() -> impl Iterator<Item=usize> {
     (Slot::Primary as usize)..(Slot::Secondary as usize + 1)
 }
 

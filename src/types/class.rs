@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 use types::item::Item;
 use types::item_type::ItemType;
 
@@ -486,7 +484,7 @@ impl Class {
     }
 }
 
-pub fn classes_iter() -> Range<usize> {
+pub fn classes_iter() -> impl Iterator<Item=usize> {
     (Class::Fighter as usize)..(Class::Monk as usize + 1)
 }
 
