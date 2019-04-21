@@ -95,6 +95,56 @@ void rest_off()
 	prt_rest();
 }
 
+/**
+ * -RAK-
+ *  pick_dir() - Picks new direction when in find mode
+ *  @dir: Initial direction
+ */
+static boolean pick_dir(long dir)
+{
+
+	long z[2];
+	long i;
+	boolean return_value = false;
+
+	if (!find_flag)
+		return false;
+
+	if (next_to4(char_row, char_col, corr_set) != 2)
+		return false;
+
+	switch (dir) {
+		case 1:
+		case 3:
+		case 7:
+		case 9:
+			z[0] = rotate_dir(dir, -1);
+			z[1] = rotate_dir(dir, 1);
+			break;
+
+		case 2:
+		case 4:
+		case 6:
+		case 8:
+			z[0] = rotate_dir(dir, -2);
+			z[1] = rotate_dir(dir, 2);
+			break;
+	}
+
+	for (i = 0; i < 2; i++) {
+		long y = char_row;
+		long x = char_col;
+		if (move_dir(z[i], &y, &x)) {
+			if (cave[y][x].fopen) {
+				return_value = true;
+				com_val = z[i] + 48;
+			}
+		}
+	}
+
+	return return_value;
+}
+
 static void _move_char(long dir)
 {
 	/*{ Moves player from one space to another...		-RAK-	}*/

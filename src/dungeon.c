@@ -2047,52 +2047,6 @@ void light_room(long param_y, long param_x)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean pick_dir(long dir)
-{
-	/*{ Picks new direction when in find mode                 -RAK-   }*/
-
-	long z[3]; /*   : array [1..2] of long;*/
-	long i1, y, x;
-	boolean return_value;
-
-	if ((find_flag) && (next_to4(char_row, char_col, corr_set) == 2)) {
-
-		switch (dir) {
-		case 1:
-		case 3:
-		case 7:
-		case 9:
-			z[1] = rotate_dir(dir, -1);
-			z[2] = rotate_dir(dir, 1);
-			break;
-
-		case 2:
-		case 4:
-		case 6:
-		case 8:
-			z[1] = rotate_dir(dir, -2);
-			z[2] = rotate_dir(dir, 2);
-			break;
-		}
-
-		return_value = false;
-
-		for (i1 = 1; i1 <= 2; i1++) {
-			y = char_row;
-			x = char_col;
-			if (move_dir(z[i1], &y, &x)) {
-				if (cave[y][x].fopen) {
-					return_value = true;
-					com_val = z[i1] + 48;
-				}
-			}
-		}
-	} else {
-		return_value = false;
-	}
-
-	return return_value;
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

@@ -87,7 +87,6 @@ extern void move_light(long y1, long x1, long y2, long x2);
 extern void light_room(long y, long x);
 extern void lite_spot(long y, long x);
 extern void unlite_spot(long y, long x);
-extern boolean pick_dir(long dir);
 extern boolean panel_contains(long y, long x);
 extern boolean no_light();
 extern void change_trap(long y, long x);
