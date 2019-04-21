@@ -331,6 +331,12 @@ extern boolean delete_object(long y, long x);
 extern char *center(char str[134], long len, char result[134]); /* was func */
 extern void eat();
 extern void discipline();
+
+/**
+ * -RAK-
+ *  move_char() - Moves player from one space to another
+ *  @dir: keypad-direction in which direction to go (8 = up)
+ */
 extern void move_char(long dir);
 extern void quaff();
 extern void pray();
