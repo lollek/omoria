@@ -13,6 +13,7 @@ pub enum Class {
     Bard = 7,
     Adventurer = 8,
     Monk = 9,
+    Barbarian = 10,
 }
 
 impl Class {
@@ -28,6 +29,7 @@ impl Class {
             Class::Bard => "Bard",
             Class::Adventurer => "Adventurer",
             Class::Monk => "Monk",
+            Class::Barbarian => "Barbarian",
         }
     }
 
@@ -43,12 +45,14 @@ impl Class {
             Class::Bard => "Untold wonders and secrets exist for those skillful enough to discover them. Through cleverness, talent, and magic, these cunning few unravel the wiles of the world, becoming adept in the arts of persuasion, manipulation, and inspiration. Typically masters of one or many forms of artistry, bards possess an uncanny ability to know more than they should and use what they learn to keep themselves and their allies ever one step ahead of danger.  Bards are quick-witted and captivating, and their skills might lead them down many paths, be they gamblers or jacks-of-all-trades, scholars or performers, leaders or scoundrels, or even all of the above. For bards, every day brings its own opportunities, adventures, and challenges, and only by bucking the odds, knowing the most, and being the best might they claim the treasures of each.",
             Class::Adventurer => "",
             Class::Monk => "For the truly exemplary, martial skill transcends the battlefield-it is a lifestyle, a doctrine, a state of mind.  These warrior-artists search out methods of battle beyond swords and shields, finding weapons within themselves just as capable of crippling or killing as any blade. These monks (so called since they adhere to ancient philosophies and strict martial disciplines) elevate their bodies to become weapons of war, from battle-minded ascetics to self-taught brawlers. Monks tread the path of discipline, and those with the will to endure that path discover within themselves not what they are, but what they are meant to be.",
+            Class::Barbarian => "Barbarians excel in combat, possessing the martial prowess and fortitude to take on foes seemingly far superior to themselves. With rage granting them boldness and daring beyond that of most other warriors, barbarians charge furiously into battle and ruin all who would stand in their way.",
         }
     }
 
     pub fn restriction_info(&self) -> &'static str {
         match self {
-            Class::Druid => "Can only use the following weapons: Club, Dagger, Dart, Quarterstaff, Scimitar, Scythe, Sickle, Shortspear, Sling, Spear. For armor, shields and Misc. items: Cannot wear anything consisting of a lot of metal. Can also not use any large shields",
+            Class::Druid => "Can only use the following weapons: Club, Dagger, Dart, Quarterstaff, Scimitar, Scythe, Sickle, Shortspear, Sling, Spear. For armor, shields and Misc. items: Cannot wear anything consisting of a lot of metal. Also can not use any large shields",
+            Class::Barbarian => "Cannot use heavy armor",
             _ => "No restrictions!",
         }
     }
@@ -65,6 +69,7 @@ impl Class {
             Class::Bard => 4,
             Class::Adventurer => 4,
             Class::Monk => 4,
+            Class::Barbarian => 12,
         }
     }
 
@@ -80,12 +85,13 @@ impl Class {
             Class::Bard => 5,
             Class::Adventurer => 6,
             Class::Monk => 8,
+            Class::Barbarian => 10,
         }
     }
 
     pub fn ranged_bonus(&self) -> i8 {
         match self {
-            Class::Fighter => 8,
+            Class::Fighter => 10,
             Class::Wizard => 4,
             Class::Cleric => 5,
             Class::Rogue => 10,
@@ -95,6 +101,7 @@ impl Class {
             Class::Bard => 6,
             Class::Adventurer => 6,
             Class::Monk => 6,
+            Class::Barbarian => 10,
         }
     }
 
@@ -110,6 +117,7 @@ impl Class {
             Class::Bard => 22,
             Class::Adventurer => 24,
             Class::Monk => 24,
+            Class::Barbarian => 14,
         }
     }
 
@@ -125,6 +133,7 @@ impl Class {
             Class::Bard => 30,
             Class::Adventurer => 30,
             Class::Monk => 45,
+            Class::Barbarian => 25,
         }
     }
 
@@ -140,6 +149,7 @@ impl Class {
             Class::Bard => 2,
             Class::Adventurer => 3,
             Class::Monk => 3,
+            Class::Barbarian => 1,
         }
     }
 
@@ -155,6 +165,7 @@ impl Class {
             Class::Bard => 28,
             Class::Adventurer => 24,
             Class::Monk => 24,
+            Class::Barbarian => 38,
         }
     }
 
@@ -170,6 +181,7 @@ impl Class {
             Class::Bard => 20,
             Class::Adventurer => 20,
             Class::Monk => 25,
+            Class::Barbarian => 10,
         }
     }
 
@@ -185,6 +197,7 @@ impl Class {
             Class::Bard => -5,
             Class::Adventurer => -5,
             Class::Monk => -5,
+            Class::Barbarian => -10,
         }
     }
 
@@ -200,6 +213,7 @@ impl Class {
             Class::Bard => 0.3,
             Class::Adventurer => 0.4,
             Class::Monk => 0.1,
+            Class::Barbarian => 0.0,
         }
     }
 
@@ -435,6 +449,7 @@ impl Class {
                    36 => "Hi-YA Man",      37 => "Baby Buddha",
                    38 => "BuddingBuddha",   _ => "Buddha"
                 },
+            Class::Barbarian => "Barbarian",
         }
     }
 
@@ -479,13 +494,43 @@ impl Class {
                     _ => false,
                 }
             },
+            Class::Barbarian => {
+                /*
+                 * Armor:
+                 * light / medium.
+                 */
+                match item.item_type() {
+                    // Utility:
+                    ItemType::LightSource => true,
+                    ItemType::Staff => true,
+                    ItemType::Pick => true,
+                    ItemType::Ring => true,
+                    ItemType::Amulet => true,
+
+                    // Weapons:
+                    ItemType::RangedWeapon => true,
+                    ItemType::PoleArm => true,
+                    ItemType::Dagger => true,
+                    ItemType::HaftedWeapon => true,
+                    ItemType::Sword => true,
+                    ItemType::Maul => true,
+
+                    // Armor
+                    ItemType::GemHelm => true,
+                    ItemType::Boots => true,
+                    ItemType::Gloves => true,
+                    ItemType::Cloak => true,
+                    ItemType::Helm => true,
+                    ItemType::Shield => true,
+                    ItemType::SoftArmor => true,
+                    ItemType::Bracers => true,
+                    ItemType::Belt => true,
+                    _ => false,
+                }
+            }
             _ => true
         }
     }
-}
-
-pub fn classes_iter() -> impl Iterator<Item=usize> {
-    (Class::Fighter as usize)..(Class::Monk as usize + 1)
 }
 
 impl From<usize> for Class {
@@ -501,6 +546,7 @@ impl From<usize> for Class {
             7 => Class::Bard,
             8 => Class::Adventurer,
             9 => Class::Monk,
+            10 => Class::Barbarian,
             _ => panic!(),
         }
     }

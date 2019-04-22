@@ -19,6 +19,7 @@ pub fn spell(slot: usize) -> Spell {
         Class::Rogue => magic::rogue::spell(slot),
         Class::Ranger => magic::ranger::spell(slot),
         Class::Fighter => empty_spell(),
+        Class::Barbarian => empty_spell(),
     }
 }
 

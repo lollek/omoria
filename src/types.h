@@ -26,7 +26,8 @@ enum class_t {
 	C_DRUID = 6,
 	C_BARD = 7,
 	C_ADVENTURER = 8,
-	C_MONK = 9
+	C_MONK = 9,
+	C_BARBARIAN = 10
 };
 
 typedef struct game_time_type

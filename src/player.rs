@@ -702,6 +702,7 @@ pub fn uses_magic(magic: Magic) -> bool {
         Class::Bard | Class::Rogue => magic == Magic::Song,
         Class::Monk => magic == Magic::Chakra,
         Class::Fighter => false,
+        Class::Barbarian => false,
     }
 }
 

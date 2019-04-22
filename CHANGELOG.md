@@ -4,6 +4,13 @@ the PROGRESS-file.
 
 ## 5.0.0.pre-alpha
 
+### April 2019
+
+## Major stuff
+* Add barbarian
+Alternative to fighter, who can rage in fights. Cannot use heavy armor. Neither
+raging nor starting equipment is yet implemented.
+
 ### February 2019
 
 ## Major stuff

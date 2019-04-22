@@ -254,7 +254,7 @@ impl Race {
             Race::Human => vec![
                 Class::Fighter, Class::Wizard, Class::Cleric, Class::Rogue,
                 Class::Ranger, Class::Paladin, Class::Druid, Class::Bard,
-                Class::Adventurer, Class::Monk,
+                Class::Adventurer, Class::Monk, Class::Barbarian,
             ],
             Race::HalfElf => vec![
                 Class::Fighter, Class::Wizard, Class::Cleric, Class::Rogue,
@@ -273,13 +273,13 @@ impl Race {
                 Class::Wizard, Class::Cleric, Class::Rogue, Class::Druid,
             ],
             Race::Dwarf => vec![
-                Class::Fighter, Class::Cleric, Class::Druid,
+                Class::Fighter, Class::Cleric, Class::Druid, Class::Barbarian,
             ],
             Race::HalfOrc => vec![
-                Class::Fighter, Class::Cleric, Class::Rogue, Class::Monk,
+                Class::Fighter, Class::Cleric, Class::Rogue, Class::Monk, Class::Barbarian,
             ],
             Race::HalfTroll => vec![
-                Class::Fighter, Class::Cleric,
+                Class::Fighter, Class::Cleric, Class::Barbarian,
             ],
             Race::Phraint => vec![
                 Class::Fighter, Class::Wizard, Class::Rogue, Class::Ranger,
