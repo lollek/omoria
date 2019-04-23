@@ -276,7 +276,8 @@ impl Race {
                 Class::Fighter, Class::Cleric, Class::Druid, Class::Barbarian,
             ],
             Race::HalfOrc => vec![
-                Class::Fighter, Class::Cleric, Class::Rogue, Class::Monk, Class::Barbarian,
+                Class::Fighter, Class::Cleric, Class::Rogue, Class::Monk,
+                Class::Barbarian,
             ],
             Race::HalfTroll => vec![
                 Class::Fighter, Class::Cleric, Class::Barbarian,
