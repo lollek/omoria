@@ -1,4 +1,4 @@
-use types::{Class, Sex, StatBlock};
+use types::{Ability, Class, Sex, StatBlock};
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Race {
@@ -380,6 +380,12 @@ impl Race {
                     Sex::Female => 16,
                 }
             Race::Dryad => 6,
+        }
+    }
+
+    pub fn abilities(&self) -> Vec<Ability> {
+        match self {
+            _ => Vec::new(),
         }
     }
 }

@@ -5325,6 +5325,11 @@ void d__execute_command(long *com_val)
 		reset_flag = true;
 		break;
 
+	case CTRL_A:
+		reset_flag = C_select_ability();
+		draw_cave();
+		break;
+
 	case CTRL_B:
 		find_flag = true;
 		move_char(1);
@@ -5909,6 +5914,7 @@ void dungeon()
 		d__update_infra_vision();
 		d__update_word_of_recall();
 		d__update_hit_points();
+		C_check_passive_abilities();
 
 		if ((player_flags.paralysis < 1) && /*{ Accept a command?     }*/
 		    (player_flags.rest < 1) && (!(death))) {

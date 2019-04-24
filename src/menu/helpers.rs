@@ -7,6 +7,22 @@ const MAX_X: usize = WIDTH - 5;
 const HEIGHT: usize = 24;
 const MAX_Y: usize = HEIGHT - 6;
 
+pub fn draw_quick_menu<S1>(title: S1, items: &[&str])
+    where S1: AsRef<str>,
+{
+    // Title
+    let title_s = title.as_ref();
+    term::put_buffer(title_s, 0, 0);
+
+    // Items
+    for (index, item) in items.as_ref().iter().enumerate() {
+        let character = ((index as u8) + ('a' as u8)) as char;
+        term::put_buffer(&format!(" {}) {:<width$}", character, item, width=20),
+            index as i32 + 1, 0);
+    }
+    term::put_buffer(&format!("    {:<width$}", "", width=20), items.len() as i32 + 1, 0);
+}
+
 pub fn draw_menu<S1, S2>(title: S1, items: &[&str], commands: S2, selected: u8)
     where S1: AsRef<str>,
           S2: AsRef<str>,

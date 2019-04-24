@@ -13,7 +13,7 @@ void help()
 
 	prt(" a     Aim projectile         |"
 	    " A     Aim (throw) an item    |"
-	    "^A     (Nothing)              |"
+	    "^A     Special abilities      |"
 	    "M-A    Armor (manual)         ",
 	    4, 1);
 	prt(" c ~   Close a door           |"

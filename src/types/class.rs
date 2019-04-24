@@ -1,3 +1,4 @@
+use types::Ability;
 use types::item::Item;
 use types::item_type::ItemType;
 
@@ -529,6 +530,13 @@ impl Class {
                 }
             }
             _ => true
+        }
+    }
+
+    pub fn abilities(&self) -> Vec<Ability> {
+        match self {
+            Class::Barbarian => [Ability::Rage].to_vec(),
+            _ => Vec::new(),
         }
     }
 }

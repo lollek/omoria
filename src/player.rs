@@ -1,13 +1,13 @@
 use libc;
 use std::mem;
-use std::cmp::min;
+use std::cmp::{ min, max };
 
 use std::ffi::CString;
 use std::sync::RwLock;
 
 use types::{
     Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat,
-    Magic, GameTime,
+    Magic, GameTime, Ability
 };
 
 use misc;
@@ -95,13 +95,19 @@ pub struct PlayerFlags {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Player {
-    pub spells_known: Vec<bool>
+    pub spells_known: Vec<bool>,
+    pub rage_rounds_spent: u8,
+    pub is_raging: bool,
+    pub rage_exhaustion_rounds_left: u8,
 }
 
 impl Player {
     pub fn new() -> Player {
         Player {
             spells_known: [false; 40].to_vec(),
+            rage_rounds_spent: 0,
+            is_raging: false,
+            rage_exhaustion_rounds_left: 0,
         }
     }
 }
@@ -449,6 +455,25 @@ pub fn hp_from_con() -> i8 {
     }
 }
 
+fn rage_rounds_from_con() -> i8 {
+    match curr_stats().get(Stat::Constitution) {
+        // Should be CON modifier
+        con if con < 10 => -4,
+        con if con < 20 => -3,
+        con if con < 30 => -2,
+        con if con < 40 => -1,
+        con if con < 140 => 0,
+        con if con < 150 => 1,
+        con if con < 226 => 2,
+        con if con < 299 => 3,
+        _ => 4,
+    }
+}
+
+fn rage_rounds_from_level() -> u8 {
+    (level() - 1) * 2
+}
+
 pub fn disarm_from_dex() -> i8 {
     match curr_stats().get(Stat::Dexterity) {
         dex if dex < 10 => -8,
@@ -605,6 +630,37 @@ pub fn set_knows_spell(slot: usize, yn: bool) {
     PLAYER.write().unwrap().spells_known[slot] = yn;
 }
 
+pub fn is_raging() -> bool {
+    PLAYER.read().unwrap().is_raging
+}
+
+pub fn set_raging(yn: bool) {
+    PLAYER.write().unwrap().is_raging = yn;
+}
+
+pub fn get_max_rage_rounds() -> u8 {
+    max(0, 4 + rage_rounds_from_level() as i8 + rage_rounds_from_con()) as u8
+}
+
+pub fn get_rage_rounds_spent() -> u8 {
+    PLAYER.read().unwrap().rage_rounds_spent
+}
+
+pub fn set_rage_rounds_spent(new_value: u8) {
+    PLAYER.write().unwrap().rage_rounds_spent = new_value;
+}
+
+pub fn get_rage_exhaustion_rounds_left() -> u8 {
+    PLAYER.read().unwrap().rage_exhaustion_rounds_left
+}
+
+pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
+    PLAYER.write().unwrap().rage_exhaustion_rounds_left = new_value;
+}
+
+pub fn abilities() -> Vec<Ability> {
+    class().abilities().into_iter().chain(race().abilities().into_iter()).collect()
+}
 
 pub fn set_record(record: PlayerRecord) {
     unsafe {
