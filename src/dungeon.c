@@ -315,6 +315,2733 @@ static boolean water_move_creature(__attribute__((unused)) long num)
 	return true;
 }
 
+static void d__jamdoor()
+{
+	/*{ Jam a closed door                                     -RAK-   }*/
+
+	treas_ptr i1;
+	long y, x, i2, tmp;
+	char m_name[82];
+	obj_set pick_a_spike = {spike, 0};
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
+		/* with cave[y][x]. do; */
+		if (cave[y][x].tptr > 0) {
+			/* with t_list[cave[y][x].tptr]. do; */
+			if (t_list[cave[y][x].tptr].tval == closed_door) {
+				if (cave[y][x].cptr == 0) {
+					if (find_range(pick_a_spike, false, &i1,
+						       &i2)) {
+						msg_print("You jam the door "
+							  "with a spike.");
+						/* with i1->data. do; */
+						if (i1->data.number > 1) {
+							i1->data.number--;
+						} else {
+							inven_destroy(i1);
+						}
+						prt_stat_block();
+						t_list[cave[y][x].tptr].p1 =
+						    -labs(
+							t_list[cave[y][x].tptr]
+							    .p1) -
+						    20;
+					} else {
+						msg_print("But you have no "
+							  "spikes...");
+					}
+				} else {
+					find_monster_name(
+					    m_name, cave[y][x].cptr, true);
+					strcat(m_name, " is in your way!");
+					msg_print(m_name);
+				}
+			} else if (t_list[cave[y][x].tptr].tval == open_door) {
+				msg_print("The door must be closed first.");
+			} else {
+				msg_print("That isn't a door!");
+			}
+		} else {
+			msg_print("That isn't a door!");
+		}
+	}
+}
+
+/*{ Throw an object across the dungeon...                 -RAK-   }*/
+/*{ Note: Flasks of oil do fire damage                            }*/
+/*{ Note: Extra damage and chance of hitting when missles are used}*/
+/*{       with correct weapon.  I.E.  wield bow and throw arrow.  }*/
+
+static void to__inven_throw(treas_ptr item_ptr)
+{
+	inven_temp->data = item_ptr->data;
+	inven_temp->data.number = 1;
+
+	/* with item_ptr->data. do; */
+
+	if ((item_ptr->data.number > 1) && (item_ptr->data.subval > 511)) {
+		item_ptr->data.number--;
+		inven_weight -= item_ptr->data.weight;
+	} else {
+		inven_destroy(item_ptr);
+	}
+
+	prt_stat_block();
+}
+
+static obj_set *to__poink(obj_set *ammo_types)
+{
+	ENTER(("to__poink", "d"));
+
+	if (equipment[Equipment_primary].tval == bow_crossbow_or_sling) {
+		(*ammo_types)[1] =
+		    0; /* all three types have just one kind of ammo */
+
+		switch (equipment[Equipment_primary].p1) {
+		case 1:
+			(*ammo_types)[0] = sling_ammo;
+			break;
+
+		case 2:
+		case 3:
+		case 4:
+			(*ammo_types)[0] = arrow;
+			break;
+
+		case 5:
+		case 6:
+			(*ammo_types)[0] = bolt;
+			break;
+		}
+
+	} else {
+		(*ammo_types)[0] = 0;
+	}
+
+	LEAVE("to__poink", "d");
+	return ammo_types;
+}
+
+static void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
+	       boolean to_be_fired)
+{
+	long tmp_weight;
+
+	/* with inven_temp->data. do; */
+
+	if (inven_temp->data.weight < 1) {
+		tmp_weight = 1;
+	} else {
+		tmp_weight = inven_temp->data.weight;
+	}
+
+	/*{ Throwing objects                      }*/
+
+	*tdam = damroll(inven_temp->data.damage) + inven_temp->data.todam;
+	*tbth = trunc(player_bthb * 0.75);
+	*tpth = player_ptohit + inven_temp->data.tohit;
+	*tdis = trunc((player_stats_curr[STR] + 100) * 200 / tmp_weight);
+
+	if (*tdis > 10) {
+		*tdis = 10;
+	}
+
+	/*{ Using Bows, slings, or crossbows      }*/
+
+	if (to_be_fired) { /*{ checks for correct wpn in poink }*/
+		switch (equipment[Equipment_primary].p1) {
+		case 1: /*{ Sling and Bullet  }*/
+			*tdam += 2;
+			*tdis = 20;
+			break;
+
+		case 2: /*{ Short Bow and Arrow    }*/
+			*tdam += 2;
+			*tdis = 25;
+			break;
+
+		case 3: /*{ Long Bow and Arrow     }*/
+			*tdam += 3;
+			*tdis = 30;
+			break;
+
+		case 4: /*{ Composite Bow and Arrow}*/
+			*tdam += 4;
+			*tdis = 35;
+			break;
+
+		case 5: /*{ Light Crossbow and Bolt}*/
+			*tdam += 2;
+			*tdis = 25;
+			break;
+
+		case 6: /*{ Heavy Crossbow and Bolt}*/
+			*tdam += 4;
+			*tdis = 35;
+			break;
+		}
+
+		*tbth = player_bthb;
+		*tpth += equipment[Equipment_primary].tohit;
+		inven_temp->data.weight +=
+		    equipment[Equipment_primary].weight + 5000;
+	}
+}
+
+static void to__drop_throw(long y, long x)
+{
+	long i1, i2, i3, cur_pos;
+	boolean flag = false;
+	char out_val[82], out_val2[82];
+
+	i1 = y;
+	i2 = x;
+	i3 = 0;
+
+	if (randint(10) > 1) {
+		do {
+			if (in_bounds(i1, i2)) {
+				/* with cave[i1][i2]. do; */
+				if (cave[i1][i2].fopen) {
+					if (cave[i1][i2].tptr == 0) {
+						flag = true;
+					}
+				}
+			}
+			if (!(flag)) {
+				i1 = y + randint(3) - 2;
+				i2 = x + randint(3) - 2;
+				i3++;
+			}
+		} while (!((flag) || (i3 > 9)));
+	}
+
+	if (flag) {
+		popt(&cur_pos);
+		cave[i1][i2].tptr = cur_pos;
+		t_list[cur_pos] = inven_temp->data;
+		if (test_light(i1, i2)) {
+			lite_spot(i1, i2);
+		}
+	} else {
+		objdes(out_val, inven_temp, false);
+		sprintf(out_val2, "The %s disappears.", out_val);
+		msg_print(out_val2);
+	}
+}
+
+static void d__throw_object(boolean to_be_fired)
+{
+	long tbth, tpth, tdam, tdis, crit_mult;
+	long y_dumy, x_dumy, dumy, i1;
+	long y, x, oldy, oldx, dir, cur_dis, count;
+	char trash_char;
+	boolean redraw, flag;
+	char out_val[82], out_val2[82], m_name[82];
+	treas_ptr item_ptr, i7;
+	obj_set ammo_types = {0};
+
+	ENTER(("d__throw_object", "%d", to_be_fired));
+
+	redraw = false;
+
+	if (to_be_fired) {
+		find_range(*to__poink(&ammo_types), false, &i7, &count);
+	} else {
+		count = change_all_ok_stats(true, false);
+
+		for (item_ptr = inventory_list; item_ptr != nil;) {
+			if ((uand(item_ptr->data.flags2, Holding_bit) != 0) &&
+			    (item_ptr->insides > 0)) {
+				count--;
+			}
+			item_ptr = item_ptr->next;
+		}
+	}
+
+	reset_flag = true;
+
+	if (to_be_fired) {
+		strcpy(out_val, "Fire which one?");
+	} else {
+		strcpy(out_val, "Hurl which item?");
+	}
+
+	if (count == 0) {
+		if (to_be_fired) {
+			msg_print("You have nothing to fire!");
+		} else {
+			msg_print("But you have nothing to throw.");
+		}
+		LEAVE("d__throw_object", "d");
+		return;
+	}
+
+	if (!get_item(&item_ptr, out_val, &redraw, count, &trash_char, false, false)) {
+		if (redraw) {
+			draw_cave();
+		}
+		LEAVE("d__throw_object", "d");
+		return;
+	}
+
+	if (redraw) {
+		draw_cave();
+	}
+
+	y_dumy = char_row;
+	x_dumy = char_col;
+	if (!d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
+		LEAVE("d__throw_object", "d");
+		return;
+	}
+
+	reset_flag = false;
+	desc_remain(item_ptr);
+
+	if (player_flags.confused > 0) {
+		msg_print("You are confused...");
+		do {
+			dir = randint(9);
+		} while (dir == 5);
+	}
+
+	to__inven_throw(item_ptr);
+	to__facts(&tbth, &tpth, &tdam, &tdis, to_be_fired);
+
+	/* with inven_temp->data. do; */
+	flag = false;
+	y = char_row;
+	x = char_col;
+	oldy = char_row;
+	oldx = char_col;
+	cur_dis = 0;
+	do {
+		move_dir(dir, &y, &x);
+		cur_dis++;
+		if (test_light(oldy, oldx)) {
+			lite_spot(oldy, oldx);
+		}
+
+		if (cur_dis > tdis) {
+			flag = true;
+		}
+
+		/* with cave[y][x]. do; */
+		if ((cave[y][x].fopen) && (!flag)) {
+			if (cave[y][x].cptr > 1) {
+				flag = true;
+				/* with */
+				/* m_list[cave[y][x].cptr].
+				*/
+				/* do; */
+				tbth -= cur_dis;
+				if (player_test_hit(
+							tbth, player_lev,
+							tpth,
+							c_list
+							[m_list
+							[cave[y][x]
+							.cptr]
+							.mptr]
+							.ac,
+							to_be_fired)) {
+					i1 = m_list[cave[y][x].cptr].mptr;
+					objdes(out_val, inven_temp, false);
+					find_monster_name(m_name, cave[y][x].cptr, false);
+					sprintf(out_val2, "The %s hits %s.", out_val, m_name);
+					msg_print(out_val2);
+					tdam = tot_dam(&(inven_temp->data), tdam, &(c_list[i1]));
+					/* with */
+					/* inven_temp->data.
+					*/
+					/* do; */
+					crit_mult = critical_blow(
+							inven_temp
+							->data
+							.weight,
+							tpth,
+							(equipment
+							 [Equipment_primary]
+							 .flags2 &
+							 Sharp_worn_bit) !=
+							0,
+							to_be_fired);
+					tdam += (5 + tdam) * crit_mult;
+
+					if (mon_take_hit(cave[y][x].cptr, tdam) > 0) {
+						sprintf(out_val2, "You have killed %s.", m_name);
+						msg_print(out_val2);
+					}
+				} else {
+					to__drop_throw(oldy, oldx);
+				}
+			} else if (panel_contains(y, x) && test_light(y, x)) {
+				print(C_item_get_tchar(&inven_temp ->data), y, x);
+			}
+		} else {
+			flag = true;
+			to__drop_throw(oldy, oldx);
+		}
+
+		oldy = y;
+		oldx = x;
+	} while (!flag);
+
+	LEAVE("d__throw_object", "d");
+}
+
+static void d__look()
+{
+	/*{ Look at an object, trap, or monster                   -RAK-   }*/
+	/*{ Note: Looking is a free move, see where invoked...            }*/
+
+	long i1, i2, y, x;
+	long dir, dummy;
+	boolean flag = false;
+	char out_val[82], out_val2[82];
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Look which direction?", &dir, &dummy, &y, &x)) {
+		if (player_flags.blind < 1) {
+			y = char_row;
+			x = char_col;
+			i1 = 0;
+			do {
+				move_dir(dir, &y, &x);
+				/* with cave[y][x]. do; */
+				if (cave[y][x].cptr > 1) {
+					if (m_list[cave[y][x].cptr].ml) {
+						i2 = m_list[cave[y][x].cptr]
+							 .mptr;
+						if (is_vowel(
+							c_list[i2].name[0])) {
+							sprintf(
+							    out_val,
+							    "You see an %s.",
+							    c_list[i2].name);
+						} else {
+							sprintf(
+							    out_val,
+							    "You see a %s.",
+							    c_list[i2].name);
+						}
+						msg_print(out_val);
+						flag = true;
+					}
+				}
+
+				if ((cave[y][x].tl) || (cave[y][x].pl) ||
+				    (cave[y][x].fm)) {
+					if (cave[y][x].tptr > 0) {
+						if (t_list[cave[y][x].tptr]
+							.tval == secret_door) {
+							msg_print("You see a "
+								  "granite "
+								  "wall.");
+						} else if (t_list[cave[y][x]
+								      .tptr]
+							       .tval !=
+							   unseen_trap) {
+							inven_temp->data =
+							    t_list[cave[y][x]
+								       .tptr];
+							inven_temp->data
+							    .number = 1;
+							objdes(out_val,
+							       inven_temp,
+							       true);
+							sprintf(out_val2,
+								"You see %s.",
+								out_val);
+							msg_print(out_val2);
+							flag = true;
+						}
+					}
+
+					if (!cave[y][x].fopen) {
+						flag = true;
+						switch (cave[y][x].fval) {
+						case 10:
+							msg_print("You see a "
+								  "granite "
+								  "wall.");
+							break;
+						case 11:
+							msg_print("You see "
+								  "some dark "
+								  "rock.");
+							break;
+						case 12:
+							msg_print("You see a "
+								  "quartz "
+								  "vein.");
+							break;
+						case 15:
+							msg_print("You see a "
+								  "granite "
+								  "wall.");
+							break;
+						default:
+							break;
+						}
+					} else {
+						switch (cave[y][x].fval) {
+						case 16:
+						case 17:
+							flag = true;
+							msg_print("You see "
+								  "some "
+								  "water.");
+							break;
+						default:
+							break;
+						}
+					}
+				}
+
+				i1++;
+			} while (!(((!cave[y][x].fopen) || (i1 > MAX_SIGHT))));
+
+			if (!flag) {
+				msg_print("You see nothing of interest in that "
+					  "direction.");
+			}
+		} else {
+			msg_print("You can't see a damn thing!");
+		}
+	}
+}
+
+static void d__set_coords(long *c_row, long *c_col)
+{
+	/*{ Set up the character co-ords          }*/
+	if ((*c_row == -1) || (*c_col == -1)) {
+		do {
+			*c_row = randint(cur_height);
+			*c_col = randint(cur_width);
+
+			/*      *c_row = 8;*/
+			/*      *c_col = 20;*/
+		} while (!((cave[*c_row][*c_col].fopen) &&
+			   (cave[*c_row][*c_col].cptr == 0) &&
+			   (cave[*c_row][*c_col].tptr == 0) &&
+			   (!(is_in(cave[*c_row][*c_col].fval, water_set)))));
+	}
+}
+
+static void d__sun_rise_or_set()
+{
+	long i1, i2;
+
+	/*{ Sunrise and Sunset on town level	  -KRC-	}*/
+	/* with player_cur_age do; */
+	if (dun_level == 0) {
+		if ((player_cur_age.hour == 6) && (player_cur_age.secs == 0)) {
+			for (i1 = 1; i1 <= cur_height; i1++) {
+				for (i2 = 1; i2 <= cur_width; i2++) {
+					cave[i1][i2].pl = true;
+				}
+			}
+			store_maint();
+			draw_cave();
+		} else if ((player_cur_age.hour == 18) && (player_cur_age.secs == 0)) {
+			for (i1 = 1; i1 <= cur_height; i1++) {
+				for (i2 = 1; i2 <= cur_width; i2++) {
+					if (cave[i1][i2].fval !=
+					    dopen_floor.ftval) {
+						cave[i1][i2].pl = true;
+					} else {
+						cave[i1][i2].pl = false;
+					}
+				}
+			}
+			store_maint();
+			draw_cave();
+		}
+	}
+}
+
+static void d__check_hours()
+{
+	/*{ Check for game hours                          }*/
+	if (!(wizard1)) {
+		if ((turn % 100) == 1) {
+			if (!(check_time())) {
+				if (closing_flag > 2) {
+					if (search_flag) {
+						search_off();
+					}
+					if (player_flags.rest > 0) {
+						rest_off();
+					}
+					find_flag = false;
+					msg_print("The gates to Moria are now "
+						  "closed.");
+					msg_print(" ");
+					do {
+						save_and_quit();
+					} while (true);
+				} else {
+					if (search_flag) {
+						search_off();
+					}
+					if (player_flags.rest > 0) {
+						rest_off();
+					}
+					move_char(5);
+					closing_flag++;
+					msg_print("The gates to Moria are "
+						  "closing...");
+					msg_print("Please finish up or save "
+						  "your game.");
+					msg_print(" ");
+				}
+			}
+		}
+	}
+}
+
+static void d__print_updated_stats()
+{
+	if (print_stat != 0) {
+		prt_stat_block();
+	}
+}
+
+static void d__check_light_status()
+{
+	/*{ Check light status                            }*/
+	/* with equipment[Equipment_light] do; */
+	ENTER(("d__check_light_status", "d"));
+	if (player_light) {
+		if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
+			equipment[Equipment_light].p1--;
+			if (equipment[Equipment_light].p1 == 0) {
+				msg_print("Your light has gone out!");
+				PF.light_on = false;
+				player_light = false;
+				find_flag = false;
+				move_light(char_row, char_col, char_row,
+					   char_col);
+			} else if (equipment[Equipment_light].p1 < 40) {
+				if (randint(5) == 1) {
+					if (find_flag) {
+						find_flag = false;
+						move_light(char_row, char_col,
+							   char_row, char_col);
+					}
+					msg_print(
+					    "Your light is growing faint.");
+				}
+			}
+		} else {
+			PF.light_on = false;
+			player_light = false;
+			find_flag = false;
+			move_light(char_row, char_col, char_row, char_col);
+		}
+	} else if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
+		equipment[Equipment_light].p1--;
+		player_light = true;
+		move_light(char_row, char_col, char_row, char_col);
+	}
+
+	LEAVE("d__check_light_status", "d");
+}
+
+static void d__hunger_interrupt(char *message)
+{
+	msg_print(message);
+	msg_flag = 0;
+	rest_off();
+}
+
+static void d__check_food()
+{
+	/*{ Check food status             }*/
+	regen_amount = PLAYER_REGEN_NORMAL;
+	if ((PF.hunger_item) && (PF.foodc > (PLAYER_FOOD_ALERT + 15))) {
+		PF.foodc = PLAYER_FOOD_ALERT + 15;
+	}
+
+	if (PF.foodc < PLAYER_FOOD_ALERT) {
+		if (PF.foodc < PLAYER_FOOD_WEAK) {
+
+			if (PF.foodc < 0) {
+				regen_amount = 0;
+			} else if (PF.foodc < PLAYER_FOOD_FAINT) {
+				regen_amount = PLAYER_REGEN_FAINT;
+			} else if (PF.foodc < PLAYER_FOOD_WEAK) {
+				regen_amount = PLAYER_REGEN_WEAK;
+			}
+
+			if ((IS_WEAK & PF.status) == 0) {
+				PF.status |= (IS_WEAK | IS_HUNGERY);
+				d__hunger_interrupt(
+				    "You are getting weak from hunger.");
+				if (find_flag) {
+					move_char(5);
+				}
+				prt_hunger();
+				player_wt -= trunc(player_wt * 0.015);
+				d__hunger_interrupt(
+				    "Your clothes seem to be getting loose.");
+				if (player_wt < min_allowable_weight()) {
+					msg_print(
+					    "Oh no...  Now you've done it.");
+					death = true;
+					moria_flag = true;
+					total_winner = false;
+					strcpy(died_from, "starvation");
+				}
+			}
+
+			if (PF.foodc < 0) {
+				if (randint(5) == 1) {
+					PF.paralysis += randint(3);
+					d__hunger_interrupt(
+					    "You faint from the lack of food.");
+					if (find_flag) {
+						move_char(5);
+					}
+				} else if (PF.foodc < PLAYER_FOOD_FAINT) {
+					if (randint(8) == 1) {
+						PF.paralysis += randint(5);
+						d__hunger_interrupt(
+						    "You faint from the lack "
+						    "of food.");
+						if (find_flag) {
+							move_char(5);
+						}
+					}
+				}
+			} /* end if (food < 0) */
+
+		} else {
+			/* alert, but not weak */
+			if ((IS_HUNGERY & PF.status) == 0) {
+				PF.status |= IS_HUNGERY;
+				d__hunger_interrupt("You are getting hungry.");
+				if (find_flag) {
+					move_char(5);
+				}
+				prt_hunger();
+			}
+		}
+
+	} /* end if (food < alert) */
+}
+
+static void d__eat_food()
+{
+	/*{ Food consumtion       }*/
+	/*{ Note: Speeded up characters really burn up the food!  }*/
+
+	PF.food_digested = BASE_FOOD_DIGESTED;
+
+	if (PF.status & IS_RESTING) {
+		PF.food_digested -= 1;
+	}
+	if (PF.slow_digest) {
+		PF.food_digested -= 1;
+	}
+	if (PF.status & IS_SEARCHING) {
+		PF.food_digested += 1;
+	}
+	if (PF.regenerate) {
+		PF.food_digested += 3;
+	}
+
+	if (PF.food_digested < 0) {
+		PF.food_digested = 0;
+	}
+
+	if (PF.speed < 0) {
+		PF.foodc -= (PF.speed * PF.speed) + PF.food_digested;
+	} else {
+		PF.foodc -= PF.food_digested;
+	}
+}
+
+static void d__regenerate()
+{
+	/*{ Regenerate            }*/
+	/* with player_do; */
+	if (PF.regenerate) {
+		regen_amount *= 1.5;
+	}
+	if (PF.rest > 0) {
+		regen_amount *= 2;
+	}
+	if (player_flags.poisoned < 1) {
+		if (player_chp < player_mhp) {
+			regenhp(regen_amount);
+		}
+	}
+	if (player_cmana < player_mana) {
+		regenmana(regen_amount);
+	}
+}
+
+static void d__update_blindness()
+{
+	/*{ Blindness             }*/
+	if (PF.blind > 0) {
+		if ((IS_BLIND & PF.status) == 0) {
+			PF.status |= IS_BLIND;
+			prt_map();
+			prt_blind();
+			if (search_flag) {
+				search_off();
+			}
+		}
+		PF.blind--;
+		if (PF.blind == 0) {
+			PF.status &= ~IS_BLIND;
+			prt_blind();
+			prt_map();
+			msg_print("The veil of darkness lifts.");
+			move_char(5);
+		}
+	}
+}
+
+static void d__update_confusion()
+{
+	/*{ Confusion             }*/
+	if (PF.confused > 0) {
+		if ((IS_CONFUSED & PF.status) == 0) {
+			PF.status |= IS_CONFUSED;
+			prt_confused();
+		}
+		PF.confused--;
+		if (PF.confused == 0) {
+			PF.status &= ~IS_CONFUSED;
+			prt_confused();
+			msg_print("You feel less confused now.");
+			if (find_flag) {
+				move_char(5);
+			}
+		}
+	}
+}
+
+static void d__update_resist_lightning()
+{
+	/*{ Resist Lightning }*/
+	if (PF.resist_lght > 0) {
+		PF.resist_lght--;
+	}
+}
+
+static void d__update_monster_protect()
+{
+	/*{ Protection from Monsters }*/
+	if (PF.protmon > 0) {
+		PF.protmon--;
+	}
+}
+
+static void d__update_fire_ring()
+{
+	/*{ Ring of Fire }*/
+	if (PF.ring_fire > 0) {
+		msg_print("Flames arise!");
+		explode(c_fire, char_row, char_col, 20 + randint(20),
+			"Ring of Fire");
+		PF.ring_fire--;
+	}
+}
+
+static void d__update_frost_ring()
+{
+
+	/*{ Ring of Frost }*/
+	if (PF.ring_ice > 0) {
+		explode(c_cold, char_row, char_col, 10 + randint(20),
+			"Ring of Frost");
+		PF.ring_ice--;
+	}
+}
+
+static void d__update_blade_barrier()
+{
+
+	/*{ Blade Barrier }*/
+	if (PF.blade_ring > 0) {
+		explode(c_null, char_row, char_col, 12 + randint(player_lev),
+			"Blade Barrier");
+		PF.blade_ring--;
+	}
+}
+
+static void d__update_magic_protect()
+{
+	/*{ Magic protection }*/
+	if (PF.magic_prot > 0) {
+		if ((IS_MAGIC_PROTECED & PF.status) == 0) {
+			PF.status |= IS_MAGIC_PROTECED;
+			player_save += 25;
+		}
+		PF.magic_prot--;
+		if (PF.magic_prot == 0) {
+			player_save -= 25;
+			PF.status &= ~IS_MAGIC_PROTECED;
+		}
+	}
+}
+
+static void d__update_resist_petrfy()
+{
+	/*{Timed resist Petrification}*/
+	if (PF.resist_petri > 0) {
+		PF.resist_petri--;
+	}
+}
+
+static void d__update_stealth()
+{
+	/*{ Timed Stealth    }*/
+	if (PF.temp_stealth > 0) {
+		if ((IS_STEALTHY & PF.status) == 0) {
+			PF.status |= IS_STEALTHY;
+			player_stl += 3;
+		}
+		PF.temp_stealth--;
+		if (PF.temp_stealth == 0) {
+			PF.status &= ~IS_STEALTHY;
+			player_stl -= 3;
+			msg_print("The monsters can once again detect you with "
+				  "ease.");
+		}
+	}
+}
+
+static void d__update_resist_charm()
+{
+	/*{ Resist Charm }*/
+	if (PF.free_time > 0) {
+		if ((IS_CHARM_PROOF & PF.status) == 0) {
+			PF.status |= IS_CHARM_PROOF;
+			PF.free_time--;
+			if (PF.free_time == 0) {
+				PF.status &= ~IS_CHARM_PROOF;
+				if (find_flag) {
+					move_char(5);
+				}
+			}
+		}
+	}
+}
+
+static void d__update_hoarse()
+{
+	/*{ Hoarse                }*/
+	if (PF.hoarse > 0) {
+		PF.hoarse--;
+		if (PF.hoarse == 0) {
+			msg_print("You feel your voice returning.");
+		}
+	}
+}
+
+static void d__update_fear()
+{
+	/*{ Afraid                }*/
+	if (PF.afraid > 0) {
+		if ((IS_AFRAID & PF.status) == 0) {
+			if ((PF.shero + PF.hero) > 0) {
+				PF.afraid = 0;
+			} else {
+				PF.status |= IS_AFRAID;
+				prt_afraid();
+			}
+		} else if ((PF.shero + PF.hero) > 0) {
+			PF.afraid = 1;
+		}
+
+		PF.afraid--;
+		if (PF.afraid == 0) {
+			PF.status &= ~IS_AFRAID;
+			prt_afraid();
+			msg_print("You feel bolder now.");
+			if (find_flag) {
+				move_char(5);
+			}
+		}
+	}
+	if (PF.afraid < 0) {
+		PF.afraid =
+		    0; /* fix when getting hit with fear while shero or hero */
+	}
+}
+
+static void d__update_poison()
+{
+	/*{ Poisoned              }*/
+	if (PF.poisoned > 0) {
+		if ((IS_POISONED & PF.status) == 0) {
+			PF.status |= IS_POISONED;
+			prt_poisoned();
+		}
+		PF.poisoned--;
+		if (PF.poisoned == 0) {
+			PF.status &= ~IS_POISONED;
+			prt_poisoned();
+			msg_print("You feel better.");
+			if (find_flag) {
+				move_char(5);
+			}
+		} else {
+			switch (con_adj()) {
+			case -4:
+				take_hit(4, "poison");
+				break;
+			case -3:
+			case -2:
+				take_hit(3, "poison");
+				break;
+			case -1:
+				take_hit(2, "poison");
+				break;
+			case 0:
+				take_hit(1, "poison");
+				break;
+			case 1:
+			case 2:
+			case 3:
+				if ((turn % 2) == 0) {
+					take_hit(1, "poison");
+				}
+				break;
+			case 4:
+			case 5:
+				if ((turn % 3) == 0) {
+					take_hit(1, "poison");
+				}
+				break;
+			case 6:
+				if ((turn % 4) == 0) {
+					take_hit(1, "poison.");
+				}
+				break;
+			} /* end switch */
+		}
+	}
+}
+
+static void d__update_fast()
+{
+
+	/*{ Fast                  }*/
+	if (PF.fast > 0) {
+		if ((IS_HASTED & PF.status) == 0) {
+			PF.status |= IS_HASTED;
+			msg_print("You feel yourself moving faster.");
+			change_speed(-1);
+			if (find_flag) {
+				move_char(5);
+			}
+		}
+		PF.fast--;
+		if (PF.fast == 0) {
+			PF.status &= ~IS_HASTED;
+			msg_print("You feel yourself slow down.");
+			change_speed(+1);
+			if (find_flag) {
+				move_char(5);
+			}
+		}
+	}
+}
+
+static void d__update_slow()
+{
+
+	/*{ Slow                  }*/
+	if (PF.slow > 0) {
+		if ((IS_SLOW & PF.status) == 0) {
+			PF.status |= IS_SLOW;
+			msg_print("You feel yourself moving slower.");
+			change_speed(+1);
+			if (find_flag) {
+				move_char(5);
+			}
+		}
+		PF.slow--;
+		if (PF.slow == 0) {
+			PF.status &= ~IS_SLOW;
+			msg_print("You feel yourself speed up.");
+			change_speed(-1);
+			if (find_flag) {
+				move_char(5);
+			}
+		}
+	}
+}
+
+static void bother(long num)
+{
+	if (num > 5) {
+		msg_print("Your sword screams insults at passing monsters!");
+	} else {
+		msg_print("Your sword loudly shouts to all nearby creatures,");
+		switch (num) {
+		case 1:
+			msg_print("What kinda monsters are you, mice -- or "
+				  "giant mice???");
+			break;
+		case 2:
+			msg_print("You pathetic creatures are not worth "
+				  "tarnishing my blade!");
+			break;
+		case 3:
+			msg_print("Attention all monsters:  SUPPERTIME!!!");
+			break;
+		case 4:
+			msg_print("Boy are we wounded!! Sure hope we don't run "
+				  "into a kobold!");
+			break;
+		case 5:
+			msg_print(
+			    "Now where did I misplace my armor?  Hmmm...");
+			break;
+		}
+	}
+
+	if (aggravate_monster(20)) {
+		msg_print("You hear the sounds of movement in the distance!");
+	}
+
+	msg_print(" ");
+}
+
+static void d__update_resting()
+{
+	/*{ Resting is over?      }*/
+	if (PF.rest > 0) {
+		/*{ Hibernate every 20 iterations so that process does  }*/
+		/*{ not eat up system...                                }*/
+		/*{ NOTE: Remove comments for VMS version 4.0 or greater}*/
+		/*{       INKEY_DELAY takes care of hibernation for     }*/
+		/*{       VMS 3.7 or less                               }*/
+		if ((PF.rest % 20) == 1) {
+			usleep(500);
+			if ((equipment[Equipment_primary].flags2 &
+			     Soul_Sword_worn_bit) != 0) {
+				bother(randint(10));
+				PF.rest = 1;
+				PF.resting_till_full = false;
+			}
+		}
+		PF.rest--;
+		/*{ Test for any key being hit to abort rest.  Also,    }*/
+		/*{ this will do a PUT_QIO which updates the screen...  }*/
+		/*{ One more side benifit; since inkey_delay hibernates }*/
+		/*{ small amount before executing, this makes resting   }*/
+		/*{ less CPU intensive...                               }*/
+		inkey_delay(&command, 0);
+		/*if (want_trap) { dump_ast_mess; XXXX}*/
+		if (PF.rest == 0) { /*{ Resting over          }*/
+			if (PF.resting_till_full &&
+			    (player_cmana < player_mana || player_chp < player_mhp)) {
+				PF.rest = 20;
+				turn_counter += PF.rest;
+			} else {
+				rest_off();
+			}
+		} else if (command != 0) { /*{ Resting aborted       }*/
+			rest_off();
+		}
+	}
+}
+
+static void d__update_hallucinate()
+{
+	/*{ Hallucinating?  (Random characters appear!)}*/
+	if (PF.image > 0) {
+		PF.image--;
+		if (PF.image == 0) {
+			draw_cave();
+		}
+	}
+}
+
+static void d__update_petrify()
+{
+	/*{  Petrification wears off slowly  } */
+	if ((turn % 100) == 0) {
+		/* with player_flags do; */
+		if (PF.petrification > 100) {
+			PF.petrification--;
+		}
+	}
+
+	/* not sure what this did, but it was commented out... */
+	/*
+	if (PF.speed > 0) and (paral_init = speed_paral) then
+			 paralysis := paralysis + paral_init + 1;
+	*/
+
+	/*{ Paralysis             }*/
+	if (PF.paralysis > 0) {
+		PF.paralysis--;
+		if (PF.rest > 0) {
+			rest_off();
+		}
+		if ((search_flag) && (PF.paralysis > PF.paral_init)) {
+			search_off();
+		}
+	}
+
+	/* hey look!  more commented out code!! */
+	/*
+	if (speed > 0) and (speed_flag) then
+			 begin
+			 speed_flag := false;
+	speed_paral := paral_init;
+	end
+	  else if (speed_paral > 1) then
+				      speed_paral := speed_paral - 1
+				      else
+					begin
+					  speed_paral := 0;
+	speed_flag := true;
+	end;
+	*/
+}
+
+static void d__update_evil_protect()
+{
+	/*{ Protection from evil counter}*/
+	if (PF.protevil > 0) {
+		PF.protevil--;
+	}
+}
+
+static void d__update_invulnerable()
+{
+	/*{ Invulnerability        }*/
+	if (PF.invuln > 0) {
+		if ((IS_INVULNERABLE & PF.status) == 0) {
+			PF.status |= IS_INVULNERABLE;
+			if (find_flag) {
+				move_char(5);
+			}
+			msg_print("Your skin turns into steel!");
+			player_pac += 100;
+			player_dis_ac += 100;
+		}
+		PF.invuln--;
+		if (PF.invuln == 0) {
+			PF.status &= ~IS_INVULNERABLE;
+			if (find_flag) {
+				move_char(5);
+			}
+			msg_print("Your skin returns to normal...");
+			player_pac -= 100;
+			player_dis_ac -= 100;
+		}
+		prt_stat_block();
+	}
+}
+
+static void d__update_heroism()
+{
+	/*{ Heroism       }*/
+	if (PF.hero > 0) {
+		if ((IS_HERO & PF.status) == 0) {
+			PF.status |= IS_HERO;
+			if (find_flag) {
+				move_char(5);
+			}
+			/* with player_do; */
+			player_mhp += 10;
+			player_chp += 10;
+			player_bth += 12;
+			player_bthb += 12;
+			msg_print("You feel like a HERO!");
+			prt_stat_block();
+		}
+		PF.hero--;
+		if (PF.hero == 0) {
+			PF.status &= ~IS_HERO;
+			if (find_flag) {
+				move_char(5);
+			}
+			/* with player_do; */
+			player_mhp -= 10;
+			if (player_chp > player_mhp) {
+				player_chp = player_mhp;
+			}
+			player_bth -= 12;
+			player_bthb -= 12;
+			msg_print("The heroism wears off.");
+			prt_stat_block();
+		}
+	}
+}
+
+static void d__update_super_heroism()
+{
+	/*{ Super Heroism }*/
+	if (PF.shero > 0) {
+		if ((IS_SUPER_HERO & PF.status) == 0) {
+			PF.status |= IS_SUPER_HERO;
+			if (find_flag) {
+				move_char(5);
+			}
+			/* with player_do; */
+			player_mhp += 20;
+			player_chp += 20;
+			player_bth += 24;
+			player_bthb += 24;
+			msg_print("You feel like a SUPER HERO!");
+			prt_stat_block();
+		}
+		PF.shero--;
+		if (PF.shero == 0) {
+			PF.status &= ~IS_SUPER_HERO;
+			if (find_flag) {
+				move_char(5);
+			}
+			/* with player_do; */
+			player_mhp -= 20;
+			if (player_chp > player_mhp) {
+				player_chp = player_mhp;
+			}
+			player_bth -= 24;
+			player_bthb -= 24;
+			msg_print("The super heroism wears off.");
+			prt_stat_block();
+		}
+	}
+}
+
+static void d__update_blessed()
+{
+	/*{ Blessed       }*/
+	if (PF.blessed > 0) {
+		if ((IS_BLESSED & PF.status) == 0) {
+			PF.status |= IS_BLESSED;
+			if (find_flag) {
+				move_char(5);
+			}
+			/* with player_do; */
+			player_bth += 5;
+			player_bthb += 5;
+			player_pac += 5;
+			player_dis_ac += 5;
+			msg_print("You feel righteous!");
+			prt_stat_block();
+		}
+		PF.blessed--;
+		if (PF.blessed == 0) {
+			PF.status &= ~IS_BLESSED;
+			if (find_flag) {
+				move_char(5);
+			}
+			/* with player_do; */
+			player_bth -= 5;
+			player_bthb -= 5;
+			player_pac -= 5;
+			player_dis_ac -= 5;
+			msg_print("The prayer has expired.");
+			prt_stat_block();
+		}
+	}
+}
+
+static void d__update_resist_heat()
+{
+	/*{ Resist Heat   }*/
+	if (PF.resist_heat > 0) {
+		PF.resist_heat--;
+	}
+}
+
+static void d__update_resist_cold()
+{
+	/*{ Resist Cold   }*/
+	if (PF.resist_cold > 0) {
+		PF.resist_cold--;
+	}
+}
+
+static void d__update_detect_invisible()
+{
+	/*{ Detect Invisible      }*/
+	if (PF.detect_inv > 0) {
+		if ((IS_ABLE_TO_SEE_INVIS & PF.status) == 0) {
+			PF.status |= IS_ABLE_TO_SEE_INVIS;
+			PF.see_inv = true;
+		}
+		PF.detect_inv--;
+		if (PF.detect_inv == 0) {
+			PF.status &= ~IS_ABLE_TO_SEE_INVIS;
+			PF.see_inv = false;
+			py_bonuses(&blank_treasure, 0);
+		}
+	}
+}
+
+static void d__update_infra_vision()
+{
+	/*{ Timed infra-vision    }*/
+	if (PF.tim_infra > 0) {
+		if ((IS_ABLE_TO_SEE_HEAT & PF.status) == 0) {
+			PF.status |= IS_ABLE_TO_SEE_HEAT;
+			PF.see_infra++;
+		}
+		PF.tim_infra--;
+		if (PF.tim_infra == 0) {
+			PF.status &= ~IS_ABLE_TO_SEE_HEAT;
+			PF.see_infra--;
+			msg_print("Your eyes stop tingling.");
+		}
+	}
+}
+
+static void d__update_word_of_recall()
+{
+	/*{ Word-of-Recall  Note: Word-of-Recall is a delayed action      }*/
+	if (PF.word_recall > 0) {
+		if (PF.word_recall == 1) {
+			if (dun_level > 0) {
+				msg_print("You feel yourself yanked upwards!");
+				dun_level = 0;
+			} else if (player_max_lev > 0) {
+				msg_print(
+				    "You feel yourself yanked downwards!");
+				dun_level = player_max_lev;
+			}
+			moria_flag = true;
+			PF.paralysis++;
+			PF.word_recall = 0;
+		} else {
+			PF.word_recall--;
+		}
+	}
+}
+
+static void d__update_hit_points()
+{
+	/*{ Check hit points for adjusting...                     }*/
+	/* with player_do; */
+	ENTER(("d__update_hit_points", "d"))
+
+	if (!(find_flag)) {
+		if (player_flags.rest < 1) {
+			if (old_chp != (long)(player_chp)) {
+				if (player_chp > player_mhp) {
+					player_chp = player_mhp;
+				}
+				old_chp = trunc(player_chp);
+			}
+			if (old_cmana != trunc(player_cmana)) {
+				if (player_cmana > player_mana) {
+					player_cmana = player_mana;
+				}
+				old_cmana = trunc(player_cmana);
+			}
+		}
+		prt_stat_block();
+	}
+	LEAVE("d__update_hit_points", "d")
+}
+
+static void d__go_up()
+{
+	/*{ Go up one level                                       -RAK-   }*/
+	/*{ Or several, with a steep staircase                    -DMF-   }*/
+
+	/* with cave[char_row][char_col]. do; */
+	if (cave[char_row][char_col].tptr > 0) {
+		if (t_list[cave[char_row][char_col].tptr].tval ==
+		    up_staircase) {
+			dun_level--;
+			moria_flag = true;
+			msg_print("You enter a maze of up staircases.");
+			msg_print("You pass through a one-way door.");
+		} else if (t_list[cave[char_row][char_col].tptr].tval ==
+			   up_steep_staircase) {
+			dun_level -= randint(3) + 1;
+			if (dun_level < 0) {
+				dun_level = 0;
+			}
+			moria_flag = true;
+			msg_print("You enter a long maze of up staircases.");
+			msg_print("You pass through a one-way door.");
+		} else {
+			msg_print("I see no up staircase here.");
+		}
+	} else {
+		msg_print("I see no up staircase here.");
+	}
+}
+
+static void d__go_down()
+{
+	/*{ Go down one level                                     -RAK-   }*/
+	/*{ Or several, with a steep staircase                    -DMF-   }*/
+
+	/* with cave[char_row][char_col]. do; */
+	if (cave[char_row][char_col].tptr > 0) {
+		if (t_list[cave[char_row][char_col].tptr].tval ==
+		    down_staircase) {
+			dun_level++;
+			moria_flag = true;
+			msg_print("You enter a maze of down staircases.");
+			msg_print("You pass through a one-way door.");
+		} else if (t_list[cave[char_row][char_col].tptr].tval ==
+			   down_steep_staircase) {
+			dun_level += randint(3) + 1;
+			moria_flag = true;
+			msg_print("You enter a long maze of down staircases.");
+			msg_print("You pass through a one-way door.");
+		} else {
+			msg_print("I see no down staircase here.");
+		}
+	} else {
+		msg_print("I see no down staircase here.");
+	}
+}
+
+static void d__bash()
+{
+	/*{ Bash open a door or chest                             -RAK-   }*/
+	/*{ Note: Affected by strength and weight of character            }*/
+
+	long y, x, tmp;
+	long old_ptodam, old_ptohit, old_bth;
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
+		/* with cave[y][x]. do; */
+		if (cave[y][x].cptr > 1) {
+			if (player_flags.afraid > 0) {
+				msg_print("You are afraid!");
+			} else {
+				/*{ Save old values of attacking  }*/
+				inven_temp->data = equipment[Equipment_primary];
+				old_ptohit = player_ptohit;
+				old_ptodam = player_ptodam;
+				old_bth = player_bth;
+				/*{ Use these values              }*/
+				equipment[Equipment_primary] = blank_treasure;
+				/* with equipment[Equipment_primary]. do; */
+				strcpy(equipment[Equipment_primary].damage,
+				       equipment[Equipment_shield].damage);
+				equipment[Equipment_primary].weight =
+				    (player_stats_curr[STR] + 20) * 100;
+				equipment[Equipment_primary].tval = 1;
+
+				/* with py do; */
+				player_bth = trunc(((player_stats_curr[STR] + 20)/ 5 + player_wt) /
+					       6.0);
+				player_ptohit = 0;
+				player_ptodam = trunc(player_wt / 75.0) + 1;
+
+				if (py_attack(y, x)) {
+					do_stun(cave[y][x].cptr, -10, 2);
+				}
+
+				/*{ Restore old values            }*/
+				equipment[Equipment_primary] = inven_temp->data;
+				player_ptohit = old_ptohit;
+				player_ptodam = old_ptodam;
+				player_bth = old_bth;
+				if (randint(300) > player_stats_curr[DEX]) {
+					msg_print("You are off-balance.");
+					player_flags.paralysis = randint(3);
+				}
+			}
+		} else if (cave[y][x].tptr > 0) {
+			/* with t_list[cave[y][x].tptr]. do; */
+			if (t_list[cave[y][x].tptr].tval == closed_door) {
+				/* with py do; */
+				if (test_hit(
+					player_wt + (player_stats_curr[STR] * player_stats_curr[STR])/ 500,
+					0, 0, labs(t_list[cave[y][x].tptr].p1) +
+						  150)) {
+					msg_print("You smash into the door! "
+						  "The door crashes open!");
+					t_list[cave[y][x].tptr] =
+					    door_list[DL_OPEN];
+					t_list[cave[y][x].tptr].p1 = 1;
+					cave[y][x].fopen = true;
+					lite_spot(y, x);
+				} else {
+					msg_print("You smash into the door! "
+						  "The door holds firm.");
+					player_flags.paralysis = 2;
+				}
+
+			} else if (t_list[cave[y][x].tptr].tval == chest) {
+
+				if (randint(10) == 1) {
+					msg_print(
+					    "You have destroyed the chest...");
+					msg_print("and its contents!");
+					strcpy(t_list[cave[y][x].tptr].name,
+					       "& ruined chest");
+					t_list[cave[y][x].tptr].flags = 0;
+				} else if (uand(
+					       0x00000001,
+					       t_list[cave[y][x].tptr].flags) !=
+					   0) {
+					if (randint(10) == 1) {
+						/* just "unlocks", traps are
+						 * still in place */
+						msg_print(
+						    "The lock breaks open!");
+						t_list[cave[y][x].tptr].flags &=
+						    0xFFFFFFFE; /* unlock */
+					}
+				}
+
+			} else {
+				msg_print("I do not see anything you can bash "
+					  "there.");
+			}
+		} else {
+			msg_print("I do not see anything you can bash there.");
+		}
+	}
+}
+
+static void d__chest_trap(long y, long x)
+{
+	/*{ Chests have traps too...                              -RAK-   }*/
+	/*{ Note: Chest traps are based on the FLAGS value                }*/
+
+	long i1, i2, i3;
+	unsigned long flags;
+
+	flags = t_list[cave[y][x].tptr].flags;
+
+	/* with t_list[cave[y][x].tptr]. do; */
+
+	if (uand(0x00000010, flags) != 0) {
+		msg_print("A small needle has pricked you!");
+		if (lose_stat(STR, "", "You are unaffected.")) {
+			take_hit(damroll("1d4"), "a poison needle");
+			print_stat = 1;
+			msg_print("You feel weakened!");
+		}
+	}
+
+	if (uand(0x00000020, flags) != 0) {
+		msg_print("A small needle has pricked you!");
+		take_hit(damroll("1d6"), "a poison needle.");
+		player_flags.poisoned += 10 + randint(20);
+	}
+
+	if (uand(0x00000040, flags) != 0) {
+		msg_print("A puff of yellow gas surrounds you!");
+		if (player_flags.free_act) {
+			msg_print("You are unaffected.");
+		} else {
+			msg_print("You choke and pass out.");
+			player_flags.paralysis = 10 + randint(20);
+		}
+	}
+
+	if (uand(0x00000080, flags) != 0) {
+		msg_print("There is a sudden explosion!");
+		delete_object(y, x);
+		take_hit(damroll("5d8"), "an exploding chest");
+	}
+
+	if (uand(0x00000100, flags) != 0) {
+		for (i1 = 0; i1 < 3; i1++) {
+			i2 = y;
+			i3 = x;
+			if (is_in(cave[i2][i3].fval, water_set)) {
+				summon_water_monster(&i2, &i3, false);
+			} else {
+				summon_land_monster(&i2, &i3, false);
+			}
+		}
+	}
+}
+
+static void d__openobject()
+{
+	/*{ Opens a closed door or closed chest...                -RAK-   }*/
+
+	long y, x, tmp, temp_dun_level;
+	boolean flag;
+	char *tmpc;
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
+		/* with cave[y][x]. do; */
+		if (cave[y][x].tptr > 0) {
+
+			/*{ Closed door           }*/
+			if (t_list[cave[y][x].tptr].tval == closed_door) {
+				/* with t_list[cave[y][x].tptr]. do; */
+				if (t_list[cave[y][x].tptr].p1 >
+				    0) { /*{ It's locked...        }*/
+					/* with player_do; */
+					tmp = player_disarm + player_lev +
+					      2 * todis_adj() + spell_adj(INT);
+
+					if (player_flags.confused > 0) {
+						msg_print("You are too "
+							  "confused to pick "
+							  "the lock.");
+					} else if ((tmp -
+						    t_list[cave[y][x].tptr]
+							.p1) > randint(100)) {
+						msg_print("You have picked the "
+							  "lock.");
+						C_player_add_exp(1);
+						prt_stat_block();
+						t_list[cave[y][x].tptr].p1 = 0;
+					} else {
+						msg_print("You failed to pick "
+							  "the lock.");
+					}
+
+				} else if (t_list[cave[y][x].tptr].p1 <
+					   0) { /*{ It's stuck    }*/
+					msg_print("It appears to be stuck.");
+				}
+
+				if (t_list[cave[y][x].tptr].p1 == 0) {
+					t_list[cave[y][x].tptr] =
+					    door_list[DL_OPEN];
+					cave[y][x].fopen = true;
+					lite_spot(y, x);
+				}
+
+			} else if (t_list[cave[y][x].tptr].tval == chest) {
+				/*{ Open a closed chest...                }*/
+				/* with player_do; */
+				tmp = player_disarm + player_lev + 2 * todis_adj() +
+				      spell_adj(INT);
+
+				/* with t_list[tptr] do; */
+				flag = false;
+				if (uand(0x00000001,
+					 t_list[cave[y][x].tptr].flags) !=
+				    0) { /* locked? */
+					if (player_flags.confused > 0) {
+						msg_print("You are too "
+							  "confused to pick "
+							  "the lock.");
+					} else if ((tmp -
+						    (2 *
+						     t_list[cave[y][x].tptr]
+							 .level)) >
+						   randint(100)) {
+						msg_print("You have picked the "
+							  "lock.");
+						flag = true;
+						C_player_add_exp(
+						    t_list[cave[y][x].tptr]
+							.level);
+						prt_stat_block();
+					} else {
+						msg_print("You failed to pick "
+							  "the lock.");
+					}
+				} else {
+					flag = true;
+				}
+
+				if (flag) {
+					t_list[cave[y][x].tptr].flags &=
+					    0xFFFFFFFE; /* unlock */
+					tmpc = strstr(
+					    t_list[cave[y][x].tptr].name, " (");
+					if (tmpc != NULL) {
+						*tmpc = 0;
+					}
+					strcat(t_list[cave[y][x].tptr].name,
+					       " (Empty)");
+					known2(t_list[cave[y][x].tptr].name);
+					t_list[cave[y][x].tptr].cost = 0;
+				}
+
+				flag = false;
+
+				/*{ Was chest still trapped?  (Snicker)   }*/
+				if (uand(0x00000001,
+					 t_list[cave[y][x].tptr].flags) ==
+				    0) { /*unlocked?*/
+					d__chest_trap(y, x);
+					if (cave[y][x].tptr > 0) {
+						flag = true;
+					}
+				}
+
+				/*{ Chest treasure is allocted as if a creature
+				 * }*/
+				/*{ had been killed... }*/
+
+				if (flag) {
+					/* horrible hack alert: chests had a bug
+					 * where the treasure inside
+					 * a chest is determined by the current
+					 * dungeon level at the time
+					 * when the chest is opened, not when
+					 * the chest was created.  so, one
+					 * could carry a chest up to town level,
+					 * open it up, and get crap.
+					 * or conversely, carry one way down in
+					 * the dungeon and get better
+					 * treasure than you deserve.  There's
+					 * no way to pass a level
+					 * value from here, where the chest is
+					 * opened, all the way down into
+					 * place_object() where a
+					 * treasure/dungeon level is actually
+					 * used,
+					 * because the call stack
+					 * d__openobject->monster_death->summon_object
+					 * ->place_object->get_obj_num doesn't
+					 * have level as a parameter all
+					 * the way until get_obj_num().  the
+					 * only way around this i can think
+					 * of, aside from re-engineering all
+					 * those functions and all calls
+					 * to them, is just to temporarily
+					 * change dun_level for the duration
+					 * of the chest's call to
+					 * monster_death().  2/16/00 JEB */
+					temp_dun_level = dun_level;
+					dun_level = t_list[cave[y][x].tptr].p1;
+					monster_death(
+					    y, x,
+					    t_list[cave[y][x].tptr].flags);
+					dun_level = temp_dun_level;
+					t_list[cave[y][x].tptr].flags =
+					    0; /* clear traps, lock, treasure */
+				}
+
+			} else {
+				msg_print("I do not see anything you can open "
+					  "there.");
+			}
+		} else {
+			msg_print("I do not see anything you can open there.");
+		}
+	}
+}
+
+static void d__closeobject()
+{
+	/*{ Closes an open door...                                -RAK-   }*/
+
+	long y, x, tmp;
+	char m_name[82];
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
+		/* with cave[y][x]. do; */
+		if (cave[y][x].tptr > 0) {
+			if (t_list[cave[y][x].tptr].tval == open_door) {
+				if (cave[y][x].cptr == 0) {
+					if (t_list[cave[y][x].tptr].p1 == 0) {
+						t_list[cave[y][x].tptr] =
+						    door_list[1];
+						cave[y][x].fopen = false;
+						lite_spot(y, x);
+					} else {
+						msg_print("The door appears to "
+							  "be broken.");
+					}
+				} else {
+					find_monster_name(
+					    m_name, cave[y][x].cptr, true);
+					strcat(m_name, " is in your way!");
+					msg_print(m_name);
+				}
+			} else {
+				msg_print("I do not see anything you can close "
+					  "there.");
+			}
+		} else {
+			msg_print("I do not see anything you can close there.");
+		}
+	}
+}
+
+static void d__disarm_trap()
+{
+	/*{ Disarms a trap                                        -RAK-   }*/
+
+	long y, x, i1, tdir;
+	long tot, t1, t2, t3, t4, t5;
+	char *tmpc;
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Which direction?", &tdir, &i1, &y, &x)) {
+		/* with cave[y][x]. do; */
+		if (cave[y][x].tptr > 0) {
+			t1 = player_disarm;  /*{ Ability to disarm     }*/
+			t2 = player_lev;     /*{ Level adjustment      }*/
+			t3 = 2 * todis_adj(); /*{ Dexterity adjustment  }*/
+			t4 = spell_adj(INT);  /*{ Intelligence adjustment}*/
+			tot = t1 + t2 + t3 + t4;
+
+			if (player_flags.blind > 0) {
+				tot /= 5;
+			} else if (no_light()) {
+				tot /= 2;
+			}
+
+			if (player_flags.confused > 0) {
+				tot /= 3;
+			}
+
+			i1 = t_list[cave[y][x].tptr].tval;
+			t5 = t_list[cave[y][x].tptr].level;
+
+			if (i1 == seen_trap) { /* { Floor trap    } */
+				/* with t_list[cave[y][x].tptr]. do; */
+				if ((tot - t5) > randint(100)) {
+					msg_print(
+					    "You have disarmed the trap.");
+					C_player_add_exp(
+					    t_list[cave[y][x].tptr].p1);
+					cave[y][x].fm = false;
+					pusht(cave[y][x].tptr);
+					cave[y][x].tptr = 0;
+					move_char(tdir);
+					lite_spot(y, x);
+					prt_stat_block();
+				} else if (randint(tot) > 5) {
+					msg_print(
+					    "You failed to disarm the trap.");
+				} else {
+					msg_print("You set the trap off!");
+					move_char(tdir);
+				}
+			} else if (i1 == 2) { /*{ Chest trap    }*/
+				/* with t_list[cave[y][x].tptr]. do; */
+				if (strstr(t_list[cave[y][x].tptr].name, "^") !=
+				    NULL) {
+					msg_print("I don't see a trap...");
+				} else if (uand(
+					       0x000001F0,
+					       t_list[cave[y][x].tptr].flags) !=
+					   0) {
+					if ((tot - t5) > randint(100)) {
+						t_list[cave[y][x].tptr].flags &=
+						    0xFFFFFE0F;
+						tmpc = strstr(
+						    t_list[cave[y][x].tptr]
+							.name,
+						    " (");
+						if (tmpc != NULL) {
+							*tmpc = 0;
+						}
+						if (uand(0x00000001,
+							 t_list[cave[y][x].tptr]
+							     .flags) != 0) {
+							strcat(t_list[cave[y][x]
+									  .tptr]
+								   .name,
+							       " (Locked)");
+						} else {
+							strcat(t_list[cave[y][x]
+									  .tptr]
+								   .name,
+							       " (Disarmed)");
+						}
+						msg_print("You have disarmed "
+							  "the chest.");
+						known2(t_list[cave[y][x].tptr]
+							   .name);
+						C_player_add_exp(t5);
+						prt_stat_block();
+					} else if (randint(tot) > 5) {
+						msg_print("You failed to "
+							  "disarm the chest.");
+					} else {
+						msg_print(
+						    "You set a trap off!");
+						known2(t_list[cave[y][x].tptr]
+							   .name);
+						d__chest_trap(y, x);
+					}
+				} else {
+					msg_print("The chest was not trapped.");
+				}
+			} else {
+				msg_print(
+				    "I do not see anything to disarm there.");
+			}
+		} else {
+			msg_print("I do not see anything to disarm there.");
+		}
+	}
+}
+
+static void d__refill_lamp()
+{
+	/*{ Refill the players lamp                               -RAK-   }*/
+
+	long i2, i3;
+	treas_ptr i1;
+	obj_set this_be_oil = {flask_of_oil, 0};
+
+	i3 = equipment[Equipment_light].subval;
+
+	if ((i3 > 0) && (i3 < 10)) {
+		if (find_range(this_be_oil, false, &i1, &i2)) {
+			msg_print("Your lamp is full.");
+			/* with equipment[Equipment_light]. do; */
+			equipment[Equipment_light].p1 += i1->data.p1;
+			if (equipment[Equipment_light].p1 > OBJ_LAMP_MAX) {
+				equipment[Equipment_light].p1 = OBJ_LAMP_MAX;
+			}
+			desc_remain(i1);
+			inven_destroy(i1);
+			prt_stat_block();
+		} else {
+			msg_print("You have no oil.");
+		}
+	} else {
+		msg_print("But you are not using a lamp.");
+	}
+}
+
+static void d__tunnel()
+{
+	/*{ Tunnels through rubble and walls                      -RAK-   }*/
+	/*{ Must take into account: secret doors, special tools           }*/
+
+	long y, x, i1, tabil;
+
+	y = char_row;
+	x = char_col;
+
+	if (d__get_dir("Which direction?", &i1, &i1, &y, &x)) {
+		/* with cave[y][x]. do; */
+
+		/*{ Compute the digging ability of player; based on       }*/
+		/*{ strength, and type of tool used                       }*/
+		tabil = (player_stats_curr[STR] + 20)/ 5;
+		if (equipment[Equipment_primary].tval > 0) {
+			/* with equipment[Equipment_primary] do; */
+			if (uand(Tunneling_worn_bit,
+				 equipment[Equipment_primary].flags) != 0) {
+				tabil +=
+				    25 + equipment[Equipment_primary].p1 * 50;
+			}
+		}
+
+		/*{ Regular walls; Granite, magma intrusion, quartz vein  }*/
+		/*{ Don't forget the boundry walls, made of titanium (255)}*/
+		switch (cave[y][x].fval) {
+		case 10:
+			i1 = randint(1200) + 80;
+			if (twall(y, x, tabil, i1)) {
+				msg_print("You have finished the tunnel.");
+			} else {
+				msg_print("You tunnel into the granite wall.");
+			}
+			break;
+
+		case 11:
+			i1 = randint(600) + 10;
+			if (twall(y, x, tabil, i1)) {
+				msg_print("You have finished the tunnel.");
+			} else {
+				msg_print(
+				    "You tunnel into the magma intrusion.");
+			}
+			break;
+
+		case 12:
+			i1 = randint(400) + 10;
+			if (twall(y, x, tabil, i1)) {
+				msg_print("You have finished the tunnel.");
+			} else {
+				msg_print("You tunnel into the quartz vein.");
+			}
+			break;
+
+		case 15:
+			msg_print("This seems to be permanent rock.");
+			break;
+
+		case 16:
+			msg_print("You can't tunnel through water!");
+			break;
+
+		default:
+			/*{ Is there an object in the way?  (Rubble and secret
+			 * doors)}*/
+			if (cave[y][x].tptr > 0) {
+
+				/*{ Rubble...     }*/
+				if (t_list[cave[y][x].tptr].tval == rubble) {
+					if (tabil > randint(180)) {
+						pusht(cave[y][x].tptr);
+						cave[y][x].tptr = 0;
+						cave[y][x].fm = false;
+						cave[y][x].fopen = true;
+						msg_print("You have removed "
+							  "the rubble.");
+						if (randint(10) == 1) {
+							place_object(y, x);
+							if (test_light(y, x)) {
+								msg_print(
+								    "You have "
+								    "found "
+								    "something"
+								    "!");
+							}
+						}
+						lite_spot(y, x);
+					} else {
+						msg_print(
+						    "You dig in the rubble...");
+					}
+
+					/*{ Secret doors...}*/
+				} else if (t_list[cave[y][x].tptr].tval ==
+					   secret_door) {
+					msg_print("You tunnel into the granite "
+						  "wall.");
+					search(char_row, char_col, player_srh);
+				} else {
+					msg_print(
+					    "You can't tunnel through that.");
+				}
+			} else {
+				msg_print("Tunnel through what?  Empty air???");
+			}
+			break;
+		}
+	}
+}
+
+static void d__drop()
+{
+	/*{ Drop an object being carried                          -RAK-   }*/
+	/*{ Note: Only one object per floor spot...                       }*/
+
+	treas_ptr com_ptr;
+	boolean redraw;
+	char trash_char;
+	char out_val[82], out_val2[82];
+	long temp;
+	long count;
+
+	reset_flag = true;
+
+	/* with player_do; */
+	temp = (player_money[6] + player_money[5] + player_money[4] + player_money[3] +
+		player_money[2] + player_money[1]);
+
+	if ((inven_ctr > 0) || (temp > 0)) {
+		count = change_all_ok_stats(true, false);
+		com_ptr = inventory_list;
+		for (; com_ptr != nil;) {
+			if ((com_ptr->data.tval == bag_or_sack) &&
+			    (com_ptr->insides != 0)) {
+				com_ptr->ok = false;
+				count--;
+			}
+			com_ptr = com_ptr->next;
+		}
+
+		/*{Someone said that it always redraws when drop}*/
+		redraw = false;
+
+		if (get_item(&com_ptr, "Which one? ", &redraw, count,
+			     &trash_char, true, false)) {
+			if (redraw) {
+				draw_cave();
+			}
+			/* with cave[char_row][char_col]. do; */
+			if (cave[char_row][char_col].tptr > 0) {
+				msg_print("There is something there already.");
+			} else {
+				if (trash_char == '$') {
+					inven_drop(com_ptr, char_row, char_col,
+						   true);
+				} else {
+					inven_drop(com_ptr, char_row, char_col,
+						   false);
+				}
+				prt_stat_block();
+				objdes(out_val, inven_temp, true);
+				sprintf(out_val2, "Dropped %s.", out_val);
+				msg_print(out_val2);
+				reset_flag = false;
+			}
+		} else if (redraw) {
+			draw_cave();
+		}
+	} else {
+		msg_print("You are not carrying anything.");
+	}
+}
+
+static void rest()
+{
+	/*{ Resting allows a player to safely restore his hp      -RAK-   }*/
+
+	long rest_num;
+	char rest_str[82];
+
+	prt("Rest for how long (or *) ? ", 1, 1);
+	get_string(rest_str, 1, 28, 10);
+
+	if (!strcmp(rest_str, "*")) {
+		rest_num = 20;
+		PF.resting_till_full = true;
+	} else {
+		rest_num = 0;
+		sscanf(rest_str, "%ld", &rest_num);
+	}
+
+	if (rest_num > 0) {
+		if (search_flag) {
+			search_off();
+		}
+		player_flags.rest = rest_num;
+		turn_counter += rest_num;
+		player_flags.status |= IS_RESTING;
+		prt_rest();
+		msg_print("Press any key to wake up...");
+		refresh();
+	} else {
+		erase_line(msg_line, msg_line);
+		reset_flag = true;
+	}
+}
+
+static void d__execute_command(long *com_val)
+{
+	treas_ptr trash_ptr;
+	char out_val[82];
+	char out2[82];
+
+	ENTER(("d__execute_command", "%d, '%c'", *com_val, *com_val));
+
+	switch (*com_val) {
+
+	/* case   1  :     ^A = Cure all     W1 */
+	/* case   2  :     ^B = objects      W1 */
+	/* case   4  :     ^D = up/down      W1 */
+	/* case   5  :     ^E = wizchar      W2 */
+	/* case   6  :     ^F = genocide     W2 */
+	/* case   7  :     ^G = treasure     W2 */
+	/* case   8  :     ^H = wizhelp      W1 */
+	/* case   9  :     ^I = identify     W1 */
+	/* case  10  :     ^J = gain exp     W2 */
+	/* case  11  :     ^K = summon       W2 */
+	/* case  12  :     ^L = wizlight     W1 */
+	/* case  14  :     ^N = mon map      W1 */
+	/* case  15  :     ^O = summon       W2 */
+	/* case  20  :     ^T = teleport     W1 */
+	/* case  22  :     ^V = restore      W1 */
+	/* case  21  :     ^U = summon       W2 */
+	/* case  23  :     ^W = create       W2 */
+	/* case  24  :     ^X = ed score     W2 */
+	/* case  27  :     ^3 = store maint  W2 */
+	/* case  31  :     ^_                W1 */
+
+	case 0:      /* \0 */
+	case CTRL_C: /* ^C signalquit in io.c handles this one, it calls d__quit
+			*/
+	case '@':
+		d__quit();
+		reset_flag = true;
+		break;
+
+	case CTRL_A:
+		reset_flag = C_select_ability();
+		draw_cave();
+		break;
+
+	case CTRL_B:
+		find_flag = true;
+		move_char(1);
+		break;
+
+	case CTRL_H:
+		find_flag = true;
+		move_char(4);
+		break;
+	case CTRL_I:
+		blow();
+		break;
+	case CTRL_J:
+		find_flag = true;
+		move_char(2);
+		break;
+	case CTRL_K:
+		find_flag = true;
+		move_char(8);
+		break;
+	case CTRL_L:
+		find_flag = true;
+		move_char(6);
+		break;
+
+	case CTRL_M:
+		show_location();
+		reset_flag = true;
+		break;
+	case CTRL_N:
+		find_flag = true;
+		move_char(3);
+		break;
+
+	case CTRL_P:
+		msg_print(old_msg);
+		reset_flag = true;
+		break;
+
+	case CTRL_R: /* redraw */
+		draw_cave();
+		reset_flag = true;
+		break;
+	case CTRL_S:
+		d__jamdoor();
+		break;
+
+	case CTRL_U:
+		find_flag = true;
+		move_char(9);
+		break;
+
+	case CTRL_W: /* Password */
+		if (!wizard1)
+			enter_wizard_mode(true);
+		else
+			wizard_command();
+		reset_flag = true;
+		break;
+
+	case CTRL_X:
+		d__look();
+		reset_flag = true;
+		break;
+	case CTRL_Y:
+		find_flag = true;
+		move_char(7);
+		break;
+	case CTRL_Z: /* suspend  (we never get this, look at signalsuspend) */
+		reset_flag = true;
+		break;
+
+	case 27: /* ALT */
+		*com_val = inkey();
+		MSG(("command: %d '%c'\n", (int)*com_val, (int)*com_val));
+		switch (*com_val) {
+		case 'a': /* Armor help */
+			moria_help("Adventuring Armor_Class Armor_List");
+			draw_cave();
+			reset_flag = true;
+			break;
+		case 'b':
+			move_char(1);
+			break;
+		case 'c':
+			C_dungeon_show_class_restrictions();
+			draw_cave();
+			break;
+		case 'd':
+			sprintf(out_val, "The date is %s",
+				full_date_string(player_cur_age, out2));
+			msg_print(out_val);
+			reset_flag = true;
+			break;
+		case 'e':
+			sprintf(out_val, "Character Classes Experience %4.2f",
+				player_expfact);
+			moria_help(out_val);
+			draw_cave();
+			reset_flag = true;
+			break;
+
+		case 'h':
+			move_char(4);
+			break;
+
+		case 'j':
+			move_char(2);
+			break;
+		case 'k':
+			move_char(8);
+			break;
+		case 'l':
+			move_char(6);
+			break;
+		case 'm':
+			moria_help("");
+			draw_cave();
+			reset_flag = true;
+			break;
+		case 'n':
+			move_char(3);
+			break;
+
+		case 'r':
+			msg_terse = !msg_terse;
+			if (msg_terse) {
+				msg_print("Question '-More-' toggled off");
+				msg_terse =
+				    true; /* try to only use true and false */
+			} else {
+				msg_print("Question '-More-' toggled on");
+				msg_terse = false;
+			}
+			reset_flag = true;
+			break;
+		case 's': /* Save and quit */
+			if (total_winner) {
+				msg_print("You are a Total Winner, your "
+					  "character must "
+					  "be retired...");
+				msg_print(
+				    "Use '@' when you are ready to quit.");
+			} else {
+				if (search_flag)
+					search_off();
+				save_and_quit();
+			}
+			reset_flag = true;
+			break;
+		case 't':
+			sprintf(out_val, "The current time is %s",
+				show_current_time(out2));
+			msg_print(out_val);
+			reset_flag = true;
+			break;
+		case 'u':
+			move_char(9);
+			break;
+
+		case 'w':
+			moria_help("Adventuring Weapons Weapon_List");
+			draw_cave();
+			reset_flag = true;
+			break;
+
+		case 'y':
+			move_char(7);
+			break;
+		}
+		break;
+
+	case '/': /* identify */
+		ident_char();
+		reset_flag = true;
+		break;
+
+	case '1':
+		move_char(1);
+		break;
+	case '2':
+		move_char(2);
+		break;
+	case '3':
+		move_char(3);
+		break;
+	case '4':
+		move_char(4);
+		break;
+
+	case '5': /* Rest one turn */
+		move_char(5);
+		usleep(10);
+		flush();
+		break;
+
+	case '6':
+		move_char(6);
+		break;
+	case '7':
+		move_char(7);
+		break;
+	case '8':
+		move_char(8);
+		break;
+	case '9':
+		move_char(9);
+		break;
+
+	case '<':
+		d__go_up();
+		break;
+	case '>':
+		d__go_down();
+		break;
+
+	case '?': /* help */
+		help();
+		reset_flag = true;
+		break;
+
+	case 'A':
+		d__throw_object(false);
+		break;
+	case 'B':
+		find_flag = true;
+		move_char(1);
+		break;
+	case 'C': /* Show character */
+		change_name();
+		draw_cave();
+		reset_flag = true;
+		break;
+	case 'D':
+		d__disarm_trap();
+		break;
+	case 'E':
+		eat();
+		break;
+	case 'F':
+		d__refill_lamp();
+		break;
+
+	case 'H':
+		find_flag = true;
+		move_char(4);
+		break;
+	case 'I': /* Selected inv */
+		reset_flag = true;
+		if (inven_command('I', &trash_ptr, "")) {
+			draw_cave();
+		}
+		break;
+	case 'J':
+		find_flag = true;
+		move_char(2);
+		break;
+	case 'K':
+		find_flag = true;
+		move_char(8);
+		break;
+	case 'L':
+		find_flag = true;
+		move_char(6);
+		break;
+	case 'M':
+		screen_map();
+		break;
+	case 'N':
+		find_flag = true;
+		move_char(3);
+		break;
+
+	case 'P':
+		C_print_known_spells();
+		draw_cave();
+		break;
+	case 'Q':
+		if (player_flags.quested) {
+			sprintf(out_val, "Current quest is to kill a %s",
+				c_list[player_cur_quest].name);
+			msg_print(out_val);
+		} else {
+			msg_print("No quest currently.");
+		}
+		reset_flag = true;
+		break;
+	case 'R':
+		rest();
+		break;
+	case 'S': /* Search mode */
+		if (search_flag) {
+			search_off();
+			reset_flag = true;
+		} else if (player_flags.blind > 0) {
+			msg_print(
+			    "You are incapable of searching while blind.");
+		} else {
+			search_on();
+			reset_flag = true;
+		}
+		break;
+	case 'T':
+		d__tunnel();
+		break;
+	case 'U':
+		find_flag = true;
+		move_char(9);
+		break;
+	case 'V':
+		msg_record("", false);
+		reset_flag = true;
+		break;
+
+	case 'X': /* Toggle light source */
+		reset_flag = true;
+		if (equipment[Equipment_light].tval > 0) {
+			if (equipment[Equipment_light].p1 > 0) {
+				if (PF.light_on) {
+					sprintf(out_val,
+						"Light Off.  %ld turns left.",
+						equipment[Equipment_light].p1);
+					PF.light_on = false;
+					player_light = false;
+				} else {
+					sprintf(out_val,
+						"Light On.  %ld turns left.",
+						equipment[Equipment_light].p1);
+					PF.light_on = true;
+					player_light = true;
+				}
+				prt_light_on();
+				msg_print(out_val);
+				move_light(char_row, char_col, char_row,
+					   char_col);
+			} else {
+				msg_print("Your light has gone out!");
+			}
+		} else {
+			msg_print("You are not carrying a light.");
+		}
+		break;
+	case 'Y':
+		find_flag = true;
+		move_char(7);
+		break;
+	case 'Z':
+		use_staff();
+		break;
+
+	case 'a':
+		d__throw_object(true);
+		break;
+	case 'b':
+		move_char(1);
+		break;
+	case 'c':
+		d__closeobject();
+		break;
+	case 'd':
+		d__drop();
+		break;
+	case 'f':
+		d__bash();
+		break;
+	case 'h':
+		move_char(4);
+		break;
+	case 'i': /* Inventory */
+		reset_flag = true;
+		if (inven_command('i', &trash_ptr, "")) {
+			draw_cave();
+		}
+		break;
+	case 'j':
+		move_char(2);
+		break;
+	case 'k':
+		move_char(8);
+		break;
+	case 'l':
+		move_char(6);
+		break;
+	case 'm': /* magick, monk, music */
+		if (C_player_uses_magic(M_NATURE)) {
+			cast(M_NATURE); /* play */
+		} else if (C_player_uses_magic(M_ARCANE)) {
+			cast(M_ARCANE); /*  magick   } */
+		} else if (C_player_uses_magic(M_CHAKRA)) {
+			cast(M_CHAKRA); /* m = monk? :) */
+		} else {
+			cast(M_SONG); /* music */
+		}
+		break;
+	case 'n':
+		move_char(3);
+		break;
+	case 'o':
+		d__openobject();
+		break;
+	case 'p': /* pray */
+		if (C_player_uses_magic(M_DIVINE)) {
+			cast(M_DIVINE);
+		} else {
+			msg_print("You pray for a moment");
+		}
+		break;
+	case 'q':
+		quaff();
+		break;
+	case 'r':
+		read_scroll();
+		break;
+	case 's': /* Search */
+		if (player_flags.blind > 0) {
+			msg_print(
+			    "You are incapable of searching while blind.");
+		} else {
+			search(char_row, char_col, player_srh);
+		}
+		break;
+	case 't': /* take off */
+		reset_flag = true;
+		if (inven_command('t', &trash_ptr, "")) {
+			draw_cave();
+		}
+		break;
+	case 'u':
+		move_char(9);
+		break;
+	case 'v': /* version */
+		reset_flag = true;
+		game_version();
+		break;
+	case 'w': /* wear */
+		reset_flag = true;
+		if (inven_command('w', &trash_ptr, "")) {
+			draw_cave();
+		} else {
+			prt_stat_block();
+		}
+		break;
+	case 'x': /* exchange weapon */
+		reset_flag = true;
+		if (inven_command('x', &trash_ptr, "")) {
+			draw_cave();
+		}
+		break;
+	case 'y':
+		move_char(7);
+		break;
+	case 'z':
+		aim_wand();
+		break;
+	default:
+		reset_flag = true;
+		prt("Type '?' for help...", 1, 1);
+		break;
+
+	} /* end com_val switch */
+
+	LEAVE("d__execute_command", "d");
+}
+
 boolean coin_stuff(char typ, long *type_num)
 {
 	boolean return_value;
@@ -1707,39 +4434,6 @@ boolean no_light()
 	return return_value;
 }
 
-void rest()
-{
-	/*{ Resting allows a player to safely restore his hp      -RAK-   }*/
-
-	long rest_num;
-	char rest_str[82];
-
-	prt("Rest for how long (or *) ? ", 1, 1);
-	get_string(rest_str, 1, 28, 10);
-
-	if (!strcmp(rest_str, "*")) {
-		rest_num = 20;
-		PF.resting_till_full = true;
-	} else {
-		rest_num = 0;
-		sscanf(rest_str, "%ld", &rest_num);
-	}
-
-	if (rest_num > 0) {
-		if (search_flag) {
-			search_off();
-		}
-		player_flags.rest = rest_num;
-		turn_counter += rest_num;
-		player_flags.status |= IS_RESTING;
-		prt_rest();
-		msg_print("Press any key to wake up...");
-		refresh();
-	} else {
-		erase_line(msg_line, msg_line);
-		reset_flag = true;
-	}
-}
 
 /**
  * water_move_player() - I wonder what was going to go in here...
@@ -1975,42 +4669,6 @@ void light_room(long param_y, long param_x)
 	}
 
 	LEAVE("light_room", "");
-}
-
-void bother(long num)
-{
-	if (num > 5) {
-		msg_print("Your sword screams insults at passing monsters!");
-	} else {
-		msg_print("Your sword loudly shouts to all nearby creatures,");
-		switch (num) {
-		case 1:
-			msg_print("What kinda monsters are you, mice -- or "
-				  "giant mice???");
-			break;
-		case 2:
-			msg_print("You pathetic creatures are not worth "
-				  "tarnishing my blade!");
-			break;
-		case 3:
-			msg_print("Attention all monsters:  SUPPERTIME!!!");
-			break;
-		case 4:
-			msg_print("Boy are we wounded!! Sure hope we don't run "
-				  "into a kobold!");
-			break;
-		case 5:
-			msg_print(
-			    "Now where did I misplace my armor?  Hmmm...");
-			break;
-		}
-	}
-
-	if (aggravate_monster(20)) {
-		msg_print("You hear the sounds of movement in the distance!");
-	}
-
-	msg_print(" ");
 }
 
 void area_affect(long dir, long y, long x)
@@ -2876,1412 +5534,6 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 }
 
 
-void d__jamdoor()
-{
-	/*{ Jam a closed door                                     -RAK-   }*/
-
-	treas_ptr i1;
-	long y, x, i2, tmp;
-	char m_name[82];
-	obj_set pick_a_spike = {spike, 0};
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].tptr > 0) {
-			/* with t_list[cave[y][x].tptr]. do; */
-			if (t_list[cave[y][x].tptr].tval == closed_door) {
-				if (cave[y][x].cptr == 0) {
-					if (find_range(pick_a_spike, false, &i1,
-						       &i2)) {
-						msg_print("You jam the door "
-							  "with a spike.");
-						/* with i1->data. do; */
-						if (i1->data.number > 1) {
-							i1->data.number--;
-						} else {
-							inven_destroy(i1);
-						}
-						prt_stat_block();
-						t_list[cave[y][x].tptr].p1 =
-						    -labs(
-							t_list[cave[y][x].tptr]
-							    .p1) -
-						    20;
-					} else {
-						msg_print("But you have no "
-							  "spikes...");
-					}
-				} else {
-					find_monster_name(
-					    m_name, cave[y][x].cptr, true);
-					strcat(m_name, " is in your way!");
-					msg_print(m_name);
-				}
-			} else if (t_list[cave[y][x].tptr].tval == open_door) {
-				msg_print("The door must be closed first.");
-			} else {
-				msg_print("That isn't a door!");
-			}
-		} else {
-			msg_print("That isn't a door!");
-		}
-	}
-}
-
-
-/*{ Throw an object across the dungeon...                 -RAK-   }*/
-/*{ Note: Flasks of oil do fire damage                            }*/
-/*{ Note: Extra damage and chance of hitting when missles are used}*/
-/*{       with correct weapon.  I.E.  wield bow and throw arrow.  }*/
-
-void to__inven_throw(treas_ptr item_ptr)
-{
-	inven_temp->data = item_ptr->data;
-	inven_temp->data.number = 1;
-
-	/* with item_ptr->data. do; */
-
-	if ((item_ptr->data.number > 1) && (item_ptr->data.subval > 511)) {
-		item_ptr->data.number--;
-		inven_weight -= item_ptr->data.weight;
-	} else {
-		inven_destroy(item_ptr);
-	}
-
-	prt_stat_block();
-}
-
-obj_set *to__poink(obj_set *ammo_types)
-{
-	ENTER(("to__poink", "d"));
-
-	if (equipment[Equipment_primary].tval == bow_crossbow_or_sling) {
-		(*ammo_types)[1] =
-		    0; /* all three types have just one kind of ammo */
-
-		switch (equipment[Equipment_primary].p1) {
-		case 1:
-			(*ammo_types)[0] = sling_ammo;
-			break;
-
-		case 2:
-		case 3:
-		case 4:
-			(*ammo_types)[0] = arrow;
-			break;
-
-		case 5:
-		case 6:
-			(*ammo_types)[0] = bolt;
-			break;
-		}
-
-	} else {
-		(*ammo_types)[0] = 0;
-	}
-
-	LEAVE("to__poink", "d");
-	return ammo_types;
-}
-
-void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
-	       boolean to_be_fired)
-{
-	long tmp_weight;
-
-	/* with inven_temp->data. do; */
-
-	if (inven_temp->data.weight < 1) {
-		tmp_weight = 1;
-	} else {
-		tmp_weight = inven_temp->data.weight;
-	}
-
-	/*{ Throwing objects                      }*/
-
-	*tdam = damroll(inven_temp->data.damage) + inven_temp->data.todam;
-	*tbth = trunc(player_bthb * 0.75);
-	*tpth = player_ptohit + inven_temp->data.tohit;
-	*tdis = trunc((player_stats_curr[STR] + 100) * 200 / tmp_weight);
-
-	if (*tdis > 10) {
-		*tdis = 10;
-	}
-
-	/*{ Using Bows, slings, or crossbows      }*/
-
-	if (to_be_fired) { /*{ checks for correct wpn in poink }*/
-		switch (equipment[Equipment_primary].p1) {
-		case 1: /*{ Sling and Bullet  }*/
-			*tdam += 2;
-			*tdis = 20;
-			break;
-
-		case 2: /*{ Short Bow and Arrow    }*/
-			*tdam += 2;
-			*tdis = 25;
-			break;
-
-		case 3: /*{ Long Bow and Arrow     }*/
-			*tdam += 3;
-			*tdis = 30;
-			break;
-
-		case 4: /*{ Composite Bow and Arrow}*/
-			*tdam += 4;
-			*tdis = 35;
-			break;
-
-		case 5: /*{ Light Crossbow and Bolt}*/
-			*tdam += 2;
-			*tdis = 25;
-			break;
-
-		case 6: /*{ Heavy Crossbow and Bolt}*/
-			*tdam += 4;
-			*tdis = 35;
-			break;
-		}
-
-		*tbth = player_bthb;
-		*tpth += equipment[Equipment_primary].tohit;
-		inven_temp->data.weight +=
-		    equipment[Equipment_primary].weight + 5000;
-	}
-}
-
-void to__drop_throw(long y, long x)
-{
-	long i1, i2, i3, cur_pos;
-	boolean flag = false;
-	char out_val[82], out_val2[82];
-
-	i1 = y;
-	i2 = x;
-	i3 = 0;
-
-	if (randint(10) > 1) {
-		do {
-			if (in_bounds(i1, i2)) {
-				/* with cave[i1][i2]. do; */
-				if (cave[i1][i2].fopen) {
-					if (cave[i1][i2].tptr == 0) {
-						flag = true;
-					}
-				}
-			}
-			if (!(flag)) {
-				i1 = y + randint(3) - 2;
-				i2 = x + randint(3) - 2;
-				i3++;
-			}
-		} while (!((flag) || (i3 > 9)));
-	}
-
-	if (flag) {
-		popt(&cur_pos);
-		cave[i1][i2].tptr = cur_pos;
-		t_list[cur_pos] = inven_temp->data;
-		if (test_light(i1, i2)) {
-			lite_spot(i1, i2);
-		}
-	} else {
-		objdes(out_val, inven_temp, false);
-		sprintf(out_val2, "The %s disappears.", out_val);
-		msg_print(out_val2);
-	}
-}
-
-void d__throw_object(boolean to_be_fired)
-{
-	long tbth, tpth, tdam, tdis, crit_mult;
-	long y_dumy, x_dumy, dumy, i1;
-	long y, x, oldy, oldx, dir, cur_dis, count;
-	char trash_char;
-	boolean redraw, flag;
-	char out_val[82], out_val2[82], m_name[82];
-	treas_ptr item_ptr, i7;
-	obj_set ammo_types = {0};
-
-	ENTER(("d__throw_object", "%d", to_be_fired));
-
-	redraw = false;
-
-	if (to_be_fired) {
-		find_range(*to__poink(&ammo_types), false, &i7, &count);
-	} else {
-		count = change_all_ok_stats(true, false);
-
-		for (item_ptr = inventory_list; item_ptr != nil;) {
-			if ((uand(item_ptr->data.flags2, Holding_bit) != 0) &&
-			    (item_ptr->insides > 0)) {
-				count--;
-			}
-			item_ptr = item_ptr->next;
-		}
-	}
-
-	reset_flag = true;
-
-	if (to_be_fired) {
-		strcpy(out_val, "Fire which one?");
-	} else {
-		strcpy(out_val, "Hurl which item?");
-	}
-
-	if (count == 0) {
-		if (to_be_fired) {
-			msg_print("You have nothing to fire!");
-		} else {
-			msg_print("But you have nothing to throw.");
-		}
-		LEAVE("d__throw_object", "d");
-		return;
-	}
-
-	if (!get_item(&item_ptr, out_val, &redraw, count, &trash_char, false, false)) {
-		if (redraw) {
-			draw_cave();
-		}
-		LEAVE("d__throw_object", "d");
-		return;
-	}
-
-	if (redraw) {
-		draw_cave();
-	}
-
-	y_dumy = char_row;
-	x_dumy = char_col;
-	if (!d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-		LEAVE("d__throw_object", "d");
-		return;
-	}
-
-	reset_flag = false;
-	desc_remain(item_ptr);
-
-	if (player_flags.confused > 0) {
-		msg_print("You are confused...");
-		do {
-			dir = randint(9);
-		} while (dir == 5);
-	}
-
-	to__inven_throw(item_ptr);
-	to__facts(&tbth, &tpth, &tdam, &tdis, to_be_fired);
-
-	/* with inven_temp->data. do; */
-	flag = false;
-	y = char_row;
-	x = char_col;
-	oldy = char_row;
-	oldx = char_col;
-	cur_dis = 0;
-	do {
-		move_dir(dir, &y, &x);
-		cur_dis++;
-		if (test_light(oldy, oldx)) {
-			lite_spot(oldy, oldx);
-		}
-
-		if (cur_dis > tdis) {
-			flag = true;
-		}
-
-		/* with cave[y][x]. do; */
-		if ((cave[y][x].fopen) && (!flag)) {
-			if (cave[y][x].cptr > 1) {
-				flag = true;
-				/* with */
-				/* m_list[cave[y][x].cptr].
-				*/
-				/* do; */
-				tbth -= cur_dis;
-				if (player_test_hit(
-							tbth, player_lev,
-							tpth,
-							c_list
-							[m_list
-							[cave[y][x]
-							.cptr]
-							.mptr]
-							.ac,
-							to_be_fired)) {
-					i1 = m_list[cave[y][x].cptr].mptr;
-					objdes(out_val, inven_temp, false);
-					find_monster_name(m_name, cave[y][x].cptr, false);
-					sprintf(out_val2, "The %s hits %s.", out_val, m_name);
-					msg_print(out_val2);
-					tdam = tot_dam(&(inven_temp->data), tdam, &(c_list[i1]));
-					/* with */
-					/* inven_temp->data.
-					*/
-					/* do; */
-					crit_mult = critical_blow(
-							inven_temp
-							->data
-							.weight,
-							tpth,
-							(equipment
-							 [Equipment_primary]
-							 .flags2 &
-							 Sharp_worn_bit) !=
-							0,
-							to_be_fired);
-					tdam += (5 + tdam) * crit_mult;
-
-					if (mon_take_hit(cave[y][x].cptr, tdam) > 0) {
-						sprintf(out_val2, "You have killed %s.", m_name);
-						msg_print(out_val2);
-					}
-				} else {
-					to__drop_throw(oldy, oldx);
-				}
-			} else if (panel_contains(y, x) && test_light(y, x)) {
-				print(C_item_get_tchar(&inven_temp ->data), y, x);
-			}
-		} else {
-			flag = true;
-			to__drop_throw(oldy, oldx);
-		}
-
-		oldy = y;
-		oldx = x;
-	} while (!flag);
-
-	LEAVE("d__throw_object", "d");
-}
-
-void d__look()
-{
-	/*{ Look at an object, trap, or monster                   -RAK-   }*/
-	/*{ Note: Looking is a free move, see where invoked...            }*/
-
-	long i1, i2, y, x;
-	long dir, dummy;
-	boolean flag = false;
-	char out_val[82], out_val2[82];
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Look which direction?", &dir, &dummy, &y, &x)) {
-		if (player_flags.blind < 1) {
-			y = char_row;
-			x = char_col;
-			i1 = 0;
-			do {
-				move_dir(dir, &y, &x);
-				/* with cave[y][x]. do; */
-				if (cave[y][x].cptr > 1) {
-					if (m_list[cave[y][x].cptr].ml) {
-						i2 = m_list[cave[y][x].cptr]
-							 .mptr;
-						if (is_vowel(
-							c_list[i2].name[0])) {
-							sprintf(
-							    out_val,
-							    "You see an %s.",
-							    c_list[i2].name);
-						} else {
-							sprintf(
-							    out_val,
-							    "You see a %s.",
-							    c_list[i2].name);
-						}
-						msg_print(out_val);
-						flag = true;
-					}
-				}
-
-				if ((cave[y][x].tl) || (cave[y][x].pl) ||
-				    (cave[y][x].fm)) {
-					if (cave[y][x].tptr > 0) {
-						if (t_list[cave[y][x].tptr]
-							.tval == secret_door) {
-							msg_print("You see a "
-								  "granite "
-								  "wall.");
-						} else if (t_list[cave[y][x]
-								      .tptr]
-							       .tval !=
-							   unseen_trap) {
-							inven_temp->data =
-							    t_list[cave[y][x]
-								       .tptr];
-							inven_temp->data
-							    .number = 1;
-							objdes(out_val,
-							       inven_temp,
-							       true);
-							sprintf(out_val2,
-								"You see %s.",
-								out_val);
-							msg_print(out_val2);
-							flag = true;
-						}
-					}
-
-					if (!cave[y][x].fopen) {
-						flag = true;
-						switch (cave[y][x].fval) {
-						case 10:
-							msg_print("You see a "
-								  "granite "
-								  "wall.");
-							break;
-						case 11:
-							msg_print("You see "
-								  "some dark "
-								  "rock.");
-							break;
-						case 12:
-							msg_print("You see a "
-								  "quartz "
-								  "vein.");
-							break;
-						case 15:
-							msg_print("You see a "
-								  "granite "
-								  "wall.");
-							break;
-						default:
-							break;
-						}
-					} else {
-						switch (cave[y][x].fval) {
-						case 16:
-						case 17:
-							flag = true;
-							msg_print("You see "
-								  "some "
-								  "water.");
-							break;
-						default:
-							break;
-						}
-					}
-				}
-
-				i1++;
-			} while (!(((!cave[y][x].fopen) || (i1 > MAX_SIGHT))));
-
-			if (!flag) {
-				msg_print("You see nothing of interest in that "
-					  "direction.");
-			}
-		} else {
-			msg_print("You can't see a damn thing!");
-		}
-	}
-}
-
-void d__set_coords(long *c_row, long *c_col)
-{
-	/*{ Set up the character co-ords          }*/
-	if ((*c_row == -1) || (*c_col == -1)) {
-		do {
-			*c_row = randint(cur_height);
-			*c_col = randint(cur_width);
-
-			/*      *c_row = 8;*/
-			/*      *c_col = 20;*/
-		} while (!((cave[*c_row][*c_col].fopen) &&
-			   (cave[*c_row][*c_col].cptr == 0) &&
-			   (cave[*c_row][*c_col].tptr == 0) &&
-			   (!(is_in(cave[*c_row][*c_col].fval, water_set)))));
-	}
-}
-
-void d__sun_rise_or_set()
-{
-	long i1, i2;
-
-	/*{ Sunrise and Sunset on town level	  -KRC-	}*/
-	/* with player_cur_age do; */
-	if (dun_level == 0) {
-		if ((player_cur_age.hour == 6) && (player_cur_age.secs == 0)) {
-			for (i1 = 1; i1 <= cur_height; i1++) {
-				for (i2 = 1; i2 <= cur_width; i2++) {
-					cave[i1][i2].pl = true;
-				}
-			}
-			store_maint();
-			draw_cave();
-		} else if ((player_cur_age.hour == 18) && (player_cur_age.secs == 0)) {
-			for (i1 = 1; i1 <= cur_height; i1++) {
-				for (i2 = 1; i2 <= cur_width; i2++) {
-					if (cave[i1][i2].fval !=
-					    dopen_floor.ftval) {
-						cave[i1][i2].pl = true;
-					} else {
-						cave[i1][i2].pl = false;
-					}
-				}
-			}
-			store_maint();
-			draw_cave();
-		}
-	}
-}
-
-void d__check_hours()
-{
-	/*{ Check for game hours                          }*/
-	if (!(wizard1)) {
-		if ((turn % 100) == 1) {
-			if (!(check_time())) {
-				if (closing_flag > 2) {
-					if (search_flag) {
-						search_off();
-					}
-					if (player_flags.rest > 0) {
-						rest_off();
-					}
-					find_flag = false;
-					msg_print("The gates to Moria are now "
-						  "closed.");
-					msg_print(" ");
-					do {
-						save_and_quit();
-					} while (true);
-				} else {
-					if (search_flag) {
-						search_off();
-					}
-					if (player_flags.rest > 0) {
-						rest_off();
-					}
-					move_char(5);
-					closing_flag++;
-					msg_print("The gates to Moria are "
-						  "closing...");
-					msg_print("Please finish up or save "
-						  "your game.");
-					msg_print(" ");
-				}
-			}
-		}
-	}
-}
-
-void d__print_updated_stats()
-{
-	if (print_stat != 0) {
-		prt_stat_block();
-	}
-}
-
-void d__check_light_status()
-{
-	/*{ Check light status                            }*/
-	/* with equipment[Equipment_light] do; */
-	ENTER(("d__check_light_status", "d"));
-	if (player_light) {
-		if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
-			equipment[Equipment_light].p1--;
-			if (equipment[Equipment_light].p1 == 0) {
-				msg_print("Your light has gone out!");
-				PF.light_on = false;
-				player_light = false;
-				find_flag = false;
-				move_light(char_row, char_col, char_row,
-					   char_col);
-			} else if (equipment[Equipment_light].p1 < 40) {
-				if (randint(5) == 1) {
-					if (find_flag) {
-						find_flag = false;
-						move_light(char_row, char_col,
-							   char_row, char_col);
-					}
-					msg_print(
-					    "Your light is growing faint.");
-				}
-			}
-		} else {
-			PF.light_on = false;
-			player_light = false;
-			find_flag = false;
-			move_light(char_row, char_col, char_row, char_col);
-		}
-	} else if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
-		equipment[Equipment_light].p1--;
-		player_light = true;
-		move_light(char_row, char_col, char_row, char_col);
-	}
-
-	LEAVE("d__check_light_status", "d");
-}
-
-void d__hunger_interrupt(char *message)
-{
-	msg_print(message);
-	msg_flag = 0;
-	rest_off();
-}
-
-void d__check_food()
-{
-	/*{ Check food status             }*/
-	regen_amount = PLAYER_REGEN_NORMAL;
-	if ((PF.hunger_item) && (PF.foodc > (PLAYER_FOOD_ALERT + 15))) {
-		PF.foodc = PLAYER_FOOD_ALERT + 15;
-	}
-
-	if (PF.foodc < PLAYER_FOOD_ALERT) {
-		if (PF.foodc < PLAYER_FOOD_WEAK) {
-
-			if (PF.foodc < 0) {
-				regen_amount = 0;
-			} else if (PF.foodc < PLAYER_FOOD_FAINT) {
-				regen_amount = PLAYER_REGEN_FAINT;
-			} else if (PF.foodc < PLAYER_FOOD_WEAK) {
-				regen_amount = PLAYER_REGEN_WEAK;
-			}
-
-			if ((IS_WEAK & PF.status) == 0) {
-				PF.status |= (IS_WEAK | IS_HUNGERY);
-				d__hunger_interrupt(
-				    "You are getting weak from hunger.");
-				if (find_flag) {
-					move_char(5);
-				}
-				prt_hunger();
-				player_wt -= trunc(player_wt * 0.015);
-				d__hunger_interrupt(
-				    "Your clothes seem to be getting loose.");
-				if (player_wt < min_allowable_weight()) {
-					msg_print(
-					    "Oh no...  Now you've done it.");
-					death = true;
-					moria_flag = true;
-					total_winner = false;
-					strcpy(died_from, "starvation");
-				}
-			}
-
-			if (PF.foodc < 0) {
-				if (randint(5) == 1) {
-					PF.paralysis += randint(3);
-					d__hunger_interrupt(
-					    "You faint from the lack of food.");
-					if (find_flag) {
-						move_char(5);
-					}
-				} else if (PF.foodc < PLAYER_FOOD_FAINT) {
-					if (randint(8) == 1) {
-						PF.paralysis += randint(5);
-						d__hunger_interrupt(
-						    "You faint from the lack "
-						    "of food.");
-						if (find_flag) {
-							move_char(5);
-						}
-					}
-				}
-			} /* end if (food < 0) */
-
-		} else {
-			/* alert, but not weak */
-			if ((IS_HUNGERY & PF.status) == 0) {
-				PF.status |= IS_HUNGERY;
-				d__hunger_interrupt("You are getting hungry.");
-				if (find_flag) {
-					move_char(5);
-				}
-				prt_hunger();
-			}
-		}
-
-	} /* end if (food < alert) */
-}
-
-void d__eat_food()
-{
-	/*{ Food consumtion       }*/
-	/*{ Note: Speeded up characters really burn up the food!  }*/
-
-	PF.food_digested = BASE_FOOD_DIGESTED;
-
-	if (PF.status & IS_RESTING) {
-		PF.food_digested -= 1;
-	}
-	if (PF.slow_digest) {
-		PF.food_digested -= 1;
-	}
-	if (PF.status & IS_SEARCHING) {
-		PF.food_digested += 1;
-	}
-	if (PF.regenerate) {
-		PF.food_digested += 3;
-	}
-
-	if (PF.food_digested < 0) {
-		PF.food_digested = 0;
-	}
-
-	if (PF.speed < 0) {
-		PF.foodc -= (PF.speed * PF.speed) + PF.food_digested;
-	} else {
-		PF.foodc -= PF.food_digested;
-	}
-}
-
-void d__regenerate()
-{
-	/*{ Regenerate            }*/
-	/* with player_do; */
-	if (PF.regenerate) {
-		regen_amount *= 1.5;
-	}
-	if (PF.rest > 0) {
-		regen_amount *= 2;
-	}
-	if (player_flags.poisoned < 1) {
-		if (player_chp < player_mhp) {
-			regenhp(regen_amount);
-		}
-	}
-	if (player_cmana < player_mana) {
-		regenmana(regen_amount);
-	}
-}
-
-void d__update_blindness()
-{
-	/*{ Blindness             }*/
-	if (PF.blind > 0) {
-		if ((IS_BLIND & PF.status) == 0) {
-			PF.status |= IS_BLIND;
-			prt_map();
-			prt_blind();
-			if (search_flag) {
-				search_off();
-			}
-		}
-		PF.blind--;
-		if (PF.blind == 0) {
-			PF.status &= ~IS_BLIND;
-			prt_blind();
-			prt_map();
-			msg_print("The veil of darkness lifts.");
-			move_char(5);
-		}
-	}
-}
-
-void d__update_confusion()
-{
-	/*{ Confusion             }*/
-	if (PF.confused > 0) {
-		if ((IS_CONFUSED & PF.status) == 0) {
-			PF.status |= IS_CONFUSED;
-			prt_confused();
-		}
-		PF.confused--;
-		if (PF.confused == 0) {
-			PF.status &= ~IS_CONFUSED;
-			prt_confused();
-			msg_print("You feel less confused now.");
-			if (find_flag) {
-				move_char(5);
-			}
-		}
-	}
-}
-
-void d__update_resist_lightning()
-{
-	/*{ Resist Lightning }*/
-	if (PF.resist_lght > 0) {
-		PF.resist_lght--;
-	}
-}
-
-void d__update_monster_protect()
-{
-	/*{ Protection from Monsters }*/
-	if (PF.protmon > 0) {
-		PF.protmon--;
-	}
-}
-
-void d__update_fire_ring()
-{
-	/*{ Ring of Fire }*/
-	if (PF.ring_fire > 0) {
-		msg_print("Flames arise!");
-		explode(c_fire, char_row, char_col, 20 + randint(20),
-			"Ring of Fire");
-		PF.ring_fire--;
-	}
-}
-
-void d__update_frost_ring()
-{
-
-	/*{ Ring of Frost }*/
-	if (PF.ring_ice > 0) {
-		explode(c_cold, char_row, char_col, 10 + randint(20),
-			"Ring of Frost");
-		PF.ring_ice--;
-	}
-}
-
-void d__update_blade_barrier()
-{
-
-	/*{ Blade Barrier }*/
-	if (PF.blade_ring > 0) {
-		explode(c_null, char_row, char_col, 12 + randint(player_lev),
-			"Blade Barrier");
-		PF.blade_ring--;
-	}
-}
-
-void d__update_magic_protect()
-{
-	/*{ Magic protection }*/
-	if (PF.magic_prot > 0) {
-		if ((IS_MAGIC_PROTECED & PF.status) == 0) {
-			PF.status |= IS_MAGIC_PROTECED;
-			player_save += 25;
-		}
-		PF.magic_prot--;
-		if (PF.magic_prot == 0) {
-			player_save -= 25;
-			PF.status &= ~IS_MAGIC_PROTECED;
-		}
-	}
-}
-
-void d__update_resist_petrfy()
-{
-	/*{Timed resist Petrification}*/
-	if (PF.resist_petri > 0) {
-		PF.resist_petri--;
-	}
-}
-
-void d__update_stealth()
-{
-	/*{ Timed Stealth    }*/
-	if (PF.temp_stealth > 0) {
-		if ((IS_STEALTHY & PF.status) == 0) {
-			PF.status |= IS_STEALTHY;
-			player_stl += 3;
-		}
-		PF.temp_stealth--;
-		if (PF.temp_stealth == 0) {
-			PF.status &= ~IS_STEALTHY;
-			player_stl -= 3;
-			msg_print("The monsters can once again detect you with "
-				  "ease.");
-		}
-	}
-}
-
-void d__update_resist_charm()
-{
-	/*{ Resist Charm }*/
-	if (PF.free_time > 0) {
-		if ((IS_CHARM_PROOF & PF.status) == 0) {
-			PF.status |= IS_CHARM_PROOF;
-			PF.free_time--;
-			if (PF.free_time == 0) {
-				PF.status &= ~IS_CHARM_PROOF;
-				if (find_flag) {
-					move_char(5);
-				}
-			}
-		}
-	}
-}
-
-void d__update_hoarse()
-{
-	/*{ Hoarse                }*/
-	if (PF.hoarse > 0) {
-		PF.hoarse--;
-		if (PF.hoarse == 0) {
-			msg_print("You feel your voice returning.");
-		}
-	}
-}
-
-void d__update_fear()
-{
-	/*{ Afraid                }*/
-	if (PF.afraid > 0) {
-		if ((IS_AFRAID & PF.status) == 0) {
-			if ((PF.shero + PF.hero) > 0) {
-				PF.afraid = 0;
-			} else {
-				PF.status |= IS_AFRAID;
-				prt_afraid();
-			}
-		} else if ((PF.shero + PF.hero) > 0) {
-			PF.afraid = 1;
-		}
-
-		PF.afraid--;
-		if (PF.afraid == 0) {
-			PF.status &= ~IS_AFRAID;
-			prt_afraid();
-			msg_print("You feel bolder now.");
-			if (find_flag) {
-				move_char(5);
-			}
-		}
-	}
-	if (PF.afraid < 0) {
-		PF.afraid =
-		    0; /* fix when getting hit with fear while shero or hero */
-	}
-}
-
-void d__update_poison()
-{
-	/*{ Poisoned              }*/
-	if (PF.poisoned > 0) {
-		if ((IS_POISONED & PF.status) == 0) {
-			PF.status |= IS_POISONED;
-			prt_poisoned();
-		}
-		PF.poisoned--;
-		if (PF.poisoned == 0) {
-			PF.status &= ~IS_POISONED;
-			prt_poisoned();
-			msg_print("You feel better.");
-			if (find_flag) {
-				move_char(5);
-			}
-		} else {
-			switch (con_adj()) {
-			case -4:
-				take_hit(4, "poison");
-				break;
-			case -3:
-			case -2:
-				take_hit(3, "poison");
-				break;
-			case -1:
-				take_hit(2, "poison");
-				break;
-			case 0:
-				take_hit(1, "poison");
-				break;
-			case 1:
-			case 2:
-			case 3:
-				if ((turn % 2) == 0) {
-					take_hit(1, "poison");
-				}
-				break;
-			case 4:
-			case 5:
-				if ((turn % 3) == 0) {
-					take_hit(1, "poison");
-				}
-				break;
-			case 6:
-				if ((turn % 4) == 0) {
-					take_hit(1, "poison.");
-				}
-				break;
-			} /* end switch */
-		}
-	}
-}
-
-void d__update_fast()
-{
-
-	/*{ Fast                  }*/
-	if (PF.fast > 0) {
-		if ((IS_HASTED & PF.status) == 0) {
-			PF.status |= IS_HASTED;
-			msg_print("You feel yourself moving faster.");
-			change_speed(-1);
-			if (find_flag) {
-				move_char(5);
-			}
-		}
-		PF.fast--;
-		if (PF.fast == 0) {
-			PF.status &= ~IS_HASTED;
-			msg_print("You feel yourself slow down.");
-			change_speed(+1);
-			if (find_flag) {
-				move_char(5);
-			}
-		}
-	}
-}
-
-void d__update_slow()
-{
-
-	/*{ Slow                  }*/
-	if (PF.slow > 0) {
-		if ((IS_SLOW & PF.status) == 0) {
-			PF.status |= IS_SLOW;
-			msg_print("You feel yourself moving slower.");
-			change_speed(+1);
-			if (find_flag) {
-				move_char(5);
-			}
-		}
-		PF.slow--;
-		if (PF.slow == 0) {
-			PF.status &= ~IS_SLOW;
-			msg_print("You feel yourself speed up.");
-			change_speed(-1);
-			if (find_flag) {
-				move_char(5);
-			}
-		}
-	}
-}
-
-void d__update_resting()
-{
-	/*{ Resting is over?      }*/
-	if (PF.rest > 0) {
-		/*{ Hibernate every 20 iterations so that process does  }*/
-		/*{ not eat up system...                                }*/
-		/*{ NOTE: Remove comments for VMS version 4.0 or greater}*/
-		/*{       INKEY_DELAY takes care of hibernation for     }*/
-		/*{       VMS 3.7 or less                               }*/
-		if ((PF.rest % 20) == 1) {
-			usleep(500);
-			if ((equipment[Equipment_primary].flags2 &
-			     Soul_Sword_worn_bit) != 0) {
-				bother(randint(10));
-				PF.rest = 1;
-				PF.resting_till_full = false;
-			}
-		}
-		PF.rest--;
-		/*{ Test for any key being hit to abort rest.  Also,    }*/
-		/*{ this will do a PUT_QIO which updates the screen...  }*/
-		/*{ One more side benifit; since inkey_delay hibernates }*/
-		/*{ small amount before executing, this makes resting   }*/
-		/*{ less CPU intensive...                               }*/
-		inkey_delay(&command, 0);
-		/*if (want_trap) { dump_ast_mess; XXXX}*/
-		if (PF.rest == 0) { /*{ Resting over          }*/
-			if (PF.resting_till_full &&
-			    (player_cmana < player_mana || player_chp < player_mhp)) {
-				PF.rest = 20;
-				turn_counter += PF.rest;
-			} else {
-				rest_off();
-			}
-		} else if (command != 0) { /*{ Resting aborted       }*/
-			rest_off();
-		}
-	}
-}
-
-void d__update_hallucinate()
-{
-	/*{ Hallucinating?  (Random characters appear!)}*/
-	if (PF.image > 0) {
-		PF.image--;
-		if (PF.image == 0) {
-			draw_cave();
-		}
-	}
-}
-
-void d__update_petrify()
-{
-	/*{  Petrification wears off slowly  } */
-	if ((turn % 100) == 0) {
-		/* with player_flags do; */
-		if (PF.petrification > 100) {
-			PF.petrification--;
-		}
-	}
-
-	/* not sure what this did, but it was commented out... */
-	/*
-	if (PF.speed > 0) and (paral_init = speed_paral) then
-			 paralysis := paralysis + paral_init + 1;
-	*/
-
-	/*{ Paralysis             }*/
-	if (PF.paralysis > 0) {
-		PF.paralysis--;
-		if (PF.rest > 0) {
-			rest_off();
-		}
-		if ((search_flag) && (PF.paralysis > PF.paral_init)) {
-			search_off();
-		}
-	}
-
-	/* hey look!  more commented out code!! */
-	/*
-	if (speed > 0) and (speed_flag) then
-			 begin
-			 speed_flag := false;
-	speed_paral := paral_init;
-	end
-	  else if (speed_paral > 1) then
-				      speed_paral := speed_paral - 1
-				      else
-					begin
-					  speed_paral := 0;
-	speed_flag := true;
-	end;
-	*/
-}
-
-void d__update_evil_protect()
-{
-	/*{ Protection from evil counter}*/
-	if (PF.protevil > 0) {
-		PF.protevil--;
-	}
-}
-
-void d__update_invulnerable()
-{
-	/*{ Invulnerability        }*/
-	if (PF.invuln > 0) {
-		if ((IS_INVULNERABLE & PF.status) == 0) {
-			PF.status |= IS_INVULNERABLE;
-			if (find_flag) {
-				move_char(5);
-			}
-			msg_print("Your skin turns into steel!");
-			player_pac += 100;
-			player_dis_ac += 100;
-		}
-		PF.invuln--;
-		if (PF.invuln == 0) {
-			PF.status &= ~IS_INVULNERABLE;
-			if (find_flag) {
-				move_char(5);
-			}
-			msg_print("Your skin returns to normal...");
-			player_pac -= 100;
-			player_dis_ac -= 100;
-		}
-		prt_stat_block();
-	}
-}
-
-void d__update_heroism()
-{
-	/*{ Heroism       }*/
-	if (PF.hero > 0) {
-		if ((IS_HERO & PF.status) == 0) {
-			PF.status |= IS_HERO;
-			if (find_flag) {
-				move_char(5);
-			}
-			/* with player_do; */
-			player_mhp += 10;
-			player_chp += 10;
-			player_bth += 12;
-			player_bthb += 12;
-			msg_print("You feel like a HERO!");
-			prt_stat_block();
-		}
-		PF.hero--;
-		if (PF.hero == 0) {
-			PF.status &= ~IS_HERO;
-			if (find_flag) {
-				move_char(5);
-			}
-			/* with player_do; */
-			player_mhp -= 10;
-			if (player_chp > player_mhp) {
-				player_chp = player_mhp;
-			}
-			player_bth -= 12;
-			player_bthb -= 12;
-			msg_print("The heroism wears off.");
-			prt_stat_block();
-		}
-	}
-}
-
-void d__update_super_heroism()
-{
-	/*{ Super Heroism }*/
-	if (PF.shero > 0) {
-		if ((IS_SUPER_HERO & PF.status) == 0) {
-			PF.status |= IS_SUPER_HERO;
-			if (find_flag) {
-				move_char(5);
-			}
-			/* with player_do; */
-			player_mhp += 20;
-			player_chp += 20;
-			player_bth += 24;
-			player_bthb += 24;
-			msg_print("You feel like a SUPER HERO!");
-			prt_stat_block();
-		}
-		PF.shero--;
-		if (PF.shero == 0) {
-			PF.status &= ~IS_SUPER_HERO;
-			if (find_flag) {
-				move_char(5);
-			}
-			/* with player_do; */
-			player_mhp -= 20;
-			if (player_chp > player_mhp) {
-				player_chp = player_mhp;
-			}
-			player_bth -= 24;
-			player_bthb -= 24;
-			msg_print("The super heroism wears off.");
-			prt_stat_block();
-		}
-	}
-}
-
-void d__update_blessed()
-{
-	/*{ Blessed       }*/
-	if (PF.blessed > 0) {
-		if ((IS_BLESSED & PF.status) == 0) {
-			PF.status |= IS_BLESSED;
-			if (find_flag) {
-				move_char(5);
-			}
-			/* with player_do; */
-			player_bth += 5;
-			player_bthb += 5;
-			player_pac += 5;
-			player_dis_ac += 5;
-			msg_print("You feel righteous!");
-			prt_stat_block();
-		}
-		PF.blessed--;
-		if (PF.blessed == 0) {
-			PF.status &= ~IS_BLESSED;
-			if (find_flag) {
-				move_char(5);
-			}
-			/* with player_do; */
-			player_bth -= 5;
-			player_bthb -= 5;
-			player_pac -= 5;
-			player_dis_ac -= 5;
-			msg_print("The prayer has expired.");
-			prt_stat_block();
-		}
-	}
-}
-
-void d__update_resist_heat()
-{
-	/*{ Resist Heat   }*/
-	if (PF.resist_heat > 0) {
-		PF.resist_heat--;
-	}
-}
-
-void d__update_resist_cold()
-{
-	/*{ Resist Cold   }*/
-	if (PF.resist_cold > 0) {
-		PF.resist_cold--;
-	}
-}
-
-void d__update_detect_invisible()
-{
-	/*{ Detect Invisible      }*/
-	if (PF.detect_inv > 0) {
-		if ((IS_ABLE_TO_SEE_INVIS & PF.status) == 0) {
-			PF.status |= IS_ABLE_TO_SEE_INVIS;
-			PF.see_inv = true;
-		}
-		PF.detect_inv--;
-		if (PF.detect_inv == 0) {
-			PF.status &= ~IS_ABLE_TO_SEE_INVIS;
-			PF.see_inv = false;
-			py_bonuses(&blank_treasure, 0);
-		}
-	}
-}
-
-void d__update_infra_vision()
-{
-	/*{ Timed infra-vision    }*/
-	if (PF.tim_infra > 0) {
-		if ((IS_ABLE_TO_SEE_HEAT & PF.status) == 0) {
-			PF.status |= IS_ABLE_TO_SEE_HEAT;
-			PF.see_infra++;
-		}
-		PF.tim_infra--;
-		if (PF.tim_infra == 0) {
-			PF.status &= ~IS_ABLE_TO_SEE_HEAT;
-			PF.see_infra--;
-			msg_print("Your eyes stop tingling.");
-		}
-	}
-}
-
-void d__update_word_of_recall()
-{
-	/*{ Word-of-Recall  Note: Word-of-Recall is a delayed action      }*/
-	if (PF.word_recall > 0) {
-		if (PF.word_recall == 1) {
-			if (dun_level > 0) {
-				msg_print("You feel yourself yanked upwards!");
-				dun_level = 0;
-			} else if (player_max_lev > 0) {
-				msg_print(
-				    "You feel yourself yanked downwards!");
-				dun_level = player_max_lev;
-			}
-			moria_flag = true;
-			PF.paralysis++;
-			PF.word_recall = 0;
-		} else {
-			PF.word_recall--;
-		}
-	}
-}
-
-void d__update_hit_points()
-{
-	/*{ Check hit points for adjusting...                     }*/
-	/* with player_do; */
-	ENTER(("d__update_hit_points", "d"))
-
-	if (!(find_flag)) {
-		if (player_flags.rest < 1) {
-			if (old_chp != (long)(player_chp)) {
-				if (player_chp > player_mhp) {
-					player_chp = player_mhp;
-				}
-				old_chp = trunc(player_chp);
-			}
-			if (old_cmana != trunc(player_cmana)) {
-				if (player_cmana > player_mana) {
-					player_cmana = player_mana;
-				}
-				old_cmana = trunc(player_cmana);
-			}
-		}
-		prt_stat_block();
-	}
-	LEAVE("d__update_hit_points", "d")
-}
-
 
 boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x)
 {
@@ -4376,1284 +5628,6 @@ void d__quit()
 
 	erase_line(1, 1);
 	refresh();
-}
-
-void d__go_up()
-{
-	/*{ Go up one level                                       -RAK-   }*/
-	/*{ Or several, with a steep staircase                    -DMF-   }*/
-
-	/* with cave[char_row][char_col]. do; */
-	if (cave[char_row][char_col].tptr > 0) {
-		if (t_list[cave[char_row][char_col].tptr].tval ==
-		    up_staircase) {
-			dun_level--;
-			moria_flag = true;
-			msg_print("You enter a maze of up staircases.");
-			msg_print("You pass through a one-way door.");
-		} else if (t_list[cave[char_row][char_col].tptr].tval ==
-			   up_steep_staircase) {
-			dun_level -= randint(3) + 1;
-			if (dun_level < 0) {
-				dun_level = 0;
-			}
-			moria_flag = true;
-			msg_print("You enter a long maze of up staircases.");
-			msg_print("You pass through a one-way door.");
-		} else {
-			msg_print("I see no up staircase here.");
-		}
-	} else {
-		msg_print("I see no up staircase here.");
-	}
-}
-
-void d__go_down()
-{
-	/*{ Go down one level                                     -RAK-   }*/
-	/*{ Or several, with a steep staircase                    -DMF-   }*/
-
-	/* with cave[char_row][char_col]. do; */
-	if (cave[char_row][char_col].tptr > 0) {
-		if (t_list[cave[char_row][char_col].tptr].tval ==
-		    down_staircase) {
-			dun_level++;
-			moria_flag = true;
-			msg_print("You enter a maze of down staircases.");
-			msg_print("You pass through a one-way door.");
-		} else if (t_list[cave[char_row][char_col].tptr].tval ==
-			   down_steep_staircase) {
-			dun_level += randint(3) + 1;
-			moria_flag = true;
-			msg_print("You enter a long maze of down staircases.");
-			msg_print("You pass through a one-way door.");
-		} else {
-			msg_print("I see no down staircase here.");
-		}
-	} else {
-		msg_print("I see no down staircase here.");
-	}
-}
-
-void d__bash()
-{
-	/*{ Bash open a door or chest                             -RAK-   }*/
-	/*{ Note: Affected by strength and weight of character            }*/
-
-	long y, x, tmp;
-	long old_ptodam, old_ptohit, old_bth;
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].cptr > 1) {
-			if (player_flags.afraid > 0) {
-				msg_print("You are afraid!");
-			} else {
-				/*{ Save old values of attacking  }*/
-				inven_temp->data = equipment[Equipment_primary];
-				old_ptohit = player_ptohit;
-				old_ptodam = player_ptodam;
-				old_bth = player_bth;
-				/*{ Use these values              }*/
-				equipment[Equipment_primary] = blank_treasure;
-				/* with equipment[Equipment_primary]. do; */
-				strcpy(equipment[Equipment_primary].damage,
-				       equipment[Equipment_shield].damage);
-				equipment[Equipment_primary].weight =
-				    (player_stats_curr[STR] + 20) * 100;
-				equipment[Equipment_primary].tval = 1;
-
-				/* with py do; */
-				player_bth = trunc(((player_stats_curr[STR] + 20)/ 5 + player_wt) /
-					       6.0);
-				player_ptohit = 0;
-				player_ptodam = trunc(player_wt / 75.0) + 1;
-
-				if (py_attack(y, x)) {
-					do_stun(cave[y][x].cptr, -10, 2);
-				}
-
-				/*{ Restore old values            }*/
-				equipment[Equipment_primary] = inven_temp->data;
-				player_ptohit = old_ptohit;
-				player_ptodam = old_ptodam;
-				player_bth = old_bth;
-				if (randint(300) > player_stats_curr[DEX]) {
-					msg_print("You are off-balance.");
-					player_flags.paralysis = randint(3);
-				}
-			}
-		} else if (cave[y][x].tptr > 0) {
-			/* with t_list[cave[y][x].tptr]. do; */
-			if (t_list[cave[y][x].tptr].tval == closed_door) {
-				/* with py do; */
-				if (test_hit(
-					player_wt + (player_stats_curr[STR] * player_stats_curr[STR])/ 500,
-					0, 0, labs(t_list[cave[y][x].tptr].p1) +
-						  150)) {
-					msg_print("You smash into the door! "
-						  "The door crashes open!");
-					t_list[cave[y][x].tptr] =
-					    door_list[DL_OPEN];
-					t_list[cave[y][x].tptr].p1 = 1;
-					cave[y][x].fopen = true;
-					lite_spot(y, x);
-				} else {
-					msg_print("You smash into the door! "
-						  "The door holds firm.");
-					player_flags.paralysis = 2;
-				}
-
-			} else if (t_list[cave[y][x].tptr].tval == chest) {
-
-				if (randint(10) == 1) {
-					msg_print(
-					    "You have destroyed the chest...");
-					msg_print("and its contents!");
-					strcpy(t_list[cave[y][x].tptr].name,
-					       "& ruined chest");
-					t_list[cave[y][x].tptr].flags = 0;
-				} else if (uand(
-					       0x00000001,
-					       t_list[cave[y][x].tptr].flags) !=
-					   0) {
-					if (randint(10) == 1) {
-						/* just "unlocks", traps are
-						 * still in place */
-						msg_print(
-						    "The lock breaks open!");
-						t_list[cave[y][x].tptr].flags &=
-						    0xFFFFFFFE; /* unlock */
-					}
-				}
-
-			} else {
-				msg_print("I do not see anything you can bash "
-					  "there.");
-			}
-		} else {
-			msg_print("I do not see anything you can bash there.");
-		}
-	}
-}
-
-void d__chest_trap(long y, long x)
-{
-	/*{ Chests have traps too...                              -RAK-   }*/
-	/*{ Note: Chest traps are based on the FLAGS value                }*/
-
-	long i1, i2, i3;
-	unsigned long flags;
-
-	flags = t_list[cave[y][x].tptr].flags;
-
-	/* with t_list[cave[y][x].tptr]. do; */
-
-	if (uand(0x00000010, flags) != 0) {
-		msg_print("A small needle has pricked you!");
-		if (lose_stat(STR, "", "You are unaffected.")) {
-			take_hit(damroll("1d4"), "a poison needle");
-			print_stat = 1;
-			msg_print("You feel weakened!");
-		}
-	}
-
-	if (uand(0x00000020, flags) != 0) {
-		msg_print("A small needle has pricked you!");
-		take_hit(damroll("1d6"), "a poison needle.");
-		player_flags.poisoned += 10 + randint(20);
-	}
-
-	if (uand(0x00000040, flags) != 0) {
-		msg_print("A puff of yellow gas surrounds you!");
-		if (player_flags.free_act) {
-			msg_print("You are unaffected.");
-		} else {
-			msg_print("You choke and pass out.");
-			player_flags.paralysis = 10 + randint(20);
-		}
-	}
-
-	if (uand(0x00000080, flags) != 0) {
-		msg_print("There is a sudden explosion!");
-		delete_object(y, x);
-		take_hit(damroll("5d8"), "an exploding chest");
-	}
-
-	if (uand(0x00000100, flags) != 0) {
-		for (i1 = 0; i1 < 3; i1++) {
-			i2 = y;
-			i3 = x;
-			if (is_in(cave[i2][i3].fval, water_set)) {
-				summon_water_monster(&i2, &i3, false);
-			} else {
-				summon_land_monster(&i2, &i3, false);
-			}
-		}
-	}
-}
-
-void d__openobject()
-{
-	/*{ Opens a closed door or closed chest...                -RAK-   }*/
-
-	long y, x, tmp, temp_dun_level;
-	boolean flag;
-	char *tmpc;
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].tptr > 0) {
-
-			/*{ Closed door           }*/
-			if (t_list[cave[y][x].tptr].tval == closed_door) {
-				/* with t_list[cave[y][x].tptr]. do; */
-				if (t_list[cave[y][x].tptr].p1 >
-				    0) { /*{ It's locked...        }*/
-					/* with player_do; */
-					tmp = player_disarm + player_lev +
-					      2 * todis_adj() + spell_adj(INT);
-
-					if (player_flags.confused > 0) {
-						msg_print("You are too "
-							  "confused to pick "
-							  "the lock.");
-					} else if ((tmp -
-						    t_list[cave[y][x].tptr]
-							.p1) > randint(100)) {
-						msg_print("You have picked the "
-							  "lock.");
-						C_player_add_exp(1);
-						prt_stat_block();
-						t_list[cave[y][x].tptr].p1 = 0;
-					} else {
-						msg_print("You failed to pick "
-							  "the lock.");
-					}
-
-				} else if (t_list[cave[y][x].tptr].p1 <
-					   0) { /*{ It's stuck    }*/
-					msg_print("It appears to be stuck.");
-				}
-
-				if (t_list[cave[y][x].tptr].p1 == 0) {
-					t_list[cave[y][x].tptr] =
-					    door_list[DL_OPEN];
-					cave[y][x].fopen = true;
-					lite_spot(y, x);
-				}
-
-			} else if (t_list[cave[y][x].tptr].tval == chest) {
-				/*{ Open a closed chest...                }*/
-				/* with player_do; */
-				tmp = player_disarm + player_lev + 2 * todis_adj() +
-				      spell_adj(INT);
-
-				/* with t_list[tptr] do; */
-				flag = false;
-				if (uand(0x00000001,
-					 t_list[cave[y][x].tptr].flags) !=
-				    0) { /* locked? */
-					if (player_flags.confused > 0) {
-						msg_print("You are too "
-							  "confused to pick "
-							  "the lock.");
-					} else if ((tmp -
-						    (2 *
-						     t_list[cave[y][x].tptr]
-							 .level)) >
-						   randint(100)) {
-						msg_print("You have picked the "
-							  "lock.");
-						flag = true;
-						C_player_add_exp(
-						    t_list[cave[y][x].tptr]
-							.level);
-						prt_stat_block();
-					} else {
-						msg_print("You failed to pick "
-							  "the lock.");
-					}
-				} else {
-					flag = true;
-				}
-
-				if (flag) {
-					t_list[cave[y][x].tptr].flags &=
-					    0xFFFFFFFE; /* unlock */
-					tmpc = strstr(
-					    t_list[cave[y][x].tptr].name, " (");
-					if (tmpc != NULL) {
-						*tmpc = 0;
-					}
-					strcat(t_list[cave[y][x].tptr].name,
-					       " (Empty)");
-					known2(t_list[cave[y][x].tptr].name);
-					t_list[cave[y][x].tptr].cost = 0;
-				}
-
-				flag = false;
-
-				/*{ Was chest still trapped?  (Snicker)   }*/
-				if (uand(0x00000001,
-					 t_list[cave[y][x].tptr].flags) ==
-				    0) { /*unlocked?*/
-					d__chest_trap(y, x);
-					if (cave[y][x].tptr > 0) {
-						flag = true;
-					}
-				}
-
-				/*{ Chest treasure is allocted as if a creature
-				 * }*/
-				/*{ had been killed... }*/
-
-				if (flag) {
-					/* horrible hack alert: chests had a bug
-					 * where the treasure inside
-					 * a chest is determined by the current
-					 * dungeon level at the time
-					 * when the chest is opened, not when
-					 * the chest was created.  so, one
-					 * could carry a chest up to town level,
-					 * open it up, and get crap.
-					 * or conversely, carry one way down in
-					 * the dungeon and get better
-					 * treasure than you deserve.  There's
-					 * no way to pass a level
-					 * value from here, where the chest is
-					 * opened, all the way down into
-					 * place_object() where a
-					 * treasure/dungeon level is actually
-					 * used,
-					 * because the call stack
-					 * d__openobject->monster_death->summon_object
-					 * ->place_object->get_obj_num doesn't
-					 * have level as a parameter all
-					 * the way until get_obj_num().  the
-					 * only way around this i can think
-					 * of, aside from re-engineering all
-					 * those functions and all calls
-					 * to them, is just to temporarily
-					 * change dun_level for the duration
-					 * of the chest's call to
-					 * monster_death().  2/16/00 JEB */
-					temp_dun_level = dun_level;
-					dun_level = t_list[cave[y][x].tptr].p1;
-					monster_death(
-					    y, x,
-					    t_list[cave[y][x].tptr].flags);
-					dun_level = temp_dun_level;
-					t_list[cave[y][x].tptr].flags =
-					    0; /* clear traps, lock, treasure */
-				}
-
-			} else {
-				msg_print("I do not see anything you can open "
-					  "there.");
-			}
-		} else {
-			msg_print("I do not see anything you can open there.");
-		}
-	}
-}
-
-void d__closeobject()
-{
-	/*{ Closes an open door...                                -RAK-   }*/
-
-	long y, x, tmp;
-	char m_name[82];
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].tptr > 0) {
-			if (t_list[cave[y][x].tptr].tval == open_door) {
-				if (cave[y][x].cptr == 0) {
-					if (t_list[cave[y][x].tptr].p1 == 0) {
-						t_list[cave[y][x].tptr] =
-						    door_list[1];
-						cave[y][x].fopen = false;
-						lite_spot(y, x);
-					} else {
-						msg_print("The door appears to "
-							  "be broken.");
-					}
-				} else {
-					find_monster_name(
-					    m_name, cave[y][x].cptr, true);
-					strcat(m_name, " is in your way!");
-					msg_print(m_name);
-				}
-			} else {
-				msg_print("I do not see anything you can close "
-					  "there.");
-			}
-		} else {
-			msg_print("I do not see anything you can close there.");
-		}
-	}
-}
-
-void d__disarm_trap()
-{
-	/*{ Disarms a trap                                        -RAK-   }*/
-
-	long y, x, i1, tdir;
-	long tot, t1, t2, t3, t4, t5;
-	char *tmpc;
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Which direction?", &tdir, &i1, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].tptr > 0) {
-			t1 = player_disarm;  /*{ Ability to disarm     }*/
-			t2 = player_lev;     /*{ Level adjustment      }*/
-			t3 = 2 * todis_adj(); /*{ Dexterity adjustment  }*/
-			t4 = spell_adj(INT);  /*{ Intelligence adjustment}*/
-			tot = t1 + t2 + t3 + t4;
-
-			if (player_flags.blind > 0) {
-				tot /= 5;
-			} else if (no_light()) {
-				tot /= 2;
-			}
-
-			if (player_flags.confused > 0) {
-				tot /= 3;
-			}
-
-			i1 = t_list[cave[y][x].tptr].tval;
-			t5 = t_list[cave[y][x].tptr].level;
-
-			if (i1 == seen_trap) { /* { Floor trap    } */
-				/* with t_list[cave[y][x].tptr]. do; */
-				if ((tot - t5) > randint(100)) {
-					msg_print(
-					    "You have disarmed the trap.");
-					C_player_add_exp(
-					    t_list[cave[y][x].tptr].p1);
-					cave[y][x].fm = false;
-					pusht(cave[y][x].tptr);
-					cave[y][x].tptr = 0;
-					move_char(tdir);
-					lite_spot(y, x);
-					prt_stat_block();
-				} else if (randint(tot) > 5) {
-					msg_print(
-					    "You failed to disarm the trap.");
-				} else {
-					msg_print("You set the trap off!");
-					move_char(tdir);
-				}
-			} else if (i1 == 2) { /*{ Chest trap    }*/
-				/* with t_list[cave[y][x].tptr]. do; */
-				if (strstr(t_list[cave[y][x].tptr].name, "^") !=
-				    NULL) {
-					msg_print("I don't see a trap...");
-				} else if (uand(
-					       0x000001F0,
-					       t_list[cave[y][x].tptr].flags) !=
-					   0) {
-					if ((tot - t5) > randint(100)) {
-						t_list[cave[y][x].tptr].flags &=
-						    0xFFFFFE0F;
-						tmpc = strstr(
-						    t_list[cave[y][x].tptr]
-							.name,
-						    " (");
-						if (tmpc != NULL) {
-							*tmpc = 0;
-						}
-						if (uand(0x00000001,
-							 t_list[cave[y][x].tptr]
-							     .flags) != 0) {
-							strcat(t_list[cave[y][x]
-									  .tptr]
-								   .name,
-							       " (Locked)");
-						} else {
-							strcat(t_list[cave[y][x]
-									  .tptr]
-								   .name,
-							       " (Disarmed)");
-						}
-						msg_print("You have disarmed "
-							  "the chest.");
-						known2(t_list[cave[y][x].tptr]
-							   .name);
-						C_player_add_exp(t5);
-						prt_stat_block();
-					} else if (randint(tot) > 5) {
-						msg_print("You failed to "
-							  "disarm the chest.");
-					} else {
-						msg_print(
-						    "You set a trap off!");
-						known2(t_list[cave[y][x].tptr]
-							   .name);
-						d__chest_trap(y, x);
-					}
-				} else {
-					msg_print("The chest was not trapped.");
-				}
-			} else {
-				msg_print(
-				    "I do not see anything to disarm there.");
-			}
-		} else {
-			msg_print("I do not see anything to disarm there.");
-		}
-	}
-}
-
-void d__refill_lamp()
-{
-	/*{ Refill the players lamp                               -RAK-   }*/
-
-	long i2, i3;
-	treas_ptr i1;
-	obj_set this_be_oil = {flask_of_oil, 0};
-
-	i3 = equipment[Equipment_light].subval;
-
-	if ((i3 > 0) && (i3 < 10)) {
-		if (find_range(this_be_oil, false, &i1, &i2)) {
-			msg_print("Your lamp is full.");
-			/* with equipment[Equipment_light]. do; */
-			equipment[Equipment_light].p1 += i1->data.p1;
-			if (equipment[Equipment_light].p1 > OBJ_LAMP_MAX) {
-				equipment[Equipment_light].p1 = OBJ_LAMP_MAX;
-			}
-			desc_remain(i1);
-			inven_destroy(i1);
-			prt_stat_block();
-		} else {
-			msg_print("You have no oil.");
-		}
-	} else {
-		msg_print("But you are not using a lamp.");
-	}
-}
-
-void d__tunnel()
-{
-	/*{ Tunnels through rubble and walls                      -RAK-   }*/
-	/*{ Must take into account: secret doors, special tools           }*/
-
-	long y, x, i1, tabil;
-
-	y = char_row;
-	x = char_col;
-
-	if (d__get_dir("Which direction?", &i1, &i1, &y, &x)) {
-		/* with cave[y][x]. do; */
-
-		/*{ Compute the digging ability of player; based on       }*/
-		/*{ strength, and type of tool used                       }*/
-		tabil = (player_stats_curr[STR] + 20)/ 5;
-		if (equipment[Equipment_primary].tval > 0) {
-			/* with equipment[Equipment_primary] do; */
-			if (uand(Tunneling_worn_bit,
-				 equipment[Equipment_primary].flags) != 0) {
-				tabil +=
-				    25 + equipment[Equipment_primary].p1 * 50;
-			}
-		}
-
-		/*{ Regular walls; Granite, magma intrusion, quartz vein  }*/
-		/*{ Don't forget the boundry walls, made of titanium (255)}*/
-		switch (cave[y][x].fval) {
-		case 10:
-			i1 = randint(1200) + 80;
-			if (twall(y, x, tabil, i1)) {
-				msg_print("You have finished the tunnel.");
-			} else {
-				msg_print("You tunnel into the granite wall.");
-			}
-			break;
-
-		case 11:
-			i1 = randint(600) + 10;
-			if (twall(y, x, tabil, i1)) {
-				msg_print("You have finished the tunnel.");
-			} else {
-				msg_print(
-				    "You tunnel into the magma intrusion.");
-			}
-			break;
-
-		case 12:
-			i1 = randint(400) + 10;
-			if (twall(y, x, tabil, i1)) {
-				msg_print("You have finished the tunnel.");
-			} else {
-				msg_print("You tunnel into the quartz vein.");
-			}
-			break;
-
-		case 15:
-			msg_print("This seems to be permanent rock.");
-			break;
-
-		case 16:
-			msg_print("You can't tunnel through water!");
-			break;
-
-		default:
-			/*{ Is there an object in the way?  (Rubble and secret
-			 * doors)}*/
-			if (cave[y][x].tptr > 0) {
-
-				/*{ Rubble...     }*/
-				if (t_list[cave[y][x].tptr].tval == rubble) {
-					if (tabil > randint(180)) {
-						pusht(cave[y][x].tptr);
-						cave[y][x].tptr = 0;
-						cave[y][x].fm = false;
-						cave[y][x].fopen = true;
-						msg_print("You have removed "
-							  "the rubble.");
-						if (randint(10) == 1) {
-							place_object(y, x);
-							if (test_light(y, x)) {
-								msg_print(
-								    "You have "
-								    "found "
-								    "something"
-								    "!");
-							}
-						}
-						lite_spot(y, x);
-					} else {
-						msg_print(
-						    "You dig in the rubble...");
-					}
-
-					/*{ Secret doors...}*/
-				} else if (t_list[cave[y][x].tptr].tval ==
-					   secret_door) {
-					msg_print("You tunnel into the granite "
-						  "wall.");
-					search(char_row, char_col, player_srh);
-				} else {
-					msg_print(
-					    "You can't tunnel through that.");
-				}
-			} else {
-				msg_print("Tunnel through what?  Empty air???");
-			}
-			break;
-		}
-	}
-}
-
-void d__drop()
-{
-	/*{ Drop an object being carried                          -RAK-   }*/
-	/*{ Note: Only one object per floor spot...                       }*/
-
-	treas_ptr com_ptr;
-	boolean redraw;
-	char trash_char;
-	char out_val[82], out_val2[82];
-	long temp;
-	long count;
-
-	reset_flag = true;
-
-	/* with player_do; */
-	temp = (player_money[6] + player_money[5] + player_money[4] + player_money[3] +
-		player_money[2] + player_money[1]);
-
-	if ((inven_ctr > 0) || (temp > 0)) {
-		count = change_all_ok_stats(true, false);
-		com_ptr = inventory_list;
-		for (; com_ptr != nil;) {
-			if ((com_ptr->data.tval == bag_or_sack) &&
-			    (com_ptr->insides != 0)) {
-				com_ptr->ok = false;
-				count--;
-			}
-			com_ptr = com_ptr->next;
-		}
-
-		/*{Someone said that it always redraws when drop}*/
-		redraw = false;
-
-		if (get_item(&com_ptr, "Which one? ", &redraw, count,
-			     &trash_char, true, false)) {
-			if (redraw) {
-				draw_cave();
-			}
-			/* with cave[char_row][char_col]. do; */
-			if (cave[char_row][char_col].tptr > 0) {
-				msg_print("There is something there already.");
-			} else {
-				if (trash_char == '$') {
-					inven_drop(com_ptr, char_row, char_col,
-						   true);
-				} else {
-					inven_drop(com_ptr, char_row, char_col,
-						   false);
-				}
-				prt_stat_block();
-				objdes(out_val, inven_temp, true);
-				sprintf(out_val2, "Dropped %s.", out_val);
-				msg_print(out_val2);
-				reset_flag = false;
-			}
-		} else if (redraw) {
-			draw_cave();
-		}
-	} else {
-		msg_print("You are not carrying anything.");
-	}
-}
-
-void view_old_mess()
-{
-	char tmp_str[82];
-	boolean done = false;
-	message_ptr ptr;
-	char out_mess[134];
-	char tmp2[134];
-
-	ptr = old_message;
-
-	for (; (ptr != nil) && !done;) {
-		strncpy(out_mess, ptr->data, sizeof(char[134]));
-		if (strlen(out_mess) > 71) {
-			for (; strlen(out_mess) > 71;) {
-				strncpy(tmp_str, out_mess, 71);
-				strcpy(tmp2, &(out_mess[71]));
-				strcpy(out_mess, tmp2);
-				msg_print(tmp_str);
-			}
-		}
-		done = msg_print(out_mess);
-		ptr = ptr->next;
-	}
-}
-
-
-void d__execute_command(long *com_val)
-{
-	treas_ptr trash_ptr;
-	char out_val[82];
-	char out2[82];
-
-	ENTER(("d__execute_command", "%d, '%c'", *com_val, *com_val));
-
-	switch (*com_val) {
-
-	/* case   1  :     ^A = Cure all     W1 */
-	/* case   2  :     ^B = objects      W1 */
-	/* case   4  :     ^D = up/down      W1 */
-	/* case   5  :     ^E = wizchar      W2 */
-	/* case   6  :     ^F = genocide     W2 */
-	/* case   7  :     ^G = treasure     W2 */
-	/* case   8  :     ^H = wizhelp      W1 */
-	/* case   9  :     ^I = identify     W1 */
-	/* case  10  :     ^J = gain exp     W2 */
-	/* case  11  :     ^K = summon       W2 */
-	/* case  12  :     ^L = wizlight     W1 */
-	/* case  14  :     ^N = mon map      W1 */
-	/* case  15  :     ^O = summon       W2 */
-	/* case  20  :     ^T = teleport     W1 */
-	/* case  22  :     ^V = restore      W1 */
-	/* case  21  :     ^U = summon       W2 */
-	/* case  23  :     ^W = create       W2 */
-	/* case  24  :     ^X = ed score     W2 */
-	/* case  27  :     ^3 = store maint  W2 */
-	/* case  31  :     ^_                W1 */
-
-	case 0:      /* \0 */
-	case CTRL_C: /* ^C signalquit in io.c handles this one, it calls d__quit
-			*/
-	case '@':
-		d__quit();
-		reset_flag = true;
-		break;
-
-	case CTRL_A:
-		reset_flag = C_select_ability();
-		draw_cave();
-		break;
-
-	case CTRL_B:
-		find_flag = true;
-		move_char(1);
-		break;
-
-	case CTRL_H:
-		find_flag = true;
-		move_char(4);
-		break;
-	case CTRL_I:
-		blow();
-		break;
-	case CTRL_J:
-		find_flag = true;
-		move_char(2);
-		break;
-	case CTRL_K:
-		find_flag = true;
-		move_char(8);
-		break;
-	case CTRL_L:
-		find_flag = true;
-		move_char(6);
-		break;
-
-	case CTRL_M:
-		show_location();
-		reset_flag = true;
-		break;
-	case CTRL_N:
-		find_flag = true;
-		move_char(3);
-		break;
-
-	case CTRL_P:
-		msg_print(old_msg);
-		reset_flag = true;
-		break;
-
-	case CTRL_R: /* redraw */
-		draw_cave();
-		reset_flag = true;
-		break;
-	case CTRL_S:
-		d__jamdoor();
-		break;
-
-	case CTRL_U:
-		find_flag = true;
-		move_char(9);
-		break;
-
-	case CTRL_W: /* Password */
-		if (!wizard1)
-			enter_wizard_mode(true);
-		else
-			wizard_command();
-		reset_flag = true;
-		break;
-
-	case CTRL_X:
-		d__look();
-		reset_flag = true;
-		break;
-	case CTRL_Y:
-		find_flag = true;
-		move_char(7);
-		break;
-	case CTRL_Z: /* suspend  (we never get this, look at signalsuspend) */
-		reset_flag = true;
-		break;
-
-	case 27: /* ALT */
-		*com_val = inkey();
-		MSG(("command: %d '%c'\n", (int)*com_val, (int)*com_val));
-		switch (*com_val) {
-		case 'a': /* Armor help */
-			moria_help("Adventuring Armor_Class Armor_List");
-			draw_cave();
-			reset_flag = true;
-			break;
-		case 'b':
-			move_char(1);
-			break;
-		case 'c':
-			C_dungeon_show_class_restrictions();
-			draw_cave();
-			break;
-		case 'd':
-			sprintf(out_val, "The date is %s",
-				full_date_string(player_cur_age, out2));
-			msg_print(out_val);
-			reset_flag = true;
-			break;
-		case 'e':
-			sprintf(out_val, "Character Classes Experience %4.2f",
-				player_expfact);
-			moria_help(out_val);
-			draw_cave();
-			reset_flag = true;
-			break;
-
-		case 'h':
-			move_char(4);
-			break;
-
-		case 'j':
-			move_char(2);
-			break;
-		case 'k':
-			move_char(8);
-			break;
-		case 'l':
-			move_char(6);
-			break;
-		case 'm':
-			moria_help("");
-			draw_cave();
-			reset_flag = true;
-			break;
-		case 'n':
-			move_char(3);
-			break;
-
-		case 'r':
-			msg_terse = !msg_terse;
-			if (msg_terse) {
-				msg_print("Question '-More-' toggled off");
-				msg_terse =
-				    true; /* try to only use true and false */
-			} else {
-				msg_print("Question '-More-' toggled on");
-				msg_terse = false;
-			}
-			reset_flag = true;
-			break;
-		case 's': /* Save and quit */
-			if (total_winner) {
-				msg_print("You are a Total Winner, your "
-					  "character must "
-					  "be retired...");
-				msg_print(
-				    "Use '@' when you are ready to quit.");
-			} else {
-				if (search_flag)
-					search_off();
-				save_and_quit();
-			}
-			reset_flag = true;
-			break;
-		case 't':
-			sprintf(out_val, "The current time is %s",
-				show_current_time(out2));
-			msg_print(out_val);
-			reset_flag = true;
-			break;
-		case 'u':
-			move_char(9);
-			break;
-
-		case 'w':
-			moria_help("Adventuring Weapons Weapon_List");
-			draw_cave();
-			reset_flag = true;
-			break;
-
-		case 'y':
-			move_char(7);
-			break;
-		}
-		break;
-
-	case '/': /* identify */
-		ident_char();
-		reset_flag = true;
-		break;
-
-	case '1':
-		move_char(1);
-		break;
-	case '2':
-		move_char(2);
-		break;
-	case '3':
-		move_char(3);
-		break;
-	case '4':
-		move_char(4);
-		break;
-
-	case '5': /* Rest one turn */
-		move_char(5);
-		usleep(10);
-		flush();
-		break;
-
-	case '6':
-		move_char(6);
-		break;
-	case '7':
-		move_char(7);
-		break;
-	case '8':
-		move_char(8);
-		break;
-	case '9':
-		move_char(9);
-		break;
-
-	case '<':
-		d__go_up();
-		break;
-	case '>':
-		d__go_down();
-		break;
-
-	case '?': /* help */
-		help();
-		reset_flag = true;
-		break;
-
-	case 'A':
-		d__throw_object(false);
-		break;
-	case 'B':
-		find_flag = true;
-		move_char(1);
-		break;
-	case 'C': /* Show character */
-		change_name();
-		draw_cave();
-		reset_flag = true;
-		break;
-	case 'D':
-		d__disarm_trap();
-		break;
-	case 'E':
-		eat();
-		break;
-	case 'F':
-		d__refill_lamp();
-		break;
-
-	case 'H':
-		find_flag = true;
-		move_char(4);
-		break;
-	case 'I': /* Selected inv */
-		reset_flag = true;
-		if (inven_command('I', &trash_ptr, "")) {
-			draw_cave();
-		}
-		break;
-	case 'J':
-		find_flag = true;
-		move_char(2);
-		break;
-	case 'K':
-		find_flag = true;
-		move_char(8);
-		break;
-	case 'L':
-		find_flag = true;
-		move_char(6);
-		break;
-	case 'M':
-		screen_map();
-		break;
-	case 'N':
-		find_flag = true;
-		move_char(3);
-		break;
-
-	case 'P':
-		C_print_known_spells();
-		draw_cave();
-		break;
-	case 'Q':
-		if (player_flags.quested) {
-			sprintf(out_val, "Current quest is to kill a %s",
-				c_list[player_cur_quest].name);
-			msg_print(out_val);
-		} else {
-			msg_print("No quest currently.");
-		}
-		reset_flag = true;
-		break;
-	case 'R':
-		rest();
-		break;
-	case 'S': /* Search mode */
-		if (search_flag) {
-			search_off();
-			reset_flag = true;
-		} else if (player_flags.blind > 0) {
-			msg_print(
-			    "You are incapable of searching while blind.");
-		} else {
-			search_on();
-			reset_flag = true;
-		}
-		break;
-	case 'T':
-		d__tunnel();
-		break;
-	case 'U':
-		find_flag = true;
-		move_char(9);
-		break;
-	case 'V':
-		msg_record("", false);
-		reset_flag = true;
-		break;
-
-	case 'X': /* Toggle light source */
-		reset_flag = true;
-		if (equipment[Equipment_light].tval > 0) {
-			if (equipment[Equipment_light].p1 > 0) {
-				if (PF.light_on) {
-					sprintf(out_val,
-						"Light Off.  %ld turns left.",
-						equipment[Equipment_light].p1);
-					PF.light_on = false;
-					player_light = false;
-				} else {
-					sprintf(out_val,
-						"Light On.  %ld turns left.",
-						equipment[Equipment_light].p1);
-					PF.light_on = true;
-					player_light = true;
-				}
-				prt_light_on();
-				msg_print(out_val);
-				move_light(char_row, char_col, char_row,
-					   char_col);
-			} else {
-				msg_print("Your light has gone out!");
-			}
-		} else {
-			msg_print("You are not carrying a light.");
-		}
-		break;
-	case 'Y':
-		find_flag = true;
-		move_char(7);
-		break;
-	case 'Z':
-		use_staff();
-		break;
-
-	case 'a':
-		d__throw_object(true);
-		break;
-	case 'b':
-		move_char(1);
-		break;
-	case 'c':
-		d__closeobject();
-		break;
-	case 'd':
-		d__drop();
-		break;
-	case 'f':
-		d__bash();
-		break;
-	case 'h':
-		move_char(4);
-		break;
-	case 'i': /* Inventory */
-		reset_flag = true;
-		if (inven_command('i', &trash_ptr, "")) {
-			draw_cave();
-		}
-		break;
-	case 'j':
-		move_char(2);
-		break;
-	case 'k':
-		move_char(8);
-		break;
-	case 'l':
-		move_char(6);
-		break;
-	case 'm': /* magick, monk, music */
-		if (C_player_uses_magic(M_NATURE)) {
-			cast(M_NATURE); /* play */
-		} else if (C_player_uses_magic(M_ARCANE)) {
-			cast(M_ARCANE); /*  magick   } */
-		} else if (C_player_uses_magic(M_CHAKRA)) {
-			cast(M_CHAKRA); /* m = monk? :) */
-		} else {
-			cast(M_SONG); /* music */
-		}
-		break;
-	case 'n':
-		move_char(3);
-		break;
-	case 'o':
-		d__openobject();
-		break;
-	case 'p': /* pray */
-		if (C_player_uses_magic(M_DIVINE)) {
-			cast(M_DIVINE);
-		} else {
-			msg_print("You pray for a moment");
-		}
-		break;
-	case 'q':
-		quaff();
-		break;
-	case 'r':
-		read_scroll();
-		break;
-	case 's': /* Search */
-		if (player_flags.blind > 0) {
-			msg_print(
-			    "You are incapable of searching while blind.");
-		} else {
-			search(char_row, char_col, player_srh);
-		}
-		break;
-	case 't': /* take off */
-		reset_flag = true;
-		if (inven_command('t', &trash_ptr, "")) {
-			draw_cave();
-		}
-		break;
-	case 'u':
-		move_char(9);
-		break;
-	case 'v': /* version */
-		reset_flag = true;
-		game_version();
-		break;
-	case 'w': /* wear */
-		reset_flag = true;
-		if (inven_command('w', &trash_ptr, "")) {
-			draw_cave();
-		} else {
-			prt_stat_block();
-		}
-		break;
-	case 'x': /* exchange weapon */
-		reset_flag = true;
-		if (inven_command('x', &trash_ptr, "")) {
-			draw_cave();
-		}
-		break;
-	case 'y':
-		move_char(7);
-		break;
-	case 'z':
-		aim_wand();
-		break;
-	default:
-		reset_flag = true;
-		prt("Type '?' for help...", 1, 1);
-		break;
-
-	} /* end com_val switch */
-
-	LEAVE("d__execute_command", "d");
 }
 
 void dungeon()

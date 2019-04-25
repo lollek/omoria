@@ -55,10 +55,11 @@ boolean explode(long typ, long y, long x, long dam_hp, const char *descrip);
 void teleport(long dis);
 boolean create_water(long y, long x);
 boolean destroy_water(long y, long x);
-boolean item_petrify();
+boolean item_petrify(void);
 boolean xor (long thing1, long thing2);
-void blow();
+void blow(void);
+void d__quit(void);
 
-void C_dungeon_show_class_restrictions();
+void C_dungeon_show_class_restrictions(void);
 
 #endif /* DUNGEON_H */

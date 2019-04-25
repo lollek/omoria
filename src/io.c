@@ -1,6 +1,7 @@
 #include <signal.h>
 
 #include "imoria.h"
+#include "dungeon.h"
 #include "save.h"
 
 void init_priv_switch()
@@ -40,7 +41,6 @@ void signalexit()
 	LEAVE("signalexit", "");
 }
 
-extern void d__quit();
 void signalquit()
 {
 	ENTER(("signalquit", ""));
