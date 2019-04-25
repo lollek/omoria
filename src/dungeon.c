@@ -37,6 +37,284 @@ static void s__panel_bounds()
 	panel_col_prt = panel_col_min - 15;
 }
 
+/**
+ * -RAK-
+ *  change_stat() - Changes stats up or down for magic items
+ *  tstat: stat to modify
+ *  amount: amount to modify stat
+ *  factor: 1 to add, -1 to revert
+ */
+static void change_stat(stat_set tstat, long amount, long factor)
+{
+	player_stats_mod[(int)tstat] += amount * factor;
+	update_stat(tstat);
+}
+
+static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
+					    boolean *commas)
+{
+	if (*commas) {
+		strcat(out_val, ", ");
+	}
+	strcat(out_val, astr);
+	*commas = true;
+}
+
+static void ml__draw_block(long y1, long x1, long y2, long x2)
+{
+	/*{ Given two sets of points, draw the block		}*/
+
+	long const topp = maxmin(y1, y2, panel_row_min);
+	long const bott = minmax(y1, y2, panel_row_max);
+	long const left = maxmin(x1, x2, panel_col_min);
+	long const right = minmax(x1, x2, panel_col_max);
+	long const new_topp = y2 - 1; /*{ Margins for new things to appear}*/
+	long const new_bott = y2 + 1;
+	long const new_left = x2 - 1;
+	long const new_righ = x2 + 1;
+
+	long y;
+	long xmax = 0;
+
+	ENTER(("ml__draw_block", "%d, %d, %d, %d", y1, x2, y2, x2));
+
+	/*{ From uppermost to bottom most lines player was on...  }*/
+	/*{ Points are guaranteed to be on the screen (I hope...) }*/
+
+	for (y = topp; y <= bott; y++) {
+		long x;
+		long xpos = 0;
+		chtype floor_str[82] = {0};
+		long floor_str_len = 0;
+
+		/*{ Leftmost to rightmost do}*/
+		for (x = left; x <= right; x++) {
+			chtype tmp_char = ' ';
+			boolean flag;
+
+			if (cave[y][x].pl || cave[y][x].fm) {
+				flag = ((y == y1 && x == x1) ||
+					(y == y2 && x == x2));
+				/* flag = true; */
+			} else {
+				flag = true;
+				if ((y >= new_topp && y <= new_bott) &&
+				    (x >= new_left && x <= new_righ) &&
+				    cave[y][x].tl) {
+					if (is_in(cave[y][x].fval, pwall_set)) {
+						cave[y][x].pl = true;
+					} else if (cave[y][x].tptr > 0 &&
+						   is_in(t_list[cave[y][x].tptr]
+							     .tval,
+							 light_set) &&
+						   !(cave[y][x].fm)) {
+						cave[y][x].fm = true;
+					}
+				}
+			}
+
+			if (cave[y][x].pl || cave[y][x].tl || cave[y][x].fm)
+				tmp_char = loc_symbol(y, x);
+			if (player_flags.image > 0 && randint(12) == 1)
+				tmp_char = (char)(randint(95) + 31);
+
+			if (flag) {
+				if (xpos == 0)
+					xpos = x;
+				xmax = x;
+			}
+
+			if (xpos > 0) {
+				if (floor_str_len > 80)
+					MSG((": ERROR draw_block floor_str_len "
+					     "too big: %d",
+					     floor_str_len));
+				floor_str[floor_str_len++] = tmp_char;
+			}
+
+		} /* end for  x */
+
+		if (floor_str_len > 80)
+			MSG((": ERROR draw_block floor_str_len too big: %d",
+			     floor_str_len));
+
+		floor_str[floor_str_len] = 0;
+
+		if (xpos > 0) {
+			/*{ Var for PRINT cannot be loop index}*/
+			long const y2 = y;
+			/*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
+
+			if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
+				MSG((": ERROR draw_block xmax-xpos is bad\n"));
+
+			floor_str[1 + xmax - xpos + 1] = 0;
+			print_chstr(floor_str, y2, xpos);
+		}
+	}
+
+	LEAVE("ml__draw_block", "m");
+}
+
+static void ml__sub1_move_light(long y1, long x1, long y2, long x2)
+{
+	/*{ Normal movement                                   }*/
+
+	long i1, i2;
+
+	ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
+
+	light_flag = true;
+
+	/* Turn off lamp light */
+	for (i1 = y1 - 1; i1 <= y1 + 1; i1++)
+		for (i2 = x1 - 1; i2 <= x1 + 1; i2++)
+			cave[i1][i2].tl = false;
+
+	for (i1 = y2 - 1; i1 <= y2 + 1; i1++)
+		for (i2 = x2 - 1; i2 <= x2 + 1; i2++)
+			cave[i1][i2].tl = true;
+
+	ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
+
+	LEAVE("ml__sub1_move_light", "m");
+}
+
+static void ml__sub2_move_light(long y1, long x1, long y2, long x2)
+{
+	/*{ When FIND_FLAG, light only permanent features     }*/
+
+	long y;
+	long x;
+
+	ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
+
+	if (light_flag) {
+		for (y = y1 - 1; y <= y1 + 1; y++)
+			for (x = x1 - 1; x <= x1 + 1; x++)
+				cave[y][x].tl = false;
+		ml__draw_block(y1, x1, y1, x1);
+		light_flag = false;
+	}
+
+	for (y = y2 - 1; y <= y2 + 1; y++) {
+		chtype floor_str[82] = {0};
+		chtype save_str[82] = {0};
+		long floor_str_len = 0;
+		long save_str_len = 0;
+		long xpos = 0;
+		chtype tmp_char;
+
+		for (x = x2 - 1; x <= x2 + 1; x++) {
+			boolean flag = false;
+			if (!(cave[y][x].fm || (cave[y][x].pl))) {
+				tmp_char = ' ';
+				if (player_light) {
+					if (is_in(cave[y][x].fval, pwall_set)) {
+						/* Turn on perm light */
+						cave[y][x].pl = true;
+						tmp_char = loc_symbol(y, x);
+						flag = true;
+					} else if (cave[y][x].tptr > 0 &&
+						   is_in(t_list[cave[y][x].tptr]
+							     .tval,
+							 light_set)) {
+						/* Turn on field marker */
+						cave[y][x].fm = true;
+						tmp_char = loc_symbol(y, x);
+						flag = true;
+					}
+				}
+			} else {
+				tmp_char = loc_symbol(y, x);
+			}
+
+			if (flag) {
+				if (xpos == 0)
+					xpos = x;
+				if (save_str[0] != 0) {
+					long i;
+					for (i = 0; i < save_str_len; ++i)
+						floor_str[floor_str_len++] =
+						    save_str[i];
+					save_str[0] = 0;
+					save_str_len = 0;
+				}
+				floor_str[floor_str_len++] = tmp_char;
+			} else if (xpos > 0) {
+				save_str[save_str_len++] = tmp_char;
+			}
+		} /* end for x */
+
+		if (xpos > 0) {
+			long const tmp_y = y;
+			floor_str[floor_str_len] = 0;
+			print_chstr(floor_str, tmp_y, xpos);
+		}
+	} /* end for y */
+
+	LEAVE("ml__sub2_move_light", "m");
+}
+
+static void ml__sub3_move_light(long y1, long x1, long y2, long x2)
+{
+	/*{ When blinded, move only the player symbol...              }*/
+
+	ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
+
+	if (light_flag) {
+		long i1;
+		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
+			long i2;
+			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
+				cave[i1][i2].tl = false;
+			}
+		}
+		light_flag = false;
+	}
+	print(' ', y1, x1);
+	print('@', y2, x2);
+
+	LEAVE("ml__sub3_move_light", "m");
+}
+
+static void ml__sub4_move_light(long y1, long x1, long y2, long x2)
+{
+	/*{ With no light, movement becomes involved...               }*/
+
+	ENTER(("ml__sub4_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
+
+	light_flag = true;
+	if (cave[y1][x1].tl) {
+		long i1;
+		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
+			long i2;
+			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
+				cave[i1][i2].tl = false;
+				if (test_light(i1, i2))
+					lite_spot(i1, i2);
+				else
+					unlite_spot(i1, i2);
+			}
+		}
+	} else if (test_light(y1, x1)) {
+		lite_spot(y1, x1);
+	} else {
+		unlite_spot(y1, x1);
+	}
+	print('@', y2, x2);
+
+	LEAVE("ml__sub4_move_light", "m");
+}
+
+/**
+ * water_move_creature() - Gee, another cool routine
+ */
+static boolean water_move_creature(__attribute__((unused)) long num)
+{
+	return true;
+}
+
 boolean coin_stuff(char typ, long *type_num)
 {
 	boolean return_value;
@@ -67,16 +345,6 @@ boolean coin_stuff(char typ, long *type_num)
 		break;
 	}
 	return return_value;
-}
-
-static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
-					    boolean *commas)
-{
-	if (*commas) {
-		strcat(out_val, ", ");
-	}
-	strcat(out_val, astr);
-	*commas = true;
 }
 
 long get_money_type(char prompt[134], boolean *back, boolean no_check)
@@ -351,14 +619,6 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 }
 
-void change_stat(stat_set tstat, long amount, long factor)
-{
-	/*{ Changes stats up or down for magic items		-RAK-	}*/
-
-	player_stats_mod[(int)tstat] += amount * factor;
-	update_stat(tstat);
-}
-
 void change_speed(long num)
 {
 	/*
@@ -416,255 +676,6 @@ boolean panel_contains(long y, long x)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-static void ml__draw_block(long y1, long x1, long y2, long x2)
-{
-	/*{ Given two sets of points, draw the block		}*/
-
-	long const topp = maxmin(y1, y2, panel_row_min);
-	long const bott = minmax(y1, y2, panel_row_max);
-	long const left = maxmin(x1, x2, panel_col_min);
-	long const right = minmax(x1, x2, panel_col_max);
-	long const new_topp = y2 - 1; /*{ Margins for new things to appear}*/
-	long const new_bott = y2 + 1;
-	long const new_left = x2 - 1;
-	long const new_righ = x2 + 1;
-
-	long y;
-	long xmax = 0;
-
-	ENTER(("ml__draw_block", "%d, %d, %d, %d", y1, x2, y2, x2));
-
-	/*{ From uppermost to bottom most lines player was on...  }*/
-	/*{ Points are guaranteed to be on the screen (I hope...) }*/
-
-	for (y = topp; y <= bott; y++) {
-		long x;
-		long xpos = 0;
-		chtype floor_str[82] = {0};
-		long floor_str_len = 0;
-
-		/*{ Leftmost to rightmost do}*/
-		for (x = left; x <= right; x++) {
-			chtype tmp_char = ' ';
-			boolean flag;
-
-			if (cave[y][x].pl || cave[y][x].fm) {
-				flag = ((y == y1 && x == x1) ||
-					(y == y2 && x == x2));
-				/* flag = true; */
-			} else {
-				flag = true;
-				if ((y >= new_topp && y <= new_bott) &&
-				    (x >= new_left && x <= new_righ) &&
-				    cave[y][x].tl) {
-					if (is_in(cave[y][x].fval, pwall_set)) {
-						cave[y][x].pl = true;
-					} else if (cave[y][x].tptr > 0 &&
-						   is_in(t_list[cave[y][x].tptr]
-							     .tval,
-							 light_set) &&
-						   !(cave[y][x].fm)) {
-						cave[y][x].fm = true;
-					}
-				}
-			}
-
-			if (cave[y][x].pl || cave[y][x].tl || cave[y][x].fm)
-				tmp_char = loc_symbol(y, x);
-			if (player_flags.image > 0 && randint(12) == 1)
-				tmp_char = (char)(randint(95) + 31);
-
-			if (flag) {
-				if (xpos == 0)
-					xpos = x;
-				xmax = x;
-			}
-
-			if (xpos > 0) {
-				if (floor_str_len > 80)
-					MSG((": ERROR draw_block floor_str_len "
-					     "too big: %d",
-					     floor_str_len));
-				floor_str[floor_str_len++] = tmp_char;
-			}
-
-		} /* end for  x */
-
-		if (floor_str_len > 80)
-			MSG((": ERROR draw_block floor_str_len too big: %d",
-			     floor_str_len));
-
-		floor_str[floor_str_len] = 0;
-
-		if (xpos > 0) {
-			/*{ Var for PRINT cannot be loop index}*/
-			long const y2 = y;
-			/*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
-
-			if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
-				MSG((": ERROR draw_block xmax-xpos is bad\n"));
-
-			floor_str[1 + xmax - xpos + 1] = 0;
-			print_chstr(floor_str, y2, xpos);
-		}
-	}
-
-	LEAVE("ml__draw_block", "m");
-}
-
-static void ml__sub1_move_light(long y1, long x1, long y2, long x2)
-{
-	/*{ Normal movement                                   }*/
-
-	long i1, i2;
-
-	ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
-
-	light_flag = true;
-
-	/* Turn off lamp light */
-	for (i1 = y1 - 1; i1 <= y1 + 1; i1++)
-		for (i2 = x1 - 1; i2 <= x1 + 1; i2++)
-			cave[i1][i2].tl = false;
-
-	for (i1 = y2 - 1; i1 <= y2 + 1; i1++)
-		for (i2 = x2 - 1; i2 <= x2 + 1; i2++)
-			cave[i1][i2].tl = true;
-
-	ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
-
-	LEAVE("ml__sub1_move_light", "m");
-}
-
-static void ml__sub2_move_light(long y1, long x1, long y2, long x2)
-{
-	/*{ When FIND_FLAG, light only permanent features     }*/
-
-	long y;
-	long x;
-
-	ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
-
-	if (light_flag) {
-		for (y = y1 - 1; y <= y1 + 1; y++)
-			for (x = x1 - 1; x <= x1 + 1; x++)
-				cave[y][x].tl = false;
-		ml__draw_block(y1, x1, y1, x1);
-		light_flag = false;
-	}
-
-	for (y = y2 - 1; y <= y2 + 1; y++) {
-		chtype floor_str[82] = {0};
-		chtype save_str[82] = {0};
-		long floor_str_len = 0;
-		long save_str_len = 0;
-		long xpos = 0;
-		chtype tmp_char;
-
-		for (x = x2 - 1; x <= x2 + 1; x++) {
-			boolean flag = false;
-			if (!(cave[y][x].fm || (cave[y][x].pl))) {
-				tmp_char = ' ';
-				if (player_light) {
-					if (is_in(cave[y][x].fval, pwall_set)) {
-						/* Turn on perm light */
-						cave[y][x].pl = true;
-						tmp_char = loc_symbol(y, x);
-						flag = true;
-					} else if (cave[y][x].tptr > 0 &&
-						   is_in(t_list[cave[y][x].tptr]
-							     .tval,
-							 light_set)) {
-						/* Turn on field marker */
-						cave[y][x].fm = true;
-						tmp_char = loc_symbol(y, x);
-						flag = true;
-					}
-				}
-			} else {
-				tmp_char = loc_symbol(y, x);
-			}
-
-			if (flag) {
-				if (xpos == 0)
-					xpos = x;
-				if (save_str[0] != 0) {
-					long i;
-					for (i = 0; i < save_str_len; ++i)
-						floor_str[floor_str_len++] =
-						    save_str[i];
-					save_str[0] = 0;
-					save_str_len = 0;
-				}
-				floor_str[floor_str_len++] = tmp_char;
-			} else if (xpos > 0) {
-				save_str[save_str_len++] = tmp_char;
-			}
-		} /* end for x */
-
-		if (xpos > 0) {
-			long const tmp_y = y;
-			floor_str[floor_str_len] = 0;
-			print_chstr(floor_str, tmp_y, xpos);
-		}
-	} /* end for y */
-
-	LEAVE("ml__sub2_move_light", "m");
-}
-/*//////////////////////////////////////////////////////////////////// */
-static void ml__sub3_move_light(long y1, long x1, long y2, long x2)
-{
-	/*{ When blinded, move only the player symbol...              }*/
-
-	ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
-
-	if (light_flag) {
-		long i1;
-		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-			long i2;
-			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
-				cave[i1][i2].tl = false;
-			}
-		}
-		light_flag = false;
-	}
-	print(' ', y1, x1);
-	print('@', y2, x2);
-
-	LEAVE("ml__sub3_move_light", "m");
-}
-/*//////////////////////////////////////////////////////////////////// */
-static void ml__sub4_move_light(long y1, long x1, long y2, long x2)
-{
-	/*{ With no light, movement becomes involved...               }*/
-
-	ENTER(("ml__sub4_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
-
-	light_flag = true;
-	if (cave[y1][x1].tl) {
-		long i1;
-		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-			long i2;
-			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
-				cave[i1][i2].tl = false;
-				if (test_light(i1, i2))
-					lite_spot(i1, i2);
-				else
-					unlite_spot(i1, i2);
-			}
-		}
-	} else if (test_light(y1, x1)) {
-		lite_spot(y1, x1);
-	} else {
-		unlite_spot(y1, x1);
-	}
-	print('@', y2, x2);
-
-	LEAVE("ml__sub4_move_light", "m");
-}
 
 void move_light(long y1, long x1, long y2, long x2)
 {
@@ -682,9 +693,7 @@ void move_light(long y1, long x1, long y2, long x2)
 		ml__sub1_move_light(y1, x1, y2, x2); /* normal */
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void lite_spot(long y, long x)
 {
 	if (panel_contains(y, x)) {
@@ -698,9 +707,7 @@ void unlite_spot(long y, long x)
 		print(' ', y, x);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void teleport(long dis)
 {
 	/*{ Teleport the player to a new location                 -RAK-   }*/
@@ -741,9 +748,7 @@ void teleport(long dis)
 
 	LEAVE("teleport", "d")
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean get_panel(long y, long x, boolean forceit)
 {
 	/*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
@@ -787,9 +792,7 @@ boolean get_panel(long y, long x, boolean forceit)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void move_rec(long y1, long x1, long y2, long x2)
 {
 	/*{ Moves creature record from one space to another       -RAK-   }*/
@@ -801,9 +804,7 @@ void move_rec(long y1, long x1, long y2, long x2)
 	cave[y1][x1].cptr = 0;
 	cave[y2][x2].cptr = i1;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 		   long *count)
 {
@@ -843,9 +844,7 @@ boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 	LEAVE("find_range", "");
 	return *count > 0;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void carry(long y, long x)
 {
 	/*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
@@ -937,9 +936,7 @@ void carry(long y, long x)
 	}
 	LEAVE("carry", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long react(long x)
 {
 	/*  returns 0 to 10 -- SD 2.4; */
@@ -959,9 +956,7 @@ long react(long x)
 
 	return ans;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void battle_game(long plus, char kb_str[82])
 {
 	long score, i1, time;
@@ -1030,9 +1025,7 @@ void battle_game(long plus, char kb_str[82])
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void brothel_game()
 {
 	if (get_yes_no("Do you accept?")) {
@@ -1049,9 +1042,7 @@ void brothel_game()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void guild_or_not(boolean passed)
 {
 	if (passed) {
@@ -1071,9 +1062,7 @@ void guild_or_not(boolean passed)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void thief_games()
 {
 	if (randint(2) == 1) {
@@ -1091,13 +1080,9 @@ void thief_games()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void kicked_out() { msg_print("The owner kicks you out..."); }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void call_guards(char who[82])
 {
 	char out_str[82];
@@ -1107,17 +1092,13 @@ void call_guards(char who[82])
 	monster_summon_by_name(char_row, char_col, "Town Guard", true, false);
 	monster_summon_by_name(char_row, char_col, "Town Guard", true, false);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void call_wizards()
 {
 	msg_print("The mage calls for a Town Wizard to remove you.");
 	monster_summon_by_name(char_row, char_col, "Town Wizard", true, false);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void eat_the_meal()
 {
 	long yummers, old_food;
@@ -1173,9 +1154,7 @@ void eat_the_meal()
 		break;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void invite_for_meal()
 {
 	msg_print("The occupants invite you in for a meal.");
@@ -1183,9 +1162,7 @@ void invite_for_meal()
 		eat_the_meal();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void party()
 {
 	msg_print("The owner invites you to join the party!");
@@ -1227,9 +1204,7 @@ void party()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void spend_the_night(char who[82])
 {
 	char out_str[82];
@@ -1243,9 +1218,7 @@ void spend_the_night(char who[82])
 		eat_the_meal();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void worship()
 {
 	long preachy, i1;
@@ -1315,9 +1288,7 @@ void worship()
 		change_rep(-5);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void beg_food()
 {
 	/*
@@ -1346,9 +1317,7 @@ void beg_food()
 	     end;
 	     */
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void beg_money()
 {
 	long i1;
@@ -1382,9 +1351,7 @@ void beg_money()
 		change_rep(-10); /*{bug fixed here; used to be 10 -- MAV }*/
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean player_test_hit(long bth, long level, long pth, long ac,
 			boolean was_fired)
 {
@@ -1418,9 +1385,7 @@ boolean player_test_hit(long bth, long level, long pth, long ac,
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean test_hit(long bth, long level, long pth, long ac)
 {
 	/*{ Attacker's level and pluses, defender's AC            -RAK-   }*/
@@ -1442,9 +1407,7 @@ boolean test_hit(long bth, long level, long pth, long ac)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean minus_ac(long typ_dam)
 {
 	/*{ AC gets worse                                         -RAK-   }*/
@@ -1511,9 +1474,7 @@ boolean minus_ac(long typ_dam)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void fire_dam(long dam, char kb_str[82])
 {
 	/*{ Burn the fool up...                                   -RAK-   }*/
@@ -1539,9 +1500,7 @@ void fire_dam(long dam, char kb_str[82])
 		prt_stat_block();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void cold_dam(long dam, char kb_str[82])
 {
 	/*{ Freeze him to death...                                -RAK-   }*/
@@ -1564,9 +1523,7 @@ void cold_dam(long dam, char kb_str[82])
 		prt_stat_block();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void light_dam(long dam, char kb_str[82])
 {
 	/*{ Lightning bolt the sucker away...                     -RAK-   }*/
@@ -1582,9 +1539,7 @@ void light_dam(long dam, char kb_str[82])
 
 	print_stat = 1;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void acid_dam(long dam, char kb_str[82])
 {
 	/*{ Throw acid on the hapless victim                      -RAK-   }*/
@@ -1624,9 +1579,7 @@ void acid_dam(long dam, char kb_str[82])
 		prt_stat_block();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void xp_loss(long amount)
 {
 	/*{ Lose experience hack for lose_exp breath              -RAK-   }*/
@@ -1709,9 +1662,7 @@ void xp_loss(long amount)
 
 	prt_stat_block();
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void corrode_gas(char kb_str[82])
 {
 	/*{ Corrode the unsuspecting person's armor               -RAK-   }*/
@@ -1731,9 +1682,7 @@ void corrode_gas(char kb_str[82])
 		prt_stat_block();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void poison_gas(long dam, char kb_str[82])
 {
 	/*{ Poison gas the idiot...                               -RAK-   }*/
@@ -1742,9 +1691,7 @@ void poison_gas(long dam, char kb_str[82])
 	print_stat = 1;
 	player_flags.poisoned += 12 + randint(dam);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean no_light()
 {
 	/*{ Returns true if player has no light                   -RAK-   }*/
@@ -1759,9 +1706,7 @@ boolean no_light()
 	}
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void rest()
 {
 	/*{ Resting allows a player to safely restore his hp      -RAK-   }*/
@@ -1801,13 +1746,6 @@ void rest()
  */
 void water_move_player(void) {}
 
-/**
- * water_move_creature() - Gee, another cool routine
- */
-static boolean water_move_creature(__attribute__((unused)) long num)
-{
-	return true;
-}
 
 /**
  * water_move_item() - I sense a patter about water moves...
@@ -1818,9 +1756,7 @@ boolean water_move_item(__attribute__((unused)) long row,
 {
 	return true;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean water_move()
 {
 	long i1;
@@ -1855,9 +1791,7 @@ boolean water_move()
 
 	return flag;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void search(long y, long x, long chance)
 {
 	/*{ Searches for hidden things...                         -RAK-   }*/
@@ -1962,9 +1896,7 @@ void search(long y, long x, long chance)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void lr__find_light(long y1, long x1, long y2, long x2)
 {
 	obj_set room_floors;
@@ -1999,7 +1931,7 @@ void lr__find_light(long y1, long x1, long y2, long x2)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void light_room(long param_y, long param_x)
 {
 	/*{ Room is lit, make it appear                           -RAK-   }*/
@@ -2044,12 +1976,7 @@ void light_room(long param_y, long param_x)
 
 	LEAVE("light_room", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void bother(long num)
 {
 	if (num > 5) {
@@ -2085,9 +2012,7 @@ void bother(long num)
 
 	msg_print(" ");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void area_affect(long dir, long y, long x)
 {
 	/*        { Turns off Find_flag if something interesting appears  -RAK-
@@ -2198,9 +2123,7 @@ void area_affect(long dir, long y, long x)
 		}	 /* end for */
 	}		  /* end if find and not blind */
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean delete_object(long y, long x)
 {
 	/*{ Deletes object from given location                    -RAK-   }*/
@@ -2224,9 +2147,7 @@ boolean delete_object(long y, long x)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long mon_take_hit(long monptr, long dam)
 {
 	/*{ Decreases monsters hit points and deletes monster if needed.  }*/
@@ -2314,9 +2235,7 @@ long mon_take_hit(long monptr, long dam)
 	RETURN("mon_take_hit", "d", 'd', "monval", &return_value);
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void monster_death(long y, long x, unsigned long flags)
 {
 	/*{ Allocates objects upon a creatures death              -RAK-   }*/
@@ -2354,9 +2273,7 @@ void monster_death(long y, long x, unsigned long flags)
 		msg_print("Use '@' when you are ready to quit.");
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void summon_object(long y, long x, long num, long typ)
 {
 	/*{ Creates objects nearby the coordinates given          -RAK-   }*/
@@ -2424,9 +2341,7 @@ void summon_object(long y, long x, long num, long typ)
 		num--;
 	} while (num != 0);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void delete_monster(long i2)
 {
 	/*{ Deletes a monster entry from the level                -RAK-   }*/
@@ -2463,9 +2378,7 @@ void delete_monster(long i2)
 
 	LEAVE("delete_monster", "c");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean py_attack(long y, long x)
 {
 	/*{ Player attacks a (poor, defenseless) creature         -RAK-   }*/
@@ -2658,9 +2571,7 @@ boolean py_attack(long y, long x)
 	RETURN("py_attack", "", 'b', "hit", &return_value);
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long tot_dam(treasure_type *item, long tdam, creature_type *monster)
 {
 	/*{ Special damage due to magical abilities of object     -RAK-   }*/
@@ -2728,9 +2639,7 @@ long tot_dam(treasure_type *item, long tdam, creature_type *monster)
 
 	return tdam;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void get_player_move_rate()
 {
 	long cur_swim;
@@ -2754,18 +2663,17 @@ void get_player_move_rate()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean xor (long thing1, long thing2) {
-		    /* with fake boolean values you cant really do a (bool1 !=
-		       bool2)
-		       and expect it to work.  */
 
-		    return !((thing1 && thing2) || (!thing1 && !thing2));
-	    }
-    /*//////////////////////////////////////////////////////////////////// */
-    long movement_rate(long cspeed, long mon)
+boolean xor(long thing1, long thing2)
+{
+	/* with fake boolean values you cant really do a (bool1 !=
+	   bool2)
+	   and expect it to work.  */
+
+	return !((thing1 && thing2) || (!thing1 && !thing2));
+}
+
+long movement_rate(long cspeed, long mon)
 {
 	/*{ Given speed, returns number of moves this turn.       -RAK-   }*/
 	/*{ NOTE: Player must always move at least once per iteration,    }*/
@@ -2816,9 +2724,7 @@ boolean xor (long thing1, long thing2) {
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void desc_remain(treas_ptr item_ptr)
 {
 	/*{ Describe amount of item remaining...                  -RAK-   }*/
@@ -2834,9 +2740,7 @@ void desc_remain(treas_ptr item_ptr)
 	sprintf(out_val2, "You have %s.", out_val);
 	msg_print(out_val2);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void add_food(long num)
 {
 	/*{ Add to the players food time                          -RAK-   }*/
@@ -2877,9 +2781,7 @@ void add_food(long num)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean twall(long y, long x, long t1, long t2)
 {
 	/*{ Tunneling through real wall: 10,11,12                 -RAK-   }*/
@@ -2914,9 +2816,7 @@ boolean twall(long y, long x, long t1, long t2)
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void desc_charges(treas_ptr item_ptr)
 {
 	/*{ Describe number of remaining charges...               -RAK-   }*/
@@ -2929,9 +2829,7 @@ void desc_charges(treas_ptr item_ptr)
 		msg_print(out_val);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 		   boolean *redraw)
 {
@@ -2977,9 +2875,7 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 	return flag;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__jamdoor()
 {
 	/*{ Jam a closed door                                     -RAK-   }*/
@@ -3034,9 +2930,7 @@ void d__jamdoor()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 
 /*{ Throw an object across the dungeon...                 -RAK-   }*/
 /*{ Note: Flasks of oil do fire damage                            }*/
@@ -3059,7 +2953,6 @@ void to__inven_throw(treas_ptr item_ptr)
 
 	prt_stat_block();
 }
-/*//////////////////////////////////////////////////////////////////// */
 
 obj_set *to__poink(obj_set *ammo_types)
 {
@@ -3093,7 +2986,7 @@ obj_set *to__poink(obj_set *ammo_types)
 	LEAVE("to__poink", "d");
 	return ammo_types;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 	       boolean to_be_fired)
 {
@@ -3159,7 +3052,7 @@ void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 		    equipment[Equipment_primary].weight + 5000;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void to__drop_throw(long y, long x)
 {
 	long i1, i2, i3, cur_pos;
@@ -3201,7 +3094,7 @@ void to__drop_throw(long y, long x)
 		msg_print(out_val2);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__throw_object(boolean to_be_fired)
 {
 	long tbth, tpth, tdam, tdis, crit_mult;
@@ -3362,9 +3255,7 @@ void d__throw_object(boolean to_be_fired)
 
 	LEAVE("d__throw_object", "d");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__look()
 {
 	/*{ Look at an object, trap, or monster                   -RAK-   }*/
@@ -3488,31 +3379,7 @@ void d__look()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* QQQQQQQ */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void d__set_coords(long *c_row, long *c_col)
 {
 	/*{ Set up the character co-ords          }*/
@@ -3529,7 +3396,7 @@ void d__set_coords(long *c_row, long *c_col)
 			   (!(is_in(cave[*c_row][*c_col].fval, water_set)))));
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__sun_rise_or_set()
 {
 	long i1, i2;
@@ -3561,7 +3428,7 @@ void d__sun_rise_or_set()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__check_hours()
 {
 	/*{ Check for game hours                          }*/
@@ -3601,14 +3468,14 @@ void d__check_hours()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__print_updated_stats()
 {
 	if (print_stat != 0) {
 		prt_stat_block();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__check_light_status()
 {
 	/*{ Check light status                            }*/
@@ -3649,14 +3516,14 @@ void d__check_light_status()
 
 	LEAVE("d__check_light_status", "d");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__hunger_interrupt(char *message)
 {
 	msg_print(message);
 	msg_flag = 0;
 	rest_off();
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__check_food()
 {
 	/*{ Check food status             }*/
@@ -3732,7 +3599,7 @@ void d__check_food()
 
 	} /* end if (food < alert) */
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__eat_food()
 {
 	/*{ Food consumtion       }*/
@@ -3763,7 +3630,7 @@ void d__eat_food()
 		PF.foodc -= PF.food_digested;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__regenerate()
 {
 	/*{ Regenerate            }*/
@@ -3783,7 +3650,7 @@ void d__regenerate()
 		regenmana(regen_amount);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_blindness()
 {
 	/*{ Blindness             }*/
@@ -3806,7 +3673,7 @@ void d__update_blindness()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_confusion()
 {
 	/*{ Confusion             }*/
@@ -3826,7 +3693,7 @@ void d__update_confusion()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_resist_lightning()
 {
 	/*{ Resist Lightning }*/
@@ -3834,7 +3701,7 @@ void d__update_resist_lightning()
 		PF.resist_lght--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_monster_protect()
 {
 	/*{ Protection from Monsters }*/
@@ -3842,7 +3709,7 @@ void d__update_monster_protect()
 		PF.protmon--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_fire_ring()
 {
 	/*{ Ring of Fire }*/
@@ -3853,7 +3720,7 @@ void d__update_fire_ring()
 		PF.ring_fire--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_frost_ring()
 {
 
@@ -3864,7 +3731,7 @@ void d__update_frost_ring()
 		PF.ring_ice--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_blade_barrier()
 {
 
@@ -3875,7 +3742,7 @@ void d__update_blade_barrier()
 		PF.blade_ring--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_magic_protect()
 {
 	/*{ Magic protection }*/
@@ -3891,7 +3758,7 @@ void d__update_magic_protect()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_resist_petrfy()
 {
 	/*{Timed resist Petrification}*/
@@ -3899,7 +3766,7 @@ void d__update_resist_petrfy()
 		PF.resist_petri--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_stealth()
 {
 	/*{ Timed Stealth    }*/
@@ -3917,7 +3784,7 @@ void d__update_stealth()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_resist_charm()
 {
 	/*{ Resist Charm }*/
@@ -3934,7 +3801,7 @@ void d__update_resist_charm()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_hoarse()
 {
 	/*{ Hoarse                }*/
@@ -3945,7 +3812,7 @@ void d__update_hoarse()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_fear()
 {
 	/*{ Afraid                }*/
@@ -3976,7 +3843,7 @@ void d__update_fear()
 		    0; /* fix when getting hit with fear while shero or hero */
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_poison()
 {
 	/*{ Poisoned              }*/
@@ -4030,7 +3897,7 @@ void d__update_poison()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_fast()
 {
 
@@ -4055,7 +3922,7 @@ void d__update_fast()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_slow()
 {
 
@@ -4080,7 +3947,7 @@ void d__update_slow()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_resting()
 {
 	/*{ Resting is over?      }*/
@@ -4120,7 +3987,7 @@ void d__update_resting()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_hallucinate()
 {
 	/*{ Hallucinating?  (Random characters appear!)}*/
@@ -4131,7 +3998,7 @@ void d__update_hallucinate()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_petrify()
 {
 	/*{  Petrification wears off slowly  } */
@@ -4175,7 +4042,7 @@ void d__update_petrify()
 	end;
 	*/
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_evil_protect()
 {
 	/*{ Protection from evil counter}*/
@@ -4183,7 +4050,7 @@ void d__update_evil_protect()
 		PF.protevil--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_invulnerable()
 {
 	/*{ Invulnerability        }*/
@@ -4210,7 +4077,7 @@ void d__update_invulnerable()
 		prt_stat_block();
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_heroism()
 {
 	/*{ Heroism       }*/
@@ -4246,7 +4113,7 @@ void d__update_heroism()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_super_heroism()
 {
 	/*{ Super Heroism }*/
@@ -4282,7 +4149,7 @@ void d__update_super_heroism()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_blessed()
 {
 	/*{ Blessed       }*/
@@ -4316,7 +4183,7 @@ void d__update_blessed()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_resist_heat()
 {
 	/*{ Resist Heat   }*/
@@ -4324,7 +4191,7 @@ void d__update_resist_heat()
 		PF.resist_heat--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_resist_cold()
 {
 	/*{ Resist Cold   }*/
@@ -4332,7 +4199,7 @@ void d__update_resist_cold()
 		PF.resist_cold--;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_detect_invisible()
 {
 	/*{ Detect Invisible      }*/
@@ -4349,7 +4216,7 @@ void d__update_detect_invisible()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_infra_vision()
 {
 	/*{ Timed infra-vision    }*/
@@ -4366,7 +4233,7 @@ void d__update_infra_vision()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_word_of_recall()
 {
 	/*{ Word-of-Recall  Note: Word-of-Recall is a delayed action      }*/
@@ -4388,7 +4255,7 @@ void d__update_word_of_recall()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__update_hit_points()
 {
 	/*{ Check hit points for adjusting...                     }*/
@@ -4414,8 +4281,8 @@ void d__update_hit_points()
 	}
 	LEAVE("d__update_hit_points", "d")
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+
 boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x)
 {
 	/*{ Prompts for a direction                               -RAK-   }*/
@@ -4486,7 +4353,7 @@ boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__quit()
 {
 	/* this can be called from signalquit in io.c */
@@ -4510,7 +4377,7 @@ void d__quit()
 	erase_line(1, 1);
 	refresh();
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__go_up()
 {
 	/*{ Go up one level                                       -RAK-   }*/
@@ -4540,7 +4407,7 @@ void d__go_up()
 		msg_print("I see no up staircase here.");
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__go_down()
 {
 	/*{ Go down one level                                     -RAK-   }*/
@@ -4567,7 +4434,7 @@ void d__go_down()
 		msg_print("I see no down staircase here.");
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__bash()
 {
 	/*{ Bash open a door or chest                             -RAK-   }*/
@@ -4672,7 +4539,7 @@ void d__bash()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__chest_trap(long y, long x)
 {
 	/*{ Chests have traps too...                              -RAK-   }*/
@@ -4728,7 +4595,7 @@ void d__chest_trap(long y, long x)
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__openobject()
 {
 	/*{ Opens a closed door or closed chest...                -RAK-   }*/
@@ -4896,7 +4763,7 @@ void d__openobject()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__closeobject()
 {
 	/*{ Closes an open door...                                -RAK-   }*/
@@ -4936,7 +4803,7 @@ void d__closeobject()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__disarm_trap()
 {
 	/*{ Disarms a trap                                        -RAK-   }*/
@@ -5050,7 +4917,7 @@ void d__disarm_trap()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__refill_lamp()
 {
 	/*{ Refill the players lamp                               -RAK-   }*/
@@ -5079,7 +4946,7 @@ void d__refill_lamp()
 		msg_print("But you are not using a lamp.");
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__tunnel()
 {
 	/*{ Tunnels through rubble and walls                      -RAK-   }*/
@@ -5191,7 +5058,7 @@ void d__tunnel()
 		}
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void d__drop()
 {
 	/*{ Drop an object being carried                          -RAK-   }*/
@@ -5254,7 +5121,7 @@ void d__drop()
 		msg_print("You are not carrying anything.");
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 void view_old_mess()
 {
 	char tmp_str[82];
@@ -5279,13 +5146,8 @@ void view_old_mess()
 		ptr = ptr->next;
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
 
-/*//////////////////////////////////////////////////////////////////// */
 
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
 void d__execute_command(long *com_val)
 {
 	treas_ptr trash_ptr;
@@ -5793,16 +5655,7 @@ void d__execute_command(long *com_val)
 
 	LEAVE("d__execute_command", "d");
 }
-/*//////////////////////////////////////////////////////////////////// */
 
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*ZZZZZZZZZZZZZZZ*/
 void dungeon()
 {
 	ENTER(("dungeon", "d"))
@@ -5973,8 +5826,3 @@ void dungeon()
 
 	LEAVE("dungeon", "d")
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* END FILE  dungeon.c */

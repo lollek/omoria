@@ -86,7 +86,6 @@ extern void objdes(char *out_val, /*: varying[a] of char; */
 /* { DUNGEON.PAS		} */
 extern void move_rec(long y1, long x1, long y2, long x2);
 extern void update_stat(stat_set tstat);
-extern void change_stat(stat_set tstat, long amount, long factor);
 extern void change_speed(long num);
 extern void py_bonuses(treasure_type *tobj, long factor);
 extern boolean get_panel(long y, long x, boolean forceit);
