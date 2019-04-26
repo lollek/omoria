@@ -325,20 +325,6 @@ void intro(int argc, char *argv[])
 	LEAVE("intro", "");
 }
 
-static void cnv_stat(unsigned char stat, stat_s_type out_val)
-{
-	long part1;
-	long part2;
-
-	if (stat > 150) {
-		part1 = 18;
-		part2 = stat - 150;
-		sprintf((char *)out_val, "%2ld/%-2ld", part1, part2);
-	} else {
-		sprintf((char *)out_val, "%2d   ", 3 + (stat / 10));
-	}
-}
-
 void file_character()
 {
 	/*{ Print the character to a file or device               -RAK-   }*/
@@ -349,9 +335,6 @@ void file_character()
 	FILE *file1;
 	char out_val[82], filename1[82], prt1[82], prt2[82];
 	char new_page = 12;
-	stat_set tstat;
-	stat_s_type
-	    out_c[STAT_SET_MAX + 1]; /*  : array [stat_set] of stat_type;*/
 	treas_ptr curse;
 	char s1[82], s2[82], s3[82];
 
@@ -364,35 +347,31 @@ void file_character()
 		if (file1 != NULL) {
 			prt("Writing character sheet...", 1, 1);
 			refresh();
-			for (tstat = STR; tstat <= CHR; tstat++) {
-				cnv_stat(player_stats_curr[(int)tstat],
-					 out_c[(int)tstat]);
-			}
 
 			fprintf(file1, " \n \n \n");
 			fprintf(file1, "  Name  : %24s  Age         :%4d     "
-				       "Strength     : %6s\n",
-				player_name, player_age, out_c[STR]);
+				       "Strength     : %d\n",
+				player_name, player_age, C_player_get_stat(STR));
 
 			fprintf(file1, "  Race  : %24s  Height      :%4d     "
-				       "Intelligence : %6s\n",
-				player_race, player_ht, out_c[INT]);
+				       "Intelligence : %d\n",
+				player_race, player_ht, C_player_get_stat(INT));
 
 			fprintf(file1, "  Sex   : %24s  Weight      :%4d     "
-				       "Wisdom       : %6s\n",
-				player_sex, player_wt, out_c[WIS]);
+				       "Wisdom       : %d\n",
+				player_sex, player_wt, C_player_get_stat(WIS));
 
 			fprintf(file1, "  Class : %24s  Social Class:%4d     "
-				       "Dexterity    : %6s\n",
-				player_tclass, player_sc, out_c[DEX]);
+				       "Dexterity    : %d\n",
+				player_tclass, player_sc, C_player_get_stat(DEX));
 
 			fprintf(file1, "  Title : %24s                       "
-				       "Constitution : %6s\n",
-				player_title, out_c[CON]);
+				       "Constitution : %d\n",
+				player_title, C_player_get_stat(CON));
 
 			fprintf(file1, "          %24s              %4s      "
-				       "Charisma     : %6s\n",
-				"", "", out_c[CHR]);
+				       "Charisma     : %d\n",
+				"", "", C_player_get_stat(CHR));
 
 			fprintf(file1, " \n \n \n \n");
 
@@ -423,12 +402,12 @@ void file_character()
 			if (xfos < 0) {
 				xfos = 0;
 			}
-			xsrh = player_srh + spell_adj(INT);
+			xsrh = player_srh + C_player_mod_from_stat(INT);
 			xstl = player_stl;
-			xdis = player_disarm + player_lev + 2 * todis_adj() +
-			       spell_adj(INT);
-			xsave = player_save + player_lev + spell_adj(WIS);
-			xdev = player_save + player_lev + spell_adj(INT);
+			xdis = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+			       C_player_mod_from_stat(INT);
+			xsave = player_save + player_lev + C_player_mod_from_stat(WIS);
+			xdev = player_save + player_lev + C_player_mod_from_stat(INT);
 			xswm = PF.swim + 4;
 			xrep = 6 + player_rep / 25;
 			sprintf(xinfra, "%ld feet", PF.see_infra);

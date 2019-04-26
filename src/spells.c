@@ -8,10 +8,8 @@
 /*//////////////////////////////////////////////////////////////////// */
 void lower_stat(stat_set tstat, char msg1[82])
 {
-
-	/* with py.stat do; */
-	player_stats_lost[(int)tstat] += de_statp(player_stats_perm[(int)tstat] - player_stats_lost[(int)tstat]);
-	update_stat(tstat);
+	player_stats_lost[(int)tstat] += 1;
+	C_player_recalc_stats();
 	if (strcmp(msg1, "X") == 0) {
 		switch (tstat) {
 		case STR:
@@ -90,10 +88,9 @@ boolean restore_stat(stat_set tstat, char msg1[82])
 	/*{stat adjusted by magic worn only}*/
 	boolean return_value = true;
 
-	/* with py.stat do; */
 	if (player_stats_lost[(int)tstat] > 0) {
 		player_stats_lost[(int)tstat] = 0;
-		update_stat(tstat);
+		C_player_recalc_stats();
 		if (strcmp(msg1, "X") == 0) {
 			switch (tstat) {
 			case STR:
@@ -902,15 +899,12 @@ void lose_exp(long amount)
 /*//////////////////////////////////////////////////////////////////// */
 boolean gain_stat(stat_set tstat, char msg1[82])
 {
-	long i1 = in_statp(player_stats_perm[(int)tstat] - player_stats_lost[(int)tstat]);
-	if (i1 < player_stats_lost[(int)tstat]) {
-		player_stats_lost[(int)tstat] -= i1;
-	} else {
+	if (player_stats_lost[(int)tstat] > 0) {
 		player_stats_lost[(int)tstat] = 0;
-		player_stats_perm[(int)tstat] =
-		    squish_stat(player_stats_perm[(int)tstat] - player_stats_lost[(int)tstat] + i1);
+	} else {
+		player_stats_perm[(int)tstat] += 1;
 	}
-	update_stat(tstat);
+	C_player_recalc_stats();
 
 	if (strcmp(msg1, "X") == 0) {
 		switch (tstat) {

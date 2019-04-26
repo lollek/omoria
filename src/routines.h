@@ -11,11 +11,6 @@ boolean C_save_character();
 boolean C_load_character();
 void C_delete_character();
 
-boolean C_player_knows_spell(int32_t slot);
-void C_player_set_knows_spell(int32_t slot, boolean yn);
-boolean C_player_uses_magic(enum magic_t magic_type);
-void C_player_add_exp(long num);
-
 signed char C_class_melee_bonus(enum class_t class);
 signed char C_class_ranged_bonus(enum class_t class);
 boolean C_class_can_use_item(enum class_t class, treasure_type const* item);
@@ -85,7 +80,6 @@ extern void objdes(char *out_val, /*: varying[a] of char; */
 
 /* { DUNGEON.PAS		} */
 extern void move_rec(long y1, long x1, long y2, long x2);
-extern void update_stat(stat_set tstat);
 extern void change_speed(long num);
 extern void py_bonuses(treasure_type *tobj, long factor);
 extern boolean get_panel(long y, long x, boolean forceit);
@@ -507,12 +501,9 @@ extern long get_obj_num(long level, long tries);
 extern void place_object(long y, long x);
 extern void alloc_object(obj_set alloc_set, long typ, long num);
 extern void random_object(long y, long x, long num);
-extern long spell_adj(stat_set attr);
 extern long bard_adj();
 extern long druid_adj();
 extern long monk_adj();
-extern float chr_adj();
-extern long con_adj();
 extern char *place_string(long num, char result[134]);
 extern char *day_of_week_string(long day, unsigned wid, char result[134]);
 extern char *month_string(long mon, char result[134]);
@@ -531,15 +522,11 @@ extern char *bag_descrip(treas_ptr bag, char result[134]);
 extern uint8_t squish_stat(int32_t stat);
 extern unsigned char in_statp(unsigned char stat);
 extern unsigned char de_statp(unsigned char stat);
-extern long tohit_adj();
 extern long toac_adj();
-extern long todis_adj();
-extern long todam_adj();
 extern char *likert(long x, long y, char *result);
 extern unsigned char characters_sex();
 extern uint16_t max_allowable_weight();
 extern uint16_t min_allowable_weight();
-extern long weight_limit();
 extern treas_ptr money_carry();
 extern char *cost_str(long amt, char result[134]);
 extern void total_cash();

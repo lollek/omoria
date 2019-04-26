@@ -7,11 +7,25 @@ pub enum Stat {
     Charisma = 5,
 }
 
+impl From<u8> for Stat {
+    fn from(stat: u8) -> Self {
+        match stat {
+            0 => Stat::Strength,
+            1 => Stat::Intelligence,
+            2 => Stat::Wisdom,
+            3 => Stat::Dexterity,
+            4 => Stat::Constitution,
+            5 => Stat::Charisma,
+            _ => panic!(),
+        }
+    }
+}
+
 pub fn stats_iter() -> impl Iterator<Item=usize> {
     (Stat::Strength as usize)..(Stat::Charisma as usize + 1)
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct StatBlock {
     pub strength: i16,
     pub intelligence: i16,

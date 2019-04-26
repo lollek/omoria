@@ -99,6 +99,7 @@ pub struct Player {
     pub rage_rounds_spent: u8,
     pub is_raging: bool,
     pub rage_exhaustion_rounds_left: u8,
+    pub curr_stats: StatBlock,
 }
 
 impl Player {
@@ -108,6 +109,7 @@ impl Player {
             rage_rounds_spent: 0,
             is_raging: false,
             rage_exhaustion_rounds_left: 0,
+            curr_stats: StatBlock::new(0),
         }
     }
 }
@@ -167,7 +169,6 @@ pub struct PlayerRecord {
     pub hitdie: libc::uint8_t,
     pub inven_weight: libc::c_long,
     pub perm_stats: StatBlock,
-    pub curr_stats: StatBlock,
     pub mod_stats: StatBlock,
     pub lost_stats: StatBlock,
     pub flags: PlayerFlags,
@@ -235,7 +236,6 @@ extern "C" {
     static mut player_uid: libc::int64_t;	/* Used in master file */
 
     static mut player_stats_perm: [libc::uint8_t; 6];
-    static mut player_stats_curr: [libc::uint8_t; 6];
     pub static mut player_stats_mod: [libc::int8_t; 6];
     pub static mut player_stats_lost: [libc::uint8_t; 6];
 
@@ -317,13 +317,21 @@ pub fn set_perm_stats(block: &StatBlock) {
 }
 
 pub fn curr_stats() -> StatBlock {
-    StatBlock::from(unsafe { player_stats_curr })
+    PLAYER.read().unwrap().curr_stats
 }
 
-pub fn set_curr_stats(block: &StatBlock) {
+pub fn recalc_curr_stats() {
+    let perm_stats = perm_stats();
+    let mod_stats = mod_stats();
+    let lost_stats = lost_stats();
+    let mut curr_stats = StatBlock::new(0);
     for stat in stats_iter() {
-        unsafe { player_stats_curr[stat] = block.get_pos(stat) as u8 };
+        let curr_stat = perm_stats.get_pos(stat)
+            + mod_stats.get_pos(stat)
+            - lost_stats.get_pos(stat);
+        curr_stats.set_pos(stat, curr_stat);
     }
+    mem::replace(&mut PLAYER.write().unwrap().curr_stats, curr_stats);
 }
 
 pub fn mod_stats() -> StatBlock {
@@ -381,78 +389,32 @@ pub fn title() -> String {
     misc::c_array_to_rust_string(string)
 }
 
-pub fn ac_from_dex() -> i8 {
-    match curr_stats().get(Stat::Dexterity) {
-        dex if dex < 10 => -4,
-        dex if dex < 20 => -3,
-        dex if dex < 30 => -2,
-        dex if dex < 40 => -1,
-        dex if dex < 120 => 0,
-        dex if dex < 150 => 1,
-        dex if dex < 191 => 2,
-        dex if dex < 226 => 3,
-        dex if dex < 249 => 4,
-        _ => 5,
-    }
+pub fn ac_from_dex() -> i16 {
+    modifier_from_stat(Stat::Strength)
 }
 
-pub fn tohit_from_stats() -> i8 {
-    fn tohit_from_dex() -> i8 {
-        match curr_stats().get(Stat::Dexterity) {
-            dex if dex < 10 => -3,
-            dex if dex < 30 => -2,
-            dex if dex < 50 => -1,
-            dex if dex < 130 => 0,
-            dex if dex < 140 => 1,
-            dex if dex < 150 => 2,
-            dex if dex < 201 => 3,
-            dex if dex < 250 => 4,
-            _ => 5,
-        }
-    }
-
-    fn tohit_from_str() -> i8 {
-        match curr_stats().get(Stat::Strength) {
-            str if str < 10 => -3,
-            str if str < 20 => -2,
-            str if str < 40 => -1,
-            str if str < 150 => 0,
-            str if str < 226 => 1,
-            str if str < 241 => 2,
-            str if str < 249 => 3,
-            _ => 4,
-        }
-    }
-
-    tohit_from_dex() + tohit_from_str()
+pub fn tohit_from_stats() -> i16 {
+    (modifier_from_stat(Stat::Strength) + modifier_from_stat(Stat::Dexterity)) / 2
 }
 
-pub fn dmg_from_str() -> i8 {
-    match curr_stats().get(Stat::Strength) {
-        str if str < 10 => -2,
-        str if str < 20 => -1,
-        str if str < 130 => 0,
-        str if str < 140 => 1,
-        str if str < 150 => 2,
-        str if str < 226 => 3,
-        str if str < 241 => 4,
-        str if str < 249 => 5,
-        _ => 6,
-    }
+pub fn get_stat(stat: Stat) -> i16 {
+    curr_stats().get(stat)
 }
 
-pub fn hp_from_con() -> i8 {
-    match curr_stats().get(Stat::Constitution) {
-        con if con < 10 => -4,
-        con if con < 20 => -3,
-        con if con < 30 => -2,
-        con if con < 40 => -1,
-        con if con < 140 => 0,
-        con if con < 150 => 1,
-        con if con < 226 => 2,
-        con if con < 299 => 3,
-        _ => 4,
-    }
+pub fn modifier_from_stat(stat: Stat) -> i16 {
+    (get_stat(stat) - 10) / 2
+}
+
+pub fn dmg_from_str() -> i16 {
+    modifier_from_stat(Stat::Strength)
+}
+
+pub fn hp_from_con() -> i16 {
+    modifier_from_stat(Stat::Constitution)
+}
+
+pub fn cost_modifier_from_charisma() -> f32 {
+    modifier_from_stat(Stat::Charisma) as f32 * -0.02
 }
 
 fn rage_rounds_from_con() -> i8 {
@@ -474,21 +436,8 @@ fn rage_rounds_from_level() -> u8 {
     (level() - 1) * 2
 }
 
-pub fn disarm_from_dex() -> i8 {
-    match curr_stats().get(Stat::Dexterity) {
-        dex if dex < 10 => -8,
-        dex if dex < 20 => -6,
-        dex if dex < 30 => -4,
-        dex if dex < 40 => -2,
-        dex if dex < 50 => -1,
-        dex if dex < 100 => 0,
-        dex if dex < 130 => 1,
-        dex if dex < 150 => 2,
-        dex if dex < 191 => 4,
-        dex if dex < 226 => 5,
-        dex if dex < 249 => 6,
-        _ => 8,
-    }
+pub fn disarm_from_dex() -> i16 {
+    modifier_from_stat(Stat::Dexterity)
 }
 
 // Max amount of health to gain each level up
@@ -608,7 +557,6 @@ pub fn record() -> PlayerRecord {
         hitdie: unsafe { player_hitdie },
         inven_weight: unsafe { inven_weight },
         perm_stats: perm_stats(),
-        curr_stats: curr_stats(),
         mod_stats: mod_stats(),
         lost_stats: lost_stats(),
         flags: unsafe { player_flags }.to_owned(),
@@ -733,9 +681,9 @@ pub fn set_record(record: PlayerRecord) {
     }
 
     set_perm_stats(&record.perm_stats);
-    set_curr_stats(&record.curr_stats);
     set_mod_stats(&record.mod_stats);
     set_lost_stats(&record.lost_stats);
+    recalc_curr_stats();
 
     unsafe {
         player_flags = record.flags;
@@ -823,6 +771,8 @@ pub fn current_bulk() -> u16 {
 }
 
 pub fn max_bulk() -> u16 {
-    min((curr_stats().strength + 30) as u16 * 13 + current_weight(), 3000)
+    let player_weight_modifier = 13;
+    min((30 + (curr_stats().strength * 10)) as u16 * player_weight_modifier
+        + current_weight(), 3000)
         + unsafe { player_xtr_wgt } as u16
 }

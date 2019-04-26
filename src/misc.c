@@ -6,7 +6,7 @@
 /*{ Calculates hit points for each level that is gained.	-RAK- * }*/
 static long get_hitdie()
 {
-	return randint(player_hitdie) + con_adj();
+	return randint(player_hitdie) + C_player_hp_from_con();
 }
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
@@ -39,7 +39,7 @@ static boolean learn_spell(boolean *redraw)
 	unsigned long spell_flag = 0;
 	unsigned long spell_flag2 = 0;
 	spl_type spells_to_choose_from;
-	long new_spells = num_new_spells(spell_adj(INT));
+	long new_spells = num_new_spells(C_player_mod_from_stat(INT));
 	boolean return_value = false;
 	treas_ptr ptr;
 
@@ -101,7 +101,7 @@ static boolean learn_spell(boolean *redraw)
 static boolean learn_prayer()
 {
 
-	unsigned long new_spells_to_learn = num_new_spells(spell_adj(WIS));
+	unsigned long new_spells_to_learn = num_new_spells(C_player_mod_from_stat(WIS));
 	boolean return_value = false;
 
 	ENTER(("learn_prayer", ""));
@@ -168,7 +168,7 @@ static boolean learn_discipline()
 		}
 	}
 
-	i2 = num_new_spells(spell_adj(WIS));
+	i2 = num_new_spells(C_player_mod_from_stat(WIS));
 	new_spell = 0;
 
 	while ((i1 > 0) && (i2 > 0)) {
@@ -523,22 +523,6 @@ char *cost_str(long amt, char result[134])
 	return result;
 }
 
-/* player::max_bulk */
-long weight_limit()
-{
-	/*	{ Computes current weight limit				-RAK-
-	 * }*/
-	long weight_cap;
-
-	weight_cap = (player_stats_curr[STR] + 30) * PLAYER_WEIGHT_CAP + player_wt;
-	if (weight_cap > 3000) {
-		weight_cap = 3000;
-	}
-	weight_cap += player_xtr_wgt;
-
-	return weight_cap;
-}
-
 void adv_time(boolean flag)
 {
 	/*{ Advance the game clock by one 'second'		-DMF-	}*/
@@ -681,231 +665,6 @@ chtype loc_symbol(long y, long x)
 	return sym;
 }
 
-/*	{ Returns a character's adjustment to damage		-JWT-
- *	player::str_to_dmg
- * }*/
-long todam_adj()
-{
-	long return_value;
-	long str;
-
-	str = player_stats_curr[STR];
-
-	if (str < 10) {
-		return_value = -2;
-	} else if (str < 20) {
-		return_value = -1;
-	} else if (str < 130) {
-		return_value = 0;
-	} else if (str < 140) {
-		return_value = 1;
-	} else if (str < 150) {
-		return_value = 2;
-	} else if (str < 226) {
-		return_value = 3;
-	} else if (str < 241) {
-		return_value = 4;
-	} else if (str < 249) {
-		return_value = 5;
-	} else {
-		return_value = 6;
-	}
-
-	return return_value;
-}
-
-/*	{ Returns a character's adjustment to disarm		-RAK-
- *	player::disarm_from_dex
- * }*/
-long todis_adj()
-{
-	long return_value;
-	long dex;
-
-	dex = player_stats_curr[DEX];
-
-	if (dex < 10) {
-		return_value = -8;
-	} else if (dex < 20) {
-		return_value = -6;
-	} else if (dex < 30) {
-		return_value = -4;
-	} else if (dex < 40) {
-		return_value = -2;
-	} else if (dex < 50) {
-		return_value = -1;
-	} else if (dex < 100) {
-		return_value = 0;
-	} else if (dex < 130) {
-		return_value = 1;
-	} else if (dex < 150) {
-		return_value = 2;
-	} else if (dex < 191) {
-		return_value = 4;
-	} else if (dex < 226) {
-		return_value = 5;
-	} else if (dex < 249) {
-		return_value = 6;
-	} else {
-		return_value = 8;
-	}
-
-	return return_value;
-}
-
-/*	{ Returns a character's adjustment to hit points	-JWT-
- *	player::hp_from_con
- * }*/
-long con_adj()
-{
-
-	long con;
-	long return_value;
-
-	con = player_stats_curr[CON];
-
-	if (con < 10) {
-		return_value = -4;
-	} else if (con < 20) {
-		return_value = -3;
-	} else if (con < 30) {
-		return_value = -2;
-	} else if (con < 40) {
-		return_value = -1;
-	} else if (con < 140) {
-		return_value = 0;
-	} else if (con < 150) {
-		return_value = 1;
-	} else if (con < 226) {
-		return_value = 2;
-	} else if (con < 299) {
-		return_value = 3;
-	} else {
-		return_value = 4;
-	}
-
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-float chr_adj()
-{
-	/*{ Adjustment for charisma				-RAK-	}*/
-	/*{ Percent decrease or increase in price of goods		}*/
-
-	float return_value;
-
-	/* with py.stat do; */
-	if (player_stats_curr[CHR] > 249) {
-		return_value = -0.10;
-	} else if (player_stats_curr[CHR] > 239) {
-		return_value = -0.08;
-	} else if (player_stats_curr[CHR] > 219) {
-		return_value = -0.06;
-	} else if (player_stats_curr[CHR] > 199) {
-		return_value = -0.04;
-	} else if (player_stats_curr[CHR] > 150) {
-		return_value = -0.02;
-	} else if (player_stats_curr[CHR] >= 100) {
-		return_value = 0.15 - (player_stats_curr[CHR] / 10) / 100;
-	} else {
-		return_value = 0.25 - (player_stats_curr[CHR] / 10) / 50;
-	}
-
-	return return_value;
-}
-
-	/*	{ Returns a character's adjustment to hit.		-JWT-
-	player::tohit_from_stats()
-	 * }*/
-long tohit_adj()
-{
-
-	long total;
-	long dex, str;
-
-	dex = player_stats_curr[DEX];
-	str = player_stats_curr[STR];
-
-	if (dex < 10) {
-		total = -3;
-	} else if (dex < 30) {
-		total = -2;
-	} else if (dex < 50) {
-		total = -1;
-	} else if (dex < 130) {
-		total = 0;
-	} else if (dex < 140) {
-		total = 1;
-	} else if (dex < 150) {
-		total = 2;
-	} else if (dex < 201) {
-		total = 3;
-	} else if (dex < 250) {
-		total = 4;
-	} else {
-		total = 5;
-	}
-
-	if (str < 10) {
-		total = total - 3;
-	} else if (str < 20) {
-		total = total - 2;
-	} else if (str < 40) {
-		total = total - 1;
-	} else if (str < 150) {
-		total = total + 0;
-	} else if (str < 226) {
-		total = total + 1;
-	} else if (str < 241) {
-		total = total + 2;
-	} else if (str < 249) {
-		total = total + 3;
-	} else {
-		total = total + 4;
-	}
-
-	return total;
-}
-
-/*	{ Returns a character's adjustment to armor class	-JWT- *}
- *	player::ac_from_dex()
- *	*/
-long toac_adj()
-{
-	long dex;
-	long return_value;
-
-	dex = player_stats_curr[DEX];
-
-	if (dex < 10) {
-		return_value = -4;
-	} else if (dex < 20) {
-		return_value = -3;
-	} else if (dex < 30) {
-		return_value = -2;
-	} else if (dex < 40) {
-		return_value = -1;
-	} else if (dex < 120) {
-		return_value = 0;
-	} else if (dex < 150) {
-		return_value = 1;
-	} else if (dex < 191) {
-		return_value = 2;
-	} else if (dex < 226) {
-		return_value = 3;
-	} else if (dex < 249) {
-		return_value = 4;
-	} else {
-		return_value = 5;
-	}
-
-	return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 unsigned char characters_sex()
 {
 	/*	{ Determine character's sex				-DCJ-
@@ -986,18 +745,21 @@ void add_money(long amount)
 	/*	{ Add money in the lightest possible amounts.
 	 * -DMF-/DY}*/
 
-	long to_bank, wl, i1;
-	char out_val[134], out2[134];
+	long to_bank;
+	long weight_limit;
+	long i1;
+	char out_val[134];
+	char out2[134];
 	long type_num;
 
 	ENTER(("add_money", ""));
 
 	to_bank = 0;
-	wl = weight_limit();
+	weight_limit = C_player_max_bulk();
 	/* with player_do; */
 
 	for (type_num = MITHRIL; type_num >= IRON; type_num--) {
-		am__add_munny(&amount, &to_bank, wl, type_num);
+		am__add_munny(&amount, &to_bank, weight_limit, type_num);
 	}
 
 	reset_total_cash();
@@ -1138,39 +900,12 @@ void char_inven_init()
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-/* misc::mod_from_stat */
-long spell_adj(stat_set attr)
-{
-	long statval;
-	long return_value;
 
-	statval = player_stats_curr[(int)attr];
+long bard_adj() { return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(DEX) + 1) / 2; }
 
-	if (statval > 249) {
-		return_value = 7;
-	} else if (statval > 239) {
-		return_value = 6;
-	} else if (statval > 219) {
-		return_value = 5;
-	} else if (statval > 199) {
-		return_value = 4;
-	} else if (statval > 149) {
-		return_value = 3;
-	} else if (statval > 109) {
-		return_value = 2;
-	} else if (statval > 39) {
-		return_value = 1;
-	} else {
-		return_value = 0;
-	}
-	return return_value;
-}
+long druid_adj() { return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(WIS) + 1) / 2; }
 
-long bard_adj() { return (spell_adj(CHR) + spell_adj(DEX) + 1) / 2; }
-
-long druid_adj() { return (spell_adj(CHR) + spell_adj(WIS) + 1) / 2; }
-
-long monk_adj() { return (spell_adj(INT) + spell_adj(WIS) + 1) / 2; }
+long monk_adj() { return (C_player_mod_from_stat(INT) + C_player_mod_from_stat(WIS) + 1) / 2; }
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -1285,13 +1020,13 @@ void spell_chance(spl_rec *spell)
 	    3 * (player_lev - C_magic_spell_level(spell->splnum));
 
 	if (C_player_uses_magic(M_ARCANE)) {
-		spell->splchn -= 3 * (spell_adj(INT) - 1);
+		spell->splchn -= 3 * (C_player_mod_from_stat(INT) - 1);
 	} else if (C_player_uses_magic(M_SONG)) {
 		spell->splchn -= 3 * (bard_adj() - 1);
 	} else if (C_player_uses_magic(M_NATURE)) {
 		spell->splchn -= 3 * (druid_adj() - 1);
 	} else {
-		spell->splchn -= 3 * (spell_adj(WIS) - 1);
+		spell->splchn -= 3 * (C_player_mod_from_stat(WIS) - 1);
 	}
 
 	if (C_magic_spell_mana(spell->splnum) > player_cmana) {
@@ -1564,7 +1299,7 @@ void learn_magic(boolean redraw_now) {
 	redraw = false;
 	if (C_player_uses_magic(M_ARCANE)) {
 		learn_spell(&redraw);
-		adj_from_stats = spell_adj(INT);
+		adj_from_stats = C_player_mod_from_stat(INT);
 	}
 	if (C_player_uses_magic(M_NATURE)) {
 		learn_druid(&redraw);
@@ -1576,7 +1311,7 @@ void learn_magic(boolean redraw_now) {
 	}
 	if (C_player_uses_magic(M_DIVINE)) {
 		learn_prayer();
-		adj_from_stats = spell_adj(WIS);
+		adj_from_stats = C_player_mod_from_stat(WIS);
 	}
 	if (C_player_uses_magic(M_CHAKRA)) {
 		learn_discipline();
@@ -2774,7 +2509,7 @@ boolean player_saves(long adjust)
 boolean player_spell_saves()
 {
 	boolean return_value;
-	return_value = player_saves(player_lev + 5 * spell_adj(WIS));
+	return_value = player_saves(player_lev + 5 * C_player_mod_from_stat(WIS));
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -3059,68 +2794,54 @@ long attack_blows(long weight, long *wtohit)
 {
 	/*{ Weapon weight VS strength and dexterity               -RAK-   }*/
 
-	long max_wield, adj_weight, blows, lev_skill;
-	long a_dex;
+	const long max_wield = C_player_max_bulk() / 10;
+	const int dex_mod = C_player_mod_from_stat(DEX);
+	const int approx_str_stat = (10 + (C_player_mod_from_stat(STR) * 2)) * 10;
 
-	blows = 1;
+	long adj_weight;
+	long blows = 1;
+	long lev_skill;
+
 	*wtohit = 0;
 
-	/* with py.stat do; */
-	max_wield = weight_limit() / 10;
+	/*{ make to-hit drop off gradually instead of being so abrupt -DCJ- }*/
 	if (max_wield < (weight / 100)) {
-		/*{ make to-hit drop off gradually instead of being so abrupt
-		 * -DCJ-}*/
 		*wtohit = max_wield - (weight / 100);
-	} else {
-		a_dex = player_stats_curr[DEX];
-
-		if (a_dex < 70) {
-			blows = 3;
-		} else if (a_dex < 150) {
-			blows = 4;
-		} else if (a_dex < 151) {
-			blows = 5;
-		} else if (a_dex < 200) {
-			blows = 6;
-		} else if (a_dex < 220) {
-			blows = 7;
-		} else if (a_dex < 240) {
-			blows = 8;
-		} else if (a_dex < 250) {
-			blows = 10;
-		} else {
-			blows = 12;
-		}
-
-		lev_skill =
-		    C_class_melee_bonus(player_pclass) * (player_lev + 10);
-
-		/*{warriors 100-500, paladin 80-400, priest 60-300, mage
-		 * 40-200}*/
-		blows =
-		    trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
-
-		/*{usually 3 for 18+ dex, 5 max except 6 for high level
-		 * warriors}*/
-		adj_weight =
-		    (long)((float)player_stats_curr[STR] / (float)(weight / 100) * 2.5);
-
-		if (adj_weight < 1) {
-			blows = 1;
-		} else if (adj_weight < 2) {
-			blows = (blows / 3.00);
-		} else if (adj_weight < 3) {
-			blows = (blows / 2.50);
-		} else if (adj_weight < 5) {
-			blows = (blows / 2.00);
-		} else if (adj_weight < 10) {
-			blows = (blows / 1.66);
-		} else {
-			blows = (blows / 1.50);
-		}
+		return blows;
 	}
 
-	return blows;
+	blows = 5 + dex_mod;
+	blows = min(12, blows);
+	blows = max(3, blows);
+
+	lev_skill =
+		C_class_melee_bonus(player_pclass) * (player_lev + 10);
+
+	/*{warriors 100-500, paladin 80-400, priest 60-300, mage
+	 * 40-200}*/
+	blows =
+		trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
+
+	/*{usually 3 for 18+ dex, 5 max except 6 for high level
+	 * warriors}*/
+	adj_weight =
+		(long)((float)approx_str_stat / (float)(weight / 100) * 2.5);
+
+	if (adj_weight < 1) {
+		blows = 1;
+	} else if (adj_weight < 2) {
+		blows = (blows / 3.00);
+	} else if (adj_weight < 3) {
+		blows = (blows / 2.50);
+	} else if (adj_weight < 5) {
+		blows = (blows / 2.00);
+	} else if (adj_weight < 10) {
+		blows = (blows / 1.66);
+	} else {
+		blows = (blows / 1.50);
+	}
+
+return blows;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

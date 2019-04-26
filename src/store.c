@@ -824,7 +824,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 		PF.poisoned--;
 		time_spent--;
 
-		switch (con_adj()) {
+		switch (C_player_hp_from_con()) {
 		case -4:
 			take_hit(4, "poison");
 			break;
@@ -1091,7 +1091,7 @@ void display_cost(long store_num, long pos)
 	i1 = ((pos - 1) % 12);
 	if (stores[store_num].store_inven[pos].scost < 0) {
 		i2 = labs(stores[store_num].store_inven[pos].scost);
-		i2 += (long)(i2 * chr_adj());
+		i2 += (long)(i2 * C_player_cost_modifier_from_charisma());
 		sprintf(out_val, "%6ld", (i2 / GOLD_VALUE));
 	} else {
 		sprintf(
@@ -1165,7 +1165,7 @@ void display_inventory(long store_num, long start)
 		if (stores[store_num].store_inven[start].scost < 0) {
 			/*{quack}*/
 			i2 = labs(stores[store_num].store_inven[start].scost);
-			i2 = i2 + trunc(i2 * chr_adj());
+			i2 = i2 + trunc(i2 * C_player_cost_modifier_from_charisma());
 			sprintf(out_val2, "%6ld",
 				((i2 + GOLD_VALUE - 1) / GOLD_VALUE));
 		} else {
@@ -1627,7 +1627,7 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 		flag = true;
 	} else {
 		/* with owners[owner] do; */
-		cost = cost - (long)(cost * chr_adj()) -
+		cost = cost - (long)(cost * C_player_cost_modifier_from_charisma()) -
 		       (long)(cost * rgold_adj[owners[stores[store_num].owner]
 						   .owner_race][player_prace]);
 		if (cost < 1) {
@@ -1819,11 +1819,11 @@ long purchase_haggle(long store_num, long *price, treasure_type *item,
 	/* with stores[store_num]. do; */
 	/* with owners[stores[store_num].owner]. do; */
 	cost = sell_price(store_num, &max_sell, &min_sell, item);
-	max_sell += (max_sell * chr_adj());
+	max_sell += (max_sell * C_player_cost_modifier_from_charisma());
 	if (max_sell < 0) {
 		max_sell = 1;
 	}
-	min_sell += (min_sell * chr_adj());
+	min_sell += (min_sell * C_player_cost_modifier_from_charisma());
 	if (min_sell < 0) {
 		min_sell = 1;
 	}

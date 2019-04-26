@@ -37,19 +37,6 @@ static void s__panel_bounds()
 	panel_col_prt = panel_col_min - 15;
 }
 
-/**
- * -RAK-
- *  change_stat() - Changes stats up or down for magic items
- *  tstat: stat to modify
- *  amount: amount to modify stat
- *  factor: 1 to add, -1 to revert
- */
-static void change_stat(stat_set tstat, long amount, long factor)
-{
-	player_stats_mod[(int)tstat] += amount * factor;
-	update_stat(tstat);
-}
-
 static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
 					    boolean *commas)
 {
@@ -443,7 +430,7 @@ static void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 	*tdam = damroll(inven_temp->data.damage) + inven_temp->data.todam;
 	*tbth = trunc(player_bthb * 0.75);
 	*tpth = player_ptohit + inven_temp->data.tohit;
-	*tdis = trunc((player_stats_curr[STR] + 100) * 200 / tmp_weight);
+	*tdis = trunc(((C_player_get_stat(STR) * 10) + 100) * 200 / tmp_weight);
 
 	if (*tdis > 10) {
 		*tdis = 10;
@@ -1299,7 +1286,7 @@ static void d__update_poison()
 				move_char(5);
 			}
 		} else {
-			switch (con_adj()) {
+			switch (C_player_hp_from_con()) {
 			case -4:
 				take_hit(4, "poison");
 				break;
@@ -1824,97 +1811,99 @@ static void d__bash()
 	y = char_row;
 	x = char_col;
 
-	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].cptr > 1) {
-			if (player_flags.afraid > 0) {
-				msg_print("You are afraid!");
-			} else {
-				/*{ Save old values of attacking  }*/
-				inven_temp->data = equipment[Equipment_primary];
-				old_ptohit = player_ptohit;
-				old_ptodam = player_ptodam;
-				old_bth = player_bth;
-				/*{ Use these values              }*/
-				equipment[Equipment_primary] = blank_treasure;
-				/* with equipment[Equipment_primary]. do; */
-				strcpy(equipment[Equipment_primary].damage,
-				       equipment[Equipment_shield].damage);
-				equipment[Equipment_primary].weight =
-				    (player_stats_curr[STR] + 20) * 100;
-				equipment[Equipment_primary].tval = 1;
+	if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) 
+		return;
 
-				/* with py do; */
-				player_bth = trunc(((player_stats_curr[STR] + 20)/ 5 + player_wt) /
-					       6.0);
-				player_ptohit = 0;
-				player_ptodam = trunc(player_wt / 75.0) + 1;
-
-				if (py_attack(y, x)) {
-					do_stun(cave[y][x].cptr, -10, 2);
-				}
-
-				/*{ Restore old values            }*/
-				equipment[Equipment_primary] = inven_temp->data;
-				player_ptohit = old_ptohit;
-				player_ptodam = old_ptodam;
-				player_bth = old_bth;
-				if (randint(300) > player_stats_curr[DEX]) {
-					msg_print("You are off-balance.");
-					player_flags.paralysis = randint(3);
-				}
-			}
-		} else if (cave[y][x].tptr > 0) {
-			/* with t_list[cave[y][x].tptr]. do; */
-			if (t_list[cave[y][x].tptr].tval == closed_door) {
-				/* with py do; */
-				if (test_hit(
-					player_wt + (player_stats_curr[STR] * player_stats_curr[STR])/ 500,
-					0, 0, labs(t_list[cave[y][x].tptr].p1) +
-						  150)) {
-					msg_print("You smash into the door! "
-						  "The door crashes open!");
-					t_list[cave[y][x].tptr] =
-					    door_list[DL_OPEN];
-					t_list[cave[y][x].tptr].p1 = 1;
-					cave[y][x].fopen = true;
-					lite_spot(y, x);
-				} else {
-					msg_print("You smash into the door! "
-						  "The door holds firm.");
-					player_flags.paralysis = 2;
-				}
-
-			} else if (t_list[cave[y][x].tptr].tval == chest) {
-
-				if (randint(10) == 1) {
-					msg_print(
-					    "You have destroyed the chest...");
-					msg_print("and its contents!");
-					strcpy(t_list[cave[y][x].tptr].name,
-					       "& ruined chest");
-					t_list[cave[y][x].tptr].flags = 0;
-				} else if (uand(
-					       0x00000001,
-					       t_list[cave[y][x].tptr].flags) !=
-					   0) {
-					if (randint(10) == 1) {
-						/* just "unlocks", traps are
-						 * still in place */
-						msg_print(
-						    "The lock breaks open!");
-						t_list[cave[y][x].tptr].flags &=
-						    0xFFFFFFFE; /* unlock */
-					}
-				}
-
-			} else {
-				msg_print("I do not see anything you can bash "
-					  "there.");
-			}
+	/* with cave[y][x]. do; */
+	if (cave[y][x].cptr > 1) {
+		if (player_flags.afraid > 0) {
+			msg_print("You are afraid!");
 		} else {
-			msg_print("I do not see anything you can bash there.");
+			/*{ Save old values of attacking  }*/
+			inven_temp->data = equipment[Equipment_primary];
+			old_ptohit = player_ptohit;
+			old_ptodam = player_ptodam;
+			old_bth = player_bth;
+			/*{ Use these values              }*/
+			equipment[Equipment_primary] = blank_treasure;
+			/* with equipment[Equipment_primary]. do; */
+			strcpy(equipment[Equipment_primary].damage,
+					equipment[Equipment_shield].damage);
+			equipment[Equipment_primary].weight =
+				((C_player_get_stat(STR) * 10) + 20) * 100;
+			equipment[Equipment_primary].tval = 1;
+
+			/* with py do; */
+			player_bth = trunc((((C_player_get_stat(STR) * 10) + 20)
+						/ 5 + player_wt) /
+					6.0);
+			player_ptohit = 0;
+			player_ptodam = trunc(player_wt / 75.0) + 1;
+
+			if (py_attack(y, x)) {
+				do_stun(cave[y][x].cptr, -10, 2);
+			}
+
+			/*{ Restore old values            }*/
+			equipment[Equipment_primary] = inven_temp->data;
+			player_ptohit = old_ptohit;
+			player_ptodam = old_ptodam;
+			player_bth = old_bth;
+			if (randint(300) > (C_player_get_stat(DEX) * 10)) {
+				msg_print("You are off-balance.");
+				player_flags.paralysis = randint(3);
+			}
 		}
+	} else if (cave[y][x].tptr > 0) {
+		/* with t_list[cave[y][x].tptr]. do; */
+		if (t_list[cave[y][x].tptr].tval == closed_door) {
+			const int from_str = C_player_get_stat(STR) * 10;
+			/* with py do; */
+			if (test_hit(player_wt + (from_str * from_str)/ 500,
+						0, 0, labs(t_list[cave[y][x].tptr].p1) +
+						150)) {
+				msg_print("You smash into the door! "
+						"The door crashes open!");
+				t_list[cave[y][x].tptr] =
+					door_list[DL_OPEN];
+				t_list[cave[y][x].tptr].p1 = 1;
+				cave[y][x].fopen = true;
+				lite_spot(y, x);
+			} else {
+				msg_print("You smash into the door! "
+						"The door holds firm.");
+				player_flags.paralysis = 2;
+			}
+
+		} else if (t_list[cave[y][x].tptr].tval == chest) {
+
+			if (randint(10) == 1) {
+				msg_print(
+						"You have destroyed the chest...");
+				msg_print("and its contents!");
+				strcpy(t_list[cave[y][x].tptr].name,
+						"& ruined chest");
+				t_list[cave[y][x].tptr].flags = 0;
+			} else if (uand(
+						0x00000001,
+						t_list[cave[y][x].tptr].flags) !=
+					0) {
+				if (randint(10) == 1) {
+					/* just "unlocks", traps are
+					 * still in place */
+					msg_print(
+							"The lock breaks open!");
+					t_list[cave[y][x].tptr].flags &=
+						0xFFFFFFFE; /* unlock */
+				}
+			}
+
+		} else {
+			msg_print("I do not see anything you can bash "
+					"there.");
+		}
+	} else {
+		msg_print("I do not see anything you can bash there.");
 	}
 }
 
@@ -1996,7 +1985,7 @@ static void d__openobject()
 				    0) { /*{ It's locked...        }*/
 					/* with player_do; */
 					tmp = player_disarm + player_lev +
-					      2 * todis_adj() + spell_adj(INT);
+					      2 * C_player_disarm_from_dex() + C_player_mod_from_stat(INT);
 
 					if (player_flags.confused > 0) {
 						msg_print("You are too "
@@ -2030,8 +2019,8 @@ static void d__openobject()
 			} else if (t_list[cave[y][x].tptr].tval == chest) {
 				/*{ Open a closed chest...                }*/
 				/* with player_do; */
-				tmp = player_disarm + player_lev + 2 * todis_adj() +
-				      spell_adj(INT);
+				tmp = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+				      C_player_mod_from_stat(INT);
 
 				/* with t_list[tptr] do; */
 				flag = false;
@@ -2198,8 +2187,8 @@ static void d__disarm_trap()
 		if (cave[y][x].tptr > 0) {
 			t1 = player_disarm;  /*{ Ability to disarm     }*/
 			t2 = player_lev;     /*{ Level adjustment      }*/
-			t3 = 2 * todis_adj(); /*{ Dexterity adjustment  }*/
-			t4 = spell_adj(INT);  /*{ Intelligence adjustment}*/
+			t3 = 2 * C_player_disarm_from_dex(); /*{ Dexterity adjustment  }*/
+			t4 = C_player_mod_from_stat(INT);  /*{ Intelligence adjustment}*/
 			tot = t1 + t2 + t3 + t4;
 
 			if (player_flags.blind > 0) {
@@ -2340,7 +2329,7 @@ static void d__tunnel()
 
 		/*{ Compute the digging ability of player; based on       }*/
 		/*{ strength, and type of tool used                       }*/
-		tabil = (player_stats_curr[STR] + 20)/ 5;
+		tabil = ((C_player_get_stat(STR) * 10) + 20)/ 5;
 		if (equipment[Equipment_primary].tval > 0) {
 			/* with equipment[Equipment_primary] do; */
 			if (uand(Tunneling_worn_bit,
@@ -3170,9 +3159,30 @@ void py_bonuses(treasure_type *tobj, long factor)
 	PF.ffall = false;
 
 	if (uand(Strength_worn_bit, tobj->flags) != 0) {
-		change_stat(STR, tobj->p1, factor);
+		player_stats_mod[STR] += tobj->p1 * factor;
 		print_stat = 1;
 	}
+	if (uand(Dexterity_worn_bit, tobj->flags) != 0) {
+		player_stats_mod[DEX] += tobj->p1 * factor;
+		print_stat = 1;
+	}
+	if (uand(Constitution_worn_bit, tobj->flags) != 0) {
+		player_stats_mod[CON] += tobj->p1 * factor;
+		print_stat = 1;
+	}
+	if (uand(Intelligence_worn_bit, tobj->flags) != 0) {
+		player_stats_mod[INT] += tobj->p1 * factor;
+		print_stat = 1;
+	}
+	if (uand(Wisdom_worn_bit, tobj->flags) != 0) {
+		player_stats_mod[WIS] += tobj->p1 * factor;
+		print_stat = 1;
+	}
+	if (uand(Charisma_worn_bit, tobj->flags) != 0) {
+		player_stats_mod[CHR] += tobj->p1 * factor;
+		print_stat = 1;
+	}
+	C_player_recalc_stats();
 	if (uand(Magic_proof_worn_bit, tobj->flags2) != 0) {
 		player_save += (25 * factor);
 	}
@@ -3183,26 +3193,6 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 	if (uand(Disarm_worn_bit, tobj->flags2) != 0) {
 		player_disarm += (tobj->p1 * factor);
-	}
-	if (uand(Dexterity_worn_bit, tobj->flags) != 0) {
-		change_stat(DEX, tobj->p1, factor);
-		print_stat = 1;
-	}
-	if (uand(Constitution_worn_bit, tobj->flags) != 0) {
-		change_stat(CON, tobj->p1, factor);
-		print_stat = 1;
-	}
-	if (uand(Intelligence_worn_bit, tobj->flags) != 0) {
-		change_stat(INT, tobj->p1, factor);
-		print_stat = 1;
-	}
-	if (uand(Wisdom_worn_bit, tobj->flags) != 0) {
-		change_stat(WIS, tobj->p1, factor);
-		print_stat = 1;
-	}
-	if (uand(Charisma_worn_bit, tobj->flags) != 0) {
-		change_stat(CHR, tobj->p1, factor);
-		print_stat = 1;
 	}
 	if (uand(Searching_worn_bit, tobj->flags) != 0) {
 		player_srh += (tobj->p1 * factor);
@@ -3266,9 +3256,9 @@ void py_bonuses(treasure_type *tobj, long factor)
 
 	/* with player_do; */
 	old_dis_ac = player_dis_ac;
-	player_ptohit = tohit_adj(); /*{ Real To Hit   } */
-	player_ptodam = todam_adj(); /*{ Real To Dam   } */
-	player_ptoac = toac_adj();   /*{ Real To AC    } */
+	player_ptohit = C_player_tohit_from_stats();
+	player_ptodam = C_player_dmg_from_str();
+	player_ptoac = C_player_ac_from_dex();
 	player_pac = 0;		 /*{ Real AC       } */
 	player_dis_th = player_ptohit;   /*{ Display To Hit        } */
 	player_dis_td = player_ptodam;   /*{ Display To Dam        } */
@@ -3362,12 +3352,6 @@ void change_speed(long num)
 	for (i1 = muptr; i1 != 0; i1 = m_list[i1].nptr) {
 		m_list[i1].cspeed += num;
 	}
-}
-
-void update_stat(stat_set tstat)
-{
-	player_stats_curr[(int)tstat] = squish_stat(
-	    player_stats_perm[(int)tstat] + 10 * player_stats_mod[(int)tstat] - player_stats_lost[(int)tstat]);
 }
 
 void change_rep(long amt)
@@ -3669,11 +3653,14 @@ long react(long x)
 	/*  returns 0 to 10 -- SD 2.4; */
 	/*  x is average reaction for a 0 SC ugly half-troll*/
 
-	long ans;
-
-	ans = (player_stats_curr[CHR] + player_rep * 2 + randint(200) + randint(200) +
-	       randint(200))/ 50 +
-	      x - 4;
+	long ans = (C_player_get_stat(CHR) * 10
+			+ (player_rep * 2)
+			+ randint(200)
+			+ randint(200) +
+			randint(200))
+		/ 50
+		+ x
+		- 4;
 
 	if (ans < 0) {
 		ans = 0;
@@ -3758,7 +3745,7 @@ void brothel_game()
 	if (get_yes_no("Do you accept?")) {
 		change_rep(-3);
 		/* with player_do; */
-		if ((player_disarm + player_lev + 2 * todis_adj() + spell_adj(INT)) >
+		if ((player_disarm + player_lev + 2 * C_player_disarm_from_dex() + C_player_mod_from_stat(INT)) >
 		    randint(100)) {
 			msg_print("Good! You are invited to join the house!");
 			C_player_add_exp(5);
@@ -3797,8 +3784,8 @@ void thief_games()
 			  "pick locks.");
 		if (get_yes_no("Do you accept?")) {
 			/* with player_do; */
-			guild_or_not((player_disarm + player_lev + 2 * todis_adj() +
-				      spell_adj(INT)) > randint(100));
+			guild_or_not((player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+				      C_player_mod_from_stat(INT)) > randint(100));
 		}
 	} else {
 		msg_print("The thieves invite you to show your stealthiness.");
@@ -3863,7 +3850,7 @@ void eat_the_meal()
 
 	default:
 		if ((yummers > 0) ||
-		    player_saves(player_lev + 5 * spell_adj(CON))) {
+		    player_saves(player_lev + 5 * C_player_mod_from_stat(CON))) {
 			msg_print(
 			    "It was a boring meal, and you eat very little.");
 			player_flags.foodc = old_food;

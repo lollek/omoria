@@ -104,7 +104,7 @@ fn get_stats() {
         .map(|stat| change_stat(random_stat(), race_stats.get_pos(stat)) as i16)
         .collect::<Vec<i16>>());
     player::set_perm_stats(&new_stats);
-    player::set_curr_stats(&new_stats);
+    player::recalc_curr_stats();
 
     unsafe {
         player::player_rep = 0;
@@ -176,18 +176,18 @@ fn put_misc3() {
 
     let xfos: i64 = max(27 - unsafe { player::player_fos }, 0).into();
     let xsrh: i64 = unsafe { player::player_srh } as i64 +
-        misc::mod_from_stat(Stat::Intelligence) as i64;
+        player::modifier_from_stat(Stat::Intelligence) as i64;
     let xstl: i64 = unsafe { player::player_stl }.into();
     let xdis: i64 = unsafe { player::player_disarm } as i64 +
         unsafe { player::player_lev } as i64 +
             (2 * player::disarm_from_dex()) as i64 +
-                misc::mod_from_stat(Stat::Intelligence) as i64;
+                player::modifier_from_stat(Stat::Intelligence) as i64;
     let xsave: i64 = unsafe { player::player_save } as i64 +
         unsafe { player::player_lev } as i64 +
-        misc::mod_from_stat(Stat::Wisdom) as i64;
+        player::modifier_from_stat(Stat::Wisdom) as i64;
     let xdev: i64 = unsafe { player::player_save } as i64 +
         unsafe { player::player_lev } as i64 +
-        misc::mod_from_stat(Stat::Intelligence) as i64;
+        player::modifier_from_stat(Stat::Intelligence) as i64;
     let xswm: i64 = unsafe { player::player_flags.swim } + 4;
     let xrep: i64 = 6 + (unsafe { player::player_rep } / 25);
     let xinf: i64 = unsafe { player::player_flags.see_infra } * 10;
@@ -226,7 +226,7 @@ fn print_history() {
 
 fn apply_stats_from_class() {
     unsafe {
-        player::player_mhp = (player::hitdie() as i8 + player::hp_from_con()).into();
+        player::player_mhp = (player::hitdie() as i8 + player::hp_from_con() as i8).into();
         player::player_chp = player::player_mhp.into();
         player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
         player::player_bthb += ((player::class().ranged_bonus() * 5) + 20) as i16;
@@ -363,7 +363,7 @@ fn generate_ahw() {
         player::player_ht = generate_player_height(player_race, player_sex);
         player::player_wt = generate_player_weight(player_race, player_sex);
 
-        player::player_disarm = (player_race.disarm_mod() + player::disarm_from_dex()).into();
+        player::player_disarm = (player_race.disarm_mod() as i16 + player::disarm_from_dex()).into();
     }
 
     debug::leave("generate_ahw");

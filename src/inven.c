@@ -1797,7 +1797,7 @@ boolean inven_check_weight()
 
 	/*{ Current stuff + weight <= max weight }*/
 
-	return_value = (inven_weight + item_wgt) <= (weight_limit() * 100);
+	return_value = (inven_weight + item_wgt) <= (C_player_max_bulk() * 100);
 
 	return return_value;
 }

@@ -323,7 +323,7 @@ static void ht__house(long y, long x)
 			if (characters_sex() != FEMALE) {
 				msg_print("The girls invite you to prove your "
 					  "abilities.");
-				battle_game(spell_adj(CHR),
+				battle_game(C_player_mod_from_stat(CHR),
 					    "some playful prostitutes");
 			} else {
 				msg_print(

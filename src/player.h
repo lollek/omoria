@@ -8,8 +8,6 @@ extern p_flags player_flags;
 /* P_STATS */
 /* array[stat_set] of {permanent} */
 extern uint8_t player_stats_perm[STAT_SET_MAX + 1];
-/* array[stat_set] of {current=p-l+m*10} */
-extern uint8_t player_stats_curr[STAT_SET_MAX + 1];
 /* array[stat_set] of {net magical adj} */
 extern int8_t  player_stats_mod[STAT_SET_MAX + 1];
 /* array[stat_set] of {amt lost} */
@@ -70,5 +68,21 @@ extern time_t player_creation_time;     /* used as key in master file */
 extern int64_t player_save_count;	  /* compared to master file value */
 extern int64_t player_claim_check;	 /* used to track trading post */
 extern int64_t player_uid;	/* Used in master file */
+
+uint16_t C_player_max_bulk(void);
+int16_t C_player_dmg_from_str(void);
+int16_t C_player_disarm_from_dex(void);
+int16_t C_player_get_stat(stat_set attr);
+int16_t C_player_mod_from_stat(stat_set attr);
+int16_t C_player_hp_from_con(void);
+float C_player_cost_modifier_from_charisma(void);
+int16_t C_player_tohit_from_stats(void);
+int16_t C_player_ac_from_dex(void);
+boolean C_player_knows_spell(int32_t slot);
+void C_player_set_knows_spell(int32_t slot, boolean yn);
+boolean C_player_uses_magic(enum magic_t magic_type);
+void C_player_add_exp(long num);
+void C_player_recalc_stats(void);
+
 
 #endif /* PLAYER_H */

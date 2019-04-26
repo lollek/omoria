@@ -853,7 +853,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 
 	case 12: /*{Steal Money     }*/
 		/* with player_do; */
-		if ((randint(256) < player_stats_curr[DEX]) &&
+		if ((randint(256) < (C_player_get_stat(DEX) * 10)) &&
 		    (player_flags.paralysis < 1)) {
 			msg_print("You quickly protect your money pouch!");
 		} else {
@@ -875,7 +875,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 
 	case 13: /*{Steal Object   }*/
 		/* with py.stat do; */
-		if ((randint(256) < player_stats_curr[DEX]) &&
+		if ((randint(256) < (C_player_get_stat(DEX) * 10)) &&
 		    (player_flags.paralysis < 1)) {
 			msg_print("You grab hold of your backpack!");
 		} else {

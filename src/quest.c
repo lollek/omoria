@@ -162,8 +162,8 @@ void q__reward_quest()
 
 	reward = c_list[player_cur_quest].mexp * (randint(3) + 5) +
 		 player_lev * (randint(2) * 100) +
-		 (randint(100) + player_stats_curr[CHR]) * 2 +
-		 player_stats_curr[INT] * randint(50) + 200;
+		 (randint(100) + (C_player_get_stat(CHR) * 10)) * 2 +
+		 (C_player_get_stat(INT) * 10) * randint(50) + 200;
 
 	sprintf(out_val, "Ah... %s, I was expecting you.", player_name);
 	msg_print(out_val);

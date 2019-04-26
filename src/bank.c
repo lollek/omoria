@@ -110,7 +110,7 @@ static void eb__withdraw_money()
 	 * how much the bank has, and how much the user can carry.
 	 */
 	if (withdraw > 0) {
-		weight_left = (weight_limit() * 100) - inven_weight;
+		weight_left = (C_player_max_bulk() * 100) - inven_weight;
 		for (mon_type = MITHRIL; mon_type >= GOLD; mon_type--) {
 			amt_given[mon_type] = min3(
 			    (withdraw * GOLD_VALUE)/ coin_value[mon_type],
@@ -173,7 +173,7 @@ static void eb__withdraw_money()
 					    coin_value[mon_type] / GOLD_VALUE;
 				}
 			} /* end for */
-			inven_weight = weight_limit() * 100 - weight_left;
+			inven_weight = C_player_max_bulk() * 100 - weight_left;
 			reset_total_cash();
 			eb__display_money();
 		} /* end if deliver */
@@ -223,7 +223,7 @@ static void eb__change_money()
 			msg_print("You don't have enough of that coin!");
 		} else if ((inven_weight +
 			    COIN_WEIGHT * (amount_to - amount_from)) >
-			   weight_limit() * 100) {
+			   C_player_max_bulk() * 100) {
 			msg_print("You can't carry that much weight.");
 		} else {
 			player_money[typ_from] -= amount_from;

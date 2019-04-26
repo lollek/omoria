@@ -172,7 +172,7 @@ void use_staff()
 				reset_flag = false;
 
 				/* with player_do; */
-				chance = player_save + player_lev + spell_adj(INT) -
+				chance = player_save + player_lev + C_player_mod_from_stat(INT) -
 					 item_ptr->data.level - 5;
 
 				if (player_flags.confused > 0) {

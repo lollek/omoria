@@ -6,8 +6,6 @@ use player;
 use random;
 use term;
 
-use types::Stat;
-
 pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
 pub const BTH_PLUS_ADJ: i16 = 3; // Adjust BTH per plus-to-hit
 
@@ -91,19 +89,6 @@ pub fn c_array_to_rust_string(array: Vec<u8>) -> String {
         .to_str()
         .unwrap()
         .to_string()
-}
-
-pub fn mod_from_stat(stat: Stat) -> u8 {
-    match player::curr_stats().get(stat) {
-        statval if statval > 249 => 7,
-        statval if statval > 239 => 6,
-        statval if statval > 219 => 5,
-        statval if statval > 199 => 4,
-        statval if statval > 149 => 3,
-        statval if statval > 109 => 2,
-        statval if statval > 39 => 1,
-        _ => 0,
-    }
 }
 
 // Returns a rating of stat depending on base
