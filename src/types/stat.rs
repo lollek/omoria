@@ -1,3 +1,4 @@
+#[derive(Copy, Clone)]
 pub enum Stat {
     Strength = 0,
     Intelligence = 1,
@@ -55,6 +56,16 @@ impl StatBlock {
             Stat::Dexterity => self.dexterity,
             Stat::Constitution => self.constitution,
             Stat::Charisma => self.charisma,
+        }
+    }
+    pub fn set(&mut self, stat: Stat, new_value: i16) {
+        match stat {
+            Stat::Strength => self.strength = new_value,
+            Stat::Intelligence => self.intelligence = new_value,
+            Stat::Wisdom => self.wisdom = new_value,
+            Stat::Dexterity => self.dexterity = new_value,
+            Stat::Constitution => self.constitution = new_value,
+            Stat::Charisma => self.charisma = new_value,
         }
     }
     pub fn get_pos(&self, stat: usize) -> i16 {

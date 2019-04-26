@@ -8,7 +8,7 @@
 /*//////////////////////////////////////////////////////////////////// */
 void lower_stat(stat_set tstat, char msg1[82])
 {
-	player_stats_lost[(int)tstat] += 1;
+	C_player_modify_lost_stat((int16_t)tstat, 1);
 	C_player_recalc_stats();
 	if (strcmp(msg1, "X") == 0) {
 		switch (tstat) {
@@ -88,8 +88,8 @@ boolean restore_stat(stat_set tstat, char msg1[82])
 	/*{stat adjusted by magic worn only}*/
 	boolean return_value = true;
 
-	if (player_stats_lost[(int)tstat] > 0) {
-		player_stats_lost[(int)tstat] = 0;
+	if (C_player_has_lost_stat((int16_t)tstat)) {
+		C_player_reset_lost_stat((int16_t)tstat);
 		C_player_recalc_stats();
 		if (strcmp(msg1, "X") == 0) {
 			switch (tstat) {
@@ -899,8 +899,8 @@ void lose_exp(long amount)
 /*//////////////////////////////////////////////////////////////////// */
 boolean gain_stat(stat_set tstat, char msg1[82])
 {
-	if (player_stats_lost[(int)tstat] > 0) {
-		player_stats_lost[(int)tstat] = 0;
+	if (C_player_has_lost_stat((int16_t)tstat)) {
+		C_player_reset_lost_stat((int16_t)tstat);
 	} else {
 		player_stats_perm[(int)tstat] += 1;
 	}

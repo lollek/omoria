@@ -79,3 +79,20 @@ pub extern fn C_player_ac_from_dex() -> libc::int16_t {
     player::ac_from_dex()
 }
 
+#[no_mangle]
+pub extern fn C_player_modify_lost_stat(stat: libc::uint8_t, amount: libc::int16_t) {
+    player::modify_lost_stat(Stat::from(stat), amount);
+}
+
+#[no_mangle]
+pub extern fn C_player_reset_lost_stat(stat: libc::uint8_t) {
+    player::reset_lost_stat(Stat::from(stat));
+}
+
+#[no_mangle]
+pub extern fn C_player_has_lost_stat(stat: libc::uint8_t) -> libc::uint8_t {
+    match player::has_lost_stat(Stat::from(stat)) {
+        true => 255,
+        false => 0,
+    }
+}

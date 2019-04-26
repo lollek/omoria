@@ -7,6 +7,7 @@ use misc;
 use ncurses;
 use player;
 use term;
+use types::Stat;
 
 // Stats Column
 const STAT_BLOCK_WIDTH: usize = 14;
@@ -67,31 +68,41 @@ pub fn print_stats(row: u8, col: u8) {
     debug::enter("print_stats");
 
     let curr = player::curr_stats();
-    let lost = player::lost_stats();
 
-    match lost.strength {
-        0 => prt_stat("STR : ", curr.strength, row, col),
-        _ => prt_lost_stat("STR : ", curr.strength, row, col),
+    if player::has_lost_stat(Stat::Strength) {
+        prt_lost_stat("STR : ", curr.strength, row, col);
+    } else {
+        prt_stat("STR : ", curr.strength, row, col);
     }
-    match lost.dexterity {
-        0 => prt_stat("DEX : ", curr.dexterity, row + 1, col),
-        _ => prt_lost_stat("DEX : ", curr.dexterity, row + 1, col),
+
+    if player::has_lost_stat(Stat::Dexterity) {
+        prt_lost_stat("DEX : ", curr.dexterity, row + 1, col);
+    } else {
+        prt_stat("DEX : ", curr.dexterity, row + 1, col);
     }
-    match lost.constitution {
-        0 => prt_stat("CON : ", curr.constitution, row + 2, col),
-        _ => prt_lost_stat("CON : ", curr.constitution, row + 2, col),
+
+    if player::has_lost_stat(Stat::Constitution) {
+        prt_lost_stat("CON : ", curr.constitution, row + 2, col);
+    } else {
+        prt_stat("CON : ", curr.constitution, row + 2, col);
     }
-    match lost.intelligence {
-        0 => prt_stat("INT : ", curr.intelligence, row + 3, col),
-        _ => prt_lost_stat("INT : ", curr.intelligence, row + 3, col),
+
+    if player::has_lost_stat(Stat::Intelligence) {
+        prt_lost_stat("INT : ", curr.intelligence, row + 3, col);
+    } else {
+        prt_stat("INT : ", curr.intelligence, row + 3, col);
     }
-    match lost.wisdom {
-        0 => prt_stat("WIS : ", curr.wisdom, row + 4, col),
-        _ => prt_lost_stat("WIS : ", curr.wisdom, row + 4, col),
+
+    if player::has_lost_stat(Stat::Wisdom) {
+        prt_lost_stat("WIS : ", curr.wisdom, row + 4, col);
+    } else {
+        prt_stat("WIS : ", curr.wisdom, row + 4, col);
     }
-    match lost.charisma {
-        0 => prt_stat("CHA : ", curr.charisma, row + 5, col),
-        _ => prt_lost_stat("CHA : ", curr.charisma, row + 5, col),
+
+    if player::has_lost_stat(Stat::Charisma) {
+        prt_lost_stat("CHA : ", curr.charisma, row + 5, col);
+    } else {
+        prt_stat("CHA : ", curr.charisma, row + 5, col);
     }
 
     debug::leave("print_stats");

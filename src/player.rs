@@ -100,6 +100,7 @@ pub struct Player {
     pub is_raging: bool,
     pub rage_exhaustion_rounds_left: u8,
     pub curr_stats: StatBlock,
+    pub lost_stats: StatBlock,
 }
 
 impl Player {
@@ -110,6 +111,7 @@ impl Player {
             is_raging: false,
             rage_exhaustion_rounds_left: 0,
             curr_stats: StatBlock::new(0),
+            lost_stats: StatBlock::new(0),
         }
     }
 }
@@ -170,7 +172,6 @@ pub struct PlayerRecord {
     pub inven_weight: libc::c_long,
     pub perm_stats: StatBlock,
     pub mod_stats: StatBlock,
-    pub lost_stats: StatBlock,
     pub flags: PlayerFlags,
     pub player: Player,
     pub char_row: libc::c_long,
@@ -237,7 +238,6 @@ extern "C" {
 
     static mut player_stats_perm: [libc::uint8_t; 6];
     pub static mut player_stats_mod: [libc::int8_t; 6];
-    pub static mut player_stats_lost: [libc::uint8_t; 6];
 
     pub static mut char_row: libc::c_long;
     pub static mut char_col: libc::c_long;
@@ -323,7 +323,7 @@ pub fn curr_stats() -> StatBlock {
 pub fn recalc_curr_stats() {
     let perm_stats = perm_stats();
     let mod_stats = mod_stats();
-    let lost_stats = lost_stats();
+    let lost_stats = PLAYER.read().unwrap().lost_stats;
     let mut curr_stats = StatBlock::new(0);
     for stat in stats_iter() {
         let curr_stat = perm_stats.get_pos(stat)
@@ -341,16 +341,6 @@ pub fn mod_stats() -> StatBlock {
 pub fn set_mod_stats(block: &StatBlock) {
     for stat in stats_iter() {
         unsafe { player_stats_mod[stat] = block.get_pos(stat) as i8 };
-    }
-}
-
-pub fn lost_stats() -> StatBlock {
-    StatBlock::from(unsafe { player_stats_lost })
-}
-
-pub fn set_lost_stats(block: &StatBlock) {
-    for stat in stats_iter() {
-        unsafe { player_stats_lost[stat] = block.get_pos(stat) as u8 };
     }
 }
 
@@ -415,6 +405,20 @@ pub fn hp_from_con() -> i16 {
 
 pub fn cost_modifier_from_charisma() -> f32 {
     modifier_from_stat(Stat::Charisma) as f32 * -0.02
+}
+
+pub fn modify_lost_stat(stat: Stat, amount: i16) {
+    let mut stats = PLAYER.write().unwrap().lost_stats;
+    let old_val = stats.get(stat);
+    stats.set(stat, old_val + amount);
+}
+
+pub fn reset_lost_stat(stat: Stat) {
+    PLAYER.write().unwrap().lost_stats.set(stat, 0);
+}
+
+pub fn has_lost_stat(stat: Stat) -> bool {
+    PLAYER.read().unwrap().lost_stats.get(stat) != 0
 }
 
 fn rage_rounds_from_con() -> i8 {
@@ -558,7 +562,6 @@ pub fn record() -> PlayerRecord {
         inven_weight: unsafe { inven_weight },
         perm_stats: perm_stats(),
         mod_stats: mod_stats(),
-        lost_stats: lost_stats(),
         flags: unsafe { player_flags }.to_owned(),
         player: PLAYER.read().unwrap().clone(),
         char_row: unsafe { char_row },
@@ -682,8 +685,6 @@ pub fn set_record(record: PlayerRecord) {
 
     set_perm_stats(&record.perm_stats);
     set_mod_stats(&record.mod_stats);
-    set_lost_stats(&record.lost_stats);
-    recalc_curr_stats();
 
     unsafe {
         player_flags = record.flags;
