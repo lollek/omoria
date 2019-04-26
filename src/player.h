@@ -5,10 +5,6 @@
 
 extern p_flags player_flags;
 
-/* P_STATS */
-/* array[stat_set] of {permanent} */
-extern uint8_t player_stats_perm[STAT_SET_MAX + 1];
-
 /* P_MISC */
 extern int64_t player_xtr_wgt;	  /* { Extra weight limit	} */
 extern int64_t player_account;		  /* { Money in the bank	} */
@@ -85,6 +81,7 @@ int16_t C_player_ac_from_dex(void);
 float C_player_cost_modifier_from_charisma(void);
 
 void C_player_mod_stat(stat_set attr, int16_t modifier);
+void C_player_mod_perm_stat(stat_set attr, int16_t modifier);
 
 
 #endif /* PLAYER_H */

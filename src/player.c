@@ -1,9 +1,6 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-/* P_STATS */
-uint8_t player_stats_perm[] = {0, 0, 0, 0, 0, 0};
-
 /* P_MISC */
 int64_t player_xtr_wgt = 0;
 int64_t player_account = 0;

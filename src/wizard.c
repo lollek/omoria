@@ -1065,7 +1065,7 @@ void change_character()
 			tmp_val = -999;
 			sscanf(tmp_str, "%ld", &tmp_val);
 			if (tmp_val != -999) {
-				player_stats_perm[(int)tstat] = tmp_val;
+				C_player_mod_perm_stat((int16_t)tstat, tmp_val);
 				C_player_recalc_stats();
 				prt_stat_block();
 			}

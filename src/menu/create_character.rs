@@ -103,7 +103,7 @@ fn get_stats() {
     let new_stats = StatBlock::from(stats_iter()
         .map(|stat| change_stat(random_stat(), race_stats.get_pos(stat)) as i16)
         .collect::<Vec<i16>>());
-    player::set_perm_stats(&new_stats);
+    player::set_perm_stats(new_stats);
     player::recalc_curr_stats();
 
     unsafe {
