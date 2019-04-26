@@ -20,39 +20,16 @@ extern "C" {
     fn add_money(amount: i64);
 }
 
-fn old_stat(stat: i16) -> i16 {
-    if stat < 150 {
-        (misc::squish_stat(stat as i32) as i16 + 30) / 10
-    } else {
-        misc::squish_stat(stat as i32) as i16 - 132
-    }
-}
-
-fn change_stat(mut cur_stat: i16, amount: i16) -> i16 {
-    debug::enter("change_stat");
-    if amount < 0 {
-        for _ in amount..0 {
-            cur_stat -= misc::squish_stat(misc::de_statp(cur_stat as u8) as i32) as i16;
-        }
-    } else {
-        for _ in 1..(amount+1) {
-            cur_stat += misc::squish_stat(misc::in_statp(cur_stat as u8) as i32) as i16;
-        }
-    }
-    debug::leave("change_stat");
-    cur_stat
-}
-
-// returns [30, 150]
+// returns [3, 18]
 fn random_stat() -> i16 {
     let mut stats = vec! [
-        random::randint(5),
-        random::randint(5),
-        random::randint(5),
-        random::randint(5),
+        random::randint(6),
+        random::randint(6),
+        random::randint(6),
+        random::randint(6),
     ];
     stats.sort();
-    stats.iter().skip(1).fold(0, |sum, i| sum + i) as i16 * 10
+    stats.iter().skip(1).fold(0, |sum, i| sum + i) as i16
 }
 
 fn put_character(show_values: bool) {
@@ -82,9 +59,9 @@ fn get_money() {
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
         - stats_iter().fold(0, |sum: i64, tstat|
-            sum + old_stat(player_stats.get_pos(tstat)) as i64)
+            sum + player_stats.get_pos(tstat) as i64)
         // Charisma adj
-        + old_stat(player_stats.get(Stat::Charisma)) as i64;
+        + player_stats.get(Stat::Charisma) as i64;
 
     // Minimum
     amount = max(amount, 80);
@@ -101,7 +78,7 @@ fn get_stats() {
     let race_stats = race.stat_block();
 
     let new_stats = StatBlock::from(stats_iter()
-        .map(|stat| change_stat(random_stat(), race_stats.get_pos(stat)) as i16)
+        .map(|stat| random_stat() + race_stats.get_pos(stat) as i16)
         .collect::<Vec<i16>>());
     player::set_perm_stats(new_stats);
     player::recalc_curr_stats();
@@ -996,12 +973,12 @@ fn choose_stats() {
                 format!("Social Class:  {}", unsafe { player::player_sc }),
                 "".to_string(),
                 "(Attributes):".to_owned(),
-                format!("Strength:      {}", misc::stat_to_string(stats.strength)),
-                format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
-                format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
-                format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
-                format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
-                format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
+                format!("Strength:      {}", stats.strength),
+                format!("Dexterity:     {}", stats.dexterity),
+                format!("Constitution:  {}", stats.constitution),
+                format!("Intelligence:  {}", stats.intelligence),
+                format!("Wisdom:        {}", stats.wisdom),
+                format!("Charisma:      {}", stats.charisma),
             ].iter().map(|it| it.as_ref()).collect::<Vec<&str>>(),
             "r=reroll stats, enter=confirm",
             255);
@@ -1031,12 +1008,12 @@ fn confirm_character() {
             format!("Mana           {}", unsafe { player::player_mana }),
             "".to_string(),
             "(Attributes):".to_string(),
-            format!("Strength:      {}", misc::stat_to_string(stats.strength)),
-            format!("Dexterity:     {}", misc::stat_to_string(stats.dexterity)),
-            format!("Constitution:  {}", misc::stat_to_string(stats.constitution)),
-            format!("Intelligence:  {}", misc::stat_to_string(stats.intelligence)),
-            format!("Wisdom:        {}", misc::stat_to_string(stats.wisdom)),
-            format!("Charisma:      {}", misc::stat_to_string(stats.charisma)),
+            format!("Strength:      {}", stats.strength),
+            format!("Dexterity:     {}", stats.dexterity),
+            format!("Constitution:  {}", stats.constitution),
+            format!("Intelligence:  {}", stats.intelligence),
+            format!("Wisdom:        {}", stats.wisdom),
+            format!("Charisma:      {}", stats.charisma),
         ].iter().map(|it| it.as_ref()).collect::<Vec<&str>>(),
         "Enter your name, finish with enter",
         255);

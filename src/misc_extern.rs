@@ -26,36 +26,6 @@ pub extern fn min_allowable_weight() -> libc::uint16_t {
 }
 
 #[no_mangle]
-pub extern fn squish_stat(stat: libc::int32_t) -> libc::uint8_t {
-    debug::enter("misc_extern::squish_stat");
-
-    let res = misc::squish_stat(stat);
-
-    debug::leave("misc_extern::squish_stat");
-    res
-}
-
-#[no_mangle]
-pub extern fn de_statp(stat: libc::c_uchar) -> libc::c_uchar {
-    debug::enter("misc_extern::de_statp");
-
-    let res = misc::de_statp(stat);
-
-    debug::leave("misc_extern::de_statp");
-    res
-}
-
-#[no_mangle]
-pub extern fn in_statp(stat: libc::c_uchar) -> libc::c_uchar {
-    debug::enter("misc_extern::in_statp");
-
-    let res = misc::in_statp(stat);
-
-    debug::leave("misc_extern::in_statp");
-    res
-}
-
-#[no_mangle]
 pub extern fn C_print_known_spells() {
     debug::enter("misc_extern::print_known_spells");
     misc::print_known_spells();

@@ -3,7 +3,6 @@ use std::ffi::CStr;
 use io;
 use magic;
 use player;
-use random;
 use term;
 
 pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
@@ -23,47 +22,6 @@ pub fn min_allowable_weight() -> u16 {
 
     player_race.weight_base(player_sex) -
         4 * player_race.weight_modifier(player_sex)
-}
-
-// Squish the stat into allowed limits
-pub fn squish_stat(stat: i32) -> u8 {
-    match stat {
-        x if x > 250 => 250,
-        x if x < 0 => 0,
-        _ => stat as u8,
-    }
-}
-
-// Decreases a stat by one randomized level
-pub fn de_statp(stat: u8) -> u8 {
-    if stat < 11 {
-        stat
-    } else if stat < 151 {
-        10
-    } else if stat < 241 {
-        let mut duh = random::randint(10) as u8 + 5;
-        if stat - duh < 150 {
-            duh = stat - 150;
-        }
-        duh
-    } else {
-        random::randint(3) as u8
-    }
-}
-
-// Increases a stat by one randomized level
-pub fn in_statp(stat: u8) -> u8 {
-    if stat < 150 {
-        10
-    } else if stat < 220 {
-        random::randint(25) as u8
-    } else if stat < 240 {
-        random::randint(10) as u8
-    } else if stat < 250 {
-        1
-    } else {
-        0
-    }
 }
 
 // Hack for converting c-array of chars to rust string
@@ -102,18 +60,6 @@ pub fn mod_to_string(stat: i64, base: i64) -> &'static str {
         6           => "Very Good",
         7|8         => "Suberb",
         _           => "Excellent",
-    }
-}
-
-pub fn stat_to_string(stat: i16) -> String {
-    if stat < 0 || stat > 250 {
-        panic!(stat)
-    }
-
-    if stat > 150 {
-        format!("18/{:-2}", stat - 150)
-    } else {
-        format!("{:2}   ", 3 + stat / 10)
     }
 }
 

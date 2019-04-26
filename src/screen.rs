@@ -3,7 +3,6 @@ use std::borrow::Cow;
 
 use debug;
 use equipment;
-use misc;
 use ncurses;
 use player;
 use term;
@@ -45,7 +44,7 @@ fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
 
     ncurses::attron(ncurses::A_DIM);
 
-    let str = format!("{}{:<6}", stat_name.as_ref(), misc::stat_to_string(stat));
+    let str = format!("{}{:<6}", stat_name.as_ref(), stat);
     term::put_buffer(str, row.into(), col.into());
 
     ncurses::attroff(ncurses::A_DIM);
@@ -58,7 +57,7 @@ pub fn prt_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
 {
     debug::enter("prt_stat");
 
-    let str = format!("{}{}", stat_name.as_ref(), misc::stat_to_string(stat));
+    let str = format!("{}{}", stat_name.as_ref(), stat);
     term::put_buffer(str, row.into(), col.into());
 
     debug::leave("prt_stat");
