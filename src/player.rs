@@ -417,18 +417,7 @@ pub fn has_lost_stat(stat: Stat) -> bool {
 }
 
 fn rage_rounds_from_con() -> i8 {
-    match curr_stats().get(Stat::Constitution) {
-        // Should be CON modifier
-        con if con < 10 => -4,
-        con if con < 20 => -3,
-        con if con < 30 => -2,
-        con if con < 40 => -1,
-        con if con < 140 => 0,
-        con if con < 150 => 1,
-        con if con < 226 => 2,
-        con if con < 299 => 3,
-        _ => 4,
-    }
+    modifier_from_stats(Stat::Constitution)
 }
 
 fn rage_rounds_from_level() -> u8 {
