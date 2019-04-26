@@ -96,3 +96,8 @@ pub extern fn C_player_has_lost_stat(stat: libc::uint8_t) -> libc::uint8_t {
         false => 0,
     }
 }
+
+#[no_mangle]
+pub extern fn C_player_mod_stat(stat: libc::uint8_t, modifier: libc::int16_t) {
+    player::mod_stat(Stat::from(stat), modifier);
+}

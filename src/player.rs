@@ -101,6 +101,7 @@ pub struct Player {
     pub rage_exhaustion_rounds_left: u8,
     pub curr_stats: StatBlock,
     pub lost_stats: StatBlock,
+    pub mod_stats: StatBlock,
 }
 
 impl Player {
@@ -112,6 +113,7 @@ impl Player {
             rage_exhaustion_rounds_left: 0,
             curr_stats: StatBlock::new(0),
             lost_stats: StatBlock::new(0),
+            mod_stats: StatBlock::new(0),
         }
     }
 }
@@ -171,7 +173,6 @@ pub struct PlayerRecord {
     pub hitdie: libc::uint8_t,
     pub inven_weight: libc::c_long,
     pub perm_stats: StatBlock,
-    pub mod_stats: StatBlock,
     pub flags: PlayerFlags,
     pub player: Player,
     pub char_row: libc::c_long,
@@ -237,7 +238,6 @@ extern "C" {
     static mut player_uid: libc::int64_t;	/* Used in master file */
 
     static mut player_stats_perm: [libc::uint8_t; 6];
-    pub static mut player_stats_mod: [libc::int8_t; 6];
 
     pub static mut char_row: libc::c_long;
     pub static mut char_col: libc::c_long;
@@ -322,7 +322,7 @@ pub fn curr_stats() -> StatBlock {
 
 pub fn recalc_curr_stats() {
     let perm_stats = perm_stats();
-    let mod_stats = mod_stats();
+    let mod_stats = PLAYER.read().unwrap().mod_stats;
     let lost_stats = PLAYER.read().unwrap().lost_stats;
     let mut curr_stats = StatBlock::new(0);
     for stat in stats_iter() {
@@ -334,14 +334,10 @@ pub fn recalc_curr_stats() {
     mem::replace(&mut PLAYER.write().unwrap().curr_stats, curr_stats);
 }
 
-pub fn mod_stats() -> StatBlock {
-    StatBlock::from(unsafe { player_stats_mod })
-}
-
-pub fn set_mod_stats(block: &StatBlock) {
-    for stat in stats_iter() {
-        unsafe { player_stats_mod[stat] = block.get_pos(stat) as i8 };
-    }
+pub fn mod_stat(stat: Stat, modifier: i16) {
+    let mut stats = PLAYER.write().unwrap().mod_stats;
+    let old_stat = stats.get(stat);
+    stats.set(stat, old_stat + modifier);
 }
 
 pub fn wallet() -> Wallet {
@@ -561,7 +557,6 @@ pub fn record() -> PlayerRecord {
         hitdie: unsafe { player_hitdie },
         inven_weight: unsafe { inven_weight },
         perm_stats: perm_stats(),
-        mod_stats: mod_stats(),
         flags: unsafe { player_flags }.to_owned(),
         player: PLAYER.read().unwrap().clone(),
         char_row: unsafe { char_row },
@@ -684,7 +679,6 @@ pub fn set_record(record: PlayerRecord) {
     }
 
     set_perm_stats(&record.perm_stats);
-    set_mod_stats(&record.mod_stats);
 
     unsafe {
         player_flags = record.flags;

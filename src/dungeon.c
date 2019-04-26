@@ -3159,27 +3159,27 @@ void py_bonuses(treasure_type *tobj, long factor)
 	PF.ffall = false;
 
 	if (uand(Strength_worn_bit, tobj->flags) != 0) {
-		player_stats_mod[STR] += tobj->p1 * factor;
+		C_player_mod_stat(STR, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	if (uand(Dexterity_worn_bit, tobj->flags) != 0) {
-		player_stats_mod[DEX] += tobj->p1 * factor;
+		C_player_mod_stat(DEX, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	if (uand(Constitution_worn_bit, tobj->flags) != 0) {
-		player_stats_mod[CON] += tobj->p1 * factor;
+		C_player_mod_stat(CON, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	if (uand(Intelligence_worn_bit, tobj->flags) != 0) {
-		player_stats_mod[INT] += tobj->p1 * factor;
+		C_player_mod_stat(INT, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	if (uand(Wisdom_worn_bit, tobj->flags) != 0) {
-		player_stats_mod[WIS] += tobj->p1 * factor;
+		C_player_mod_stat(WIS, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	if (uand(Charisma_worn_bit, tobj->flags) != 0) {
-		player_stats_mod[CHR] += tobj->p1 * factor;
+		C_player_mod_stat(CHR, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	C_player_recalc_stats();

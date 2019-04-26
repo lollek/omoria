@@ -3,7 +3,6 @@
 
 /* P_STATS */
 uint8_t player_stats_perm[] = {0, 0, 0, 0, 0, 0};
-int8_t  player_stats_mod[] = {0, 0, 0, 0, 0, 0};
 
 /* P_MISC */
 int64_t player_xtr_wgt = 0;
