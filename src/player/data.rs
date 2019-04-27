@@ -6,10 +6,11 @@ use std::ffi::CString;
 use std::sync::RwLock;
 
 use types::{
-    Class, StatBlock, stats_iter, Wallet, currencies_iter, Race, Sex, Stat,
+    Class, StatBlock, Wallet, currencies_iter, Race, Sex, Stat,
     Magic, GameTime, Ability
 };
 
+use player;
 use random;
 use misc;
 use debug;
@@ -243,7 +244,7 @@ extern "C" {
 }
 
 lazy_static! {
-    static ref PLAYER: RwLock<Player> = RwLock::new(Player::new());
+    pub(super) static ref PLAYER: RwLock<Player> = RwLock::new(Player::new());
 }
 
 pub fn name() -> String {
@@ -300,37 +301,11 @@ pub fn set_class(class: Class) {
     debug::leave("player::set_class");
 }
 
-pub fn set_perm_stats(block: StatBlock) {
-    mem::replace(&mut PLAYER.write().unwrap().perm_stats, block);
-}
-
-pub fn curr_stats() -> StatBlock {
-    let mut stats = PLAYER.read().unwrap().curr_stats;
-    if is_raging() {
-        stats.strength += 4;
-        stats.constitution += 4;
-    }
-    return stats;
-}
-
-pub fn recalc_curr_stats() {
-    let perm_stats = PLAYER.read().unwrap().perm_stats;
-    let mod_stats = PLAYER.read().unwrap().mod_stats;
-    let lost_stats = lost_stats();
-    let mut curr_stats = StatBlock::new(0);
-    for stat in stats_iter() {
-        let curr_stat = perm_stats.get_pos(stat)
-            + mod_stats.get_pos(stat)
-            - lost_stats.get_pos(stat);
-        curr_stats.set_pos(stat, curr_stat);
-    }
-    mem::replace(&mut PLAYER.write().unwrap().curr_stats, curr_stats);
-}
 
 pub fn roll_hp_for_levelup() -> i16 {
     // TODO: At level-up we should only roll the hitdie, and then dynamically modify hp
     // from CON, so that you cannot abuse bumping temp CON before leveling up
-    random::randint(hitdie() as i64) as i16 + hp_from_con()
+    random::randint(hitdie() as i64) as i16 + player::hp_from_con()
 }
 
 pub fn mod_stat(stat: Stat, modifier: i16) {
@@ -367,71 +342,8 @@ pub fn set_bank_wallet(wallet: &Wallet) {
     unsafe { bank[0] = wallet.total };
 }
 
-pub fn ac_from_dex() -> i16 {
-    let mut ac = modifier_from_stat(Stat::Dexterity);
-    if is_raging() {
-        ac -= 2;
-    }
-    return ac;
-}
-
-pub fn tohit_from_stats() -> i16 {
-    (modifier_from_stat(Stat::Strength) + modifier_from_stat(Stat::Dexterity)) / 2
-}
-
-pub fn get_stat(stat: Stat) -> i16 {
-    curr_stats().get(stat)
-}
-
-pub fn modifier_from_stat(stat: Stat) -> i16 {
-    (get_stat(stat) - 10) / 2
-}
-
-pub fn dmg_from_str() -> i16 {
-    modifier_from_stat(Stat::Strength)
-}
-
-pub fn hp_from_con() -> i16 {
-    modifier_from_stat(Stat::Constitution)
-}
-
-pub fn cost_modifier_from_charisma() -> f32 {
-    modifier_from_stat(Stat::Charisma) as f32 * -0.02
-}
-
-pub fn modify_lost_stat(stat: Stat, amount: i16) {
-    let mut stats = PLAYER.write().unwrap().lost_stats;
-    let old_val = stats.get(stat);
-    stats.set(stat, old_val + amount);
-}
-
-pub fn reset_lost_stat(stat: Stat) {
-    PLAYER.write().unwrap().lost_stats.set(stat, 0);
-}
-
-pub fn lost_stats() -> StatBlock {
-    let mut stats = PLAYER.read().unwrap().lost_stats;
-    if is_fatigued() {
-        stats.strength += 2;
-        stats.constitution += 2;
-    }
-    return stats;
-}
-
-pub fn has_lost_stat(stat: Stat) -> bool {
-    lost_stats().get(stat) != 0
-}
-
-fn rage_rounds_from_con() -> i16 {
-    modifier_from_stat(Stat::Constitution)
-}
-
 fn rage_rounds_from_level() -> i16 {
     ((level() - 1) * 2) as i16
-}
-
-pub fn disarm_from_dex() -> i16 {
-    modifier_from_stat(Stat::Dexterity)
 }
 
 // Max amount of health to gain each level up
@@ -473,10 +385,6 @@ pub fn set_uid(val: i64) {
 
 pub fn uid() -> i64 {
     unsafe { player_uid }
-}
-
-pub fn is_dead() -> bool {
-    unsafe { player_flags.dead != 0 }
 }
 
 pub fn increase_save_counter() {
@@ -564,16 +472,8 @@ pub fn set_knows_spell(slot: usize, yn: bool) {
     PLAYER.write().unwrap().spells_known[slot] = yn;
 }
 
-pub fn is_raging() -> bool {
-    PLAYER.read().unwrap().is_raging
-}
-
-pub fn set_raging(yn: bool) {
-    PLAYER.write().unwrap().is_raging = yn;
-}
-
 pub fn get_max_rage_rounds() -> u8 {
-    max(0, 4 + rage_rounds_from_level() + rage_rounds_from_con()) as u8
+    max(0, 4 + rage_rounds_from_level() + player::rage_rounds_from_con()) as u8
 }
 
 pub fn get_rage_rounds_spent() -> u8 {
@@ -590,10 +490,6 @@ pub fn get_rage_exhaustion_rounds_left() -> u8 {
 
 pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
     PLAYER.write().unwrap().rage_exhaustion_rounds_left = new_value;
-}
-
-pub fn is_fatigued() -> bool {
-    get_rage_exhaustion_rounds_left() > 0
 }
 
 pub fn abilities() -> Vec<Ability> {
@@ -760,7 +656,7 @@ pub fn current_bulk() -> u16 {
 
 pub fn max_bulk() -> u16 {
     let player_weight_modifier = 13;
-    min((30 + (curr_stats().strength * 10)) as u16 * player_weight_modifier
+    min((30 + (player::curr_stats().strength * 10)) as u16 * player_weight_modifier
         + current_weight(), 3000)
         + extra_bulk_carry()
 }

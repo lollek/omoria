@@ -40,7 +40,6 @@ pub mod highscore_extern;
 pub mod master_extern;
 pub mod misc_extern;
 pub mod ncurses_extern;
-pub mod player_extern;
 pub mod random_extern;
 pub mod screen_extern;
 pub mod term_extern;
