@@ -1040,7 +1040,6 @@ pub fn create_character() {
 
     unsafe {
         player::player_creation_time = time(null::<time_t>() as *mut i64);
-        player::player_save_count = 0;
         player::player_claim_check = 0;
     }
 

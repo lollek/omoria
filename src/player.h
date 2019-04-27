@@ -55,7 +55,6 @@ extern int64_t  player_mr;		  /* { mag.res.lev.delta } */
 extern uint8_t player_quests;     /* { # completed } {FUBAR} */
 extern uint16_t player_cur_quest; /* { creature # of quest } {FUBAR} */
 extern time_t player_creation_time;     /* used as key in master file */
-extern int64_t player_save_count;	  /* compared to master file value */
 extern int64_t player_claim_check;	 /* used to track trading post */
 extern int64_t player_uid;	/* Used in master file */
 

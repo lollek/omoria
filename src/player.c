@@ -51,7 +51,6 @@ int64_t  player_mr = 0;
 uint8_t player_quests = 0;
 uint16_t player_cur_quest = 0;
 time_t player_creation_time = 0;
-int64_t player_save_count = 0;
 int64_t player_claim_check = 0;
 int64_t player_uid = 0;
 

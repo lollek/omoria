@@ -104,6 +104,7 @@ pub struct Player {
     pub lost_stats: StatBlock,
     pub mod_stats: StatBlock,
     pub perm_stats: StatBlock,
+    pub save_counter: u64,
 }
 
 impl Player {
@@ -117,6 +118,7 @@ impl Player {
             lost_stats: StatBlock::new(0),
             mod_stats: StatBlock::new(0),
             perm_stats: StatBlock::new(0),
+            save_counter: 0,
         }
     }
 }
@@ -125,7 +127,6 @@ impl Player {
 #[repr(C)]
 pub struct PlayerRecord {
     pub uid: libc::int64_t,
-    pub save_count: libc::int64_t,
     pub deaths: libc::int64_t,
     pub xtr_wgt: libc::int64_t,
     pub account: libc::int64_t,
@@ -230,7 +231,6 @@ extern "C" {
     pub static mut player_mr: libc::int64_t  ;		  /* { mag.res.lev.delta } */
     pub static mut player_rep: libc::int64_t ;		  /* { XP from good creatures } */
     pub static mut player_claim_check: libc::int64_t ;	 /* used to track trading post */
-    pub static mut player_save_count: libc::int64_t ;	  /* compared to master file value */
     pub static mut inven_weight: libc::c_long; /* Inventory carry weight */
     pub static mut player_creation_time: libc::time_t ;     /* used as key in master file */
     static mut player_uid: libc::int64_t;	/* Used in master file */
@@ -482,7 +482,7 @@ pub fn is_dead() -> bool {
 }
 
 pub fn increase_save_counter() {
-    unsafe { player_save_count += 1 };
+    PLAYER.write().unwrap().save_counter += 1;
 }
 
 pub fn max_exp() -> i64 {
@@ -500,7 +500,6 @@ pub fn deepest_level() -> u8 {
 pub fn record() -> PlayerRecord {
     PlayerRecord {
         uid: uid(),
-        save_count: unsafe { player_save_count },
         deaths: unsafe { player_deaths },
         xtr_wgt: unsafe { player_xtr_wgt },
         account: unsafe { player_account },
@@ -607,7 +606,6 @@ pub fn abilities() -> Vec<Ability> {
 
 pub fn set_record(record: PlayerRecord) {
     unsafe {
-        player_save_count = record.save_count;
         player_deaths = record.deaths;
         player_xtr_wgt = record.xtr_wgt;
         player_account = record.account;
