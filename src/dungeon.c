@@ -2413,7 +2413,7 @@ static void d__tunnel()
 					   secret_door) {
 					msg_print("You tunnel into the granite "
 						  "wall.");
-					search(char_row, char_col, player_srh);
+					search(char_row, char_col, C_player_get_curr_search_skill());
 				} else {
 					msg_print(
 					    "You can't tunnel through that.");
@@ -2985,7 +2985,7 @@ static void d__execute_command(long *com_val)
 			msg_print(
 			    "You are incapable of searching while blind.");
 		} else {
-			search(char_row, char_col, player_srh);
+			search(char_row, char_col, C_player_get_curr_search_skill());
 		}
 		break;
 	case 't': /* take off */
@@ -3195,7 +3195,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 		player_disarm += (tobj->p1 * factor);
 	}
 	if (uand(Searching_worn_bit, tobj->flags) != 0) {
-		player_srh += (tobj->p1 * factor);
+		C_player_mod_search_skill(tobj->p1 * factor);
 		player_fos -= (tobj->p1 * factor);
 	}
 	if (uand(Stealth_worn_bit, tobj->flags) != 0) {

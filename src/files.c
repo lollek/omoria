@@ -402,7 +402,7 @@ void file_character()
 			if (xfos < 0) {
 				xfos = 0;
 			}
-			xsrh = player_srh + C_player_mod_from_stat(INT);
+			xsrh = C_player_get_curr_search_skill();
 			xstl = player_stl;
 			xdis = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
 			       C_player_mod_from_stat(INT);

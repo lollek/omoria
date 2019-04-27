@@ -1102,10 +1102,10 @@ void change_character()
 	}
 
 	if (!abort) {
-		tmp_val = player_srh;
+		tmp_val = 0;
 		if (cc__input_field("(0-200) Searching = ", &tmp_val, 0, 200,
 				    &flag)) {
-			player_srh = tmp_val;
+			C_player_mod_search_skill(tmp_val);
 		} else {
 			abort = true;
 		}

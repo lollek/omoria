@@ -107,6 +107,7 @@ pub struct Player {
     pub perm_stats: StatBlock,
     pub save_counter: u64,
     pub extra_bulk_carry: u16,
+    pub search_modifier: i16,
 }
 
 impl Player {
@@ -122,6 +123,7 @@ impl Player {
             perm_stats: StatBlock::new(0),
             save_counter: 0,
             extra_bulk_carry: 0,
+            search_modifier: 0,
         }
     }
 }
@@ -151,11 +153,9 @@ pub struct PlayerRecord {
     pub max_exp: libc::int64_t,
     pub exp: libc::int64_t,
     pub rep: libc::int64_t,
-    pub premium: libc::int64_t,
     pub lev: libc::uint16_t,
     pub max_lev: libc::uint16_t,
     pub expfact: libc::c_float,
-    pub srh: libc::int16_t,
     pub fos: libc::int16_t,
     pub stl: libc::uint8_t,
     pub bth: libc::int16_t,
@@ -182,12 +182,10 @@ pub struct PlayerRecord {
 }
 
 extern "C" {
-    pub static mut player_money: [libc::int64_t; 7] ;	 /* { Money on person	} */
-    pub static mut player_play_tm: Time ;	/* { Time spent in game	} */
-    pub static mut player_max_exp: libc::int64_t ;		  /* { Max experience} */
-    pub static mut player_premium: libc::int64_t ;		  /* {Base cost to restore } */
-    pub static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
-    pub static mut player_srh: libc::int16_t ;		  /* { Chance in search} */
+    pub(super) static mut player_money: [libc::int64_t; 7] ; /* { Money on person	} */
+    pub(super) static mut player_play_tm: Time ;/* { Time spent in game	} */
+    pub(super) static mut player_max_exp: libc::int64_t ;  /* { Max experience} */
+    pub(super) static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
     pub static mut player_chp: libc::c_float ;		  /* { Cur hit pts	} */
     pub static mut player_cheated: libc::uint8_t ;	  /*{ gone into wizard or god mode} */
     pub static mut player_quests: libc::uint8_t ;     /* { # completed } {FUBAR} */
@@ -429,11 +427,9 @@ pub fn record() -> PlayerRecord {
         max_exp: unsafe { player_max_exp },
         exp: unsafe { player_exp },
         rep: unsafe { player_rep },
-        premium: unsafe { player_premium },
         lev: level().into(),
         max_lev: unsafe { player_max_lev },
         expfact: unsafe { player_expfact },
-        srh: unsafe { player_srh },
         fos: unsafe { player_fos },
         stl: unsafe { player_stl },
         bth: unsafe { player_bth },
@@ -531,7 +527,6 @@ pub fn set_record(record: PlayerRecord) {
         player_max_exp = record.max_exp;
         player_exp = record.exp;
         player_rep = record.rep;
-        player_premium = record.premium;
     }
 
     set_level(record.lev as u8);
@@ -539,7 +534,6 @@ pub fn set_record(record: PlayerRecord) {
     unsafe {
         player_max_lev = record.max_lev;
         player_expfact = record.expfact;
-        player_srh = record.srh;
         player_fos = record.fos;
         player_stl = record.stl;
         player_bth = record.bth;

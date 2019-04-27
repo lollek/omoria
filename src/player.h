@@ -19,13 +19,11 @@ extern char player_tclass[82];		  /* { Character's class	} */
 extern int64_t player_max_exp;		  /* { Max experience} */
 extern int64_t player_exp;		  /* { Cur experienc	} */
 extern int64_t player_rep;		  /* { XP from good creatures } */
-extern int64_t player_premium;		  /* {Base cost to restore } */
 extern uint16_t player_age;       /* { Characters age} */
 extern uint16_t player_ht;	/* { Height	} */
 extern uint16_t player_wt;	/* { Weight	} */
 extern uint16_t player_lev;       /* { Level		} */
 extern uint16_t player_max_lev;   /* { Max level explored} */
-extern int16_t player_srh;		  /* { Chance in search} */
 extern int16_t player_fos;		  /* { Frenq of search} */
 extern int16_t player_bth;		  /* { Base to hit	} */
 extern int16_t player_bthb;		  /* { BTH with bows	} */
@@ -67,7 +65,8 @@ boolean C_player_uses_magic(enum magic_t magic_type);
 void C_player_add_exp(long num);
 int16_t C_player_roll_hp_for_levelup(void);
 void C_player_set_extra_bulk_carry(uint16_t new_value);
-
+void C_player_mod_search_skill(int16_t modifier);
+int16_t C_player_get_curr_search_skill(void);
 
 void C_player_recalc_stats(void);
 int16_t C_player_get_stat(stat_set attr);

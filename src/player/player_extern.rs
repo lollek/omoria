@@ -172,3 +172,13 @@ pub extern fn C_player_set_extra_bulk_carry(new_value: libc::uint16_t) {
     player::set_extra_bulk_carry(new_value);
     debug::leave("C_player_set_extra_bulk_carry");
 }
+
+#[no_mangle]
+pub extern fn C_player_mod_search_skill(modifier: libc::int16_t) {
+    player::mod_search_skill(modifier);
+}
+
+#[no_mangle]
+pub extern fn C_player_get_curr_search_skill() -> libc::int16_t {
+    player::get_curr_search_skill()
+}

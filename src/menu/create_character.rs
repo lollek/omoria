@@ -85,7 +85,6 @@ fn get_stats() {
 
     unsafe {
         player::player_rep = 0;
-        player::player_srh = race.search_mod() as i16;
         player::player_bth = race.melee_bonus() as i16;
         player::player_bthb = race.ranged_bonus() as i16;
         player::player_fos = race.search_freq() as i16;
@@ -152,8 +151,7 @@ fn put_misc3() {
     let xbthb: i64 = player::ranged_tohit().into();
 
     let xfos: i64 = max(27 - unsafe { player::player_fos }, 0).into();
-    let xsrh: i64 = unsafe { player::player_srh } as i64 +
-        player::modifier_from_stat(Stat::Intelligence) as i64;
+    let xsrh: i64 = player::get_curr_search_skill().into();
     let xstl: i64 = unsafe { player::player_stl }.into();
     let xdis: i64 = unsafe { player::player_disarm } as i64 +
         unsafe { player::player_lev } as i64 +
@@ -207,7 +205,6 @@ fn apply_stats_from_class() {
         player::player_chp = player::player_mhp.into();
         player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
         player::player_bthb += ((player::class().ranged_bonus() * 5) + 20) as i16;
-        player::player_srh += player::class().search_mod() as i16;
         player::player_disarm += player::class().disarm_mod() as i16;
         player::player_fos += player::class().search_freq() as i16;
         player::player_stl += player::class().stealth_mod() as u8;
