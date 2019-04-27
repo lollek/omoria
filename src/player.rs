@@ -310,7 +310,12 @@ pub fn set_perm_stats(block: StatBlock) {
 }
 
 pub fn curr_stats() -> StatBlock {
-    PLAYER.read().unwrap().curr_stats
+    let mut stats = PLAYER.read().unwrap().curr_stats;
+    if is_raging() {
+        stats.strength += 4;
+        stats.constitution += 4;
+    }
+    return stats;
 }
 
 pub fn recalc_curr_stats() {
@@ -375,7 +380,11 @@ pub fn title() -> String {
 }
 
 pub fn ac_from_dex() -> i16 {
-    modifier_from_stat(Stat::Strength)
+    let mut ac = modifier_from_stat(Stat::Dexterity);
+    if is_raging() {
+        ac -= 2;
+    }
+    return ac;
 }
 
 pub fn tohit_from_stats() -> i16 {
@@ -416,12 +425,12 @@ pub fn has_lost_stat(stat: Stat) -> bool {
     PLAYER.read().unwrap().lost_stats.get(stat) != 0
 }
 
-fn rage_rounds_from_con() -> i8 {
-    modifier_from_stats(Stat::Constitution)
+fn rage_rounds_from_con() -> i16 {
+    modifier_from_stat(Stat::Constitution)
 }
 
-fn rage_rounds_from_level() -> u8 {
-    (level() - 1) * 2
+fn rage_rounds_from_level() -> i16 {
+    ((level() - 1) * 2) as i16
 }
 
 pub fn disarm_from_dex() -> i16 {
@@ -572,7 +581,7 @@ pub fn set_raging(yn: bool) {
 }
 
 pub fn get_max_rage_rounds() -> u8 {
-    max(0, 4 + rage_rounds_from_level() as i8 + rage_rounds_from_con()) as u8
+    max(0, 4 + rage_rounds_from_level() + rage_rounds_from_con()) as u8
 }
 
 pub fn get_rage_rounds_spent() -> u8 {
