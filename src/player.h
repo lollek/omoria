@@ -19,7 +19,6 @@ extern char player_tclass[82];		  /* { Character's class	} */
 extern int64_t player_max_exp;		  /* { Max experience} */
 extern int64_t player_exp;		  /* { Cur experienc	} */
 extern int64_t player_rep;		  /* { XP from good creatures } */
-extern int64_t player_deaths;		  /* {Number of insured restores} */
 extern int64_t player_premium;		  /* {Base cost to restore } */
 extern uint16_t player_age;       /* { Characters age} */
 extern uint16_t player_ht;	/* { Height	} */

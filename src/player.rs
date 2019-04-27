@@ -127,7 +127,6 @@ impl Player {
 #[repr(C)]
 pub struct PlayerRecord {
     pub uid: libc::int64_t,
-    pub deaths: libc::int64_t,
     pub xtr_wgt: libc::int64_t,
     pub account: libc::int64_t,
     pub money: Wallet,
@@ -185,7 +184,6 @@ extern "C" {
     pub static mut player_money: [libc::int64_t; 7] ;	 /* { Money on person	} */
     pub static mut player_play_tm: Time ;	/* { Time spent in game	} */
     pub static mut player_max_exp: libc::int64_t ;		  /* { Max experience} */
-    pub static mut player_deaths: libc::int64_t ;		  /* {Number of insured restores} */
     pub static mut player_premium: libc::int64_t ;		  /* {Base cost to restore } */
     pub static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
     pub static mut player_srh: libc::int16_t ;		  /* { Chance in search} */
@@ -500,7 +498,6 @@ pub fn deepest_level() -> u8 {
 pub fn record() -> PlayerRecord {
     PlayerRecord {
         uid: uid(),
-        deaths: unsafe { player_deaths },
         xtr_wgt: unsafe { player_xtr_wgt },
         account: unsafe { player_account },
         money: wallet(),
@@ -606,7 +603,6 @@ pub fn abilities() -> Vec<Ability> {
 
 pub fn set_record(record: PlayerRecord) {
     unsafe {
-        player_deaths = record.deaths;
         player_xtr_wgt = record.xtr_wgt;
         player_account = record.account;
     }

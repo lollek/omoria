@@ -15,7 +15,6 @@ char player_tclass[82] = "";
 int64_t player_max_exp = 0;
 int64_t player_exp = 0;
 int64_t player_rep = 0;
-int64_t player_deaths = 0;
 int64_t player_premium = 0;
 uint16_t player_age = 0;
 uint16_t player_ht = 0;

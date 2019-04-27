@@ -554,9 +554,6 @@ extern void check_kickout_time(long num, long check);
 /* { BANK.INC		} */
 extern void enter_bank();
 
-/* { INSURANCE.INC	} */
-extern void buy_insurance();
-
 /* { river.c } */
 extern void all_the_river_stuff();
 

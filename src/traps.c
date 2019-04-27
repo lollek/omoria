@@ -733,10 +733,7 @@ void hit_trap(long *y, long *x)
 		break;
 
 	case 111: /* { Insurance  } */
-		if (check_store_hours(S_INSURANCE, -1)) {
-			/* msg_print("Moved...to the bank."); */
-			buy_insurance();
-		}
+		msg_print("The insurance shop has gone out of business.");
 		break;
 
 	case 112: /* { Bank       } */
