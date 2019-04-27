@@ -312,17 +312,13 @@ pub fn curr_stats() -> StatBlock {
         stats.strength += 4;
         stats.constitution += 4;
     }
-    if is_fatigued() {
-        stats.strength -= 2;
-        stats.constitution -= 2;
-    }
     return stats;
 }
 
 pub fn recalc_curr_stats() {
     let perm_stats = PLAYER.read().unwrap().perm_stats;
     let mod_stats = PLAYER.read().unwrap().mod_stats;
-    let lost_stats = PLAYER.read().unwrap().lost_stats;
+    let lost_stats = lost_stats();
     let mut curr_stats = StatBlock::new(0);
     for stat in stats_iter() {
         let curr_stat = perm_stats.get_pos(stat)
@@ -415,8 +411,17 @@ pub fn reset_lost_stat(stat: Stat) {
     PLAYER.write().unwrap().lost_stats.set(stat, 0);
 }
 
+pub fn lost_stats() -> StatBlock {
+    let mut stats = PLAYER.read().unwrap().lost_stats;
+    if is_fatigued() {
+        stats.strength += 2;
+        stats.constitution += 2;
+    }
+    return stats;
+}
+
 pub fn has_lost_stat(stat: Stat) -> bool {
-    PLAYER.read().unwrap().lost_stats.get(stat) != 0
+    lost_stats().get(stat) != 0
 }
 
 fn rage_rounds_from_con() -> i16 {

@@ -50,6 +50,7 @@ pub fn rage() -> bool {
 
     player::set_raging(true);
     term::msg_print("You enter a rage");
+    player::recalc_curr_stats();
     return true;
 }
 
@@ -60,6 +61,7 @@ pub fn check_passive_abilities() {
         player::set_rage_exhaustion_rounds_left(exhaust_rounds_left);
         if exhaust_rounds_left == 0 {
             term::msg_print("You are no longer exhausted");
+            player::recalc_curr_stats();
         }
     }
 
@@ -71,6 +73,7 @@ pub fn check_passive_abilities() {
             player::set_rage_rounds_spent(0);
             player::set_rage_exhaustion_rounds_left(rage_rounds * 2);
             term::msg_print("You leave your rage feeling exhausted");
+            player::recalc_curr_stats();
         }
     }
 }
