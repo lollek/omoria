@@ -3251,7 +3251,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 			i1 = 500;
 			break;
 		}
-		player_xtr_wgt += i1 * factor;
+		C_player_set_extra_bulk_carry(i1 * factor);
 	}
 
 	/* with player_do; */

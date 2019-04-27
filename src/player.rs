@@ -105,6 +105,7 @@ pub struct Player {
     pub mod_stats: StatBlock,
     pub perm_stats: StatBlock,
     pub save_counter: u64,
+    pub extra_bulk_carry: u16,
 }
 
 impl Player {
@@ -119,6 +120,7 @@ impl Player {
             mod_stats: StatBlock::new(0),
             perm_stats: StatBlock::new(0),
             save_counter: 0,
+            extra_bulk_carry: 0,
         }
     }
 }
@@ -127,7 +129,6 @@ impl Player {
 #[repr(C)]
 pub struct PlayerRecord {
     pub uid: libc::int64_t,
-    pub xtr_wgt: libc::int64_t,
     pub account: libc::int64_t,
     pub money: Wallet,
     pub birth: GameTime,
@@ -180,7 +181,6 @@ pub struct PlayerRecord {
 }
 
 extern "C" {
-    pub static mut player_xtr_wgt: libc::int64_t ;	  /* { Extra weight limit	} */
     pub static mut player_money: [libc::int64_t; 7] ;	 /* { Money on person	} */
     pub static mut player_play_tm: Time ;	/* { Time spent in game	} */
     pub static mut player_max_exp: libc::int64_t ;		  /* { Max experience} */
@@ -498,7 +498,6 @@ pub fn deepest_level() -> u8 {
 pub fn record() -> PlayerRecord {
     PlayerRecord {
         uid: uid(),
-        xtr_wgt: unsafe { player_xtr_wgt },
         account: unsafe { player_account },
         money: wallet(),
         birth: unsafe { player_birth },
@@ -603,7 +602,6 @@ pub fn abilities() -> Vec<Ability> {
 
 pub fn set_record(record: PlayerRecord) {
     unsafe {
-        player_xtr_wgt = record.xtr_wgt;
         player_account = record.account;
     }
 
@@ -748,6 +746,14 @@ pub fn current_weight() -> u16 {
     unsafe { player_wt }
 }
 
+pub fn set_extra_bulk_carry(new_value: u16) {
+    PLAYER.write().unwrap().extra_bulk_carry = new_value;
+}
+
+pub fn extra_bulk_carry() -> u16 {
+    PLAYER.read().unwrap().extra_bulk_carry
+}
+
 pub fn current_bulk() -> u16 {
     (unsafe { inven_weight }) as u16 / 100
 }
@@ -756,5 +762,5 @@ pub fn max_bulk() -> u16 {
     let player_weight_modifier = 13;
     min((30 + (curr_stats().strength * 10)) as u16 * player_weight_modifier
         + current_weight(), 3000)
-        + unsafe { player_xtr_wgt } as u16
+        + extra_bulk_carry()
 }

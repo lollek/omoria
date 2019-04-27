@@ -165,3 +165,10 @@ pub extern fn C_player_roll_hp_for_levelup() -> libc::int16_t {
     debug::leave("C_player_roll_hp_for_levelup");
     return ret;
 }
+
+#[no_mangle]
+pub extern fn C_player_set_extra_bulk_carry(new_value: libc::uint16_t) {
+    debug::enter("C_player_set_extra_bulk_carry");
+    player::set_extra_bulk_carry(new_value);
+    debug::leave("C_player_set_extra_bulk_carry");
+}
