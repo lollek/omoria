@@ -282,16 +282,4 @@ typedef struct encrypt_state
 	char data_buf[ENCRYPT_STAT_BUF_SIZE + 8];
 } encrypt_state;
 
-typedef struct master_key
-{
-	time_t creation_time;
-} master_key;
-
-typedef struct master_entry
-{
-	int64_t save_count;
-	int64_t deaths;
-	time_t updated;
-} master_entry;
-
 #endif /* TYPES_H */
