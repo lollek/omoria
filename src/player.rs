@@ -10,6 +10,7 @@ use types::{
     Magic, GameTime, Ability
 };
 
+use random;
 use misc;
 use debug;
 
@@ -172,7 +173,6 @@ pub struct PlayerRecord {
     pub dis_tac: libc::int16_t,
     pub disarm: libc::int16_t,
     pub save: libc::int16_t,
-    pub hitdie: libc::uint8_t,
     pub inven_weight: libc::c_long,
     pub flags: PlayerFlags,
     pub player: Player,
@@ -225,7 +225,6 @@ extern "C" {
     pub static mut player_dis_tac: libc::int16_t ;		  /* { Display +ToTAC} */
     pub static mut player_disarm: libc::int16_t ;		  /* { % to Disarm	} */
     pub static mut player_save: libc::int16_t ;		  /* { Saving throw	} */
-    pub static mut player_hitdie: libc::uint8_t ;     /* { Char hit die	} */
     pub static mut player_expfact: libc::c_float ;		  /* { Experience factor} */
     pub static mut player_cmana: libc::c_float ;		  /* { Cur mana pts  } */
     pub static mut player_exp: libc::int64_t ;		  /* { Cur experienc	} */
@@ -330,6 +329,12 @@ pub fn recalc_curr_stats() {
         curr_stats.set_pos(stat, curr_stat);
     }
     mem::replace(&mut PLAYER.write().unwrap().curr_stats, curr_stats);
+}
+
+pub fn roll_hp_for_levelup() -> i16 {
+    // TODO: At level-up we should only roll the hitdie, and then dynamically modify hp
+    // from CON, so that you cannot abuse bumping temp CON before leveling up
+    random::randint(hitdie() as i64) as i16 + hp_from_con()
 }
 
 pub fn mod_stat(stat: Stat, modifier: i16) {
@@ -551,7 +556,6 @@ pub fn record() -> PlayerRecord {
         dis_tac: unsafe { player_dis_tac },
         disarm: unsafe { player_disarm },
         save: unsafe { player_save },
-        hitdie: unsafe { player_hitdie },
         inven_weight: unsafe { inven_weight },
         flags: unsafe { player_flags }.to_owned(),
         player: PLAYER.read().unwrap().clone(),
@@ -670,7 +674,6 @@ pub fn set_record(record: PlayerRecord) {
         player_dis_tac = record.dis_tac;
         player_disarm = record.disarm;
         player_save = record.save;
-        player_hitdie = record.hitdie;
         inven_weight = record.inven_weight;
     }
 

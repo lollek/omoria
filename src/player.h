@@ -46,7 +46,6 @@ extern int16_t player_save;		  /* { Saving throw	} */
 extern int16_t player_sc;		  /* { Social Class	} */
 extern enum class_t player_pclass;      /* { # of class	} */
 extern uint8_t player_prace;      /* { # of race	} */
-extern uint8_t player_hitdie;     /* { Char hit die	} */
 extern uint8_t player_stl;	/* { Stealth factor} */
 extern float player_expfact;		  /* { Experience factor} */
 extern float player_cmana;		  /* { Cur mana pts  } */
@@ -69,6 +68,7 @@ boolean C_player_knows_spell(int32_t slot);
 void C_player_set_knows_spell(int32_t slot, boolean yn);
 boolean C_player_uses_magic(enum magic_t magic_type);
 void C_player_add_exp(long num);
+int16_t C_player_roll_hp_for_levelup(void);
 
 void C_player_recalc_stats(void);
 int16_t C_player_get_stat(stat_set attr);

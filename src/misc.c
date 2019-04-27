@@ -3,12 +3,6 @@
 #include "imoria.h"
 #include "save.h"
 
-/*{ Calculates hit points for each level that is gained.	-RAK- * }*/
-static long get_hitdie()
-{
-	return randint(player_hitdie) + C_player_hp_from_con();
-}
-
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 /* Print list of spells     -RAK- */
 static void print_new_spells(spl_type spell, long num, boolean *redraw)
@@ -1266,7 +1260,7 @@ void gain_level()
 	long nhp, dif_exp, need_exp;
 	ENTER(("gain_level", ""));
 
-	nhp = get_hitdie();
+	nhp = C_player_roll_hp_for_levelup();
 	player_mhp += nhp;
 	player_chp += nhp;
 	if (player_mhp < 1) {

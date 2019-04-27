@@ -42,7 +42,6 @@ int16_t player_save = 0;
 int16_t player_sc = 0;
 enum class_t player_pclass = 0;
 uint8_t player_prace = 0;
-uint8_t player_hitdie = 0;
 uint8_t player_stl = 0;
 float player_expfact = 0;
 float player_cmana = 0;

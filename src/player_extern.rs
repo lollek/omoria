@@ -106,3 +106,8 @@ pub extern fn C_player_mod_stat(stat: libc::uint8_t, modifier: libc::int16_t) {
 pub extern fn C_player_mod_perm_stat(stat: libc::uint8_t, modifier: libc::int16_t) {
     player::mod_perm_stat(Stat::from(stat), modifier);
 }
+
+#[no_mangle]
+pub extern fn C_player_roll_hp_for_levelup() -> libc::int16_t {
+    player::roll_hp_for_levelup()
+}
