@@ -11,7 +11,6 @@ time_type player_play_tm = {0, 0, 0, 0, 0, 0, 0};
 char player_name[82] = "";
 char player_race[82] = "";
 char player_sex[82] = "";
-char player_title[82] = "";
 char player_tclass[82] = "";
 int64_t player_max_exp = 0;
 int64_t player_exp = 0;

@@ -8,8 +8,9 @@ the PROGRESS-file.
 
 ## Major stuff
 * Add barbarian
-Alternative to fighter, who can rage in fights. Cannot use heavy armor. Neither
-raging nor starting equipment is yet implemented.
+Alternative to fighter, who can rage in fights. Cannot use heavy armor. May be
+more buggy than other classes at first
+
 * Changed stats
 No longer goes from 3 -> 17 -> 18/00 -> 18/99. Now instead goes from 0 and up,
 where 18/00 is 18 and 18/99 is around 24-25. Now stuff is generally calculated
@@ -17,6 +18,11 @@ the 3e dnd way, where modifiers = (stat - 10) / 2. Before it was totally up in
 the air, where the cut-off-points usually were in between skill levels. After
 this change, most modifiers from stats are somewhere between half as good and
 twice as good as before, depending on skills, levels and stats.
+
+## Minor stuff
+* Removed titles
+Some were cool, but mostly it was annoying having to come up with titles for new
+classes, also a lot of them were immersion-breaking.
 
 ### February 2019
 

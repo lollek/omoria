@@ -14,7 +14,6 @@ pub struct MasterRecord {
     pub user_name: String,
     pub character_name: String,
     pub points: i64,
-    pub title: String,
     pub alive: bool,
     pub level: u8,
     pub race: String,
@@ -84,7 +83,6 @@ pub fn update_character(uid: i64) -> Option<()> {
         let record = records.get_mut(pos).unwrap();
         record.character_name = player::name();
         record.points = player::calc_total_points();
-        record.title = player::title();
         record.alive = !player::is_dead();
         record.level = player::level();
     }
@@ -113,7 +111,6 @@ pub fn add_character() -> Option<i64> {
         user_name: "-".to_string(),
         character_name: player::name(),
         points: player::calc_total_points(),
-        title: player::title(),
         alive: true,
         level: player::level(),
         race: player::race().name().to_string(),

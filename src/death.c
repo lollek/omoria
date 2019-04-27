@@ -69,10 +69,8 @@ void ud__kingly()
 	strcpy(died_from, "Ripe Old Age");
 
 	if (characters_sex() == MALE) {
-		strcpy(player_title, "Magnificent");
 		strcat(player_tclass, " King");
 	} else {
-		strcpy(player_title, "Beautiful");
 		strcat(player_tclass, " Queen");
 	}
 
@@ -197,7 +195,7 @@ void make_tomb(char dd[][82])
 
 	date(day);
 	ud__fill_str(str1, player_name);
-	ud__fill_str(str2, player_title);
+	ud__fill_str(str2, "Magnificent");
 	ud__fill_str(str3, player_tclass);
 	sprintf(temp, "Level : %d", player_lev);
 	ud__fill_str(str4, temp);

@@ -15,7 +15,6 @@ extern time_type player_play_tm;	/* { Time spent in game	} */
 extern char player_name[82];		  /* { Name of character	} */
 extern char player_race[82];		  /* { Race of character	} */
 extern char player_sex[82];		  /* { Sex of character	} */
-extern char player_title[82];		  /* { Character's title	} */
 extern char player_tclass[82];		  /* { Character's class	} */
 extern int64_t player_max_exp;		  /* { Max experience} */
 extern int64_t player_exp;		  /* { Cur experienc	} */

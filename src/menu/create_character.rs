@@ -213,7 +213,6 @@ fn apply_stats_from_class() {
         player::player_stl += player::class().stealth_mod() as u8;
         player::player_save += player::class().save_mod() as i16;
         player::player_expfact += player::class().expfactor();
-        player::refresh_title();
         player::player_mr = player::class().magic_resist().into();
 
         // Real values

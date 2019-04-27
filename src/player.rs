@@ -140,7 +140,6 @@ pub struct PlayerRecord {
     pub race: Race,
     pub sex: Sex,
     pub class: Class,
-    pub title: String,
     pub history: Vec<String>,
     pub cheated: libc::uint8_t,
     pub age: libc::uint16_t,
@@ -197,7 +196,6 @@ extern "C" {
     pub static mut player_cur_age: GameTime;   /* {Current game date	} */
     pub static mut player_flags: PlayerFlags;
     pub static mut player_history: [[libc::c_char; 82]; 5];
-    static mut player_title: [libc::c_char; 82];
     static mut player_name: [libc::c_char; 82];
     static mut player_race: [libc::c_char; 82];
     static mut player_prace: libc::uint8_t;
@@ -375,19 +373,6 @@ pub fn set_bank_wallet(wallet: &Wallet) {
     unsafe { bank[0] = wallet.total };
 }
 
-pub fn refresh_title() {
-    let new_title = class().title(level());
-    let cstr = CString::new(new_title).unwrap();
-    unsafe {
-        libc::strcpy(player_title.as_mut_ptr(), cstr.as_ptr());
-    }
-}
-
-pub fn title() -> String {
-    let string: Vec<u8> = unsafe { player_title }.iter().map(|&i| i as u8).collect();
-    misc::c_array_to_rust_string(string)
-}
-
 pub fn ac_from_dex() -> i16 {
     let mut ac = modifier_from_stat(Stat::Dexterity);
     if is_raging() {
@@ -525,7 +510,6 @@ pub fn record() -> PlayerRecord {
         race: race(),
         sex: sex(),
         class: class(),
-        title: title(),
         history: unsafe { player_history }.iter()
             .map(|i| misc::c_i8_array_to_rust_string(i.to_vec()))
             .collect(),
@@ -639,7 +623,6 @@ pub fn set_record(record: PlayerRecord) {
     set_race(record.race);
     set_sex(record.sex);
     set_class(record.class);
-    refresh_title();
 
     for (i, line) in record.history.iter().enumerate() {
         let cstr = CString::new(line.to_string()).unwrap();

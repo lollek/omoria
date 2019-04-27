@@ -4372,8 +4372,6 @@ void xp_loss(long amount)
 		player_cmana = player_mana;
 	}
 
-	strcpy(player_title, player_titles[player_pclass][player_lev]);
-
 	prt_stat_block();
 }
 

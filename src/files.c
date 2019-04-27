@@ -365,9 +365,9 @@ void file_character()
 				       "Dexterity    : %d\n",
 				player_tclass, player_sc, C_player_get_stat(DEX));
 
-			fprintf(file1, "  Title : %24s                       "
+			fprintf(file1, "          %24s                       "
 				       "Constitution : %d\n",
-				player_title, C_player_get_stat(CON));
+				"", C_player_get_stat(CON));
 
 			fprintf(file1, "          %24s              %4s      "
 				       "Charisma     : %d\n",

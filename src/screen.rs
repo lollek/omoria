@@ -14,7 +14,6 @@ const STAT_COL: u8 = 0;
 
 const RACE_ROW: u8 = 1;
 const CLASS_ROW: u8 = 2;
-const TITLE_ROW: u8 = 3;
 const HP_ROW: u8 = 5;
 const MANA_ROW: u8 = 6;
 const STAT_ROW: u8 = 8; // -> 13
@@ -193,7 +192,6 @@ fn print_equipment(row: u8, col: u8) {
 fn print_stats_column() {
     print_field(player::race().name(), RACE_ROW, STAT_COL);
     print_field(player::class().name(), CLASS_ROW, STAT_COL);
-    print_field(player::title(), TITLE_ROW, STAT_COL);
 
     print_hp(HP_ROW, STAT_COL);
     print_mana(MANA_ROW, STAT_COL);

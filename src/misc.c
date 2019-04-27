@@ -1259,7 +1259,6 @@ void gain_level()
 	/*{ Increases hit points and level			-RAK-	}*/
 	long nhp, dif_exp, need_exp;
 	ENTER(("gain_level", ""));
-
 	nhp = C_player_roll_hp_for_levelup();
 	player_mhp += nhp;
 	player_chp += nhp;
@@ -1273,7 +1272,6 @@ void gain_level()
 		dif_exp = player_exp - need_exp;
 		player_exp = need_exp + (dif_exp / 2);
 	}
-	strcpy(player_title, player_titles[player_pclass][player_lev]);
 	msg_print("Your skills have improved.");
 	msg_print(" ");
 	learn_magic(true);
