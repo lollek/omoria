@@ -152,9 +152,10 @@ fn print_mana(row: u8, col: u8) {
 }
 
 fn print_time(row: u8, col: u8) {
-    let min = unsafe { player::player_cur_age.secs } / 60;
-    let hour = unsafe { player::player_cur_age.hour };
-    let dow = match unsafe { player::player_cur_age.day } % 7 {
+    let player_age = player::age();
+    let min = player_age.secs / 60;
+    let hour = player_age.hour;
+    let dow = match player_age.day % 7 {
         0 => "Moonday",
         1 => "Toilday",
         2 => "Wealday",

@@ -38,12 +38,12 @@ pub fn use_ability(ability: Ability) -> bool {
 }
 
 pub fn rage() -> bool {
-    if player::get_rage_rounds_spent() > 0 {
+    if player::rage_rounds_spent() > 0 {
         term::msg_print("You need to rest before you can rage again");
         return true;
     }
 
-    if player::get_rage_exhaustion_rounds_left() > 0 {
+    if player::rage_exhaustion_rounds_left() > 0 {
         term::msg_print("You are too exhausted to rage");
         return true;
     }
@@ -55,7 +55,7 @@ pub fn rage() -> bool {
 }
 
 pub fn check_passive_abilities() {
-    let mut exhaust_rounds_left = player::get_rage_exhaustion_rounds_left();
+    let mut exhaust_rounds_left = player::rage_exhaustion_rounds_left();
     if exhaust_rounds_left > 0 {
         exhaust_rounds_left -= 1;
         player::set_rage_exhaustion_rounds_left(exhaust_rounds_left);
@@ -66,9 +66,9 @@ pub fn check_passive_abilities() {
     }
 
     if player::is_raging() {
-        let rage_rounds = player::get_rage_rounds_spent() + 1;
+        let rage_rounds = player::rage_rounds_spent() + 1;
         player::set_rage_rounds_spent(rage_rounds);
-        if rage_rounds > player::get_max_rage_rounds() {
+        if rage_rounds > player::max_rage_rounds() {
             player::set_raging(false);
             player::set_rage_rounds_spent(0);
             player::set_rage_exhaustion_rounds_left(rage_rounds * 2);

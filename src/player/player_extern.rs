@@ -179,6 +179,6 @@ pub extern fn C_player_mod_search_skill(modifier: libc::int16_t) {
 }
 
 #[no_mangle]
-pub extern fn C_player_get_curr_search_skill() -> libc::int16_t {
-    player::get_curr_search_skill()
+pub extern fn C_player_curr_search_skill() -> libc::int16_t {
+    player::curr_search_skill()
 }

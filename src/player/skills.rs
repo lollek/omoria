@@ -11,12 +11,12 @@ fn search_skill_modifier() -> i16 {
     PLAYER.read().unwrap().search_modifier
 }
 
-pub fn get_perm_search_skill() -> i16 {
+pub fn perm_search_skill() -> i16 {
     (player::race().search_mod() + player::class().search_mod()).into()
 }
 
-pub fn get_curr_search_skill() -> i16 {
-    get_perm_search_skill()
+pub fn curr_search_skill() -> i16 {
+    perm_search_skill()
         + player::modifier_from_stat(Stat::Intelligence)
         + search_skill_modifier()
 }

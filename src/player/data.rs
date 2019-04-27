@@ -186,12 +186,12 @@ extern "C" {
     pub(super) static mut player_play_tm: Time ;/* { Time spent in game	} */
     pub(super) static mut player_max_exp: libc::int64_t ;  /* { Max experience} */
     pub(super) static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
-    pub static mut player_chp: libc::c_float ;		  /* { Cur hit pts	} */
-    pub static mut player_cheated: libc::uint8_t ;	  /*{ gone into wizard or god mode} */
-    pub static mut player_quests: libc::uint8_t ;     /* { # completed } {FUBAR} */
-    pub static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
-    pub static mut player_birth: GameTime;     /* {Date of char's birth} */
-    pub static mut player_cur_age: GameTime;   /* {Current game date	} */
+    pub(super) static mut player_chp: libc::c_float ;  /* { Cur hit pts	} */
+    pub(super) static mut player_cheated: libc::uint8_t ;  /*{ gone into wizard or god mode} */
+    pub(super) static mut player_quests: libc::uint8_t ;     /* { # completed } {FUBAR} */
+    pub(super) static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
+    pub(super) static mut player_birth: GameTime;     /* {Date of char's birth} */
+    pub(super) static mut player_cur_age: GameTime;   /* {Current game date	} */
     pub static mut player_flags: PlayerFlags;
     pub static mut player_history: [[libc::c_char; 82]; 5];
     static mut player_name: [libc::c_char; 82];
@@ -468,11 +468,11 @@ pub fn set_knows_spell(slot: usize, yn: bool) {
     PLAYER.write().unwrap().spells_known[slot] = yn;
 }
 
-pub fn get_max_rage_rounds() -> u8 {
+pub fn max_rage_rounds() -> u8 {
     max(0, 4 + rage_rounds_from_level() + player::rage_rounds_from_con()) as u8
 }
 
-pub fn get_rage_rounds_spent() -> u8 {
+pub fn rage_rounds_spent() -> u8 {
     PLAYER.read().unwrap().rage_rounds_spent
 }
 
@@ -480,7 +480,7 @@ pub fn set_rage_rounds_spent(new_value: u8) {
     PLAYER.write().unwrap().rage_rounds_spent = new_value;
 }
 
-pub fn get_rage_exhaustion_rounds_left() -> u8 {
+pub fn rage_exhaustion_rounds_left() -> u8 {
     PLAYER.read().unwrap().rage_exhaustion_rounds_left
 }
 
@@ -584,6 +584,14 @@ pub fn current_hp() -> i16 {
     (unsafe { player_chp }) as i16
 }
 
+pub fn reset_current_hp() {
+    unsafe { player_chp = player_mhp.into() };
+}
+
+pub fn modify_current_hp(amount: f32) {
+    unsafe { player_chp += amount; }
+}
+
 pub fn max_hp() -> i16 {
     unsafe { player_mhp }
 }
@@ -653,4 +661,20 @@ pub fn max_bulk() -> u16 {
     min((30 + (player::curr_stats().strength * 10)) as u16 * player_weight_modifier
         + current_weight(), 3000)
         + extra_bulk_carry()
+}
+
+pub fn set_birthdate(new_value: GameTime) {
+    unsafe { player_birth = new_value; }
+}
+
+pub fn birthdate() -> GameTime {
+    unsafe { player_birth }
+}
+
+pub fn set_age(new_value: GameTime) {
+    unsafe { player_cur_age = new_value; }
+}
+
+pub fn age() -> GameTime {
+    unsafe { player_cur_age }
 }

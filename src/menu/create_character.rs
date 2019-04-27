@@ -14,7 +14,7 @@ use screen;
 use term;
 use menu::helpers;
 
-use types::{Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex};
+use types::{Stat, StatBlock, stats_iter, Race, races_iter, Currency, Sex, GameTime};
 
 extern "C" {
     fn add_money(amount: i64);
@@ -135,7 +135,7 @@ fn put_misc2() {
     term::prt(format!("Gold       : {}", player::wallet().total), 11, 30);
     term::prt(format!("Account    : {}", unsafe { player::player_account }), 12, 30);
     term::prt(format!("Max Hit Points : {}", unsafe { player::player_mhp }), 9, 53);
-    term::prt(format!("Cur Hit Points : {}", unsafe { player::player_chp }), 10, 53);
+    term::prt(format!("Cur Hit Points : {}", player::current_hp()), 10, 53);
     term::prt(format!("Max Mana       : {}", unsafe { player::player_mana }), 11, 53);
     term::prt(format!("Cur Mana       : {}", unsafe { player::player_cmana }), 12, 53);
 
@@ -151,7 +151,7 @@ fn put_misc3() {
     let xbthb: i64 = player::ranged_tohit().into();
 
     let xfos: i64 = max(27 - unsafe { player::player_fos }, 0).into();
-    let xsrh: i64 = player::get_curr_search_skill().into();
+    let xsrh: i64 = player::curr_search_skill().into();
     let xstl: i64 = unsafe { player::player_stl }.into();
     let xdis: i64 = unsafe { player::player_disarm } as i64 +
         unsafe { player::player_lev } as i64 +
@@ -202,7 +202,9 @@ fn print_history() {
 fn apply_stats_from_class() {
     unsafe {
         player::player_mhp = (player::hitdie() as i8 + player::hp_from_con() as i8).into();
-        player::player_chp = player::player_mhp.into();
+    }
+    player::reset_current_hp();
+    unsafe {
         player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
         player::player_bthb += ((player::class().ranged_bonus() * 5) + 20) as i16;
         player::player_disarm += player::class().disarm_mod() as i16;
@@ -312,27 +314,25 @@ fn generate_ahw() {
 
     unsafe {
         player::player_age = generate_player_age(player_race);
+    }
 
-        player::player_birth.year = 500 + random::randint(50);
-        player::player_birth.month = random::randint(13) as u8;
-        player::player_birth.day = random::randint(28) as u8;
-        player::player_birth.hour = (random::randint(24) - 1) as u8;
-        player::player_birth.secs = (random::randint(400) - 1) as u16;
+    let mut player_birthdate: GameTime = GameTime::new();
+    player_birthdate.year = 500 + random::randint(50);
+    player_birthdate.month = random::randint(13) as u8;
+    player_birthdate.day = random::randint(28) as u8;
+    player_birthdate.hour = (random::randint(24) - 1) as u8;
+    player_birthdate.secs = (random::randint(400) - 1) as u16;
+    player::set_birthdate(player_birthdate);
 
-        player::player_cur_age.year = player::player_age as i64 + player::player_birth.year;
-        player::player_cur_age.month = player::player_birth.month as u8;
-        player::player_cur_age.day = (player::player_birth.day + 1) as u8;
-        /*
-           if player_cur_age.day % 7 == 0 {
-           add_days(&player_cur_age, 2);
-           }
-           if player_cur_age.day % 7 == 1 {
-           add_days(&player_cur_age, 1);
-           }
-           */
-        player::player_cur_age.hour = 7 as u8;
-        player::player_cur_age.secs = (300 + random::randint(99)) as u16;
+    let mut player_age: GameTime = GameTime::new();
+    player_age.year = unsafe { player::player_age } as i64 + player_birthdate.year;
+    player_age.month = player_birthdate.month as u8;
+    player_age.day = (player_birthdate.day + 1) as u8;
+    player_age.hour = 7 as u8;
+    player_age.secs = (300 + random::randint(99)) as u16;
+    player::set_age(player_age);
 
+    unsafe {
         player::player_ht = generate_player_height(player_race, player_sex);
         player::player_wt = generate_player_weight(player_race, player_sex);
 

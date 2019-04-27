@@ -66,7 +66,7 @@ void C_player_add_exp(long num);
 int16_t C_player_roll_hp_for_levelup(void);
 void C_player_set_extra_bulk_carry(uint16_t new_value);
 void C_player_mod_search_skill(int16_t modifier);
-int16_t C_player_get_curr_search_skill(void);
+int16_t C_player_curr_search_skill(void);
 
 void C_player_recalc_stats(void);
 int16_t C_player_get_stat(stat_set attr);

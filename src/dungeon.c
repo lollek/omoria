@@ -2413,7 +2413,7 @@ static void d__tunnel()
 					   secret_door) {
 					msg_print("You tunnel into the granite "
 						  "wall.");
-					search(char_row, char_col, C_player_get_curr_search_skill());
+					search(char_row, char_col, C_player_curr_search_skill());
 				} else {
 					msg_print(
 					    "You can't tunnel through that.");
@@ -2985,7 +2985,7 @@ static void d__execute_command(long *com_val)
 			msg_print(
 			    "You are incapable of searching while blind.");
 		} else {
-			search(char_row, char_col, C_player_get_curr_search_skill());
+			search(char_row, char_col, C_player_curr_search_skill());
 		}
 		break;
 	case 't': /* take off */

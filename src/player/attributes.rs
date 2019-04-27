@@ -15,6 +15,6 @@ pub fn set_raging(yn: bool) {
 }
 
 pub fn is_fatigued() -> bool {
-    player::get_rage_exhaustion_rounds_left() > 0
+    player::rage_exhaustion_rounds_left() > 0
 }
 

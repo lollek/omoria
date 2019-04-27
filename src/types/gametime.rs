@@ -10,3 +10,14 @@ pub struct GameTime {
     pub secs: libc::uint16_t,
 }
 
+impl GameTime {
+    pub fn new() -> Self {
+        GameTime {
+            year: 0,
+            month: 0,
+            day: 0,
+            hour: 0,
+            secs: 0,
+        }
+    }
+}
