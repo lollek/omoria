@@ -314,6 +314,10 @@ pub fn curr_stats() -> StatBlock {
         stats.strength += 4;
         stats.constitution += 4;
     }
+    if is_fatigued() {
+        stats.strength -= 2;
+        stats.constitution -= 2;
+    }
     return stats;
 }
 
@@ -602,6 +606,10 @@ pub fn get_rage_exhaustion_rounds_left() -> u8 {
 
 pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
     PLAYER.write().unwrap().rage_exhaustion_rounds_left = new_value;
+}
+
+pub fn is_fatigued() -> bool {
+    get_rage_exhaustion_rounds_left() > 0
 }
 
 pub fn abilities() -> Vec<Ability> {
