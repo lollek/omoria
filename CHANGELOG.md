@@ -23,6 +23,8 @@ twice as good as before, depending on skills, levels and stats.
 * Removed titles
 Some were cool, but mostly it was annoying having to come up with titles for new
 classes, also a lot of them were immersion-breaking.
+* Your race no longer has any effect on your health points
+Now comes fully from your class
 
 ### February 2019
 

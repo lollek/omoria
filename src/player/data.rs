@@ -346,7 +346,7 @@ fn rage_rounds_from_level() -> i16 {
 
 // Max amount of health to gain each level up
 pub fn hitdie() -> u8 {
-    class().health_bonus() + race().health_bonus()
+    class().health_bonus()
 }
 
 pub fn melee_tohit() -> i16 {

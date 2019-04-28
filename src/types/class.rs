@@ -61,15 +61,15 @@ impl Class {
     pub fn health_bonus(&self) -> u8 {
         match self {
             Class::Fighter => 10,
-            Class::Wizard => 0,
-            Class::Cleric => 3,
-            Class::Rogue => 6,
-            Class::Ranger => 4,
-            Class::Paladin => 6,
-            Class::Druid => 3,
-            Class::Bard => 4,
-            Class::Adventurer => 4,
-            Class::Monk => 4,
+            Class::Wizard => 6,
+            Class::Cleric => 8,
+            Class::Rogue => 8,
+            Class::Ranger => 10,
+            Class::Paladin => 10,
+            Class::Druid => 8,
+            Class::Bard => 8,
+            Class::Adventurer => 10,
+            Class::Monk => 8,
             Class::Barbarian => 12,
         }
     }

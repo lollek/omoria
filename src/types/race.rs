@@ -50,7 +50,6 @@ impl Race {
         vec![
             format!("Melee bonus:       {}", self.melee_bonus()),
             format!("Ranged bonus:      {}", self.ranged_bonus()),
-            format!("Health bonus:      {}", self.health_bonus()),
             format!("Experience factor: {}", self.expfactor()),
             format!("Search frequence:  {}", self.search_freq()),
             format!("Search modifier:   {}", self.search_mod()),
@@ -171,21 +170,6 @@ impl Race {
             Race::HalfTroll => -5,
             Race::Phraint => 15,
             Race::Dryad => 2,
-        }
-    }
-
-    pub fn health_bonus(&self) -> u8 {
-        match self {
-            Race::Human => 10,
-            Race::HalfElf => 9,
-            Race::Elf => 8,
-            Race::Halfling => 6,
-            Race::Gnome => 7,
-            Race::Dwarf => 9,
-            Race::HalfOrc => 10,
-            Race::HalfTroll => 12,
-            Race::Phraint => 8,
-            Race::Dryad => 7,
         }
     }
 
