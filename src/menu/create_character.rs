@@ -134,7 +134,7 @@ fn put_misc2() {
     term::prt(format!("Experience : {}", unsafe { player::player_exp }), 10, 30);
     term::prt(format!("Gold       : {}", player::wallet().total), 11, 30);
     term::prt(format!("Account    : {}", unsafe { player::player_account }), 12, 30);
-    term::prt(format!("Max Hit Points : {}", unsafe { player::player_mhp }), 9, 53);
+    term::prt(format!("Max Hit Points : {}", player::max_hp()), 9, 53);
     term::prt(format!("Cur Hit Points : {}", player::current_hp()), 10, 53);
     term::prt(format!("Max Mana       : {}", unsafe { player::player_mana }), 11, 53);
     term::prt(format!("Cur Mana       : {}", unsafe { player::player_cmana }), 12, 53);
@@ -200,9 +200,7 @@ fn print_history() {
 
 
 fn apply_stats_from_class() {
-    unsafe {
-        player::player_mhp = (player::hitdie() as i8 + player::hp_from_con() as i8).into();
-    }
+    player::modify_max_hp(player::hitdie() as i16 + player::hp_from_con());
     player::reset_current_hp();
     unsafe {
         player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
@@ -1000,7 +998,7 @@ fn confirm_character() {
             format!("Sex:           {}", player::sex().to_string()),
             format!("Class:         {}", player::class().name()),
             "".to_string(),
-            format!("Hit Points     {}", unsafe { player::player_mhp }),
+            format!("Hit Points     {}", player::max_hp()),
             format!("Mana           {}", unsafe { player::player_mana }),
             "".to_string(),
             "(Attributes):".to_string(),

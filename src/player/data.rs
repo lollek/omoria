@@ -206,7 +206,7 @@ extern "C" {
     pub static mut player_ht: libc::uint16_t ;	/* { Height	} */
     pub static mut player_wt: libc::uint16_t ;	/* { Weight	} */
     pub static mut player_lev: libc::uint16_t ;       /* { Level		} */
-    pub static mut player_mhp: libc::int16_t ;		  /* { Max hit pts	} */
+    pub(super) static mut player_mhp: libc::int16_t ;  /* { Max hit pts	} */
     pub static mut player_fos: libc::int16_t ;		  /* { Frenq of search} */
     pub static mut player_bth: libc::int16_t ;		  /* { Base to hit	} */
     pub static mut player_bthb: libc::int16_t ;		  /* { BTH with bows	} */
@@ -594,6 +594,10 @@ pub fn modify_current_hp(amount: f32) {
 
 pub fn max_hp() -> i16 {
     unsafe { player_mhp }
+}
+
+pub fn modify_max_hp(amount: i16) {
+    unsafe { player_mhp += amount; }
 }
 
 pub fn current_mp() -> i16 {
