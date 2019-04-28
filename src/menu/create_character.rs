@@ -88,7 +88,7 @@ fn get_stats() {
         player::player_bth = race.melee_bonus() as i16;
         player::player_bthb = race.ranged_bonus() as i16;
         player::player_fos = race.search_freq() as i16;
-        player::player_stl = race.stealth_mod() as u8; // TODO BUG! overflows for some races
+        player::player_stl = race.stealth_mod() as i16;
         player::player_save = race.save_mod() as i16;
         player::player_lev = 1;
         player::player_ptodam = player::dmg_from_str() as i16;
@@ -200,14 +200,16 @@ fn print_history() {
 
 
 fn apply_stats_from_class() {
-    player::modify_max_hp(player::hitdie() as i16 + player::hp_from_con());
+    debug::enter("create_character::apply_stats_from_class");
+
+    player::modify_max_hp(player::hitdie() as i16);
     player::reset_current_hp();
     unsafe {
         player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
         player::player_bthb += ((player::class().ranged_bonus() * 5) + 20) as i16;
         player::player_disarm += player::class().disarm_mod() as i16;
         player::player_fos += player::class().search_freq() as i16;
-        player::player_stl += player::class().stealth_mod() as u8;
+        player::player_stl += player::class().stealth_mod() as i16;
         player::player_save += player::class().save_mod() as i16;
         player::player_expfact += player::class().expfactor();
         player::player_mr = player::class().magic_resist().into();
@@ -224,6 +226,8 @@ fn apply_stats_from_class() {
         player::player_dis_tac = player::player_ptoac;
         player::player_dis_ac = player::player_pac;
     }
+
+    debug::leave("create_character::apply_stats_from_class");
 }
 
 fn generate_player_age(player_race: Race) -> u16 {

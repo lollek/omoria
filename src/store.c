@@ -916,21 +916,16 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 
 	/* with player_do; */
 	regen_percent = regen_amount * 2 * time_spent;
-	if (regen_percent > 1.00) {
+	if (regen_percent > 1.00)
 		regen_percent = 1.00;
-	}
-	if (player_chp < player_mhp) {
-		regenhp(regen_percent);
-	}
-	if (player_chp > player_mhp) {
-		player_chp = player_mhp;
-	}
-	if (player_cmana < player_mana) {
+	if (C_player_current_hp() < C_player_max_hp())
+		C_player_regen_hp(regen_percent);
+	if (C_player_current_hp() > C_player_max_hp())
+		C_player_reset_current_hp();
+	if (player_cmana < player_mana)
 		regenmana(regen_percent);
-	}
-	if (player_cmana > player_mana) {
+	if (player_cmana > player_mana)
 		player_cmana = player_mana;
-	}
 
 	if (new_screen) {
 		moria_flag = true;

@@ -258,7 +258,6 @@ extern void search_off();
 extern void search_on();
 extern void rest_off();
 extern void take_hit(long damage, char hit_from[82]);
-extern void regenhp(float percent);
 extern void regenmana(float percent);
 
 /* { QUEST.PAS		} */

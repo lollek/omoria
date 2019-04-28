@@ -76,8 +76,6 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 17: /*{ Gain Con }*/
-		player_mhp++;
-		player_chp += player_mhp;
 		ident = gain_stat(CON, "X");
 		prt_stat_block();
 		break;

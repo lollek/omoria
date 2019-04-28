@@ -1067,8 +1067,8 @@ static void d__regenerate()
 		regen_amount *= 2;
 	}
 	if (player_flags.poisoned < 1) {
-		if (player_chp < player_mhp) {
-			regenhp(regen_amount);
+		if (C_player_current_hp() < C_player_max_hp()) {
+			C_player_regen_hp(regen_amount);
 		}
 	}
 	if (player_cmana < player_mana) {
@@ -1437,7 +1437,8 @@ static void d__update_resting()
 		/*if (want_trap) { dump_ast_mess; XXXX}*/
 		if (PF.rest == 0) { /*{ Resting over          }*/
 			if (PF.resting_till_full &&
-			    (player_cmana < player_mana || player_chp < player_mhp)) {
+			    (player_cmana < player_mana ||
+			     C_player_current_hp() < C_player_max_hp())) {
 				PF.rest = 20;
 				turn_counter += PF.rest;
 			} else {
@@ -1549,8 +1550,7 @@ static void d__update_heroism()
 				move_char(5);
 			}
 			/* with player_do; */
-			player_mhp += 10;
-			player_chp += 10;
+			C_player_modify_max_hp(10);
 			player_bth += 12;
 			player_bthb += 12;
 			msg_print("You feel like a HERO!");
@@ -1563,10 +1563,10 @@ static void d__update_heroism()
 				move_char(5);
 			}
 			/* with player_do; */
-			player_mhp -= 10;
-			if (player_chp > player_mhp) {
-				player_chp = player_mhp;
-			}
+			C_player_modify_max_hp(-10);
+			C_player_modify_current_hp(10);
+			if (C_player_current_hp() > C_player_current_hp())
+				C_player_reset_current_hp();
 			player_bth -= 12;
 			player_bthb -= 12;
 			msg_print("The heroism wears off.");
@@ -1585,8 +1585,7 @@ static void d__update_super_heroism()
 				move_char(5);
 			}
 			/* with player_do; */
-			player_mhp += 20;
-			player_chp += 20;
+			C_player_modify_max_hp(20);
 			player_bth += 24;
 			player_bthb += 24;
 			msg_print("You feel like a SUPER HERO!");
@@ -1599,10 +1598,10 @@ static void d__update_super_heroism()
 				move_char(5);
 			}
 			/* with player_do; */
-			player_mhp -= 20;
-			if (player_chp > player_mhp) {
-				player_chp = player_mhp;
-			}
+			C_player_modify_max_hp(-20);
+			C_player_modify_current_hp(20);
+			if (C_player_current_hp() > C_player_current_hp())
+				C_player_reset_current_hp();
 			player_bth -= 24;
 			player_bthb -= 24;
 			msg_print("The super heroism wears off.");
@@ -1725,11 +1724,10 @@ static void d__update_hit_points()
 
 	if (!(find_flag)) {
 		if (player_flags.rest < 1) {
-			if (old_chp != (long)(player_chp)) {
-				if (player_chp > player_mhp) {
-					player_chp = player_mhp;
-				}
-				old_chp = trunc(player_chp);
+			if (old_chp != C_player_current_hp()) {
+				if (C_player_current_hp() > C_player_max_hp())
+					C_player_reset_current_hp();
+				old_chp = trunc(C_player_current_hp());
 			}
 			if (old_cmana != trunc(player_cmana)) {
 				if (player_cmana > player_mana) {
@@ -4319,17 +4317,14 @@ void xp_loss(long amount)
 	i2 = player_lev - i1;
 
 	for (; i2 > 0;) {
-		av_hp = (player_mhp / player_lev);
+		av_hp = (C_player_max_hp() / player_lev);
 		av_mn = (player_mana / player_lev);
 		player_lev--;
 		i2--;
 		lose_hp = randint(av_hp * 2 - 1);
 		lose_mn = randint(av_mn * 2 - 1);
-		player_mhp -= lose_hp;
+		C_player_modify_max_hp(lose_hp);
 		player_mana -= lose_mn;
-		if (player_mhp < 1) {
-			player_mhp = 1;
-		}
 		if (player_mana < 0) {
 			player_mana = 0;
 		}
@@ -4365,8 +4360,8 @@ void xp_loss(long amount)
 		}
 	}
 
-	if (player_chp > player_mhp) {
-		player_chp = player_mhp;
+	if (C_player_current_hp() > C_player_max_hp()) {
+		C_player_reset_current_hp();
 	}
 	if (player_cmana > player_mana) {
 		player_cmana = player_mana;
@@ -5649,7 +5644,7 @@ void dungeon()
 	teleport_flag = false;
 	mon_tot_mult = 0;
 	cave[char_row][char_col].cptr = 1;
-	old_chp = trunc(player_chp);
+	old_chp = trunc(C_player_current_hp());
 	old_cmana = trunc(player_cmana);
 
 	/*{ Light up the area around character    }*/

@@ -28,7 +28,6 @@ extern int16_t player_fos;		  /* { Frenq of search} */
 extern int16_t player_bth;		  /* { Base to hit	} */
 extern int16_t player_bthb;		  /* { BTH with bows	} */
 extern int16_t player_mana;		  /* { Mana points	} */
-extern int16_t player_mhp;		  /* { Max hit pts	} */
 extern int16_t player_ptohit;		  /* { Pluses to hit	} */
 extern int16_t player_ptodam;		  /* { Pluses to dam	} */
 extern int16_t player_pac;		  /* { Total AC	} */
@@ -42,10 +41,9 @@ extern int16_t player_save;		  /* { Saving throw	} */
 extern int16_t player_sc;		  /* { Social Class	} */
 extern enum class_t player_pclass;      /* { # of class	} */
 extern uint8_t player_prace;      /* { # of race	} */
-extern uint8_t player_stl;	/* { Stealth factor} */
+extern int16_t player_stl;	/* { Stealth factor} */
 extern float player_expfact;		  /* { Experience factor} */
 extern float player_cmana;		  /* { Cur mana pts  } */
-extern float player_chp;		  /* { Cur hit pts	} */
 extern char player_history[5][82];	 /* ;{ History record} */
 extern boolean player_cheated;	  /*{ gone into wizard or god mode} */
 extern int64_t  player_mr;		  /* { mag.res.lev.delta } */
@@ -67,6 +65,13 @@ int16_t C_player_roll_hp_for_levelup(void);
 void C_player_set_extra_bulk_carry(uint16_t new_value);
 void C_player_mod_search_skill(int16_t modifier);
 int16_t C_player_curr_search_skill(void);
+
+int16_t C_player_current_hp(void);
+int16_t C_player_max_hp(void);
+void C_player_reset_current_hp(void);
+void C_player_modify_max_hp(int16_t modifier);
+void C_player_modify_current_hp(float modifier);
+void C_player_regen_hp(float percent);
 
 void C_player_recalc_stats(void);
 int16_t C_player_get_stat(stat_set attr);

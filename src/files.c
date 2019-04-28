@@ -377,11 +377,11 @@ void file_character()
 
 			fprintf(file1, "  + To Hit    :%3d        Level      "
 				       ":%9d     Max Hit Points :%4d\n",
-				player_dis_th, player_lev, player_mhp);
+				player_dis_th, player_lev, C_player_max_hp());
 
 			fprintf(file1, "  + To Damage :%3d        Experience "
 				       ":%9ld     Cur Hit Points :%4d\n",
-				player_dis_td, player_exp, (int)player_chp);
+				player_dis_td, player_exp, C_player_current_hp());
 
 			fprintf(file1, "  + To AC     :%3d        Gold       "
 				       ":%9ld     Max Mana       :%4d\n",

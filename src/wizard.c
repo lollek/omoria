@@ -1074,12 +1074,11 @@ void change_character()
 
 	/* with player_do; */
 	if (!abort) {
-		tmp_val = player_mhp;
+		tmp_val = 0;
 		if (cc__input_field("(1-32767) Hit points = ", &tmp_val, 1,
 				    32767, &flag)) {
 			if (flag) {
-				player_mhp = tmp_val;
-				player_chp = player_mhp;
+				C_player_modify_max_hp(tmp_val);
 				prt_stat_block();
 			}
 		} else {

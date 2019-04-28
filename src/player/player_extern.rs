@@ -182,3 +182,33 @@ pub extern fn C_player_mod_search_skill(modifier: libc::int16_t) {
 pub extern fn C_player_curr_search_skill() -> libc::int16_t {
     player::curr_search_skill()
 }
+
+#[no_mangle]
+pub extern fn C_player_current_hp() -> libc::int16_t {
+    player::current_hp()
+}
+
+#[no_mangle]
+pub extern fn C_player_max_hp() -> libc::int16_t {
+    player::max_hp()
+}
+
+#[no_mangle]
+pub extern fn C_player_reset_current_hp() {
+    player::reset_current_hp()
+}
+
+#[no_mangle]
+pub extern fn C_player_modify_max_hp(modifier: libc::int16_t) {
+    player::modify_max_hp(modifier);
+}
+
+#[no_mangle]
+pub extern fn C_player_modify_current_hp(modifier: libc::c_float) {
+    player::modify_current_hp(modifier);
+}
+
+#[no_mangle]
+pub extern fn C_player_regen_hp(percent: libc::c_float) {
+    player::regen_hp(percent);
+}

@@ -7,11 +7,11 @@ pub fn is_dead() -> bool {
 }
 
 pub fn is_raging() -> bool {
-    PLAYER.read().unwrap().is_raging
+    PLAYER.try_read().unwrap().is_raging
 }
 
 pub fn set_raging(yn: bool) {
-    PLAYER.write().unwrap().is_raging = yn;
+    PLAYER.try_write().unwrap().is_raging = yn;
 }
 
 pub fn is_fatigued() -> bool {

@@ -169,16 +169,15 @@ boolean hp_player(long num, char kind[82])
 	/* with player_do; */
 	if (num < 0) {
 		take_hit(num, kind);
-		if (player_chp < 0) {
+		if (C_player_current_hp() < 0) {
 			msg_print("You feel your life slipping away!");
 			msg_print(" ");
 		}
 		return_value = true;
-	} else if (player_chp < player_mhp) {
-		player_chp += num;
-		if (player_chp > player_mhp) {
-			player_chp = player_mhp;
-		}
+	} else if (C_player_current_hp() < C_player_max_hp()) {
+		C_player_modify_current_hp(num);
+		if (C_player_current_hp() > C_player_max_hp())
+			C_player_reset_current_hp();
 		prt_stat_block();
 
 		switch ((long)(num / 5)) {
@@ -843,15 +842,12 @@ void lose_exp(long amount)
 	for (i2 = player_lev - i1; i2 > 0;) {
 		i2--;
 		player_lev--;
-		av_hp = trunc(player_mhp / player_lev);
+		av_hp = trunc(C_player_max_hp() / player_lev);
 		av_mn = trunc(player_mana / player_lev);
 		lose_hp = randint(av_hp * 2 - 1);
 		lose_mn = randint(av_mn * 2 - 1);
-		player_mhp -= lose_hp;
+		C_player_modify_max_hp(lose_hp);
 		player_mana -= lose_mn;
-		if (player_mhp < 1) {
-			player_mhp = 1;
-		}
 		if (player_mana < 0) {
 			player_mana = 0;
 		}
@@ -885,12 +881,10 @@ void lose_exp(long amount)
 		}
 	} /* end for */
 
-	if (player_chp > player_mhp) {
-		player_chp = player_mhp;
-	}
-	if (player_cmana > player_mana) {
+	if (C_player_current_hp() > C_player_max_hp())
+		C_player_reset_current_hp();
+	if (player_cmana > player_mana)
 		player_cmana = player_mana;
-	}
 	prt_stat_block();
 }
 /*//////////////////////////////////////////////////////////////////// */

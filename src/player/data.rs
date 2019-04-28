@@ -108,6 +108,9 @@ pub struct Player {
     pub save_counter: u64,
     pub extra_bulk_carry: u16,
     pub search_modifier: i16,
+    pub max_hp_last_calc: i16, // Last time we checked, what was max hp?
+    pub max_hp: i16,
+    pub current_hp: f32,
 }
 
 impl Player {
@@ -124,6 +127,9 @@ impl Player {
             save_counter: 0,
             extra_bulk_carry: 0,
             search_modifier: 0,
+            max_hp_last_calc: 0,
+            max_hp: 0,
+            current_hp: 0.0,
         }
     }
 }
@@ -157,13 +163,11 @@ pub struct PlayerRecord {
     pub max_lev: libc::uint16_t,
     pub expfact: libc::c_float,
     pub fos: libc::int16_t,
-    pub stl: libc::uint8_t,
+    pub stl: libc::int16_t,
     pub bth: libc::int16_t,
     pub bthb: libc::int16_t,
     pub mana: libc::int16_t,
     pub cmana: libc::c_float,
-    pub mhp: libc::int16_t,
-    pub chp: libc::c_float,
     pub ptohit: libc::int16_t,
     pub ptodam: libc::int16_t,
     pub pac: libc::int16_t,
@@ -186,7 +190,6 @@ extern "C" {
     pub(super) static mut player_play_tm: Time ;/* { Time spent in game	} */
     pub(super) static mut player_max_exp: libc::int64_t ;  /* { Max experience} */
     pub(super) static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
-    pub(super) static mut player_chp: libc::c_float ;  /* { Cur hit pts	} */
     pub(super) static mut player_cheated: libc::uint8_t ;  /*{ gone into wizard or god mode} */
     pub(super) static mut player_quests: libc::uint8_t ;     /* { # completed } {FUBAR} */
     pub(super) static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
@@ -200,13 +203,12 @@ extern "C" {
     static mut player_sex: [libc::c_char; 82];
     static mut player_tclass: [libc::c_char; 82];
     static mut player_pclass: libc::c_int;
-    pub static mut player_stl: libc::uint8_t;
+    pub static mut player_stl: libc::int16_t;
     pub static mut player_sc: libc::int16_t ;		  /* { Social Class	} */
     pub static mut player_age: libc::uint16_t ;       /* { Characters age} */
     pub static mut player_ht: libc::uint16_t ;	/* { Height	} */
     pub static mut player_wt: libc::uint16_t ;	/* { Weight	} */
     pub static mut player_lev: libc::uint16_t ;       /* { Level		} */
-    pub(super) static mut player_mhp: libc::int16_t ;  /* { Max hit pts	} */
     pub static mut player_fos: libc::int16_t ;		  /* { Frenq of search} */
     pub static mut player_bth: libc::int16_t ;		  /* { Base to hit	} */
     pub static mut player_bthb: libc::int16_t ;		  /* { BTH with bows	} */
@@ -301,19 +303,17 @@ pub fn set_class(class: Class) {
 
 
 pub fn roll_hp_for_levelup() -> i16 {
-    // TODO: At level-up we should only roll the hitdie, and then dynamically modify hp
-    // from CON, so that you cannot abuse bumping temp CON before leveling up
-    random::randint(hitdie() as i64) as i16 + player::hp_from_con()
+    random::randint(hitdie() as i64) as i16
 }
 
 pub fn mod_stat(stat: Stat, modifier: i16) {
-    let mut stats = PLAYER.write().unwrap().mod_stats;
+    let mut stats = PLAYER.try_write().unwrap().mod_stats;
     let old_stat = stats.get(stat);
     stats.set(stat, old_stat + modifier);
 }
 
 pub fn mod_perm_stat(stat: Stat, modifier: i16) {
-    let mut stats = PLAYER.write().unwrap().perm_stats;
+    let mut stats = PLAYER.try_write().unwrap().perm_stats;
     let old_stat = stats.get(stat);
     stats.set(stat, old_stat + modifier);
 }
@@ -386,7 +386,7 @@ pub fn uid() -> i64 {
 }
 
 pub fn increase_save_counter() {
-    PLAYER.write().unwrap().save_counter += 1;
+    PLAYER.try_write().unwrap().save_counter += 1;
 }
 
 pub fn max_exp() -> i64 {
@@ -436,8 +436,6 @@ pub fn record() -> PlayerRecord {
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
-        mhp: unsafe { player_mhp },
-        chp: unsafe { player_chp },
         ptohit: unsafe { player_ptohit },
         ptodam: unsafe { player_ptodam },
         pac: unsafe { player_pac },
@@ -450,22 +448,22 @@ pub fn record() -> PlayerRecord {
         save: unsafe { player_save },
         inven_weight: unsafe { inven_weight },
         flags: unsafe { player_flags }.to_owned(),
-        player: PLAYER.read().unwrap().clone(),
+        player: PLAYER.try_read().unwrap().clone(),
         char_row: unsafe { char_row },
         char_col: unsafe { char_col },
     }
 }
 
 pub fn knows_any_spell() -> bool {
-    PLAYER.read().unwrap().spells_known.iter().any(|&known| known)
+    PLAYER.try_read().unwrap().spells_known.iter().any(|&known| known)
 }
 
 pub fn knows_spell(slot: usize) -> bool {
-    PLAYER.read().unwrap().spells_known[slot].clone()
+    PLAYER.try_read().unwrap().spells_known[slot].clone()
 }
 
 pub fn set_knows_spell(slot: usize, yn: bool) {
-    PLAYER.write().unwrap().spells_known[slot] = yn;
+    PLAYER.try_write().unwrap().spells_known[slot] = yn;
 }
 
 pub fn max_rage_rounds() -> u8 {
@@ -473,19 +471,19 @@ pub fn max_rage_rounds() -> u8 {
 }
 
 pub fn rage_rounds_spent() -> u8 {
-    PLAYER.read().unwrap().rage_rounds_spent
+    PLAYER.try_read().unwrap().rage_rounds_spent
 }
 
 pub fn set_rage_rounds_spent(new_value: u8) {
-    PLAYER.write().unwrap().rage_rounds_spent = new_value;
+    PLAYER.try_write().unwrap().rage_rounds_spent = new_value;
 }
 
 pub fn rage_exhaustion_rounds_left() -> u8 {
-    PLAYER.read().unwrap().rage_exhaustion_rounds_left
+    PLAYER.try_read().unwrap().rage_exhaustion_rounds_left
 }
 
 pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
-    PLAYER.write().unwrap().rage_exhaustion_rounds_left = new_value;
+    PLAYER.try_write().unwrap().rage_exhaustion_rounds_left = new_value;
 }
 
 pub fn abilities() -> Vec<Ability> {
@@ -540,8 +538,6 @@ pub fn set_record(record: PlayerRecord) {
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
-        player_mhp = record.mhp;
-        player_chp = record.chp;
         player_ptohit = record.ptohit;
         player_ptodam = record.ptodam;
         player_pac = record.pac;
@@ -559,7 +555,7 @@ pub fn set_record(record: PlayerRecord) {
         player_flags = record.flags;
     }
 
-    mem::replace(&mut *PLAYER.write().unwrap(), record.player);
+    mem::replace(&mut *PLAYER.try_write().unwrap(), record.player);
 
     unsafe {
         char_row = record.char_row;
@@ -581,23 +577,52 @@ pub fn uses_magic(magic: Magic) -> bool {
 }
 
 pub fn current_hp() -> i16 {
-    (unsafe { player_chp }) as i16
+    PLAYER.try_read().unwrap().current_hp as i16
 }
 
 pub fn reset_current_hp() {
-    unsafe { player_chp = player_mhp.into() };
+    debug::enter("player::reset_current_hp");
+    let max_hp = PLAYER.try_read().unwrap().max_hp;
+    PLAYER.try_write().unwrap().current_hp = max_hp.into();
+    debug::leave("player::reset_current_hp");
 }
 
 pub fn modify_current_hp(amount: f32) {
-    unsafe { player_chp += amount; }
+    debug::enter("player::modify_current_hp");
+    PLAYER.try_write().unwrap().current_hp += amount;
+    debug::leave("player::modify_current_hp");
+}
+
+fn set_max_hp(new_value: i16) {
+    debug::enter("player::set_max_hp");
+    let hp_modifier = new_value - PLAYER.try_read().unwrap().max_hp_last_calc;
+    {
+        let mut player = PLAYER.try_write().unwrap();
+        player.max_hp_last_calc = new_value;
+        player.max_hp = new_value;
+    }
+    modify_current_hp(hp_modifier as f32);
+    debug::leave("player::set_max_hp");
 }
 
 pub fn max_hp() -> i16 {
-    unsafe { player_mhp }
+    debug::enter("player::max_hp");
+    let max_hp = PLAYER.try_read().unwrap().max_hp;
+    let new_max_hp = max_hp + (player::hp_from_con() * level() as i16);
+
+    let hp_modifier = new_max_hp - PLAYER.try_read().unwrap().max_hp_last_calc;
+    PLAYER.try_write().unwrap().max_hp_last_calc = new_max_hp;
+    modify_current_hp(hp_modifier as f32);
+
+    debug::leave("player::max_hp");
+    return new_max_hp
 }
 
 pub fn modify_max_hp(amount: i16) {
-    unsafe { player_mhp += amount; }
+    debug::enter("player::modify_max_hp");
+    let max_hp = PLAYER.try_read().unwrap().max_hp;
+    set_max_hp(max(1, max_hp + amount));
+    debug::leave("player::modify_max_hp");
 }
 
 pub fn current_mp() -> i16 {
@@ -649,11 +674,11 @@ pub fn current_weight() -> u16 {
 }
 
 pub fn set_extra_bulk_carry(new_value: u16) {
-    PLAYER.write().unwrap().extra_bulk_carry = new_value;
+    PLAYER.try_write().unwrap().extra_bulk_carry = new_value;
 }
 
 pub fn extra_bulk_carry() -> u16 {
-    PLAYER.read().unwrap().extra_bulk_carry
+    PLAYER.try_read().unwrap().extra_bulk_carry
 }
 
 pub fn current_bulk() -> u16 {
@@ -681,4 +706,9 @@ pub fn set_age(new_value: GameTime) {
 
 pub fn age() -> GameTime {
     unsafe { player_cur_age }
+}
+
+pub fn regen_hp(percent: f32) {
+    let player_regen_hpbase = 0.022;
+    modify_current_hp(player_regen_hpbase + max_hp() as f32 * percent);
 }

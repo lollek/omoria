@@ -4,11 +4,11 @@ use player;
 use player::data::PLAYER;
 
 pub fn mod_search_skill(modifier: i16) {
-    PLAYER.write().unwrap().search_modifier += modifier;
+    PLAYER.try_write().unwrap().search_modifier += modifier;
 }
 
 fn search_skill_modifier() -> i16 {
-    PLAYER.read().unwrap().search_modifier
+    PLAYER.try_read().unwrap().search_modifier
 }
 
 pub fn perm_search_skill() -> i16 {

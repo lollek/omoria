@@ -6,11 +6,11 @@ use player;
 use player::data::PLAYER;
 
 pub fn set_perm_stats(block: StatBlock) {
-    mem::replace(&mut PLAYER.write().unwrap().perm_stats, block);
+    mem::replace(&mut PLAYER.try_write().unwrap().perm_stats, block);
 }
 
 pub fn curr_stats() -> StatBlock {
-    let mut stats = PLAYER.read().unwrap().curr_stats;
+    let mut stats = PLAYER.try_read().unwrap().curr_stats;
     if player::is_raging() {
         stats.strength += 4;
         stats.constitution += 4;
@@ -19,8 +19,8 @@ pub fn curr_stats() -> StatBlock {
 }
 
 pub fn recalc_curr_stats() {
-    let perm_stats = PLAYER.read().unwrap().perm_stats;
-    let mod_stats = PLAYER.read().unwrap().mod_stats;
+    let perm_stats = PLAYER.try_read().unwrap().perm_stats;
+    let mod_stats = PLAYER.try_read().unwrap().mod_stats;
     let lost_stats = lost_stats();
     let mut curr_stats = StatBlock::new(0);
     for stat in stats_iter() {
@@ -29,7 +29,7 @@ pub fn recalc_curr_stats() {
             - lost_stats.get_pos(stat);
         curr_stats.set_pos(stat, curr_stat);
     }
-    mem::replace(&mut PLAYER.write().unwrap().curr_stats, curr_stats);
+    mem::replace(&mut PLAYER.try_write().unwrap().curr_stats, curr_stats);
 }
 
 pub fn get_stat(stat: Stat) -> i16 {
@@ -61,17 +61,17 @@ pub fn cost_modifier_from_charisma() -> f32 {
 }
 
 pub fn modify_lost_stat(stat: Stat, amount: i16) {
-    let mut stats = PLAYER.write().unwrap().lost_stats;
+    let mut stats = PLAYER.try_write().unwrap().lost_stats;
     let old_val = stats.get(stat);
     stats.set(stat, old_val + amount);
 }
 
 pub fn reset_lost_stat(stat: Stat) {
-    PLAYER.write().unwrap().lost_stats.set(stat, 0);
+    PLAYER.try_write().unwrap().lost_stats.set(stat, 0);
 }
 
 pub fn lost_stats() -> StatBlock {
-    let mut stats = PLAYER.read().unwrap().lost_stats;
+    let mut stats = PLAYER.try_read().unwrap().lost_stats;
     if player::is_fatigued() {
         stats.strength += 2;
         stats.constitution += 2;

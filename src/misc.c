@@ -1260,12 +1260,7 @@ void gain_level()
 	long nhp, dif_exp, need_exp;
 	ENTER(("gain_level", ""));
 	nhp = C_player_roll_hp_for_levelup();
-	player_mhp += nhp;
-	player_chp += nhp;
-	if (player_mhp < 1) {
-		player_mhp = 1;
-		player_chp = 1;
-	}
+	C_player_modify_max_hp(nhp);
 	player_lev++;
 	need_exp = trunc(exp_per_level[player_lev] * player_expfact);
 	if (player_exp > need_exp) {

@@ -24,7 +24,6 @@ int16_t player_fos = 0;
 int16_t player_bth = 0;
 int16_t player_bthb = 0;
 int16_t player_mana = 0;
-int16_t player_mhp = 0;
 int16_t player_ptohit = 0;
 int16_t player_ptodam = 0;
 int16_t player_pac = 0;
@@ -38,10 +37,9 @@ int16_t player_save = 0;
 int16_t player_sc = 0;
 enum class_t player_pclass = 0;
 uint8_t player_prace = 0;
-uint8_t player_stl = 0;
+int16_t player_stl = 0;
 float player_expfact = 0;
 float player_cmana = 0;
-float player_chp = 0;
 char player_history[][82] = {"", "", "", "", ""};
 boolean player_cheated = false;
 int64_t  player_mr = 0;
@@ -83,13 +81,6 @@ void rest_off()
 	prt_rest();
 }
 
-void regenhp(float percent)
-{
-	/*{ Regenerate hit points		-RAK-	}*/
-
-	player_chp += player_mhp * percent + PLAYER_REGEN_HPBASE;
-}
-
 void regenmana(float percent)
 {
 	/*{ Regenerate mana points		-RAK-	}*/
@@ -107,7 +98,7 @@ void take_hit(long damage, char hit_from[82])
 		damage = 0;
 	}
 
-	player_chp -= damage;
+	C_player_modify_current_hp(-damage);
 
 	if (search_flag) {
 		search_off();
@@ -119,7 +110,7 @@ void take_hit(long damage, char hit_from[82])
 
 	flush();
 
-	if (player_chp <= -1) {
+	if (C_player_current_hp() <= -1) {
 		if (!death) {
 			/*{ Hee, hee... Ain't I mean?     }*/
 			death = true;
