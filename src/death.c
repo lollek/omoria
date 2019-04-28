@@ -195,7 +195,7 @@ void make_tomb(char dd[][82])
 
 	date(day);
 	ud__fill_str(str1, player_name);
-	ud__fill_str(str2, "Magnificent");
+	ud__fill_str(str2, "");
 	ud__fill_str(str3, player_tclass);
 	sprintf(temp, "Level : %d", player_lev);
 	ud__fill_str(str4, temp);
@@ -218,7 +218,7 @@ void make_tomb(char dd[][82])
 	sc(dd[5],
 	   "           /                             \\  : _;,,,;_    :   :");
 	si(dd[6], "          /", str1, "\\,;_          _;,,,;_");
-	sc(dd[7], "         |               the               |   ___");
+	sc(dd[7], "         |                                 |   ___");
 	si(dd[8], "         | ", str2, " |  /   \\");
 	sc(dd[9], "         |                                 |  :   :");
 	si(dd[10], "         | ", str3, " | _;,,,;_   ____");
