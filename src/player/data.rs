@@ -192,7 +192,7 @@ extern "C" {
     pub(super) static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
     pub(super) static mut player_birth: GameTime;     /* {Date of char's birth} */
     pub(super) static mut player_cur_age: GameTime;   /* {Current game date	} */
-    pub static mut player_flags: PlayerFlags;
+    pub(super) static mut player_flags: PlayerFlags;
     pub static mut player_history: [[libc::c_char; 82]; 5];
     static mut player_name: [libc::c_char; 82];
     static mut player_race: [libc::c_char; 82];

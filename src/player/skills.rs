@@ -20,3 +20,11 @@ pub fn curr_search_skill() -> i16 {
         + player::modifier_from_stat(Stat::Intelligence)
         + search_skill_modifier()
 }
+
+pub fn set_swim_speed(new_value: i64) {
+    unsafe { player::player_flags.swim = new_value; }
+}
+
+pub fn swim_speed() -> i64 {
+    unsafe { player::player_flags.swim }
+}

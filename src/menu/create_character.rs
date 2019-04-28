@@ -96,9 +96,9 @@ fn get_stats() {
         player::player_ptoac = 0;
         player::player_pac = player::ac_from_dex() as i16;
         player::player_expfact = race.expfactor();
-        player::player_flags.see_infra = race.infravision() as i64;
-        player::player_flags.swim = race.swim_speed() as i64;
     }
+    player::set_infravision(race.infravision() as i64);
+    player::set_swim_speed(race.swim_speed() as i64);
 
     debug::leave("get_stats");
 }
@@ -163,9 +163,9 @@ fn put_misc3() {
     let xdev: i64 = unsafe { player::player_save } as i64 +
         unsafe { player::player_lev } as i64 +
         player::modifier_from_stat(Stat::Intelligence) as i64;
-    let xswm: i64 = unsafe { player::player_flags.swim } + 4;
+    let xswm: i64 = player::swim_speed() + 4;
     let xrep: i64 = 6 + (unsafe { player::player_rep } / 25);
-    let xinf: i64 = unsafe { player::player_flags.see_infra } * 10;
+    let xinf: i64 = player::infravision() * 10;
 
     term::prt("(Miscellaneous Abilities)", 15, 23);
     term::put_buffer(format!("Fighting    : {}", misc::mod_to_string(xbth, 12)), 16, 1);
