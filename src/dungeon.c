@@ -1798,40 +1798,40 @@ static void d__go_down()
 	}
 }
 
+/**
+ * -RAK-
+ *  d__bash() - Bash open a door or chest
+ * Note: Affected by strength and weight of character
+ */
 static void d__bash()
 {
-	/*{ Bash open a door or chest                             -RAK-   }*/
-	/*{ Note: Affected by strength and weight of character            }*/
 
-	long y, x, tmp;
-	long old_ptodam, old_ptohit, old_bth;
+	long y = char_row;
+	long x = char_col;
+	long tmp;
 
-	y = char_row;
-	x = char_col;
 
 	if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) 
 		return;
 
-	/* with cave[y][x]. do; */
 	if (cave[y][x].cptr > 1) {
 		if (player_flags.afraid > 0) {
 			msg_print("You are afraid!");
 		} else {
 			/*{ Save old values of attacking  }*/
 			inven_temp->data = equipment[Equipment_primary];
-			old_ptohit = player_ptohit;
-			old_ptodam = player_ptodam;
-			old_bth = player_bth;
+			const long old_ptodam = player_ptohit;
+			const long old_ptohit = player_ptodam;
+			const long old_bth = player_bth;
+
 			/*{ Use these values              }*/
 			equipment[Equipment_primary] = blank_treasure;
-			/* with equipment[Equipment_primary]. do; */
 			strcpy(equipment[Equipment_primary].damage,
 					equipment[Equipment_shield].damage);
 			equipment[Equipment_primary].weight =
 				((C_player_get_stat(STR) * 10) + 20) * 100;
 			equipment[Equipment_primary].tval = 1;
 
-			/* with py do; */
 			player_bth = trunc((((C_player_get_stat(STR) * 10) + 20)
 						/ 5 + player_wt) /
 					6.0);
@@ -1853,10 +1853,9 @@ static void d__bash()
 			}
 		}
 	} else if (cave[y][x].tptr > 0) {
-		/* with t_list[cave[y][x].tptr]. do; */
 		if (t_list[cave[y][x].tptr].tval == closed_door) {
 			const int from_str = C_player_get_stat(STR) * 10;
-			/* with py do; */
+
 			if (test_hit(player_wt + (from_str * from_str)/ 500,
 						0, 0, labs(t_list[cave[y][x].tptr].p1) +
 						150)) {
