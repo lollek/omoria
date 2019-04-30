@@ -4,27 +4,27 @@
 #include "imoria.h"
 #include "generate.h"
 
-void gc__correct_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2)
+/**
+ * gc__correct_dir() - Always picks a correct direction
+ */
+static void gc__correct_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2)
 {
-	/*{ Always picks a correct direction		}*/
 
-	if (y1 < y2) {
+	if (y1 < y2)
 		*rdir = 1;
-	} else if (y1 == y2) {
+	else if (y1 == y2)
 		*rdir = 0;
-	} else {
+	else
 		*rdir = -1;
-	}
 
-	if (x1 < x2) {
+	if (x1 < x2)
 		*cdir = 1;
-	} else if (x1 == x2) {
+	else if (x1 == x2)
 		*cdir = 0;
-	} else {
+	else
 		*cdir = -1;
-	}
 
-	if ((rdir != 0) && (cdir != 0)) {
+	if (rdir != 0 && cdir != 0) {
 		if (randint(2) == 1) {
 			*rdir = 0;
 		} else {
@@ -33,11 +33,12 @@ void gc__correct_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2)
 	}
 }
 
+/**
+ * gc__rand_dir() - Chance of wandering direction
+ */
 void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
 		  long chance)
 {
-	/*{ Chance of wandering direction			}*/
-
 	switch (randint(chance)) {
 	case 1:
 		*rdir = -1;
@@ -61,82 +62,80 @@ void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
 	}
 }
 
+/**
+ * gc__blank_cave() - Blanks out entire cave
+ */
 void gc__blank_cave()
 {
-	/*{ Blanks out entire cave				-RAK-	}*/
-
-	long i1, i2;
-
-	for (i1 = 0; i1 <= MAX_HEIGHT; i1++) {
-		for (i2 = 0; i2 <= MAX_WIDTH; i2++) {
-			cave[i1][i2] = blank_floor;
+	for (long y = 0; y <= MAX_HEIGHT; y++) {
+		for (long x = 0; x <= MAX_WIDTH; x++) {
+			cave[y][x] = blank_floor;
 		}
 	}
 }
 
+/**
+ * -RAK-
+ *  gc__fill_cave() - Fills in empty spots with desired rock
+ *  Note: 9 is a temporary value
+ */
 void gc__fill_cave(floor_type fill)
 {
-	/*{ Fills in empty spots with desired rock		-RAK-	}*/
-	/*{ Note: 9 is a temporary value.				}*/
-
-	long i1, i2;
-
-	for (i1 = 2; i1 <= cur_height - 1; i1++) {
-		for (i2 = 2; i2 <= cur_width - 1; i2++) {
-			if (is_in(cave[i1][i2].fval, blank_floor_set)) {
-				cave[i1][i2].fval = fill.ftval;
-				cave[i1][i2].fopen = fill.ftopen;
+	for (long y = 2; y <= cur_height - 1; y++) {
+		for (long x = 2; x <= cur_width - 1; x++) {
+			if (is_in(cave[y][x].fval, blank_floor_set)) {
+				cave[y][x].fval = fill.ftval;
+				cave[y][x].fopen = fill.ftopen;
 			}
 		}
 	}
 }
 
+/**
+ * -RAK-
+ *  gc__place_boundry() Places indestructible rock arounds edges of dungeon
+ */
 void gc__place_boundry()
 {
-	/*{ Places indestructable rock around edges of dungeon	-RAK-	}*/
-
-	long i1;
-
-	for (i1 = 1; i1 <= cur_height; i1++) {
-		cave[i1][1].fval = boundry_wall.ftval;
-		cave[i1][1].fopen = boundry_wall.ftopen;
-		cave[i1][cur_width].fval = boundry_wall.ftval;
-		cave[i1][cur_width].fopen = boundry_wall.ftopen;
+	for (long y = 1; y <= cur_height; y++) {
+		cave[y][1].fval = boundry_wall.ftval;
+		cave[y][1].fopen = boundry_wall.ftopen;
+		cave[y][cur_width].fval = boundry_wall.ftval;
+		cave[y][cur_width].fopen = boundry_wall.ftopen;
 	}
 
-	for (i1 = 1; i1 <= cur_width; i1++) {
-		cave[1][i1].fval = boundry_wall.ftval;
-		cave[1][i1].fopen = boundry_wall.ftopen;
-		cave[cur_height][i1].fval = boundry_wall.ftval;
-		cave[cur_height][i1].fopen = boundry_wall.ftopen;
+	for (long x = 1; x <= cur_width; x++) {
+		cave[1][x].fval = boundry_wall.ftval;
+		cave[1][x].fopen = boundry_wall.ftopen;
+		cave[cur_height][x].fval = boundry_wall.ftval;
+		cave[cur_height][x].fopen = boundry_wall.ftopen;
 	}
 }
 
+/**
+ * -RAK-
+ *  gc__place_streamer() - Places "streamers" of rock through dungeon
+ */
 void gc__place_streamer(floor_type rock, long treas_chance)
 {
-	/*{ Places "streamers" of rock through dungeon		-RAK-	}*/
-
-	long i1, y, x, dir, ty, tx, t1, t2;
-	boolean flag;
-
 	/*{ Choose starting point and direction		}*/
-	y = trunc(cur_height / 2.0) + 11 - randint(23);
-	x = trunc(cur_width / 2.0) + 16 - randint(33);
+	long y = trunc(cur_height / 2.0) + 11 - randint(23);
+	long x = trunc(cur_width / 2.0) + 16 - randint(33);
 
-	dir = randint(8); /*{ Number 1-4, 6-9	}*/
+	long dir = randint(8); /*{ Number 1-4, 6-9	}*/
 	if (dir > 4) {
 		dir++;
 	}
 
 	/*{ Place streamer into dungeon			}*/
-	flag = false;		  /*{ Set to true when y,x are out-of-bounds}*/
-	t1 = 2 * DUN_STR_RNG + 1; /*{ Constants	}*/
-	t2 = DUN_STR_RNG + 1;
+	boolean flag = false;		  /*{ Set to true when y,x are out-of-bounds}*/
+	const long t1 = 2 * DUN_STR_RNG + 1; /*{ Constants	}*/
+	const long t2 = DUN_STR_RNG + 1;
 
 	do {
-		for (i1 = 1; i1 < DUN_STR_DEN; i1++) {
-			ty = y + randint(t1) - t2;
-			tx = x + randint(t1) - t2;
+		for (long _ = 1; _ < DUN_STR_DEN; _++) {
+			long ty = y + randint(t1) - t2;
+			long tx = x + randint(t1) - t2;
 			if (in_bounds(ty, tx)) {
 				if (cave[ty][tx].fval == rock_wall1.ftval) {
 					cave[ty][tx].fval = rock.ftval;
@@ -153,26 +152,24 @@ void gc__place_streamer(floor_type rock, long treas_chance)
 	} while (!flag);
 }
 
-void gc__tunnel(long row1, long col1, long row2, long col2, long *doorptr,
+/**
+ * -RAK-
+ *  gc__tunnel() - Constructs a tunnel between two points
+ */
+static void gc__tunnel(long row1, long col1, long row2, long col2, long *doorptr,
 		coords *doorstk)
 {
-	/*{ Constructs a tunnel between two points		}*/
-
-	long tmp_row, tmp_col;
-	long row_dir, col_dir;
-	long i1, i2;
+	long row_dir;
+	long col_dir;
 	coords tunstk[1001];
 	coords wallstk[1001];
-	long tunptr;
-	long wallptr;
-	boolean stop_flag, door_flag;
 
 	/*{ Note: 9 is a temporary value		}*/
 
-	stop_flag = false;
-	door_flag = false;
-	tunptr = 0;
-	wallptr = 0;
+	boolean stop_flag = false;
+	boolean door_flag = false;
+	long tunptr = 0;
+	long wallptr = 0;
 	gc__correct_dir(&row_dir, &col_dir, row1, col1, row2, col2);
 
 	do {
@@ -181,8 +178,8 @@ void gc__tunnel(long row1, long col1, long row2, long col2, long *doorptr,
 				     DUN_TUN_RND);
 		}
 
-		tmp_row = row1 + row_dir;
-		tmp_col = col1 + col_dir;
+		long tmp_row = row1 + row_dir;
+		long tmp_col = col1 + col_dir;
 
 		for (; !(in_bounds(tmp_row, tmp_col));) {
 			gc__rand_dir(&row_dir, &col_dir, row1, col1, row2, col2,
@@ -200,15 +197,13 @@ void gc__tunnel(long row1, long col1, long row2, long col2, long *doorptr,
 			}
 			wallstk[wallptr].y = row1;
 			wallstk[wallptr].x = col1;
-			for (i1 = row1 - 1; i1 <= row1 + 1; i1++) {
-				for (i2 = col1 - 1; i2 <= col1 + 1; i2++) {
-					if (in_bounds(i1, i2)) {
-						/* with cave[i1][i2]. do; */
-						if (is_in(cave[i1][i2].fval,
-							  wall_set)) {
-							cave[i1][i2].fval = 9;
-						}
-					}
+			for (long y = row1 - 1; y <= row1 + 1; y++) {
+				for (long x = col1 - 1; x <= col1 + 1; x++) {
+					if (!in_bounds(y, x))
+						continue;
+					if (!is_in(cave[y][x].fval, wall_set))
+						continue;
+					cave[y][x].fval = 9;
 				}
 			}
 
@@ -243,27 +238,26 @@ void gc__tunnel(long row1, long col1, long row2, long col2, long *doorptr,
 		}
 	} while (!(((row1 == row2) && (col1 == col2)) || (stop_flag)));
 
-	for (i1 = 1; i1 <= tunptr; i1++) {
-		cave[tunstk[i1].y][tunstk[i1].x].fval = corr_floor1.ftval;
-		cave[tunstk[i1].y][tunstk[i1].x].fopen = corr_floor1.ftopen;
+	for (long i = 1; i <= tunptr; i++) {
+		cave[tunstk[i].y][tunstk[i].x].fval = corr_floor1.ftval;
+		cave[tunstk[i].y][tunstk[i].x].fopen = corr_floor1.ftopen;
 	}
 
-	for (i1 = 1; i1 <= wallptr; i1++) {
-		/* with cave[wallstk[i1].y][wallstk[i1].x]. do; */
-		if (cave[wallstk[i1].y][wallstk[i1].x].fval == 9) {
+	for (long i = 1; i <= wallptr; i++) {
+		if (cave[wallstk[i].y][wallstk[i].x].fval == 9) {
 			if (randint(100) < DUN_TUN_PEN) {
-				place_door(wallstk[i1].y, wallstk[i1].x);
+				place_door(wallstk[i].y, wallstk[i].x);
 			} else {
-				cave[wallstk[i1].y][wallstk[i1].x].fval =
+				cave[wallstk[i].y][wallstk[i].x].fval =
 				    corr_floor2.ftval;
-				cave[wallstk[i1].y][wallstk[i1].x].fopen =
+				cave[wallstk[i].y][wallstk[i].x].fopen =
 				    corr_floor2.ftopen;
 			}
 		}
 	}
 }
 
-boolean gc__next_to(long y, long x)
+static boolean gc__next_to(long y, long x)
 {
 	obj_set corridors = {4, 5, 6, 0};
 	boolean next_to = false;
@@ -285,10 +279,11 @@ boolean gc__next_to(long y, long x)
 	return next_to;
 }
 
-void gc__try_door(long y, long x)
+/**
+ * gc__try_door() - Places door at y,x position if at least 2 walls found
+ */
+static void gc__try_door(long y, long x)
 {
-	/*{ Places door at y,x position if at least 2 walls found	}*/
-
 	if (randint(100) > DUN_TUN_JCT) {
 		if (cave[y][x].fval == corr_floor1.ftval) {
 			if (gc__next_to(y, x)) {
@@ -298,10 +293,12 @@ void gc__try_door(long y, long x)
 	}
 }
 
-void gc__place_pool(floor_type water)
+/**
+ * -DMF-
+ *  gc__place_pool() - Place a pool of water, and rough up the edges
+ */
+static void gc__place_pool(floor_type water)
 {
-	/*{ Place a pool of water, and rough up the edges		-DMF-
-	 * }*/
 	(void)water;
 	/*
 	long   y,x;
@@ -313,28 +310,14 @@ void gc__place_pool(floor_type water)
 	/* XXXX place_pool does nothing useful */
 }
 
-void gc__all_the_river_stuff() { all_the_river_stuff(); /* in river.c */ }
+static void gc__all_the_river_stuff() { all_the_river_stuff(); /* in river.c */ }
 
-void gc__cave_gen()
+static void gc__cave_gen()
 {
 	/*{ Cave logic flow for generation of new dungeon		}*/
-	/*
-	    type
-	      spot_type = record
-		      endx	: long;
-		      endy	: long;
-	      end;
-	      room_type = array [1..20,1..20] of boolean;
-      */
 	coords doorstk[101];
 	boolean room_map[21][21]; /*: room_type;*/
-	long i1, i2, i3, i4;
-	long y1, x1, y2, x2;
-	long pick1, pick2;
-	long row_rooms, col_rooms;
 	long doorptr = 0;
-	long alloc_level;
-	long roomCount;
 	short yloc[401]; /*: array [1..400] of short;*/
 	short xloc[401]; /*: array [1..400] of short;*/
 
@@ -344,20 +327,20 @@ void gc__cave_gen()
 	obj_set allocSet4 = {1, 2, 0};       /* treasure things */
 	obj_set allocSet5 = {1, 2, 4, 0};    /* treasure things */
 
-	i3 = 0;
+	long i3 = 0;
 
-	row_rooms = 2 * (long)(cur_height / SCREEN_HEIGHT);
-	col_rooms = 2 * (long)(cur_width / SCREEN_WIDTH);
+	long row_rooms = 2 * (long)(cur_height / SCREEN_HEIGHT);
+	long col_rooms = 2 * (long)(cur_width / SCREEN_WIDTH);
 
-	for (i1 = 1; i1 <= row_rooms; i1++) {
-		for (i2 = 1; i2 <= col_rooms; i2++) {
-			room_map[i1][i2] = false;
+	for (long y = 1; y <= row_rooms; y++) {
+		for (long x = 1; x <= col_rooms; x++) {
+			room_map[y][x] = false;
 		}
 	}
 
 	if (1) {
-		for (i1 = 1, roomCount = randnor(DUN_ROO_MEA, 2);
-		     i1 <= roomCount; i1++) {
+		for (long i = 1, roomCount = randnor(DUN_ROO_MEA, 2);
+		     i <= roomCount; i++) {
 			room_map[randint(row_rooms)][randint(col_rooms)] = true;
 		}
 	} else {
@@ -367,11 +350,11 @@ void gc__cave_gen()
 		room_map[2][3] = true;
 	}
 
-	for (i1 = 1; i1 <= row_rooms; i1++) {
-		for (i2 = 1; i2 <= col_rooms; i2++) {
-			if (room_map[i1][i2]) {
+	for (long y = 1; y <= row_rooms; y++) {
+		for (long i2 = 1; i2 <= col_rooms; i2++) {
+			if (room_map[y][i2]) {
 				i3++;
-				yloc[i3] = (i1 - 1) * (quart_height * 2 + 1) +
+				yloc[i3] = (y - 1) * (quart_height * 2 + 1) +
 					   quart_height + 1;
 				xloc[i3] = (i2 - 1) * (quart_width * 2 + 1) +
 					   quart_width + 1;
@@ -397,50 +380,50 @@ void gc__cave_gen()
 		}
 	}
 
-	for (i4 = 1; i4 <= i3; i4++) {
-		pick1 = randint(i3);
-		pick2 = randint(i3);
-		y1 = yloc[pick1];
-		x1 = xloc[pick1];
+	for (long _ = 1; _ <= i3; _++) {
+		long pick1 = randint(i3);
+		long pick2 = randint(i3);
+		long y1 = yloc[pick1];
+		long x1 = xloc[pick1];
 		yloc[pick1] = yloc[pick2];
 		xloc[pick1] = xloc[pick2];
 		yloc[pick2] = y1;
 		xloc[pick2] = x1;
 	}
 
-	for (i4 = 1; i4 < i3; i4++) {
-		y1 = yloc[i4];
-		x1 = xloc[i4];
-		y2 = yloc[i4 + 1];
-		x2 = xloc[i4 + 1];
+	for (long i = 1; i < i3; i++) {
+		long y1 = yloc[i];
+		long x1 = xloc[i];
+		long y2 = yloc[i + 1];
+		long x2 = xloc[i + 1];
 		gc__tunnel(y2, x2, y1, x1, &doorptr, doorstk);
 	}
 
 	gc__fill_cave(rock_wall1);
 
-	for (i1 = 1; i1 <= DUN_STR_MAG; i1++) {
+	for (long _ = 1; _ <= DUN_STR_MAG; _++) {
 		gc__place_streamer(rock_wall2, dun_str_mc);
 	}
-	for (i1 = 1; i1 <= DUN_STR_QUA; i1++) {
+	for (long _ = 1; _ <= DUN_STR_QUA; _++) {
 		gc__place_streamer(rock_wall3, dun_str_qc);
 	}
 
 	gc__place_boundry();
 	gc__all_the_river_stuff();
 
-	for (i1 = 1; i1 <= DUN_POOLS; i1++) {
+	for (long _ = 1; _ <= DUN_POOLS; _++) {
 		gc__place_pool(water1);
 	}
 
 	/*{ Place intersection doors	}*/
-	for (i1 = 1; i1 <= doorptr; i1++) {
-		gc__try_door(doorstk[i1].y, doorstk[i1].x - 1);
-		gc__try_door(doorstk[i1].y, doorstk[i1].x + 1);
-		gc__try_door(doorstk[i1].y - 1, doorstk[i1].x);
-		gc__try_door(doorstk[i1].y + 1, doorstk[i1].x);
+	for (long i = 1; i <= doorptr; i++) {
+		gc__try_door(doorstk[i].y, doorstk[i].x - 1);
+		gc__try_door(doorstk[i].y, doorstk[i].x + 1);
+		gc__try_door(doorstk[i].y - 1, doorstk[i].x);
+		gc__try_door(doorstk[i].y + 1, doorstk[i].x);
 	}
 
-	alloc_level = trunc(dun_level / 3);
+	long alloc_level = trunc(dun_level / 3);
 	if (alloc_level < 2) {
 		alloc_level = 2;
 	} else if (alloc_level > 10) {
@@ -472,7 +455,7 @@ void gc__cave_gen()
 	gc__place_boundry(); /* just to make sure */
 }
 
-void gc__make_door(long y, long x, long *cur_pos, long store_num,
+static void gc__make_door(long y, long x, long *cur_pos, long store_num,
 		   long house_type)
 {
 	cave[y][x].fval = corr_floor3.ftval;
@@ -512,7 +495,7 @@ void gc__make_door(long y, long x, long *cur_pos, long store_num,
 	}
 }
 
-void dr_castle(long yval, long xval, long dy, long dx, floor_type ft)
+static void dr_castle(long yval, long xval, long dy, long dx, floor_type ft)
 {
 	/*{ for castle--changes all in both lines of symmetry }*/
 
@@ -529,13 +512,13 @@ void dr_castle(long yval, long xval, long dy, long dx, floor_type ft)
 	} while (!((dy >= 0) && (dx >= 0)));
 }
 
-void gc__blank_square(long dy, long dx)
+static void gc__blank_square(long dy, long dx)
 {
 	cave[dy][dx].fopen = dopen_floor.ftopen;
 	cave[dy][dx].fval = dopen_floor.ftval;
 }
 
-void gc__build_store(long store_num, long where)
+static void gc__build_store(long store_num, long where)
 {
 	/*{ Builds a building at a row,column coordinate, and	}*/
 	/*{ set up the initial contents by setting p1 to	}*/
@@ -693,104 +676,95 @@ void gc__build_store(long store_num, long where)
 	}
 }
 
-void gc__build_house(long house_num, long where)
+static void gc__build_house(long house_num, long where)
 {
 	gc__build_store(house_num + TOT_STORES - 1, where);
 }
 
-void gc__build_fountain(long where)
+static void gc__build_fountain(long where)
 {
 	/*{ Build a fountain at row, column coordinate	-dmf-	}*/
 
-	long yval, y_height, y_depth;
-	long xval, x_left, x_right;
-	long i1, i2;
-	long count;
 	long flr[36]; /*: array [1..35] of long;*/
 
-	yval = (10 * (int)(where / 9)) + 4 + randint(3);
-	xval = 14 * (where % 9) + 9 + randint(3);
+	const long yval = (10 * (int)(where / 9)) + 4 + randint(3);
+	const long xval = 14 * (where % 9) + 9 + randint(3);
 
-	for (i1 = 1; i1 <= 35; i1++) {
-		flr[i1] = 2;
+	for (long i = 1; i <= 35; i++) {
+		flr[i] = 2;
 	}
 	flr[1] = 1;
 	flr[7] = 1;
-	for (i1 = 10; i1 <= 12; i1++) {
-		flr[i1] = 3;
+	for (long i = 10; i <= 12; i++) {
+		flr[i] = 3;
 	}
-	for (i1 = 16; i1 <= 17; i1++) {
-		flr[i1] = 3;
+	for (long i = 16; i <= 17; i++) {
+		flr[i] = 3;
 	}
-	for (i1 = 19; i1 <= 20; i1++) {
-		flr[i1] = 3;
+	for (long i = 19; i <= 20; i++) {
+		flr[i] = 3;
 	}
-	for (i1 = 24; i1 <= 26; i1++) {
-		flr[i1] = 3;
+	for (long i = 24; i <= 26; i++) {
+		flr[i] = 3;
 	}
 	flr[29] = 1;
 	flr[35] = 1;
 
-	y_height = yval - 2;
-	y_depth = yval + 2;
-	x_left = xval - 3;
-	x_right = xval + 3;
+	const long y_height = yval - 2;
+	const long y_depth = yval + 2;
+	const long x_left = xval - 3;
+	const long x_right = xval + 3;
 
-	count = 0;
+	long count = 0;
+	long i1;
 	do {
 		i1 = randint(35);
 	} while (!(flr[i1] == 2) && (i1 != 18));
 
 	flr[i1] = 4;
-	for (i1 = y_height; i1 <= y_depth; i1++) {
-		for (i2 = x_left; i2 <= x_right; i2++) {
+	for (long y = y_height; y <= y_depth; y++) {
+		for (long x = x_left; x <= x_right; x++) {
 			count++;
 			switch (flr[count]) {
 			case 1:
-				cave[i1][i2].fval = dopen_floor.ftval;
-				cave[i1][i2].fopen = dopen_floor.ftopen;
+				cave[y][x].fval = dopen_floor.ftval;
+				cave[y][x].fopen = dopen_floor.ftopen;
 				break;
 			case 2:
-				cave[i1][i2].fval = boundry_wall.ftval;
-				cave[i1][i2].fopen = boundry_wall.ftopen;
+				cave[y][x].fval = boundry_wall.ftval;
+				cave[y][x].fopen = boundry_wall.ftopen;
 				break;
 			case 3:
-				cave[i1][i2].fval = water1.ftval;
-				cave[i1][i2].fopen = water1.ftopen;
+				cave[y][x].fval = water1.ftval;
+				cave[y][x].fopen = water1.ftopen;
 				usleep(5);
 				if (randint(12) == 1) {
-					place_gold(i1, i2);
+					place_gold(y, x);
 				}
 				break;
 			case 4:
-				cave[i1][i2].fval = rock_wall2.ftval;
-				cave[i1][i2].fopen = rock_wall2.ftopen;
+				cave[y][x].fval = rock_wall2.ftval;
+				cave[y][x].fopen = rock_wall2.ftopen;
 				break;
 			}
 		}
 	}
 }
 
-void gc__mixem(long rooms[], long num)
+static void gc__mixem(long rooms[], long num)
 {
-	/*{ randomize array[0..num-1] }*/
-
-	long i1, i2, i3;
-
-	for (i1 = 0; i1 < num; i1++) {
-		i2 = i1 - 1 + randint(num - i1);
-		i3 = rooms[i1];
+	for (long i1 = 0; i1 < num; i1++) {
+		long i2 = i1 - 1 + randint(num - i1);
+		long i3 = rooms[i1];
 		rooms[i1] = rooms[i2];
 		rooms[i2] = i3;
 	}
 }
 
-void gc__town_gen()
+static void gc__town_gen()
 {
-	long i1, i2, i3;
 	long rooms[36];       /* array [0..35] of long;*/
 	boolean roomdone[36]; /* array [0..35] of boolean;*/
-	long center;
 
 	obj_set allocSet1 = {1, 2, 0};
 	obj_set allocSet2 = {16, 17, 18, 0};
@@ -799,20 +773,20 @@ void gc__town_gen()
 	/*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
 	/*  } */
 
-	for (i1 = 0; i1 < 36; i1++) {
-		roomdone[i1] = false;
+	for (long i = 0; i < 36; i++) {
+		roomdone[i] = false;
 	}
 
-	center = 10 + randint(5);
-	i3 = 0;
-	for (i1 = -2; i1 <= 2; i1++) {
-		for (i2 = -1; i2 <= 2; i2++) {
-			if (((i1 < 2) && (i1 > -2)) ||
-			    ((i2 > -1) && (i2 < 2))) {
-				roomdone[center + i1 + i2 * 9] = true;
-				if ((i1 != 0) || (i2 == -1) ||
-				    (i2 == 2)) { /*{not castle}*/
-					rooms[i3] = center + i1 + i2 * 9;
+	long center = 10 + randint(5);
+	long i3 = 0;
+	for (long i = -2; i <= 2; i++) {
+		for (long j = -1; j <= 2; j++) {
+			if (((i < 2) && (i > -2)) ||
+			    ((j > -1) && (j < 2))) {
+				roomdone[center + i + j * 9] = true;
+				if ((i != 0) || (j == -1) ||
+				    (j == 2)) { /*{not castle}*/
+					rooms[i3] = center + i + j * 9;
 					i3++;
 				}
 			}
@@ -832,14 +806,14 @@ void gc__town_gen()
 	gc__build_fountain(rooms[9]);
 	gc__build_store(S_BLACK_MARKET, rooms[10]); /* 11 */
 
-	for (i1 = 2; i1 <= MAX_HOUSE1; i1++) {
-		gc__build_house(1, rooms[9 + i1]);
+	for (long i = 2; i <= MAX_HOUSE1; i++) {
+		gc__build_house(1, rooms[9 + i]);
 	}
 
 	i3 = 0;
-	for (i1 = 0; i1 < 36; i1++) {
-		if (!roomdone[i1]) {
-			rooms[i3] = i1;
+	for (long i = 0; i < 36; i++) {
+		if (!roomdone[i]) {
+			rooms[i3] = i;
 			i3++;
 		}
 	}
@@ -856,12 +830,14 @@ void gc__town_gen()
 	gc__build_fountain(rooms[9]);
 	gc__build_house(4, rooms[10]);
 
-	for (i1 = 1; i1 <= MAX_HOUSE2; i1++) {
-		gc__build_house(2, rooms[10 + i1]);
+	for (long i = 1; i <= MAX_HOUSE2; i++) {
+		gc__build_house(2, rooms[10 + i]);
 	}
 
 	gc__fill_cave(dopen_floor);
 
+	long i1;
+	long i2;
 	do {
 		i1 = randint(4);
 		i2 = randint(4);
@@ -874,10 +850,10 @@ void gc__town_gen()
 
 		mugging_chance = NIGHT_MUGGING;
 
-		for (i1 = 1; i1 <= cur_height; i1++) {
-			for (i2 = 1; i2 <= cur_width; i2++) {
-				if (cave[i1][i2].fval != dopen_floor.ftval) {
-					cave[i1][i2].pl = true;
+		for (long y = 1; y <= cur_height; y++) {
+			for (long x = 1; x <= cur_width; x++) {
+				if (cave[y][x].fval != dopen_floor.ftval) {
+					cave[y][x].pl = true;
 				}
 			}
 		}
@@ -893,9 +869,9 @@ void gc__town_gen()
 		/*{ Day	}*/
 
 		mugging_chance = DAY_MUGGING;
-		for (i1 = 1; i1 <= cur_height; i1++) {
-			for (i2 = 1; i2 <= cur_width; i2++) {
-				cave[i1][i2].pl = true;
+		for (long y = 1; y <= cur_height; y++) {
+			for (long x = 1; x <= cur_width; x++) {
+				cave[y][x].pl = true;
 			}
 		}
 
