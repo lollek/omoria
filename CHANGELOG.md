@@ -4,9 +4,11 @@ the PROGRESS-file.
 
 ## 5.0.0.pre-alpha
 
-### April 2019
+### May 2019
+* Some slight changes to starting items. You now start with more stuff to avoid
+  unplayable starts where you cannot buy anything useful.
 
-## Major stuff
+### April 2019
 * Add barbarian
 Alternative to fighter, who can rage in fights. Cannot use heavy armor. May be
 more buggy than other classes at first
@@ -19,31 +21,31 @@ the air, where the cut-off-points usually were in between skill levels. After
 this change, most modifiers from stats are somewhere between half as good and
 twice as good as before, depending on skills, levels and stats.
 
-## Minor stuff
 * Removed titles
 Some were cool, but mostly it was annoying having to come up with titles for new
 classes, also a lot of them were immersion-breaking.
+
 * Your race no longer has any effect on your health points
 Now comes fully from your class
 
 ### February 2019
 
-## Major stuff
 * Add restrictions on what druids can wear (Can be seen through Alt-C)
 - Weapons: Club, Dagger, Quarterstaff, Sling
 - Armor, Shields, Misc: Only stuff without large amounts of metal in it
+
 * Moved druid magic from 'p' to 'm'
+
 * Changes to how 'P' is displayed
 
-## Minor stuff
 * Fix crash on displaying skeletons
+
 * Lots of code cleanup, A.K.A introducing bugs
 
 ### December 2018
-
-## Major stuff
 * WIP - Begun work on a new way of displaying item names. Will make names more
   easy to understand without resorting to the manual.
+
 * Some things are no longer stackable (Torches, valuable jewelry, amulets)
   This feels more natural and balanced to me, and I would like resource management
   to be a bigger part of the game, which this is a step towards.
