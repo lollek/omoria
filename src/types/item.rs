@@ -796,7 +796,7 @@ impl Item {
     }
 
     fn armor_string<'a>(&self) -> Cow<'a, str> {
-        if self.toac == 0 && self.ac == 0 {
+        if self.ac == 0 && (!self.is_identified() || self.toac == 0) {
             return Cow::from("");
         }
 
