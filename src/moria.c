@@ -93,8 +93,6 @@ int main(int argc, char *argv[])
 		strcat(save_file_name, player_name);
 		player_uid = C_master_add_character();
 
-		char_inven_init();
-
 		learn_magic(false);
 		player_cmana = player_mana;
 		randes_seed = seed; /* Description seed */

@@ -1,5 +1,7 @@
 use std::ffi::CStr;
 
+use types::item;
+
 use io;
 use magic;
 use player;
@@ -85,3 +87,22 @@ pub fn print_known_spells() {
     io::inkey_flush();
 }
 
+pub fn rs2item_damage(damage_string: &str) -> item::Damage {
+    const DAMAGE_SIZE: usize = 7;
+
+    let mut damage: [i8; DAMAGE_SIZE] = [0; DAMAGE_SIZE];
+    for (index, c) in damage_string.chars().take(DAMAGE_SIZE - 1).enumerate() {
+        damage[index] = c as i8;
+    }
+    return damage;
+}
+
+pub fn rs2item_name(name_string: &str) -> item::Name {
+    const NAME_SIZE: usize = 70;
+
+    let mut name: [i8; NAME_SIZE] = [0; NAME_SIZE];
+    for (index, c) in name_string.chars().take(NAME_SIZE - 1).enumerate() {
+        name[index] = c as i8;
+    }
+    return name;
+}

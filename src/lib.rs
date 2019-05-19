@@ -18,6 +18,7 @@ pub mod dungeon;
 pub mod equipment;
 pub mod highscore;
 pub mod io;
+pub mod item;
 pub mod magic;
 pub mod menu;
 pub mod master;

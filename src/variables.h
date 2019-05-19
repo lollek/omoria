@@ -112,7 +112,6 @@ extern char sex_type[82];
 extern float rgold_adj[MAX_RACES][MAX_RACES];
 extern treasure_type yums[NUM_YUM + 1];
 extern treasure_type monk_book;
-extern unsigned char player_init[MAX_CLASS][5];
 extern boolean total_winner;
 
 /*	{ Following are store definitions				} */

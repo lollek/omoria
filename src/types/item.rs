@@ -5,6 +5,9 @@ use libc;
 
 use thirdparty::serde::BigArray;
 
+pub type Damage = [libc::c_char; 7];
+pub type Name = [libc::c_char; 70];
+
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
 // For more info. Se item_guide.txt
@@ -12,7 +15,7 @@ use thirdparty::serde::BigArray;
 pub struct Item { // treasure_type
     // Object name. See below for rules on names.
     #[serde(with = "BigArray")]
-    pub name: [libc::c_char; 70],
+    pub name: Name,
 
     // Object type. Literally, is what kind of object it is.
     pub tval: libc::uint8_t,
@@ -55,7 +58,7 @@ pub struct Item { // treasure_type
 
     // the amount of damage an item does to monster.  everything
     // should have a damage value, even if it's just "0d0".
-    pub damage: [libc::c_char; 7],
+    pub damage: Damage,
 
     // a vague measurement of how strong an item's magic is.
     pub level: libc::int8_t,

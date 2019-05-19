@@ -546,7 +546,6 @@ extern long critical_blow(long weight, long plus, boolean cs_sharp,
 extern boolean move_dir(long dir, long *y, long *x); /* was move */
 extern boolean player_saves(long adjust);
 extern boolean player_spell_saves();
-extern void char_inven_init();
 extern void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence);
 extern void check_kickout_time(long num, long check);
 

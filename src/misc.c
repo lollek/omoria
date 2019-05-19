@@ -859,41 +859,6 @@ void subtract_money(long amount, boolean make_change)
 		add_money(-amt);
 	}
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void char_inven_init()
-{
-	/*	{ Init players with some belongings			-RAK-
-	 * }*/
-
-	long i1, i2;
-
-	ENTER(("char_inven_init", ""));
-	/*	printf("\nENTER char_inven_init\n\n"); fflush(stdout); */
-
-	inventory_list = nil;
-	for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
-		equipment[i1].tval = 0;
-	}
-
-	for (i1 = 0; i1 < 5; i1++) {
-		/*	  printf("    char_inven_init A%d\n",i1); */
-		/* fflush(stdout); */
-
-		i2 = player_init[player_pclass][i1];
-		inven_temp->data = inventory_init[i2];
-		inven_carry();
-
-		/*	  printf("    char_inven_init %d (done)\n",i1); */
-		/* fflush(stdout); */
-	}
-	/*	printf("\nEXIT char_inven_init\n\n"); fflush(stdout); */
-	LEAVE("char_inven_init", "");
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 long bard_adj() { return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(DEX) + 1) / 2; }
 

@@ -1,15 +1,6 @@
 #include "imoria.h"
 #include "dungeon.h"
 
-treas_ptr inven_carry()
-{
-	/*	{ Add the item in inven_temp to players inventory.  Return the
-	 * }*/
-	/*	{ item position for a description if needed...		-RAK-
-	 * }*/
-	return add_inven_item(inven_temp->data);
-}
-
 static void aii__insert(treas_ptr ptr, treas_ptr new_item)
 {
 	treas_ptr cur;
@@ -167,6 +158,15 @@ treas_ptr add_inven_item(treasure_type item)
 	/*  fflush(stdout); */
 
 	return return_value;
+}
+
+treas_ptr inven_carry()
+{
+	/*	{ Add the item in inven_temp to players inventory.  Return the
+	 * }*/
+	/*	{ item position for a description if needed...		-RAK-
+	 * }*/
+	return add_inven_item(inven_temp->data);
 }
 
 long change_all_ok_stats(boolean nok, boolean nin)

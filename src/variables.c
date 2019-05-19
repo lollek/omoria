@@ -309,22 +309,6 @@ treasure_type monk_book = {
     10,				    1,			  0,     0,
     0,				    0,			  "0d0", 1, 0};
 
-/*	{ Each type of character starts out with a few provisions...	} */
-/*	{ Note the the entries refer to array elements of INVENTORY_INIT array}
- */
-unsigned char player_init[MAX_CLASS][5] = {
-    {1, 104, 42, 7, 33},    /*{ Warrior	} */
-    {1, 104, 42, 7, 67},    /*{ Mage	} */
-    {1, 104, 42, 156, 71},  /*{ Priest	} */
-    {1, 104, 33, 7, 111},   /*{ Rogue	} */
-    {1, 104, 42, 7, 107},   /*{ Ranger	} */
-    {1, 104, 42, 7, 71},    /*{ Paladin	} */
-    {1, 104, 42, 156, 107}, /*{ Druid	} */
-    {1, 104, 42, 7, 111},   /*{ Bard	} */
-    {1, 104, 42, 7, 67},    /*{ Adventurer	} */
-    {1, 104, 42, 28, 43}    /*{ Monk	} */
-};
-
 boolean total_winner = false;
 
 /*	{ Following are store definitions				} */
@@ -1692,7 +1676,7 @@ treasure_type gold_list[MAX_GOLD] = {
 
 treasure_type t_list[MAX_TALLOC + 1];
 treasure_type equipment[EQUIP_MAX];
-treas_ptr inventory_list;
+treas_rec* inventory_list = NULL;
 treas_ptr inven_temp;
 
 /*	{ Items which are sold in the stores are different from dungeon } */
