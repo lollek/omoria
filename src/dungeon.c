@@ -2589,10 +2589,6 @@ static void d__execute_command(long *com_val)
 		move_char(6);
 		break;
 
-	case CTRL_M:
-		show_location();
-		reset_flag = true;
-		break;
 	case CTRL_N:
 		find_flag = true;
 		move_char(3);
@@ -2828,9 +2824,6 @@ static void d__execute_command(long *com_val)
 	case 'L':
 		find_flag = true;
 		move_char(6);
-		break;
-	case 'M':
-		screen_map();
 		break;
 	case 'N':
 		find_flag = true;

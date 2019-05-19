@@ -8,6 +8,9 @@ the PROGRESS-file.
 * Some slight changes to starting items. You now start with more stuff to avoid
   unplayable starts where you cannot buy anything useful.
 
+* Removed all maps from the game. The whole point about this game is that moria
+  is unmappable, so it's weird that you can map out floors at all.
+
 ### April 2019
 * Add barbarian
 Alternative to fighter, who can rage in fights. Cannot use heavy armor. May be

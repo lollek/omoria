@@ -576,13 +576,10 @@ extern void put_buffer_attr(const char *out_str, /*	: varying [a] of char; */
 			    long row, long col, int attrs);
 /* use clear_from */
 extern void Clear_From(int row);
-extern void move_cursor_relative(int row, int col);
 /* use pause_line */
 extern void Pause_Line(int prt_line);
 extern void move_cursor(int row, int col);
 extern unsigned sleep();
-extern void screen_map();
-extern void show_location();
 
 /* { unix.c		} */
 extern void user_name(char *buf);

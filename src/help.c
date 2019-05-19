@@ -47,8 +47,8 @@ void help()
 	    "M-I    (Nothing)              ",
 	    10, 1);
 	prt(" m     Magic / Music / Monk   |"
-	    " M     Show a minimap         |"
-	    "^M     Show a zoomed out map  |"
+	    " M     (Nothing)              |"
+	    "^M     (Nothing)              |"
 	    "M-M    Show manual            ",
 	    11, 1);
 	prt(" o ~   Open a door or chest   |"
