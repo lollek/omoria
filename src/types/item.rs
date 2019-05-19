@@ -797,11 +797,15 @@ impl Item {
 
     fn armor_string<'a>(&self) -> Cow<'a, str> {
         if self.toac == 0 && self.ac == 0 {
-            Cow::from("")
-        } else {
-            let toac_sign = if self.toac > 0 { "+" } else {""};
-            Cow::from(format!(" [{},{}{}]", self.ac, toac_sign, self.toac))
+            return Cow::from("");
         }
+
+        if !self.is_identified() {
+            return Cow::from(format!(" [{}]", self.ac));
+        }
+
+        let toac_sign = if self.toac > 0 { "+" } else {""};
+        return Cow::from(format!(" [{},{}{}]", self.ac, toac_sign, self.toac))
     }
 
     pub fn item_type(&self) -> ItemType {
