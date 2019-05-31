@@ -80,79 +80,80 @@ use one difficulty always. This should also make it possible to balance.
 
 ## Original omoria PROGRESS-file
 
-Bank.inc		done with all but deposit of items (it was disabled)
-Bit_Pos.mar		done
-Bit_Pos64.for		done
-Bj.inc			done
-Blow.inc		done
-Build.com		<none>
-Casino.pas		done
-Changer.inc		<none>             (code never used, bank does it...)
-Constants.inc		done
-Create.pas		done   (except "get_ssn")
-Creature.pas		done
-Death.pas		done
-Desc.pas		done
-Distance.mar		<done>
-Dungeon.pas		done           should get rid of globals...
-Eat.inc			done
-Files.pas		done
-Generate.pas		nearly done,   need to implement old_seed stuff
-Get_Account.mar		<none>
-Help.pas		done
-Horse.inc		done           (needs testing, but seems to work)
-Imoria.cld		<done>
-Imoria_Setup.com	<none>
-Insert.mar		done
-Insurance.inc		done
-Inven.pas		done
-Io.pas			done       (trap vms messages not implemented, duh)
-Magic.inc		done
-Maxmin.mar		done
-Minmax.mar		done
-Misc.pas		       already_playing
-Monk.inc		done
-Monsters.dat		<done>
-Moria.pas		done         should probably delete //ed code
-Moriadef.cld		<done>
-Moriahlp.rnh		<done, wrote perl script to display help>
-Netopen.pas		<none> stuff for post, not needed
-Play.inc		done
-Player.pas		done
-Potions.inc		done
-Prayer.inc		done
-Putqio.mar		<done>
-Quest.pas		done, added item rewards
-Randint.mar		<done>
-Randrep.mar		<done>
-Routines.inc		<done>
-Save.pas		done          should check for errors when writing
-Screen.pas		done
-Scrolls.inc		done
-Sing.inc		done
-Slots.inc		done
-Spells.inc		done
-Staffs.inc		done
-Store.pas		done          want to import shakesphere insulter
-Subquad.mar		<done>
-Termdef.pas		<none> probably not needed since I stole umoria code
-Trade.inc		done
-Types.inc		done
-Users.mar		<done>
-Uw_Id.for		<none> probably not needed
-Values.inc		done
-Variables.inc		done
-Wands.inc		done
-Wizard.pas		done
+Bank.inc		done with all but deposit of items (it was disabled)  
+Bit_Pos.mar		done  
+Bit_Pos64.for		done  
+Bj.inc			done  
+Blow.inc		done  
+Build.com		<none>  
+Casino.pas		done  
+Changer.inc		<none>             (code never used, bank does it...)  
+Constants.inc		done  
+Create.pas		done   (except "get_ssn")  
+Creature.pas		done  
+Death.pas		done  
+Desc.pas		done  
+Distance.mar		<done>  
+Dungeon.pas		done           should get rid of globals...  
+Eat.inc			done  
+Files.pas		done  
+Generate.pas		nearly done,   need to implement old_seed stuff  
+Get_Account.mar		<none>  
+Help.pas		done  
+Horse.inc		done           (needs testing, but seems to work)  
+Imoria.cld		<done>  
+Imoria_Setup.com	<none>  
+Insert.mar		done  
+Insurance.inc		done  
+Inven.pas		done  
+Io.pas			done       (trap vms messages not implemented, duh)  
+Magic.inc		done  
+Maxmin.mar		done  
+Minmax.mar		done  
+Misc.pas		       already_playing  
+Monk.inc		done  
+Monsters.dat		<done>  
+Moria.pas		done         should probably delete //ed code  
+Moriadef.cld		<done>  
+Moriahlp.rnh		<done, wrote perl script to display help>  
+Netopen.pas		<none> stuff for post, not needed  
+Play.inc		done  
+Player.pas		done  
+Potions.inc		done  
+Prayer.inc		done  
+Putqio.mar		<done>  
+Quest.pas		done, added item rewards  
+Randint.mar		<done>  
+Randrep.mar		<done>  
+Routines.inc		<done>  
+Save.pas		done          should check for errors when writing  
+Screen.pas		done  
+Scrolls.inc		done  
+Sing.inc		done  
+Slots.inc		done  
+Spells.inc		done  
+Staffs.inc		done  
+Store.pas		done          want to import shakesphere insulter  
+Subquad.mar		<done>  
+Termdef.pas		<none> probably not needed since I stole umoria code  
+Trade.inc		done  
+Types.inc		done  
+Users.mar		<done>  
+Uw_Id.for		<none> probably not needed  
+Values.inc		done  
+Variables.inc		done  
+Wands.inc		done  
+Wizard.pas		done  
 
 ( source can be found at wbcms.cc.buffalo.edu in maslib/games/imoria )
 
-Started on nov 16, 1997.  Got the source, un-sharded it!
-nov 17, actually started converting stuff.
-nov 22, finished with most of the types/vars/values, time to recode!
-dec 7,  you can create a character and get initial inventory and spells!
+Started on nov 16, 1997.  Got the source, un-sharded it!  
+nov 17, actually started converting stuff.  
+nov 22, finished with most of the types/vars/values, time to recode!  
+dec 7,  you can create a character and get initial inventory and spells!  
 
-1998
+### 1998
+
 march 1, you can actually play the game now
 
 june, mid, Jeanetta started some alpha testing.  wow, lots of bugs.
@@ -194,13 +195,11 @@ july 13:
 july 18:
 	hmmm, done with the post.  is that everything?
 
--------------------------------------------------------------------------------
-4.85.3
+### 4.85.3
   july 20 1998		added reduced map and better Locate from umoria
 			fixed store hours and bribes so correct index is used
 
--------------------------------------------------------------------------------
-4.85.4
+### 4.85.4
   july 21 1998		fixed learn_spell and learn_prayer offering spell
 			from outside correct range.
 
@@ -211,31 +210,29 @@ july 18:
 
 			always xor save file data against random numbers
 
--------------------------------------------------------------------------------
-4.85.5
+### 4.85.5
 
   july and aug		I must have changed something between pl 4 and 5,
 			but I have no idea what.
 
   sep 16 1998		announced package to freshmeat.net
 
--------------------------------------------------------------------------------
-4.85.6
+### 4.85.6
 
 Sep 27 1998
 
-Fixes a crash in the speeded up identify selection code.<br>
-Call endwin to clean up ncurses on exit.<br>
--------------------------------------------------------------------------------
-4.85.7
+Fixes a crash in the speeded up identify selection code.
+Call endwin to clean up ncurses on exit.
+
+### 4.85.7
 
 Sep 29 1998
 
 Should fix a problem in monk.c where a for loop should have begun at 0.
 Added break; to paladin, druid and priest spells so only one is cast
 at a time.  I don't think I play them very often!
--------------------------------------------------------------------------------
-4.85.8
+
+### 4.85.8
 
 Oct 05 1998
 
@@ -243,8 +240,8 @@ Made mhelp.pl output \n\r rather than just \n, should fix messed up output
 when using help from within the game.
 Replaced index call with strchr
 Fixed bug in bi__insure_all_items that made the game look like it had hung.
--------------------------------------------------------------------------------
-4.85.9
+
+### 4.85.9
 
 Oct 12 1998
 
@@ -255,8 +252,8 @@ skipped.
 Staves of darkness no longer mess up the screen when used.
 Enter can be used to reply to "-more-"
 ^M is still broken, getch returns 10 (^J) and I don't know why. Use 'V'.
--------------------------------------------------------------------------------
-4.85.10
+
+### 4.85.10
 
 Oct 14 1998
 
@@ -266,8 +263,7 @@ exits with no errors right after starting.
 I also added a message if the help file could not be executed so the
 screen does not just flash.
 
--------------------------------------------------------------------------------
-4.85.11
+### 4.85.11
 
 Dec 5 1999
 
@@ -280,8 +276,8 @@ Also added USE_CURSES_ATTRS to configure.h to make it easy for the
 people who have had problems with attr_get().  Some minor graphics
 fixes including one caused by using the J command (parts of the map
 were not redrawn correctly).
--------------------------------------------------------------------------------
-4.85.12
+
+### 4.85.12
 
 Dec 13 1999
 
@@ -294,8 +290,7 @@ Let petrification wear off over time, partly taken from the 4.94 sources.
 Fixed message printed by area spells that killed things (monster names
 were sometimes lost)
 
--------------------------------------------------------------------------------
-4.85.13
+### 4.85.13
 
 Dec 18 1999
 
@@ -305,8 +300,7 @@ Fixed a few item sets that caused crashes if DO_DEBUG was on.
 Fixed an off by one problem with the material types of magic items.
 Fixed some of the monster death messages.
 
--------------------------------------------------------------------------------
-4.85.14
+### 4.85.14
 
 Dec 22 1999
 
@@ -323,8 +317,7 @@ If a monster was in the dark, hit by something and cast teleport on itself
 then the old position (shown when the monster was hit) was not redrawn.
 I never noticed that at UW, but this week it happened at least 3 times. Odd.
 
--------------------------------------------------------------------------------
-4.85.15
+### 4.85.15
 
 Jan 7 2000
 
@@ -336,10 +329,7 @@ newer curses.  If things are still broken let me know.
 
 Don't just detrap chests when disarming them, unlock them too.
 
-
-
--------------------------------------------------------------------------------
-4.85.16
+### 4.85.16
 
 Jan 31 2000
 
@@ -353,8 +343,7 @@ errors.  Monks will be helped a lot by this.
 
 Fixed genocide, it usually went into an infinite loop.
 
--------------------------------------------------------------------------------
-4.85.17
+### 4.85.17
 
 Feb 17 2000
 
@@ -373,8 +362,7 @@ added valuable_gems to things that can be recharged.
 
 wizard_create will let you create anything now (including traps!).
 
--------------------------------------------------------------------------------
-4.85.18
+### 4.85.18
 
 Oct 15 2000
 
@@ -382,8 +370,8 @@ correctly set random seed in casino so that it does not always play
 exactly the same games after loading a saved character.
 
 A bunch of little things I did back in March that I have forgotten about.
--------------------------------------------------------------------------------
-4.85.19
+
+### 4.85.19
 
 Oct 26 2000
 
@@ -414,8 +402,7 @@ couple of other little bugs.
    based on the rings' +todam value.  looks like a cut-and-paste error,
    probably from when those rings were invented originally...
 
--------------------------------------------------------------------------------
-4.85.20
+### 4.85.20
 
 June 6, 2001
 
@@ -427,8 +414,7 @@ Fix a bunch of item prices in the stores that depended on how identified the ite
 Fix mhelp.pl to be smarter about figuring out how many lines are on the screen.
 Fix gain_mana() so it does the right thing on even level ups.
 
--------------------------------------------------------------------------------
-4.85.21
+### 4.85.21
 
 May 28, 2002
 
@@ -472,8 +458,7 @@ paths.  And I upped the max path length to 170 chars from 60 to accommodate
 NetBSD packages installed without root access.  I hope that is plenty, it
 was certainly lazy.  But at least it checks for overflows now!
 
--------------------------------------------------------------------------------
-4.85.22
+### 4.85.22
 
 Aug 20, 2003
 
@@ -483,4 +468,3 @@ if you change OUTPAGE_WIDTH cover the full map.
 Proved that I still maintain the code if someone emails me a problem.
 Thanks Robin!  :)
 
-/* end progress */
