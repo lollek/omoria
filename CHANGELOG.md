@@ -2,6 +2,10 @@
 This is the changelog for version 5+. For info on versions older than that, see
 the PROGRESS-file.
 
+## 5.0.0
+No changes, but since I'm almost a year into this I should start using version
+numbers
+
 ## 5.0.0.pre-alpha
 
 ### May 2019
