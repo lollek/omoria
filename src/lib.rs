@@ -12,6 +12,7 @@ extern crate serde_json;
 extern crate pancurses;
 
 pub mod ability;
+pub mod commands;
 pub mod constants;
 pub mod debug;
 pub mod dungeon;
@@ -34,9 +35,9 @@ pub mod types;
 
 pub mod ability_extern;
 pub mod bank_extern;
+pub mod commands_extern;
 pub mod constants_extern;
 pub mod classes_extern;
-pub mod dungeon_extern;
 pub mod highscore_extern;
 pub mod master_extern;
 pub mod misc_extern;

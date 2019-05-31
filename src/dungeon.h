@@ -60,6 +60,6 @@ boolean xor (long thing1, long thing2);
 void blow(void);
 void d__quit(void);
 
-void C_dungeon_show_class_restrictions(void);
+void C_commands_show_class_restrictions(void);
 
 #endif /* DUNGEON_H */

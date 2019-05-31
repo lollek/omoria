@@ -2645,7 +2645,7 @@ static void d__execute_command(long *com_val)
 			move_char(1);
 			break;
 		case 'c':
-			C_dungeon_show_class_restrictions();
+			C_commands_show_class_restrictions();
 			draw_cave();
 			break;
 		case 'd':
