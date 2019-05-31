@@ -28,6 +28,10 @@ const TIME_ROW: u8 = 20;
 const EQUIP_COL: u8 = 81;
 const EQUIP_ROW: u8 = 1;
 
+// Visible Items Column
+const VISIBLE_COL: u8 = 1;
+const VISIBLE_ROW: u8 = 30;
+
 // Status Row
 const STATUS_ROW: u8 = 23;
 const DEPTH_COL: u8 = 61;
@@ -190,6 +194,10 @@ fn print_equipment(row: u8, col: u8) {
     debug::leave("print_equipment");
 }
 
+pub fn print_equipment_block() {
+    print_equipment(EQUIP_ROW, EQUIP_COL);
+}
+
 fn print_stats_column() {
     print_field(player::race().name(), RACE_ROW, STAT_COL);
     print_field(player::class().name(), CLASS_ROW, STAT_COL);
@@ -224,6 +232,17 @@ pub fn print_stat_block() {
     debug::leave("print_stat_block");
 }
 
-pub fn print_equipment_block() {
-    print_equipment(EQUIP_ROW, EQUIP_COL);
+fn print_visible_monsters(row: &mut u8, col: u8) {
+    // print "VISIBLE MONSTERS"
+}
+
+fn print_visible_items(row: u8, col: u8) {
+    // print "VISIBLE ITEMS"
+}
+
+pub fn print_visible_things() {
+    let mut row = VISIBLE_ROW;
+    let col = VISIBLE_COL;
+    print_visible_monsters(&mut row, col);
+    print_visible_items(row, col);
 }
