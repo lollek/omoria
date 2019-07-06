@@ -1,64 +1,5 @@
-/* monsters.c */
-/**/
-
 #include "imoria.h"
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_monster(long y, long x, long z, boolean slp)
-{
-	/*{ Places a monster at given location			-RAK-	}*/
-
-	long cur_pos;
-
-	/*  printf ("\n     Enter place_monster: %d (%d,%d)",z,x,y); */
-	/*  fflush(stdout); */
-
-	popm(&cur_pos);
-
-	/*  printf ("\n     got cur_pos: %d",cur_pos);  fflush(stdout); */
-
-	/* with m_list[cur_pos] do; */
-	m_list[cur_pos].fy = y;
-	m_list[cur_pos].fx = x;
-	m_list[cur_pos].mptr = z;
-	m_list[cur_pos].nptr = muptr;
-	muptr = cur_pos;
-
-	if ((c_list[z].cdefense & 0x4000) != 0) {
-		m_list[cur_pos].hp = max_hp(c_list[z].hd);
-	} else {
-		m_list[cur_pos].hp = damroll(c_list[z].hd);
-	}
-	/*  printf ("\n     hp: %d)",m_list[cur_pos].hp);  fflush(stdout); */
-
-	m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
-	/*  printf ("\n     cdis: %d)",m_list[cur_pos].cdis);  fflush(stdout);
-	 */
-	m_list[cur_pos].cspeed = c_list[z].speed + player_flags.speed;
-	m_list[cur_pos].stunned = 0;
-
-	if (slp) {
-		/*    printf ("\n     set sleep: %d",c_list[z].sleep); */
-		/*    fflush(stdout); */
-		m_list[cur_pos].csleep =
-		    (c_list[z].sleep / 5.0) + randint(c_list[z].sleep);
-		/*    printf ("\n     sleep: %d",m_list[cur_pos].csleep); */
-		/*    fflush(stdout); */
-	} else {
-		/*    printf ("\n     set no sleep:");  fflush(stdout); */
-		m_list[cur_pos].csleep = 0;
-	}
-
-	cave[y][x].cptr = cur_pos;
-
-	/*  printf ("\n     Exit place_monster: %d (%d,%d)",z,x,y); */
-	/*  fflush(stdout); */
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 			boolean water)
 {
@@ -128,12 +69,3 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 		} while (!(flag || count > 10));
 	} /* end for */
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* END FILE  monsters.c */

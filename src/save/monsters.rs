@@ -2,6 +2,7 @@ use std::mem;
 
 use libc;
 
+use types::Monster;
 use save::types::*;
 
 const MAX_MALLOC: usize = 101;

@@ -2195,42 +2195,36 @@ boolean earthquake()
 
 	return true;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean mass_poly()
 {
 	/*{ Polymorph any creature that player can see...         -RAK-   }*/
 	/*{ NOTE: cannot polymorph a winning creature (BALROG)            }*/
 
-	long i1, i2, y, x;
-	boolean flag = false;
+	long i = muptr;
+	while (i != 0) {
+		long this = i;
+		i = m_list[i].nptr;
 
-	i1 = muptr;
+		if (m_list[this].cdis >= MAX_SIGHT)
+			continue;
 
-	do {
-		/* with m_list[i1]. do; */
-		i2 = m_list[i1].nptr;
-		if (m_list[i1].cdis < MAX_SIGHT) {
-			/* with c_list[m_list[i1].mptr]. do; */
-			if ((uand(c_list[m_list[i1].mptr].cdefense,
-				  0x80000000) == 0) &&
-			    (!mon_resists(i1))) {
-				y = m_list[i1].fy;
-				x = m_list[i1].fx;
-				delete_monster(i1);
-				place_monster(y, x,
-					      randint(m_level[MAX_MONS_LEVEL]) +
-						  m_level[0],
-					      false);
-				flag = true;
-			}
-		}
+		if (c_list[m_list[this].mptr].cdefense & 0x80000000)
+			// Win-the-Game creature
+			continue;
 
-		i1 = i2;
-	} while (i1 != 0); /* what if no monsters? */
+		if (mon_resists(this))
+			continue;
 
-	return flag;
+		uint8_t const y = m_list[this].fy;
+		uint8_t const x = m_list[this].fx;
+		long const monster_i = randint(m_level[MAX_MONS_LEVEL]) + m_level[0];
+		delete_monster(this);
+		place_monster(y, x, monster_i, false);
+		return true;
+	}
+
+	return false;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

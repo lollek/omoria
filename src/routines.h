@@ -468,7 +468,7 @@ extern void compact_monsters();
 extern void popm(long *x);
 extern void pushm(long x);
 extern long max_hp(char const *hp_str);
-extern void place_monster(long y, long x, long z, boolean slp);
+void C_create_monster(uint8_t y, uint8_t x, long z, boolean is_asleep);
 extern void place_win_monster();
 extern void alloc_land_monster(obj_set alloc_set, long num, long dis,
 			       boolean slp, boolean water);

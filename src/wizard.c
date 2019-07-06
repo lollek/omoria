@@ -225,8 +225,9 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
 					if (is_in(cave[i3][i4].fval,
 						  floor_set)) {
 						if (cave[i3][i4].fopen) {
-							place_monster(
-							    i3, i4, i2, sleepy);
+							C_place_monster(
+							    (uint8_t)i3,
+							    (uint8_t)i4, i2, sleepy);
 							i1 = 8;
 							y = i3;
 							x = i4;

@@ -1618,8 +1618,6 @@ boolean test_light(long y, long x)
 /*//////////////////////////////////////////////////////////////////// */
 long distance(long y1, long x1, long y2, long x2)
 {
-	register int dy, dx;
-
 	/*
 		;	Distance returned is only an approximation based on :
 		;
@@ -1630,12 +1628,8 @@ long distance(long y1, long x1, long y2, long x2)
 		;		    ----------------------
 		;			      2
 	*/
-	dy = y1 - y2;
-	if (dy < 0)
-		dy = -dy;
-	dx = x1 - x2;
-	if (dx < 0)
-		dx = -dx;
+	long dy = abs(y1 - y2);
+	long dx = abs(x1 - x2);
 
 	return ((((dy + dx) << 1) - (dy > dx ? dx : dy)) >> 1);
 }
@@ -2079,252 +2073,160 @@ long minmax(long x, long y, long z)
 	i1 = max(x, y) + 1;
 	return min(i1, z);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+enum monster_t {
+	LAND,
+	WATER,
+};
+
+static boolean summon_monster(long *y, long *x, boolean slp, enum monster_t monster_type)
+{
+	boolean return_value = false;
+	long const max_monster_level = dun_level + MON_SUMMON_ADJ;
+
+	for (long i = 0; i <= 9; ++i) {
+		long const monster_y = *y - 2 + randint(3);
+		long const monster_x = *x - 2 + randint(3);
+
+		if (!in_bounds(monster_y, monster_x))
+			continue;
+
+		if (monster_type == LAND && !is_in(cave[monster_y][monster_x].fval, earth_set))
+			continue;
+		if (monster_type == WATER && !is_in(cave[monster_y][monster_x].fval, water_set))
+			continue;
+
+		if (cave[monster_y][monster_x].cptr != 0)
+			continue;
+		if (!cave[monster_y][monster_x].fopen)
+			continue;
+
+		boolean flag = false;
+		long count = 0;
+		do {
+			count++;
+			long monster_i = min(max_monster_level, MAX_MONS_LEVEL);
+			monster_i = dun_level == 0
+				? randint(m_level[0])
+				: randint(m_level[monster_i]) + m_level[0];
+			if (monster_i > MAX_CREATURES) {
+				monster_i = MAX_CREATURES;
+			}
+
+			creature_type const * const template = &c_list[monster_i];
+			if (template->cmove & 0x00008000)
+				continue;
+
+			boolean drowns_in_wrong_element = template->cmove & 0x00000040;
+			boolean can_fly = template->cmove & 0x00800000;
+			if (drowns_in_wrong_element && !can_fly) {
+				boolean water_creature = template->cmove & 0x00000010;
+				if (monster_type == LAND && water_creature)
+					// Cannot match water monsters to land
+					continue;
+
+				if (monster_type == WATER && !water_creature)
+					// Cannot match land monsters to water
+					continue;
+			}
+
+			C_create_monster((uint8_t)monster_y,
+					(uint8_t)monster_x, monster_i, slp);
+			return_value = true;
+			flag = true;
+		} while (!(flag || count > 10));
+
+		i = 9;
+		*y = monster_y;
+		*x = monster_x;
+	}
+
+	return return_value;
+}
+
+/*{ Places land creature adjacent to given location	-RAK-	}*/
 boolean summon_land_monster(long *y, long *x, boolean slp)
 {
-	/*{ Places land creature adjacent to given location	-RAK-	}*/
-
-	long i1, i2, i3, i4, i5, count;
-	boolean flag;
-	boolean return_value = false;
-
-	i1 = 0;
-	i5 = dun_level + MON_SUMMON_ADJ;
-
-	do {
-		i2 = *y - 2 + randint(3);
-		i3 = *x - 2 + randint(3);
-		if (in_bounds(i2, i3)) {
-			/* with cave[i2][i3]. do; */
-			if (is_in(cave[i2][i3].fval, earth_set)) {
-				if (cave[i2][i3].cptr == 0) {
-					if (cave[i2][i3].fopen) {
-						flag = false;
-						count = 0;
-						do {
-							if (i5 >
-							    MAX_MONS_LEVEL) {
-								i4 =
-								    MAX_MONS_LEVEL;
-							} else {
-								i4 = i5;
-							}
-							if (dun_level == 0) {
-								i4 = randint(
-								    m_level[0]);
-							} else {
-								i4 =
-								    randint(
-									m_level
-									    [i4]) +
-								    m_level[0];
-							}
-							if (i4 >
-							    MAX_CREATURES) {
-								i4 =
-								    MAX_CREATURES;
-							}
-							if (((c_list[i4].cmove &
-							      0x00008000) ==
-							     0) &&
-							    (((c_list[i4]
-								   .cmove &
-							       0x00000010) ==
-							      0) ||
-							     ((c_list[i4]
-								   .cmove &
-							       0x00000040) ==
-							      0) ||
-							     ((c_list[i4]
-								   .cmove &
-							       0x00800000) !=
-							      0))) {
-								place_monster(
-								    i2, i3, i4,
-								    slp);
-								return_value =
-								    true;
-								flag = true;
-							}
-							count++;
-						} while (
-						    !((flag) || (count > 10)));
-						i1 = 9;
-						*y = i2;
-						*x = i3;
-					}
-				}
-			}
-		}
-		i1++;
-	} while (i1 <= 9);
-
-	return return_value;
+	return summon_monster(y, x, slp, LAND);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/*{ Places water creature adjacent to given location  -DMF-   }*/
 boolean summon_water_monster(long *y, long *x, boolean slp)
 {
-	/*{ Places water creature adjacent to given location  -DMF-   }*/
-
-	long i1, i2, i3, i4, i5, count;
-	boolean flag;
-	boolean return_value = false;
-
-	i1 = 0;
-	i5 = dun_level + MON_SUMMON_ADJ;
-
-	do {
-		i2 = *y - 2 + randint(3);
-		i3 = *x - 2 + randint(3);
-		if (in_bounds(i2, i3)) {
-			/* with cave[i2][i3]. do; */
-			if (is_in(cave[i2][i3].fval, water_set)) {
-				if (cave[i2][i3].cptr == 0) {
-					if (cave[i2][i3].fopen) {
-						flag = false;
-						count = 0;
-						do {
-							if (i5 >
-							    MAX_MONS_LEVEL) {
-								i4 =
-								    MAX_MONS_LEVEL;
-							} else {
-								i4 = i5;
-							}
-							if (dun_level == 0) {
-								i4 = randint(
-								    m_level[0]);
-							} else {
-								i4 =
-								    randint(
-									m_level
-									    [i4]) +
-								    m_level[0];
-							}
-							if (i4 >
-							    MAX_CREATURES) {
-								i4 =
-								    MAX_CREATURES;
-							}
-							if ((((c_list[i4]
-								   .cmove &
-							       0x00008000) ==
-							      0) &&
-							     (((c_list[i4]
-								    .cmove &
-								0x00000010) !=
-							       0) ||
-							      ((c_list[i4]
-								    .cmove &
-								0x00000040) ==
-							       0) ||
-							      ((c_list[i4]
-								    .cmove &
-								0x00800000) !=
-							       0)))) {
-								place_monster(
-								    i2, i3, i4,
-								    slp);
-								return_value =
-								    true;
-								flag = true;
-							}
-							count++;
-						} while (
-						    !((flag) || (count > 10)));
-						i1 = 9;
-						*y = i2;
-						*x = i3;
-					}
-				}
-			}
-		}
-		i1++;
-	} while (i1 <= 9);
-
-	return return_value;
+	return summon_monster(y, x, slp, WATER);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/*{ Places undead adjacent to given location          -RAK-   }*/
 boolean summon_undead(long *y, long *x)
 {
-	/*{ Places undead adjacent to given location          -RAK-   }*/
 
-	long i1, i2, i3, i4, i5, ctr;
-	obj_set undead_set = {1, 2, 4, 5, 0};
+	obj_set const undead_set = {1, 2, 4, 5, 0};
 	boolean return_value = false;
 
-	i1 = 0;
-	i4 = m_level[MAX_MONS_LEVEL] + m_level[0];
+	long i4 = m_level[MAX_MONS_LEVEL] + m_level[0];
+	long monster_i;
 
 	do {
-		i5 = randint(i4);
-		ctr = 0;
-		do {
-			if ((c_list[i5].cdefense & 0x0008) != 0) {
+		monster_i = randint(i4);
+		long ctr = 0;
+		while (ctr <= 19) {
+			if ((c_list[monster_i].cdefense & 0x0008) != 0) {
 				ctr = 20;
 				i4 = 0;
 			} else {
-				i5++;
-				if (i5 > i4) {
+				monster_i++;
+				if (monster_i > i4) {
 					ctr = 20;
 				} else {
 					ctr++;
 				}
 			}
-		} while (ctr <= 19);
+		}
 	} while (i4 != 0);
 
-	do {
-		i2 = *y - 2 + randint(3);
-		i3 = *x - 2 + randint(3);
-		if (in_bounds(i2, i3)) {
-			/* with cave[i2,i3] do; */
-			if (is_in(cave[i2][i3].fval, undead_set)) {
-				if ((cave[i2][i3].cptr == 0) &&
-				    (cave[i2][i3].fopen)) {
-					place_monster(i2, i3, i5, false);
-					return_value = true;
-					i1 = 9;
-					*y = i2;
-					*x = i3;
-				}
-			}
+	for (long i = 0; i <= 9; ++i) {
+		long const monster_y = *y - 2 + randint(3);
+		long const monster_x = *x - 2 + randint(3);
+
+		if (!in_bounds(monster_y, monster_x))
+			continue;
+		if (!is_in(cave[monster_y][monster_x].fval, undead_set))
+			continue;
+
+		if ((cave[monster_y][monster_x].cptr == 0) &&
+				(cave[monster_y][monster_x].fopen)) {
+			C_create_monster((uint8_t)monster_y,
+					(uint8_t)monster_x, monster_i, false);
+			return_value = true;
+			i = 9;
+			*y = monster_y;
+			*x = monster_x;
 		}
-		i1++;
-	} while (i1 <= 9);
+	}
 
 	return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/*{ Places demon adjacent to given location           -RAK-   }*/
 boolean summon_demon(long *y, long *x)
 {
-	/*{ Places demon adjacent to given location           -RAK-   }*/
-
-	long i1, i2, i3, i4, i5, ctr;
+	long i1, i2, i3, i4, monster_i, ctr;
 	obj_set demon_set = {1, 2, 4, 5, 0};
 	boolean return_value = false;
 
 	i1 = 0;
 	i4 = m_level[MAX_MONS_LEVEL] + m_level[0];
 	do {
-		i5 = randint(i4);
+		monster_i = randint(i4);
 		ctr = 0;
 		do {
 			/*{        Check monsters for demon }*/
-			if ((c_list[i5].cdefense & 0x0400) != 0) {
+			if ((c_list[monster_i].cdefense & 0x0400) != 0) {
 				ctr = 20;
 				i4 = 0;
 			} else {
-				i5++;
-				if (i5 > i4) {
+				monster_i++;
+				if (monster_i > i4) {
 					ctr = 20;
 				} else {
 					ctr++;
@@ -2343,7 +2245,8 @@ boolean summon_demon(long *y, long *x)
 			if (is_in(cave[i2][i3].fval, demon_set)) {
 				if ((cave[i2][i3].cptr == 0) &&
 				    (cave[i2][i3].fopen)) {
-					place_monster(i2, i3, i5, false);
+					C_create_monster((uint8_t)i2,
+							(uint8_t)i3, monster_i, false);
 					return_value = true;
 					i1 = 9;
 					*y = i2;
@@ -2362,85 +2265,57 @@ boolean summon_demon(long *y, long *x)
 boolean summon_breed(long *y, long *x)
 {
 	/*{ Places breeding monster adjacent to given location }*/
-
-	long i1, i2, i3, i4, i5, ctr;
-	/*  obj_set   breed_set = {1,2,4,5,0}; */
 	boolean return_value = false;
 
-	i1 = 0;
-	do {
-		i2 = *y - 2 + randint(3);
-		i3 = *x - 2 + randint(3);
-		if (in_bounds(i2, i3)) {
-			/* with cave[i2,i3] do; */
-			if ((is_in(cave[i2][i3].fval, earth_set)) ||
-			    (is_in(cave[i2][i3].fval, water_set))) {
-				if ((cave[i2][i3].cptr == 0) &&
-				    (cave[i2][i3].fopen)) {
-					i4 = m_level[MAX_MONS_LEVEL] +
-					     m_level[0];
-					do {
-						i5 = randint(i4);
-						ctr = 0;
-						do {
-							if (((c_list[i5].cmove &
-							      0x00200000) !=
-							     0) &&
-							    (((is_in(
-								  cave[i2][i3]
-								      .fval,
-								  earth_set)) &&
-							      (((c_list[i5]
-								     .cmove &
-								 0x00000010) ==
-								0) ||
-							       ((c_list[i5]
-								     .cmove &
-								 0x00000040) ==
-								0) ||
-							       ((c_list[i5]
-								     .cmove &
-								 0x00800000) !=
-								0))) ||
-							     ((is_in(
-								  cave[i2][i3]
-								      .fval,
-								  water_set)) &&
-							      (((c_list[i5]
-								     .cmove &
-								 0x00000010) !=
-								0) ||
-							       ((c_list[i5]
-								     .cmove &
-								 0x00000040) ==
-								0) ||
-							       ((c_list[i5]
-								     .cmove &
-								 0x00800000) !=
-								0))))) {
-								ctr = 20;
-								i4 = 0;
-							} else {
-								i5++;
-								if (i5 > i4) {
-									ctr =
+	for (int i = 0; i <= 9; ++i) {
+		long const monster_y = *y - 2 + randint(3);
+		long const monster_x = *x - 2 + randint(3);
+
+		if (!in_bounds(monster_y, monster_x))
+			continue;
+		if (!is_in(cave[monster_y][monster_x].fval, earth_set) &&
+				!is_in(cave[monster_y][monster_x].fval, water_set))
+			continue;
+		if (cave[monster_y][monster_x].cptr != 0)
+			continue;
+		if (!cave[monster_y][monster_x].fopen)
+			continue;
+
+		long max_level = m_level[MAX_MONS_LEVEL] + m_level[0];
+		long monster_i;
+		do {
+			monster_i = randint(max_level);
+			long ctr = 0;
+			creature_type const * const template = &c_list[monster_i];
+			do {
+				if ((template->cmove & 0x00200000) != 0 &&
+					(((is_in(cave[monster_y][monster_x].fval, earth_set)) &&
+						  (((template->cmove & 0x00000010) == 0) ||
+						   ((template->cmove & 0x00000040) == 0) ||
+						   ((template->cmove & 0x00800000) != 0))) ||
+						 ((is_in(cave[monster_y][monster_x].fval, water_set)) &&
+						  (((template->cmove & 0x00000010) != 0) ||
+						   ((template->cmove & 0x00000040) == 0) ||
+						   ((template->cmove & 0x00800000) != 0))))) {
+							    ctr = 20;
+							    max_level = 0;
+						    } else {
+							    monster_i++;
+							    if (monster_i > max_level) {
+								    ctr =
 									    20;
-								} else {
-									ctr++;
-								}
-							}
-						} while (ctr <= 19);
-					} while (i4 != 0);
-					place_monster(i2, i3, i5, false);
-					return_value = true;
-					i1 = 9;
-					*y = i2;
-					*x = i3;
-				}
-			}
-		}
-		i1++;
-	} while (i1 <= 9);
+							    } else {
+								    ctr++;
+							    }
+						    }
+			} while (ctr <= 19);
+		} while (max_level != 0);
+		C_create_monster((uint8_t)monster_y, (uint8_t)monster_x, monster_i, false);
+		return_value = true;
+		i = 9;
+		*y = monster_y;
+		*x = monster_x;
+	}
 
 	return return_value;
 }

@@ -712,3 +712,15 @@ pub fn regen_hp(percent: f32) {
     let player_regen_hpbase = 0.022;
     modify_current_hp(player_regen_hpbase + max_hp() as f32 * percent);
 }
+
+pub fn speed() -> i64 {
+    unsafe { player_flags.speed }
+}
+
+pub fn current_row() -> i64 {
+    unsafe { char_row }
+}
+
+pub fn current_column() -> i64 {
+    unsafe { char_col }
+}
