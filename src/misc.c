@@ -1334,7 +1334,6 @@ void popm(long *x)
 
 	if (mfptr < 1) {
 		compact_monsters();
-
 		validate_monsters();
 	}
 
@@ -1364,22 +1363,15 @@ void report_mlist_error(const char *err_msg, int error_node, int prev_node)
 
 void validate_monsters()
 {
-	boolean used_list[MAX_MALLOC + 1];
-	boolean free_list[MAX_MALLOC + 1];
-	boolean busted;
-	int i1, i2;
+	boolean used_list[MAX_MALLOC + 1] = { false };
+	boolean free_list[MAX_MALLOC + 1] = { false };
 
-	for (i1 = 0; i1 <= MAX_MALLOC; i1++) {
-		used_list[i1] = false;
-		free_list[i1] = false;
-	}
-
-	busted = false;
+	boolean busted = false;
+	int i1;
+	int i2;
 	for (i2 = 0, i1 = muptr; i1; i2 = i1, i1 = m_list[i1].nptr) {
 		if (used_list[i1]) {
-			/*
-			 * there is a loop in the monster list!
-			 */
+			/* there is a loop in the monster list! */
 			report_mlist_error("Internal Error: m_list has a loop!",
 					   i1, i2);
 			busted = true;
@@ -1435,53 +1427,45 @@ void validate_monsters()
 /*//////////////////////////////////////////////////////////////////// */
 void compact_monsters()
 {
-	long i1, i2, i3, ctr, cur_dis;
-	boolean delete_1, delete_any;
+	int monsters_deleted = 0;
+	long delete_distance = 66;
 
 	validate_monsters();
 
-	cur_dis = 66;
-	delete_any = false;
-
-	do {
-		i1 = muptr;
-		i2 = 0;
+	while (monsters_deleted == 0) {
+		long i = muptr;
+		long prev_i = 0;
 		do {
-			delete_1 = false;
-			i3 = m_list[i1].nptr;
-			/* with m_list[i1] do; */
-			if (cur_dis < m_list[i1].cdis) {
+			boolean deleted_this = false;
+			long next_i = m_list[i].nptr;
+			if (delete_distance < m_list[i].cdis) {
 				if (randint(3) == 1) {
-					if (i2 == 0) {
-						muptr = i3;
+					if (prev_i == 0) {
+						muptr = next_i;
 					} else {
-						m_list[i2].nptr = i3;
+						m_list[prev_i].nptr = next_i;
 					}
-					cave[m_list[i1].fy][m_list[i1].fx]
-					    .cptr = 0;
-					m_list[i1] = blank_monster;
-					m_list[i1].nptr = mfptr;
-					mfptr = i1;
-					delete_1 = true;
-					delete_any = true;
-					ctr++;
+					cave[m_list[i].fy][m_list[i].fx].cptr = 0;
+					m_list[i] = blank_monster;
+					m_list[i].nptr = mfptr;
+					mfptr = i;
+					deleted_this = true;
+					monsters_deleted++;
 				}
 			}
-			if (!(delete_1)) {
-				i2 = i1;
+			if (!deleted_this) {
+				prev_i = i;
 			}
-			i1 = i3;
-		} while (i1 != 0);
-		if (!(delete_any)) {
-			cur_dis -= 6;
-			if (cur_dis < 0) {
-				cur_dis = 0; /* not really needed but it makes
-						debugging happier */
-			}
-		}
-	} while (!delete_any);
+			i = next_i;
+		} while (i != 0);
 
-	if (cur_dis < 66) {
+		if (monsters_deleted == 0) {
+			// narrow the search closed to the player
+			delete_distance -= 6;
+		}
+	}
+
+	if (delete_distance < 66) {
 		prt_map();
 	}
 }
