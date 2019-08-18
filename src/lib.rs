@@ -24,6 +24,7 @@ pub mod magic;
 pub mod menu;
 pub mod master;
 pub mod misc;
+pub mod monsters;
 pub mod ncurses;
 pub mod player;
 pub mod random;

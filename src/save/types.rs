@@ -1,7 +1,7 @@
 use libc;
 use thirdparty::serde::{ BigArray, NullPtr };
 
-use types::{ GameTime, Item };
+use types::{ GameTime, Item, Monster };
 
 pub const STORE_INVEN_MAX: usize = 24;
 pub const MAX_STORES: usize = 12;
@@ -63,27 +63,6 @@ pub struct Cave {
     pub oct: libc::uint8_t,
     #[serde(skip_serializing, default)]
     pub h2o: libc::uint8_t,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize)]
-pub struct Monster {
-    pub hp: libc::int16_t,      // Hit points
-    pub csleep: libc::int16_t,  // Inactive counter
-    pub cdis: libc::int16_t,    // Cur dis from player
-    pub mptr: libc::uint16_t,   // Pointer into creature
-    #[serde(skip_serializing, default)]
-    pub nptr: libc::uint16_t,   // Pointer to next block
-    pub cspeed: libc::int8_t,   // Movement speed
-
-    // Note: FY and FX constrain dungeon size to 255
-    pub fy: libc::uint8_t,      // Y Pointer into map
-    pub fx: libc::uint8_t,      // X Pointer into map
-
-    pub stunned: libc::int8_t,  // Rounds stunned
-    pub ml: libc::uint8_t,      // On if shown
-    pub confused: libc::uint8_t,// On if confused
-    pub moved: libc::uint8_t,   // On if water-moved
 }
 
 #[derive(Serialize, Deserialize)]
