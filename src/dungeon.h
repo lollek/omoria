@@ -8,25 +8,20 @@
 typedef long mm_type[6]; /* array [1..5] of long; */
 
 extern long dir_val; /* { For movement          } */
-/* extern	long	y,x,moves;      	// { For movement          } */
-/* extern	long	i1,i2,tmp1;      	// { Temporaries           } */
 extern long old_chp, old_cmana; /* { Detect change         } */
 extern float regen_amount;      /* { Regenerate hp and mana} */
 extern char command;		/* { Last command          } */
-/* extern	vtype	out_val,out2;        	// { For messages          } */
-/* extern	vtype	tmp_str;        	// { Temporary             } */
 extern boolean moria_flag;    /* { Next level when true  } */
 extern boolean reset_flag;    /* { Do not move creatures } */
 extern boolean search_flag;   /* { Player is searching   } */
 extern boolean teleport_flag; /* { Handle telport traps  } */
 extern boolean player_light;  /* { Player carrying light } */
 extern boolean save_msg_flag; /* { Msg flag after INKEY  } */
-extern char s1[70], s2[70], s3[70], s4[70];  /* { Summon item strings   } */
+extern char s1[70];           /* { Summon item strings   } */
+extern char s2[70];           /* { Summon item strings   } */
+extern char s3[70];           /* { Summon item strings   } */
+extern char s4[70];           /* { Summon item strings   } */
 extern long i_summ_count;     /* { Summon item count	   } */
-/* extern	char		trash_char; */
-/* extern	FILE *		f1; */
-/* extern	stat_set	tstat; */
-/* extern	treas_ptr	trash_ptr; */
 
 #define DISPLAY_SIZE 20
 #define MOO_DISPLAY_SIZE 18

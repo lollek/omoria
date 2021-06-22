@@ -18,7 +18,10 @@ boolean search_flag;     /* { Player is searching   } */
 boolean teleport_flag;   /* { Handle telport traps  } */
 boolean player_light;    /* { Player carrying light } */
 boolean save_msg_flag;   /* { Msg flag after INKEY  } */
-char s1[70], s2[70], s3[70], s4[70];    /* { Summon item strings   } */
+char s1[70];             /* { Summon item strings   } */
+char s2[70];             /* { Summon item strings   } */
+char s3[70];             /* { Summon item strings   } */
+char s4[70];             /* { Summon item strings   } */
 long i_summ_count;       /* { Summon item count	   } */
 
 /**
