@@ -44,7 +44,6 @@ char days[7][30] = {
     "TUE:XXXXXXXXXXXXXXXXXXXXXXXX|", "WED:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "THU:XXXXXXXXXXXXXXXXXXXXXXXX|", "FRI:XXXXXXXXXXXXXXXXXXXXXXXX|",
     "SAT:XXXXXXXXXXXXXXXXXXXXXXXX|"};
-long closing_flag = 0;    /* { Used for closing   } */
 			  /*{neatness arrays} */
 unsigned char key_of[9] = /*  array [0..8] of unsigned char; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
