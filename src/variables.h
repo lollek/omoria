@@ -28,7 +28,6 @@ extern long turn;		   /*	{ Cur trun of game    } */
 extern boolean wizard1;		   /*	{ Wizard flag	      } */
 extern boolean wizard2;		   /*	{ Wizard flag	      } */
 extern boolean used_line[24];      /* array [2..23] of boolean; */
-extern unsigned long wdata[2][13]; /*  array [1..2,0..12] of unsigned; */
 extern char days[7][30];
 extern long closing_flag; /* { Used for closing   } */
 /*{neatness arrays} */
