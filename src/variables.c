@@ -32,7 +32,6 @@ boolean wizard1 = false;      /*	{ Wizard flag	      } */
 boolean wizard2 = false;      /*	{ Wizard flag	      } */
 boolean used_line[24] =       /* 22 of false */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-boolean became_wizard = false;
 unsigned long wdata[2][13] = /*  array [1..2,0..12] of unsigned; */
     {{31415, 81, 58, 35, 193, 3, 41, 49, 228, 2, 85, 9, 125},
      {92653, 24, 166, 38, 92, 31, 137, 155, 177, 239, 79, 236, 112}};

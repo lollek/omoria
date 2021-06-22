@@ -11,6 +11,8 @@
 
 #define PB(x, y, z) put_buffer((x), (y), (z))
 
+static boolean became_wizard = false;
+
 void game_version()
 {
 	/*{ Print Moria credits					-RAK-	}*/
