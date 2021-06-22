@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
 		/* Retrieve character */
 		game_state = GS_IGNORE_CTRL_C;
 		generate = get_char(true);
-		is_from_file = true;
 		save_char();
 		change_name();
 		magic_init(randes_seed);
@@ -86,7 +85,6 @@ int main(int argc, char *argv[])
 	} else {
 		char save_file_name[82];
 		/* Create character */
-		is_from_file = false;
 		create_character();
 		player_flags.light_on = false;
 		strcpy(save_file_name, SAVE_FILE_PATH "/");
