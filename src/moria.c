@@ -38,7 +38,6 @@ int main(int argc, char *argv[])
 	inven_temp->insides = 0;
 	inven_temp->next = nil;
 	inven_temp->is_in = false;
-	old_message = nil;
 	turn_counter = 100000;
 
 	/* Sort the objects by level */
