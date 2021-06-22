@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
 	C_main_menu();
 
 	/* Generate a character, or retrieve old one... */
+	boolean generate = false;
 	if (player_name[0] != '\0') {
 		/* Retrieve character */
 		game_state = GS_IGNORE_CTRL_C;
