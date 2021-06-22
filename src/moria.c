@@ -57,9 +57,6 @@ int main(int argc, char *argv[])
 	}
 	bank_init();
 
-	/* Build the secret wizard and god passwords */
-	bpswd();
-
 	/*
 	 * Check operating hours
 	 * If not wizard then No_Control_Y

@@ -6,6 +6,9 @@
 
 #define LOW_NUM -98765432
 
+#define LOW_PASSWORD "fragrance"
+#define HIGH_PASSWORD "mopwillow"
+
 #define PB(x, y, z) put_buffer((x), (y), (z))
 
 void game_version()
@@ -74,18 +77,6 @@ void game_version()
 }
 #undef PB
 
-void bpswd()
-{
-	/*{ Builds passwords                                      -RAK-   }*/
-	/*  Do remember that the passwords are max 12 chars plus a null. */
-
-	/* lesser op password */
-	strcpy(password1, "fragrance");
-
-	/* full op password */
-	strcpy(password2, "mopwillow");
-}
-
 boolean check_pswd(char passwd[134], boolean present)
 {
 	long i1;
@@ -118,10 +109,12 @@ boolean check_pswd(char passwd[134], boolean present)
 	}
 
 	MSG(("Login attempt: %s", tpw));
-	if (!(strcmp(tpw, password1))) {
+	/* lesser op password */
+	if (!(strcmp(tpw, LOW_PASSWORD))) {
 		checked_out = true;
 		wizard1 = true;
-	} else if (!strcmp(tpw, password2)) {
+	/* full op password */
+	} else if (!strcmp(tpw, HIGH_PASSWORD)) {
 		checked_out = true;
 		wizard1 = true;
 		wizard2 = true;
@@ -836,7 +829,7 @@ void enter_wizard_mode(boolean ask_for_pass)
 	} else {
 		if (became_wizard || !ask_for_pass) {
 			/*if (check_pswd("doublespeak",true)) {*/
-			if (check_pswd(password1, true)) {
+			if (check_pswd(LOW_PASSWORD, true)) {
 				msg_print("Wizard mode on.");
 				controly();
 			}

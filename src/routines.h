@@ -317,7 +317,6 @@ extern void termdef();
 /* { WIZARD.PAS		}*/
 extern void wizard_command(void);
 extern void game_version();
-extern void bpswd();
 extern boolean check_pswd(char passw[134], boolean present);
 extern void wizard_light();
 extern void monster_summon_by_name(long y, long x, char name[28], boolean present,
