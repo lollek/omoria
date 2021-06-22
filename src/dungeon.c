@@ -7,6 +7,7 @@
 void C_print_known_spells();
 
 static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
+static boolean cave_flag = false;  /*	{ Used in GET_PANEL   } */
 
 long dir_val;		 /* { For movement (running)} */
 long old_chp, old_cmana; /* { Detect change         } */

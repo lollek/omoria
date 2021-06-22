@@ -22,7 +22,6 @@ extern boolean death;		   /*	{ True if died	      } */
 extern char died_from[82];		   /*	{ What killed him     } */
 extern long turn_counter;	  /*	{ Turns ellapsed      } */
 extern boolean find_flag;	  /*	{ Used in MORIA	      } */
-extern boolean cave_flag;	  /*	{ Used in GET_PANEL   } */
 extern boolean redraw;		   /*	{ For redraw screen   } */
 extern unsigned long print_stat;   /*	{ Flag for stats      } */
 extern long turn;		   /*	{ Cur trun of game    } */

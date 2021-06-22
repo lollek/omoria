@@ -25,7 +25,6 @@ boolean death = false;	/*	{ True if died	      } */
 char died_from[82];	      /*	{ What killed him     } */
 long turn_counter;	    /*	{ Turns ellapsed      } */
 boolean find_flag;	    /*	{ Used in MORIA	      } */
-boolean cave_flag;	    /*	{ Used in GET_PANEL   } */
 boolean redraw;		      /*	{ For redraw screen   } */
 unsigned long print_stat = 0; /*	{ Flag for stats      } */
 long turn = 0;		      /*	{ Cur trun of game    } */
