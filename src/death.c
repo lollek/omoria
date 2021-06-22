@@ -188,8 +188,15 @@ static void date(char *day)
 
 void make_tomb(char dd[][82])
 {
-	char str1[82], str2[82], str3[82], str4[82], str5[82], str6[82], str7[82], str8[82];
-	char temp[82];
+	char str1[82];
+	char str2[82];
+	char str3[82];
+	char str4[82];
+	char str5[82];
+	char str6[82];
+	char str7[82];
+	char str8[82];
+	char temp[83];
 	long i1;
 	char day[11];
 
@@ -243,7 +250,7 @@ void make_tomb(char dd[][82])
 
 void write_tomb(char dstr[][82])
 {
-	char out_str[82];
+	char out_str[120];
 	char fnam[82];
 	FILE *f1;
 	long i1;

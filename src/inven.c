@@ -212,8 +212,11 @@ long ic__display_inv(treas_ptr cur_display[], char prompt[82], treas_ptr start,
 {
 	/*{ start changes into start of next page; returns # items in page}*/
 
-	long count, i1;
-	char out_val[82], out_val2[82], out_val3[82];
+	long count;
+	long i1;
+	char out_val[82];
+	char out_val2[120];
+	char out_val3[82];
 	char *t;
 
 	for (count = 0; start != NULL && count < DISPLAY_SIZE;) {
@@ -506,7 +509,9 @@ treas_ptr ic__remove(long item_val, boolean show_message)
 	/*{ Remove item from equipment list               -RAK-   }*/
 
 	long typ;
-	char out_val[82], prt1[82], prt2[82];
+	char out_val[200];
+	char prt1[82];
+	char prt2[82];
 
 	prt1[0] = 0;
 
@@ -706,7 +711,7 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 	while (!exit_flag) {
 		long i1;
 		boolean equip_cursed_item;
-		char out_val[82];
+		char out_val[200];
 		treas_ptr selected_item;
 		boolean item_was_selected;
 
@@ -1409,11 +1414,11 @@ void ic__switch_weapon(long *scr_state)
 	/*{ Switch primary and secondary weapons          -RAK-   }*/
 
 	if ((Cursed_worn_bit & equipment[Equipment_primary].flags) != 0) {
-		char prt1[82], prt2[82];
+		char prt1[82];
+		char prt2[200];
 		inven_temp->data = equipment[Equipment_primary];
 		objdes(prt1, inven_temp, false);
-		sprintf(prt2, "The %s you are wielding appears to be cursed.",
-			prt1);
+		sprintf(prt2, "The %s you are wielding appears to be cursed.", prt1);
 		msg_print(prt2);
 	} else {
 		treasure_type tmp_obj;
@@ -1847,7 +1852,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 {
 	/*{ Drop money onto ground                                -DMF-   }*/
 
-	char out_val[82];
+	char out_val[200];
 	char out_val2[82];
 	int com_val;
 	boolean reset_flag;
@@ -1894,9 +1899,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 			coin_stuff((char)com_val, &mon_type);
 			max = player_money[mon_type];
 			sprintf(out_val2, "%ld", max);
-			sprintf(out_val,
-				"Drop how much %s (1-%ld), Esc to exit : ",
-				mon_name, max);
+			sprintf(out_val, "Drop how much %s (1-%ld), Esc to exit : ", mon_name, max);
 			prt(out_val, 1, 1);
 			if (get_string(out_val2, 1, strlen(out_val) + 1, 10)) {
 				sscanf(out_val2, "%ld", &amt);

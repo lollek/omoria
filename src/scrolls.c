@@ -7,7 +7,10 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 	long i2, i3, i4, randy;
 	long y, x;
 	long tmp[9]; /*: array [1..8] of long;*/
-	char out_val[82], out_val2[82], str1[82], str2[82];
+	char out_val[82];
+	char out_val2[120];
+	char str1[82];
+	char str2[82];
 	boolean ident, flag;
 	char dstr[20][82];
 
@@ -448,8 +451,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 			/* with equipment[i3]. do; */
 			inven_temp->data = equipment[i3];
 			objdes(out_val, inven_temp, false);
-			sprintf(out_val2, "Your %s glows black, then fades.",
-				out_val);
+			sprintf(out_val2, "Your %s glows black, then fades.", out_val);
 			msg_print(out_val2);
 			equipment[i3].flags = Cursed_worn_bit;
 			equipment[i3].toac = -randint(5) - randint(5);

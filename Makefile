@@ -14,7 +14,7 @@
 CC =		gcc
 
 CFLAGS =	-Wall -Wextra -Werror -pedantic -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1
-LDFLAGS =	-lncurses -ltermcap -lm -Wl,--gc-sections -lpthread -ldl
+LDFLAGS =	-lncurses -ltinfo -ltermcap -lm -Wl,--gc-sections -lpthread -ldl
 
 #
 # the owner and group for the game and data files
@@ -42,7 +42,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 omoria: $(OBJFILES)
 	cargo build
-	$(CC) $(LDFLAGS) $(OBJFILES) -o $@ target/debug/libomoria.a
+	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
 .PHONY: omoria
 
 run: omoria ctags

@@ -231,8 +231,9 @@ void sm__winnings()
 	/* calculates the amount won */ /* Currently, odds slightly favor  */
 					/* the user.   Return of 101%      */
 
-	char out_val[82];
-	char comment[82], comment1[82];
+	char out_val[300];
+	char comment[82];
+	char comment1[82];
 	long winning;
 
 	strcpy(comment, "You have won ");

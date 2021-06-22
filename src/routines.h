@@ -206,7 +206,7 @@ extern void init_priv_switch();
 extern void priv_switch(long switch_val);
 extern void no_controly();
 extern void controly();
-extern void exit_curses(void);
+extern void exit_ncurses(void);
 extern void exit_game() __attribute__((noreturn));
 /* extern void inkey(char *getchar); */
 extern char inkey();

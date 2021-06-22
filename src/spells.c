@@ -588,25 +588,25 @@ boolean mon_resists(unsigned char a_cptr)
 boolean do_stun(unsigned char a_cptr, long save_bonus, long time)
 {
 	long held;
-	char m_name[82], out_val[82];
-	boolean return_value = false; /* was true, but that seemed odd */
+	char m_name[82];
+	char out_val[100];
 
-	/* with m_list[a_cptr]. do; */
 	find_monster_name(m_name, a_cptr, true);
-	if (!mon_resists(a_cptr)) {
-		if (!mon_save(a_cptr, save_bonus, c_sc_hold)) {
-			return_value = true;
-			sprintf(out_val, "%s appears stunned!", m_name);
-			msg_print(out_val);
-			held = m_list[a_cptr].stunned + 1 + randint(time);
-			if (held > 24) {
-				m_list[a_cptr].stunned = 24;
-			} else {
-				m_list[a_cptr].stunned = held;
-			}
-		}
+	if (mon_resists(a_cptr)) {
+		return false;
 	}
-	return return_value;
+	if (mon_save(a_cptr, save_bonus, c_sc_hold)) {
+		return false;
+	}
+	sprintf(out_val, "%s appears stunned!", m_name);
+	msg_print(out_val);
+	held = m_list[a_cptr].stunned + 1 + randint(time);
+	if (held > 24) {
+		m_list[a_cptr].stunned = 24;
+	} else {
+		m_list[a_cptr].stunned = held;
+	}
+	return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -2385,10 +2385,15 @@ boolean fire_bolt(long typ, long dir, long y, long x, long dam, char bolt_typ[28
 {
 	/*{ Shoot a bolt in a given direction                     -RAK-   }*/
 
-	long dist, cptr, mptr;
-	long weapon_type, harm_type;
+	long dist;
+	long cptr;
+	long mptr;
+	long weapon_type;
+	long harm_type;
 	obj_set *dummy;
-	char str[82], str2[82], out_val[82];
+	char str[82];
+	char str2[82];
+	char out_val[120];
 
 	get_flags(typ, &weapon_type, &harm_type, &dummy);
 	dist = 0;
@@ -2405,20 +2410,15 @@ boolean fire_bolt(long typ, long dir, long y, long x, long dam, char bolt_typ[28
 
 				find_monster_name(str, cptr, false);
 				find_monster_name(str2, cptr, true);
-				sprintf(out_val, "The %s strikes %s.", bolt_typ,
-					str);
+				sprintf(out_val, "The %s strikes %s.", bolt_typ, str);
 				msg_print(out_val);
-				if (uand(harm_type, c_list[mptr].cdefense) !=
-				    0) {
+				if (uand(harm_type, c_list[mptr].cdefense) != 0) {
 					dam *= 2;
-				} else if (uand(weapon_type,
-						c_list[mptr].spells) != 0) {
+				} else if (uand(weapon_type, c_list[mptr].spells) != 0) {
 					dam /= 4;
 				}
 				if (mon_take_hit(cptr, dam) > 0) {
-					sprintf(out_val,
-						"%s dies in a fit of agony.",
-						str2);
+					sprintf(out_val, "%s dies in a fit of agony.", str2);
 					msg_print(out_val);
 				} else {
 					if (panel_contains(y, x)) {
@@ -2459,8 +2459,11 @@ boolean wall_to_mud(long dir, long y, long x)
 {
 	/*{ Turn stone to mud, delete wall....                    -RAK-   }*/
 
-	long i1, cptr, mptr;
-	char out_val[82], out_val2[82];
+	long i1;
+	long cptr;
+	long mptr;
+	char out_val[82];
+	char out_val2[120];
 	boolean flag = false;
 	boolean return_value = false;
 
@@ -2483,14 +2486,9 @@ boolean wall_to_mud(long dir, long y, long x)
 				flag = true;
 				if (panel_contains(y, x)) {
 					if (test_light(y, x)) {
-						inven_temp->data =
-						    t_list[cave[y][x].tptr];
-						objdes(out_val, inven_temp,
-						       false);
-						sprintf(
-						    out_val2,
-						    "The %s turns into mud.",
-						    out_val);
+						inven_temp->data = t_list[cave[y][x].tptr];
+						objdes(out_val, inven_temp, false);
+						sprintf(out_val2, "The %s turns into mud.", out_val);
 						msg_print(out_val2);
 						return_value = true;
 					}

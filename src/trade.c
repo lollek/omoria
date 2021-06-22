@@ -355,22 +355,20 @@ void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
 		     long *cur_display_size, pinven_ptr cur_display[])
 {
-	long count, old_display_size;
-	char out_val1[82], out_val2[82];
-
-	old_display_size = *cur_display_size;
-	count = 0;
+	long count = 0;
+	long old_display_size = *cur_display_size;
 
 	while ((start != NULL) && (count < T_DISPLAY_SIZE)) {
 		if (start->data.fsr.trade_type == TT_FOR_SALE) {
 			count++;
 
 			if (cur_display[count] != start) {
+				char out_val1[82];
+				char out_val2[85];
 				cur_display[count] = start;
 				inven_temp->data = start->data.fsr.object;
 				objdes(out_val1, inven_temp, true);
-				sprintf(out_val2, "%c) %s", (char)(96 + count),
-					out_val1);
+				sprintf(out_val2, "%c) %s", (char)(96 + count), out_val1);
 				prt(out_val2, count + 5, 1);
 				sprintf(out_val2, "%ld",
 					start->data.fsr.best_bid);
@@ -563,7 +561,8 @@ void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
 			  boolean *redisplay, boolean *weight_changed,
 			  boolean *exit_flag)
 {
-	char out_val1[82], out_val2[82];
+	char out_val1[82];
+        char out_val2[83];
 	treas_ptr temp_ptr = NULL;
 
 	msg_print("Hmm, you're supposed to get something.");

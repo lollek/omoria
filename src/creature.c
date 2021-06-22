@@ -1090,11 +1090,16 @@ void c__make_attack(long monptr)
 {
 	/*{ Make an attack on the player (chuckle...)             -RAK-   }*/
 
-	long atype, adesc; /*,dam;*/
+	long atype;
+	long adesc; /*,dam;*/
 	long acount;
 	long i5;
-	char attstr[82], attx[82];
-	char cdesc[82], ddesc[82], s1[82], theattack[82];
+	char attstr[82];
+	char attx[82];
+	char cdesc[82];
+	char ddesc[82];
+	char s1[82];
+	char theattack[120];
 	boolean flag;
 	char damstr[36];
 	char *achar;
@@ -1185,8 +1190,7 @@ void c__make_attack(long monptr)
 				case 6:
 					/* normal, poison strength, confusion
 					 * attack, acid attack */
-					sprintf(theattack, "%smisses you.",
-						cdesc);
+					sprintf(theattack, "%smisses you.", cdesc);
 					msg_print(theattack);
 					break;
 				default:
@@ -1636,11 +1640,18 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 	/*{ took_turn  := true if creature casts a spell          }*/
 
 	unsigned long i1;
-	long i2, i3, y, x, chance2;
-	long chance, thrown_spell;
+	long i2;
+	long i3;
+	long y;
+	long x;
+	long chance2;
+	long chance;
+	long thrown_spell;
 	float r1;
 	long spell_choice[32]; /* [1..31] of long;*/
-	char cdesc[82], ddesc[82], outval[82];
+	char cdesc[82];
+	char ddesc[82];
+	char outval[120];
 	boolean stop_player;
 	boolean return_value;
 
@@ -1861,16 +1872,11 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 		case 17:
 			if (trunc(player_cmana) > 0) { /*{Drain Mana   }*/
 				stop_player = true;
-				sprintf(outval,
-					"%sdraws psychic energy from you!",
-					cdesc);
+				sprintf(outval, "%sdraws psychic energy from you!", cdesc);
 				msg_print(outval);
-				sprintf(outval, "%sappears healthier...",
-					cdesc);
+				sprintf(outval, "%sappears healthier...", cdesc);
 				msg_print(outval);
-				r1 = (randint(c_list[m_list[monptr].mptr].level)
-				      / 2) +
-				     1;
+				r1 = (randint(c_list[m_list[monptr].mptr].level) / 2) + 1;
 				if (r1 > player_cmana) {
 					r1 = player_cmana;
 				}
@@ -2318,13 +2324,10 @@ void creatures(boolean attack)
 
 void mn__append_mon(long mon_num)
 {
-	char out_val[82];
-	FILE *f1;
-
-	f1 = (FILE *)fopen(MORIA_CST, "a");
+	char out_val[230];
+	FILE *f1 = (FILE *)fopen(MORIA_CST, "a");
 	if (f1 == NULL) {
-		sprintf(out_val, "Error: unable to open %s for append.",
-			MORIA_CST);
+		sprintf(out_val, "Error: unable to open %s for append.", MORIA_CST);
 		msg_print(out_val);
 	} else {
 		fprintf(f1, "%s\n", c_list[mon_num].name);

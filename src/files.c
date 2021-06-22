@@ -329,14 +329,29 @@ void file_character()
 {
 	/*{ Print the character to a file or device               -RAK-   }*/
 
-	long i1, i2, xbth, xbthb, xfos, xsrh, xstl, xdis;
-	long xsave, xdev, xswm, xrep;
+	long i1;
+	long i2;
+	long xbth;
+	long xbthb;
+	long xfos;
+	long xsrh;
+	long xstl;
+	long xdis;
+	long xsave;
+	long xdev;
+	long xswm;
+	long xrep;
 	char xinfra[82];
 	FILE *file1;
-	char out_val[82], filename1[82], prt1[82], prt2[82];
+	char out_val[300];
+	char filename1[82];
+	char prt1[120];
+	char prt2[82];
 	char new_page = 12;
 	treas_ptr curse;
-	char s1[82], s2[82], s3[82];
+	char s1[82];
+	char s2[82];
+	char s3[82];
 
 	prt("File name: ", 1, 1);
 	if (get_string(filename1, 1, 12, 64)) {
@@ -568,20 +583,12 @@ void file_character()
 							break;
 						}
 						i2++;
-						inven_temp->data =
-						    equipment[i1];
+						inven_temp->data = equipment[i1];
 						objdes(prt2, inven_temp, true);
-						if ((inven_temp->data.flags2 &
-						     Insured_bit) == 0) {
-							sprintf(out_val,
-								"  %c%s%s",
-								(char)(i2 + 96),
-								prt1, prt2);
+						if ((inven_temp->data.flags2 & Insured_bit) == 0) {
+							sprintf(out_val, "  %c%s%s", (char)(i2 + 96), prt1, prt2);
 						} else {
-							sprintf(out_val,
-								" (%c%s%s",
-								(char)(i2 + 96),
-								prt1, prt2);
+							sprintf(out_val, " (%c%s%s", (char)(i2 + 96), prt1, prt2);
 						}
 						fprintf(file1, "%s\n", out_val);
 					}

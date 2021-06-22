@@ -315,6 +315,7 @@ void soup_up_black_market(long indx)
 			default:
 				break;
 			}
+			break;
 
 		case 6:
 		case 7:
@@ -386,7 +387,7 @@ void soup_up_black_market(long indx)
 		default:
 			break;
 		};
-
+		break;
 	case shield:
 	case hard_armor:
 		switch (randint(10)) {
@@ -461,6 +462,7 @@ void soup_up_black_market(long indx)
 		default:
 			break;
 		}
+		break;
 
 	case ring:
 		switch (t_list[indx].subval) {

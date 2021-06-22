@@ -608,8 +608,9 @@ boolean check_store_hours(long st, long sh)
 	/* sh is the same as st, or -1 for the unnamed stores (S_TRADE_POST and
 	 * up)*/
 
-	char name[134], prop[134];
-	char out_val[82];
+	char name[134];
+	char prop[134];
+	char out_val[300];
 	char ope;
 	boolean flag;
 	boolean return_value = false;
@@ -665,9 +666,7 @@ boolean check_store_hours(long st, long sh)
 				msg_print("");
 				return_value = true;
 			} else {
-				sprintf(out_val,
-					"Sorry, the %s is closed for the %s",
-					name, prop);
+				sprintf(out_val, "Sorry, the %s is closed for the %s", name, prop);
 				msg_print(out_val);
 				return_value = false;
 			}
@@ -1134,8 +1133,11 @@ void display_inventory(long store_num, long start)
 	/*{ Displays a store's inventory				-RAK-
 	 * }*/
 
-	long i1, i2, stop;
-	char out_val1[82], out_val2[82];
+	long i1;
+	long i2;
+	long stop;
+	char out_val1[82];
+	char out_val2[85];
 
 	ENTER(("display_inventory", ""));
 
@@ -1189,7 +1191,9 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 	long choice;
 	treas_ptr item_new;
 	long save_number;
-	char out_val[82], foo[82], out2[82];
+	char out_val[82];
+	char foo[82];
+	char out2[100];
 	boolean flag;
 	boolean return_value = false;
 
@@ -1314,11 +1318,8 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 								      true);
 							item_new =
 							    inven_carry();
-							objdes(out_val,
-							       item_new, true);
-							sprintf(out2,
-								"You have %s",
-								out_val);
+							objdes(out_val, item_new, true);
+							sprintf(out2, "You have %s", out_val);
 							msg_print(out2);
 							if (*cur_top >
 							    stores[store_num]
@@ -1400,7 +1401,9 @@ boolean store_sell(long store_num, long cur_top, boolean blitz)
 	long count = 0;
 	treas_ptr item_ptr = NULL;
 	long item_pos, price;
-	char out_val[82], foo[82], out2[82];
+	char out_val[82];
+	char foo[82];
+	char out2[100];
 	char trash_char;
 	boolean redraw;
 	boolean return_value = false;
@@ -1595,14 +1598,27 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 	/*{ Return value shows the result of the haggling:                 */
 	/*    0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy }         */
 
-	long max_sell = 1, max_buy = 1, min_buy = 1;
-	long cost, cur_ask, final_ask, min_offer;
-	long last_offer, new_offer, final_flag, x3;
-	long max_gold = 0, delta;
-	float x1, x2;
-	float min_per = 1.0, max_per = 1.0;
-	boolean flag, loop_flag;
-	char comment[82], out_val[82];
+	long max_sell = 1;
+	long max_buy = 1;
+	long min_buy = 1;
+	long cost;
+	long cur_ask;
+	long final_ask;
+	long min_offer;
+	long last_offer;
+	long new_offer;
+	long final_flag;
+	long x3;
+	long max_gold = 0;
+	long delta;
+	float x1;
+	float x2;
+	float min_per = 1.0;
+	float max_per = 1.0;
+	boolean flag;
+	boolean loop_flag;
+	char comment[82];
+	char out_val[100];
 	long return_value = 0;
 
 	ENTER(("sell_haggle", "s"));
@@ -1681,8 +1697,7 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 			do {
 				do {
 					loop_flag = true;
-					sprintf(out_val, "%s%ld       ",
-						comment, cur_ask);
+					sprintf(out_val, "%s%ld       ", comment, cur_ask);
 					put_buffer(out_val, 2, 1);
 					switch (receive_offer(
 					    store_num,
@@ -1796,14 +1811,26 @@ long purchase_haggle(long store_num, long *price, treasure_type *item,
 {
 	/*{ Haggling routine                                      -RAK-   }*/
 
-	long max_sell, min_sell, max_buy;
-	long cost, cur_ask, final_ask, min_offer;
-	long last_offer, new_offer, final_flag, x3;
+	long max_sell;
+	long min_sell;
+	long max_buy;
+	long cost;
+	long cur_ask;
+	long final_ask;
+	long min_offer;
+	long last_offer;
+	long new_offer;
+	long final_flag;
+	long x3;
 	long delta;
-	float x1, x2;
-	float min_per, max_per;
-	boolean flag, loop_flag;
-	char out_val[82], comment[82];
+	float x1;
+	long x2;
+	float min_per;
+	float max_per;
+	boolean flag;
+	boolean loop_flag;
+	char out_val[100];
+	char comment[82];
 	long return_value = 0;
 
 	flag = false;
@@ -1850,8 +1877,7 @@ long purchase_haggle(long store_num, long *price, treasure_type *item,
 		do {
 			do {
 				loop_flag = true;
-				sprintf(out_val, "%s%ld          ", comment,
-					cur_ask);
+				sprintf(out_val, "%s%ld          ", comment, cur_ask);
 				put_buffer(out_val, 2, 1);
 				switch (receive_offer(
 				    store_num, "What do you offer? ",

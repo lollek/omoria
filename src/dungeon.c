@@ -480,13 +480,13 @@ static void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
 
 static void to__drop_throw(long y, long x)
 {
-	long i1, i2, i3, cur_pos;
+	long i1 = y;
+	long i2 = x;
+	long i3 = 0;
+	long cur_pos;
 	boolean flag = false;
-	char out_val[82], out_val2[82];
-
-	i1 = y;
-	i2 = x;
-	i3 = 0;
+	char out_val[82];
+	char out_val2[120];
 
 	if (randint(10) > 1) {
 		do {
@@ -522,13 +522,29 @@ static void to__drop_throw(long y, long x)
 
 static void d__throw_object(boolean to_be_fired)
 {
-	long tbth, tpth, tdam, tdis, crit_mult;
-	long y_dumy, x_dumy, dumy, i1;
-	long y, x, oldy, oldx, dir, cur_dis, count;
+	long tbth;
+	long tpth;
+	long tdam;
+	long tdis;
+	long crit_mult;
+	long y_dumy;
+	long x_dumy;
+	long dumy;
+	long i1;
+	long y;
+	long x;
+	long oldy;
+	long oldx;
+	long dir;
+	long cur_dis;
+	long count;
 	char trash_char;
 	boolean redraw, flag;
-	char out_val[82], out_val2[82], m_name[82];
-	treas_ptr item_ptr, i7;
+	char out_val[82];
+	char out_val2[200];
+	char m_name[82];
+	treas_ptr item_ptr;
+	treas_ptr i7;
 	obj_set ammo_types = {0};
 
 	ENTER(("d__throw_object", "%d", to_be_fired));
@@ -686,10 +702,15 @@ static void d__look()
 	/*{ Look at an object, trap, or monster                   -RAK-   }*/
 	/*{ Note: Looking is a free move, see where invoked...            }*/
 
-	long i1, i2, y, x;
-	long dir, dummy;
+	long i1;
+	long i2;
+	long y;
+	long x;
+	long dir;
+	long dummy;
 	boolean flag = false;
-	char out_val[82], out_val2[82];
+	char out_val[82];
+	char out_val2[120];
 
 	y = char_row;
 	x = char_col;
@@ -731,21 +752,11 @@ static void d__look()
 							msg_print("You see a "
 								  "granite "
 								  "wall.");
-						} else if (t_list[cave[y][x]
-								      .tptr]
-							       .tval !=
-							   unseen_trap) {
-							inven_temp->data =
-							    t_list[cave[y][x]
-								       .tptr];
-							inven_temp->data
-							    .number = 1;
-							objdes(out_val,
-							       inven_temp,
-							       true);
-							sprintf(out_val2,
-								"You see %s.",
-								out_val);
+						} else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
+							inven_temp->data = t_list[cave[y][x].tptr];
+							inven_temp->data.number = 1;
+							objdes(out_val, inven_temp, true);
+							sprintf(out_val2, "You see %s.", out_val);
 							msg_print(out_val2);
 							flag = true;
 						}
@@ -2431,7 +2442,8 @@ static void d__drop()
 	treas_ptr com_ptr;
 	boolean redraw;
 	char trash_char;
-	char out_val[82], out_val2[82];
+	char out_val[82];
+	char out_val2[120];
 	long temp;
 	long count;
 
@@ -3554,7 +3566,8 @@ void carry(long y, long x)
 	/*{ sit there...                                                  }*/
 
 	treas_ptr item_ptr;
-	char out_val[82], out2[82];
+	char out_val[82];
+	char out2[120];
 	char page_char;
 	char inv_char;
 	treas_ptr tmp_ptr;
@@ -3625,8 +3638,7 @@ void carry(long y, long x)
 						     (count / 20) * 20 + 97);
 					}
 				}
-				sprintf(out2, "You have %s. (%c%c)", out_val,
-					page_char, inv_char);
+				sprintf(out2, "You have %s. (%c%c)", out_val, page_char, inv_char);
 				msg_print(out2);
 			} else {
 				msg_print("You can't carry that much weight.");
@@ -4118,12 +4130,13 @@ boolean minus_ac(long typ_dam)
 	/*{ Note: This routine affects magical AC bonuse so that stores   }*/
 	/*{       can detect the damage.                                  }*/
 
-	long i1, i2;
+	long i1 = 0;
+	long i2;
 	long tmp[9]; /*  : array [1..8] of long;*/
-	char out_str[82], out_val[82];
+	char out_str[120];
+	char out_val[82];
 	boolean return_value = false;
 
-	i1 = 0;
 	if (equipment[Equipment_armor].tval > 0) {
 		i1++;
 		tmp[i1] = Equipment_armor;
@@ -5013,9 +5026,16 @@ boolean py_attack(long y, long x)
 {
 	/*{ Player attacks a (poor, defenseless) creature         -RAK-   }*/
 
-	long a_cptr, a_mptr, i3, blows, tot_tohit, crit_mult;
-	char m_name[82], out_val[82];
-	boolean mean_jerk_flag, is_sharp;
+	long a_cptr;
+	long a_mptr;
+	long i3;
+	long blows;
+	long tot_tohit;
+	long crit_mult;
+	char m_name[82];
+	char out_val[120];
+	boolean mean_jerk_flag;
+	boolean is_sharp;
 	boolean backstab_flag;
 
 	obj_set mages_suck = {hafted_weapon, pole_arm, sword, maul, 0};
@@ -5359,7 +5379,8 @@ void desc_remain(treas_ptr item_ptr)
 {
 	/*{ Describe amount of item remaining...                  -RAK-   }*/
 
-	char out_val[82], out_val2[82];
+	char out_val[82];
+	char out_val2[120];
 
 	inven_temp->data = item_ptr->data;
 

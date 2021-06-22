@@ -49,7 +49,8 @@ void q__reward_item(long target)
 	long i1, i2, i3;
 	treasure_type rewards[QUEST_ITEMS];
 	char command;
-	char reward_names[QUEST_ITEMS][82], out_val[82];
+	char reward_names[QUEST_ITEMS][82];
+	char out_val[89];
 	boolean flag;
 
 	long q1 = 15;				/* allocs to attempt */
@@ -114,8 +115,7 @@ void q__reward_item(long target)
 	C_clear_screen();
 
 	for (i2 = 0; i2 < QUEST_ITEMS; i2++) {
-		sprintf(out_val, "%c)     %s", (char)(i2 + 97),
-			reward_names[i2]);
+		sprintf(out_val, "%c)     %s", (char)(i2 + 97), reward_names[i2]);
 		prt(out_val, 3 + i2, 10);
 	}
 	sprintf(out_val, "%c)     a check for %ld gold pieces", (char)(i2 + 97),
@@ -157,7 +157,7 @@ void q__reward_item(long target)
 void q__reward_quest()
 {
 	long reward;
-	char out_val[82];
+	char out_val[120];
 	boolean redraw = false;
 
 	reward = c_list[player_cur_quest].mexp * (randint(3) + 5) +

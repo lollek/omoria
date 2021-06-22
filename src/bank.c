@@ -39,31 +39,29 @@ static boolean eb__get_entry(char comment[82], long *num)
 static void eb__dep_munny(long mon_type)
 {
 	long deposit;
-	char out_val[82];
+	char out_val[120];
 
-	if (player_money[mon_type] > 0) {
-		do {
-			sprintf(out_val, "How much %s to deposit?",
-				coin_name[mon_type]);
-			if (eb__get_entry(out_val, &deposit)) {
-				if (deposit > player_money[mon_type]) {
-					sprintf(out_val,
-						"You do not have that much %s!",
-						coin_name[mon_type]);
-					msg_print(out_val);
-				}
+	if (player_money[mon_type] <= 0) {
+		return;
+	}
+	do {
+		sprintf(out_val, "How much %s to deposit?", coin_name[mon_type]);
+		if (eb__get_entry(out_val, &deposit)) {
+			if (deposit > player_money[mon_type]) {
+				sprintf(out_val, "You do not have that much %s!", coin_name[mon_type]);
+				msg_print(out_val);
 			}
-		} while (deposit > player_money[mon_type]);
-
-		if (deposit > 0) {
-			bank[mon_type] += deposit;
-			player_money[mon_type] -= deposit;
-			inven_weight -= COIN_WEIGHT * deposit;
-			player_account +=
-			    trunc(deposit * BANK_SKIM * coin_value[mon_type])
-			    / GOLD_VALUE;
-			eb__display_money();
 		}
+	} while (deposit > player_money[mon_type]);
+
+	if (deposit > 0) {
+		bank[mon_type] += deposit;
+		player_money[mon_type] -= deposit;
+		inven_weight -= COIN_WEIGHT * deposit;
+		player_account +=
+		    trunc(deposit * BANK_SKIM * coin_value[mon_type])
+		    / GOLD_VALUE;
+		eb__display_money();
 	}
 }
 
