@@ -6,7 +6,6 @@ extern treas_ptr cur_inven;       /* { Current inven page  } */
 extern money_type bank;		  /* { Bank's money	 } */
 extern money_type coin_value;     /* { Copy of money values} */
 extern long player_max_exp;       /* { Max exp possible    } */
-extern unsigned long seed;	/* { Contains seed #     } */
 extern unsigned long randes_seed; /* { For encoding colors } */
 extern unsigned long town_seed;   /* { Seed for town genera} */
 extern long cur_height;		  /* { Cur dungeon size    } */
