@@ -60,7 +60,6 @@ static void ml__draw_block(long y1, long x1, long y2, long x2)
 	long const new_left = x2 - 1;
 	long const new_righ = x2 + 1;
 
-	long y;
 	long xmax = 0;
 
 	ENTER(("ml__draw_block", "%d, %d, %d, %d", y1, x2, y2, x2));
@@ -68,14 +67,13 @@ static void ml__draw_block(long y1, long x1, long y2, long x2)
 	/*{ From uppermost to bottom most lines player was on...  }*/
 	/*{ Points are guaranteed to be on the screen (I hope...) }*/
 
-	for (y = topp; y <= bott; y++) {
-		long x;
+	for (long y = topp; y <= bott; y++) {
 		long xpos = 0;
 		chtype floor_str[82] = {0};
 		long floor_str_len = 0;
 
 		/*{ Leftmost to rightmost do}*/
-		for (x = left; x <= right; x++) {
+		for (long x = left; x <= right; x++) {
 			chtype tmp_char = ' ';
 			boolean flag;
 
@@ -147,20 +145,18 @@ static void ml__sub1_move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ Normal movement                                   }*/
 
-	long i1, i2;
-
 	ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
 	light_flag = true;
 
 	/* Turn off lamp light */
-	for (i1 = y1 - 1; i1 <= y1 + 1; i1++)
-		for (i2 = x1 - 1; i2 <= x1 + 1; i2++)
-			cave[i1][i2].tl = false;
+	for (long i = y1 - 1; i <= y1 + 1; i++)
+		for (long j = x1 - 1; j <= x1 + 1; j++)
+			cave[i][j].tl = false;
 
-	for (i1 = y2 - 1; i1 <= y2 + 1; i1++)
-		for (i2 = x2 - 1; i2 <= x2 + 1; i2++)
-			cave[i1][i2].tl = true;
+	for (long i = y2 - 1; i <= y2 + 1; i++)
+		for (long j = x2 - 1; j <= x2 + 1; j++)
+			cave[i][j].tl = true;
 
 	ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
 
@@ -171,20 +167,17 @@ static void ml__sub2_move_light(long y1, long x1, long y2, long x2)
 {
 	/*{ When FIND_FLAG, light only permanent features     }*/
 
-	long y;
-	long x;
-
 	ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
 	if (light_flag) {
-		for (y = y1 - 1; y <= y1 + 1; y++)
-			for (x = x1 - 1; x <= x1 + 1; x++)
+		for (long y = y1 - 1; y <= y1 + 1; y++)
+			for (long x = x1 - 1; x <= x1 + 1; x++)
 				cave[y][x].tl = false;
 		ml__draw_block(y1, x1, y1, x1);
 		light_flag = false;
 	}
 
-	for (y = y2 - 1; y <= y2 + 1; y++) {
+	for (long y = y2 - 1; y <= y2 + 1; y++) {
 		chtype floor_str[82] = {0};
 		chtype save_str[82] = {0};
 		long floor_str_len = 0;
@@ -192,7 +185,7 @@ static void ml__sub2_move_light(long y1, long x1, long y2, long x2)
 		long xpos = 0;
 		chtype tmp_char;
 
-		for (x = x2 - 1; x <= x2 + 1; x++) {
+		for (long x = x2 - 1; x <= x2 + 1; x++) {
 			boolean flag = false;
 			if (!(cave[y][x].fm || (cave[y][x].pl))) {
 				tmp_char = ' ';
@@ -273,10 +266,8 @@ static void ml__sub4_move_light(long y1, long x1, long y2, long x2)
 
 	light_flag = true;
 	if (cave[y1][x1].tl) {
-		long i1;
-		for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-			long i2;
-			for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
+		for (long i1 = y1 - 1; i1 <= y1 + 1; i1++) {
+			for (long i2 = x1 - 1; i2 <= x1 + 1; i2++) {
 				cave[i1][i2].tl = false;
 				if (test_light(i1, i2))
 					lite_spot(i1, i2);
@@ -307,53 +298,46 @@ static void d__jamdoor()
 	/*{ Jam a closed door                                     -RAK-   }*/
 
 	treas_ptr i1;
-	long y, x, i2, tmp;
+	long y = char_row;
+	long x = char_col;
+	long i2;
+	long tmp;
 	char m_name[82];
 	obj_set pick_a_spike = {spike, 0};
 
-	y = char_row;
-	x = char_col;
 
-	if (d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
-		/* with cave[y][x]. do; */
-		if (cave[y][x].tptr > 0) {
-			/* with t_list[cave[y][x].tptr]. do; */
-			if (t_list[cave[y][x].tptr].tval == closed_door) {
-				if (cave[y][x].cptr == 0) {
-					if (find_range(pick_a_spike, false, &i1,
-						       &i2)) {
-						msg_print("You jam the door "
-							  "with a spike.");
-						/* with i1->data. do; */
-						if (i1->data.number > 1) {
-							i1->data.number--;
-						} else {
-							inven_destroy(i1);
-						}
-						prt_stat_block();
-						t_list[cave[y][x].tptr].p1 =
-						    -labs(
-							t_list[cave[y][x].tptr]
-							    .p1) -
-						    20;
-					} else {
-						msg_print("But you have no "
-							  "spikes...");
-					}
+	if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
+		return;
+	}
+
+	if (cave[y][x].tptr <= 0) {
+		msg_print("That isn't a door!");
+		return;
+	}
+
+	if (t_list[cave[y][x].tptr].tval == closed_door) {
+		if (cave[y][x].cptr == 0) {
+			if (find_range(pick_a_spike, false, &i1, &i2)) {
+				msg_print("You jam the door with a spike.");
+				if (i1->data.number > 1) {
+					i1->data.number--;
 				} else {
-					find_monster_name(
-					    m_name, cave[y][x].cptr, true);
-					strcat(m_name, " is in your way!");
-					msg_print(m_name);
+					inven_destroy(i1);
 				}
-			} else if (t_list[cave[y][x].tptr].tval == open_door) {
-				msg_print("The door must be closed first.");
+				prt_stat_block();
+				t_list[cave[y][x].tptr].p1 = -labs(t_list[cave[y][x].tptr].p1) - 20;
 			} else {
-				msg_print("That isn't a door!");
+				msg_print("But you have no spikes...");
 			}
 		} else {
-			msg_print("That isn't a door!");
+			find_monster_name(m_name, cave[y][x].cptr, true);
+			strcat(m_name, " is in your way!");
+			msg_print(m_name);
 		}
+	} else if (t_list[cave[y][x].tptr].tval == open_door) {
+		msg_print("The door must be closed first.");
+	} else {
+		msg_print("That isn't a door!");
 	}
 }
 
@@ -715,104 +699,85 @@ static void d__look()
 	y = char_row;
 	x = char_col;
 
-	if (d__get_dir("Look which direction?", &dir, &dummy, &y, &x)) {
-		if (player_flags.blind < 1) {
-			y = char_row;
-			x = char_col;
-			i1 = 0;
-			do {
-				move_dir(dir, &y, &x);
-				/* with cave[y][x]. do; */
-				if (cave[y][x].cptr > 1) {
-					if (m_list[cave[y][x].cptr].ml) {
-						i2 = m_list[cave[y][x].cptr]
-							 .mptr;
-						if (is_vowel(
-							c_list[i2].name[0])) {
-							sprintf(
-							    out_val,
-							    "You see an %s.",
-							    c_list[i2].name);
-						} else {
-							sprintf(
-							    out_val,
-							    "You see a %s.",
-							    c_list[i2].name);
-						}
-						msg_print(out_val);
-						flag = true;
-					}
+	if (!d__get_dir("Look which direction?", &dir, &dummy, &y, &x)) {
+		return;
+	}
+
+	if (player_flags.blind >= 1) {
+		msg_print("You can't see a damn thing!");
+		return;
+	}
+
+	y = char_row;
+	x = char_col;
+	i1 = 0;
+	do {
+		move_dir(dir, &y, &x);
+		/* with cave[y][x]. do; */
+		if (cave[y][x].cptr > 1) {
+			if (m_list[cave[y][x].cptr].ml) {
+				i2 = m_list[cave[y][x].cptr].mptr;
+				if (is_vowel(c_list[i2].name[0])) {
+					sprintf(out_val, "You see an %s.", c_list[i2].name);
+				} else {
+					sprintf(out_val, "You see a %s.", c_list[i2].name);
 				}
-
-				if ((cave[y][x].tl) || (cave[y][x].pl) ||
-				    (cave[y][x].fm)) {
-					if (cave[y][x].tptr > 0) {
-						if (t_list[cave[y][x].tptr]
-							.tval == secret_door) {
-							msg_print("You see a "
-								  "granite "
-								  "wall.");
-						} else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
-							inven_temp->data = t_list[cave[y][x].tptr];
-							inven_temp->data.number = 1;
-							objdes(out_val, inven_temp, true);
-							sprintf(out_val2, "You see %s.", out_val);
-							msg_print(out_val2);
-							flag = true;
-						}
-					}
-
-					if (!cave[y][x].fopen) {
-						flag = true;
-						switch (cave[y][x].fval) {
-						case 10:
-							msg_print("You see a "
-								  "granite "
-								  "wall.");
-							break;
-						case 11:
-							msg_print("You see "
-								  "some dark "
-								  "rock.");
-							break;
-						case 12:
-							msg_print("You see a "
-								  "quartz "
-								  "vein.");
-							break;
-						case 15:
-							msg_print("You see a "
-								  "granite "
-								  "wall.");
-							break;
-						default:
-							break;
-						}
-					} else {
-						switch (cave[y][x].fval) {
-						case 16:
-						case 17:
-							flag = true;
-							msg_print("You see "
-								  "some "
-								  "water.");
-							break;
-						default:
-							break;
-						}
-					}
-				}
-
-				i1++;
-			} while (!(((!cave[y][x].fopen) || (i1 > MAX_SIGHT))));
-
-			if (!flag) {
-				msg_print("You see nothing of interest in that "
-					  "direction.");
+				msg_print(out_val);
+				flag = true;
 			}
-		} else {
-			msg_print("You can't see a damn thing!");
 		}
+
+		if ((cave[y][x].tl) || (cave[y][x].pl) || (cave[y][x].fm)) {
+			if (cave[y][x].tptr > 0) {
+				if (t_list[cave[y][x].tptr]
+					.tval == secret_door) {
+					msg_print("You see a granite wall.");
+				} else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
+					inven_temp->data = t_list[cave[y][x].tptr];
+					inven_temp->data.number = 1;
+					objdes(out_val, inven_temp, true);
+					sprintf(out_val2, "You see %s.", out_val);
+					msg_print(out_val2);
+					flag = true;
+				}
+			}
+
+			if (!cave[y][x].fopen) {
+				flag = true;
+				switch (cave[y][x].fval) {
+				case 10:
+					msg_print("You see a granite wall.");
+					break;
+				case 11:
+					msg_print("You see some dark rock.");
+					break;
+				case 12:
+					msg_print("You see a quartz vein.");
+					break;
+				case 15:
+					msg_print("You see a granite wall.");
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch (cave[y][x].fval) {
+				case 16:
+				case 17:
+					flag = true;
+					msg_print("You see some water.");
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		i1++;
+	} while (!(((!cave[y][x].fopen) || (i1 > MAX_SIGHT))));
+
+	if (!flag) {
+		msg_print("You see nothing of interest in that direction.");
 	}
 }
 
