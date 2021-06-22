@@ -21,7 +21,6 @@ long quest[NUM_QUESTS + 1];   /* {quest data} */
 char old_msg[82] = "bogus msg";  /* { Last message	      } */
 boolean want_trap;	    /* { True = trap messages} */
 boolean want_warn;	    /* { True = water warning} */
-long max_mess_keep;	   /* { Max old to keep     } */
 long max_score;		      /*	{ # of scores to list } */
 boolean generate;	     /*	{ Generate next level } */
 boolean death = false;	/*	{ True if died	      } */

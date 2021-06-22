@@ -18,7 +18,6 @@ extern long quest[NUM_QUESTS + 1]; /* {quest data} */
 extern char old_msg[82];		   /* { Last message	      } */
 extern boolean want_trap;	  /* { True = trap messages} */
 extern boolean want_warn;	  /* { True = water warning} */
-extern long max_mess_keep;	 /* { Max old to keep     } */
 extern long max_score;		   /*	{ # of scores to list } */
 extern boolean generate;	   /*	{ Generate next level } */
 extern boolean death;		   /*	{ True if died	      } */
