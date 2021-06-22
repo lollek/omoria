@@ -3,6 +3,8 @@
 #include "imoria.h"
 #include "save.h"
 
+static long max_score = 20; // # of scores to list
+
 FILE *priv_fopen(char *path, char *mode)
 {
 	FILE *f1;
@@ -51,9 +53,6 @@ static void intro_parse_switches(int argc, char *argv[])
 	boolean print_usage = false;
 	boolean show_highs = false;
 	boolean show_version = false;
-
-	/* so far there is no filename to open */
-	max_score = 20;
 
 	/* parse the command line arguments */
 	for (--argc, ++argv; (argc > 0) && (argv[0][0] == '-');
