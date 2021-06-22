@@ -4,6 +4,9 @@
 #include "dungeon.h"
 #include "save.h"
 
+#define MAX_MESSAGES 50
+static char msg_prev[MAX_MESSAGES + 1][82];
+
 void init_priv_switch()
 {
 	/*  the hope is that imoria is sgid games or something that can write

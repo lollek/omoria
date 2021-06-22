@@ -244,7 +244,6 @@
 #define MAX_PLAYER_LEVEL 40    /*{ Maximum possible character level	} */
 #define MAX_RACES 10	   /*{ Number of defined races	        } */
 #define MAX_CLASS 10	   /*{ Number of defined classes		} */
-#define MAX_MESSAGES 50	/*{ Previous messages that in buffer	} */
 #define USE_DEVICE 3	   /*{ x> Harder devices x< Easier devices	} */
 #define NUM_QUESTS 5	   /*{ # of possible quests to select from	} */
 #define BASE_FOOD_DIGESTED 2   /* food digested per turn */

@@ -14,7 +14,6 @@ extern long dun_level;   /* { Cur dungeon level   } */
 extern long missle_ctr;  /* { Counter for missles } */
 extern long msg_line;    /* { Contains message txt} */
 extern boolean msg_flag; /* { Set with first msg  } */
-extern char msg_prev[MAX_MESSAGES + 1][82];
 extern long quest[NUM_QUESTS + 1]; /* {quest data} */
 extern char old_msg[82];		   /* { Last message	      } */
 extern boolean want_trap;	  /* { True = trap messages} */
