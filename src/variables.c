@@ -1747,40 +1747,6 @@ long inven_ctr = 0;    /* { Total different obj's} */
 long inven_weight = 0; /* { Cur carried weight	} */
 long equip_ctr = 0;    /* { Cur equipment ctr	} */
 
-/*	{ Following are variables that changed with level of difficulty	} */
-/*	{ 1/x chance of treasure per magma		} */
-const long dun_str_mc = 95;
-/*	{ 1/x chance of treasure per quartz		} */
-const long dun_str_qc = 55;
-/*	{ Level/x chance of unusual room		} */
-const long dun_unusual = 100;
-/*	{ Amount of objects for rooms			} */
-const long treas_room_alloc = 7;
-/*	{ Amount of objects for corridors		} */
-const long treas_any_alloc = 2;
-/*	{ Amount of gold (and gems)			} */
-const long treas_gold_alloc = 2;
-/*	{ 1/n Chance of item being a Great Item 	} */
-const long obj_great = 30;
-/*	{ Adjust STD per level				} */
-const float obj_std_adj = 1.25;
-/*	{ Minimum STD					} */
-const long obj_std_min = 7;
-/*	{ Town object generation level			} */
-const long obj_town_level = 7;
-/*	{ Base amount of magic				} */
-const long obj_base_magic = 12;
-/*	{ Max amount of magic				} */
-const long obj_base_max = 100;
-/*	{ magic_chance/# = special magic		} */
-const long obj_div_special = 11;
-/*	{ magic_chance/# = cursed items			} */
-const float obj_div_cursed = 1.2;
-/*	{ High value slows multiplication		} */
-const long mon_mult_adj = 7;
-/*	{ Dun_level/x chance of high level creature	} */
-const long mon_nasty = 50;
-/* */
 /*	{ Following are feature objects defined for dungeon		} */
 /* */
 

@@ -8,6 +8,8 @@ void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 static long t_level[MAX_OBJ_LEVEL + 1];
 static long tcptr;	    /* { Cur treasure heap ptr} */
 
+static const long obj_great = 30; //  1/n Chance of item being a Great Item 
+
 /* Print list of spells     -RAK- */
 static void print_new_spells(spl_type spell, long num, boolean *redraw)
 {

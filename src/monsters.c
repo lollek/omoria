@@ -3,6 +3,8 @@
 
 #include "imoria.h"
 
+static const long mon_nasty = 50; /// Dun_level/x chance of high level creature
+
 /*{ Places a monster at given location -RAK- }*/
 void place_monster(long y, long x, long z, boolean slp)
 {

@@ -4,6 +4,8 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+static const long mon_mult_adj = 7; // High value slows multiplication
+
 void lm__read_custom(FILE *file)
 {
 	long count;

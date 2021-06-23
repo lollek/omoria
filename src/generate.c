@@ -315,6 +315,15 @@ static void gc__all_the_river_stuff() { all_the_river_stuff(); /* in river.c */ 
 static void gc__cave_gen()
 {
 	/*{ Cave logic flow for generation of new dungeon		}*/
+
+	/*{ Following are variables that change with level of difficulty } */
+	const long dun_str_mc = 95; // 1/x chance of treasure per magma
+	const long dun_str_qc = 55; // 1/x chance of treasure per quartz
+	const long dun_unusual = 100; // Level/x chance of unusual room
+	const long treas_room_alloc = 7; // Amount of objects for rooms
+	const long treas_any_alloc = 2; // Amount of objects for corridors
+	const long treas_gold_alloc = 2; // Amount of gold (and gems)
+
 	coords doorstk[101];
 	boolean room_map[21][21]; /*: room_type;*/
 	long doorptr = 0;

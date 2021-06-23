@@ -4,6 +4,8 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+const long obj_town_level = 7; // Town object generation level
+
 /*	{ Background information					} */
 
 /*	{ Buying and selling adjustments for character race VS store	} */

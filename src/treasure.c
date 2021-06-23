@@ -1,5 +1,12 @@
 #include "imoria.h"
 
+static const float obj_std_adj = 1.25; // Adjust STD per level
+static const long obj_std_min = 7; // Minimum STD
+static const long obj_base_magic = 12; //  Base amount of magic
+static const long obj_base_max = 100; // Max amount of magic
+static const long obj_div_special = 11; //  magic_chance/# = special magic
+static const float obj_div_cursed = 1.2; // magic_chance/# = cursed items
+
 static void mt__ego_sword(treasure_type *treasure_ptr)
 {
 	switch (randint(5)) {
