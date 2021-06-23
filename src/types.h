@@ -71,6 +71,32 @@ enum class_t {
 	C_BARBARIAN = 10
 };
 
+enum store_t {
+	S_GENERAL = 0,   /* 'the entrance to the General Store' */
+	S_ARMORY = 1,    /* 'the entrance to the Armory' */
+	S_WEAPONS = 2,   /* 'the entrance to the Weapon Smiths' */
+	S_TEMPLE = 3,    /* 'the entrance to the Temple' */
+	S_ALCHEMY = 4,   /* 'the entrance to the Alchemy Shop' */
+	S_MAGIC = 5,     /* 'the entrance to the Magic Shop' */
+	S_INN = 6,       /*,'the entrance to the Inn' */
+	S_LIBRARY = 7,   /* 'the entrance to the Library' */
+	S_MUSIC = 8,     /* 'the entrance to the Music Shop' */
+	S_GEM = 9,       /*,'the entrance to the Gem Store' */
+	S_DELI = 10,     /* 'the entrance to the All-Nite Deli' */
+	S_BLACK_MARKET = 11,
+	S_TRADE_POST = 12,/* 'the entrance to the Trading Post' */
+	S_INSURANCE = 13,/* 'the entrance to the Insurance Shop' */
+	S_BANK = 14,      /* 'the entrance to the Bank' */
+	S_CHANGER = 15,   /* 'the entrance to the Money Exchange' */
+	S_CASINO = 16,    /* 'the entrance to the Casino' */
+	S_FORTRESS = 17,
+	S_GENERIC_1 = 18,/* 'the entrance to a building' */
+	S_GENERIC_2 = 19,/* 'the entrance to a building' */
+	S_GENERIC_3 = 20,/* 'the entrance to a building' */
+	S_GENERIC_4 = 21,/* 'the entrance to a building' */
+	S_GENERIC_5 = 22,/* 'the entrance to a building' */
+};
+
 typedef struct game_time_type
 {
 	int64_t year;

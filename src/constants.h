@@ -316,29 +316,6 @@
 #define OBJ_SET_MAX 255 /* type obj_set is supposed to be 0..255 */
 #define MAX_OBJ_SET 25  /* max items allowed in an obj_set[] */
 
-#define S_GENERAL 0    /* 'the entrance to the General Store' */
-#define S_ARMORY 1     /* 'the entrance to the Armory' */
-#define S_WEAPONS 2    /* 'the entrance to the Weapon Smiths' */
-#define S_TEMPLE 3     /* 'the entrance to the Temple' */
-#define S_ALCHEMY 4    /* 'the entrance to the Alchemy Shop' */
-#define S_MAGIC 5      /* 'the entrance to the Magic Shop' */
-#define S_INN 6	/* 'the entrance to the Inn' */
-#define S_LIBRARY 7    /* 'the entrance to the Library' */
-#define S_MUSIC 8      /* 'the entrance to the Music Shop' */
-#define S_GEM 9	/* 'the entrance to the Gem Store' */
-#define S_DELI 10      /* 'the entrance to the All-Nite Deli' */
-#define S_INSURANCE 13 /* 'the entrance to the Insurance Shop' */
-#define S_BLACK_MARKET 11
-#define S_BANK 14       /* 'the entrance to the Bank' */
-#define S_TRADE_POST 12 /* 'the entrance to the Trading Post' */
-#define S_CHANGER 15    /* 'the entrance to the Money Exchange' */
-#define S_CASINO 16     /* 'the entrance to the Casino' */
-#define S_FORTRESS 17
-#define S_GENERIC_1 18 /* 'the entrance to a building' */
-#define S_GENERIC_2 19 /* 'the entrance to a building' */
-#define S_GENERIC_3 20 /* 'the entrance to a building' */
-#define S_GENERIC_4 21 /* 'the entrance to a building' */
-#define S_GENERIC_5 22 /* 'the entrance to a building' */
 
 #define PLACE_OBJECT_TRIES 3 /* pick best object out of this many */
 
