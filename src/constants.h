@@ -5,13 +5,6 @@
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66
 
-#define STR 0
-#define INT 1
-#define WIS 2
-#define DEX 3
-#define CON 4
-#define CHR 5
-
 /*	{ Spell Effect Constants! } */
 #define c_null 0
 #define c_lightning 1

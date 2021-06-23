@@ -16,6 +16,15 @@ typedef char stat_set;			    /* = 0..5; */
 typedef uint8_t stat_s_type[STAT_SET_MAX + 1];    /* = array [stat_set] of unsigned char; */
 typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 
+enum stat_t {
+	STR = 0,
+	INT = 1,
+	WIS = 2,
+	DEX = 3,
+	CON = 4,
+	CHR = 5
+};
+
 enum class_t {
 	C_WARRIOR = 0,
 	C_MAGE = 1,
