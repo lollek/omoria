@@ -796,7 +796,7 @@ long item_value(treasure_type *item)
 	return return_value;
 }
 
-boolean check_store_hours(long st, long sh)
+boolean check_store_hours(enum store_t st, long sh)
 {
 	/*{ Check to see if a store is open, message when closed  -DMF-   }*/
 
@@ -905,7 +905,7 @@ boolean check_store_hours(long st, long sh)
 	return return_value;
 }
 
-void check_store_hours_and_enter(long st, long sh, long store_num)
+void check_store_hours_and_enter(enum store_t st, long sh, long store_num)
 {
 	/* st is the S_GENERAL or whatever store it is */
 	/* sh is the same as st, or -1 for the unnamed stores (S_TRADE_POST and

@@ -557,7 +557,7 @@ static void gc__blank_square(long dy, long dx)
 	cave[dy][dx].fval = dopen_floor.ftval;
 }
 
-static void gc__build_store(long store_num, long where)
+static void gc__build_store(enum store_t store_num, long where)
 {
 	/*{ Builds a building at a row,column coordinate, and	}*/
 	/*{ set up the initial contents by setting p1 to	}*/
