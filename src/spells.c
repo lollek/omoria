@@ -3,9 +3,30 @@
 
 #include "imoria.h"
 #include "dungeon.h"
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+static const treasure_type scare_monster = /* { Special trap	} */
+    {"a strange rune", seen_trap, 0x00000000, 0x00000000, 0, 0,     99,
+     0,		       0,	 0,   0,	  0,	  0, "0d0", -90, 0};
+/* used in get_flags, and other places if I needed them */
+static obj_set null_obj_set = {0, 0};
+static obj_set destroyed_by_lightning = {ring, rod, wand, 0};
+static obj_set destroyed_by_acid = {
+    arrow,      bow_crossbow_or_sling, hafted_weapon, pole_arm, gem_helm,
+    boots,      gloves_and_gauntlets,  cloak,	 helm,     shield,
+    hard_armor, soft_armor,	    staff,	 scroll1,  scroll2,
+    Food,       open_door,	     closed_door,   0};
+static obj_set destroyed_by_cold = {potion1, potion2, 0};
+static obj_set destroyed_by_fire = {
+    arrow,   bow_crossbow_or_sling, hafted_weapon, pole_arm,
+    boots,   gloves_and_gauntlets,  cloak,	 soft_armor,
+    staff,   scroll1,		    scroll2,       potion1,
+    potion2, Food,		    open_door,     closed_door,
+    0};
+static obj_set destroyed_by_petrify = {boots, soft_armor, potion1, potion2, Food, 0};
+static obj_set destroyed_by_sunray = {cloak, scroll1, scroll2, potion1, potion2, 0};
+
+
+
 void lower_stat(stat_set tstat, char msg1[82])
 {
 	C_player_modify_lost_stat((int16_t)tstat, 1);

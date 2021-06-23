@@ -81,6 +81,7 @@ void gc__blank_cave()
  */
 void gc__fill_cave(floor_type fill)
 {
+	obj_set blank_floor_set = {0, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	for (long y = 2; y <= cur_height - 1; y++) {
 		for (long x = 2; x <= cur_width - 1; x++) {
 			if (is_in(cave[y][x].fval, blank_floor_set)) {

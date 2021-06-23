@@ -3,6 +3,96 @@
 
 #include "imoria.h"
 
+static char const *colors[MAX_COLORS] = {
+    "Amber",	   "Azure",		  "Blue",	    "Blue Speckled",
+    "Blue Spotted",    "Black",		  "Black Speckled",  "Black Spotted",
+    "Brown",	   "Brown Speckled",  "Brown Spotted",   "Bubbling",
+    "Chartreuse",      "Clear",		  "Cloudy",	  "Copper",
+    "Copper Spotted",  "Crimson",	 "Cyan",	    "Dark Blue",
+    "Dark Green",      "Dark Red",	"Ecru",	    "Gold",
+    "Gold Spotted",    "Green",		  "Green Speckled",  "Green Spotted",
+    "Grey",	    "Grey Spotted",    "Hazy",	    "Indigo",
+    "Light Blue",      "Light Green",     "Magenta",	 "Metallic Blue",
+    "Metallic Red",    "Metallic Green",  "Metallic Purple", "Misty",
+    "Orange",	  "Orange Speckled", "Orange Spotted",  "Pink",
+    "Pink Speckled",   "Plaid",		  "Puce",	    "Purple",
+    "Purple Speckled", "Purple Spotted",  "Red",	     "Red Speckled",
+    "Red Spotted",     "Silver",	  "Silver Speckled", "Silver Spotted",
+    "Smokey",	  "Tan",		  "Tangerine",       "Topaz",
+    "Turquoise",       "Violet",	  "Vermilion",       "White",
+    "White Speckled",  "White Spotted",   "Yellow",	  "Daggy"};
+static char const *mushrooms[MAX_MUSH] = {
+    "Blue",	"Black",     "Brown",    "Copper",  "Crimson", "Dark blue",
+    "Dark green",  "Dark red",  "Gold",     "Green",   "Grey",    "Light Blue",
+    "Light Green", "Orange",    "Pink",     "Plaid",   "Purple",  "Red",
+    "Tan",	 "Turquoise", "Violet",   "White",   "Yellow",  "Wrinkled",
+    "Wooden",      "Slimey",    "Speckled", "Spotted", "Furry"};
+static char const *woods[MAX_WOODS] = {
+    "Applewood",  "Ashen",      "Aspen",     "Avocado wood", "Balsa",
+    "Banyan",     "Birch",      "Cedar",     "Cherrywood",   "Cinnibar",
+    "Cottonwood", "Cypress",    "Dogwood",   "Driftwood",    "Ebony",
+    "Elm wood",   "Eucalyptus", "Grapevine", "Hawthorn",     "Hemlock",
+    "Hickory",    "Iron wood",  "Juniper",   "Locust",       "Mahogany",
+    "Magnolia",   "Manzanita",  "Maple",     "Mulberry",     "Oak",
+    "Pecan",      "Persimmon",  "Pine",      "Redwood",      "Rosewood",
+    "Spruce",     "Sumac",      "Sycamore",  "Teak",	 "Walnut",
+    "Zebra wood"};
+static char const *metals[MAX_METALS] = {
+    "Aluminium",     "Bone",	"Brass",		"Bronze",
+    "Cast Iron",     "Chromium",    "Copper",		"Gold",
+    "Iron",	  "Lead",	"Magnesium",	"Molybdenum",
+    "Nickel",	"Pewter",      "Rusty",		"Silver",
+    "Steel",	 "Tin",	 "Titanium",		"Tungsten",
+    "Zirconium",     "Zinc",	"Aluminium Plated", "Brass Plated",
+    "Copper Plated", "Gold Plated", "Nickel Plated",    "Silver Plated",
+    "Steel Plated",  "Tin Plated",  "Zinc Plated",      "Uranium"};
+static char const *horns[MAX_HORNS] = {"Bag Pipes", "Bugle", "Conch Shell", "Fife",
+    "Harmonica", "Horn",  "Picolo",      "Pipes",
+    "Recorder",  "Reed",  "Trumpet",     "Tuba",
+    "Whistle"};
+static char const *rocks[MAX_ROCKS] = {
+    "Amber",      "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
+    "Aquamarine", "Argentite", "Azurite",     "Beryl",	"Bloodstone",
+    "Calcite",    "Carnelian", "Coral",       "Corundum",     "Cryolite",
+    "Diamond",    "Diorite",   "Emerald",     "Flint",	"Fluorite",
+    "Gabbro",     "Garnet",    "Granite",     "Gypsum",       "Hematite",
+    "Jade",       "Jasper",    "Kryptonite",  "Lapus lazuli", "Limestone",
+    "Malachite",  "Manganite", "Marble",      "Mica",	 "Moonstone",
+    "Neptunite",  "Obsidian",  "Onyx",	"Opal",	 "Pearl",
+    "Pyrite",     "Quartz",    "Quartzite",   "Rhodonite",    "Rhyolite",
+    "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
+    "Topaz",      "Turquoise", "Zircon"};
+static char const *amulets[MAX_AMULETS] = {
+    "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
+    "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
+    "Rosewood",  "Walnut",   "Aluminium", "Bone",      "Brass",    "Bronze",
+    "Copper",    "Iron",     "Lead",      "Nickel",    "Agate",    "Amethyst",
+    "Diamond",   "Emerald",  "Flint",     "Garnet",    "Jade",     "Obsidian",
+    "Onyx",      "Opal",     "Pearl",     "Quartz",    "Ruby",     "Sapphire",
+    "Tiger eye", "Topaz",    "Turquoise"};
+static char const *cloths[MAX_CLOTHS] = {"Burlap",     "Cotton",     "Wool",
+    "Sack-cloth", "Rabbit-fur", "Lizard-skin",
+    "Goat-skin"};
+static char const *syllables[MAX_SYLLABLES] = {
+    "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",
+    "arze", "ash",  "aus",  "ban",  "bar",  "bat",  "bek",  "bie",  "bin",
+    "bit",  "bjor", "blu",  "brd",  "bu",   "byt",  "comp", "con",  "cos",
+    "cre",  "dalf", "dan",  "den",  "doe",  "dok",  "eep",  "el",   "eng",
+    "er",   "ere",  "erk",  "esh",  "evs",  "fa",   "fid",  "for",  "fri",
+    "fu",   "gan",  "gar",  "glen", "gop",  "gre",  "ha",   "he",   "hyd",
+    "i",    "ing",  "ion",  "ip",   "ish",  "it",   "ite",  "iv",   "jo",
+    "kho",  "kli",  "klis", "la",   "lech", "man",  "mar",  "me",   "mi",
+    "mic",  "mik",  "mon",  "mung", "mur",  "naed", "neg",  "nep",  "ner",
+    "nes",  "nis",  "nih",  "nin",  "o",    "od",   "ood",  "ook",  "oook",
+    "org",  "orn",  "ox",   "oxy",  "pay",  "pet",  "ple",  "plu",  "po",
+    "pot",  "prok", "re",   "rea",  "rhov", "ri",   "ro",   "rog",  "rok",
+    "rol",  "sa",   "san",  "sat",  "see",  "sef",  "seh",  "shu",  "si",
+    "snd",  "sne",  "snik", "sno",  "so",   "sol",  "spam", "sri",  "sta",
+    "sun",  "ta",   "taf",  "tem",  "ther", "ti",   "tox",  "trol", "tue",
+    "turs", "u",    "ulk",  "um",   "un",   "uni",  "ur",   "val",  "viv",
+    "vly",  "vom",  "wah",  "wed",  "werg", "wex",  "whon", "wlf",  "x",
+    "yerg", "yp",   "zun"};
+
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

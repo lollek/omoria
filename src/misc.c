@@ -7,6 +7,24 @@ void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
 static long t_level[MAX_OBJ_LEVEL + 1];
 static long tcptr;	    /* { Cur treasure heap ptr} */
+static long mfptr;	/* { Cur free monster ptr	} */
+static treasure_type up_stair = {
+    "an up staircase", up_staircase, 0x00000000, 0x00000000, 0, 0,     1,
+    0,		       0,	    0,   0,	  0,	  0, "1d1", 0, 0};
+static treasure_type down_stair = {
+    "a down staircase", down_staircase, 0x00000000, 0x00000000, 0,
+    0,			1,		0,     0,	  0,	  0,
+    0,			0,		"1d1", 0, 0};
+static treasure_type up_steep = {
+    "a steep staircase", up_steep_staircase, 0x00000000, 0x00000000, 0,
+    0,			 1,		     0,     0,		0,	  0,
+    0,			 0,		     "1d1", 0, 0};
+static treasure_type down_steep = {
+    "a steep staircase", down_steep_staircase, 0x00000000, 0x00000000, 0,
+    0,			 1,		       0,     0,	  0,	  0,
+    0,			 0,		       "1d1", 0, 0};
+static monster_type blank_monster = /* { Blank monster values	} */
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false};
 
 static const long obj_great = 30; //  1/n Chance of item being a Great Item 
 

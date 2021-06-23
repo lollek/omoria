@@ -7,6 +7,7 @@
 #define MAX_MESSAGES 50
 static char msg_prev[MAX_MESSAGES + 1][82];
 static unsigned char record_ctr = 0;
+static gid_t games_gid;
 
 void init_priv_switch()
 {

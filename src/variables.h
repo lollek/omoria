@@ -118,57 +118,17 @@ extern long inven_weight; /* { Cur carried weight	} */
 extern long equip_ctr;    /* { Cur equipment ctr	} */
 
 /*	{ Following are feature objects defined for dungeon		} */
-extern treasure_type trap_lista[MAX_TRAPA + 1];
-extern treasure_type trap_listb[MAX_TRAPB + 1];
-extern treasure_type scare_monster; /* { Special trap	} */
-extern treasure_type some_rubble;
 extern treasure_type door_list[3];
-extern treasure_type up_stair;
-extern treasure_type down_stair;
-extern treasure_type up_steep;
-extern treasure_type down_steep;
 
 /*	{ Following are creature arrays and variables			} */
 extern creature_type c_list[MAX_CREATURES + 1];
 extern monster_type m_list[MAX_MALLOC + 1];
 extern long m_level[MAX_MONS_LEVEL + 1];
-extern monster_type blank_monster; /* { Blank monster values	} */
 extern long muptr;		   /* { Cur used monster ptr	} */
-extern long mfptr;		   /* { Cur free monster ptr	} */
 extern long mon_tot_mult;	  /* { # of repro's of creature	} */
 
-/*	{ Following are arrays for descriptive pieces			} */
-extern char const *colors[MAX_COLORS];
-extern char const *mushrooms[MAX_MUSH];
-extern char const *woods[MAX_WOODS];
-extern char const *metals[MAX_METALS];
-extern char const *horns[MAX_HORNS];
-extern char const *rocks[MAX_ROCKS];
-extern char const *amulets[MAX_AMULETS];
-extern char const *cloths[MAX_CLOTHS];
-extern char const *syllables[MAX_SYLLABLES];
-/*	vowel_set		: */
-/*				  char_set; */
-
 /* new stuff */
-extern long malloc_calls;
-extern long malloc_bytes;
-extern long free_calls;
-extern long free_bytes;
 extern char coin_name[MITHRIL + 1][82];
-extern obj_set blank_floor_set;
-
-extern obj_set null_obj_set;
-extern obj_set destroyed_by_lightning;
-extern obj_set destroyed_by_acid;
-extern obj_set destroyed_by_cold;
-extern obj_set destroyed_by_fire;
-extern obj_set destroyed_by_petrify;
-extern obj_set destroyed_by_sunray;
-
-extern gid_t games_gid;
-extern boolean scoresAreEncrypted;
-extern boolean saveFilesAreEncrypted;
 
 extern unsigned char highScoreKey[8];
 extern unsigned char saveFileKey[8];
