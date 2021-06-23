@@ -659,13 +659,9 @@ chtype loc_symbol(long y, long x)
 	return sym;
 }
 
+/*{ Determine character's sex				-DCJ- }*/
 unsigned char characters_sex()
 {
-	/*	{ Determine character's sex				-DCJ-
-	 * }*/
-	/*	  characters_sex := trunc((index(sex_type,player_sex)+5)/6) ;
-	 */
-
 	return ((player_sex[0] == 'F') ? FEMALE : MALE);
 }
 /*//////////////////////////////////////////////////////////////////// */

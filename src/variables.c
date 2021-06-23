@@ -202,7 +202,6 @@ boolean msg_terse;
 long char_row = 0;
 long char_col = 0;
 long com_val;
-char sex_type[82] = "FemaleMale  ";
 
 /*	{ Background information					} */
 
