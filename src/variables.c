@@ -197,7 +197,6 @@ long exp_per_level[MAX_PLAYER_LEVEL + 1] = {
     3600,   4400,    5400,    6800,    8400,   10200,  12500,  17500,  25000,
     35000,  50000,   75000,   100000,  150000, 200000, 300000, 400000, 500000,
     750000, 1500000, 2500000, 5000000, 9999999};
-float acc_exp = 0.0; /*{ Accumulator for fractional exp} */
 char bare_hands[7] = "1d1";
 boolean msg_terse;
 unsigned char record_ctr = 0;

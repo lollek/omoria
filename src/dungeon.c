@@ -9,6 +9,7 @@ void C_print_known_spells();
 static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
 static boolean cave_flag = false;  /*	{ Used in GET_PANEL   } */
 static long closing_flag = 0;    /* { Used for closing   } */
+static float acc_exp = 0.0; /*{ Accumulator for fractional exp} */
 
 long dir_val;		 /* { For movement (running)} */
 long old_chp, old_cmana; /* { Detect change         } */

@@ -88,7 +88,6 @@ extern obj_set slow_set;
 extern obj_set stable_set;
 
 extern long exp_per_level[MAX_PLAYER_LEVEL + 1];
-extern float acc_exp; /*{ Accumulator for fractional exp} */
 extern char bare_hands[7];
 extern boolean msg_terse;
 extern unsigned char record_ctr;
