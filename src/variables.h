@@ -94,7 +94,6 @@ extern long char_row;
 extern long char_col;
 extern long com_val;
 extern treasure_type yums[NUM_YUM + 1];
-extern treasure_type monk_book;
 extern boolean total_winner;
 
 /*	{ Following are store definitions				} */

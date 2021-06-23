@@ -251,13 +251,6 @@ treasure_type yums[NUM_YUM + 1] = {
      270, 2, 2, 0, 0, 0, 0, "10d12", 20, 0}, /*{18} */
 };
 
-/*	{ Create fake book for using monk disciplines		} */
-treasure_type monk_book = {
-    "& Book of Mental Disciplines", miscellaneous_object, 0x00000000,
-    0x00003FFF,			    0,			  0,     1,
-    10,				    1,			  0,     0,
-    0,				    0,			  "0d0", 1, 0};
-
 boolean total_winner = false;
 
 /*	{ Following are store definitions				} */
