@@ -5,36 +5,6 @@
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66
 
-/*	{ Spell Effect Constants! } */
-#define c_null 0
-#define c_lightning 1
-#define c_gas 2
-#define c_acid 3
-#define c_cold 4
-#define c_fire 5
-#define c_good 6
-#define c_evil 7
-#define c_petrify 8
-#define c_sunray 9
-#define c_illusion 10
-#define c_probe 11
-#define c_sleep 12
-#define c_confuse 13
-#define c_hp 14
-#define c_drain 15
-#define c_speed 16
-#define c_hold 17
-#define c_turn 18
-#define c_poly 19
-#define c_joke 20
-#define c_monster 21
-#define c_invisible 22
-#define c_creature 23
-#define c_object 24
-#define c_treasure 25
-#define c_hp_undead 26
-#define c_thunder 27
-#define c_holy_word 28
 
 #define c_sc_hold 1
 #define c_sc_mental 2

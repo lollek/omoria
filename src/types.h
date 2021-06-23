@@ -25,6 +25,38 @@ enum stat_t {
 	CHR = 5
 };
 
+enum spell_effect_t {
+	c_null = 0,
+	c_lightning = 1,
+	c_gas = 2,
+	c_acid = 3,
+	c_cold = 4,
+	c_fire = 5,
+	c_good = 6,
+	c_evil = 7,
+	c_petrify = 8,
+	c_sunray = 9,
+	c_illusion = 10,
+	c_probe = 11,
+	c_sleep = 12,
+	c_confuse = 13,
+	c_hp = 14,
+	c_drain = 15,
+	c_speed = 16,
+	c_hold = 17,
+	c_turn = 18,
+	c_poly = 19,
+	c_joke = 20,
+	c_monster = 21,
+	c_invisible = 22,
+	c_creature = 23,
+	c_object = 24,
+	c_treasure = 25,
+	c_hp_undead = 26,
+	c_thunder = 27,
+	c_holy_word = 28
+};
+
 enum class_t {
 	C_WARRIOR = 0,
 	C_MAGE = 1,
