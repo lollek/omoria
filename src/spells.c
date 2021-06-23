@@ -28,6 +28,72 @@ static obj_set destroyed_by_petrify = {boots, soft_armor, potion1, potion2, Food
 static obj_set destroyed_by_sunray = {cloak, scroll1, scroll2, potion1, potion2, 0};
 
 
+static void get_flags(enum spell_effect_t typ, long *weapon_type, long *harm_type, obj_set **destroy)
+{
+	/*{ Return flags for given type area affect               -RAK-   }*/
+
+	switch (typ) {
+	case c_lightning: /* {1} */
+		*weapon_type = 0x00080000;
+		*harm_type = 0x0100;
+		*destroy = &destroyed_by_lightning;
+		break;
+
+	case c_gas: /* {2}*/
+		*weapon_type = 0x00100000;
+		*harm_type = 0x0040;
+		*destroy = &null_obj_set;
+		break;
+
+	case c_acid: /* {3}*/
+		*weapon_type = 0x00200000;
+		*harm_type = 0x0080;
+		*destroy = &destroyed_by_acid;
+		break;
+
+	case c_cold: /* {4}*/
+		*weapon_type = 0x00400000;
+		*harm_type = 0x0010;
+		*destroy = &destroyed_by_cold;
+		break;
+
+	case c_fire: /* {5}*/
+		*weapon_type = 0x00800000;
+		*harm_type = 0x0020;
+		*destroy = &destroyed_by_fire;
+		break;
+
+	case c_good: /* {6}*/
+		*weapon_type = 0x00000000;
+		*harm_type = 0x0004;
+		*destroy = &null_obj_set;
+		break;
+
+	case c_evil: /* {7}*/
+		*weapon_type = 0x00000000;
+		*harm_type = 0x0000;
+		*destroy = &null_obj_set;
+		break;
+
+	case c_petrify: /* {8}*/
+		*weapon_type = 0x00000000;
+		*harm_type = 0x0000;
+		*destroy = &destroyed_by_petrify;
+		break;
+
+	case c_sunray: /* {9}*/
+		*weapon_type = 0x00000000;
+		*harm_type = 0x0108;
+		*destroy = &destroyed_by_sunray;
+		break;
+
+	default:
+		*weapon_type = 0;
+		*harm_type = 0;
+		*destroy = &null_obj_set;
+		break;
+	}
+}
 
 void lower_stat(enum stat_t tstat, char msg1[82])
 {
@@ -257,18 +323,20 @@ boolean aggravate_monster(long dis_affect)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean explode(long typ, long y, long x, long dam_hp, const char *descrip)
+boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char *descrip)
 {
-	long i1, i2;
-	long dam, max_dis, thit, tkill;
-	long weapon_type, harm_type;
+	long i1;
+	long i2;
+	long dam;
+	long max_dis = 2;
+	long thit = 0;
+	long tkill = 0;
+	long weapon_type;
+	long harm_type;
 	obj_set *destroy;
 	char out_val[82];
 	boolean return_value = true;
 
-	thit = 0;
-	tkill = 0;
-	max_dis = 2;
 
 	get_flags(typ, &weapon_type, &harm_type, &destroy);
 
@@ -472,72 +540,6 @@ boolean explode(long typ, long y, long x, long dam_hp, const char *descrip)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void get_flags(long typ, long *weapon_type, long *harm_type, obj_set **destroy)
-{
-	/*{ Return flags for given type area affect               -RAK-   }*/
-
-	switch (typ) {
-	case c_lightning: /* {1} */
-		*weapon_type = 0x00080000;
-		*harm_type = 0x0100;
-		*destroy = &destroyed_by_lightning;
-		break;
-
-	case c_gas: /* {2}*/
-		*weapon_type = 0x00100000;
-		*harm_type = 0x0040;
-		*destroy = &null_obj_set;
-		break;
-
-	case c_acid: /* {3}*/
-		*weapon_type = 0x00200000;
-		*harm_type = 0x0080;
-		*destroy = &destroyed_by_acid;
-		break;
-
-	case c_cold: /* {4}*/
-		*weapon_type = 0x00400000;
-		*harm_type = 0x0010;
-		*destroy = &destroyed_by_cold;
-		break;
-
-	case c_fire: /* {5}*/
-		*weapon_type = 0x00800000;
-		*harm_type = 0x0020;
-		*destroy = &destroyed_by_fire;
-		break;
-
-	case c_good: /* {6}*/
-		*weapon_type = 0x00000000;
-		*harm_type = 0x0004;
-		*destroy = &null_obj_set;
-		break;
-
-	case c_evil: /* {7}*/
-		*weapon_type = 0x00000000;
-		*harm_type = 0x0000;
-		*destroy = &null_obj_set;
-		break;
-
-	case c_petrify: /* {8}*/
-		*weapon_type = 0x00000000;
-		*harm_type = 0x0000;
-		*destroy = &destroyed_by_petrify;
-		break;
-
-	case c_sunray: /* {9}*/
-		*weapon_type = 0x00000000;
-		*harm_type = 0x0108;
-		*destroy = &destroyed_by_sunray;
-		break;
-
-	default:
-		*weapon_type = 0;
-		*harm_type = 0;
-		*destroy = &null_obj_set;
-		break;
-	}
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -718,7 +720,7 @@ boolean teleport_to(long ny, long nx)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean breath(long typ, long y, long x, long dam_hp, char ddesc[82])
+boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp, char ddesc[82])
 {
 	/*{ Breath weapon works like a fire_ball, but affects the player. }*/
 	/*{ Note the area affect....                              -RAK-   }*/
@@ -807,6 +809,9 @@ boolean breath(long typ, long y, long x, long dam_hp, char ddesc[82])
 					break;
 				case c_evil:
 					xp_loss(dam);
+					break;
+				default:
+					// Not implemented
 					break;
 				}
 			}

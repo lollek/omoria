@@ -365,8 +365,6 @@ extern boolean light_line(long dir, long y, long x, long power);
 extern boolean starlite(long y, long x);
 extern boolean disarm_all(long dir, long y, long x);
 extern boolean detect_curse();
-extern void get_flags(long typ, long *weapon_type, long *harm_type,
-		      obj_set **destroy);
 extern boolean detect_magic();
 extern boolean purify();
 extern boolean lore_spell();
@@ -378,7 +376,7 @@ extern boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
 			     char ddesc[28]);
 extern boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
 			 char descrip[28]);
-extern boolean breath(long typ, long y, long x, long dam_hp, char ddesc[82]);
+extern boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp, char ddesc[82]);
 extern boolean recharge(long num);
 extern boolean zap_monster(long dir, long y, long x, long aux, long zaptype);
 extern boolean wall_to_mud(long dir, long y, long x);

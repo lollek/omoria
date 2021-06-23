@@ -46,7 +46,7 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 		boolean *redraw);
 boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
 		long *x);
-boolean explode(long typ, long y, long x, long dam_hp, const char *descrip);
+boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char *descrip);
 void teleport(long dis);
 boolean create_water(long y, long x);
 boolean destroy_water(long y, long x);
