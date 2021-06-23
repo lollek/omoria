@@ -4,6 +4,8 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+#define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
+
 static const long mon_mult_adj = 7; // High value slows multiplication
 
 void lm__read_custom(FILE *file)

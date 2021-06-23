@@ -3,6 +3,8 @@
 
 #include "imoria.h"
 
+static uint8_t const MAX_QUESTS = 35;  /*{ Maximum number of quests per game	} */
+
 /*
 void q__change_money()
 {

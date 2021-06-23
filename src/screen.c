@@ -3,6 +3,44 @@
 static long win_equip_x = 81;
 static long win_equip_y = 16;
 
+/*	{ Screen placement parameters					} */
+#define STAT_COLUMN 1
+#define RACE_ROW (STAT_COLUMN + 1)
+#define CLASS_ROW (RACE_ROW + 1)
+#define TITLE_ROW (CLASS_ROW + 1)
+
+#define HP_ROW (TITLE_ROW + 2)
+#define MANA_ROW (HP_ROW + 1)
+
+#define STR_ROW (MANA_ROW + 2)
+#define INT_ROW (STR_ROW + 1)
+#define WIS_ROW (INT_ROW + 1)
+#define DEX_ROW (WIS_ROW + 1)
+#define CON_ROW (DEX_ROW + 1)
+#define CHA_ROW (CON_ROW + 1)
+
+#define EXP_ROW (CHA_ROW + 2)
+#define QUEST_ROW (EXP_ROW + 1)
+#define AC_ROW (QUEST_ROW + 1)
+#define GOLD_ROW (AC_ROW + 1)
+#define WEIGHT_ROW (GOLD_ROW + 1)
+#define TIME_ROW (WEIGHT_ROW + 2)
+#define WINNER_ROW 23
+#define WINNER_COLUMN 1
+
+#define STATUS_ROW 24
+#define HUNGER_COLUMN 1
+#define BLIND_COLUMN 9
+#define CONFUSED_COLUMN 16
+#define AFRAID_COLUMN 26
+#define POISONED_COLUMN 34
+#define SEARCHING_COLUMN 44
+#define RESTING_COLUMN 44
+#define QUESTED_COLUMN 53 /*{FUBAR}*/
+#define DEPTH_COLUMN 62
+#define LIGHT_ON_COLUMN 62
+
+
 void C_print_equipment_block();
 void prt_equipment(void)
 {

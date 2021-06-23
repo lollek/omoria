@@ -3,6 +3,10 @@
 #include "imoria.h"
 #include "save.h"
 
+/*	{ Output dungeon section sizes					} */
+#define OUTPAGE_HEIGHT 44 /* { 44 lines of dungeon per section	} */
+#define OUTPAGE_WIDTH 99  /* { 100 columns of dungeon per section	} */
+
 static long max_score = 20; // # of scores to list
 
 FILE *priv_fopen(char *path, char *mode)

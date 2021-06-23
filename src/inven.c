@@ -1,6 +1,13 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+#define MITHRIL_POS (MAX_GOLD)
+#define PLATINUM_POS (MAX_GOLD - 1)
+#define GOLD_POS (MAX_GOLD - 2)
+#define SILVER_POS 4
+#define COPPER_POS 3
+#define IRON_POS 2
+
 static void aii__insert(treas_ptr ptr, treas_ptr new_item)
 {
 	treas_ptr cur;

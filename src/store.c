@@ -4,12 +4,12 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+#define DAY_LENGTH 9600 /*{ Turns in a day			} */
 const long obj_town_level = 7; // Town object generation level
-
-/*	{ Background information					} */
 
 /*	{ Buying and selling adjustments for character race VS store	} */
 /*	{ owner race							} */
+#define MAX_RACES 10	   /*{ Number of defined races	        } */
 static float rgold_adj[MAX_RACES][MAX_RACES] = {
     /*               Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr, Dry */
     /*Human     */ {0.00, 0.05, 0.05, 0.10, 0.13, 0.15, 0.20, 0.25, 0.20, 0.05},

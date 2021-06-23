@@ -3,6 +3,8 @@
 void eb__display_money(void);
 void eb__display_store(const char *shop_owner);
 
+#define BANK_SKIM 0.95      /*{ Percent of money that really gets deposited} */
+
 static boolean eb__get_entry(char comment[82], long *num)
 {
 	/*

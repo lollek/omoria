@@ -6,6 +6,8 @@
 
 void C_print_known_spells();
 
+#define OBJ_LAMP_MAX 15000 /*{ Maximum amount that lamp can be filled} */
+
 static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
 static boolean cave_flag = false;  /*	{ Used in GET_PANEL   } */
 static long closing_flag = 0;    /* { Used for closing   } */

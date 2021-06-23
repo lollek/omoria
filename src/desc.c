@@ -3,6 +3,16 @@
 
 #include "imoria.h"
 
+/*	{ Descriptive constants						} */
+#define MAX_COLORS 68     /*{ Used with potions	} */
+#define MAX_MUSH 29       /*{ Used with mushrooms	} */
+#define MAX_WOODS 41      /*{ Used with staffs	} */
+#define MAX_METALS 32     /*{ Used with wands	} */
+#define MAX_HORNS 13      /*{ Used with horns	} */
+#define MAX_ROCKS 53      /*{ Used with rings	} */
+#define MAX_CLOTHS 7      /*{ Used with bags/sacks	} */
+#define MAX_AMULETS 39    /*{ Used with amulets	} */
+#define MAX_SYLLABLES 156 /*{ Used with scrolls	} */
 static char const *colors[MAX_COLORS] = {
     "Amber",	   "Azure",		  "Blue",	    "Blue Speckled",
     "Blue Spotted",    "Black",		  "Black Speckled",  "Black Spotted",

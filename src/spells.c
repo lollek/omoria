@@ -4,6 +4,8 @@
 #include "imoria.h"
 #include "dungeon.h"
 
+#define OBJ_BOLT_RANGE 18  /*{ Maximum range of bolts and balls	} */
+
 static const treasure_type scare_monster = /* { Special trap	} */
     {"a strange rune", seen_trap, 0x00000000, 0x00000000, 0, 0,     99,
      0,		       0,	 0,   0,	  0,	  0, "0d0", -90, 0};

@@ -1,89 +1,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
-/* The global constants for imoria */
-
-/*
- * Note to the Wizard:
- * 	Tweaking these constants can *GREATLY* change the game.
- * 	Two years of constant tuning have generated these
- * 	values.	 Minor adjustments are encouraged, but you must
- * 	be very careful not to unbalance the game.  Moria was
- * 	meant to be challenging, not a give away.  Many
- * 	adjustments can cause the game to act strangely, or even
- * 	cause errors.
- */
-
-/*
- * { Wizard accounts (can use wizard/god modes)	      -DCJ/KRC-
- *   Please document additions to this list.  Current wizards are:
- *
- *  games/arcana       : GAMES
- *  Tom Bunch          : 8630891
- *  Ken Case           : 9EBB07D3, C8518
- *  Robert Christ      : 8725262
- *  Mary Conner        : 26F45030, 8221984
- *  Brad DeGrazia      : 8830329
- *  Rob DeLoura        : 8536399
- *                     : DD7CB31C
- *  Jimbo Harris       : 8727288
- *  Jonathan Sari      : 8728277
- *  Raoul St.Pierre    : 8832780
- *  And Dean Yasuda as the MBI!
- *
- * wizards =
- *':GAMES:9EBB07D3:C8518:26F45030:8727288:8536399:DD7CB31C:8728277:8221984:8725262:8832780:8830329:';
- */
-
-#define wizards "goohead"
-
-/*	{ Encryption constants						}
- *	{ Note: These numbers were pulled from the air, and can be	}
- *	{	changed.  If changed, characters produced from other	}
- *	{	versions will fail to restore.				}
- */
-#define ENCRYPT_SEED1 1175191
-#define ENCRYPT_SEED2 99755171
 
 /*	{ Screen size parameters					} */
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66
-
-/*	{ Screen placement parameters					} */
-#define STAT_COLUMN 1
-#define RACE_ROW (STAT_COLUMN + 1)
-#define CLASS_ROW (RACE_ROW + 1)
-#define TITLE_ROW (CLASS_ROW + 1)
-
-#define HP_ROW (TITLE_ROW + 2)
-#define MANA_ROW (HP_ROW + 1)
-
-#define STR_ROW (MANA_ROW + 2)
-#define INT_ROW (STR_ROW + 1)
-#define WIS_ROW (INT_ROW + 1)
-#define DEX_ROW (WIS_ROW + 1)
-#define CON_ROW (DEX_ROW + 1)
-#define CHA_ROW (CON_ROW + 1)
-
-#define EXP_ROW (CHA_ROW + 2)
-#define QUEST_ROW (EXP_ROW + 1)
-#define AC_ROW (QUEST_ROW + 1)
-#define GOLD_ROW (AC_ROW + 1)
-#define WEIGHT_ROW (GOLD_ROW + 1)
-#define TIME_ROW (WEIGHT_ROW + 2)
-#define WINNER_ROW 23
-#define WINNER_COLUMN 1
-
-#define STATUS_ROW 24
-#define HUNGER_COLUMN 1
-#define BLIND_COLUMN 9
-#define CONFUSED_COLUMN 16
-#define AFRAID_COLUMN 26
-#define POISONED_COLUMN 34
-#define SEARCHING_COLUMN 44
-#define RESTING_COLUMN 44
-#define QUESTED_COLUMN 53 /*{FUBAR}*/
-#define DEPTH_COLUMN 62
-#define LIGHT_ON_COLUMN 62
 
 #define STR 0
 #define INT 1
@@ -133,32 +53,6 @@
 #define MAX_HEIGHT 66 /* { Multiple of 11; >= 22 } */
 #define MAX_WIDTH 198 /* { Multiple of 33; >= 66 } */
 
-/*	{ Output dungeon section sizes					} */
-#define OUTPAGE_HEIGHT 44 /* { 44 lines of dungeon per section	} */
-#define OUTPAGE_WIDTH 99  /* { 100 columns of dungeon per section	} */
-
-/*
- *	{ Dungeon generation values					}
- *	{ Note: The entire design of dungeon can be changed by only	}
- *	{	slight adjustments here.				}
- */
-#define DAY_LENGTH 9600 /*{ Turns in a day			} */
-#define DUN_TUN_RND 36  /*{ Random direction (4 is min)		} */
-#define DUN_TUN_CHG 70  /*{ Chance of changing direction (99 max)} */
-#define DUN_TUN_FND 12  /*{ Distance for auto find to kick in	} */
-#define DUN_TUN_CON 15  /*{ Chance of extra tunneling		} */
-#define DUN_ROO_MEA 32  /*{ Mean of # of rooms, standard dev=2	} */
-#define DUN_TUN_PEN 25  /*{ % chance of room doors		} */
-#define DUN_TUN_JCT 15  /*{ % chance of doors at tunnel junctons	} */
-#define DUN_STR_DEN 5   /*{ Density of streamers			} */
-#define DUN_STR_RNG 2   /*{ Width of streamers			} */
-#define DUN_STR_MAG 3   /*{ Number of magma streamers		} */
-#define DUN_STR_QUA 2   /*{ Number of quartz streamers		} */
-#define DUN_WTR_DEN 5   /*{ Density of water			} */
-#define DUN_WTR_WIDTH 4 /*{ Width of river			} */
-#define DUN_RIVERS 3    /*{ Number of rivers			} */
-#define DUN_RIV_LEN 35  /*{ Maximum river length			} */
-#define DUN_POOLS 3     /*{ Number of pools			} */
 
 /*	{ Store constants						} */
 #define MAX_OWNER_KIND 4 /*{ Number of different keepers for a shop} */
@@ -166,15 +60,6 @@
 #define MAX_OWNERS (MAX_STORES * MAX_OWNER_KIND)
 /*{ Number of owners to choose from	} */
 #define MAX_UNNAMED 6 /*{ # of 'odd' shops (Post, etc)	} */
-#define TOT_STORES (MAX_STORES + MAX_UNNAMED)
-#define MAX_FOUNTAINS 2     /*{ # of fountains on town level	} */
-#define MAX_HOUSE1 4	/*{ # of generic houses in town	} */
-#define MAX_HOUSE2 8	/*{ # of small houses in town } */
-#define MAX_HOUSE3 2	/*{ # apartments } */
-#define MAX_HOUSE4 2	/*{ # small apartments } */
-#define DAY_MUGGING 50      /*{ 1/x chance that page gets mugged (day)} */
-#define NIGHT_MUGGING 15    /*{ 1/x chance that page gets mugged (night)} */
-#define BANK_SKIM 0.95      /*{ Percent of money that really gets deposited} */
 #define STORE_INVEN_MAX 24  /*{ Max number of discrete objs in inven	} */
 #define STORE_CHOICES 50    /*{ Number of items to choice stock from	} */
 #define STORE_MAX_INVEN 20  /*{ Max diff objs in stock before auto sell} */
@@ -201,11 +86,6 @@
 #define COPPER_VALUE 4
 #define IRON_VALUE 1
 
-/*	{ Constants describing limits of certain objects		} */
-#define OBJ_LAMP_MAX 15000 /*{ Maximum amount that lamp can be filled} */
-#define OBJ_BOLT_RANGE 18  /*{ Maximum range of bolts and balls	} */
-#define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
-
 /*	{ Creature contants						} */
 #define MAX_CREATURES 415     /*{ Number of creatures defined for univ	} */
 #define MAX_MALLOC (100 + 1)  /*{ Max that can be allocated	        } */
@@ -227,23 +107,9 @@
 #define MAX_TRAPA 19 /*{ Number of defined traps		} */
 #define MAX_TRAPB 20 /*{ Includes secret doors		} */
 
-/*	{ Descriptive constants						} */
-#define MAX_COLORS 68     /*{ Used with potions	} */
-#define MAX_MUSH 29       /*{ Used with mushrooms	} */
-#define MAX_WOODS 41      /*{ Used with staffs	} */
-#define MAX_METALS 32     /*{ Used with wands	} */
-#define MAX_HORNS 13      /*{ Used with horns	} */
-#define MAX_ROCKS 53      /*{ Used with rings	} */
-#define MAX_CLOTHS 7      /*{ Used with bags/sacks	} */
-#define MAX_AMULETS 39    /*{ Used with amulets	} */
-#define MAX_SYLLABLES 156 /*{ Used with scrolls	} */
-
 /*	{ Player constants						} */
-#define MAX_QUESTS 35	  /*{ Maximum number of quests per game	} */
 #define MAX_SPELLS 40	  /*{ Maximum number of spells per class	} */
 #define MAX_PLAYER_LEVEL 40    /*{ Maximum possible character level	} */
-#define MAX_RACES 10	   /*{ Number of defined races	        } */
-#define MAX_CLASS 10	   /*{ Number of defined classes		} */
 #define USE_DEVICE 3	   /*{ x> Harder devices x< Easier devices	} */
 #define NUM_QUESTS 5	   /*{ # of possible quests to select from	} */
 #define BASE_FOOD_DIGESTED 2   /* food digested per turn */
@@ -445,13 +311,6 @@
 #define IS_STEALTHY 0x20000000
 #define IS_MAGIC_PROTECED 0x40000000
 #define IS_mmm 0x80000000
-
-#define MITHRIL_POS (MAX_GOLD)
-#define PLATINUM_POS (MAX_GOLD - 1)
-#define GOLD_POS (MAX_GOLD - 2)
-#define SILVER_POS 4
-#define COPPER_POS 3
-#define IRON_POS 2
 
 #define TOTAL_ 0
 #define IRON 1
