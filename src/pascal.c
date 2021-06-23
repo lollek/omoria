@@ -34,7 +34,7 @@ boolean is_in(long const obj, obj_set const oset)
 	long tmp;
 	boolean return_value = false;
 
-/*    ENTER("is_in","m"); */
+	/*    ENTER("is_in","m"); */
 
 #if DO_DEBUG
 	tmp = 0;

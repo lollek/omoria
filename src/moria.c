@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
 
 		learn_magic(false);
 		player_cmana = player_mana;
-		randes_seed = town_seed; // Unsure why the seed needs to be the same
+		randes_seed =
+		    town_seed; // Unsure why the seed needs to be the same
 		magic_init(randes_seed);
 		generate = true;
 

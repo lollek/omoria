@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void us__staff_effect(long effect, boolean *idented)
 {
@@ -172,7 +172,8 @@ void use_staff()
 				reset_flag = false;
 
 				/* with player_do; */
-				chance = player_save + player_lev + C_player_mod_from_stat(INT) -
+				chance = player_save + player_lev +
+					 C_player_mod_from_stat(INT) -
 					 item_ptr->data.level - 5;
 
 				if (player_flags.confused > 0) {
@@ -201,7 +202,8 @@ void use_staff()
 							C_player_add_exp(
 							    (item_ptr->data
 								 .level /
-							     (float)player_lev) +
+							     (float)
+								 player_lev) +
 							    .5);
 							prt_stat_block();
 						}

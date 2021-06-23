@@ -3,7 +3,8 @@
 
 #include "imoria.h"
 
-static uint8_t const MAX_QUESTS = 35;  /*{ Maximum number of quests per game	} */
+static uint8_t const MAX_QUESTS =
+    35; /*{ Maximum number of quests per game	} */
 
 /*
 void q__change_money()
@@ -43,7 +44,7 @@ void q__reward_money(long reward)
 
 void q__reward_item(long target)
 {
-/* alloc several items, plus the money; */
+	/* alloc several items, plus the money; */
 
 #define QUEST_ITEMS 9
 #define QUEST_ITEM_FREQUENCY 10
@@ -61,12 +62,16 @@ void q__reward_item(long target)
 	float q4 = (1.2 * target * GOLD_VALUE); /* value to stop at */
 
 	obj_set wand_set = {staff, wand, 0};
-	obj_set weapon_set = {bow_crossbow_or_sling, hafted_weapon, pole_arm,
-			      dagger,		     sword,	 maul,
+	obj_set weapon_set = {bow_crossbow_or_sling,
+			      hafted_weapon,
+			      pole_arm,
+			      dagger,
+			      sword,
+			      maul,
 			      0};
 	obj_set misc1_set = {bracers, belt, amulet, ring, 0};
 	obj_set misc2_set = {valuable_gems, bag_or_sack, valuable_gems_wear,
-			     chime,	 horn,	0};
+			     chime,	    horn,	 0};
 	obj_set ammo_set = {bolt, arrow, 0};
 	obj_set armor1_set = {gem_helm, boots, gloves_and_gauntlets, cloak, 0};
 	obj_set armor2_set = {helm, shield, soft_armor, 0};
@@ -117,7 +122,8 @@ void q__reward_item(long target)
 	C_clear_screen();
 
 	for (i2 = 0; i2 < QUEST_ITEMS; i2++) {
-		sprintf(out_val, "%c)     %s", (char)(i2 + 97), reward_names[i2]);
+		sprintf(out_val, "%c)     %s", (char)(i2 + 97),
+			reward_names[i2]);
 		prt(out_val, 3 + i2, 10);
 	}
 	sprintf(out_val, "%c)     a check for %ld gold pieces", (char)(i2 + 97),
@@ -274,7 +280,7 @@ boolean q__completed_quest()
 
 	if ((!player_flags.quested) && (player_cur_quest != 0)) {
 		player_flags.quested = false; /* { not under quest          } */
-		player_quests++;	 /* { one more is now complete } */
+		player_quests++;	      /* { one more is now complete } */
 		return_value = true;
 	}
 
@@ -301,17 +307,17 @@ void q__reject_char()
 	case 1:
 		msg_print(
 		    "'M'lord, the Arch-Mage does not wish to be disturbed.'");
-                break;
+		break;
 	case 2:
 		msg_print(
 		    "'My master has other business at the present time.'");
-                break;
+		break;
 	case 3:
 		msg_print("'Piss off you inexperienced peon.'");
-                break;
+		break;
 	case 4:
 		msg_print("'You have yet to prove yourself worthy.'");
-                break;
+		break;
 	}
 	msg_print("The guard escorts you back outside and locks the door.");
 	msg_print("");

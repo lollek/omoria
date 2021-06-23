@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)
@@ -206,7 +206,7 @@ void ic__clear_display(treas_ptr cur_display[], long *cur_display_size)
 	ENTER(("ic__clear_display", "iu"));
 
 	cur_display_size = 0;
-        (void)cur_display_size;
+	(void)cur_display_size;
 	for (index = 1; index <= DISPLAY_SIZE; index++) {
 		cur_display[index] = 0;
 	}
@@ -300,7 +300,8 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 
 	ENTER(("ic__show_inven", "iu"));
 
-	num_choices = ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
+	num_choices =
+	    ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
 
 	while (!exit_flag) {
 		boolean caps_flag = false;
@@ -317,14 +318,15 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 				num_choices = 0;
 			} else {
 				cur_inven = next_inven;
-				num_choices = ic__display_inv(
-						cur_display, prompt, cur_inven,
-						&next_inven);
+				num_choices =
+				    ic__display_inv(cur_display, prompt,
+						    cur_inven, &next_inven);
 			}
 			continue;
 		}
 
-		if (command == 3 || command == 25 || command == 26 || command == 27) {
+		if (command == 3 || command == 25 || command == 26 ||
+		    command == 27) {
 			*valid_flag = false;
 			exit_flag = true;
 			continue;
@@ -333,24 +335,27 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 		if ('1' <= command && command <= '9') {
 			cur_inven = inventory_list;
 			count = 0;
-			if (!(cur_inven->next == NULL || count >= (command - '1') * 20)) {
+			if (!(cur_inven->next == NULL ||
+			      count >= (command - '1') * 20)) {
 				do {
 					count++;
 					cur_inven = cur_inven->next;
 					if (cur_inven->next == NULL) {
 						exit_flag = true;
 					}
-				} while (!(cur_inven->next == NULL || count >= (command - '1') * 20));
+				} while (!(cur_inven->next == NULL ||
+					   count >= (command - '1') * 20));
 			}
 
-			if (cur_inven->next == NULL && count != (command - '1') * 20) {
+			if (cur_inven->next == NULL &&
+			    count != (command - '1') * 20) {
 				prt("Entire inventory displayed.", 1, 1);
 				cur_inven = inventory_list;
 			} else {
 				next_inven = cur_inven;
-				num_choices = ic__display_inv(
-						cur_display, prompt, cur_inven,
-						&next_inven);
+				num_choices =
+				    ic__display_inv(cur_display, prompt,
+						    cur_inven, &next_inven);
 			}
 			sprintf(out_str, ": %c", (int)command);
 			prt(out_str, 1, 75);
@@ -390,16 +395,16 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 		wgt = 0;
 		if ((*ret_ptr)->data.flags2 & Holding_bit) {
 			treas_ptr temp_ptr = (*ret_ptr)->next;
-			while ((temp_ptr != NULL) && (temp_ptr ->is_in)) {
-				wgt += temp_ptr->data.weight * temp_ptr->data.number;
+			while ((temp_ptr != NULL) && (temp_ptr->is_in)) {
+				wgt += temp_ptr->data.weight *
+				       temp_ptr->data.number;
 				temp_ptr = temp_ptr->next;
 			}
 		}
 
 		if (!((*ret_ptr)->is_in) && wgt == 0) {
 			if (caps_flag &&
-					!(is_in((*ret_ptr)->data.tval,
-							stuff_to_fire))) {
+			    !(is_in((*ret_ptr)->data.tval, stuff_to_fire))) {
 				count = (*ret_ptr)->data.number;
 			} else {
 				count = 1;
@@ -408,10 +413,8 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 				inven_destroy(*ret_ptr);
 			}
 			ic__clear_display(cur_display, cur_display_size);
-			num_choices = ic__display_inv(cur_display,
-					prompt,
-					cur_inven,
-					&next_inven);
+			num_choices = ic__display_inv(cur_display, prompt,
+						      cur_inven, &next_inven);
 		} else {
 			msg_print("You must empty the bag of holding first.");
 		}
@@ -582,8 +585,9 @@ void ic__unwear(long *scr_state)
 
 	exit_flag = false;
 	do {
-		sprintf(out_val, "(a-%c, *,<space> for equipment list, Esc to "
-				 "exit) Take off which one?",
+		sprintf(out_val,
+			"(a-%c, *,<space> for equipment list, Esc to "
+			"exit) Take off which one?",
 			((int)equip_ctr + 96));
 		test_flag = false;
 		msg_print(out_val);
@@ -656,7 +660,8 @@ void ic__unwear(long *scr_state)
 	}
 }
 
-static void ic__wear__gem(treas_rec *gem) {
+static void ic__wear__gem(treas_rec *gem)
+{
 	long factor;
 	treasure_type *const worn_helm = &equipment[Equipment_helm];
 
@@ -670,7 +675,7 @@ static void ic__wear__gem(treas_rec *gem) {
 		msg_print("There is no more room on the helm.");
 		if (randint(2) == 1) {
 			msg_print("You lose your grip and the gem "
-					"falls to the floor.");
+				  "falls to the floor.");
 			msg_print("The gem shatters!");
 			msg_print("");
 			inven_destroy(gem);
@@ -726,14 +731,31 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 		change_all_ok_stats(true, false);
 
 		{ /* Filter item types before we show the list */
-			const obj_set wearables = {
-				valuable_gems_wear, lamp_or_torch,
-				bow_crossbow_or_sling, hafted_weapon,
-				pole_arm, dagger, sword, pick_or_shovel,
-				maul, gem_helm, boots, gloves_and_gauntlets,
-				cloak, helm, shield, hard_armor, soft_armor,
-				bracers, belt, amulet, ring, 0, 0, 0, 0
-			};
+			const obj_set wearables = {valuable_gems_wear,
+						   lamp_or_torch,
+						   bow_crossbow_or_sling,
+						   hafted_weapon,
+						   pole_arm,
+						   dagger,
+						   sword,
+						   pick_or_shovel,
+						   maul,
+						   gem_helm,
+						   boots,
+						   gloves_and_gauntlets,
+						   cloak,
+						   helm,
+						   shield,
+						   hard_armor,
+						   soft_armor,
+						   bracers,
+						   belt,
+						   amulet,
+						   ring,
+						   0,
+						   0,
+						   0,
+						   0};
 			treas_rec *ptr;
 			long count;
 			find_range(wearables, false, &ptr, &count);
@@ -744,13 +766,14 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 		clear_rc(2, 1);
 
 		selected_item = inventory_list;
-		item_was_selected = ic__show_inven(&selected_item, true, false, scr_state,
-					   valid_flag, prompt, cur_display,
-					   cur_display_size);
+		item_was_selected = ic__show_inven(
+		    &selected_item, true, false, scr_state, valid_flag, prompt,
+		    cur_display, cur_display_size);
 		if (!item_was_selected) {
 			break;
 		}
-		if (!C_class_can_use_item(player_pclass, &selected_item->data)) {
+		if (!C_class_can_use_item(player_pclass,
+					  &selected_item->data)) {
 			msg_print("You cannot wear that item type!");
 			return;
 		}
@@ -814,8 +837,8 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 
 		case ring:
 			i1 = equipment[Equipment_right_ring].tval == 0
-				? Equipment_right_ring
-				: Equipment_left_ring;
+				 ? Equipment_right_ring
+				 : Equipment_left_ring;
 			break;
 
 		case valuable_gems_wear:
@@ -832,17 +855,18 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 		} /* end switch */
 
 		equip_cursed_item = item_was_selected &&
-				equipment[i1].tval > 0 &&
-				Cursed_worn_bit & equipment[i1].flags;
+				    equipment[i1].tval > 0 &&
+				    Cursed_worn_bit & equipment[i1].flags;
 		if (equip_cursed_item) {
-			char const * const equip_way = i1 == Equipment_primary
-				? "wielding"
-				: "wearing";
+			char const *const equip_way =
+			    i1 == Equipment_primary ? "wielding" : "wearing";
 			char out_val_tmp[82];
 			inven_temp->data = equipment[i1];
 			objdes(out_val, inven_temp, false);
 			strcpy(out_val_tmp, out_val);
-			sprintf(out_val, "The %s you are %s appears to be cursed", out_val_tmp, equip_way);
+			sprintf(out_val,
+				"The %s you are %s appears to be cursed",
+				out_val_tmp, equip_way);
 			item_was_selected = false;
 		}
 
@@ -892,8 +916,8 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 					i2++;
 				}
 			} while (!(i3 == i1));
-			sprintf(out_val, "%s%s (%c%c", prt1, prt2,
-				(int)i2 + 96, (int)cur_char2());
+			sprintf(out_val, "%s%s (%c%c", prt1, prt2, (int)i2 + 96,
+				(int)cur_char2());
 			msg_print(out_val);
 		}
 
@@ -1105,7 +1129,8 @@ void ic__stats(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 			}
 
 			prt(out_val, 4, 15);
-			sprintf(out_val, "'%u'", C_item_get_tchar(&item_ptr->data));
+			sprintf(out_val, "'%u'",
+				C_item_get_tchar(&item_ptr->data));
 			prt(out_val, 5, 15);
 			print_hex_value((item_ptr->data.flags), 6, 15);
 			print_hex_value((item_ptr->data.flags2), 7, 15);
@@ -1296,7 +1321,7 @@ void ic__put_inside()
 					}
 
 				} /* end if (have two legal items) */
-			}	 /* end if (get_item to put into) */
+			}	  /* end if (get_item to put into) */
 		}		  /* end if (count != 0) */
 	}			  /* end if (get_item to put in bag) */
 
@@ -1321,14 +1346,13 @@ void ic__take_out()
 	}
 
 	if (get_item(&from_ptr, "Remove which item?", &redraw, count,
-				&trash_char, false, true)) {
+		     &trash_char, false, true)) {
 		player_flags.paralysis += 2;
 		reset_flag = false;
 		temp_ptr = inventory_list;
 
 		while ((temp_ptr != NULL) && (temp_ptr != from_ptr)) {
-			if ((temp_ptr->data.flags2 & Holding_bit) !=
-					0) {
+			if ((temp_ptr->data.flags2 & Holding_bit) != 0) {
 				curse = temp_ptr;
 			}
 			temp_ptr = temp_ptr->next;
@@ -1359,7 +1383,7 @@ void ic__take_out()
 
 		} else {
 			msg_print("You make several attempts, but "
-					"cannot seem to get a grip on it.");
+				  "cannot seem to get a grip on it.");
 			cur_inven = inventory_list;
 		}
 	}
@@ -1381,7 +1405,8 @@ void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
 	*(--out_pos) = 0;
 
 	while (ptr != NULL) {
-		if (strchr(out_pos, (char)C_item_get_tchar(&ptr->data)) == NULL) {
+		if (strchr(out_pos, (char)C_item_get_tchar(&ptr->data)) ==
+		    NULL) {
 			*(--out_pos) = (char)C_item_get_tchar(&ptr->data);
 		}
 		ptr = ptr->next;
@@ -1425,7 +1450,8 @@ void ic__switch_weapon(long *scr_state)
 		char prt2[200];
 		inven_temp->data = equipment[Equipment_primary];
 		objdes(prt1, inven_temp, false);
-		sprintf(prt2, "The %s you are wielding appears to be cursed.", prt1);
+		sprintf(prt2, "The %s you are wielding appears to be cursed.",
+			prt1);
 		msg_print(prt2);
 	} else {
 		treasure_type tmp_obj;
@@ -1906,7 +1932,9 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 			coin_stuff((char)com_val, &mon_type);
 			max = player_money[mon_type];
 			sprintf(out_val2, "%ld", max);
-			sprintf(out_val, "Drop how much %s (1-%ld), Esc to exit : ", mon_name, max);
+			sprintf(out_val,
+				"Drop how much %s (1-%ld), Esc to exit : ",
+				mon_name, max);
 			prt(out_val, 1, 1);
 			if (get_string(out_val2, 1, strlen(out_val) + 1, 10)) {
 				sscanf(out_val2, "%ld", &amt);
@@ -1989,24 +2017,28 @@ boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 
 	if (mon) {
 		if (count > 20) {
-			sprintf(out_val, "(Items a-t,$, <space> for inventory, "
-					 "Esc to exit) %s",
+			sprintf(out_val,
+				"(Items a-t,$, <space> for inventory, "
+				"Esc to exit) %s",
 				pmt);
 		} else if (!only_money) {
-			sprintf(out_val, "(Items a-%c,$, <space> for inventory "
-					 "list, Esc to exit) %s",
+			sprintf(out_val,
+				"(Items a-%c,$, <space> for inventory "
+				"list, Esc to exit) %s",
 				((int)count + 96), pmt);
 		} else {
 			sprintf(out_val, " ");
 		}
 	} else {
 		if (count > 20) {
-			sprintf(out_val, "(Items a-t, <space> for inventory, "
-					 "Esc to exit) %s",
+			sprintf(out_val,
+				"(Items a-t, <space> for inventory, "
+				"Esc to exit) %s",
 				pmt);
 		} else {
-			sprintf(out_val, "(Items a-%c, <space> for inventory "
-					 "list, Esc to exit) %s",
+			sprintf(out_val,
+				"(Items a-%c, <space> for inventory "
+				"list, Esc to exit) %s",
 				((int)count + 96), pmt);
 		}
 	}
@@ -2047,8 +2079,9 @@ boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 		case 32:
 
 			clear_rc(2, 1);
-			sprintf(out_val, "(Items a-%%N, <space> for next page, "
-					 "Esc to exit) %s",
+			sprintf(out_val,
+				"(Items a-%%N, <space> for next page, "
+				"Esc to exit) %s",
 				pmt);
 			return_value = inven_command('?', com_ptr, out_val);
 			test_flag = true;
@@ -2063,8 +2096,10 @@ boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 
 				/* with player_do; */
 				if (player_money[IRON] + player_money[COPPER] +
-					player_money[SILVER] + player_money[GOLD] +
-					player_money[PLATINUM] + player_money[MITHRIL] >
+					player_money[SILVER] +
+					player_money[GOLD] +
+					player_money[PLATINUM] +
+					player_money[MITHRIL] >
 				    0) {
 					return_value =
 					    drop_money(com_ptr, &stay);
@@ -2108,15 +2143,14 @@ boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
 							count++;
 						}
 						(*com_ptr) = (*com_ptr)->next;
-					} while (!(((*com_ptr)->next == NULL) ||
-						   (count ==
-						    (com_val - 49) * 20 +
-							(long)(choice) - 97)));
+					} while (!(
+					    ((*com_ptr)->next == NULL) ||
+					    (count == (com_val - 49) * 20 +
+							  (long)(choice)-97)));
 
 					if (((*com_ptr)->next == NULL) &&
-					    (count !=
-					     (com_val - 49) * 20 +
-						 (long)(choice) - 97)) {
+					    (count != (com_val - 49) * 20 +
+							  (long)(choice)-97)) {
 						return_value = false;
 						stay = true;
 						prt("Invalid Selection.", 1, 1);

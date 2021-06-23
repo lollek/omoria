@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 static void nonmagic_song(void)
 {
@@ -86,7 +86,8 @@ static void song_failure(void)
 }
 
 static void init_magic_books(enum magic_t magic_type, obj_set *magic_books,
-		char const** book_name) {
+			     char const **book_name)
+{
 
 	memset(*magic_books, 0, sizeof(*magic_books));
 	switch (magic_type) {
@@ -113,7 +114,8 @@ static void init_magic_books(enum magic_t magic_type, obj_set *magic_books,
 	}
 }
 
-static boolean blind_check(enum magic_t magic_type) {
+static boolean blind_check(enum magic_t magic_type)
+{
 	if (player_flags.blind > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
@@ -133,7 +135,8 @@ static boolean blind_check(enum magic_t magic_type) {
 	return true;
 }
 
-static boolean light_check(enum magic_t magic_type) {
+static boolean light_check(enum magic_t magic_type)
+{
 	if (no_light()) {
 		switch (magic_type) {
 		case M_ARCANE:
@@ -149,7 +152,8 @@ static boolean light_check(enum magic_t magic_type) {
 	return true;
 }
 
-static boolean hoarse_check(enum magic_t magic_type) {
+static boolean hoarse_check(enum magic_t magic_type)
+{
 	if (player_flags.hoarse > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
@@ -165,7 +169,8 @@ static boolean hoarse_check(enum magic_t magic_type) {
 	return true;
 }
 
-static boolean scared_check(enum magic_t magic_type) {
+static boolean scared_check(enum magic_t magic_type)
+{
 	if (player_flags.afraid > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
@@ -181,7 +186,8 @@ static boolean scared_check(enum magic_t magic_type) {
 	return true;
 }
 
-static boolean hallucinate_check(enum magic_t magic_type) {
+static boolean hallucinate_check(enum magic_t magic_type)
+{
 	if (player_flags.image > 0) {
 		switch (magic_type) {
 		case M_ARCANE:
@@ -198,7 +204,8 @@ static boolean hallucinate_check(enum magic_t magic_type) {
 	return true;
 }
 
-static boolean knowledge_check(enum magic_t magic_type) {
+static boolean knowledge_check(enum magic_t magic_type)
+{
 	if (C_player_uses_magic(magic_type))
 		return true;
 
@@ -220,7 +227,8 @@ static boolean knowledge_check(enum magic_t magic_type) {
 	return false;
 }
 
-static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost) {
+static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost)
+{
 	player_cmana = 0;
 
 	switch (magic_type) {
@@ -228,7 +236,7 @@ static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost) {
 	case M_DIVINE:
 		msg_print("You faint from fatigue!");
 		player_flags.paralysis =
-			randint(5 * (mana_cost - player_cmana));
+		    randint(5 * (mana_cost - player_cmana));
 		if (randint(3) == 1)
 			lower_stat(CON, "You have damaged your health!");
 		break;
@@ -236,23 +244,22 @@ static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost) {
 	case M_NATURE:
 	case M_SONG:
 		msg_print("You lose your voice attempting the song!");
-		player_flags.hoarse =
-			randint(5 * (mana_cost - player_cmana));
+		player_flags.hoarse = randint(5 * (mana_cost - player_cmana));
 		if (randint(3) == 1)
 			lower_stat(CHR, "You have damaged your voice!");
 		break;
 
 	case M_CHAKRA:
 		msg_print("You faint from fatigue!");
-		player_flags.paralysis =
-			randint(5 * mana_cost - player_cmana);
+		player_flags.paralysis = randint(5 * mana_cost - player_cmana);
 		if (randint(3) == 1)
 			lower_stat(CON, "You have damaged your health!");
 		break;
 	}
 }
 
-static void drain_mana(enum magic_t magic_type, long choice) {
+static void drain_mana(enum magic_t magic_type, long choice)
+{
 	uint8_t mana_cost = C_magic_spell_mana(choice);
 	if (mana_cost <= player_cmana)
 		player_cmana -= mana_cost;
@@ -295,7 +302,6 @@ static void _cast(enum magic_t magic_type)
 		return;
 	if (!hallucinate_check(magic_type))
 		return;
-
 
 	/* Check book users for books */
 	if (magic_books[0] != 0) {

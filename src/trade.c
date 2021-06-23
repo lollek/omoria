@@ -1,11 +1,11 @@
 /* trade.c */
 /* routines to handle the trading post */
 
-#include "imoria.h"
 #include "trade.h"
+#include "imoria.h"
 #include <sys/file.h> /* for flock     */
 
-#define ROUND(x) ((long)((x)+.5))
+#define ROUND(x) ((long)((x) + .5))
 
 #define T_DISPLAY_SIZE 12
 #define T_ACCEPTABLE_ITEM_PRICE 50
@@ -24,23 +24,20 @@
 #define TT_FOR_SALE 1
 #define TT_CASH 2
 
-typedef struct trade_account_type
-{
+typedef struct trade_account_type {
 	uid_t uid;
 	char username[13];
 	long master_id;
 	long claim_check;
 } trade_account_type;
 
-typedef struct profit_record
-{
+typedef struct profit_record {
 	long trade_type;
 	long time;
 	long money;
 } profit_record;
 
-typedef struct for_sale_record
-{
+typedef struct for_sale_record {
 	long trade_type;
 	long time;
 	treasure_type object;
@@ -50,30 +47,26 @@ typedef struct for_sale_record
 	trade_account_type best_bidder;
 } for_sale_record;
 
-typedef struct cash_record
-{
+typedef struct cash_record {
 	long trade_type;
 	long time;
 	long amount;
 	trade_account_type owner;
 } cash_record;
 
-typedef union trade_record_type
-{
+typedef union trade_record_type {
 	struct profit_record pr;
 	struct for_sale_record fsr;
 	struct cash_record cr;
 } trade_record_type;
 
-typedef struct pinven_record
-{
+typedef struct pinven_record {
 	struct pinven_record *prev;
 	struct pinven_record *next;
 	trade_record_type data;
 } pinven_record;
 
 typedef pinven_record *pinven_ptr;
-
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -170,7 +163,7 @@ void tp__open_trade_file(FILE **sales, boolean *exit_flag)
 
 	if (!trade_file_open(sales, &busy)) {
 		msg_print("and the doors are locked. Only a moria "
-				"wizard can open them.");
+			  "wizard can open them.");
 	} else if (busy) {
 		msg_print("but the storekeeper is helping someone else.");
 	} else {
@@ -368,7 +361,8 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
 				cur_display[count] = start;
 				inven_temp->data = start->data.fsr.object;
 				objdes(out_val1, inven_temp, true);
-				sprintf(out_val2, "%c) %s", (char)(96 + count), out_val1);
+				sprintf(out_val2, "%c) %s", (char)(96 + count),
+					out_val1);
 				prt(out_val2, count + 5, 1);
 				sprintf(out_val2, "%ld",
 					start->data.fsr.best_bid);
@@ -383,7 +377,8 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
 					   player_claim_check) {
 					prt("your sale!", count + 5, 71);
 				} else if (start->data.fsr.best_bidder
-					       .claim_check == player_claim_check) {
+					       .claim_check ==
+					   player_claim_check) {
 					prt("your bid!", count + 5, 71);
 				}
 			}
@@ -562,7 +557,7 @@ void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
 			  boolean *exit_flag)
 {
 	char out_val1[82];
-        char out_val2[83];
+	char out_val2[83];
 	treas_ptr temp_ptr = NULL;
 
 	msg_print("Hmm, you're supposed to get something.");
@@ -977,18 +972,16 @@ void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 					tp__send_money(
 					    &(cur_display[which]
 						  ->data.fsr.seller),
-					    ROUND(
-						item_value(
-						    &(cur_display[which]
+					    ROUND(item_value(&(
+						      cur_display[which]
 							  ->data.fsr.object)) *
-						T_REFUND_ON_SALE),
+						  T_REFUND_ON_SALE),
 					    inv);
 					tp__made_profit(
-					    -ROUND(
-						item_value(
-						    &(cur_display[which]
-							  ->data.fsr.object)) *
-						T_REFUND_ON_SALE),
+					    -ROUND(item_value(&(
+						       cur_display[which]
+							   ->data.fsr.object)) *
+						   T_REFUND_ON_SALE),
 					    profits);
 					break;
 

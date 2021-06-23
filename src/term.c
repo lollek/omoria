@@ -17,11 +17,11 @@
 
 #include "config.h"
 
-#include <curses.h>
 #include <ctype.h>
-#include <sys/ioctl.h>
+#include <curses.h>
 #include <signal.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <termios.h>
 
 static void minor_error(char const *error_message)
@@ -56,7 +56,7 @@ char inkey()
 {
 	int i;
 
-	refresh();	 /* Dump IO buffer		*/
+	refresh();	   /* Dump IO buffer		*/
 	command_count = 0; /* Just to be safe -CJS- */
 	while (TRUE) {
 		i = getch();
@@ -76,9 +76,11 @@ char inkey()
 				/* just in case, to make sure that the process
 				 * eventually dies */
 				panic_save = 1;
-				strcpy(died_from, "(end of input: panic saved)");
+				strcpy(died_from,
+				       "(end of input: panic saved)");
 				if (!save_and_quit()) {
-					strcpy(died_from, "panic: unexpected eof");
+					strcpy(died_from,
+					       "panic: unexpected eof");
 					death = TRUE;
 				}
 				exit_game();
@@ -236,4 +238,3 @@ void bell()
 
 	write(1, "\007", 1);
 }
-

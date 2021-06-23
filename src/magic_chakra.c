@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void chakra_spell_effects(long effect)
 {

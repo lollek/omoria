@@ -5,7 +5,6 @@
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66
 
-
 #define c_sc_hold 1
 #define c_sc_mental 2
 
@@ -16,27 +15,26 @@
 #define MAX_HEIGHT 66 /* { Multiple of 11; >= 22 } */
 #define MAX_WIDTH 198 /* { Multiple of 33; >= 66 } */
 
-
 /*	{ Store constants						} */
 #define MAX_OWNER_KIND 4 /*{ Number of different keepers for a shop} */
-#define MAX_STORES 12    /*{ Number of different stores		} */
+#define MAX_STORES 12	 /*{ Number of different stores		} */
 #define MAX_OWNERS (MAX_STORES * MAX_OWNER_KIND)
 /*{ Number of owners to choose from	} */
-#define MAX_UNNAMED 6 /*{ # of 'odd' shops (Post, etc)	} */
+#define MAX_UNNAMED 6	    /*{ # of 'odd' shops (Post, etc)	} */
 #define STORE_INVEN_MAX 24  /*{ Max number of discrete objs in inven	} */
 #define STORE_CHOICES 50    /*{ Number of items to choice stock from	} */
 #define STORE_MAX_INVEN 20  /*{ Max diff objs in stock before auto sell} */
 #define STORE_MIN_INVEN 14  /*{ Min diff objs in stock before auto buy} */
 #define STORE_TURN_AROUND 3 /*{ Amount of buying and selling normally } */
 #define INVEN_INIT_MAX 157  /*{ Size of store init array		} */
-#define COST_ADJ 240.00     /*{ FLOAT(Gold$value)--adjusts store costs } */
-#define WEIGHT_ADJ 100      /*{ Adjust weights of items 		} */
-#define QUEST_DELAY 800     /*{ # of turns to wait before char can get quest} */
+#define COST_ADJ 240.00	    /*{ FLOAT(Gold$value)--adjusts store costs } */
+#define WEIGHT_ADJ 100	    /*{ Adjust weights of items 		} */
+#define QUEST_DELAY 800	    /*{ # of turns to wait before char can get quest} */
 
 /*	{ Treasure constants						} */
-#define EQUIP_MAX 15      /*{ Size of equipment array		} */
+#define EQUIP_MAX 15	  /*{ Size of equipment array		} */
 #define MAX_OBJ_LEVEL 256 /*{ Maximum level of magic in dungeon	} */
-#define MAX_OBJECTS 473   /*{ Number of objects for universe       } */
+#define MAX_OBJECTS 473	  /*{ Number of objects for universe       } */
 /* if MAX_OBJECTS goes over 1024 then save will break */
 #define MAX_GOLD 25    /*{ Number of different types of gold	} */
 #define MAX_TALLOC 225 /*{ Max objects per level		} */
@@ -54,13 +52,13 @@
 #define MAX_MALLOC (100 + 1)  /*{ Max that can be allocated	        } */
 #define MAX_MALLOC_CHANCE 160 /*{ 1/x chance of new monster each round	} */
 #define MAX_MONS_LEVEL 100    /*{ Maximum level of creatures		} */
-#define MAX_SIGHT 20	  /*{ Maximum dis a creature can be seen	} */
+#define MAX_SIGHT 20	      /*{ Maximum dis a creature can be seen	} */
 #define MAX_SPELL_DIS 18      /*{ Maximum dis creat. spell can be cast	} */
-#define MAX_MON_MULT 75       /*{ Maximum reproductions on a level	} */
+#define MAX_MON_MULT 75	      /*{ Maximum reproductions on a level	} */
 #define MIN_MALLOC_LEVEL 14   /*{ Minimum number of monsters/level	} */
-#define MIN_MALLOC_TD 8       /*{ Number of people on town level (day)	} */
+#define MIN_MALLOC_TD 8	      /*{ Number of people on town level (day)	} */
 #define MIN_MALLOC_TN 12      /*{ Number of people on town level (night)} */
-#define WIN_MON_TOT 2	 /*{ Total number of "win" creatures	} */
+#define WIN_MON_TOT 2	      /*{ Total number of "win" creatures	} */
 #define WIN_MON_APPEAR 100    /*{ Level where winning creatures begin	} */
 #define OUT_OF_ENV_DAM 32     /*{ max HP lost/rnd/2^move in wrong env	} */
 #define MON_SUMMON_ADJ 2      /*{ Adjust level of summoned creatures	} */
@@ -71,10 +69,10 @@
 #define MAX_TRAPB 20 /*{ Includes secret doors		} */
 
 /*	{ Player constants						} */
-#define MAX_SPELLS 40	  /*{ Maximum number of spells per class	} */
+#define MAX_SPELLS 40	       /*{ Maximum number of spells per class	} */
 #define MAX_PLAYER_LEVEL 40    /*{ Maximum possible character level	} */
-#define USE_DEVICE 3	   /*{ x> Harder devices x< Easier devices	} */
-#define NUM_QUESTS 5	   /*{ # of possible quests to select from	} */
+#define USE_DEVICE 3	       /*{ x> Harder devices x< Easier devices	} */
+#define NUM_QUESTS 5	       /*{ # of possible quests to select from	} */
 #define BASE_FOOD_DIGESTED 2   /* food digested per turn */
 #define PLAYER_FOOD_FULL 10000 /*{ Getting full				} */
 #define PLAYER_FOOD_MAX 15000  /*{ Maximum food value, beyond is wasted	} */
@@ -86,8 +84,8 @@
 #define PLAYER_REGEN_NORMAL 0.0030 /*{ Regen factor when full	} */
 #define PLAYER_REGEN_HPBASE 0.0220 /*{ Min amount hp regen		} */
 #define PLAYER_REGEN_MNBASE 0.0080 /*{ Min amount mana regen	} */
-#define PLAYER_WEIGHT_CAP 13       /*{ "#"*(1/10 pounds) per strength point	} */
-#define PLAYER_EXIT_PAUSE 0	/*{ Pause time before player can re-roll	} */
+#define PLAYER_WEIGHT_CAP 13	   /*{ "#"*(1/10 pounds) per strength point	} */
+#define PLAYER_EXIT_PAUSE 0	   /*{ Pause time before player can re-roll	} */
 #define MAX_HIGH_SCORES 100 /*{ Maximum number of high scores to keep } */
 #define FEMALE 1
 #define MALE 2
@@ -163,19 +161,19 @@
 /*	{ Constants for equipment inventory items		-KRC-	} */
 
 #define Equipment_min 0
-#define Equipment_primary (Equipment_min)	      /*  0 */
-#define Equipment_helm (Equipment_primary + 1)	 /*  1 */
-#define Equipment_amulet (Equipment_helm + 1)	  /*  2 */
-#define Equipment_armor (Equipment_amulet + 1)	 /*  3 */
-#define Equipment_belt (Equipment_armor + 1)	   /*  4 */
-#define Equipment_shield (Equipment_belt + 1)	  /*  5 */
-#define Equipment_gloves (Equipment_shield + 1)	/*  6 */
+#define Equipment_primary (Equipment_min)	       /*  0 */
+#define Equipment_helm (Equipment_primary + 1)	       /*  1 */
+#define Equipment_amulet (Equipment_helm + 1)	       /*  2 */
+#define Equipment_armor (Equipment_amulet + 1)	       /*  3 */
+#define Equipment_belt (Equipment_armor + 1)	       /*  4 */
+#define Equipment_shield (Equipment_belt + 1)	       /*  5 */
+#define Equipment_gloves (Equipment_shield + 1)	       /*  6 */
 #define Equipment_bracers (Equipment_gloves + 1)       /*  7 */
 #define Equipment_right_ring (Equipment_bracers + 1)   /*  8 */
 #define Equipment_left_ring (Equipment_right_ring + 1) /*  9 */
 #define Equipment_boots (Equipment_left_ring + 1)      /* 10 */
-#define Equipment_cloak (Equipment_boots + 1)	  /* 11 */
-#define Equipment_light (Equipment_cloak + 1)	  /* 12 */
+#define Equipment_cloak (Equipment_boots + 1)	       /* 11 */
+#define Equipment_light (Equipment_cloak + 1)	       /* 12 */
 #define Equipment_secondary (Equipment_light + 1)      /* 13 */
 
 /* .tval constants -DCJ- */
@@ -313,8 +311,7 @@
 #define CTRL_Z 26
 
 #define OBJ_SET_MAX 255 /* type obj_set is supposed to be 0..255 */
-#define MAX_OBJ_SET 25  /* max items allowed in an obj_set[] */
-
+#define MAX_OBJ_SET 25	/* max items allowed in an obj_set[] */
 
 #define PLACE_OBJECT_TRIES 3 /* pick best object out of this many */
 

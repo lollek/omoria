@@ -1,33 +1,33 @@
 /* Here you should find the guts of the game */
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 #include "save.h"
 
 void C_print_known_spells();
 
 #define OBJ_LAMP_MAX 15000 /*{ Maximum amount that lamp can be filled} */
 
-static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
-static boolean cave_flag = false;  /*	{ Used in GET_PANEL   } */
-static long closing_flag = 0;    /* { Used for closing   } */
-static float acc_exp = 0.0; /*{ Accumulator for fractional exp} */
+static boolean light_flag;	  /*	{ Used in MOVE_LIGHT  } */
+static boolean cave_flag = false; /*	{ Used in GET_PANEL   } */
+static long closing_flag = 0;	  /* { Used for closing   } */
+static float acc_exp = 0.0;	  /*{ Accumulator for fractional exp} */
 
 long dir_val;		 /* { For movement (running)} */
 long old_chp, old_cmana; /* { Detect change         } */
-float regen_amount;      /* { Regenerate hp and mana} */
+float regen_amount;	 /* { Regenerate hp and mana} */
 char command;		 /* { Last command          } */
-boolean moria_flag;      /* { Next level when true  } */
-boolean reset_flag;      /* { Do not move creatures } */
-boolean search_flag;     /* { Player is searching   } */
-boolean teleport_flag;   /* { Handle telport traps  } */
-boolean player_light;    /* { Player carrying light } */
-boolean save_msg_flag;   /* { Msg flag after INKEY  } */
-char s1[70];             /* { Summon item strings   } */
-char s2[70];             /* { Summon item strings   } */
-char s3[70];             /* { Summon item strings   } */
-char s4[70];             /* { Summon item strings   } */
-long i_summ_count;       /* { Summon item count	   } */
+boolean moria_flag;	 /* { Next level when true  } */
+boolean reset_flag;	 /* { Do not move creatures } */
+boolean search_flag;	 /* { Player is searching   } */
+boolean teleport_flag;	 /* { Handle telport traps  } */
+boolean player_light;	 /* { Player carrying light } */
+boolean save_msg_flag;	 /* { Msg flag after INKEY  } */
+char s1[70];		 /* { Summon item strings   } */
+char s2[70];		 /* { Summon item strings   } */
+char s3[70];		 /* { Summon item strings   } */
+char s4[70];		 /* { Summon item strings   } */
+long i_summ_count;	 /* { Summon item count	   } */
 
 /**
  * -RAK-
@@ -313,7 +313,6 @@ static void d__jamdoor()
 	char m_name[82];
 	obj_set pick_a_spike = {spike, 0};
 
-
 	if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
 		return;
 	}
@@ -333,7 +332,8 @@ static void d__jamdoor()
 					inven_destroy(i1);
 				}
 				prt_stat_block();
-				t_list[cave[y][x].tptr].p1 = -labs(t_list[cave[y][x].tptr].p1) - 20;
+				t_list[cave[y][x].tptr].p1 =
+				    -labs(t_list[cave[y][x].tptr].p1) - 20;
 			} else {
 				msg_print("But you have no spikes...");
 			}
@@ -405,7 +405,7 @@ static obj_set *to__poink(obj_set *ammo_types)
 }
 
 static void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
-	       boolean to_be_fired)
+		      boolean to_be_fired)
 {
 	long tmp_weight;
 
@@ -575,7 +575,8 @@ static void d__throw_object(boolean to_be_fired)
 		return;
 	}
 
-	if (!get_item(&item_ptr, out_val, &redraw, count, &trash_char, false, false)) {
+	if (!get_item(&item_ptr, out_val, &redraw, count, &trash_char, false,
+		      false)) {
 		if (redraw) {
 			draw_cave();
 		}
@@ -631,51 +632,47 @@ static void d__throw_object(boolean to_be_fired)
 				flag = true;
 				/* with */
 				/* m_list[cave[y][x].cptr].
-				*/
+				 */
 				/* do; */
 				tbth -= cur_dis;
 				if (player_test_hit(
-							tbth, player_lev,
-							tpth,
-							c_list
-							[m_list
-							[cave[y][x]
-							.cptr]
-							.mptr]
-							.ac,
-							to_be_fired)) {
+					tbth, player_lev, tpth,
+					c_list[m_list[cave[y][x].cptr].mptr].ac,
+					to_be_fired)) {
 					i1 = m_list[cave[y][x].cptr].mptr;
 					objdes(out_val, inven_temp, false);
-					find_monster_name(m_name, cave[y][x].cptr, false);
-					sprintf(out_val2, "The %s hits %s.", out_val, m_name);
+					find_monster_name(
+					    m_name, cave[y][x].cptr, false);
+					sprintf(out_val2, "The %s hits %s.",
+						out_val, m_name);
 					msg_print(out_val2);
-					tdam = tot_dam(&(inven_temp->data), tdam, &(c_list[i1]));
+					tdam = tot_dam(&(inven_temp->data),
+						       tdam, &(c_list[i1]));
 					/* with */
 					/* inven_temp->data.
-					*/
+					 */
 					/* do; */
 					crit_mult = critical_blow(
-							inven_temp
-							->data
-							.weight,
-							tpth,
-							(equipment
-							 [Equipment_primary]
-							 .flags2 &
-							 Sharp_worn_bit) !=
-							0,
-							to_be_fired);
+					    inven_temp->data.weight, tpth,
+					    (equipment[Equipment_primary]
+						 .flags2 &
+					     Sharp_worn_bit) != 0,
+					    to_be_fired);
 					tdam += (5 + tdam) * crit_mult;
 
-					if (mon_take_hit(cave[y][x].cptr, tdam) > 0) {
-						sprintf(out_val2, "You have killed %s.", m_name);
+					if (mon_take_hit(cave[y][x].cptr,
+							 tdam) > 0) {
+						sprintf(out_val2,
+							"You have killed %s.",
+							m_name);
 						msg_print(out_val2);
 					}
 				} else {
 					to__drop_throw(oldy, oldx);
 				}
 			} else if (panel_contains(y, x) && test_light(y, x)) {
-				print(C_item_get_tchar(&inven_temp ->data), y, x);
+				print(C_item_get_tchar(&inven_temp->data), y,
+				      x);
 			}
 		} else {
 			flag = true;
@@ -726,9 +723,11 @@ static void d__look()
 			if (m_list[cave[y][x].cptr].ml) {
 				i2 = m_list[cave[y][x].cptr].mptr;
 				if (is_vowel(c_list[i2].name[0])) {
-					sprintf(out_val, "You see an %s.", c_list[i2].name);
+					sprintf(out_val, "You see an %s.",
+						c_list[i2].name);
 				} else {
-					sprintf(out_val, "You see a %s.", c_list[i2].name);
+					sprintf(out_val, "You see a %s.",
+						c_list[i2].name);
 				}
 				msg_print(out_val);
 				flag = true;
@@ -737,14 +736,17 @@ static void d__look()
 
 		if ((cave[y][x].tl) || (cave[y][x].pl) || (cave[y][x].fm)) {
 			if (cave[y][x].tptr > 0) {
-				if (t_list[cave[y][x].tptr]
-					.tval == secret_door) {
+				if (t_list[cave[y][x].tptr].tval ==
+				    secret_door) {
 					msg_print("You see a granite wall.");
-				} else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
-					inven_temp->data = t_list[cave[y][x].tptr];
+				} else if (t_list[cave[y][x].tptr].tval !=
+					   unseen_trap) {
+					inven_temp->data =
+					    t_list[cave[y][x].tptr];
 					inven_temp->data.number = 1;
 					objdes(out_val, inven_temp, true);
-					sprintf(out_val2, "You see %s.", out_val);
+					sprintf(out_val2, "You see %s.",
+						out_val);
 					msg_print(out_val2);
 					flag = true;
 				}
@@ -821,7 +823,8 @@ static void d__sun_rise_or_set()
 			}
 			store_maint();
 			draw_cave();
-		} else if ((player_cur_age.hour == 18) && (player_cur_age.secs == 0)) {
+		} else if ((player_cur_age.hour == 18) &&
+			   (player_cur_age.secs == 0)) {
 			for (i1 = 1; i1 <= cur_height; i1++) {
 				for (i2 = 1; i2 <= cur_width; i2++) {
 					if (cave[i1][i2].fval !=
@@ -1794,8 +1797,7 @@ static void d__bash()
 	long x = char_col;
 	long tmp;
 
-
-	if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) 
+	if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x))
 		return;
 
 	if (cave[y][x].cptr > 1) {
@@ -1811,14 +1813,15 @@ static void d__bash()
 			/*{ Use these values              }*/
 			equipment[Equipment_primary] = blank_treasure;
 			strcpy(equipment[Equipment_primary].damage,
-					equipment[Equipment_shield].damage);
+			       equipment[Equipment_shield].damage);
 			equipment[Equipment_primary].weight =
-				((C_player_get_stat(STR) * 10) + 20) * 100;
+			    ((C_player_get_stat(STR) * 10) + 20) * 100;
 			equipment[Equipment_primary].tval = 1;
 
-			player_bth = trunc((((C_player_get_stat(STR) * 10) + 20)
-						/ 5 + player_wt) /
-					6.0);
+			player_bth =
+			    trunc((((C_player_get_stat(STR) * 10) + 20) / 5 +
+				   player_wt) /
+				  6.0);
 			player_ptohit = 0;
 			player_ptodam = trunc(player_wt / 75.0) + 1;
 
@@ -1840,48 +1843,43 @@ static void d__bash()
 		if (t_list[cave[y][x].tptr].tval == closed_door) {
 			const int from_str = C_player_get_stat(STR) * 10;
 
-			if (test_hit(player_wt + (from_str * from_str)/ 500,
-						0, 0, labs(t_list[cave[y][x].tptr].p1) +
-						150)) {
+			if (test_hit(player_wt + (from_str * from_str) / 500, 0,
+				     0,
+				     labs(t_list[cave[y][x].tptr].p1) + 150)) {
 				msg_print("You smash into the door! "
-						"The door crashes open!");
-				t_list[cave[y][x].tptr] =
-					door_list[DL_OPEN];
+					  "The door crashes open!");
+				t_list[cave[y][x].tptr] = door_list[DL_OPEN];
 				t_list[cave[y][x].tptr].p1 = 1;
 				cave[y][x].fopen = true;
 				lite_spot(y, x);
 			} else {
 				msg_print("You smash into the door! "
-						"The door holds firm.");
+					  "The door holds firm.");
 				player_flags.paralysis = 2;
 			}
 
 		} else if (t_list[cave[y][x].tptr].tval == chest) {
 
 			if (randint(10) == 1) {
-				msg_print(
-						"You have destroyed the chest...");
+				msg_print("You have destroyed the chest...");
 				msg_print("and its contents!");
 				strcpy(t_list[cave[y][x].tptr].name,
-						"& ruined chest");
+				       "& ruined chest");
 				t_list[cave[y][x].tptr].flags = 0;
-			} else if (uand(
-						0x00000001,
-						t_list[cave[y][x].tptr].flags) !=
-					0) {
+			} else if (uand(0x00000001,
+					t_list[cave[y][x].tptr].flags) != 0) {
 				if (randint(10) == 1) {
 					/* just "unlocks", traps are
 					 * still in place */
-					msg_print(
-							"The lock breaks open!");
+					msg_print("The lock breaks open!");
 					t_list[cave[y][x].tptr].flags &=
-						0xFFFFFFFE; /* unlock */
+					    0xFFFFFFFE; /* unlock */
 				}
 			}
 
 		} else {
 			msg_print("I do not see anything you can bash "
-					"there.");
+				  "there.");
 		}
 	} else {
 		msg_print("I do not see anything you can bash there.");
@@ -1966,7 +1964,8 @@ static void d__openobject()
 				    0) { /*{ It's locked...        }*/
 					/* with player_do; */
 					tmp = player_disarm + player_lev +
-					      2 * C_player_disarm_from_dex() + C_player_mod_from_stat(INT);
+					      2 * C_player_disarm_from_dex() +
+					      C_player_mod_from_stat(INT);
 
 					if (player_flags.confused > 0) {
 						msg_print("You are too "
@@ -2000,7 +1999,8 @@ static void d__openobject()
 			} else if (t_list[cave[y][x].tptr].tval == chest) {
 				/*{ Open a closed chest...                }*/
 				/* with player_do; */
-				tmp = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+				tmp = player_disarm + player_lev +
+				      2 * C_player_disarm_from_dex() +
 				      C_player_mod_from_stat(INT);
 
 				/* with t_list[tptr] do; */
@@ -2013,9 +2013,8 @@ static void d__openobject()
 							  "confused to pick "
 							  "the lock.");
 					} else if ((tmp -
-						    (2 *
-						     t_list[cave[y][x].tptr]
-							 .level)) >
+						    (2 * t_list[cave[y][x].tptr]
+							     .level)) >
 						   randint(100)) {
 						msg_print("You have picked the "
 							  "lock.");
@@ -2166,10 +2165,12 @@ static void d__disarm_trap()
 	if (d__get_dir("Which direction?", &tdir, &i1, &y, &x)) {
 		/* with cave[y][x]. do; */
 		if (cave[y][x].tptr > 0) {
-			t1 = player_disarm;  /*{ Ability to disarm     }*/
-			t2 = player_lev;     /*{ Level adjustment      }*/
-			t3 = 2 * C_player_disarm_from_dex(); /*{ Dexterity adjustment  }*/
-			t4 = C_player_mod_from_stat(INT);  /*{ Intelligence adjustment}*/
+			t1 = player_disarm; /*{ Ability to disarm     }*/
+			t2 = player_lev;    /*{ Level adjustment      }*/
+			t3 = 2 * C_player_disarm_from_dex(); /*{ Dexterity
+								adjustment  }*/
+			t4 = C_player_mod_from_stat(
+			    INT); /*{ Intelligence adjustment}*/
 			tot = t1 + t2 + t3 + t4;
 
 			if (player_flags.blind > 0) {
@@ -2310,7 +2311,7 @@ static void d__tunnel()
 
 		/*{ Compute the digging ability of player; based on       }*/
 		/*{ strength, and type of tool used                       }*/
-		tabil = ((C_player_get_stat(STR) * 10) + 20)/ 5;
+		tabil = ((C_player_get_stat(STR) * 10) + 20) / 5;
 		if (equipment[Equipment_primary].tval > 0) {
 			/* with equipment[Equipment_primary] do; */
 			if (uand(Tunneling_worn_bit,
@@ -2394,7 +2395,8 @@ static void d__tunnel()
 					   secret_door) {
 					msg_print("You tunnel into the granite "
 						  "wall.");
-					search(char_row, char_col, C_player_curr_search_skill());
+					search(char_row, char_col,
+					       C_player_curr_search_skill());
 				} else {
 					msg_print(
 					    "You can't tunnel through that.");
@@ -2423,8 +2425,8 @@ static void d__drop()
 	reset_flag = true;
 
 	/* with player_do; */
-	temp = (player_money[6] + player_money[5] + player_money[4] + player_money[3] +
-		player_money[2] + player_money[1]);
+	temp = (player_money[6] + player_money[5] + player_money[4] +
+		player_money[3] + player_money[2] + player_money[1]);
 
 	if ((inven_ctr > 0) || (temp > 0)) {
 		count = change_all_ok_stats(true, false);
@@ -2515,30 +2517,30 @@ static void d__execute_command(long *com_val)
 
 	switch (*com_val) {
 
-	/* case   1  :     ^A = Cure all     W1 */
-	/* case   2  :     ^B = objects      W1 */
-	/* case   4  :     ^D = up/down      W1 */
-	/* case   5  :     ^E = wizchar      W2 */
-	/* case   6  :     ^F = genocide     W2 */
-	/* case   7  :     ^G = treasure     W2 */
-	/* case   8  :     ^H = wizhelp      W1 */
-	/* case   9  :     ^I = identify     W1 */
-	/* case  10  :     ^J = gain exp     W2 */
-	/* case  11  :     ^K = summon       W2 */
-	/* case  12  :     ^L = wizlight     W1 */
-	/* case  14  :     ^N = mon map      W1 */
-	/* case  15  :     ^O = summon       W2 */
-	/* case  20  :     ^T = teleport     W1 */
-	/* case  22  :     ^V = restore      W1 */
-	/* case  21  :     ^U = summon       W2 */
-	/* case  23  :     ^W = create       W2 */
-	/* case  24  :     ^X = ed score     W2 */
-	/* case  27  :     ^3 = store maint  W2 */
-	/* case  31  :     ^_                W1 */
+		/* case   1  :     ^A = Cure all     W1 */
+		/* case   2  :     ^B = objects      W1 */
+		/* case   4  :     ^D = up/down      W1 */
+		/* case   5  :     ^E = wizchar      W2 */
+		/* case   6  :     ^F = genocide     W2 */
+		/* case   7  :     ^G = treasure     W2 */
+		/* case   8  :     ^H = wizhelp      W1 */
+		/* case   9  :     ^I = identify     W1 */
+		/* case  10  :     ^J = gain exp     W2 */
+		/* case  11  :     ^K = summon       W2 */
+		/* case  12  :     ^L = wizlight     W1 */
+		/* case  14  :     ^N = mon map      W1 */
+		/* case  15  :     ^O = summon       W2 */
+		/* case  20  :     ^T = teleport     W1 */
+		/* case  22  :     ^V = restore      W1 */
+		/* case  21  :     ^U = summon       W2 */
+		/* case  23  :     ^W = create       W2 */
+		/* case  24  :     ^X = ed score     W2 */
+		/* case  27  :     ^3 = store maint  W2 */
+		/* case  31  :     ^_                W1 */
 
-	case 0:      /* \0 */
+	case 0:	     /* \0 */
 	case CTRL_C: /* ^C signalquit in io.c handles this one, it calls d__quit
-			*/
+		      */
 	case '@':
 		d__quit();
 		reset_flag = true;
@@ -2960,7 +2962,8 @@ static void d__execute_command(long *com_val)
 			msg_print(
 			    "You are incapable of searching while blind.");
 		} else {
-			search(char_row, char_col, C_player_curr_search_skill());
+			search(char_row, char_col,
+			       C_player_curr_search_skill());
 		}
 		break;
 	case 't': /* take off */
@@ -3080,8 +3083,7 @@ long get_money_type(char prompt[134], boolean *back, boolean no_check)
 			*back = false;
 			break;
 		case 109:
-			test_flag =
-			    ((player_money[MITHRIL] > 0) || (no_check));
+			test_flag = ((player_money[MITHRIL] > 0) || (no_check));
 			break;
 		case 112:
 			test_flag =
@@ -3234,11 +3236,11 @@ void py_bonuses(treasure_type *tobj, long factor)
 	player_ptohit = C_player_tohit_from_stats();
 	player_ptodam = C_player_dmg_from_str();
 	player_ptoac = C_player_ac_from_dex();
-	player_pac = 0;		 /*{ Real AC       } */
-	player_dis_th = player_ptohit;   /*{ Display To Hit        } */
-	player_dis_td = player_ptodam;   /*{ Display To Dam        } */
-	player_dis_ac = 0;		 /*{ Display To AC         } */
-	player_dis_tac = player_ptoac;   /*{ Display AC            } */
+	player_pac = 0;		       /*{ Real AC       } */
+	player_dis_th = player_ptohit; /*{ Display To Hit        } */
+	player_dis_td = player_ptodam; /*{ Display To Dam        } */
+	player_dis_ac = 0;	       /*{ Display To AC         } */
+	player_dis_tac = player_ptoac; /*{ Display AC            } */
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 		/* with equipment[i1] do; */
@@ -3305,7 +3307,8 @@ void py_bonuses(treasure_type *tobj, long factor)
 		/* with equipment[i1] do; */
 		if (uand(Sustain_Stat_worn_bit, equipment[i1].flags) != 0) {
 			if ((equipment[i1].p1 > 0) && (equipment[i1].p1 < 7)) {
-				player_flags.sustain[equipment[i1].p1 - 1] = true;
+				player_flags.sustain[equipment[i1].p1 - 1] =
+				    true;
 			}
 		}
 	}
@@ -3342,8 +3345,9 @@ void change_rep(long amt)
 			amt += player_rep;
 			player_rep = 0;
 		} /*{increase goodness}*/
-		player_rep =
-		    trunc(sqrt((20 + player_rep) * (20 + player_rep) + 40 * amt) - 20);
+		player_rep = trunc(
+		    sqrt((20 + player_rep) * (20 + player_rep) + 40 * amt) -
+		    20);
 	}
 }
 
@@ -3604,14 +3608,14 @@ void carry(long y, long x)
 						page_char = '*';
 						inv_char = '*';
 					} else {
-						page_char =
-						    ((count / 20) + 49);
+						page_char = ((count / 20) + 49);
 						inv_char =
-						    (count -
-						     (count / 20) * 20 + 97);
+						    (count - (count / 20) * 20 +
+						     97);
 					}
 				}
-				sprintf(out2, "You have %s. (%c%c)", out_val, page_char, inv_char);
+				sprintf(out2, "You have %s. (%c%c)", out_val,
+					page_char, inv_char);
 				msg_print(out2);
 			} else {
 				msg_print("You can't carry that much weight.");
@@ -3628,14 +3632,10 @@ long react(long x)
 	/*  returns 0 to 10 -- SD 2.4; */
 	/*  x is average reaction for a 0 SC ugly half-troll*/
 
-	long ans = (C_player_get_stat(CHR) * 10
-			+ (player_rep * 2)
-			+ randint(200)
-			+ randint(200) +
-			randint(200))
-		/ 50
-		+ x
-		- 4;
+	long ans = (C_player_get_stat(CHR) * 10 + (player_rep * 2) +
+		    randint(200) + randint(200) + randint(200)) /
+		       50 +
+		   x - 4;
 
 	if (ans < 0) {
 		ans = 0;
@@ -3658,8 +3658,8 @@ void battle_game(long plus, char kb_str[82])
 
 		/* with player_do; */
 		for (i1 = 1; i1 <= 7; i1++) {
-			if (player_test_hit(player_bth, player_lev, plus, 20 * i1,
-					    false)) {
+			if (player_test_hit(player_bth, player_lev, plus,
+					    20 * i1, false)) {
 				score++;
 				time = time * 2 + 10;
 			}
@@ -3720,8 +3720,9 @@ void brothel_game()
 	if (get_yes_no("Do you accept?")) {
 		change_rep(-3);
 		/* with player_do; */
-		if ((player_disarm + player_lev + 2 * C_player_disarm_from_dex() + C_player_mod_from_stat(INT)) >
-		    randint(100)) {
+		if ((player_disarm + player_lev +
+		     2 * C_player_disarm_from_dex() +
+		     C_player_mod_from_stat(INT)) > randint(100)) {
 			msg_print("Good! You are invited to join the house!");
 			C_player_add_exp(5);
 			spend_time(600, "putting out for peasants", false);
@@ -3759,8 +3760,10 @@ void thief_games()
 			  "pick locks.");
 		if (get_yes_no("Do you accept?")) {
 			/* with player_do; */
-			guild_or_not((player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-				      C_player_mod_from_stat(INT)) > randint(100));
+			guild_or_not((player_disarm + player_lev +
+				      2 * C_player_disarm_from_dex() +
+				      C_player_mod_from_stat(INT)) >
+				     randint(100));
 		}
 	} else {
 		msg_print("The thieves invite you to show your stealthiness.");
@@ -3825,7 +3828,8 @@ void eat_the_meal()
 
 	default:
 		if ((yummers > 0) ||
-		    player_saves(player_lev + 5 * C_player_mod_from_stat(CON))) {
+		    player_saves(player_lev +
+				 5 * C_player_mod_from_stat(CON))) {
 			msg_print(
 			    "It was a boring meal, and you eat very little.");
 			player_flags.foodc = old_food;
@@ -3944,12 +3948,14 @@ void worship()
 			if (player_money[TOTAL_] > 0) {
 				msg_print("Bless you, dude!");
 
-				i1 = ((randint(12) * player_money[TOTAL_])/ 1000 +
+				i1 = ((randint(12) * player_money[TOTAL_]) /
+					  1000 +
 				      20) *
 				     GOLD_VALUE;
-				if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
-					i1 =
-					    player_money[TOTAL_] * GOLD_VALUE / 2;
+				if (i1 >
+				    player_money[TOTAL_] * GOLD_VALUE / 2) {
+					i1 = player_money[TOTAL_] * GOLD_VALUE /
+					     2;
 				}
 
 				subtract_money(i1, false);
@@ -3958,8 +3964,8 @@ void worship()
 				if (i1 > 20 * GOLD_VALUE) {
 					change_rep(5);
 				} else {
-					change_rep((i1 + 5 * GOLD_VALUE -
-						    1)/(5 * GOLD_VALUE));
+					change_rep((i1 + 5 * GOLD_VALUE - 1) /
+						   (5 * GOLD_VALUE));
 				}
 
 			} else {
@@ -4018,8 +4024,9 @@ void beg_money()
 		if (player_money[TOTAL_] > 0) {
 			msg_print("How kind of you!");
 			spend_time(100, "giving handouts", false);
-			i1 = ((randint(12) * player_money[TOTAL_])/ 1000 + 20) *
-			     GOLD_VALUE;
+			i1 =
+			    ((randint(12) * player_money[TOTAL_]) / 1000 + 20) *
+			    GOLD_VALUE;
 			if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
 				i1 = player_money[TOTAL_] * GOLD_VALUE / 2;
 			}
@@ -4027,8 +4034,8 @@ void beg_money()
 			if (i1 > 20 * GOLD_VALUE) {
 				change_rep(5);
 			} else {
-				change_rep((i1 + 5 * GOLD_VALUE -
-					    1)/(5 * GOLD_VALUE));
+				change_rep((i1 + 5 * GOLD_VALUE - 1) /
+					   (5 * GOLD_VALUE));
 			}
 			prt_stat_block();
 		} else {
@@ -4169,10 +4176,19 @@ void fire_dam(long dam, char kb_str[82])
 {
 	/*{ Burn the fool up...                                   -RAK-   }*/
 
-	obj_set things_that_burn = {
-	    arrow,   bow_crossbow_or_sling, hafted_weapon, pole_arm,   maul,
-	    boots,   gloves_and_gauntlets,  cloak,	 soft_armor, staff,
-	    scroll1, scroll2,		    0};
+	obj_set things_that_burn = {arrow,
+				    bow_crossbow_or_sling,
+				    hafted_weapon,
+				    pole_arm,
+				    maul,
+				    boots,
+				    gloves_and_gauntlets,
+				    cloak,
+				    soft_armor,
+				    staff,
+				    scroll1,
+				    scroll2,
+				    0};
 
 	if (player_flags.fire_resist) {
 		dam /= 3;
@@ -4183,7 +4199,7 @@ void fire_dam(long dam, char kb_str[82])
 
 	take_hit(dam, kb_str);
 
-	print_stat = 1 ;
+	print_stat = 1;
 
 	if (inven_damage(things_that_burn, 3) > 0) {
 		msg_print("There is smoke coming from your pack!");
@@ -4236,9 +4252,9 @@ void acid_dam(long dam, char kb_str[82])
 
 	long flag = 0;
 	obj_set things_that_dilute = {
-	    miscellaneous_object,  chest,	 bolt,       arrow,
+	    miscellaneous_object,  chest,	  bolt,	      arrow,
 	    bow_crossbow_or_sling, hafted_weapon, pole_arm,   boots,
-	    gloves_and_gauntlets,  cloak,	 soft_armor, 0};
+	    gloves_and_gauntlets,  cloak,	  soft_armor, 0};
 
 	if (minus_ac(Resist_Acid_worn_bit)) {
 		flag = 1;
@@ -4289,7 +4305,8 @@ void xp_loss(long amount)
 		player_exp -= amount;
 	}
 
-	for (i1 = 1; (long)(exp_per_level[i1] * player_expfact) <= player_exp;) {
+	for (i1 = 1;
+	     (long)(exp_per_level[i1] * player_expfact) <= player_exp;) {
 		i1++;
 	}
 	i2 = player_lev - i1;
@@ -4352,7 +4369,7 @@ void corrode_gas(char kb_str[82])
 {
 	/*{ Corrode the unsuspecting person's armor               -RAK-   }*/
 
-	obj_set things_that_corrode = {dagger, sword,      gem_helm, helm,
+	obj_set things_that_corrode = {dagger, sword,	   gem_helm, helm,
 				       shield, hard_armor, wand,     0};
 
 	if (!(minus_ac(Resist_Acid_worn_bit))) {
@@ -4392,12 +4409,10 @@ boolean no_light()
 	return return_value;
 }
 
-
 /**
  * water_move_player() - I wonder what was going to go in here...
  */
 void water_move_player(void) {}
-
 
 /**
  * water_move_item() - I sense a patter about water moves...
@@ -4493,11 +4508,11 @@ void search(long y, long x, long chance)
 
 								/*{ Secret door?
 								 * }*/
-							} else if (t_list
-								       [cave[i1][i2]
-									    .tptr]
-									   .tval ==
-								   secret_door) {
+							} else if (
+							    t_list[cave[i1][i2]
+								       .tptr]
+								.tval ==
+							    secret_door) {
 								msg_print(
 								    "You have "
 								    "found a "
@@ -4514,11 +4529,11 @@ void search(long y, long x, long chance)
 
 								/*{ Chest is
 								 * trapped? }*/
-							} else if (t_list
-								       [cave[i1][i2]
-									    .tptr]
-									   .tval ==
-								   chest) {
+							} else if (
+							    t_list[cave[i1][i2]
+								       .tptr]
+								.tval ==
+							    chest) {
 								if (t_list
 									[cave[i1][i2]
 									     .tptr]
@@ -4736,7 +4751,7 @@ void area_affect(long dir, long y, long x)
 				}
 
 			} /* end if move_char */
-		}	 /* end for */
+		}	  /* end for */
 	}		  /* end if find and not blind */
 }
 
@@ -4783,8 +4798,7 @@ long mon_take_hit(long monptr, long dam)
 		monster_death(m_list[monptr].fy, m_list[monptr].fx,
 			      c_list[m_list[monptr].mptr].cmove);
 
-		if ((m_list[monptr].mptr == player_cur_quest) &&
-		    (PF.quested)) {
+		if ((m_list[monptr].mptr == player_cur_quest) && (PF.quested)) {
 			PF.quested = false;
 			prt_quested();
 			msg_print("*** QUEST COMPLETED ***");
@@ -5129,7 +5143,7 @@ boolean py_attack(long y, long x)
 				} else { /*{ Bare hands!?  }*/
 					if (player_pclass == C_MONK) {
 						i3 = randint(
-						    (4 + 2 * player_lev)/ 3);
+						    (4 + 2 * player_lev) / 3);
 						crit_mult = critical_blow(
 						    12000, 0, false, false);
 						if (randint(crit_mult + 2) >
@@ -5199,10 +5213,18 @@ long tot_dam(treasure_type *item, long tdam, creature_type *monster)
 {
 	/*{ Special damage due to magical abilities of object     -RAK-   }*/
 
-	obj_set stuff_that_goes_thump = {
-	    sling_ammo,		   bolt,	  arrow,	lamp_or_torch,
-	    bow_crossbow_or_sling, hafted_weapon, pole_arm,     dagger,
-	    sword,		   maul,	  flask_of_oil, 0};
+	obj_set stuff_that_goes_thump = {sling_ammo,
+					 bolt,
+					 arrow,
+					 lamp_or_torch,
+					 bow_crossbow_or_sling,
+					 hafted_weapon,
+					 pole_arm,
+					 dagger,
+					 sword,
+					 maul,
+					 flask_of_oil,
+					 0};
 
 	unsigned long cdefense, flags, flags2;
 
@@ -5287,16 +5309,16 @@ void get_player_move_rate()
 	}
 }
 
-boolean xor(long thing1, long thing2)
-{
-	/* with fake boolean values you cant really do a (bool1 !=
-	   bool2)
-	   and expect it to work.  */
+boolean xor
+    (long thing1, long thing2) {
+	    /* with fake boolean values you cant really do a (bool1 !=
+	       bool2)
+	       and expect it to work.  */
 
-	return !((thing1 && thing2) || (!thing1 && !thing2));
-}
+	    return !((thing1 && thing2) || (!thing1 && !thing2));
+    }
 
-long movement_rate(long cspeed, long mon)
+    long movement_rate(long cspeed, long mon)
 {
 	/*{ Given speed, returns number of moves this turn.       -RAK-   }*/
 	/*{ NOTE: Player must always move at least once per iteration,    }*/
@@ -5313,8 +5335,9 @@ long movement_rate(long cspeed, long mon)
 	if (xor((is_in(cave[MY(mon)][MX(mon)].fval, earth_set) ||
 		 is_in(cave[MY(mon)][MX(mon)].fval, pwall_set)),
 		(uand(c_list[m_list[mon].mptr].cmove, 0x00000010) == 0))) {
-		c_rate = (long)(uand(c_list[m_list[mon].mptr].cmove, 0x00000300)
-				/ 256);
+		c_rate =
+		    (long)(uand(c_list[m_list[mon].mptr].cmove, 0x00000300) /
+			   256);
 	} else {
 		c_rate = 3;
 	}
@@ -5498,8 +5521,6 @@ boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
 
 	return flag;
 }
-
-
 
 boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x)
 {
@@ -5709,7 +5730,7 @@ void dungeon()
 		d__update_hit_points();
 		C_check_passive_abilities();
 
-		if ((player_flags.paralysis < 1) && /*{ Accept a command?     }*/
+		if ((player_flags.paralysis < 1) && /*{ Accept a command? }*/
 		    (player_flags.rest < 1) && (!(death))) {
 
 			/*{ Accept a command and execute it }*/

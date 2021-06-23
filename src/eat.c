@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void e__eyeball_of_drong(boolean *ident)
 {
@@ -66,8 +66,8 @@ void eat()
 	}
 
 	redraw = false;
-	if (!get_item(&item_ptr, "Eat what?", &redraw, count, &trash_char, false,
-		      false)) {
+	if (!get_item(&item_ptr, "Eat what?", &redraw, count, &trash_char,
+		      false, false)) {
 		if (redraw)
 			draw_cave();
 		return;
@@ -288,7 +288,8 @@ void eat()
 	}
 
 	if (item_ptr->data.flags != 0 && item_ptr->data.level > 0) {
-		C_player_add_exp(((float)item_ptr->data.level / (float)player_lev) + .5);
+		C_player_add_exp(
+		    ((float)item_ptr->data.level / (float)player_lev) + .5);
 		prt_stat_block();
 	}
 

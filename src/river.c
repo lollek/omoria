@@ -1,8 +1,8 @@
 /* river.c */
 /* this all used to be in generate.pas */
 
-#include "imoria.h"
 #include "generate.h"
+#include "imoria.h"
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -203,7 +203,7 @@ void r__place_river(river_args *a, long dir, long next_dir, coords this,
 	r__move_this(next_dir, &up1,
 		     &up2); /*{up2 is upstream end of next segment}*/
 
-	tflow = (Gup[up2.y][up2.x].flow - 1)/ 2; /*{river size}*/
+	tflow = (Gup[up2.y][up2.x].flow - 1) / 2; /*{river size}*/
 
 	/*{aim (y,x) toward upstream end of segment, randomize slightly}*/
 	oy = RIVER_SEGMENT_SIZE * this.y + wiggle.y;
@@ -351,7 +351,7 @@ void r__chart_river(river_args *a)
 	long i1, i2, dir, branches;
 	long out_flow, in_flow;
 	coords this, thing;
-	coords that[4];     /*     : array [1..3] of coords;*/
+	coords that[4];	    /*     : array [1..3] of coords;*/
 	long that_dir[4];   /*     : array [1..3] of long;*/
 	boolean that_ok[4]; /*     : array [1..3] of boolean;*/
 	boolean that_chosen[4];
@@ -405,16 +405,14 @@ void r__chart_river(river_args *a)
 
 		if (that_chosen[1]) { /*{ No sharp left turns }*/
 			r__move_this(rotate_dir(dir, 1), &this, &thing);
-			if (r__move_this(rotate_dir(dir, 2), &thing,
-					 &thing)) {
+			if (r__move_this(rotate_dir(dir, 2), &thing, &thing)) {
 				r__remove_this(a, &thing);
 			}
 		}
 
 		if (that_chosen[3]) { /*{ No sharp right turns }*/
 			r__move_this(rotate_dir(dir, -1), &this, &thing);
-			if (r__move_this(rotate_dir(dir, -2), &thing,
-					 &thing)) {
+			if (r__move_this(rotate_dir(dir, -2), &thing, &thing)) {
 				r__remove_this(a, &thing);
 			}
 		}
@@ -451,7 +449,7 @@ void r__chart_river(river_args *a)
 				i2++;
 			}
 		} /* end for i1 */
-	}	 /* end for dequeue_s_list */
+	}	  /* end for dequeue_s_list */
 
 	LEAVE("r__chart_river", "r");
 }

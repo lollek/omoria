@@ -1,9 +1,9 @@
 /* bj.c */
 /* blackjack code for the casino */
 
-#include "imoria.h"
-#include "casino.h"
 #include "bj.h"
+#include "casino.h"
+#include "imoria.h"
 
 static boolean deal_bust;
 static boolean card5_save;

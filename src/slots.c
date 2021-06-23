@@ -1,9 +1,9 @@
 /* slots.c */
 /* slot machine code for the casino */
 
-#include "imoria.h"
-#include "casino.h"
 #include "slots.h"
+#include "casino.h"
+#include "imoria.h"
 
 char *s_name[6] = {"jackpot", "cherry", "orange", "bell", "bar"};
 slot slotpos;

@@ -25,30 +25,29 @@ FILE *priv_fopen(char *path, char *mode)
 
 void intro_qualifier_help()
 {
-	printf(		"\n\r"
-			"Invalid Moria option!  Valid qualifiers are:\n\r"
-			"  -w         Warn about hearing things in water.\n\r"
-			"  -s         List top 20 high scores.\n\r"
-			"  -t num     List <num> high scores after death or for -s.\n\r"
-			"  -V         Print version info.\n\r"
-			"\n\r"
-			"\n\r");
-	printf(		"Wizard commands:\n\r"
-			"  -Wpassword Enter wizard mode password.\n\r"
-			"  -Rfile     Restore character in master file.\n\r"
-			"  -Ufile     Change the dead flag in save file.\n\r"
-			"  -Efile     Encrpyt a character file.\n\r"
-			"  -Dfile     Decrypt a character file.\n\r"
-			"\n\r");
+	printf("\n\r"
+	       "Invalid Moria option!  Valid qualifiers are:\n\r"
+	       "  -w         Warn about hearing things in water.\n\r"
+	       "  -s         List top 20 high scores.\n\r"
+	       "  -t num     List <num> high scores after death or for -s.\n\r"
+	       "  -V         Print version info.\n\r"
+	       "\n\r"
+	       "\n\r");
+	printf("Wizard commands:\n\r"
+	       "  -Wpassword Enter wizard mode password.\n\r"
+	       "  -Rfile     Restore character in master file.\n\r"
+	       "  -Ufile     Change the dead flag in save file.\n\r"
+	       "  -Efile     Encrpyt a character file.\n\r"
+	       "  -Dfile     Decrypt a character file.\n\r"
+	       "\n\r");
 }
 
 void print_version_info()
 {
-	printf(
-			"\n\r"
-			"Linux Omoria Version %s\n\r"
-			"\n\r"
-			, omoria_version());
+	printf("\n\r"
+	       "Linux Omoria Version %s\n\r"
+	       "\n\r",
+	       omoria_version());
 }
 
 static void intro_parse_switches(int argc, char *argv[])
@@ -240,7 +239,7 @@ boolean intro_do_death_file(boolean already_exiting, char *the_file)
 			fclose(file1);
 			exit_flag = true;
 		} /* end if file1 (writing) */
-	}	 /* end if file1 (reading) */
+	}	  /* end if file1 (reading) */
 
 	return (exit_flag || already_exiting);
 }
@@ -265,7 +264,7 @@ boolean intro_ensure_file_exists(boolean already_exiting, char *the_file)
 			fclose(file1);
 			exit_flag = true;
 		} /* end if file1 (writing) */
-	}	 /* end if file1 (reading) */
+	}	  /* end if file1 (reading) */
 
 	return (exit_flag || already_exiting);
 }
@@ -287,18 +286,20 @@ void intro(int argc, char *argv[])
 
 	if (exit_flag) {
 		intro_ensure_file_exists(exit_flag, MORIA_TRD);
-		printf("\r\n"
-			"Notice: System IMORIA wizard should set the protection\r\n"
-			"        on  files  just created.  See the README file for\r\n"
-			"        help on setting protection on the files.\r\n"
-			"        Hint: make privs\r\n"
-			"\r\n"
-			"Notice: File hours.dat may be edited to set operating\r\n"
-			"        hours for IMORIA.\r\n"
-			"\r\n"
-			"Notice: File moria.dat may be edited to contain  news\r\n"
-			"        items, etc...\r\n"
-			"\r\n");
+		printf(
+		    "\r\n"
+		    "Notice: System IMORIA wizard should set the protection\r\n"
+		    "        on  files  just created.  See the README file "
+		    "for\r\n"
+		    "        help on setting protection on the files.\r\n"
+		    "        Hint: make privs\r\n"
+		    "\r\n"
+		    "Notice: File hours.dat may be edited to set operating\r\n"
+		    "        hours for IMORIA.\r\n"
+		    "\r\n"
+		    "Notice: File moria.dat may be edited to contain  news\r\n"
+		    "        items, etc...\r\n"
+		    "\r\n");
 		exit_game();
 	}
 
@@ -322,7 +323,7 @@ void intro(int argc, char *argv[])
 			}
 			fclose(file1);
 		}
-                exit_game();
+		exit_game();
 	}
 
 	LEAVE("intro", "");
@@ -367,47 +368,60 @@ void file_character()
 			refresh();
 
 			fprintf(file1, " \n \n \n");
-			fprintf(file1, "  Name  : %24s  Age         :%4d     "
-				       "Strength     : %d\n",
-				player_name, player_age, C_player_get_stat(STR));
+			fprintf(file1,
+				"  Name  : %24s  Age         :%4d     "
+				"Strength     : %d\n",
+				player_name, player_age,
+				C_player_get_stat(STR));
 
-			fprintf(file1, "  Race  : %24s  Height      :%4d     "
-				       "Intelligence : %d\n",
+			fprintf(file1,
+				"  Race  : %24s  Height      :%4d     "
+				"Intelligence : %d\n",
 				player_race, player_ht, C_player_get_stat(INT));
 
-			fprintf(file1, "  Sex   : %24s  Weight      :%4d     "
-				       "Wisdom       : %d\n",
+			fprintf(file1,
+				"  Sex   : %24s  Weight      :%4d     "
+				"Wisdom       : %d\n",
 				player_sex, player_wt, C_player_get_stat(WIS));
 
-			fprintf(file1, "  Class : %24s  Social Class:%4d     "
-				       "Dexterity    : %d\n",
-				player_tclass, player_sc, C_player_get_stat(DEX));
+			fprintf(file1,
+				"  Class : %24s  Social Class:%4d     "
+				"Dexterity    : %d\n",
+				player_tclass, player_sc,
+				C_player_get_stat(DEX));
 
-			fprintf(file1, "          %24s                       "
-				       "Constitution : %d\n",
+			fprintf(file1,
+				"          %24s                       "
+				"Constitution : %d\n",
 				"", C_player_get_stat(CON));
 
-			fprintf(file1, "          %24s              %4s      "
-				       "Charisma     : %d\n",
+			fprintf(file1,
+				"          %24s              %4s      "
+				"Charisma     : %d\n",
 				"", "", C_player_get_stat(CHR));
 
 			fprintf(file1, " \n \n \n \n");
 
-			fprintf(file1, "  + To Hit    :%3d        Level      "
-				       ":%9d     Max Hit Points :%4d\n",
+			fprintf(file1,
+				"  + To Hit    :%3d        Level      "
+				":%9d     Max Hit Points :%4d\n",
 				player_dis_th, player_lev, C_player_max_hp());
 
-			fprintf(file1, "  + To Damage :%3d        Experience "
-				       ":%9ld     Cur Hit Points :%4d\n",
-				player_dis_td, player_exp, C_player_current_hp());
+			fprintf(file1,
+				"  + To Damage :%3d        Experience "
+				":%9ld     Cur Hit Points :%4d\n",
+				player_dis_td, player_exp,
+				C_player_current_hp());
 
-			fprintf(file1, "  + To AC     :%3d        Gold       "
-				       ":%9ld     Max Mana       :%4d\n",
+			fprintf(file1,
+				"  + To AC     :%3d        Gold       "
+				":%9ld     Max Mana       :%4d\n",
 				player_dis_tac, player_money[TOTAL_],
 				player_mana);
 
-			fprintf(file1, "    Total AC  :%3d        Account    "
-				       ":%9ld     Cur Mana       :%4d\n",
+			fprintf(file1,
+				"    Total AC  :%3d        Account    "
+				":%9ld     Cur Mana       :%4d\n",
 				player_dis_ac, player_account, player_mana);
 
 			fprintf(file1, " \n \n");
@@ -422,10 +436,13 @@ void file_character()
 			}
 			xsrh = C_player_curr_search_skill();
 			xstl = player_stl;
-			xdis = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+			xdis = player_disarm + player_lev +
+			       2 * C_player_disarm_from_dex() +
 			       C_player_mod_from_stat(INT);
-			xsave = player_save + player_lev + C_player_mod_from_stat(WIS);
-			xdev = player_save + player_lev + C_player_mod_from_stat(INT);
+			xsave = player_save + player_lev +
+				C_player_mod_from_stat(WIS);
+			xdev = player_save + player_lev +
+			       C_player_mod_from_stat(INT);
 			xswm = PF.swim + 4;
 			xrep = 6 + player_rep / 25;
 			sprintf(xinfra, "%ld feet", PF.see_infra);
@@ -435,23 +452,27 @@ void file_character()
 			fprintf(file1, "%50s\n \n",
 				"(Miscellaneous Abilities)");
 
-			fprintf(file1, "  Fighting    : %10s  Stealth     : "
-				       "%10s  Perception  : %10s\n",
+			fprintf(file1,
+				"  Fighting    : %10s  Stealth     : "
+				"%10s  Perception  : %10s\n",
 				likert(xbth, 12, s1), likert(xstl, 1, s2),
 				likert(xfos, 3, s3));
 
-			fprintf(file1, "  Throw/Bows  : %10s  Disarming   : "
-				       "%10s  Searching   : %10s\n",
+			fprintf(file1,
+				"  Throw/Bows  : %10s  Disarming   : "
+				"%10s  Searching   : %10s\n",
 				likert(xbthb, 12, s1), likert(xdis, 8, s2),
 				likert(xsrh, 6, s3));
 
-			fprintf(file1, "  Saving Throw: %10s  Magic Device: "
-				       "%10s  Infra-Vision: %10s\n",
+			fprintf(file1,
+				"  Saving Throw: %10s  Magic Device: "
+				"%10s  Infra-Vision: %10s\n",
 				likert(xsave, 6, s1), likert(xdev, 7, s2),
 				xinfra);
 
-			fprintf(file1, "  Reputation  : %10s                   "
-				       "         Swimming    : %10s\n",
+			fprintf(file1,
+				"  Reputation  : %10s                   "
+				"         Swimming    : %10s\n",
 				likert(xrep, 1, s1), likert(xswm, 1, s3));
 
 			/*{ Write out the character's history     }*/
@@ -479,9 +500,11 @@ void file_character()
 			fprintf(
 			    file1,
 			    "  You were born at %s on %s, %s the %s, %ld AH.\n",
-			    time_string(player_birth.hour, player_birth.secs, s1),
+			    time_string(player_birth.hour, player_birth.secs,
+					s1),
 			    out_val, month_string(player_birth.month, s2),
-			    place_string(player_birth.day, s3), player_birth.year);
+			    place_string(player_birth.day, s3),
+			    player_birth.year);
 
 			fprintf(file1, "  %s\n", show_char_age(s1));
 			fprintf(file1, "  The current time is %s.\n",
@@ -586,17 +609,25 @@ void file_character()
 							break;
 						}
 						i2++;
-						inven_temp->data = equipment[i1];
+						inven_temp->data =
+						    equipment[i1];
 						objdes(prt2, inven_temp, true);
-						if ((inven_temp->data.flags2 & Insured_bit) == 0) {
-							sprintf(out_val, "  %c%s%s", (char)(i2 + 96), prt1, prt2);
+						if ((inven_temp->data.flags2 &
+						     Insured_bit) == 0) {
+							sprintf(out_val,
+								"  %c%s%s",
+								(char)(i2 + 96),
+								prt1, prt2);
 						} else {
-							sprintf(out_val, " (%c%s%s", (char)(i2 + 96), prt1, prt2);
+							sprintf(out_val,
+								" (%c%s%s",
+								(char)(i2 + 96),
+								prt1, prt2);
 						}
 						fprintf(file1, "%s\n", out_val);
 					}
 				} /* end for equipment */
-			}	 /* end else has equipment */
+			}	  /* end else has equipment */
 
 			/*{ Write out the character's inventory...        }*/
 
@@ -611,11 +642,13 @@ void file_character()
 				for (curse = inventory_list; curse != nil;
 				     curse = curse->next) {
 					if ((i1 % 50) == 0) {
-						fprintf(file1, "%c\n \n \n \n  "
-							       "%s %ld]\n \n",
-							new_page, "[General "
-								  "Inventory "
-								  "List, Page",
+						fprintf(file1,
+							"%c\n \n \n \n  "
+							"%s %ld]\n \n",
+							new_page,
+							"[General "
+							"Inventory "
+							"List, Page",
 							(i1 / 50) + 1);
 					}
 					inven_temp->data = curse->data;
@@ -659,12 +692,12 @@ void file_character()
 					fprintf(file1, "%s\n", out_val);
 					i1++;
 				} /* end for inventory */
-			}	 /* end else inventory not null */
+			}	  /* end else inventory not null */
 
 			fclose(file1);
 			prt("Completed.", 1, 1);
 		} /* end if file !NULL */
-	}	 /* end get_string */
+	}	  /* end get_string */
 }
 
 void print_map()
@@ -857,13 +890,15 @@ void print_monsters()
 				fprintf(file1, "%3ld  %30s     (%c)\n", i1,
 					c_list[i1].name, c_list[i1].cchar);
 
-				fprintf(file1, "     Speed =%2d  Level     "
-					       "=%2d  Exp =%5ld\n",
+				fprintf(file1,
+					"     Speed =%2d  Level     "
+					"=%2d  Exp =%5ld\n",
 					c_list[i1].speed, c_list[i1].level,
 					c_list[i1].mexp);
 
-				fprintf(file1, "     AC    =%2d  Eye-sight "
-					       "=%2d  HD  =%5s\n",
+				fprintf(file1,
+					"     AC    =%2d  Eye-sight "
+					"=%2d  HD  =%5s\n",
 					c_list[i1].ac, c_list[i1].aaf,
 					c_list[i1].hd);
 
@@ -1004,10 +1039,11 @@ void print_monsters()
 					    file1,
 					    "   --Spells/Dragon Breath =\n");
 					if ((spells & 0x80000000) != 0) {
-						fprintf(file1, "       Doesn't "
-							       "cast spells 1 "
-							       "out of %ld "
-							       "turns.\n",
+						fprintf(file1,
+							"       Doesn't "
+							"cast spells 1 "
+							"out of %ld "
+							"turns.\n",
 							(0xF & spells));
 					} else {
 						fprintf(file1,
@@ -1572,7 +1608,7 @@ void print_monsters()
 							out_val, damstr);
 
 					} /* end acount */
-				}	 /* end for attstr */
+				}	  /* end for attstr */
 
 				fprintf(file1, "   --Magic Resistance : ");
 				if (c_list[i1].mr == 0) {
@@ -1599,7 +1635,7 @@ void print_monsters()
 			prt("Completed.", 1, 1);
 
 		} /* end file1 != NULL */
-	}	 /* end get filename */
+	}	  /* end get filename */
 }
 
 boolean read_top_scores(FILE **f1, char *fnam, char list[][134], int max_high,
@@ -1708,8 +1744,8 @@ char *center(char *in_str, long str_len, char *out_str)
 	return out_str;
 }
 
-boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82], FILE **f1,
-			FILE **f2)
+boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
+			FILE **f1, FILE **f2)
 {
 	char out_str[1026];
 	boolean flag = true;

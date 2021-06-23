@@ -1,7 +1,7 @@
 #include <signal.h>
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 #include "save.h"
 
 #define MAX_MESSAGES 50
@@ -103,7 +103,8 @@ void controly()
 	/* ok, this is unix not vms, so it turns on ^C and ^Z */
 }
 
-void exit_ncurses() {
+void exit_ncurses()
+{
 	if (curses_is_running) {
 		refresh(); /* { Dump any remaining buffer	} */
 
@@ -118,7 +119,7 @@ void exit_game()
 {
 	/*	{ Immediate exit from program } */
 	controly(); /* { Turn control-Y back on	} */
-        exit_ncurses();
+	exit_ncurses();
 	fflush(stdout);
 	exit(0); /* { exit from game		} */
 }

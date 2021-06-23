@@ -1,8 +1,8 @@
 /* creature.c */
 /**/
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 #define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
 
@@ -81,7 +81,7 @@ void load_monsters()
 		c_list[count].aaf = (unsigned char)value;
 
 		/* ac */
-		fscanf(file, "%d\n", &value); 
+		fscanf(file, "%d\n", &value);
 		c_list[count].ac = (unsigned char)value;
 
 		/* name */
@@ -222,7 +222,7 @@ void replace_name()
 			/*      printf ("NewName = */
 			/*      >>%s<<\n",c_list[count].name); */
 		} /* end if */
-	}	 /* end for */
+	}	  /* end for */
 
 	LEAVE("replace_name", "");
 }
@@ -316,7 +316,8 @@ void c__update_mon(long monptr, long *hear_count)
 		s_range = MAX_SIGHT;
 	}
 
-	if ((player_flags.blind < 1) && panel_contains(MY(monptr), MX(monptr))) {
+	if ((player_flags.blind < 1) &&
+	    panel_contains(MY(monptr), MX(monptr))) {
 		if (wizard2) {
 			flag = true;
 		} else if ((ML(monptr).cdis <= s_range)) {
@@ -758,7 +759,8 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 	case 1: /*{Normal attack  }*/
 		dam = damroll(damstr);
 		/* with player_do; */
-		dam -= (long)((((player_pac + player_ptoac) / 200.0) * dam) + .5);
+		dam -=
+		    (long)((((player_pac + player_ptoac) / 200.0) * dam) + .5);
 		take_hit(dam, ddesc);
 		prt_stat_block();
 		break;
@@ -862,9 +864,11 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 			msg_print("You quickly protect your money pouch!");
 		} else {
 			if (player_money[TOTAL_] > 0) {
-				subtract_money(randint(5) * (player_money[TOTAL_] *
-							     GOLD_VALUE)/ 100,
-					       false);
+				subtract_money(
+				    randint(5) *
+					(player_money[TOTAL_] * GOLD_VALUE) /
+					100,
+				    false);
 				msg_print("Your purse feels lighter.");
 				prt_stat_block();
 			}
@@ -892,8 +896,8 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 			}
 			if (item_ptr != NULL) {
 				if (!item_ptr->is_in) {
-					if (uand(item_ptr->data.flags2, Holding_bit) !=
-							0) {
+					if (uand(item_ptr->data.flags2,
+						 Holding_bit) != 0) {
 						if (item_ptr->insides == 0) {
 							inven_destroy(item_ptr);
 						}
@@ -1194,7 +1198,8 @@ void c__make_attack(long monptr)
 				case 6:
 					/* normal, poison strength, confusion
 					 * attack, acid attack */
-					sprintf(theattack, "%smisses you.", cdesc);
+					sprintf(theattack, "%smisses you.",
+						cdesc);
 					msg_print(theattack);
 					break;
 				default:
@@ -1202,7 +1207,7 @@ void c__make_attack(long monptr)
 				}
 			}
 		} /* end for i5 */
-	}	 /* end for attstr != null */
+	}	  /* end for attstr != null */
 
 	LEAVE("c__make_attack", "c")
 }
@@ -1237,12 +1242,12 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 				if (is_in(cave[newy][newx].fval, floor_set)) {
 					if (uand(movebits, 0x00000040) == 0) {
 						tflag = true;
-					} else if (! xor
-						   ((is_in(
-							cave[newy][newx].fval,
-							earth_set)),
-						    (uand(movebits,
-							  0x00000010) == 0))) {
+					} else if (!xor((is_in(cave[newy][newx]
+								   .fval,
+							       earth_set)),
+							(uand(movebits,
+							      0x00000010) ==
+							 0))) {
 						tflag = true;
 					}
 				}
@@ -1261,7 +1266,8 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 					case closed_door: /*{ Closed doors...
 							     }*/
 						if (t_list[cave[newy][newx]
-							       .tptr].p1 ==
+							       .tptr]
+							.p1 ==
 						    0) { /*{ Closed doors  }*/
 							tflag = true;
 							if (cave[newy][newx]
@@ -1285,10 +1291,10 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 									    false;
 								}
 							}
-						} else if (t_list
-							       [cave[newy][newx]
-								    .tptr].p1 >
-							   0) {
+						} else if (t_list[cave[newy]
+								      [newx]
+									  .tptr]
+							       .p1 > 0) {
 							/*{ Locked doors  }*/
 							if (randint(
 								100 -
@@ -1303,10 +1309,10 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 									     .tptr]
 									.p1 = 0;
 							}
-						} else if (t_list
-							       [cave[newy][newx]
-								    .tptr].p1 <
-							   0) {
+						} else if (t_list[cave[newy]
+								      [newx]
+									  .tptr]
+							       .p1 < 0) {
 							/*{ Stuck doors   }*/
 							if (randint(
 								m_list[monptr]
@@ -1361,7 +1367,8 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 							     }*/
 						i2 =
 						    labs(t_list[cave[newy][newx]
-								    .tptr].p1) +
+								    .tptr]
+							     .p1) +
 						    20;
 						if (randint(m_list[monptr].hp) >
 						    i2) {
@@ -1414,8 +1421,8 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 					if (t_list[cave[newy][newx].tptr]
 						.tval == seen_trap) {
 						if (t_list[cave[newy][newx]
-							       .tptr].subval ==
-						    99) {
+							       .tptr]
+							.subval == 99) {
 							if (randint(
 								OBJ_RUNE_PROT) <
 							    c_list
@@ -1566,7 +1573,8 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 					/* with cave[newy,newx] do; */
 					if (cave[newy][newx].tptr > 0) {
 						if (t_list[cave[newy][newx]
-							       .tptr].tval <
+							       .tptr]
+							.tval <
 						    valuable_metal) {
 							delete_object(newy,
 								      newx);
@@ -1876,11 +1884,17 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 		case 17:
 			if (trunc(player_cmana) > 0) { /*{Drain Mana   }*/
 				stop_player = true;
-				sprintf(outval, "%sdraws psychic energy from you!", cdesc);
+				sprintf(outval,
+					"%sdraws psychic energy from you!",
+					cdesc);
 				msg_print(outval);
-				sprintf(outval, "%sappears healthier...", cdesc);
+				sprintf(outval, "%sappears healthier...",
+					cdesc);
 				msg_print(outval);
-				r1 = (randint(c_list[m_list[monptr].mptr].level) / 2) + 1;
+				r1 = (randint(
+					  c_list[m_list[monptr].mptr].level) /
+				      2) +
+				     1;
 				if (r1 > player_cmana) {
 					r1 = player_cmana;
 				}
@@ -2171,8 +2185,8 @@ void c__splash(long monptr)
 	/*{ divide damage by 2 for each mon_swimming level, random
 	  rounding procedure }*/
 	for (i1 = 1; i1 <= mon_swimming; i1++) {
-		drown_dam = (drown_dam +
-			     (randint(3) - 1))/ 3; /* kinda large for a 2 */
+		drown_dam = (drown_dam + (randint(3) - 1)) /
+			    3; /* kinda large for a 2 */
 	}
 
 	m_list[monptr].hp -= drown_dam;
@@ -2227,9 +2241,10 @@ void creatures(boolean attack)
 										m_list[i1]
 										    .csleep =
 										    0;
-									} else if (player_flags
-										       .rest <
-										   1) {
+									} else if (
+									    player_flags
+										.rest <
+									    1) {
 										if (randint(
 											10) >
 										    player_stl) {
@@ -2297,7 +2312,8 @@ void creatures(boolean attack)
 					cave[m_list[i1].fy][m_list[i1].fx].fval,
 					floor_set)) {
 					if (((is_in(cave[m_list[i1].fy]
-							[m_list[i1].fx].fval,
+							[m_list[i1].fx]
+							    .fval,
 						    water_set)) !=
 					     (uand(
 						  c_list[m_list[i1].mptr].cmove,
@@ -2331,7 +2347,8 @@ void mn__append_mon(long mon_num)
 	char out_val[230];
 	FILE *f1 = (FILE *)fopen(MORIA_CST, "a");
 	if (f1 == NULL) {
-		sprintf(out_val, "Error: unable to open %s for append.", MORIA_CST);
+		sprintf(out_val, "Error: unable to open %s for append.",
+			MORIA_CST);
 		msg_print(out_val);
 	} else {
 		fprintf(f1, "%s\n", c_list[mon_num].name);

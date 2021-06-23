@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void divine_spell_effects(long effect)
 {
@@ -145,7 +145,7 @@ void divine_spell_effects(long effect)
 		zap_area(0, 0, c_turn);
 		break;
 
-	case 30:				   /*{ Prayer }*/
+	case 30:				       /*{ Prayer }*/
 		player_flags.shero = 24 + randint(48); /* XXXX not cumulitive */
 		break;
 

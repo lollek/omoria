@@ -4,85 +4,158 @@
 #include "imoria.h"
 
 /*	{ Descriptive constants						} */
-#define MAX_COLORS 68     /*{ Used with potions	} */
-#define MAX_MUSH 29       /*{ Used with mushrooms	} */
-#define MAX_WOODS 41      /*{ Used with staffs	} */
-#define MAX_METALS 32     /*{ Used with wands	} */
-#define MAX_HORNS 13      /*{ Used with horns	} */
-#define MAX_ROCKS 53      /*{ Used with rings	} */
-#define MAX_CLOTHS 7      /*{ Used with bags/sacks	} */
-#define MAX_AMULETS 39    /*{ Used with amulets	} */
+#define MAX_COLORS 68	  /*{ Used with potions	} */
+#define MAX_MUSH 29	  /*{ Used with mushrooms	} */
+#define MAX_WOODS 41	  /*{ Used with staffs	} */
+#define MAX_METALS 32	  /*{ Used with wands	} */
+#define MAX_HORNS 13	  /*{ Used with horns	} */
+#define MAX_ROCKS 53	  /*{ Used with rings	} */
+#define MAX_CLOTHS 7	  /*{ Used with bags/sacks	} */
+#define MAX_AMULETS 39	  /*{ Used with amulets	} */
 #define MAX_SYLLABLES 156 /*{ Used with scrolls	} */
-static char const *colors[MAX_COLORS] = {
-    "Amber",	   "Azure",		  "Blue",	    "Blue Speckled",
-    "Blue Spotted",    "Black",		  "Black Speckled",  "Black Spotted",
-    "Brown",	   "Brown Speckled",  "Brown Spotted",   "Bubbling",
-    "Chartreuse",      "Clear",		  "Cloudy",	  "Copper",
-    "Copper Spotted",  "Crimson",	 "Cyan",	    "Dark Blue",
-    "Dark Green",      "Dark Red",	"Ecru",	    "Gold",
-    "Gold Spotted",    "Green",		  "Green Speckled",  "Green Spotted",
-    "Grey",	    "Grey Spotted",    "Hazy",	    "Indigo",
-    "Light Blue",      "Light Green",     "Magenta",	 "Metallic Blue",
-    "Metallic Red",    "Metallic Green",  "Metallic Purple", "Misty",
-    "Orange",	  "Orange Speckled", "Orange Spotted",  "Pink",
-    "Pink Speckled",   "Plaid",		  "Puce",	    "Purple",
-    "Purple Speckled", "Purple Spotted",  "Red",	     "Red Speckled",
-    "Red Spotted",     "Silver",	  "Silver Speckled", "Silver Spotted",
-    "Smokey",	  "Tan",		  "Tangerine",       "Topaz",
-    "Turquoise",       "Violet",	  "Vermilion",       "White",
-    "White Speckled",  "White Spotted",   "Yellow",	  "Daggy"};
+static char const *colors[MAX_COLORS] = {"Amber",
+					 "Azure",
+					 "Blue",
+					 "Blue Speckled",
+					 "Blue Spotted",
+					 "Black",
+					 "Black Speckled",
+					 "Black Spotted",
+					 "Brown",
+					 "Brown Speckled",
+					 "Brown Spotted",
+					 "Bubbling",
+					 "Chartreuse",
+					 "Clear",
+					 "Cloudy",
+					 "Copper",
+					 "Copper Spotted",
+					 "Crimson",
+					 "Cyan",
+					 "Dark Blue",
+					 "Dark Green",
+					 "Dark Red",
+					 "Ecru",
+					 "Gold",
+					 "Gold Spotted",
+					 "Green",
+					 "Green Speckled",
+					 "Green Spotted",
+					 "Grey",
+					 "Grey Spotted",
+					 "Hazy",
+					 "Indigo",
+					 "Light Blue",
+					 "Light Green",
+					 "Magenta",
+					 "Metallic Blue",
+					 "Metallic Red",
+					 "Metallic Green",
+					 "Metallic Purple",
+					 "Misty",
+					 "Orange",
+					 "Orange Speckled",
+					 "Orange Spotted",
+					 "Pink",
+					 "Pink Speckled",
+					 "Plaid",
+					 "Puce",
+					 "Purple",
+					 "Purple Speckled",
+					 "Purple Spotted",
+					 "Red",
+					 "Red Speckled",
+					 "Red Spotted",
+					 "Silver",
+					 "Silver Speckled",
+					 "Silver Spotted",
+					 "Smokey",
+					 "Tan",
+					 "Tangerine",
+					 "Topaz",
+					 "Turquoise",
+					 "Violet",
+					 "Vermilion",
+					 "White",
+					 "White Speckled",
+					 "White Spotted",
+					 "Yellow",
+					 "Daggy"};
 static char const *mushrooms[MAX_MUSH] = {
-    "Blue",	"Black",     "Brown",    "Copper",  "Crimson", "Dark blue",
-    "Dark green",  "Dark red",  "Gold",     "Green",   "Grey",    "Light Blue",
-    "Light Green", "Orange",    "Pink",     "Plaid",   "Purple",  "Red",
-    "Tan",	 "Turquoise", "Violet",   "White",   "Yellow",  "Wrinkled",
-    "Wooden",      "Slimey",    "Speckled", "Spotted", "Furry"};
+    "Blue",	   "Black",	"Brown",    "Copper",  "Crimson", "Dark blue",
+    "Dark green",  "Dark red",	"Gold",	    "Green",   "Grey",	  "Light Blue",
+    "Light Green", "Orange",	"Pink",	    "Plaid",   "Purple",  "Red",
+    "Tan",	   "Turquoise", "Violet",   "White",   "Yellow",  "Wrinkled",
+    "Wooden",	   "Slimey",	"Speckled", "Spotted", "Furry"};
 static char const *woods[MAX_WOODS] = {
-    "Applewood",  "Ashen",      "Aspen",     "Avocado wood", "Balsa",
-    "Banyan",     "Birch",      "Cedar",     "Cherrywood",   "Cinnibar",
-    "Cottonwood", "Cypress",    "Dogwood",   "Driftwood",    "Ebony",
-    "Elm wood",   "Eucalyptus", "Grapevine", "Hawthorn",     "Hemlock",
-    "Hickory",    "Iron wood",  "Juniper",   "Locust",       "Mahogany",
-    "Magnolia",   "Manzanita",  "Maple",     "Mulberry",     "Oak",
-    "Pecan",      "Persimmon",  "Pine",      "Redwood",      "Rosewood",
-    "Spruce",     "Sumac",      "Sycamore",  "Teak",	 "Walnut",
+    "Applewood",  "Ashen",	"Aspen",     "Avocado wood", "Balsa",
+    "Banyan",	  "Birch",	"Cedar",     "Cherrywood",   "Cinnibar",
+    "Cottonwood", "Cypress",	"Dogwood",   "Driftwood",    "Ebony",
+    "Elm wood",	  "Eucalyptus", "Grapevine", "Hawthorn",     "Hemlock",
+    "Hickory",	  "Iron wood",	"Juniper",   "Locust",	     "Mahogany",
+    "Magnolia",	  "Manzanita",	"Maple",     "Mulberry",     "Oak",
+    "Pecan",	  "Persimmon",	"Pine",	     "Redwood",	     "Rosewood",
+    "Spruce",	  "Sumac",	"Sycamore",  "Teak",	     "Walnut",
     "Zebra wood"};
-static char const *metals[MAX_METALS] = {
-    "Aluminium",     "Bone",	"Brass",		"Bronze",
-    "Cast Iron",     "Chromium",    "Copper",		"Gold",
-    "Iron",	  "Lead",	"Magnesium",	"Molybdenum",
-    "Nickel",	"Pewter",      "Rusty",		"Silver",
-    "Steel",	 "Tin",	 "Titanium",		"Tungsten",
-    "Zirconium",     "Zinc",	"Aluminium Plated", "Brass Plated",
-    "Copper Plated", "Gold Plated", "Nickel Plated",    "Silver Plated",
-    "Steel Plated",  "Tin Plated",  "Zinc Plated",      "Uranium"};
-static char const *horns[MAX_HORNS] = {"Bag Pipes", "Bugle", "Conch Shell", "Fife",
-    "Harmonica", "Horn",  "Picolo",      "Pipes",
-    "Recorder",  "Reed",  "Trumpet",     "Tuba",
-    "Whistle"};
+static char const *metals[MAX_METALS] = {"Aluminium",
+					 "Bone",
+					 "Brass",
+					 "Bronze",
+					 "Cast Iron",
+					 "Chromium",
+					 "Copper",
+					 "Gold",
+					 "Iron",
+					 "Lead",
+					 "Magnesium",
+					 "Molybdenum",
+					 "Nickel",
+					 "Pewter",
+					 "Rusty",
+					 "Silver",
+					 "Steel",
+					 "Tin",
+					 "Titanium",
+					 "Tungsten",
+					 "Zirconium",
+					 "Zinc",
+					 "Aluminium Plated",
+					 "Brass Plated",
+					 "Copper Plated",
+					 "Gold Plated",
+					 "Nickel Plated",
+					 "Silver Plated",
+					 "Steel Plated",
+					 "Tin Plated",
+					 "Zinc Plated",
+					 "Uranium"};
+static char const *horns[MAX_HORNS] = {
+    "Bag Pipes", "Bugle",  "Conch Shell", "Fife",     "Harmonica",
+    "Horn",	 "Picolo", "Pipes",	  "Recorder", "Reed",
+    "Trumpet",	 "Tuba",   "Whistle"};
 static char const *rocks[MAX_ROCKS] = {
-    "Amber",      "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
-    "Aquamarine", "Argentite", "Azurite",     "Beryl",	"Bloodstone",
-    "Calcite",    "Carnelian", "Coral",       "Corundum",     "Cryolite",
-    "Diamond",    "Diorite",   "Emerald",     "Flint",	"Fluorite",
-    "Gabbro",     "Garnet",    "Granite",     "Gypsum",       "Hematite",
-    "Jade",       "Jasper",    "Kryptonite",  "Lapus lazuli", "Limestone",
-    "Malachite",  "Manganite", "Marble",      "Mica",	 "Moonstone",
-    "Neptunite",  "Obsidian",  "Onyx",	"Opal",	 "Pearl",
-    "Pyrite",     "Quartz",    "Quartzite",   "Rhodonite",    "Rhyolite",
-    "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
-    "Topaz",      "Turquoise", "Zircon"};
+    "Amber",	  "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
+    "Aquamarine", "Argentite", "Azurite",     "Beryl",	      "Bloodstone",
+    "Calcite",	  "Carnelian", "Coral",	      "Corundum",     "Cryolite",
+    "Diamond",	  "Diorite",   "Emerald",     "Flint",	      "Fluorite",
+    "Gabbro",	  "Garnet",    "Granite",     "Gypsum",	      "Hematite",
+    "Jade",	  "Jasper",    "Kryptonite",  "Lapus lazuli", "Limestone",
+    "Malachite",  "Manganite", "Marble",      "Mica",	      "Moonstone",
+    "Neptunite",  "Obsidian",  "Onyx",	      "Opal",	      "Pearl",
+    "Pyrite",	  "Quartz",    "Quartzite",   "Rhodonite",    "Rhyolite",
+    "Ruby",	  "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
+    "Topaz",	  "Turquoise", "Zircon"};
 static char const *amulets[MAX_AMULETS] = {
-    "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
-    "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
-    "Rosewood",  "Walnut",   "Aluminium", "Bone",      "Brass",    "Bronze",
-    "Copper",    "Iron",     "Lead",      "Nickel",    "Agate",    "Amethyst",
-    "Diamond",   "Emerald",  "Flint",     "Garnet",    "Jade",     "Obsidian",
-    "Onyx",      "Opal",     "Pearl",     "Quartz",    "Ruby",     "Sapphire",
+    "Birch",	 "Cedar",    "Dogwood",	  "Driftwood", "Elm wood", "Hemlock",
+    "Hickory",	 "Mahogany", "Maple",	  "Oak",       "Pine",	   "Redwood",
+    "Rosewood",	 "Walnut",   "Aluminium", "Bone",      "Brass",	   "Bronze",
+    "Copper",	 "Iron",     "Lead",	  "Nickel",    "Agate",	   "Amethyst",
+    "Diamond",	 "Emerald",  "Flint",	  "Garnet",    "Jade",	   "Obsidian",
+    "Onyx",	 "Opal",     "Pearl",	  "Quartz",    "Ruby",	   "Sapphire",
     "Tiger eye", "Topaz",    "Turquoise"};
-static char const *cloths[MAX_CLOTHS] = {"Burlap",     "Cotton",     "Wool",
-    "Sack-cloth", "Rabbit-fur", "Lizard-skin",
-    "Goat-skin"};
+static char const *cloths[MAX_CLOTHS] = {
+    "Burlap",	  "Cotton",	 "Wool",     "Sack-cloth",
+    "Rabbit-fur", "Lizard-skin", "Goat-skin"};
 static char const *syllables[MAX_SYLLABLES] = {
     "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",
     "arze", "ash",  "aus",  "ban",  "bar",  "bat",  "bek",  "bie",  "bin",
@@ -243,7 +316,7 @@ void magic_init(__attribute__((unused)) unsigned long random_seed)
 		default:
 			break;
 		} /* end switch */
-	}	 /* end for */
+	}	  /* end for */
 
 #if DO_DEBUG && 0
 	for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {

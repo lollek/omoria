@@ -6,27 +6,76 @@
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
 static long t_level[MAX_OBJ_LEVEL + 1];
-static long tcptr;	    /* { Cur treasure heap ptr} */
-static long mfptr;	/* { Cur free monster ptr	} */
-static treasure_type up_stair = {
-    "an up staircase", up_staircase, 0x00000000, 0x00000000, 0, 0,     1,
-    0,		       0,	    0,   0,	  0,	  0, "1d1", 0, 0};
-static treasure_type down_stair = {
-    "a down staircase", down_staircase, 0x00000000, 0x00000000, 0,
-    0,			1,		0,     0,	  0,	  0,
-    0,			0,		"1d1", 0, 0};
-static treasure_type up_steep = {
-    "a steep staircase", up_steep_staircase, 0x00000000, 0x00000000, 0,
-    0,			 1,		     0,     0,		0,	  0,
-    0,			 0,		     "1d1", 0, 0};
-static treasure_type down_steep = {
-    "a steep staircase", down_steep_staircase, 0x00000000, 0x00000000, 0,
-    0,			 1,		       0,     0,	  0,	  0,
-    0,			 0,		       "1d1", 0, 0};
+static long tcptr; /* { Cur treasure heap ptr} */
+static long mfptr; /* { Cur free monster ptr	} */
+static treasure_type up_stair = {"an up staircase",
+				 up_staircase,
+				 0x00000000,
+				 0x00000000,
+				 0,
+				 0,
+				 1,
+				 0,
+				 0,
+				 0,
+				 0,
+				 0,
+				 0,
+				 "1d1",
+				 0,
+				 0};
+static treasure_type down_stair = {"a down staircase",
+				   down_staircase,
+				   0x00000000,
+				   0x00000000,
+				   0,
+				   0,
+				   1,
+				   0,
+				   0,
+				   0,
+				   0,
+				   0,
+				   0,
+				   "1d1",
+				   0,
+				   0};
+static treasure_type up_steep = {"a steep staircase",
+				 up_steep_staircase,
+				 0x00000000,
+				 0x00000000,
+				 0,
+				 0,
+				 1,
+				 0,
+				 0,
+				 0,
+				 0,
+				 0,
+				 0,
+				 "1d1",
+				 0,
+				 0};
+static treasure_type down_steep = {"a steep staircase",
+				   down_steep_staircase,
+				   0x00000000,
+				   0x00000000,
+				   0,
+				   0,
+				   1,
+				   0,
+				   0,
+				   0,
+				   0,
+				   0,
+				   0,
+				   "1d1",
+				   0,
+				   0};
 static monster_type blank_monster = /* { Blank monster values	} */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false};
 
-static const long obj_great = 30; //  1/n Chance of item being a Great Item 
+static const long obj_great = 30; //  1/n Chance of item being a Great Item
 
 /* Print list of spells     -RAK- */
 static void print_new_spells(spl_type spell, long num, boolean *redraw)
@@ -88,7 +137,8 @@ static boolean learn_spell(boolean *redraw)
 			if (C_player_knows_spell(spell_index))
 				continue;
 
-			spells_to_choose_from[spell_counter++].splnum = spell_index;
+			spells_to_choose_from[spell_counter++].splnum =
+			    spell_index;
 
 		} while (flag1 != 0 || flag2 != 0);
 
@@ -96,8 +146,8 @@ static boolean learn_spell(boolean *redraw)
 			break; /* No spells to learn */
 
 		print_new_spells(spells_to_choose_from, spell_counter, redraw);
-		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
-					"Learn which spell?", redraw)) {
+		if (get_spell(spells_to_choose_from, spell_counter, &selected,
+			      &trash, "Learn which spell?", redraw)) {
 			C_player_set_knows_spell(selected, true);
 			return_value = true;
 			if (player_mana == 0) {
@@ -119,7 +169,8 @@ static boolean learn_spell(boolean *redraw)
 static boolean learn_prayer()
 {
 
-	unsigned long new_spells_to_learn = num_new_spells(C_player_mod_from_stat(WIS));
+	unsigned long new_spells_to_learn =
+	    num_new_spells(C_player_mod_from_stat(WIS));
 	boolean return_value = false;
 
 	ENTER(("learn_prayer", ""));
@@ -318,8 +369,8 @@ static boolean learn_druid(boolean *redraw)
 		long selected;
 		long trash;
 		print_new_spells(spells_to_choose_from, spell_counter, redraw);
-		if (get_spell(spells_to_choose_from, spell_counter, &selected, &trash,
-					"Learn which spell?", redraw)) {
+		if (get_spell(spells_to_choose_from, spell_counter, &selected,
+			      &trash, "Learn which spell?", redraw)) {
 			int j;
 			C_player_set_knows_spell(selected, true);
 			return_value = true;
@@ -329,12 +380,14 @@ static boolean learn_druid(boolean *redraw)
 			}
 			/* Remove selected value from list */
 			for (j = 0; j < spell_counter; ++j) {
-				if (spells_to_choose_from[j].splnum == selected) {
+				if (spells_to_choose_from[j].splnum ==
+				    selected) {
 					break;
 				}
 			}
-			for (;j < spell_counter; ++j) {
-				spells_to_choose_from[j].splnum = spells_to_choose_from[j+1].splnum;
+			for (; j < spell_counter; ++j) {
+				spells_to_choose_from[j].splnum =
+				    spells_to_choose_from[j + 1].splnum;
 			}
 			spell_counter--;
 		}
@@ -390,7 +443,7 @@ void sort_objects()
 				}
 				i2 = i2 - gap;
 			} /* end while i2 */
-		}	 /* end for i1 */
+		}	  /* end for i1 */
 		gap = gap / 2;
 	} /* end while gap */
 
@@ -499,7 +552,7 @@ boolean check_time()
 	boolean return_value = false;
 
 	/*{ Returns the day number; 1=Sunday...7=Saturday         -RAK-   }*/
-	/*{ Returns the hour number; 0=midnight...23=11 player_       -RAK-   }*/
+	/*{ Returns the hour number; 0=midnight...23=11 player_       -RAK- }*/
 
 	cur_time = time(NULL);
 	now = *localtime(&cur_time);
@@ -659,7 +712,7 @@ chtype loc_symbol(long y, long x)
 				sym = C_item_get_tchar(&t_list[tptr]);
 			}
 
-		/* 0, 3, 8 and 9 were here too */
+			/* 0, 3, 8 and 9 were here too */
 		} else if (is_in(fval, earth_set)) {
 			sym = '.';
 		} else if (is_in(fval, pwall_set)) {
@@ -717,11 +770,11 @@ void add_days(game_time_type *ti, long d)
 	unsigned char mos;
 
 	yrs = (int)(d / 364); /* how many years you get from 'd' days */
-	d -= 364 * yrs;       /* d = however many days are left over... */
+	d -= 364 * yrs;	      /* d = however many days are left over... */
 	mos =
 	    (int)(d / 28); /* how many months you get from the remaining days */
-	d -= 28 * mos;     /* d = however many days are left over... */
-	ti->day += d;      /* add the remaining days, months, and years */
+	d -= 28 * mos;	   /* d = however many days are left over... */
+	ti->day += d;	   /* add the remaining days, months, and years */
 	ti->month += mos;
 	ti->year += yrs;
 	if (ti->day > 28) {
@@ -741,7 +794,7 @@ void am__add_munny(long *amount, long *to_bank, long wl, long type_num)
 
 	coin_num = player_money[type_num];
 	trans = *amount / coin_value[type_num];
-	w_max = (wl * 100 - inven_weight)/ COIN_WEIGHT;
+	w_max = (wl * 100 - inven_weight) / COIN_WEIGHT;
 	if (w_max < -coin_num) {
 		w_max = -coin_num;
 	}
@@ -784,7 +837,7 @@ void add_money(long amount)
 		msg_print(out_val);
 		if (get_yes_no("Do you wish to send a page to the bank with "
 			       "the excess money?")) {
-			i1 = (((95 * to_bank)/ 100)/ GOLD_VALUE);
+			i1 = (((95 * to_bank) / 100) / GOLD_VALUE);
 			if (i1 < 5) {
 				msg_print("The page cannot be moved by such "
 					  "paltry sums of gold.");
@@ -801,12 +854,13 @@ void add_money(long amount)
 					    ((bank[MITHRIL] *
 						  coin_value[MITHRIL] +
 					      bank[PLATINUM] *
-						  coin_value[PLATINUM])
-					     / GOLD_VALUE +
+						  coin_value[PLATINUM]) /
+						 GOLD_VALUE +
 					     bank[GOLD]);
-					sprintf(out_val, "The page deposits "
-							 "%ld gold at the bank "
-							 "for you.",
+					sprintf(out_val,
+						"The page deposits "
+						"%ld gold at the bank "
+						"for you.",
 						i1);
 					msg_print(out_val);
 				}
@@ -845,7 +899,7 @@ boolean sm__sub_munny(long *amt, long *wt, long type_num)
 	boolean return_value;
 
 	coin_num = player_money[type_num];
-	trans = (*amt + coin_value[type_num] - 1)/ coin_value[type_num];
+	trans = (*amt + coin_value[type_num] - 1) / coin_value[type_num];
 	if (coin_num < trans) {
 		trans = coin_num;
 	}
@@ -880,11 +934,23 @@ void subtract_money(long amount, boolean make_change)
 	}
 }
 
-long bard_adj() { return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(DEX) + 1) / 2; }
+long bard_adj()
+{
+	return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(DEX) + 1) /
+	       2;
+}
 
-long druid_adj() { return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(WIS) + 1) / 2; }
+long druid_adj()
+{
+	return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(WIS) + 1) /
+	       2;
+}
 
-long monk_adj() { return (C_player_mod_from_stat(INT) + C_player_mod_from_stat(WIS) + 1) / 2; }
+long monk_adj()
+{
+	return (C_player_mod_from_stat(INT) + C_player_mod_from_stat(WIS) + 1) /
+	       2;
+}
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -994,9 +1060,8 @@ void spell_chance(spl_rec *spell)
 	/*	with magic_spell[player_pclass,spell.splnum] do*/
 	/*	  with spell do                                 */
 
-	spell->splchn =
-	    C_magic_spell_failchance(spell->splnum) -
-	    3 * (player_lev - C_magic_spell_level(spell->splnum));
+	spell->splchn = C_magic_spell_failchance(spell->splnum) -
+			3 * (player_lev - C_magic_spell_level(spell->splnum));
 
 	if (C_player_uses_magic(M_ARCANE)) {
 		spell->splchn -= 3 * (C_player_mod_from_stat(INT) - 1);
@@ -1263,7 +1328,8 @@ void gain_level()
 }
 
 void C_gain_mana(int16_t amount);
-void learn_magic(boolean redraw_now) {
+void learn_magic(boolean redraw_now)
+{
 	const boolean player_is_at_even_level = (player_lev & 1) == 0;
 	long adj_from_stats = 0;
 	int16_t mana_increase = 0;
@@ -1293,11 +1359,24 @@ void learn_magic(boolean redraw_now) {
 	if (player_is_at_even_level)
 		adj_from_stats += 1;
 	switch (adj_from_stats) {
-		case 1: case 2: case 3: mana_increase = 1; break;
-		case 4: case 5: mana_increase = 2; break;
-		case 6: mana_increase = 3; break;
-		case 7: case 8: mana_increase = 4; break;
-		default: break;
+	case 1:
+	case 2:
+	case 3:
+		mana_increase = 1;
+		break;
+	case 4:
+	case 5:
+		mana_increase = 2;
+		break;
+	case 6:
+		mana_increase = 3;
+		break;
+	case 7:
+	case 8:
+		mana_increase = 4;
+		break;
+	default:
+		break;
 	}
 
 	C_gain_mana(mana_increase);
@@ -1383,8 +1462,8 @@ void report_mlist_error(const char *err_msg, int error_node, int prev_node)
 
 void validate_monsters()
 {
-	boolean used_list[MAX_MALLOC + 1] = { false };
-	boolean free_list[MAX_MALLOC + 1] = { false };
+	boolean used_list[MAX_MALLOC + 1] = {false};
+	boolean free_list[MAX_MALLOC + 1] = {false};
 
 	boolean busted = false;
 	int i1;
@@ -1465,7 +1544,8 @@ void compact_monsters()
 					} else {
 						m_list[prev_i].nptr = next_i;
 					}
-					cave[m_list[i].fy][m_list[i].fx].cptr = 0;
+					cave[m_list[i].fy][m_list[i].fx].cptr =
+					    0;
 					m_list[i] = blank_monster;
 					m_list[i].nptr = mfptr;
 					mfptr = i;
@@ -1588,8 +1668,8 @@ void compact_objects()
 								   .tptr] =
 							    blank_treasure;
 							t_list[cave[i1][i2]
-								   .tptr].p1 =
-							    tcptr;
+								   .tptr]
+							    .p1 = tcptr;
 							tcptr =
 							    cave[i1][i2].tptr;
 							cave[i1][i2].tptr = 0;
@@ -1796,7 +1876,7 @@ void place_gold(long y, long x)
 	long cur_pos, i1;
 
 	popt(&cur_pos);
-	i1 = (2 + randint(dun_level + 4) + randint(dun_level + 4))/ 4;
+	i1 = (2 + randint(dun_level + 4) + randint(dun_level + 4)) / 4;
 	if (randint(obj_great) == 1) {
 		i1 += randint(dun_level);
 	}
@@ -2465,7 +2545,8 @@ boolean player_saves(long adjust)
 boolean player_spell_saves()
 {
 	boolean return_value;
-	return_value = player_saves(player_lev + 5 * C_player_mod_from_stat(WIS));
+	return_value =
+	    player_saves(player_lev + 5 * C_player_mod_from_stat(WIS));
 	return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -2752,7 +2833,8 @@ long attack_blows(long weight, long *wtohit)
 
 	const long max_wield = C_player_max_bulk() / 10;
 	const int dex_mod = C_player_mod_from_stat(DEX);
-	const int approx_str_stat = (10 + (C_player_mod_from_stat(STR) * 2)) * 10;
+	const int approx_str_stat =
+	    (10 + (C_player_mod_from_stat(STR) * 2)) * 10;
 
 	long adj_weight;
 	long blows = 1;
@@ -2770,18 +2852,16 @@ long attack_blows(long weight, long *wtohit)
 	blows = min(12, blows);
 	blows = max(3, blows);
 
-	lev_skill =
-		C_class_melee_bonus(player_pclass) * (player_lev + 10);
+	lev_skill = C_class_melee_bonus(player_pclass) * (player_lev + 10);
 
 	/*{warriors 100-500, paladin 80-400, priest 60-300, mage
 	 * 40-200}*/
-	blows =
-		trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
+	blows = trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
 
 	/*{usually 3 for 18+ dex, 5 max except 6 for high level
 	 * warriors}*/
 	adj_weight =
-		(long)((float)approx_str_stat / (float)(weight / 100) * 2.5);
+	    (long)((float)approx_str_stat / (float)(weight / 100) * 2.5);
 
 	if (adj_weight < 1) {
 		blows = 1;
@@ -2797,7 +2877,7 @@ long attack_blows(long weight, long *wtohit)
 		blows = (blows / 1.50);
 	}
 
-return blows;
+	return blows;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -2823,12 +2903,14 @@ long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired)
 	} else {
 		py_crit = C_class_melee_bonus(player_pclass);
 
-		if (player_pclass == C_MONK) { /*{ monks are crit specialists }*/
+		if (player_pclass ==
+		    C_MONK) { /*{ monks are crit specialists }*/
 			py_crit *= 2;
 		}
 	}
 
-	if (randint(5000) <= (weight + 6 * plus + py_crit * (player_lev + 10))) {
+	if (randint(5000) <=
+	    (weight + 6 * plus + py_crit * (player_lev + 10))) {
 		randomthing = randint(300 + randint(weight));
 		if (randomthing <= 150) {
 			return_value = 1;
@@ -2866,7 +2948,8 @@ void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence)
 	i2 = m_list[ptr].mptr;
 
 	/*{ Does the player know what he's fighting?      }*/
-	if (((uand(0x10000, c_list[i2].cmove) != 0) && (!(player_flags.see_inv))) ||
+	if (((uand(0x10000, c_list[i2].cmove) != 0) &&
+	     (!(player_flags.see_inv))) ||
 	    (player_flags.blind > 0) || (!(m_list[ptr].ml))) {
 		if (begin_sentence) {
 			strcpy(m_name, "It");

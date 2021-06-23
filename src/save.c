@@ -1,8 +1,8 @@
 /* save.c */
 /* code for saving and loading characters */
 
-#include <unistd.h> /* unlink */
 #include <string.h> /* strncpy */
+#include <unistd.h> /* unlink */
 
 #include "imoria.h"
 #include "save.h"
@@ -14,7 +14,7 @@ boolean save_and_quit(void)
 	if (flag) {
 		char out_rec[1026];
 		sprintf(out_rec, "Character saved. [Moria Version %s]\n",
-				omoria_version());
+			omoria_version());
 		prt(out_rec, 2, 1);
 		exit_game();
 	}
@@ -36,7 +36,8 @@ boolean save_char(void)
 		refresh();
 	}
 
-	if (flag) flag = C_master_update_character(player_uid);
+	if (flag)
+		flag = C_master_update_character(player_uid);
 	flag = C_save_character();
 
 	LEAVE("save_char", "");
@@ -61,7 +62,8 @@ boolean get_char(boolean prop)
 		MSG(("Character does not exist in master!"));
 		paniced = true;
 	}
-	if (!paniced) paniced = !C_load_character();
+	if (!paniced)
+		paniced = !C_load_character();
 
 	if (paniced) {
 		clear_from(1);

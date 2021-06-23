@@ -1,34 +1,75 @@
 /* spells.c */
 /**/
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
-#define OBJ_BOLT_RANGE 18  /*{ Maximum range of bolts and balls	} */
+#define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */
 
 static const treasure_type scare_monster = /* { Special trap	} */
-    {"a strange rune", seen_trap, 0x00000000, 0x00000000, 0, 0,     99,
-     0,		       0,	 0,   0,	  0,	  0, "0d0", -90, 0};
+    {"a strange rune",
+     seen_trap,
+     0x00000000,
+     0x00000000,
+     0,
+     0,
+     99,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     "0d0",
+     -90,
+     0};
 /* used in get_flags, and other places if I needed them */
 static obj_set null_obj_set = {0, 0};
 static obj_set destroyed_by_lightning = {ring, rod, wand, 0};
-static obj_set destroyed_by_acid = {
-    arrow,      bow_crossbow_or_sling, hafted_weapon, pole_arm, gem_helm,
-    boots,      gloves_and_gauntlets,  cloak,	 helm,     shield,
-    hard_armor, soft_armor,	    staff,	 scroll1,  scroll2,
-    Food,       open_door,	     closed_door,   0};
+static obj_set destroyed_by_acid = {arrow,
+				    bow_crossbow_or_sling,
+				    hafted_weapon,
+				    pole_arm,
+				    gem_helm,
+				    boots,
+				    gloves_and_gauntlets,
+				    cloak,
+				    helm,
+				    shield,
+				    hard_armor,
+				    soft_armor,
+				    staff,
+				    scroll1,
+				    scroll2,
+				    Food,
+				    open_door,
+				    closed_door,
+				    0};
 static obj_set destroyed_by_cold = {potion1, potion2, 0};
-static obj_set destroyed_by_fire = {
-    arrow,   bow_crossbow_or_sling, hafted_weapon, pole_arm,
-    boots,   gloves_and_gauntlets,  cloak,	 soft_armor,
-    staff,   scroll1,		    scroll2,       potion1,
-    potion2, Food,		    open_door,     closed_door,
-    0};
-static obj_set destroyed_by_petrify = {boots, soft_armor, potion1, potion2, Food, 0};
-static obj_set destroyed_by_sunray = {cloak, scroll1, scroll2, potion1, potion2, 0};
+static obj_set destroyed_by_fire = {arrow,
+				    bow_crossbow_or_sling,
+				    hafted_weapon,
+				    pole_arm,
+				    boots,
+				    gloves_and_gauntlets,
+				    cloak,
+				    soft_armor,
+				    staff,
+				    scroll1,
+				    scroll2,
+				    potion1,
+				    potion2,
+				    Food,
+				    open_door,
+				    closed_door,
+				    0};
+static obj_set destroyed_by_petrify = {boots,	soft_armor, potion1,
+				       potion2, Food,	    0};
+static obj_set destroyed_by_sunray = {cloak,   scroll1, scroll2,
+				      potion1, potion2, 0};
 
-
-static void get_flags(enum spell_effect_t typ, long *weapon_type, long *harm_type, obj_set **destroy)
+static void get_flags(enum spell_effect_t typ, long *weapon_type,
+		      long *harm_type, obj_set **destroy)
 {
 	/*{ Return flags for given type area affect               -RAK-   }*/
 
@@ -323,7 +364,8 @@ boolean aggravate_monster(long dis_affect)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char *descrip)
+boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
+		const char *descrip)
 {
 	long i1;
 	long i2;
@@ -336,7 +378,6 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char
 	obj_set *destroy;
 	char out_val[82];
 	boolean return_value = true;
-
 
 	get_flags(typ, &weapon_type, &harm_type, &destroy);
 
@@ -416,14 +457,15 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char
 								    0) {
 									dam *=
 									    2;
-								} else if ((weapon_type &
-									    c_list
-										[m_list
-										     [cave[i1][i2]
-											  .cptr]
-											 .mptr]
-										    .spells) !=
-									   0) {
+								} else if (
+								    (weapon_type &
+								     c_list
+									 [m_list
+									      [cave[i1][i2]
+										   .cptr]
+										  .mptr]
+									     .spells) !=
+								    0) {
 									dam /=
 									    4;
 								}
@@ -439,8 +481,8 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char
 
 								if ((dam > 0) &&
 								    (!mon_resists(
-									 cave[i1][i2]
-									     .cptr))) {
+									cave[i1][i2]
+									    .cptr))) {
 									thit++;
 									if (mon_take_hit(
 										cave[i1][i2]
@@ -475,7 +517,7 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp, const char
 				}
 			}
 		} /* end for */
-	}	 /* end for */
+	}	  /* end for */
 
 	for (i1 = y - max_dis; i1 <= y + max_dis; i1++) {
 		for (i2 = x - max_dis; i2 <= x + max_dis; i2++) {
@@ -720,7 +762,8 @@ boolean teleport_to(long ny, long nx)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp, char ddesc[82])
+boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
+	       char ddesc[82])
 {
 	/*{ Breath weapon works like a fire_ball, but affects the player. }*/
 	/*{ Note the area affect....                              -RAK-   }*/
@@ -765,32 +808,34 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp, char ddesc[
 				 */
 				/* do; */
 				dam = dam_hp;
-				if (uand(harm_type, c_list[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
+				if (uand(harm_type,
+					 c_list[m_list[cave[i1][i2].cptr].mptr]
+					     .cdefense) != 0) {
 					dam *= 2;
-				} else if (uand(weapon_type, c_list[m_list[cave[i1][i2].cptr].mptr].spells) != 0) {
+				} else if (uand(weapon_type,
+						c_list[m_list[cave[i1][i2].cptr]
+							   .mptr]
+						    .spells) != 0) {
 					dam = trunc(dam / 4.0);
 				}
-				dam = (long)(dam / (distance(i1, i2, y, x) + 1));
+				dam =
+				    (long)(dam / (distance(i1, i2, y, x) + 1));
 				if (!mon_resists(cave[i1][i2].cptr)) {
 					m_list[cave[i1][i2].cptr].hp -= dam;
 				}
 				m_list[cave[i1][i2].cptr].csleep = 0;
 				if (m_list[cave[i1][i2].cptr].hp < 0) {
 					monster_death(
-					    m_list[cave[i1][i2].cptr]
-						.fy,
-					    m_list[cave[i1][i2].cptr]
-						.fx,
-					    c_list[m_list[cave[i1][i2]
-							      .cptr]
-						       .mptr].cmove);
-					delete_monster(
-					    cave[i1][i2].cptr);
+					    m_list[cave[i1][i2].cptr].fy,
+					    m_list[cave[i1][i2].cptr].fx,
+					    c_list[m_list[cave[i1][i2].cptr]
+						       .mptr]
+						.cmove);
+					delete_monster(cave[i1][i2].cptr);
 				}
 			} else if (cave[i1][i2].cptr == 1) {
-				dam =
-				    trunc(dam_hp /
-					  (distance(i1, i2, y, x) + 1));
+				dam = trunc(dam_hp /
+					    (distance(i1, i2, y, x) + 1));
 				switch (typ) {
 				case c_lightning:
 					light_dam(dam, ddesc);
@@ -864,7 +909,8 @@ void lose_exp(long amount)
 		player_exp -= amount;
 	}
 
-	for (i1 = 1; trunc(exp_per_level[i1] * player_expfact) <= player_exp; i1++) {
+	for (i1 = 1; trunc(exp_per_level[i1] * player_expfact) <= player_exp;
+	     i1++) {
 	}
 
 	for (i2 = player_lev - i1; i2 > 0;) {
@@ -1506,14 +1552,16 @@ boolean sleep_monsters1(long y, long x)
 						    "The %s is unaffected.",
 						    c_list[m_list[cave[i1][i2]
 								      .cptr]
-							       .mptr].name);
+							       .mptr]
+							.name);
 					} else {
 						sprintf(
 						    out_val,
 						    "The %s falls asleep.",
 						    c_list[m_list[cave[i1][i2]
 								      .cptr]
-							       .mptr].name);
+							       .mptr]
+							.name);
 						m_list[cave[i1][i2].cptr]
 						    .csleep = 500;
 					}
@@ -1587,7 +1635,7 @@ boolean td_destroy()
 	/*{ Destroys any adjacent door(s)/trap(s)                 -RAK-   }*/
 
 	long i1, i2;
-	obj_set pick_a_door = {unseen_trap, seen_trap,   open_door,
+	obj_set pick_a_door = {unseen_trap, seen_trap,	 open_door,
 			       closed_door, secret_door, 0};
 
 	boolean flag = false;
@@ -1652,7 +1700,7 @@ boolean recharge(long num)
 	/* that */
 	/* uses charges.  2/15/00 JEB */
 	obj_set batteries_not_included = {valuable_gems, staff, rod, wand,
-					  chime,	 horn,  0};
+					  chime,	 horn,	0};
 	boolean return_value = false;
 
 	change_all_ok_stats(true, true);
@@ -1831,12 +1879,13 @@ boolean create_food(long t0, long t1, long t2, long t3, long t4)
 					place_object(i1, i2);
 					if (this_one < 0) { /*{junk food.}*/
 						i3 = store_choice
-						    [10][(STORE_CHOICES *
-							      (-this_one) +
-							  randint(
-							      STORE_CHOICES) +
-							  3)/ 5 -
-							 1];
+						    [10]
+						    [(STORE_CHOICES *
+							  (-this_one) +
+						      randint(STORE_CHOICES) +
+						      3) /
+							 5 -
+						     1];
 						t_list[cave[i1][i2].tptr] =
 						    inventory_init[i3];
 					} else { /*{good food}*/
@@ -1925,8 +1974,7 @@ void za__yes_it_did(long monptr, long dmge, long typ)
 		m_list[monptr].csleep = 0;
 		break;
 
-	case c_hold:
-		; /*{done in do_stun in did_it_work already}*/
+	case c_hold:; /*{done in do_stun in did_it_work already}*/
 		break;
 
 	case c_thunder:
@@ -2124,7 +2172,7 @@ boolean earthquake()
 						}
 						if ((cave[i1][i2].cptr > 1) &&
 						    (!mon_resists(
-							 cave[i1][i2].cptr))) {
+							cave[i1][i2].cptr))) {
 							mon_take_hit(
 							    cave[i1][i2].cptr,
 							    damroll("2d8"));
@@ -2301,7 +2349,8 @@ boolean light_line(long dir, long y, long x, long power)
 						    "The %s wails out in pain!",
 						    c_list
 							[m_list[cave[y][x].cptr]
-							     .mptr].name);
+							     .mptr]
+							    .name);
 
 						msg_print(out_val);
 
@@ -2409,7 +2458,8 @@ boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2)
 	return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_bolt(long typ, long dir, long y, long x, long dam, char bolt_typ[28])
+boolean fire_bolt(long typ, long dir, long y, long x, long dam,
+		  char bolt_typ[28])
 {
 	/*{ Shoot a bolt in a given direction                     -RAK-   }*/
 
@@ -2438,15 +2488,20 @@ boolean fire_bolt(long typ, long dir, long y, long x, long dam, char bolt_typ[28
 
 				find_monster_name(str, cptr, false);
 				find_monster_name(str2, cptr, true);
-				sprintf(out_val, "The %s strikes %s.", bolt_typ, str);
+				sprintf(out_val, "The %s strikes %s.", bolt_typ,
+					str);
 				msg_print(out_val);
-				if (uand(harm_type, c_list[mptr].cdefense) != 0) {
+				if (uand(harm_type, c_list[mptr].cdefense) !=
+				    0) {
 					dam *= 2;
-				} else if (uand(weapon_type, c_list[mptr].spells) != 0) {
+				} else if (uand(weapon_type,
+						c_list[mptr].spells) != 0) {
 					dam /= 4;
 				}
 				if (mon_take_hit(cptr, dam) > 0) {
-					sprintf(out_val, "%s dies in a fit of agony.", str2);
+					sprintf(out_val,
+						"%s dies in a fit of agony.",
+						str2);
 					msg_print(out_val);
 				} else {
 					if (panel_contains(y, x)) {
@@ -2514,9 +2569,14 @@ boolean wall_to_mud(long dir, long y, long x)
 				flag = true;
 				if (panel_contains(y, x)) {
 					if (test_light(y, x)) {
-						inven_temp->data = t_list[cave[y][x].tptr];
-						objdes(out_val, inven_temp, false);
-						sprintf(out_val2, "The %s turns into mud.", out_val);
+						inven_temp->data =
+						    t_list[cave[y][x].tptr];
+						objdes(out_val, inven_temp,
+						       false);
+						sprintf(
+						    out_val2,
+						    "The %s turns into mud.",
+						    out_val);
 						msg_print(out_val2);
 						return_value = true;
 					}
@@ -2565,7 +2625,7 @@ boolean td_destroy2(long dir, long y, long x)
 {
 	/*{ Destroy all traps and doors in a given direction      -RAK-   }*/
 
-	obj_set thump_stuff = {chest,       unseen_trap, seen_trap,
+	obj_set thump_stuff = {chest,	    unseen_trap, seen_trap,
 			       closed_door, secret_door, 0};
 	boolean flag = false;
 

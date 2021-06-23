@@ -1,8 +1,8 @@
 /* blow.c */
 /* chimes, horns, gems, and other stuff */
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 static void b__chime_and_horn_effects(long effect, boolean *idented)
 {
@@ -101,7 +101,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 		ident = unlight_area(char_row, char_col);
 		break;
 
-	/*{ Horns...						      }*/
+		/*{ Horns... }*/
 
 	case 17: /*{ Horn of Bubbles }*/
 		msg_print("Bubbles stream forth and surround you!");
@@ -356,7 +356,8 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 		/* with player_do; */
 		loss = 0;
 		for (i3 = 1; i3 <= 6; i3++) {
-			loss += (player_money[i3] - player_money[i3] / 2) * COIN_WEIGHT;
+			loss += (player_money[i3] - player_money[i3] / 2) *
+				COIN_WEIGHT;
 			player_money[i3] /= 2;
 		}
 		inven_weight -= loss;
@@ -497,8 +498,8 @@ void blow()
 				/* with player_do; */
 				chance = player_save + player_lev + bard_adj() -
 					 item_ptr->data.level - 5;
-				if (((player_flags.confused + player_flags.afraid) >
-				     0) &&
+				if (((player_flags.confused +
+				      player_flags.afraid) > 0) &&
 				    ((item_ptr->data.tval == chime) ||
 				     (item_ptr->data.tval == horn))) {
 					msg_print("you can not use the "
@@ -535,8 +536,8 @@ void blow()
 						}
 
 						if (ident) {
-							identify(&(inven_temp
-								       ->data));
+							identify(&(
+							    inven_temp->data));
 						}
 						if (inven_temp->data.flags !=
 						    0) {
@@ -544,7 +545,8 @@ void blow()
 							C_player_add_exp(
 							    (item_ptr->data
 								 .level /
-							     (float)player_lev) +
+							     (float)
+								 player_lev) +
 							    .5);
 							prt_stat_block();
 						}

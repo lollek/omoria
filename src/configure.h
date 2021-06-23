@@ -24,13 +24,13 @@
  * WARNING:  Be sure to copy monsters.dat to this directory!  The game
  *          will attempt to create the other files the first time that
  *          it is run.
-*/
+ */
 #define DATA_FILE_PATH "data"
 
 /*
  * Keep this one under 160 characters, it points to the help program...
  * You may have to edit mhelp.pl to set the path to perl.
-*/
+ */
 #define HELP_FILE_PATH DATA_FILE_PATH "/mhelp.pl"
 
 /*
@@ -44,7 +44,7 @@
  *
  * This is only used in put_buffer_attr (term.c).  If you get it working
  * with a curses that it does not currently work with please let me know!
-*/
+ */
 #define USE_CURSES_ATTRS 1
 
 /* END FILE  configure.h */

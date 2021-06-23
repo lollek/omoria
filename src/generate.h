@@ -1,22 +1,19 @@
 #ifndef GENERATE_H
 #define GENERATE_H
-typedef struct coords
-{
+typedef struct coords {
 	long y;
 	long x;
 } coords;
 
-typedef struct river_deal
-{
+typedef struct river_deal {
 	long in1, in2, out; /*{ (keypad) directions; in is upstream }*/
-	long flow;	  /*{ water flow out of this river spot }*/
-	long pos;	   /*{ in array of s_l_type; if > num_left then }*/
+	long flow;	    /*{ water flow out of this river spot }*/
+	long pos;	    /*{ in array of s_l_type; if > num_left then }*/
 			    /*{ spot is no longer available }*/
 } river_deal;
 
-typedef struct s_l_type
-{
-	coords loc;	/*{ cross-ref back to river_deal }*/
+typedef struct s_l_type {
+	coords loc;	   /*{ cross-ref back to river_deal }*/
 	boolean is_active; /*{ is still an unresolved river source}*/
 } s_l_type;
 
@@ -25,8 +22,7 @@ typedef struct s_l_type
 #define RIVER_TOTAL_SIZE 310
 #define RIVER_SEGMENT_SIZE 6
 
-typedef struct river_args
-{
+typedef struct river_args {
 	river_deal gup[RIVER_SIZE_Y + 1][RIVER_SIZE_X + 1];
 	/*: array [1..RIVER_SIZE_Y] of array [1..RIVER_SIZE_X] of river_deal;*/
 

@@ -192,15 +192,15 @@ Constant.h should always be included after config.h,
 /* atari-st compiled with gnu-c  */
 
 #define MORIA_SAV "moria.save"
-#define MORIA_HOU (char *) prefix_file("files/hours")
-#define MORIA_MOR (char *) prefix_file("files/news")
-#define MORIA_TOP (char *) prefix_file("files/scores")
-#define MORIA_HELP (char *) prefix_file("files/roglcmds.hlp")
-#define MORIA_ORIG_HELP (char *) prefix_file("files/origcmds.hlp")
-#define MORIA_WIZ_HELP (char *) prefix_file("files/rwizcmds.hlp")
-#define MORIA_OWIZ_HELP (char *) prefix_file("files/owizcmds.hlp")
-#define MORIA_WELCOME (char *) prefix_file("files/welcome.hlp")
-#define MORIA_VER (char *) prefix_file("files/version.hlp")
+#define MORIA_HOU (char *)prefix_file("files/hours")
+#define MORIA_MOR (char *)prefix_file("files/news")
+#define MORIA_TOP (char *)prefix_file("files/scores")
+#define MORIA_HELP (char *)prefix_file("files/roglcmds.hlp")
+#define MORIA_ORIG_HELP (char *)prefix_file("files/origcmds.hlp")
+#define MORIA_WIZ_HELP (char *)prefix_file("files/rwizcmds.hlp")
+#define MORIA_OWIZ_HELP (char *)prefix_file("files/owizcmds.hlp")
+#define MORIA_WELCOME (char *)prefix_file("files/welcome.hlp")
+#define MORIA_VER (char *)prefix_file("files/version.hlp")
 
 #else
 

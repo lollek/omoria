@@ -1,12 +1,12 @@
 /* casino.c */
 /**/
 
-#include "imoria.h"
 #include "casino.h"
-#include "slots.h"
-#include "horse.h"
 #include "bj.h"
+#include "horse.h"
+#include "imoria.h"
 #include "save.h"
+#include "slots.h"
 
 long bet;
 long gld;

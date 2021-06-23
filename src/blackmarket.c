@@ -1,8 +1,8 @@
 /* blackmarket.c */
 /**/
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 static void bm__add_tohit(long a, long b, long c, long i, long *r)
 {

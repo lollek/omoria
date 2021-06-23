@@ -1,8 +1,8 @@
 /* wands.c */
 /**/
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -214,7 +214,8 @@ void aim_wand()
 							C_player_add_exp(
 							    (item_ptr->data
 								 .level /
-							     (float)player_lev) +
+							     (float)
+								 player_lev) +
 							    .5);
 							prt_stat_block();
 						}
@@ -222,7 +223,7 @@ void aim_wand()
 						desc_charges(item_ptr);
 
 					} /* end if have charges */
-				}	 /* end if get_dir */
+				}	  /* end if get_dir */
 			}		  /* end if get_item */
 
 		} else {

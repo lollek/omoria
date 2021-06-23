@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 		       treas_ptr item_ptr)
@@ -303,15 +303,15 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 			flag = false;
 			randy = randint(2);
 			for (i3 = 0; i3 < randy; i3++) {
-				if (enchant(&(equipment[Equipment_primary]
-						  .tohit))) {
+				if (enchant(&(
+					equipment[Equipment_primary].tohit))) {
 					flag = true;
 				}
 			}
 			randy = randint(2);
 			for (i3 = 0; i3 < randy; i3++) {
-				if (enchant(&(equipment[Equipment_primary]
-						  .todam))) {
+				if (enchant(&(
+					equipment[Equipment_primary].todam))) {
 					flag = true;
 				}
 			}
@@ -451,7 +451,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 			/* with equipment[i3]. do; */
 			inven_temp->data = equipment[i3];
 			objdes(out_val, inven_temp, false);
-			sprintf(out_val2, "Your %s glows black, then fades.", out_val);
+			sprintf(out_val2, "Your %s glows black, then fades.",
+				out_val);
 			msg_print(out_val2);
 			equipment[i3].flags = Cursed_worn_bit;
 			equipment[i3].toac = -randint(5) - randint(5);
@@ -535,44 +536,26 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 		ident = create_food(-1, -2, -3, -4, 0);
 		break;
 
-	/* case 45 moved up to 32 */
+		/* case 45 moved up to 32 */
 
-	case 46:
-		;
-	case 47:
-		;
-	case 48:
-		;
-	case 49:
-		;
-	case 50:
-		;
-	case 51:
-		;
-	case 52:
-		;
-	case 53:
-		;
-	case 54:
-		;
-	case 55:
-		;
-	case 56:
-		;
-	case 57:
-		;
-	case 58:
-		;
-	case 59:
-		;
-	case 60:
-		;
-	case 61:
-		;
-	case 62:
-		;
-	default:
-		;
+	case 46:;
+	case 47:;
+	case 48:;
+	case 49:;
+	case 50:;
+	case 51:;
+	case 52:;
+	case 53:;
+	case 54:;
+	case 55:;
+	case 56:;
+	case 57:;
+	case 58:;
+	case 59:;
+	case 60:;
+	case 61:;
+	case 62:;
+	default:;
 		break;
 	} /* end switch */
 
@@ -683,7 +666,7 @@ void read_scroll()
 									 ->data
 									 .level /
 								     (float)
-								     player_lev) +
+									 player_lev) +
 								    .5);
 								prt_stat_block();
 							}

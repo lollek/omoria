@@ -194,7 +194,8 @@ void encrypt_write(FILE *f1, encrypt_state *state, char line[1026])
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void read_decrypt(FILE *f1, encrypt_state *state, char line[1026], boolean *got_eof)
+void read_decrypt(FILE *f1, encrypt_state *state, char line[1026],
+		  boolean *got_eof)
 {
 	/* this is ment to decrypt ascii, a null in the plaintext marks the
 	   end of the file.  so, you can use it with binary data as long as

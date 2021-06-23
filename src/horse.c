@@ -1,9 +1,9 @@
 /* horse.c */
 /* horse race code for the casino */
 
-#include "imoria.h"
-#include "casino.h"
 #include "horse.h"
+#include "casino.h"
+#include "imoria.h"
 
 void hr__display_commands()
 {
@@ -173,26 +173,62 @@ void hr__get_horse_stats(long *num_horse, h_name horse, h_stat hstat,
 	long i1, i2;
 	boolean horse_not_chosen[MAX_HORSE_NAMES + 1];
 
-	h_name horsename = {
-	    "bogus horse",	"Man 'o War",	"Secretariat",
-	    "Seattle Slew",       "Moksha",	    "Beast Master",
-	    "Prince of Darkness", "Beelzebub",	 "Black Shadow",
-	    "Gargle Blaster",     "George Jetson",     "Covenant",
-	    "Turiya",		  "Neysa",	     "Sure Thing",
-	    "Battle Cruiser",     "Mobie",	     "Arthur Dent",
-	    "Mr. Creosote",       "Shadowfax",	 "Bet Twice",
-	    "I'm a Lumberjack",   "Dr. Science",       "Harry The Horse",
-	    "Tiberius",		  "Hellfire",	  "Mephistopheles",
-	    "Belial",		  "Pluto",	     "Firesweeper",
-	    "Cloudminder",	"Spectacular Bid",   "Noor",
-	    "Affirmed",		  "Citation",	  "Dr. Fagen",
-	    "War Admiral",	"Epitaph",	   "Not A Chance",
-	    "Death Pizza",	"Relay(Cop's)Horse", "Nightmare",
-	    "Excelsior",	  "Paul Revere",       "Myxilplick",
-	    "Mercury",		  "Robohorse",	 "Hellfire",
-	    "Bladerunner",	"Arch Mage",	 "Shadow Runner",
-	    "Golden Hoof",	"Necromancer",       "Heirophant",
-	    "Jehannum",		  "Transwarp"};
+	h_name horsename = {"bogus horse",
+			    "Man 'o War",
+			    "Secretariat",
+			    "Seattle Slew",
+			    "Moksha",
+			    "Beast Master",
+			    "Prince of Darkness",
+			    "Beelzebub",
+			    "Black Shadow",
+			    "Gargle Blaster",
+			    "George Jetson",
+			    "Covenant",
+			    "Turiya",
+			    "Neysa",
+			    "Sure Thing",
+			    "Battle Cruiser",
+			    "Mobie",
+			    "Arthur Dent",
+			    "Mr. Creosote",
+			    "Shadowfax",
+			    "Bet Twice",
+			    "I'm a Lumberjack",
+			    "Dr. Science",
+			    "Harry The Horse",
+			    "Tiberius",
+			    "Hellfire",
+			    "Mephistopheles",
+			    "Belial",
+			    "Pluto",
+			    "Firesweeper",
+			    "Cloudminder",
+			    "Spectacular Bid",
+			    "Noor",
+			    "Affirmed",
+			    "Citation",
+			    "Dr. Fagen",
+			    "War Admiral",
+			    "Epitaph",
+			    "Not A Chance",
+			    "Death Pizza",
+			    "Relay(Cop's)Horse",
+			    "Nightmare",
+			    "Excelsior",
+			    "Paul Revere",
+			    "Myxilplick",
+			    "Mercury",
+			    "Robohorse",
+			    "Hellfire",
+			    "Bladerunner",
+			    "Arch Mage",
+			    "Shadow Runner",
+			    "Golden Hoof",
+			    "Necromancer",
+			    "Heirophant",
+			    "Jehannum",
+			    "Transwarp"};
 
 	h_stat horsestat = {99, 25, 30, 28, 22, 21, 24, 23, 22, 23, 20, 26,
 			    23, 30, 23, 19, 23, 22, 19, 27, 25, 23, 28, 24,
@@ -360,9 +396,8 @@ boolean s__find_plot(long horse, long *row, long *col, h_stat dist,
 	if ((t >= screen_low) && (t <= screen_high)) {
 		return_value = true;
 		if (t <= 730) {
-			*row =
-			    3 +
-			    (horse * (750 - t) + (lane[horse] * t) / 2) / 730;
+			*row = 3 + (horse * (750 - t) + (lane[horse] * t) / 2) /
+				       730;
 		} else if (t > 3770) {
 			*row = 8 + lane[horse];
 		} else if ((t <= 1090) || (t > 3410)) {
@@ -952,8 +987,7 @@ void hr__game_horse()
 
 		/* with player_cur_age do; */
 		if (((player_cur_age.day % 7) >= 2) &&
-		    (player_cur_age.hour >= 6) &&
-		    (player_cur_age.hour < 18)) {
+		    (player_cur_age.hour >= 6) && (player_cur_age.hour < 18)) {
 
 			c_closed = true;
 			exit_flag = true;

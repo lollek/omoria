@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 /**
  * -RAK-
@@ -20,21 +20,21 @@ static boolean pick_dir(long dir)
 		return false;
 
 	switch (dir) {
-		case 1:
-		case 3:
-		case 7:
-		case 9:
-			z[0] = rotate_dir(dir, -1);
-			z[1] = rotate_dir(dir, 1);
-			break;
+	case 1:
+	case 3:
+	case 7:
+	case 9:
+		z[0] = rotate_dir(dir, -1);
+		z[1] = rotate_dir(dir, 1);
+		break;
 
-		case 2:
-		case 4:
-		case 6:
-		case 8:
-			z[0] = rotate_dir(dir, -2);
-			z[1] = rotate_dir(dir, 2);
-			break;
+	case 2:
+	case 4:
+	case 6:
+	case 8:
+		z[0] = rotate_dir(dir, -2);
+		z[1] = rotate_dir(dir, 2);
+		break;
 	}
 
 	for (i = 0; i < 2; i++) {

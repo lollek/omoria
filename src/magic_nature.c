@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void nature_spell_effects(long effect)
 {
@@ -87,7 +87,7 @@ void nature_spell_effects(long effect)
 		}
 		break;
 
-	case 15:					/*{ Magic Res. }*/
+	case 15:					    /*{ Magic Res. }*/
 		player_flags.magic_prot = randint(15) + 10; /* not cumulitive */
 		break;
 

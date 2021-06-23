@@ -40,7 +40,6 @@ static long win_equip_y = 16;
 #define DEPTH_COLUMN 62
 #define LIGHT_ON_COLUMN 62
 
-
 void C_print_equipment_block();
 void prt_equipment(void)
 {
@@ -84,7 +83,7 @@ void draw_cave()
 void prt_map()
 {
 	long y;
-	long panel_y = 1;	 /* Used for erasing dirty lines */
+	long panel_y = 1;	  /* Used for erasing dirty lines */
 	long const panel_x0 = 14; /*{ Erasure starts in this column  }*/
 
 	ENTER(("prt_map", ""));
@@ -92,9 +91,9 @@ void prt_map()
 	redraw = false; /*{ Screen has been redrawn	   }*/
 	for (y = panel_row_min; y <= panel_row_max; y++) {
 		chtype floor_str[82] = {0}; /* string to be printed */
-		long floor_str_len = 0;     /* floor_str length counter */
+		long floor_str_len = 0;	    /* floor_str length counter */
 		long isp = 0;		    /* Number of blanks encountered */
-		boolean flag = false;       /* False until floor_str <> '' */
+		boolean flag = false;	    /* False until floor_str <> '' */
 		long xpos = 0;
 		long x;
 

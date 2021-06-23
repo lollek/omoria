@@ -1,8 +1,8 @@
 /* wizard.c */
 /**/
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 #define LOW_NUM -98765432
 
@@ -115,7 +115,7 @@ boolean check_pswd(char passwd[134], boolean present)
 	if (!(strcmp(tpw, LOW_PASSWORD))) {
 		checked_out = true;
 		wizard1 = true;
-	/* full op password */
+		/* full op password */
 	} else if (!strcmp(tpw, HIGH_PASSWORD)) {
 		checked_out = true;
 		wizard1 = true;
@@ -268,7 +268,7 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
 				}
 			}
 		} /* end else */
-	}	 /* end if junk */
+	}	  /* end if junk */
 
 	if (!present) {
 		erase_line(msg_line, msg_line);
@@ -782,7 +782,7 @@ boolean summon_item(long y, long x, char name1[70], char name2[70], long count,
 				}
 
 			} /* end for */
-		}	 /* end if found */
+		}	  /* end if found */
 
 		if (best_value > LOW_NUM) {
 			msg_print("Allocated.");
@@ -1083,8 +1083,8 @@ void change_character()
 
 	if (!abort) {
 		tmp_val = player_mana;
-		if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0,
-					32767, &flag)) {
+		if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0, 32767,
+				    &flag)) {
 			if (flag) {
 				player_mana = tmp_val;
 				player_cmana = player_mana;
@@ -1160,8 +1160,8 @@ void change_character()
 		if (cc__input_field("Player Gold = ", &tmp_val, 0, 100000000,
 				    &flag)) {
 			if (flag) {
-				tmp_val =
-				    (tmp_val - player_money[TOTAL_]) * GOLD_VALUE;
+				tmp_val = (tmp_val - player_money[TOTAL_]) *
+					  GOLD_VALUE;
 				if (tmp_val > 0) {
 					add_money(tmp_val);
 				} else {
@@ -1469,7 +1469,7 @@ void wizard_command(void)
 		msg_print("Stores updated.");
 		break;
 	case 31: /* ^_  Can you say security through obscurity?
-		    */
+		  */
 		if (wizard1 && search_flag && player_cheated) {
 			player_cheated = false;
 			msg_print("Cheat flag turned off.");

@@ -209,7 +209,7 @@ void set_gem_values()
 				object_list[count].cost += 1000;
 			}
 		} /* end if (finely cut) */
-	}	 /* end for */
+	}	  /* end for */
 
 	LEAVE("set_gem_values", "");
 }

@@ -18,17 +18,15 @@
 
 #if defined(unix) || defined(__NetBSD__)
 
-#include <sys/types.h>
-#include <unistd.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #if defined(SYS_V) && defined(lint)
 /* for AIX, prevent hundreds of unnecessary lint errors, must define before
    signal.h is included */
 #define _h_IEEETRAP
-typedef struct
-{
+typedef struct {
 	int stuff;
 } fpvmach;
 #endif
@@ -36,17 +34,17 @@ typedef struct
 #include <signal.h>
 
 #ifdef M_XENIX
-#include <sys/types.h>
 #include <sys/select.h>
+#include <sys/types.h>
 /* For various selects from TCP/IP.  */
 #define bzero(addr, n) memset((char *)addr, 0, n)
 #endif
 
 #ifndef USG
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <sys/types.h>
 #include <sys/param.h>
+#include <sys/resource.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #endif
 
 #ifdef __linux__
@@ -89,8 +87,7 @@ struct passwd *getpwnam();
 #endif
 
 #if defined(SYS_V) && defined(lint)
-struct screen
-{
+struct screen {
 	int dumb;
 };
 #endif
@@ -162,7 +159,7 @@ int check_input(int microsec)
 	smask = 1; /* i.e. (1 << 0) */
 	if (select(1, &smask, (int *)0, (int *)0, &tbuf) == 1)
 #endif
-	    {
+	{
 		ch = getch();
 		/* check for EOF errors here, select sometimes works even when
 		 * EOF */

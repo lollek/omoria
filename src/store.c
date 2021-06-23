@@ -1,88 +1,137 @@
 /* store.c */
 /**/
 
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
-#define DAY_LENGTH 9600 /*{ Turns in a day			} */
+#define DAY_LENGTH 9600	       /*{ Turns in a day			} */
 const long obj_town_level = 7; // Town object generation level
 
 /*	{ Buying and selling adjustments for character race VS store	} */
 /*	{ owner race							} */
-#define MAX_RACES 10	   /*{ Number of defined races	        } */
+#define MAX_RACES 10 /*{ Number of defined races	        } */
 static float rgold_adj[MAX_RACES][MAX_RACES] = {
     /*               Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr, Dry */
     /*Human     */ {0.00, 0.05, 0.05, 0.10, 0.13, 0.15, 0.20, 0.25, 0.20, 0.05},
     /*Half-Elf  */ {0.10, 0.00, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.25, 0.05},
     /*Elf       */ {0.10, 0.05, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.30, 0.00},
-    /*Halfling  */ {0.15, 0.10, 0.05, -0.05, 0.05, 0.10, 0.15, 0.30, 0.25, 0.05},
-    /*Gnome     */ {0.15, 0.15, 0.10, 0.05, -0.05, 0.10, 0.15, 0.30, 0.20, 0.15},
-    /*Dwarf     */ {0.15, 0.20, 0.20, 0.10, 0.10, -0.05, 0.25, 0.35, 0.15, 0.30},
+    /*Halfling  */
+    {0.15, 0.10, 0.05, -0.05, 0.05, 0.10, 0.15, 0.30, 0.25, 0.05},
+    /*Gnome     */
+    {0.15, 0.15, 0.10, 0.05, -0.05, 0.10, 0.15, 0.30, 0.20, 0.15},
+    /*Dwarf     */
+    {0.15, 0.20, 0.20, 0.10, 0.10, -0.05, 0.25, 0.35, 0.15, 0.30},
     /*Half-Orc  */ {0.15, 0.20, 0.25, 0.15, 0.15, 0.30, 0.10, 0.15, 0.15, 0.25},
     /*Half-Troll*/ {0.10, 0.15, 0.15, 0.10, 0.10, 0.30, 0.10, 0.10, 0.15, 0.25},
-    /*Phraint   */ {0.20, 0.25, 0.30, 0.25, 0.20, 0.15, 0.15, 0.15, -0.10, 0.20},
-    /*Dryad     */ {0.10, 0.05, 0.05, 0.05, 0.15, 0.30, 0.30, 0.25, 0.20, -0.05}
-};
+    /*Phraint   */
+    {0.20, 0.25, 0.30, 0.25, 0.20, 0.15, 0.15, 0.15, -0.10, 0.20},
+    /*Dryad     */
+    {0.10, 0.05, 0.05, 0.05, 0.15, 0.30, 0.30, 0.25, 0.20, -0.05}};
 
-/*	{ Store owners have different characteristics for pricing and haggling} */
-/*	{ Note: Store owners should be added in groups, one for each store    } */
+/*	{ Store owners have different characteristics for pricing and haggling}
+ */
+/*	{ Note: Store owners should be added in groups, one for each store    }
+ */
 static owner_type owners[MAX_OWNERS] = {
     /* {set number one} */
-    {"Erick the Honest       (Human)      General Store", 2500, 0.75, 0.08, 0.04, 0, 12},
-    {"Mauglin the Grumpy     (Dwarf)      Armory", 32000, 1.00, 0.12, 0.04, 5, 5},
-    {"Arndal Beast-Slayer    (Half-Elf)   Weaponsmith", 10000, 0.85, 0.10, 0.05, 1, 8},
-    {"Hardblow the Humble    (Human)      Temple", 3500, 0.75, 0.09, 0.06, 0, 15},
-    {"Ga-nat the Greedy      (Gnome)      Alchemist", 12000, 1.20, 0.15, 0.04, 4, 9},
-    {"Valeria Starshine      (Elf)        Magic Shop", 32000, 0.75, 0.10, 0.05, 2, 11},
+    {"Erick the Honest       (Human)      General Store", 2500, 0.75, 0.08,
+     0.04, 0, 12},
+    {"Mauglin the Grumpy     (Dwarf)      Armory", 32000, 1.00, 0.12, 0.04, 5,
+     5},
+    {"Arndal Beast-Slayer    (Half-Elf)   Weaponsmith", 10000, 0.85, 0.10, 0.05,
+     1, 8},
+    {"Hardblow the Humble    (Human)      Temple", 3500, 0.75, 0.09, 0.06, 0,
+     15},
+    {"Ga-nat the Greedy      (Gnome)      Alchemist", 12000, 1.20, 0.15, 0.04,
+     4, 9},
+    {"Valeria Starshine      (Elf)        Magic Shop", 32000, 0.75, 0.10, 0.05,
+     2, 11},
     {"Tika Majere            (Human)      Inn", 32000, 1.00, 0.08, 0.05, 0, 7},
-    {"Socrates the Philosopher  (Human)  Library", 5000, 1.00, 0.10, 0.05, 0, 10},
-    {"Dysella of Oakglade    (Dryad)      Music Shop", 10000, 1.00, 0.10, 0.05, 9, 10},
-    {"The Dragon Master      (Human)       Gem Store", 15000, 0.95, 0.10, 0.05, 0, 5},
-    {"Grond the Grotesque   (Half-Orc)     All-Nite Deli", 3000, 1.00, 0.10, 0.05, 6, 5},
-    {"Ugluk the Ugly        (Orc)          Black Market", 500000, 2.50, 1.5, 0.01, 6, 6},
+    {"Socrates the Philosopher  (Human)  Library", 5000, 1.00, 0.10, 0.05, 0,
+     10},
+    {"Dysella of Oakglade    (Dryad)      Music Shop", 10000, 1.00, 0.10, 0.05,
+     9, 10},
+    {"The Dragon Master      (Human)       Gem Store", 15000, 0.95, 0.10, 0.05,
+     0, 5},
+    {"Grond the Grotesque   (Half-Orc)     All-Nite Deli", 3000, 1.00, 0.10,
+     0.05, 6, 5},
+    {"Ugluk the Ugly        (Orc)          Black Market", 500000, 2.50, 1.5,
+     0.01, 6, 6},
 
     /*{set number two} */
-    {"Andy the Friendly      (Halfling)   General Store", 2000, 0.70, 0.08, 0.05, 3, 15},
-    {"Darg-Low the Grim      (Human)      Armory", 10000, 0.90, 0.11, 0.04, 0, 9},
-    {"Oglign Dragon-Slayer   (Dwarf)      Weaponsmith", 32000, 0.95, 0.12, 0.04, 5, 8},
-    {"Gunnar the Paladin     (Human)      Temple", 5000, 0.85, 0.10, 0.05, 0, 23},
-    {"Mauser the Chemist     (Half-Elf)   Alchemist", 10000, 0.90, 0.11, 0.05, 1, 8},
-    {"K'rek Kwith the Quick  (Phraint)    Magic Shop", 32000, 0.90, 0.10, 0.05, 8, 5},
+    {"Andy the Friendly      (Halfling)   General Store", 2000, 0.70, 0.08,
+     0.05, 3, 15},
+    {"Darg-Low the Grim      (Human)      Armory", 10000, 0.90, 0.11, 0.04, 0,
+     9},
+    {"Oglign Dragon-Slayer   (Dwarf)      Weaponsmith", 32000, 0.95, 0.12, 0.04,
+     5, 8},
+    {"Gunnar the Paladin     (Human)      Temple", 5000, 0.85, 0.10, 0.05, 0,
+     23},
+    {"Mauser the Chemist     (Half-Elf)   Alchemist", 10000, 0.90, 0.11, 0.05,
+     1, 8},
+    {"K'rek Kwith the Quick  (Phraint)    Magic Shop", 32000, 0.90, 0.10, 0.05,
+     8, 5},
     {"Samwise                (Halfling)   Inn", 32000, 0.70, 0.10, 0.05, 3, 12},
-    {"Elrond the Wise        (Elf)        Library", 5000, 1.00, 0.10, 0.05, 2, 10},
-    {"Shaun the Bard         (Human)    Music Shop", 10000, 1.00, 0.10, 0.05, 0, 10},
-    {"Ari-San                (Elf)       Gem Store", 15000, 1.00, 0.10, 0.05, 2, 10},
-    {"Gerald Ciceau		 (Human)     All-Nite Deli", 3000, 1.00, 0.07, 0.05, 0, 5},
-    {"Gloin the Fierce       (Dwarf)     Black Market", 500000, 2.5, 1.5, 0.01, 5, 4},
+    {"Elrond the Wise        (Elf)        Library", 5000, 1.00, 0.10, 0.05, 2,
+     10},
+    {"Shaun the Bard         (Human)    Music Shop", 10000, 1.00, 0.10, 0.05, 0,
+     10},
+    {"Ari-San                (Elf)       Gem Store", 15000, 1.00, 0.10, 0.05, 2,
+     10},
+    {"Gerald Ciceau		 (Human)     All-Nite Deli", 3000, 1.00, 0.07,
+     0.05, 0, 5},
+    {"Gloin the Fierce       (Dwarf)     Black Market", 500000, 2.5, 1.5, 0.01,
+     5, 4},
 
     /*{set number three} */
-    {"Lyar-el the Comely     (Elf)        General Store", 3000, 0.65, 0.07, 0.06, 2, 18},
-    {"Mauglim the Horrible   (Half-Orc)   Armory", 3000, 1.00, 0.13, 0.05, 6, 9},
-    {"Ithyl-Mak the Beastly	 (Half-Troll) Weaponsmith", 3000, 1.10, 0.15, 0.06, 7, 8},
-    {"Delihla the Pure       (Half-Elf)   Temple", 25000, 0.80, 0.07, 0.06, 1, 20},
-    {"Wizzle the Chaotic     (Halfling)   Alchemist", 10000, 0.90, 0.10, 0.06, 3, 8},
-    {"Inglorian the Mage     (Human?)     Magic Shop", 32000, 1.00, 0.10, 0.07, 0, 10},
+    {"Lyar-el the Comely     (Elf)        General Store", 3000, 0.65, 0.07,
+     0.06, 2, 18},
+    {"Mauglim the Horrible   (Half-Orc)   Armory", 3000, 1.00, 0.13, 0.05, 6,
+     9},
+    {"Ithyl-Mak the Beastly	 (Half-Troll) Weaponsmith", 3000, 1.10, 0.15,
+     0.06, 7, 8},
+    {"Delihla the Pure       (Half-Elf)   Temple", 25000, 0.80, 0.07, 0.06, 1,
+     20},
+    {"Wizzle the Chaotic     (Halfling)   Alchemist", 10000, 0.90, 0.10, 0.06,
+     3, 8},
+    {"Inglorian the Mage     (Human?)     Magic Shop", 32000, 1.00, 0.10, 0.07,
+     0, 10},
     {"Lucas the Portly       (Human)      Inn", 32000, 0.75, 0.10, 0.03, 0, 3},
-    {"Dyxel the Beautiful    (Dryad)      Library", 5000, 1.00, 0.10, 0.05, 9, 15},
-    {"Roland the Melodic     (Halfling)   Music Shop", 10000, 1.00, 0.10, 0.05, 3, 10},
-    {"Galton the turrible    (Half-Orc)   Gem Store", 15000, 0.95, 0.20, 0.05, 6, 4},
-    {"Joseph Tansli		 (Human)      All-Nite Deli", 3000, 1.00, 0.10, 0.05, 0, 10},
-    {"Grima Wormtongue       (Human?)     Black Market", 500000, 2.5, 1.5, 0.01, 0, 5},
+    {"Dyxel the Beautiful    (Dryad)      Library", 5000, 1.00, 0.10, 0.05, 9,
+     15},
+    {"Roland the Melodic     (Halfling)   Music Shop", 10000, 1.00, 0.10, 0.05,
+     3, 10},
+    {"Galton the turrible    (Half-Orc)   Gem Store", 15000, 0.95, 0.20, 0.05,
+     6, 4},
+    {"Joseph Tansli		 (Human)      All-Nite Deli", 3000, 1.00, 0.10,
+     0.05, 0, 10},
+    {"Grima Wormtongue       (Human?)     Black Market", 500000, 2.5, 1.5, 0.01,
+     0, 5},
 
     /*{set number four} */
-    {"Felimid mac Fal        (Half-Elf)   General Store", 3500, 1.10, 0.15, 0.10, 1, 5},
-    {"Andre the Dull         (Half-Troll) Armory", 10000, 1.00, 0.08, 0.04, 6, 8},
-    {"Vlad Taltos            (Human)      Weaponsmith", 25000, 0.80, 0.10, 0.03, 0, 15},
-    {"Brother Maynard        (Human)      Temple", 15000, 1.00, 0.15, 0.08, 0, 5},
-    {"Questor Thews	         (Gnome)      Alchemist", 20000, 0.70, 0.10, 0.02, 4, 10},
-    {"Gopher the Great!      (Gnome)      Magic Shop", 20000, 1.15, 0.13, 0.06, 4, 10},
+    {"Felimid mac Fal        (Half-Elf)   General Store", 3500, 1.10, 0.15,
+     0.10, 1, 5},
+    {"Andre the Dull         (Half-Troll) Armory", 10000, 1.00, 0.08, 0.04, 6,
+     8},
+    {"Vlad Taltos            (Human)      Weaponsmith", 25000, 0.80, 0.10, 0.03,
+     0, 15},
+    {"Brother Maynard        (Human)      Temple", 15000, 1.00, 0.15, 0.08, 0,
+     5},
+    {"Questor Thews	         (Gnome)      Alchemist", 20000, 0.70, 0.10,
+     0.02, 4, 10},
+    {"Gopher the Great!      (Gnome)      Magic Shop", 20000, 1.15, 0.13, 0.06,
+     4, 10},
     {"Mike the *Very* large  (Phraint)    Inn", 32000, 0.90, 0.10, 0.05, 8, 1},
-    {"Kelstor the Sage       (Human)      Library", 5000, 1.00, 0.10, 0.05, 0, 10},
-    {"K'phelt the Drone     (Phraint)    Music Shop", 10000, 1.00, 0.10, 0.05, 8, 10},
-    {"Daphnea the Tender     (Dryad)      Gem Store", 15000, 0.80, 0.10, 0.05, 9, 3},
-    {"Clarion the Exotic 	 (Dryad)      All-Nite Deli", 3000, 1.00, 0.10, 0.05, 9, 5},
-    {"Netta Winsome          (Dryad)      Black Market", 500000, 2.5, 1.4, 0.02, 9, 9}
-};
+    {"Kelstor the Sage       (Human)      Library", 5000, 1.00, 0.10, 0.05, 0,
+     10},
+    {"K'phelt the Drone     (Phraint)    Music Shop", 10000, 1.00, 0.10, 0.05,
+     8, 10},
+    {"Daphnea the Tender     (Dryad)      Gem Store", 15000, 0.80, 0.10, 0.05,
+     9, 3},
+    {"Clarion the Exotic 	 (Dryad)      All-Nite Deli", 3000, 1.00, 0.10,
+     0.05, 9, 5},
+    {"Netta Winsome          (Dryad)      Black Market", 500000, 2.5, 1.4, 0.02,
+     9, 9}};
 
 /*	{ Each store will buy only certain items, based on TVAL } */
 static obj_set store_buy[MAX_STORES] = {
@@ -121,83 +170,83 @@ static obj_set store_buy[MAX_STORES] = {
 static char store_hours[MAX_STORES + MAX_UNNAMED][7][14] =
     /* Mon, Tue, Wed, Thu, Fri, Sat, Sun */
     {
-     /*{General Store	} */
-     {"NNB       BN", "NNB       BN", "NNB       BN", "NNB       BN",
-      "NNB       BN", "NNB       BN", "NNB       BN"},
-     /*{Armory		} */
-     {"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
-      "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
-     /*{Weapon Smiths	} */
-     {"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
-      "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
-     /*{Temple		} */
-     {"            ", "            ", "            ", "            ",
-      "            ", "            ", "            "},
-     /*{Alchemy Shop	} */
-     {"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
-      "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
-     /*{Magic Shop	} */
-     {"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
-      "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
-     /*{Inn		} */
-     {"            ", "            ", "            ", "            ",
-      "            ", "            ", "            "},
-     /*{Library	} */
-     {"NNN        N", "NNN        N", "NNN        N", "NNN        N",
-      "NNN        N", "NNN        N", "NNN        N"},
-     /*{Music Shop 	} */
-     {"NNNB    BNNN", "NNNB   BNNNN", "NNNB    BNNN", "NNNB    BNNN",
-      "NNNB    BNNN", "NNNB    BNNN", "NNNB    BNNN"},
-     /*{Gem Store	} */
-     {"NNNB     BNN", "NNNB   BNNNN", "NNNB     BNN", "NNNB     BNN",
-      "NNNB     BNN", "NNNB     BNN", "NNNB     BNN"},
-     /*{All-Night Deli } */
-     {"            ", "            ", "            ", "            ",
-      "            ", "            ", "            "},
-     /*{Black Market } */
-     {"BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB",
-      "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB"},
-     /*{Trading Post	} */
-     {"NNNB      BN", "NNNB      BN", "WWWB      BN", "NNNB      BN",
-      "NNNB      BN", "NNNB      BW", "WWWWWWWWWWWW"},
-     /*{Insurance Shop	} */
-     {"BBBB     BBB", "BBBB     BBB", "BBBB     BBB", "BBBB     BBB",
-      "BBBB     BBB", "BBBB     BBB", "BBBB     BBB"},
-     /*{Bank		} */
-     {"NNNN     NNN", "NNNN     NNN", "WWWW     NNN", "NNNN     NNN",
-      "NNNN     NNN", "NNNN    WWWW", "WWWWWWWWWWWW"},
-     /*{Money Exchange	} */
-     {"NNNB     BNN", "NNNB     BNN", "WWWB     BNN", "NNNB     BNN",
-      "NNNB     BNN", "NNNB     BWW", "WWWWWWWWWWWW"},
-     /*{Casino		} */
-     {"            ", "            ", "   DDDDDD   ", "   DDDDDD   ",
-      "   DDDDDD   ", "   DDDDDD   ", "   DDDDDD   "},
-     /*{Quest Store    } */
-     {"            ", "            ", "            ", "            ",
-      "            ", "            ", "            "}};
+	/*{General Store	} */
+	{"NNB       BN", "NNB       BN", "NNB       BN", "NNB       BN",
+	 "NNB       BN", "NNB       BN", "NNB       BN"},
+	/*{Armory		} */
+	{"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
+	 "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
+	/*{Weapon Smiths	} */
+	{"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
+	 "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
+	/*{Temple		} */
+	{"            ", "            ", "            ", "            ",
+	 "            ", "            ", "            "},
+	/*{Alchemy Shop	} */
+	{"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
+	 "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
+	/*{Magic Shop	} */
+	{"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
+	 "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
+	/*{Inn		} */
+	{"            ", "            ", "            ", "            ",
+	 "            ", "            ", "            "},
+	/*{Library	} */
+	{"NNN        N", "NNN        N", "NNN        N", "NNN        N",
+	 "NNN        N", "NNN        N", "NNN        N"},
+	/*{Music Shop 	} */
+	{"NNNB    BNNN", "NNNB   BNNNN", "NNNB    BNNN", "NNNB    BNNN",
+	 "NNNB    BNNN", "NNNB    BNNN", "NNNB    BNNN"},
+	/*{Gem Store	} */
+	{"NNNB     BNN", "NNNB   BNNNN", "NNNB     BNN", "NNNB     BNN",
+	 "NNNB     BNN", "NNNB     BNN", "NNNB     BNN"},
+	/*{All-Night Deli } */
+	{"            ", "            ", "            ", "            ",
+	 "            ", "            ", "            "},
+	/*{Black Market } */
+	{"BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB",
+	 "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB"},
+	/*{Trading Post	} */
+	{"NNNB      BN", "NNNB      BN", "WWWB      BN", "NNNB      BN",
+	 "NNNB      BN", "NNNB      BW", "WWWWWWWWWWWW"},
+	/*{Insurance Shop	} */
+	{"BBBB     BBB", "BBBB     BBB", "BBBB     BBB", "BBBB     BBB",
+	 "BBBB     BBB", "BBBB     BBB", "BBBB     BBB"},
+	/*{Bank		} */
+	{"NNNN     NNN", "NNNN     NNN", "WWWW     NNN", "NNNN     NNN",
+	 "NNNN     NNN", "NNNN    WWWW", "WWWWWWWWWWWW"},
+	/*{Money Exchange	} */
+	{"NNNB     BNN", "NNNB     BNN", "WWWB     BNN", "NNNB     BNN",
+	 "NNNB     BNN", "NNNB     BWW", "WWWWWWWWWWWW"},
+	/*{Casino		} */
+	{"            ", "            ", "   DDDDDD   ", "   DDDDDD   ",
+	 "   DDDDDD   ", "   DDDDDD   ", "   DDDDDD   "},
+	/*{Quest Store    } */
+	{"            ", "            ", "            ", "            ",
+	 "            ", "            ", "            "}};
 
 /*	{ Store owners can be bribed to open up their shop during */
 /*	  certain hours (so that you can always have the opportunity to */
 /*	  buy insurance, and suchlike.)					} */
 static long store_bribe[MAX_STORES + MAX_UNNAMED] = {
-    50,  /*  0 general */
+    50,	 /*  0 general */
     150, /*  1 armory */
     150, /*  2 weapons */
-    75,  /*  3 temple */
-    75,  /*  4 alchemy */
+    75,	 /*  3 temple */
+    75,	 /*  4 alchemy */
     300, /*  5 magic */
-    25,  /*  6 inn */
+    25,	 /*  6 inn */
     100, /*  7 library */
-    50,  /*  8 music */
-    75,  /*  9 gem */
-    0,   /* 10 deli */
+    50,	 /*  8 music */
+    75,	 /*  9 gem */
+    0,	 /* 10 deli */
     100, /* 11 black market */
-    50,  /* 12 trade post */
+    50,	 /* 12 trade post */
     100, /* 13 insurance */
     100, /* 14 bank */
-    25,  /* 15 money changer */
+    25,	 /* 15 money changer */
     100, /* 16 casino */
-    0    /* 17 fortress */
+    0	 /* 17 fortress */
 };
 
 void store_init()
@@ -222,7 +271,7 @@ void store_init()
 			stores[i2].store_inven[i3].sitem = blank_treasure;
 			stores[i2].store_inven[i3].scost = 0;
 		} /* end for i3 */
-	}	 /* end for i2 */
+	}	  /* end for i2 */
 
 	/*  for (i2 = 0; i2 < max_stores; i2++) { */
 	/*    printf("store owner[%ld] = %s\n", i2, */
@@ -246,7 +295,8 @@ void bank_init()
 	bank[PLATINUM] = starting / 5000;
 	bank[MITHRIL] = starting / 100000;
 	bank[TOTAL_] = (bank[MITHRIL] * coin_value[MITHRIL] +
-			bank[PLATINUM] * coin_value[PLATINUM])/ GOLD_VALUE +
+			bank[PLATINUM] * coin_value[PLATINUM]) /
+			   GOLD_VALUE +
 		       bank[GOLD];
 
 	/*  for(starting = TOTAL_; starting <= MITHRIL; starting++) { */
@@ -256,7 +306,7 @@ void bank_init()
 
 void sm__rndcash(long *amt, long target)
 {
-	*amt = (199 * (*amt) + randint(2 * target))/ 200;
+	*amt = (199 * (*amt) + randint(2 * target)) / 200;
 }
 
 void store_maint()
@@ -322,9 +372,10 @@ void store_maint()
 	sm__rndcash(&(bank[GOLD]), 50000);
 	sm__rndcash(&(bank[PLATINUM]), 5000);
 	sm__rndcash(&(bank[MITHRIL]), 1000);
-	bank[TOTAL_] = (bank[MITHRIL] * MITHRIL_VALUE +
-			bank[PLATINUM] * PLATINUM_VALUE)/ GOLD_VALUE +
-		       bank[GOLD];
+	bank[TOTAL_] =
+	    (bank[MITHRIL] * MITHRIL_VALUE + bank[PLATINUM] * PLATINUM_VALUE) /
+		GOLD_VALUE +
+	    bank[GOLD];
 
 	/*  printf ("\n         exit store_maint\n");  fflush(stdout); */
 }
@@ -455,14 +506,12 @@ void store_carry(long store_num, long *ipos)
 		do {
 			item_val++;
 			/* with store_inven[item_val].sitem do; */
-			if (typ ==
-			    stores[store_num]
-				.store_inven[item_val]
-				.sitem.tval) {
-				if (subt ==
-				    stores[store_num]
-					.store_inven[item_val]
-					.sitem.subval) {
+			if (typ == stores[store_num]
+				       .store_inven[item_val]
+				       .sitem.tval) {
+				if (subt == stores[store_num]
+						.store_inven[item_val]
+						.sitem.subval) {
 					/*{ Adds to other item	}*/
 					if (subt > 255) {
 						if (stores[store_num]
@@ -539,8 +588,9 @@ long sell_price(long snum, long *max_sell, long *min_sell, treasure_type *item)
 	i1 = item_value(item);
 
 	if (item->cost > 0) {
-		i1 += trunc(i1 * rgold_adj[owners[stores[snum].owner]
-					       .owner_race][player_prace]);
+		i1 +=
+		    trunc(i1 * rgold_adj[owners[stores[snum].owner].owner_race]
+					[player_prace]);
 		if (i1 < 1) {
 			i1 = 1;
 		}
@@ -585,7 +635,7 @@ long item_value(treasure_type *item)
 
 	switch (item->tval) {
 
-	/*{ Weapons and armor	}*/
+		/*{ Weapons and armor	}*/
 
 	case bow_crossbow_or_sling:
 	case hafted_weapon:
@@ -644,7 +694,7 @@ long item_value(treasure_type *item)
 		}
 		break;
 
-	/*{ Ammo }*/
+		/*{ Ammo }*/
 
 	case sling_ammo:
 	case bolt:
@@ -671,7 +721,7 @@ long item_value(treasure_type *item)
 		}
 		break;
 
-	/*{ Potions, Scrolls, and Food	}*/
+		/*{ Potions, Scrolls, and Food	}*/
 
 	case scroll1:
 	case scroll2:
@@ -698,7 +748,7 @@ long item_value(treasure_type *item)
 		}
 		break;
 
-	/*{ Rings and amulets	}*/
+		/*{ Rings and amulets	}*/
 
 	case amulet:
 	case ring:
@@ -726,7 +776,7 @@ long item_value(treasure_type *item)
 		}
 		break;
 
-	/*{ Horns and Chimes	}*/
+		/*{ Horns and Chimes	}*/
 
 	case chime:
 	case horn:
@@ -747,7 +797,7 @@ long item_value(treasure_type *item)
 		}
 		break;
 
-	/* { Wands rods, and staffs}*/
+		/* { Wands rods, and staffs}*/
 
 	case staff:
 	case rod:
@@ -772,7 +822,7 @@ long item_value(treasure_type *item)
 		}
 		break;
 
-	/*{Gems and jewelry of all types}*/
+		/*{Gems and jewelry of all types}*/
 
 	case valuable_jewelry:
 	case valuable_gems:
@@ -824,7 +874,8 @@ boolean check_store_hours(enum store_t st, long sh)
 			((player_cur_age.day > stores[sh].store_open.day) ||
 			 ((player_cur_age.day == stores[sh].store_open.day) &&
 			  ((player_cur_age.hour > stores[sh].store_open.hour) ||
-			   ((player_cur_age.hour == stores[sh].store_open.hour) &&
+			   ((player_cur_age.hour ==
+			     stores[sh].store_open.hour) &&
 			    ((player_cur_age.secs >
 			      stores[sh].store_open.secs))))))))));
 	} else {
@@ -836,7 +887,7 @@ boolean check_store_hours(enum store_t st, long sh)
 		strcpy(name, store_door[st].name);
 		insert_str(name, "the entrance to the ", "");
 		ope = store_hours[sh][player_cur_age.day % 7 + 0] /* was + 1 */
-				 [player_cur_age.hour / 2 + 0]; /* was + 1 */
+				 [player_cur_age.hour / 2 + 0];	  /* was + 1 */
 		switch (ope) {
 		case ' ':
 			return_value = true;
@@ -862,7 +913,9 @@ boolean check_store_hours(enum store_t st, long sh)
 				msg_print("");
 				return_value = true;
 			} else {
-				sprintf(out_val, "Sorry, the %s is closed for the %s", name, prop);
+				sprintf(out_val,
+					"Sorry, the %s is closed for the %s",
+					name, prop);
 				msg_print(out_val);
 				return_value = false;
 			}
@@ -944,11 +997,11 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 	if (!whole_days) {
 		time_spent = days_spent; /*{if a 6:00 threshold is passed}*/
 
-		new_screen = ((turns_today + time_spent + 2400)/ 4800) >
-			     ((turns_today + 2400)/ 4800);
+		new_screen = ((turns_today + time_spent + 2400) / 4800) >
+			     ((turns_today + 2400) / 4800);
 
-		mornings = (turns_today + time_spent - 2400)/ 9600 -
-			   (turns_today - 2400)/ 9600;
+		mornings = (turns_today + time_spent - 2400) / 9600 -
+			   (turns_today - 2400) / 9600;
 		days_spent = 0;
 	} else {
 		time_spent = DAY_LENGTH * days_spent - turns_today;
@@ -971,17 +1024,20 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 				"You spend the remainder of the night %s",
 				place);
 			msg_print(out_val);
-			player_cur_age.hour = 8; /*{why get up before shops open?}*/
+			player_cur_age.hour =
+			    8; /*{why get up before shops open?}*/
 			player_cur_age.secs = randint(400) - 1;
-			time_spent = (time_spent - DAY_LENGTH +
-				      400 * player_cur_age.hour + player_cur_age.secs);
+			time_spent =
+			    (time_spent - DAY_LENGTH +
+			     400 * player_cur_age.hour + player_cur_age.secs);
 		} else {
 			sprintf(out_val, "You spend the night %s", place);
 			msg_print(out_val);
 			player_cur_age.hour = 8;
 			add_days(&(player_cur_age), 1);
 			player_cur_age.secs = randint(400) - 1;
-			time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
+			time_spent +=
+			    400 * player_cur_age.hour + player_cur_age.secs;
 		}
 		break;
 
@@ -1339,7 +1395,7 @@ void display_inventory(long store_num, long start)
 
 	/* with stores[store_num] do; */
 	i1 = ((start - 1) % 12);
-	stop = (((start - 1)/ 12) + 1) * 12;
+	stop = (((start - 1) / 12) + 1) * 12;
 
 	if (stop > stores[store_num].store_ctr) {
 		stop = stores[store_num].store_ctr;
@@ -1358,7 +1414,8 @@ void display_inventory(long store_num, long start)
 		if (stores[store_num].store_inven[start].scost < 0) {
 			/*{quack}*/
 			i2 = labs(stores[store_num].store_inven[start].scost);
-			i2 = i2 + trunc(i2 * C_player_cost_modifier_from_charisma());
+			i2 = i2 +
+			     trunc(i2 * C_player_cost_modifier_from_charisma());
 			sprintf(out_val2, "%6ld",
 				((i2 + GOLD_VALUE - 1) / GOLD_VALUE));
 		} else {
@@ -1435,7 +1492,8 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 					.scost > 0) {
 					price = stores[store_num]
 						    .store_inven[item_val]
-						    .scost / GOLD_VALUE;
+						    .scost /
+						GOLD_VALUE;
 					choice = 0;
 				} else {
 					choice = purchase_haggle(
@@ -1452,8 +1510,8 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 						    price * GOLD_VALUE, true);
 						flag = true;
 					} else {
-						to_bank =
-						    price - player_money[TOTAL_];
+						to_bank = price -
+							  player_money[TOTAL_];
 						flag = send_page(to_bank);
 					}
 
@@ -1499,7 +1557,8 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 								    "buckwheat "
 								    "cakes and "
 								    "bacon.");
-								player_flags.foodc =
+								player_flags
+								    .foodc =
 								    PLAYER_FOOD_FULL;
 								player_flags
 								    .status &= ~(
@@ -1514,8 +1573,11 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 								      true);
 							item_new =
 							    inven_carry();
-							objdes(out_val, item_new, true);
-							sprintf(out2, "You have %s", out_val);
+							objdes(out_val,
+							       item_new, true);
+							sprintf(out2,
+								"You have %s",
+								out_val);
 							msg_print(out2);
 							if (*cur_top >
 							    stores[store_num]
@@ -1834,9 +1896,12 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 		flag = true;
 	} else {
 		/* with owners[owner] do; */
-		cost = cost - (long)(cost * C_player_cost_modifier_from_charisma()) -
-		       (long)(cost * rgold_adj[owners[stores[store_num].owner]
-						   .owner_race][player_prace]);
+		cost =
+		    cost -
+		    (long)(cost * C_player_cost_modifier_from_charisma()) -
+		    (long)(cost *
+			   rgold_adj[owners[stores[store_num].owner].owner_race]
+				    [player_prace]);
 		if (cost < 1) {
 			cost = 1;
 		}
@@ -1893,7 +1958,8 @@ long sell_haggle(long store_num, long *price, treasure_type *item,
 			do {
 				do {
 					loop_flag = true;
-					sprintf(out_val, "%s%ld       ", comment, cur_ask);
+					sprintf(out_val, "%s%ld       ",
+						comment, cur_ask);
 					put_buffer(out_val, 2, 1);
 					switch (receive_offer(
 					    store_num,
@@ -2073,7 +2139,8 @@ long purchase_haggle(long store_num, long *price, treasure_type *item,
 		do {
 			do {
 				loop_flag = true;
-				sprintf(out_val, "%s%ld          ", comment, cur_ask);
+				sprintf(out_val, "%s%ld          ", comment,
+					cur_ask);
 				put_buffer(out_val, 2, 1);
 				switch (receive_offer(
 				    store_num, "What do you offer? ",

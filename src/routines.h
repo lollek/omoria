@@ -15,7 +15,7 @@ void C_delete_character();
 
 signed char C_class_melee_bonus(enum class_t class);
 signed char C_class_ranged_bonus(enum class_t class);
-boolean C_class_can_use_item(enum class_t class, treasure_type const* item);
+boolean C_class_can_use_item(enum class_t class, treasure_type const *item);
 
 uint8_t C_magic_spell_level(int32_t slot);
 uint8_t C_magic_spell_mana(int32_t slot);
@@ -110,7 +110,8 @@ extern void thief_games();
 extern long react(long x);
 extern void change_rep(long amt);
 extern boolean check_store_hours(enum store_t type, long sh);
-extern void check_store_hours_and_enter(enum store_t type, long sh, long store_num);
+extern void check_store_hours_and_enter(enum store_t type, long sh,
+					long store_num);
 extern void hit_trap(long *y, long *x);
 extern boolean minus_ac(long typ_dam);
 extern void corrode_gas(char kb_str[82]);
@@ -180,7 +181,8 @@ extern long change_all_ok_stats(boolean nok, boolean nin);
 extern char cur_char1();
 extern char cur_char2();
 extern char cur_insure();
-extern boolean inven_command(char command, treas_ptr *item_ptr, char prompt[82]);
+extern boolean inven_command(char command, treas_ptr *item_ptr,
+			     char prompt[82]);
 extern void delete_inven_item(treas_ptr ptr);
 extern void inven_destroy(treas_ptr item_ptr);
 extern void inven_drop(treas_ptr item_ptr, long y, long x, boolean mon);
@@ -321,10 +323,10 @@ extern void wizard_command(void);
 extern void game_version();
 extern boolean check_pswd(char passw[134], boolean present);
 extern void wizard_light();
-extern void monster_summon_by_name(long y, long x, char name[28], boolean present,
-				   boolean sleepy);
-extern boolean summon_item(long y, long x, char name1[70], char name2[70], long count,
-			   boolean present);
+extern void monster_summon_by_name(long y, long x, char name[28],
+				   boolean present, boolean sleepy);
+extern boolean summon_item(long y, long x, char name1[70], char name2[70],
+			   long count, boolean present);
 extern void change_character();
 extern void edit_score_file();
 extern void wizard_create();
@@ -376,7 +378,8 @@ extern boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
 			     char ddesc[28]);
 extern boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
 			 char descrip[28]);
-extern boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp, char ddesc[82]);
+extern boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
+		      char ddesc[82]);
 extern boolean recharge(long num);
 extern boolean zap_monster(long dir, long y, long x, long aux, long zaptype);
 extern boolean wall_to_mud(long dir, long y, long x);
@@ -422,7 +425,7 @@ extern long bit_pos(unsigned long *test);
 extern long bit_pos64(unsigned long *high, unsigned long *low);
 extern long distance(long y1, long x1, long y2, long x2);
 extern void insert_str(char *object_str,	/* : varying[a] of char; */
-		       char const *mtc_str,     /*	: varying[b] of char; */
+		       char const *mtc_str,	/*	: varying[b] of char; */
 		       char const *insert_str); /* : varying[c] of char); */
 extern void shell_out();
 extern long users();
@@ -537,7 +540,7 @@ extern long num_new_spells(long smarts);
 void learn_magic(boolean redraw);
 extern void gain_level();
 extern void insert_num(char *object_str, /*	: varying[a] of char; */
-		       char *mtc_str,    /*	: varying[b] of char; */
+		       char *mtc_str,	 /*	: varying[b] of char; */
 		       long number, boolean show_sign);
 extern long attack_blows(long weight, long *wtohit);
 extern long critical_blow(long weight, long plus, boolean cs_sharp,
@@ -545,7 +548,8 @@ extern long critical_blow(long weight, long plus, boolean cs_sharp,
 extern boolean move_dir(long dir, long *y, long *x); /* was move */
 extern boolean player_saves(long adjust);
 extern boolean player_spell_saves();
-extern void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence);
+extern void find_monster_name(char m_name[82], const long ptr,
+			      boolean begin_sentence);
 extern void check_kickout_time(long num, long check);
 
 /* { BANK.INC		} */
@@ -568,11 +572,11 @@ extern void dispose(void *ptr, int size, char *message);
 extern char *chomp(char *input_line);
 extern long min3(long i1, long i2, long i3);
 
-
 /* use put_buffer */
 extern void put_buffer_(char const *out_str, int32_t row, int32_t col);
-extern void put_buffer_attr(const char *out_str, /*	: varying [a] of char; */
-			    long row, long col, int attrs);
+extern void
+put_buffer_attr(const char *out_str, /*	: varying [a] of char; */
+		long row, long col, int attrs);
 /* use clear_from */
 extern void Clear_From(int row);
 /* use pause_line */

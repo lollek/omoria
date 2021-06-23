@@ -1,5 +1,5 @@
-#include "imoria.h"
 #include "dungeon.h"
+#include "imoria.h"
 
 void q__potion_effect(long effect, boolean *idented)
 {
@@ -249,7 +249,7 @@ void q__potion_effect(long effect, boolean *idented)
 		ident = cure_me(&player_flags.image);
 		break;
 
-	/* case 48 moved up to 32 */
+		/* case 48 moved up to 32 */
 
 	case 49: /* reduce petrification */
 		if (PF.petrification > 0) {
@@ -261,32 +261,19 @@ void q__potion_effect(long effect, boolean *idented)
 		}
 		break;
 
-	case 50:
-		;
-	case 51:
-		;
-	case 52:
-		;
-	case 53:
-		;
-	case 54:
-		;
-	case 55:
-		;
-	case 56:
-		;
-	case 57:
-		;
-	case 58:
-		;
-	case 59:
-		;
-	case 60:
-		;
-	case 61:
-		;
-	case 62:
-		;
+	case 50:;
+	case 51:;
+	case 52:;
+	case 53:;
+	case 54:;
+	case 55:;
+	case 56:;
+	case 57:;
+	case 58:;
+	case 59:;
+	case 60:;
+	case 61:;
+	case 62:;
 	default:
 		break;
 	} /* end switch */
@@ -351,8 +338,8 @@ void quaff()
 
 				if (item_ptr->data.flags != 0) {
 					C_player_add_exp((item_ptr->data.level /
-						   (float)player_lev) +
-						  .5);
+							  (float)player_lev) +
+							 .5);
 					prt_stat_block();
 				}
 
