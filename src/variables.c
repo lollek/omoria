@@ -1339,7 +1339,6 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
 };
 
 boolean object_ident[MAX_OBJECTS + 1]; /*(max_objects of false) */
-long t_level[MAX_OBJ_LEVEL + 1];
 
 /*	{ Gold list (All types of gold and gems are defined here)	} */
 treasure_type gold_list[MAX_GOLD] = {

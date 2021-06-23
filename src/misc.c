@@ -4,6 +4,9 @@
 #include "save.h"
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
+
+static long t_level[MAX_OBJ_LEVEL + 1];
+
 /* Print list of spells     -RAK- */
 static void print_new_spells(spl_type spell, long num, boolean *redraw)
 {
