@@ -174,6 +174,29 @@ static char store_hours[MAX_STORES + MAX_UNNAMED][7][14] =
      {"            ", "            ", "            ", "            ",
       "            ", "            ", "            "}};
 
+/*	{ Store owners can be bribed to open up their shop during */
+/*	  certain hours (so that you can always have the opportunity to */
+/*	  buy insurance, and suchlike.)					} */
+static long store_bribe[MAX_STORES + MAX_UNNAMED] = {
+    50,  /*  0 general */
+    150, /*  1 armory */
+    150, /*  2 weapons */
+    75,  /*  3 temple */
+    75,  /*  4 alchemy */
+    300, /*  5 magic */
+    25,  /*  6 inn */
+    100, /*  7 library */
+    50,  /*  8 music */
+    75,  /*  9 gem */
+    0,   /* 10 deli */
+    100, /* 11 black market */
+    50,  /* 12 trade post */
+    100, /* 13 insurance */
+    100, /* 14 bank */
+    25,  /* 15 money changer */
+    100, /* 16 casino */
+    0    /* 17 fortress */
+};
 
 void store_init()
 {
