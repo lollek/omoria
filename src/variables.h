@@ -116,7 +116,6 @@ extern treasure_type blank_treasure;
 extern long inven_ctr;    /* { Total different obj's	} */
 extern long inven_weight; /* { Cur carried weight	} */
 extern long equip_ctr;    /* { Cur equipment ctr	} */
-extern long tcptr;	/* { Cur treasure heap ptr	} */
 
 /*	{ Following are variables that change with level of difficulty	} */
 /*	{ 1/x chance of treasure per magma		} */

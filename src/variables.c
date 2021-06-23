@@ -1746,7 +1746,6 @@ treasure_type blank_treasure = {" ", 0, 0, 0, 0, 0,   0,
 long inven_ctr = 0;    /* { Total different obj's} */
 long inven_weight = 0; /* { Cur carried weight	} */
 long equip_ctr = 0;    /* { Cur equipment ctr	} */
-long tcptr;	    /* { Cur treasure heap ptr} */
 
 /*	{ Following are variables that changed with level of difficulty	} */
 /*	{ 1/x chance of treasure per magma		} */
