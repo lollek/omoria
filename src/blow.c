@@ -215,7 +215,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 	long i3, i4, loss, dur;
 	long dumy, y_dumy, x_dumy;
 	long y, x;
-	stat_set tstat;
+	enum stat_t tstat;
 	boolean ident;
 	char dir;
 

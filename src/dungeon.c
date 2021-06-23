@@ -3115,7 +3115,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 
 	unsigned long item_flags, item_flags2;
 	long i1, old_dis_ac;
-	stat_set tstat;
+	enum stat_t tstat;
 
 	PF.see_inv = false;
 	PF.teleport = false;

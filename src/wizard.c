@@ -1025,7 +1025,7 @@ void change_character()
 
 	long tmp_val;
 	char tmp_str[82];
-	stat_set tstat;
+	enum stat_t tstat;
 	boolean flag = false;
 	boolean abort = false;
 
@@ -1347,7 +1347,7 @@ void wizard_help()
 void wizard_command(void)
 {
 	char tmp_str[82];
-	stat_set tstat;
+	enum stat_t tstat;
 	treas_ptr trash_ptr;
 	long y, x;
 

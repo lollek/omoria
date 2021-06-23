@@ -29,7 +29,7 @@ static obj_set destroyed_by_sunray = {cloak, scroll1, scroll2, potion1, potion2,
 
 
 
-void lower_stat(stat_set tstat, char msg1[82])
+void lower_stat(enum stat_t tstat, char msg1[82])
 {
 	C_player_modify_lost_stat((int16_t)tstat, 1);
 	C_player_recalc_stats();
@@ -62,7 +62,7 @@ void lower_stat(stat_set tstat, char msg1[82])
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean lose_stat(stat_set tstat, char msg1[82], char msg2[82])
+boolean lose_stat(enum stat_t tstat, char msg1[82], char msg2[82])
 {
 	boolean return_value = true;
 
@@ -106,7 +106,7 @@ boolean lose_stat(stat_set tstat, char msg1[82], char msg2[82])
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean restore_stat(stat_set tstat, char msg1[82])
+boolean restore_stat(enum stat_t tstat, char msg1[82])
 {
 	/*{stat adjusted by magic worn only}*/
 	boolean return_value = true;
@@ -913,7 +913,7 @@ void lose_exp(long amount)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean gain_stat(stat_set tstat, char msg1[82])
+boolean gain_stat(enum stat_t tstat, char msg1[82])
 {
 	if (C_player_has_lost_stat((int16_t)tstat)) {
 		C_player_reset_lost_stat((int16_t)tstat);

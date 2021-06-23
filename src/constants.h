@@ -312,7 +312,6 @@
 #define CTRL_Y 25
 #define CTRL_Z 26
 
-#define STAT_SET_MAX 5  /* type stat_set is supposed to be 0..5 */
 #define OBJ_SET_MAX 255 /* type obj_set is supposed to be 0..255 */
 #define MAX_OBJ_SET 25  /* max items allowed in an obj_set[] */
 

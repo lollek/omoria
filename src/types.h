@@ -12,10 +12,9 @@ typedef struct quad_type
 
 typedef char account_type[10 + 2];
 typedef uint8_t obj_set[MAX_OBJ_SET]; /* = set of 0..255; */
-typedef char stat_set;			    /* = 0..5; */
-typedef uint8_t stat_s_type[STAT_SET_MAX + 1];    /* = array [stat_set] of unsigned char; */
 typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 
+#define STAT_T_SIZE 6  /* type stat_set is supposed to be 0..5 */
 enum stat_t {
 	STR = 0,
 	INT = 1,
@@ -234,7 +233,7 @@ typedef struct p_flags
 	boolean regenerate;   /* { Regenerate hit pts  } */
 	boolean lght_resist;  /* { Resistance to light } */
 	boolean ffall;	/* { No damage falling   } */
-	boolean sustain[STAT_SET_MAX + 1]; /* { keep characteristic } */
+	boolean sustain[STAT_T_SIZE]; /* { keep characteristic } */
 	boolean confuse_monster;	   /* { Glowing hands...    } */
 	int64_t resist_lght;		   /* { Timed lighting rst  } */
 	int64_t free_time;			   /* { Timed free action   } */

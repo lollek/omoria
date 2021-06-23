@@ -74,17 +74,17 @@ void C_player_modify_current_hp(float modifier);
 void C_player_regen_hp(float percent);
 
 void C_player_recalc_stats(void);
-int16_t C_player_get_stat(stat_set attr);
-void C_player_modify_lost_stat(stat_set attr, int16_t amount);
-void C_player_reset_lost_stat(stat_set attr);
-boolean C_player_has_lost_stat(stat_set attr);
-int16_t C_player_mod_from_stat(stat_set attr);
+int16_t C_player_get_stat(enum stat_t attr);
+void C_player_modify_lost_stat(enum stat_t attr, int16_t amount);
+void C_player_reset_lost_stat(enum stat_t attr);
+boolean C_player_has_lost_stat(enum stat_t attr);
+int16_t C_player_mod_from_stat(enum stat_t attr);
 int16_t C_player_tohit_from_stats(void);
 int16_t C_player_ac_from_dex(void);
 float C_player_cost_modifier_from_charisma(void);
 
-void C_player_mod_stat(stat_set attr, int16_t modifier);
-void C_player_mod_perm_stat(stat_set attr, int16_t modifier);
+void C_player_mod_stat(enum stat_t attr, int16_t modifier);
+void C_player_mod_perm_stat(enum stat_t attr, int16_t modifier);
 
 
 #endif /* PLAYER_H */

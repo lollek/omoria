@@ -1,5 +1,7 @@
 #ifndef ROUTINES_H
 #define ROUTINES_H
+
+#include "types.h"
 /**/
 
 /* START - FROM RUST */
@@ -398,10 +400,10 @@ extern boolean protect_evil();
 extern boolean create_food(long t0, long t1, long t2, long t3, long t4);
 extern boolean zap_area(long cflag, long dmge, long typ);
 extern boolean warding_glyph();
-extern void lower_stat(stat_set tstat, char msg1[82]);
-extern boolean lose_stat(stat_set tstat, char msg1[82], char msg2[82]);
-extern boolean restore_stat(stat_set tstat, char msg1[82]);
-extern boolean gain_stat(stat_set tstat, char msg1[82]);
+extern void lower_stat(enum stat_t tstat, char msg1[82]);
+extern boolean lose_stat(enum stat_t tstat, char msg1[82], char msg2[82]);
+extern boolean restore_stat(enum stat_t tstat, char msg1[82]);
+extern boolean gain_stat(enum stat_t tstat, char msg1[82]);
 extern void lose_exp(long amount);
 extern boolean slow_poison();
 extern boolean bless(long amount);
