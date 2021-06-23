@@ -101,7 +101,6 @@ extern store_type stores[MAX_STORES + 1];
 extern treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1];
 extern long store_choice[MAX_STORES][STORE_CHOICES];
 /*	  array [1..max_stores] of obj_set; */
-extern char store_hours[MAX_STORES + MAX_UNNAMED][7][14];
 extern long store_bribe[MAX_STORES + MAX_UNNAMED];
 extern long mugging_chance; /* { Chance page gets mugged} */
 

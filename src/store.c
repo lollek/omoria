@@ -109,6 +109,72 @@ static obj_set store_buy[MAX_STORES] = {
     /* {Black Market } */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
+/*	{ Hours that a store is open, in two hour increments. */
+/*		  = Open */
+/*		N = 'Closed for the night' */
+/*		W = 'Closed for the weekend' */
+/*		D = 'Closed for the day' */
+/*		B = Bribeable */
+/*					} */
+static char store_hours[MAX_STORES + MAX_UNNAMED][7][14] =
+    /* Mon, Tue, Wed, Thu, Fri, Sat, Sun */
+    {
+     /*{General Store	} */
+     {"NNB       BN", "NNB       BN", "NNB       BN", "NNB       BN",
+      "NNB       BN", "NNB       BN", "NNB       BN"},
+     /*{Armory		} */
+     {"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
+      "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
+     /*{Weapon Smiths	} */
+     {"NNNB     NNN", "NNNB     NNN", "WWWB     NNN", "NNNB     NNN",
+      "NNNB     NNN", "NNNB     WWW", "WWWWWWWWWWWW"},
+     /*{Temple		} */
+     {"            ", "            ", "            ", "            ",
+      "            ", "            ", "            "},
+     /*{Alchemy Shop	} */
+     {"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
+      "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
+     /*{Magic Shop	} */
+     {"NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN",
+      "NNNN    NNNN", "NNNN    NNNN", "NNNN    NNNN"},
+     /*{Inn		} */
+     {"            ", "            ", "            ", "            ",
+      "            ", "            ", "            "},
+     /*{Library	} */
+     {"NNN        N", "NNN        N", "NNN        N", "NNN        N",
+      "NNN        N", "NNN        N", "NNN        N"},
+     /*{Music Shop 	} */
+     {"NNNB    BNNN", "NNNB   BNNNN", "NNNB    BNNN", "NNNB    BNNN",
+      "NNNB    BNNN", "NNNB    BNNN", "NNNB    BNNN"},
+     /*{Gem Store	} */
+     {"NNNB     BNN", "NNNB   BNNNN", "NNNB     BNN", "NNNB     BNN",
+      "NNNB     BNN", "NNNB     BNN", "NNNB     BNN"},
+     /*{All-Night Deli } */
+     {"            ", "            ", "            ", "            ",
+      "            ", "            ", "            "},
+     /*{Black Market } */
+     {"BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB",
+      "BBBBBBBBBBBB", "BBBBBBBBBBBB", "BBBBBBBBBBBB"},
+     /*{Trading Post	} */
+     {"NNNB      BN", "NNNB      BN", "WWWB      BN", "NNNB      BN",
+      "NNNB      BN", "NNNB      BW", "WWWWWWWWWWWW"},
+     /*{Insurance Shop	} */
+     {"BBBB     BBB", "BBBB     BBB", "BBBB     BBB", "BBBB     BBB",
+      "BBBB     BBB", "BBBB     BBB", "BBBB     BBB"},
+     /*{Bank		} */
+     {"NNNN     NNN", "NNNN     NNN", "WWWW     NNN", "NNNN     NNN",
+      "NNNN     NNN", "NNNN    WWWW", "WWWWWWWWWWWW"},
+     /*{Money Exchange	} */
+     {"NNNB     BNN", "NNNB     BNN", "WWWB     BNN", "NNNB     BNN",
+      "NNNB     BNN", "NNNB     BWW", "WWWWWWWWWWWW"},
+     /*{Casino		} */
+     {"            ", "            ", "   DDDDDD   ", "   DDDDDD   ",
+      "   DDDDDD   ", "   DDDDDD   ", "   DDDDDD   "},
+     /*{Quest Store    } */
+     {"            ", "            ", "            ", "            ",
+      "            ", "            ", "            "}};
+
+
 void store_init()
 {
 	/*	{ Initializes the stores with owners			-RAK- */
