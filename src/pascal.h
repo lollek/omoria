@@ -6,8 +6,6 @@
 /* Things to save typing when converting pascal to c */
 
 #define nil 0
-#define false 0
-#define true 1
 
 #define trunc(xx) (xx)
 

@@ -3,9 +3,8 @@
 
 #include <stdint.h>
 
+#include "boolean.h"
 #include "constants.h"
-
-typedef uint8_t boolean;
 
 typedef struct quad_type {
 	uint16_t l0;
