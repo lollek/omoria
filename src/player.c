@@ -66,6 +66,40 @@ time_t player_creation_time = 0;
 int64_t player_claim_check = 0;
 int64_t player_uid = 0;
 
+/*	{ Following are player variables				} */
+p_flags player_flags = {
+    false, false,
+    0,	   0,
+    0,	   0,
+    0,	   7500,
+    2,	   0,
+    0,	   0,
+    false, 0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   false,
+    false, false,
+    false, false,
+    false, false,
+    false, false,
+    false, false,
+    false, {false, false, false, false, false, false}, /* sustain */
+    false, 0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   0,
+    0,	   false,
+    false, false,
+    false};
+
 void search_off()
 {
 	search_flag = false;

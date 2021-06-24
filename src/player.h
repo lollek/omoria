@@ -6,6 +6,70 @@
 #include "types.h"
 #include "magic.h"
 
+typedef struct p_flags {
+	boolean insured;       /* { Character insured   } */
+	boolean dead;	       /* { Currently restored  } */
+	uint64_t status;       /* { Status of player    } */
+	int64_t rest;	       /* { Rest counter	 } */
+	int64_t blind;	       /* { Blindness counter   } */
+	int64_t paralysis;     /* { Paralysis counter   } */
+	int64_t confused;      /* { Confusion counter   } */
+	int64_t foodc;	       /* { Food counter        } (was just food) */
+	int64_t food_digested; /* { Food per round      } */
+	int64_t protection;    /* { Protection fr. evil } */
+	int64_t speed;	       /* { Cur speed adjust    } */
+	int64_t speed_paral;   /* { Slow speed adjust   } */
+	boolean speed_flag;    /* { On if reset speed   } */
+	int64_t paral_init;    /* { Init val for slow   } */
+	int64_t move_rate;     /* { move_rate	         } */
+	int64_t swim;	       /* { Cur swim adjust     } */
+	int64_t fast;	       /* { Temp speed change   } */
+	int64_t slow;	       /* { Temp speed change   } */
+	int64_t petrification; /* { Amount Petrified    } */
+	int64_t afraid;	       /* { Fear                } */
+	int64_t poisoned;      /* { Poisoned            } */
+	int64_t image;	       /* { Hallucinate         } */
+	int64_t protevil;      /* { Protect VS evil     } */
+	int64_t invuln;	       /* { Increases AC        } */
+	int64_t hero;	       /* { Heroism	         } */
+	int64_t shero;	       /* { Super Heroism	 } */
+	int64_t blessed;       /* { Blessed	         } */
+	int64_t resist_heat;   /* { Timed heat resist   } */
+	int64_t resist_cold;   /* { Timed cold resist   } */
+	int64_t detect_inv;    /* { Timed see invisible } */
+	int64_t word_recall;   /* { Timed teleport level} */
+	int64_t see_infra;     /* { See warm creatures  } */
+	int64_t tim_infra;     /* { Timed infra vision  } */
+	boolean see_inv;       /* { Can see invisible   } */
+	boolean teleport;      /* { Random teleportation} */
+	boolean free_act;      /* { Never paralyzed     } */
+	boolean slow_digest;   /* { Lower food needs    } */
+	boolean aggravate;     /* { Agravate monsters   } */
+	boolean fire_resist;   /* { Resistance to fire  } */
+	boolean cold_resist;   /* { Resistance to cold  } */
+	boolean acid_resist;   /* { Resistance to acid  } */
+	boolean hunger_item;   /* { Resets food counter } */
+	boolean regenerate;    /* { Regenerate hit pts  } */
+	boolean lght_resist;   /* { Resistance to light } */
+	boolean ffall;	       /* { No damage falling   } */
+	boolean sustain[STAT_T_SIZE]; /* { keep characteristic } */
+	boolean confuse_monster;      /* { Glowing hands...    } */
+	int64_t resist_lght;	      /* { Timed lighting rst  } */
+	int64_t free_time;	      /* { Timed free action   } */
+	int64_t ring_fire;	      /* { Timed fire spell    } */
+	int64_t protmon;	      /* { Timed monst prot    } */
+	int64_t hoarse;		      /* { Timed no-bard spells} */
+	int64_t magic_prot;	      /* { Timed magic prot    } */
+	int64_t ring_ice;	      /* { Timed cold spell    } */
+	int64_t temp_stealth;	      /* { Timed stealth       } */
+	int64_t resist_petri;	      /* { Timed resist petrify} */
+	int64_t blade_ring;	      /* { Timed blade spell   } */
+	boolean petri_resist;	      /* { Resist Petrification} */
+	boolean quested;	      /* { Performing a Quest  } {FUBAR} */
+	boolean light_on;	      /* { Light source is active } */
+	boolean resting_till_full;
+} p_flags;
+
 extern p_flags player_flags;
 
 /* P_MISC */

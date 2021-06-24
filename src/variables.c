@@ -177,39 +177,6 @@ obj_set slow_set = {hafted_weapon,
 obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
 		      0,     0,	    0,		0, 0, 0, 0, 0};
 
-/*	{ Following are player variables				} */
-p_flags player_flags = {
-    false, false,
-    0,	   0,
-    0,	   0,
-    0,	   7500,
-    2,	   0,
-    0,	   0,
-    false, 0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   false,
-    false, false,
-    false, false,
-    false, false,
-    false, false,
-    false, false,
-    false, {false, false, false, false, false, false}, /* sustain */
-    false, 0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   false,
-    false, false,
-    false};
 
 /*	{ Base experience levels, may be adjusted up for race and/or class} */
 long exp_per_level[MAX_PLAYER_LEVEL + 1] = {
