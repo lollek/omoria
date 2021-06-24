@@ -1,4 +1,20 @@
-#include "imoria.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 
 static const float obj_std_adj = 1.25;	 // Adjust STD per level
 static const long obj_std_min = 7;	 // Minimum STD

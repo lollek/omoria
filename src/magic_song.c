@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
+#include "player.h"
 #include "dungeon.h"
-#include "imoria.h"
 
 void song_spell_effects(long effect)
 {
@@ -135,9 +152,9 @@ void song_spell_effects(long effect)
 
 	case 28: /*{ Protection from Nature }*/
 		/* with player_flags do; */
-		PF.resist_heat += randint(15) + 10;
-		PF.resist_cold += randint(15) + 10;
-		PF.resist_lght += randint(15) + 10;
+		(player_flags).resist_heat += randint(15) + 10;
+		(player_flags).resist_cold += randint(15) + 10;
+		(player_flags).resist_lght += randint(15) + 10;
 		break;
 
 	case 29: /*{ See Invisible }*/
@@ -171,8 +188,8 @@ void song_spell_effects(long effect)
 
 	case 34: /*{ Resist Charm }*/
 		/* with player_flags do; */
-		PF.free_time += randint(10) + player_lev;
-		PF.magic_prot += randint(10) + player_lev;
+		(player_flags).free_time += randint(10) + player_lev;
+		(player_flags).magic_prot += randint(10) + player_lev;
 		break;
 
 	case 35: /*{ Item Lore }*/

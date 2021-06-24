@@ -2,6 +2,8 @@
 #define HORSE_H
 /* declarations for the horse racing module in the casino */
 
+#include "types.h"
+
 #define RACES_PER_DAY 10
 #define MAX_HORSE_NAMES 55
 

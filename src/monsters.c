@@ -1,7 +1,24 @@
 /* monsters.c */
 /**/
 
-#include "imoria.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
+#include "player.h"
 
 static const long mon_nasty = 50; /// Dun_level/x chance of high level creature
 

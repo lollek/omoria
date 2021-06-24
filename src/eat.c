@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
 #include "dungeon.h"
-#include "imoria.h"
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
+#include "player.h"
 
 void e__eyeball_of_drong(boolean *ident)
 {
@@ -8,17 +25,17 @@ void e__eyeball_of_drong(boolean *ident)
 	i1 = damroll("10d8") + 100;
 	take_hit(i1, "the Wrath of Ned");
 
-	cure_me(&PF.afraid);
+	cure_me(&(player_flags).afraid);
 	bless(randint(100) + 100);
-	PF.hero += randint(100) + 100;
-	PF.shero += randint(50) + 75;
-	PF.invuln += randint(15) + 10;
+	(player_flags).hero += randint(100) + 100;
+	(player_flags).shero += randint(50) + 75;
+	(player_flags).invuln += randint(15) + 10;
 
-	PF.image += randint(500) + randint(500) + randint(1000) + 5000;
-	PF.poisoned += randint(100) + 150;
-	PF.confused += randint(30) + 50;
-	PF.blind += randint(3) + 10;
-	PF.paralysis = 4;
+	(player_flags).image += randint(500) + randint(500) + randint(1000) + 5000;
+	(player_flags).poisoned += randint(100) + 150;
+	(player_flags).confused += randint(30) + 50;
+	(player_flags).blind += randint(3) + 10;
+	(player_flags).paralysis = 4;
 
 	msg_print("You hear a distant rumble of laughter...");
 	msg_print("You throw back your head and laugh back!");
@@ -88,13 +105,13 @@ void eat()
 			/*{ Foods }*/
 			switch (bit_pos(&i1) + 1) {
 			case 1:
-				PF.poisoned +=
+				(player_flags).poisoned +=
 				    randint(10) + item_ptr->data.level;
 				ident = true;
 				break;
 
 			case 2:
-				PF.blind += randint(250) +
+				(player_flags).blind += randint(250) +
 					    10 * item_ptr->data.level + 100;
 				draw_cave();
 				msg_print("A veil of darkness surrounds you.");
@@ -102,19 +119,19 @@ void eat()
 				break;
 
 			case 3:
-				PF.afraid += randint(10) + item_ptr->data.level;
+				(player_flags).afraid += randint(10) + item_ptr->data.level;
 				msg_print("You feel terrified!");
 				ident = true;
 				break;
 
 			case 4:
-				PF.confused +=
+				(player_flags).confused +=
 				    randint(10) + item_ptr->data.level;
 				msg_print("You feel drugged.");
 				break;
 
 			case 5:
-				PF.image += randint(200) +
+				(player_flags).image += randint(200) +
 					    25 * item_ptr->data.level + 200;
 				break;
 
@@ -127,8 +144,8 @@ void eat()
 				break;
 
 			case 8:
-				if (PF.afraid > 1) {
-					PF.afraid = 1;
+				if ((player_flags).afraid > 1) {
+					(player_flags).afraid = 1;
 					ident = true;
 				}
 				break;

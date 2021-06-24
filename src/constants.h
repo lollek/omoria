@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+
 /*	{ Screen size parameters					} */
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66

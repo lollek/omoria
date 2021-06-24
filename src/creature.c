@@ -1,8 +1,25 @@
 /* creature.c */
 /**/
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 #define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
 
@@ -776,11 +793,11 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
 		if (randint(2) == 1) {
-			if (PF.confused < 1) {
+			if ((player_flags).confused < 1) {
 				msg_print("You feel confused.");
-				PF.confused += randint(level);
+				(player_flags).confused += randint(level);
 			}
-			PF.confused += 3;
+			(player_flags).confused += 3;
 		}
 		prt_stat_block();
 		break;
@@ -790,11 +807,11 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		if (player_spell_saves()) {
 			msg_print("You resist the effects!");
-		} else if (PF.afraid < 1) {
+		} else if ((player_flags).afraid < 1) {
 			msg_print("You are suddenly afraid!");
-			PF.afraid += 3 + randint(level);
+			(player_flags).afraid += 3 + randint(level);
 		} else {
-			PF.afraid += 3;
+			(player_flags).afraid += 3;
 		}
 		prt_stat_block();
 		break;
@@ -829,12 +846,12 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 	case 10: /*{Blindness attack}*/
 		/* with player_flags do; */
 		take_hit(damroll(damstr), ddesc);
-		if (PF.blind < 1) {
-			PF.blind += 10 + randint(level);
+		if ((player_flags).blind < 1) {
+			(player_flags).blind += 10 + randint(level);
 			msg_print("Your eyes begin to sting.");
 			msg_print(" ");
 		}
-		PF.blind +=
+		(player_flags).blind +=
 		    5; /* blind the first time is worse than cumulitave blind */
 		prt_stat_block();
 		break;
@@ -844,13 +861,13 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		if (player_spell_saves()) {
 			msg_print("You resist the effects!");
-		} else if (PF.paralysis < 1) {
-			if (PF.free_act || (PF.free_time > 0)) {
+		} else if ((player_flags).paralysis < 1) {
+			if ((player_flags).free_act || ((player_flags).free_time > 0)) {
 				msg_print("You are unaffected.");
 			} else {
 				/* new paralysis overwrites old one, otherwise
 				 * you become dead fast */
-				PF.paralysis = randint(level) + 3;
+				(player_flags).paralysis = randint(level) + 3;
 				msg_print("You are paralyzed.");
 			}
 		}
@@ -924,7 +941,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 		take_hit(damroll(damstr), ddesc);
 		prt_stat_block();
 		msg_print("You feel very sick.");
-		PF.poisoned += randint(level) + 5;
+		(player_flags).poisoned += randint(level) + 5;
 		break;
 
 	case 15: /*{Lose dexterity }*/
@@ -1080,7 +1097,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 
 	case 27: /*{POISON Poison  }*/
 		/* with player_flags do; */
-		PF.poisoned += damroll(damstr);
+		(player_flags).poisoned += damroll(damstr);
 		msg_print("You feel very sick.");
 		break;
 
@@ -1782,17 +1799,17 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			stop_player = true;
 			strcat(cdesc, "casts a spell.");
 			msg_print(cdesc);
-			if (PF.free_act || (PF.free_time > 0)) {
+			if ((player_flags).free_act || ((player_flags).free_time > 0)) {
 				msg_print("You are unaffected...");
 			} else if (player_spell_saves()) {
 				msg_print(
 				    "You resist the affects of the spell.");
 			} else {
 				msg_print("You can't move!");
-				if (PF.paralysis > 0) {
-					PF.paralysis += 2;
+				if ((player_flags).paralysis > 0) {
+					(player_flags).paralysis += 2;
 				} else {
-					PF.paralysis = randint(5) + 4;
+					(player_flags).paralysis = randint(5) + 4;
 				}
 			}
 			break;
@@ -1869,15 +1886,15 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 			stop_player = true;
 			strcat(cdesc, "casts a spell.");
 			msg_print(cdesc);
-			if (PF.free_act || (PF.free_time > 0)) {
+			if ((player_flags).free_act || ((player_flags).free_time > 0)) {
 				msg_print("You are unaffected...");
 			} else if (player_spell_saves()) {
 				msg_print(
 				    "You resist the affects of the spell.");
-			} else if (PF.slow > 0) {
-				PF.slow += 2;
+			} else if ((player_flags).slow > 0) {
+				(player_flags).slow += 2;
 			} else {
-				PF.slow = randint(5) + 3;
+				(player_flags).slow = randint(5) + 3;
 			}
 			break;
 
@@ -2052,7 +2069,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 				find_flag = false;
 				move_char(5);
 			}
-			if (PF.rest > 0) {
+			if ((player_flags).rest > 0) {
 				rest_off();
 			}
 		}

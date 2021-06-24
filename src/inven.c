@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
+#include "player.h"
 
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)
@@ -477,7 +494,7 @@ static char const *ic__equip_print_prefix(long position)
 		return " Worn about body    : ";
 		break;
 	case Equipment_light:
-		if (PF.light_on && (equipment[position].p1 > 0)) {
+		if ((player_flags).light_on && (equipment[position].p1 > 0)) {
 			return " Light source (On)  : ";
 		} else {
 			return " Light source (Off) : ";
@@ -878,7 +895,7 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
 			treasure_type unwear_obj = equipment[i1];
 			equipment[i1] = selected_item->data;
 			if (i1 == Equipment_light) {
-				PF.light_on = true;
+				(player_flags).light_on = true;
 			}
 			equipment[i1].number = 1;
 

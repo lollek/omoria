@@ -1,6 +1,8 @@
 #ifndef TERM_H
 #define TERM_H
 
+#include <stdio.h>
+
 typedef unsigned char int8u;
 
 void moriaterm();

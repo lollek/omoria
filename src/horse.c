@@ -1,9 +1,13 @@
 /* horse.c */
 /* horse race code for the casino */
 
+#include <math.h>
+#include <string.h>
+
+#include "routines.h"
 #include "horse.h"
 #include "casino.h"
-#include "imoria.h"
+#include "player.h"
 
 void hr__display_commands()
 {

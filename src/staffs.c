@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 void us__staff_effect(long effect, boolean *idented)
 {
@@ -116,9 +133,9 @@ void us__staff_effect(long effect, boolean *idented)
 
 	case 22:
 		/* with player_flags do; */
-		ident = cure_me(&(PF.blind));
-		ident |= cure_me(&(PF.poisoned));
-		ident |= cure_me(&(PF.confused));
+		ident = cure_me(&((player_flags).blind));
+		ident |= cure_me(&((player_flags).poisoned));
+		ident |= cure_me(&((player_flags).confused));
 		break;
 
 	case 23:

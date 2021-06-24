@@ -1,8 +1,11 @@
 #ifndef ROUTINES_H
 #define ROUTINES_H
 
+#include <time.h>
+#include <curses.h>
+#include <stdio.h>
+
 #include "types.h"
-/**/
 
 /* START - FROM RUST */
 boolean C_master_update_character(int64_t uid);

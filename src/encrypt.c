@@ -1,44 +1,24 @@
 /* encrypt.c */
 /* routines to handle encrypting and decrypting save files */
 
-#include "imoria.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
-#if ENABLE_DES
-#include <des_crypt.h>
-#endif
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 
-#if ENABLE_DES
-void des_encrypt_write(FILE *f1, encrypt_state *state)
-{
-	/* called by encrypt_write to encode a block of plaintext and write it
-	 */
-
-	int result;
-
-	if (state->buf_pos != 0) {
-		/* round up to 8 bytes */
-		state->buf_pos += 7;
-		state->buf_pos &= 0xfffffff8;
-
-		result =
-		    cbc_crypt(state->des_key, state->data_buf, state->buf_pos,
-			      DES_ENCRYPT | DES_SW, state->des_ivec);
-
-		if (result != DESERR_NONE) {
-			prt("Error calling cbc_crypt to encrypt.", 1, 1);
-			refresh();
-		}
-
-		if (write((int)fileno(f1), state->data_buf, state->buf_pos) !=
-		    state->buf_pos) {
-			prt("Error writing line to file.", 1, 1);
-			refresh();
-		}
-
-		state->buf_pos = 0;
-	}
-}
-#else
 void rand_encrypt_write(FILE *f1, encrypt_state *state)
 {
 	/* called by encrypt_write to encode a block of plaintext and write it
@@ -55,55 +35,7 @@ void rand_encrypt_write(FILE *f1, encrypt_state *state)
 		state->buf_pos = 0;
 	}
 }
-#endif
 
-#if ENABLE_DES
-void des_read_decrypt(FILE *f1, encrypt_state *state)
-{
-	/* called by read_decrypt to get next block of plaintext */
-
-	int result;
-
-	state->buf_pos = 0;
-	state->buf_size = 0;
-	state->data_buf[0] = 0;
-
-	if (feof(f1)) {
-		state->got_eof = true;
-	} else {
-
-		state->buf_size = read((int)fileno(f1), state->data_buf,
-				       ENCRYPT_STAT_BUF_SIZE);
-		if (state->buf_size == -1) {
-			prt("Error reading line from file.", 1, 1);
-			state->got_eof = true;
-		} else {
-
-			if (state->buf_size == 0) {
-				state->got_eof = true;
-			} else if (state->buf_size & 0x07) {
-				prt("Error read not a multiple of 8 bytes.", 1,
-				    1);
-				refresh();
-				state->got_eof = true;
-				state->buf_size = 0;
-			} else {
-				result = cbc_crypt(
-				    state->des_key, state->data_buf,
-				    state->buf_size, DES_DECRYPT | DES_SW,
-				    state->des_ivec);
-
-				if (result != DESERR_NONE) {
-					prt("Error calling cbc_crypt to "
-					    "decrypt.",
-					    1, 1);
-					refresh();
-				}
-			}
-		}
-	}
-}
-#else
 void rand_read_decrypt(FILE *f1, encrypt_state *state)
 {
 	/* called by read_decrypt to get next block of plaintext */
@@ -129,7 +61,6 @@ void rand_read_decrypt(FILE *f1, encrypt_state *state)
 		}
 	}
 }
-#endif
 
 void encrypt_flush(FILE *f1, encrypt_state *state)
 {
@@ -141,12 +72,7 @@ void encrypt_flush(FILE *f1, encrypt_state *state)
 
 	if (state->doit) {
 		state->data_buf[state->buf_pos++] = 0;
-#if ENABLE_DES
-		state->data_buf[state->buf_pos++] = randint(256) - 1;
-		des_encrypt_write(f1, state);
-#else
 		rand_encrypt_write(f1, state);
-#endif
 	}
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -172,22 +98,14 @@ void encrypt_write(FILE *f1, encrypt_state *state, char line[1026])
 			    line[i1] ^ (randint(256) - 1);
 
 			if (state->buf_pos == ENCRYPT_STAT_BUF_SIZE) {
-#if ENABLE_DES
-				des_encrypt_write(f1, state);
-#else
 				rand_encrypt_write(f1, state);
-#endif
 			}
 		}
 
 		state->data_buf[state->buf_pos++] = '\n' ^ (randint(256) - 1);
 
 		if (state->buf_pos == ENCRYPT_STAT_BUF_SIZE) {
-#if ENABLE_DES
-			des_encrypt_write(f1, state);
-#else
 			rand_encrypt_write(f1, state);
-#endif
 		}
 	}
 }
@@ -225,11 +143,7 @@ void read_decrypt(FILE *f1, encrypt_state *state, char line[1026],
 
 			for (i1 = 0, exit = false; (i1 < 1000) && !exit;) {
 				if (state->buf_pos >= state->buf_size) {
-#if ENABLE_DES
-					des_read_decrypt(f1, state);
-#else
 					rand_read_decrypt(f1, state);
-#endif
 				}
 
 				if (state->buf_size == 0) {

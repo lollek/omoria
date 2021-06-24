@@ -1,6 +1,8 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
+#include "types.h"
+
 /**
  * -OK-
  *  prt_equipment() - Draws equipment screen on the right

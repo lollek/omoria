@@ -1,7 +1,23 @@
 #include <time.h>
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
-#include "imoria.h"
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "save.h"
+#include "player.h"
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
@@ -3009,17 +3025,17 @@ long get_hexdecant(long dy, long dx)
 /*//////////////////////////////////////////////////////////////////// */
 void petrify(long amt)
 {
-	PF.petrification += randint(amt);
+	(player_flags).petrification += randint(amt);
 
-	if (PF.petrification < 100) {
+	if ((player_flags).petrification < 100) {
 		msg_print("You feel your joints stiffening.");
-	} else if (PF.petrification < 150) {
+	} else if ((player_flags).petrification < 150) {
 		msg_print("Your feet are beginning to feel heavy.");
-	} else if (PF.petrification < 200) {
+	} else if ((player_flags).petrification < 200) {
 		msg_print("Your knees are no longer able to bend.");
-	} else if (PF.petrification < 250) {
+	} else if ((player_flags).petrification < 250) {
 		msg_print("Your legs feel like blocks of stone.");
-	} else if (PF.petrification < 300) {
+	} else if ((player_flags).petrification < 300) {
 		msg_print("You are finding it difficult to breathe.");
 	} else {
 		msg_print("You have turned to stone.");
@@ -3065,7 +3081,7 @@ void place_win_monster()
 
 		m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
 		m_list[cur_pos].cspeed =
-		    c_list[m_list[cur_pos].mptr].speed + PF.speed;
+		    c_list[m_list[cur_pos].mptr].speed + (player_flags).speed;
 		m_list[cur_pos].stunned = 0;
 		m_list[cur_pos].csleep = 0;
 		cave[y][x].cptr = cur_pos;

@@ -1,8 +1,16 @@
 /* generate.c */
 /**/
+#include <curses.h>
+#include <stdlib.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
 #include "generate.h"
-#include "imoria.h"
+#include "pascal.h"
+#include "routines.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
+#include "player.h"
 
 /*
  *	{ Dungeon generation values					}

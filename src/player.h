@@ -1,7 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "imoria.h"
+#include <time.h>
+
+#include "types.h"
+#include "magic.h"
 
 extern p_flags player_flags;
 

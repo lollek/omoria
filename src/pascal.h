@@ -1,6 +1,8 @@
 #ifndef PASCAL_H
 #define PASCAL_H
 
+#include "types.h"
+
 /* Things to save typing when converting pascal to c */
 
 #define nil 0

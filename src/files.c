@@ -1,7 +1,24 @@
 #include <sys/file.h> /* for flock     */
 
-#include "imoria.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "save.h"
+#include "player.h"
 
 /*	{ Output dungeon section sizes					} */
 #define OUTPAGE_HEIGHT 44 /* { 44 lines of dungeon per section	} */
@@ -443,9 +460,9 @@ void file_character()
 				C_player_mod_from_stat(WIS);
 			xdev = player_save + player_lev +
 			       C_player_mod_from_stat(INT);
-			xswm = PF.swim + 4;
+			xswm = (player_flags).swim + 4;
 			xrep = 6 + player_rep / 25;
-			sprintf(xinfra, "%ld feet", PF.see_infra);
+			sprintf(xinfra, "%ld feet", (player_flags).see_infra);
 
 			fprintf(file1, "\n");
 

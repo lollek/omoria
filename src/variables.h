@@ -2,6 +2,8 @@
 #define VARIABLES_H
 /* Ever feel the need for more global vars? */
 
+#include "types.h"
+
 extern treas_ptr cur_inven;	  /* { Current inven page  } */
 extern money_type bank;		  /* { Bank's money	 } */
 extern money_type coin_value;	  /* { Copy of money values} */
@@ -136,7 +138,4 @@ extern unsigned char saveFileKey[8];
 extern int game_state;
 extern boolean curses_is_running;
 
-#include "player.h"
-
-/* END FILE  variables.h */
 #endif /* VARIABLES_H */

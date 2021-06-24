@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 void q__potion_effect(long effect, boolean *idented)
 {
@@ -102,19 +119,19 @@ void q__potion_effect(long effect, boolean *idented)
 
 	case 20: /*{ Darkness }*/
 		msg_print("You are covered by a veil of darkness.");
-		PF.blind += randint(100) + 100;
+		(player_flags).blind += randint(100) + 100;
 		ident = true;
 		break;
 
 	case 21: /*{ Confusion }*/
 		msg_print("Hey!  This is good stuff!  * Hick! *");
-		PF.confused += randint(20) + 12;
+		(player_flags).confused += randint(20) + 12;
 		ident = true;
 		break;
 
 	case 22: /*{ Poison }*/
 		msg_print("You feel very sick.");
-		PF.poisoned += randint(15) + 10;
+		(player_flags).poisoned += randint(15) + 10;
 		ident = true;
 		break;
 
@@ -171,13 +188,13 @@ void q__potion_effect(long effect, boolean *idented)
 
 	case 34: /*{ Salt Water }*/
 		/* with player_flags do; */
-		PF.poisoned = 0;
+		(player_flags).poisoned = 0;
 		player_flags.status &= ~IS_POISONED;
 		prt_poisoned();
-		if (PF.foodc > 150) {
-			PF.foodc = 150;
+		if ((player_flags).foodc > 150) {
+			(player_flags).foodc = 150;
 		}
-		PF.paralysis = 4;
+		(player_flags).paralysis = 4;
 		msg_print("The potion makes you vomit!");
 		ident = true;
 		break;
@@ -209,11 +226,11 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 40: /*{ Resist Heat }*/
-		PF.resist_heat += randint(10) + 10;
+		(player_flags).resist_heat += randint(10) + 10;
 		break;
 
 	case 41: /*{ Resist Cold }*/
-		PF.resist_cold += randint(10) + 10;
+		(player_flags).resist_cold += randint(10) + 10;
 		break;
 
 	case 42:
@@ -238,25 +255,25 @@ void q__potion_effect(long effect, boolean *idented)
 		break;
 
 	case 46: /*{ Infra-Vision }*/
-		PF.tim_infra += 100 + randint(100);
+		(player_flags).tim_infra += 100 + randint(100);
 		ident = true;
 		msg_print("Your eyes begin to tingle.");
 		break;
 
 	case 47: /* cure hallucination */
 		msg_print("Pretty colors!");
-		PF.confused += randint(5) + 5;
+		(player_flags).confused += randint(5) + 5;
 		ident = cure_me(&player_flags.image);
 		break;
 
 		/* case 48 moved up to 32 */
 
 	case 49: /* reduce petrification */
-		if (PF.petrification > 0) {
+		if ((player_flags).petrification > 0) {
 			ident = true;
-			PF.petrification -= 100;
-			if (PF.petrification < 0) {
-				PF.petrification = 0;
+			(player_flags).petrification -= 100;
+			if ((player_flags).petrification < 0) {
+				(player_flags).petrification = 0;
 			}
 		}
 		break;

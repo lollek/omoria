@@ -1,8 +1,25 @@
 /* spells.c */
 /**/
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 #define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */
 
@@ -173,7 +190,7 @@ boolean lose_stat(enum stat_t tstat, char msg1[82], char msg2[82])
 {
 	boolean return_value = true;
 
-	if (!(PF.sustain[(int)tstat])) {
+	if (!((player_flags).sustain[(int)tstat])) {
 		lower_stat(tstat, msg1);
 	} else {
 		if (strcmp(msg2, "X") == 0) {
@@ -1010,10 +1027,10 @@ boolean slow_poison()
 	/*{ Slow Poison                                           -RAK-   }*/
 	boolean return_value = false;
 
-	if (PF.poisoned > 0) {
-		PF.poisoned /= 2;
-		if (PF.poisoned < 1) {
-			PF.poisoned = 1;
+	if ((player_flags).poisoned > 0) {
+		(player_flags).poisoned /= 2;
+		if ((player_flags).poisoned < 1) {
+			(player_flags).poisoned = 1;
 		}
 		return_value = true;
 		msg_print("The effects of the poison has been reduced.");
@@ -1129,7 +1146,7 @@ boolean detect_inv2(long amount)
 {
 	/*{ Detect Invisible for period of time                   -RAK-   }*/
 
-	PF.detect_inv += amount;
+	(player_flags).detect_inv += amount;
 
 	return true;
 }
@@ -1302,7 +1319,7 @@ boolean bless(long amount)
 {
 	/*{ Bless                                                 -RAK-   }*/
 
-	PF.blessed += amount;
+	(player_flags).blessed += amount;
 
 	return true;
 }
@@ -1681,7 +1698,7 @@ boolean protect_evil()
 {
 	/*{ Evil creatures don't like this...                     -RAK-   }*/
 
-	PF.protevil += randint(25) + 3 * player_lev;
+	(player_flags).protevil += randint(25) + 3 * player_lev;
 
 	return true;
 }

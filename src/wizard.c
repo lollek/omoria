@@ -1,8 +1,25 @@
 /* wizard.c */
 /**/
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 #define LOW_NUM -98765432
 
@@ -1358,17 +1375,17 @@ void wizard_command(void)
 		player_cmana = player_mana;
 		prt_stat_block();
 		remove_curse();
-		cure_me(&(PF.blind));
-		cure_me(&(PF.hoarse));
-		cure_me(&(PF.afraid));
-		cure_me(&(PF.poisoned));
-		cure_me(&(PF.confused));
+		cure_me(&((player_flags).blind));
+		cure_me(&((player_flags).hoarse));
+		cure_me(&((player_flags).afraid));
+		cure_me(&((player_flags).poisoned));
+		cure_me(&((player_flags).confused));
 		for (tstat = STR; tstat <= CHR; tstat++)
 			restore_stat(tstat, "");
-		if (PF.slow > 1)
-			PF.slow = 1;
-		if (PF.image > 1)
-			PF.image = 1;
+		if ((player_flags).slow > 1)
+			(player_flags).slow = 1;
+		if ((player_flags).image > 1)
+			(player_flags).image = 1;
 		break;
 	case 'b':
 		print_objects();

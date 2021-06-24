@@ -1,6 +1,9 @@
 #ifndef TYPES_H
 #define TYPES_H
-/* The global types for imoria */
+
+#include <stdint.h>
+
+#include "constants.h"
 
 typedef uint8_t boolean;
 

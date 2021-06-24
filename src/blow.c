@@ -1,8 +1,25 @@
 /* blow.c */
 /* chimes, horns, gems, and other stuff */
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 static void b__chime_and_horn_effects(long effect, boolean *idented)
 {
@@ -88,9 +105,9 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 
 	case 14: /*{ Chime of Curing }*/
 		/* with player_flags do; */
-		ident = cure_me(&PF.blind);
-		ident |= cure_me(&PF.poisoned);
-		ident |= cure_me(&PF.confused);
+		ident = cure_me(&(player_flags).blind);
+		ident |= cure_me(&(player_flags).poisoned);
+		ident |= cure_me(&(player_flags).confused);
 		break;
 
 	case 15: /*{ Chime of Dispell Evil }*/
@@ -190,9 +207,9 @@ static void b__chime_and_horn_effects(long effect, boolean *idented)
 		ident = true;
 		msg_print("All of the seas of the world still (yeah, right)!");
 		msg_print("The gods of the ocean hear you...");
-		PF.blessed += randint(20);
-		cure_me(&PF.blind);
-		cure_me(&PF.poisoned);
+		(player_flags).blessed += randint(20);
+		cure_me(&(player_flags).blind);
+		cure_me(&(player_flags).poisoned);
 		break;
 
 	case 29: /*{ Horn of Fog }*/
@@ -312,14 +329,14 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr)
 			ident = true;
 		}
 		/* with player_flags do; */
-		if (PF.slow > 0) {
+		if ((player_flags).slow > 0) {
 			ident = true;
-			PF.slow = 1;
+			(player_flags).slow = 1;
 		}
 		/* bitwise or, otherwise it shortcuts and not everything happens
 		 */
-		if (cure_me(&PF.blind) | cure_me(&PF.poisoned) |
-		    cure_me(&PF.confused) | cure_me(&PF.afraid) |
+		if (cure_me(&(player_flags).blind) | cure_me(&(player_flags).poisoned) |
+		    cure_me(&(player_flags).confused) | cure_me(&(player_flags).afraid) |
 		    restore_level()) {
 			ident = true;
 		}

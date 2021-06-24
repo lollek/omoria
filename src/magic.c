@@ -1,5 +1,10 @@
+#include <string.h>
+
+#include "routines.h"
+#include "debug.h"
+#include "variables.h"
+#include "player.h"
 #include "dungeon.h"
-#include "imoria.h"
 
 static void nonmagic_song(void)
 {

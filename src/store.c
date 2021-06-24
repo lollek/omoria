@@ -1,8 +1,25 @@
 /* store.c */
 /**/
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 #define DAY_LENGTH 9600	       /*{ Turns in a day			} */
 const long obj_town_level = 7; // Town object generation level
@@ -1071,8 +1088,8 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 	}
 
 	/* with player_flags do; */
-	for (t2 = time_spent; (PF.poisoned > 0) && (t2 > 0);) {
-		PF.poisoned--;
+	for (t2 = time_spent; ((player_flags).poisoned > 0) && (t2 > 0);) {
+		(player_flags).poisoned--;
 		time_spent--;
 
 		switch (C_player_hp_from_con()) {
@@ -1109,57 +1126,57 @@ void spend_time(long days_spent, char place[82], boolean whole_days)
 			break;
 		} /* end switch */
 
-		if (PF.poisoned == 0) {
-			PF.status &= ~IS_POISONED;
+		if ((player_flags).poisoned == 0) {
+			(player_flags).status &= ~IS_POISONED;
 			msg_print("You feel better.");
 			refresh();
 		}
 	} /* end for */
 
-	st__reset_flag(time_spent, &(PF.blind));
-	st__reset_flag(time_spent, &(PF.confused));
-	st__reset_flag(time_spent, &(PF.protection));
-	st__reset_flag(time_spent, &(PF.fast));
-	st__reset_flag(time_spent, &(PF.slow));
-	st__reset_flag(time_spent, &(PF.afraid));
-	st__reset_flag(time_spent, &(PF.image));
-	st__reset_flag(time_spent, &(PF.protevil));
-	st__reset_flag(time_spent, &(PF.invuln));
-	st__reset_flag(time_spent, &(PF.hero));
-	st__reset_flag(time_spent, &(PF.shero));
-	st__reset_flag(time_spent, &(PF.blessed));
-	st__reset_flag(time_spent, &(PF.resist_heat));
-	st__reset_flag(time_spent, &(PF.resist_cold));
-	st__reset_flag(time_spent, &(PF.detect_inv));
-	st__reset_flag(time_spent, &(PF.word_recall));
-	st__reset_flag(time_spent, &(PF.tim_infra));
-	st__reset_flag(time_spent, &(PF.resist_lght));
-	st__reset_flag(time_spent, &(PF.free_time));
-	st__reset_flag(time_spent, &(PF.ring_fire));
-	st__reset_flag(time_spent, &(PF.protmon));
-	st__reset_flag(time_spent, &(PF.hoarse));
-	st__reset_flag(time_spent, &(PF.magic_prot));
-	st__reset_flag(time_spent, &(PF.ring_ice));
-	st__reset_flag(time_spent, &(PF.temp_stealth));
-	st__reset_flag(time_spent, &(PF.resist_petri));
-	st__reset_flag(time_spent, &(PF.blade_ring));
+	st__reset_flag(time_spent, &((player_flags).blind));
+	st__reset_flag(time_spent, &((player_flags).confused));
+	st__reset_flag(time_spent, &((player_flags).protection));
+	st__reset_flag(time_spent, &((player_flags).fast));
+	st__reset_flag(time_spent, &((player_flags).slow));
+	st__reset_flag(time_spent, &((player_flags).afraid));
+	st__reset_flag(time_spent, &((player_flags).image));
+	st__reset_flag(time_spent, &((player_flags).protevil));
+	st__reset_flag(time_spent, &((player_flags).invuln));
+	st__reset_flag(time_spent, &((player_flags).hero));
+	st__reset_flag(time_spent, &((player_flags).shero));
+	st__reset_flag(time_spent, &((player_flags).blessed));
+	st__reset_flag(time_spent, &((player_flags).resist_heat));
+	st__reset_flag(time_spent, &((player_flags).resist_cold));
+	st__reset_flag(time_spent, &((player_flags).detect_inv));
+	st__reset_flag(time_spent, &((player_flags).word_recall));
+	st__reset_flag(time_spent, &((player_flags).tim_infra));
+	st__reset_flag(time_spent, &((player_flags).resist_lght));
+	st__reset_flag(time_spent, &((player_flags).free_time));
+	st__reset_flag(time_spent, &((player_flags).ring_fire));
+	st__reset_flag(time_spent, &((player_flags).protmon));
+	st__reset_flag(time_spent, &((player_flags).hoarse));
+	st__reset_flag(time_spent, &((player_flags).magic_prot));
+	st__reset_flag(time_spent, &((player_flags).ring_ice));
+	st__reset_flag(time_spent, &((player_flags).temp_stealth));
+	st__reset_flag(time_spent, &((player_flags).resist_petri));
+	st__reset_flag(time_spent, &((player_flags).blade_ring));
 
 	switch (days_spent) {
 	case 0:
 	case 1:
-		PF.foodc -= time_spent;
-		if (PF.foodc <= PLAYER_FOOD_ALERT) {
+		(player_flags).foodc -= time_spent;
+		if ((player_flags).foodc <= PLAYER_FOOD_ALERT) {
 			/* free food if you were hungry when you got here? */
-			PF.foodc = PLAYER_FOOD_ALERT + 1;
+			(player_flags).foodc = PLAYER_FOOD_ALERT + 1;
 		}
 		break;
 
 	default:
-		PF.foodc = PLAYER_FOOD_FULL - 1;
+		(player_flags).foodc = PLAYER_FOOD_FULL - 1;
 		break;
 	}
 
-	PF.confuse_monster = false;
+	(player_flags).confuse_monster = false;
 
 	for (i1 = 1; i1 <= mornings; i1++) {
 		store_maint();

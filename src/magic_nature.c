@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 void nature_spell_effects(long effect)
 {
@@ -133,9 +150,9 @@ void nature_spell_effects(long effect)
 
 	case 24: /*{ Dispel Magic }*/
 		/* with player_flags do; */
-		cure_me(&PF.blind);
-		cure_me(&PF.poisoned);
-		cure_me(&PF.afraid);
+		cure_me(&(player_flags).blind);
+		cure_me(&(player_flags).poisoned);
+		cure_me(&(player_flags).afraid);
 		break;
 
 	case 25: /*{ Fire Stream }*/
@@ -149,9 +166,9 @@ void nature_spell_effects(long effect)
 
 	case 26: /*{ Protection from Nature }*/
 		/* with player_flags do; */
-		PF.resist_heat += randint(15) + 10;
-		PF.resist_cold += randint(15) + 10;
-		PF.resist_lght += randint(15) + 10;
+		(player_flags).resist_heat += randint(15) + 10;
+		(player_flags).resist_cold += randint(15) + 10;
+		(player_flags).resist_lght += randint(15) + 10;
 		break;
 
 	case 27: /*{ Turn Stone to Mud }*/
@@ -225,8 +242,8 @@ void nature_spell_effects(long effect)
 
 	case 37: /*{ Resist Charm }*/
 		/* with player_flags do; */
-		PF.free_time += randint(10) + player_lev;
-		PF.magic_prot += randint(10) + player_lev;
+		(player_flags).free_time += randint(10) + player_lev;
+		(player_flags).magic_prot += randint(10) + player_lev;
 		break;
 
 	case 38: /*{ Battle Frenzy }*/

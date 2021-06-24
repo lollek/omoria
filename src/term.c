@@ -2,8 +2,32 @@
 
 #include <sys/wait.h>
 
-#include "imoria.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+#include <stdio.h>
+#include <ctype.h>
+#include <curses.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "save.h"
+#include "config.h"
 
 /* source/io.c: terminal I/O code, uses the curses package
 
@@ -13,16 +37,6 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
-#include <stdio.h>
-
-#include "config.h"
-
-#include <ctype.h>
-#include <curses.h>
-#include <signal.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <termios.h>
 
 static void minor_error(char const *error_message)
 {

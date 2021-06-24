@@ -1,5 +1,22 @@
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "player.h"
 
 void divine_spell_effects(long effect)
 {
@@ -85,16 +102,16 @@ void divine_spell_effects(long effect)
 
 	case 16: /*{ Resist Heat and Cold }*/
 		/* with player_flags do; */
-		PF.resist_heat += randint(10) + 10;
-		PF.resist_cold += randint(10) + 10;
+		(player_flags).resist_heat += randint(10) + 10;
+		(player_flags).resist_cold += randint(10) + 10;
 		break;
 
 	case 17: /*{ Silence }*/
-		PF.temp_stealth += (randint(20) + 15);
+		(player_flags).temp_stealth += (randint(20) + 15);
 		break;
 
 	case 18: /*{ Resist Petrification }*/
-		PF.resist_petri += (randint(15) + 10);
+		(player_flags).resist_petri += (randint(15) + 10);
 		break;
 
 	case 19: /*{ Neutralize Poison }*/

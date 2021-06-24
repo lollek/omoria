@@ -1,5 +1,11 @@
-#include "imoria.h"
+#include <string.h>
+
+#include "configure.h"
+#include "routines.h"
+#include "debug.h"
+#include "variables.h"
 #include "save.h"
+#include "player.h"
 
 void C_main_menu();
 int main(int argc, char *argv[])
@@ -22,8 +28,8 @@ int main(int argc, char *argv[])
 
 	/* Check to see if an update is in progress -DMF- */
 	if (check_kickout()) {
-		writeln("Imoria is locked . . . Try playing conquest.");
-		writeln("Who knows *how* long this might take?");
+		printf("Imoria is locked . . . Try playing conquest.\n\r");
+		printf("Who knows *how* long this might take?\n\r");
 		exit_game();
 	}
 
@@ -36,7 +42,7 @@ int main(int argc, char *argv[])
 	inven_temp->data = blank_treasure;
 	inven_temp->ok = false;
 	inven_temp->insides = 0;
-	inven_temp->next = nil;
+	inven_temp->next = NULL;
 	inven_temp->is_in = false;
 	turn_counter = 100000;
 

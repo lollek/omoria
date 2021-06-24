@@ -1,5 +1,7 @@
 #include "dungeon.h"
-#include "imoria.h"
+#include "routines.h"
+#include "variables.h"
+#include "player.h"
 
 void arcane_spell_effects(long effect)
 {
@@ -209,7 +211,7 @@ void arcane_spell_effects(long effect)
 		break;
 
 	case 36: /*{ Haste Self }*/
-		PF.fast += randint(20) + player_lev;
+		(player_flags).fast += randint(20) + player_lev;
 		break;
 
 	case 37: /*{ Fire Ball }*/

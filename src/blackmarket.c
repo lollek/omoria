@@ -1,8 +1,24 @@
 /* blackmarket.c */
 /**/
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
 
 static void bm__add_tohit(long a, long b, long c, long i, long *r)
 {
@@ -806,8 +822,8 @@ void Opusii_vomit(long percentage)
 {
   if (randint(100) < percentage) {
     /*with player_flags do; */
-    PF.foodc     -= 500;
-    PF.paralysis  = 4;
+    (player_flags).foodc     -= 500;
+    (player_flags).paralysis  = 4;
     msg_print("You feel your insides heave!");
   }
 }

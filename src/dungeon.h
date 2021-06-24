@@ -2,6 +2,8 @@
 #define DUNGEON_H
 /* there were not enough globals in variables.h */
 
+#include "types.h"
+
 #define DRAW_BOLT_DELAY 50
 #define DRAW_BALL_DELAY 30
 

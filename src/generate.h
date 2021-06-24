@@ -1,5 +1,8 @@
 #ifndef GENERATE_H
 #define GENERATE_H
+
+#include "types.h"
+
 typedef struct coords {
 	long y;
 	long x;

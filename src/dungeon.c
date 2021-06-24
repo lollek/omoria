@@ -1,8 +1,25 @@
 /* Here you should find the guts of the game */
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
 #include "dungeon.h"
-#include "imoria.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "save.h"
+#include "player.h"
 
 void C_print_known_spells();
 
@@ -894,11 +911,11 @@ static void d__check_light_status()
 	/* with equipment[Equipment_light] do; */
 	ENTER(("d__check_light_status", "d"));
 	if (player_light) {
-		if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
+		if ((equipment[Equipment_light].p1 > 0) && (player_flags).light_on) {
 			equipment[Equipment_light].p1--;
 			if (equipment[Equipment_light].p1 == 0) {
 				msg_print("Your light has gone out!");
-				PF.light_on = false;
+				(player_flags).light_on = false;
 				player_light = false;
 				find_flag = false;
 				move_light(char_row, char_col, char_row,
@@ -915,12 +932,12 @@ static void d__check_light_status()
 				}
 			}
 		} else {
-			PF.light_on = false;
+			(player_flags).light_on = false;
 			player_light = false;
 			find_flag = false;
 			move_light(char_row, char_col, char_row, char_col);
 		}
-	} else if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
+	} else if ((equipment[Equipment_light].p1 > 0) && (player_flags).light_on) {
 		equipment[Equipment_light].p1--;
 		player_light = true;
 		move_light(char_row, char_col, char_row, char_col);
@@ -940,23 +957,23 @@ static void d__check_food()
 {
 	/*{ Check food status             }*/
 	regen_amount = PLAYER_REGEN_NORMAL;
-	if ((PF.hunger_item) && (PF.foodc > (PLAYER_FOOD_ALERT + 15))) {
-		PF.foodc = PLAYER_FOOD_ALERT + 15;
+	if (((player_flags).hunger_item) && ((player_flags).foodc > (PLAYER_FOOD_ALERT + 15))) {
+		(player_flags).foodc = PLAYER_FOOD_ALERT + 15;
 	}
 
-	if (PF.foodc < PLAYER_FOOD_ALERT) {
-		if (PF.foodc < PLAYER_FOOD_WEAK) {
+	if ((player_flags).foodc < PLAYER_FOOD_ALERT) {
+		if ((player_flags).foodc < PLAYER_FOOD_WEAK) {
 
-			if (PF.foodc < 0) {
+			if ((player_flags).foodc < 0) {
 				regen_amount = 0;
-			} else if (PF.foodc < PLAYER_FOOD_FAINT) {
+			} else if ((player_flags).foodc < PLAYER_FOOD_FAINT) {
 				regen_amount = PLAYER_REGEN_FAINT;
-			} else if (PF.foodc < PLAYER_FOOD_WEAK) {
+			} else if ((player_flags).foodc < PLAYER_FOOD_WEAK) {
 				regen_amount = PLAYER_REGEN_WEAK;
 			}
 
-			if ((IS_WEAK & PF.status) == 0) {
-				PF.status |= (IS_WEAK | IS_HUNGERY);
+			if ((IS_WEAK & (player_flags).status) == 0) {
+				(player_flags).status |= (IS_WEAK | IS_HUNGERY);
 				d__hunger_interrupt(
 				    "You are getting weak from hunger.");
 				if (find_flag) {
@@ -976,17 +993,17 @@ static void d__check_food()
 				}
 			}
 
-			if (PF.foodc < 0) {
+			if ((player_flags).foodc < 0) {
 				if (randint(5) == 1) {
-					PF.paralysis += randint(3);
+					(player_flags).paralysis += randint(3);
 					d__hunger_interrupt(
 					    "You faint from the lack of food.");
 					if (find_flag) {
 						move_char(5);
 					}
-				} else if (PF.foodc < PLAYER_FOOD_FAINT) {
+				} else if ((player_flags).foodc < PLAYER_FOOD_FAINT) {
 					if (randint(8) == 1) {
-						PF.paralysis += randint(5);
+						(player_flags).paralysis += randint(5);
 						d__hunger_interrupt(
 						    "You faint from the lack "
 						    "of food.");
@@ -999,8 +1016,8 @@ static void d__check_food()
 
 		} else {
 			/* alert, but not weak */
-			if ((IS_HUNGERY & PF.status) == 0) {
-				PF.status |= IS_HUNGERY;
+			if ((IS_HUNGERY & (player_flags).status) == 0) {
+				(player_flags).status |= IS_HUNGERY;
 				d__hunger_interrupt("You are getting hungry.");
 				if (find_flag) {
 					move_char(5);
@@ -1017,29 +1034,29 @@ static void d__eat_food()
 	/*{ Food consumtion       }*/
 	/*{ Note: Speeded up characters really burn up the food!  }*/
 
-	PF.food_digested = BASE_FOOD_DIGESTED;
+	(player_flags).food_digested = BASE_FOOD_DIGESTED;
 
-	if (PF.status & IS_RESTING) {
-		PF.food_digested -= 1;
+	if ((player_flags).status & IS_RESTING) {
+		(player_flags).food_digested -= 1;
 	}
-	if (PF.slow_digest) {
-		PF.food_digested -= 1;
+	if ((player_flags).slow_digest) {
+		(player_flags).food_digested -= 1;
 	}
-	if (PF.status & IS_SEARCHING) {
-		PF.food_digested += 1;
+	if ((player_flags).status & IS_SEARCHING) {
+		(player_flags).food_digested += 1;
 	}
-	if (PF.regenerate) {
-		PF.food_digested += 3;
-	}
-
-	if (PF.food_digested < 0) {
-		PF.food_digested = 0;
+	if ((player_flags).regenerate) {
+		(player_flags).food_digested += 3;
 	}
 
-	if (PF.speed < 0) {
-		PF.foodc -= (PF.speed * PF.speed) + PF.food_digested;
+	if ((player_flags).food_digested < 0) {
+		(player_flags).food_digested = 0;
+	}
+
+	if ((player_flags).speed < 0) {
+		(player_flags).foodc -= ((player_flags).speed * (player_flags).speed) + (player_flags).food_digested;
 	} else {
-		PF.foodc -= PF.food_digested;
+		(player_flags).foodc -= (player_flags).food_digested;
 	}
 }
 
@@ -1047,10 +1064,10 @@ static void d__regenerate()
 {
 	/*{ Regenerate            }*/
 	/* with player_do; */
-	if (PF.regenerate) {
+	if ((player_flags).regenerate) {
 		regen_amount *= 1.5;
 	}
-	if (PF.rest > 0) {
+	if ((player_flags).rest > 0) {
 		regen_amount *= 2;
 	}
 	if (player_flags.poisoned < 1) {
@@ -1066,18 +1083,18 @@ static void d__regenerate()
 static void d__update_blindness()
 {
 	/*{ Blindness             }*/
-	if (PF.blind > 0) {
-		if ((IS_BLIND & PF.status) == 0) {
-			PF.status |= IS_BLIND;
+	if ((player_flags).blind > 0) {
+		if ((IS_BLIND & (player_flags).status) == 0) {
+			(player_flags).status |= IS_BLIND;
 			prt_map();
 			prt_blind();
 			if (search_flag) {
 				search_off();
 			}
 		}
-		PF.blind--;
-		if (PF.blind == 0) {
-			PF.status &= ~IS_BLIND;
+		(player_flags).blind--;
+		if ((player_flags).blind == 0) {
+			(player_flags).status &= ~IS_BLIND;
 			prt_blind();
 			prt_map();
 			msg_print("The veil of darkness lifts.");
@@ -1089,14 +1106,14 @@ static void d__update_blindness()
 static void d__update_confusion()
 {
 	/*{ Confusion             }*/
-	if (PF.confused > 0) {
-		if ((IS_CONFUSED & PF.status) == 0) {
-			PF.status |= IS_CONFUSED;
+	if ((player_flags).confused > 0) {
+		if ((IS_CONFUSED & (player_flags).status) == 0) {
+			(player_flags).status |= IS_CONFUSED;
 			prt_confused();
 		}
-		PF.confused--;
-		if (PF.confused == 0) {
-			PF.status &= ~IS_CONFUSED;
+		(player_flags).confused--;
+		if ((player_flags).confused == 0) {
+			(player_flags).status &= ~IS_CONFUSED;
 			prt_confused();
 			msg_print("You feel less confused now.");
 			if (find_flag) {
@@ -1109,27 +1126,27 @@ static void d__update_confusion()
 static void d__update_resist_lightning()
 {
 	/*{ Resist Lightning }*/
-	if (PF.resist_lght > 0) {
-		PF.resist_lght--;
+	if ((player_flags).resist_lght > 0) {
+		(player_flags).resist_lght--;
 	}
 }
 
 static void d__update_monster_protect()
 {
 	/*{ Protection from Monsters }*/
-	if (PF.protmon > 0) {
-		PF.protmon--;
+	if ((player_flags).protmon > 0) {
+		(player_flags).protmon--;
 	}
 }
 
 static void d__update_fire_ring()
 {
 	/*{ Ring of Fire }*/
-	if (PF.ring_fire > 0) {
+	if ((player_flags).ring_fire > 0) {
 		msg_print("Flames arise!");
 		explode(c_fire, char_row, char_col, 20 + randint(20),
 			"Ring of Fire");
-		PF.ring_fire--;
+		(player_flags).ring_fire--;
 	}
 }
 
@@ -1137,10 +1154,10 @@ static void d__update_frost_ring()
 {
 
 	/*{ Ring of Frost }*/
-	if (PF.ring_ice > 0) {
+	if ((player_flags).ring_ice > 0) {
 		explode(c_cold, char_row, char_col, 10 + randint(20),
 			"Ring of Frost");
-		PF.ring_ice--;
+		(player_flags).ring_ice--;
 	}
 }
 
@@ -1148,25 +1165,25 @@ static void d__update_blade_barrier()
 {
 
 	/*{ Blade Barrier }*/
-	if (PF.blade_ring > 0) {
+	if ((player_flags).blade_ring > 0) {
 		explode(c_null, char_row, char_col, 12 + randint(player_lev),
 			"Blade Barrier");
-		PF.blade_ring--;
+		(player_flags).blade_ring--;
 	}
 }
 
 static void d__update_magic_protect()
 {
 	/*{ Magic protection }*/
-	if (PF.magic_prot > 0) {
-		if ((IS_MAGIC_PROTECED & PF.status) == 0) {
-			PF.status |= IS_MAGIC_PROTECED;
+	if ((player_flags).magic_prot > 0) {
+		if ((IS_MAGIC_PROTECED & (player_flags).status) == 0) {
+			(player_flags).status |= IS_MAGIC_PROTECED;
 			player_save += 25;
 		}
-		PF.magic_prot--;
-		if (PF.magic_prot == 0) {
+		(player_flags).magic_prot--;
+		if ((player_flags).magic_prot == 0) {
 			player_save -= 25;
-			PF.status &= ~IS_MAGIC_PROTECED;
+			(player_flags).status &= ~IS_MAGIC_PROTECED;
 		}
 	}
 }
@@ -1174,22 +1191,22 @@ static void d__update_magic_protect()
 static void d__update_resist_petrfy()
 {
 	/*{Timed resist Petrification}*/
-	if (PF.resist_petri > 0) {
-		PF.resist_petri--;
+	if ((player_flags).resist_petri > 0) {
+		(player_flags).resist_petri--;
 	}
 }
 
 static void d__update_stealth()
 {
 	/*{ Timed Stealth    }*/
-	if (PF.temp_stealth > 0) {
-		if ((IS_STEALTHY & PF.status) == 0) {
-			PF.status |= IS_STEALTHY;
+	if ((player_flags).temp_stealth > 0) {
+		if ((IS_STEALTHY & (player_flags).status) == 0) {
+			(player_flags).status |= IS_STEALTHY;
 			player_stl += 3;
 		}
-		PF.temp_stealth--;
-		if (PF.temp_stealth == 0) {
-			PF.status &= ~IS_STEALTHY;
+		(player_flags).temp_stealth--;
+		if ((player_flags).temp_stealth == 0) {
+			(player_flags).status &= ~IS_STEALTHY;
 			player_stl -= 3;
 			msg_print("The monsters can once again detect you with "
 				  "ease.");
@@ -1200,12 +1217,12 @@ static void d__update_stealth()
 static void d__update_resist_charm()
 {
 	/*{ Resist Charm }*/
-	if (PF.free_time > 0) {
-		if ((IS_CHARM_PROOF & PF.status) == 0) {
-			PF.status |= IS_CHARM_PROOF;
-			PF.free_time--;
-			if (PF.free_time == 0) {
-				PF.status &= ~IS_CHARM_PROOF;
+	if ((player_flags).free_time > 0) {
+		if ((IS_CHARM_PROOF & (player_flags).status) == 0) {
+			(player_flags).status |= IS_CHARM_PROOF;
+			(player_flags).free_time--;
+			if ((player_flags).free_time == 0) {
+				(player_flags).status &= ~IS_CHARM_PROOF;
 				if (find_flag) {
 					move_char(5);
 				}
@@ -1217,9 +1234,9 @@ static void d__update_resist_charm()
 static void d__update_hoarse()
 {
 	/*{ Hoarse                }*/
-	if (PF.hoarse > 0) {
-		PF.hoarse--;
-		if (PF.hoarse == 0) {
+	if ((player_flags).hoarse > 0) {
+		(player_flags).hoarse--;
+		if ((player_flags).hoarse == 0) {
 			msg_print("You feel your voice returning.");
 		}
 	}
@@ -1228,21 +1245,21 @@ static void d__update_hoarse()
 static void d__update_fear()
 {
 	/*{ Afraid                }*/
-	if (PF.afraid > 0) {
-		if ((IS_AFRAID & PF.status) == 0) {
-			if ((PF.shero + PF.hero) > 0) {
-				PF.afraid = 0;
+	if ((player_flags).afraid > 0) {
+		if ((IS_AFRAID & (player_flags).status) == 0) {
+			if (((player_flags).shero + (player_flags).hero) > 0) {
+				(player_flags).afraid = 0;
 			} else {
-				PF.status |= IS_AFRAID;
+				(player_flags).status |= IS_AFRAID;
 				prt_afraid();
 			}
-		} else if ((PF.shero + PF.hero) > 0) {
-			PF.afraid = 1;
+		} else if (((player_flags).shero + (player_flags).hero) > 0) {
+			(player_flags).afraid = 1;
 		}
 
-		PF.afraid--;
-		if (PF.afraid == 0) {
-			PF.status &= ~IS_AFRAID;
+		(player_flags).afraid--;
+		if ((player_flags).afraid == 0) {
+			(player_flags).status &= ~IS_AFRAID;
 			prt_afraid();
 			msg_print("You feel bolder now.");
 			if (find_flag) {
@@ -1250,8 +1267,8 @@ static void d__update_fear()
 			}
 		}
 	}
-	if (PF.afraid < 0) {
-		PF.afraid =
+	if ((player_flags).afraid < 0) {
+		(player_flags).afraid =
 		    0; /* fix when getting hit with fear while shero or hero */
 	}
 }
@@ -1259,14 +1276,14 @@ static void d__update_fear()
 static void d__update_poison()
 {
 	/*{ Poisoned              }*/
-	if (PF.poisoned > 0) {
-		if ((IS_POISONED & PF.status) == 0) {
-			PF.status |= IS_POISONED;
+	if ((player_flags).poisoned > 0) {
+		if ((IS_POISONED & (player_flags).status) == 0) {
+			(player_flags).status |= IS_POISONED;
 			prt_poisoned();
 		}
-		PF.poisoned--;
-		if (PF.poisoned == 0) {
-			PF.status &= ~IS_POISONED;
+		(player_flags).poisoned--;
+		if ((player_flags).poisoned == 0) {
+			(player_flags).status &= ~IS_POISONED;
 			prt_poisoned();
 			msg_print("You feel better.");
 			if (find_flag) {
@@ -1314,18 +1331,18 @@ static void d__update_fast()
 {
 
 	/*{ Fast                  }*/
-	if (PF.fast > 0) {
-		if ((IS_HASTED & PF.status) == 0) {
-			PF.status |= IS_HASTED;
+	if ((player_flags).fast > 0) {
+		if ((IS_HASTED & (player_flags).status) == 0) {
+			(player_flags).status |= IS_HASTED;
 			msg_print("You feel yourself moving faster.");
 			change_speed(-1);
 			if (find_flag) {
 				move_char(5);
 			}
 		}
-		PF.fast--;
-		if (PF.fast == 0) {
-			PF.status &= ~IS_HASTED;
+		(player_flags).fast--;
+		if ((player_flags).fast == 0) {
+			(player_flags).status &= ~IS_HASTED;
 			msg_print("You feel yourself slow down.");
 			change_speed(+1);
 			if (find_flag) {
@@ -1339,18 +1356,18 @@ static void d__update_slow()
 {
 
 	/*{ Slow                  }*/
-	if (PF.slow > 0) {
-		if ((IS_SLOW & PF.status) == 0) {
-			PF.status |= IS_SLOW;
+	if ((player_flags).slow > 0) {
+		if ((IS_SLOW & (player_flags).status) == 0) {
+			(player_flags).status |= IS_SLOW;
 			msg_print("You feel yourself moving slower.");
 			change_speed(+1);
 			if (find_flag) {
 				move_char(5);
 			}
 		}
-		PF.slow--;
-		if (PF.slow == 0) {
-			PF.status &= ~IS_SLOW;
+		(player_flags).slow--;
+		if ((player_flags).slow == 0) {
+			(player_flags).status &= ~IS_SLOW;
 			msg_print("You feel yourself speed up.");
 			change_speed(-1);
 			if (find_flag) {
@@ -1399,22 +1416,22 @@ static void bother(long num)
 static void d__update_resting()
 {
 	/*{ Resting is over?      }*/
-	if (PF.rest > 0) {
+	if ((player_flags).rest > 0) {
 		/*{ Hibernate every 20 iterations so that process does  }*/
 		/*{ not eat up system...                                }*/
 		/*{ NOTE: Remove comments for VMS version 4.0 or greater}*/
 		/*{       INKEY_DELAY takes care of hibernation for     }*/
 		/*{       VMS 3.7 or less                               }*/
-		if ((PF.rest % 20) == 1) {
+		if (((player_flags).rest % 20) == 1) {
 			usleep(500);
 			if ((equipment[Equipment_primary].flags2 &
 			     Soul_Sword_worn_bit) != 0) {
 				bother(randint(10));
-				PF.rest = 1;
-				PF.resting_till_full = false;
+				(player_flags).rest = 1;
+				(player_flags).resting_till_full = false;
 			}
 		}
-		PF.rest--;
+		(player_flags).rest--;
 		/*{ Test for any key being hit to abort rest.  Also,    }*/
 		/*{ this will do a PUT_QIO which updates the screen...  }*/
 		/*{ One more side benifit; since inkey_delay hibernates }*/
@@ -1422,12 +1439,12 @@ static void d__update_resting()
 		/*{ less CPU intensive...                               }*/
 		inkey_delay(&command, 0);
 		/*if (want_trap) { dump_ast_mess; XXXX}*/
-		if (PF.rest == 0) { /*{ Resting over          }*/
-			if (PF.resting_till_full &&
+		if ((player_flags).rest == 0) { /*{ Resting over          }*/
+			if ((player_flags).resting_till_full &&
 			    (player_cmana < player_mana ||
 			     C_player_current_hp() < C_player_max_hp())) {
-				PF.rest = 20;
-				turn_counter += PF.rest;
+				(player_flags).rest = 20;
+				turn_counter += (player_flags).rest;
 			} else {
 				rest_off();
 			}
@@ -1440,9 +1457,9 @@ static void d__update_resting()
 static void d__update_hallucinate()
 {
 	/*{ Hallucinating?  (Random characters appear!)}*/
-	if (PF.image > 0) {
-		PF.image--;
-		if (PF.image == 0) {
+	if ((player_flags).image > 0) {
+		(player_flags).image--;
+		if ((player_flags).image == 0) {
 			draw_cave();
 		}
 	}
@@ -1453,24 +1470,24 @@ static void d__update_petrify()
 	/*{  Petrification wears off slowly  } */
 	if ((turn % 100) == 0) {
 		/* with player_flags do; */
-		if (PF.petrification > 100) {
-			PF.petrification--;
+		if ((player_flags).petrification > 100) {
+			(player_flags).petrification--;
 		}
 	}
 
 	/* not sure what this did, but it was commented out... */
 	/*
-	if (PF.speed > 0) and (paral_init = speed_paral) then
+	if ((player_flags).speed > 0) and (paral_init = speed_paral) then
 			 paralysis := paralysis + paral_init + 1;
 	*/
 
 	/*{ Paralysis             }*/
-	if (PF.paralysis > 0) {
-		PF.paralysis--;
-		if (PF.rest > 0) {
+	if ((player_flags).paralysis > 0) {
+		(player_flags).paralysis--;
+		if ((player_flags).rest > 0) {
 			rest_off();
 		}
-		if ((search_flag) && (PF.paralysis > PF.paral_init)) {
+		if ((search_flag) && ((player_flags).paralysis > (player_flags).paral_init)) {
 			search_off();
 		}
 	}
@@ -1495,17 +1512,17 @@ static void d__update_petrify()
 static void d__update_evil_protect()
 {
 	/*{ Protection from evil counter}*/
-	if (PF.protevil > 0) {
-		PF.protevil--;
+	if ((player_flags).protevil > 0) {
+		(player_flags).protevil--;
 	}
 }
 
 static void d__update_invulnerable()
 {
 	/*{ Invulnerability        }*/
-	if (PF.invuln > 0) {
-		if ((IS_INVULNERABLE & PF.status) == 0) {
-			PF.status |= IS_INVULNERABLE;
+	if ((player_flags).invuln > 0) {
+		if ((IS_INVULNERABLE & (player_flags).status) == 0) {
+			(player_flags).status |= IS_INVULNERABLE;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1513,9 +1530,9 @@ static void d__update_invulnerable()
 			player_pac += 100;
 			player_dis_ac += 100;
 		}
-		PF.invuln--;
-		if (PF.invuln == 0) {
-			PF.status &= ~IS_INVULNERABLE;
+		(player_flags).invuln--;
+		if ((player_flags).invuln == 0) {
+			(player_flags).status &= ~IS_INVULNERABLE;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1530,9 +1547,9 @@ static void d__update_invulnerable()
 static void d__update_heroism()
 {
 	/*{ Heroism       }*/
-	if (PF.hero > 0) {
-		if ((IS_HERO & PF.status) == 0) {
-			PF.status |= IS_HERO;
+	if ((player_flags).hero > 0) {
+		if ((IS_HERO & (player_flags).status) == 0) {
+			(player_flags).status |= IS_HERO;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1543,9 +1560,9 @@ static void d__update_heroism()
 			msg_print("You feel like a HERO!");
 			prt_stat_block();
 		}
-		PF.hero--;
-		if (PF.hero == 0) {
-			PF.status &= ~IS_HERO;
+		(player_flags).hero--;
+		if ((player_flags).hero == 0) {
+			(player_flags).status &= ~IS_HERO;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1565,9 +1582,9 @@ static void d__update_heroism()
 static void d__update_super_heroism()
 {
 	/*{ Super Heroism }*/
-	if (PF.shero > 0) {
-		if ((IS_SUPER_HERO & PF.status) == 0) {
-			PF.status |= IS_SUPER_HERO;
+	if ((player_flags).shero > 0) {
+		if ((IS_SUPER_HERO & (player_flags).status) == 0) {
+			(player_flags).status |= IS_SUPER_HERO;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1578,9 +1595,9 @@ static void d__update_super_heroism()
 			msg_print("You feel like a SUPER HERO!");
 			prt_stat_block();
 		}
-		PF.shero--;
-		if (PF.shero == 0) {
-			PF.status &= ~IS_SUPER_HERO;
+		(player_flags).shero--;
+		if ((player_flags).shero == 0) {
+			(player_flags).status &= ~IS_SUPER_HERO;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1600,9 +1617,9 @@ static void d__update_super_heroism()
 static void d__update_blessed()
 {
 	/*{ Blessed       }*/
-	if (PF.blessed > 0) {
-		if ((IS_BLESSED & PF.status) == 0) {
-			PF.status |= IS_BLESSED;
+	if ((player_flags).blessed > 0) {
+		if ((IS_BLESSED & (player_flags).status) == 0) {
+			(player_flags).status |= IS_BLESSED;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1614,9 +1631,9 @@ static void d__update_blessed()
 			msg_print("You feel righteous!");
 			prt_stat_block();
 		}
-		PF.blessed--;
-		if (PF.blessed == 0) {
-			PF.status &= ~IS_BLESSED;
+		(player_flags).blessed--;
+		if ((player_flags).blessed == 0) {
+			(player_flags).status &= ~IS_BLESSED;
 			if (find_flag) {
 				move_char(5);
 			}
@@ -1634,31 +1651,31 @@ static void d__update_blessed()
 static void d__update_resist_heat()
 {
 	/*{ Resist Heat   }*/
-	if (PF.resist_heat > 0) {
-		PF.resist_heat--;
+	if ((player_flags).resist_heat > 0) {
+		(player_flags).resist_heat--;
 	}
 }
 
 static void d__update_resist_cold()
 {
 	/*{ Resist Cold   }*/
-	if (PF.resist_cold > 0) {
-		PF.resist_cold--;
+	if ((player_flags).resist_cold > 0) {
+		(player_flags).resist_cold--;
 	}
 }
 
 static void d__update_detect_invisible()
 {
 	/*{ Detect Invisible      }*/
-	if (PF.detect_inv > 0) {
-		if ((IS_ABLE_TO_SEE_INVIS & PF.status) == 0) {
-			PF.status |= IS_ABLE_TO_SEE_INVIS;
-			PF.see_inv = true;
+	if ((player_flags).detect_inv > 0) {
+		if ((IS_ABLE_TO_SEE_INVIS & (player_flags).status) == 0) {
+			(player_flags).status |= IS_ABLE_TO_SEE_INVIS;
+			(player_flags).see_inv = true;
 		}
-		PF.detect_inv--;
-		if (PF.detect_inv == 0) {
-			PF.status &= ~IS_ABLE_TO_SEE_INVIS;
-			PF.see_inv = false;
+		(player_flags).detect_inv--;
+		if ((player_flags).detect_inv == 0) {
+			(player_flags).status &= ~IS_ABLE_TO_SEE_INVIS;
+			(player_flags).see_inv = false;
 			py_bonuses(&blank_treasure, 0);
 		}
 	}
@@ -1667,15 +1684,15 @@ static void d__update_detect_invisible()
 static void d__update_infra_vision()
 {
 	/*{ Timed infra-vision    }*/
-	if (PF.tim_infra > 0) {
-		if ((IS_ABLE_TO_SEE_HEAT & PF.status) == 0) {
-			PF.status |= IS_ABLE_TO_SEE_HEAT;
-			PF.see_infra++;
+	if ((player_flags).tim_infra > 0) {
+		if ((IS_ABLE_TO_SEE_HEAT & (player_flags).status) == 0) {
+			(player_flags).status |= IS_ABLE_TO_SEE_HEAT;
+			(player_flags).see_infra++;
 		}
-		PF.tim_infra--;
-		if (PF.tim_infra == 0) {
-			PF.status &= ~IS_ABLE_TO_SEE_HEAT;
-			PF.see_infra--;
+		(player_flags).tim_infra--;
+		if ((player_flags).tim_infra == 0) {
+			(player_flags).status &= ~IS_ABLE_TO_SEE_HEAT;
+			(player_flags).see_infra--;
 			msg_print("Your eyes stop tingling.");
 		}
 	}
@@ -1684,8 +1701,8 @@ static void d__update_infra_vision()
 static void d__update_word_of_recall()
 {
 	/*{ Word-of-Recall  Note: Word-of-Recall is a delayed action      }*/
-	if (PF.word_recall > 0) {
-		if (PF.word_recall == 1) {
+	if ((player_flags).word_recall > 0) {
+		if ((player_flags).word_recall == 1) {
 			if (dun_level > 0) {
 				msg_print("You feel yourself yanked upwards!");
 				dun_level = 0;
@@ -1695,10 +1712,10 @@ static void d__update_word_of_recall()
 				dun_level = player_max_lev;
 			}
 			moria_flag = true;
-			PF.paralysis++;
-			PF.word_recall = 0;
+			(player_flags).paralysis++;
+			(player_flags).word_recall = 0;
 		} else {
-			PF.word_recall--;
+			(player_flags).word_recall--;
 		}
 	}
 }
@@ -2485,7 +2502,7 @@ static void rest()
 
 	if (!strcmp(rest_str, "*")) {
 		rest_num = 20;
-		PF.resting_till_full = true;
+		(player_flags).resting_till_full = true;
 	} else {
 		rest_num = 0;
 		sscanf(rest_str, "%ld", &rest_num);
@@ -2862,17 +2879,17 @@ static void d__execute_command(long *com_val)
 		reset_flag = true;
 		if (equipment[Equipment_light].tval > 0) {
 			if (equipment[Equipment_light].p1 > 0) {
-				if (PF.light_on) {
+				if ((player_flags).light_on) {
 					sprintf(out_val,
 						"Light Off.  %ld turns left.",
 						equipment[Equipment_light].p1);
-					PF.light_on = false;
+					(player_flags).light_on = false;
 					player_light = false;
 				} else {
 					sprintf(out_val,
 						"Light On.  %ld turns left.",
 						equipment[Equipment_light].p1);
-					PF.light_on = true;
+					(player_flags).light_on = true;
 					player_light = true;
 				}
 				prt_light_on();
@@ -3119,21 +3136,21 @@ void py_bonuses(treasure_type *tobj, long factor)
 	long i1, old_dis_ac;
 	enum stat_t tstat;
 
-	PF.see_inv = false;
-	PF.teleport = false;
-	PF.free_act = false;
-	PF.slow_digest = false;
-	PF.aggravate = false;
+	(player_flags).see_inv = false;
+	(player_flags).teleport = false;
+	(player_flags).free_act = false;
+	(player_flags).slow_digest = false;
+	(player_flags).aggravate = false;
 	for (tstat = STR; tstat <= CHR; tstat++) {
-		PF.sustain[(int)tstat] = false;
+		(player_flags).sustain[(int)tstat] = false;
 	}
-	PF.fire_resist = false;
-	PF.hunger_item = false;
-	PF.acid_resist = false;
-	PF.cold_resist = false;
-	PF.regenerate = false;
-	PF.lght_resist = false;
-	PF.ffall = false;
+	(player_flags).fire_resist = false;
+	(player_flags).hunger_item = false;
+	(player_flags).acid_resist = false;
+	(player_flags).cold_resist = false;
+	(player_flags).regenerate = false;
+	(player_flags).lght_resist = false;
+	(player_flags).ffall = false;
 
 	if (uand(Strength_worn_bit, tobj->flags) != 0) {
 		C_player_mod_stat(STR, tobj->p1 * factor);
@@ -3263,16 +3280,16 @@ void py_bonuses(treasure_type *tobj, long factor)
 
 	/* { Add in temporary spell increases	}*/
 	/* with player_flags do; */
-	if (PF.invuln > 0) {
+	if ((player_flags).invuln > 0) {
 		player_pac += 100;
 		player_dis_ac += 100;
 	}
-	if (PF.blessed > 0) {
+	if ((player_flags).blessed > 0) {
 		player_pac += 5;
 		player_dis_ac += 5;
 	}
-	if (PF.detect_inv > 0) {
-		PF.see_inv =
+	if ((player_flags).detect_inv > 0) {
+		(player_flags).see_inv =
 		    true; /* does this mean that if you put on/take off stuff
 			     you are going to lose magic detect_inv ? */
 	}
@@ -3290,18 +3307,18 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 
 	/* with player_flags do; */
-	PF.slow_digest = uand(Slow_Digestion_worn_bit, item_flags) != 0;
-	PF.aggravate = uand(Aggravation_worn_bit, item_flags) != 0;
-	PF.teleport = uand(Teleportation_worn_bit, item_flags) != 0;
-	PF.regenerate = uand(Regeneration_worn_bit, item_flags) != 0;
-	PF.hunger_item = uand(Hunger_worn_bit, item_flags2) != 0;
-	PF.fire_resist = uand(Resist_Fire_worn_bit, item_flags) != 0;
-	PF.acid_resist = uand(Resist_Acid_worn_bit, item_flags) != 0;
-	PF.cold_resist = uand(Resist_Cold_worn_bit, item_flags) != 0;
-	PF.free_act = uand(Free_Action_worn_bit, item_flags) != 0;
-	PF.see_inv |= uand(See_Invisible_worn_bit, item_flags) != 0;
-	PF.lght_resist = uand(Resist_Lightning_worn_bit, item_flags) != 0;
-	PF.ffall = uand(Feather_Fall_worn_bit, item_flags) != 0;
+	(player_flags).slow_digest = uand(Slow_Digestion_worn_bit, item_flags) != 0;
+	(player_flags).aggravate = uand(Aggravation_worn_bit, item_flags) != 0;
+	(player_flags).teleport = uand(Teleportation_worn_bit, item_flags) != 0;
+	(player_flags).regenerate = uand(Regeneration_worn_bit, item_flags) != 0;
+	(player_flags).hunger_item = uand(Hunger_worn_bit, item_flags2) != 0;
+	(player_flags).fire_resist = uand(Resist_Fire_worn_bit, item_flags) != 0;
+	(player_flags).acid_resist = uand(Resist_Acid_worn_bit, item_flags) != 0;
+	(player_flags).cold_resist = uand(Resist_Cold_worn_bit, item_flags) != 0;
+	(player_flags).free_act = uand(Free_Action_worn_bit, item_flags) != 0;
+	(player_flags).see_inv |= uand(See_Invisible_worn_bit, item_flags) != 0;
+	(player_flags).lght_resist = uand(Resist_Lightning_worn_bit, item_flags) != 0;
+	(player_flags).ffall = uand(Feather_Fall_worn_bit, item_flags) != 0;
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 		/* with equipment[i1] do; */
@@ -4467,7 +4484,7 @@ void search(long y, long x, long chance)
 	char out_val[86];
 
 	/* with player_flags do; */
-	if (PF.confused + PF.blind > 0) {
+	if ((player_flags).confused + (player_flags).blind > 0) {
 		chance = trunc(chance / 10.0);
 	} else if (no_light()) {
 		chance = (long)(chance / 5.0);
@@ -4798,8 +4815,8 @@ long mon_take_hit(long monptr, long dam)
 		monster_death(m_list[monptr].fy, m_list[monptr].fx,
 			      c_list[m_list[monptr].mptr].cmove);
 
-		if ((m_list[monptr].mptr == player_cur_quest) && (PF.quested)) {
-			PF.quested = false;
+		if ((m_list[monptr].mptr == player_cur_quest) && ((player_flags).quested)) {
+			(player_flags).quested = false;
 			prt_quested();
 			msg_print("*** QUEST COMPLETED ***");
 			msg_print("Return to the surface and report to the "
@@ -5291,20 +5308,20 @@ void get_player_move_rate()
 
 	/* with player_flags do; */
 	if (is_in(cave[char_row][char_col].fval, earth_set)) {
-		PF.move_rate = 4;
+		(player_flags).move_rate = 4;
 	} else {
-		cur_swim = ((PF.swim + randint(5) - 1) / 5);
+		cur_swim = (((player_flags).swim + randint(5) - 1) / 5);
 
 		if (cur_swim <= -2) {
-			PF.move_rate = 0;
+			(player_flags).move_rate = 0;
 		} else if (cur_swim == -1) {
-			PF.move_rate = 1;
+			(player_flags).move_rate = 1;
 		} else if (cur_swim == 0) {
-			PF.move_rate = 2;
+			(player_flags).move_rate = 2;
 		} else if (cur_swim == 1) {
-			PF.move_rate = 4;
+			(player_flags).move_rate = 4;
 		} else {
-			PF.move_rate = 8;
+			(player_flags).move_rate = 8;
 		}
 	}
 }
@@ -5393,18 +5410,18 @@ void add_food(long num)
 	/*{ Add to the players food time                          -RAK-   }*/
 
 	/* with player_flags do; */
-	if (PF.foodc < 0) {
-		PF.foodc = 0;
+	if ((player_flags).foodc < 0) {
+		(player_flags).foodc = 0;
 	}
-	PF.foodc += num;
+	(player_flags).foodc += num;
 
-	if (PF.foodc > PLAYER_FOOD_FULL) {
+	if ((player_flags).foodc > PLAYER_FOOD_FULL) {
 		msg_print("You are full.");
 	}
 
-	if (PF.foodc > PLAYER_FOOD_MAX) {
+	if ((player_flags).foodc > PLAYER_FOOD_MAX) {
 		msg_print("You're getting fat from eating so much.");
-		PF.foodc = PLAYER_FOOD_MAX;
+		(player_flags).foodc = PLAYER_FOOD_MAX;
 		player_wt += trunc(player_wt * 0.1);
 		if (player_wt > max_allowable_weight()) {
 			msg_print("Oh no...  Now you've done it.");
@@ -5630,7 +5647,7 @@ void dungeon()
 	i_summ_count = 0;
 
 	/*{ Check light status for setup          }*/
-	if ((equipment[Equipment_light].p1 > 0) && PF.light_on) {
+	if ((equipment[Equipment_light].p1 > 0) && (player_flags).light_on) {
 		player_light = true;
 	} else {
 		player_light = false;
@@ -5668,7 +5685,7 @@ void dungeon()
 		/*{ Increment turn counter			}*/
 		turn++;
 
-		if ((PF.speed > 0) || ((turn % (labs(PF.speed) + 1)) == 0)) {
+		if (((player_flags).speed > 0) || ((turn % (labs((player_flags).speed) + 1)) == 0)) {
 			water_move();
 			adv_time(true); /*{ Increment game time }*/
 		}

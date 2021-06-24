@@ -1,9 +1,26 @@
 /* traps.c */
 /* all sorts of nasty traps (stores too)! */
 
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h> /* for ftruncate, usleep */
+
+#include "configure.h"
+#include "constants.h"
+#include "magic.h"
+#include "pascal.h"
+#include "routines.h"
+#include "term.h"
+#include "types.h"
+#include "debug.h"
+#include "variables.h"
 #include "dungeon.h"
-#include "imoria.h"
 #include "trade.h"
+#include "player.h"
 
 /*	{ Traps are just Nasty treasures...				} */
 static treasure_type trap_lista[MAX_TRAPA + 1] = {
@@ -296,13 +313,13 @@ static void ht__poison_gas(long dam)
 static void ht__blind_gas(void)
 {
 	msg_print("A black gas surrounds you!");
-	PF.blind += randint(50) + 50;
+	(player_flags).blind += randint(50) + 50;
 }
 /*//////////////////////////////////////////////////////////////////// */
 static void ht__confuse_gas(void)
 {
 	msg_print("A gas of scintillating colors surrounds you!");
-	PF.confused += randint(15) + 15;
+	(player_flags).confused += randint(15) + 15;
 }
 /*//////////////////////////////////////////////////////////////////// */
 static void ht__slow_dart(long dam)
@@ -310,7 +327,7 @@ static void ht__slow_dart(long dam)
 	if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
 		take_hit(dam, "a dart trap");
 		msg_print("A small dart hits you!");
-		PF.slow += randint(20) + 10;
+		(player_flags).slow += randint(20) + 10;
 	} else {
 		msg_print("A small dart barely misses you.");
 	}
