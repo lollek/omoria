@@ -433,7 +433,7 @@ void identify(treasure_type *item)
 			}
 		}
 
-		for (curse = inventory_list; curse != nil;
+		for (curse = inventory_list; curse != NULL;
 		     curse = curse->next) {
 			/* with curse^.data do; */
 			if ((curse->data.tval == x1) &&
@@ -634,13 +634,13 @@ char *bag_descrip(treas_ptr bag, char result[134]) /* was func */
 	long count, wgt;
 	treas_ptr ptr;
 
-	if ((bag->next == nil) || (bag->next->is_in == false)) {
+	if ((bag->next == NULL) || (bag->next->is_in == false)) {
 		sprintf(result, " (empty)");
 	} else {
 		count = 0;
 		wgt = 0;
 
-		for (ptr = bag->next; (ptr != nil) && (ptr->is_in);
+		for (ptr = bag->next; (ptr != NULL) && (ptr->is_in);
 		     ptr = ptr->next) {
 			count += ptr->data.number;
 			wgt += ptr->data.weight * ptr->data.number;

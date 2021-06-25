@@ -5,8 +5,6 @@
 
 /* Things to save typing when converting pascal to c */
 
-#define nil 0
-
 #define trunc(xx) (xx)
 
 #define uor(xx, yy) ((xx) | (yy))

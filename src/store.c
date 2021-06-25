@@ -1467,7 +1467,7 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz)
 	boolean flag;
 	boolean return_value = false;
 
-	item_new = nil;
+	item_new = NULL;
 	/* with stores[store_num] do; */
 	if (blitz) {
 		strcpy(foo, "BLITZ-PURCHASE item? ");

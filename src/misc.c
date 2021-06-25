@@ -313,7 +313,7 @@ static boolean learn_song(boolean *redraw)
 	curse = inventory_list;
 	new_spells = num_new_spells(bard_adj());
 
-	while (curse != nil) {
+	while (curse != NULL) {
 		if (curse->data.tval == song_book) {
 			spell_flag |= curse->data.flags;
 			spell_flag2 |= curse->data.flags2;

@@ -656,7 +656,7 @@ void file_character()
 					       "inventory.\n");
 			} else {
 				i1 = 1;
-				for (curse = inventory_list; curse != nil;
+				for (curse = inventory_list; curse != NULL;
 				     curse = curse->next) {
 					if ((i1 % 50) == 0) {
 						fprintf(file1,

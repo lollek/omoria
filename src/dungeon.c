@@ -565,7 +565,7 @@ static void d__throw_object(boolean to_be_fired)
 	} else {
 		count = change_all_ok_stats(true, false);
 
-		for (item_ptr = inventory_list; item_ptr != nil;) {
+		for (item_ptr = inventory_list; item_ptr != NULL;) {
 			if ((uand(item_ptr->data.flags2, Holding_bit) != 0) &&
 			    (item_ptr->insides > 0)) {
 				count--;
@@ -2448,7 +2448,7 @@ static void d__drop()
 	if ((inven_ctr > 0) || (temp > 0)) {
 		count = change_all_ok_stats(true, false);
 		com_ptr = inventory_list;
-		for (; com_ptr != nil;) {
+		for (; com_ptr != NULL;) {
 			if ((com_ptr->data.tval == bag_or_sack) &&
 			    (com_ptr->insides != 0)) {
 				com_ptr->ok = false;

@@ -337,7 +337,7 @@ void wmi__init_data_list(list_elem_ptr *data_list)
 			    sizeof(list_elem), "init_data_list");
 			curse = curse->next;
 			curse->data = temp_ray[i1];
-			curse->next = nil;
+			curse->next = NULL;
 		}
 	}
 }
@@ -359,7 +359,7 @@ void wmi__display_list(list_elem_ptr start, long *cur_display_size,
 	old_display_size = *cur_display_size;
 	count = 0;
 
-	for (; (start != nil) && (count < MOO_DISPLAY_SIZE);) {
+	for (; (start != NULL) && (count < MOO_DISPLAY_SIZE);) {
 		count++;
 		if (cur_display[count] != start) {
 			cur_display[count] = start;
@@ -374,10 +374,10 @@ void wmi__display_list(list_elem_ptr start, long *cur_display_size,
 
 	for (; old_display_size > *cur_display_size; old_display_size--) {
 		erase_line(old_display_size + 3, 1);
-		cur_display[old_display_size] = nil;
+		cur_display[old_display_size] = NULL;
 	}
 
-	if (start == nil) {
+	if (start == NULL) {
 		*blegga = *data_list;
 	} else {
 		*blegga = start;
@@ -390,7 +390,7 @@ void wmi__clear_display(long *cur_display_size, list_elem_ptr cur_display[])
 
 	*cur_display_size = 0;
 	for (i4 = 1; i4 <= MOO_DISPLAY_SIZE; i4++) {
-		cur_display[i4] = nil;
+		cur_display[i4] = NULL;
 	}
 }
 
