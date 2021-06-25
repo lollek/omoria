@@ -3302,8 +3302,8 @@ void py_bonuses(treasure_type *tobj, long factor)
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 		/* with equipment[i1] do; */
-		item_flags = uor(item_flags, equipment[i1].flags);
-		item_flags2 = uor(item_flags2, equipment[i1].flags2);
+		item_flags = (item_flags | equipment[i1].flags);
+		item_flags2 = (item_flags2 | equipment[i1].flags2);
 	}
 
 	/* with player_flags do; */
