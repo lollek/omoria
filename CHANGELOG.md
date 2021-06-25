@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1
+* 25 June 2021
+ - If you shoot in a direction and miss the first monster, your missile may now
+   hit the second monster standing behind it.
+
+
 ## 5.0.0
 No changes, but since I'm almost a year into this I should start using version
 numbers

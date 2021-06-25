@@ -257,11 +257,10 @@ static void __missile_travel(treas_rec *missile, enum _ranged_attack_t type, lon
 
 		// We hit some creature
 		if (cave[missile_y][missile_x].cptr > 1) {
-			if (!__missile_try_hit_creature(missile, type, missile_y, missile_x, travel_distance)) {
-				__missile_hit_ground(missile, prev_missile_y, prev_missile_x);
+			if (__missile_try_hit_creature(missile, type, missile_y, missile_x, travel_distance)) {
+				LEAVE("__missile_travel", "");
+				return;
 			}
-			LEAVE("__missile_travel", "");
-			return;
 		}
 
 		if (panel_contains(missile_y, missile_x) && test_light(missile_y, missile_x)) {
