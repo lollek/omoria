@@ -5,8 +5,6 @@
 
 /* Things to save typing when converting pascal to c */
 
-#define trunc(xx) (xx)
-
 #define uor(xx, yy) ((xx) | (yy))
 #define uand(xx, yy) ((xx) & (yy))
 #define uxor(xx, yy) ((xx) ^ (yy))

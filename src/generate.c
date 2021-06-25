@@ -159,8 +159,8 @@ void gc__place_boundry()
 void gc__place_streamer(floor_type rock, long treas_chance)
 {
 	/*{ Choose starting point and direction		}*/
-	long y = trunc(cur_height / 2.0) + 11 - randint(23);
-	long x = trunc(cur_width / 2.0) + 16 - randint(33);
+	long y = (cur_height / 2.0) + 11 - randint(23);
+	long x = (cur_width / 2.0) + 16 - randint(33);
 
 	long dir = randint(8); /*{ Number 1-4, 6-9	}*/
 	if (dir > 4) {
@@ -475,7 +475,7 @@ static void gc__cave_gen()
 		gc__try_door(doorstk[i].y + 1, doorstk[i].x);
 	}
 
-	long alloc_level = trunc(dun_level / 3);
+	long alloc_level = (dun_level / 3);
 	if (alloc_level < 2) {
 		alloc_level = 2;
 	} else if (alloc_level > 10) {
@@ -960,16 +960,16 @@ void generate_cave()
 	if (dun_level == 0) {
 		cur_height = SCREEN_HEIGHT * 2;
 		cur_width = SCREEN_WIDTH * 2;
-		max_panel_rows = trunc(cur_height / SCREEN_HEIGHT) * 2 - 2;
-		max_panel_cols = trunc(cur_width / SCREEN_WIDTH) * 2 - 2;
+		max_panel_rows = (cur_height / SCREEN_HEIGHT) * 2 - 2;
+		max_panel_cols = (cur_width / SCREEN_WIDTH) * 2 - 2;
 		panel_row = 0;
 		panel_col = 0;
 		gc__town_gen();
 	} else {
 		cur_height = MAX_HEIGHT;
 		cur_width = MAX_WIDTH;
-		max_panel_rows = trunc(cur_height / SCREEN_HEIGHT) * 2 - 2;
-		max_panel_cols = trunc(cur_width / SCREEN_WIDTH) * 2 - 2;
+		max_panel_rows = (cur_height / SCREEN_HEIGHT) * 2 - 2;
+		max_panel_cols = (cur_width / SCREEN_WIDTH) * 2 - 2;
 		panel_row = max_panel_rows;
 		panel_col = max_panel_cols;
 		gc__cave_gen();

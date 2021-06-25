@@ -647,7 +647,7 @@ char *bag_descrip(treas_ptr bag, char result[134]) /* was func */
 		}
 
 		sprintf(result, " (%ld%% full, containing %ld item%s)",
-			trunc(wgt * 100 / bag->data.p1), count,
+			(wgt * 100 / bag->data.p1), count,
 			((count != 1) ? "s" : ""));
 	}
 	return result;
