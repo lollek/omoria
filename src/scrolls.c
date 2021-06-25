@@ -115,28 +115,28 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 
 		/* if something is cursed it gets priority */
 
-		if (uand(Cursed_worn_bit, equipment[Equipment_armor].flags) !=
+		if ((Cursed_worn_bit & equipment[Equipment_armor].flags) !=
 		    0) {
 			i4 = Equipment_armor;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_shield].flags) != 0) {
 			i4 = Equipment_shield;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_cloak].flags) != 0) {
 			i4 = Equipment_cloak;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_helm].flags) != 0) {
 			i4 = Equipment_helm;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_gloves].flags) != 0) {
 			i4 = Equipment_gloves;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_boots].flags) != 0) {
 			i4 = Equipment_boots;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_belt].flags) != 0) {
 			i4 = Equipment_belt;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_bracers].flags) != 0) {
 			i4 = Equipment_bracers;
 		}
@@ -363,25 +363,25 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 		break;
 
 	case 34:
-		if (uand(Cursed_worn_bit, equipment[Equipment_armor].flags) !=
+		if ((Cursed_worn_bit & equipment[Equipment_armor].flags) !=
 		    0) {
 			i3 = Equipment_armor;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_shield].flags) != 0) {
 			i3 = Equipment_shield;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_cloak].flags) != 0) {
 			i3 = Equipment_cloak;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_helm].flags) != 0) {
 			i3 = Equipment_helm;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_gloves].flags) != 0) {
 			i3 = Equipment_gloves;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_boots].flags) != 0) {
 			i3 = Equipment_boots;
-		} else if (uand(Cursed_worn_bit,
+		} else if ((Cursed_worn_bit &
 				equipment[Equipment_cloak].flags) != 0) {
 			i3 = Equipment_cloak;
 		} else if (equipment[Equipment_armor].tval > 0) {

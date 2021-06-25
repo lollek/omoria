@@ -694,9 +694,9 @@ chtype loc_symbol(long y, long x)
 			if ((m_list[cptr].ml) &&
 			    (!is_in(fval, water_set) ||
 			     (is_in(fval, water_set) &&
-			      ((uand(c_list[mptr].cmove, 0x00800000) != 0) ||
+			      (((c_list[mptr].cmove & 0x00800000) != 0) ||
 			       (distance(char_row, char_col, y, x) <= 5)))) &&
-			    ((uand(c_list[mptr].cmove, 0x00010000) == 0) ||
+			    (((c_list[mptr].cmove & 0x00010000) == 0) ||
 			     (player_flags.see_inv))) {
 				sym = c_list[mptr].cchar;
 			} else if (tptr > 0) {
@@ -2964,7 +2964,7 @@ void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence)
 	i2 = m_list[ptr].mptr;
 
 	/*{ Does the player know what he's fighting?      }*/
-	if (((uand(0x10000, c_list[i2].cmove) != 0) &&
+	if ((((0x10000 & c_list[i2].cmove) != 0) &&
 	     (!(player_flags.see_inv))) ||
 	    (player_flags.blind > 0) || (!(m_list[ptr].ml))) {
 		if (begin_sentence) {
@@ -3071,7 +3071,7 @@ void place_win_monster()
 		m_list[cur_pos].nptr = muptr;
 		muptr = cur_pos;
 
-		if (uand(c_list[m_list[cur_pos].mptr].cdefense, 0x4000) != 0) {
+		if ((c_list[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
 			m_list[cur_pos].hp =
 			    max_hp(c_list[m_list[cur_pos].mptr].hd);
 		} else {

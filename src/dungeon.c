@@ -566,7 +566,7 @@ static void d__throw_object(boolean to_be_fired)
 		count = change_all_ok_stats(true, false);
 
 		for (item_ptr = inventory_list; item_ptr != NULL;) {
-			if ((uand(item_ptr->data.flags2, Holding_bit) != 0) &&
+			if (((item_ptr->data.flags2 & Holding_bit) != 0) &&
 			    (item_ptr->insides > 0)) {
 				count--;
 			}
@@ -1883,7 +1883,7 @@ static void d__bash()
 				strcpy(t_list[cave[y][x].tptr].name,
 				       "& ruined chest");
 				t_list[cave[y][x].tptr].flags = 0;
-			} else if (uand(0x00000001,
+			} else if ((0x00000001 &
 					t_list[cave[y][x].tptr].flags) != 0) {
 				if (randint(10) == 1) {
 					/* just "unlocks", traps are
@@ -1915,7 +1915,7 @@ static void d__chest_trap(long y, long x)
 
 	/* with t_list[cave[y][x].tptr]. do; */
 
-	if (uand(0x00000010, flags) != 0) {
+	if ((0x00000010 & flags) != 0) {
 		msg_print("A small needle has pricked you!");
 		if (lose_stat(STR, "", "You are unaffected.")) {
 			take_hit(damroll("1d4"), "a poison needle");
@@ -1924,13 +1924,13 @@ static void d__chest_trap(long y, long x)
 		}
 	}
 
-	if (uand(0x00000020, flags) != 0) {
+	if ((0x00000020 & flags) != 0) {
 		msg_print("A small needle has pricked you!");
 		take_hit(damroll("1d6"), "a poison needle.");
 		player_flags.poisoned += 10 + randint(20);
 	}
 
-	if (uand(0x00000040, flags) != 0) {
+	if ((0x00000040 & flags) != 0) {
 		msg_print("A puff of yellow gas surrounds you!");
 		if (player_flags.free_act) {
 			msg_print("You are unaffected.");
@@ -1940,13 +1940,13 @@ static void d__chest_trap(long y, long x)
 		}
 	}
 
-	if (uand(0x00000080, flags) != 0) {
+	if ((0x00000080 & flags) != 0) {
 		msg_print("There is a sudden explosion!");
 		delete_object(y, x);
 		take_hit(damroll("5d8"), "an exploding chest");
 	}
 
-	if (uand(0x00000100, flags) != 0) {
+	if ((0x00000100 & flags) != 0) {
 		for (i1 = 0; i1 < 3; i1++) {
 			i2 = y;
 			i3 = x;
@@ -2022,7 +2022,7 @@ static void d__openobject()
 
 				/* with t_list[tptr] do; */
 				flag = false;
-				if (uand(0x00000001,
+				if ((0x00000001 &
 					 t_list[cave[y][x].tptr].flags) !=
 				    0) { /* locked? */
 					if (player_flags.confused > 0) {
@@ -2065,7 +2065,7 @@ static void d__openobject()
 				flag = false;
 
 				/*{ Was chest still trapped?  (Snicker)   }*/
-				if (uand(0x00000001,
+				if ((0x00000001 &
 					 t_list[cave[y][x].tptr].flags) ==
 				    0) { /*unlocked?*/
 					d__chest_trap(y, x);
@@ -2228,8 +2228,8 @@ static void d__disarm_trap()
 				if (strstr(t_list[cave[y][x].tptr].name, "^") !=
 				    NULL) {
 					msg_print("I don't see a trap...");
-				} else if (uand(
-					       0x000001F0,
+				} else if ((
+					       0x000001F0 &
 					       t_list[cave[y][x].tptr].flags) !=
 					   0) {
 					if ((tot - t5) > randint(100)) {
@@ -2242,7 +2242,7 @@ static void d__disarm_trap()
 						if (tmpc != NULL) {
 							*tmpc = 0;
 						}
-						if (uand(0x00000001,
+						if ((0x00000001 &
 							 t_list[cave[y][x].tptr]
 							     .flags) != 0) {
 							strcat(t_list[cave[y][x]
@@ -2331,7 +2331,7 @@ static void d__tunnel()
 		tabil = ((C_player_get_stat(STR) * 10) + 20) / 5;
 		if (equipment[Equipment_primary].tval > 0) {
 			/* with equipment[Equipment_primary] do; */
-			if (uand(Tunneling_worn_bit,
+			if ((Tunneling_worn_bit &
 				 equipment[Equipment_primary].flags) != 0) {
 				tabil +=
 				    25 + equipment[Equipment_primary].p1 * 50;
@@ -3152,72 +3152,72 @@ void py_bonuses(treasure_type *tobj, long factor)
 	(player_flags).lght_resist = false;
 	(player_flags).ffall = false;
 
-	if (uand(Strength_worn_bit, tobj->flags) != 0) {
+	if ((Strength_worn_bit & tobj->flags) != 0) {
 		C_player_mod_stat(STR, tobj->p1 * factor);
 		print_stat = 1;
 	}
-	if (uand(Dexterity_worn_bit, tobj->flags) != 0) {
+	if ((Dexterity_worn_bit & tobj->flags) != 0) {
 		C_player_mod_stat(DEX, tobj->p1 * factor);
 		print_stat = 1;
 	}
-	if (uand(Constitution_worn_bit, tobj->flags) != 0) {
+	if ((Constitution_worn_bit & tobj->flags) != 0) {
 		C_player_mod_stat(CON, tobj->p1 * factor);
 		print_stat = 1;
 	}
-	if (uand(Intelligence_worn_bit, tobj->flags) != 0) {
+	if ((Intelligence_worn_bit & tobj->flags) != 0) {
 		C_player_mod_stat(INT, tobj->p1 * factor);
 		print_stat = 1;
 	}
-	if (uand(Wisdom_worn_bit, tobj->flags) != 0) {
+	if ((Wisdom_worn_bit & tobj->flags) != 0) {
 		C_player_mod_stat(WIS, tobj->p1 * factor);
 		print_stat = 1;
 	}
-	if (uand(Charisma_worn_bit, tobj->flags) != 0) {
+	if ((Charisma_worn_bit & tobj->flags) != 0) {
 		C_player_mod_stat(CHR, tobj->p1 * factor);
 		print_stat = 1;
 	}
 	C_player_recalc_stats();
-	if (uand(Magic_proof_worn_bit, tobj->flags2) != 0) {
+	if ((Magic_proof_worn_bit & tobj->flags2) != 0) {
 		player_save += (25 * factor);
 	}
-	if (uand(Bad_repute_worn_bit, tobj->flags2) != 0) {
+	if ((Bad_repute_worn_bit & tobj->flags2) != 0) {
 		change_rep(
 		    -100 *
 		    factor); /*{XXX hey!  this is bad! new variable!-ste}*/
 	}
-	if (uand(Disarm_worn_bit, tobj->flags2) != 0) {
+	if ((Disarm_worn_bit & tobj->flags2) != 0) {
 		player_disarm += (tobj->p1 * factor);
 	}
-	if (uand(Searching_worn_bit, tobj->flags) != 0) {
+	if ((Searching_worn_bit & tobj->flags) != 0) {
 		C_player_mod_search_skill(tobj->p1 * factor);
 		player_fos -= (tobj->p1 * factor);
 	}
-	if (uand(Stealth_worn_bit, tobj->flags) != 0) {
+	if ((Stealth_worn_bit & tobj->flags) != 0) {
 		player_stl += (tobj->p1 * factor) + factor;
 	}
-	if (uand(Speed_worn_bit, tobj->flags) != 0) {
+	if ((Speed_worn_bit & tobj->flags) != 0) {
 		i1 = tobj->p1 * factor;
 		change_speed(-i1);
 	}
-	if (uand(Blindness_worn_bit, tobj->flags) != 0) {
+	if ((Blindness_worn_bit & tobj->flags) != 0) {
 		if (factor > 0) {
 			player_flags.blind += 1000;
 		}
 	}
-	if (uand(Timidness_worn_bit, tobj->flags) != 0) {
+	if ((Timidness_worn_bit & tobj->flags) != 0) {
 		if (factor > 0) {
 			player_flags.afraid += 50;
 		}
 	}
-	if (uand(Infra_Vision_worn_bit, tobj->flags) != 0) {
+	if ((Infra_Vision_worn_bit & tobj->flags) != 0) {
 		player_flags.see_infra += (tobj->p1 * factor);
 	}
 	/* This has no effect, what was it supposed to do?
-	if (uand(Swimming_worn_bit, tobj->flags2) != 0) {
+	if ((Swimming_worn_bit & tobj->flags2) != 0) {
 		i1 = tobj->p1 * factor;
 	}
 	*/
-	if (uand(Increase_carry_worn_bit, tobj->flags2) != 0) {
+	if ((Increase_carry_worn_bit & tobj->flags2) != 0) {
 		switch (tobj->p1) {
 		case 1:
 			i1 = 500;
@@ -3262,7 +3262,7 @@ void py_bonuses(treasure_type *tobj, long factor)
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 		/* with equipment[i1] do; */
 		if (equipment[i1].tval > 0) {
-			if (uand(Cursed_worn_bit, equipment[i1].flags) == 0) {
+			if ((Cursed_worn_bit & equipment[i1].flags) == 0) {
 				player_pac += equipment[i1].ac;
 				player_dis_ac += equipment[i1].ac;
 			}
@@ -3307,22 +3307,22 @@ void py_bonuses(treasure_type *tobj, long factor)
 	}
 
 	/* with player_flags do; */
-	(player_flags).slow_digest = uand(Slow_Digestion_worn_bit, item_flags) != 0;
-	(player_flags).aggravate = uand(Aggravation_worn_bit, item_flags) != 0;
-	(player_flags).teleport = uand(Teleportation_worn_bit, item_flags) != 0;
-	(player_flags).regenerate = uand(Regeneration_worn_bit, item_flags) != 0;
-	(player_flags).hunger_item = uand(Hunger_worn_bit, item_flags2) != 0;
-	(player_flags).fire_resist = uand(Resist_Fire_worn_bit, item_flags) != 0;
-	(player_flags).acid_resist = uand(Resist_Acid_worn_bit, item_flags) != 0;
-	(player_flags).cold_resist = uand(Resist_Cold_worn_bit, item_flags) != 0;
-	(player_flags).free_act = uand(Free_Action_worn_bit, item_flags) != 0;
-	(player_flags).see_inv |= uand(See_Invisible_worn_bit, item_flags) != 0;
-	(player_flags).lght_resist = uand(Resist_Lightning_worn_bit, item_flags) != 0;
-	(player_flags).ffall = uand(Feather_Fall_worn_bit, item_flags) != 0;
+	(player_flags).slow_digest = (Slow_Digestion_worn_bit & item_flags) != 0;
+	(player_flags).aggravate = (Aggravation_worn_bit & item_flags) != 0;
+	(player_flags).teleport = (Teleportation_worn_bit & item_flags) != 0;
+	(player_flags).regenerate = (Regeneration_worn_bit & item_flags) != 0;
+	(player_flags).hunger_item = (Hunger_worn_bit & item_flags2) != 0;
+	(player_flags).fire_resist = (Resist_Fire_worn_bit & item_flags) != 0;
+	(player_flags).acid_resist = (Resist_Acid_worn_bit & item_flags) != 0;
+	(player_flags).cold_resist = (Resist_Cold_worn_bit & item_flags) != 0;
+	(player_flags).free_act = (Free_Action_worn_bit & item_flags) != 0;
+	(player_flags).see_inv |= (See_Invisible_worn_bit & item_flags) != 0;
+	(player_flags).lght_resist = (Resist_Lightning_worn_bit & item_flags) != 0;
+	(player_flags).ffall = (Feather_Fall_worn_bit & item_flags) != 0;
 
 	for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
 		/* with equipment[i1] do; */
-		if (uand(Sustain_Stat_worn_bit, equipment[i1].flags) != 0) {
+		if ((Sustain_Stat_worn_bit & equipment[i1].flags) != 0) {
 			if ((equipment[i1].p1 > 0) && (equipment[i1].p1 < 7)) {
 				player_flags.sustain[equipment[i1].p1 - 1] =
 				    true;
@@ -4893,28 +4893,28 @@ void monster_death(long y, long x, unsigned long flags)
 
 	i1 = (long)((flags & 0x03000000) / (0x01000000));
 
-	if (uand(flags, 0x04000000) != 0) {
+	if ((flags & 0x04000000) != 0) {
 		if (randint(100) < 60) {
 			summon_object(y, x, 1, i1);
 		}
 	}
 
-	if (uand(flags, 0x08000000) != 0) {
+	if ((flags & 0x08000000) != 0) {
 		if (randint(100) < 90) {
 			summon_object(y, x, 1, i1);
 		}
 	}
 
-	if (uand(flags, 0x10000000) != 0) {
+	if ((flags & 0x10000000) != 0) {
 		summon_object(y, x, randint(2), i1);
 	}
-	if (uand(flags, 0x20000000) != 0) {
+	if ((flags & 0x20000000) != 0) {
 		summon_object(y, x, damroll("2d2"), i1);
 	}
-	if (uand(flags, 0x40000000) != 0) {
+	if ((flags & 0x40000000) != 0) {
 		summon_object(y, x, damroll("4d3"), i1);
 	}
-	if (uand(flags, 0x80000000) != 0) {
+	if ((flags & 0x80000000) != 0) {
 		total_winner = true;
 		msg_print("*** CONGRATULATIONS *** You have won the game...");
 		msg_print("Use '@' when you are ready to quit.");
@@ -5254,48 +5254,48 @@ long tot_dam(treasure_type *item, long tdam, creature_type *monster)
 		/* with monster do; */
 
 		/*{ Slay Dragon   }*/
-		if ((uand(cdefense, 0x0001) != 0) &&
-		    (uand(flags, Slay_Dragon_worn_bit) != 0)) {
+		if (((cdefense & 0x0001) != 0) &&
+		    ((flags & Slay_Dragon_worn_bit) != 0)) {
 			tdam *= 4;
 
 			/*{ Slay Undead   }*/
-		} else if ((uand(cdefense, 0x0008) != 0) &&
-			   (uand(flags, Slay_Undead_worn_bit) != 0)) {
+		} else if (((cdefense & 0x0008) != 0) &&
+			   ((flags & Slay_Undead_worn_bit) != 0)) {
 			tdam *= 3;
 
 			/*{ Demon Bane    }*/
-		} else if ((uand(cdefense, 0x0400) != 0) &&
-			   (uand(flags2, Slay_demon_worn_bit) != 0)) {
+		} else if (((cdefense & 0x0400) != 0) &&
+			   ((flags2 & Slay_demon_worn_bit) != 0)) {
 			tdam *= 3;
 
 			/*{ Slay Regenerative }*/
-		} else if ((uand(cdefense, 0x8000) != 0) &&
-			   (uand(flags2, Slay_regen_worn_bit) != 0)) {
+		} else if (((cdefense & 0x8000) != 0) &&
+			   ((flags2 & Slay_regen_worn_bit) != 0)) {
 			tdam *= 3;
 
 			/*{ Slay Monster  }*/
-		} else if ((uand(cdefense, 0x0002) != 0) &&
-			   (uand(flags, Slay_Monster_worn_bit) != 0)) {
+		} else if (((cdefense & 0x0002) != 0) &&
+			   ((flags & Slay_Monster_worn_bit) != 0)) {
 			tdam *= 2;
 
 			/*{ Slay Evil     }*/
-		} else if ((uand(cdefense, 0x0004) != 0) &&
-			   (uand(flags, Slay_Evil_worn_bit) != 0)) {
+		} else if (((cdefense & 0x0004) != 0) &&
+			   ((flags & Slay_Evil_worn_bit) != 0)) {
 			tdam *= 2;
 
 			/*{ Soul Sword    }*/
-		} else if ((!(uand(cdefense, 0x0008) != 0)) &&
-			   (uand(flags2, Soul_Sword_worn_bit) != 0)) {
+		} else if ((!((cdefense & 0x0008) != 0)) &&
+			   ((flags2 & Soul_Sword_worn_bit) != 0)) {
 			tdam *= 2;
 		}
 		/*{ Frost         }*/
-	} else if ((uand(cdefense, 0x0010) != 0) &&
-		   (uand(flags, Cold_Brand_worn_bit) != 0)) {
+	} else if (((cdefense & 0x0010) != 0) &&
+		   ((flags & Cold_Brand_worn_bit) != 0)) {
 		tdam *= 1.5;
 
 		/*{ Fire          }*/
-	} else if ((uand(cdefense, 0x0020) != 0) &&
-		   (uand(flags, Flame_Brand_worn_bit) != 0)) {
+	} else if (((cdefense & 0x0020) != 0) &&
+		   ((flags & Flame_Brand_worn_bit) != 0)) {
 		tdam *= 1.5;
 	}
 
@@ -5351,9 +5351,9 @@ boolean xor
 	/* with cave[fy,fx] do; */
 	if (xor((is_in(cave[MY(mon)][MX(mon)].fval, earth_set) ||
 		 is_in(cave[MY(mon)][MX(mon)].fval, pwall_set)),
-		(uand(c_list[m_list[mon].mptr].cmove, 0x00000010) == 0))) {
+		((c_list[m_list[mon].mptr].cmove & 0x00000010) == 0))) {
 		c_rate =
-		    (long)(uand(c_list[m_list[mon].mptr].cmove, 0x00000300) /
+		    (long)((c_list[m_list[mon].mptr].cmove & 0x00000300) /
 			   256);
 	} else {
 		c_rate = 3;

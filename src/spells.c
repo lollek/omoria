@@ -825,11 +825,11 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
 				 */
 				/* do; */
 				dam = dam_hp;
-				if (uand(harm_type,
+				if ((harm_type &
 					 c_list[m_list[cave[i1][i2].cptr].mptr]
 					     .cdefense) != 0) {
 					dam *= 2;
-				} else if (uand(weapon_type,
+				} else if ((weapon_type &
 						c_list[m_list[cave[i1][i2].cptr]
 							   .mptr]
 						    .spells) != 0) {
@@ -1089,17 +1089,16 @@ boolean detect_creatures(long typ)
 			switch (typ) {
 			case c_evil:
 				found =
-				    uand(0x0004,
-					 c_list[m_list[i1].mptr].cdefense) != 0;
+				    (0x0004 & c_list[m_list[i1].mptr].cdefense) != 0;
 				break;
 			case c_monster:
 				found =
-				    uand(0x10000,
+				    (0x10000 &
 					 c_list[m_list[i1].mptr].cmove) == 0;
 				break;
 			case c_invisible:
 				found =
-				    uand(0x10000,
+				    (0x10000 &
 					 c_list[m_list[i1].mptr].cmove) != 0;
 				break;
 			default:
@@ -1800,7 +1799,7 @@ boolean mass_genocide()
 		/* with c_list[m_list[i1].mptr]. do; */
 		i2 = m_list[i1].nptr;
 		if (m_list[i1].cdis <= MAX_SIGHT) {
-			if ((uand(c_list[m_list[i1].mptr].cmove, 0x80000000) ==
+			if (((c_list[m_list[i1].mptr].cmove & 0x80000000) ==
 			     0) &&
 			    (!mon_resists(i1))) {
 				delete_monster(i1);
@@ -1833,7 +1832,7 @@ boolean genocide()
 			/* with c_list[m_list[i1].mptr]. do; */
 			i2 = m_list[i1].nptr;
 			if (typ == c_list[m_list[i1].mptr].cchar) {
-				if ((uand(c_list[m_list[i1].mptr].cmove,
+				if (((c_list[m_list[i1].mptr].cmove &
 					  0x80000000) == 0) &&
 				    (!mon_resists(i1))) {
 					delete_monster(i1);
@@ -1947,15 +1946,15 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ)
 		break;
 
 	case c_turn:
-		hmm = uand(c_list[m_list[monptr].mptr].cdefense, 0x0008) != 0;
+		hmm = (c_list[m_list[monptr].mptr].cdefense & 0x0008) != 0;
 		break;
 
 	case c_drain:
-		hmm = uand(c_list[m_list[monptr].mptr].cdefense, 0x0008) == 0;
+		hmm = (c_list[m_list[monptr].mptr].cdefense & 0x0008) == 0;
 		break;
 
 	case c_hp:
-		hmm = uand(c_list[m_list[monptr].mptr].cdefense, cflag) != 0;
+		hmm = (c_list[m_list[monptr].mptr].cdefense & cflag) != 0;
 		break;
 
 	default:
@@ -2306,7 +2305,7 @@ boolean mass_poly()
 		i2 = m_list[i1].nptr;
 		if (m_list[i1].cdis < MAX_SIGHT) {
 			/* with c_list[m_list[i1].mptr]. do; */
-			if ((uand(c_list[m_list[i1].mptr].cdefense,
+			if (((c_list[m_list[i1].mptr].cdefense &
 				  0x80000000) == 0) &&
 			    (!mon_resists(i1))) {
 				y = m_list[i1].fy;
@@ -2508,10 +2507,10 @@ boolean fire_bolt(long typ, long dir, long y, long x, long dam,
 				sprintf(out_val, "The %s strikes %s.", bolt_typ,
 					str);
 				msg_print(out_val);
-				if (uand(harm_type, c_list[mptr].cdefense) !=
+				if ((harm_type & c_list[mptr].cdefense) !=
 				    0) {
 					dam *= 2;
-				} else if (uand(weapon_type,
+				} else if ((weapon_type &
 						c_list[mptr].spells) != 0) {
 					dam /= 4;
 				}
@@ -2605,7 +2604,7 @@ boolean wall_to_mud(long dir, long y, long x)
 			mptr = m_list[cptr].mptr;
 			if (cptr > 1) {
 
-				if (uand(0x0200,
+				if ((0x0200 &
 					 c_list[m_list[cave[y][x].cptr].mptr]
 					     .cdefense) != 0) {
 					i1 = mon_take_hit(cptr, 100);
@@ -2853,7 +2852,7 @@ boolean zm__did_it_work(long zaptype, long cptr, long aux)
 
 	case c_drain:
 		flag =
-		    ((uand(c_list[m_list[cptr].mptr].cdefense, 0x0008) == 0) &&
+		    (((c_list[m_list[cptr].mptr].cdefense & 0x0008) == 0) &&
 		     (!mon_resists(cptr)));
 		break;
 
@@ -3068,7 +3067,7 @@ boolean detect_curse()
 	if (get_item(&item_ptr, "Item you wish to examine?", &redraw, inven_ctr,
 		     &trash_char, false, false)) {
 		/* with item_ptr->data. do; */
-		if (uand(Cursed_worn_bit, item_ptr->data.flags) != 0) {
+		if ((Cursed_worn_bit & item_ptr->data.flags) != 0) {
 			item_ptr->data.flags2 |= Known_cursed_bit;
 			msg_print("The item is cursed!");
 		} else {
@@ -3216,9 +3215,9 @@ boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
 			sprintf(out_val, "The %s strikes the %s.", descrip,
 				c_list[mptr].name);
 			msg_print(out_val);
-			if (uand(harm_type, c_list[mptr].cdefense) != 0) {
+			if ((harm_type & c_list[mptr].cdefense) != 0) {
 				dam_hp *= 2;
-			} else if (uand(weapon_type, c_list[mptr].spells) !=
+			} else if ((weapon_type & c_list[mptr].spells) !=
 				   0) {
 				dam_hp /= 4;
 			}

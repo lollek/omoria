@@ -5,7 +5,6 @@
 
 /* Things to save typing when converting pascal to c */
 
-#define uand(xx, yy) ((xx) & (yy))
 #define uxor(xx, yy) ((xx) ^ (yy))
 
 void writeln(char *out_line);

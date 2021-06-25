@@ -284,7 +284,7 @@ void multiply_monster(long y, long x, long z, boolean slp)
 						    }*/
 						/*{ Some critters are
 						 * canabalistic!       }*/
-						if (uand(c_list[z].cmove,
+						if ((c_list[z].cmove &
 							 0x00080000) != 0) {
 							delete_monster(
 							    cave[i2][i3].cptr);
@@ -324,7 +324,7 @@ void c__update_mon(long monptr, long *hear_count)
 	flag = false;
 
 	if ((is_in(cave[MY(monptr)][MX(monptr)].fval, water_set)) &&
-	    (uand(c_list[ML(monptr).mptr].cmove, 0x00800000) == 0)) {
+	    ((c_list[ML(monptr).mptr].cmove & 0x00800000) == 0)) {
 		/*{in water, not flying}*/
 		h_range = 10;
 		s_range = 5;
@@ -344,14 +344,14 @@ void c__update_mon(long monptr, long *hear_count)
 				    (cave[MY(monptr)][MX(monptr)]
 					 .tl)) { /*{can see creature?}*/
 					flag = (player_flags.see_inv ||
-						(uand(0x10000,
+						((0x10000 &
 						      c_list[ML(monptr).mptr]
 							  .cmove) == 0));
 				} else if (player_flags.see_infra >
 					   0) { /*{infravision?}*/
 					flag = ((ML(monptr).cdis <=
 						 player_flags.see_infra) &&
-						(uand(0x2000,
+						((0x2000 &
 						      c_list[ML(monptr).mptr]
 							  .cdefense) != 0));
 				}
@@ -913,7 +913,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr)
 			}
 			if (item_ptr != NULL) {
 				if (!item_ptr->is_in) {
-					if (uand(item_ptr->data.flags2,
+					if ((item_ptr->data.flags2 &
 						 Holding_bit) != 0) {
 						if (item_ptr->insides == 0) {
 							inven_destroy(item_ptr);
@@ -1141,7 +1141,7 @@ void c__make_attack(long monptr)
 	strcat(cdesc, " ");
 
 	/*{ For "DIED_FROM" string        }*/
-	if (uand(0x80000000, c_list[m_list[monptr].mptr].cmove) != 0) {
+	if ((0x80000000 & c_list[m_list[monptr].mptr].cmove) != 0) {
 		sprintf(ddesc, "The %s", c_list[m_list[monptr].mptr].name);
 	} else {
 		sprintf(ddesc, "& %s", c_list[m_list[monptr].mptr].name);
@@ -1170,7 +1170,7 @@ void c__make_attack(long monptr)
 		sscanf(attx, "%ld %ld %s", &atype, &adesc, damstr);
 
 		if (player_flags.protevil > 0) {
-			if (uand(c_list[m_list[monptr].mptr].cdefense,
+			if ((c_list[m_list[monptr].mptr].cdefense &
 				 0x0004) != 0) {
 				if ((player_lev + 1) >
 				    c_list[m_list[monptr].mptr].level) {
@@ -1181,7 +1181,7 @@ void c__make_attack(long monptr)
 		}
 
 		if (player_flags.protmon > 0) {
-			if (uand(c_list[m_list[monptr].mptr].cdefense,
+			if ((c_list[m_list[monptr].mptr].cdefense &
 				 0x0002) != 0) {
 				if ((player_lev + 1) >
 				    c_list[m_list[monptr].mptr].level) {
@@ -1257,26 +1257,26 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 				tflag = true;
 			} else if (cave[newy][newx].fopen) {
 				if (is_in(cave[newy][newx].fval, floor_set)) {
-					if (uand(movebits, 0x00000040) == 0) {
+					if ((movebits & 0x00000040) == 0) {
 						tflag = true;
 					} else if (!xor((is_in(cave[newy][newx]
 								   .fval,
 							       earth_set)),
-							(uand(movebits,
+							((movebits &
 							      0x00000010) ==
 							 0))) {
 						tflag = true;
 					}
 				}
 				/*{ Creature moves through walls? }*/
-			} else if (uand(movebits, 0x40000) != 0) {
+			} else if ((movebits & 0x40000) != 0) {
 				tflag = true;
 				/*{ Creature can open doors?      }*/
 			} else if (cave[newy][newx].tptr > 0) {
 
 				/* with t_list[cave[newy][newx].tptr]. do; */
 				/* with m_list[monptr]. do; */
-				if (uand(movebits, 0x20000) != 0) {
+				if ((movebits & 0x20000) != 0) {
 					/*{ Creature can open doors... }*/
 					switch (t_list[cave[newy][newx].tptr]
 						    .tval) {
@@ -1544,7 +1544,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 
 						/*{ Creature eats other
 						 * creatures?        }*/
-						if (uand(movebits, 0x80000) !=
+						if ((movebits & 0x80000) !=
 						    0) {
 							if (m_list
 								[cave[newy]
@@ -1586,7 +1586,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count)
 				/* with m_list[monptr] do */
 
 				/*{ Pick up or eat an object              }*/
-				if (uand(movebits, 0x100000) != 0) {
+				if ((movebits & 0x100000) != 0) {
 					/* with cave[newy,newx] do; */
 					if (cave[newy][newx].tptr > 0) {
 						if (t_list[cave[newy][newx]
@@ -1687,8 +1687,8 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 	ENTER(("c__cast_spell", "c"))
 	/* with m_list[monptr] do; */
 	/* with c_list[m_list[monptr].mptr] do; */
-	chance = (uand(c_list[m_list[monptr].mptr].spells, 0x0000000F));
-	chance2 = (uand(c_list[m_list[monptr].mptr].spells, 0x80000000));
+	chance = ((c_list[m_list[monptr].mptr].spells & 0x0000000F));
+	chance2 = ((c_list[m_list[monptr].mptr].spells & 0x80000000));
 
 	/*{ 1 in x chance of casting spell                }*/
 	/*{ if chance2 is true then 1 in x of not casting }*/
@@ -1720,7 +1720,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 		find_monster_name(cdesc, monptr, true);
 		strcat(cdesc, " ");
 		/*{ For "DIED_FROM" string  }*/
-		if (uand(0x80000000, c_list[m_list[monptr].mptr].cmove) != 0) {
+		if ((0x80000000 & c_list[m_list[monptr].mptr].cmove) != 0) {
 			sprintf(ddesc, "The %s",
 				c_list[m_list[monptr].mptr].name);
 		} else {
@@ -1733,7 +1733,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn)
 		/*{ End DIED_FROM                 }*/
 
 		/*{ Extract all possible spells into spell_choice }*/
-		i1 = uand(c_list[m_list[monptr].mptr].spells, 0x0FFFFFF0);
+		i1 = (c_list[m_list[monptr].mptr].spells & 0x0FFFFFF0);
 		i3 = 0;
 		for (; i1 != 0;) {
 			i2 = bit_pos(&i1) + 1;
@@ -2091,7 +2091,7 @@ boolean mon_move(long monptr, long *hear_count)
 	/* with c_list[m_list[monptr].mptr] do; */
 
 	/*{ Does the creature regenerate?                         }*/
-	if (uand(c_list[ML(monptr).mptr].cdefense, 0x8000) != 0) {
+	if ((c_list[ML(monptr).mptr].cdefense & 0x8000) != 0) {
 		m_list[monptr].hp += randint(4);
 	}
 
@@ -2100,7 +2100,7 @@ boolean mon_move(long monptr, long *hear_count)
 	}
 
 	/*{ Does the critter multiply?                            }*/
-	if (uand(c_list[ML(monptr).mptr].cmove, 0x00200000) != 0) {
+	if ((c_list[ML(monptr).mptr].cmove & 0x00200000) != 0) {
 		if (MAX_MON_MULT >= mon_tot_mult) {
 			if ((player_flags.rest % mon_mult_adj) == 0) {
 				/* with m_list[monptr] do; */
@@ -2146,23 +2146,23 @@ boolean mon_move(long monptr, long *hear_count)
 
 		/*{ 75% random movement                                   }*/
 		if ((randint(100) <= 75) &&
-		    (uand(c_list[ML(monptr).mptr].cmove, 0x00000008) != 0)) {
+		    ((c_list[ML(monptr).mptr].cmove & 0x00000008) != 0)) {
 			return_value = c__move_confused(monptr, mm, hear_count);
 
 			/*{ 40% random movement }*/
 		} else if ((randint(100) <= 40) &&
-			   (uand(c_list[ML(monptr).mptr].cmove, 0x00000004) !=
+			   ((c_list[ML(monptr).mptr].cmove & 0x00000004) !=
 			    0)) {
 			return_value = c__move_confused(monptr, mm, hear_count);
 
 			/*{ 20% random movement }*/
 		} else if ((randint(100) <= 20) &&
-			   (uand(c_list[ML(monptr).mptr].cmove, 0x00000002) !=
+			   ((c_list[ML(monptr).mptr].cmove & 0x00000002) !=
 			    0)) {
 			return_value = c__move_confused(monptr, mm, hear_count);
 
 			/*{ Normal movement }*/
-		} else if (uand(c_list[ML(monptr).mptr].cmove, 0x00000001) ==
+		} else if ((c_list[ML(monptr).mptr].cmove & 0x00000001) ==
 			   0) {
 			if (randint(200) == 1) {
 				return_value =
@@ -2195,7 +2195,7 @@ void c__splash(long monptr)
 	/* with m_list[monptr]. do; */
 	/* with c_list[m_list[monptr].mptr]. do begin; */
 	mon_swimming =
-	    (long)((uand(c_list[m_list[monptr].mptr].cmove, 0x00000700)) / 256);
+	    (long)(((c_list[m_list[monptr].mptr].cmove & 0x00000700)) / 256);
 	drown_dam = randint(OUT_OF_ENV_DAM);
 
 	/*{ here will also be modifiers due to waterspeed,depth }*/
@@ -2332,10 +2332,10 @@ void creatures(boolean attack)
 							[m_list[i1].fx]
 							    .fval,
 						    water_set)) !=
-					     (uand(
-						  c_list[m_list[i1].mptr].cmove,
+					     ((
+						  c_list[m_list[i1].mptr].cmove &
 						  0x00000010) != 0)) &&
-					    (uand(c_list[m_list[i1].mptr].cmove,
+					    ((c_list[m_list[i1].mptr].cmove &
 						  0x00000040) != 0)) {
 						c__splash(i1);
 					}
