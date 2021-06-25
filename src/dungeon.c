@@ -20,6 +20,7 @@
 #include "variables.h"
 #include "save.h"
 #include "player.h"
+#include "fighting_ranged.h"
 
 void C_print_known_spells();
 
@@ -356,343 +357,6 @@ static void d__jamdoor()
 	} else {
 		msg_print("That isn't a door!");
 	}
-}
-
-/*{ Throw an object across the dungeon...                 -RAK-   }*/
-/*{ Note: Flasks of oil do fire damage                            }*/
-/*{ Note: Extra damage and chance of hitting when missles are used}*/
-/*{       with correct weapon.  I.E.  wield bow and throw arrow.  }*/
-
-static void to__inven_throw(treas_ptr item_ptr)
-{
-	inven_temp->data = item_ptr->data;
-	inven_temp->data.number = 1;
-
-	/* with item_ptr->data. do; */
-
-	if ((item_ptr->data.number > 1) && (item_ptr->data.subval > 511)) {
-		item_ptr->data.number--;
-		inven_weight -= item_ptr->data.weight;
-	} else {
-		inven_destroy(item_ptr);
-	}
-
-	prt_stat_block();
-}
-
-static obj_set *to__poink(obj_set *ammo_types)
-{
-	ENTER(("to__poink", "d"));
-
-	if (equipment[Equipment_primary].tval == bow_crossbow_or_sling) {
-		(*ammo_types)[1] =
-		    0; /* all three types have just one kind of ammo */
-
-		switch (equipment[Equipment_primary].p1) {
-		case 1:
-			(*ammo_types)[0] = sling_ammo;
-			break;
-
-		case 2:
-		case 3:
-		case 4:
-			(*ammo_types)[0] = arrow;
-			break;
-
-		case 5:
-		case 6:
-			(*ammo_types)[0] = bolt;
-			break;
-		}
-
-	} else {
-		(*ammo_types)[0] = 0;
-	}
-
-	LEAVE("to__poink", "d");
-	return ammo_types;
-}
-
-static void to__facts(long *tbth, long *tpth, long *tdam, long *tdis,
-		      boolean to_be_fired)
-{
-	long tmp_weight;
-
-	/* with inven_temp->data. do; */
-
-	if (inven_temp->data.weight < 1) {
-		tmp_weight = 1;
-	} else {
-		tmp_weight = inven_temp->data.weight;
-	}
-
-	/*{ Throwing objects                      }*/
-
-	*tdam = damroll(inven_temp->data.damage) + inven_temp->data.todam;
-	*tbth = trunc(player_bthb * 0.75);
-	*tpth = player_ptohit + inven_temp->data.tohit;
-	*tdis = trunc(((C_player_get_stat(STR) * 10) + 100) * 200 / tmp_weight);
-
-	if (*tdis > 10) {
-		*tdis = 10;
-	}
-
-	/*{ Using Bows, slings, or crossbows      }*/
-
-	if (to_be_fired) { /*{ checks for correct wpn in poink }*/
-		switch (equipment[Equipment_primary].p1) {
-		case 1: /*{ Sling and Bullet  }*/
-			*tdam += 2;
-			*tdis = 20;
-			break;
-
-		case 2: /*{ Short Bow and Arrow    }*/
-			*tdam += 2;
-			*tdis = 25;
-			break;
-
-		case 3: /*{ Long Bow and Arrow     }*/
-			*tdam += 3;
-			*tdis = 30;
-			break;
-
-		case 4: /*{ Composite Bow and Arrow}*/
-			*tdam += 4;
-			*tdis = 35;
-			break;
-
-		case 5: /*{ Light Crossbow and Bolt}*/
-			*tdam += 2;
-			*tdis = 25;
-			break;
-
-		case 6: /*{ Heavy Crossbow and Bolt}*/
-			*tdam += 4;
-			*tdis = 35;
-			break;
-		}
-
-		*tbth = player_bthb;
-		*tpth += equipment[Equipment_primary].tohit;
-		inven_temp->data.weight +=
-		    equipment[Equipment_primary].weight + 5000;
-	}
-}
-
-static void to__drop_throw(long y, long x)
-{
-	long i1 = y;
-	long i2 = x;
-	long i3 = 0;
-	long cur_pos;
-	boolean flag = false;
-	char out_val[82];
-	char out_val2[120];
-
-	if (randint(10) > 1) {
-		do {
-			if (in_bounds(i1, i2)) {
-				/* with cave[i1][i2]. do; */
-				if (cave[i1][i2].fopen) {
-					if (cave[i1][i2].tptr == 0) {
-						flag = true;
-					}
-				}
-			}
-			if (!(flag)) {
-				i1 = y + randint(3) - 2;
-				i2 = x + randint(3) - 2;
-				i3++;
-			}
-		} while (!((flag) || (i3 > 9)));
-	}
-
-	if (flag) {
-		popt(&cur_pos);
-		cave[i1][i2].tptr = cur_pos;
-		t_list[cur_pos] = inven_temp->data;
-		if (test_light(i1, i2)) {
-			lite_spot(i1, i2);
-		}
-	} else {
-		objdes(out_val, inven_temp, false);
-		sprintf(out_val2, "The %s disappears.", out_val);
-		msg_print(out_val2);
-	}
-}
-
-static void d__throw_object(boolean to_be_fired)
-{
-	long tbth;
-	long tpth;
-	long tdam;
-	long tdis;
-	long crit_mult;
-	long y_dumy;
-	long x_dumy;
-	long dumy;
-	long i1;
-	long y;
-	long x;
-	long oldy;
-	long oldx;
-	long dir;
-	long cur_dis;
-	long count;
-	char trash_char;
-	boolean redraw, flag;
-	char out_val[82];
-	char out_val2[200];
-	char m_name[82];
-	treas_ptr item_ptr;
-	treas_ptr i7;
-	obj_set ammo_types = {0};
-
-	ENTER(("d__throw_object", "%d", to_be_fired));
-
-	redraw = false;
-
-	if (to_be_fired) {
-		find_range(*to__poink(&ammo_types), false, &i7, &count);
-	} else {
-		count = change_all_ok_stats(true, false);
-
-		for (item_ptr = inventory_list; item_ptr != NULL;) {
-			if (((item_ptr->data.flags2 & Holding_bit) != 0) &&
-			    (item_ptr->insides > 0)) {
-				count--;
-			}
-			item_ptr = item_ptr->next;
-		}
-	}
-
-	reset_flag = true;
-
-	if (to_be_fired) {
-		strcpy(out_val, "Fire which one?");
-	} else {
-		strcpy(out_val, "Hurl which item?");
-	}
-
-	if (count == 0) {
-		if (to_be_fired) {
-			msg_print("You have nothing to fire!");
-		} else {
-			msg_print("But you have nothing to throw.");
-		}
-		LEAVE("d__throw_object", "d");
-		return;
-	}
-
-	if (!get_item(&item_ptr, out_val, &redraw, count, &trash_char, false,
-		      false)) {
-		if (redraw) {
-			draw_cave();
-		}
-		LEAVE("d__throw_object", "d");
-		return;
-	}
-
-	if (redraw) {
-		draw_cave();
-	}
-
-	y_dumy = char_row;
-	x_dumy = char_col;
-	if (!d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-		LEAVE("d__throw_object", "d");
-		return;
-	}
-
-	reset_flag = false;
-	desc_remain(item_ptr);
-
-	if (player_flags.confused > 0) {
-		msg_print("You are confused...");
-		do {
-			dir = randint(9);
-		} while (dir == 5);
-	}
-
-	to__inven_throw(item_ptr);
-	to__facts(&tbth, &tpth, &tdam, &tdis, to_be_fired);
-
-	/* with inven_temp->data. do; */
-	flag = false;
-	y = char_row;
-	x = char_col;
-	oldy = char_row;
-	oldx = char_col;
-	cur_dis = 0;
-	do {
-		move_dir(dir, &y, &x);
-		cur_dis++;
-		if (test_light(oldy, oldx)) {
-			lite_spot(oldy, oldx);
-		}
-
-		if (cur_dis > tdis) {
-			flag = true;
-		}
-
-		/* with cave[y][x]. do; */
-		if ((cave[y][x].fopen) && (!flag)) {
-			if (cave[y][x].cptr > 1) {
-				flag = true;
-				/* with */
-				/* m_list[cave[y][x].cptr].
-				 */
-				/* do; */
-				tbth -= cur_dis;
-				if (player_test_hit(
-					tbth, player_lev, tpth,
-					c_list[m_list[cave[y][x].cptr].mptr].ac,
-					to_be_fired)) {
-					i1 = m_list[cave[y][x].cptr].mptr;
-					objdes(out_val, inven_temp, false);
-					find_monster_name(
-					    m_name, cave[y][x].cptr, false);
-					sprintf(out_val2, "The %s hits %s.",
-						out_val, m_name);
-					msg_print(out_val2);
-					tdam = tot_dam(&(inven_temp->data),
-						       tdam, &(c_list[i1]));
-					/* with */
-					/* inven_temp->data.
-					 */
-					/* do; */
-					crit_mult = critical_blow(
-					    inven_temp->data.weight, tpth,
-					    (equipment[Equipment_primary]
-						 .flags2 &
-					     Sharp_worn_bit) != 0,
-					    to_be_fired);
-					tdam += (5 + tdam) * crit_mult;
-
-					if (mon_take_hit(cave[y][x].cptr,
-							 tdam) > 0) {
-						sprintf(out_val2,
-							"You have killed %s.",
-							m_name);
-						msg_print(out_val2);
-					}
-				} else {
-					to__drop_throw(oldy, oldx);
-				}
-			} else if (panel_contains(y, x) && test_light(y, x)) {
-				print(C_item_get_tchar(&inven_temp->data), y,
-				      x);
-			}
-		} else {
-			flag = true;
-			to__drop_throw(oldy, oldx);
-		}
-
-		oldy = y;
-		oldx = x;
-	} while (!flag);
-
-	LEAVE("d__throw_object", "d");
 }
 
 static void d__look()
@@ -2778,7 +2442,7 @@ static void d__execute_command(long *com_val)
 		break;
 
 	case 'A':
-		d__throw_object(false);
+		throw_something();
 		break;
 	case 'B':
 		find_flag = true;
@@ -2904,7 +2568,7 @@ static void d__execute_command(long *com_val)
 		break;
 
 	case 'a':
-		d__throw_object(true);
+		shoot_something();
 		break;
 	case 'b':
 		move_char(1);
@@ -3518,11 +3182,6 @@ boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
 
 	for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
 
-		/*    fprintf(debug_file,"find: >%s<\n",ptr->data.name); */
-		/*    fprintf(debug_file,"find:     %d %d %d %d\n", */
-		/*	    (long)ptr->data.tval, (long)ptr->is_in, */
-		/*	    (long)ptr->insides, (long)ptr->ok); */
-
 		/* Filter */
 		if (!is_in(ptr->data.tval, item_val))
 			continue;
@@ -4057,12 +3716,9 @@ void beg_money()
 	}
 }
 
-boolean player_test_hit(long bth, long level, long pth, long ac,
+boolean player_test_hit(long base_to_hit, long level, long plus_to_hit, long enemy_ac,
 			boolean was_fired)
 {
-	long i1;
-	boolean return_value;
-
 	if (search_flag) {
 		search_off();
 	}
@@ -4071,24 +3727,22 @@ boolean player_test_hit(long bth, long level, long pth, long ac,
 	}
 
 	/* compare player::melee_tohit()  and player::ranged_tohit() */
-	i1 = bth + pth * BTH_PLUS_ADJ;
+	long hit_value = base_to_hit + (plus_to_hit * BTH_PLUS_ADJ);
 
 	if (was_fired) {
-		i1 += (level * C_class_ranged_bonus(player_pclass)) / 2;
+		hit_value += (level * C_class_ranged_bonus(player_pclass)) / 2;
 	} else {
-		i1 += (level * C_class_melee_bonus(player_pclass)) / 2;
+		hit_value += (level * C_class_melee_bonus(player_pclass)) / 2;
 	}
 
-	if (randint(i1) > ac) {
-		return_value = true;
+	/*{ hits if above ac or 1 in 20.  OOK! }*/
+	if (randint(hit_value) > enemy_ac) {
+		return true;
 	} else if (randint(20) == 1) {
-		/*{ hits if above ac or 1 in 20.  OOK! }*/
-		return_value = true;
+		return true;
 	} else {
-		return_value = false;
+		return false;
 	}
-
-	return return_value;
 }
 
 boolean test_hit(long bth, long level, long pth, long ac)

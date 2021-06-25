@@ -194,7 +194,7 @@ extern boolean inven_check_weight();
 extern boolean inven_check_num();
 extern treas_ptr add_inven_item(treasure_type item);
 extern treas_ptr inven_carry();
-extern boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw,
+extern boolean get_item(treas_ptr *com_ptr, char const *pmt, boolean *redraw,
 			long count, char *choice, boolean mon,
 			boolean no_wait); /*	: boolean := false); */
 treas_ptr ic__remove(long item_val, boolean show_message);

@@ -2008,7 +2008,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr)
 	return return_value;
 }
 
-boolean get_item(treas_ptr *com_ptr, char pmt[82], boolean *redraw, long count,
+boolean get_item(treas_ptr *com_ptr, char const *pmt, boolean *redraw, long count,
 		 char *choice, boolean mon, boolean no_wait)
 {
 	/*{ Get the ID of an item and return the CTR value of it  -RAK-   }*/

@@ -1402,9 +1402,13 @@ void learn_magic(boolean redraw_now)
 	}
 }
 
+/**
+ * in_bounds() - Checks if a coordinate is in the dungeon bounds -RAK-
+ * @y: Y-coordiate
+ * @x: X-coordinate
+ */
 boolean in_bounds(long y, long x)
 {
-	/*{ Checks a co-ordinate for in bounds status		-RAK-	}*/
 	boolean return_value;
 
 	if ((y > 1) && (y < cur_height) && (x > 1) && (x < cur_width)) {
