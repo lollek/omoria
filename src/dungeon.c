@@ -310,14 +310,6 @@ static void ml__sub4_move_light(long y1, long x1, long y2, long x2)
 	LEAVE("ml__sub4_move_light", "m");
 }
 
-/**
- * water_move_creature() - Gee, another cool routine
- */
-static boolean water_move_creature(__attribute__((unused)) long num)
-{
-	return true;
-}
-
 static void d__jamdoor()
 {
 	/*{ Jam a closed door                                     -RAK-   }*/
@@ -4427,11 +4419,6 @@ boolean no_light()
 }
 
 /**
- * water_move_player() - I wonder what was going to go in here...
- */
-void water_move_player(void) {}
-
-/**
  * water_move_item() - I sense a patter about water moves...
  */
 boolean water_move_item(__attribute__((unused)) long row,
@@ -4443,34 +4430,16 @@ boolean water_move_item(__attribute__((unused)) long row,
 
 boolean water_move()
 {
-	long i1;
 	boolean flag = false;
 
-	/*  this was all commented out, so I left it that way XXXX
-      {       for i1 := 1 to max_height do
-		for i2 := 1 to max_width do
-		  cave[i1,i2].moved := false;
-	      for i1 := 1 to max_height do
-		for i2 := 1 to max_width do
-		  begin
-		    if (cave[i1,i2].tptr > 0) and
-		       (t_list[cave[i1,i2].tptr].tval < unseen_trap) then
-		      begin
-			flag := water_move_item(i1,i2,cave[i1,i2].tptr);
-		      end;
-		  end;
-      }
-      */
-	water_move_player();
+	// water_move_player();
 
-	for (i1 = muptr; i1 != 0;) {
-		m_list[i1].moved = false;
-		i1 = m_list[i1].nptr;
+	for (long i = muptr; i != 0; i = m_list[i].nptr) {
+		m_list[i].moved = false;
 	}
 
-	for (i1 = muptr; i1 != 0;) {
-		flag = water_move_creature(i1);
-		i1 = m_list[i1].nptr;
+	for (long i = muptr; i != 0; i = m_list[i].nptr) {
+		// flag = water_move_creature(i);
 	}
 
 	return flag;
