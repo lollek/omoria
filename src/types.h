@@ -172,14 +172,6 @@ typedef struct treas_rec {
 
 typedef treas_rec *treas_ptr;
 
-typedef struct spell_t {
-  char sname[28];
-  uint8_t slevel;
-  uint8_t smana;
-  uint8_t sfail;
-  boolean learned;
-} spell_t;
-
 typedef struct spl_rec {
   int64_t splnum;
   int64_t splchn;
