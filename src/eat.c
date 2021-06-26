@@ -18,30 +18,28 @@
 #include "types.h"
 #include "variables.h"
 
-void e__eyeball_of_drong(boolean *ident) {
-  long i1;
+static boolean __eat_eyeball_of_drong(void) {
 
-  i1 = damroll("10d8") + 100;
-  take_hit(i1, "the Wrath of Ned");
+  long damage = damroll("10d8") + 100;
+  take_hit(damage, "the Wrath of Ned");
 
-  cure_me(&(player_flags).afraid);
+  cure_me(&player_flags.afraid);
   bless(randint(100) + 100);
-  (player_flags).hero += randint(100) + 100;
-  (player_flags).shero += randint(50) + 75;
-  (player_flags).invuln += randint(15) + 10;
+  player_flags.hero += randint(100) + 100;
+  player_flags.shero += randint(50) + 75;
+  player_flags.invuln += randint(15) + 10;
 
-  (player_flags).image += randint(500) + randint(500) + randint(1000) + 5000;
-  (player_flags).poisoned += randint(100) + 150;
-  (player_flags).confused += randint(30) + 50;
-  (player_flags).blind += randint(3) + 10;
-  (player_flags).paralysis = 4;
+  player_flags.image += randint(500) + randint(500) + randint(1000) + 5000;
+  player_flags.poisoned += randint(100) + 150;
+  player_flags.confused += randint(30) + 50;
+  player_flags.blind += randint(3) + 10;
+  player_flags.paralysis = 4;
 
   msg_print("You hear a distant rumble of laughter...");
   msg_print("You throw back your head and laugh back!");
   aggravate_monster(30);
 
-  i1 = randint(5);
-  if (i1 == 1) {
+  if (randint(5) == 1) {
     gain_stat(STR, "Ned smiles upon you.");
     gain_stat(INT, "");
     gain_stat(WIS, "");
@@ -54,79 +52,72 @@ void e__eyeball_of_drong(boolean *ident) {
   msg_print("A veil of darkness clings to your eyes.");
   msg_print("You are unable to move!");
 
-  *ident = true;
+  return true;
 }
 
-void eat() {
-  /* { Eat some food...					-RAK-	}*/
-
-  long count;
-  treas_rec *first;
-  treas_rec *item_ptr;
-  char trash_char;
-  boolean redraw;
-  boolean ident;
-  obj_set const things_to_eat = {Food, junk_food, 0};
-
-  reset_flag = true;
+static treas_rec *__select_what_to_eat() {
 
   if (inven_ctr <= 0) {
     msg_print("But you are not carrying anything.");
-    return;
+    return NULL;
   }
 
+  obj_set const things_to_eat = {Food, junk_food, 0};
+  treas_rec *first;
+  long count;
   if (!find_range(things_to_eat, false, &first, &count)) {
     msg_print("You are not carrying any food.");
-    return;
+    return NULL;
   }
 
-  redraw = false;
-  if (!get_item(&item_ptr, "Eat what?", &redraw, count, &trash_char, false,
-                false)) {
-    if (redraw)
-      draw_cave();
-    return;
-  }
+  boolean redraw = false;
+  treas_rec *item_ptr = NULL;
+  char trash_char;
+  boolean select_ok = get_item(&item_ptr, "Eat what?", &redraw, count, &trash_char, false, false);
 
   if (redraw)
-    draw_cave();
+      draw_cave();
 
-  reset_flag = false;
-  ident = false;
+  if (select_ok)
+    return item_ptr;
+  else
+    return NULL;
+}
 
+static boolean __apply_food_effects(treas_rec *item_ptr) {
   if (item_ptr->data.tval == junk_food && item_ptr->data.subval == 270) {
-    e__eyeball_of_drong(&ident);
-  } else {
-    long dam_pts = 0;
-    unsigned long i1;
-    for (i1 = item_ptr->data.flags; i1 > 0;) {
-      /*{ Foods }*/
-      switch (bit_pos(&i1) + 1) {
+    return __eat_eyeball_of_drong();
+  }
+
+  long dam_pts = 0;
+  boolean ident = false;
+  for (unsigned long i = item_ptr->data.flags; i > 0;) {
+    switch (bit_pos(&i) + 1) {
       case 1:
-        (player_flags).poisoned += randint(10) + item_ptr->data.level;
+        player_flags.poisoned += randint(10) + item_ptr->data.level;
         ident = true;
         break;
 
       case 2:
-        (player_flags).blind += randint(250) + 10 * item_ptr->data.level + 100;
+        player_flags.blind += randint(250) + 10 * item_ptr->data.level + 100;
         draw_cave();
         msg_print("A veil of darkness surrounds you.");
         ident = true;
         break;
 
       case 3:
-        (player_flags).afraid += randint(10) + item_ptr->data.level;
+        player_flags.afraid += randint(10) + item_ptr->data.level;
         msg_print("You feel terrified!");
         ident = true;
         break;
 
       case 4:
-        (player_flags).confused += randint(10) + item_ptr->data.level;
+        player_flags.confused += randint(10) + item_ptr->data.level;
         msg_print("You feel drugged.");
         break;
 
       case 5:
-        (player_flags).image += randint(200) + 25 * item_ptr->data.level + 200;
+        player_flags.image += randint(200) + 25 * item_ptr->data.level + 200;
         break;
 
       case 6:
@@ -138,8 +129,8 @@ void eat() {
         break;
 
       case 8:
-        if ((player_flags).afraid > 1) {
-          (player_flags).afraid = 1;
+        if (player_flags.afraid > 1) {
+          player_flags.afraid = 1;
           ident = true;
         }
         break;
@@ -228,7 +219,7 @@ void eat() {
         ident = cure_me(&player_flags.hoarse);
         break;
 
-      /* fill player to full, then adds food value */
+        /* fill player to full, then adds food value */
       case 30:
         player_flags.foodc = PLAYER_FOOD_FULL;
         msg_print("Yum!");
@@ -236,61 +227,71 @@ void eat() {
 
       case 31:
         switch (bit_pos(&item_ptr->data.flags2) + 1) {
-        case 1: /* crunchy */
-          switch (randint(4)) {
-          case 1:
-            msg_print("*munch* *munch*");
+          case 1: /* crunchy */
+            switch (randint(4)) {
+              case 1:
+                msg_print("*munch* *munch*");
+                break;
+              case 2:
+                msg_print("*crunch* *crunch*");
+                break;
+              case 3:
+                msg_print("*munch* *crunch*");
+                break;
+              case 4:
+                msg_print("*crunch* *munch*");
+                break;
+            }
             break;
-          case 2:
-            msg_print("*crunch* *crunch*");
-            break;
-          case 3:
-            msg_print("*munch* *crunch*");
-            break;
-          case 4:
-            msg_print("*crunch* *munch*");
-            break;
-          }
-          break;
 
-        case 2: /* liquid */
-          switch (randint(3)) {
-          case 1:
-            msg_print("*guzzle* *guzzle*");
-            break;
-          case 2:
-            msg_print("*glug* *glug* *glug*");
-            break;
-          case 3:
-            msg_print("*slurp*");
-            break;
-          }
+          case 2: /* liquid */
+            switch (randint(3)) {
+              case 1:
+                msg_print("*guzzle* *guzzle*");
+                break;
+              case 2:
+                msg_print("*glug* *glug* *glug*");
+                break;
+              case 3:
+                msg_print("*slurp*");
+                break;
+            }
 
-          if (randint(3) == 1) {
-            msg_print("*Burp*");
-            msg_print("('scuse me....)");
-          } /* Belch */
-          break;
+            if (randint(3) == 1) {
+              msg_print("*Burp*");
+              msg_print("('scuse me....)");
+            } /* Belch */
+            break;
 
-        default:
-          break;
+          default:
+            break;
         }
 
         break;
 
       default:
         break;
-      }
+    }
 
-      if (dam_pts != 0) {
-        ident = hp_player(dam_pts, "poisonous food.");
-      }
+    if (dam_pts != 0) {
+      ident = hp_player(dam_pts, "poisonous food.");
     }
   }
+  return ident;
+}
 
-  /*{ End of food actions... }*/
+void eat() {
+  /* { Eat some food...					-RAK-	}*/
 
-  if (ident) {
+  reset_flag = true;
+  treas_rec *item_ptr = __select_what_to_eat();
+  if (item_ptr == NULL)
+    return;
+
+  reset_flag = false;
+  boolean const identify_effect = __apply_food_effects(item_ptr);
+
+  if (identify_effect) {
     identify(&(item_ptr->data));
   }
 
