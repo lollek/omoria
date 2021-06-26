@@ -727,7 +727,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
   long dam, level, aning;
   long i1, i2, i4;
   boolean flag;
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   obj_set food_stuffs = {Food, 0};
   obj_set staff_rod_or_wand = {staff, rod, wand, 0};
 

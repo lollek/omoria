@@ -1136,7 +1136,7 @@ void enter_store(long store_num) {
   /*{ Entering a store					-RAK-	}*/
 
   long com_val, cur_top, tics;
-  treas_ptr trash_ptr;
+  treas_rec *trash_ptr;
   char command;
   boolean exit_flag;
 
@@ -1372,7 +1372,7 @@ boolean store_purchase(long store_num, long *cur_top, boolean blitz) {
 
   long i1, item_val, price, to_bank;
   long choice;
-  treas_ptr item_new;
+  treas_rec *item_new;
   long save_number;
   char out_val[82];
   char foo[82];
@@ -1527,7 +1527,7 @@ boolean store_sell(long store_num, long cur_top, boolean blitz) {
   /*{ Sell an item to the store                             -RAK-   }*/
 
   long count = 0;
-  treas_ptr item_ptr = NULL;
+  treas_rec *item_ptr = NULL;
   long item_pos, price;
   char out_val[82];
   char foo[82];

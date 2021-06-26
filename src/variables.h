@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-extern treas_ptr cur_inven;       /* { Current inven page  } */
+extern treas_rec *cur_inven;      /* { Current inven page  } */
 extern money_type bank;           /* { Bank's money	 } */
 extern money_type coin_value;     /* { Copy of money values} */
 extern long player_max_exp;       /* { Max exp possible    } */
@@ -111,8 +111,8 @@ extern boolean object_ident[MAX_OBJECTS + 1];
 extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];
 extern treasure_type equipment[EQUIP_MAX];
-extern treas_ptr inventory_list;
-extern treas_ptr inven_temp;
+extern treas_rec *inventory_list;
+extern treas_rec *inven_temp;
 extern treasure_type inventory_init[INVEN_INIT_MAX + 1];
 extern treasure_type blank_treasure;
 extern long inven_ctr;    /* { Total different obj's	} */

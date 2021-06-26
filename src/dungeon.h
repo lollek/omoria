@@ -38,13 +38,13 @@ extern long i_summ_count;       /* { Summon item count	   } */
 #define MX(mmm) (m_list[(mmm)].fx)
 
 boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
-void desc_remain(treas_ptr item_ptr);
+void desc_remain(treas_rec *item_ptr);
 void add_food(long num);
-void desc_charges(treas_ptr item_ptr);
+void desc_charges(treas_rec *item_ptr);
 boolean move_to_creature(long dir, long *y, long *x);
 boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
                          boolean visable);
-boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
+boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,
                    boolean *redraw);
 boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
 boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,

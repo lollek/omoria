@@ -299,7 +299,7 @@ static void ml__sub4_move_light(long y1, long x1, long y2, long x2) {
 static void d__jamdoor() {
   /*{ Jam a closed door                                     -RAK-   }*/
 
-  treas_ptr i1;
+  treas_rec *i1;
   long y = char_row;
   long x = char_col;
   long i2;
@@ -1806,7 +1806,7 @@ static void d__refill_lamp() {
   /*{ Refill the players lamp                               -RAK-   }*/
 
   long i2, i3;
-  treas_ptr i1;
+  treas_rec *i1;
   obj_set this_be_oil = {flask_of_oil, 0};
 
   i3 = equipment[Equipment_light].subval;
@@ -1938,7 +1938,7 @@ static void d__drop() {
   /*{ Drop an object being carried                          -RAK-   }*/
   /*{ Note: Only one object per floor spot...                       }*/
 
-  treas_ptr com_ptr;
+  treas_rec *com_ptr;
   boolean redraw;
   char trash_char;
   char out_val[82];
@@ -2028,7 +2028,7 @@ static void rest() {
 }
 
 static void d__execute_command(long *com_val) {
-  treas_ptr trash_ptr;
+  treas_rec *trash_ptr;
   char out_val[82];
   char out2[82];
 
@@ -2982,9 +2982,9 @@ void move_rec(long y1, long x1, long y2, long x2) {
   cave[y2][x2].cptr = i1;
 }
 
-boolean find_range(obj_set const item_val, boolean inner, treas_ptr *first,
+boolean find_range(obj_set const item_val, boolean inner, treas_rec **first,
                    long *count) {
-  treas_ptr ptr;
+  treas_rec *ptr;
 
   ENTER(("find_range", ""));
 
@@ -3022,12 +3022,12 @@ void carry(long y, long x) {
   /*{ objects are picked up.  Some objects, such as open doors, just}*/
   /*{ sit there...                                                  }*/
 
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   char out_val[82];
   char out2[120];
   char page_char;
   char inv_char;
-  treas_ptr tmp_ptr;
+  treas_rec *tmp_ptr;
   long count;
   boolean money_flag;
 
@@ -3429,7 +3429,7 @@ void worship() {
 void beg_food() {
   /*
        var      i2              : long;
-                item_ptr        : treas_ptr;
+                item_ptr        : treas_rec;*
        begin
         if (find_range([food],false,item_ptr,i2)) then
           begin
@@ -4630,7 +4630,7 @@ boolean xor
   return return_value;
 }
 
-void desc_remain(treas_ptr item_ptr) {
+void desc_remain(treas_rec *item_ptr) {
   /*{ Describe amount of item remaining...                  -RAK-   }*/
 
   char out_val[82];
@@ -4720,7 +4720,7 @@ boolean twall(long y, long x, long t1, long t2) {
   return return_value;
 }
 
-void desc_charges(treas_ptr item_ptr) {
+void desc_charges(treas_rec *item_ptr) {
   /*{ Describe number of remaining charges...               -RAK-   }*/
 
   char out_val[82];
@@ -4731,7 +4731,7 @@ void desc_charges(treas_ptr item_ptr) {
   }
 }
 
-boolean cast_spell(char prompt[82], treas_ptr item_ptr, long *sn, long *sc,
+boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,
                    boolean *redraw) {
   /*{ Return spell number and failure chance                -RAK-   }*/
 

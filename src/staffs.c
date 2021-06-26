@@ -166,7 +166,8 @@ void use_staff() {
 
   unsigned long i1;
   long i3, chance, i4;
-  treas_ptr i2, item_ptr;
+  treas_rec *i2;
+  treas_rec *item_ptr;
   char trash_char;
   boolean redraw, ident;
   obj_set this_be_a_staff = {staff, 0};

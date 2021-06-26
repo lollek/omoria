@@ -170,8 +170,6 @@ typedef struct treas_rec {
   struct treas_rec *next;
 } treas_rec;
 
-typedef treas_rec *treas_ptr;
-
 typedef struct spl_rec {
   int64_t splnum;
   int64_t splchn;

@@ -286,7 +286,7 @@ static void __missile_travel(treas_rec *missile, enum _ranged_attack_t type,
  */
 static long __count_things_to_throw() {
   long things_to_throw = change_all_ok_stats(TRUE, FALSE);
-  for (treas_ptr item_ptr = inventory_list; item_ptr != NULL;
+  for (treas_rec *item_ptr = inventory_list; item_ptr != NULL;
        item_ptr = item_ptr->next) {
     if (((item_ptr->data.flags2 & Holding_bit) != 0) &&
         (item_ptr->insides > 0)) {
@@ -338,7 +338,7 @@ static long __count_things_to_shoot() {
 
   // Count objects which can be used as ammo
   change_all_ok_stats(FALSE, FALSE);
-  for (treas_ptr ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
+  for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (ptr->data.tval != ammo_type) {
       continue;
     }
@@ -395,7 +395,7 @@ static void __ranged_attack(enum _ranged_attack_t type) {
 
   // Decide what to attack with
   boolean redraw = FALSE;
-  treas_ptr weapon;
+  treas_rec *weapon;
   char unused_char;
   boolean const item_to_use_found =
       get_item(&weapon, item_query, &redraw, num_things_to_attack_with,

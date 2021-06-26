@@ -1283,7 +1283,7 @@ void wizard_help() {
 void wizard_command(void) {
   char tmp_str[82];
   enum stat_t tstat;
-  treas_ptr trash_ptr;
+  treas_rec *trash_ptr;
   long y, x;
 
   prt("Wizard command: ", 1, 1);

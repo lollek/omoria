@@ -261,8 +261,8 @@ static void drain_mana(enum magic_t magic_type, long choice) {
 }
 
 static void _cast(enum magic_t magic_type) {
-  treas_ptr i1;
-  treas_ptr item_ptr = inven_temp;
+  treas_rec *i1;
+  treas_rec *item_ptr = inven_temp;
   long choice;
   long chance;
   long i2;

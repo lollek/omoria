@@ -303,7 +303,8 @@ void quaff() {
 
   unsigned long q1, q2;
   long i3, i6;
-  treas_ptr i2, item_ptr;
+  treas_rec *i2;
+  treas_rec *item_ptr;
   char trash_char;
   boolean redraw, ident;
   obj_set stuff_to_drink = {potion1, potion2, 0};

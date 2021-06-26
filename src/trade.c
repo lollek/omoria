@@ -540,7 +540,7 @@ void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
                           boolean *exit_flag) {
   char out_val1[82];
   char out_val2[83];
-  treas_ptr temp_ptr = NULL;
+  treas_rec *temp_ptr = NULL;
 
   msg_print("Hmm, you're supposed to get something.");
   inven_temp->data = (*item)->data.fsr.object;
@@ -569,7 +569,7 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
   boolean weight_changed, gold_changed, redisplay;
   pinven_ptr item = NULL; /*, next;*/
   char out_val2[82];
-  /*  treas_ptr  temp_ptr; */
+  /*  treas_rec * temp_ptr; */
 
   weight_changed = false;
   gold_changed = false;
@@ -794,12 +794,12 @@ void tp__bid(long *cur_display_size, trade_account_type *cur_player,
 void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
               trade_account_type *cur_player, long *cur_display_size,
               pinven_ptr cur_display[], char shop_owner[82]) {
-  treas_ptr item_ptr = NULL;
+  treas_rec *item_ptr = NULL;
   boolean redraw;
   pinven_ptr item = NULL;
   char response[82];
   long wgt;
-  treas_ptr temp_ptr = NULL;
+  treas_rec *temp_ptr = NULL;
   char trash_char;
 
   redraw = false;
@@ -963,7 +963,7 @@ void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
   char command;
   long com_val;
   char out_val[82];
-  treas_ptr trash_ptr = NULL;
+  treas_rec *trash_ptr = NULL;
 
   if (get_com("", &command)) {
     com_val = command;

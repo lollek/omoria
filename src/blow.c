@@ -226,7 +226,8 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
   *idented = ident;
 }
 
-static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr) {
+static void b__misc_effects(long effect, boolean *idented,
+                            treas_rec *item_ptr) {
   long i3, i4, loss, dur;
   long dumy, y_dumy, x_dumy;
   long y, x;
@@ -491,7 +492,8 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr) {
 void blow() {
   unsigned long i1;
   long i3, chance, i5;
-  treas_ptr i2, item_ptr;
+  treas_rec *i2;
+  treas_rec *item_ptr;
   char trash_char;
   boolean redraw, ident;
   obj_set things_that_blow = {misc_usable, valuable_gems, chime, horn, 0};

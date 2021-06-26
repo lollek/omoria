@@ -25,8 +25,8 @@
 #define COPPER_POS 3
 #define IRON_POS 2
 
-static void aii__insert(treas_ptr ptr, treas_ptr new_item) {
-  treas_ptr cur;
+static void aii__insert(treas_rec *ptr, treas_rec *new_item) {
+  treas_rec *cur;
 
   if (ptr == inventory_list) {
     new_item->next = inventory_list;
@@ -55,15 +55,15 @@ static boolean is_players_spell_book(long typ) {
   return false;
 }
 
-treas_ptr add_inven_item(treasure_type item) {
+treas_rec *add_inven_item(treasure_type item) {
   /*	{ Add item to inventory_list				-DMF-
    * }*/
 
-  treas_ptr return_value = NULL;
+  treas_rec *return_value = NULL;
 
   if (inventory_list == NULL) {
     inventory_list =
-        (treas_ptr)safe_malloc(sizeof(treas_rec), "add_inven_item");
+        (treas_rec *)safe_malloc(sizeof(treas_rec), "add_inven_item");
 
     inventory_list->data = item;
     inventory_list->ok = false;
@@ -81,9 +81,9 @@ treas_ptr add_inven_item(treasure_type item) {
     long wgt = item.number * item.weight;
     boolean flag = false;
     boolean duplicate_spell_book = false;
-    treas_ptr curse = inventory_list;
-    treas_ptr new_item =
-        (treas_ptr)safe_malloc(sizeof(treas_rec), "add_inven_item");
+    treas_rec *curse = inventory_list;
+    treas_rec *new_item =
+        (treas_rec *)safe_malloc(sizeof(treas_rec), "add_inven_item");
 
     new_item->data = item;
     new_item->ok = false;
@@ -180,7 +180,7 @@ treas_ptr add_inven_item(treasure_type item) {
   return return_value;
 }
 
-treas_ptr inven_carry() {
+treas_rec *inven_carry() {
   /*	{ Add the item in inven_temp to players inventory.  Return the
    * }*/
   /*	{ item position for a description if needed...		-RAK-
@@ -210,7 +210,7 @@ long change_all_ok_stats(boolean nok, boolean nin) {
   return count;
 }
 
-void ic__clear_display(treas_ptr cur_display[], long *cur_display_size) {
+void ic__clear_display(treas_rec *cur_display[], long *cur_display_size) {
   long index;
 
   ENTER(("ic__clear_display", "iu"));
@@ -224,8 +224,8 @@ void ic__clear_display(treas_ptr cur_display[], long *cur_display_size) {
   LEAVE("ic__clear_display", "iu");
 }
 
-long ic__display_inv(treas_ptr cur_display[], char prompt[82], treas_ptr start,
-                     treas_ptr *next_start) {
+long ic__display_inv(treas_rec *cur_display[], char prompt[82],
+                     treas_rec *start, treas_rec **next_start) {
   /*{ start changes into start of next page; returns # items in page}*/
 
   long count;
@@ -286,16 +286,16 @@ long ic__display_inv(treas_ptr cur_display[], char prompt[82], treas_ptr start,
   return count;
 }
 
-boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
+boolean ic__show_inven(treas_rec **ret_ptr, boolean want_back,
                        boolean clean_flag, long *scr_state, boolean *valid_flag,
-                       char prompt[82], treas_ptr cur_display[],
+                       char prompt[82], treas_rec *cur_display[],
                        long *cur_display_size) {
   /*  { Displays inventory items, returns chosen item if want_back. }*/
   /*{ boolean returns if chosen }*/
 
   long num_choices;
   boolean exit_flag = false;
-  treas_ptr next_inven;
+  treas_rec *next_inven;
   long count;
   long count2;
   char out_str[82];
@@ -392,7 +392,7 @@ boolean ic__show_inven(treas_ptr *ret_ptr, boolean want_back,
 
     wgt = 0;
     if ((*ret_ptr)->data.flags2 & Holding_bit) {
-      treas_ptr temp_ptr = (*ret_ptr)->next;
+      treas_rec *temp_ptr = (*ret_ptr)->next;
       while ((temp_ptr != NULL) && (temp_ptr->is_in)) {
         wgt += temp_ptr->data.weight * temp_ptr->data.number;
         temp_ptr = temp_ptr->next;
@@ -507,7 +507,7 @@ void ic__show_equip(long *scr_state, long r1) {
   }
 }
 
-treas_ptr ic__remove(long item_val, boolean show_message) {
+treas_rec *ic__remove(long item_val, boolean show_message) {
   /*{ Remove item from equipment list               -RAK-   }*/
 
   long typ;
@@ -699,7 +699,7 @@ static void ic__wear__gem(treas_rec *gem) {
   py_bonuses(worn_helm, 1);
 }
 
-void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
+void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
               long *scr_state, boolean *valid_flag) {
   /*{ Wear routine, wear or wield an item           -RAK-   }*/
   boolean exit_flag = false;
@@ -712,7 +712,7 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
     long i1;
     boolean equip_cursed_item;
     char out_val[200];
-    treas_ptr selected_item;
+    treas_rec *selected_item;
     boolean item_was_selected;
 
     ic__clear_display(cur_display, cur_display_size);
@@ -918,12 +918,12 @@ void ic__wear(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
   LEAVE("ic__wear", "i2");
 }
 
-void ic__stats(treas_ptr cur_display[], long *cur_display_size, char prompt[82],
-               long *scr_state, boolean *valid_flag) {
+void ic__stats(treas_rec *cur_display[], long *cur_display_size,
+               char prompt[82], long *scr_state, boolean *valid_flag) {
   /*{ Statistics routine, get wizard info on an item        -DMF-   }*/
 
   char out_val[82];
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   boolean exit_flag;
 
   ENTER(("ic__stats", "i2"));
@@ -1178,7 +1178,7 @@ void ic__show_money() {
   prt(prt1, 10, 10);
 }
 
-void ic__destroy_bag(treas_ptr bag) {
+void ic__destroy_bag(treas_rec *bag) {
   while ((bag->next != NULL) && (bag->next->is_in)) {
     /* this seems odd, wasn't it already subtracted from   XXXX
        inven_weight when it went into the bag?  */
@@ -1193,7 +1193,7 @@ void ic__destroy_bag(treas_ptr bag) {
 void ic__put_inside() {
   /*        { Put an item inside of another item            -DMF-   }*/
 
-  treas_ptr put_ptr;
+  treas_rec *put_ptr;
   boolean redraw;
   boolean blooey = false;
   char trash_char;
@@ -1202,7 +1202,7 @@ void ic__put_inside() {
 
   if (get_item(&put_ptr, "Put which item?", &redraw, inven_ctr, &trash_char,
                false, true)) {
-    treas_ptr temp_ptr;
+    treas_rec *temp_ptr;
     long count = 0;
     change_all_ok_stats(false, false);
     temp_ptr = inventory_list;
@@ -1218,7 +1218,7 @@ void ic__put_inside() {
     if (count == 0) {
       msg_print("You have nothing to put it into.");
     } else {
-      treas_ptr into_ptr;
+      treas_rec *into_ptr;
       clear_rc(2, 1);
       if (get_item(&into_ptr, "Into which item?", &redraw, inven_ctr,
                    &trash_char, false, true)) {
@@ -1232,7 +1232,7 @@ void ic__put_inside() {
           ic__destroy_bag(into_ptr);
         } else {
           long wgt;
-          treas_ptr curse;
+          treas_rec *curse;
           player_flags.paralysis++;
           reset_flag = false;
 
@@ -1294,9 +1294,9 @@ void ic__put_inside() {
 void ic__take_out() {
   /*{ Take an item out of another item              -DMF-   }*/
 
-  treas_ptr from_ptr;
-  treas_ptr temp_ptr;
-  treas_ptr curse;
+  treas_rec *from_ptr;
+  treas_rec *temp_ptr;
+  treas_rec *curse;
   boolean redraw;
   boolean flag;
   char trash_char;
@@ -1352,10 +1352,10 @@ void ic__take_out() {
 }
 
 void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
-                         treas_ptr cur_display[], long *cur_display_size) {
+                         treas_rec *cur_display[], long *cur_display_size) {
   /*{ Inventory of selective items, picked by character     -DMF-   }*/
 
-  treas_ptr ptr;
+  treas_rec *ptr;
   char out[134], out_str[134];
   boolean exit_flag = false;
   char command;
@@ -1434,7 +1434,7 @@ void ic__switch_weapon(long *scr_state) {
   }
 }
 
-boolean inven_command(char command, treas_ptr *item_ptr, char sprompt[82]) {
+boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
   /* Comprehensive function block to handle all inventory      -RAK-
    * and equipment routines.  Five kinds of calls can take place.
    * Note that '?' is a special call for other routines to display
@@ -1443,7 +1443,7 @@ boolean inven_command(char command, treas_ptr *item_ptr, char sprompt[82]) {
 
   long scr_state = 0;
   boolean exit_flag, test_flag;
-  treas_ptr cur_display[DISPLAY_SIZE + 1];
+  treas_rec *cur_display[DISPLAY_SIZE + 1];
   long cur_display_size;
   boolean valid_flag = false;
   char prompt[82];
@@ -1709,7 +1709,7 @@ char cur_insure() {
   return return_value;
 }
 
-void inven_destroy(treas_ptr item_ptr) {
+void inven_destroy(treas_rec *item_ptr) {
   /*{ Destroy an item in the inventory                      -RAK-   }*/
 
   ENTER(("inven_destroy", "i"));
@@ -1729,10 +1729,11 @@ void inven_destroy(treas_ptr item_ptr) {
   LEAVE("inven_destroy", "i");
 }
 
-void delete_inven_item(treas_ptr ptr) {
+void delete_inven_item(treas_rec *ptr) {
   /*{ Remove an item from inventory_list                    -DMF-   }*/
 
-  treas_ptr temp_ptr, curse;
+  treas_rec *temp_ptr;
+  treas_rec *curse;
 
   ENTER(("delete_inven_item", "i"));
 
@@ -1791,8 +1792,8 @@ long inven_damage(obj_set typ, long perc) {
   /*{ Destroys a type of item on a given percent chance     -RAK-   }*/
 
   long i2 = 0;
-  treas_ptr curse;
-  treas_ptr next_curse;
+  treas_rec *curse;
+  treas_rec *next_curse;
 
   ENTER(("inven_damage", "i"));
 
@@ -1818,7 +1819,7 @@ long inven_damage(obj_set typ, long perc) {
   return i2;
 }
 
-boolean drop_money(treas_ptr *ptr, boolean *clr) {
+boolean drop_money(treas_rec **ptr, boolean *clr) {
   /*{ Drop money onto ground                                -DMF-   }*/
 
   char out_val[200];
@@ -1925,7 +1926,7 @@ boolean drop_money(treas_ptr *ptr, boolean *clr) {
   return return_value;
 }
 
-boolean get_item(treas_ptr *com_ptr, char const *pmt, boolean *redraw,
+boolean get_item(treas_rec **com_ptr, char const *pmt, boolean *redraw,
                  long count, char *choice, boolean mon, boolean no_wait) {
   /*{ Get the ID of an item and return the CTR value of it  -RAK-   }*/
 
@@ -2125,17 +2126,17 @@ boolean get_item(treas_ptr *com_ptr, char const *pmt, boolean *redraw,
   return return_value;
 }
 
-void inven_drop(treas_ptr item_ptr, long y, long x, boolean mon) {
+void inven_drop(treas_rec *item_ptr, long y, long x, boolean mon) {
   /*{ Drops an item from inventory to given location        -RAK-   }*/
 
   long i1;
-  treas_ptr temp_ptr;
+  treas_rec *temp_ptr;
 
   /* with cave[y][x]. do; */
   if (cave[y][x].tptr > 0) {
     pusht(cave[y][x].tptr);
   }
-  temp_ptr = (treas_ptr)safe_malloc(sizeof(treas_rec), "inven_drop");
+  temp_ptr = (treas_rec *)safe_malloc(sizeof(treas_rec), "inven_drop");
   temp_ptr->data = item_ptr->data;
   if (mon) {
     inven_temp->data = item_ptr->data;

@@ -19,7 +19,7 @@
 #include "variables.h"
 
 void rs__scroll_effect(long effect, boolean *idented, boolean *first,
-                       treas_ptr item_ptr) {
+                       treas_rec *item_ptr) {
   long i2, i3, i4, randy;
   long y, x;
   long tmp[9]; /*: array [1..8] of long;*/
@@ -550,7 +550,8 @@ void read_scroll() {
 
   unsigned long q1, q2;
   long i3, i5;
-  treas_ptr i2, item_ptr;
+  treas_rec *i2;
+  treas_rec *item_ptr;
   char trash_char;
   boolean redraw, ident, first;
   obj_set stuff_to_read = {scroll1, scroll2, 0};

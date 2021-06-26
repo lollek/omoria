@@ -61,8 +61,8 @@ void eat() {
   /* { Eat some food...					-RAK-	}*/
 
   long count;
-  treas_ptr first;
-  treas_ptr item_ptr;
+  treas_rec *first;
+  treas_rec *item_ptr;
   char trash_char;
   boolean redraw;
   boolean ident;

@@ -348,7 +348,7 @@ void file_character() {
   char prt1[120];
   char prt2[82];
   char new_page = 12;
-  treas_ptr curse;
+  treas_rec *curse;
   char s1[82];
   char s2[82];
   char s3[82];

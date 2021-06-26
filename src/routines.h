@@ -79,9 +79,9 @@ extern void known1(char *object_str);  /* : varying[a] of char); */
 extern void known2(char *object_str);  /* : varying[a] of char); */
 extern void unquote(char *object_str); /* : varying[a] of char); */
 extern void identify(treasure_type *item);
-extern void objdes(char *out_val, /*: varying[a] of char; */
-                   treas_ptr ptr, /*	: treas_ptr; */
-                   boolean pref); /*	: boolean); */
+extern void objdes(char *out_val,  /*: varying[a] of char; */
+                   treas_rec *ptr, /*	: treas_ptr; */
+                   boolean pref);  /*	: boolean); */
 
 /* { DUNGEON.PAS		} */
 extern void move_rec(long y1, long x1, long y2, long x2);
@@ -128,7 +128,7 @@ extern long mon_take_hit(long monptr, long dam);
 extern long tot_dam(treasure_type *item, long tdam, creature_type *monster);
 extern boolean py_attack(long y, long x);
 extern boolean find_range(obj_set const item_val, boolean inner,
-                          treas_ptr *first, long *count);
+                          treas_rec **first, long *count);
 extern boolean player_test_hit(long bth, long level, long pth, long ac,
                                boolean was_fired);
 extern boolean test_hit(long bth, long level, long pth, long ac);
@@ -184,20 +184,20 @@ extern long change_all_ok_stats(boolean nok, boolean nin);
 extern char cur_char1();
 extern char cur_char2();
 extern char cur_insure();
-extern boolean inven_command(char command, treas_ptr *item_ptr,
+extern boolean inven_command(char command, treas_rec **item_ptr,
                              char prompt[82]);
-extern void delete_inven_item(treas_ptr ptr);
-extern void inven_destroy(treas_ptr item_ptr);
-extern void inven_drop(treas_ptr item_ptr, long y, long x, boolean mon);
+extern void delete_inven_item(treas_rec *ptr);
+extern void inven_destroy(treas_rec *item_ptr);
+extern void inven_drop(treas_rec *item_ptr, long y, long x, boolean mon);
 extern long inven_damage(obj_set typ, long perc);
 extern boolean inven_check_weight();
 extern boolean inven_check_num();
-extern treas_ptr add_inven_item(treasure_type item);
-extern treas_ptr inven_carry();
-extern boolean get_item(treas_ptr *com_ptr, char const *pmt, boolean *redraw,
+extern treas_rec *add_inven_item(treasure_type item);
+extern treas_rec *inven_carry();
+extern boolean get_item(treas_rec **com_ptr, char const *pmt, boolean *redraw,
                         long count, char *choice, boolean mon,
                         boolean no_wait); /*	: boolean := false); */
-treas_ptr ic__remove(long item_val, boolean show_message);
+treas_rec *ic__remove(long item_val, boolean show_message);
 
 /**
  * -OK-
@@ -516,12 +516,12 @@ extern time_type *convert_seconds_to_time(time_t seconds, time_type *tim);
 extern time_t convert_time_to_seconds(time_type *tim);
 extern char *show_char_age(char result[134]);
 extern char *show_current_time(char result[134]);
-extern char *bag_descrip(treas_ptr bag, char result[134]);
+extern char *bag_descrip(treas_rec *bag, char result[134]);
 extern char *likert(long x, long y, char *result);
 extern unsigned char characters_sex();
 extern uint16_t max_allowable_weight();
 extern uint16_t min_allowable_weight();
-extern treas_ptr money_carry();
+extern treas_rec *money_carry();
 extern char *cost_str(long amt, char result[134]);
 extern void total_cash();
 

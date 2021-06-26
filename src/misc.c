@@ -121,7 +121,7 @@ static boolean learn_spell(boolean *redraw) {
   spl_type spells_to_choose_from;
   long new_spells = num_new_spells(C_player_mod_from_stat(INT));
   boolean return_value = false;
-  treas_ptr ptr;
+  treas_rec *ptr;
 
   ENTER(("learn_spell", ""));
 
@@ -296,7 +296,7 @@ static boolean learn_song(boolean *redraw) {
   unsigned long spell_flag = 0;
   unsigned long spell_flag2 = 0;
   spl_type spell;
-  treas_ptr curse;
+  treas_rec *curse;
 
   boolean return_value = false;
 
@@ -847,7 +847,7 @@ void add_money(long amount) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-treas_ptr money_carry() {
+treas_rec *money_carry() {
   /*{ Pick up some money	-DMF-	}*/
 
   /* with player_do; */

@@ -390,7 +390,7 @@ void identify(treasure_type *item) {
   /*{ Something has been identified }*/
 
   long i1, x1, x2;
-  treas_ptr curse;
+  treas_rec *curse;
 
   x1 = item->tval;
   x2 = item->subval;
@@ -482,7 +482,7 @@ void unquote(char *object_str) {
  * @ptr: Pointer to the object to describe
  * @pref: ???
  */
-void objdes(char *out_val, treas_ptr ptr, boolean pref) {
+void objdes(char *out_val, treas_rec *ptr, boolean pref) {
   char *cpos;
   char tmp_val[82];
 
@@ -595,12 +595,12 @@ void objdes(char *out_val, treas_ptr ptr, boolean pref) {
   LEAVE("objdes", "i");
 }
 
-char *bag_descrip(treas_ptr bag, char result[134]) /* was func */
+char *bag_descrip(treas_rec *bag, char result[134]) /* was func */
 {
   /*{ Return description about the contents of a bag	-DMF-	}*/
 
   long count, wgt;
-  treas_ptr ptr;
+  treas_rec *ptr;
 
   if ((bag->next == NULL) || (bag->next->is_in == false)) {
     sprintf(result, " (empty)");

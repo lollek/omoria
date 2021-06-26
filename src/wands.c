@@ -163,7 +163,8 @@ void aim_wand() {
   unsigned long i1;
   long i3, i4, chance, i5;
   long dir;
-  treas_ptr i2, item_ptr;
+  treas_rec *i2;
+  treas_rec *item_ptr;
   long dumy, y_dumy, x_dumy;
   char trash_char;
   boolean redraw, ident;

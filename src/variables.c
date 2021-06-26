@@ -20,7 +20,7 @@
 #include "types.h"
 #include "variables.h"
 
-treas_ptr cur_inven;    /* { Current inven page  } */
+treas_rec *cur_inven;   /* { Current inven page  } */
 money_type bank;        /* { Bank's money	 } */
 money_type coin_value = /* { Copy of money values} */
     {0, 1, 4, 20, 240, 960, 12480};
@@ -1380,7 +1380,7 @@ treasure_type gold_list[MAX_GOLD] = {{"& copper piece~", valuable_metal, 0, 0,
 treasure_type t_list[MAX_TALLOC + 1];
 treasure_type equipment[EQUIP_MAX];
 treas_rec *inventory_list = NULL;
-treas_ptr inven_temp;
+treas_rec *inven_temp;
 
 /*	{ Items which are sold in the stores are different from dungeon } */
 /*	{ items so that identify works properly.  Note that the players } */

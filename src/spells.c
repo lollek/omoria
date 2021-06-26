@@ -1197,10 +1197,10 @@ boolean bless(long amount) {
 boolean ident_spell() {
   /*{ Identify an object                                    -RAK-   }*/
 
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   char out_val[82];
   char trash_char;
-  treas_ptr ptr;
+  treas_rec *ptr;
   long count = 0;
   boolean redraw = false;
   boolean return_value = false;
@@ -1538,7 +1538,7 @@ boolean protect_evil() {
 boolean recharge(long num) {
   /*{ Recharge a wand, staff, or rod.  Sometimes the item breaks. -RAK-}*/
 
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   boolean redraw = false;
   char trash_char;
   /* added valuable_gems to this set, which should include any item type
@@ -2725,7 +2725,7 @@ boolean am_i_dumb() { return player_lev < randint(randint(50)); }
 boolean lore_spell() {
   /*{ Give name for most items in inventory -Cap'n- }*/
 
-  treas_ptr thingy;
+  treas_rec *thingy;
 
   thingy = inventory_list;
   for (; thingy != NULL;) {
@@ -2743,7 +2743,7 @@ boolean lore_spell() {
 /*//////////////////////////////////////////////////////////////////// */
 boolean detect_curse() {
   char trash_char;
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   boolean redraw;
   boolean flag = false;
 
@@ -2773,7 +2773,7 @@ boolean detect_curse() {
 boolean detect_magic() {
   /*{ Determine whether an item is magical or not           -Cap'n- }*/
 
-  treas_ptr item_ptr;
+  treas_rec *item_ptr;
   char trash_char;
   boolean redraw, dumb, dumber;
   boolean flag = false;
