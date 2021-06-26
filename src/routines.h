@@ -1,9 +1,9 @@
 #ifndef ROUTINES_H
 #define ROUTINES_H
 
-#include <time.h>
 #include <curses.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "types.h"
 
@@ -80,8 +80,8 @@ extern void known2(char *object_str);  /* : varying[a] of char); */
 extern void unquote(char *object_str); /* : varying[a] of char); */
 extern void identify(treasure_type *item);
 extern void objdes(char *out_val, /*: varying[a] of char; */
-		   treas_ptr ptr, /*	: treas_ptr; */
-		   boolean pref); /*	: boolean); */
+                   treas_ptr ptr, /*	: treas_ptr; */
+                   boolean pref); /*	: boolean); */
 
 /* { DUNGEON.PAS		} */
 extern void move_rec(long y1, long x1, long y2, long x2);
@@ -114,7 +114,7 @@ extern long react(long x);
 extern void change_rep(long amt);
 extern boolean check_store_hours(enum store_t type, long sh);
 extern void check_store_hours_and_enter(enum store_t type, long sh,
-					long store_num);
+                                        long store_num);
 extern void hit_trap(long *y, long *x);
 extern boolean minus_ac(long typ_dam);
 extern void corrode_gas(char kb_str[82]);
@@ -128,9 +128,9 @@ extern long mon_take_hit(long monptr, long dam);
 extern long tot_dam(treasure_type *item, long tdam, creature_type *monster);
 extern boolean py_attack(long y, long x);
 extern boolean find_range(obj_set const item_val, boolean inner,
-			  treas_ptr *first, long *count);
+                          treas_ptr *first, long *count);
 extern boolean player_test_hit(long bth, long level, long pth, long ac,
-			       boolean was_fired);
+                               boolean was_fired);
 extern boolean test_hit(long bth, long level, long pth, long ac);
 extern void delete_monster(long i2);
 extern void summon_object(long y, long x, long num, long typ);
@@ -162,7 +162,7 @@ extern void print_objects();
 extern void print_monsters();
 extern void file_character();
 extern boolean read_top_scores(FILE **f1, char *fnam, char list[][134],
-			       int max_high, int *n1, char *openerr);
+                               int max_high, int *n1, char *openerr);
 extern boolean write_top_scores(FILE **f1, char list[][134], int max_high);
 extern boolean close_top_scores(FILE **f1);
 extern FILE *priv_fopen(char *path, char *mode);
@@ -185,7 +185,7 @@ extern char cur_char1();
 extern char cur_char2();
 extern char cur_insure();
 extern boolean inven_command(char command, treas_ptr *item_ptr,
-			     char prompt[82]);
+                             char prompt[82]);
 extern void delete_inven_item(treas_ptr ptr);
 extern void inven_destroy(treas_ptr item_ptr);
 extern void inven_drop(treas_ptr item_ptr, long y, long x, boolean mon);
@@ -195,8 +195,8 @@ extern boolean inven_check_num();
 extern treas_ptr add_inven_item(treasure_type item);
 extern treas_ptr inven_carry();
 extern boolean get_item(treas_ptr *com_ptr, char const *pmt, boolean *redraw,
-			long count, char *choice, boolean mon,
-			boolean no_wait); /*	: boolean := false); */
+                        long count, char *choice, boolean mon,
+                        boolean no_wait); /*	: boolean := false); */
 treas_ptr ic__remove(long item_val, boolean show_message);
 
 /**
@@ -236,7 +236,7 @@ extern void put_buffer_(char const *str_buff, int row, int col);
 extern void prt(char const *str_buff, int row, int col);
 extern void prt_(char const *str_buff, int row, int col);
 extern void prt2(char *str_buff1, /*	: varying[a] of char; */
-		 char *str_buff2, int row, int col);
+                 char *str_buff2, int row, int col);
 
 extern boolean msg_print(char *str_buff); /* : varying[a] of char); */
 extern boolean get_com(char const *prompt, char *command);
@@ -252,7 +252,7 @@ extern boolean get_yes_no(char const *prompt);
 
 /* use get_string */
 extern boolean Get_String(char *in_str, /* : varying[a] of char; */
-			  int row, int column, int slen);
+                          int row, int column, int slen);
 extern long get_hex_value(long row, long col, long slen);
 extern void print_hex_value(long num, long row, long col);
 extern void pause_game(long prt_line);
@@ -274,7 +274,7 @@ extern void enter_fortress();
 extern void encrypt_write(FILE *f1, encrypt_state *state, char line[1026]);
 extern void encrypt_flush(FILE *f1, encrypt_state *state);
 extern void read_decrypt(FILE *f1, encrypt_state *state, char line[1026],
-			 boolean *got_eof);
+                         boolean *got_eof);
 
 /* { SCREEN.PAS		} */
 #include "screen.h"
@@ -298,18 +298,18 @@ extern boolean increase_insults(long store_num);
 extern void decrease_insults(long store_num);
 extern boolean haggle_insults(long store_num);
 extern long receive_offer(long store_num, char comment[82], long *new_offer,
-			  long last_offer, long factor);
+                          long last_offer, long factor);
 extern long purchase_haggle(long store_num, long *price, treasure_type *item,
-			    boolean blitz);
+                            boolean blitz);
 extern long sell_haggle(long store_num, long *price, treasure_type *item,
-			boolean blitz);
+                        boolean blitz);
 extern void spend_time(long days_spent, char place[82], boolean whole_days);
 extern boolean store_purchase(long store_num, long *cur_top, boolean blitz);
 extern boolean store_sell(long store_num, long cur_top, boolean blitz);
 extern void enter_store(long store_num);
 extern long item_value(treasure_type *item);
 extern long sell_price(long snum, long *max_sell, long *min_sell,
-		       treasure_type *item);
+                       treasure_type *item);
 extern boolean store_check_num(long store_num);
 extern void store_carry(long store_num, long *ipos);
 extern void store_destroy(long store_num, long item_val, boolean one_of);
@@ -327,9 +327,9 @@ extern void game_version();
 extern boolean check_pswd(char passw[134], boolean present);
 extern void wizard_light();
 extern void monster_summon_by_name(long y, long x, char name[28],
-				   boolean present, boolean sleepy);
+                                   boolean present, boolean sleepy);
 extern boolean summon_item(long y, long x, char name1[70], char name2[70],
-			   long count, boolean present);
+                           long count, boolean present);
 extern void change_character();
 extern void edit_score_file();
 extern void wizard_create();
@@ -374,15 +374,15 @@ extern boolean detect_magic();
 extern boolean purify();
 extern boolean lore_spell();
 extern boolean fire_bolt(long typ, long dir, long y, long x, long dam,
-			 char bolt_typ[28]);
+                         char bolt_typ[28]);
 extern boolean fire_ball(long typ, long dir, long y, long x, long dam_hp,
-			 char descrip[28]);
+                         char descrip[28]);
 extern boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
-			     char ddesc[28]);
+                             char ddesc[28]);
 extern boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
-			 char descrip[28]);
+                         char descrip[28]);
 extern boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
-		      char ddesc[82]);
+                      char ddesc[82]);
 extern boolean recharge(long num);
 extern boolean zap_monster(long dir, long y, long x, long aux, long zaptype);
 extern boolean wall_to_mud(long dir, long y, long x);
@@ -427,9 +427,9 @@ extern long minmax(long x, long y, long z);
 extern long bit_pos(unsigned long *test);
 extern long bit_pos64(unsigned long *high, unsigned long *low);
 extern long distance(long y1, long x1, long y2, long x2);
-extern void insert_str(char *object_str,	/* : varying[a] of char; */
-		       char const *mtc_str,	/*	: varying[b] of char; */
-		       char const *insert_str); /* : varying[c] of char); */
+extern void insert_str(char *object_str,        /* : varying[a] of char; */
+                       char const *mtc_str,     /*	: varying[b] of char; */
+                       char const *insert_str); /* : varying[c] of char); */
 extern void shell_out();
 extern long users();
 extern long max_users();
@@ -476,7 +476,7 @@ extern long max_hp(char const *hp_str);
 extern void place_monster(long y, long x, long z, boolean slp);
 extern void place_win_monster();
 extern void alloc_land_monster(obj_set alloc_set, long num, long dis,
-			       boolean slp, boolean water);
+                               boolean slp, boolean water);
 
 extern boolean summon_land_monster(long *y, long *x, boolean slp);
 extern boolean summon_water_monster(long *y, long *x, boolean slp);
@@ -538,21 +538,21 @@ extern void subtract_money(long amount, boolean make_change);
 extern boolean send_page(long to_bank);
 extern void spell_chance(spl_rec *spell);
 extern boolean get_spell(spl_type spell, long num, long *sn, long *sc,
-			 char prompt[82], boolean *redraw);
+                         char prompt[82], boolean *redraw);
 extern long num_new_spells(long smarts);
 void learn_magic(boolean redraw);
 extern void gain_level();
 extern void insert_num(char *object_str, /*	: varying[a] of char; */
-		       char *mtc_str,	 /*	: varying[b] of char; */
-		       long number, boolean show_sign);
+                       char *mtc_str,    /*	: varying[b] of char; */
+                       long number, boolean show_sign);
 extern long attack_blows(long weight, long *wtohit);
 extern long critical_blow(long weight, long plus, boolean cs_sharp,
-			  boolean is_fired);
+                          boolean is_fired);
 extern boolean move_dir(long dir, long *y, long *x); /* was move */
 extern boolean player_saves(long adjust);
 extern boolean player_spell_saves();
 extern void find_monster_name(char m_name[82], const long ptr,
-			      boolean begin_sentence);
+                              boolean begin_sentence);
 extern void check_kickout_time(long num, long check);
 
 /* { BANK.INC		} */
@@ -579,7 +579,7 @@ extern long min3(long i1, long i2, long i3);
 extern void put_buffer_(char const *out_str, int32_t row, int32_t col);
 extern void
 put_buffer_attr(const char *out_str, /*	: varying [a] of char; */
-		long row, long col, int attrs);
+                long row, long col, int attrs);
 /* use clear_from */
 extern void Clear_From(int row);
 /* use pause_line */

@@ -12,41 +12,41 @@
 
 #include "configure.h"
 #include "constants.h"
+#include "debug.h"
 #include "magic.h"
 #include "pascal.h"
 #include "routines.h"
 #include "term.h"
 #include "types.h"
-#include "debug.h"
 #include "variables.h"
 
-treas_ptr cur_inven;	/* { Current inven page  } */
-money_type bank;	/* { Bank's money	 } */
+treas_ptr cur_inven;    /* { Current inven page  } */
+money_type bank;        /* { Bank's money	 } */
 money_type coin_value = /* { Copy of money values} */
     {0, 1, 4, 20, 240, 960, 12480};
-long player_max_exp;	   /* { Max exp possible    } */
+long player_max_exp;       /* { Max exp possible    } */
 unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
-long cur_height;	   /* { Cur dungeon size    } */
+long cur_height;           /* { Cur dungeon size    } */
 long cur_width;
-long dun_level;			/* { Cur dungeon level   } */
-long missle_ctr = 0;		/* { Counter for missles } */
-long msg_line;			/* { Contains message txt} */
-boolean msg_flag;		/* { Set with first msg  } */
-long quest[NUM_QUESTS + 1];	/* {quest data} */
+long dun_level;                 /* { Cur dungeon level   } */
+long missle_ctr = 0;            /* { Counter for missles } */
+long msg_line;                  /* { Contains message txt} */
+boolean msg_flag;               /* { Set with first msg  } */
+long quest[NUM_QUESTS + 1];     /* {quest data} */
 char old_msg[82] = "bogus msg"; /* { Last message	      } */
-boolean want_trap;		/* { True = trap messages} */
-boolean want_warn;		/* { True = water warning} */
-boolean death = false;		/*	{ True if died	      } */
-char died_from[82];		/*	{ What killed him     } */
-long turn_counter;		/*	{ Turns ellapsed      } */
-boolean find_flag;		/*	{ Used in MORIA	      } */
-boolean redraw;			/*	{ For redraw screen   } */
-unsigned long print_stat = 0;	/*	{ Flag for stats      } */
-long turn = 0;			/*	{ Cur trun of game    } */
-boolean wizard1 = false;	/*	{ Wizard flag	      } */
-boolean wizard2 = false;	/*	{ Wizard flag	      } */
-boolean used_line[24] =		/* 22 of false */
+boolean want_trap;              /* { True = trap messages} */
+boolean want_warn;              /* { True = water warning} */
+boolean death = false;          /*	{ True if died	      } */
+char died_from[82];             /*	{ What killed him     } */
+long turn_counter;              /*	{ Turns ellapsed      } */
+boolean find_flag;              /*	{ Used in MORIA	      } */
+boolean redraw;                 /*	{ For redraw screen   } */
+unsigned long print_stat = 0;   /*	{ Flag for stats      } */
+long turn = 0;                  /*	{ Cur trun of game    } */
+boolean wizard1 = false;        /*	{ Wizard flag	      } */
+boolean wizard2 = false;        /*	{ Wizard flag	      } */
+boolean used_line[24] =         /* 22 of false */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /**
@@ -71,7 +71,7 @@ signed char dy_of[10] = /*  array [1..9] of signed char; */
     {0, 1, 1, 1, 0, 0, 0, -1, -1, -1};
 /*	{ Bit testing array						} */
 unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
-    {0,		 0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
+    {0,          0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
      0x00000020, 0x00000040, 0x00000080, 0x00000100, 0x00000200, 0x00000400,
      0x00000800, 0x00001000, 0x00002000, 0x00004000, 0x00008000, 0x00010000,
      0x00020000, 0x00040000, 0x00080000, 0x00100000, 0x00200000, 0x00400000,
@@ -109,9 +109,9 @@ floor_type corr_floor4 = {7, false}; /*{ Secret door type floor} */
 floor_type rock_wall1 = {10, false};   /*{ Granite rock wall	} */
 floor_type rock_wall2 = {11, false};   /*{ Magma rock wall	} */
 floor_type rock_wall3 = {12, false};   /*{ Quartz rock wall	} */
-floor_type water1 = {16, true};	       /*{ Water on floor	} */
-floor_type water2 = {17, true};	       /*{ Water on room floor} */
-floor_type water3 = {18, true};	       /*{ Lit water on floor	} */
+floor_type water1 = {16, true};        /*{ Water on floor	} */
+floor_type water2 = {17, true};        /*{ Water on room floor} */
+floor_type water3 = {18, true};        /*{ Lit water on floor	} */
 floor_type boundry_wall = {15, false}; /*{ Indestructable wall} */
 
 /*	{  Following are set definitions				} */
@@ -121,66 +121,65 @@ obj_set wall_set = {10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set pwall_set = {10, 11, 12, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set corr_set = {4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set trap_set = {unseen_trap, seen_trap, secret_door, entrance_to_store,
-		    0,		 0,	    0,		 0,
-		    0,		 0,	    0,		 0,
-		    0,		 0,	    0,		 0};
+                    0,           0,         0,           0,
+                    0,           0,         0,           0,
+                    0,           0,         0,           0};
 obj_set light_set = {seen_trap,
-		     rubble,
-		     open_door,
-		     closed_door,
-		     up_staircase,
-		     down_staircase,
-		     secret_door,
-		     entrance_to_store,
-		     up_steep_staircase,
-		     down_steep_staircase,
-		     0,
-		     0,
-		     0,
-		     0,
-		     0,
-		     0};
+                     rubble,
+                     open_door,
+                     closed_door,
+                     up_staircase,
+                     down_staircase,
+                     secret_door,
+                     entrance_to_store,
+                     up_steep_staircase,
+                     down_steep_staircase,
+                     0,
+                     0,
+                     0,
+                     0,
+                     0,
+                     0};
 obj_set water_set = {16, 17, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set earth_set = {1, 2, 4, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set float_set = {arrow,
-		     lamp_or_torch,
-		     bow_crossbow_or_sling,
-		     boots,
-		     gloves_and_gauntlets,
-		     cloak,
-		     soft_armor,
-		     scroll1,
-		     scroll2,
-		     potion1,
-		     potion2,
-		     flask_of_oil,
-		     Food,
-		     magic_book,
-		     prayer_book,
-		     song_book};
+                     lamp_or_torch,
+                     bow_crossbow_or_sling,
+                     boots,
+                     gloves_and_gauntlets,
+                     cloak,
+                     soft_armor,
+                     scroll1,
+                     scroll2,
+                     potion1,
+                     potion2,
+                     flask_of_oil,
+                     Food,
+                     magic_book,
+                     prayer_book,
+                     song_book};
 obj_set slow_set = {hafted_weapon,
-		    pole_arm,
-		    dagger,
-		    sword,
-		    pick_or_shovel,
-		    maul,
-		    gem_helm,
-		    helm,
-		    shield,
-		    valuable_metal,
-		    0,
-		    0,
-		    0,
-		    0,
-		    0,
-		    0};
+                    pole_arm,
+                    dagger,
+                    sword,
+                    pick_or_shovel,
+                    maul,
+                    gem_helm,
+                    helm,
+                    shield,
+                    valuable_metal,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0};
 obj_set stable_set = {chest, spike, hard_armor, 0, 0, 0, 0, 0,
-		      0,     0,	    0,		0, 0, 0, 0, 0};
-
+                      0,     0,     0,          0, 0, 0, 0, 0};
 
 /*	{ Base experience levels, may be adjusted up for race and/or class} */
 long exp_per_level[MAX_PLAYER_LEVEL + 1] = {
-    0,	    10,	     25,      45,      70,     100,    140,    200,    280,
+    0,      10,      25,      45,      70,     100,    140,    200,    280,
     380,    500,     650,     850,     1100,   1400,   1800,   2300,   2900,
     3600,   4400,    5400,    6800,    8400,   10200,  12500,  17500,  25000,
     35000,  50000,   75000,   100000,  150000, 200000, 300000, 400000, 500000,
@@ -299,18 +298,18 @@ treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
 /*{ Note : Raised from 26 to 50 possible choices		-DMF-	} */
 long store_choice[MAX_STORES][STORE_CHOICES] = {
     /*	{ General Store } */
-    {105, 104, 103, 102, 105, 104, 42, 105, 27,	 26,  5,  4, 3,
-     3,	  2,   102, 103, 104, 105, 1,  1,   1,	 2,   2,  3, 3,
-     1,	  1,   1,   1,	 4,   1,   1,  1,   1,	 1,   1,  1, 1,
-     1,	  1,   1,   1,	 1,   27,  26, 4,   103, 104, 105},
+    {105, 104, 103, 102, 105, 104, 42, 105, 27,  26,  5,  4, 3,
+     3,   2,   102, 103, 104, 105, 1,  1,   1,   2,   2,  3, 3,
+     1,   1,   1,   1,   4,   1,   1,  1,   1,   1,   1,  1, 1,
+     1,   1,   1,   1,   1,   27,  26, 4,   103, 104, 105},
     /*	{ Armory	} */
     {30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 47,
      30, 33, 34, 43, 44, 28, 29, 30, 31, 30, 31, 32, 33, 34, 35, 36, 37,
      38, 39, 40, 41, 43, 44, 45, 46, 47, 28, 29, 30, 31, 30, 32, 35},
     /*	{ Weaponsmith	} */
-    {6,	 7,  8,	 9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,  21, 22,
-     23, 24, 25, 6,  7,	 23, 25, 23, 25, 6,  7,	 8,  9,	 10, 11,  12, 13,
-     14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 6,	 7,  156, 156},
+    {6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,  21, 22,
+     23, 24, 25, 6,  7,  23, 25, 23, 25, 6,  7,  8,  9,  10, 11,  12, 13,
+     14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 6,  7,  156, 156},
     /*	{ Temple	} */
     {59, 59, 77, 79, 80, 81, 84, 85, 13, 14, 15, 96, 97, 98,  100, 79, 79,
      80, 80, 81, 98, 59, 77, 80, 81, 84, 59, 59, 77, 79, 80,  81,  84, 85,
@@ -790,8 +789,8 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      5000, 13, 3, 1, 0, 0, 0, 3, "0d0", 50, 0},
     {"& %A Amulet| of DOOM^", amulet, 0,
      Cursed_worn_bit + Strength_worn_bit + Dexterity_worn_bit +
-	 Constitution_worn_bit + Intelligence_worn_bit + Wisdom_worn_bit +
-	 Charisma_worn_bit + Searching_worn_bit,
+         Constitution_worn_bit + Intelligence_worn_bit + Wisdom_worn_bit +
+         Charisma_worn_bit + Searching_worn_bit,
      -5, 0, 14, 3, 1, 0, 0, 0, 0, "0d0", 50, 0},
     {"& Scroll~ %T| of Enchant Weapon To-Hit", scroll1, 0x00000000, 0x00000001,
      0, 125, 257, 5, 1, 0, 0, 0, 0, "0d0", 12, 0},
@@ -1326,55 +1325,55 @@ boolean object_ident[MAX_OBJECTS + 1]; /*(max_objects of false) */
 
 /*	{ Gold list (All types of gold and gems are defined here)	} */
 treasure_type gold_list[MAX_GOLD] = {{"& copper piece~", valuable_metal, 0, 0,
-				      0, 0, 2, 5, 420, 0, 0, 0, 0, " ", 2, 0},
-				     {"& iron piece~", valuable_metal, 0, 0, 0,
-				      0, 1, 5, 2400, 0, 0, 0, 0, " ", 1, 0},
-				     {"& copper piece~", valuable_metal, 0, 0,
-				      0, 0, 4, 5, 720, 0, 0, 0, 0, " ", 2, 0},
-				     {"& silver piece~", valuable_metal, 0, 0,
-				      0, 0, 5, 5, 180, 0, 0, 0, 0, " ", 3, 0},
-				     {"& iron piece~", valuable_metal, 0, 0, 0,
-				      0, 3, 5, 4800, 0, 0, 0, 0, " ", 1, 0},
-				     {"& copper piece~", valuable_metal, 0, 0,
-				      0, 0, 6, 5, 1200, 0, 0, 0, 0, " ", 2, 0},
-				     {"& silver piece~", valuable_metal, 0, 0,
-				      0, 0, 7, 5, 300, 0, 0, 0, 0, " ", 3, 0},
-				     {"& gold piece~", valuable_metal, 0, 0, 0,
-				      0, 12, 5, 30, 0, 0, 0, 0, " ", 4, 0},
-				     {"& iron piece~", valuable_metal, 0, 0, 0,
-				      0, 3, 5, 9000, 0, 0, 0, 0, " ", 1, 0},
-				     {"& copper piece~", valuable_metal, 0, 0,
-				      0, 0, 6, 5, 2400, 0, 0, 0, 0, " ", 2, 0},
-				     {"& silver piece~", valuable_metal, 0, 0,
-				      0, 0, 7, 5, 600, 0, 0, 0, 0, " ", 3, 0},
-				     {"& gold piece~", valuable_metal, 0, 0, 0,
-				      0, 12, 5, 60, 0, 0, 0, 0, " ", 4, 0},
-				     {"& copper piece~", valuable_metal, 0, 0,
-				      0, 0, 6, 5, 6000, 0, 0, 0, 0, " ", 2, 0},
-				     {"& silver piece~", valuable_metal, 0, 0,
-				      0, 0, 7, 5, 1200, 0, 0, 0, 0, " ", 3, 0},
-				     {"& gold piece~", valuable_metal, 0, 0, 0,
-				      0, 12, 5, 120, 0, 0, 0, 0, " ", 4, 0},
-				     {"& silver piece~", valuable_metal, 0, 0,
-				      0, 0, 7, 5, 1500, 0, 0, 0, 0, " ", 3, 0},
-				     {"& gold piece~", valuable_metal, 0, 0, 0,
-				      0, 18, 5, 150, 0, 0, 0, 0, " ", 4, 0},
-				     {"& platinum piece~", valuable_metal, 0, 0,
-				      0, 0, 20, 5, 50, 0, 0, 0, 0, " ", 5, 0},
-				     {"& silver piece~", valuable_metal, 0, 0,
-				      0, 0, 16, 5, 3000, 0, 0, 0, 0, " ", 3, 0},
-				     {"& gold piece~", valuable_metal, 0, 0, 0,
-				      0, 24, 5, 250, 0, 0, 0, 0, " ", 4, 0},
-				     {"& platinum piece~", valuable_metal, 0, 0,
-				      0, 0, 28, 5, 75, 0, 0, 0, 0, " ", 5, 0},
-				     {"& mithril piece~", valuable_metal, 0, 0,
-				      0, 0, 32, 5, 8, 0, 0, 0, 0, " ", 6, 0},
-				     {"& gold piece~", valuable_metal, 0, 0, 0,
-				      0, 50, 5, 600, 0, 0, 0, 0, " ", 4, 0},
-				     {"& platinum piece~", valuable_metal, 0, 0,
-				      0, 0, 55, 5, 200, 0, 0, 0, 0, " ", 5, 0},
-				     {"& mithril piece~", valuable_metal, 0, 0,
-				      0, 0, 60, 5, 20, 0, 0, 0, 0, " ", 6, 0}
+                                      0, 0, 2, 5, 420, 0, 0, 0, 0, " ", 2, 0},
+                                     {"& iron piece~", valuable_metal, 0, 0, 0,
+                                      0, 1, 5, 2400, 0, 0, 0, 0, " ", 1, 0},
+                                     {"& copper piece~", valuable_metal, 0, 0,
+                                      0, 0, 4, 5, 720, 0, 0, 0, 0, " ", 2, 0},
+                                     {"& silver piece~", valuable_metal, 0, 0,
+                                      0, 0, 5, 5, 180, 0, 0, 0, 0, " ", 3, 0},
+                                     {"& iron piece~", valuable_metal, 0, 0, 0,
+                                      0, 3, 5, 4800, 0, 0, 0, 0, " ", 1, 0},
+                                     {"& copper piece~", valuable_metal, 0, 0,
+                                      0, 0, 6, 5, 1200, 0, 0, 0, 0, " ", 2, 0},
+                                     {"& silver piece~", valuable_metal, 0, 0,
+                                      0, 0, 7, 5, 300, 0, 0, 0, 0, " ", 3, 0},
+                                     {"& gold piece~", valuable_metal, 0, 0, 0,
+                                      0, 12, 5, 30, 0, 0, 0, 0, " ", 4, 0},
+                                     {"& iron piece~", valuable_metal, 0, 0, 0,
+                                      0, 3, 5, 9000, 0, 0, 0, 0, " ", 1, 0},
+                                     {"& copper piece~", valuable_metal, 0, 0,
+                                      0, 0, 6, 5, 2400, 0, 0, 0, 0, " ", 2, 0},
+                                     {"& silver piece~", valuable_metal, 0, 0,
+                                      0, 0, 7, 5, 600, 0, 0, 0, 0, " ", 3, 0},
+                                     {"& gold piece~", valuable_metal, 0, 0, 0,
+                                      0, 12, 5, 60, 0, 0, 0, 0, " ", 4, 0},
+                                     {"& copper piece~", valuable_metal, 0, 0,
+                                      0, 0, 6, 5, 6000, 0, 0, 0, 0, " ", 2, 0},
+                                     {"& silver piece~", valuable_metal, 0, 0,
+                                      0, 0, 7, 5, 1200, 0, 0, 0, 0, " ", 3, 0},
+                                     {"& gold piece~", valuable_metal, 0, 0, 0,
+                                      0, 12, 5, 120, 0, 0, 0, 0, " ", 4, 0},
+                                     {"& silver piece~", valuable_metal, 0, 0,
+                                      0, 0, 7, 5, 1500, 0, 0, 0, 0, " ", 3, 0},
+                                     {"& gold piece~", valuable_metal, 0, 0, 0,
+                                      0, 18, 5, 150, 0, 0, 0, 0, " ", 4, 0},
+                                     {"& platinum piece~", valuable_metal, 0, 0,
+                                      0, 0, 20, 5, 50, 0, 0, 0, 0, " ", 5, 0},
+                                     {"& silver piece~", valuable_metal, 0, 0,
+                                      0, 0, 16, 5, 3000, 0, 0, 0, 0, " ", 3, 0},
+                                     {"& gold piece~", valuable_metal, 0, 0, 0,
+                                      0, 24, 5, 250, 0, 0, 0, 0, " ", 4, 0},
+                                     {"& platinum piece~", valuable_metal, 0, 0,
+                                      0, 0, 28, 5, 75, 0, 0, 0, 0, " ", 5, 0},
+                                     {"& mithril piece~", valuable_metal, 0, 0,
+                                      0, 0, 32, 5, 8, 0, 0, 0, 0, " ", 6, 0},
+                                     {"& gold piece~", valuable_metal, 0, 0, 0,
+                                      0, 50, 5, 600, 0, 0, 0, 0, " ", 4, 0},
+                                     {"& platinum piece~", valuable_metal, 0, 0,
+                                      0, 0, 55, 5, 200, 0, 0, 0, 0, " ", 5, 0},
+                                     {"& mithril piece~", valuable_metal, 0, 0,
+                                      0, 0, 60, 5, 20, 0, 0, 0, 0, " ", 6, 0}
 
 };
 
@@ -1719,7 +1718,7 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
 };
 
 treasure_type blank_treasure = {" ", 0, 0, 0, 0, 0,   0, 0,
-				0,   0, 0, 0, 0, " ", 0, 0};
+                                0,   0, 0, 0, 0, " ", 0, 0};
 long inven_ctr = 0;    /* { Total different obj's} */
 long inven_weight = 0; /* { Cur carried weight	} */
 long equip_ctr = 0;    /* { Cur equipment ctr	} */
@@ -1742,12 +1741,12 @@ creature_type c_list[MAX_CREATURES + 1];
 monster_type m_list[MAX_MALLOC + 1];
 long m_level[MAX_MONS_LEVEL + 1];
 
-long muptr;	   /* { Cur used monster ptr	} */
+long muptr;        /* { Cur used monster ptr	} */
 long mon_tot_mult; /* { # of repro's of creature	} */
 
 /* new stuff */
-char coin_name[MITHRIL + 1][82] = {"total", "iron",	"copper", "silver",
-				   "gold",  "platinum", "mithril"};
+char coin_name[MITHRIL + 1][82] = {"total", "iron",     "copper", "silver",
+                                   "gold",  "platinum", "mithril"};
 
 unsigned char highScoreKey[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 unsigned char saveFileKey[8] = {8, 7, 6, 5, 4, 3, 2, 1};

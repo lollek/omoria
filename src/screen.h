@@ -30,7 +30,7 @@ extern void prt_map();
  *  prt_stat() - Print character stat in given row, column
  */
 extern void prt_stat(const char stat_name[82], unsigned char stat, long row,
-		     long column);
+                     long column);
 
 /**
  * -RAK-

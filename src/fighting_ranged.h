@@ -9,6 +9,6 @@ void throw_something();
 /**
  * shoot_something() - Prompt the player to shoot something
  */
-void shoot_something() ;
+void shoot_something();
 
 #endif /* FIGHTING_RANGED_H */

@@ -8,15 +8,15 @@
 
 #include "configure.h"
 #include "constants.h"
+#include "debug.h"
+#include "dungeon.h"
 #include "magic.h"
 #include "pascal.h"
+#include "player.h"
 #include "routines.h"
 #include "term.h"
 #include "types.h"
-#include "debug.h"
 #include "variables.h"
-#include "dungeon.h"
-#include "player.h"
 
 /* P_MISC */
 int64_t player_xtr_wgt = 0;
@@ -69,22 +69,22 @@ int64_t player_uid = 0;
 /*	{ Following are player variables				} */
 p_flags player_flags = {
     false, false,
-    0,	   0,
-    0,	   0,
-    0,	   7500,
-    2,	   0,
-    0,	   0,
+    0,     0,
+    0,     0,
+    0,     7500,
+    2,     0,
+    0,     0,
     false, 0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   false,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     false,
     false, false,
     false, false,
     false, false,
@@ -92,86 +92,81 @@ p_flags player_flags = {
     false, false,
     false, {false, false, false, false, false, false}, /* sustain */
     false, 0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   0,
-    0,	   false,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     0,
+    0,     false,
     false, false,
     false};
 
-void search_off()
-{
-	search_flag = false;
-	find_flag = false;
-	move_char(5);
-	change_speed(-1);
-	player_flags.status &= ~IS_SEARCHING;
-	prt_search();
+void search_off() {
+  search_flag = false;
+  find_flag = false;
+  move_char(5);
+  change_speed(-1);
+  player_flags.status &= ~IS_SEARCHING;
+  prt_search();
 }
 
-void search_on()
-{
-	/*{ Search Mode enhancement                               -RAK-   }*/
+void search_on() {
+  /*{ Search Mode enhancement                               -RAK-   }*/
 
-	search_flag = true;
-	change_speed(+1);
-	player_flags.status |= IS_SEARCHING;
-	prt_search();
-	/* with player_flags do; */
+  search_flag = true;
+  change_speed(+1);
+  player_flags.status |= IS_SEARCHING;
+  prt_search();
+  /* with player_flags do; */
 }
 
-void rest_off()
-{
-	player_flags.rest = 0;
-	player_flags.status &= ~IS_RESTING;
-	player_flags.resting_till_full = false;
-	if (msg_flag) {
-		erase_line(1, 1);
-	}
-	prt_rest();
+void rest_off() {
+  player_flags.rest = 0;
+  player_flags.status &= ~IS_RESTING;
+  player_flags.resting_till_full = false;
+  if (msg_flag) {
+    erase_line(1, 1);
+  }
+  prt_rest();
 }
 
-void regenmana(float percent)
-{
-	/*{ Regenerate mana points		-RAK-	}*/
+void regenmana(float percent) {
+  /*{ Regenerate mana points		-RAK-	}*/
 
-	player_cmana += player_mana * percent + PLAYER_REGEN_MNBASE;
+  player_cmana += player_mana * percent + PLAYER_REGEN_MNBASE;
 }
 
-void take_hit(long damage, char hit_from[82])
-{
-	/*{ Decreases players hit points and sets death flag if neccessary}*/
+void take_hit(long damage, char hit_from[82]) {
+  /*{ Decreases players hit points and sets death flag if neccessary}*/
 
-	ENTER(("take_hit", "%d, %s", damage, hit_from));
+  ENTER(("take_hit", "%d, %s", damage, hit_from));
 
-	if (player_flags.invuln > 0) {
-		damage = 0;
-	}
+  if (player_flags.invuln > 0) {
+    damage = 0;
+  }
 
-	C_player_modify_current_hp(-damage);
+  C_player_modify_current_hp(-damage);
 
-	if (search_flag) {
-		search_off();
-	}
+  if (search_flag) {
+    search_off();
+  }
 
-	if (player_flags.rest > 0) {
-		rest_off();
-	}
+  if (player_flags.rest > 0) {
+    rest_off();
+  }
 
-	flush();
+  flush();
 
-	if (C_player_current_hp() <= -1) {
-		if (!death) {
-			/*{ Hee, hee... Ain't I mean?     }*/
-			death = true;
-			strcpy(died_from, hit_from);
-			total_winner = false;
-		}
-		moria_flag = true;
-	} else {
-		prt_stat_block();
-	}
+  if (C_player_current_hp() <= -1) {
+    if (!death) {
+      /*{ Hee, hee... Ain't I mean?     }*/
+      death = true;
+      strcpy(died_from, hit_from);
+      total_winner = false;
+    }
+    moria_flag = true;
+  } else {
+    prt_stat_block();
+  }
 
-	LEAVE("take_hit", "");
+  LEAVE("take_hit", "");
 }

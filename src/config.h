@@ -299,10 +299,10 @@ Constant.h should always be included after config.h,
 #ifdef MAC
 #ifdef RSRC
 #define MACRSRC /* Defined if we are building the resources.  */
-#else		/* !RSRC */
+#else           /* !RSRC */
 #define MACGAME /* Defined if we are building the game.  */
-#endif		/* RSRC */
-#endif		/* MAC */
+#endif          /* RSRC */
+#endif          /* MAC */
 
 #ifdef MAC
 /* Screen dimensions */

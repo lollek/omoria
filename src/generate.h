@@ -4,20 +4,20 @@
 #include "types.h"
 
 typedef struct coords {
-	long y;
-	long x;
+  long y;
+  long x;
 } coords;
 
 typedef struct river_deal {
-	long in1, in2, out; /*{ (keypad) directions; in is upstream }*/
-	long flow;	    /*{ water flow out of this river spot }*/
-	long pos;	    /*{ in array of s_l_type; if > num_left then }*/
-			    /*{ spot is no longer available }*/
+  long in1, in2, out; /*{ (keypad) directions; in is upstream }*/
+  long flow;          /*{ water flow out of this river spot }*/
+  long pos;           /*{ in array of s_l_type; if > num_left then }*/
+                      /*{ spot is no longer available }*/
 } river_deal;
 
 typedef struct s_l_type {
-	coords loc;	   /*{ cross-ref back to river_deal }*/
-	boolean is_active; /*{ is still an unresolved river source}*/
+  coords loc;        /*{ cross-ref back to river_deal }*/
+  boolean is_active; /*{ is still an unresolved river source}*/
 } s_l_type;
 
 #define RIVER_SIZE_Y 10
@@ -26,15 +26,15 @@ typedef struct s_l_type {
 #define RIVER_SEGMENT_SIZE 6
 
 typedef struct river_args {
-	river_deal gup[RIVER_SIZE_Y + 1][RIVER_SIZE_X + 1];
-	/*: array [1..RIVER_SIZE_Y] of array [1..RIVER_SIZE_X] of river_deal;*/
+  river_deal gup[RIVER_SIZE_Y + 1][RIVER_SIZE_X + 1];
+  /*: array [1..RIVER_SIZE_Y] of array [1..RIVER_SIZE_X] of river_deal;*/
 
-	s_l_type s_list[RIVER_TOTAL_SIZE + 1];
-	/*: array [1..RIVER_TOTAL_SIZE] of s_l_type;*/
+  s_l_type s_list[RIVER_TOTAL_SIZE + 1];
+  /*: array [1..RIVER_TOTAL_SIZE] of s_l_type;*/
 
-	long max_wet; /*{ # of river or next-to-river }*/
-	long num_left, s_l_top;
-	coords river_mouth;
+  long max_wet; /*{ # of river or next-to-river }*/
+  long num_left, s_l_top;
+  coords river_mouth;
 
 } river_args;
 
