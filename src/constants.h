@@ -5,9 +5,6 @@
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66
 
-#define c_sc_hold 1
-#define c_sc_mental 2
-
 /*	{ # of numbered objects for easy summoning (ie. create food) } */
 #define NUM_YUM 18
 

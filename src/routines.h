@@ -353,7 +353,8 @@ extern void sing();
 extern void read_scroll();
 extern void use_staff();
 extern boolean mon_resists(unsigned char a_cptr);
-extern boolean mon_save(long a_cptr, long bonus, long spell_class);
+extern boolean mon_save(long a_cptr, long bonus,
+                        enum spell_class_t spell_class);
 extern boolean sleep_monsters1(long y, long x);
 extern boolean detect_item(long typ);
 extern boolean detect_trap();
@@ -373,14 +374,14 @@ extern boolean detect_curse();
 extern boolean detect_magic();
 extern boolean purify();
 extern boolean lore_spell();
-extern boolean fire_bolt(long typ, long dir, long y, long x, long dam,
-                         char bolt_typ[28]);
-extern boolean fire_ball(long typ, long dir, long y, long x, long dam_hp,
-                         char descrip[28]);
+extern boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x,
+                         long dam, char bolt_typ[28]);
+extern boolean fire_ball(enum spell_effect_t typ, long dir, long y, long x,
+                         long dam_hp, char descrip[28]);
 extern boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
                              char ddesc[28]);
-extern boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
-                         char descrip[28]);
+extern boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
+                         long dam_hp, char descrip[28]);
 extern boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
                       char ddesc[82]);
 extern boolean recharge(long num);
@@ -396,7 +397,7 @@ extern boolean teleport_monster(long dir, long y, long x);
 extern boolean mass_genocide();
 extern boolean genocide();
 extern boolean mass_poly();
-extern boolean detect_creatures(long typ);
+extern boolean detect_creatures(enum spell_effect_t typ);
 extern boolean hp_player(long num, char kind[82]);
 extern boolean cure_me(long *what_flag);
 extern boolean earthquake();

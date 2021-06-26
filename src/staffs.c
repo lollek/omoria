@@ -42,11 +42,11 @@ void us__staff_effect(long effect, boolean *idented) {
     break;
 
   case 4:
-    ident = detect_item(c_treasure);
+    ident = detect_item(SE_TREASURE);
     break;
 
   case 5:
-    ident = detect_item(c_object);
+    ident = detect_item(SE_OBJECT);
     break;
 
   case 6:
@@ -86,15 +86,15 @@ void us__staff_effect(long effect, boolean *idented) {
     break;
 
   case 12:
-    ident = zap_area(0, 1, c_speed); /*{haste}*/
+    ident = zap_area(0, 1, SE_SPEED); /*{haste}*/
     break;
 
   case 13:
-    ident = zap_area(0, -1, c_speed); /*{slow}*/
+    ident = zap_area(0, -1, SE_SPEED); /*{slow}*/
     break;
 
   case 14:
-    ident = zap_area(0, 0, c_sleep);
+    ident = zap_area(0, 0, SE_SLEEP);
     break;
 
   case 15:
@@ -102,7 +102,7 @@ void us__staff_effect(long effect, boolean *idented) {
     break;
 
   case 16:
-    ident = detect_creatures(c_invisible);
+    ident = detect_creatures(SE_INVISIBLE);
     break;
 
   case 17:
@@ -127,7 +127,7 @@ void us__staff_effect(long effect, boolean *idented) {
     break;
 
   case 21:
-    ident = detect_creatures(c_evil);
+    ident = detect_creatures(SE_EVIL);
     break;
 
   case 22:
@@ -138,7 +138,7 @@ void us__staff_effect(long effect, boolean *idented) {
     break;
 
   case 23:
-    ident = zap_area(0x0004, 60, c_hp);
+    ident = zap_area(0x0004, 60, SE_HP);
     break;
 
   case 24:

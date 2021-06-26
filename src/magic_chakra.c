@@ -42,7 +42,7 @@ void chakra_spell_effects(long effect) {
     break;
 
   case 5: /*{ Sense Enemies }*/
-    detect_creatures(c_creature);
+    detect_creatures(SE_CREATURE);
     break;
 
   case 6: /*{ Self-Healing II }                 */

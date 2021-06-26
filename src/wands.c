@@ -45,17 +45,17 @@ void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
     break;
 
   case 2:
-    fire_bolt(c_lightning, dir, i3, i4, damroll("3d8"), "Lightning Bolt");
+    fire_bolt(SE_LIGHTNING, dir, i3, i4, damroll("3d8"), "Lightning Bolt");
     ident = true;
     break;
 
   case 3:
-    fire_bolt(c_cold, dir, i3, i4, damroll("4d8"), "Frost Bolt");
+    fire_bolt(SE_COLD, dir, i3, i4, damroll("4d8"), "Frost Bolt");
     ident = true;
     break;
 
   case 4:
-    fire_bolt(c_fire, dir, i3, i4, damroll("6d8"), "Fire Bolt");
+    fire_bolt(SE_FIRE, dir, i3, i4, damroll("6d8"), "Fire Bolt");
     ident = true;
     break;
 
@@ -68,27 +68,27 @@ void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
     break;
 
   case 7:
-    ident = zap_monster(dir, i3, i4, -damroll("4d6"), c_hp);
+    ident = zap_monster(dir, i3, i4, -damroll("4d6"), SE_HP);
     break;
 
   case 8:
-    ident = zap_monster(dir, i3, i4, 1, c_speed);
+    ident = zap_monster(dir, i3, i4, 1, SE_SPEED);
     break;
 
   case 9:
-    ident = zap_monster(dir, i3, i4, -1, c_speed);
+    ident = zap_monster(dir, i3, i4, -1, SE_SPEED);
     break;
 
   case 10:
-    ident = zap_monster(dir, i3, i4, 0, c_confuse);
+    ident = zap_monster(dir, i3, i4, 0, SE_CONFUSE);
     break;
 
   case 11:
-    ident = zap_monster(dir, i3, i4, 0, c_sleep);
+    ident = zap_monster(dir, i3, i4, 0, SE_SLEEP);
     break;
 
   case 12:
-    ident = zap_monster(dir, i3, i4, 50, c_drain);
+    ident = zap_monster(dir, i3, i4, 50, SE_DRAIN);
     break;
 
   case 13:
@@ -117,27 +117,27 @@ void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
     break;
 
   case 19:
-    fire_ball(c_lightning, dir, i3, i4, 24, "Lightning Ball");
+    fire_ball(SE_LIGHTNING, dir, i3, i4, 24, "Lightning Ball");
     ident = true;
     break;
 
   case 20:
-    fire_ball(c_cold, dir, i3, i4, 32, "Cold Ball");
+    fire_ball(SE_COLD, dir, i3, i4, 32, "Cold Ball");
     ident = true;
     break;
 
   case 21:
-    fire_ball(c_fire, dir, i3, i4, 48, "Fire Ball");
+    fire_ball(SE_FIRE, dir, i3, i4, 48, "Fire Ball");
     ident = true;
     break;
 
   case 22:
-    fire_ball(c_gas, dir, i3, i4, 8, "Stinking Cloud");
+    fire_ball(SE_GAS, dir, i3, i4, 8, "Stinking Cloud");
     ident = true;
     break;
 
   case 23:
-    fire_ball(c_acid, dir, i3, i4, 40, "Acid Ball");
+    fire_ball(SE_ACID, dir, i3, i4, 40, "Acid Ball");
     ident = true;
     break;
 
@@ -146,7 +146,7 @@ void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
     break;
 
   case 25:
-    ident = zap_monster(dir, i3, i4, 0, c_probe);
+    ident = zap_monster(dir, i3, i4, 0, SE_PROBE);
     break;
 
   default:

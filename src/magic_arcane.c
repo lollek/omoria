@@ -22,7 +22,7 @@ void arcane_spell_effects(long effect) {
     break;
 
   case 2: /*{ Detect Monster }*/
-    detect_creatures(c_monster);
+    detect_creatures(SE_MONSTER);
     break;
 
   case 3: /*{ Phase Door }*/
@@ -45,19 +45,19 @@ void arcane_spell_effects(long effect) {
 
   case 7: /*{ Stinking Cloud }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_ball(c_gas, dir, char_row, char_col, 9, "Stinking Cloud");
+      fire_ball(SE_GAS, dir, char_row, char_col, 9, "Stinking Cloud");
     }
     break;
 
   case 8: /*{ Confuse Monster }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, 0, c_confuse);
+      zap_monster(dir, char_row, char_col, 0, SE_CONFUSE);
     }
     break;
 
   case 9: /*{ Lightning Bolt }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_bolt(c_lightning, dir, char_row, char_col, damroll("3d8") + 1,
+      fire_bolt(SE_LIGHTNING, dir, char_row, char_col, damroll("3d8") + 1,
                 "Lightning Bolt");
     }
     break;
@@ -68,7 +68,7 @@ void arcane_spell_effects(long effect) {
 
   case 11: /*{ Sleep I }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, 0, c_sleep);
+      zap_monster(dir, char_row, char_col, 0, SE_SLEEP);
     }
     break;
 
@@ -89,7 +89,7 @@ void arcane_spell_effects(long effect) {
 
   case 15: /*{ Frost Bolt }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_bolt(c_cold, dir, char_row, char_col, damroll("4d8") + 1,
+      fire_bolt(SE_COLD, dir, char_row, char_col, damroll("4d8") + 1,
                 "Frost Bolt");
     }
     break;
@@ -122,7 +122,7 @@ void arcane_spell_effects(long effect) {
 
   case 22: /*{ Phantasmal Force }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_bolt(c_illusion, dir, char_row, char_col, damroll("8d4"),
+      fire_bolt(SE_ILLUSION, dir, char_row, char_col, damroll("8d4"),
                 "phantasmal force");
     }
     break;
@@ -142,25 +142,25 @@ void arcane_spell_effects(long effect) {
     break;
 
   case 26: /*{ Sleep III }*/
-    zap_area(0, 0, c_sleep);
+    zap_area(0, 0, SE_SLEEP);
     break;
 
   case 27: /*{ Hold Monster }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, 4 + randint(4), c_hold);
+      zap_monster(dir, char_row, char_col, 4 + randint(4), SE_HOLD);
     }
     break;
 
   case 28: /*{ Fire Bolt }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_bolt(c_fire, dir, char_row, char_col, damroll("6d8") + 1,
+      fire_bolt(SE_FIRE, dir, char_row, char_col, damroll("6d8") + 1,
                 "Fire Bolt");
     }
     break;
 
   case 29: /*{ Slow Creature }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, -1, c_speed);
+      zap_monster(dir, char_row, char_col, -1, SE_SPEED);
     }
     break;
 
@@ -170,12 +170,12 @@ void arcane_spell_effects(long effect) {
 
   case 31: /*{ Frost Ball }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_ball(c_cold, dir, char_row, char_col, 40, "Frost Ball");
+      fire_ball(SE_COLD, dir, char_row, char_col, 40, "Frost Ball");
     }
     break;
 
   case 32: /*{ Death Spell }*/
-    zap_area(0, player_lev / 2 + damroll("4d8"), c_drain);
+    zap_area(0, player_lev / 2 + damroll("4d8"), SE_DRAIN);
     break;
 
   case 33: /*{ Ring of Fire }*/
@@ -198,7 +198,7 @@ void arcane_spell_effects(long effect) {
 
   case 37: /*{ Fire Ball }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_ball(c_fire, dir, char_row, char_col, 59, "Fire Ball");
+      fire_ball(SE_FIRE, dir, char_row, char_col, 59, "Fire Ball");
     }
     break;
 

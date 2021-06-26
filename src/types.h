@@ -12,36 +12,42 @@ typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 #define STAT_T_SIZE 6 /* type stat_set is supposed to be 0..5 */
 enum stat_t { STR = 0, INT = 1, WIS = 2, DEX = 3, CON = 4, CHR = 5 };
 
+enum spell_class_t {
+  SC_NULL = 0,
+  SC_HOLD = 1,
+  SC_MENTAL = 2 // SE_CONFUSE, SE_SLEEP, SE_JOKE
+};
+
 enum spell_effect_t {
-  c_null = 0,
-  c_lightning = 1,
-  c_gas = 2,
-  c_acid = 3,
-  c_cold = 4,
-  c_fire = 5,
-  c_good = 6,
-  c_evil = 7,
-  c_petrify = 8,
-  c_sunray = 9,
-  c_illusion = 10,
-  c_probe = 11,
-  c_sleep = 12,
-  c_confuse = 13,
-  c_hp = 14,
-  c_drain = 15,
-  c_speed = 16,
-  c_hold = 17,
-  c_turn = 18,
-  c_poly = 19,
-  c_joke = 20,
-  c_monster = 21,
-  c_invisible = 22,
-  c_creature = 23,
-  c_object = 24,
-  c_treasure = 25,
-  c_hp_undead = 26,
-  c_thunder = 27,
-  c_holy_word = 28
+  SE_NULL = 0,      // Nothing, or "normal" type
+  SE_LIGHTNING = 1, // Lightning damage
+  SE_GAS = 2,       // Poisonous gas damage
+  SE_ACID = 3,      // Acid damage
+  SE_COLD = 4,      // Cold damage
+  SE_FIRE = 5,      // Fire damage
+  SE_GOOD = 6,      // Holy damage
+  SE_EVIL = 7,      // Marker for evil creatures, also xp loss damage type
+  SE_PETRIFY = 8,
+  SE_SUNRAY = 9,
+  SE_ILLUSION = 10, // Illusion damage
+  SE_PROBE = 11,    // Some kind of ray?
+  SE_SLEEP = 12,    // Sleep monster
+  SE_CONFUSE = 13,  // Confuses monster
+  SE_HP = 14,       // Pure HP damage/healing?
+  SE_DRAIN = 15,    // Drain life
+  SE_SPEED = 16,    // Slow / speed up monster (and player?)
+  SE_HOLD = 17,     // Hold monster
+  SE_TURN = 18,     // Turn undead
+  SE_POLY = 19,
+  SE_JOKE = 20,      // Joke damage (really)
+  SE_MONSTER = 21,   // Marker for monster creatures
+  SE_INVISIBLE = 22, // Marker for invisible creatures
+  SE_CREATURE = 23,  // Marker for enemies?
+  SE_OBJECT = 24,    // Marker for object
+  SE_TREASURE = 25,  // Marker for treasure
+  SE_HP_UNDEAD = 26,
+  SE_THUNDER = 27, // Causes confusion?
+  SE_HOLY_WORD = 28
 };
 
 enum class_t {

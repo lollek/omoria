@@ -218,11 +218,11 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 15: /*{ Detect Treasure }*/
-    ident = detect_item(c_treasure);
+    ident = detect_item(SE_TREASURE);
     break;
 
   case 16: /*{ Detect Object }*/
-    ident = detect_item(c_object);
+    ident = detect_item(SE_OBJECT);
     break;
 
   case 17: /*{ Detect Trap }*/
@@ -240,7 +240,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 20: /*{ Detect Invisible }*/
-    ident = detect_creatures(c_invisible);
+    ident = detect_creatures(SE_INVISIBLE);
     break;
 
   case 21: /*{ Aggravate Monster }*/
@@ -288,7 +288,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 30: /*{ Dispell Creature }*/
-    ident = zap_area(0x0008, 60, c_hp);
+    ident = zap_area(0x0008, 60, SE_HP);
     break;
 
   case 31: /*{ Blank }*/

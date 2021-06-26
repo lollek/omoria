@@ -80,11 +80,11 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
     break;
 
   case 9: /*{ Chime of Slow Monster }*/
-    ident = zap_area(0, -1, c_speed);
+    ident = zap_area(0, -1, SE_SPEED);
     break;
 
   case 10: /*{ Chime of Sooth Monster }*/
-    ident = zap_area(0, 0, c_sleep);
+    ident = zap_area(0, 0, SE_SLEEP);
     break;
 
   case 11: /*{ Chime of Cure Light Wounds }*/
@@ -110,7 +110,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
     break;
 
   case 15: /*{ Chime of Dispell Evil }*/
-    ident = zap_area(0x0004, 60, c_hp);
+    ident = zap_area(0x0004, 60, SE_HP);
     break;
 
   case 16: /*{ Chime of Darkness }*/
@@ -148,17 +148,17 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
 
   case 21: /*{ Horn of Cold }*/
     msg_print("A wave of cold pours forth...");
-    ident = zap_area(0x0010, 60, c_hp);
+    ident = zap_area(0x0010, 60, SE_HP); // Wrong element type?
     break;
 
   case 22: /*{ Horn of Heat }*/
     msg_print("A blast of warm air pours forth...");
-    ident = zap_area(0x0020, 60, c_hp);
+    ident = zap_area(0x0020, 60, SE_HP); // Wrong element type?
     break;
 
   case 23: /*{ Horn of Gas }*/
     msg_print("Gas streams out ...!");
-    ident = zap_area(0x0040, 60, c_hp);
+    ident = zap_area(0x0040, 60, SE_HP); // Wrong element type?
     player_flags.poisoned += randint(10);
     break;
 
@@ -196,7 +196,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
 
   case 27: /*{ Horn of Valhalla }*/
     msg_print("The Voice of Odin (oh brother...) smites evil!");
-    ident = zap_area(0x0004, 70, c_hp);
+    ident = zap_area(0x0004, 70, SE_HP);
     light_area(char_row, char_col);
     hp_player(randint(20) + 20, "a horn.");
     break;
@@ -215,7 +215,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
     msg_print("Thick fog billows out...");
     unlight_area(char_row, char_col);
     msg_print("The nearby creatures are confused");
-    zap_area(0, 0, c_confuse);
+    zap_area(0, 0, SE_CONFUSE);
     ident = true;
     break;
 
@@ -244,7 +244,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr) {
     break;
 
   case 2: /*{Gold Cross}*/
-    ident = zap_area(0x0400, 100, c_hp);
+    ident = zap_area(0x0400, 100, SE_HP);
     break;
 
   case 3: /*{Mithril Cross}*/
@@ -364,7 +364,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr) {
     break;
 
   case 14:
-    ident = zap_area(0, 2, c_speed);
+    ident = zap_area(0, 2, SE_SPEED);
     break;
 
   case 15:
@@ -402,11 +402,11 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr) {
     break;
 
   case 19:
-    ident = detect_creatures(c_monster);
+    ident = detect_creatures(SE_MONSTER);
     break;
 
   case 20:
-    ident = zap_area(0x0004, 60, c_hp);
+    ident = zap_area(0x0004, 60, SE_HP);
     break;
 
   case 21:
@@ -424,7 +424,7 @@ static void b__misc_effects(long effect, boolean *idented, treas_ptr item_ptr) {
     break;
 
   case 23:
-    ident = detect_creatures(c_invisible);
+    ident = detect_creatures(SE_INVISIBLE);
     break;
 
   case 24:

@@ -754,7 +754,7 @@ static void d__update_fire_ring() {
   /*{ Ring of Fire }*/
   if ((player_flags).ring_fire > 0) {
     msg_print("Flames arise!");
-    explode(c_fire, char_row, char_col, 20 + randint(20), "Ring of Fire");
+    explode(SE_FIRE, char_row, char_col, 20 + randint(20), "Ring of Fire");
     (player_flags).ring_fire--;
   }
 }
@@ -763,7 +763,7 @@ static void d__update_frost_ring() {
 
   /*{ Ring of Frost }*/
   if ((player_flags).ring_ice > 0) {
-    explode(c_cold, char_row, char_col, 10 + randint(20), "Ring of Frost");
+    explode(SE_COLD, char_row, char_col, 10 + randint(20), "Ring of Frost");
     (player_flags).ring_ice--;
   }
 }
@@ -772,7 +772,7 @@ static void d__update_blade_barrier() {
 
   /*{ Blade Barrier }*/
   if ((player_flags).blade_ring > 0) {
-    explode(c_null, char_row, char_col, 12 + randint(player_lev),
+    explode(SE_NULL, char_row, char_col, 12 + randint(player_lev),
             "Blade Barrier");
     (player_flags).blade_ring--;
   }

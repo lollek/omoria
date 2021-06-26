@@ -1352,7 +1352,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
             /* do; */
             msg_print("Your hands stop glowing.");
             player_flags.confuse_monster = false;
-            if (mon_save(monptr, 0, c_sc_mental)) {
+            if (mon_save(monptr, 0, SC_MENTAL)) {
               sprintf(out_val,
                       "The %s is "
                       "unaffected.",
@@ -1720,7 +1720,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
       }
       msg_print(cdesc);
       i1 = (player_exp / 100) * MON_DRAIN_LIFE;
-      breath(c_evil, char_row, char_col, 1, ddesc);
+      breath(SE_EVIL, char_row, char_col, 1, ddesc);
 
       break;
 
@@ -1728,7 +1728,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
       stop_player = true;
       strcat(cdesc, "breathes petrifying gas at you!");
       msg_print(cdesc);
-      breath(c_petrify, char_row, char_col, 1, ddesc);
+      breath(SE_PETRIFY, char_row, char_col, 1, ddesc);
       break;
 
     case 20: /*{Breath Light }*/
@@ -1742,10 +1742,10 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
       msg_print(cdesc);
       if ((strstr(cdesc, "Druid") != NULL) ||
           (strstr(cdesc, "Titan") != NULL)) {
-        breath(c_lightning, char_row, char_col, 32, ddesc);
+        breath(SE_LIGHTNING, char_row, char_col, 32, ddesc);
       } else {
-        breath(c_lightning, char_row, char_col, (long)(m_list[monptr].hp / 4.0),
-               ddesc);
+        breath(SE_LIGHTNING, char_row, char_col,
+               (long)(m_list[monptr].hp / 4.0), ddesc);
       }
       break;
 
@@ -1753,14 +1753,15 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
       stop_player = true;
       strcat(cdesc, "breathes gas.");
       msg_print(cdesc);
-      breath(c_gas, char_row, char_col, (long)(m_list[monptr].hp / 3.0), ddesc);
+      breath(SE_GAS, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
+             ddesc);
       break;
 
     case 22: /*{Breath Acid  }*/
       stop_player = true;
       strcat(cdesc, "breathes acid.");
       msg_print(cdesc);
-      breath(c_acid, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
+      breath(SE_ACID, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
              ddesc);
       break;
 
@@ -1768,7 +1769,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
       stop_player = true;
       strcat(cdesc, "breathes frost.");
       msg_print(cdesc);
-      breath(c_cold, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
+      breath(SE_COLD, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
              ddesc);
       break;
 
@@ -1781,9 +1782,9 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
       }
       msg_print(cdesc);
       if (strstr(cdesc, "Heirophant Druid") != NULL) {
-        breath(c_fire, char_row, char_col, 48, ddesc);
+        breath(SE_FIRE, char_row, char_col, 48, ddesc);
       } else {
-        breath(c_fire, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
+        breath(SE_FIRE, char_row, char_col, (long)(m_list[monptr].hp / 3.0),
                ddesc);
       }
       break;

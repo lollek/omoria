@@ -35,7 +35,7 @@ void nature_spell_effects(long effect) {
     break;
 
   case 2: /*{ Detect Monster }*/
-    detect_creatures(c_monster);
+    detect_creatures(SE_MONSTER);
     break;
 
   case 3: /*{ Battle Song }*/
@@ -57,7 +57,7 @@ void nature_spell_effects(long effect) {
 
   case 7: /*{ Magical Jig }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, 0, c_confuse);
+      zap_monster(dir, char_row, char_col, 0, SE_CONFUSE);
     }
     break;
 
@@ -196,7 +196,7 @@ void nature_spell_effects(long effect) {
     break;
 
   case 33: /*{ Word of Blindness }*/
-    if (zap_area(0, 0, c_confuse)) {
+    if (zap_area(0, 0, SE_CONFUSE)) {
       msg_print("You blind the creatures!");
     }
     break;
@@ -210,9 +210,9 @@ void nature_spell_effects(long effect) {
       if (d__get_dir("Hotter(1) || Colder(2)?", &dir, &dumy, &y_dumy,
                      &x_dumy)) {
         if (dir == 1) {
-          zap_area(0x0020, 30, c_hp);
+          zap_area(0x0020, 30, SE_HP);
         } else if (dir == 2) {
-          zap_area(0x0010, 30, c_hp);
+          zap_area(0x0010, 30, SE_HP);
         }
       } else {
         dir = 1;
@@ -236,7 +236,7 @@ void nature_spell_effects(long effect) {
     break;
 
   case 39: /*{ Dispel Monster }*/
-    zap_area(0x0002, 3 * player_lev, c_hp);
+    zap_area(0x0002, 3 * player_lev, SE_HP);
     break;
 
   case 40: /*{ Note of Destruction }*/

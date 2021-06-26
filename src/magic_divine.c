@@ -30,7 +30,7 @@ void divine_spell_effects(long effect) {
   switch (effect + 1) {
 
   case 1: /*{ Detect Evil }*/
-    detect_creatures(c_evil);
+    detect_creatures(SE_EVIL);
     break;
 
   case 2: /*{ Cure Light Wounds }*/
@@ -63,7 +63,7 @@ void divine_spell_effects(long effect) {
 
   case 9: /*{ Blind Creature }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, 0, c_confuse);
+      zap_monster(dir, char_row, char_col, 0, SE_CONFUSE);
     }
     break;
 
@@ -77,7 +77,7 @@ void divine_spell_effects(long effect) {
 
   case 12: /*{ Ray of Sanctification }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_bolt(c_good, dir, char_row, char_col, damroll("2d6"), "Purple Ray");
+      fire_bolt(SE_GOOD, dir, char_row, char_col, damroll("2d6"), "Purple Ray");
     }
     break;
 
@@ -144,7 +144,7 @@ void divine_spell_effects(long effect) {
 
   case 27: /*{ Orb of Draining }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_ball(c_good, dir, char_row, char_col, damroll("3d6") + player_lev,
+      fire_ball(SE_GOOD, dir, char_row, char_col, damroll("3d6") + player_lev,
                 "Black Sphere");
     }
     break;
@@ -154,7 +154,7 @@ void divine_spell_effects(long effect) {
     break;
 
   case 29: /*{ Turn Undead }*/
-    zap_area(0, 0, c_turn);
+    zap_area(0, 0, SE_TURN);
     break;
 
   case 30:                                 /*{ Prayer }*/
@@ -162,7 +162,7 @@ void divine_spell_effects(long effect) {
     break;
 
   case 31: /*{ Dispell Undead }*/
-    zap_area(0x0008, 3 * player_lev, c_hp);
+    zap_area(0x0008, 3 * player_lev, SE_HP);
     break;
 
   case 32: /*{ Resist Paralysis }*/
@@ -174,7 +174,7 @@ void divine_spell_effects(long effect) {
     break;
 
   case 34: /*{ Dispell Evil }*/
-    zap_area(0x0004, 3 * player_lev, c_hp);
+    zap_area(0x0004, 3 * player_lev, SE_HP);
     break;
 
   case 35: /*{ Heal }*/
@@ -187,7 +187,7 @@ void divine_spell_effects(long effect) {
 
   case 37: /*{ Holy Thunder }*/
     msg_print("KABOOM!");
-    zap_area(0x0004, 4 + randint(4), c_thunder);
+    zap_area(0x0004, 4 + randint(4), SE_THUNDER);
     break;
 
   case 38: /*{ Glyph of Warding }*/
@@ -206,7 +206,7 @@ void divine_spell_effects(long effect) {
     break;
 
   case 40: /*{ Holy Word }*/
-    zap_area(0x0004, 6 * player_lev, c_holy_word);
+    zap_area(0x0004, 6 * player_lev, SE_HOLY_WORD);
     cure_me(&player_flags.afraid);
     cure_me(&player_flags.poisoned);
     hp_player(1000, "a prayer.");

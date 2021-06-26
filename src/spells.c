@@ -90,55 +90,55 @@ static void get_flags(enum spell_effect_t typ, long *weapon_type,
   /*{ Return flags for given type area affect               -RAK-   }*/
 
   switch (typ) {
-  case c_lightning: /* {1} */
+  case SE_LIGHTNING: /* {1} */
     *weapon_type = 0x00080000;
     *harm_type = 0x0100;
     *destroy = &destroyed_by_lightning;
     break;
 
-  case c_gas: /* {2}*/
+  case SE_GAS: /* {2}*/
     *weapon_type = 0x00100000;
     *harm_type = 0x0040;
     *destroy = &null_obj_set;
     break;
 
-  case c_acid: /* {3}*/
+  case SE_ACID: /* {3}*/
     *weapon_type = 0x00200000;
     *harm_type = 0x0080;
     *destroy = &destroyed_by_acid;
     break;
 
-  case c_cold: /* {4}*/
+  case SE_COLD: /* {4}*/
     *weapon_type = 0x00400000;
     *harm_type = 0x0010;
     *destroy = &destroyed_by_cold;
     break;
 
-  case c_fire: /* {5}*/
+  case SE_FIRE: /* {5}*/
     *weapon_type = 0x00800000;
     *harm_type = 0x0020;
     *destroy = &destroyed_by_fire;
     break;
 
-  case c_good: /* {6}*/
+  case SE_GOOD: /* {6}*/
     *weapon_type = 0x00000000;
     *harm_type = 0x0004;
     *destroy = &null_obj_set;
     break;
 
-  case c_evil: /* {7}*/
+  case SE_EVIL: /* {7}*/
     *weapon_type = 0x00000000;
     *harm_type = 0x0000;
     *destroy = &null_obj_set;
     break;
 
-  case c_petrify: /* {8}*/
+  case SE_PETRIFY: /* {8}*/
     *weapon_type = 0x00000000;
     *harm_type = 0x0000;
     *destroy = &destroyed_by_petrify;
     break;
 
-  case c_sunray: /* {9}*/
+  case SE_SUNRAY: /* {9}*/
     *weapon_type = 0x00000000;
     *harm_type = 0x0108;
     *destroy = &destroyed_by_sunray;
@@ -417,9 +417,9 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                 /* do; */
                 dam = dam_hp;
 
-                if ((typ == c_illusion) || (typ == c_joke)) {
-                  if (mon_save(cave[i1][i2].cptr, 0, c_sc_mental)) {
-                    if (typ == c_illusion) {
+                if ((typ == SE_ILLUSION) || (typ == SE_JOKE)) {
+                  if (mon_save(cave[i1][i2].cptr, 0, SC_MENTAL)) {
+                    if (typ == SE_ILLUSION) {
                       dam = 0;
                     } else {
                       dam = dam / 4;
@@ -495,13 +495,13 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
   }
 
   if (tkill == 1) {
-    if (typ == c_joke) {
+    if (typ == SE_JOKE) {
       msg_print("There is a scream of side-splitting laughter!");
     } else {
       msg_print("There is a scream of agony!");
     }
   } else if (tkill > 1) {
-    if (typ == c_joke) {
+    if (typ == SE_JOKE) {
       msg_print("There are several screams of agonized laughter!");
     } else {
       msg_print("There are several screams of agony!");
@@ -517,7 +517,7 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mon_save(long a_cptr, long bonus, long spell_class) {
+boolean mon_save(long a_cptr, long bonus, enum spell_class_t spell_class) {
   long mon_level;
   boolean return_value;
 
@@ -527,15 +527,15 @@ boolean mon_save(long a_cptr, long bonus, long spell_class) {
   /* with c_list[mptr] do; */
   if ((0x1000 & c_list[m_list[a_cptr].mptr].cdefense) != 0) {
     switch (spell_class) {
-    case c_sc_hold:
+    case SC_HOLD:
       bonus += 4;
       break;
 
-    case c_sc_mental:
+    case SC_MENTAL:
       bonus += 20;
       break;
 
-    default:
+    case SC_NULL:
       break;
     }
   }
@@ -591,7 +591,7 @@ boolean do_stun(unsigned char a_cptr, long save_bonus, long time) {
   if (mon_resists(a_cptr)) {
     return false;
   }
-  if (mon_save(a_cptr, save_bonus, c_sc_hold)) {
+  if (mon_save(a_cptr, save_bonus, SC_HOLD)) {
     return false;
   }
   sprintf(out_val, "%s appears stunned!", m_name);
@@ -753,22 +753,22 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
       } else if (cave[i1][i2].cptr == 1) {
         dam = trunc(dam_hp / (distance(i1, i2, y, x) + 1));
         switch (typ) {
-        case c_lightning:
+        case SE_LIGHTNING:
           light_dam(dam, ddesc);
           break;
-        case c_gas:
+        case SE_GAS:
           poison_gas(dam, ddesc);
           break;
-        case c_acid:
+        case SE_ACID:
           acid_dam(dam, ddesc);
           break;
-        case c_cold:
+        case SE_COLD:
           cold_dam(dam, ddesc);
           break;
-        case c_fire:
+        case SE_FIRE:
           fire_dam(dam, ddesc);
           break;
-        case c_evil:
+        case SE_EVIL:
           xp_loss(dam);
           break;
         default:
@@ -962,7 +962,7 @@ boolean restore_level() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_creatures(long typ) {
+boolean detect_creatures(enum spell_effect_t typ) {
   /*{ Display evil creatures on current panel               -RAK-   }*/
 
   long i1;
@@ -976,13 +976,13 @@ boolean detect_creatures(long typ) {
     if (panel_contains(m_list[i1].fy, m_list[i1].fx)) {
 
       switch (typ) {
-      case c_evil:
+      case SE_EVIL:
         found = (0x0004 & c_list[m_list[i1].mptr].cdefense) != 0;
         break;
-      case c_monster:
+      case SE_MONSTER:
         found = (0x10000 & c_list[m_list[i1].mptr].cmove) == 0;
         break;
-      case c_invisible:
+      case SE_INVISIBLE:
         found = (0x10000 & c_list[m_list[i1].mptr].cmove) != 0;
         break;
       default:
@@ -1004,14 +1004,16 @@ boolean detect_creatures(long typ) {
 
   if (flag) {
     switch (typ) {
-    case c_evil:
+    case SE_EVIL:
       msg_print("You sense the presence of evil!");
       break;
-    case c_monster:
+    case SE_MONSTER:
       msg_print("You sense the presence of monsters!");
       break;
-    case c_invisible:
+    case SE_INVISIBLE:
       msg_print("You sense the presence of invisible creatures!");
+      break;
+    default:
       break;
     }
     msg_print(" ");
@@ -1045,7 +1047,7 @@ boolean detect_item(long typ) {
     for (i2 = panel_col_min; i2 <= panel_col_max; i2++) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].tptr > 0) {
-        if (typ == c_treasure) {
+        if (typ == SE_TREASURE) {
           show_it = is_in(t_list[cave[i1][i2].tptr].tval, treasures);
         } else {
           show_it = (t_list[cave[i1][i2].tptr].tval < valuable_metal);
@@ -1408,7 +1410,7 @@ boolean sleep_monsters1(long y, long x) {
         /* do; */
         if (!mon_resists(cave[i1][i2].cptr)) {
           flag = true;
-          if (mon_save(cave[i1][i2].cptr, 0, c_sc_mental)) {
+          if (mon_save(cave[i1][i2].cptr, 0, SC_MENTAL)) {
             sprintf(out_val, "The %s is unaffected.",
                     c_list[m_list[cave[i1][i2].cptr].mptr].name);
           } else {
@@ -1736,30 +1738,31 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
   /* with c_list[m_list[i1].mptr]. do; */
 
   switch (typ) {
-  case c_confuse:
-  case c_sleep:
-  case c_joke:
-    hmm = !mon_save(monptr, 0, c_sc_mental);
+  case SE_CONFUSE:
+  case SE_SLEEP:
+  case SE_JOKE:
+    hmm = !mon_save(monptr, 0, SC_MENTAL);
     break;
 
-  case c_hold:
-  case c_thunder:
+  case SE_HOLD:
+  case SE_THUNDER:
     hmm = do_stun(monptr, 0, dmge);
     break;
 
-  case c_speed:
-    hmm = !mon_save(c_list[m_list[monptr].mptr].level, 0, c_null) || (dmge > 0);
+  case SE_SPEED:
+    hmm =
+        !mon_save(c_list[m_list[monptr].mptr].level, 0, SC_NULL) || (dmge > 0);
     break;
 
-  case c_turn:
+  case SE_TURN:
     hmm = (c_list[m_list[monptr].mptr].cdefense & 0x0008) != 0;
     break;
 
-  case c_drain:
+  case SE_DRAIN:
     hmm = (c_list[m_list[monptr].mptr].cdefense & 0x0008) == 0;
     break;
 
-  case c_hp:
+  case SE_HP:
     hmm = (c_list[m_list[monptr].mptr].cdefense & cflag) != 0;
     break;
 
@@ -1771,7 +1774,7 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
   return hmm && (!mon_resists(monptr));
 }
 /*//////////////////////////////////////////////////////////////////// */
-void za__yes_it_did(long monptr, long dmge, long typ) {
+void za__yes_it_did(long monptr, long dmge, enum spell_effect_t typ) {
   char out_val[82];
 
   long mptr = m_list[monptr].mptr; /* monster might get deleted */
@@ -1779,50 +1782,50 @@ void za__yes_it_did(long monptr, long dmge, long typ) {
   /* with m_list[i1]. do; */
 
   switch (typ) {
-  case c_confuse:
-  case c_turn:
+  case SE_CONFUSE:
+  case SE_TURN:
     sprintf(out_val, "The %s runs frantically!", c_list[mptr].name);
     msg_print(out_val);
     m_list[monptr].confused = true;
     break;
 
-  case c_sleep:
+  case SE_SLEEP:
     m_list[monptr].csleep = 500;
     break;
 
-  case c_speed:
+  case SE_SPEED:
     m_list[monptr].cspeed += dmge;
     m_list[monptr].csleep = 0;
     break;
 
-  case c_hold:; /*{done in do_stun in did_it_work already}*/
+  case SE_HOLD:; /*{done in do_stun in did_it_work already}*/
     break;
 
-  case c_thunder:
+  case SE_THUNDER:
     m_list[monptr].confused = true;
     break;
 
-  case c_hp:
-  case c_joke:
-  case c_drain:
-  case c_holy_word:
+  case SE_HP:
+  case SE_JOKE:
+  case SE_DRAIN:
+  case SE_HOLY_WORD:
     /* with c_list[m_list[i1].mptr]. do; */
     if (mon_take_hit(monptr, randint(dmge)) > 0) {
-      if (typ == c_joke) {
+      if (typ == SE_JOKE) {
         sprintf(out_val, "The %s dies laughing!", c_list[mptr].name);
       } else {
         sprintf(out_val, "The %s dissolves!", c_list[mptr].name);
       }
       msg_print(out_val);
     } else {
-      if (typ == c_joke) {
+      if (typ == SE_JOKE) {
         sprintf(out_val, "The %s chuckles.", c_list[mptr].name);
         msg_print(out_val);
         m_list[monptr].confused = true;
       } else {
         sprintf(out_val, "The %s shudders.", c_list[mptr].name);
         msg_print(out_val);
-        if (typ == c_holy_word) {
+        if (typ == SE_HOLY_WORD) {
           if (do_stun(monptr, -4, 4 + randint(4))) {
             m_list[monptr].confused = true;
           }
@@ -1830,18 +1833,20 @@ void za__yes_it_did(long monptr, long dmge, long typ) {
       }
     }
     break;
+  default:
+    break;
   } /* end switch */
 }
 /*//////////////////////////////////////////////////////////////////// */
 boolean za__no_it_didnt(long monptr, long dmge, long typ) {
   char out_val[82];
-  obj_set some_stuff = {c_sleep, c_confuse, c_speed, c_hold, c_joke, 0};
+  obj_set some_stuff = {SE_SLEEP, SE_CONFUSE, SE_SPEED, SE_HOLD, SE_JOKE, 0};
   boolean flag = false;
 
   /* with m_list[i1]. do; */
   if (is_in(typ, some_stuff)) {
     flag = true;
-    if (typ == c_joke) {
+    if (typ == SE_JOKE) {
       sprintf(out_val, "The %s appears offended...",
               c_list[m_list[monptr].mptr].name);
       msg_print(out_val);
@@ -2151,7 +2156,8 @@ boolean starlite(long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2) {
+boolean fb__ill_joke(long a_cptr, enum spell_effect_t typ, long dam, char *str,
+                     char *str2) {
   long i2;
   char out_val[82];
 
@@ -2159,10 +2165,10 @@ boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2) {
   find_monster_name(str2, a_cptr, true);
   /* with m_list[a_cptr] do; */
   /* with c_list[mptr] do; */
-  if (!mon_save(a_cptr, 0, c_sc_mental)) {
+  if (!mon_save(a_cptr, 0, SC_MENTAL)) {
     m_list[a_cptr].confused = true;
     i2 = mon_take_hit(a_cptr, dam);
-    if (typ == c_illusion) {
+    if (typ == SE_ILLUSION) {
       sprintf(out_val, "%s seems to believe the illusion...", str2);
       msg_print(out_val);
       if (i2 > 0) {
@@ -2182,7 +2188,7 @@ boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2) {
     }
 
   } else {
-    if (typ == c_illusion) {
+    if (typ == SE_ILLUSION) {
       sprintf(out_val, "%s is unaffected.", str2);
       msg_print(out_val);
     } else {
@@ -2198,7 +2204,7 @@ boolean fb__ill_joke(long a_cptr, long typ, long dam, char *str, char *str2) {
   return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_bolt(long typ, long dir, long y, long x, long dam,
+boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
                   char bolt_typ[28]) {
   /*{ Shoot a bolt in a given direction                     -RAK-   }*/
 
@@ -2216,7 +2222,7 @@ boolean fire_bolt(long typ, long dir, long y, long x, long dam,
   dist = 0;
   if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
     /* with cave[y][x]. do; */
-    if ((typ == c_illusion) || (typ == c_joke)) {
+    if ((typ == SE_ILLUSION) || (typ == SE_JOKE)) {
       fb__ill_joke(cave[y][x].cptr, typ, dam, str, str2);
     } else {
       /* with m_list[cave[y][x].cptr]. do; */
@@ -2251,8 +2257,8 @@ boolean fire_bolt(long typ, long dir, long y, long x, long dam,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_ball(long typ, long dir, long y, long x, long dam_hp,
-                  char descrip[28]) {
+boolean fire_ball(enum spell_effect_t typ, long dir, long y, long x,
+                  long dam_hp, char descrip[28]) {
   /*{ Shoot a ball in a given direction.  Note that balls have an   }*/
   /*{ area affect....                                       -RAK-   }*/
 
@@ -2385,7 +2391,7 @@ boolean poly_monster(long dir, long y, long x) {
     if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, false)) {
       /* with cave[y][x]. do; */
       cptr = cave[y][x].cptr;
-      if (!mon_save(cptr, 0, c_null)) {
+      if (!mon_save(cptr, 0, SC_NULL)) {
         if (!mon_resists(cptr)) {
           flag = true;
           delete_monster(cptr);
@@ -2527,29 +2533,30 @@ boolean teleport_monster(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean zm__did_it_work(long zaptype, long cptr, long aux) {
+static boolean zm__did_it_work(enum spell_effect_t zaptype, long cptr,
+                               long aux) {
   boolean flag;
 
   /* with cave[y,x] do; */
   /* with c_list[m_list[cptr].mptr] do; */
 
   switch (zaptype) {
-  case c_sleep:
-  case c_confuse:
-    flag = ((!mon_save(cptr, 0, c_sc_mental)) && (!mon_resists(cptr)));
+  case SE_SLEEP:
+  case SE_CONFUSE:
+    flag = ((!mon_save(cptr, 0, SC_MENTAL)) && (!mon_resists(cptr)));
     break;
 
-  case c_drain:
+  case SE_DRAIN:
     flag = (((c_list[m_list[cptr].mptr].cdefense & 0x0008) == 0) &&
             (!mon_resists(cptr)));
     break;
 
-  case c_speed:
-    flag = ((!mon_save(cptr, 0, c_null)) && (!mon_resists(cptr))) || (aux > 0);
+  case SE_SPEED:
+    flag = ((!mon_save(cptr, 0, SC_NULL)) && (!mon_resists(cptr))) || (aux > 0);
     break;
 
-  case c_hold:
-    flag = ((!mon_save(cptr, 0, c_hold)) && (!mon_resists(cptr)));
+  case SE_HOLD:
+    flag = ((!mon_save(cptr, 0, SC_HOLD)) && (!mon_resists(cptr)));
     break;
 
   default:
@@ -2560,7 +2567,8 @@ boolean zm__did_it_work(long zaptype, long cptr, long aux) {
 }
 
 /*//////////////////////////////////////////////////////////////////// */
-void zm__yes_it_did(long zaptype, long cptr, long aux, char *str1, char *str2) {
+void zm__yes_it_did(enum spell_effect_t zaptype, long cptr, long aux,
+                    char *str1, char *str2) {
   long i1;
   char out_val[82];
 
@@ -2568,7 +2576,7 @@ void zm__yes_it_did(long zaptype, long cptr, long aux, char *str1, char *str2) {
   /* with m_list[cptr]. do; */
 
   switch (zaptype) {
-  case c_probe:
+  case SE_PROBE:
     sprintf(out_val, "The mysterious ray strikes %s.", str2);
     msg_print(out_val);
     msg_print("A voice booms down from above!  It says..");
@@ -2576,21 +2584,21 @@ void zm__yes_it_did(long zaptype, long cptr, long aux, char *str1, char *str2) {
     msg_print(out_val);
     break;
 
-  case c_sleep:
+  case SE_SLEEP:
     m_list[cptr].csleep = 500;
     sprintf(out_val, "%s falls asleep.", str1);
     msg_print(out_val);
     break;
 
-  case c_confuse:
+  case SE_CONFUSE:
     m_list[cptr].confused = true;
     m_list[cptr].csleep = 0;
     sprintf(out_val, "%s appears confused.", str1);
     msg_print(out_val);
     break;
 
-  case c_hp:
-  case c_drain:
+  case SE_HP:
+  case SE_DRAIN:
     if (mon_take_hit(cptr, aux) > 0) {
       sprintf(out_val, "%s dies in a fit of agony.", str1);
     } else {
@@ -2599,12 +2607,12 @@ void zm__yes_it_did(long zaptype, long cptr, long aux, char *str1, char *str2) {
     msg_print(out_val);
     break;
 
-  case c_speed:
+  case SE_SPEED:
     m_list[cptr].cspeed += aux;
     m_list[cptr].csleep = 0;
     break;
 
-  case c_hold:
+  case SE_HOLD:
     sprintf(out_val, "%s appears frozen!", str1);
     msg_print(out_val);
     i1 = m_list[cptr].stunned + aux;
@@ -2619,16 +2627,16 @@ void zm__yes_it_did(long zaptype, long cptr, long aux, char *str1, char *str2) {
   }
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zm__no_it_didnt(long zaptype, char *str1) {
+boolean zm__no_it_didnt(enum spell_effect_t zaptype, char *str1) {
   /*{ returns true for item idents }*/
 
-  obj_set things_you_can_know = {c_illusion, c_sleep, c_confuse, 0};
+  obj_set things_you_can_know = {SE_ILLUSION, SE_SLEEP, SE_CONFUSE, 0};
   char out_val[82];
   boolean flag;
 
   flag = is_in(zaptype, things_you_can_know);
 
-  if (zaptype != c_drain) {
+  if (zaptype != SE_DRAIN) {
     sprintf(out_val, "%s is unaffected.", str1);
     msg_print(out_val);
   }
@@ -2859,8 +2867,8 @@ boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_line(long typ, long dir, long y, long x, long dam_hp,
-                  char descrip[28]) {
+boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
+                  long dam_hp, char descrip[28]) {
   /*{ Fire a spell that affects a line of monsters                  }*/
 
   long dist;

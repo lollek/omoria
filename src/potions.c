@@ -145,7 +145,7 @@ void q__potion_effect(long effect, boolean *idented) {
     break;
 
   case 25:
-    ident = detect_creatures(c_monster);
+    ident = detect_creatures(SE_MONSTER);
     break;
 
   case 26: /*{ Increase Dex }*/

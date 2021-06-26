@@ -29,7 +29,7 @@ void song_spell_effects(long effect) {
   switch (effect + 1) {
 
   case 1: /*{ Detect Monster }*/
-    detect_creatures(c_monster);
+    detect_creatures(SE_MONSTER);
     break;
 
   case 2: /*{ Battle Song }*/
@@ -51,7 +51,7 @@ void song_spell_effects(long effect) {
 
   case 6: /*{ Magical Jig }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, 0, c_confuse);
+      zap_monster(dir, char_row, char_col, 0, SE_CONFUSE);
     }
     break;
 
@@ -77,7 +77,7 @@ void song_spell_effects(long effect) {
     break;
 
   case 12: /*{ Detect Invisible }*/
-    detect_creatures(c_invisible);
+    detect_creatures(SE_INVISIBLE);
     break;
 
   case 13: /*{ Cure Poison }*/
@@ -98,7 +98,7 @@ void song_spell_effects(long effect) {
 
   case 17: /*{ Physical Humor }*/
     if (d__get_dir("Which diretion?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_bolt(c_joke, dir, char_row, char_col, damroll("3d8"), "punch line");
+      fire_bolt(SE_JOKE, dir, char_row, char_col, damroll("3d8"), "punch line");
     }
     break;
 
@@ -118,15 +118,15 @@ void song_spell_effects(long effect) {
     break;
 
   case 21: /*{ Mass Charm }*/
-    zap_area(0, 0, c_sleep);
+    zap_area(0, 0, SE_SLEEP);
     break;
 
   case 22: /*{ Detect Treasure }*/
-    detect_item(c_treasure);
+    detect_item(SE_TREASURE);
     break;
 
   case 23: /*{ Detect Object }*/
-    detect_item(c_object);
+    detect_item(SE_OBJECT);
     break;
 
   case 24: /*{ Resist Petrification }*/
@@ -139,7 +139,7 @@ void song_spell_effects(long effect) {
 
   case 26: /*{ Panic }*/
     msg_print("You scare the creatures!");
-    zap_area(0, 0, c_confuse);
+    zap_area(0, 0, SE_CONFUSE);
     break;
 
   case 27: /*{ Word of Recall }*/
@@ -163,7 +163,7 @@ void song_spell_effects(long effect) {
 
   case 31: /*{ Joke of Death }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      fire_ball(c_joke, dir, char_row, char_col, 30, "terrible joke");
+      fire_ball(SE_JOKE, dir, char_row, char_col, 30, "terrible joke");
     }
     break;
 
@@ -175,7 +175,7 @@ void song_spell_effects(long effect) {
 
   case 33: /*{ Slow Creature }*/
     if (d__get_dir("Which direction?", &dir, &dumy, &y_dumy, &x_dumy)) {
-      zap_monster(dir, char_row, char_col, -1, c_speed);
+      zap_monster(dir, char_row, char_col, -1, SE_SPEED);
     }
     break;
 
@@ -196,7 +196,7 @@ void song_spell_effects(long effect) {
     break;
 
   case 37: /*{ Last Laugh }*/
-    zap_area(0, 50, c_joke);
+    zap_area(0, 50, SE_JOKE);
     break;
 
   case 38: /*{ Teleport Level }*/
@@ -223,7 +223,7 @@ void song_spell_effects(long effect) {
     break;
 
   case 40: /*{ Song of Power }*/
-    zap_area(0x0006, 4 * player_lev, c_hp);
+    zap_area(0x0006, 4 * player_lev, SE_HP);
     cure_me(&(player_flags.poisoned));
     hp_player(300, "a spell");
     cure_me(&player_flags.blind);
