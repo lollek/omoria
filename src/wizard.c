@@ -30,6 +30,13 @@
 
 static boolean became_wizard = false;
 
+typedef struct list_elem {
+  treasure_type data;
+  struct list_elem *next;
+} list_elem;
+
+typedef list_elem *list_elem_ptr;
+
 void game_version() {
   /*{ Print Moria credits					-RAK-	}*/
 

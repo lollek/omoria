@@ -239,12 +239,6 @@ typedef struct message_record {
 
 typedef message_record *message_ptr;
 
-typedef struct list_elem {
-  treasure_type data;
-  struct list_elem *next;
-} list_elem;
-
-typedef list_elem *list_elem_ptr;
 
 /* needs to be a multiple of 8 */
 #define ENCRYPT_STAT_BUF_SIZE 1024
