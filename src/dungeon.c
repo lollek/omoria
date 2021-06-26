@@ -4099,104 +4099,57 @@ boolean water_move()
 	return flag;
 }
 
-void search(long y, long x, long chance)
+void search(long player_y, long player_x, long chance)
 {
 	/*{ Searches for hidden things...                         -RAK-   }*/
 
-	long i1, i2;
-	char out_val[86];
 
-	/* with player_flags do; */
 	if ((player_flags).confused + (player_flags).blind > 0) {
 		chance = trunc(chance / 10.0);
 	} else if (no_light()) {
 		chance = (long)(chance / 5.0);
 	}
 
-	for (i1 = (y - 1); i1 <= (y + 1); i1++) {
-		for (i2 = (x - 1); i2 <= (x + 1); i2++) {
-			if (in_bounds(i1, i2)) {
-				if ((i1 != y) || (i2 != x)) {
-					if (randint(100) < chance) {
-						/* with cave[i1][i2]. do; */
+	for (long y = (player_y - 1); y <= (player_y + 1); y++) {
+		for (long x = (player_x - 1); x <= (player_x + 1); x++) {
+			if (!in_bounds(y, x)) {
+				continue;
+			}
+			if (y == player_y && x == player_x) {
+				// There can be no unfound thing where the
+				// player is standing?
+				continue;
+			}
+			if (randint(100) >= chance) {
+				continue;
+			}
 
-						/*{ Search for hidden objects
-						 * }*/
-						if (cave[i1][i2].tptr > 0) {
-							/* with t_list[tptr] do;
-							 */
+			// Search for hidden objects
+			if (cave[y][x].tptr <= 0) {
+				continue;
+			}
 
-							/*{ Trap on floor? }*/
-							if (t_list[cave[i1][i2]
-								       .tptr]
-								.tval ==
-							    unseen_trap) {
-								sprintf(
-								    out_val,
-								    "You have "
-								    "found %s.",
-								    t_list
-									[cave[i1][i2]
-									     .tptr]
-									    .name);
-								msg_print(
-								    out_val);
-								change_trap(i1,
-									    i2);
-								find_flag =
-								    false;
+			if (t_list[cave[y][x].tptr].tval == unseen_trap) {
+				// Trap on floor
+				char out_val[86];
+				sprintf(out_val, "You have found %s.", t_list[cave[y][x].tptr].name);
+				msg_print(out_val);
+				change_trap(y, x);
+				find_flag = false;
 
-								/*{ Secret door?
-								 * }*/
-							} else if (
-							    t_list[cave[i1][i2]
-								       .tptr]
-								.tval ==
-							    secret_door) {
-								msg_print(
-								    "You have "
-								    "found a "
-								    "secret "
-								    "door.");
-								cave[i1][i2]
-								    .fval =
-								    corr_floor2
-									.ftval;
-								change_trap(i1,
-									    i2);
-								find_flag =
-								    false;
+			} else if (t_list[cave[y][x].tptr].tval == secret_door) {
+				// Secret door
+				msg_print("You have found a secret door.");
+				cave[y][x].fval = corr_floor2.ftval;
+				change_trap(y, x);
+				find_flag = false;
 
-								/*{ Chest is
-								 * trapped? }*/
-							} else if (
-							    t_list[cave[i1][i2]
-								       .tptr]
-								.tval ==
-							    chest) {
-								if (t_list
-									[cave[i1][i2]
-									     .tptr]
-									    .flags >
-								    1) {
-									if (pindex(
-										t_list
-										    [cave[i1][i2]
-											 .tptr]
-											.name,
-										'^') >
-									    0) {
-										known2(
-										    t_list
-											[cave[i1][i2]
-											     .tptr]
-											    .name);
-										msg_print(
-										    "You have discovered a trap on the chest!");
-									}
-								}
-							}
-						}
+			} else if (t_list[cave[y][x].tptr].tval == chest) {
+				if (t_list[cave[y][x].tptr].flags > 1) {
+					if (pindex(t_list[cave[y][x].tptr].name, '^') > 0) {
+						// Chest is trapped
+						known2(t_list[cave[y][x].tptr].name);
+						msg_print("You have discovered a trap on the chest!");
 					}
 				}
 			}
