@@ -436,13 +436,6 @@ extern long max_users();
 extern boolean get_uw_id();
 extern boolean net_trade();
 extern void get_account(char *account);
-extern void sys_gettim(quad_type *bin_time);
-extern void sys_numtim(time_type *weird_num, quad_type *bin_time);
-extern void sys_asctim(
-    unsigned short *timlin, /*: [reference] unsigned short := %immed 0; */
-    char *timbuf,      /*: [class_s] packed array [$l1..$u1:long] of char; */
-    quad_type *timadr, /*: [reference] quad_type := %immed 0; */
-    long *cvtflg);     /*: [reference] long := %immed 0); */
 
 /* MISC */
 const char *imoria_version();
