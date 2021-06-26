@@ -21,6 +21,16 @@
 #include "types.h"
 #include "variables.h"
 
+typedef struct owner_type {
+  char owner_name[82];
+  int64_t max_cost;
+  float max_inflate;
+  float min_inflate;
+  float haggle_per;
+  uint8_t owner_race;
+  uint8_t insult_max;
+} owner_type;
+
 #define DAY_LENGTH 9600        /*{ Turns in a day			} */
 const long obj_town_level = 7; // Town object generation level
 

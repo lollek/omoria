@@ -208,16 +208,6 @@ typedef struct cave_type {
 typedef cave_type
     row_floor[MAX_WIDTH + 1]; /*= array [1..max_width] of cave_type; */
 
-typedef struct owner_type {
-  char owner_name[82];
-  int64_t max_cost;
-  float max_inflate;
-  float min_inflate;
-  float haggle_per;
-  uint8_t owner_race;
-  uint8_t insult_max;
-} owner_type;
-
 typedef struct inven_record {
   int64_t scost;
   treasure_type sitem;
