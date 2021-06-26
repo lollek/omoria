@@ -6,7 +6,6 @@
 #include "boolean.h"
 #include "constants.h"
 
-typedef char account_type[10 + 2];
 typedef uint8_t obj_set[MAX_OBJ_SET];    /* = set of 0..255; */
 typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 
