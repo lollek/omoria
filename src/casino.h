@@ -1,6 +1,7 @@
 #ifndef CASINO_H
 #define CASINO_H
-/* common declarations for the casino modules */
+
+#include "boolean.h"
 
 extern long bet;
 extern long gld;

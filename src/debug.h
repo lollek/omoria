@@ -1,6 +1,10 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#include <stdio.h>
+
+#include "boolean.h"
+
 #if DO_DEBUG
 extern boolean const do_debug_funcall;
 extern boolean const do_debug_objdes;
