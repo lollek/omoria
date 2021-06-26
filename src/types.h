@@ -232,14 +232,6 @@ typedef struct store_type {
   /* : array [1..store_inven_max] of inven_record; */
 } store_type;
 
-typedef struct message_record {
-  char data[134];
-  struct message_record *next;
-} message_record;
-
-typedef message_record *message_ptr;
-
-
 /* needs to be a multiple of 8 */
 #define ENCRYPT_STAT_BUF_SIZE 1024
 typedef struct encrypt_state {
