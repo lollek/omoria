@@ -1,5 +1,3 @@
-use std::mem;
-
 use libc;
 
 use debug;
@@ -44,7 +42,7 @@ fn load_cave(data: Vec<Cave>) {
     let mut i = 0;
     for y in 1..height {
         for x in 1..width {
-            mem::replace(unsafe { &mut cave[y as usize][x as usize] }, data[i]);
+            unsafe { cave[y as usize][x as usize] = data[i] };
             i += 1;
         }
     }
@@ -81,7 +79,7 @@ fn load_treasure(data: Vec<TreasureAndCoordinate>) {
         unsafe {
             C_popt(&mut index);
             cave[item.y as usize][item.x as usize].tptr = index as u8;
-            mem::replace(&mut t_list[index as usize], item.treasure);
+            t_list[index as usize] = item.treasure;
         }
     }
 }

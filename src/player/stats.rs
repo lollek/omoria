@@ -1,12 +1,10 @@
-use std::mem;
-
 use types::{ StatBlock, Stat, stats_iter };
 
 use player;
 use player::data::PLAYER;
 
 pub fn set_perm_stats(block: StatBlock) {
-    mem::replace(&mut PLAYER.try_write().unwrap().perm_stats, block);
+    PLAYER.try_write().unwrap().perm_stats = block;
 }
 
 pub fn curr_stats() -> StatBlock {
@@ -29,7 +27,7 @@ pub fn recalc_curr_stats() {
             - lost_stats.get_pos(stat);
         curr_stats.set_pos(stat, curr_stat);
     }
-    mem::replace(&mut PLAYER.try_write().unwrap().curr_stats, curr_stats);
+    PLAYER.try_write().unwrap().curr_stats = curr_stats;
 }
 
 pub fn get_stat(stat: Stat) -> i16 {

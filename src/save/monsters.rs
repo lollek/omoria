@@ -1,5 +1,3 @@
-use std::mem;
-
 use libc;
 
 use types::Monster;
@@ -39,7 +37,7 @@ fn load_monsters(data: Vec<Monster>) {
         unsafe {
             C_popm(&mut index);
 
-            mem::replace(&mut m_list[index as usize], item);
+            m_list[index as usize] = item;
 
             cave[item.fy as usize][item.fx as usize].cptr = index as u8;
             if muptr == 0 {

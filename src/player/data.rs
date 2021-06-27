@@ -1,5 +1,4 @@
 use libc;
-use std::mem;
 use std::cmp::{ min, max };
 
 use std::ffi::CString;
@@ -555,7 +554,7 @@ pub fn set_record(record: PlayerRecord) {
         player_flags = record.flags;
     }
 
-    mem::replace(&mut *PLAYER.try_write().unwrap(), record.player);
+    *PLAYER.try_write().unwrap() = record.player;
 
     unsafe {
         char_row = record.char_row;

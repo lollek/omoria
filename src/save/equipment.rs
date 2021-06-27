@@ -1,5 +1,3 @@
-use std::mem;
-
 use libc;
 use debug;
 use types::Item;
@@ -28,6 +26,6 @@ pub fn set_record(record: Vec<Item>) {
         if item.tval != 0 {
             unsafe { equip_ctr += 1 };
         }
-        mem::replace(unsafe { &mut equipment[i] }, item);
+        unsafe { equipment[i] = item };
     }
 }

@@ -50,15 +50,15 @@ pub fn fatal(msg: &str) -> ! {
     panic!("{}", msg);
 }
 
-fn log_error(e: &error::Error) {
+fn log_error(e: &dyn error::Error) {
     debug(DebugLevel::FATAL, &format!("{}", e));
-    match e.cause() {
+    match e.source() {
         Some(cause) => log_error(cause),
         None => ()
     }
 }
 
-pub fn fatal2(msg: &str, e: &error::Error) -> ! {
+pub fn fatal2(msg: &str, e: &dyn error::Error) -> ! {
     if DEBUG_ENABLED {
         debug(DebugLevel::FATAL, msg);
         debug(DebugLevel::FATAL, "!!BEGIN STACKTRACE!!");

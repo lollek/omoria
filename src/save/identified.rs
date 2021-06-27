@@ -1,5 +1,3 @@
-use std::mem;
-
 use libc;
 
 use save::types::*;
@@ -15,5 +13,5 @@ pub fn record() -> IdentifiedRecord {
 }
 
 pub fn set_record(record: IdentifiedRecord) {
-    mem::replace(unsafe { &mut object_ident }, record.list);
+    unsafe { object_ident = record.list };
 }

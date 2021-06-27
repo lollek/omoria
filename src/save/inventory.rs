@@ -39,7 +39,7 @@ pub fn set_record(record: Vec<InventoryItem>) {
     let mut ptr = unsafe { inventory_list };
 
     for (i, item) in record.into_iter().enumerate() {
-        mem::replace(unsafe { &mut *ptr }, item);
+        unsafe { *ptr = item };
         if i != size -1 {
             unsafe {
                 let next = mallocfn();

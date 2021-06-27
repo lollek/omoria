@@ -110,7 +110,7 @@ pub fn draw_help<S1, S2>(title: S1, msg: S2)
         if lines.last().unwrap().len() + word.len() >= MAX_X {
             lines.push(String::new());
         }
-        let mut last = lines.last_mut().unwrap();
+        let last = lines.last_mut().unwrap();
         if last.len() > 0 {
             last.push_str(" ");
         }

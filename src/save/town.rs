@@ -1,5 +1,3 @@
-use std::mem;
-
 use libc;
 
 use save::types::*;
@@ -20,8 +18,8 @@ pub fn record() -> TownRecord {
 
 pub fn set_record(record: TownRecord) {
     unsafe {
-        mem::replace(&mut stores, record.stores);
+        stores = record.stores;
         town_seed = record.town_seed;
-        mem::replace(&mut bank, record.bank);
+        bank = record.bank;
     }
 }
