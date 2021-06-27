@@ -304,7 +304,7 @@ static boolean learn_song(boolean *redraw) {
   ENTER(("learn_song", ""));
 
   curse = inventory_list;
-  new_spells = num_new_spells(bard_adj());
+  new_spells = num_new_spells(C_player_mod_from_stat(CHR));
 
   while (curse != NULL) {
     if (curse->data.tval == song_book) {
@@ -357,7 +357,7 @@ static boolean learn_song(boolean *redraw) {
 static boolean learn_druid(boolean *redraw) {
 
   int i;
-  long num_spells_to_learn = num_new_spells(druid_adj());
+  long num_spells_to_learn = num_new_spells(C_player_mod_from_stat(WIS));
   spl_type spells_to_choose_from;
   int spell_counter = 0;
   boolean return_value = false;
@@ -903,25 +903,6 @@ void subtract_money(long amount, boolean make_change) {
   }
 }
 
-long bard_adj() {
-  return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(DEX) + 1) / 2;
-}
-
-long druid_adj() {
-  return (C_player_mod_from_stat(CHR) + C_player_mod_from_stat(WIS) + 1) / 2;
-}
-
-long monk_adj() {
-  return (C_player_mod_from_stat(INT) + C_player_mod_from_stat(WIS) + 1) / 2;
-}
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 boolean get_spell(spl_type spell, long num, long *sn, long *sc, char prompt[82],
                   boolean *redraw) {
   /*{ Returns spell pointer					-RAK-
@@ -1026,9 +1007,9 @@ void spell_chance(spl_rec *spell) {
   if (C_player_uses_magic(M_ARCANE)) {
     spell->splchn -= 3 * (C_player_mod_from_stat(INT) - 1);
   } else if (C_player_uses_magic(M_SONG)) {
-    spell->splchn -= 3 * (bard_adj() - 1);
+    spell->splchn -= 3 * (C_player_mod_from_stat(CHR) - 1);
   } else if (C_player_uses_magic(M_NATURE)) {
-    spell->splchn -= 3 * (druid_adj() - 1);
+    spell->splchn -= 3 * (C_player_mod_from_stat(WIS) - 1);
   } else {
     spell->splchn -= 3 * (C_player_mod_from_stat(WIS) - 1);
   }

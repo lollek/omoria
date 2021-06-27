@@ -7,7 +7,7 @@
 #include "variables.h"
 
 static void nonmagic_song(void) {
-  switch (bard_adj() + randint(4)) {
+  switch (C_player_mod_from_stat(CHR) + randint(4)) {
   case 0:
   case 1:
   case 2:

@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.0.2
+
+27 June 2021
+
+Make mana gain per level same as magic stat modifier. If needed I will rescale
+mana cost for spells instead (and gain from potions) since this makes it easier
+to understand
+
+Change so all magic types only use one stat each, giving the following:
+* Arcane -> Intelligence
+* Divine -> Wisdom
+* Nature -> Wisdom
+* Song -> Charisma
+* Chakra -> Wisdom
+
 ## 5.0.1
 
 25 June 2021
