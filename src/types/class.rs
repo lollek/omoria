@@ -1,6 +1,6 @@
 use item;
 
-use types::Ability;
+use types::{ Ability, Magic };
 use types::item::Item;
 use types::item_type::ItemType;
 
@@ -305,6 +305,20 @@ impl Class {
             _ => Vec::new(),
         }
     }
+
+
+    pub fn magic_type(&self) -> Option<Magic> {
+        match self {
+            Class::Wizard | Class::Adventurer => Some(Magic::Arcane),
+            Class::Cleric | Class::Paladin => Some(Magic::Divine),
+            Class::Druid | Class::Ranger => Some(Magic::Nature),
+            Class::Bard | Class::Rogue => Some(Magic::Song),
+            Class::Monk => Some(Magic::Chakra),
+            Class::Fighter => None,
+            Class::Barbarian => None,
+        }
+    }
+
 
     pub fn starting_items(&self) -> Vec<Item> {
         match self {

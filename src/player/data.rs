@@ -7,7 +7,7 @@ use std::sync::RwLock;
 
 use types::{
     Class, StatBlock, Wallet, currencies_iter, Race, Sex, Stat,
-    Magic, GameTime, Ability
+    GameTime, Ability
 };
 
 use player;
@@ -560,19 +560,6 @@ pub fn set_record(record: PlayerRecord) {
     unsafe {
         char_row = record.char_row;
         char_col = record.char_col;
-    }
-}
-
-
-pub fn uses_magic(magic: Magic) -> bool {
-    match class() {
-        Class::Wizard | Class::Adventurer => magic == Magic::Arcane,
-        Class::Cleric | Class::Paladin => magic == Magic::Divine,
-        Class::Druid | Class::Ranger => magic == Magic::Nature,
-        Class::Bard | Class::Rogue => magic == Magic::Song,
-        Class::Monk => magic == Magic::Chakra,
-        Class::Fighter => false,
-        Class::Barbarian => false,
     }
 }
 

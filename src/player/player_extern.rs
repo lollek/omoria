@@ -25,9 +25,10 @@ pub extern fn C_player_set_knows_spell(slot: libc::int32_t, yn: libc::uint8_t) {
 #[no_mangle]
 pub extern fn C_player_uses_magic(magic_type: libc::int32_t) -> libc::uint8_t {
     debug::enter("C_player_uses_magic");
-    let ret = match player::uses_magic(Magic::from(magic_type)) {
-        true => 255,
-        false => 0
+    let ret = if player::class().magic_type() == Some(Magic::from(magic_type)) {
+        255
+    } else {
+        0
     };
     debug::leave("C_player_uses_magic");
     return ret;

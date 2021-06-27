@@ -19,6 +19,6 @@ pub extern fn C_magic_spell_failchance(slot: libc::int32_t) -> libc::uint8_t {
 }
 
 #[no_mangle]
-pub extern fn C_gain_mana(amount: libc::int16_t) {
-    magic::gain_mana(amount);
+pub extern fn C_gain_mana() {
+    magic::gain_mana_from_level_up();
 }

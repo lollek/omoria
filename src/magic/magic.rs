@@ -32,10 +32,8 @@ pub fn empty_spell() -> Spell {
     }
 }
 
-pub fn gain_mana(amount: i16) {
-    if !player::knows_any_spell() || amount <= 0 {
-        return;
+pub fn gain_mana_from_level_up() {
+    if let Some(magic) = player::class().magic_type() {
+        player::modify_max_mp(player::modifier_from_stat(magic.modifier_stat()));
     }
-
-    player::modify_max_mp(amount);
 }

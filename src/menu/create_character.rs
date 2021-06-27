@@ -8,6 +8,7 @@ use libc::{time, time_t, strcpy};
 use debug;
 use io;
 use item;
+use magic;
 use misc;
 use player;
 use random;

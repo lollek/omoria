@@ -1,3 +1,5 @@
+use types::Stat;
+
 #[derive(PartialEq)]
 pub enum Magic {
     Arcane = 0,
@@ -5,6 +7,18 @@ pub enum Magic {
     Nature = 2,
     Song = 3,
     Chakra = 4,
+}
+
+impl Magic {
+    pub fn modifier_stat(&self) -> Stat {
+        match self {
+            Magic::Arcane => Stat::Intelligence,
+            Magic::Divine => Stat::Wisdom,
+            Magic::Nature => Stat::Wisdom,
+            Magic::Song => Stat::Charisma,
+            Magic::Chakra => Stat::Wisdom,
+        }
+    }
 }
 
 impl From<i32> for Magic {
