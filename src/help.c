@@ -23,8 +23,8 @@ void help() {
   /*{ Help for available commands }*/
 
   C_clear_screen();
-  prt(" Movement: Keypad (1-9) or roguelike (hjklyubn)."
-      " ~ means a direction. Hold shift with roguelike keys to run   ",
+  prt(" Movement keys: hjklyubn. Dot to wait one turn."
+      " ~ means a direction. Hold shift to run   ",
       1, 1);
 
   prt(" a     Aim projectile         |"

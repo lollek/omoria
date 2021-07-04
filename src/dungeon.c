@@ -2239,38 +2239,6 @@ static void d__execute_command(long *com_val) {
     reset_flag = true;
     break;
 
-  case '1':
-    move_char(1);
-    break;
-  case '2':
-    move_char(2);
-    break;
-  case '3':
-    move_char(3);
-    break;
-  case '4':
-    move_char(4);
-    break;
-
-  case '5': /* Rest one turn */
-    move_char(5);
-    usleep(10);
-    flush();
-    break;
-
-  case '6':
-    move_char(6);
-    break;
-  case '7':
-    move_char(7);
-    break;
-  case '8':
-    move_char(8);
-    break;
-  case '9':
-    move_char(9);
-    break;
-
   case '<':
     d__go_up();
     break;
@@ -2281,6 +2249,12 @@ static void d__execute_command(long *com_val) {
   case '?': /* help */
     help();
     reset_flag = true;
+    break;
+
+  case '.': /* Rest one turn */
+    move_char(5);
+    usleep(10);
+    flush();
     break;
 
   case 'A':

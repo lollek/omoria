@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.0.3
+
+4 July 2021
+
+Remove numpad keys for movement. Will maybe reuse those buttons of other things
+in the future
+
+Pressing . waits one turn
+
 ## 5.0.2
 
 27 June 2021
