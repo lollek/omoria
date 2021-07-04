@@ -125,7 +125,6 @@ static boolean learn_spell(boolean *redraw) {
   boolean return_value = false;
   treas_rec *ptr;
 
-
   for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (ptr->data.tval == magic_book) {
       spell_flag |= ptr->data.flags;

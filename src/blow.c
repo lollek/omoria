@@ -510,7 +510,8 @@ void blow() {
         }
         reset_flag = false;
         /* with player_do; */
-        chance = player_save + player_lev + C_player_mod_from_stat(CHR) - item_ptr->data.level - 5;
+        chance = player_save + player_lev + C_player_mod_from_stat(CHR) -
+                 item_ptr->data.level - 5;
         if (((player_flags.confused + player_flags.afraid) > 0) &&
             ((item_ptr->data.tval == chime) || (item_ptr->data.tval == horn))) {
           msg_print("you can not use the "
