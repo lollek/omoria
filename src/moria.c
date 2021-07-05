@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "store.h"
 #include "configure.h"
 #include "debug.h"
 #include "player.h"

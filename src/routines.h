@@ -112,9 +112,6 @@ extern void brothel_game();
 extern void thief_games();
 extern long react(long x);
 extern void change_rep(long amt);
-extern boolean check_store_hours(enum store_t type, long sh);
-extern void check_store_hours_and_enter(enum store_t type, long sh,
-                                        long store_num);
 extern void hit_trap(long *y, long *x);
 extern boolean minus_ac(long typ_dam);
 extern void corrode_gas(char kb_str[82]);
@@ -278,45 +275,6 @@ extern void read_decrypt(FILE *f1, encrypt_state *state, char line[1026],
 
 /* { SCREEN.PAS		} */
 #include "screen.h"
-
-/* { STORE.PAS		} */
-extern void prt_comment1();
-extern void prt_comment2(long offer, long asking, long final);
-extern void prt_comment3(long offer, long asking, long final);
-extern void prt_comment4();
-extern void prt_comment5();
-extern void prt_comment6();
-extern void display_commands();
-extern void haggle_commands(long typ);
-extern void display_inventory(long store_num, long start);
-extern void display_cost(long store_num, long pos);
-extern void store_prt_gold();
-extern void display_store(long store_num, long cur_top);
-extern boolean get_store_item(long *com_val, char pmt[82], long i1, long i2);
-extern void shut_store(long store_num);
-extern boolean increase_insults(long store_num);
-extern void decrease_insults(long store_num);
-extern boolean haggle_insults(long store_num);
-extern long receive_offer(long store_num, char comment[82], long *new_offer,
-                          long last_offer, long factor);
-extern long purchase_haggle(long store_num, long *price, treasure_type *item,
-                            boolean blitz);
-extern long sell_haggle(long store_num, long *price, treasure_type *item,
-                        boolean blitz);
-extern void spend_time(long days_spent, char place[82], boolean whole_days);
-extern boolean store_purchase(long store_num, long *cur_top, boolean blitz);
-extern boolean store_sell(long store_num, long cur_top, boolean blitz);
-extern void enter_store(long store_num);
-extern long item_value(treasure_type *item);
-extern long sell_price(long snum, long *max_sell, long *min_sell,
-                       treasure_type *item);
-extern boolean store_check_num(long store_num);
-extern void store_carry(long store_num, long *ipos);
-extern void store_destroy(long store_num, long item_val, boolean one_of);
-extern void store_init();
-extern void bank_init();
-extern void store_create(long store_num);
-extern void store_maint();
 
 /* { TERMDEF.PAS		} */
 extern void termdef();

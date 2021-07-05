@@ -9,6 +9,7 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "store.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"

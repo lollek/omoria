@@ -9,6 +9,7 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "store.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
@@ -771,31 +772,31 @@ void hit_trap(long *y, long *x) {
 
   /*{ Town level traps are special, the stores...   }*/
   case 101: /* { General    } */
-    check_store_hours_and_enter(S_GENERAL, S_GENERAL, S_GENERAL);
+    check_store_hours_and_enter(S_GENERAL, S_GENERAL);
     break;
 
   case 102: /* { Armory     } */
-    check_store_hours_and_enter(S_ARMORY, S_ARMORY, S_ARMORY);
+    check_store_hours_and_enter(S_ARMORY, S_ARMORY);
     break;
 
   case 103: /* { Weaponsmith} */
-    check_store_hours_and_enter(S_WEAPONS, S_WEAPONS, S_WEAPONS);
+    check_store_hours_and_enter(S_WEAPONS, S_WEAPONS);
     break;
 
   case 104: /* { Temple     } */
-    check_store_hours_and_enter(S_TEMPLE, S_TEMPLE, S_TEMPLE);
+    check_store_hours_and_enter(S_TEMPLE, S_TEMPLE);
     break;
 
   case 105: /* { Alchemy    } */
-    check_store_hours_and_enter(S_ALCHEMY, S_ALCHEMY, S_ALCHEMY);
+    check_store_hours_and_enter(S_ALCHEMY, S_ALCHEMY);
     break;
 
   case 106: /* { Magic-User } */
-    check_store_hours_and_enter(S_MAGIC, S_MAGIC, S_MAGIC);
+    check_store_hours_and_enter(S_MAGIC, S_MAGIC);
     break;
 
   case 107: /* { Inn        } */
-    check_store_hours_and_enter(S_INN, S_INN, S_INN);
+    check_store_hours_and_enter(S_INN, S_INN);
     break;
 
   case 108: /* { Trade Post } */
@@ -805,11 +806,11 @@ void hit_trap(long *y, long *x) {
     break;
 
   case 109: /* { Library    } */
-    check_store_hours_and_enter(S_LIBRARY, S_LIBRARY, S_LIBRARY);
+    check_store_hours_and_enter(S_LIBRARY, S_LIBRARY);
     break;
 
   case 110: /* { Music Shop } */
-    check_store_hours_and_enter(S_MUSIC, S_MUSIC, S_MUSIC);
+    check_store_hours_and_enter(S_MUSIC, S_MUSIC);
     break;
 
   case 111: /* { Insurance  } */
@@ -823,7 +824,7 @@ void hit_trap(long *y, long *x) {
     break;
 
   case 113: /* { Gem Shop   } */
-    check_store_hours_and_enter(S_GEM, S_GEM, S_GEM);
+    check_store_hours_and_enter(S_GEM, S_GEM);
     break;
 
   case 114: /* { $ Changer  } */
@@ -839,7 +840,7 @@ void hit_trap(long *y, long *x) {
     break;
 
   case 116: /* { Deli       } */
-    check_store_hours_and_enter(S_DELI, S_DELI, S_DELI);
+    check_store_hours_and_enter(S_DELI, S_DELI);
     break;
 
   case 117: /* { Fortress   } */
@@ -847,7 +848,7 @@ void hit_trap(long *y, long *x) {
     break;
 
   case 118: /* { Black Market } */
-    check_store_hours_and_enter(S_BLACK_MARKET, S_BLACK_MARKET, S_BLACK_MARKET);
+    check_store_hours_and_enter(S_BLACK_MARKET, S_BLACK_MARKET);
     break;
 
   case 120:

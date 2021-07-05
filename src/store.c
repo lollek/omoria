@@ -9,6 +9,7 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "store.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
@@ -31,34 +32,31 @@ typedef struct owner_type {
   uint8_t insult_max;
 } owner_type;
 
-#define DAY_LENGTH 9600        /*{ Turns in a day			} */
-const long obj_town_level = 7; // Town object generation level
+// Turns in a day
+#define DAY_LENGTH 9600
 
-/*	{ Buying and selling adjustments for character race VS store	} */
-/*	{ owner race							} */
-#define MAX_RACES 10 /*{ Number of defined races	        } */
+// Number of defined races
+#define MAX_RACES 10
+
+// Town object generation level
+static const long obj_town_level = 7;
+
+// Buying and selling adjustments for character race VS store owner race
 static float rgold_adj[MAX_RACES][MAX_RACES] = {
     /*               Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr, Dry */
     /*Human     */ {0.00, 0.05, 0.05, 0.10, 0.13, 0.15, 0.20, 0.25, 0.20, 0.05},
     /*Half-Elf  */ {0.10, 0.00, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.25, 0.05},
     /*Elf       */ {0.10, 0.05, 0.00, 0.05, 0.10, 0.20, 0.25, 0.30, 0.30, 0.00},
-    /*Halfling  */
-    {0.15, 0.10, 0.05, -0.05, 0.05, 0.10, 0.15, 0.30, 0.25, 0.05},
-    /*Gnome     */
-    {0.15, 0.15, 0.10, 0.05, -0.05, 0.10, 0.15, 0.30, 0.20, 0.15},
-    /*Dwarf     */
-    {0.15, 0.20, 0.20, 0.10, 0.10, -0.05, 0.25, 0.35, 0.15, 0.30},
+    /*Halfling */ {0.15, 0.10, 0.05, -0.05, 0.05, 0.10, 0.15, 0.30, 0.25, 0.05},
+    /*Gnome    */ {0.15, 0.15, 0.10, 0.05, -0.05, 0.10, 0.15, 0.30, 0.20, 0.15},
+    /*Dwarf    */ {0.15, 0.20, 0.20, 0.10, 0.10, -0.05, 0.25, 0.35, 0.15, 0.30},
     /*Half-Orc  */ {0.15, 0.20, 0.25, 0.15, 0.15, 0.30, 0.10, 0.15, 0.15, 0.25},
     /*Half-Troll*/ {0.10, 0.15, 0.15, 0.10, 0.10, 0.30, 0.10, 0.10, 0.15, 0.25},
-    /*Phraint   */
-    {0.20, 0.25, 0.30, 0.25, 0.20, 0.15, 0.15, 0.15, -0.10, 0.20},
-    /*Dryad     */
-    {0.10, 0.05, 0.05, 0.05, 0.15, 0.30, 0.30, 0.25, 0.20, -0.05}};
+    /*Phraint  */ {0.20, 0.25, 0.30, 0.25, 0.20, 0.15, 0.15, 0.15, -0.10, 0.20},
+    /*Dryad   */ {0.10, 0.05, 0.05, 0.05, 0.15, 0.30, 0.30, 0.25, 0.20, -0.05}};
 
-/*	{ Store owners have different characteristics for pricing and haggling}
- */
-/*	{ Note: Store owners should be added in groups, one for each store    }
- */
+// Store owners have different characteristics for pricing and haggling
+// Note: Store owners should be added in groups, one for each store
 static owner_type owners[MAX_OWNERS] = {
     /* {set number one} */
     {"Erick the Honest       (Human)      General Store", 2500, 0.75, 0.08,
@@ -276,142 +274,55 @@ static long store_bribe[MAX_STORES + MAX_UNNAMED] = {
     0    /* 17 fortress */
 };
 
-void store_init() {
-  /*	{ Initializes the stores with owners			-RAK- */
-  /*} */
-  int i1, i2, i3;
-
-  ENTER(("store_init", ""));
-
-  i1 = MAX_OWNERS / MAX_STORES;
-  for (i2 = 0; i2 < MAX_STORES; i2++) {
-    stores[i2].owner = MAX_STORES * (randint(i1) - 1) + i2;
-    stores[i2].insult_cur = 0;
-    stores[i2].store_open.year = 0;
-    stores[i2].store_open.month = 0;
-    stores[i2].store_open.day = 0;
-    stores[i2].store_open.hour = 0;
-    stores[i2].store_open.secs = 0;
-    stores[i2].store_ctr = 0;
-    for (i3 = 0; i3 <= STORE_INVEN_MAX; i3++) {
-      stores[i2].store_inven[i3].sitem = blank_treasure;
-      stores[i2].store_inven[i3].scost = 0;
-    } /* end for i3 */
-  }   /* end for i2 */
-
-  /*  for (i2 = 0; i2 < max_stores; i2++) { */
-  /*    printf("store owner[%ld] = %s\n", i2, */
-  /*    owners[stores[i2].owner].owner_name); */
-  /*  } */
-
-  LEAVE("store_init", "s");
-} /* end store_init */
-
-void bank_init() {
-  /*	{ Initialize the bank					-DMF- */
-  /*} */
-  long starting;
-
-  starting = (randint(2000) + 1000) * 1000;
-  bank[IRON] = starting / 8;
-  bank[COPPER] = starting / 30;
-  bank[SILVER] = starting / 50;
-  bank[GOLD] = starting / 250;
-  bank[PLATINUM] = starting / 5000;
-  bank[MITHRIL] = starting / 100000;
-  bank[TOTAL_] = (bank[MITHRIL] * coin_value[MITHRIL] +
-                  bank[PLATINUM] * coin_value[PLATINUM]) /
-                     GOLD_VALUE +
-                 bank[GOLD];
-
-  /*  for(starting = TOTAL_; starting <= MITHRIL; starting++) { */
-  /*    printf("bank[%ld] = %ld\n", starting, bank[starting]); */
-  /*  } */
-}
-
-void sm__rndcash(long *amt, long target) {
+static void __randomize_cash(long *amt, long target) {
   *amt = (199 * (*amt) + randint(2 * target)) / 200;
 }
 
-void store_maint() {
-  /*{ Initialize and up-keep the store's inventory.		-RAK-
-   * }*/
+/**
+ * @__store_has_space_for() - Check to see if store has space for item
+ * @store_num: Type of store
+ * @item: Item to add
+ */
+static boolean __store_has_space_for(enum store_t store_num, treas_rec const * const item) {
 
-  long i1, i2, cnt, store_ctr;
+  ENTER(("__store_has_space_for", ""));
 
-  /*printf ("\n         enter store_maint\n");  fflush(stdout);*/
-
-  for (; stores[S_BLACK_MARKET].store_ctr > 0;) {
-    store_destroy(S_BLACK_MARKET, stores[S_BLACK_MARKET].store_ctr, false);
+  if (stores[store_num].store_ctr < STORE_INVEN_MAX) {
+    LEAVE("__store_has_space_for", "");
+    return true;
   }
 
-  for (i1 = 0; i1 < MAX_STORES; i1++) {
-    stores[i1].insult_cur = 0;
-    store_ctr = stores[i1].store_ctr;
-    if (store_ctr > STORE_MAX_INVEN) {
-      /* too much stuff */
-      for (i2 = 0, cnt = (store_ctr - STORE_MAX_INVEN + 2); i2 < cnt; i2++) {
-        store_destroy(i1, randint(stores[i1].store_ctr), false);
-      }
-    } else if (store_ctr < STORE_MIN_INVEN) {
-      /* make new stuff */
-      for (i2 = 0, cnt = (STORE_MIN_INVEN - store_ctr + 2); i2 < cnt; i2++) {
-        store_create(i1);
-      }
-    } else {
-      /* make some, ruin some */
-      for (i2 = 0, cnt = (1 + randint(STORE_TURN_AROUND)); i2 < cnt; i2++) {
-        store_destroy(i1, randint(stores[i1].store_ctr), true);
-      }
-      for (i2 = 0, cnt = (1 + randint(STORE_TURN_AROUND)); i2 < cnt; i2++) {
-        store_create(i1);
-      }
+  if (item->data.subval > 255 && item->data.subval < 512) {
+    for (long i = 0; i < stores[store_num].store_ctr; i++) {
+      if (stores[store_num].store_inven[i].sitem.tval != item->data.tval)
+        continue;
+
+      if (stores[store_num].store_inven[i].sitem.subval != item->data.subval)
+        continue;
+
+      LEAVE("__store_has_space_for", "");
+      return true;
     }
-
-    store_ctr = stores[i1].store_ctr;
-    if (i1 == S_INN) {
-      if (randint(8) == 1) {
-        for (i2 = 0; i2 < store_ctr; i2++) {
-          store_destroy(i1, i2, false);
-        }
-        for (i2 = 0; i2 < STORE_MIN_INVEN + 2; i2++) {
-          store_create(i1);
-        }
-      }
-    }
-
-  } /* end for */
-
-  sm__rndcash(&(bank[IRON]), 500000);
-  sm__rndcash(&(bank[COPPER]), 200000);
-  sm__rndcash(&(bank[SILVER]), 100000);
-  sm__rndcash(&(bank[GOLD]), 50000);
-  sm__rndcash(&(bank[PLATINUM]), 5000);
-  sm__rndcash(&(bank[MITHRIL]), 1000);
-  bank[TOTAL_] =
-      (bank[MITHRIL] * MITHRIL_VALUE + bank[PLATINUM] * PLATINUM_VALUE) /
-          GOLD_VALUE +
-      bank[GOLD];
-
-  /*  printf ("\n         exit store_maint\n");  fflush(stdout); */
+  }
+  LEAVE("__store_has_space_for", "");
+  return false;
 }
 
-void store_create(long store_num) {
-  /*{ Creates an item and inserts it into store's inven	-RAK-	}*/
+/**
+ * __add_item_to_store() - Creates an item and inserts it into store's inven
+ * @store_num: Type of store
+ */
+static void __add_item_to_store(enum store_t store_num) {
 
-  long i1, tries, cur_pos, dummy;
-
-  /*  printf ("\n           enter  store_create (%ld)",store_num); */
-  /*  fflush(stdout); */
-
-  tries = 0;
+  long cur_pos;
   popt(&cur_pos);
-  /* with stores[store_num] do; */
-  do {
+
+  for (int tries = 0; tries < 4; ++tries) {
     if (store_num != S_BLACK_MARKET) {
-      i1 = store_choice[store_num][randint(STORE_CHOICES) - 1];
-      t_list[cur_pos] = inventory_init[i1];
+      long i = store_choice[store_num][randint(STORE_CHOICES) - 1];
+      t_list[cur_pos] = inventory_init[i];
       magic_treasure(cur_pos, obj_town_level, false);
+
     } else {
       /* black market item */
       do {
@@ -425,41 +336,41 @@ void store_create(long store_num) {
       t_list[cur_pos].cost *= 2;
       t_list[cur_pos].flags2 |= Blackmarket_bit;
     }
+
+    //TODO: Stop using inven_temp
     inven_temp->data = t_list[cur_pos];
-    if (store_check_num(store_num)) {
-      /* with t_list[cur_pos] do; */
+    if (__store_has_space_for(store_num, inven_temp)) {
       if (t_list[cur_pos].cost > 0) { /*{ Item must be good	}*/
         if (t_list[cur_pos].cost <
             (owners[stores[store_num].owner].max_cost * GOLD_VALUE)) {
+          long dummy;
           store_carry(store_num, &dummy);
-          tries = 10;
+          break;
         }
       }
     }
-    tries++;
-  } while (!(tries > 3));
+  }
   pusht(cur_pos);
-  /*  printf ("\n           exit  store_create");  fflush(stdout); */
 }
 
-void store_destroy(long store_num, long item_val, boolean one_of) {
-  /*{ Destroy an item in the stores inventory.  Note that if	}*/
-  /*{ 'one_of' is false, an entire slot is destroyed	-RAK-	}*/
+/**
+ * __remove_item_from_store() - Destroy an item in the stores inventory.
+ * @store_num: Store type
+ * @item_val: ?
+ * @one_of: If false, the entire slot is destroyed
+ */
+static void __remove_item_from_store(enum store_t store_num, long item_val, boolean one_of) {
 
-  long i2, store_ctr;
-
-  /* with stores[store_num] do; */
   inven_temp->data = stores[store_num].store_inven[item_val].sitem;
-  /* with stores[store_num].store_inven[item_val].sitem do; */
   if ((stores[store_num].store_inven[item_val].sitem.number > 1) &&
       (stores[store_num].store_inven[item_val].sitem.subval < 512) &&
       (one_of)) {
     inven_temp->data.number = 1;
     stores[store_num].store_inven[item_val].sitem.number--;
   } else {
-    store_ctr = stores[store_num].store_ctr;
-    for (i2 = item_val; i2 < store_ctr; i2++) {
-      stores[store_num].store_inven[i2] = stores[store_num].store_inven[i2 + 1];
+    long store_ctr = stores[store_num].store_ctr;
+    for (int i = item_val; i < store_ctr; i++) {
+      stores[store_num].store_inven[i] = stores[store_num].store_inven[i + 1];
     }
     stores[store_num].store_inven[store_ctr].sitem = blank_treasure;
     stores[store_num].store_inven[store_ctr].scost = 0;
@@ -467,1661 +378,192 @@ void store_destroy(long store_num, long item_val, boolean one_of) {
   }
 }
 
-void sc__insert(long store_num, long pos, long icost) {
-  /*{ Insert INVEN_MAX at given location	}*/
+/**
+ * __insert_item_in_store() - Insert INVEN_MAX at given location
+ * @store_num: Type of store
+ * @pos: 
+ * @icost: 
+ */
+static void __insert_item_in_store(enum store_t store_num, long pos, long icost) {
 
-  long i1;
-
-  /* with stores[store_num] do; */
-  for (i1 = stores[store_num].store_ctr; i1 >= pos; i1--) {
-    stores[store_num].store_inven[i1 + 1] = stores[store_num].store_inven[i1];
+  for (long i = stores[store_num].store_ctr; i >= pos; i--) {
+    stores[store_num].store_inven[i + 1] = stores[store_num].store_inven[i];
   }
 
+  // TODO: Shouldn't use inven_temp
   stores[store_num].store_inven[pos].sitem = inven_temp->data;
   stores[store_num].store_inven[pos].scost = -icost * GOLD_VALUE;
   stores[store_num].store_ctr++;
 }
 
-void store_carry(long store_num, long *ipos) {
-  /*{ Add the item in INVEN_MAX to stores inventory.	-RAK-	}*/
+/**
+ * __calc_sell_price() - Base sell price of item depending on like/dislike
+ * @store_type: Type of store
+ * @item: Item to appraise
+ */
+static long __calc_sell_price(enum store_t store_type, treasure_type const * const item) {
+  if (item->cost <= 0)
+    return 0;
 
-  long item_num, item_val;
-  long typ, subt, icost, dummy;
-  boolean flag;
-
-  /*{ Store_carry routine			}*/
-
-  *ipos = 0;
-  identify(&(inven_temp->data));
-  unquote(inven_temp->data.name);
-  known1(inven_temp->data.name);
-  known2(inven_temp->data.name);
-  sell_price(store_num, &icost, &dummy, &(inven_temp->data));
-
-  if (icost > 0) {
-    /* with inven_temp->data do; */
-    /* with stores[store_num] do; */
-    item_val = 0;
-    item_num = inven_temp->data.number;
-    typ = inven_temp->data.tval;
-    subt = inven_temp->data.subval;
-    flag = false;
-
-    do {
-      item_val++;
-      /* with store_inven[item_val].sitem do; */
-      if (typ == stores[store_num].store_inven[item_val].sitem.tval) {
-        if (subt == stores[store_num].store_inven[item_val].sitem.subval) {
-          /*{ Adds to other item	}*/
-          if (subt > 255) {
-            if (stores[store_num].store_inven[item_val].sitem.number < 24) {
-              stores[store_num].store_inven[item_val].sitem.number += item_num;
-            }
-            flag = true;
-          }
-        }
-      } else if (typ > stores[store_num].store_inven[item_val].sitem.tval) {
-        /*{ Insert into list		}*/
-        sc__insert(store_num, item_val, icost);
-        flag = true;
-        *ipos = item_val;
-      }
-      /* end of thrid with */
-    } while (!((item_val >= stores[store_num].store_ctr) || (flag)));
-    if (!(flag)) { /*{ Becomes last item in list	}*/
-      sc__insert(store_num, stores[store_num].store_ctr + 1, icost);
-      *ipos = stores[store_num].store_ctr;
-    }
-  } /* end if icost */
-}
-
-boolean store_check_num(long store_num) {
-  /*{ Check to see if he will be carrying too many objects	-RAK-
-   * }*/
-
-  long i1;
-  boolean return_value = false;
-
-  ENTER(("store_check_num", ""));
-
-  /* with stores[store_num] do; */
-  if (stores[store_num].store_ctr < STORE_INVEN_MAX) {
-    return_value = true;
-  } else if ((inven_temp->data.subval > 255) &&
-             (inven_temp->data.subval < 512)) {
-    for (i1 = 0; i1 < stores[store_num].store_ctr; i1++) {
-      /* with store_inven[i1].store_inven[i1].sitem do; */
-      if (stores[store_num].store_inven[i1].sitem.tval ==
-          inven_temp->data.tval) {
-        if (stores[store_num].store_inven[i1].sitem.subval ==
-            inven_temp->data.subval) {
-          return_value = true;
-        }
-      }
-    } /* end for */
+  long value = item_value(item);
+  value += trunc(value * rgold_adj[owners[stores[store_type].owner].owner_race][player_prace]);
+  if (value < 1) {
+    value = 1;
   }
-  LEAVE("store_check_num", "");
-  return return_value;
+  return value;
 }
 
-long sell_price(long snum, long *max_sell, long *min_sell,
-                treasure_type *item) {
-  /*{ Asking price for an item				-RAK-	}*/
-
-  long i1;
-  long return_value = 0;
-
-  /* with stores[snum] do; */
-  i1 = item_value(item);
-
-  if (item->cost > 0) {
-    i1 += trunc(i1 *
-                rgold_adj[owners[stores[snum].owner].owner_race][player_prace]);
-    if (i1 < 1) {
-      i1 = 1;
-    }
-    *max_sell = trunc(i1 * (1 + owners[stores[snum].owner].max_inflate));
-    *min_sell = trunc(i1 * (1 + owners[stores[snum].owner].min_inflate));
-    if (*min_sell > *max_sell) {
-      *min_sell = *max_sell;
-    }
-    return_value = i1;
-  } else { /*{quack}*/
-    *max_sell = 0;
-    *min_sell = 0;
-    return_value = 0;
-  }
-  return return_value;
+/**
+ *__store_max_price() - Calculate max inflated price for a store
+ * @store_type: Store type
+ * @base_price: Base price of item to inflate
+ */
+static long __store_max_price(enum store_t store_type, long base_price) {
+  return trunc(base_price * (1 + owners[stores[store_type].owner].max_inflate));
 }
 
-long iv__search_list(long x1, long x2) {
-  long i1 = 0;
-  long i2 = 0;
-  do {
-    i1++;
-    if ((object_list[i1].tval == x1) && (object_list[i1].subval == x2)) {
-      i2 = object_list[i1].cost;
-    }
-  } while (!((i1 == MAX_OBJECTS) || (i2 > 0)));
-
-  return (i2 / GOLD_VALUE);
+/**
+ *__store_min_price() - Calculate min inflated price for a store
+ * @store_type: Store type
+ * @base_price: Base price of item to inflate
+ */
+static long __store_min_price(enum store_t store_type, long base_price) {
+  long min_sell = trunc(base_price * (1 + owners[stores[store_type].owner].min_inflate));
+  long max_sell = __store_max_price(store_type, base_price);
+  if (min_sell > max_sell)
+    min_sell = max_sell;
+  return min_sell;
 }
 
-long item_value(treasure_type *item) {
-  /*{ Returns the value for any given object		-RAK-	}*/
-  long return_value;
-
-  /* with item do; */
-  return_value = item->cost / GOLD_VALUE;
-
-  switch (item->tval) {
-
-    /*{ Weapons and armor	}*/
-
-  case bow_crossbow_or_sling:
-  case hafted_weapon:
-  case pole_arm:
-  case sword:
-  case dagger:
-  case maul:
-  case boots:
-  case gloves_and_gauntlets:
-  case gem_helm:
-  case cloak:
-  case helm:
-  case shield:
-  case hard_armor:
-  case soft_armor:
-
-    if (strstr(item->name, "^") != NULL) {
-      return_value = iv__search_list(item->tval, item->subval) * item->number;
-    } else {
-      switch (item->tval) {
-      case bow_crossbow_or_sling:
-      case hafted_weapon:
-      case pole_arm:
-      case sword:
-      case dagger:
-      case maul:
-        if (item->tohit < 0) {
-          return_value = 0;
-        } else if (item->todam < 0) {
-          return_value = 0;
-        } else if (item->toac < 0) {
-          return_value = 0;
-        } else {
-          return_value = ((item->cost / GOLD_VALUE +
-                           (item->tohit + item->todam + item->toac) * 100) *
-                          item->number);
-        }
-        break;
-
-      default:
-        if (item->toac < 0) {
-          return_value = 0;
-        } else {
-          return_value =
-              ((item->cost / GOLD_VALUE + item->toac * 100) * item->number);
-        }
-        break;
-      } /* end switch */
-    }
-    break;
-
-    /*{ Ammo }*/
-
-  case sling_ammo:
-  case bolt:
-  case arrow:
-  case spike:
-
-    if (strstr(item->name, "^") != NULL) {
-      return_value = iv__search_list(item->tval, 1) * (item->number);
-    } else {
-      if (item->tohit < 0) {
-        return_value = 0;
-      } else if (item->todam < 0) {
-        return_value = 0;
-      } else if (item->toac < 0) {
-        return_value = 0;
-      } else {
-        return_value = ((item->cost / GOLD_VALUE +
-                         (item->tohit + item->todam + item->toac) * 10) *
-                        (item->number));
-      }
-    }
-    break;
-
-    /*{ Potions, Scrolls, and Food	}*/
-
-  case scroll1:
-  case scroll2:
-  case potion1:
-  case potion2:
-  case Food:
-
-    if (strstr(item->name, "|") != NULL) {
-      switch (item->tval) {
-      case scroll1:
-      case scroll2:
-        return_value = 20;
-        break;
-
-      case potion1:
-      case potion2:
-        return_value = 20;
-        break;
-
-      case Food:
-        return_value = 1;
-        break;
-      }
-    }
-    break;
-
-    /*{ Rings and amulets	}*/
-
-  case amulet:
-  case ring:
-
-    if (strstr(item->name, "|") != NULL) {
-      switch (item->tval) {
-      case amulet:
-        return_value = 45;
-        break;
-      case ring:
-        return_value = 45;
-        break;
-      }
-    } else if (strstr(item->name, "^") != NULL) {
-      return_value = (item->cost > 0) ? (item->cost / GOLD_VALUE) : 0;
-    } else {
-      return_value =
-          (item->cost > 0)
-              ? ((item->cost / GOLD_VALUE) +
-                 trunc(item->cost / COST_ADJ / 20.0) *
-                     (item->tohit + item->todam + item->toac + 2 * item->p1))
-              : 0;
-    }
-    break;
-
-    /*{ Horns and Chimes	}*/
-
-  case chime:
-  case horn:
-
-    if (strstr(item->name, "|") != NULL) {
-      switch (item->tval) {
-      case chime:
-        return_value = 50;
-        break;
-      case horn:
-        return_value = 80;
-        break;
-      }
-    } else if (strstr(item->name, "^") == NULL) {
-      return_value = ((item->cost / GOLD_VALUE) +
-                      trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
-    }
-    break;
-
-    /* { Wands rods, and staffs}*/
-
-  case staff:
-  case rod:
-  case wand:
-
-    if (strstr(item->name, "|") != NULL) {
-      switch (item->tval) {
-      case staff:
-        return_value = 70;
-        break;
-      case rod:
-        return_value = 60;
-        break;
-      case wand:
-        return_value = 50;
-        break;
-      }
-    } else if (strstr(item->name, "^") == NULL) {
-      return_value = ((item->cost / GOLD_VALUE) +
-                      trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
-    }
-    break;
-
-    /*{Gems and jewelry of all types}*/
-
-  case valuable_jewelry:
-  case valuable_gems:
-
-    if (strstr(item->name, "|") != NULL) {
-      switch (item->tval) {
-      case valuable_jewelry:
-        return_value = 20;
-        break;
-      case valuable_gems:
-        return_value = 20;
-        break;
-      }
-    } else if (strstr(item->name, "^") == NULL) {
-      return_value = (item->cost / GOLD_VALUE);
-    }
-    break;
-
-  } /* end switch */
-
-  return return_value;
-}
-
-boolean check_store_hours(enum store_t st, long sh) {
-  /*{ Check to see if a store is open, message when closed  -DMF-   }*/
-
-  /* st is the S_GENERAL or whatever store it is */
-  /* sh is the same as st, or -1 for the unnamed stores (S_TRADE_POST and
-   * up)*/
-
-  char name[134];
-  char prop[134];
-  char out_val[300];
-  char ope;
-  boolean flag;
-  boolean return_value = false;
-
-  ENTER(("check_store_hours", ""));
-
-  if (sh != -1) {
-    /* with stores[sh].store_open do; */
-    /* with player_do; */
-    flag = ((player_cur_age.year > stores[sh].store_open.year) ||
-            ((player_cur_age.year == stores[sh].store_open.year) &&
-             ((player_cur_age.month > stores[sh].store_open.month) ||
-              ((player_cur_age.month == stores[sh].store_open.month) &&
-               ((player_cur_age.day > stores[sh].store_open.day) ||
-                ((player_cur_age.day == stores[sh].store_open.day) &&
-                 ((player_cur_age.hour > stores[sh].store_open.hour) ||
-                  ((player_cur_age.hour == stores[sh].store_open.hour) &&
-                   ((player_cur_age.secs > stores[sh].store_open.secs))))))))));
-  } else {
-    flag = true;
-    sh = st;
+static long __find_object_from_list(long tval, long subval) {
+  for (long i = 1; i <= MAX_OBJECTS; ++i) {
+    if (object_list[i].tval != tval) continue;
+    if (object_list[i].subval != subval) continue;
+    return object_list[i].cost / GOLD_VALUE;
   }
 
-  if (flag) {
-    strcpy(name, store_door[st].name);
-    insert_str(name, "the entrance to the ", "");
-    ope = store_hours[sh][player_cur_age.day % 7 + 0] /* was + 1 */
-                     [player_cur_age.hour / 2 + 0];   /* was + 1 */
-    switch (ope) {
-    case ' ':
-      return_value = true;
-      break;
-
-    case 'N':
-    case 'W':
-    case 'D':
-      switch (ope) {
-      case 'N':
-        strcpy(prop, "night.");
-        break;
-      case 'W':
-        strcpy(prop, "weekend.");
-        break;
-      case 'D':
-        strcpy(prop, "day.");
-        break;
-      }
-      if (wizard2) {
-        msg_print("Being a wizard, you break into the shop.");
-        msg_print("");
-        return_value = true;
-      } else {
-        sprintf(out_val, "Sorry, the %s is closed for the %s", name, prop);
-        msg_print(out_val);
-        return_value = false;
-      }
-      break;
-
-    case 'B':
-      sprintf(prop, "Do you wish to play %ld gold to bribe the owner?",
-              store_bribe[st]);
-      if (get_yes_no(prop)) {
-        if (player_money[TOTAL_] >= store_bribe[st]) {
-          subtract_money(store_bribe[st] * GOLD_VALUE, false);
-          msg_print("The owner reluctantly lets "
-                    "you in.");
-          msg_print("");
-          return_value = true;
-        } else {
-          return_value = false;
-          msg_print("You haven't the money to "
-                    "bribe the owner!");
-        }
-      } else {
-        return_value = false;
-        msg_print("The owner complains bitterly about "
-                  "being woken up for no reason.");
-      }
-      break;
-
-    default:
-      return_value = false;
-    }
-  } else {
-    msg_print("The doors are locked.");
-  }
-
-  LEAVE("check_store_hours", "");
-  return return_value;
+  return 0;
 }
 
-void check_store_hours_and_enter(enum store_t st, long sh, long store_num) {
-  /* st is the S_GENERAL or whatever store it is */
-  /* sh is the same as st, or -1 for the unnamed stores (S_TRADE_POST and
-   * up)*/
-  /* store_num should probably always be the same as st */
+static void __tick_down(long time_spent, long *flag) {
+  if (*flag <= 1)
+    return;
 
-  ENTER(("check_store_hours_and_enter", ""));
-  if (check_store_hours(st, sh)) {
-    enter_store(store_num);
-  }
-  LEAVE("check_store_hours_and_enter", "");
-}
-
-void st__reset_flag(long time_spent, long *flag) {
-  if (*flag > 1) {
-    (*flag) -= time_spent;
-    if (*flag < 1) {
-      *flag = 1;
-    }
+  *flag -= time_spent;
+  if (*flag < 1) {
+    *flag = 1;
   }
 }
 
-void spend_time(long days_spent, char place[82], boolean whole_days) {
-  /*{ if not whole_days then it is actually turns... }*/
+/**
+ * __store_print_inventory() - Display's a store's inventory
+ * @store_type: Type of store
+ * @start: ???
+ */
+static void __store_print_inventory(enum store_t store_type, long start) {
+  ENTER(("__store_print_inventory", ""));
 
-  long mornings, time_spent, turns_today, t2, i1;
-  float regen_percent;
-  boolean new_screen;
-  char out_val[82];
+  long i = ((start - 1) % 12);
+  long stop = (((start - 1) / 12) + 1) * 12;
 
-  /* with player_cur_age do; */
-  turns_today = player_cur_age.hour * 400 + player_cur_age.secs;
-
-  if (!whole_days) {
-    time_spent = days_spent; /*{if a 6:00 threshold is passed}*/
-
-    new_screen = ((turns_today + time_spent + 2400) / 4800) >
-                 ((turns_today + 2400) / 4800);
-
-    mornings =
-        (turns_today + time_spent - 2400) / 9600 - (turns_today - 2400) / 9600;
-    days_spent = 0;
-  } else {
-    time_spent = DAY_LENGTH * days_spent - turns_today;
-    new_screen = true;
-    mornings = days_spent;
-  }
-
-  switch (days_spent) {
-  case 0:
-    player_cur_age.secs += time_spent;
-    player_cur_age.hour += player_cur_age.secs / 400;
-    player_cur_age.secs = player_cur_age.secs % 400;
-    add_days(&(player_cur_age), player_cur_age.hour / 24);
-    player_cur_age.hour = player_cur_age.hour % 24;
-    break;
-
-  case 1:
-    if (player_cur_age.hour < 6) {
-      sprintf(out_val, "You spend the remainder of the night %s", place);
-      msg_print(out_val);
-      player_cur_age.hour = 8; /*{why get up before shops open?}*/
-      player_cur_age.secs = randint(400) - 1;
-      time_spent = (time_spent - DAY_LENGTH + 400 * player_cur_age.hour +
-                    player_cur_age.secs);
-    } else {
-      sprintf(out_val, "You spend the night %s", place);
-      msg_print(out_val);
-      player_cur_age.hour = 8;
-      add_days(&(player_cur_age), 1);
-      player_cur_age.secs = randint(400) - 1;
-      time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
-    }
-    break;
-
-  case 3:
-    msg_print("You spend three days in the inn.");
-    /* 10/26/00 --JEB.  what the hell was "28+randint(3)" doing in
-     */
-    /* this context? */
-    /*    add_days(&(player_cur_age),28+randint(3)); */
-    add_days(&(player_cur_age), 3);
-    player_cur_age.hour = 8 + randint(4);
-    player_cur_age.secs = randint(400) - 1;
-    time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
-    break;
-
-  case 7:
-    msg_print("You spend the week in the inn.");
-    add_days(&(player_cur_age), 7);
-    player_cur_age.hour = 8 + randint(4);
-    player_cur_age.secs = randint(400) - 1;
-    time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
-    break;
-  }
-
-  refresh();
-  turn += time_spent;
-  turn_counter += QUEST_DELAY;
-
-  if (new_screen) {
-    sleep(1);
-  }
-
-  /* with player_flags do; */
-  for (t2 = time_spent; ((player_flags).poisoned > 0) && (t2 > 0);) {
-    (player_flags).poisoned--;
-    time_spent--;
-
-    switch (C_player_hp_from_con()) {
-    case -4:
-      take_hit(4, "poison");
-      break;
-    case -3:
-    case -2:
-      take_hit(3, "poison");
-      break;
-    case -1:
-      take_hit(2, "poison");
-      break;
-    case 0:
-      take_hit(1, "poison");
-      break;
-    case 1:
-    case 2:
-    case 3:
-      if ((t2 % 2) == 0) {
-        take_hit(1, "poison");
-      }
-      break;
-    case 4:
-    case 5:
-      if ((t2 % 3) == 0) {
-        take_hit(1, "poison.");
-      }
-      break;
-    case 6:
-      if ((t2 % 4) == 0) {
-        take_hit(1, "poison.");
-      }
-      break;
-    } /* end switch */
-
-    if ((player_flags).poisoned == 0) {
-      (player_flags).status &= ~IS_POISONED;
-      msg_print("You feel better.");
-      refresh();
-    }
-  } /* end for */
-
-  st__reset_flag(time_spent, &((player_flags).blind));
-  st__reset_flag(time_spent, &((player_flags).confused));
-  st__reset_flag(time_spent, &((player_flags).protection));
-  st__reset_flag(time_spent, &((player_flags).fast));
-  st__reset_flag(time_spent, &((player_flags).slow));
-  st__reset_flag(time_spent, &((player_flags).afraid));
-  st__reset_flag(time_spent, &((player_flags).image));
-  st__reset_flag(time_spent, &((player_flags).protevil));
-  st__reset_flag(time_spent, &((player_flags).invuln));
-  st__reset_flag(time_spent, &((player_flags).hero));
-  st__reset_flag(time_spent, &((player_flags).shero));
-  st__reset_flag(time_spent, &((player_flags).blessed));
-  st__reset_flag(time_spent, &((player_flags).resist_heat));
-  st__reset_flag(time_spent, &((player_flags).resist_cold));
-  st__reset_flag(time_spent, &((player_flags).detect_inv));
-  st__reset_flag(time_spent, &((player_flags).word_recall));
-  st__reset_flag(time_spent, &((player_flags).tim_infra));
-  st__reset_flag(time_spent, &((player_flags).resist_lght));
-  st__reset_flag(time_spent, &((player_flags).free_time));
-  st__reset_flag(time_spent, &((player_flags).ring_fire));
-  st__reset_flag(time_spent, &((player_flags).protmon));
-  st__reset_flag(time_spent, &((player_flags).hoarse));
-  st__reset_flag(time_spent, &((player_flags).magic_prot));
-  st__reset_flag(time_spent, &((player_flags).ring_ice));
-  st__reset_flag(time_spent, &((player_flags).temp_stealth));
-  st__reset_flag(time_spent, &((player_flags).resist_petri));
-  st__reset_flag(time_spent, &((player_flags).blade_ring));
-
-  switch (days_spent) {
-  case 0:
-  case 1:
-    (player_flags).foodc -= time_spent;
-    if ((player_flags).foodc <= PLAYER_FOOD_ALERT) {
-      /* free food if you were hungry when you got here? */
-      (player_flags).foodc = PLAYER_FOOD_ALERT + 1;
-    }
-    break;
-
-  default:
-    (player_flags).foodc = PLAYER_FOOD_FULL - 1;
-    break;
-  }
-
-  (player_flags).confuse_monster = false;
-
-  for (i1 = 1; i1 <= mornings; i1++) {
-    store_maint();
-  }
-
-  /* with player_do; */
-  regen_percent = regen_amount * 2 * time_spent;
-  if (regen_percent > 1.00)
-    regen_percent = 1.00;
-  if (C_player_current_hp() < C_player_max_hp())
-    C_player_regen_hp(regen_percent);
-  if (C_player_current_hp() > C_player_max_hp())
-    C_player_reset_current_hp();
-  if (player_cmana < player_mana)
-    regenmana(regen_percent);
-  if (player_cmana > player_mana)
-    player_cmana = player_mana;
-
-  if (new_screen) {
-    moria_flag = true;
-    msg_print("");
-  }
-}
-
-void enter_store(long store_num) {
-  /*{ Entering a store					-RAK-	}*/
-
-  long com_val, cur_top, tics;
-  treas_rec *trash_ptr;
-  char command;
-  boolean exit_flag;
-
-  ENTER(("enter_store", ""));
-
-  tics = 1;
-  /* with stores[store_num] do; */
-  exit_flag = false;
-  cur_top = 1;
-
-  display_store(store_num, cur_top);
-
-  do {
-    if (get_com("", &command)) {
-      msg_flag = false;
-      com_val = (long)(command);
-
-      switch (com_val) {
-      case 18:
-        display_store(store_num, cur_top);
-        break;
-      case 'I': /*{ Selective Inventory   }*/
-        if (inven_command('I', &trash_ptr, "")) {
-          display_store(store_num, cur_top);
-        }
-        break;
-      case ' ':
-        if (cur_top == 1) {
-          if (stores[store_num].store_ctr > 12) {
-            cur_top = 13;
-            display_inventory(store_num, cur_top);
-          } else {
-            prt("Entire inventory is "
-                "shown.",
-                1, 1);
-          }
-        } else {
-          cur_top = 1;
-          display_inventory(store_num, cur_top);
-        }
-        break;
-      case 'e': /*{ Equipment List        }*/
-        if (inven_command('e', &trash_ptr, "")) {
-          display_store(store_num, cur_top);
-        }
-        break;
-      case 'i': /*{ Inventory             }*/
-        if (inven_command('i', &trash_ptr, "")) {
-          display_store(store_num, cur_top);
-        }
-        break;
-      case 't': /*{ Take off              }*/
-        if (inven_command('t', &trash_ptr, "")) {
-          display_store(store_num, cur_top);
-        }
-        break;
-      case 'w': /*{ Wear                  }*/
-        if (inven_command('w', &trash_ptr, "")) {
-          display_store(store_num, cur_top);
-        }
-        break;
-      case 'x': /*{ Switch weapon         }*/
-        if (inven_command('x', &trash_ptr, "")) {
-          display_store(store_num, cur_top);
-        }
-        break;
-      case 'p':
-        exit_flag = store_purchase(store_num, &cur_top, false);
-        break;
-      case 'P':
-        exit_flag = store_purchase(store_num, &cur_top, true);
-        break;
-      case 's':
-        exit_flag = store_sell(store_num, cur_top, false);
-        break;
-      case 'S':
-        exit_flag = store_sell(store_num, cur_top, true);
-        break;
-      default:
-        prt("Invalid Command.", 1, 1);
-        break;
-      } /* end switch */
-    } else {
-      exit_flag = true;
-    }
-    adv_time(false);
-    tics++;
-    check_kickout_time(tics, 2);
-  } while (!exit_flag);
-
-  if (moria_flag) {
-    clear_rc(1, 1);
-    prt_stat_block();
-  } else {
-    draw_cave();
-  }
-
-  LEAVE("enter_store", "");
-}
-
-void display_store(long store_num, long cur_top) {
-  /*{ Displays store					-RAK-	}*/
-  ENTER(("display_store", ""));
-
-  /* with stores[store_num] do; */
-  C_clear_screen();
-  prt(owners[stores[store_num].owner].owner_name, 4, 10);
-  prt("   Item", 5, 1);
-  prt("Asking Price", 5, 61);
-  store_prt_gold();
-  display_commands();
-  display_inventory(store_num, cur_top);
-
-  LEAVE("display_store", "");
-}
-
-void store_prt_gold() {
-  /*{ Displays players gold					-RAK-
-   * }*/
-
-  char out_val[82];
-  ENTER(("store_prt_gold", ""));
-
-  sprintf(out_val, "Gold Remaining : %ld", player_money[TOTAL_]);
-  prt(out_val, 19, 18);
-
-  LEAVE("store_prt_gold", "");
-}
-
-void display_cost(long store_num, long pos) {
-  /*{ Re-displays only a single cost                        -RAK-   }*/
-
-  long i1, i2;
-  char out_val[82];
-
-  /* with stores[store_num] do; */
-  i1 = ((pos - 1) % 12);
-  if (stores[store_num].store_inven[pos].scost < 0) {
-    i2 = labs(stores[store_num].store_inven[pos].scost);
-    i2 += (long)(i2 * C_player_cost_modifier_from_charisma());
-    sprintf(out_val, "%6ld", (i2 / GOLD_VALUE));
-  } else {
-    sprintf(out_val, "%6ld [FIXED]",
-            (stores[store_num].store_inven[pos].scost / GOLD_VALUE));
-  }
-
-  prt(out_val, i1 + 6, 60);
-}
-
-void display_commands() {
-  /*{ Displays the set of commands				-RAK-
-   * }*/
-  ENTER(("display_commands", ""));
-
-  prt("You may:", 21, 1);
-  prt(" p/P) Purchase an item.          <space> browse store's "
-      "inventory.",
-      22, 1);
-  prt(" s/S) Sell an item.              i) Inventory and Equipment "
-      "Lists.",
-      23, 1);
-  prt(" ^R) Redraw the screen.        Esc) Exit from building.", 24, 1);
-
-  LEAVE("display_commands", "");
-}
-
-void haggle_commands(long typ) {
-  /*{ Displays the set of commands				-RAK-
-   * }*/
-
-  if (typ == -1) {
-    prt("Specify an asking-price in gold pieces.", 22, 1);
-  } else {
-    prt("Specify an offer in gold pieces.", 22, 1);
-  }
-  prt("Esc) Quit Haggling.", 23, 1);
-  prt("", 24, 1);
-}
-
-void display_inventory(long store_num, long start) {
-  /*{ Displays a store's inventory				-RAK-
-   * }*/
-
-  long i1;
-  long i2;
-  long stop;
-  char out_val1[82];
-  char out_val2[85];
-
-  ENTER(("display_inventory", ""));
-
-  /* with stores[store_num] do; */
-  i1 = ((start - 1) % 12);
-  stop = (((start - 1) / 12) + 1) * 12;
-
-  if (stop > stores[store_num].store_ctr) {
-    stop = stores[store_num].store_ctr;
+  if (stop > stores[store_type].store_ctr) {
+    stop = stores[store_type].store_ctr;
   }
 
   for (; (start <= stop);) {
-    inven_temp->data = stores[store_num].store_inven[start].sitem;
-    /* with inven_temp->data do; */
+    inven_temp->data = stores[store_type].store_inven[start].sitem;
     if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
       inven_temp->data.number = 1;
     }
+    char out_val1[82];
     objdes(out_val1, inven_temp, true);
-    sprintf(out_val2, "%c) %s", (97 + (int)i1), out_val1);
-    prt(out_val2, i1 + 6, 1);
-    if (stores[store_num].store_inven[start].scost < 0) {
+    char out_val2[85];
+    sprintf(out_val2, "%c) %s", (97 + (int)i), out_val1);
+    prt(out_val2, i + 6, 1);
+    if (stores[store_type].store_inven[start].scost < 0) {
       /*{quack}*/
-      i2 = labs(stores[store_num].store_inven[start].scost);
-      i2 = i2 + trunc(i2 * C_player_cost_modifier_from_charisma());
-      sprintf(out_val2, "%6ld", ((i2 + GOLD_VALUE - 1) / GOLD_VALUE));
+      long cost = labs(stores[store_type].store_inven[start].scost);
+      cost = cost + trunc(cost * C_player_cost_modifier_from_charisma());
+      sprintf(out_val2, "%6ld", ((cost + GOLD_VALUE - 1) / GOLD_VALUE));
     } else {
       sprintf(out_val2, "%6ld [Fixed]",
-              (stores[store_num].store_inven[start].scost / GOLD_VALUE));
+              (stores[store_type].store_inven[start].scost / GOLD_VALUE));
     }
-    prt(out_val2, i1 + 6, 60);
-    i1++;
+    prt(out_val2, i + 6, 60);
+    i++;
     start++;
   }
-  if (i1 < 12) {
-    for (i2 = 1; i2 <= (12 - i1 + 1); i2++) {
-      prt("", i2 + i1 + 5, 1);
+  if (i < 12) {
+    for (long j = 1; j <= (12 - i + 1); j++) {
+      prt("", j + i + 5, 1);
     }
   }
 
-  LEAVE("display_inventory", "");
+  LEAVE("__store_print_inventory", "");
 }
 
-boolean store_purchase(long store_num, long *cur_top, boolean blitz) {
-  /*{ Buy an item from a store                              -RAK-   }*/
+/**
+ * __store_print_store_gold() - Displays player's gold in store
+ */
+static void __store_print_store_gold() {
 
-  long i1, item_val, price, to_bank;
-  long choice;
-  treas_rec *item_new;
-  long save_number;
+  ENTER(("__store_print_store_gold", ""));
+
   char out_val[82];
-  char foo[82];
-  char out2[100];
-  boolean flag;
-  boolean return_value = false;
+  sprintf(out_val, "Gold Remaining : %ld", player_money[TOTAL_]);
+  prt(out_val, 19, 18);
 
-  item_new = NULL;
-  /* with stores[store_num] do; */
-  if (blitz) {
-    strcpy(foo, "BLITZ-PURCHASE item? ");
-  } else {
-    strcpy(foo, "Purchase which item? ");
-  }
-  /* { i1 = number of objects shown on screen        }*/
-
-  if (*cur_top == 13) {
-    i1 = stores[store_num].store_ctr - 12;
-  } else if (stores[store_num].store_ctr > 12) {
-    i1 = 12;
-  } else {
-    i1 = stores[store_num].store_ctr;
-  }
-
-  if (stores[store_num].store_ctr < 1) {
-    msg_print("I am currently out of stock.");
-    /*{ Get the item number to be bought              }*/
-  } else if (get_store_item(&item_val, foo, 1, i1)) {
-    /*{"Which item are you interested in? ",1,i1)) then}*/
-    item_val += *cur_top - 1; /*{ true item_val }*/
-    inven_temp->data = stores[store_num].store_inven[item_val].sitem;
-
-    /* with inven_temp->data. do; */
-    if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
-      save_number = inven_temp->data.number;
-      inven_temp->data.number = 1;
-    } else {
-      save_number = 1;
-    }
-
-    if (inven_check_weight() || (store_num == S_INN)) {
-      if (inven_check_num() || (store_num == S_INN)) {
-        if (stores[store_num].store_inven[item_val].scost > 0) {
-          price = stores[store_num].store_inven[item_val].scost / GOLD_VALUE;
-          choice = 0;
-        } else {
-          choice =
-              purchase_haggle(store_num, &price, &(inven_temp->data), blitz);
-        }
-
-        switch (choice) {
-
-        case 0:
-          /* with player_do; */
-          if (player_money[TOTAL_] >= price) {
-            subtract_money(price * GOLD_VALUE, true);
-            flag = true;
-          } else {
-            to_bank = price - player_money[TOTAL_];
-            flag = send_page(to_bank);
-          }
-
-          if (flag) {
-            prt_comment1();
-            decrease_insults(store_num);
-            if (store_num == S_INN) {
-              /* with */
-              /* store_inven[item_val]
-               */
-              /* do; */
-              if (stores[store_num].store_inven[item_val].scost < 0) {
-                stores[store_num].store_inven[item_val].scost =
-                    price * GOLD_VALUE;
-              }
-              spend_time(stores[store_num].store_inven[item_val].sitem.p1,
-                         "at the Inn.", true);
-              if (stores[store_num].store_inven[item_val].sitem.subval == 303) {
-                spend_time(600, "eating.", false);
-                msg_print("You eat a "
-                          "leisurely "
-                          "meal of "
-                          "buckwheat "
-                          "cakes and "
-                          "bacon.");
-                player_flags.foodc = PLAYER_FOOD_FULL;
-                player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
-                msg_print(" ");
-              }
-              return_value = true;
-            } else {
-              store_destroy(store_num, item_val, true);
-              item_new = inven_carry();
-              objdes(out_val, item_new, true);
-              sprintf(out2, "You have %s", out_val);
-              msg_print(out2);
-              if (*cur_top > stores[store_num].store_ctr) {
-                *cur_top = 1;
-                display_inventory(store_num, *cur_top);
-              } else {
-                /* with */
-                /* store_inven[item_val]
-                 */
-                /* do; */
-                if (save_number > 1) {
-                  if (stores[store_num].store_inven[item_val].scost < 0) {
-                    stores[store_num].store_inven[item_val].scost =
-                        price * GOLD_VALUE;
-                    display_cost(store_num, item_val);
-                  }
-                } else {
-                  display_inventory(store_num, item_val);
-                }
-              }
-              store_prt_gold();
-            }
-          } else {
-            if (increase_insults(store_num)) {
-              return_value = true;
-            } else {
-              prt_comment1();
-              msg_print("Liar!  You "
-                        "have not "
-                        "the gold!");
-            }
-          }
-
-          break;
-
-        case 2:
-          return_value = true;
-          break;
-
-        default:
-          break;
-        } /* end switch */
-        prt("", 2, 1);
-
-      } else {
-        prt("You cannot carry that many different "
-            "items.",
-            1, 1);
-      }
-    } else {
-      prt("You can not carry that much weight.", 1, 1);
-    }
-  }
-
-  return return_value;
+  LEAVE("__store_print_store_gold", "");
 }
 
-boolean store_sell(long store_num, long cur_top, boolean blitz) {
-  /*{ Sell an item to the store                             -RAK-   }*/
+/**
+ * __store_redraw_cost() - Re-displays only a single cost
+ * @store_type: Type of store
+ * @pos: Item position in list
+ */
+static void __store_redraw_cost(enum store_t store_type, long pos) {
 
-  long count = 0;
-  treas_rec *item_ptr = NULL;
-  long item_pos, price;
   char out_val[82];
-  char foo[82];
-  char out2[100];
-  char trash_char;
-  boolean redraw;
-  boolean return_value = false;
 
-  ENTER(("store_sell", ""));
-
-  if (blitz) {
-    strcpy(foo, "BLITZ-SELLING item? ");
+  long i = ((pos - 1) % 12);
+  if (stores[store_type].store_inven[pos].scost < 0) {
+    long cost = labs(stores[store_type].store_inven[pos].scost);
+    cost += (long)(cost * C_player_cost_modifier_from_charisma());
+    sprintf(out_val, "%6ld", (cost / GOLD_VALUE));
   } else {
-    strcpy(foo, "Which one? ");
+    sprintf(out_val, "%6ld [FIXED]",
+            (stores[store_type].store_inven[pos].scost / GOLD_VALUE));
   }
 
-  /* with stores[store_num] do; */
-  redraw = false;
-  if (!find_range(store_buy[store_num], false, &item_ptr, &count)) {
-    msg_print("You have nothing the store wishes to buy.");
-  } else if (get_item(&item_ptr, foo, &redraw, count, &trash_char, false,
-                      false)) {
-    if (redraw) {
-      display_store(store_num, cur_top);
-    }
-    inven_temp->data = item_ptr->data;
-    /* with inven_temp->data. do; */
-    if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
-      inven_temp->data.number = 1; /*{But why????}*/
-    }
-    objdes(out_val, inven_temp, true);
-    sprintf(out2, "Selling %s", out_val);
-    msg_print(out2);
-    msg_print(" ");
-    if (is_in(inven_temp->data.tval, store_buy[store_num])) {
-      if (store_check_num(store_num)) {
-
-        switch (sell_haggle(store_num, &price, &(inven_temp->data), blitz)) {
-        case 0:
-          prt_comment1();
-          add_money(price * GOLD_VALUE);
-          inven_destroy(item_ptr);
-          store_carry(store_num, &item_pos);
-          if (item_pos > 0) {
-            if (item_pos < 13) {
-              if (cur_top < 13) {
-                display_inventory(store_num, item_pos);
-              } else {
-                display_inventory(store_num, cur_top);
-              }
-            } else if (cur_top > 12) {
-              display_inventory(store_num, item_pos);
-            }
-          }
-          store_prt_gold();
-          break;
-
-        case 2:
-          return_value = true;
-          break;
-
-        case 3:
-          msg_print("How dare you!");
-          msg_print("I will not buy that!");
-          return_value = increase_insults(store_num);
-          break;
-
-        case 4:
-          /* black market or insured stuff after a
-           * death */
-          msg_print("Hmmmmm, that looks hot. I "
-                    "will not buy it!");
-          msg_print("I am an honest merchant!");
-
-        default:
-          break;
-        }
-      } else {
-        prt("I have not the room in my store to keep "
-            "it...",
-            1, 1);
-      }
-    } else {
-      prt("I do not buy such items.", 1, 1);
-    }
-  } else if (redraw) {
-    display_store(store_num, cur_top);
-  }
-
-  LEAVE("store_sell", "");
-  return return_value;
+  prt(out_val, i + 6, 60);
 }
 
-boolean increase_insults(long store_num) {
-  /*{ Increase the insult counter and get pissed if too many -RAK-  }*/
-  boolean return_value = false;
+/**
+ * __store_close() - Deny the player entrance to the store
+ * @store_type: Type of store
+ */
+static void __store_close(long store_type) {
+  stores[store_type].store_open.year = player_cur_age.year;
+  stores[store_type].store_open.month = player_cur_age.month;
+  stores[store_type].store_open.day = player_cur_age.day;
+  stores[store_type].store_open.hour = player_cur_age.hour;
+  stores[store_type].store_open.secs = player_cur_age.secs;
 
-  /* with stores[store_num] do; */
-  stores[store_num].insult_cur++;
-  if (stores[store_num].insult_cur >
-      owners[stores[store_num].owner].insult_max) {
-    prt_comment4();
-    stores[store_num].insult_cur = 0;
-    change_rep(-5);
-    shut_store(store_num);
-    return_value = true;
-  }
-  return return_value;
-}
+  stores[store_type].store_open.day++;
+  stores[store_type].store_open.hour = 6;
+  stores[store_type].store_open.secs = randint(400) - 1;
 
-void decrease_insults(long store_num) {
-  /* with stores[store_num] do; */
-  stores[store_num].insult_cur -= 2;
-  if (stores[store_num].insult_cur < 0) {
-    stores[store_num].insult_cur = 0;
-  }
-}
-
-void shut_store(long store_num) {
-  /* with stores[store_num] do; */
-  /* with player_cur_age do; */
-  stores[store_num].store_open.year = player_cur_age.year;
-  stores[store_num].store_open.month = player_cur_age.month;
-  stores[store_num].store_open.day = player_cur_age.day;
-  stores[store_num].store_open.hour = player_cur_age.hour;
-  stores[store_num].store_open.secs = player_cur_age.secs;
-
-  /* with store_open do; */
-
-  stores[store_num].store_open.day++;
-  stores[store_num].store_open.hour = 6;
-  stores[store_num].store_open.secs = randint(400) - 1;
-
-  if (stores[store_num].store_open.day > 28) {
-    stores[store_num].store_open.day = 1;
-    stores[store_num].store_open.month++;
-    if (stores[store_num].store_open.month > 13) {
-      stores[store_num].store_open.month = 1;
-      stores[store_num].store_open.year++;
+  if (stores[store_type].store_open.day > 28) {
+    stores[store_type].store_open.day = 1;
+    stores[store_type].store_open.month++;
+    if (stores[store_type].store_open.month > 13) {
+      stores[store_type].store_open.month = 1;
+      stores[store_type].store_open.year++;
     }
   }
 }
 
-boolean get_store_item(long *com_val, char pmt[82], long i1, long i2) {
-  /*{ Get the ID of a store item and return its value       -RAK-   }*/
-
-  char command;
-  char out_val[82];
-  boolean flag = true;
-
-  *com_val = 0;
-  sprintf(out_val, "(Items %c-%c, Esc to exit) %s", (int)i1 + 96, (int)i2 + 96,
-          pmt);
-
-  while (((*com_val < i1) || (*com_val > i2)) && (flag)) {
-    prt(out_val, 1, 1);
-    command = inkey();
-    *com_val = (long)(command);
-    switch (*com_val) {
-    case 3:
-    case 25:
-    case 26:
-    case 27:
-      flag = false;
-      break;
-    default:
-      *com_val -= 96;
-      break;
-    }
-  }
-
-  msg_flag = false;
-  erase_line(msg_line, msg_line);
-
-  return flag;
-}
-
-long sell_haggle(long store_num, long *price, treasure_type *item,
-                 boolean blitz) {
-  /*{ Haggling routine                                      -RAK-   }*/
-  /*{ Return value shows the result of the haggling:                 */
-  /*    0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy }         */
-
-  long max_sell = 1;
-  long max_buy = 1;
-  long min_buy = 1;
-  long cost;
-  long cur_ask;
-  long final_ask;
-  long min_offer;
-  long last_offer;
-  long new_offer;
-  long final_flag;
-  long x3;
-  long max_gold = 0;
-  long delta;
-  float x1;
-  float x2;
-  float min_per = 1.0;
-  float max_per = 1.0;
-  boolean flag;
-  boolean loop_flag;
-  char comment[82];
-  char out_val[100];
-  long return_value = 0;
-
-  ENTER(("sell_haggle", "s"));
-
-  flag = false;
-  *price = 0;
-  final_flag = 0;
-  msg_flag = false;
-
-  /* with stores[store_num] do; */
-  cost = item_value(item);
-  if (cost < 1) {
-    return_value = 3;
-    flag = true;
-  } else if (item->flags2 & Blackmarket_bit) {
-    return_value = 4;
-    flag = true;
-  } else {
-    /* with owners[owner] do; */
-    cost = cost - (long)(cost * C_player_cost_modifier_from_charisma()) -
-           (long)(cost * rgold_adj[owners[stores[store_num].owner].owner_race]
-                                  [player_prace]);
-    if (cost < 1) {
-      cost = 1;
-    }
-    max_sell =
-        trunc(cost * (1 + (owners[stores[store_num].owner]).max_inflate));
-    max_buy = trunc(cost * (1 - (owners[stores[store_num].owner]).max_inflate));
-    min_buy = trunc(cost * (1 - (owners[stores[store_num].owner]).min_inflate));
-    if (min_buy < max_buy) {
-      min_buy = max_buy;
-    }
-    min_per = (owners[stores[store_num].owner]).haggle_per;
-    max_per = min_per * 3.0;
-    max_gold = (owners[stores[store_num].owner]).max_cost;
-  }
-
-  if (blitz) {
-    delta = (min_buy - max_buy);
-    last_offer = min_buy - (delta / 7);
-    /* with stores[store_num] do; */
-    *price = last_offer - ((stores[store_num].insult_cur * delta) /
-                           owners[stores[store_num].owner].insult_max);
-    strcpy(comment, "Need cash quick?  I'll pay you ");
-    sprintf(out_val, "%s%ld   ", comment, *price);
-    msg_print(out_val);
-    msg_print(" ");
-  } else {
-    /*{haggling}*/
-    if (!(flag)) {
-      haggle_commands(-1);
-      if (max_buy > max_gold) {
-        strcpy(comment, "Final offer : ");
-        final_flag = 1;
-        cur_ask = max_gold;
-        final_ask = max_gold;
-        msg_print("I am sorry, but I have not the "
-                  "money to afford such a fine item.");
-        msg_print(" ");
-      } else {
-        cur_ask = max_buy;
-        final_ask = min_buy;
-        if (final_ask > max_gold) {
-          final_ask = max_gold;
-        }
-        strcpy(comment, "Offer : ");
-      }
-      min_offer = max_sell;
-      last_offer = min_offer;
-      if (cur_ask < 1) {
-        cur_ask = 1;
-      }
-      do {
-        do {
-          loop_flag = true;
-          sprintf(out_val, "%s%ld       ", comment, cur_ask);
-          put_buffer(out_val, 2, 1);
-          switch (receive_offer(store_num, "What price do you ask? ",
-                                &new_offer, last_offer, -1)) {
-          case 1:
-            flag = true;
-            return_value = 1;
-            break;
-
-          case 2:
-            return_value = 2;
-            flag = true;
-            break;
-
-          default:
-            if (new_offer < cur_ask) {
-              /* they probably missed
-               * a key... be kind */
-              prt_comment6();
-              loop_flag = false;
-            } else if (new_offer == cur_ask) {
-              /* sold!!! */
-              flag = true;
-              *price = new_offer;
-            }
-            break;
-          }
-        } while (!((flag) || (loop_flag)));
-
-        if (!(flag)) {
-          msg_flag = false;
-          x1 = (float)(last_offer - new_offer) / (float)(last_offer - cur_ask);
-
-          if (x1 < min_per) {
-            flag = haggle_insults(store_num);
-            if (flag) {
-              return_value = 2;
-            }
-          } else {
-            if (x1 > max_per) {
-              x1 *= 0.75;
-              if (x1 < max_per) {
-                x1 = max_per;
-              }
-            }
-            x2 = (x1 + (randint(5) - 3) / 100.0);
-            x3 = trunc((new_offer - cur_ask) * x2) + 1;
-            cur_ask += x3;
-
-            if (cur_ask > final_ask) {
-              cur_ask = final_ask;
-              strcpy(comment, "Final Offer : ");
-              final_flag++;
-
-              if (final_flag > 3) {
-
-                if (increase_insults(store_num)) {
-                  return_value = 2;
-                } else {
-                  return_value = 1;
-                }
-                flag = true;
-              }
-
-            } else if (new_offer <= cur_ask) {
-              flag = true;
-              *price = new_offer;
-            }
-
-            if (!(flag)) {
-              last_offer = new_offer;
-              prt(" ", 2, 1);
-              sprintf(out_val,
-                      "Your last bid "
-                      "  : %ld   ",
-                      last_offer);
-              put_buffer(out_val, 2, 40);
-              prt_comment3(cur_ask, last_offer, final_flag);
-            }
-          }
-        }
-      } while (!flag);
-      prt(" ", 2, 1);
-      display_commands();
-    }
-  }
-
-  RETURN("sell_haggle", "s", 'd', "status:", &return_value);
-  return return_value;
-}
-
-long purchase_haggle(long store_num, long *price, treasure_type *item,
-                     boolean blitz) {
-  /*{ Haggling routine                                      -RAK-   }*/
-
-  long max_sell;
-  long min_sell;
-  long max_buy;
-  long cost;
-  long cur_ask;
-  long final_ask;
-  long min_offer;
-  long last_offer;
-  long new_offer;
-  long final_flag;
-  long x3;
-  long delta;
-  float x1;
-  long x2;
-  float min_per;
-  float max_per;
-  boolean flag;
-  boolean loop_flag;
-  char out_val[100];
-  char comment[82];
-  long return_value = 0;
-
-  flag = false;
-  *price = 0;
-  final_flag = 0;
-  msg_flag = false;
-
-  /* with stores[store_num]. do; */
-  /* with owners[stores[store_num].owner]. do; */
-  cost = sell_price(store_num, &max_sell, &min_sell, item);
-  max_sell += (max_sell * C_player_cost_modifier_from_charisma());
-  if (max_sell < 0) {
-    max_sell = 1;
-  }
-  min_sell += (min_sell * C_player_cost_modifier_from_charisma());
-  if (min_sell < 0) {
-    min_sell = 1;
-  }
-  max_buy = trunc(cost * (1 - owners[stores[store_num].owner].max_inflate));
-  min_per = owners[stores[store_num].owner].haggle_per;
-  max_per = min_per * 3.0;
-
-  haggle_commands(1);
-  cur_ask = max_sell;
-  final_ask = min_sell;
-  min_offer = max_buy;
-  last_offer = min_offer;
-  strcpy(comment, "Asking : ");
-
-  if (blitz) {
-    delta = (max_sell - min_sell);
-    last_offer = min_sell + (delta / 4);
-    /* with stores[store_num]. do; */
-    *price = last_offer + ((stores[store_num].insult_cur * delta) /
-                           owners[stores[store_num].owner].insult_max);
-    strcpy(comment, "In a hurry, eh?  It's yours for a mere ");
-    sprintf(out_val, "%s%ld       ", comment, *price);
-    msg_print(out_val);
-    msg_print(" ");
-  } else {
-    /*{ go ahead and haggle }*/
-    do {
-      do {
-        loop_flag = true;
-        sprintf(out_val, "%s%ld          ", comment, cur_ask);
-        put_buffer(out_val, 2, 1);
-        switch (receive_offer(store_num, "What do you offer? ", &new_offer,
-                              last_offer, 1)) {
-        case 1:
-          return_value = 1;
-          flag = true;
-          break;
-
-        case 2:
-          return_value = 2;
-          flag = true;
-          break;
-
-        default:
-          if (new_offer > cur_ask) {
-            prt_comment6();
-            loop_flag = false;
-          } else if (new_offer == cur_ask) {
-            flag = true;
-            *price = new_offer;
-          }
-        } /* end switch */
-
-      } while (!((flag) || (loop_flag)));
-
-      if (!(flag)) {
-
-        x1 = (float)(new_offer - last_offer) / (float)(cur_ask - last_offer);
-        if (x1 < min_per) {
-          flag = haggle_insults(store_num);
-          if (flag) {
-            return_value = 2;
-          }
-        } else {
-          if (x1 > max_per) {
-            x1 *= 0.75;
-            if (x1 < max_per) {
-              x1 = max_per;
-            }
-          }
-          x2 = (x1 + (randint(5) - 3) / 100.0);
-          x3 = (long)((cur_ask - new_offer) * x2) + 1;
-          cur_ask -= x3;
-          if (cur_ask < final_ask) {
-            cur_ask = final_ask;
-            strcpy(comment, "Final Offer : ");
-            final_flag++;
-            if (final_flag > 3) {
-              if (increase_insults(store_num)) {
-                return_value = 2;
-              } else {
-                return_value = 1;
-              }
-              flag = true;
-            } else if (new_offer >= cur_ask) {
-              flag = true;
-              *price = new_offer;
-            }
-
-            if (!flag) {
-              last_offer = new_offer;
-              prt("", 2, 1);
-              sprintf(out_val,
-                      "Your last "
-                      "offer : %ld  "
-                      " ",
-                      last_offer);
-              put_buffer(out_val, 2, 40);
-              prt_comment2(last_offer, cur_ask, final_flag);
-            }
-          }
-        }
-      }
-    } while (!flag);
-  }
-
-  prt("", 2, 1);
-  display_commands();
-
-  return return_value;
-}
-
-boolean haggle_insults(long store_num) {
-  /*{ Have insulted while haggling                          -RAK-   }*/
-
-  boolean return_value = false;
-
-  if (increase_insults(store_num)) {
-    return_value = true;
-  } else {
-    prt_comment5();
-  }
-
-  return return_value;
-}
-
-boolean ro__get_haggle(char comment[82], long *num) {
-  long i1, clen;
-  char out_val[82];
-  boolean flag = true;
-
-  ENTER(("ro__get_haggle", "s"));
-
-  i1 = 0;
-  clen = strlen(comment) + 1;
-
-  do {
-    msg_print(comment);
-    msg_flag = false;
-
-    if (!(get_string(out_val, 1, clen, 40))) {
-      flag = false;
-      erase_line(msg_line, msg_line);
-    }
-
-    i1 = 0;
-    sscanf(out_val, "%ld", &i1);
-  } while (!((i1 != 0) || (!flag)));
-
-  if (flag) {
-    *num = i1;
-  }
-
-  RETURN("ro__get_haggle", "s", 'b', "flag:", &flag);
-  return flag;
-}
-
-long receive_offer(long store_num, char comment[82], long *new_offer,
-                   long last_offer, long factor) {
-  boolean flag;
-  long return_value = 0;
-
-  ENTER(("receive_offer", "i"));
-
-  flag = false;
-
-  do {
-    if (ro__get_haggle(comment, new_offer)) {
-      if ((*new_offer * factor) >= (last_offer * factor)) {
-        flag = true;
-      } else if (haggle_insults(store_num)) {
-        return_value = 2;
-        flag = true;
-      }
-    } else {
-      return_value = 1;
-      flag = true;
-    }
-  } while (!flag);
-
-  RETURN("receive_offer", "i", 'd', "123: ", &return_value);
-  return return_value;
-}
-
-void prt_comment1() {
+static void prt_comment1() {
   /*{ Comment one : Finished haggling                               }*/
 
   msg_flag = false;
@@ -2174,7 +616,7 @@ void prt_comment1() {
   }
 }
 
-void prt_comment2(long offer, long asking, long final) {
+static void prt_comment2(long offer, long asking, long final) {
   /*{ %A1 is offer, %A2 is asking...                }*/
 
   char comment[82];
@@ -2254,7 +696,7 @@ void prt_comment2(long offer, long asking, long final) {
   }
 }
 
-void prt_comment3(long offer, long asking, long final) {
+static void prt_comment3(long offer, long asking, long final) {
   char comment[82];
 
   if (final > 0) {
@@ -2324,7 +766,7 @@ void prt_comment3(long offer, long asking, long final) {
   msg_print(comment);
 }
 
-void prt_comment4() {
+static void prt_comment4() {
   /*{ Kick 'da bum out...                                   -RAK-   }*/
 
   msg_flag = false;
@@ -2362,7 +804,7 @@ void prt_comment4() {
   msg_flag = false;
 }
 
-void prt_comment5() {
+static void prt_comment5() {
   switch (randint(10)) {
   case 1:
     msg_print("You will have to do better than that!");
@@ -2397,7 +839,7 @@ void prt_comment5() {
   }
 }
 
-void prt_comment6() {
+static void prt_comment6() {
   switch (randint(5)) {
   case 1:
     msg_print("I must of heard you wrong...");
@@ -2417,4 +859,1525 @@ void prt_comment6() {
   }
 }
 
-/* END FILE  store.c */
+/**
+ * __store_get_insulted() - Increase the insult counter and get pissed if too many
+ * @store_type: Type of store
+ */
+static boolean __store_get_insulted(enum store_t store_type) {
+
+  stores[store_type].insult_cur++;
+  if (stores[store_type].insult_cur <= owners[stores[store_type].owner].insult_max)
+    return false;
+
+  prt_comment4();
+  stores[store_type].insult_cur = 0;
+  change_rep(-5);
+  __store_close(store_type);
+  return true;
+}
+
+/**
+ * __get_store_item() - Get the ID of a store item and return its value
+ */
+static boolean __get_store_item(long *com_val, char pmt[82], long i1, long i2) {
+  char out_val[82];
+
+  *com_val = 0;
+  sprintf(out_val, "(Items %c-%c, Esc to exit) %s", (int)i1 + 96, (int)i2 + 96,
+          pmt);
+
+  boolean return_value = true;
+  while ((*com_val < i1 || *com_val > i2) && return_value) {
+    prt(out_val, 1, 1);
+    char command = inkey();
+    *com_val = (long)(command);
+    switch (*com_val) {
+    case 3:
+    case 25:
+    case 26:
+    case 27:
+      return_value = false;
+      break;
+    default:
+      *com_val -= 96;
+      break;
+    }
+  }
+
+  msg_flag = false;
+  erase_line(msg_line, msg_line);
+
+  return return_value;
+}
+
+
+/**
+ * __store_lower_insult_level() - Lower insult counter for shop
+ * @store_type: Type of store
+ */
+static void __store_lower_insult_level(enum store_t store_type) {
+  /* with stores[store_type] do; */
+  stores[store_type].insult_cur -= 2;
+  if (stores[store_type].insult_cur < 0) {
+    stores[store_type].insult_cur = 0;
+  }
+}
+
+/**
+ * __store_display_haggle_commands() - Displays the set of commands
+ * @typ: ???
+ */
+static void __store_display_haggle_commands(long typ) {
+
+  if (typ == -1) {
+    prt("Specify an asking-price in gold pieces.", 22, 1);
+  } else {
+    prt("Specify an offer in gold pieces.", 22, 1);
+  }
+  prt("Esc) Quit Haggling.", 23, 1);
+  prt("", 24, 1);
+}
+
+/**
+ * __store_display_commands() - Display set of store commands
+ */
+static void __store_display_commands() {
+  ENTER(("__store_display_commands", ""));
+
+  prt("You may:", 21, 1);
+  prt(" p/P) Purchase an item.          <space> browse store's inventory.", 22, 1);
+  prt(" s/S) Sell an item.              i) Inventory and Equipment Lists.", 23, 1);
+  prt(" ^R) Redraw the screen.        Esc) Exit from building.", 24, 1);
+
+  LEAVE("__store_display_commands", "");
+}
+
+/**
+ * __haggle_insults() - Have insulted while haggling
+ */
+static boolean __haggle_insults(enum store_t store_num) {
+
+  if (__store_get_insulted(store_num)) {
+    return true;
+  } else {
+    prt_comment5();
+    return false;
+  }
+}
+
+static boolean __get_haggle(char comment[82], long *num) {
+
+  ENTER(("__get_haggle", "s"));
+
+  long i1 = 0;
+  long clen = strlen(comment) + 1;
+
+  boolean flag = true;
+  do {
+    char out_val[82];
+    msg_print(comment);
+    msg_flag = false;
+
+    if (!(get_string(out_val, 1, clen, 40))) {
+      flag = false;
+      erase_line(msg_line, msg_line);
+    }
+
+    i1 = 0;
+    sscanf(out_val, "%ld", &i1);
+  } while (!((i1 != 0) || (!flag)));
+
+  if (flag) {
+    *num = i1;
+  }
+
+  RETURN("__get_haggle", "s", 'b', "flag:", &flag);
+  return flag;
+}
+
+
+static long __receive_offer(long store_num, char comment[82], long *new_offer,
+                   long last_offer, long factor) {
+  boolean flag;
+  long return_value = 0;
+
+  ENTER(("__receive_offer", "i"));
+
+  flag = false;
+
+  do {
+    if (__get_haggle(comment, new_offer)) {
+      if ((*new_offer * factor) >= (last_offer * factor)) {
+        flag = true;
+      } else if (__haggle_insults(store_num)) {
+        return_value = 2;
+        flag = true;
+      }
+    } else {
+      return_value = 1;
+      flag = true;
+    }
+  } while (!flag);
+
+  RETURN("__receive_offer", "i", 'd', "123: ", &return_value);
+  return return_value;
+}
+
+
+/**
+ * __purchase_haggle() - Haggling routine
+ */
+static long __purchase_haggle(enum store_t store_num, long *price, treasure_type *item,
+                     boolean blitz) {
+
+  long max_buy;
+  long cur_ask;
+  long final_ask;
+  long min_offer;
+  long last_offer;
+  long new_offer;
+  long final_flag;
+  long x3;
+  long delta;
+  float x1;
+  long x2;
+  float min_per;
+  float max_per;
+  boolean flag;
+  boolean loop_flag;
+  char out_val[100];
+  char comment[82];
+  long return_value = 0;
+
+  flag = false;
+  *price = 0;
+  final_flag = 0;
+  msg_flag = false;
+
+  long base_price = __calc_sell_price(store_num, item);
+  long max_price = __store_max_price(store_num, base_price);
+  long min_price = __store_min_price(store_num, base_price);
+  max_price += (max_price * C_player_cost_modifier_from_charisma());
+  if (max_price < 0) {
+    max_price = 1;
+  }
+  min_price += (min_price * C_player_cost_modifier_from_charisma());
+  if (min_price < 0) {
+    min_price = 1;
+  }
+  max_buy = trunc(base_price * (1 - owners[stores[store_num].owner].max_inflate));
+  min_per = owners[stores[store_num].owner].haggle_per;
+  max_per = min_per * 3.0;
+
+  __store_display_haggle_commands(1);
+  cur_ask = max_price;
+  final_ask = min_price;
+  min_offer = max_buy;
+  last_offer = min_offer;
+  strcpy(comment, "Asking : ");
+
+  if (blitz) {
+    delta = (max_price - min_price);
+    last_offer = min_price + (delta / 4);
+    /* with stores[store_num]. do; */
+    *price = last_offer + ((stores[store_num].insult_cur * delta) /
+                           owners[stores[store_num].owner].insult_max);
+    strcpy(comment, "In a hurry, eh?  It's yours for a mere ");
+    sprintf(out_val, "%s%ld       ", comment, *price);
+    msg_print(out_val);
+    msg_print(" ");
+  } else {
+    /*{ go ahead and haggle }*/
+    do {
+      do {
+        loop_flag = true;
+        sprintf(out_val, "%s%ld          ", comment, cur_ask);
+        put_buffer(out_val, 2, 1);
+        switch (__receive_offer(store_num, "What do you offer? ", &new_offer,
+                              last_offer, 1)) {
+        case 1:
+          return_value = 1;
+          flag = true;
+          break;
+
+        case 2:
+          return_value = 2;
+          flag = true;
+          break;
+
+        default:
+          if (new_offer > cur_ask) {
+            prt_comment6();
+            loop_flag = false;
+          } else if (new_offer == cur_ask) {
+            flag = true;
+            *price = new_offer;
+          }
+        } /* end switch */
+
+      } while (!((flag) || (loop_flag)));
+
+      if (!(flag)) {
+
+        x1 = (float)(new_offer - last_offer) / (float)(cur_ask - last_offer);
+        if (x1 < min_per) {
+          flag = __haggle_insults(store_num);
+          if (flag) {
+            return_value = 2;
+          }
+        } else {
+          if (x1 > max_per) {
+            x1 *= 0.75;
+            if (x1 < max_per) {
+              x1 = max_per;
+            }
+          }
+          x2 = (x1 + (randint(5) - 3) / 100.0);
+          x3 = (long)((cur_ask - new_offer) * x2) + 1;
+          cur_ask -= x3;
+          if (cur_ask < final_ask) {
+            cur_ask = final_ask;
+            strcpy(comment, "Final Offer : ");
+            final_flag++;
+            if (final_flag > 3) {
+              if (__store_get_insulted(store_num)) {
+                return_value = 2;
+              } else {
+                return_value = 1;
+              }
+              flag = true;
+            } else if (new_offer >= cur_ask) {
+              flag = true;
+              *price = new_offer;
+            }
+
+            if (!flag) {
+              last_offer = new_offer;
+              prt("", 2, 1);
+              sprintf(out_val,
+                      "Your last "
+                      "offer : %ld  "
+                      " ",
+                      last_offer);
+              put_buffer(out_val, 2, 40);
+              prt_comment2(last_offer, cur_ask, final_flag);
+            }
+          }
+        }
+      }
+    } while (!flag);
+  }
+
+  prt("", 2, 1);
+  __store_display_commands();
+
+  return return_value;
+}
+
+/**
+ * __store_purchase() - Buy an item from a store
+ * @store_type: Type ofs tore
+ * @cur_top: ???
+ * @blitz: If we are blitz-buying
+ */
+static boolean __store_purchase(enum store_t store_type, long *cur_top, boolean blitz) {
+
+  boolean return_value = false;
+
+  treas_rec *item_new = NULL;
+  char foo[82];
+  if (blitz) {
+    strcpy(foo, "BLITZ-PURCHASE item? ");
+  } else {
+    strcpy(foo, "Purchase which item? ");
+  }
+
+  long objects_shown_on_screen;
+  if (*cur_top == 13) {
+    objects_shown_on_screen = stores[store_type].store_ctr - 12;
+  } else if (stores[store_type].store_ctr > 12) {
+    objects_shown_on_screen = 12;
+  } else {
+    objects_shown_on_screen = stores[store_type].store_ctr;
+  }
+
+  long item_val;
+  if (stores[store_type].store_ctr < 1) {
+    msg_print("I am currently out of stock.");
+    /*{ Get the item number to be bought              }*/
+  } else if (__get_store_item(&item_val, foo, 1, objects_shown_on_screen)) {
+    /*{"Which item are you interested in? ",1,objects_shown_on_screen)) then}*/
+    item_val += *cur_top - 1; /*{ true item_val }*/
+    inven_temp->data = stores[store_type].store_inven[item_val].sitem;
+
+    long save_number;
+    if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
+      save_number = inven_temp->data.number;
+      inven_temp->data.number = 1;
+    } else {
+      save_number = 1;
+    }
+
+    if (inven_check_weight() || store_type == S_INN) {
+      if (inven_check_num() || store_type == S_INN) {
+        long price;
+        long choice;
+        if (stores[store_type].store_inven[item_val].scost > 0) {
+          price = stores[store_type].store_inven[item_val].scost / GOLD_VALUE;
+          choice = 0;
+        } else {
+          choice = __purchase_haggle(store_type, &price, &(inven_temp->data), blitz);
+        }
+
+        switch (choice) {
+
+        case 0:
+          {
+            boolean flag;
+            if (player_money[TOTAL_] >= price) {
+              subtract_money(price * GOLD_VALUE, true);
+              flag = true;
+            } else {
+              long to_bank = price - player_money[TOTAL_];
+              flag = send_page(to_bank);
+            }
+
+            if (flag) {
+              prt_comment1();
+              __store_lower_insult_level(store_type);
+              if (store_type == S_INN) {
+                if (stores[store_type].store_inven[item_val].scost < 0) {
+                  stores[store_type].store_inven[item_val].scost =
+                    price * GOLD_VALUE;
+                }
+                spend_time(stores[store_type].store_inven[item_val].sitem.p1,
+                    "at the Inn.", true);
+                if (stores[store_type].store_inven[item_val].sitem.subval == 303) {
+                  spend_time(600, "eating.", false);
+                  msg_print("You eat a leisurely meal of buckwheat cakes and bacon.");
+                  player_flags.foodc = PLAYER_FOOD_FULL;
+                  player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
+                  msg_print(" ");
+                }
+                return_value = true;
+              } else {
+                __remove_item_from_store(store_type, item_val, true);
+                item_new = inven_carry();
+                char out_val[82];
+                objdes(out_val, item_new, true);
+                char out2[100];
+                sprintf(out2, "You have %s", out_val);
+                msg_print(out2);
+                if (*cur_top > stores[store_type].store_ctr) {
+                  *cur_top = 1;
+                  __store_print_inventory(store_type, *cur_top);
+                } else {
+                  if (save_number > 1) {
+                    if (stores[store_type].store_inven[item_val].scost < 0) {
+                      stores[store_type].store_inven[item_val].scost =
+                        price * GOLD_VALUE;
+                      __store_redraw_cost(store_type, item_val);
+                    }
+                  } else {
+                    __store_print_inventory(store_type, item_val);
+                  }
+                }
+                __store_print_store_gold();
+              }
+            } else {
+              if (__store_get_insulted(store_type)) {
+                return_value = true;
+              } else {
+                prt_comment1();
+                msg_print("Liar!  You have not the gold!");
+              }
+            }
+          }
+
+          break;
+
+        case 2:
+          return_value = true;
+          break;
+
+        default:
+          break;
+        }
+        prt("", 2, 1);
+
+      } else {
+        prt("You cannot carry that many different "
+            "items.",
+            1, 1);
+      }
+    } else {
+      prt("You can not carry that much weight.", 1, 1);
+    }
+  }
+
+  return return_value;
+}
+
+/**
+ * __sell_haggle() - Haggling routine
+ * @store_type: Type of store
+ * @price:
+ * @item: 
+ * @blitz: 
+ * @return: 0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy
+ */
+static long __sell_haggle(enum store_t store_type, long *price, treasure_type *item, boolean blitz) {
+
+  ENTER(("__sell_haggle", "s"));
+
+  long max_sell = 1;
+  long max_buy = 1;
+  long min_buy = 1;
+  long cur_ask;
+  long final_ask;
+  long min_offer;
+  long last_offer;
+  long new_offer;
+  long x3;
+  long max_gold = 0;
+  long delta;
+  float x1;
+  float x2;
+  float min_per = 1.0;
+  float max_per = 1.0;
+  boolean loop_flag;
+  char comment[82];
+  char out_val[100];
+  long return_value = 0;
+
+
+  boolean flag = false;
+  *price = 0;
+  long final_flag = 0;
+  msg_flag = false;
+
+  long cost = item_value(item);
+  if (cost < 1) {
+    return_value = 3;
+    flag = true;
+  } else if (item->flags2 & Blackmarket_bit) {
+    return_value = 4;
+    flag = true;
+  } else {
+    cost = cost - (long)(cost * C_player_cost_modifier_from_charisma()) -
+           (long)(cost * rgold_adj[owners[stores[store_type].owner].owner_race]
+                                  [player_prace]);
+    if (cost < 1) {
+      cost = 1;
+    }
+    max_sell =
+        trunc(cost * (1 + (owners[stores[store_type].owner]).max_inflate));
+    max_buy = trunc(cost * (1 - (owners[stores[store_type].owner]).max_inflate));
+    min_buy = trunc(cost * (1 - (owners[stores[store_type].owner]).min_inflate));
+    if (min_buy < max_buy) {
+      min_buy = max_buy;
+    }
+    min_per = (owners[stores[store_type].owner]).haggle_per;
+    max_per = min_per * 3.0;
+    max_gold = (owners[stores[store_type].owner]).max_cost;
+  }
+
+  if (blitz) {
+    delta = (min_buy - max_buy);
+    last_offer = min_buy - (delta / 7);
+    *price = last_offer - ((stores[store_type].insult_cur * delta) /
+                           owners[stores[store_type].owner].insult_max);
+    strcpy(comment, "Need cash quick?  I'll pay you ");
+    sprintf(out_val, "%s%ld   ", comment, *price);
+    msg_print(out_val);
+    msg_print(" ");
+    RETURN("__sell_haggle", "s", 'd', "status:", &return_value);
+    return return_value;
+  }
+
+  if (flag) {
+    RETURN("__sell_haggle", "s", 'd', "status:", &return_value);
+    return return_value;
+  }
+
+  // Haggling
+  __store_display_haggle_commands(-1);
+  if (max_buy > max_gold) {
+    strcpy(comment, "Final offer : ");
+    final_flag = 1;
+    cur_ask = max_gold;
+    final_ask = max_gold;
+    msg_print("I am sorry, but I have not the money to afford such a fine item.");
+    msg_print(" ");
+  } else {
+    cur_ask = max_buy;
+    final_ask = min_buy;
+    if (final_ask > max_gold) {
+      final_ask = max_gold;
+    }
+    strcpy(comment, "Offer : ");
+  }
+
+  min_offer = max_sell;
+  last_offer = min_offer;
+  if (cur_ask < 1) {
+    cur_ask = 1;
+  }
+
+  do {
+    do {
+      loop_flag = true;
+      sprintf(out_val, "%s%ld       ", comment, cur_ask);
+      put_buffer(out_val, 2, 1);
+      switch (__receive_offer(store_type, "What price do you ask? ",
+            &new_offer, last_offer, -1)) {
+        case 1:
+          flag = true;
+          return_value = 1;
+          break;
+
+        case 2:
+          return_value = 2;
+          flag = true;
+          break;
+
+        default:
+          if (new_offer < cur_ask) {
+            /* they probably missed
+             * a key... be kind */
+            prt_comment6();
+            loop_flag = false;
+          } else if (new_offer == cur_ask) {
+            /* sold!!! */
+            flag = true;
+            *price = new_offer;
+          }
+          break;
+      }
+    } while (!(flag || loop_flag));
+
+    if (!flag) {
+      msg_flag = false;
+      x1 = (float)(last_offer - new_offer) / (float)(last_offer - cur_ask);
+
+      if (x1 < min_per) {
+        flag = __haggle_insults(store_type);
+        if (flag) {
+          return_value = 2;
+        }
+      } else {
+        if (x1 > max_per) {
+          x1 *= 0.75;
+          if (x1 < max_per) {
+            x1 = max_per;
+          }
+        }
+        x2 = (x1 + (randint(5) - 3) / 100.0);
+        x3 = trunc((new_offer - cur_ask) * x2) + 1;
+        cur_ask += x3;
+
+        if (cur_ask > final_ask) {
+          cur_ask = final_ask;
+          strcpy(comment, "Final Offer : ");
+          final_flag++;
+
+          if (final_flag > 3) {
+
+            if (__store_get_insulted(store_type)) {
+              return_value = 2;
+            } else {
+              return_value = 1;
+            }
+            flag = true;
+          }
+
+        } else if (new_offer <= cur_ask) {
+          flag = true;
+          *price = new_offer;
+        }
+
+        if (!(flag)) {
+          last_offer = new_offer;
+          prt(" ", 2, 1);
+          sprintf(out_val, "Your last bid   : %ld   ", last_offer);
+          put_buffer(out_val, 2, 40);
+          prt_comment3(cur_ask, last_offer, final_flag);
+        }
+      }
+    }
+  } while (!flag);
+
+  prt(" ", 2, 1);
+  __store_display_commands();
+
+  RETURN("__sell_haggle", "s", 'd', "status:", &return_value);
+  return return_value;
+}
+
+
+/**
+ * __store_sell() - Sell an item to the store
+ * @store_type: Type of store
+ * @cur_top: ???
+ * @blitz: If we are blitz-selling
+ */
+static boolean __store_sell(enum store_t store_type, long cur_top, boolean blitz) {
+
+  ENTER(("__store_sell", ""));
+
+
+  char foo[82];
+  if (blitz) {
+    strcpy(foo, "BLITZ-SELLING item? ");
+  } else {
+    strcpy(foo, "Which one? ");
+  }
+
+  long count = 0;
+  treas_rec *item_ptr = NULL;
+  if (!find_range(store_buy[store_type], false, &item_ptr, &count)) {
+    msg_print("You have nothing the store wishes to buy.");
+    LEAVE("__store_sell", "");
+    return false;
+  }
+
+  boolean return_value = false;
+  boolean redraw = false;
+  char trash_char;
+  if (!get_item(&item_ptr, foo, &redraw, count, &trash_char, false, false)) {
+    if (redraw) {
+      display_store(store_type, cur_top);
+    }
+    LEAVE("__store_sell", "");
+    return false;
+  }
+
+  if (redraw) {
+    display_store(store_type, cur_top);
+  }
+  inven_temp->data = item_ptr->data;
+  if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
+    inven_temp->data.number = 1; /*{But why????}*/
+  }
+
+  char out_val[82];
+  char out2[100];
+  objdes(out_val, inven_temp, true);
+  sprintf(out2, "Selling %s", out_val);
+  msg_print(out2);
+  msg_print(" ");
+  if (!is_in(inven_temp->data.tval, store_buy[store_type])) {
+    prt("I do not buy such items.", 1, 1);
+    LEAVE("__store_sell", "");
+    return false;
+  }
+
+  // TODO: Stop using inven_temp
+  if (!__store_has_space_for(store_type, inven_temp)) {
+    prt("I have not the room in my store to keep it...", 1, 1);
+    LEAVE("__store_sell", "");
+    return false;
+  }
+
+  long price;
+  switch (__sell_haggle(store_type, &price, &inven_temp->data, blitz)) {
+    case 0:
+      prt_comment1();
+      add_money(price * GOLD_VALUE);
+      inven_destroy(item_ptr);
+      long item_pos;
+      store_carry(store_type, &item_pos);
+      if (item_pos > 0) {
+        if (item_pos < 13) {
+          if (cur_top < 13) {
+            __store_print_inventory(store_type, item_pos);
+          } else {
+            __store_print_inventory(store_type, cur_top);
+          }
+        } else if (cur_top > 12) {
+          __store_print_inventory(store_type, item_pos);
+        }
+      }
+      __store_print_store_gold();
+      break;
+
+    case 2:
+      return_value = true;
+      break;
+
+    case 3:
+      msg_print("How dare you!");
+      msg_print("I will not buy that!");
+      return_value = __store_get_insulted(store_type);
+      break;
+
+    case 4:
+      /* black market or insured stuff after a death */
+      msg_print("Hmmmmm, that looks hot. I will not buy it!");
+      msg_print("I am an honest merchant!");
+
+    default:
+      break;
+  }
+
+  LEAVE("__store_sell", "");
+  return return_value;
+}
+
+
+/**
+ * __store_enter() - Entering a store
+ * @store_type: type of store
+ */
+static void __store_enter(enum store_t store_type) {
+
+  ENTER(("__store_enter", ""));
+
+  treas_rec *trash_ptr;
+
+
+  long tics = 1;
+  boolean exit_flag = false;
+  long cur_top = 1;
+
+  display_store(store_type, cur_top);
+
+  do {
+    char command;
+    if (get_com("", &command)) {
+      msg_flag = false;
+      long com_val = (long)(command);
+
+      switch (com_val) {
+      case 18:
+        display_store(store_type, cur_top);
+        break;
+      case 'I': /*{ Selective Inventory   }*/
+        if (inven_command('I', &trash_ptr, "")) {
+          display_store(store_type, cur_top);
+        }
+        break;
+      case ' ':
+        if (cur_top == 1) {
+          if (stores[store_type].store_ctr > 12) {
+            cur_top = 13;
+            __store_print_inventory(store_type, cur_top);
+          } else {
+            prt("Entire inventory is "
+                "shown.",
+                1, 1);
+          }
+        } else {
+          cur_top = 1;
+          __store_print_inventory(store_type, cur_top);
+        }
+        break;
+      case 'e': /*{ Equipment List        }*/
+        if (inven_command('e', &trash_ptr, "")) {
+          display_store(store_type, cur_top);
+        }
+        break;
+      case 'i': /*{ Inventory             }*/
+        if (inven_command('i', &trash_ptr, "")) {
+          display_store(store_type, cur_top);
+        }
+        break;
+      case 't': /*{ Take off              }*/
+        if (inven_command('t', &trash_ptr, "")) {
+          display_store(store_type, cur_top);
+        }
+        break;
+      case 'w': /*{ Wear                  }*/
+        if (inven_command('w', &trash_ptr, "")) {
+          display_store(store_type, cur_top);
+        }
+        break;
+      case 'x': /*{ Switch weapon         }*/
+        if (inven_command('x', &trash_ptr, "")) {
+          display_store(store_type, cur_top);
+        }
+        break;
+      case 'p':
+        exit_flag = __store_purchase(store_type, &cur_top, false);
+        break;
+      case 'P':
+        exit_flag = __store_purchase(store_type, &cur_top, true);
+        break;
+      case 's':
+        exit_flag = __store_sell(store_type, cur_top, false);
+        break;
+      case 'S':
+        exit_flag = __store_sell(store_type, cur_top, true);
+        break;
+      default:
+        prt("Invalid Command.", 1, 1);
+        break;
+      } /* end switch */
+    } else {
+      exit_flag = true;
+    }
+    adv_time(false);
+    tics++;
+    check_kickout_time(tics, 2);
+  } while (!exit_flag);
+
+  if (moria_flag) {
+    clear_rc(1, 1);
+    prt_stat_block();
+  } else {
+    draw_cave();
+  }
+
+  LEAVE("__store_enter", "");
+}
+
+void store_init() {
+  ENTER(("store_init", ""));
+
+  int max_owners = MAX_OWNERS / MAX_STORES;
+  for (int i = 0; i < MAX_STORES; i++) {
+    stores[i].owner = MAX_STORES * (randint(max_owners) - 1) + i;
+    stores[i].insult_cur = 0;
+    stores[i].store_open.year = 0;
+    stores[i].store_open.month = 0;
+    stores[i].store_open.day = 0;
+    stores[i].store_open.hour = 0;
+    stores[i].store_open.secs = 0;
+    stores[i].store_ctr = 0;
+    for (int j = 0; j <= STORE_INVEN_MAX; j++) {
+      stores[i].store_inven[j].sitem = blank_treasure;
+      stores[i].store_inven[j].scost = 0;
+    }
+  }
+
+  LEAVE("store_init", "s");
+}
+
+void bank_init() {
+  long starting = (randint(2000) + 1000) * 1000;
+  bank[IRON] = starting / 8;
+  bank[COPPER] = starting / 30;
+  bank[SILVER] = starting / 50;
+  bank[GOLD] = starting / 250;
+  bank[PLATINUM] = starting / 5000;
+  bank[MITHRIL] = starting / 100000;
+  bank[TOTAL_] = (bank[MITHRIL] * coin_value[MITHRIL] +
+                  bank[PLATINUM] * coin_value[PLATINUM]) /
+                     GOLD_VALUE +
+                 bank[GOLD];
+}
+
+void store_maint() {
+
+  while (stores[S_BLACK_MARKET].store_ctr > 0) {
+    __remove_item_from_store(S_BLACK_MARKET, stores[S_BLACK_MARKET].store_ctr, false);
+  }
+
+  for (int i = 0; i < MAX_STORES; i++) {
+    stores[i].insult_cur = 0;
+
+    long num_things_in_store = stores[i].store_ctr;
+    if (num_things_in_store > STORE_MAX_INVEN) {
+      // Clean up if too much stuff
+      for (int j = 0, cnt = (num_things_in_store - STORE_MAX_INVEN + 2); j < cnt; j++) {
+        __remove_item_from_store(i, randint(stores[i].store_ctr), false);
+      }
+    } else if (num_things_in_store < STORE_MIN_INVEN) {
+      // Add new stuff if needed
+      for (int j = 0, cnt = (STORE_MIN_INVEN - num_things_in_store + 2); j < cnt; j++) {
+        __add_item_to_store(i);
+      }
+    } else {
+      // Change the stock a bit
+      for (int j = 0, cnt = (1 + randint(STORE_TURN_AROUND)); j < cnt; j++) {
+        __remove_item_from_store(i, randint(stores[i].store_ctr), true);
+      }
+      for (int j = 0, cnt = (1 + randint(STORE_TURN_AROUND)); j < cnt; j++) {
+        __add_item_to_store(i);
+      }
+    }
+
+    num_things_in_store = stores[i].store_ctr;
+    if (i == S_INN) {
+      if (randint(8) == 1) {
+        for (int j = 0; j < num_things_in_store; j++) {
+          __remove_item_from_store(i, j, false);
+        }
+        for (int j = 0; j < STORE_MIN_INVEN + 2; j++) {
+          __add_item_to_store(i);
+        }
+      }
+    }
+
+  }
+
+  __randomize_cash(&(bank[IRON]), 500000);
+  __randomize_cash(&(bank[COPPER]), 200000);
+  __randomize_cash(&(bank[SILVER]), 100000);
+  __randomize_cash(&(bank[GOLD]), 50000);
+  __randomize_cash(&(bank[PLATINUM]), 5000);
+  __randomize_cash(&(bank[MITHRIL]), 1000);
+  bank[TOTAL_] =
+      (bank[MITHRIL] * MITHRIL_VALUE + bank[PLATINUM] * PLATINUM_VALUE) /
+          GOLD_VALUE +
+      bank[GOLD];
+}
+
+
+void store_carry(enum store_t store_num, long *ipos) {
+
+  // TODO: Stop using inven_temp
+  *ipos = 0;
+  identify(&(inven_temp->data));
+  unquote(inven_temp->data.name);
+  known1(inven_temp->data.name);
+  known2(inven_temp->data.name);
+
+  long item_base_price = __calc_sell_price(store_num, &inven_temp->data);
+  long max_price = __store_max_price(store_num, item_base_price);
+
+  if (max_price <= 0)
+    return;
+
+  long item_val = 0;
+  long item_num = inven_temp->data.number;
+  long typ = inven_temp->data.tval;
+  long subt = inven_temp->data.subval;
+  boolean flag = false;
+
+  do {
+    item_val++;
+    if (typ == stores[store_num].store_inven[item_val].sitem.tval) {
+      if (subt == stores[store_num].store_inven[item_val].sitem.subval) {
+        /*{ Adds to other item	}*/
+        if (subt > 255) {
+          if (stores[store_num].store_inven[item_val].sitem.number < 24) {
+            stores[store_num].store_inven[item_val].sitem.number += item_num;
+          }
+          flag = true;
+        }
+      }
+    } else if (typ > stores[store_num].store_inven[item_val].sitem.tval) {
+      /*{ Insert into list		}*/
+      __insert_item_in_store(store_num, item_val, max_price);
+      flag = true;
+      *ipos = item_val;
+    }
+    /* end of thrid with */
+  } while (!((item_val >= stores[store_num].store_ctr) || (flag)));
+  if (!(flag)) { /*{ Becomes last item in list	}*/
+    __insert_item_in_store(store_num, stores[store_num].store_ctr + 1, max_price);
+    *ipos = stores[store_num].store_ctr;
+  }
+}
+
+long item_value(treasure_type const * const item) {
+  long return_value = item->cost / GOLD_VALUE;
+
+  switch (item->tval) {
+
+    // Weapons and armor
+  case bow_crossbow_or_sling:
+  case hafted_weapon:
+  case pole_arm:
+  case sword:
+  case dagger:
+  case maul:
+  case boots:
+  case gloves_and_gauntlets:
+  case gem_helm:
+  case cloak:
+  case helm:
+  case shield:
+  case hard_armor:
+  case soft_armor:
+
+    if (strstr(item->name, "^") != NULL) {
+      return_value = __find_object_from_list(item->tval, item->subval) * item->number;
+
+    } else {
+      switch (item->tval) {
+      case bow_crossbow_or_sling:
+      case hafted_weapon:
+      case pole_arm:
+      case sword:
+      case dagger:
+      case maul:
+        if (item->tohit < 0) {
+          return_value = 0;
+        } else if (item->todam < 0) {
+          return_value = 0;
+        } else if (item->toac < 0) {
+          return_value = 0;
+        } else {
+          return_value = ((item->cost / GOLD_VALUE +
+                           (item->tohit + item->todam + item->toac) * 100) *
+                          item->number);
+        }
+        break;
+
+      default:
+        if (item->toac < 0) {
+          return_value = 0;
+        } else {
+          return_value =
+              ((item->cost / GOLD_VALUE + item->toac * 100) * item->number);
+        }
+        break;
+      }
+    }
+    break;
+
+    // Ammo
+  case sling_ammo:
+  case bolt:
+  case arrow:
+  case spike:
+
+    if (strstr(item->name, "^") != NULL) {
+      return_value = __find_object_from_list(item->tval, 1) * (item->number);
+    } else {
+      if (item->tohit < 0) {
+        return_value = 0;
+      } else if (item->todam < 0) {
+        return_value = 0;
+      } else if (item->toac < 0) {
+        return_value = 0;
+      } else {
+        return_value = ((item->cost / GOLD_VALUE +
+                         (item->tohit + item->todam + item->toac) * 10) *
+                        (item->number));
+      }
+    }
+    break;
+
+    // Potions, Scrolls, and Food
+  case scroll1:
+  case scroll2:
+  case potion1:
+  case potion2:
+  case Food:
+
+    if (strstr(item->name, "|") != NULL) {
+      switch (item->tval) {
+      case scroll1:
+      case scroll2:
+        return_value = 20;
+        break;
+
+      case potion1:
+      case potion2:
+        return_value = 20;
+        break;
+
+      case Food:
+        return_value = 1;
+        break;
+      }
+    }
+    break;
+
+    // Rings and amulets
+  case amulet:
+  case ring:
+
+    if (strstr(item->name, "|") != NULL) {
+      switch (item->tval) {
+      case amulet:
+        return_value = 45;
+        break;
+      case ring:
+        return_value = 45;
+        break;
+      }
+    } else if (strstr(item->name, "^") != NULL) {
+      return_value = (item->cost > 0) ? (item->cost / GOLD_VALUE) : 0;
+    } else {
+      return_value =
+          (item->cost > 0)
+              ? ((item->cost / GOLD_VALUE) +
+                 trunc(item->cost / COST_ADJ / 20.0) *
+                     (item->tohit + item->todam + item->toac + 2 * item->p1))
+              : 0;
+    }
+    break;
+
+    // Horns and Chimes
+  case chime:
+  case horn:
+
+    if (strstr(item->name, "|") != NULL) {
+      switch (item->tval) {
+      case chime:
+        return_value = 50;
+        break;
+      case horn:
+        return_value = 80;
+        break;
+      }
+    } else if (strstr(item->name, "^") == NULL) {
+      return_value = ((item->cost / GOLD_VALUE) +
+                      trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
+    }
+    break;
+
+    // Wands rods, and staffs
+  case staff:
+  case rod:
+  case wand:
+
+    if (strstr(item->name, "|") != NULL) {
+      switch (item->tval) {
+      case staff:
+        return_value = 70;
+        break;
+      case rod:
+        return_value = 60;
+        break;
+      case wand:
+        return_value = 50;
+        break;
+      }
+    } else if (strstr(item->name, "^") == NULL) {
+      return_value = ((item->cost / GOLD_VALUE) +
+                      trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
+    }
+    break;
+
+    // Gems and jewelry of all types
+  case valuable_jewelry:
+  case valuable_gems:
+
+    if (strstr(item->name, "|") != NULL) {
+      switch (item->tval) {
+      case valuable_jewelry:
+        return_value = 20;
+        break;
+      case valuable_gems:
+        return_value = 20;
+        break;
+      }
+    } else if (strstr(item->name, "^") == NULL) {
+      return_value = (item->cost / GOLD_VALUE);
+    }
+    break;
+
+  }
+
+  return return_value;
+}
+
+boolean check_store_hours(enum store_t store_type, long store_visual) {
+  boolean is_open;
+
+  ENTER(("check_store_hours", ""));
+
+  if (store_visual != -1) {
+    is_open = ((player_cur_age.year > stores[store_visual].store_open.year) ||
+            ((player_cur_age.year == stores[store_visual].store_open.year) &&
+             ((player_cur_age.month > stores[store_visual].store_open.month) ||
+              ((player_cur_age.month == stores[store_visual].store_open.month) &&
+               ((player_cur_age.day > stores[store_visual].store_open.day) ||
+                ((player_cur_age.day == stores[store_visual].store_open.day) &&
+                 ((player_cur_age.hour > stores[store_visual].store_open.hour) ||
+                  ((player_cur_age.hour == stores[store_visual].store_open.hour) &&
+                   ((player_cur_age.secs > stores[store_visual].store_open.secs))))))))));
+  } else {
+    is_open = true;
+    store_visual = store_type;
+  }
+
+  if (!is_open) {
+    msg_print("The doors are locked.");
+    LEAVE("check_store_hours", "");
+    return false;
+  }
+
+  char availability = store_hours[store_visual][player_cur_age.day % 7 + 0][player_cur_age.hour / 2 + 0];
+  switch (availability) {
+    case ' ':
+      LEAVE("check_store_hours", "");
+      return false;
+
+    case 'N':
+    case 'W':
+    case 'D':
+      {
+        if (wizard2) {
+          msg_print("Being a wizard, you break into the shop.");
+          msg_print("");
+          LEAVE("check_store_hours", "");
+          return true;
+        }
+
+        char const * time;
+        switch (availability) {
+          case 'N':
+            time = "night.";
+            break;
+          case 'W':
+            time = "weekend.";
+            break;
+          case 'D':
+            time = "day.";
+            break;
+        }
+        char name[134];
+        strcpy(name, store_door[store_type].name);
+        insert_str(name, "the entrance to the ", "");
+        char out_val[300];
+        sprintf(out_val, "Sorry, the %s is closed for the %s", name, time);
+        msg_print(out_val);
+        LEAVE("check_store_hours", "");
+        return false;
+      }
+      break;
+
+    case 'B':
+      {
+        char prop[134];
+        sprintf(prop, "Do you wish to play %ld gold to bribe the owner?", store_bribe[store_type]);
+        if (!get_yes_no(prop)) {
+          msg_print("The owner complains bitterly about "
+              "being woken up for no reason.");
+          LEAVE("check_store_hours", "");
+          return false;
+        }
+
+        if (player_money[TOTAL_] >= store_bribe[store_type]) {
+          subtract_money(store_bribe[store_type] * GOLD_VALUE, false);
+          msg_print("The owner reluctantly lets you in.");
+          msg_print("");
+          LEAVE("check_store_hours", "");
+          return true;
+        } else {
+          msg_print("You haven't the money to bribe the owner!");
+          LEAVE("check_store_hours", "");
+          return false;
+        }
+      }
+      break;
+
+    default:
+      LEAVE("check_store_hours", "");
+      return false;
+  }
+}
+
+void check_store_hours_and_enter(enum store_t type, long store_visual) {
+
+  ENTER(("check_store_hours_and_enter", ""));
+
+  if (check_store_hours(type, store_visual))
+    __store_enter(type);
+
+  LEAVE("check_store_hours_and_enter", "");
+}
+
+void spend_time(long days_spent, char place[82], boolean whole_days) {
+
+
+  long const turns_today = player_cur_age.hour * 400 + player_cur_age.secs;
+
+  long mornings;
+  long time_spent;
+  boolean new_screen;
+  if (!whole_days) {
+    time_spent = days_spent; /*{if a 6:00 threshold is passed}*/
+
+    new_screen = ((turns_today + time_spent + 2400) / 4800) >
+                 ((turns_today + 2400) / 4800);
+
+    mornings =
+        (turns_today + time_spent - 2400) / 9600 - (turns_today - 2400) / 9600;
+    days_spent = 0;
+  } else {
+    time_spent = DAY_LENGTH * days_spent - turns_today;
+    new_screen = true;
+    mornings = days_spent;
+  }
+
+  switch (days_spent) {
+  case 0:
+    player_cur_age.secs += time_spent;
+    player_cur_age.hour += player_cur_age.secs / 400;
+    player_cur_age.secs = player_cur_age.secs % 400;
+    add_days(&(player_cur_age), player_cur_age.hour / 24);
+    player_cur_age.hour = player_cur_age.hour % 24;
+    break;
+
+  case 1:
+    if (player_cur_age.hour < 6) {
+      char out_val[82];
+      sprintf(out_val, "You spend the remainder of the night %s", place);
+      msg_print(out_val);
+      player_cur_age.hour = 8; /*{why get up before shops open?}*/
+      player_cur_age.secs = randint(400) - 1;
+      time_spent = (time_spent - DAY_LENGTH + 400 * player_cur_age.hour +
+                    player_cur_age.secs);
+    } else {
+      char out_val[82];
+      sprintf(out_val, "You spend the night %s", place);
+      msg_print(out_val);
+      player_cur_age.hour = 8;
+      add_days(&(player_cur_age), 1);
+      player_cur_age.secs = randint(400) - 1;
+      time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
+    }
+    break;
+
+  case 3:
+    msg_print("You spend three days in the inn.");
+    /* 10/26/00 --JEB.  what the hell was "28+randint(3)" doing in
+     */
+    /* this context? */
+    /*    add_days(&(player_cur_age),28+randint(3)); */
+    add_days(&(player_cur_age), 3);
+    player_cur_age.hour = 8 + randint(4);
+    player_cur_age.secs = randint(400) - 1;
+    time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
+    break;
+
+  case 7:
+    msg_print("You spend the week in the inn.");
+    add_days(&(player_cur_age), 7);
+    player_cur_age.hour = 8 + randint(4);
+    player_cur_age.secs = randint(400) - 1;
+    time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
+    break;
+  }
+
+  refresh();
+  turn += time_spent;
+  turn_counter += QUEST_DELAY;
+
+  if (new_screen) {
+    sleep(1);
+  }
+
+  for (long i = time_spent; (player_flags.poisoned > 0) && (i > 0);) {
+    player_flags.poisoned--;
+    time_spent--;
+
+    switch (C_player_hp_from_con()) {
+    case -4:
+      take_hit(4, "poison");
+      break;
+    case -3:
+    case -2:
+      take_hit(3, "poison");
+      break;
+    case -1:
+      take_hit(2, "poison");
+      break;
+    case 0:
+      take_hit(1, "poison");
+      break;
+    case 1:
+    case 2:
+    case 3:
+      if (i % 2 == 0) {
+        take_hit(1, "poison");
+      }
+      break;
+    case 4:
+    case 5:
+      if (i % 3 == 0) {
+        take_hit(1, "poison.");
+      }
+      break;
+    case 6:
+      if (i % 4 == 0) {
+        take_hit(1, "poison.");
+      }
+      break;
+    } /* end switch */
+
+    if (player_flags.poisoned == 0) {
+      player_flags.status &= ~IS_POISONED;
+      msg_print("You feel better.");
+      refresh();
+    }
+  } /* end for */
+
+  __tick_down(time_spent, &player_flags.blind);
+  __tick_down(time_spent, &player_flags.confused);
+  __tick_down(time_spent, &player_flags.protection);
+  __tick_down(time_spent, &player_flags.fast);
+  __tick_down(time_spent, &player_flags.slow);
+  __tick_down(time_spent, &player_flags.afraid);
+  __tick_down(time_spent, &player_flags.image);
+  __tick_down(time_spent, &player_flags.protevil);
+  __tick_down(time_spent, &player_flags.invuln);
+  __tick_down(time_spent, &player_flags.hero);
+  __tick_down(time_spent, &player_flags.shero);
+  __tick_down(time_spent, &player_flags.blessed);
+  __tick_down(time_spent, &player_flags.resist_heat);
+  __tick_down(time_spent, &player_flags.resist_cold);
+  __tick_down(time_spent, &player_flags.detect_inv);
+  __tick_down(time_spent, &player_flags.word_recall);
+  __tick_down(time_spent, &player_flags.tim_infra);
+  __tick_down(time_spent, &player_flags.resist_lght);
+  __tick_down(time_spent, &player_flags.free_time);
+  __tick_down(time_spent, &player_flags.ring_fire);
+  __tick_down(time_spent, &player_flags.protmon);
+  __tick_down(time_spent, &player_flags.hoarse);
+  __tick_down(time_spent, &player_flags.magic_prot);
+  __tick_down(time_spent, &player_flags.ring_ice);
+  __tick_down(time_spent, &player_flags.temp_stealth);
+  __tick_down(time_spent, &player_flags.resist_petri);
+  __tick_down(time_spent, &player_flags.blade_ring);
+
+  switch (days_spent) {
+  case 0:
+  case 1:
+    player_flags.foodc -= time_spent;
+    if (player_flags.foodc <= PLAYER_FOOD_ALERT) {
+      /* free food if you were hungry when you got here? */
+      player_flags.foodc = PLAYER_FOOD_ALERT + 1;
+    }
+    break;
+
+  default:
+    player_flags.foodc = PLAYER_FOOD_FULL - 1;
+    break;
+  }
+
+  player_flags.confuse_monster = false;
+
+  for (long i = 1; i <= mornings; i++) {
+    store_maint();
+  }
+
+  float regen_percent = regen_amount * 2 * time_spent;
+  if (regen_percent > 1.00)
+    regen_percent = 1.00;
+  if (C_player_current_hp() < C_player_max_hp())
+    C_player_regen_hp(regen_percent);
+  if (C_player_current_hp() > C_player_max_hp())
+    C_player_reset_current_hp();
+  if (player_cmana < player_mana)
+    regenmana(regen_percent);
+  if (player_cmana > player_mana)
+    player_cmana = player_mana;
+
+  if (new_screen) {
+    moria_flag = true;
+    msg_print("");
+  }
+}
+
+void display_store(enum store_t store_type, long cur_top) {
+  ENTER(("display_store", ""));
+
+  C_clear_screen();
+  prt(owners[stores[store_type].owner].owner_name, 4, 10);
+  prt("   Item", 5, 1);
+  prt("Asking Price", 5, 61);
+  __store_print_store_gold();
+  __store_display_commands();
+  __store_print_inventory(store_type, cur_top);
+
+  LEAVE("display_store", "");
+}
+
