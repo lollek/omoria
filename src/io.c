@@ -1,3 +1,6 @@
+#define _GNU_SOURCE
+
+#include <stdio.h>
 #include <curses.h>
 #include <math.h>
 #include <signal.h>
@@ -253,9 +256,23 @@ boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
   return return_value;
 }
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+void msg_printf(char const * const fmt, ...) {
+  va_list ap;
+
+  va_start(ap, fmt);
+  char *buffer;
+  int result = vasprintf(&buffer, fmt, ap);
+  if (result == -1) {
+    MSG(("ERROR: Failed to allocate a line for vasprintf!"));
+    msg_print("<<Failed to allocate data for this line>>");
+    return;
+  }
+
+  msg_print(buffer);
+  free(buffer);
+  va_end(ap);
+}
+
 boolean msg_print(char *str_buff) /* : varying[a] of char; */
 {
   /*{ Outputs message to top line of screen }*/
@@ -266,12 +283,8 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
   obj_set small_set = {3, 25, 26, 27, 0};
   boolean flag;
 
-  /*  if (str_buff && str_buff[0]) {*/
-
   if ((msg_flag) && (!msg_terse)) {
     old_len = strlen(old_msg) + 1;
-    /*strcat(old_msg, " -more-");*/
-    /*put_buffer(old_msg,msg_line,msg_line);*/
     put_buffer(" -more-", msg_line, old_len);
     do {
       in_char = inkey();
@@ -285,12 +298,6 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
   msg_record(str_buff, true);
 
   msg_flag = true;
-
-  /*
-  } else {
-    msg_flag = false;
-  }
-  */
 
   if (is_in(in_char, small_set)) {
     flag = true;

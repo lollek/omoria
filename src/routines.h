@@ -235,6 +235,7 @@ extern void prt_(char const *str_buff, int row, int col);
 extern void prt2(char *str_buff1, /*	: varying[a] of char; */
                  char *str_buff2, int row, int col);
 
+void msg_printf(char const * const fmt, ...);
 extern boolean msg_print(char *str_buff); /* : varying[a] of char); */
 extern boolean get_com(char const *prompt, char *command);
 

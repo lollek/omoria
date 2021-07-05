@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "store.h"
 #include "casino.h"
 #include "horse.h"
 #include "player.h"
