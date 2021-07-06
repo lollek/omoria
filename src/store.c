@@ -32,6 +32,18 @@ typedef struct owner_type {
   uint8_t insult_max;
 } owner_type;
 
+enum trade_status_t {
+  TS_SUCCESS = 0,          // Successful trade
+  TS_ABORTED = 2,       // We changed our mind
+  TS_REFUSED_TRASH = 3, // Other party will not buy your old junk
+  TS_REFUSED_BLACKMARKET = 4, // Other party will not buy black market items
+};
+
+typedef struct trade_result {
+  enum trade_status_t status;
+  long price;
+} trade_result_t;
+
 // Turns in a day
 #define DAY_LENGTH 9600
 
@@ -397,13 +409,13 @@ static void __insert_item_in_store(enum store_t store_num, long pos, long icost)
 }
 
 /**
- * __calc_sell_price() - Base sell price of item depending on like/dislike
+ * __calc_purchase_price() - Base price of item depending on like/dislike
  * @store_type: Type of store
  * @item: Item to appraise
  */
-static long __calc_sell_price(enum store_t store_type, treasure_type const * const item) {
+static long __calc_purchase_price(enum store_t store_type, treasure_type const * const item) {
   if (item->cost <= 0)
-    return 0;
+    return 1;
 
   long value = item_value(item);
   value += trunc(value * rgold_adj[owners[stores[store_type].owner].owner_race][player_prace]);
@@ -414,25 +426,76 @@ static long __calc_sell_price(enum store_t store_type, treasure_type const * con
 }
 
 /**
- *__store_max_price() - Calculate max inflated price for a store
- * @store_type: Store type
- * @base_price: Base price of item to inflate
+ * __calc_sell_price() - Base price of item depending on like/dislike
+ * @store_type: Type of store
+ * @item: Item to appraise
  */
-static long __store_max_price(enum store_t store_type, long base_price) {
-  return trunc(base_price * (1 + owners[stores[store_type].owner].max_inflate));
+static long __calc_sell_price(enum store_t store_type, treasure_type const * const item) {
+  if (item->cost <= 0)
+    return 0;
+
+  long value = item_value(item);
+  value -= trunc(value * rgold_adj[owners[stores[store_type].owner].owner_race][player_prace]);
+  if (value < 1) {
+    value = 1;
+  }
+  return value;
 }
 
 /**
- *__store_min_price() - Calculate min inflated price for a store
+ *__store_max_inflated_price() - Max inflated price a store will ask for
  * @store_type: Store type
  * @base_price: Base price of item to inflate
  */
-static long __store_min_price(enum store_t store_type, long base_price) {
-  long min_sell = trunc(base_price * (1 + owners[stores[store_type].owner].min_inflate));
-  long max_sell = __store_max_price(store_type, base_price);
-  if (min_sell > max_sell)
-    min_sell = max_sell;
-  return min_sell;
+static long __store_max_inflated_price(enum store_t store_type, long base_price) {
+  long max_price = trunc(base_price * (1 + owners[stores[store_type].owner].max_inflate));
+  max_price += (max_price * C_player_cost_modifier_from_charisma());
+  if (max_price < 0) {
+    max_price = 1;
+  }
+  return max_price;
+}
+
+/**
+ *__store_min_inflated_price() - Minimum a store will allow to sell for
+ * @store_type: Store type
+ * @base_price: Base price of item to inflate
+ */
+static long __store_min_inflated_price(enum store_t store_type, long base_price) {
+  long min_price = trunc(base_price * (1 + owners[stores[store_type].owner].min_inflate));
+  min_price += (min_price * C_player_cost_modifier_from_charisma());
+  if (min_price < 0) {
+    min_price = 1;
+  }
+  return min_price;
+}
+
+/**
+ *__store_max_deflated_price() - Max price a store will purchase for
+ * @store_type: Store type
+ * @base_price: Base price of item to inflate
+ */
+static long __store_max_deflated_price(enum store_t store_type, long base_price) {
+  long max_price = trunc(base_price * (1 - owners[stores[store_type].owner].max_inflate));
+  max_price -= (max_price * C_player_cost_modifier_from_charisma());
+  if (max_price < 0) {
+    max_price = 1;
+  }
+  return max_price;
+}
+
+/**
+ *__store_min_deflated_price() - Minimum a store try to purchase for
+ * @store_type: Store type
+ * @base_price: Base price of item to inflate
+ */
+static long __store_min_deflated_price(enum store_t store_type, long base_price) {
+  long min_price = trunc(base_price * (1 - owners[stores[store_type].owner].min_inflate));
+  min_price -= (min_price * C_player_cost_modifier_from_charisma());
+  if (min_price < 0) {
+    min_price = 1;
+  }
+  return min_price;
 }
 
 static long __find_object_from_list(long tval, long subval) {
@@ -563,8 +626,11 @@ static void __store_close(long store_type) {
   }
 }
 
-static void prt_comment1() {
   /*{ Comment one : Finished haggling                               }*/
+/**
+ * __print_trade_accepted() - Print something the store keeper says to accept the trade
+ */
+static void __print_trade_accepted() {
 
   msg_flag = false;
   switch (randint(15)) {
@@ -862,6 +928,7 @@ static void prt_comment6() {
 /**
  * __store_get_insulted() - Increase the insult counter and get pissed if too many
  * @store_type: Type of store
+ * @return: True if you are now barred from the store
  */
 static boolean __store_get_insulted(enum store_t store_type) {
 
@@ -877,41 +944,6 @@ static boolean __store_get_insulted(enum store_t store_type) {
 }
 
 /**
- * __get_store_item() - Get the ID of a store item and return its value
- */
-static boolean __get_store_item(long *com_val, char pmt[82], long i1, long i2) {
-  char out_val[82];
-
-  *com_val = 0;
-  sprintf(out_val, "(Items %c-%c, Esc to exit) %s", (int)i1 + 96, (int)i2 + 96,
-          pmt);
-
-  boolean return_value = true;
-  while ((*com_val < i1 || *com_val > i2) && return_value) {
-    prt(out_val, 1, 1);
-    char command = inkey();
-    *com_val = (long)(command);
-    switch (*com_val) {
-    case 3:
-    case 25:
-    case 26:
-    case 27:
-      return_value = false;
-      break;
-    default:
-      *com_val -= 96;
-      break;
-    }
-  }
-
-  msg_flag = false;
-  erase_line(msg_line, msg_line);
-
-  return return_value;
-}
-
-
-/**
  * __store_lower_insult_level() - Lower insult counter for shop
  * @store_type: Type of store
  */
@@ -921,21 +953,6 @@ static void __store_lower_insult_level(enum store_t store_type) {
   if (stores[store_type].insult_cur < 0) {
     stores[store_type].insult_cur = 0;
   }
-}
-
-/**
- * __store_display_haggle_commands() - Displays the set of commands
- * @typ: ???
- */
-static void __store_display_haggle_commands(long typ) {
-
-  if (typ == -1) {
-    prt("Specify an asking-price in gold pieces.", 22, 1);
-  } else {
-    prt("Specify an offer in gold pieces.", 22, 1);
-  }
-  prt("Esc) Quit Haggling.", 23, 1);
-  prt("", 24, 1);
 }
 
 /**
@@ -965,143 +982,118 @@ static boolean __haggle_insults(enum store_t store_num) {
   }
 }
 
-static boolean __get_haggle(char comment[82], long *num) {
+static long __receive_offer(long store_num, char comment[82], long *new_offer,
+                   long last_offer, long factor) {
 
-  ENTER(("__get_haggle", "s"));
-
-  long i1 = 0;
-  long clen = strlen(comment) + 1;
-
-  boolean flag = true;
-  do {
-    char out_val[82];
+  long return_value = 0;
+  long const comment_len = strlen(comment) + 1;
+  for (;;) {
+    //START
     msg_print(comment);
     msg_flag = false;
 
-    if (!(get_string(out_val, 1, clen, 40))) {
-      flag = false;
+    char player_input[82];
+    if (!get_string(player_input, 1, comment_len, 40)) {
       erase_line(msg_line, msg_line);
+      return 1;
     }
 
-    i1 = 0;
-    sscanf(out_val, "%ld", &i1);
-  } while (!((i1 != 0) || (!flag)));
+    long player_input_as_long;
+    if (sscanf(player_input, "%ld", &player_input_as_long) != 1) {
+      continue;
+    }
+    if (player_input_as_long <= 0) {
+      continue;
+    }
 
-  if (flag) {
-    *num = i1;
+    *new_offer = player_input_as_long;
+
+    if ((*new_offer * factor) >= (last_offer * factor)) {
+      break;
+    }
+    if (__haggle_insults(store_num)) {
+      return 2;
+    }
   }
 
-  RETURN("__get_haggle", "s", 'b', "flag:", &flag);
-  return flag;
+  return return_value;
 }
 
+/**
+ * __purchase_blitz() - Purchase something without haggling
+ * @store_type: Type of store
+ * @item: Item to purchase
+ * @returns: Trade result
+ */
+static trade_result_t __purchase_blitz(enum store_t store_type, treasure_type const * item) {
+  long const base_price = __calc_purchase_price(store_type, item);
+  long const max_price = __store_max_inflated_price(store_type, base_price);
+  long const min_price = __store_min_inflated_price(store_type, base_price);
 
-static long __receive_offer(long store_num, char comment[82], long *new_offer,
-                   long last_offer, long factor) {
-  boolean flag;
-  long return_value = 0;
-
-  ENTER(("__receive_offer", "i"));
-
-  flag = false;
-
-  do {
-    if (__get_haggle(comment, new_offer)) {
-      if ((*new_offer * factor) >= (last_offer * factor)) {
-        flag = true;
-      } else if (__haggle_insults(store_num)) {
-        return_value = 2;
-        flag = true;
-      }
-    } else {
-      return_value = 1;
-      flag = true;
-    }
-  } while (!flag);
-
-  RETURN("__receive_offer", "i", 'd', "123: ", &return_value);
-  return return_value;
+  long const max_min_diff = max_price - min_price;
+  long const last_offer = min_price + (max_min_diff / 4);
+  long price = last_offer + ((stores[store_type].insult_cur * max_min_diff) / owners[stores[store_type].owner].insult_max);
+  msg_printf("In a hurry, eh?  It's yours for a mere %ld       ", price);
+  msg_print(" ");
+  prt("", 2, 1);
+  __store_display_commands();
+  return (trade_result_t){
+    .status = TS_SUCCESS,
+    .price = price
+  };
 }
 
 
 /**
  * __purchase_haggle() - Haggling routine
  */
-static long __purchase_haggle(enum store_t store_num, long *price, treasure_type *item,
-                     boolean blitz) {
+static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *item) {
 
-  long max_buy;
-  long cur_ask;
-  long final_ask;
-  long min_offer;
-  long last_offer;
-  long new_offer;
-  long final_flag;
-  long x3;
-  long delta;
-  float x1;
-  long x2;
-  float min_per;
-  float max_per;
-  boolean flag;
-  boolean loop_flag;
-  char out_val[100];
-  char comment[82];
-  long return_value = 0;
-
-  flag = false;
-  *price = 0;
-  final_flag = 0;
   msg_flag = false;
 
-  long base_price = __calc_sell_price(store_num, item);
-  long max_price = __store_max_price(store_num, base_price);
-  long min_price = __store_min_price(store_num, base_price);
-  max_price += (max_price * C_player_cost_modifier_from_charisma());
-  if (max_price < 0) {
-    max_price = 1;
-  }
-  min_price += (min_price * C_player_cost_modifier_from_charisma());
-  if (min_price < 0) {
-    min_price = 1;
-  }
-  max_buy = trunc(base_price * (1 - owners[stores[store_num].owner].max_inflate));
-  min_per = owners[stores[store_num].owner].haggle_per;
-  max_per = min_per * 3.0;
+  long const base_price = __calc_purchase_price(store_num, item);
+  long const max_price = __store_max_inflated_price(store_num, base_price);
+  long const min_price = __store_min_inflated_price(store_num, base_price);
+  long const max_buy = __store_min_deflated_price(store_num, base_price);
+  float const min_per = owners[stores[store_num].owner].haggle_per;
+  float const max_per = min_per * 3.0;
 
-  __store_display_haggle_commands(1);
-  cur_ask = max_price;
-  final_ask = min_price;
-  min_offer = max_buy;
-  last_offer = min_offer;
+
+  long cur_ask = max_price;
+  long const final_ask = min_price;
+  long min_offer = max_buy;
+  long last_offer = min_offer;
+
+  char comment[82];
   strcpy(comment, "Asking : ");
 
-  if (blitz) {
-    delta = (max_price - min_price);
-    last_offer = min_price + (delta / 4);
-    /* with stores[store_num]. do; */
-    *price = last_offer + ((stores[store_num].insult_cur * delta) /
-                           owners[stores[store_num].owner].insult_max);
-    strcpy(comment, "In a hurry, eh?  It's yours for a mere ");
-    sprintf(out_val, "%s%ld       ", comment, *price);
-    msg_print(out_val);
-    msg_print(" ");
-  } else {
-    /*{ go ahead and haggle }*/
+  // Haggling
+  long price = 0;
+  enum trade_status_t status = 0;
+  boolean flag = false;
+  long final_flag = 0;
+  long new_offer;
+
+  prt("Specify an offer in gold pieces.", 22, 1);
+  prt("Esc) Quit Haggling.", 23, 1);
+  prt("", 24, 1);
+
+  do {
+    boolean loop_flag;
     do {
-      do {
-        loop_flag = true;
-        sprintf(out_val, "%s%ld          ", comment, cur_ask);
-        put_buffer(out_val, 2, 1);
-        switch (__receive_offer(store_num, "What do you offer? ", &new_offer,
-                              last_offer, 1)) {
+      loop_flag = true;
+      char out_val[100];
+      sprintf(out_val, "%s%ld          ", comment, cur_ask);
+      put_buffer(out_val, 2, 1);
+      switch (__receive_offer(store_num, "What do you offer? ", &new_offer,
+            last_offer, 1)) {
         case 1:
-          return_value = 1;
+          status = 1;
           flag = true;
           break;
 
         case 2:
-          return_value = 2;
+          status = 2;
           flag = true;
           break;
 
@@ -1110,90 +1102,80 @@ static long __purchase_haggle(enum store_t store_num, long *price, treasure_type
             prt_comment6();
             loop_flag = false;
           } else if (new_offer == cur_ask) {
+            // Sold !
             flag = true;
-            *price = new_offer;
+            price = new_offer;
           }
-        } /* end switch */
+      } /* end switch */
 
-      } while (!((flag) || (loop_flag)));
+    } while (!(flag || loop_flag));
 
-      if (!(flag)) {
+    if (!flag) {
 
-        x1 = (float)(new_offer - last_offer) / (float)(cur_ask - last_offer);
-        if (x1 < min_per) {
-          flag = __haggle_insults(store_num);
-          if (flag) {
-            return_value = 2;
+      float x1 = (float)(new_offer - last_offer) / (float)(cur_ask - last_offer);
+      if (x1 < min_per) {
+        flag = __haggle_insults(store_num);
+        if (flag) {
+          status = 2;
+        }
+      } else {
+        if (x1 > max_per) {
+          x1 *= 0.75;
+          if (x1 < max_per) {
+            x1 = max_per;
           }
-        } else {
-          if (x1 > max_per) {
-            x1 *= 0.75;
-            if (x1 < max_per) {
-              x1 = max_per;
+        }
+        long x2 = (x1 + (randint(5) - 3) / 100.0);
+        long x3 = (long)((cur_ask - new_offer) * x2) + 1;
+        cur_ask -= x3;
+        if (cur_ask < final_ask) {
+          cur_ask = final_ask;
+          strcpy(comment, "Final Offer : ");
+          final_flag++;
+          if (final_flag > 3) {
+            if (__store_get_insulted(store_num)) {
+              status = 2;
+            } else {
+              status = 1;
             }
+            flag = true;
+          } else if (new_offer >= cur_ask) {
+            flag = true;
+            price = new_offer;
           }
-          x2 = (x1 + (randint(5) - 3) / 100.0);
-          x3 = (long)((cur_ask - new_offer) * x2) + 1;
-          cur_ask -= x3;
-          if (cur_ask < final_ask) {
-            cur_ask = final_ask;
-            strcpy(comment, "Final Offer : ");
-            final_flag++;
-            if (final_flag > 3) {
-              if (__store_get_insulted(store_num)) {
-                return_value = 2;
-              } else {
-                return_value = 1;
-              }
-              flag = true;
-            } else if (new_offer >= cur_ask) {
-              flag = true;
-              *price = new_offer;
-            }
 
-            if (!flag) {
-              last_offer = new_offer;
-              prt("", 2, 1);
-              sprintf(out_val,
-                      "Your last "
-                      "offer : %ld  "
-                      " ",
-                      last_offer);
-              put_buffer(out_val, 2, 40);
-              prt_comment2(last_offer, cur_ask, final_flag);
-            }
+          if (!flag) {
+            last_offer = new_offer;
+            prt("", 2, 1);
+            char out_val[100];
+            sprintf(out_val, "Your last offer : %ld   ", last_offer);
+            put_buffer(out_val, 2, 40);
+            prt_comment2(last_offer, cur_ask, final_flag);
           }
         }
       }
-    } while (!flag);
-  }
+    }
+  } while (!flag);
 
   prt("", 2, 1);
   __store_display_commands();
 
-  return return_value;
+  return (trade_result_t){
+    .status = status,
+      .price = price
+  };
 }
 
 /**
- * __store_purchase() - Buy an item from a store
- * @store_type: Type ofs tore
+ * __store_purchase_select_item() - Select item to purchase
+ * @store_type: Type of store
  * @cur_top: ???
- * @blitz: If we are blitz-buying
+ * @blitz: Are we blitz-buying?
+ * @return: Selected item index, or -1 if we changed our mind
  */
-static boolean __store_purchase(enum store_t store_type, long *cur_top, boolean blitz) {
-
-  boolean return_value = false;
-
-  treas_rec *item_new = NULL;
-  char foo[82];
-  if (blitz) {
-    strcpy(foo, "BLITZ-PURCHASE item? ");
-  } else {
-    strcpy(foo, "Purchase which item? ");
-  }
-
-  long objects_shown_on_screen;
-  if (*cur_top == 13) {
+static int __store_purchase_select_item(enum store_t store_type, long cur_top, boolean blitz) {
+  int objects_shown_on_screen;
+  if (cur_top == 13) {
     objects_shown_on_screen = stores[store_type].store_ctr - 12;
   } else if (stores[store_type].store_ctr > 12) {
     objects_shown_on_screen = 12;
@@ -1201,121 +1183,188 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top, boolean 
     objects_shown_on_screen = stores[store_type].store_ctr;
   }
 
-  long item_val;
+
+  char prt_buf[82];
+  if (blitz) {
+    sprintf(prt_buf, "(Items a-%c, Esc to exit) BLITZ-PURCHASE Item? ",
+        objects_shown_on_screen + 'a' - 1);
+  } else {
+    sprintf(prt_buf, "(Items a-%c, Esc to exit) Purchase which item? ",
+        objects_shown_on_screen + 'a' - 1);
+  }
+
+  int selected_item = -1;
+  while (selected_item < 1 || objects_shown_on_screen < selected_item) {
+    prt(prt_buf, 1, 1);
+    char command = inkey();
+    switch (command) {
+      case 3:
+      case 25:
+      case 26:
+      case 27:
+        selected_item = -1;
+        goto break_outer;
+      default:
+        selected_item = (int)command - 96;
+        break;
+    }
+  }
+break_outer:
+
+  msg_flag = false;
+  erase_line(msg_line, msg_line);
+
+  return selected_item + cur_top - 1;
+}
+
+/**
+ * __store_purchase() - Buy an item from a store
+ * @store_type: Type of store
+ * @cur_top: ???
+ * @blitz: If we are blitz-buying
+ */
+static boolean __store_purchase(enum store_t store_type, long *cur_top, boolean blitz) {
+
   if (stores[store_type].store_ctr < 1) {
     msg_print("I am currently out of stock.");
-    /*{ Get the item number to be bought              }*/
-  } else if (__get_store_item(&item_val, foo, 1, objects_shown_on_screen)) {
-    /*{"Which item are you interested in? ",1,objects_shown_on_screen)) then}*/
-    item_val += *cur_top - 1; /*{ true item_val }*/
-    inven_temp->data = stores[store_type].store_inven[item_val].sitem;
+    return false;
+  }
 
-    long save_number;
-    if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
-      save_number = inven_temp->data.number;
-      inven_temp->data.number = 1;
+  int selected_item = __store_purchase_select_item(store_type, *cur_top, blitz);
+  if (selected_item == -1)
+    return false;
+
+  inven_temp->data = stores[store_type].store_inven[selected_item].sitem;
+
+  long save_number;
+  if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
+    save_number = inven_temp->data.number;
+    inven_temp->data.number = 1;
+  } else {
+    save_number = 1;
+  }
+
+  if (!inven_check_weight() && store_type != S_INN) {
+    prt("You can not carry that much weight.", 1, 1);
+    return false;
+  }
+
+  if (!inven_check_num() && store_type != S_INN) {
+    prt("You cannot carry that many different items.", 1, 1);
+    return false;
+  }
+
+  trade_result_t trade_result;
+  if (stores[store_type].store_inven[selected_item].scost > 0) {
+    trade_result.price = stores[store_type].store_inven[selected_item].scost / GOLD_VALUE;
+    trade_result.status = TS_SUCCESS;
+  } else if (blitz) {
+    trade_result = __purchase_blitz(store_type, &inven_temp->data);
+  } else {
+    trade_result = __purchase_haggle(store_type, &inven_temp->data);
+  }
+
+  if (trade_result.status == TS_ABORTED) {
+    prt("", 2, 1);
+    return true;
+  }
+
+  if (trade_result.status != TS_SUCCESS) {
+    prt("", 2, 1);
+    return false;
+  }
+
+  long price = trade_result.price;
+
+  // Check if we can pay for it
+  boolean could_pay;
+  if (player_money[TOTAL_] >= trade_result.price) {
+    subtract_money(trade_result.price * GOLD_VALUE, true);
+    could_pay = true;
+  } else {
+    long to_bank = price - player_money[TOTAL_];
+    could_pay = send_page(to_bank);
+  }
+
+  if (!could_pay) {
+    boolean barred_from_store = __store_get_insulted(store_type);
+    if (barred_from_store) {
+      prt("", 2, 1);
+      return true;
     } else {
-      save_number = 1;
-    }
-
-    if (inven_check_weight() || store_type == S_INN) {
-      if (inven_check_num() || store_type == S_INN) {
-        long price;
-        long choice;
-        if (stores[store_type].store_inven[item_val].scost > 0) {
-          price = stores[store_type].store_inven[item_val].scost / GOLD_VALUE;
-          choice = 0;
-        } else {
-          choice = __purchase_haggle(store_type, &price, &(inven_temp->data), blitz);
-        }
-
-        switch (choice) {
-
-        case 0:
-          {
-            boolean flag;
-            if (player_money[TOTAL_] >= price) {
-              subtract_money(price * GOLD_VALUE, true);
-              flag = true;
-            } else {
-              long to_bank = price - player_money[TOTAL_];
-              flag = send_page(to_bank);
-            }
-
-            if (flag) {
-              prt_comment1();
-              __store_lower_insult_level(store_type);
-              if (store_type == S_INN) {
-                if (stores[store_type].store_inven[item_val].scost < 0) {
-                  stores[store_type].store_inven[item_val].scost =
-                    price * GOLD_VALUE;
-                }
-                spend_time(stores[store_type].store_inven[item_val].sitem.p1,
-                    "at the Inn.", true);
-                if (stores[store_type].store_inven[item_val].sitem.subval == 303) {
-                  spend_time(600, "eating.", false);
-                  msg_print("You eat a leisurely meal of buckwheat cakes and bacon.");
-                  player_flags.foodc = PLAYER_FOOD_FULL;
-                  player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
-                  msg_print(" ");
-                }
-                return_value = true;
-              } else {
-                __remove_item_from_store(store_type, item_val, true);
-                item_new = inven_carry();
-                char out_val[82];
-                objdes(out_val, item_new, true);
-                char out2[100];
-                sprintf(out2, "You have %s", out_val);
-                msg_print(out2);
-                if (*cur_top > stores[store_type].store_ctr) {
-                  *cur_top = 1;
-                  __store_print_inventory(store_type, *cur_top);
-                } else {
-                  if (save_number > 1) {
-                    if (stores[store_type].store_inven[item_val].scost < 0) {
-                      stores[store_type].store_inven[item_val].scost =
-                        price * GOLD_VALUE;
-                      __store_redraw_cost(store_type, item_val);
-                    }
-                  } else {
-                    __store_print_inventory(store_type, item_val);
-                  }
-                }
-                __store_print_store_gold();
-              }
-            } else {
-              if (__store_get_insulted(store_type)) {
-                return_value = true;
-              } else {
-                prt_comment1();
-                msg_print("Liar!  You have not the gold!");
-              }
-            }
-          }
-
-          break;
-
-        case 2:
-          return_value = true;
-          break;
-
-        default:
-          break;
-        }
-        prt("", 2, 1);
-
-      } else {
-        prt("You cannot carry that many different "
-            "items.",
-            1, 1);
-      }
-    } else {
-      prt("You can not carry that much weight.", 1, 1);
+      msg_print("Liar!  You have not the gold!");
+      prt("", 2, 1);
+      return false;
     }
   }
 
+  __print_trade_accepted();
+  __store_lower_insult_level(store_type);
+  boolean return_value;
+  if (store_type == S_INN) {
+    if (stores[store_type].store_inven[selected_item].scost < 0) {
+      stores[store_type].store_inven[selected_item].scost =
+        price * GOLD_VALUE;
+    }
+    spend_time(stores[store_type].store_inven[selected_item].sitem.p1,
+        "at the Inn.", true);
+    if (stores[store_type].store_inven[selected_item].sitem.subval == 303) {
+      spend_time(600, "eating.", false);
+      msg_print("You eat a leisurely meal of buckwheat cakes and bacon.");
+      player_flags.foodc = PLAYER_FOOD_FULL;
+      player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
+      msg_print(" ");
+    }
+    return_value = true;
+  } else {
+    __remove_item_from_store(store_type, selected_item, true);
+    treas_rec *item_new = inven_carry();
+    char out_val[82];
+    objdes(out_val, item_new, true);
+    char out2[100];
+    sprintf(out2, "You have %s", out_val);
+    msg_print(out2);
+    if (*cur_top > stores[store_type].store_ctr) {
+      *cur_top = 1;
+      __store_print_inventory(store_type, *cur_top);
+    } else {
+      if (save_number > 1) {
+        if (stores[store_type].store_inven[selected_item].scost < 0) {
+          stores[store_type].store_inven[selected_item].scost =
+            price * GOLD_VALUE;
+          __store_redraw_cost(store_type, selected_item);
+        }
+      } else {
+        __store_print_inventory(store_type, selected_item);
+      }
+    }
+    __store_print_store_gold();
+  }
+  prt("", 2, 1);
+
   return return_value;
+}
+
+/**
+ * __sell_blitz() - Blitz sell an item to a store
+ * @store_type: Type of store
+ * @item: Item to sell
+ * @return: Agreed sell price
+ */
+static long __sell_blitz(enum store_t store_type, treasure_type const * item) {
+  long const cost = __calc_sell_price(store_type, item);
+  long const max_buy = __store_max_deflated_price(store_type, cost);
+  long const min_buy = __store_min_deflated_price(store_type, cost);
+
+  long const min_max_diff = (min_buy - max_buy);
+  long last_offer = min_buy - (min_max_diff / 7);
+  long price = last_offer - ((stores[store_type].insult_cur * min_max_diff) /
+      owners[stores[store_type].owner].insult_max);
+  msg_printf("Need cash quick?  I'll pay you %ld   ", price);
+  msg_print(" ");
+  prt(" ", 2, 1);
+  __store_display_commands();
+  return price;
 }
 
 /**
@@ -1326,107 +1375,67 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top, boolean 
  * @blitz: 
  * @return: 0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy
  */
-static long __sell_haggle(enum store_t store_type, long *price, treasure_type *item, boolean blitz) {
-
-  ENTER(("__sell_haggle", "s"));
-
-  long max_sell = 1;
-  long max_buy = 1;
-  long min_buy = 1;
-  long cur_ask;
-  long final_ask;
-  long min_offer;
-  long last_offer;
-  long new_offer;
-  long x3;
-  long max_gold = 0;
-  long delta;
-  float x1;
-  float x2;
-  float min_per = 1.0;
-  float max_per = 1.0;
-  boolean loop_flag;
-  char comment[82];
-  char out_val[100];
-  long return_value = 0;
+static long __sell_haggle(enum store_t store_type, long *price, treasure_type *item) {
 
 
-  boolean flag = false;
   *price = 0;
-  long final_flag = 0;
   msg_flag = false;
 
-  long cost = item_value(item);
+  long cost = __calc_sell_price(store_type, item);
   if (cost < 1) {
-    return_value = 3;
-    flag = true;
-  } else if (item->flags2 & Blackmarket_bit) {
-    return_value = 4;
-    flag = true;
-  } else {
-    cost = cost - (long)(cost * C_player_cost_modifier_from_charisma()) -
-           (long)(cost * rgold_adj[owners[stores[store_type].owner].owner_race]
-                                  [player_prace]);
-    if (cost < 1) {
-      cost = 1;
-    }
-    max_sell =
-        trunc(cost * (1 + (owners[stores[store_type].owner]).max_inflate));
-    max_buy = trunc(cost * (1 - (owners[stores[store_type].owner]).max_inflate));
-    min_buy = trunc(cost * (1 - (owners[stores[store_type].owner]).min_inflate));
-    if (min_buy < max_buy) {
-      min_buy = max_buy;
-    }
-    min_per = (owners[stores[store_type].owner]).haggle_per;
-    max_per = min_per * 3.0;
-    max_gold = (owners[stores[store_type].owner]).max_cost;
+    return 3;
   }
 
-  if (blitz) {
-    delta = (min_buy - max_buy);
-    last_offer = min_buy - (delta / 7);
-    *price = last_offer - ((stores[store_type].insult_cur * delta) /
-                           owners[stores[store_type].owner].insult_max);
-    strcpy(comment, "Need cash quick?  I'll pay you ");
-    sprintf(out_val, "%s%ld   ", comment, *price);
-    msg_print(out_val);
-    msg_print(" ");
-    RETURN("__sell_haggle", "s", 'd', "status:", &return_value);
-    return return_value;
+  if (item->flags2 & Blackmarket_bit) {
+    return 4;
   }
 
-  if (flag) {
-    RETURN("__sell_haggle", "s", 'd', "status:", &return_value);
-    return return_value;
-  }
+  long const max_sell = __store_max_inflated_price(store_type, cost);
+  long const max_buy = __store_max_deflated_price(store_type, cost);
+  long const min_buy = __store_min_deflated_price(store_type, cost);
+  float const min_per = (owners[stores[store_type].owner]).haggle_per;
+  float const max_per = min_per * 3.0;
 
   // Haggling
-  __store_display_haggle_commands(-1);
-  if (max_buy > max_gold) {
+  prt("Specify an asking-price in gold pieces.", 22, 1);
+  prt("Esc) Quit Haggling.", 23, 1);
+  prt("", 24, 1);
+
+  long const store_max_gold = owners[stores[store_type].owner].max_cost;
+  long cur_ask;
+  long final_ask;
+  long final_flag = 0;
+  char comment[82];
+  if (max_buy > store_max_gold) {
     strcpy(comment, "Final offer : ");
     final_flag = 1;
-    cur_ask = max_gold;
-    final_ask = max_gold;
+    cur_ask = store_max_gold;
+    final_ask = store_max_gold;
     msg_print("I am sorry, but I have not the money to afford such a fine item.");
     msg_print(" ");
   } else {
     cur_ask = max_buy;
     final_ask = min_buy;
-    if (final_ask > max_gold) {
-      final_ask = max_gold;
+    if (final_ask > store_max_gold) {
+      final_ask = store_max_gold;
     }
     strcpy(comment, "Offer : ");
   }
 
-  min_offer = max_sell;
-  last_offer = min_offer;
+  long min_offer = max_sell;
+  long last_offer = min_offer;
   if (cur_ask < 1) {
     cur_ask = 1;
   }
 
+  boolean flag;
+  boolean loop_flag;
+  long new_offer;
+  long return_value = 0;
   do {
     do {
       loop_flag = true;
+      char out_val[100];
       sprintf(out_val, "%s%ld       ", comment, cur_ask);
       put_buffer(out_val, 2, 1);
       switch (__receive_offer(store_type, "What price do you ask? ",
@@ -1443,12 +1452,10 @@ static long __sell_haggle(enum store_t store_type, long *price, treasure_type *i
 
         default:
           if (new_offer < cur_ask) {
-            /* they probably missed
-             * a key... be kind */
             prt_comment6();
             loop_flag = false;
           } else if (new_offer == cur_ask) {
-            /* sold!!! */
+            // Sold !
             flag = true;
             *price = new_offer;
           }
@@ -1458,7 +1465,7 @@ static long __sell_haggle(enum store_t store_type, long *price, treasure_type *i
 
     if (!flag) {
       msg_flag = false;
-      x1 = (float)(last_offer - new_offer) / (float)(last_offer - cur_ask);
+      float x1 = (float)(last_offer - new_offer) / (float)(last_offer - cur_ask);
 
       if (x1 < min_per) {
         flag = __haggle_insults(store_type);
@@ -1472,8 +1479,8 @@ static long __sell_haggle(enum store_t store_type, long *price, treasure_type *i
             x1 = max_per;
           }
         }
-        x2 = (x1 + (randint(5) - 3) / 100.0);
-        x3 = trunc((new_offer - cur_ask) * x2) + 1;
+        long x2 = (x1 + (randint(5) - 3) / 100.0);
+        long x3 = trunc((new_offer - cur_ask) * x2) + 1;
         cur_ask += x3;
 
         if (cur_ask > final_ask) {
@@ -1496,9 +1503,10 @@ static long __sell_haggle(enum store_t store_type, long *price, treasure_type *i
           *price = new_offer;
         }
 
-        if (!(flag)) {
+        if (!flag) {
           last_offer = new_offer;
           prt(" ", 2, 1);
+          char out_val[100];
           sprintf(out_val, "Your last bid   : %ld   ", last_offer);
           put_buffer(out_val, 2, 40);
           prt_comment3(cur_ask, last_offer, final_flag);
@@ -1510,7 +1518,6 @@ static long __sell_haggle(enum store_t store_type, long *price, treasure_type *i
   prt(" ", 2, 1);
   __store_display_commands();
 
-  RETURN("__sell_haggle", "s", 'd', "status:", &return_value);
   return return_value;
 }
 
@@ -1580,9 +1587,17 @@ static boolean __store_sell(enum store_t store_type, long cur_top, boolean blitz
   }
 
   long price;
-  switch (__sell_haggle(store_type, &price, &inven_temp->data, blitz)) {
+  long sell_result;
+  if (blitz) {
+    sell_result = 0;
+    price = __sell_blitz(store_type, &inven_temp->data);
+  } else {
+    sell_result = __sell_haggle(store_type, &price, &inven_temp->data);
+  }
+
+  switch (sell_result) {
     case 0:
-      prt_comment1();
+      __print_trade_accepted();
       add_money(price * GOLD_VALUE);
       inven_destroy(item_ptr);
       long item_pos;
@@ -1833,8 +1848,8 @@ void store_carry(enum store_t store_num, long *ipos) {
   known1(inven_temp->data.name);
   known2(inven_temp->data.name);
 
-  long item_base_price = __calc_sell_price(store_num, &inven_temp->data);
-  long max_price = __store_max_price(store_num, item_base_price);
+  long item_base_price = __calc_purchase_price(store_num, &inven_temp->data);
+  long max_price = __store_max_inflated_price(store_num, item_base_price);
 
   if (max_price <= 0)
     return;
@@ -2097,7 +2112,7 @@ boolean check_store_hours(enum store_t store_type, long store_visual) {
   switch (availability) {
     case ' ':
       LEAVE("check_store_hours", "");
-      return false;
+      return true;
 
     case 'N':
     case 'W':
