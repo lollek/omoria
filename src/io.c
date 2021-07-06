@@ -1,6 +1,5 @@
 #define _GNU_SOURCE
 
-#include <stdio.h>
 #include <curses.h>
 #include <math.h>
 #include <signal.h>
@@ -256,7 +255,7 @@ boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
   return return_value;
 }
 
-void msg_printf(char const * const fmt, ...) {
+void msg_printf(char const *const fmt, ...) {
   va_list ap;
 
   va_start(ap, fmt);

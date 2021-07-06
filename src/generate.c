@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "store.h"
 #include "debug.h"
 #include "generate.h"
 #include "pascal.h"
 #include "player.h"
 #include "routines.h"
+#include "store.h"
 #include "types.h"
 #include "variables.h"
 

@@ -1,11 +1,11 @@
 #include <string.h>
 
-#include "store.h"
 #include "configure.h"
 #include "debug.h"
 #include "player.h"
 #include "routines.h"
 #include "save.h"
+#include "store.h"
 #include "variables.h"
 
 void C_main_menu();
