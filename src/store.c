@@ -1083,8 +1083,7 @@ static trade_result_t __purchase_blitz(enum store_t store_type,
 /**
  * __purchase_haggle() - Haggling routine
  */
-static trade_result_t __purchase_haggle(enum store_t store_num,
-                                        treasure_type *item) {
+static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *item) {
 
   msg_flag = false;
 
@@ -1167,7 +1166,6 @@ static trade_result_t __purchase_haggle(enum store_t store_num,
     sprintf(out_val, "Your last offer : %ld   ", last_offer);
     put_buffer(out_val, 2, 40);
     prt_comment2(last_offer, cur_ask, final_flag);
-    continue;
   }
 }
 
@@ -1383,19 +1381,17 @@ static long __sell_blitz(enum store_t store_type, treasure_type const *item) {
  * @blitz:
  * @return: 0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy
  */
-static long __sell_haggle(enum store_t store_type, long *price,
-                          treasure_type *item) {
+static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item) {
 
-  *price = 0;
   msg_flag = false;
 
   long cost = __calc_sell_price(store_type, item);
   if (cost < 1) {
-    return 3;
+    return (trade_result_t){.status = TS_REFUSED_TRASH, .price = 0};
   }
 
   if (item->flags2 & Blackmarket_bit) {
-    return 4;
+    return (trade_result_t){.status = TS_REFUSED_BLACKMARKET, .price = 0};
   }
 
   long const max_sell = __store_max_inflated_price(store_type, cost);
@@ -1437,94 +1433,64 @@ static long __sell_haggle(enum store_t store_type, long *price,
     cur_ask = 1;
   }
 
-  boolean flag;
-  boolean loop_flag;
   long new_offer;
-  long return_value = 0;
-  do {
-    do {
-      loop_flag = true;
-      char out_val[100];
-      sprintf(out_val, "%s%ld       ", comment, cur_ask);
-      put_buffer(out_val, 2, 1);
-      switch (__receive_offer(store_type, "What price do you ask? ", &new_offer,
-                              last_offer, -1)) {
-      case TS_ABORTED:
-        flag = true;
-        return_value = 1;
-        break;
+  for (;;) {
+    char out_val[100];
+    sprintf(out_val, "%s%ld       ", comment, cur_ask);
+    put_buffer(out_val, 2, 1);
+    enum trade_status_t offer_result = __receive_offer(store_type, "What price do you ask? ",
+        &new_offer, last_offer, -1);
 
-      case TS_REFUSED_INSULTED:
-        return_value = 2;
-        flag = true;
-        break;
-
-      default:
-        if (new_offer < cur_ask) {
+    if (offer_result == TS_ABORTED)
+      return (trade_result_t){.status = TS_ABORTED, .price = 0};
+    else if (offer_result == TS_REFUSED_INSULTED)
+      return (trade_result_t){.status = TS_REFUSED_INSULTED, .price = 0};
+    else if (offer_result == TS_SUCCESS) {
+      if (new_offer == cur_ask)
+        return (trade_result_t){.status = TS_SUCCESS, .price = new_offer};
+      else if (new_offer < cur_ask) {
           prt_comment6();
-          loop_flag = false;
-        } else if (new_offer == cur_ask) {
-          // Sold !
-          flag = true;
-          *price = new_offer;
-        }
-        break;
+          continue;
       }
-    } while (!(flag || loop_flag));
-
-    if (flag)
-      break;
+    }
 
     msg_flag = false;
     float x1 = (float)(last_offer - new_offer) / (float)(last_offer - cur_ask);
     if (x1 < min_per) {
-      flag = __haggle_insults(store_type);
-      if (flag) {
-        return_value = 2;
-      }
-    } else {
-      if (x1 > max_per) {
-        x1 *= 0.75;
-        if (x1 < max_per) {
-          x1 = max_per;
-        }
-      }
-      float x2 = (x1 + (randint(5) - 3) / 100.0);
-      long x3 = trunc((new_offer - cur_ask) * x2) + 1;
-      cur_ask += x3;
-      if (cur_ask > final_ask) {
-        cur_ask = final_ask;
-        strcpy(comment, "Final Offer : ");
-        final_flag++;
+      if (__haggle_insults(store_type))
+        return (trade_result_t){.status = TS_REFUSED_INSULTED, .price = 0};
+      continue;
+    }
 
-        if (final_flag > 3) {
-          if (__store_get_insulted(store_type)) {
-            return_value = 2;
-          } else {
-            return_value = 1;
-          }
-          flag = true;
-        }
-      } else if (new_offer <= cur_ask) {
-        flag = true;
-        *price = new_offer;
-      }
-
-      if (!flag) {
-        last_offer = new_offer;
-        prt(" ", 2, 1);
-        char out_val[100];
-        sprintf(out_val, "Your last bid   : %ld   ", last_offer);
-        put_buffer(out_val, 2, 40);
-        prt_comment3(cur_ask, last_offer, final_flag);
+    if (x1 > max_per) {
+      x1 *= 0.75;
+      if (x1 < max_per) {
+        x1 = max_per;
       }
     }
-  } while (!flag);
+    float x2 = (x1 + (randint(5) - 3) / 100.0);
+    long x3 = trunc((new_offer - cur_ask) * x2) + 1;
+    cur_ask += x3;
+    if (cur_ask > final_ask) {
+      cur_ask = final_ask;
+      strcpy(comment, "Final Offer : ");
+      final_flag++;
 
-  prt(" ", 2, 1);
-  __store_display_commands();
+      if (final_flag > 3) {
+        if (__store_get_insulted(store_type))
+          return (trade_result_t){.status = TS_REFUSED_INSULTED, .price = 0};
+        else
+          return (trade_result_t){.status = TS_ABORTED, .price = 0};
+      }
+    } else if (new_offer <= cur_ask)
+      return (trade_result_t){.status = TS_SUCCESS, .price = new_offer};
 
-  return return_value;
+    last_offer = new_offer;
+    prt(" ", 2, 1);
+    sprintf(out_val, "Your last bid   : %ld   ", last_offer);
+    put_buffer(out_val, 2, 40);
+    prt_comment3(cur_ask, last_offer, final_flag);
+  }
 }
 
 /**
@@ -1591,19 +1557,20 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
     return false;
   }
 
-  long price;
-  long sell_result;
+  trade_result_t trade_result;
   if (blitz) {
-    sell_result = 0;
-    price = __sell_blitz(store_type, &inven_temp->data);
+    trade_result.price = __sell_blitz(store_type, &inven_temp->data);
+    trade_result.status = TS_SUCCESS;
   } else {
-    sell_result = __sell_haggle(store_type, &price, &inven_temp->data);
+    trade_result = __sell_haggle(store_type, &inven_temp->data);
+    prt(" ", 2, 1);
+    __store_display_commands();
   }
 
-  switch (sell_result) {
-  case 0:
+  switch (trade_result.status) {
+  case TS_SUCCESS:
     __print_trade_accepted();
-    add_money(price * GOLD_VALUE);
+    add_money(trade_result.price * GOLD_VALUE);
     inven_destroy(item_ptr);
     long item_pos;
     store_carry(store_type, &item_pos);
@@ -1621,17 +1588,17 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
     __store_print_store_gold();
     break;
 
-  case 2:
+  case TS_REFUSED_INSULTED:
     return_value = true;
     break;
 
-  case 3:
+  case TS_REFUSED_TRASH:
     msg_print("How dare you!");
     msg_print("I will not buy that!");
     return_value = __store_get_insulted(store_type);
     break;
 
-  case 4:
+  case TS_REFUSED_BLACKMARKET:
     /* black market or insured stuff after a death */
     msg_print("Hmmmmm, that looks hot. I will not buy it!");
     msg_print("I am an honest merchant!");
