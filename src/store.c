@@ -1145,7 +1145,7 @@ static trade_result_t __purchase_haggle(enum store_t store_num,
         x1 = max_per;
       }
     }
-    long x2 = (x1 + (randint(5) - 3) / 100.0);
+    float x2 = (x1 + (randint(5) - 3) / 100.0);
     long x3 = trunc((cur_ask - new_offer) * x2) + 1;
     cur_ask -= x3;
     if (cur_ask < final_ask) {
@@ -1489,7 +1489,7 @@ static long __sell_haggle(enum store_t store_type, long *price,
           x1 = max_per;
         }
       }
-      long x2 = (x1 + (randint(5) - 3) / 100.0);
+      float x2 = (x1 + (randint(5) - 3) / 100.0);
       long x3 = trunc((new_offer - cur_ask) * x2) + 1;
       cur_ask += x3;
       if (cur_ask > final_ask) {
