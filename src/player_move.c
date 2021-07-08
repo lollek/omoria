@@ -68,11 +68,6 @@ static boolean pick_dir(long dir) {
 }
 
 static void _move_char(long dir) {
-  long test_row = char_row;
-  long test_col = char_col;
-  long i1;
-  long i2;
-
   if (dir == 5)
     find_flag = false;
 
@@ -83,6 +78,8 @@ static void _move_char(long dir) {
   }
 
   /* Legal move? */
+  long test_row = char_row;
+  long test_col = char_col;
   if (!move_dir(dir, &test_row, &test_col))
     return;
 
@@ -96,7 +93,7 @@ static void _move_char(long dir) {
     if (player_flags.afraid < 1) {
       py_attack(test_row, test_col);
     } else {
-      msg_print("You are too afraid!");
+      msg_print("You are too afraid to attack!");
     }
     return;
   }
@@ -166,11 +163,11 @@ static void _move_char(long dir) {
   } else if ((cave[test_row][test_col].fval == corr_floor2.ftval ||
               cave[test_row][test_col].fval == corr_floor3.ftval) &&
              player_flags.blind < 1) {
-    for (i1 = test_row - 1; i1 <= test_row + 1; i1++) {
-      for (i2 = test_col - 1; i2 <= test_col + 1; i2++) {
-        if (in_bounds(i1, i2) && cave[i1][i2].fval == lopen_floor.ftval &&
-            !cave[i1][i2].pl) {
-          light_room(i1, i2);
+    for (long y = test_row - 1; y <= test_row + 1; y++) {
+      for (long x = test_col - 1; x <= test_col + 1; x++) {
+        if (in_bounds(y, x) && cave[y][x].fval == lopen_floor.ftval &&
+            !cave[y][x].pl) {
+          light_room(y, x);
         }
       }
     }

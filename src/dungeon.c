@@ -31,17 +31,16 @@ static boolean light_flag;        /*	{ Used in MOVE_LIGHT  } */
 static boolean cave_flag = false; /*	{ Used in GET_PANEL   } */
 static long closing_flag = 0;     /* { Used for closing   } */
 static float acc_exp = 0.0;       /*{ Accumulator for fractional exp} */
+static long old_chp;               /* { Detect change         } */
+static long old_cmana;             /* { Detect change         } */
+static boolean player_light;    /* { Player carrying light } */
+static boolean save_msg_flag;   /* { Msg flag after INKEY  } */
 
-long dir_val;            /* { For movement (running)} */
-long old_chp, old_cmana; /* { Detect change         } */
 float regen_amount;      /* { Regenerate hp and mana} */
-char command;            /* { Last command          } */
 boolean moria_flag;      /* { Next level when true  } */
 boolean reset_flag;      /* { Do not move creatures } */
 boolean search_flag;     /* { Player is searching   } */
 boolean teleport_flag;   /* { Handle telport traps  } */
-boolean player_light;    /* { Player carrying light } */
-boolean save_msg_flag;   /* { Msg flag after INKEY  } */
 char s1[70];             /* { Summon item strings   } */
 char s2[70];             /* { Summon item strings   } */
 char s3[70];             /* { Summon item strings   } */
@@ -1031,6 +1030,7 @@ static void d__update_resting() {
     /*{ One more side benifit; since inkey_delay hibernates }*/
     /*{ small amount before executing, this makes resting   }*/
     /*{ less CPU intensive...                               }*/
+    char command;
     inkey_delay(&command, 0);
     /*if (want_trap) { dump_ast_mess; XXXX}*/
     if ((player_flags).rest == 0) { /*{ Resting over          }*/
@@ -2549,7 +2549,7 @@ long get_money_type(char prompt[134], boolean *back, boolean no_check) {
   *back = true;
 
   do {
-    command = inkey();
+    char command = inkey();
     com_val = (long)(command);
     switch (com_val) {
     case 0:
@@ -4979,7 +4979,7 @@ void dungeon() {
           print_null(char_row, char_col);
           save_msg_flag = msg_flag;
           game_state = GS_GET_COMMAND;
-          command = inkey();
+          char command = inkey();
           game_state = GS_IGNORE_CTRL_C;
           if (save_msg_flag) {
             erase_line(msg_line, msg_line);
