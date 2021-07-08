@@ -312,15 +312,13 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
 
 boolean get_com(char const *prompt, char *command) {
   boolean return_value;
-  long com_val;
 
   if (strlen(prompt) > 1) {
     prt(prompt, 1, 1);
   }
   *command = inkey();
-  com_val = (long)*command;
 
-  return_value = !(com_val == 3 || com_val == 25 || com_val == 27);
+  return_value = !(*command == 3 || *command == 25 || *command == 27);
 
   erase_line(msg_line, msg_line);
   msg_flag = false;

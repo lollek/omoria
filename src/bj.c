@@ -514,11 +514,9 @@ static void bj__split() {
 
 static void bj__get_game_command() {
   char command;
-  long com_val = 0;
 
   if (get_com("", &command)) {
-    com_val = command;
-    switch (com_val) {
+    switch (command) {
     case 104: /* hit */
       py_index++;
       bj__get_player_card(py_index);

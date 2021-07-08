@@ -1631,9 +1631,7 @@ static void __store_enter(enum store_t store_type) {
     char command;
     if (get_com("", &command)) {
       msg_flag = false;
-      long com_val = (long)(command);
-
-      switch (com_val) {
+      switch (command) {
       case 18:
         display_store(store_type, cur_top);
         break;

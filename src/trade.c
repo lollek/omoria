@@ -640,22 +640,22 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean tp__get_store_item(long *com_val, char pmt[82], long i1, long i2) {
+boolean tp__get_store_item(long *command, char pmt[82], long i1, long i2) {
   /*{ Get the ID of a store item and return it's value      -RAK-   }*/
 
   char out_val[82];
   boolean flag;
 
-  *com_val = 0;
+  *command = 0;
   flag = true;
 
   sprintf(out_val, "(Items %c-%c, Esc to exit) %s", (char)(i1 + 96),
           (char)(i2 + 96), pmt);
 
-  while (((*com_val < i1) || (*com_val > i2)) && (flag)) {
+  while (((*command < i1) || (*command > i2)) && (flag)) {
     prt(out_val, 1, 1);
-    *com_val = inkey();
-    switch (*com_val) {
+    *command = inkey();
+    switch (*command) {
     case 3:
     case 25:
     case 26:
@@ -663,7 +663,7 @@ boolean tp__get_store_item(long *com_val, char pmt[82], long i1, long i2) {
       flag = false;
       break;
     default:
-      (*com_val) -= 96;
+      (*command) -= 96;
       break;
     }
   }
@@ -962,13 +962,11 @@ void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
                        trade_record_type *profits, char shop_owner[82],
                        trade_account_type *cur_player, boolean *exit_flag) {
   char command;
-  long com_val;
   char out_val[82];
   treas_rec *trash_ptr = NULL;
 
   if (get_com("", &command)) {
-    com_val = command;
-    switch (com_val) {
+    switch (command) {
 
     case 4: /* ^d */
       if (wizard2) {

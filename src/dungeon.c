@@ -2028,14 +2028,14 @@ static void rest() {
   }
 }
 
-static void d__execute_command(long *com_val) {
+static void d__execute_command(long *command) {
   treas_rec *trash_ptr;
   char out_val[82];
   char out2[82];
 
-  ENTER(("d__execute_command", "%d, '%c'", *com_val, *com_val));
+  ENTER(("d__execute_command", "%d, '%c'", *command, *command));
 
-  switch (*com_val) {
+  switch (*command) {
 
     /* case   1  :     ^A = Cure all     W1 */
     /* case   2  :     ^B = objects      W1 */
@@ -2140,9 +2140,9 @@ static void d__execute_command(long *com_val) {
     break;
 
   case 27: /* ALT */
-    *com_val = inkey();
-    MSG(("command: %d '%c'\n", (int)*com_val, (int)*com_val));
-    switch (*com_val) {
+    *command = inkey();
+    MSG(("command: %d '%c'\n", (int)*command, (int)*command));
+    switch (*command) {
     case 'a': /* Armor help */
       moria_help("Adventuring Armor_Class Armor_List");
       draw_cave();
@@ -2488,7 +2488,7 @@ static void d__execute_command(long *com_val) {
     prt("Type '?' for help...", 1, 1);
     break;
 
-  } /* end com_val switch */
+  }
 
   LEAVE("d__execute_command", "d");
 }
@@ -4749,7 +4749,7 @@ boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,
   return flag;
 }
 
-boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
+boolean d__get_dir(char prompt[82], long *dir, long *command_ptr, long *y,
                    long *x) {
   /*{ Prompts for a direction                               -RAK-   }*/
 
@@ -4771,40 +4771,40 @@ boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
     case '7':
     case '8':
     case '9':
-      *com_val = (long)command;
+      *command_ptr = (long)command;
       flag = true;
       break;
 
     case 'b':
-      *com_val = '1';
+      *command_ptr = '1';
       flag = true;
       break;
     case 'j':
-      *com_val = '2';
+      *command_ptr = '2';
       flag = true;
       break;
     case 'n':
-      *com_val = '3';
+      *command_ptr = '3';
       flag = true;
       break;
     case 'h':
-      *com_val = '4';
+      *command_ptr = '4';
       flag = true;
       break;
     case 'l':
-      *com_val = '6';
+      *command_ptr = '6';
       flag = true;
       break;
     case 'y':
-      *com_val = '7';
+      *command_ptr = '7';
       flag = true;
       break;
     case 'k':
-      *com_val = '8';
+      *command_ptr = '8';
       flag = true;
       break;
     case 'u':
-      *com_val = '9';
+      *command_ptr = '9';
       flag = true;
       break;
 
@@ -4813,7 +4813,7 @@ boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
     }
 
     if (flag) {
-      *dir = *com_val - '0';
+      *dir = *command_ptr - '0';
       move_dir(*dir, y, x);
       return true;
     }

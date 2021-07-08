@@ -563,7 +563,7 @@ treas_rec *ic__remove(long item_val, boolean show_message) {
 void ic__unwear(long *scr_state) {
   /*{ Unwear routine, remove a piece of equipment   -RAK-   }*/
 
-  long i1, i2, com_val;
+  long i1, i2, l_command;
   boolean exit_flag, test_flag;
   char command;
   char out_val[82];
@@ -583,8 +583,8 @@ void ic__unwear(long *scr_state) {
     msg_print(out_val);
     do {
       command = inkey();
-      com_val = (long)(command);
-      switch (com_val) {
+      l_command = (long)(command);
+      switch (l_command) {
       case 0:
       case 3:
       case 25:
@@ -601,8 +601,8 @@ void ic__unwear(long *scr_state) {
         break;
 
       default:
-        com_val -= 96;
-        if ((com_val >= 1) && (com_val <= equip_ctr)) {
+        l_command -= 96;
+        if ((l_command >= 1) && (l_command <= equip_ctr)) {
           test_flag = true;
         }
         break;
@@ -619,11 +619,11 @@ void ic__unwear(long *scr_state) {
         if (equipment[i2].tval > 0) {
           i1++;
         }
-      } while (i1 != com_val);
+      } while (i1 != l_command);
 
       if ((Cursed_worn_bit & equipment[i2].flags) != 0) {
         msg_print("Hmmm, it seems to be cursed...");
-        com_val = 0;
+        l_command = 0;
       } else {
         ic__remove(i2, true);
       }
@@ -634,10 +634,10 @@ void ic__unwear(long *scr_state) {
     } else if (equip_ctr == 0) {
       exit_flag = true;
     } else if (inven_ctr >= Equipment_min - 1) {
-      ic__show_equip(scr_state, com_val);
+      ic__show_equip(scr_state, l_command);
       exit_flag = true;
     } else if (!exit_flag) {
-      ic__show_equip(scr_state, com_val);
+      ic__show_equip(scr_state, l_command);
     }
   } while (!exit_flag);
 
@@ -1824,7 +1824,7 @@ boolean drop_money(treas_rec **ptr, boolean *clr) {
 
   char out_val[200];
   char out_val2[82];
-  int com_val;
+  int l_command;
   boolean reset_flag;
   long max;
   char mon_name[82];
@@ -1841,11 +1841,11 @@ boolean drop_money(treas_rec **ptr, boolean *clr) {
     *clr = true;
   } else {
     /* with player_do begin; */
-    com_val = get_money_type("Drop ", &reset_flag, false);
+    l_command = get_money_type("Drop ", &reset_flag, false);
     reset_flag = (!reset_flag);
     if (!reset_flag) {
 
-      switch (com_val) {
+      switch (l_command) {
       case 109:
         strcpy(mon_name, coin_name[MITHRIL]);
         break;
@@ -1866,7 +1866,7 @@ boolean drop_money(treas_rec **ptr, boolean *clr) {
         break;
       }
 
-      coin_stuff((char)com_val, &mon_type);
+      coin_stuff((char)l_command, &mon_type);
       max = player_money[mon_type];
       sprintf(out_val2, "%ld", max);
       sprintf(out_val, "Drop how much %s (1-%ld), Esc to exit : ", mon_name,

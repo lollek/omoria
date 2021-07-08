@@ -385,20 +385,20 @@ void wmi__display_screen(long *cur_display_size, list_elem_ptr cur_display[],
   wmi__display_commands();
 }
 
-boolean wmi__get_list_entry(long *com_val, char pmt[82], long i1, long i2) {
+boolean wmi__get_list_entry(long *l_command, char pmt[82], long i1, long i2) {
   char command;
   char temp[134];
   boolean flag = true;
 
-  *com_val = 0;
+  *l_command = 0;
 
   sprintf(temp, "(Entries %c-%c, ^Z to exit) %s", (int)i1 + 96, (int)i2 + 96,
           pmt);
-  for (; (((*com_val < i1) || (*com_val > i2)) && (flag));) {
+  for (; (((*l_command < i1) || (*l_command > i2)) && (flag));) {
     prt(temp, 1, 1);
     command = inkey();
-    *com_val = (long)command;
-    switch (*com_val) {
+    *l_command = (long)command;
+    switch (*l_command) {
     case 3:
     case 25:
     case 26:
@@ -406,7 +406,7 @@ boolean wmi__get_list_entry(long *com_val, char pmt[82], long i1, long i2) {
       flag = false;
       break;
     default:
-      *com_val -= 96;
+      *l_command -= 96;
       break;
     }
   }
@@ -423,12 +423,12 @@ boolean wmi__parse_command(list_elem_ptr *blegga, list_elem_ptr *cur_top,
 
 {
   char command;
-  long com_val, which;
+  long l_command, which;
   boolean flag = false;
 
   if (get_com("", &command)) {
-    com_val = (long)command;
-    switch (com_val) {
+    l_command = (long)command;
+    switch (l_command) {
 
     case 18: /*{^R}*/
       wmi__display_screen(cur_display_size, cur_display, *cur_top, blegga,
@@ -855,21 +855,21 @@ void esf__display_screen(int cur_top, char list[][134], int n1, int *blegga,
   esf__display_commands();
 }
 
-boolean esf__get_list_entry(int *com_val, char pmt[82], int cur_top, int i1,
+boolean esf__get_list_entry(int *l_command, char pmt[82], int cur_top, int i1,
                             int i2) {
   char out_val[82];
   boolean flag = true;
 
-  *com_val = 0;
+  *l_command = 0;
 
   sprintf(out_val, "(Entries %c-%c, Esc to exit) %s", (char)(i1 + 96),
           (char)(i2 + 96), pmt);
 
-  for (; (((*com_val < i1) || (*com_val > i2)) && (flag));) {
+  for (; (((*l_command < i1) || (*l_command > i2)) && (flag));) {
     prt(out_val, 1, 1);
-    *com_val = inkey();
+    *l_command = inkey();
 
-    switch (*com_val) {
+    switch (*l_command) {
     case 3:
     case 25:
     case 26:
@@ -877,7 +877,7 @@ boolean esf__get_list_entry(int *com_val, char pmt[82], int cur_top, int i1,
       flag = false;
       break;
     default:
-      (*com_val) += (cur_top - 97);
+      (*l_command) += (cur_top - 97);
       break;
     }
   }

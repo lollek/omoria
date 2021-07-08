@@ -26,8 +26,6 @@
 static boolean pick_dir(long dir) {
 
   long z[2];
-  long i;
-  boolean return_value = false;
 
   if (!find_flag)
     return false;
@@ -53,13 +51,14 @@ static boolean pick_dir(long dir) {
     break;
   }
 
-  for (i = 0; i < 2; i++) {
+  boolean return_value = false;
+  for (int i = 0; i < 2; i++) {
     long y = char_row;
     long x = char_col;
     if (move_dir(z[i], &y, &x)) {
       if (cave[y][x].fopen) {
         return_value = true;
-        com_val = z[i] + 48;
+        com_val = dir_to_char(z[i]);
       }
     }
   }
@@ -176,6 +175,36 @@ static void _move_char(long dir) {
   /* Make final assignments of char co-ords */
   char_row = test_row;
   char_col = test_col;
+}
+
+int char_to_dir(char c) {
+    switch (c) {
+        case 'b': case 'B': return 1;
+        case 'j': case 'J': return 2;
+        case 'n': case 'N': return 3;
+        case 'h': case 'H': return 4;
+        case '.': return 5;
+        case 'l': case 'L': return 6;
+        case 'y': case 'Y': return 7;
+        case 'k': case 'K': return 8;
+        case 'u': case 'U': return 9;
+        default: return -1;
+    }
+}
+
+char dir_to_char(int dir) {
+    switch (dir) {
+        case 1: return 'b';
+        case 2: return 'j';
+        case 3: return 'n';
+        case 4: return 'h';
+        case 5: return '.';
+        case 6: return 'l';
+        case 7: return 'y';
+        case 8: return 'k';
+        case 9: return 'u';
+        default: return '?';
+    }
 }
 
 void move_char(long dir) {
