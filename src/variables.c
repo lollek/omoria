@@ -78,13 +78,13 @@ unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
      0x00800000, 0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
      0x20000000, 0x40000000, 0x80000000};
 
-char MORIA_HOU[192];
-char MORIA_TRD[192];
-char MORIA_LCK[192];
-char MORIA_DTH[192];
-char MORIA_MON[192];
-char MORIA_CST[192];
-char MORIA_GCST[192];
+char const * MORIA_HOU;
+char const * MORIA_TRD;
+char const * MORIA_LCK;
+char const * MORIA_DTH;
+char const * MORIA_MON;
+char const * MORIA_CST;
+char const * MORIA_GCST;
 
 /*	{  following are calculated from max dungeon sizes		} */
 long max_panel_rows, max_panel_cols;

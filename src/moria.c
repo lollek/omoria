@@ -13,9 +13,9 @@ void C_main_menu();
 int main(int argc, char *argv[]) {
 
   // Initialization
-  MSG(("%s", "Main - Initialization"));
   game_state = GS_LOADING;
   dbg__init();
+  MSG(("%s", "Main - Initialization"));
 
   /* Get the directory location of the image */
   if (!init__file_paths()) {

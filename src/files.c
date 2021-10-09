@@ -122,7 +122,7 @@ static void intro_parse_switches(int argc, char *argv[]) {
   }
 }
 
-boolean intro_do_hours_file(boolean already_exiting, char *the_file) {
+boolean intro_do_hours_file(boolean already_exiting, char const *the_file) {
   /*      { Attempt to read hours.dat.  If it does not exist,     } */
   /*      { then create a standard one.                           } */
 
@@ -184,7 +184,7 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file) {
   return (exit_flag || already_exiting);
 }
 
-boolean intro_do_death_file(boolean already_exiting, char *the_file) {
+boolean intro_do_death_file(boolean already_exiting, char const *the_file) {
   FILE *file1;
   boolean exit_flag = false;
 
@@ -230,7 +230,7 @@ boolean intro_do_death_file(boolean already_exiting, char *the_file) {
   return (exit_flag || already_exiting);
 }
 
-boolean intro_ensure_file_exists(boolean already_exiting, char *the_file) {
+boolean intro_ensure_file_exists(boolean already_exiting, char const *the_file) {
   FILE *file1;
   boolean exit_flag = false;
 

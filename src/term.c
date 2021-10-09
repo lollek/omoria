@@ -14,7 +14,6 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "config.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
