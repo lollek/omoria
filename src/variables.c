@@ -1370,7 +1370,14 @@ treasure_type gold_list[MAX_GOLD] = {{"& copper piece~", valuable_metal, 0, 0,
 treasure_type t_list[MAX_TALLOC + 1];
 treasure_type equipment[EQUIP_MAX];
 treas_rec *inventory_list = NULL;
-treas_rec *inven_temp;
+treas_rec inven_temp = {
+    .data = {" ", 0, 0, 0, 0, 0,   0, 0,
+        0,   0, 0, 0, 0, " ", 0, 0},
+    .ok = false,
+    .insides = 0,
+    .next = NULL,
+    .is_in = false,
+};
 
 /*	{ Items which are sold in the stores are different from dungeon } */
 /*	{ items so that identify works properly.  Note that the players } */

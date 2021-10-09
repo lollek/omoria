@@ -540,9 +540,9 @@ void blow() {
             }
 
             if (ident) {
-              identify(&(inven_temp->data));
+              identify(&(inven_temp.data));
             }
-            if (inven_temp->data.flags != 0) {
+            if (inven_temp.data.flags != 0) {
               /* with player_do; */
               C_player_add_exp((item_ptr->data.level / (float)player_lev) + .5);
               prt_stat_block();

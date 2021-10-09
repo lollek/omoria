@@ -185,7 +185,7 @@ treas_rec *inven_carry() {
    * }*/
   /*	{ item position for a description if needed...		-RAK-
    * }*/
-  return add_inven_item(inven_temp->data);
+  return add_inven_item(inven_temp.data);
 }
 
 long change_all_ok_stats(boolean nok, boolean nin) {
@@ -240,8 +240,8 @@ long ic__display_inv(treas_rec *cur_display[], char prompt[82],
       count++;
       if (cur_display[count] != start) {
         cur_display[count] = start;
-        inven_temp->data = start->data;
-        objdes(out_val, inven_temp, true);
+        inven_temp.data = start->data;
+        objdes(out_val, &inven_temp, true);
         if ((start->data.flags2 & Holding_bit) != 0) {
           if (strstr(start->data.name, "|") == NULL) {
             bag_descrip(start, out_val3);
@@ -490,8 +490,8 @@ static char const *ic__equip_print_prefix(long position) {
 void inv__equip_pos_string(char out_val[82], long equip_pos, long counter) {
   char tmp_buf[82];
 
-  inven_temp->data = equipment[equip_pos];
-  objdes(tmp_buf, inven_temp, true);
+  inven_temp.data = equipment[equip_pos];
+  objdes(tmp_buf, &inven_temp, true);
   sprintf(out_val, "%c%c%c%s%s", cur_insure(), (char)('a' + counter - 1),
           cur_char2(), ic__equip_print_prefix(equip_pos), tmp_buf);
 }
@@ -518,9 +518,9 @@ treas_rec *ic__remove(long item_val, boolean show_message) {
   prt1[0] = 0;
 
   typ = equipment[item_val].tval;
-  inven_temp->data = equipment[item_val];
+  inven_temp.data = equipment[item_val];
   add_inven_item(equipment[item_val]);
-  inven_weight -= inven_temp->data.number * inven_temp->data.weight;
+  inven_weight -= inven_temp.data.number * inven_temp.data.weight;
   equipment[item_val] = blank_treasure;
   equip_ctr--;
 
@@ -548,16 +548,16 @@ treas_rec *ic__remove(long item_val, boolean show_message) {
       break;
     }
 
-    objdes(prt2, inven_temp, true);
+    objdes(prt2, &inven_temp, true);
     sprintf(out_val, "%s%s", prt1, prt2);
     msg_print(out_val);
   }
 
   if (item_val != Equipment_secondary) { /* Secondary weapon already off */
-    py_bonuses(&(inven_temp->data), -1);
+    py_bonuses(&(inven_temp.data), -1);
   }
 
-  return inven_temp;
+  return &inven_temp;
 }
 
 void ic__unwear(long *scr_state) {
@@ -846,8 +846,8 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
       char const *const equip_way =
           i1 == Equipment_primary ? "wielding" : "wearing";
       char out_val_tmp[82];
-      inven_temp->data = equipment[i1];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[i1];
+      objdes(out_val, &inven_temp, false);
       strcpy(out_val_tmp, out_val);
       sprintf(out_val, "The %s you are %s appears to be cursed", out_val_tmp,
               equip_way);
@@ -889,8 +889,8 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
         strcpy(prt1, "You are wearing ");
         break;
       }
-      inven_temp->data = equipment[i1];
-      objdes(prt2, inven_temp, true);
+      inven_temp.data = equipment[i1];
+      objdes(prt2, &inven_temp, true);
       i2 = 0;
       i3 = Equipment_min - 1;
       do { /*{ Get the right letter of equipment }*/
@@ -1335,7 +1335,7 @@ void ic__take_out() {
         curse = curse->next;
       }
       curse->next = from_ptr->next;
-      inven_temp->data = from_ptr->data;
+      inven_temp.data = from_ptr->data;
       inven_carry(); /* XXXX is this a memory leak? */
       /*{change to next line by Dean; used to begin
         with
@@ -1405,8 +1405,8 @@ void ic__switch_weapon(long *scr_state) {
   if ((Cursed_worn_bit & equipment[Equipment_primary].flags) != 0) {
     char prt1[82];
     char prt2[200];
-    inven_temp->data = equipment[Equipment_primary];
-    objdes(prt1, inven_temp, false);
+    inven_temp.data = equipment[Equipment_primary];
+    objdes(prt1, &inven_temp, false);
     sprintf(prt2, "The %s you are wielding appears to be cursed.", prt1);
     msg_print(prt2);
   } else {
@@ -1668,11 +1668,11 @@ char cur_char1() {
   char return_value;
 
   /* with inven_temp->data. do; */
-  if ((Cursed_worn_bit & inven_temp->data.flags) == 0) {
+  if ((Cursed_worn_bit & inven_temp.data.flags) == 0) {
     return_value = ')'; /*{ Not cursed...                 }*/
-  } else if ((Known_cursed_bit & inven_temp->data.flags2) != 0) {
+  } else if ((Known_cursed_bit & inven_temp.data.flags2) != 0) {
     return_value = '*'; /*{ Cursed and detected by spell }*/
-  } else if (pindex(inven_temp->data.name, '^') > 0) {
+  } else if (pindex(inven_temp.data.name, '^') > 0) {
     return_value = ')'; /*{ Cursed, but not identified    }*/
   } else {
     return_value = '*'; /*{ Cursed and identified...      }*/
@@ -1686,7 +1686,7 @@ char cur_char2() {
 
   /*{ Returns a '*' for cursed items, a ')' for normal ones -RAK-   }*/
 
-  if ((Cursed_worn_bit & inven_temp->data.flags) == 0) {
+  if ((Cursed_worn_bit & inven_temp.data.flags) == 0) {
     return_value = ')'; /*{ Not cursed...  }*/
   } else {
     return_value = '*'; /*{ Cursed...      }*/
@@ -1700,7 +1700,7 @@ char cur_insure() {
 
   char return_value;
 
-  if ((inven_temp->data.flags2 & Insured_bit) == 0) {
+  if ((inven_temp.data.flags2 & Insured_bit) == 0) {
     return_value = ' ';
   } else {
     return_value = '(';
@@ -1714,13 +1714,13 @@ void inven_destroy(treas_rec *item_ptr) {
 
   ENTER(("inven_destroy", "i"));
 
-  inven_temp->data = item_ptr->data;
+  inven_temp.data = item_ptr->data;
 
   /* with item_ptr->data. do; */
   if ((item_ptr->data.number > 1) && (item_ptr->data.subval < 512)) {
     item_ptr->data.number--;
     inven_weight -= item_ptr->data.weight;
-    inven_temp->data.number = 1;
+    inven_temp.data.number = 1;
   } else {
     inven_weight -= item_ptr->data.weight * item_ptr->data.number;
     delete_inven_item(item_ptr);
@@ -1773,7 +1773,7 @@ boolean inven_check_weight() {
   boolean return_value;
 
   /* with inven_temp^.data do; */
-  item_wgt = inven_temp->data.number * inven_temp->data.weight;
+  item_wgt = inven_temp.data.number * inven_temp.data.weight;
 
   /*{ Current stuff + weight <= max weight }*/
 
@@ -1909,9 +1909,9 @@ boolean drop_money(treas_rec **ptr, boolean *clr) {
             break;
           }
 
-          inven_temp->data = gold_list[pos - 1];
-          inven_temp->data.number = amt;
-          *ptr = inven_temp;
+          inven_temp.data = gold_list[pos - 1];
+          inven_temp.data.number = amt;
+          *ptr = &inven_temp;
           return_value = true;
           inven_weight -= COIN_WEIGHT * amt;
           reset_total_cash();
@@ -2139,12 +2139,12 @@ void inven_drop(treas_rec *item_ptr, long y, long x, boolean mon) {
   temp_ptr = (treas_rec *)safe_malloc(sizeof(treas_rec), "inven_drop");
   temp_ptr->data = item_ptr->data;
   if (mon) {
-    inven_temp->data = item_ptr->data;
+    inven_temp.data = item_ptr->data;
   } else {
     inven_destroy(item_ptr);
   }
   popt(&i1);
-  t_list[i1] = inven_temp->data;
+  t_list[i1] = inven_temp.data;
   cave[y][x].tptr = i1;
   dispose(temp_ptr, sizeof(treas_rec), "inven_drop");
 }

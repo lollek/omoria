@@ -917,9 +917,9 @@ void c__make_attack(long monptr) {
   } else {
     sprintf(ddesc, "& %s", c_list[m_list[monptr].mptr].name);
   }
-  strcpy(inven_temp->data.name, ddesc);
-  inven_temp->data.number = 1;
-  objdes(ddesc, inven_temp, true);
+  strcpy(inven_temp.data.name, ddesc);
+  inven_temp.data.number = 1;
+  objdes(ddesc, &inven_temp, true);
   strcpy(died_from, ddesc);
   /*{ End DIED_FROM                 }*/
 
@@ -1351,9 +1351,9 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
     } else {
       sprintf(ddesc, "& %s", c_list[m_list[monptr].mptr].name);
     }
-    strcpy(inven_temp->data.name, ddesc);
-    inven_temp->data.number = 1;
-    objdes(ddesc, inven_temp, true);
+    strcpy(inven_temp.data.name, ddesc);
+    inven_temp.data.number = 1;
+    objdes(ddesc, &inven_temp, true);
     /*{ End DIED_FROM                 }*/
 
     /*{ Extract all possible spells into spell_choice }*/

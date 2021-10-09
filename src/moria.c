@@ -33,12 +33,6 @@ int main(int argc, char *argv[]) {
   quart_height = SCREEN_HEIGHT / 4;
   quart_width = SCREEN_WIDTH / 4;
   dun_level = 0;
-  inven_temp = safe_malloc(sizeof(treas_rec), "inven_temp");
-  inven_temp->data = blank_treasure;
-  inven_temp->ok = false;
-  inven_temp->insides = 0;
-  inven_temp->next = NULL;
-  inven_temp->is_in = false;
   turn_counter = 100000;
 
   /* Sort the objects by level */

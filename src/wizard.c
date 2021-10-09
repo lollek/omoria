@@ -1147,9 +1147,9 @@ void wizard_create() {
   /* with inven_temp->data do; */
   prt("Name   : ", 1, 1);
   if (get_string(tmp_str, 1, 10, 40)) {
-    strcpy(inven_temp->data.name, tmp_str);
+    strcpy(inven_temp.data.name, tmp_str);
   } else {
-    strcpy(inven_temp->data.name, "& Wizard Object!");
+    strcpy(inven_temp.data.name, "& Wizard Object!");
   }
 
   do {
@@ -1161,71 +1161,71 @@ void wizard_create() {
 
   } while (!flag);
 
-  inven_temp->data.tval = tmp_val;
+  inven_temp.data.tval = tmp_val;
 
   prt("Flags  (In HEX): ", 1, 1);
-  inven_temp->data.flags = get_hex_value(1, 18, 8);
+  inven_temp.data.flags = get_hex_value(1, 18, 8);
 
   prt("Flags2 (In HEX): ", 1, 1);
-  inven_temp->data.flags2 = get_hex_value(1, 18, 8);
+  inven_temp.data.flags2 = get_hex_value(1, 18, 8);
 
   prt("P1     : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 0;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.p1 = tmp_val;
+  inven_temp.data.p1 = tmp_val;
 
   prt("Cost : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 0;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.cost = tmp_val;
+  inven_temp.data.cost = tmp_val;
 
   prt("Subval : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 1;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.subval = tmp_val;
+  inven_temp.data.subval = tmp_val;
 
   prt("Weight : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 1;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.weight = tmp_val;
+  inven_temp.data.weight = tmp_val;
 
   prt("Number : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 1;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.number = tmp_val;
+  inven_temp.data.number = tmp_val;
 
   prt("+To hit: ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 0;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.tohit = tmp_val;
+  inven_temp.data.tohit = tmp_val;
 
   prt("+To dam: ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 0;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.todam = tmp_val;
+  inven_temp.data.todam = tmp_val;
 
   prt("AC     : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 0;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.ac = tmp_val;
+  inven_temp.data.ac = tmp_val;
 
   prt("+To AC : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
   tmp_val = 0;
   sscanf(tmp_str, "%ld", &tmp_val);
-  inven_temp->data.toac = tmp_val;
+  inven_temp.data.toac = tmp_val;
 
   prt("Damage : ", 1, 1);
   get_string(tmp_str, 1, 10, 5);
-  strcpy(inven_temp->data.damage, tmp_str);
+  strcpy(inven_temp.data.damage, tmp_str);
 
   prt("Level  : ", 1, 1);         /* added code to specify item's */
   get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
@@ -1233,11 +1233,11 @@ void wizard_create() {
   sscanf(tmp_str, "%ld", &tmp_val);
   if (tmp_val < 0)
     tmp_val = 0;
-  inven_temp->data.level = tmp_val;
+  inven_temp.data.level = tmp_val;
 
   if (get_yes_no("Allocate?")) {
     popt(&tmp_val);
-    t_list[tmp_val] = inven_temp->data;
+    t_list[tmp_val] = inven_temp.data;
     /* with cave[char_row][char_col]. do; */
     if (cave[char_row][char_col].tptr > 0) {
       delete_object(char_row, char_col);
@@ -1248,7 +1248,7 @@ void wizard_create() {
     msg_print("Aborted...");
   }
 
-  inven_temp->data = blank_treasure;
+  inven_temp.data = blank_treasure;
   move_char(5);
   creatures(false);
 }

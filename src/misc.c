@@ -815,12 +815,12 @@ treas_rec *money_carry() {
   /* with player_do; */
   /* with inven_temp^.data do; */
 
-  player_money[inven_temp->data.level] += inven_temp->data.number;
+  player_money[inven_temp.data.level] += inven_temp.data.number;
   reset_total_cash();
-  inven_weight += inven_temp->data.number * inven_temp->data.weight;
+  inven_weight += inven_temp.data.number * inven_temp.data.weight;
   prt_stat_block();
 
-  return inven_temp;
+  return &inven_temp;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

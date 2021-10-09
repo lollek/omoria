@@ -121,8 +121,8 @@ void q__reward_item(long target) {
     unquote(rewards[i2].name);
     known1(rewards[i2].name);
     known2(rewards[i2].name);
-    inven_temp->data = rewards[i2];
-    objdes(reward_names[i2], inven_temp, true);
+    inven_temp.data = rewards[i2];
+    objdes(reward_names[i2], &inven_temp, true);
   }
 
   pusht(i1);
@@ -147,7 +147,7 @@ void q__reward_item(long target) {
         q__reward_money(target);
         flag = true;
       } else {
-        inven_temp->data = rewards[(int)command];
+        inven_temp.data = rewards[(int)command];
         if (inven_check_num()) {      /*{ Too many objects?
                                          }*/
           if (inven_check_weight()) { /*{ Weight

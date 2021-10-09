@@ -393,9 +393,9 @@ static void d__look() {
         if (t_list[cave[y][x].tptr].tval == secret_door) {
           msg_print("You see a granite wall.");
         } else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
-          inven_temp->data = t_list[cave[y][x].tptr];
-          inven_temp->data.number = 1;
-          objdes(out_val, inven_temp, true);
+          inven_temp.data = t_list[cave[y][x].tptr];
+          inven_temp.data.number = 1;
+          objdes(out_val, &inven_temp, true);
           sprintf(out_val2, "You see %s.", out_val);
           msg_print(out_val2);
           flag = true;
@@ -1399,7 +1399,7 @@ static void d__bash() {
       msg_print("You are afraid!");
     } else {
       /*{ Save old values of attacking  }*/
-      inven_temp->data = equipment[Equipment_primary];
+      inven_temp.data = equipment[Equipment_primary];
       const long old_ptodam = player_ptohit;
       const long old_ptohit = player_ptodam;
       const long old_bth = player_bth;
@@ -1422,7 +1422,7 @@ static void d__bash() {
       }
 
       /*{ Restore old values            }*/
-      equipment[Equipment_primary] = inven_temp->data;
+      equipment[Equipment_primary] = inven_temp.data;
       player_ptohit = old_ptohit;
       player_ptodam = old_ptodam;
       player_bth = old_bth;
@@ -1983,7 +1983,7 @@ static void d__drop() {
           inven_drop(com_ptr, char_row, char_col, false);
         }
         prt_stat_block();
-        objdes(out_val, inven_temp, true);
+        objdes(out_val, &inven_temp, true);
         sprintf(out_val2, "Dropped %s.", out_val);
         msg_print(out_val2);
         reset_flag = false;
@@ -3013,7 +3013,7 @@ void carry(long y, long x) {
   find_flag = false;
 
   /* with cave[y][x]. do; */
-  inven_temp->data = t_list[cave[y][x].tptr];
+  inven_temp.data = t_list[cave[y][x].tptr];
 
   /*{ There's GOLD in them thar hills!      }*/
   /*{ OPPS!                                 }*/
@@ -3030,7 +3030,7 @@ void carry(long y, long x) {
         pusht(cave[y][x].tptr);
         cave[y][x].tptr = 0;
 
-        if (inven_temp->data.tval == valuable_metal) {
+        if (inven_temp.data.tval == valuable_metal) {
           item_ptr = money_carry();
           money_flag = true;
         } else {
@@ -3556,15 +3556,15 @@ boolean minus_ac(long typ_dam) {
 
   if (i1 > 0) {
     i2 = tmp[randint(i1)];
-    inven_temp->data = equipment[i2];
+    inven_temp.data = equipment[i2];
     /* with equipment[i2] do; */
     if ((equipment[i2].flags & typ_dam) != 0) {
-      objdes(out_val, inven_temp, false);
+      objdes(out_val, &inven_temp, false);
       sprintf(out_str, "Your %s resists damage!", out_val);
       msg_print(out_str);
       return_value = true;
     } else if ((equipment[i2].ac + equipment[i2].toac) > 0) {
-      objdes(out_val, inven_temp, false);
+      objdes(out_val, &inven_temp, false);
       sprintf(out_str, "Your %s is damaged!", out_val);
       msg_print(out_str);
       equipment[i2].toac--;
@@ -4442,9 +4442,9 @@ boolean py_attack(long y, long x) {
             inven_weight -= equipment[Equipment_primary].weight;
             prt_stat_block();
             equip_ctr--;
-            inven_temp->data = equipment[Equipment_primary];
+            inven_temp.data = equipment[Equipment_primary];
             equipment[Equipment_primary] = blank_treasure;
-            py_bonuses(&(inven_temp->data), -1);
+            py_bonuses(&(inven_temp.data), -1);
           }
         }
       } else {
@@ -4612,12 +4612,12 @@ void desc_remain(treas_rec *item_ptr) {
   char out_val[82];
   char out_val2[120];
 
-  inven_temp->data = item_ptr->data;
+  inven_temp.data = item_ptr->data;
 
   /* with inven_temp->data do; */
 
-  inven_temp->data.number--;
-  objdes(out_val, inven_temp, true);
+  inven_temp.data.number--;
+  objdes(out_val, &inven_temp, true);
   sprintf(out_val2, "You have %s.", out_val);
   msg_print(out_val2);
 }

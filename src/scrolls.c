@@ -38,8 +38,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   case 1: /*{ Enchant to Hit }*/
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
-      inven_temp->data = equipment[Equipment_primary];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[Equipment_primary];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
       if (enchant(&(equipment[Equipment_primary].tohit))) {
@@ -56,8 +56,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   case 2: /*{ Enchant to Damage }*/
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
-      inven_temp->data = equipment[Equipment_primary];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[Equipment_primary];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
       if (enchant(&(equipment[Equipment_primary].todam))) {
@@ -132,8 +132,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 
     if (i4 > 0) {
       /* with equipment[i4]. do; */
-      inven_temp->data = equipment[i4];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[i4];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
       if (enchant(&(equipment[i4].toac))) {
@@ -300,8 +300,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   case 45:                        /*{ Enchant Weapon }*/
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
-      inven_temp->data = equipment[Equipment_primary];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[Equipment_primary];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows brightly!", out_val);
       msg_print(out_val2);
       flag = false;
@@ -331,14 +331,14 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   case 33: /*{ Curse Weapon }*/
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
-      inven_temp->data = equipment[Equipment_primary];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[Equipment_primary];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows black, then fades.", out_val);
       msg_print(out_val2);
       equipment[Equipment_primary].tohit = -randint(5) - randint(5);
       equipment[Equipment_primary].todam = -randint(5) - randint(5);
       equipment[Equipment_primary].flags = Cursed_worn_bit;
-      py_bonuses(&(inven_temp->data), -1);
+      py_bonuses(&(inven_temp.data), -1);
       ident = true;
     }
     break;
@@ -376,8 +376,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 
     if (i3 > 0) {
       /* with equipment[i3]. do; */
-      inven_temp->data = equipment[i3];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[i3];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows brightly!", out_val);
       msg_print(out_val2);
       flag = false;
@@ -432,13 +432,13 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 
     if (i3 > 0) {
       /* with equipment[i3]. do; */
-      inven_temp->data = equipment[i3];
-      objdes(out_val, inven_temp, false);
+      inven_temp.data = equipment[i3];
+      objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows black, then fades.", out_val);
       msg_print(out_val2);
       equipment[i3].flags = Cursed_worn_bit;
       equipment[i3].toac = -randint(5) - randint(5);
-      py_bonuses(&(inven_temp->data), -1);
+      py_bonuses(&(inven_temp.data), -1);
       ident = true;
     }
     break;

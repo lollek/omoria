@@ -102,7 +102,7 @@ extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];
 extern treasure_type equipment[EQUIP_MAX];
 extern treas_rec *inventory_list;
-extern treas_rec *inven_temp;
+extern treas_rec inven_temp;
 extern treasure_type inventory_init[INVEN_INIT_MAX + 1];
 extern treasure_type blank_treasure;
 extern long inven_ctr;    /* { Total different obj's	} */

@@ -558,9 +558,9 @@ void file_character() {
               break;
             }
             i2++;
-            inven_temp->data = equipment[i1];
-            objdes(prt2, inven_temp, true);
-            if ((inven_temp->data.flags2 & Insured_bit) == 0) {
+            inven_temp.data = equipment[i1];
+            objdes(prt2, &inven_temp, true);
+            if ((inven_temp.data.flags2 & Insured_bit) == 0) {
               sprintf(out_val, "  %c%s%s", (char)(i2 + 96), prt1, prt2);
             } else {
               sprintf(out_val, " (%c%s%s", (char)(i2 + 96), prt1, prt2);
@@ -591,8 +591,8 @@ void file_character() {
                     "List, Page",
                     (i1 / 50) + 1);
           }
-          inven_temp->data = curse->data;
-          objdes(s1, inven_temp, true);
+          inven_temp.data = curse->data;
+          objdes(s1, &inven_temp, true);
           if (curse->is_in) {
             sprintf(prt1, "    %s", s1);
           } else {
@@ -600,20 +600,20 @@ void file_character() {
           }
 
           if (i1 < 27) {
-            if ((inven_temp->data.flags2 & Insured_bit) == 0) {
+            if ((inven_temp.data.flags2 & Insured_bit) == 0) {
               sprintf(out_val, " %c) %s", (char)(i1 + 96), prt1);
             } else {
               sprintf(out_val, "(%c) %s", (char)(i1 + 96), prt1);
             }
           } else {
-            if ((inven_temp->data.flags2 & Insured_bit) == 0) {
+            if ((inven_temp.data.flags2 & Insured_bit) == 0) {
               sprintf(out_val, " *) %s", prt1);
             } else {
               sprintf(out_val, "(*) %s", prt1);
             }
           }
 
-          if ((inven_temp->data.flags2 & Holding_bit) != 0) {
+          if ((inven_temp.data.flags2 & Holding_bit) != 0) {
             bag_descrip(curse, s1);
             strcat(out_val, s1);
           }
@@ -750,12 +750,12 @@ void print_objects() {
         for (i1 = 1; i1 <= nobj; i1++) {
           t_list[i2] = object_list[get_obj_num(level, PLACE_OBJECT_TRIES)];
           magic_treasure(i2, level, false);
-          inven_temp->data = t_list[i2];
+          inven_temp.data = t_list[i2];
           /* with inven_temp->data. do; */
-          unquote(inven_temp->data.name);
-          known1(inven_temp->data.name);
-          known2(inven_temp->data.name);
-          objdes(tmp_str, inven_temp, true);
+          unquote(inven_temp.data.name);
+          known1(inven_temp.data.name);
+          known2(inven_temp.data.name);
+          objdes(tmp_str, &inven_temp, true);
           fprintf(file1, "%s\n", tmp_str);
         }
         pusht(i2);

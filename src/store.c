@@ -353,8 +353,8 @@ static void __add_item_to_store(enum store_t store_num) {
     }
 
     // TODO: Stop using inven_temp
-    inven_temp->data = t_list[cur_pos];
-    if (__store_has_space_for(store_num, inven_temp)) {
+    inven_temp.data = t_list[cur_pos];
+    if (__store_has_space_for(store_num, &inven_temp)) {
       if (t_list[cur_pos].cost > 0) { /*{ Item must be good	}*/
         if (t_list[cur_pos].cost <
             (owners[stores[store_num].owner].max_cost * GOLD_VALUE)) {
@@ -377,11 +377,11 @@ static void __add_item_to_store(enum store_t store_num) {
 static void __remove_item_from_store(enum store_t store_num, long item_val,
                                      boolean one_of) {
 
-  inven_temp->data = stores[store_num].store_inven[item_val].sitem;
+  inven_temp.data = stores[store_num].store_inven[item_val].sitem;
   if ((stores[store_num].store_inven[item_val].sitem.number > 1) &&
       (stores[store_num].store_inven[item_val].sitem.subval < 512) &&
       (one_of)) {
-    inven_temp->data.number = 1;
+    inven_temp.data.number = 1;
     stores[store_num].store_inven[item_val].sitem.number--;
   } else {
     long store_ctr = stores[store_num].store_ctr;
@@ -408,7 +408,7 @@ static void __insert_item_in_store(enum store_t store_num, long pos,
   }
 
   // TODO: Shouldn't use inven_temp
-  stores[store_num].store_inven[pos].sitem = inven_temp->data;
+  stores[store_num].store_inven[pos].sitem = inven_temp.data;
   stores[store_num].store_inven[pos].scost = -icost * GOLD_VALUE;
   stores[store_num].store_ctr++;
 }
@@ -555,12 +555,12 @@ static void __store_print_inventory(enum store_t store_type, long start) {
   }
 
   for (; (start <= stop);) {
-    inven_temp->data = stores[store_type].store_inven[start].sitem;
-    if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
-      inven_temp->data.number = 1;
+    inven_temp.data = stores[store_type].store_inven[start].sitem;
+    if ((inven_temp.data.subval > 255) && (inven_temp.data.subval < 512)) {
+      inven_temp.data.number = 1;
     }
     char out_val1[82];
-    objdes(out_val1, inven_temp, true);
+    objdes(out_val1, &inven_temp, true);
     char out_val2[85];
     sprintf(out_val2, "%c) %s", (97 + (int)i), out_val1);
     prt(out_val2, i + 6, 1);
@@ -1239,12 +1239,12 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
   if (selected_item == -1)
     return false;
 
-  inven_temp->data = stores[store_type].store_inven[selected_item].sitem;
+  inven_temp.data = stores[store_type].store_inven[selected_item].sitem;
 
   long save_number;
-  if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
-    save_number = inven_temp->data.number;
-    inven_temp->data.number = 1;
+  if ((inven_temp.data.subval > 255) && (inven_temp.data.subval < 512)) {
+    save_number = inven_temp.data.number;
+    inven_temp.data.number = 1;
   } else {
     save_number = 1;
   }
@@ -1265,9 +1265,9 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
         stores[store_type].store_inven[selected_item].scost / GOLD_VALUE;
     trade_result.status = TS_SUCCESS;
   } else if (blitz) {
-    trade_result = __purchase_blitz(store_type, &inven_temp->data);
+    trade_result = __purchase_blitz(store_type, &inven_temp.data);
   } else {
-    trade_result = __purchase_haggle(store_type, &inven_temp->data);
+    trade_result = __purchase_haggle(store_type, &inven_temp.data);
     prt("", 2, 1);
     __store_display_commands();
   }
@@ -1534,25 +1534,25 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
   if (redraw) {
     display_store(store_type, cur_top);
   }
-  inven_temp->data = item_ptr->data;
-  if ((inven_temp->data.subval > 255) && (inven_temp->data.subval < 512)) {
-    inven_temp->data.number = 1; /*{But why????}*/
+  inven_temp.data = item_ptr->data;
+  if ((inven_temp.data.subval > 255) && (inven_temp.data.subval < 512)) {
+    inven_temp.data.number = 1; /*{But why????}*/
   }
 
   char out_val[82];
   char out2[100];
-  objdes(out_val, inven_temp, true);
+  objdes(out_val, &inven_temp, true);
   sprintf(out2, "Selling %s", out_val);
   msg_print(out2);
   msg_print(" ");
-  if (!is_in(inven_temp->data.tval, store_buy[store_type])) {
+  if (!is_in(inven_temp.data.tval, store_buy[store_type])) {
     prt("I do not buy such items.", 1, 1);
     LEAVE("__store_sell", "");
     return false;
   }
 
   // TODO: Stop using inven_temp
-  if (!__store_has_space_for(store_type, inven_temp)) {
+  if (!__store_has_space_for(store_type, &inven_temp)) {
     prt("I have not the room in my store to keep it...", 1, 1);
     LEAVE("__store_sell", "");
     return false;
@@ -1560,10 +1560,10 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
 
   trade_result_t trade_result;
   if (blitz) {
-    trade_result.price = __sell_blitz(store_type, &inven_temp->data);
+    trade_result.price = __sell_blitz(store_type, &inven_temp.data);
     trade_result.status = TS_SUCCESS;
   } else {
-    trade_result = __sell_haggle(store_type, &inven_temp->data);
+    trade_result = __sell_haggle(store_type, &inven_temp.data);
     prt(" ", 2, 1);
     __store_display_commands();
   }
@@ -1815,21 +1815,21 @@ void store_carry(enum store_t store_num, long *ipos) {
 
   // TODO: Stop using inven_temp
   *ipos = 0;
-  identify(&(inven_temp->data));
-  unquote(inven_temp->data.name);
-  known1(inven_temp->data.name);
-  known2(inven_temp->data.name);
+  identify(&(inven_temp.data));
+  unquote(inven_temp.data.name);
+  known1(inven_temp.data.name);
+  known2(inven_temp.data.name);
 
-  long item_base_price = __calc_purchase_price(store_num, &inven_temp->data);
+  long item_base_price = __calc_purchase_price(store_num, &inven_temp.data);
   long max_price = __store_max_inflated_price(store_num, item_base_price);
 
   if (max_price <= 0)
     return;
 
   long item_val = 0;
-  long item_num = inven_temp->data.number;
-  long typ = inven_temp->data.tval;
-  long subt = inven_temp->data.subval;
+  long item_num = inven_temp.data.number;
+  long typ = inven_temp.data.tval;
+  long subt = inven_temp.data.subval;
   boolean flag = false;
 
   do {

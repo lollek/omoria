@@ -2306,8 +2306,8 @@ boolean wall_to_mud(long dir, long y, long x) {
         flag = true;
         if (panel_contains(y, x)) {
           if (test_light(y, x)) {
-            inven_temp->data = t_list[cave[y][x].tptr];
-            objdes(out_val, inven_temp, false);
+            inven_temp.data = t_list[cave[y][x].tptr];
+            objdes(out_val, &inven_temp, false);
             sprintf(out_val2, "The %s turns into mud.", out_val);
             msg_print(out_val2);
             return_value = true;
