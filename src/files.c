@@ -266,7 +266,6 @@ void intro(int argc, char *argv[]) {
   /* make sure that various files exist */
   exit_flag = intro_do_hours_file(exit_flag, MORIA_HOU);
   exit_flag = intro_do_death_file(exit_flag, MORIA_DTH);
-  exit_flag = intro_ensure_file_exists(exit_flag, MORIA_GCST);
 
   if (exit_flag) {
     intro_ensure_file_exists(exit_flag, MORIA_TRD);

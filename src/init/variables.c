@@ -51,13 +51,5 @@ bool init__file_paths(void) {
   }
   sprintf((char *)MORIA_MON, "%s%s", datapath, monsters_suffix);
 
-  char const * const gcustom_suffix = "/moria_gcustom.mst";
-  MORIA_GCST = malloc(datapath_len + strlen(gcustom_suffix) + 1);
-  if (MORIA_GCST == NULL) {
-    fprintf(stderr, "%s", "Virtual memory exhausted\n");
-    return false;
-  }
-  sprintf((char *)MORIA_GCST, "%s%s", datapath, gcustom_suffix);
-
   return true;
 }

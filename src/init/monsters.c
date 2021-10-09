@@ -36,25 +36,6 @@ static void print_creature(creature_type *c, int c_num, int style) {
 #endif
 
 
-static void lm__read_custom(FILE *file) {
-  long count;
-  char a[28];
-
-  if (!feof(file)) {
-    do {
-      a[0] = 0;
-      fgets(a, sizeof(char[28]), file); /* new name */
-      if ((count = strlen(a)) > 1) {
-        a[count - 1] = 0; /* strip newline */
-        fscanf(file, "%ld\n", &count);
-        if ((count <= MAX_CREATURES) && (count > 0)) {
-          strncpy(c_list[count].name, a, sizeof(char[28]) - 1);
-        }
-      }
-    } while (!feof(file));
-  }
-}
-
 static void print_error(char const *msg) {
   fprintf(stderr, "There was an error parsing the monsters file. "
       "%s"
@@ -375,20 +356,6 @@ bool init__monsters() {
 
   fclose(file);
   MSG(("load_monsters: loaded %d of max %d", num_monsters_loaded, MAX_CREATURES));
-
-  /* try to open the custom creature names files */
-  /* if they exist, then read in new names for creatures */
-
-  /* first load the global custom names */
-  file = fopen(MORIA_GCST, "r");
-  if (file != NULL) {
-    lm__read_custom(file);
-    fclose(file);
-  } else {
-    printf("\n\rUnable to open custom name file for reading: %s\n\r",
-           MORIA_GCST);
-    /* pause_game(24); */
-  }
 
   LEAVE("load_monsters", "");
   return true;

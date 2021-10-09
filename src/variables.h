@@ -46,7 +46,6 @@ extern char const * MORIA_TRD;
 extern char const * MORIA_LCK;
 extern char const * MORIA_DTH;
 extern char const * MORIA_MON;
-extern char const * MORIA_GCST;
 
 /*	{  following are calculated from max dungeon sizes		} */
 extern long max_panel_rows, max_panel_cols;
