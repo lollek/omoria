@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.0.4
+
+9 October 2021
+
+* Remove the functionality where you can give monsters custom names. Seemed like
+an unncessary hack.
+* Better error handling for monster.dat. Now you will get an error message if
+  you break it.
+
 ## 5.0.3
 
 4 July 2021
