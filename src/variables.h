@@ -40,12 +40,6 @@ extern signed char dy_of[10];    /*  array [1..9] of signed char; */
 /*	{ Bit testing array						} */
 extern unsigned long bit_array[33]; /*  array [1..32] of unsigned; */
 
-/*	{ External file names; are all located in directory with image	} */
-extern char const * MORIA_HOU;
-extern char const * MORIA_TRD;
-extern char const * MORIA_DTH;
-extern char const * MORIA_MON;
-
 /*	{  following are calculated from max dungeon sizes		} */
 extern long max_panel_rows, max_panel_cols;
 extern long quart_height, quart_width;

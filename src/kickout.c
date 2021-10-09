@@ -26,7 +26,7 @@ void kick__kickout_player_if_time() {
 
 bool kick__should_kickout(void) {
 
-  FILE *kick = fopen(MORIA_KICKOUT_FILE, "r");
+  FILE *kick = fopen(KICKOUT_FILE, "r");
 
   if (kick != NULL) {
     fclose(kick);

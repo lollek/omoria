@@ -8,7 +8,6 @@
 #include "store.h"
 #include "variables.h"
 #include "kickout.h"
-#include "init/variables.h"
 #include "init/monsters.h"
 
 void C_main_menu();
@@ -27,7 +26,6 @@ int main(int argc, char *argv[]) {
     exit_game();
   }
 
-  if (!init__file_paths()) exit_game();
   if (!init__monsters()) exit_game();
 
   /* Some necessary initializations */

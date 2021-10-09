@@ -264,11 +264,11 @@ void intro(int argc, char *argv[]) {
   ENTER(("intro", ""));
 
   /* make sure that various files exist */
-  exit_flag = intro_do_hours_file(exit_flag, MORIA_HOU);
-  exit_flag = intro_do_death_file(exit_flag, MORIA_DTH);
+  exit_flag = intro_do_hours_file(exit_flag, OPERATING_HOURS_FILE);
+  exit_flag = intro_do_death_file(exit_flag, DEATH_FILE);
 
   if (exit_flag) {
-    intro_ensure_file_exists(exit_flag, MORIA_TRD);
+    intro_ensure_file_exists(exit_flag, TRADE_FILE);
     printf("\r\n"
            "Notice: System IMORIA wizard should set the protection\r\n"
            "        on  files  just created.  See the README file "
@@ -294,9 +294,9 @@ void intro(int argc, char *argv[]) {
   if (!check_time() && !wizard1) {
     /* print out the hours file and exit the game */
 
-    file1 = fopen(MORIA_HOU, "r");
+    file1 = fopen(OPERATING_HOURS_FILE, "r");
     if (file1 == NULL) {
-      printf("Unable to open %s for reading\n\r", MORIA_HOU);
+      printf("Unable to open %s for reading\n\r", OPERATING_HOURS_FILE);
     } else {
       while (!feof(file1)) {
         in_line[0] = 0;

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../configure.h"
 #include "../debug.h"
 #include "../variables.h"
 
@@ -320,9 +321,9 @@ bool init__monsters() {
   /* Parse MORIA_MON-file and create monster types. The format looks like below.
    * More information is in monsters.info */
 
-  FILE *file = fopen(MORIA_MON, "r");
+  FILE *file = fopen(MONSTERS_FILE, "r");
   if (file == NULL) {
-    fprintf(stderr, "Unable to open monster file for reading: %s\n", MORIA_MON);
+    fprintf(stderr, "Unable to open monster file for reading: %s\n", MONSTERS_FILE);
     return false;
   }
 

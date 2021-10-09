@@ -122,7 +122,7 @@ void ud__print_tomb(char dstr[][82]) {
   if (player_lev > 10) {
     user_name(user);
     user[12] = 0;
-    f1 = fopen(MORIA_DTH, "r+");
+    f1 = fopen(DEATH_FILE, "r+");
     if (f1 != NULL) {
       fseek(f1, 0, SEEK_END);
       if (player_cheated) {

@@ -5,19 +5,26 @@
 #define SAVE_FILE_PATH "save"
 
 /*
- * Keep the path under 60 characters or it will overflow some variables.
- *
- * This is where hours.dat, moria.dat, monsters.dat, moria_gcustom.mst,
- * moriamas.dat, moriatop.dat, moriatrd.dat, death.log
- *
- * WARNING:  Be sure to copy monsters.dat to this directory!  The game
- *          will attempt to create the other files the first time that
- *          it is run.
+ * Note: Be sure to copy monsters.dat to this directory!  The game
+ * will attempt to create the other files the first time that
+ * it is run.
  */
 #define DATA_FILE_PATH "data"
 
 // If this file exists, players will get kicked out and cannot join
-#define MORIA_KICKOUT_FILE DATA_FILE_PATH "/morialock.dat"
+#define KICKOUT_FILE DATA_FILE_PATH "/morialock.dat"
+
+// Hours when you are allowed to play
+#define OPERATING_HOURS_FILE DATA_FILE_PATH "/hours.dat"
+
+// File for handling trades
+#define TRADE_FILE DATA_FILE_PATH "/moriatrd.dat"
+
+// File for logging deaths
+#define DEATH_FILE DATA_FILE_PATH "/death.log"
+
+// Files for monster templates
+#define MONSTERS_FILE DATA_FILE_PATH "/monsters.dat"
 
 /*
  * Keep this one under 160 characters, it points to the help program...
