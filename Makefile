@@ -9,8 +9,8 @@ DATAFILES =	$(READFILES) $(WRITEFILES)
 
 all:	omoria ctags
 
-CFILES = $(wildcard src/*.c)
-HFILES = $(wildcard src/*.h)
+CFILES = $(wildcard src/*.c) $(wildcard src/*/*.c)
+HFILES = $(wildcard src/*.h) $(wildcard src/*/*.h)
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 .c.o:

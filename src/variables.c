@@ -78,10 +78,8 @@ unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
      0x00800000, 0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
      0x20000000, 0x40000000, 0x80000000};
 
-/*	{ External file names; paths are set in io.c get_paths } */
 char MORIA_HOU[192];
 char MORIA_TRD[192];
-/*	vtype		MORIA_HLP; */
 char MORIA_LCK[192];
 char MORIA_DTH[192];
 char MORIA_MON[192];

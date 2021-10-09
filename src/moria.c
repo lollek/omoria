@@ -7,6 +7,7 @@
 #include "save.h"
 #include "store.h"
 #include "variables.h"
+#include "init/variables.h"
 
 void C_main_menu();
 int main(int argc, char *argv[]) {
@@ -17,7 +18,9 @@ int main(int argc, char *argv[]) {
   dbg__init();
 
   /* Get the directory location of the image */
-  get_paths();
+  if (!init__file_paths()) {
+    exit_game();
+  }
 
   /* Here comes the monsters.... */
   load_monsters();

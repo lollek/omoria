@@ -359,32 +359,3 @@ void print_hex_value(long num, long row, long col) {
 }
 
 void pause_game(long prt_line) { pause_line(prt_line); }
-
-void get_paths() {
-  /* Setup paths for moria -RAK- */
-
-  char *datapath = DATA_FILE_PATH;
-  ENTER(("get_paths", ""));
-
-  if (strlen(datapath) > (sizeof(MORIA_HOU) - 20)) {
-    printf("Umm, DATA_FILE_PATH is too long (%lu chars).\n\r",
-           strlen(datapath));
-    printf("Keep it under %lu chars or change the type\n\r",
-           sizeof(MORIA_HOU) - 20);
-    printf("of MORIA_HOU and friends in variables.h.\n\r");
-    printf("Or fix the get_paths() code in io.c.  Your choice.\n\r");
-    exit_game();
-  }
-
-  sprintf(MORIA_HOU, "%s/hours.dat", datapath);
-  sprintf(MORIA_LCK, "%s/morialock.lock", datapath);
-  sprintf(MORIA_MON, "%s/monsters.dat", datapath);
-  sprintf(MORIA_DTH, "%s/death.log", datapath);
-  sprintf(MORIA_GCST, "%s/moria_gcustom.mst", datapath);
-  sprintf(MORIA_TRD, "%s/moriatrd.dat", datapath);
-
-  sprintf(MORIA_CST, "moria_custom.mst");
-  LEAVE("get_paths", "");
-}
-
-/* END FILE  io.c */
