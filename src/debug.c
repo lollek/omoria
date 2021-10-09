@@ -30,13 +30,13 @@ FILE *debug_file = NULL;
 int call_depth = 0;
 
 
-void init_debug(void) {
+void debug_init(void) {
 #if DO_DEBUG
     debug_file = fopen("debug.out", "w");
 #endif
 }
 
-void enter(char const *routine_name, char const *fmt, ...) {
+void debug_enter(char const *routine_name, char const *fmt, ...) {
   va_list args;
 
   if (!do_debug_funcall)
@@ -52,7 +52,7 @@ void enter(char const *routine_name, char const *fmt, ...) {
   fflush(debug_file);
 }
 
-void leave(char *routine_name, char *marker) {
+void debug_leave(char *routine_name, char *marker) {
   if (!do_debug_funcall)
     return;
 
@@ -67,7 +67,7 @@ void leave(char *routine_name, char *marker) {
   call_depth--;
 }
 
-void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
+void debug_return_dbg(char *routine_name, char *marker, char typestr, char *descript,
                 void *valptr) {
   if (!do_debug_funcall)
     return;
@@ -114,7 +114,7 @@ void return_dbg(char *routine_name, char *marker, char typestr, char *descript,
   call_depth--;
 }
 
-void log_msg(char const *fmt, ...) {
+void debug_log_msg(char const *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   fprintf(debug_file, ">            ");

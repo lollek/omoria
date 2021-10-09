@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   // Initialization
   MSG(("%s", "Main - Initialization"));
   game_state = GS_LOADING;
-  init_debug();
+  debug_init();
 
   /* Get the directory location of the image */
   get_paths();
