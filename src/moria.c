@@ -28,13 +28,6 @@ int main(int argc, char *argv[]) {
 
   if (!init__monsters()) exit_game();
 
-  /* Some necessary initializations */
-  msg_line = 1;
-  quart_height = SCREEN_HEIGHT / 4;
-  quart_width = SCREEN_WIDTH / 4;
-  dun_level = 0;
-  turn_counter = 100000;
-
   /* Sort the objects by level */
   sort_objects();
 

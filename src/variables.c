@@ -29,9 +29,9 @@ unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
 long cur_height;           /* { Cur dungeon size    } */
 long cur_width;
-long dun_level;                 /* { Cur dungeon level   } */
+long dun_level = 0;             /* { Cur dungeon level   } */
 long missle_ctr = 0;            /* { Counter for missles } */
-long msg_line;                  /* { Contains message txt} */
+long msg_line = 1;              /* { Contains message txt} */
 boolean msg_flag;               /* { Set with first msg  } */
 long quest[NUM_QUESTS + 1];     /* {quest data} */
 char old_msg[82] = "bogus msg"; /* { Last message	      } */
@@ -39,7 +39,7 @@ boolean want_trap;              /* { True = trap messages} */
 boolean want_warn;              /* { True = water warning} */
 boolean death = false;          /*	{ True if died	      } */
 char died_from[82];             /*	{ What killed him     } */
-long turn_counter;              /*	{ Turns ellapsed      } */
+long turn_counter = 100000;     /*	{ Turns ellapsed      } */
 boolean find_flag;              /*	{ Used in MORIA	      } */
 boolean redraw;                 /*	{ For redraw screen   } */
 unsigned long print_stat = 0;   /*	{ Flag for stats      } */
@@ -80,7 +80,8 @@ unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
 
 /*	{  following are calculated from max dungeon sizes		} */
 long max_panel_rows, max_panel_cols;
-long quart_height, quart_width;
+long quart_height = SCREEN_HEIGHT / 4;
+long quart_width = SCREEN_WIDTH / 4;
 long panel_row, panel_col;
 long panel_row_min, panel_row_max;
 long panel_col_min, panel_col_max;
