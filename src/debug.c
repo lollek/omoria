@@ -1,8 +1,6 @@
-/* debug.c */
-/**/
-
 #include <stdarg.h>
 #include <stdio.h>
+#include <execinfo.h>
 
 #include <curses.h>
 #include <math.h>
@@ -22,7 +20,6 @@
 #include "types.h"
 #include "variables.h"
 
-#if DO_DEBUG
 /* Toggleables */
 boolean const do_debug_funcall = true;
 boolean const do_debug_objdes = false;
@@ -32,7 +29,12 @@ boolean const do_debug_magic_cast = true;
 FILE *debug_file = NULL;
 int call_depth = 0;
 
-void init_debug(void) { debug_file = fopen("debug.out", "w"); }
+
+void init_debug(void) {
+#if DO_DEBUG
+    debug_file = fopen("debug.out", "w");
+#endif
+}
 
 void enter(char const *routine_name, char const *fmt, ...) {
   va_list args;
@@ -121,4 +123,3 @@ void log_msg(char const *fmt, ...) {
   va_end(args);
   fflush(debug_file);
 }
-#endif

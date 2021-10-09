@@ -21,10 +21,10 @@ extern int call_depth;
 
 #else /* !DO_DEBUG */
 
-#define ENTER(args)
-#define LEAVE(rname, mark)
-#define RETURN(rname, mark, typestr, desc, valptr)
-#define MSG(str)
+#define ENTER(args) do {} while (0)
+#define LEAVE(rname, mark) do {} while (0)
+#define RETURN(rname, mark, typestr, desc, valptr) do {} while (0)
+#define MSG(str) do {} while (0)
 
 #endif /* DO_DEBUG */
 

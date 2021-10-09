@@ -192,7 +192,7 @@ long change_all_ok_stats(boolean nok, boolean nin) {
   treas_rec *ptr;
   long count = 0;
 
-  ENTER(("change_all_ok_stats", "%d, %d", nok, nin))
+  ENTER(("change_all_ok_stats", "%d, %d", nok, nin));
 
   for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (ptr->is_in) {
@@ -206,7 +206,7 @@ long change_all_ok_stats(boolean nok, boolean nin) {
     }
   }
 
-  RETURN("change_all_ok_stats", "u", 'd', "count", &count)
+  RETURN("change_all_ok_stats", "u", 'd', "count", &count);
   return count;
 }
 

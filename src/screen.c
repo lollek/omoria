@@ -17,8 +17,10 @@
 #include "types.h"
 #include "variables.h"
 
+#if DO_DEBUG
 static long win_equip_x = 81;
 static long win_equip_y = 16;
+#endif
 
 /*	{ Screen placement parameters					} */
 #define STAT_COLUMN 1

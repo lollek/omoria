@@ -57,13 +57,13 @@ boolean save_char(void) {
   return flag;
 }
 
-boolean get_char(boolean prop) {
+boolean get_char(void) {
   /*{ Restore a saved game				-RAK- & -JWT-
    * }*/
 
   boolean paniced = false;
 
-  ENTER(("get_char", "%d", prop));
+  ENTER(("get_char", "%d"));
 
   prt("Restoring Character...", 1, 1);
   refresh();

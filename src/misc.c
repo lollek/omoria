@@ -1977,7 +1977,7 @@ long damroll(char const *dice) {
   long return_value = 0;
   char *ptr;
 
-  ENTER(("damroll", "m"))
+  ENTER(("damroll", "m"));
 
   strcpy(dice_copy, dice);
   ptr = strchr(dice_copy, 'd');
@@ -1986,7 +1986,7 @@ long damroll(char const *dice) {
   sscanf(dice_copy, "%ld %ld", &num, &sides);
   return_value = rand_rep(num, sides);
 
-  RETURN("damroll", "m", 'd', "damage", &return_value)
+  RETURN("damroll", "m", 'd', "damage", &return_value);
   return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -2707,7 +2707,7 @@ long get_hexdecant(long dy, long dx) {
   long hexdecant;
   long return_value;
 
-  ENTER(("get_hexdecant", "m"))
+  ENTER(("get_hexdecant", "m"));
 
   ay = labs(dy);
   ax = labs(dx);

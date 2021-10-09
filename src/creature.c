@@ -374,7 +374,7 @@ void c__update_mon(long monptr, long *hear_count) {
 void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
   char out_val[1026];
 
-  ENTER(("c__monster_eaten_message", "c"))
+  ENTER(("c__monster_eaten_message", "c"));
 
   switch (randint(10)) {
   case 1:
@@ -425,14 +425,14 @@ void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
 
   msg_print(out_val);
 
-  LEAVE("c__monster_eaten_message", "c")
+  LEAVE("c__monster_eaten_message", "c");
 }
 
 boolean c__check_for_hit(long monptr, long atype) {
   long level, armor_stuff;
   boolean flag = false;
 
-  ENTER(("c__check_for_hit", "c"))
+  ENTER(("c__check_for_hit", "c"));
 
   level = c_list[m_list[monptr].mptr].level;
   armor_stuff = player_pac + player_ptoac;
@@ -560,11 +560,11 @@ boolean c__check_for_hit(long monptr, long atype) {
   return flag;
 }
 
-void c__print_attack(long monptr, long adesc, char *cdesc) {
+void c__print_attack(long adesc, char *cdesc) {
   char the_attack[134];
   boolean no_print = false;
 
-  ENTER(("c__print_attack", "%ld, %ld,len: %d >%s<", monptr, adesc,
+  ENTER(("c__print_attack", "%ld,len: %d >%s<", adesc,
          strlen(cdesc), cdesc));
   strcpy(the_attack, cdesc);
 
@@ -720,7 +720,7 @@ void c__print_attack(long monptr, long adesc, char *cdesc) {
     msg_print(the_attack);
   }
 
-  LEAVE("c__print_attack", "c")
+  LEAVE("c__print_attack", "c");
 }
 
 void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
@@ -731,7 +731,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
   obj_set food_stuffs = {Food, 0};
   obj_set staff_rod_or_wand = {staff, rod, wand, 0};
 
-  ENTER(("c__apply_attack", "c"))
+  ENTER(("c__apply_attack", "c"));
 
   level = c_list[m_list[monptr].mptr].level;
 
@@ -1060,7 +1060,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
     break;
   } /* end switch */
 
-  LEAVE("c__apply_attack", "c")
+  LEAVE("c__apply_attack", "c");
 }
 
 void c__make_attack(long monptr) {
@@ -1080,7 +1080,7 @@ void c__make_attack(long monptr) {
   char damstr[36];
   char *achar;
 
-  ENTER(("c__make_attack", "c"))
+  ENTER(("c__make_attack", "c"));
   /* with m_list[monptr] do; */
   /* with c_list[m_list[monptr].mptr]. do; */
 
@@ -1152,7 +1152,7 @@ void c__make_attack(long monptr) {
       flag = c__check_for_hit(monptr, atype);
 
       if (flag) {
-        c__print_attack(monptr, adesc, cdesc);
+        c__print_attack(adesc, cdesc);
         c__apply_attack(monptr, atype, ddesc, damstr);
       } else {
         switch (adesc) {
@@ -1172,7 +1172,7 @@ void c__make_attack(long monptr) {
     } /* end for i5 */
   }   /* end for attstr != null */
 
-  LEAVE("c__make_attack", "c")
+  LEAVE("c__make_attack", "c");
 }
 
 boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
@@ -1184,7 +1184,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
   char out_val[82];
   boolean return_value = false;
 
-  ENTER(("c__make_move", "c"))
+  ENTER(("c__make_move", "c"));
 
   i1 = 1;
   flag = false;
@@ -1429,7 +1429,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
 boolean c__move_confused(long monptr, mm_type mm, long *hear_count) {
   boolean return_value;
 
-  ENTER(("c__move_confused", "c"))
+  ENTER(("c__move_confused", "c"));
 
   mm[1] = randint(9);
   mm[2] = randint(9);
@@ -1448,7 +1448,7 @@ void c__get_moves(long monptr, mm_type *mm) {
   long y, x;
   long move_val, octant_side;
 
-  ENTER(("c__get_moves", "c"))
+  ENTER(("c__get_moves", "c"));
   /*{ octant_side = +/-1 }*/
 
   if (m_list[monptr].csleep != 0) {
@@ -1467,7 +1467,7 @@ void c__get_moves(long monptr, mm_type *mm) {
   (*mm)[4] = rotate_dir((*mm)[2], octant_side);
   (*mm)[5] = rotate_dir((*mm)[3], -octant_side);
 
-  LEAVE("c__get_moves", "c")
+  LEAVE("c__get_moves", "c");
 }
 
 boolean c__cast_spell(long monptr, boolean *took_turn) {
@@ -1491,7 +1491,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
   boolean stop_player;
   boolean return_value;
 
-  ENTER(("c__cast_spell", "c"))
+  ENTER(("c__cast_spell", "c"));
   /* with m_list[monptr] do; */
   /* with c_list[m_list[monptr].mptr] do; */
   chance = ((c_list[m_list[monptr].mptr].spells & 0x0000000F));
@@ -1871,7 +1871,7 @@ boolean mon_move(long monptr, long *hear_count) {
   boolean move_test;
   boolean return_value = false;
 
-  ENTER(("mon_move", "c"))
+  ENTER(("mon_move", "c"));
   /* with c_list[m_list[monptr].mptr] do; */
 
   /*{ Does the creature regenerate?                         }*/
@@ -1963,7 +1963,7 @@ boolean mon_move(long monptr, long *hear_count) {
 void c__splash(long monptr) {
   long i1, mon_swimming, drown_dam;
 
-  ENTER(("c__splash", "c"))
+  ENTER(("c__splash", "c"));
   /* with m_list[monptr]. do; */
   /* with c_list[m_list[monptr].mptr]. do begin; */
   mon_swimming =
@@ -1987,14 +1987,14 @@ void c__splash(long monptr) {
     delete_monster(cave[m_list[monptr].fy][m_list[monptr].fx].cptr);
   }
 
-  LEAVE("c__splash", "c")
+  LEAVE("c__splash", "c");
 }
 
 void creatures(boolean attack) {
   long i1, i2, i3, moldy, moldx;
   long hear_count;
 
-  ENTER(("creatures", "c"))
+  ENTER(("creatures", "c"));
   /*{ Main procedure for creatures                              -RAK- }*/
   if (1) {
     get_player_move_rate();
@@ -2074,7 +2074,7 @@ void creatures(boolean attack) {
     }
     /*{ End processing monsters       }*/
   }
-  LEAVE("creatures", "c")
+  LEAVE("creatures", "c");
 }
 
 void mn__append_mon(long mon_num) {

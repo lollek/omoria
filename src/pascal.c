@@ -45,7 +45,9 @@ long pindex(char *s1, char c1) {
 /*//////////////////////////////////////////////////////////////////// */
 boolean is_in(long const obj, obj_set const oset) {
   long i1;
+#if DO_DEBUG
   long tmp;
+#endif
   boolean return_value = false;
 
   /*    ENTER("is_in","m"); */

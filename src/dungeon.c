@@ -1305,7 +1305,7 @@ static void d__update_word_of_recall() {
 static void d__update_hit_points() {
   /*{ Check hit points for adjusting...                     }*/
   /* with player_do; */
-  ENTER(("d__update_hit_points", "d"))
+  ENTER(("d__update_hit_points", "d"));
 
   if (!(find_flag)) {
     if (player_flags.rest < 1) {
@@ -1323,7 +1323,7 @@ static void d__update_hit_points() {
     }
     prt_stat_block();
   }
-  LEAVE("d__update_hit_points", "d")
+  LEAVE("d__update_hit_points", "d");
 }
 
 static void d__go_up() {
@@ -2900,7 +2900,7 @@ void teleport(long dis) {
   creatures(false);
   teleport_flag = false;
 
-  LEAVE("teleport", "d")
+  LEAVE("teleport", "d");
 }
 
 boolean get_panel(long y, long x, boolean forceit) {
@@ -4844,7 +4844,7 @@ void d__quit() {
 }
 
 void dungeon() {
-  ENTER(("dungeon", "d"))
+  ENTER(("dungeon", "d"));
 
   s1[0] = 0;
   s2[0] = 0;
@@ -5009,5 +5009,5 @@ void dungeon() {
     search_off(); /*{ Fixed "SLOW" bug; 06-11-86 RAK     }*/
   }
 
-  LEAVE("dungeon", "d")
+  LEAVE("dungeon", "d");
 }
