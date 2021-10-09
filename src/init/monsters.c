@@ -390,16 +390,6 @@ bool init__monsters() {
     /* pause_game(24); */
   }
 
-  /* now get the users custom names */
-  file = fopen(MORIA_CST, "r");
-  if (file != NULL) {
-    lm__read_custom(file);
-    fclose(file);
-  }
-
-  /*  for (count = 1; count < 5; count++) { */
-  /*    print_creature(&(c_list[count]),count,1); */
-  /*  } */
   LEAVE("load_monsters", "");
   return true;
 }

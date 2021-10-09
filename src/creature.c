@@ -1897,41 +1897,6 @@ void creatures(boolean attack) {
   LEAVE("creatures", "c");
 }
 
-void mn__append_mon(long mon_num) {
-  char out_val[230];
-  FILE *f1 = (FILE *)fopen(MORIA_CST, "a");
-  if (f1 == NULL) {
-    sprintf(out_val, "Error: unable to open %s for append.", MORIA_CST);
-    msg_print(out_val);
-  } else {
-    fprintf(f1, "%s\n", c_list[mon_num].name);
-    fprintf(f1, "%ld\n", mon_num);
-    fclose(f1);
-  }
-}
-
-void mon_name() {
-  /*{name any monster you wish [currently virtual]}*/
-
-  char virtual_name[28];
-  long mon_num;
-
-  prt("Monster to rename:", 1, 1);
-  if (get_string(virtual_name, 1, 20, 26)) {
-    mon_num = find_mon(virtual_name);
-    if (mon_num != 0) {
-      prt("New name:", 1, 1);
-      if (get_string(virtual_name, 1, 11, 26)) {
-        strcpy(c_list[mon_num].name, virtual_name);
-        mn__append_mon(mon_num);
-      }
-    } else {
-      msg_print("Hmm.... can't find a monster with that name");
-    }
-  }
-  msg_print("");
-}
-
 long find_mon(const char *virtual_name) {
   /*{returns number of monster in list specified by virtual_name}*/
 

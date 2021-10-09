@@ -54,7 +54,6 @@ extern void create_character();
 extern void set_gem_values();
 
 /* { CREATURE.PAS		} */
-extern void mon_name();
 extern long find_mon(const char *virtual_name);
 extern void check_mon_lite(long y, long x);
 extern void multiply_monster(long y, long x, long z, boolean slp);
