@@ -10,11 +10,11 @@ extern boolean const do_debug_funcall;
 extern boolean const do_debug_objdes;
 extern boolean const do_debug_magic_cast;
 
-#define ENTER(args) debug_enter args;
-#define LEAVE(rname, mark) debug_leave((rname), (mark));
+#define ENTER(args) dbg__enter args;
+#define LEAVE(rname, mark) dbg__leave((rname), (mark));
 #define RETURN(rname, mark, typestr, desc, valptr)                             \
-  debug_return_dbg((rname), (mark), (typestr), (desc), (valptr));
-#define MSG(args) debug_log_msg args
+  dbg__return_dbg((rname), (mark), (typestr), (desc), (valptr));
+#define MSG(args) dbg__log_msg args
 
 extern FILE *debug_file;
 extern int call_depth;
@@ -28,11 +28,11 @@ extern int call_depth;
 
 #endif /* DO_DEBUG */
 
-void debug_init(void);
-void debug_enter(char const *routine_name, char const *fmt, ...);
-void debug_leave(char *routine_name, char *marker);
-void debug_return_dbg(char *routine_name, char *marker, char typestr, char *descript,
+void dbg__init(void);
+void dbg__enter(char const *routine_name, char const *fmt, ...);
+void dbg__leave(char *routine_name, char *marker);
+void dbg__return_dbg(char *routine_name, char *marker, char typestr, char *descript,
                 void *valptr);
-void debug_log_msg(char const *fmt, ...);
+void dbg__log_msg(char const *fmt, ...);
 
 #endif /* DEBUG_H */
