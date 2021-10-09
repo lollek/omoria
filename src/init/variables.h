@@ -5,6 +5,7 @@
 
 /**
  * init__file_paths() - Init variable file paths
+ *
  * @return - true on success, false of failure.
  * Will print information to stderr on failure
  */

@@ -8,6 +8,7 @@
 #include "store.h"
 #include "variables.h"
 #include "init/variables.h"
+#include "init/monsters.h"
 
 void C_main_menu();
 int main(int argc, char *argv[]) {
@@ -17,13 +18,8 @@ int main(int argc, char *argv[]) {
   dbg__init();
   MSG(("%s", "Main - Initialization"));
 
-  /* Get the directory location of the image */
-  if (!init__file_paths()) {
-    exit_game();
-  }
-
-  /* Here comes the monsters.... */
-  load_monsters();
+  if (!init__file_paths()) exit_game();
+  if (!init__monsters()) exit_game();
 
   /* Check to see if an update is in progress -DMF- */
   if (check_kickout()) {
