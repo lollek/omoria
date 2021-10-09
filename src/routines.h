@@ -206,8 +206,6 @@ treas_rec *ic__remove(long item_val, boolean show_message);
 void inv__equip_pos_string(char out_val[82], long equip_pos, long counter);
 
 /* { IO.PAS		} */
-extern void init_priv_switch();
-extern void priv_switch(long switch_val);
 extern void no_controly();
 extern void controly();
 extern void exit_ncurses(void);

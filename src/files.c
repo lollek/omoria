@@ -26,19 +26,6 @@
 
 static long max_score = 20; // # of scores to list
 
-FILE *priv_fopen(char *path, char *mode) {
-  FILE *f1;
-  /* call fopen bracketed by priv_switch calls */
-
-  priv_switch(1);
-
-  f1 = (FILE *)fopen(path, mode);
-
-  priv_switch(0);
-
-  return f1;
-}
-
 void intro_qualifier_help() {
   printf("\n\r"
          "Invalid Moria option!  Valid qualifiers are:\n\r"
@@ -144,7 +131,7 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file) {
   long i1;
   boolean exit_flag = false;
 
-  file1 = priv_fopen(the_file, "r");
+  file1 = fopen(the_file, "r");
   if (file1 != NULL) {
     while (!feof(file1)) {
       in_line[0] = 0;
@@ -174,7 +161,6 @@ boolean intro_do_hours_file(boolean already_exiting, char *the_file) {
 
   } else {
     /* try to create the default hours.dat file */
-    priv_switch(0);
     file1 = (FILE *)fopen(the_file, "w");
     if (file1 != NULL) {
       fprintf(file1, "    Moria operating hours are:\n");
@@ -202,7 +188,7 @@ boolean intro_do_death_file(boolean already_exiting, char *the_file) {
   FILE *file1;
   boolean exit_flag = false;
 
-  file1 = priv_fopen(the_file, "r");
+  file1 = fopen(the_file, "r");
   if (file1 != NULL) {
     /* file already exists and can be opened */
     fclose(file1);
@@ -248,7 +234,7 @@ boolean intro_ensure_file_exists(boolean already_exiting, char *the_file) {
   FILE *file1;
   boolean exit_flag = false;
 
-  file1 = priv_fopen(the_file, "r");
+  file1 = fopen(the_file, "r");
   if (file1 != NULL) {
     /* file already exists and can be opened */
     fclose(file1);
@@ -309,7 +295,7 @@ void intro(int argc, char *argv[]) {
   if (!check_time() && !wizard1) {
     /* print out the hours file and exit the game */
 
-    file1 = priv_fopen(MORIA_HOU, "r");
+    file1 = fopen(MORIA_HOU, "r");
     if (file1 == NULL) {
       printf("Unable to open %s for reading\n\r", MORIA_HOU);
     } else {
@@ -1454,7 +1440,7 @@ boolean read_top_scores(FILE **f1, char *fnam, char list[][134], int max_high,
   openerr[0] = 0;
   *n1 = 0;
 
-  *f1 = priv_fopen(fnam, "r+");
+  *f1 = fopen(fnam, "r+");
 
   if (*f1 == NULL) {
     sprintf(openerr, "Error opening> %s", fnam);

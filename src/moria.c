@@ -12,8 +12,6 @@ void C_main_menu();
 int main(int argc, char *argv[]) {
   /* SYSPRV stays off except when needed */
   game_state = GS_LOADING;
-  init_priv_switch();
-  priv_switch(0);
 
 #if DO_DEBUG
   init_debug();

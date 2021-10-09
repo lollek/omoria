@@ -76,7 +76,7 @@ void load_monsters() {
    */
   ENTER(("load_monsters", ""));
 
-  file = priv_fopen(MORIA_MON, "r");
+  file = fopen(MORIA_MON, "r");
   if (file == NULL) {
     printf("\nUnable to open monster file for reading: %s\n\r", MORIA_MON);
     exit_game();
@@ -156,7 +156,7 @@ void load_monsters() {
   /* if they exist, then read in new names for creatures */
 
   /* first load the global custom names */
-  file = priv_fopen(MORIA_GCST, "r");
+  file = fopen(MORIA_GCST, "r");
   if (file != NULL) {
     lm__read_custom(file);
     fclose(file);
@@ -167,7 +167,7 @@ void load_monsters() {
   }
 
   /* now get the users custom names */
-  file = priv_fopen(MORIA_CST, "r");
+  file = fopen(MORIA_CST, "r");
   if (file != NULL) {
     lm__read_custom(file);
     fclose(file);

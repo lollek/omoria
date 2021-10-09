@@ -131,7 +131,7 @@ boolean trade_file_open(FILE **tf, boolean *busy) {
   int trys;
   boolean return_value = false;
 
-  *tf = priv_fopen(MORIA_TRD, "r+");
+  *tf = fopen(MORIA_TRD, "r+");
   *busy = true;
 
   if (*tf != NULL) {

@@ -24,35 +24,11 @@
 #define MAX_MESSAGES 50
 static char msg_prev[MAX_MESSAGES + 1][82];
 static unsigned char record_ctr = 0;
-static gid_t games_gid;
-
-void init_priv_switch() {
-  /*  the hope is that imoria is sgid games or something that can write
-      to the master and scores files                                    */
-  games_gid = getegid();
-}
-
-void priv_switch(long switch_val) {
-  /*	{ Turns SYSPRV off if 0; on if 1;			-RAK- */
-  /*} */
-  /*	{ This is needed if image is installed with SYSPRV because */
-  /*} */
-  /*	{ user could write on system areas.  By turning the priv off */
-  /*} */
-  /*	{ system areas are secure } */
-
-  if (switch_val) {
-    setegid(games_gid);
-  } else {
-    setegid(getgid());
-  }
-}
 
 void signalexit() {
   ENTER(("signalexit", ""));
   MSG(("Sorry, caught a core-dump signal."));
 
-  priv_switch(0);
   msg_print("Sorry, caught a core-dump signal.");
   save_and_quit();
   exit_game(0);
@@ -62,7 +38,6 @@ void signalexit() {
 
 void signalquit() {
   ENTER(("signalquit", ""));
-  priv_switch(0);
   signal(SIGINT, signalquit);
   switch (game_state) {
 
@@ -82,7 +57,6 @@ void signalquit() {
 }
 
 void signalsave() {
-  priv_switch(0);
   save_and_quit();
   exit_game();
 }

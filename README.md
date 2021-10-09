@@ -15,7 +15,7 @@ bugs you would like.
 
 ## Getting started
 If you have installed the requirements above, you should only be required to
-`make privs` and then `make run` to compile and start the project.
+`make run` to compile and start the project.
 
 # Original Imoria README
 (There may be some outdated information here, because of changes I have
@@ -35,8 +35,7 @@ In the Makefile edit the owner and group to use for the game and data files.
 run `make imoria`
 
 the first time you run imoria it should make a bunch of data files and
-then quit.  I run "make privs" to fixup the file ownership and privileges,
-since the Makefile does not know where the data files are at this may
+then quit. Since the Makefile does not know where the data files are at this may
 not work correctly for you (I do intend to make this better).
 
 

@@ -410,7 +410,7 @@ boolean check_kickout() {
 
   ENTER(("check_kickout", ""));
 
-  kick = priv_fopen(MORIA_LCK, "r");
+  kick = fopen(MORIA_LCK, "r");
 
   if (kick != NULL) {
     fclose(kick);
