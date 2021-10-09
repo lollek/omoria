@@ -27,14 +27,6 @@ bool init__file_paths(void) {
   }
   sprintf((char *)MORIA_TRD, "%s%s", datapath, trd_suffix);
 
-  char const * const lock_suffix = "/morialock.dat";
-  MORIA_LCK = malloc(datapath_len + strlen(lock_suffix) + 1);
-  if (MORIA_LCK == NULL) {
-    fprintf(stderr, "%s", "Virtual memory exhausted\n");
-    return false;
-  }
-  sprintf((char *)MORIA_LCK, "%s%s", datapath, lock_suffix);
-
   char const * const death_suffix = "/death.log";
   MORIA_DTH = malloc(datapath_len + strlen(death_suffix) + 1);
   if (MORIA_DTH == NULL) {

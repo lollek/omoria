@@ -401,26 +401,6 @@ static boolean learn_druid(boolean *redraw) {
   return return_value;
 }
 
-boolean check_kickout() {
-  /*{ Check to see if everyone should be kicked out of the game,	}*/
-  /*{ by attempting to open the kick-out file.		-DMF- }*/
-
-  boolean return_value = false;
-  FILE *kick;
-
-  ENTER(("check_kickout", ""));
-
-  kick = fopen(MORIA_LCK, "r");
-
-  if (kick != NULL) {
-    fclose(kick);
-    return_value = true;
-  }
-
-  LEAVE("check_kickout", "");
-  return return_value;
-}
-
 void sort_objects() {
   /*	{ Order the treasure list by level			-RAK- */
   /*} */
@@ -606,24 +586,6 @@ void adv_time(boolean flag) {
 
   if (flag && (player_cur_age.secs % 100) == 0) {
     prt_stat_block();
-  }
-}
-
-void check_kickout_time(long num, long check) {
-  /*{ Check for kicking people out of the game              -DMF-   }*/
-
-  if ((num % check) == 1) {
-    if (check_kickout()) {
-      find_flag = false;
-      msg_print("A new version of IMORIA is being installed.");
-      msg_print("After your character is saved, wait a few "
-                "minutes,");
-      msg_print("And then try to run the game.");
-      msg_print("");
-      do {
-        save_and_quit();
-      } while (true);
-    }
   }
 }
 

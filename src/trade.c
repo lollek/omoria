@@ -13,6 +13,7 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
+#include "kickout.h"
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
@@ -1145,7 +1146,10 @@ void enter_trading_post() {
                           &exit_flag);
         adv_time(false);
         tics++;
-        check_kickout_time(tics, 2);
+
+        if (tics % 2 == 1) {
+          kick__kickout_player_if_time();
+        }
       }
     }
     tp__write_inv(sales, &inv, &cur_top, &blegga, &profits, &cur_display_size,

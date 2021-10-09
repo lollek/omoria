@@ -13,6 +13,7 @@
 #include "debug.h"
 #include "dungeon.h"
 #include "fighting_ranged.h"
+#include "kickout.h"
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
@@ -4901,8 +4902,9 @@ void dungeon() {
 
     d__sun_rise_or_set();
 
-    /*{ Check for kickout				}*/
-    check_kickout_time(turn, 10);
+    if (turn % 10 == 1) {
+      kick__kickout_player_if_time();
+    }
 
     d__check_hours();
 

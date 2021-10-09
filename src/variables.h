@@ -43,7 +43,6 @@ extern unsigned long bit_array[33]; /*  array [1..32] of unsigned; */
 /*	{ External file names; are all located in directory with image	} */
 extern char const * MORIA_HOU;
 extern char const * MORIA_TRD;
-extern char const * MORIA_LCK;
 extern char const * MORIA_DTH;
 extern char const * MORIA_MON;
 

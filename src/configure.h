@@ -1,10 +1,7 @@
 #ifndef CONFIGURE_H
 #define CONFIGURE_H
-/* include file for fun configurable stuff */
 
-/*
- * Where savegames are put
- */
+// Where savegames are put
 #define SAVE_FILE_PATH "save"
 
 /*
@@ -18,6 +15,9 @@
  *          it is run.
  */
 #define DATA_FILE_PATH "data"
+
+// If this file exists, players will get kicked out and cannot join
+#define MORIA_KICKOUT_FILE DATA_FILE_PATH "/morialock.dat"
 
 /*
  * Keep this one under 160 characters, it points to the help program...

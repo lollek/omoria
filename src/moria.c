@@ -7,6 +7,7 @@
 #include "save.h"
 #include "store.h"
 #include "variables.h"
+#include "kickout.h"
 #include "init/variables.h"
 #include "init/monsters.h"
 
@@ -18,15 +19,16 @@ int main(int argc, char *argv[]) {
   dbg__init();
   MSG(("%s", "Main - Initialization"));
 
-  if (!init__file_paths()) exit_game();
-  if (!init__monsters()) exit_game();
-
-  /* Check to see if an update is in progress -DMF- */
-  if (check_kickout()) {
-    printf("Imoria is locked . . . Try playing conquest.\n\r");
-    printf("Who knows *how* long this might take?\n\r");
+  // Check to see if an update is in progress
+  if (kick__should_kickout()) {
+    printf("The gates to moria are locked ...\n"
+        "Perhaps a new version is being installed.\n"
+        "Wait a few minutes and try again.\n");
     exit_game();
   }
+
+  if (!init__file_paths()) exit_game();
+  if (!init__monsters()) exit_game();
 
   /* Some necessary initializations */
   msg_line = 1;

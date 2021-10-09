@@ -10,6 +10,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
+#include "kickout.h"
 #include "constants.h"
 #include "debug.h"
 #include "dungeon.h"
@@ -1701,7 +1702,9 @@ static void __store_enter(enum store_t store_type) {
     }
     adv_time(false);
     tics++;
-    check_kickout_time(tics, 2);
+    if (tics % 2 == 1) {
+      kick__kickout_player_if_time();
+    }
   } while (!exit_flag);
 
   if (moria_flag) {

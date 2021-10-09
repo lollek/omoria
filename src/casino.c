@@ -15,6 +15,7 @@
 #include "constants.h"
 #include "debug.h"
 #include "horse.h"
+#include "kickout.h"
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
@@ -76,7 +77,7 @@ void c__change_money() {
 
 void c__check_casino_kickout() {
   if ((tics % 2) == 1) {
-    if (check_kickout()) {
+    if (kick__should_kickout()) {
       msg_print("A new version of Imoria is being installed.");
       msg_print("After your character is saved, wait a few "
                 "minutes,");

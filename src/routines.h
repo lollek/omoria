@@ -410,7 +410,6 @@ extern void price_adjust();
 extern void item_weight_adjust();
 extern long day_num();
 extern long hour_num();
-extern boolean check_kickout();
 extern boolean check_time();
 extern long randnor(long mean, long stand);
 extern boolean in_bounds(long y, long x);
@@ -507,7 +506,6 @@ extern boolean player_saves(long adjust);
 extern boolean player_spell_saves();
 extern void find_monster_name(char m_name[82], const long ptr,
                               boolean begin_sentence);
-extern void check_kickout_time(long num, long check);
 
 /* { BANK.INC		} */
 extern void enter_bank();

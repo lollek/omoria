@@ -80,7 +80,6 @@ unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
 
 char const * MORIA_HOU;
 char const * MORIA_TRD;
-char const * MORIA_LCK;
 char const * MORIA_DTH;
 char const * MORIA_MON;
 

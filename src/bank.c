@@ -13,6 +13,7 @@
 #include "routines.h"
 #include "term.h"
 #include "types.h"
+#include "kickout.h"
 
 #include "debug.h"
 
@@ -308,7 +309,10 @@ void enter_bank() {
     eb__parse_command(&exit_flag, shop_owner);
     adv_time(false);
     tics++;
-    check_kickout_time(tics, 2);
+
+    if (tics % 2 == 1) {
+      kick__kickout_player_if_time();
+    }
   } while (!exit_flag);
   draw_cave();
 }
