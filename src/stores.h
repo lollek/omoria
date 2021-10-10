@@ -4,11 +4,6 @@
 #include "types.h"
 
 /**
- * bank_init() - Initialize the bank
- */
-void bank_init();
-
-/**
  * store_maint() - Initialize and up-keep the store's inventory.
  */
 void store_maint();
