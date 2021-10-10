@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
   if (!init__argv(argc, argv)) exit_game();
   if (!init__graphics()) exit_game();
 
+  MSG(("%s", "Main - Entering menu"));
   C_main_menu();
 
   /* Generate a character, or retrieve old one... */

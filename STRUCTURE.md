@@ -9,13 +9,13 @@ so the layout might not always be optimal.
 ```
 /src/init           - Object and logic initialization
 - Can only be used by the main()-function
-- Can use any file outside /src/init as a dependency
+- Can use any file in /src/logic or /src/model
 
 /src/pre-game       - Startup-menu, etc
 /src/pre-game/logic
 /src/pre-game/model
-- Only depended on by main(), and before game starts
-- Can depend on /src/logic and /src/model
+- Can only be used by the main()-function
+- Can use any file in /src/logic or /src/model
 
 /src/logic          - Game logic
 /src/model          - Types, classes, structs
@@ -24,4 +24,5 @@ so the layout might not always be optimal.
 ## Namespaces
 
 * dbg = src/debug.h
-* init = src/init/*
+* init = src/init/\*
+* pregame = src/pre-game/\*
