@@ -1,6 +1,6 @@
 use debug;
 use io;
-use menu;
+use logic::menu;
 use term;
 use player;
 use types::Ability;
@@ -13,7 +13,7 @@ pub fn select_ability() -> bool {
     let abilities = player::abilities();
     let abilities_str = abilities.iter().map(|it| it.name()).collect::<Vec<&str>>();
 
-    menu::helpers::draw_quick_menu(
+    menu::draw_quick_menu(
         "Use which ability?",
         &abilities_str);
 

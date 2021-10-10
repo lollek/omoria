@@ -11,11 +11,10 @@ so the layout might not always be optimal.
 - Can only be used by the main()-function
 - Can use any file in /src/logic or /src/model
 
-/src/pre-game       - Startup-menu, etc
-/src/pre-game/logic
-/src/pre-game/model
-- Can only be used by the main()-function
-- Can use any file in /src/logic or /src/model
+/src/pregame       - Startup-menu, etc
+- The public pregame function can only be called from pregame/main.c
+- pregame/main.h can only be called from the main()-function
+- pregame/*.c can use any file in /src/logic or /src/model
 
 /src/logic          - Game logic
 /src/model          - Types, classes, structs

@@ -5,6 +5,6 @@
 
 boolean save_and_quit(void);
 boolean save_char(void);
-boolean get_char(void);
+void get_char(void);
 
 #endif /* SAVE_H */

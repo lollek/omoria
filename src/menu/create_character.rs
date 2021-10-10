@@ -13,7 +13,7 @@ use player;
 use random;
 use screen;
 use term;
-use menu::helpers;
+use logic::menu;
 
 use types::{Stat, StatBlock, stats_iter, Item, Race, races_iter, Currency, Sex, GameTime};
 use save::types::InventoryItem;
@@ -197,7 +197,7 @@ fn print_history() {
     .collect::<Vec<String>>()
     .join(" ");
 
-    helpers::draw_help("Your background", &history);
+    menu::draw_help("Your background", &history);
 }
 
 
@@ -846,7 +846,7 @@ fn choose_class() {
     let mut index = 0;
 
     loop {
-        helpers::draw_menu(
+        menu::draw_menu(
             "Choose your class",
             &class_strings,
             "j=up, k=down, enter=select, ?=info, r=restrictions",
@@ -859,10 +859,10 @@ fn choose_class() {
                 debug::leave("create_character::choose_class");
                 return;
             },
-            '?' => helpers::draw_help(
+            '?' => menu::draw_help(
                 classes[index as usize].name(),
                 classes[index as usize].info()),
-            'r' => helpers::draw_help(
+            'r' => menu::draw_help(
                 classes[index as usize].name(),
                 classes[index as usize].restriction_info()),
             _ => {},
@@ -877,7 +877,7 @@ fn choose_race() {
     let mut index = 0;
 
     loop {
-        helpers::draw_menu(
+        menu::draw_menu(
             "Choose your race",
             &races,
             "j=up, k=down, enter=select, ?=info, s=stats, c=classes",
@@ -891,17 +891,17 @@ fn choose_race() {
                 debug::leave("create_character::choose_race");
                 return;
             },
-            '?' => helpers::draw_help(
+            '?' => menu::draw_help(
                 races[index as usize],
                 Race::from(index as usize).info()),
-            's' => helpers::draw_help_vec(
+            's' => menu::draw_help_vec(
                 races[index as usize],
                 &Race::from(index as usize)
                 .stats_info()
                 .iter()
                 .map(|it| it.as_ref())
                 .collect::<Vec<&str>>()),
-            'c' => helpers::draw_help_vec(
+            'c' => menu::draw_help_vec(
                 races[index as usize],
                 &Race::from(index as usize)
                 .available_classes()
@@ -924,7 +924,7 @@ fn choose_sex() {
 
     let mut index = 0;
     loop {
-        helpers::draw_menu(
+        menu::draw_menu(
             "Choose your sex",
             &vec![
                 "Male",
@@ -965,7 +965,7 @@ fn choose_stats() {
     loop {
         let stats = player::curr_stats();
 
-        helpers::draw_menu(
+        menu::draw_menu(
             "Roll up your stats",
             &vec![
                 format!("Age:           {}", unsafe { player::player_age }),
@@ -997,7 +997,7 @@ fn confirm_character() {
 
     let stats = player::curr_stats();
 
-    helpers::draw_menu(
+    menu::draw_menu(
         "Confirm your character",
         &vec![
             "Name: ".to_string(),

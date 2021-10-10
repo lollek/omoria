@@ -1,6 +1,5 @@
 use debug;
 use menu;
-use player;
 
 #[no_mangle]
 pub extern fn change_name() {
@@ -16,19 +15,6 @@ pub extern fn create_character() {
     debug::enter("menu_extern::create_character");
 
     menu::create_character();
-
-    debug::leave("menu_extern::create_character");
-}
-
-
-#[no_mangle]
-pub extern fn C_main_menu() {
-    debug::enter("menu_extern::main_menu");
-
-    if let Some(character) = menu::main_menu() {
-        player::set_name(&character.name);
-        player::set_uid(character.uid.parse::<i64>().unwrap());
-    }
 
     debug::leave("menu_extern::create_character");
 }

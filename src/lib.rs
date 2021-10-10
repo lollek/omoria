@@ -11,6 +11,8 @@ extern crate serde;
 extern crate serde_json;
 extern crate pancurses;
 
+mod pregame;
+
 pub mod ability;
 pub mod commands;
 pub mod constants;
@@ -20,9 +22,10 @@ pub mod equipment;
 pub mod highscore;
 pub mod io;
 pub mod item;
+pub mod logic;
 pub mod magic;
-pub mod menu;
 pub mod master;
+pub mod menu;
 pub mod misc;
 pub mod monsters;
 pub mod ncurses;

@@ -25,37 +25,6 @@
 
 static const long mon_mult_adj = 7; // High value slows multiplication
 
-void replace_name() {
-  /*{ replace <gp> for game players name }*/
-
-  long count;
-  char t_str[82];
-  char *s;
-
-  ENTER(("replace_name", ""));
-
-  strcpy(t_str, player_name);
-  if (t_str[0] == 0) {
-    strcpy(t_str, "Dead Guy");
-  }
-  if (strlen(t_str) > 15) {
-    t_str[15] = 0;
-  }
-
-  for (count = 1; count <= MAX_CREATURES; count++) {
-    s = strstr(c_list[count].name, "<gp>");
-    if (s != NULL) {
-      /*      printf ("\n\nOldName = */
-      /*      >>%s<<\n",c_list[count].name); */
-      insert_str(c_list[count].name, "<gp>", t_str);
-      /*      printf ("NewName = */
-      /*      >>%s<<\n",c_list[count].name); */
-    } /* end if */
-  }   /* end for */
-
-  LEAVE("replace_name", "");
-}
-
 void check_mon_lite(long y, long x) {
   /*{ Makes sure new creature gets lit up                   -RAK-   }*/
 

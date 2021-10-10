@@ -62,7 +62,6 @@ extern void creatures(boolean attack);
 /* { DEATH.PAS		} */
 extern void upon_death();
 extern void make_tomb(char dstr[][82]);
-extern void replace_name();
 extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
 

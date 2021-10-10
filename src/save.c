@@ -57,7 +57,7 @@ boolean save_char(void) {
   return flag;
 }
 
-boolean get_char(void) {
+void get_char(void) {
   /*{ Restore a saved game				-RAK- & -JWT-
    * }*/
 
@@ -89,5 +89,4 @@ boolean get_char(void) {
   clear();
 
   LEAVE("get_char", "");
-  return false;
 }
