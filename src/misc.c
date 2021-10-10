@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "treasures.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
@@ -20,7 +21,6 @@
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
-static long t_level[MAX_OBJ_LEVEL + 1];
 static long tcptr; /* { Cur treasure heap ptr} */
 static long mfptr; /* { Cur free monster ptr	} */
 static treasure_type up_stair = {"an up staircase",
@@ -401,55 +401,6 @@ static boolean learn_druid(boolean *redraw) {
   return return_value;
 }
 
-void init_m_level() {
-  /*	{ Initializes M_LEVEL array for use with PLACE_MONSTER */
-  /*-RAK-	} */
-  int i1 = 1;
-  int i2 = 0;
-  int i3 = MAX_CREATURES - WIN_MON_TOT;
-
-  ENTER(("init_m_level", ""));
-
-  do {
-    m_level[i2] = 0;
-    while ((i1 <= i3) && (c_list[i1].level == i2)) {
-      m_level[i2]++;
-      i1++;
-    }
-    i2++;
-  } while (i2 <= MAX_MONS_LEVEL);
-
-  for (i1 = 2; i1 <= MAX_MONS_LEVEL; i1++) {
-    m_level[i1] += m_level[i1 - 1];
-  }
-
-  /*  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) { */
-  /*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
-  /*  } */
-  LEAVE("init_m_level", "");
-}
-
-void init_t_level() {
-  /*	{ Initializes T_LEVEL array for use with PLACE_OBJECT	-RAK- */
-  /*} */
-  int i1 = 1;
-  int i2 = 0;
-
-  ENTER(("init_t_level", ""));
-
-  do {
-    while ((i1 <= MAX_OBJECTS) && (object_list[i1].level == i2)) {
-      t_level[i2] = t_level[i2] + 1; /* number of treasures with this level */
-      i1++;
-    }
-    i2++;
-  } while (!((i2 > MAX_OBJ_LEVEL) || (i1 > MAX_OBJECTS)));
-
-  for (i1 = 1; i1 <= MAX_OBJ_LEVEL; i1++) {
-    t_level[i1] += t_level[i1 - 1];
-  }
-  LEAVE("init_t_level", "");
-}
 
 void price_adjust() {
   long i1;

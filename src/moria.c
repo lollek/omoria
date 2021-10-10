@@ -30,10 +30,6 @@ int main(int argc, char *argv[]) {
   if (!init__monsters()) exit_game();
   if (!init__treasures()) exit_game();
 
-  /* Init monster and treasure levels for allocate */
-  init_m_level();
-  init_t_level();
-
   /* Init the store inventories */
   store_init();
   if (COST_ADJ != 1.00) {

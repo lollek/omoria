@@ -16,6 +16,8 @@
 #include "types.h"
 #include "variables.h"
 
+long t_level[MAX_OBJ_LEVEL + 1];
+
 static const float obj_std_adj = 1.25;   // Adjust STD per level
 static const long obj_std_min = 7;       // Minimum STD
 static const long obj_base_magic = 12;   //  Base amount of magic
