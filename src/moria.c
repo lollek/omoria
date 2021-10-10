@@ -3,6 +3,7 @@
 #include "init/argv.h"
 #include "init/bank.h"
 #include "init/death.h"
+#include "init/graphics.h"
 #include "init/kickout.h"
 #include "init/monsters.h"
 #include "init/stores.h"
@@ -43,10 +44,7 @@ int main(int argc, char *argv[]) {
   if (!init__death()) exit_game();
   if (!init__trade()) exit_game();
   if (!init__argv(argc, argv)) exit_game();
-
-  no_controly();
-  C_init_curses();
-  curses_is_running = true;
+  if (!init__graphics()) exit_game();
 
   C_main_menu();
 

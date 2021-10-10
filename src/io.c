@@ -13,6 +13,7 @@
 #include "constants.h"
 #include "debug.h"
 #include "dungeon.h"
+#include "graphics.h"
 #include "magic.h"
 #include "pascal.h"
 #include "routines.h"

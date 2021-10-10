@@ -125,6 +125,5 @@ extern unsigned char highScoreKey[8];
 extern unsigned char saveFileKey[8];
 
 extern int game_state;
-extern boolean curses_is_running;
 
 #endif /* VARIABLES_H */
