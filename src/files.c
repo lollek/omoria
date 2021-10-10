@@ -122,54 +122,10 @@ static void intro_parse_switches(int argc, char *argv[]) {
   }
 }
 
-boolean intro_ensure_file_exists(boolean already_exiting, char const *the_file) {
-  FILE *file1;
-  boolean exit_flag = false;
-
-  file1 = fopen(the_file, "r");
-  if (file1 != NULL) {
-    /* file already exists and can be opened */
-    fclose(file1);
-  } else {
-    /* create a new file */
-    file1 = (FILE *)fopen(the_file, "w");
-    if (file1 == NULL) {
-      printf("Error creating %s\n\r", the_file);
-      exit_game();
-    } else {
-      printf("Created %s\n\r", the_file);
-      fclose(file1);
-      exit_flag = true;
-    } /* end if file1 (writing) */
-  }   /* end if file1 (reading) */
-
-  return (exit_flag || already_exiting);
-}
-
 void intro(int argc, char *argv[]) {
   /* Attempt to open the intro file                        -RAK- */
 
-  boolean exit_flag = false;
-
   ENTER(("intro", ""));
-
-  if (exit_flag) {
-    intro_ensure_file_exists(exit_flag, TRADE_FILE);
-    printf("\r\n"
-           "Notice: System IMORIA wizard should set the protection\r\n"
-           "        on  files  just created.  See the README file "
-           "for\r\n"
-           "        help on setting protection on the files.\r\n"
-           "        Hint: make privs\r\n"
-           "\r\n"
-           "Notice: File hours.dat may be edited to set operating\r\n"
-           "        hours for IMORIA.\r\n"
-           "\r\n"
-           "Notice: File moria.dat may be edited to contain  news\r\n"
-           "        items, etc...\r\n"
-           "\r\n");
-    exit_game();
-  }
 
   intro_parse_switches(argc, argv);
 

@@ -3,7 +3,7 @@ CC =		gcc
 CFLAGS =	-Wall -Wextra -Werror -pedantic -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1
 LDFLAGS =	-lncurses -ltinfo -ltermcap -lm -Wl,--gc-sections -lpthread -ldl
 
-READFILES =	data/hours.dat data/moria.dat data/monsters.dat data/moria_gcustom.mst
+READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
 WRITEFILES =	data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
 
@@ -26,7 +26,7 @@ run: omoria ctags
 	RUST_BACKTRACE=1 ./omoria
 
 nodata ::
-	$(RM) data/hours.dat data/moria.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
+	$(RM) data/hours.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
 
 clean ::
 	$(RM) $(OBJFILES) core omoria
