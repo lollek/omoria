@@ -122,52 +122,6 @@ static void intro_parse_switches(int argc, char *argv[]) {
   }
 }
 
-boolean intro_do_death_file(boolean already_exiting, char const *the_file) {
-  FILE *file1;
-  boolean exit_flag = false;
-
-  file1 = fopen(the_file, "r");
-  if (file1 != NULL) {
-    /* file already exists and can be opened */
-    fclose(file1);
-  } else {
-    /* create a new file */
-    file1 = (FILE *)fopen(the_file, "w");
-    if (file1 == NULL) {
-      printf("Error creating %s\n\r", the_file);
-      exit_game();
-    } else {
-      fprintf(file1, "Moria death log file\n");
-      fprintf(file1, "\n");
-      fprintf(file1, "Key to abbreviations:\n");
-      fprintf(file1, "\n");
-      fprintf(file1, "For Race:          For Class:\n");
-      fprintf(file1, "  1 = Human          1 = Warrior\n");
-      fprintf(file1, "  2 = Half-Elf       2 = Mage\n");
-      fprintf(file1, "  3 = Elf            3 = Priest\n");
-      fprintf(file1, "  4 = Halfling       4 = Rogue\n");
-      fprintf(file1, "  5 = Gnome          5 = Ranger\n");
-      fprintf(file1, "  6 = Dwarf          6 = Paladin\n");
-      fprintf(file1, "  7 = Half-Orc       7 = Druid\n");
-      fprintf(file1, "  8 = Half-Troll     8 = Bard\n");
-      fprintf(file1, "  9 = Phraint        9 = Adventurer\n");
-      fprintf(file1, " 10 = Dryad         10 = Monk\n");
-      fprintf(file1, "\n");
-      fprintf(file1, "             Dif Class   Dung Dung\n");
-      fprintf(file1, " Username      Race  Lvl Cur  Max  Died from\n");
-      fprintf(file1, " ------------ - -- -- -- ---- ---- "
-                     "---------------------------------------"
-                     "-----\n");
-
-      printf("Created %s\n\r", the_file);
-      fclose(file1);
-      exit_flag = true;
-    } /* end if file1 (writing) */
-  }   /* end if file1 (reading) */
-
-  return (exit_flag || already_exiting);
-}
-
 boolean intro_ensure_file_exists(boolean already_exiting, char const *the_file) {
   FILE *file1;
   boolean exit_flag = false;
@@ -198,9 +152,6 @@ void intro(int argc, char *argv[]) {
   boolean exit_flag = false;
 
   ENTER(("intro", ""));
-
-  /* make sure that various files exist */
-  exit_flag = intro_do_death_file(exit_flag, DEATH_FILE);
 
   if (exit_flag) {
     intro_ensure_file_exists(exit_flag, TRADE_FILE);

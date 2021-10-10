@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "init/bank.h"
+#include "init/death.h"
 #include "init/kickout.h"
 #include "init/monsters.h"
 #include "init/stores.h"
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
   if (!init__treasures()) exit_game();
   if (!init__stores()) exit_game();
   if (!init__bank()) exit_game();
+  if (!init__death()) exit_game();
 
   /*
    * Check operating hours
