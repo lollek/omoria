@@ -148,7 +148,6 @@ extern boolean twall(long y, long x, long t1, long t2);
 extern void dungeon();
 
 /* { FILES.PAS		} */
-extern void intro(int argc, char *argv[]);
 extern void print_map();
 extern void print_objects();
 extern void print_monsters();

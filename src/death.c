@@ -18,6 +18,8 @@
 #include "types.h"
 #include "variables.h"
 
+long max_score = 20;
+
 static char *ud__fill_str(char *centered_str, char *in_str) {
   /* Centers a string within a 31 character string  -JWT- */
 

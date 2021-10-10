@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "init/argv.h"
 #include "init/bank.h"
 #include "init/death.h"
 #include "init/kickout.h"
@@ -41,14 +42,9 @@ int main(int argc, char *argv[]) {
   if (!init__bank()) exit_game();
   if (!init__death()) exit_game();
   if (!init__trade()) exit_game();
+  if (!init__argv(argc, argv)) exit_game();
 
-  /*
-   * Check operating hours
-   * If not wizard then No_Control_Y
-   * Check or create hours.dat, print message
-   */
-  intro(argc, argv);
-
+  no_controly();
   C_init_curses();
   curses_is_running = true;
 
