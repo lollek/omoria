@@ -30,7 +30,6 @@ void C_print_known_spells();
 
 static boolean light_flag;        /*	{ Used in MOVE_LIGHT  } */
 static boolean cave_flag = false; /*	{ Used in GET_PANEL   } */
-static long closing_flag = 0;     /* { Used for closing   } */
 static float acc_exp = 0.0;       /*{ Accumulator for fractional exp} */
 static long old_chp;               /* { Detect change         } */
 static long old_cmana;             /* { Detect change         } */
@@ -489,41 +488,18 @@ static void d__sun_rise_or_set() {
 
 static void d__check_hours() {
   /*{ Check for game hours                          }*/
-  if (!(wizard1)) {
-    if ((turn % 100) == 1) {
-      if (!(check_time())) {
-        if (closing_flag > 2) {
-          if (search_flag) {
-            search_off();
-          }
-          if (player_flags.rest > 0) {
-            rest_off();
-          }
-          find_flag = false;
-          msg_print("The gates to Moria are now "
-                    "closed.");
-          msg_print(" ");
-          do {
-            save_and_quit();
-          } while (true);
-        } else {
-          if (search_flag) {
-            search_off();
-          }
-          if (player_flags.rest > 0) {
-            rest_off();
-          }
-          move_char(5);
-          closing_flag++;
-          msg_print("The gates to Moria are "
-                    "closing...");
-          msg_print("Please finish up or save "
-                    "your game.");
-          msg_print(" ");
-        }
-      }
+  if (turn % 100 != 1) return;
+  if (!kick__should_kickout()) return;
+
+    if (search_flag) {
+      search_off();
     }
-  }
+    if (player_flags.rest > 0) {
+      rest_off();
+    }
+    find_flag = false;
+
+    kick__kickout_player_if_time();
 }
 
 static void d__print_updated_stats() {

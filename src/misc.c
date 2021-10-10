@@ -401,33 +401,6 @@ static boolean learn_druid(boolean *redraw) {
   return return_value;
 }
 
-
-boolean check_time() {
-  /*{ Check the day-time strings to see if open             -RAK-   }*/
-
-  /* the file hours.dat is where days gets filled in from     */
-  /* default hours are defined in values.h, in the days array */
-
-  struct tm now;
-  long cur_time;
-  long day, hour;
-  boolean return_value = false;
-
-  /*{ Returns the day number; 1=Sunday...7=Saturday         -RAK-   }*/
-  /*{ Returns the hour number; 0=midnight...23=11 player_       -RAK- }*/
-
-  cur_time = time(NULL);
-  now = *localtime(&cur_time);
-  day = now.tm_wday;
-  hour = now.tm_hour;
-
-  if (days[day][hour + 4] == 'X') {
-    return_value = true;
-  }
-
-  return return_value;
-}
-
 char *cost_str(long amt, char result[134]) {
   /*{ Return string describing how much the amount is worth	-DMF-
    * }*/

@@ -1,11 +1,13 @@
 #include <string.h>
 
 #include "init/bank.h"
+#include "init/kickout.h"
 #include "init/monsters.h"
 #include "init/stores.h"
 #include "init/treasures.h"
 
 #include "configure.h"
+#include "kickout.h"
 #include "debug.h"
 #include "kickout.h"
 #include "player.h"
@@ -23,10 +25,11 @@ int main(int argc, char *argv[]) {
   MSG(("%s", "Main - Initialization"));
 
   // Check to see if an update is in progress
+  if (!init__kickout()) exit_game();
   if (kick__should_kickout()) {
-    printf("The gates to moria are locked ...\n"
-        "Perhaps a new version is being installed.\n"
-        "Wait a few minutes and try again.\n");
+    printf("The gates to Moria are closed.\n"
+            "Either you are outside operating hours, or there is a maintenance going on.\n\n");
+    kick__dump_operating_hours_to_file(stdout);
     exit_game();
   }
 

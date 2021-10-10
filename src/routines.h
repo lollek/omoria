@@ -406,7 +406,6 @@ const char *imoria_version();
 const char *omoria_version();
 extern long day_num();
 extern long hour_num();
-extern boolean check_time();
 extern long randnor(long mean, long stand);
 extern boolean in_bounds(long y, long x);
 extern long next_to4(long y, long x, obj_set group_set);

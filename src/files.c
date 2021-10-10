@@ -122,68 +122,6 @@ static void intro_parse_switches(int argc, char *argv[]) {
   }
 }
 
-boolean intro_do_hours_file(boolean already_exiting, char const *the_file) {
-  /*      { Attempt to read hours.dat.  If it does not exist,     } */
-  /*      { then create a standard one.                           } */
-
-  FILE *file1;
-  char in_line[82];
-  long i1;
-  boolean exit_flag = false;
-
-  file1 = fopen(the_file, "r");
-  if (file1 != NULL) {
-    while (!feof(file1)) {
-      in_line[0] = 0;
-      fgets(in_line, sizeof(in_line), file1);
-
-      chomp(in_line);
-      if (strlen(in_line) > 3) {
-        if (!(strncmp("SUN:", in_line, 4))) {
-          strncpy(days[0], in_line, sizeof(days[0]));
-        } else if (!(strncmp("MON:", in_line, 4))) {
-          strncpy(days[1], in_line, sizeof(days[1]));
-        } else if (!(strncmp("TUE:", in_line, 4))) {
-          strncpy(days[2], in_line, sizeof(days[2]));
-        } else if (!(strncmp("WED:", in_line, 4))) {
-          strncpy(days[3], in_line, sizeof(days[3]));
-        } else if (!(strncmp("THR:", in_line, 4))) {
-          strncpy(days[4], in_line, sizeof(days[4]));
-        } else if (!(strncmp("FRI:", in_line, 4))) {
-          strncpy(days[5], in_line, sizeof(days[5]));
-        } else if (!(strncmp("SAT:", in_line, 4))) {
-          strncpy(days[6], in_line, sizeof(days[6]));
-        }
-      } /* end if */
-
-    } /* end while */
-    fclose(file1);
-
-  } else {
-    /* try to create the default hours.dat file */
-    file1 = (FILE *)fopen(the_file, "w");
-    if (file1 != NULL) {
-      fprintf(file1, "    Moria operating hours are:\n");
-      fprintf(file1, "    |    AM     |    player_    |\n");
-      fprintf(file1, "    1         111         111\n");
-      fprintf(file1, "    2123456789012123456789012\n");
-      for (i1 = 0; i1 < 7; i1++) {
-        fprintf(file1, "%s\n", days[i1]);
-      }
-      fprintf(file1, "       (X=Open; .=Closed)\n");
-      fclose(file1);
-      printf("Created %s\n", the_file);
-      exit_flag = true;
-    } else {
-      printf("Error in creating %s for output.\n\r", the_file);
-      exit(1);
-    } /* end if file1 (writing) */
-
-  } /* end if file1 (reading) */
-
-  return (exit_flag || already_exiting);
-}
-
 boolean intro_do_death_file(boolean already_exiting, char const *the_file) {
   FILE *file1;
   boolean exit_flag = false;
@@ -257,14 +195,11 @@ boolean intro_ensure_file_exists(boolean already_exiting, char const *the_file) 
 void intro(int argc, char *argv[]) {
   /* Attempt to open the intro file                        -RAK- */
 
-  char in_line[82];
-  FILE *file1;
   boolean exit_flag = false;
 
   ENTER(("intro", ""));
 
   /* make sure that various files exist */
-  exit_flag = intro_do_hours_file(exit_flag, OPERATING_HOURS_FILE);
   exit_flag = intro_do_death_file(exit_flag, DEATH_FILE);
 
   if (exit_flag) {
@@ -289,23 +224,6 @@ void intro(int argc, char *argv[]) {
 
   if (!wizard1) {
     no_controly();
-  }
-
-  if (!check_time() && !wizard1) {
-    /* print out the hours file and exit the game */
-
-    file1 = fopen(OPERATING_HOURS_FILE, "r");
-    if (file1 == NULL) {
-      printf("Unable to open %s for reading\n\r", OPERATING_HOURS_FILE);
-    } else {
-      while (!feof(file1)) {
-        in_line[0] = 0;
-        fgets(in_line, sizeof(in_line), file1);
-        printf("%s\r", in_line);
-      }
-      fclose(file1);
-    }
-    exit_game();
   }
 
   LEAVE("intro", "");

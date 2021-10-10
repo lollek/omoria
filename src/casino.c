@@ -78,15 +78,8 @@ void c__change_money() {
 void c__check_casino_kickout() {
   if ((tics % 2) == 1) {
     if (kick__should_kickout()) {
-      msg_print("A new version of Imoria is being installed.");
-      msg_print("After your character is saved, wait a few "
-                "minutes,");
-      msg_print("And then try to run the game.");
-      msg_print("");
       c__change_money();
-      do {
-        save_and_quit();
-      } while (!false);
+      kick__kickout_player_if_time();
     }
   }
   tics++;

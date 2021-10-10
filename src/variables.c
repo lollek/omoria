@@ -49,17 +49,6 @@ boolean wizard2 = false;        /*	{ Wizard flag	      } */
 boolean used_line[24] =         /* 22 of false */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-/**
- * -RAK-
- *  Operating hours for Moria
- *  X = Open
- *  . = Closed
- */
-char days[7][30] = {
-    "SUN:XXXXXXXXXXXXXXXXXXXXXXXX|", "MON:XXXXXXXXXXXXXXXXXXXXXXXX|",
-    "TUE:XXXXXXXXXXXXXXXXXXXXXXXX|", "WED:XXXXXXXXXXXXXXXXXXXXXXXX|",
-    "THU:XXXXXXXXXXXXXXXXXXXXXXXX|", "FRI:XXXXXXXXXXXXXXXXXXXXXXXX|",
-    "SAT:XXXXXXXXXXXXXXXXXXXXXXXX|"};
 /*{neatness arrays} */
 unsigned char key_of[9] = /*  array [0..8] of unsigned char; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
