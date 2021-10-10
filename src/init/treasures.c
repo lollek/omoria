@@ -3,9 +3,10 @@
 #include <math.h>
 #include <string.h>
 
-#include "../variables.h"
 #include "../debug.h"
+#include "../routines.h"
 #include "../treasures.h"
+#include "../variables.h"
 
 #include "treasures.h"
 
@@ -267,11 +268,165 @@ static bool adjust_gem_values(void) {
   return true;
 }
 
+static void randomize_material(char const *str_array[], int count) {
+  for (long i = 0; i < count; i++) {
+    long j = randint(count) - 1;
+    if (i != j) {
+      char const *tmp = str_array[i];
+      str_array[i] = str_array[j];
+      str_array[j] = tmp;
+#if DO_DEBUG && 0
+      MSG(("%2ld:%2ld \"%s\" swapped with \"%s\"\n", i, j, str_array[i],
+           str_array[j]));
+#endif
+    }
+  }
+}
+
+/**
+ *
+ * Initialize all potions, wands, staves, scrolls, etc...
+ */
+static bool initialize_materials(void) {
+  ENTER(("initialize_materials", ""));
+
+  randomize_material(colors, MAX_COLORS);
+  randomize_material(woods, MAX_WOODS);
+  randomize_material(metals, MAX_METALS);
+  randomize_material(horns, MAX_HORNS);
+  randomize_material(rocks, MAX_ROCKS);
+  randomize_material(amulets, MAX_AMULETS);
+  randomize_material(mushrooms, MAX_MUSH);
+  randomize_material(cloths, MAX_CLOTHS);
+
+  for (size_t i = 1; i <= MAX_OBJECTS; i++) {
+
+    /*
+     * The arrays of the object materals all start at 0.
+     * Object subvals start at 1.  When doing the lookup
+     * subtract one from subval!
+     */
+    long tmpv = (0xFF & object_list[i].subval);
+    char tmps[82];
+
+    switch (object_list[i].tval) {
+
+    case potion1:
+    case potion2:
+      if (tmpv <= MAX_COLORS) {
+        insert_str(object_list[i].name, "%C", colors[tmpv - 1]);
+      }
+      break;
+
+    case scroll1:
+    case scroll2:
+      rantitle(tmps);
+      insert_str(object_list[i].name, "%T", tmps);
+      break;
+
+    case ring:
+      if (tmpv <= MAX_ROCKS) {
+        insert_str(object_list[i].name, "%R", rocks[tmpv - 1]);
+      }
+      break;
+
+    case valuable_gems:
+      if (tmpv <= MAX_ROCKS) {
+        insert_str(object_list[i].name, "%R", rocks[tmpv - 1]);
+      }
+      break;
+
+    case valuable_gems_wear:
+      if (tmpv <= MAX_ROCKS) {
+        insert_str(object_list[i].name, "%R", rocks[tmpv - 1]);
+      }
+      break;
+
+    case amulet:
+      if (tmpv <= MAX_AMULETS) {
+        insert_str(object_list[i].name, "%A", amulets[tmpv - 1]);
+      }
+      break;
+
+    case wand:
+      if (tmpv <= MAX_METALS) {
+        insert_str(object_list[i].name, "%M", metals[tmpv - 1]);
+      }
+      break;
+
+    case chime:
+      if (tmpv <= MAX_METALS) {
+        insert_str(object_list[i].name, "%M", metals[tmpv - 1]);
+      }
+      break;
+
+    case horn:
+      if (tmpv <= MAX_HORNS) {
+        insert_str(object_list[i].name, "%H", horns[tmpv - 1]);
+      }
+      break;
+
+    case staff:
+      if (tmpv <= MAX_WOODS) {
+        insert_str(object_list[i].name, "%W", woods[tmpv - 1]);
+      }
+      break;
+
+    case Food:
+      if (tmpv <= MAX_MUSH) {
+        insert_str(object_list[i].name, "%M", mushrooms[tmpv - 1]);
+      }
+      break;
+
+    case rod:
+      /* what happened to the rods? */
+      /*
+      if (tmpv <= MAX_RODS) {
+        insert_str(object_list[i].name,"%D",rods[tmpv-1]);
+      }
+      */
+      break;
+
+    case bag_or_sack:
+      if (tmpv <= MAX_CLOTHS) {
+        insert_str(object_list[i].name, "%N", cloths[tmpv - 1]);
+      }
+      break;
+
+    case misc_usable:
+      if (tmpv <= MAX_ROCKS) {
+        insert_str(object_list[i].name, "%R", rocks[tmpv - 1]);
+      }
+      if (tmpv <= MAX_WOODS) {
+        insert_str(object_list[i].name, "%W", woods[tmpv - 1]);
+      }
+      if (tmpv <= MAX_METALS) {
+        insert_str(object_list[i].name, "%M", metals[tmpv - 1]);
+      }
+      if (tmpv <= MAX_AMULETS) {
+        insert_str(object_list[i].name, "%A", amulets[tmpv - 1]);
+      }
+      break;
+    default:
+      break;
+    }
+  }
+
+#if DO_DEBUG && 0
+  for (size_t i = 1; i <= MAX_OBJECTS; i++) {
+    MSG(("object_list[%ld] = %s\n", i, object_list[i].name));
+  }
+#endif
+  LEAVE("initialize_materials", "");
+  return true;
+}
+
 bool init__treasures(void) {
   if (!sort_treasures()) return false;
   if (!init_t_level()) return false;
   if (!adjust_prices()) return false;
   if (!adjust_weights()) return false;
   if (!adjust_gem_values()) return false;
+  if (!initialize_materials()) return false;
   return true;
 }

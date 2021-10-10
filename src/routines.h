@@ -65,9 +65,7 @@ extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
 
 /* { DESC.PAS		} */
-extern void randes();
 extern void rantitle(char *title); /* : varying[a] of char); */
-extern void magic_init(unsigned long random_seed);
 extern void known1(char *object_str);  /* : varying[a] of char); */
 extern void known2(char *object_str);  /* : varying[a] of char); */
 extern void unquote(char *object_str); /* : varying[a] of char); */

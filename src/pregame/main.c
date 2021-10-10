@@ -49,8 +49,6 @@ bool pregame__main(void) {
     generate = true;
   }
 
-  magic_init(randes_seed);
-
   if (player_pclass == C_MONK) {
     strcpy(bare_hands, "2d2");
   }

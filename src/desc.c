@@ -1,6 +1,3 @@
-/* desc.c */
-/**/
-
 #include <curses.h>
 #include <math.h>
 #include <stdio.h>
@@ -16,352 +13,9 @@
 #include "pascal.h"
 #include "routines.h"
 #include "term.h"
+#include "treasures.h"
 #include "types.h"
 #include "variables.h"
-
-/*	{ Descriptive constants						} */
-#define MAX_COLORS 68     /*{ Used with potions	} */
-#define MAX_MUSH 29       /*{ Used with mushrooms	} */
-#define MAX_WOODS 41      /*{ Used with staffs	} */
-#define MAX_METALS 32     /*{ Used with wands	} */
-#define MAX_HORNS 13      /*{ Used with horns	} */
-#define MAX_ROCKS 53      /*{ Used with rings	} */
-#define MAX_CLOTHS 7      /*{ Used with bags/sacks	} */
-#define MAX_AMULETS 39    /*{ Used with amulets	} */
-#define MAX_SYLLABLES 156 /*{ Used with scrolls	} */
-static char const *colors[MAX_COLORS] = {"Amber",
-                                         "Azure",
-                                         "Blue",
-                                         "Blue Speckled",
-                                         "Blue Spotted",
-                                         "Black",
-                                         "Black Speckled",
-                                         "Black Spotted",
-                                         "Brown",
-                                         "Brown Speckled",
-                                         "Brown Spotted",
-                                         "Bubbling",
-                                         "Chartreuse",
-                                         "Clear",
-                                         "Cloudy",
-                                         "Copper",
-                                         "Copper Spotted",
-                                         "Crimson",
-                                         "Cyan",
-                                         "Dark Blue",
-                                         "Dark Green",
-                                         "Dark Red",
-                                         "Ecru",
-                                         "Gold",
-                                         "Gold Spotted",
-                                         "Green",
-                                         "Green Speckled",
-                                         "Green Spotted",
-                                         "Grey",
-                                         "Grey Spotted",
-                                         "Hazy",
-                                         "Indigo",
-                                         "Light Blue",
-                                         "Light Green",
-                                         "Magenta",
-                                         "Metallic Blue",
-                                         "Metallic Red",
-                                         "Metallic Green",
-                                         "Metallic Purple",
-                                         "Misty",
-                                         "Orange",
-                                         "Orange Speckled",
-                                         "Orange Spotted",
-                                         "Pink",
-                                         "Pink Speckled",
-                                         "Plaid",
-                                         "Puce",
-                                         "Purple",
-                                         "Purple Speckled",
-                                         "Purple Spotted",
-                                         "Red",
-                                         "Red Speckled",
-                                         "Red Spotted",
-                                         "Silver",
-                                         "Silver Speckled",
-                                         "Silver Spotted",
-                                         "Smokey",
-                                         "Tan",
-                                         "Tangerine",
-                                         "Topaz",
-                                         "Turquoise",
-                                         "Violet",
-                                         "Vermilion",
-                                         "White",
-                                         "White Speckled",
-                                         "White Spotted",
-                                         "Yellow",
-                                         "Daggy"};
-static char const *mushrooms[MAX_MUSH] = {
-    "Blue",        "Black",     "Brown",    "Copper",  "Crimson", "Dark blue",
-    "Dark green",  "Dark red",  "Gold",     "Green",   "Grey",    "Light Blue",
-    "Light Green", "Orange",    "Pink",     "Plaid",   "Purple",  "Red",
-    "Tan",         "Turquoise", "Violet",   "White",   "Yellow",  "Wrinkled",
-    "Wooden",      "Slimey",    "Speckled", "Spotted", "Furry"};
-static char const *woods[MAX_WOODS] = {
-    "Applewood",  "Ashen",      "Aspen",     "Avocado wood", "Balsa",
-    "Banyan",     "Birch",      "Cedar",     "Cherrywood",   "Cinnibar",
-    "Cottonwood", "Cypress",    "Dogwood",   "Driftwood",    "Ebony",
-    "Elm wood",   "Eucalyptus", "Grapevine", "Hawthorn",     "Hemlock",
-    "Hickory",    "Iron wood",  "Juniper",   "Locust",       "Mahogany",
-    "Magnolia",   "Manzanita",  "Maple",     "Mulberry",     "Oak",
-    "Pecan",      "Persimmon",  "Pine",      "Redwood",      "Rosewood",
-    "Spruce",     "Sumac",      "Sycamore",  "Teak",         "Walnut",
-    "Zebra wood"};
-static char const *metals[MAX_METALS] = {"Aluminium",
-                                         "Bone",
-                                         "Brass",
-                                         "Bronze",
-                                         "Cast Iron",
-                                         "Chromium",
-                                         "Copper",
-                                         "Gold",
-                                         "Iron",
-                                         "Lead",
-                                         "Magnesium",
-                                         "Molybdenum",
-                                         "Nickel",
-                                         "Pewter",
-                                         "Rusty",
-                                         "Silver",
-                                         "Steel",
-                                         "Tin",
-                                         "Titanium",
-                                         "Tungsten",
-                                         "Zirconium",
-                                         "Zinc",
-                                         "Aluminium Plated",
-                                         "Brass Plated",
-                                         "Copper Plated",
-                                         "Gold Plated",
-                                         "Nickel Plated",
-                                         "Silver Plated",
-                                         "Steel Plated",
-                                         "Tin Plated",
-                                         "Zinc Plated",
-                                         "Uranium"};
-static char const *horns[MAX_HORNS] = {
-    "Bag Pipes", "Bugle",  "Conch Shell", "Fife",     "Harmonica",
-    "Horn",      "Picolo", "Pipes",       "Recorder", "Reed",
-    "Trumpet",   "Tuba",   "Whistle"};
-static char const *rocks[MAX_ROCKS] = {
-    "Amber",      "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
-    "Aquamarine", "Argentite", "Azurite",     "Beryl",        "Bloodstone",
-    "Calcite",    "Carnelian", "Coral",       "Corundum",     "Cryolite",
-    "Diamond",    "Diorite",   "Emerald",     "Flint",        "Fluorite",
-    "Gabbro",     "Garnet",    "Granite",     "Gypsum",       "Hematite",
-    "Jade",       "Jasper",    "Kryptonite",  "Lapus lazuli", "Limestone",
-    "Malachite",  "Manganite", "Marble",      "Mica",         "Moonstone",
-    "Neptunite",  "Obsidian",  "Onyx",        "Opal",         "Pearl",
-    "Pyrite",     "Quartz",    "Quartzite",   "Rhodonite",    "Rhyolite",
-    "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
-    "Topaz",      "Turquoise", "Zircon"};
-static char const *amulets[MAX_AMULETS] = {
-    "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
-    "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
-    "Rosewood",  "Walnut",   "Aluminium", "Bone",      "Brass",    "Bronze",
-    "Copper",    "Iron",     "Lead",      "Nickel",    "Agate",    "Amethyst",
-    "Diamond",   "Emerald",  "Flint",     "Garnet",    "Jade",     "Obsidian",
-    "Onyx",      "Opal",     "Pearl",     "Quartz",    "Ruby",     "Sapphire",
-    "Tiger eye", "Topaz",    "Turquoise"};
-static char const *cloths[MAX_CLOTHS] = {
-    "Burlap",     "Cotton",      "Wool",     "Sack-cloth",
-    "Rabbit-fur", "Lizard-skin", "Goat-skin"};
-static char const *syllables[MAX_SYLLABLES] = {
-    "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",
-    "arze", "ash",  "aus",  "ban",  "bar",  "bat",  "bek",  "bie",  "bin",
-    "bit",  "bjor", "blu",  "brd",  "bu",   "byt",  "comp", "con",  "cos",
-    "cre",  "dalf", "dan",  "den",  "doe",  "dok",  "eep",  "el",   "eng",
-    "er",   "ere",  "erk",  "esh",  "evs",  "fa",   "fid",  "for",  "fri",
-    "fu",   "gan",  "gar",  "glen", "gop",  "gre",  "ha",   "he",   "hyd",
-    "i",    "ing",  "ion",  "ip",   "ish",  "it",   "ite",  "iv",   "jo",
-    "kho",  "kli",  "klis", "la",   "lech", "man",  "mar",  "me",   "mi",
-    "mic",  "mik",  "mon",  "mung", "mur",  "naed", "neg",  "nep",  "ner",
-    "nes",  "nis",  "nih",  "nin",  "o",    "od",   "ood",  "ook",  "oook",
-    "org",  "orn",  "ox",   "oxy",  "pay",  "pet",  "ple",  "plu",  "po",
-    "pot",  "prok", "re",   "rea",  "rhov", "ri",   "ro",   "rog",  "rok",
-    "rol",  "sa",   "san",  "sat",  "see",  "sef",  "seh",  "shu",  "si",
-    "snd",  "sne",  "snik", "sno",  "so",   "sol",  "spam", "sri",  "sta",
-    "sun",  "ta",   "taf",  "tem",  "ther", "ti",   "tox",  "trol", "tue",
-    "turs", "u",    "ulk",  "um",   "un",   "uni",  "ur",   "val",  "viv",
-    "vly",  "vom",  "wah",  "wed",  "werg", "wex",  "whon", "wlf",  "x",
-    "yerg", "yp",   "zun"};
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void magic_init(__attribute__((unused)) unsigned long random_seed) {
-  /*	{ Initialize all potions, wands, staves, scrolls, etc...
-   * }*/
-
-  long i1, tmpv;
-  char tmps[82];
-
-  ENTER(("magic-init", ""));
-
-  randes();
-
-  for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-
-    /*
-     * The arrays of the object materals all start at 0.
-     * Object subvals start at 1.  When doing the lookup
-     * subtract one from subval!
-     */
-    tmpv = (0xFF & object_list[i1].subval);
-
-    switch (object_list[i1].tval) {
-
-    case potion1:
-    case potion2:
-      if (tmpv <= MAX_COLORS) {
-        insert_str(object_list[i1].name, "%C", colors[tmpv - 1]);
-      }
-      break;
-
-    case scroll1:
-    case scroll2:
-      rantitle(tmps);
-      insert_str(object_list[i1].name, "%T", tmps);
-      break;
-
-    case ring:
-      if (tmpv <= MAX_ROCKS) {
-        insert_str(object_list[i1].name, "%R", rocks[tmpv - 1]);
-      }
-      break;
-
-    case valuable_gems:
-      if (tmpv <= MAX_ROCKS) {
-        insert_str(object_list[i1].name, "%R", rocks[tmpv - 1]);
-      }
-      break;
-
-    case valuable_gems_wear:
-      if (tmpv <= MAX_ROCKS) {
-        insert_str(object_list[i1].name, "%R", rocks[tmpv - 1]);
-      }
-      break;
-
-    case amulet:
-      if (tmpv <= MAX_AMULETS) {
-        insert_str(object_list[i1].name, "%A", amulets[tmpv - 1]);
-      }
-      break;
-
-    case wand:
-      if (tmpv <= MAX_METALS) {
-        insert_str(object_list[i1].name, "%M", metals[tmpv - 1]);
-      }
-      break;
-
-    case chime:
-      if (tmpv <= MAX_METALS) {
-        insert_str(object_list[i1].name, "%M", metals[tmpv - 1]);
-      }
-      break;
-
-    case horn:
-      if (tmpv <= MAX_HORNS) {
-        insert_str(object_list[i1].name, "%H", horns[tmpv - 1]);
-      }
-      break;
-
-    case staff:
-      if (tmpv <= MAX_WOODS) {
-        insert_str(object_list[i1].name, "%W", woods[tmpv - 1]);
-      }
-      break;
-
-    case Food:
-      if (tmpv <= MAX_MUSH) {
-        insert_str(object_list[i1].name, "%M", mushrooms[tmpv - 1]);
-      }
-      break;
-
-    case rod:
-      /* what happened to the rods? */
-      /*
-      if (tmpv <= MAX_RODS) {
-        insert_str(object_list[i1].name,"%D",rods[tmpv-1]);
-      }
-      */
-      break;
-
-    case bag_or_sack:
-      if (tmpv <= MAX_CLOTHS) {
-        insert_str(object_list[i1].name, "%N", cloths[tmpv - 1]);
-      }
-      break;
-
-    case misc_usable:
-      if (tmpv <= MAX_ROCKS) {
-        insert_str(object_list[i1].name, "%R", rocks[tmpv - 1]);
-      }
-      if (tmpv <= MAX_WOODS) {
-        insert_str(object_list[i1].name, "%W", woods[tmpv - 1]);
-      }
-      if (tmpv <= MAX_METALS) {
-        insert_str(object_list[i1].name, "%M", metals[tmpv - 1]);
-      }
-      if (tmpv <= MAX_AMULETS) {
-        insert_str(object_list[i1].name, "%A", amulets[tmpv - 1]);
-      }
-      break;
-    default:
-      break;
-    } /* end switch */
-  }   /* end for */
-
-#if DO_DEBUG && 0
-  for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-    MSG(("object_list[%ld] = %s\n", i1, object_list[i1].name));
-  }
-#endif
-  LEAVE("magic-init", "");
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-void r__randdesloop(char const *str_array[], int count) {
-  long i1;
-  for (i1 = 0; i1 < count; i1++) {
-    long i2 = randint(count) - 1;
-    if (i1 != i2) {
-      char const *tmp = str_array[i1];
-      str_array[i1] = str_array[i2];
-      str_array[i2] = tmp;
-#if DO_DEBUG && 0
-      MSG(("%2ld:%2ld \"%s\" swapped with \"%s\"\n", i1, i2, str_array[i1],
-           str_array[i2]));
-#endif
-    }
-  }
-}
-
-/*//////////////////////////////////////////////////////////////////// */
-
-void randes() {
-  /*{ Randomize colors, woods, and metals				}*/
-
-  r__randdesloop(colors, MAX_COLORS);
-  r__randdesloop(woods, MAX_WOODS);
-  r__randdesloop(metals, MAX_METALS);
-  r__randdesloop(horns, MAX_HORNS);
-  r__randdesloop(rocks, MAX_ROCKS);
-  r__randdesloop(amulets, MAX_AMULETS);
-  r__randdesloop(mushrooms, MAX_MUSH);
-  r__randdesloop(cloths, MAX_CLOTHS);
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 void rantitle(char *title) {
   /*{ Return random title						}*/
@@ -383,9 +37,7 @@ void rantitle(char *title) {
   }
   strcat(title, "\"");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void identify(treasure_type *item) {
   /*{ Something has been identified }*/
 
@@ -436,27 +88,21 @@ void identify(treasure_type *item) {
     } while (i1 != MAX_OBJECTS);
   } /* end if | */
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void known1(char *object_str) {
   /*{ Remove 'Secret' symbol for identity of object
    * }*/
 
   insert_str(object_str, "|", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void known2(char *object_str) {
   /*{ Remove 'Secret' symbol for identity of pluses
    * }*/
 
   insert_str(object_str, "^", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void unquote(char *object_str) {
   /*	{ Return string without quoted portion }*/
 
@@ -618,20 +264,3 @@ char *bag_descrip(treas_rec *bag, char result[134]) /* was func */
   }
   return result;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* END FILE  desc.c */
