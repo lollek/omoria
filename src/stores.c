@@ -18,7 +18,7 @@
 #include "pascal.h"
 #include "player.h"
 #include "routines.h"
-#include "store.h"
+#include "stores.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
@@ -1715,28 +1715,6 @@ static void __store_enter(enum store_t store_type) {
   }
 
   LEAVE("__store_enter", "");
-}
-
-void store_init() {
-  ENTER(("store_init", ""));
-
-  int max_owners = MAX_OWNERS / MAX_STORES;
-  for (int i = 0; i < MAX_STORES; i++) {
-    stores[i].owner = MAX_STORES * (randint(max_owners) - 1) + i;
-    stores[i].insult_cur = 0;
-    stores[i].store_open.year = 0;
-    stores[i].store_open.month = 0;
-    stores[i].store_open.day = 0;
-    stores[i].store_open.hour = 0;
-    stores[i].store_open.secs = 0;
-    stores[i].store_ctr = 0;
-    for (int j = 0; j <= STORE_INVEN_MAX; j++) {
-      stores[i].store_inven[j].sitem = blank_treasure;
-      stores[i].store_inven[j].scost = 0;
-    }
-  }
-
-  LEAVE("store_init", "s");
 }
 
 void bank_init() {

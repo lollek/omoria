@@ -19,7 +19,7 @@
 #include "player.h"
 #include "routines.h"
 #include "save.h"
-#include "store.h"
+#include "stores.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"

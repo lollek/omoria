@@ -4,11 +4,6 @@
 #include "types.h"
 
 /**
- * store_init() - Initializes the stores with owners
- */
-void store_init();
-
-/**
  * bank_init() - Initialize the bank
  */
 void bank_init();

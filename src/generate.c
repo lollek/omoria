@@ -9,7 +9,7 @@
 #include "pascal.h"
 #include "player.h"
 #include "routines.h"
-#include "store.h"
+#include "stores.h"
 #include "types.h"
 #include "variables.h"
 

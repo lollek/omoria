@@ -8,7 +8,7 @@
 #include "horse.h"
 #include "player.h"
 #include "routines.h"
-#include "store.h"
+#include "stores.h"
 
 void hr__display_commands() {
   c__display_gold();
