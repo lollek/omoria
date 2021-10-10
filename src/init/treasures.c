@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "../variables.h"
 #include "../debug.h"
@@ -67,8 +68,38 @@ static bool init_t_level(void) {
   return true;
 }
 
+static bool adjust_prices(void) {
+  if (COST_ADJ == 1.00) return true;
+
+  for (long i = 1; i <= MAX_OBJECTS; i++) {
+    object_list[i].cost = trunc(object_list[i].cost * COST_ADJ + 0.99);
+  }
+
+  for (long i = 1; i <= INVEN_INIT_MAX; i++) {
+    inventory_init[i].cost = trunc(inventory_init[i].cost * COST_ADJ + 0.99);
+  }
+
+  return true;
+}
+
+static bool adjust_weights(void) {
+  if (WEIGHT_ADJ == 1) return true;
+
+  for (long i = 1; i <= MAX_OBJECTS; i++) {
+    object_list[i].weight *= WEIGHT_ADJ;
+  }
+
+  for (long i = 1; i <= INVEN_INIT_MAX; i++) {
+    inventory_init[i].weight *= WEIGHT_ADJ;
+  }
+
+  return true;
+}
+
 bool init__treasures(void) {
   if (!sort_treasures()) return false;
   if (!init_t_level()) return false;
+  if (!adjust_prices()) return false;
+  if (!adjust_weights()) return false;
   return true;
 }

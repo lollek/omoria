@@ -404,8 +404,6 @@ extern void get_account(char *account);
 /* MISC */
 const char *imoria_version();
 const char *omoria_version();
-extern void price_adjust();
-extern void item_weight_adjust();
 extern long day_num();
 extern long hour_num();
 extern boolean check_time();

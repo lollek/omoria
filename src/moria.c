@@ -33,13 +33,6 @@ int main(int argc, char *argv[]) {
   if (!init__treasures()) exit_game();
   if (!init__stores()) exit_game();
 
-  /* Init the store inventories */
-  if (COST_ADJ != 1.00) {
-    price_adjust();
-  }
-  if (WEIGHT_ADJ != 1) {
-    item_weight_adjust();
-  }
   bank_init();
 
   /*

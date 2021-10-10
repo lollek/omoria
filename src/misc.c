@@ -402,28 +402,6 @@ static boolean learn_druid(boolean *redraw) {
 }
 
 
-void price_adjust() {
-  long i1;
-  for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-    object_list[i1].cost = trunc(object_list[i1].cost * COST_ADJ + 0.99);
-  }
-
-  for (i1 = 1; i1 <= INVEN_INIT_MAX; i1++) {
-    inventory_init[i1].cost = trunc(inventory_init[i1].cost * COST_ADJ + 0.99);
-  }
-}
-
-void item_weight_adjust() {
-  long i1;
-  for (i1 = 1; i1 <= MAX_OBJECTS; i1++) {
-    object_list[i1].weight *= WEIGHT_ADJ;
-  }
-
-  for (i1 = 1; i1 <= INVEN_INIT_MAX; i1++) {
-    inventory_init[i1].weight *= WEIGHT_ADJ;
-  }
-}
-
 boolean check_time() {
   /*{ Check the day-time strings to see if open             -RAK-   }*/
 
