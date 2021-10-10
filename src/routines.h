@@ -443,7 +443,6 @@ extern void petrify(long amt);
 extern void compact_objects();
 extern void popt(long *x);
 extern void pusht(long x);
-extern void sort_objects();
 extern void magic_treasure(long x, long level, boolean forceit);
 extern void place_trap(long y, long x, long typ, long subval);
 extern void place_rubble(long y, long x);

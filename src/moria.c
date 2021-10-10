@@ -9,6 +9,7 @@
 #include "variables.h"
 #include "kickout.h"
 #include "init/monsters.h"
+#include "init/treasures.h"
 
 void C_main_menu();
 int main(int argc, char *argv[]) {
@@ -27,9 +28,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (!init__monsters()) exit_game();
-
-  /* Sort the objects by level */
-  sort_objects();
+  if (!init__treasures()) exit_game();
 
   /* Init monster and treasure levels for allocate */
   init_m_level();

@@ -401,45 +401,6 @@ static boolean learn_druid(boolean *redraw) {
   return return_value;
 }
 
-void sort_objects() {
-  /*	{ Order the treasure list by level			-RAK- */
-  /*} */
-  long i1, i2, i3, gap;
-  treasure_type tmp;
-
-  ENTER(("sort_objects", ""));
-
-  gap = MAX_OBJECTS / 2;
-  while (gap > 0) {
-    for (i1 = gap + 1; i1 <= MAX_OBJECTS; i1++) {
-      i2 = i1 - gap;
-      while (i2 > 0) {
-        i3 = i2 + gap;
-        if (object_list[i2].level > object_list[i3].level) {
-          tmp = object_list[i2];
-          object_list[i2] = object_list[i3];
-          object_list[i3] = tmp;
-        } else {
-          i2 = 0;
-        }
-        i2 = i2 - gap;
-      } /* end while i2 */
-    }   /* end for i1 */
-    gap = gap / 2;
-  } /* end while gap */
-
-  /*  Verify that the sort worked */
-  /*    i2 = 0; */
-  /*    for (i1=1; i1<=MAX_OBJECTS; i1++) { */
-  /*      if (i2 > object_list[i1].level) { */
-  /*	printf("Error: sort_objects failed\n"); */
-  /*	exit_game(); */
-  /*      } */
-  /*      i2 = object_list[i1].level; */
-  /*    } */
-  LEAVE("sort_objects", "");
-}
-
 void init_m_level() {
   /*	{ Initializes M_LEVEL array for use with PLACE_MONSTER */
   /*-RAK-	} */
