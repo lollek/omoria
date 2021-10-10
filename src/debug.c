@@ -29,13 +29,6 @@ boolean const do_debug_magic_cast = true;
 FILE *debug_file = NULL;
 int call_depth = 0;
 
-
-void dbg__init(void) {
-#if DO_DEBUG
-    debug_file = fopen("debug.out", "w");
-#endif
-}
-
 void dbg__enter(char const *routine_name, char const *fmt, ...) {
   va_list args;
 

@@ -3,6 +3,7 @@
 #include "init/argv.h"
 #include "init/bank.h"
 #include "init/death.h"
+#include "init/debug.h"
 #include "init/graphics.h"
 #include "init/kickout.h"
 #include "init/monsters.h"
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
 
   // Initialization
   game_state = GS_LOADING;
-  dbg__init();
+  if (!init__debug()) exit_game();
   MSG(("%s", "Main - Initialization"));
 
   // Check to see if an update is in progress

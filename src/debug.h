@@ -16,7 +16,6 @@ extern boolean const do_debug_magic_cast;
   dbg__return_dbg((rname), (mark), (typestr), (desc), (valptr));
 #define MSG(args) dbg__log_msg args
 
-extern FILE *debug_file;
 extern int call_depth;
 
 #else /* !DO_DEBUG */
@@ -28,7 +27,8 @@ extern int call_depth;
 
 #endif /* DO_DEBUG */
 
-void dbg__init(void);
+extern FILE *debug_file;
+
 void dbg__enter(char const *routine_name, char const *fmt, ...);
 void dbg__leave(char *routine_name, char *marker);
 void dbg__return_dbg(char *routine_name, char *marker, char typestr, char *descript,
