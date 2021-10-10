@@ -8,6 +8,9 @@ I will use this project to test how project / code structure affects the code,
 so the layout might not always be optimal.
 ```
 /src/init           - Object and logic initialization
+- Can only be used by the main()-function
+- Can use any file outside /src/init as a dependency
+
 /src/pre-game       - Startup-menu, etc
 /src/pre-game/logic
 /src/pre-game/model
