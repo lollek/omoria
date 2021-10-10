@@ -51,7 +51,6 @@ extern void enter_casino();
 /*	{ Chances the name of the character			-JWT- * } */
 extern void change_name();
 extern void create_character();
-extern void set_gem_values();
 
 /* { CREATURE.PAS		} */
 extern long find_mon(const char *virtual_name);
