@@ -22,6 +22,7 @@ mod class_interop;
 mod currency;
 mod gametime;
 mod item;
+mod item_interop;
 mod item_type;
 mod magic;
 mod monster;

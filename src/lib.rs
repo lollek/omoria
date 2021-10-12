@@ -36,7 +36,6 @@ pub mod screen;
 pub mod template;
 pub mod term;
 pub mod thirdparty;
-pub mod types;
 
 pub mod ability_extern;
 pub mod bank_extern;
