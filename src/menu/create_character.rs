@@ -15,8 +15,8 @@ use screen;
 use term;
 use logic::menu;
 
-use model::Sex;
-use types::{Stat, StatBlock, stats_iter, Item, Race, races_iter, Currency, GameTime};
+use model::{ Sex, Stat, StatBlock };
+use types::{Item, Race, races_iter, Currency, GameTime};
 use save::types::InventoryItem;
 
 extern "C" {
@@ -62,7 +62,7 @@ fn get_money() {
         // Social Class adj
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
-        - stats_iter().fold(0, |sum: i64, tstat|
+        - Stat::iter().fold(0, |sum: i64, tstat|
             sum + player_stats.get_pos(tstat) as i64)
         // Charisma adj
         + player_stats.get(Stat::Charisma) as i64;
@@ -81,7 +81,7 @@ fn get_stats() {
     let race = player::race();
     let race_stats = race.stat_block();
 
-    let new_stats = StatBlock::from(stats_iter()
+    let new_stats = StatBlock::from(Stat::iter()
         .map(|stat| random_stat() + race_stats.get_pos(stat) as i16)
         .collect::<Vec<i16>>());
     player::set_perm_stats(new_stats);

@@ -1,4 +1,4 @@
-use types::{ StatBlock, Stat, stats_iter };
+use model::{ Stat, StatBlock };
 
 use player;
 use player::data::PLAYER;
@@ -21,7 +21,7 @@ pub fn recalc_curr_stats() {
     let mod_stats = PLAYER.try_read().unwrap().mod_stats;
     let lost_stats = lost_stats();
     let mut curr_stats = StatBlock::new(0);
-    for stat in stats_iter() {
+    for stat in Stat::iter() {
         let curr_stat = perm_stats.get_pos(stat)
             + mod_stats.get_pos(stat)
             - lost_stats.get_pos(stat);

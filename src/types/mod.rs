@@ -7,7 +7,6 @@ pub use self::magic::*;
 pub use self::monster::*;
 pub use self::race::*;
 pub use self::spell::*;
-pub use self::stat::*;
 
 pub mod ability;
 pub mod currency;
@@ -18,6 +17,5 @@ pub mod magic;
 pub mod monster;
 pub mod race;
 pub mod spell;
-pub mod stat;
 
 pub mod item_extern;

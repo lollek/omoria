@@ -1,4 +1,4 @@
-use types::Stat;
+use model::Stat;
 
 use player;
 use player::data::PLAYER;

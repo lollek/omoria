@@ -2,7 +2,8 @@ use libc;
 
 use debug;
 use player;
-use types::{ Magic, Stat };
+use types::Magic;
+use model::Stat;
 
 #[no_mangle]
 pub extern fn C_player_knows_spell(slot: libc::int32_t) -> libc::uint8_t {

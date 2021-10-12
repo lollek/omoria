@@ -6,7 +6,7 @@ use equipment;
 use ncurses;
 use player;
 use term;
-use types::Stat;
+use model::Stat;
 
 // Stats Column
 const STAT_BLOCK_WIDTH: usize = 14;

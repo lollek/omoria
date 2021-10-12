@@ -1,4 +1,4 @@
-use types::Stat;
+use model::Stat;
 
 #[derive(PartialEq)]
 pub enum Magic {
