@@ -4,8 +4,8 @@ use std::cmp::{ min, max };
 use std::ffi::CString;
 use std::sync::RwLock;
 
-use model::{ Ability, Class, Currency, Sex, Stat, StatBlock, Wallet };
-use types::{ Race, GameTime };
+use model::{ Ability, Class, Currency, GameTime, Sex, Stat, StatBlock, Wallet };
+use types::Race;
 
 use player;
 use random;
