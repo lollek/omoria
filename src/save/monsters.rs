@@ -1,6 +1,6 @@
 use libc;
 
-use types::Monster;
+use model::Monster;
 use save::types::*;
 
 const MAX_MALLOC: usize = 101;

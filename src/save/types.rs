@@ -1,8 +1,8 @@
 use libc;
 use thirdparty::serde::{ BigArray, NullPtr };
 
-use model::GameTime;
-use types::{ Item, Monster };
+use model::{ GameTime, Monster };
+use types::{ Item };
 
 pub const STORE_INVEN_MAX: usize = 24;
 pub const MAX_STORES: usize = 12;
