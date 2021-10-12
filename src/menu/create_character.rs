@@ -15,8 +15,8 @@ use screen;
 use term;
 use logic::menu;
 
-use model::{ Currency, GameTime, Sex, Stat, StatBlock };
-use types::{Item, Race, races_iter};
+use model::{ Currency, GameTime, Race, Sex, Stat, StatBlock };
+use types::{Item};
 use save::types::InventoryItem;
 
 extern "C" {
@@ -874,7 +874,7 @@ fn choose_class() {
 fn choose_race() {
     debug::enter("create_character::choose_race");
 
-    let races = races_iter().map(|i| Race::from(i).name()).collect::<Vec<&str>>();
+    let races = Race::iter().map(|i| Race::from(i).name()).collect::<Vec<&str>>();
     let mut index = 0;
 
     loop {

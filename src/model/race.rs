@@ -372,6 +372,11 @@ impl Race {
             _ => Vec::new(),
         }
     }
+
+    pub fn iter() -> impl Iterator<Item=usize> {
+        (Race::Human as usize)..(Race::Dryad as usize + 1)
+    }
+
 }
 
 impl From<usize> for Race {
@@ -390,9 +395,5 @@ impl From<usize> for Race {
             _ => panic!("pos out of range")
         }
     }
-}
-
-pub fn races_iter() -> impl Iterator<Item=usize> {
-    (Race::Human as usize)..(Race::Dryad as usize + 1)
 }
 
