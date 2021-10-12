@@ -1,5 +1,4 @@
 pub use self::ability::*;
-pub use self::class::*;
 pub use self::currency::*;
 pub use self::gametime::*;
 pub use self::item::*;
@@ -13,7 +12,6 @@ pub use self::stat::*;
 pub use self::wallet::*;
 
 pub mod ability;
-pub mod class;
 pub mod currency;
 pub mod gametime;
 pub mod item;

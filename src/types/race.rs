@@ -1,4 +1,5 @@
-use types::{Ability, Class, Sex, StatBlock};
+use model::Class;
+use types::{Ability, Sex, StatBlock};
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Race {
