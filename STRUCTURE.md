@@ -18,6 +18,7 @@ so the layout might not always be optimal.
 
 /src/logic          - Game logic
 /src/model          - Types, classes, structs
+/src/template       - Templates of models
 ```
 
 ## Namespaces

@@ -7,7 +7,7 @@ use libc::{time, time_t, strcpy};
 
 use debug;
 use io;
-use item;
+use template;
 use misc;
 use player;
 use random;
@@ -1036,13 +1036,13 @@ fn add_equipment() {
     // General starting items
     let mut general_starting_items = Vec::new();
 
-    let mut ration_of_food = item::food::ration_of_food();
+    let mut ration_of_food = template::food::ration_of_food();
     ration_of_food.number = 5;
     general_starting_items.push(ration_of_food);
 
-    general_starting_items.push(item::general::wooden_torch());
-    general_starting_items.push(item::general::cloak());
-    general_starting_items.push(item::armor::soft_leather_armor());
+    general_starting_items.push(template::general::wooden_torch());
+    general_starting_items.push(template::general::cloak());
+    general_starting_items.push(template::armor::soft_leather_armor());
 
     for item in general_starting_items {
         unsafe { add_inven_item(item); }

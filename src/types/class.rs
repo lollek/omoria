@@ -1,4 +1,4 @@
-use item;
+use template;
 
 use types::{ Ability, Magic };
 use types::item::Item;
@@ -323,44 +323,44 @@ impl Class {
     pub fn starting_items(&self) -> Vec<Item> {
         match self {
             Class::Fighter => vec![
-                item::weapon::stiletto(),
+                template::weapon::stiletto(),
             ],
             Class::Wizard => vec![
-                item::weapon::stiletto(),
-                item::magic_token::magic_book(),
+                template::weapon::stiletto(),
+                template::magic_token::magic_book(),
                 ],
             Class::Cleric => vec![
-                item::weapon::quarterstaff(),
-                item::magic_token::prayer_book(),
+                template::weapon::quarterstaff(),
+                template::magic_token::prayer_book(),
             ],
             Class::Rogue => vec![
-                item::weapon::stiletto(),
-                item::magic_token::song_book(),
+                template::weapon::stiletto(),
+                template::magic_token::song_book(),
             ],
             Class::Ranger => vec![
-                item::weapon::stiletto(),
-                item::magic_token::instrument(),
+                template::weapon::stiletto(),
+                template::magic_token::instrument(),
             ],
             Class::Paladin => vec![
-                item::weapon::stiletto(),
-                item::magic_token::prayer_book(),
+                template::weapon::stiletto(),
+                template::magic_token::prayer_book(),
             ],
             Class::Druid => vec![
-                item::weapon::quarterstaff(),
-                item::magic_token::instrument(),
+                template::weapon::quarterstaff(),
+                template::magic_token::instrument(),
             ],
             Class::Bard => vec![
-                item::weapon::stiletto(),
-                item::magic_token::song_book(),
+                template::weapon::stiletto(),
+                template::magic_token::song_book(),
             ],
             Class::Adventurer => vec![
-                item::weapon::stiletto(),
-                item::magic_token::magic_book(),
+                template::weapon::stiletto(),
+                template::magic_token::magic_book(),
             ],
             Class::Monk => vec![
             ],
             Class::Barbarian => vec![
-                item::weapon::stiletto(),
+                template::weapon::stiletto(),
             ],
         }
     }
