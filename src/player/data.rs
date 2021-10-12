@@ -4,9 +4,9 @@ use std::cmp::{ min, max };
 use std::ffi::CString;
 use std::sync::RwLock;
 
-use model::{ Class, Sex, Stat, StatBlock, Wallet };
+use model::{ Ability, Class, Sex, Stat, StatBlock, Wallet };
 use types::{
-    currencies_iter, Race, GameTime, Ability
+    currencies_iter, Race, GameTime, 
 };
 
 use player;

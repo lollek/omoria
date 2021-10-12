@@ -3,7 +3,7 @@ use io;
 use logic::menu;
 use term;
 use player;
-use types::Ability;
+use model::Ability;
 
 // Let the player select an action
 // Returns true if the turn was free (i.e. don't take a turn)

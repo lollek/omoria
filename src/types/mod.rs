@@ -1,4 +1,3 @@
-pub use self::ability::*;
 pub use self::currency::*;
 pub use self::gametime::*;
 pub use self::item::*;
@@ -8,7 +7,6 @@ pub use self::monster::*;
 pub use self::race::*;
 pub use self::spell::*;
 
-pub mod ability;
 pub mod currency;
 pub mod gametime;
 pub mod item;
