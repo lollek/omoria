@@ -1,5 +1,5 @@
-use types::{ Magic, Item };
-use model::Ability;
+use types::{ Item };
+use model::{ Ability, Magic };
 use template;
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
