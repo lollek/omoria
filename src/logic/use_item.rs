@@ -1,5 +1,6 @@
 use model::Class;
-use types::{ Item, ItemType };
+use model::{ ItemType };
+use types::{ Item };
 
 pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
     match class {

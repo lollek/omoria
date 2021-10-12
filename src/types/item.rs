@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use types::ItemType;
+use model::ItemType;
 use misc;
 use libc;
 
