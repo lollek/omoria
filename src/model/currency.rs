@@ -20,6 +20,10 @@ impl Currency {
             _ => panic!()
         }
     }
+
+    pub fn iter() -> impl Iterator<Item=usize> {
+        (Currency::Iron as usize)..(Currency::Mithril as usize) + 1
+    }
 }
 
 impl From<usize> for Currency {
@@ -36,7 +40,4 @@ impl From<usize> for Currency {
     }
 }
 
-pub fn currencies_iter() -> impl Iterator<Item=usize> {
-    (Currency::Iron as usize)..(Currency::Mithril as usize) + 1
-}
 

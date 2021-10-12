@@ -4,10 +4,8 @@ use std::cmp::{ min, max };
 use std::ffi::CString;
 use std::sync::RwLock;
 
-use model::{ Ability, Class, Sex, Stat, StatBlock, Wallet };
-use types::{
-    currencies_iter, Race, GameTime, 
-};
+use model::{ Ability, Class, Currency, Sex, Stat, StatBlock, Wallet };
+use types::{ Race, GameTime };
 
 use player;
 use random;
@@ -322,7 +320,7 @@ pub fn wallet() -> Wallet {
 }
 
 pub fn set_wallet(wallet: &Wallet) {
-    for currency in currencies_iter() {
+    for currency in Currency::iter() {
         unsafe { player_money[currency] = wallet.get_pos(currency) };
     }
     unsafe { player_money[0] = wallet.total };
@@ -333,7 +331,7 @@ pub fn bank_wallet() -> Wallet {
 }
 
 pub fn set_bank_wallet(wallet: &Wallet) {
-    for currency in currencies_iter() {
+    for currency in Currency::iter() {
         unsafe { bank[currency] = wallet.get_pos(currency) };
     }
     unsafe { bank[0] = wallet.total };

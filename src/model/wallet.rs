@@ -1,4 +1,4 @@
-use types::{Currency, currencies_iter};
+use model::Currency;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Wallet {
@@ -26,7 +26,7 @@ impl Wallet {
     }
 
     pub fn calculate_total(&mut self) {
-        self.total = currencies_iter()
+        self.total = Currency::iter()
             .fold(0, |sum, i| sum + (self.get_pos(i) * Currency::from(i).value()))
             / Currency::Gold.value()
     }
