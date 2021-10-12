@@ -1,4 +1,4 @@
-use types::{ Spell };
+use model::{ Spell };
 
 pub fn spell(level: usize) -> Spell {
     match level {

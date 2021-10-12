@@ -1,8 +1,7 @@
 use player;
 use magic;
 
-use model::Class;
-use types::Spell;
+use model::{ Class, Spell };
 
 pub fn spells_iter() -> impl Iterator<Item=usize> {
     0..40
