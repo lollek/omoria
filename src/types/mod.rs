@@ -8,7 +8,6 @@ pub use self::monster::*;
 pub use self::race::*;
 pub use self::spell::*;
 pub use self::stat::*;
-pub use self::wallet::*;
 
 pub mod ability;
 pub mod currency;
@@ -20,6 +19,5 @@ pub mod monster;
 pub mod race;
 pub mod spell;
 pub mod stat;
-pub mod wallet;
 
 pub mod item_extern;
