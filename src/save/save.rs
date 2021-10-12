@@ -10,7 +10,7 @@ use debug;
 use master;
 use player;
 use save;
-use types::Item;
+use model::Item;
 
 use save::types::*;
 

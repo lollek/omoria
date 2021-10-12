@@ -15,8 +15,7 @@ use screen;
 use term;
 use logic::menu;
 
-use model::{ Currency, GameTime, Race, Sex, Stat, StatBlock };
-use types::{Item};
+use model::{ Currency, GameTime, Item, Race, Sex, Stat, StatBlock };
 use save::types::InventoryItem;
 
 extern "C" {

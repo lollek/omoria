@@ -1,8 +1,7 @@
 use libc;
 
 use logic::use_item;
-use model::Class;
-use types::item::Item;
+use model::{ Class, Item };
 
 #[no_mangle]
 pub extern fn C_class_melee_bonus(class: libc::int32_t) -> libc::int8_t {

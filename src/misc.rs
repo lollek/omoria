@@ -1,11 +1,10 @@
 use std::ffi::CStr;
 
-use types::item;
-
 use io;
 use magic;
 use player;
 use term;
+use model::{ Damage, Name };
 
 pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
 pub const BTH_PLUS_ADJ: i16 = 3; // Adjust BTH per plus-to-hit
@@ -87,7 +86,7 @@ pub fn print_known_spells() {
     io::inkey_flush();
 }
 
-pub fn rs2item_damage(damage_string: &str) -> item::Damage {
+pub fn rs2item_damage(damage_string: &str) -> Damage {
     const DAMAGE_SIZE: usize = 7;
 
     let mut damage: [i8; DAMAGE_SIZE] = [0; DAMAGE_SIZE];
@@ -97,7 +96,7 @@ pub fn rs2item_damage(damage_string: &str) -> item::Damage {
     return damage;
 }
 
-pub fn rs2item_name(name_string: &str) -> item::Name {
+pub fn rs2item_name(name_string: &str) -> Name {
     const NAME_SIZE: usize = 70;
 
     let mut name: [i8; NAME_SIZE] = [0; NAME_SIZE];

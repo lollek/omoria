@@ -1,7 +1,7 @@
 use libc;
 
 use debug;
-use types::Item;
+use model::Item;
 
 use save::types::*;
 

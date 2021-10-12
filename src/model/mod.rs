@@ -1,7 +1,11 @@
+pub type Damage = [libc::c_char; 7];
+pub type Name = [libc::c_char; 70];
+
 pub use self::ability::*;
 pub use self::class::*;
 pub use self::currency::*;
 pub use self::gametime::*;
+pub use self::item::*;
 pub use self::item_type::*;
 pub use self::magic::*;
 pub use self::monster::*;
@@ -17,6 +21,7 @@ mod class;
 mod class_interop;
 mod currency;
 mod gametime;
+mod item;
 mod item_type;
 mod magic;
 mod monster;

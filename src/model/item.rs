@@ -2,11 +2,9 @@ use std::borrow::Cow;
 use model::ItemType;
 use misc;
 use libc;
+use model::{ Damage, Name };
 
 use thirdparty::serde::BigArray;
-
-pub type Damage = [libc::c_char; 7];
-pub type Name = [libc::c_char; 70];
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]

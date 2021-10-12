@@ -1,6 +1,5 @@
 use misc;
-use model::{ ItemType };
-use types::{ Item };
+use model::{ Item, ItemType };
 
 pub fn ration_of_food() -> Item {
     Item {

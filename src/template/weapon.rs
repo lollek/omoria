@@ -1,5 +1,4 @@
-use model::{ ItemType };
-use types::{ Item };
+use model::{ Item, ItemType };
 
 use misc;
 

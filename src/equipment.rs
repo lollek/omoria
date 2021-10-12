@@ -1,4 +1,4 @@
-use types::Item;
+use model::Item;
 
 pub const EQUIP_MAX: usize = 15;
 

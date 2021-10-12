@@ -1,6 +1,6 @@
 use libc;
 use debug;
-use types::Item;
+use model::Item;
 
 const EQUIP_MAX: usize = 15;
 
