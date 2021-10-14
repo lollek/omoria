@@ -6,6 +6,5 @@ mod identified;
 mod inventory;
 mod monsters;
 mod save;
+mod save_interop;
 mod town;
-
-mod save_extern;
