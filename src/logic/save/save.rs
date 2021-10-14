@@ -8,17 +8,17 @@ use serde_json;
 use constants;
 use debug;
 use master;
-use player;
 use logic::save;
 use model::{
     DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
-    TownRecord
+    PlayerRecord, TownRecord
 };
+use player;
 
 
 #[derive(Serialize, Deserialize)]
 struct SaveRecord {
-    player: player::PlayerRecord,
+    player: PlayerRecord,
     inventory: Vec<InventoryItem>,
     equipment: Vec<Item>,
     town: TownRecord,

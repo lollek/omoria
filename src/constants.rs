@@ -21,6 +21,7 @@ pub const MAX_OBJECTS: usize = 473;
 // Max number of treasures
 pub const MAX_TALLOC: usize = 225;
 
-// Nummber of stores
+// Number of stores
 pub const MAX_STORES: usize = 12;
 
+pub const MAX_PLAYER_LEVEL: usize = 40;
