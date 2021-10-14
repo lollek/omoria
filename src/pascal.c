@@ -19,12 +19,6 @@
 #include "types.h"
 #include "variables.h"
 
-/*//////////////////////////////////////////////////////////////////// */
-
-void writeln(char *out_line) { printf("%s\n\r", out_line); }
-
-/*//////////////////////////////////////////////////////////////////// */
-
 long pindex(char *s1, char c1) {
   /*
     pascal index function, return position of c1 in s1
