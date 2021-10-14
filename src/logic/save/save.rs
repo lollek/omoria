@@ -9,7 +9,7 @@ use constants;
 use debug;
 use master;
 use player;
-use save;
+use logic::save;
 use model::{
     DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
     TownRecord

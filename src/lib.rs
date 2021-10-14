@@ -31,7 +31,6 @@ pub mod monsters;
 pub mod ncurses;
 pub mod player;
 pub mod random;
-pub mod save;
 pub mod screen;
 pub mod template;
 pub mod term;
