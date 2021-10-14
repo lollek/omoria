@@ -3,7 +3,7 @@ use libc;
 use std::ptr;
 use std::mem;
 
-use save::types::*;
+use model::{ InventoryItem };
 
 extern "C" {
     static mut inventory_list: *mut InventoryItem;

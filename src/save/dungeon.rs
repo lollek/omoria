@@ -1,11 +1,9 @@
 use libc;
 
+use constants;
 use debug;
-use model::Item;
+use model::{ Cave, DungeonRecord, Item, TreasureAndCoordinate };
 
-use save::types::*;
-
-pub const MAX_TALLOC: usize = 225;
 
 extern "C" {
     #[link_name="tlink"] fn C_tlink();
@@ -15,8 +13,8 @@ extern "C" {
     static mut cur_width: libc::c_long;
     static mut max_panel_rows: libc::c_long;
     static mut max_panel_cols: libc::c_long;
-    static mut cave: [[Cave; MAX_WIDTH + 1]; MAX_HEIGHT + 1];
-    static mut t_list: [Item; MAX_TALLOC + 1];
+    static mut cave: [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1];
+    static mut t_list: [Item; constants::MAX_TALLOC + 1];
     static mut dun_level: libc::c_long;
     static mut mon_tot_mult: libc::c_long;
     static mut turn: libc::c_long;

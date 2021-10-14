@@ -1,9 +1,10 @@
 use libc;
 
-use save::types::*;
+use constants;
+use model::{ Store, TownRecord };
 
 extern "C" {
-    static mut stores: [Store; MAX_STORES +1];
+    static mut stores: [Store; constants::MAX_STORES +1];
     static mut town_seed: libc::c_ulong;
     static mut bank: [libc::int64_t; 7];
 }

@@ -10,9 +10,10 @@ use debug;
 use master;
 use player;
 use save;
-use model::Item;
-
-use save::types::*;
+use model::{
+    DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
+    TownRecord
+};
 
 
 #[derive(Serialize, Deserialize)]

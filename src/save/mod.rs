@@ -1,12 +1,11 @@
 pub use self::save::*;
 
-pub mod dungeon;
-pub mod equipment;
-pub mod identified;
-pub mod inventory;
-pub mod monsters;
-pub mod save;
-pub mod town;
-pub mod types;
+mod dungeon;
+mod equipment;
+mod identified;
+mod inventory;
+mod monsters;
+mod save;
+mod town;
 
-pub mod save_extern;
+mod save_extern;

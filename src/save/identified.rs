@@ -1,9 +1,10 @@
 use libc;
 
-use save::types::*;
+use constants;
+use model::IdentifiedRecord;
 
 extern "C" {
-    static mut object_ident: [libc::uint8_t; MAX_OBJECTS + 1];
+    static mut object_ident: [libc::uint8_t; constants::MAX_OBJECTS + 1];
 }
 
 pub fn record() -> IdentifiedRecord {

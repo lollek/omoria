@@ -15,8 +15,9 @@ use screen;
 use term;
 use logic::menu;
 
-use model::{ Currency, GameTime, Item, Race, Sex, Stat, StatBlock };
-use save::types::InventoryItem;
+use model::{
+    Currency, GameTime, InventoryItem, Item, Race, Sex, Stat, StatBlock
+};
 
 extern "C" {
     fn add_money(amount: i64);

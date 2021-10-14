@@ -1,17 +1,15 @@
 use libc;
 
-use model::Monster;
-use save::types::*;
-
-const MAX_MALLOC: usize = 101;
+use constants;
+use model::{ Cave, Monster, MonsterRecord };
 
 extern "C" {
     #[link_name = "mlink"] fn C_mlink();
     #[link_name = "popm"] fn C_popm(index: *mut libc::c_long);
 
-    static mut m_list: [Monster; MAX_MALLOC + 1];
+    static mut m_list: [Monster; constants::MAX_MALLOC + 1];
     static mut muptr: libc::c_long;
-    static mut cave: [[Cave; MAX_WIDTH + 1]; MAX_HEIGHT + 1];
+    static mut cave: [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1];
 }
 
 fn save_monsters() -> Vec<Monster> {
