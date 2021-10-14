@@ -51,9 +51,12 @@ void kick__kickout_player_if_time() {
     msg_print(" ");
   }
 
-  do {
-    save_and_quit();
-  } while (true);
+  for (int i = 0; i < 10; ++i) {
+      if (sav__save_char()) {
+          break;
+      }
+  }
+  exit_game();
 }
 
 bool kick__should_kickout(void) {

@@ -23,22 +23,8 @@
 #include "types.h"
 #include "variables.h"
 
-boolean save_and_quit(void) {
-  boolean flag = save_char();
-
-  if (flag) {
-    char out_rec[1026];
-    sprintf(out_rec, "Character saved. [Moria Version %s]\n", omoria_version());
-    prt(out_rec, 2, 1);
-    exit_game();
-  }
-
-  return flag;
-}
-
-boolean save_char(void) {
-  /* Actual save procedure -RAK- & -JWT- */
-  boolean flag = true;
+bool sav__save_char(void) {
+  bool flag = true;
 
   ENTER(("save_char", ""));
 
@@ -57,36 +43,30 @@ boolean save_char(void) {
   return flag;
 }
 
-void get_char(void) {
-  /*{ Restore a saved game				-RAK- & -JWT-
-   * }*/
-
-  boolean paniced = false;
-
-  ENTER(("get_char", "%d"));
+bool sav__load_character(char const *player_name, int64_t player_uid) {
+  ENTER(("sav__load_character", "%d"));
 
   prt("Restoring Character...", 1, 1);
   refresh();
 
   MSG(("name: %s, uid: %ld", player_name, player_uid));
 
-  if (!paniced && !C_master_character_exists(player_uid)) {
+  if (!C_master_character_exists(player_uid)) {
     MSG(("Character does not exist in master!"));
-    paniced = true;
+    return false;
   }
-  if (!paniced)
-    paniced = !C_load_character();
 
-  if (paniced) {
+  if (!C_load_character()) {
     clear_from(1);
     prt("Data Corruption Error.", 1, 1);
     prt(" ", 2, 1);
 
     /* We'll put it in the debug log as well */
     MSG(("Data Corruption Error"));
-    exit_game();
+    return false;
   }
   clear();
 
-  LEAVE("get_char", "");
+  LEAVE("sav__load_character", "");
+  return true;
 }

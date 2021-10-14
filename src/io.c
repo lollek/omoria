@@ -31,8 +31,8 @@ void signalexit() {
   MSG(("Sorry, caught a core-dump signal."));
 
   msg_print("Sorry, caught a core-dump signal.");
-  save_and_quit();
-  exit_game(0);
+  sav__save_char();
+  exit_game();
 
   LEAVE("signalexit", "");
 }
@@ -58,7 +58,7 @@ void signalquit() {
 }
 
 void signalsave() {
-  save_and_quit();
+  sav__save_char();
   exit_game();
 }
 
