@@ -8,7 +8,7 @@ use serde_json;
 use constants;
 use debug;
 use master;
-use logic::save;
+use save;
 use model::{
     DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
     PlayerRecord, TownRecord

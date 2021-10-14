@@ -1,6 +1,6 @@
  use libc;
 
- use logic::save;
+ use save;
 
 #[no_mangle]
 pub extern fn C_delete_character() {
