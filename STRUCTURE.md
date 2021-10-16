@@ -46,3 +46,4 @@ Modules;
 * init = src/init/\*
 * pregame = src/pre-game/\*
 * sav = src/save.h
+* mst = src/master.h

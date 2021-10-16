@@ -1,10 +1,11 @@
 #include <string.h>
 
 #include "../configure.h"
+#include "../master.h"
 #include "../player.h"
-#include "../variables.h"
-#include "../save.h"
 #include "../routines.h"
+#include "../save.h"
+#include "../variables.h"
 
 #include "menu.h"
 
@@ -26,7 +27,7 @@ static bool create_new_character(void) {
     player_flags.light_on = false;
     strcpy(save_file_name, SAVE_FILE_PATH "/");
     strcat(save_file_name, player_name);
-    player_uid = C_master_add_character();
+    player_uid = mst__add_character();
 
     learn_magic(false);
     player_cmana = player_mana;

@@ -10,6 +10,7 @@
 #include "constants.h"
 #include "debug.h"
 #include "magic.h"
+#include "master.h"
 #include "pascal.h"
 #include "player.h"
 #include "routines.h"
@@ -154,7 +155,7 @@ void upon_death() {
   player_flags.dead = true;
 
   /*  What happens upon dying...    -RAK- */
-  if (!C_master_update_character(player_uid)) {
+  if (!mst__update_character(player_uid)) {
     msg_print("ERROR opening file MASTER. "
               "Contact your local wizard.");
     msg_print(" ");
