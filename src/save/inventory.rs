@@ -3,6 +3,7 @@ use libc;
 use std::ptr;
 use std::mem;
 
+use debug;
 use model::{ InventoryItem };
 
 extern "C" {
@@ -23,6 +24,7 @@ pub fn record() -> Vec<InventoryItem> {
 }
 
 pub fn set_record(record: Vec<InventoryItem>) {
+    debug::enter("inventory::set_record");
     fn mallocfn() -> *mut InventoryItem {
         unsafe { libc::malloc(mem::size_of::<InventoryItem>()) as *mut InventoryItem }
     }
@@ -49,4 +51,5 @@ pub fn set_record(record: Vec<InventoryItem>) {
         }
     }
     unsafe { inven_ctr = size as libc::c_long };
+    debug::leave("inventory::set_record");
 }

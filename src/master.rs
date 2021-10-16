@@ -123,17 +123,20 @@ pub fn add_character() -> Option<i64> {
     Some(new_uid)
 }
 
-pub fn character_exists(uid: i64) -> Option<()> {
+pub fn character_exists(uid: i64) -> bool {
     debug::enter("master_character_exists");
 
-    let records = read_master()?;
+    let records = read_master();
+    if records.is_none() {
+        return false;
+    }
 
-    let result = match records.iter()
+    let result = match records.unwrap().iter()
         .position(|ref i| i.uid == uid) {
-            Some(_) => Some(()),
+            Some(_) => true,
             None => {
                 debug::warn("Master file did not contain the player");
-                None
+                false
             },
         };
 

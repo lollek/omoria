@@ -13,7 +13,7 @@
 static bool load_existing_character(void) {
     game_state = GS_IGNORE_CTRL_C;
     if (!sav__load_character(player_name, player_uid)) return false;
-    if (!sav__save_char()) return false;
+    if (!sav__save_character()) return false;
     change_name();
 
     return true;

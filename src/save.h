@@ -1,7 +1,6 @@
 #ifndef SAVE_H
 #define SAVE_H
 
-#include <stdbool.h>
 #include <stdint.h>
 
 /**
@@ -9,13 +8,13 @@
  *
  * @returns: True on success, false on failure
  */
-bool sav__save_char(void);
+uint8_t sav__save_character(void);
 
 /**
  * sav__load_character() - Loads the given character
  *
  * @returns: True on success, false on failure
  */
-bool sav__load_character(char const *player_name, int64_t player_uid);
+uint8_t sav__load_character(char const *player_name, int64_t player_uid);
 
 #endif /* SAVE_H */

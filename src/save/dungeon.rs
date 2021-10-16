@@ -98,6 +98,7 @@ pub fn record() -> DungeonRecord {
 }
 
 pub fn set_record(record: DungeonRecord) {
+    debug::enter("dungeon::set_record");
     unsafe {
         cur_height = record.cur_height;
         cur_width = record.cur_width;
@@ -112,4 +113,5 @@ pub fn set_record(record: DungeonRecord) {
         turn = record.turn;
         randes_seed = record.randes_seed;
     }
+    debug::leave("dungeon::set_record");
 }

@@ -319,6 +319,7 @@ pub fn abilities() -> Vec<Ability> {
 }
 
 pub fn set_record(record: PlayerRecord) {
+    debug::enter("player::set_record");
     unsafe {
         player_account = record.account;
     }
@@ -389,6 +390,7 @@ pub fn set_record(record: PlayerRecord) {
         char_row = record.char_row;
         char_col = record.char_col;
     }
+    debug::leave("player::set_record");
 }
 
 pub fn current_hp() -> i16 {

@@ -2187,7 +2187,7 @@ static void d__execute_command(long *command) {
       } else {
         if (search_flag)
           search_off();
-        if (sav__save_char())
+        if (sav__save_character())
           exit_game();
       }
       reset_flag = true;

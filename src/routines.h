@@ -9,7 +9,6 @@
 
 /* START - FROM RUST */
 boolean C_master_update_character(int64_t uid);
-boolean C_master_character_exists(int64_t uid);
 int64_t C_master_add_character();
 
 boolean C_save_character();
