@@ -19,6 +19,8 @@ Modules;
   as well.
 * Pregame - Things which happen before the game really begins.
 * Save - All logic for saving and retrieving characters.
+* Master - All logic for master files
+* Persistence - All logic for saving and loading data models.
 
 ```
 /src/init           - Object and logic initialization

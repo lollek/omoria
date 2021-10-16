@@ -130,7 +130,10 @@ pub fn save_character_with_feedback() -> Option<()> {
 fn save_character() -> Option<()> {
     debug::enter("save_character");
 
-    master::update_character(player::uid());
+    if let Err(e) = master::update_character(player::uid()) {
+        debug::error(format!("Failed to update character in master: {}", e).as_str());
+        return None;
+    }
     player::increase_save_counter();
 
     let file = open_savefile(&player::name(), player::uid(), true)?;
