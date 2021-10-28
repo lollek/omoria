@@ -19,6 +19,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "logic/generate_item.h"
 
 /*	{ Output dungeon section sizes					} */
 #define OUTPAGE_HEIGHT 44 /* { 44 lines of dungeon per section	} */
@@ -462,7 +463,7 @@ void print_objects() {
         popt(&i2);
 
         for (i1 = 1; i1 <= nobj; i1++) {
-          t_list[i2] = object_list[get_obj_num(level, PLACE_OBJECT_TRIES)];
+          t_list[i2] = object_list[generate_item_level_for_dungeon_level(level, PLACE_OBJECT_TRIES)];
           magic_treasure(i2, level, false);
           inven_temp.data = t_list[i2];
           /* with inven_temp->data. do; */

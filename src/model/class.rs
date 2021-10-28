@@ -241,44 +241,44 @@ impl Class {
     pub fn starting_items(&self) -> Vec<Item> {
         match self {
             Class::Fighter => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
             ],
             Class::Wizard => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
                 template::magic_token::magic_book(),
                 ],
             Class::Cleric => vec![
-                template::weapon::quarterstaff(),
+                template::generate_mace(1, template::MaceTemplate::IronShodQuarterstaff),
                 template::magic_token::prayer_book(),
             ],
             Class::Rogue => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
                 template::magic_token::song_book(),
             ],
             Class::Ranger => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
                 template::magic_token::instrument(),
             ],
             Class::Paladin => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
                 template::magic_token::prayer_book(),
             ],
             Class::Druid => vec![
-                template::weapon::quarterstaff(),
+                template::generate_mace(1, template::MaceTemplate::IronShodQuarterstaff),
                 template::magic_token::instrument(),
             ],
             Class::Bard => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
                 template::magic_token::song_book(),
             ],
             Class::Adventurer => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
                 template::magic_token::magic_book(),
             ],
             Class::Monk => vec![
             ],
             Class::Barbarian => vec![
-                template::weapon::stiletto(),
+                template::generate_dagger(1, template::DaggerTemplate::Stiletto),
             ],
         }
     }

@@ -731,11 +731,9 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
     treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
     if (is_special)
       switch (treasure_ptr->subval) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
+      case 1:  case 2:  case 3:  case 4:  case 5:
+      case 12: case 13: case 14: case 15:
+      case 16: case 17: case 18:
         switch (randint(3)) {
         case 1:
           strcat(treasure_ptr->name, " of Intelligence");
@@ -757,11 +755,9 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
           break;
         }
         break;
-      case 6:
-      case 7:
-      case 8:
-      case 9:
-      case 10:
+
+      case 6:  case 7:  case 8:  case 9:  case 10:
+      case 19: case 20: case 21: case 22: case 23:
         switch (randint(6)) {
         case 1:
           strcat(treasure_ptr->name, " of Might");
@@ -1696,14 +1692,12 @@ static void mt__get_chances(long level, boolean *is_magic, boolean *is_special,
   /* Chance increases with each dungeon level			*/
 
   long magic = obj_base_magic + (level * (obj_base_max - obj_base_magic)) / 100;
-  long special;
-  long cursed;
 
   if (magic > obj_base_max)
     magic = obj_base_max;
 
-  special = trunc(magic / obj_div_special);
-  cursed = trunc(magic / obj_div_cursed);
+  long special = trunc(magic / obj_div_special);
+  long cursed = trunc(magic / obj_div_cursed);
 
   *is_magic = randint(150) <= magic;
   *is_special = randint(150) <= special;

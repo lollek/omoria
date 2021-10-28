@@ -1041,9 +1041,12 @@ fn add_equipment() {
     ration_of_food.number = 5;
     general_starting_items.push(ration_of_food);
 
-    general_starting_items.push(template::general::wooden_torch());
-    general_starting_items.push(template::general::cloak());
-    general_starting_items.push(template::armor::soft_leather_armor());
+    let torch = template::generate_light_source(1, template::LightSourceTemplate::WoodenTorch);
+    general_starting_items.push(torch);
+    let light_cloak = template::generate_cloak(1, template::CloakTemplate::LightCloak);
+    general_starting_items.push(light_cloak);
+    let soft_leather_armor = template::generate_armor(1, template::ArmorTemplate::SoftLeatherArmor);
+    general_starting_items.push(soft_leather_armor);
 
     for item in general_starting_items {
         unsafe { add_inven_item(item); }

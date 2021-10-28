@@ -19,6 +19,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "logic/generate_item.h"
 
 static uint8_t const MAX_QUESTS =
     35; /*{ Maximum number of quests per game	} */
@@ -105,7 +106,7 @@ void q__reward_item(long target) {
 
     for (i3 = 0; (i3 < q1) && (rewards[i2].cost < q3);) {
 
-      t_list[i1] = object_list[get_obj_num(player_max_lev + 10, q2)];
+      t_list[i1] = object_list[generate_item_level_for_dungeon_level(player_max_lev + 10, q2)];
       if (is_in(t_list[i1].tval, *toys[i2])) {
         magic_treasure(i1, player_max_lev + 10, true);
 

@@ -6,7 +6,7 @@ pub enum ItemType {
     Chest = 2,
     MiscUsable = 3,
     Jewelry = 4,
-    Gems = 5,
+    Gem = 5,
     Bag = 6,
     WearableGem = 7,
 
@@ -136,7 +136,7 @@ impl ItemType {
                 }
             }.into(),
             ItemType::Jewelry => '*'.into(),
-            ItemType::Gems => '*'.into(),
+            ItemType::Gem => '*'.into(),
             ItemType::Bag => '~'.into(),
             ItemType::WearableGem => '*'.into(),
 
@@ -272,7 +272,7 @@ impl From<u8> for ItemType {
             2 => ItemType::Chest,
             3 => ItemType::MiscUsable,
             4 => ItemType::Jewelry,
-            5 => ItemType::Gems,
+            5 => ItemType::Gem,
             6 => ItemType::Bag,
             7 => ItemType::WearableGem,
 

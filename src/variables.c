@@ -178,41 +178,41 @@ long com_val;
 
 treasure_type yums[NUM_YUM + 1] = {
     {"& Bogus Hard Biscuit~", Food, 0x00000000, Nothing_flag, 500, 1, 309, 2, 1,
-     0, 0, 0, 0, "0d0", -1, 0}, /*{0} */
+     0, 0, 0, 0, "0d0", -1, 0},
     {"& Hard Biscuit~", Food, 0x00000000, Nothing_flag, 500, 1, 309, 2, 1, 0, 0,
-     0, 0, "0d0", -1, 0}, /*{1} */
+     0, 0, "0d0", -1, 0},
     {"& Pint of Fine Wine", Food, 0x00000000, Nothing_flag, 400, 2, 312, 10, 1,
-     0, 0, 0, 0, "0d0", -1, 0}, /*{2} */
+     0, 0, 0, 0, "0d0", -1, 0},
     {"& Strip~ of Beef Jerky", Food, 0x00000000, Nothing_flag, 1750, 2, 310, 2,
-     1, 0, 0, 0, 0, "0d0", -1, 0}, /*{3} */
+     1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Piece~ of Elvish Waybread", Food, 0x00000000, 0x21800020, 3500, 10, 313,
-     3, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{4} */
+     3, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Stew~", Food, 0x00000000, 0x330001C0, 2000, 0, 314, 3, 1, 0, 0, 0, 0,
-     "0d0", -1, 0}, /*{5} */
+     "0d0", -1, 0}, 
     {"& Green Jelly~", Food, 0x00000000, 0x22400060, 4000, 50, 315, 3, 1, 0, 0,
-     0, 0, "0d0", -1, 0}, /*{6} */
+     0, 0, "0d0", -1, 0},
     {"& pint~ of fine grade mush", Food, 0x00000000, 0x00000000, 1500, 0, 306,
-     252, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{7} */
+     252, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Mushroom~", Food, 0x00000000, Nothing_flag, 3000, 2, 308, 5, 1, 0, 0, 0,
-     0, "0d0", -1, 0}, /*{8} */
+     0, "0d0", -1, 0}, 
     {"& Pint of Fine Ale", Food, 0x00000000, Nothing_flag, 500, 1, 311, 10, 1,
-     0, 0, 0, 0, "0d0", -1, 0}, /*{9} */
+     0, 0, 0, 0, "0d0", -1, 0},
     {"& Handful~ of Berries| (Smurfberries)", Food, 0x00000000, 0x30400000,
-     1000, 0, 317, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{10} */
+     1000, 0, 317, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, 
     {"& Handful~ of Berries| (Goodberries)", Food, 0x00000000, 0x30C00080, 1000,
-     0, 318, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, /*{11} */
+     0, 318, 3, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Cool Set of Threads^ [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag,
-     0, 45, 11, 75, 1, -1, 0, 3, 0, "0d0", -1, 0}, /*{12} */
+     0, 45, 11, 75, 1, -1, 0, 3, 0, "0d0", -1, 0},
     {"Filthy Naga Hide Armor^ [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag,
-     0, 45, 12, 300, 1, -1, 0, 9, 0, "0d0", -1, 0}, /*{13} */
+     0, 45, 12, 300, 1, -1, 0, 9, 0, "0d0", -1, 0},
     {"Stone Plate Armor^ [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0,
-     45, 14, 600, 1, -6, 0, 10, 0, "2d4", -1, 0}, /*{14} */
+     45, 14, 600, 1, -6, 0, 10, 0, "2d4", -1, 0},
     {"Elven Chain Mail^ [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag, 0,
-     900, 13, 160, 1, -1, 0, 17, 0, "1d2", -1, 0}, /*{15} */
+     900, 13, 160, 1, -1, 0, 17, 0, "1d2", -1, 0},
     {"Mithril Chain Mail^ [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0,
-     1800, 15, 240, 1, -1, 0, 24, 0, "1d4", -1, 0}, /*{16} */
+     1800, 15, 240, 1, -1, 0, 24, 0, "1d4", -1, 0},
     {"Mithril Plate Armor^ [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0,
-     3600, 16, 400, 1, -1, 0, 32, 0, "2d4", -1, 0}, /*{17} */
+     3600, 16, 400, 1, -1, 0, 32, 0, "2d4", -1, 0},
     {"& Eyeball~| of Drong", junk_food, 0x00000000, 0x00000000, 300, 1000, 270,
      2, 2, 0, 0, 0, 0, "10d12", 20, 0}, /*{18} */
 };
@@ -338,7 +338,8 @@ long mugging_chance; /* { Chance page gets mugged} */
 /*      Search for MAX_OBJECTS to get to the end of the list */
 
 /*	{ Object list[1..max_objects] (All objects must be defined here)} */
-treasure_type object_list[MAX_OBJECTS + 1] = {
+/*
+treasure_type object_list[MAX_OBJECTS + 1]; = {
     {"& %M Bogus Object~| of Doom", Food, 0x00000000, 0x00000001, 500, 0, 257,
      1, 1, 0, 0, 0, 0, "0d0", 7, 0},
     {"& %M Mushroom~| of Poison", Food, 0x00000000, 0x00000001, 500, 0, 257, 1,
@@ -549,30 +550,30 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      0, 12, 3, 40, 1, 0, 0, 3, 0, "1d1", 6, 0},
     {"& Pair of Sandals^ [%P6,%P4]", boots, Nothing_flag, Nothing_flag, 0, 1, 4,
      1, 1, 0, 0, 0, 0, "0d0", 1, 0},
-    {"& Soft Leather Cap^ [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 4, 1,
-     10, 1, 0, 0, 1, 0, "0d0", 2, 0},
-    {"& Hard Leather Cap^ [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 12, 2,
-     15, 1, 0, 0, 2, 0, "0d0", 4, 0},
-    {"& Metal Cap^ [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 30, 3, 20, 1,
-     0, 0, 3, 0, "1d1", 7, 0},
-    {"& Iron Helm^ [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 75, 4, 75, 1,
-     0, 0, 5, 0, "1d3", 20, 0},
-    {"& Steel Helm^ [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 200, 5, 60,
-     1, 0, 0, 6, 0, "1d3", 40, 0},
-    {"& Silver Crown^ [%P6,%P4] (%P1)", helm, 0x00000000, Nothing_flag, 0, 250,
-     6, 20, 1, 0, 0, 0, 0, "1d1", 44, 0},
-    {"& Golden Crown^ [%P6,%P4] (%P1)", helm, 0x00000000, Nothing_flag, 0, 500,
-     7, 30, 1, 0, 0, 0, 0, "1d1", 47, 0},
-    {"& Jewel Encrusted Crown^ [%P6,%P4] (%P1)", helm, 0x00000000, Nothing_flag,
-     0, 1000, 8, 40, 1, 0, 0, 0, 0, "1d1", 50, 0},
-    {"& Iron Helm^ of Gems [%P6,%P4]", gem_helm, 0x00000000, 0x00000000, 2, 300,
-     9, 75, 1, 0, 0, 2, 0, "1d3", 50, 0},
-    {"& Steel Helm^ of Gems [%P6,%P4]", gem_helm, 0x00000000, 0x00000000, 5,
-     700, 10, 60, 1, 0, 0, 3, 0, "1d3", 75, 0},
-    {"& Cloth Hat^ [%P6,%P4]", helm, Nothing_flag, Nothing_flag, 0, 5, 11, 5, 1,
-     0, 0, 0, 0, "0d0", 1, 0},
-    {"& Cloth Hat^ [%P6,%P4]", helm, Nothing_flag, Nothing_flag, 0, 5, 11, 5, 1,
-     0, 0, 0, 0, "0d0", 1, 0},
+    {"& Soft Leather Cap^ [%P6,%P4]",            helm,     0, 0, 0, 4,    1, 10, 1, 0, 0, 1, 0,
+        "0d0", 2, 0},
+    {"& Hard Leather Cap^ [%P6,%P4]",            helm,     0, 0, 0, 12,   2, 15, 1, 0, 0, 2, 0,
+        "0d0", 4, 0},
+    {"& Metal Cap^ [%P6,%P4]",                   helm,     0, 0, 0, 30,   3, 20, 1, 0, 0, 3, 0,
+        "1d1", 7, 0},
+    {"& Iron Helm^ [%P6,%P4]",                   helm,     0, 0, 0, 75,   4, 75, 1, 0, 0, 5, 0,
+        "1d3", 20, 0},
+    {"& Steel Helm^ [%P6,%P4]",                  helm,     0, 0, 0, 200,  5, 60, 1, 0, 0, 6, 0,
+        "1d3", 40, 0},
+    {"& Silver Crown^ [%P6,%P4] (%P1)",          helm,     0, 0, 0, 250,  6, 20, 1, 0, 0, 0, 0,
+        "1d1", 44, 0},
+    {"& Golden Crown^ [%P6,%P4] (%P1)",          helm,     0, 0, 0, 500,  7, 30, 1, 0, 0, 0, 0,
+        "1d1", 47, 0},
+    {"& Jewel Encrusted Crown^ [%P6,%P4] (%P1)", helm,     0, 0, 0, 1000, 8, 40, 1, 0, 0, 0, 0,
+        "1d1", 50, 0},
+    {"& Iron Helm^ of Gems [%P6,%P4]",           gem_helm, 0, 0, 2, 300 , 9, 75, 1, 0, 0, 2, 0,
+        "1d3", 50, 0},
+    {"& Steel Helm^ of Gems [%P6,%P4]",          gem_helm, 0, 0, 5, 700, 10, 60, 1, 0, 0, 3, 0,
+        "1d3", 75, 0},
+    {"& Cloth Hat^ [%P6,%P4]",                   helm,     0, 0, 0, 5,   11, 5,  1, 0, 0, 0, 0,
+        "0d0", 1, 0},
+    {"& Cloth Hat^ [%P6,%P4]",                   helm,     0, 0, 0, 5,   11, 5,  1, 0, 0, 0, 0,
+        "0d0", 1, 0},
     {"& Finely cut %R| of Teleportation^", valuable_gems_wear, 0x00000000,
      0x00000400, 0, 300, 1, 5, 1, 0, 0, 0, 0, "0d0", 5, 0},
     {"& Finely cut %R| of Resist Cold^", valuable_gems_wear, 0x00000000,
@@ -677,75 +678,75 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      125, 5, 90, 1, 0, 0, 4, 0, "1d3", 20, 0},
     {"& Large Metal Shield^ [%P6,%P4]", shield, 0x00000000, Nothing_flag, 0,
      200, 6, 120, 1, 0, 0, 5, 0, "1d3", 30, 0},
-    {"& %R Ring| of Gain Strength^ (%P1)", ring, 0, Strength_worn_bit, 0, 400,
+    {"& %r ring| of gain strength^ (%p1)", ring, 0, strength_worn_bit, 0, 400,
      1, 2, 1, 0, 0, 0, 0, "0d0", 30, 0},
-    {"& %R Ring| of Gain Dexterity^ (%P1)", ring, 0, Dexterity_worn_bit, 0, 400,
+    {"& %r ring| of gain dexterity^ (%p1)", ring, 0, dexterity_worn_bit, 0, 400,
      2, 2, 1, 0, 0, 0, 0, "0d0", 30, 0},
-    {"& %R Ring| of Gain Constitution^ (%P1)", ring, 0, Constitution_worn_bit,
+    {"& %r ring| of gain constitution^ (%p1)", ring, 0, constitution_worn_bit,
      0, 400, 3, 2, 1, 0, 0, 0, 0, "0d0", 30, 0},
-    {"& %R Ring| of Gain Intelligence^ (%P1)", ring, 0, Intelligence_worn_bit,
+    {"& %r ring| of gain intelligence^ (%p1)", ring, 0, intelligence_worn_bit,
      0, 350, 4, 2, 1, 0, 0, 0, 0, "0d0", 30, 0},
-    {"& %R Ring| of Speed^ (%P1)", ring, 0, Speed_worn_bit, 0, 8000, 7, 2, 1, 0,
+    {"& %r ring| of speed^ (%p1)", ring, 0, speed_worn_bit, 0, 8000, 7, 2, 1, 0,
      0, 0, 0, "0d0", 50, 0},
-    {"& %R Ring| of Speed^ (%P1)", ring, 0, Speed_worn_bit, 0, 1, 35, 2, 1, 0,
+    {"& %r ring| of speed^ (%p1)", ring, 0, speed_worn_bit, 0, 1, 35, 2, 1, 0,
      0, 0, 0, "0d0", 5, 0},
-    {"& %R Ring| of Searching^ (%P1)", ring, 0, Searching_worn_bit, 0, 250, 8,
+    {"& %r ring| of searching^ (%p1)", ring, 0, searching_worn_bit, 0, 250, 8,
      2, 1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Teleportation^", ring, 0,
-     Cursed_worn_bit + Teleportation_worn_bit, 0, 0, 9, 2, 1, 0, 0, 0, 0, "0d0",
+    {"& %r ring| of teleportation^", ring, 0,
+     cursed_worn_bit + teleportation_worn_bit, 0, 0, 9, 2, 1, 0, 0, 0, 0, "0d0",
      7, 0},
-    {"& %R Ring| of Slow Digestion^", ring, 0, Slow_Digestion_worn_bit, 0, 250,
+    {"& %r ring| of slow digestion^", ring, 0, slow_digestion_worn_bit, 0, 250,
      10, 2, 1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Resist Fire^", ring, 0, Resist_Fire_worn_bit, 0, 250, 11, 2,
+    {"& %r ring| of resist fire^", ring, 0, resist_fire_worn_bit, 0, 250, 11, 2,
      1, 0, 0, 0, 0, "0d0", 14, 0},
-    {"& %R Ring| of Resist Cold^", ring, 0, Resist_Cold_worn_bit, 0, 250, 12, 2,
+    {"& %r ring| of resist cold^", ring, 0, resist_cold_worn_bit, 0, 250, 12, 2,
      1, 0, 0, 0, 0, "0d0", 14, 0},
-    {"& %R Ring| of Feather Falling^", ring, 0, Feather_Fall_worn_bit, 0, 200,
+    {"& %r ring| of feather falling^", ring, 0, feather_fall_worn_bit, 0, 200,
      13, 2, 1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Adornment^", ring, 0x00000000, Nothing_flag, 0, 20, 14, 2,
+    {"& %r ring| of adornment^", ring, 0x00000000, nothing_flag, 0, 20, 14, 2,
      1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Adornment^", ring, 0x00000000, Nothing_flag, 0, 30, 15, 2,
+    {"& %r ring| of adornment^", ring, 0x00000000, nothing_flag, 0, 30, 15, 2,
      1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Weakness^", ring, 0, Cursed_worn_bit + Strength_worn_bit,
+    {"& %r ring| of weakness^", ring, 0, cursed_worn_bit + strength_worn_bit,
      -5, 0, 16, 2, 1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Lordly Protection (FIRE)^", ring, 0, Resist_Fire_worn_bit,
+    {"& %r ring| of lordly protection (fire)^", ring, 0, resist_fire_worn_bit,
      0, 1200, 17, 2, 1, 0, 0, 0, 5, "0d0", 50, 0},
-    {"& %R Ring| of Lordly Protection (ACID)^", ring, 0, Resist_Acid_worn_bit,
+    {"& %r ring| of lordly protection (acid)^", ring, 0, resist_acid_worn_bit,
      0, 1200, 18, 2, 1, 0, 0, 0, 5, "0d0", 50, 0},
-    {"& %R Ring| of Lordly Protection (COLD)^", ring, 0, Resist_Cold_worn_bit,
+    {"& %r ring| of lordly protection (cold)^", ring, 0, resist_cold_worn_bit,
      0, 1200, 19, 2, 1, 0, 0, 0, 5, "0d0", 50, 0},
-    {"& %R Ring| of WOE^", ring, 0,
-     Cursed_worn_bit + Aggravation_worn_bit + Teleportation_worn_bit, -5, 0, 20,
+    {"& %r ring| of woe^", ring, 0,
+     cursed_worn_bit + aggravation_worn_bit + teleportation_worn_bit, -5, 0, 20,
      2, 1, 0, 0, 0, -3, "0d0", 50, 0},
-    {"& %R Ring| of Stupidity^", ring, 0,
-     Cursed_worn_bit + Intelligence_worn_bit, -5, 0, 21, 2, 1, 0, 0, 0, 0,
+    {"& %r ring| of stupidity^", ring, 0,
+     cursed_worn_bit + intelligence_worn_bit, -5, 0, 21, 2, 1, 0, 0, 0, 0,
      "0d0", 20, 0},
-    {"& %R Ring| of Increase Damage^ (%P3)", ring, 0x00000000, Nothing_flag, 0,
+    {"& %r ring| of increase damage^ (%p3)", ring, 0x00000000, nothing_flag, 0,
      100, 22, 2, 1, 0, 0, 0, 0, "0d0", 20, 0},
-    {"& %R Ring| of Increase To-Hit^ (%P2)", ring, 0x00000000, Nothing_flag, 0,
+    {"& %r ring| of increase to-hit^ (%p2)", ring, 0x00000000, nothing_flag, 0,
      100, 23, 2, 1, 0, 0, 0, 0, "0d0", 20, 0},
-    {"& %R Ring| of Protection^ [%P4]", ring, 0x00000000, Nothing_flag, 0, 100,
+    {"& %r ring| of protection^ [%p4]", ring, 0x00000000, nothing_flag, 0, 100,
      24, 2, 1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Aggravate Monster^", ring, 0,
-     Cursed_worn_bit + Aggravation_worn_bit, 0, 0, 25, 2, 1, 0, 0, 0, 0, "0d0",
+    {"& %r ring| of aggravate monster^", ring, 0,
+     cursed_worn_bit + aggravation_worn_bit, 0, 0, 25, 2, 1, 0, 0, 0, 0, "0d0",
      7, 0},
-    {"& %R Ring| of See Invisible^", ring, 0, See_Invisible_worn_bit, 0, 340,
+    {"& %r ring| of see invisible^", ring, 0, see_invisible_worn_bit, 0, 340,
      26, 2, 1, 0, 0, 0, 0, "0d0", 40, 0},
-    {"& %R Ring| of Sustain Strength^", ring, 0, Sustain_Stat_worn_bit, 1, 750,
+    {"& %r ring| of sustain strength^", ring, 0, sustain_stat_worn_bit, 1, 750,
      27, 2, 1, 0, 0, 0, 0, "0d0", 44, 0},
-    {"& %R Ring| of Sustain Intelligence^", ring, 0, Sustain_Stat_worn_bit, 2,
+    {"& %r ring| of sustain intelligence^", ring, 0, sustain_stat_worn_bit, 2,
      600, 28, 2, 1, 0, 0, 0, 0, "0d0", 44, 0},
-    {"& %R Ring| of Sustain Wisdom^", ring, 0, Sustain_Stat_worn_bit, 3, 600,
+    {"& %r ring| of sustain wisdom^", ring, 0, sustain_stat_worn_bit, 3, 600,
      29, 2, 1, 0, 0, 0, 0, "0d0", 44, 0},
-    {"& %R Ring| of Sustain Constitution^", ring, 0, Sustain_Stat_worn_bit, 4,
+    {"& %r ring| of sustain constitution^", ring, 0, sustain_stat_worn_bit, 4,
      750, 30, 2, 1, 0, 0, 0, 0, "0d0", 44, 0},
-    {"& %R Ring| of Sustain Dexterity^", ring, 0, Sustain_Stat_worn_bit, 5, 750,
+    {"& %r ring| of sustain dexterity^", ring, 0, sustain_stat_worn_bit, 5, 750,
      31, 2, 1, 0, 0, 0, 0, "0d0", 44, 0},
-    {"& %R Ring| of Sustain Charisma^", ring, 0, Sustain_Stat_worn_bit, 6, 500,
+    {"& %r ring| of sustain charisma^", ring, 0, sustain_stat_worn_bit, 6, 500,
      32, 2, 1, 0, 0, 0, 0, "0d0", 7, 0},
-    {"& %R Ring| of Slaying^", ring, 0x00000000, Nothing_flag, 6, 1000, 33, 2,
+    {"& %r ring| of slaying^", ring, 0x00000000, nothing_flag, 6, 1000, 33, 2,
      1, 0, 0, 0, 0, "0d0", 50, 0},
-    {"& %R Ring| of Gnomekind^", ring, Nothing_flag, 0x00400088, 2, 2000, 34, 2,
+    {"& %r ring| of gnomekind^", ring, nothing_flag, 0x00400088, 2, 2000, 34, 2,
      1, 0, 0, 0, 0, "0d0", 40, 0},
     {"& %A Amulet| of Adornment^", amulet, 0x00000000, Nothing_flag, 0, 20, 11,
      3, 1, 0, 0, 0, 0, "0d0", 16, 0},
@@ -1280,7 +1281,9 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      12, 20, 1, 0, 0, 0, 0, "0d0", 15, 0},
     {"& %H| of Fog^ (%P1 charges)", horn, 0x00000000, 0x10000000, 0, 500, 13,
      20, 1, 0, 0, 0, 0, "0d0", 25, 0},
+     */
     /* Instruments are not in use */
+         /*
     {"& Pipes of Peace", instrument, 0x00000000, 0x000003FF, 0, 30, 258, 40, 1,
      -100, 0, 0, 0, "1d1", 40, 0},
     {"& Lyre of Nature", instrument, 0x00000000, 0x000FFC00, 0, 105, 259, 40, 1,
@@ -1300,6 +1303,7 @@ treasure_type object_list[MAX_OBJECTS + 1] = {
      0x00000000, 0, 950, 265, 60, 1, -100, 0, 0, 0, "0d0", 40, 0}
 
 };
+     */
 
 boolean object_ident[MAX_OBJECTS + 1]; /*(max_objects of false) */
 
@@ -1376,139 +1380,139 @@ treas_rec inven_temp = {
 
 treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"& Bogus Ration~ of Food", Food, 0x00000000, Nothing_flag, 5000, 3, 307,
-     10, 5, 0, 0, 0, 0, "0d0", 0, 1}, /*{  0} */
+     10, 5, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Ration~ of Food", Food, 0x00000000, Nothing_flag, 5000, 3, 307, 10, 5,
-     0, 0, 0, 0, "0d0", 0, 1}, /*{  1} */
+     0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Hard Biscuit~", Food, 0x00000000, Nothing_flag, 500, 1, 309, 2, 5, 0, 0,
-     0, 0, "0d0", 0, 1}, /*{  2} */
+     0, 0, "0d0", 0, 1}, 
     {"& Strip~ of Beef Jerky", Food, 0x00000000, Nothing_flag, 1750, 2, 310, 2,
-     5, 0, 0, 0, 0, "0d0", 0, 1}, /*{  3} */
+     5, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Pint of Fine Ale", Food, 0x00000000, Nothing_flag, 500, 1, 311, 10, 3,
-     0, 0, 0, 0, "0d0", 0, 1}, /*{  4} */
+     0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Pint of Fine Wine", Food, 0x00000000, Nothing_flag, 400, 2, 312, 10, 1,
-     0, 0, 0, 0, "0d0", 0, 1}, /*{  5} */
+     0, 0, 0, 0, "0d0", 0, 1},
     {"& Misercorde (%P0) (%P2,%P3)", dagger, 0x10000000, Nothing_flag, 0, 10, 2,
-     15, 1, 0, 0, 0, 0, "1d4", 0, 1}, /*{  6} */
+     15, 1, 0, 0, 0, 0, "1d4", 0, 1},
     {"& Stiletto (%P0) (%P2,%P3)", dagger, 0x10000000, Nothing_flag, 0, 10, 3,
-     12, 1, 0, 0, 0, 0, "1d4", 0, 1}, /*{  7} */
+     12, 1, 0, 0, 0, 0, "1d4", 0, 1},
     {"& Bastard Sword (%P0) (%P2,%P3)", sword, 0x10000000, Nothing_flag, 0, 350,
-     7, 140, 1, 0, 0, 0, 0, "3d4", 0, 1}, /*{  8} */
+     7, 140, 1, 0, 0, 0, 0, "3d4", 0, 1},
     {"& Broadsword (%P0) (%P2,%P3)", sword, 0x10000000, Nothing_flag, 0, 255,
-     10, 150, 1, 0, 0, 0, 0, "2d5", 0, 1}, /*{  9} */
+     10, 150, 1, 0, 0, 0, 0, "2d5", 0, 1},
     {"& Longsword (%P0) (%P2,%P3)", sword, 0x10000000, Nothing_flag, 0, 300, 18,
-     130, 1, 0, 0, 0, 0, "1d10", 0, 1}, /*{ 10} */
+     130, 1, 0, 0, 0, 0, "1d10", 0, 1},
     {"& Small Sword (%P0) (%P2,%P3)", dagger, 0x10000000, Nothing_flag, 0, 48,
-     22, 75, 1, 0, 0, 0, 0, "1d6", 0, 1}, /*{ 11} */
+     22, 75, 1, 0, 0, 0, 0, "1d6", 0, 1},
     {"& Broad Axe (%P0) (%P2,%P3)", hafted_weapon, 0x10000000, Nothing_flag, 0,
-     304, 4, 160, 1, 0, 0, 0, 0, "2d5", 0, 1}, /*{ 12} */
+     304, 4, 160, 1, 0, 0, 0, 0, "2d5", 0, 1},
     {"& Morningstar (%P0) (%P2,%P3)", maul, 0x00000000, Nothing_flag, 0, 396, 9,
-     150, 1, 0, 0, 0, 0, "2d6", 0, 1}, /*{ 13} */
+     150, 1, 0, 0, 0, 0, "2d6", 0, 1}, 
     {"& Mace (%P0) (%P2,%P3)", maul, 0x00000000, Nothing_flag, 0, 130, 10, 120,
-     1, 0, 0, 0, 0, "2d4", 0, 1}, /*{ 14} */
+     1, 0, 0, 0, 0, "2d4", 0, 1}, 
     {"& War Hammer (%P0) (%P2,%P3)", maul, 0x00000000, Nothing_flag, 0, 225, 11,
-     120, 1, 0, 0, 0, 0, "3d3", 0, 1}, /*{ 15} */
+     120, 1, 0, 0, 0, 0, "3d3", 0, 1}, 
     {"& Halberd (%P0) (%P2,%P3)", pole_arm, 0x10000000, Nothing_flag, 0, 430, 5,
-     190, 1, 0, 0, 0, 0, "3d4", 0, 1}, /*{ 16} */
+     190, 1, 0, 0, 0, 0, "3d4", 0, 1},
     {"& Pike (%P0) (%P2,%P3)", pole_arm, 0x10000000, Nothing_flag, 0, 358, 7,
-     160, 1, 0, 0, 0, 0, "2d5", 0, 1}, /*{ 17} */
+     160, 1, 0, 0, 0, 0, "2d5", 0, 1},
     {"& Spear (%P0) (%P2,%P3)", pole_arm, 0x10000000, Nothing_flag, 0, 36, 8,
-     50, 1, 0, 0, 0, 0, "1d6", 0, 1}, /*{ 18} */
+     50, 1, 0, 0, 0, 0, "1d6", 0, 1},
     {"& Short Bow (%P2)", bow_crossbow_or_sling, 0x00000000, Nothing_flag, 2,
-     50, 1, 30, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 19} */
+     50, 1, 30, 1, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Long Bow (%P2)", bow_crossbow_or_sling, 0x00000000, Nothing_flag, 3,
-     120, 2, 40, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 20} */
+     120, 2, 40, 1, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Light Crossbow (%P2)", bow_crossbow_or_sling, 0x00000000, Nothing_flag,
-     5, 160, 10, 110, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 21} */
+     5, 160, 10, 110, 1, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Sling (%P2)", bow_crossbow_or_sling, 0x00000000, Nothing_flag, 1, 5, 20,
-     5, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 22} */
+     5, 1, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Arrow~ (%P2,%P3)", arrow, 0x10000000, Nothing_flag, 0, 1, 1, 2, 1, 0, 0,
-     0, 0, "3d4", 0, 1}, /*{ 23} */
+     0, 0, "3d4", 0, 1},
     {"& Bolt~ (%P2,%P3)", bolt, 0x10000000, Nothing_flag, 0, 2, 1, 3, 1, 0, 0,
-     0, 0, "3d5", 0, 1}, /*{ 24} */
+     0, 0, "3d5", 0, 1},
     {"& Iron Shot~ (%P2,%P3)", sling_ammo, 0x00000000, Nothing_flag, 0, 2, 1, 5,
-     1, 0, 0, 0, 0, "3d3", 0, 1}, /*{ 25} */
+     1, 0, 0, 0, 0, "3d3", 0, 1},
     {"& Pick (%P1) (%P2,%P3)", pick_or_shovel, 0x10000000, Tunneling_worn_bit,
-     1, 50, 1, 150, 1, 0, 0, 0, 0, "1d3", 0, 1}, /*{ 26} */
+     1, 50, 1, 150, 1, 0, 0, 0, 0, "1d3", 0, 1},
     {"& Shovel (%P1) (%P2,%P3)", pick_or_shovel, 0x00000000, Tunneling_worn_bit,
-     0, 15, 2, 60, 1, 0, 0, 0, 0, "1d2", 0, 1}, /*{ 27} */
+     0, 15, 2, 60, 1, 0, 0, 0, 0, "1d2", 0, 1}, 
     {"& Pair of Soft Leather Boots [%P6,%P4]", boots, 0x00000000, Nothing_flag,
-     0, 7, 2, 30, 1, 0, 0, 2, 0, "1d1", 0, 1}, /*{ 28} */
+     0, 7, 2, 30, 1, 0, 0, 2, 0, "1d1", 0, 1},
     {"& Pair of Hard Leather Boots [%P6,%P4]", boots, 0x00000000, Nothing_flag,
-     0, 12, 3, 40, 1, 0, 0, 3, 0, "1d1", 0, 1}, /*{ 29} */
+     0, 12, 3, 40, 1, 0, 0, 3, 0, "1d1", 0, 1},
     {"& Hard Leather Cap [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 12, 2,
-     15, 1, 0, 0, 2, 0, "0d0", 0, 1}, /*{ 30} */
+     15, 1, 0, 0, 2, 0, "0d0", 0, 1},
     {"& Metal Cap [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 30, 3, 20, 1,
-     0, 0, 3, 0, "1d1", 0, 1}, /*{ 31} */
+     0, 0, 3, 0, "1d1", 0, 1},
     {"& Iron Helm [%P6,%P4]", helm, 0x00000000, Nothing_flag, 0, 75, 4, 75, 1,
-     0, 0, 5, 0, "1d3", 0, 1}, /*{ 32} */
+     0, 0, 5, 0, "1d3", 0, 1},
     {"Soft Leather Armor [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag, 0,
-     18, 2, 80, 1, 0, 0, 4, 0, "0d0", 0, 1}, /*{ 33} */
+     18, 2, 80, 1, 0, 0, 4, 0, "0d0", 0, 1},
     {"Soft Studded Leather [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag, 0,
-     35, 3, 90, 1, 0, 0, 5, 0, "1d1", 0, 1}, /*{ 34} */
+     35, 3, 90, 1, 0, 0, 5, 0, "1d1", 0, 1}, 
     {"Hard Leather Armor [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag, 0,
-     55, 4, 100, 1, -1, 0, 6, 0, "1d1", 0, 1}, /*{ 35} */
+     55, 4, 100, 1, -1, 0, 6, 0, "1d1", 0, 1},
     {"Hard Studded Leather [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag, 0,
-     100, 5, 110, 1, -1, 0, 7, 0, "1d2", 0, 1}, /*{ 36} */
+     100, 5, 110, 1, -1, 0, 7, 0, "1d2", 0, 1},
     {"Leather Scale Mail [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag, 0,
-     330, 9, 140, 1, -1, 0, 11, 0, "1d1", 0, 1}, /*{ 37} */
+     330, 9, 140, 1, -1, 0, 11, 0, "1d1", 0, 1},
     {"Metal Scale Mail [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0, 430,
-     1, 250, 1, -2, 0, 13, 0, "1d4", 0, 1}, /*{ 38} */
+     1, 250, 1, -2, 0, 13, 0, "1d4", 0, 1},
     {"Chain Mail [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0, 530, 2,
-     220, 1, -2, 0, 14, 0, "1d4", 0, 1}, /*{ 39} */
+     220, 1, -2, 0, 14, 0, "1d4", 0, 1},
     {"Partial Plate Armor [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0,
-     900, 9, 260, 1, -3, 0, 22, 0, "1d6", 0, 1}, /*{ 40} */
+     900, 9, 260, 1, -3, 0, 22, 0, "1d6", 0, 1},
     {"Full Plate Armor [%P6,%P4]", hard_armor, 0x00000000, Nothing_flag, 0,
-     1050, 11, 380, 1, -3, 0, 25, 0, "2d4", 0, 1}, /*{ 41} */
+     1050, 11, 380, 1, -3, 0, 25, 0, "2d4", 0, 1}, 
     {"& Cloak [%P6,%P4]", cloak, 0x00000000, Nothing_flag, 0, 3, 1, 10, 1, 0, 0,
-     1, 0, "0d0", 0, 1}, /*{ 42} */
+     1, 0, "0d0", 0, 1},
     {"& Set of Leather Gloves [%P6,%P4]", gloves_and_gauntlets, 0x00000000,
-     Nothing_flag, 0, 3, 1, 5, 1, 0, 0, 1, 0, "0d0", 0, 1}, /*{ 43} */
+     Nothing_flag, 0, 3, 1, 5, 1, 0, 0, 1, 0, "0d0", 0, 1}, 
     {"& Set of Gauntlets [%P6,%P4]", gloves_and_gauntlets, 0x00000000,
-     Nothing_flag, 0, 35, 2, 25, 1, 0, 0, 2, 0, "1d1", 0, 1}, /*{ 44} */
+     Nothing_flag, 0, 35, 2, 25, 1, 0, 0, 2, 0, "1d1", 0, 1},
     {"& Small Leather Shield [%P6,%P4]", shield, 0x00000000, Nothing_flag, 0,
-     30, 1, 50, 1, 0, 0, 2, 0, "1d1", 0, 1}, /*{ 45} */
+     30, 1, 50, 1, 0, 0, 2, 0, "1d1", 0, 1},
     {"& Medium Leather Shield [%P6,%P4]", shield, 0x00000000, Nothing_flag, 0,
-     60, 2, 75, 1, 0, 0, 3, 0, "1d2", 0, 1}, /*{ 46} */
+     60, 2, 75, 1, 0, 0, 3, 0, "1d2", 0, 1}, 
     {"& Small Metal Shield [%P6,%P4]", shield, 0x00000000, Nothing_flag, 0, 50,
-     4, 65, 1, 0, 0, 3, 0, "1d3", 0, 1}, /*{ 47} */
+     4, 65, 1, 0, 0, 3, 0, "1d3", 0, 1}, 
     {"& Ring of Resist Fire", ring, 0x00000000, 0x00080000, 0, 250, 11, 2, 1, 0,
-     0, 0, 0, "0d0", 0, 1}, /*{ 48} */
+     0, 0, 0, "0d0", 0, 1},
     {"& Ring of Resist Cold", ring, 0x00000000, 0x00200000, 0, 250, 12, 2, 1, 0,
-     0, 0, 0, "0d0", 0, 1}, /*{ 49} */
+     0, 0, 0, "0d0", 0, 1}, 
     {"& Ring of Feather Falling", ring, 0x00000000, 0x04000000, 0, 250, 13, 2,
-     1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 50} */
+     1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Ring of Protection [%P4]", ring, 0x00000000, Nothing_flag, 0, 100, 24,
-     2, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 51} */
+     2, 1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Amulet of Charisma (%P1)", amulet, 0x00000000, 0x00000020, 0, 250, 6, 3,
-     1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 52} */
+     1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Amulet of Slow Digestion", amulet, 0x00000000, 0x00000080, 0, 200, 9, 3,
-     1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 53} */
+     1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Amulet of Resist Acid", amulet, 0x00000000, 0x00100000, 0, 300, 10, 3,
-     1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 54} */
+     1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Enchant Weapon To-Hit", scroll1, 0x00000000, 0x00000001, 0,
-     125, 300, 5, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 55} */
+     125, 300, 5, 1, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Scroll~ of Enchant Weapon To-Dam", scroll1, 0x00000000, 0x00000002, 0,
-     125, 301, 5, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 56} */
+     125, 301, 5, 1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Enchant Armor", scroll1, 0x00000000, 0x00000004, 0, 125, 302,
-     5, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 57} */
+     5, 1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Identify", scroll1, 0x00000000, 0x00000008, 0, 50, 303, 5, 2,
-     0, 0, 0, 0, "0d0", 0, 1}, /*{ 58} */
+     0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Remove Curse", scroll1, 0x00000000, 0x00000010, 0, 100, 304,
-     5, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 59} */
+     5, 1, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Light", scroll1, 0x00000000, 0x00000020, 0, 15, 305, 5, 3, 0,
-     0, 0, 0, "0d0", 0, 1}, /*{ 60} */
+     0, 0, 0, "0d0", 0, 1},
     {"& Scroll~ of Phase Door", scroll1, 0x00000000, 0x00000080, 0, 15, 306, 5,
-     2, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 61} */
+     2, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Magic Mapping", scroll1, 0x00000000, 0x00000800, 0, 40, 307,
-     5, 2, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 62} */
+     5, 2, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Scroll~ of Treasure Detection", scroll1, 0x00000000, 0x00004000, 0, 15,
-     308, 5, 2, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 63} */
+     308, 5, 2, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Scroll~ of Object Detection", scroll1, 0x00000000, 0x00008000, 0, 15,
-     309, 5, 2, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 64} */
+     309, 5, 2, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Scroll~ of Detect Invisible", scroll1, 0x00000000, 0x00080000, 0, 15,
-     310, 5, 2, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 65} */
+     310, 5, 2, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Scroll~ of Recharging", scroll1, 0x00000000, 0x01000000, 0, 200, 311, 5,
-     1, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 66} */
+     1, 0, 0, 0, 0, "0d0", 0, 1},
     {"& Book of Magic Spells [Beginners-Magik]", magic_book, 0x00000000,
      0x0000007F, 0, 25, 257, 60, 1, -100, 0, 0, 0, "1d1", 0, 1}, /*{ 67} */
     {"& Book of Magic Spells [Magik I]", magic_book, 0x00000000, 0x0007FF80, 0,
@@ -1527,27 +1531,27 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
      0x000001FE, 0x00000000, 0, 900, 261, 60, 1, -100, 0, 0, 0, "1d1", 0,
      1}, /*{ 74} */
     {"& Potion~ of Restore Strength", potion1, 0x00000000, 0x00000004, 0, 300,
-     310, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 75} */
+     310, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Potion~ of Restore Intelligence", potion1, 0x00000000, 0x00000020, 0,
-     300, 311, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 76} */
+     300, 311, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, 
     {"& Potion~ of Restore Wisdom", potion1, 0x00000000, 0x00000100, 0, 300,
-     312, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 77} */
+     312, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Potion~ of Restore Charisma", potion1, 0x00000000, 0x00000800, 0, 300,
-     313, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 78} */
+     313, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, 
     {"& Potion~ of Cure Light Wounds", potion1, 0x00000000, 0x10001000, 50, 15,
-     314, 4, 2, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 79} */
+     314, 4, 2, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Potion~ of Cure Serious Wounds", potion1, 0x00000000, 0x30002000, 100,
-     40, 315, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 80} */
+     40, 315, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Potion~ of Cure Critical Wounds", potion1, 0x00000000, 0x70004000, 100,
-     100, 316, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 81} */
+     100, 316, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Potion~ of Restore Dexterity", potion1, 0x00010000, 0x04000000, 0, 300,
-     317, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 82} */
+     317, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Potion~ of Restore Constitution", potion1, 0x00000000, 0x68000000, 0,
-     300, 318, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 83} */
+     300, 318, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, 
     {"& Potion~ of Heroism", potion1, 0x00000008, 0x00000000, 0, 35, 319, 4, 2,
-     0, 0, 0, 0, "1d1", 0, 1}, /*{ 84} */
+     0, 0, 0, 0, "1d1", 0, 1}, 
     {"& Potion~ of Boldliness", potion1, 0x00000020, 0x00000000, 0, 10, 320, 4,
-     2, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 85} */
+     2, 0, 0, 0, 0, "1d1", 0, 1}, 
     {"& Wand of Light (%P1 charges)", wand, 0x00000000, 0x00000001, 0, 200, 1,
      10, 1, 0, 0, 0, 0, "1d1", 2, 1}, /*{ 86} */
     {"& Wand of Lightning Bolts (%P1 charges)", wand, 0x00000000, 0x00000002, 0,
@@ -1569,23 +1573,23 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"& Staff of Detect Invisible (%P1 charges)", staff, 0x00000000, 0x00008000,
      0, 200, 16, 50, 1, 0, 0, 0, 0, "1d2", 3, 1}, /*{ 95} */
     {"& Potion~ of Restore Life Levels", potion1, 0x00000040, 0x00000000, 0,
-     400, 321, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 96} */
+     400, 321, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Scroll~ of Blessing", scroll1, 0x00000010, 0x00000000, 0, 15, 312, 5, 2,
-     0, 0, 0, 0, "0d0", 0, 1}, /*{ 97} */
+     0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Scroll~ of Word-of-Recall", scroll1, 0x00000080, 0x00000000, 0, 150,
-     313, 5, 3, 0, 0, 0, 0, "0d0", 0, 1}, /*{ 98} */
+     313, 5, 3, 0, 0, 0, 0, "0d0", 0, 1}, 
     {"& Potion~ of Slow Poison", potion1, 0x00000400, 0x00000000, 0, 25, 322, 4,
-     2, 0, 0, 0, 0, "1d1", 0, 1}, /*{ 99} */
+     2, 0, 0, 0, 0, "1d1", 0, 1}, 
     {"& Potion~ of Neutralize Poison", potion1, 0x00000800, 0x00000000, 0, 75,
-     323, 4, 1, 0, 0, 0, 0, "1d1", 0, 1}, /*{100} */
+     323, 4, 1, 0, 0, 0, 0, "1d1", 0, 1},
     {"& Wand of Stinking Cloud (%P1 charges)", wand, 0x00000000, 0x00200000, 0,
      400, 22, 10, 1, 0, 0, 0, 0, "1d1", 5, 1}, /*{101} */
     {"& Iron Spike~", spike, 0x10000000, Nothing_flag, 0, 1, 1, 10, 1, 0, 0, 0,
-     0, "1d1", 1, 1}, /*{102} */
+     0, "1d1", 1, 1},
     {"& Brass Lantern~ with %P5 turns of light", lamp_or_torch, 0x00000000,
-     Nothing_flag, 7500, 35, 2, 50, 1, 0, 0, 0, 0, "1d1", 1, 1}, /*{103} */
+     Nothing_flag, 7500, 35, 2, 50, 1, 0, 0, 0, 0, "1d1", 1, 1},
     {"& Wooden Torch~ with %P5 turns of light", lamp_or_torch, 0x00000000,
-     Nothing_flag, 4000, 2, 14, 30, 1, 0, 0, 0, 0, "1d1", 1, 1}, /*{104} */
+     Nothing_flag, 4000, 2, 14, 30, 1, 0, 0, 0, 0, "1d1", 1, 1}, 
     {"& Flask~ of oil", flask_of_oil, 0x00000000, 0x00040000, 7500, 3, 257, 10,
      5, 0, 0, 0, 0, "2d6", 1, 1}, /*{105} */
     {"Lodging for one day", lodging_at_inn, 0x00000000, Nothing_flag, 1, 50,
@@ -1623,53 +1627,53 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"Horn of Tritons (%P1 charges)", horn, 0x00000000, 0x08000000, 0, 200, 12,
      20, 1, 0, 0, 0, 0, "0d0", 15, 1}, /*{121} */
     {"& Finely cut Agate~", valuable_gems, 0x00000000, 0x00000000, 0, 50, 257,
-     5, 1, 0, 0, 0, 0, "0d0", 5, 1}, /*{122} */
+     5, 1, 0, 0, 0, 0, "0d0", 5, 1},
     {"& Finely cut Diamond~", valuable_gems, 0x00000000, 0x00000000, 0, 500,
-     258, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{123} */
+     258, 5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Rough cut Diamond~", valuable_gems, 0x00000000, 0x00000000, 0, 100, 259,
-     5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{124} */
+     5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Rough cut Sapphire~", valuable_gems, 0x00000000, 0x00000000, 0, 40, 260,
-     5, 1, 0, 0, 0, 0, "0d0", 5, 1}, /*{125} */
+     5, 1, 0, 0, 0, 0, "0d0", 5, 1},
     {"& Finely cut Sapphire~", valuable_gems, 0x00000000, 0x00000000, 0, 250,
-     261, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{126} */
+     261, 5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Small pouch of Diamonds~", valuable_gems, 0x00000000, 0x00000000, 0,
-     1000, 262, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{127} */
+     1000, 262, 5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Finely wrought gold necklace~", valuable_jewelry, 0x00000000,
-     0x00000000, 0, 100, 40, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{128} */
+     0x00000000, 0, 100, 40, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, 
     {"& Small silver bracelet~", bracers, 0x00000000, 0x00000000, 0, 80, 30, 5,
-     1, 0, 0, 0, 0, "0d0", 10, 1}, /*{129} */
+     1, 0, 0, 0, 0, "0d0", 10, 1}, 
     {"& Large mithril garter-belt~", valuable_jewelry, 0x00000000, 0x00000000,
-     0, 1500, 265, 5, 1, 0, 0, 0, 0, "0d0", 20, 1}, /*{130} */
+     0, 1500, 265, 5, 1, 0, 0, 0, 0, "0d0", 20, 1}, 
     {"& Small silver pendant~", valuable_jewelry, 0x00000000, 0x00000000, 0, 60,
-     266, 5, 1, 0, 0, 0, 0, "0d0", 5, 1}, /*{131} */
+     266, 5, 1, 0, 0, 0, 0, "0d0", 5, 1}, 
     {"& Small gold pendant~", valuable_jewelry, 0x00000000, 0x00000000, 0, 90,
-     267, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{132} */
+     267, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, 
     {"& Small mithril pendant~", valuable_jewelry, 0x00000000, 0x00000000, 0,
-     450, 268, 5, 1, 0, 0, 0, 0, "0d0", 15, 1}, /*{133} */
+     450, 268, 5, 1, 0, 0, 0, 0, "0d0", 15, 1}, 
     {"& Finely cut Gem of Detect Monsters (%P1 charges)", valuable_gems,
      nothing_flag, 0x00040000, 0, 350, 1, 5, 1, 0, 0, 0, 0, "0d0", 10,
-     1}, /*{134} */
+     1}, 
     {"& Finely cut Gem of Dispel Evil (%P1 charges)", valuable_gems,
      nothing_flag, 0x00080000, 0, 1200, 2, 5, 1, 0, 0, 0, 0, "0d0", 10,
-     1}, /*{135} */
+     1},
     {"& Finely cut Gem of Acid Balls (%P1 charges)", valuable_gems,
      nothing_flag, 0x00200000, 0, 1000, 4, 5, 1, 0, 0, 0, 0, "0d0", 10,
-     1}, /*{136} */
+     1},
     {"& Finely cut Gem of Detect Invisible (%P1 charges)", valuable_gems,
      nothing_flag, 0x00400000, 0, 200, 5, 5, 1, 0, 0, 0, 0, "0d0", 10,
-     1}, /*{137} */
+     1},
     {"& Finely cut Gem of Identify (%P1 charges)", valuable_gems, nothing_flag,
-     0x00800000, 0, 600, 6, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{138} */
+     0x00800000, 0, 600, 6, 5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Finely cut Gem of Light (%P1 charges)", valuable_gems, nothing_flag,
-     0x01000000, 0, 100, 7, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{139} */
+     0x01000000, 0, 100, 7, 5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Finely cut Gem of Remove Curse (%P1 charges)", valuable_gems,
      nothing_flag, 0x04000000, 0, 250, 8, 5, 1, 0, 0, 0, 0, "0d0", 10,
-     1}, /*{140} */
+     1},
     {"& Finely cut Gem of Annihilation (%P1 charges)", valuable_gems,
      nothing_flag, 0x08000000, 0, 350, 7, 5, 1, 0, 0, 0, 0, "0d0", 10,
-     1}, /*{141} */
+     1},
     {"& Finely cut Gem of Recall (%P1 charges)", valuable_gems, nothing_flag,
-     0x10000000, 0, 1200, 7, 5, 1, 0, 0, 0, 0, "0d0", 10, 1}, /*{142} */
+     0x10000000, 0, 1200, 7, 5, 1, 0, 0, 0, 0, "0d0", 10, 1},
     {"& Box~ of Piranha Crackers", junk_food, 0x00000001, 0x40000000, 1500, 4,
      257, 2, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{143} */
     {"& Can~ of Orca-Cola", junk_food, 0x00000002, 0x40000000, 500, 4, 258, 2,
@@ -1698,7 +1702,7 @@ treasure_type inventory_init[INVEN_INIT_MAX + 1] = {
     {"& Pack~ of Kitten McNuggets", junk_food, 0x00000001, 0x40000000, 1500, 8,
      269, 2, 1, 0, 0, 0, 0, "0d0", 0, 1}, /*{155} */
     {"& Iron Shod Quarterstaff^ (%P2,%P3)", maul, 0x00000000, Nothing_flag, 0,
-     25, 13, 100, 1, 0, 0, 0, 0, "1d5", 0, 1}, /*{156} */
+     25, 13, 100, 1, 0, 0, 0, 0, "1d5", 0, 1},
     {"Room and board for one day", lodging_at_inn, 0x00000000, Nothing_flag, 1,
      70, 303, 3000, 14, 0, 0, 0, 0, "0d0", 0, 1} /*{157} */
 

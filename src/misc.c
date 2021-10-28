@@ -18,6 +18,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "logic/generate_item.h"
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
@@ -1654,55 +1655,6 @@ void place_stairs(long typ, long num, long walls) {
     } while (!flag);
   } /* end for */
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-long get_obj_num(long level, long tries) {
-  /*{ Returns the array number of a random object		-RAK-	}*/
-
-  /* pick an object tries times, keep the one with the highest level */
-  /* here are the comments from umoria:                              */
-
-  /* This code has been added to make it slightly more likely to get the
-     higher level objects.	Originally a uniform distribution over
-     all
-     objects less than or equal to the dungeon level.  This distribution
-     makes a level n objects occur approx 2/n% of the time on level n,
-     and 1/2n are 0th level. */
-
-  long i1, i2, i3, i4;
-
-  if (level > MAX_OBJ_LEVEL) {
-    level = MAX_OBJ_LEVEL;
-  }
-
-  if (randint(obj_great) == 1) {
-    level = MAX_OBJ_LEVEL;
-  }
-
-  i4 = 1;
-  i3 = i2 = 0;
-  do {
-    if (level == 0) {
-      i1 = randint(t_level[0]);
-      if (object_list[i1].level >= i3) {
-        i4 = i1;
-        i3 = object_list[i1].level;
-      }
-    } else {
-      i1 = randint(t_level[level]);
-      if (object_list[i1].level >= i3) {
-        i4 = i1;
-        i3 = object_list[i1].level;
-      }
-    }
-  } while (++i2 < tries);
-
-  return i4;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
 void place_object(long y, long x) {
   /*{ Places an object at given row, column co-ordinate	-RAK-	}*/
@@ -1710,7 +1662,7 @@ void place_object(long y, long x) {
 
   popt(&cur_pos);
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = object_list[get_obj_num(dun_level, PLACE_OBJECT_TRIES)];
+  t_list[cur_pos] = generate_item_for_dungeon_level(dun_level);
   magic_treasure(cur_pos, dun_level, false);
 }
 /*//////////////////////////////////////////////////////////////////// */

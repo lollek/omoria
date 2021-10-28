@@ -95,7 +95,6 @@ extern long store_choice[MAX_STORES][STORE_CHOICES];
 extern long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Following are treasure arrays	and variables			} */
-extern treasure_type object_list[MAX_OBJECTS + 1];
 extern boolean object_ident[MAX_OBJECTS + 1];
 extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];

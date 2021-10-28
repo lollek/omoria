@@ -442,7 +442,6 @@ extern void place_door(long y, long x);
 extern void place_a_staircase(long y, long x, long typ);
 extern void place_stairs(long typ, long num, long walls);
 extern void place_gold(long y, long x);
-extern long get_obj_num(long level, long tries);
 extern void place_object(long y, long x);
 extern void alloc_object(obj_set alloc_set, long typ, long num);
 extern void random_object(long y, long x, long num);

@@ -22,6 +22,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "logic/generate_item.h"
 
 typedef struct owner_type {
   char owner_name[82];
@@ -341,7 +342,7 @@ static void __add_item_to_store(enum store_t store_num) {
     } else {
       /* black market item */
       do {
-        t_list[cur_pos] = object_list[get_obj_num(
+        t_list[cur_pos] = object_list[generate_item_level_for_dungeon_level(
             obj_town_level * 2 + randint(obj_town_level * 15),
             PLACE_OBJECT_TRIES * 2)];
         magic_treasure(cur_pos,
