@@ -25,8 +25,6 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   long tmp[9]; /*: array [1..8] of long;*/
   char out_val[82];
   char out_val2[120];
-  char str1[82];
-  char str2[82];
   boolean ident, flag;
   char dstr[20][82];
 
@@ -479,6 +477,9 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     ident = true;
     msg_print("This is a scroll of wishing.");
     msg_print(" ");
+    msg_print("Unfortunately your wish did not come true.");
+    /* TODO: Need to make a nicer implementation here. I didn't like the old way
+     * of wishing.
     if (cave[char_row][char_col].tptr == 0) {
       prt("What item do you wish to summon?", 1, 1);
       if (get_string(str1, 1, 34, 40)) {
@@ -498,6 +499,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     } else {
       msg_print("You are standing on something.");
     }
+    */
     break;
 
   case 43:

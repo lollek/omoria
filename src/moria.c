@@ -9,7 +9,6 @@
 #include "init/monsters.h"
 #include "init/stores.h"
 #include "init/trade.h"
-#include "init/treasures.h"
 
 #include "pregame/main.h"
 
@@ -40,7 +39,6 @@ int main(int argc, char *argv[]) {
   }
 
   if (!init__monsters()) exit_game();
-  if (!init__treasures()) exit_game();
   if (!init__stores()) exit_game();
   if (!init__bank()) exit_game();
   if (!init__death()) exit_game();

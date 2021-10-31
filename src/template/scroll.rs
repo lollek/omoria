@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use model;
 use misc;
 
@@ -49,83 +47,29 @@ pub enum ScrollTemplate {
     WordOfRecall,
 }
 
-pub fn generate_scroll(item_level: u8) -> model::Item {
-    let template: ScrollTemplate = generate_template(item_level);
-    model::Item {
-        name: misc::rs2item_name(format!("{}{}", "& Scroll~ %T| of ", template.name()).as_str()),
-        tval: model::ItemType::Scroll1 as u8,
-        flags: template.flags1(),
-        flags2: template.flags2(),
-        p1: 0,
-        cost: template.cost(),
-        subval: template.subval(),
-        weight: 5,
-        number: 1,
-        tohit: 0,
-        todam: 0,
-        ac: 0,
-        toac: 0,
-        damage: misc::rs2item_damage("0d0"),
-        level: item_level as i8,
-        identified: 0,
-    }
-}
-
-fn generate_template(item_level: u8) -> ScrollTemplate {
-    let usable_level: HashMap<ScrollTemplate, u8> = [
-        (ScrollTemplate::Light, 0),
-        (ScrollTemplate::ObjectDetection, 0),
-        (ScrollTemplate::TreasureDetection, 0),
-        (ScrollTemplate::Blessing, 1),
-        (ScrollTemplate::Darkness, 1),
-        (ScrollTemplate::DetectInvisible, 1),
-        (ScrollTemplate::Identify, 1),
-        (ScrollTemplate::PhaseDoor, 1),
-        (ScrollTemplate::SummonMonster, 1),
-        (ScrollTemplate::AggravateMonster, 5),
-        (ScrollTemplate::MagicMapping, 5),
-        (ScrollTemplate::MonsterConfusion, 5),
-        (ScrollTemplate::SleepMonster, 5),
-        (ScrollTemplate::TrapDetection, 5),
-        (ScrollTemplate::WordOfRecall, 5),
-        (ScrollTemplate::RemoveCurse, 7),
-        (ScrollTemplate::CreateFood, 10),
-        (ScrollTemplate::DoorStairLocation, 10),
-        (ScrollTemplate::FeignDeath, 10),
-        (ScrollTemplate::Teleport, 10),
-        (ScrollTemplate::DoorCreation, 12),
-        (ScrollTemplate::EnchantArmor, 12),
-        (ScrollTemplate::EnchantWeaponToDam, 12),
-        (ScrollTemplate::EnchantWeaponToHit, 12),
-        (ScrollTemplate::HolyChant, 12),
-        (ScrollTemplate::TrapCreation, 12),
-        (ScrollTemplate::TrapDoorDestruction, 12),
-        (ScrollTemplate::SummonUndead, 15),
-        (ScrollTemplate::TeleportLevel, 15),
-        (ScrollTemplate::HolyPrayer, 25),
-        (ScrollTemplate::MakeMunchies, 25),
-        (ScrollTemplate::ProtectionFromEvil, 30),
-        (ScrollTemplate::Genocide, 30),
-        (ScrollTemplate::Destruction, 40),
-        (ScrollTemplate::DispelUndead, 40),
-        (ScrollTemplate::Recharging, 40),
-        (ScrollTemplate::CurseArmor, 50),
-        (ScrollTemplate::CurseWeapon, 50),
-        (ScrollTemplate::EnchantWeapon, 50),
-        (ScrollTemplate::MassGenocide, 50),
-        (ScrollTemplate::RuneOfProtection, 50),
-        (ScrollTemplate::Wishing, 50),
-    ].iter().cloned().collect();
-
-    let available_templates: Vec<ScrollTemplate> = usable_level.into_iter()
-        .filter(|(_template, level)| level >= &item_level)
-        .map(|(template, _level)| template)
-        .collect();
-
-    available_templates[rand::random::<usize>() % available_templates.len()]
-}
-
 impl ScrollTemplate {
+    pub fn create(&self) -> model::Item {
+        model::Item {
+            name: misc::rs2item_name(format!("{}{}", "& Scroll~ %T| of ", self.name()).as_str()),
+            tval: model::ItemType::Scroll1 as u8,
+            flags: self.flags1(),
+            flags2: self.flags2(),
+            p1: 0,
+            cost: self.cost() * model::Currency::Gold.value(),
+            subval: self.subval(),
+            weight: 5,
+            number: 1,
+            tohit: 0,
+            todam: 0,
+            ac: 0,
+            toac: 0,
+            damage: misc::rs2item_damage("0d0"),
+            level: 0,
+            identified: 0,
+        }
+    }
+
+
     fn name(&self) -> String {
         match self {
             ScrollTemplate::AggravateMonster => "Trap/Door Destruction",
@@ -358,6 +302,53 @@ impl ScrollTemplate {
             ScrollTemplate::TreasureDetection => 271,
             ScrollTemplate::Wishing => 267,
             ScrollTemplate::WordOfRecall => 265,
+        }
+    }
+
+    pub fn level(&self) -> u8 {
+        match self {
+            ScrollTemplate::Light => 0,
+            ScrollTemplate::ObjectDetection => 0,
+            ScrollTemplate::TreasureDetection => 0,
+            ScrollTemplate::Blessing => 1,
+            ScrollTemplate::Darkness => 1,
+            ScrollTemplate::DetectInvisible => 1,
+            ScrollTemplate::Identify => 1,
+            ScrollTemplate::PhaseDoor => 1,
+            ScrollTemplate::SummonMonster => 1,
+            ScrollTemplate::AggravateMonster => 5,
+            ScrollTemplate::MagicMapping => 5,
+            ScrollTemplate::MonsterConfusion => 5,
+            ScrollTemplate::SleepMonster => 5,
+            ScrollTemplate::TrapDetection => 5,
+            ScrollTemplate::WordOfRecall => 5,
+            ScrollTemplate::RemoveCurse => 7,
+            ScrollTemplate::CreateFood => 10,
+            ScrollTemplate::DoorStairLocation => 10,
+            ScrollTemplate::FeignDeath => 10,
+            ScrollTemplate::Teleport => 10,
+            ScrollTemplate::DoorCreation => 12,
+            ScrollTemplate::EnchantArmor => 12,
+            ScrollTemplate::EnchantWeaponToDam => 12,
+            ScrollTemplate::EnchantWeaponToHit => 12,
+            ScrollTemplate::HolyChant => 12,
+            ScrollTemplate::TrapCreation => 12,
+            ScrollTemplate::TrapDoorDestruction => 12,
+            ScrollTemplate::SummonUndead => 15,
+            ScrollTemplate::TeleportLevel => 15,
+            ScrollTemplate::HolyPrayer => 25,
+            ScrollTemplate::MakeMunchies => 25,
+            ScrollTemplate::ProtectionFromEvil => 30,
+            ScrollTemplate::Genocide => 30,
+            ScrollTemplate::Destruction => 40,
+            ScrollTemplate::DispelUndead => 40,
+            ScrollTemplate::Recharging => 40,
+            ScrollTemplate::CurseArmor => 50,
+            ScrollTemplate::CurseWeapon => 50,
+            ScrollTemplate::EnchantWeapon => 50,
+            ScrollTemplate::MassGenocide => 50,
+            ScrollTemplate::RuneOfProtection => 50,
+            ScrollTemplate::Wishing => 50,
         }
     }
 }

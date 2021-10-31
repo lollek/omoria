@@ -53,9 +53,6 @@ typedef struct trade_result {
 // Number of defined races
 #define MAX_RACES 10
 
-// Town object generation level
-static const long obj_town_level = 7;
-
 // Buying and selling adjustments for character race VS store owner race
 static float rgold_adj[MAX_RACES][MAX_RACES] = {
     /*               Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr, Dry */
@@ -334,23 +331,44 @@ static void __add_item_to_store(enum store_t store_num) {
   popt(&cur_pos);
 
   for (int tries = 0; tries < 4; ++tries) {
-    if (store_num != S_BLACK_MARKET) {
-      long i = store_choice[store_num][randint(STORE_CHOICES) - 1];
-      t_list[cur_pos] = inventory_init[i];
-      magic_treasure(cur_pos, obj_town_level, false);
-
-    } else {
-      /* black market item */
-      do {
-        t_list[cur_pos] = object_list[generate_item_level_for_dungeon_level(
-            obj_town_level * 2 + randint(obj_town_level * 15),
-            PLACE_OBJECT_TRIES * 2)];
-        magic_treasure(cur_pos,
-                       obj_town_level * 2 + randint(obj_town_level * 15), true);
-
-      } while (t_list[cur_pos].cost < 500 * GOLD_VALUE);
-      t_list[cur_pos].cost *= 2;
-      t_list[cur_pos].flags2 |= Blackmarket_bit;
+    switch (store_num) {
+      case S_GENERAL:
+        t_list[cur_pos] = generate_item_for_general_store();
+        break;
+      case S_ARMORY:
+        t_list[cur_pos] = generate_item_for_armorsmith();
+        break;
+      case S_WEAPONS:
+        t_list[cur_pos] = generate_item_for_weaponsmith();
+        break;
+      case S_TEMPLE:
+        t_list[cur_pos] = generate_item_for_temple();
+        break;
+      case S_ALCHEMY:
+        t_list[cur_pos] = generate_item_for_alchemist_store();
+        break;
+      case S_MAGIC:
+        t_list[cur_pos] = generate_item_for_magic_store();
+        break;
+      case S_INN:
+        t_list[cur_pos] = generate_item_for_inn();
+        break;
+      case S_LIBRARY:
+        t_list[cur_pos] = generate_item_for_library();
+        break;
+      case S_MUSIC:
+        t_list[cur_pos] = generate_item_for_music_store();
+        break;
+      case S_GEM:
+        t_list[cur_pos] = generate_item_for_gem_store();
+        break;
+      case S_DELI:
+        t_list[cur_pos] = generate_item_for_all_night_deli();
+        break;
+      case S_BLACK_MARKET:
+        t_list[cur_pos] = generate_item_for_black_market();
+        break;
+      default: return; // Should panic
     }
 
     // TODO: Stop using inven_temp
@@ -516,18 +534,6 @@ static long __store_min_deflated_price(enum store_t store_type,
     min_price = 1;
   }
   return min_price;
-}
-
-static long __find_object_from_list(long tval, long subval) {
-  for (long i = 1; i <= MAX_OBJECTS; ++i) {
-    if (object_list[i].tval != tval)
-      continue;
-    if (object_list[i].subval != subval)
-      continue;
-    return object_list[i].cost / GOLD_VALUE;
-  }
-
-  return 0;
 }
 
 static void __tick_down(long time_spent, long *flag) {
@@ -1846,8 +1852,7 @@ long item_value(treasure_type const *const item) {
   case soft_armor:
 
     if (strstr(item->name, "^") != NULL) {
-      return_value =
-          __find_object_from_list(item->tval, item->subval) * item->number;
+      return_value *= item->number;
 
     } else {
       switch (item->tval) {
@@ -1889,7 +1894,7 @@ long item_value(treasure_type const *const item) {
   case spike:
 
     if (strstr(item->name, "^") != NULL) {
-      return_value = __find_object_from_list(item->tval, 1) * (item->number);
+      return_value *= (item->number);
     } else {
       if (item->tohit < 0) {
         return_value = 0;

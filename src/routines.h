@@ -270,8 +270,6 @@ extern boolean check_pswd(char passw[134], boolean present);
 extern void wizard_light();
 extern void monster_summon_by_name(long y, long x, char name[28],
                                    boolean present, boolean sleepy);
-extern boolean summon_item(long y, long x, char name1[70], char name2[70],
-                           long count, boolean present);
 extern void change_character();
 extern void edit_score_file();
 extern void wizard_create();

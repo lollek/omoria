@@ -1,5 +1,4 @@
 pub enum Currency {
-    Total = 0,
     Iron = 1,
     Copper = 2,
     Silver = 3,
@@ -17,7 +16,6 @@ impl Currency {
             Currency::Gold => 240,
             Currency::Platinum => 960,
             Currency::Mithril => 12480,
-            _ => panic!()
         }
     }
 

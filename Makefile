@@ -23,7 +23,7 @@ omoria: $(OBJFILES)
 
 run: omoria ctags
 	>debug2.out
-	RUST_BACKTRACE=1 ./omoria
+	RUST_BACKTRACE=1 rust-gdb ./omoria
 
 nodata ::
 	$(RM) data/hours.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP

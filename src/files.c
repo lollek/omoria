@@ -463,8 +463,7 @@ void print_objects() {
         popt(&i2);
 
         for (i1 = 1; i1 <= nobj; i1++) {
-          t_list[i2] = object_list[generate_item_level_for_dungeon_level(level, PLACE_OBJECT_TRIES)];
-          magic_treasure(i2, level, false);
+          t_list[i2] = generate_item_for_dungeon_level(level);
           inven_temp.data = t_list[i2];
           /* with inven_temp->data. do; */
           unquote(inven_temp.data.name);

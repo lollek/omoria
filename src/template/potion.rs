@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
 use misc;
 use model;
-
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PotionTemplate {
@@ -53,87 +50,78 @@ pub enum PotionTemplate {
     Water,
 }
 
-pub fn generate_potion(item_level: u8) -> model::Item {
-    let template: PotionTemplate = generate_template(item_level);
-    model::Item {
-        name: template.name(),
-        tval: model::ItemType::Potion1 as u8,
-        flags: template.flags1(),
-        flags2: template.flags2(),
-        p1: template.p1(),
-        cost: template.cost(),
-        subval: template.subval(),
-        weight: 4,
-        number: 1,
-        tohit: 0,
-        todam: 0,
-        ac: 0,
-        toac: 0,
-        damage: misc::rs2item_damage("1d1"),
-        level: item_level as i8,
-        identified: 0,
-    }
-}
-
-fn generate_template(item_level: u8) -> PotionTemplate {
-    let usable_level: HashMap<PotionTemplate, u8> = [
-        (PotionTemplate::SaltWater, 0),
-        (PotionTemplate::FleaBile, 0),
-        (PotionTemplate::Blindness, 0),
-        (PotionTemplate::Confusion, 0),
-        (PotionTemplate::CureLightWounds, 0),
-        (PotionTemplate::Water, 0),
-        (PotionTemplate::Sleep, 0),
-        (PotionTemplate::SlimeMoldJuice, 0),
-        (PotionTemplate::AppleJuice, 0),
-        (PotionTemplate::ResistCold, 1),
-        (PotionTemplate::HasteSelf, 1),
-        (PotionTemplate::Boldliness, 1),
-        (PotionTemplate::ResistHeat, 1),
-        (PotionTemplate::Heroism, 1),
-        (PotionTemplate::SlowPoison, 1),
-        (PotionTemplate::Slowness,  1),
-        (PotionTemplate::CureSeriousWounds, 3),
-        (PotionTemplate::DetectInvisible, 3),
-        (PotionTemplate::InfraVision, 3),
-        (PotionTemplate::Poison, 3),
-        (PotionTemplate::SuperHeroism, 3),
-        (PotionTemplate::NeutralizePoison, 5),
-        (PotionTemplate::CureCriticalWounds, 5),
-        (PotionTemplate::LoseMemories, 10),
-        (PotionTemplate::Healing, 12),
-        (PotionTemplate::Charisma, 25),
-        (PotionTemplate::Ugliness, 25),
-        (PotionTemplate::GainConstitution, 25),
-        (PotionTemplate::GainDexterity, 25),
-        (PotionTemplate::GainIntelligence, 25),
-        (PotionTemplate::GainStrength, 25),
-        (PotionTemplate::GainWisdom, 25),
-        (PotionTemplate::LoseIntelligence, 25),
-        (PotionTemplate::RestoreMana, 25),
-        (PotionTemplate::LoseWisdom,  25),
-        (PotionTemplate::RestoreCharisma, 40),
-        (PotionTemplate::RestoreConstitution, 40),
-        (PotionTemplate::RestoreDexterity, 40),
-        (PotionTemplate::RestoreIntelligence, 40),
-        (PotionTemplate::RestoreStrength, 40),
-        (PotionTemplate::RestoreWisdom, 40),
-        (PotionTemplate::RestoreLifeLevels, 40),
-        (PotionTemplate::Invulnerability, 40),
-        (PotionTemplate::Learning, 45),
-        (PotionTemplate::GainExperience, 50),
-    ].iter().cloned().collect();
-
-    let available_templates: Vec<PotionTemplate> = usable_level.into_iter()
-        .filter(|(_template, level)| level >= &item_level)
-        .map(|(template, _level)| template)
-        .collect();
-
-    available_templates[rand::random::<usize>() % available_templates.len()]
-}
-
-
 impl PotionTemplate {
+    pub fn iter() -> impl Iterator<Item=PotionTemplate> {
+        [
+            PotionTemplate::AppleJuice,
+            PotionTemplate::Blindness,
+            PotionTemplate::Boldliness,
+            PotionTemplate::Charisma,
+            PotionTemplate::Confusion,
+            PotionTemplate::CureCriticalWounds,
+            PotionTemplate::CureLightWounds,
+            PotionTemplate::CureSeriousWounds,
+            PotionTemplate::DetectInvisible,
+            PotionTemplate::FleaBile,
+            PotionTemplate::GainConstitution,
+            PotionTemplate::GainDexterity,
+            PotionTemplate::GainExperience,
+            PotionTemplate::GainIntelligence,
+            PotionTemplate::GainStrength,
+            PotionTemplate::GainWisdom,
+            PotionTemplate::HasteSelf,
+            PotionTemplate::Healing,
+            PotionTemplate::Heroism,
+            PotionTemplate::InfraVision,
+            PotionTemplate::Invulnerability,
+            PotionTemplate::Learning,
+            PotionTemplate::LoseIntelligence,
+            PotionTemplate::LoseMemories,
+            PotionTemplate::LoseWisdom,
+            PotionTemplate::NeutralizePoison,
+            PotionTemplate::Poison,
+            PotionTemplate::ResistCold,
+            PotionTemplate::ResistHeat,
+            PotionTemplate::RestoreCharisma,
+            PotionTemplate::RestoreConstitution,
+            PotionTemplate::RestoreDexterity,
+            PotionTemplate::RestoreIntelligence,
+            PotionTemplate::RestoreLifeLevels,
+            PotionTemplate::RestoreMana,
+            PotionTemplate::RestoreStrength,
+            PotionTemplate::RestoreWisdom,
+            PotionTemplate::SaltWater,
+            PotionTemplate::Sleep,
+            PotionTemplate::SlimeMoldJuice,
+            PotionTemplate::SlowPoison,
+            PotionTemplate::Slowness,
+            PotionTemplate::SuperHeroism,
+            PotionTemplate::Ugliness,
+            PotionTemplate::Water,
+        ].iter().copied()
+    }
+
+    pub fn create(&self) -> model::Item {
+        model::Item {
+            name: self.name(),
+            tval: model::ItemType::Potion1 as u8,
+            flags: self.flags1(),
+            flags2: self.flags2(),
+            p1: self.p1(),
+            cost: self.cost() * model::Currency::Gold.value(),
+            subval: self.subval(),
+            weight: 4,
+            number: 1,
+            tohit: 0,
+            todam: 0,
+            ac: 0,
+            toac: 0,
+            damage: misc::rs2item_damage("1d1"),
+            level: 0,
+            identified: 0,
+        }
+    }
+
     fn name(&self) -> model::Name {
         match self {
             PotionTemplate::AppleJuice => misc::rs2item_name("& %C Potion~| of Apple Juice"),
@@ -434,4 +422,53 @@ impl PotionTemplate {
         }
     }
 
+    pub fn level(&self) -> u8 {
+        match self {
+            PotionTemplate::SaltWater => 0,
+            PotionTemplate::FleaBile => 0,
+            PotionTemplate::Blindness => 0,
+            PotionTemplate::Confusion => 0,
+            PotionTemplate::CureLightWounds => 0,
+            PotionTemplate::Water => 0,
+            PotionTemplate::Sleep => 0,
+            PotionTemplate::SlimeMoldJuice => 0,
+            PotionTemplate::AppleJuice => 0,
+            PotionTemplate::ResistCold => 1,
+            PotionTemplate::HasteSelf => 1,
+            PotionTemplate::Boldliness => 1,
+            PotionTemplate::ResistHeat => 1,
+            PotionTemplate::Heroism => 1,
+            PotionTemplate::SlowPoison => 1,
+            PotionTemplate::Slowness =>  1,
+            PotionTemplate::CureSeriousWounds => 3,
+            PotionTemplate::DetectInvisible => 3,
+            PotionTemplate::InfraVision => 3,
+            PotionTemplate::Poison => 3,
+            PotionTemplate::SuperHeroism => 3,
+            PotionTemplate::NeutralizePoison => 5,
+            PotionTemplate::CureCriticalWounds => 5,
+            PotionTemplate::LoseMemories => 10,
+            PotionTemplate::Healing => 12,
+            PotionTemplate::Charisma => 25,
+            PotionTemplate::Ugliness => 25,
+            PotionTemplate::GainConstitution => 25,
+            PotionTemplate::GainDexterity => 25,
+            PotionTemplate::GainIntelligence => 25,
+            PotionTemplate::GainStrength => 25,
+            PotionTemplate::GainWisdom => 25,
+            PotionTemplate::LoseIntelligence => 25,
+            PotionTemplate::RestoreMana => 25,
+            PotionTemplate::LoseWisdom =>  25,
+            PotionTemplate::RestoreCharisma => 40,
+            PotionTemplate::RestoreConstitution => 40,
+            PotionTemplate::RestoreDexterity => 40,
+            PotionTemplate::RestoreIntelligence => 40,
+            PotionTemplate::RestoreStrength => 40,
+            PotionTemplate::RestoreWisdom => 40,
+            PotionTemplate::RestoreLifeLevels => 40,
+            PotionTemplate::Invulnerability => 40,
+            PotionTemplate::Learning => 45,
+            PotionTemplate::GainExperience => 50,
+        }
+    }
 }

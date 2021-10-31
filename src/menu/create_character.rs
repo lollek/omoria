@@ -13,7 +13,7 @@ use player;
 use random;
 use screen;
 use term;
-use logic::menu;
+use logic::{ menu, generate_item };
 
 use model::{
     Currency, GameTime, InventoryItem, Item, Race, Sex, Stat, StatBlock
@@ -1037,15 +1037,15 @@ fn add_equipment() {
     // General starting items
     let mut general_starting_items = Vec::new();
 
-    let mut ration_of_food = template::food::ration_of_food();
+    let mut ration_of_food = generate_item::create_item(template::FoodTemplate::RationOfFood, 0);
     ration_of_food.number = 5;
     general_starting_items.push(ration_of_food);
 
-    let torch = template::generate_light_source(1, template::LightSourceTemplate::WoodenTorch);
+    let torch = generate_item::create_item(template::LightSourceTemplate::WoodenTorch, 0);
     general_starting_items.push(torch);
-    let light_cloak = template::generate_cloak(1, template::CloakTemplate::LightCloak);
+    let light_cloak = generate_item::create_item(template::CloakTemplate::LightCloak, 0);
     general_starting_items.push(light_cloak);
-    let soft_leather_armor = template::generate_armor(1, template::ArmorTemplate::SoftLeatherArmor);
+    let soft_leather_armor = generate_item::create_item(template::ArmorTemplate::SoftLeatherArmor, 0);
     general_starting_items.push(soft_leather_armor);
 
     for item in general_starting_items {
