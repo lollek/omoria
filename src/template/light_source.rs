@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LightSourceTemplate {
@@ -18,28 +18,9 @@ impl LightSourceTemplate {
             LightSourceTemplate::MagicLantern,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::LightSource as u8,
-            flags: 0,
-            flags2: 0,
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
-    }
-
+impl template::Template for LightSourceTemplate {
     fn name(&self) -> &str {
         match self {
             LightSourceTemplate::WoodenTorch => "& Wooden Torch~ with %P5 turns of light",
@@ -48,6 +29,11 @@ impl LightSourceTemplate {
             LightSourceTemplate::MagicLantern => "& Magic Lantern^ with %P5 turns of light",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::LightSource }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+
 
     fn p1(&self) -> i64 {
         match self {
@@ -67,7 +53,7 @@ impl LightSourceTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             LightSourceTemplate::WoodenTorch => 13,
             LightSourceTemplate::BrassLantern => 1,
@@ -85,6 +71,12 @@ impl LightSourceTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             LightSourceTemplate::WoodenTorch => "1d4",
@@ -94,7 +86,7 @@ impl LightSourceTemplate {
         }
     }
 
-    fn level(&self) -> &u8 {
+    fn item_level(&self) -> u8 {
         match self {
             LightSourceTemplate::WoodenTorch => 1,
             LightSourceTemplate::BrassLantern => 20,
@@ -102,4 +94,6 @@ impl LightSourceTemplate {
             LightSourceTemplate::MagicLantern => 1,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

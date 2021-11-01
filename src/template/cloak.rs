@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CloakTemplate {
@@ -20,27 +20,9 @@ impl CloakTemplate {
             CloakTemplate::WyrmhideCloak,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Bracers as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: self.ac(),
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
-    }
+impl template::Template for CloakTemplate {
 
     fn name(&self) -> &str {
         match self {
@@ -52,6 +34,12 @@ impl CloakTemplate {
         }
     }
 
+    fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }
+
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             CloakTemplate::LightCloak => 3,
@@ -62,7 +50,7 @@ impl CloakTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             CloakTemplate::LightCloak => 1,
             CloakTemplate::HeavyCloak => 2,
@@ -82,7 +70,11 @@ impl CloakTemplate {
         }
     }
 
-    fn ac(&self) -> i16 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+
+    fn base_ac(&self) -> i16 {
         match self {
             CloakTemplate::LightCloak => 1,
             CloakTemplate::HeavyCloak => 2,
@@ -92,7 +84,10 @@ impl CloakTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "0d0" }
+
+    fn item_level(&self) -> u8 {
         match self {
             CloakTemplate::LightCloak => 0,
             CloakTemplate::HeavyCloak => 0,
@@ -101,4 +96,6 @@ impl CloakTemplate {
             CloakTemplate::WyrmhideCloak => 50,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

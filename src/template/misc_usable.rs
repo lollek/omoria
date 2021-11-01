@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {
@@ -26,28 +26,9 @@ impl MiscUsableTemplate {
             MiscUsableTemplate::CorkedBottle,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: self.r#type() as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
-    }
-
+impl template::Template for MiscUsableTemplate {
     fn name(&self) -> &str {
         match self {
             MiscUsableTemplate::FlaskOfOil => "& Flask~ of Oil",
@@ -61,7 +42,7 @@ impl MiscUsableTemplate {
         }
     }
 
-    fn r#type(&self) -> model::ItemType {
+    fn item_type(&self) -> model::ItemType {
         match self {
             MiscUsableTemplate::FlaskOfOil => model::ItemType::FlaskOfOil,
             MiscUsableTemplate::IronSpike => model::ItemType::Spike,
@@ -73,6 +54,9 @@ impl MiscUsableTemplate {
             MiscUsableTemplate::CorkedBottle => model::ItemType::MiscUsable,
         }
     }
+
+
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -113,7 +97,7 @@ impl MiscUsableTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             MiscUsableTemplate::FlaskOfOil => 257,
             MiscUsableTemplate::IronSpike => 1,
@@ -139,6 +123,12 @@ impl MiscUsableTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             MiscUsableTemplate::FlaskOfOil => "2d6",
@@ -152,7 +142,7 @@ impl MiscUsableTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             MiscUsableTemplate::FlaskOfOil => 10,
             MiscUsableTemplate::IronSpike => 20,
@@ -164,4 +154,6 @@ impl MiscUsableTemplate {
             MiscUsableTemplate::CorkedBottle => 5,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

@@ -1,6 +1,5 @@
 use model;
-
-use misc;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum FoodTemplate {
@@ -89,28 +88,9 @@ impl FoodTemplate {
             FoodTemplate::EyeballOfNed,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Food as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: self.number(),
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
-    }
-
+impl template::Template for FoodTemplate {
     fn name(&self) -> &str {
         match self {
             FoodTemplate::Mushroom => "& Mushroom~",
@@ -154,6 +134,9 @@ impl FoodTemplate {
             FoodTemplate::EyeballOfNed => "& Eyeball~| of Ned",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Food }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -289,7 +272,7 @@ impl FoodTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             FoodTemplate::Mushroom => 256,
             FoodTemplate::MushroomOfPoison => 257,
@@ -423,6 +406,11 @@ impl FoodTemplate {
         }
     }
 
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             FoodTemplate::Mushroom => "0d0",
@@ -468,7 +456,7 @@ impl FoodTemplate {
         }
     }
 
-    fn level(&self) -> &u8 {
+    fn item_level(&self) -> u8 {
         match self {
             FoodTemplate::Mushroom => 255,
             FoodTemplate::MushroomOfPoison => 40,
@@ -511,4 +499,6 @@ impl FoodTemplate {
             FoodTemplate::EyeballOfNed => 255,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

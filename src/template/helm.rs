@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HelmTemplate {
@@ -34,28 +34,9 @@ impl HelmTemplate {
             HelmTemplate::JewelEncrustedCrown,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Helm as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: self.ac(),
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
-    }
-
+impl template::Template for HelmTemplate {
     fn name(&self) -> &str {
         match self {
             HelmTemplate::ClothHat => "Cloth Hat^ [%P6,%P4]",
@@ -72,6 +53,11 @@ impl HelmTemplate {
             HelmTemplate::JewelEncrustedCrown => "Jewel Encrusted Crown^ [%P6,%P4] (%P1)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Helm }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
 
     fn cost(&self) -> i64 {
         match self {
@@ -90,7 +76,7 @@ impl HelmTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             HelmTemplate::ClothHat => 12,
             HelmTemplate::SoftLeatherCap => 13,
@@ -124,7 +110,11 @@ impl HelmTemplate {
         }
     }
 
-    fn ac(&self) -> i16 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+
+    fn base_ac(&self) -> i16 {
         match self {
             HelmTemplate::ClothHat => 1,
             HelmTemplate::SoftLeatherCap => 2,
@@ -141,7 +131,10 @@ impl HelmTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "0d0" }
+
+    fn item_level(&self) -> u8 {
         match self {
             HelmTemplate::ClothHat => 1,
             HelmTemplate::SoftLeatherCap => 2,
@@ -157,4 +150,6 @@ impl HelmTemplate {
             HelmTemplate::JewelEncrustedCrown => 75,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

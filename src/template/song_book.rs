@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SongBookTemplate {
@@ -18,27 +18,9 @@ impl SongBookTemplate {
             SongBookTemplate::GreaterSongBook,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::SongBook as u8,
-            flags: self.flags1(),
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 60,
-            number: 1,
-            tohit: -100,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("1d1"),
-            level: 0,
-            identified: 0,
-        }
-    }
+impl template::Template for SongBookTemplate {
 
     fn name(&self) -> &str {
         match self {
@@ -48,6 +30,8 @@ impl SongBookTemplate {
             SongBookTemplate::GreaterSongBook => "& Epics of the Bards [Greater Song Book]",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::SongBook }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -67,6 +51,9 @@ impl SongBookTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
+
     fn cost(&self) -> i64 {
         match self {
             SongBookTemplate::BeginnersHandbook => 30,
@@ -76,7 +63,7 @@ impl SongBookTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             SongBookTemplate::BeginnersHandbook => 262,
             SongBookTemplate::SongBook1 => 263,
@@ -84,4 +71,14 @@ impl SongBookTemplate {
             SongBookTemplate::GreaterSongBook => 265,
         }
     }
+
+    fn weight(&self) -> u16 { 60 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+    fn item_level(&self) -> u8 { 0 }
+    fn is_identified(&self) -> bool { false }
 }

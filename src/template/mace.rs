@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MaceTemplate {
@@ -31,27 +31,9 @@ impl MaceTemplate {
             MaceTemplate::OgreMaul,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Maul as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
-    }
+impl template::Template for MaceTemplate {
 
     fn name(&self) -> &str {
         match self {
@@ -68,6 +50,11 @@ impl MaceTemplate {
         }
     }
 
+    fn item_type(&self) -> model::ItemType { model::ItemType::Maul }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             MaceTemplate::BallAndChain => 200,
@@ -83,7 +70,7 @@ impl MaceTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             MaceTemplate::BallAndChain => 2,
             MaceTemplate::WoodenClub => 6,
@@ -113,6 +100,12 @@ impl MaceTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             MaceTemplate::BallAndChain => "2d4",
@@ -128,7 +121,7 @@ impl MaceTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             MaceTemplate::BallAndChain => 20,
             MaceTemplate::WoodenClub => 0,
@@ -142,4 +135,6 @@ impl MaceTemplate {
             MaceTemplate::OgreMaul => 50,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

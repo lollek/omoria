@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PickTemplate {
@@ -24,27 +24,9 @@ impl PickTemplate {
             PickTemplate::DwarvenShovel,
         ].iter().copied()
     }
+}
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Pick as u8,
-            flags: self.flags1(),
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
-    }
+impl template::Template for PickTemplate {
 
     fn name(&self) -> &str {
         match self {
@@ -57,6 +39,8 @@ impl PickTemplate {
             PickTemplate::DwarvenShovel => "& Dwarven Shovel^ (%P1) (%P2,%P3)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Pick }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -106,7 +90,7 @@ impl PickTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             PickTemplate::Pick => 1,
             PickTemplate::Shovel => 2,
@@ -130,6 +114,13 @@ impl PickTemplate {
         }
     }
 
+
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             PickTemplate::Pick => "1d3",
@@ -142,7 +133,7 @@ impl PickTemplate {
         }
     }
 
-    fn level(&self) -> &u8 {
+    fn item_level(&self) -> u8 {
         match self {
             PickTemplate::Pick => 0,
             PickTemplate::Shovel => 0,
@@ -153,4 +144,6 @@ impl PickTemplate {
             PickTemplate::DwarvenShovel => 40,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }
