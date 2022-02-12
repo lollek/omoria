@@ -116,7 +116,6 @@ pub fn generate_item_for_magic_store() -> model::Item {
 }
 
 pub fn generate_item_for_inn() -> model::Item {
-    // TODO PR#36: Inn should just generate them all in the same order every time
     let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
 
     templates.extend(template::LodgingAtInnTemplate::vec());
@@ -201,6 +200,7 @@ pub fn generate_item_for_dungeon_level(dungeon_level: u8) -> model::Item {
 
 pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
 
+    /* TODO #37
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
     let is_high_quality = if item_level > 15 {
         item_level - 10
@@ -232,7 +232,8 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     let is_cursed = !is_magic && 5 > (rand::random::<u8>() % 100);
 
 
-    // TODO PR#36: Implement magic_treasure()
+    // TODO Implement magic_treasure()
+    */
 
     enum GenTreasureType {
         Armor, // Belt, Bracers, SoftArmor, HardArmor, Shield, Helm, Cloak, Gloves, Boots
