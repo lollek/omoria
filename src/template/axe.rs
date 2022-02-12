@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AxeTemplate {
@@ -15,41 +15,26 @@ pub enum AxeTemplate {
 }
 
 impl AxeTemplate {
-    pub fn iter() -> impl Iterator<Item=AxeTemplate> {
-        [
-            AxeTemplate::Balestarius,
-            AxeTemplate::BattleAxe,
-            AxeTemplate::BroadAxe,
-            AxeTemplate::HandAxe,
-            AxeTemplate::WarAxe,
-            AxeTemplate::LargeAxe,
-            AxeTemplate::BeardedAxe,
-            AxeTemplate::SilverEdgedAxe,
-            AxeTemplate::ChampionAxe,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(AxeTemplate::Balestarius),
+            Box::new(AxeTemplate::BattleAxe),
+            Box::new(AxeTemplate::BroadAxe),
+            Box::new(AxeTemplate::HandAxe),
+            Box::new(AxeTemplate::WarAxe),
+            Box::new(AxeTemplate::LargeAxe),
+            Box::new(AxeTemplate::BeardedAxe),
+            Box::new(AxeTemplate::SilverEdgedAxe),
+            Box::new(AxeTemplate::ChampionAxe),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::HaftedWeapon as u8,
-            flags: 0x10000000,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        AxeTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for AxeTemplate {
     fn name(&self) -> &str {
         match self {
             AxeTemplate::Balestarius => "Balestarius (%P0)^ (%P2,%P3)",
@@ -63,6 +48,11 @@ impl AxeTemplate {
             AxeTemplate::ChampionAxe => "Champion Axe (%P0)^ (%P2,%P3)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::HaftedWeapon }
+    fn flags1(&self) -> u64 { 0x10000000 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
 
     fn cost(&self) -> i64 {
         match self {
@@ -78,7 +68,7 @@ impl AxeTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             AxeTemplate::Balestarius => 1,
             AxeTemplate::BattleAxe => 3,
@@ -106,6 +96,12 @@ impl AxeTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             AxeTemplate::Balestarius => "2d8",
@@ -120,7 +116,7 @@ impl AxeTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             AxeTemplate::Balestarius => 30,
             AxeTemplate::BattleAxe => 13,
@@ -133,5 +129,7 @@ impl AxeTemplate {
             AxeTemplate::ChampionAxe => 40,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }
 

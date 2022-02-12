@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum JunkFoodTemplate {
@@ -19,45 +19,30 @@ pub enum JunkFoodTemplate {
 }
 
 impl JunkFoodTemplate {
-    pub fn iter() -> impl Iterator<Item=JunkFoodTemplate> {
-        [
-            JunkFoodTemplate::BoxOfPiranhaCrackers,
-            JunkFoodTemplate::CanOfOrcaCola,
-            JunkFoodTemplate::TwelvePoundTrollBuger,
-            JunkFoodTemplate::BagOfBrontosaurusChips,
-            JunkFoodTemplate::SliceOfPurpleMushroomPizza,
-            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich,
-            JunkFoodTemplate::DragonSteak,
-            JunkFoodTemplate::VorpalBunnyThroatLozenge,
-            JunkFoodTemplate::DeepFriedGiantCentipede,
-            JunkFoodTemplate::PintOfBeetleJuice,
-            JunkFoodTemplate::BownOfBatStew,
-            JunkFoodTemplate::JarOfPickledLeeches,
-            JunkFoodTemplate::PackOfKittenMcNuggets,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(JunkFoodTemplate::BoxOfPiranhaCrackers),
+            Box::new(JunkFoodTemplate::CanOfOrcaCola),
+            Box::new(JunkFoodTemplate::TwelvePoundTrollBuger),
+            Box::new(JunkFoodTemplate::BagOfBrontosaurusChips),
+            Box::new(JunkFoodTemplate::SliceOfPurpleMushroomPizza),
+            Box::new(JunkFoodTemplate::PeanutButterAndGrapeJellySandwich),
+            Box::new(JunkFoodTemplate::DragonSteak),
+            Box::new(JunkFoodTemplate::VorpalBunnyThroatLozenge),
+            Box::new(JunkFoodTemplate::DeepFriedGiantCentipede),
+            Box::new(JunkFoodTemplate::PintOfBeetleJuice),
+            Box::new(JunkFoodTemplate::BownOfBatStew),
+            Box::new(JunkFoodTemplate::JarOfPickledLeeches),
+            Box::new(JunkFoodTemplate::PackOfKittenMcNuggets),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::JunkFood as u8,
-            flags: self.flags1(),
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 2,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 1,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        JunkFoodTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for JunkFoodTemplate {
     fn name(&self) -> &str {
         match self {
             JunkFoodTemplate::BoxOfPiranhaCrackers => "& Box~ of Piranha Crackers",
@@ -75,6 +60,8 @@ impl JunkFoodTemplate {
             JunkFoodTemplate::PackOfKittenMcNuggets => "& Pack~ of Kitten McNuggets",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::JunkFood }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -148,7 +135,7 @@ impl JunkFoodTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             JunkFoodTemplate::BoxOfPiranhaCrackers => 257,
             JunkFoodTemplate::CanOfOrcaCola => 258,
@@ -165,6 +152,13 @@ impl JunkFoodTemplate {
             JunkFoodTemplate::PackOfKittenMcNuggets => 269,
         }
     }
+
+    fn weight(&self) -> u16 { 1 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
 
     fn damage(&self) -> &str {
         match self {
@@ -183,5 +177,8 @@ impl JunkFoodTemplate {
             JunkFoodTemplate::PackOfKittenMcNuggets => "0d0",
         }
     }
+
+    fn item_level(&self) -> u8 { 1 }
+    fn is_identified(&self) -> bool { false }
 }
 

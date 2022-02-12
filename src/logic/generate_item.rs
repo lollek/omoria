@@ -4,11 +4,11 @@ use std::convert::TryInto;
 use model;
 use template;
 
-fn get_random_from_list<T>(list: Vec<T>) -> T {
+fn get_random_from_list(mut list: Vec<Box<dyn template::Template>>) -> Box<dyn template::Template> {
     if list.len() == 0 {
         panic!("List contains 0 items!");
     }
-    list[rand::random::<usize>() % list.len()]
+    list.remove(rand::random::<usize>() % list.len())
 }
 
 /**
@@ -62,39 +62,29 @@ pub fn generate_item_for_general_store() -> model::Item {
 
 pub fn generate_item_for_armorsmith() -> model::Item {
     let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
-    let boots: Vec<Box<template::BootsTemplate>> = template::BootsTemplate::iter()
-        .map(|x| Box::new(x))
+    templates.extend(template::ArmorTemplate::vec());
+    templates.extend(template::BootsTemplate::vec());
+    templates.extend(template::GlovesTemplate::vec());
+    templates.extend(template::HelmTemplate::vec());
+    templates.extend(template::ShieldTemplate::vec());
+
+    templates = templates.into_iter()
+        .filter(|x| x.item_level() <= 10)
         .collect();
 
-    templates.extend(boots);
-
-    /* TODO
-    let helm: Vec<Box<dyn template::Template>> = template::HelmTemplate::iter().map(|x| Box::new(x)).collect();
-    let templates: Vec<Box<dyn template::Template>> = vec![
-        boots,
-    ].flatten();
-        template::ArmorTemplate::iter().collect(),
-        template::GlovesTemplate::iter().collect(),
-        template::ShieldTemplate::iter().collect(),
-    .flatten()
-        .iter()
-        .filter(|template| template.level() <= 10)
-        .collect();
-        */
     create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_weaponsmith() -> model::Item {
-    /* TODO
-    let daggers = template::DaggerTemplate::iter()
-        .filter(|x| x.level() <= 10)
+    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    templates.extend(template::DaggerTemplate::vec());
+    templates.extend(template::SwordTemplate::vec());
+    templates.extend(template::AxeTemplate::vec());
+
+    templates = templates.into_iter()
+        .filter(|x| x.item_level() <= 10)
         .collect();
-    let swords = template::SwordTemplate::iter()
-        .filter(|x| x.level() <= 10)
-        .collect();
-    let axes = template::AxeTemplate::iter()
-        .filter(|x| x.level() <= 10)
-        .collect();
+    /* TODO PR#36
     let maces = template::MaceTemplate::iter()
         .filter(|x| x.level() <= 10)
         .collect();
@@ -117,27 +107,26 @@ pub fn generate_item_for_weaponsmith() -> model::Item {
         daggers, swords, axes, maces, polearms, bows, crossbows, slings, ammo,
     ]);
     */
-    let random_template = vec![];
-    create_item(random_template, 7)
+    create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_alchemist_store() -> model::Item {
-    /*
-    let potions = template::PotionTemplate::iter()
-        .filter(|x| x.level <= 10)
+    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    templates.extend(template::PotionTemplate::vec());
+    templates = templates.into_iter()
+        .filter(|x| x.item_level() <= 10)
         .collect();
-    let random_template = get_random_from_list(potions);
-    */
-    let random_template = vec![];
-    create_item(random_template, 7)
+    create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_magic_store() -> model::Item {
-    /* TODO
-     * Staff, Wand, Scroll
-    let staves = template::StaffTemplate::iter()
-        .filter(|x| x.level <= 10)
+    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    templates.extend(template::StaffTemplate::vec());
+    templates = templates.into_iter()
+        .filter(|x| x.item_level() <= 10)
         .collect();
+    /* TODO PR#36
+     * Staff, Wand, Scroll
     let wands = template::WandTemplate::iter()
         .filter(|x| x.level <= 10)
         .collect();
@@ -148,33 +137,37 @@ pub fn generate_item_for_magic_store() -> model::Item {
         staves, wands, scrolls,
     ].flatten());
      */
-    let random_template = vec![];
-    create_item(random_template, 7)
+    create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_inn() -> model::Item {
-    // TODO: Inn should just generate them all in the same order every time
-    let random_template = get_random_from_list(template::LodgingAtInnTemplate::iter().collect());
-    create_item(Box::new(random_template), 7)
+    // TODO PR#36: Inn should just generate them all in the same order every time
+    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    templates.extend(template::LodgingAtInnTemplate::vec());
+    create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_library() -> model::Item {
-    let random_template = get_random_from_list(vec![
-           template::MagicBookTemplate::iter().collect(),
-           template::SongBookTemplate::iter().collect(),
-    ]);
-    create_item(random_template, 7)
+    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    templates.extend(template::MagicBookTemplate::vec());
+    templates.extend(template::SongBookTemplate::vec());
+    templates = templates.into_iter()
+        .filter(|x| x.item_level() <= 10)
+        .collect();
+    create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_temple() -> model::Item {
-    let random_template = get_random_from_list(vec![
-           template::PrayerBookTemplate::iter().collect(),
-    ]);
-    create_item(random_template, 7)
+    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    templates.extend(template::PrayerBookTemplate::vec());
+    templates = templates.into_iter()
+        .filter(|x| x.item_level() <= 10)
+        .collect();
+    create_item(get_random_from_list(templates), 7)
 }
 
 pub fn generate_item_for_music_store() -> model::Item {
-    /* TODO
+    /* TODO PR#36
     let random_template = get_random_from_list(vec![
        template::InstrumentTemplate::iter().collect(),
        template::ChimeTemplate::iter().collect(),
@@ -186,7 +179,7 @@ pub fn generate_item_for_music_store() -> model::Item {
 }
 
 pub fn generate_item_for_gem_store() -> model::Item {
-    /* TODO
+    /* TODO PR#36
     let random_template = get_random_from_list(vec![
        template::AmuletTemplate::iter().filter(|x| x.level <= 10).collect(),
        template::RingTemplate::iter().filter(|x| x.level <= 10).collect(),
@@ -198,7 +191,7 @@ pub fn generate_item_for_gem_store() -> model::Item {
 }
 
 pub fn generate_item_for_all_night_deli() -> model::Item {
-    get_random_from_list(template::JunkFoodTemplate::iter().collect()).create()
+    create_item(get_random_from_list(template::JunkFoodTemplate::vec()), 7)
 }
 
 /**
@@ -256,7 +249,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     let is_cursed = !is_magic && 5 > (rand::random::<u8>() % 100);
 
 
-    // TODO: Implement magic_treasure()
+    // TODO PR#36: Implement magic_treasure()
 
     enum GenTreasureType {
         Armor, // Belt, Bracers, SoftArmor, HardArmor, Shield, Helm, Cloak, Gloves, Boots
@@ -296,7 +289,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
 
     match item_type {
         GenTreasureType::Armor => {
-            /* TODO
+            /* TODO PR#36
                Armor(template::ArmorTemplate),
                Boots(template::BootsTemplate),
                Belt(template::BeltTemplate),
@@ -311,7 +304,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
             create_item(template, item_level)
         },
         GenTreasureType::DungeonItems => {
-            /* TODO
+            /* TODO PR#36
                Chest(template::ChestTemplate),
                Misc(template::MiscTemplate),
              */
@@ -320,7 +313,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
             create_item(template, item_level)
         },
         GenTreasureType::Jewelry => {
-            /* TODO
+            /* TODO PR#36
                Amulet(template::AmuletTemplate),
                Valuable(template::ValuableTemplate),
                Ring(template::RingTemplate),
@@ -330,7 +323,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
             create_item(template, item_level)
         },
         GenTreasureType::MagicItem => {
-            /* TODO
+            /* TODO PR#36
                Chime(template::ChimeTemplate),
                Horn(template::HornTemplate),
                Staff(template::StaffTemplate),
@@ -341,19 +334,19 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
             create_item(template, item_level)
         },
         GenTreasureType::Potion => {
-            // TODO
+            // TODO PR#36
             let list = vec![];
             let template = get_random_from_list(list);
             create_item(template, item_level)
         },
         GenTreasureType::Scroll => {
-            // TODO
+            // TODO PR#36
             let list = vec![];
             let template = get_random_from_list(list);
             create_item(template, item_level)
         },
         GenTreasureType::Usable => {
-            /* TODO
+            /* TODO PR#36
                Ammo(template::AmmunitionTemplate),
                Bag(template::BagTemplate),
                Food(template::FoodTemplate),
@@ -366,7 +359,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
             create_item(template, item_level)
         },
         GenTreasureType::Weapon => {
-            /* TODO
+            /* TODO PR#36
             let list = vec![
                 template::AxeTemplate::iter()
                     .filter(|x| item_level >= x.level())

@@ -18,20 +18,24 @@ pub enum DaggerTemplate {
 
 
 impl DaggerTemplate {
-    pub fn iter() -> impl Iterator<Item=DaggerTemplate> {
-        [
-            DaggerTemplate::MainGauche,
-            DaggerTemplate::Misercorde,
-            DaggerTemplate::Stiletto,
-            DaggerTemplate::Bodkin,
-            DaggerTemplate::BrokenDagger,
-            DaggerTemplate::CatONineTails,
-            DaggerTemplate::Bilbo,
-            DaggerTemplate::Baselard,
-            DaggerTemplate::Foil,
-            DaggerTemplate::Rapier,
-            DaggerTemplate::SmallSword,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(DaggerTemplate::MainGauche),
+            Box::new(DaggerTemplate::Misercorde),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(DaggerTemplate::Bodkin),
+            Box::new(DaggerTemplate::BrokenDagger),
+            Box::new(DaggerTemplate::CatONineTails),
+            Box::new(DaggerTemplate::Bilbo),
+            Box::new(DaggerTemplate::Baselard),
+            Box::new(DaggerTemplate::Foil),
+            Box::new(DaggerTemplate::Rapier),
+            Box::new(DaggerTemplate::SmallSword),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        DaggerTemplate::vec().into_iter()
     }
 }
 

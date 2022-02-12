@@ -10,13 +10,17 @@ pub enum MagicBookTemplate {
 }
 
 impl MagicBookTemplate {
-    pub fn iter() -> impl Iterator<Item=MagicBookTemplate> {
-        [
-            MagicBookTemplate::BeginnersMagic,
-            MagicBookTemplate::Magic1,
-            MagicBookTemplate::Magic2,
-            MagicBookTemplate::MagesGuideToPower,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(MagicBookTemplate::BeginnersMagic),
+            Box::new(MagicBookTemplate::Magic1),
+            Box::new(MagicBookTemplate::Magic2),
+            Box::new(MagicBookTemplate::MagesGuideToPower),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        MagicBookTemplate::vec().into_iter()
     }
 }
 

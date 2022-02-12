@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -31,56 +31,41 @@ pub enum StaffTemplate {
 
 
 impl StaffTemplate {
-    pub fn iter() -> impl Iterator<Item=StaffTemplate> {
-        [
-            StaffTemplate::StaffOfLight,
-            StaffTemplate::StaffOfDoorStairLocation,
-            StaffTemplate::StaffOfTrapLocation,
-            StaffTemplate::StaffOfTreasureLocation,
-            StaffTemplate::StaffOfObjectLocation,
-            StaffTemplate::StaffOfTeleportation,
-            StaffTemplate::StaffOfEarthquakes,
-            StaffTemplate::StaffOfSummoning,
-            StaffTemplate::StaffOfDestruction,
-            StaffTemplate::StaffOfStarlite,
-            StaffTemplate::StaffOfHasteMonsters,
-            StaffTemplate::StaffOfSlowMonsters,
-            StaffTemplate::StaffOfSleepMonsters,
-            StaffTemplate::StaffOfCureLightWounds,
-            StaffTemplate::StaffOfDetectInvisible,
-            StaffTemplate::StaffOfSpeed,
-            StaffTemplate::StaffOfSlowness,
-            StaffTemplate::StaffOfMassPolymorph,
-            StaffTemplate::StaffOfRemoveCurse,
-            StaffTemplate::StaffOfDetectEvil,
-            StaffTemplate::StaffOfCuring,
-            StaffTemplate::StaffOfDispelEvil,
-            StaffTemplate::StaffOfDarkness,
-            StaffTemplate::StaffOfIdentify,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(StaffTemplate::StaffOfLight),
+            Box::new(StaffTemplate::StaffOfDoorStairLocation),
+            Box::new(StaffTemplate::StaffOfTrapLocation),
+            Box::new(StaffTemplate::StaffOfTreasureLocation),
+            Box::new(StaffTemplate::StaffOfObjectLocation),
+            Box::new(StaffTemplate::StaffOfTeleportation),
+            Box::new(StaffTemplate::StaffOfEarthquakes),
+            Box::new(StaffTemplate::StaffOfSummoning),
+            Box::new(StaffTemplate::StaffOfDestruction),
+            Box::new(StaffTemplate::StaffOfStarlite),
+            Box::new(StaffTemplate::StaffOfHasteMonsters),
+            Box::new(StaffTemplate::StaffOfSlowMonsters),
+            Box::new(StaffTemplate::StaffOfSleepMonsters),
+            Box::new(StaffTemplate::StaffOfCureLightWounds),
+            Box::new(StaffTemplate::StaffOfDetectInvisible),
+            Box::new(StaffTemplate::StaffOfSpeed),
+            Box::new(StaffTemplate::StaffOfSlowness),
+            Box::new(StaffTemplate::StaffOfMassPolymorph),
+            Box::new(StaffTemplate::StaffOfRemoveCurse),
+            Box::new(StaffTemplate::StaffOfDetectEvil),
+            Box::new(StaffTemplate::StaffOfCuring),
+            Box::new(StaffTemplate::StaffOfDispelEvil),
+            Box::new(StaffTemplate::StaffOfDarkness),
+            Box::new(StaffTemplate::StaffOfIdentify),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Horn as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 50,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("1d2"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        StaffTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for StaffTemplate {
     fn name(&self) -> &str {
         match self {
             StaffTemplate::StaffOfLight => "& %W Staff| of Light^ (%P1 charges)",
@@ -109,6 +94,9 @@ impl StaffTemplate {
             StaffTemplate::StaffOfIdentify => "& %W Staff| of Identify^ (%P1 charges)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Staff }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -139,6 +127,8 @@ impl StaffTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             StaffTemplate::StaffOfLight => 250,
@@ -168,7 +158,7 @@ impl StaffTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             StaffTemplate::StaffOfLight => 1,
             StaffTemplate::StaffOfDoorStairLocation => 2,
@@ -197,7 +187,17 @@ impl StaffTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn weight(&self) -> u16 { 50 }
+
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
+    fn damage(&self) -> &str { "1d2" }
+
+    fn item_level(&self) -> u8 {
         match self {
             StaffTemplate::StaffOfLight => 5,
             StaffTemplate::StaffOfDoorStairLocation => 10,
@@ -225,5 +225,7 @@ impl StaffTemplate {
             StaffTemplate::StaffOfIdentify => 20,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }
 

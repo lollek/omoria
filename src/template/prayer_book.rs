@@ -10,13 +10,17 @@ pub enum PrayerBookTemplate {
 }
 
 impl PrayerBookTemplate {
-    pub fn iter() -> impl Iterator<Item=PrayerBookTemplate> {
-        [
-            PrayerBookTemplate::BeginnersHandbook,
-            PrayerBookTemplate::WordsOfWisdom,
-            PrayerBookTemplate::ChantsAndBlessings,
-            PrayerBookTemplate::ExorcismAndDispelling,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(PrayerBookTemplate::BeginnersHandbook),
+            Box::new(PrayerBookTemplate::WordsOfWisdom),
+            Box::new(PrayerBookTemplate::ChantsAndBlessings),
+            Box::new(PrayerBookTemplate::ExorcismAndDispelling),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        PrayerBookTemplate::vec().into_iter()
     }
 }
 

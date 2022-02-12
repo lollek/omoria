@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ShieldTemplate {
@@ -15,40 +15,26 @@ pub enum ShieldTemplate {
 }
 
 impl ShieldTemplate {
-    pub fn iter() -> impl Iterator<Item=ShieldTemplate> {
-        [
-            ShieldTemplate::SmallLeatherShield,
-            ShieldTemplate::MediumLeatherShield,
-            ShieldTemplate::LargeLeatherShield,
-            ShieldTemplate::Buckler,
-            ShieldTemplate::KiteShield,
-            ShieldTemplate::TowerShield,
-            ShieldTemplate::SharkskinShield,
-            ShieldTemplate::DemonhideShield,
-            ShieldTemplate::WyrmhideShield,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(ShieldTemplate::SmallLeatherShield),
+            Box::new(ShieldTemplate::MediumLeatherShield),
+            Box::new(ShieldTemplate::LargeLeatherShield),
+            Box::new(ShieldTemplate::Buckler),
+            Box::new(ShieldTemplate::KiteShield),
+            Box::new(ShieldTemplate::TowerShield),
+            Box::new(ShieldTemplate::SharkskinShield),
+            Box::new(ShieldTemplate::DemonhideShield),
+            Box::new(ShieldTemplate::WyrmhideShield),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Shield as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: self.ac(),
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        ShieldTemplate::vec().into_iter()
     }
+}
+
+impl template::Template for ShieldTemplate {
 
     fn name(&self) -> &str {
         match self {
@@ -64,6 +50,11 @@ impl ShieldTemplate {
         }
     }
 
+    fn item_type(&self) -> model::ItemType { model::ItemType::Shield }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             ShieldTemplate::SmallLeatherShield => 10,
@@ -78,7 +69,7 @@ impl ShieldTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             ShieldTemplate::SmallLeatherShield => 1,
             ShieldTemplate::MediumLeatherShield => 2,
@@ -106,7 +97,11 @@ impl ShieldTemplate {
         }
     }
 
-    fn ac(&self) -> i16 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+
+    fn base_ac(&self) -> i16 {
         match self {
             ShieldTemplate::SmallLeatherShield => 2,
             ShieldTemplate::MediumLeatherShield => 3,
@@ -119,7 +114,11 @@ impl ShieldTemplate {
             ShieldTemplate::WyrmhideShield => 20,
         }
     }
-    pub fn level(&self) -> u8 {
+
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "0d0" }
+
+    fn item_level(&self) -> u8 {
         match self {
             ShieldTemplate::SmallLeatherShield => 3,
             ShieldTemplate::MediumLeatherShield => 8,
@@ -133,4 +132,5 @@ impl ShieldTemplate {
         }
     }
 
+    fn is_identified(&self) -> bool { false }
 }

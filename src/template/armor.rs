@@ -40,42 +40,46 @@ pub enum ArmorTemplate {
 
 
 impl ArmorTemplate {
-    pub fn iter() -> impl Iterator<Item=ArmorTemplate> {
-        [
-            ArmorTemplate::AugmentedChainMail,
-            ArmorTemplate::BarChainMail,
-            ArmorTemplate::BronzePlateMail,
-            ArmorTemplate::ChainMail,
-            ArmorTemplate::CoolSetOfThreads,
-            ArmorTemplate::DemonhideArmor,
-            ArmorTemplate::DoubleChainMail,
-            ArmorTemplate::DuskShroud,
-            ArmorTemplate::ElvenChainMail,
-            ArmorTemplate::FilthyNagaHideArmor,
-            ArmorTemplate::FilthyRags,
-            ArmorTemplate::FullPlateArmor,
-            ArmorTemplate::HardLeatherArmor,
-            ArmorTemplate::HardLeatherRingMail,
-            ArmorTemplate::HardStuddedLeather,
-            ArmorTemplate::LacqueredPlate,
-            ArmorTemplate::LaminatedArmor,
-            ArmorTemplate::LeatherBrigantineArmor,
-            ArmorTemplate::LeatherScaleMail,
-            ArmorTemplate::MetalBrigandineArmor,
-            ArmorTemplate::MetalLamellarArmor,
-            ArmorTemplate::MetalScaleMail,
-            ArmorTemplate::MithrilChainMail,
-            ArmorTemplate::MithrilPlateArmor,
-            ArmorTemplate::PartialPlateArmor,
-            ArmorTemplate::Robe,
-            ArmorTemplate::RustyChainMail,
-            ArmorTemplate::SoftLeatherArmor,
-            ArmorTemplate::SoftLeatherRingMail,
-            ArmorTemplate::SoftStuddedLeather,
-            ArmorTemplate::StonePlateArmor,
-            ArmorTemplate::WovenCordArmor,
-            ArmorTemplate::WyrmhideArmor,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(ArmorTemplate::AugmentedChainMail),
+            Box::new(ArmorTemplate::BarChainMail),
+            Box::new(ArmorTemplate::BronzePlateMail),
+            Box::new(ArmorTemplate::ChainMail),
+            Box::new(ArmorTemplate::CoolSetOfThreads),
+            Box::new(ArmorTemplate::DemonhideArmor),
+            Box::new(ArmorTemplate::DoubleChainMail),
+            Box::new(ArmorTemplate::DuskShroud),
+            Box::new(ArmorTemplate::ElvenChainMail),
+            Box::new(ArmorTemplate::FilthyNagaHideArmor),
+            Box::new(ArmorTemplate::FilthyRags),
+            Box::new(ArmorTemplate::FullPlateArmor),
+            Box::new(ArmorTemplate::HardLeatherArmor),
+            Box::new(ArmorTemplate::HardLeatherRingMail),
+            Box::new(ArmorTemplate::HardStuddedLeather),
+            Box::new(ArmorTemplate::LacqueredPlate),
+            Box::new(ArmorTemplate::LaminatedArmor),
+            Box::new(ArmorTemplate::LeatherBrigantineArmor),
+            Box::new(ArmorTemplate::LeatherScaleMail),
+            Box::new(ArmorTemplate::MetalBrigandineArmor),
+            Box::new(ArmorTemplate::MetalLamellarArmor),
+            Box::new(ArmorTemplate::MetalScaleMail),
+            Box::new(ArmorTemplate::MithrilChainMail),
+            Box::new(ArmorTemplate::MithrilPlateArmor),
+            Box::new(ArmorTemplate::PartialPlateArmor),
+            Box::new(ArmorTemplate::Robe),
+            Box::new(ArmorTemplate::RustyChainMail),
+            Box::new(ArmorTemplate::SoftLeatherArmor),
+            Box::new(ArmorTemplate::SoftLeatherRingMail),
+            Box::new(ArmorTemplate::SoftStuddedLeather),
+            Box::new(ArmorTemplate::StonePlateArmor),
+            Box::new(ArmorTemplate::WovenCordArmor),
+            Box::new(ArmorTemplate::WyrmhideArmor),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        ArmorTemplate::vec().into_iter()
     }
 }
 

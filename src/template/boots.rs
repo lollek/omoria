@@ -16,18 +16,21 @@ pub enum BootsTemplate {
 
 
 impl BootsTemplate {
-    pub fn iter() -> impl Iterator<Item=BootsTemplate> {
-        [
-            BootsTemplate::SoftLeatherShoes,
-            BootsTemplate::SoftLeatherBoots,
-            BootsTemplate::HardLeatherBoots,
-            BootsTemplate::Sandals,
-            BootsTemplate::ChainBoots,
-            BootsTemplate::LightPlatedBoots,
-            BootsTemplate::SharkskinBoots,
-            BootsTemplate::DemonhideBoots,
-            BootsTemplate::WyrmhideBoot,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(BootsTemplate::SoftLeatherShoes),
+            Box::new(BootsTemplate::SoftLeatherBoots),
+            Box::new(BootsTemplate::HardLeatherBoots),
+            Box::new(BootsTemplate::Sandals),
+            Box::new(BootsTemplate::ChainBoots),
+            Box::new(BootsTemplate::LightPlatedBoots),
+            Box::new(BootsTemplate::SharkskinBoots),
+            Box::new(BootsTemplate::DemonhideBoots),
+            Box::new(BootsTemplate::WyrmhideBoot),
+        ]
+    }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        BootsTemplate::vec().into_iter()
     }
 }
 

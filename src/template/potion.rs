@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PotionTemplate {
@@ -51,126 +51,113 @@ pub enum PotionTemplate {
 }
 
 impl PotionTemplate {
-    pub fn iter() -> impl Iterator<Item=PotionTemplate> {
-        [
-            PotionTemplate::AppleJuice,
-            PotionTemplate::Blindness,
-            PotionTemplate::Boldliness,
-            PotionTemplate::Charisma,
-            PotionTemplate::Confusion,
-            PotionTemplate::CureCriticalWounds,
-            PotionTemplate::CureLightWounds,
-            PotionTemplate::CureSeriousWounds,
-            PotionTemplate::DetectInvisible,
-            PotionTemplate::FleaBile,
-            PotionTemplate::GainConstitution,
-            PotionTemplate::GainDexterity,
-            PotionTemplate::GainExperience,
-            PotionTemplate::GainIntelligence,
-            PotionTemplate::GainStrength,
-            PotionTemplate::GainWisdom,
-            PotionTemplate::HasteSelf,
-            PotionTemplate::Healing,
-            PotionTemplate::Heroism,
-            PotionTemplate::InfraVision,
-            PotionTemplate::Invulnerability,
-            PotionTemplate::Learning,
-            PotionTemplate::LoseIntelligence,
-            PotionTemplate::LoseMemories,
-            PotionTemplate::LoseWisdom,
-            PotionTemplate::NeutralizePoison,
-            PotionTemplate::Poison,
-            PotionTemplate::ResistCold,
-            PotionTemplate::ResistHeat,
-            PotionTemplate::RestoreCharisma,
-            PotionTemplate::RestoreConstitution,
-            PotionTemplate::RestoreDexterity,
-            PotionTemplate::RestoreIntelligence,
-            PotionTemplate::RestoreLifeLevels,
-            PotionTemplate::RestoreMana,
-            PotionTemplate::RestoreStrength,
-            PotionTemplate::RestoreWisdom,
-            PotionTemplate::SaltWater,
-            PotionTemplate::Sleep,
-            PotionTemplate::SlimeMoldJuice,
-            PotionTemplate::SlowPoison,
-            PotionTemplate::Slowness,
-            PotionTemplate::SuperHeroism,
-            PotionTemplate::Ugliness,
-            PotionTemplate::Water,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(PotionTemplate::AppleJuice),
+            Box::new(PotionTemplate::Blindness),
+            Box::new(PotionTemplate::Boldliness),
+            Box::new(PotionTemplate::Charisma),
+            Box::new(PotionTemplate::Confusion),
+            Box::new(PotionTemplate::CureCriticalWounds),
+            Box::new(PotionTemplate::CureLightWounds),
+            Box::new(PotionTemplate::CureSeriousWounds),
+            Box::new(PotionTemplate::DetectInvisible),
+            Box::new(PotionTemplate::FleaBile),
+            Box::new(PotionTemplate::GainConstitution),
+            Box::new(PotionTemplate::GainDexterity),
+            Box::new(PotionTemplate::GainExperience),
+            Box::new(PotionTemplate::GainIntelligence),
+            Box::new(PotionTemplate::GainStrength),
+            Box::new(PotionTemplate::GainWisdom),
+            Box::new(PotionTemplate::HasteSelf),
+            Box::new(PotionTemplate::Healing),
+            Box::new(PotionTemplate::Heroism),
+            Box::new(PotionTemplate::InfraVision),
+            Box::new(PotionTemplate::Invulnerability),
+            Box::new(PotionTemplate::Learning),
+            Box::new(PotionTemplate::LoseIntelligence),
+            Box::new(PotionTemplate::LoseMemories),
+            Box::new(PotionTemplate::LoseWisdom),
+            Box::new(PotionTemplate::NeutralizePoison),
+            Box::new(PotionTemplate::Poison),
+            Box::new(PotionTemplate::ResistCold),
+            Box::new(PotionTemplate::ResistHeat),
+            Box::new(PotionTemplate::RestoreCharisma),
+            Box::new(PotionTemplate::RestoreConstitution),
+            Box::new(PotionTemplate::RestoreDexterity),
+            Box::new(PotionTemplate::RestoreIntelligence),
+            Box::new(PotionTemplate::RestoreLifeLevels),
+            Box::new(PotionTemplate::RestoreMana),
+            Box::new(PotionTemplate::RestoreStrength),
+            Box::new(PotionTemplate::RestoreWisdom),
+            Box::new(PotionTemplate::SaltWater),
+            Box::new(PotionTemplate::Sleep),
+            Box::new(PotionTemplate::SlimeMoldJuice),
+            Box::new(PotionTemplate::SlowPoison),
+            Box::new(PotionTemplate::Slowness),
+            Box::new(PotionTemplate::SuperHeroism),
+            Box::new(PotionTemplate::Ugliness),
+            Box::new(PotionTemplate::Water),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: self.name(),
-            tval: model::ItemType::Potion1 as u8,
-            flags: self.flags1(),
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 4,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("1d1"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        PotionTemplate::vec().into_iter()
     }
+}
 
-    fn name(&self) -> model::Name {
+impl template::Template for PotionTemplate {
+    fn name(&self) -> &str {
         match self {
-            PotionTemplate::AppleJuice => misc::rs2item_name("& %C Potion~| of Apple Juice"),
-            PotionTemplate::Blindness => misc::rs2item_name("& %C Potion~| of Blindness"),
-            PotionTemplate::Boldliness => misc::rs2item_name("& %C Potion~| of Boldliness"),
-            PotionTemplate::Charisma => misc::rs2item_name("& %C Potion~| of Charisma"),
-            PotionTemplate::Confusion => misc::rs2item_name("& %C Potion~| of Confusion"),
-            PotionTemplate::CureCriticalWounds => misc::rs2item_name("& %C Potion~| of Cure Critical Wounds"),
-            PotionTemplate::CureLightWounds => misc::rs2item_name("& %C Potion~| of Cure Light Wounds"),
-            PotionTemplate::CureSeriousWounds => misc::rs2item_name("& %C Potion~| of Cure Serious Wounds"),
-            PotionTemplate::DetectInvisible => misc::rs2item_name("& %C Potion~| of Detect Invisible"),
-            PotionTemplate::FleaBile => misc::rs2item_name("& %C Potion~| of Flea Bile"),
-            PotionTemplate::GainConstitution => misc::rs2item_name("& %C Potion~| of Gain Constitution"),
-            PotionTemplate::GainDexterity => misc::rs2item_name("& %C Potion~| of Gain Dexterity"),
-            PotionTemplate::GainExperience => misc::rs2item_name("& %C Potion~| of Gain Experience"),
-            PotionTemplate::GainIntelligence => misc::rs2item_name("& %C Potion~| of Restore Strength"),
-            PotionTemplate::GainStrength => misc::rs2item_name("& %C Potion~| of Gain Strength"),
-            PotionTemplate::GainWisdom => misc::rs2item_name("& %C Potion~| of Gain Wisdom"),
-            PotionTemplate::HasteSelf => misc::rs2item_name("& %C Potion~| of Haste Self"),
-            PotionTemplate::Healing => misc::rs2item_name("& %C Potion~| of Healing"),
-            PotionTemplate::Heroism => misc::rs2item_name("& %C Potion~| of Heroism"),
-            PotionTemplate::InfraVision => misc::rs2item_name("& %C Potion~| of Infra-Vision"),
-            PotionTemplate::Invulnerability => misc::rs2item_name("& %C Potion~| of Invulnerability"),
-            PotionTemplate::Learning => misc::rs2item_name("& %C Potion~| of Learning"),
-            PotionTemplate::LoseIntelligence => misc::rs2item_name("& %C Potion~| of Lose Intelligence"),
-            PotionTemplate::LoseMemories => misc::rs2item_name("& %C Potion~| of Lose Memories"),
-            PotionTemplate::LoseWisdom => misc::rs2item_name("& %C Potion~| of Lose Wisdom"),
-            PotionTemplate::NeutralizePoison => misc::rs2item_name("& %C Potion~| of Neutralize Poison"),
-            PotionTemplate::Poison => misc::rs2item_name("& %C Potion~| of Poison"),
-            PotionTemplate::ResistCold => misc::rs2item_name("& %C Potion~| of Resist Cold"),
-            PotionTemplate::ResistHeat => misc::rs2item_name("& %C Potion~| of Resist Heat"),
-            PotionTemplate::RestoreCharisma => misc::rs2item_name("& %C Potion~| of Restore Charisma"),
-            PotionTemplate::RestoreConstitution => misc::rs2item_name("& %C Potion~| of Restore Consitution"),
-            PotionTemplate::RestoreDexterity => misc::rs2item_name("& %C Potion~| of Restore Dexterity"),
-            PotionTemplate::RestoreIntelligence => misc::rs2item_name("& %C Potion~| of Restore Intelligence"),
-            PotionTemplate::RestoreLifeLevels => misc::rs2item_name("& %C Potion~| of Restore Life Levels"),
-            PotionTemplate::RestoreMana => misc::rs2item_name("& %C Potion~| of Restore Mana"),
-            PotionTemplate::RestoreStrength => misc::rs2item_name("& %C Potion~| of Restore Strength"),
-            PotionTemplate::RestoreWisdom => misc::rs2item_name("& %C Potion~| of Restore Wisdom"),
-            PotionTemplate::SaltWater => misc::rs2item_name("& %C Potion~| of Salt Water"),
-            PotionTemplate::Sleep => misc::rs2item_name("& %C Potion~| of Sleep"),
-            PotionTemplate::SlimeMoldJuice => misc::rs2item_name("& %C Potion~| of Slime Mold Juice"),
-            PotionTemplate::SlowPoison => misc::rs2item_name("& %C Potion~| of Slow Poison"),
-            PotionTemplate::Slowness => misc::rs2item_name("& %C Potion~| of Slowness"),
-            PotionTemplate::SuperHeroism => misc::rs2item_name("& %C Potion~| of Super Heroism"),
-            PotionTemplate::Ugliness => misc::rs2item_name("& %C Potion~| of Ugliness"),
-            PotionTemplate::Water => misc::rs2item_name("& %C Potion~| of Water"),
+            PotionTemplate::AppleJuice => "& %C Potion~| of Apple Juice",
+            PotionTemplate::Blindness => "& %C Potion~| of Blindness",
+            PotionTemplate::Boldliness => "& %C Potion~| of Boldliness",
+            PotionTemplate::Charisma => "& %C Potion~| of Charisma",
+            PotionTemplate::Confusion => "& %C Potion~| of Confusion",
+            PotionTemplate::CureCriticalWounds => "& %C Potion~| of Cure Critical Wounds",
+            PotionTemplate::CureLightWounds => "& %C Potion~| of Cure Light Wounds",
+            PotionTemplate::CureSeriousWounds => "& %C Potion~| of Cure Serious Wounds",
+            PotionTemplate::DetectInvisible => "& %C Potion~| of Detect Invisible",
+            PotionTemplate::FleaBile => "& %C Potion~| of Flea Bile",
+            PotionTemplate::GainConstitution => "& %C Potion~| of Gain Constitution",
+            PotionTemplate::GainDexterity => "& %C Potion~| of Gain Dexterity",
+            PotionTemplate::GainExperience => "& %C Potion~| of Gain Experience",
+            PotionTemplate::GainIntelligence => "& %C Potion~| of Restore Strength",
+            PotionTemplate::GainStrength => "& %C Potion~| of Gain Strength",
+            PotionTemplate::GainWisdom => "& %C Potion~| of Gain Wisdom",
+            PotionTemplate::HasteSelf => "& %C Potion~| of Haste Self",
+            PotionTemplate::Healing => "& %C Potion~| of Healing",
+            PotionTemplate::Heroism => "& %C Potion~| of Heroism",
+            PotionTemplate::InfraVision => "& %C Potion~| of Infra-Vision",
+            PotionTemplate::Invulnerability => "& %C Potion~| of Invulnerability",
+            PotionTemplate::Learning => "& %C Potion~| of Learning",
+            PotionTemplate::LoseIntelligence => "& %C Potion~| of Lose Intelligence",
+            PotionTemplate::LoseMemories => "& %C Potion~| of Lose Memories",
+            PotionTemplate::LoseWisdom => "& %C Potion~| of Lose Wisdom",
+            PotionTemplate::NeutralizePoison => "& %C Potion~| of Neutralize Poison",
+            PotionTemplate::Poison => "& %C Potion~| of Poison",
+            PotionTemplate::ResistCold => "& %C Potion~| of Resist Cold",
+            PotionTemplate::ResistHeat => "& %C Potion~| of Resist Heat",
+            PotionTemplate::RestoreCharisma => "& %C Potion~| of Restore Charisma",
+            PotionTemplate::RestoreConstitution => "& %C Potion~| of Restore Consitution",
+            PotionTemplate::RestoreDexterity => "& %C Potion~| of Restore Dexterity",
+            PotionTemplate::RestoreIntelligence => "& %C Potion~| of Restore Intelligence",
+            PotionTemplate::RestoreLifeLevels => "& %C Potion~| of Restore Life Levels",
+            PotionTemplate::RestoreMana => "& %C Potion~| of Restore Mana",
+            PotionTemplate::RestoreStrength => "& %C Potion~| of Restore Strength",
+            PotionTemplate::RestoreWisdom => "& %C Potion~| of Restore Wisdom",
+            PotionTemplate::SaltWater => "& %C Potion~| of Salt Water",
+            PotionTemplate::Sleep => "& %C Potion~| of Sleep",
+            PotionTemplate::SlimeMoldJuice => "& %C Potion~| of Slime Mold Juice",
+            PotionTemplate::SlowPoison => "& %C Potion~| of Slow Poison",
+            PotionTemplate::Slowness => "& %C Potion~| of Slowness",
+            PotionTemplate::SuperHeroism => "& %C Potion~| of Super Heroism",
+            PotionTemplate::Ugliness => "& %C Potion~| of Ugliness",
+            PotionTemplate::Water => "& %C Potion~| of Water",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Potion1 }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -372,7 +359,7 @@ impl PotionTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             PotionTemplate::Blindness => 276,
             PotionTemplate::Boldliness => 293,
@@ -422,7 +409,15 @@ impl PotionTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn weight(&self) -> u16 { 4 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             PotionTemplate::SaltWater => 0,
             PotionTemplate::FleaBile => 0,
@@ -471,4 +466,6 @@ impl PotionTemplate {
             PotionTemplate::GainExperience => 50,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

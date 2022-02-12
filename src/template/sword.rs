@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SwordTemplate {
@@ -21,46 +21,31 @@ pub enum SwordTemplate {
 
 
 impl SwordTemplate {
-    pub fn iter() -> impl Iterator<Item=SwordTemplate> {
-        [
-            SwordTemplate::Backsword,
-            SwordTemplate::BastardSword,
-            SwordTemplate::Broadsword,
-            SwordTemplate::Claymore,
-            SwordTemplate::Cutlass,
-            SwordTemplate::Espadon,
-            SwordTemplate::ExecutionersSword,
-            SwordTemplate::Flamberge,
-            SwordTemplate::Katana,
-            SwordTemplate::Longsword,
-            SwordTemplate::Nodachi,
-            SwordTemplate::Sabre,
-            SwordTemplate::Zweihander,
-            SwordTemplate::BrokenSword,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(SwordTemplate::Backsword),
+            Box::new(SwordTemplate::BastardSword),
+            Box::new(SwordTemplate::Broadsword),
+            Box::new(SwordTemplate::Claymore),
+            Box::new(SwordTemplate::Cutlass),
+            Box::new(SwordTemplate::Espadon),
+            Box::new(SwordTemplate::ExecutionersSword),
+            Box::new(SwordTemplate::Flamberge),
+            Box::new(SwordTemplate::Katana),
+            Box::new(SwordTemplate::Longsword),
+            Box::new(SwordTemplate::Nodachi),
+            Box::new(SwordTemplate::Sabre),
+            Box::new(SwordTemplate::Zweihander),
+            Box::new(SwordTemplate::BrokenSword),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Sword as u8,
-            flags: 0x10000000,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        SwordTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for SwordTemplate {
     fn name(&self) -> &str {
         match self {
             SwordTemplate::Backsword => "Backsword (%P0)^ (%P2,%P3)",
@@ -79,6 +64,11 @@ impl SwordTemplate {
             SwordTemplate::BrokenSword => "Broken Sword (%P0)^ (%P2,%P3)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Sword }
+    fn flags1(&self) -> u64 { 0x10000000 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
 
     fn cost(&self) -> i64 {
         match self {
@@ -99,7 +89,7 @@ impl SwordTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             SwordTemplate::Backsword => 6,
             SwordTemplate::BastardSword => 7,
@@ -137,6 +127,12 @@ impl SwordTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             SwordTemplate::Backsword => "1d9",
@@ -156,7 +152,7 @@ impl SwordTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             SwordTemplate::Backsword => 7,
             SwordTemplate::BastardSword => 14,
@@ -174,4 +170,6 @@ impl SwordTemplate {
             SwordTemplate::BrokenSword => 0,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

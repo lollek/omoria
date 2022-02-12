@@ -18,21 +18,25 @@ pub enum HelmTemplate {
 }
 
 impl HelmTemplate {
-    pub fn iter() -> impl Iterator<Item=HelmTemplate> {
-        [
-            HelmTemplate::ClothHat,
-            HelmTemplate::SoftLeatherCap,
-            HelmTemplate::HardLeatherCap,
-            HelmTemplate::MetalCap,
-            HelmTemplate::FullHelm,
-            HelmTemplate::GreatHelm,
-            HelmTemplate::WingedHelm,
-            HelmTemplate::SilverCrown,
-            HelmTemplate::SilverMask,
-            HelmTemplate::GoldenCrown,
-            HelmTemplate::GoldenMask,
-            HelmTemplate::JewelEncrustedCrown,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(HelmTemplate::ClothHat),
+            Box::new(HelmTemplate::SoftLeatherCap),
+            Box::new(HelmTemplate::HardLeatherCap),
+            Box::new(HelmTemplate::MetalCap),
+            Box::new(HelmTemplate::FullHelm),
+            Box::new(HelmTemplate::GreatHelm),
+            Box::new(HelmTemplate::WingedHelm),
+            Box::new(HelmTemplate::SilverCrown),
+            Box::new(HelmTemplate::SilverMask),
+            Box::new(HelmTemplate::GoldenCrown),
+            Box::new(HelmTemplate::GoldenMask),
+            Box::new(HelmTemplate::JewelEncrustedCrown),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        HelmTemplate::vec().into_iter()
     }
 }
 
