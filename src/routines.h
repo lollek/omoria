@@ -270,8 +270,6 @@ extern boolean check_pswd(char passw[134], boolean present);
 extern void wizard_light();
 extern void monster_summon_by_name(long y, long x, char name[28],
                                    boolean present, boolean sleepy);
-extern boolean summon_item(long y, long x, char name1[70], char name2[70],
-                           long count, boolean present);
 extern void change_character();
 extern void edit_score_file();
 extern void wizard_create();
@@ -442,7 +440,6 @@ extern void place_door(long y, long x);
 extern void place_a_staircase(long y, long x, long typ);
 extern void place_stairs(long typ, long num, long walls);
 extern void place_gold(long y, long x);
-extern long get_obj_num(long level, long tries);
 extern void place_object(long y, long x);
 extern void alloc_object(obj_set alloc_set, long typ, long num);
 extern void random_object(long y, long x, long num);

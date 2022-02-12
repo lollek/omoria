@@ -41,52 +41,30 @@ void rantitle(char *title) {
 void identify(treasure_type *item) {
   /*{ Something has been identified }*/
 
-  long i1, x1, x2;
-  treas_rec *curse;
 
-  x1 = item->tval;
-  x2 = item->subval;
+  if (strstr(item->name, "|") == NULL)
+    return;
 
-  if (strstr(item->name, "|") != NULL) {
-    for (i1 = 0; i1 < MAX_TALLOC; i1++) {
-      /* with t_list[i1] do; */
-      if ((t_list[i1].tval == x1) && (t_list[i1].subval == x2)) {
-        unquote(t_list[i1].name);
-        known1(t_list[i1].name);
-      }
+  for (long i = 0; i < MAX_TALLOC; i++) {
+    if (t_list[i].tval == item->tval && t_list[i].subval == item->subval) {
+      unquote(t_list[i].name);
+      known1(t_list[i].name);
     }
-    for (i1 = Equipment_min; i1 <= Equipment_secondary; i1++) {
-      /* with equipment[i1] do; */
-      if ((equipment[i1].tval == x1) && (equipment[i1].subval == x2)) {
-        unquote(equipment[i1].name);
-        known1(equipment[i1].name);
-      }
-    }
+  }
 
-    for (curse = inventory_list; curse != NULL; curse = curse->next) {
-      /* with curse^.data do; */
-      if ((curse->data.tval == x1) && (curse->data.subval == x2)) {
-        unquote(curse->data.name);
-        known1(curse->data.name);
-      }
+  for (long i = Equipment_min; i <= Equipment_secondary; i++) {
+    if (equipment[i].tval == item->tval && equipment[i].subval == item->subval) {
+      unquote(equipment[i].name);
+      known1(equipment[i].name);
     }
+  }
 
-    i1 = 0;
-    do {
-      i1++;
-      /* with object_list[i1] do; */
-      if ((object_list[i1].tval == x1) && (object_list[i1].subval == x2)) {
-        if (strstr(object_list[i1].name, "%T") != NULL) {
-          insert_str(object_list[i1].name, " %T|", "");
-          object_ident[i1] = true;
-        } else {
-          unquote(object_list[i1].name);
-          known1(object_list[i1].name);
-          object_ident[i1] = true;
-        }
-      }
-    } while (i1 != MAX_OBJECTS);
-  } /* end if | */
+  for (treas_rec *curse = inventory_list; curse != NULL; curse = curse->next) {
+    if (curse->data.tval == item->tval && curse->data.subval == item->subval) {
+      unquote(curse->data.name);
+      known1(curse->data.name);
+    }
+  }
 }
 
 void known1(char *object_str) {

@@ -21,6 +21,8 @@
 #include "types.h"
 #include "variables.h"
 
+#include "logic/generate_item.h"
+
 #define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */
 
 static const treasure_type scare_monster = /* { Special trap	} */
@@ -1674,7 +1676,7 @@ boolean genocide() {
 boolean create_food(long t0, long t1, long t2, long t3, long t4) {
   /*{ Create food for the player.           -RAK-   }*/
 
-  long i1, i2, i3, this_one, dist;
+  long i1, i2, this_one, dist;
 
   for (i1 = char_row - 2; i1 <= char_row + 2; i1++) {
     for (i2 = char_col - 2; i2 <= char_col + 2; i2++) {
@@ -1710,11 +1712,7 @@ boolean create_food(long t0, long t1, long t2, long t3, long t4) {
         if (this_one != 0) {
           place_object(i1, i2);
           if (this_one < 0) { /*{junk food.}*/
-            i3 = store_choice[10][(STORE_CHOICES * (-this_one) +
-                                   randint(STORE_CHOICES) + 3) /
-                                      5 -
-                                  1];
-            t_list[cave[i1][i2].tptr] = inventory_init[i3];
+            t_list[cave[i1][i2].tptr] = generate_item_for_all_night_deli();
           } else { /*{good food}*/
             t_list[cave[i1][i2].tptr] = yums[this_one];
           }

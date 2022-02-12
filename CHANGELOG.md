@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.0-alpha
+* Massive code changes to items. Added, removed and modified a lot of items.
+  Also removed "colors". E.g. potions are now only "potions", not "red potion".
+  This is not final, and there will be a lot of changes going forward.
+
 ## 5.0.4
 
 9 October 2021

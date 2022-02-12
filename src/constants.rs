@@ -1,6 +1,6 @@
 pub static SAVE_FOLDER: &'static str = "save";
 pub static DATA_FOLDER: &'static str = "data";
-pub static OMORIA_VERSION: &'static str = "5.0.4";
+pub static OMORIA_VERSION: &'static str = "5.1.0-alpha";
 pub static IMORIA_VERSION: &'static str = "4.85.22";
 
 // Number of Cave tiles on y-axis
@@ -23,5 +23,11 @@ pub const MAX_TALLOC: usize = 225;
 
 // Number of stores
 pub const MAX_STORES: usize = 12;
+
+// Level of items generated in stores
+pub const STORE_ITEM_LEVEL: u8 = 7;
+
+// Max depth level of items in stores
+pub const STORE_MAX_ITEM_LEVEL: u8 = 10;
 
 pub const MAX_PLAYER_LEVEL: usize = 40;

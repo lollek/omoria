@@ -19,26 +19,33 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 omoria: $(OBJFILES)
 	cargo build
 	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
-.PHONY: omoria
 
+.PHONY: run
 run: omoria ctags
 	>debug2.out
 	RUST_BACKTRACE=1 ./omoria
 
+.PHONY: debug
+debug: omoria ctags
+	>debug2.out
+	RUST_BACKTRACE=1 rust-gdb ./omoria
+
+.PHONY: nodata
 nodata ::
 	$(RM) data/hours.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
 
+.PHONY: clean
 clean ::
 	$(RM) $(OBJFILES) core omoria
-.PHONY: clean
 
+.PHONY: ctags
 ctags:
 	@ctags -R . --exclude .git
-.PHONY: ctags
+	@rusty-tags vi
 
+.PHONY: format
 format:
 	@clang-format -i $(CFILES) $(HFILES)
-.PHONY: format
 
-spotless : nodata clean
 .PHONY: spotless
+spotless : nodata clean

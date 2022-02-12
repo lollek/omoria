@@ -90,19 +90,15 @@ extern boolean total_winner;
 /*	{ Following are store definitions				} */
 extern store_type stores[MAX_STORES + 1];
 extern treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1];
-extern long store_choice[MAX_STORES][STORE_CHOICES];
-/*	  array [1..max_stores] of obj_set; */
 extern long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Following are treasure arrays	and variables			} */
-extern treasure_type object_list[MAX_OBJECTS + 1];
 extern boolean object_ident[MAX_OBJECTS + 1];
 extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];
 extern treasure_type equipment[EQUIP_MAX];
 extern treas_rec *inventory_list;
 extern treas_rec inven_temp;
-extern treasure_type inventory_init[INVEN_INIT_MAX + 1];
 extern treasure_type blank_treasure;
 extern long inven_ctr;    /* { Total different obj's	} */
 extern long inven_weight; /* { Cur carried weight	} */

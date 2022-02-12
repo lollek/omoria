@@ -20,67 +20,6 @@
 
 long t_level[MAX_OBJ_LEVEL + 1];
 
-char const *colors[MAX_COLORS] = {
-  "Amber", "Azure", "Blue", "Blue Speckled", "Blue Spotted", "Black", "Black Speckled",
-  "Black Spotted", "Brown", "Brown Speckled", "Brown Spotted", "Bubbling", "Chartreuse",
-  "Clear", "Cloudy", "Copper", "Copper Spotted", "Crimson", "Cyan", "Dark Blue",
-  "Dark Green", "Dark Red", "Ecru", "Gold", "Gold Spotted", "Green", "Green Speckled",
-  "Green Spotted", "Grey", "Grey Spotted", "Hazy", "Indigo", "Light Blue", "Light Green",
-  "Magenta", "Metallic Blue", "Metallic Red", "Metallic Green", "Metallic Purple", "Misty",
-  "Orange", "Orange Speckled", "Orange Spotted", "Pink", "Pink Speckled", "Plaid", "Puce",
-  "Purple", "Purple Speckled", "Purple Spotted", "Red", "Red Speckled", "Red Spotted",
-  "Silver", "Silver Speckled", "Silver Spotted", "Smokey", "Tan", "Tangerine", "Topaz",
-  "Turquoise", "Violet", "Vermilion", "White", "White Speckled", "White Spotted", "Yellow",
-  "Daggy"};
-char const *mushrooms[MAX_MUSH] = {
-    "Blue",        "Black",     "Brown",    "Copper",  "Crimson", "Dark blue",
-    "Dark green",  "Dark red",  "Gold",     "Green",   "Grey",    "Light Blue",
-    "Light Green", "Orange",    "Pink",     "Plaid",   "Purple",  "Red",
-    "Tan",         "Turquoise", "Violet",   "White",   "Yellow",  "Wrinkled",
-    "Wooden",      "Slimey",    "Speckled", "Spotted", "Furry"};
-char const *woods[MAX_WOODS] = {
-    "Applewood",  "Ashen",      "Aspen",     "Avocado wood", "Balsa",
-    "Banyan",     "Birch",      "Cedar",     "Cherrywood",   "Cinnibar",
-    "Cottonwood", "Cypress",    "Dogwood",   "Driftwood",    "Ebony",
-    "Elm wood",   "Eucalyptus", "Grapevine", "Hawthorn",     "Hemlock",
-    "Hickory",    "Iron wood",  "Juniper",   "Locust",       "Mahogany",
-    "Magnolia",   "Manzanita",  "Maple",     "Mulberry",     "Oak",
-    "Pecan",      "Persimmon",  "Pine",      "Redwood",      "Rosewood",
-    "Spruce",     "Sumac",      "Sycamore",  "Teak",         "Walnut",
-    "Zebra wood"};
-char const *metals[MAX_METALS] = {
-  "Aluminium", "Bone", "Brass", "Bronze", "Cast Iron", "Chromium", "Copper", "Gold",
-  "Iron", "Lead", "Magnesium", "Molybdenum", "Nickel", "Pewter", "Rusty", "Silver",
-  "Steel", "Tin", "Titanium", "Tungsten", "Zirconium", "Zinc", "Aluminium Plated",
-  "Brass Plated", "Copper Plated", "Gold Plated", "Nickel Plated", "Silver Plated",
-  "Steel Plated", "Tin Plated", "Zinc Plated", "Uranium"};
-char const *horns[MAX_HORNS] = {
-    "Bag Pipes", "Bugle",  "Conch Shell", "Fife",     "Harmonica",
-    "Horn",      "Picolo", "Pipes",       "Recorder", "Reed",
-    "Trumpet",   "Tuba",   "Whistle"};
-char const *rocks[MAX_ROCKS] = {
-    "Amber",      "Agate",     "Alexandrite", "Amethyst",     "Antlerite",
-    "Aquamarine", "Argentite", "Azurite",     "Beryl",        "Bloodstone",
-    "Calcite",    "Carnelian", "Coral",       "Corundum",     "Cryolite",
-    "Diamond",    "Diorite",   "Emerald",     "Flint",        "Fluorite",
-    "Gabbro",     "Garnet",    "Granite",     "Gypsum",       "Hematite",
-    "Jade",       "Jasper",    "Kryptonite",  "Lapus lazuli", "Limestone",
-    "Malachite",  "Manganite", "Marble",      "Mica",         "Moonstone",
-    "Neptunite",  "Obsidian",  "Onyx",        "Opal",         "Pearl",
-    "Pyrite",     "Quartz",    "Quartzite",   "Rhodonite",    "Rhyolite",
-    "Ruby",       "Sapphire",  "Sphalerite",  "Staurolite",   "Tiger eye",
-    "Topaz",      "Turquoise", "Zircon"};
-char const *amulets[MAX_AMULETS] = {
-    "Birch",     "Cedar",    "Dogwood",   "Driftwood", "Elm wood", "Hemlock",
-    "Hickory",   "Mahogany", "Maple",     "Oak",       "Pine",     "Redwood",
-    "Rosewood",  "Walnut",   "Aluminium", "Bone",      "Brass",    "Bronze",
-    "Copper",    "Iron",     "Lead",      "Nickel",    "Agate",    "Amethyst",
-    "Diamond",   "Emerald",  "Flint",     "Garnet",    "Jade",     "Obsidian",
-    "Onyx",      "Opal",     "Pearl",     "Quartz",    "Ruby",     "Sapphire",
-    "Tiger eye", "Topaz",    "Turquoise"};
-char const *cloths[MAX_CLOTHS] = {
-    "Burlap",     "Cotton",      "Wool",     "Sack-cloth",
-    "Rabbit-fur", "Lizard-skin", "Goat-skin"};
 char const *syllables[MAX_SYLLABLES] = {
     "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",
     "arze", "ash",  "aus",  "ban",  "bar",  "bat",  "bek",  "bie",  "bin",
@@ -731,11 +670,9 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
     treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
     if (is_special)
       switch (treasure_ptr->subval) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
+      case 1:  case 2:  case 3:  case 4:  case 5:
+      case 12: case 13: case 14: case 15:
+      case 16: case 17: case 18:
         switch (randint(3)) {
         case 1:
           strcat(treasure_ptr->name, " of Intelligence");
@@ -757,11 +694,9 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
           break;
         }
         break;
-      case 6:
-      case 7:
-      case 8:
-      case 9:
-      case 10:
+
+      case 6:  case 7:  case 8:  case 9:  case 10:
+      case 19: case 20: case 21: case 22: case 23:
         switch (randint(6)) {
         case 1:
           strcat(treasure_ptr->name, " of Might");
@@ -1696,14 +1631,12 @@ static void mt__get_chances(long level, boolean *is_magic, boolean *is_special,
   /* Chance increases with each dungeon level			*/
 
   long magic = obj_base_magic + (level * (obj_base_max - obj_base_magic)) / 100;
-  long special;
-  long cursed;
 
   if (magic > obj_base_max)
     magic = obj_base_max;
 
-  special = trunc(magic / obj_div_special);
-  cursed = trunc(magic / obj_div_cursed);
+  long special = trunc(magic / obj_div_special);
+  long cursed = trunc(magic / obj_div_cursed);
 
   *is_magic = randint(150) <= magic;
   *is_special = randint(150) <= special;
