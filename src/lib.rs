@@ -29,7 +29,6 @@ pub mod master_interop;
 pub mod menu;
 pub mod misc;
 pub mod model;
-pub mod monsters;
 pub mod ncurses;
 pub mod persistence;
 pub mod player;

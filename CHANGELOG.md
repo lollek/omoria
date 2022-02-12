@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.2.0-alpha
+* Lots of changes to monsters. Added, removed and modified.
+
 ## 5.1.0-alpha
 * Massive code changes to items. Added, removed and modified a lot of items.
   Also removed "colors". E.g. potions are now only "potions", not "red potion".
