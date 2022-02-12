@@ -14,17 +14,21 @@ pub enum MiscUsableTemplate {
 }
 
 impl MiscUsableTemplate {
-    pub fn iter() -> impl Iterator<Item=MiscUsableTemplate> {
-        [
-            MiscUsableTemplate::FlaskOfOil,
-            MiscUsableTemplate::IronSpike,
-            MiscUsableTemplate::Statue,
-            MiscUsableTemplate::SilverCross,
-            MiscUsableTemplate::GoldCross,
-            MiscUsableTemplate::MithrilCross,
-            MiscUsableTemplate::Cross,
-            MiscUsableTemplate::CorkedBottle,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(MiscUsableTemplate::FlaskOfOil),
+            Box::new(MiscUsableTemplate::IronSpike),
+            Box::new(MiscUsableTemplate::Statue),
+            Box::new(MiscUsableTemplate::SilverCross),
+            Box::new(MiscUsableTemplate::GoldCross),
+            Box::new(MiscUsableTemplate::MithrilCross),
+            Box::new(MiscUsableTemplate::Cross),
+            Box::new(MiscUsableTemplate::CorkedBottle),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        MiscUsableTemplate::vec().into_iter()
     }
 }
 

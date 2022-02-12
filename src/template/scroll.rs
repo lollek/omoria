@@ -1,5 +1,5 @@
 use model;
-use misc;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ScrollTemplate {
@@ -48,74 +48,108 @@ pub enum ScrollTemplate {
 }
 
 impl ScrollTemplate {
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(format!("{}{}", "& Scroll~ %T| of ", self.name()).as_str()),
-            tval: model::ItemType::Scroll1 as u8,
-            flags: self.flags1(),
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 5,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(ScrollTemplate::AggravateMonster),
+            Box::new(ScrollTemplate::Blessing),
+            Box::new(ScrollTemplate::CreateFood),
+            Box::new(ScrollTemplate::CurseArmor),
+            Box::new(ScrollTemplate::CurseWeapon),
+            Box::new(ScrollTemplate::Darkness),
+            Box::new(ScrollTemplate::Destruction),
+            Box::new(ScrollTemplate::DetectInvisible),
+            Box::new(ScrollTemplate::DispelUndead),
+            Box::new(ScrollTemplate::DoorCreation),
+            Box::new(ScrollTemplate::DoorStairLocation),
+            Box::new(ScrollTemplate::EnchantArmor),
+            Box::new(ScrollTemplate::EnchantWeapon),
+            Box::new(ScrollTemplate::EnchantWeaponToDam),
+            Box::new(ScrollTemplate::EnchantWeaponToHit),
+            Box::new(ScrollTemplate::FeignDeath),
+            Box::new(ScrollTemplate::Genocide),
+            Box::new(ScrollTemplate::HolyChant),
+            Box::new(ScrollTemplate::HolyPrayer),
+            Box::new(ScrollTemplate::Identify),
+            Box::new(ScrollTemplate::Light),
+            Box::new(ScrollTemplate::MagicMapping),
+            Box::new(ScrollTemplate::MakeMunchies),
+            Box::new(ScrollTemplate::MassGenocide),
+            Box::new(ScrollTemplate::MonsterConfusion),
+            Box::new(ScrollTemplate::ObjectDetection),
+            Box::new(ScrollTemplate::PhaseDoor),
+            Box::new(ScrollTemplate::ProtectionFromEvil),
+            Box::new(ScrollTemplate::Recharging),
+            Box::new(ScrollTemplate::RemoveCurse),
+            Box::new(ScrollTemplate::RuneOfProtection),
+            Box::new(ScrollTemplate::SleepMonster),
+            Box::new(ScrollTemplate::SummonMonster),
+            Box::new(ScrollTemplate::SummonUndead),
+            Box::new(ScrollTemplate::Teleport),
+            Box::new(ScrollTemplate::TeleportLevel),
+            Box::new(ScrollTemplate::TrapCreation),
+            Box::new(ScrollTemplate::TrapDetection),
+            Box::new(ScrollTemplate::TrapDoorDestruction),
+            Box::new(ScrollTemplate::TreasureDetection),
+            Box::new(ScrollTemplate::Wishing),
+            Box::new(ScrollTemplate::WordOfRecall),
+            ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        ScrollTemplate::vec().into_iter()
+    }
+}
+
+impl template::Template for ScrollTemplate {
+
+    fn name(&self) -> &str {
+        match self {
+            ScrollTemplate::AggravateMonster => "& Scroll~ %T| of Trap/Door Destruction",
+            ScrollTemplate::Blessing => "& Scroll~ %T| of Blessing",
+            ScrollTemplate::CreateFood => "& Scroll~ %T| of Create Food",
+            ScrollTemplate::CurseArmor => "& Scroll~ %T| of Curse Armor",
+            ScrollTemplate::CurseWeapon => "& Scroll~ %T| of Curse Weapon",
+            ScrollTemplate::Darkness => "& Scroll~ %T| of Darkness",
+            ScrollTemplate::Destruction => "& Scroll~ %T| of Destruction",
+            ScrollTemplate::DetectInvisible => "& Scroll~ %T| of Detect Invisible",
+            ScrollTemplate::DispelUndead => "& Scroll~ %T| of Dispel Undead",
+            ScrollTemplate::DoorCreation => "& Scroll~ %T| of Door Creation",
+            ScrollTemplate::DoorStairLocation => "& Scroll~ %T| of Door/Stair Location",
+            ScrollTemplate::EnchantArmor => "& Scroll~ %T| of Enchant Armor",
+            ScrollTemplate::EnchantWeapon => "& Scroll~ %T| of Enchant Weapon",
+            ScrollTemplate::EnchantWeaponToDam => "& Scroll~ %T| of Enchant Weapon To Dam",
+            ScrollTemplate::EnchantWeaponToHit => "& Scroll~ %T| of Enchant Weapon To Hit",
+            ScrollTemplate::FeignDeath => "& Scroll~ %T| of Feign Death",
+            ScrollTemplate::Genocide => "G& Scroll~ %T| of enocide",
+            ScrollTemplate::HolyChant => "& Scroll~ %T| of Holy Chant",
+            ScrollTemplate::HolyPrayer => "& Scroll~ %T| of Holy Prayer",
+            ScrollTemplate::Identify => "& Scroll~ %T| of Identify",
+            ScrollTemplate::Light => "& Scroll~ %T| of Light",
+            ScrollTemplate::MagicMapping => "& Scroll~ %T| of Magic Mapping",
+            ScrollTemplate::MakeMunchies => "& Scroll~ %T| of Make Munchies",
+            ScrollTemplate::MassGenocide => "& Scroll~ %T| of Mass Genocide",
+            ScrollTemplate::MonsterConfusion => "& Scroll~ %T| of Monster Confusion",
+            ScrollTemplate::ObjectDetection => "& Scroll~ %T| of Object Detection",
+            ScrollTemplate::PhaseDoor => "& Scroll~ %T| of Phase Door",
+            ScrollTemplate::ProtectionFromEvil => "& Scroll~ %T| of Protection from Evil",
+            ScrollTemplate::Recharging => "& Scroll~ %T| of Recharging",
+            ScrollTemplate::RemoveCurse => "& Scroll~ %T| of Remove Curse",
+            ScrollTemplate::RuneOfProtection => "& Scroll~ %T| of Rune of Protection",
+            ScrollTemplate::SleepMonster => "& Scroll~ %T| of Sleep Monster",
+            ScrollTemplate::SummonMonster => "& Scroll~ %T| of Summon Monster",
+            ScrollTemplate::SummonUndead => "& Scroll~ %T| of Summon Undead",
+            ScrollTemplate::Teleport => "& Scroll~ %T| of Teleport",
+            ScrollTemplate::TeleportLevel => "& Scroll~ %T| of Teleport Level",
+            ScrollTemplate::TrapCreation => "& Scroll~ %T| of Trap Creation",
+            ScrollTemplate::TrapDetection => "& Scroll~ %T| of Trap Detection",
+            ScrollTemplate::TrapDoorDestruction => "& Scroll~ %T| of Trap/Door Destruction",
+            ScrollTemplate::TreasureDetection => "& Scroll~ %T| of Treasure Detection",
+            ScrollTemplate::Wishing => "& Scroll~ %T| of Wishing",
+            ScrollTemplate::WordOfRecall => "& Scroll~ %T| of Word of Recall",
         }
     }
 
-
-    fn name(&self) -> String {
-        match self {
-            ScrollTemplate::AggravateMonster => "Trap/Door Destruction",
-            ScrollTemplate::Blessing => "Blessing",
-            ScrollTemplate::CreateFood => "Create Food",
-            ScrollTemplate::CurseArmor => "Curse Armor",
-            ScrollTemplate::CurseWeapon => "Curse Weapon",
-            ScrollTemplate::Darkness => "Darkness",
-            ScrollTemplate::Destruction => "Destruction",
-            ScrollTemplate::DetectInvisible => "Detect Invisible",
-            ScrollTemplate::DispelUndead => "Dispel Undead",
-            ScrollTemplate::DoorCreation => "Door Creation",
-            ScrollTemplate::DoorStairLocation => "Door/Stair Location",
-            ScrollTemplate::EnchantArmor => "Enchant Armor",
-            ScrollTemplate::EnchantWeapon => "Enchant Weapon",
-            ScrollTemplate::EnchantWeaponToDam => "Enchant Weapon To Dam",
-            ScrollTemplate::EnchantWeaponToHit => "Enchant Weapon To Hit",
-            ScrollTemplate::FeignDeath => "Feign Death",
-            ScrollTemplate::Genocide => "Genocide",
-            ScrollTemplate::HolyChant => "Holy Chant",
-            ScrollTemplate::HolyPrayer => "Holy Prayer",
-            ScrollTemplate::Identify => "Identify",
-            ScrollTemplate::Light => "Light",
-            ScrollTemplate::MagicMapping => "Magic Mapping",
-            ScrollTemplate::MakeMunchies => "Make Munchies",
-            ScrollTemplate::MassGenocide => "Mass Genocide",
-            ScrollTemplate::MonsterConfusion => "Monster Confusion",
-            ScrollTemplate::ObjectDetection => "Object Detection",
-            ScrollTemplate::PhaseDoor => "Phase Door",
-            ScrollTemplate::ProtectionFromEvil => "Protection from Evil",
-            ScrollTemplate::Recharging => "Recharging",
-            ScrollTemplate::RemoveCurse => "Remove Curse",
-            ScrollTemplate::RuneOfProtection => "Rune of Protection",
-            ScrollTemplate::SleepMonster => "Sleep Monster",
-            ScrollTemplate::SummonMonster => "Summon Monster",
-            ScrollTemplate::SummonUndead => "Summon Undead",
-            ScrollTemplate::Teleport => "Teleport",
-            ScrollTemplate::TeleportLevel => "Teleport Level",
-            ScrollTemplate::TrapCreation => "Trap Creation",
-            ScrollTemplate::TrapDetection => "Trap Detection",
-            ScrollTemplate::TrapDoorDestruction => "Trap/Door Destruction",
-            ScrollTemplate::TreasureDetection => "Treasure Detection",
-            ScrollTemplate::Wishing => "Wishing",
-            ScrollTemplate::WordOfRecall => "Word of Recall",
-        }.to_string()
-    }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Scroll1 }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -211,6 +245,8 @@ impl ScrollTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             ScrollTemplate::AggravateMonster => 0,
@@ -258,7 +294,7 @@ impl ScrollTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             ScrollTemplate::AggravateMonster => 277,
             ScrollTemplate::Blessing => 262,
@@ -305,7 +341,15 @@ impl ScrollTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn weight(&self) -> u16 { 5 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "0d0" }
+
+    fn item_level(&self) -> u8 {
         match self {
             ScrollTemplate::Light => 0,
             ScrollTemplate::ObjectDetection => 0,
@@ -351,4 +395,6 @@ impl ScrollTemplate {
             ScrollTemplate::Wishing => 50,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

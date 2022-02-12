@@ -10,13 +10,17 @@ pub enum InstrumentTemplate {
 }
 
 impl InstrumentTemplate {
-    pub fn iter() -> impl Iterator<Item=InstrumentTemplate> {
-        [
-            InstrumentTemplate::PipesOfPeace,
-            InstrumentTemplate::LyreOfNature,
-            InstrumentTemplate::LuteOfTheWoods,
-            InstrumentTemplate::HarpOfTheDruids,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(InstrumentTemplate::PipesOfPeace),
+            Box::new(InstrumentTemplate::LyreOfNature),
+            Box::new(InstrumentTemplate::LuteOfTheWoods),
+            Box::new(InstrumentTemplate::HarpOfTheDruids),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        InstrumentTemplate::vec().into_iter()
     }
 }
 

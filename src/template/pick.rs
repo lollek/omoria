@@ -13,16 +13,20 @@ pub enum PickTemplate {
 }
 
 impl PickTemplate {
-    pub fn iter() -> impl Iterator<Item=PickTemplate> {
-        [
-            PickTemplate::Pick,
-            PickTemplate::Shovel,
-            PickTemplate::OrcishPick1,
-            PickTemplate::OrcishPick2,
-            PickTemplate::DwarvenPick,
-            PickTemplate::GnomishShovel,
-            PickTemplate::DwarvenShovel,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(PickTemplate::Pick),
+            Box::new(PickTemplate::Shovel),
+            Box::new(PickTemplate::OrcishPick1),
+            Box::new(PickTemplate::OrcishPick2),
+            Box::new(PickTemplate::DwarvenPick),
+            Box::new(PickTemplate::GnomishShovel),
+            Box::new(PickTemplate::DwarvenShovel),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        PickTemplate::vec().into_iter()
     }
 }
 

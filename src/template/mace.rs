@@ -17,19 +17,23 @@ pub enum MaceTemplate {
 
 
 impl MaceTemplate {
-    pub fn iter() -> impl Iterator<Item=MaceTemplate> {
-        [
-            MaceTemplate::BallAndChain,
-            MaceTemplate::WoodenClub,
-            MaceTemplate::Flail,
-            MaceTemplate::GreatFlail,
-            MaceTemplate::MorningStar,
-            MaceTemplate::Mace,
-            MaceTemplate::WarHammer,
-            MaceTemplate::LeadFilledMace,
-            MaceTemplate::IronShodQuarterstaff,
-            MaceTemplate::OgreMaul,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(MaceTemplate::BallAndChain),
+            Box::new(MaceTemplate::WoodenClub),
+            Box::new(MaceTemplate::Flail),
+            Box::new(MaceTemplate::GreatFlail),
+            Box::new(MaceTemplate::MorningStar),
+            Box::new(MaceTemplate::Mace),
+            Box::new(MaceTemplate::WarHammer),
+            Box::new(MaceTemplate::LeadFilledMace),
+            Box::new(MaceTemplate::IronShodQuarterstaff),
+            Box::new(MaceTemplate::OgreMaul),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        MaceTemplate::vec().into_iter()
     }
 }
 

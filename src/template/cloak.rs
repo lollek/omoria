@@ -11,14 +11,18 @@ pub enum CloakTemplate {
 }
 
 impl CloakTemplate {
-    pub fn iter() -> impl Iterator<Item=CloakTemplate> {
-        [
-            CloakTemplate::LightCloak,
-            CloakTemplate::HeavyCloak,
-            CloakTemplate::SharkskinCloak,
-            CloakTemplate::DemonhideCloak,
-            CloakTemplate::WyrmhideCloak,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(CloakTemplate::LightCloak),
+            Box::new(CloakTemplate::HeavyCloak),
+            Box::new(CloakTemplate::SharkskinCloak),
+            Box::new(CloakTemplate::DemonhideCloak),
+            Box::new(CloakTemplate::WyrmhideCloak),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        CloakTemplate::vec().into_iter()
     }
 }
 

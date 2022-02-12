@@ -1,6 +1,5 @@
 use model;
-
-use misc;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {
@@ -11,36 +10,21 @@ pub enum AmmunitionTemplate {
 }
 
 impl AmmunitionTemplate {
-    pub fn iter() -> impl Iterator<Item=AmmunitionTemplate> {
-        [
-            AmmunitionTemplate::Arrow,
-            AmmunitionTemplate::Bolt,
-            AmmunitionTemplate::RoundedPebble,
-            AmmunitionTemplate::IronShot,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(AmmunitionTemplate::Arrow),
+            Box::new(AmmunitionTemplate::Bolt),
+            Box::new(AmmunitionTemplate::RoundedPebble),
+            Box::new(AmmunitionTemplate::IronShot),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: self.r#type() as u8,
-            flags: self.flags1(),
-            flags2: 0,
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: 1,
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        AmmunitionTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for AmmunitionTemplate {
     fn name(&self) -> &str {
         match self {
             AmmunitionTemplate::Arrow => "& Arrow~^ (%P2,%P3)",
@@ -50,7 +34,7 @@ impl AmmunitionTemplate {
         }
     }
 
-    fn r#type(&self) -> model::ItemType {
+    fn item_type(&self) -> model::ItemType {
         match self {
             AmmunitionTemplate::Arrow => model::ItemType::Arrow,
             AmmunitionTemplate::Bolt => model::ItemType::Bolt,
@@ -68,6 +52,9 @@ impl AmmunitionTemplate {
         }
     }
 
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             AmmunitionTemplate::Arrow => 1,
@@ -76,6 +63,8 @@ impl AmmunitionTemplate {
             AmmunitionTemplate::IronShot => 2,
         }
     }
+
+    fn subtype(&self) -> i64 { 1 }
 
     fn weight(&self) -> u16 {
         match self {
@@ -86,6 +75,12 @@ impl AmmunitionTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             AmmunitionTemplate::Arrow => "3d4",
@@ -95,7 +90,7 @@ impl AmmunitionTemplate {
         }
     }
 
-    pub fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             AmmunitionTemplate::Arrow => 2,
             AmmunitionTemplate::Bolt => 3,
@@ -103,4 +98,6 @@ impl AmmunitionTemplate {
             AmmunitionTemplate::IronShot => 3,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

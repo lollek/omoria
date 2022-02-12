@@ -10,13 +10,17 @@ pub enum LightSourceTemplate {
 }
 
 impl LightSourceTemplate {
-    pub fn iter() -> impl Iterator<Item=LightSourceTemplate> {
-        [
-            LightSourceTemplate::WoodenTorch,
-            LightSourceTemplate::BrassLantern,
-            LightSourceTemplate::MagicTorch,
-            LightSourceTemplate::MagicLantern,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(LightSourceTemplate::WoodenTorch),
+            Box::new(LightSourceTemplate::BrassLantern),
+            Box::new(LightSourceTemplate::MagicTorch),
+            Box::new(LightSourceTemplate::MagicLantern),
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        LightSourceTemplate::vec().into_iter()
     }
 }
 
