@@ -1,6 +1,7 @@
 use std::cmp::max;
 use std::convert::TryInto;
 
+use constants;
 use model;
 use template;
 
@@ -57,7 +58,7 @@ pub fn generate_item_for_general_store() -> model::Item {
         Box::new(template::CloakTemplate::LightCloak),
     ];
     let random_template = get_random_from_list(templates_to_choose_from);
-    create_item(random_template, 7)
+    create_item(random_template, constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_armorsmith() -> model::Item {
@@ -69,10 +70,10 @@ pub fn generate_item_for_armorsmith() -> model::Item {
     templates.extend(template::ShieldTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
 
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_weaponsmith() -> model::Item {
@@ -88,9 +89,9 @@ pub fn generate_item_for_weaponsmith() -> model::Item {
     templates.extend(template::SwordTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_alchemist_store() -> model::Item {
@@ -98,9 +99,9 @@ pub fn generate_item_for_alchemist_store() -> model::Item {
     templates.extend(template::PotionTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_magic_store() -> model::Item {
@@ -110,9 +111,9 @@ pub fn generate_item_for_magic_store() -> model::Item {
     templates.extend(template::ScrollTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_inn() -> model::Item {
@@ -120,7 +121,7 @@ pub fn generate_item_for_inn() -> model::Item {
 
     templates.extend(template::LodgingAtInnTemplate::vec());
 
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_library() -> model::Item {
@@ -130,9 +131,9 @@ pub fn generate_item_for_library() -> model::Item {
     templates.extend(template::SongBookTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_temple() -> model::Item {
@@ -141,9 +142,9 @@ pub fn generate_item_for_temple() -> model::Item {
     templates.extend(template::PrayerBookTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_music_store() -> model::Item {
@@ -154,9 +155,9 @@ pub fn generate_item_for_music_store() -> model::Item {
     templates.extend(template::HornTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_gem_store() -> model::Item {
@@ -167,13 +168,13 @@ pub fn generate_item_for_gem_store() -> model::Item {
     templates.extend(template::ValuableTemplate::vec());
 
     templates = templates.into_iter()
-        .filter(|x| x.item_level() <= 10)
+        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
         .collect();
-    create_item(get_random_from_list(templates), 7)
+    create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_all_night_deli() -> model::Item {
-    create_item(get_random_from_list(template::JunkFoodTemplate::vec()), 7)
+    create_item(get_random_from_list(template::JunkFoodTemplate::vec()), constants::STORE_ITEM_LEVEL)
 }
 
 /**

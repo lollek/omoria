@@ -24,4 +24,10 @@ pub const MAX_TALLOC: usize = 225;
 // Number of stores
 pub const MAX_STORES: usize = 12;
 
+// Level of items generated in stores
+pub const STORE_ITEM_LEVEL: u8 = 7;
+
+// Max depth level of items in stores
+pub const STORE_MAX_ITEM_LEVEL: u8 = 10;
+
 pub const MAX_PLAYER_LEVEL: usize = 40;
