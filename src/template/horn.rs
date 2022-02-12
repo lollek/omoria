@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -19,45 +19,30 @@ pub enum HornTemplate {
 }
 
 impl HornTemplate {
-    pub fn iter() -> impl Iterator<Item=HornTemplate> {
-        [
-            HornTemplate::HornOfBubbles,
-            HornTemplate::HornOfCalling,
-            HornTemplate::HornOfSoftSounds,
-            HornTemplate::HornOfBlasting,
-            HornTemplate::HornOfCold,
-            HornTemplate::HornOfHeat,
-            HornTemplate::HornOfGas,
-            HornTemplate::HornOfRecall,
-            HornTemplate::HornOfChaos,
-            HornTemplate::HornOfGlue,
-            HornTemplate::HornOfValhalla,
-            HornTemplate::HornOfTritons,
-            HornTemplate::HornOfFog,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(HornTemplate::HornOfBubbles),
+            Box::new(HornTemplate::HornOfCalling),
+            Box::new(HornTemplate::HornOfSoftSounds),
+            Box::new(HornTemplate::HornOfBlasting),
+            Box::new(HornTemplate::HornOfCold),
+            Box::new(HornTemplate::HornOfHeat),
+            Box::new(HornTemplate::HornOfGas),
+            Box::new(HornTemplate::HornOfRecall),
+            Box::new(HornTemplate::HornOfChaos),
+            Box::new(HornTemplate::HornOfGlue),
+            Box::new(HornTemplate::HornOfValhalla),
+            Box::new(HornTemplate::HornOfTritons),
+            Box::new(HornTemplate::HornOfFog),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Horn as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 1,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        HornTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for HornTemplate {
     fn name(&self) -> &str {
         match self {
             HornTemplate::HornOfBubbles => "& %H| of Bubbles^ (%P1 charges)",
@@ -75,6 +60,9 @@ impl HornTemplate {
             HornTemplate::HornOfFog => "& %H| of Fog^ (%P1 charges)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Horn }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -94,6 +82,8 @@ impl HornTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             HornTemplate::HornOfBubbles => 0,
@@ -112,7 +102,7 @@ impl HornTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             HornTemplate::HornOfBubbles => 1,
             HornTemplate::HornOfCalling => 2,
@@ -130,7 +120,15 @@ impl HornTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn weight(&self) -> u16 { 2 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             HornTemplate::HornOfBubbles => 15,
             HornTemplate::HornOfCalling => 10,
@@ -147,4 +145,6 @@ impl HornTemplate {
             HornTemplate::HornOfFog => 25,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

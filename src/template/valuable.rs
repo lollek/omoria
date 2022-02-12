@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ValuableTemplate {
@@ -39,65 +39,50 @@ pub enum ValuableTemplate {
 }
 
 impl ValuableTemplate {
-    pub fn iter() -> impl Iterator<Item=ValuableTemplate> {
-        [
-            ValuableTemplate::GemOfTeleportation,
-            ValuableTemplate::GemOfResistCold,
-            ValuableTemplate::GemOfResistAcid,
-            ValuableTemplate::GemOfSeeInvisible,
-            ValuableTemplate::GemOfStealth,
-            ValuableTemplate::GemOfSlowDigestion,
-            ValuableTemplate::GemOfProtectFire,
-            ValuableTemplate::GemOfDetectMonsters,
-            ValuableTemplate::GemOfDispelEvil,
-            ValuableTemplate::GemOfDarkness,
-            ValuableTemplate::GemOfAcidBalls,
-            ValuableTemplate::GemOfDetectInvisible,
-            ValuableTemplate::GemOfIdentify,
-            ValuableTemplate::GemOfLight,
-            ValuableTemplate::GemOfSummoning,
-            ValuableTemplate::GemOfRemoveCurse,
-            ValuableTemplate::GemOfAnnihilation,
-            ValuableTemplate::GemOfRecall,
-            ValuableTemplate::FineAgate,
-            ValuableTemplate::FineDiamond,
-            ValuableTemplate::RoughDiamond,
-            ValuableTemplate::RoughSapphire,
-            ValuableTemplate::FineSapphire,
-            ValuableTemplate::SmallBagOfOpals,
-            ValuableTemplate::SmallBagOfSapphires,
-            ValuableTemplate::SmallPouchOfDiamonds,
-            ValuableTemplate::LargeSackOfPearls,
-            ValuableTemplate::LargeSackOfSapphires,
-            ValuableTemplate::LargePouchOfDiamonds,
-            ValuableTemplate::SmallGoldPendant,
-            ValuableTemplate::SmallMithrilPendant,
-            ValuableTemplate::LargeMithrilGarterBelt,
-            ValuableTemplate::SmallSilverPendant,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(ValuableTemplate::GemOfTeleportation),
+            Box::new(ValuableTemplate::GemOfResistCold),
+            Box::new(ValuableTemplate::GemOfResistAcid),
+            Box::new(ValuableTemplate::GemOfSeeInvisible),
+            Box::new(ValuableTemplate::GemOfStealth),
+            Box::new(ValuableTemplate::GemOfSlowDigestion),
+            Box::new(ValuableTemplate::GemOfProtectFire),
+            Box::new(ValuableTemplate::GemOfDetectMonsters),
+            Box::new(ValuableTemplate::GemOfDispelEvil),
+            Box::new(ValuableTemplate::GemOfDarkness),
+            Box::new(ValuableTemplate::GemOfAcidBalls),
+            Box::new(ValuableTemplate::GemOfDetectInvisible),
+            Box::new(ValuableTemplate::GemOfIdentify),
+            Box::new(ValuableTemplate::GemOfLight),
+            Box::new(ValuableTemplate::GemOfSummoning),
+            Box::new(ValuableTemplate::GemOfRemoveCurse),
+            Box::new(ValuableTemplate::GemOfAnnihilation),
+            Box::new(ValuableTemplate::GemOfRecall),
+            Box::new(ValuableTemplate::FineAgate),
+            Box::new(ValuableTemplate::FineDiamond),
+            Box::new(ValuableTemplate::RoughDiamond),
+            Box::new(ValuableTemplate::RoughSapphire),
+            Box::new(ValuableTemplate::FineSapphire),
+            Box::new(ValuableTemplate::SmallBagOfOpals),
+            Box::new(ValuableTemplate::SmallBagOfSapphires),
+            Box::new(ValuableTemplate::SmallPouchOfDiamonds),
+            Box::new(ValuableTemplate::LargeSackOfPearls),
+            Box::new(ValuableTemplate::LargeSackOfSapphires),
+            Box::new(ValuableTemplate::LargePouchOfDiamonds),
+            Box::new(ValuableTemplate::SmallGoldPendant),
+            Box::new(ValuableTemplate::SmallMithrilPendant),
+            Box::new(ValuableTemplate::LargeMithrilGarterBelt),
+            Box::new(ValuableTemplate::SmallSilverPendant),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: self.r#type() as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        ValuableTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for ValuableTemplate {
     fn name(&self) -> &str {
         match self {
             ValuableTemplate::GemOfTeleportation => "& Finely cut %R| of Teleportation^",
@@ -136,7 +121,7 @@ impl ValuableTemplate {
         }
     }
 
-    fn r#type(&self) -> model::ItemType {
+    fn item_type(&self) -> model::ItemType {
         match self {
             ValuableTemplate::GemOfTeleportation => model::ItemType::WearableGem,
             ValuableTemplate::GemOfResistCold => model::ItemType::WearableGem,
@@ -173,6 +158,8 @@ impl ValuableTemplate {
             ValuableTemplate::SmallSilverPendant => model::ItemType::Jewelry,
         }
     }
+
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -212,6 +199,8 @@ impl ValuableTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             ValuableTemplate::GemOfTeleportation => 300,
@@ -250,7 +239,7 @@ impl ValuableTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             ValuableTemplate::GemOfTeleportation => 1,
             ValuableTemplate::GemOfResistCold => 2,
@@ -326,7 +315,14 @@ impl ValuableTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             ValuableTemplate::GemOfTeleportation => 5,
             ValuableTemplate::GemOfResistCold => 14,
@@ -363,4 +359,6 @@ impl ValuableTemplate {
             ValuableTemplate::SmallSilverPendant => 5,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

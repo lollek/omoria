@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum WandTemplate {
@@ -31,57 +31,42 @@ pub enum WandTemplate {
 }
 
 impl WandTemplate {
-    pub fn iter() -> impl Iterator<Item=WandTemplate> {
-        [
-            WandTemplate::WandOfProbing,
-            WandTemplate::WandOfLight,
-            WandTemplate::WandOfLightningBolts,
-            WandTemplate::WandOfFrostBolts,
-            WandTemplate::WandOfFireBolts,
-            WandTemplate::WandOfStoneToMud,
-            WandTemplate::WandOfPolymorph,
-            WandTemplate::WandOfHealMonster,
-            WandTemplate::WandOfHasteMonster,
-            WandTemplate::WandOfSlowMonster,
-            WandTemplate::WandOfConfuseMonster,
-            WandTemplate::WandOfSleepMonster,
-            WandTemplate::WandOfDrainLife,
-            WandTemplate::WandOfTrapDoorDestruction,
-            WandTemplate::WandOfMagicMissile,
-            WandTemplate::WandOfWallBuilding,
-            WandTemplate::WandOfCloneMonster,
-            WandTemplate::WandOfTeleportAway,
-            WandTemplate::WandOfDisarming,
-            WandTemplate::WandOfLightningBalls,
-            WandTemplate::WandOfColdBalls,
-            WandTemplate::WandOfFireBalls,
-            WandTemplate::WandOfStinkingCloud,
-            WandTemplate::WandOfAcidBalls,
-            WandTemplate::WandOfWonder,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(WandTemplate::WandOfProbing),
+            Box::new(WandTemplate::WandOfLight),
+            Box::new(WandTemplate::WandOfLightningBolts),
+            Box::new(WandTemplate::WandOfFrostBolts),
+            Box::new(WandTemplate::WandOfFireBolts),
+            Box::new(WandTemplate::WandOfStoneToMud),
+            Box::new(WandTemplate::WandOfPolymorph),
+            Box::new(WandTemplate::WandOfHealMonster),
+            Box::new(WandTemplate::WandOfHasteMonster),
+            Box::new(WandTemplate::WandOfSlowMonster),
+            Box::new(WandTemplate::WandOfConfuseMonster),
+            Box::new(WandTemplate::WandOfSleepMonster),
+            Box::new(WandTemplate::WandOfDrainLife),
+            Box::new(WandTemplate::WandOfTrapDoorDestruction),
+            Box::new(WandTemplate::WandOfMagicMissile),
+            Box::new(WandTemplate::WandOfWallBuilding),
+            Box::new(WandTemplate::WandOfCloneMonster),
+            Box::new(WandTemplate::WandOfTeleportAway),
+            Box::new(WandTemplate::WandOfDisarming),
+            Box::new(WandTemplate::WandOfLightningBalls),
+            Box::new(WandTemplate::WandOfColdBalls),
+            Box::new(WandTemplate::WandOfFireBalls),
+            Box::new(WandTemplate::WandOfStinkingCloud),
+            Box::new(WandTemplate::WandOfAcidBalls),
+            Box::new(WandTemplate::WandOfWonder),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Horn as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 10,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("1d1"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        WandTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for WandTemplate {
     fn name(&self) -> &str {
         match self {
             WandTemplate::WandOfProbing => "& %M Wand| of Probing^ (%P1 charges)",
@@ -111,6 +96,9 @@ impl WandTemplate {
             WandTemplate::WandOfWonder => "& %M Wand| of Wonder^ (%P1 charges)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Wand }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -142,6 +130,8 @@ impl WandTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             WandTemplate::WandOfProbing => 1500,
@@ -172,7 +162,7 @@ impl WandTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             WandTemplate::WandOfProbing => 25,
             WandTemplate::WandOfLight => 1,
@@ -202,7 +192,15 @@ impl WandTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn weight(&self) -> u16 { 2 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             WandTemplate::WandOfProbing => 30,
             WandTemplate::WandOfLight => 0,
@@ -231,4 +229,6 @@ impl WandTemplate {
             WandTemplate::WandOfWonder => 2,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

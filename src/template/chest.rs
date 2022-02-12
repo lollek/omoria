@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChestTemplate {
@@ -12,38 +12,23 @@ pub enum ChestTemplate {
 }
 
 impl ChestTemplate {
-    pub fn iter() -> impl Iterator<Item=ChestTemplate> {
-        [
-            ChestTemplate::SmallWoodenChest,
-            ChestTemplate::LargeWoodenChest,
-            ChestTemplate::SmallIronChest,
-            ChestTemplate::LargeIronChest,
-            ChestTemplate::SmallSteelChest,
-            ChestTemplate::LargeSteelChest,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(ChestTemplate::SmallWoodenChest),
+            Box::new(ChestTemplate::LargeWoodenChest),
+            Box::new(ChestTemplate::SmallIronChest),
+            Box::new(ChestTemplate::LargeIronChest),
+            Box::new(ChestTemplate::SmallSteelChest),
+            Box::new(ChestTemplate::LargeSteelChest),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Chest as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage(self.damage()),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        ChestTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for ChestTemplate {
     fn name(&self) -> &str {
         match self {
             ChestTemplate::SmallWoodenChest => "& Small wooden chest",
@@ -54,6 +39,9 @@ impl ChestTemplate {
             ChestTemplate::LargeSteelChest => "& Large steel chest",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Chest }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -66,6 +54,8 @@ impl ChestTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             ChestTemplate::SmallWoodenChest => 300,
@@ -77,7 +67,7 @@ impl ChestTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             ChestTemplate::SmallWoodenChest => 1,
             ChestTemplate::LargeWoodenChest => 4,
@@ -99,6 +89,12 @@ impl ChestTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+
     fn damage(&self) -> &str {
         match self {
             ChestTemplate::SmallWoodenChest => "2d3",
@@ -110,7 +106,7 @@ impl ChestTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             ChestTemplate::SmallWoodenChest => 7,
             ChestTemplate::LargeWoodenChest => 15,
@@ -120,5 +116,7 @@ impl ChestTemplate {
             ChestTemplate::LargeSteelChest => 50,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }
 

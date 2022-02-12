@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BagTemplate {
@@ -11,37 +11,22 @@ pub enum BagTemplate {
 }
 
 impl BagTemplate {
-    pub fn iter() -> impl Iterator<Item=BagTemplate> {
-        [
-            BagTemplate::BagOfHolding250,
-            BagTemplate::BagOfHolding500,
-            BagTemplate::BagOfHolding1000,
-            BagTemplate::BagOfHolding1500,
-            BagTemplate::BagOfDevouring,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(BagTemplate::BagOfHolding250),
+            Box::new(BagTemplate::BagOfHolding500),
+            Box::new(BagTemplate::BagOfHolding1000),
+            Box::new(BagTemplate::BagOfHolding1500),
+            Box::new(BagTemplate::BagOfDevouring),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Bag as u8,
-            flags: self.flags1(),
-            flags2: 0,
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        BagTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for BagTemplate {
     fn name(&self) -> &str {
         match self {
             BagTemplate::BagOfHolding250 => "& %N Bag| of Holding (250)",
@@ -52,6 +37,8 @@ impl BagTemplate {
         }
     }
 
+    fn item_type(&self) -> model::ItemType { model::ItemType::Bag }
+
     fn flags1(&self) -> u64 {
         match self {
             BagTemplate::BagOfHolding250 => 0x04000000,
@@ -61,6 +48,8 @@ impl BagTemplate {
             BagTemplate::BagOfDevouring => 0x0C000000,
         }
     }
+
+    fn flags2(&self) -> u64 { 0 }
 
     fn p1(&self) -> i64 {
         match self {
@@ -82,7 +71,7 @@ impl BagTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             BagTemplate::BagOfHolding250 => 1,
             BagTemplate::BagOfHolding500 => 2,
@@ -102,7 +91,14 @@ impl BagTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             BagTemplate::BagOfHolding250 => 20,
             BagTemplate::BagOfHolding500 => 50,
@@ -111,4 +107,6 @@ impl BagTemplate {
             BagTemplate::BagOfDevouring => 45,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

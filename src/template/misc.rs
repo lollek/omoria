@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscTemplate {
@@ -17,43 +17,28 @@ pub enum MiscTemplate {
 }
 
 impl MiscTemplate {
-    pub fn iter() -> impl Iterator<Item=MiscTemplate> {
-        [
-            MiscTemplate::RatSkeleton,
-            MiscTemplate::GiantCentipedeSkeleton,
-            MiscTemplate::EmptyBottle,
-            MiscTemplate::PotteryShard,
-            MiscTemplate::HumanSkeleton,
-            MiscTemplate::DwarfSkeleton,
-            MiscTemplate::ElfSkeleton,
-            MiscTemplate::GnomeSkeleton,
-            MiscTemplate::BrokenTeeth,
-            MiscTemplate::LargeBrokenBone,
-            MiscTemplate::BrokenStick,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(MiscTemplate::RatSkeleton),
+            Box::new(MiscTemplate::GiantCentipedeSkeleton),
+            Box::new(MiscTemplate::EmptyBottle),
+            Box::new(MiscTemplate::PotteryShard),
+            Box::new(MiscTemplate::HumanSkeleton),
+            Box::new(MiscTemplate::DwarfSkeleton),
+            Box::new(MiscTemplate::ElfSkeleton),
+            Box::new(MiscTemplate::GnomeSkeleton),
+            Box::new(MiscTemplate::BrokenTeeth),
+            Box::new(MiscTemplate::LargeBrokenBone),
+            Box::new(MiscTemplate::BrokenStick),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::MiscObject as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: 0,
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("1d1"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        MiscTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for MiscTemplate {
     fn name(&self) -> &str {
         match self {
             MiscTemplate::RatSkeleton => "& Rat Skeleton",
@@ -70,7 +55,13 @@ impl MiscTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn item_type(&self) -> model::ItemType { model::ItemType::MiscUsable }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
+    fn cost(&self) -> i64 { 0 }
+
+    fn subtype(&self) -> i64 {
         match self {
             MiscTemplate::RatSkeleton => 1,
             MiscTemplate::GiantCentipedeSkeleton => 2,
@@ -102,8 +93,14 @@ impl MiscTemplate {
         }
     }
 
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
 
-    fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             MiscTemplate::RatSkeleton => 1,
             MiscTemplate::GiantCentipedeSkeleton => 1,
@@ -118,5 +115,7 @@ impl MiscTemplate {
             MiscTemplate::BrokenStick => 0,
         }
     }
+
+    fn is_identified(&self) -> bool { true }
 }
 

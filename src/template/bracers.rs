@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BracersTemplate {
@@ -25,50 +25,35 @@ pub enum BracersTemplate {
 
 
 impl BracersTemplate {
-    pub fn iter() -> impl Iterator<Item=BracersTemplate> {
-        [
-            BracersTemplate::BracersOfProtection,
-            BracersTemplate::BracersOfDefense,
-            BracersTemplate::BracersOfShielding,
-            BracersTemplate::MithrilBracers,
-            BracersTemplate::AdamantiteBracers,
-            BracersTemplate::BracersOfWeaponAttraction,
-            BracersTemplate::SilverBraceletOfWarding,
-            BracersTemplate::SilverBracelet,
-            BracersTemplate::GoldBracelet,
-            BracersTemplate::PlatinumBracelet,
-            BracersTemplate::LeatherBracers,
-            BracersTemplate::StuddedLeatherBracers,
-            BracersTemplate::LightPlatedBracers,
-            BracersTemplate::SharkskinBracers,
-            BracersTemplate::DemonhideBracers,
-            BracersTemplate::WyrmhideBracers,
-            BracersTemplate::ChainmailBracers,
-            BracersTemplate::LamellarBracers,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(BracersTemplate::BracersOfProtection),
+            Box::new(BracersTemplate::BracersOfDefense),
+            Box::new(BracersTemplate::BracersOfShielding),
+            Box::new(BracersTemplate::MithrilBracers),
+            Box::new(BracersTemplate::AdamantiteBracers),
+            Box::new(BracersTemplate::BracersOfWeaponAttraction),
+            Box::new(BracersTemplate::SilverBraceletOfWarding),
+            Box::new(BracersTemplate::SilverBracelet),
+            Box::new(BracersTemplate::GoldBracelet),
+            Box::new(BracersTemplate::PlatinumBracelet),
+            Box::new(BracersTemplate::LeatherBracers),
+            Box::new(BracersTemplate::StuddedLeatherBracers),
+            Box::new(BracersTemplate::LightPlatedBracers),
+            Box::new(BracersTemplate::SharkskinBracers),
+            Box::new(BracersTemplate::DemonhideBracers),
+            Box::new(BracersTemplate::WyrmhideBracers),
+            Box::new(BracersTemplate::ChainmailBracers),
+            Box::new(BracersTemplate::LamellarBracers),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Bracers as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: self.ac(),
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        BracersTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for BracersTemplate {
     fn name(&self) -> &str {
         match self {
             BracersTemplate::BracersOfProtection => "Bracers^ of Protection [%P6,%P4]",
@@ -91,6 +76,11 @@ impl BracersTemplate {
             BracersTemplate::LamellarBracers => "Lamellar Bracers^ [%P6,%P4]",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
 
     fn cost(&self) -> i64 {
         match self {
@@ -115,7 +105,7 @@ impl BracersTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             BracersTemplate::BracersOfProtection => 1,
             BracersTemplate::BracersOfDefense => 2,
@@ -161,7 +151,11 @@ impl BracersTemplate {
         }
     }
 
-    fn ac(&self) -> i16 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+
+    fn base_ac(&self) -> i16 {
         match self {
             BracersTemplate::BracersOfProtection => 6,
             BracersTemplate::BracersOfDefense => 7,
@@ -183,7 +177,11 @@ impl BracersTemplate {
             BracersTemplate::LamellarBracers => 7,
         }
     }
-    fn leve(&self) -> u8 {
+
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             BracersTemplate::BracersOfProtection => 35,
             BracersTemplate::BracersOfDefense => 40,
@@ -206,5 +204,6 @@ impl BracersTemplate {
         }
     }
 
+    fn is_identified(&self) -> bool { false }
 }
 

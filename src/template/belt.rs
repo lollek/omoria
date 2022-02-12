@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BeltTemplate {
@@ -15,40 +15,25 @@ pub enum BeltTemplate {
 
 
 impl BeltTemplate {
-    pub fn iter() -> impl Iterator<Item=BeltTemplate> {
-        [
-            BeltTemplate::Sash,
-            BeltTemplate::LightBelt,
-            BeltTemplate::Belt,
-            BeltTemplate::HeavyBelt,
-            BeltTemplate::LightPlatedBelt,
-            BeltTemplate::SharkskinBelt,
-            BeltTemplate::DemonhideBelt,
-            BeltTemplate::WyrmhideBelt,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(BeltTemplate::Sash),
+            Box::new(BeltTemplate::LightBelt),
+            Box::new(BeltTemplate::Belt),
+            Box::new(BeltTemplate::HeavyBelt),
+            Box::new(BeltTemplate::LightPlatedBelt),
+            Box::new(BeltTemplate::SharkskinBelt),
+            Box::new(BeltTemplate::DemonhideBelt),
+            Box::new(BeltTemplate::WyrmhideBelt),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Belt as u8,
-            flags: 0,
-            flags2: 0,
-            p1: 0,
-            cost: self.cost(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: self.ac(),
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        BeltTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for BeltTemplate {
     fn name(&self) -> &str {
         match self {
             BeltTemplate::Sash => "Sash^ [%P6,%P4]",
@@ -61,6 +46,11 @@ impl BeltTemplate {
             BeltTemplate::WyrmhideBelt => "Wyrmhide Belt^ [%P6,%P4]",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Belt }
+    fn flags1(&self) -> u64 { 0 }
+    fn flags2(&self) -> u64 { 0 }
+    fn p1(&self) -> i64 { 0 }
 
     fn cost(&self) -> i64 {
         match self {
@@ -75,7 +65,7 @@ impl BeltTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             BeltTemplate::Sash => 1,
             BeltTemplate::LightBelt => 2,
@@ -101,7 +91,11 @@ impl BeltTemplate {
         }
     }
 
-    fn ac(&self) -> i16 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+
+    fn base_ac(&self) -> i16 {
         match self {
             BeltTemplate::Sash => 0,
             BeltTemplate::LightBelt => 0,
@@ -114,7 +108,10 @@ impl BeltTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             BeltTemplate::Sash => 0,
             BeltTemplate::LightBelt => 0,
@@ -126,5 +123,7 @@ impl BeltTemplate {
             BeltTemplate::WyrmhideBelt => 50,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }
 

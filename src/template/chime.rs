@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChimeTemplate {
@@ -22,48 +22,33 @@ pub enum ChimeTemplate {
 }
 
 impl ChimeTemplate {
-    pub fn iter() -> impl Iterator<Item=ChimeTemplate> {
-        [
-            ChimeTemplate::ChimeOfLight,
-            ChimeTemplate::ChimeOfDetectDoorsStairs,
-            ChimeTemplate::ChimeOfDetectTraps,
-            ChimeTemplate::ChimeOfTeleportation,
-            ChimeTemplate::ChimeOfThunderblast,
-            ChimeTemplate::ChimeOfSummonMonster,
-            ChimeTemplate::ChimeOfDisarming,
-            ChimeTemplate::ChimeOfAggravation,
-            ChimeTemplate::ChimeOfSlowMonster,
-            ChimeTemplate::ChimeOfSootheMonster,
-            ChimeTemplate::ChimeOfCureLightWound,
-            ChimeTemplate::ChimeOfChanging,
-            ChimeTemplate::ChimeOfRemoveCurse,
-            ChimeTemplate::ChimeOfCuring,
-            ChimeTemplate::ChimeOfDispelEvil,
-            ChimeTemplate::ChimeOfDarkness,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(ChimeTemplate::ChimeOfLight),
+            Box::new(ChimeTemplate::ChimeOfDetectDoorsStairs),
+            Box::new(ChimeTemplate::ChimeOfDetectTraps),
+            Box::new(ChimeTemplate::ChimeOfTeleportation),
+            Box::new(ChimeTemplate::ChimeOfThunderblast),
+            Box::new(ChimeTemplate::ChimeOfSummonMonster),
+            Box::new(ChimeTemplate::ChimeOfDisarming),
+            Box::new(ChimeTemplate::ChimeOfAggravation),
+            Box::new(ChimeTemplate::ChimeOfSlowMonster),
+            Box::new(ChimeTemplate::ChimeOfSootheMonster),
+            Box::new(ChimeTemplate::ChimeOfCureLightWound),
+            Box::new(ChimeTemplate::ChimeOfChanging),
+            Box::new(ChimeTemplate::ChimeOfRemoveCurse),
+            Box::new(ChimeTemplate::ChimeOfCuring),
+            Box::new(ChimeTemplate::ChimeOfDispelEvil),
+            Box::new(ChimeTemplate::ChimeOfDarkness),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Chime as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: 0,
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 1,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        ChimeTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for ChimeTemplate {
     fn name(&self) -> &str {
         match self {
             ChimeTemplate::ChimeOfLight => "& %M Chime| of Light^ (%P1 charges)",
@@ -84,6 +69,9 @@ impl ChimeTemplate {
             ChimeTemplate::ChimeOfDarkness => "& %M Chime| of Darkness^ (%P1 charges)",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Chime }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -106,6 +94,8 @@ impl ChimeTemplate {
         }
     }
 
+    fn p1(&self) -> i64 { 0 }
+
     fn cost(&self) -> i64 {
         match self {
             ChimeTemplate::ChimeOfLight => 275,
@@ -127,7 +117,7 @@ impl ChimeTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             ChimeTemplate::ChimeOfLight => 1,
             ChimeTemplate::ChimeOfDetectDoorsStairs => 2,
@@ -148,7 +138,15 @@ impl ChimeTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn weight(&self) -> u16 { 2 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             ChimeTemplate::ChimeOfLight => 10,
             ChimeTemplate::ChimeOfDetectDoorsStairs => 15,
@@ -168,4 +166,6 @@ impl ChimeTemplate {
             ChimeTemplate::ChimeOfDarkness => 20,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

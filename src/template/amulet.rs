@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {
@@ -19,45 +19,30 @@ pub enum AmuletTemplate {
 }
 
 impl AmuletTemplate {
-    pub fn iter() -> impl Iterator<Item=AmuletTemplate> {
-        [
-            AmuletTemplate::AmuletOfAdornment1,
-            AmuletTemplate::AmuletOfAdornment2,
-            AmuletTemplate::AmuletOfWisdom,
-            AmuletTemplate::AmuletOfCharisma,
-            AmuletTemplate::AmuletOfSearching,
-            AmuletTemplate::AmuletOfTeleportation,
-            AmuletTemplate::AmuletOfSlowDigestion,
-            AmuletTemplate::AmuletOfResistAcid,
-            AmuletTemplate::AmuletOfTheMagi,
-            AmuletTemplate::AmuletOfDoom,
-            AmuletTemplate::SilverNecklace,
-            AmuletTemplate::GoldNecklace,
-            AmuletTemplate::MithrilNecklace,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(AmuletTemplate::AmuletOfAdornment1),
+            Box::new(AmuletTemplate::AmuletOfAdornment2),
+            Box::new(AmuletTemplate::AmuletOfWisdom),
+            Box::new(AmuletTemplate::AmuletOfCharisma),
+            Box::new(AmuletTemplate::AmuletOfSearching),
+            Box::new(AmuletTemplate::AmuletOfTeleportation),
+            Box::new(AmuletTemplate::AmuletOfSlowDigestion),
+            Box::new(AmuletTemplate::AmuletOfResistAcid),
+            Box::new(AmuletTemplate::AmuletOfTheMagi),
+            Box::new(AmuletTemplate::AmuletOfDoom),
+            Box::new(AmuletTemplate::SilverNecklace),
+            Box::new(AmuletTemplate::GoldNecklace),
+            Box::new(AmuletTemplate::MithrilNecklace),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Amulet as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: self.weight(),
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: 0,
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        AmuletTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for AmuletTemplate {
     fn name(&self) -> &str {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => "& %A Amulet| of Adornment^",
@@ -75,6 +60,9 @@ impl AmuletTemplate {
             AmuletTemplate::MithrilNecklace => "& Mithril Necklace~^",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Amulet }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -130,7 +118,7 @@ impl AmuletTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => 11,
             AmuletTemplate::AmuletOfAdornment2 => 12,
@@ -166,7 +154,14 @@ impl AmuletTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn item_level(&self) -> u8 {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => 16,
             AmuletTemplate::AmuletOfAdornment2 => 16,
@@ -183,4 +178,6 @@ impl AmuletTemplate {
             AmuletTemplate::MithrilNecklace => 9,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }

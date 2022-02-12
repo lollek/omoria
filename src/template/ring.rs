@@ -1,5 +1,5 @@
-use misc;
 use model;
+use template;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum RingTemplate {
@@ -39,65 +39,50 @@ pub enum RingTemplate {
 }
 
 impl RingTemplate {
-    pub fn iter() -> impl Iterator<Item=RingTemplate> {
-        [
-            RingTemplate::RingOfGainStrength,
-            RingTemplate::RingOfGainDexterity,
-            RingTemplate::RingOfGainConstitution,
-            RingTemplate::RingOfGainIntelligence,
-            RingTemplate::RingOfSpeed1,
-            RingTemplate::RingOfSpeed2,
-            RingTemplate::RingOfSearching,
-            RingTemplate::RingOfTeleportation,
-            RingTemplate::RingOfSlowDigestion,
-            RingTemplate::RingOfResistFire,
-            RingTemplate::RingOfResistCold,
-            RingTemplate::RingOfFeatherFalling,
-            RingTemplate::RingOfAdornment1,
-            RingTemplate::RingOfAdornment2,
-            RingTemplate::RingOfWeakness,
-            RingTemplate::RingOfLordlyProtectionFire,
-            RingTemplate::RingOfLordlyProtectionAcid,
-            RingTemplate::RingOfLordlyProtectionCold,
-            RingTemplate::RingOfWoe,
-            RingTemplate::RingOfStupidity,
-            RingTemplate::RingOfIncreaseDamage,
-            RingTemplate::RingOfIncreaseToHit,
-            RingTemplate::RingOfProtection,
-            RingTemplate::RingOfAggravateMonsters,
-            RingTemplate::RingOfSeeInvisible,
-            RingTemplate::RingOfSustainStrength,
-            RingTemplate::RingOfSustainIntelligence,
-            RingTemplate::RingOfSustainWisdom,
-            RingTemplate::RingOfSustainConstitution,
-            RingTemplate::RingOfSustainDexterity,
-            RingTemplate::RingOfSustainCharisma,
-            RingTemplate::RingOfSlaying,
-            RingTemplate::RingOfGnomekind,
-        ].iter().copied()
+    pub fn vec() -> Vec<Box<dyn template::Template>> {
+        vec![
+            Box::new(RingTemplate::RingOfGainStrength),
+            Box::new(RingTemplate::RingOfGainDexterity),
+            Box::new(RingTemplate::RingOfGainConstitution),
+            Box::new(RingTemplate::RingOfGainIntelligence),
+            Box::new(RingTemplate::RingOfSpeed1),
+            Box::new(RingTemplate::RingOfSpeed2),
+            Box::new(RingTemplate::RingOfSearching),
+            Box::new(RingTemplate::RingOfTeleportation),
+            Box::new(RingTemplate::RingOfSlowDigestion),
+            Box::new(RingTemplate::RingOfResistFire),
+            Box::new(RingTemplate::RingOfResistCold),
+            Box::new(RingTemplate::RingOfFeatherFalling),
+            Box::new(RingTemplate::RingOfAdornment1),
+            Box::new(RingTemplate::RingOfAdornment2),
+            Box::new(RingTemplate::RingOfWeakness),
+            Box::new(RingTemplate::RingOfLordlyProtectionFire),
+            Box::new(RingTemplate::RingOfLordlyProtectionAcid),
+            Box::new(RingTemplate::RingOfLordlyProtectionCold),
+            Box::new(RingTemplate::RingOfWoe),
+            Box::new(RingTemplate::RingOfStupidity),
+            Box::new(RingTemplate::RingOfIncreaseDamage),
+            Box::new(RingTemplate::RingOfIncreaseToHit),
+            Box::new(RingTemplate::RingOfProtection),
+            Box::new(RingTemplate::RingOfAggravateMonsters),
+            Box::new(RingTemplate::RingOfSeeInvisible),
+            Box::new(RingTemplate::RingOfSustainStrength),
+            Box::new(RingTemplate::RingOfSustainIntelligence),
+            Box::new(RingTemplate::RingOfSustainWisdom),
+            Box::new(RingTemplate::RingOfSustainConstitution),
+            Box::new(RingTemplate::RingOfSustainDexterity),
+            Box::new(RingTemplate::RingOfSustainCharisma),
+            Box::new(RingTemplate::RingOfSlaying),
+            Box::new(RingTemplate::RingOfGnomekind),
+        ]
     }
 
-    pub fn create(&self) -> model::Item {
-        model::Item {
-            name: misc::rs2item_name(self.name()),
-            tval: model::ItemType::Ring as u8,
-            flags: 0,
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
-            subval: self.subval(),
-            weight: 2,
-            number: 1,
-            tohit: 0,
-            todam: 0,
-            ac: 0,
-            toac: self.to_ac(),
-            damage: misc::rs2item_damage("0d0"),
-            level: 0,
-            identified: 0,
-        }
+    pub fn iter() -> impl Iterator<Item=Box<dyn template::Template>> {
+        RingTemplate::vec().into_iter()
     }
+}
 
+impl template::Template for RingTemplate {
     fn name(&self) -> &str {
         match self {
             RingTemplate::RingOfGainStrength => "& %r ring| of gain strength^ (%p1)",
@@ -135,6 +120,9 @@ impl RingTemplate {
             RingTemplate::RingOfGnomekind => "& %r ring| of gnomekind^",
         }
     }
+
+    fn item_type(&self) -> model::ItemType { model::ItemType::Ring }
+    fn flags1(&self) -> u64 { 0 }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -250,7 +238,7 @@ impl RingTemplate {
         }
     }
 
-    fn subval(&self) -> i64 {
+    fn subtype(&self) -> i64 {
         match self {
             RingTemplate::RingOfGainStrength => 1,
             RingTemplate::RingOfGainDexterity => 2,
@@ -288,7 +276,14 @@ impl RingTemplate {
         }
     }
 
-    fn to_ac(&self) -> i16 {
+    fn weight(&self) -> u16 { 2 }
+    fn number(&self) -> u16 { 1 }
+    fn modifier_to_hit(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn base_ac(&self) -> i16 { 0 }
+    fn damage(&self) -> &str { "1d1" }
+
+    fn modifier_to_ac(&self) -> i16 {
         match self {
             RingTemplate::RingOfGainStrength => 0,
             RingTemplate::RingOfGainDexterity => 0,
@@ -326,7 +321,7 @@ impl RingTemplate {
         }
     }
 
-    fn level(&self) -> u8 {
+    fn item_level(&self) -> u8 {
         match self {
             RingTemplate::RingOfGainStrength => 30,
             RingTemplate::RingOfGainDexterity => 30,
@@ -363,4 +358,6 @@ impl RingTemplate {
             RingTemplate::RingOfGnomekind => 40,
         }
     }
+
+    fn is_identified(&self) -> bool { false }
 }
