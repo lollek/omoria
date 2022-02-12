@@ -29,11 +29,11 @@ impl BagTemplate {
 impl template::Template for BagTemplate {
     fn name(&self) -> &str {
         match self {
-            BagTemplate::BagOfHolding250 => "& %N Bag| of Holding (250)",
-            BagTemplate::BagOfHolding500 => "& %N Bag| of Holding (500)",
-            BagTemplate::BagOfHolding1000 => "& %N Bag| of Holding (1000)",
-            BagTemplate::BagOfHolding1500 => "& %N Bag| of Holding (1500)",
-            BagTemplate::BagOfDevouring => "& %N Bag| of Devouring",
+            BagTemplate::BagOfHolding250 => "& Bag| of Holding (250)",
+            BagTemplate::BagOfHolding500 => "& Bag| of Holding (500)",
+            BagTemplate::BagOfHolding1000 => "& Bag| of Holding (1000)",
+            BagTemplate::BagOfHolding1500 => "& Bag| of Holding (1500)",
+            BagTemplate::BagOfDevouring => "& Bag| of Devouring",
         }
     }
 

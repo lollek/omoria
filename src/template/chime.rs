@@ -51,22 +51,22 @@ impl ChimeTemplate {
 impl template::Template for ChimeTemplate {
     fn name(&self) -> &str {
         match self {
-            ChimeTemplate::ChimeOfLight => "& %M Chime| of Light^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDetectDoorsStairs => "& %M Chime| of Detect Doors/Stairs^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDetectTraps => "& %M Chime| of Detect Traps^ (%P1 charges)",
-            ChimeTemplate::ChimeOfTeleportation => "& %M Chime| of Teleportation^ (%P1 charges)",
-            ChimeTemplate::ChimeOfThunderblast => "& %M Chime| of Thunderblasts^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSummonMonster => "& %M Chime| of Summon Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDisarming => "& %M Chime| of Disarming^ (%P1 charges)",
-            ChimeTemplate::ChimeOfAggravation => "& %M Chime| of Aggravation^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSlowMonster => "& %M Chime| of Slow Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSootheMonster => "& %M Chime| of Soothe Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfCureLightWound => "& %M Chime| of Cure Light Wound^ (%P1 charges)",
-            ChimeTemplate::ChimeOfChanging => "& %M Chime| of Changing^ (%P1 charges)",
-            ChimeTemplate::ChimeOfRemoveCurse => "& %M Chime| of Remove Curse^ (%P1 charges)",
-            ChimeTemplate::ChimeOfCuring => "& %M Chime| of Curing^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDispelEvil => "& %M Chime| of Dispel Evil^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDarkness => "& %M Chime| of Darkness^ (%P1 charges)",
+            ChimeTemplate::ChimeOfLight => "& Chime| of Light^ (%P1 charges)",
+            ChimeTemplate::ChimeOfDetectDoorsStairs => "& Chime| of Detect Doors/Stairs^ (%P1 charges)",
+            ChimeTemplate::ChimeOfDetectTraps => "& Chime| of Detect Traps^ (%P1 charges)",
+            ChimeTemplate::ChimeOfTeleportation => "& Chime| of Teleportation^ (%P1 charges)",
+            ChimeTemplate::ChimeOfThunderblast => "& Chime| of Thunderblasts^ (%P1 charges)",
+            ChimeTemplate::ChimeOfSummonMonster => "& Chime| of Summon Monster^ (%P1 charges)",
+            ChimeTemplate::ChimeOfDisarming => "& Chime| of Disarming^ (%P1 charges)",
+            ChimeTemplate::ChimeOfAggravation => "& Chime| of Aggravation^ (%P1 charges)",
+            ChimeTemplate::ChimeOfSlowMonster => "& Chime| of Slow Monster^ (%P1 charges)",
+            ChimeTemplate::ChimeOfSootheMonster => "& Chime| of Soothe Monster^ (%P1 charges)",
+            ChimeTemplate::ChimeOfCureLightWound => "& Chime| of Cure Light Wound^ (%P1 charges)",
+            ChimeTemplate::ChimeOfChanging => "& Chime| of Changing^ (%P1 charges)",
+            ChimeTemplate::ChimeOfRemoveCurse => "& Chime| of Remove Curse^ (%P1 charges)",
+            ChimeTemplate::ChimeOfCuring => "& Chime| of Curing^ (%P1 charges)",
+            ChimeTemplate::ChimeOfDispelEvil => "& Chime| of Dispel Evil^ (%P1 charges)",
+            ChimeTemplate::ChimeOfDarkness => "& Chime| of Darkness^ (%P1 charges)",
         }
     }
 

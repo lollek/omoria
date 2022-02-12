@@ -371,6 +371,10 @@ static void __add_item_to_store(enum store_t store_num) {
       default: return; // Should panic
     }
 
+    unquote(t_list[cur_pos].name);
+    known1(t_list[cur_pos].name);
+    known2(t_list[cur_pos].name);
+
     // TODO: Stop using inven_temp
     inven_temp.data = t_list[cur_pos];
     if (__store_has_space_for(store_num, &inven_temp)) {

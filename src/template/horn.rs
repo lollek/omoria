@@ -45,19 +45,19 @@ impl HornTemplate {
 impl template::Template for HornTemplate {
     fn name(&self) -> &str {
         match self {
-            HornTemplate::HornOfBubbles => "& %H| of Bubbles^ (%P1 charges)",
-            HornTemplate::HornOfCalling => "& %H| of Calling^ (%P1 charges)",
-            HornTemplate::HornOfSoftSounds => "& %H| of Soft Sounds^ (%P1 charges)",
-            HornTemplate::HornOfBlasting => "& %H| of *Blasting*^ (%P1 charges)",
-            HornTemplate::HornOfCold => "& %H| of Cold^ (%P1 charges)",
-            HornTemplate::HornOfHeat => "& %H| of Heat^ (%P1 charges)",
-            HornTemplate::HornOfGas => "& %H| of Gas^ (%P1 charges)",
-            HornTemplate::HornOfRecall => "& %H| of Recall^ (%P1 charges)",
-            HornTemplate::HornOfChaos => "& %H| of *Chaos*^ (%P1 charges)",
-            HornTemplate::HornOfGlue => "& %H| of Glue^ (%P1 charges)",
-            HornTemplate::HornOfValhalla => "& %H| of Valhalla^ (%P1 charges)",
-            HornTemplate::HornOfTritons => "& %H| of Tritons^ (%P1 charges)",
-            HornTemplate::HornOfFog => "& %H| of Fog^ (%P1 charges)",
+            HornTemplate::HornOfBubbles => "& Horn| of Bubbles^ (%P1 charges)",
+            HornTemplate::HornOfCalling => "& Horn| of Calling^ (%P1 charges)",
+            HornTemplate::HornOfSoftSounds => "& Horn| of Soft Sounds^ (%P1 charges)",
+            HornTemplate::HornOfBlasting => "& Horn| of *Blasting*^ (%P1 charges)",
+            HornTemplate::HornOfCold => "& Horn| of Cold^ (%P1 charges)",
+            HornTemplate::HornOfHeat => "& Horn| of Heat^ (%P1 charges)",
+            HornTemplate::HornOfGas => "& Horn| of Gas^ (%P1 charges)",
+            HornTemplate::HornOfRecall => "& Horn| of Recall^ (%P1 charges)",
+            HornTemplate::HornOfChaos => "& Horn| of *Chaos*^ (%P1 charges)",
+            HornTemplate::HornOfGlue => "& Horn| of Glue^ (%P1 charges)",
+            HornTemplate::HornOfValhalla => "& Horn| of Valhalla^ (%P1 charges)",
+            HornTemplate::HornOfTritons => "& Horn| of Tritons^ (%P1 charges)",
+            HornTemplate::HornOfFog => "& Horn| of Fog^ (%P1 charges)",
         }
     }
 
