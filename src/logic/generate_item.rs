@@ -1,11 +1,12 @@
-use std::cmp::max;
 use std::convert::TryInto;
 
 use constants;
 use model;
-use template;
+use item_template;
 
-fn get_random_from_list(mut list: Vec<Box<dyn template::Template>>) -> Box<dyn template::Template> {
+fn get_random_from_list(mut list: Vec<Box<dyn item_template::ItemTemplate>>)
+    -> Box<dyn item_template::ItemTemplate>
+{
     if list.len() == 0 {
         panic!("List contains 0 items!");
     }
@@ -43,31 +44,31 @@ pub fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8
 }
 
 pub fn generate_item_for_general_store() -> model::Item {
-    let templates_to_choose_from: Vec<Box<dyn template::Template>> = vec![
-        Box::new(template::FoodTemplate::RationOfFood),
-        Box::new(template::FoodTemplate::HardBiscuit),
-        Box::new(template::FoodTemplate::BeefJerky),
-        Box::new(template::FoodTemplate::FineAle),
-        Box::new(template::FoodTemplate::FineWine),
-        Box::new(template::MiscUsableTemplate::IronSpike),
-        Box::new(template::LightSourceTemplate::BrassLantern),
-        Box::new(template::LightSourceTemplate::WoodenTorch),
-        Box::new(template::MiscUsableTemplate::FlaskOfOil),
-        Box::new(template::PickTemplate::Shovel),
-        Box::new(template::PickTemplate::Pick),
-        Box::new(template::CloakTemplate::LightCloak),
+    let templates_to_choose_from: Vec<Box<dyn item_template::ItemTemplate>> = vec![
+        Box::new(item_template::FoodTemplate::RationOfFood),
+        Box::new(item_template::FoodTemplate::HardBiscuit),
+        Box::new(item_template::FoodTemplate::BeefJerky),
+        Box::new(item_template::FoodTemplate::FineAle),
+        Box::new(item_template::FoodTemplate::FineWine),
+        Box::new(item_template::MiscUsableTemplate::IronSpike),
+        Box::new(item_template::LightSourceTemplate::BrassLantern),
+        Box::new(item_template::LightSourceTemplate::WoodenTorch),
+        Box::new(item_template::MiscUsableTemplate::FlaskOfOil),
+        Box::new(item_template::PickTemplate::Shovel),
+        Box::new(item_template::PickTemplate::Pick),
+        Box::new(item_template::CloakTemplate::LightCloak),
     ];
     let random_template = get_random_from_list(templates_to_choose_from);
     create_item(random_template, constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_armorsmith() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
-    templates.extend(template::ArmorTemplate::vec());
-    templates.extend(template::BootsTemplate::vec());
-    templates.extend(template::GlovesTemplate::vec());
-    templates.extend(template::HelmTemplate::vec());
-    templates.extend(template::ShieldTemplate::vec());
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
+    templates.extend(item_template::ArmorTemplate::vec());
+    templates.extend(item_template::BootsTemplate::vec());
+    templates.extend(item_template::GlovesTemplate::vec());
+    templates.extend(item_template::HelmTemplate::vec());
+    templates.extend(item_template::ShieldTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -77,16 +78,16 @@ pub fn generate_item_for_armorsmith() -> model::Item {
 }
 
 pub fn generate_item_for_weaponsmith() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
-    templates.extend(template::AmmunitionTemplate::vec());
-    templates.extend(template::AxeTemplate::vec());
-    templates.extend(template::BowTemplate::vec());
-    templates.extend(template::CrossbowTemplate::vec());
-    templates.extend(template::DaggerTemplate::vec());
-    templates.extend(template::MaceTemplate::vec());
-    templates.extend(template::PolearmTemplate::vec());
-    templates.extend(template::SlingTemplate::vec());
-    templates.extend(template::SwordTemplate::vec());
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
+    templates.extend(item_template::AmmunitionTemplate::vec());
+    templates.extend(item_template::AxeTemplate::vec());
+    templates.extend(item_template::BowTemplate::vec());
+    templates.extend(item_template::CrossbowTemplate::vec());
+    templates.extend(item_template::DaggerTemplate::vec());
+    templates.extend(item_template::MaceTemplate::vec());
+    templates.extend(item_template::PolearmTemplate::vec());
+    templates.extend(item_template::SlingTemplate::vec());
+    templates.extend(item_template::SwordTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -95,8 +96,8 @@ pub fn generate_item_for_weaponsmith() -> model::Item {
 }
 
 pub fn generate_item_for_alchemist_store() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
-    templates.extend(template::PotionTemplate::vec());
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
+    templates.extend(item_template::PotionTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -105,10 +106,10 @@ pub fn generate_item_for_alchemist_store() -> model::Item {
 }
 
 pub fn generate_item_for_magic_store() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
-    templates.extend(template::StaffTemplate::vec());
-    templates.extend(template::WandTemplate::vec());
-    templates.extend(template::ScrollTemplate::vec());
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
+    templates.extend(item_template::StaffTemplate::vec());
+    templates.extend(item_template::WandTemplate::vec());
+    templates.extend(item_template::ScrollTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -117,18 +118,18 @@ pub fn generate_item_for_magic_store() -> model::Item {
 }
 
 pub fn generate_item_for_inn() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
 
-    templates.extend(template::LodgingAtInnTemplate::vec());
+    templates.extend(item_template::LodgingAtInnTemplate::vec());
 
     create_item(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
 pub fn generate_item_for_library() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
 
-    templates.extend(template::MagicBookTemplate::vec());
-    templates.extend(template::SongBookTemplate::vec());
+    templates.extend(item_template::MagicBookTemplate::vec());
+    templates.extend(item_template::SongBookTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -137,9 +138,9 @@ pub fn generate_item_for_library() -> model::Item {
 }
 
 pub fn generate_item_for_temple() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
 
-    templates.extend(template::PrayerBookTemplate::vec());
+    templates.extend(item_template::PrayerBookTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -148,11 +149,11 @@ pub fn generate_item_for_temple() -> model::Item {
 }
 
 pub fn generate_item_for_music_store() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
 
-    templates.extend(template::InstrumentTemplate::vec());
-    templates.extend(template::ChimeTemplate::vec());
-    templates.extend(template::HornTemplate::vec());
+    templates.extend(item_template::InstrumentTemplate::vec());
+    templates.extend(item_template::ChimeTemplate::vec());
+    templates.extend(item_template::HornTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -161,11 +162,11 @@ pub fn generate_item_for_music_store() -> model::Item {
 }
 
 pub fn generate_item_for_gem_store() -> model::Item {
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
 
-    templates.extend(template::AmuletTemplate::vec());
-    templates.extend(template::RingTemplate::vec());
-    templates.extend(template::ValuableTemplate::vec());
+    templates.extend(item_template::AmuletTemplate::vec());
+    templates.extend(item_template::RingTemplate::vec());
+    templates.extend(item_template::ValuableTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -174,7 +175,7 @@ pub fn generate_item_for_gem_store() -> model::Item {
 }
 
 pub fn generate_item_for_all_night_deli() -> model::Item {
-    create_item(get_random_from_list(template::JunkFoodTemplate::vec()), constants::STORE_ITEM_LEVEL)
+    create_item(get_random_from_list(item_template::JunkFoodTemplate::vec()), constants::STORE_ITEM_LEVEL)
 }
 
 /**
@@ -272,56 +273,56 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
         _ => panic!("Rand out of range!"),
     };
 
-    let mut templates: Vec<Box<dyn template::Template>> = Vec::new();
+    let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
     match item_type {
         GenTreasureType::Armor => {
-            templates.extend(template::ArmorTemplate::vec());
-            templates.extend(template::BootsTemplate::vec());
-            templates.extend(template::BeltTemplate::vec());
-            templates.extend(template::BracersTemplate::vec());
-            templates.extend(template::CloakTemplate::vec());
-            templates.extend(template::GlovesTemplate::vec());
-            templates.extend(template::HelmTemplate::vec());
-            templates.extend(template::ShieldTemplate::vec());
+            templates.extend(item_template::ArmorTemplate::vec());
+            templates.extend(item_template::BootsTemplate::vec());
+            templates.extend(item_template::BeltTemplate::vec());
+            templates.extend(item_template::BracersTemplate::vec());
+            templates.extend(item_template::CloakTemplate::vec());
+            templates.extend(item_template::GlovesTemplate::vec());
+            templates.extend(item_template::HelmTemplate::vec());
+            templates.extend(item_template::ShieldTemplate::vec());
         },
         GenTreasureType::DungeonItems => {
-            templates.extend(template::ChestTemplate::vec());
-            templates.extend(template::MiscTemplate::vec());
+            templates.extend(item_template::ChestTemplate::vec());
+            templates.extend(item_template::MiscTemplate::vec());
         },
         GenTreasureType::Jewelry => {
-            templates.extend(template::AmuletTemplate::vec());
-            templates.extend(template::ValuableTemplate::vec());
-            templates.extend(template::RingTemplate::vec());
+            templates.extend(item_template::AmuletTemplate::vec());
+            templates.extend(item_template::ValuableTemplate::vec());
+            templates.extend(item_template::RingTemplate::vec());
         },
         GenTreasureType::MagicItem => {
-            templates.extend(template::ChimeTemplate::vec());
-            templates.extend(template::HornTemplate::vec());
-            templates.extend(template::StaffTemplate::vec());
-            templates.extend(template::WandTemplate::vec());
+            templates.extend(item_template::ChimeTemplate::vec());
+            templates.extend(item_template::HornTemplate::vec());
+            templates.extend(item_template::StaffTemplate::vec());
+            templates.extend(item_template::WandTemplate::vec());
         },
         GenTreasureType::Potion => {
-            templates.extend(template::PotionTemplate::vec());
+            templates.extend(item_template::PotionTemplate::vec());
         },
         GenTreasureType::Scroll => {
-            templates.extend(template::ScrollTemplate::vec());
+            templates.extend(item_template::ScrollTemplate::vec());
         },
         GenTreasureType::Usable => {
-            templates.extend(template::AmmunitionTemplate::vec());
-            templates.extend(template::BagTemplate::vec());
-            templates.extend(template::FoodTemplate::vec());
-            templates.extend(template::LightSourceTemplate::vec());
-            templates.extend(template::MiscUsableTemplate::vec());
-            templates.extend(template::PickTemplate::vec());
+            templates.extend(item_template::AmmunitionTemplate::vec());
+            templates.extend(item_template::BagTemplate::vec());
+            templates.extend(item_template::FoodTemplate::vec());
+            templates.extend(item_template::LightSourceTemplate::vec());
+            templates.extend(item_template::MiscUsableTemplate::vec());
+            templates.extend(item_template::PickTemplate::vec());
         },
         GenTreasureType::Weapon => {
-            templates.extend(template::AxeTemplate::vec());
-            templates.extend(template::BowTemplate::vec());
-            templates.extend(template::CrossbowTemplate::vec());
-            templates.extend(template::DaggerTemplate::vec());
-            templates.extend(template::MaceTemplate::vec());
-            templates.extend(template::PolearmTemplate::vec());
-            templates.extend(template::SlingTemplate::vec());
-            templates.extend(template::SwordTemplate::vec());
+            templates.extend(item_template::AxeTemplate::vec());
+            templates.extend(item_template::BowTemplate::vec());
+            templates.extend(item_template::CrossbowTemplate::vec());
+            templates.extend(item_template::DaggerTemplate::vec());
+            templates.extend(item_template::MaceTemplate::vec());
+            templates.extend(item_template::PolearmTemplate::vec());
+            templates.extend(item_template::SlingTemplate::vec());
+            templates.extend(item_template::SwordTemplate::vec());
         },
     }
     templates = templates.into_iter()
@@ -330,7 +331,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     create_item(get_random_from_list(templates), item_level)
 }
 
-pub fn create_item(template: Box<dyn template::Template>, item_level: u8) -> model::Item {
+pub fn create_item(template: Box<dyn item_template::ItemTemplate>, item_level: u8) -> model::Item {
     let mut item = template.create();
 
     item.level = item_level.try_into().unwrap_or(i8::MAX);
