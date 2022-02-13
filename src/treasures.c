@@ -20,26 +20,6 @@
 
 long t_level[MAX_OBJ_LEVEL + 1];
 
-char const *syllables[MAX_SYLLABLES] = {
-    "a",    "ab",   "ag",   "aks",  "ala",  "an",   "ankh", "app",  "arg",
-    "arze", "ash",  "aus",  "ban",  "bar",  "bat",  "bek",  "bie",  "bin",
-    "bit",  "bjor", "blu",  "brd",  "bu",   "byt",  "comp", "con",  "cos",
-    "cre",  "dalf", "dan",  "den",  "doe",  "dok",  "eep",  "el",   "eng",
-    "er",   "ere",  "erk",  "esh",  "evs",  "fa",   "fid",  "for",  "fri",
-    "fu",   "gan",  "gar",  "glen", "gop",  "gre",  "ha",   "he",   "hyd",
-    "i",    "ing",  "ion",  "ip",   "ish",  "it",   "ite",  "iv",   "jo",
-    "kho",  "kli",  "klis", "la",   "lech", "man",  "mar",  "me",   "mi",
-    "mic",  "mik",  "mon",  "mung", "mur",  "naed", "neg",  "nep",  "ner",
-    "nes",  "nis",  "nih",  "nin",  "o",    "od",   "ood",  "ook",  "oook",
-    "org",  "orn",  "ox",   "oxy",  "pay",  "pet",  "ple",  "plu",  "po",
-    "pot",  "prok", "re",   "rea",  "rhov", "ri",   "ro",   "rog",  "rok",
-    "rol",  "sa",   "san",  "sat",  "see",  "sef",  "seh",  "shu",  "si",
-    "snd",  "sne",  "snik", "sno",  "so",   "sol",  "spam", "sri",  "sta",
-    "sun",  "ta",   "taf",  "tem",  "ther", "ti",   "tox",  "trol", "tue",
-    "turs", "u",    "ulk",  "um",   "un",   "uni",  "ur",   "val",  "viv",
-    "vly",  "vom",  "wah",  "wed",  "werg", "wex",  "whon", "wlf",  "x",
-    "yerg", "yp",   "zun"};
-
 static const float obj_std_adj = 1.25;   // Adjust STD per level
 static const long obj_std_min = 7;       // Minimum STD
 static const long obj_base_magic = 12;   //  Base amount of magic

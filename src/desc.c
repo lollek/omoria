@@ -17,30 +17,8 @@
 #include "types.h"
 #include "variables.h"
 
-void rantitle(char *title) {
-  /*{ Return random title						}*/
-
-  long i1, i2, i3, i4;
-
-  i3 = randint(2) + 1; /* two or three words */
-  strcpy(title, "Titled \"");
-
-  for (i1 = 0; i1 < i3; i1++) {
-    i4 = randint(2); /* one or two syllables each */
-    for (i2 = 0; i2 < i4; i2++) {
-      strcat(title, syllables[randint(MAX_SYLLABLES) - 1]);
-    }
-
-    if (i1 != i3 - 1) {
-      strcat(title, " ");
-    }
-  }
-  strcat(title, "\"");
-}
-
 void identify(treasure_type *item) {
   /*{ Something has been identified }*/
-
 
   if (strstr(item->name, "|") == NULL)
     return;

@@ -61,7 +61,6 @@ extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
 
 /* { DESC.PAS		} */
-extern void rantitle(char *title); /* : varying[a] of char); */
 extern void known1(char *object_str);  /* : varying[a] of char); */
 extern void known2(char *object_str);  /* : varying[a] of char); */
 extern void unquote(char *object_str); /* : varying[a] of char); */
@@ -427,7 +426,6 @@ extern void petrify(long amt);
 extern void compact_objects();
 extern void popt(long *x);
 extern void pusht(long x);
-extern void magic_treasure(long x, long level, boolean forceit);
 extern void place_trap(long y, long x, long typ, long subval);
 extern void place_rubble(long y, long x);
 extern void place_open_door(long y, long x);

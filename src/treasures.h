@@ -2,12 +2,10 @@
 #define TREASURES_H
 
 #include "constants.h"
-
-//  Descriptive constants
-#define MAX_SYLLABLES 156 // Used with scrolls
-
-extern char const *syllables[MAX_SYLLABLES];
+#include "types.h"
 
 extern long t_level[MAX_OBJ_LEVEL + 1];
+
+extern void magic_treasure(long x, long level, boolean forceit);
 
 #endif // TREASURES_H
