@@ -7,7 +7,7 @@ use libc::{time, time_t, strcpy};
 
 use debug;
 use io;
-use template;
+use item_template;
 use misc;
 use player;
 use random;
@@ -1037,15 +1037,15 @@ fn add_equipment() {
     // General starting items
     let mut general_starting_items = Vec::new();
 
-    let mut ration_of_food = generate_item::create_item(Box::new(template::FoodTemplate::RationOfFood), 0);
+    let mut ration_of_food = generate_item::create_item(Box::new(item_template::FoodTemplate::RationOfFood), 0);
     ration_of_food.number = 5;
     general_starting_items.push(ration_of_food);
 
-    let torch = generate_item::create_item(Box::new(template::LightSourceTemplate::WoodenTorch), 0);
+    let torch = generate_item::create_item(Box::new(item_template::LightSourceTemplate::WoodenTorch), 0);
     general_starting_items.push(torch);
-    let light_cloak = generate_item::create_item(Box::new(template::CloakTemplate::LightCloak), 0);
+    let light_cloak = generate_item::create_item(Box::new(item_template::CloakTemplate::LightCloak), 0);
     general_starting_items.push(light_cloak);
-    let soft_leather_armor = generate_item::create_item(Box::new(template::ArmorTemplate::SoftLeatherArmor), 0);
+    let soft_leather_armor = generate_item::create_item(Box::new(item_template::ArmorTemplate::SoftLeatherArmor), 0);
     general_starting_items.push(soft_leather_armor);
 
     for item in general_starting_items {

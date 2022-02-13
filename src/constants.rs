@@ -1,6 +1,6 @@
 pub static SAVE_FOLDER: &'static str = "save";
 pub static DATA_FOLDER: &'static str = "data";
-pub static OMORIA_VERSION: &'static str = "5.1.0-alpha";
+pub static OMORIA_VERSION: &'static str = "5.1.1-alpha";
 pub static IMORIA_VERSION: &'static str = "4.85.22";
 
 // Number of Cave tiles on y-axis

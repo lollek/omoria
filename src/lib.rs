@@ -29,14 +29,13 @@ pub mod master_interop;
 pub mod menu;
 pub mod misc;
 pub mod model;
-pub mod monsters;
 pub mod ncurses;
 pub mod persistence;
 pub mod player;
 pub mod random;
 pub mod save;
 pub mod screen;
-pub mod template;
+pub mod item_template;
 pub mod term;
 pub mod thirdparty;
 

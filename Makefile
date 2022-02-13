@@ -9,6 +9,7 @@ DATAFILES =	$(READFILES) $(WRITEFILES)
 
 all:	omoria ctags
 
+RSFILES = $(wildcard src/*.rs) $(wildcard src/*/*.rs)
 CFILES = $(wildcard src/*.c) $(wildcard src/*/*.c)
 HFILES = $(wildcard src/*.h) $(wildcard src/*/*.h)
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
@@ -16,7 +17,7 @@ OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
-omoria: $(OBJFILES)
+omoria: $(OBJFILES) $(RSFILES)
 	cargo build
 	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
 

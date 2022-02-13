@@ -333,6 +333,7 @@ bool load_monsters(void) {
 
     creature_type *monster = &c_list[i];
 
+
     if (!parse_header(file)) break;
     if (!parse_aaf(file, monster)) break;
     if (!parse_ac(file, monster)) break;

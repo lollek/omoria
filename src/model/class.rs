@@ -1,6 +1,6 @@
 use model::{ Ability, Item, Magic };
 use logic::generate_item;
-use template;
+use item_template;
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum Class {
@@ -240,46 +240,46 @@ impl Class {
 
 
     pub fn starting_items(&self) -> Vec<Item> {
-        let templates: Vec<Box<dyn template::Template>> = match self {
+        let templates: Vec<Box<dyn item_template::ItemTemplate>> = match self {
             Class::Fighter => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
+                Box::new(item_template::DaggerTemplate::Stiletto),
             ],
             Class::Wizard => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
-                Box::new(template::MagicBookTemplate::BeginnersMagic),
+                Box::new(item_template::DaggerTemplate::Stiletto),
+                Box::new(item_template::MagicBookTemplate::BeginnersMagic),
                 ],
             Class::Cleric => vec![
-                Box::new(template::MaceTemplate::IronShodQuarterstaff),
-                Box::new(template::PrayerBookTemplate::BeginnersHandbook),
+                Box::new(item_template::MaceTemplate::IronShodQuarterstaff),
+                Box::new(item_template::PrayerBookTemplate::BeginnersHandbook),
             ],
             Class::Rogue => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
-                Box::new(template::SongBookTemplate::BeginnersHandbook),
+                Box::new(item_template::DaggerTemplate::Stiletto),
+                Box::new(item_template::SongBookTemplate::BeginnersHandbook),
             ],
             Class::Ranger => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
-                Box::new(template::InstrumentTemplate::PipesOfPeace),
+                Box::new(item_template::DaggerTemplate::Stiletto),
+                Box::new(item_template::InstrumentTemplate::PipesOfPeace),
             ],
             Class::Paladin => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
-                Box::new(template::PrayerBookTemplate::BeginnersHandbook),
+                Box::new(item_template::DaggerTemplate::Stiletto),
+                Box::new(item_template::PrayerBookTemplate::BeginnersHandbook),
             ],
             Class::Druid => vec![
-                Box::new(template::MaceTemplate::IronShodQuarterstaff),
-                Box::new(template::InstrumentTemplate::PipesOfPeace),
+                Box::new(item_template::MaceTemplate::IronShodQuarterstaff),
+                Box::new(item_template::InstrumentTemplate::PipesOfPeace),
             ],
             Class::Bard => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
-                Box::new(template::SongBookTemplate::BeginnersHandbook),
+                Box::new(item_template::DaggerTemplate::Stiletto),
+                Box::new(item_template::SongBookTemplate::BeginnersHandbook),
             ],
             Class::Adventurer => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
-                Box::new(template::MagicBookTemplate::BeginnersMagic),
+                Box::new(item_template::DaggerTemplate::Stiletto),
+                Box::new(item_template::MagicBookTemplate::BeginnersMagic),
             ],
             Class::Monk => vec![
             ],
             Class::Barbarian => vec![
-                Box::new(template::DaggerTemplate::Stiletto),
+                Box::new(item_template::DaggerTemplate::Stiletto),
             ],
         };
         templates.into_iter().map(|x| generate_item::create_item(x, 0)).collect()
