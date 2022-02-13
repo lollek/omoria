@@ -37,6 +37,23 @@ impl DaggerTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         DaggerTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(DaggerTemplate::MainGauche),
+            2 => Box::new(DaggerTemplate::Misercorde),
+            3 => Box::new(DaggerTemplate::Stiletto),
+            4 => Box::new(DaggerTemplate::Bodkin),
+            6 => Box::new(DaggerTemplate::BrokenDagger),
+            5 => Box::new(DaggerTemplate::CatONineTails),
+            8 => Box::new(DaggerTemplate::Bilbo),
+            9 => Box::new(DaggerTemplate::Baselard),
+            16 => Box::new(DaggerTemplate::Foil),
+            20 => Box::new(DaggerTemplate::Rapier),
+            22 => Box::new(DaggerTemplate::SmallSword),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for DaggerTemplate {
@@ -84,7 +101,7 @@ impl item_template::ItemTemplate for DaggerTemplate {
             DaggerTemplate::Misercorde => 2,
             DaggerTemplate::Stiletto => 3,
             DaggerTemplate::Bodkin => 4,
-            DaggerTemplate::BrokenDagger => 5,
+            DaggerTemplate::BrokenDagger => 6,
             DaggerTemplate::CatONineTails => 5,
             DaggerTemplate::Bilbo => 8,
             DaggerTemplate::Baselard => 9,

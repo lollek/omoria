@@ -518,7 +518,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
   boolean flag;
   treas_rec *item_ptr;
   obj_set food_stuffs = {Food, 0};
-  obj_set staff_rod_or_wand = {staff, rod, wand, 0};
+  obj_set staff_or_wand = {staff, wand, 0};
 
   ENTER(("c__apply_attack", "c"));
 
@@ -813,7 +813,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
       }
       i4 = level;
       /* with item_ptr^.data do; */
-      if (is_in(item_ptr->data.tval, staff_rod_or_wand)) {
+      if (is_in(item_ptr->data.tval, staff_or_wand)) {
         if (item_ptr->data.p1 > 0) {
           m_list[monptr].hp += i4 * item_ptr->data.p1;
           item_ptr->data.p1 = 0;

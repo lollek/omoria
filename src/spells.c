@@ -44,7 +44,7 @@ static const treasure_type scare_monster = /* { Special trap	} */
      0};
 /* used in get_flags, and other places if I needed them */
 static obj_set null_obj_set = {0, 0};
-static obj_set destroyed_by_lightning = {ring, rod, wand, 0};
+static obj_set destroyed_by_lightning = {ring, wand, 0};
 static obj_set destroyed_by_acid = {arrow,
                                     bow_crossbow_or_sling,
                                     hafted_weapon,
@@ -58,13 +58,12 @@ static obj_set destroyed_by_acid = {arrow,
                                     hard_armor,
                                     soft_armor,
                                     staff,
-                                    scroll1,
-                                    scroll2,
+                                    Scroll,
                                     Food,
                                     open_door,
                                     closed_door,
                                     0};
-static obj_set destroyed_by_cold = {potion1, potion2, 0};
+static obj_set destroyed_by_cold = {potion, 0};
 static obj_set destroyed_by_fire = {arrow,
                                     bow_crossbow_or_sling,
                                     hafted_weapon,
@@ -74,18 +73,16 @@ static obj_set destroyed_by_fire = {arrow,
                                     cloak,
                                     soft_armor,
                                     staff,
-                                    scroll1,
-                                    scroll2,
-                                    potion1,
-                                    potion2,
+                                    Scroll,
+                                    potion,
                                     Food,
                                     open_door,
                                     closed_door,
                                     0};
-static obj_set destroyed_by_petrify = {boots,   soft_armor, potion1,
-                                       potion2, Food,       0};
-static obj_set destroyed_by_sunray = {cloak,   scroll1, scroll2,
-                                      potion1, potion2, 0};
+static obj_set destroyed_by_petrify = {boots,   soft_armor, potion,
+                                       Food,       0};
+static obj_set destroyed_by_sunray = {cloak,   Scroll,
+                                      potion, 0};
 
 static void get_flags(enum spell_effect_t typ, long *weapon_type,
                       long *harm_type, obj_set **destroy) {
@@ -1538,7 +1535,7 @@ boolean protect_evil() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 boolean recharge(long num) {
-  /*{ Recharge a wand, staff, or rod.  Sometimes the item breaks. -RAK-}*/
+  /*{ Recharge a wand or staff.  Sometimes the item breaks. -RAK-}*/
 
   treas_rec *item_ptr;
   boolean redraw = false;
@@ -1547,7 +1544,7 @@ boolean recharge(long num) {
    */
   /* that */
   /* uses charges.  2/15/00 JEB */
-  obj_set batteries_not_included = {valuable_gems, staff, rod, wand,
+  obj_set batteries_not_included = {valuable_gems, staff, wand,
                                     chime,         horn,  0};
   boolean return_value = false;
 

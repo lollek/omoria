@@ -40,6 +40,25 @@ impl AmuletTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         AmuletTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            11 => Box::new(AmuletTemplate::AmuletOfAdornment1),
+            12 => Box::new(AmuletTemplate::AmuletOfAdornment2),
+            5 => Box::new(AmuletTemplate::AmuletOfWisdom),
+            6 => Box::new(AmuletTemplate::AmuletOfCharisma),
+            7 => Box::new(AmuletTemplate::AmuletOfSearching),
+            8 => Box::new(AmuletTemplate::AmuletOfTeleportation),
+            9 => Box::new(AmuletTemplate::AmuletOfSlowDigestion),
+            10 => Box::new(AmuletTemplate::AmuletOfResistAcid),
+            13 => Box::new(AmuletTemplate::AmuletOfTheMagi),
+            14 => Box::new(AmuletTemplate::AmuletOfDoom),
+            30 => Box::new(AmuletTemplate::SilverNecklace),
+            40 => Box::new(AmuletTemplate::GoldNecklace),
+            50 => Box::new(AmuletTemplate::MithrilNecklace),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for AmuletTemplate {

@@ -307,7 +307,7 @@ void quaff() {
   treas_rec *item_ptr;
   char trash_char;
   boolean redraw, ident;
-  obj_set stuff_to_drink = {potion1, potion2, 0};
+  obj_set stuff_to_drink = {potion, 0};
 
   reset_flag = true;
 
@@ -327,23 +327,6 @@ void quaff() {
 
         for (; q1 > 0 || q2 > 0;) {
           i6 = bit_pos64(&q2, &q1) + 1;
-
-          /*
-           * It looks like potion2 was created
-           *before flags2 was
-           * added to the treasure type, now we
-           *can fit all the
-           * potion effects into the pair of
-           *flags.
-           *
-           * The += 31 should be 64 now, I am
-           *leaving it at 31 so
-           * that old characters do not get
-           *confused.
-           */
-          if (item_ptr->data.tval == potion2) {
-            i6 += 31;
-          }
 
           q__potion_effect(i6, &ident);
         } /* end for */

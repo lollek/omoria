@@ -23,14 +23,13 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
 
                 // Weapons:
                 ItemType::RangedWeapon => item.subval == 20, // Sling
-                ItemType::PoleArm => item.subval == 8,
+                ItemType::Polearm => item.subval == 8,
                 ItemType::Dagger => true,
-                ItemType::HaftedWeapon => false,
+                ItemType::Axe => false,
                 ItemType::Sword => false, // No scimitar
-                ItemType::Maul => item.subval == 6 || item.subval == 13,
+                ItemType::Mace => item.subval == 6 || item.subval == 13,
 
                 // Armor
-                ItemType::GemHelm => false, // Only metal atm
                 ItemType::Boots => true,
                 ItemType::Gloves => item.subval != 2,
                 ItemType::Cloak => true,
@@ -57,14 +56,13 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
 
                 // Weapons:
                 ItemType::RangedWeapon => true,
-                ItemType::PoleArm => true,
+                ItemType::Polearm => true,
                 ItemType::Dagger => true,
-                ItemType::HaftedWeapon => true,
+                ItemType::Axe => true,
                 ItemType::Sword => true,
-                ItemType::Maul => true,
+                ItemType::Mace => true,
 
                 // Armor
-                ItemType::GemHelm => true,
                 ItemType::Boots => true,
                 ItemType::Gloves => true,
                 ItemType::Cloak => true,

@@ -51,6 +51,30 @@ impl BracersTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BracersTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BracersTemplate::BracersOfProtection),
+            2 => Box::new(BracersTemplate::BracersOfDefense),
+            3 => Box::new(BracersTemplate::BracersOfShielding),
+            4 => Box::new(BracersTemplate::MithrilBracers),
+            5 => Box::new(BracersTemplate::AdamantiteBracers),
+            6 => Box::new(BracersTemplate::BracersOfWeaponAttraction),
+            31 => Box::new(BracersTemplate::SilverBraceletOfWarding),
+            30 => Box::new(BracersTemplate::SilverBracelet),
+            40 => Box::new(BracersTemplate::GoldBracelet),
+            50 => Box::new(BracersTemplate::PlatinumBracelet),
+            7 => Box::new(BracersTemplate::LeatherBracers),
+            8 => Box::new(BracersTemplate::StuddedLeatherBracers),
+            9 => Box::new(BracersTemplate::LightPlatedBracers),
+            10 => Box::new(BracersTemplate::SharkskinBracers),
+            11 => Box::new(BracersTemplate::DemonhideBracers),
+            12 => Box::new(BracersTemplate::WyrmhideBracers),
+            13 => Box::new(BracersTemplate::ChainmailBracers),
+            14 => Box::new(BracersTemplate::LamellarBracers),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for BracersTemplate {

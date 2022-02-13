@@ -30,6 +30,20 @@ impl MiscUsableTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         MiscUsableTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(MiscUsableTemplate::IronSpike),
+            14 => Box::new(MiscUsableTemplate::Statue),
+            16 => Box::new(MiscUsableTemplate::SilverCross),
+            17 => Box::new(MiscUsableTemplate::GoldCross),
+            18 => Box::new(MiscUsableTemplate::MithrilCross),
+            19 => Box::new(MiscUsableTemplate::Cross),
+            21 => Box::new(MiscUsableTemplate::CorkedBottle),
+            257 => Box::new(MiscUsableTemplate::FlaskOfOil),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for MiscUsableTemplate {

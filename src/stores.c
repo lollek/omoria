@@ -1915,21 +1915,17 @@ long item_value(treasure_type const *const item) {
     break;
 
     // Potions, Scrolls, and Food
-  case scroll1:
-  case scroll2:
-  case potion1:
-  case potion2:
+  case Scroll:
+  case potion:
   case Food:
 
     if (strstr(item->name, "|") != NULL) {
       switch (item->tval) {
-      case scroll1:
-      case scroll2:
+      case Scroll:
         return_value = 20;
         break;
 
-      case potion1:
-      case potion2:
+      case potion:
         return_value = 20;
         break;
 
@@ -1984,18 +1980,14 @@ long item_value(treasure_type const *const item) {
     }
     break;
 
-    // Wands rods, and staffs
+    // Wands and staffs
   case staff:
-  case rod:
   case wand:
 
     if (strstr(item->name, "|") != NULL) {
       switch (item->tval) {
       case staff:
         return_value = 70;
-        break;
-      case rod:
-        return_value = 60;
         break;
       case wand:
         return_value = 50;

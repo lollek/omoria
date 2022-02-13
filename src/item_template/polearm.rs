@@ -39,6 +39,24 @@ impl PolearmTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         PolearmTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(PolearmTemplate::AwlPike),
+            2 => Box::new(PolearmTemplate::BeakedAxe),
+            3 => Box::new(PolearmTemplate::Fauchard),
+            4 => Box::new(PolearmTemplate::Glaive),
+            5 => Box::new(PolearmTemplate::Halberd),
+            6 => Box::new(PolearmTemplate::LucerneHammer),
+            7 => Box::new(PolearmTemplate::Pike),
+            8 => Box::new(PolearmTemplate::Spike),
+            9 => Box::new(PolearmTemplate::Lance),
+            10 => Box::new(PolearmTemplate::Javelin),
+            11 => Box::new(PolearmTemplate::Naginata),
+            12 => Box::new(PolearmTemplate::WarScythe),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for PolearmTemplate {
@@ -60,7 +78,7 @@ impl item_template::ItemTemplate for PolearmTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::PoleArm }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Polearm }
     fn flags1(&self) -> u64 { 0x10000000 }
     fn flags2(&self) -> u64 { 0 }
     fn p1(&self) -> i64 { 0 }

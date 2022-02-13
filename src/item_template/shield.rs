@@ -32,6 +32,21 @@ impl ShieldTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         ShieldTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(ShieldTemplate::SmallLeatherShield),
+            2 => Box::new(ShieldTemplate::MediumLeatherShield),
+            3 => Box::new(ShieldTemplate::LargeLeatherShield),
+            4 => Box::new(ShieldTemplate::Buckler),
+            5 => Box::new(ShieldTemplate::KiteShield),
+            6 => Box::new(ShieldTemplate::TowerShield),
+            7 => Box::new(ShieldTemplate::SharkskinShield),
+            8 => Box::new(ShieldTemplate::DemonhideShield),
+            9 => Box::new(ShieldTemplate::WyrmhideShield),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for ShieldTemplate {

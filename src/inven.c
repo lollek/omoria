@@ -1062,18 +1062,13 @@ void ic__stats(treas_rec *cur_display[], long *cur_display_size,
       case staff:
         strcpy(out_val, "Staff");
         break;
-      case rod:
-        strcpy(out_val, "Rod");
-        break;
       case wand:
         strcpy(out_val, "Wand");
         break;
-      case scroll1:
-      case scroll2:
+      case Scroll:
         strcpy(out_val, "Scroll");
         break;
-      case potion1:
-      case potion2:
+      case potion:
         strcpy(out_val, "Potion");
         break;
       case flask_of_oil:

@@ -3566,8 +3566,7 @@ void fire_dam(long dam, char kb_str[82]) {
                               cloak,
                               soft_armor,
                               staff,
-                              scroll1,
-                              scroll2,
+                              Scroll,
                               0};
 
   if (player_flags.fire_resist) {
@@ -3590,7 +3589,7 @@ void fire_dam(long dam, char kb_str[82]) {
 void cold_dam(long dam, char kb_str[82]) {
   /*{ Freeze him to death...                                -RAK-   }*/
 
-  obj_set things_that_freeze = {potion1, potion2, 0};
+  obj_set things_that_freeze = {potion, 0};
 
   if (player_flags.cold_resist) {
     dam /= 3;

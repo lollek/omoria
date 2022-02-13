@@ -63,6 +63,36 @@ impl StaffTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         StaffTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(StaffTemplate::StaffOfLight),
+            2 => Box::new(StaffTemplate::StaffOfDoorStairLocation),
+            3 => Box::new(StaffTemplate::StaffOfTrapLocation),
+            4 => Box::new(StaffTemplate::StaffOfTreasureLocation),
+            5 => Box::new(StaffTemplate::StaffOfObjectLocation),
+            6 => Box::new(StaffTemplate::StaffOfTeleportation),
+            7 => Box::new(StaffTemplate::StaffOfEarthquakes),
+            8 => Box::new(StaffTemplate::StaffOfSummoning),
+            10 => Box::new(StaffTemplate::StaffOfDestruction),
+            11 => Box::new(StaffTemplate::StaffOfStarlite),
+            12 => Box::new(StaffTemplate::StaffOfHasteMonsters),
+            13 => Box::new(StaffTemplate::StaffOfSlowMonsters),
+            14 => Box::new(StaffTemplate::StaffOfSleepMonsters),
+            15 => Box::new(StaffTemplate::StaffOfCureLightWounds),
+            16 => Box::new(StaffTemplate::StaffOfDetectInvisible),
+            17 => Box::new(StaffTemplate::StaffOfSpeed),
+            18 => Box::new(StaffTemplate::StaffOfSlowness),
+            19 => Box::new(StaffTemplate::StaffOfMassPolymorph),
+            20 => Box::new(StaffTemplate::StaffOfRemoveCurse),
+            21 => Box::new(StaffTemplate::StaffOfDetectEvil),
+            22 => Box::new(StaffTemplate::StaffOfCuring),
+            23 => Box::new(StaffTemplate::StaffOfDispelEvil),
+            25 => Box::new(StaffTemplate::StaffOfDarkness),
+            26 => Box::new(StaffTemplate::StaffOfIdentify),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for StaffTemplate {

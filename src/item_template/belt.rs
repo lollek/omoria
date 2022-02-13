@@ -31,6 +31,20 @@ impl BeltTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BeltTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BeltTemplate::Sash),
+            2 => Box::new(BeltTemplate::LightBelt),
+            3 => Box::new(BeltTemplate::Belt),
+            4 => Box::new(BeltTemplate::HeavyBelt),
+            5 => Box::new(BeltTemplate::LightPlatedBelt),
+            6 => Box::new(BeltTemplate::SharkskinBelt),
+            7 => Box::new(BeltTemplate::DemonhideBelt),
+            8 => Box::new(BeltTemplate::WyrmhideBelt),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for BeltTemplate {

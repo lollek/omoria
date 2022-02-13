@@ -46,6 +46,28 @@ impl ChimeTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         ChimeTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(ChimeTemplate::ChimeOfLight),
+            2 => Box::new(ChimeTemplate::ChimeOfDetectDoorsStairs),
+            3 => Box::new(ChimeTemplate::ChimeOfDetectTraps),
+            4 => Box::new(ChimeTemplate::ChimeOfTeleportation),
+            5 => Box::new(ChimeTemplate::ChimeOfThunderblast),
+            6 => Box::new(ChimeTemplate::ChimeOfSummonMonster),
+            7 => Box::new(ChimeTemplate::ChimeOfDisarming),
+            8 => Box::new(ChimeTemplate::ChimeOfAggravation),
+            9 => Box::new(ChimeTemplate::ChimeOfSlowMonster),
+            10 => Box::new(ChimeTemplate::ChimeOfSootheMonster),
+            11 => Box::new(ChimeTemplate::ChimeOfCureLightWound),
+            12 => Box::new(ChimeTemplate::ChimeOfChanging),
+            13 => Box::new(ChimeTemplate::ChimeOfRemoveCurse),
+            14 => Box::new(ChimeTemplate::ChimeOfCuring),
+            15 => Box::new(ChimeTemplate::ChimeOfDispelEvil),
+            16 => Box::new(ChimeTemplate::ChimeOfDarkness),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for ChimeTemplate {

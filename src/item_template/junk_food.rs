@@ -40,6 +40,25 @@ impl JunkFoodTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         JunkFoodTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            257 => Box::new(JunkFoodTemplate::BoxOfPiranhaCrackers),
+            258 => Box::new(JunkFoodTemplate::CanOfOrcaCola),
+            259 => Box::new(JunkFoodTemplate::TwelvePoundTrollBuger),
+            260 => Box::new(JunkFoodTemplate::BagOfBrontosaurusChips),
+            261 => Box::new(JunkFoodTemplate::SliceOfPurpleMushroomPizza),
+            262 => Box::new(JunkFoodTemplate::PeanutButterAndGrapeJellySandwich),
+            263 => Box::new(JunkFoodTemplate::DragonSteak),
+            264 => Box::new(JunkFoodTemplate::VorpalBunnyThroatLozenge),
+            265 => Box::new(JunkFoodTemplate::DeepFriedGiantCentipede),
+            266 => Box::new(JunkFoodTemplate::PintOfBeetleJuice),
+            267 => Box::new(JunkFoodTemplate::BownOfBatStew),
+            268 => Box::new(JunkFoodTemplate::JarOfPickledLeeches),
+            269 => Box::new(JunkFoodTemplate::PackOfKittenMcNuggets),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for JunkFoodTemplate {

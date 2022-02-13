@@ -28,6 +28,19 @@ impl PickTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         PickTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(PickTemplate::Pick),
+            2 => Box::new(PickTemplate::Shovel),
+            4 => Box::new(PickTemplate::OrcishPick1),
+            7 => Box::new(PickTemplate::OrcishPick2),
+            3 => Box::new(PickTemplate::DwarvenPick),
+            5 => Box::new(PickTemplate::GnomishShovel),
+            6 => Box::new(PickTemplate::DwarvenShovel),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for PickTemplate {
@@ -98,7 +111,7 @@ impl item_template::ItemTemplate for PickTemplate {
         match self {
             PickTemplate::Pick => 1,
             PickTemplate::Shovel => 2,
-            PickTemplate::OrcishPick1 => 2,
+            PickTemplate::OrcishPick1 => 4,
             PickTemplate::OrcishPick2 => 7,
             PickTemplate::DwarvenPick => 3,
             PickTemplate::GnomishShovel => 5,

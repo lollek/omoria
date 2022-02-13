@@ -18,14 +18,13 @@ pub enum ItemType {
     LightSource = 15,
 
     RangedWeapon = 20,
-    HaftedWeapon = 21,
-    PoleArm = 22,
+    Axe = 21,
+    Polearm = 22,
     Dagger = 23,
     Sword = 24,
     Pick = 25,
-    Maul = 26,
+    Mace = 26,
 
-    GemHelm = 29,
     Boots = 30,
     Gloves = 31,
     Cloak = 32,
@@ -42,14 +41,10 @@ pub enum ItemType {
 
     Staff = 55,
 
-    Rod = 60,
-
     Wand = 65,
-    Scroll1 = 70,
-    Scroll2 = 71,
+    Scroll = 70,
 
-    Potion1 = 75,
-    Potion2 = 76,
+    Potion = 75,
     FlaskOfOil = 77,
 
     Food = 80,
@@ -84,8 +79,8 @@ impl ItemType {
     pub fn has_damage(&self) -> bool {
         match self {
             ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow | ItemType::Spike
-                | ItemType::HaftedWeapon | ItemType::PoleArm
-                | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Maul
+                | ItemType::Axe | ItemType::Polearm
+                | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Mace
                 => true,
             _ => false,
         }
@@ -94,8 +89,8 @@ impl ItemType {
     pub fn has_attack_enhancement(&self) -> bool {
         match self {
             ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow | ItemType::Spike
-                | ItemType::RangedWeapon | ItemType::HaftedWeapon | ItemType::PoleArm
-                | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Maul
+                | ItemType::RangedWeapon | ItemType::Axe | ItemType::Polearm
+                | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Mace
                 => true,
             _ => false,
         }
@@ -148,8 +143,8 @@ impl ItemType {
             ItemType::LightSource => '~'.into(),
 
             ItemType::RangedWeapon => '}'.into(),
-            ItemType::HaftedWeapon => '\\'.into(),
-            ItemType::PoleArm => '/'.into(),
+            ItemType::Axe => '\\'.into(),
+            ItemType::Polearm => '/'.into(),
             ItemType::Dagger => {
                 match subval {
                     40 => '\\', // Cat-O-Nine Tails
@@ -158,9 +153,8 @@ impl ItemType {
             }.into(),
             ItemType::Sword => '|'.into(),
             ItemType::Pick => '\\'.into(),
-            ItemType::Maul => '\\'.into(),
+            ItemType::Mace => '\\'.into(),
 
-            ItemType::GemHelm => ']'.into(),
             ItemType::Boots => ']'.into(),
             ItemType::Gloves => ']'.into(),
             ItemType::Cloak => '('.into(),
@@ -192,14 +186,10 @@ impl ItemType {
 
             ItemType::Staff => '_'.into(),
 
-            ItemType::Rod => '-'.into(),
-
             ItemType::Wand => '-'.into(),
-            ItemType::Scroll1 => '?'.into(),
-            ItemType::Scroll2 => '?'.into(),
+            ItemType::Scroll => '?'.into(),
 
-            ItemType::Potion1 => '!'.into(),
-            ItemType::Potion2 => '!'.into(),
+            ItemType::Potion => '!'.into(),
             ItemType::FlaskOfOil => '!'.into(),
 
             ItemType::Food => {
@@ -284,14 +274,13 @@ impl From<u8> for ItemType {
             15 => ItemType::LightSource,
 
             20 => ItemType::RangedWeapon,
-            21 => ItemType::HaftedWeapon,
-            22 => ItemType::PoleArm,
+            21 => ItemType::Axe,
+            22 => ItemType::Polearm,
             23 => ItemType::Dagger,
             24 => ItemType::Sword,
             25 => ItemType::Pick,
-            26 => ItemType::Maul,
+            26 => ItemType::Mace,
 
-            29 => ItemType::GemHelm,
             30 => ItemType::Boots,
             31 => ItemType::Gloves,
             32 => ItemType::Cloak,
@@ -308,14 +297,10 @@ impl From<u8> for ItemType {
 
             55 => ItemType::Staff,
 
-            60 => ItemType::Rod,
-
             65 => ItemType::Wand,
-            70 => ItemType::Scroll1,
-            71 => ItemType::Scroll2,
+            70 => ItemType::Scroll,
 
-            75 => ItemType::Potion1,
-            76 => ItemType::Potion2,
+            75 => ItemType::Potion,
             77 => ItemType::FlaskOfOil,
 
             80 => ItemType::Food,

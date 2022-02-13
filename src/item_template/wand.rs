@@ -64,6 +64,37 @@ impl WandTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         WandTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            25 => Box::new(WandTemplate::WandOfProbing),
+            1 => Box::new(WandTemplate::WandOfLight),
+            2 => Box::new(WandTemplate::WandOfLightningBolts),
+            3 => Box::new(WandTemplate::WandOfFrostBolts),
+            4 => Box::new(WandTemplate::WandOfFireBolts),
+            5 => Box::new(WandTemplate::WandOfStoneToMud),
+            6 => Box::new(WandTemplate::WandOfPolymorph),
+            7 => Box::new(WandTemplate::WandOfHealMonster),
+            8 => Box::new(WandTemplate::WandOfHasteMonster),
+            9 => Box::new(WandTemplate::WandOfSlowMonster),
+            10 => Box::new(WandTemplate::WandOfConfuseMonster),
+            11 => Box::new(WandTemplate::WandOfSleepMonster),
+            12 => Box::new(WandTemplate::WandOfDrainLife),
+            13 => Box::new(WandTemplate::WandOfTrapDoorDestruction),
+            14 => Box::new(WandTemplate::WandOfMagicMissile),
+            15 => Box::new(WandTemplate::WandOfWallBuilding),
+            16 => Box::new(WandTemplate::WandOfCloneMonster),
+            17 => Box::new(WandTemplate::WandOfTeleportAway),
+            18 => Box::new(WandTemplate::WandOfDisarming),
+            19 => Box::new(WandTemplate::WandOfLightningBalls),
+            20 => Box::new(WandTemplate::WandOfColdBalls),
+            21 => Box::new(WandTemplate::WandOfFireBalls),
+            22 => Box::new(WandTemplate::WandOfStinkingCloud),
+            23 => Box::new(WandTemplate::WandOfAcidBalls),
+            24 => Box::new(WandTemplate::WandOfWonder),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for WandTemplate {

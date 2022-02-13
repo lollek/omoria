@@ -40,6 +40,25 @@ impl HornTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         HornTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(HornTemplate::HornOfBubbles),
+            2 => Box::new(HornTemplate::HornOfCalling),
+            3 => Box::new(HornTemplate::HornOfSoftSounds),
+            4 => Box::new(HornTemplate::HornOfBlasting),
+            5 => Box::new(HornTemplate::HornOfCold),
+            6 => Box::new(HornTemplate::HornOfHeat),
+            7 => Box::new(HornTemplate::HornOfGas),
+            8 => Box::new(HornTemplate::HornOfRecall),
+            9 => Box::new(HornTemplate::HornOfChaos),
+            10 => Box::new(HornTemplate::HornOfGlue),
+            11 => Box::new(HornTemplate::HornOfValhalla),
+            12 => Box::new(HornTemplate::HornOfTritons),
+            13 => Box::new(HornTemplate::HornOfFog),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for HornTemplate {

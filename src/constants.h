@@ -173,69 +173,6 @@
 #define Equipment_light (Equipment_cloak + 1)          /* 12 */
 #define Equipment_secondary (Equipment_light + 1)      /* 13 */
 
-/* .tval constants -DCJ- */
-#define miscellaneous_object 1
-#define chest 2
-#define misc_usable 3
-#define valuable_jewelry 4
-#define valuable_gems 5
-#define bag_or_sack 6
-#define valuable_gems_wear 7
-#define sling_ammo 10
-#define bolt 11
-#define arrow 12
-#define spike 13
-#define lamp_or_torch 15
-#define bow_crossbow_or_sling 20
-#define hafted_weapon 21
-#define pole_arm 22
-#define dagger 23
-#define sword 24
-#define pick_or_shovel 25
-#define maul 26
-#define gem_helm 29
-#define boots 30
-#define gloves_and_gauntlets 31
-#define cloak 32
-#define helm 33
-#define shield 34
-#define hard_armor 35
-#define soft_armor 36
-#define bracers 37
-#define belt 38
-#define amulet 40
-#define ring 45
-#define staff 55
-#define rod 60
-#define wand 65
-#define scroll1 70
-#define scroll2 71
-#define potion1 75
-#define potion2 76
-#define flask_of_oil 77
-#define Food 80
-#define junk_food 81
-#define chime 85
-#define horn 86
-#define magic_book 90
-#define prayer_book 91
-#define instrument 92 /* Not in use */
-#define song_book 93
-#define lodging_at_inn 95
-#define valuable_metal 100 /* look in detect_item for limit */
-#define unseen_trap 101
-#define seen_trap 102
-#define rubble 103
-#define open_door 104
-#define closed_door 105
-#define up_staircase 107
-#define down_staircase 108
-#define secret_door 109
-#define entrance_to_store 110
-#define up_steep_staircase 111
-#define down_steep_staircase 112
-#define whirlpool 113
-
 /* fields in py.flags.status */
 #define IS_HUNGERY 0x00000001
 #define IS_WEAK 0x00000002

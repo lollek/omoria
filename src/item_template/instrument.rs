@@ -22,6 +22,16 @@ impl InstrumentTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         InstrumentTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            258 => Box::new(InstrumentTemplate::PipesOfPeace),
+            259 => Box::new(InstrumentTemplate::LyreOfNature),
+            260 => Box::new(InstrumentTemplate::LuteOfTheWoods),
+            261 => Box::new(InstrumentTemplate::HarpOfTheDruids),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for InstrumentTemplate {

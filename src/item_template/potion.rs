@@ -104,6 +104,57 @@ impl PotionTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         PotionTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            276 => Box::new(PotionTemplate::Blindness),
+            293 => Box::new(PotionTemplate::Boldliness),
+            266 => Box::new(PotionTemplate::Charisma),
+            277 => Box::new(PotionTemplate::Confusion),
+            271 => Box::new(PotionTemplate::CureCriticalWounds),
+            269 => Box::new(PotionTemplate::CureLightWounds),
+            270 => Box::new(PotionTemplate::CureSeriousWounds),
+            297 => Box::new(PotionTemplate::DetectInvisible),
+            302 => Box::new(PotionTemplate::FleaBile),
+            273 => Box::new(PotionTemplate::GainConstitution),
+            284 => Box::new(PotionTemplate::GainDexterity),
+            274 => Box::new(PotionTemplate::GainExperience),
+            260 => Box::new(PotionTemplate::GainIntelligence),
+            257 => Box::new(PotionTemplate::GainStrength),
+            263 => Box::new(PotionTemplate::GainWisdom),
+            279 => Box::new(PotionTemplate::HasteSelf),
+            272 => Box::new(PotionTemplate::Healing),
+            291 => Box::new(PotionTemplate::Heroism),
+            301 => Box::new(PotionTemplate::InfraVision),
+            290 => Box::new(PotionTemplate::Invulnerability),
+            287 => Box::new(PotionTemplate::Learning),
+            261 => Box::new(PotionTemplate::LoseIntelligence),
+            288 => Box::new(PotionTemplate::LoseMemories),
+            264 => Box::new(PotionTemplate::LoseWisdom),
+            299 => Box::new(PotionTemplate::NeutralizePoison),
+            258 => Box::new(PotionTemplate::Poison),
+            296 => Box::new(PotionTemplate::ResistCold),
+            295 => Box::new(PotionTemplate::ResistHeat),
+            268 => Box::new(PotionTemplate::RestoreCharisma),
+            286 => Box::new(PotionTemplate::RestoreConstitution),
+            285 => Box::new(PotionTemplate::RestoreDexterity),
+            262 => Box::new(PotionTemplate::RestoreIntelligence),
+            294 => Box::new(PotionTemplate::RestoreLifeLevels),
+            300 => Box::new(PotionTemplate::RestoreMana),
+            259 => Box::new(PotionTemplate::RestoreStrength),
+            265 => Box::new(PotionTemplate::RestoreWisdom),
+            289 => Box::new(PotionTemplate::SaltWater),
+            275 => Box::new(PotionTemplate::Sleep),
+            298 => Box::new(PotionTemplate::SlowPoison),
+            280 => Box::new(PotionTemplate::Slowness),
+            292 => Box::new(PotionTemplate::SuperHeroism),
+            267 => Box::new(PotionTemplate::Ugliness),
+            283 => Box::new(PotionTemplate::Water),
+            281 => Box::new(PotionTemplate::SlimeMoldJuice),
+            282 => Box::new(PotionTemplate::AppleJuice),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for PotionTemplate {
@@ -157,7 +208,7 @@ impl item_template::ItemTemplate for PotionTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Potion1 }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Potion }
 
     fn flags1(&self) -> u64 {
         match self {

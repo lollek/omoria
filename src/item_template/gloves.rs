@@ -34,6 +34,22 @@ impl GlovesTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         GlovesTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(GlovesTemplate::LeatherGloves),
+            2 => Box::new(GlovesTemplate::HeavyGloves),
+            5 => Box::new(GlovesTemplate::ClothGloves),
+            6 => Box::new(GlovesTemplate::ChainGloves),
+            7 => Box::new(GlovesTemplate::LightGauntlets),
+            8 => Box::new(GlovesTemplate::HeavyGauntlets),
+            9 => Box::new(GlovesTemplate::SharkskinGloves),
+            10 => Box::new(GlovesTemplate::WarGauntlets),
+            11 => Box::new(GlovesTemplate::DemonhideGloves),
+            12 => Box::new(GlovesTemplate::WyrmhideGloves),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for GlovesTemplate {

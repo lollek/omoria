@@ -550,106 +550,96 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
 void read_scroll() {
   /*{ Scrolls for the reading				-RAK-	}*/
 
-  unsigned long q1, q2;
-  long i3, i5;
-  treas_rec *i2;
-  treas_rec *item_ptr;
-  char trash_char;
-  boolean redraw, ident, first;
-  obj_set stuff_to_read = {scroll1, scroll2, 0};
 
-  first = true;
+  boolean first = true;
   reset_flag = true;
 
-  if (inven_ctr > 0) {
-    if (find_range(stuff_to_read, false, &i2, &i3)) {
-      if (player_flags.blind > 0) {
-        msg_print("You can't see to read the scroll.");
-      } else if (no_light()) {
-        msg_print("You have no light to read by.");
-      } else if (player_flags.confused > 0) {
-        msg_print("The text seems to swim about the page!");
-        msg_print("You are too confused to read...");
-      } else {
-        redraw = false;
-        if (get_item(&item_ptr, "Read which scroll?", &redraw, i3, &trash_char,
-                     false, false)) {
-          /* with item_ptr->data. do; */
-          if (redraw) {
-            draw_cave();
-          }
-          reset_flag = false;
-          q1 = item_ptr->data.flags;
-          q2 = item_ptr->data.flags2;
-          ident = false;
-          for (; q1 > 0 || q2 > 0;) {
-            i5 = bit_pos64(&q2, &q1) + 1;
+  if (inven_ctr <= 0) {
+      msg_print("But you are not carrying anything.");
+      return;
+  }
 
-            /*
-             * It looks like scroll2 was
-             *created before flags2 was
-             * added to the treasure type,
-             *now we can fit all the
-             * potion effects into the pair
-             *of flags.
-             *
-             * The += 31 should be 64 now, I
-             *am leaving it at 31 so
-             * that old characters do not
-             *get confused.
-             */
-            if (item_ptr->data.tval == scroll2) {
-              i5 += 31;
-            }
-            if (first) {
-              if (!(i5 == 4 || i5 == 25 || i5 == 42)) {
-                /* the above
-                 * are:
-                 * identify,
-                 * recharge
-                 * item, wishing
-                 */
-                msg_print("As you "
-                          "read the "
-                          "scroll it "
-                          "vanishes"
-                          ".");
-                first = false;
-              }
-
-              rs__scroll_effect(i5, &ident, &first, item_ptr);
-            }
-          }
-
-          if (!(reset_flag)) {
-            if (ident) {
-              identify(&(item_ptr->data));
-            }
-            if (!first) {
-              desc_remain(item_ptr);
-              inven_destroy(item_ptr);
-              prt_stat_block();
-
-              if (item_ptr->data.flags != 0) {
-                /* with py.misc
-                 */
-                /* do; */
-                C_player_add_exp((item_ptr->data.level / (float)player_lev) +
-                                 .5);
-                prt_stat_block();
-              }
-            }
-          }
-        } else {
-          if (redraw) {
-            draw_cave();
-          }
-        }
-      }
-    } else {
+  treas_rec *i2;
+  long i3;
+  obj_set stuff_to_read = {Scroll, 0};
+  if (!find_range(stuff_to_read, false, &i2, &i3)) {
       msg_print("You are not carrying any scrolls.");
-    }
-  } else {
-    msg_print("But you are not carrying anything.");
+      return;
+  }
+
+  if (player_flags.blind > 0) {
+      msg_print("You can't see to read the scroll.");
+      return;
+  }
+
+  if (no_light()) {
+      msg_print("You have no light to read by.");
+      return;
+  }
+
+  if (player_flags.confused > 0) {
+      msg_print("The text seems to swim about the page!");
+      msg_print("You are too confused to read...");
+      return;
+  }
+
+  treas_rec *item_ptr;
+  boolean redraw = false;
+  char trash_char;
+  if (!get_item(&item_ptr, "Read which scroll?", &redraw, i3, &trash_char, false, false)) {
+      if (redraw) {
+          draw_cave();
+      }
+      return;
+  }
+
+  if (redraw) {
+      draw_cave();
+  }
+  reset_flag = false;
+  unsigned long q1 = item_ptr->data.flags;
+  unsigned long q2 = item_ptr->data.flags2;
+  boolean ident = false;
+  for (; q1 > 0 || q2 > 0;) {
+      long i5 = bit_pos64(&q2, &q1) + 1;
+
+      if (first) {
+          if (!(i5 == 4 || i5 == 25 || i5 == 42)) {
+              /* the above
+               * are:
+               * identify,
+               * recharge
+               * item, wishing
+               */
+              msg_print("As you "
+                      "read the "
+                      "scroll it "
+                      "vanishes"
+                      ".");
+              first = false;
+          }
+
+          rs__scroll_effect(i5, &ident, &first, item_ptr);
+      }
+  }
+
+  if (!(reset_flag)) {
+      if (ident) {
+          identify(&(item_ptr->data));
+      }
+      if (!first) {
+          desc_remain(item_ptr);
+          inven_destroy(item_ptr);
+          prt_stat_block();
+
+          if (item_ptr->data.flags != 0) {
+              /* with py.misc
+              */
+              /* do; */
+              C_player_add_exp((item_ptr->data.level / (float)player_lev) +
+                      .5);
+              prt_stat_block();
+          }
+      }
   }
 }

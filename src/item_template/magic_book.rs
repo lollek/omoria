@@ -22,6 +22,16 @@ impl MagicBookTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         MagicBookTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            257 => Box::new(MagicBookTemplate::BeginnersMagic),
+            258 => Box::new(MagicBookTemplate::Magic1),
+            259 => Box::new(MagicBookTemplate::Magic2),
+            261 => Box::new(MagicBookTemplate::MagesGuideToPower),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for MagicBookTemplate {

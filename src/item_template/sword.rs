@@ -43,6 +43,26 @@ impl SwordTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         SwordTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            6 => Box::new(SwordTemplate::Backsword),
+            7 => Box::new(SwordTemplate::BastardSword),
+            10 => Box::new(SwordTemplate::Broadsword),
+            11 => Box::new(SwordTemplate::Claymore),
+            12 => Box::new(SwordTemplate::Cutlass),
+            13 => Box::new(SwordTemplate::Espadon),
+            14 => Box::new(SwordTemplate::ExecutionersSword),
+            15 => Box::new(SwordTemplate::Flamberge),
+            17 => Box::new(SwordTemplate::Katana),
+            18 => Box::new(SwordTemplate::Longsword),
+            19 => Box::new(SwordTemplate::Nodachi),
+            21 => Box::new(SwordTemplate::Sabre),
+            23 => Box::new(SwordTemplate::Zweihander),
+            24 => Box::new(SwordTemplate::BrokenSword),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for SwordTemplate {

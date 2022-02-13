@@ -22,6 +22,16 @@ impl LodgingAtInnTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         LodgingAtInnTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            300 => Box::new(LodgingAtInnTemplate::LodgingForOneDay),
+            302 => Box::new(LodgingAtInnTemplate::LodgingForThreeDays),
+            301 => Box::new(LodgingAtInnTemplate::LodgingForOneWeek),
+            303 => Box::new(LodgingAtInnTemplate::RoomAndBoardForOneDay),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for LodgingAtInnTemplate {

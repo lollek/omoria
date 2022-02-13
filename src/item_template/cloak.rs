@@ -24,6 +24,17 @@ impl CloakTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         CloakTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(CloakTemplate::LightCloak),
+            2 => Box::new(CloakTemplate::HeavyCloak),
+            3 => Box::new(CloakTemplate::SharkskinCloak),
+            4 => Box::new(CloakTemplate::DemonhideCloak),
+            5 => Box::new(CloakTemplate::WyrmhideCloak),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for CloakTemplate {

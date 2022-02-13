@@ -159,14 +159,14 @@ impl Item {
                     24 => "Broken sword",
                     _ => "Alien sword",
                 }),
-                ItemType::HaftedWeapon =>
+                ItemType::Axe =>
                     Cow::from(match self.subval {
                         1 => "Balestarius",
                         3 => "Battle axe",
                         4 => "Broad axe",
                         _ => "Alien hafted weapon",
                     }),
-                ItemType::Maul =>
+                ItemType::Mace =>
                     Cow::from(match self.subval {
                         2 => "Ball and chain",
                         6 => "Wooden club",
@@ -179,7 +179,7 @@ impl Item {
                         13 => "Iron-shod quarterstaff",
                         _ => "Alien maul",
                     }),
-                ItemType::PoleArm =>
+                ItemType::Polearm =>
                     Cow::from(match self.subval {
                         1 => "Awl-pike",
                         2 => "Beaked axe",
@@ -249,16 +249,6 @@ impl Item {
                         11 => "Cloth hat",
                         _ => "Alien helm",
                     }),
-                ItemType::GemHelm => {
-                    let material = match self.subval {
-                        9 => "Iron helm",
-                        10 => "Steel helm",
-                        _ => "Alien helm",
-                    };
-                    Cow::from(format!("{}{}", material,
-                                      if self.is_identified() {
-                                          "of gems" } else { "" }))
-                },
                 ItemType::WearableGem => {
                     let attribute = match self.subval {
                         1 => "of teleportation",
@@ -519,7 +509,7 @@ impl Item {
                         265 => "Epics of the Bards [Greater Song Book]",
                         _ => "Alien book",
                     }),
-                ItemType::Scroll1 => {
+                ItemType::Scroll => {
                     let attribute = if self.is_identified() {
                         match self.subval {
                             257 => " of Enchant Weapon To-Hit",
@@ -572,7 +562,7 @@ impl Item {
                     };
                     Cow::from(format!("Scroll{}{}", plural_s(), attribute))
                 },
-                ItemType::Potion1 => {
+                ItemType::Potion => {
                     let material = match self.subval {
                         281 => "Icky green",
                         282 => "Light brown",

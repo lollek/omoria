@@ -22,6 +22,16 @@ impl PrayerBookTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         PrayerBookTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            258 => Box::new(PrayerBookTemplate::BeginnersHandbook),
+            259 => Box::new(PrayerBookTemplate::WordsOfWisdom),
+            260 => Box::new(PrayerBookTemplate::ChantsAndBlessings),
+            261 => Box::new(PrayerBookTemplate::ExorcismAndDispelling),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for PrayerBookTemplate {

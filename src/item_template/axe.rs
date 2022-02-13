@@ -32,6 +32,21 @@ impl AxeTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         AxeTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(AxeTemplate::Balestarius),
+            3 => Box::new(AxeTemplate::BattleAxe),
+            4 => Box::new(AxeTemplate::BroadAxe),
+            5 => Box::new(AxeTemplate::HandAxe),
+            6 => Box::new(AxeTemplate::WarAxe),
+            7 => Box::new(AxeTemplate::LargeAxe),
+            8 => Box::new(AxeTemplate::BeardedAxe),
+            9 => Box::new(AxeTemplate::SilverEdgedAxe),
+            10 => Box::new(AxeTemplate::ChampionAxe),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for AxeTemplate {
@@ -49,7 +64,7 @@ impl item_template::ItemTemplate for AxeTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::HaftedWeapon }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Axe }
     fn flags1(&self) -> u64 { 0x10000000 }
     fn flags2(&self) -> u64 { 0 }
     fn p1(&self) -> i64 { 0 }
