@@ -168,7 +168,7 @@ impl item_template::ItemTemplate for ScrollTemplate {
             ScrollTemplate::EnchantWeaponToDam => "& Scroll~| of Enchant Weapon To Dam",
             ScrollTemplate::EnchantWeaponToHit => "& Scroll~| of Enchant Weapon To Hit",
             ScrollTemplate::FeignDeath => "& Scroll~| of Feign Death",
-            ScrollTemplate::Genocide => "& Scroll~| of enocide",
+            ScrollTemplate::Genocide => "& Scroll~| of Genocide",
             ScrollTemplate::HolyChant => "& Scroll~| of Holy Chant",
             ScrollTemplate::HolyPrayer => "& Scroll~| of Holy Prayer",
             ScrollTemplate::Identify => "& Scroll~| of Identify",
