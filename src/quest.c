@@ -77,7 +77,7 @@ void q__reward_item(long target) {
 
   obj_set wand_set = {staff, wand, 0};
   obj_set weapon_set = {
-      bow_crossbow_or_sling, hafted_weapon, pole_arm, dagger, sword, maul, 0};
+      bow, crossbow, sling, hafted_weapon, pole_arm, dagger, sword, maul, 0};
   obj_set misc1_set = {bracers, belt, amulet, ring, 0};
   obj_set misc2_set = {valuable_gems, bag_or_sack, valuable_gems_wear,
                        chime,         horn,        0};

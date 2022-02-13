@@ -121,7 +121,9 @@ void soup_up_black_market(long indx) {
     t_list[indx].subval = missle_ctr + 512;
     break;
 
-  case bow_crossbow_or_sling:
+  case bow:
+  case crossbow:
+  case sling:
     bm__add_tohit(5, 5, 1, indx, &r1);
     t_list[indx].cost += 1000 * r1 + 10000;
     break;

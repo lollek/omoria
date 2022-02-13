@@ -2618,7 +2618,7 @@ void place_open_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[0];
+  t_list[cur_pos] = door_open;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = true;
 }
@@ -2631,7 +2631,7 @@ void place_broken_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[0];
+  t_list[cur_pos] = door_open;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = true;
   t_list[cur_pos].p1 = 1;
@@ -2645,7 +2645,7 @@ void place_closed_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
+  t_list[cur_pos] = door_closed;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = false;
 }
@@ -2658,7 +2658,7 @@ void place_locked_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
+  t_list[cur_pos] = door_closed;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = false;
   t_list[cur_pos].p1 = randint(10) + 10;
@@ -2672,7 +2672,7 @@ void place_stuck_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
+  t_list[cur_pos] = door_closed;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = false;
   t_list[cur_pos].p1 = -randint(10) - 10;
@@ -2686,7 +2686,7 @@ void place_secret_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[2];
+  t_list[cur_pos] = door_secret;
   cave[y][x].fval = corr_floor4.ftval;
   cave[y][x].fopen = false;
 }

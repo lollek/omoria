@@ -46,7 +46,7 @@ static const treasure_type scare_monster = /* { Special trap	} */
 static obj_set null_obj_set = {0, 0};
 static obj_set destroyed_by_lightning = {ring, wand, 0};
 static obj_set destroyed_by_acid = {arrow,
-                                    bow_crossbow_or_sling,
+                                    bow, crossbow, sling,
                                     hafted_weapon,
                                     pole_arm,
                                     gem_helm,
@@ -65,7 +65,7 @@ static obj_set destroyed_by_acid = {arrow,
                                     0};
 static obj_set destroyed_by_cold = {potion, 0};
 static obj_set destroyed_by_fire = {arrow,
-                                    bow_crossbow_or_sling,
+                                    bow, crossbow, sling,
                                     hafted_weapon,
                                     pole_arm,
                                     boots,
@@ -1466,7 +1466,7 @@ boolean door_creation() {
           }
           cave[i1][i2].fopen = false;
           cave[i1][i2].tptr = i3;
-          t_list[i3] = door_list[2];
+          t_list[i3] = door_secret;
           if (test_light(i1, i2)) {
             lite_spot(i1, i2);
           }

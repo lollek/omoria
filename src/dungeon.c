@@ -1415,7 +1415,7 @@ static void d__bash() {
                    labs(t_list[cave[y][x].tptr].p1) + 150)) {
         msg_print("You smash into the door! "
                   "The door crashes open!");
-        t_list[cave[y][x].tptr] = door_list[DL_OPEN];
+        t_list[cave[y][x].tptr] = door_open;
         t_list[cave[y][x].tptr].p1 = 1;
         cave[y][x].fopen = true;
         lite_spot(y, x);
@@ -1547,7 +1547,7 @@ static void d__openobject() {
         }
 
         if (t_list[cave[y][x].tptr].p1 == 0) {
-          t_list[cave[y][x].tptr] = door_list[DL_OPEN];
+          t_list[cave[y][x].tptr] = door_open;
           cave[y][x].fopen = true;
           lite_spot(y, x);
         }
@@ -1667,7 +1667,7 @@ static void d__closeobject() {
       if (t_list[cave[y][x].tptr].tval == open_door) {
         if (cave[y][x].cptr == 0) {
           if (t_list[cave[y][x].tptr].p1 == 0) {
-            t_list[cave[y][x].tptr] = door_list[1];
+            t_list[cave[y][x].tptr] = door_closed;
             cave[y][x].fopen = false;
             lite_spot(y, x);
           } else {
@@ -3557,7 +3557,7 @@ void fire_dam(long dam, char kb_str[82]) {
   /*{ Burn the fool up...                                   -RAK-   }*/
 
   obj_set things_that_burn = {arrow,
-                              bow_crossbow_or_sling,
+                              bow, crossbow, sling,
                               hafted_weapon,
                               pole_arm,
                               maul,
@@ -3629,7 +3629,7 @@ void acid_dam(long dam, char kb_str[82]) {
   long flag = 0;
   obj_set things_that_dilute = {
       miscellaneous_object,  chest,         bolt,       arrow,
-      bow_crossbow_or_sling, hafted_weapon, pole_arm,   boots,
+      bow, crossbow, sling, hafted_weapon, pole_arm,   boots,
       gloves_and_gauntlets,  cloak,         soft_armor, 0};
 
   if (minus_ac(Resist_Acid_worn_bit)) {
@@ -4365,9 +4365,17 @@ boolean py_attack(long y, long x) {
         if (equipment[Equipment_primary].tval > 0) {
           i3 = damroll(equipment[Equipment_primary].damage);
           i3 = tot_dam(&equipment[Equipment_primary], i3, &c_list[a_mptr]);
-          is_sharp =
-              (equipment[Equipment_primary].tval != bow_crossbow_or_sling) &&
-              ((equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0);
+          switch (equipment[Equipment_primary].tval) {
+              case bow:
+              case crossbow:
+              case sling:
+                  is_sharp = false;
+                  break;
+
+              default:
+                  is_sharp = equipment[Equipment_primary].flags2 & Sharp_worn_bit;
+                  break;
+          }
           crit_mult = critical_blow(equipment[Equipment_primary].weight,
                                     tot_tohit, is_sharp, false);
           if (backstab_flag) {
@@ -4439,7 +4447,7 @@ long tot_dam(treasure_type *item, long tdam, creature_type *monster) {
   /*{ Special damage due to magical abilities of object     -RAK-   }*/
 
   obj_set stuff_that_goes_thump = {
-      sling_ammo,    bolt,     arrow,  lamp_or_torch, bow_crossbow_or_sling,
+      sling_ammo,    bolt,     arrow,  lamp_or_torch, bow, crossbow, sling,
       hafted_weapon, pole_arm, dagger, sword,         maul,
       flask_of_oil,  0};
 

@@ -23,6 +23,16 @@ impl CrossbowTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         CrossbowTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            10 => Box::new(CrossbowTemplate::SiegeCrossbow),
+            11 => Box::new(CrossbowTemplate::Ballista),
+            12 => Box::new(CrossbowTemplate::LightCrossbow),
+            13 => Box::new(CrossbowTemplate::HeavyCrossbow),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for CrossbowTemplate {
@@ -35,7 +45,7 @@ impl item_template::ItemTemplate for CrossbowTemplate {
        }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::RangedWeapon }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Crossbow }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }
 
@@ -62,7 +72,7 @@ impl item_template::ItemTemplate for CrossbowTemplate {
             CrossbowTemplate::SiegeCrossbow => 10,
             CrossbowTemplate::Ballista => 11,
             CrossbowTemplate::LightCrossbow => 12,
-            CrossbowTemplate::HeavyCrossbow => 12,
+            CrossbowTemplate::HeavyCrossbow => 13,
         }
     }
 

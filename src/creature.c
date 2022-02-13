@@ -1015,7 +1015,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
               tflag = true;
               if (cave[newy][newx].fm) {
                 if (los(char_row, char_col, newy, newx)) {
-                  t_list[cave[newy][newx].tptr] = door_list[DL_OPEN];
+                  t_list[cave[newy][newx].tptr] = door_open;
                   cave[newy][newx].fopen = true;
                   lite_spot(newy, newx);
                   tflag = false;
@@ -1040,7 +1040,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
             tflag = true;
             if (cave[newy][newx].fm) {
               if (los(char_row, char_col, newy, newx)) {
-                t_list[cave[newy][newx].tptr] = door_list[DL_OPEN];
+                t_list[cave[newy][newx].tptr] = door_open;
                 cave[newy][newx].fopen = true;
                 lite_spot(newy, newx);
                 tflag = false;
@@ -1062,7 +1062,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
               tflag = true;
               if (cave[newy][newx].fm) {
                 if (los(char_row, char_col, newy, newx)) {
-                  t_list[cave[newy][newx].tptr] = door_list[DL_OPEN];
+                  t_list[cave[newy][newx].tptr] = door_open;
                   t_list[cave[newy][newx].tptr].p1 = randint(2) - 1;
                   cave[newy][newx].fopen = true;
                   lite_spot(newy, newx);

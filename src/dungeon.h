@@ -23,11 +23,6 @@ extern long i_summ_count;       /* { Summon item count	   } */
 #define DISPLAY_SIZE 20
 #define MOO_DISPLAY_SIZE 18
 
-/* index stuff for door_list */
-#define DL_OPEN 0
-#define DL_CLOSED 1
-#define DL_SECRET 2
-
 #define ML(mmm) (m_list[(mmm)])
 #define MY(mmm) (m_list[(mmm)].fy)
 #define MX(mmm) (m_list[(mmm)].fx)

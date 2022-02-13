@@ -29,6 +29,19 @@ impl BowTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BowTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BowTemplate::Shortbow),
+            2 => Box::new(BowTemplate::HuntersBow),
+            3 => Box::new(BowTemplate::CompositeBow),
+            4 => Box::new(BowTemplate::WarBow),
+            5 => Box::new(BowTemplate::DoubleBow),
+            6 => Box::new(BowTemplate::SiegeBow),
+            7 => Box::new(BowTemplate::WardedBow),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for BowTemplate {
@@ -44,7 +57,7 @@ impl item_template::ItemTemplate for BowTemplate {
        }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::RangedWeapon }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Bow }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }
 

@@ -17,6 +17,13 @@ impl SlingTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         SlingTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            20 => Box::new(SlingTemplate::Sling),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for SlingTemplate {
@@ -26,7 +33,7 @@ impl item_template::ItemTemplate for SlingTemplate {
        }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::RangedWeapon }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Sling }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }
 

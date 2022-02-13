@@ -1689,7 +1689,9 @@ void magic_treasure(long x, long level, boolean forceit) {
     mt__weapons(treasure_ptr, level, is_magic, is_special, is_cursed, forceit);
     break;
 
-  case bow_crossbow_or_sling:
+  case bow:
+  case crossbow:
+  case sling:
     mt__bows_and_slings(treasure_ptr, level, is_magic, is_special, is_cursed,
                         forceit);
     break;

@@ -105,7 +105,9 @@ extern long inven_weight; /* { Cur carried weight	} */
 extern long equip_ctr;    /* { Cur equipment ctr	} */
 
 /*	{ Following are feature objects defined for dungeon		} */
-extern treasure_type door_list[3];
+extern treasure_type door_open;
+extern treasure_type door_closed;
+extern treasure_type door_secret;
 
 /*	{ Following are creature arrays and variables			} */
 extern creature_type c_list[MAX_CREATURES + 1];

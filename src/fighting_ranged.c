@@ -302,30 +302,22 @@ static long __count_things_to_throw() {
 static uint8_t __calculate_ammo_type() {
   ENTER(("__calculate_ammo_type", "d"));
 
-  if (equipment[Equipment_primary].tval != bow_crossbow_or_sling) {
-    LEAVE("__calculate_ammo_type", "d");
-    return 0;
-  }
+  switch (equipment[Equipment_primary].tval) {
+      case bow:
+          LEAVE("__calculate_ammo_type", "d");
+          return arrow;
 
-  switch (equipment[Equipment_primary].p1) {
-  case 1:
-    LEAVE("__calculate_ammo_type", "d");
-    return sling_ammo;
+      case crossbow:
+          LEAVE("__calculate_ammo_type", "d");
+          return bolt;
 
-  case 2:
-  case 3:
-  case 4:
-    LEAVE("__calculate_ammo_type", "d");
-    return arrow;
+      case sling:
+          LEAVE("__calculate_ammo_type", "d");
+          return sling_ammo;
 
-  case 5:
-  case 6:
-    LEAVE("__calculate_ammo_type", "d");
-    return bolt;
-
-  default:
-    LEAVE("__calculate_ammo_type", "d");
-    return 0;
+      default:
+          LEAVE("__calculate_ammo_type", "d");
+          return 0;
   }
 }
 

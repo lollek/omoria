@@ -124,7 +124,7 @@ obj_set water_set = {16, 17, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set earth_set = {1, 2, 4, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 obj_set float_set = {arrow,
                      lamp_or_torch,
-                     bow_crossbow_or_sling,
+                     bow, crossbow, sling,
                      boots,
                      gloves_and_gauntlets,
                      cloak,
@@ -354,13 +354,10 @@ long equip_ctr = 0;    /* { Cur equipment ctr	} */
 
 /*	{ Secret door must have same subval as closed door in	} */
 /*	{ TRAP_LISTB.  See CHANGE_TRAP				} */
-treasure_type door_list[3] = {
-    {"an open door", open_door, 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0, 0,
-     0, "1d1", 0, 0},
-    {"a closed door", closed_door, 0x00000000, 0x00000000, 0, 0, 19, 0, 0, 0, 0,
-     0, 0, "1d1", 0, 0},
-    {"a secret door", secret_door, 0x00000000, 0x00000000, 0, 0, 19, 0, 0, 0, 0,
-     0, 0, "1d1", 0, 0}};
+treasure_type door_open = {"an open door", open_door, 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0, 0,
+    0, "1d1", 0, 0};
+treasure_type door_closed = {"a closed door", closed_door, 0x00000000, 0x00000000, 0, 0, 19, 0, 0, 0, 0, 0, 0, "1d1", 0, 0};
+treasure_type door_secret = {"a secret door", secret_door, 0x00000000, 0x00000000, 0, 0, 19, 0, 0, 0, 0, 0, 0, "1d1", 0, 0};
 
 /*	{ Following are creature arrays and variables			} */
 creature_type c_list[MAX_CREATURES + 1];

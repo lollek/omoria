@@ -529,7 +529,9 @@ treas_rec *ic__remove(long item_val, boolean show_message) {
     case sling_ammo:
     case bolt:
     case arrow:
-    case bow_crossbow_or_sling:
+    case bow:
+    case crossbow:
+    case sling:
     case hafted_weapon:
     case pole_arm:
     case sword:
@@ -721,7 +723,7 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
     { /* Filter item types before we show the list */
       const obj_set wearables = {valuable_gems_wear,
                                  lamp_or_torch,
-                                 bow_crossbow_or_sling,
+                                 bow, crossbow, sling,
                                  hafted_weapon,
                                  pole_arm,
                                  dagger,
@@ -740,8 +742,6 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
                                  belt,
                                  amulet,
                                  ring,
-                                 0,
-                                 0,
                                  0,
                                  0};
       treas_rec *ptr;
@@ -774,7 +774,9 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
       i1 = Equipment_light;
       break;
 
-    case bow_crossbow_or_sling:
+    case bow:
+    case crossbow:
+    case sling:
     case hafted_weapon:
     case pole_arm:
     case sword:
@@ -1002,7 +1004,9 @@ void ic__stats(treas_rec *cur_display[], long *cur_display_size,
       case lamp_or_torch:
         strcpy(out_val, "Lamp or torch");
         break;
-      case bow_crossbow_or_sling:
+      case bow:
+      case crossbow:
+      case sling:
         strcpy(out_val, "Ranged weapon");
         break;
       case hafted_weapon:

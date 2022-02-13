@@ -17,7 +17,10 @@ pub enum ItemType {
 
     LightSource = 15,
 
-    RangedWeapon = 20,
+    Bow = 16,
+    Crossbow = 17,
+    Sling = 18,
+
     Axe = 21,
     Polearm = 22,
     Dagger = 23,
@@ -89,7 +92,7 @@ impl ItemType {
     pub fn has_attack_enhancement(&self) -> bool {
         match self {
             ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow | ItemType::Spike
-                | ItemType::RangedWeapon | ItemType::Axe | ItemType::Polearm
+                | ItemType::Bow | ItemType::Crossbow | ItemType::Sling | ItemType::Axe | ItemType::Polearm
                 | ItemType::Dagger | ItemType::Sword | ItemType::Pick | ItemType::Mace
                 => true,
             _ => false,
@@ -142,7 +145,10 @@ impl ItemType {
 
             ItemType::LightSource => '~'.into(),
 
-            ItemType::RangedWeapon => '}'.into(),
+            ItemType::Bow => '}'.into(),
+            ItemType::Crossbow => '}'.into(),
+            ItemType::Sling => '}'.into(),
+
             ItemType::Axe => '\\'.into(),
             ItemType::Polearm => '/'.into(),
             ItemType::Dagger => {
@@ -273,7 +279,10 @@ impl From<u8> for ItemType {
 
             15 => ItemType::LightSource,
 
-            20 => ItemType::RangedWeapon,
+            16 => ItemType::Bow,
+            17 => ItemType::Crossbow,
+            18 => ItemType::Sling,
+
             21 => ItemType::Axe,
             22 => ItemType::Polearm,
             23 => ItemType::Dagger,

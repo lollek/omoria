@@ -59,6 +59,10 @@ impl dyn ItemTemplate {
             model::ItemType::Arrow => item_template::AmmunitionTemplate::from(subval),
             model::ItemType::LightSource => item_template::LightSourceTemplate::from(subval),
 
+            model::ItemType::Bow => item_template::BowTemplate::from(subval),
+            model::ItemType::Crossbow => item_template::CrossbowTemplate::from(subval),
+            model::ItemType::Sling => item_template::SlingTemplate::from(subval),
+
             model::ItemType::Axe => item_template::AxeTemplate::from(subval),
             model::ItemType::Polearm => item_template::PolearmTemplate::from(subval),
             model::ItemType::Dagger => item_template::DaggerTemplate::from(subval),
@@ -97,24 +101,19 @@ impl dyn ItemTemplate {
 
             // Not Items, but yeah
             model::ItemType::LodgingAtInn => item_template::LodgingAtInnTemplate::from(subval),
+            model::ItemType::Money => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::UnseenTrap => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::SeenTrap => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::Rubble => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::OpenDoor => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::ClosedDoor => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::UpStaircase => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::DownStaircase => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::SecretDoor => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::EntranceToStore => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::UpSteepStaircase => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::DownSteepStaircase => item_template::DungeonFeatureTemplate::from(subval),
+            model::ItemType::Whirlpool => item_template::DungeonFeatureTemplate::from(subval),
         }
-        /*
-
-        RangedWeapon = 20,
-
-        Money = 100, /* look in detect_item for limit */
-        UnseenTrap = 101,
-        SeenTrap = 102,
-        Rubble = 103,
-        OpenDoor = 104,
-        ClosedDoor = 105,
-        UpStaircase = 107,
-        DownStaircase = 108,
-        SecretDoor = 109,
-        EntranceToStore = 110,
-        UpSteepStaircase = 111,
-        DownSteepStaircase = 112,
-        Whirlpool = 113,
-        */
     }
 }

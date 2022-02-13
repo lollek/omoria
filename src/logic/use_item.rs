@@ -22,7 +22,7 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
                 ItemType::Staff => true,
 
                 // Weapons:
-                ItemType::RangedWeapon => item.subval == 20, // Sling
+                ItemType::Sling => true, // Sling
                 ItemType::Polearm => item.subval == 8,
                 ItemType::Dagger => true,
                 ItemType::Axe => false,
@@ -55,7 +55,9 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
                 ItemType::Amulet => true,
 
                 // Weapons:
-                ItemType::RangedWeapon => true,
+                ItemType::Bow => true,
+                ItemType::Crossbow => true,
+                ItemType::Sling => true,
                 ItemType::Polearm => true,
                 ItemType::Dagger => true,
                 ItemType::Axe => true,

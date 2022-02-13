@@ -1840,7 +1840,9 @@ long item_value(treasure_type const *const item) {
   switch (item->tval) {
 
     // Weapons and armor
-  case bow_crossbow_or_sling:
+  case bow:
+  case crossbow:
+  case sling:
   case hafted_weapon:
   case pole_arm:
   case sword:
@@ -1860,7 +1862,9 @@ long item_value(treasure_type const *const item) {
 
     } else {
       switch (item->tval) {
-      case bow_crossbow_or_sling:
+      case bow:
+      case crossbow:
+      case sling:
       case hafted_weapon:
       case pole_arm:
       case sword:

@@ -193,16 +193,21 @@ impl Item {
                         10 => "Javelin",
                         _ => "Alien polearm",
                     }),
-                ItemType::RangedWeapon =>
+                ItemType::Bow =>
                     Cow::from(match self.subval {
                         1 => "Short bow",
                         2 => "Long bow",
                         3 => "Composite bow",
+                        _ => "Alien bow",
+                    }),
+                ItemType::Crossbow =>
+                    Cow::from(match self.subval {
                         10 => "Light crossbow",
                         11 => "Heavy crossbow",
-                        20 => "Sling",
-                        _ => "Alien ranged weapon",
+                        _ => "Alien crossbow",
                     }),
+                ItemType::Sling =>
+                    Cow::from("Sling"),
                 ItemType::Arrow => Cow::from(format!("Arrow{}", plural_s())),
                 ItemType::Bolt => Cow::from(format!("Bolt{}", plural_s())),
                 ItemType::SlingAmmo => Cow::from(format!("Rounded pebble{}", plural_s())),
