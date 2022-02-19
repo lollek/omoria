@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {
@@ -62,22 +65,42 @@ impl AmuletTemplate {
 }
 
 impl item_template::ItemTemplate for AmuletTemplate {
-    fn name(&self) -> &str {
-        match self {
-            AmuletTemplate::AmuletOfAdornment1 => "& Amulet| of Adornment^",
-            AmuletTemplate::AmuletOfAdornment2 => "& Amulet| of Adornment^",
-            AmuletTemplate::AmuletOfWisdom => "& Amulet| of Wisdom^ (%P1)",
-            AmuletTemplate::AmuletOfCharisma => "& Amulet| of Charisma^ (%P1)",
-            AmuletTemplate::AmuletOfSearching => "& Amulet| of Searching^ (%P1)",
-            AmuletTemplate::AmuletOfTeleportation => "& Amulet| of Teleportation^",
-            AmuletTemplate::AmuletOfSlowDigestion => "& Amulet| of Slow Digestion^",
-            AmuletTemplate::AmuletOfResistAcid => "& Amulet| of Resist Acid^",
-            AmuletTemplate::AmuletOfTheMagi => "& Amulet| of the Magi^",
-            AmuletTemplate::AmuletOfDoom => "& Amulet| of Doom^",
-            AmuletTemplate::SilverNecklace => "& Silver Necklace~^",
-            AmuletTemplate::GoldNecklace => "& Gold Necklace~^",
-            AmuletTemplate::MithrilNecklace => "& Mithril Necklace~^",
+    fn name(&self, item: &model::Item) -> String {
+        let plural_s = || if item.number == 1 { "" } else { "s" };
+
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Amulet"));
+        if self.is_identified() {
+            parts.push(
+                match self {
+                    AmuletTemplate::AmuletOfAdornment1 => Cow::from(" of Adornment"),
+                    AmuletTemplate::AmuletOfAdornment2 => Cow::from(" of Adornment"),
+                    AmuletTemplate::AmuletOfWisdom => Cow::from(" of Wisdom"),
+                    AmuletTemplate::AmuletOfCharisma => Cow::from(" of Charisma"),
+                    AmuletTemplate::AmuletOfSearching => Cow::from(" of Searching"),
+                    AmuletTemplate::AmuletOfTeleportation => Cow::from(" of Teleportation"),
+                    AmuletTemplate::AmuletOfSlowDigestion => Cow::from(" of Slow Digestion"),
+                    AmuletTemplate::AmuletOfResistAcid => Cow::from(" of Resist Acid"),
+                    AmuletTemplate::AmuletOfTheMagi => Cow::from(" of the Magi"),
+                    AmuletTemplate::AmuletOfDoom => Cow::from(" of Doom"),
+                    AmuletTemplate::SilverNecklace => Cow::from(format!("{} (Silver)", plural_s())),
+                    AmuletTemplate::GoldNecklace => Cow::from(format!("{} (Gold)", plural_s())),
+                    AmuletTemplate::MithrilNecklace => Cow::from(format!("{} (Mithril)", plural_s())),
+                });
         }
+        if item.p1 != 0 {
+            parts.push(item_name::p1(&item));
+        }
+        if item.tohit != 0 {
+            parts.push(item_name::to_hit(&item));
+        }
+        if item.todam != 0 {
+            parts.push(item_name::to_damage(&item));
+        }
+        if item.toac != 0 {
+            parts.push(item_name::to_ac(&item));
+        }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Amulet }

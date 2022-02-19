@@ -332,7 +332,7 @@ void quaff() {
         } /* end for */
 
         if (ident) {
-          identify(&(item_ptr->data));
+          set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
         }
 
         if (item_ptr->data.flags != 0) {

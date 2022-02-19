@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum DaggerTemplate {
@@ -58,20 +61,21 @@ impl DaggerTemplate {
 
 impl item_template::ItemTemplate for DaggerTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            DaggerTemplate::MainGauche =>"Main Gauche (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Misercorde =>"Misercorde (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Stiletto =>"Stiletto (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Bodkin =>"Bodkin (%P0)^ (%P2,%P3)",
-            DaggerTemplate::BrokenDagger =>"Broken Dagger (%P0)^ (%P2,%P3)",
-            DaggerTemplate::CatONineTails =>"Cat-O-Nine Tails (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Bilbo =>"Bilbo (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Baselard =>"Baselard (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Foil =>"Foil (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Rapier =>"Rapier (%P0)^ (%P2,%P3)",
-            DaggerTemplate::SmallSword =>"Small Sword (%P0)^ (%P2,%P3)",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_weapon_name(item,
+            Cow::from(match self {
+                DaggerTemplate::MainGauche =>"Main Gauche",
+                DaggerTemplate::Misercorde =>"Misercorde",
+                DaggerTemplate::Stiletto =>"Stiletto",
+                DaggerTemplate::Bodkin =>"Bodkin",
+                DaggerTemplate::BrokenDagger =>"Broken Dagger",
+                DaggerTemplate::CatONineTails =>"Cat-O-Nine Tails",
+                DaggerTemplate::Bilbo =>"Bilbo",
+                DaggerTemplate::Baselard =>"Baselard",
+                DaggerTemplate::Foil =>"Foil",
+                DaggerTemplate::Rapier =>"Rapier",
+                DaggerTemplate::SmallSword =>"Small Sword",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Dagger }

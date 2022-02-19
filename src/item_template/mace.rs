@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MaceTemplate {
@@ -55,19 +58,20 @@ impl MaceTemplate {
 
 impl item_template::ItemTemplate for MaceTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            MaceTemplate::BallAndChain => "Ball and Chain (%P0)^ (%P2,%P3)",
-            MaceTemplate::WoodenClub => "Wooden Club (%P0)^ (%P2,%P3)",
-            MaceTemplate::Flail => "Flail (%P0)^ (%P2,%P3)",
-            MaceTemplate::GreatFlail => "Two Handed Great Flail (%P0)^ (%P2,%P3)",
-            MaceTemplate::MorningStar => "Morningstar (%P0)^ (%P2,%P3)",
-            MaceTemplate::Mace => "Mace (%P0)^ (%P2,%P3)",
-            MaceTemplate::WarHammer => "War Hammer (%P0)^ (%P2,%P3)",
-            MaceTemplate::LeadFilledMace => "Lead Filled Mace (%P0)^ (%P2,%P3)",
-            MaceTemplate::IronShodQuarterstaff => "Iron Shod Quarterstaff (%P0)^ (%P2,%P3)",
-            MaceTemplate::OgreMaul => "Ogre Maul (%P0)^ (%P2,%P3)",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_weapon_name(item,
+            Cow::from(match self {
+                MaceTemplate::BallAndChain => "Ball and Chain",
+                MaceTemplate::WoodenClub => "Wooden Club",
+                MaceTemplate::Flail => "Flail",
+                MaceTemplate::GreatFlail => "Two Handed Great Flail",
+                MaceTemplate::MorningStar => "Morningstar",
+                MaceTemplate::Mace => "Mace",
+                MaceTemplate::WarHammer => "War Hammer",
+                MaceTemplate::LeadFilledMace => "Lead Filled Mace",
+                MaceTemplate::IronShodQuarterstaff => "Iron Shod Quarterstaff",
+                MaceTemplate::OgreMaul => "Ogre Maul",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Mace }

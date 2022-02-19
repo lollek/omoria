@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SongBookTemplate {
@@ -36,13 +39,14 @@ impl SongBookTemplate {
 
 impl item_template::ItemTemplate for SongBookTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            SongBookTemplate::BeginnersHandbook => "& Book of Bard Lyrics [Beginners Handbook]",
-            SongBookTemplate::SongBook1 => "& Songs of Charming [Song Book I]",
-            SongBookTemplate::SongBook2 => "& Ballads of Knowledge [Song Book II]",
-            SongBookTemplate::GreaterSongBook => "& Epics of the Bards [Greater Song Book]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_book_name(item,
+            Cow::from(match self {
+                SongBookTemplate::BeginnersHandbook => "Book of Bard Lyrics [Beginners Handbook]",
+                SongBookTemplate::SongBook1 => "Songs of Charming [Song Book I]",
+                SongBookTemplate::SongBook2 => "Ballads of Knowledge [Song Book II]",
+                SongBookTemplate::GreaterSongBook => "Epics of the Bards [Greater Song Book]",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::SongBook }

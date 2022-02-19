@@ -93,7 +93,6 @@ extern treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1];
 extern long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Following are treasure arrays	and variables			} */
-extern boolean object_ident[MAX_OBJECTS + 1];
 extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];
 extern treasure_type equipment[EQUIP_MAX];

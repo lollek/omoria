@@ -371,9 +371,7 @@ static void __add_item_to_store(enum store_t store_num) {
       default: return; // Should panic
     }
 
-    unquote(t_list[cur_pos].name);
-    known1(t_list[cur_pos].name);
-    known2(t_list[cur_pos].name);
+    t_list[cur_pos].identified = true;
 
     // TODO: Stop using inven_temp
     inven_temp.data = t_list[cur_pos];
@@ -571,7 +569,7 @@ static void __store_print_inventory(enum store_t store_type, long start) {
       inven_temp.data.number = 1;
     }
     char out_val1[82];
-    objdes(out_val1, &inven_temp, true);
+    C_item_name_generate_name(&inven_temp.data, out_val1);
     char out_val2[85];
     sprintf(out_val2, "%c) %s", (97 + (int)i), out_val1);
     prt(out_val2, i + 6, 1);
@@ -1338,7 +1336,7 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
     __remove_item_from_store(store_type, selected_item, true);
     treas_rec *item_new = inven_carry();
     char out_val[82];
-    objdes(out_val, item_new, true);
+    C_item_name_generate_name(&item_new->data, out_val);
     char out2[100];
     sprintf(out2, "You have %s", out_val);
     msg_print(out2);
@@ -1552,7 +1550,7 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
 
   char out_val[82];
   char out2[100];
-  objdes(out_val, &inven_temp, true);
+  C_item_name_generate_name(&inven_temp.data, out_val);
   sprintf(out2, "Selling %s", out_val);
   msg_print(out2);
   msg_print(" ");
@@ -1790,10 +1788,7 @@ void store_carry(enum store_t store_num, long *ipos) {
 
   // TODO: Stop using inven_temp
   *ipos = 0;
-  identify(&(inven_temp.data));
-  unquote(inven_temp.data.name);
-  known1(inven_temp.data.name);
-  known2(inven_temp.data.name);
+  inven_temp.data.identified = true;
 
   long item_base_price = __calc_purchase_price(store_num, &inven_temp.data);
   long max_price = __store_max_inflated_price(store_num, item_base_price);
@@ -1857,7 +1852,7 @@ long item_value(treasure_type const *const item) {
   case hard_armor:
   case soft_armor:
 
-    if (strstr(item->name, "^") != NULL) {
+    if (!item->identified) {
       return_value *= item->number;
 
     } else {
@@ -1901,7 +1896,7 @@ long item_value(treasure_type const *const item) {
   case arrow:
   case spike:
 
-    if (strstr(item->name, "^") != NULL) {
+    if (!item->identified) {
       return_value *= (item->number);
     } else {
       if (item->tohit < 0) {
@@ -1923,7 +1918,7 @@ long item_value(treasure_type const *const item) {
   case potion:
   case Food:
 
-    if (strstr(item->name, "|") != NULL) {
+    if (!item->identified) {
       switch (item->tval) {
       case Scroll:
         return_value = 20;
@@ -1944,7 +1939,7 @@ long item_value(treasure_type const *const item) {
   case amulet:
   case ring:
 
-    if (strstr(item->name, "|") != NULL) {
+    if (!is_type_identified(item->tval, item->subval)) {
       switch (item->tval) {
       case amulet:
         return_value = 45;
@@ -1953,7 +1948,7 @@ long item_value(treasure_type const *const item) {
         return_value = 45;
         break;
       }
-    } else if (strstr(item->name, "^") != NULL) {
+    } else if (!item->identified) {
       return_value = (item->cost > 0) ? (item->cost / GOLD_VALUE) : 0;
     } else {
       return_value =
@@ -1969,7 +1964,7 @@ long item_value(treasure_type const *const item) {
   case chime:
   case horn:
 
-    if (strstr(item->name, "|") != NULL) {
+    if (!is_type_identified(item->tval, item->subval)) {
       switch (item->tval) {
       case chime:
         return_value = 50;
@@ -1978,7 +1973,7 @@ long item_value(treasure_type const *const item) {
         return_value = 80;
         break;
       }
-    } else if (strstr(item->name, "^") == NULL) {
+    } else if (!item->identified) {
       return_value = ((item->cost / GOLD_VALUE) +
                       trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
     }
@@ -1988,7 +1983,7 @@ long item_value(treasure_type const *const item) {
   case staff:
   case wand:
 
-    if (strstr(item->name, "|") != NULL) {
+    if (!is_type_identified(item->tval, item->subval)) {
       switch (item->tval) {
       case staff:
         return_value = 70;
@@ -1997,7 +1992,7 @@ long item_value(treasure_type const *const item) {
         return_value = 50;
         break;
       }
-    } else if (strstr(item->name, "^") == NULL) {
+    } else if (!item->identified) {
       return_value = ((item->cost / GOLD_VALUE) +
                       trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
     }
@@ -2007,7 +2002,7 @@ long item_value(treasure_type const *const item) {
   case valuable_jewelry:
   case valuable_gems:
 
-    if (strstr(item->name, "|") != NULL) {
+    if (!is_type_identified(item->tval, item->subval)) {
       switch (item->tval) {
       case valuable_jewelry:
         return_value = 20;
@@ -2016,7 +2011,7 @@ long item_value(treasure_type const *const item) {
         return_value = 20;
         break;
       }
-    } else if (strstr(item->name, "^") == NULL) {
+    } else if (!item->identified) {
       return_value = (item->cost / GOLD_VALUE);
     }
     break;
@@ -2083,7 +2078,7 @@ boolean check_store_hours(enum store_t store_type, long store_visual) {
       break;
     }
     char name[134];
-    strcpy(name, store_door[store_type].name);
+    C_item_name_generate_name(&store_door[store_type], name);
     insert_str(name, "the entrance to the ", "");
     char out_val[300];
     sprintf(out_val, "Sorry, the %s is closed for the %s", name, time);

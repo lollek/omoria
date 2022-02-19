@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscTemplate {
@@ -56,20 +59,24 @@ impl MiscTemplate {
 }
 
 impl item_template::ItemTemplate for MiscTemplate {
-    fn name(&self) -> &str {
-        match self {
-            MiscTemplate::RatSkeleton => "& Rat Skeleton",
-            MiscTemplate::GiantCentipedeSkeleton => "& Giant Centipede Skeleton",
-            MiscTemplate::EmptyBottle => "& Empty Bottle^",
-            MiscTemplate::PotteryShard => "Some Shards of Pottery^",
-            MiscTemplate::HumanSkeleton => "& Human Skeleton",
-            MiscTemplate::DwarfSkeleton => "& Dwarf Skeleton",
-            MiscTemplate::ElfSkeleton => "& Elf Skeleton",
-            MiscTemplate::GnomeSkeleton => "& Gnome Skeleton",
-            MiscTemplate::BrokenTeeth => "& Broken Set of Teeth^",
-            MiscTemplate::LargeBrokenBone => "& Large Broken Bone^",
-            MiscTemplate::BrokenStick => "& Broken Stick^",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(Cow::from(
+                match self {
+                    MiscTemplate::RatSkeleton => "Rat Skeleton",
+                    MiscTemplate::GiantCentipedeSkeleton => "Giant Centipede Skeleton",
+                    MiscTemplate::EmptyBottle => "Empty Bottle",
+                    MiscTemplate::PotteryShard => "Some Shards of Pottery",
+                    MiscTemplate::HumanSkeleton => "Human Skeleton",
+                    MiscTemplate::DwarfSkeleton => "Dwarf Skeleton",
+                    MiscTemplate::ElfSkeleton => "Elf Skeleton",
+                    MiscTemplate::GnomeSkeleton => "Gnome Skeleton",
+                    MiscTemplate::BrokenTeeth => "Broken Set of Teeth",
+                    MiscTemplate::LargeBrokenBone => "Large Broken Bone",
+                    MiscTemplate::BrokenStick => "Broken Stick",
+                }));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::MiscObject }

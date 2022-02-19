@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum WandTemplate {
@@ -98,34 +101,41 @@ impl WandTemplate {
 }
 
 impl item_template::ItemTemplate for WandTemplate {
-    fn name(&self) -> &str {
-        match self {
-            WandTemplate::WandOfProbing => "& Wand| of Probing^ (%P1 charges)",
-            WandTemplate::WandOfLight => "& Wand| of Light^ (%P1 charges)",
-            WandTemplate::WandOfLightningBolts => "& Wand| of Lightning Bolts^ (%P1 charges)",
-            WandTemplate::WandOfFrostBolts => "& Wand| of Frost Bolts^ (%P1 charges)",
-            WandTemplate::WandOfFireBolts => "& Wand| of Fire Bolts^ (%P1 charges)",
-            WandTemplate::WandOfStoneToMud => "& Wand| of Stone-to-Mud^ (%P1 charges)",
-            WandTemplate::WandOfPolymorph => "& Wand| of Polymorph^ (%P1 charges)",
-            WandTemplate::WandOfHealMonster => "& Wand| of Heal Monster^ (%P1 charges)",
-            WandTemplate::WandOfHasteMonster => "& Wand| of Haste Monster^ (%P1 charges)",
-            WandTemplate::WandOfSlowMonster => "& Wand| of Slow Monster^ (%P1 charges)",
-            WandTemplate::WandOfConfuseMonster => "& Wand| of Confuse Monster^ (%P1 charges)",
-            WandTemplate::WandOfSleepMonster => "& Wand| of Sleep Monster^ (%P1 charges)",
-            WandTemplate::WandOfDrainLife => "& Wand| of Drain Life^ (%P1 charges)",
-            WandTemplate::WandOfTrapDoorDestruction => "& Wand| of Trap/Door destruction^ (%P1 charges)",
-            WandTemplate::WandOfMagicMissile => "& Wand| of Magic Missile^ (%P1 charges)",
-            WandTemplate::WandOfWallBuilding => "& Wand| of Wall Building^ (%P1 charges)",
-            WandTemplate::WandOfCloneMonster => "& Wand| of Clone Monster^ (%P1 charges)",
-            WandTemplate::WandOfTeleportAway => "& Wand| of Teleport Away^ (%P1 charges)",
-            WandTemplate::WandOfDisarming => "& Wand| of Disarming^ (%P1 charges)",
-            WandTemplate::WandOfLightningBalls => "& Wand| of Lightning Balls^ (%P1 charges)",
-            WandTemplate::WandOfColdBalls => "& Wand| of Cold Balls^ (%P1 charges)",
-            WandTemplate::WandOfFireBalls => "& Wand| of Fire Balls^ (%P1 charges)",
-            WandTemplate::WandOfStinkingCloud => "& Wand| of Stinking Cloud^ (%P1 charges)",
-            WandTemplate::WandOfAcidBalls => "& Wand| of Acid Balls^ (%P1 charges)",
-            WandTemplate::WandOfWonder => "& Wand| of Wonder^ (%P1 charges)",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Wand"));
+        if self.is_identified() {
+            parts.push(
+                Cow::from(match self {
+                    WandTemplate::WandOfProbing => " of Probing",
+                    WandTemplate::WandOfLight => " of Light",
+                    WandTemplate::WandOfLightningBolts => "of Lightning Bolts",
+                    WandTemplate::WandOfFrostBolts => " of Frost Bolts",
+                    WandTemplate::WandOfFireBolts => " of Fire Bolts",
+                    WandTemplate::WandOfStoneToMud => " of Stone-to-Mud",
+                    WandTemplate::WandOfPolymorph => " of Polymorph",
+                    WandTemplate::WandOfHealMonster => " of Heal Monster",
+                    WandTemplate::WandOfHasteMonster => " of Haste Monster",
+                    WandTemplate::WandOfSlowMonster => " of Slow Monster",
+                    WandTemplate::WandOfConfuseMonster => " of Confuse Monster",
+                    WandTemplate::WandOfSleepMonster => " of Sleep Monster",
+                    WandTemplate::WandOfDrainLife => " of Drain Life",
+                    WandTemplate::WandOfTrapDoorDestruction => " of Trap/Door destruction",
+                    WandTemplate::WandOfMagicMissile => " of Magic Missile",
+                    WandTemplate::WandOfWallBuilding => " of Wall Building",
+                    WandTemplate::WandOfCloneMonster => " of Clone Monster",
+                    WandTemplate::WandOfTeleportAway => " of Teleport Away",
+                    WandTemplate::WandOfDisarming => " of Disarming",
+                    WandTemplate::WandOfLightningBalls => " of Lightning Balls",
+                    WandTemplate::WandOfColdBalls => " of Cold Balls",
+                    WandTemplate::WandOfFireBalls => " of Fire Balls",
+                    WandTemplate::WandOfStinkingCloud => " of Stinking Cloud",
+                    WandTemplate::WandOfAcidBalls => " of Acid Balls",
+                    WandTemplate::WandOfWonder => " of Wonder",
+                }));
         }
+        parts.push(item_name::charges(&item));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Wand }

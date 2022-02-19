@@ -394,7 +394,7 @@ static void d__look() {
         } else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
           inven_temp.data = t_list[cave[y][x].tptr];
           inven_temp.data.number = 1;
-          objdes(out_val, &inven_temp, true);
+          C_item_name_generate_name(&inven_temp.data, out_val);
           sprintf(out_val2, "You see %s.", out_val);
           msg_print(out_val2);
           flag = true;
@@ -1430,7 +1430,6 @@ static void d__bash() {
       if (randint(10) == 1) {
         msg_print("You have destroyed the chest...");
         msg_print("and its contents!");
-        strcpy(t_list[cave[y][x].tptr].name, "& ruined chest");
         t_list[cave[y][x].tptr].flags = 0;
       } else if ((0x00000001 & t_list[cave[y][x].tptr].flags) != 0) {
         if (randint(10) == 1) {
@@ -1510,7 +1509,6 @@ static void d__openobject() {
 
   long y, x, tmp, temp_dun_level;
   boolean flag;
-  char *tmpc;
 
   y = char_row;
   x = char_col;
@@ -1582,12 +1580,6 @@ static void d__openobject() {
 
         if (flag) {
           t_list[cave[y][x].tptr].flags &= 0xFFFFFFFE; /* unlock */
-          tmpc = strstr(t_list[cave[y][x].tptr].name, " (");
-          if (tmpc != NULL) {
-            *tmpc = 0;
-          }
-          strcat(t_list[cave[y][x].tptr].name, " (Empty)");
-          known2(t_list[cave[y][x].tptr].name);
           t_list[cave[y][x].tptr].cost = 0;
         }
 
@@ -1694,7 +1686,6 @@ static void d__disarm_trap() {
 
   long y, x, i1, tdir;
   long tot, t1, t2, t3, t4, t5;
-  char *tmpc;
 
   y = char_row;
   x = char_col;
@@ -1740,32 +1731,20 @@ static void d__disarm_trap() {
           move_char(tdir);
         }
       } else if (i1 == 2) { /*{ Chest trap    }*/
-        /* with t_list[cave[y][x].tptr]. do; */
-        if (strstr(t_list[cave[y][x].tptr].name, "^") != NULL) {
-          msg_print("I don't see a trap...");
-        } else if ((0x000001F0 & t_list[cave[y][x].tptr].flags) != 0) {
+        if ((0x000001F0 & t_list[cave[y][x].tptr].flags) != 0) {
           if ((tot - t5) > randint(100)) {
             t_list[cave[y][x].tptr].flags &= 0xFFFFFE0F;
-            tmpc = strstr(t_list[cave[y][x].tptr].name, " (");
-            if (tmpc != NULL) {
-              *tmpc = 0;
-            }
-            if ((0x00000001 & t_list[cave[y][x].tptr].flags) != 0) {
-              strcat(t_list[cave[y][x].tptr].name, " (Locked)");
-            } else {
-              strcat(t_list[cave[y][x].tptr].name, " (Disarmed)");
-            }
-            msg_print("You have disarmed "
-                      "the chest.");
-            known2(t_list[cave[y][x].tptr].name);
+            msg_print("You have disarmed the chest.");
+            treasure_type *treas = &t_list[cave[y][x].tptr];
+            set_type_identified(treas->tval, treas->subval, true);
+            treas->identified = true;
             C_player_add_exp(t5);
             prt_stat_block();
           } else if (randint(tot) > 5) {
-            msg_print("You failed to "
-                      "disarm the chest.");
+            msg_print("You failed to disarm the chest.");
           } else {
             msg_print("You set a trap off!");
-            known2(t_list[cave[y][x].tptr].name);
+            t_list[cave[y][x].tptr].identified = true;
             d__chest_trap(y, x);
           }
         } else {
@@ -1959,7 +1938,7 @@ static void d__drop() {
           inven_drop(com_ptr, char_row, char_col, false);
         }
         prt_stat_block();
-        objdes(out_val, &inven_temp, true);
+        C_item_name_generate_name(&inven_temp.data, out_val);
         sprintf(out_val2, "Dropped %s.", out_val);
         msg_print(out_val2);
         reset_flag = false;
@@ -2704,7 +2683,7 @@ void py_bonuses(treasure_type *tobj, long factor) {
       player_ptohit += equipment[i1].tohit;
       player_ptodam += equipment[i1].todam;
       player_ptoac += equipment[i1].toac;
-      if (strstr(equipment[i1].name, "^") == NULL) {
+      if (equipment[i1].identified) {
         player_dis_th += equipment[i1].tohit;
         player_dis_td += equipment[i1].todam;
         player_dis_tac += equipment[i1].toac;
@@ -3015,7 +2994,7 @@ void carry(long y, long x) {
         }
 
         prt_stat_block();
-        objdes(out_val, item_ptr, true);
+        C_item_name_generate_name(&inven_temp.data, out_val);
 
         if (money_flag) {
 
@@ -3536,12 +3515,12 @@ boolean minus_ac(long typ_dam) {
     inven_temp.data = equipment[i2];
     /* with equipment[i2] do; */
     if ((equipment[i2].flags & typ_dam) != 0) {
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_str, "Your %s resists damage!", out_val);
       msg_print(out_str);
       return_value = true;
     } else if ((equipment[i2].ac + equipment[i2].toac) > 0) {
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_str, "Your %s is damaged!", out_val);
       msg_print(out_str);
       equipment[i2].toac--;
@@ -3831,8 +3810,10 @@ void search(long player_y, long player_x, long chance) {
 
       if (t_list[cave[y][x].tptr].tval == unseen_trap) {
         // Trap on floor
+        char tname[70];
         char out_val[86];
-        sprintf(out_val, "You have found %s.", t_list[cave[y][x].tptr].name);
+        C_item_name_generate_name(&t_list[cave[y][x].tptr], tname);
+        sprintf(out_val, "You have found %s.", tname);
         msg_print(out_val);
         change_trap(y, x);
         find_flag = false;
@@ -3846,9 +3827,10 @@ void search(long player_y, long player_x, long chance) {
 
       } else if (t_list[cave[y][x].tptr].tval == chest) {
         if (t_list[cave[y][x].tptr].flags > 1) {
-          if (pindex(t_list[cave[y][x].tptr].name, '^') > 0) {
+          if (!t_list[cave[y][x].tptr].identified) {
             // Chest is trapped
-            known2(t_list[cave[y][x].tptr].name);
+
+            t_list[cave[y][x].tptr].identified = true;
             msg_print("You have discovered a trap on the chest!");
           }
         }
@@ -4601,7 +4583,7 @@ void desc_remain(treas_rec *item_ptr) {
   /* with inven_temp->data do; */
 
   inven_temp.data.number--;
-  objdes(out_val, &inven_temp, true);
+  C_item_name_generate_name(&inven_temp.data, out_val);
   sprintf(out_val2, "You have %s.", out_val);
   msg_print(out_val2);
 }
@@ -4685,7 +4667,7 @@ void desc_charges(treas_rec *item_ptr) {
 
   char out_val[82];
 
-  if (strstr(item_ptr->data.name, "^") == NULL) {
+  if (item_ptr->data.identified) {
     sprintf(out_val, "You have %ld charges remaining.", item_ptr->data.p1);
     msg_print(out_val);
   }

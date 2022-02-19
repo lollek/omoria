@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BeltTemplate {
@@ -48,17 +51,18 @@ impl BeltTemplate {
 }
 
 impl item_template::ItemTemplate for BeltTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BeltTemplate::Sash => "Sash^ [%P6,%P4]",
-            BeltTemplate::LightBelt => "Light Belt^ [%P6,%P4]",
-            BeltTemplate::Belt => "Belt^ [%P6,%P4]",
-            BeltTemplate::HeavyBelt => "Heavy Belt^ [%P6,%P4]",
-            BeltTemplate::LightPlatedBelt => "Light Plated Belt^ [%P6,%P4]",
-            BeltTemplate::SharkskinBelt => "Sharkskin Belt^ [%P6,%P4]",
-            BeltTemplate::DemonhideBelt => "Demonhide Belt^ [%P6,%P4]",
-            BeltTemplate::WyrmhideBelt => "Wyrmhide Belt^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                BeltTemplate::Sash => "Sash",
+                BeltTemplate::LightBelt => "Light Belt",
+                BeltTemplate::Belt => "Belt",
+                BeltTemplate::HeavyBelt => "Heavy Belt",
+                BeltTemplate::LightPlatedBelt => "Light Plated Belt",
+                BeltTemplate::SharkskinBelt => "Sharkskin Belt",
+                BeltTemplate::DemonhideBelt => "Demonhide Belt",
+                BeltTemplate::WyrmhideBelt => "Wyrmhide Belt",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Belt }

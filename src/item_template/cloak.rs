@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CloakTemplate {
@@ -39,14 +42,15 @@ impl CloakTemplate {
 
 impl item_template::ItemTemplate for CloakTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            CloakTemplate::LightCloak => "Light Cloak^ [%P6,%P4]",
-            CloakTemplate::HeavyCloak => "Heavy Cloak^ [%P6,%P4]",
-            CloakTemplate::SharkskinCloak => "Sharkskin Cloak^ [%P6,%P4]",
-            CloakTemplate::DemonhideCloak => "Demonhide Cloak^ [%P6,%P4]",
-            CloakTemplate::WyrmhideCloak => "Wyrmhide Cloak^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                CloakTemplate::LightCloak => "Light Cloak",
+                CloakTemplate::HeavyCloak => "Heavy Cloak",
+                CloakTemplate::SharkskinCloak => "Sharkskin Cloak",
+                CloakTemplate::DemonhideCloak => "Demonhide Cloak",
+                CloakTemplate::WyrmhideCloak => "Wyrmhide Cloak",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }

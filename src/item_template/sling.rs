@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SlingTemplate {
@@ -27,10 +30,12 @@ impl SlingTemplate {
 }
 
 impl item_template::ItemTemplate for SlingTemplate {
-    fn name(&self) -> &str {
-        match self {
-            SlingTemplate::Sling => "Sling (%P0)^ (%P2,%P3)",
-       }
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Sling"));
+        parts.push(item_name::damage(&item));
+        parts.push(item_name::attack_enchantment(&item));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Sling }

@@ -8,6 +8,11 @@
 #include "types.h"
 
 /* START - FROM RUST */
+uint8_t is_type_identified(uint8_t item_type, int64_t subval);
+void set_type_identified(uint8_t item_type, int64_t subval, uint8_t is_identified);
+
+void C_item_name_generate_name(treasure_type *item, char result[70]);
+
 boolean C_save_character();
 boolean C_load_character();
 void C_delete_character();
@@ -59,15 +64,6 @@ extern void upon_death();
 extern void make_tomb(char dstr[][82]);
 extern void write_tomb(char dstr[][82]);
 extern void print_dead_character();
-
-/* { DESC.PAS		} */
-extern void known1(char *object_str);  /* : varying[a] of char); */
-extern void known2(char *object_str);  /* : varying[a] of char); */
-extern void unquote(char *object_str); /* : varying[a] of char); */
-extern void identify(treasure_type *item);
-extern void objdes(char *out_val,  /*: varying[a] of char; */
-                   treas_rec *ptr, /*	: treas_ptr; */
-                   boolean pref);  /*	: boolean); */
 
 /* { DUNGEON.PAS		} */
 extern void move_rec(long y1, long x1, long y2, long x2);

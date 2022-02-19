@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BootsTemplate {
@@ -51,18 +54,19 @@ impl BootsTemplate {
 }
 
 impl item_template::ItemTemplate for BootsTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BootsTemplate::SoftLeatherShoes => "Soft Leather Shoes^ [%P6,%P4]",
-            BootsTemplate::SoftLeatherBoots => "Soft Leather Boots^ [%P6,%P4]",
-            BootsTemplate::HardLeatherBoots => "Hard Leather Boots^ [%P6,%P4]",
-            BootsTemplate::Sandals => "Sandals^ [%P6,%P4]",
-            BootsTemplate::ChainBoots => "Chain Boots^ [%P6,%P4]",
-            BootsTemplate::LightPlatedBoots => "Light Plated Boots^ [%P6,%P4]",
-            BootsTemplate::SharkskinBoots => "Sharkskin Boots^ [%P6,%P4]",
-            BootsTemplate::DemonhideBoots => "Demonhide Boots^ [%P6,%P4]",
-            BootsTemplate::WyrmhideBoot => "Wyrmhide Boots^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                BootsTemplate::SoftLeatherShoes => "Soft Leather Shoes",
+                BootsTemplate::SoftLeatherBoots => "Soft Leather Boots",
+                BootsTemplate::HardLeatherBoots => "Hard Leather Boots",
+                BootsTemplate::Sandals => "Sandals",
+                BootsTemplate::ChainBoots => "Chain Boots",
+                BootsTemplate::LightPlatedBoots => "Light Plated Boots",
+                BootsTemplate::SharkskinBoots => "Sharkskin Boots",
+                BootsTemplate::DemonhideBoots => "Demonhide Boots",
+                BootsTemplate::WyrmhideBoot => "Wyrmhide Boots",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Boots }

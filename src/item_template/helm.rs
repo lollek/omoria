@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HelmTemplate {
@@ -59,21 +62,22 @@ impl HelmTemplate {
 }
 
 impl item_template::ItemTemplate for HelmTemplate {
-    fn name(&self) -> &str {
-        match self {
-            HelmTemplate::ClothHat => "Cloth Hat^ [%P6,%P4]",
-            HelmTemplate::SoftLeatherCap => "Soft Leather Cap^ [%P6,%P4]",
-            HelmTemplate::HardLeatherCap => "Hard Leather Cap^ [%P6,%P4]",
-            HelmTemplate::MetalCap => "Metal Cap^ [%P6,%P4]",
-            HelmTemplate::FullHelm => "Full Helm^ [%P6,%P4]",
-            HelmTemplate::GreatHelm => "Great Helm^ [%P6,%P4]",
-            HelmTemplate::WingedHelm => "Winged Helm^ [%P6,%P4]",
-            HelmTemplate::SilverCrown => "Silver Crown^ [%P6,%P4] (%P1)",
-            HelmTemplate::SilverMask => "Silver Mask^ [%P6,%P4] (%P1)",
-            HelmTemplate::GoldenCrown => "Golden Crown^ [%P6,%P4] (%P1)",
-            HelmTemplate::GoldenMask => "Golden Mask^ [%P6,%P4] (%P1)",
-            HelmTemplate::JewelEncrustedCrown => "Jewel Encrusted Crown^ [%P6,%P4] (%P1)",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                HelmTemplate::ClothHat => "Cloth Hat",
+                HelmTemplate::SoftLeatherCap => "Soft Leather Cap",
+                HelmTemplate::HardLeatherCap => "Hard Leather Cap",
+                HelmTemplate::MetalCap => "Metal Cap",
+                HelmTemplate::FullHelm => "Full Helm",
+                HelmTemplate::GreatHelm => "Great Helm",
+                HelmTemplate::WingedHelm => "Winged Helm",
+                HelmTemplate::SilverCrown => "Silver Crown",
+                HelmTemplate::SilverMask => "Silver Mask",
+                HelmTemplate::GoldenCrown => "Golden Crown",
+                HelmTemplate::GoldenMask => "Golden Mask",
+                HelmTemplate::JewelEncrustedCrown => "Jewel Encrusted Crown",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Helm }

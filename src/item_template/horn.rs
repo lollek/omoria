@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -62,22 +65,31 @@ impl HornTemplate {
 }
 
 impl item_template::ItemTemplate for HornTemplate {
-    fn name(&self) -> &str {
-        match self {
-            HornTemplate::HornOfBubbles => "& Horn| of Bubbles^ (%P1 charges)",
-            HornTemplate::HornOfCalling => "& Horn| of Calling^ (%P1 charges)",
-            HornTemplate::HornOfSoftSounds => "& Horn| of Soft Sounds^ (%P1 charges)",
-            HornTemplate::HornOfBlasting => "& Horn| of *Blasting*^ (%P1 charges)",
-            HornTemplate::HornOfCold => "& Horn| of Cold^ (%P1 charges)",
-            HornTemplate::HornOfHeat => "& Horn| of Heat^ (%P1 charges)",
-            HornTemplate::HornOfGas => "& Horn| of Gas^ (%P1 charges)",
-            HornTemplate::HornOfRecall => "& Horn| of Recall^ (%P1 charges)",
-            HornTemplate::HornOfChaos => "& Horn| of *Chaos*^ (%P1 charges)",
-            HornTemplate::HornOfGlue => "& Horn| of Glue^ (%P1 charges)",
-            HornTemplate::HornOfValhalla => "& Horn| of Valhalla^ (%P1 charges)",
-            HornTemplate::HornOfTritons => "& Horn| of Tritons^ (%P1 charges)",
-            HornTemplate::HornOfFog => "& Horn| of Fog^ (%P1 charges)",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Horn"));
+        if self.is_identified() {
+            parts.push(Cow::from(
+                    match self {
+                        HornTemplate::HornOfBubbles => " of Bubbles",
+                        HornTemplate::HornOfCalling => " of Calling",
+                        HornTemplate::HornOfSoftSounds => " of Soft Sounds",
+                        HornTemplate::HornOfBlasting => " of *Blasting*",
+                        HornTemplate::HornOfCold => " of Cold",
+                        HornTemplate::HornOfHeat => " of Heat",
+                        HornTemplate::HornOfGas => " of Gas",
+                        HornTemplate::HornOfRecall => " of Recall",
+                        HornTemplate::HornOfChaos => " of *Chaos*",
+                        HornTemplate::HornOfGlue => " of Glue",
+                        HornTemplate::HornOfValhalla => " of Valhalla",
+                        HornTemplate::HornOfTritons => " of Tritons",
+                        HornTemplate::HornOfFog => " of Fog",
+                    }));
         }
+        if item.is_identified() {
+            parts.push(item_name::charges(item))
+        }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Horn }

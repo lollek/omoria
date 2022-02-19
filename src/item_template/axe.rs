@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AxeTemplate {
@@ -50,18 +53,19 @@ impl AxeTemplate {
 }
 
 impl item_template::ItemTemplate for AxeTemplate {
-    fn name(&self) -> &str {
-        match self {
-            AxeTemplate::Balestarius => "Balestarius (%P0)^ (%P2,%P3)",
-            AxeTemplate::BattleAxe => "Battle Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::BroadAxe => "Broad Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::HandAxe => "Hand Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::WarAxe => "War Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::LargeAxe => "Large Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::BeardedAxe => "Bearded Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::SilverEdgedAxe => "Silved Edged Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::ChampionAxe => "Champion Axe (%P0)^ (%P2,%P3)",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_weapon_name(item,
+            Cow::from(match self {
+                AxeTemplate::Balestarius => "Balestarius",
+                AxeTemplate::BattleAxe => "Battle Axe",
+                AxeTemplate::BroadAxe => "Broad Axe",
+                AxeTemplate::HandAxe => "Hand Axe",
+                AxeTemplate::WarAxe => "War Axe",
+                AxeTemplate::LargeAxe => "Large Axe",
+                AxeTemplate::BeardedAxe => "Bearded Axe",
+                AxeTemplate::SilverEdgedAxe => "Silved Edged Axe",
+                AxeTemplate::ChampionAxe => "Champion Axe",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Axe }

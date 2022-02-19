@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -96,33 +99,40 @@ impl StaffTemplate {
 }
 
 impl item_template::ItemTemplate for StaffTemplate {
-    fn name(&self) -> &str {
-        match self {
-            StaffTemplate::StaffOfLight => "& Staff| of Light^ (%P1 charges)",
-            StaffTemplate::StaffOfDoorStairLocation => "& Staff| of Door/Stair Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTrapLocation => "& Staff| of Trap Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTreasureLocation => "& Staff| of Treasure Location^ (%P1 charges)",
-            StaffTemplate::StaffOfObjectLocation => "& Staff| of Object Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTeleportation => "& Staff| of Teleportation^ (%P1 charges)",
-            StaffTemplate::StaffOfEarthquakes => "& Staff| of Earthquakes^ (%P1 charges)",
-            StaffTemplate::StaffOfSummoning => "& Staff| of Summoning^ (%P1 charges)",
-            StaffTemplate::StaffOfDestruction => "& Staff| of *Destruction*^ (%P1 charges)",
-            StaffTemplate::StaffOfStarlite => "& Staff| of Starlite^ (%P1 charges)",
-            StaffTemplate::StaffOfHasteMonsters => "& Staff| of Haste Monsters^ (%P1 charges)",
-            StaffTemplate::StaffOfSlowMonsters => "& Staff| of Slow Monsters^ (%P1 charges)",
-            StaffTemplate::StaffOfSleepMonsters => "& Staff| of Sleep Monsters^ (%P1 charges)",
-            StaffTemplate::StaffOfCureLightWounds => "& Staff| of Cure Light Wounds^ (%P1 charges)",
-            StaffTemplate::StaffOfDetectInvisible => "& Staff| of Detect Invisible^ (%P1 charges)",
-            StaffTemplate::StaffOfSpeed => "& Staff| of Speed^ (%P1 charges)",
-            StaffTemplate::StaffOfSlowness => "& Staff| of Slowness^ (%P1 charges)",
-            StaffTemplate::StaffOfMassPolymorph => "& Staff| of Mass Polymorph^ (%P1 charges)",
-            StaffTemplate::StaffOfRemoveCurse => "& Staff| of Remove Curse^ (%P1 charges)",
-            StaffTemplate::StaffOfDetectEvil => "& Staff| of Detect Evil^ (%P1 charges)",
-            StaffTemplate::StaffOfCuring => "& Staff| of Curing^ (%P1 charges)",
-            StaffTemplate::StaffOfDispelEvil => "& Staff| of Dispel Evil^ (%P1 charges)",
-            StaffTemplate::StaffOfDarkness => "& Staff| of Darkness^ (%P1 charges)",
-            StaffTemplate::StaffOfIdentify => "& Staff| of Identify^ (%P1 charges)",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Staff"));
+        if self.is_identified() {
+            parts.push(
+                Cow::from(match self {
+                    StaffTemplate::StaffOfLight => " of Light",
+                    StaffTemplate::StaffOfDoorStairLocation => " of Door/Stair Location",
+                    StaffTemplate::StaffOfTrapLocation => "of Trap Location",
+                    StaffTemplate::StaffOfTreasureLocation => " of Treasure Location",
+                    StaffTemplate::StaffOfObjectLocation => " of Object Location",
+                    StaffTemplate::StaffOfTeleportation => " of Teleportation",
+                    StaffTemplate::StaffOfEarthquakes => " of Earthquakes",
+                    StaffTemplate::StaffOfSummoning => " of Summoning",
+                    StaffTemplate::StaffOfDestruction => " of *Destruction*",
+                    StaffTemplate::StaffOfStarlite => " of Starlite",
+                    StaffTemplate::StaffOfHasteMonsters => " of Haste Monsters",
+                    StaffTemplate::StaffOfSlowMonsters => " of Slow Monsters",
+                    StaffTemplate::StaffOfSleepMonsters => " of Sleep Monsters",
+                    StaffTemplate::StaffOfCureLightWounds => " of Cure Light Wounds",
+                    StaffTemplate::StaffOfDetectInvisible => " of Detect Invisible",
+                    StaffTemplate::StaffOfSpeed => " of Speed",
+                    StaffTemplate::StaffOfSlowness => " of Slowness",
+                    StaffTemplate::StaffOfMassPolymorph => " of Mass Polymorph",
+                    StaffTemplate::StaffOfRemoveCurse => " of Remove Curse",
+                    StaffTemplate::StaffOfDetectEvil => " of Detect Evil",
+                    StaffTemplate::StaffOfCuring => " of Curing",
+                    StaffTemplate::StaffOfDispelEvil => " of Dispel Evil",
+                    StaffTemplate::StaffOfDarkness => " of Darkness",
+                    StaffTemplate::StaffOfIdentify => " of Identify",
+                }));
         }
+        parts.push(item_name::charges(&item));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Staff }

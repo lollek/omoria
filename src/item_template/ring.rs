@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum RingTemplate {
@@ -122,42 +125,60 @@ impl RingTemplate {
 }
 
 impl item_template::ItemTemplate for RingTemplate {
-    fn name(&self) -> &str {
-        match self {
-            RingTemplate::RingOfGainStrength => "& Ring| of Gain Strength^ (%p1)",
-            RingTemplate::RingOfGainDexterity => "& Ring| of Gain Dexterity^ (%p1)",
-            RingTemplate::RingOfGainConstitution => "& Ring| of Gain Constitution^ (%p1)",
-            RingTemplate::RingOfGainIntelligence => "& Ring| of Gain Intelligence^ (%p1)",
-            RingTemplate::RingOfSpeed1 => "& Ring| of Speed^ (%p1)",
-            RingTemplate::RingOfSpeed2 => "& Ring| of Speed^ (%p1)",
-            RingTemplate::RingOfSearching => "& Ring| of Searching^ (%p1)",
-            RingTemplate::RingOfTeleportation => "& Ring| of Teleportation^",
-            RingTemplate::RingOfSlowDigestion => "& Ring| of Slow Digestion^",
-            RingTemplate::RingOfResistFire => "& Ring| of Resist Fire^",
-            RingTemplate::RingOfResistCold => "& Ring| of Resist Cold^",
-            RingTemplate::RingOfFeatherFalling => "& Ring| of Feather Falling^",
-            RingTemplate::RingOfAdornment1 => "& Ring| of Adornment^",
-            RingTemplate::RingOfAdornment2 => "& Ring| of Adornment^",
-            RingTemplate::RingOfWeakness => "& Ring| of Weakness^",
-            RingTemplate::RingOfLordlyProtectionFire => "& Ring| of Lordly Protection (Fire)^",
-            RingTemplate::RingOfLordlyProtectionAcid => "& Ring| of Lordly Protection (Acid)^",
-            RingTemplate::RingOfLordlyProtectionCold => "& Ring| of Lordly Protection (Cold)^",
-            RingTemplate::RingOfWoe => "& Ring| of Woe^",
-            RingTemplate::RingOfStupidity => "& Ring| of Stupidity^",
-            RingTemplate::RingOfIncreaseDamage => "& Ring| of Increase Damage^ (%p3)",
-            RingTemplate::RingOfIncreaseToHit => "& Ring| of Increase To-hit^ (%p2)",
-            RingTemplate::RingOfProtection => "& Ring| of Protection^ [%p4]",
-            RingTemplate::RingOfAggravateMonsters => "& Ring| of Aggravate Monster^",
-            RingTemplate::RingOfSeeInvisible => "& Ring| of See Invisible^",
-            RingTemplate::RingOfSustainStrength => "& Ring| of Sustain Strength^",
-            RingTemplate::RingOfSustainIntelligence => "& Ring| of Sustain Intelligence^",
-            RingTemplate::RingOfSustainWisdom => "& Ring| of Sustain Wisdom^",
-            RingTemplate::RingOfSustainConstitution => "& Ring| of Sustain Constitution^",
-            RingTemplate::RingOfSustainDexterity => "& Ring| of Sustain Dexterity^",
-            RingTemplate::RingOfSustainCharisma => "& Ring| of Sustain Charisma^",
-            RingTemplate::RingOfSlaying => "& Ring| of Slaying^",
-            RingTemplate::RingOfGnomekind => "& Ring| of Gnomekind^",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Ring"));
+        if self.is_identified() {
+            parts.push(
+                Cow::from(match self {
+                    RingTemplate::RingOfGainStrength => " of Gain Strength",
+                    RingTemplate::RingOfGainDexterity => " of Gain Dexterity",
+                    RingTemplate::RingOfGainConstitution => " of Gain Constitution",
+                    RingTemplate::RingOfGainIntelligence => " of Gain Intelligence",
+                    RingTemplate::RingOfSpeed1 => " of Speed",
+                    RingTemplate::RingOfSpeed2 => " of Speed",
+                    RingTemplate::RingOfSearching => " of Searching",
+                    RingTemplate::RingOfTeleportation => " of Teleportation",
+                    RingTemplate::RingOfSlowDigestion => " of Slow Digestion",
+                    RingTemplate::RingOfResistFire => " of Resist Fire",
+                    RingTemplate::RingOfResistCold => " of Resist Cold",
+                    RingTemplate::RingOfFeatherFalling => " of Feather Falling",
+                    RingTemplate::RingOfAdornment1 => " of Adornment",
+                    RingTemplate::RingOfAdornment2 => " of Adornment",
+                    RingTemplate::RingOfWeakness => " of Weakness",
+                    RingTemplate::RingOfLordlyProtectionFire => " of Lordly Protection (Fire)",
+                    RingTemplate::RingOfLordlyProtectionAcid => " of Lordly Protection (Acid)",
+                    RingTemplate::RingOfLordlyProtectionCold => " of Lordly Protection (Cold)",
+                    RingTemplate::RingOfWoe => " of Woe",
+                    RingTemplate::RingOfStupidity => " of Stupidity",
+                    RingTemplate::RingOfIncreaseDamage => " of Increase Damage",
+                    RingTemplate::RingOfIncreaseToHit => " of Increase To-hit",
+                    RingTemplate::RingOfProtection => " of Protection",
+                    RingTemplate::RingOfAggravateMonsters => " of Aggravate Monster",
+                    RingTemplate::RingOfSeeInvisible => " of See Invisible",
+                    RingTemplate::RingOfSustainStrength => " of Sustain Strength",
+                    RingTemplate::RingOfSustainIntelligence => " of Sustain Intelligence",
+                    RingTemplate::RingOfSustainWisdom => " of Sustain Wisdom",
+                    RingTemplate::RingOfSustainConstitution => " of Sustain Constitution",
+                    RingTemplate::RingOfSustainDexterity => " of Sustain Dexterity",
+                    RingTemplate::RingOfSustainCharisma => " of Sustain Charisma",
+                    RingTemplate::RingOfSlaying => " of Slaying",
+                    RingTemplate::RingOfGnomekind => " of Gnomekind",
+                }));
         }
+        if item.p1 != 0 {
+            parts.push(item_name::p1(&item));
+        }
+        if item.tohit != 0 {
+            parts.push(item_name::to_hit(&item));
+        }
+        if item.todam != 0 {
+            parts.push(item_name::to_damage(&item));
+        }
+        if item.toac != 0 {
+            parts.push(item_name::to_ac(&item));
+        }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Ring }

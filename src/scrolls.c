@@ -37,7 +37,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
       inven_temp.data = equipment[Equipment_primary];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
       if (enchant(&(equipment[Equipment_primary].tohit))) {
@@ -55,7 +55,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
       inven_temp.data = equipment[Equipment_primary];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
       if (enchant(&(equipment[Equipment_primary].todam))) {
@@ -131,7 +131,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     if (i4 > 0) {
       /* with equipment[i4]. do; */
       inven_temp.data = equipment[i4];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
       if (enchant(&(equipment[i4].toac))) {
@@ -145,7 +145,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 4: /*{ Identify }*/
-    identify(&(item_ptr->data));
+    item_ptr->data.identified = true;
+    set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
     msg_print("This is an identify scroll");
     msg_print(" ");
     if (ident_spell()) {
@@ -259,7 +260,8 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 25: /*{ Recharge Item }*/
-    identify(&(item_ptr->data));
+    item_ptr->data.identified = true;
+    set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
     msg_print("This is a Recharge-Item scroll.");
     msg_print(" ");
     if (recharge(60)) {
@@ -299,7 +301,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
       inven_temp.data = equipment[Equipment_primary];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows brightly!", out_val);
       msg_print(out_val2);
       flag = false;
@@ -330,7 +332,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     /* with equipment[Equipment_primary]. do; */
     if (equipment[Equipment_primary].tval > 0) {
       inven_temp.data = equipment[Equipment_primary];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows black, then fades.", out_val);
       msg_print(out_val2);
       equipment[Equipment_primary].tohit = -randint(5) - randint(5);
@@ -375,7 +377,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     if (i3 > 0) {
       /* with equipment[i3]. do; */
       inven_temp.data = equipment[i3];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows brightly!", out_val);
       msg_print(out_val2);
       flag = false;
@@ -431,7 +433,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     if (i3 > 0) {
       /* with equipment[i3]. do; */
       inven_temp.data = equipment[i3];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       sprintf(out_val2, "Your %s glows black, then fades.", out_val);
       msg_print(out_val2);
       equipment[i3].flags = Cursed_worn_bit;
@@ -605,17 +607,12 @@ void read_scroll() {
 
       if (first) {
           if (!(i5 == 4 || i5 == 25 || i5 == 42)) {
-              /* the above
-               * are:
+              /* the above are:
                * identify,
-               * recharge
-               * item, wishing
+               * recharge item,
+               * wishing
                */
-              msg_print("As you "
-                      "read the "
-                      "scroll it "
-                      "vanishes"
-                      ".");
+              msg_print("As you read the scroll it vanishes.");
               first = false;
           }
 
@@ -625,7 +622,8 @@ void read_scroll() {
 
   if (!(reset_flag)) {
       if (ident) {
-          identify(&(item_ptr->data));
+          item_ptr->data.identified = true;
+          set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
       }
       if (!first) {
           desc_remain(item_ptr);

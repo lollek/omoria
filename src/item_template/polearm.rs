@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PolearmTemplate {
@@ -60,22 +63,23 @@ impl PolearmTemplate {
 }
 
 impl item_template::ItemTemplate for PolearmTemplate {
-    fn name(&self) -> &str {
-        match self {
-            PolearmTemplate::AwlPike => "Awl-Pike (%P0)^ (%P2,%P3)",
-            PolearmTemplate::BeakedAxe => "Beaked Axe (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Fauchard => "Fauchard (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Glaive => "Glaive (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Halberd => "Halberd (%P0)^ (%P2,%P3)",
-            PolearmTemplate::LucerneHammer => "Lucerne Hammer (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Pike => "Pike (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Spike => "Spear (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Lance => "Lance (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Javelin => "Javelin (%P0)^ (%P2,%P3)",
-            PolearmTemplate::Naginata => "Naginata (%P0)^ (%P2,%P3)",
-            PolearmTemplate::WarScythe => "War Scythe (%P0)^ (%P2,%P3)",
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_weapon_name(item,
+            Cow::from(match self {
+                PolearmTemplate::AwlPike => "Awl-Pike",
+                PolearmTemplate::BeakedAxe => "Beaked Axe",
+                PolearmTemplate::Fauchard => "Fauchard",
+                PolearmTemplate::Glaive => "Glaive",
+                PolearmTemplate::Halberd => "Halberd",
+                PolearmTemplate::LucerneHammer => "Lucerne Hammer",
+                PolearmTemplate::Pike => "Pike",
+                PolearmTemplate::Spike => "Spear",
+                PolearmTemplate::Lance => "Lance",
+                PolearmTemplate::Javelin => "Javelin",
+                PolearmTemplate::Naginata => "Naginata",
+                PolearmTemplate::WarScythe => "War Scythe",
 
-        }
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Polearm }

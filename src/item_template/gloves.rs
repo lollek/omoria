@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum GlovesTemplate {
@@ -54,19 +57,20 @@ impl GlovesTemplate {
 
 impl item_template::ItemTemplate for GlovesTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            GlovesTemplate::LeatherGloves => "Leather Gloves^ [%P6,%P4]",
-            GlovesTemplate::HeavyGloves => "Heavy Gloves^ [%P6,%P4]",
-            GlovesTemplate::ClothGloves => "Cloth Gloves^ [%P6,%P4]",
-            GlovesTemplate::ChainGloves => "Chain Gloves^ [%P6,%P4]",
-            GlovesTemplate::LightGauntlets => "Light Gauntlets^ [%P6,%P4]",
-            GlovesTemplate::HeavyGauntlets => "Heavy Gauntlets^ [%P6,%P4]",
-            GlovesTemplate::SharkskinGloves => "Sharkskin Gloves^ [%P6,%P4]",
-            GlovesTemplate::WarGauntlets => "War Gauntlets^ [%P6,%P4]",
-            GlovesTemplate::DemonhideGloves => "Demonhide Gloves^ [%P6,%P4]",
-            GlovesTemplate::WyrmhideGloves => "Wyrmhide Gloves^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                GlovesTemplate::LeatherGloves => "Leather Gloves",
+                GlovesTemplate::HeavyGloves => "Heavy Gloves",
+                GlovesTemplate::ClothGloves => "Cloth Gloves",
+                GlovesTemplate::ChainGloves => "Chain Gloves",
+                GlovesTemplate::LightGauntlets => "Light Gauntlets",
+                GlovesTemplate::HeavyGauntlets => "Heavy Gauntlets",
+                GlovesTemplate::SharkskinGloves => "Sharkskin Gloves",
+                GlovesTemplate::WarGauntlets => "War Gauntlets",
+                GlovesTemplate::DemonhideGloves => "Demonhide Gloves",
+                GlovesTemplate::WyrmhideGloves => "Wyrmhide Gloves",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType {

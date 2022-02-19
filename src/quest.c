@@ -116,11 +116,10 @@ void q__reward_item(long target) {
       }
     }
 
-    unquote(rewards[i2].name);
-    known1(rewards[i2].name);
-    known2(rewards[i2].name);
+    set_type_identified(rewards[i2].tval, rewards[i2].subval, true);
+    rewards[i2].identified = true;
     inven_temp.data = rewards[i2];
-    objdes(reward_names[i2], &inven_temp, true);
+    C_item_name_generate_name(&inven_temp.data, reward_names[i2]);
   }
 
   pusht(i1);

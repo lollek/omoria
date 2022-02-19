@@ -274,7 +274,7 @@ void file_character() {
             }
             i2++;
             inven_temp.data = equipment[i1];
-            objdes(prt2, &inven_temp, true);
+            C_item_name_generate_name(&inven_temp.data, prt2);
             if ((inven_temp.data.flags2 & Insured_bit) == 0) {
               sprintf(out_val, "  %c%s%s", (char)(i2 + 96), prt1, prt2);
             } else {
@@ -307,7 +307,7 @@ void file_character() {
                     (i1 / 50) + 1);
           }
           inven_temp.data = curse->data;
-          objdes(s1, &inven_temp, true);
+          C_item_name_generate_name(&inven_temp.data, s1);
           if (curse->is_in) {
             sprintf(prt1, "    %s", s1);
           } else {
@@ -466,10 +466,9 @@ void print_objects() {
           t_list[i2] = generate_item_for_dungeon_level(level);
           inven_temp.data = t_list[i2];
           /* with inven_temp->data. do; */
-          unquote(inven_temp.data.name);
-          known1(inven_temp.data.name);
-          known2(inven_temp.data.name);
-          objdes(tmp_str, &inven_temp, true);
+          set_type_identified(inven_temp.data.tval, inven_temp.data.subval, true);
+          inven_temp.data.identified = true;
+          C_item_name_generate_name(&inven_temp.data, tmp_str);
           fprintf(file1, "%s\n", tmp_str);
         }
         pusht(i2);

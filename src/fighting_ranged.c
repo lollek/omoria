@@ -165,9 +165,9 @@ static void __missile_hit_ground(treas_rec *missile, long y, long x) {
       lite_spot(place_missile_y, place_missile_x);
     }
   } else {
-    char out_val[82];
+    char out_val[70];
+    C_item_name_generate_name(&missile->data, out_val);
     char out_val2[120];
-    objdes(out_val, missile, false);
     sprintf(out_val2, "The %s disappears.", out_val);
     msg_print(out_val2);
   }
@@ -196,12 +196,14 @@ static boolean __missile_try_hit_creature(treas_rec *missile,
     return false;
   }
 
-  char missile_text_buf[82];
-  char monster_name_buf[82];
-  char text_buf[200];
+  char missile_text_buf[70];
   long monster_index = m_list[cave[y][x].cptr].mptr;
-  objdes(missile_text_buf, missile, FALSE);
+  C_item_name_generate_name(&missile->data, missile_text_buf);
+
+  char monster_name_buf[82];
   find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);
+
+  char text_buf[200];
   sprintf(text_buf, "The %s hits %s.", missile_text_buf, monster_name_buf);
   msg_print(text_buf);
   damage = tot_dam(&(missile->data), damage, &(c_list[monster_index]));

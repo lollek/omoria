@@ -76,6 +76,6 @@ pub fn get_name(slot: Slot) -> String {
     let item = unsafe { equipment[slot as usize] };
     match item.tval {
         0 => "".to_string(),
-        _ => item_name::generate_item_name(&item),
+        _ => item_name::generate_name(&item),
     }
 }

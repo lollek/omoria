@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum InstrumentTemplate {
@@ -36,13 +39,17 @@ impl InstrumentTemplate {
 
 impl item_template::ItemTemplate for InstrumentTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            InstrumentTemplate::PipesOfPeace => "& Pipes of Peace",
-            InstrumentTemplate::LyreOfNature => "& Lyre of Nature",
-            InstrumentTemplate::LuteOfTheWoods => "& Lute of the Woods",
-            InstrumentTemplate::HarpOfTheDruids =>"& Harp of the Druids" ,
-        }
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(Cow::from(
+                match self {
+                    InstrumentTemplate::PipesOfPeace => "Pipes of Peace",
+                    InstrumentTemplate::LyreOfNature => "Lyre of Nature",
+                    InstrumentTemplate::LuteOfTheWoods => "Lute of the Woods",
+                    InstrumentTemplate::HarpOfTheDruids =>"Harp of the Druids" ,
+                }));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Instrument }

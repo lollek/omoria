@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum GemTemplate {
@@ -89,31 +92,84 @@ impl GemTemplate {
 }
 
 impl item_template::ItemTemplate for GemTemplate {
-    fn name(&self) -> &str {
-        match self {
-            GemTemplate::GemOfDetectMonsters => "& Finely cut| of Detect Monsters^ (%P1 charges)",
-            GemTemplate::GemOfDispelEvil => "& Finely cut| of Dispel Evil^ (%P1 charges)",
-            GemTemplate::GemOfDarkness => "& Finely cut| of Darkness^ (%P1 charges)",
-            GemTemplate::GemOfAcidBalls => "& Finely cut| of Acid Balls^ (%P1 charges)",
-            GemTemplate::GemOfDetectInvisible => "& Finely cut| of Detect Invisible^ (%P1 charges)",
-            GemTemplate::GemOfIdentify => "& Finely cut| of Identify^ (%P1 charges)",
-            GemTemplate::GemOfLight => "& Finely cut| of Light^ (%P1 charges)",
-            GemTemplate::GemOfSummoning => "& Finely cut| of Summoning^ (%P1 charges)",
-            GemTemplate::GemOfRemoveCurse => "& Finely cut| of Remove Curse^ (%P1 charges)",
-            GemTemplate::GemOfAnnihilation => "& Finely cut| of Annihilation^ (%P1 charges)",
-            GemTemplate::GemOfRecall => "& Finely cut| of Recall^ (%P1 charges)",
-            GemTemplate::FineAgate => "& Finely cut Agate~^",
-            GemTemplate::FineDiamond => "& Finely cut Diamond~^",
-            GemTemplate::RoughDiamond => "& Rough cut Diamond~^",
-            GemTemplate::RoughSapphire => "& Rough cut Sapphire~^",
-            GemTemplate::FineSapphire => "& Finely cut Sapphire~^",
-            GemTemplate::SmallBagOfOpals => "& Small bag~ of Opals^",
-            GemTemplate::SmallBagOfSapphires => "& Small bag~ of Sapphires^",
-            GemTemplate::SmallPouchOfDiamonds => "& Small pouch~ of Diamonds^",
-            GemTemplate::LargeSackOfPearls => "& Large sack~ of Pearls^",
-            GemTemplate::LargeSackOfSapphires => "& Large sack~ of Sapphires^",
-            GemTemplate::LargePouchOfDiamonds => "& Large pouch~ of Diamonds^",
+    fn name(&self, item: &model::Item) -> String {
+        let plural_s = || if item.number == 1 { "" } else { "s" };
+
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(
+            match self {
+                GemTemplate::GemOfDetectMonsters |
+                GemTemplate::GemOfDispelEvil |
+                GemTemplate::GemOfDarkness |
+                GemTemplate::GemOfAcidBalls |
+                GemTemplate::GemOfDetectInvisible |
+                GemTemplate::GemOfIdentify |
+                GemTemplate::GemOfLight |
+                GemTemplate::GemOfSummoning |
+                GemTemplate::GemOfRemoveCurse |
+                GemTemplate::GemOfAnnihilation |
+                GemTemplate::GemOfRecall =>
+                Cow::from("Finely Cut Gem"),
+                GemTemplate::FineAgate =>
+                    Cow::from(format!("Finely cut Agate{}", plural_s())),
+                GemTemplate::FineDiamond =>
+                    Cow::from(format!("Finely cut Diamond{}", plural_s())),
+                GemTemplate::RoughDiamond =>
+                    Cow::from(format!("Rough cut Diamond{}", plural_s())),
+                GemTemplate::RoughSapphire =>
+                    Cow::from(format!("Rough cut Sapphire{}", plural_s())),
+                GemTemplate::FineSapphire =>
+                    Cow::from(format!("Finely cut Sapphire{}", plural_s())),
+                GemTemplate::SmallBagOfOpals =>
+                    Cow::from(format!("Small bag{} of Opals", plural_s())),
+                GemTemplate::SmallBagOfSapphires =>
+                    Cow::from(format!("Small bag{} of Sapphires", plural_s())),
+                GemTemplate::SmallPouchOfDiamonds =>
+                    Cow::from(format!("Small pouch{} of Diamonds", plural_s())),
+                GemTemplate::LargeSackOfPearls =>
+                    Cow::from(format!("Large sack{} of Pearls", plural_s())),
+                GemTemplate::LargeSackOfSapphires =>
+                    Cow::from(format!("Large sack{} of Sapphires", plural_s())),
+                GemTemplate::LargePouchOfDiamonds =>
+                    Cow::from(format!("Large pouch{} of Diamonds", plural_s())),
+            });
+        if self.is_identified() {
+            parts.push(Cow::from(
+                    match self {
+                        GemTemplate::GemOfDetectMonsters => " of Detect Monsters",
+                        GemTemplate::GemOfDispelEvil => " of Dispel Evil",
+                        GemTemplate::GemOfDarkness => " of Darkness",
+                        GemTemplate::GemOfAcidBalls => " of Acid Balls",
+                        GemTemplate::GemOfDetectInvisible => " of Detect Invisible",
+                        GemTemplate::GemOfIdentify => " of Identify",
+                        GemTemplate::GemOfLight => " of Light",
+                        GemTemplate::GemOfSummoning => " of Summoning",
+                        GemTemplate::GemOfRemoveCurse => " of Remove Curse",
+                        GemTemplate::GemOfAnnihilation => " of Annihilation",
+                        GemTemplate::GemOfRecall => " of Recall",
+                        _ => "",
+                    }));
         }
+        if item.is_identified() {
+            parts.push(
+                    match self {
+                        GemTemplate::GemOfDetectMonsters |
+                        GemTemplate::GemOfDispelEvil |
+                        GemTemplate::GemOfDarkness |
+                        GemTemplate::GemOfAcidBalls |
+                        GemTemplate::GemOfDetectInvisible |
+                        GemTemplate::GemOfIdentify |
+                        GemTemplate::GemOfLight |
+                        GemTemplate::GemOfSummoning |
+                        GemTemplate::GemOfRemoveCurse |
+                        GemTemplate::GemOfAnnihilation |
+                        GemTemplate::GemOfRecall =>
+                            item_name::charges(item),
+                        _ => Cow::from(""),
+                    });
+        }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Gem }

@@ -363,7 +363,7 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
         char out_val2[85];
         cur_display[count] = start;
         inven_temp.data = start->data.fsr.object;
-        objdes(out_val1, &inven_temp, true);
+        C_item_name_generate_name(&inven_temp.data, out_val1);
         sprintf(out_val2, "%c) %s", (char)(96 + count), out_val1);
         prt(out_val2, count + 5, 1);
         sprintf(out_val2, "%ld", start->data.fsr.best_bid);
@@ -549,7 +549,7 @@ void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
   if (inven_check_num() && inven_check_weight()) {
     temp_ptr = inven_carry();
     msg_print("You are now the proud owner of");
-    objdes(out_val1, temp_ptr, true);
+    C_item_name_generate_name(&temp_ptr->data, out_val1);
     sprintf(out_val2, "%s.", out_val1);
     msg_print(out_val2);
     tp__send_money(&((*item)->data.fsr.seller),
@@ -700,7 +700,7 @@ void tp__dump(char filename[82], pinven_ptr *inv) {
         sprintf(out_val, "%ld", item->data.fsr.time);
         fprintf(dump, "  time:        %s\n", out_val);
         inven_temp.data = item->data.fsr.object;
-        objdes(out_val, &inven_temp, true);
+        C_item_name_generate_name(&inven_temp.data, out_val);
         fprintf(dump, "  object:      %s\n", out_val);
         fprintf(dump, "  seller:      %s/%ld\n", item->data.fsr.seller.username,
                 item->data.fsr.seller.claim_check);
@@ -818,8 +818,7 @@ void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
       }
     }
 
-    if ((strstr(item_ptr->data.name, "|") != NULL) ||
-        (strstr(item_ptr->data.name, "^") != NULL)) {
+    if (!item_ptr->data.identified) {
       strcpy(response, "I can't sell that!  Identify it first!");
     } else if (wgt != 0) {
       strcpy(response, "Hey that bag is full of items! Empty it first.");

@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChimeTemplate {
@@ -71,25 +74,31 @@ impl ChimeTemplate {
 }
 
 impl item_template::ItemTemplate for ChimeTemplate {
-    fn name(&self) -> &str {
-        match self {
-            ChimeTemplate::ChimeOfLight => "& Chime| of Light^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDetectDoorsStairs => "& Chime| of Detect Doors/Stairs^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDetectTraps => "& Chime| of Detect Traps^ (%P1 charges)",
-            ChimeTemplate::ChimeOfTeleportation => "& Chime| of Teleportation^ (%P1 charges)",
-            ChimeTemplate::ChimeOfThunderblast => "& Chime| of Thunderblasts^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSummonMonster => "& Chime| of Summon Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDisarming => "& Chime| of Disarming^ (%P1 charges)",
-            ChimeTemplate::ChimeOfAggravation => "& Chime| of Aggravation^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSlowMonster => "& Chime| of Slow Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSootheMonster => "& Chime| of Soothe Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfCureLightWound => "& Chime| of Cure Light Wound^ (%P1 charges)",
-            ChimeTemplate::ChimeOfChanging => "& Chime| of Changing^ (%P1 charges)",
-            ChimeTemplate::ChimeOfRemoveCurse => "& Chime| of Remove Curse^ (%P1 charges)",
-            ChimeTemplate::ChimeOfCuring => "& Chime| of Curing^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDispelEvil => "& Chime| of Dispel Evil^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDarkness => "& Chime| of Darkness^ (%P1 charges)",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from("Chime"));
+        if self.is_identified() {
+            parts.push(Cow::from(match self {
+                ChimeTemplate::ChimeOfLight => " of Light",
+                ChimeTemplate::ChimeOfDetectDoorsStairs => " of Detect Doors/Stairs",
+                ChimeTemplate::ChimeOfDetectTraps => " of Detect Traps",
+                ChimeTemplate::ChimeOfTeleportation => " of Teleportation",
+                ChimeTemplate::ChimeOfThunderblast => " of Thunderblasts",
+                ChimeTemplate::ChimeOfSummonMonster => " of Summon Monster",
+                ChimeTemplate::ChimeOfDisarming => " of Disarming",
+                ChimeTemplate::ChimeOfAggravation => " of Aggravation",
+                ChimeTemplate::ChimeOfSlowMonster => " of Slow Monster",
+                ChimeTemplate::ChimeOfSootheMonster => " of Soothe Monster",
+                ChimeTemplate::ChimeOfCureLightWound => " of Cure Light Wound",
+                ChimeTemplate::ChimeOfChanging => " of Changing",
+                ChimeTemplate::ChimeOfRemoveCurse => " of Remove Curse",
+                ChimeTemplate::ChimeOfCuring => " of Curing",
+                ChimeTemplate::ChimeOfDispelEvil => " of Dispel Evil",
+                ChimeTemplate::ChimeOfDarkness => " of Darkness",
+            }));
         }
+        parts.push(item_name::charges(&item));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Chime }

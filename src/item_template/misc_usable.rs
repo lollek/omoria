@@ -1,11 +1,15 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {
     FlaskOfOil,
     IronSpike,
     Statue,
+    Teeth,
     SilverCross,
     GoldCross,
     MithrilCross,
@@ -19,6 +23,7 @@ impl MiscUsableTemplate {
             Box::new(MiscUsableTemplate::FlaskOfOil),
             Box::new(MiscUsableTemplate::IronSpike),
             Box::new(MiscUsableTemplate::Statue),
+            Box::new(MiscUsableTemplate::Teeth),
             Box::new(MiscUsableTemplate::SilverCross),
             Box::new(MiscUsableTemplate::GoldCross),
             Box::new(MiscUsableTemplate::MithrilCross),
@@ -35,6 +40,7 @@ impl MiscUsableTemplate {
         match subval {
             1 => Box::new(MiscUsableTemplate::IronSpike),
             14 => Box::new(MiscUsableTemplate::Statue),
+            15 => Box::new(MiscUsableTemplate::Teeth),
             16 => Box::new(MiscUsableTemplate::SilverCross),
             17 => Box::new(MiscUsableTemplate::GoldCross),
             18 => Box::new(MiscUsableTemplate::MithrilCross),
@@ -47,17 +53,65 @@ impl MiscUsableTemplate {
 }
 
 impl item_template::ItemTemplate for MiscUsableTemplate {
-    fn name(&self) -> &str {
+    fn name(&self, item: &model::Item) -> String {
+        let plural_s = || if item.number == 1 { "" } else { "s" };
+        let plural_es = || if item.number == 1 { "" } else { "es" };
+
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(
+            match self {
+                MiscUsableTemplate::FlaskOfOil => Cow::from(format!("Flask{} of Oil", plural_s())),
+                MiscUsableTemplate::IronSpike => Cow::from(format!("Iron Spike{}", plural_s())),
+                MiscUsableTemplate::Statue => Cow::from(format!("Iron Statue{}", plural_s())),
+                MiscUsableTemplate::Teeth => Cow::from("Teeth"),
+                MiscUsableTemplate::SilverCross => Cow::from(format!("Silver Cross{}", plural_es())),
+                MiscUsableTemplate::GoldCross => Cow::from(format!("Gold Cross{}", plural_es())),
+                MiscUsableTemplate::MithrilCross => Cow::from(format!("Mithril Cross{}", plural_es())),
+                MiscUsableTemplate::Cross => Cow::from(format!("Iron Cross{}", plural_es())),
+                MiscUsableTemplate::CorkedBottle => Cow::from(format!("Corked Bottle{}", plural_s())),
+            });
         match self {
-            MiscUsableTemplate::FlaskOfOil => "& Flask~ of Oil",
-            MiscUsableTemplate::IronSpike => "& Iron Spike~",
-            MiscUsableTemplate::Statue => "& %A Statue^",
-            MiscUsableTemplate::SilverCross => "& Silver Cross^",
-            MiscUsableTemplate::GoldCross => "& Gold Cross^",
-            MiscUsableTemplate::MithrilCross => "& Mithril Cross^",
-            MiscUsableTemplate::Cross => "& %M Cross^",
-            MiscUsableTemplate::CorkedBottle => "& Corked Bottle^",
+            MiscUsableTemplate::Teeth => {
+                if item.flags & 0x20000000 {
+                    parts.push(Cow::from(" from a Dragon"));
+                } else if item.flags & 0x40000000 {
+                    parts.push(Cow::from(" of a Demon"));
+                }
+            },
+            MiscUsableTemplate::Status => {
+                if item.flags & 0x00000100 {
+                    parts.push(Cow::from(" Major of Undead Summoning"));
+                } else if item.flags & 0x00000200 {
+                    parts.push(Cow::from(" Major of Demon Summoning"));
+                } else if item.flags & 0x00000400 {
+                    parts.push(Cow::from(" Life Giving"));
+                }
+            },
+            MiscUsableTemplate::SilverCross |
+            MiscUsableTemplate::GoldCross |
+            MiscUsableTemplate::MithrilCross => {
+                if item.flags & 0x00000001 {
+                    parts.push(Cow::from(" of Turning"));
+                } else if item.flags & 0x00000002 {
+                    parts.push(Cow::from(" of Demon Dispelling"));
+                }
+            },
+            MiscUsableTemplate::Cross => {
+                if item.flags & 0x00000004 {
+                    parts.push(Cow::from(" of Summon Undead"));
+                }
+            },
+            MiscUsableTemplate::CorkedBottle => {
+                if item.flags & 0x00000010 {
+                    parts.push(Cow::from(" containing a Djinni"));
+                } else if item.flags & 0x00000020 {
+                    parts.push(Cow::from(" containing some Demons"));
+                }
+            },
+            _ => ,
         }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType {
@@ -65,6 +119,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => model::ItemType::FlaskOfOil,
             MiscUsableTemplate::IronSpike => model::ItemType::Spike,
             MiscUsableTemplate::Statue => model::ItemType::MiscUsable,
+            MiscUsableTemplate::Teeth => model::ItemType::MiscUsable,
             MiscUsableTemplate::SilverCross => model::ItemType::MiscUsable,
             MiscUsableTemplate::GoldCross => model::ItemType::MiscUsable,
             MiscUsableTemplate::MithrilCross => model::ItemType::MiscUsable,
@@ -81,6 +136,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 0x00040000,
             MiscUsableTemplate::IronSpike => 0,
             MiscUsableTemplate::Statue => 0,
+            MiscUsableTemplate::Teeth => 0,
             MiscUsableTemplate::SilverCross => 0,
             MiscUsableTemplate::GoldCross => 0,
             MiscUsableTemplate::MithrilCross => 0,
@@ -94,6 +150,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 7500,
             MiscUsableTemplate::IronSpike => 0,
             MiscUsableTemplate::Statue => 0,
+            MiscUsableTemplate::Teeth => 0,
             MiscUsableTemplate::SilverCross => 0,
             MiscUsableTemplate::GoldCross => 0,
             MiscUsableTemplate::MithrilCross => 0,
@@ -107,6 +164,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 3,
             MiscUsableTemplate::IronSpike => 1,
             MiscUsableTemplate::Statue => 20,
+            MiscUsableTemplate::Teeth => 0,
             MiscUsableTemplate::SilverCross => 250,
             MiscUsableTemplate::GoldCross => 500,
             MiscUsableTemplate::MithrilCross => 750,
@@ -120,6 +178,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 257,
             MiscUsableTemplate::IronSpike => 1,
             MiscUsableTemplate::Statue => 14,
+            MiscUsableTemplate::Teeth => 15,
             MiscUsableTemplate::SilverCross => 16,
             MiscUsableTemplate::GoldCross => 17,
             MiscUsableTemplate::MithrilCross => 18,
@@ -133,6 +192,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 10,
             MiscUsableTemplate::IronSpike => 10,
             MiscUsableTemplate::Statue => 10,
+            MiscUsableTemplate::Teeth => 1,
             MiscUsableTemplate::SilverCross => 3,
             MiscUsableTemplate::GoldCross => 5,
             MiscUsableTemplate::MithrilCross => 10,
@@ -152,6 +212,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => "2d6",
             MiscUsableTemplate::IronSpike => "1d1",
             MiscUsableTemplate::Statue => "1d2",
+            MiscUsableTemplate::Teeth => "1d1",
             MiscUsableTemplate::SilverCross => "1d1",
             MiscUsableTemplate::GoldCross => "1d1",
             MiscUsableTemplate::MithrilCross => "1d1",
@@ -165,6 +226,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 10,
             MiscUsableTemplate::IronSpike => 20,
             MiscUsableTemplate::Statue => 1,
+            MiscUsableTemplate::Teeth => 1,
             MiscUsableTemplate::SilverCross => 25,
             MiscUsableTemplate::GoldCross => 1,
             MiscUsableTemplate::MithrilCross => 45,

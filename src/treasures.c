@@ -32,7 +32,6 @@ static void mt__ego_sword(treasure_type *treasure_ptr) {
 
   case 1: /*{Holy Avenger}*/
 
-    strcat(treasure_ptr->name, " (HA)");
     treasure_ptr->flags |=
         (See_Invisible_worn_bit | Sustain_Stat_worn_bit | Resist_Acid_worn_bit |
          Resist_Fire_worn_bit | Strength_worn_bit | Slay_Undead_worn_bit |
@@ -48,7 +47,6 @@ static void mt__ego_sword(treasure_type *treasure_ptr) {
 
   case 2: /*{Defender}*/
 
-    strcat(treasure_ptr->name, " [%P4] (DF)");
     treasure_ptr->flags |=
         (Feather_Fall_worn_bit | See_Invisible_worn_bit |
          Resist_Lightning_worn_bit | Free_Action_worn_bit |
@@ -65,7 +63,6 @@ static void mt__ego_sword(treasure_type *treasure_ptr) {
 
   case 3: /*{Demon Bane}*/
 
-    strcat(treasure_ptr->name, " (DB)");
     treasure_ptr->flags |= Resist_Fire_worn_bit;
     treasure_ptr->flags2 |= Slay_demon_worn_bit;
     treasure_ptr->tohit += 3;
@@ -75,7 +72,6 @@ static void mt__ego_sword(treasure_type *treasure_ptr) {
 
   case 4: /* {Soul Sword}*/
 
-    strcat(treasure_ptr->name, " (SS)");
     treasure_ptr->flags |=
         (Intelligence_worn_bit | Wisdom_worn_bit | Charisma_worn_bit |
          See_Invisible_worn_bit | Regeneration_worn_bit);
@@ -89,7 +85,6 @@ static void mt__ego_sword(treasure_type *treasure_ptr) {
 
   case 5: /*{Vorpal Sword}*/
 
-    strcat(treasure_ptr->name, " (V)");
     treasure_ptr->flags |= Sustain_Stat_worn_bit;
     treasure_ptr->flags2 |= Sharp_worn_bit;
     treasure_ptr->p1 = 1;
@@ -103,7 +98,6 @@ static void mt__ego_sword(treasure_type *treasure_ptr) {
 static void mt__slaying_sword(treasure_type *treasure_ptr) {
   switch (randint(4)) {
   case 1: /* {Slay Monster}*/
-    strcat(treasure_ptr->name, " (SM)");
     treasure_ptr->flags |= (See_Invisible_worn_bit | Slay_Monster_worn_bit);
     treasure_ptr->tohit += 3;
     treasure_ptr->todam += 3;
@@ -111,7 +105,6 @@ static void mt__slaying_sword(treasure_type *treasure_ptr) {
     break;
 
   case 2: /* {Slay Dragon}*/
-    strcat(treasure_ptr->name, " (SD)");
     treasure_ptr->flags |= Slay_Dragon_worn_bit;
     treasure_ptr->tohit += 3;
     treasure_ptr->todam += 3;
@@ -119,7 +112,6 @@ static void mt__slaying_sword(treasure_type *treasure_ptr) {
     break;
 
   case 3: /* {Slay Undead}*/
-    strcat(treasure_ptr->name, " (SU)");
     treasure_ptr->flags |= Slay_Undead_worn_bit;
     treasure_ptr->tohit += 2;
     treasure_ptr->todam += 2;
@@ -127,7 +119,6 @@ static void mt__slaying_sword(treasure_type *treasure_ptr) {
     break;
 
   case 4: /* {Slay Regenerative}*/
-    strcat(treasure_ptr->name, " (SR)");
     treasure_ptr->flags2 |= Slay_regen_worn_bit;
     treasure_ptr->tohit += 2;
     treasure_ptr->todam += 2;
@@ -139,7 +130,6 @@ static void mt__slaying_sword(treasure_type *treasure_ptr) {
 static void mt__magic_sword(treasure_type *treasure_ptr) {
   switch (randint(4)) {
   case 1: /* {Flame Tongue}*/
-    strcat(treasure_ptr->name, " (FT)");
     treasure_ptr->flags |= Flame_Brand_worn_bit;
     treasure_ptr->tohit += 1;
     treasure_ptr->todam += 3;
@@ -147,7 +137,6 @@ static void mt__magic_sword(treasure_type *treasure_ptr) {
     break;
 
   case 2: /* {Frost Brand}*/
-    strcat(treasure_ptr->name, " (FB)");
     treasure_ptr->flags |= Cold_Brand_worn_bit;
     treasure_ptr->tohit += 1;
     treasure_ptr->todam += 1;
@@ -155,7 +144,6 @@ static void mt__magic_sword(treasure_type *treasure_ptr) {
     break;
 
   case 3: /* {Wizards Blade}*/
-    strcat(treasure_ptr->name, " (WB)");
     treasure_ptr->flags2 |= Magic_proof_worn_bit;
     treasure_ptr->weight = trunc(treasure_ptr->weight * 4 / 5);
     treasure_ptr->tval = dagger; /* let mages use it */
@@ -165,7 +153,6 @@ static void mt__magic_sword(treasure_type *treasure_ptr) {
     break;
 
   case 4: /* {Blessed Blade}*/
-    strcat(treasure_ptr->name, " (BB)");
     treasure_ptr->flags2 |= Magic_proof_worn_bit;
     treasure_ptr->tval = maul; /* let priests use it */
     treasure_ptr->tohit += 2;
@@ -239,8 +226,7 @@ static void mt__gems(treasure_type *treasure_ptr) {
     p1 = randint(6) + 4;
     break;
   default:
-    MSG(("WARNING: Unknown subval in mt__gems: %ld  %s", treasure_ptr->subval,
-         treasure_ptr->name));
+    MSG(("WARNING: Unknown subval in mt__gems: %ld", treasure_ptr->subval));
     p1 = 0;
     break;
   }
@@ -253,19 +239,16 @@ static void mt__misc_usable(treasure_type *treasure_ptr) {
   case 14: /* statues */
     switch (randint(3)) {
     case 1: /* summoning undead */
-      strcat(treasure_ptr->name, " Major of Undead Summoning");
       treasure_ptr->flags |= 0x00000100;
       treasure_ptr->cost = 0;
       treasure_ptr->p1 = randint(4) + 2;
       break;
     case 2: /* summon demon */
-      strcat(treasure_ptr->name, " Major of Demon Summoning");
       treasure_ptr->flags |= 0x00000200;
       treasure_ptr->cost = 0;
       treasure_ptr->p1 = randint(3) + 1;
       break;
     case 3: /* Life giving */
-      strcat(treasure_ptr->name, " Life Giving");
       treasure_ptr->flags |= 0x00000400;
       treasure_ptr->cost = 900000;
       treasure_ptr->p1 = randint(5) + 3;
@@ -276,13 +259,11 @@ static void mt__misc_usable(treasure_type *treasure_ptr) {
   case 15: /* teeth ? */
     switch (randint(4)) {
     case 1:
-      strcat(treasure_ptr->name, " from a Dragon");
       treasure_ptr->p1 = randint(4) + 2;
       treasure_ptr->cost += treasure_ptr->p1 * 20000;
       treasure_ptr->flags |= 0x20000000;
       break;
     case 2:
-      strcat(treasure_ptr->name, " of a Demon");
       treasure_ptr->flags |= 0x40000000;
       treasure_ptr->p1 = randint(4) + 2;
       treasure_ptr->cost += treasure_ptr->p1 * 20000;
@@ -300,13 +281,11 @@ static void mt__misc_usable(treasure_type *treasure_ptr) {
     case 1:
     case 2:
     case 3:
-      strcat(treasure_ptr->name, " of Turning");
       treasure_ptr->flags |= 0x00000001;
       treasure_ptr->p1 = randint(treasure_ptr->p1 * 2) + 2;
       treasure_ptr->cost += treasure_ptr->p1 * 20000;
       break;
     case 4:
-      strcat(treasure_ptr->name, " of Demon Dispelling");
       treasure_ptr->flags |= 0x00000002;
       treasure_ptr->p1 = randint(trunc(treasure_ptr->subval / 2));
       treasure_ptr->cost += treasure_ptr->p1 * 50000;
@@ -314,14 +293,13 @@ static void mt__misc_usable(treasure_type *treasure_ptr) {
     break;
 
   case 19:
-    strcat(treasure_ptr->name, " of Summon Undead");
     treasure_ptr->flags |= 0x00000004;
     treasure_ptr->cost = 0;
     treasure_ptr->p1 = 2;
     break;
 
   case 20:
-    strcat(treasure_ptr->name, " of Demon Summoning");
+    //strcat(treasure_ptr->name, " of Demon Summoning");
     treasure_ptr->flags |= 0x00000008;
     treasure_ptr->cost = 0;
     treasure_ptr->p1 = 2;
@@ -330,14 +308,12 @@ static void mt__misc_usable(treasure_type *treasure_ptr) {
   case 21:
     switch (randint(3)) {
     case 1:
-      strcat(treasure_ptr->name, " containing a Djinni");
       treasure_ptr->flags |= 0x00000010;
       treasure_ptr->cost = 200000;
       treasure_ptr->p1 = 1;
       break;
     case 2:
     case 3:
-      strcat(treasure_ptr->name, " containing some Demons");
       treasure_ptr->flags |= 0x00000020;
       treasure_ptr->cost = 0;
       treasure_ptr->p1 = 1;
@@ -386,7 +362,6 @@ static void mt__armor_and_shields(treasure_type *treasure_ptr, long level,
       switch (randint(9)) {
 
       case 1: /*{ Resist }*/
-        strcat(treasure_ptr->name, " (R)");
         treasure_ptr->flags |=
             (Resist_Lightning_worn_bit | Resist_Cold_worn_bit |
              Resist_Acid_worn_bit | Resist_Fire_worn_bit);
@@ -395,21 +370,18 @@ static void mt__armor_and_shields(treasure_type *treasure_ptr, long level,
         break;
 
       case 2: /*{ Resist Acid	}*/
-        strcat(treasure_ptr->name, " (RA)");
         treasure_ptr->flags |= Resist_Acid_worn_bit;
         treasure_ptr->cost += 100000;
         break;
 
       case 3: /*{ Resist Fire	}*/
       case 4:
-        strcat(treasure_ptr->name, " (RF)");
         treasure_ptr->flags |= Resist_Fire_worn_bit;
         treasure_ptr->cost += 60000;
         break;
 
       case 5: /*{ Resist Cold	}*/
       case 6:
-        strcat(treasure_ptr->name, " (RC)");
         treasure_ptr->flags |= Resist_Cold_worn_bit;
         treasure_ptr->cost += 60000;
         break;
@@ -417,7 +389,6 @@ static void mt__armor_and_shields(treasure_type *treasure_ptr, long level,
       case 7: /*{ Resist Lightning}*/
       case 8:
       case 9:
-        strcat(treasure_ptr->name, " (RL)");
         treasure_ptr->flags |= Resist_Lightning_worn_bit;
         treasure_ptr->cost += 50000;
         break;
@@ -443,7 +414,6 @@ static void mt__weapons(treasure_type *treasure_ptr, long level,
 
     /* filthy rags? */
     if (treasure_ptr->subval == 99 && randint(5) == 1) {
-      strcat(treasure_ptr->name, " of Trollkind");
       treasure_ptr->flags |=
           (Charisma_worn_bit | Searching_worn_bit | Stealth_worn_bit |
            Regeneration_worn_bit | Resist_Acid_worn_bit | Resist_Cold_worn_bit);
@@ -482,7 +452,6 @@ static void mt__bows_and_slings(treasure_type *treasure_ptr, long level,
   if (is_magic) {
     treasure_ptr->tohit = mt__m_bonus(1, 30, level, forceit);
     if (is_special) {
-      strcat(treasure_ptr->name, " of Criticals");
       treasure_ptr->flags2 |= Sharp_worn_bit;
       treasure_ptr->tohit += 5;
       treasure_ptr->cost += 300000;
@@ -520,26 +489,22 @@ static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr, long level,
     if (is_special) {
       /* gloves_and_gauntlets 5 is "Set of Cloth Gloves" */
       if (treasure_ptr->subval == 5 && randint(10) == 1) {
-        strcat(treasure_ptr->name, " of the Hive");
         treasure_ptr->flags |= Dexterity_worn_bit;
         treasure_ptr->p1 = 2;
         treasure_ptr->cost += 50000;
       } else {
         switch (randint(5)) {
         case 1:
-          strcat(treasure_ptr->name, " of Free Action");
           treasure_ptr->flags |= Free_Action_worn_bit;
           treasure_ptr->cost += 100000;
           break;
         case 2:
-          strcat(treasure_ptr->name, " of Slaying");
           treasure_ptr->tohit = 1 + randint(3);
           treasure_ptr->todam = 1 + randint(3);
           treasure_ptr->cost +=
               (treasure_ptr->tohit + treasure_ptr->todam) * 25000;
           break;
         case 3:
-          strcat(treasure_ptr->name, " of Thievery (%P1)");
           treasure_ptr->flags2 |= Disarm_worn_bit;
           treasure_ptr->flags |=
               (Feather_Fall_worn_bit | See_Invisible_worn_bit);
@@ -548,7 +513,6 @@ static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr, long level,
           break;
         case 4:
         case 5:
-          strcat(treasure_ptr->name, " of Ogre Power");
           treasure_ptr->flags |= (Slow_Digestion_worn_bit | Strength_worn_bit);
           treasure_ptr->p1 = randint(4);
           treasure_ptr->cost += 150000;
@@ -560,17 +524,14 @@ static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr, long level,
     if (is_special) {
       switch (randint(3)) {
       case 1:
-        strcat(treasure_ptr->name, " of Clumsiness");
         treasure_ptr->flags |= (Cursed_worn_bit | Dexterity_worn_bit);
         treasure_ptr->p1 = 1;
         break;
       case 2:
-        strcat(treasure_ptr->name, " of Weakness");
         treasure_ptr->flags |= (Cursed_worn_bit | Strength_worn_bit);
         treasure_ptr->p1 = 1;
         break;
       case 3:
-        strcat(treasure_ptr->name, " of Ogre Intelligence");
         treasure_ptr->flags |= (Cursed_worn_bit | Intelligence_worn_bit);
         treasure_ptr->p1 = 1;
         break;
@@ -590,7 +551,6 @@ static void mt__boots(treasure_type *treasure_ptr, long level, boolean is_magic,
     if (is_special) {
       switch (randint(16)) {
       case 1:
-        strcat(treasure_ptr->name, " of Speed");
         treasure_ptr->flags |= Speed_worn_bit;
         treasure_ptr->p1 = 1;
         treasure_ptr->cost += 500000;
@@ -599,14 +559,12 @@ static void mt__boots(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 3:
       case 4:
       case 5:
-        strcat(treasure_ptr->name, " of Stealth");
         treasure_ptr->flags |= Stealth_worn_bit;
         treasure_ptr->cost += 50000;
         break;
       default:
         if (treasure_ptr->subval == 4 && randint(6) == 1) {
           /* Pair of Sandals */
-          strcat(treasure_ptr->name, " of Dryadkind");
           treasure_ptr->flags |=
               (Charisma_worn_bit | Feather_Fall_worn_bit |
                See_Invisible_worn_bit | Free_Action_worn_bit);
@@ -617,7 +575,6 @@ static void mt__boots(treasure_type *treasure_ptr, long level, boolean is_magic,
         }
       }
     } else {
-      strcat(treasure_ptr->name, " of Slow descent");
       treasure_ptr->flags |= Feather_Fall_worn_bit;
       treasure_ptr->cost += 25000;
     }
@@ -627,16 +584,13 @@ static void mt__boots(treasure_type *treasure_ptr, long level, boolean is_magic,
 
     switch (randint(3)) {
     case 1:
-      strcat(treasure_ptr->name, " of Slowness");
       treasure_ptr->flags |= (Cursed_worn_bit | Speed_worn_bit);
       treasure_ptr->p1 = -1;
       break;
     case 2:
-      strcat(treasure_ptr->name, " of Noise");
       treasure_ptr->flags |= (Cursed_worn_bit | Aggravation_worn_bit);
       break;
     case 3:
-      strcat(treasure_ptr->name, " of Great Mass");
       treasure_ptr->flags |= Cursed_worn_bit;
       treasure_ptr->weight *= 5;
       break;
@@ -655,19 +609,16 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 16: case 17: case 18:
         switch (randint(3)) {
         case 1:
-          strcat(treasure_ptr->name, " of Intelligence");
           treasure_ptr->flags |= Intelligence_worn_bit;
           treasure_ptr->p1 = randint(2);
           treasure_ptr->cost += treasure_ptr->p1 * 50000;
           break;
         case 2:
-          strcat(treasure_ptr->name, " of Wisdom");
           treasure_ptr->flags |= Wisdom_worn_bit;
           treasure_ptr->p1 = randint(2);
           treasure_ptr->cost += treasure_ptr->p1 * 50000;
           break;
         case 3:
-          strcat(treasure_ptr->name, " of Infra-Vision");
           treasure_ptr->flags |= Infra_Vision_worn_bit;
           treasure_ptr->p1 = 1 + randint(4);
           treasure_ptr->cost += treasure_ptr->p1 * 25000;
@@ -679,46 +630,39 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 19: case 20: case 21: case 22: case 23:
         switch (randint(6)) {
         case 1:
-          strcat(treasure_ptr->name, " of Might");
           treasure_ptr->flags |= (Free_Action_worn_bit | Constitution_worn_bit |
                                   Strength_worn_bit | Dexterity_worn_bit);
           treasure_ptr->p1 = randint(3);
           treasure_ptr->cost += 100000 + treasure_ptr->p1 * 50000;
           break;
         case 2:
-          strcat(treasure_ptr->name, " of Lordliness");
           treasure_ptr->flags |= (Wisdom_worn_bit | Charisma_worn_bit);
           treasure_ptr->p1 = randint(3);
           treasure_ptr->cost += 100000 + treasure_ptr->p1 * 50000;
           break;
         case 3:
-          strcat(treasure_ptr->name, " of the Magi");
           treasure_ptr->flags |= (Free_Action_worn_bit | Strength_worn_bit |
                                   Constitution_worn_bit | Dexterity_worn_bit);
           treasure_ptr->p1 = randint(3);
           treasure_ptr->cost += 300000 + treasure_ptr->p1 * 50000;
           break;
         case 4:
-          strcat(treasure_ptr->name, " of Beauty");
           treasure_ptr->flags |= Charisma_worn_bit;
           treasure_ptr->p1 = randint(3);
           treasure_ptr->cost += 75000;
           break;
         case 5:
-          strcat(treasure_ptr->name, " of Seeing");
           treasure_ptr->flags |= (See_Invisible_worn_bit | Searching_worn_bit);
           treasure_ptr->p1 = 1 + randint(4);
           treasure_ptr->cost += 100000 + treasure_ptr->p1 * 10000;
           break;
         case 6:
-          strcat(treasure_ptr->name, " of Regeneration");
           treasure_ptr->flags |= Regeneration_worn_bit;
           treasure_ptr->cost += 150000;
           break;
         }
         break;
       case 11:
-        strcat(treasure_ptr->name, " of Hobbitkind");
         treasure_ptr->flags |= (Infra_Vision_worn_bit | See_Invisible_worn_bit |
                                 Free_Action_worn_bit | Searching_worn_bit);
         treasure_ptr->p1 = 5;
@@ -733,45 +677,37 @@ static void mt__helms(treasure_type *treasure_ptr, long level, boolean is_magic,
       switch (randint(15)) {
       case 1:
       case 2:
-        strcat(treasure_ptr->name, " of Stupidity");
         treasure_ptr->flags |= Intelligence_worn_bit;
         treasure_ptr->p1 = -1;
         break;
       case 3:
       case 4:
-        strcat(treasure_ptr->name, " of Dullness");
         treasure_ptr->flags |= Wisdom_worn_bit;
         treasure_ptr->p1 = -1;
         break;
       case 5:
       case 6:
-        strcat(treasure_ptr->name, " of Blindness");
         treasure_ptr->flags |= Blindness_worn_bit;
         break;
       case 7:
       case 8:
-        strcat(treasure_ptr->name, " of Timidness");
         treasure_ptr->flags |= Timidness_worn_bit;
         break;
       case 9:
       case 10:
-        strcat(treasure_ptr->name, " of Weakness");
         treasure_ptr->flags |= Strength_worn_bit;
         treasure_ptr->p1 = -1;
         break;
       case 11:
       case 12:
-        strcat(treasure_ptr->name, " of Teleportation");
         treasure_ptr->flags |= Teleportation_worn_bit;
         break;
       case 13:
       case 14:
-        strcat(treasure_ptr->name, " of Ugliness");
         treasure_ptr->flags |= Charisma_worn_bit;
         treasure_ptr->p1 = -1;
         break;
       case 15:
-        strcat(treasure_ptr->name, " of **TOTAL DOOM**");
         treasure_ptr->flags |=
             (Cursed_worn_bit | Strength_worn_bit | Dexterity_worn_bit |
              Constitution_worn_bit | Intelligence_worn_bit | Wisdom_worn_bit |
@@ -799,7 +735,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
         switch (randint(16)) {
         case 1:
           if (randint(3) == 1) {
-            strcat(treasure_ptr->name, " of Titan Strength");
             treasure_ptr->flags |=
                 (Resist_Lightning_worn_bit | Resist_Fire_worn_bit |
                  Resist_Cold_worn_bit | Resist_Acid_worn_bit |
@@ -808,7 +743,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
             treasure_ptr->p1 = 7;
             treasure_ptr->cost += 7500000;
           } else {
-            strcat(treasure_ptr->name, " of Storm Giant Strength");
             treasure_ptr->flags |=
                 (Resist_Lightning_worn_bit | Resist_Acid_worn_bit);
             treasure_ptr->flags2 |= (Magic_proof_worn_bit);
@@ -817,7 +751,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
           }
           break;
         case 2:
-          strcat(treasure_ptr->name, " of Cloud Giant Strength");
           treasure_ptr->flags |=
               (Resist_Lightning_worn_bit | Resist_Acid_worn_bit);
           treasure_ptr->p1 = 5;
@@ -825,7 +758,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
           break;
         case 3:
         case 4:
-          strcat(treasure_ptr->name, " of Fire Giant Strength");
           treasure_ptr->flags |= Resist_Fire_worn_bit;
           treasure_ptr->p1 = 4;
           treasure_ptr->cost += 1750000;
@@ -833,7 +765,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
         case 5:
         case 6:
         case 7:
-          strcat(treasure_ptr->name, " of Frost Giant Strength");
           treasure_ptr->flags |= Resist_Cold_worn_bit;
           treasure_ptr->p1 = 3;
           treasure_ptr->cost += 1250000;
@@ -842,7 +773,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
         case 9:
         case 10:
         case 11:
-          strcat(treasure_ptr->name, " of Stone Giant Strength");
           treasure_ptr->p1 = 2;
           treasure_ptr->cost += 800000;
           break;
@@ -851,7 +781,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
         case 14:
         case 15:
         case 16:
-          strcat(treasure_ptr->name, " of Hill Giant Strength");
           treasure_ptr->p1 = 1;
           treasure_ptr->cost += 600000;
           break;
@@ -864,13 +793,11 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 11:
         switch (randint(2)) {
         case 1:
-          strcat(treasure_ptr->name, " of Deflection");
           treasure_ptr->flags2 |= Magic_proof_worn_bit;
           treasure_ptr->toac += randint(5);
           treasure_ptr->cost += treasure_ptr->toac * 20000;
           break;
         case 2:
-          strcat(treasure_ptr->name, " of Improved Digestion");
           treasure_ptr->flags |=
               (Sustain_Stat_worn_bit | Slow_Digestion_worn_bit);
           treasure_ptr->p1 = 2;
@@ -880,7 +807,6 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
         break;
 
       case 13: /* Leather Belt */
-        strcat(treasure_ptr->name, " of Dwarvenkind");
         treasure_ptr->flags |= (Infra_Vision_worn_bit | Tunneling_worn_bit |
                                 Sustain_Stat_worn_bit);
         treasure_ptr->flags2 |= Magic_proof_worn_bit;
@@ -898,12 +824,10 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 1: /* Girdle */
         switch (randint(2)) {
         case 1:
-          strcat(treasure_ptr->name, " of Sex Change");
           treasure_ptr->flags |= Charisma_worn_bit;
           treasure_ptr->p1 = -2;
           break;
         case 2:
-          strcat(treasure_ptr->name, " of Weakness");
           treasure_ptr->flags |= Strength_worn_bit;
           treasure_ptr->p1 = -1;
           break;
@@ -912,12 +836,10 @@ static void mt__belt(treasure_type *treasure_ptr, long level, boolean is_magic,
 
       case 10: /* Silver Belt Buckle, Gold Belt Buckle */
       case 11:
-        strcat(treasure_ptr->name, " of Fear");
         treasure_ptr->flags |= (Cursed_worn_bit | Timidness_worn_bit);
         treasure_ptr->p1 = -1;
         break;
       case 13: /* Leather Belt */
-        strcat(treasure_ptr->name, " of Hunger");
         treasure_ptr->flags |= Cursed_worn_bit;
         treasure_ptr->flags2 |= Hunger_worn_bit;
         treasure_ptr->p1 = -1;
@@ -1148,8 +1070,7 @@ static void mt__wand(treasure_type *treasure_ptr, boolean forceit) {
     p1 = randint(20) + 10;
     break;
   default:
-    MSG(("WARNING: Unknown subval in mt__wand: %ld  %s", treasure_ptr->subval,
-         treasure_ptr->name));
+    MSG(("WARNING: Unknown subval in mt__wand: %ld", treasure_ptr->subval));
     p1 = 0;
     break;
   }
@@ -1243,8 +1164,7 @@ static void mt__staff(treasure_type *treasure_ptr, boolean forceit) {
     p1 = randint(6) + 6;
     break;
   default:
-    MSG(("WARNING: Unknown subval in mt__staff: %ld  %s", treasure_ptr->subval,
-         treasure_ptr->name));
+    MSG(("WARNING: Unknown subval in mt__staff: %ld", treasure_ptr->subval));
     p1 = 0;
     break;
   }
@@ -1308,8 +1228,7 @@ static void mt__chime(treasure_type *treasure_ptr, boolean forceit) {
     p1 = randint(10) + 6;
     break;
   default:
-    MSG(("WARNING: Unknown subval in mt__chime: %ld  %s", treasure_ptr->subval,
-         treasure_ptr->name));
+    MSG(("WARNING: Unknown subval in mt__chime: %ld", treasure_ptr->subval));
     p1 = 0;
     break;
   }
@@ -1364,8 +1283,7 @@ static void mt__horn(treasure_type *treasure_ptr, boolean forceit) {
     p1 = randint(8) + 1;
     break;
   default:
-    MSG(("WARNING: Unknown subval in mt__horn: %ld  %s", treasure_ptr->subval,
-         treasure_ptr->name));
+    MSG(("WARNING: Unknown subval in mt__horn: %ld", treasure_ptr->subval));
     p1 = 0;
     break;
   }
@@ -1385,7 +1303,6 @@ static void mt__cloak(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 2:
       case 3:
       case 4:
-        strcat(treasure_ptr->name, " of Protection");
         treasure_ptr->toac = mt__m_bonus(2, 40, level, forceit);
         treasure_ptr->cost += 25000 + treasure_ptr->toac * 10000;
         break;
@@ -1393,7 +1310,6 @@ static void mt__cloak(treasure_type *treasure_ptr, long level, boolean is_magic,
       case 6:
       case 7:
       case 8:
-        strcat(treasure_ptr->name, " of Stealth (%P1)");
         treasure_ptr->flags |= Stealth_worn_bit;
         treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
         treasure_ptr->p1 = randint(3);
@@ -1401,7 +1317,6 @@ static void mt__cloak(treasure_type *treasure_ptr, long level, boolean is_magic,
             treasure_ptr->p1 * 50000 + treasure_ptr->toac * 10000;
         break;
       case 9:
-        strcat(treasure_ptr->name, " of Elvenkind");
         treasure_ptr->flags |= (See_Invisible_worn_bit | Sustain_Stat_worn_bit |
                                 Stealth_worn_bit | Charisma_worn_bit);
         treasure_ptr->p1 = 2;
@@ -1416,7 +1331,6 @@ static void mt__cloak(treasure_type *treasure_ptr, long level, boolean is_magic,
   } else if (is_cursed) {
     switch (randint(3)) {
     case 1:
-      strcat(treasure_ptr->name, " of Irritation");
       treasure_ptr->flags |= (Cursed_worn_bit | Aggravation_worn_bit);
       treasure_ptr->ac = 0;
       treasure_ptr->toac = -mt__m_bonus(1, 10, level, forceit);
@@ -1425,14 +1339,12 @@ static void mt__cloak(treasure_type *treasure_ptr, long level, boolean is_magic,
       treasure_ptr->cost = 0;
       break;
     case 2:
-      strcat(treasure_ptr->name, " of Vulnerability");
       treasure_ptr->flags |= Cursed_worn_bit;
       treasure_ptr->ac = 0;
       treasure_ptr->toac = -mt__m_bonus(10, 100, level + 50, forceit);
       treasure_ptr->cost = 0;
       break;
     case 3:
-      strcat(treasure_ptr->name, " of Enveloping");
       treasure_ptr->flags |= Cursed_worn_bit;
       treasure_ptr->toac = -mt__m_bonus(1, 10, level, forceit);
       treasure_ptr->tohit = -mt__m_bonus(2, 40, level + 10, forceit);
@@ -1456,51 +1368,41 @@ static void mt__chest(treasure_type *treasure_ptr, long level) {
 
   if (treasure_ptr->subval == 5) {
     /* dead human body */
-    strcat(treasure_ptr->name, "^ (Looted)");
   } else {
     switch (randint(level) + 4) {
     case 1:
-      strcat(treasure_ptr->name, "^ (Empty)");
       break;
     case 2:
-      strcat(treasure_ptr->name, "^ (Locked)");
       treasure_ptr->flags |= 0x00000001;
       break;
     case 3:
     case 4:
-      strcat(treasure_ptr->name, "^ (Poison Needle)");
       treasure_ptr->flags |= 0x00000011;
       break;
     case 5:
     case 6:
-      strcat(treasure_ptr->name, "^ (Poison Needle)");
       treasure_ptr->flags |= 0x00000021;
       break;
     case 7:
     case 8:
     case 9:
-      strcat(treasure_ptr->name, "^ (Gas Trap)");
       treasure_ptr->flags |= 0x00000041;
       break;
     case 10:
     case 11:
-      strcat(treasure_ptr->name, "^ (Explosion Device)");
       treasure_ptr->flags |= 0x00000081;
       break;
     case 12:
     case 13:
     case 14:
-      strcat(treasure_ptr->name, "^ (Summoning Runes)");
       treasure_ptr->flags |= 0x00000101;
       break;
     case 15:
     case 16:
     case 17:
-      strcat(treasure_ptr->name, "^ (Multiple Traps)");
       treasure_ptr->flags |= 0x00000071;
       break;
     default:
-      strcat(treasure_ptr->name, "^ (Multiple Traps)");
       treasure_ptr->flags |= 0x00000181;
       break;
     }
@@ -1532,14 +1434,12 @@ static void mt__ammo(treasure_type *treasure_ptr, long level, boolean is_magic,
           case 1:
           case 2:
           case 3:
-            strcat(treasure_ptr->name, " of Slaying");
             treasure_ptr->tohit += 5;
             treasure_ptr->todam += 5;
             treasure_ptr->cost += 2000;
             break;
           case 4:
           case 5:
-            strcat(treasure_ptr->name, " of Fire");
             treasure_ptr->flags |= Flame_Brand_worn_bit;
             treasure_ptr->tohit += 2;
             treasure_ptr->todam += 4;
@@ -1547,7 +1447,6 @@ static void mt__ammo(treasure_type *treasure_ptr, long level, boolean is_magic,
             break;
           case 6:
           case 7:
-            strcat(treasure_ptr->name, " of Slay Evil");
             treasure_ptr->flags |= Slay_Evil_worn_bit;
             treasure_ptr->tohit += 3;
             treasure_ptr->todam += 3;
@@ -1555,14 +1454,12 @@ static void mt__ammo(treasure_type *treasure_ptr, long level, boolean is_magic,
             break;
           case 8:
           case 9:
-            strcat(treasure_ptr->name, " of Slay Monster");
             treasure_ptr->flags |= Slay_Monster_worn_bit;
             treasure_ptr->tohit += 2;
             treasure_ptr->todam += 2;
             treasure_ptr->cost += 3000;
             break;
           case 10:
-            strcat(treasure_ptr->name, " of Dragon Slaying");
             treasure_ptr->flags |= Slay_Dragon_worn_bit;
             treasure_ptr->tohit += 10;
             treasure_ptr->todam += 10;

@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BracersTemplate {
@@ -78,27 +81,66 @@ impl BracersTemplate {
 }
 
 impl item_template::ItemTemplate for BracersTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BracersTemplate::BracersOfProtection => "Bracers^ of Protection [%P6,%P4]",
-            BracersTemplate::BracersOfDefense => "Bracers^ of Defense [%P6,%P4]",
-            BracersTemplate::BracersOfShielding => "Bracers^ of Shielding [%P6,%P4]",
-            BracersTemplate::MithrilBracers => "Mithril Bracers^ [%P6,%P4]",
-            BracersTemplate::AdamantiteBracers => "Adamantite Bracers^ [%P6,%P4]",
-            BracersTemplate::BracersOfWeaponAttraction => "Bracers^ of Weapon Attraction [%P6,%P4]",
-            BracersTemplate::SilverBraceletOfWarding => "Silver Bracelet^ of Warding [%P6,%P4] (R)",
-            BracersTemplate::SilverBracelet => "Silver Bracelet^ [%P6,%P4]",
-            BracersTemplate::GoldBracelet => "Gold Bracelet^ [%P6,%P4]",
-            BracersTemplate::PlatinumBracelet => "Platinum Bracelet^ [%P6,%P4]",
-            BracersTemplate::LeatherBracers => "Leather Bracers^ [%P6,%P4]",
-            BracersTemplate::StuddedLeatherBracers => "Studded Leather Bracers^ [%P6,%P4]",
-            BracersTemplate::LightPlatedBracers => "Light Plated Bracers^ [%P6,%P4]",
-            BracersTemplate::SharkskinBracers => "Sharkskin Bracers^ [%P6,%P4]",
-            BracersTemplate::DemonhideBracers => "Demonhide Bracers^ [%P6,%P4]",
-            BracersTemplate::WyrmhideBracers => "Wyrmhide Bracers^ [%P6,%P4]",
-            BracersTemplate::ChainmailBracers => "Chainmail Bracers^ [%P6,%P4]",
-            BracersTemplate::LamellarBracers => "Lamellar Bracers^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                BracersTemplate::BracersOfProtection =>
+                    if self.is_identified() {
+                        "Bracers of Protection"
+                    } else {
+                        "Bracers"
+                    },
+                BracersTemplate::BracersOfDefense =>
+                    if self.is_identified() {
+                        "Bracers of Defense"
+                    } else {
+                        "Bracers"
+                    },
+                BracersTemplate::BracersOfShielding =>
+                    if self.is_identified() {
+                        "Bracers of Shielding"
+                    } else {
+                        "Bracers"
+                    },
+                BracersTemplate::MithrilBracers =>
+                    "Mithril Bracers",
+                BracersTemplate::AdamantiteBracers =>
+                    "Adamantite Bracers",
+                BracersTemplate::BracersOfWeaponAttraction =>
+                    if self.is_identified() {
+                        "Bracers of Weapon Attaction"
+                    } else {
+                        "Bracers"
+                    },
+                BracersTemplate::SilverBraceletOfWarding =>
+                    if self.is_identified() {
+                        "Silver Bracers of Warding"
+                    } else {
+                        "Silver Bracers"
+                    },
+                BracersTemplate::SilverBracelet =>
+                    "Silver Bracelet",
+                BracersTemplate::GoldBracelet =>
+                    "Gold Bracelet",
+                BracersTemplate::PlatinumBracelet =>
+                    "Platinum Bracelet",
+                BracersTemplate::LeatherBracers =>
+                    "Leather Bracers",
+                BracersTemplate::StuddedLeatherBracers =>
+                    "Studded Leather Bracers",
+                BracersTemplate::LightPlatedBracers =>
+                    "Light Plated Bracers",
+                BracersTemplate::SharkskinBracers =>
+                    "Sharkskin Bracers",
+                BracersTemplate::DemonhideBracers =>
+                    "Demonhide Bracers",
+                BracersTemplate::WyrmhideBracers =>
+                    "Wyrmhide Bracers",
+                BracersTemplate::ChainmailBracers =>
+                    "Chainmail Bracers",
+                BracersTemplate::LamellarBracers =>
+                    "Lamellar Bracers",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }

@@ -261,7 +261,6 @@ static void b__misc_effects(long effect, boolean *idented,
     break;
 
   case 5: /*{Cross}*/
-    strcat(item_ptr->data.name, "(Empty)");
     msg_print("You free a Djinni from the bottle!");
     msg_print("He grants you a wish...");
     msg_print("'I will raise one of your stats by two...'");
@@ -285,7 +284,6 @@ static void b__misc_effects(long effect, boolean *idented,
       summon_demon(&x, &y);
     }
     player_flags.paralysis += 2;
-    strcat(item_ptr->data.name, "(Empty)");
     ident = true;
     break;
 
@@ -540,7 +538,7 @@ void blow() {
             }
 
             if (ident) {
-              identify(&(inven_temp.data));
+              set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
             }
             if (inven_temp.data.flags != 0) {
               /* with player_do; */

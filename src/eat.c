@@ -293,7 +293,7 @@ void eat() {
   boolean const identify_effect = __apply_food_effects(item_ptr);
 
   if (identify_effect) {
-    identify(&(item_ptr->data));
+    set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
   }
 
   if (item_ptr->data.flags != 0 && item_ptr->data.level > 0) {

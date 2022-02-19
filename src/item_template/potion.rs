@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PotionTemplate {
@@ -158,54 +161,61 @@ impl PotionTemplate {
 }
 
 impl item_template::ItemTemplate for PotionTemplate {
-    fn name(&self) -> &str {
-        match self {
-            PotionTemplate::AppleJuice => "& Potion~| of Apple Juice",
-            PotionTemplate::Blindness => "& Potion~| of Blindness",
-            PotionTemplate::Boldliness => "& Potion~| of Boldliness",
-            PotionTemplate::Charisma => "& Potion~| of Charisma",
-            PotionTemplate::Confusion => "& Potion~| of Confusion",
-            PotionTemplate::CureCriticalWounds => "& Potion~| of Cure Critical Wounds",
-            PotionTemplate::CureLightWounds => "& Potion~| of Cure Light Wounds",
-            PotionTemplate::CureSeriousWounds => "& Potion~| of Cure Serious Wounds",
-            PotionTemplate::DetectInvisible => "& Potion~| of Detect Invisible",
-            PotionTemplate::FleaBile => "& Potion~| of Flea Bile",
-            PotionTemplate::GainConstitution => "& Potion~| of Gain Constitution",
-            PotionTemplate::GainDexterity => "& Potion~| of Gain Dexterity",
-            PotionTemplate::GainExperience => "& Potion~| of Gain Experience",
-            PotionTemplate::GainIntelligence => "& Potion~| of Restore Strength",
-            PotionTemplate::GainStrength => "& Potion~| of Gain Strength",
-            PotionTemplate::GainWisdom => "& Potion~| of Gain Wisdom",
-            PotionTemplate::HasteSelf => "& Potion~| of Haste Self",
-            PotionTemplate::Healing => "& Potion~| of Healing",
-            PotionTemplate::Heroism => "& Potion~| of Heroism",
-            PotionTemplate::InfraVision => "& Potion~| of Infra-Vision",
-            PotionTemplate::Invulnerability => "& Potion~| of Invulnerability",
-            PotionTemplate::Learning => "& Potion~| of Learning",
-            PotionTemplate::LoseIntelligence => "& Potion~| of Lose Intelligence",
-            PotionTemplate::LoseMemories => "& Potion~| of Lose Memories",
-            PotionTemplate::LoseWisdom => "& Potion~| of Lose Wisdom",
-            PotionTemplate::NeutralizePoison => "& Potion~| of Neutralize Poison",
-            PotionTemplate::Poison => "& Potion~| of Poison",
-            PotionTemplate::ResistCold => "& Potion~| of Resist Cold",
-            PotionTemplate::ResistHeat => "& Potion~| of Resist Heat",
-            PotionTemplate::RestoreCharisma => "& Potion~| of Restore Charisma",
-            PotionTemplate::RestoreConstitution => "& Potion~| of Restore Consitution",
-            PotionTemplate::RestoreDexterity => "& Potion~| of Restore Dexterity",
-            PotionTemplate::RestoreIntelligence => "& Potion~| of Restore Intelligence",
-            PotionTemplate::RestoreLifeLevels => "& Potion~| of Restore Life Levels",
-            PotionTemplate::RestoreMana => "& Potion~| of Restore Mana",
-            PotionTemplate::RestoreStrength => "& Potion~| of Restore Strength",
-            PotionTemplate::RestoreWisdom => "& Potion~| of Restore Wisdom",
-            PotionTemplate::SaltWater => "& Potion~| of Salt Water",
-            PotionTemplate::Sleep => "& Potion~| of Sleep",
-            PotionTemplate::SlimeMoldJuice => "& Potion~| of Slime Mold Juice",
-            PotionTemplate::SlowPoison => "& Potion~| of Slow Poison",
-            PotionTemplate::Slowness => "& Potion~| of Slowness",
-            PotionTemplate::SuperHeroism => "& Potion~| of Super Heroism",
-            PotionTemplate::Ugliness => "& Potion~| of Ugliness",
-            PotionTemplate::Water => "& Potion~| of Water",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(Cow::from(if item.number == 1 { "Potion" } else { "Potions" }));
+        if self.is_identified() {
+            parts.push(
+                Cow::from(match self {
+                    PotionTemplate::AppleJuice => " of Apple Juice",
+                    PotionTemplate::Blindness => " of Blindness",
+                    PotionTemplate::Boldliness => " of Boldliness",
+                    PotionTemplate::Charisma => " of Charisma",
+                    PotionTemplate::Confusion => " of Confusion",
+                    PotionTemplate::CureCriticalWounds => " of Cure Critical Wounds",
+                    PotionTemplate::CureLightWounds => " of Cure Light Wounds",
+                    PotionTemplate::CureSeriousWounds => " of Cure Serious Wounds",
+                    PotionTemplate::DetectInvisible => " of Detect Invisible",
+                    PotionTemplate::FleaBile => " of Flea Bile",
+                    PotionTemplate::GainConstitution => " of Gain Constitution",
+                    PotionTemplate::GainDexterity => " of Gain Dexterity",
+                    PotionTemplate::GainExperience => " of Gain Experience",
+                    PotionTemplate::GainIntelligence => " of Restore Strength",
+                    PotionTemplate::GainStrength => " of Gain Strength",
+                    PotionTemplate::GainWisdom => " of Gain Wisdom",
+                    PotionTemplate::HasteSelf => " of Haste Self",
+                    PotionTemplate::Healing => " of Healing",
+                    PotionTemplate::Heroism => " of Heroism",
+                    PotionTemplate::InfraVision => " of Infra-Vision",
+                    PotionTemplate::Invulnerability => " of Invulnerability",
+                    PotionTemplate::Learning => " of Learning",
+                    PotionTemplate::LoseIntelligence => " of Lose Intelligence",
+                    PotionTemplate::LoseMemories => " of Lose Memories",
+                    PotionTemplate::LoseWisdom => " of Lose Wisdom",
+                    PotionTemplate::NeutralizePoison => " of Neutralize Poison",
+                    PotionTemplate::Poison => " of Poison",
+                    PotionTemplate::ResistCold => " of Resist Cold",
+                    PotionTemplate::ResistHeat => " of Resist Heat",
+                    PotionTemplate::RestoreCharisma => " of Restore Charisma",
+                    PotionTemplate::RestoreConstitution => " of Restore Consitution",
+                    PotionTemplate::RestoreDexterity => " of Restore Dexterity",
+                    PotionTemplate::RestoreIntelligence => " of Restore Intelligence",
+                    PotionTemplate::RestoreLifeLevels => " of Restore Life Levels",
+                    PotionTemplate::RestoreMana => " of Restore Mana",
+                    PotionTemplate::RestoreStrength => " of Restore Strength",
+                    PotionTemplate::RestoreWisdom => " of Restore Wisdom",
+                    PotionTemplate::SaltWater => " of Salt Water",
+                    PotionTemplate::Sleep => " of Sleep",
+                    PotionTemplate::SlimeMoldJuice => " of Slime Mold Juice",
+                    PotionTemplate::SlowPoison => " of Slow Poison",
+                    PotionTemplate::Slowness => " of Slowness",
+                    PotionTemplate::SuperHeroism => " of Super Heroism",
+                    PotionTemplate::Ugliness => " of Ugliness",
+                    PotionTemplate::Water => " of Water",
+                }))
         }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Potion }

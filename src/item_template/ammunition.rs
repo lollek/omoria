@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {
@@ -35,13 +38,20 @@ impl AmmunitionTemplate {
 }
 
 impl item_template::ItemTemplate for AmmunitionTemplate {
-    fn name(&self) -> &str {
-        match self {
-            AmmunitionTemplate::Arrow => "& Arrow~^ (%P2,%P3)",
-            AmmunitionTemplate::Bolt => "& Bolt~^ (%P2,%P3)",
-            AmmunitionTemplate::RoundedPebble => "& Rounded Pebble~^ (%P2,%P3)",
-            AmmunitionTemplate::IronShot => "& Iron Shot~^ (%P2,%P3)",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        let plural_s = || if item.number == 1 { "" } else { "s" };
+
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(Cow::from(
+            match self {
+                AmmunitionTemplate::Arrow => format!("Arrow{}", plural_s()),
+                AmmunitionTemplate::Bolt => format!("Bolt{}", plural_s()),
+                AmmunitionTemplate::RoundedPebble => format!("Rounded Pebble{}", plural_s()),
+                AmmunitionTemplate::IronShot => format!("Iron Shot{}", plural_s()),
+            }));
+        parts.push(item_name::attack_enchantment(&item));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType {

@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SwordTemplate {
@@ -66,23 +69,24 @@ impl SwordTemplate {
 }
 
 impl item_template::ItemTemplate for SwordTemplate {
-    fn name(&self) -> &str {
-        match self {
-            SwordTemplate::Backsword => "Backsword (%P0)^ (%P2,%P3)",
-            SwordTemplate::BastardSword => "Bastard Sword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Broadsword => "Broadsword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Claymore => "Claymore (%P0)^ (%P2,%P3)",
-            SwordTemplate::Cutlass => "Cutlass (%P0)^ (%P2,%P3)",
-            SwordTemplate::Espadon => "Espadon (%P0)^ (%P2,%P3)",
-            SwordTemplate::ExecutionersSword => "Executioner's Sword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Flamberge => "Flamberge (%P0)^ (%P2,%P3)",
-            SwordTemplate::Katana => "Katana (%P0)^ (%P2,%P3)",
-            SwordTemplate::Longsword => "Longsword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Nodachi => "No-Dachi (%P0)^ (%P2,%P3)",
-            SwordTemplate::Sabre => "Sabre (%P0)^ (%P2,%P3)",
-            SwordTemplate::Zweihander => "Zweihander (%P0)^ (%P2,%P3)",
-            SwordTemplate::BrokenSword => "Broken Sword (%P0)^ (%P2,%P3)",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_weapon_name(item,
+            Cow::from(match self {
+                SwordTemplate::Backsword => "Backsword",
+                SwordTemplate::BastardSword => "Bastard Sword",
+                SwordTemplate::Broadsword => "Broadsword",
+                SwordTemplate::Claymore => "Claymore",
+                SwordTemplate::Cutlass => "Cutlass",
+                SwordTemplate::Espadon => "Espadon",
+                SwordTemplate::ExecutionersSword => "Executioner's Sword",
+                SwordTemplate::Flamberge => "Flamberge",
+                SwordTemplate::Katana => "Katana",
+                SwordTemplate::Longsword => "Longsword",
+                SwordTemplate::Nodachi => "No-Dachi",
+                SwordTemplate::Sabre => "Sabre",
+                SwordTemplate::Zweihander => "Zweihander",
+                SwordTemplate::BrokenSword => "Broken Sword",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Sword }

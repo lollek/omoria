@@ -21,6 +21,7 @@ pub mod dungeon;
 pub mod equipment;
 pub mod error;
 pub mod highscore;
+pub mod identification;
 pub mod io;
 pub mod logic;
 pub mod magic;

@@ -35,13 +35,13 @@ impl LodgingAtInnTemplate {
 }
 
 impl item_template::ItemTemplate for LodgingAtInnTemplate {
-    fn name(&self) -> &str {
+    fn name(&self, _item: &model::Item) -> String {
         match self {
             LodgingAtInnTemplate::LodgingForOneDay => "Lodging for one day",
             LodgingAtInnTemplate::LodgingForThreeDays => "Lodging for three days",
             LodgingAtInnTemplate::LodgingForOneWeek => "Lodging for the week",
             LodgingAtInnTemplate::RoomAndBoardForOneDay => "Room and board for one day",
-        }
+        }.to_string()
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::LodgingAtInn }

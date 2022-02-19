@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ShieldTemplate {
@@ -51,18 +54,21 @@ impl ShieldTemplate {
 
 impl item_template::ItemTemplate for ShieldTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            ShieldTemplate::SmallLeatherShield => "Small Leather Shield^ [%P6,%P4]",
-            ShieldTemplate::MediumLeatherShield => "Medium Leather Shield^ [%P6,%P4]",
-            ShieldTemplate::LargeLeatherShield => "Large Leather Shield^ [%P6,%P4]",
-            ShieldTemplate::Buckler => "Buckler^ [%P6,%P4]",
-            ShieldTemplate::KiteShield => "Kite Shield^ [%P6,%P4]",
-            ShieldTemplate::TowerShield => "Tower Shield^ [%P6,%P4]",
-            ShieldTemplate::SharkskinShield => "Sharkskin Shield^ [%P6,%P4]",
-            ShieldTemplate::DemonhideShield => "Demonhide Shield^ [%P6,%P4]",
-            ShieldTemplate::WyrmhideShield => "Wyrmhide Shield^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from(match self {
+            ShieldTemplate::SmallLeatherShield => "Small Leather Shield",
+            ShieldTemplate::MediumLeatherShield => "Medium Leather Shield",
+            ShieldTemplate::LargeLeatherShield => "Large Leather Shield",
+            ShieldTemplate::Buckler => "Buckler",
+            ShieldTemplate::KiteShield => "Kite Shield",
+            ShieldTemplate::TowerShield => "Tower Shield",
+            ShieldTemplate::SharkskinShield => "Sharkskin Shield",
+            ShieldTemplate::DemonhideShield => "Demonhide Shield",
+            ShieldTemplate::WyrmhideShield => "Wyrmhide Shield",
+        }));
+        parts.push(item_name::armor(&item));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Shield }

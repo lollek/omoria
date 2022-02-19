@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum JunkFoodTemplate {
@@ -62,22 +65,28 @@ impl JunkFoodTemplate {
 }
 
 impl item_template::ItemTemplate for JunkFoodTemplate {
-    fn name(&self) -> &str {
-        match self {
-            JunkFoodTemplate::BoxOfPiranhaCrackers => "& Box~ of Piranha Crackers",
-            JunkFoodTemplate::CanOfOrcaCola => "& Can~ of Orca-Cola",
-            JunkFoodTemplate::TwelvePoundTrollBuger => "& Twelve-Pound Troll Burger~",
-            JunkFoodTemplate::BagOfBrontosaurusChips => "& Bag~ of Brontosaurus Chips",
-            JunkFoodTemplate::SliceOfPurpleMushroomPizza => "& Slice~ of Purple Mushroom Pizza",
-            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => "& Peanut Butter and Grape Jelly Sandwich~",
-            JunkFoodTemplate::DragonSteak => "& Dragon Steak~",
-            JunkFoodTemplate::VorpalBunnyThroatLozenge => "& Vorpal Bunny Throat Lozenge~",
-            JunkFoodTemplate::DeepFriedGiantCentipede => "& Deep-Fried Giant Centipede~",
-            JunkFoodTemplate::PintOfBeetleJuice => "& Pint~ of Beetle Juice",
-            JunkFoodTemplate::BownOfBatStew => "& Bowl~ of Bat Stew",
-            JunkFoodTemplate::JarOfPickledLeeches => "& Jar~ of Pickled Leeches",
-            JunkFoodTemplate::PackOfKittenMcNuggets => "& Pack~ of Kitten McNuggets",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        let plural_s = || if item.number == 1 { "" } else { "s" };
+
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(item));
+        parts.push(Cow::from(
+                match self {
+                    JunkFoodTemplate::BoxOfPiranhaCrackers => format!("Box{} of Piranha Crackers", plural_s()),
+                    JunkFoodTemplate::CanOfOrcaCola => format!("Can{} of Orca-Cola", plural_s()),
+                    JunkFoodTemplate::TwelvePoundTrollBuger => format!("Twelve-Pound Troll Burger{}", plural_s()),
+                    JunkFoodTemplate::BagOfBrontosaurusChips => format!("Bag{} of Brontosaurus Chips", plural_s()),
+                    JunkFoodTemplate::SliceOfPurpleMushroomPizza => format!("Slice{} of Purple Mushroom Pizza", plural_s()),
+                    JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => format!("Peanut Butter and Grape Jelly Sandwich{}", plural_s()),
+                    JunkFoodTemplate::DragonSteak => format!("Dragon Steak{}", plural_s()),
+                    JunkFoodTemplate::VorpalBunnyThroatLozenge => format!("Vorpal Bunny Throat Lozenge{}", plural_s()),
+                    JunkFoodTemplate::DeepFriedGiantCentipede => format!("Deep-Fried Giant Centipede{}", plural_s()),
+                    JunkFoodTemplate::PintOfBeetleJuice => format!("Pint{} of Beetle Juice", plural_s()),
+                    JunkFoodTemplate::BownOfBatStew => format!("Bowl{} of Bat Stew", plural_s()),
+                    JunkFoodTemplate::JarOfPickledLeeches => format!("Jar{} of Pickled Leeches", plural_s()),
+                    JunkFoodTemplate::PackOfKittenMcNuggets => format!("Pack{} of Kitten McNuggets", plural_s()),
+                }));
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::JunkFood }

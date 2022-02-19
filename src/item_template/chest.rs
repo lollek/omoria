@@ -41,15 +41,39 @@ impl ChestTemplate {
 }
 
 impl item_template::ItemTemplate for ChestTemplate {
-    fn name(&self) -> &str {
-        match self {
-            ChestTemplate::SmallWoodenChest => "& Small wooden chest",
-            ChestTemplate::LargeWoodenChest => "& Large wooden chest",
-            ChestTemplate::SmallIronChest => "& Small iron chest",
-            ChestTemplate::LargeIronChest => "& Large iron chest",
-            ChestTemplate::SmallSteelChest => "& Small steel chest",
-            ChestTemplate::LargeSteelChest => "& Large steel chest",
+    fn name(&self, _item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(Cow::from(
+            match self {
+                ChestTemplate::SmallWoodenChest => "Small wooden chest",
+                ChestTemplate::LargeWoodenChest => "Large wooden chest",
+                ChestTemplate::SmallIronChest => "Small iron chest",
+                ChestTemplate::LargeIronChest => "Large iron chest",
+                ChestTemplate::SmallSteelChest => "Small steel chest",
+                ChestTemplate::LargeSteelChest => "Large steel chest",
+            }));
+        if item.is_identified() {
+            if item.subval == 5 { // Dead human body
+                parts.push(Cow::from(" (Looted)"));
+            } else if item.flags & 0x00000181 {
+                parts.push(Cow::from(" (Multiple Traps)"));
+            } else if item.flags & 0x00000071 {
+                parts.push(Cow::from(" (Multiple Traps)"));
+            } else if item.flags & 0x00000101 {
+                parts.push(Cow::from(" (Summoning Runes)"));
+            } else if item.flags & 0x00000081 {
+                parts.push(Cow::from(" (Explosion Device)"));
+            } else if item.flags & 0x00000041 {
+                parts.push(Cow::from(" (Gas Trap)"));
+            } else if item.flags & 0x00000021 {
+                parts.push(Cow::from(" (Poison Needle)"));
+            } else if item.flags & 0x00000011 {
+                parts.push(Cow::from(" (Poison Needle)"));
+            } else if item.flags & 0x00000001 {
+                parts.push(Cow::from(" (Locked)"));
+            }
         }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::Chest }

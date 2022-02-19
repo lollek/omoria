@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum WearableGemTemplate {
@@ -44,16 +47,23 @@ impl WearableGemTemplate {
 }
 
 impl item_template::ItemTemplate for WearableGemTemplate {
-    fn name(&self) -> &str {
-        match self {
-            WearableGemTemplate::GemOfTeleportation => "& Finely cut| of Teleportation^",
-            WearableGemTemplate::GemOfResistCold => "& Finely cut| of Resist Cold^",
-            WearableGemTemplate::GemOfResistAcid => "& Finely cut| of Resist Acid^",
-            WearableGemTemplate::GemOfSeeInvisible => "& Finely cut| of See Invisible^",
-            WearableGemTemplate::GemOfStealth => "& Finely cut| of Stealth^",
-            WearableGemTemplate::GemOfSlowDigestion => "& Finely cut| of Slow Digestion^",
-            WearableGemTemplate::GemOfProtectFire => "& Finely cut| of Lordly Protection (FIRE)^",
+    fn name(&self, item: &model::Item) -> String {
+        let mut parts = Vec::new();
+        parts.push(item_name::number_of(&item));
+        parts.push(Cow::from("Finely Cut Gem"));
+        if self.is_identified() {
+            parts.push(
+                Cow::from(match self {
+                    WearableGemTemplate::GemOfTeleportation => " of Teleportation",
+                    WearableGemTemplate::GemOfResistCold => " of Resist Cold",
+                    WearableGemTemplate::GemOfResistAcid => " of Resist Acid",
+                    WearableGemTemplate::GemOfSeeInvisible => " of See Invisible",
+                    WearableGemTemplate::GemOfStealth => " of Stealth",
+                    WearableGemTemplate::GemOfSlowDigestion => " of Slow Digestion",
+                    WearableGemTemplate::GemOfProtectFire => " of Lordly Protection (FIRE)",
+                }));
         }
+        parts.join("")
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::WearableGem }

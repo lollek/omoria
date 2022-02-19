@@ -5,7 +5,6 @@ use item_template;
 pub trait ItemTemplate {
     fn create(&self) -> model::Item {
         model::Item {
-            name: misc::rs2item_name(self.name()),
             tval: self.item_type() as u8,
             flags: self.flags1(),
             flags2: self.flags2(),
@@ -24,7 +23,7 @@ pub trait ItemTemplate {
         }
     }
 
-    fn name(&self) -> &str;
+    fn name(&self, item: &model::Item) -> String;
     fn item_type(&self) -> model::ItemType;
     fn flags1(&self) -> u64;
     fn flags2(&self) -> u64;

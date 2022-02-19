@@ -1,5 +1,8 @@
+use std::borrow::Cow;
+
 use model;
 use item_template;
+use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HardArmorTemplate {
@@ -73,25 +76,26 @@ impl HardArmorTemplate {
 
 impl item_template::ItemTemplate for HardArmorTemplate {
 
-    fn name(&self) -> &str {
-        match self {
-            HardArmorTemplate::AugmentedChainMail => "Augmented Chain Mail^ [%P6,%P4]",
-            HardArmorTemplate::BarChainMail => "Bar Chain Mail^ [%P6,%P4]",
-            HardArmorTemplate::BronzePlateMail => "Bronze Plate Mail^ [%P6,%P4]",
-            HardArmorTemplate::ChainMail => "Chain Mail^ [%P6,%P4]",
-            HardArmorTemplate::DoubleChainMail => "Double Chain Mail^ [%P6,%P4]",
-            HardArmorTemplate::FullPlateArmor => "Full Plate Armor^ [%P6,%P4]",
-            HardArmorTemplate::LacqueredPlate => "Lacquered Plate^ [%P6,%P4]",
-            HardArmorTemplate::LaminatedArmor => "Laminated Armor^ [%P6,%P4]",
-            HardArmorTemplate::MetalBrigandineArmor => "Metal Brigandine Armor^ [%P6,%P4]",
-            HardArmorTemplate::MetalLamellarArmor => "Metal Lamellar Armor^ [%P6,%P4]",
-            HardArmorTemplate::MetalScaleMail => "Metal Scale Mail^ [%P6,%P4]",
-            HardArmorTemplate::MithrilChainMail => "Mithril Chain Mail^ [%P6,%P4]",
-            HardArmorTemplate::MithrilPlateArmor => "Mithril Plate Armor^ [%P6,%P4]",
-            HardArmorTemplate::PartialPlateArmor => "Partial Plate Armor^ [%P6,%P4]",
-            HardArmorTemplate::RustyChainMail => "Rusty Chain Mail^ [%P6,%P4]",
-            HardArmorTemplate::StonePlateArmor => "Stone Plate Armor^ [%P6,%P4]",
-        }
+    fn name(&self, item: &model::Item) -> String {
+        item_name::generate_armor_name(item,
+            Cow::from(match self {
+                HardArmorTemplate::AugmentedChainMail => "Augmented Chain Mail",
+                HardArmorTemplate::BarChainMail => "Bar Chain Mail",
+                HardArmorTemplate::BronzePlateMail => "Bronze Plate Mail",
+                HardArmorTemplate::ChainMail => "Chain Mail",
+                HardArmorTemplate::DoubleChainMail => "Double Chain Mail",
+                HardArmorTemplate::FullPlateArmor => "Full Plate Armor",
+                HardArmorTemplate::LacqueredPlate => "Lacquered Plate",
+                HardArmorTemplate::LaminatedArmor => "Laminated Armor",
+                HardArmorTemplate::MetalBrigandineArmor => "Metal Brigandine Armor",
+                HardArmorTemplate::MetalLamellarArmor => "Metal Lamellar Armor",
+                HardArmorTemplate::MetalScaleMail => "Metal Scale Mail",
+                HardArmorTemplate::MithrilChainMail => "Mithril Chain Mail",
+                HardArmorTemplate::MithrilPlateArmor => "Mithril Plate Armor",
+                HardArmorTemplate::PartialPlateArmor => "Partial Plate Armor",
+                HardArmorTemplate::RustyChainMail => "Rusty Chain Mail",
+                HardArmorTemplate::StonePlateArmor => "Stone Plate Armor",
+            }))
     }
 
     fn item_type(&self) -> model::ItemType { model::ItemType::HardArmor }
