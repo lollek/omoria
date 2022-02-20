@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PrayerBookTemplate {
@@ -38,16 +35,6 @@ impl PrayerBookTemplate {
 }
 
 impl item_template::ItemTemplate for PrayerBookTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        return item_name::generate_book_name(item,
-            Cow::from(match self {
-                PrayerBookTemplate::BeginnersHandbook => "Holy Book of Prayers [Beginners Handbook]",
-                PrayerBookTemplate::WordsOfWisdom => "Holy Book of Prayers [Words of Wisdom]",
-                PrayerBookTemplate::ChantsAndBlessings => "Holy Book of Prayers [Chants and Blessings]",
-                PrayerBookTemplate::ExorcismAndDispelling => "Holy Book of Prayers [Exorcism and Dispelling]",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::PrayerBook }
 
     fn flags1(&self) -> u64 {

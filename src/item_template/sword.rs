@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SwordTemplate {
@@ -69,26 +66,6 @@ impl SwordTemplate {
 }
 
 impl item_template::ItemTemplate for SwordTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_weapon_name(item,
-            Cow::from(match self {
-                SwordTemplate::Backsword => "Backsword",
-                SwordTemplate::BastardSword => "Bastard Sword",
-                SwordTemplate::Broadsword => "Broadsword",
-                SwordTemplate::Claymore => "Claymore",
-                SwordTemplate::Cutlass => "Cutlass",
-                SwordTemplate::Espadon => "Espadon",
-                SwordTemplate::ExecutionersSword => "Executioner's Sword",
-                SwordTemplate::Flamberge => "Flamberge",
-                SwordTemplate::Katana => "Katana",
-                SwordTemplate::Longsword => "Longsword",
-                SwordTemplate::Nodachi => "No-Dachi",
-                SwordTemplate::Sabre => "Sabre",
-                SwordTemplate::Zweihander => "Zweihander",
-                SwordTemplate::BrokenSword => "Broken Sword",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Sword }
     fn flags1(&self) -> u64 { 0x10000000 }
     fn flags2(&self) -> u64 { 0 }

@@ -38,21 +38,6 @@ impl BagTemplate {
 }
 
 impl item_template::ItemTemplate for BagTemplate {
-    fn name(&self, _item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push("Bag");
-        if self.is_identified() {
-            parts.push(match self {
-                BagTemplate::BagOfHolding250 => " of Holding (250)",
-                BagTemplate::BagOfHolding500 => " of Holding (500)",
-                BagTemplate::BagOfHolding1000 => " of Holding (1000)",
-                BagTemplate::BagOfHolding1500 => " of Holding (1500)",
-                BagTemplate::BagOfDevouring => " of Devouring",
-            });
-        }
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Bag }
 
     fn flags1(&self) -> u64 {

@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HardArmorTemplate {
@@ -75,29 +72,6 @@ impl HardArmorTemplate {
 }
 
 impl item_template::ItemTemplate for HardArmorTemplate {
-
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_armor_name(item,
-            Cow::from(match self {
-                HardArmorTemplate::AugmentedChainMail => "Augmented Chain Mail",
-                HardArmorTemplate::BarChainMail => "Bar Chain Mail",
-                HardArmorTemplate::BronzePlateMail => "Bronze Plate Mail",
-                HardArmorTemplate::ChainMail => "Chain Mail",
-                HardArmorTemplate::DoubleChainMail => "Double Chain Mail",
-                HardArmorTemplate::FullPlateArmor => "Full Plate Armor",
-                HardArmorTemplate::LacqueredPlate => "Lacquered Plate",
-                HardArmorTemplate::LaminatedArmor => "Laminated Armor",
-                HardArmorTemplate::MetalBrigandineArmor => "Metal Brigandine Armor",
-                HardArmorTemplate::MetalLamellarArmor => "Metal Lamellar Armor",
-                HardArmorTemplate::MetalScaleMail => "Metal Scale Mail",
-                HardArmorTemplate::MithrilChainMail => "Mithril Chain Mail",
-                HardArmorTemplate::MithrilPlateArmor => "Mithril Plate Armor",
-                HardArmorTemplate::PartialPlateArmor => "Partial Plate Armor",
-                HardArmorTemplate::RustyChainMail => "Rusty Chain Mail",
-                HardArmorTemplate::StonePlateArmor => "Stone Plate Armor",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::HardArmor }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

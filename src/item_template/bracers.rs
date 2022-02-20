@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BracersTemplate {
@@ -81,68 +78,6 @@ impl BracersTemplate {
 }
 
 impl item_template::ItemTemplate for BracersTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_armor_name(item,
-            Cow::from(match self {
-                BracersTemplate::BracersOfProtection =>
-                    if self.is_identified() {
-                        "Bracers of Protection"
-                    } else {
-                        "Bracers"
-                    },
-                BracersTemplate::BracersOfDefense =>
-                    if self.is_identified() {
-                        "Bracers of Defense"
-                    } else {
-                        "Bracers"
-                    },
-                BracersTemplate::BracersOfShielding =>
-                    if self.is_identified() {
-                        "Bracers of Shielding"
-                    } else {
-                        "Bracers"
-                    },
-                BracersTemplate::MithrilBracers =>
-                    "Mithril Bracers",
-                BracersTemplate::AdamantiteBracers =>
-                    "Adamantite Bracers",
-                BracersTemplate::BracersOfWeaponAttraction =>
-                    if self.is_identified() {
-                        "Bracers of Weapon Attaction"
-                    } else {
-                        "Bracers"
-                    },
-                BracersTemplate::SilverBraceletOfWarding =>
-                    if self.is_identified() {
-                        "Silver Bracers of Warding"
-                    } else {
-                        "Silver Bracers"
-                    },
-                BracersTemplate::SilverBracelet =>
-                    "Silver Bracelet",
-                BracersTemplate::GoldBracelet =>
-                    "Gold Bracelet",
-                BracersTemplate::PlatinumBracelet =>
-                    "Platinum Bracelet",
-                BracersTemplate::LeatherBracers =>
-                    "Leather Bracers",
-                BracersTemplate::StuddedLeatherBracers =>
-                    "Studded Leather Bracers",
-                BracersTemplate::LightPlatedBracers =>
-                    "Light Plated Bracers",
-                BracersTemplate::SharkskinBracers =>
-                    "Sharkskin Bracers",
-                BracersTemplate::DemonhideBracers =>
-                    "Demonhide Bracers",
-                BracersTemplate::WyrmhideBracers =>
-                    "Wyrmhide Bracers",
-                BracersTemplate::ChainmailBracers =>
-                    "Chainmail Bracers",
-                BracersTemplate::LamellarBracers =>
-                    "Lamellar Bracers",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

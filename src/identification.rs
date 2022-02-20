@@ -4,10 +4,10 @@ use std::collections::hash_map::Entry;
 
 use model;
 
-pub struct Data = HashMap<model::ItemType, HashMap<i64, bool>>
+pub type Data = HashMap<model::ItemType, HashMap<i64, bool>>;
 
 lazy_static! {
-    pub(super) ref IDENTIFICATION: RwLock<Data> = RwLock::new(HashMap::new());
+    static ref IDENTIFICATION: RwLock<Data> = RwLock::new(HashMap::new());
 }
 
 pub fn save() -> Data {
@@ -28,10 +28,10 @@ pub fn is_identified(item_type: model::ItemType, subval: i64) -> bool {
     false
 }
 
-pub fn set_identified(item_type: model::ItemType, subval: i64, bool is_identified) {
+pub fn set_identified(item_type: model::ItemType, subval: i64, is_identified: bool) {
     IDENTIFICATION.try_write().unwrap()
         .entry(item_type)
-        .or_insert(HashMap::new());
+        .or_insert(HashMap::new())
         .entry(subval)
         .and_modify(|val| val = is_identified)
         .or_insert(is_identified)

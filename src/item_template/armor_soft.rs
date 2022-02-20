@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SoftArmorTemplate {
@@ -78,30 +75,6 @@ impl SoftArmorTemplate {
 }
 
 impl item_template::ItemTemplate for SoftArmorTemplate {
-
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_armor_name(item,
-            Cow::from(match self {
-                SoftArmorTemplate::CoolSetOfThreads => "Cool Set of Threads",
-                SoftArmorTemplate::DemonhideArmor => "Demonhide Armor",
-                SoftArmorTemplate::DuskShroud => "Dusk Shroud",
-                SoftArmorTemplate::ElvenChainMail => "Elven Chain Mail",
-                SoftArmorTemplate::FilthyNagaHideArmor => "Filthy Naga Hide Armor",
-                SoftArmorTemplate::FilthyRags => "Filthy Rags",
-                SoftArmorTemplate::HardLeatherArmor => "Hard Leather Armor",
-                SoftArmorTemplate::HardLeatherRingMail => "Hard Leather Ring Mail",
-                SoftArmorTemplate::HardStuddedLeather => "Hard Studded Leather",
-                SoftArmorTemplate::LeatherScaleMail => "Leather Scale Mail",
-                SoftArmorTemplate::Robe => "Robe",
-                SoftArmorTemplate::SoftLeatherArmor => "Soft Leather Armor",
-                SoftArmorTemplate::SoftLeatherRingMail => "Soft Leather Ring Mail",
-                SoftArmorTemplate::SoftStuddedLeather => "Soft Studded Armor",
-                SoftArmorTemplate::WovenCordArmor => "Woven Cord Armor",
-                SoftArmorTemplate::WyrmhideArmor => "Wyrmhide Armor",
-                SoftArmorTemplate::LeatherBrigantineArmor => "Leather Brigantine Armor",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::SoftArmor }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

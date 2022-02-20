@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {
@@ -53,67 +50,6 @@ impl MiscUsableTemplate {
 }
 
 impl item_template::ItemTemplate for MiscUsableTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let plural_s = || if item.number == 1 { "" } else { "s" };
-        let plural_es = || if item.number == 1 { "" } else { "es" };
-
-        let mut parts = Vec::new();
-        parts.push(item_name::number_of(item));
-        parts.push(
-            match self {
-                MiscUsableTemplate::FlaskOfOil => Cow::from(format!("Flask{} of Oil", plural_s())),
-                MiscUsableTemplate::IronSpike => Cow::from(format!("Iron Spike{}", plural_s())),
-                MiscUsableTemplate::Statue => Cow::from(format!("Iron Statue{}", plural_s())),
-                MiscUsableTemplate::Teeth => Cow::from("Teeth"),
-                MiscUsableTemplate::SilverCross => Cow::from(format!("Silver Cross{}", plural_es())),
-                MiscUsableTemplate::GoldCross => Cow::from(format!("Gold Cross{}", plural_es())),
-                MiscUsableTemplate::MithrilCross => Cow::from(format!("Mithril Cross{}", plural_es())),
-                MiscUsableTemplate::Cross => Cow::from(format!("Iron Cross{}", plural_es())),
-                MiscUsableTemplate::CorkedBottle => Cow::from(format!("Corked Bottle{}", plural_s())),
-            });
-        match self {
-            MiscUsableTemplate::Teeth => {
-                if item.flags & 0x20000000 {
-                    parts.push(Cow::from(" from a Dragon"));
-                } else if item.flags & 0x40000000 {
-                    parts.push(Cow::from(" of a Demon"));
-                }
-            },
-            MiscUsableTemplate::Status => {
-                if item.flags & 0x00000100 {
-                    parts.push(Cow::from(" Major of Undead Summoning"));
-                } else if item.flags & 0x00000200 {
-                    parts.push(Cow::from(" Major of Demon Summoning"));
-                } else if item.flags & 0x00000400 {
-                    parts.push(Cow::from(" Life Giving"));
-                }
-            },
-            MiscUsableTemplate::SilverCross |
-            MiscUsableTemplate::GoldCross |
-            MiscUsableTemplate::MithrilCross => {
-                if item.flags & 0x00000001 {
-                    parts.push(Cow::from(" of Turning"));
-                } else if item.flags & 0x00000002 {
-                    parts.push(Cow::from(" of Demon Dispelling"));
-                }
-            },
-            MiscUsableTemplate::Cross => {
-                if item.flags & 0x00000004 {
-                    parts.push(Cow::from(" of Summon Undead"));
-                }
-            },
-            MiscUsableTemplate::CorkedBottle => {
-                if item.flags & 0x00000010 {
-                    parts.push(Cow::from(" containing a Djinni"));
-                } else if item.flags & 0x00000020 {
-                    parts.push(Cow::from(" containing some Demons"));
-                }
-            },
-            _ => ,
-        }
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType {
         match self {
             MiscUsableTemplate::FlaskOfOil => model::ItemType::FlaskOfOil,

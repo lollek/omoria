@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -65,33 +62,6 @@ impl HornTemplate {
 }
 
 impl item_template::ItemTemplate for HornTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(Cow::from("Horn"));
-        if self.is_identified() {
-            parts.push(Cow::from(
-                    match self {
-                        HornTemplate::HornOfBubbles => " of Bubbles",
-                        HornTemplate::HornOfCalling => " of Calling",
-                        HornTemplate::HornOfSoftSounds => " of Soft Sounds",
-                        HornTemplate::HornOfBlasting => " of *Blasting*",
-                        HornTemplate::HornOfCold => " of Cold",
-                        HornTemplate::HornOfHeat => " of Heat",
-                        HornTemplate::HornOfGas => " of Gas",
-                        HornTemplate::HornOfRecall => " of Recall",
-                        HornTemplate::HornOfChaos => " of *Chaos*",
-                        HornTemplate::HornOfGlue => " of Glue",
-                        HornTemplate::HornOfValhalla => " of Valhalla",
-                        HornTemplate::HornOfTritons => " of Tritons",
-                        HornTemplate::HornOfFog => " of Fog",
-                    }));
-        }
-        if item.is_identified() {
-            parts.push(item_name::charges(item))
-        }
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Horn }
     fn flags1(&self) -> u64 { 0 }
 

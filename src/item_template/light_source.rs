@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LightSourceTemplate {
@@ -38,21 +35,6 @@ impl LightSourceTemplate {
 }
 
 impl item_template::ItemTemplate for LightSourceTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(item_name::number_of(&item));
-        parts.push(
-            match self {
-                LightSourceTemplate::WoodenTorch => Cow::from(format!("Wooden Torch{}", if item.number == 1 { "" } else { "es" })),
-                LightSourceTemplate::BrassLantern => Cow::from(format!("Brass Lantern{}", if item.number == 1 { "" } else { "s" })),
-                LightSourceTemplate::MagicTorch => Cow::from("Magic Torch"),
-                LightSourceTemplate::MagicLantern => Cow::from("Magic Lantern"),
-            });
-        let turns_plural = if item.p1 == 1 { "" } else { "s" };
-        parts.push(Cow::from(format!(" with {} turn{} of light", item.p1, turns_plural)));
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::LightSource }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -99,42 +96,6 @@ impl StaffTemplate {
 }
 
 impl item_template::ItemTemplate for StaffTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(Cow::from("Staff"));
-        if self.is_identified() {
-            parts.push(
-                Cow::from(match self {
-                    StaffTemplate::StaffOfLight => " of Light",
-                    StaffTemplate::StaffOfDoorStairLocation => " of Door/Stair Location",
-                    StaffTemplate::StaffOfTrapLocation => "of Trap Location",
-                    StaffTemplate::StaffOfTreasureLocation => " of Treasure Location",
-                    StaffTemplate::StaffOfObjectLocation => " of Object Location",
-                    StaffTemplate::StaffOfTeleportation => " of Teleportation",
-                    StaffTemplate::StaffOfEarthquakes => " of Earthquakes",
-                    StaffTemplate::StaffOfSummoning => " of Summoning",
-                    StaffTemplate::StaffOfDestruction => " of *Destruction*",
-                    StaffTemplate::StaffOfStarlite => " of Starlite",
-                    StaffTemplate::StaffOfHasteMonsters => " of Haste Monsters",
-                    StaffTemplate::StaffOfSlowMonsters => " of Slow Monsters",
-                    StaffTemplate::StaffOfSleepMonsters => " of Sleep Monsters",
-                    StaffTemplate::StaffOfCureLightWounds => " of Cure Light Wounds",
-                    StaffTemplate::StaffOfDetectInvisible => " of Detect Invisible",
-                    StaffTemplate::StaffOfSpeed => " of Speed",
-                    StaffTemplate::StaffOfSlowness => " of Slowness",
-                    StaffTemplate::StaffOfMassPolymorph => " of Mass Polymorph",
-                    StaffTemplate::StaffOfRemoveCurse => " of Remove Curse",
-                    StaffTemplate::StaffOfDetectEvil => " of Detect Evil",
-                    StaffTemplate::StaffOfCuring => " of Curing",
-                    StaffTemplate::StaffOfDispelEvil => " of Dispel Evil",
-                    StaffTemplate::StaffOfDarkness => " of Darkness",
-                    StaffTemplate::StaffOfIdentify => " of Identify",
-                }));
-        }
-        parts.push(item_name::charges(&item));
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Staff }
     fn flags1(&self) -> u64 { 0 }
 

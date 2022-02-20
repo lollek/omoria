@@ -1,5 +1,3 @@
-use libc;
-
 use debug;
 use identification;
 

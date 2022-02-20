@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CrossbowTemplate {
@@ -39,16 +36,6 @@ impl CrossbowTemplate {
 }
 
 impl item_template::ItemTemplate for CrossbowTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_weapon_name(item,
-            Cow::from(match self {
-                CrossbowTemplate::SiegeCrossbow => "Siege Crossbow",
-                CrossbowTemplate::Ballista => "Ballista",
-                CrossbowTemplate::LightCrossbow => "Light Crossbow",
-                CrossbowTemplate::HeavyCrossbow => "Heavy Crossbow",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Crossbow }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

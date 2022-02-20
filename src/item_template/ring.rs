@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum RingTemplate {
@@ -125,62 +122,6 @@ impl RingTemplate {
 }
 
 impl item_template::ItemTemplate for RingTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(Cow::from("Ring"));
-        if self.is_identified() {
-            parts.push(
-                Cow::from(match self {
-                    RingTemplate::RingOfGainStrength => " of Gain Strength",
-                    RingTemplate::RingOfGainDexterity => " of Gain Dexterity",
-                    RingTemplate::RingOfGainConstitution => " of Gain Constitution",
-                    RingTemplate::RingOfGainIntelligence => " of Gain Intelligence",
-                    RingTemplate::RingOfSpeed1 => " of Speed",
-                    RingTemplate::RingOfSpeed2 => " of Speed",
-                    RingTemplate::RingOfSearching => " of Searching",
-                    RingTemplate::RingOfTeleportation => " of Teleportation",
-                    RingTemplate::RingOfSlowDigestion => " of Slow Digestion",
-                    RingTemplate::RingOfResistFire => " of Resist Fire",
-                    RingTemplate::RingOfResistCold => " of Resist Cold",
-                    RingTemplate::RingOfFeatherFalling => " of Feather Falling",
-                    RingTemplate::RingOfAdornment1 => " of Adornment",
-                    RingTemplate::RingOfAdornment2 => " of Adornment",
-                    RingTemplate::RingOfWeakness => " of Weakness",
-                    RingTemplate::RingOfLordlyProtectionFire => " of Lordly Protection (Fire)",
-                    RingTemplate::RingOfLordlyProtectionAcid => " of Lordly Protection (Acid)",
-                    RingTemplate::RingOfLordlyProtectionCold => " of Lordly Protection (Cold)",
-                    RingTemplate::RingOfWoe => " of Woe",
-                    RingTemplate::RingOfStupidity => " of Stupidity",
-                    RingTemplate::RingOfIncreaseDamage => " of Increase Damage",
-                    RingTemplate::RingOfIncreaseToHit => " of Increase To-hit",
-                    RingTemplate::RingOfProtection => " of Protection",
-                    RingTemplate::RingOfAggravateMonsters => " of Aggravate Monster",
-                    RingTemplate::RingOfSeeInvisible => " of See Invisible",
-                    RingTemplate::RingOfSustainStrength => " of Sustain Strength",
-                    RingTemplate::RingOfSustainIntelligence => " of Sustain Intelligence",
-                    RingTemplate::RingOfSustainWisdom => " of Sustain Wisdom",
-                    RingTemplate::RingOfSustainConstitution => " of Sustain Constitution",
-                    RingTemplate::RingOfSustainDexterity => " of Sustain Dexterity",
-                    RingTemplate::RingOfSustainCharisma => " of Sustain Charisma",
-                    RingTemplate::RingOfSlaying => " of Slaying",
-                    RingTemplate::RingOfGnomekind => " of Gnomekind",
-                }));
-        }
-        if item.p1 != 0 {
-            parts.push(item_name::p1(&item));
-        }
-        if item.tohit != 0 {
-            parts.push(item_name::to_hit(&item));
-        }
-        if item.todam != 0 {
-            parts.push(item_name::to_damage(&item));
-        }
-        if item.toac != 0 {
-            parts.push(item_name::to_ac(&item));
-        }
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Ring }
     fn flags1(&self) -> u64 { 0 }
 

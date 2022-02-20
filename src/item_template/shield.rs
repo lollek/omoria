@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ShieldTemplate {
@@ -53,24 +50,6 @@ impl ShieldTemplate {
 }
 
 impl item_template::ItemTemplate for ShieldTemplate {
-
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(Cow::from(match self {
-            ShieldTemplate::SmallLeatherShield => "Small Leather Shield",
-            ShieldTemplate::MediumLeatherShield => "Medium Leather Shield",
-            ShieldTemplate::LargeLeatherShield => "Large Leather Shield",
-            ShieldTemplate::Buckler => "Buckler",
-            ShieldTemplate::KiteShield => "Kite Shield",
-            ShieldTemplate::TowerShield => "Tower Shield",
-            ShieldTemplate::SharkskinShield => "Sharkskin Shield",
-            ShieldTemplate::DemonhideShield => "Demonhide Shield",
-            ShieldTemplate::WyrmhideShield => "Wyrmhide Shield",
-        }));
-        parts.push(item_name::armor(&item));
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Shield }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

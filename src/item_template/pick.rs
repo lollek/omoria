@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PickTemplate {
@@ -47,20 +44,6 @@ impl PickTemplate {
 }
 
 impl item_template::ItemTemplate for PickTemplate {
-
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_weapon_name(item,
-            Cow::from(match self {
-                PickTemplate::Pick => "Pick",
-                PickTemplate::Shovel => "Shovel",
-                PickTemplate::OrcishPick1 => "Orcish Pick",
-                PickTemplate::OrcishPick2 => "Orcish Pick",
-                PickTemplate::DwarvenPick => "Dwarven Pick",
-                PickTemplate::GnomishShovel => "Gnomish Shovel",
-                PickTemplate::DwarvenShovel => "Dwarven Shovel",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Pick }
 
     fn flags1(&self) -> u64 {

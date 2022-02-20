@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BootsTemplate {
@@ -54,21 +51,6 @@ impl BootsTemplate {
 }
 
 impl item_template::ItemTemplate for BootsTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_armor_name(item,
-            Cow::from(match self {
-                BootsTemplate::SoftLeatherShoes => "Soft Leather Shoes",
-                BootsTemplate::SoftLeatherBoots => "Soft Leather Boots",
-                BootsTemplate::HardLeatherBoots => "Hard Leather Boots",
-                BootsTemplate::Sandals => "Sandals",
-                BootsTemplate::ChainBoots => "Chain Boots",
-                BootsTemplate::LightPlatedBoots => "Light Plated Boots",
-                BootsTemplate::SharkskinBoots => "Sharkskin Boots",
-                BootsTemplate::DemonhideBoots => "Demonhide Boots",
-                BootsTemplate::WyrmhideBoot => "Wyrmhide Boots",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Boots }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

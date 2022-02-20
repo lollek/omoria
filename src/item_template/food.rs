@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum FoodTemplate {
@@ -134,94 +131,6 @@ impl FoodTemplate {
 }
 
 impl item_template::ItemTemplate for FoodTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let plural_s = || if item.number == 1 { "" } else { "s" };
-        let mut parts = Vec::new();
-        parts.push(item_name::number_of(item));
-        parts.push(Cow::from(match self {
-            FoodTemplate::Mushroom |
-            FoodTemplate::Mushroom2 |
-            FoodTemplate::MushroomOfPoison |
-            FoodTemplate::MushroomOfBlindness |
-            FoodTemplate::MushroomOfParanoia |
-            FoodTemplate::MushroomOfConfusion |
-            FoodTemplate::MushroomOfHallucination |
-            FoodTemplate::MushroomOfCurePoison |
-            FoodTemplate::MushroomOfCureBlindness |
-            FoodTemplate::MushroomOfCureParanoia |
-            FoodTemplate::MushroomOfCureConfusion |
-            FoodTemplate::MushroomOfWeakness |
-            FoodTemplate::MushroomOfUnhealth |
-            FoodTemplate::MushroomOfRestoreConstitution |
-            FoodTemplate::MushroomOfFirstAid |
-            FoodTemplate::MushroomOfMinorCures |
-            FoodTemplate::MushroomOfLightCures |
-            FoodTemplate::MushroomOfRestoring |
-            FoodTemplate::MushroomOfPoison2 |
-            FoodTemplate::MushroomOfHallucination2 |
-            FoodTemplate::MushroomOfCurePoison2 |
-            FoodTemplate::MushroomOfUnhealth2 |
-            FoodTemplate::MushroomOfCureSeriousWounds
-                => format!("Mushroom{}", plural_s()),
-            FoodTemplate::PintOfFineGradeMush
-                => format!("Pint{} of Fine Grade Mush", plural_s()),
-            FoodTemplate::RationOfFood
-                => format!("Ration{} of Food", plural_s()),
-            FoodTemplate::HardBiscuit
-                => format!("Hard Biscuit{}", plural_s()),
-            FoodTemplate::BeefJerky
-                => format!("Strip{} of Beef Jerky", plural_s()),
-            FoodTemplate::FineAle
-                => format!("Pint{} of Fine Ale", plural_s()),
-            FoodTemplate::FineWine
-                => format!("Pint{} of Fine Wine", plural_s()),
-            FoodTemplate::ElvishWaybread
-                => format!("Piece{} of Elvish Waybread", plural_s()),
-            FoodTemplate::Stew
-                => format!("Stew{}", plural_s()),
-            FoodTemplate::GreenJelly
-                => format!("Green Jelly{}", plural_s()),
-            FoodTemplate::BerriesPoisonous |
-            FoodTemplate::BerriesSmurfberries |
-            FoodTemplate::BerriesGoodberries
-                => format!("Handful{} of Berries", plural_s()),
-            FoodTemplate::EyeballOfNed
-                => format!("Eyeball{}", plural_s()),
-        }));
-
-        if self.is_identified() {
-            parts.push(Cow::from(match self {
-                FoodTemplate::MushroomOfPoison => " of Poison",
-                FoodTemplate::MushroomOfBlindness => " of Blindness",
-                FoodTemplate::MushroomOfParanoia => " of Paranoia",
-                FoodTemplate::MushroomOfConfusion => " of Confusion",
-                FoodTemplate::MushroomOfHallucination => " of Hallucination",
-                FoodTemplate::MushroomOfCurePoison => " of Cure Poison",
-                FoodTemplate::MushroomOfCureBlindness => " of Cure Blindness",
-                FoodTemplate::MushroomOfCureParanoia => " of Cure Paranoia",
-                FoodTemplate::MushroomOfCureConfusion => " of Cure Confusion",
-                FoodTemplate::MushroomOfWeakness => " of Weakness",
-                FoodTemplate::MushroomOfUnhealth => " of Unhealth",
-                FoodTemplate::MushroomOfRestoreConstitution => " of Restore Constitution",
-                FoodTemplate::MushroomOfFirstAid => " of First-Aid",
-                FoodTemplate::MushroomOfMinorCures => " of Minor Cures",
-                FoodTemplate::MushroomOfLightCures => " of Light Cures",
-                FoodTemplate::MushroomOfRestoring => " of Restoring",
-                FoodTemplate::MushroomOfPoison2 => " of Poison",
-                FoodTemplate::MushroomOfHallucination2 => " of Hallucination",
-                FoodTemplate::MushroomOfCurePoison2 => " of Cure Poison",
-                FoodTemplate::MushroomOfUnhealth2 => " of Unhealth",
-                FoodTemplate::MushroomOfCureSeriousWounds => " of Cure Serious Wounds",
-                FoodTemplate::BerriesPoisonous => " (Poisonous)",
-                FoodTemplate::BerriesSmurfberries => " (Smurfberries)",
-                FoodTemplate::BerriesGoodberries => " (Goodberries)",
-                FoodTemplate::EyeballOfNed => " of Ned",
-                _ => "",
-            }));
-        }
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Food }
     fn flags1(&self) -> u64 { 0 }
 

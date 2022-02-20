@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChimeTemplate {
@@ -74,33 +71,6 @@ impl ChimeTemplate {
 }
 
 impl item_template::ItemTemplate for ChimeTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(Cow::from("Chime"));
-        if self.is_identified() {
-            parts.push(Cow::from(match self {
-                ChimeTemplate::ChimeOfLight => " of Light",
-                ChimeTemplate::ChimeOfDetectDoorsStairs => " of Detect Doors/Stairs",
-                ChimeTemplate::ChimeOfDetectTraps => " of Detect Traps",
-                ChimeTemplate::ChimeOfTeleportation => " of Teleportation",
-                ChimeTemplate::ChimeOfThunderblast => " of Thunderblasts",
-                ChimeTemplate::ChimeOfSummonMonster => " of Summon Monster",
-                ChimeTemplate::ChimeOfDisarming => " of Disarming",
-                ChimeTemplate::ChimeOfAggravation => " of Aggravation",
-                ChimeTemplate::ChimeOfSlowMonster => " of Slow Monster",
-                ChimeTemplate::ChimeOfSootheMonster => " of Soothe Monster",
-                ChimeTemplate::ChimeOfCureLightWound => " of Cure Light Wound",
-                ChimeTemplate::ChimeOfChanging => " of Changing",
-                ChimeTemplate::ChimeOfRemoveCurse => " of Remove Curse",
-                ChimeTemplate::ChimeOfCuring => " of Curing",
-                ChimeTemplate::ChimeOfDispelEvil => " of Dispel Evil",
-                ChimeTemplate::ChimeOfDarkness => " of Darkness",
-            }));
-        }
-        parts.push(item_name::charges(&item));
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Chime }
     fn flags1(&self) -> u64 { 0 }
 

@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ScrollTemplate {
@@ -152,60 +149,6 @@ impl ScrollTemplate {
 }
 
 impl item_template::ItemTemplate for ScrollTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let mut parts = Vec::new();
-        parts.push(item_name::number_of(&item));
-        parts.push(Cow::from(if item.number == 1 { "Scroll" } else { "Scrolls" }));
-        if self.is_identified() {
-            parts.push(
-                Cow::from(match self {
-                    ScrollTemplate::AggravateMonster => " of Trap/Door Destruction",
-                    ScrollTemplate::Blessing => " of Blessing",
-                    ScrollTemplate::CreateFood => " of Create Food",
-                    ScrollTemplate::CurseArmor => " of Curse Armor",
-                    ScrollTemplate::CurseWeapon => " of Curse Weapon",
-                    ScrollTemplate::Darkness => " of Darkness",
-                    ScrollTemplate::Destruction => " of Destruction",
-                    ScrollTemplate::DetectInvisible => " of Detect Invisible",
-                    ScrollTemplate::DispelUndead => " of Dispel Undead",
-                    ScrollTemplate::DoorCreation => " of Door Creation",
-                    ScrollTemplate::DoorStairLocation => " of Door/Stair Location",
-                    ScrollTemplate::EnchantArmor => " of Enchant Armor",
-                    ScrollTemplate::EnchantWeapon => " of Enchant Weapon",
-                    ScrollTemplate::EnchantWeaponToDam => " of Enchant Weapon To Dam",
-                    ScrollTemplate::EnchantWeaponToHit => " of Enchant Weapon To Hit",
-                    ScrollTemplate::FeignDeath => " of Feign Death",
-                    ScrollTemplate::Genocide => " of Genocide",
-                    ScrollTemplate::HolyChant => " of Holy Chant",
-                    ScrollTemplate::HolyPrayer => " of Holy Prayer",
-                    ScrollTemplate::Identify => " of Identify",
-                    ScrollTemplate::Light => " of Light",
-                    ScrollTemplate::MagicMapping => " of Magic Mapping",
-                    ScrollTemplate::MakeMunchies => " of Make Munchies",
-                    ScrollTemplate::MassGenocide => " of Mass Genocide",
-                    ScrollTemplate::MonsterConfusion => " of Monster Confusion",
-                    ScrollTemplate::ObjectDetection => " of Object Detection",
-                    ScrollTemplate::PhaseDoor => " of Phase Door",
-                    ScrollTemplate::ProtectionFromEvil => " of Protection from Evil",
-                    ScrollTemplate::Recharging => " of Recharging",
-                    ScrollTemplate::RemoveCurse => " of Remove Curse",
-                    ScrollTemplate::RuneOfProtection => " of Rune of Protection",
-                    ScrollTemplate::SleepMonster => " of Sleep Monster",
-                    ScrollTemplate::SummonMonster => " of Summon Monster",
-                    ScrollTemplate::SummonUndead => " of Summon Undead",
-                    ScrollTemplate::Teleport => " of Teleport",
-                    ScrollTemplate::TeleportLevel => " of Teleport Level",
-                    ScrollTemplate::TrapCreation => " of Trap Creation",
-                    ScrollTemplate::TrapDetection => " of Trap Detection",
-                    ScrollTemplate::TrapDoorDestruction => " of Trap/Door Destruction",
-                    ScrollTemplate::TreasureDetection => " of Treasure Detection",
-                    ScrollTemplate::Wishing => " of Wishing",
-                    ScrollTemplate::WordOfRecall => " of Word of Recall",
-                }));
-        }
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Scroll }
 
     fn flags1(&self) -> u64 {

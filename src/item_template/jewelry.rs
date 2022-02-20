@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum JewelryTemplate {
@@ -38,21 +35,6 @@ impl JewelryTemplate {
 }
 
 impl item_template::ItemTemplate for JewelryTemplate {
-    fn name(&self, item: &model::Item) -> String {
-        let plural_s = || if item.number == 1 { "" } else { "s" };
-
-        let mut parts = Vec::new();
-        parts.push(item_name::number_of(item));
-        parts.push(Cow::from(
-                match self {
-                    JewelryTemplate::SmallGoldPendant => format!("Small gold pendant{}", plural_s()),
-                    JewelryTemplate::SmallMithrilPendant => format!("Small mithril pendant{}", plural_s()),
-                    JewelryTemplate::LargeMithrilGarterBelt => format!("Large mithril garter-belt{}", plural_s()),
-                    JewelryTemplate::SmallSilverPendant => format!("Small silver pendant{}", plural_s()),
-                }));
-        parts.join("")
-    }
-
     fn item_type(&self) -> model::ItemType {
         match self {
             JewelryTemplate::SmallGoldPendant => model::ItemType::Jewelry,

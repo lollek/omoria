@@ -23,7 +23,6 @@ pub trait ItemTemplate {
         }
     }
 
-    fn name(&self, item: &model::Item) -> String;
     fn item_type(&self) -> model::ItemType;
     fn flags1(&self) -> u64;
     fn flags2(&self) -> u64;

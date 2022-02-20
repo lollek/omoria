@@ -1,8 +1,5 @@
-use std::borrow::Cow;
-
 use model;
 use item_template;
-use logic::item_name;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum DaggerTemplate {
@@ -60,24 +57,6 @@ impl DaggerTemplate {
 }
 
 impl item_template::ItemTemplate for DaggerTemplate {
-
-    fn name(&self, item: &model::Item) -> String {
-        item_name::generate_weapon_name(item,
-            Cow::from(match self {
-                DaggerTemplate::MainGauche =>"Main Gauche",
-                DaggerTemplate::Misercorde =>"Misercorde",
-                DaggerTemplate::Stiletto =>"Stiletto",
-                DaggerTemplate::Bodkin =>"Bodkin",
-                DaggerTemplate::BrokenDagger =>"Broken Dagger",
-                DaggerTemplate::CatONineTails =>"Cat-O-Nine Tails",
-                DaggerTemplate::Bilbo =>"Bilbo",
-                DaggerTemplate::Baselard =>"Baselard",
-                DaggerTemplate::Foil =>"Foil",
-                DaggerTemplate::Rapier =>"Rapier",
-                DaggerTemplate::SmallSword =>"Small Sword",
-            }))
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Dagger }
     fn flags1(&self) -> u64 { 0x10000000 }
     fn flags2(&self) -> u64 { 0 }
