@@ -18,33 +18,33 @@ pub fn generate_weapon_name<'a>(item: &model::Item, name: Cow<'a, str>) -> Strin
     parts.push(helpers::damage(&item));
     parts.push(helpers::attack_enchantment(&item));
     parts.push(helpers::armor(&item));
-    if item.flags & 0x01598001 {
+    if item.flags & 0x01598001 == 0x01598001{
         parts.push(Cow::from(" (HA)"));
-    } else if item.flags & 0x07B80900 {
+    } else if item.flags & 0x07B80900 == 0x07B80900 {
         parts.push(Cow::from(" (DF)"));
-    } else if item.flags & 0x00080000 && item.flags2 & 0x00000001 {
+    } else if item.flags & 0x00080000 == 0x00080000 && item.flags2 & 0x00000001 == 0x00000001 {
         parts.push(Cow::from(" (DB)"));
-    } else if item.flags & 0x01000838 && item.flags2 & 0x00200002 {
+    } else if item.flags & 0x01000838 == 0x01000838 && item.flags2 & 0x00200002 == 0x00200002 {
         parts.push(Cow::from(" (SS)"));
-    } else if item.flags & 0x00400000 && item.flags2 & 0x00000040 {
+    } else if item.flags & 0x00400000 == 0x00400000 && item.flags2 & 0x00000040 == 0x00000040 {
         parts.push(Cow::from(" (V)"));
-    } else if item.flags & 0x00300960 {
+    } else if item.flags & 0x00300960 == 0x00300960 {
         parts.push(Cow::from(" of Trollkind"));
-    } else if item.flags & 0x01004000 {
+    } else if item.flags & 0x01004000 == 0x01004000 {
         parts.push(Cow::from(" (SM)"));
-    } else if item.flags & 0x00002000 {
+    } else if item.flags & 0x00002000 == 0x00002000 {
         parts.push(Cow::from(" (SD)"));
-    } else if item.flags & 0x00004000 {
+    } else if item.flags & 0x00004000 == 0x00004000 {
         parts.push(Cow::from(" of Slay Monster"));
-    } else if item.flags & 0x00008000 {
+    } else if item.flags & 0x00008000 == 0x00008000 {
         parts.push(Cow::from(" of Slay Evil"));
-    } else if item.flags & 0x00010000 {
+    } else if item.flags & 0x00010000 == 0x00010000 {
         parts.push(Cow::from(" (SU)"));
-    } else if item.flags & 0x00020000 {
+    } else if item.flags & 0x00020000 == 0x00020000 {
         parts.push(Cow::from(" (FB)"));
-    } else if item.flags & 0x00040000 {
+    } else if item.flags & 0x00040000 == 0x00040000 {
         parts.push(Cow::from(" (FT)"));
-    } else if item.flags2 & 0x00000010 {
+    } else if item.flags2 & 0x00000010 == 0x00000010 {
         if item.item_type() == model::ItemType::Dagger {
             parts.push(Cow::from(" (WB)"));
         } else if item.item_type() == model::ItemType::Mace {
@@ -52,9 +52,9 @@ pub fn generate_weapon_name<'a>(item: &model::Item, name: Cow<'a, str>) -> Strin
         } else {
             parts.push(Cow::from(" (Magic)"));
         }
-    } else if item.flags2 & 0x00000004 {
+    } else if item.flags2 & 0x00000004 == 0x00000004 {
         parts.push(Cow::from(" (SR)"));
-    } else if item.flags2 & 0x00000040 {
+    } else if item.flags2 & 0x00000040 == 0x00000040 {
         parts.push(Cow::from(" of Criticals"));
     } else if item.tohit > 4 && item.todam > 4 {
         parts.push(Cow::from(" of Slaying"));
@@ -69,101 +69,105 @@ pub fn generate_armor_name<'a>(item: &model::Item, name: Cow<'a, str>) -> String
         parts.push(helpers::attack_enchantment(&item));
     }
     parts.push(helpers::armor(&item));
-    if item.flags & 0x02380000 {
+    if item.flags & 0x02380000 == 0x02380000 {
         parts.push(Cow::from(" (R)"));
-    } else if item.flags & 0x00800007 {
+    } else if item.flags & 0x00800007 == 0x00800007 {
         parts.push(Cow::from(" of Might"));
-    } else if item.flags & 0x00800007 {
+    } else if item.flags & 0x00800007 == 0x00800007 {
         parts.push(Cow::from(" of the Magi"));
-    } else if item.flags & 0x00000030 {
+    } else if item.flags & 0x00000030 == 0x00000030 {
         parts.push(Cow::from(" of Lordliness"));
-    } else if item.flags & 0x41800040 {
+    } else if item.flags & 0x41800040 == 0x41800040 {
         parts.push(Cow::from(" of Hobbitkind"));
-    } else if item.flags & 0x01400120 {
+    } else if item.flags & 0x01400120 == 0x01400120 {
         parts.push(Cow::from(" of Elvenkin"));
-    } else if item.flags & 0x60400000 & item.flags2 & 0x00000010 {
+    } else if item.flags & 0x60400000 == 0x60400000 && item.flags2 & 0x00000010 == 0x00000010 {
         parts.push(Cow::from(" of Dwarvenkind"));
-    } else if item.flags & 0x05800020 & item.flags2 & 0x00000010 {
+    } else if item.flags & 0x05800020 == 0x05800020 && item.flags2 & 0x00000010 == 0x00000010 {
         parts.push(Cow::from(" of Dryadkind"));
-    } else if item.flags & 0x03B80800 & item.flags2 & 0x00000010 {
+    } else if item.flags & 0x03B80800 == 0x03B80800 && item.flags2 & 0x00000010 == 0x00000010 {
         parts.push(Cow::from(" of Titan Strength"));
-    } else if item.flags & 0x03100000 & item.flags2 & 0x00000010 {
-        parts.push(Cow::from(" of Storm Giant Strength"));
-    } else if item.flags & 0x03100000  {
-        parts.push(Cow::from(" of Cloud Giant Strength"));
-    } else if item.flags & 0x01080000  {
+    } else if item.flags & 0x03100000 == 0x03100000 {
+        if item.flags2 & 0x00000010 == 0x00000010 {
+            parts.push(Cow::from(" of Storm Giant Strength"));
+        } else {
+            parts.push(Cow::from(" of Cloud Giant Strength"));
+        }
+    } else if item.flags & 0x01080000 == 0x01080000 {
         parts.push(Cow::from(" of Fire Giant Strength"));
-    } else if item.flags & 0x01200000  {
+    } else if item.flags & 0x01200000 == 0x01200000 {
         parts.push(Cow::from(" of Frost Giant Strength"));
-    } else if item.flags & 0x01000000 && item.p1 > 1  {
-        parts.push(Cow::from(" of Stone Giant Strength"));
-    } else if item.flags & 0x01000000 && item.p1 == 1  {
-        parts.push(Cow::from(" of Hill Giant Strength"));
-    } else if item.flags & 0x00000081 {
+    } else if item.flags & 0x01000000 == 0x01000000 {
+        if item.p1 > 1  {
+            parts.push(Cow::from(" of Stone Giant Strength"));
+        } else {
+            parts.push(Cow::from(" of Hill Giant Strength"));
+        }
+    } else if item.flags & 0x00000081 == 0x00000081 {
         parts.push(Cow::from(" of Ogre Power"));
-    } else if item.flags & 0x01000040 {
+    } else if item.flags & 0x01000040 == 0x01000040 {
         parts.push(Cow::from(" of Seeing"));
-    } else if item.flags & 0x9800073F && item.flags2 & 0x80400000 {
+    } else if item.flags & 0x9800073F == 0x9800073F && item.flags2 & 0x80400000 == 0x80400000 {
         parts.push(Cow::from(" of **TOTAL DOOM**"));
-    } else if item.flags & 0x80000001 {
+    } else if item.flags & 0x80000001 == 0x80000001 {
         parts.push(Cow::from(" of Weakness"));
-    } else if item.flags & 0x80000002 {
+    } else if item.flags & 0x80000002 == 0x80000002 {
         parts.push(Cow::from(" of Clumsiness"));
-    } else if item.flags & 0x80000008 {
+    } else if item.flags & 0x80000008 == 0x80000008 {
         parts.push(Cow::from(" of Stupidity"));
-    } else if item.flags & 0x80000010 {
+    } else if item.flags & 0x80000010 == 0x80000010 {
         parts.push(Cow::from(" of Dullness"));
-    } else if item.flags & 0x80000020 {
+    } else if item.flags & 0x80000020 == 0x80000020 {
         parts.push(Cow::from(" of Ugliness"));
-    } else if item.flags & 0x80000200 {
+    } else if item.flags & 0x80000200 == 0x80000200 {
         parts.push(Cow::from(" of Noise"));
-    } else if item.flags & 0x80000400 {
+    } else if item.flags & 0x80000400 == 0x80000400 {
         parts.push(Cow::from(" of Teleportation"));
-    } else if item.flags & 0x80001000 {
+    } else if item.flags & 0x80001000 == 0x80001000 {
         parts.push(Cow::from(" of Slowness"));
-    } else if item.flags & 0x80400000 {
+    } else if item.flags & 0x80400000 == 0x80400000 {
         parts.push(Cow::from(" of Hunger"));
-    } else if item.flags & 0x88000000 {
+    } else if item.flags & 0x88000000 == 0x88000000 {
         parts.push(Cow::from(" of Blindness"));
-    } else if item.flags & 0x90000000 {
+    } else if item.flags & 0x90000000 == 0x90000000 {
         parts.push(Cow::from(" of Fear"));
-    } else if item.flags & 0x80000000 {
+    } else if item.flags & 0x80000000 == 0x80000000 {
         parts.push(Cow::from(" of Great Mass"));
-    } else if item.flags & 0x05000000 && item.flags2 & 0x00000020 {
+    } else if item.flags & 0x05000000 == 0x05000000 && item.flags2 & 0x00000020 == 0x00000020 {
         parts.push(Cow::from(" of Thievery"));
-    } else if item.flags2 & 0x00000010 && item.toac > 0 {
+    } else if item.flags2 & 0x00000010 == 0x00000010 && item.toac > 0 {
         parts.push(Cow::from(" of Deflection"));
-    } else if item.flags & 0x00400080 {
+    } else if item.flags & 0x00400080 == 0x00400080 {
         parts.push(Cow::from(" of Improved Digestion"));
-    } else if item.flags & 0x00100000 {
+    } else if item.flags & 0x00100000 == 0x00100000 {
         parts.push(Cow::from(" (RA)"));
-    } else if item.flags & 0x00080000 {
+    } else if item.flags & 0x00080000 == 0x00080000 {
         parts.push(Cow::from(" (RF)"));
-    } else if item.flags & 0x00200000 {
+    } else if item.flags & 0x00200000 == 0x00200000 {
         parts.push(Cow::from(" (RC)"));
-    } else if item.flags & 0x02000000 {
+    } else if item.flags & 0x02000000 == 0x02000000 {
         parts.push(Cow::from(" (RL)"));
-    } else if item.flags & 0x00000002 {
+    } else if item.flags & 0x00000002 == 0x00000002 {
         parts.push(Cow::from(" of the Hive"));
-    } else if item.flags & 0x00001000 {
+    } else if item.flags & 0x00001000 == 0x00001000 {
         parts.push(Cow::from(" of Speed"));
-    } else if item.flags & 0x00000100 {
+    } else if item.flags & 0x00000100 == 0x00000100 {
         parts.push(Cow::from(" of Stealth"));
-    } else if item.flags & 0x00800000 {
+    } else if item.flags & 0x00800000 == 0x00800000 {
         parts.push(Cow::from(" of Free Action"));
-    } else if item.flags & 0x04000000 {
+    } else if item.flags & 0x04000000 == 0x04000000 {
         parts.push(Cow::from(" of Slow Descent"));
     } else if item.tohit != 0 || item.todam != 0 {
         parts.push(Cow::from(" of Slaying"));
-    } else if item.flags & 0x00000008 {
+    } else if item.flags & 0x00000008 == 0x00000008 {
         parts.push(Cow::from(" of Intelligence"));
-    } else if item.flags & 0x00000010 {
+    } else if item.flags & 0x00000010 == 0x00000010 {
         parts.push(Cow::from(" of Wisdom"));
-    } else if item.flags & 0x00000020 {
+    } else if item.flags & 0x00000020 == 0x00000020 {
         parts.push(Cow::from(" of Beauty"));
-    } else if item.flags & 0x40000000 {
+    } else if item.flags & 0x40000000 == 0x40000000 {
         parts.push(Cow::from(" of Infravision"));
-    } else if item.flags & 0x00000800 {
+    } else if item.flags & 0x00000800 == 0x00000800 {
         parts.push(Cow::from(" of Regeneration"));
     }
     parts.join("")
@@ -203,21 +207,21 @@ fn chest_name(item: &model::Item) -> String {
     if item.is_identified() {
         if item.subval == 5 { // Dead human body
             parts.push(Cow::from(" (Looted)"));
-        } else if item.flags & 0x00000181 {
+        } else if item.flags & 0x00000181 == 0x00000181 {
             parts.push(Cow::from(" (Multiple Traps)"));
-        } else if item.flags & 0x00000071 {
+        } else if item.flags & 0x00000071 == 0x00000071 {
             parts.push(Cow::from(" (Multiple Traps)"));
-        } else if item.flags & 0x00000101 {
+        } else if item.flags & 0x00000101 == 0x00000101 {
             parts.push(Cow::from(" (Summoning Runes)"));
-        } else if item.flags & 0x00000081 {
+        } else if item.flags & 0x00000081 == 0x00000081 {
             parts.push(Cow::from(" (Explosion Device)"));
-        } else if item.flags & 0x00000041 {
+        } else if item.flags & 0x00000041 == 0x00000041 {
             parts.push(Cow::from(" (Gas Trap)"));
-        } else if item.flags & 0x00000021 {
+        } else if item.flags & 0x00000021 == 0x00000021 {
             parts.push(Cow::from(" (Poison Needle)"));
-        } else if item.flags & 0x00000011 {
+        } else if item.flags & 0x00000011 == 0x00000011 {
             parts.push(Cow::from(" (Poison Needle)"));
-        } else if item.flags & 0x00000001 {
+        } else if item.flags & 0x00000001 == 0x00000001 {
             parts.push(Cow::from(" (Locked)"));
         }
     }
@@ -250,39 +254,39 @@ fn misc_name(item: &model::Item) -> String {
 
     match item.subtype() {
         item_template::MiscUsableTemplate::Teeth => {
-            if item.flags & 0x20000000 {
+            if item.flags & 0x20000000 == 0x20000000 {
                 parts.push(Cow::from(" from a Dragon"));
-            } else if item.flags & 0x40000000 {
+            } else if item.flags & 0x40000000 == 0x40000000 {
                 parts.push(Cow::from(" of a Demon"));
             }
         },
         item_template::MiscUsableTemplate::Status => {
-            if item.flags & 0x00000100 {
+            if item.flags & 0x00000100 == 0x00000100 {
                 parts.push(Cow::from(" Major of Undead Summoning"));
-            } else if item.flags & 0x00000200 {
+            } else if item.flags & 0x00000200 == 0x00000200 {
                 parts.push(Cow::from(" Major of Demon Summoning"));
-            } else if item.flags & 0x00000400 {
+            } else if item.flags & 0x00000400 == 0x00000400 {
                 parts.push(Cow::from(" Life Giving"));
             }
         },
         item_template::MiscUsableTemplate::SilverCross |
         item_template::MiscUsableTemplate::GoldCross |
         item_template::MiscUsableTemplate::MithrilCross => {
-                if item.flags & 0x00000001 {
+                if item.flags & 0x00000001 == 0x00000001 {
                     parts.push(Cow::from(" of Turning"));
-                } else if item.flags & 0x00000002 {
+                } else if item.flags & 0x00000002 == 0x00000002 {
                     parts.push(Cow::from(" of Demon Dispelling"));
                 }
             },
         item_template::MiscUsableTemplate::Cross => {
-            if item.flags & 0x00000004 {
+            if item.flags & 0x00000004 == 0x00000004 {
                 parts.push(Cow::from(" of Summon Undead"));
             }
         },
         item_template::MiscUsableTemplate::CorkedBottle => {
-            if item.flags & 0x00000010 {
+            if item.flags & 0x00000010 == 0x00000010 {
                 parts.push(Cow::from(" containing a Djinni"));
-            } else if item.flags & 0x00000020 {
+            } else if item.flags & 0x00000020 == 0x00000020 {
                 parts.push(Cow::from(" containing some Demons"));
             }
         },

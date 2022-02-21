@@ -11,17 +11,17 @@ lazy_static! {
 }
 
 pub fn save() -> Data {
-    IDENTIFICATION.try_read().unwrap()
+    *IDENTIFICATION.try_read().unwrap()
 }
 
 pub fn load(data: Data) {
-    IDENTIFICATION.try_write().unwrap() = data
+    *IDENTIFICATION.try_write().unwrap() = data
 }
 
 pub fn is_identified(item_type: model::ItemType, subval: i64) -> bool {
-    if let Entry::Occupied(o) = IDENTIFICATION.try_read().unwrap().entry(item_type) {
+    if let Entry::Occupied(o) = (*IDENTIFICATION.try_read().unwrap()).entry(item_type) {
         if let Entry::Occupied(p) = o.get().entry(subval) {
-            return p.get();
+            return *p.get();
         }
     }
 
@@ -33,6 +33,6 @@ pub fn set_identified(item_type: model::ItemType, subval: i64, is_identified: bo
         .entry(item_type)
         .or_insert(HashMap::new())
         .entry(subval)
-        .and_modify(|val| val = is_identified)
-        .or_insert(is_identified)
+        .and_modify(|val| *val = is_identified)
+        .or_insert(is_identified);
 }
