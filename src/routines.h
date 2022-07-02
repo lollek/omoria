@@ -40,9 +40,6 @@ extern void C_init_curses();
 
 /* END - FROM RUST */
 
-/* { CASINO.PAS		} */
-extern void enter_casino();
-
 /* { CREATE.PAS		} */
 /*	{ Chances the name of the character			-JWT- * } */
 extern void change_name();

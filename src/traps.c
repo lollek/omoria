@@ -22,6 +22,7 @@
 #include "trade.h"
 #include "types.h"
 #include "variables.h"
+#include "casino.h"
 
 /*	{ Traps are just Nasty treasures...				} */
 static treasure_type trap_lista[MAX_TRAPA + 1] = {

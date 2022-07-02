@@ -1,6 +1,3 @@
-/* casino.c */
-/**/
-
 #include <curses.h>
 #include <math.h>
 #include <stdio.h>
