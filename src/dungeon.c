@@ -23,6 +23,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "creature.h"
 
 void C_print_known_spells();
 

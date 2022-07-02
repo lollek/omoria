@@ -21,6 +21,8 @@
 #include "types.h"
 #include "variables.h"
 
+#include "creature.h"
+
 #define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
 
 static const long mon_mult_adj = 7; // High value slows multiplication
@@ -86,7 +88,7 @@ void multiply_monster(long y, long x, long z, boolean slp) {
 /*//////////////////////////////////////////////////////////////////// */
 /*///////////           Begin the insanity               ///////////// */
 
-void c__update_mon(long monptr, long *hear_count) {
+static void c__update_mon(long monptr, long *hear_count) {
   boolean flag;
   long h_range, s_range;
 
@@ -160,7 +162,7 @@ void c__update_mon(long monptr, long *hear_count) {
   /*  LEAVE("c__update_mon", "c") */
 }
 
-void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
+static void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
   char out_val[1026];
 
   ENTER(("c__monster_eaten_message", "c"));
@@ -217,7 +219,7 @@ void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
   LEAVE("c__monster_eaten_message", "c");
 }
 
-boolean c__check_for_hit(long monptr, long atype) {
+static boolean c__check_for_hit(long monptr, long atype) {
   long level, armor_stuff;
   boolean flag = false;
 
@@ -349,7 +351,7 @@ boolean c__check_for_hit(long monptr, long atype) {
   return flag;
 }
 
-void c__print_attack(long adesc, char *cdesc) {
+static void c__print_attack(long adesc, char *cdesc) {
   char the_attack[134];
   boolean no_print = false;
 
@@ -512,7 +514,7 @@ void c__print_attack(long adesc, char *cdesc) {
   LEAVE("c__print_attack", "c");
 }
 
-void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
+static void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
   long dam, level, aning;
   long i1, i2, i4;
   boolean flag;
@@ -852,7 +854,7 @@ void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
   LEAVE("c__apply_attack", "c");
 }
 
-void c__make_attack(long monptr) {
+static void c__make_attack(long monptr) {
   /*{ Make an attack on the player (chuckle...)             -RAK-   }*/
 
   long atype;
@@ -964,7 +966,7 @@ void c__make_attack(long monptr) {
   LEAVE("c__make_attack", "c");
 }
 
-boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
+static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
   /*{ Make the move if possible, five choices               -RAK-   }*/
 
   long i1, i2, newy, newx;
@@ -1215,7 +1217,7 @@ boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
   return return_value;
 }
 
-boolean c__move_confused(long monptr, mm_type mm, long *hear_count) {
+static boolean c__move_confused(long monptr, mm_type mm, long *hear_count) {
   boolean return_value;
 
   ENTER(("c__move_confused", "c"));
@@ -1231,7 +1233,7 @@ boolean c__move_confused(long monptr, mm_type mm, long *hear_count) {
   return return_value;
 }
 
-void c__get_moves(long monptr, mm_type *mm) {
+static void c__get_moves(long monptr, mm_type *mm) {
   /*{ Choose correct directions for monster movement        -RAK-   }*/
 
   long y, x;
@@ -1259,7 +1261,7 @@ void c__get_moves(long monptr, mm_type *mm) {
   LEAVE("c__get_moves", "c");
 }
 
-boolean c__cast_spell(long monptr, boolean *took_turn) {
+static boolean c__cast_spell(long monptr, boolean *took_turn) {
   /*{ Creatures can cast spells too.  (Dragon Breath)       -RAK-   }*/
   /*{ cast_spell := true if creature changes position       }*/
   /*{ took_turn  := true if creature casts a spell          }*/
@@ -1652,7 +1654,7 @@ boolean c__cast_spell(long monptr, boolean *took_turn) {
   return return_value;
 }
 
-boolean mon_move(long monptr, long *hear_count) {
+static boolean mon_move(long monptr, long *hear_count) {
   /*{ Move the critters about the dungeon                   -RAK-   }*/
 
   long i1, i2, i3;
@@ -1749,7 +1751,7 @@ boolean mon_move(long monptr, long *hear_count) {
   return return_value;
 }
 
-void c__splash(long monptr) {
+static void c__splash(long monptr) {
   long i1, mon_swimming, drown_dam;
 
   ENTER(("c__splash", "c"));

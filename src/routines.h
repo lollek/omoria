@@ -38,18 +38,11 @@ chtype C_item_get_tchar(const treasure_type *item);
 
 extern void C_init_curses();
 
-/* END - FROM RUST */
-
-/* { CREATE.PAS		} */
 /*	{ Chances the name of the character			-JWT- * } */
 extern void change_name();
 extern void create_character();
 
-/* { CREATURE.PAS		} */
-extern long find_mon(const char *virtual_name);
-extern void check_mon_lite(long y, long x);
-extern void multiply_monster(long y, long x, long z, boolean slp);
-extern void creatures(boolean attack);
+/* END - FROM RUST */
 
 /* { DEATH.PAS		} */
 extern void upon_death();

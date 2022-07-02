@@ -21,6 +21,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "creature.h"
 
 #define LOW_NUM -98765432
 
