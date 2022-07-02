@@ -44,74 +44,10 @@ extern void create_character();
 
 /* END - FROM RUST */
 
-/* { DUNGEON.PAS		} */
-extern void move_rec(long y1, long x1, long y2, long x2);
-extern void change_speed(long num);
-extern void py_bonuses(treasure_type *tobj, long factor);
-extern boolean get_panel(long y, long x, boolean forceit);
-extern void search(long y, long x, long chance);
-extern void area_affect(long dir, long y, long x);
-extern void carry(long y, long x);
-extern void move_light(long y1, long x1, long y2, long x2);
-extern void light_room(long y, long x);
-extern void lite_spot(long y, long x);
-extern void unlite_spot(long y, long x);
-extern boolean panel_contains(long y, long x);
-extern boolean no_light();
 extern void change_trap(long y, long x);
-extern void kicked_out();
-extern void call_guards(char who[82]);
-extern void call_wizards();
-extern void beg_food();
-extern void beg_money();
-extern void invite_for_meal();
-extern void party();
-extern void spend_the_night(char who[82]);
-extern void worship();
-extern void battle_game(long plus, char kb_str[82]);
-extern void brothel_game();
-extern void thief_games();
-extern long react(long x);
-extern void change_rep(long amt);
 extern void hit_trap(long *y, long *x);
-extern boolean minus_ac(long typ_dam);
-extern void corrode_gas(char kb_str[82]);
-extern void poison_gas(long dam, char kb_str[82]);
-extern void fire_dam(long dam, char kb_str[82]);
-extern void acid_dam(long dam, char kb_str[82]);
-extern void cold_dam(long dam, char kb_str[82]);
-extern void light_dam(long dam, char kb_str[82]);
-extern void monster_death(long y, long x, unsigned long flags);
-extern long mon_take_hit(long monptr, long dam);
-extern long tot_dam(treasure_type *item, long tdam, creature_type *monster);
-extern boolean py_attack(long y, long x);
-extern boolean find_range(obj_set const item_val, boolean inner,
-                          treas_rec **first, long *count);
-extern boolean player_test_hit(long bth, long level, long pth, long ac,
-                               boolean was_fired);
-extern boolean test_hit(long bth, long level, long pth, long ac);
-extern void delete_monster(long i2);
-extern void summon_object(long y, long x, long num, long typ);
 
-/**
- * -DMF-
- * get_money_type() - Prompt for what type of money to use
- */
-long get_money_type(char prompt[134], boolean *back, boolean no_check);
-
-/**
- * coin_stuff() - Figure out what kind of coin is beign asked about
- * @typ: Initial of coin metal
- * @type_num: ???
- */
-boolean coin_stuff(char typ, long *type_num);
-extern boolean set_money(char typ, long coin_num);
-
-extern long movement_rate(long cspeed, long mon);
-extern void get_player_move_rate();
-extern void xp_loss(long amount);
-extern boolean twall(long y, long x, long t1, long t2);
-extern void dungeon();
+/* { DUNGEON.PAS		} */
 
 /* { FILES.PAS		} */
 extern void print_map();

@@ -14,11 +14,10 @@
 #include "term.h"
 #include "types.h"
 #include "kickout.h"
-
 #include "debug.h"
-
 #include "player.h"
 #include "variables.h"
+#include "dungeon.h"
 
 void eb__display_money(void);
 void eb__display_store(const char *shop_owner);

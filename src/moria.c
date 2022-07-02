@@ -22,6 +22,7 @@
 #include "stores.h"
 #include "variables.h"
 #include "death.h"
+#include "dungeon.h"
 
 int main(int argc, char *argv[]) {
 
