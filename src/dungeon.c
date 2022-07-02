@@ -11,7 +11,6 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "dungeon.h"
 #include "fighting_ranged.h"
 #include "kickout.h"
 #include "magic.h"
@@ -26,6 +25,9 @@
 #include "creature.h"
 #include "death.h"
 #include "desc.h"
+#include "help.h"
+
+#include "dungeon.h"
 
 void C_print_known_spells();
 

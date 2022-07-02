@@ -44,14 +44,11 @@ extern void create_character();
 
 /* END - FROM RUST */
 
+// TRAPS
 extern void change_trap(long y, long x);
 extern void hit_trap(long *y, long *x);
 
-/* { HELP.PAS		} */
-extern void ident_char();
-extern void help();
-extern void wizard_help();
-extern void moria_help(char help_level[82]);
+/* { WIZARD.PAS		} */
 extern void enter_wizard_mode(boolean ask_for_pass);
 
 /* { INVEN.PAS		} */
