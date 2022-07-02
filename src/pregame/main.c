@@ -6,6 +6,7 @@
 #include "../routines.h"
 #include "../save.h"
 #include "../variables.h"
+#include "../generate.h"
 
 #include "menu.h"
 

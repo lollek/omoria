@@ -45,4 +45,6 @@ typedef struct river_args {
 #define S_l_top a->s_l_top
 #define River_mouth a->river_mouth
 
+void generate_cave();
+
 #endif /* GENERATE_H */

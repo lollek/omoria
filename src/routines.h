@@ -47,9 +47,6 @@ extern void create_character();
 extern void change_trap(long y, long x);
 extern void hit_trap(long *y, long *x);
 
-/* { GENERATE.PAS		} */
-extern void generate_cave();
-
 /* { HELP.PAS		} */
 extern void ident_char();
 extern void help();
