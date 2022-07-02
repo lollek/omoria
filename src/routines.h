@@ -44,12 +44,6 @@ extern void create_character();
 
 /* END - FROM RUST */
 
-/* { DEATH.PAS		} */
-extern void upon_death();
-extern void make_tomb(char dstr[][82]);
-extern void write_tomb(char dstr[][82]);
-extern void print_dead_character();
-
 /* { DESC.PAS		} */
 extern void rantitle(char *title); /* : varying[a] of char); */
 extern void known1(char *object_str);  /* : varying[a] of char); */

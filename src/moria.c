@@ -21,6 +21,7 @@
 #include "save.h"
 #include "stores.h"
 #include "variables.h"
+#include "death.h"
 
 int main(int argc, char *argv[]) {
 
