@@ -32,24 +32,25 @@ impl AxeTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         AxeTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(AxeTemplate::Balestarius),
+            3 => Box::new(AxeTemplate::BattleAxe),
+            4 => Box::new(AxeTemplate::BroadAxe),
+            5 => Box::new(AxeTemplate::HandAxe),
+            6 => Box::new(AxeTemplate::WarAxe),
+            7 => Box::new(AxeTemplate::LargeAxe),
+            8 => Box::new(AxeTemplate::BeardedAxe),
+            9 => Box::new(AxeTemplate::SilverEdgedAxe),
+            10 => Box::new(AxeTemplate::ChampionAxe),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for AxeTemplate {
-    fn name(&self) -> &str {
-        match self {
-            AxeTemplate::Balestarius => "Balestarius (%P0)^ (%P2,%P3)",
-            AxeTemplate::BattleAxe => "Battle Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::BroadAxe => "Broad Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::HandAxe => "Hand Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::WarAxe => "War Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::LargeAxe => "Large Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::BeardedAxe => "Bearded Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::SilverEdgedAxe => "Silved Edged Axe (%P0)^ (%P2,%P3)",
-            AxeTemplate::ChampionAxe => "Champion Axe (%P0)^ (%P2,%P3)",
-        }
-    }
-
-    fn item_type(&self) -> model::ItemType { model::ItemType::HaftedWeapon }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Axe }
     fn flags1(&self) -> u64 { 0x10000000 }
     fn flags2(&self) -> u64 { 0 }
     fn p1(&self) -> i64 { 0 }

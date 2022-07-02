@@ -35,26 +35,26 @@ impl MaceTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         MaceTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            2 => Box::new(MaceTemplate::BallAndChain),
+            6 => Box::new(MaceTemplate::WoodenClub),
+            7 => Box::new(MaceTemplate::Flail),
+            8 => Box::new(MaceTemplate::GreatFlail),
+            9 => Box::new(MaceTemplate::MorningStar),
+            10 => Box::new(MaceTemplate::Mace),
+            11 => Box::new(MaceTemplate::WarHammer),
+            12 => Box::new(MaceTemplate::LeadFilledMace),
+            13 => Box::new(MaceTemplate::IronShodQuarterstaff),
+            14 => Box::new(MaceTemplate::OgreMaul),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for MaceTemplate {
-
-    fn name(&self) -> &str {
-        match self {
-            MaceTemplate::BallAndChain => "Ball and Chain (%P0)^ (%P2,%P3)",
-            MaceTemplate::WoodenClub => "Wooden Club (%P0)^ (%P2,%P3)",
-            MaceTemplate::Flail => "Flail (%P0)^ (%P2,%P3)",
-            MaceTemplate::GreatFlail => "Two Handed Great Flail (%P0)^ (%P2,%P3)",
-            MaceTemplate::MorningStar => "Morningstar (%P0)^ (%P2,%P3)",
-            MaceTemplate::Mace => "Mace (%P0)^ (%P2,%P3)",
-            MaceTemplate::WarHammer => "War Hammer (%P0)^ (%P2,%P3)",
-            MaceTemplate::LeadFilledMace => "Lead Filled Mace (%P0)^ (%P2,%P3)",
-            MaceTemplate::IronShodQuarterstaff => "Iron Shod Quarterstaff (%P0)^ (%P2,%P3)",
-            MaceTemplate::OgreMaul => "Ogre Maul (%P0)^ (%P2,%P3)",
-        }
-    }
-
-    fn item_type(&self) -> model::ItemType { model::ItemType::Maul }
+    fn item_type(&self) -> model::ItemType { model::ItemType::Mace }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }
     fn p1(&self) -> i64 { 0 }

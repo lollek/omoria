@@ -34,13 +34,10 @@ pub enum FoodTemplate {
     FineWine,
     ElvishWaybread,
     Stew,
-    JollyGreenJelly,
     GreenJelly,
     BerriesPoisonous,
     BerriesSmurfberries,
-    BerriesSmurfberries2,
     BerriesGoodberries,
-    BerriesGoodberries2,
     EyeballOfNed,
 }
 
@@ -78,13 +75,10 @@ impl FoodTemplate {
             Box::new(FoodTemplate::FineWine),
             Box::new(FoodTemplate::ElvishWaybread),
             Box::new(FoodTemplate::Stew),
-            Box::new(FoodTemplate::JollyGreenJelly),
             Box::new(FoodTemplate::GreenJelly),
             Box::new(FoodTemplate::BerriesPoisonous),
             Box::new(FoodTemplate::BerriesSmurfberries),
-            Box::new(FoodTemplate::BerriesSmurfberries2),
             Box::new(FoodTemplate::BerriesGoodberries),
-            Box::new(FoodTemplate::BerriesGoodberries2),
             Box::new(FoodTemplate::EyeballOfNed),
             ]
     }
@@ -92,53 +86,51 @@ impl FoodTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         FoodTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            256 => Box::new(FoodTemplate::Mushroom),
+            257 => Box::new(FoodTemplate::MushroomOfPoison),
+            258 => Box::new(FoodTemplate::MushroomOfBlindness),
+            259 => Box::new(FoodTemplate::MushroomOfParanoia),
+            260 => Box::new(FoodTemplate::MushroomOfConfusion),
+            261 => Box::new(FoodTemplate::MushroomOfHallucination),
+            262 => Box::new(FoodTemplate::MushroomOfCurePoison),
+            263 => Box::new(FoodTemplate::MushroomOfCureBlindness),
+            264 => Box::new(FoodTemplate::MushroomOfCureParanoia),
+            265 => Box::new(FoodTemplate::MushroomOfCureConfusion),
+            266 => Box::new(FoodTemplate::MushroomOfWeakness),
+            267 => Box::new(FoodTemplate::MushroomOfUnhealth),
+            268 => Box::new(FoodTemplate::MushroomOfRestoreConstitution),
+            269 => Box::new(FoodTemplate::MushroomOfFirstAid),
+            270 => Box::new(FoodTemplate::MushroomOfMinorCures),
+            271 => Box::new(FoodTemplate::MushroomOfLightCures),
+            272 => Box::new(FoodTemplate::MushroomOfRestoring),
+            273 => Box::new(FoodTemplate::MushroomOfPoison2),
+            274 => Box::new(FoodTemplate::MushroomOfHallucination2),
+            275 => Box::new(FoodTemplate::MushroomOfCurePoison2),
+            276 => Box::new(FoodTemplate::MushroomOfUnhealth2),
+            277 => Box::new(FoodTemplate::MushroomOfCureSeriousWounds),
+            306 => Box::new(FoodTemplate::PintOfFineGradeMush),
+            307 => Box::new(FoodTemplate::RationOfFood),
+            308 => Box::new(FoodTemplate::Mushroom2),
+            309 => Box::new(FoodTemplate::HardBiscuit),
+            310 => Box::new(FoodTemplate::BeefJerky),
+            311 => Box::new(FoodTemplate::FineAle),
+            312 => Box::new(FoodTemplate::FineWine),
+            313 => Box::new(FoodTemplate::ElvishWaybread),
+            314 => Box::new(FoodTemplate::Stew),
+            315 => Box::new(FoodTemplate::GreenJelly),
+            316 => Box::new(FoodTemplate::BerriesPoisonous),
+            317 => Box::new(FoodTemplate::BerriesSmurfberries),
+            318 => Box::new(FoodTemplate::BerriesGoodberries),
+            319 => Box::new(FoodTemplate::EyeballOfNed),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for FoodTemplate {
-    fn name(&self) -> &str {
-        match self {
-            FoodTemplate::Mushroom => "& Mushroom~",
-            FoodTemplate::MushroomOfPoison => "& Mushroom~| of Poison",
-            FoodTemplate::MushroomOfBlindness => "& Mushroom~| of Blindness",
-            FoodTemplate::MushroomOfParanoia => "& Mushroom~| of Paranoia",
-            FoodTemplate::MushroomOfConfusion => "& Mushroom~| of Confusion",
-            FoodTemplate::MushroomOfHallucination => "& Mushroom~| of Hallucination",
-            FoodTemplate::MushroomOfCurePoison => "& Mushroom~| of Cure Poison",
-            FoodTemplate::MushroomOfCureBlindness => "& Mushroom~| of Cure Blindness",
-            FoodTemplate::MushroomOfCureParanoia => "& Mushroom~| of Cure Paranoia",
-            FoodTemplate::MushroomOfCureConfusion => "& Mushroom~| of Cure Confusion",
-            FoodTemplate::MushroomOfWeakness => "& Mushroom~| of Weakness",
-            FoodTemplate::MushroomOfUnhealth => "& Mushroom~| of Unhealth",
-            FoodTemplate::MushroomOfRestoreConstitution => "& Mushroom~| of Restore Constitution",
-            FoodTemplate::MushroomOfFirstAid => "& Mushroom~| of First-Aid",
-            FoodTemplate::MushroomOfMinorCures => "& Mushroom~| of Minor Cures",
-            FoodTemplate::MushroomOfLightCures => "& Mushroom~| of Light Cures",
-            FoodTemplate::MushroomOfRestoring => "& Mushroom~| of Restoring",
-            FoodTemplate::MushroomOfPoison2 => "& Mushroom~| of Poison",
-            FoodTemplate::MushroomOfHallucination2 => "& Mushroom~| of Hallucination",
-            FoodTemplate::MushroomOfCurePoison2 => "& Mushroom~| of Cure Poison",
-            FoodTemplate::MushroomOfUnhealth2 => "& Mushroom~| of Unhealth",
-            FoodTemplate::MushroomOfCureSeriousWounds => "& Mushroom~| of Cure Serious Wounds",
-            FoodTemplate::PintOfFineGradeMush => "& pint~ of fine grade mush",
-            FoodTemplate::RationOfFood => "& Ration~ of Food",
-            FoodTemplate::Mushroom2 => "& Mushroom~",
-            FoodTemplate::HardBiscuit => "& Hard Biscuit~",
-            FoodTemplate::BeefJerky => "& Strip~ of Beef Jerky",
-            FoodTemplate::FineAle => "& Pint~ of Fine Ale",
-            FoodTemplate::FineWine => "& Pint~ of Fine Wine",
-            FoodTemplate::ElvishWaybread => "& Piece~ of Elvish Waybread",
-            FoodTemplate::Stew => "& Stew~",
-            FoodTemplate::JollyGreenJelly => "& Jolly Green Jelly~| (Ho Ho Ho!)",
-            FoodTemplate::GreenJelly => "& Green Jelly~",
-            FoodTemplate::BerriesPoisonous => "& Handful~ of Berries| (Poisonous)",
-            FoodTemplate::BerriesSmurfberries => "& Handful~ of Berries| (Smurfberries)",
-            FoodTemplate::BerriesSmurfberries2 => "& Handful~ of Berries| (Smurfberries)",
-            FoodTemplate::BerriesGoodberries => "& Handful~ of Berries| (Goodberries)",
-            FoodTemplate::BerriesGoodberries2 => "& Handful~ of Berries| (Goodberries)",
-            FoodTemplate::EyeballOfNed => "& Eyeball~| of Ned",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Food }
     fn flags1(&self) -> u64 { 0 }
 
@@ -175,13 +167,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 0,
             FoodTemplate::ElvishWaybread => 0x21800020,
             FoodTemplate::Stew => 0x330001C0,
-            FoodTemplate::JollyGreenJelly => 0x224001C0,
             FoodTemplate::GreenJelly => 0x22400060,
             FoodTemplate::BerriesPoisonous => 0x0C0000000,
             FoodTemplate::BerriesSmurfberries => 0x10400000,
-            FoodTemplate::BerriesSmurfberries2 => 0x30400000,
             FoodTemplate::BerriesGoodberries => 0x10C00080,
-            FoodTemplate::BerriesGoodberries2 => 0x30C00080,
             FoodTemplate::EyeballOfNed => 0x00000053,
 
         }
@@ -220,13 +209,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 400,
             FoodTemplate::ElvishWaybread => 3500,
             FoodTemplate::Stew => 2000,
-            FoodTemplate::JollyGreenJelly => 4000,
             FoodTemplate::GreenJelly => 4000,
             FoodTemplate::BerriesPoisonous => 1000,
             FoodTemplate::BerriesSmurfberries => 1000,
-            FoodTemplate::BerriesSmurfberries2 => 1000,
             FoodTemplate::BerriesGoodberries => 1000,
-            FoodTemplate::BerriesGoodberries2 => 1000,
             FoodTemplate::EyeballOfNed => 200,
 
         }
@@ -265,13 +251,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 2,
             FoodTemplate::ElvishWaybread => 10,
             FoodTemplate::Stew => 0,
-            FoodTemplate::JollyGreenJelly => 0,
             FoodTemplate::GreenJelly => 50,
             FoodTemplate::BerriesPoisonous => 0,
             FoodTemplate::BerriesSmurfberries => 0,
-            FoodTemplate::BerriesSmurfberries2 => 0,
             FoodTemplate::BerriesGoodberries => 0,
-            FoodTemplate::BerriesGoodberries2 => 0,
             FoodTemplate::EyeballOfNed => 50,
         }
     }
@@ -309,13 +292,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 312,
             FoodTemplate::ElvishWaybread => 313,
             FoodTemplate::Stew => 314,
-            FoodTemplate::JollyGreenJelly => 315,
             FoodTemplate::GreenJelly => 315,
             FoodTemplate::BerriesPoisonous => 316,
             FoodTemplate::BerriesSmurfberries => 317,
-            FoodTemplate::BerriesSmurfberries2 => 317,
             FoodTemplate::BerriesGoodberries => 318,
-            FoodTemplate::BerriesGoodberries2 => 318,
             FoodTemplate::EyeballOfNed => 319,
         }
     }
@@ -353,13 +333,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 10,
             FoodTemplate::ElvishWaybread => 3,
             FoodTemplate::Stew => 3,
-            FoodTemplate::JollyGreenJelly => 3,
             FoodTemplate::GreenJelly => 3,
             FoodTemplate::BerriesPoisonous => 3,
             FoodTemplate::BerriesSmurfberries => 3,
-            FoodTemplate::BerriesSmurfberries2 => 3,
             FoodTemplate::BerriesGoodberries => 3,
-            FoodTemplate::BerriesGoodberries2 => 3,
             FoodTemplate::EyeballOfNed => 2,
 
         }
@@ -398,13 +375,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 1,
             FoodTemplate::ElvishWaybread => 1,
             FoodTemplate::Stew => 1,
-            FoodTemplate::JollyGreenJelly => 1,
             FoodTemplate::GreenJelly => 1,
             FoodTemplate::BerriesPoisonous => 1,
             FoodTemplate::BerriesSmurfberries => 1,
-            FoodTemplate::BerriesSmurfberries2 => 1,
             FoodTemplate::BerriesGoodberries => 1,
-            FoodTemplate::BerriesGoodberries2 => 1,
             FoodTemplate::EyeballOfNed => 2,
 
         }
@@ -448,13 +422,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => "0d0",
             FoodTemplate::ElvishWaybread => "0d0",
             FoodTemplate::Stew => "0d0",
-            FoodTemplate::JollyGreenJelly => "0d0",
             FoodTemplate::GreenJelly => "0d0",
             FoodTemplate::BerriesPoisonous => "0d0",
             FoodTemplate::BerriesSmurfberries => "0d0",
-            FoodTemplate::BerriesSmurfberries2 => "0d0",
             FoodTemplate::BerriesGoodberries => "0d0",
-            FoodTemplate::BerriesGoodberries2 => "0d0",
             FoodTemplate::EyeballOfNed => "6d5",
 
         }
@@ -493,13 +464,10 @@ impl item_template::ItemTemplate for FoodTemplate {
             FoodTemplate::FineWine => 9,
             FoodTemplate::ElvishWaybread => 7,
             FoodTemplate::Stew => 15,
-            FoodTemplate::JollyGreenJelly => 20,
             FoodTemplate::GreenJelly => 30,
             FoodTemplate::BerriesPoisonous => 15,
             FoodTemplate::BerriesSmurfberries => 28,
-            FoodTemplate::BerriesSmurfberries2 => 7,
             FoodTemplate::BerriesGoodberries => 255,
-            FoodTemplate::BerriesGoodberries2 => 0,
             FoodTemplate::EyeballOfNed => 255,
         }
     }

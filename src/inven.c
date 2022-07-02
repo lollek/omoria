@@ -241,9 +241,9 @@ long ic__display_inv(treas_rec *cur_display[], char prompt[82],
       if (cur_display[count] != start) {
         cur_display[count] = start;
         inven_temp.data = start->data;
-        objdes(out_val, &inven_temp, true);
+        C_item_name_generate_name(&inven_temp.data, out_val);
         if ((start->data.flags2 & Holding_bit) != 0) {
-          if (strstr(start->data.name, "|") == NULL) {
+          if (is_type_identified(start->data.tval, start->data.subval)) {
             bag_descrip(start, out_val3);
             strcat(out_val, out_val3);
           }
@@ -491,7 +491,7 @@ void inv__equip_pos_string(char out_val[82], long equip_pos, long counter) {
   char tmp_buf[82];
 
   inven_temp.data = equipment[equip_pos];
-  objdes(tmp_buf, &inven_temp, true);
+  C_item_name_generate_name(&inven_temp.data, tmp_buf);
   sprintf(out_val, "%c%c%c%s%s", cur_insure(), (char)('a' + counter - 1),
           cur_char2(), ic__equip_print_prefix(equip_pos), tmp_buf);
 }
@@ -529,7 +529,9 @@ treas_rec *ic__remove(long item_val, boolean show_message) {
     case sling_ammo:
     case bolt:
     case arrow:
-    case bow_crossbow_or_sling:
+    case bow:
+    case crossbow:
+    case sling:
     case hafted_weapon:
     case pole_arm:
     case sword:
@@ -548,7 +550,7 @@ treas_rec *ic__remove(long item_val, boolean show_message) {
       break;
     }
 
-    objdes(prt2, &inven_temp, true);
+    C_item_name_generate_name(&inven_temp.data, prt2);
     sprintf(out_val, "%s%s", prt1, prt2);
     msg_print(out_val);
   }
@@ -721,7 +723,7 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
     { /* Filter item types before we show the list */
       const obj_set wearables = {valuable_gems_wear,
                                  lamp_or_torch,
-                                 bow_crossbow_or_sling,
+                                 bow, crossbow, sling,
                                  hafted_weapon,
                                  pole_arm,
                                  dagger,
@@ -740,8 +742,6 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
                                  belt,
                                  amulet,
                                  ring,
-                                 0,
-                                 0,
                                  0,
                                  0};
       treas_rec *ptr;
@@ -774,7 +774,9 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
       i1 = Equipment_light;
       break;
 
-    case bow_crossbow_or_sling:
+    case bow:
+    case crossbow:
+    case sling:
     case hafted_weapon:
     case pole_arm:
     case sword:
@@ -847,7 +849,7 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
           i1 == Equipment_primary ? "wielding" : "wearing";
       char out_val_tmp[82];
       inven_temp.data = equipment[i1];
-      objdes(out_val, &inven_temp, false);
+      C_item_name_generate_name(&inven_temp.data, out_val);
       strcpy(out_val_tmp, out_val);
       sprintf(out_val, "The %s you are %s appears to be cursed", out_val_tmp,
               equip_way);
@@ -890,7 +892,7 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
         break;
       }
       inven_temp.data = equipment[i1];
-      objdes(prt2, &inven_temp, true);
+      C_item_name_generate_name(&inven_temp.data, prt2);
       i2 = 0;
       i3 = Equipment_min - 1;
       do { /*{ Get the right letter of equipment }*/
@@ -959,8 +961,10 @@ void ic__stats(treas_rec *cur_display[], long *cur_display_size,
       prt("Level       : ", 18, 1);
       prt("Blackmarket : ", 19, 1);
       prt("Insured     : ", 20, 1);
-      prt(item_ptr->data.name, 1, 15);
-      objdes(out_val, item_ptr, true);
+      char name[70];
+      C_item_name_generate_name(&item_ptr->data, name);
+      prt(name, 1, 15);
+      C_item_name_generate_name(&item_ptr->data, out_val);
       prt(out_val, 2, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.tval);
       prt(out_val, 3, 15);
@@ -1002,7 +1006,9 @@ void ic__stats(treas_rec *cur_display[], long *cur_display_size,
       case lamp_or_torch:
         strcpy(out_val, "Lamp or torch");
         break;
-      case bow_crossbow_or_sling:
+      case bow:
+      case crossbow:
+      case sling:
         strcpy(out_val, "Ranged weapon");
         break;
       case hafted_weapon:
@@ -1062,18 +1068,13 @@ void ic__stats(treas_rec *cur_display[], long *cur_display_size,
       case staff:
         strcpy(out_val, "Staff");
         break;
-      case rod:
-        strcpy(out_val, "Rod");
-        break;
       case wand:
         strcpy(out_val, "Wand");
         break;
-      case scroll1:
-      case scroll2:
+      case Scroll:
         strcpy(out_val, "Scroll");
         break;
-      case potion1:
-      case potion2:
+      case potion:
         strcpy(out_val, "Potion");
         break;
       case flask_of_oil:
@@ -1406,7 +1407,7 @@ void ic__switch_weapon(long *scr_state) {
     char prt1[82];
     char prt2[200];
     inven_temp.data = equipment[Equipment_primary];
-    objdes(prt1, &inven_temp, false);
+    C_item_name_generate_name(&inven_temp.data, prt1);
     sprintf(prt2, "The %s you are wielding appears to be cursed.", prt1);
     msg_print(prt2);
   } else {
@@ -1672,7 +1673,7 @@ char cur_char1() {
     return_value = ')'; /*{ Not cursed...                 }*/
   } else if ((Known_cursed_bit & inven_temp.data.flags2) != 0) {
     return_value = '*'; /*{ Cursed and detected by spell }*/
-  } else if (pindex(inven_temp.data.name, '^') > 0) {
+  } else if (!inven_temp.data.identified) {
     return_value = ')'; /*{ Cursed, but not identified    }*/
   } else {
     return_value = '*'; /*{ Cursed and identified...      }*/

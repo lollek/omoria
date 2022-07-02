@@ -6,6 +6,7 @@ pub enum MiscUsableTemplate {
     FlaskOfOil,
     IronSpike,
     Statue,
+    Teeth,
     SilverCross,
     GoldCross,
     MithrilCross,
@@ -19,6 +20,7 @@ impl MiscUsableTemplate {
             Box::new(MiscUsableTemplate::FlaskOfOil),
             Box::new(MiscUsableTemplate::IronSpike),
             Box::new(MiscUsableTemplate::Statue),
+            Box::new(MiscUsableTemplate::Teeth),
             Box::new(MiscUsableTemplate::SilverCross),
             Box::new(MiscUsableTemplate::GoldCross),
             Box::new(MiscUsableTemplate::MithrilCross),
@@ -30,27 +32,30 @@ impl MiscUsableTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         MiscUsableTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(MiscUsableTemplate::IronSpike),
+            14 => Box::new(MiscUsableTemplate::Statue),
+            15 => Box::new(MiscUsableTemplate::Teeth),
+            16 => Box::new(MiscUsableTemplate::SilverCross),
+            17 => Box::new(MiscUsableTemplate::GoldCross),
+            18 => Box::new(MiscUsableTemplate::MithrilCross),
+            19 => Box::new(MiscUsableTemplate::Cross),
+            21 => Box::new(MiscUsableTemplate::CorkedBottle),
+            257 => Box::new(MiscUsableTemplate::FlaskOfOil),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for MiscUsableTemplate {
-    fn name(&self) -> &str {
-        match self {
-            MiscUsableTemplate::FlaskOfOil => "& Flask~ of Oil",
-            MiscUsableTemplate::IronSpike => "& Iron Spike~",
-            MiscUsableTemplate::Statue => "& %A Statue^",
-            MiscUsableTemplate::SilverCross => "& Silver Cross^",
-            MiscUsableTemplate::GoldCross => "& Gold Cross^",
-            MiscUsableTemplate::MithrilCross => "& Mithril Cross^",
-            MiscUsableTemplate::Cross => "& %M Cross^",
-            MiscUsableTemplate::CorkedBottle => "& Corked Bottle^",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType {
         match self {
             MiscUsableTemplate::FlaskOfOil => model::ItemType::FlaskOfOil,
             MiscUsableTemplate::IronSpike => model::ItemType::Spike,
             MiscUsableTemplate::Statue => model::ItemType::MiscUsable,
+            MiscUsableTemplate::Teeth => model::ItemType::MiscUsable,
             MiscUsableTemplate::SilverCross => model::ItemType::MiscUsable,
             MiscUsableTemplate::GoldCross => model::ItemType::MiscUsable,
             MiscUsableTemplate::MithrilCross => model::ItemType::MiscUsable,
@@ -67,6 +72,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 0x00040000,
             MiscUsableTemplate::IronSpike => 0,
             MiscUsableTemplate::Statue => 0,
+            MiscUsableTemplate::Teeth => 0,
             MiscUsableTemplate::SilverCross => 0,
             MiscUsableTemplate::GoldCross => 0,
             MiscUsableTemplate::MithrilCross => 0,
@@ -80,6 +86,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 7500,
             MiscUsableTemplate::IronSpike => 0,
             MiscUsableTemplate::Statue => 0,
+            MiscUsableTemplate::Teeth => 0,
             MiscUsableTemplate::SilverCross => 0,
             MiscUsableTemplate::GoldCross => 0,
             MiscUsableTemplate::MithrilCross => 0,
@@ -93,6 +100,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 3,
             MiscUsableTemplate::IronSpike => 1,
             MiscUsableTemplate::Statue => 20,
+            MiscUsableTemplate::Teeth => 0,
             MiscUsableTemplate::SilverCross => 250,
             MiscUsableTemplate::GoldCross => 500,
             MiscUsableTemplate::MithrilCross => 750,
@@ -106,6 +114,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 257,
             MiscUsableTemplate::IronSpike => 1,
             MiscUsableTemplate::Statue => 14,
+            MiscUsableTemplate::Teeth => 15,
             MiscUsableTemplate::SilverCross => 16,
             MiscUsableTemplate::GoldCross => 17,
             MiscUsableTemplate::MithrilCross => 18,
@@ -119,6 +128,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 10,
             MiscUsableTemplate::IronSpike => 10,
             MiscUsableTemplate::Statue => 10,
+            MiscUsableTemplate::Teeth => 1,
             MiscUsableTemplate::SilverCross => 3,
             MiscUsableTemplate::GoldCross => 5,
             MiscUsableTemplate::MithrilCross => 10,
@@ -138,6 +148,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => "2d6",
             MiscUsableTemplate::IronSpike => "1d1",
             MiscUsableTemplate::Statue => "1d2",
+            MiscUsableTemplate::Teeth => "1d1",
             MiscUsableTemplate::SilverCross => "1d1",
             MiscUsableTemplate::GoldCross => "1d1",
             MiscUsableTemplate::MithrilCross => "1d1",
@@ -151,6 +162,7 @@ impl item_template::ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::FlaskOfOil => 10,
             MiscUsableTemplate::IronSpike => 20,
             MiscUsableTemplate::Statue => 1,
+            MiscUsableTemplate::Teeth => 1,
             MiscUsableTemplate::SilverCross => 25,
             MiscUsableTemplate::GoldCross => 1,
             MiscUsableTemplate::MithrilCross => 45,

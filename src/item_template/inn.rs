@@ -22,18 +22,19 @@ impl LodgingAtInnTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         LodgingAtInnTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            300 => Box::new(LodgingAtInnTemplate::LodgingForOneDay),
+            302 => Box::new(LodgingAtInnTemplate::LodgingForThreeDays),
+            301 => Box::new(LodgingAtInnTemplate::LodgingForOneWeek),
+            303 => Box::new(LodgingAtInnTemplate::RoomAndBoardForOneDay),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for LodgingAtInnTemplate {
-    fn name(&self) -> &str {
-        match self {
-            LodgingAtInnTemplate::LodgingForOneDay => "Lodging for one day",
-            LodgingAtInnTemplate::LodgingForThreeDays => "Lodging for three days",
-            LodgingAtInnTemplate::LodgingForOneWeek => "Lodging for the week",
-            LodgingAtInnTemplate::RoomAndBoardForOneDay => "Room and board for one day",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::LodgingAtInn }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

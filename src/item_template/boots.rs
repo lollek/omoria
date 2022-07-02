@@ -29,26 +29,28 @@ impl BootsTemplate {
             Box::new(BootsTemplate::WyrmhideBoot),
         ]
     }
+
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BootsTemplate::vec().into_iter()
+    }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BootsTemplate::SoftLeatherShoes),
+            2 => Box::new(BootsTemplate::SoftLeatherBoots),
+            3 => Box::new(BootsTemplate::HardLeatherBoots),
+            4 => Box::new(BootsTemplate::Sandals),
+            5 => Box::new(BootsTemplate::ChainBoots),
+            6 => Box::new(BootsTemplate::LightPlatedBoots),
+            7 => Box::new(BootsTemplate::SharkskinBoots),
+            8 => Box::new(BootsTemplate::DemonhideBoots),
+            9 => Box::new(BootsTemplate::WyrmhideBoot),
+            _ => panic!("subval {} out of bounds", subval),
+        }
     }
 }
 
 impl item_template::ItemTemplate for BootsTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BootsTemplate::SoftLeatherShoes => "Soft Leather Shoes^ [%P6,%P4]",
-            BootsTemplate::SoftLeatherBoots => "Soft Leather Boots^ [%P6,%P4]",
-            BootsTemplate::HardLeatherBoots => "Hard Leather Boots^ [%P6,%P4]",
-            BootsTemplate::Sandals => "Sandals^ [%P6,%P4]",
-            BootsTemplate::ChainBoots => "Chain Boots^ [%P6,%P4]",
-            BootsTemplate::LightPlatedBoots => "Light Plated Boots^ [%P6,%P4]",
-            BootsTemplate::SharkskinBoots => "Sharkskin Boots^ [%P6,%P4]",
-            BootsTemplate::DemonhideBoots => "Demonhide Boots^ [%P6,%P4]",
-            BootsTemplate::WyrmhideBoot => "Wyrmhide Boots^ [%P6,%P4]",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Boots }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

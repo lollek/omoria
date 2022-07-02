@@ -22,18 +22,19 @@ impl AmmunitionTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         AmmunitionTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(AmmunitionTemplate::Arrow),
+            2 => Box::new(AmmunitionTemplate::Bolt),
+            3 => Box::new(AmmunitionTemplate::RoundedPebble),
+            4 => Box::new(AmmunitionTemplate::IronShot),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for AmmunitionTemplate {
-    fn name(&self) -> &str {
-        match self {
-            AmmunitionTemplate::Arrow => "& Arrow~^ (%P2,%P3)",
-            AmmunitionTemplate::Bolt => "& Bolt~^ (%P2,%P3)",
-            AmmunitionTemplate::RoundedPebble => "& Rounded Pebble~^ (%P2,%P3)",
-            AmmunitionTemplate::IronShot => "& Iron Shot~^ (%P2,%P3)",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType {
         match self {
             AmmunitionTemplate::Arrow => model::ItemType::Arrow,
@@ -64,7 +65,14 @@ impl item_template::ItemTemplate for AmmunitionTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 { 1 }
+    fn subtype(&self) -> i64 {
+        match self {
+            AmmunitionTemplate::Arrow => 1,
+            AmmunitionTemplate::Bolt => 2,
+            AmmunitionTemplate::RoundedPebble => 3,
+            AmmunitionTemplate::IronShot => 4,
+        }
+ }
 
     fn weight(&self) -> u16 {
         match self {

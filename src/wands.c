@@ -218,7 +218,7 @@ void aim_wand() {
               aw__wand_effects(i5, &ident, dir, i3, i4);
             }
             if (ident) {
-              identify(&(item_ptr->data));
+              set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
             }
             if (item_ptr->data.flags != 0) {
               /* with player_do; */

@@ -36,26 +36,27 @@ impl MiscTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         MiscTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(MiscTemplate::RatSkeleton),
+            2 => Box::new(MiscTemplate::GiantCentipedeSkeleton),
+            4 => Box::new(MiscTemplate::EmptyBottle),
+            5 => Box::new(MiscTemplate::PotteryShard),
+            7 => Box::new(MiscTemplate::HumanSkeleton),
+            8 => Box::new(MiscTemplate::DwarfSkeleton),
+            9 => Box::new(MiscTemplate::ElfSkeleton),
+            10 => Box::new(MiscTemplate::GnomeSkeleton),
+            11 => Box::new(MiscTemplate::BrokenTeeth),
+            12 => Box::new(MiscTemplate::LargeBrokenBone),
+            13 => Box::new(MiscTemplate::BrokenStick),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for MiscTemplate {
-    fn name(&self) -> &str {
-        match self {
-            MiscTemplate::RatSkeleton => "& Rat Skeleton",
-            MiscTemplate::GiantCentipedeSkeleton => "& Giant Centipede Skeleton",
-            MiscTemplate::EmptyBottle => "& Empty Bottle^",
-            MiscTemplate::PotteryShard => "Some Shards of Pottery^",
-            MiscTemplate::HumanSkeleton => "& Human Skeleton",
-            MiscTemplate::DwarfSkeleton => "& Dwarf Skeleton",
-            MiscTemplate::ElfSkeleton => "& Elf Skeleton",
-            MiscTemplate::GnomeSkeleton => "& Gnome Skeleton",
-            MiscTemplate::BrokenTeeth => "& Broken Set of Teeth^",
-            MiscTemplate::LargeBrokenBone => "& Large Broken Bone^",
-            MiscTemplate::BrokenStick => "& Broken Stick^",
-        }
-    }
-
-    fn item_type(&self) -> model::ItemType { model::ItemType::MiscUsable }
+    fn item_type(&self) -> model::ItemType { model::ItemType::MiscObject }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }
     fn p1(&self) -> i64 { 0 }

@@ -64,39 +64,40 @@ impl WandTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         WandTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            25 => Box::new(WandTemplate::WandOfProbing),
+            1 => Box::new(WandTemplate::WandOfLight),
+            2 => Box::new(WandTemplate::WandOfLightningBolts),
+            3 => Box::new(WandTemplate::WandOfFrostBolts),
+            4 => Box::new(WandTemplate::WandOfFireBolts),
+            5 => Box::new(WandTemplate::WandOfStoneToMud),
+            6 => Box::new(WandTemplate::WandOfPolymorph),
+            7 => Box::new(WandTemplate::WandOfHealMonster),
+            8 => Box::new(WandTemplate::WandOfHasteMonster),
+            9 => Box::new(WandTemplate::WandOfSlowMonster),
+            10 => Box::new(WandTemplate::WandOfConfuseMonster),
+            11 => Box::new(WandTemplate::WandOfSleepMonster),
+            12 => Box::new(WandTemplate::WandOfDrainLife),
+            13 => Box::new(WandTemplate::WandOfTrapDoorDestruction),
+            14 => Box::new(WandTemplate::WandOfMagicMissile),
+            15 => Box::new(WandTemplate::WandOfWallBuilding),
+            16 => Box::new(WandTemplate::WandOfCloneMonster),
+            17 => Box::new(WandTemplate::WandOfTeleportAway),
+            18 => Box::new(WandTemplate::WandOfDisarming),
+            19 => Box::new(WandTemplate::WandOfLightningBalls),
+            20 => Box::new(WandTemplate::WandOfColdBalls),
+            21 => Box::new(WandTemplate::WandOfFireBalls),
+            22 => Box::new(WandTemplate::WandOfStinkingCloud),
+            23 => Box::new(WandTemplate::WandOfAcidBalls),
+            24 => Box::new(WandTemplate::WandOfWonder),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for WandTemplate {
-    fn name(&self) -> &str {
-        match self {
-            WandTemplate::WandOfProbing => "& Wand| of Probing^ (%P1 charges)",
-            WandTemplate::WandOfLight => "& Wand| of Light^ (%P1 charges)",
-            WandTemplate::WandOfLightningBolts => "& Wand| of Lightning Bolts^ (%P1 charges)",
-            WandTemplate::WandOfFrostBolts => "& Wand| of Frost Bolts^ (%P1 charges)",
-            WandTemplate::WandOfFireBolts => "& Wand| of Fire Bolts^ (%P1 charges)",
-            WandTemplate::WandOfStoneToMud => "& Wand| of Stone-to-Mud^ (%P1 charges)",
-            WandTemplate::WandOfPolymorph => "& Wand| of Polymorph^ (%P1 charges)",
-            WandTemplate::WandOfHealMonster => "& Wand| of Heal Monster^ (%P1 charges)",
-            WandTemplate::WandOfHasteMonster => "& Wand| of Haste Monster^ (%P1 charges)",
-            WandTemplate::WandOfSlowMonster => "& Wand| of Slow Monster^ (%P1 charges)",
-            WandTemplate::WandOfConfuseMonster => "& Wand| of Confuse Monster^ (%P1 charges)",
-            WandTemplate::WandOfSleepMonster => "& Wand| of Sleep Monster^ (%P1 charges)",
-            WandTemplate::WandOfDrainLife => "& Wand| of Drain Life^ (%P1 charges)",
-            WandTemplate::WandOfTrapDoorDestruction => "& Wand| of Trap/Door destruction^ (%P1 charges)",
-            WandTemplate::WandOfMagicMissile => "& Wand| of Magic Missile^ (%P1 charges)",
-            WandTemplate::WandOfWallBuilding => "& Wand| of Wall Building^ (%P1 charges)",
-            WandTemplate::WandOfCloneMonster => "& Wand| of Clone Monster^ (%P1 charges)",
-            WandTemplate::WandOfTeleportAway => "& Wand| of Teleport Away^ (%P1 charges)",
-            WandTemplate::WandOfDisarming => "& Wand| of Disarming^ (%P1 charges)",
-            WandTemplate::WandOfLightningBalls => "& Wand| of Lightning Balls^ (%P1 charges)",
-            WandTemplate::WandOfColdBalls => "& Wand| of Cold Balls^ (%P1 charges)",
-            WandTemplate::WandOfFireBalls => "& Wand| of Fire Balls^ (%P1 charges)",
-            WandTemplate::WandOfStinkingCloud => "& Wand| of Stinking Cloud^ (%P1 charges)",
-            WandTemplate::WandOfAcidBalls => "& Wand| of Acid Balls^ (%P1 charges)",
-            WandTemplate::WandOfWonder => "& Wand| of Wonder^ (%P1 charges)",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Wand }
     fn flags1(&self) -> u64 { 0 }
 

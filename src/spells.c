@@ -26,8 +26,7 @@
 #define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */
 
 static const treasure_type scare_monster = /* { Special trap	} */
-    {"a strange rune",
-     seen_trap,
+    {seen_trap,
      0x00000000,
      0x00000000,
      0,
@@ -44,9 +43,9 @@ static const treasure_type scare_monster = /* { Special trap	} */
      0};
 /* used in get_flags, and other places if I needed them */
 static obj_set null_obj_set = {0, 0};
-static obj_set destroyed_by_lightning = {ring, rod, wand, 0};
+static obj_set destroyed_by_lightning = {ring, wand, 0};
 static obj_set destroyed_by_acid = {arrow,
-                                    bow_crossbow_or_sling,
+                                    bow, crossbow, sling,
                                     hafted_weapon,
                                     pole_arm,
                                     gem_helm,
@@ -58,15 +57,14 @@ static obj_set destroyed_by_acid = {arrow,
                                     hard_armor,
                                     soft_armor,
                                     staff,
-                                    scroll1,
-                                    scroll2,
+                                    Scroll,
                                     Food,
                                     open_door,
                                     closed_door,
                                     0};
-static obj_set destroyed_by_cold = {potion1, potion2, 0};
+static obj_set destroyed_by_cold = {potion, 0};
 static obj_set destroyed_by_fire = {arrow,
-                                    bow_crossbow_or_sling,
+                                    bow, crossbow, sling,
                                     hafted_weapon,
                                     pole_arm,
                                     boots,
@@ -74,18 +72,16 @@ static obj_set destroyed_by_fire = {arrow,
                                     cloak,
                                     soft_armor,
                                     staff,
-                                    scroll1,
-                                    scroll2,
-                                    potion1,
-                                    potion2,
+                                    Scroll,
+                                    potion,
                                     Food,
                                     open_door,
                                     closed_door,
                                     0};
-static obj_set destroyed_by_petrify = {boots,   soft_armor, potion1,
-                                       potion2, Food,       0};
-static obj_set destroyed_by_sunray = {cloak,   scroll1, scroll2,
-                                      potion1, potion2, 0};
+static obj_set destroyed_by_petrify = {boots,   soft_armor, potion,
+                                       Food,       0};
+static obj_set destroyed_by_sunray = {cloak,   Scroll,
+                                      potion, 0};
 
 static void get_flags(enum spell_effect_t typ, long *weapon_type,
                       long *harm_type, obj_set **destroy) {
@@ -1085,9 +1081,6 @@ boolean detect_trap() {
           change_trap(i1, i2);
           cave[i1][i2].fm = true;
           flag = true;
-        } else if (t_list[cave[i1][i2].tptr].tval == chest) {
-          /* with t_list[tptr] do; */
-          known2(t_list[cave[i1][i2].tptr].name);
         }
       }
     }
@@ -1200,7 +1193,7 @@ boolean ident_spell() {
   /*{ Identify an object                                    -RAK-   }*/
 
   treas_rec *item_ptr;
-  char out_val[82];
+  char out_val[70];
   char trash_char;
   treas_rec *ptr;
   long count = 0;
@@ -1212,7 +1205,7 @@ boolean ident_spell() {
   /* only show things that need to be identified */
   change_all_ok_stats(false, false);
   for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
-    if (strchr(ptr->data.name, '^') || strchr(ptr->data.name, '|')) {
+    if (!ptr->data.identified) {
       ptr->ok = true;
       count++;
     }
@@ -1226,9 +1219,9 @@ boolean ident_spell() {
     if (get_item(&item_ptr, "Item you wish identified?", &redraw, count,
                  &trash_char, false, false)) {
       /* with item_ptr->data. do; */
-      identify(&(item_ptr->data));
-      known2(item_ptr->data.name);
-      objdes(out_val, item_ptr, true);
+      item_ptr->data.identified = true;
+      set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
+      C_item_name_generate_name(&item_ptr->data, out_val);
       msg_print(out_val);
 
       return_value = true;
@@ -1469,7 +1462,7 @@ boolean door_creation() {
           }
           cave[i1][i2].fopen = false;
           cave[i1][i2].tptr = i3;
-          t_list[i3] = door_list[2];
+          t_list[i3] = door_secret;
           if (test_light(i1, i2)) {
             lite_spot(i1, i2);
           }
@@ -1538,7 +1531,7 @@ boolean protect_evil() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 boolean recharge(long num) {
-  /*{ Recharge a wand, staff, or rod.  Sometimes the item breaks. -RAK-}*/
+  /*{ Recharge a wand or staff.  Sometimes the item breaks. -RAK-}*/
 
   treas_rec *item_ptr;
   boolean redraw = false;
@@ -1547,7 +1540,7 @@ boolean recharge(long num) {
    */
   /* that */
   /* uses charges.  2/15/00 JEB */
-  obj_set batteries_not_included = {valuable_gems, staff, rod, wand,
+  obj_set batteries_not_included = {valuable_gems, staff, wand,
                                     chime,         horn,  0};
   boolean return_value = false;
 
@@ -1564,9 +1557,7 @@ boolean recharge(long num) {
         return_value = true;
         num = num / (item_ptr->data.level + 2);
         item_ptr->data.p1 += 2 + randint(num);
-        if (strchr(item_ptr->data.name, '^') != NULL) {
-          insert_str(item_ptr->data.name, " (%P1", "^ (%P1");
-        }
+        item_ptr->data.identified = true;
       }
     } else if ((item_ptr->data.tval == lamp_or_torch) &&
                (item_ptr->data.subval == 17)) {
@@ -1578,9 +1569,7 @@ boolean recharge(long num) {
         return_value = true;
         num *= 100;
         item_ptr->data.p1 += num / 3 + randint(num);
-        if (strchr(item_ptr->data.name, '^') != NULL) {
-          insert_str(item_ptr->data.name, " (%P1", "^ (%P1");
-        }
+        item_ptr->data.identified = true;
       }
     } else if ((item_ptr->data.tval == lamp_or_torch) &&
                (item_ptr->data.subval == 15)) {
@@ -1592,9 +1581,7 @@ boolean recharge(long num) {
         return_value = true;
         num *= 80;
         item_ptr->data.p1 += num / 3 + randint(num);
-        if (strchr(item_ptr->data.name, '^') != NULL) {
-          insert_str(item_ptr->data.name, " (%P1", "^ (%P1");
-        }
+        item_ptr->data.identified = true;
       }
     }
   }
@@ -2305,7 +2292,7 @@ boolean wall_to_mud(long dir, long y, long x) {
         if (panel_contains(y, x)) {
           if (test_light(y, x)) {
             inven_temp.data = t_list[cave[y][x].tptr];
-            objdes(out_val, &inven_temp, false);
+            C_item_name_generate_name(&inven_temp.data, out_val);
             sprintf(out_val2, "The %s turns into mud.", out_val);
             msg_print(out_val2);
             return_value = true;
@@ -2472,7 +2459,6 @@ boolean disarm_all(long dir, long y, long x) {
   /*{ Disarms all traps/chests in a given direction         -RAK-   }*/
 
   long oldy, oldx, tval;
-  char *achar;
   boolean flag = false;
 
   do {
@@ -2497,12 +2483,7 @@ boolean disarm_all(long dir, long y, long x) {
           t_list[cave[y][x].tptr].flags &= 0xFFFFFE0F; /* detrap */
           t_list[cave[y][x].tptr].flags &= 0xFFFFFFFE; /* unlock */
           flag = true;
-          achar = strstr(t_list[cave[y][x].tptr].name, " (");
-          if (achar != NULL) {
-            *achar = 0;
-          }
-          strcat(t_list[cave[y][x].tptr].name, " (Unlocked)");
-          known2(t_list[cave[y][x].tptr].name);
+          t_list[cave[y][x].tptr].identified = true;
         }
       }
     }
@@ -2723,15 +2704,11 @@ boolean am_i_dumb() { return player_lev < randint(randint(50)); }
 boolean lore_spell() {
   /*{ Give name for most items in inventory -Cap'n- }*/
 
-  treas_rec *thingy;
-
-  thingy = inventory_list;
-  for (; thingy != NULL;) {
+  for (treas_rec *thingy = inventory_list; thingy != NULL; thingy = thingy->next) {
     if (!am_i_dumb()) {
-      identify(&(thingy->data));
-      known2(thingy->data.name);
+      set_type_identified(thingy->data.tval, thingy->data.subval, true);
+      thingy->data.identified = true;
     }
-    thingy = thingy->next;
   }
 
   return true;

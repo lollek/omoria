@@ -24,19 +24,20 @@ impl BagTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BagTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BagTemplate::BagOfHolding250),
+            2 => Box::new(BagTemplate::BagOfHolding500),
+            3 => Box::new(BagTemplate::BagOfHolding1000),
+            4 => Box::new(BagTemplate::BagOfHolding1500),
+            5 => Box::new(BagTemplate::BagOfDevouring),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for BagTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BagTemplate::BagOfHolding250 => "& Bag| of Holding (250)",
-            BagTemplate::BagOfHolding500 => "& Bag| of Holding (500)",
-            BagTemplate::BagOfHolding1000 => "& Bag| of Holding (1000)",
-            BagTemplate::BagOfHolding1500 => "& Bag| of Holding (1500)",
-            BagTemplate::BagOfDevouring => "& Bag| of Devouring",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Bag }
 
     fn flags1(&self) -> u64 {
@@ -76,8 +77,8 @@ impl item_template::ItemTemplate for BagTemplate {
             BagTemplate::BagOfHolding250 => 1,
             BagTemplate::BagOfHolding500 => 2,
             BagTemplate::BagOfHolding1000 => 3,
-            BagTemplate::BagOfHolding1500 => 3,
-            BagTemplate::BagOfDevouring => 4,
+            BagTemplate::BagOfHolding1500 => 4,
+            BagTemplate::BagOfDevouring => 5,
         }
     }
 

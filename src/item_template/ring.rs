@@ -80,47 +80,48 @@ impl RingTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         RingTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(RingTemplate::RingOfGainStrength),
+            2 => Box::new(RingTemplate::RingOfGainDexterity),
+            3 => Box::new(RingTemplate::RingOfGainConstitution),
+            4 => Box::new(RingTemplate::RingOfGainIntelligence),
+            7 => Box::new(RingTemplate::RingOfSpeed1),
+            35 => Box::new(RingTemplate::RingOfSpeed2),
+            8 => Box::new(RingTemplate::RingOfSearching),
+            9 => Box::new(RingTemplate::RingOfTeleportation),
+            10 => Box::new(RingTemplate::RingOfSlowDigestion),
+            11 => Box::new(RingTemplate::RingOfResistFire),
+            12 => Box::new(RingTemplate::RingOfResistCold),
+            13 => Box::new(RingTemplate::RingOfFeatherFalling),
+            14 => Box::new(RingTemplate::RingOfAdornment1),
+            15 => Box::new(RingTemplate::RingOfAdornment2),
+            16 => Box::new(RingTemplate::RingOfWeakness),
+            17 => Box::new(RingTemplate::RingOfLordlyProtectionFire),
+            18 => Box::new(RingTemplate::RingOfLordlyProtectionAcid),
+            19 => Box::new(RingTemplate::RingOfLordlyProtectionCold),
+            20 => Box::new(RingTemplate::RingOfWoe),
+            21 => Box::new(RingTemplate::RingOfStupidity),
+            22 => Box::new(RingTemplate::RingOfIncreaseDamage),
+            23 => Box::new(RingTemplate::RingOfIncreaseToHit),
+            24 => Box::new(RingTemplate::RingOfProtection),
+            25 => Box::new(RingTemplate::RingOfAggravateMonsters),
+            26 => Box::new(RingTemplate::RingOfSeeInvisible),
+            27 => Box::new(RingTemplate::RingOfSustainStrength),
+            28 => Box::new(RingTemplate::RingOfSustainIntelligence),
+            29 => Box::new(RingTemplate::RingOfSustainWisdom),
+            30 => Box::new(RingTemplate::RingOfSustainConstitution),
+            31 => Box::new(RingTemplate::RingOfSustainDexterity),
+            32 => Box::new(RingTemplate::RingOfSustainCharisma),
+            33 => Box::new(RingTemplate::RingOfSlaying),
+            34 => Box::new(RingTemplate::RingOfGnomekind),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for RingTemplate {
-    fn name(&self) -> &str {
-        match self {
-            RingTemplate::RingOfGainStrength => "& Ring| of Gain Strength^ (%p1)",
-            RingTemplate::RingOfGainDexterity => "& Ring| of Gain Dexterity^ (%p1)",
-            RingTemplate::RingOfGainConstitution => "& Ring| of Gain Constitution^ (%p1)",
-            RingTemplate::RingOfGainIntelligence => "& Ring| of Gain Intelligence^ (%p1)",
-            RingTemplate::RingOfSpeed1 => "& Ring| of Speed^ (%p1)",
-            RingTemplate::RingOfSpeed2 => "& Ring| of Speed^ (%p1)",
-            RingTemplate::RingOfSearching => "& Ring| of Searching^ (%p1)",
-            RingTemplate::RingOfTeleportation => "& Ring| of Teleportation^",
-            RingTemplate::RingOfSlowDigestion => "& Ring| of Slow Digestion^",
-            RingTemplate::RingOfResistFire => "& Ring| of Resist Fire^",
-            RingTemplate::RingOfResistCold => "& Ring| of Resist Cold^",
-            RingTemplate::RingOfFeatherFalling => "& Ring| of Feather Falling^",
-            RingTemplate::RingOfAdornment1 => "& Ring| of Adornment^",
-            RingTemplate::RingOfAdornment2 => "& Ring| of Adornment^",
-            RingTemplate::RingOfWeakness => "& Ring| of Weakness^",
-            RingTemplate::RingOfLordlyProtectionFire => "& Ring| of Lordly Protection (Fire)^",
-            RingTemplate::RingOfLordlyProtectionAcid => "& Ring| of Lordly Protection (Acid)^",
-            RingTemplate::RingOfLordlyProtectionCold => "& Ring| of Lordly Protection (Cold)^",
-            RingTemplate::RingOfWoe => "& Ring| of Woe^",
-            RingTemplate::RingOfStupidity => "& Ring| of Stupidity^",
-            RingTemplate::RingOfIncreaseDamage => "& Ring| of Increase Damage^ (%p3)",
-            RingTemplate::RingOfIncreaseToHit => "& Ring| of Increase To-hit^ (%p2)",
-            RingTemplate::RingOfProtection => "& Ring| of Protection^ [%p4]",
-            RingTemplate::RingOfAggravateMonsters => "& Ring| of Aggravate Monster^",
-            RingTemplate::RingOfSeeInvisible => "& Ring| of See Invisible^",
-            RingTemplate::RingOfSustainStrength => "& Ring| of Sustain Strength^",
-            RingTemplate::RingOfSustainIntelligence => "& Ring| of Sustain Intelligence^",
-            RingTemplate::RingOfSustainWisdom => "& Ring| of Sustain Wisdom^",
-            RingTemplate::RingOfSustainConstitution => "& Ring| of Sustain Constitution^",
-            RingTemplate::RingOfSustainDexterity => "& Ring| of Sustain Dexterity^",
-            RingTemplate::RingOfSustainCharisma => "& Ring| of Sustain Charisma^",
-            RingTemplate::RingOfSlaying => "& Ring| of Slaying^",
-            RingTemplate::RingOfGnomekind => "& Ring| of Gnomekind^",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Ring }
     fn flags1(&self) -> u64 { 0 }
 

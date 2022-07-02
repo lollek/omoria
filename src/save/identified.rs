@@ -1,21 +1,12 @@
-use libc;
-
-use constants;
 use debug;
-use model::IdentifiedRecord;
+use identification;
 
-extern "C" {
-    static mut object_ident: [libc::uint8_t; constants::MAX_OBJECTS + 1];
+pub fn record() -> identification::Data {
+    identification::save()
 }
 
-pub fn record() -> IdentifiedRecord {
-    IdentifiedRecord {
-        list: unsafe { object_ident }.to_owned(),
-    }
-}
-
-pub fn set_record(record: IdentifiedRecord) {
+pub fn set_record(record: identification::Data) {
     debug::enter("identified::set_record");
-    unsafe { object_ident = record.list };
+    identification::load(record);
     debug::leave("identified::set_record");
 }

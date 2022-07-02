@@ -1,4 +1,5 @@
 use model::Item;
+use logic::item_name;
 
 pub const EQUIP_MAX: usize = 15;
 
@@ -75,6 +76,6 @@ pub fn get_name(slot: Slot) -> String {
     let item = unsafe { equipment[slot as usize] };
     match item.tval {
         0 => "".to_string(),
-        _ => item.equipment_name(),
+        _ => item_name::generate(&item),
     }
 }

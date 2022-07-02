@@ -64,7 +64,8 @@ pub fn generate_item_for_general_store() -> model::Item {
 
 pub fn generate_item_for_armorsmith() -> model::Item {
     let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
-    templates.extend(item_template::ArmorTemplate::vec());
+    templates.extend(item_template::HardArmorTemplate::vec());
+    templates.extend(item_template::SoftArmorTemplate::vec());
     templates.extend(item_template::BootsTemplate::vec());
     templates.extend(item_template::GlovesTemplate::vec());
     templates.extend(item_template::HelmTemplate::vec());
@@ -166,7 +167,9 @@ pub fn generate_item_for_gem_store() -> model::Item {
 
     templates.extend(item_template::AmuletTemplate::vec());
     templates.extend(item_template::RingTemplate::vec());
-    templates.extend(item_template::ValuableTemplate::vec());
+    templates.extend(item_template::JewelryTemplate::vec());
+    templates.extend(item_template::GemTemplate::vec());
+    templates.extend(item_template::WearableGemTemplate::vec());
 
     templates = templates.into_iter()
         .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
@@ -242,10 +245,10 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
         DungeonItems, // MiscObject, Chest
         Jewelry, // Jewelry, Gems, Ring, Amulet
         MagicItem, // Wand, Rod, Staff, Chime, Horn
-        Potion, // Potion1, Potion2
-        Scroll, // Scroll1, Scroll2
+        Potion,
+        Scroll,
         Usable, // FlaskOfOil, SlingAmmo, Bolt, Arrow, Spike, Bag, LightSource, MiscUsable
-        Weapon, // RangedWeapon, HafterWeapon, PoleArm, Dagger, Sword, Pick, Maul
+        Weapon, // RangedWeapon, HafterWeapon, Polearm, Dagger, Sword, Pick, Maul
     }
 
     let item_type = match rand::random::<u8>() % 100 {
@@ -276,7 +279,8 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     let mut templates: Vec<Box<dyn item_template::ItemTemplate>> = Vec::new();
     match item_type {
         GenTreasureType::Armor => {
-            templates.extend(item_template::ArmorTemplate::vec());
+            templates.extend(item_template::HardArmorTemplate::vec());
+            templates.extend(item_template::SoftArmorTemplate::vec());
             templates.extend(item_template::BootsTemplate::vec());
             templates.extend(item_template::BeltTemplate::vec());
             templates.extend(item_template::BracersTemplate::vec());
@@ -291,8 +295,10 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
         },
         GenTreasureType::Jewelry => {
             templates.extend(item_template::AmuletTemplate::vec());
-            templates.extend(item_template::ValuableTemplate::vec());
+            templates.extend(item_template::JewelryTemplate::vec());
             templates.extend(item_template::RingTemplate::vec());
+            templates.extend(item_template::GemTemplate::vec());
+            templates.extend(item_template::WearableGemTemplate::vec());
         },
         GenTreasureType::MagicItem => {
             templates.extend(item_template::ChimeTemplate::vec());

@@ -40,27 +40,28 @@ impl AmuletTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         AmuletTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            11 => Box::new(AmuletTemplate::AmuletOfAdornment1),
+            12 => Box::new(AmuletTemplate::AmuletOfAdornment2),
+            5 => Box::new(AmuletTemplate::AmuletOfWisdom),
+            6 => Box::new(AmuletTemplate::AmuletOfCharisma),
+            7 => Box::new(AmuletTemplate::AmuletOfSearching),
+            8 => Box::new(AmuletTemplate::AmuletOfTeleportation),
+            9 => Box::new(AmuletTemplate::AmuletOfSlowDigestion),
+            10 => Box::new(AmuletTemplate::AmuletOfResistAcid),
+            13 => Box::new(AmuletTemplate::AmuletOfTheMagi),
+            14 => Box::new(AmuletTemplate::AmuletOfDoom),
+            30 => Box::new(AmuletTemplate::SilverNecklace),
+            40 => Box::new(AmuletTemplate::GoldNecklace),
+            50 => Box::new(AmuletTemplate::MithrilNecklace),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for AmuletTemplate {
-    fn name(&self) -> &str {
-        match self {
-            AmuletTemplate::AmuletOfAdornment1 => "& Amulet| of Adornment^",
-            AmuletTemplate::AmuletOfAdornment2 => "& Amulet| of Adornment^",
-            AmuletTemplate::AmuletOfWisdom => "& Amulet| of Wisdom^ (%P1)",
-            AmuletTemplate::AmuletOfCharisma => "& Amulet| of Charisma^ (%P1)",
-            AmuletTemplate::AmuletOfSearching => "& Amulet| of Searching^ (%P1)",
-            AmuletTemplate::AmuletOfTeleportation => "& Amulet| of Teleportation^",
-            AmuletTemplate::AmuletOfSlowDigestion => "& Amulet| of Slow Digestion^",
-            AmuletTemplate::AmuletOfResistAcid => "& Amulet| of Resist Acid^",
-            AmuletTemplate::AmuletOfTheMagi => "& Amulet| of the Magi^",
-            AmuletTemplate::AmuletOfDoom => "& Amulet| of Doom^",
-            AmuletTemplate::SilverNecklace => "& Silver Necklace~^",
-            AmuletTemplate::GoldNecklace => "& Gold Necklace~^",
-            AmuletTemplate::MithrilNecklace => "& Mithril Necklace~^",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Amulet }
     fn flags1(&self) -> u64 { 0 }
 

@@ -43,28 +43,29 @@ impl SwordTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         SwordTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            6 => Box::new(SwordTemplate::Backsword),
+            7 => Box::new(SwordTemplate::BastardSword),
+            10 => Box::new(SwordTemplate::Broadsword),
+            11 => Box::new(SwordTemplate::Claymore),
+            12 => Box::new(SwordTemplate::Cutlass),
+            13 => Box::new(SwordTemplate::Espadon),
+            14 => Box::new(SwordTemplate::ExecutionersSword),
+            15 => Box::new(SwordTemplate::Flamberge),
+            17 => Box::new(SwordTemplate::Katana),
+            18 => Box::new(SwordTemplate::Longsword),
+            19 => Box::new(SwordTemplate::Nodachi),
+            21 => Box::new(SwordTemplate::Sabre),
+            23 => Box::new(SwordTemplate::Zweihander),
+            24 => Box::new(SwordTemplate::BrokenSword),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for SwordTemplate {
-    fn name(&self) -> &str {
-        match self {
-            SwordTemplate::Backsword => "Backsword (%P0)^ (%P2,%P3)",
-            SwordTemplate::BastardSword => "Bastard Sword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Broadsword => "Broadsword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Claymore => "Claymore (%P0)^ (%P2,%P3)",
-            SwordTemplate::Cutlass => "Cutlass (%P0)^ (%P2,%P3)",
-            SwordTemplate::Espadon => "Espadon (%P0)^ (%P2,%P3)",
-            SwordTemplate::ExecutionersSword => "Executioner's Sword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Flamberge => "Flamberge (%P0)^ (%P2,%P3)",
-            SwordTemplate::Katana => "Katana (%P0)^ (%P2,%P3)",
-            SwordTemplate::Longsword => "Longsword (%P0)^ (%P2,%P3)",
-            SwordTemplate::Nodachi => "No-Dachi (%P0)^ (%P2,%P3)",
-            SwordTemplate::Sabre => "Sabre (%P0)^ (%P2,%P3)",
-            SwordTemplate::Zweihander => "Zweihander (%P0)^ (%P2,%P3)",
-            SwordTemplate::BrokenSword => "Broken Sword (%P0)^ (%P2,%P3)",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Sword }
     fn flags1(&self) -> u64 { 0x10000000 }
     fn flags2(&self) -> u64 { 0 }

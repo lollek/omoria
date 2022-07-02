@@ -338,7 +338,6 @@ void si__pesky_stuff(long *best_value, long *good_value,
   popt(cur_pos);
   cave[y][x].tptr = *cur_pos;
   t_list[*cur_pos] = blank_treasure;
-  sprintf(t_list[*cur_pos].name, "& bogus summoned item %ld", *cur_pos);
 }
 
 boolean si__optimize_item(treasure_type *pick, long *value, long optimize,
@@ -722,13 +721,6 @@ void wizard_create() {
   msg_flag = false;
 
   /* with inven_temp->data do; */
-  prt("Name   : ", 1, 1);
-  if (get_string(tmp_str, 1, 10, 40)) {
-    strcpy(inven_temp.data.name, tmp_str);
-  } else {
-    strcpy(inven_temp.data.name, "& Wizard Object!");
-  }
-
   do {
     prt("Tval   : ", 1, 1);
     get_string(tmp_str, 1, 10, 10);
@@ -919,10 +911,9 @@ void wizard_command(void) {
     break;
   case 'i':
     msg_print("Poof!  Your items are all identifed!!!");
-    for (trash_ptr = inventory_list; trash_ptr != NULL;) {
-      identify(&(trash_ptr->data));
-      known2(trash_ptr->data.name);
-      trash_ptr = trash_ptr->next;
+    for (trash_ptr = inventory_list; trash_ptr != NULL; trash_ptr = trash_ptr->next) {
+      trash_ptr->data.identified = true;
+      set_type_identified(trash_ptr->data.tval, trash_ptr->data.subval, true);
     }
     break;
   case 'j': /* Gain exp */

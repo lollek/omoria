@@ -46,30 +46,31 @@ impl ChimeTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         ChimeTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(ChimeTemplate::ChimeOfLight),
+            2 => Box::new(ChimeTemplate::ChimeOfDetectDoorsStairs),
+            3 => Box::new(ChimeTemplate::ChimeOfDetectTraps),
+            4 => Box::new(ChimeTemplate::ChimeOfTeleportation),
+            5 => Box::new(ChimeTemplate::ChimeOfThunderblast),
+            6 => Box::new(ChimeTemplate::ChimeOfSummonMonster),
+            7 => Box::new(ChimeTemplate::ChimeOfDisarming),
+            8 => Box::new(ChimeTemplate::ChimeOfAggravation),
+            9 => Box::new(ChimeTemplate::ChimeOfSlowMonster),
+            10 => Box::new(ChimeTemplate::ChimeOfSootheMonster),
+            11 => Box::new(ChimeTemplate::ChimeOfCureLightWound),
+            12 => Box::new(ChimeTemplate::ChimeOfChanging),
+            13 => Box::new(ChimeTemplate::ChimeOfRemoveCurse),
+            14 => Box::new(ChimeTemplate::ChimeOfCuring),
+            15 => Box::new(ChimeTemplate::ChimeOfDispelEvil),
+            16 => Box::new(ChimeTemplate::ChimeOfDarkness),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for ChimeTemplate {
-    fn name(&self) -> &str {
-        match self {
-            ChimeTemplate::ChimeOfLight => "& Chime| of Light^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDetectDoorsStairs => "& Chime| of Detect Doors/Stairs^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDetectTraps => "& Chime| of Detect Traps^ (%P1 charges)",
-            ChimeTemplate::ChimeOfTeleportation => "& Chime| of Teleportation^ (%P1 charges)",
-            ChimeTemplate::ChimeOfThunderblast => "& Chime| of Thunderblasts^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSummonMonster => "& Chime| of Summon Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDisarming => "& Chime| of Disarming^ (%P1 charges)",
-            ChimeTemplate::ChimeOfAggravation => "& Chime| of Aggravation^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSlowMonster => "& Chime| of Slow Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfSootheMonster => "& Chime| of Soothe Monster^ (%P1 charges)",
-            ChimeTemplate::ChimeOfCureLightWound => "& Chime| of Cure Light Wound^ (%P1 charges)",
-            ChimeTemplate::ChimeOfChanging => "& Chime| of Changing^ (%P1 charges)",
-            ChimeTemplate::ChimeOfRemoveCurse => "& Chime| of Remove Curse^ (%P1 charges)",
-            ChimeTemplate::ChimeOfCuring => "& Chime| of Curing^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDispelEvil => "& Chime| of Dispel Evil^ (%P1 charges)",
-            ChimeTemplate::ChimeOfDarkness => "& Chime| of Darkness^ (%P1 charges)",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Chime }
     fn flags1(&self) -> u64 { 0 }
 

@@ -40,27 +40,28 @@ impl JunkFoodTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         JunkFoodTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            257 => Box::new(JunkFoodTemplate::BoxOfPiranhaCrackers),
+            258 => Box::new(JunkFoodTemplate::CanOfOrcaCola),
+            259 => Box::new(JunkFoodTemplate::TwelvePoundTrollBuger),
+            260 => Box::new(JunkFoodTemplate::BagOfBrontosaurusChips),
+            261 => Box::new(JunkFoodTemplate::SliceOfPurpleMushroomPizza),
+            262 => Box::new(JunkFoodTemplate::PeanutButterAndGrapeJellySandwich),
+            263 => Box::new(JunkFoodTemplate::DragonSteak),
+            264 => Box::new(JunkFoodTemplate::VorpalBunnyThroatLozenge),
+            265 => Box::new(JunkFoodTemplate::DeepFriedGiantCentipede),
+            266 => Box::new(JunkFoodTemplate::PintOfBeetleJuice),
+            267 => Box::new(JunkFoodTemplate::BownOfBatStew),
+            268 => Box::new(JunkFoodTemplate::JarOfPickledLeeches),
+            269 => Box::new(JunkFoodTemplate::PackOfKittenMcNuggets),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for JunkFoodTemplate {
-    fn name(&self) -> &str {
-        match self {
-            JunkFoodTemplate::BoxOfPiranhaCrackers => "& Box~ of Piranha Crackers",
-            JunkFoodTemplate::CanOfOrcaCola => "& Can~ of Orca-Cola",
-            JunkFoodTemplate::TwelvePoundTrollBuger => "& Twelve-Pound Troll Burger~",
-            JunkFoodTemplate::BagOfBrontosaurusChips => "& Bag~ of Brontosaurus Chips",
-            JunkFoodTemplate::SliceOfPurpleMushroomPizza => "& Slice~ of Purple Mushroom Pizza",
-            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => "& Peanut Butter and Grape Jelly Sandwich~",
-            JunkFoodTemplate::DragonSteak => "& Dragon Steak~",
-            JunkFoodTemplate::VorpalBunnyThroatLozenge => "& Vorpal Bunny Throat Lozenge~",
-            JunkFoodTemplate::DeepFriedGiantCentipede => "& Deep-Fried Giant Centipede~",
-            JunkFoodTemplate::PintOfBeetleJuice => "& Pint~ of Beetle Juice",
-            JunkFoodTemplate::BownOfBatStew => "& Bowl~ of Bat Stew",
-            JunkFoodTemplate::JarOfPickledLeeches => "& Jar~ of Pickled Leeches",
-            JunkFoodTemplate::PackOfKittenMcNuggets => "& Pack~ of Kitten McNuggets",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::JunkFood }
 
     fn flags1(&self) -> u64 {

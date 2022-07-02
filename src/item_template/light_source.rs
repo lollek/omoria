@@ -22,18 +22,19 @@ impl LightSourceTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         LightSourceTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            13 => Box::new(LightSourceTemplate::WoodenTorch),
+            1 => Box::new(LightSourceTemplate::BrassLantern),
+            30 => Box::new(LightSourceTemplate::MagicTorch),
+            17 => Box::new(LightSourceTemplate::MagicLantern),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for LightSourceTemplate {
-    fn name(&self) -> &str {
-        match self {
-            LightSourceTemplate::WoodenTorch => "& Wooden Torch~ with %P5 turns of light",
-            LightSourceTemplate::BrassLantern => "& Brass Lantern~ with %P5 turns of light",
-            LightSourceTemplate::MagicTorch => "& Magic Torch^ with %P5 turns of light",
-            LightSourceTemplate::MagicLantern => "& Magic Lantern^ with %P5 turns of light",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::LightSource }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

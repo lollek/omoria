@@ -1045,7 +1045,7 @@ fn add_equipment() {
     general_starting_items.push(torch);
     let light_cloak = generate_item::create_item(Box::new(item_template::CloakTemplate::LightCloak), 0);
     general_starting_items.push(light_cloak);
-    let soft_leather_armor = generate_item::create_item(Box::new(item_template::ArmorTemplate::SoftLeatherArmor), 0);
+    let soft_leather_armor = generate_item::create_item(Box::new(item_template::SoftArmorTemplate::SoftLeatherArmor), 0);
     general_starting_items.push(soft_leather_armor);
 
     for item in general_starting_items {

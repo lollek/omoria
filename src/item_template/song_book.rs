@@ -22,19 +22,19 @@ impl SongBookTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         SongBookTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            262 => Box::new(SongBookTemplate::BeginnersHandbook),
+            263 => Box::new(SongBookTemplate::SongBook1),
+            264 => Box::new(SongBookTemplate::SongBook2),
+            265 => Box::new(SongBookTemplate::GreaterSongBook),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for SongBookTemplate {
-
-    fn name(&self) -> &str {
-        match self {
-            SongBookTemplate::BeginnersHandbook => "& Book of Bard Lyrics [Beginners Handbook]",
-            SongBookTemplate::SongBook1 => "& Songs of Charming [Song Book I]",
-            SongBookTemplate::SongBook2 => "& Ballads of Knowledge [Song Book II]",
-            SongBookTemplate::GreaterSongBook => "& Epics of the Bards [Greater Song Book]",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::SongBook }
 
     fn flags1(&self) -> u64 {

@@ -51,32 +51,33 @@ impl BracersTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BracersTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BracersTemplate::BracersOfProtection),
+            2 => Box::new(BracersTemplate::BracersOfDefense),
+            3 => Box::new(BracersTemplate::BracersOfShielding),
+            4 => Box::new(BracersTemplate::MithrilBracers),
+            5 => Box::new(BracersTemplate::AdamantiteBracers),
+            6 => Box::new(BracersTemplate::BracersOfWeaponAttraction),
+            31 => Box::new(BracersTemplate::SilverBraceletOfWarding),
+            30 => Box::new(BracersTemplate::SilverBracelet),
+            40 => Box::new(BracersTemplate::GoldBracelet),
+            50 => Box::new(BracersTemplate::PlatinumBracelet),
+            7 => Box::new(BracersTemplate::LeatherBracers),
+            8 => Box::new(BracersTemplate::StuddedLeatherBracers),
+            9 => Box::new(BracersTemplate::LightPlatedBracers),
+            10 => Box::new(BracersTemplate::SharkskinBracers),
+            11 => Box::new(BracersTemplate::DemonhideBracers),
+            12 => Box::new(BracersTemplate::WyrmhideBracers),
+            13 => Box::new(BracersTemplate::ChainmailBracers),
+            14 => Box::new(BracersTemplate::LamellarBracers),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for BracersTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BracersTemplate::BracersOfProtection => "Bracers^ of Protection [%P6,%P4]",
-            BracersTemplate::BracersOfDefense => "Bracers^ of Defense [%P6,%P4]",
-            BracersTemplate::BracersOfShielding => "Bracers^ of Shielding [%P6,%P4]",
-            BracersTemplate::MithrilBracers => "Mithril Bracers^ [%P6,%P4]",
-            BracersTemplate::AdamantiteBracers => "Adamantite Bracers^ [%P6,%P4]",
-            BracersTemplate::BracersOfWeaponAttraction => "Bracers^ of Weapon Attraction [%P6,%P4]",
-            BracersTemplate::SilverBraceletOfWarding => "Silver Bracelet^ of Warding [%P6,%P4] (R)",
-            BracersTemplate::SilverBracelet => "Silver Bracelet^ [%P6,%P4]",
-            BracersTemplate::GoldBracelet => "Gold Bracelet^ [%P6,%P4]",
-            BracersTemplate::PlatinumBracelet => "Platinum Bracelet^ [%P6,%P4]",
-            BracersTemplate::LeatherBracers => "Leather Bracers^ [%P6,%P4]",
-            BracersTemplate::StuddedLeatherBracers => "Studded Leather Bracers^ [%P6,%P4]",
-            BracersTemplate::LightPlatedBracers => "Light Plated Bracers^ [%P6,%P4]",
-            BracersTemplate::SharkskinBracers => "Sharkskin Bracers^ [%P6,%P4]",
-            BracersTemplate::DemonhideBracers => "Demonhide Bracers^ [%P6,%P4]",
-            BracersTemplate::WyrmhideBracers => "Wyrmhide Bracers^ [%P6,%P4]",
-            BracersTemplate::ChainmailBracers => "Chainmail Bracers^ [%P6,%P4]",
-            BracersTemplate::LamellarBracers => "Lamellar Bracers^ [%P6,%P4]",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

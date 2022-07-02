@@ -199,8 +199,7 @@ void use_staff() {
         }
 
         if (randint(chance) < USE_DEVICE) {
-          msg_print("You failed to use the staff "
-                    "properly.");
+          msg_print("You failed to use the staff properly.");
         } else if (item_ptr->data.p1 > 0) {
           i1 = item_ptr->data.flags;
           ident = false;
@@ -210,7 +209,7 @@ void use_staff() {
 
             us__staff_effect(i4, &ident);
           }
-          identify(&(item_ptr->data));
+          set_type_identified(item_ptr->data.tval, item_ptr->data.subval, true);
           if (ident) {
             if (item_ptr->data.flags != 0) {
               /* with player_do; */

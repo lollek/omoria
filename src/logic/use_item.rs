@@ -18,27 +18,26 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
              */
             match item.item_type() {
                 // Utility:
-                ItemType::LightSource => true,
-                ItemType::Staff => true,
+                ItemType::LightSource(_) => true,
+                ItemType::Staff(_) => true,
 
                 // Weapons:
-                ItemType::RangedWeapon => item.subval == 20, // Sling
-                ItemType::PoleArm => item.subval == 8,
-                ItemType::Dagger => true,
-                ItemType::HaftedWeapon => false,
-                ItemType::Sword => false, // No scimitar
-                ItemType::Maul => item.subval == 6 || item.subval == 13,
+                ItemType::Sling(_) => true, // Sling
+                ItemType::Polearm(_) => item.subval == 8,
+                ItemType::Dagger(_) => true,
+                ItemType::Axe(_) => false,
+                ItemType::Sword(_) => false, // No scimitar
+                ItemType::Mace(_) => item.subval == 6 || item.subval == 13,
 
                 // Armor
-                ItemType::GemHelm => false, // Only metal atm
-                ItemType::Boots => true,
-                ItemType::Gloves => item.subval != 2,
-                ItemType::Cloak => true,
-                ItemType::Helm => item.subval == 1,
-                ItemType::Shield => item.subval <= 3,
-                ItemType::SoftArmor => item.subval <= 6,
-                ItemType::Bracers => item.subval <= 3,
-                ItemType::Belt => true,
+                ItemType::Boots(_) => true,
+                ItemType::Gloves(_) => item.subval != 2,
+                ItemType::Cloak(_) => true,
+                ItemType::Helm(_) => item.subval == 1,
+                ItemType::Shield(_) => item.subval <= 3,
+                ItemType::SoftArmor(_) => item.subval <= 6,
+                ItemType::Bracers(_) => item.subval <= 3,
+                ItemType::Belt(_) => true,
                 _ => false,
             }
         },
@@ -49,30 +48,31 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
              */
             match item.item_type() {
                 // Utility:
-                ItemType::LightSource => true,
-                ItemType::Staff => true,
-                ItemType::Pick => true,
-                ItemType::Ring => true,
-                ItemType::Amulet => true,
+                ItemType::LightSource(_) => true,
+                ItemType::Staff(_) => true,
+                ItemType::Pick(_) => true,
+                ItemType::Ring(_) => true,
+                ItemType::Amulet(_) => true,
 
                 // Weapons:
-                ItemType::RangedWeapon => true,
-                ItemType::PoleArm => true,
-                ItemType::Dagger => true,
-                ItemType::HaftedWeapon => true,
-                ItemType::Sword => true,
-                ItemType::Maul => true,
+                ItemType::Bow(_) => true,
+                ItemType::Crossbow(_) => true,
+                ItemType::Sling(_) => true,
+                ItemType::Polearm(_) => true,
+                ItemType::Dagger(_) => true,
+                ItemType::Axe(_) => true,
+                ItemType::Sword(_) => true,
+                ItemType::Mace(_) => true,
 
                 // Armor
-                ItemType::GemHelm => true,
-                ItemType::Boots => true,
-                ItemType::Gloves => true,
-                ItemType::Cloak => true,
-                ItemType::Helm => true,
-                ItemType::Shield => true,
-                ItemType::SoftArmor => true,
-                ItemType::Bracers => true,
-                ItemType::Belt => true,
+                ItemType::Boots(_) => true,
+                ItemType::Gloves(_) => true,
+                ItemType::Cloak(_) => true,
+                ItemType::Helm(_) => true,
+                ItemType::Shield(_) => true,
+                ItemType::SoftArmor(_) => true,
+                ItemType::Bracers(_) => true,
+                ItemType::Belt(_) => true,
                 _ => false,
             }
         }

@@ -1,15 +1,16 @@
-use model::{ Item, ItemType };
+use model;
+use logic::item_symbol;
 use debug;
 
 use pancurses;
 
 #[no_mangle]
-pub extern fn C_item_get_tchar(item_ptr: *const Item) -> pancurses::chtype {
+pub extern fn C_item_get_tchar(item_ptr: *const model::Item) -> pancurses::chtype {
     debug::enter(&format!("C_item_get_tchar"));
 
     let item = unsafe { *item_ptr };
     debug::info(&format!("(enter) symbol: {}, {}", item.tval, item.subval));
-    let res = ItemType::from(item.tval).symbol(item.subval);
+    let res = item_symbol::generate(&item, item.item_type());
 
     debug::leave("C_item_get_tchar");
     res

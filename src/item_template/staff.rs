@@ -63,38 +63,39 @@ impl StaffTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         StaffTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(StaffTemplate::StaffOfLight),
+            2 => Box::new(StaffTemplate::StaffOfDoorStairLocation),
+            3 => Box::new(StaffTemplate::StaffOfTrapLocation),
+            4 => Box::new(StaffTemplate::StaffOfTreasureLocation),
+            5 => Box::new(StaffTemplate::StaffOfObjectLocation),
+            6 => Box::new(StaffTemplate::StaffOfTeleportation),
+            7 => Box::new(StaffTemplate::StaffOfEarthquakes),
+            8 => Box::new(StaffTemplate::StaffOfSummoning),
+            10 => Box::new(StaffTemplate::StaffOfDestruction),
+            11 => Box::new(StaffTemplate::StaffOfStarlite),
+            12 => Box::new(StaffTemplate::StaffOfHasteMonsters),
+            13 => Box::new(StaffTemplate::StaffOfSlowMonsters),
+            14 => Box::new(StaffTemplate::StaffOfSleepMonsters),
+            15 => Box::new(StaffTemplate::StaffOfCureLightWounds),
+            16 => Box::new(StaffTemplate::StaffOfDetectInvisible),
+            17 => Box::new(StaffTemplate::StaffOfSpeed),
+            18 => Box::new(StaffTemplate::StaffOfSlowness),
+            19 => Box::new(StaffTemplate::StaffOfMassPolymorph),
+            20 => Box::new(StaffTemplate::StaffOfRemoveCurse),
+            21 => Box::new(StaffTemplate::StaffOfDetectEvil),
+            22 => Box::new(StaffTemplate::StaffOfCuring),
+            23 => Box::new(StaffTemplate::StaffOfDispelEvil),
+            25 => Box::new(StaffTemplate::StaffOfDarkness),
+            26 => Box::new(StaffTemplate::StaffOfIdentify),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for StaffTemplate {
-    fn name(&self) -> &str {
-        match self {
-            StaffTemplate::StaffOfLight => "& Staff| of Light^ (%P1 charges)",
-            StaffTemplate::StaffOfDoorStairLocation => "& Staff| of Door/Stair Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTrapLocation => "& Staff| of Trap Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTreasureLocation => "& Staff| of Treasure Location^ (%P1 charges)",
-            StaffTemplate::StaffOfObjectLocation => "& Staff| of Object Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTeleportation => "& Staff| of Teleportation^ (%P1 charges)",
-            StaffTemplate::StaffOfEarthquakes => "& Staff| of Earthquakes^ (%P1 charges)",
-            StaffTemplate::StaffOfSummoning => "& Staff| of Summoning^ (%P1 charges)",
-            StaffTemplate::StaffOfDestruction => "& Staff| of *Destruction*^ (%P1 charges)",
-            StaffTemplate::StaffOfStarlite => "& Staff| of Starlite^ (%P1 charges)",
-            StaffTemplate::StaffOfHasteMonsters => "& Staff| of Haste Monsters^ (%P1 charges)",
-            StaffTemplate::StaffOfSlowMonsters => "& Staff| of Slow Monsters^ (%P1 charges)",
-            StaffTemplate::StaffOfSleepMonsters => "& Staff| of Sleep Monsters^ (%P1 charges)",
-            StaffTemplate::StaffOfCureLightWounds => "& Staff| of Cure Light Wounds^ (%P1 charges)",
-            StaffTemplate::StaffOfDetectInvisible => "& Staff| of Detect Invisible^ (%P1 charges)",
-            StaffTemplate::StaffOfSpeed => "& Staff| of Speed^ (%P1 charges)",
-            StaffTemplate::StaffOfSlowness => "& Staff| of Slowness^ (%P1 charges)",
-            StaffTemplate::StaffOfMassPolymorph => "& Staff| of Mass Polymorph^ (%P1 charges)",
-            StaffTemplate::StaffOfRemoveCurse => "& Staff| of Remove Curse^ (%P1 charges)",
-            StaffTemplate::StaffOfDetectEvil => "& Staff| of Detect Evil^ (%P1 charges)",
-            StaffTemplate::StaffOfCuring => "& Staff| of Curing^ (%P1 charges)",
-            StaffTemplate::StaffOfDispelEvil => "& Staff| of Dispel Evil^ (%P1 charges)",
-            StaffTemplate::StaffOfDarkness => "& Staff| of Darkness^ (%P1 charges)",
-            StaffTemplate::StaffOfIdentify => "& Staff| of Identify^ (%P1 charges)",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Staff }
     fn flags1(&self) -> u64 { 0 }
 

@@ -38,8 +38,6 @@ Modules;
 - The public pregame function can only be called from pregame/main.c
 - pregame/main.h can only be called from the main()-function
 - pregame/*.c can use any file in /src/logic or /src/model
-
-/src/template       - Templates of models
 ```
 
 ## Namespaces

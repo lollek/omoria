@@ -40,27 +40,28 @@ impl HornTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         HornTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(HornTemplate::HornOfBubbles),
+            2 => Box::new(HornTemplate::HornOfCalling),
+            3 => Box::new(HornTemplate::HornOfSoftSounds),
+            4 => Box::new(HornTemplate::HornOfBlasting),
+            5 => Box::new(HornTemplate::HornOfCold),
+            6 => Box::new(HornTemplate::HornOfHeat),
+            7 => Box::new(HornTemplate::HornOfGas),
+            8 => Box::new(HornTemplate::HornOfRecall),
+            9 => Box::new(HornTemplate::HornOfChaos),
+            10 => Box::new(HornTemplate::HornOfGlue),
+            11 => Box::new(HornTemplate::HornOfValhalla),
+            12 => Box::new(HornTemplate::HornOfTritons),
+            13 => Box::new(HornTemplate::HornOfFog),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for HornTemplate {
-    fn name(&self) -> &str {
-        match self {
-            HornTemplate::HornOfBubbles => "& Horn| of Bubbles^ (%P1 charges)",
-            HornTemplate::HornOfCalling => "& Horn| of Calling^ (%P1 charges)",
-            HornTemplate::HornOfSoftSounds => "& Horn| of Soft Sounds^ (%P1 charges)",
-            HornTemplate::HornOfBlasting => "& Horn| of *Blasting*^ (%P1 charges)",
-            HornTemplate::HornOfCold => "& Horn| of Cold^ (%P1 charges)",
-            HornTemplate::HornOfHeat => "& Horn| of Heat^ (%P1 charges)",
-            HornTemplate::HornOfGas => "& Horn| of Gas^ (%P1 charges)",
-            HornTemplate::HornOfRecall => "& Horn| of Recall^ (%P1 charges)",
-            HornTemplate::HornOfChaos => "& Horn| of *Chaos*^ (%P1 charges)",
-            HornTemplate::HornOfGlue => "& Horn| of Glue^ (%P1 charges)",
-            HornTemplate::HornOfValhalla => "& Horn| of Valhalla^ (%P1 charges)",
-            HornTemplate::HornOfTritons => "& Horn| of Tritons^ (%P1 charges)",
-            HornTemplate::HornOfFog => "& Horn| of Fog^ (%P1 charges)",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Horn }
     fn flags1(&self) -> u64 { 0 }
 

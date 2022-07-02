@@ -93,7 +93,6 @@ extern treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1];
 extern long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Following are treasure arrays	and variables			} */
-extern boolean object_ident[MAX_OBJECTS + 1];
 extern treasure_type gold_list[MAX_GOLD];
 extern treasure_type t_list[MAX_TALLOC + 1];
 extern treasure_type equipment[EQUIP_MAX];
@@ -105,7 +104,9 @@ extern long inven_weight; /* { Cur carried weight	} */
 extern long equip_ctr;    /* { Cur equipment ctr	} */
 
 /*	{ Following are feature objects defined for dungeon		} */
-extern treasure_type door_list[3];
+extern treasure_type door_open;
+extern treasure_type door_closed;
+extern treasure_type door_secret;
 
 /*	{ Following are creature arrays and variables			} */
 extern creature_type c_list[MAX_CREATURES + 1];

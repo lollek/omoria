@@ -12,9 +12,10 @@ use ncurses;
 use save;
 use term;
 use model::{
-    DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
+    DungeonRecord, InventoryItem, Item, MonsterRecord,
     PlayerRecord, TownRecord
 };
+use identification;
 use player;
 
 
@@ -25,7 +26,7 @@ struct SaveRecord {
     equipment: Vec<Item>,
     town: TownRecord,
     dungeon: DungeonRecord,
-    identified: IdentifiedRecord,
+    identification_data: identification::Data,
     monsters: MonsterRecord,
 }
 

@@ -8,7 +8,7 @@ bugs you would like.
 
 ## Requirements
 * Modern GCC (Game won't run with other compilers)
-* Rustc
+* Rustc (v1.61)
 * Curses
 * Termcap
 * Pthreads

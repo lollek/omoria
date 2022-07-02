@@ -31,22 +31,23 @@ impl BeltTemplate {
     pub fn iter() -> impl Iterator<Item=Box<dyn item_template::ItemTemplate>> {
         BeltTemplate::vec().into_iter()
     }
+
+    pub fn from(subval: i64) -> Box<dyn item_template::ItemTemplate> {
+        match subval {
+            1 => Box::new(BeltTemplate::Sash),
+            2 => Box::new(BeltTemplate::LightBelt),
+            3 => Box::new(BeltTemplate::Belt),
+            4 => Box::new(BeltTemplate::HeavyBelt),
+            5 => Box::new(BeltTemplate::LightPlatedBelt),
+            6 => Box::new(BeltTemplate::SharkskinBelt),
+            7 => Box::new(BeltTemplate::DemonhideBelt),
+            8 => Box::new(BeltTemplate::WyrmhideBelt),
+            _ => panic!("subval {} out of bounds", subval),
+        }
+    }
 }
 
 impl item_template::ItemTemplate for BeltTemplate {
-    fn name(&self) -> &str {
-        match self {
-            BeltTemplate::Sash => "Sash^ [%P6,%P4]",
-            BeltTemplate::LightBelt => "Light Belt^ [%P6,%P4]",
-            BeltTemplate::Belt => "Belt^ [%P6,%P4]",
-            BeltTemplate::HeavyBelt => "Heavy Belt^ [%P6,%P4]",
-            BeltTemplate::LightPlatedBelt => "Light Plated Belt^ [%P6,%P4]",
-            BeltTemplate::SharkskinBelt => "Sharkskin Belt^ [%P6,%P4]",
-            BeltTemplate::DemonhideBelt => "Demonhide Belt^ [%P6,%P4]",
-            BeltTemplate::WyrmhideBelt => "Wyrmhide Belt^ [%P6,%P4]",
-        }
-    }
-
     fn item_type(&self) -> model::ItemType { model::ItemType::Belt }
     fn flags1(&self) -> u64 { 0 }
     fn flags2(&self) -> u64 { 0 }

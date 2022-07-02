@@ -24,70 +24,18 @@ void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
 static long tcptr; /* { Cur treasure heap ptr} */
 static long mfptr; /* { Cur free monster ptr	} */
-static treasure_type up_stair = {"an up staircase",
-                                 up_staircase,
-                                 0x00000000,
-                                 0x00000000,
-                                 0,
-                                 0,
-                                 1,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 "1d1",
-                                 0,
-                                 0};
-static treasure_type down_stair = {"a down staircase",
-                                   down_staircase,
-                                   0x00000000,
-                                   0x00000000,
-                                   0,
-                                   0,
-                                   1,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   "1d1",
-                                   0,
-                                   0};
-static treasure_type up_steep = {"a steep staircase",
-                                 up_steep_staircase,
-                                 0x00000000,
-                                 0x00000000,
-                                 0,
-                                 0,
-                                 1,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 "1d1",
-                                 0,
-                                 0};
-static treasure_type down_steep = {"a steep staircase",
-                                   down_steep_staircase,
-                                   0x00000000,
-                                   0x00000000,
-                                   0,
-                                   0,
-                                   1,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   "1d1",
-                                   0,
-                                   0};
+static treasure_type up_stair = {up_staircase,
+    0x00000000, 0x00000000, 0, 0, 1, 0, 0,
+    0, 0, 0, 0, "1d1", 0, 0};
+static treasure_type down_stair = {down_staircase,
+    0x00000000, 0x00000000, 0, 0, 1, 0, 0,
+    0, 0, 0, 0, "1d1", 0, 0};
+static treasure_type up_steep = {up_steep_staircase,
+    0x00000000, 0x00000000, 0, 0, 1, 0, 0,
+    0, 0, 0, 0, "1d1", 0, 0};
+static treasure_type down_steep = {down_steep_staircase,
+    0x00000000, 0x00000000, 0, 0, 1, 0, 0,
+    0, 0, 0, 0, "1d1", 0, 0};
 static monster_type blank_monster = /* { Blank monster values	} */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false};
 
@@ -2618,7 +2566,7 @@ void place_open_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[0];
+  t_list[cur_pos] = door_open;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = true;
 }
@@ -2631,7 +2579,7 @@ void place_broken_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[0];
+  t_list[cur_pos] = door_open;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = true;
   t_list[cur_pos].p1 = 1;
@@ -2645,7 +2593,7 @@ void place_closed_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
+  t_list[cur_pos] = door_closed;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = false;
 }
@@ -2658,7 +2606,7 @@ void place_locked_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
+  t_list[cur_pos] = door_closed;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = false;
   t_list[cur_pos].p1 = randint(10) + 10;
@@ -2672,7 +2620,7 @@ void place_stuck_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
+  t_list[cur_pos] = door_closed;
   cave[y][x].fval = corr_floor3.ftval;
   cave[y][x].fopen = false;
   t_list[cur_pos].p1 = -randint(10) - 10;
@@ -2686,7 +2634,7 @@ void place_secret_door(long y, long x) {
   popt(&cur_pos);
 
   cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[2];
+  t_list[cur_pos] = door_secret;
   cave[y][x].fval = corr_floor4.ftval;
   cave[y][x].fopen = false;
 }
