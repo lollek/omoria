@@ -47,21 +47,6 @@ extern void create_character();
 extern void change_trap(long y, long x);
 extern void hit_trap(long *y, long *x);
 
-/* { DUNGEON.PAS		} */
-
-/* { FILES.PAS		} */
-extern void print_map();
-extern void print_objects();
-extern void print_monsters();
-extern void file_character();
-extern boolean read_top_scores(FILE **f1, char *fnam, char list[][134],
-                               int max_high, int *n1, char *openerr);
-extern boolean write_top_scores(FILE **f1, char list[][134], int max_high);
-extern boolean close_top_scores(FILE **f1);
-extern FILE *priv_fopen(char *path, char *mode);
-extern void encrypt_file(char fnam[82]);
-extern void decrypt_file(char fnam[82]);
-
 /* { GENERATE.PAS		} */
 extern void generate_cave();
 

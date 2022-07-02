@@ -22,6 +22,8 @@
 #include "logic/generate_item.h"
 #include "desc.h"
 
+#include "files.h"
+
 /*	{ Output dungeon section sizes					} */
 #define OUTPAGE_HEIGHT 44 /* { 44 lines of dungeon per section	} */
 #define OUTPAGE_WIDTH 99  /* { 100 columns of dungeon per section	} */

@@ -23,6 +23,7 @@
 #include "variables.h"
 #include "creature.h"
 #include "desc.h"
+#include "files.h"
 
 #define LOW_NUM -98765432
 

@@ -18,6 +18,8 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "files.h"
+
 #include "death.h"
 
 long max_score = 20;
