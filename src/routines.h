@@ -44,16 +44,6 @@ extern void create_character();
 
 /* END - FROM RUST */
 
-/* { DESC.PAS		} */
-extern void rantitle(char *title); /* : varying[a] of char); */
-extern void known1(char *object_str);  /* : varying[a] of char); */
-extern void known2(char *object_str);  /* : varying[a] of char); */
-extern void unquote(char *object_str); /* : varying[a] of char); */
-extern void identify(treasure_type *item);
-extern void objdes(char *out_val,  /*: varying[a] of char; */
-                   treas_rec *ptr, /*	: treas_ptr; */
-                   boolean pref);  /*	: boolean); */
-
 /* { DUNGEON.PAS		} */
 extern void move_rec(long y1, long x1, long y2, long x2);
 extern void change_speed(long num);

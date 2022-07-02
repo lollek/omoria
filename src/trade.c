@@ -23,6 +23,7 @@
 #include "trade.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 #define ROUND(x) ((long)((x) + .5))
 

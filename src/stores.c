@@ -23,6 +23,7 @@
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
+#include "desc.h"
 
 typedef struct owner_type {
   char owner_name[82];

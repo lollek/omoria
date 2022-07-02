@@ -20,6 +20,7 @@
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
+#include "desc.h"
 
 /*	{ Output dungeon section sizes					} */
 #define OUTPAGE_HEIGHT 44 /* { 44 lines of dungeon per section	} */

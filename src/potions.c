@@ -17,6 +17,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 void q__potion_effect(long effect, boolean *idented) {
   long i4, i5;

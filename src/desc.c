@@ -17,6 +17,8 @@
 #include "types.h"
 #include "variables.h"
 
+#include "desc.h"
+
 void rantitle(char *title) {
   /*{ Return random title						}*/
 

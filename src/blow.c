@@ -20,6 +20,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 static void b__chime_and_horn_effects(long effect, boolean *idented) {
   /*{ Chimes...				      }*/

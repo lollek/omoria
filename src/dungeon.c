@@ -25,6 +25,7 @@
 #include "variables.h"
 #include "creature.h"
 #include "death.h"
+#include "desc.h"
 
 void C_print_known_spells();
 

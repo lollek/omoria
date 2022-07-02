@@ -8,6 +8,7 @@
 #include "player.h"
 #include "routines.h"
 #include "variables.h"
+#include "desc.h"
 
 enum _ranged_attack_t { THROW, SHOOT };
 

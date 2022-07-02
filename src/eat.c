@@ -17,6 +17,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 static boolean __eat_eyeball_of_drong(void) {
 

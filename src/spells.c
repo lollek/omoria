@@ -21,7 +21,7 @@
 #include "types.h"
 #include "variables.h"
 #include "creature.h"
-
+#include "desc.h"
 #include "logic/generate_item.h"
 
 #define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */

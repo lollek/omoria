@@ -20,6 +20,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 #include "creature.h"
 

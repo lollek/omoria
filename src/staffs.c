@@ -17,6 +17,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 void us__staff_effect(long effect, boolean *idented) {
   long i3, randnum;

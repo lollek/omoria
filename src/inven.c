@@ -17,6 +17,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "desc.h"
 
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)

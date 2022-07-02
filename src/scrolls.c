@@ -18,6 +18,7 @@
 #include "types.h"
 #include "variables.h"
 #include "death.h"
+#include "desc.h"
 
 void rs__scroll_effect(long effect, boolean *idented, boolean *first,
                        treas_rec *item_ptr) {

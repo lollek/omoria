@@ -20,6 +20,7 @@
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
+#include "desc.h"
 
 static uint8_t const MAX_QUESTS =
     35; /*{ Maximum number of quests per game	} */
