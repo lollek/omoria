@@ -492,7 +492,7 @@ void inv__equip_pos_string(char out_val[82], long equip_pos, long counter) {
 
   inven_temp.data = equipment[equip_pos];
   objdes(tmp_buf, &inven_temp, true);
-  sprintf(out_val, "%c%c%c%s%s", cur_insure(), (char)('a' + counter - 1),
+  snprintf(out_val, 82, "%c%c%c%s%s", cur_insure(), (char)('a' + counter - 1),
           cur_char2(), ic__equip_print_prefix(equip_pos), tmp_buf);
 }
 

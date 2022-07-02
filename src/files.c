@@ -1219,16 +1219,14 @@ boolean close_top_scores(FILE **f1) {
   return return_value;
 }
 
-char *center(char *in_str, long str_len, char *out_str) {
-  int i, j;
+char *center(char in_str[134], int str_len, char out_str[134]) {
+  int const in_str_len = strlen(in_str);
+  int const j = (str_len - in_str_len) / 2;
 
-  i = strlen(in_str);
-  j = (str_len - i) / 2;
-
-  if (i >= str_len) {
+  if (in_str_len >= str_len) {
     strncpy(out_str, in_str, str_len);
   } else {
-    sprintf(out_str, "%*s%s%*s", j, "", in_str, (int)str_len - i - j, "");
+    snprintf(out_str, 134, "%*s%s%*s", j, "", in_str, str_len - in_str_len - j, "");
   }
 
   return out_str;

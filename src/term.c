@@ -25,6 +25,13 @@
 #include "types.h"
 #include "variables.h"
 
+int command_count;
+int eof_flag;
+int character_generated, character_saved;
+int sound_beep_flag;
+int panic_save;
+FILE *highscore_fp;
+
 /* source/io.c: terminal I/O code, uses the curses package
 
    Copyright (c) 1989-94 James E. Wilson, Robert A. Koeneke

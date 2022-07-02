@@ -2201,20 +2201,16 @@ char *show_char_age(char result[134]) {
 
   return result;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-char *play_time(time_type *t, char *result) {
+
+char *play_time(time_type *t, char result[134]) {
   /*{ Return string for how long character has been playing -DMF-   }*/
 
-  sprintf(result, "%d day%s and %d:%02d:%02d hours.", t->days,
+  snprintf(result, 134, "%d day%s and %d:%02d:%02d hours.", t->days,
           ((t->days == 1) ? "" : "s"), t->hours, t->minutes, t->seconds);
 
   return result;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 /*
         { Add two time_types together                           -DMF-   }
 [global,psect(misc5$code)] procedure add_play_time(
@@ -2251,9 +2247,6 @@ char *play_time(time_type *t, char *result) {
           end;
       end;
 */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 time_type *convert_seconds_to_time(time_t seconds, time_type *tim) {
   tim->years = 0;
   tim->months = 0;
@@ -2297,7 +2290,7 @@ char *full_date_string(game_time_type time, char result[134]) {
     *pos = 0;
   }
   /* with time do; */
-  sprintf(result, "%s, %s the %s, %s", out1, month_string(time.month, out2),
+  snprintf(result, 134, "%s, %s the %s, %s", out1, month_string(time.month, out2),
           place_string(time.day, out3),
           time_string(time.hour, time.secs, out4));
 
@@ -2306,7 +2299,7 @@ char *full_date_string(game_time_type time, char result[134]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-char *show_current_time(char *result) {
+char *show_current_time(char result[134]) {
   /*{ Return current time in the game                       -DMF-   }*/
   /* Tue Jul 07 00:05:40 1998 */
 

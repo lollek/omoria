@@ -276,7 +276,7 @@ extern void wizard_create();
 
 extern void py_bonuses(treasure_type *tobj, long factor);
 extern boolean delete_object(long y, long x);
-extern char *center(char str[134], long len, char result[134]); /* was func */
+extern char *center(char str[134], int len, char result[134]); /* was func */
 extern void eat();
 extern void discipline();
 

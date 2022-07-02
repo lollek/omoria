@@ -25,12 +25,12 @@ void bell();
 /* number of messages to save in a buffer */
 #define MAX_SAVE_MSG 22 /* How many messages to save -CJS- */
 
-int command_count;
-int eof_flag;
-int character_generated, character_saved;
-int sound_beep_flag;
-int panic_save;
-FILE *highscore_fp;
+extern int command_count;
+extern int eof_flag;
+extern int character_generated, character_saved;
+extern int sound_beep_flag;
+extern int panic_save;
+extern FILE *highscore_fp;
 
 /* end file term.h */
 #endif /* TERM_H */
