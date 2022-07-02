@@ -1,4 +1,4 @@
-# Imoria
+# Omoria
 A fork of Imoria with some fixes and changes, making it more fun to play for me.
 This project has also involved into a way for me to try out the Rust language,
 so I am in the process of porting it from C to Rust. So basically this project
