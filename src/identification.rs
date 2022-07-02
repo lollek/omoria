@@ -18,7 +18,7 @@ pub fn load(data: Data) {
     *IDENTIFICATION.try_write().unwrap() = data
 }
 
-pub fn is_identified(item_type: model::ItemType, subval: i64) -> bool {
+pub fn is_item_type_identified(item_type: model::ItemType, subval: i64) -> bool {
     if let Entry::Occupied(o) = (*IDENTIFICATION.try_read().unwrap()).entry(item_type) {
         if let Entry::Occupied(p) = o.get().entry(subval) {
             return *p.get();
@@ -28,7 +28,7 @@ pub fn is_identified(item_type: model::ItemType, subval: i64) -> bool {
     false
 }
 
-pub fn set_identified(item_type: model::ItemType, subval: i64, is_identified: bool) {
+pub fn set_item_type_identified(item_type: model::ItemType, subval: i64, is_identified: bool) {
     IDENTIFICATION.try_write().unwrap()
         .entry(item_type)
         .or_insert(HashMap::new())

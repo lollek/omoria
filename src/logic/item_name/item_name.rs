@@ -2,6 +2,7 @@ use std::borrow::Cow;
 
 use item_template;
 use model;
+use identification;
 
 use super::helpers;
 
@@ -45,9 +46,9 @@ pub fn generate_weapon_name<'a>(item: &model::Item, name: Cow<'a, str>) -> Strin
     } else if item.flags & 0x00040000 == 0x00040000 {
         parts.push(Cow::from(" (FT)"));
     } else if item.flags2 & 0x00000010 == 0x00000010 {
-        if item.item_type() == model::ItemType::Dagger {
+        if let model::ItemType::Dagger(_) = item.item_type() {
             parts.push(Cow::from(" (WB)"));
-        } else if item.item_type() == model::ItemType::Mace {
+        } else if let model::ItemType::Mace(_) = item.item_type() {
             parts.push(Cow::from(" (BB)"));
         } else {
             parts.push(Cow::from(" (Magic)"));
@@ -173,10 +174,10 @@ pub fn generate_armor_name<'a>(item: &model::Item, name: Cow<'a, str>) -> String
     parts.join("")
 }
 
-fn misc_object_name(item: &model::Item) -> String {
+fn misc_object_name(item: &model::Item, subtype: item_template::MiscTemplate) -> String {
         let mut parts = Vec::new();
         parts.push(helpers::number_of(item));
-        parts.push(Cow::from(match item.subtype() {
+        parts.push(Cow::from(match subtype {
             item_template::MiscTemplate::RatSkeleton => "Rat Skeleton",
             item_template::MiscTemplate::GiantCentipedeSkeleton => "Giant Centipede Skeleton",
             item_template::MiscTemplate::EmptyBottle => "Empty Bottle",
@@ -192,10 +193,10 @@ fn misc_object_name(item: &model::Item) -> String {
         parts.join("")
 }
 
-fn chest_name(item: &model::Item) -> String {
+fn chest_name(item: &model::Item, subtype: item_template::ChestTemplate) -> String {
     let mut parts = Vec::new();
 
-    parts.push(Cow::from(match item.subtype() {
+    parts.push(Cow::from(match subtype {
         item_template::ChestTemplate::SmallWoodenChest => "Small wooden chest",
         item_template::ChestTemplate::LargeWoodenChest => "Large wooden chest",
         item_template::ChestTemplate::SmallIronChest => "Small iron chest",
@@ -228,10 +229,10 @@ fn chest_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn misc_name(item: &model::Item) -> String {
+fn misc_name(item: &model::Item, subtype: item_template::MiscUsableTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
-    parts.push(match item.subtype() {
+    parts.push(match subtype {
         item_template::MiscUsableTemplate::FlaskOfOil
             => Cow::from(format!("Flask{} of Oil", helpers::plural_s(&item))),
         item_template::MiscUsableTemplate::IronSpike
@@ -252,7 +253,7 @@ fn misc_name(item: &model::Item) -> String {
             => Cow::from(format!("Corked Bottle{}", helpers::plural_s(&item))),
     });
 
-    match item.subtype() {
+    match subtype {
         item_template::MiscUsableTemplate::Teeth => {
             if item.flags & 0x20000000 == 0x20000000 {
                 parts.push(Cow::from(" from a Dragon"));
@@ -260,7 +261,7 @@ fn misc_name(item: &model::Item) -> String {
                 parts.push(Cow::from(" of a Demon"));
             }
         },
-        item_template::MiscUsableTemplate::Status => {
+        item_template::MiscUsableTemplate::Statue => {
             if item.flags & 0x00000100 == 0x00000100 {
                 parts.push(Cow::from(" Major of Undead Summoning"));
             } else if item.flags & 0x00000200 == 0x00000200 {
@@ -295,10 +296,10 @@ fn misc_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn jewelry_name(item: &model::Item) -> String {
+fn jewelry_name(item: &model::Item, subtype: item_template::JewelryTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
-    parts.push(Cow::from(match item.subtype() {
+    parts.push(Cow::from(match subtype {
         item_template::JewelryTemplate::SmallGoldPendant
             => format!("Small gold pendant{}", helpers::plural_s(&item)),
         item_template::JewelryTemplate::SmallMithrilPendant
@@ -311,12 +312,12 @@ fn jewelry_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn bag_name(item: &model::Item) -> String {
+fn bag_name(item: &model::Item, subtype: item_template::BagTemplate) -> String {
     let mut parts = Vec::new();
     parts.push("Bag");
 
-    if item.subtype().is_identified() {
-        parts.push(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(match subtype {
             item_template::BagTemplate::BagOfHolding250 => " of Holding (250)",
             item_template::BagTemplate::BagOfHolding500 => " of Holding (500)",
             item_template::BagTemplate::BagOfHolding1000 => " of Holding (1000)",
@@ -327,11 +328,11 @@ fn bag_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn gem_name(item: &model::Item) -> String {
+fn gem_name(item: &model::Item, subtype: item_template::GemTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
 
-    parts.push(match item.subtype() {
+    parts.push(match subtype {
         item_template::GemTemplate::GemOfDetectMonsters |
         item_template::GemTemplate::GemOfDispelEvil |
         item_template::GemTemplate::GemOfDarkness |
@@ -368,8 +369,8 @@ fn gem_name(item: &model::Item) -> String {
             Cow::from(format!("Large pouch{} of Diamonds", helpers::plural_s(&item))),
     });
 
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::GemTemplate::GemOfDetectMonsters => " of Detect Monsters",
             item_template::GemTemplate::GemOfDispelEvil => " of Dispel Evil",
             item_template::GemTemplate::GemOfDarkness => " of Darkness",
@@ -386,7 +387,7 @@ fn gem_name(item: &model::Item) -> String {
     }
 
     if item.is_identified() {
-        parts.push(match item.subtype() {
+        parts.push(match subtype {
             item_template::GemTemplate::GemOfDetectMonsters |
             item_template::GemTemplate::GemOfDispelEvil |
             item_template::GemTemplate::GemOfDarkness |
@@ -405,12 +406,12 @@ fn gem_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn wearable_gem_name(item: &model::Item) -> String {
+fn wearable_gem_name(item: &model::Item, subtype: item_template::WearableGemTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(&item));
     parts.push(Cow::from("Finely cut Gem"));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::WearableGemTemplate::GemOfTeleportation => " of Teleportation",
             item_template::WearableGemTemplate::GemOfResistCold => " of Resist Cold",
             item_template::WearableGemTemplate::GemOfResistAcid => " of Resist Acid",
@@ -423,10 +424,10 @@ fn wearable_gem_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn ammo_name(item: &model::Item) -> String {
+fn ammo_name(item: &model::Item, subtype: item_template::AmmunitionTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
-    parts.push(Cow::from(match item.subtype() {
+    parts.push(Cow::from(match subtype {
         item_template::AmmunitionTemplate::Arrow =>
             format!("Arrow{}", helpers::plural_s(&item)),
         item_template::AmmunitionTemplate::Bolt =>
@@ -440,10 +441,10 @@ fn ammo_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn light_source_name(item: &model::Item) -> String {
+fn light_source_name(item: &model::Item, subtype: item_template::LightSourceTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(&item));
-    parts.push(match item.subtype() {
+    parts.push(match subtype {
         item_template::LightSourceTemplate::WoodenTorch =>
             Cow::from(format!("Wooden Torch{}", helpers::plural_es(&item))),
         item_template::LightSourceTemplate::BrassLantern =>
@@ -458,8 +459,8 @@ fn light_source_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn bow_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn bow_name(item: &model::Item, subtype: item_template::BowTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::BowTemplate::Shortbow => "Shortbow",
         item_template::BowTemplate::HuntersBow => "Hunters Bow",
         item_template::BowTemplate::CompositeBow => "Composite Bow",
@@ -470,8 +471,8 @@ fn bow_name(item: &model::Item) -> String {
     }))
 }
 
-fn crossbow_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn crossbow_name(item: &model::Item, subtype: item_template::CrossbowTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::CrossbowTemplate::SiegeCrossbow => "Siege Crossbow",
         item_template::CrossbowTemplate::Ballista => "Ballista",
         item_template::CrossbowTemplate::LightCrossbow => "Light Crossbow",
@@ -479,7 +480,7 @@ fn crossbow_name(item: &model::Item) -> String {
     }))
 }
 
-fn sling_name(item: &model::Item) -> String {
+fn sling_name(item: &model::Item, subtype: item_template::SlingTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Sling"));
     parts.push(helpers::damage(&item));
@@ -487,8 +488,8 @@ fn sling_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn axe_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn axe_name(item: &model::Item, subtype: item_template::AxeTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::AxeTemplate::Balestarius => "Balestarius",
         item_template::AxeTemplate::BattleAxe => "Battle Axe",
         item_template::AxeTemplate::BroadAxe => "Broad Axe",
@@ -501,8 +502,8 @@ fn axe_name(item: &model::Item) -> String {
     }))
 }
 
-fn polearm_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn polearm_name(item: &model::Item, subtype: item_template::PolearmTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::PolearmTemplate::AwlPike => "Awl-Pike",
         item_template::PolearmTemplate::BeakedAxe => "Beaked Axe",
         item_template::PolearmTemplate::Fauchard => "Fauchard",
@@ -518,8 +519,8 @@ fn polearm_name(item: &model::Item) -> String {
     }))
 }
 
-fn dagger_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn dagger_name(item: &model::Item, subtype: item_template::DaggerTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::DaggerTemplate::MainGauche =>"Main Gauche",
         item_template::DaggerTemplate::Misercorde =>"Misercorde",
         item_template::DaggerTemplate::Stiletto =>"Stiletto",
@@ -534,8 +535,8 @@ fn dagger_name(item: &model::Item) -> String {
     }))
 }
 
-fn sword_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn sword_name(item: &model::Item, subtype: item_template::SwordTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::SwordTemplate::Backsword => "Backsword",
         item_template::SwordTemplate::BastardSword => "Bastard Sword",
         item_template::SwordTemplate::Broadsword => "Broadsword",
@@ -553,8 +554,8 @@ fn sword_name(item: &model::Item) -> String {
     }))
 }
 
-fn pick_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn pick_name(item: &model::Item, subtype: item_template::PickTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::PickTemplate::Pick => "Pick",
         item_template::PickTemplate::Shovel => "Shovel",
         item_template::PickTemplate::OrcishPick1 => "Orcish Pick",
@@ -565,8 +566,8 @@ fn pick_name(item: &model::Item) -> String {
     }))
 }
 
-fn mace_name(item: &model::Item) -> String {
-    generate_weapon_name(item, Cow::from(match item.subtype() {
+fn mace_name(item: &model::Item, subtype: item_template::MaceTemplate) -> String {
+    generate_weapon_name(item, Cow::from(match subtype {
         item_template::MaceTemplate::BallAndChain => "Ball and Chain",
         item_template::MaceTemplate::WoodenClub => "Wooden Club",
         item_template::MaceTemplate::Flail => "Flail",
@@ -580,8 +581,8 @@ fn mace_name(item: &model::Item) -> String {
     }))
 }
 
-fn boots_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn boots_name(item: &model::Item, subtype: item_template::BootsTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::BootsTemplate::SoftLeatherShoes => "Soft Leather Shoes",
        item_template::BootsTemplate::SoftLeatherBoots => "Soft Leather Boots",
        item_template::BootsTemplate::HardLeatherBoots => "Hard Leather Boots",
@@ -594,8 +595,8 @@ fn boots_name(item: &model::Item) -> String {
    }))
 }
 
-fn gloves_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn gloves_name(item: &model::Item, subtype: item_template::GlovesTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::GlovesTemplate::LeatherGloves => "Leather Gloves",
        item_template::GlovesTemplate::HeavyGloves => "Heavy Gloves",
        item_template::GlovesTemplate::ClothGloves => "Cloth Gloves",
@@ -609,8 +610,8 @@ fn gloves_name(item: &model::Item) -> String {
    }))
 }
 
-fn cloak_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn cloak_name(item: &model::Item, subtype: item_template::CloakTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::CloakTemplate::LightCloak => "Light Cloak",
        item_template::CloakTemplate::HeavyCloak => "Heavy Cloak",
        item_template::CloakTemplate::SharkskinCloak => "Sharkskin Cloak",
@@ -618,8 +619,8 @@ fn cloak_name(item: &model::Item) -> String {
        item_template::CloakTemplate::WyrmhideCloak => "Wyrmhide Cloak",
    }))
 }
-fn helm_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn helm_name(item: &model::Item, subtype: item_template::HelmTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::HelmTemplate::ClothHat => "Cloth Hat",
        item_template::HelmTemplate::SoftLeatherCap => "Soft Leather Cap",
        item_template::HelmTemplate::HardLeatherCap => "Hard Leather Cap",
@@ -635,8 +636,8 @@ fn helm_name(item: &model::Item) -> String {
    }))
 }
 
-fn shield_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn shield_name(item: &model::Item, subtype: item_template::ShieldTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
         item_template::ShieldTemplate::SmallLeatherShield => "Small Leather Shield",
         item_template::ShieldTemplate::MediumLeatherShield => "Medium Leather Shield",
         item_template::ShieldTemplate::LargeLeatherShield => "Large Leather Shield",
@@ -649,8 +650,8 @@ fn shield_name(item: &model::Item) -> String {
     }))
 }
 
-fn hard_armor_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn hard_armor_name(item: &model::Item, subtype: item_template::HardArmorTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::HardArmorTemplate::AugmentedChainMail => "Augmented Chain Mail",
        item_template::HardArmorTemplate::BarChainMail => "Bar Chain Mail",
        item_template::HardArmorTemplate::BronzePlateMail => "Bronze Plate Mail",
@@ -670,8 +671,8 @@ fn hard_armor_name(item: &model::Item) -> String {
    }))
 }
 
-fn soft_armor_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn soft_armor_name(item: &model::Item, subtype: item_template::SoftArmorTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::SoftArmorTemplate::CoolSetOfThreads => "Cool Set of Threads",
        item_template::SoftArmorTemplate::DemonhideArmor => "Demonhide Armor",
        item_template::SoftArmorTemplate::DuskShroud => "Dusk Shroud",
@@ -692,25 +693,40 @@ fn soft_armor_name(item: &model::Item) -> String {
    }))
 }
 
-fn bracers_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn bracers_name(item: &model::Item, subtype: item_template::BracersTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
         item_template::BracersTemplate::BracersOfProtection =>
-            if item.subtype().is_identified() { "Bracers of Protection" }
-            else                    { "Bracers" },
+            if identification::is_item_type_identified(item.item_type(), item.subval) {
+                "Bracers of Protection"
+            } else {
+                "Bracers"
+            },
         item_template::BracersTemplate::BracersOfDefense =>
-            if item.subtype().is_identified() { "Bracers of Defense" }
-            else                    { "Bracers" },
+            if identification::is_item_type_identified(item.item_type(), item.subval) {
+                "Bracers of Defense"
+            } else {
+                "Bracers"
+            },
         item_template::BracersTemplate::BracersOfShielding =>
-            if item.subtype().is_identified() { "Bracers of Shielding" }
-            else                    { "Bracers" },
+            if identification::is_item_type_identified(item.item_type(), item.subval) {
+                "Bracers of Shielding"
+            } else {
+                "Bracers"
+            },
         item_template::BracersTemplate::MithrilBracers => "Mithril Bracers",
         item_template::BracersTemplate::AdamantiteBracers => "Adamantite Bracers",
         item_template::BracersTemplate::BracersOfWeaponAttraction =>
-            if item.subtype().is_identified() { "Bracers of Weapon Attaction" }
-            else                    { "Bracers" },
+            if identification::is_item_type_identified(item.item_type(), item.subval) {
+                "Bracers of Weapon Attaction"
+            } else {
+                "Bracers"
+            },
         item_template::BracersTemplate::SilverBraceletOfWarding =>
-            if item.subtype().is_identified() { "Silver Bracers of Warding" }
-            else                    { "Silver Bracers" },
+            if identification::is_item_type_identified(item.item_type(), item.subval) {
+                "Silver Bracers of Warding"
+            } else {
+                "Silver Bracers"
+            },
         item_template::BracersTemplate::SilverBracelet => "Silver Bracelet",
         item_template::BracersTemplate::GoldBracelet => "Gold Bracelet",
         item_template::BracersTemplate::PlatinumBracelet => "Platinum Bracelet",
@@ -725,8 +741,8 @@ fn bracers_name(item: &model::Item) -> String {
     }))
 }
 
-fn belt_name(item: &model::Item) -> String {
-    generate_armor_name(item, Cow::from(match item.subtype() {
+fn belt_name(item: &model::Item, subtype: item_template::BeltTemplate) -> String {
+    generate_armor_name(item, Cow::from(match subtype {
        item_template::BeltTemplate::Sash => "Sash",
        item_template::BeltTemplate::LightBelt => "Light Belt",
        item_template::BeltTemplate::Belt => "Belt",
@@ -738,11 +754,11 @@ fn belt_name(item: &model::Item) -> String {
    }))
 }
 
-fn amulet_name(item: &model::Item) -> String {
+fn amulet_name(item: &model::Item, subtype: item_template::AmuletTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Amulet"));
-    if item.subtype().is_identified() {
-        parts.push(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(match subtype {
             item_template::AmuletTemplate::AmuletOfAdornment1 => Cow::from(" of Adornment"),
             item_template::AmuletTemplate::AmuletOfAdornment2 => Cow::from(" of Adornment"),
             item_template::AmuletTemplate::AmuletOfWisdom => Cow::from(" of Wisdom"),
@@ -776,11 +792,11 @@ fn amulet_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn ring_name(item: &model::Item) -> String {
+fn ring_name(item: &model::Item, subtype: item_template::RingTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Ring"));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::RingTemplate::RingOfGainStrength => " of Gain Strength",
             item_template::RingTemplate::RingOfGainDexterity => " of Gain Dexterity",
             item_template::RingTemplate::RingOfGainConstitution => " of Gain Constitution",
@@ -831,11 +847,11 @@ fn ring_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn staff_name(item: &model::Item) -> String {
+fn staff_name(item: &model::Item, subtype: item_template::StaffTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Staff"));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::StaffTemplate::StaffOfLight => " of Light",
             item_template::StaffTemplate::StaffOfDoorStairLocation => " of Door/Stair Location",
             item_template::StaffTemplate::StaffOfTrapLocation => "of Trap Location",
@@ -866,12 +882,12 @@ fn staff_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn wand_name(item: &model::Item) -> String {
+fn wand_name(item: &model::Item, subtype: item_template::WandTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Wand"));
-    if item.subtype().is_identified() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
         parts.push(
-            Cow::from(match item.subtype() {
+            Cow::from(match subtype {
                 item_template::WandTemplate::WandOfProbing => " of Probing",
                 item_template::WandTemplate::WandOfLight => " of Light",
                 item_template::WandTemplate::WandOfLightningBolts => "of Lightning Bolts",
@@ -903,12 +919,12 @@ fn wand_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn scroll_name(item: &model::Item) -> String {
+fn scroll_name(item: &model::Item, subtype: item_template::ScrollTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(&item));
     parts.push(Cow::from(if item.number == 1 { "Scroll" } else { "Scrolls" }));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::ScrollTemplate::AggravateMonster => " of Trap/Door Destruction",
             item_template::ScrollTemplate::Blessing => " of Blessing",
             item_template::ScrollTemplate::CreateFood => " of Create Food",
@@ -956,12 +972,12 @@ fn scroll_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn potion_name(item: &model::Item) -> String {
+fn potion_name(item: &model::Item, subtype: item_template::PotionTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
     parts.push(Cow::from(if item.number == 1 { "Potion" } else { "Potions" }));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::PotionTemplate::AppleJuice => " of Apple Juice",
             item_template::PotionTemplate::Blindness => " of Blindness",
             item_template::PotionTemplate::Boldliness => " of Boldliness",
@@ -1012,10 +1028,10 @@ fn potion_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn food_name(item: &model::Item) -> String {
+fn food_name(item: &model::Item, subtype: item_template::FoodTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
-    parts.push(Cow::from(match item.subtype() {
+    parts.push(Cow::from(match subtype {
         item_template::FoodTemplate::Mushroom |
         item_template::FoodTemplate::Mushroom2 |
         item_template::FoodTemplate::MushroomOfPoison |
@@ -1066,8 +1082,8 @@ fn food_name(item: &model::Item) -> String {
             => format!("Eyeball{}", helpers::plural_s(&item)),
     }));
 
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::FoodTemplate::MushroomOfPoison => " of Poison",
             item_template::FoodTemplate::MushroomOfBlindness => " of Blindness",
             item_template::FoodTemplate::MushroomOfParanoia => " of Paranoia",
@@ -1099,10 +1115,10 @@ fn food_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn junk_food_name(item: &model::Item) -> String {
+fn junk_food_name(item: &model::Item, subtype: item_template::JunkFoodTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
-    parts.push(Cow::from(match item.subtype() {
+    parts.push(Cow::from(match subtype {
         item_template::JunkFoodTemplate::BoxOfPiranhaCrackers =>
             format!("Box{} of Piranha Crackers", helpers::plural_s(&item)),
         item_template::JunkFoodTemplate::CanOfOrcaCola =>
@@ -1133,11 +1149,11 @@ fn junk_food_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn chime_name(item: &model::Item) -> String {
+fn chime_name(item: &model::Item, subtype: item_template::ChimeTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Chime"));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::ChimeTemplate::ChimeOfLight => " of Light",
             item_template::ChimeTemplate::ChimeOfDetectDoorsStairs => " of Detect Doors/Stairs",
             item_template::ChimeTemplate::ChimeOfDetectTraps => " of Detect Traps",
@@ -1160,11 +1176,11 @@ fn chime_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn horn_name(item: &model::Item) -> String {
+fn horn_name(item: &model::Item, subtype: item_template::HornTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(Cow::from("Horn"));
-    if item.subtype().is_identified() {
-        parts.push(Cow::from(match item.subtype() {
+    if identification::is_item_type_identified(item.item_type(), item.subval) {
+        parts.push(Cow::from(match subtype {
             item_template::HornTemplate::HornOfBubbles => " of Bubbles",
             item_template::HornTemplate::HornOfCalling => " of Calling",
             item_template::HornTemplate::HornOfSoftSounds => " of Soft Sounds",
@@ -1186,8 +1202,8 @@ fn horn_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn magic_book_name(item: &model::Item) -> String {
-    generate_book_name(item, Cow::from(match item.subtype() {
+fn magic_book_name(item: &model::Item, subtype: item_template::MagicBookTemplate) -> String {
+    generate_book_name(item, Cow::from(match subtype {
         item_template::MagicBookTemplate::BeginnersMagic => "Book of Magic Spells [Beginners-Magik]",
         item_template::MagicBookTemplate::Magic1 => "Book of Magic Spells [Magik I]",
         item_template::MagicBookTemplate::Magic2 => "Book of Magic Spells [Magik II]",
@@ -1195,8 +1211,8 @@ fn magic_book_name(item: &model::Item) -> String {
     }))
 }
 
-fn prayer_book_name(item: &model::Item) -> String {
-    generate_book_name(item, Cow::from(match item.subtype() {
+fn prayer_book_name(item: &model::Item, subtype: item_template::PrayerBookTemplate) -> String {
+    generate_book_name(item, Cow::from(match subtype {
         item_template::PrayerBookTemplate::BeginnersHandbook => "Holy Book of Prayers [Beginners Handbook]",
         item_template::PrayerBookTemplate::WordsOfWisdom => "Holy Book of Prayers [Words of Wisdom]",
         item_template::PrayerBookTemplate::ChantsAndBlessings => "Holy Book of Prayers [Chants and Blessings]",
@@ -1204,10 +1220,10 @@ fn prayer_book_name(item: &model::Item) -> String {
     }))
 }
 
-fn instrument_name(item: &model::Item) -> String {
+fn instrument_name(item: &model::Item, subtype: item_template::InstrumentTemplate) -> String {
     let mut parts = Vec::new();
     parts.push(helpers::number_of(item));
-    parts.push(Cow::from(match item.subtype() {
+    parts.push(Cow::from(match subtype {
         item_template::InstrumentTemplate::PipesOfPeace => "Pipes of Peace",
         item_template::InstrumentTemplate::LyreOfNature => "Lyre of Nature",
         item_template::InstrumentTemplate::LuteOfTheWoods => "Lute of the Woods",
@@ -1216,8 +1232,8 @@ fn instrument_name(item: &model::Item) -> String {
     parts.join("")
 }
 
-fn song_book_name(item: &model::Item) -> String {
-    generate_book_name(item, Cow::from(match item.subtype() {
+fn song_book_name(item: &model::Item, subtype: item_template::SongBookTemplate) -> String {
+    generate_book_name(item, Cow::from(match subtype {
         item_template::SongBookTemplate::BeginnersHandbook => "Book of Bard Lyrics [Beginners Handbook]",
         item_template::SongBookTemplate::SongBook1 => "Songs of Charming [Song Book I]",
         item_template::SongBookTemplate::SongBook2 => "Ballads of Knowledge [Song Book II]",
@@ -1225,8 +1241,8 @@ fn song_book_name(item: &model::Item) -> String {
     }))
 }
 
-fn lodging_at_inn_name(item: &model::Item) -> String {
-    match item.subtype() {
+fn lodging_at_inn_name(item: &model::Item, subtype: item_template::LodgingAtInnTemplate) -> String {
+    match subtype {
         item_template::LodgingAtInnTemplate::LodgingForOneDay => "Lodging for one day",
         item_template::LodgingAtInnTemplate::LodgingForThreeDays => "Lodging for three days",
         item_template::LodgingAtInnTemplate::LodgingForOneWeek => "Lodging for the week",
@@ -1234,9 +1250,9 @@ fn lodging_at_inn_name(item: &model::Item) -> String {
     }.to_string()
 }
 
-fn dungeon_feature_name(item: &model::Item) -> String {
+fn dungeon_feature_name(item: &model::Item, subtype: item_template::DungeonFeatureTemplate) -> String {
     let mut parts = Vec::new();
-    match item.subtype() {
+    match subtype {
         item_template::DungeonFeatureTemplate::Money => {
             parts.push(helpers::number_of(item));
             Cow::from(match item.subval {
@@ -1323,64 +1339,64 @@ fn dungeon_feature_name(item: &model::Item) -> String {
 
 pub fn generate(item: &model::Item) -> String {
     match item.item_type() {
-            model::ItemType::MiscObject => misc_object_name(&item),
-            model::ItemType::Chest => chest_name(&item),
-            model::ItemType::MiscUsable => misc_name(&item),
-            model::ItemType::Spike => misc_object_name(&item),
-            model::ItemType::FlaskOfOil => misc_object_name(&item),
-            model::ItemType::Jewelry => jewelry_name(&item),
-            model::ItemType::Bag => bag_name(&item),
-            model::ItemType::Gem => gem_name(&item),
-            model::ItemType::WearableGem => wearable_gem_name(&item),
-            model::ItemType::SlingAmmo => ammo_name(&item),
-            model::ItemType::Bolt => ammo_name(&item),
-            model::ItemType::Arrow => ammo_name(&item),
-            model::ItemType::LightSource => light_source_name(&item),
-            model::ItemType::Bow => bow_name(&item),
-            model::ItemType::Crossbow => crossbow_name(&item),
-            model::ItemType::Sling => sling_name(&item),
-            model::ItemType::Axe => axe_name(&item),
-            model::ItemType::Polearm => polearm_name(&item),
-            model::ItemType::Dagger => dagger_name(&item),
-            model::ItemType::Sword => sword_name(&item),
-            model::ItemType::Pick => pick_name(&item),
-            model::ItemType::Mace => mace_name(&item),
-            model::ItemType::Boots => boots_name(&item),
-            model::ItemType::Gloves => gloves_name(&item),
-            model::ItemType::Cloak => cloak_name(&item),
-            model::ItemType::Helm => helm_name(&item),
-            model::ItemType::Shield => shield_name(&item),
-            model::ItemType::HardArmor => hard_armor_name(&item),
-            model::ItemType::SoftArmor => soft_armor_name(&item),
-            model::ItemType::Bracers => bracers_name(&item),
-            model::ItemType::Belt => belt_name(&item),
-            model::ItemType::Amulet => amulet_name(&item),
-            model::ItemType::Ring => ring_name(&item),
-            model::ItemType::Staff => staff_name(&item),
-            model::ItemType::Wand => wand_name(&item),
-            model::ItemType::Scroll => scroll_name(&item),
-            model::ItemType::Potion => potion_name(&item),
-            model::ItemType::Food => food_name(&item),
-            model::ItemType::JunkFood => junk_food_name(&item),
-            model::ItemType::Chime => chime_name(&item),
-            model::ItemType::Horn => horn_name(&item),
-            model::ItemType::MagicBook => magic_book_name(&item),
-            model::ItemType::PrayerBook => prayer_book_name(&item),
-            model::ItemType::Instrument => instrument_name(&item),
-            model::ItemType::SongBook => song_book_name(&item),
-            model::ItemType::LodgingAtInn |
-            model::ItemType::Money |
-            model::ItemType::UnseenTrap |
-            model::ItemType::SeenTrap |
-            model::ItemType::Rubble |
-            model::ItemType::OpenDoor |
-            model::ItemType::ClosedDoor |
-            model::ItemType::UpStaircase |
-            model::ItemType::DownStaircase |
-            model::ItemType::SecretDoor |
-            model::ItemType::EntranceToStore |
-            model::ItemType::UpSteepStaircase |
-            model::ItemType::DownSteepStaircase |
-            model::ItemType::Whirlpool => dungeon_feature_name(&item),
+            model::ItemType::MiscObject(subtype) => misc_object_name(&item, subtype),
+            model::ItemType::Chest(subtype) => chest_name(&item, subtype),
+            model::ItemType::MiscUsable(subtype) => misc_name(&item, subtype),
+            model::ItemType::Spike(subtype) => misc_name(&item, subtype),
+            model::ItemType::FlaskOfOil(subtype) => misc_name(&item, subtype),
+            model::ItemType::Jewelry(subtype) => jewelry_name(&item, subtype),
+            model::ItemType::Bag(subtype) => bag_name(&item, subtype),
+            model::ItemType::Gem(subtype) => gem_name(&item, subtype),
+            model::ItemType::WearableGem(subtype) => wearable_gem_name(&item, subtype),
+            model::ItemType::SlingAmmo(subtype) => ammo_name(&item, subtype),
+            model::ItemType::Bolt(subtype) => ammo_name(&item, subtype),
+            model::ItemType::Arrow(subtype) => ammo_name(&item, subtype),
+            model::ItemType::LightSource(subtype) => light_source_name(&item, subtype),
+            model::ItemType::Bow(subtype) => bow_name(&item, subtype),
+            model::ItemType::Crossbow(subtype) => crossbow_name(&item, subtype),
+            model::ItemType::Sling(subtype) => sling_name(&item, subtype),
+            model::ItemType::Axe(subtype) => axe_name(&item, subtype),
+            model::ItemType::Polearm(subtype) => polearm_name(&item, subtype),
+            model::ItemType::Dagger(subtype) => dagger_name(&item, subtype),
+            model::ItemType::Sword(subtype) => sword_name(&item, subtype),
+            model::ItemType::Pick(subtype) => pick_name(&item, subtype),
+            model::ItemType::Mace(subtype) => mace_name(&item, subtype),
+            model::ItemType::Boots(subtype) => boots_name(&item, subtype),
+            model::ItemType::Gloves(subtype) => gloves_name(&item, subtype),
+            model::ItemType::Cloak(subtype) => cloak_name(&item, subtype),
+            model::ItemType::Helm(subtype) => helm_name(&item, subtype),
+            model::ItemType::Shield(subtype) => shield_name(&item, subtype),
+            model::ItemType::HardArmor(subtype) => hard_armor_name(&item, subtype),
+            model::ItemType::SoftArmor(subtype) => soft_armor_name(&item, subtype),
+            model::ItemType::Bracers(subtype) => bracers_name(&item, subtype),
+            model::ItemType::Belt(subtype) => belt_name(&item, subtype),
+            model::ItemType::Amulet(subtype) => amulet_name(&item, subtype),
+            model::ItemType::Ring(subtype) => ring_name(&item, subtype),
+            model::ItemType::Staff(subtype) => staff_name(&item, subtype),
+            model::ItemType::Wand(subtype) => wand_name(&item, subtype),
+            model::ItemType::Scroll(subtype) => scroll_name(&item, subtype),
+            model::ItemType::Potion(subtype) => potion_name(&item, subtype),
+            model::ItemType::Food(subtype) => food_name(&item, subtype),
+            model::ItemType::JunkFood(subtype) => junk_food_name(&item, subtype),
+            model::ItemType::Chime(subtype) => chime_name(&item, subtype),
+            model::ItemType::Horn(subtype) => horn_name(&item, subtype),
+            model::ItemType::MagicBook(subtype) => magic_book_name(&item, subtype),
+            model::ItemType::PrayerBook(subtype) => prayer_book_name(&item, subtype),
+            model::ItemType::Instrument(subtype) => instrument_name(&item, subtype),
+            model::ItemType::SongBook(subtype) => song_book_name(&item, subtype),
+            model::ItemType::LodgingAtInn(subtype) => lodging_at_inn_name(&item, subtype),
+            model::ItemType::Money(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::UnseenTrap(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::SeenTrap(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::Rubble(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::OpenDoor(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::ClosedDoor(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::UpStaircase(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::DownStaircase(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::SecretDoor(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::EntranceToStore(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::UpSteepStaircase(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::DownSteepStaircase(subtype) => dungeon_feature_name(&item, subtype),
+            model::ItemType::Whirlpool(subtype) => dungeon_feature_name(&item, subtype),
     }
 }
