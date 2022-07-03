@@ -40,7 +40,6 @@ mod identified_record;
 mod inven_record;
 mod inventory_item;
 mod item;
-mod item_interop;
 mod item_type;
 mod magic;
 mod monster;

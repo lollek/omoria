@@ -1,10 +1,14 @@
+use thirdparty::serde::BigArray;
+
 use std::borrow::Cow;
+
+use data;
+use conversion;
 use model::ItemType;
 use misc;
 use libc;
 use model::{ Damage, Name };
 
-use thirdparty::serde::BigArray;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -807,7 +811,7 @@ impl Item {
     }
 
     pub fn item_type(&self) -> ItemType {
-        ItemType::from(self.tval)
+        conversion::item_type::from_usize(self.tval.into()).unwrap()
     }
 
     pub fn is_identified(&self) -> bool {
@@ -824,10 +828,10 @@ impl Item {
             parts.push(Cow::from(format!(" with {} turn{} of light", self.p1, plural_s)));
         }
 
-        if self.item_type().has_damage() {
+        if data::item_type::has_damage(&self.item_type()) {
             parts.push(self.damage_string());
         }
-        if self.item_type().has_attack_enhancement() && self.is_identified() {
+        if data::item_type::has_attack_enhancement(&self.item_type()) && self.is_identified() {
             parts.push(self.attack_enchantment_string());
         }
         parts.push(self.armor_string());
