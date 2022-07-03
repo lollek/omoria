@@ -49,7 +49,7 @@ fn put_character(show_values: bool) {
     if show_values {
         term::prt(player::name(), 2, 14);
         term::prt(data::race::name(&player::race()), 3, 14);
-        term::prt(player::sex().to_string(), 4, 14);
+        term::prt(data::sex::name(&player::sex()), 4, 14);
         term::prt(data::class::name(&player::class()), 5, 14);
     }
 
@@ -1026,7 +1026,7 @@ fn confirm_character() {
         &vec![
             "Name: ".to_string(),
             format!("Race:          {}", data::race::name(&player::race())),
-            format!("Sex:           {}", player::sex().to_string()),
+            format!("Sex:           {}", data::sex::name(&player::sex())),
             format!("Class:         {}", data::class::name(&player::class())),
             "".to_string(),
             format!("Hit Points     {}", player::max_hp()),

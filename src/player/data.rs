@@ -109,11 +109,11 @@ pub fn set_race(race: Race) {
 }
 
 pub fn sex() -> Sex {
-    Sex::from(unsafe { player_sex[0] as u8 as char })
+    conversion::sex::from_char(unsafe { player_sex[0] as u8 as char }).unwrap()
 }
 
 pub fn set_sex(sex: Sex) {
-    let cstr = CString::new(sex.to_string()).unwrap();
+    let cstr = CString::new(data::sex::name(&sex)).unwrap();
     unsafe {
         libc::strcpy(player_sex.as_mut_ptr(), cstr.as_ptr());
     }
