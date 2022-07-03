@@ -9,7 +9,6 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../casino.h"
 #include "../configure.h"
 #include "../constants.h"
 #include "../debug.h"
@@ -21,6 +20,7 @@
 #include "../misc.h"
 #include "../random.h"
 
+#include "casino_local.h"
 #include "slotmachine.h"
 
 #define xS_JACKPOT 1

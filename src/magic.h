@@ -1,6 +1,8 @@
 #ifndef MAGIC_H
 #define MAGIC_H
 
+#include <stdint.h>
+
 enum magic_t { M_ARCANE, M_DIVINE, M_NATURE, M_SONG, M_CHAKRA };
 
 /**

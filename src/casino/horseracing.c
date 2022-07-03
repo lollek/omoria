@@ -4,13 +4,13 @@
 #include <math.h>
 #include <string.h>
 
-#include "../casino.h"
 #include "../player.h"
 #include "../stores.h"
 #include "../term.h"
 #include "../misc.h"
 #include "../random.h"
 
+#include "casino_local.h"
 #include "horseracing.h"
 
 #define RACES_PER_DAY 10

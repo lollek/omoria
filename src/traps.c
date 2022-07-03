@@ -21,7 +21,7 @@
 #include "trade.h"
 #include "types.h"
 #include "variables.h"
-#include "casino.h"
+#include "casino/casino.h"
 #include "quest.h"
 #include "screen.h"
 #include "spells.h"
