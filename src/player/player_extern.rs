@@ -6,7 +6,6 @@ use conversion;
 use data;
 use debug;
 use player;
-use model::{ Stat };
 
 #[no_mangle]
 pub extern fn C_player_knows_spell(slot: libc::int32_t) -> libc::uint8_t {
@@ -79,7 +78,7 @@ pub extern fn C_player_disarm_from_dex() -> libc::int16_t {
 #[no_mangle]
 pub extern fn C_player_get_stat(stat: libc::uint8_t) -> libc::int16_t {
     debug::enter(&format!("C_player_get_stat. stat={}", stat));
-    let ret = player::get_stat(Stat::from(stat));
+    let ret = player::get_stat(conversion::stat::from_usize(stat.into()).unwrap());
     debug::leave("C_player_get_stat");
     return ret;
 }
@@ -87,7 +86,7 @@ pub extern fn C_player_get_stat(stat: libc::uint8_t) -> libc::int16_t {
 #[no_mangle]
 pub extern fn C_player_mod_from_stat(stat: libc::uint8_t) -> libc::int16_t {
     debug::enter("C_player_mod_from_stat");
-    let ret = player::modifier_from_stat(Stat::from(stat));
+    let ret = player::modifier_from_stat(conversion::stat::from_usize(stat.into()).unwrap());
     debug::leave("C_player_mod_from_stat");
     return ret;
 }
@@ -127,21 +126,21 @@ pub extern fn C_player_ac_from_dex() -> libc::int16_t {
 #[no_mangle]
 pub extern fn C_player_modify_lost_stat(stat: libc::uint8_t, amount: libc::int16_t) {
     debug::enter("C_player_modify_lost_stat");
-    player::modify_lost_stat(Stat::from(stat), amount);
+    player::modify_lost_stat(conversion::stat::from_usize(stat.into()).unwrap(), amount);
     debug::leave("C_player_modify_lost_stat");
 }
 
 #[no_mangle]
 pub extern fn C_player_reset_lost_stat(stat: libc::uint8_t) {
     debug::enter("C_player_reset_lost_stat");
-    player::reset_lost_stat(Stat::from(stat));
+    player::reset_lost_stat(conversion::stat::from_usize(stat.into()).unwrap());
     debug::leave("C_player_reset_lost_stat");
 }
 
 #[no_mangle]
 pub extern fn C_player_has_lost_stat(stat: libc::uint8_t) -> libc::uint8_t {
     debug::enter("C_player_has_lost_stat");
-    let ret = match player::has_lost_stat(Stat::from(stat)) {
+    let ret = match player::has_lost_stat(conversion::stat::from_usize(stat.into()).unwrap()) {
         true => 255,
         false => 0,
     };
@@ -152,14 +151,14 @@ pub extern fn C_player_has_lost_stat(stat: libc::uint8_t) -> libc::uint8_t {
 #[no_mangle]
 pub extern fn C_player_mod_stat(stat: libc::uint8_t, modifier: libc::int16_t) {
     debug::enter("C_player_mod_stat");
-    player::mod_stat(Stat::from(stat), modifier);
+    player::mod_stat(conversion::stat::from_usize(stat.into()).unwrap(), modifier);
     debug::leave("C_player_mod_stat");
 }
 
 #[no_mangle]
 pub extern fn C_player_mod_perm_stat(stat: libc::uint8_t, modifier: libc::int16_t) {
     debug::enter("C_player_mod_perm_stat");
-    player::mod_perm_stat(Stat::from(stat), modifier);
+    player::mod_perm_stat(conversion::stat::from_usize(stat.into()).unwrap(), modifier);
     debug::leave("C_player_mod_perm_stat");
 }
 

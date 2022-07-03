@@ -22,10 +22,10 @@ pub fn recalc_curr_stats() {
     let lost_stats = lost_stats();
     let mut curr_stats = StatBlock::new(0);
     for stat in Stat::iter() {
-        let curr_stat = perm_stats.get_pos(stat)
-            + mod_stats.get_pos(stat)
-            - lost_stats.get_pos(stat);
-        curr_stats.set_pos(stat, curr_stat);
+        let curr_stat = perm_stats.get(stat)
+            + mod_stats.get(stat)
+            - lost_stats.get(stat);
+        curr_stats.set(stat, curr_stat);
     }
     PLAYER.try_write().unwrap().curr_stats = curr_stats;
 }

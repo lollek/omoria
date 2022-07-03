@@ -65,7 +65,7 @@ fn get_money() {
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
         - Stat::iter().fold(0, |sum: i64, tstat|
-            sum + player_stats.get_pos(tstat) as i64)
+            sum + player_stats.get(tstat) as i64)
         // Charisma adj
         + player_stats.get(Stat::Charisma) as i64;
 
@@ -84,7 +84,7 @@ fn get_stats() {
     let race_stats = data::race::stat_block(&race);
 
     let new_stats = StatBlock::from(Stat::iter()
-        .map(|stat| random_stat() + race_stats.get_pos(stat) as i16)
+        .map(|stat| random_stat() + race_stats.get(stat) as i16)
         .collect::<Vec<i16>>());
     player::set_perm_stats(new_stats);
     player::recalc_curr_stats();
