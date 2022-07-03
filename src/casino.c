@@ -6,12 +6,9 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "casino/blackjack.h"
-#include "casino.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "horse.h"
 #include "kickout.h"
 #include "magic.h"
 #include "pascal.h"
@@ -24,6 +21,10 @@
 #include "screen.h"
 #include "random.h"
 #include "misc.h"
+
+#include "casino/blackjack.h"
+#include "casino/horseracing.h"
+#include "casino.h"
 
 long bet;
 long gld;
@@ -124,7 +125,7 @@ void c__play_game(char game) {
         break;
 
       case 99:
-        hr__game_horse();
+        start_horse_racing();
         exit_flag = true;
         c__display_casino();
         break;

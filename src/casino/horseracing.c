@@ -4,15 +4,24 @@
 #include <math.h>
 #include <string.h>
 
-#include "casino.h"
-#include "horse.h"
-#include "player.h"
-#include "stores.h"
-#include "term.h"
-#include "misc.h"
-#include "random.h"
+#include "../casino.h"
+#include "../player.h"
+#include "../stores.h"
+#include "../term.h"
+#include "../misc.h"
+#include "../random.h"
 
-void hr__display_commands() {
+#include "horseracing.h"
+
+#define RACES_PER_DAY 10
+#define MAX_HORSE_NAMES 55
+
+typedef long h_stat[MAX_HORSE_NAMES + 1];
+typedef char h_name[MAX_HORSE_NAMES + 1][82];
+typedef boolean h_bool[MAX_HORSE_NAMES + 1];
+typedef float statr[11];
+
+static void hr__display_commands() {
   c__display_gold();
   prt("You may:", 20, 1);
   prt(" p) place a bet                      v) view the program.", 21, 2);
@@ -20,7 +29,7 @@ void hr__display_commands() {
   prt("^R) Redraw the screen.", 23, 2);
 }
 
-void hr__display_track3() {
+static void hr__display_track3() {
   C_clear_screen();
   put_buffer("-- -- -- -- -- -- -- -- -- -- -- -- -- -- __ __", 3, 1);
   put_buffer("-_", 4, 51);
@@ -54,7 +63,7 @@ void hr__display_track3() {
   refresh();
 }
 
-void hr__display_track2() {
+static void hr__display_track2() {
   C_clear_screen();
   put_buffer("_", 2, 46);
   put_buffer("_", 3, 46);
@@ -88,7 +97,7 @@ void hr__display_track2() {
   refresh();
 }
 
-void hr__display_track4() {
+static void hr__display_track4() {
   C_clear_screen();
   put_buffer("__ __ -- -- -- -- -- -- -- -- -- -- -- -- -- -- --", 3, 29);
   put_buffer("_-", 4, 25);
@@ -122,7 +131,7 @@ void hr__display_track4() {
   refresh();
 }
 
-void hr__display_track5() {
+static void hr__display_track5() {
   C_clear_screen();
   put_buffer("_", 2, 3);
   put_buffer("_", 3, 3);
@@ -156,7 +165,7 @@ void hr__display_track5() {
   refresh();
 }
 
-void hr__display_track1() {
+static void hr__display_track1() {
   C_clear_screen();
   put_buffer("__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __", 2, 1);
   put_buffer("__ __ __ __ __ __ __", 2, 58);
@@ -165,7 +174,7 @@ void hr__display_track1() {
   refresh();
 }
 
-void hr__get_horse_stats(long *num_horse, h_name horse, h_stat hstat,
+static void hr__get_horse_stats(long *num_horse, h_name horse, h_stat hstat,
                          long *sum_bets, h_stat bets, h_stat true_bets,
                          statr odds, statr true_odds, long *true_sum_bets) {
   long i1, i2;
@@ -277,23 +286,7 @@ void hr__get_horse_stats(long *num_horse, h_name horse, h_stat hstat,
   }
 }
 
-long hr__move(float amount) {
-  long return_value = 0;
-
-  if ((amount / 10) >= 1) {
-    return_value = 1;
-  }
-  if ((amount / 100) >= 1) {
-    return_value = 2;
-  }
-  if ((amount / 1000) >= 1) {
-    return_value = 3;
-  }
-
-  return return_value;
-}
-
-void hr__list_horses(long num_horse, h_name horse, statr odds) {
+static void hr__list_horses(long num_horse, h_name horse, statr odds) {
   /*  list horses + odds for the next race */
   long i1;
   char out_val[82];
@@ -327,7 +320,7 @@ void hr__list_horses(long num_horse, h_name horse, statr odds) {
   }
 }
 
-void hr__print_positions(long row, long col, long horse_bet, h_name horse,
+static void hr__print_positions(long row, long col, long horse_bet, h_name horse,
                          h_stat fastest) {
   char out_val[82];
   long i1;
@@ -343,7 +336,7 @@ void hr__print_positions(long row, long col, long horse_bet, h_name horse,
   }
 }
 
-void s__start_race(long num_horse) {
+static void s__start_race(long num_horse) {
   long i1;
   char out_val[82];
 
@@ -360,7 +353,7 @@ void s__start_race(long num_horse) {
   }
 }
 
-void s__get_positions(long num_horse, long win_count, h_stat dist,
+static void s__get_positions(long num_horse, long win_count, h_stat dist,
                       h_stat fastest, h_stat order) {
   long i1, i2, t;
 
@@ -378,7 +371,7 @@ void s__get_positions(long num_horse, long win_count, h_stat dist,
   }
 }
 
-boolean s__find_plot(long horse, long *row, long *col, h_stat dist,
+static boolean s__find_plot(long horse, long *row, long *col, h_stat dist,
                      long screen_low, long screen_high, h_stat lane) {
   long t;
   boolean return_value = false;
@@ -427,7 +420,7 @@ boolean s__find_plot(long horse, long *row, long *col, h_stat dist,
   return return_value;
 }
 
-void s__predict_order(long num_horse, statr true_odds, h_stat final_order,
+static void s__predict_order(long num_horse, statr true_odds, h_stat final_order,
                       h_stat final_fastest) {
   long i1, i2, sum, t;
   h_stat temp;
@@ -456,7 +449,7 @@ void s__predict_order(long num_horse, statr true_odds, h_stat final_order,
   }
 }
 
-void s__predict_race(long num_horse, h_stat h_times[], h_stat final_fastest,
+static void s__predict_race(long num_horse, h_stat h_times[], h_stat final_fastest,
                      h_stat hstat) {
   long t, t2, try_speedy, speedy, old_speedy, i1, i2, seg, pokey;
 
@@ -516,7 +509,7 @@ void s__predict_race(long num_horse, h_stat h_times[], h_stat final_fastest,
   }
 }
 
-void hr__start(long num_horse, long *screen_high, long *which_screen,
+static void hr__start(long num_horse, long *screen_high, long *which_screen,
                long *win_count, long *new_win_count, long *screen_low,
                statr true_odds, h_stat final_order, h_stat final_fastest,
                h_stat fastest, h_stat hstat, h_stat area, h_stat dist,
@@ -669,7 +662,7 @@ void hr__start(long num_horse, long *screen_high, long *which_screen,
   C_clear_screen();
 }
 
-void hr__display_winnings(long horse_bet, h_stat fastest, statr odds,
+static void hr__display_winnings(long horse_bet, h_stat fastest, statr odds,
                           char horse_bet_type, h_name horse) {
   /*  displays the amount paid per $2 bet  */
   float win1, win2, win3, show3, place2, place3, earnings;
@@ -755,7 +748,7 @@ void hr__display_winnings(long horse_bet, h_stat fastest, statr odds,
   C_clear_screen();
 }
 
-boolean grb__get_bet_type(char *horse_bet_type) {
+static boolean grb__get_bet_type(char *horse_bet_type) {
   char command;
   boolean exit_flag = false;
   boolean return_value = true;
@@ -780,7 +773,7 @@ boolean grb__get_bet_type(char *horse_bet_type) {
   return return_value;
 }
 
-boolean grb__get_bet_horse(long num_horse, h_name horse, statr odds,
+static boolean grb__get_bet_horse(long num_horse, h_name horse, statr odds,
                            long *horse_bet) {
   boolean exit_flag = false;
   char comment[82];
@@ -805,7 +798,7 @@ boolean grb__get_bet_horse(long num_horse, h_name horse, statr odds,
   return return_value;
 }
 
-boolean hr__get_race_bet(char *horse_bet_type, long *horse_bet, long num_horse,
+static boolean hr__get_race_bet(char *horse_bet_type, long *horse_bet, long num_horse,
                          h_name horse, statr odds, h_stat bets,
                          long *sum_bets) {
   char comment[82];
@@ -851,7 +844,7 @@ boolean hr__get_race_bet(char *horse_bet_type, long *horse_bet, long num_horse,
   return return_value;
 }
 
-boolean hr__get_horse_command(boolean *exit_flag, char *horse_bet_type,
+static boolean hr__get_horse_command(boolean *exit_flag, char *horse_bet_type,
                               long *horse_bet, long *sum_bets, long *num_horse,
                               h_name horse, statr odds, h_stat bets,
                               long *true_sum_bets, h_stat hstat,
@@ -889,7 +882,7 @@ boolean hr__get_horse_command(boolean *exit_flag, char *horse_bet_type,
   return return_value;
 }
 
-void hr__game_horse() {
+void start_horse_racing() {
   h_name horse;
   h_stat hstat, dist, area, lane;
   h_stat fastest, final_fastest;
