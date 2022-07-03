@@ -9,23 +9,39 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "casino.h"
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "slots.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "misc.h"
-#include "random.h"
+#include "../casino.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../misc.h"
+#include "../random.h"
+
+#include "slotmachine.h"
+
+#define xS_JACKPOT 1
+#define xS_CHERRY 2
+#define xS_ORANGE 3
+#define xS_BELL 4
+#define xS_BAR 5
+
+#define S_JACKPOT 0
+#define S_CHERRY 1
+#define S_ORANGE 2
+#define S_BELL 3
+#define S_BAR 4
+
+typedef long stype;    /* stype = (jackpot,cherry,orange,bell,bar);*/
+typedef stype slot[4]; /* slot  = array[1..3] of stype;*/
 
 char *s_name[6] = {"jackpot", "cherry", "orange", "bell", "bar"};
 slot slotpos;
 
-void sm__display_slot_options() {
+static void sm__display_slot_options() {
   prt(" -------------------------------------------           ", 2, 11);
   prt("|                                           |   _-_     ", 3, 11);
   prt("|                                           |  /   \\     ", 4, 11);
@@ -49,7 +65,7 @@ void sm__display_slot_options() {
   prt("^R) Redraw the screen.          Esc) Return to main menu.", 23, 2);
 }
 
-void sm__position_adjust(long *c1, long *c2, long *c3) {
+static void sm__position_adjust(long *c1, long *c2, long *c3) {
   /*  Centers slots in middle of box */
 
   *c1 = 15;
@@ -61,7 +77,7 @@ void sm__position_adjust(long *c1, long *c2, long *c3) {
   /*  if (slotpos[3] > 1) { *c3 = 42; } */
 }
 
-void sm__display_slots() {
+static void sm__display_slots() {
   char out_val[82];
   long c1, c2, c3;
 
@@ -77,7 +93,7 @@ void sm__display_slots() {
   c__display_gold();
 }
 
-void sm__display_prizes() {
+static void sm__display_prizes() {
   char command;
 
   C_clear_screen();
@@ -119,7 +135,7 @@ void sm__display_prizes() {
   sm__display_slots();
 }
 
-void sm__get_slots() {
+static void sm__get_slots() {
   long c;
 
   /*  Wheel one  */
@@ -165,7 +181,7 @@ void sm__get_slots() {
   }
 }
 
-void sm__clearslots(long line) {
+static void sm__clearslots(long line) {
   /*  clears a line of slots */
 
   char killpos[82];
@@ -176,7 +192,7 @@ void sm__clearslots(long line) {
   put_buffer(killpos, line, 43);
 }
 
-void sm__print_slots() {
+static void sm__print_slots() {
   /* Simulates wheel spinning  */
 
   long i;
@@ -225,7 +241,7 @@ void sm__print_slots() {
   }
 }
 
-void sm__winnings() {
+static void sm__winnings() {
   /* calculates the amount won */ /* Currently, odds slightly favor  */
                                   /* the user.   Return of 101%      */
 
@@ -322,7 +338,7 @@ void sm__winnings() {
   }
 }
 
-void sm__get_slots_bet() {
+static void sm__get_slots_bet() {
   char comment[82];
   long num;
   boolean exit_flag = false;
@@ -349,7 +365,7 @@ void sm__get_slots_bet() {
   }
 }
 
-void sm__slot_commands() {
+static void sm__slot_commands() {
   char command;
   boolean exit_flag = false;
 
@@ -386,7 +402,7 @@ void sm__slot_commands() {
   } while (!exit_flag);
 }
 
-void sm__game_slots() {
+void start_slot_machine() {
   C_clear_screen();
   slotpos[1] = S_JACKPOT;
   slotpos[2] = S_JACKPOT;

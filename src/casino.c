@@ -14,7 +14,6 @@
 #include "pascal.h"
 #include "player.h"
 #include "save.h"
-#include "slots.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
@@ -24,6 +23,7 @@
 
 #include "casino/blackjack.h"
 #include "casino/horseracing.h"
+#include "casino/slotmachine.h"
 #include "casino.h"
 
 long bet;
@@ -113,7 +113,7 @@ void c__play_game(char game) {
     if (!exit_flag) {
       switch (game) {
       case 97:
-        sm__game_slots();
+        start_slot_machine();
         exit_flag = true;
         c__display_casino();
         break;
