@@ -1,4 +1,4 @@
-use model::{Race, Sex, Ability, StatBlock, Class};
+use model::{Ability, Class, Race, Sex, StatBlock};
 
 pub fn name(race: &Race) -> &'static str {
     match race {
@@ -182,16 +182,86 @@ pub fn swim_speed(race: &Race) -> i8 {
 
 pub fn stat_block(race: &Race) -> StatBlock {
     match race {
-        Race::Human => StatBlock::from([0, 0, 0, 0, 0, 0]),
-        Race::HalfElf => StatBlock::from([-1, 1, 0, 1, -1, 1]),
-        Race::Elf => StatBlock::from([-1, 2, 1, 1, -2, 1]),
-        Race::Halfling => StatBlock::from([-2, 2, 1, 3, 1, 1]),
-        Race::Gnome => StatBlock::from([-1, 2, 0, 2, 1, -2]),
-        Race::Dwarf => StatBlock::from([2, -3, 1, -2, 2, -3]),
-        Race::HalfOrc => StatBlock::from([2, -1, 0, 0, 1, -4]),
-        Race::HalfTroll => StatBlock::from([4, -4, -3, -4, 4, -6]),
-        Race::Phraint => StatBlock::from([0, 0, -4, 5, 0, -3]),
-        Race::Dryad => StatBlock::from([-1, 0, 3, 0, -2, 3]),
+        Race::Human => StatBlock {
+            strength: 0,
+            intelligence: 0,
+            wisdom: 0,
+            dexterity: 0,
+            constitution: 0,
+            charisma: 0,
+        },
+        Race::HalfElf => StatBlock{
+            strength: -1,
+            intelligence: 1,
+            wisdom: 0,
+            dexterity: 1,
+            constitution: -1,
+            charisma: 1,
+        },
+        Race::Elf => StatBlock {
+            strength: -1,
+            intelligence: 2,
+            wisdom: 1,
+            dexterity: 1,
+            constitution: -2,
+            charisma: 1,
+        },
+        Race::Halfling => StatBlock {
+            strength: -2,
+            intelligence: 2,
+            wisdom: 1,
+            dexterity: 3,
+            constitution: 1,
+            charisma: 1,
+        },
+        Race::Gnome => StatBlock {
+            strength: -1,
+            intelligence: 2,
+            wisdom: 0,
+            dexterity: 2,
+            constitution: 1,
+            charisma: -2,
+        },
+        Race::Dwarf => StatBlock {
+            strength: 2,
+            intelligence: -3,
+            wisdom: 1,
+            dexterity: -2,
+            constitution: 2,
+            charisma: -3,
+        },
+        Race::HalfOrc => StatBlock {
+            strength: 2,
+            intelligence: -1,
+            wisdom: 0,
+            dexterity: 0,
+            constitution: 1,
+            charisma: -4,
+        },
+        Race::HalfTroll => StatBlock {
+            strength: 4,
+            intelligence: -4,
+            wisdom: -3,
+            dexterity: -4,
+            constitution: 4,
+            charisma: -6,
+        },
+        Race::Phraint => StatBlock {
+            strength: 0,
+            intelligence: 0,
+            wisdom: -4,
+            dexterity: 5,
+            constitution: 0,
+            charisma: -3,
+        },
+        Race::Dryad => StatBlock {
+            strength: -1,
+            intelligence: 0,
+            wisdom: 3,
+            dexterity: 0,
+            constitution: -2,
+            charisma: 3,
+        },
     }
 }
 
