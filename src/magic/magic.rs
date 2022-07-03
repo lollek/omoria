@@ -1,9 +1,10 @@
-use player;
+use data;
 use magic;
+use player;
 
-use model::{ Class, Spell };
+use model::{Class, Spell};
 
-pub fn spells_iter() -> impl Iterator<Item=usize> {
+pub fn spells_iter() -> impl Iterator<Item = usize> {
     0..40
 }
 
@@ -33,7 +34,7 @@ pub fn empty_spell() -> Spell {
 }
 
 pub fn gain_mana_from_level_up() {
-    if let Some(magic) = player::class().magic_type() {
+    if let Some(magic) = data::class::magic_type(&player::class()) {
         player::modify_max_mp(player::modifier_from_stat(magic.modifier_stat()));
     }
 }

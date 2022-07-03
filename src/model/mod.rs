@@ -33,7 +33,6 @@ pub use self::wallet::*;
 mod ability;
 mod cave;
 mod class;
-mod class_interop;
 mod currency;
 mod dungeon_record;
 mod gametime;

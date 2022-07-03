@@ -1,6 +1,7 @@
 use libc;
 use std::borrow::Cow;
 
+use data;
 use debug;
 use equipment;
 use ncurses;
@@ -200,7 +201,7 @@ pub fn print_equipment_block() {
 
 fn print_stats_column() {
     print_field(player::race().name(), RACE_ROW, STAT_COL);
-    print_field(player::class().name(), CLASS_ROW, STAT_COL);
+    print_field(data::class::name(&player::class()), CLASS_ROW, STAT_COL);
 
     print_hp(HP_ROW, STAT_COL);
     print_mana(MANA_ROW, STAT_COL);

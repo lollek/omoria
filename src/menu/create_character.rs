@@ -5,6 +5,7 @@ use std::ffi::CString;
 
 use libc::{time, time_t, strcpy};
 
+use data;
 use debug;
 use io;
 use item_template;
@@ -48,7 +49,7 @@ fn put_character(show_values: bool) {
         term::prt(player::name(), 2, 14);
         term::prt(player::race().name(), 3, 14);
         term::prt(player::sex().to_string(), 4, 14);
-        term::prt(player::class().name(), 5, 14);
+        term::prt(data::class::name(&player::class()), 5, 14);
     }
 
     debug::leave("create_character::put_character");
@@ -209,14 +210,14 @@ fn apply_stats_from_class() {
     player::modify_max_hp(player::hitdie() as i16);
     player::reset_current_hp();
     unsafe {
-        player::player_bth += ((player::class().melee_bonus() * 5) + 20) as i16;
-        player::player_bthb += ((player::class().ranged_bonus() * 5) + 20) as i16;
-        player::player_disarm += player::class().disarm_mod() as i16;
-        player::player_fos += player::class().search_freq() as i16;
-        player::player_stl += player::class().stealth_mod() as i16;
-        player::player_save += player::class().save_mod() as i16;
-        player::player_expfact += player::class().expfactor();
-        player::player_mr = player::class().magic_resist().into();
+        player::player_bth += ((data::class::melee_bonus(&player::class()) * 5) + 20) as i16;
+        player::player_bthb += ((data::class::ranged_bonus(&player::class()) * 5) + 20) as i16;
+        player::player_disarm += data::class::disarm_mod(&player::class()) as i16;
+        player::player_fos += data::class::search_freq(&player::class()) as i16;
+        player::player_stl += data::class::stealth_mod(&player::class()) as i16;
+        player::player_save += data::class::save_mod(&player::class()) as i16;
+        player::player_expfact += data::class::expfactor(&player::class());
+        player::player_mr = data::class::magic_resist(&player::class()).into();
 
         // Real values
         player::player_ptodam = player::dmg_from_str() as i16;
@@ -843,7 +844,7 @@ fn choose_class() {
     debug::enter("create_character::choose_class");
 
     let classes = player::race().available_classes();
-    let class_strings = classes.iter().map(|it| it.name()).collect::<Vec<&str>>();
+    let class_strings = classes.iter().map(data::class::name).collect::<Vec<&str>>();
     let mut index = 0;
 
     loop {
@@ -861,11 +862,11 @@ fn choose_class() {
                 return;
             },
             '?' => menu::draw_help(
-                classes[index as usize].name(),
-                classes[index as usize].info()),
+                data::class::name(&classes[index as usize]),
+                data::class::info(&classes[index as usize])),
             'r' => menu::draw_help(
-                classes[index as usize].name(),
-                classes[index as usize].restriction_info()),
+                data::class::name(&classes[index as usize]),
+                data::class::restriction_info(&classes[index as usize])),
             _ => {},
         }
     }
@@ -907,7 +908,7 @@ fn choose_race() {
                 &Race::from(index as usize)
                 .available_classes()
                 .iter()
-                .map(|it| it.name())
+                .map(data::class::name)
                 .collect::<Vec<&str>>()),
             _ => {},
         }
@@ -1004,7 +1005,7 @@ fn confirm_character() {
             "Name: ".to_string(),
             format!("Race:          {}", player::race().name()),
             format!("Sex:           {}", player::sex().to_string()),
-            format!("Class:         {}", player::class().name()),
+            format!("Class:         {}", data::class::name(&player::class())),
             "".to_string(),
             format!("Hit Points     {}", player::max_hp()),
             format!("Mana           {}", unsafe { player::player_mana }),
@@ -1053,7 +1054,7 @@ fn add_equipment() {
     }
 
     // Class specific starting items
-    for item in player::class().starting_items() {
+    for item in data::class::starting_items(&player::class()) {
         unsafe { add_inven_item(item); }
     }
 

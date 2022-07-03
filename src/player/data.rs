@@ -1,28 +1,31 @@
-use std::cmp::{ min, max };
+use std::cmp::{max, min};
+use std::convert::TryInto;
 use std::ffi::CString;
 use std::sync::RwLock;
 
 use constants;
+use conversion;
 use model::{
-    Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord,
-    Race, Sex, Stat, Time, Wallet
+    Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time,
+    Wallet,
 };
 
+use data;
+use debug;
+use misc;
 use player;
 use random;
-use misc;
-use debug;
 
 extern "C" {
-    pub(super) static mut player_money: [libc::int64_t; 7] ; /* { Money on person	} */
-    pub(super) static mut player_play_tm: Time ;/* { Time spent in game	} */
-    pub(super) static mut player_max_exp: libc::int64_t ;  /* { Max experience} */
-    pub(super) static mut player_max_lev: libc::uint16_t ;   /* { Max level explored} */
-    pub(super) static mut player_cheated: libc::uint8_t ;  /*{ gone into wizard or god mode} */
-    pub(super) static mut player_quests: libc::uint8_t ;     /* { # completed } {FUBAR} */
-    pub(super) static mut player_cur_quest: libc::uint16_t ; /* { creature # of quest } {FUBAR} */
-    pub(super) static mut player_birth: GameTime;     /* {Date of char's birth} */
-    pub(super) static mut player_cur_age: GameTime;   /* {Current game date	} */
+    pub(super) static mut player_money: [libc::int64_t; 7]; /* { Money on person	} */
+    pub(super) static mut player_play_tm: Time; /* { Time spent in game	} */
+    pub(super) static mut player_max_exp: libc::int64_t; /* { Max experience} */
+    pub(super) static mut player_max_lev: libc::uint16_t; /* { Max level explored} */
+    pub(super) static mut player_cheated: libc::uint8_t; /*{ gone into wizard or god mode} */
+    pub(super) static mut player_quests: libc::uint8_t; /* { # completed } {FUBAR} */
+    pub(super) static mut player_cur_quest: libc::uint16_t; /* { creature # of quest } {FUBAR} */
+    pub(super) static mut player_birth: GameTime; /* {Date of char's birth} */
+    pub(super) static mut player_cur_age: GameTime; /* {Current game date	} */
     pub(super) static mut player_flags: PlayerFlags;
     pub static mut player_history: [[libc::c_char; 82]; 5];
     static mut player_name: [libc::c_char; 82];
@@ -32,35 +35,35 @@ extern "C" {
     static mut player_tclass: [libc::c_char; 82];
     static mut player_pclass: libc::c_int;
     pub static mut player_stl: libc::int16_t;
-    pub static mut player_sc: libc::int16_t ;		  /* { Social Class	} */
-    pub static mut player_age: libc::uint16_t ;       /* { Characters age} */
-    pub static mut player_ht: libc::uint16_t ;	/* { Height	} */
-    pub static mut player_wt: libc::uint16_t ;	/* { Weight	} */
-    pub static mut player_lev: libc::uint16_t ;       /* { Level		} */
-    pub static mut player_fos: libc::int16_t ;		  /* { Frenq of search} */
-    pub static mut player_bth: libc::int16_t ;		  /* { Base to hit	} */
-    pub static mut player_bthb: libc::int16_t ;		  /* { BTH with bows	} */
-    pub static mut player_mana: libc::int16_t ;		  /* { Mana points	} */
-    pub static mut player_ptohit: libc::int16_t ;		  /* { Pluses to hit	} */
-    pub static mut player_ptodam: libc::int16_t ;		  /* { Pluses to dam	} */
-    pub static mut player_pac: libc::int16_t ;		  /* { Total AC	} */
-    pub static mut player_ptoac: libc::int16_t ;		  /* { Magical AC	} */
-    pub static mut player_dis_th: libc::int16_t ;		  /* { Display +ToHit} */
-    pub static mut player_dis_td: libc::int16_t ;		  /* { Display +ToDam} */
-    pub static mut player_dis_ac: libc::int16_t ;		  /* { Display +ToAC } */
-    pub static mut player_dis_tac: libc::int16_t ;		  /* { Display +ToTAC} */
-    pub static mut player_disarm: libc::int16_t ;		  /* { % to Disarm	} */
-    pub static mut player_save: libc::int16_t ;		  /* { Saving throw	} */
-    pub static mut player_expfact: libc::c_float ;		  /* { Experience factor} */
-    pub static mut player_cmana: libc::c_float ;		  /* { Cur mana pts  } */
-    pub static mut player_exp: libc::int64_t ;		  /* { Cur experienc	} */
-    pub static mut player_account: libc::int64_t ;		  /* { Money in the bank	} */
-    pub static mut player_mr: libc::int64_t  ;		  /* { mag.res.lev.delta } */
-    pub static mut player_rep: libc::int64_t ;		  /* { XP from good creatures } */
-    pub static mut player_claim_check: libc::int64_t ;	 /* used to track trading post */
+    pub static mut player_sc: libc::int16_t; /* { Social Class	} */
+    pub static mut player_age: libc::uint16_t; /* { Characters age} */
+    pub static mut player_ht: libc::uint16_t; /* { Height	} */
+    pub static mut player_wt: libc::uint16_t; /* { Weight	} */
+    pub static mut player_lev: libc::uint16_t; /* { Level		} */
+    pub static mut player_fos: libc::int16_t; /* { Frenq of search} */
+    pub static mut player_bth: libc::int16_t; /* { Base to hit	} */
+    pub static mut player_bthb: libc::int16_t; /* { BTH with bows	} */
+    pub static mut player_mana: libc::int16_t; /* { Mana points	} */
+    pub static mut player_ptohit: libc::int16_t; /* { Pluses to hit	} */
+    pub static mut player_ptodam: libc::int16_t; /* { Pluses to dam	} */
+    pub static mut player_pac: libc::int16_t; /* { Total AC	} */
+    pub static mut player_ptoac: libc::int16_t; /* { Magical AC	} */
+    pub static mut player_dis_th: libc::int16_t; /* { Display +ToHit} */
+    pub static mut player_dis_td: libc::int16_t; /* { Display +ToDam} */
+    pub static mut player_dis_ac: libc::int16_t; /* { Display +ToAC } */
+    pub static mut player_dis_tac: libc::int16_t; /* { Display +ToTAC} */
+    pub static mut player_disarm: libc::int16_t; /* { % to Disarm	} */
+    pub static mut player_save: libc::int16_t; /* { Saving throw	} */
+    pub static mut player_expfact: libc::c_float; /* { Experience factor} */
+    pub static mut player_cmana: libc::c_float; /* { Cur mana pts  } */
+    pub static mut player_exp: libc::int64_t; /* { Cur experienc	} */
+    pub static mut player_account: libc::int64_t; /* { Money in the bank	} */
+    pub static mut player_mr: libc::int64_t; /* { mag.res.lev.delta } */
+    pub static mut player_rep: libc::int64_t; /* { XP from good creatures } */
+    pub static mut player_claim_check: libc::int64_t; /* used to track trading post */
     pub static mut inven_weight: libc::c_long; /* Inventory carry weight */
-    pub static mut player_creation_time: libc::time_t ;     /* used as key in master file */
-    static mut player_uid: libc::int64_t;	/* Used in master file */
+    pub static mut player_creation_time: libc::time_t; /* used as key in master file */
+    static mut player_uid: libc::int64_t; /* Used in master file */
 
     pub static mut char_row: libc::c_long;
     pub static mut char_col: libc::c_long;
@@ -82,7 +85,9 @@ pub fn name() -> String {
 
 pub fn set_name(new_name: &str) {
     let cstr = CString::new(new_name).unwrap();
-    unsafe { libc::strcpy(player_name.as_mut_ptr() as *mut i8, cstr.as_ptr()); }
+    unsafe {
+        libc::strcpy(player_name.as_mut_ptr() as *mut i8, cstr.as_ptr());
+    }
 }
 
 pub fn race() -> Race {
@@ -109,26 +114,28 @@ pub fn sex() -> Sex {
 
 pub fn set_sex(sex: Sex) {
     let cstr = CString::new(sex.to_string()).unwrap();
-    unsafe { libc::strcpy(player_sex.as_mut_ptr(), cstr.as_ptr()); }
+    unsafe {
+        libc::strcpy(player_sex.as_mut_ptr(), cstr.as_ptr());
+    }
 }
 
 pub fn class() -> Class {
     debug::enter("player::class");
-    let result = Class::from(unsafe { player_pclass } as usize);
+    let result =
+        conversion::class::from_usize(unsafe { player_pclass }.try_into().unwrap()).unwrap();
     debug::leave("player::class");
     result
 }
 
 pub fn set_class(class: Class) {
     debug::enter("player::set_class");
-    let cstr = CString::new(class.name()).unwrap();
+    let cstr = CString::new(data::class::name(&class)).unwrap();
     unsafe {
         player_pclass = class as i32;
         libc::strcpy(player_tclass.as_mut_ptr(), cstr.as_ptr());
     }
     debug::leave("player::set_class");
 }
-
 
 pub fn roll_hp_for_levelup() -> i16 {
     random::randint(hitdie() as i64) as i16
@@ -174,22 +181,18 @@ fn rage_rounds_from_level() -> i16 {
 
 // Max amount of health to gain each level up
 pub fn hitdie() -> u8 {
-    class().health_bonus()
+    data::class::health_bonus(&self::class())
 }
 
 pub fn melee_tohit() -> i16 {
     unsafe {
-        player_bth +
-            (player_lev as i16 * misc::BTH_LEV_ADJ) +
-            (player_ptohit * misc::BTH_PLUS_ADJ)
+        player_bth + (player_lev as i16 * misc::BTH_LEV_ADJ) + (player_ptohit * misc::BTH_PLUS_ADJ)
     }
 }
 
 pub fn ranged_tohit() -> i16 {
     unsafe {
-        player_bthb +
-            (player_lev as i16 * misc::BTH_LEV_ADJ) +
-            (player_ptohit * misc::BTH_PLUS_ADJ)
+        player_bthb + (player_lev as i16 * misc::BTH_LEV_ADJ) + (player_ptohit * misc::BTH_PLUS_ADJ)
     }
 }
 
@@ -244,7 +247,8 @@ pub fn record() -> PlayerRecord {
         race: race(),
         sex: sex(),
         class: class(),
-        history: unsafe { player_history }.iter()
+        history: unsafe { player_history }
+            .iter()
             .map(|i| misc::c_i8_array_to_rust_string(i.to_vec()))
             .collect(),
         cheated: unsafe { player_cheated },
@@ -283,7 +287,12 @@ pub fn record() -> PlayerRecord {
 }
 
 pub fn knows_any_spell() -> bool {
-    PLAYER.try_read().unwrap().spells_known.iter().any(|&known| known)
+    PLAYER
+        .try_read()
+        .unwrap()
+        .spells_known
+        .iter()
+        .any(|&known| known)
 }
 
 pub fn knows_spell(slot: usize) -> bool {
@@ -295,7 +304,10 @@ pub fn set_knows_spell(slot: usize, yn: bool) {
 }
 
 pub fn max_rage_rounds() -> u8 {
-    max(0, 4 + rage_rounds_from_level() + player::rage_rounds_from_con()) as u8
+    max(
+        0,
+        4 + rage_rounds_from_level() + player::rage_rounds_from_con(),
+    ) as u8
 }
 
 pub fn rage_rounds_spent() -> u8 {
@@ -315,7 +327,10 @@ pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
 }
 
 pub fn abilities() -> Vec<Ability> {
-    class().abilities().into_iter().chain(race().abilities().into_iter()).collect()
+    data::class::abilities(&class())
+        .into_iter()
+        .chain(race().abilities().into_iter())
+        .collect()
 }
 
 pub fn set_record(record: PlayerRecord) {
@@ -342,7 +357,9 @@ pub fn set_record(record: PlayerRecord) {
 
     for (i, line) in record.history.iter().enumerate() {
         let cstr = CString::new(line.to_string()).unwrap();
-        unsafe { libc::strcpy(player_history[i].as_mut_ptr(), cstr.as_ptr()); }
+        unsafe {
+            libc::strcpy(player_history[i].as_mut_ptr(), cstr.as_ptr());
+        }
     }
 
     unsafe {
@@ -432,7 +449,7 @@ pub fn max_hp() -> i16 {
     modify_current_hp(hp_modifier as f32);
 
     debug::leave("player::max_hp");
-    return new_max_hp
+    return new_max_hp;
 }
 
 pub fn modify_max_hp(amount: i16) {
@@ -504,13 +521,17 @@ pub fn current_bulk() -> u16 {
 
 pub fn max_bulk() -> u16 {
     let player_weight_modifier = 13;
-    min((30 + (player::curr_stats().strength * 10)) as u16 * player_weight_modifier
-        + current_weight(), 3000)
-        + extra_bulk_carry()
+    min(
+        (30 + (player::curr_stats().strength * 10)) as u16 * player_weight_modifier
+            + current_weight(),
+        3000,
+    ) + extra_bulk_carry()
 }
 
 pub fn set_birthdate(new_value: GameTime) {
-    unsafe { player_birth = new_value; }
+    unsafe {
+        player_birth = new_value;
+    }
 }
 
 pub fn birthdate() -> GameTime {
@@ -518,7 +539,9 @@ pub fn birthdate() -> GameTime {
 }
 
 pub fn set_age(new_value: GameTime) {
-    unsafe { player_cur_age = new_value; }
+    unsafe {
+        player_cur_age = new_value;
+    }
 }
 
 pub fn age() -> GameTime {

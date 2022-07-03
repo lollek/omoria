@@ -13,6 +13,7 @@ extern crate pancurses;
 
 mod pregame;
 
+pub mod conversion;
 pub mod commands;
 pub mod constants;
 pub mod data;

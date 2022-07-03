@@ -1,3 +1,4 @@
+use data;
 use debug;
 use error::Error;
 use player;
@@ -31,7 +32,7 @@ pub fn update_character(uid: i64) -> Result<(), Error> {
         alive: !player::is_dead(),
         level: player::level(),
         race: player::race().name().to_string(),
-        class: player::class().name().to_string(),
+        class: data::class::name(&player::class()).to_string(),
     }, false)?;
 
     debug::leave("master_update_character");
@@ -57,7 +58,7 @@ pub fn add_character() -> Result<i64, Error> {
         alive: true,
         level: player::level(),
         race: player::race().name().to_string(),
-        class: player::class().name().to_string(),
+        class: data::class::name(&player::class()).to_string(),
     }, true)?;
 
     debug::leave("master_add_character");
