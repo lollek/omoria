@@ -9,17 +9,21 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "bj.h"
-#include "casino.h"
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "random.h"
+#include "../casino.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../random.h"
+
+#include "blackjack.h"
+
+typedef char drawcard[16][82];
+typedef long hand[16];
 
 static boolean deal_bust;
 static boolean card5_save;
@@ -712,7 +716,7 @@ static void bj__blackjack_commands() {
   } while (!exit_flag);
 }
 
-void bj__game_blackjack() {
+void start_blackjack() {
   C_clear_screen();
   bj__display_bj();
   bj__initialize_hand();
