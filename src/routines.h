@@ -8,10 +8,6 @@
 #include "types.h"
 
 /* START - FROM RUST */
-boolean C_save_character();
-boolean C_load_character();
-void C_delete_character();
-
 signed char C_class_melee_bonus(enum class_t class);
 signed char C_class_ranged_bonus(enum class_t class);
 boolean C_class_can_use_item(enum class_t class, treasure_type const *item);

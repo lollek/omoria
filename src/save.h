@@ -17,4 +17,6 @@ uint8_t sav__save_character(void);
  */
 uint8_t sav__load_character(char const *player_name, int64_t player_uid);
 
+void C_delete_character();
+
 #endif /* SAVE_H */
