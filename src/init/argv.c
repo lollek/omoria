@@ -3,6 +3,7 @@
 #include "../variables.h"
 #include "../routines.h"
 #include "../death.h"
+#include "../highscore.h"
 
 #include "argv.h"
 

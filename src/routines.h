@@ -8,7 +8,6 @@
 #include "types.h"
 
 /* START - FROM RUST */
-void C_highscore(uint8_t max_highscores);
 
 /**
  * Ask the player to select an ability to use
