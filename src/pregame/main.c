@@ -5,7 +5,7 @@
 #include "../player.h"
 #include "../save.h"
 #include "../variables.h"
-#include "../dungeon_generation/dungeon_generation.h"
+#include "../generate_dungeon/generate_dungeon.h"
 #include "../menu.h"
 #include "../screen.h"
 #include "../misc.h"
