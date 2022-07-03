@@ -7,6 +7,7 @@ typedef unsigned char int8u;
 
 void moriaterm();
 void bell();
+void C_clear_screen();
 
 /* Dungeon size parameters					*/
 #define MAX_HEIGHT 66 /* Multiple of 11; >= 22 */

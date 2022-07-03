@@ -8,9 +8,6 @@
 #include "types.h"
 
 /* START - FROM RUST */
-
-void C_clear_screen();
-
 chtype C_item_get_tchar(const treasure_type *item);
 
 extern void C_init_curses();

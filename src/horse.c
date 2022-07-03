@@ -9,6 +9,7 @@
 #include "player.h"
 #include "routines.h"
 #include "stores.h"
+#include "term.h"
 
 void hr__display_commands() {
   c__display_gold();
