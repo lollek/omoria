@@ -1,6 +1,3 @@
-/* rooms.c */
-/* this all used to be in generate.pas */
-
 #include <curses.h>
 #include <math.h>
 #include <stdio.h>
@@ -9,25 +6,22 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "generate.h"
-#include "magic.h"
-#include "pascal.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "misc.h"
-#include "random.h"
-#include "traps.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../misc.h"
+#include "../random.h"
+#include "../traps.h"
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+#include "models.h"
 
-void gc__vault_trap(long y, long x, long yd, long xd, long num) {
-  /*{ Place a trap with a given displacement of point	-RAK-	}*/
+/*{ Place a trap with a given displacement of point	-RAK-	}*/
+static void gc__vault_trap(long y, long x, long yd, long xd, long num) {
 
   long count, y1, x1, i1;
   boolean flag;
@@ -39,7 +33,6 @@ void gc__vault_trap(long y, long x, long yd, long xd, long num) {
     do {
       y1 = y - yd - 1 + randint(2 * yd + 1);
       x1 = x - xd - 1 + randint(2 * xd + 1);
-      /* with cave[y1][x1]. do; */
       if (is_in(cave[y1][x1].fval, floor_set)) {
         if (cave[y1][x1].tptr == 0) {
           place_trap(y1, x1, 1, randint(MAX_TRAPA));
@@ -50,11 +43,9 @@ void gc__vault_trap(long y, long x, long yd, long xd, long num) {
     } while (!((flag) || (count > 5)));
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void gc__vault_monster(long y, long x, long num) {
-  /*{ Place a trap with a given displacement of point	-RAK-	}*/
+
+/*{ Place a trap with a given displacement of point	-RAK-	}*/
+static void gc__vault_monster(long y, long x, long num) {
   long i1, y1, x1;
 
   for (i1 = 1; i1 <= num; i1++) {
@@ -63,11 +54,9 @@ void gc__vault_monster(long y, long x, long num) {
     summon_land_monster(&y1, &x1, true);
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/*{ Builds a room at a row,column coordinate		-RAK-	}*/
 void gc__build_room(long yval, long xval) {
-  /*{ Builds a room at a row,column coordinate		-RAK-	}*/
 
   long y_height, y_depth;
   long x_left, x_right;
@@ -106,14 +95,10 @@ void gc__build_room(long yval, long xval) {
     cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/* Builds a room at a row,column coordinate		-RAK-
+   Type 1 unusual rooms are several overlapping rectangular ones */
 void gc__build_type1(long yval, long xval) {
-  /*	{ Builds a room at a row,column coordinate		-RAK-
-   * }*/
-  /*	{ Type 1 unusual rooms are several overlapping rectangular ones
-   * }*/
 
   long y_height, y_depth;
   long x_left, x_right;
@@ -141,13 +126,11 @@ void gc__build_type1(long yval, long xval) {
 
     for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
 
-      /* with cave[i1][x_left-1]. do; */
       if (cave[i1][x_left - 1].fval != cur_floor.ftval) {
         cave[i1][x_left - 1].fval = rock_wall1.ftval;
         cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
       }
 
-      /* with cave[i1][x_right+1]. do; */
       if (cave[i1][x_right + 1].fval != cur_floor.ftval) {
         cave[i1][x_right + 1].fval = rock_wall1.ftval;
         cave[i1][x_right + 1].fopen = rock_wall1.ftopen;
@@ -156,13 +139,11 @@ void gc__build_type1(long yval, long xval) {
 
     for (i1 = x_left; i1 <= x_right; i1++) {
 
-      /* with cave[y_height-1][i1]. do; */
       if (cave[y_height - 1][i1].fval != cur_floor.ftval) {
         cave[y_height - 1][i1].fval = rock_wall1.ftval;
         cave[y_height - 1][i1].fopen = rock_wall1.ftopen;
       }
 
-      /* with cave[y_depth+1][i1]. do; */
       if (cave[y_depth + 1][i1].fval != cur_floor.ftval) {
         cave[y_depth + 1][i1].fval = rock_wall1.ftval;
         cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
@@ -170,21 +151,16 @@ void gc__build_type1(long yval, long xval) {
     }
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/* Builds an unusual room at a row,column coordinate	-RAK- 
+   Type 2 unusual rooms all have an inner room: 
+
+     1 - Just an inner room with one door 
+     2 - An inner room within an inner room 
+     3 - An inner room with pillar(s) 
+     4 - Inner room has a maze
+     5 - A set of four inner rooms }*/
 void gc__build_type2(long yval, long xval) {
-  /*	{ Builds an unusual room at a row,column coordinate	-RAK-
-   * }*/
-  /*	{ Type 2 unusual rooms all have an inner room:
-   * }*/
-  /*	{   1 - Just an inner room with one door
-   * }*/
-  /*	{   2 - An inner room within an inner room
-   * }*/
-  /*	{   3 - An inner room with pillar(s) }*/
-  /*	{   4 - Inner room has a maze }*/
-  /*	{   5 - A set of four inner rooms }*/
 
   long y_height, y_depth;
   long x_left, x_right;
@@ -485,12 +461,10 @@ void gc__build_type2(long yval, long xval) {
     break;
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+/* Builds a room at a row,column coordinate		-RAK-
+    Type 3 unusual rooms are cross shaped	*/
 void gc__build_type3(long yval, long xval) {
-  /*{ Builds a room at a row,column coordinate		-RAK-	}*/
-  /*{ Type 3 unusual rooms are cross shaped			}*/
 
   long y_height, y_depth;
   long x_left, x_right;
@@ -645,8 +619,3 @@ void gc__build_type3(long yval, long xval) {
     break;
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* end rooms.c */

@@ -22,7 +22,7 @@
 #include "variables.h"
 #include "death.h"
 #include "dungeon.h"
-#include "generate.h"
+#include "dungeon_generation/dungeon_generation.h"
 #include "port.h"
 
 int main(int argc, char *argv[]) {

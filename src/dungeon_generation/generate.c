@@ -4,18 +4,20 @@
 #include <stdlib.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "debug.h"
-#include "generate.h"
-#include "pascal.h"
-#include "player.h"
-#include "stores.h"
-#include "types.h"
-#include "variables.h"
-#include "misc.h"
-#include "random.h"
-#include "monsters.h"
+#include "../debug.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../stores.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../misc.h"
+#include "../random.h"
+#include "../monsters.h"
+
 #include "river.h"
 #include "rooms.h"
+
+#include "models.h"
 
 /*
  *	{ Dungeon generation values					}
@@ -78,7 +80,7 @@ static void gc__correct_dir(long *rdir, long *cdir, long y1, long x1, long y2,
 /**
  * gc__rand_dir() - Chance of wandering direction
  */
-void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
+static void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
                   long chance) {
   switch (randint(chance)) {
   case 1:
@@ -106,7 +108,7 @@ void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
 /**
  * gc__blank_cave() - Blanks out entire cave
  */
-void gc__blank_cave() {
+static void gc__blank_cave() {
   for (long y = 0; y <= MAX_HEIGHT; y++) {
     for (long x = 0; x <= MAX_WIDTH; x++) {
       cave[y][x] = blank_floor;
@@ -119,7 +121,7 @@ void gc__blank_cave() {
  *  gc__fill_cave() - Fills in empty spots with desired rock
  *  Note: 9 is a temporary value
  */
-void gc__fill_cave(floor_type fill) {
+static void gc__fill_cave(floor_type fill) {
   obj_set blank_floor_set = {0, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   for (long y = 2; y <= cur_height - 1; y++) {
     for (long x = 2; x <= cur_width - 1; x++) {
@@ -135,7 +137,7 @@ void gc__fill_cave(floor_type fill) {
  * -RAK-
  *  gc__place_boundry() Places indestructible rock arounds edges of dungeon
  */
-void gc__place_boundry() {
+static void gc__place_boundry() {
   for (long y = 1; y <= cur_height; y++) {
     cave[y][1].fval = boundry_wall.ftval;
     cave[y][1].fopen = boundry_wall.ftopen;
@@ -155,7 +157,7 @@ void gc__place_boundry() {
  * -RAK-
  *  gc__place_streamer() - Places "streamers" of rock through dungeon
  */
-void gc__place_streamer(floor_type rock, long treas_chance) {
+static void gc__place_streamer(floor_type rock, long treas_chance) {
   /*{ Choose starting point and direction		}*/
   long y = (cur_height / 2.0) + 11 - randint(23);
   long x = (cur_width / 2.0) + 16 - randint(33);
