@@ -1,9 +1,10 @@
 use debug;
+use data;
 use io;
 use logic::menu;
 use term;
 use player;
-use model::Ability;
+use model;
 
 // Let the player select an action
 // Returns true if the turn was free (i.e. don't take a turn)
@@ -11,7 +12,7 @@ pub fn select_ability() -> bool {
     debug::enter("ability::select_ability");
 
     let abilities = player::abilities();
-    let abilities_str = abilities.iter().map(|it| it.name()).collect::<Vec<&str>>();
+    let abilities_str = abilities.iter().map(data::ability::name).collect::<Vec<&str>>();
 
     menu::draw_quick_menu(
         "Use which ability?",
@@ -31,9 +32,9 @@ pub fn select_ability() -> bool {
 
 // Activate an ability
 // Returns true if the action was a free action (i.e. don't take a turn)
-pub fn use_ability(ability: Ability) -> bool {
+pub fn use_ability(ability: model::Ability) -> bool {
     match ability {
-        Ability::Rage => rage(),
+        model::Ability::Rage => rage(),
     }
 }
 
