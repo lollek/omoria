@@ -12,7 +12,7 @@ fn search_skill_modifier() -> i16 {
 }
 
 pub fn perm_search_skill() -> i16 {
-    (player::race().search_mod() + data::class::search_mod(&player::class())).into()
+    (data::race::search_mod(&player::race()) + data::class::search_mod(&player::class())).into()
 }
 
 pub fn curr_search_skill() -> i16 {

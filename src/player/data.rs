@@ -92,7 +92,7 @@ pub fn set_name(new_name: &str) {
 
 pub fn race() -> Race {
     debug::enter("player::race");
-    let result = Race::from(unsafe { player_prace } as usize);
+    let result = conversion::race::from_usize(unsafe { player_prace } as usize).unwrap();
     debug::leave("player::race");
     result
 }
@@ -100,7 +100,7 @@ pub fn race() -> Race {
 pub fn set_race(race: Race) {
     debug::enter("player::set_race");
 
-    let cstr = CString::new(race.name()).unwrap();
+    let cstr = CString::new(data::race::name(&race)).unwrap();
     unsafe {
         player_prace = race as u8;
         libc::strcpy(player_race.as_mut_ptr(), cstr.as_ptr());
@@ -331,7 +331,7 @@ pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
 pub fn abilities() -> Vec<Ability> {
     data::class::abilities(&class())
         .into_iter()
-        .chain(race().abilities().into_iter())
+        .chain(data::race::abilities(&race()).into_iter())
         .collect()
 }
 

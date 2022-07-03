@@ -1,5 +1,6 @@
 use std::ffi::CStr;
 
+use data;
 use io;
 use magic;
 use player;
@@ -13,16 +14,16 @@ pub fn max_allowable_weight() -> u16 {
     let player_race = player::race();
     let player_sex = player::sex();
 
-    player_race.weight_base(player_sex) +
-        4 * player_race.weight_modifier(player_sex)
+    data::race::weight_base(&player_race, player_sex) +
+        4 * data::race::weight_modifier(&player_race, player_sex)
 }
 
 pub fn min_allowable_weight() -> u16 {
     let player_race = player::race();
     let player_sex = player::sex();
 
-    player_race.weight_base(player_sex) -
-        4 * player_race.weight_modifier(player_sex)
+    data::race::weight_base(&player_race, player_sex) -
+        4 * data::race::weight_modifier(&player_race, player_sex)
 }
 
 // Hack for converting c-array of chars to rust string

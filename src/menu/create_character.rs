@@ -5,6 +5,7 @@ use std::ffi::CString;
 
 use libc::{time, time_t, strcpy};
 
+use conversion;
 use data;
 use debug;
 use io;
@@ -47,7 +48,7 @@ fn put_character(show_values: bool) {
 
     if show_values {
         term::prt(player::name(), 2, 14);
-        term::prt(player::race().name(), 3, 14);
+        term::prt(data::race::name(&player::race()), 3, 14);
         term::prt(player::sex().to_string(), 4, 14);
         term::prt(data::class::name(&player::class()), 5, 14);
     }
@@ -80,7 +81,7 @@ fn get_stats() {
     debug::enter("create_character::get_stats");
 
     let race = player::race();
-    let race_stats = race.stat_block();
+    let race_stats = data::race::stat_block(&race);
 
     let new_stats = StatBlock::from(Stat::iter()
         .map(|stat| random_stat() + race_stats.get_pos(stat) as i16)
@@ -90,20 +91,20 @@ fn get_stats() {
 
     unsafe {
         player::player_rep = 0;
-        player::player_bth = race.melee_bonus() as i16;
-        player::player_bthb = race.ranged_bonus() as i16;
-        player::player_fos = race.search_freq() as i16;
-        player::player_stl = race.stealth_mod() as i16;
-        player::player_save = race.save_mod() as i16;
+        player::player_bth = data::race::melee_bonus(&race) as i16;
+        player::player_bthb = data::race::ranged_bonus(&race) as i16;
+        player::player_fos = data::race::search_freq(&race) as i16;
+        player::player_stl = data::race::stealth_mod(&race) as i16;
+        player::player_save = data::race::save_mod(&race) as i16;
         player::player_lev = 1;
         player::player_ptodam = player::dmg_from_str() as i16;
         player::player_ptohit = player::tohit_from_stats() as i16;
         player::player_ptoac = 0;
         player::player_pac = player::ac_from_dex() as i16;
-        player::player_expfact = race.expfactor();
+        player::player_expfact = data::race::expfactor(&race);
     }
-    player::set_infravision(race.infravision() as i64);
-    player::set_swim_speed(race.swim_speed() as i64);
+    player::set_infravision(data::race::infravision(&race) as i64);
+    player::set_swim_speed(data::race::swim_speed(&race) as i64);
 
     debug::leave("create_character::get_stats");
 }
@@ -307,8 +308,8 @@ fn generate_player_height(player_race: Race, player_sex: Sex) -> u16 {
 
 fn generate_player_weight(race: Race, sex: Sex) -> u16 {
     random::randnor(
-        race.weight_base(sex) as i64,
-        race.weight_modifier(sex) as i64
+        data::race::weight_base(&race, sex) as i64,
+        data::race::weight_modifier(&race, sex) as i64
         ) as u16
 }
 
@@ -343,7 +344,7 @@ fn generate_ahw() {
         player::player_ht = generate_player_height(player_race, player_sex);
         player::player_wt = generate_player_weight(player_race, player_sex);
 
-        player::player_disarm = (player_race.disarm_mod() as i16 + player::disarm_from_dex()).into();
+        player::player_disarm = (data::race::disarm_mod(&player_race) as i16 + player::disarm_from_dex()).into();
     }
 
     debug::leave("create_character::generate_ahw");
@@ -843,7 +844,7 @@ fn choose_name() {
 fn choose_class() {
     debug::enter("create_character::choose_class");
 
-    let classes = player::race().available_classes();
+    let classes = data::race::available_classes(&player::race());
     let class_strings = classes.iter().map(data::class::name).collect::<Vec<&str>>();
     let mut index = 0;
 
@@ -872,10 +873,33 @@ fn choose_class() {
     }
 }
 
+pub fn stats_info(race: &Race) -> Vec<String> {
+    let stats = data::race::stat_block(race);
+    vec![
+        format!("Melee bonus:       {}", data::race::melee_bonus(race)),
+        format!("Ranged bonus:      {}", data::race::ranged_bonus(race)),
+        format!("Experience factor: {}", data::race::expfactor(race)),
+        format!("Search frequence:  {}", data::race::search_freq(race)),
+        format!("Search modifier:   {}", data::race::search_mod(race)),
+        format!("Stealth modifier:  {}", data::race::stealth_mod(race)),
+        format!("Save modifier:     {}", data::race::save_mod(race)),
+        format!("Disarm modifier:   {}", data::race::disarm_mod(race)),
+        format!("Infravision:       {}", data::race::infravision(race)),
+        format!("Swim speed:        {}", data::race::swim_speed(race)),
+        "ATTRIBUTES:".to_owned(),
+        format!("Strength:          {}", stats.strength),
+        format!("Dexterity:         {}", stats.dexterity),
+        format!("Constituton:       {}", stats.constitution),
+        format!("Intelligence:      {}", stats.intelligence),
+        format!("Wisdom:            {}", stats.wisdom),
+        format!("Charisma:          {}", stats.charisma),
+    ]
+}
+
 fn choose_race() {
     debug::enter("create_character::choose_race");
 
-    let races = Race::iter().map(|i| Race::from(i).name()).collect::<Vec<&str>>();
+    let races = Race::iter().map(|i| data::race::name(&Race::from(i))).collect::<Vec<&str>>();
     let mut index = 0;
 
     loop {
@@ -889,24 +913,22 @@ fn choose_race() {
             'k' => index = if index == 0 { 0 } else { index - 1 },
             'j' => index = min(races.len() as u8 -1, index + 1),
             '\r' => {
-                player::set_race(Race::from(index as usize));
+                player::set_race(conversion::race::from_usize(index as usize).unwrap());
                 debug::leave("create_character::choose_race");
                 return;
             },
             '?' => menu::draw_help(
                 races[index as usize],
-                Race::from(index as usize).info()),
+                data::race::info(&conversion::race::from_usize(index as usize).unwrap())),
             's' => menu::draw_help_vec(
                 races[index as usize],
-                &Race::from(index as usize)
-                .stats_info()
+                &stats_info(&conversion::race::from_usize(index as usize).unwrap())
                 .iter()
                 .map(|it| it.as_ref())
                 .collect::<Vec<&str>>()),
             'c' => menu::draw_help_vec(
                 races[index as usize],
-                &Race::from(index as usize)
-                .available_classes()
+                &data::race::available_classes(&conversion::race::from_usize(index as usize).unwrap())
                 .iter()
                 .map(data::class::name)
                 .collect::<Vec<&str>>()),
@@ -1003,7 +1025,7 @@ fn confirm_character() {
         "Confirm your character",
         &vec![
             "Name: ".to_string(),
-            format!("Race:          {}", player::race().name()),
+            format!("Race:          {}", data::race::name(&player::race())),
             format!("Sex:           {}", player::sex().to_string()),
             format!("Class:         {}", data::class::name(&player::class())),
             "".to_string(),

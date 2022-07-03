@@ -200,7 +200,7 @@ pub fn print_equipment_block() {
 }
 
 fn print_stats_column() {
-    print_field(player::race().name(), RACE_ROW, STAT_COL);
+    print_field(data::race::name(&player::race()), RACE_ROW, STAT_COL);
     print_field(data::class::name(&player::class()), CLASS_ROW, STAT_COL);
 
     print_hp(HP_ROW, STAT_COL);

@@ -31,7 +31,7 @@ pub fn update_character(uid: i64) -> Result<(), Error> {
         points: player::calc_total_points(),
         alive: !player::is_dead(),
         level: player::level(),
-        race: player::race().name().to_string(),
+        race: data::race::name(&player::race()).to_string(),
         class: data::class::name(&player::class()).to_string(),
     }, false)?;
 
@@ -57,7 +57,7 @@ pub fn add_character() -> Result<i64, Error> {
         points: player::calc_total_points(),
         alive: true,
         level: player::level(),
-        race: player::race().name().to_string(),
+        race: data::race::name(&player::race()).to_string(),
         class: data::class::name(&player::class()).to_string(),
     }, true)?;
 

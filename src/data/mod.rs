@@ -4,5 +4,6 @@ pub mod currency;
 pub mod item_name;
 pub mod item_type;
 pub mod magic;
+pub mod race;
 
 mod interop;
