@@ -13,12 +13,14 @@
 #include "master.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "save.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "files.h"
+#include "misc.h"
+#include "random.h"
+#include "unix.h"
 
 #include "death.h"
 

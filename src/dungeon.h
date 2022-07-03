@@ -117,5 +117,7 @@ void get_player_move_rate();
 void xp_loss(long amount);
 boolean twall(long y, long x, long t1, long t2);
 void dungeon();
+void py_bonuses(treasure_type *tobj, long factor);
+boolean delete_object(long y, long x);
 
 #endif /* DUNGEON_H */

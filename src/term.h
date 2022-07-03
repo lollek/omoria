@@ -8,6 +8,15 @@ typedef unsigned char int8u;
 void moriaterm();
 void bell();
 void C_clear_screen();
+/* use put_buffer */
+void put_buffer_(char const *out_str, int32_t row, int32_t col);
+void put_buffer_attr(const char *out_str, long row, long col, int attrs);
+#define clear_from(r) Clear_From((r)-1)
+void Clear_From(int row);
+#define pause_line(r) Pause_Line((r)-1)
+void Pause_Line(int prt_line);
+void move_cursor(int row, int col);
+unsigned sleep();
 
 /* Dungeon size parameters					*/
 #define MAX_HEIGHT 66 /* Multiple of 11; >= 22 */

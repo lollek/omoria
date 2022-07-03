@@ -16,11 +16,17 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "desc.h"
+#include "inven.h"
+#include "screen.h"
+#include "wizard.h"
+#include "spells.h"
+#include "random.h"
+#include "misc.h"
+#include "bank.h"
 
 static void b__chime_and_horn_effects(long effect, boolean *idented) {
   /*{ Chimes...				      }*/

@@ -13,11 +13,15 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "inven.h"
 #include "desc.h"
+#include "screen.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
 
 void us__staff_effect(long effect, boolean *idented) {
   long i3, randnum;

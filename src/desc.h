@@ -4,13 +4,12 @@
 #include "boolean.h"
 #include "types.h"
 
-extern void rantitle(char *title);
-extern void known1(char *object_str);
-extern void known2(char *object_str);
-extern void unquote(char *object_str);
-extern void identify(treasure_type *item);
-extern void objdes(char *out_val,
-                   treas_rec *ptr,
-                   boolean pref);
+void rantitle(char *title);
+void known1(char *object_str);
+void known2(char *object_str);
+void unquote(char *object_str);
+void identify(treasure_type *item);
+void objdes(char *out_val, treas_rec *ptr, boolean pref);
+char *bag_descrip(treas_rec *bag, char result[134]);
 
 #endif // DESC_H

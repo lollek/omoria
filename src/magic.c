@@ -3,8 +3,12 @@
 #include "debug.h"
 #include "dungeon.h"
 #include "player.h"
-#include "routines.h"
 #include "variables.h"
+#include "inven.h"
+#include "screen.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
 
 static void nonmagic_song(void) {
   switch (C_player_mod_from_stat(CHR) + randint(4)) {

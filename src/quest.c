@@ -15,12 +15,15 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
 #include "desc.h"
+#include "inven.h"
+#include "screen.h"
+#include "misc.h"
+#include "random.h"
 
 static uint8_t const MAX_QUESTS =
     35; /*{ Maximum number of quests per game	} */

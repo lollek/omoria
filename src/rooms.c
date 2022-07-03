@@ -15,10 +15,12 @@
 #include "generate.h"
 #include "magic.h"
 #include "pascal.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "misc.h"
+#include "random.h"
+#include "traps.h"
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

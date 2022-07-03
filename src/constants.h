@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include "io.h"
+
 /*	{ Screen size parameters					} */
 #define SCREEN_HEIGHT 22
 #define SCREEN_WIDTH 66
@@ -329,11 +331,12 @@
  * print_chstr()
  */
 #define erase_line(r, c) Erase_Line((r)-1, (c)-1)
-#define clear_from(r) Clear_From((r)-1)
 #define print(s, r, c) Print((s), (r)-1, (c)-1)
 #define get_string(s, r, c, l) Get_String((s), (r)-1, (c)-1, (l))
-#define pause_line(r) Pause_Line((r)-1)
 #define print_null(r, c)                                                       \
   (move_cursor((r)-panel_row_prt - 1, (c)-panel_col_prt - 1))
+
+const char *imoria_version();
+const char *omoria_version();
 
 #endif /* CONSTANTS_H */

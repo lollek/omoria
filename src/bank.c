@@ -10,7 +10,6 @@
 #include "constants.h"
 #include "magic.h"
 #include "pascal.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "kickout.h"
@@ -18,6 +17,13 @@
 #include "player.h"
 #include "variables.h"
 #include "dungeon.h"
+#include "io.h"
+#include "screen.h"
+#include "misc.h"
+#include "random.h"
+#include "port.h"
+
+#include "bank.h"
 
 void eb__display_money(void);
 void eb__display_store(const char *shop_owner);

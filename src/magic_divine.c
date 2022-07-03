@@ -13,10 +13,13 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "screen.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
 
 void divine_spell_effects(long effect) {
 

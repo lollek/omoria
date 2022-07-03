@@ -16,11 +16,13 @@
 #include "graphics.h"
 #include "magic.h"
 #include "pascal.h"
-#include "routines.h"
 #include "save.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "unix.h"
+
+#include "io.h"
 
 #define MAX_MESSAGES 50
 static char msg_prev[MAX_MESSAGES + 1][82];

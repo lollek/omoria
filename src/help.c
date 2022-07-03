@@ -14,10 +14,11 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "io.h"
+#include "screen.h"
 
 void help() {
   /*{ Help for available commands }*/

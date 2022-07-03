@@ -153,4 +153,10 @@ float C_player_cost_modifier_from_charisma(void);
 void C_player_mod_stat(enum stat_t attr, int16_t modifier);
 void C_player_mod_perm_stat(enum stat_t attr, int16_t modifier);
 
+void search_off();
+void search_on();
+void rest_off();
+void take_hit(long damage, char hit_from[82]);
+void regenmana(float percent);
+
 #endif /* PLAYER_H */

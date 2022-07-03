@@ -16,7 +16,6 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "stores.h"
 #include "term.h"
 #include "types.h"
@@ -24,6 +23,12 @@
 #include "creature.h"
 #include "desc.h"
 #include "files.h"
+#include "screen.h"
+#include "player_move.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
+#include "monsters.h"
 
 #define LOW_NUM -98765432
 

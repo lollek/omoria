@@ -1,7 +1,9 @@
 #include "dungeon.h"
 #include "player.h"
-#include "routines.h"
 #include "variables.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
 
 void arcane_spell_effects(long effect) {
   /*{ Spells...                                     }*/

@@ -17,13 +17,16 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "stores.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
 #include "desc.h"
+#include "inven.h"
+#include "screen.h"
+#include "misc.h"
+#include "random.h"
 
 typedef struct owner_type {
   char owner_name[82];

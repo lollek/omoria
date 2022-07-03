@@ -13,10 +13,11 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "screen.h"
+#include "player_move.h"
 
 /* P_MISC */
 int64_t player_xtr_wgt = 0;

@@ -8,10 +8,14 @@
 #include "generate.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "stores.h"
 #include "types.h"
 #include "variables.h"
+#include "misc.h"
+#include "random.h"
+#include "monsters.h"
+#include "river.h"
+#include "rooms.h"
 
 /*
  *	{ Dungeon generation values					}

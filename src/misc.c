@@ -13,14 +13,21 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "save.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
 #include "death.h"
-#include "model/class.h"
+#include "model_class.h"
+#include "model_item.h"
+#include "screen.h"
+#include "random.h"
+#include "monsters.h"
+#include "traps.h"
+#include "bank.h"
+
+#include "misc.h"
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 

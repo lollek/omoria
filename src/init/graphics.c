@@ -1,5 +1,6 @@
-#include "../routines.h"
 #include "../graphics.h"
+#include "../ncurses_utils.h"
+#include "../io.h"
 
 #include "graphics.h"
 

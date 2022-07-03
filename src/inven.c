@@ -13,12 +13,20 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "desc.h"
-#include "model/class.h"
+#include "model_class.h"
+#include "model_item.h"
+#include "io.h"
+#include "screen.h"
+#include "misc.h"
+#include "random.h"
+#include "bank.h"
+#include "port.h"
+
+#include "inven.h"
 
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)

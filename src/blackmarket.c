@@ -15,10 +15,10 @@
 #include "dungeon.h"
 #include "magic.h"
 #include "pascal.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "random.h"
 
 static void bm__add_tohit(long a, long b, long c, long i, long *r) {
   *r = randint(a) + randint(b) + randint(c);

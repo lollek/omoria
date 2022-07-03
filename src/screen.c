@@ -12,10 +12,14 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "inven.h"
+#include "misc.h"
+#include "random.h"
+
+#include "screen.h"
 
 #if DO_DEBUG
 static long win_equip_x = 81;

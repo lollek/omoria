@@ -16,10 +16,10 @@
 #include "debug.h"
 #include "magic.h"
 #include "pascal.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "random.h"
 
 static boolean deal_bust;
 static boolean card5_save;

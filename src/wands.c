@@ -16,11 +16,15 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "desc.h"
+#include "inven.h"
+#include "screen.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
 
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

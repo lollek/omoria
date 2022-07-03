@@ -7,9 +7,10 @@
 #include "casino.h"
 #include "horse.h"
 #include "player.h"
-#include "routines.h"
 #include "stores.h"
 #include "term.h"
+#include "misc.h"
+#include "random.h"
 
 void hr__display_commands() {
   c__display_gold();

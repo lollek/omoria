@@ -3,10 +3,13 @@
 #include "../configure.h"
 #include "../master.h"
 #include "../player.h"
-#include "../routines.h"
 #include "../save.h"
 #include "../variables.h"
 #include "../generate.h"
+#include "../menu.h"
+#include "../screen.h"
+#include "../misc.h"
+#include "../term.h"
 
 #include "menu.h"
 

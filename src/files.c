@@ -14,13 +14,14 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "save.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 #include "logic/generate_item.h"
 #include "desc.h"
+#include "io.h"
+#include "misc.h"
 
 #include "files.h"
 
@@ -1137,90 +1138,6 @@ void print_monsters() {
   }   /* end get filename */
 }
 
-boolean read_top_scores(FILE **f1, char *fnam, char list[][134], int max_high,
-                        int *n1, char *openerr) {
-  /* list[] should be declared string list[max_high+1] */
-  /* be sure to unlock the file when finished          */
-
-  boolean file_flag = false;
-  boolean paniced;
-  char temp[1026];
-  int i1, trys;
-
-  encrypt_state hs_state;
-
-  for (i1 = 1; i1 <= max_high; i1++) {
-    list[i1][0] = 0;
-  }
-
-  openerr[0] = 0;
-  *n1 = 0;
-
-  *f1 = fopen(fnam, "r+");
-
-  if (*f1 == NULL) {
-    sprintf(openerr, "Error opening> %s", fnam);
-  } else {
-
-    /* get exclusive access to the high score file */
-
-    for (trys = 0; (trys < 5) && !file_flag; trys++) {
-      if (flock((int)fileno(*f1), LOCK_EX | LOCK_NB) == 0) {
-        file_flag = true;
-      } else {
-        sleep(1);
-      }
-    }
-
-    if (!file_flag) {
-      fclose(*f1);
-      *f1 = NULL;
-      strcpy(openerr, "Error gaining lock for score file.");
-    } else {
-      for (paniced = false, *n1 = 1; !paniced && (*n1 <= max_high);) {
-        read_decrypt(*f1, &hs_state, temp, &paniced);
-        if (!paniced) {
-          if (strlen(temp) > 80) {
-            temp[80] = 0;
-          }
-          strcpy(list[*n1], temp);
-          (*n1)++;
-        }
-      }
-    }
-  }
-
-  (*n1)--;
-  return file_flag;
-}
-
-boolean write_top_scores(FILE **f1, char list[][134], int max_high) {
-  int i1;
-  char temp[82];
-  encrypt_state hs_state;
-
-  rewind(*f1);
-  ftruncate((int)fileno(*f1), 0);
-
-  for (i1 = 1; i1 <= max_high; i1++) {
-    strcpy(temp, list[i1]);
-    encrypt_write(*f1, &hs_state, temp);
-  }
-
-  encrypt_flush(*f1, &hs_state);
-  return true;
-}
-
-boolean close_top_scores(FILE **f1) {
-  boolean return_value = true;
-
-  if (flock((int)fileno(*f1), LOCK_UN) != 0) {
-    return_value = false;
-  }
-  fclose(*f1);
-
-  return return_value;
-}
 
 char *center(char in_str[134], int str_len, char out_str[134]) {
   int const in_str_len = strlen(in_str);

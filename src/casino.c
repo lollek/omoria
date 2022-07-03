@@ -16,12 +16,14 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "save.h"
 #include "slots.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "screen.h"
+#include "random.h"
+#include "misc.h"
 
 long bet;
 long gld;

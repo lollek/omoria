@@ -16,13 +16,18 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
-#include "routines.h"
 #include "stores.h"
 #include "term.h"
 #include "trade.h"
 #include "types.h"
 #include "variables.h"
 #include "casino.h"
+#include "quest.h"
+#include "screen.h"
+#include "spells.h"
+#include "misc.h"
+#include "random.h"
+#include "bank.h"
 
 /*	{ Traps are just Nasty treasures...				} */
 static treasure_type trap_lista[MAX_TRAPA + 1] = {

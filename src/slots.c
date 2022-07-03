@@ -15,11 +15,12 @@
 #include "debug.h"
 #include "magic.h"
 #include "pascal.h"
-#include "routines.h"
 #include "slots.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
+#include "misc.h"
+#include "random.h"
 
 char *s_name[6] = {"jackpot", "cherry", "orange", "bell", "bar"};
 slot slotpos;

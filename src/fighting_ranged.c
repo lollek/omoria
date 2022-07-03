@@ -6,9 +6,13 @@
 #include "debug.h"
 #include "dungeon.h"
 #include "player.h"
-#include "routines.h"
 #include "variables.h"
 #include "desc.h"
+#include "model_item.h"
+#include "inven.h"
+#include "screen.h"
+#include "misc.h"
+#include "random.h"
 
 enum _ranged_attack_t { THROW, SHOOT };
 
