@@ -1,41 +1,17 @@
+use enum_iterator;
+
+#[derive(Copy, Clone, enum_iterator::Sequence)]
 pub enum Currency {
-    Iron = 1,
-    Copper = 2,
-    Silver = 3,
-    Gold = 4,
-    Platinum = 5,
-    Mithril = 6,
+    Iron,
+    Copper,
+    Silver,
+    Gold,
+    Platinum,
+    Mithril,
 }
 
 impl Currency {
-    pub fn value(&self) -> i64 {
-        match self {
-            Currency::Iron => 1,
-            Currency::Copper => 4,
-            Currency::Silver => 20,
-            Currency::Gold => 240,
-            Currency::Platinum => 960,
-            Currency::Mithril => 12480,
-        }
-    }
-
-    pub fn iter() -> impl Iterator<Item=usize> {
-        (Currency::Iron as usize)..(Currency::Mithril as usize) + 1
+    pub fn iter() -> impl Iterator<Item = Currency> {
+        enum_iterator::all::<Currency>()
     }
 }
-
-impl From<usize> for Currency {
-    fn from(value: usize) -> Currency {
-        match value {
-            1 => Currency::Iron,
-            2 => Currency::Copper,
-            3 => Currency::Silver,
-            4 => Currency::Gold,
-            5 => Currency::Platinum,
-            6 => Currency::Mithril,
-            _ => panic!(),
-        }
-    }
-}
-
-

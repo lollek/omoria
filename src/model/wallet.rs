@@ -1,3 +1,4 @@
+use data;
 use model::Currency;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -12,23 +13,21 @@ pub struct Wallet {
 }
 
 impl Wallet {
-    pub fn get_pos(&self, pos: usize) -> i64 {
+    pub fn get_pos(&self, pos: Currency) -> i64 {
         match pos {
-            0 => self.total,
-            1 => self.iron,
-            2 => self.copper,
-            3 => self.silver,
-            4 => self.gold,
-            5 => self.platinum,
-            6 => self.mithril,
-            _ => panic!(),
+            Currency::Iron => self.iron,
+            Currency::Copper => self.copper,
+            Currency::Silver => self.silver,
+            Currency::Gold => self.gold,
+            Currency::Platinum => self.platinum,
+            Currency::Mithril => self.mithril,
         }
     }
 
     pub fn calculate_total(&mut self) {
-        self.total = Currency::iter()
-            .fold(0, |sum, i| sum + (self.get_pos(i) * Currency::from(i).value()))
-            / Currency::Gold.value()
+        self.total = Currency::iter().fold(0, |sum, i| {
+            sum + (self.get_pos(i) * data::currency::value(&i))
+        }) / data::currency::value(&Currency::Gold)
     }
 }
 

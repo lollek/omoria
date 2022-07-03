@@ -71,7 +71,7 @@ fn get_money() {
     // Minimum
     amount = max(amount, 80);
 
-    let gold_value = Currency::Gold.value();
+    let gold_value = data::currency::value(&Currency::Gold);
     unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
     debug::leave("create_character::get_money");
 }

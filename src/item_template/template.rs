@@ -1,3 +1,4 @@
+use data;
 use misc;
 use model;
 
@@ -9,7 +10,7 @@ pub trait ItemTemplate {
             flags: self.flags1(),
             flags2: self.flags2(),
             p1: self.p1(),
-            cost: self.cost() * model::Currency::Gold.value(),
+            cost: self.cost() * data::currency::value(&model::Currency::Gold),
             subval: self.subtype(),
             weight: self.weight(),
             number: self.number(),

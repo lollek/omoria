@@ -159,7 +159,8 @@ pub fn wallet() -> Wallet {
 
 pub fn set_wallet(wallet: &Wallet) {
     for currency in Currency::iter() {
-        unsafe { player_money[currency] = wallet.get_pos(currency) };
+        let position = conversion::currency::to_usize(currency);
+        unsafe { player_money[position] = wallet.get_pos(currency) };
     }
     unsafe { player_money[0] = wallet.total };
 }
@@ -170,7 +171,8 @@ pub fn bank_wallet() -> Wallet {
 
 pub fn set_bank_wallet(wallet: &Wallet) {
     for currency in Currency::iter() {
-        unsafe { bank[currency] = wallet.get_pos(currency) };
+        let position = conversion::currency::to_usize(currency);
+        unsafe { bank[position] = wallet.get_pos(currency) };
     }
     unsafe { bank[0] = wallet.total };
 }
