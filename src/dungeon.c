@@ -27,6 +27,7 @@
 #include "desc.h"
 #include "help.h"
 #include "model/class.h"
+#include "ability.h"
 
 #include "dungeon.h"
 
