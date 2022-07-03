@@ -1,4 +1,3 @@
-use data;
 use model::Currency;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -24,23 +23,4 @@ impl Wallet {
         }
     }
 
-    pub fn calculate_total(&mut self) {
-        self.total = Currency::iter().fold(0, |sum, i| {
-            sum + (self.get_pos(i) * data::currency::value(&i))
-        }) / data::currency::value(&Currency::Gold)
-    }
-}
-
-impl From<[i64; 7]> for Wallet {
-    fn from(array: [i64; 7]) -> Wallet {
-        Wallet {
-            total: array[0],
-            iron: array[1],
-            copper: array[2],
-            silver: array[3],
-            gold: array[4],
-            platinum: array[5],
-            mithril: array[6],
-        }
-    }
 }

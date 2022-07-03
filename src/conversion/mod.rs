@@ -5,3 +5,4 @@ pub mod magic;
 pub mod race;
 pub mod sex;
 pub mod stat;
+pub mod wallet;

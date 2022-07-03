@@ -154,7 +154,7 @@ pub fn mod_perm_stat(stat: Stat, modifier: i16) {
 }
 
 pub fn wallet() -> Wallet {
-    Wallet::from(unsafe { player_money })
+    conversion::wallet::from_int64(unsafe { player_money })
 }
 
 pub fn set_wallet(wallet: &Wallet) {
@@ -166,7 +166,7 @@ pub fn set_wallet(wallet: &Wallet) {
 }
 
 pub fn bank_wallet() -> Wallet {
-    Wallet::from(unsafe { bank })
+    conversion::wallet::from_int64(unsafe { bank })
 }
 
 pub fn set_bank_wallet(wallet: &Wallet) {

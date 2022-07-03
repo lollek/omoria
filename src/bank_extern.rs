@@ -1,6 +1,7 @@
 use std::ffi::CStr;
 use libc::c_char;
 
+use logic;
 use player;
 use term;
 
@@ -58,10 +59,10 @@ pub extern fn eb__display_store(shop_owner: *const c_char) {
 #[no_mangle]
 pub extern fn reset_total_cash() {
     let mut player_money = player::wallet();
-    player_money.calculate_total();
+    player_money.total = logic::wallet::calculate_total(&player_money);
     player::set_wallet(&player_money);
 
     let mut bank = player::bank_wallet();
-    bank.calculate_total();
+    bank.total = logic::wallet::calculate_total(&bank);
     player::set_bank_wallet(&bank);
 }
