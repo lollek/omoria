@@ -17,4 +17,8 @@ void nature_spell_effects(long effect);
 void song_spell_effects(long effect);
 void chakra_spell_effects(long effect);
 
+uint8_t C_magic_spell_level(int32_t slot);
+uint8_t C_magic_spell_mana(int32_t slot);
+uint8_t C_magic_spell_failchance(int32_t slot);
+
 #endif /* MAGIC_H */

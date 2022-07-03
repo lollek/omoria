@@ -8,10 +8,6 @@
 #include "types.h"
 
 /* START - FROM RUST */
-uint8_t C_magic_spell_level(int32_t slot);
-uint8_t C_magic_spell_mana(int32_t slot);
-uint8_t C_magic_spell_failchance(int32_t slot);
-
 void C_highscore(uint8_t max_highscores);
 
 /**
