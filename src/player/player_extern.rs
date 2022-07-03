@@ -1,9 +1,12 @@
+use std::convert::TryInto;
+
 use libc;
 
+use conversion;
 use data;
 use debug;
 use player;
-use model::{ Stat, Magic };
+use model::{ Stat };
 
 #[no_mangle]
 pub extern fn C_player_knows_spell(slot: libc::int32_t) -> libc::uint8_t {
@@ -26,7 +29,7 @@ pub extern fn C_player_set_knows_spell(slot: libc::int32_t, yn: libc::uint8_t) {
 #[no_mangle]
 pub extern fn C_player_uses_magic(magic_type: libc::int32_t) -> libc::uint8_t {
     debug::enter("C_player_uses_magic");
-    let ret = if data::class::magic_type(&player::class()) == Some(Magic::from(magic_type)) {
+    let ret = if data::class::magic_type(&player::class()) == Some(conversion::magic::from_usize(magic_type.try_into().unwrap()).unwrap()) {
         255
     } else {
         0
