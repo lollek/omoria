@@ -8,10 +8,6 @@
 #include "types.h"
 
 /* START - FROM RUST */
-signed char C_class_melee_bonus(enum class_t class);
-signed char C_class_ranged_bonus(enum class_t class);
-boolean C_class_can_use_item(enum class_t class, treasure_type const *item);
-
 uint8_t C_magic_spell_level(int32_t slot);
 uint8_t C_magic_spell_mana(int32_t slot);
 uint8_t C_magic_spell_failchance(int32_t slot);

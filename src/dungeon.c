@@ -26,6 +26,7 @@
 #include "death.h"
 #include "desc.h"
 #include "help.h"
+#include "model/class.h"
 
 #include "dungeon.h"
 

@@ -20,6 +20,7 @@
 #include "variables.h"
 #include "logic/generate_item.h"
 #include "death.h"
+#include "model/class.h"
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 

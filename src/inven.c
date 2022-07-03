@@ -18,6 +18,7 @@
 #include "types.h"
 #include "variables.h"
 #include "desc.h"
+#include "model/class.h"
 
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)
