@@ -38,8 +38,16 @@
 typedef long mm_type[6];
 static const long mon_mult_adj = 7; // High value slows multiplication
 
+void move_rec(long y1, long x1, long y2, long x2) {
+
+  unsigned char i1;
+
+  i1 = cave[y1][x1].cptr;
+  cave[y1][x1].cptr = 0;
+  cave[y2][x2].cptr = i1;
+}
+
 void check_mon_lite(long y, long x) {
-  /*{ Makes sure new creature gets lit up                   -RAK-   }*/
 
   /* with cave[y][x]. do; */
   if (cave[y][x].cptr > 1) {
@@ -55,9 +63,6 @@ void check_mon_lite(long y, long x) {
 }
 
 void multiply_monster(long y, long x, long z, boolean slp) {
-  /*{ Places creature adjacent to given location            -RAK-   }*/
-  /*{ Rats and Flies are fun!                                       }*/
-
   long i1, i2, i3;
 
   i1 = 0;
@@ -1880,7 +1885,6 @@ void creatures(boolean attack) {
 }
 
 long find_mon(const char *virtual_name) {
-  /*{returns number of monster in list specified by virtual_name}*/
 
   long count;
   boolean maybe = false;

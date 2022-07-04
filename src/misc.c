@@ -6,26 +6,26 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "treasures.h"
+#include "bank.h"
 #include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "save.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "generate_item/generate_item.h"
 #include "death.h"
+#include "debug.h"
+#include "generate_item/generate_item.h"
+#include "magic.h"
 #include "model_class.h"
 #include "model_item.h"
-#include "screen.h"
-#include "random.h"
 #include "monsters.h"
+#include "pascal.h"
+#include "player.h"
+#include "random.h"
+#include "save.h"
+#include "screen.h"
+#include "term.h"
 #include "traps.h"
-#include "bank.h"
+#include "treasures.h"
+#include "types.h"
+#include "variables.h"
 
 #include "misc.h"
 
@@ -2215,7 +2215,7 @@ char *play_time(time_type *t, char result[134]) {
   /*{ Return string for how long character has been playing -DMF-   }*/
 
   snprintf(result, 134, "%d day%s and %d:%02d:%02d hours.", t->days,
-          ((t->days == 1) ? "" : "s"), t->hours, t->minutes, t->seconds);
+           ((t->days == 1) ? "" : "s"), t->hours, t->minutes, t->seconds);
 
   return result;
 }
@@ -2299,9 +2299,9 @@ char *full_date_string(game_time_type time, char result[134]) {
     *pos = 0;
   }
   /* with time do; */
-  snprintf(result, 134, "%s, %s the %s, %s", out1, month_string(time.month, out2),
-          place_string(time.day, out3),
-          time_string(time.hour, time.secs, out4));
+  snprintf(result, 134, "%s, %s the %s, %s", out1,
+           month_string(time.month, out2), place_string(time.day, out3),
+           time_string(time.hour, time.secs, out4));
 
   return result;
 }
@@ -2805,8 +2805,77 @@ char *likert(long x, long y, char *out_str) {
 
   return out_str;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
-/* END FILE  misc.c */
+boolean d__get_dir(char prompt[82], long *dir, long *command_ptr, long *y,
+                   long *x) {
+
+  char command;
+  boolean flag = false;
+
+  while (true) {
+    if (!get_com(prompt, &command)) {
+      reset_flag = true;
+      return false;
+    }
+
+    switch (command) {
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+      *command_ptr = (long)command;
+      flag = true;
+      break;
+
+    case 'b':
+      *command_ptr = '1';
+      flag = true;
+      break;
+    case 'j':
+      *command_ptr = '2';
+      flag = true;
+      break;
+    case 'n':
+      *command_ptr = '3';
+      flag = true;
+      break;
+    case 'h':
+      *command_ptr = '4';
+      flag = true;
+      break;
+    case 'l':
+      *command_ptr = '6';
+      flag = true;
+      break;
+    case 'y':
+      *command_ptr = '7';
+      flag = true;
+      break;
+    case 'k':
+      *command_ptr = '8';
+      flag = true;
+      break;
+    case 'u':
+      *command_ptr = '9';
+      flag = true;
+      break;
+
+    default:
+      break;
+    }
+
+    if (flag) {
+      *dir = *command_ptr - '0';
+      move_dir(*dir, y, x);
+      return true;
+    }
+  }
+}
+
+boolean xor(long thing1, long thing2) {
+  return !((thing1 && thing2) || (!thing1 && !thing2));
+}

@@ -1,14 +1,15 @@
 #include <string.h>
+#include <time.h>
 
 #include "debug.h"
-#include "main_loop.h"
-#include "player.h"
-#include "variables.h"
 #include "inven.h"
+#include "main_loop.h"
+#include "misc.h"
+#include "player.h"
+#include "random.h"
 #include "screen.h"
 #include "spells.h"
-#include "misc.h"
-#include "random.h"
+#include "variables.h"
 
 static void nonmagic_song(void) {
   switch (C_player_mod_from_stat(CHR) + randint(4)) {
@@ -262,6 +263,49 @@ static void drain_mana(enum magic_t magic_type, long choice) {
   else
     drain_mana_failed(magic_type, mana_cost);
   prt_stat_block();
+}
+
+/*{ Return spell number and failure chance                -RAK-   }*/
+static boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn,
+                          long *sc, boolean *redraw) {
+
+  unsigned long i2, i4;
+  long i1, i3, num;
+  spl_type aspell;
+  boolean flag = false;
+
+  i1 = num = 0;
+  i2 = item_ptr->data.flags;
+  i4 = item_ptr->data.flags2;
+
+  do {
+    i3 = bit_pos64(&i4, &i2) + 1;
+    /*{ Avoid the cursed bit like the plague -DMF-   }*/
+    if (i3 > 31) {
+      i3--;
+    }
+    if (i3 > 0) {
+      i3--;
+      if ((C_magic_spell_level(i3) <= player_lev) &&
+          (C_player_knows_spell(i3))) {
+        aspell[i1++].splnum = i3;
+        num = i1;
+      } else {
+        aspell[i1++].splnum = -1; /* leave gaps for unknown spells */
+      }
+    }
+
+  } while (!((i2 == 0) && (i4 == 0)));
+
+  if (num > 0) {
+    flag = get_spell(aspell, num, sn, sc, prompt, redraw);
+  }
+
+  if (*redraw) {
+    draw_cave();
+  }
+
+  return flag;
 }
 
 static void _cast(enum magic_t magic_type) {

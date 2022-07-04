@@ -3,15 +3,7 @@
 
 #include "types.h"
 
-boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,
-                   boolean *redraw);
-boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
-void teleport(long dis);
-boolean xor (long thing1, long thing2);
-void d__quit(void);
 
-void C_commands_show_class_restrictions(void);
-void move_rec(long y1, long x1, long y2, long x2);
 void change_speed(long num);
 void py_bonuses(treasure_type *tobj, long factor);
 boolean get_panel(long y, long x, boolean forceit);
@@ -49,24 +41,24 @@ void monster_death(long y, long x, unsigned long flags);
 long mon_take_hit(long monptr, long dam);
 long tot_dam(treasure_type *item, long tdam, creature_type *monster);
 boolean py_attack(long y, long x);
-boolean find_range(obj_set const item_val, boolean inner,
-                          treas_rec **first, long *count);
+boolean find_range(obj_set const item_val, boolean inner, treas_rec **first,
+                   long *count);
 boolean player_test_hit(long bth, long level, long pth, long ac,
-                               boolean was_fired);
+                        boolean was_fired);
 boolean test_hit(long bth, long level, long pth, long ac);
 void delete_monster(long i2);
 void summon_object(long y, long x, long num, long typ);
 
 /**
- * -DMF-
- * get_money_type() - Prompt for what type of money to use
+ * Prompt for what type of money to use
  */
 long get_money_type(char prompt[134], boolean *back, boolean no_check);
 
 /**
- * coin_stuff() - Figure out what kind of coin is beign asked about
- * @typ: Initial of coin metal
- * @type_num: ???
+ * Figure out what kind of coin is beign asked about
+ * 
+ * typ: Initial of coin metal
+ * type_num: ???
  */
 boolean coin_stuff(char typ, long *type_num);
 

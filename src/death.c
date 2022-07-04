@@ -197,6 +197,29 @@ static void date(char *day) {
   (void)strcpy(day, tmp);
 }
 
+void death_by_quitting(void) {
+  /* this can be called from signalquit in io.c */
+
+  char command;
+
+  flush();
+  if (get_com("Enter 'Q' to quit (and kill this character)", &command)) {
+    switch (command) {
+    case 'q':
+    case 'Q':
+      strcpy(died_from, "Ripe Old Age");
+      moria_flag = true;
+      death = true;
+      break;
+    default:
+      break;
+    }
+  }
+
+  erase_line(1, 1);
+  refresh();
+}
+
 void make_tomb(char dd[][82]) {
   char str1[82];
   char str2[82];

@@ -8,44 +8,45 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
+#include "ability.h"
 #include "blow.h"
+#include "commands.h"
+#include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "fighting_ranged.h"
-#include "kickout.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "save.h"
-#include "stores.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
 #include "creature.h"
 #include "death.h"
+#include "debug.h"
 #include "desc.h"
+#include "eat.h"
+#include "fighting_ranged.h"
 #include "help.h"
-#include "model_class.h"
-#include "ability.h"
-#include "menu.h"
-#include "traps.h"
-#include "wizard.h"
 #include "inven.h"
 #include "io.h"
-#include "screen.h"
-#include "eat.h"
-#include "player_move.h"
-#include "potions.h"
-#include "scrolls.h"
-#include "staffs.h"
-#include "spells.h"
-#include "wands.h"
+#include "kickout.h"
+#include "magic.h"
+#include "menu.h"
 #include "misc.h"
-#include "random.h"
+#include "model_class.h"
 #include "monsters.h"
+#include "pascal.h"
+#include "player.h"
 #include "player/hunger.h"
 #include "player/regeneration.h"
+#include "player_move.h"
+#include "potions.h"
+#include "random.h"
+#include "save.h"
+#include "screen.h"
+#include "scrolls.h"
+#include "spells.h"
+#include "staffs.h"
+#include "stores.h"
+#include "term.h"
+#include "traps.h"
+#include "types.h"
+#include "variables.h"
+#include "wands.h"
+#include "wizard.h"
 
 #include "main_loop.h"
 
@@ -56,15 +57,15 @@ void C_print_known_spells();
 static boolean light_flag;        /*	{ Used in MOVE_LIGHT  } */
 static boolean cave_flag = false; /*	{ Used in GET_PANEL   } */
 static float acc_exp = 0.0;       /*{ Accumulator for fractional exp} */
-static long old_chp;               /* { Detect change         } */
-static long old_cmana;             /* { Detect change         } */
-static boolean player_light;    /* { Player carrying light } */
-static boolean save_msg_flag;   /* { Msg flag after INKEY  } */
-static char s1[70];             /* { Summon item strings   } */
-static char s2[70];             /* { Summon item strings   } */
-static char s3[70];             /* { Summon item strings   } */
-static char s4[70];             /* { Summon item strings   } */
-static long i_summ_count;       /* { Summon item count	   } */
+static long old_chp;              /* { Detect change         } */
+static long old_cmana;            /* { Detect change         } */
+static boolean player_light;      /* { Player carrying light } */
+static boolean save_msg_flag;     /* { Msg flag after INKEY  } */
+static char s1[70];               /* { Summon item strings   } */
+static char s2[70];               /* { Summon item strings   } */
+static char s3[70];               /* { Summon item strings   } */
+static char s4[70];               /* { Summon item strings   } */
+static long i_summ_count;         /* { Summon item count	   } */
 
 /**
  * -RAK-
@@ -507,18 +508,20 @@ static void d__sun_rise_or_set() {
 
 static void d__check_hours() {
   /*{ Check for game hours                          }*/
-  if (turn % 100 != 1) return;
-  if (!kick__should_kickout()) return;
+  if (turn % 100 != 1)
+    return;
+  if (!kick__should_kickout())
+    return;
 
-    if (search_flag) {
-      search_off();
-    }
-    if (player_flags.rest > 0) {
-      rest_off();
-    }
-    find_flag = false;
+  if (search_flag) {
+    search_off();
+  }
+  if (player_flags.rest > 0) {
+    rest_off();
+  }
+  find_flag = false;
 
-    kick__kickout_player_if_time();
+  kick__kickout_player_if_time();
 }
 
 static void d__print_updated_stats() {
@@ -1974,7 +1977,7 @@ static void d__execute_command(long *command) {
   case CTRL_C: /* ^C signalquit in io.c handles this one, it calls d__quit
                 */
   case '@':
-    d__quit();
+    death_by_quitting();
     reset_flag = true;
     break;
 
@@ -2400,7 +2403,6 @@ static void d__execute_command(long *command) {
     reset_flag = true;
     prt("Type '?' for help...", 1, 1);
     break;
-
   }
 
   LEAVE("d__execute_command", "d");
@@ -2776,46 +2778,6 @@ void unlite_spot(long y, long x) {
   }
 }
 
-void teleport(long dis) {
-  /*{ Teleport the player to a new location                 -RAK-   }*/
-
-  long y, x, i1, i2;
-
-  ENTER(("teleport", "%d", dis));
-
-  do {
-    y = randint(cur_height);
-    x = randint(cur_width);
-    for (; distance(y, x, char_row, char_col) > dis;) {
-      y += trunc((char_row - y) / 2);
-      x += trunc((char_col - x) / 2);
-    }
-  } while (!((cave[y][x].fopen) && (cave[y][x].cptr < 2)));
-
-  move_rec(char_row, char_col, y, x);
-  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
-      /* with cave[i1,i2] do; */
-      cave[i1][i2].tl = false;
-      if (!(test_light(i1, i2))) {
-        unlite_spot(i1, i2);
-      }
-    }
-  }
-
-  if (test_light(char_row, char_col)) {
-    lite_spot(char_row, char_col);
-  }
-
-  char_row = y;
-  char_col = x;
-  move_char(5);
-  creatures(false);
-  teleport_flag = false;
-
-  LEAVE("teleport", "d");
-}
-
 boolean get_panel(long y, long x, boolean forceit) {
   /*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
   /*{ when a move off the screen has occurred and figures new borders}*/
@@ -2857,17 +2819,6 @@ boolean get_panel(long y, long x, boolean forceit) {
   }
 
   return return_value;
-}
-
-void move_rec(long y1, long x1, long y2, long x2) {
-  /*{ Moves creature record from one space to another       -RAK-   }*/
-  /* (x1,y1) might equal (x2,y2) so use a temp var */
-
-  unsigned char i1;
-
-  i1 = cave[y1][x1].cptr;
-  cave[y1][x1].cptr = 0;
-  cave[y2][x2].cptr = i1;
 }
 
 boolean find_range(obj_set const item_val, boolean inner, treas_rec **first,
@@ -4458,19 +4409,10 @@ void get_player_move_rate() {
   }
 }
 
-boolean xor
-    (long thing1, long thing2) {
-      /* with fake boolean values you cant really do a (bool1 !=
-         bool2)
-         and expect it to work.  */
-
-      return !((thing1 && thing2) || (!thing1 && !thing2));
-    }
-
-    long movement_rate(long cspeed, long mon) {
-  /*{ Given speed, returns number of moves this turn.       -RAK-   }*/
-  /*{ NOTE: Player must always move at least once per iteration,    }*/
-  /*{       a slowed player is handled by moving monsters faster    }*/
+/*{ Given speed, returns number of moves this turn.       -RAK-   }*/
+/*{ NOTE: Player must always move at least once per iteration,    }*/
+/*{       a slowed player is handled by moving monsters faster    }*/
+long movement_rate(long cspeed, long mon) {
 
   long final_rate;      /*{ final speed as long }*/
   long c_rate, py_rate; /*{ rate (0,1,2,3) = (0,1/4,1/2,1)
@@ -4518,7 +4460,6 @@ boolean xor
   return return_value;
 }
 
-
 boolean twall(long y, long x, long t1, long t2) {
   /*{ Tunneling through real wall: 10,11,12                 -RAK-   }*/
   /*{ Used by TUNNEL and WALL_TO_MUD                                }*/
@@ -4551,143 +4492,6 @@ boolean twall(long y, long x, long t1, long t2) {
   }
 
   return return_value;
-}
-
-boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,
-                   boolean *redraw) {
-  /*{ Return spell number and failure chance                -RAK-   }*/
-
-  unsigned long i2, i4;
-  long i1, i3, num;
-  spl_type aspell;
-  boolean flag = false;
-
-  i1 = num = 0;
-  i2 = item_ptr->data.flags;
-  i4 = item_ptr->data.flags2;
-
-  do {
-    i3 = bit_pos64(&i4, &i2) + 1;
-    /*{ Avoid the cursed bit like the plague -DMF-   }*/
-    if (i3 > 31) {
-      i3--;
-    }
-    if (i3 > 0) {
-      i3--;
-      if ((C_magic_spell_level(i3) <= player_lev) &&
-          (C_player_knows_spell(i3))) {
-        aspell[i1++].splnum = i3;
-        num = i1;
-      } else {
-        aspell[i1++].splnum = -1; /* leave gaps for unknown spells */
-      }
-    }
-
-  } while (!((i2 == 0) && (i4 == 0)));
-
-  if (num > 0) {
-    flag = get_spell(aspell, num, sn, sc, prompt, redraw);
-  }
-
-  if (*redraw) {
-    draw_cave();
-  }
-
-  return flag;
-}
-
-boolean d__get_dir(char prompt[82], long *dir, long *command_ptr, long *y,
-                   long *x) {
-  /*{ Prompts for a direction                               -RAK-   }*/
-
-  char command;
-  boolean flag = false;
-
-  while (true) {
-    if (!get_com(prompt, &command)) {
-      reset_flag = true;
-      return false;
-    }
-
-    switch (command) {
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-      *command_ptr = (long)command;
-      flag = true;
-      break;
-
-    case 'b':
-      *command_ptr = '1';
-      flag = true;
-      break;
-    case 'j':
-      *command_ptr = '2';
-      flag = true;
-      break;
-    case 'n':
-      *command_ptr = '3';
-      flag = true;
-      break;
-    case 'h':
-      *command_ptr = '4';
-      flag = true;
-      break;
-    case 'l':
-      *command_ptr = '6';
-      flag = true;
-      break;
-    case 'y':
-      *command_ptr = '7';
-      flag = true;
-      break;
-    case 'k':
-      *command_ptr = '8';
-      flag = true;
-      break;
-    case 'u':
-      *command_ptr = '9';
-      flag = true;
-      break;
-
-    default:
-      break;
-    }
-
-    if (flag) {
-      *dir = *command_ptr - '0';
-      move_dir(*dir, y, x);
-      return true;
-    }
-  }
-}
-
-void d__quit() {
-  /* this can be called from signalquit in io.c */
-
-  char command;
-
-  flush();
-  if (get_com("Enter 'Q' to quit (and kill this character)", &command)) {
-    switch (command) {
-    case 'q':
-    case 'Q':
-      strcpy(died_from, "Ripe Old Age");
-      moria_flag = true;
-      death = true;
-      break;
-    default:
-      break;
-    }
-  }
-
-  erase_line(1, 1);
-  refresh();
 }
 
 void dungeon() {

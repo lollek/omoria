@@ -7,6 +7,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
+#include "creature.h"
 #include "constants.h"
 #include "debug.h"
 #include "main_loop.h"

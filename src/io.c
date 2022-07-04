@@ -12,6 +12,7 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
+#include "death.h"
 #include "main_loop.h"
 #include "graphics.h"
 #include "magic.h"
@@ -45,7 +46,7 @@ void signalquit() {
   switch (game_state) {
 
   case GS_GET_COMMAND:
-    d__quit();
+    death_by_quitting();
     break;
 
   case GS_IGNORE_CTRL_C:

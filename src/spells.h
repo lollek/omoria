@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+/*{ Teleport the player to a new location                 -RAK-   }*/
+void teleport(long dis);
 boolean create_water(long y, long x);
 boolean destroy_water(long y, long x);
 boolean item_petrify(void);

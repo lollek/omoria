@@ -5,6 +5,11 @@
 
 #include "types.h"
 
+/* with fake boolean values you cant really do a (bool1 != bool2) and expect it to work.  */
+boolean xor (long thing1, long thing2);
+
+/*{ Prompts for a direction                               -RAK-   }*/
+boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
 long maxmin(long x, long y, long z);
 long minmax(long x, long y, long z);
 long bit_pos(unsigned long *test);

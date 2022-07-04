@@ -2915,12 +2915,42 @@ boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
 
   return true;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+void teleport(long dis) {
 
-/* END FILE  spells.c */
+  long y, x, i1, i2;
+
+  ENTER(("teleport", "%d", dis));
+
+  do {
+    y = randint(cur_height);
+    x = randint(cur_width);
+    for (; distance(y, x, char_row, char_col) > dis;) {
+      y += trunc((char_row - y) / 2);
+      x += trunc((char_col - x) / 2);
+    }
+  } while (!((cave[y][x].fopen) && (cave[y][x].cptr < 2)));
+
+  move_rec(char_row, char_col, y, x);
+  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
+    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+      /* with cave[i1,i2] do; */
+      cave[i1][i2].tl = false;
+      if (!(test_light(i1, i2))) {
+        unlite_spot(i1, i2);
+      }
+    }
+  }
+
+  if (test_light(char_row, char_col)) {
+    lite_spot(char_row, char_col);
+  }
+
+  char_row = y;
+  char_col = x;
+  move_char(5);
+  creatures(false);
+  teleport_flag = false;
+
+  LEAVE("teleport", "d");
+}
