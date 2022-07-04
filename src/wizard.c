@@ -39,13 +39,6 @@
 
 static boolean became_wizard = false;
 
-typedef struct list_elem {
-  treasure_type data;
-  struct list_elem *next;
-} list_elem;
-
-typedef list_elem *list_elem_ptr;
-
 void game_version() {
   /*{ Print Moria credits					-RAK-	}*/
 
@@ -151,19 +144,6 @@ boolean check_pswd(char passwd[134], boolean present) {
     wizard1 = true;
     wizard2 = true;
   }
-  /*
-        if ( uw$id ) then
-          begin
-            get_account(account.body);
-            account.length := index( account.body, ' ' )-1;
-            if index( wizards, ':'+account+':' ) = 0 then
-               begin
-                 wizard1 := false;
-                 wizard2 := false;
-                 checked_out := false;
-               end;
-          end;
-  */
 
   msg_flag = false;
   if (!present) {
@@ -287,84 +267,6 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
   if (!present) {
     erase_line(msg_line, msg_line);
   }
-}
-
-boolean si__get_new_ttype(char s[70], char str[82], char out_str[134]) {
-  /*{prompts for new string, <CR> leaves old value}*/
-  char os[70];
-  boolean flag = false;
-
-  if (strlen(s) > 0) {
-    sprintf(out_str, "%s [%s] : ", str, s);
-  } else {
-    sprintf(out_str, "%s : ", str);
-  }
-
-  prt(out_str, 1, 1);
-  strcpy(os, s);
-
-  if (get_string(s, 1, strlen(out_str) + 1, 40)) {
-    flag = true;
-    if ((strlen(os) > 0) && (strlen(s) == 0)) {
-      strcpy(s, os);
-    }
-  }
-
-  return flag;
-}
-
-void si__pesky_stuff(long *best_value, long *good_value,
-                     treasure_type *best_pick, treasure_type *good_pick,
-                     long *optimize, char out_str[134], long *i_summ_count,
-                     long *cur_pos, long x, long y) {
-  /*{init variables, see if optimizing (1=best, -1= worst); find # of
-   * tries }*/
-  long omax;
-
-  *best_value = LOW_NUM;
-  *good_value = LOW_NUM;
-  *best_pick = yums[5]; /*{rice-a-roni}*/
-  *good_pick = yums[5];
-
-  if (strstr(s4, "Moo.") != NULL) {
-    *optimize = 1;
-  } else if (strstr(s4, "Moo?") != NULL) {
-    *optimize = -1;
-  } else {
-    *optimize = 0;
-  }
-
-  omax = *i_summ_count;
-  sscanf(out_str, "%ld", i_summ_count);
-
-  if (*i_summ_count == 0) {
-    *i_summ_count = omax;
-  }
-  if (*i_summ_count <= 0) {
-    *i_summ_count = 1;
-  }
-  popt(cur_pos);
-  cave[y][x].tptr = *cur_pos;
-  t_list[*cur_pos] = blank_treasure;
-  sprintf(t_list[*cur_pos].name, "& bogus summoned item %ld", *cur_pos);
-}
-
-boolean si__optimize_item(treasure_type *pick, long *value, long optimize,
-                          long cur_pos) {
-  /*{ formula for comparing value of items}*/
-  long i1;
-  boolean flag = false;
-
-  /* with t_list[cur_pos]. do; */
-  i1 = optimize * (t_list[cur_pos].cost + t_list[cur_pos].tohit +
-                   t_list[cur_pos].todam + t_list[cur_pos].toac);
-  if (i1 > *value) {
-    *value = i1;
-    *pick = t_list[cur_pos];
-    flag = true;
-  }
-
-  return flag;
 }
 
 void enter_wizard_mode(boolean ask_for_pass) {
