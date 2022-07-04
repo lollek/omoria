@@ -4,7 +4,7 @@
 
 #include "boolean.h"
 #include "debug.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "player.h"
 #include "variables.h"
 #include "desc.h"

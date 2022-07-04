@@ -12,7 +12,7 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
@@ -32,6 +32,7 @@
 
 #define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
 
+typedef long mm_type[6];
 static const long mon_mult_adj = 7; // High value slows multiplication
 
 void check_mon_lite(long y, long x) {

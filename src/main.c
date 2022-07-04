@@ -21,7 +21,7 @@
 #include "stores.h"
 #include "variables.h"
 #include "death.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "generate_dungeon/generate_dungeon.h"
 #include "port.h"
 

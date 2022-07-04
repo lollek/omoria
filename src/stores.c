@@ -13,7 +13,7 @@
 #include "kickout.h"
 #include "constants.h"
 #include "debug.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"

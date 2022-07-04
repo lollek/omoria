@@ -12,7 +12,7 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "graphics.h"
 #include "magic.h"
 #include "pascal.h"

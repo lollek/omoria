@@ -16,7 +16,7 @@
 #include "debug.h"
 #include "player.h"
 #include "variables.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "io.h"
 #include "screen.h"
 #include "misc.h"

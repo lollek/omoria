@@ -12,7 +12,7 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "dungeon.h"
+#include "main_loop.h"
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
@@ -33,6 +33,8 @@
 #include "spells.h"
 
 #define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */
+#define DRAW_BOLT_DELAY 50
+#define DRAW_BALL_DELAY 30
 
 static const treasure_type scare_monster = /* { Special trap	} */
     {"a strange rune",

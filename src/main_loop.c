@@ -44,7 +44,7 @@
 #include "random.h"
 #include "monsters.h"
 
-#include "dungeon.h"
+#include "main_loop.h"
 
 void C_print_known_spells();
 
@@ -57,17 +57,17 @@ static long old_chp;               /* { Detect change         } */
 static long old_cmana;             /* { Detect change         } */
 static boolean player_light;    /* { Player carrying light } */
 static boolean save_msg_flag;   /* { Msg flag after INKEY  } */
+static char s1[70];             /* { Summon item strings   } */
+static char s2[70];             /* { Summon item strings   } */
+static char s3[70];             /* { Summon item strings   } */
+static char s4[70];             /* { Summon item strings   } */
+static long i_summ_count;       /* { Summon item count	   } */
 
 float regen_amount;      /* { Regenerate hp and mana} */
 boolean moria_flag;      /* { Next level when true  } */
 boolean reset_flag;      /* { Do not move creatures } */
 boolean search_flag;     /* { Player is searching   } */
 boolean teleport_flag;   /* { Handle telport traps  } */
-char s1[70];             /* { Summon item strings   } */
-char s2[70];             /* { Summon item strings   } */
-char s3[70];             /* { Summon item strings   } */
-char s4[70];             /* { Summon item strings   } */
-long i_summ_count;       /* { Summon item count	   } */
 
 /**
  * -RAK-
