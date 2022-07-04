@@ -1,5 +1,5 @@
 use model;
-use logic::generate_item;
+use generate_item;
 use item_template;
 
 pub fn name(class: &model::Class) -> &'static str {
@@ -266,5 +266,5 @@ pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
             Box::new(item_template::DaggerTemplate::Stiletto),
         ],
     };
-    templates.into_iter().map(|x| generate_item::create_item(x, 0)).collect()
+    templates.into_iter().map(|x| generate_item::generate(x, 0)).collect()
 }

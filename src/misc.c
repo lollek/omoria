@@ -17,7 +17,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "logic/generate_item.h"
+#include "generate_item/generate_item.h"
 #include "death.h"
 #include "model_class.h"
 #include "model_item.h"

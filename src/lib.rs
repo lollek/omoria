@@ -6,17 +6,17 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+extern crate enum_iterator;
 extern crate libc;
+extern crate pancurses;
 extern crate serde;
 extern crate serde_json;
-extern crate pancurses;
-extern crate enum_iterator;
 
 mod pregame;
 
-pub mod conversion;
 pub mod commands;
 pub mod constants;
+pub mod conversion;
 pub mod data;
 pub mod debug;
 pub mod dungeon;
@@ -25,6 +25,7 @@ pub mod error;
 pub mod flow;
 pub mod highscore;
 pub mod io;
+pub mod item_template;
 pub mod logic;
 pub mod magic;
 pub mod master;
@@ -38,13 +39,13 @@ pub mod player;
 pub mod random;
 pub mod save;
 pub mod screen;
-pub mod item_template;
 pub mod term;
 pub mod thirdparty;
 
 pub mod bank_extern;
 pub mod commands_extern;
 pub mod constants_extern;
+pub mod generate_item;
 pub mod highscore_extern;
 pub mod misc_extern;
 pub mod ncurses_extern;

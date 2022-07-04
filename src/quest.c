@@ -18,7 +18,7 @@
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "logic/generate_item.h"
+#include "generate_item/generate_item.h"
 #include "desc.h"
 #include "inven.h"
 #include "screen.h"

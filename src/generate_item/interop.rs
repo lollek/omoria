@@ -2,7 +2,7 @@ use libc;
 
 use debug;
 use model::Item;
-use logic::generate_item;
+use generate_item;
 
 #[no_mangle]
 pub extern fn generate_item_level_for_dungeon_level(dungeon_level: libc::uint8_t, tries: libc::uint8_t) -> libc::uint8_t {

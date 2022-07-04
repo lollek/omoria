@@ -21,7 +21,7 @@
 #include "variables.h"
 #include "creature.h"
 #include "desc.h"
-#include "logic/generate_item.h"
+#include "generate_item/generate_item.h"
 #include "traps.h"
 #include "inven.h"
 #include "screen.h"
