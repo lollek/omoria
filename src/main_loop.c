@@ -9,6 +9,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
+#include "blow.h"
 #include "constants.h"
 #include "debug.h"
 #include "fighting_ranged.h"
@@ -4517,21 +4518,6 @@ boolean xor
   return return_value;
 }
 
-void desc_remain(treas_rec *item_ptr) {
-  /*{ Describe amount of item remaining...                  -RAK-   }*/
-
-  char out_val[82];
-  char out_val2[120];
-
-  inven_temp.data = item_ptr->data;
-
-  /* with inven_temp->data do; */
-
-  inven_temp.data.number--;
-  objdes(out_val, &inven_temp, true);
-  sprintf(out_val2, "You have %s.", out_val);
-  msg_print(out_val2);
-}
 
 boolean twall(long y, long x, long t1, long t2) {
   /*{ Tunneling through real wall: 10,11,12                 -RAK-   }*/
@@ -4565,17 +4551,6 @@ boolean twall(long y, long x, long t1, long t2) {
   }
 
   return return_value;
-}
-
-void desc_charges(treas_rec *item_ptr) {
-  /*{ Describe number of remaining charges...               -RAK-   }*/
-
-  char out_val[82];
-
-  if (strstr(item_ptr->data.name, "^") == NULL) {
-    sprintf(out_val, "You have %ld charges remaining.", item_ptr->data.p1);
-    msg_print(out_val);
-  }
 }
 
 boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,

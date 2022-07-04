@@ -4,6 +4,11 @@
 
 #include "types.h"
 
+/* index stuff for door_list */
+#define DL_OPEN 0
+#define DL_CLOSED 1
+#define DL_SECRET 2
+
 extern treas_rec *cur_inven;      /* { Current inven page  } */
 extern money_type bank;           /* { Bank's money	 } */
 extern money_type coin_value;     /* { Copy of money values} */

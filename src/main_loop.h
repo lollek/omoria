@@ -1,31 +1,13 @@
 #ifndef MAIN_LOOP_H
 #define MAIN_LOOP_H
-/* there were not enough globals in variables.h */
 
 #include "types.h"
 
-/* index stuff for door_list */
-#define DL_OPEN 0
-#define DL_CLOSED 1
-#define DL_SECRET 2
-
-boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
-void desc_remain(treas_rec *item_ptr);
-void desc_charges(treas_rec *item_ptr);
-boolean move_to_creature(long dir, long *y, long *x);
-boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
-                         boolean visable);
 boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn, long *sc,
                    boolean *redraw);
 boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
-boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
-                const char *descrip);
 void teleport(long dis);
-boolean create_water(long y, long x);
-boolean destroy_water(long y, long x);
-boolean item_petrify(void);
 boolean xor (long thing1, long thing2);
-void blow(void);
 void d__quit(void);
 
 void C_commands_show_class_restrictions(void);

@@ -20,6 +20,32 @@
 
 #include "desc.h"
 
+/*{ Describe amount of item remaining...                  -RAK-   }*/
+void desc_remain(treas_rec *item_ptr) {
+
+  char out_val[82];
+  char out_val2[120];
+
+  inven_temp.data = item_ptr->data;
+
+  /* with inven_temp->data do; */
+
+  inven_temp.data.number--;
+  objdes(out_val, &inven_temp, true);
+  sprintf(out_val2, "You have %s.", out_val);
+  msg_print(out_val2);
+}
+
+/*{ Describe number of remaining charges...               -RAK-   }*/
+void desc_charges(treas_rec *item_ptr) {
+  char out_val[82];
+
+  if (strstr(item_ptr->data.name, "^") == NULL) {
+    sprintf(out_val, "You have %ld charges remaining.", item_ptr->data.p1);
+    msg_print(out_val);
+  }
+}
+
 void rantitle(char *title) {
   /*{ Return random title						}*/
 

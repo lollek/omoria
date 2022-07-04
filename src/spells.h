@@ -3,6 +3,15 @@
 
 #include "types.h"
 
+boolean create_water(long y, long x);
+boolean destroy_water(long y, long x);
+boolean item_petrify(void);
+boolean move_to_creature(long dir, long *y, long *x);
+boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
+                         boolean visable);
+boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
+                const char *descrip);
+boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
 boolean mon_resists(unsigned char a_cptr);
 boolean mon_save(long a_cptr, long bonus, enum spell_class_t spell_class);
 boolean sleep_monsters1(long y, long x);
