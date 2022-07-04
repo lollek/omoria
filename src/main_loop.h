@@ -4,7 +4,6 @@
 
 #include "types.h"
 
-extern float regen_amount;      /* { Regenerate hp and mana} */
 extern boolean moria_flag;      /* { Next level when true  } */
 extern boolean reset_flag;      /* { Do not move creatures } */
 extern boolean search_flag;     /* { Player is searching   } */
@@ -24,7 +23,6 @@ extern boolean teleport_flag;   /* { Handle telport traps  } */
 
 boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
 void desc_remain(treas_rec *item_ptr);
-void add_food(long num);
 void desc_charges(treas_rec *item_ptr);
 boolean move_to_creature(long dir, long *y, long *x);
 boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,

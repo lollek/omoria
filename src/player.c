@@ -133,7 +133,7 @@ void rest_off() {
 void regenmana(float percent) {
   /*{ Regenerate mana points		-RAK-	}*/
 
-  player_cmana += player_mana * percent + PLAYER_REGEN_MNBASE;
+  player_cmana += player_mana * percent + 0.0080;
 }
 
 void take_hit(long damage, char hit_from[82]) {

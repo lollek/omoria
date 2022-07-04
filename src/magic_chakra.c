@@ -20,6 +20,7 @@
 #include "spells.h"
 #include "misc.h"
 #include "random.h"
+#include "player/hunger.h"
 
 void chakra_spell_effects(long effect) {
   /*{ Disciplines....}*/
@@ -38,8 +39,7 @@ void chakra_spell_effects(long effect) {
     break;
 
   case 4: /*{ Negate Hunger } */
-    player_flags.foodc = PLAYER_FOOD_FULL + 4000;
-    player_flags.status &= ~(IS_HUNGERY | IS_WEAK);
+    player_hunger_set_status(FULL);
     prt_hunger();
     msg_print("You are full.");
     break;

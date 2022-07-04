@@ -27,6 +27,8 @@
 #include "screen.h"
 #include "misc.h"
 #include "random.h"
+#include "player/hunger.h"
+#include "player/regeneration.h"
 
 typedef struct owner_type {
   char owner_name[82];
@@ -1333,8 +1335,7 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
     if (stores[store_type].store_inven[selected_item].sitem.subval == 303) {
       spend_time(600, "eating.", false);
       msg_print("You eat a leisurely meal of buckwheat cakes and bacon.");
-      player_flags.foodc = PLAYER_FOOD_FULL;
-      player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
+      player_hunger_set_status(FULL);
       msg_print(" ");
     }
     return_value = true;
@@ -2297,14 +2298,15 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
   case 0:
   case 1:
     player_flags.foodc -= time_spent;
-    if (player_flags.foodc <= PLAYER_FOOD_ALERT) {
+    enum hunger_status_t hunger_status = player_hunger_status();
+    if (hunger_status < HUNGRY) {
       /* free food if you were hungry when you got here? */
-      player_flags.foodc = PLAYER_FOOD_ALERT + 1;
+      player_hunger_set_status(HUNGRY);
     }
     break;
 
   default:
-    player_flags.foodc = PLAYER_FOOD_FULL - 1;
+    player_hunger_set_status(FULL);
     break;
   }
 
@@ -2314,7 +2316,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
     store_maint();
   }
 
-  float regen_percent = regen_amount * 2 * time_spent;
+  float regen_percent = player_regeneration_get_amount() * 2 * time_spent;
   if (regen_percent > 1.00)
     regen_percent = 1.00;
   if (C_player_current_hp() < C_player_max_hp())

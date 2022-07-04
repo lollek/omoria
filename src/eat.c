@@ -22,6 +22,7 @@
 #include "spells.h"
 #include "misc.h"
 #include "random.h"
+#include "player/hunger.h"
 
 static boolean __eat_eyeball_of_drong(void) {
 
@@ -227,7 +228,7 @@ static boolean __apply_food_effects(treas_rec *item_ptr) {
 
       /* fill player to full, then adds food value */
     case 30:
-      player_flags.foodc = PLAYER_FOOD_FULL;
+      player_hunger_set_status(FULL);
       msg_print("Yum!");
       break;
 
@@ -306,9 +307,7 @@ void eat() {
     prt_stat_block();
   }
 
-  add_food(item_ptr->data.p1);
-  player_flags.status &= ~(IS_HUNGERY | IS_WEAK);
-  prt_hunger();
+  player_hunger_eat(item_ptr->data.p1);
   desc_remain(item_ptr);
   inven_destroy(item_ptr);
   prt_stat_block();

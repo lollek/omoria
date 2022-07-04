@@ -20,6 +20,7 @@
 #include "spells.h"
 #include "misc.h"
 #include "random.h"
+#include "player/hunger.h"
 
 void divine_spell_effects(long effect) {
 
@@ -199,7 +200,7 @@ void divine_spell_effects(long effect) {
 
   case 39: /*{ Hero's Feast }*/
     msg_print("You have a marvelous meal!");
-    player_flags.foodc = PLAYER_FOOD_FULL + 4000;
+    player_hunger_set_status(FULL);
     prt_hunger();
     hp_player(200, "a prayer.");
     create_food(6, 4, 3, 2, 1);

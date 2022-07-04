@@ -43,6 +43,8 @@
 #include "misc.h"
 #include "random.h"
 #include "monsters.h"
+#include "player/hunger.h"
+#include "player/regeneration.h"
 
 #include "main_loop.h"
 
@@ -63,7 +65,6 @@ static char s3[70];             /* { Summon item strings   } */
 static char s4[70];             /* { Summon item strings   } */
 static long i_summ_count;       /* { Summon item count	   } */
 
-float regen_amount;      /* { Regenerate hp and mana} */
 boolean moria_flag;      /* { Next level when true  } */
 boolean reset_flag;      /* { Do not move creatures } */
 boolean search_flag;     /* { Player is searching   } */
@@ -567,83 +568,6 @@ static void d__check_light_status() {
   LEAVE("d__check_light_status", "d");
 }
 
-static void d__hunger_interrupt(char *message) {
-  msg_print(message);
-  msg_flag = 0;
-  rest_off();
-}
-
-static void d__check_food() {
-  /*{ Check food status             }*/
-  regen_amount = PLAYER_REGEN_NORMAL;
-  if (((player_flags).hunger_item) &&
-      ((player_flags).foodc > (PLAYER_FOOD_ALERT + 15))) {
-    (player_flags).foodc = PLAYER_FOOD_ALERT + 15;
-  }
-
-  if ((player_flags).foodc < PLAYER_FOOD_ALERT) {
-    if ((player_flags).foodc < PLAYER_FOOD_WEAK) {
-
-      if ((player_flags).foodc < 0) {
-        regen_amount = 0;
-      } else if ((player_flags).foodc < PLAYER_FOOD_FAINT) {
-        regen_amount = PLAYER_REGEN_FAINT;
-      } else if ((player_flags).foodc < PLAYER_FOOD_WEAK) {
-        regen_amount = PLAYER_REGEN_WEAK;
-      }
-
-      if ((IS_WEAK & (player_flags).status) == 0) {
-        (player_flags).status |= (IS_WEAK | IS_HUNGERY);
-        d__hunger_interrupt("You are getting weak from hunger.");
-        if (find_flag) {
-          move_char(5);
-        }
-        prt_hunger();
-        player_wt -= trunc(player_wt * 0.015);
-        d__hunger_interrupt("Your clothes seem to be getting loose.");
-        if (player_wt < min_allowable_weight()) {
-          msg_print("Oh no...  Now you've done it.");
-          death = true;
-          moria_flag = true;
-          total_winner = false;
-          strcpy(died_from, "starvation");
-        }
-      }
-
-      if ((player_flags).foodc < 0) {
-        if (randint(5) == 1) {
-          (player_flags).paralysis += randint(3);
-          d__hunger_interrupt("You faint from the lack of food.");
-          if (find_flag) {
-            move_char(5);
-          }
-        } else if ((player_flags).foodc < PLAYER_FOOD_FAINT) {
-          if (randint(8) == 1) {
-            (player_flags).paralysis += randint(5);
-            d__hunger_interrupt("You faint from the lack "
-                                "of food.");
-            if (find_flag) {
-              move_char(5);
-            }
-          }
-        }
-      } /* end if (food < 0) */
-
-    } else {
-      /* alert, but not weak */
-      if ((IS_HUNGERY & (player_flags).status) == 0) {
-        (player_flags).status |= IS_HUNGERY;
-        d__hunger_interrupt("You are getting hungry.");
-        if (find_flag) {
-          move_char(5);
-        }
-        prt_hunger();
-      }
-    }
-
-  } /* end if (food < alert) */
-}
-
 static void d__eat_food() {
   /*{ Food consumtion       }*/
   /*{ Note: Speeded up characters really burn up the food!  }*/
@@ -676,14 +600,7 @@ static void d__eat_food() {
 }
 
 static void d__regenerate() {
-  /*{ Regenerate            }*/
-  /* with player_do; */
-  if ((player_flags).regenerate) {
-    regen_amount *= 1.5;
-  }
-  if ((player_flags).rest > 0) {
-    regen_amount *= 2;
-  }
+  float const regen_amount = player_regeneration_get_amount();
   if (player_flags.poisoned < 1) {
     if (C_player_current_hp() < C_player_max_hp()) {
       C_player_regen_hp(regen_amount);
@@ -3243,8 +3160,7 @@ void eat_the_meal() {
   switch (yummers) {
   case 15:
     msg_print("It is a sumptuous banquet, and you feel quite stuffed.");
-    player_flags.foodc = PLAYER_FOOD_MAX;
-    player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
+    player_hunger_set_status(BLOATED);
     prt_hunger();
     change_rep(3);
     break;
@@ -3255,8 +3171,7 @@ void eat_the_meal() {
   case 9:
   case 10:
     msg_print("It is an ample meal, and you feel full.");
-    player_flags.foodc = PLAYER_FOOD_FULL;
-    player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
+    player_hunger_set_status(FULL);
     prt_hunger();
     change_rep(1);
     break;
@@ -4621,46 +4536,6 @@ void desc_remain(treas_rec *item_ptr) {
   msg_print(out_val2);
 }
 
-void add_food(long num) {
-  /*{ Add to the players food time                          -RAK-   }*/
-
-  /* with player_flags do; */
-  if ((player_flags).foodc < 0) {
-    (player_flags).foodc = 0;
-  }
-  (player_flags).foodc += num;
-
-  if ((player_flags).foodc > PLAYER_FOOD_FULL) {
-    msg_print("You are full.");
-  }
-
-  if ((player_flags).foodc > PLAYER_FOOD_MAX) {
-    msg_print("You're getting fat from eating so much.");
-    (player_flags).foodc = PLAYER_FOOD_MAX;
-    player_wt += trunc(player_wt * 0.1);
-    if (player_wt > max_allowable_weight()) {
-      msg_print("Oh no...  Now you've done it.");
-      death = true;
-      moria_flag = true;
-      total_winner = false;
-      strcpy(died_from, "gluttony");
-    } else {
-      switch (randint(3)) {
-      case 1:
-        msg_print("Buuurrrppppp !");
-        break;
-      case 2:
-        msg_print("Remember, obesity kills.");
-        break;
-      case 3:
-        msg_print("Your armor doesn't seem to fit too "
-                  "well anymore.");
-        break;
-      }
-    }
-  }
-}
-
 boolean twall(long y, long x, long t1, long t2) {
   /*{ Tunneling through real wall: 10,11,12                 -RAK-   }*/
   /*{ Used by TUNNEL and WALL_TO_MUD                                }*/
@@ -4921,7 +4796,7 @@ void dungeon() {
     /*{ Update counters and messages			}*/
     /* with player_flags do; */
 
-    d__check_food();
+    player_hunger_recalculate();
     d__eat_food();
     d__regenerate();
     d__update_blindness();

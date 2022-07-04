@@ -73,16 +73,6 @@
 #define USE_DEVICE 3           /*{ x> Harder devices x< Easier devices	} */
 #define NUM_QUESTS 5           /*{ # of possible quests to select from	} */
 #define BASE_FOOD_DIGESTED 2   /* food digested per turn */
-#define PLAYER_FOOD_FULL 10000 /*{ Getting full				} */
-#define PLAYER_FOOD_MAX 15000  /*{ Maximum food value, beyond is wasted	} */
-#define PLAYER_FOOD_FAINT 300  /*{ Character begins fainting		} */
-#define PLAYER_FOOD_WEAK 1000  /*{ Warn player that he is getting very low} */
-#define PLAYER_FOOD_ALERT 2000 /*{ Warn player that he is getting low	} */
-#define PLAYER_REGEN_FAINT 0.0005  /*{ Regen factor when fainting	} */
-#define PLAYER_REGEN_WEAK 0.0015   /*{ Regen factor when weak	} */
-#define PLAYER_REGEN_NORMAL 0.0030 /*{ Regen factor when full	} */
-#define PLAYER_REGEN_HPBASE 0.0220 /*{ Min amount hp regen		} */
-#define PLAYER_REGEN_MNBASE 0.0080 /*{ Min amount mana regen	} */
 #define PLAYER_WEIGHT_CAP 13       /*{ "#"*(1/10 pounds) per strength point	} */
 #define PLAYER_EXIT_PAUSE 0        /*{ Pause time before player can re-roll	} */
 #define MAX_HIGH_SCORES 100 /*{ Maximum number of high scores to keep } */

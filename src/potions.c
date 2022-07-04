@@ -9,19 +9,20 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "main_loop.h"
+#include "desc.h"
+#include "inven.h"
 #include "magic.h"
+#include "main_loop.h"
+#include "misc.h"
 #include "pascal.h"
 #include "player.h"
+#include "player/hunger.h"
+#include "random.h"
+#include "screen.h"
+#include "spells.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
 
 void q__potion_effect(long effect, boolean *idented) {
   long i4, i5;
@@ -224,9 +225,7 @@ void q__potion_effect(long effect, boolean *idented) {
 
   case 39: /*{ Restore Level }*/
     ident = restore_level();
-    add_food(5000);
-    player_flags.status &= ~(IS_WEAK | IS_HUNGERY);
-    prt_hunger();
+    player_hunger_eat(5000);
     break;
 
   case 40: /*{ Resist Heat }*/
@@ -362,7 +361,7 @@ void quaff() {
           prt_stat_block();
         }
 
-        add_food(item_ptr->data.p1);
+        player_hunger_eat(item_ptr->data.p1);
         desc_remain(item_ptr);
         inven_destroy(item_ptr);
         prt_stat_block();
