@@ -25,7 +25,6 @@ pub mod error;
 pub mod flow;
 pub mod highscore;
 pub mod io;
-pub mod item_template;
 pub mod logic;
 pub mod magic;
 pub mod master;

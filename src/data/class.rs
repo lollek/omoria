@@ -1,6 +1,7 @@
 use model;
 use generate_item;
-use item_template;
+use generate_item::ItemTemplate;
+use generate_item::template::*;
 
 pub fn name(class: &model::Class) -> &'static str {
     match class {
@@ -224,46 +225,46 @@ pub fn magic_type(class: &model::Class) -> Option<model::Magic> {
 
 
 pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
-    let templates: Vec<Box<dyn item_template::ItemTemplate>> = match class {
+    let templates: Vec<Box<dyn ItemTemplate>> = match class {
         model::Class::Fighter => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
+            Box::new(DaggerTemplate::Stiletto),
         ],
         model::Class::Wizard => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
-            Box::new(item_template::MagicBookTemplate::BeginnersMagic),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(MagicBookTemplate::BeginnersMagic),
             ],
         model::Class::Cleric => vec![
-            Box::new(item_template::MaceTemplate::IronShodQuarterstaff),
-            Box::new(item_template::PrayerBookTemplate::BeginnersHandbook),
+            Box::new(MaceTemplate::IronShodQuarterstaff),
+            Box::new(PrayerBookTemplate::BeginnersHandbook),
         ],
         model::Class::Rogue => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
-            Box::new(item_template::SongBookTemplate::BeginnersHandbook),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(SongBookTemplate::BeginnersHandbook),
         ],
         model::Class::Ranger => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
-            Box::new(item_template::InstrumentTemplate::PipesOfPeace),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(InstrumentTemplate::PipesOfPeace),
         ],
         model::Class::Paladin => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
-            Box::new(item_template::PrayerBookTemplate::BeginnersHandbook),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(PrayerBookTemplate::BeginnersHandbook),
         ],
         model::Class::Druid => vec![
-            Box::new(item_template::MaceTemplate::IronShodQuarterstaff),
-            Box::new(item_template::InstrumentTemplate::PipesOfPeace),
+            Box::new(MaceTemplate::IronShodQuarterstaff),
+            Box::new(InstrumentTemplate::PipesOfPeace),
         ],
         model::Class::Bard => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
-            Box::new(item_template::SongBookTemplate::BeginnersHandbook),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(SongBookTemplate::BeginnersHandbook),
         ],
         model::Class::Adventurer => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
-            Box::new(item_template::MagicBookTemplate::BeginnersMagic),
+            Box::new(DaggerTemplate::Stiletto),
+            Box::new(MagicBookTemplate::BeginnersMagic),
         ],
         model::Class::Monk => vec![
         ],
         model::Class::Barbarian => vec![
-            Box::new(item_template::DaggerTemplate::Stiletto),
+            Box::new(DaggerTemplate::Stiletto),
         ],
     };
     templates.into_iter().map(|x| generate_item::generate(x, 0)).collect()

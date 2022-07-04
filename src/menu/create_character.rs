@@ -9,8 +9,8 @@ use conversion;
 use data;
 use debug;
 use io;
-use item_template;
 use generate_item;
+use generate_item::template::*;
 use logic::menu;
 use misc;
 use player;
@@ -1203,18 +1203,18 @@ fn add_equipment() {
     let mut general_starting_items = Vec::new();
 
     let mut ration_of_food =
-        generate_item::generate(Box::new(item_template::FoodTemplate::RationOfFood), 0);
+        generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
     ration_of_food.number = 5;
     general_starting_items.push(ration_of_food);
 
     let torch =
-        generate_item::generate(Box::new(item_template::LightSourceTemplate::WoodenTorch), 0);
+        generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0);
     general_starting_items.push(torch);
     let light_cloak =
-        generate_item::generate(Box::new(item_template::CloakTemplate::LightCloak), 0);
+        generate_item::generate(Box::new(CloakTemplate::LightCloak), 0);
     general_starting_items.push(light_cloak);
     let soft_leather_armor =
-        generate_item::generate(Box::new(item_template::ArmorTemplate::SoftLeatherArmor), 0);
+        generate_item::generate(Box::new(ArmorTemplate::SoftLeatherArmor), 0);
     general_starting_items.push(soft_leather_armor);
 
     for item in general_starting_items {
