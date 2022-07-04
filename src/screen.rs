@@ -233,11 +233,11 @@ pub fn print_stat_block() {
     debug::leave("print_stat_block");
 }
 
-fn print_visible_monsters(row: &mut u8, col: u8) {
+fn print_visible_monsters(_row: &mut u8, _col: u8) {
     // print "VISIBLE MONSTERS"
 }
 
-fn print_visible_items(row: u8, col: u8) {
+fn print_visible_items(_row: u8, _col: u8) {
     // print "VISIBLE ITEMS"
 }
 
