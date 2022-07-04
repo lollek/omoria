@@ -28,6 +28,7 @@
 
 #include "inven.h"
 
+#define DISPLAY_SIZE 20
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)
 #define GOLD_POS (MAX_GOLD - 2)

@@ -16,6 +16,10 @@ extern long dun_level;             /* { Cur dungeon level   } */
 extern long missle_ctr;            /* { Counter for missles } */
 extern long msg_line;              /* { Contains message txt} */
 extern boolean msg_flag;           /* { Set with first msg  } */
+extern boolean moria_flag;      /* { Next level when true  } */
+extern boolean reset_flag;      /* { Do not move creatures } */
+extern boolean search_flag;     /* { Player is searching   } */
+extern boolean teleport_flag;   /* { Handle telport traps  } */
 extern long quest[NUM_QUESTS + 1]; /* {quest data} */
 extern char old_msg[82];           /* { Last message	      } */
 extern boolean want_trap;          /* { True = trap messages} */

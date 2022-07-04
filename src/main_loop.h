@@ -4,22 +4,10 @@
 
 #include "types.h"
 
-extern boolean moria_flag;      /* { Next level when true  } */
-extern boolean reset_flag;      /* { Do not move creatures } */
-extern boolean search_flag;     /* { Player is searching   } */
-extern boolean teleport_flag;   /* { Handle telport traps  } */
-
-#define DISPLAY_SIZE 20
-#define MOO_DISPLAY_SIZE 18
-
 /* index stuff for door_list */
 #define DL_OPEN 0
 #define DL_CLOSED 1
 #define DL_SECRET 2
-
-#define ML(mmm) (m_list[(mmm)])
-#define MY(mmm) (m_list[(mmm)].fy)
-#define MX(mmm) (m_list[(mmm)].fx)
 
 boolean do_stun(unsigned char a_cptr, long save_bonus, long time);
 void desc_remain(treas_rec *item_ptr);

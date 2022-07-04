@@ -65,11 +65,6 @@ static char s3[70];             /* { Summon item strings   } */
 static char s4[70];             /* { Summon item strings   } */
 static long i_summ_count;       /* { Summon item count	   } */
 
-boolean moria_flag;      /* { Next level when true  } */
-boolean reset_flag;      /* { Do not move creatures } */
-boolean search_flag;     /* { Player is searching   } */
-boolean teleport_flag;   /* { Handle telport traps  } */
-
 /**
  * -RAK-
  * s__panel_bounds() - Calculates current boundries
@@ -4484,8 +4479,10 @@ boolean xor
   /* with m_list[mon] do; */
   /* with c_list[mptr] do; */
   /* with cave[fy,fx] do; */
-  if (xor((is_in(cave[MY(mon)][MX(mon)].fval, earth_set) ||
-           is_in(cave[MY(mon)][MX(mon)].fval, pwall_set)),
+  uint8_t const monster_y = m_list[mon].fy;
+  uint8_t const monster_x = m_list[mon].fx;
+  if (xor((is_in(cave[monster_y][monster_x].fval, earth_set) ||
+           is_in(cave[monster_y][monster_x].fval, pwall_set)),
           ((c_list[m_list[mon].mptr].cmove & 0x00000010) == 0))) {
     c_rate = (long)((c_list[m_list[mon].mptr].cmove & 0x00000300) / 256);
   } else {

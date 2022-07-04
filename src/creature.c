@@ -30,6 +30,9 @@
 
 #include "creature.h"
 
+#define ML(mmm) (m_list[(mmm)])
+#define MY(mmm) (m_list[(mmm)].fy)
+#define MX(mmm) (m_list[(mmm)].fx)
 #define OBJ_RUNE_PROT 3000 /*{ Rune of protection resistance	} */
 
 typedef long mm_type[6];

@@ -39,6 +39,10 @@ boolean death = false;          /*	{ True if died	      } */
 char died_from[82];             /*	{ What killed him     } */
 long turn_counter = 100000;     /*	{ Turns ellapsed      } */
 boolean find_flag;              /*	{ Used in MORIA	      } */
+boolean moria_flag;      /* { Next level when true  } */
+boolean reset_flag;      /* { Do not move creatures } */
+boolean search_flag;     /* { Player is searching   } */
+boolean teleport_flag;   /* { Handle telport traps  } */
 boolean redraw;                 /*	{ For redraw screen   } */
 unsigned long print_stat = 0;   /*	{ Flag for stats      } */
 long turn = 0;                  /*	{ Cur trun of game    } */
