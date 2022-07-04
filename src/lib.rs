@@ -26,7 +26,6 @@ pub mod flow;
 pub mod highscore;
 pub mod io;
 pub mod logic;
-pub mod magic;
 pub mod master;
 pub mod master_interop;
 pub mod menu;

@@ -1,8 +1,8 @@
 use std::ffi::CStr;
 
+use conversion;
 use data;
 use io;
-use magic;
 use player;
 use term;
 use model::{ Damage, Name };
@@ -68,8 +68,8 @@ pub fn mod_to_string(stat: i64, base: i64) -> &'static str {
 pub fn print_known_spells() {
     term::clear_from(1);
     term::prt("   Name                         Level  Mana   Known", 1, 1);
-    for i in magic::spells_iter() {
-        let spell = magic::spell(i);
+    for i in 0..40 {
+        let spell = conversion::spell::from_usize_or_blank(player::class(), i);
         let player_knows_spell = if player::knows_spell(i) {
             "true"
         } else {
