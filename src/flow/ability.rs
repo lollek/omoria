@@ -1,10 +1,10 @@
-use debug;
-use data;
-use io;
-use logic::menu;
-use term;
-use player;
-use model;
+use crate::debug;
+use crate::data;
+use crate::io;
+use crate::logic::menu;
+use crate::term;
+use crate::player;
+use crate::model;
 
 // Let the player select an action
 // Returns true if the turn was free (i.e. don't take a turn)

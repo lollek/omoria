@@ -1,8 +1,8 @@
 use libc;
 
-use debug;
-use model::Item;
-use generate_item;
+use crate::debug;
+use crate::model::Item;
+use crate::generate_item;
 
 #[no_mangle]
 pub extern fn generate_item_level_for_dungeon_level(dungeon_level: libc::uint8_t, tries: libc::uint8_t) -> libc::uint8_t {

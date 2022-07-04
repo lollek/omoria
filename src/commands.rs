@@ -1,7 +1,7 @@
-use data;
-use logic::menu;
-use player;
-use term;
+use crate::data;
+use crate::logic::menu;
+use crate::player;
+use crate::term;
 
 pub fn show_class_restrictions() {
     let class = player::class();

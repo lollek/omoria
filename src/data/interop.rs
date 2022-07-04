@@ -1,9 +1,9 @@
 use libc;
 
-use conversion;
-use data;
-use debug;
-use model::Item;
+use crate::conversion;
+use crate::data;
+use crate::debug;
+use crate::model::Item;
 
 #[no_mangle]
 pub extern "C" fn C_class_melee_bonus(class: libc::int32_t) -> libc::int8_t {

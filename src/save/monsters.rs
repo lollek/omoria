@@ -1,8 +1,8 @@
 use libc;
 
-use constants;
-use debug;
-use model::{ Cave, Monster, MonsterRecord };
+use crate::constants;
+use crate::debug;
+use crate::model::{ Cave, Monster, MonsterRecord };
 
 extern "C" {
     #[link_name = "mlink"] fn C_mlink();

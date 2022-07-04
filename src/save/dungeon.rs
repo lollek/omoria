@@ -1,8 +1,8 @@
 use libc;
 
-use constants;
-use debug;
-use model::{ Cave, DungeonRecord, Item, TreasureAndCoordinate };
+use crate::constants;
+use crate::debug;
+use crate::model::{ Cave, DungeonRecord, Item, TreasureAndCoordinate };
 
 
 extern "C" {

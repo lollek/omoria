@@ -1,6 +1,6 @@
 use libc;
 
-use model::Item;
+use crate::model::Item;
 
 #[repr(C)]
 #[derive(Serialize, Deserialize)]

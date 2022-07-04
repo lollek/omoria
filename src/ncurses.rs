@@ -8,7 +8,7 @@ pub use pancurses::{
     A_REVERSE, A_DIM
 };
 
-use debug;
+use crate::debug;
 
 thread_local! {
     static STDSCR: RefCell<Option<pancurses::Window>> = RefCell::new(None);

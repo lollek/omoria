@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 
-use data;
-use misc;
-use model::{Item, ItemType};
+use crate::data;
+use crate::misc;
+use crate::model::{Item, ItemType};
 
 fn number_of<'a>(item: &Item) -> Cow<'a, str> {
     match item.number {

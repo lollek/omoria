@@ -1,4 +1,4 @@
-use model;
+use crate::model;
 
 pub fn from_usize(pos: usize) -> Option<model::Class> {
     match pos {

@@ -1,12 +1,12 @@
 use std::fs;
 use std::cmp::min;
 
-use constants;
-use debug;
-use io;
-use logic::menu;
-use player;
-use term;
+use crate::constants;
+use crate::debug;
+use crate::io;
+use crate::logic::menu;
+use crate::player;
+use crate::term;
 
 #[derive(Clone, Debug)]
 struct Character {

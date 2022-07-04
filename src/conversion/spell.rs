@@ -1,4 +1,4 @@
-use model::{Class, Spell};
+use crate::model::{Class, Spell};
 
 fn from_usize_for_adventurer(level: usize) -> Option<Spell> {
     match level {

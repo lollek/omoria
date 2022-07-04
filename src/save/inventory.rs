@@ -3,8 +3,8 @@ use libc;
 use std::ptr;
 use std::mem;
 
-use debug;
-use model::{ InventoryItem };
+use crate::debug;
+use crate::model::{ InventoryItem };
 
 extern "C" {
     static mut inventory_list: *mut InventoryItem;

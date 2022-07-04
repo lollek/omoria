@@ -1,6 +1,6 @@
-use term;
-use ncurses;
-use io;
+use crate::term;
+use crate::ncurses;
+use crate::io;
 
 const WIDTH: usize = 80;
 const MAX_X: usize = WIDTH - 5;

@@ -1,9 +1,9 @@
 use std::ffi::CString;
 use libc;
 
-use debug;
-use misc;
-use ncurses;
+use crate::debug;
+use crate::misc;
+use crate::ncurses;
 
 extern "C" {
     #[link_name="msg_flag"]

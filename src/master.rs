@@ -1,9 +1,9 @@
-use data;
-use debug;
-use error::Error;
-use player;
-use persistence;
-use random;
+use crate::data;
+use crate::debug;
+use crate::error::Error;
+use crate::player;
+use crate::persistence;
+use crate::random;
 
 #[derive(Serialize, Deserialize)]
 pub struct MasterRecord {

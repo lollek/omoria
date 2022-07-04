@@ -2,10 +2,10 @@ use std::convert::TryInto;
 
 use libc;
 
-use conversion;
-use data;
-use debug;
-use player;
+use crate::conversion;
+use crate::data;
+use crate::debug;
+use crate::player;
 
 #[no_mangle]
 pub extern fn C_player_knows_spell(slot: libc::int32_t) -> libc::uint8_t {

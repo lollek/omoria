@@ -1,5 +1,5 @@
-use model::Class;
-use model::{ Item, ItemType };
+use crate::model::Class;
+use crate::model::{ Item, ItemType };
 
 pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
     match class {

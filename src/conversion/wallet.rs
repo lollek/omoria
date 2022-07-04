@@ -1,4 +1,4 @@
-use model::Wallet;
+use crate::model::Wallet;
 
 pub fn from_int64(array: [i64; 7]) -> Wallet {
     Wallet {

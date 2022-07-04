@@ -1,5 +1,5 @@
-use debug;
-use menu;
+use crate::debug;
+use crate::menu;
 
 #[no_mangle]
 pub extern fn change_name() {

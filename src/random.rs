@@ -1,6 +1,6 @@
 extern crate rand;
 
-use random::rand::Rng;
+use crate::random::rand::Rng;
 
 // Returns [1, maxval]
 pub fn randint(maxval: i64) -> i64 {

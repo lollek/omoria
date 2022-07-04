@@ -3,18 +3,18 @@ use std::convert::TryInto;
 use std::ffi::CString;
 use std::sync::RwLock;
 
-use constants;
-use conversion;
-use model::{
+use crate::constants;
+use crate::conversion;
+use crate::model::{
     Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time,
     Wallet,
 };
 
-use data;
-use debug;
-use misc;
-use player;
-use random;
+use crate::data;
+use crate::debug;
+use crate::misc;
+use crate::player;
+use crate::random;
 
 extern "C" {
     pub(super) static mut player_money: [libc::int64_t; 7]; /* { Money on person	} */

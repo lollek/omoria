@@ -1,8 +1,8 @@
-use error::Error;
+use crate::error::Error;
 use std::sync::RwLock;
 
-use master::MasterRecord;
-use persistence::FileStorageEngine;
+use crate::master::MasterRecord;
+use crate::persistence::FileStorageEngine;
 
 pub trait PersistenceEngine where Self: Sync + Send {
     fn load_masters(&mut self) -> Result<Vec<MasterRecord>, Error>;

@@ -1,7 +1,7 @@
-use model::Stat;
-use data;
-use player;
-use player::data::PLAYER;
+use crate::model::Stat;
+use crate::data;
+use crate::player;
+use crate::player::data::PLAYER;
 
 pub fn mod_search_skill(modifier: i16) {
     PLAYER.try_write().unwrap().search_modifier += modifier;

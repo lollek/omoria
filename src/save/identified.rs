@@ -1,8 +1,8 @@
 use libc;
 
-use constants;
-use debug;
-use model::IdentifiedRecord;
+use crate::constants;
+use crate::debug;
+use crate::model::IdentifiedRecord;
 
 extern "C" {
     static mut object_ident: [libc::uint8_t; constants::MAX_OBJECTS + 1];

@@ -1,6 +1,6 @@
 use libc;
 
-use player;
+use crate::player;
 
 #[no_mangle]
 pub extern fn C_magic_spell_level(slot: libc::int32_t) -> libc::uint8_t {

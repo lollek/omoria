@@ -1,9 +1,9 @@
-use thirdparty::serde::BigArray;
+use crate::thirdparty::serde::BigArray;
 
-use conversion;
+use crate::conversion;
 use libc;
-use model::ItemType;
-use model::{Damage, Name};
+use crate::model::ItemType;
+use crate::model::{Damage, Name};
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]

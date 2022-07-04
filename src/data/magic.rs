@@ -1,4 +1,4 @@
-use model::{Magic, Stat};
+use crate::model::{Magic, Stat};
 
 pub fn modifier_stat(magic: &Magic) -> Stat {
     match magic {

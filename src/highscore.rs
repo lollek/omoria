@@ -1,4 +1,4 @@
-use master;
+use crate::master;
 
 pub fn highscore(max: u8) {
     let mut master = master::read_master().unwrap();

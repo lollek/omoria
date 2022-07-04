@@ -1,6 +1,6 @@
 use libc;
 
-use thirdparty::serde::BigArray;
+use crate::thirdparty::serde::BigArray;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]

@@ -1,4 +1,4 @@
-use model::Currency;
+use crate::model::Currency;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Wallet {

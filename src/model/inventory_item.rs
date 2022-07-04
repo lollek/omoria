@@ -2,10 +2,10 @@ use libc;
 use std::ptr;
 
 use serde::{ Deserializer, Serializer };
-use thirdparty::serde::NullPtr;
-use thirdparty::serde::nullptr::UnitVisitor;
+use crate::thirdparty::serde::NullPtr;
+use crate::thirdparty::serde::nullptr::UnitVisitor;
 
-use model::Item;
+use crate::model::Item;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]

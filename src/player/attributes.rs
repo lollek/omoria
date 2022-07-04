@@ -1,6 +1,6 @@
-use player;
-use player::data::PLAYER;
-use player::data::player_flags;
+use crate::player;
+use crate::player::data::PLAYER;
+use crate::player::data::player_flags;
 
 pub fn is_dead() -> bool {
     unsafe { player_flags.dead != 0 }

@@ -1,4 +1,4 @@
-use model;
+use crate::model;
 
 pub fn name(ability: &model::Ability) -> &'static str {
     match ability {

@@ -1,4 +1,4 @@
-use model::Sex;
+use crate::model::Sex;
 
 pub fn name(sex: &Sex) -> &'static str {
     match sex {

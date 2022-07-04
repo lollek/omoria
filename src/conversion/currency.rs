@@ -1,4 +1,4 @@
-use model::Currency;
+use crate::model::Currency;
 
 pub fn from_usize(value: usize) -> Option<Currency> {
     match value {

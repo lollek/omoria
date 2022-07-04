@@ -2,6 +2,7 @@
 name = "omoria"
 version = "0.1.0"
 authors = ["Olle Kvarnström <olle+git@iix.se>"]
+edition = "2018"
 
 [dependencies]
 libc = "0.2"

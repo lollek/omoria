@@ -1,7 +1,7 @@
 use libc;
 
-use constants;
-use model::Store;
+use crate::constants;
+use crate::model::Store;
 
 #[repr(C)]
 #[derive(Serialize, Deserialize)]

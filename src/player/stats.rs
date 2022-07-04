@@ -1,7 +1,7 @@
-use model::{ Stat, StatBlock };
+use crate::model::{ Stat, StatBlock };
 
-use player;
-use player::data::PLAYER;
+use crate::player;
+use crate::player::data::PLAYER;
 
 pub fn set_perm_stats(block: StatBlock) {
     PLAYER.try_write().unwrap().perm_stats = block;

@@ -1,10 +1,10 @@
 use libc;
 
-use conversion;
-use debug;
-use misc;
-use term;
-use player;
+use crate::conversion;
+use crate::debug;
+use crate::misc;
+use crate::term;
+use crate::player;
 
 #[no_mangle]
 pub extern fn max_allowable_weight() -> libc::uint16_t {

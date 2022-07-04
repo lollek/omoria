@@ -5,17 +5,17 @@ use std::io::{Read, Write, Seek};
 
 use serde_json;
 
-use constants;
-use debug;
-use master;
-use ncurses;
-use save;
-use term;
-use model::{
+use crate::constants;
+use crate::debug;
+use crate::master;
+use crate::ncurses;
+use crate::save;
+use crate::term;
+use crate::model::{
     DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
     PlayerRecord, TownRecord
 };
-use player;
+use crate::player;
 
 
 #[derive(Serialize, Deserialize)]

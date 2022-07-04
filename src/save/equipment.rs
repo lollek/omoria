@@ -1,7 +1,7 @@
 use libc;
 
-use debug;
-use model::Item;
+use crate::debug;
+use crate::model::Item;
 
 const EQUIP_MAX: usize = 15;
 

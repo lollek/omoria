@@ -1,5 +1,5 @@
-use data;
-use player;
+use crate::data;
+use crate::player;
 
 pub fn gain_mana_from_level_up() {
     if let Some(magic) = data::class::magic_type(&player::class()) {

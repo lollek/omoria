@@ -1,4 +1,4 @@
-use model::Sex;
+use crate::model::Sex;
 
 pub fn from_char(ch: char) -> Option<Sex> {
     match ch {

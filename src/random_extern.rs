@@ -1,6 +1,6 @@
 use libc;
 
-use random;
+use crate::random;
 
 #[no_mangle]
 pub extern fn randint(maxval: libc::c_long) -> libc::c_long {

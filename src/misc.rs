@@ -1,11 +1,11 @@
 use std::ffi::CStr;
 
-use conversion;
-use data;
-use io;
-use player;
-use term;
-use model::{ Damage, Name };
+use crate::conversion;
+use crate::data;
+use crate::io;
+use crate::player;
+use crate::term;
+use crate::model::{ Damage, Name };
 
 pub const BTH_LEV_ADJ: i16 = 3; // Adjust BTH per level
 pub const BTH_PLUS_ADJ: i16 = 3; // Adjust BTH per plus-to-hit

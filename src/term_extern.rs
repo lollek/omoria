@@ -1,8 +1,8 @@
 use std::ffi::CStr;
 use libc;
 
-use debug;
-use term;
+use crate::debug;
+use crate::term;
 
 #[no_mangle]
 pub extern fn C_clear_screen() {

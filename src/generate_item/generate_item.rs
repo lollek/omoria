@@ -2,8 +2,8 @@ use std::convert::TryInto;
 
 use super::item_template::ItemTemplate;
 use super::template::*;
-use constants;
-use model;
+use crate::constants;
+use crate::model;
 
 fn get_random_from_list(
     mut list: Vec<Box<dyn ItemTemplate>>,

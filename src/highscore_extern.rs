@@ -1,6 +1,6 @@
 use libc;
 
-use highscore;
+use crate::highscore;
 
 
 #[no_mangle]

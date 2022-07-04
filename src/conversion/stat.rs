@@ -1,4 +1,4 @@
-use model::Stat;
+use crate::model::Stat;
 
 pub fn from_usize(stat: usize) -> Option<Stat> {
     match stat {

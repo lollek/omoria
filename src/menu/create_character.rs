@@ -5,20 +5,20 @@ use std::str;
 
 use libc::{strcpy, time, time_t};
 
-use conversion;
-use data;
-use debug;
-use io;
-use generate_item;
-use generate_item::template::*;
-use logic::menu;
-use misc;
-use player;
-use random;
-use screen;
-use term;
+use crate::conversion;
+use crate::data;
+use crate::debug;
+use crate::io;
+use crate::generate_item;
+use crate::generate_item::template::*;
+use crate::logic::menu;
+use crate::misc;
+use crate::player;
+use crate::random;
+use crate::screen;
+use crate::term;
 
-use model::{Currency, GameTime, InventoryItem, Item, Race, Sex, Stat, StatBlock};
+use crate::model::{Currency, GameTime, InventoryItem, Item, Race, Sex, Stat, StatBlock};
 
 extern "C" {
     fn add_money(amount: i64);

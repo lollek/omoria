@@ -1,7 +1,7 @@
  use libc;
  use std::ffi::CStr;
 
- use save;
+ use crate::save;
 
 #[no_mangle]
 pub extern fn C_delete_character() {

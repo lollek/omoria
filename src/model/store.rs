@@ -1,7 +1,7 @@
 use libc;
 
-use model::{ InvenRecord, GameTime };
-use constants::STORE_INVEN_MAX;
+use crate::model::{ InvenRecord, GameTime };
+use crate::constants::STORE_INVEN_MAX;
 
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]

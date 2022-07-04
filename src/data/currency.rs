@@ -1,4 +1,4 @@
-use model::Currency;
+use crate::model::Currency;
 
 // Returns value in iron
 pub fn value(currency: &Currency) -> i64 {

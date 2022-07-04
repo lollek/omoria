@@ -1,5 +1,5 @@
-use data;
-use model::Item;
+use crate::data;
+use crate::model::Item;
 
 pub const EQUIP_MAX: usize = 15;
 

@@ -1,7 +1,7 @@
-use conversion;
+use crate::conversion;
 use libc;
-use logic::use_item;
-use model::Item;
+use crate::logic::use_item;
+use crate::model::Item;
 
 #[no_mangle]
 pub extern "C" fn C_class_can_use_item(class: libc::int32_t, item: *const Item) -> libc::uint8_t {

@@ -1,4 +1,4 @@
-use model::Monster;
+use crate::model::Monster;
 
 #[repr(C)]
 #[derive(Serialize, Deserialize)]

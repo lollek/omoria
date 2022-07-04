@@ -1,4 +1,4 @@
-use model;
+use crate::model;
 use super::super::item_template::ItemTemplate;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]

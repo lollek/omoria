@@ -1,4 +1,4 @@
-use model::{Ability, Class, Race, Sex, StatBlock};
+use crate::model::{Ability, Class, Race, Sex, StatBlock};
 
 pub fn name(race: &Race) -> &'static str {
     match race {

@@ -1,4 +1,4 @@
-use model::Race;
+use crate::model::Race;
 
 pub fn from_usize(pos: usize) -> Option<Race> {
     match pos {

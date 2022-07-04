@@ -1,6 +1,6 @@
 use libc;
 
-use model::{ Cave, TreasureAndCoordinate };
+use crate::model::{ Cave, TreasureAndCoordinate };
 
 #[repr(C)]
 #[derive(Serialize, Deserialize)]

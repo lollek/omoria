@@ -1,9 +1,9 @@
 use std::ffi::CStr;
 use libc::c_char;
 
-use logic;
-use player;
-use term;
+use crate::logic;
+use crate::player;
+use crate::term;
 
 extern {
     static wizard2: i8;

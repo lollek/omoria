@@ -1,6 +1,6 @@
-use data;
-use misc;
-use model;
+use crate::data;
+use crate::misc;
+use crate::model;
 
 pub trait ItemTemplate {
     fn create(&self) -> model::Item {

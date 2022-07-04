@@ -1,6 +1,6 @@
 use pancurses;
 
-use model::ItemType;
+use crate::model::ItemType;
 
 // Has damage numbers
 pub fn has_damage(item_type: &ItemType) -> bool {

@@ -1,8 +1,8 @@
 use libc;
 
-use constants;
-use debug;
-use model::{ Store, TownRecord };
+use crate::constants;
+use crate::debug;
+use crate::model::{ Store, TownRecord };
 
 extern "C" {
     static mut stores: [Store; constants::MAX_STORES +1];

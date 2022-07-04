@@ -1,7 +1,7 @@
 use libc;
 use std::ffi::CString;
 
-use constants;
+use crate::constants;
 
 lazy_static! {
     static ref IMORIA_CSTR: CString = CString::new(constants::IMORIA_VERSION).unwrap();

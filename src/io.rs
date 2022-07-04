@@ -1,7 +1,7 @@
 use std::ffi::CString;
 use libc::{c_char, c_int};
 
-use term;
+use crate::term;
 
 extern "C" {
     #[link_name="inkey"]

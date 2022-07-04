@@ -1,7 +1,7 @@
-use model;
-use generate_item;
-use generate_item::ItemTemplate;
-use generate_item::template::*;
+use crate::model;
+use crate::generate_item;
+use crate::generate_item::ItemTemplate;
+use crate::generate_item::template::*;
 
 pub fn name(class: &model::Class) -> &'static str {
     match class {

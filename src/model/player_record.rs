@@ -1,6 +1,6 @@
 use libc;
 
-use model::{ Class, GameTime, Player, PlayerFlags, Race, Sex, Time, Wallet };
+use crate::model::{ Class, GameTime, Player, PlayerFlags, Race, Sex, Time, Wallet };
 
 #[repr(C)]
 #[derive(Serialize, Deserialize)]

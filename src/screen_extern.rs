@@ -1,4 +1,4 @@
-use screen;
+use crate::screen;
 
 #[no_mangle]
 pub extern fn C_print_stat_block() {

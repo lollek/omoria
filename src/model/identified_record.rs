@@ -1,8 +1,8 @@
 use libc;
 
-use thirdparty::serde::BigArray;
+use crate::thirdparty::serde::BigArray;
 
-use constants;
+use crate::constants;
 
 #[repr(C)]
 #[derive(Serialize, Deserialize)]

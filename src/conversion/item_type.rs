@@ -1,4 +1,4 @@
-use model::ItemType;
+use crate::model::ItemType;
 
 pub fn from_usize(pos: usize) -> Option<ItemType> {
     match pos {

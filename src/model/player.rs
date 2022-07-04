@@ -1,4 +1,4 @@
-use model::StatBlock;
+use crate::model::StatBlock;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Player {

@@ -1,7 +1,7 @@
 use libc;
 
-use debug;
-use master;
+use crate::debug;
+use crate::master;
 
 #[no_mangle]
 pub extern fn mst__update_character(uid: libc::int64_t) -> libc::uint8_t {

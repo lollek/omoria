@@ -1,5 +1,5 @@
-use debug;
-use commands;
+use crate::debug;
+use crate::commands;
 
 #[no_mangle]
 pub extern fn C_commands_show_class_restrictions() {

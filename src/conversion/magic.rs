@@ -1,4 +1,4 @@
-use model::Magic;
+use crate::model::Magic;
 
 pub fn from_usize(pos: usize) -> Option<Magic> {
     match pos {
