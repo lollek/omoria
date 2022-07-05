@@ -6,7 +6,6 @@
 #include "debug.h"
 #include "desc.h"
 #include "inven.h"
-#include "main_loop.h"
 #include "misc.h"
 #include "model_item.h"
 #include "monsters.h"

@@ -2,7 +2,6 @@
 #include <string.h>
 #include <time.h>
 
-#include "../main_loop.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player_action.h"

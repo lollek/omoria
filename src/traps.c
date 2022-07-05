@@ -17,7 +17,6 @@
 #include "effects.h"
 #include "fighting.h"
 #include "magic.h"
-#include "main_loop.h"
 #include "misc.h"
 #include "pascal.h"
 #include "player.h"

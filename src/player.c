@@ -11,7 +11,6 @@
 #include "debug.h"
 #include "magic.h"
 #include "model_class.h"
-#include "main_loop.h"
 #include "pascal.h"
 #include "player.h"
 #include "player_action.h"

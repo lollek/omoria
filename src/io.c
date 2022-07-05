@@ -13,7 +13,6 @@
 #include "constants.h"
 #include "debug.h"
 #include "death.h"
-#include "main_loop.h"
 #include "graphics.h"
 #include "magic.h"
 #include "pascal.h"

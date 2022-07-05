@@ -3,7 +3,6 @@
 
 #include "../debug.h"
 #include "../inven.h"
-#include "../main_loop.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../random.h"

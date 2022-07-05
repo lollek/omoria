@@ -1,4 +1,3 @@
-#include "../main_loop.h"
 #include "../player.h"
 #include "../variables.h"
 #include "../spells.h"

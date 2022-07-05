@@ -13,7 +13,6 @@
 #include "io.h"
 #include "kickout.h"
 #include "magic.h"
-#include "main_loop.h"
 #include "misc.h"
 #include "pascal.h"
 #include "player.h"

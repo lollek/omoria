@@ -19,7 +19,6 @@
 #include "generate_item/generate_item.h"
 #include "inven.h"
 #include "magic.h"
-#include "main_loop.h"
 #include "misc.h"
 #include "monsters.h"
 #include "pascal.h"

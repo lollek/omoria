@@ -12,7 +12,6 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "main_loop.h"
 #include "magic.h"
 #include "pascal.h"
 #include "term.h"
