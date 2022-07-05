@@ -6,24 +6,23 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "inven.h"
-#include "io.h"
-#include "kickout.h"
-#include "magic.h"
-#include "misc.h"
-#include "pascal.h"
-#include "player.h"
-#include "port.h"
-#include "random.h"
-#include "screen.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-
-#include "bank.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../inven.h"
+#include "../io.h"
+#include "../kickout.h"
+#include "../magic.h"
+#include "../misc.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../port.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../stores.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
 
 void eb__display_money(void);
 void eb__display_store(const char *shop_owner);

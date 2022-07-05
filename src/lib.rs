@@ -39,7 +39,6 @@ pub mod screen;
 pub mod term;
 pub mod thirdparty;
 
-pub mod bank_extern;
 pub mod commands_extern;
 pub mod constants_extern;
 pub mod generate_item;
@@ -49,3 +48,4 @@ pub mod ncurses_extern;
 pub mod random_extern;
 pub mod screen_extern;
 pub mod term_extern;
+mod town_level;

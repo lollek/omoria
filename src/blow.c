@@ -25,7 +25,6 @@
 #include "spells.h"
 #include "random.h"
 #include "misc.h"
-#include "bank.h"
 
 static void b__chime_and_horn_effects(long effect, boolean *idented) {
   /*{ Chimes...				      }*/

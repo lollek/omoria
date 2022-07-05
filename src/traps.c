@@ -9,8 +9,8 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "bank.h"
 #include "casino/casino.h"
+#include "town_level/enter_bank.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"

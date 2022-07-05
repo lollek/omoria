@@ -1,17 +1,15 @@
-use std::ffi::CStr;
 use libc::c_char;
+use std::ffi::CStr;
 
-use crate::logic;
 use crate::player;
 use crate::term;
 
-extern {
+extern "C" {
     static wizard2: i8;
 }
 
-
 #[no_mangle]
-pub extern fn eb__display_money() {
+pub extern "C" fn eb__display_money() {
     let is_wizard2 = unsafe { wizard2 } != 0;
     let player_account = unsafe { player::player_account };
     let wallet = player::wallet();
@@ -39,7 +37,7 @@ pub extern fn eb__display_money() {
 }
 
 #[no_mangle]
-pub extern fn eb__display_store(shop_owner: *const c_char) {
+pub extern "C" fn eb__display_store(shop_owner: *const c_char) {
     if shop_owner.is_null() {
         panic!("Null string received");
     }
@@ -52,17 +50,14 @@ pub extern fn eb__display_store(shop_owner: *const c_char) {
     term::prt("You may:", 18, 0);
     term::prt(" d) Deposit money.             w) Withdraw money.", 19, 0);
     term::prt(" c) Change small currency.     i) Buy insurance.", 20, 0);
-    term::prt("^R) Redraw the screen.       Esc) Exit from building.", 21, 0);
-    term::prt(" p) Put item in vault.         r) Remove item from vault.", 22, 0);
-}
-
-#[no_mangle]
-pub extern fn reset_total_cash() {
-    let mut player_money = player::wallet();
-    player_money.total = logic::wallet::calculate_total(&player_money);
-    player::set_wallet(&player_money);
-
-    let mut bank = player::bank_wallet();
-    bank.total = logic::wallet::calculate_total(&bank);
-    player::set_bank_wallet(&bank);
+    term::prt(
+        "^R) Redraw the screen.       Esc) Exit from building.",
+        21,
+        0,
+    );
+    term::prt(
+        " p) Put item in vault.         r) Remove item from vault.",
+        22,
+        0,
+    );
 }

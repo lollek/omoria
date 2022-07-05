@@ -6,7 +6,6 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "bank.h"
 #include "configure.h"
 #include "constants.h"
 #include "death.h"
@@ -21,6 +20,7 @@
 #include "random.h"
 #include "save.h"
 #include "screen.h"
+#include "stores.h"
 #include "term.h"
 #include "traps.h"
 #include "treasures.h"
@@ -2876,11 +2876,12 @@ boolean d__get_dir(char prompt[82], long *dir, long *command_ptr, long *y,
   }
 }
 
-boolean xor(long thing1, long thing2) {
-  return !((thing1 && thing2) || (!thing1 && !thing2));
-}
+boolean xor
+    (long thing1, long thing2) {
+      return !((thing1 && thing2) || (!thing1 && !thing2));
+    }
 
-boolean coin_stuff(char typ, long *type_num) {
+    boolean coin_stuff(char typ, long *type_num) {
   boolean return_value;
 
   return_value = true;

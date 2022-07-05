@@ -58,6 +58,8 @@ typedef struct trade_result {
 // Number of defined races
 #define MAX_RACES 10
 
+money_type bank;        /* { Bank's money	 } */
+
 // Buying and selling adjustments for character race VS store owner race
 static float rgold_adj[MAX_RACES][MAX_RACES] = {
     /*               Hum,  HfE,  Elf,  Hal,  Gno,  Dwa,  HfO,  HfT,  Phr, Dry */

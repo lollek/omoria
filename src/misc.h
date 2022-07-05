@@ -124,4 +124,7 @@ int char_to_dir(char c);
  */
 char dir_to_char(int dir);
 
+/*{ recomputes cash totals for player and bank }*/
+void reset_total_cash();
+
 #endif // MISC_H

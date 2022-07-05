@@ -22,7 +22,6 @@
 #include "screen.h"
 #include "misc.h"
 #include "random.h"
-#include "bank.h"
 #include "port.h"
 
 #include "inven.h"

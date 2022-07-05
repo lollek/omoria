@@ -1,5 +1,6 @@
-#include "../variables.h"
 #include "../random.h"
+#include "../stores.h"
+#include "../variables.h"
 
 #include "bank.h"
 
@@ -12,9 +13,9 @@ bool init__bank(void) {
   bank[PLATINUM] = starting / 5000;
   bank[MITHRIL] = starting / 100000;
   bank[TOTAL_] = (bank[MITHRIL] * coin_value[MITHRIL] +
-      bank[PLATINUM] * coin_value[PLATINUM]) /
-    GOLD_VALUE +
-    bank[GOLD];
+                  bank[PLATINUM] * coin_value[PLATINUM]) /
+                     GOLD_VALUE +
+                 bank[GOLD];
 
   return true;
 }

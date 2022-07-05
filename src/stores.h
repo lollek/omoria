@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+extern money_type bank;           /* { Bank's money	 } */
+
 /**
  * store_maint() - Initialize and up-keep the store's inventory.
  */
