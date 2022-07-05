@@ -8,6 +8,7 @@
 
 #include "../configure.h"
 #include "../constants.h"
+#include "../currency.h"
 #include "../debug.h"
 #include "../inven.h"
 #include "../io.h"
@@ -83,7 +84,7 @@ static void eb__dep_munny(long mon_type) {
     player_money[mon_type] -= deposit;
     inven_weight -= COIN_WEIGHT * deposit;
     player_account +=
-        trunc(deposit * BANK_SKIM * coin_value[mon_type]) / GOLD_VALUE;
+        trunc(deposit * BANK_SKIM * coin_value(mon_type)) / GOLD_VALUE;
     eb__display_money();
   }
 }
@@ -130,10 +131,10 @@ static void eb__withdraw_money() {
   if (withdraw > 0) {
     weight_left = (C_player_max_bulk() * 100) - inven_weight;
     for (mon_type = MITHRIL; mon_type >= GOLD; mon_type--) {
-      amt_given[mon_type] = min3((withdraw * GOLD_VALUE) / coin_value[mon_type],
+      amt_given[mon_type] = min3((withdraw * GOLD_VALUE) / coin_value(mon_type),
                                  bank[mon_type], weight_left / COIN_WEIGHT);
       weight_left -= amt_given[mon_type] * COIN_WEIGHT;
-      withdraw -= amt_given[mon_type] * (coin_value[mon_type] / GOLD_VALUE);
+      withdraw -= amt_given[mon_type] * (coin_value(mon_type) / GOLD_VALUE);
     } /* end for mon_type */
 
     deliver = true;
@@ -179,7 +180,7 @@ static void eb__withdraw_money() {
           player_money[mon_type] += amt_given[mon_type];
           bank[mon_type] -= amt_given[mon_type];
           player_account -=
-              amt_given[mon_type] * coin_value[mon_type] / GOLD_VALUE;
+              amt_given[mon_type] * coin_value(mon_type) / GOLD_VALUE;
         }
       } /* end for */
       inven_weight = C_player_max_bulk() * 100 - weight_left;
@@ -216,8 +217,8 @@ static void eb__change_money() {
     change_flag = eb__get_entry(prompt, &amount_from);
   }
   if (change_flag) {
-    amount_to = (amount_from * coin_value[typ_from]) /
-                coin_value[typ_to]; /*{NO surcharge}*/
+    amount_to = (amount_from * coin_value(typ_from)) /
+                coin_value(typ_to); /*{NO surcharge}*/
     if (amount_to == 0) {
       msg_print("You don't have enough to trade for that "
                 "type of coin!");

@@ -10,7 +10,6 @@
 #define DL_SECRET 2
 
 extern treas_rec *cur_inven;      /* { Current inven page  } */
-extern money_type coin_value;     /* { Copy of money values} */
 extern long player_max_exp;       /* { Max exp possible    } */
 extern unsigned long randes_seed; /* { For encoding colors } */
 extern unsigned long town_seed;   /* { Seed for town genera} */

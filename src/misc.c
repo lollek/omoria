@@ -7,6 +7,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
+#include "currency.h"
 #include "constants.h"
 #include "death.h"
 #include "debug.h"
@@ -605,18 +606,18 @@ void am__add_munny(long *amount, long *to_bank, long wl, long type_num) {
   long coin_num;
 
   coin_num = player_money[type_num];
-  trans = *amount / coin_value[type_num];
+  trans = *amount / coin_value(type_num);
   w_max = (wl * 100 - inven_weight) / COIN_WEIGHT;
   if (w_max < -coin_num) {
     w_max = -coin_num;
   }
   if (w_max < trans) {
-    *to_bank += (trans - w_max) * coin_value[type_num];
+    *to_bank += (trans - w_max) * coin_value(type_num);
     trans = w_max;
   }
   inven_weight += COIN_WEIGHT * trans;
   player_money[type_num] = coin_num + trans;
-  *amount = *amount % coin_value[type_num];
+  *amount = *amount % coin_value(type_num);
 }
 /*//////////////////////////////////////////////////////////////////// */
 void add_money(long amount) {
@@ -660,8 +661,8 @@ void add_money(long amount) {
         } else {
           bank[GOLD] += i1;
           player_account += i1;
-          bank[TOTAL_] = ((bank[MITHRIL] * coin_value[MITHRIL] +
-                           bank[PLATINUM] * coin_value[PLATINUM]) /
+          bank[TOTAL_] = ((bank[MITHRIL] * coin_value(MITHRIL) +
+                           bank[PLATINUM] * coin_value(PLATINUM)) /
                               GOLD_VALUE +
                           bank[GOLD]);
           sprintf(out_val,
@@ -703,13 +704,13 @@ boolean sm__sub_munny(long *amt, long *wt, long type_num) {
   boolean return_value;
 
   coin_num = player_money[type_num];
-  trans = (*amt + coin_value[type_num] - 1) / coin_value[type_num];
+  trans = (*amt + coin_value(type_num) - 1) / coin_value(type_num);
   if (coin_num < trans) {
     trans = coin_num;
   }
   (*wt) += COIN_WEIGHT * trans;
   player_money[type_num] = coin_num - trans;
-  (*amt) -= trans * coin_value[type_num];
+  (*amt) -= trans * coin_value(type_num);
 
   return_value = *amt > 0;
   return return_value;
@@ -2127,9 +2128,9 @@ boolean send_page(long to_bank) {
       msg_print("The page returns and says that the bank is "
                 "out of money.");
     } else {
-      sp__takey_munny(coin_value[MITHRIL], &bank[MITHRIL], &to_bank,
+      sp__takey_munny(coin_value(MITHRIL), &bank[MITHRIL], &to_bank,
                       &from_bank);
-      sp__takey_munny(coin_value[PLATINUM], &bank[PLATINUM], &to_bank,
+      sp__takey_munny(coin_value(PLATINUM), &bank[PLATINUM], &to_bank,
                       &from_bank);
       sp__takey_munny(GOLD_VALUE, &bank[GOLD], &to_bank, &from_bank);
       if (randint(mugging_chance) == 1) {

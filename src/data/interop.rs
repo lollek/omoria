@@ -27,3 +27,8 @@ pub extern "C" fn C_item_get_tchar(item_ptr: *const Item) -> pancurses::chtype {
     debug::leave("C_item_get_tchar");
     res
 }
+
+#[no_mangle]
+pub extern "C" fn coin_value(currency: libc::uint8_t) -> libc::int64_t {
+    data::currency::value(&conversion::currency::from_usize(currency.into()).unwrap())
+}

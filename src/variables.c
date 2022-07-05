@@ -20,8 +20,6 @@
 #include "variables.h"
 
 treas_rec *cur_inven;   /* { Current inven page  } */
-money_type coin_value = /* { Copy of money values} */
-    {0, 1, 4, 20, 240, 960, 12480};
 unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
 long cur_height;           /* { Cur dungeon size    } */
