@@ -20,6 +20,14 @@ void change_trap(long y, long x);
 void hit_trap(long *y, long *x);
 
 /**
+ * @brief Player triggered a trap by opening a chest or failing to disarm
+ * 
+ * @param y 
+ * @param x 
+ */
+void trigger_trap(long y, long x);
+
+/**
  * @brief Places a particular trap at location
  * 
  * @param y coordinate

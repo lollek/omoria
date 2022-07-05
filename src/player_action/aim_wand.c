@@ -1,6 +1,3 @@
-/* wands.c */
-/**/
-
 #include <curses.h>
 #include <math.h>
 #include <stdio.h>
@@ -9,27 +6,24 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "main_loop.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../main_loop.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../desc.h"
+#include "../inven.h"
+#include "../screen.h"
+#include "../spells.h"
+#include "../misc.h"
+#include "../random.h"
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
+static void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
                       long i4) {
   boolean ident;
 
@@ -161,10 +155,8 @@ void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
 
   *idented = ident;
 }
-/*//////////////////////////////////////////////////////////////////// */
-void aim_wand() {
-  /*{ Wands for the aiming...				}*/
 
+void player_action_aim_wand() {
   unsigned long i1;
   long i3, i4, chance, i5;
   long dir;
@@ -247,11 +239,3 @@ void aim_wand() {
     draw_cave();
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-
-/* END FILE  wands.c */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */

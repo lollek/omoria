@@ -5,7 +5,7 @@
 #include "../main_loop.h"
 #include "../misc.h"
 #include "../player.h"
-#include "../player_action/move.h"
+#include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../types.h"

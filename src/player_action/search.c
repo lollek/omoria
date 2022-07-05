@@ -13,6 +13,10 @@
 #include "search.h"
 
 void player_action_search(long player_y, long player_x, long chance) {
+  if (player_flags.blind > 0) {
+    msg_print("You are incapable of searching while blind.");
+    return;
+  }
 
   if ((player_flags).confused + (player_flags).blind > 0) {
     chance = trunc(chance / 10.0);

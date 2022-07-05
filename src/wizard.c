@@ -24,7 +24,7 @@
 #include "desc.h"
 #include "files.h"
 #include "screen.h"
-#include "player_action/move.h"
+#include "player_action.h"
 #include "spells.h"
 #include "misc.h"
 #include "random.h"

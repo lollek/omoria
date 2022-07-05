@@ -108,4 +108,20 @@ boolean delete_object(long y, long x);
 /*{ Tunneling through wall }*/
 boolean twall(long y, long x, long t1, long t2);
 
+/**
+ * Get a 'dir' from a roguelike command
+ * 
+ * c: character to translate
+ * return: number [0-9] or -1 on error
+ */
+int char_to_dir(char c);
+
+/**
+ * Get roguelike command for a direction
+ * 
+ * dir: Direction to get command for
+ * return: Roguelike command in char, or '?' on error;
+ */
+char dir_to_char(int dir);
+
 #endif // MISC_H

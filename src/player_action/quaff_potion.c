@@ -6,25 +6,25 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "desc.h"
-#include "inven.h"
-#include "magic.h"
-#include "main_loop.h"
-#include "misc.h"
-#include "pascal.h"
-#include "player.h"
-#include "player/hunger.h"
-#include "random.h"
-#include "screen.h"
-#include "spells.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../desc.h"
+#include "../inven.h"
+#include "../magic.h"
+#include "../main_loop.h"
+#include "../misc.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../player/hunger.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../spells.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
 
-void q__potion_effect(long effect, boolean *idented) {
+static void q__potion_effect(long effect, boolean *idented) {
   long i4, i5;
   boolean ident = false;
 
@@ -302,9 +302,7 @@ void q__potion_effect(long effect, boolean *idented) {
   *idented = ident;
 }
 
-void quaff() {
-  /*{ Potions for the quaffing                              -RAK-   }*/
-
+void player_action_quaff_potion() {
   unsigned long q1, q2;
   long i3, i6;
   treas_rec *i2;

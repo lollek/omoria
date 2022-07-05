@@ -545,6 +545,58 @@ void hit_trap(long *y, long *x) {
 
   LEAVE("hit_trap", "");
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
+void trigger_trap(long y, long x) {
+  /*{ Chests have traps too...                              -RAK-   }*/
+  /*{ Note: Chest traps are based on the FLAGS value                }*/
+
+  long i1, i2, i3;
+  unsigned long flags;
+
+  flags = t_list[cave[y][x].tptr].flags;
+
+  /* with t_list[cave[y][x].tptr]. do; */
+
+  if ((0x00000010 & flags) != 0) {
+    msg_print("A small needle has pricked you!");
+    if (lose_stat(STR, "", "You are unaffected.")) {
+      take_hit(damroll("1d4"), "a poison needle");
+      print_stat = 1;
+      msg_print("You feel weakened!");
+    }
+  }
+
+  if ((0x00000020 & flags) != 0) {
+    msg_print("A small needle has pricked you!");
+    take_hit(damroll("1d6"), "a poison needle.");
+    player_flags.poisoned += 10 + randint(20);
+  }
+
+  if ((0x00000040 & flags) != 0) {
+    msg_print("A puff of yellow gas surrounds you!");
+    if (player_flags.free_act) {
+      msg_print("You are unaffected.");
+    } else {
+      msg_print("You choke and pass out.");
+      player_flags.paralysis = 10 + randint(20);
+    }
+  }
+
+  if ((0x00000080 & flags) != 0) {
+    msg_print("There is a sudden explosion!");
+    delete_object(y, x);
+    take_hit(damroll("5d8"), "an exploding chest");
+  }
+
+  if ((0x00000100 & flags) != 0) {
+    for (i1 = 0; i1 < 3; i1++) {
+      i2 = y;
+      i3 = x;
+      if (is_in(cave[i2][i3].fval, water_set)) {
+        summon_water_monster(&i2, &i3, false);
+      } else {
+        summon_land_monster(&i2, &i3, false);
+      }
+    }
+  }
+}

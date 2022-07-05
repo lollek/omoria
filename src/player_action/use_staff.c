@@ -6,24 +6,24 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "main_loop.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "inven.h"
-#include "desc.h"
-#include "screen.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../main_loop.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../inven.h"
+#include "../desc.h"
+#include "../screen.h"
+#include "../spells.h"
+#include "../misc.h"
+#include "../random.h"
 
-void us__staff_effect(long effect, boolean *idented) {
+static void us__staff_effect(long effect, boolean *idented) {
   long i3, randnum;
   long y, x;
   boolean ident;
@@ -166,9 +166,7 @@ void us__staff_effect(long effect, boolean *idented) {
   *idented = ident;
 }
 
-void use_staff() {
-  /*{ Use a staff...                                        -RAK-   }*/
-
+void player_action_use_staff() {
   unsigned long i1;
   long i3, chance, i4;
   treas_rec *i2;

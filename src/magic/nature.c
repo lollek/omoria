@@ -6,19 +6,19 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "main_loop.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../main_loop.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../spells.h"
+#include "../misc.h"
+#include "../random.h"
 
 void nature_spell_effects(long effect) {
   long i;

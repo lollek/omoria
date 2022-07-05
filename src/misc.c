@@ -2965,3 +2965,61 @@ boolean twall(long y, long x, long t1, long t2) {
 
   return return_value;
 }
+
+int char_to_dir(char c) {
+  switch (c) {
+  case 'b':
+  case 'B':
+    return 1;
+  case 'j':
+  case 'J':
+    return 2;
+  case 'n':
+  case 'N':
+    return 3;
+  case 'h':
+  case 'H':
+    return 4;
+  case '.':
+    return 5;
+  case 'l':
+  case 'L':
+    return 6;
+  case 'y':
+  case 'Y':
+    return 7;
+  case 'k':
+  case 'K':
+    return 8;
+  case 'u':
+  case 'U':
+    return 9;
+  default:
+    return -1;
+  }
+}
+
+char dir_to_char(int dir) {
+  switch (dir) {
+  case 1:
+    return 'b';
+  case 2:
+    return 'j';
+  case 3:
+    return 'n';
+  case 4:
+    return 'h';
+  case 5:
+    return '.';
+  case 6:
+    return 'l';
+  case 7:
+    return 'y';
+  case 8:
+    return 'k';
+  case 9:
+    return 'u';
+  default:
+    return '?';
+  }
+}

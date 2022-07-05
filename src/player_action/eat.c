@@ -6,23 +6,23 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "main_loop.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
-#include "player/hunger.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../main_loop.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../desc.h"
+#include "../inven.h"
+#include "../screen.h"
+#include "../spells.h"
+#include "../misc.h"
+#include "../random.h"
+#include "../player/hunger.h"
 
 static boolean __eat_eyeball_of_drong(void) {
 
@@ -287,8 +287,7 @@ static boolean __apply_food_effects(treas_rec *item_ptr) {
   return ident;
 }
 
-void eat() {
-  /* { Eat some food...					-RAK-	}*/
+void player_action_eat() {
 
   reset_flag = true;
   treas_rec *item_ptr = __select_what_to_eat();

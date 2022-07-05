@@ -1,9 +1,9 @@
-#include "main_loop.h"
-#include "player.h"
-#include "variables.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
+#include "../main_loop.h"
+#include "../player.h"
+#include "../variables.h"
+#include "../spells.h"
+#include "../misc.h"
+#include "../random.h"
 
 void arcane_spell_effects(long effect) {
   /*{ Spells...                                     }*/

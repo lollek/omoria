@@ -6,23 +6,23 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "main_loop.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "death.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
+#include "../configure.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../main_loop.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../death.h"
+#include "../desc.h"
+#include "../inven.h"
+#include "../screen.h"
+#include "../spells.h"
+#include "../misc.h"
+#include "../random.h"
 
 void rs__scroll_effect(long effect, boolean *idented, boolean *first,
                        treas_rec *item_ptr) {
@@ -553,9 +553,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   *idented = ident;
 }
 
-void read_scroll() {
-  /*{ Scrolls for the reading				-RAK-	}*/
-
+void player_action_read_scroll() {
   unsigned long q1, q2;
   long i3, i5;
   treas_rec *i2;

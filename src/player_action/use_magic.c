@@ -1,15 +1,16 @@
 #include <string.h>
 #include <time.h>
 
-#include "debug.h"
-#include "inven.h"
-#include "main_loop.h"
-#include "misc.h"
-#include "player.h"
-#include "random.h"
-#include "screen.h"
-#include "spells.h"
-#include "variables.h"
+#include "../debug.h"
+#include "../inven.h"
+#include "../main_loop.h"
+#include "../misc.h"
+#include "../player.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../spells.h"
+#include "../variables.h"
+#include "../magic.h"
 
 static void nonmagic_song(void) {
   switch (C_player_mod_from_stat(CHR) + randint(4)) {
@@ -442,7 +443,7 @@ static void _cast(enum magic_t magic_type) {
   drain_mana(magic_type, choice);
 }
 
-void cast(enum magic_t magic_type) {
+void player_action_use_magic(enum magic_t magic_type) {
   ENTER(("cast", ""));
   _cast(magic_type);
   LEAVE("cast", "");

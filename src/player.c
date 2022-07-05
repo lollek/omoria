@@ -14,7 +14,7 @@
 #include "main_loop.h"
 #include "pascal.h"
 #include "player.h"
-#include "player_action/move.h"
+#include "player_action.h"
 #include "random.h"
 #include "screen.h"
 #include "term.h"
