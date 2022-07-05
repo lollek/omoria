@@ -33,6 +33,7 @@
 #include "player/hunger.h"
 #include "player/regeneration.h"
 #include "player_move.h"
+#include "player_action/search.h"
 #include "potions.h"
 #include "random.h"
 #include "save.h"
@@ -1822,7 +1823,7 @@ static void d__tunnel() {
         } else if (t_list[cave[y][x].tptr].tval == secret_door) {
           msg_print("You tunnel into the granite "
                     "wall.");
-          search(char_row, char_col, C_player_curr_search_skill());
+          player_action_search(char_row, char_col, C_player_curr_search_skill());
         } else {
           msg_print("You can't tunnel through that.");
         }
@@ -2347,7 +2348,7 @@ static void d__execute_command(long *command) {
     if (player_flags.blind > 0) {
       msg_print("You are incapable of searching while blind.");
     } else {
-      search(char_row, char_col, C_player_curr_search_skill());
+      player_action_search(char_row, char_col, C_player_curr_search_skill());
     }
     break;
   case 't': /* take off */
@@ -3408,61 +3409,6 @@ boolean water_move() {
   return flag;
 }
 
-void search(long player_y, long player_x, long chance) {
-  /*{ Searches for hidden things...                         -RAK-   }*/
-
-  if ((player_flags).confused + (player_flags).blind > 0) {
-    chance = trunc(chance / 10.0);
-  } else if (no_light()) {
-    chance = (long)(chance / 5.0);
-  }
-
-  for (long y = (player_y - 1); y <= (player_y + 1); y++) {
-    for (long x = (player_x - 1); x <= (player_x + 1); x++) {
-      if (!in_bounds(y, x)) {
-        continue;
-      }
-      if (y == player_y && x == player_x) {
-        // There can be no unfound thing where the
-        // player is standing?
-        continue;
-      }
-      if (randint(100) >= chance) {
-        continue;
-      }
-
-      // Search for hidden objects
-      if (cave[y][x].tptr <= 0) {
-        continue;
-      }
-
-      if (t_list[cave[y][x].tptr].tval == unseen_trap) {
-        // Trap on floor
-        char out_val[86];
-        sprintf(out_val, "You have found %s.", t_list[cave[y][x].tptr].name);
-        msg_print(out_val);
-        change_trap(y, x);
-        find_flag = false;
-
-      } else if (t_list[cave[y][x].tptr].tval == secret_door) {
-        // Secret door
-        msg_print("You have found a secret door.");
-        cave[y][x].fval = corr_floor2.ftval;
-        change_trap(y, x);
-        find_flag = false;
-
-      } else if (t_list[cave[y][x].tptr].tval == chest) {
-        if (t_list[cave[y][x].tptr].flags > 1) {
-          if (pindex(t_list[cave[y][x].tptr].name, '^') > 0) {
-            // Chest is trapped
-            known2(t_list[cave[y][x].tptr].name);
-            msg_print("You have discovered a trap on the chest!");
-          }
-        }
-      }
-    }
-  }
-}
 
 void lr__find_light(long y1, long x1, long y2, long x2) {
   obj_set room_floors;

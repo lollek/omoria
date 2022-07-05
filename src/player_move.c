@@ -20,6 +20,7 @@
 #include "screen.h"
 #include "misc.h"
 #include "random.h"
+#include "player_action/search.h"
 
 #include "player_move.h"
 
@@ -207,7 +208,7 @@ static void _move_char(long dir) {
 
   /* Check to see if he notices something */
   if (player_flags.blind < 1 && (randint(player_fos) == 1 || search_flag))
-    search(test_row, test_col, C_player_curr_search_skill());
+    player_action_search(test_row, test_col, C_player_curr_search_skill());
 
   /* An object is beneath him? */
   if (cave[test_row][test_col].tptr > 0)

@@ -3,7 +3,6 @@
 
 #include "types.h"
 
-void search(long y, long x, long chance);
 void area_affect(long dir, long y, long x);
 void carry(long y, long x);
 void move_light(long y1, long x1, long y2, long x2);
