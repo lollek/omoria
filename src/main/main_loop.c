@@ -19,6 +19,7 @@
 #include "../effects.h"
 #include "../fighting.h"
 #include "../fighting_ranged.h"
+#include "../generate_dungeon/generate_dungeon.h"
 #include "../help.h"
 #include "../inven.h"
 #include "../io.h"
@@ -33,6 +34,7 @@
 #include "../player/hunger.h"
 #include "../player/regeneration.h"
 #include "../player_action.h"
+#include "../port.h"
 #include "../random.h"
 #include "../save.h"
 #include "../screen.h"
@@ -838,7 +840,6 @@ static void d__update_hit_points() {
   LEAVE("d__update_hit_points", "d");
 }
 
-
 static void d__execute_command(long *command) {
   treas_rec *trash_ptr;
   char out_val[82];
@@ -1303,8 +1304,8 @@ boolean water_move() {
   return flag;
 }
 
-void dungeon() {
-  ENTER(("dungeon", "d"));
+void main_loop__0() {
+  ENTER(("main_loop", "d"));
 
   s1[0] = 0;
   s2[0] = 0;
@@ -1470,5 +1471,25 @@ void dungeon() {
     search_off(); /*{ Fixed "SLOW" bug; 06-11-86 RAK     }*/
   }
 
-  LEAVE("dungeon", "d");
+  LEAVE("main_loop", "d");
+}
+
+int main_loop(void) {
+  /* Loop till dead, or exit */
+  while (true) {
+    /* Dungeon logic */
+    main_loop__0();
+    /* Character gets buried, or respawns */
+    if (death) {
+      upon_death();
+      if (death) {
+#if DO_DEBUG
+        memory_error(0, "DEBUG_ON_EXIT");
+#endif
+        return 0;
+      }
+    }
+
+    generate_cave();
+  }
 }

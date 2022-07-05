@@ -3,6 +3,6 @@
 
 #include "../types.h"
 
-void dungeon();
+int main_loop(void);
 
 #endif /* MAIN_LOOP_H */

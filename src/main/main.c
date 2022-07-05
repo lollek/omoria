@@ -15,10 +15,8 @@
 #include "../configure.h"
 #include "../death.h"
 #include "../debug.h"
-#include "../generate_dungeon/generate_dungeon.h"
 #include "../kickout.h"
 #include "../player.h"
-#include "../port.h"
 #include "../save.h"
 #include "../stores.h"
 #include "../variables.h"
@@ -64,21 +62,5 @@ int main(int argc, char *argv[]) {
     exit_game();
 
   MSG(("%s", "Main - Entering game"));
-  /* Loop till dead, or exit */
-  while (true) {
-    /* Dungeon logic */
-    dungeon();
-    /* Character gets buried, or respawns */
-    if (death) {
-      upon_death();
-      if (death) {
-#if DO_DEBUG
-        memory_error(0, "DEBUG_ON_EXIT");
-#endif
-        return 0;
-      }
-    }
-
-    generate_cave();
-  }
+  return main_loop();
 }
