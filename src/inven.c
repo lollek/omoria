@@ -2159,3 +2159,106 @@ void inven_drop(treas_rec *item_ptr, long y, long x, boolean mon) {
   cave[y][x].tptr = i1;
   dispose(temp_ptr, sizeof(treas_rec), "inven_drop");
 }
+
+boolean find_range(obj_set const item_val, boolean inner, treas_rec **first,
+                   long *count) {
+  treas_rec *ptr;
+
+  ENTER(("find_range", ""));
+
+  *count = 0;
+  *first = NULL;
+
+  change_all_ok_stats(false, false);
+
+  for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
+
+    /* Filter */
+    if (!is_in(ptr->data.tval, item_val))
+      continue;
+    if (ptr->is_in && !inner)
+      continue;
+    if (ptr->data.tval == bag_or_sack && ptr->insides > 0)
+      continue;
+
+    /* Do */
+    if (*count == 0)
+      *first = ptr;
+    ptr->ok = true;
+    (*count)++;
+  }
+
+  MSG(("find: count=%ld\n", *count));
+
+  LEAVE("find_range", "");
+  return *count > 0;
+}
+
+static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
+                                            boolean *commas) {
+  if (*commas) {
+    strcat(out_val, ", ");
+  }
+  strcat(out_val, astr);
+  *commas = true;
+}
+
+long get_money_type(char prompt[134], boolean *back, boolean no_check) {
+  boolean comma_flag = false;
+  boolean test_flag = false;
+  char out_val[134];
+  long com_val;
+
+  strncpy(out_val, prompt, sizeof(char[134]));
+
+  if ((player_money[6] > 0) || (no_check))
+    s__get_money_type__prompt_money("<m>ithril", out_val, &comma_flag);
+  if ((player_money[5] > 0) || (no_check))
+    s__get_money_type__prompt_money("<p>latinum", out_val, &comma_flag);
+  if ((player_money[4] > 0) || (no_check))
+    s__get_money_type__prompt_money("<g>old", out_val, &comma_flag);
+  if ((player_money[3] > 0) || (no_check))
+    s__get_money_type__prompt_money("<s>ilver", out_val, &comma_flag);
+  if ((player_money[2] > 0) || (no_check))
+    s__get_money_type__prompt_money("<c>opper", out_val, &comma_flag);
+  if ((player_money[1] > 0) || (no_check))
+    s__get_money_type__prompt_money("<i>ron", out_val, &comma_flag);
+
+  prt(out_val, 1, 1);
+  *back = true;
+
+  do {
+    char command = inkey();
+    com_val = (long)(command);
+    switch (com_val) {
+    case 0:
+    case 3:
+    case 25:
+    case 26:
+    case 27:
+      test_flag = true;
+      *back = false;
+      break;
+    case 109:
+      test_flag = ((player_money[MITHRIL] > 0) || (no_check));
+      break;
+    case 112:
+      test_flag = ((player_money[PLATINUM] > 0) || (no_check));
+      break;
+    case 103:
+      test_flag = ((player_money[GOLD] > 0) || (no_check));
+      break;
+    case 115:
+      test_flag = ((player_money[SILVER] > 0) || (no_check));
+      break;
+    case 99:
+      test_flag = ((player_money[COPPER] > 0) || (no_check));
+      break;
+    case 105:
+      test_flag = ((player_money[IRON] > 0) || (no_check));
+      break;
+    } /* end switch */
+  } while (!test_flag);
+
+  return com_val;
+}

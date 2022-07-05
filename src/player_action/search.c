@@ -16,7 +16,7 @@ void player_action_search(long player_y, long player_x, long chance) {
 
   if ((player_flags).confused + (player_flags).blind > 0) {
     chance = trunc(chance / 10.0);
-  } else if (no_light()) {
+  } else if (player_has_no_light()) {
     chance = (long)(chance / 5.0);
   }
 

@@ -7,25 +7,207 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "../configure.h"
-#include "../creature.h"
 #include "../constants.h"
+#include "../creature.h"
 #include "../debug.h"
-#include "../main_loop.h"
+#include "../desc.h"
+#include "../inven.h"
 #include "../magic.h"
+#include "../main_loop.h"
+#include "../dungeon/light.h"
+#include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
+#include "../random.h"
+#include "../screen.h"
 #include "../term.h"
+#include "../traps.h"
 #include "../types.h"
 #include "../variables.h"
-#include "../screen.h"
-#include "../misc.h"
-#include "../random.h"
 
 #include "search.h"
+#include "attack.h"
 
 #include "move.h"
 
 boolean cave_flag = false; /*	{ Used in get_panel   } */
+
+/*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
+/*{ on the TVAL of the object.  Traps are set off, money and most }*/
+/*{ objects are picked up.  Some objects, such as open doors, just}*/
+/*{ sit there...                                                  }*/
+static void carry(long y, long x) {
+
+  treas_rec *item_ptr;
+  char out_val[82];
+  char out2[120];
+  char page_char;
+  char inv_char;
+  treas_rec *tmp_ptr;
+  long count;
+  boolean money_flag;
+
+  ENTER(("carry", "%d, %d", y, x));
+
+  money_flag = false;
+  find_flag = false;
+
+  /* with cave[y][x]. do; */
+  inven_temp.data = t_list[cave[y][x].tptr];
+
+  /*{ There's GOLD in them thar hills!      }*/
+  /*{ OPPS!                                 }*/
+
+  if (is_in(t_list[cave[y][x].tptr].tval, trap_set)) {
+    hit_trap(&y, &x);
+  } else if (t_list[cave[y][x].tptr].tval <= valuable_metal) {
+
+    /*{ Attempt to pick up an object.         }*/
+    if (inven_check_num()) {      /*{ Too many objects?     }*/
+      if (inven_check_weight()) { /*{ Weight limit check }*/
+
+        /*{ Okay, pick it up      }*/
+        pusht(cave[y][x].tptr);
+        cave[y][x].tptr = 0;
+
+        if (inven_temp.data.tval == valuable_metal) {
+          item_ptr = money_carry();
+          money_flag = true;
+        } else {
+          item_ptr = inven_carry();
+        }
+
+        prt_stat_block();
+        objdes(out_val, item_ptr, true);
+
+        if (money_flag) {
+
+          page_char = '$';
+          inv_char = '$';
+
+        } else {
+
+          count = 0;
+          tmp_ptr = inventory_list;
+
+          if (tmp_ptr->next == item_ptr->next) {
+            count = 0;
+          } else {
+            do {
+              count++;
+              tmp_ptr = tmp_ptr->next;
+            } while (tmp_ptr->next != item_ptr->next);
+          }
+
+          if ((count / 20) > 9) {
+            page_char = '*';
+            inv_char = '*';
+          } else {
+            page_char = ((count / 20) + 49);
+            inv_char = (count - (count / 20) * 20 + 97);
+          }
+        }
+        sprintf(out2, "You have %s. (%c%c)", out_val, page_char, inv_char);
+        msg_print(out2);
+      } else {
+        msg_print("You can't carry that much weight.");
+      }
+    } else {
+      msg_print("You can't carry that many items.");
+    }
+  }
+  LEAVE("carry", "");
+}
+
+/*        { Turns off Find_flag if something interesting appears  -RAK- * }*/
+/*        { BUG: Does not handle corridor/room corners, but I didn't * want }*/
+/*        {      to add a lot of checking for such a minor detail }*/
+static void area_affect(long dir, long y, long x) {
+  long z[4]; /*: array [1..3] of long;*/
+  long i1, row, col;
+  obj_set corridors = {4, 5, 6, 0};
+  obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
+
+  if (cave[y][x].fval == corr_floor1.ftval) {
+    if (next_to4(y, x, corridors) > 2) {
+      find_flag = false;
+    }
+  }
+
+  if ((find_flag) && (player_flags.blind < 1)) {
+
+    switch (dir) {
+    case 1:
+    case 3:
+    case 7:
+    case 9:
+      z[1] = rotate_dir(dir, -1);
+      z[2] = dir;
+      z[3] = rotate_dir(dir, 1);
+      break;
+
+    case 2:
+    case 4:
+    case 6:
+    case 8:
+      z[1] = rotate_dir(dir, -2);
+      z[2] = dir;
+      z[3] = rotate_dir(dir, 2);
+      break;
+    }
+
+    for (i1 = 1; i1 <= 3; i1++) {
+      row = y;
+      col = x;
+      if (move_dir(z[i1], &row, &col)) {
+
+        /* with cave[row,col] do; */
+
+        /* { Empty doorways        }*/
+        if (cave[row][col].fval == corr_floor2.ftval) {
+          find_flag = false;
+        }
+
+        /*  { Objects player can see}*/
+        /*  { Including doors       }*/
+        if (find_flag) {
+          if (player_light) {
+            if (cave[row][col].tptr > 0) {
+              if (!(is_in(t_list[cave[row][col].tptr].tval,
+                          some_hidden_stuff))) {
+                find_flag = false;
+              }
+            }
+          } else if ((cave[row][col].tl) || (cave[row][col].pl) ||
+                     (cave[row][col].fm)) {
+            if (cave[row][col].tptr > 0) {
+              if (!(is_in(t_list[cave[row][col].tptr].tval,
+                          some_hidden_stuff))) {
+                find_flag = false;
+              }
+            }
+          }
+        }
+
+        /*{ Creatures             }*/
+        if (find_flag) {
+          if ((cave[row][col].tl) || (cave[row][col].pl) || (player_light)) {
+            if (cave[row][col].cptr > 1) {
+              /* with */
+              /* m_list[cave[row][col].cptr]
+               */
+              /* do; */
+              if (m_list[cave[row][col].cptr].ml) {
+                find_flag = false;
+              }
+            }
+          }
+        }
+
+      } /* end if move_char */
+    }   /* end for */
+  }     /* end if find and not blind */
+}
 
 /**
  * -RAK-
@@ -42,11 +224,10 @@ static void s__panel_bounds() {
   panel_col_prt = panel_col_min - 15;
 }
 
-
 /*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
 /*{ when a move off the screen has occurred and figures new borders}*/
 /* forceit forcses the panel bounds to be recalculated (show_location).
-  */
+ */
 static boolean get_panel(long y, long x, boolean forceit) {
 
   long prow, pcol;
@@ -154,11 +335,11 @@ static void _move_char(long dir) {
   if (cave[test_row][test_col].cptr >= 2) {
     if (find_flag) {
       find_flag = false;
-      move_light(char_row, char_col, char_row, char_col);
+      dungeon_light_move(char_row, char_col, char_row, char_col);
     }
     /* ..if we dare */
     if (player_flags.afraid < 1) {
-      py_attack(test_row, test_col);
+      player_action_attack(test_row, test_col);
     } else {
       msg_print("You are too afraid to attack!");
     }
@@ -216,13 +397,13 @@ static void _move_char(long dir) {
     carry(test_row, test_col);
 
   /* Move the light source */
-  move_light(char_row, char_col, test_row, test_col);
+  dungeon_light_move(char_row, char_col, test_row, test_col);
 
   /* A room of light should be lit... */
   if (cave[test_row][test_col].fval == lopen_floor.ftval) {
     if (player_flags.blind < 1) {
       if (!(cave[test_row][test_col].pl)) {
-        light_room(test_row, test_col);
+        dungeon_light_room(test_row, test_col);
       }
     }
 
@@ -234,7 +415,7 @@ static void _move_char(long dir) {
       for (long x = test_col - 1; x <= test_col + 1; x++) {
         if (in_bounds(y, x) && cave[y][x].fval == lopen_floor.ftval &&
             !cave[y][x].pl) {
-          light_room(y, x);
+          dungeon_light_room(y, x);
         }
       }
     }
@@ -246,33 +427,61 @@ static void _move_char(long dir) {
 }
 
 int char_to_dir(char c) {
-    switch (c) {
-        case 'b': case 'B': return 1;
-        case 'j': case 'J': return 2;
-        case 'n': case 'N': return 3;
-        case 'h': case 'H': return 4;
-        case '.': return 5;
-        case 'l': case 'L': return 6;
-        case 'y': case 'Y': return 7;
-        case 'k': case 'K': return 8;
-        case 'u': case 'U': return 9;
-        default: return -1;
-    }
+  switch (c) {
+  case 'b':
+  case 'B':
+    return 1;
+  case 'j':
+  case 'J':
+    return 2;
+  case 'n':
+  case 'N':
+    return 3;
+  case 'h':
+  case 'H':
+    return 4;
+  case '.':
+    return 5;
+  case 'l':
+  case 'L':
+    return 6;
+  case 'y':
+  case 'Y':
+    return 7;
+  case 'k':
+  case 'K':
+    return 8;
+  case 'u':
+  case 'U':
+    return 9;
+  default:
+    return -1;
+  }
 }
 
 char dir_to_char(int dir) {
-    switch (dir) {
-        case 1: return 'b';
-        case 2: return 'j';
-        case 3: return 'n';
-        case 4: return 'h';
-        case 5: return '.';
-        case 6: return 'l';
-        case 7: return 'y';
-        case 8: return 'k';
-        case 9: return 'u';
-        default: return '?';
-    }
+  switch (dir) {
+  case 1:
+    return 'b';
+  case 2:
+    return 'j';
+  case 3:
+    return 'n';
+  case 4:
+    return 'h';
+  case 5:
+    return '.';
+  case 6:
+    return 'l';
+  case 7:
+    return 'y';
+  case 8:
+    return 'k';
+  case 9:
+    return 'u';
+  default:
+    return '?';
+  }
 }
 
 void player_action_move(long dir) {

@@ -2879,3 +2879,89 @@ boolean d__get_dir(char prompt[82], long *dir, long *command_ptr, long *y,
 boolean xor(long thing1, long thing2) {
   return !((thing1 && thing2) || (!thing1 && !thing2));
 }
+
+boolean coin_stuff(char typ, long *type_num) {
+  boolean return_value;
+
+  return_value = true;
+  switch (typ) {
+  case 'm':
+    *type_num = MITHRIL;
+    break;
+  case 'p':
+    *type_num = PLATINUM;
+    break;
+  case 'g':
+    *type_num = GOLD;
+    break;
+  case 's':
+    *type_num = SILVER;
+    break;
+  case 'c':
+    *type_num = COPPER;
+    break;
+  case 'i':
+    *type_num = IRON;
+    break;
+
+  default:
+    return_value = false;
+    break;
+  }
+  return return_value;
+}
+
+boolean delete_object(long y, long x) {
+
+  boolean return_value = false;
+
+  /* with cave[y,x] do; */
+  if (t_list[cave[y][x].tptr].tval == secret_door) {
+    cave[y][x].fval = corr_floor3.ftval;
+  }
+  cave[y][x].fopen = true;
+  pusht(cave[y][x].tptr);
+  cave[y][x].tptr = 0;
+  cave[y][x].fm = false;
+  if (test_light(y, x)) {
+    lite_spot(y, x);
+    return_value = true;
+  } else {
+    unlite_spot(y, x);
+  }
+
+  return return_value;
+}
+
+boolean twall(long y, long x, long t1, long t2) {
+  /*{ Used by TUNNEL and WALL_TO_MUD                                }*/
+
+  obj_set some_walls = {1, 2, 0};
+  boolean return_value = false;
+
+  /* with cave[y][x]. do; */
+  if (t1 > t2) {
+    if (next_to4(y, x, some_walls) > 0) {
+      cave[y][x].fval = corr_floor2.ftval;
+      cave[y][x].fopen = corr_floor2.ftopen;
+    } else {
+      cave[y][x].fval = corr_floor1.ftval;
+      cave[y][x].fopen = corr_floor1.ftopen;
+    }
+
+    if (test_light(y, x)) {
+      if (panel_contains(y, x)) {
+        if (cave[y][x].tptr > 0) {
+          msg_print("You have found something!");
+        }
+        lite_spot(y, x);
+      }
+    }
+
+    cave[y][x].fm = false;
+    cave[y][x].pl = false;
+    return_value = true;
+  }
+
+  return return_value;
+}

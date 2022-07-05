@@ -141,7 +141,7 @@ static boolean blind_check(enum magic_t magic_type) {
 }
 
 static boolean light_check(enum magic_t magic_type) {
-  if (no_light()) {
+  if (player_has_no_light()) {
     switch (magic_type) {
     case M_ARCANE:
     case M_DIVINE:

@@ -2,6 +2,7 @@
 #define MISC_H
 
 #include <curses.h>
+#include <time.h>
 
 #include "types.h"
 
@@ -92,5 +93,19 @@ boolean move_dir(long dir, long *y, long *x);
 boolean player_saves(long adjust);
 boolean player_spell_saves();
 void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence);
+
+/**
+ * Figure out what kind of coin is beign asked about
+ * 
+ * typ: Initial of coin metal
+ * type_num: ???
+ */
+boolean coin_stuff(char typ, long *type_num);
+
+/*{ Deletes object from given location                    -RAK-   }*/
+boolean delete_object(long y, long x);
+
+/*{ Tunneling through wall }*/
+boolean twall(long y, long x, long t1, long t2);
 
 #endif // MISC_H

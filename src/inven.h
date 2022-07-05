@@ -29,4 +29,12 @@ treas_rec *ic__remove(long item_val, boolean show_message);
  */
 void inv__equip_pos_string(char out_val[82], long equip_pos, long counter);
 
+boolean find_range(obj_set const item_val, boolean inner, treas_rec **first,
+                   long *count);
+
+/**
+ * Prompt for what type of money to use
+ */
+long get_money_type(char prompt[134], boolean *back, boolean no_check);
+
 #endif // INVEN_H

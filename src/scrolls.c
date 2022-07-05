@@ -571,7 +571,7 @@ void read_scroll() {
     if (find_range(stuff_to_read, false, &i2, &i3)) {
       if (player_flags.blind > 0) {
         msg_print("You can't see to read the scroll.");
-      } else if (no_light()) {
+      } else if (player_has_no_light()) {
         msg_print("You have no light to read by.");
       } else if (player_flags.confused > 0) {
         msg_print("The text seems to swim about the page!");

@@ -276,3 +276,28 @@ void prt_quested() {
     put_buffer("        ", STATUS_ROW, QUESTED_COLUMN);
   }
 }
+
+void lite_spot(long y, long x) {
+  if (panel_contains(y, x)) {
+    print(loc_symbol(y, x), y, x);
+  }
+}
+
+void unlite_spot(long y, long x) {
+  if (panel_contains(y, x)) {
+    print(' ', y, x);
+  }
+}
+
+boolean panel_contains(long y, long x) {
+  boolean return_value = false;
+
+  if ((y >= panel_row_min) && (y <= panel_row_max)) {
+    if ((x >= panel_col_min) && (x <= panel_col_max)) {
+      return_value = true;
+    }
+  }
+
+  return return_value;
+}
+

@@ -119,6 +119,7 @@ extern uint16_t player_cur_quest;     /* { creature # of quest } {FUBAR} */
 extern time_t player_creation_time;   /* used as key in master file */
 extern int64_t player_claim_check;    /* used to track trading post */
 extern int64_t player_uid;            /* Used in master file */
+extern boolean player_light;          /* { Player carrying light } */
 
 uint16_t C_player_max_bulk(void);
 int16_t C_player_dmg_from_str(void);
@@ -173,6 +174,19 @@ void change_speed(long num);
       { When an item is worn or taken off, this re-adjusts the player }
       { bonuses.  Factor=1 : wear; Factor=-1 : removed                }
 */
+void py_bonuses(treasure_type *tobj, long factor);
+
+/**
+ * @return True if player has no light
+ */
+boolean player_has_no_light();
+
+void change_rep(long amt);
+
+boolean player_test_hit(long bth, long level, long pth, long ac,
+                        boolean was_fired);
+
+long tot_dam(treasure_type *item, long tdam, creature_type *monster);
 void py_bonuses(treasure_type *tobj, long factor);
 
 #endif /* PLAYER_H */

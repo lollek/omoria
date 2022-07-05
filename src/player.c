@@ -9,17 +9,18 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "main_loop.h"
 #include "magic.h"
+#include "model_class.h"
+#include "main_loop.h"
 #include "pascal.h"
 #include "player.h"
+#include "player_action/move.h"
+#include "random.h"
+#include "screen.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "screen.h"
-#include "player_action/move.h"
 
-/* P_MISC */
 int64_t player_xtr_wgt = 0;
 int64_t player_account = 0;
 money_type player_money = {0, 0, 0, 0, 0, 0, 0};
@@ -66,6 +67,7 @@ uint16_t player_cur_quest = 0;
 time_t player_creation_time = 0;
 int64_t player_claim_check = 0;
 int64_t player_uid = 0;
+boolean player_light;
 
 /*	{ Following are player variables				} */
 p_flags player_flags = {
@@ -377,4 +379,124 @@ void py_bonuses(treasure_type *tobj, long factor) {
       }
     }
   }
+}
+
+boolean player_has_no_light() {
+
+  if (!(cave[char_row][char_col].tl)) {
+    if (!(cave[char_row][char_col].pl)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void change_rep(long amt) {
+  if ((amt < 0) || (player_rep + amt <= 0)) { /*{bad deed or make up for sins}*/
+    player_rep += amt;
+  } else { /*{ good deed that puts char into positive reputation }*/
+           /*{ good characters progress slowly -- past 0 it costs 2, past
+            * 20 costs 3...}*/
+    if (player_rep < 0) { /*{ go from bad to good }*/
+      amt += player_rep;
+      player_rep = 0;
+    } /*{increase goodness}*/
+    player_rep =
+        trunc(sqrt((20 + player_rep) * (20 + player_rep) + 40 * amt) - 20);
+  }
+}
+
+boolean player_test_hit(long base_to_hit, long level, long plus_to_hit,
+                        long enemy_ac, boolean was_fired) {
+  if (search_flag) {
+    search_off();
+  }
+  if (player_flags.rest > 0) {
+    rest_off();
+  }
+
+  /* compare player::melee_tohit()  and player::ranged_tohit() */
+  long hit_value = base_to_hit + (plus_to_hit * BTH_PLUS_ADJ);
+
+  if (was_fired) {
+    hit_value += (level * C_class_ranged_bonus(player_pclass)) / 2;
+  } else {
+    hit_value += (level * C_class_melee_bonus(player_pclass)) / 2;
+  }
+
+  /*{ hits if above ac or 1 in 20.  OOK! }*/
+  if (randint(hit_value) > enemy_ac) {
+    return true;
+  } else if (randint(20) == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+long tot_dam(treasure_type *item, long tdam, creature_type *monster) {
+  /*{ Special damage due to magical abilities of object     -RAK-   }*/
+
+  obj_set stuff_that_goes_thump = {
+      sling_ammo,    bolt,     arrow,  lamp_or_torch, bow_crossbow_or_sling,
+      hafted_weapon, pole_arm, dagger, sword,         maul,
+      flask_of_oil,  0};
+
+  unsigned long cdefense, flags, flags2;
+
+  cdefense = monster->cdefense;
+  flags = item->flags;
+  flags2 = item->flags2;
+
+  /* with item do; */
+  if (is_in(item->tval, stuff_that_goes_thump)) {
+    /* with monster do; */
+
+    /*{ Slay Dragon   }*/
+    if (((cdefense & 0x0001) != 0) && ((flags & Slay_Dragon_worn_bit) != 0)) {
+      tdam *= 4;
+
+      /*{ Slay Undead   }*/
+    } else if (((cdefense & 0x0008) != 0) &&
+               ((flags & Slay_Undead_worn_bit) != 0)) {
+      tdam *= 3;
+
+      /*{ Demon Bane    }*/
+    } else if (((cdefense & 0x0400) != 0) &&
+               ((flags2 & Slay_demon_worn_bit) != 0)) {
+      tdam *= 3;
+
+      /*{ Slay Regenerative }*/
+    } else if (((cdefense & 0x8000) != 0) &&
+               ((flags2 & Slay_regen_worn_bit) != 0)) {
+      tdam *= 3;
+
+      /*{ Slay Monster  }*/
+    } else if (((cdefense & 0x0002) != 0) &&
+               ((flags & Slay_Monster_worn_bit) != 0)) {
+      tdam *= 2;
+
+      /*{ Slay Evil     }*/
+    } else if (((cdefense & 0x0004) != 0) &&
+               ((flags & Slay_Evil_worn_bit) != 0)) {
+      tdam *= 2;
+
+      /*{ Soul Sword    }*/
+    } else if ((!((cdefense & 0x0008) != 0)) &&
+               ((flags2 & Soul_Sword_worn_bit) != 0)) {
+      tdam *= 2;
+    }
+    /*{ Frost         }*/
+  } else if (((cdefense & 0x0010) != 0) &&
+             ((flags & Cold_Brand_worn_bit) != 0)) {
+    tdam *= 1.5;
+
+    /*{ Fire          }*/
+  } else if (((cdefense & 0x0020) != 0) &&
+             ((flags & Flame_Brand_worn_bit) != 0)) {
+    tdam *= 1.5;
+  }
+
+  return tdam;
 }

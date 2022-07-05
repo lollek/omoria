@@ -11,24 +11,26 @@
 
 #include "configure.h"
 #include "constants.h"
+#include "creature.h"
 #include "debug.h"
-#include "main_loop.h"
+#include "desc.h"
+#include "dungeon/light.h"
+#include "effects.h"
+#include "generate_item/generate_item.h"
+#include "inven.h"
 #include "magic.h"
+#include "main_loop.h"
+#include "misc.h"
+#include "monsters.h"
 #include "pascal.h"
 #include "player.h"
+#include "player_action/move.h"
+#include "random.h"
+#include "screen.h"
 #include "term.h"
+#include "traps.h"
 #include "types.h"
 #include "variables.h"
-#include "creature.h"
-#include "desc.h"
-#include "generate_item/generate_item.h"
-#include "traps.h"
-#include "inven.h"
-#include "screen.h"
-#include "player_action/move.h"
-#include "misc.h"
-#include "random.h"
-#include "monsters.h"
 
 #include "spells.h"
 
@@ -97,6 +99,79 @@ static obj_set destroyed_by_petrify = {boots,   soft_armor, potion1,
                                        potion2, Food,       0};
 static obj_set destroyed_by_sunray = {cloak,   scroll1, scroll2,
                                       potion1, potion2, 0};
+
+/*{ Lose experience hack for lose_exp breath              -RAK-   }*/
+static void xp_loss(long amount) {
+
+  long i1, i2;
+  long av_hp, lose_hp;
+  long av_mn, lose_mn;
+  boolean flag;
+
+  amount = (player_exp / 100) * MON_DRAIN_LIFE; /* passed val?  XXXX */
+
+  /* with player_do; */
+  msg_print("You feel your life draining away!");
+  if (amount > player_exp) {
+    player_exp = 0;
+  } else {
+    player_exp -= amount;
+  }
+
+  for (i1 = 1; (long)(exp_per_level[i1] * player_expfact) <= player_exp;) {
+    i1++;
+  }
+  i2 = player_lev - i1;
+
+  for (; i2 > 0;) {
+    av_hp = (C_player_max_hp() / player_lev);
+    av_mn = (player_mana / player_lev);
+    player_lev--;
+    i2--;
+    lose_hp = randint(av_hp * 2 - 1);
+    lose_mn = randint(av_mn * 2 - 1);
+    C_player_modify_max_hp(lose_hp);
+    player_mana -= lose_mn;
+    if (player_mana < 0) {
+      player_mana = 0;
+    }
+
+    if (C_player_uses_magic(M_ARCANE) || C_player_uses_magic(M_DIVINE) ||
+        C_player_uses_magic(M_NATURE) || C_player_uses_magic(M_SONG) ||
+        C_player_uses_magic(M_CHAKRA)) {
+      i1 = 32;
+      flag = false;
+      do {
+        i1--;
+        if (C_player_knows_spell(i1)) {
+          flag = true;
+        }
+      } while (!((flag) || (i1 < 2)));
+      if (flag) {
+        C_player_set_knows_spell(i1, false);
+        if (C_player_uses_magic(M_ARCANE)) {
+          msg_print("You have forgotten a magic "
+                    "spell!");
+        } else if (C_player_uses_magic(M_DIVINE)) {
+          msg_print("You have forgotten a prayer!");
+        } else if (C_player_uses_magic(M_SONG)) {
+          msg_print("You have forgotten a song!");
+        } else {
+          msg_print("You have forgotten a discipline!");
+        }
+      }
+    }
+  }
+
+  if (C_player_current_hp() > C_player_max_hp()) {
+    C_player_reset_current_hp();
+  }
+  if (player_cmana > player_mana) {
+    player_cmana = player_mana;
+  }
+
+  prt_stat_block();
+}
 
 static void get_flags(enum spell_effect_t typ, long *weapon_type,
                       long *harm_type, obj_set **destroy) {
@@ -1264,7 +1339,7 @@ boolean light_area(long y, long x) {
   msg_print("You are surrounded by a white light.");
 
   if (is_in(cave[y][x].fval, room_floors) && (dun_level > 0)) {
-    light_room(y, x);
+    dungeon_light_room(y, x);
   } else {
     for (i1 = y - 1; i1 <= y + 1; i1++) {
       for (i2 = x - 1; i2 <= x + 1; i2++) {
@@ -2101,7 +2176,7 @@ boolean light_line(long dir, long y, long x, long power) {
 
       if (!((cave[y][x].tl) || (cave[y][x].pl))) {
         if (cave[y][x].fval == lopen_floor.ftval) {
-          light_room(y, x);
+          dungeon_light_room(y, x);
         } else {
           lite_spot(y, x);
         }

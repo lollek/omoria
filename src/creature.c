@@ -12,21 +12,23 @@
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "main_loop.h"
+#include "desc.h"
+#include "effects.h"
+#include "fighting.h"
+#include "inven.h"
 #include "magic.h"
+#include "main_loop.h"
+#include "misc.h"
+#include "monsters.h"
 #include "pascal.h"
 #include "player.h"
+#include "player_action/move.h"
+#include "random.h"
+#include "screen.h"
+#include "spells.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "player_action/move.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
-#include "monsters.h"
 
 #include "creature.h"
 
@@ -37,6 +39,80 @@
 
 typedef long mm_type[6];
 static const long mon_mult_adj = 7; // High value slows multiplication
+
+static void get_player_move_rate() {
+  long cur_swim;
+
+  /* with player_flags do; */
+  if (is_in(cave[char_row][char_col].fval, earth_set)) {
+    (player_flags).move_rate = 4;
+  } else {
+    cur_swim = (((player_flags).swim + randint(5) - 1) / 5);
+
+    if (cur_swim <= -2) {
+      (player_flags).move_rate = 0;
+    } else if (cur_swim == -1) {
+      (player_flags).move_rate = 1;
+    } else if (cur_swim == 0) {
+      (player_flags).move_rate = 2;
+    } else if (cur_swim == 1) {
+      (player_flags).move_rate = 4;
+    } else {
+      (player_flags).move_rate = 8;
+    }
+  }
+}
+
+/*{ Given speed, returns number of moves this turn.       -RAK-   }*/
+/*{ NOTE: Player must always move at least once per iteration,    }*/
+/*{       a slowed player is handled by moving monsters faster    }*/
+static long movement_rate(long cspeed, long mon) {
+
+  long final_rate;      /*{ final speed as long }*/
+  long c_rate, py_rate; /*{ rate (0,1,2,3) = (0,1/4,1/2,1)
+                             _                in wrong element }*/
+  long return_value;
+
+  /* with m_list[mon] do; */
+  /* with c_list[mptr] do; */
+  /* with cave[fy,fx] do; */
+  uint8_t const monster_y = m_list[mon].fy;
+  uint8_t const monster_x = m_list[mon].fx;
+  if (xor((is_in(cave[monster_y][monster_x].fval, earth_set) ||
+           is_in(cave[monster_y][monster_x].fval, pwall_set)),
+          ((c_list[m_list[mon].mptr].cmove & 0x00000010) == 0))) {
+    c_rate = (long)((c_list[m_list[mon].mptr].cmove & 0x00000300) / 256);
+  } else {
+    c_rate = 3;
+  }
+
+  if (c_rate == 3) {
+    c_rate = 4; /* I wish I knew why they did this... rounding up? */
+  }
+
+  py_rate = player_flags.move_rate;
+
+  if (cspeed > 0) {
+    c_rate *= cspeed;
+  } else {
+    py_rate *= (2 - cspeed);
+  }
+
+  final_rate = c_rate / py_rate;
+
+  if (((c_rate * turn) % py_rate) < (c_rate % py_rate)) {
+    final_rate++;
+  }
+
+  /* { if player resting, max monster move = 1 } */
+  if ((final_rate > 1) && (player_flags.rest > 0)) {
+    return_value = 1;
+  } else {
+    return_value = final_rate;
+  }
+
+  return return_value;
+}
 
 void move_rec(long y1, long x1, long y2, long x2) {
 
@@ -371,8 +447,7 @@ static void c__print_attack(long adesc, char *cdesc) {
   char the_attack[134];
   boolean no_print = false;
 
-  ENTER(("c__print_attack", "%ld,len: %d >%s<", adesc,
-         strlen(cdesc), cdesc));
+  ENTER(("c__print_attack", "%ld,len: %d >%s<", adesc, strlen(cdesc), cdesc));
   strcpy(the_attack, cdesc);
 
   switch (adesc) {
@@ -530,7 +605,8 @@ static void c__print_attack(long adesc, char *cdesc) {
   LEAVE("c__print_attack", "c");
 }
 
-static void c__apply_attack(long monptr, long atype, char ddesc[82], char *damstr) {
+static void c__apply_attack(long monptr, long atype, char ddesc[82],
+                            char *damstr) {
   long dam, level, aning;
   long i1, i2, i4;
   boolean flag;

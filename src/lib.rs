@@ -19,7 +19,6 @@ pub mod constants;
 pub mod conversion;
 pub mod data;
 pub mod debug;
-pub mod dungeon;
 pub mod equipment;
 pub mod error;
 pub mod flow;

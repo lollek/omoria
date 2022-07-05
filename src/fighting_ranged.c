@@ -4,15 +4,16 @@
 
 #include "boolean.h"
 #include "debug.h"
-#include "main_loop.h"
-#include "player.h"
-#include "variables.h"
 #include "desc.h"
-#include "model_item.h"
 #include "inven.h"
-#include "screen.h"
+#include "main_loop.h"
 #include "misc.h"
+#include "model_item.h"
+#include "monsters.h"
+#include "player.h"
 #include "random.h"
+#include "screen.h"
+#include "variables.h"
 
 enum _ranged_attack_t { THROW, SHOOT };
 

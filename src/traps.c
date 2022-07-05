@@ -9,25 +9,28 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "bank.h"
+#include "casino/casino.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "main_loop.h"
+#include "effects.h"
+#include "fighting.h"
 #include "magic.h"
+#include "main_loop.h"
+#include "misc.h"
 #include "pascal.h"
 #include "player.h"
+#include "quest.h"
+#include "random.h"
+#include "screen.h"
+#include "spells.h"
 #include "stores.h"
 #include "term.h"
+#include "town_level/enter_house.h"
 #include "trade.h"
 #include "types.h"
 #include "variables.h"
-#include "casino/casino.h"
-#include "quest.h"
-#include "screen.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
-#include "bank.h"
 
 /*	{ Traps are just Nasty treasures...				} */
 static treasure_type trap_lista[MAX_TRAPA + 1] = {
@@ -123,11 +126,7 @@ static treasure_type some_rubble = {
     "some rubble", rubble, 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0, 0, 0,
     "0d0",         0,      0};
 
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void place_trap(long y, long x, long typ, long subval) {
-  /*{ Places a particular trap at location y,x		-RAK-	}*/
 
   long cur_pos;
   treasure_type cur_trap;
@@ -142,17 +141,12 @@ void place_trap(long y, long x, long typ, long subval) {
   cave[y][x].tptr = cur_pos;
   t_list[cur_pos] = cur_trap;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void change_trap(long y, long x) {
-  /*{ Change a trap from invisible to visible               -RAK-   }*/
-  /*{ Note: Secret doors are handled here                           }*/
 
   long i3;
   obj_set little_things = {unseen_trap, secret_door, 0};
 
-  /* with cave[y,x] do; */
   if (is_in(t_list[cave[y][x].tptr].tval, little_things)) {
     i3 = cave[y][x].tptr;
     place_trap(y, x, 2, t_list[i3].subval);
@@ -160,12 +154,8 @@ void change_trap(long y, long x) {
     lite_spot(y, x);
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void place_rubble(long y, long x) {
-  /*{ Places rubble at location y,x				-RAK-
-   * }*/
 
   long cur_pos;
 
@@ -176,9 +166,7 @@ void place_rubble(long y, long x) {
 
   t_list[cur_pos] = some_rubble;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__open_pit(long dam) {
   msg_print("You fell into a pit!");
   if (player_flags.ffall) {
@@ -187,7 +175,7 @@ static void ht__open_pit(long dam) {
     take_hit(dam, "an open pit");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__arrow(long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     take_hit(dam, "an arrow trap");
@@ -196,7 +184,7 @@ static void ht__arrow(long dam) {
     msg_print("An arrow barely misses you.");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__covered_pit(long dam, long y, long x) {
   msg_print("You fell into a covered pit.");
   if (player_flags.ffall) {
@@ -206,7 +194,7 @@ static void ht__covered_pit(long dam, long y, long x) {
     place_trap(y, x, 2, 1);
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__trap_door(long dam) {
   msg_print("You fell through a trap door!");
   msg_print(" ");
@@ -218,7 +206,7 @@ static void ht__trap_door(long dam) {
     take_hit(dam, "a trap door");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__sleep_gas(void) {
 
   if (player_flags.paralysis == 0) {
@@ -231,14 +219,14 @@ static void ht__sleep_gas(void) {
     }
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__hidden_object(long y, long x) {
   cave[y][x].fm = false;
   pusht(cave[y][x].tptr);
   place_object(y, x);
   msg_print("Hmmm, there was something under this rock.");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__str_dart(long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     if (lose_stat(STR, "", "A small dart hits you.")) {
@@ -250,24 +238,24 @@ static void ht__str_dart(long dam) {
     msg_print("A small dart barely misses you.");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__teleport(void) {
   teleport_flag = true;
   msg_print("You hit a teleport trap!");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__rockfall(long dam, long y, long x) {
   take_hit(dam, "falling rock");
   pusht(cave[y][x].tptr);
   place_rubble(y, x);
   msg_print("You are hit by falling rock");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__corrode_gas(void) {
   corrode_gas("corrosion gas.");
   msg_print("A strange red gas surrounds you.");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__summon_monster(long y, long x) {
   long i1, ty, tx;
 
@@ -284,32 +272,32 @@ static void ht__summon_monster(long y, long x) {
     }
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__fire(long dam) {
   fire_dam(dam, "a fire trap.");
   msg_print("You are enveloped in flames!");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__acid(long dam) {
   acid_dam(dam, "an acid trap.");
   msg_print("You are splashed with acid!");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__poison_gas(long dam) {
   poison_gas(dam, "a poison gas trap.");
   msg_print("A pungent green gas surrounds you!");
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__blind_gas(void) {
   msg_print("A black gas surrounds you!");
   (player_flags).blind += randint(50) + 50;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__confuse_gas(void) {
   msg_print("A gas of scintillating colors surrounds you!");
   (player_flags).confused += randint(15) + 15;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__slow_dart(long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     take_hit(dam, "a dart trap");
@@ -319,7 +307,7 @@ static void ht__slow_dart(long dam) {
     msg_print("A small dart barely misses you.");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__con_dart(long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     if (lose_stat(CON, "", "A small dart hits you.")) {
@@ -331,9 +319,9 @@ static void ht__con_dart(long dam) {
     msg_print("A small dart barely misses you.");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__secret_door(void) {}
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__chute(long dam) {
   msg_print("You fell down a chute!");
   msg_print(" ");
@@ -345,9 +333,9 @@ static void ht__chute(long dam) {
     take_hit(dam, "chute landing");
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__scare_monster(void) {}
-/*//////////////////////////////////////////////////////////////////// */
+
 static void ht__whirlpool(long dam) {
   msg_print("You are swept into a whirlpool!");
   msg_print(" ");
@@ -360,322 +348,8 @@ static void ht__whirlpool(long dam) {
     }
   } while (randint(2) != 1);
 }
-/*//////////////////////////////////////////////////////////////////// */
-static void ht__house(long y, long x) {
-  switch (t_list[cave[y][x].tptr].p1) {
-  case 1:
-    msg_print("The building is empty.");
-    if (react(10) == 0) {
-      msg_print("The building is being guarded!");
-      call_guards("Magic Mouth spell");
-    }
-    break;
 
-  case 2:
-    msg_print("There is a Thieves' Guild meeting here.");
-    switch (react(6)) {
-    case 0:
-      call_guards("Guildmaster");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-      kicked_out();
-      break;
-
-    case 8:
-    case 9:
-    case 10:
-      thief_games();
-      break;
-    }
-    break;
-
-  case 3:
-    msg_print("This is a town brothel.  Some young prostitutes are "
-              "here.");
-    switch (react(10)) {
-    case 0:
-      call_guards("prostitutes");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-      kicked_out();
-      break;
-
-    default:
-      if (characters_sex() != FEMALE) {
-        msg_print("The girls invite you to prove your "
-                  "abilities.");
-        battle_game(C_player_mod_from_stat(CHR), "some playful prostitutes");
-      } else {
-        msg_print("The girls invite you to work with them.");
-        brothel_game();
-      }
-    }
-    break;
-
-  case 4:
-    msg_print("Some drunken fighters are telling tales here.");
-    switch (react(8)) {
-    case 0:
-      call_guards("group of fighters");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-      kicked_out();
-      break;
-
-    default:
-      msg_print("They ask you to demonstrate your fighting skill.");
-      battle_game(player_ptohit, "some drunken fighters");
-      break;
-    }
-    break;
-
-  case 5:
-    msg_print("There is a party in progress here.");
-    switch (react(8)) {
-    case 0:
-      call_guards("party's host");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-      kicked_out();
-      break;
-
-    default:
-      party();
-    }
-    break;
-
-  case 6:
-    switch (randint(2)) {
-    case 1:
-      msg_print("The building is a poorhouse.");
-      break;
-    case 2:
-      msg_print("This is an orphanage.");
-      break;
-    }
-
-    switch (react(12)) {
-    case 0:
-      call_guards("beggars");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      kicked_out();
-      break;
-
-    default:
-      switch (randint(2)) {
-      case 1: /*beg_food();  break;*/ /* beg_food is
-                                         unfinished XXXX */
-      case 2:
-        beg_money();
-        break;
-      }
-    }
-    break;
-
-  case 7:
-  case 8:
-    switch (randint(3)) {
-    case 1:
-      msg_print("This is the home of a peasant family.");
-      break;
-    case 2:
-      msg_print("These are the quarters of a humble laborer.");
-      break;
-    case 3:
-      msg_print(" This is the home of several poor families.");
-      break;
-    }
-
-    switch (react(8)) {
-    case 0:
-      call_guards("peasant(s)");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-      kicked_out();
-      break;
-
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-      invite_for_meal();
-      break;
-
-    case 8:
-    case 9:
-    case 10:
-      spend_the_night("peasant(s)");
-      break;
-    }
-    break;
-
-  case 9:
-    switch (randint(3)) {
-    case 1:
-    case 2:
-      msg_print("This is the home of a merchant.");
-      break;
-    case 3:
-      msg_print("This is the house of an accomplished craftsman.");
-      break;
-    }
-
-    switch (react(5)) {
-    case 0:
-      call_guards("owner");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      kicked_out();
-      break;
-
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-      invite_for_meal();
-      break;
-
-    case 10:
-      spend_the_night("gentleman");
-      break;
-    }
-    break;
-
-  case 10:
-    msg_print("There is a religious service in progress here.");
-    switch (react(8)) {
-    case 0:
-      call_guards("High Priest");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-      kicked_out();
-      break;
-
-    default:
-      worship();
-      break;
-    }
-    break;
-
-  case 11:
-    switch (randint(3)) {
-    case 1:
-      msg_print("This is the house of a wealthy shopkeeper.");
-      break;
-    case 2:
-      msg_print("This is the mansion of a affluent noble.");
-      break;
-    case 3:
-      msg_print("This is the estate of an rich guildsman.");
-      break;
-    }
-
-    switch (react(2)) {
-    case 0:
-      call_guards("master of the house");
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-      kicked_out();
-      break;
-
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-      invite_for_meal();
-      break;
-
-    case 10:
-      spend_the_night("master of the house");
-      break;
-    }
-    break;
-
-  case 12:
-    msg_print("This is the home of a powerful mage.");
-    switch (react(5)) {
-    case 0:
-      call_wizards();
-      break;
-
-    case 1:
-    case 2:
-    case 3:
-      call_guards("mage");
-      break;
-
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-      kicked_out();
-      break;
-
-    case 10:
-      invite_for_meal();
-      break;
-    }
-  }
-
-  t_list[cave[y][x].tptr].p1 = 1;
-
-  prt_stat_block();
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 void hit_trap(long *y, long *x) {
-  /*{ Player hit a trap...  (Chuckle)                       -RAK-   }*/
 
   long dam;
 
@@ -684,9 +358,6 @@ void hit_trap(long *y, long *x) {
   change_trap(*y, *x);
   lite_spot(char_row, char_col);
   find_flag = false;
-
-  /* with cave[*y][*x]. do; */
-  /* with player_do; */
 
   dam = damroll(t_list[cave[*y][*x].tptr].damage);
 
@@ -860,7 +531,7 @@ void hit_trap(long *y, long *x) {
   case 120:
   case 121:
   case 122: /* { House      } */
-    ht__house(*y, *x);
+    enter_house(*y, *x);
     break;
 
   case 123:
