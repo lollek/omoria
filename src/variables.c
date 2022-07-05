@@ -364,7 +364,6 @@ treasure_type door_list[3] = {
      0, 0, "1d1", 0, 0}};
 
 /*	{ Following are creature arrays and variables			} */
-creature_type c_list[MAX_CREATURES + 1];
 monster_type m_list[MAX_MALLOC + 1];
 long m_level[MAX_MONS_LEVEL + 1];
 

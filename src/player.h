@@ -3,6 +3,7 @@
 
 #include <time.h>
 
+#include "creature.h"
 #include "magic.h"
 #include "types.h"
 
@@ -186,7 +187,7 @@ void change_rep(long amt);
 boolean player_test_hit(long bth, long level, long pth, long ac,
                         boolean was_fired);
 
-long tot_dam(treasure_type *item, long tdam, creature_type *monster);
+long tot_dam(treasure_type *item, long tdam, monster_template *monster);
 void py_bonuses(treasure_type *tobj, long factor);
 
 #endif /* PLAYER_H */

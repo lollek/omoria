@@ -47,7 +47,6 @@
 #define IRON_VALUE 1
 
 /*	{ Creature contants						} */
-#define MAX_CREATURES 415     /*{ Number of creatures defined for univ	} */
 #define MAX_MALLOC (100 + 1)  /*{ Max that can be allocated	        } */
 #define MAX_MALLOC_CHANCE 160 /*{ 1/x chance of new monster each round	} */
 #define MAX_MONS_LEVEL 100    /*{ Maximum level of creatures		} */

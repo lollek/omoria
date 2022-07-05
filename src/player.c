@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "creature.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
@@ -434,7 +435,7 @@ boolean player_test_hit(long base_to_hit, long level, long plus_to_hit,
   }
 }
 
-long tot_dam(treasure_type *item, long tdam, creature_type *monster) {
+long tot_dam(treasure_type *item, long tdam, monster_template *monster) {
   /*{ Special damage due to magical abilities of object     -RAK-   }*/
 
   obj_set stuff_that_goes_thump = {

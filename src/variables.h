@@ -116,7 +116,6 @@ extern long equip_ctr;    /* { Cur equipment ctr	} */
 extern treasure_type door_list[3];
 
 /*	{ Following are creature arrays and variables			} */
-extern creature_type c_list[MAX_CREATURES + 1];
 extern monster_type m_list[MAX_MALLOC + 1];
 extern long m_level[MAX_MONS_LEVEL + 1];
 extern long muptr;        /* { Cur used monster ptr	} */

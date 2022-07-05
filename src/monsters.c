@@ -11,6 +11,8 @@
 
 #include "configure.h"
 #include "constants.h"
+#include "creature.h"
+#include "death.h"
 #include "debug.h"
 #include "magic.h"
 #include "misc.h"
@@ -19,7 +21,6 @@
 #include "random.h"
 #include "screen.h"
 #include "term.h"
-#include "death.h"
 #include "types.h"
 #include "variables.h"
 #include "wizard.h"
