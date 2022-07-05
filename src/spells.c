@@ -25,7 +25,7 @@
 #include "traps.h"
 #include "inven.h"
 #include "screen.h"
-#include "player_move.h"
+#include "player_action/move.h"
 #include "misc.h"
 #include "random.h"
 #include "monsters.h"
@@ -690,7 +690,7 @@ boolean teleport_to(long ny, long nx) {
   }
   char_row = y;
   char_col = x;
-  move_char(5);
+  player_action_move(5);
   creatures(false);
 
   return return_value;
@@ -2948,7 +2948,7 @@ void teleport(long dis) {
 
   char_row = y;
   char_col = x;
-  move_char(5);
+  player_action_move(5);
   creatures(false);
   teleport_flag = false;
 

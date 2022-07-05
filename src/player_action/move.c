@@ -6,23 +6,24 @@
 #include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "creature.h"
-#include "constants.h"
-#include "debug.h"
-#include "main_loop.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "screen.h"
-#include "misc.h"
-#include "random.h"
-#include "player_action/search.h"
+#include "../configure.h"
+#include "../creature.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../main_loop.h"
+#include "../magic.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../term.h"
+#include "../types.h"
+#include "../variables.h"
+#include "../screen.h"
+#include "../misc.h"
+#include "../random.h"
 
-#include "player_move.h"
+#include "search.h"
+
+#include "move.h"
 
 boolean cave_flag = false; /*	{ Used in get_panel   } */
 
@@ -172,7 +173,7 @@ static void _move_char(long dir) {
 
     if (find_flag) {
       find_flag = false;
-      move_char(5);
+      player_action_move(5);
       return;
     }
 
@@ -191,7 +192,7 @@ static void _move_char(long dir) {
   if (find_flag && (is_in(cave[char_row][char_col].fval, earth_set) ==
                     is_in(cave[test_row][test_col].fval, water_set))) {
     find_flag = false;
-    move_char(5);
+    player_action_move(5);
     return;
   }
 
@@ -274,7 +275,7 @@ char dir_to_char(int dir) {
     }
 }
 
-void move_char(long dir) {
+void player_action_move(long dir) {
   ENTER(("move_char", "%d", dir));
   _move_char(dir);
   LEAVE("move_char", "m");

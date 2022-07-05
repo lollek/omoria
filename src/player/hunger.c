@@ -5,7 +5,7 @@
 #include "../main_loop.h"
 #include "../misc.h"
 #include "../player.h"
-#include "../player_move.h"
+#include "../player_action/move.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../types.h"
@@ -54,7 +54,7 @@ void player_hunger_recalculate(void) {
       msg_flag = 0;
       rest_off();
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       prt_hunger();
     }
@@ -68,7 +68,7 @@ void player_hunger_recalculate(void) {
     msg_flag = 0;
     rest_off();
     if (find_flag) {
-      move_char(5);
+      player_action_move(5);
     }
     prt_hunger();
     player_wt -= trunc(player_wt * 0.015);
@@ -89,7 +89,7 @@ void player_hunger_recalculate(void) {
       msg_flag = 0;
       rest_off();
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     } else if (player_flags.foodc < PLAYER_FOOD_FAINT) {
       if (randint(8) == 1) {
@@ -98,7 +98,7 @@ void player_hunger_recalculate(void) {
         msg_flag = 0;
         rest_off();
         if (find_flag) {
-          move_char(5);
+          player_action_move(5);
         }
       }
     }

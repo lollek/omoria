@@ -22,7 +22,7 @@
 #include "desc.h"
 #include "inven.h"
 #include "screen.h"
-#include "player_move.h"
+#include "player_action/move.h"
 #include "spells.h"
 #include "misc.h"
 #include "random.h"
@@ -161,7 +161,7 @@ static void c__update_mon(long monptr, long *hear_count) {
       flush();
       if (find_flag) {
         find_flag = false;
-        move_char(5);
+        player_action_move(5);
       }
     }
   } else if (ML(monptr).ml) {
@@ -1144,7 +1144,7 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
 
           if (find_flag) {
             find_flag = false;
-            move_char(5);
+            player_action_move(5);
           }
 
           c__make_attack(monptr);
@@ -1659,7 +1659,7 @@ static boolean c__cast_spell(long monptr, boolean *took_turn) {
     if (stop_player) {
       if (find_flag) {
         find_flag = false;
-        move_char(5);
+        player_action_move(5);
       }
       if ((player_flags).rest > 0) {
         rest_off();

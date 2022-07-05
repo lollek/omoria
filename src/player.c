@@ -17,7 +17,7 @@
 #include "types.h"
 #include "variables.h"
 #include "screen.h"
-#include "player_move.h"
+#include "player_action/move.h"
 
 /* P_MISC */
 int64_t player_xtr_wgt = 0;
@@ -104,7 +104,7 @@ p_flags player_flags = {
 void search_off() {
   search_flag = false;
   find_flag = false;
-  move_char(5);
+  player_action_move(5);
   change_speed(-1);
   player_flags.status &= ~IS_SEARCHING;
   prt_search();

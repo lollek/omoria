@@ -32,7 +32,7 @@
 #include "player.h"
 #include "player/hunger.h"
 #include "player/regeneration.h"
-#include "player_move.h"
+#include "player_action/move.h"
 #include "player_action/search.h"
 #include "potions.h"
 #include "random.h"
@@ -612,7 +612,7 @@ static void d__update_blindness() {
       prt_blind();
       prt_map();
       msg_print("The veil of darkness lifts.");
-      move_char(5);
+      player_action_move(5);
     }
   }
 }
@@ -630,7 +630,7 @@ static void d__update_confusion() {
       prt_confused();
       msg_print("You feel less confused now.");
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     }
   }
@@ -726,7 +726,7 @@ static void d__update_resist_charm() {
       if ((player_flags).free_time == 0) {
         (player_flags).status &= ~IS_CHARM_PROOF;
         if (find_flag) {
-          move_char(5);
+          player_action_move(5);
         }
       }
     }
@@ -763,7 +763,7 @@ static void d__update_fear() {
       prt_afraid();
       msg_print("You feel bolder now.");
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     }
   }
@@ -786,7 +786,7 @@ static void d__update_poison() {
       prt_poisoned();
       msg_print("You feel better.");
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     } else {
       switch (C_player_hp_from_con()) {
@@ -835,7 +835,7 @@ static void d__update_fast() {
       msg_print("You feel yourself moving faster.");
       change_speed(-1);
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     }
     (player_flags).fast--;
@@ -844,7 +844,7 @@ static void d__update_fast() {
       msg_print("You feel yourself slow down.");
       change_speed(+1);
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     }
   }
@@ -859,7 +859,7 @@ static void d__update_slow() {
       msg_print("You feel yourself moving slower.");
       change_speed(+1);
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     }
     (player_flags).slow--;
@@ -868,7 +868,7 @@ static void d__update_slow() {
       msg_print("You feel yourself speed up.");
       change_speed(-1);
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
     }
   }
@@ -1015,7 +1015,7 @@ static void d__update_invulnerable() {
     if ((IS_INVULNERABLE & (player_flags).status) == 0) {
       (player_flags).status |= IS_INVULNERABLE;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       msg_print("Your skin turns into steel!");
       player_pac += 100;
@@ -1025,7 +1025,7 @@ static void d__update_invulnerable() {
     if ((player_flags).invuln == 0) {
       (player_flags).status &= ~IS_INVULNERABLE;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       msg_print("Your skin returns to normal...");
       player_pac -= 100;
@@ -1041,7 +1041,7 @@ static void d__update_heroism() {
     if ((IS_HERO & (player_flags).status) == 0) {
       (player_flags).status |= IS_HERO;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       /* with player_do; */
       C_player_modify_max_hp(10);
@@ -1054,7 +1054,7 @@ static void d__update_heroism() {
     if ((player_flags).hero == 0) {
       (player_flags).status &= ~IS_HERO;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       /* with player_do; */
       C_player_modify_max_hp(-10);
@@ -1075,7 +1075,7 @@ static void d__update_super_heroism() {
     if ((IS_SUPER_HERO & (player_flags).status) == 0) {
       (player_flags).status |= IS_SUPER_HERO;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       /* with player_do; */
       C_player_modify_max_hp(20);
@@ -1088,7 +1088,7 @@ static void d__update_super_heroism() {
     if ((player_flags).shero == 0) {
       (player_flags).status &= ~IS_SUPER_HERO;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       /* with player_do; */
       C_player_modify_max_hp(-20);
@@ -1109,7 +1109,7 @@ static void d__update_blessed() {
     if ((IS_BLESSED & (player_flags).status) == 0) {
       (player_flags).status |= IS_BLESSED;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       /* with player_do; */
       player_bth += 5;
@@ -1123,7 +1123,7 @@ static void d__update_blessed() {
     if ((player_flags).blessed == 0) {
       (player_flags).status &= ~IS_BLESSED;
       if (find_flag) {
-        move_char(5);
+        player_action_move(5);
       }
       /* with player_do; */
       player_bth -= 5;
@@ -1653,14 +1653,14 @@ static void d__disarm_trap() {
           cave[y][x].fm = false;
           pusht(cave[y][x].tptr);
           cave[y][x].tptr = 0;
-          move_char(tdir);
+          player_action_move(tdir);
           lite_spot(y, x);
           prt_stat_block();
         } else if (randint(tot) > 5) {
           msg_print("You failed to disarm the trap.");
         } else {
           msg_print("You set the trap off!");
-          move_char(tdir);
+          player_action_move(tdir);
         }
       } else if (i1 == 2) { /*{ Chest trap    }*/
         /* with t_list[cave[y][x].tptr]. do; */
@@ -1973,32 +1973,32 @@ static void d__execute_command(long *command) {
 
   case CTRL_B:
     find_flag = true;
-    move_char(1);
+    player_action_move(1);
     break;
 
   case CTRL_H:
     find_flag = true;
-    move_char(4);
+    player_action_move(4);
     break;
   case CTRL_I:
     blow();
     break;
   case CTRL_J:
     find_flag = true;
-    move_char(2);
+    player_action_move(2);
     break;
   case CTRL_K:
     find_flag = true;
-    move_char(8);
+    player_action_move(8);
     break;
   case CTRL_L:
     find_flag = true;
-    move_char(6);
+    player_action_move(6);
     break;
 
   case CTRL_N:
     find_flag = true;
-    move_char(3);
+    player_action_move(3);
     break;
 
   case CTRL_P:
@@ -2016,7 +2016,7 @@ static void d__execute_command(long *command) {
 
   case CTRL_U:
     find_flag = true;
-    move_char(9);
+    player_action_move(9);
     break;
 
   case CTRL_W: /* Password */
@@ -2033,7 +2033,7 @@ static void d__execute_command(long *command) {
     break;
   case CTRL_Y:
     find_flag = true;
-    move_char(7);
+    player_action_move(7);
     break;
   case CTRL_Z: /* suspend  (we never get this, look at signalsuspend) */
     reset_flag = true;
@@ -2049,7 +2049,7 @@ static void d__execute_command(long *command) {
       reset_flag = true;
       break;
     case 'b':
-      move_char(1);
+      player_action_move(1);
       break;
     case 'c':
       C_commands_show_class_restrictions();
@@ -2069,17 +2069,17 @@ static void d__execute_command(long *command) {
       break;
 
     case 'h':
-      move_char(4);
+      player_action_move(4);
       break;
 
     case 'j':
-      move_char(2);
+      player_action_move(2);
       break;
     case 'k':
-      move_char(8);
+      player_action_move(8);
       break;
     case 'l':
-      move_char(6);
+      player_action_move(6);
       break;
     case 'm':
       moria_help("");
@@ -2087,7 +2087,7 @@ static void d__execute_command(long *command) {
       reset_flag = true;
       break;
     case 'n':
-      move_char(3);
+      player_action_move(3);
       break;
 
     case 'r':
@@ -2121,7 +2121,7 @@ static void d__execute_command(long *command) {
       reset_flag = true;
       break;
     case 'u':
-      move_char(9);
+      player_action_move(9);
       break;
 
     case 'w':
@@ -2131,7 +2131,7 @@ static void d__execute_command(long *command) {
       break;
 
     case 'y':
-      move_char(7);
+      player_action_move(7);
       break;
     }
     break;
@@ -2154,7 +2154,7 @@ static void d__execute_command(long *command) {
     break;
 
   case '.': /* Rest one turn */
-    move_char(5);
+    player_action_move(5);
     usleep(10);
     flush();
     break;
@@ -2164,7 +2164,7 @@ static void d__execute_command(long *command) {
     break;
   case 'B':
     find_flag = true;
-    move_char(1);
+    player_action_move(1);
     break;
   case 'C': /* Show character */
     change_name();
@@ -2183,7 +2183,7 @@ static void d__execute_command(long *command) {
 
   case 'H':
     find_flag = true;
-    move_char(4);
+    player_action_move(4);
     break;
   case 'I': /* Selected inv */
     reset_flag = true;
@@ -2193,19 +2193,19 @@ static void d__execute_command(long *command) {
     break;
   case 'J':
     find_flag = true;
-    move_char(2);
+    player_action_move(2);
     break;
   case 'K':
     find_flag = true;
-    move_char(8);
+    player_action_move(8);
     break;
   case 'L':
     find_flag = true;
-    move_char(6);
+    player_action_move(6);
     break;
   case 'N':
     find_flag = true;
-    move_char(3);
+    player_action_move(3);
     break;
 
   case 'P':
@@ -2241,7 +2241,7 @@ static void d__execute_command(long *command) {
     break;
   case 'U':
     find_flag = true;
-    move_char(9);
+    player_action_move(9);
     break;
   case 'V':
     msg_record("", false);
@@ -2275,7 +2275,7 @@ static void d__execute_command(long *command) {
     break;
   case 'Y':
     find_flag = true;
-    move_char(7);
+    player_action_move(7);
     break;
   case 'Z':
     use_staff();
@@ -2285,7 +2285,7 @@ static void d__execute_command(long *command) {
     shoot_something();
     break;
   case 'b':
-    move_char(1);
+    player_action_move(1);
     break;
   case 'c':
     d__closeobject();
@@ -2297,7 +2297,7 @@ static void d__execute_command(long *command) {
     d__bash();
     break;
   case 'h':
-    move_char(4);
+    player_action_move(4);
     break;
   case 'i': /* Inventory */
     reset_flag = true;
@@ -2306,13 +2306,13 @@ static void d__execute_command(long *command) {
     }
     break;
   case 'j':
-    move_char(2);
+    player_action_move(2);
     break;
   case 'k':
-    move_char(8);
+    player_action_move(8);
     break;
   case 'l':
-    move_char(6);
+    player_action_move(6);
     break;
   case 'm': /* magick, monk, music */
     if (C_player_uses_magic(M_NATURE)) {
@@ -2326,7 +2326,7 @@ static void d__execute_command(long *command) {
     }
     break;
   case 'n':
-    move_char(3);
+    player_action_move(3);
     break;
   case 'o':
     d__openobject();
@@ -2358,7 +2358,7 @@ static void d__execute_command(long *command) {
     }
     break;
   case 'u':
-    move_char(9);
+    player_action_move(9);
     break;
   case 'v': /* version */
     reset_flag = true;
@@ -2379,7 +2379,7 @@ static void d__execute_command(long *command) {
     }
     break;
   case 'y':
-    move_char(7);
+    player_action_move(7);
     break;
   case 'z':
     aim_wand();
@@ -4199,7 +4199,7 @@ void dungeon() {
   old_cmana = trunc(player_cmana);
 
   /*{ Light up the area around character    }*/
-  move_char(5);
+  player_action_move(5);
 
   /*{ Light, but do not move critters       }*/
   creatures(false);

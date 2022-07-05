@@ -24,7 +24,7 @@
 #include "desc.h"
 #include "files.h"
 #include "screen.h"
-#include "player_move.h"
+#include "player_action/move.h"
 #include "spells.h"
 #include "misc.h"
 #include "random.h"
@@ -736,7 +736,7 @@ void wizard_create() {
   }
 
   inven_temp.data = blank_treasure;
-  move_char(5);
+  player_action_move(5);
   creatures(false);
 }
 
