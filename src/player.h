@@ -159,4 +159,20 @@ void rest_off();
 void take_hit(long damage, char hit_from[82]);
 void regenmana(float percent);
 
+/*
+  { Changes speed of monsters relative to player		-RAK-
+  }
+  { Note: When the player is sped up or slowed down, I simply     }
+  {       change the speed of all the monsters.  This greatly     }
+  {       simplified the logic...                                 }
+*/
+void change_speed(long num);
+
+/*
+      { Player bonuses					-RAK-	}
+      { When an item is worn or taken off, this re-adjusts the player }
+      { bonuses.  Factor=1 : wear; Factor=-1 : removed                }
+*/
+void py_bonuses(treasure_type *tobj, long factor);
+
 #endif /* PLAYER_H */

@@ -1,6 +1,8 @@
 #ifndef PLAYER_MOVE_H
 #define PLAYER_MOVE_H
 
+extern boolean cave_flag;
+
 /**
  * char_to_dir() - Get a 'dir' from a roguelike command
  * @c: character to translate

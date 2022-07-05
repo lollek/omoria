@@ -3,10 +3,6 @@
 
 #include "types.h"
 
-
-void change_speed(long num);
-void py_bonuses(treasure_type *tobj, long factor);
-boolean get_panel(long y, long x, boolean forceit);
 void search(long y, long x, long chance);
 void area_affect(long dir, long y, long x);
 void carry(long y, long x);

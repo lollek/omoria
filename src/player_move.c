@@ -23,6 +23,67 @@
 
 #include "player_move.h"
 
+boolean cave_flag = false; /*	{ Used in get_panel   } */
+
+/**
+ * -RAK-
+ * s__panel_bounds() - Calculates current boundries
+ */
+static void s__panel_bounds() {
+  panel_row_min = (trunc(panel_row * (SCREEN_HEIGHT / 2)) + 1);
+  panel_row_max = panel_row_min + SCREEN_HEIGHT - 1;
+
+  panel_col_min = (trunc(panel_col * (SCREEN_WIDTH / 2)) + 1);
+  panel_col_max = panel_col_min + SCREEN_WIDTH - 1;
+
+  panel_row_prt = panel_row_min - 2;
+  panel_col_prt = panel_col_min - 15;
+}
+
+
+/*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
+/*{ when a move off the screen has occurred and figures new borders}*/
+/* forceit forcses the panel bounds to be recalculated (show_location).
+  */
+static boolean get_panel(long y, long x, boolean forceit) {
+
+  long prow, pcol;
+  boolean return_value;
+
+  prow = panel_row;
+  pcol = panel_col;
+
+  if (forceit || (y < panel_row_min + 2) || (y > panel_row_max - 2)) {
+    prow = trunc((y - 2) / (SCREEN_HEIGHT / 2));
+    if (prow > max_panel_rows) {
+      prow = max_panel_rows;
+    } else if (prow < 0) {
+      prow = 0;
+    }
+  }
+
+  if (forceit || (x < panel_col_min + 3) || (x > panel_col_max - 3)) {
+    pcol = trunc((x - 3) / (SCREEN_WIDTH / 2));
+    if (pcol > max_panel_cols) {
+      pcol = max_panel_cols;
+    } else if (pcol < 0) {
+      pcol = 0;
+    }
+  }
+
+  if ((prow != panel_row) || (pcol != panel_col) || !(cave_flag)) {
+    panel_row = prow;
+    panel_col = pcol;
+    s__panel_bounds();
+    cave_flag = true;
+    return_value = true;
+  } else {
+    return_value = false;
+  }
+
+  return return_value;
+}
+
 /**
  * -RAK-
  *  pick_dir() - Picks new direction when in find mode
