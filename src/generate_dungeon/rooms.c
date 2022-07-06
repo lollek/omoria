@@ -15,6 +15,7 @@
 #include "../types.h"
 #include "../variables.h"
 #include "../misc.h"
+#include "../generate_monster.h"
 #include "../random.h"
 #include "../traps.h"
 

@@ -20,6 +20,7 @@
 #include "../fighting.h"
 #include "../fighting_ranged.h"
 #include "../generate_dungeon/generate_dungeon.h"
+#include "../generate_monster.h"
 #include "../help.h"
 #include "../inven.h"
 #include "../io.h"
@@ -1371,7 +1372,7 @@ void main_loop__0() {
     /*{ Check for random wandering monster generation
      * }*/
     if (randint(MAX_MALLOC_CHANCE) == 1) {
-      alloc_land_monster(floor_set, 1, MAX_SIGHT, false, false);
+      generate_land_monster(floor_set, 1, MAX_SIGHT, false);
     }
 
     /*{ Screen may need updating, used mostly for stats}*/

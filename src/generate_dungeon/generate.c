@@ -5,6 +5,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "../debug.h"
+#include "../generate_monster.h"
 #include "../misc.h"
 #include "../monsters.h"
 #include "../pascal.h"
@@ -364,8 +365,8 @@ static void gc__cave_gen() {
   short yloc[401]; /*: array [1..400] of short;*/
   short xloc[401]; /*: array [1..400] of short;*/
 
-  obj_set allocSet1 = {1, 2, 0};       /* land mosnters */
-  obj_set allocSet2 = {16, 17, 18, 0}; /* land mosnters */
+  obj_set allocSet1 = {1, 2, 0};       /* land monsters */
+  obj_set allocSet2 = {16, 17, 18, 0}; /* water monsters */
   obj_set allocSet3 = {4, 0};          /* treasure things */
   obj_set allocSet4 = {1, 2, 0};       /* treasure things */
   obj_set allocSet5 = {1, 2, 4, 0};    /* treasure things */
@@ -472,11 +473,10 @@ static void gc__cave_gen() {
   place_stairs(up_steep_staircase, 1, 3);
   place_stairs(down_steep_staircase, 1, 3);
 
-  alloc_land_monster(allocSet1, (randint(8) + MIN_MALLOC_LEVEL + alloc_level),
-                     0, true, false);
-  alloc_land_monster(allocSet2,
-                     (randint(8) + MIN_MALLOC_LEVEL + alloc_level) / 3, 0, true,
-                     true);
+  generate_land_monster(allocSet1, (randint(8) + MIN_MALLOC_LEVEL + alloc_level),
+                     0, true);
+  generate_water_monster(allocSet2,
+                     (randint(8) + MIN_MALLOC_LEVEL + alloc_level) / 3, 0, true);
 
   alloc_object(allocSet3, 3, randint(alloc_level));
   alloc_object(allocSet4, 5, randnor(treas_room_alloc, 3));
@@ -879,8 +879,8 @@ static void gc__town_gen() {
     place_stairs(down_staircase, 2, 0);
     place_stairs(down_steep_staircase, 1, 0);
 
-    alloc_land_monster(allocSet1, MIN_MALLOC_TN, 3, true, false);
-    alloc_land_monster(allocSet2, 7, 0, true, true);
+    generate_land_monster(allocSet1, MIN_MALLOC_TN, 3, true);
+    generate_water_monster(allocSet2, 7, 0, true);
     store_maint();
 
   } else {
@@ -896,8 +896,8 @@ static void gc__town_gen() {
     place_stairs(down_staircase, 2, 0);
     place_stairs(down_steep_staircase, 1, 0);
 
-    alloc_land_monster(allocSet1, MIN_MALLOC_TD, 3, true, false);
-    alloc_land_monster(allocSet2, 7, 0, true, true);
+    generate_land_monster(allocSet1, MIN_MALLOC_TD, 3, true);
+    generate_water_monster(allocSet2, 7, 0, true);
     store_maint();
   }
 

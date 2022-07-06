@@ -17,6 +17,7 @@
 #include "dungeon/light.h"
 #include "effects.h"
 #include "generate_item/generate_item.h"
+#include "generate_monster.h"
 #include "inven.h"
 #include "magic.h"
 #include "misc.h"
@@ -517,11 +518,12 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                 }
 
                 if ((harm_type &
-                     monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
+                     monster_templates[m_list[cave[i1][i2].cptr].mptr]
+                         .cdefense) != 0) {
                   dam *= 2;
                 } else if ((weapon_type &
-                            monster_templates[m_list[cave[i1][i2].cptr].mptr].spells) !=
-                           0) {
+                            monster_templates[m_list[cave[i1][i2].cptr].mptr]
+                                .spells) != 0) {
                   dam /= 4;
                 }
 
@@ -533,8 +535,9 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                     tkill++;
                   } else {
                     if (panel_contains(i1, i2)) {
-                      print(monster_templates[m_list[cave[i1][i2].cptr].mptr].cchar, i1,
-                            i2);
+                      print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
+                                .cchar,
+                            i1, i2);
                       m_list[cave[i1][i2].cptr].ml = true;
                     }
                   }
@@ -817,11 +820,12 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
          */
         /* do; */
         dam = dam_hp;
-        if ((harm_type & monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) !=
-            0) {
+        if ((harm_type &
+             monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
           dam *= 2;
         } else if ((weapon_type &
-                    monster_templates[m_list[cave[i1][i2].cptr].mptr].spells) != 0) {
+                    monster_templates[m_list[cave[i1][i2].cptr].mptr].spells) !=
+                   0) {
           dam = trunc(dam / 4.0);
         }
         dam = (long)(dam / (distance(i1, i2, y, x) + 1));
@@ -830,9 +834,9 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
         }
         m_list[cave[i1][i2].cptr].csleep = 0;
         if (m_list[cave[i1][i2].cptr].hp < 0) {
-          monster_death(m_list[cave[i1][i2].cptr].fy,
-                        m_list[cave[i1][i2].cptr].fx,
-                        monster_templates[m_list[cave[i1][i2].cptr].mptr].cmove);
+          monster_death(
+              m_list[cave[i1][i2].cptr].fy, m_list[cave[i1][i2].cptr].fx,
+              monster_templates[m_list[cave[i1][i2].cptr].mptr].cmove);
           delete_monster(cave[i1][i2].cptr);
         }
       } else if (cave[i1][i2].cptr == 1) {
@@ -1078,7 +1082,8 @@ boolean detect_creatures(enum spell_effect_t typ) {
 
       if (found) {
         m_list[i1].ml = true;
-        print(monster_templates[m_list[i1].mptr].cchar, m_list[i1].fy, m_list[i1].fx);
+        print(monster_templates[m_list[i1].mptr].cchar, m_list[i1].fy,
+              m_list[i1].fx);
         flag = true;
       }
     }
@@ -1831,8 +1836,8 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
     break;
 
   case SE_SPEED:
-    hmm =
-        !mon_save(monster_templates[m_list[monptr].mptr].level, 0, SC_NULL) || (dmge > 0);
+    hmm = !mon_save(monster_templates[m_list[monptr].mptr].level, 0, SC_NULL) ||
+          (dmge > 0);
     break;
 
   case SE_TURN:
@@ -2186,7 +2191,8 @@ boolean light_line(long dir, long y, long x, long power) {
         /* with monster_templates[m_list[cave[y][x].cptr].mptr]. */
         /* do; */
         if (!mon_resists(cave[y][x].cptr)) {
-          if (0x0100 & monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) {
+          if (0x0100 &
+              monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) {
 
             sprintf(out_val, "The %s wails out in pain!",
                     monster_templates[m_list[cave[y][x].cptr].mptr].name);
@@ -2401,7 +2407,8 @@ boolean wall_to_mud(long dir, long y, long x) {
       mptr = m_list[cptr].mptr;
       if (cptr > 1) {
 
-        if ((0x0200 & monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
+        if ((0x0200 &
+             monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
           i1 = mon_take_hit(cptr, 100);
           flag = true;
           if (m_list[cptr].ml) {
@@ -2930,10 +2937,12 @@ boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
     mptr = m_list[cptr].mptr;
 
     if (!mon_resists(cptr)) {
-      sprintf(out_val, "The %s hits the %s.", ddesc, monster_templates[mptr].name);
+      sprintf(out_val, "The %s hits the %s.", ddesc,
+              monster_templates[mptr].name);
       msg_print(out_val);
       if (mon_take_hit(cptr, dam_hp) > 0) {
-        sprintf(out_val, "The %s dies in a fit of agony.", monster_templates[mptr].name);
+        sprintf(out_val, "The %s dies in a fit of agony.",
+                monster_templates[mptr].name);
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
@@ -2967,7 +2976,8 @@ boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
     cptr = cave[y][x].cptr;
     mptr = m_list[cptr].mptr;
     if (!mon_resists(cptr)) {
-      sprintf(out_val, "The %s strikes the %s.", descrip, monster_templates[mptr].name);
+      sprintf(out_val, "The %s strikes the %s.", descrip,
+              monster_templates[mptr].name);
       msg_print(out_val);
       if ((harm_type & monster_templates[mptr].cdefense) != 0) {
         dam_hp *= 2;
@@ -2976,7 +2986,8 @@ boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
       }
 
       if (mon_take_hit(cptr, dam_hp) > 0) {
-        sprintf(out_val, "The %s dies in a fit of agony.", monster_templates[mptr].name);
+        sprintf(out_val, "The %s dies in a fit of agony.",
+                monster_templates[mptr].name);
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {

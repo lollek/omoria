@@ -1,11 +1,12 @@
+#include "../generate_monster.h"
 #include "../misc.h"
 #include "../player.h"
+#include "../player/hunger.h"
 #include "../random.h"
 #include "../screen.h"
+#include "../stores.h"
 #include "../variables.h"
 #include "../wizard.h"
-#include "../stores.h"
-#include "../player/hunger.h"
 
 static void call_wizards() {
   msg_print("The mage calls for a Town Wizard to remove you.");
@@ -386,7 +387,6 @@ static void beg_money() {
     change_rep(-10); /*{bug fixed here; used to be 10 -- MAV }*/
   }
 }
-
 
 void enter_house(long y, long x) {
   switch (t_list[cave[y][x].tptr].p1) {

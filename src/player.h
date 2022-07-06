@@ -5,6 +5,7 @@
 
 #include "creature.h"
 #include "magic.h"
+#include "monster_template.h"
 #include "types.h"
 
 typedef struct p_flags {

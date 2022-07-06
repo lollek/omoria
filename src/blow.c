@@ -15,6 +15,7 @@
 #include "magic.h"
 #include "pascal.h"
 #include "player.h"
+#include "generate_monster.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"

@@ -10,12 +10,12 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "casino/casino.h"
-#include "town_level/enter_bank.h"
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
 #include "effects.h"
 #include "fighting.h"
+#include "generate_monster.h"
 #include "magic.h"
 #include "misc.h"
 #include "pascal.h"
@@ -26,6 +26,7 @@
 #include "spells.h"
 #include "stores.h"
 #include "term.h"
+#include "town_level/enter_bank.h"
 #include "town_level/enter_house.h"
 #include "trade.h"
 #include "types.h"

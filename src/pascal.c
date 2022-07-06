@@ -37,38 +37,32 @@ long pindex(char *s1, char c1) {
 }
 /*//////////////////////////////////////////////////////////////////// */
 boolean is_in(long const obj, obj_set const oset) {
-  long i1;
 #if DO_DEBUG
-  long tmp;
 #endif
   boolean return_value = false;
 
-  /*    ENTER("is_in","m"); */
-
 #if DO_DEBUG
-  tmp = 0;
-  for (i1 = 0; i1 < MAX_OBJ_SET; i1++) {
-    if ((tmp > oset[i1]) && (oset[i1] > 0)) {
-      printf("bad obj_set i1 = %ld\n\r", i1);
-      MSG(("bad obj_set: %d", oset[i1]));
-      for (i1 = 0; i1 < MAX_OBJ_SET; i1++) {
-        MSG(("%d  ", oset[i1]));
+  long prev = 0;
+  for (long i = 0; i < MAX_OBJ_SET; i++) {
+    if (prev > oset[i] && oset[i] > 0) {
+      printf("bad obj_set i = %ld\n\r", i);
+      MSG(("bad obj_set: %d", oset[i]));
+      for (i = 0; i < MAX_OBJ_SET; i++) {
+        MSG(("%d  ", oset[i]));
       }
       fprintf(debug_file, "\n");
       abort();
     }
-    tmp = oset[i1];
+    prev = oset[i];
   }
 #endif
-  for (i1 = 0; (i1 < MAX_OBJ_SET) && (oset[i1] <= obj) && (!return_value);
-       i1++) {
-    /*for (i1=0;(i1<MAX_OBJ_SET) && (!return_value); i1++) {*/
-    if (obj == oset[i1]) {
+
+  for (long i = 0; (i < MAX_OBJ_SET) && (oset[i] <= obj) && (!return_value);
+       i++) {
+    if (obj == oset[i]) {
       return_value = true;
     }
   }
-
-  /*    RETURN("is_in","m",'b',"isin",&return_value); */
   return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */

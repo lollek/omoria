@@ -7,11 +7,12 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
-#include "currency.h"
 #include "constants.h"
+#include "currency.h"
 #include "death.h"
 #include "debug.h"
 #include "generate_item/generate_item.h"
+#include "generate_monster.h"
 #include "magic.h"
 #include "model_class.h"
 #include "model_item.h"
@@ -1797,306 +1798,20 @@ long minmax(long x, long y, long z) {
   i1 = max(x, y) + 1;
   return min(i1, z);
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean summon_land_monster(long *y, long *x, boolean slp) {
-  /*{ Places land creature adjacent to given location	-RAK-	}*/
 
-  long i1, i2, i3, i4, i5, count;
-  boolean flag;
-  boolean return_value = false;
-
-  i1 = 0;
-  i5 = dun_level + MON_SUMMON_ADJ;
-
-  do {
-    i2 = *y - 2 + randint(3);
-    i3 = *x - 2 + randint(3);
-    if (in_bounds(i2, i3)) {
-      /* with cave[i2][i3]. do; */
-      if (is_in(cave[i2][i3].fval, earth_set)) {
-        if (cave[i2][i3].cptr == 0) {
-          if (cave[i2][i3].fopen) {
-            flag = false;
-            count = 0;
-            do {
-              if (i5 > MAX_MONS_LEVEL) {
-                i4 = MAX_MONS_LEVEL;
-              } else {
-                i4 = i5;
-              }
-              if (dun_level == 0) {
-                i4 = randint(m_level[0]);
-              } else {
-                i4 = randint(m_level[i4]) + m_level[0];
-              }
-              if (i4 > MAX_CREATURES) {
-                i4 = MAX_CREATURES;
-              }
-              if (((monster_templates[i4].cmove & 0x00008000) == 0) &&
-                  (((monster_templates[i4].cmove & 0x00000010) == 0) ||
-                   ((monster_templates[i4].cmove & 0x00000040) == 0) ||
-                   ((monster_templates[i4].cmove & 0x00800000) != 0))) {
-                place_monster(i2, i3, i4, slp);
-                return_value = true;
-                flag = true;
-              }
-              count++;
-            } while (!((flag) || (count > 10)));
-            i1 = 9;
-            *y = i2;
-            *x = i3;
-          }
-        }
-      }
-    }
-    i1++;
-  } while (i1 <= 9);
-
-  return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean summon_water_monster(long *y, long *x, boolean slp) {
-  /*{ Places water creature adjacent to given location  -DMF-   }*/
-
-  long i1, i2, i3, i4, i5, count;
-  boolean flag;
-  boolean return_value = false;
-
-  i1 = 0;
-  i5 = dun_level + MON_SUMMON_ADJ;
-
-  do {
-    i2 = *y - 2 + randint(3);
-    i3 = *x - 2 + randint(3);
-    if (in_bounds(i2, i3)) {
-      /* with cave[i2][i3]. do; */
-      if (is_in(cave[i2][i3].fval, water_set)) {
-        if (cave[i2][i3].cptr == 0) {
-          if (cave[i2][i3].fopen) {
-            flag = false;
-            count = 0;
-            do {
-              if (i5 > MAX_MONS_LEVEL) {
-                i4 = MAX_MONS_LEVEL;
-              } else {
-                i4 = i5;
-              }
-              if (dun_level == 0) {
-                i4 = randint(m_level[0]);
-              } else {
-                i4 = randint(m_level[i4]) + m_level[0];
-              }
-              if (i4 > MAX_CREATURES) {
-                i4 = MAX_CREATURES;
-              }
-              if ((((monster_templates[i4].cmove & 0x00008000) == 0) &&
-                   (((monster_templates[i4].cmove & 0x00000010) != 0) ||
-                    ((monster_templates[i4].cmove & 0x00000040) == 0) ||
-                    ((monster_templates[i4].cmove & 0x00800000) != 0)))) {
-                place_monster(i2, i3, i4, slp);
-                return_value = true;
-                flag = true;
-              }
-              count++;
-            } while (!((flag) || (count > 10)));
-            i1 = 9;
-            *y = i2;
-            *x = i3;
-          }
-        }
-      }
-    }
-    i1++;
-  } while (i1 <= 9);
-
-  return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean summon_undead(long *y, long *x) {
-  /*{ Places undead adjacent to given location          -RAK-   }*/
-
-  long i1, i2, i3, i4, i5, ctr;
-  obj_set undead_set = {1, 2, 4, 5, 0};
-  boolean return_value = false;
-
-  i1 = 0;
-  i4 = m_level[MAX_MONS_LEVEL] + m_level[0];
-
-  do {
-    i5 = randint(i4);
-    ctr = 0;
-    do {
-      if ((monster_templates[i5].cdefense & 0x0008) != 0) {
-        ctr = 20;
-        i4 = 0;
-      } else {
-        i5++;
-        if (i5 > i4) {
-          ctr = 20;
-        } else {
-          ctr++;
-        }
-      }
-    } while (ctr <= 19);
-  } while (i4 != 0);
-
-  do {
-    i2 = *y - 2 + randint(3);
-    i3 = *x - 2 + randint(3);
-    if (in_bounds(i2, i3)) {
-      /* with cave[i2,i3] do; */
-      if (is_in(cave[i2][i3].fval, undead_set)) {
-        if ((cave[i2][i3].cptr == 0) && (cave[i2][i3].fopen)) {
-          place_monster(i2, i3, i5, false);
-          return_value = true;
-          i1 = 9;
-          *y = i2;
-          *x = i3;
-        }
-      }
-    }
-    i1++;
-  } while (i1 <= 9);
-
-  return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean summon_demon(long *y, long *x) {
-  /*{ Places demon adjacent to given location           -RAK-   }*/
-
-  long i1, i2, i3, i4, i5, ctr;
-  obj_set demon_set = {1, 2, 4, 5, 0};
-  boolean return_value = false;
-
-  i1 = 0;
-  i4 = m_level[MAX_MONS_LEVEL] + m_level[0];
-  do {
-    i5 = randint(i4);
-    ctr = 0;
-    do {
-      /*{        Check monsters for demon }*/
-      if ((monster_templates[i5].cdefense & 0x0400) != 0) {
-        ctr = 20;
-        i4 = 0;
-      } else {
-        i5++;
-        if (i5 > i4) {
-          ctr = 20;
-        } else {
-          ctr++;
-        }
-      }
-    } while (ctr <= 19);
-  } while (i4 != 0);
-
-  do {
-    do {
-      i2 = *y - 2 + randint(3);
-      i3 = *x - 2 + randint(3);
-    } while (!((i2 != *y) || (i3 != *x)));
-    if (in_bounds(i2, i3)) {
-      /* with cave[i2,i3] do; */
-      if (is_in(cave[i2][i3].fval, demon_set)) {
-        if ((cave[i2][i3].cptr == 0) && (cave[i2][i3].fopen)) {
-          place_monster(i2, i3, i5, false);
-          return_value = true;
-          i1 = 9;
-          *y = i2;
-          *x = i3;
-        }
-      }
-    }
-    i1++;
-  } while (i1 <= 9);
-
-  return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-boolean summon_breed(long *y, long *x) {
-  /*{ Places breeding monster adjacent to given location }*/
-
-  long i1, i2, i3, i4, i5, ctr;
-  /*  obj_set   breed_set = {1,2,4,5,0}; */
-  boolean return_value = false;
-
-  i1 = 0;
-  do {
-    i2 = *y - 2 + randint(3);
-    i3 = *x - 2 + randint(3);
-    if (in_bounds(i2, i3)) {
-      /* with cave[i2,i3] do; */
-      if ((is_in(cave[i2][i3].fval, earth_set)) ||
-          (is_in(cave[i2][i3].fval, water_set))) {
-        if ((cave[i2][i3].cptr == 0) && (cave[i2][i3].fopen)) {
-          i4 = m_level[MAX_MONS_LEVEL] + m_level[0];
-          do {
-            i5 = randint(i4);
-            ctr = 0;
-            do {
-              if (((monster_templates[i5].cmove & 0x00200000) != 0) &&
-                  (((is_in(cave[i2][i3].fval, earth_set)) &&
-                    (((monster_templates[i5].cmove & 0x00000010) == 0) ||
-                     ((monster_templates[i5].cmove & 0x00000040) == 0) ||
-                     ((monster_templates[i5].cmove & 0x00800000) != 0))) ||
-                   ((is_in(cave[i2][i3].fval, water_set)) &&
-                    (((monster_templates[i5].cmove & 0x00000010) != 0) ||
-                     ((monster_templates[i5].cmove & 0x00000040) == 0) ||
-                     ((monster_templates[i5].cmove & 0x00800000) != 0))))) {
-                ctr = 20;
-                i4 = 0;
-              } else {
-                i5++;
-                if (i5 > i4) {
-                  ctr = 20;
-                } else {
-                  ctr++;
-                }
-              }
-            } while (ctr <= 19);
-          } while (i4 != 0);
-          place_monster(i2, i3, i5, false);
-          return_value = true;
-          i1 = 9;
-          *y = i2;
-          *x = i3;
-        }
-      }
-    }
-    i1++;
-  } while (i1 <= 9);
-
-  return return_value;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+/*{ Saving throws for player character... 		-RAK-	}*/
 boolean player_saves(long adjust) {
-  /*{ Saving throws for player character... 		-RAK-	}*/
   boolean return_value;
   return_value = (randint(100) <= player_save + adjust) && (randint(20) != 1);
   return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 boolean player_spell_saves() {
   boolean return_value;
   return_value = player_saves(player_lev + 5 * C_player_mod_from_stat(WIS));
   return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 void sp__takey_munny(long coin_value, long *bank_assets, long *to_bank,
                      long *from_bank) {
   long trans;
@@ -2110,9 +1825,9 @@ void sp__takey_munny(long coin_value, long *bank_assets, long *to_bank,
   *to_bank -= (trans * coin_value) / GOLD_VALUE;
   player_account -= (trans * coin_value) / GOLD_VALUE;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
+/*{ Send a page to the bank to fetch money		-DMF-	}*/
 boolean send_page(long to_bank) {
-  /*{ Send a page to the bank to fetch money		-DMF-	}*/
 
   boolean back;
   long from_bank;
@@ -2461,7 +2176,8 @@ void find_monster_name(char m_name[82], const long ptr,
   i2 = m_list[ptr].mptr;
 
   /*{ Does the player know what he's fighting?      }*/
-  if ((((0x10000 & monster_templates[i2].cmove) != 0) && (!(player_flags.see_inv))) ||
+  if ((((0x10000 & monster_templates[i2].cmove) != 0) &&
+       (!(player_flags.see_inv))) ||
       (player_flags.blind > 0) || (!(m_list[ptr].ml))) {
     if (begin_sentence) {
       strcpy(m_name, "It");

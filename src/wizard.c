@@ -11,23 +11,24 @@
 
 #include "configure.h"
 #include "constants.h"
+#include "creature.h"
 #include "debug.h"
+#include "desc.h"
+#include "files.h"
+#include "generate_monster.h"
 #include "magic.h"
+#include "misc.h"
+#include "monsters.h"
 #include "pascal.h"
 #include "player.h"
+#include "player_action.h"
+#include "random.h"
+#include "screen.h"
+#include "spells.h"
 #include "stores.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "creature.h"
-#include "desc.h"
-#include "files.h"
-#include "screen.h"
-#include "player_action.h"
-#include "spells.h"
-#include "misc.h"
-#include "random.h"
-#include "monsters.h"
 
 #define LOW_NUM -98765432
 
@@ -188,84 +189,6 @@ void wizard_light() {
   prt_map();
   detect_trap();
   detect_sdoor();
-}
-
-void monster_summon_by_name(long y, long x, char name[28], boolean present,
-                            boolean sleepy) {
-  /*{ Wizard routine for summoning a specific monster       -RAD-   }*/
-
-  long i1 = 0, i2, i3, i4;
-  char monster[28];
-  boolean junk;
-
-  if (!present) {
-    prt("Monster desired:  ", 1, 1);
-    junk = (get_string(monster, 1, 19, 26));
-  } else {
-    strcpy(monster, name);
-    junk = true;
-  }
-
-  if (junk) {
-    i2 = 0;
-    sscanf(monster, "%ld", &i2);
-    if (i2 < 0) {
-      i2 = 1;
-    }
-    if (i2 > MAX_CREATURES) {
-      i2 = MAX_CREATURES;
-    }
-
-    if ((i2 > 0) && (i2 <= MAX_CREATURES)) {
-      /* summon by number */
-      i1 = 0;
-      do {
-        i3 = y - 2 + randint(3);
-        i4 = x - 2 + randint(3);
-        if (in_bounds(i3, i4)) {
-          /*with cave[i3,i4] do*/
-          if (is_in(cave[i3][i4].fval, floor_set)) {
-            if (cave[i3][i4].fopen) {
-              place_monster(i3, i4, i2, sleepy);
-              i1 = 8;
-              y = i3;
-              x = i4;
-            }
-          }
-        }
-        i1++;
-      } while (i1 <= 8);
-    } else {
-      /* find by name, then summon */
-      for (i2 = 1; i2 <= MAX_CREATURES; i2++) {
-        if ((strstr(monster_templates[i2].name, monster) != NULL) && (i1 != 10)) {
-          i1 = 0;
-          do {
-            i3 = y - 2 + randint(3);
-            i4 = x - 2 + randint(3);
-            if (in_bounds(i3, i4)) {
-              /*with cave[i3,i4] do*/
-              if (is_in(cave[i3][i4].fval, floor_set)) {
-                if (cave[i3][i4].cptr == 0) {
-                  if (cave[i3][i4].fopen) {
-                    place_monster(i3, i4, i2, sleepy);
-                    i1 = 9;
-                    y = i3;
-                    x = i4;
-                  }
-                }
-              }
-            }
-            i1++;
-          } while (i1 <= 9);
-        }
-      }
-    } /* end else */
-  }   /* end if junk */
-
-  if (!present) {
-    erase_line(msg_line, msg_line);
-  }
 }
 
 void enter_wizard_mode(boolean ask_for_pass) {
