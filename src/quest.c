@@ -175,7 +175,7 @@ void q__reward_quest() {
   char out_val[120];
   boolean redraw = false;
 
-  reward = c_list[player_cur_quest].mexp * (randint(3) + 5) +
+  reward = monster_templates[player_cur_quest].mexp * (randint(3) + 5) +
            player_lev * (randint(2) * 100) +
            (randint(100) + (C_player_get_stat(CHR) * 10)) * 2 +
            (C_player_get_stat(INT) * 10) * randint(50) + 200;
@@ -183,7 +183,7 @@ void q__reward_quest() {
   sprintf(out_val, "Ah... %s, I was expecting you.", player_name);
   msg_print(out_val);
   sprintf(out_val, "I see you've killed the %s.  That's good.",
-          c_list[player_cur_quest].name);
+          monster_templates[player_cur_quest].name);
   msg_print(out_val);
 
   if (((player_quests % QUEST_ITEM_FREQUENCY) == 0)) {
@@ -218,14 +218,14 @@ long q__select_quest() {
   do {
     count++;
 
-    if (c_list[count].level > player_lev) {
+    if (monster_templates[count].level > player_lev) {
       exit_flag = true;
       do {
         tmp_select = count + randint(80);
         if (tmp_select > MAX_CREATURES) {
           tmp_select = MAX_CREATURES - 1;
         }
-      } while ((!((c_list[tmp_select].cmove & 0x00008000) == 0)) &&
+      } while ((!((monster_templates[tmp_select].cmove & 0x00008000) == 0)) &&
                tmp_select < MAX_CREATURES - 1);
     }
 
@@ -267,7 +267,7 @@ void q__draw_fortress(boolean enter_flag) {
   prt(shop_owner, 4, 10);
   for (count = 1; count <= NUM_QUESTS; count++) {
     sprintf(out_val, "%c)     %s", (char)(count + 96),
-            c_list[quest[count]].name);
+            monster_templates[quest[count]].name);
     prt(out_val, 5 + count, 20);
   }
   /*{                      q__display_gold;}*/
@@ -370,7 +370,7 @@ void q__repeat_quest() {
 
   msg_print("Hmmm. . .  I see you haven't completed your quest.");
   msg_print("Have you forgotten it already?");
-  sprintf(out_val, "Go kill a %s!", c_list[player_cur_quest].name);
+  sprintf(out_val, "Go kill a %s!", monster_templates[player_cur_quest].name);
   msg_print(out_val);
   msg_print("");
 }

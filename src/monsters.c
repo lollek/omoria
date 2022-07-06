@@ -41,18 +41,18 @@ void place_monster(long y, long x, long z, boolean slp) {
   m_list[cur_pos].nptr = muptr;
   muptr = cur_pos;
 
-  if ((c_list[z].cdefense & 0x4000) != 0) {
-    m_list[cur_pos].hp = max_hp(c_list[z].hd);
+  if ((monster_templates[z].cdefense & 0x4000) != 0) {
+    m_list[cur_pos].hp = max_hp(monster_templates[z].hd);
   } else {
-    m_list[cur_pos].hp = damroll(c_list[z].hd);
+    m_list[cur_pos].hp = damroll(monster_templates[z].hd);
   }
 
   m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
-  m_list[cur_pos].cspeed = c_list[z].speed + player_flags.speed;
+  m_list[cur_pos].cspeed = monster_templates[z].speed + player_flags.speed;
   m_list[cur_pos].stunned = 0;
 
   if (slp) {
-    m_list[cur_pos].csleep = (c_list[z].sleep / 5.0) + randint(c_list[z].sleep);
+    m_list[cur_pos].csleep = (monster_templates[z].sleep / 5.0) + randint(monster_templates[z].sleep);
   } else {
     m_list[cur_pos].csleep = 0;
   }
@@ -96,13 +96,13 @@ void alloc_land_monster(obj_set alloc_set, long num, long dis, boolean slp,
 
       boolean ok_monster_found;
       if (!water) {
-        ok_monster_found = (((c_list[monster_i].cmove & 0x00008000) == 0) &&
-                            (((c_list[monster_i].cmove & 0x00000010) == 0) ||
-                             ((c_list[monster_i].cmove & 0x00000040) == 0) ||
-                             ((c_list[monster_i].cmove & 0x00800000) != 0)));
+        ok_monster_found = (((monster_templates[monster_i].cmove & 0x00008000) == 0) &&
+                            (((monster_templates[monster_i].cmove & 0x00000010) == 0) ||
+                             ((monster_templates[monster_i].cmove & 0x00000040) == 0) ||
+                             ((monster_templates[monster_i].cmove & 0x00800000) != 0)));
       } else {
-        ok_monster_found = (((c_list[monster_i].cmove & 0x00008000) == 0) &&
-                            ((c_list[monster_i].cmove & 0x00000010) != 0));
+        ok_monster_found = (((monster_templates[monster_i].cmove & 0x00008000) == 0) &&
+                            ((monster_templates[monster_i].cmove & 0x00000010) != 0));
       }
 
       if (ok_monster_found) {
@@ -219,7 +219,7 @@ long mon_take_hit(long monptr, long dam) {
   if (m_list[monptr].hp < 0) {
 
     monster_death(m_list[monptr].fy, m_list[monptr].fx,
-                  c_list[m_list[monptr].mptr].cmove);
+                  monster_templates[m_list[monptr].mptr].cmove);
 
     if ((m_list[monptr].mptr == player_cur_quest) && ((player_flags).quested)) {
       (player_flags).quested = false;
@@ -229,14 +229,14 @@ long mon_take_hit(long monptr, long dam) {
                 "Arch-Wizard.");
     }
 
-    /* with c_list[m_list[monptr].mptr]. do; */
+    /* with monster_templates[m_list[monptr].mptr]. do; */
     /* with player_do; */
-    if (((c_list[m_list[monptr].mptr].cmove & 0x00004000) == 0) &&
-        (c_list[m_list[monptr].mptr].mexp > 0)) {
+    if (((monster_templates[m_list[monptr].mptr].cmove & 0x00004000) == 0) &&
+        (monster_templates[m_list[monptr].mptr].mexp > 0)) {
 
       acc_tmp =
-          (c_list[m_list[monptr].mptr].mexp *
-           ((c_list[m_list[monptr].mptr].level + 0.1) / (float)player_lev));
+          (monster_templates[m_list[monptr].mptr].mexp *
+           ((monster_templates[m_list[monptr].mptr].level + 0.1) / (float)player_lev));
       i1 = (long)(acc_tmp);
       acc_exp += (acc_tmp - i1);
       if (acc_exp > 1) {
@@ -245,9 +245,9 @@ long mon_take_hit(long monptr, long dam) {
       }
       C_player_add_exp(i1);
 
-    } else if (c_list[m_list[monptr].mptr].mexp > 0) {
+    } else if (monster_templates[m_list[monptr].mptr].mexp > 0) {
 
-      change_rep(-c_list[m_list[monptr].mptr].mexp);
+      change_rep(-monster_templates[m_list[monptr].mptr].mexp);
       if (player_rep > -250) {
         msg_print("The townspeople look at you sadly.");
         msg_print("They shake their heads at the "

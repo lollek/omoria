@@ -194,7 +194,7 @@ static boolean __missile_try_hit_creature(treas_rec *missile,
   long plus_to_hit = __calc_plus_to_hit(missile, type);
   long damage = __calc_damage(missile, type);
 
-  int16_t monster_ac = c_list[m_list[cave[y][x].cptr].mptr].ac;
+  int16_t monster_ac = monster_templates[m_list[cave[y][x].cptr].mptr].ac;
   boolean creature_was_hit =
       player_test_hit(base_to_hit, player_lev, plus_to_hit, monster_ac, true);
   if (!creature_was_hit) {
@@ -209,7 +209,7 @@ static boolean __missile_try_hit_creature(treas_rec *missile,
   find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);
   sprintf(text_buf, "The %s hits %s.", missile_text_buf, monster_name_buf);
   msg_print(text_buf);
-  damage = tot_dam(&(missile->data), damage, &(c_list[monster_index]));
+  damage = tot_dam(&(missile->data), damage, &(monster_templates[monster_index]));
   long crit_mult = critical_blow(
       missile->data.weight, plus_to_hit,
       (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0, true);

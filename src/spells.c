@@ -499,7 +499,7 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                  */
                 /* do; */
                 /* with */
-                /* c_list[m_list[cave[i1][i2].cptr].mptr]
+                /* monster_templates[m_list[cave[i1][i2].cptr].mptr]
                  */
                 /* do; */
                 dam = dam_hp;
@@ -517,10 +517,10 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                 }
 
                 if ((harm_type &
-                     c_list[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
+                     monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
                   dam *= 2;
                 } else if ((weapon_type &
-                            c_list[m_list[cave[i1][i2].cptr].mptr].spells) !=
+                            monster_templates[m_list[cave[i1][i2].cptr].mptr].spells) !=
                            0) {
                   dam /= 4;
                 }
@@ -533,7 +533,7 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                     tkill++;
                   } else {
                     if (panel_contains(i1, i2)) {
-                      print(c_list[m_list[cave[i1][i2].cptr].mptr].cchar, i1,
+                      print(monster_templates[m_list[cave[i1][i2].cptr].mptr].cchar, i1,
                             i2);
                       m_list[cave[i1][i2].cptr].ml = true;
                     }
@@ -608,11 +608,11 @@ boolean mon_save(long a_cptr, long bonus, enum spell_class_t spell_class) {
   long mon_level;
   boolean return_value;
 
-  mon_level = c_list[m_list[a_cptr].mptr].level;
+  mon_level = monster_templates[m_list[a_cptr].mptr].level;
 
   /* with m_list[a_cptr] do; */
-  /* with c_list[mptr] do; */
-  if ((0x1000 & c_list[m_list[a_cptr].mptr].cdefense) != 0) {
+  /* with monster_templates[mptr] do; */
+  if ((0x1000 & monster_templates[m_list[a_cptr].mptr].cdefense) != 0) {
     switch (spell_class) {
     case SC_HOLD:
       bonus += 4;
@@ -641,9 +641,9 @@ boolean mon_resists(unsigned char a_cptr) {
   boolean return_value;
 
   /* with m_list[a_cptr] do; */
-  /* with c_list[m_list[a_cptr].mptr] do; */
+  /* with monster_templates[m_list[a_cptr].mptr] do; */
 
-  res_chance = c_list[m_list[a_cptr].mptr].mr;
+  res_chance = monster_templates[m_list[a_cptr].mptr].mr;
 
   delta_lev = (player_lev + player_mr);
   if (delta_lev < 0) {
@@ -657,7 +657,7 @@ boolean mon_resists(unsigned char a_cptr) {
 
   if (res_chance >= randint(100)) {
     sprintf(out_val, "The %s is protected by a mysterious force.",
-            c_list[m_list[a_cptr].mptr].name);
+            monster_templates[m_list[a_cptr].mptr].name);
     msg_print(out_val);
     return_value = true;
   } else {
@@ -813,15 +813,15 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
          */
         /* do; */
         /* with */
-        /* c_list[m_list[cave[i1][i2].cptr].mptr].
+        /* monster_templates[m_list[cave[i1][i2].cptr].mptr].
          */
         /* do; */
         dam = dam_hp;
-        if ((harm_type & c_list[m_list[cave[i1][i2].cptr].mptr].cdefense) !=
+        if ((harm_type & monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) !=
             0) {
           dam *= 2;
         } else if ((weapon_type &
-                    c_list[m_list[cave[i1][i2].cptr].mptr].spells) != 0) {
+                    monster_templates[m_list[cave[i1][i2].cptr].mptr].spells) != 0) {
           dam = trunc(dam / 4.0);
         }
         dam = (long)(dam / (distance(i1, i2, y, x) + 1));
@@ -832,7 +832,7 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
         if (m_list[cave[i1][i2].cptr].hp < 0) {
           monster_death(m_list[cave[i1][i2].cptr].fy,
                         m_list[cave[i1][i2].cptr].fx,
-                        c_list[m_list[cave[i1][i2].cptr].mptr].cmove);
+                        monster_templates[m_list[cave[i1][i2].cptr].mptr].cmove);
           delete_monster(cave[i1][i2].cptr);
         }
       } else if (cave[i1][i2].cptr == 1) {
@@ -1062,13 +1062,13 @@ boolean detect_creatures(enum spell_effect_t typ) {
 
       switch (typ) {
       case SE_EVIL:
-        found = (0x0004 & c_list[m_list[i1].mptr].cdefense) != 0;
+        found = (0x0004 & monster_templates[m_list[i1].mptr].cdefense) != 0;
         break;
       case SE_MONSTER:
-        found = (0x10000 & c_list[m_list[i1].mptr].cmove) == 0;
+        found = (0x10000 & monster_templates[m_list[i1].mptr].cmove) == 0;
         break;
       case SE_INVISIBLE:
-        found = (0x10000 & c_list[m_list[i1].mptr].cmove) != 0;
+        found = (0x10000 & monster_templates[m_list[i1].mptr].cmove) != 0;
         break;
       default:
         MSG(("Unknown typ in detect_creatures"));
@@ -1078,7 +1078,7 @@ boolean detect_creatures(enum spell_effect_t typ) {
 
       if (found) {
         m_list[i1].ml = true;
-        print(c_list[m_list[i1].mptr].cchar, m_list[i1].fy, m_list[i1].fx);
+        print(monster_templates[m_list[i1].mptr].cchar, m_list[i1].fy, m_list[i1].fx);
         flag = true;
       }
     }
@@ -1490,17 +1490,17 @@ boolean sleep_monsters1(long y, long x) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].cptr > 1) {
         /* with m_list[cave[i1][i2].cptr]. do; */
-        /* with c_list[m_list[cave[i1][i2].cptr].mptr].
+        /* with monster_templates[m_list[cave[i1][i2].cptr].mptr].
          */
         /* do; */
         if (!mon_resists(cave[i1][i2].cptr)) {
           flag = true;
           if (mon_save(cave[i1][i2].cptr, 0, SC_MENTAL)) {
             sprintf(out_val, "The %s is unaffected.",
-                    c_list[m_list[cave[i1][i2].cptr].mptr].name);
+                    monster_templates[m_list[cave[i1][i2].cptr].mptr].name);
           } else {
             sprintf(out_val, "The %s falls asleep.",
-                    c_list[m_list[cave[i1][i2].cptr].mptr].name);
+                    monster_templates[m_list[cave[i1][i2].cptr].mptr].name);
             m_list[cave[i1][i2].cptr].csleep = 500;
           }
           msg_print(out_val);
@@ -1704,10 +1704,10 @@ boolean mass_genocide() {
   i1 = muptr; /* what happens if there are no monsters in the world? */
   do {
     /* with m_list[i1]. do; */
-    /* with c_list[m_list[i1].mptr]. do; */
+    /* with monster_templates[m_list[i1].mptr]. do; */
     i2 = m_list[i1].nptr;
     if (m_list[i1].cdis <= MAX_SIGHT) {
-      if (((c_list[m_list[i1].mptr].cmove & 0x80000000) == 0) &&
+      if (((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0) &&
           (!mon_resists(i1))) {
         delete_monster(i1);
         flag = true;
@@ -1735,15 +1735,15 @@ boolean genocide() {
   if (get_com("Which type of creature do wish exterminated? ", &typ)) {
     do {
       /* with m_list[i1]. do; */
-      /* with c_list[m_list[i1].mptr]. do; */
+      /* with monster_templates[m_list[i1].mptr]. do; */
       i2 = m_list[i1].nptr;
-      if (typ == c_list[m_list[i1].mptr].cchar) {
-        if (((c_list[m_list[i1].mptr].cmove & 0x80000000) == 0) &&
+      if (typ == monster_templates[m_list[i1].mptr].cchar) {
+        if (((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0) &&
             (!mon_resists(i1))) {
           delete_monster(i1);
         } else {
           sprintf(out_val, "The %s is unaffected.",
-                  c_list[m_list[i1].mptr].name);
+                  monster_templates[m_list[i1].mptr].name);
           msg_print(out_val);
         }
       }
@@ -1816,7 +1816,7 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
   boolean hmm = false;
 
   /* with m_list[i1]. do; */
-  /* with c_list[m_list[i1].mptr]. do; */
+  /* with monster_templates[m_list[i1].mptr]. do; */
 
   switch (typ) {
   case SE_CONFUSE:
@@ -1832,19 +1832,19 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
 
   case SE_SPEED:
     hmm =
-        !mon_save(c_list[m_list[monptr].mptr].level, 0, SC_NULL) || (dmge > 0);
+        !mon_save(monster_templates[m_list[monptr].mptr].level, 0, SC_NULL) || (dmge > 0);
     break;
 
   case SE_TURN:
-    hmm = (c_list[m_list[monptr].mptr].cdefense & 0x0008) != 0;
+    hmm = (monster_templates[m_list[monptr].mptr].cdefense & 0x0008) != 0;
     break;
 
   case SE_DRAIN:
-    hmm = (c_list[m_list[monptr].mptr].cdefense & 0x0008) == 0;
+    hmm = (monster_templates[m_list[monptr].mptr].cdefense & 0x0008) == 0;
     break;
 
   case SE_HP:
-    hmm = (c_list[m_list[monptr].mptr].cdefense & cflag) != 0;
+    hmm = (monster_templates[m_list[monptr].mptr].cdefense & cflag) != 0;
     break;
 
   default:
@@ -1865,7 +1865,7 @@ void za__yes_it_did(long monptr, long dmge, enum spell_effect_t typ) {
   switch (typ) {
   case SE_CONFUSE:
   case SE_TURN:
-    sprintf(out_val, "The %s runs frantically!", c_list[mptr].name);
+    sprintf(out_val, "The %s runs frantically!", monster_templates[mptr].name);
     msg_print(out_val);
     m_list[monptr].confused = true;
     break;
@@ -1890,21 +1890,21 @@ void za__yes_it_did(long monptr, long dmge, enum spell_effect_t typ) {
   case SE_JOKE:
   case SE_DRAIN:
   case SE_HOLY_WORD:
-    /* with c_list[m_list[i1].mptr]. do; */
+    /* with monster_templates[m_list[i1].mptr]. do; */
     if (mon_take_hit(monptr, randint(dmge)) > 0) {
       if (typ == SE_JOKE) {
-        sprintf(out_val, "The %s dies laughing!", c_list[mptr].name);
+        sprintf(out_val, "The %s dies laughing!", monster_templates[mptr].name);
       } else {
-        sprintf(out_val, "The %s dissolves!", c_list[mptr].name);
+        sprintf(out_val, "The %s dissolves!", monster_templates[mptr].name);
       }
       msg_print(out_val);
     } else {
       if (typ == SE_JOKE) {
-        sprintf(out_val, "The %s chuckles.", c_list[mptr].name);
+        sprintf(out_val, "The %s chuckles.", monster_templates[mptr].name);
         msg_print(out_val);
         m_list[monptr].confused = true;
       } else {
-        sprintf(out_val, "The %s shudders.", c_list[mptr].name);
+        sprintf(out_val, "The %s shudders.", monster_templates[mptr].name);
         msg_print(out_val);
         if (typ == SE_HOLY_WORD) {
           if (do_stun(monptr, -4, 4 + randint(4))) {
@@ -1929,14 +1929,14 @@ boolean za__no_it_didnt(long monptr, long dmge, long typ) {
     flag = true;
     if (typ == SE_JOKE) {
       sprintf(out_val, "The %s appears offended...",
-              c_list[m_list[monptr].mptr].name);
+              monster_templates[m_list[monptr].mptr].name);
       msg_print(out_val);
       if (mon_take_hit(monptr, randint(dmge) / 4) > 0) {
         msg_print("and dies from disgust!!!");
       }
     } else {
       sprintf(out_val, "The %s is unaffected...",
-              c_list[m_list[monptr].mptr].name);
+              monster_templates[m_list[monptr].mptr].name);
       msg_print(out_val);
     }
   }
@@ -1953,7 +1953,7 @@ boolean zap_area(long cflag, long dmge, long typ) {
   do {
     m_next = m_list[i1].nptr;
     /* with m_list[i1]. do; */
-    /* with c_list[m_list[i1].mptr] do; */
+    /* with monster_templates[m_list[i1].mptr] do; */
     if (m_list[i1].ml) {
       if (za__did_it_work(i1, cflag, dmge, typ)) {
         za__yes_it_did(i1, dmge, typ);
@@ -2138,8 +2138,8 @@ boolean mass_poly() {
     /* with m_list[i1]. do; */
     i2 = m_list[i1].nptr;
     if (m_list[i1].cdis < MAX_SIGHT) {
-      /* with c_list[m_list[i1].mptr]. do; */
-      if (((c_list[m_list[i1].mptr].cdefense & 0x80000000) == 0) &&
+      /* with monster_templates[m_list[i1].mptr]. do; */
+      if (((monster_templates[m_list[i1].mptr].cdefense & 0x80000000) == 0) &&
           (!mon_resists(i1))) {
         y = m_list[i1].fy;
         x = m_list[i1].fx;
@@ -2183,13 +2183,13 @@ boolean light_line(long dir, long y, long x, long power) {
 
       if (cave[y][x].cptr > 1) {
         /* with m_list[cave[y][x].cptr]. do; */
-        /* with c_list[m_list[cave[y][x].cptr].mptr]. */
+        /* with monster_templates[m_list[cave[y][x].cptr].mptr]. */
         /* do; */
         if (!mon_resists(cave[y][x].cptr)) {
-          if (0x0100 & c_list[m_list[cave[y][x].cptr].mptr].cdefense) {
+          if (0x0100 & monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) {
 
             sprintf(out_val, "The %s wails out in pain!",
-                    c_list[m_list[cave[y][x].cptr].mptr].name);
+                    monster_templates[m_list[cave[y][x].cptr].mptr].name);
 
             msg_print(out_val);
 
@@ -2202,7 +2202,7 @@ boolean light_line(long dir, long y, long x, long power) {
               sprintf(out_val,
                       "The %s dies in a "
                       "fit of agony.",
-                      c_list[m_list[cave[y][x].cptr].mptr].name);
+                      monster_templates[m_list[cave[y][x].cptr].mptr].name);
               msg_print(out_val);
             }
           }
@@ -2245,7 +2245,7 @@ boolean fb__ill_joke(long a_cptr, enum spell_effect_t typ, long dam, char *str,
   find_monster_name(str, a_cptr, false);
   find_monster_name(str2, a_cptr, true);
   /* with m_list[a_cptr] do; */
-  /* with c_list[mptr] do; */
+  /* with monster_templates[mptr] do; */
   if (!mon_save(a_cptr, 0, SC_MENTAL)) {
     m_list[a_cptr].confused = true;
     i2 = mon_take_hit(a_cptr, dam);
@@ -2307,7 +2307,7 @@ boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
       fb__ill_joke(cave[y][x].cptr, typ, dam, str, str2);
     } else {
       /* with m_list[cave[y][x].cptr]. do; */
-      /* with c_list[m_list[cave[y][x].cptr].mptr]. do; */
+      /* with monster_templates[m_list[cave[y][x].cptr].mptr]. do; */
       cptr = cave[y][x].cptr;
       mptr = m_list[cptr].mptr;
       if (!mon_resists(cptr)) {
@@ -2316,9 +2316,9 @@ boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
         find_monster_name(str2, cptr, true);
         sprintf(out_val, "The %s strikes %s.", bolt_typ, str);
         msg_print(out_val);
-        if ((harm_type & c_list[mptr].cdefense) != 0) {
+        if ((harm_type & monster_templates[mptr].cdefense) != 0) {
           dam *= 2;
-        } else if ((weapon_type & c_list[mptr].spells) != 0) {
+        } else if ((weapon_type & monster_templates[mptr].spells) != 0) {
           dam /= 4;
         }
         if (mon_take_hit(cptr, dam) > 0) {
@@ -2326,7 +2326,7 @@ boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
           msg_print(out_val);
         } else {
           if (panel_contains(y, x)) {
-            print(c_list[mptr].cchar, y, x);
+            print(monster_templates[mptr].cchar, y, x);
             m_list[cptr].ml = true;
           }
         }
@@ -2401,7 +2401,7 @@ boolean wall_to_mud(long dir, long y, long x) {
       mptr = m_list[cptr].mptr;
       if (cptr > 1) {
 
-        if ((0x0200 & c_list[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
+        if ((0x0200 & monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
           i1 = mon_take_hit(cptr, 100);
           flag = true;
           if (m_list[cptr].ml) {
@@ -2409,12 +2409,12 @@ boolean wall_to_mud(long dir, long y, long x) {
               sprintf(out_val,
                       "The %s dies in a "
                       "fit of agony.",
-                      c_list[mptr].name);
+                      monster_templates[mptr].name);
             } else {
               sprintf(out_val,
                       "The %s wails out "
                       "in pain!.",
-                      c_list[mptr].name);
+                      monster_templates[mptr].name);
             }
             msg_print(out_val);
           }
@@ -2486,7 +2486,7 @@ boolean poly_monster(long dir, long y, long x) {
         }
       } else {
         sprintf(out_val, "The %s is unaffected.",
-                c_list[m_list[cptr].mptr].name);
+                monster_templates[m_list[cptr].mptr].name);
         msg_print(out_val);
       }
     } else {
@@ -2619,7 +2619,7 @@ static boolean zm__did_it_work(enum spell_effect_t zaptype, long cptr,
   boolean flag;
 
   /* with cave[y,x] do; */
-  /* with c_list[m_list[cptr].mptr] do; */
+  /* with monster_templates[m_list[cptr].mptr] do; */
 
   switch (zaptype) {
   case SE_SLEEP:
@@ -2628,7 +2628,7 @@ static boolean zm__did_it_work(enum spell_effect_t zaptype, long cptr,
     break;
 
   case SE_DRAIN:
-    flag = (((c_list[m_list[cptr].mptr].cdefense & 0x0008) == 0) &&
+    flag = (((monster_templates[m_list[cptr].mptr].cdefense & 0x0008) == 0) &&
             (!mon_resists(cptr)));
     break;
 
@@ -2925,19 +2925,19 @@ boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
   if (bolt_to_creature(dir, &y, &x, &dist, range, true)) {
     /* with cave[y,x] do; */
     /* with m_list[cptr] do; */
-    /* with c_list[mptr] do; */
+    /* with monster_templates[mptr] do; */
     cptr = cave[y][x].cptr;
     mptr = m_list[cptr].mptr;
 
     if (!mon_resists(cptr)) {
-      sprintf(out_val, "The %s hits the %s.", ddesc, c_list[mptr].name);
+      sprintf(out_val, "The %s hits the %s.", ddesc, monster_templates[mptr].name);
       msg_print(out_val);
       if (mon_take_hit(cptr, dam_hp) > 0) {
-        sprintf(out_val, "The %s dies in a fit of agony.", c_list[mptr].name);
+        sprintf(out_val, "The %s dies in a fit of agony.", monster_templates[mptr].name);
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(c_list[mptr].cchar, y, x);
+          print(monster_templates[mptr].cchar, y, x);
           m_list[cptr].ml = true;
         }
       }
@@ -2963,24 +2963,24 @@ boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
   for (; bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true);) {
     /* with cave[y,x] do; */
     /* with m_list[cptr] do; */
-    /* with c_list[mptr] do; */
+    /* with monster_templates[mptr] do; */
     cptr = cave[y][x].cptr;
     mptr = m_list[cptr].mptr;
     if (!mon_resists(cptr)) {
-      sprintf(out_val, "The %s strikes the %s.", descrip, c_list[mptr].name);
+      sprintf(out_val, "The %s strikes the %s.", descrip, monster_templates[mptr].name);
       msg_print(out_val);
-      if ((harm_type & c_list[mptr].cdefense) != 0) {
+      if ((harm_type & monster_templates[mptr].cdefense) != 0) {
         dam_hp *= 2;
-      } else if ((weapon_type & c_list[mptr].spells) != 0) {
+      } else if ((weapon_type & monster_templates[mptr].spells) != 0) {
         dam_hp /= 4;
       }
 
       if (mon_take_hit(cptr, dam_hp) > 0) {
-        sprintf(out_val, "The %s dies in a fit of agony.", c_list[mptr].name);
+        sprintf(out_val, "The %s dies in a fit of agony.", monster_templates[mptr].name);
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(c_list[mptr].cchar, y, x);
+          print(monster_templates[mptr].cchar, y, x);
           m_list[cptr].ml = true;
         }
       }

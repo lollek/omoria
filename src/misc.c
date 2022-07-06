@@ -496,11 +496,11 @@ chtype loc_symbol(long y, long x) {
       if ((m_list[cptr].ml) &&
           (!is_in(fval, water_set) ||
            (is_in(fval, water_set) &&
-            (((c_list[mptr].cmove & 0x00800000) != 0) ||
+            (((monster_templates[mptr].cmove & 0x00800000) != 0) ||
              (distance(char_row, char_col, y, x) <= 5)))) &&
-          (((c_list[mptr].cmove & 0x00010000) == 0) ||
+          (((monster_templates[mptr].cmove & 0x00010000) == 0) ||
            (player_flags.see_inv))) {
-        sym = c_list[mptr].cchar;
+        sym = monster_templates[mptr].cchar;
       } else if (tptr > 0) {
         sym = C_item_get_tchar(&t_list[tptr]);
       } else if (is_in(fval, earth_set)) { /* 0, 3, 8 and 9
@@ -1834,10 +1834,10 @@ boolean summon_land_monster(long *y, long *x, boolean slp) {
               if (i4 > MAX_CREATURES) {
                 i4 = MAX_CREATURES;
               }
-              if (((c_list[i4].cmove & 0x00008000) == 0) &&
-                  (((c_list[i4].cmove & 0x00000010) == 0) ||
-                   ((c_list[i4].cmove & 0x00000040) == 0) ||
-                   ((c_list[i4].cmove & 0x00800000) != 0))) {
+              if (((monster_templates[i4].cmove & 0x00008000) == 0) &&
+                  (((monster_templates[i4].cmove & 0x00000010) == 0) ||
+                   ((monster_templates[i4].cmove & 0x00000040) == 0) ||
+                   ((monster_templates[i4].cmove & 0x00800000) != 0))) {
                 place_monster(i2, i3, i4, slp);
                 return_value = true;
                 flag = true;
@@ -1893,10 +1893,10 @@ boolean summon_water_monster(long *y, long *x, boolean slp) {
               if (i4 > MAX_CREATURES) {
                 i4 = MAX_CREATURES;
               }
-              if ((((c_list[i4].cmove & 0x00008000) == 0) &&
-                   (((c_list[i4].cmove & 0x00000010) != 0) ||
-                    ((c_list[i4].cmove & 0x00000040) == 0) ||
-                    ((c_list[i4].cmove & 0x00800000) != 0)))) {
+              if ((((monster_templates[i4].cmove & 0x00008000) == 0) &&
+                   (((monster_templates[i4].cmove & 0x00000010) != 0) ||
+                    ((monster_templates[i4].cmove & 0x00000040) == 0) ||
+                    ((monster_templates[i4].cmove & 0x00800000) != 0)))) {
                 place_monster(i2, i3, i4, slp);
                 return_value = true;
                 flag = true;
@@ -1932,7 +1932,7 @@ boolean summon_undead(long *y, long *x) {
     i5 = randint(i4);
     ctr = 0;
     do {
-      if ((c_list[i5].cdefense & 0x0008) != 0) {
+      if ((monster_templates[i5].cdefense & 0x0008) != 0) {
         ctr = 20;
         i4 = 0;
       } else {
@@ -1983,7 +1983,7 @@ boolean summon_demon(long *y, long *x) {
     ctr = 0;
     do {
       /*{        Check monsters for demon }*/
-      if ((c_list[i5].cdefense & 0x0400) != 0) {
+      if ((monster_templates[i5].cdefense & 0x0400) != 0) {
         ctr = 20;
         i4 = 0;
       } else {
@@ -2043,15 +2043,15 @@ boolean summon_breed(long *y, long *x) {
             i5 = randint(i4);
             ctr = 0;
             do {
-              if (((c_list[i5].cmove & 0x00200000) != 0) &&
+              if (((monster_templates[i5].cmove & 0x00200000) != 0) &&
                   (((is_in(cave[i2][i3].fval, earth_set)) &&
-                    (((c_list[i5].cmove & 0x00000010) == 0) ||
-                     ((c_list[i5].cmove & 0x00000040) == 0) ||
-                     ((c_list[i5].cmove & 0x00800000) != 0))) ||
+                    (((monster_templates[i5].cmove & 0x00000010) == 0) ||
+                     ((monster_templates[i5].cmove & 0x00000040) == 0) ||
+                     ((monster_templates[i5].cmove & 0x00800000) != 0))) ||
                    ((is_in(cave[i2][i3].fval, water_set)) &&
-                    (((c_list[i5].cmove & 0x00000010) != 0) ||
-                     ((c_list[i5].cmove & 0x00000040) == 0) ||
-                     ((c_list[i5].cmove & 0x00800000) != 0))))) {
+                    (((monster_templates[i5].cmove & 0x00000010) != 0) ||
+                     ((monster_templates[i5].cmove & 0x00000040) == 0) ||
+                     ((monster_templates[i5].cmove & 0x00800000) != 0))))) {
                 ctr = 20;
                 i4 = 0;
               } else {
@@ -2461,7 +2461,7 @@ void find_monster_name(char m_name[82], const long ptr,
   i2 = m_list[ptr].mptr;
 
   /*{ Does the player know what he's fighting?      }*/
-  if ((((0x10000 & c_list[i2].cmove) != 0) && (!(player_flags.see_inv))) ||
+  if ((((0x10000 & monster_templates[i2].cmove) != 0) && (!(player_flags.see_inv))) ||
       (player_flags.blind > 0) || (!(m_list[ptr].ml))) {
     if (begin_sentence) {
       strcpy(m_name, "It");
@@ -2470,9 +2470,9 @@ void find_monster_name(char m_name[82], const long ptr,
     }
   } else {
     if (begin_sentence) {
-      sprintf(m_name, "The %s", c_list[i2].name);
+      sprintf(m_name, "The %s", monster_templates[i2].name);
     } else {
-      sprintf(m_name, "the %s", c_list[i2].name);
+      sprintf(m_name, "the %s", monster_templates[i2].name);
     }
   }
 }
@@ -2564,15 +2564,15 @@ void place_win_monster() {
     m_list[cur_pos].nptr = muptr;
     muptr = cur_pos;
 
-    if ((c_list[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
-      m_list[cur_pos].hp = max_hp(c_list[m_list[cur_pos].mptr].hd);
+    if ((monster_templates[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
+      m_list[cur_pos].hp = max_hp(monster_templates[m_list[cur_pos].mptr].hd);
     } else {
-      m_list[cur_pos].hp = damroll(c_list[m_list[cur_pos].mptr].hd);
+      m_list[cur_pos].hp = damroll(monster_templates[m_list[cur_pos].mptr].hd);
     }
 
     m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
     m_list[cur_pos].cspeed =
-        c_list[m_list[cur_pos].mptr].speed + (player_flags).speed;
+        monster_templates[m_list[cur_pos].mptr].speed + (player_flags).speed;
     m_list[cur_pos].stunned = 0;
     m_list[cur_pos].csleep = 0;
     cave[y][x].cptr = cur_pos;

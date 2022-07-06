@@ -39,10 +39,10 @@ void player_action_look() {
     if (cave[y][x].cptr > 1) {
       if (m_list[cave[y][x].cptr].ml) {
         i2 = m_list[cave[y][x].cptr].mptr;
-        if (is_vowel(c_list[i2].name[0])) {
-          sprintf(out_val, "You see an %s.", c_list[i2].name);
+        if (is_vowel(monster_templates[i2].name[0])) {
+          sprintf(out_val, "You see an %s.", monster_templates[i2].name);
         } else {
-          sprintf(out_val, "You see a %s.", c_list[i2].name);
+          sprintf(out_val, "You see a %s.", monster_templates[i2].name);
         }
         msg_print(out_val);
         flag = true;

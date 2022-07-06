@@ -38,7 +38,7 @@
 
 typedef long mm_type[6];
 
-long m_level[MAX_MONS_LEVEL + 1] = {
+long const m_level[MAX_MONS_LEVEL + 1] = {
     18,  14,  33,  51,  63,  77,  87,  97,  104, 114, 129, 135, 152, 162, 170,
     186, 196, 201, 208, 215, 229, 234, 239, 247, 252, 262, 269, 274, 282, 288,
     298, 304, 311, 315, 320, 336, 343, 351, 358, 363, 373, 373, 375, 375, 375,
@@ -47,7 +47,7 @@ long m_level[MAX_MONS_LEVEL + 1] = {
     384, 384, 384, 384, 384, 385, 385, 385, 385, 385, 385, 385, 385, 385, 385,
     385, 385, 385, 385, 385, 385, 385, 385, 385, 393, 395};
 
-monster_template c_list[] = {
+monster_template const monster_templates[] = {
     {10, 1, "<<Placeholder>>", 0x0010C000, 0x00009F52, 0x3000, 25000, 50, 1,
      'p', "20d8", "1 1 3d3", 0, 20},
     {10, 1, "Town Wizard", 0x0010C000, 0x00009F52, 0x3000, 25000, 50, 1, 'p',
@@ -915,14 +915,14 @@ static long movement_rate(long cspeed, long mon) {
   long return_value;
 
   /* with m_list[mon] do; */
-  /* with c_list[mptr] do; */
+  /* with monster_templates[mptr] do; */
   /* with cave[fy,fx] do; */
   uint8_t const monster_y = m_list[mon].fy;
   uint8_t const monster_x = m_list[mon].fx;
   if (xor((is_in(cave[monster_y][monster_x].fval, earth_set) ||
            is_in(cave[monster_y][monster_x].fval, pwall_set)),
-          ((c_list[m_list[mon].mptr].cmove & 0x00000010) == 0))) {
-    c_rate = (long)((c_list[m_list[mon].mptr].cmove & 0x00000300) / 256);
+          ((monster_templates[m_list[mon].mptr].cmove & 0x00000010) == 0))) {
+    c_rate = (long)((monster_templates[m_list[mon].mptr].cmove & 0x00000300) / 256);
   } else {
     c_rate = 3;
   }
@@ -996,7 +996,7 @@ void multiply_monster(long y, long x, long z, boolean slp) {
                                           }*/
             /*{ Some critters are
              * canabalistic!       }*/
-            if ((c_list[z].cmove & 0x00080000) != 0) {
+            if ((monster_templates[z].cmove & 0x00080000) != 0) {
               delete_monster(cave[i2][i3].cptr);
               place_monster(i2, i3, z, slp);
               check_mon_lite(i2, i3);
@@ -1032,7 +1032,7 @@ static void c__update_mon(long monptr, long *hear_count) {
   flag = false;
 
   if ((is_in(cave[MY(monptr)][MX(monptr)].fval, water_set)) &&
-      ((c_list[ML(monptr).mptr].cmove & 0x00800000) == 0)) {
+      ((monster_templates[ML(monptr).mptr].cmove & 0x00800000) == 0)) {
     /*{in water, not flying}*/
     h_range = 10;
     s_range = 5;
@@ -1046,14 +1046,14 @@ static void c__update_mon(long monptr, long *hear_count) {
       flag = true;
     } else if ((ML(monptr).cdis <= s_range)) {
       if (los(char_row, char_col, MY(monptr), MX(monptr))) {
-        /* with c_list[mptr] do; */
+        /* with monster_templates[mptr] do; */
         if ((cave[MY(monptr)][MX(monptr)].pl) ||
             (cave[MY(monptr)][MX(monptr)].tl)) { /*{can see creature?}*/
           flag = (player_flags.see_inv ||
-                  ((0x10000 & c_list[ML(monptr).mptr].cmove) == 0));
+                  ((0x10000 & monster_templates[ML(monptr).mptr].cmove) == 0));
         } else if (player_flags.see_infra > 0) { /*{infravision?}*/
           flag = ((ML(monptr).cdis <= player_flags.see_infra) &&
-                  ((0x2000 & c_list[ML(monptr).mptr].cdefense) != 0));
+                  ((0x2000 & monster_templates[ML(monptr).mptr].cdefense) != 0));
         }
       }
     }
@@ -1067,7 +1067,7 @@ static void c__update_mon(long monptr, long *hear_count) {
   if (flag) {
     /*{ Light it up...        }*/
     if (!(ML(monptr).ml)) {
-      print(c_list[ML(monptr).mptr].cchar, MY(monptr), MX(monptr));
+      print(monster_templates[ML(monptr).mptr].cchar, MY(monptr), MX(monptr));
       ML(monptr).ml = true;
       if (search_flag) {
         search_off();
@@ -1095,7 +1095,7 @@ static void c__update_mon(long monptr, long *hear_count) {
   /*  LEAVE("c__update_mon", "c") */
 }
 
-static void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
+static void c__monster_eaten_message(char const *squash, char const *doesit, long cptr) {
   char out_val[1026];
 
   ENTER(("c__monster_eaten_message", "c"));
@@ -1143,7 +1143,7 @@ static void c__monster_eaten_message(char *squash, char *doesit, long cptr) {
 
   case 10:
     sprintf(out_val, "Aw, darn.  There goes %ld experience!",
-            (c_list[m_list[cptr].mptr].mexp));
+            (monster_templates[m_list[cptr].mptr].mexp));
     break;
   }
 
@@ -1158,7 +1158,7 @@ static boolean c__check_for_hit(long monptr, long atype) {
 
   ENTER(("c__check_for_hit", "c"));
 
-  level = c_list[m_list[monptr].mptr].level;
+  level = monster_templates[m_list[monptr].mptr].level;
   armor_stuff = player_pac + player_ptoac;
 
   switch (atype) {
@@ -1457,7 +1457,7 @@ static void c__apply_attack(long monptr, long atype, char ddesc[82],
 
   ENTER(("c__apply_attack", "c"));
 
-  level = c_list[m_list[monptr].mptr].level;
+  level = monster_templates[m_list[monptr].mptr].level;
 
   switch (atype) {
   case 1: /*{Normal attack  }*/
@@ -1806,20 +1806,20 @@ static void c__make_attack(long monptr) {
 
   ENTER(("c__make_attack", "c"));
   /* with m_list[monptr] do; */
-  /* with c_list[m_list[monptr].mptr]. do; */
+  /* with monster_templates[m_list[monptr].mptr]. do; */
 
   attstr[0] = 0;
   attx[0] = 0;
 
-  strcpy(attstr, c_list[m_list[monptr].mptr].damage);
+  strcpy(attstr, monster_templates[m_list[monptr].mptr].damage);
   find_monster_name(cdesc, monptr, true);
   strcat(cdesc, " ");
 
   /*{ For "DIED_FROM" string        }*/
-  if ((0x80000000 & c_list[m_list[monptr].mptr].cmove) != 0) {
-    sprintf(ddesc, "The %s", c_list[m_list[monptr].mptr].name);
+  if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
+    sprintf(ddesc, "The %s", monster_templates[m_list[monptr].mptr].name);
   } else {
-    sprintf(ddesc, "& %s", c_list[m_list[monptr].mptr].name);
+    sprintf(ddesc, "& %s", monster_templates[m_list[monptr].mptr].name);
   }
   strcpy(inven_temp.data.name, ddesc);
   inven_temp.data.number = 1;
@@ -1845,8 +1845,8 @@ static void c__make_attack(long monptr) {
     sscanf(attx, "%ld %ld %s", &atype, &adesc, damstr);
 
     if (player_flags.protevil > 0) {
-      if ((c_list[m_list[monptr].mptr].cdefense & 0x0004) != 0) {
-        if ((player_lev + 1) > c_list[m_list[monptr].mptr].level) {
+      if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0004) != 0) {
+        if ((player_lev + 1) > monster_templates[m_list[monptr].mptr].level) {
           atype = 99;
           adesc = 99;
         }
@@ -1854,8 +1854,8 @@ static void c__make_attack(long monptr) {
     }
 
     if (player_flags.protmon > 0) {
-      if ((c_list[m_list[monptr].mptr].cdefense & 0x0002) != 0) {
-        if ((player_lev + 1) > c_list[m_list[monptr].mptr].level) {
+      if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0002) != 0) {
+        if ((player_lev + 1) > monster_templates[m_list[monptr].mptr].level) {
           atype = 99;
           adesc = 99;
         }
@@ -1912,7 +1912,7 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
 
   i1 = 1;
   flag = false;
-  movebits = c_list[m_list[monptr].mptr].cmove;
+  movebits = monster_templates[m_list[monptr].mptr].cmove;
 
   do {
     /*{ Get new positon               }*/
@@ -1958,7 +1958,7 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
               }
             } else if (t_list[cave[newy][newx].tptr].p1 > 0) {
               /*{ Locked doors  }*/
-              if (randint(100 - c_list[m_list[monptr].mptr].level) < 5) {
+              if (randint(100 - monster_templates[m_list[monptr].mptr].level) < 5) {
                 t_list[cave[newy][newx].tptr].p1 = 0;
               }
             } else if (t_list[cave[newy][newx].tptr].p1 < 0) {
@@ -2022,7 +2022,7 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
         if (cave[newy][newx].tptr > 0) {
           if (t_list[cave[newy][newx].tptr].tval == seen_trap) {
             if (t_list[cave[newy][newx].tptr].subval == 99) {
-              if (randint(OBJ_RUNE_PROT) < c_list[m_list[monptr].mptr].level) {
+              if (randint(OBJ_RUNE_PROT) < monster_templates[m_list[monptr].mptr].level) {
                 if ((newy == char_row) && (newx == char_col)) {
                   msg_print("Th"
                             "e "
@@ -2071,7 +2071,7 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
           if (player_flags.confuse_monster) {
             /* with m_list[monptr] do; */
             /* with */
-            /* c_list[m_list[monptr].mptr].
+            /* monster_templates[m_list[monptr].mptr].
              */
             /* do; */
             msg_print("Your hands stop glowing.");
@@ -2080,12 +2080,12 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
               sprintf(out_val,
                       "The %s is "
                       "unaffected.",
-                      c_list[m_list[monptr].mptr].name);
+                      monster_templates[m_list[monptr].mptr].name);
             } else {
               sprintf(out_val,
                       "The %s appears "
                       "confused.",
-                      c_list[m_list[monptr].mptr].name);
+                      monster_templates[m_list[monptr].mptr].name);
               m_list[monptr].confused = true;
             }
             msg_print(out_val);
@@ -2105,12 +2105,12 @@ static boolean c__make_move(long monptr, mm_type mm, long *hear_count) {
             if ((movebits & 0x80000) != 0) {
               if (m_list[cave[newy][newx].cptr].ml) {
                 /*squash =
-                 * c_list[m_list[cptr].mptr].name;*/
+                 * monster_templates[m_list[cptr].mptr].name;*/
                 /*doesit =
-                 * c_list[m_list[monptr].mptr].name;*/
+                 * monster_templates[m_list[monptr].mptr].name;*/
                 c__monster_eaten_message(
-                    c_list[m_list[cave[newy][newx].cptr].mptr].name,
-                    c_list[m_list[monptr].mptr].name, cave[newy][newx].cptr);
+                    monster_templates[m_list[cave[newy][newx].cptr].mptr].name,
+                    monster_templates[m_list[monptr].mptr].name, cave[newy][newx].cptr);
               }
               delete_monster(cave[newy][newx].cptr);
             } else {
@@ -2217,9 +2217,9 @@ static boolean c__cast_spell(long monptr, boolean *took_turn) {
 
   ENTER(("c__cast_spell", "c"));
   /* with m_list[monptr] do; */
-  /* with c_list[m_list[monptr].mptr] do; */
-  chance = ((c_list[m_list[monptr].mptr].spells & 0x0000000F));
-  chance2 = ((c_list[m_list[monptr].mptr].spells & 0x80000000));
+  /* with monster_templates[m_list[monptr].mptr] do; */
+  chance = ((monster_templates[m_list[monptr].mptr].spells & 0x0000000F));
+  chance2 = ((monster_templates[m_list[monptr].mptr].spells & 0x80000000));
 
   /*{ 1 in x chance of casting spell                }*/
   /*{ if chance2 is true then 1 in x of not casting }*/
@@ -2250,10 +2250,10 @@ static boolean c__cast_spell(long monptr, boolean *took_turn) {
     find_monster_name(cdesc, monptr, true);
     strcat(cdesc, " ");
     /*{ For "DIED_FROM" string  }*/
-    if ((0x80000000 & c_list[m_list[monptr].mptr].cmove) != 0) {
-      sprintf(ddesc, "The %s", c_list[m_list[monptr].mptr].name);
+    if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
+      sprintf(ddesc, "The %s", monster_templates[m_list[monptr].mptr].name);
     } else {
-      sprintf(ddesc, "& %s", c_list[m_list[monptr].mptr].name);
+      sprintf(ddesc, "& %s", monster_templates[m_list[monptr].mptr].name);
     }
     strcpy(inven_temp.data.name, ddesc);
     inven_temp.data.number = 1;
@@ -2261,7 +2261,7 @@ static boolean c__cast_spell(long monptr, boolean *took_turn) {
     /*{ End DIED_FROM                 }*/
 
     /*{ Extract all possible spells into spell_choice }*/
-    i1 = (c_list[m_list[monptr].mptr].spells & 0x0FFFFFF0);
+    i1 = (monster_templates[m_list[monptr].mptr].spells & 0x0FFFFFF0);
     i3 = 0;
     for (; i1 != 0;) {
       i2 = bit_pos(&i1) + 1;
@@ -2426,7 +2426,7 @@ static boolean c__cast_spell(long monptr, boolean *took_turn) {
         msg_print(outval);
         sprintf(outval, "%sappears healthier...", cdesc);
         msg_print(outval);
-        r1 = (randint(c_list[m_list[monptr].mptr].level) / 2) + 1;
+        r1 = (randint(monster_templates[m_list[monptr].mptr].level) / 2) + 1;
         if (r1 > player_cmana) {
           r1 = player_cmana;
         }
@@ -2566,7 +2566,7 @@ static boolean c__cast_spell(long monptr, boolean *took_turn) {
       MSG(("ERROR: cast bad spell: i3 = %ld "
            "spell_choice[i3] = %ld\n       "
            "monster = >%s<\n",
-           i3, spell_choice[i3], c_list[m_list[monptr].mptr].name));
+           i3, spell_choice[i3], monster_templates[m_list[monptr].mptr].name));
       break;
     }
 
@@ -2596,19 +2596,19 @@ static boolean mon_move(long monptr, long *hear_count) {
   boolean return_value = false;
 
   ENTER(("mon_move", "c"));
-  /* with c_list[m_list[monptr].mptr] do; */
+  /* with monster_templates[m_list[monptr].mptr] do; */
 
   /*{ Does the creature regenerate?                         }*/
-  if ((c_list[ML(monptr).mptr].cdefense & 0x8000) != 0) {
+  if ((monster_templates[ML(monptr).mptr].cdefense & 0x8000) != 0) {
     m_list[monptr].hp += randint(4);
   }
 
-  if (m_list[monptr].hp > max_hp(c_list[ML(monptr).mptr].hd)) {
-    m_list[monptr].hp = max_hp(c_list[ML(monptr).mptr].hd);
+  if (m_list[monptr].hp > max_hp(monster_templates[ML(monptr).mptr].hd)) {
+    m_list[monptr].hp = max_hp(monster_templates[ML(monptr).mptr].hd);
   }
 
   /*{ Does the critter multiply?                            }*/
-  if ((c_list[ML(monptr).mptr].cmove & 0x00200000) != 0) {
+  if ((monster_templates[ML(monptr).mptr].cmove & 0x00200000) != 0) {
     if (MAX_MON_MULT >= mon_tot_mult) {
       if ((player_flags.rest % mon_mult_adj) == 0) {
         /* with m_list[monptr] do; */
@@ -2640,7 +2640,7 @@ static boolean mon_move(long monptr, long *hear_count) {
     return_value = c__move_confused(monptr, mm, hear_count);
     m_list[monptr].confused = (randint(8) != 1);
     move_test = true;
-  } else if (c_list[ML(monptr).mptr].spells > 0) {
+  } else if (monster_templates[ML(monptr).mptr].spells > 0) {
     /*{ Creature may cast a spell                             }*/
     return_value = c__cast_spell(monptr, &move_test);
   }
@@ -2649,21 +2649,21 @@ static boolean mon_move(long monptr, long *hear_count) {
 
     /*{ 75% random movement                                   }*/
     if ((randint(100) <= 75) &&
-        ((c_list[ML(monptr).mptr].cmove & 0x00000008) != 0)) {
+        ((monster_templates[ML(monptr).mptr].cmove & 0x00000008) != 0)) {
       return_value = c__move_confused(monptr, mm, hear_count);
 
       /*{ 40% random movement }*/
     } else if ((randint(100) <= 40) &&
-               ((c_list[ML(monptr).mptr].cmove & 0x00000004) != 0)) {
+               ((monster_templates[ML(monptr).mptr].cmove & 0x00000004) != 0)) {
       return_value = c__move_confused(monptr, mm, hear_count);
 
       /*{ 20% random movement }*/
     } else if ((randint(100) <= 20) &&
-               ((c_list[ML(monptr).mptr].cmove & 0x00000002) != 0)) {
+               ((monster_templates[ML(monptr).mptr].cmove & 0x00000002) != 0)) {
       return_value = c__move_confused(monptr, mm, hear_count);
 
       /*{ Normal movement }*/
-    } else if ((c_list[ML(monptr).mptr].cmove & 0x00000001) == 0) {
+    } else if ((monster_templates[ML(monptr).mptr].cmove & 0x00000001) == 0) {
       if (randint(200) == 1) {
         return_value = c__move_confused(monptr, mm, hear_count);
       } else {
@@ -2689,9 +2689,9 @@ static void c__splash(long monptr) {
 
   ENTER(("c__splash", "c"));
   /* with m_list[monptr]. do; */
-  /* with c_list[m_list[monptr].mptr]. do begin; */
+  /* with monster_templates[m_list[monptr].mptr]. do begin; */
   mon_swimming =
-      (long)(((c_list[m_list[monptr].mptr].cmove & 0x00000700)) / 256);
+      (long)(((monster_templates[m_list[monptr].mptr].cmove & 0x00000700)) / 256);
   drown_dam = randint(OUT_OF_ENV_DAM);
 
   /*{ here will also be modifiers due to waterspeed,depth }*/
@@ -2706,7 +2706,7 @@ static void c__splash(long monptr) {
 
   if (m_list[monptr].hp < 0) {
     monster_death(m_list[monptr].fy, m_list[monptr].fx,
-                  c_list[m_list[monptr].mptr].cmove);
+                  monster_templates[m_list[monptr].mptr].cmove);
     /* with cave[fy,fx] do; */
     delete_monster(cave[m_list[monptr].fy][m_list[monptr].fx].cptr);
   }
@@ -2737,7 +2737,7 @@ void creatures(boolean attack) {
           i3 = movement_rate(m_list[i1].cspeed, i1);
           if (i3 > 0) {
             for (i2 = 1; i2 <= i3; i2++) {
-              if ((m_list[i1].cdis <= c_list[m_list[i1].mptr].aaf) ||
+              if ((m_list[i1].cdis <= monster_templates[m_list[i1].mptr].aaf) ||
                   (m_list[i1].ml)) {
                 if (m_list[i1].csleep > 0) {
                   if (player_flags.aggravate) {
@@ -2778,8 +2778,8 @@ void creatures(boolean attack) {
 
         if (is_in(cave[m_list[i1].fy][m_list[i1].fx].fval, floor_set)) {
           if (((is_in(cave[m_list[i1].fy][m_list[i1].fx].fval, water_set)) !=
-               ((c_list[m_list[i1].mptr].cmove & 0x00000010) != 0)) &&
-              ((c_list[m_list[i1].mptr].cmove & 0x00000040) != 0)) {
+               ((monster_templates[m_list[i1].mptr].cmove & 0x00000010) != 0)) &&
+              ((monster_templates[m_list[i1].mptr].cmove & 0x00000040) != 0)) {
             c__splash(i1);
           }
         }
@@ -2807,7 +2807,7 @@ long find_mon(const char *virtual_name) {
   boolean maybe = false;
 
   for (count = 1; (count <= MAX_CREATURES) && !maybe;) {
-    if (!strcmp(virtual_name, c_list[count].name)) {
+    if (!strcmp(virtual_name, monster_templates[count].name)) {
       maybe = true;
     } else {
       count++;

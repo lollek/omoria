@@ -89,7 +89,7 @@ boolean player_action_attack(long y, long x) {
   tot_tohit += player_ptohit;
 
   /*{ stopped from killing town creatures?? }*/
-  if (((c_list[a_mptr].cmove & 0x00004000) == 0) ||
+  if (((monster_templates[a_mptr].cmove & 0x00004000) == 0) ||
       (randint(100) < -player_rep)) {
     mean_jerk_flag = true;
   } else {
@@ -100,7 +100,7 @@ boolean player_action_attack(long y, long x) {
   if (mean_jerk_flag) {
     /* with player_do; */
     do {
-      if (player_test_hit(player_bth, player_lev, tot_tohit, c_list[a_mptr].ac,
+      if (player_test_hit(player_bth, player_lev, tot_tohit, monster_templates[a_mptr].ac,
                           false)) {
         if (backstab_flag) {
           sprintf(out_val, "You backstab %s!", m_name);
@@ -112,7 +112,7 @@ boolean player_action_attack(long y, long x) {
         /*{ Weapon?       }*/
         if (equipment[Equipment_primary].tval > 0) {
           i3 = damroll(equipment[Equipment_primary].damage);
-          i3 = tot_dam(&equipment[Equipment_primary], i3, &c_list[a_mptr]);
+          i3 = tot_dam(&equipment[Equipment_primary], i3, &monster_templates[a_mptr]);
           is_sharp =
               (equipment[Equipment_primary].tval != bow_crossbow_or_sling) &&
               ((equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0);

@@ -238,7 +238,7 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
     } else {
       /* find by name, then summon */
       for (i2 = 1; i2 <= MAX_CREATURES; i2++) {
-        if ((strstr(c_list[i2].name, monster) != NULL) && (i1 != 10)) {
+        if ((strstr(monster_templates[i2].name, monster) != NULL) && (i1 != 10)) {
           i1 = 0;
           do {
             i3 = y - 2 + randint(3);

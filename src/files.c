@@ -507,28 +507,28 @@ void print_monsters() {
       prt("Writing Monster Dictionary...", 1, 1);
       refresh();
       for (i1 = 1; i1 <= MAX_CREATURES; i1++) {
-        /* with c_list[i1]. do; */
+        /* with monster_templates[i1]. do; */
 
-        cmove = c_list[i1].cmove;
-        cdefense = c_list[i1].cdefense;
-        spells = c_list[i1].spells;
+        cmove = monster_templates[i1].cmove;
+        cdefense = monster_templates[i1].cdefense;
+        spells = monster_templates[i1].spells;
 
         /*{ Begin writing to file }*/
         fprintf(file1, "-------------------------------"
                        "-------------\n");
 
-        fprintf(file1, "%3ld  %30s     (%c)\n", i1, c_list[i1].name,
-                c_list[i1].cchar);
+        fprintf(file1, "%3ld  %30s     (%c)\n", i1, monster_templates[i1].name,
+                monster_templates[i1].cchar);
 
         fprintf(file1,
                 "     Speed =%2d  Level     "
                 "=%2d  Exp =%5ld\n",
-                c_list[i1].speed, c_list[i1].level, c_list[i1].mexp);
+                monster_templates[i1].speed, monster_templates[i1].level, monster_templates[i1].mexp);
 
         fprintf(file1,
                 "     AC    =%2d  Eye-sight "
                 "=%2d  HD  =%5s\n",
-                c_list[i1].ac, c_list[i1].aaf, c_list[i1].hd);
+                monster_templates[i1].ac, monster_templates[i1].aaf, monster_templates[i1].hd);
 
         if ((0x80000000 & cmove) != 0) {
           fprintf(file1, "     Creature is a "
@@ -800,7 +800,7 @@ void print_monsters() {
         fprintf(file1, "   --Creature attacks =\n");
         attstr[0] = 0;
         attx[0] = 0;
-        strcpy(attstr, c_list[i1].damage);
+        strcpy(attstr, monster_templates[i1].damage);
 
         for (; attstr[0] != 0;) {
 
@@ -1111,17 +1111,17 @@ void print_monsters() {
         }   /* end for attstr */
 
         fprintf(file1, "   --Magic Resistance : ");
-        if (c_list[i1].mr == 0) {
+        if (monster_templates[i1].mr == 0) {
           fprintf(file1, "None\n");
-        } else if (c_list[i1].mr < 20) {
+        } else if (monster_templates[i1].mr < 20) {
           fprintf(file1, "Very Low\n");
-        } else if (c_list[i1].mr < 50) {
+        } else if (monster_templates[i1].mr < 50) {
           fprintf(file1, "Low\n");
-        } else if (c_list[i1].mr < 80) {
+        } else if (monster_templates[i1].mr < 80) {
           fprintf(file1, "Medium\n");
-        } else if (c_list[i1].mr < 110) {
+        } else if (monster_templates[i1].mr < 110) {
           fprintf(file1, "High\n");
-        } else if (c_list[i1].mr < 140) {
+        } else if (monster_templates[i1].mr < 140) {
           fprintf(file1, "Very High\n");
         } else {
           fprintf(file1, "Extreme\n");
