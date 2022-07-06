@@ -3,13 +3,6 @@
 
 #include "io.h"
 
-/*	{ Screen size parameters					} */
-#define SCREEN_HEIGHT 22
-#define SCREEN_WIDTH 66
-
-/*	{ # of numbered objects for easy summoning (ie. create food) } */
-#define NUM_YUM 18
-
 /*	{ Dungeon size parameters					} */
 #define MAX_HEIGHT 66 /* { Multiple of 11; >= 22 } */
 #define MAX_WIDTH 198 /* { Multiple of 33; >= 66 } */

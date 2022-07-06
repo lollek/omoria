@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+/*	{ Screen size parameters					} */
+#define SCREEN_HEIGHT 22
+#define SCREEN_WIDTH 66
+
 /**
  *  Draws equipment screen on the right
  */

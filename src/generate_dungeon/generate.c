@@ -5,14 +5,15 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "../debug.h"
+#include "../misc.h"
+#include "../monsters.h"
 #include "../pascal.h"
 #include "../player.h"
+#include "../random.h"
+#include "../screen.h"
 #include "../stores.h"
 #include "../types.h"
 #include "../variables.h"
-#include "../misc.h"
-#include "../random.h"
-#include "../monsters.h"
 
 #include "river.h"
 #include "rooms.h"
@@ -80,8 +81,8 @@ static void gc__correct_dir(long *rdir, long *cdir, long y1, long x1, long y2,
 /**
  * gc__rand_dir() - Chance of wandering direction
  */
-static void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2, long x2,
-                  long chance) {
+static void gc__rand_dir(long *rdir, long *cdir, long y1, long x1, long y2,
+                         long x2, long chance) {
   switch (randint(chance)) {
   case 1:
     *rdir = -1;

@@ -15,11 +15,12 @@
 #include "debug.h"
 #include "magic.h"
 #include "pascal.h"
+#include "screen.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
 
-treas_rec *cur_inven;   /* { Current inven page  } */
+treas_rec *cur_inven;      /* { Current inven page  } */
 unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
 long cur_height;           /* { Cur dungeon size    } */
@@ -36,10 +37,10 @@ boolean death = false;          /*	{ True if died	      } */
 char died_from[82];             /*	{ What killed him     } */
 long turn_counter = 100000;     /*	{ Turns ellapsed      } */
 boolean find_flag;              /*	{ Used in MORIA	      } */
-boolean moria_flag;      /* { Next level when true  } */
-boolean reset_flag;      /* { Do not move creatures } */
-boolean search_flag;     /* { Player is searching   } */
-boolean teleport_flag;   /* { Handle telport traps  } */
+boolean moria_flag;             /* { Next level when true  } */
+boolean reset_flag;             /* { Do not move creatures } */
+boolean search_flag;            /* { Player is searching   } */
+boolean teleport_flag;          /* { Handle telport traps  } */
 boolean redraw;                 /*	{ For redraw screen   } */
 unsigned long print_stat = 0;   /*	{ Flag for stats      } */
 long turn = 0;                  /*	{ Cur trun of game    } */
@@ -175,7 +176,7 @@ long com_val;
 /*       treasure.c:mt__armor_and_shields for where they are */
 /*       generated.  (also mt__food in the same file) */
 
-treasure_type yums[NUM_YUM + 1] = {
+treasure_type yums[] = {
     {"& Bogus Hard Biscuit~", Food, 0x00000000, Nothing_flag, 500, 1, 309, 2, 1,
      0, 0, 0, 0, "0d0", -1, 0},
     {"& Hard Biscuit~", Food, 0x00000000, Nothing_flag, 500, 1, 309, 2, 1, 0, 0,
@@ -187,17 +188,17 @@ treasure_type yums[NUM_YUM + 1] = {
     {"& Piece~ of Elvish Waybread", Food, 0x00000000, 0x21800020, 3500, 10, 313,
      3, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Stew~", Food, 0x00000000, 0x330001C0, 2000, 0, 314, 3, 1, 0, 0, 0, 0,
-     "0d0", -1, 0}, 
+     "0d0", -1, 0},
     {"& Green Jelly~", Food, 0x00000000, 0x22400060, 4000, 50, 315, 3, 1, 0, 0,
      0, 0, "0d0", -1, 0},
     {"& pint~ of fine grade mush", Food, 0x00000000, 0x00000000, 1500, 0, 306,
      252, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Mushroom~", Food, 0x00000000, Nothing_flag, 3000, 2, 308, 5, 1, 0, 0, 0,
-     0, "0d0", -1, 0}, 
+     0, "0d0", -1, 0},
     {"& Pint of Fine Ale", Food, 0x00000000, Nothing_flag, 500, 1, 311, 10, 1,
      0, 0, 0, 0, "0d0", -1, 0},
     {"& Handful~ of Berries| (Smurfberries)", Food, 0x00000000, 0x30400000,
-     1000, 0, 317, 3, 1, 0, 0, 0, 0, "0d0", -1, 0}, 
+     1000, 0, 317, 3, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Handful~ of Berries| (Goodberries)", Food, 0x00000000, 0x30C00080, 1000,
      0, 318, 3, 1, 0, 0, 0, 0, "0d0", -1, 0},
     {"& Cool Set of Threads^ [%P6,%P4]", soft_armor, 0x00000000, Nothing_flag,
@@ -336,8 +337,7 @@ treasure_type t_list[MAX_TALLOC + 1];
 treasure_type equipment[EQUIP_MAX];
 treas_rec *inventory_list = NULL;
 treas_rec inven_temp = {
-    .data = {" ", 0, 0, 0, 0, 0,   0, 0,
-        0,   0, 0, 0, 0, " ", 0, 0},
+    .data = {" ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, " ", 0, 0},
     .ok = false,
     .insides = 0,
     .next = NULL,
