@@ -6,7 +6,6 @@
 #include "../init/debug.h"
 #include "../init/graphics.h"
 #include "../init/kickout.h"
-#include "../init/monsters.h"
 #include "../init/stores.h"
 #include "../init/trade.h"
 
@@ -42,8 +41,6 @@ int main(int argc, char *argv[]) {
     exit_game();
   }
 
-  if (!init__monsters())
-    exit_game();
   if (!init__stores())
     exit_game();
   if (!init__bank())

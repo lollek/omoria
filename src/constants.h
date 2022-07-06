@@ -49,7 +49,6 @@
 /*	{ Creature contants						} */
 #define MAX_MALLOC (100 + 1)  /*{ Max that can be allocated	        } */
 #define MAX_MALLOC_CHANCE 160 /*{ 1/x chance of new monster each round	} */
-#define MAX_MONS_LEVEL 100    /*{ Maximum level of creatures		} */
 #define MAX_SIGHT 20          /*{ Maximum dis a creature can be seen	} */
 #define MAX_SPELL_DIS 18      /*{ Maximum dis creat. spell can be cast	} */
 #define MAX_MON_MULT 75       /*{ Maximum reproductions on a level	} */

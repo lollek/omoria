@@ -117,7 +117,6 @@ extern treasure_type door_list[3];
 
 /*	{ Following are creature arrays and variables			} */
 extern monster_type m_list[MAX_MALLOC + 1];
-extern long m_level[MAX_MONS_LEVEL + 1];
 extern long muptr;        /* { Cur used monster ptr	} */
 extern long mon_tot_mult; /* { # of repro's of creature	} */
 

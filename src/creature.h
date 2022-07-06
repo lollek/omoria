@@ -4,6 +4,9 @@
 #include "boolean.h"
 
 #define MAX_CREATURES 415     /*{ Number of monster templates defined for univ	} */
+#define MAX_MONS_LEVEL 100    /*{ Maximum level of creatures		} */
+
+extern long m_level[MAX_MONS_LEVEL + 1];
 
 typedef struct monster_template {
   uint8_t aaf;       /*: [bit(7),pos(0)] 0..127; Area affect radius */
