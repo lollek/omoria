@@ -27,7 +27,6 @@ pub mod io;
 pub mod logic;
 pub mod master;
 pub mod master_interop;
-pub mod menu;
 pub mod misc;
 pub mod model;
 pub mod ncurses;
