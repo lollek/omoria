@@ -1,83 +1,85 @@
 use std::fs;
 use std::io::Write;
-use std::error;
 
 // todo: Make this toggle-able
 static DEBUG_ENABLED: bool = true;
-const FILENAME: &'static str = "debug2.out";
+const FILENAME: &str = "debug_rust.out";
 static mut DEPTH: i32 = 0;
 
 #[derive(Debug)]
 enum DebugLevel {
-    INFO,
-    WARN,
-    ERR,
-    FATAL,
+    Info,
+    Warning,
+    Error,
+    Fatal,
 }
 
-fn debug(level: DebugLevel, msg: &str) {
+fn debug<S>(level: DebugLevel, msg: S)
+where
+    S: AsRef<str>,
+{
     fs::OpenOptions::new()
         .create(true)
         .append(true)
         .open(FILENAME)
         .expect("Failed to open debug file for writing")
-        .write_all(&format!("{:?}: {}\n", level, msg).into_bytes())
+        .write_all(&format!("{:?}: {}\n", level, msg.as_ref()).into_bytes())
         .expect("Failed to write to debug file");
 }
 
-pub fn info(msg: &str) {
+pub fn info<S>(msg: S)
+where
+    S: AsRef<str>,
+{
     if DEBUG_ENABLED {
-        debug(DebugLevel::INFO, msg);
+        debug(DebugLevel::Info, msg.as_ref());
     }
 }
 
-pub fn warn(msg: &str) {
+pub fn warn<S>(msg: S)
+where
+    S: AsRef<str>,
+{
     if DEBUG_ENABLED {
-        debug(DebugLevel::WARN, msg);
+        debug(DebugLevel::Warning, msg.as_ref());
     }
 }
 
-pub fn error(msg: &str) {
+pub fn error<S>(msg: S)
+where
+    S: AsRef<str>,
+{
     if DEBUG_ENABLED {
-        debug(DebugLevel::ERR, msg);
+        debug(DebugLevel::Error, msg.as_ref());
     }
 }
 
-pub fn fatal(msg: &str) -> ! {
+pub fn fatal<S>(msg: S) -> !
+where
+    S: AsRef<str>,
+{
     if DEBUG_ENABLED {
-        debug(DebugLevel::FATAL, msg);
+        debug(DebugLevel::Fatal, msg.as_ref());
     }
-    panic!("{}", msg);
+    panic!("{}", msg.as_ref());
 }
 
-fn log_error(e: &dyn error::Error) {
-    debug(DebugLevel::FATAL, &format!("{}", e));
-    match e.source() {
-        Some(cause) => log_error(cause),
-        None => ()
-    }
-}
-
-pub fn fatal2(msg: &str, e: &dyn error::Error) -> ! {
-    if DEBUG_ENABLED {
-        debug(DebugLevel::FATAL, msg);
-        debug(DebugLevel::FATAL, "!!BEGIN STACKTRACE!!");
-        log_error(e);
-        debug(DebugLevel::FATAL, "!!END STACKTRACE!!");
-    }
-    panic!("{}: {}", msg, e);
-}
-
-pub fn enter(function: &str) {
+pub fn enter<S>(function: S)
+where
+    S: AsRef<str>,
+{
     unsafe {
         DEPTH += 1;
-        info(&format!("{}: ENTER {}", DEPTH, function));
+        info(format!("{}: ENTER {}", DEPTH, function.as_ref()));
     }
 }
 
-pub fn leave(function: &str) {
+pub fn leave<S>(function: S)
+where
+    S: AsRef<str>,
+{
     unsafe {
         DEPTH -= 1;
-        info(&format!("{}: LEAVE {}", DEPTH, function));
+        info(format!("{}: LEAVE {}", DEPTH, function.as_ref()));
     }
 }

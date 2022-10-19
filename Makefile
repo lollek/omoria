@@ -23,12 +23,12 @@ omoria: $(OBJFILES) $(RSFILES)
 
 .PHONY: run
 run: omoria
-	>debug2.out
+	>debug_rust.out
 	RUST_BACKTRACE=1 ./omoria
 
 .PHONY: debug
 debug: omoria
-	>debug2.out
+	>debug_rust.out
 	RUST_BACKTRACE=1 rust-gdb ./omoria
 
 .PHONY: nodata

@@ -20,7 +20,7 @@ pub extern "C" fn C_item_get_tchar(item_ptr: *const Item) -> pancurses::chtype {
     debug::enter(&format!("C_item_get_tchar"));
 
     let item = unsafe { *item_ptr };
-    debug::info(&format!("(enter) symbol: {}, {}", item.tval, item.subval));
+    debug::info(format!("(enter) symbol: {}, {}", item.tval, item.subval));
     let item_type = conversion::item_type::from_usize(item.tval.into()).unwrap();
     let res = data::item_type::symbol(&item_type, item.subval);
 

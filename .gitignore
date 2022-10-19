@@ -5,7 +5,7 @@
 omoria
 tags
 debug.out
-debug2.out
+debug_rust.out
 
 /target
 **/*.rs.bk

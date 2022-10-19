@@ -53,14 +53,14 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
     let mut buffer = String::new();
 
     if let Err(e) = f.read_to_string(&mut buffer) {
-        debug::warn(&format!("Failed to load save @read_to_string, (err: {})", e));
+        debug::warn(format!("Failed to load save @read_to_string, (err: {})", e));
         return None;
     }
 
     match serde_json::from_str(&buffer) {
         Ok(json) => Some(json),
         Err(e) => {
-            debug::warn(&format!("Failed to load save @from_str, (err: {})", e));
+            debug::warn(format!("Failed to load save @from_str, (err: {})", e));
             return None;
         },
     }

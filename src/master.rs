@@ -70,7 +70,7 @@ pub fn character_exists(uid: i64) -> bool {
 
     let records = persistence::load_masters();
     if let Err(e) = records {
-        debug::error(&format!("{:?}", e));
+        debug::error(format!("{:?}", e));
         return false;
     }
 
