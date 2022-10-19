@@ -4,37 +4,37 @@ use crate::model::ItemType;
 
 // Has damage numbers
 pub fn has_damage(item_type: &ItemType) -> bool {
-    match item_type {
+    matches!(
+        item_type,
         ItemType::SlingAmmo
-        | ItemType::Bolt
-        | ItemType::Arrow
-        | ItemType::Spike
-        | ItemType::HaftedWeapon
-        | ItemType::PoleArm
-        | ItemType::Dagger
-        | ItemType::Sword
-        | ItemType::Pick
-        | ItemType::Maul => true,
-        _ => false,
-    }
+            | ItemType::Bolt
+            | ItemType::Arrow
+            | ItemType::Spike
+            | ItemType::HaftedWeapon
+            | ItemType::PoleArm
+            | ItemType::Dagger
+            | ItemType::Sword
+            | ItemType::Pick
+            | ItemType::Maul
+    )
 }
 
 // Can be enhanced to-hit
 pub fn has_attack_enhancement(item_type: &ItemType) -> bool {
-    match item_type {
+    matches!(
+        item_type,
         ItemType::SlingAmmo
-        | ItemType::Bolt
-        | ItemType::Arrow
-        | ItemType::Spike
-        | ItemType::RangedWeapon
-        | ItemType::HaftedWeapon
-        | ItemType::PoleArm
-        | ItemType::Dagger
-        | ItemType::Sword
-        | ItemType::Pick
-        | ItemType::Maul => true,
-        _ => false,
-    }
+            | ItemType::Bolt
+            | ItemType::Arrow
+            | ItemType::Spike
+            | ItemType::RangedWeapon
+            | ItemType::HaftedWeapon
+            | ItemType::PoleArm
+            | ItemType::Dagger
+            | ItemType::Sword
+            | ItemType::Pick
+            | ItemType::Maul
+    )
 }
 
 pub fn symbol(item_type: &ItemType, subval: i64) -> pancurses::chtype {
