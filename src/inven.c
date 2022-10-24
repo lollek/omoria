@@ -233,9 +233,11 @@ void ic__clear_display(treas_rec *cur_display[], long *cur_display_size) {
   LEAVE("ic__clear_display", "iu");
 }
 
-long ic__display_inv(treas_rec *cur_display[], char prompt[82],
+static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
                      treas_rec *start, treas_rec **next_start) {
   /*{ start changes into start of next page; returns # items in page}*/
+
+  ENTER(("ic__display_inv", "iu"));
 
   long count;
   long i1;
@@ -292,17 +294,20 @@ long ic__display_inv(treas_rec *cur_display[], char prompt[82],
   }
   prt(out_val, 1, 1);
 
+  LEAVE("ic__display_inv", "iu");
+
   return count;
 }
 
-boolean ic__show_inven(treas_rec **ret_ptr, boolean want_back,
+/*  { Displays inventory items, returns chosen item if want_back. }*/
+/*{ boolean returns if chosen }*/
+static boolean ic__show_inven(treas_rec **ret_ptr, boolean want_back,
                        boolean clean_flag, long *scr_state, boolean *valid_flag,
                        char prompt[82], treas_rec *cur_display[],
                        long *cur_display_size) {
-  /*  { Displays inventory items, returns chosen item if want_back. }*/
-  /*{ boolean returns if chosen }*/
 
-  long num_choices;
+  ENTER(("ic__show_inven", "iu"));
+
   boolean exit_flag = false;
   treas_rec *next_inven;
   long count;
@@ -312,9 +317,8 @@ boolean ic__show_inven(treas_rec **ret_ptr, boolean want_back,
   boolean return_value = false;
   long wgt = 0;
 
-  ENTER(("ic__show_inven", "iu"));
 
-  num_choices = ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
+  long num_choices = ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
 
   while (!exit_flag) {
     boolean caps_flag = false;
@@ -708,13 +712,13 @@ static void ic__wear__gem(treas_rec *gem) {
   py_bonuses(worn_helm, 1);
 }
 
-void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
+/*{ Wear routine, wear or wield an item           -RAK-   }*/
+static void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
               long *scr_state, boolean *valid_flag) {
-  /*{ Wear routine, wear or wield an item           -RAK-   }*/
-  boolean exit_flag = false;
 
   ENTER(("ic__wear", "i2"));
 
+  boolean exit_flag = false;
   cur_inven = inventory_list;
 
   while (!exit_flag) {
@@ -864,10 +868,6 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
     }
 
     if (item_was_selected) {
-      long i2;
-      long i3;
-      char prt1[82];
-      char prt2[82];
       treasure_type unwear_obj = equipment[i1];
       equipment[i1] = selected_item->data;
       if (i1 == Equipment_light) {
@@ -887,6 +887,7 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
         ic__remove(EQUIP_MAX - 1, true);
       }
 
+      char prt1[82];
       switch (i1) {
       case Equipment_primary:
         strcpy(prt1, "You are wielding ");
@@ -898,10 +899,12 @@ void ic__wear(treas_rec *cur_display[], long *cur_display_size, char prompt[82],
         strcpy(prt1, "You are wearing ");
         break;
       }
+
       inven_temp.data = equipment[i1];
+      char prt2[82];
       objdes(prt2, &inven_temp, true);
-      i2 = 0;
-      i3 = Equipment_min - 1;
+      long i2 = 0;
+      long i3 = Equipment_min - 1;
       do { /*{ Get the right letter of equipment }*/
         i3++;
         if (equipment[i3].tval > 0) {
@@ -1450,23 +1453,22 @@ boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
    * only a portion of the inventory, and take no other action.
    */
 
-  long scr_state = 0;
-  boolean exit_flag, test_flag;
+  ENTER(("inven_command", "i"));
+
+  boolean test_flag;
   treas_rec *cur_display[DISPLAY_SIZE + 1];
   long cur_display_size;
   boolean valid_flag = false;
   char prompt[82];
   boolean return_value = false;
 
-  ENTER(("inven_command", "i"));
-
   strcpy(prompt, sprompt); /* prompt gets modified from time to time,
                               constants get passed to inven_command... */
-  exit_flag = false;
-  scr_state = 0;
+  boolean exit_flag = false;
+  long scr_state = 0;
   cur_inven = inventory_list;
 
-  do {
+  while (!exit_flag) {
     switch (command) {
 
     case 'i': /*{ Inventory     }*/
@@ -1474,8 +1476,7 @@ boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
         msg_print("You are not carrying anything.");
       } else {
         clear_rc(1, 1);
-        strcpy(prompt, "You are currently carrying: "
-                       "space for next page");
+        strcpy(prompt, "You are currently carrying: space for next page");
         ic__clear_display(cur_display, &cur_display_size);
         change_all_ok_stats(true, true);
         ic__show_inven(item_ptr, false, false, &scr_state, &valid_flag, prompt,
@@ -1488,8 +1489,7 @@ boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
         msg_print("You are not carrying anything.");
       } else {
         clear_rc(1, 1);
-        strcpy(prompt, "Warning: a-t/A-T DESTROYS that "
-                       "item: space for next page");
+        strcpy(prompt, "Warning: a-t/A-T DESTROYS that item: space for next page");
         ic__clear_display(cur_display, &cur_display_size);
         change_all_ok_stats(true, true);
         ic__show_inven(item_ptr, true, true, &scr_state, &valid_flag, prompt,
@@ -1516,8 +1516,7 @@ boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
         if (inven_ctr == 0) {
           msg_print("You are not carrying anything.");
         } else {
-          ic__stats(cur_display, &cur_display_size, prompt, &scr_state,
-                    &valid_flag);
+          ic__stats(cur_display, &cur_display_size, prompt, &scr_state, &valid_flag);
         }
       }
       break;
@@ -1536,8 +1535,7 @@ boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
         msg_print("You are not carrying anything.");
       } else {
         /*{ May set scr_state to 1        }*/
-        ic__wear(cur_display, &cur_display_size, prompt, &scr_state,
-                 &valid_flag);
+        ic__wear(cur_display, &cur_display_size, prompt, &scr_state, &valid_flag);
       }
       break;
 
@@ -1597,69 +1595,64 @@ boolean inven_command(char command, treas_rec **item_ptr, char sprompt[82]) {
     default:
       /*{ Nonsense command }*/
       break;
-    } /* end case */
-
-    if (scr_state > 0) {
-      prt("<e>quip, <i>inven, <t>ake-off, <w>ear/wield, "
-          "e<x>change, <M>oney, <c>lean.",
-          23, 2);
-      if (wizard2) {
-        prt("<p>ut item into, <r>emove item from, <s> "
-            "stats of item, <I>inven selective.",
-            24, 2);
-      } else {
-        prt("<p>ut item into, <r>emove item from, "
-            "<I>inven selective, or Esc to exit.",
-            24, 2);
-      }
-      test_flag = false;
-
-      do {
-        command = inkey();
-        switch (command) {
-        case 0:
-        case 3:
-        case 25:
-        case 26:
-        case 27:
-        case 32:
-          /*{ Exit from module      }*/
-          exit_flag = true;
-          test_flag = true;
-          break;
-
-        case 'e':
-        case 'i':
-        case 'c':
-        case 's':
-        case 't':
-        case 'w':
-        case 'x':
-        case 'M':
-        case 'p':
-        case 'r':
-        case 'I':
-        case 'W':
-          /*{ Module commands }*/
-          test_flag = true;
-          break;
-
-        case '?':
-          break;
-
-        default:
-          break;
-        } /* end switch */
-
-      } while (!test_flag);
-      prt("", 23, 1);
-      prt("", 24, 1);
-
-    } else {
-      exit_flag = true;
     }
 
-  } while (!exit_flag);
+    if (scr_state <= 0) {
+        break;
+    }
+
+    prt("<e>quip, <i>inven, <t>ake-off, <w>ear/wield, e<x>change, <M>oney, <c>lean.",
+            23, 2);
+    if (wizard2) {
+        prt("<p>ut item into, <r>emove item from, <s> stats of item, <I>inven selective.",
+                24, 2);
+    } else {
+        prt("<p>ut item into, <r>emove item from, <I>inven selective, or Esc to exit.",
+                24, 2);
+    }
+    test_flag = false;
+
+    do {
+        command = inkey();
+        switch (command) {
+            case 0:
+            case 3:
+            case 25:
+            case 26:
+            case 27:
+            case 32:
+                /*{ Exit from module      }*/
+                exit_flag = true;
+                test_flag = true;
+                break;
+
+            case 'e':
+            case 'i':
+            case 'c':
+            case 's':
+            case 't':
+            case 'w':
+            case 'x':
+            case 'M':
+            case 'p':
+            case 'r':
+            case 'I':
+            case 'W':
+                /*{ Module commands }*/
+                test_flag = true;
+                break;
+
+            case '?':
+                break;
+
+            default:
+                break;
+        } /* end switch */
+
+    } while (!test_flag);
+    prt("", 23, 1);
+    prt("", 24, 1);
+  }
 
   if (scr_state > 0) { /*{ If true, must redraw screen   }*/
     return_value = true;
