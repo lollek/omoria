@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum InstrumentTemplate {
@@ -19,23 +19,24 @@ impl InstrumentTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         InstrumentTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for InstrumentTemplate {
-
     fn name(&self) -> &str {
         match self {
             InstrumentTemplate::PipesOfPeace => "& Pipes of Peace",
             InstrumentTemplate::LyreOfNature => "& Lyre of Nature",
             InstrumentTemplate::LuteOfTheWoods => "& Lute of the Woods",
-            InstrumentTemplate::HarpOfTheDruids =>"& Harp of the Druids" ,
+            InstrumentTemplate::HarpOfTheDruids => "& Harp of the Druids",
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Instrument }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Instrument
+    }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -55,7 +56,9 @@ impl ItemTemplate for InstrumentTemplate {
         }
     }
 
-    fn p1(&self) -> i64 { 0 }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -75,13 +78,31 @@ impl ItemTemplate for InstrumentTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 60 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
-    fn item_level(&self) -> u8 { 0 }
-    fn is_identified(&self) -> bool { false }
+    fn weight(&self) -> u16 {
+        60
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
+    fn item_level(&self) -> u8 {
+        0
+    }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

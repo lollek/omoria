@@ -1,7 +1,7 @@
-use crate::model;
 use crate::generate_item;
-use crate::generate_item::ItemTemplate;
 use crate::generate_item::template::*;
+use crate::generate_item::ItemTemplate;
+use crate::model;
 
 pub fn name(class: &model::Class) -> &'static str {
     match class {
@@ -210,7 +210,6 @@ pub fn abilities(class: &model::Class) -> Vec<model::Ability> {
     }
 }
 
-
 pub fn magic_type(class: &model::Class) -> Option<model::Magic> {
     match class {
         model::Class::Wizard | model::Class::Adventurer => Some(model::Magic::Arcane),
@@ -223,16 +222,13 @@ pub fn magic_type(class: &model::Class) -> Option<model::Magic> {
     }
 }
 
-
 pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
     let templates: Vec<Box<dyn ItemTemplate>> = match class {
-        model::Class::Fighter => vec![
-            Box::new(DaggerTemplate::Stiletto),
-        ],
+        model::Class::Fighter => vec![Box::new(DaggerTemplate::Stiletto)],
         model::Class::Wizard => vec![
             Box::new(DaggerTemplate::Stiletto),
             Box::new(MagicBookTemplate::BeginnersMagic),
-            ],
+        ],
         model::Class::Cleric => vec![
             Box::new(MaceTemplate::IronShodQuarterstaff),
             Box::new(PrayerBookTemplate::BeginnersHandbook),
@@ -261,11 +257,11 @@ pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
             Box::new(DaggerTemplate::Stiletto),
             Box::new(MagicBookTemplate::BeginnersMagic),
         ],
-        model::Class::Monk => vec![
-        ],
-        model::Class::Barbarian => vec![
-            Box::new(DaggerTemplate::Stiletto),
-        ],
+        model::Class::Monk => vec![],
+        model::Class::Barbarian => vec![Box::new(DaggerTemplate::Stiletto)],
     };
-    templates.into_iter().map(|x| generate_item::generate(x, 0)).collect()
+    templates
+        .into_iter()
+        .map(|x| generate_item::generate(x, 0))
+        .collect()
 }

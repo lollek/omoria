@@ -190,7 +190,7 @@ pub fn stat_block(race: &Race) -> StatBlock {
             constitution: 0,
             charisma: 0,
         },
-        Race::HalfElf => StatBlock{
+        Race::HalfElf => StatBlock {
             strength: -1,
             intelligence: 1,
             wisdom: 0,

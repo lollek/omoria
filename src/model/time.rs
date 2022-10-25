@@ -6,6 +6,6 @@ pub struct Time {
     pub days: u16,
     pub hours: u16,
     pub minutes: u16,
-    pub seconds: u16 ,
+    pub seconds: u16,
     pub hundredths: u16,
 }

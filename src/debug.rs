@@ -1,6 +1,6 @@
-use std::{fs, panic};
-use std::io::Write;
 use backtrace::Backtrace;
+use std::io::Write;
+use std::{fs, panic};
 
 // todo: Make this toggle-able
 static DEBUG_ENABLED: bool = true;
@@ -21,14 +21,22 @@ extern "C" fn debug_init() {
 
 pub fn init() {
     panic::set_hook(Box::new(|panic_info| {
-        let (filename, line) =
-            panic_info.location().map(|loc| (loc.file(), loc.line()))
+        let (filename, line) = panic_info
+            .location()
+            .map(|loc| (loc.file(), loc.line()))
             .unwrap_or(("<unknown>", 0));
 
-        let cause = panic_info.payload().downcast_ref::<String>().map(String::to_owned)
-            .unwrap_or_else(||
-                            panic_info.payload().downcast_ref::<&str>().map(|it| it.to_string())
-                            .unwrap_or_else(|| "<cause unknown>".to_owned()));
+        let cause = panic_info
+            .payload()
+            .downcast_ref::<String>()
+            .map(String::to_owned)
+            .unwrap_or_else(|| {
+                panic_info
+                    .payload()
+                    .downcast_ref::<&str>()
+                    .map(|it| it.to_string())
+                    .unwrap_or_else(|| "<cause unknown>".to_owned())
+            });
 
         error(format!("A panic occurred at {filename}:{line}: {cause}"));
         error(format!("{:?}", Backtrace::new()));

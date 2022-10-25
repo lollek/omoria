@@ -1,5 +1,5 @@
 use crate::data;
-use crate::model::{Wallet, Currency};
+use crate::model::{Currency, Wallet};
 
 pub fn calculate_total(wallet: &Wallet) -> i64 {
     Currency::iter().fold(0, |sum, i| {

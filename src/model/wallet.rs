@@ -22,5 +22,4 @@ impl Wallet {
             Currency::Mithril => self.mithril,
         }
     }
-
 }

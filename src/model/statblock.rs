@@ -13,12 +13,12 @@ pub struct StatBlock {
 impl StatBlock {
     pub fn new(initial_value: i16) -> StatBlock {
         StatBlock {
-            strength:       initial_value,
-            intelligence:   initial_value,
-            wisdom:         initial_value,
-            dexterity:      initial_value,
-            constitution:   initial_value,
-            charisma:       initial_value,
+            strength: initial_value,
+            intelligence: initial_value,
+            wisdom: initial_value,
+            dexterity: initial_value,
+            constitution: initial_value,
+            charisma: initial_value,
         }
     }
 

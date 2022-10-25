@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum RingTemplate {
@@ -77,7 +77,7 @@ impl RingTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         RingTemplate::vec().into_iter()
     }
 }
@@ -121,8 +121,12 @@ impl ItemTemplate for RingTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Ring }
-    fn flags1(&self) -> u64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Ring
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -276,12 +280,24 @@ impl ItemTemplate for RingTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 2 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
+    fn weight(&self) -> u16 {
+        2
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
 
     fn modifier_to_ac(&self) -> i16 {
         match self {
@@ -359,5 +375,7 @@ impl ItemTemplate for RingTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

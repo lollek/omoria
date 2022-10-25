@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CloakTemplate {
@@ -21,13 +21,12 @@ impl CloakTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         CloakTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for CloakTemplate {
-
     fn name(&self) -> &str {
         match self {
             CloakTemplate::LightCloak => "Light Cloak^ [%P6,%P4]",
@@ -38,11 +37,19 @@ impl ItemTemplate for CloakTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Bracers }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Bracers
+    }
 
-    fn flags1(&self) -> u64 { 0 }
-    fn flags2(&self) -> u64 { 0 }
-    fn p1(&self) -> i64 { 0 }
+    fn flags1(&self) -> u64 {
+        0
+    }
+    fn flags2(&self) -> u64 {
+        0
+    }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -74,9 +81,15 @@ impl ItemTemplate for CloakTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
 
     fn base_ac(&self) -> i16 {
         match self {
@@ -88,8 +101,12 @@ impl ItemTemplate for CloakTemplate {
         }
     }
 
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "0d0" }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "0d0"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -101,5 +118,7 @@ impl ItemTemplate for CloakTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

@@ -1,7 +1,7 @@
 use libc;
 
-use std::ptr;
 use std::mem;
+use std::ptr;
 
 use crate::inventory;
 use crate::model::InventoryItem;
@@ -33,7 +33,7 @@ pub fn set_record(record: Vec<InventoryItem>) {
 
     for (i, item) in record.into_iter().enumerate() {
         unsafe { *ptr = item };
-        if i != size -1 {
+        if i != size - 1 {
             unsafe {
                 let next = mallocfn();
                 (*ptr).next = next;

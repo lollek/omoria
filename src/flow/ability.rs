@@ -1,19 +1,20 @@
 use crate::data;
 use crate::io;
 use crate::logic::menu;
-use crate::term;
-use crate::player;
 use crate::model;
+use crate::player;
+use crate::term;
 
 // Let the player select an action
 // Returns true if the turn was free (i.e. don't take a turn)
 pub fn select_ability() -> bool {
     let abilities = player::abilities();
-    let abilities_str = abilities.iter().map(data::ability::name).collect::<Vec<&str>>();
+    let abilities_str = abilities
+        .iter()
+        .map(data::ability::name)
+        .collect::<Vec<&str>>();
 
-    menu::draw_quick_menu(
-        "Use which ability?",
-        &abilities_str);
+    menu::draw_quick_menu("Use which ability?", &abilities_str);
 
     loop {
         let selection = io::inkey_flush() as char;

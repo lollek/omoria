@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ArmorTemplate {
@@ -37,7 +37,6 @@ pub enum ArmorTemplate {
     WovenCordArmor,
     WyrmhideArmor,
 }
-
 
 impl ArmorTemplate {
     pub fn vec() -> Vec<Box<dyn ItemTemplate>> {
@@ -78,13 +77,12 @@ impl ArmorTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         ArmorTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for ArmorTemplate {
-
     fn name(&self) -> &str {
         match self {
             ArmorTemplate::AugmentedChainMail => "Augmented Chain Mail^ [%P6,%P4]",
@@ -161,10 +159,15 @@ impl ItemTemplate for ArmorTemplate {
         }
     }
 
-
-    fn flags1(&self) -> u64 { 0 }
-    fn flags2(&self) -> u64 { 0 }
-    fn p1(&self) -> i64 { 0 }
+    fn flags1(&self) -> u64 {
+        0
+    }
+    fn flags2(&self) -> u64 {
+        0
+    }
+    fn p1(&self) -> i64 {
+        0
+    }
     fn cost(&self) -> i64 {
         match self {
             ArmorTemplate::AugmentedChainMail => 675,
@@ -202,7 +205,6 @@ impl ItemTemplate for ArmorTemplate {
             ArmorTemplate::LeatherBrigantineArmor => 300,
         }
     }
-
 
     fn subtype(&self) -> i64 {
         match self {
@@ -280,7 +282,9 @@ impl ItemTemplate for ArmorTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
+    fn number(&self) -> u16 {
+        1
+    }
 
     fn modifier_to_hit(&self) -> i16 {
         match self {
@@ -320,7 +324,9 @@ impl ItemTemplate for ArmorTemplate {
         }
     }
 
-    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
 
     fn base_ac(&self) -> i16 {
         match self {
@@ -360,8 +366,12 @@ impl ItemTemplate for ArmorTemplate {
         }
     }
 
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -401,5 +411,7 @@ impl ItemTemplate for ArmorTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

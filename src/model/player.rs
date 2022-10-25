@@ -18,7 +18,6 @@ pub struct Player {
     pub current_hp: f32,
 }
 
-
 impl Player {
     pub fn new() -> Player {
         Player {

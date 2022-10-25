@@ -2,12 +2,13 @@ use libc;
 
 use crate::constants;
 use crate::debug;
-use crate::model::{ Cave, DungeonRecord, Item, TreasureAndCoordinate };
-
+use crate::model::{Cave, DungeonRecord, Item, TreasureAndCoordinate};
 
 extern "C" {
-    #[link_name="tlink"] fn C_tlink();
-    #[link_name="popt"] fn C_popt(index: *mut libc::c_long);
+    #[link_name = "tlink"]
+    fn C_tlink();
+    #[link_name = "popt"]
+    fn C_popt(index: *mut libc::c_long);
 
     static mut cur_height: libc::c_long;
     static mut cur_width: libc::c_long;

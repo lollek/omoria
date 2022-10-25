@@ -25,8 +25,8 @@ pub use self::spell::*;
 pub use self::stat::*;
 pub use self::statblock::*;
 pub use self::store::*;
-pub use self::town_record::*;
 pub use self::time::*;
+pub use self::town_record::*;
 pub use self::treasure_and_coordinate::*;
 pub use self::wallet::*;
 
@@ -54,7 +54,7 @@ mod spell;
 mod stat;
 mod statblock;
 mod store;
-mod town_record;
 mod time;
+mod town_record;
 mod treasure_and_coordinate;
 mod wallet;

@@ -11,7 +11,7 @@ pub enum Stat {
 }
 
 impl Stat {
-    pub fn iter() -> impl Iterator<Item=Stat> {
+    pub fn iter() -> impl Iterator<Item = Stat> {
         enum_iterator::all::<Stat>()
     }
 }

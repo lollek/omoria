@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum JunkFoodTemplate {
@@ -37,7 +37,7 @@ impl JunkFoodTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         JunkFoodTemplate::vec().into_iter()
     }
 }
@@ -50,7 +50,9 @@ impl ItemTemplate for JunkFoodTemplate {
             JunkFoodTemplate::TwelvePoundTrollBuger => "& Twelve-Pound Troll Burger~",
             JunkFoodTemplate::BagOfBrontosaurusChips => "& Bag~ of Brontosaurus Chips",
             JunkFoodTemplate::SliceOfPurpleMushroomPizza => "& Slice~ of Purple Mushroom Pizza",
-            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => "& Peanut Butter and Grape Jelly Sandwich~",
+            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => {
+                "& Peanut Butter and Grape Jelly Sandwich~"
+            }
             JunkFoodTemplate::DragonSteak => "& Dragon Steak~",
             JunkFoodTemplate::VorpalBunnyThroatLozenge => "& Vorpal Bunny Throat Lozenge~",
             JunkFoodTemplate::DeepFriedGiantCentipede => "& Deep-Fried Giant Centipede~",
@@ -61,7 +63,9 @@ impl ItemTemplate for JunkFoodTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::JunkFood }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::JunkFood
+    }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -153,12 +157,24 @@ impl ItemTemplate for JunkFoodTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 1 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn weight(&self) -> u16 {
+        1
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
 
     fn damage(&self) -> &str {
         match self {
@@ -178,7 +194,10 @@ impl ItemTemplate for JunkFoodTemplate {
         }
     }
 
-    fn item_level(&self) -> u8 { 1 }
-    fn is_identified(&self) -> bool { false }
+    fn item_level(&self) -> u8 {
+        1
+    }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }
-

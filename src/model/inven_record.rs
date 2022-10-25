@@ -6,4 +6,3 @@ pub struct InvenRecord {
     pub scost: i64,
     pub sitem: Item,
 }
-

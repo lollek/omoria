@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HelmTemplate {
@@ -35,7 +35,7 @@ impl HelmTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         HelmTemplate::vec().into_iter()
     }
 }
@@ -58,10 +58,18 @@ impl ItemTemplate for HelmTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Helm }
-    fn flags1(&self) -> u64 { 0 }
-    fn flags2(&self) -> u64 { 0 }
-    fn p1(&self) -> i64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Helm
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
+    fn flags2(&self) -> u64 {
+        0
+    }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -114,9 +122,15 @@ impl ItemTemplate for HelmTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
 
     fn base_ac(&self) -> i16 {
         match self {
@@ -135,8 +149,12 @@ impl ItemTemplate for HelmTemplate {
         }
     }
 
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "0d0" }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "0d0"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -155,5 +173,7 @@ impl ItemTemplate for HelmTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

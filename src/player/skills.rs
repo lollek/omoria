@@ -1,5 +1,5 @@
-use crate::model::Stat;
 use crate::data;
+use crate::model::Stat;
 use crate::player;
 use crate::player::data::PLAYER;
 
@@ -16,13 +16,13 @@ pub fn perm_search_skill() -> i16 {
 }
 
 pub fn curr_search_skill() -> i16 {
-    perm_search_skill()
-        + player::modifier_from_stat(Stat::Intelligence)
-        + search_skill_modifier()
+    perm_search_skill() + player::modifier_from_stat(Stat::Intelligence) + search_skill_modifier()
 }
 
 pub fn set_swim_speed(new_value: i64) {
-    unsafe { player::player_flags.swim = new_value; }
+    unsafe {
+        player::player_flags.swim = new_value;
+    }
 }
 
 pub fn swim_speed() -> i64 {

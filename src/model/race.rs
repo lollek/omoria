@@ -11,12 +11,11 @@ pub enum Race {
     HalfOrc,
     HalfTroll,
     Phraint,
-    Dryad
+    Dryad,
 }
 
 impl Race {
-    pub fn iter() -> impl Iterator<Item=Race> {
-        return enum_iterator::all::<Race>()
+    pub fn iter() -> impl Iterator<Item = Race> {
+        return enum_iterator::all::<Race>();
     }
-
 }

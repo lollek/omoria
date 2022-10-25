@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum DaggerTemplate {
@@ -15,7 +15,6 @@ pub enum DaggerTemplate {
     Rapier,
     SmallSword,
 }
-
 
 impl DaggerTemplate {
     pub fn vec() -> Vec<Box<dyn ItemTemplate>> {
@@ -34,33 +33,40 @@ impl DaggerTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         DaggerTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for DaggerTemplate {
-
     fn name(&self) -> &str {
         match self {
-            DaggerTemplate::MainGauche =>"Main Gauche (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Misercorde =>"Misercorde (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Stiletto =>"Stiletto (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Bodkin =>"Bodkin (%P0)^ (%P2,%P3)",
-            DaggerTemplate::BrokenDagger =>"Broken Dagger (%P0)^ (%P2,%P3)",
-            DaggerTemplate::CatONineTails =>"Cat-O-Nine Tails (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Bilbo =>"Bilbo (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Baselard =>"Baselard (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Foil =>"Foil (%P0)^ (%P2,%P3)",
-            DaggerTemplate::Rapier =>"Rapier (%P0)^ (%P2,%P3)",
-            DaggerTemplate::SmallSword =>"Small Sword (%P0)^ (%P2,%P3)",
+            DaggerTemplate::MainGauche => "Main Gauche (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Misercorde => "Misercorde (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Stiletto => "Stiletto (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Bodkin => "Bodkin (%P0)^ (%P2,%P3)",
+            DaggerTemplate::BrokenDagger => "Broken Dagger (%P0)^ (%P2,%P3)",
+            DaggerTemplate::CatONineTails => "Cat-O-Nine Tails (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Bilbo => "Bilbo (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Baselard => "Baselard (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Foil => "Foil (%P0)^ (%P2,%P3)",
+            DaggerTemplate::Rapier => "Rapier (%P0)^ (%P2,%P3)",
+            DaggerTemplate::SmallSword => "Small Sword (%P0)^ (%P2,%P3)",
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Dagger }
-    fn flags1(&self) -> u64 { 0x10000000 }
-    fn flags2(&self) -> u64 { 0 }
-    fn p1(&self) -> i64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Dagger
+    }
+    fn flags1(&self) -> u64 {
+        0x10000000
+    }
+    fn flags2(&self) -> u64 {
+        0
+    }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -110,25 +116,35 @@ impl ItemTemplate for DaggerTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
 
     fn damage(&self) -> &str {
         match self {
-            DaggerTemplate::MainGauche =>"1d5",
-            DaggerTemplate::Misercorde =>"1d4",
-            DaggerTemplate::Stiletto =>"1d4",
-            DaggerTemplate::Bodkin =>"1d4",
-            DaggerTemplate::BrokenDagger =>"1d1",
-            DaggerTemplate::CatONineTails =>"1d4",
-            DaggerTemplate::Bilbo =>"1d6",
-            DaggerTemplate::Baselard =>"1d7",
-            DaggerTemplate::Foil =>"1d5",
-            DaggerTemplate::Rapier =>"1d6",
-            DaggerTemplate::SmallSword =>"1d6",
+            DaggerTemplate::MainGauche => "1d5",
+            DaggerTemplate::Misercorde => "1d4",
+            DaggerTemplate::Stiletto => "1d4",
+            DaggerTemplate::Bodkin => "1d4",
+            DaggerTemplate::BrokenDagger => "1d1",
+            DaggerTemplate::CatONineTails => "1d4",
+            DaggerTemplate::Bilbo => "1d6",
+            DaggerTemplate::Baselard => "1d7",
+            DaggerTemplate::Foil => "1d5",
+            DaggerTemplate::Rapier => "1d6",
+            DaggerTemplate::SmallSword => "1d6",
         }
     }
 
@@ -148,5 +164,7 @@ impl ItemTemplate for DaggerTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

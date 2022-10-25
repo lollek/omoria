@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ShieldTemplate {
@@ -29,13 +29,12 @@ impl ShieldTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         ShieldTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for ShieldTemplate {
-
     fn name(&self) -> &str {
         match self {
             ShieldTemplate::SmallLeatherShield => "Small Leather Shield^ [%P6,%P4]",
@@ -50,10 +49,18 @@ impl ItemTemplate for ShieldTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Shield }
-    fn flags1(&self) -> u64 { 0 }
-    fn flags2(&self) -> u64 { 0 }
-    fn p1(&self) -> i64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Shield
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
+    fn flags2(&self) -> u64 {
+        0
+    }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -97,9 +104,15 @@ impl ItemTemplate for ShieldTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
 
     fn base_ac(&self) -> i16 {
         match self {
@@ -115,8 +128,12 @@ impl ItemTemplate for ShieldTemplate {
         }
     }
 
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "0d0" }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "0d0"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -132,5 +149,7 @@ impl ItemTemplate for ShieldTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

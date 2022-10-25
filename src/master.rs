@@ -1,8 +1,8 @@
 use crate::data;
 use crate::debug;
 use crate::error::Error;
-use crate::player;
 use crate::persistence;
+use crate::player;
 use crate::random;
 
 #[derive(Serialize, Deserialize)]
@@ -22,16 +22,19 @@ pub fn read_master() -> Result<Vec<MasterRecord>, Error> {
 }
 
 pub fn update_character(uid: i64) -> Result<(), Error> {
-    persistence::save_master(MasterRecord {
-        uid: uid,
-        user_name: "-".to_string(),
-        character_name: player::name(),
-        points: player::calc_total_points(),
-        alive: !player::is_dead(),
-        level: player::level(),
-        race: data::race::name(&player::race()).to_string(),
-        class: data::class::name(&player::class()).to_string(),
-    }, false)?;
+    persistence::save_master(
+        MasterRecord {
+            uid: uid,
+            user_name: "-".to_string(),
+            character_name: player::name(),
+            points: player::calc_total_points(),
+            alive: !player::is_dead(),
+            level: player::level(),
+            race: data::race::name(&player::race()).to_string(),
+            class: data::class::name(&player::class()).to_string(),
+        },
+        false,
+    )?;
 
     Ok(())
 }
@@ -39,22 +42,25 @@ pub fn update_character(uid: i64) -> Result<(), Error> {
 pub fn add_character() -> Result<i64, Error> {
     let mut new_uid;
     loop {
-        new_uid = random::randint(<i64>::max_value() -1);
+        new_uid = random::randint(<i64>::max_value() - 1);
         if new_uid != 0 {
             break;
         }
     }
 
-    persistence::save_master(MasterRecord{
-        uid: new_uid,
-        user_name: "-".to_string(),
-        character_name: player::name(),
-        points: player::calc_total_points(),
-        alive: true,
-        level: player::level(),
-        race: data::race::name(&player::race()).to_string(),
-        class: data::class::name(&player::class()).to_string(),
-    }, true)?;
+    persistence::save_master(
+        MasterRecord {
+            uid: new_uid,
+            user_name: "-".to_string(),
+            character_name: player::name(),
+            points: player::calc_total_points(),
+            alive: true,
+            level: player::level(),
+            race: data::race::name(&player::race()).to_string(),
+            class: data::class::name(&player::class()).to_string(),
+        },
+        true,
+    )?;
 
     Ok(new_uid)
 }
@@ -66,12 +72,11 @@ pub fn character_exists(uid: i64) -> bool {
         return false;
     }
 
-    match records.unwrap().iter()
-        .position(|ref i| i.uid == uid) {
-            Some(_) => true,
-            None => {
-                debug::warn("Master file did not contain the player");
-                false
-            },
+    match records.unwrap().iter().position(|ref i| i.uid == uid) {
+        Some(_) => true,
+        None => {
+            debug::warn("Master file did not contain the player");
+            false
         }
+    }
 }

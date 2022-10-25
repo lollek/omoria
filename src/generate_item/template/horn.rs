@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -37,7 +37,7 @@ impl HornTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         HornTemplate::vec().into_iter()
     }
 }
@@ -61,8 +61,12 @@ impl ItemTemplate for HornTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Horn }
-    fn flags1(&self) -> u64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Horn
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -82,7 +86,9 @@ impl ItemTemplate for HornTemplate {
         }
     }
 
-    fn p1(&self) -> i64 { 0 }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -120,13 +126,27 @@ impl ItemTemplate for HornTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 2 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
+    fn weight(&self) -> u16 {
+        2
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -146,5 +166,7 @@ impl ItemTemplate for HornTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

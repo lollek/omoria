@@ -1,10 +1,10 @@
 use libc;
 
 use crate::constants;
-use crate::model::{ Store, TownRecord };
+use crate::model::{Store, TownRecord};
 
 extern "C" {
-    static mut stores: [Store; constants::MAX_STORES +1];
+    static mut stores: [Store; constants::MAX_STORES + 1];
     static mut town_seed: libc::c_ulong;
     static mut bank: [i64; 7];
 }

@@ -1,11 +1,13 @@
 use libc;
 
 use crate::constants;
-use crate::model::{ Cave, Monster, MonsterRecord };
+use crate::model::{Cave, Monster, MonsterRecord};
 
 extern "C" {
-    #[link_name = "mlink"] fn C_mlink();
-    #[link_name = "popm"] fn C_popm(index: *mut libc::c_long);
+    #[link_name = "mlink"]
+    fn C_mlink();
+    #[link_name = "popm"]
+    fn C_popm(index: *mut libc::c_long);
 
     static mut m_list: [Monster; constants::MAX_MALLOC + 1];
     static mut muptr: libc::c_long;

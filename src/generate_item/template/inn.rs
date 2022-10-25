@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LodgingAtInnTemplate {
@@ -19,7 +19,7 @@ impl LodgingAtInnTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         LodgingAtInnTemplate::vec().into_iter()
     }
 }
@@ -34,9 +34,15 @@ impl ItemTemplate for LodgingAtInnTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::LodgingAtInn }
-    fn flags1(&self) -> u64 { 0 }
-    fn flags2(&self) -> u64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::LodgingAtInn
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
+    fn flags2(&self) -> u64 {
+        0
+    }
 
     fn p1(&self) -> i64 {
         match self {
@@ -65,7 +71,9 @@ impl ItemTemplate for LodgingAtInnTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 3000 }
+    fn weight(&self) -> u16 {
+        3000
+    }
 
     fn number(&self) -> u16 {
         match self {
@@ -76,13 +84,25 @@ impl ItemTemplate for LodgingAtInnTemplate {
         }
     }
 
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
-    fn item_level(&self) -> u8 { 1 }
-    fn is_identified(&self) -> bool { true }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
+    fn item_level(&self) -> u8 {
+        1
+    }
+    fn is_identified(&self) -> bool {
+        true
+    }
 }
-
-

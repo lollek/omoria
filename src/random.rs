@@ -16,9 +16,8 @@ pub fn rand_rep(num: i64, die: i64) -> i64 {
 }
 
 pub fn randnor(mean: i64, stand: i64) -> i64 {
-    ((
-            (-2.0 * (randint(9999999) as f64 / 10000000.0).ln()).sqrt() *
-            (6.283 * (randint(9999999) as f64 / 10000000.0)).cos() *
-            stand as f64
-     ) + mean as f64) as i64
+    (((-2.0 * (randint(9999999) as f64 / 10000000.0).ln()).sqrt()
+        * (6.283 * (randint(9999999) as f64 / 10000000.0)).cos()
+        * stand as f64)
+        + mean as f64) as i64
 }

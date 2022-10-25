@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SongBookTemplate {
@@ -19,13 +19,12 @@ impl SongBookTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         SongBookTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for SongBookTemplate {
-
     fn name(&self) -> &str {
         match self {
             SongBookTemplate::BeginnersHandbook => "& Book of Bard Lyrics [Beginners Handbook]",
@@ -35,7 +34,9 @@ impl ItemTemplate for SongBookTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::SongBook }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::SongBook
+    }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -55,8 +56,9 @@ impl ItemTemplate for SongBookTemplate {
         }
     }
 
-    fn p1(&self) -> i64 { 0 }
-
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -76,13 +78,31 @@ impl ItemTemplate for SongBookTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 60 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
-    fn item_level(&self) -> u8 { 0 }
-    fn is_identified(&self) -> bool { false }
+    fn weight(&self) -> u16 {
+        60
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
+    fn item_level(&self) -> u8 {
+        0
+    }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

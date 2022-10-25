@@ -1,6 +1,6 @@
 use crate::inventory::display_inventory;
 
 #[no_mangle]
-pub extern fn display_inventory() {
+pub extern "C" fn display_inventory() {
     display_inventory::display_inventory();
 }

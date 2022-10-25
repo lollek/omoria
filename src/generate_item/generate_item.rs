@@ -5,9 +5,7 @@ use super::template::*;
 use crate::constants;
 use crate::model;
 
-fn get_random_from_list(
-    mut list: Vec<Box<dyn ItemTemplate>>,
-) -> Box<dyn ItemTemplate> {
+fn get_random_from_list(mut list: Vec<Box<dyn ItemTemplate>>) -> Box<dyn ItemTemplate> {
     if list.len() == 0 {
         panic!("List contains 0 items!");
     }

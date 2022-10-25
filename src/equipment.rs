@@ -68,7 +68,7 @@ impl From<usize> for Slot {
     }
 }
 
-pub fn slots_iter() -> impl Iterator<Item=usize> {
+pub fn slots_iter() -> impl Iterator<Item = usize> {
     (Slot::Primary as usize)..(Slot::Secondary as usize + 1)
 }
 

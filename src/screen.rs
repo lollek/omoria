@@ -3,10 +3,10 @@ use std::borrow::Cow;
 
 use crate::data;
 use crate::equipment;
+use crate::model::Stat;
 use crate::ncurses;
 use crate::player;
 use crate::term;
-use crate::model::Stat;
 
 // Stats Column
 const STAT_BLOCK_WIDTH: usize = 14;
@@ -41,7 +41,8 @@ extern "C" {
 }
 
 fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
-    where S: AsRef<str>
+where
+    S: AsRef<str>,
 {
     ncurses::attron(ncurses::A_DIM);
 
@@ -52,7 +53,8 @@ fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
 }
 
 pub fn prt_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
-    where S: AsRef<str>
+where
+    S: AsRef<str>,
 {
     let str = format!("{}{}", stat_name.as_ref(), stat);
     term::put_buffer(str, row.into(), col.into());
@@ -99,23 +101,23 @@ pub fn print_stats(row: u8, col: u8) {
 }
 
 fn print_field<S>(msg: S, row: u8, col: u8)
-    where S: AsRef<str>
+where
+    S: AsRef<str>,
 {
-    let msg_formatted = format!("{:<width$}", msg.as_ref(), width=STAT_BLOCK_WIDTH);
+    let msg_formatted = format!("{:<width$}", msg.as_ref(), width = STAT_BLOCK_WIDTH);
     term::put_buffer(msg_formatted, row.into(), col.into());
 }
 
 fn print_hp(row: u8, col: u8) {
     let current = player::current_hp();
     let max = player::max_hp();
-    let color =
-        if current >= max {
-            ncurses::color_pair(ncurses::COLOR_GREEN)
-        } else if current >= max / 3 {
-            ncurses::color_pair(ncurses::COLOR_YELLOW)
-        } else {
-            ncurses::color_pair(ncurses::COLOR_RED)
-        };
+    let color = if current >= max {
+        ncurses::color_pair(ncurses::COLOR_GREEN)
+    } else if current >= max / 3 {
+        ncurses::color_pair(ncurses::COLOR_YELLOW)
+    } else {
+        ncurses::color_pair(ncurses::COLOR_RED)
+    };
 
     ncurses::attron(color);
     term::put_buffer(format!("HP  : {:>6}", current), row.into(), col.into());
@@ -129,14 +131,13 @@ fn print_mana(row: u8, col: u8) {
 
     let current = player::current_mp();
     let max = player::max_mp();
-    let color =
-        if current >= max {
-            ncurses::color_pair(ncurses::COLOR_BLUE)
-        } else if current >= max / 3 {
-            ncurses::color_pair(ncurses::COLOR_CYAN)
-        } else {
-            ncurses::color_pair(ncurses::COLOR_MAGENTA)
-        };
+    let color = if current >= max {
+        ncurses::color_pair(ncurses::COLOR_BLUE)
+    } else if current >= max / 3 {
+        ncurses::color_pair(ncurses::COLOR_CYAN)
+    } else {
+        ncurses::color_pair(ncurses::COLOR_MAGENTA)
+    };
 
     ncurses::attron(color);
     term::put_buffer(format!("MANA: {:>6}", current), row.into(), col.into());
@@ -161,13 +162,11 @@ fn print_time(row: u8, col: u8) {
 
 fn print_depth(row: u8, col: u8) {
     let depth = unsafe { dun_level } * 50;
-    let string =
-        match depth {
-            0 => Cow::from("Town Level      "),
-            _ => Cow::from(format!("Depth: {} (feet)", depth)),
-        };
+    let string = match depth {
+        0 => Cow::from("Town Level      "),
+        _ => Cow::from(format!("Depth: {} (feet)", depth)),
+    };
     term::put_buffer(string, row.into(), col.into());
-
 }
 
 fn print_equipment(row: u8, col: u8) {
@@ -193,14 +192,26 @@ fn print_stats_column() {
 
     print_stats(STAT_ROW, STAT_COL);
 
-    print_field(format!("QST : {:>6}", player::quests()),
-                QUEST_ROW, STAT_COL);
-    print_field(format!("AC  : {:>6}", unsafe { player::player_dis_ac }),
-                AC_ROW, STAT_COL);
-    print_field(format!("Gold: {:>6}", player::wallet().total),
-                GOLD_ROW, STAT_COL);
-    print_field(format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
-                BULK_ROW, STAT_COL);
+    print_field(
+        format!("QST : {:>6}", player::quests()),
+        QUEST_ROW,
+        STAT_COL,
+    );
+    print_field(
+        format!("AC  : {:>6}", unsafe { player::player_dis_ac }),
+        AC_ROW,
+        STAT_COL,
+    );
+    print_field(
+        format!("Gold: {:>6}", player::wallet().total),
+        GOLD_ROW,
+        STAT_COL,
+    );
+    print_field(
+        format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
+        BULK_ROW,
+        STAT_COL,
+    );
 
     print_time(TIME_ROW, STAT_COL);
 }

@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -28,7 +28,6 @@ pub enum StaffTemplate {
     StaffOfDarkness,
     StaffOfIdentify,
 }
-
 
 impl StaffTemplate {
     pub fn vec() -> Vec<Box<dyn ItemTemplate>> {
@@ -60,7 +59,7 @@ impl StaffTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         StaffTemplate::vec().into_iter()
     }
 }
@@ -69,9 +68,13 @@ impl ItemTemplate for StaffTemplate {
     fn name(&self) -> &str {
         match self {
             StaffTemplate::StaffOfLight => "& Staff| of Light^ (%P1 charges)",
-            StaffTemplate::StaffOfDoorStairLocation => "& Staff| of Door/Stair Location^ (%P1 charges)",
+            StaffTemplate::StaffOfDoorStairLocation => {
+                "& Staff| of Door/Stair Location^ (%P1 charges)"
+            }
             StaffTemplate::StaffOfTrapLocation => "& Staff| of Trap Location^ (%P1 charges)",
-            StaffTemplate::StaffOfTreasureLocation => "& Staff| of Treasure Location^ (%P1 charges)",
+            StaffTemplate::StaffOfTreasureLocation => {
+                "& Staff| of Treasure Location^ (%P1 charges)"
+            }
             StaffTemplate::StaffOfObjectLocation => "& Staff| of Object Location^ (%P1 charges)",
             StaffTemplate::StaffOfTeleportation => "& Staff| of Teleportation^ (%P1 charges)",
             StaffTemplate::StaffOfEarthquakes => "& Staff| of Earthquakes^ (%P1 charges)",
@@ -95,8 +98,12 @@ impl ItemTemplate for StaffTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Staff }
-    fn flags1(&self) -> u64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Staff
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -127,7 +134,9 @@ impl ItemTemplate for StaffTemplate {
         }
     }
 
-    fn p1(&self) -> i64 { 0 }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -187,15 +196,29 @@ impl ItemTemplate for StaffTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 50 }
+    fn weight(&self) -> u16 {
+        50
+    }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
 
-    fn damage(&self) -> &str { "1d2" }
+    fn damage(&self) -> &str {
+        "1d2"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -226,6 +249,7 @@ impl ItemTemplate for StaffTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }
-

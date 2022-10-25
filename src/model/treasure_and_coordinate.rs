@@ -9,4 +9,3 @@ pub struct TreasureAndCoordinate {
     pub y: libc::c_long,
     pub x: libc::c_long,
 }
-

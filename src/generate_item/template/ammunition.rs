@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {
@@ -19,7 +19,7 @@ impl AmmunitionTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         AmmunitionTemplate::vec().into_iter()
     }
 }
@@ -52,8 +52,12 @@ impl ItemTemplate for AmmunitionTemplate {
         }
     }
 
-    fn flags2(&self) -> u64 { 0 }
-    fn p1(&self) -> i64 { 0 }
+    fn flags2(&self) -> u64 {
+        0
+    }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -64,7 +68,9 @@ impl ItemTemplate for AmmunitionTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 { 1 }
+    fn subtype(&self) -> i64 {
+        1
+    }
 
     fn weight(&self) -> u16 {
         match self {
@@ -75,11 +81,21 @@ impl ItemTemplate for AmmunitionTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
 
     fn damage(&self) -> &str {
         match self {
@@ -99,5 +115,7 @@ impl ItemTemplate for AmmunitionTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

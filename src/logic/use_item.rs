@@ -1,5 +1,5 @@
 use crate::model::Class;
-use crate::model::{ Item, ItemType };
+use crate::model::{Item, ItemType};
 
 pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
     match class {
@@ -41,7 +41,7 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
                 ItemType::Belt => true,
                 _ => false,
             }
-        },
+        }
         Class::Barbarian => {
             /*
              * Armor:
@@ -76,6 +76,6 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
                 _ => false,
             }
         }
-        _ => true
+        _ => true,
     }
 }

@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PickTemplate {
@@ -25,13 +25,12 @@ impl PickTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         PickTemplate::vec().into_iter()
     }
 }
 
 impl ItemTemplate for PickTemplate {
-
     fn name(&self) -> &str {
         match self {
             PickTemplate::Pick => "& Pick (%P1) (%P2,%P3)",
@@ -44,7 +43,9 @@ impl ItemTemplate for PickTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Pick }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Pick
+    }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -73,7 +74,7 @@ impl ItemTemplate for PickTemplate {
     fn p1(&self) -> i64 {
         match self {
             PickTemplate::Pick => 1,
-            PickTemplate::Shovel=> 0,
+            PickTemplate::Shovel => 0,
             PickTemplate::OrcishPick1 => 2,
             PickTemplate::OrcishPick2 => 3,
             PickTemplate::DwarvenPick => 3,
@@ -118,12 +119,21 @@ impl ItemTemplate for PickTemplate {
         }
     }
 
-
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
 
     fn damage(&self) -> &str {
         match self {
@@ -149,5 +159,7 @@ impl ItemTemplate for PickTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

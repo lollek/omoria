@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PrayerBookTemplate {
@@ -19,7 +19,7 @@ impl PrayerBookTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         PrayerBookTemplate::vec().into_iter()
     }
 }
@@ -29,12 +29,18 @@ impl ItemTemplate for PrayerBookTemplate {
         match self {
             PrayerBookTemplate::BeginnersHandbook => "& Holy Book of Prayers [Beginners Handbook]",
             PrayerBookTemplate::WordsOfWisdom => "& Holy Book of Prayers [Words of Wisdom]",
-            PrayerBookTemplate::ChantsAndBlessings => "& Holy Book of Prayers [Chants and Blessings]",
-            PrayerBookTemplate::ExorcismAndDispelling => "& Holy Book of Prayers [Exorcism and Dispelling]",
+            PrayerBookTemplate::ChantsAndBlessings => {
+                "& Holy Book of Prayers [Chants and Blessings]"
+            }
+            PrayerBookTemplate::ExorcismAndDispelling => {
+                "& Holy Book of Prayers [Exorcism and Dispelling]"
+            }
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::PrayerBook }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::PrayerBook
+    }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -54,7 +60,9 @@ impl ItemTemplate for PrayerBookTemplate {
         }
     }
 
-    fn p1(&self) -> i64 { 0 }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -74,14 +82,31 @@ impl ItemTemplate for PrayerBookTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 60 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
-    fn item_level(&self) -> u8 { 0 }
-    fn is_identified(&self) -> bool { false }
+    fn weight(&self) -> u16 {
+        60
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
+    fn item_level(&self) -> u8 {
+        0
+    }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }
-

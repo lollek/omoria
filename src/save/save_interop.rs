@@ -1,15 +1,15 @@
- use libc;
- use std::ffi::CStr;
+use libc;
+use std::ffi::CStr;
 
- use crate::save;
+use crate::save;
 
 #[no_mangle]
-pub extern fn C_delete_character() {
+pub extern "C" fn C_delete_character() {
     save::delete_character();
 }
 
 #[no_mangle]
-pub extern fn sav__save_character() -> u8 {
+pub extern "C" fn sav__save_character() -> u8 {
     match save::save_character_with_feedback() {
         Some(_) => 255,
         None => 0,
@@ -17,7 +17,7 @@ pub extern fn sav__save_character() -> u8 {
 }
 
 #[no_mangle]
-pub extern fn sav__load_character(player_name: *const libc::c_char, player_uid: i64) -> u8 {
+pub extern "C" fn sav__load_character(player_name: *const libc::c_char, player_uid: i64) -> u8 {
     if player_name.is_null() {
         panic!("Null string received");
     }
@@ -28,4 +28,3 @@ pub extern fn sav__load_character(player_name: *const libc::c_char, player_uid: 
         None => 0,
     }
 }
-

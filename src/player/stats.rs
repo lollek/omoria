@@ -1,4 +1,4 @@
-use crate::model::{ Stat, StatBlock };
+use crate::model::{Stat, StatBlock};
 
 use crate::player;
 use crate::player::data::PLAYER;
@@ -22,9 +22,7 @@ pub fn recalc_curr_stats() {
     let lost_stats = lost_stats();
     let mut curr_stats = StatBlock::new(0);
     for stat in Stat::iter() {
-        let curr_stat = perm_stats.get(stat)
-            + mod_stats.get(stat)
-            - lost_stats.get(stat);
+        let curr_stat = perm_stats.get(stat) + mod_stats.get(stat) - lost_stats.get(stat);
         curr_stats.set(stat, curr_stat);
     }
     PLAYER.try_write().unwrap().curr_stats = curr_stats;

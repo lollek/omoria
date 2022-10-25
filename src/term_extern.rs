@@ -1,15 +1,15 @@
-use std::ffi::CStr;
 use libc;
+use std::ffi::CStr;
 
 use crate::term;
 
 #[no_mangle]
-pub extern fn C_clear_screen() {
+pub extern "C" fn C_clear_screen() {
     term::clear_screen();
 }
 
 #[no_mangle]
-pub extern fn prt(msg: *const libc::c_char, row: i32, col: i32) {
+pub extern "C" fn prt(msg: *const libc::c_char, row: i32, col: i32) {
     if msg.is_null() {
         panic!("Null string received");
     }
@@ -17,7 +17,7 @@ pub extern fn prt(msg: *const libc::c_char, row: i32, col: i32) {
 }
 
 #[no_mangle]
-pub extern fn prt_(msg: *const libc::c_char, row: i32, col: i32) {
+pub extern "C" fn prt_(msg: *const libc::c_char, row: i32, col: i32) {
     if msg.is_null() {
         panic!("Null string received");
     }
@@ -27,12 +27,12 @@ pub extern fn prt_(msg: *const libc::c_char, row: i32, col: i32) {
 }
 
 #[no_mangle]
-pub extern fn put_buffer(msg: *const libc::c_char, row: i32, col: i32) {
+pub extern "C" fn put_buffer(msg: *const libc::c_char, row: i32, col: i32) {
     put_buffer_(msg, row - 1, col - 1);
 }
 
 #[no_mangle]
-pub extern fn put_buffer_(msg: *const libc::c_char, row: i32, col: i32) {
+pub extern "C" fn put_buffer_(msg: *const libc::c_char, row: i32, col: i32) {
     if msg.is_null() {
         panic!("Null string received");
     }

@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PotionTemplate {
@@ -101,7 +101,7 @@ impl PotionTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         PotionTemplate::vec().into_iter()
     }
 }
@@ -157,7 +157,9 @@ impl ItemTemplate for PotionTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Potion1 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Potion1
+    }
 
     fn flags1(&self) -> u64 {
         match self {
@@ -409,13 +411,27 @@ impl ItemTemplate for PotionTemplate {
         }
     }
 
-    fn weight(&self) -> u16 { 4 }
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
+    fn weight(&self) -> u16 {
+        4
+    }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -434,7 +450,7 @@ impl ItemTemplate for PotionTemplate {
             PotionTemplate::ResistHeat => 1,
             PotionTemplate::Heroism => 1,
             PotionTemplate::SlowPoison => 1,
-            PotionTemplate::Slowness =>  1,
+            PotionTemplate::Slowness => 1,
             PotionTemplate::CureSeriousWounds => 3,
             PotionTemplate::DetectInvisible => 3,
             PotionTemplate::InfraVision => 3,
@@ -453,7 +469,7 @@ impl ItemTemplate for PotionTemplate {
             PotionTemplate::GainWisdom => 25,
             PotionTemplate::LoseIntelligence => 25,
             PotionTemplate::RestoreMana => 25,
-            PotionTemplate::LoseWisdom =>  25,
+            PotionTemplate::LoseWisdom => 25,
             PotionTemplate::RestoreCharisma => 40,
             PotionTemplate::RestoreConstitution => 40,
             PotionTemplate::RestoreDexterity => 40,
@@ -467,5 +483,7 @@ impl ItemTemplate for PotionTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

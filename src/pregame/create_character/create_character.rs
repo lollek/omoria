@@ -37,7 +37,6 @@ fn put_character(show_values: bool) {
         term::prt(data::sex::name(&player::sex()), 4, 14);
         term::prt(data::class::name(&player::class()), 5, 14);
     }
-
 }
 
 fn get_money() {
@@ -59,7 +58,6 @@ fn get_money() {
 }
 
 fn put_stats() {
-
     screen::print_stats(2, 64);
 
     term::prt(
@@ -108,7 +106,6 @@ fn put_misc1() {
 }
 
 fn put_misc2() {
-
     term::prt(
         format!("Level      : {}", unsafe { player::player_lev }),
         9,

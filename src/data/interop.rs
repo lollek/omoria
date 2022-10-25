@@ -14,7 +14,6 @@ pub extern "C" fn C_class_ranged_bonus(class: i32) -> i8 {
 
 #[no_mangle]
 pub extern "C" fn C_item_get_tchar(item_ptr: *const Item) -> pancurses::chtype {
-
     let item = unsafe { *item_ptr };
     let item_type = conversion::item_type::from_usize(item.tval.into()).unwrap();
     data::item_type::symbol(&item_type, item.subval)

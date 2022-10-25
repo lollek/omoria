@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum FoodTemplate {
@@ -86,10 +86,10 @@ impl FoodTemplate {
             Box::new(FoodTemplate::BerriesGoodberries),
             Box::new(FoodTemplate::BerriesGoodberries2),
             Box::new(FoodTemplate::EyeballOfNed),
-            ]
+        ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         FoodTemplate::vec().into_iter()
     }
 }
@@ -139,8 +139,12 @@ impl ItemTemplate for FoodTemplate {
         }
     }
 
-    fn item_type(&self) -> model::ItemType { model::ItemType::Food }
-    fn flags1(&self) -> u64 { 0 }
+    fn item_type(&self) -> model::ItemType {
+        model::ItemType::Food
+    }
+    fn flags1(&self) -> u64 {
+        0
+    }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -183,7 +187,6 @@ impl ItemTemplate for FoodTemplate {
             FoodTemplate::BerriesGoodberries => 0x10C00080,
             FoodTemplate::BerriesGoodberries2 => 0x30C00080,
             FoodTemplate::EyeballOfNed => 0x00000053,
-
         }
     }
 
@@ -228,7 +231,6 @@ impl ItemTemplate for FoodTemplate {
             FoodTemplate::BerriesGoodberries => 1000,
             FoodTemplate::BerriesGoodberries2 => 1000,
             FoodTemplate::EyeballOfNed => 200,
-
         }
     }
 
@@ -361,7 +363,6 @@ impl ItemTemplate for FoodTemplate {
             FoodTemplate::BerriesGoodberries => 3,
             FoodTemplate::BerriesGoodberries2 => 3,
             FoodTemplate::EyeballOfNed => 2,
-
         }
     }
 
@@ -406,14 +407,21 @@ impl ItemTemplate for FoodTemplate {
             FoodTemplate::BerriesGoodberries => 1,
             FoodTemplate::BerriesGoodberries2 => 1,
             FoodTemplate::EyeballOfNed => 2,
-
         }
     }
 
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
 
     fn damage(&self) -> &str {
         match self {
@@ -456,7 +464,6 @@ impl ItemTemplate for FoodTemplate {
             FoodTemplate::BerriesGoodberries => "0d0",
             FoodTemplate::BerriesGoodberries2 => "0d0",
             FoodTemplate::EyeballOfNed => "6d5",
-
         }
     }
 
@@ -504,5 +511,7 @@ impl ItemTemplate for FoodTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }

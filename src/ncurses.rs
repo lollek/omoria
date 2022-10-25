@@ -1,11 +1,10 @@
-use std::process;
 use std::cell::RefCell;
+use std::process;
 
 use pancurses;
 pub use pancurses::{
-    COLOR_BLACK, COLOR_BLUE, COLOR_GREEN, COLOR_RED, COLOR_YELLOW,
-    COLOR_MAGENTA, COLOR_CYAN,
-    A_REVERSE, A_DIM
+    A_DIM, A_REVERSE, COLOR_BLACK, COLOR_BLUE, COLOR_CYAN, COLOR_GREEN, COLOR_MAGENTA, COLOR_RED,
+    COLOR_YELLOW,
 };
 
 thread_local! {
@@ -13,13 +12,12 @@ thread_local! {
 }
 
 fn with_stdscr<S>(fun: S)
-    where S: Fn(&pancurses::Window)
+where
+    S: Fn(&pancurses::Window),
 {
-    STDSCR.with(|stdscr_wrapper| {
-        match *stdscr_wrapper.borrow() {
-            Some(ref stdscr) => fun(stdscr),
-            None => panic!("stdscr not initialized?"),
-        }
+    STDSCR.with(|stdscr_wrapper| match *stdscr_wrapper.borrow() {
+        Some(ref stdscr) => fun(stdscr),
+        None => panic!("stdscr not initialized?"),
     });
 }
 
@@ -43,18 +41,36 @@ pub fn init_curses() {
     STDSCR.with(|stdscr| stdscr.replace(Some(window)));
 
     pancurses::start_color();
-    pancurses::init_pair(pancurses::COLOR_RED,
-                         pancurses::COLOR_RED, pancurses::COLOR_BLACK);
-    pancurses::init_pair(pancurses::COLOR_GREEN,
-                         pancurses::COLOR_GREEN, pancurses::COLOR_BLACK);
-    pancurses::init_pair(pancurses::COLOR_YELLOW,
-                         pancurses::COLOR_YELLOW, pancurses::COLOR_BLACK);
-    pancurses::init_pair(pancurses::COLOR_BLUE,
-                         pancurses::COLOR_BLUE, pancurses::COLOR_BLACK);
-    pancurses::init_pair(pancurses::COLOR_MAGENTA,
-                         pancurses::COLOR_MAGENTA, pancurses::COLOR_BLACK);
-    pancurses::init_pair(pancurses::COLOR_CYAN,
-                         pancurses::COLOR_CYAN, pancurses::COLOR_BLACK);
+    pancurses::init_pair(
+        pancurses::COLOR_RED,
+        pancurses::COLOR_RED,
+        pancurses::COLOR_BLACK,
+    );
+    pancurses::init_pair(
+        pancurses::COLOR_GREEN,
+        pancurses::COLOR_GREEN,
+        pancurses::COLOR_BLACK,
+    );
+    pancurses::init_pair(
+        pancurses::COLOR_YELLOW,
+        pancurses::COLOR_YELLOW,
+        pancurses::COLOR_BLACK,
+    );
+    pancurses::init_pair(
+        pancurses::COLOR_BLUE,
+        pancurses::COLOR_BLUE,
+        pancurses::COLOR_BLACK,
+    );
+    pancurses::init_pair(
+        pancurses::COLOR_MAGENTA,
+        pancurses::COLOR_MAGENTA,
+        pancurses::COLOR_BLACK,
+    );
+    pancurses::init_pair(
+        pancurses::COLOR_CYAN,
+        pancurses::COLOR_CYAN,
+        pancurses::COLOR_BLACK,
+    );
 
     pancurses::cbreak();
     pancurses::noecho();
@@ -71,7 +87,8 @@ pub fn refresh() {
 
 // Use term::put_buffer instead of this directly
 pub fn mvaddstr<'a, S>(row: i32, col: i32, msg: S)
-    where S: AsRef<str>
+where
+    S: AsRef<str>,
 {
     with_stdscr(|stdscr| {
         if stdscr.mvaddstr(row, col, msg.as_ref()) != 0 {

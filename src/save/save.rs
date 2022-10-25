@@ -1,22 +1,20 @@
-use std::fs::{File, OpenOptions};
 use std::fs;
+use std::fs::{File, OpenOptions};
 use std::io;
-use std::io::{Read, Write, Seek};
+use std::io::{Read, Seek, Write};
 
 use serde_json;
 
 use crate::constants;
 use crate::debug;
 use crate::master;
+use crate::model::{
+    DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord, PlayerRecord, TownRecord,
+};
 use crate::ncurses;
+use crate::player;
 use crate::save;
 use crate::term;
-use crate::model::{
-    DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord,
-    PlayerRecord, TownRecord
-};
-use crate::player;
-
 
 #[derive(Serialize, Deserialize)]
 struct SaveRecord {
@@ -30,7 +28,12 @@ struct SaveRecord {
 }
 
 fn savefile_name(player_name: &str, player_uid: i64) -> String {
-    format!("{}/{}-{}.json", constants::SAVE_FOLDER, player_name, player_uid)
+    format!(
+        "{}/{}-{}.json",
+        constants::SAVE_FOLDER,
+        player_name,
+        player_uid
+    )
 }
 
 fn open_savefile(player_name: &str, player_uid: i64, to_write: bool) -> Option<File> {
@@ -40,13 +43,14 @@ fn open_savefile(player_name: &str, player_uid: i64, to_write: bool) -> Option<F
         .create(to_write)
         .truncate(to_write)
         .append(false)
-        .open(savefile_name(player_name, player_uid)) {
-            Ok(file) => Some(file),
-            Err(e) => {
-                debug::error(&format!("failed to open save file: {}", e));
-                None
-            },
+        .open(savefile_name(player_name, player_uid))
+    {
+        Ok(file) => Some(file),
+        Err(e) => {
+            debug::error(&format!("failed to open save file: {}", e));
+            None
         }
+    }
 }
 
 fn read_save(mut f: &File) -> Option<SaveRecord> {
@@ -62,7 +66,7 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
         Err(e) => {
             debug::warn(format!("Failed to load save @from_str, (err: {})", e));
             return None;
-        },
+        }
     }
 }
 
@@ -88,7 +92,7 @@ pub fn load_character_with_feedback(player_name: &str, player_uid: i64) -> Optio
             debug::error("Failed to load character!");
             term::prt("Data Corruption Error", 0, 0);
             None
-        },
+        }
     };
 
     ncurses::clear();
@@ -131,15 +135,18 @@ fn save_character() -> Option<()> {
     player::increase_save_counter();
 
     let file = open_savefile(&player::name(), player::uid(), true)?;
-    write_save(&file, &SaveRecord{
-        player: player::record(),
-        inventory: save::inventory::record(),
-        equipment: save::equipment::record(),
-        town: save::town::record(),
-        dungeon: save::dungeon::record(),
-        identified: save::identified::record(),
-        monsters: save::monsters::record(),
-    })?;
+    write_save(
+        &file,
+        &SaveRecord {
+            player: player::record(),
+            inventory: save::inventory::record(),
+            equipment: save::equipment::record(),
+            town: save::town::record(),
+            dungeon: save::dungeon::record(),
+            identified: save::identified::record(),
+            monsters: save::monsters::record(),
+        },
+    )?;
     Some(())
 }
 
@@ -149,6 +156,6 @@ pub fn delete_character() -> Option<()> {
         Err(e) => {
             debug::error(&format!("Failed to delete save (err: {})", e));
             None
-        },
+        }
     }
 }

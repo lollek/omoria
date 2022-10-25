@@ -12,13 +12,20 @@ impl fmt::Display for Error {
 
 impl fmt::Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{{ file: {}, line: {}, msg: {} }}", file!(), line!(), self.error_msg)
+        write!(
+            f,
+            "{{ file: {}, line: {}, msg: {} }}",
+            file!(),
+            line!(),
+            self.error_msg
+        )
     }
 }
 
 impl From<&str> for Error {
     fn from(value: &str) -> Error {
-        Error { error_msg: value.to_string() }
+        Error {
+            error_msg: value.to_string(),
+        }
     }
 }
-

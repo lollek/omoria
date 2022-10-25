@@ -1,5 +1,5 @@
-use crate::model;
 use super::super::item_template::ItemTemplate;
+use crate::model;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ValuableTemplate {
@@ -77,7 +77,7 @@ impl ValuableTemplate {
         ]
     }
 
-    pub fn iter() -> impl Iterator<Item=Box<dyn ItemTemplate>> {
+    pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         ValuableTemplate::vec().into_iter()
     }
 }
@@ -92,11 +92,15 @@ impl ItemTemplate for ValuableTemplate {
             ValuableTemplate::GemOfStealth => "& Finely cut| of Stealth^",
             ValuableTemplate::GemOfSlowDigestion => "& Finely cut| of Slow Digestion^",
             ValuableTemplate::GemOfProtectFire => "& Finely cut| of Lordly Protection (FIRE)^",
-            ValuableTemplate::GemOfDetectMonsters => "& Finely cut| of Detect Monsters^ (%P1 charges)",
+            ValuableTemplate::GemOfDetectMonsters => {
+                "& Finely cut| of Detect Monsters^ (%P1 charges)"
+            }
             ValuableTemplate::GemOfDispelEvil => "& Finely cut| of Dispel Evil^ (%P1 charges)",
             ValuableTemplate::GemOfDarkness => "& Finely cut| of Darkness^ (%P1 charges)",
             ValuableTemplate::GemOfAcidBalls => "& Finely cut| of Acid Balls^ (%P1 charges)",
-            ValuableTemplate::GemOfDetectInvisible => "& Finely cut| of Detect Invisible^ (%P1 charges)",
+            ValuableTemplate::GemOfDetectInvisible => {
+                "& Finely cut| of Detect Invisible^ (%P1 charges)"
+            }
             ValuableTemplate::GemOfIdentify => "& Finely cut| of Identify^ (%P1 charges)",
             ValuableTemplate::GemOfLight => "& Finely cut| of Light^ (%P1 charges)",
             ValuableTemplate::GemOfSummoning => "& Finely cut| of Summoning^ (%P1 charges)",
@@ -159,7 +163,9 @@ impl ItemTemplate for ValuableTemplate {
         }
     }
 
-    fn flags1(&self) -> u64 { 0 }
+    fn flags1(&self) -> u64 {
+        0
+    }
 
     fn flags2(&self) -> u64 {
         match self {
@@ -199,7 +205,9 @@ impl ItemTemplate for ValuableTemplate {
         }
     }
 
-    fn p1(&self) -> i64 { 0 }
+    fn p1(&self) -> i64 {
+        0
+    }
 
     fn cost(&self) -> i64 {
         match self {
@@ -315,12 +323,24 @@ impl ItemTemplate for ValuableTemplate {
         }
     }
 
-    fn number(&self) -> u16 { 1 }
-    fn modifier_to_hit(&self) -> i16 { 0 }
-    fn modifier_to_damage(&self) -> i16 { 0 }
-    fn base_ac(&self) -> i16 { 0 }
-    fn modifier_to_ac(&self) -> i16 { 0 }
-    fn damage(&self) -> &str { "1d1" }
+    fn number(&self) -> u16 {
+        1
+    }
+    fn modifier_to_hit(&self) -> i16 {
+        0
+    }
+    fn modifier_to_damage(&self) -> i16 {
+        0
+    }
+    fn base_ac(&self) -> i16 {
+        0
+    }
+    fn modifier_to_ac(&self) -> i16 {
+        0
+    }
+    fn damage(&self) -> &str {
+        "1d1"
+    }
 
     fn item_level(&self) -> u8 {
         match self {
@@ -360,5 +380,7 @@ impl ItemTemplate for ValuableTemplate {
         }
     }
 
-    fn is_identified(&self) -> bool { false }
+    fn is_identified(&self) -> bool {
+        false
+    }
 }
