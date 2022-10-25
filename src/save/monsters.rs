@@ -57,7 +57,5 @@ pub fn record() -> MonsterRecord {
 }
 
 pub fn set_record(record: MonsterRecord) {
-    debug::enter("monsters::set_record");
     load_monsters(record.monsters);
-    debug::leave("monsters::set_record");
 }

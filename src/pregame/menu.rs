@@ -16,14 +16,10 @@ struct Character {
 
 #[no_mangle]
 pub extern fn pregame__menu_rs() {
-    debug::enter("pregame__menu_rs");
-
     if let Some(character) = main_menu() {
         player::set_name(&character.name);
         player::set_uid(character.uid.parse::<i64>().unwrap());
     }
-
-    debug::leave("pregame__menu_rs");
 }
 
 /**
@@ -34,8 +30,6 @@ pub extern fn pregame__menu_rs() {
  * - None to create a new character
  */
 fn main_menu() -> Option<Character> {
-    debug::enter("pregame::main_menu");
-
     print_banner();
 
     let characters = load_characters();
@@ -66,14 +60,10 @@ fn main_menu() -> Option<Character> {
     }
 
     term::clear_screen();
-
-    debug::leave("pregame::main_menu");
     retval
 }
 
 fn print_banner() {
-    debug::enter("pregame::print_banner");
-
     menu::draw_menu(
         format!("Omoria {}", constants::OMORIA_VERSION),
         &vec![
@@ -99,13 +89,9 @@ fn print_banner() {
 
     io::inkey_flush();
     term::clear_screen();
-
-    debug::leave("pregame::print_banner");
 }
 
 fn load_characters() -> Vec<Character> {
-    debug::enter("pregame::load_characters");
-
     let res = fs::read_dir(constants::SAVE_FOLDER)
         .unwrap()
         .map(|it| it.unwrap()
@@ -123,8 +109,6 @@ fn load_characters() -> Vec<Character> {
             }
         })
     .collect();
-
-    debug::leave("pregame::load_characters");
     res
 }
 

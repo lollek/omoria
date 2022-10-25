@@ -37,8 +37,6 @@ pub(super) fn random_starting_stat_block(race_stats: &StatBlock) -> StatBlock {
 }
 
 pub(super) fn generate_player_stats() {
-    debug::enter("create_character::get_stats");
-
     let race = player::race();
     let race_stats = data::race::stat_block(&race);
     let new_stats = random_starting_stat_block(&race_stats);
@@ -62,8 +60,6 @@ pub(super) fn generate_player_stats() {
     }
     player::set_infravision(data::race::infravision(&race) as i64);
     player::set_swim_speed(data::race::swim_speed(&race) as i64);
-
-    debug::leave("create_character::get_stats");
 }
 
 // Get the racial history, and determines social class
@@ -136,8 +132,6 @@ fn generate_player_age(player_race: Race) -> u16 {
 
 // Computes character's age, height, and weight -JWT-
 pub(super) fn regenerate_player_ahw() {
-    debug::enter("create_character::generate_ahw");
-
     let player_race = player::race();
     let player_sex = player::sex();
 
@@ -168,8 +162,6 @@ pub(super) fn regenerate_player_ahw() {
         player::player_disarm =
             (data::race::disarm_mod(&player_race) as i16 + player::disarm_from_dex()).into();
     }
-
-    debug::leave("create_character::generate_ahw");
 }
 
 pub(super) fn regenerate_player_stats() {

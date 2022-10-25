@@ -233,18 +233,13 @@ void ic__clear_display(treas_rec *cur_display[], long *cur_display_size) {
   LEAVE("ic__clear_display", "iu");
 }
 
+/*{ start changes into start of next page; returns # items in page}*/
 static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
                      treas_rec *start, treas_rec **next_start) {
-  /*{ start changes into start of next page; returns # items in page}*/
 
   ENTER(("ic__display_inv", "iu"));
 
   long count;
-  long i1;
-  char out_val[82];
-  char out_val2[120];
-  char out_val3[82];
-  char *t;
 
   for (count = 0; start != NULL && count < DISPLAY_SIZE;) {
     if (start->ok) {
@@ -252,13 +247,16 @@ static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
       if (cur_display[count] != start) {
         cur_display[count] = start;
         inven_temp.data = start->data;
+        char out_val[82];
         objdes(out_val, &inven_temp, true);
         if ((start->data.flags2 & Holding_bit) != 0) {
           if (strstr(start->data.name, "|") == NULL) {
+            char out_val3[82];
             bag_descrip(start, out_val3);
             strcat(out_val, out_val3);
           }
         }
+        char out_val2[120];
         if (start->is_in) {
           sprintf(out_val2, "%c%c%c%s%s", cur_insure(), (96 + (int)count),
                   cur_char1(), "     ", out_val);
@@ -272,9 +270,9 @@ static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
     start = start->next;
   } /* end for */
 
-  for (i1 = count + 1; i1 <= DISPLAY_SIZE; i1++) {
-    erase_line(i1 + 1, 1);
-    cur_display[i1] = NULL;
+  for (long i = count + 1; i <= DISPLAY_SIZE; i++) {
+    erase_line(i + 1, 1);
+    cur_display[i] = NULL;
   }
 
   if (start == NULL) {
@@ -283,7 +281,10 @@ static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
     *next_start = start;
   }
 
+  char out_val[82];
+  char *t;
   if (count > 0) {
+    char out_val2[120];
     strcpy(out_val, prompt);
     sprintf(out_val2, "%c", ((int)count + 96));
     insert_str(out_val, "%N", out_val2);
@@ -1363,25 +1364,24 @@ void ic__take_out() {
   }
 }
 
-void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
+/*{ Inventory of selective items, picked by character     -DMF-   }*/
+static void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
                          treas_rec *cur_display[], long *cur_display_size) {
-  /*{ Inventory of selective items, picked by character     -DMF-   }*/
 
-  treas_rec *ptr;
-  char out[134], out_str[134];
-  boolean exit_flag = false;
-  char command;
+  char out[134];
   char *out_pos;
-
-  ptr = inventory_list;
   out_pos = &(out[sizeof(out)]);
   *(--out_pos) = 0;
 
-  while (ptr != NULL) {
+  char out_str[134];
+  boolean exit_flag = false;
+  char command;
+
+
+  for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (strchr(out_pos, (char)C_item_get_tchar(&ptr->data)) == NULL) {
       *(--out_pos) = (char)C_item_get_tchar(&ptr->data);
     }
-    ptr = ptr->next;
   }
 
   do {
@@ -1393,21 +1393,19 @@ void ic__selective_inven(long *scr_state, boolean *valid_flag, char prompt[82],
   } while (!(exit_flag || (pindex(out_pos, command) != 0)));
 
   if (!exit_flag) {
-    change_all_ok_stats(false, false);
-    ptr = inventory_list;
-
-    while (ptr != NULL) {
-      if ((char)C_item_get_tchar(&ptr->data) == command) {
-        ptr->ok = true;
+      change_all_ok_stats(false, false);
+      treas_rec *ptr = inventory_list;
+      for (; ptr != NULL; ptr = ptr->next) {
+          if ((char)C_item_get_tchar(&ptr->data) == command) {
+              ptr->ok = true;
+          }
       }
-      ptr = ptr->next;
-    }
 
-    ic__clear_display(cur_display, cur_display_size);
-    clear_rc(1, 1);
-    strcpy(prompt, "You are currently carrying: space for next page");
-    ic__show_inven(&ptr, false, false, scr_state, valid_flag, prompt,
-                   cur_display, cur_display_size);
+      ic__clear_display(cur_display, cur_display_size);
+      clear_rc(1, 1);
+      strcpy(prompt, "You are currently carrying: space for next page");
+      ic__show_inven(&ptr, false, false, scr_state, valid_flag, prompt,
+              cur_display, cur_display_size);
   }
 }
 

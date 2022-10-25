@@ -984,7 +984,12 @@ static void d__execute_command(long *command) {
     case 'h':
       player_action_move(4);
       break;
-
+    case 'i':
+      reset_flag = true;
+      if (inven_command('i', &trash_ptr, "")) {
+        draw_cave();
+      }
+      break;
     case 'j':
       player_action_move(2);
       break;
@@ -1192,9 +1197,8 @@ static void d__execute_command(long *command) {
     break;
   case 'i': /* Inventory */
     reset_flag = true;
-    if (inven_command('i', &trash_ptr, "")) {
-      draw_cave();
-    }
+    display_inventory();
+    draw_cave();
     break;
   case 'j':
     player_action_move(2);

@@ -96,8 +96,6 @@ pub fn load_character_with_feedback(player_name: &str, player_uid: i64) -> Optio
 }
 
 fn load_character(player_name: &str, player_uid: i64) -> Option<()> {
-    debug::enter("load_character");
-
     if !master::character_exists(player_uid) {
         debug::error("Character does not exist in master!");
         return None;
@@ -112,8 +110,6 @@ fn load_character(player_name: &str, player_uid: i64) -> Option<()> {
     save::dungeon::set_record(records.dungeon);
     save::identified::set_record(records.identified);
     save::monsters::set_record(records.monsters);
-
-    debug::leave("load_character");
     Some(())
 }
 
@@ -128,8 +124,6 @@ pub fn save_character_with_feedback() -> Option<()> {
 }
 
 fn save_character() -> Option<()> {
-    debug::enter("save_character");
-
     if let Err(e) = master::update_character(player::uid()) {
         debug::error(format!("Failed to update character in master: {}", e).as_str());
         return None;
@@ -146,8 +140,6 @@ fn save_character() -> Option<()> {
         identified: save::identified::record(),
         monsters: save::monsters::record(),
     })?;
-
-    debug::leave("save_character");
     Some(())
 }
 

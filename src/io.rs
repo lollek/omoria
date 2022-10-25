@@ -14,6 +14,8 @@ extern "C" {
     fn C_get_com(prompt: *const c_char, command: *mut c_char);
 }
 
+pub const ESCAPE: u8 = 27;
+
 pub fn inkey_flush() -> u8 {
     term::refresh_screen();
     unsafe {

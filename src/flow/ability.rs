@@ -9,8 +9,6 @@ use crate::model;
 // Let the player select an action
 // Returns true if the turn was free (i.e. don't take a turn)
 pub fn select_ability() -> bool {
-    debug::enter("ability::select_ability");
-
     let abilities = player::abilities();
     let abilities_str = abilities.iter().map(data::ability::name).collect::<Vec<&str>>();
 
@@ -25,7 +23,6 @@ pub fn select_ability() -> bool {
             return true;
         }
         let index = (selection as u8 - 'a' as u8) as usize;
-        debug::leave("ability::select_ability");
         return use_ability(abilities[index as usize]);
     }
 }

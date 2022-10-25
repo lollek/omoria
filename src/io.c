@@ -71,6 +71,7 @@ void no_controly() {
   ENTER(("no_controly", ""));
 
   signal(SIGINT, signalquit);
+#if !DO_DEBUG
   signal(SIGHUP, signalsave);
   signal(SIGTSTP, SIG_IGN);
   signal(SIGQUIT, signalexit);
@@ -82,6 +83,7 @@ void no_controly() {
   signal(SIGABRT, signalexit);
   signal(SIGBUS, signalexit);
   signal(SIGSYS, signalexit);
+#endif
   LEAVE("no_controly", "");
 }
 

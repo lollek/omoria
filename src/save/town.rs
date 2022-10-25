@@ -19,11 +19,9 @@ pub fn record() -> TownRecord {
 }
 
 pub fn set_record(record: TownRecord) {
-    debug::enter("town::set_record");
     unsafe {
         stores = record.stores;
         town_seed = record.town_seed;
         bank = record.bank;
     }
-    debug::leave("town::set_record");
 }

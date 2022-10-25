@@ -342,5 +342,5 @@ pub fn generate(template: Box<dyn ItemTemplate>, item_level: u8) -> model::Item 
 
     item.level = item_level.try_into().unwrap_or(i8::MAX);
 
-    return item;
+    item
 }

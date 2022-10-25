@@ -91,21 +91,15 @@ pub fn set_name(new_name: &str) {
 }
 
 pub fn race() -> Race {
-    debug::enter("player::race");
-    let result = conversion::race::from_usize(unsafe { player_prace } as usize).unwrap();
-    debug::leave("player::race");
-    result
+    conversion::race::from_usize(unsafe { player_prace } as usize).unwrap()
 }
 
 pub fn set_race(race: Race) {
-    debug::enter("player::set_race");
-
     let cstr = CString::new(data::race::name(&race)).unwrap();
     unsafe {
         player_prace = race as u8;
         libc::strcpy(player_race.as_mut_ptr(), cstr.as_ptr());
     }
-    debug::leave("player::set_race");
 }
 
 pub fn sex() -> Sex {
@@ -120,21 +114,15 @@ pub fn set_sex(sex: Sex) {
 }
 
 pub fn class() -> Class {
-    debug::enter("player::class");
-    let result =
-        conversion::class::from_usize(unsafe { player_pclass }.try_into().unwrap()).unwrap();
-    debug::leave("player::class");
-    result
+    conversion::class::from_usize(unsafe { player_pclass }.try_into().unwrap()).unwrap()
 }
 
 pub fn set_class(class: Class) {
-    debug::enter("player::set_class");
     let cstr = CString::new(data::class::name(&class)).unwrap();
     unsafe {
         player_pclass = class as i32;
         libc::strcpy(player_tclass.as_mut_ptr(), cstr.as_ptr());
     }
-    debug::leave("player::set_class");
 }
 
 pub fn roll_hp_for_levelup() -> i16 {
@@ -336,7 +324,6 @@ pub fn abilities() -> Vec<Ability> {
 }
 
 pub fn set_record(record: PlayerRecord) {
-    debug::enter("player::set_record");
     unsafe {
         player_account = record.account;
     }
@@ -409,7 +396,6 @@ pub fn set_record(record: PlayerRecord) {
         char_row = record.char_row;
         char_col = record.char_col;
     }
-    debug::leave("player::set_record");
 }
 
 pub fn current_hp() -> i16 {
@@ -417,20 +403,15 @@ pub fn current_hp() -> i16 {
 }
 
 pub fn reset_current_hp() {
-    debug::enter("player::reset_current_hp");
     let max_hp = PLAYER.try_read().unwrap().max_hp;
     PLAYER.try_write().unwrap().current_hp = max_hp.into();
-    debug::leave("player::reset_current_hp");
 }
 
 pub fn modify_current_hp(amount: f32) {
-    debug::enter("player::modify_current_hp");
     PLAYER.try_write().unwrap().current_hp += amount;
-    debug::leave("player::modify_current_hp");
 }
 
 fn set_max_hp(new_value: i16) {
-    debug::enter("player::set_max_hp");
     let hp_modifier = new_value - PLAYER.try_read().unwrap().max_hp_last_calc;
     {
         let mut player = PLAYER.try_write().unwrap();
@@ -438,11 +419,9 @@ fn set_max_hp(new_value: i16) {
         player.max_hp = new_value;
     }
     modify_current_hp(hp_modifier as f32);
-    debug::leave("player::set_max_hp");
 }
 
 pub fn max_hp() -> i16 {
-    debug::enter("player::max_hp");
     let max_hp = PLAYER.try_read().unwrap().max_hp;
     let new_max_hp = max_hp + (player::hp_from_con() * level() as i16);
 
@@ -450,15 +429,12 @@ pub fn max_hp() -> i16 {
     PLAYER.try_write().unwrap().max_hp_last_calc = new_max_hp;
     modify_current_hp(hp_modifier as f32);
 
-    debug::leave("player::max_hp");
     return new_max_hp;
 }
 
 pub fn modify_max_hp(amount: i16) {
-    debug::enter("player::modify_max_hp");
     let max_hp = PLAYER.try_read().unwrap().max_hp;
     set_max_hp(max(1, max_hp + amount));
-    debug::leave("player::modify_max_hp");
 }
 
 pub fn current_mp() -> i16 {

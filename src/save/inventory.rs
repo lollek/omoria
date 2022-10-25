@@ -4,7 +4,8 @@ use std::ptr;
 use std::mem;
 
 use crate::debug;
-use crate::model::{ InventoryItem };
+use crate::inventory;
+use crate::model::InventoryItem;
 
 extern "C" {
     static mut inventory_list: *mut InventoryItem;
@@ -12,19 +13,10 @@ extern "C" {
 }
 
 pub fn record() -> Vec<InventoryItem> {
-    let mut ptr = unsafe { inventory_list };
-    let mut vec = Vec::new();
-
-    while !ptr.is_null() {
-        let elem = unsafe { &*ptr };
-        vec.push(elem.to_owned());
-        ptr = elem.next;
-    }
-    vec
+    inventory::not_safe::inventory_clone()
 }
 
 pub fn set_record(record: Vec<InventoryItem>) {
-    debug::enter("inventory::set_record");
     fn mallocfn() -> *mut InventoryItem {
         unsafe { libc::malloc(mem::size_of::<InventoryItem>()) as *mut InventoryItem }
     }
@@ -51,5 +43,4 @@ pub fn set_record(record: Vec<InventoryItem>) {
         }
     }
     unsafe { inven_ctr = size as libc::c_long };
-    debug::leave("inventory::set_record");
 }

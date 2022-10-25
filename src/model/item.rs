@@ -67,7 +67,8 @@ pub struct Item {
 
 impl Item {
     pub fn item_type(&self) -> ItemType {
-        conversion::item_type::from_usize(self.tval.into()).unwrap()
+        conversion::item_type::from_usize(self.tval.into())
+            .unwrap_or_else(|| panic!("expected item type from tval {}", self.tval))
     }
 
     pub fn is_identified(&self) -> bool {

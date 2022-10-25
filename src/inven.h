@@ -3,6 +3,12 @@
 
 #include "types.h"
 
+/**
+ * -OK- rust
+ *  display_inventory() - Display the player's inventory
+ */
+void display_inventory(void);
+
 long change_all_ok_stats(boolean nok, boolean nin);
 char cur_char1();
 char cur_char2();

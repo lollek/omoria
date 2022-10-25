@@ -24,45 +24,28 @@ pub fn has_msg_flag() -> bool {
 }
 
 pub fn clear_from(row: i32) {
-    debug::enter("clear_from");
-
     unsafe { C_Clear_From(row - 1) };
-
-    debug::leave("clear_from");
 }
 
 pub fn refresh_screen() {
-    debug::enter("refresh_screen");
-
     ncurses::refresh();
-
-    debug::leave("refresh_screen");
 }
 
 pub fn msg_print<S>(out_str: S)
     where S: Into<Vec<u8>>
 {
-    debug::enter("msg_print");
-
     let cstr = CString::new(out_str).unwrap();
     unsafe { C_msg_print(cstr.as_ptr()) }
-
-    debug::leave("msg_print");
 }
 
 /* Gets a string terminated by <RETURN>		*/
 pub fn get_string(row: i32, col: i32, slen: i32) -> String {
-    debug::enter("get_string");
-
     let tmp_str: [u8; 134] = [0; 134];
 
     while tmp_str[0] == b'\0' {
         unsafe { C_Get_String(tmp_str.as_ptr() as *mut libc::c_char, row - 1, col - 1, slen) };
     }
-    let cstr = misc::c_array_to_rust_string(tmp_str.to_vec());
-
-    debug::leave("get_string");
-    cstr
+    misc::c_array_to_rust_string(tmp_str.to_vec())
 }
 
 
@@ -70,27 +53,19 @@ pub fn get_string(row: i32, col: i32, slen: i32) -> String {
 pub fn prt<S>(msg: S, row: i32, col: i32)
     where S: AsRef<str>
 {
-    debug::enter("prt");
-
     if row == -1 && has_msg_flag() {
         msg_print("");
     }
     ncurses::mov(row, col);
     ncurses::clrtoeol();
     put_buffer(msg, row, col);
-
-    debug::leave("prt");
 }
 
 // Output text to coordinate. Basically a wrapper around ncurses::move_print
 pub fn put_buffer<S>(msg: S, row: i32, col: i32)
     where S: AsRef<str>
 {
-    debug::enter(&format!("put_buffer_r: '{}'. y: {}. x: {}", msg.as_ref(), row, col));
-
     ncurses::mvaddstr(row, col, msg);
-
-    debug::leave("put_buffer_r");
 }
 
 pub fn clear_screen() {

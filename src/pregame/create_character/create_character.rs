@@ -27,8 +27,6 @@ extern "C" {
 }
 
 fn put_character(show_values: bool) {
-    debug::enter("create_character::put_character");
-
     term::prt("Name      : ", 2, 2);
     term::prt("Race      : ", 3, 2);
     term::prt("Sex       : ", 4, 2);
@@ -41,11 +39,9 @@ fn put_character(show_values: bool) {
         term::prt(data::class::name(&player::class()), 5, 14);
     }
 
-    debug::leave("create_character::put_character");
 }
 
 fn get_money() {
-    debug::enter("create_character::get_money");
     let player_stats = player::curr_stats();
     let mut amount: i64 = 325 + random::randint(25)
         // Social Class adj
@@ -61,11 +57,9 @@ fn get_money() {
 
     let gold_value = data::currency::value(&Currency::Gold);
     unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
-    debug::leave("create_character::get_money");
 }
 
 fn put_stats() {
-    debug::enter("create_character::put_stats");
 
     screen::print_stats(2, 64);
 
@@ -89,13 +83,9 @@ fn put_stats() {
         12,
         3,
     );
-
-    debug::leave("create_character::put_stats");
 }
 
 fn put_misc1() {
-    debug::enter("create_character::put_misc1");
-
     term::prt(
         format!("Age          : {}", unsafe { player::player_age }),
         2,
@@ -116,12 +106,9 @@ fn put_misc1() {
         5,
         39,
     );
-
-    debug::leave("create_character::put_misc1");
 }
 
 fn put_misc2() {
-    debug::enter("create_character::put_misc2");
 
     term::prt(
         format!("Level      : {}", unsafe { player::player_lev }),
@@ -151,13 +138,9 @@ fn put_misc2() {
         12,
         53,
     );
-
-    debug::leave("create_character::put_misc2");
 }
 
 fn put_misc3() {
-    debug::enter("create_character::put_misc3");
-
     term::clear_from(14);
 
     let xbth: i64 = player::melee_tohit().into();
@@ -232,8 +215,6 @@ fn put_misc3() {
         19,
         1,
     );
-
-    debug::leave("create_character::put_misc3");
 }
 
 fn print_history() {
@@ -263,8 +244,6 @@ fn print_history() {
 }
 
 fn apply_stats_from_class() {
-    debug::enter("create_character::apply_stats_from_class");
-
     player::modify_max_hp(player::hitdie() as i16);
     player::reset_current_hp();
     unsafe {
@@ -289,26 +268,18 @@ fn apply_stats_from_class() {
         player::player_dis_tac = player::player_ptoac;
         player::player_dis_ac = player::player_pac;
     }
-
-    debug::leave("create_character::apply_stats_from_class");
 }
 
 // Display character on screen -RAK-
 fn display_char() {
-    debug::enter("create_character::display_char");
-
     put_character(true);
     put_misc1();
     put_stats();
     put_misc2();
     put_misc3();
-
-    debug::leave("create_character::display_char");
 }
 
 pub fn change_name() {
-    debug::enter("create_character::change_name");
-
     term::clear_screen();
     display_char();
     loop {
@@ -319,14 +290,10 @@ pub fn change_name() {
             _ => (),
         }
     }
-
-    debug::leave("create_character::change_name");
 }
 
 /* Gets a name for the character    -JWT- */
 fn choose_name() {
-    debug::enter("create_character::choose_name");
-
     term::prt(
         "Enter your player's name  [press <RETURN> when finished]",
         21,
@@ -340,13 +307,9 @@ fn choose_name() {
         }
     }
     term::clear_from(21);
-
-    debug::leave("create_character::choose_name");
 }
 
 fn choose_class() {
-    debug::enter("create_character::choose_class");
-
     let classes = data::race::available_classes(&player::race());
     let class_strings = classes.iter().map(data::class::name).collect::<Vec<&str>>();
     let mut index = 0;
@@ -363,7 +326,6 @@ fn choose_class() {
             'j' => index = min(classes.len() as u8 - 1, index + 1),
             '\r' => {
                 player::set_class(classes[index as usize]);
-                debug::leave("create_character::choose_class");
                 return;
             }
             '?' => menu::draw_help(
@@ -403,8 +365,6 @@ pub fn stats_info(race: &Race) -> Vec<String> {
 }
 
 fn choose_race() {
-    debug::enter("create_character::choose_race");
-
     let races = Race::iter()
         .map(|i| data::race::name(&Race::from(i)))
         .collect::<Vec<&str>>();
@@ -423,7 +383,6 @@ fn choose_race() {
             'j' => index = min(races.len() as u8 - 1, index + 1),
             '\r' => {
                 player::set_race(conversion::race::from_usize(index as usize).unwrap());
-                debug::leave("create_character::choose_race");
                 return;
             }
             '?' => menu::draw_help(
@@ -452,11 +411,8 @@ fn choose_race() {
 }
 
 fn choose_sex() {
-    debug::enter("create_character::choose_sex");
-
     if player::race() == Race::Dryad {
         player::set_sex(Sex::Female);
-        debug::leave("create_character::choose_sex");
         return;
     }
 
@@ -474,7 +430,6 @@ fn choose_sex() {
             'j' => index = 1,
             '\r' => {
                 player::set_sex(if index == 0 { Sex::Male } else { Sex::Female });
-                debug::leave("create_character::choose_sex");
                 return;
             }
             _ => {}
@@ -483,8 +438,6 @@ fn choose_sex() {
 }
 
 fn choose_stats() {
-    debug::enter("create_character::choose_stats");
-
     regenerate_player_stats();
     loop {
         let stats = player::curr_stats();
@@ -521,8 +474,6 @@ fn choose_stats() {
 }
 
 fn confirm_character() {
-    debug::enter("create_character::confirm_character");
-
     let stats = player::curr_stats();
 
     menu::draw_menu(
@@ -558,13 +509,9 @@ fn confirm_character() {
             break;
         }
     }
-
-    debug::leave("create_character::confirm_character");
 }
 
 fn add_equipment() {
-    debug::enter("create_character::add_equipment");
-
     // General starting items
     let mut general_starting_items = Vec::new();
 
@@ -591,13 +538,9 @@ fn add_equipment() {
             add_inven_item(item);
         }
     }
-
-    debug::leave("create_character::add_equipment");
 }
 
 pub fn create_character() {
-    debug::enter("create_character::create_character");
-
     choose_race();
     choose_sex();
     choose_stats();
@@ -614,6 +557,4 @@ pub fn create_character() {
 
     confirm_character(); // And choose name
     add_equipment();
-
-    debug::leave("create_character::create_character");
 }

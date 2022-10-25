@@ -1,3 +1,4 @@
+use crate::conversion::item_type;
 use crate::data;
 use crate::misc;
 use crate::model;
@@ -6,7 +7,7 @@ pub trait ItemTemplate {
     fn create(&self) -> model::Item {
         model::Item {
             name: misc::rs2item_name(self.name()),
-            tval: self.item_type() as u8,
+            tval: item_type::to_usize(self.item_type()) as u8,
             flags: self.flags1(),
             flags2: self.flags2(),
             p1: self.p1(),

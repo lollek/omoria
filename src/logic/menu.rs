@@ -36,6 +36,8 @@ where
     S1: AsRef<str>,
     S2: AsRef<str>,
 {
+    term::clear_screen();
+
     // Title
     let title_s = title.as_ref();
     term::put_buffer(&format!("{:*<width$}", "", width = WIDTH - 1), 0, 0);

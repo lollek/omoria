@@ -8,29 +8,17 @@ use crate::player;
 
 #[no_mangle]
 pub extern fn max_allowable_weight() -> libc::uint16_t {
-    debug::enter("misc_extern::max_allowable_weight");
-
-    let res = misc::max_allowable_weight();
-
-    debug::leave("misc_extern::max_allowable_weight");
-    res
+    misc::max_allowable_weight()
 }
 
 #[no_mangle]
 pub extern fn min_allowable_weight() -> libc::uint16_t {
-    debug::enter("misc_extern::min_allowable_weight");
-
-    let res = misc::min_allowable_weight();
-
-    debug::leave("misc_extern::min_allowable_weight");
-    res
+    misc::min_allowable_weight()
 }
 
 #[no_mangle]
 pub extern fn C_print_known_spells() {
-    debug::enter("misc_extern::print_known_spells");
     misc::print_known_spells();
-    debug::leave("misc_extern::print_known_spells");
 }
 
 // Utility function for misc.c::print_new_spells to use rust-strings

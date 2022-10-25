@@ -64,67 +64,47 @@ pub fn init_curses() {
 }
 
 pub fn refresh() {
-    debug::enter("ncurses::refresh");
-
     with_stdscr(|stdscr| {
         if stdscr.refresh() != 0 {
             panic!("refresh returned ERR");
         }
     });
-
-    debug::leave("ncurses::refresh");
 }
 
 // Use term::put_buffer instead of this directly
 pub fn mvaddstr<'a, S>(row: i32, col: i32, msg: S)
     where S: AsRef<str>
 {
-    debug::enter("ncurses::mvaddstr");
-
     with_stdscr(|stdscr| {
         if stdscr.mvaddstr(row, col, msg.as_ref()) != 0 {
             panic!("mvaddstr returned ERR");
         }
     });
-
-    debug::leave("ncurses::mvaddstr");
 }
 
 pub fn clrtoeol() {
-    debug::enter("ncurses::clrtoeol");
-
     with_stdscr(|stdscr| {
         if stdscr.clrtoeol() != 0 {
             panic!("clrtoeol returned ERR");
         }
     });
-
-    debug::leave("ncurses::clrtoeol");
 }
 
 pub fn mov(row: i32, col: i32) {
-    debug::enter("ncurses::mov");
-
     with_stdscr(|stdscr| {
         if stdscr.mv(row, col) != 0 {
             panic!("move returned ERR");
         }
     });
-
-    debug::leave("ncurses::mov");
 }
 
 // Use term::clear_screen instead
 pub fn clear() {
-    debug::enter("ncurses::clear");
-
     with_stdscr(|stdscr| {
         if stdscr.clear() != 0 {
             panic!("clear returned ERR");
         }
     });
-
-    debug::leave("ncurses::clear");
 }
 
 #[derive(Copy, Clone)]
@@ -144,25 +124,17 @@ pub enum CursesAttr {
 }
 
 pub fn attron(attr: pancurses::chtype) {
-    debug::enter("ncurses::attron");
-
     with_stdscr(|stdscr| {
         if stdscr.attron(attr) != 0 {
             panic!("attron returned ERR");
         }
     });
-
-    debug::leave("ncurses::attron");
 }
 
 pub fn attroff(attr: pancurses::chtype) {
-    debug::enter("ncurses::attroff");
-
     with_stdscr(|stdscr| {
         if stdscr.attroff(attr) != 0 {
             panic!("attroff returned ERR");
         }
     });
-
-    debug::leave("ncurses::attroff");
 }

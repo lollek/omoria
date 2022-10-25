@@ -61,7 +61,7 @@ void help() {
   prt(" i     Inventory list         |"
       " I     Inven of one item type |"
       "^I     Use instrument         |"
-      "M-I    (Nothing)              ",
+      "M-I    Inventory list (old)   ",
       10, 1);
   prt(" m     Magic / Music / Monk   |"
       " M     (Nothing)              |"

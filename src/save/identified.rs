@@ -15,7 +15,5 @@ pub fn record() -> IdentifiedRecord {
 }
 
 pub fn set_record(record: IdentifiedRecord) {
-    debug::enter("identified::set_record");
     unsafe { object_ident = record.list };
-    debug::leave("identified::set_record");
 }

@@ -1,10 +1,10 @@
-use std::fs;
+use std::{fs, panic};
 use std::io::Write;
+use backtrace::Backtrace;
 
 // todo: Make this toggle-able
 static DEBUG_ENABLED: bool = true;
 const FILENAME: &str = "debug_rust.out";
-static mut DEPTH: i32 = 0;
 
 #[derive(Debug)]
 enum DebugLevel {
@@ -12,6 +12,27 @@ enum DebugLevel {
     Warning,
     Error,
     Fatal,
+}
+
+#[no_mangle]
+extern "C" fn debug_init() {
+    init();
+}
+
+pub fn init() {
+    panic::set_hook(Box::new(|panic_info| {
+        let (filename, line) =
+            panic_info.location().map(|loc| (loc.file(), loc.line()))
+            .unwrap_or(("<unknown>", 0));
+
+        let cause = panic_info.payload().downcast_ref::<String>().map(String::to_owned)
+            .unwrap_or_else(||
+                            panic_info.payload().downcast_ref::<&str>().map(|it| it.to_string())
+                            .unwrap_or_else(|| "<cause unknown>".to_owned()));
+
+        error(format!("A panic occurred at {filename}:{line}: {cause}"));
+        error(format!("{:?}", Backtrace::new()));
+    }));
 }
 
 fn debug<S>(level: DebugLevel, msg: S)
@@ -62,24 +83,4 @@ where
         debug(DebugLevel::Fatal, msg.as_ref());
     }
     panic!("{}", msg.as_ref());
-}
-
-pub fn enter<S>(function: S)
-where
-    S: AsRef<str>,
-{
-    unsafe {
-        DEPTH += 1;
-        info(format!("{}: ENTER {}", DEPTH, function.as_ref()));
-    }
-}
-
-pub fn leave<S>(function: S)
-where
-    S: AsRef<str>,
-{
-    unsafe {
-        DEPTH -= 1;
-        info(format!("{}: LEAVE {}", DEPTH, function.as_ref()));
-    }
 }

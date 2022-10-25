@@ -23,6 +23,7 @@ pub mod equipment;
 pub mod error;
 pub mod flow;
 pub mod highscore;
+pub mod inventory;
 pub mod io;
 pub mod logic;
 pub mod master;

@@ -1,7 +1,7 @@
-pub static SAVE_FOLDER: &'static str = "save";
-pub static DATA_FOLDER: &'static str = "data";
-pub static OMORIA_VERSION: &'static str = "5.1.1-alpha";
-pub static IMORIA_VERSION: &'static str = "4.85.22";
+pub static SAVE_FOLDER: &str = "save";
+pub static DATA_FOLDER: &str = "data";
+pub static OMORIA_VERSION: &str = "5.2.0-alpha";
+pub static IMORIA_VERSION: &str = "4.85.22";
 
 // Number of Cave tiles on y-axis
 pub const MAX_HEIGHT: usize = 66;

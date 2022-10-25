@@ -44,32 +44,22 @@ extern "C" {
 fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
     where S: AsRef<str>
 {
-    debug::enter("prt_lost_stat");
-
     ncurses::attron(ncurses::A_DIM);
 
     let str = format!("{}{:<6}", stat_name.as_ref(), stat);
     term::put_buffer(str, row.into(), col.into());
 
     ncurses::attroff(ncurses::A_DIM);
-
-    debug::leave("prt_lost_stat");
 }
 
 pub fn prt_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
     where S: AsRef<str>
 {
-    debug::enter("prt_stat");
-
     let str = format!("{}{}", stat_name.as_ref(), stat);
     term::put_buffer(str, row.into(), col.into());
-
-    debug::leave("prt_stat");
 }
 
 pub fn print_stats(row: u8, col: u8) {
-    debug::enter("print_stats");
-
     let curr = player::curr_stats();
 
     if player::has_lost_stat(Stat::Strength) {
@@ -107,8 +97,6 @@ pub fn print_stats(row: u8, col: u8) {
     } else {
         prt_stat("CHA : ", curr.charisma, row + 5, col);
     }
-
-    debug::leave("print_stats");
 }
 
 fn print_field<S>(msg: S, row: u8, col: u8)
@@ -184,7 +172,6 @@ fn print_depth(row: u8, col: u8) {
 }
 
 fn print_equipment(row: u8, col: u8) {
-    debug::enter("print_equipment");
     for (index, slot_i) in equipment::slots_iter().enumerate() {
         let slot = equipment::Slot::from(slot_i);
         let index_char = ('a' as u8 + index as u8) as char;
@@ -192,7 +179,6 @@ fn print_equipment(row: u8, col: u8) {
         let msg = format!("{}) {:<13}: {}", index_char, slot.name(), item_name);
         term::prt(msg, (row + index as u8).into(), col.into());
     }
-    debug::leave("print_equipment");
 }
 
 pub fn print_equipment_block() {
@@ -225,12 +211,8 @@ fn print_status_row() {
 }
 
 pub fn print_stat_block() {
-    debug::enter("print_stat_block");
-
     print_stats_column();
     print_status_row();
-
-    debug::leave("print_stat_block");
 }
 
 fn print_visible_monsters(_row: &mut u8, _col: u8) {

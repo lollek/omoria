@@ -17,7 +17,6 @@ pub fn record() -> Vec<Item> {
 }
 
 pub fn set_record(record: Vec<Item>) {
-    debug::enter("equipment::set_record");
     if record.len() != EQUIP_MAX {
         debug::fatal(&format!("equipment.len and EQUIP_MAX differ!: {} vs {}",
                               record.len(), EQUIP_MAX));
@@ -30,5 +29,4 @@ pub fn set_record(record: Vec<Item>) {
         }
         unsafe { equipment[i] = item };
     }
-    debug::leave("equipment::set_record");
 }
