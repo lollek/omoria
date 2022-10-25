@@ -1,5 +1,3 @@
-use crate::debug;
-
 #[no_mangle]
 pub extern fn change_name() {
     super::create_character::change_name();

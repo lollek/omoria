@@ -2,7 +2,6 @@ use std::fs;
 use std::cmp::min;
 
 use crate::constants;
-use crate::debug;
 use crate::io;
 use crate::logic::menu;
 use crate::player;

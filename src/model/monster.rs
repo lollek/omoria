@@ -8,20 +8,20 @@ extern "C" {
 #[repr(C)]
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Monster {
-    pub hp: libc::int16_t,      // Hit points
-    pub csleep: libc::int16_t,  // Inactive counter
-    pub cdis: libc::int16_t,    // Cur dis from player
-    pub mptr: libc::uint16_t,   // Pointer into creature
+    pub hp: i16,      // Hit points
+    pub csleep: i16,  // Inactive counter
+    pub cdis: i16,    // Cur dis from player
+    pub mptr: u16,   // Pointer into creature
     #[serde(skip_serializing, default)]
-    pub nptr: libc::uint16_t,   // Pointer to next block
-    pub cspeed: libc::int8_t,   // Movement speed
+    pub nptr: u16,   // Pointer to next block
+    pub cspeed: i8,   // Movement speed
 
     // Note: FY and FX constrain dungeon size to 255
-    pub fy: libc::uint8_t,      // Y Pointer into map
-    pub fx: libc::uint8_t,      // X Pointer into map
+    pub fy: u8,      // Y Pointer into map
+    pub fx: u8,      // X Pointer into map
 
-    pub stunned: libc::int8_t,  // Rounds stunned
-    pub ml: libc::uint8_t,      // On if shown
-    pub confused: libc::uint8_t,// On if confused
-    pub moved: libc::uint8_t,   // On if water-moved
+    pub stunned: i8,  // Rounds stunned
+    pub ml: u8,      // On if shown
+    pub confused: u8,// On if confused
+    pub moved: u8,   // On if water-moved
 }

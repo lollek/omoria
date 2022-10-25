@@ -1,5 +1,3 @@
-use libc;
-
 use crate::thirdparty::serde::BigArray;
 
 use crate::constants;
@@ -8,5 +6,5 @@ use crate::constants;
 #[derive(Serialize, Deserialize)]
 pub struct IdentifiedRecord {
     #[serde(with = "BigArray")]
-    pub list: [libc::uint8_t; constants::MAX_OBJECTS + 1],
+    pub list: [u8; constants::MAX_OBJECTS + 1],
 }

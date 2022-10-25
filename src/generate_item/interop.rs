@@ -1,24 +1,20 @@
-use libc;
-
-use crate::debug;
 use crate::model::Item;
 use crate::generate_item;
 
 #[no_mangle]
-pub extern fn generate_item_level_for_dungeon_level(dungeon_level: libc::uint8_t, tries: libc::uint8_t) -> libc::uint8_t {
+pub extern fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8 {
     generate_item::generate_item_level_for_dungeon_level(dungeon_level, tries)
 }
 
 #[no_mangle]
-pub extern fn generate_item_for_dungeon_level(dungeon_level: libc::uint8_t) -> Item {
+pub extern fn generate_item_for_dungeon_level(dungeon_level: u8) -> Item {
     generate_item::generate_item_for_dungeon_level(dungeon_level)
 }
 
 #[no_mangle]
-pub extern fn generate_item_for_item_level(item_level: libc::uint8_t) -> Item {
+pub extern fn generate_item_for_item_level(item_level: u8) -> Item {
     generate_item::generate_item_for_item_level(item_level)
 }
-
 
 #[no_mangle]
 pub extern fn generate_item_for_general_store() -> Item {

@@ -1,7 +1,6 @@
 use std::ffi::CStr;
 use libc;
 
-use crate::debug;
 use crate::term;
 
 #[no_mangle]

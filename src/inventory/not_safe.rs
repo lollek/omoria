@@ -1,4 +1,4 @@
-use crate::{model::InventoryItem, debug};
+use crate::model::InventoryItem;
 
 extern "C" {
     static mut inventory_list: *mut InventoryItem;

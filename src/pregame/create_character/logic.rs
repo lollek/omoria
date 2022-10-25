@@ -6,7 +6,7 @@ use std::{
 use libc::strcpy;
 
 use crate::{
-    data, debug,
+    data,
     model::{GameTime, Race, Stat, StatBlock},
     player, random,
 };

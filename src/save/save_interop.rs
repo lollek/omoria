@@ -9,7 +9,7 @@ pub extern fn C_delete_character() {
 }
 
 #[no_mangle]
-pub extern fn sav__save_character() -> libc::uint8_t {
+pub extern fn sav__save_character() -> u8 {
     match save::save_character_with_feedback() {
         Some(_) => 255,
         None => 0,
@@ -17,7 +17,7 @@ pub extern fn sav__save_character() -> libc::uint8_t {
 }
 
 #[no_mangle]
-pub extern fn sav__load_character(player_name: *const libc::c_char, player_uid: libc::int64_t) -> libc::uint8_t {
+pub extern fn sav__load_character(player_name: *const libc::c_char, player_uid: i64) -> u8 {
     if player_name.is_null() {
         panic!("Null string received");
     }

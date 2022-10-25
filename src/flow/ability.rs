@@ -1,4 +1,3 @@
-use crate::debug;
 use crate::data;
 use crate::io;
 use crate::logic::menu;

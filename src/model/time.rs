@@ -1,13 +1,11 @@
-use libc;
-
 #[repr(C)]
 #[derive(Serialize, Deserialize, Clone, Copy)]
 pub struct Time {
-    pub years: libc::uint16_t,
-    pub months: libc::uint16_t,
-    pub days: libc::uint16_t,
-    pub hours: libc::uint16_t,
-    pub minutes: libc::uint16_t,
-    pub seconds: libc::uint16_t ,
-    pub hundredths: libc::uint16_t,
+    pub years: u16,
+    pub months: u16,
+    pub days: u16,
+    pub hours: u16,
+    pub minutes: u16,
+    pub seconds: u16 ,
+    pub hundredths: u16,
 }

@@ -1,7 +1,6 @@
 use libc;
 
 use crate::constants;
-use crate::debug;
 use crate::model::{ Cave, Monster, MonsterRecord };
 
 extern "C" {

@@ -1,19 +1,18 @@
 use std::ffi::CString;
 use libc;
 
-use crate::debug;
 use crate::misc;
 use crate::ncurses;
 
 extern "C" {
     #[link_name="msg_flag"]
-    static C_msg_flag: libc::uint8_t;
+    static C_msg_flag: u8;
 
     #[link_name="msg_print"]
     fn C_msg_print(str_buff: *const libc::c_char);
 
     #[link_name="Get_String"]
-    fn C_Get_String(in_str: *const libc::c_char, row: libc::c_int, col: libc::c_int, slen: libc::c_int) -> libc::uint8_t;
+    fn C_Get_String(in_str: *const libc::c_char, row: libc::c_int, col: libc::c_int, slen: libc::c_int) -> u8;
 
     #[link_name="Clear_From"]
     fn C_Clear_From(row: libc::c_int);

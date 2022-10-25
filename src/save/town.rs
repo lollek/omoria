@@ -1,13 +1,12 @@
 use libc;
 
 use crate::constants;
-use crate::debug;
 use crate::model::{ Store, TownRecord };
 
 extern "C" {
     static mut stores: [Store; constants::MAX_STORES +1];
     static mut town_seed: libc::c_ulong;
-    static mut bank: [libc::int64_t; 7];
+    static mut bank: [i64; 7];
 }
 
 pub fn record() -> TownRecord {

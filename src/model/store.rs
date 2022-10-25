@@ -1,5 +1,3 @@
-use libc;
-
 use crate::model::{ InvenRecord, GameTime };
 use crate::constants::STORE_INVEN_MAX;
 
@@ -7,9 +5,9 @@ use crate::constants::STORE_INVEN_MAX;
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Store {
     pub store_open: GameTime,
-    pub owner: libc::uint8_t,
-    pub insult_cur: libc::int8_t,
-    pub store_ctr: libc::uint8_t,
+    pub owner: u8,
+    pub insult_cur: i8,
+    pub store_ctr: u8,
     pub store_inven: [InvenRecord; STORE_INVEN_MAX + 1],
 }
 

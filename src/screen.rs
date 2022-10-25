@@ -2,7 +2,6 @@ use libc;
 use std::borrow::Cow;
 
 use crate::data;
-use crate::debug;
 use crate::equipment;
 use crate::ncurses;
 use crate::player;

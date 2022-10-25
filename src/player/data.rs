@@ -11,64 +11,63 @@ use crate::model::{
 };
 
 use crate::data;
-use crate::debug;
 use crate::misc;
 use crate::player;
 use crate::random;
 
 extern "C" {
-    pub(super) static mut player_money: [libc::int64_t; 7]; /* { Money on person	} */
+    pub(super) static mut player_money: [i64; 7]; /* { Money on person	} */
     pub(super) static mut player_play_tm: Time; /* { Time spent in game	} */
-    pub(super) static mut player_max_exp: libc::int64_t; /* { Max experience} */
-    pub(super) static mut player_max_lev: libc::uint16_t; /* { Max level explored} */
-    pub(super) static mut player_cheated: libc::uint8_t; /*{ gone into wizard or god mode} */
-    pub(super) static mut player_quests: libc::uint8_t; /* { # completed } {FUBAR} */
-    pub(super) static mut player_cur_quest: libc::uint16_t; /* { creature # of quest } {FUBAR} */
+    pub(super) static mut player_max_exp: i64; /* { Max experience} */
+    pub(super) static mut player_max_lev: u16; /* { Max level explored} */
+    pub(super) static mut player_cheated: u8; /*{ gone into wizard or god mode} */
+    pub(super) static mut player_quests: u8; /* { # completed } {FUBAR} */
+    pub(super) static mut player_cur_quest: u16; /* { creature # of quest } {FUBAR} */
     pub(super) static mut player_birth: GameTime; /* {Date of char's birth} */
     pub(super) static mut player_cur_age: GameTime; /* {Current game date	} */
     pub(super) static mut player_flags: PlayerFlags;
     pub static mut player_history: [[libc::c_char; 82]; 5];
     static mut player_name: [libc::c_char; 82];
     static mut player_race: [libc::c_char; 82];
-    static mut player_prace: libc::uint8_t;
+    static mut player_prace: u8;
     static mut player_sex: [libc::c_char; 82];
     static mut player_tclass: [libc::c_char; 82];
     static mut player_pclass: libc::c_int;
-    pub static mut player_stl: libc::int16_t;
-    pub static mut player_sc: libc::int16_t; /* { Social Class	} */
-    pub static mut player_age: libc::uint16_t; /* { Characters age} */
-    pub static mut player_ht: libc::uint16_t; /* { Height	} */
-    pub static mut player_wt: libc::uint16_t; /* { Weight	} */
-    pub static mut player_lev: libc::uint16_t; /* { Level		} */
-    pub static mut player_fos: libc::int16_t; /* { Frenq of search} */
-    pub static mut player_bth: libc::int16_t; /* { Base to hit	} */
-    pub static mut player_bthb: libc::int16_t; /* { BTH with bows	} */
-    pub static mut player_mana: libc::int16_t; /* { Mana points	} */
-    pub static mut player_ptohit: libc::int16_t; /* { Pluses to hit	} */
-    pub static mut player_ptodam: libc::int16_t; /* { Pluses to dam	} */
-    pub static mut player_pac: libc::int16_t; /* { Total AC	} */
-    pub static mut player_ptoac: libc::int16_t; /* { Magical AC	} */
-    pub static mut player_dis_th: libc::int16_t; /* { Display +ToHit} */
-    pub static mut player_dis_td: libc::int16_t; /* { Display +ToDam} */
-    pub static mut player_dis_ac: libc::int16_t; /* { Display +ToAC } */
-    pub static mut player_dis_tac: libc::int16_t; /* { Display +ToTAC} */
-    pub static mut player_disarm: libc::int16_t; /* { % to Disarm	} */
-    pub static mut player_save: libc::int16_t; /* { Saving throw	} */
+    pub static mut player_stl: i16;
+    pub static mut player_sc: i16; /* { Social Class	} */
+    pub static mut player_age: u16; /* { Characters age} */
+    pub static mut player_ht: u16; /* { Height	} */
+    pub static mut player_wt: u16; /* { Weight	} */
+    pub static mut player_lev: u16; /* { Level		} */
+    pub static mut player_fos: i16; /* { Frenq of search} */
+    pub static mut player_bth: i16; /* { Base to hit	} */
+    pub static mut player_bthb: i16; /* { BTH with bows	} */
+    pub static mut player_mana: i16; /* { Mana points	} */
+    pub static mut player_ptohit: i16; /* { Pluses to hit	} */
+    pub static mut player_ptodam: i16; /* { Pluses to dam	} */
+    pub static mut player_pac: i16; /* { Total AC	} */
+    pub static mut player_ptoac: i16; /* { Magical AC	} */
+    pub static mut player_dis_th: i16; /* { Display +ToHit} */
+    pub static mut player_dis_td: i16; /* { Display +ToDam} */
+    pub static mut player_dis_ac: i16; /* { Display +ToAC } */
+    pub static mut player_dis_tac: i16; /* { Display +ToTAC} */
+    pub static mut player_disarm: i16; /* { % to Disarm	} */
+    pub static mut player_save: i16; /* { Saving throw	} */
     pub static mut player_expfact: libc::c_float; /* { Experience factor} */
     pub static mut player_cmana: libc::c_float; /* { Cur mana pts  } */
-    pub static mut player_exp: libc::int64_t; /* { Cur experienc	} */
-    pub static mut player_account: libc::int64_t; /* { Money in the bank	} */
-    pub static mut player_mr: libc::int64_t; /* { mag.res.lev.delta } */
-    pub static mut player_rep: libc::int64_t; /* { XP from good creatures } */
-    pub static mut player_claim_check: libc::int64_t; /* used to track trading post */
+    pub static mut player_exp: i64; /* { Cur experienc	} */
+    pub static mut player_account: i64; /* { Money in the bank	} */
+    pub static mut player_mr: i64; /* { mag.res.lev.delta } */
+    pub static mut player_rep: i64; /* { XP from good creatures } */
+    pub static mut player_claim_check: i64; /* used to track trading post */
     pub static mut inven_weight: libc::c_long; /* Inventory carry weight */
     pub static mut player_creation_time: libc::time_t; /* used as key in master file */
-    static mut player_uid: libc::int64_t; /* Used in master file */
+    static mut player_uid: i64; /* Used in master file */
 
     pub static mut char_row: libc::c_long;
     pub static mut char_col: libc::c_long;
 
-    static mut bank: [libc::int64_t; 7];
+    static mut bank: [i64; 7];
     static exp_per_level: [libc::c_long; constants::MAX_PLAYER_LEVEL + 1];
     #[link_name = "gain_level"]
     fn C_gain_level();

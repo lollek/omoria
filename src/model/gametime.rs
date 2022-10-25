@@ -1,13 +1,11 @@
-use libc;
-
 #[repr(C)]
 #[derive(Serialize, Deserialize, Clone, Copy)]
 pub struct GameTime {
-    pub year: libc::int64_t,
-    pub month: libc::uint8_t,
-    pub day: libc::uint8_t,
-    pub hour: libc::uint8_t,
-    pub secs: libc::uint16_t,
+    pub year: i64,
+    pub month: u8,
+    pub hour: u8,
+    pub secs: u16,
+    pub day: u8,
 }
 
 impl GameTime {
@@ -19,5 +17,11 @@ impl GameTime {
             hour: 0,
             secs: 0,
         }
+    }
+}
+
+impl Default for GameTime {
+    fn default() -> Self {
+        Self::new()
     }
 }

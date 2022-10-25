@@ -3,7 +3,6 @@ use libc;
 use std::ptr;
 use std::mem;
 
-use crate::debug;
 use crate::inventory;
 use crate::model::InventoryItem;
 
