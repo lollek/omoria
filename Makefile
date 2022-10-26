@@ -9,10 +9,11 @@ DATAFILES =	$(READFILES) $(WRITEFILES)
 
 all:	omoria
 
-RSFILES = $(wildcard src/*.rs) $(wildcard src/*/*.rs)
-CFILES = $(wildcard src/*.c) $(wildcard src/*/*.c)
-HFILES = $(wildcard src/*.h) $(wildcard src/*/*.h)
-OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
+
+RSFILES = $(shell find src/ -type f -name '*.rs')
+CFILES = $(shell find src/ -type f -name '*.c')
+HFILES = $(shell find src/ -type f -name '*.h')
+OBJFILES = $(shell find src/ -type f -name '*.c')
 
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
@@ -25,6 +26,10 @@ omoria: $(OBJFILES) $(RSFILES)
 run: omoria
 	>debug_rust.out
 	RUST_BACKTRACE=1 ./omoria
+
+.PHONY: test
+test: 
+	cargo test
 
 .PHONY: debug
 debug: omoria
@@ -46,7 +51,8 @@ ctags:
 
 .PHONY: format
 format:
-	@clang-format -i $(CFILES) $(HFILES)
+	@rustfmt $(RSFILES)
+	#@clang-format -i $(CFILES) $(HFILES)
 
 .PHONY: spotless
 spotless : nodata clean

@@ -30,6 +30,8 @@ pub use self::town_record::*;
 pub use self::treasure_and_coordinate::*;
 pub use self::wallet::*;
 
+pub mod item_subtype;
+
 mod ability;
 mod cave;
 mod class;

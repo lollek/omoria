@@ -73,4 +73,8 @@ impl Item {
     pub fn is_identified(&self) -> bool {
         self.identified != 0
     }
+
+    pub fn set_identified(&mut self, yn: bool) {
+        self.identified = if yn { 255 } else { 0 };
+    }
 }
