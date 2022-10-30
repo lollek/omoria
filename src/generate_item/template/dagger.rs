@@ -91,7 +91,7 @@ impl ItemTemplate for DaggerTemplate {
             DaggerTemplate::Stiletto => 3,
             DaggerTemplate::Bodkin => 4,
             DaggerTemplate::BrokenDagger => 5,
-            DaggerTemplate::CatONineTails => 5,
+            DaggerTemplate::CatONineTails => 6,
             DaggerTemplate::Bilbo => 8,
             DaggerTemplate::Baselard => 9,
             DaggerTemplate::Foil => 16,

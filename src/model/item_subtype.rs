@@ -286,8 +286,7 @@ pub enum MaulSubType {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum GemHelmSubType {
-}
+pub enum GemHelmSubType {}
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum BootsSubType {
@@ -512,8 +511,7 @@ pub enum StaffSubType {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum RodSubType {
-}
+pub enum RodSubType {}
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum WandSubType {
@@ -591,8 +589,7 @@ pub enum Scroll1SubType {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum Scroll2SubType {
-}
+pub enum Scroll2SubType {}
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Potion1SubType {
@@ -644,8 +641,7 @@ pub enum Potion1SubType {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum Potion2SubType {
-}
+pub enum Potion2SubType {}
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum FlaskOfOilSubType {
@@ -685,13 +681,10 @@ pub enum FoodSubType {
     FineWine,
     ElvishWaybread,
     Stew,
-    JollyGreenJelly,
     GreenJelly,
     BerriesPoisonous,
     BerriesSmurfberries,
-    BerriesSmurfberries2,
     BerriesGoodberries,
-    BerriesGoodberries2,
     EyeballOfNed,
 }
 

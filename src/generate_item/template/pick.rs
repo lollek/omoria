@@ -99,7 +99,7 @@ impl ItemTemplate for PickTemplate {
         match self {
             PickTemplate::Pick => 1,
             PickTemplate::Shovel => 2,
-            PickTemplate::OrcishPick1 => 2,
+            PickTemplate::OrcishPick1 => 8,
             PickTemplate::OrcishPick2 => 7,
             PickTemplate::DwarvenPick => 3,
             PickTemplate::GnomishShovel => 5,

@@ -80,7 +80,7 @@ impl ItemTemplate for BagTemplate {
             BagTemplate::BagOfHolding250 => 1,
             BagTemplate::BagOfHolding500 => 2,
             BagTemplate::BagOfHolding1000 => 3,
-            BagTemplate::BagOfHolding1500 => 3,
+            BagTemplate::BagOfHolding1500 => 5,
             BagTemplate::BagOfDevouring => 4,
         }
     }

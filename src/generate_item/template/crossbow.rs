@@ -67,7 +67,7 @@ impl ItemTemplate for CrossbowTemplate {
             CrossbowTemplate::SiegeCrossbow => 10,
             CrossbowTemplate::Ballista => 11,
             CrossbowTemplate::LightCrossbow => 12,
-            CrossbowTemplate::HeavyCrossbow => 12,
+            CrossbowTemplate::HeavyCrossbow => 13,
         }
     }
 
