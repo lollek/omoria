@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ChimeSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChimeTemplate {
@@ -125,24 +128,44 @@ impl ItemTemplate for ChimeTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            ChimeTemplate::ChimeOfLight => 1,
-            ChimeTemplate::ChimeOfDetectDoorsStairs => 2,
-            ChimeTemplate::ChimeOfDetectTraps => 3,
-            ChimeTemplate::ChimeOfTeleportation => 4,
-            ChimeTemplate::ChimeOfThunderblast => 5,
-            ChimeTemplate::ChimeOfSummonMonster => 6,
-            ChimeTemplate::ChimeOfDisarming => 7,
-            ChimeTemplate::ChimeOfAggravation => 8,
-            ChimeTemplate::ChimeOfSlowMonster => 9,
-            ChimeTemplate::ChimeOfSootheMonster => 10,
-            ChimeTemplate::ChimeOfCureLightWound => 11,
-            ChimeTemplate::ChimeOfChanging => 12,
-            ChimeTemplate::ChimeOfRemoveCurse => 13,
-            ChimeTemplate::ChimeOfCuring => 14,
-            ChimeTemplate::ChimeOfDispelEvil => 15,
-            ChimeTemplate::ChimeOfDarkness => 16,
+            ChimeTemplate::ChimeOfLight => ItemSubType::Chime(ChimeSubType::ChimeOfLight),
+            ChimeTemplate::ChimeOfDetectDoorsStairs => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfDetectDoorsStairs)
+            }
+            ChimeTemplate::ChimeOfDetectTraps => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfDetectTraps)
+            }
+            ChimeTemplate::ChimeOfTeleportation => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfTeleportation)
+            }
+            ChimeTemplate::ChimeOfThunderblast => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfThunderblast)
+            }
+            ChimeTemplate::ChimeOfSummonMonster => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfSummonMonster)
+            }
+            ChimeTemplate::ChimeOfDisarming => ItemSubType::Chime(ChimeSubType::ChimeOfDisarming),
+            ChimeTemplate::ChimeOfAggravation => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfAggravation)
+            }
+            ChimeTemplate::ChimeOfSlowMonster => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfSlowMonster)
+            }
+            ChimeTemplate::ChimeOfSootheMonster => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfSootheMonster)
+            }
+            ChimeTemplate::ChimeOfCureLightWound => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfCureLightWound)
+            }
+            ChimeTemplate::ChimeOfChanging => ItemSubType::Chime(ChimeSubType::ChimeOfChanging),
+            ChimeTemplate::ChimeOfRemoveCurse => {
+                ItemSubType::Chime(ChimeSubType::ChimeOfRemoveCurse)
+            }
+            ChimeTemplate::ChimeOfCuring => ItemSubType::Chime(ChimeSubType::ChimeOfCuring),
+            ChimeTemplate::ChimeOfDispelEvil => ItemSubType::Chime(ChimeSubType::ChimeOfDispelEvil),
+            ChimeTemplate::ChimeOfDarkness => ItemSubType::Chime(ChimeSubType::ChimeOfDarkness),
         }
     }
 

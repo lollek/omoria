@@ -5,16 +5,17 @@ use super::template::*;
 use crate::constants;
 use crate::model;
 
+/**
+ * Returns a random item from the received list. Will panic if list is is_empty
+ */
 fn get_random_from_list(mut list: Vec<Box<dyn ItemTemplate>>) -> Box<dyn ItemTemplate> {
-    if list.len() == 0 {
+    if list.is_empty() {
         panic!("List contains 0 items!");
     }
     list.remove(rand::random::<usize>() % list.len())
 }
 
 /**
- * generate_item_level_for_dungeon_level()
- *
  * Generate an item level based around which dungeon level it should drop on
  */
 pub fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8 {
@@ -38,9 +39,12 @@ pub fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8
         }
     }
 
-    return item_level;
+    item_level
 }
 
+/**
+ * Generate an item suitable sold by the general store
+ */
 pub fn generate_item_for_general_store() -> model::Item {
     let templates_to_choose_from: Vec<Box<dyn ItemTemplate>> = vec![
         Box::new(FoodTemplate::RationOfFood),
@@ -60,6 +64,9 @@ pub fn generate_item_for_general_store() -> model::Item {
     generate(random_template, constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the armor smith
+ */
 pub fn generate_item_for_armorsmith() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
     templates.extend(ArmorTemplate::vec());
@@ -68,14 +75,13 @@ pub fn generate_item_for_armorsmith() -> model::Item {
     templates.extend(HelmTemplate::vec());
     templates.extend(ShieldTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
-
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the weapon smith
+ */
 pub fn generate_item_for_weaponsmith() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
     templates.extend(AmmunitionTemplate::vec());
@@ -88,70 +94,72 @@ pub fn generate_item_for_weaponsmith() -> model::Item {
     templates.extend(SlingTemplate::vec());
     templates.extend(SwordTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the alchemist
+ */
 pub fn generate_item_for_alchemist_store() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
     templates.extend(PotionTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the magic store
+ */
 pub fn generate_item_for_magic_store() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
     templates.extend(StaffTemplate::vec());
     templates.extend(WandTemplate::vec());
     templates.extend(ScrollTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the inn
+ */
 pub fn generate_item_for_inn() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
 
     templates.extend(LodgingAtInnTemplate::vec());
-
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the library
+ */
 pub fn generate_item_for_library() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
 
     templates.extend(MagicBookTemplate::vec());
     templates.extend(SongBookTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the temple
+ */
 pub fn generate_item_for_temple() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
 
     templates.extend(PrayerBookTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the music store
+ */
 pub fn generate_item_for_music_store() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
 
@@ -159,13 +167,13 @@ pub fn generate_item_for_music_store() -> model::Item {
     templates.extend(ChimeTemplate::vec());
     templates.extend(HornTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the gem store
+ */
 pub fn generate_item_for_gem_store() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
 
@@ -173,13 +181,13 @@ pub fn generate_item_for_gem_store() -> model::Item {
     templates.extend(RingTemplate::vec());
     templates.extend(ValuableTemplate::vec());
 
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL)
-        .collect();
+    templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL)
 }
 
+/**
+ * Generate an item suitable sold by the all night deli
+ */
 pub fn generate_item_for_all_night_deli() -> model::Item {
     generate(
         get_random_from_list(JunkFoodTemplate::vec()),
@@ -188,8 +196,6 @@ pub fn generate_item_for_all_night_deli() -> model::Item {
 }
 
 /**
- * generate_item_for_black_market()
- *
  * Generate an item for a random item in the black market.
  *
  * We want it to be possible to spawn all items with enough luck,
@@ -202,14 +208,21 @@ pub fn generate_item_for_black_market() -> model::Item {
     let mut item = generate_item_for_item_level(item_level);
     item.cost *= 2;
     item.flags2 |= 0x20000000; // Set "black market" bit
-    return item;
+
+    item
 }
 
+/**
+ * Generate an item suitably dropped at a given dungeon level
+ */
 pub fn generate_item_for_dungeon_level(dungeon_level: u8) -> model::Item {
     let item_level = generate_item_level_for_dungeon_level(dungeon_level, 3);
     generate_item_for_item_level(item_level)
 }
 
+/**
+ * Generate an item which should have a given item level
+ */
 pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     /* TODO #37
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
@@ -328,13 +341,13 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
             templates.extend(SwordTemplate::vec());
         }
     }
-    templates = templates
-        .into_iter()
-        .filter(|x| x.item_level() <= item_level)
-        .collect();
+    templates.retain(|x| x.item_level() <= item_level);
     generate(get_random_from_list(templates), item_level)
 }
 
+/**
+ * Create an item from a given type and item level
+ */
 pub fn generate(template: Box<dyn ItemTemplate>, item_level: u8) -> model::Item {
     let mut item = template.create();
 

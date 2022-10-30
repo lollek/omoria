@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{GemSubType, ItemSubType, JewelrySubType, WearableGemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ValuableTemplate {
@@ -247,41 +250,75 @@ impl ItemTemplate for ValuableTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            ValuableTemplate::GemOfTeleportation => 1,
-            ValuableTemplate::GemOfResistCold => 2,
-            ValuableTemplate::GemOfResistAcid => 3,
-            ValuableTemplate::GemOfSeeInvisible => 4,
-            ValuableTemplate::GemOfStealth => 5,
-            ValuableTemplate::GemOfSlowDigestion => 6,
-            ValuableTemplate::GemOfProtectFire => 7,
-            ValuableTemplate::GemOfDetectMonsters => 1,
-            ValuableTemplate::GemOfDispelEvil => 2,
-            ValuableTemplate::GemOfDarkness => 3,
-            ValuableTemplate::GemOfAcidBalls => 4,
-            ValuableTemplate::GemOfDetectInvisible => 5,
-            ValuableTemplate::GemOfIdentify => 6,
-            ValuableTemplate::GemOfLight => 7,
-            ValuableTemplate::GemOfSummoning => 8,
-            ValuableTemplate::GemOfRemoveCurse => 9,
-            ValuableTemplate::GemOfAnnihilation => 10,
-            ValuableTemplate::GemOfRecall => 11,
-            ValuableTemplate::FineAgate => 257,
-            ValuableTemplate::FineDiamond => 258,
-            ValuableTemplate::RoughDiamond => 259,
-            ValuableTemplate::RoughSapphire => 260,
-            ValuableTemplate::FineSapphire => 261,
-            ValuableTemplate::SmallBagOfOpals => 262,
-            ValuableTemplate::SmallBagOfSapphires => 263,
-            ValuableTemplate::SmallPouchOfDiamonds => 264,
-            ValuableTemplate::LargeSackOfPearls => 265,
-            ValuableTemplate::LargeSackOfSapphires => 266,
-            ValuableTemplate::LargePouchOfDiamonds => 267,
-            ValuableTemplate::SmallGoldPendant => 274,
-            ValuableTemplate::SmallMithrilPendant => 275,
-            ValuableTemplate::LargeMithrilGarterBelt => 276,
-            ValuableTemplate::SmallSilverPendant => 266,
+            ValuableTemplate::GemOfTeleportation => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfTeleportation)
+            }
+            ValuableTemplate::GemOfResistCold => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfResistCold)
+            }
+            ValuableTemplate::GemOfResistAcid => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfResistAcid)
+            }
+            ValuableTemplate::GemOfSeeInvisible => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfSeeInvisible)
+            }
+            ValuableTemplate::GemOfStealth => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfStealth)
+            }
+            ValuableTemplate::GemOfSlowDigestion => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfSlowDigestion)
+            }
+            ValuableTemplate::GemOfProtectFire => {
+                ItemSubType::WearableGem(WearableGemSubType::GemOfProtectFire)
+            }
+            ValuableTemplate::GemOfDetectMonsters => {
+                ItemSubType::Gem(GemSubType::GemOfDetectMonsters)
+            }
+            ValuableTemplate::GemOfDispelEvil => ItemSubType::Gem(GemSubType::GemOfDispelEvil),
+            ValuableTemplate::GemOfDarkness => ItemSubType::Gem(GemSubType::GemOfDarkness),
+            ValuableTemplate::GemOfAcidBalls => ItemSubType::Gem(GemSubType::GemOfAcidBalls),
+            ValuableTemplate::GemOfDetectInvisible => {
+                ItemSubType::Gem(GemSubType::GemOfDetectInvisible)
+            }
+            ValuableTemplate::GemOfIdentify => ItemSubType::Gem(GemSubType::GemOfIdentify),
+            ValuableTemplate::GemOfLight => ItemSubType::Gem(GemSubType::GemOfLight),
+            ValuableTemplate::GemOfSummoning => ItemSubType::Gem(GemSubType::GemOfSummoning),
+            ValuableTemplate::GemOfRemoveCurse => ItemSubType::Gem(GemSubType::GemOfRemoveCurse),
+            ValuableTemplate::GemOfAnnihilation => ItemSubType::Gem(GemSubType::GemOfAnnihilation),
+            ValuableTemplate::GemOfRecall => ItemSubType::Gem(GemSubType::GemOfRecall),
+            ValuableTemplate::FineAgate => ItemSubType::Gem(GemSubType::FineAgate),
+            ValuableTemplate::FineDiamond => ItemSubType::Gem(GemSubType::FineDiamond),
+            ValuableTemplate::RoughDiamond => ItemSubType::Gem(GemSubType::RoughDiamond),
+            ValuableTemplate::RoughSapphire => ItemSubType::Gem(GemSubType::RoughSapphire),
+            ValuableTemplate::FineSapphire => ItemSubType::Gem(GemSubType::FineSapphire),
+            ValuableTemplate::SmallBagOfOpals => ItemSubType::Gem(GemSubType::SmallBagOfOpals),
+            ValuableTemplate::SmallBagOfSapphires => {
+                ItemSubType::Gem(GemSubType::SmallBagOfSapphires)
+            }
+            ValuableTemplate::SmallPouchOfDiamonds => {
+                ItemSubType::Gem(GemSubType::SmallPouchOfDiamonds)
+            }
+            ValuableTemplate::LargeSackOfPearls => ItemSubType::Gem(GemSubType::LargeSackOfPearls),
+            ValuableTemplate::LargeSackOfSapphires => {
+                ItemSubType::Gem(GemSubType::LargeSackOfSapphires)
+            }
+            ValuableTemplate::LargePouchOfDiamonds => {
+                ItemSubType::Gem(GemSubType::LargePouchOfDiamonds)
+            }
+            ValuableTemplate::SmallGoldPendant => {
+                ItemSubType::Jewelry(JewelrySubType::SmallGoldPendant)
+            }
+            ValuableTemplate::SmallMithrilPendant => {
+                ItemSubType::Jewelry(JewelrySubType::SmallMithrilPendant)
+            }
+            ValuableTemplate::LargeMithrilGarterBelt => {
+                ItemSubType::Jewelry(JewelrySubType::LargeMithrilGarterBelt)
+            }
+            ValuableTemplate::SmallSilverPendant => {
+                ItemSubType::Jewelry(JewelrySubType::SmallSilverPendant)
+            }
         }
     }
 

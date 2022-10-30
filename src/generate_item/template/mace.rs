@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, MaulSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MaceTemplate {
@@ -80,18 +83,20 @@ impl ItemTemplate for MaceTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            MaceTemplate::BallAndChain => 2,
-            MaceTemplate::WoodenClub => 6,
-            MaceTemplate::Flail => 7,
-            MaceTemplate::GreatFlail => 8,
-            MaceTemplate::MorningStar => 9,
-            MaceTemplate::Mace => 10,
-            MaceTemplate::WarHammer => 11,
-            MaceTemplate::LeadFilledMace => 12,
-            MaceTemplate::IronShodQuarterstaff => 13,
-            MaceTemplate::OgreMaul => 14,
+            MaceTemplate::BallAndChain => ItemSubType::Maul(MaulSubType::BallAndChain),
+            MaceTemplate::WoodenClub => ItemSubType::Maul(MaulSubType::WoodenClub),
+            MaceTemplate::Flail => ItemSubType::Maul(MaulSubType::Flail),
+            MaceTemplate::GreatFlail => ItemSubType::Maul(MaulSubType::GreatFlail),
+            MaceTemplate::MorningStar => ItemSubType::Maul(MaulSubType::MorningStar),
+            MaceTemplate::Mace => ItemSubType::Maul(MaulSubType::Mace),
+            MaceTemplate::WarHammer => ItemSubType::Maul(MaulSubType::WarHammer),
+            MaceTemplate::LeadFilledMace => ItemSubType::Maul(MaulSubType::LeadFilledMace),
+            MaceTemplate::IronShodQuarterstaff => {
+                ItemSubType::Maul(MaulSubType::IronShodQuarterstaff)
+            }
+            MaceTemplate::OgreMaul => ItemSubType::Maul(MaulSubType::OgreMaul),
         }
     }
 

@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{BootsSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BootsTemplate {
@@ -75,17 +78,17 @@ impl ItemTemplate for BootsTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            BootsTemplate::SoftLeatherShoes => 1,
-            BootsTemplate::SoftLeatherBoots => 2,
-            BootsTemplate::HardLeatherBoots => 3,
-            BootsTemplate::Sandals => 4,
-            BootsTemplate::ChainBoots => 5,
-            BootsTemplate::LightPlatedBoots => 6,
-            BootsTemplate::SharkskinBoots => 7,
-            BootsTemplate::DemonhideBoots => 8,
-            BootsTemplate::WyrmhideBoot => 9,
+            BootsTemplate::SoftLeatherShoes => ItemSubType::Boots(BootsSubType::SoftLeatherShoes),
+            BootsTemplate::SoftLeatherBoots => ItemSubType::Boots(BootsSubType::SoftLeatherBoots),
+            BootsTemplate::HardLeatherBoots => ItemSubType::Boots(BootsSubType::HardLeatherBoots),
+            BootsTemplate::Sandals => ItemSubType::Boots(BootsSubType::Sandals),
+            BootsTemplate::ChainBoots => ItemSubType::Boots(BootsSubType::ChainBoots),
+            BootsTemplate::LightPlatedBoots => ItemSubType::Boots(BootsSubType::LightPlatedBoots),
+            BootsTemplate::SharkskinBoots => ItemSubType::Boots(BootsSubType::SharkskinBoots),
+            BootsTemplate::DemonhideBoots => ItemSubType::Boots(BootsSubType::DemonhideBoots),
+            BootsTemplate::WyrmhideBoot => ItemSubType::Boots(BootsSubType::WyrmhideBoot),
         }
     }
 

@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{BracersSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BracersTemplate {
@@ -112,26 +115,54 @@ impl ItemTemplate for BracersTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            BracersTemplate::BracersOfProtection => 1,
-            BracersTemplate::BracersOfDefense => 2,
-            BracersTemplate::BracersOfShielding => 3,
-            BracersTemplate::MithrilBracers => 4,
-            BracersTemplate::AdamantiteBracers => 5,
-            BracersTemplate::BracersOfWeaponAttraction => 6,
-            BracersTemplate::SilverBraceletOfWarding => 31,
-            BracersTemplate::SilverBracelet => 30,
-            BracersTemplate::GoldBracelet => 40,
-            BracersTemplate::PlatinumBracelet => 50,
-            BracersTemplate::LeatherBracers => 7,
-            BracersTemplate::StuddedLeatherBracers => 8,
-            BracersTemplate::LightPlatedBracers => 9,
-            BracersTemplate::SharkskinBracers => 10,
-            BracersTemplate::DemonhideBracers => 11,
-            BracersTemplate::WyrmhideBracers => 12,
-            BracersTemplate::ChainmailBracers => 13,
-            BracersTemplate::LamellarBracers => 14,
+            BracersTemplate::BracersOfProtection => {
+                ItemSubType::Bracers(BracersSubType::BracersOfProtection)
+            }
+            BracersTemplate::BracersOfDefense => {
+                ItemSubType::Bracers(BracersSubType::BracersOfDefense)
+            }
+            BracersTemplate::BracersOfShielding => {
+                ItemSubType::Bracers(BracersSubType::BracersOfShielding)
+            }
+            BracersTemplate::MithrilBracers => ItemSubType::Bracers(BracersSubType::MithrilBracers),
+            BracersTemplate::AdamantiteBracers => {
+                ItemSubType::Bracers(BracersSubType::AdamantiteBracers)
+            }
+            BracersTemplate::BracersOfWeaponAttraction => {
+                ItemSubType::Bracers(BracersSubType::BracersOfWeaponAttraction)
+            }
+            BracersTemplate::SilverBraceletOfWarding => {
+                ItemSubType::Bracers(BracersSubType::SilverBraceletOfWarding)
+            }
+            BracersTemplate::SilverBracelet => ItemSubType::Bracers(BracersSubType::SilverBracelet),
+            BracersTemplate::GoldBracelet => ItemSubType::Bracers(BracersSubType::GoldBracelet),
+            BracersTemplate::PlatinumBracelet => {
+                ItemSubType::Bracers(BracersSubType::PlatinumBracelet)
+            }
+            BracersTemplate::LeatherBracers => ItemSubType::Bracers(BracersSubType::LeatherBracers),
+            BracersTemplate::StuddedLeatherBracers => {
+                ItemSubType::Bracers(BracersSubType::StuddedLeatherBracers)
+            }
+            BracersTemplate::LightPlatedBracers => {
+                ItemSubType::Bracers(BracersSubType::LightPlatedBracers)
+            }
+            BracersTemplate::SharkskinBracers => {
+                ItemSubType::Bracers(BracersSubType::SharkskinBracers)
+            }
+            BracersTemplate::DemonhideBracers => {
+                ItemSubType::Bracers(BracersSubType::DemonhideBracers)
+            }
+            BracersTemplate::WyrmhideBracers => {
+                ItemSubType::Bracers(BracersSubType::WyrmhideBracers)
+            }
+            BracersTemplate::ChainmailBracers => {
+                ItemSubType::Bracers(BracersSubType::ChainmailBracers)
+            }
+            BracersTemplate::LamellarBracers => {
+                ItemSubType::Bracers(BracersSubType::LamellarBracers)
+            }
         }
     }
 

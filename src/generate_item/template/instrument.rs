@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{InstrumentSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum InstrumentTemplate {
@@ -69,12 +72,20 @@ impl ItemTemplate for InstrumentTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            InstrumentTemplate::PipesOfPeace => 258,
-            InstrumentTemplate::LyreOfNature => 259,
-            InstrumentTemplate::LuteOfTheWoods => 260,
-            InstrumentTemplate::HarpOfTheDruids => 261,
+            InstrumentTemplate::PipesOfPeace => {
+                ItemSubType::Instrument(InstrumentSubType::PipesOfPeace)
+            }
+            InstrumentTemplate::LyreOfNature => {
+                ItemSubType::Instrument(InstrumentSubType::LyreOfNature)
+            }
+            InstrumentTemplate::LuteOfTheWoods => {
+                ItemSubType::Instrument(InstrumentSubType::LuteOfTheWoods)
+            }
+            InstrumentTemplate::HarpOfTheDruids => {
+                ItemSubType::Instrument(InstrumentSubType::HarpOfTheDruids)
+            }
         }
     }
 

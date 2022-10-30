@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, Scroll1SubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ScrollTemplate {
@@ -297,50 +300,72 @@ impl ItemTemplate for ScrollTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            ScrollTemplate::AggravateMonster => 277,
-            ScrollTemplate::Blessing => 262,
-            ScrollTemplate::CreateFood => 285,
-            ScrollTemplate::CurseArmor => 260,
-            ScrollTemplate::CurseWeapon => 258,
-            ScrollTemplate::Darkness => 283,
-            ScrollTemplate::Destruction => 266,
-            ScrollTemplate::DetectInvisible => 276,
-            ScrollTemplate::DispelUndead => 286,
-            ScrollTemplate::DoorCreation => 280,
-            ScrollTemplate::DoorStairLocation => 274,
-            ScrollTemplate::EnchantArmor => 259,
-            ScrollTemplate::EnchantWeapon => 258,
-            ScrollTemplate::EnchantWeaponToDam => 257,
-            ScrollTemplate::EnchantWeaponToHit => 257,
-            ScrollTemplate::FeignDeath => 268,
-            ScrollTemplate::Genocide => 282,
-            ScrollTemplate::HolyChant => 263,
-            ScrollTemplate::HolyPrayer => 264,
-            ScrollTemplate::Identify => 260,
-            ScrollTemplate::Light => 262,
-            ScrollTemplate::MagicMapping => 268,
-            ScrollTemplate::MakeMunchies => 269,
-            ScrollTemplate::MassGenocide => 275,
-            ScrollTemplate::MonsterConfusion => 267,
-            ScrollTemplate::ObjectDetection => 272,
-            ScrollTemplate::PhaseDoor => 264,
-            ScrollTemplate::ProtectionFromEvil => 284,
-            ScrollTemplate::Recharging => 281,
-            ScrollTemplate::RemoveCurse => 261,
-            ScrollTemplate::RuneOfProtection => 270,
-            ScrollTemplate::SleepMonster => 269,
-            ScrollTemplate::SummonMonster => 263,
-            ScrollTemplate::SummonUndead => 261,
-            ScrollTemplate::Teleport => 266,
-            ScrollTemplate::TeleportLevel => 265,
-            ScrollTemplate::TrapCreation => 278,
-            ScrollTemplate::TrapDetection => 273,
-            ScrollTemplate::TrapDoorDestruction => 279,
-            ScrollTemplate::TreasureDetection => 271,
-            ScrollTemplate::Wishing => 267,
-            ScrollTemplate::WordOfRecall => 265,
+            ScrollTemplate::AggravateMonster => {
+                ItemSubType::Scroll1(Scroll1SubType::AggravateMonster)
+            }
+            ScrollTemplate::Blessing => ItemSubType::Scroll1(Scroll1SubType::Blessing),
+            ScrollTemplate::CreateFood => ItemSubType::Scroll1(Scroll1SubType::CreateFood),
+            ScrollTemplate::CurseArmor => ItemSubType::Scroll1(Scroll1SubType::CurseArmor),
+            ScrollTemplate::CurseWeapon => ItemSubType::Scroll1(Scroll1SubType::CurseWeapon),
+            ScrollTemplate::Darkness => ItemSubType::Scroll1(Scroll1SubType::Darkness),
+            ScrollTemplate::Destruction => ItemSubType::Scroll1(Scroll1SubType::Destruction),
+            ScrollTemplate::DetectInvisible => {
+                ItemSubType::Scroll1(Scroll1SubType::DetectInvisible)
+            }
+            ScrollTemplate::DispelUndead => ItemSubType::Scroll1(Scroll1SubType::DispelUndead),
+            ScrollTemplate::DoorCreation => ItemSubType::Scroll1(Scroll1SubType::DoorCreation),
+            ScrollTemplate::DoorStairLocation => {
+                ItemSubType::Scroll1(Scroll1SubType::DoorStairLocation)
+            }
+            ScrollTemplate::EnchantArmor => ItemSubType::Scroll1(Scroll1SubType::EnchantArmor),
+            ScrollTemplate::EnchantWeapon => ItemSubType::Scroll1(Scroll1SubType::EnchantWeapon),
+            ScrollTemplate::EnchantWeaponToDam => {
+                ItemSubType::Scroll1(Scroll1SubType::EnchantWeaponToDam)
+            }
+            ScrollTemplate::EnchantWeaponToHit => {
+                ItemSubType::Scroll1(Scroll1SubType::EnchantWeaponToHit)
+            }
+            ScrollTemplate::FeignDeath => ItemSubType::Scroll1(Scroll1SubType::FeignDeath),
+            ScrollTemplate::Genocide => ItemSubType::Scroll1(Scroll1SubType::Genocide),
+            ScrollTemplate::HolyChant => ItemSubType::Scroll1(Scroll1SubType::HolyChant),
+            ScrollTemplate::HolyPrayer => ItemSubType::Scroll1(Scroll1SubType::HolyPrayer),
+            ScrollTemplate::Identify => ItemSubType::Scroll1(Scroll1SubType::Identify),
+            ScrollTemplate::Light => ItemSubType::Scroll1(Scroll1SubType::Light),
+            ScrollTemplate::MagicMapping => ItemSubType::Scroll1(Scroll1SubType::MagicMapping),
+            ScrollTemplate::MakeMunchies => ItemSubType::Scroll1(Scroll1SubType::MakeMunchies),
+            ScrollTemplate::MassGenocide => ItemSubType::Scroll1(Scroll1SubType::MassGenocide),
+            ScrollTemplate::MonsterConfusion => {
+                ItemSubType::Scroll1(Scroll1SubType::MonsterConfusion)
+            }
+            ScrollTemplate::ObjectDetection => {
+                ItemSubType::Scroll1(Scroll1SubType::ObjectDetection)
+            }
+            ScrollTemplate::PhaseDoor => ItemSubType::Scroll1(Scroll1SubType::PhaseDoor),
+            ScrollTemplate::ProtectionFromEvil => {
+                ItemSubType::Scroll1(Scroll1SubType::ProtectionFromEvil)
+            }
+            ScrollTemplate::Recharging => ItemSubType::Scroll1(Scroll1SubType::Recharging),
+            ScrollTemplate::RemoveCurse => ItemSubType::Scroll1(Scroll1SubType::RemoveCurse),
+            ScrollTemplate::RuneOfProtection => {
+                ItemSubType::Scroll1(Scroll1SubType::RuneOfProtection)
+            }
+            ScrollTemplate::SleepMonster => ItemSubType::Scroll1(Scroll1SubType::SleepMonster),
+            ScrollTemplate::SummonMonster => ItemSubType::Scroll1(Scroll1SubType::SummonMonster),
+            ScrollTemplate::SummonUndead => ItemSubType::Scroll1(Scroll1SubType::SummonUndead),
+            ScrollTemplate::Teleport => ItemSubType::Scroll1(Scroll1SubType::Teleport),
+            ScrollTemplate::TeleportLevel => ItemSubType::Scroll1(Scroll1SubType::TeleportLevel),
+            ScrollTemplate::TrapCreation => ItemSubType::Scroll1(Scroll1SubType::TrapCreation),
+            ScrollTemplate::TrapDetection => ItemSubType::Scroll1(Scroll1SubType::TrapDetection),
+            ScrollTemplate::TrapDoorDestruction => {
+                ItemSubType::Scroll1(Scroll1SubType::TrapDoorDestruction)
+            }
+            ScrollTemplate::TreasureDetection => {
+                ItemSubType::Scroll1(Scroll1SubType::TreasureDetection)
+            }
+            ScrollTemplate::Wishing => ItemSubType::Scroll1(Scroll1SubType::Wishing),
+            ScrollTemplate::WordOfRecall => ItemSubType::Scroll1(Scroll1SubType::WordOfRecall),
         }
     }
 

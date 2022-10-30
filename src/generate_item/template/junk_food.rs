@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, JunkFoodSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum JunkFoodTemplate {
@@ -139,21 +142,45 @@ impl ItemTemplate for JunkFoodTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            JunkFoodTemplate::BoxOfPiranhaCrackers => 257,
-            JunkFoodTemplate::CanOfOrcaCola => 258,
-            JunkFoodTemplate::TwelvePoundTrollBuger => 259,
-            JunkFoodTemplate::BagOfBrontosaurusChips => 260,
-            JunkFoodTemplate::SliceOfPurpleMushroomPizza => 261,
-            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => 262,
-            JunkFoodTemplate::DragonSteak => 263,
-            JunkFoodTemplate::VorpalBunnyThroatLozenge => 264,
-            JunkFoodTemplate::DeepFriedGiantCentipede => 265,
-            JunkFoodTemplate::PintOfBeetleJuice => 266,
-            JunkFoodTemplate::BownOfBatStew => 267,
-            JunkFoodTemplate::JarOfPickledLeeches => 268,
-            JunkFoodTemplate::PackOfKittenMcNuggets => 269,
+            JunkFoodTemplate::BoxOfPiranhaCrackers => {
+                ItemSubType::JunkFood(JunkFoodSubType::BoxOfPiranhaCrackers)
+            }
+            JunkFoodTemplate::CanOfOrcaCola => {
+                ItemSubType::JunkFood(JunkFoodSubType::CanOfOrcaCola)
+            }
+            JunkFoodTemplate::TwelvePoundTrollBuger => {
+                ItemSubType::JunkFood(JunkFoodSubType::TwelvePoundTrollBuger)
+            }
+            JunkFoodTemplate::BagOfBrontosaurusChips => {
+                ItemSubType::JunkFood(JunkFoodSubType::BagOfBrontosaurusChips)
+            }
+            JunkFoodTemplate::SliceOfPurpleMushroomPizza => {
+                ItemSubType::JunkFood(JunkFoodSubType::SliceOfPurpleMushroomPizza)
+            }
+            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => {
+                ItemSubType::JunkFood(JunkFoodSubType::PeanutButterAndGrapeJellySandwich)
+            }
+            JunkFoodTemplate::DragonSteak => ItemSubType::JunkFood(JunkFoodSubType::DragonSteak),
+            JunkFoodTemplate::VorpalBunnyThroatLozenge => {
+                ItemSubType::JunkFood(JunkFoodSubType::VorpalBunnyThroatLozenge)
+            }
+            JunkFoodTemplate::DeepFriedGiantCentipede => {
+                ItemSubType::JunkFood(JunkFoodSubType::DeepFriedGiantCentipede)
+            }
+            JunkFoodTemplate::PintOfBeetleJuice => {
+                ItemSubType::JunkFood(JunkFoodSubType::PintOfBeetleJuice)
+            }
+            JunkFoodTemplate::BownOfBatStew => {
+                ItemSubType::JunkFood(JunkFoodSubType::BownOfBatStew)
+            }
+            JunkFoodTemplate::JarOfPickledLeeches => {
+                ItemSubType::JunkFood(JunkFoodSubType::JarOfPickledLeeches)
+            }
+            JunkFoodTemplate::PackOfKittenMcNuggets => {
+                ItemSubType::JunkFood(JunkFoodSubType::PackOfKittenMcNuggets)
+            }
         }
     }
 

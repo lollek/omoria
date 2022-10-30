@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{DaggerSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum DaggerTemplate {
@@ -84,19 +87,19 @@ impl ItemTemplate for DaggerTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            DaggerTemplate::MainGauche => 1,
-            DaggerTemplate::Misercorde => 2,
-            DaggerTemplate::Stiletto => 3,
-            DaggerTemplate::Bodkin => 4,
-            DaggerTemplate::BrokenDagger => 5,
-            DaggerTemplate::CatONineTails => 6,
-            DaggerTemplate::Bilbo => 8,
-            DaggerTemplate::Baselard => 9,
-            DaggerTemplate::Foil => 16,
-            DaggerTemplate::Rapier => 20,
-            DaggerTemplate::SmallSword => 22,
+            DaggerTemplate::MainGauche => ItemSubType::Dagger(DaggerSubType::MainGauche),
+            DaggerTemplate::Misercorde => ItemSubType::Dagger(DaggerSubType::Misercorde),
+            DaggerTemplate::Stiletto => ItemSubType::Dagger(DaggerSubType::Stiletto),
+            DaggerTemplate::Bodkin => ItemSubType::Dagger(DaggerSubType::Bodkin),
+            DaggerTemplate::BrokenDagger => ItemSubType::Dagger(DaggerSubType::BrokenDagger),
+            DaggerTemplate::CatONineTails => ItemSubType::Dagger(DaggerSubType::CatONineTails),
+            DaggerTemplate::Bilbo => ItemSubType::Dagger(DaggerSubType::Bilbo),
+            DaggerTemplate::Baselard => ItemSubType::Dagger(DaggerSubType::Baselard),
+            DaggerTemplate::Foil => ItemSubType::Dagger(DaggerSubType::Foil),
+            DaggerTemplate::Rapier => ItemSubType::Dagger(DaggerSubType::Rapier),
+            DaggerTemplate::SmallSword => ItemSubType::Dagger(DaggerSubType::SmallSword),
         }
     }
 

@@ -1,7 +1,8 @@
-use std::convert::TryInto;
-
 use super::super::item_template::ItemTemplate;
-use crate::{model::{self, item_subtype::LightSourceSubType}, conversion::item_subtype::light_source::to_usize};
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, LightSourceSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LightSourceTemplate {
@@ -64,13 +65,21 @@ impl ItemTemplate for LightSourceTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
-        to_usize(match self {
-            LightSourceTemplate::WoodenTorch => LightSourceSubType::WoodenTorch,
-            LightSourceTemplate::BrassLantern => LightSourceSubType::BrassLantern,
-            LightSourceTemplate::MagicTorch => LightSourceSubType::MagicTorch,
-            LightSourceTemplate::MagicLantern => LightSourceSubType::MagicLantern,
-        }).try_into().unwrap_or_else(|e| panic!("Failed to convert: {}", e))
+    fn subtype(&self) -> ItemSubType {
+        match self {
+            LightSourceTemplate::WoodenTorch => {
+                ItemSubType::LightSource(LightSourceSubType::WoodenTorch)
+            }
+            LightSourceTemplate::BrassLantern => {
+                ItemSubType::LightSource(LightSourceSubType::BrassLantern)
+            }
+            LightSourceTemplate::MagicTorch => {
+                ItemSubType::LightSource(LightSourceSubType::MagicTorch)
+            }
+            LightSourceTemplate::MagicLantern => {
+                ItemSubType::LightSource(LightSourceSubType::MagicLantern)
+            }
+        }
     }
 
     fn weight(&self) -> u16 {

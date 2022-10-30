@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{CloakSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CloakTemplate {
@@ -61,13 +64,13 @@ impl ItemTemplate for CloakTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            CloakTemplate::LightCloak => 1,
-            CloakTemplate::HeavyCloak => 2,
-            CloakTemplate::SharkskinCloak => 3,
-            CloakTemplate::DemonhideCloak => 4,
-            CloakTemplate::WyrmhideCloak => 5,
+            CloakTemplate::LightCloak => ItemSubType::Cloak(CloakSubType::LightCloak),
+            CloakTemplate::HeavyCloak => ItemSubType::Cloak(CloakSubType::HeavyCloak),
+            CloakTemplate::SharkskinCloak => ItemSubType::Cloak(CloakSubType::SharkskinCloak),
+            CloakTemplate::DemonhideCloak => ItemSubType::Cloak(CloakSubType::DemonhideCloak),
+            CloakTemplate::WyrmhideCloak => ItemSubType::Cloak(CloakSubType::WyrmhideCloak),
         }
     }
 

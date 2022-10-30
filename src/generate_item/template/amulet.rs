@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{AmuletSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {
@@ -122,21 +125,35 @@ impl ItemTemplate for AmuletTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            AmuletTemplate::AmuletOfAdornment1 => 11,
-            AmuletTemplate::AmuletOfAdornment2 => 12,
-            AmuletTemplate::AmuletOfWisdom => 5,
-            AmuletTemplate::AmuletOfCharisma => 6,
-            AmuletTemplate::AmuletOfSearching => 7,
-            AmuletTemplate::AmuletOfTeleportation => 8,
-            AmuletTemplate::AmuletOfSlowDigestion => 9,
-            AmuletTemplate::AmuletOfResistAcid => 10,
-            AmuletTemplate::AmuletOfTheMagi => 13,
-            AmuletTemplate::AmuletOfDoom => 14,
-            AmuletTemplate::SilverNecklace => 30,
-            AmuletTemplate::GoldNecklace => 40,
-            AmuletTemplate::MithrilNecklace => 50,
+            AmuletTemplate::AmuletOfAdornment1 => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfAdornment1)
+            }
+            AmuletTemplate::AmuletOfAdornment2 => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfAdornment2)
+            }
+            AmuletTemplate::AmuletOfWisdom => ItemSubType::Amulet(AmuletSubType::AmuletOfWisdom),
+            AmuletTemplate::AmuletOfCharisma => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfCharisma)
+            }
+            AmuletTemplate::AmuletOfSearching => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfSearching)
+            }
+            AmuletTemplate::AmuletOfTeleportation => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfTeleportation)
+            }
+            AmuletTemplate::AmuletOfSlowDigestion => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfSlowDigestion)
+            }
+            AmuletTemplate::AmuletOfResistAcid => {
+                ItemSubType::Amulet(AmuletSubType::AmuletOfResistAcid)
+            }
+            AmuletTemplate::AmuletOfTheMagi => ItemSubType::Amulet(AmuletSubType::AmuletOfTheMagi),
+            AmuletTemplate::AmuletOfDoom => ItemSubType::Amulet(AmuletSubType::AmuletOfDoom),
+            AmuletTemplate::SilverNecklace => ItemSubType::Amulet(AmuletSubType::SilverNecklace),
+            AmuletTemplate::GoldNecklace => ItemSubType::Amulet(AmuletSubType::GoldNecklace),
+            AmuletTemplate::MithrilNecklace => ItemSubType::Amulet(AmuletSubType::MithrilNecklace),
         }
     }
 

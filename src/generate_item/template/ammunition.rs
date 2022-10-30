@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {
@@ -68,8 +71,15 @@ impl ItemTemplate for AmmunitionTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
-        1
+    fn subtype(&self) -> ItemSubType {
+        match self {
+            AmmunitionTemplate::Arrow => ItemSubType::Arrow(ArrowSubType::Arrow),
+            AmmunitionTemplate::Bolt => ItemSubType::Bolt(BoltSubType::Bolt),
+            AmmunitionTemplate::RoundedPebble => {
+                ItemSubType::SlingAmmo(SlingAmmoSubType::RoundedPebble)
+            }
+            AmmunitionTemplate::IronShot => ItemSubType::SlingAmmo(SlingAmmoSubType::IronShot),
+        }
     }
 
     fn weight(&self) -> u16 {

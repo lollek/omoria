@@ -60,6 +60,8 @@ pub enum ItemSubType {
     PrayerBook(PrayerBookSubType),
     Instrument(InstrumentSubType),
     SongBook(SongBookSubType),
+
+    LodgingAtInn(LodgingAtInnSubType),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -772,4 +774,12 @@ pub enum SongBookSubType {
     SongBook1,
     SongBook2,
     GreaterSongBook,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum LodgingAtInnSubType {
+    LodgingForOneDay,
+    LodgingForThreeDays,
+    LodgingForOneWeek,
+    RoomAndBoardForOneDay,
 }

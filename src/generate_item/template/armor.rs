@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{HardArmorSubType, ItemSubType, SoftArmorSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ArmorTemplate {
@@ -206,41 +209,95 @@ impl ItemTemplate for ArmorTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            ArmorTemplate::AugmentedChainMail => 5,
-            ArmorTemplate::BarChainMail => 6,
-            ArmorTemplate::BronzePlateMail => 13,
-            ArmorTemplate::ChainMail => 2,
-            ArmorTemplate::CoolSetOfThreads => 11,
-            ArmorTemplate::DemonhideArmor => 15,
-            ArmorTemplate::DoubleChainMail => 4,
-            ArmorTemplate::DuskShroud => 14,
-            ArmorTemplate::ElvenChainMail => 13,
-            ArmorTemplate::FilthyNagaHideArmor => 12,
-            ArmorTemplate::FilthyRags => 99,
-            ArmorTemplate::FullPlateArmor => 11,
-            ArmorTemplate::HardLeatherArmor => 4,
-            ArmorTemplate::HardLeatherRingMail => 8,
-            ArmorTemplate::HardStuddedLeather => 5,
-            ArmorTemplate::LacqueredPlate => 12,
-            ArmorTemplate::LaminatedArmor => 8,
-            ArmorTemplate::LeatherScaleMail => 9,
-            ArmorTemplate::MetalBrigandineArmor => 7,
-            ArmorTemplate::MetalLamellarArmor => 10,
-            ArmorTemplate::MetalScaleMail => 1,
-            ArmorTemplate::MithrilChainMail => 15,
-            ArmorTemplate::MithrilPlateArmor => 16,
-            ArmorTemplate::PartialPlateArmor => 9,
-            ArmorTemplate::Robe => 1,
-            ArmorTemplate::RustyChainMail => 3,
-            ArmorTemplate::SoftLeatherArmor => 2,
-            ArmorTemplate::SoftLeatherRingMail => 7,
-            ArmorTemplate::SoftStuddedLeather => 3,
-            ArmorTemplate::StonePlateArmor => 14,
-            ArmorTemplate::WovenCordArmor => 6,
-            ArmorTemplate::WyrmhideArmor => 16,
-            ArmorTemplate::LeatherBrigantineArmor => 10,
+            ArmorTemplate::AugmentedChainMail => {
+                ItemSubType::HardArmor(HardArmorSubType::AugmentedChainMail)
+            }
+            ArmorTemplate::BarChainMail => ItemSubType::HardArmor(HardArmorSubType::BarChainMail),
+            ArmorTemplate::BronzePlateMail => {
+                ItemSubType::HardArmor(HardArmorSubType::BronzePlateMail)
+            }
+            ArmorTemplate::ChainMail => ItemSubType::HardArmor(HardArmorSubType::ChainMail),
+            ArmorTemplate::CoolSetOfThreads => {
+                ItemSubType::SoftArmor(SoftArmorSubType::CoolSetOfThreads)
+            }
+            ArmorTemplate::DemonhideArmor => {
+                ItemSubType::SoftArmor(SoftArmorSubType::DemonhideArmor)
+            }
+            ArmorTemplate::DoubleChainMail => {
+                ItemSubType::HardArmor(HardArmorSubType::DoubleChainMail)
+            }
+            ArmorTemplate::DuskShroud => ItemSubType::SoftArmor(SoftArmorSubType::DuskShroud),
+            ArmorTemplate::ElvenChainMail => {
+                ItemSubType::SoftArmor(SoftArmorSubType::ElvenChainMail)
+            }
+            ArmorTemplate::FilthyNagaHideArmor => {
+                ItemSubType::SoftArmor(SoftArmorSubType::FilthyNagaHideArmor)
+            }
+            ArmorTemplate::FilthyRags => ItemSubType::SoftArmor(SoftArmorSubType::FilthyRags),
+            ArmorTemplate::FullPlateArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::FullPlateArmor)
+            }
+            ArmorTemplate::HardLeatherArmor => {
+                ItemSubType::SoftArmor(SoftArmorSubType::HardLeatherArmor)
+            }
+            ArmorTemplate::HardLeatherRingMail => {
+                ItemSubType::SoftArmor(SoftArmorSubType::HardLeatherRingMail)
+            }
+            ArmorTemplate::HardStuddedLeather => {
+                ItemSubType::SoftArmor(SoftArmorSubType::HardStuddedLeather)
+            }
+            ArmorTemplate::LacqueredPlate => {
+                ItemSubType::HardArmor(HardArmorSubType::LacqueredPlate)
+            }
+            ArmorTemplate::LaminatedArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::LaminatedArmor)
+            }
+            ArmorTemplate::LeatherScaleMail => {
+                ItemSubType::SoftArmor(SoftArmorSubType::LeatherScaleMail)
+            }
+            ArmorTemplate::MetalBrigandineArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::MetalBrigandineArmor)
+            }
+            ArmorTemplate::MetalLamellarArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::MetalLamellarArmor)
+            }
+            ArmorTemplate::MetalScaleMail => {
+                ItemSubType::HardArmor(HardArmorSubType::MetalScaleMail)
+            }
+            ArmorTemplate::MithrilChainMail => {
+                ItemSubType::HardArmor(HardArmorSubType::MithrilChainMail)
+            }
+            ArmorTemplate::MithrilPlateArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::MithrilPlateArmor)
+            }
+            ArmorTemplate::PartialPlateArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::PartialPlateArmor)
+            }
+            ArmorTemplate::Robe => ItemSubType::SoftArmor(SoftArmorSubType::Robe),
+            ArmorTemplate::RustyChainMail => {
+                ItemSubType::HardArmor(HardArmorSubType::RustyChainMail)
+            }
+            ArmorTemplate::SoftLeatherArmor => {
+                ItemSubType::SoftArmor(SoftArmorSubType::SoftLeatherArmor)
+            }
+            ArmorTemplate::SoftLeatherRingMail => {
+                ItemSubType::SoftArmor(SoftArmorSubType::SoftLeatherRingMail)
+            }
+            ArmorTemplate::SoftStuddedLeather => {
+                ItemSubType::SoftArmor(SoftArmorSubType::SoftStuddedLeather)
+            }
+            ArmorTemplate::StonePlateArmor => {
+                ItemSubType::HardArmor(HardArmorSubType::StonePlateArmor)
+            }
+            ArmorTemplate::WovenCordArmor => {
+                ItemSubType::SoftArmor(SoftArmorSubType::WovenCordArmor)
+            }
+            ArmorTemplate::WyrmhideArmor => ItemSubType::SoftArmor(SoftArmorSubType::WyrmhideArmor),
+            ArmorTemplate::LeatherBrigantineArmor => {
+                ItemSubType::SoftArmor(SoftArmorSubType::LeatherBrigantineArmor)
+            }
         }
     }
 

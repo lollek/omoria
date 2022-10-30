@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{HornSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -108,21 +111,21 @@ impl ItemTemplate for HornTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            HornTemplate::HornOfBubbles => 1,
-            HornTemplate::HornOfCalling => 2,
-            HornTemplate::HornOfSoftSounds => 3,
-            HornTemplate::HornOfBlasting => 4,
-            HornTemplate::HornOfCold => 5,
-            HornTemplate::HornOfHeat => 6,
-            HornTemplate::HornOfGas => 7,
-            HornTemplate::HornOfRecall => 8,
-            HornTemplate::HornOfChaos => 9,
-            HornTemplate::HornOfGlue => 10,
-            HornTemplate::HornOfValhalla => 11,
-            HornTemplate::HornOfTritons => 12,
-            HornTemplate::HornOfFog => 13,
+            HornTemplate::HornOfBubbles => ItemSubType::Horn(HornSubType::HornOfBubbles),
+            HornTemplate::HornOfCalling => ItemSubType::Horn(HornSubType::HornOfCalling),
+            HornTemplate::HornOfSoftSounds => ItemSubType::Horn(HornSubType::HornOfSoftSounds),
+            HornTemplate::HornOfBlasting => ItemSubType::Horn(HornSubType::HornOfBlasting),
+            HornTemplate::HornOfCold => ItemSubType::Horn(HornSubType::HornOfCold),
+            HornTemplate::HornOfHeat => ItemSubType::Horn(HornSubType::HornOfHeat),
+            HornTemplate::HornOfGas => ItemSubType::Horn(HornSubType::HornOfGas),
+            HornTemplate::HornOfRecall => ItemSubType::Horn(HornSubType::HornOfRecall),
+            HornTemplate::HornOfChaos => ItemSubType::Horn(HornSubType::HornOfChaos),
+            HornTemplate::HornOfGlue => ItemSubType::Horn(HornSubType::HornOfGlue),
+            HornTemplate::HornOfValhalla => ItemSubType::Horn(HornSubType::HornOfValhalla),
+            HornTemplate::HornOfTritons => ItemSubType::Horn(HornSubType::HornOfTritons),
+            HornTemplate::HornOfFog => ItemSubType::Horn(HornSubType::HornOfFog),
         }
     }
 

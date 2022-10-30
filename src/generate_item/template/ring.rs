@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, RingSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum RingTemplate {
@@ -242,41 +245,77 @@ impl ItemTemplate for RingTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            RingTemplate::RingOfGainStrength => 1,
-            RingTemplate::RingOfGainDexterity => 2,
-            RingTemplate::RingOfGainConstitution => 3,
-            RingTemplate::RingOfGainIntelligence => 4,
-            RingTemplate::RingOfSpeed1 => 7,
-            RingTemplate::RingOfSpeed2 => 35,
-            RingTemplate::RingOfSearching => 8,
-            RingTemplate::RingOfTeleportation => 9,
-            RingTemplate::RingOfSlowDigestion => 10,
-            RingTemplate::RingOfResistFire => 11,
-            RingTemplate::RingOfResistCold => 12,
-            RingTemplate::RingOfFeatherFalling => 13,
-            RingTemplate::RingOfAdornment1 => 14,
-            RingTemplate::RingOfAdornment2 => 15,
-            RingTemplate::RingOfWeakness => 16,
-            RingTemplate::RingOfLordlyProtectionFire => 17,
-            RingTemplate::RingOfLordlyProtectionAcid => 18,
-            RingTemplate::RingOfLordlyProtectionCold => 19,
-            RingTemplate::RingOfWoe => 20,
-            RingTemplate::RingOfStupidity => 21,
-            RingTemplate::RingOfIncreaseDamage => 22,
-            RingTemplate::RingOfIncreaseToHit => 23,
-            RingTemplate::RingOfProtection => 24,
-            RingTemplate::RingOfAggravateMonsters => 25,
-            RingTemplate::RingOfSeeInvisible => 26,
-            RingTemplate::RingOfSustainStrength => 27,
-            RingTemplate::RingOfSustainIntelligence => 28,
-            RingTemplate::RingOfSustainWisdom => 29,
-            RingTemplate::RingOfSustainConstitution => 30,
-            RingTemplate::RingOfSustainDexterity => 31,
-            RingTemplate::RingOfSustainCharisma => 32,
-            RingTemplate::RingOfSlaying => 33,
-            RingTemplate::RingOfGnomekind => 34,
+            RingTemplate::RingOfGainStrength => ItemSubType::Ring(RingSubType::RingOfGainStrength),
+            RingTemplate::RingOfGainDexterity => {
+                ItemSubType::Ring(RingSubType::RingOfGainDexterity)
+            }
+            RingTemplate::RingOfGainConstitution => {
+                ItemSubType::Ring(RingSubType::RingOfGainConstitution)
+            }
+            RingTemplate::RingOfGainIntelligence => {
+                ItemSubType::Ring(RingSubType::RingOfGainIntelligence)
+            }
+            RingTemplate::RingOfSpeed1 => ItemSubType::Ring(RingSubType::RingOfSpeed1),
+            RingTemplate::RingOfSpeed2 => ItemSubType::Ring(RingSubType::RingOfSpeed2),
+            RingTemplate::RingOfSearching => ItemSubType::Ring(RingSubType::RingOfSearching),
+            RingTemplate::RingOfTeleportation => {
+                ItemSubType::Ring(RingSubType::RingOfTeleportation)
+            }
+            RingTemplate::RingOfSlowDigestion => {
+                ItemSubType::Ring(RingSubType::RingOfSlowDigestion)
+            }
+            RingTemplate::RingOfResistFire => ItemSubType::Ring(RingSubType::RingOfResistFire),
+            RingTemplate::RingOfResistCold => ItemSubType::Ring(RingSubType::RingOfResistCold),
+            RingTemplate::RingOfFeatherFalling => {
+                ItemSubType::Ring(RingSubType::RingOfFeatherFalling)
+            }
+            RingTemplate::RingOfAdornment1 => ItemSubType::Ring(RingSubType::RingOfAdornment1),
+            RingTemplate::RingOfAdornment2 => ItemSubType::Ring(RingSubType::RingOfAdornment2),
+            RingTemplate::RingOfWeakness => ItemSubType::Ring(RingSubType::RingOfWeakness),
+            RingTemplate::RingOfLordlyProtectionFire => {
+                ItemSubType::Ring(RingSubType::RingOfLordlyProtectionFire)
+            }
+            RingTemplate::RingOfLordlyProtectionAcid => {
+                ItemSubType::Ring(RingSubType::RingOfLordlyProtectionAcid)
+            }
+            RingTemplate::RingOfLordlyProtectionCold => {
+                ItemSubType::Ring(RingSubType::RingOfLordlyProtectionCold)
+            }
+            RingTemplate::RingOfWoe => ItemSubType::Ring(RingSubType::RingOfWoe),
+            RingTemplate::RingOfStupidity => ItemSubType::Ring(RingSubType::RingOfStupidity),
+            RingTemplate::RingOfIncreaseDamage => {
+                ItemSubType::Ring(RingSubType::RingOfIncreaseDamage)
+            }
+            RingTemplate::RingOfIncreaseToHit => {
+                ItemSubType::Ring(RingSubType::RingOfIncreaseToHit)
+            }
+            RingTemplate::RingOfProtection => ItemSubType::Ring(RingSubType::RingOfProtection),
+            RingTemplate::RingOfAggravateMonsters => {
+                ItemSubType::Ring(RingSubType::RingOfAggravateMonsters)
+            }
+            RingTemplate::RingOfSeeInvisible => ItemSubType::Ring(RingSubType::RingOfSeeInvisible),
+            RingTemplate::RingOfSustainStrength => {
+                ItemSubType::Ring(RingSubType::RingOfSustainStrength)
+            }
+            RingTemplate::RingOfSustainIntelligence => {
+                ItemSubType::Ring(RingSubType::RingOfSustainIntelligence)
+            }
+            RingTemplate::RingOfSustainWisdom => {
+                ItemSubType::Ring(RingSubType::RingOfSustainWisdom)
+            }
+            RingTemplate::RingOfSustainConstitution => {
+                ItemSubType::Ring(RingSubType::RingOfSustainConstitution)
+            }
+            RingTemplate::RingOfSustainDexterity => {
+                ItemSubType::Ring(RingSubType::RingOfSustainDexterity)
+            }
+            RingTemplate::RingOfSustainCharisma => {
+                ItemSubType::Ring(RingSubType::RingOfSustainCharisma)
+            }
+            RingTemplate::RingOfSlaying => ItemSubType::Ring(RingSubType::RingOfSlaying),
+            RingTemplate::RingOfGnomekind => ItemSubType::Ring(RingSubType::RingOfGnomekind),
         }
     }
 

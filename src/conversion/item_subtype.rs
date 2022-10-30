@@ -23,6 +23,7 @@ pub mod instrument;
 pub mod jewelry;
 pub mod junk_food;
 pub mod light_source;
+pub mod lodging_at_inn;
 pub mod magic_book;
 pub mod maul;
 pub mod misc_item;
@@ -93,6 +94,7 @@ pub fn to_usize(item_subtype: ItemSubType) -> usize {
         ItemSubType::PrayerBook(subtype) => prayer_book::to_usize(subtype),
         ItemSubType::Instrument(subtype) => instrument::to_usize(subtype),
         ItemSubType::SongBook(subtype) => song_book::to_usize(subtype),
+        ItemSubType::LodgingAtInn(subtype) => lodging_at_inn::to_usize(subtype),
     }
 }
 
@@ -153,6 +155,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::PrayerBook => prayer_book::from_usize(item_subtype).map(ItemSubType::PrayerBook),
         ItemType::Instrument => instrument::from_usize(item_subtype).map(ItemSubType::Instrument),
         ItemType::SongBook => song_book::from_usize(item_subtype).map(ItemSubType::SongBook),
+        ItemType::LodgingAtInn => {
+            lodging_at_inn::from_usize(item_subtype).map(ItemSubType::LodgingAtInn)
+        }
         _ => panic!("Unhandled item type {:?}", item_type),
     }
 }
