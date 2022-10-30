@@ -27,8 +27,14 @@ run: omoria
 	>debug_rust.out
 	RUST_BACKTRACE=1 ./omoria
 
+.PHONY: pre-push
+pre-push:
+	rustfmt $(git diff --name-only | grep ".*\.rs$")
+	clang-format -i $(git diff --name-only | grep ".*\.[ch]$")
+	cargo test
+
 .PHONY: test
-test: 
+test:
 	cargo test
 
 .PHONY: debug
