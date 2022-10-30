@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{HaftedWeaponSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AxeTemplate {
@@ -76,17 +79,19 @@ impl ItemTemplate for AxeTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            AxeTemplate::Balestarius => 1,
-            AxeTemplate::BattleAxe => 3,
-            AxeTemplate::BroadAxe => 4,
-            AxeTemplate::HandAxe => 5,
-            AxeTemplate::WarAxe => 6,
-            AxeTemplate::LargeAxe => 7,
-            AxeTemplate::BeardedAxe => 8,
-            AxeTemplate::SilverEdgedAxe => 9,
-            AxeTemplate::ChampionAxe => 10,
+            AxeTemplate::Balestarius => ItemSubType::HaftedWeapon(HaftedWeaponSubType::Balestarius),
+            AxeTemplate::BattleAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::BattleAxe),
+            AxeTemplate::BroadAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::BroadAxe),
+            AxeTemplate::HandAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::HandAxe),
+            AxeTemplate::WarAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::WarAxe),
+            AxeTemplate::LargeAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::LargeAxe),
+            AxeTemplate::BeardedAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::BeardedAxe),
+            AxeTemplate::SilverEdgedAxe => {
+                ItemSubType::HaftedWeapon(HaftedWeaponSubType::SilverEdgedAxe)
+            }
+            AxeTemplate::ChampionAxe => ItemSubType::HaftedWeapon(HaftedWeaponSubType::ChampionAxe),
         }
     }
 

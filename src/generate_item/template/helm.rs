@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{HelmSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HelmTemplate {
@@ -88,20 +91,22 @@ impl ItemTemplate for HelmTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            HelmTemplate::ClothHat => 12,
-            HelmTemplate::SoftLeatherCap => 13,
-            HelmTemplate::HardLeatherCap => 14,
-            HelmTemplate::MetalCap => 15,
-            HelmTemplate::FullHelm => 16,
-            HelmTemplate::GreatHelm => 17,
-            HelmTemplate::WingedHelm => 18,
-            HelmTemplate::SilverCrown => 19,
-            HelmTemplate::SilverMask => 20,
-            HelmTemplate::GoldenCrown => 21,
-            HelmTemplate::GoldenMask => 22,
-            HelmTemplate::JewelEncrustedCrown => 23,
+            HelmTemplate::ClothHat => ItemSubType::Helm(HelmSubType::ClothHat),
+            HelmTemplate::SoftLeatherCap => ItemSubType::Helm(HelmSubType::SoftLeatherCap),
+            HelmTemplate::HardLeatherCap => ItemSubType::Helm(HelmSubType::HardLeatherCap),
+            HelmTemplate::MetalCap => ItemSubType::Helm(HelmSubType::MetalCap),
+            HelmTemplate::FullHelm => ItemSubType::Helm(HelmSubType::FullHelm),
+            HelmTemplate::GreatHelm => ItemSubType::Helm(HelmSubType::GreatHelm),
+            HelmTemplate::WingedHelm => ItemSubType::Helm(HelmSubType::WingedHelm),
+            HelmTemplate::SilverCrown => ItemSubType::Helm(HelmSubType::SilverCrown),
+            HelmTemplate::SilverMask => ItemSubType::Helm(HelmSubType::SilverMask),
+            HelmTemplate::GoldenCrown => ItemSubType::Helm(HelmSubType::GoldenCrown),
+            HelmTemplate::GoldenMask => ItemSubType::Helm(HelmSubType::GoldenMask),
+            HelmTemplate::JewelEncrustedCrown => {
+                ItemSubType::Helm(HelmSubType::JewelEncrustedCrown)
+            }
         }
     }
 

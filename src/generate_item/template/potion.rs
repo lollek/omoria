@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, Potion1SubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PotionTemplate {
@@ -361,53 +364,83 @@ impl ItemTemplate for PotionTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            PotionTemplate::Blindness => 276,
-            PotionTemplate::Boldliness => 293,
-            PotionTemplate::Charisma => 266,
-            PotionTemplate::Confusion => 277,
-            PotionTemplate::CureCriticalWounds => 271,
-            PotionTemplate::CureLightWounds => 269,
-            PotionTemplate::CureSeriousWounds => 270,
-            PotionTemplate::DetectInvisible => 297,
-            PotionTemplate::FleaBile => 302,
-            PotionTemplate::GainConstitution => 273,
-            PotionTemplate::GainDexterity => 284,
-            PotionTemplate::GainExperience => 274,
-            PotionTemplate::GainIntelligence => 260,
-            PotionTemplate::GainStrength => 257,
-            PotionTemplate::GainWisdom => 263,
-            PotionTemplate::HasteSelf => 279,
-            PotionTemplate::Healing => 272,
-            PotionTemplate::Heroism => 291,
-            PotionTemplate::InfraVision => 301,
-            PotionTemplate::Invulnerability => 290,
-            PotionTemplate::Learning => 287,
-            PotionTemplate::LoseIntelligence => 261,
-            PotionTemplate::LoseMemories => 288,
-            PotionTemplate::LoseWisdom => 264,
-            PotionTemplate::NeutralizePoison => 299,
-            PotionTemplate::Poison => 258,
-            PotionTemplate::ResistCold => 296,
-            PotionTemplate::ResistHeat => 295,
-            PotionTemplate::RestoreCharisma => 268,
-            PotionTemplate::RestoreConstitution => 286,
-            PotionTemplate::RestoreDexterity => 285,
-            PotionTemplate::RestoreIntelligence => 262,
-            PotionTemplate::RestoreLifeLevels => 294,
-            PotionTemplate::RestoreMana => 300,
-            PotionTemplate::RestoreStrength => 259,
-            PotionTemplate::RestoreWisdom => 265,
-            PotionTemplate::SaltWater => 289,
-            PotionTemplate::Sleep => 275,
-            PotionTemplate::SlowPoison => 298,
-            PotionTemplate::Slowness => 280,
-            PotionTemplate::SuperHeroism => 292,
-            PotionTemplate::Ugliness => 267,
-            PotionTemplate::Water => 283,
-            PotionTemplate::SlimeMoldJuice => 281,
-            PotionTemplate::AppleJuice => 282,
+            PotionTemplate::Blindness => ItemSubType::Potion1(Potion1SubType::Blindness),
+            PotionTemplate::Boldliness => ItemSubType::Potion1(Potion1SubType::Boldliness),
+            PotionTemplate::Charisma => ItemSubType::Potion1(Potion1SubType::Charisma),
+            PotionTemplate::Confusion => ItemSubType::Potion1(Potion1SubType::Confusion),
+            PotionTemplate::CureCriticalWounds => {
+                ItemSubType::Potion1(Potion1SubType::CureCriticalWounds)
+            }
+            PotionTemplate::CureLightWounds => {
+                ItemSubType::Potion1(Potion1SubType::CureLightWounds)
+            }
+            PotionTemplate::CureSeriousWounds => {
+                ItemSubType::Potion1(Potion1SubType::CureSeriousWounds)
+            }
+            PotionTemplate::DetectInvisible => {
+                ItemSubType::Potion1(Potion1SubType::DetectInvisible)
+            }
+            PotionTemplate::FleaBile => ItemSubType::Potion1(Potion1SubType::FleaBile),
+            PotionTemplate::GainConstitution => {
+                ItemSubType::Potion1(Potion1SubType::GainConstitution)
+            }
+            PotionTemplate::GainDexterity => ItemSubType::Potion1(Potion1SubType::GainDexterity),
+            PotionTemplate::GainExperience => ItemSubType::Potion1(Potion1SubType::GainExperience),
+            PotionTemplate::GainIntelligence => {
+                ItemSubType::Potion1(Potion1SubType::GainIntelligence)
+            }
+            PotionTemplate::GainStrength => ItemSubType::Potion1(Potion1SubType::GainStrength),
+            PotionTemplate::GainWisdom => ItemSubType::Potion1(Potion1SubType::GainWisdom),
+            PotionTemplate::HasteSelf => ItemSubType::Potion1(Potion1SubType::HasteSelf),
+            PotionTemplate::Healing => ItemSubType::Potion1(Potion1SubType::Healing),
+            PotionTemplate::Heroism => ItemSubType::Potion1(Potion1SubType::Heroism),
+            PotionTemplate::InfraVision => ItemSubType::Potion1(Potion1SubType::InfraVision),
+            PotionTemplate::Invulnerability => {
+                ItemSubType::Potion1(Potion1SubType::Invulnerability)
+            }
+            PotionTemplate::Learning => ItemSubType::Potion1(Potion1SubType::Learning),
+            PotionTemplate::LoseIntelligence => {
+                ItemSubType::Potion1(Potion1SubType::LoseIntelligence)
+            }
+            PotionTemplate::LoseMemories => ItemSubType::Potion1(Potion1SubType::LoseMemories),
+            PotionTemplate::LoseWisdom => ItemSubType::Potion1(Potion1SubType::LoseWisdom),
+            PotionTemplate::NeutralizePoison => {
+                ItemSubType::Potion1(Potion1SubType::NeutralizePoison)
+            }
+            PotionTemplate::Poison => ItemSubType::Potion1(Potion1SubType::Poison),
+            PotionTemplate::ResistCold => ItemSubType::Potion1(Potion1SubType::ResistCold),
+            PotionTemplate::ResistHeat => ItemSubType::Potion1(Potion1SubType::ResistHeat),
+            PotionTemplate::RestoreCharisma => {
+                ItemSubType::Potion1(Potion1SubType::RestoreCharisma)
+            }
+            PotionTemplate::RestoreConstitution => {
+                ItemSubType::Potion1(Potion1SubType::RestoreConstitution)
+            }
+            PotionTemplate::RestoreDexterity => {
+                ItemSubType::Potion1(Potion1SubType::RestoreDexterity)
+            }
+            PotionTemplate::RestoreIntelligence => {
+                ItemSubType::Potion1(Potion1SubType::RestoreIntelligence)
+            }
+            PotionTemplate::RestoreLifeLevels => {
+                ItemSubType::Potion1(Potion1SubType::RestoreLifeLevels)
+            }
+            PotionTemplate::RestoreMana => ItemSubType::Potion1(Potion1SubType::RestoreMana),
+            PotionTemplate::RestoreStrength => {
+                ItemSubType::Potion1(Potion1SubType::RestoreStrength)
+            }
+            PotionTemplate::RestoreWisdom => ItemSubType::Potion1(Potion1SubType::RestoreWisdom),
+            PotionTemplate::SaltWater => ItemSubType::Potion1(Potion1SubType::SaltWater),
+            PotionTemplate::Sleep => ItemSubType::Potion1(Potion1SubType::Sleep),
+            PotionTemplate::SlowPoison => ItemSubType::Potion1(Potion1SubType::SlowPoison),
+            PotionTemplate::Slowness => ItemSubType::Potion1(Potion1SubType::Slowness),
+            PotionTemplate::SuperHeroism => ItemSubType::Potion1(Potion1SubType::SuperHeroism),
+            PotionTemplate::Ugliness => ItemSubType::Potion1(Potion1SubType::Ugliness),
+            PotionTemplate::Water => ItemSubType::Potion1(Potion1SubType::Water),
+            PotionTemplate::SlimeMoldJuice => ItemSubType::Potion1(Potion1SubType::SlimeMoldJuice),
+            PotionTemplate::AppleJuice => ItemSubType::Potion1(Potion1SubType::AppleJuice),
         }
     }
 

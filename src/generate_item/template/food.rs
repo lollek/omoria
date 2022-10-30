@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{FoodSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum FoodTemplate {
@@ -278,47 +281,83 @@ impl ItemTemplate for FoodTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            FoodTemplate::Mushroom => 256,
-            FoodTemplate::MushroomOfPoison => 257,
-            FoodTemplate::MushroomOfBlindness => 258,
-            FoodTemplate::MushroomOfParanoia => 259,
-            FoodTemplate::MushroomOfConfusion => 260,
-            FoodTemplate::MushroomOfHallucination => 261,
-            FoodTemplate::MushroomOfCurePoison => 262,
-            FoodTemplate::MushroomOfCureBlindness => 263,
-            FoodTemplate::MushroomOfCureParanoia => 264,
-            FoodTemplate::MushroomOfCureConfusion => 265,
-            FoodTemplate::MushroomOfWeakness => 266,
-            FoodTemplate::MushroomOfUnhealth => 267,
-            FoodTemplate::MushroomOfRestoreConstitution => 268,
-            FoodTemplate::MushroomOfFirstAid => 269,
-            FoodTemplate::MushroomOfMinorCures => 270,
-            FoodTemplate::MushroomOfLightCures => 271,
-            FoodTemplate::MushroomOfRestoring => 272,
-            FoodTemplate::MushroomOfPoison2 => 273,
-            FoodTemplate::MushroomOfHallucination2 => 274,
-            FoodTemplate::MushroomOfCurePoison2 => 275,
-            FoodTemplate::MushroomOfUnhealth2 => 276,
-            FoodTemplate::MushroomOfCureSeriousWounds => 277,
-            FoodTemplate::PintOfFineGradeMush => 306,
-            FoodTemplate::RationOfFood => 307,
-            FoodTemplate::Mushroom2 => 308,
-            FoodTemplate::HardBiscuit => 309,
-            FoodTemplate::BeefJerky => 310,
-            FoodTemplate::FineAle => 311,
-            FoodTemplate::FineWine => 312,
-            FoodTemplate::ElvishWaybread => 313,
-            FoodTemplate::Stew => 314,
-            FoodTemplate::JollyGreenJelly => 315,
-            FoodTemplate::GreenJelly => 315,
-            FoodTemplate::BerriesPoisonous => 316,
-            FoodTemplate::BerriesSmurfberries => 317,
-            FoodTemplate::BerriesSmurfberries2 => 317,
-            FoodTemplate::BerriesGoodberries => 318,
-            FoodTemplate::BerriesGoodberries2 => 318,
-            FoodTemplate::EyeballOfNed => 319,
+            FoodTemplate::Mushroom => ItemSubType::Food(FoodSubType::Mushroom),
+            FoodTemplate::MushroomOfPoison => ItemSubType::Food(FoodSubType::MushroomOfPoison),
+            FoodTemplate::MushroomOfBlindness => {
+                ItemSubType::Food(FoodSubType::MushroomOfBlindness)
+            }
+            FoodTemplate::MushroomOfParanoia => ItemSubType::Food(FoodSubType::MushroomOfParanoia),
+            FoodTemplate::MushroomOfConfusion => {
+                ItemSubType::Food(FoodSubType::MushroomOfConfusion)
+            }
+            FoodTemplate::MushroomOfHallucination => {
+                ItemSubType::Food(FoodSubType::MushroomOfHallucination)
+            }
+            FoodTemplate::MushroomOfCurePoison => {
+                ItemSubType::Food(FoodSubType::MushroomOfCurePoison)
+            }
+            FoodTemplate::MushroomOfCureBlindness => {
+                ItemSubType::Food(FoodSubType::MushroomOfCureBlindness)
+            }
+            FoodTemplate::MushroomOfCureParanoia => {
+                ItemSubType::Food(FoodSubType::MushroomOfCureParanoia)
+            }
+            FoodTemplate::MushroomOfCureConfusion => {
+                ItemSubType::Food(FoodSubType::MushroomOfCureConfusion)
+            }
+            FoodTemplate::MushroomOfWeakness => ItemSubType::Food(FoodSubType::MushroomOfWeakness),
+            FoodTemplate::MushroomOfUnhealth => ItemSubType::Food(FoodSubType::MushroomOfUnhealth),
+            FoodTemplate::MushroomOfRestoreConstitution => {
+                ItemSubType::Food(FoodSubType::MushroomOfRestoreConstitution)
+            }
+            FoodTemplate::MushroomOfFirstAid => ItemSubType::Food(FoodSubType::MushroomOfFirstAid),
+            FoodTemplate::MushroomOfMinorCures => {
+                ItemSubType::Food(FoodSubType::MushroomOfMinorCures)
+            }
+            FoodTemplate::MushroomOfLightCures => {
+                ItemSubType::Food(FoodSubType::MushroomOfLightCures)
+            }
+            FoodTemplate::MushroomOfRestoring => {
+                ItemSubType::Food(FoodSubType::MushroomOfRestoring)
+            }
+            FoodTemplate::MushroomOfPoison2 => ItemSubType::Food(FoodSubType::MushroomOfPoison2),
+            FoodTemplate::MushroomOfHallucination2 => {
+                ItemSubType::Food(FoodSubType::MushroomOfHallucination2)
+            }
+            FoodTemplate::MushroomOfCurePoison2 => {
+                ItemSubType::Food(FoodSubType::MushroomOfCurePoison2)
+            }
+            FoodTemplate::MushroomOfUnhealth2 => {
+                ItemSubType::Food(FoodSubType::MushroomOfUnhealth2)
+            }
+            FoodTemplate::MushroomOfCureSeriousWounds => {
+                ItemSubType::Food(FoodSubType::MushroomOfCureSeriousWounds)
+            }
+            FoodTemplate::PintOfFineGradeMush => {
+                ItemSubType::Food(FoodSubType::PintOfFineGradeMush)
+            }
+            FoodTemplate::RationOfFood => ItemSubType::Food(FoodSubType::RationOfFood),
+            FoodTemplate::Mushroom2 => ItemSubType::Food(FoodSubType::Mushroom2),
+            FoodTemplate::HardBiscuit => ItemSubType::Food(FoodSubType::HardBiscuit),
+            FoodTemplate::BeefJerky => ItemSubType::Food(FoodSubType::BeefJerky),
+            FoodTemplate::FineAle => ItemSubType::Food(FoodSubType::FineAle),
+            FoodTemplate::FineWine => ItemSubType::Food(FoodSubType::FineWine),
+            FoodTemplate::ElvishWaybread => ItemSubType::Food(FoodSubType::ElvishWaybread),
+            FoodTemplate::Stew => ItemSubType::Food(FoodSubType::Stew),
+            FoodTemplate::JollyGreenJelly => ItemSubType::Food(FoodSubType::GreenJelly),
+            FoodTemplate::GreenJelly => ItemSubType::Food(FoodSubType::GreenJelly),
+            FoodTemplate::BerriesPoisonous => ItemSubType::Food(FoodSubType::BerriesPoisonous),
+            FoodTemplate::BerriesSmurfberries => {
+                ItemSubType::Food(FoodSubType::BerriesSmurfberries)
+            }
+            FoodTemplate::BerriesSmurfberries2 => {
+                ItemSubType::Food(FoodSubType::BerriesSmurfberries)
+            }
+            FoodTemplate::BerriesGoodberries => ItemSubType::Food(FoodSubType::BerriesGoodberries),
+            FoodTemplate::BerriesGoodberries2 => ItemSubType::Food(FoodSubType::BerriesGoodberries),
+            FoodTemplate::EyeballOfNed => ItemSubType::Food(FoodSubType::EyeballOfNed),
         }
     }
 

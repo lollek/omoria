@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{BeltSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BeltTemplate {
@@ -72,16 +75,16 @@ impl ItemTemplate for BeltTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            BeltTemplate::Sash => 1,
-            BeltTemplate::LightBelt => 2,
-            BeltTemplate::Belt => 3,
-            BeltTemplate::HeavyBelt => 4,
-            BeltTemplate::LightPlatedBelt => 5,
-            BeltTemplate::SharkskinBelt => 6,
-            BeltTemplate::DemonhideBelt => 7,
-            BeltTemplate::WyrmhideBelt => 8,
+            BeltTemplate::Sash => ItemSubType::Belt(BeltSubType::Sash),
+            BeltTemplate::LightBelt => ItemSubType::Belt(BeltSubType::LightBelt),
+            BeltTemplate::Belt => ItemSubType::Belt(BeltSubType::Belt),
+            BeltTemplate::HeavyBelt => ItemSubType::Belt(BeltSubType::HeavyBelt),
+            BeltTemplate::LightPlatedBelt => ItemSubType::Belt(BeltSubType::LightPlatedBelt),
+            BeltTemplate::SharkskinBelt => ItemSubType::Belt(BeltSubType::SharkskinBelt),
+            BeltTemplate::DemonhideBelt => ItemSubType::Belt(BeltSubType::DemonhideBelt),
+            BeltTemplate::WyrmhideBelt => ItemSubType::Belt(BeltSubType::WyrmhideBelt),
         }
     }
 

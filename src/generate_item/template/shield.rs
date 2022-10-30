@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, ShieldSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ShieldTemplate {
@@ -76,17 +79,23 @@ impl ItemTemplate for ShieldTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            ShieldTemplate::SmallLeatherShield => 1,
-            ShieldTemplate::MediumLeatherShield => 2,
-            ShieldTemplate::LargeLeatherShield => 3,
-            ShieldTemplate::Buckler => 4,
-            ShieldTemplate::KiteShield => 5,
-            ShieldTemplate::TowerShield => 6,
-            ShieldTemplate::SharkskinShield => 7,
-            ShieldTemplate::DemonhideShield => 8,
-            ShieldTemplate::WyrmhideShield => 9,
+            ShieldTemplate::SmallLeatherShield => {
+                ItemSubType::Shield(ShieldSubType::SmallLeatherShield)
+            }
+            ShieldTemplate::MediumLeatherShield => {
+                ItemSubType::Shield(ShieldSubType::MediumLeatherShield)
+            }
+            ShieldTemplate::LargeLeatherShield => {
+                ItemSubType::Shield(ShieldSubType::LargeLeatherShield)
+            }
+            ShieldTemplate::Buckler => ItemSubType::Shield(ShieldSubType::Buckler),
+            ShieldTemplate::KiteShield => ItemSubType::Shield(ShieldSubType::KiteShield),
+            ShieldTemplate::TowerShield => ItemSubType::Shield(ShieldSubType::TowerShield),
+            ShieldTemplate::SharkskinShield => ItemSubType::Shield(ShieldSubType::SharkskinShield),
+            ShieldTemplate::DemonhideShield => ItemSubType::Shield(ShieldSubType::DemonhideShield),
+            ShieldTemplate::WyrmhideShield => ItemSubType::Shield(ShieldSubType::WyrmhideShield),
         }
     }
 

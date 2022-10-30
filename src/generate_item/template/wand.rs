@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, WandSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum WandTemplate {
@@ -170,33 +173,43 @@ impl ItemTemplate for WandTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            WandTemplate::WandOfProbing => 25,
-            WandTemplate::WandOfLight => 1,
-            WandTemplate::WandOfLightningBolts => 2,
-            WandTemplate::WandOfFrostBolts => 3,
-            WandTemplate::WandOfFireBolts => 4,
-            WandTemplate::WandOfStoneToMud => 5,
-            WandTemplate::WandOfPolymorph => 6,
-            WandTemplate::WandOfHealMonster => 7,
-            WandTemplate::WandOfHasteMonster => 8,
-            WandTemplate::WandOfSlowMonster => 9,
-            WandTemplate::WandOfConfuseMonster => 10,
-            WandTemplate::WandOfSleepMonster => 11,
-            WandTemplate::WandOfDrainLife => 12,
-            WandTemplate::WandOfTrapDoorDestruction => 13,
-            WandTemplate::WandOfMagicMissile => 14,
-            WandTemplate::WandOfWallBuilding => 15,
-            WandTemplate::WandOfCloneMonster => 16,
-            WandTemplate::WandOfTeleportAway => 17,
-            WandTemplate::WandOfDisarming => 18,
-            WandTemplate::WandOfLightningBalls => 19,
-            WandTemplate::WandOfColdBalls => 20,
-            WandTemplate::WandOfFireBalls => 21,
-            WandTemplate::WandOfStinkingCloud => 22,
-            WandTemplate::WandOfAcidBalls => 23,
-            WandTemplate::WandOfWonder => 24,
+            WandTemplate::WandOfProbing => ItemSubType::Wand(WandSubType::WandOfProbing),
+            WandTemplate::WandOfLight => ItemSubType::Wand(WandSubType::WandOfLight),
+            WandTemplate::WandOfLightningBolts => {
+                ItemSubType::Wand(WandSubType::WandOfLightningBolts)
+            }
+            WandTemplate::WandOfFrostBolts => ItemSubType::Wand(WandSubType::WandOfFrostBolts),
+            WandTemplate::WandOfFireBolts => ItemSubType::Wand(WandSubType::WandOfFireBolts),
+            WandTemplate::WandOfStoneToMud => ItemSubType::Wand(WandSubType::WandOfStoneToMud),
+            WandTemplate::WandOfPolymorph => ItemSubType::Wand(WandSubType::WandOfPolymorph),
+            WandTemplate::WandOfHealMonster => ItemSubType::Wand(WandSubType::WandOfHealMonster),
+            WandTemplate::WandOfHasteMonster => ItemSubType::Wand(WandSubType::WandOfHasteMonster),
+            WandTemplate::WandOfSlowMonster => ItemSubType::Wand(WandSubType::WandOfSlowMonster),
+            WandTemplate::WandOfConfuseMonster => {
+                ItemSubType::Wand(WandSubType::WandOfConfuseMonster)
+            }
+            WandTemplate::WandOfSleepMonster => ItemSubType::Wand(WandSubType::WandOfSleepMonster),
+            WandTemplate::WandOfDrainLife => ItemSubType::Wand(WandSubType::WandOfDrainLife),
+            WandTemplate::WandOfTrapDoorDestruction => {
+                ItemSubType::Wand(WandSubType::WandOfTrapDoorDestruction)
+            }
+            WandTemplate::WandOfMagicMissile => ItemSubType::Wand(WandSubType::WandOfMagicMissile),
+            WandTemplate::WandOfWallBuilding => ItemSubType::Wand(WandSubType::WandOfWallBuilding),
+            WandTemplate::WandOfCloneMonster => ItemSubType::Wand(WandSubType::WandOfCloneMonster),
+            WandTemplate::WandOfTeleportAway => ItemSubType::Wand(WandSubType::WandOfTeleportAway),
+            WandTemplate::WandOfDisarming => ItemSubType::Wand(WandSubType::WandOfDisarming),
+            WandTemplate::WandOfLightningBalls => {
+                ItemSubType::Wand(WandSubType::WandOfLightningBalls)
+            }
+            WandTemplate::WandOfColdBalls => ItemSubType::Wand(WandSubType::WandOfColdBalls),
+            WandTemplate::WandOfFireBalls => ItemSubType::Wand(WandSubType::WandOfFireBalls),
+            WandTemplate::WandOfStinkingCloud => {
+                ItemSubType::Wand(WandSubType::WandOfStinkingCloud)
+            }
+            WandTemplate::WandOfAcidBalls => ItemSubType::Wand(WandSubType::WandOfAcidBalls),
+            WandTemplate::WandOfWonder => ItemSubType::Wand(WandSubType::WandOfWonder),
         }
     }
 

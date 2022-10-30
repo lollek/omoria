@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, LodgingAtInnSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LodgingAtInnTemplate {
@@ -62,12 +65,20 @@ impl ItemTemplate for LodgingAtInnTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            LodgingAtInnTemplate::LodgingForOneDay => 300,
-            LodgingAtInnTemplate::LodgingForThreeDays => 302,
-            LodgingAtInnTemplate::LodgingForOneWeek => 301,
-            LodgingAtInnTemplate::RoomAndBoardForOneDay => 303,
+            LodgingAtInnTemplate::LodgingForOneDay => {
+                ItemSubType::LodgingAtInn(LodgingAtInnSubType::LodgingForOneDay)
+            }
+            LodgingAtInnTemplate::LodgingForThreeDays => {
+                ItemSubType::LodgingAtInn(LodgingAtInnSubType::LodgingForThreeDays)
+            }
+            LodgingAtInnTemplate::LodgingForOneWeek => {
+                ItemSubType::LodgingAtInn(LodgingAtInnSubType::LodgingForOneWeek)
+            }
+            LodgingAtInnTemplate::RoomAndBoardForOneDay => {
+                ItemSubType::LodgingAtInn(LodgingAtInnSubType::RoomAndBoardForOneDay)
+            }
         }
     }
 

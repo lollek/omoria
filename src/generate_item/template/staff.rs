@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, StaffSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -167,32 +170,60 @@ impl ItemTemplate for StaffTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            StaffTemplate::StaffOfLight => 1,
-            StaffTemplate::StaffOfDoorStairLocation => 2,
-            StaffTemplate::StaffOfTrapLocation => 3,
-            StaffTemplate::StaffOfTreasureLocation => 4,
-            StaffTemplate::StaffOfObjectLocation => 5,
-            StaffTemplate::StaffOfTeleportation => 6,
-            StaffTemplate::StaffOfEarthquakes => 7,
-            StaffTemplate::StaffOfSummoning => 8,
-            StaffTemplate::StaffOfDestruction => 10,
-            StaffTemplate::StaffOfStarlite => 11,
-            StaffTemplate::StaffOfHasteMonsters => 12,
-            StaffTemplate::StaffOfSlowMonsters => 13,
-            StaffTemplate::StaffOfSleepMonsters => 14,
-            StaffTemplate::StaffOfCureLightWounds => 15,
-            StaffTemplate::StaffOfDetectInvisible => 16,
-            StaffTemplate::StaffOfSpeed => 17,
-            StaffTemplate::StaffOfSlowness => 18,
-            StaffTemplate::StaffOfMassPolymorph => 19,
-            StaffTemplate::StaffOfRemoveCurse => 20,
-            StaffTemplate::StaffOfDetectEvil => 21,
-            StaffTemplate::StaffOfCuring => 22,
-            StaffTemplate::StaffOfDispelEvil => 23,
-            StaffTemplate::StaffOfDarkness => 25,
-            StaffTemplate::StaffOfIdentify => 26,
+            StaffTemplate::StaffOfLight => ItemSubType::Staff(StaffSubType::StaffOfLight),
+            StaffTemplate::StaffOfDoorStairLocation => {
+                ItemSubType::Staff(StaffSubType::StaffOfDoorStairLocation)
+            }
+            StaffTemplate::StaffOfTrapLocation => {
+                ItemSubType::Staff(StaffSubType::StaffOfTrapLocation)
+            }
+            StaffTemplate::StaffOfTreasureLocation => {
+                ItemSubType::Staff(StaffSubType::StaffOfTreasureLocation)
+            }
+            StaffTemplate::StaffOfObjectLocation => {
+                ItemSubType::Staff(StaffSubType::StaffOfObjectLocation)
+            }
+            StaffTemplate::StaffOfTeleportation => {
+                ItemSubType::Staff(StaffSubType::StaffOfTeleportation)
+            }
+            StaffTemplate::StaffOfEarthquakes => {
+                ItemSubType::Staff(StaffSubType::StaffOfEarthquakes)
+            }
+            StaffTemplate::StaffOfSummoning => ItemSubType::Staff(StaffSubType::StaffOfSummoning),
+            StaffTemplate::StaffOfDestruction => {
+                ItemSubType::Staff(StaffSubType::StaffOfDestruction)
+            }
+            StaffTemplate::StaffOfStarlite => ItemSubType::Staff(StaffSubType::StaffOfStarlite),
+            StaffTemplate::StaffOfHasteMonsters => {
+                ItemSubType::Staff(StaffSubType::StaffOfHasteMonsters)
+            }
+            StaffTemplate::StaffOfSlowMonsters => {
+                ItemSubType::Staff(StaffSubType::StaffOfSlowMonsters)
+            }
+            StaffTemplate::StaffOfSleepMonsters => {
+                ItemSubType::Staff(StaffSubType::StaffOfSleepMonsters)
+            }
+            StaffTemplate::StaffOfCureLightWounds => {
+                ItemSubType::Staff(StaffSubType::StaffOfCureLightWounds)
+            }
+            StaffTemplate::StaffOfDetectInvisible => {
+                ItemSubType::Staff(StaffSubType::StaffOfDetectInvisible)
+            }
+            StaffTemplate::StaffOfSpeed => ItemSubType::Staff(StaffSubType::StaffOfSpeed),
+            StaffTemplate::StaffOfSlowness => ItemSubType::Staff(StaffSubType::StaffOfSlowness),
+            StaffTemplate::StaffOfMassPolymorph => {
+                ItemSubType::Staff(StaffSubType::StaffOfMassPolymorph)
+            }
+            StaffTemplate::StaffOfRemoveCurse => {
+                ItemSubType::Staff(StaffSubType::StaffOfRemoveCurse)
+            }
+            StaffTemplate::StaffOfDetectEvil => ItemSubType::Staff(StaffSubType::StaffOfDetectEvil),
+            StaffTemplate::StaffOfCuring => ItemSubType::Staff(StaffSubType::StaffOfCuring),
+            StaffTemplate::StaffOfDispelEvil => ItemSubType::Staff(StaffSubType::StaffOfDispelEvil),
+            StaffTemplate::StaffOfDarkness => ItemSubType::Staff(StaffSubType::StaffOfDarkness),
+            StaffTemplate::StaffOfIdentify => ItemSubType::Staff(StaffSubType::StaffOfIdentify),
         }
     }
 

@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{GlovesSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum GlovesTemplate {
@@ -81,18 +84,18 @@ impl ItemTemplate for GlovesTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            GlovesTemplate::LeatherGloves => 1,
-            GlovesTemplate::HeavyGloves => 2,
-            GlovesTemplate::ClothGloves => 5,
-            GlovesTemplate::ChainGloves => 6,
-            GlovesTemplate::LightGauntlets => 7,
-            GlovesTemplate::HeavyGauntlets => 8,
-            GlovesTemplate::SharkskinGloves => 9,
-            GlovesTemplate::WarGauntlets => 10,
-            GlovesTemplate::DemonhideGloves => 11,
-            GlovesTemplate::WyrmhideGloves => 12,
+            GlovesTemplate::LeatherGloves => ItemSubType::Gloves(GlovesSubType::LeatherGloves),
+            GlovesTemplate::HeavyGloves => ItemSubType::Gloves(GlovesSubType::HeavyGloves),
+            GlovesTemplate::ClothGloves => ItemSubType::Gloves(GlovesSubType::ClothGloves),
+            GlovesTemplate::ChainGloves => ItemSubType::Gloves(GlovesSubType::ChainGloves),
+            GlovesTemplate::LightGauntlets => ItemSubType::Gloves(GlovesSubType::LightGauntlets),
+            GlovesTemplate::HeavyGauntlets => ItemSubType::Gloves(GlovesSubType::HeavyGauntlets),
+            GlovesTemplate::SharkskinGloves => ItemSubType::Gloves(GlovesSubType::SharkskinGloves),
+            GlovesTemplate::WarGauntlets => ItemSubType::Gloves(GlovesSubType::WarGauntlets),
+            GlovesTemplate::DemonhideGloves => ItemSubType::Gloves(GlovesSubType::DemonhideGloves),
+            GlovesTemplate::WyrmhideGloves => ItemSubType::Gloves(GlovesSubType::WyrmhideGloves),
         }
     }
 

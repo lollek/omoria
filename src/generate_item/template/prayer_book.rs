@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, PrayerBookSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PrayerBookTemplate {
@@ -73,12 +76,20 @@ impl ItemTemplate for PrayerBookTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            PrayerBookTemplate::BeginnersHandbook => 258,
-            PrayerBookTemplate::WordsOfWisdom => 259,
-            PrayerBookTemplate::ChantsAndBlessings => 260,
-            PrayerBookTemplate::ExorcismAndDispelling => 261,
+            PrayerBookTemplate::BeginnersHandbook => {
+                ItemSubType::PrayerBook(PrayerBookSubType::BeginnersHandbook)
+            }
+            PrayerBookTemplate::WordsOfWisdom => {
+                ItemSubType::PrayerBook(PrayerBookSubType::WordsOfWisdom)
+            }
+            PrayerBookTemplate::ChantsAndBlessings => {
+                ItemSubType::PrayerBook(PrayerBookSubType::ChantsAndBlessings)
+            }
+            PrayerBookTemplate::ExorcismAndDispelling => {
+                ItemSubType::PrayerBook(PrayerBookSubType::ExorcismAndDispelling)
+            }
         }
     }
 

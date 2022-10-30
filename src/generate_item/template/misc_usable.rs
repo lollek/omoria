@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {
@@ -102,16 +105,24 @@ impl ItemTemplate for MiscUsableTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            MiscUsableTemplate::FlaskOfOil => 257,
-            MiscUsableTemplate::IronSpike => 1,
-            MiscUsableTemplate::Statue => 14,
-            MiscUsableTemplate::SilverCross => 16,
-            MiscUsableTemplate::GoldCross => 17,
-            MiscUsableTemplate::MithrilCross => 18,
-            MiscUsableTemplate::Cross => 19,
-            MiscUsableTemplate::CorkedBottle => 21,
+            MiscUsableTemplate::FlaskOfOil => {
+                ItemSubType::FlaskOfOil(FlaskOfOilSubType::FlaskOfOil)
+            }
+            MiscUsableTemplate::IronSpike => ItemSubType::Spike(SpikeSubType::IronSpike),
+            MiscUsableTemplate::Statue => ItemSubType::MiscUsable(MiscUsableSubType::Statue),
+            MiscUsableTemplate::SilverCross => {
+                ItemSubType::MiscUsable(MiscUsableSubType::SilverCross)
+            }
+            MiscUsableTemplate::GoldCross => ItemSubType::MiscUsable(MiscUsableSubType::GoldCross),
+            MiscUsableTemplate::MithrilCross => {
+                ItemSubType::MiscUsable(MiscUsableSubType::MithrilCross)
+            }
+            MiscUsableTemplate::Cross => ItemSubType::MiscUsable(MiscUsableSubType::Cross),
+            MiscUsableTemplate::CorkedBottle => {
+                ItemSubType::MiscUsable(MiscUsableSubType::CorkedBottle)
+            }
         }
     }
 

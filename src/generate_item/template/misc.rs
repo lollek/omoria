@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, MiscObjectSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscTemplate {
@@ -71,19 +74,29 @@ impl ItemTemplate for MiscTemplate {
         0
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            MiscTemplate::RatSkeleton => 1,
-            MiscTemplate::GiantCentipedeSkeleton => 2,
-            MiscTemplate::EmptyBottle => 4,
-            MiscTemplate::PotteryShard => 5,
-            MiscTemplate::HumanSkeleton => 7,
-            MiscTemplate::DwarfSkeleton => 8,
-            MiscTemplate::ElfSkeleton => 9,
-            MiscTemplate::GnomeSkeleton => 10,
-            MiscTemplate::BrokenTeeth => 11,
-            MiscTemplate::LargeBrokenBone => 12,
-            MiscTemplate::BrokenStick => 13,
+            MiscTemplate::RatSkeleton => ItemSubType::MiscObject(MiscObjectSubType::RatSkeleton),
+            MiscTemplate::GiantCentipedeSkeleton => {
+                ItemSubType::MiscObject(MiscObjectSubType::GiantCentipedeSkeleton)
+            }
+            MiscTemplate::EmptyBottle => ItemSubType::MiscObject(MiscObjectSubType::EmptyBottle),
+            MiscTemplate::PotteryShard => ItemSubType::MiscObject(MiscObjectSubType::PotteryShard),
+            MiscTemplate::HumanSkeleton => {
+                ItemSubType::MiscObject(MiscObjectSubType::HumanSkeleton)
+            }
+            MiscTemplate::DwarfSkeleton => {
+                ItemSubType::MiscObject(MiscObjectSubType::DwarfSkeleton)
+            }
+            MiscTemplate::ElfSkeleton => ItemSubType::MiscObject(MiscObjectSubType::ElfSkeleton),
+            MiscTemplate::GnomeSkeleton => {
+                ItemSubType::MiscObject(MiscObjectSubType::GnomeSkeleton)
+            }
+            MiscTemplate::BrokenTeeth => ItemSubType::MiscObject(MiscObjectSubType::BrokenTeeth),
+            MiscTemplate::LargeBrokenBone => {
+                ItemSubType::MiscObject(MiscObjectSubType::LargeBrokenBone)
+            }
+            MiscTemplate::BrokenStick => ItemSubType::MiscObject(MiscObjectSubType::BrokenStick),
         }
     }
 

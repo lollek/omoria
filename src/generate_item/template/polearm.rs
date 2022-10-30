@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, PoleArmSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PolearmTemplate {
@@ -88,20 +91,20 @@ impl ItemTemplate for PolearmTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            PolearmTemplate::AwlPike => 1,
-            PolearmTemplate::BeakedAxe => 2,
-            PolearmTemplate::Fauchard => 3,
-            PolearmTemplate::Glaive => 4,
-            PolearmTemplate::Halberd => 5,
-            PolearmTemplate::LucerneHammer => 6,
-            PolearmTemplate::Pike => 7,
-            PolearmTemplate::Spike => 8,
-            PolearmTemplate::Lance => 9,
-            PolearmTemplate::Javelin => 10,
-            PolearmTemplate::Naginata => 11,
-            PolearmTemplate::WarScythe => 12,
+            PolearmTemplate::AwlPike => ItemSubType::PoleArm(PoleArmSubType::AwlPike),
+            PolearmTemplate::BeakedAxe => ItemSubType::PoleArm(PoleArmSubType::BeakedAxe),
+            PolearmTemplate::Fauchard => ItemSubType::PoleArm(PoleArmSubType::Fauchard),
+            PolearmTemplate::Glaive => ItemSubType::PoleArm(PoleArmSubType::Glaive),
+            PolearmTemplate::Halberd => ItemSubType::PoleArm(PoleArmSubType::Halberd),
+            PolearmTemplate::LucerneHammer => ItemSubType::PoleArm(PoleArmSubType::LucerneHammer),
+            PolearmTemplate::Pike => ItemSubType::PoleArm(PoleArmSubType::Pike),
+            PolearmTemplate::Spike => ItemSubType::PoleArm(PoleArmSubType::Spike),
+            PolearmTemplate::Lance => ItemSubType::PoleArm(PoleArmSubType::Lance),
+            PolearmTemplate::Javelin => ItemSubType::PoleArm(PoleArmSubType::Javelin),
+            PolearmTemplate::Naginata => ItemSubType::PoleArm(PoleArmSubType::Naginata),
+            PolearmTemplate::WarScythe => ItemSubType::PoleArm(PoleArmSubType::WarScythe),
         }
     }
 

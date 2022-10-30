@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, MagicBookSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MagicBookTemplate {
@@ -71,12 +74,16 @@ impl ItemTemplate for MagicBookTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            MagicBookTemplate::BeginnersMagic => 257,
-            MagicBookTemplate::Magic1 => 258,
-            MagicBookTemplate::Magic2 => 259,
-            MagicBookTemplate::MagesGuideToPower => 261,
+            MagicBookTemplate::BeginnersMagic => {
+                ItemSubType::MagicBook(MagicBookSubType::BeginnersMagic)
+            }
+            MagicBookTemplate::Magic1 => ItemSubType::MagicBook(MagicBookSubType::Magic1),
+            MagicBookTemplate::Magic2 => ItemSubType::MagicBook(MagicBookSubType::Magic2),
+            MagicBookTemplate::MagesGuideToPower => {
+                ItemSubType::MagicBook(MagicBookSubType::MagesGuideToPower)
+            }
         }
     }
 

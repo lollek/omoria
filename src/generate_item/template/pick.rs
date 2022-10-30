@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, PickSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PickTemplate {
@@ -95,15 +98,15 @@ impl ItemTemplate for PickTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            PickTemplate::Pick => 1,
-            PickTemplate::Shovel => 2,
-            PickTemplate::OrcishPick1 => 2,
-            PickTemplate::OrcishPick2 => 7,
-            PickTemplate::DwarvenPick => 3,
-            PickTemplate::GnomishShovel => 5,
-            PickTemplate::DwarvenShovel => 6,
+            PickTemplate::Pick => ItemSubType::Pick(PickSubType::Pick),
+            PickTemplate::Shovel => ItemSubType::Pick(PickSubType::Shovel),
+            PickTemplate::OrcishPick1 => ItemSubType::Pick(PickSubType::OrcishPick1),
+            PickTemplate::OrcishPick2 => ItemSubType::Pick(PickSubType::OrcishPick2),
+            PickTemplate::DwarvenPick => ItemSubType::Pick(PickSubType::DwarvenPick),
+            PickTemplate::GnomishShovel => ItemSubType::Pick(PickSubType::GnomishShovel),
+            PickTemplate::DwarvenShovel => ItemSubType::Pick(PickSubType::DwarvenShovel),
         }
     }
 

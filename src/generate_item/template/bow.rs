@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, RangedWeaponSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BowTemplate {
@@ -77,15 +80,17 @@ impl ItemTemplate for BowTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            BowTemplate::Shortbow => 1,
-            BowTemplate::HuntersBow => 2,
-            BowTemplate::CompositeBow => 3,
-            BowTemplate::WarBow => 4,
-            BowTemplate::DoubleBow => 5,
-            BowTemplate::SiegeBow => 6,
-            BowTemplate::WardedBow => 7,
+            BowTemplate::Shortbow => ItemSubType::RangedWeapon(RangedWeaponSubType::Shortbow),
+            BowTemplate::HuntersBow => ItemSubType::RangedWeapon(RangedWeaponSubType::HuntersBow),
+            BowTemplate::CompositeBow => {
+                ItemSubType::RangedWeapon(RangedWeaponSubType::CompositeBow)
+            }
+            BowTemplate::WarBow => ItemSubType::RangedWeapon(RangedWeaponSubType::WarBow),
+            BowTemplate::DoubleBow => ItemSubType::RangedWeapon(RangedWeaponSubType::DoubleBow),
+            BowTemplate::SiegeBow => ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeBow),
+            BowTemplate::WardedBow => ItemSubType::RangedWeapon(RangedWeaponSubType::WardedBow),
         }
     }
 

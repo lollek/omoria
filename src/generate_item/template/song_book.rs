@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, SongBookSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SongBookTemplate {
@@ -69,12 +72,16 @@ impl ItemTemplate for SongBookTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            SongBookTemplate::BeginnersHandbook => 262,
-            SongBookTemplate::SongBook1 => 263,
-            SongBookTemplate::SongBook2 => 264,
-            SongBookTemplate::GreaterSongBook => 265,
+            SongBookTemplate::BeginnersHandbook => {
+                ItemSubType::SongBook(SongBookSubType::BeginnersHandbook)
+            }
+            SongBookTemplate::SongBook1 => ItemSubType::SongBook(SongBookSubType::SongBook1),
+            SongBookTemplate::SongBook2 => ItemSubType::SongBook(SongBookSubType::SongBook2),
+            SongBookTemplate::GreaterSongBook => {
+                ItemSubType::SongBook(SongBookSubType::GreaterSongBook)
+            }
         }
     }
 

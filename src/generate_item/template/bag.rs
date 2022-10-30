@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{BagSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BagTemplate {
@@ -75,13 +78,13 @@ impl ItemTemplate for BagTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            BagTemplate::BagOfHolding250 => 1,
-            BagTemplate::BagOfHolding500 => 2,
-            BagTemplate::BagOfHolding1000 => 3,
-            BagTemplate::BagOfHolding1500 => 3,
-            BagTemplate::BagOfDevouring => 4,
+            BagTemplate::BagOfHolding250 => ItemSubType::Bag(BagSubType::BagOfHolding250),
+            BagTemplate::BagOfHolding500 => ItemSubType::Bag(BagSubType::BagOfHolding500),
+            BagTemplate::BagOfHolding1000 => ItemSubType::Bag(BagSubType::BagOfHolding1000),
+            BagTemplate::BagOfHolding1500 => ItemSubType::Bag(BagSubType::BagOfHolding1500),
+            BagTemplate::BagOfDevouring => ItemSubType::Bag(BagSubType::BagOfDevouring),
         }
     }
 

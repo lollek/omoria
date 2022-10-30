@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ChestSubType, ItemSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChestTemplate {
@@ -73,14 +76,14 @@ impl ItemTemplate for ChestTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            ChestTemplate::SmallWoodenChest => 1,
-            ChestTemplate::LargeWoodenChest => 4,
-            ChestTemplate::SmallIronChest => 7,
-            ChestTemplate::LargeIronChest => 10,
-            ChestTemplate::SmallSteelChest => 13,
-            ChestTemplate::LargeSteelChest => 16,
+            ChestTemplate::SmallWoodenChest => ItemSubType::Chest(ChestSubType::SmallWoodenChest),
+            ChestTemplate::LargeWoodenChest => ItemSubType::Chest(ChestSubType::LargeWoodenChest),
+            ChestTemplate::SmallIronChest => ItemSubType::Chest(ChestSubType::SmallIronChest),
+            ChestTemplate::LargeIronChest => ItemSubType::Chest(ChestSubType::LargeIronChest),
+            ChestTemplate::SmallSteelChest => ItemSubType::Chest(ChestSubType::SmallSteelChest),
+            ChestTemplate::LargeSteelChest => ItemSubType::Chest(ChestSubType::LargeSteelChest),
         }
     }
 

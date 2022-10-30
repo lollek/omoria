@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, SwordSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SwordTemplate {
@@ -96,22 +99,22 @@ impl ItemTemplate for SwordTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            SwordTemplate::Backsword => 6,
-            SwordTemplate::BastardSword => 7,
-            SwordTemplate::Broadsword => 10,
-            SwordTemplate::Claymore => 11,
-            SwordTemplate::Cutlass => 12,
-            SwordTemplate::Espadon => 13,
-            SwordTemplate::ExecutionersSword => 14,
-            SwordTemplate::Flamberge => 15,
-            SwordTemplate::Katana => 17,
-            SwordTemplate::Longsword => 18,
-            SwordTemplate::Nodachi => 19,
-            SwordTemplate::Sabre => 21,
-            SwordTemplate::Zweihander => 23,
-            SwordTemplate::BrokenSword => 24,
+            SwordTemplate::Backsword => ItemSubType::Sword(SwordSubType::Backsword),
+            SwordTemplate::BastardSword => ItemSubType::Sword(SwordSubType::BastardSword),
+            SwordTemplate::Broadsword => ItemSubType::Sword(SwordSubType::Broadsword),
+            SwordTemplate::Claymore => ItemSubType::Sword(SwordSubType::Claymore),
+            SwordTemplate::Cutlass => ItemSubType::Sword(SwordSubType::Cutlass),
+            SwordTemplate::Espadon => ItemSubType::Sword(SwordSubType::Espadon),
+            SwordTemplate::ExecutionersSword => ItemSubType::Sword(SwordSubType::ExecutionersSword),
+            SwordTemplate::Flamberge => ItemSubType::Sword(SwordSubType::Flamberge),
+            SwordTemplate::Katana => ItemSubType::Sword(SwordSubType::Katana),
+            SwordTemplate::Longsword => ItemSubType::Sword(SwordSubType::Longsword),
+            SwordTemplate::Nodachi => ItemSubType::Sword(SwordSubType::Nodachi),
+            SwordTemplate::Sabre => ItemSubType::Sword(SwordSubType::Sabre),
+            SwordTemplate::Zweihander => ItemSubType::Sword(SwordSubType::Zweihander),
+            SwordTemplate::BrokenSword => ItemSubType::Sword(SwordSubType::BrokenSword),
         }
     }
 

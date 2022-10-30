@@ -1,5 +1,8 @@
 use super::super::item_template::ItemTemplate;
-use crate::model;
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, RangedWeaponSubType},
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SlingTemplate {
@@ -45,9 +48,9 @@ impl ItemTemplate for SlingTemplate {
         }
     }
 
-    fn subtype(&self) -> i64 {
+    fn subtype(&self) -> ItemSubType {
         match self {
-            SlingTemplate::Sling => 20,
+            SlingTemplate::Sling => ItemSubType::RangedWeapon(RangedWeaponSubType::Sling),
         }
     }
 
