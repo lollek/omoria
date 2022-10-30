@@ -7,13 +7,13 @@ READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
 WRITEFILES =	data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
 
-all:	omoria
-
-
 RSFILES = $(shell find src/ -type f -name '*.rs')
 CFILES = $(shell find src/ -type f -name '*.c')
 HFILES = $(shell find src/ -type f -name '*.h')
-OBJFILES = $(shell find src/ -type f -name '*.c')
+OBJFILES = $(shell find src/ -type f -name '*.o')
+
+.PHONY: all
+all:	omoria
 
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
