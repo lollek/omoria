@@ -4,7 +4,7 @@ use crate::conversion::item_subtype::from_i64;
 use crate::identification;
 use crate::model::item_subtype::{
     ChestSubType, GemSubType, ItemSubType, JewelrySubType, LightSourceSubType, MiscObjectSubType,
-    MiscUsableSubType,
+    MiscUsableSubType, BagSubType,
 };
 use crate::model::{Item, ItemType};
 
@@ -191,6 +191,28 @@ pub(crate) fn gem(item: &Item) -> String {
             }
             _ => "".to_owned(),
         }))
+    }
+
+    parts.join("")
+}
+
+pub(crate) fn bag(item: &Item) -> String {
+    let subtype = from_i64(ItemType::Bag, item.subval)
+        .unwrap_or_else(|| panic!("Subtype for item is not a bag? {:?}", item));
+
+    let mut parts = vec![
+        Cow::from("bag")
+    ];
+
+    if identification::is_identified(subtype) {
+        parts.push(Cow::from(match subtype {
+            ItemSubType::Bag(BagSubType::BagOfHolding250) => " of holding (250)",
+            ItemSubType::Bag(BagSubType::BagOfHolding500) => " of holding (500)",
+            ItemSubType::Bag(BagSubType::BagOfHolding1000) => " of holding (1000)",
+            ItemSubType::Bag(BagSubType::BagOfHolding1500) => " of holding (1500)",
+            ItemSubType::Bag(BagSubType::BagOfDevouring) => " of devouring",
+            t => panic!("Expected bag, got {:?}", t),
+        }));
     }
 
     parts.join("")

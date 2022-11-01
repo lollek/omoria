@@ -724,45 +724,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("Holy Book{}{}", plural_s(), name))
         }
-        ItemType::Chest => Cow::from(match item.subval {
-            1 => "Small wooden chest",
-            4 => "Large wooden chest",
-            5 => "Dead human body",
-            7 => "Small iron chest",
-            10 => "Large iron chest",
-            13 => "Small steel chest",
-            16 => "Large steel chest",
-            _ => "Alien chest",
-        }),
-        ItemType::Bag => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    1 => " of Holding (250)",
-                    2 => " of Holding (500)",
-                    3 => " of Holding (1000)",
-                    //3 => "%N Bag of Holding (1500)",
-                    4 => " of Devouring",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("%N Bag{}", attribute))
-        }
-        ItemType::MiscObject => Cow::from(match item.subval {
-            1 => "Rat skeleton",
-            2 => "Giant centipede skeleton",
-            4 => "Empty bottle",
-            5 => "Broken set of pottery",
-            7 => "Human skeleton",
-            8 => "Dwarf skeleton",
-            9 => "Elf skeleton",
-            10 => "Gnome skeleton",
-            11 => "Broken set of teeth",
-            12 => "Large broken bone",
-            13 => "Broken stick",
-            _ => "Alien thing",
-        }),
         _ => Cow::from("Something alien"),
     }
 }
@@ -824,6 +785,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::MiscUsable => subtypes::misc_usable(item),
         ItemType::Jewelry => subtypes::jewelry(item),
         ItemType::Gem => subtypes::gem(item),
+        ItemType::Bag => subtypes::bag(item),
         ItemType::LightSource => subtypes::light_source(item),
         _ => generic_item(item),
     }
