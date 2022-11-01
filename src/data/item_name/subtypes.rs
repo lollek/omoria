@@ -1,13 +1,14 @@
 use std::borrow::Cow;
 
 use crate::conversion::item_subtype::from_i64;
+use crate::identification;
 use crate::model::item_subtype::{
-    ChestSubType, ItemSubType, JewelrySubType, LightSourceSubType, MiscObjectSubType,
+    ChestSubType, GemSubType, ItemSubType, JewelrySubType, LightSourceSubType, MiscObjectSubType,
     MiscUsableSubType,
 };
 use crate::model::{Item, ItemType};
 
-use super::helpers::{no_more, number_of, plural_s};
+use super::helpers::{no_more, number_of, p1_plural_s, plural_es, plural_s};
 
 pub(crate) fn misc_object(item: &Item) -> String {
     vec![
@@ -95,6 +96,106 @@ pub(crate) fn jewelry(item: &Item) -> String {
     .join("")
 }
 
+pub(crate) fn gem(item: &Item) -> String {
+    let subtype = from_i64(ItemType::Gem, item.subval)
+        .unwrap_or_else(|| panic!("Subtype for item is not a gem? {:?}", item));
+
+    let mut parts = vec![
+        number_of(item),
+        match subtype {
+            ItemSubType::Gem(GemSubType::GemOfDetectMonsters)
+            | ItemSubType::Gem(GemSubType::GemOfDispelEvil)
+            | ItemSubType::Gem(GemSubType::GemOfDarkness)
+            | ItemSubType::Gem(GemSubType::GemOfAcidBalls)
+            | ItemSubType::Gem(GemSubType::GemOfDetectInvisible)
+            | ItemSubType::Gem(GemSubType::GemOfIdentify)
+            | ItemSubType::Gem(GemSubType::GemOfLight)
+            | ItemSubType::Gem(GemSubType::GemOfSummoning)
+            | ItemSubType::Gem(GemSubType::GemOfRemoveCurse)
+            | ItemSubType::Gem(GemSubType::GemOfAnnihilation)
+            | ItemSubType::Gem(GemSubType::GemOfRecall) => {
+                Cow::Borrowed(if identification::is_identified(subtype) {
+                    "gem"
+                } else {
+                    "finely cut gem"
+                })
+            }
+            ItemSubType::Gem(GemSubType::FineAgate) => {
+                Cow::from(format!("finely cut agate{}", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::FineDiamond) => {
+                Cow::from(format!("finely cut diamond{}", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::RoughDiamond) => {
+                Cow::from(format!("roughly cut diamond{}", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::RoughSapphire) => {
+                Cow::from(format!("roughly cut sapphire{}", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::FineSapphire) => {
+                Cow::from(format!("finely cut sapphire{}", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::SmallBagOfOpals) => {
+                Cow::from(format!("small bag{} of opals", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::SmallBagOfSapphires) => {
+                Cow::from(format!("small bag{} of sapphires", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::SmallPouchOfDiamonds) => {
+                Cow::from(format!("small pouch{} of diamonds", plural_es(item)))
+            }
+            ItemSubType::Gem(GemSubType::LargeSackOfPearls) => {
+                Cow::from(format!("large sack{} of pearls", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::LargeSackOfSapphires) => {
+                Cow::from(format!("large sack{} of sapphires", plural_s(item)))
+            }
+            ItemSubType::Gem(GemSubType::LargePouchOfDiamonds) => {
+                Cow::from(format!("large pouch{} of diamonds", plural_es(item)))
+            }
+            t => panic!("Expected jewelry, got {:?}", t),
+        },
+    ];
+
+    if identification::is_identified(subtype) {
+        parts.push(Cow::from(match subtype {
+            ItemSubType::Gem(GemSubType::GemOfDetectMonsters) => " of detect monsters",
+            ItemSubType::Gem(GemSubType::GemOfDispelEvil) => " of dispel evil",
+            ItemSubType::Gem(GemSubType::GemOfDarkness) => " of darkness",
+            ItemSubType::Gem(GemSubType::GemOfAcidBalls) => " of acid balls",
+            ItemSubType::Gem(GemSubType::GemOfDetectInvisible) => " of detect invisible",
+            ItemSubType::Gem(GemSubType::GemOfIdentify) => " of identify",
+            ItemSubType::Gem(GemSubType::GemOfLight) => " of light",
+            ItemSubType::Gem(GemSubType::GemOfSummoning) => " of summoning",
+            ItemSubType::Gem(GemSubType::GemOfRemoveCurse) => " of remove curse",
+            ItemSubType::Gem(GemSubType::GemOfAnnihilation) => " of annihilation",
+            ItemSubType::Gem(GemSubType::GemOfRecall) => " of recall",
+            _ => "",
+        }))
+    }
+
+    if item.is_identified() {
+        parts.push(Cow::from(match subtype {
+            ItemSubType::Gem(GemSubType::GemOfDetectMonsters)
+            | ItemSubType::Gem(GemSubType::GemOfDispelEvil)
+            | ItemSubType::Gem(GemSubType::GemOfDarkness)
+            | ItemSubType::Gem(GemSubType::GemOfAcidBalls)
+            | ItemSubType::Gem(GemSubType::GemOfDetectInvisible)
+            | ItemSubType::Gem(GemSubType::GemOfIdentify)
+            | ItemSubType::Gem(GemSubType::GemOfLight)
+            | ItemSubType::Gem(GemSubType::GemOfSummoning)
+            | ItemSubType::Gem(GemSubType::GemOfRemoveCurse)
+            | ItemSubType::Gem(GemSubType::GemOfAnnihilation)
+            | ItemSubType::Gem(GemSubType::GemOfRecall) => {
+                format!(" ({} charge{})", item.p1, p1_plural_s(item))
+            }
+            _ => "".to_owned(),
+        }))
+    }
+
+    parts.join("")
+}
+
 pub(crate) fn light_source(item: &Item) -> String {
     vec![
         number_of(item),
@@ -119,7 +220,7 @@ pub(crate) fn light_source(item: &Item) -> String {
         Cow::from(format!(
             " with {} turn{} of light",
             item.p1,
-            if item.p1 == 1 { "" } else { "s" }
+            p1_plural_s(item)
         )),
     ]
     .join("")

@@ -823,6 +823,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::Chest => subtypes::chest(item),
         ItemType::MiscUsable => subtypes::misc_usable(item),
         ItemType::Jewelry => subtypes::jewelry(item),
+        ItemType::Gem => subtypes::gem(item),
         ItemType::LightSource => subtypes::light_source(item),
         _ => generic_item(item),
     }

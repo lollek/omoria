@@ -17,6 +17,14 @@ pub(crate) fn no_more<'a>(item: &Item) -> Cow<'a, str> {
     }
 }
 
+pub(crate) fn p1_plural_s<'a>(item: &Item) -> Cow<'a, str> {
+    if item.p1 == 1 {
+        Cow::Borrowed("")
+    } else {
+        Cow::Borrowed("s")
+    }
+}
+
 pub(crate) fn plural_s<'a>(item: &Item) -> Cow<'a, str> {
     if item.number == 1 {
         Cow::Borrowed("")

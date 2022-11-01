@@ -43,6 +43,7 @@ pub mod commands_extern;
 pub mod constants_extern;
 pub mod generate_item;
 pub mod highscore_extern;
+pub mod identification;
 pub mod misc_extern;
 pub mod ncurses_extern;
 pub mod random_extern;
