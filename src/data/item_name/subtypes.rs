@@ -4,7 +4,7 @@ use crate::conversion::item_subtype::from_i64;
 use crate::identification;
 use crate::model::item_subtype::{
     ChestSubType, GemSubType, ItemSubType, JewelrySubType, LightSourceSubType, MiscObjectSubType,
-    MiscUsableSubType, BagSubType,
+    MiscUsableSubType, BagSubType, WearableGemSubType,
 };
 use crate::model::{Item, ItemType};
 
@@ -213,6 +213,36 @@ pub(crate) fn bag(item: &Item) -> String {
             ItemSubType::Bag(BagSubType::BagOfDevouring) => " of devouring",
             t => panic!("Expected bag, got {:?}", t),
         }));
+    }
+
+    parts.join("")
+}
+
+pub(crate) fn wearable_gem(item: &Item) -> String {
+    let subtype = from_i64(ItemType::WearableGem, item.subval)
+        .unwrap_or_else(|| panic!("Subtype for item is not a wearable gem? {:?}", item));
+
+
+    let mut parts = vec![
+        number_of(item),
+        Cow::Borrowed(if identification::is_identified(subtype) {
+            "gem"
+        } else {
+            "finely cut gem"
+        }),
+    ];
+
+    if identification::is_identified(subtype) {
+        parts.push(Cow::from(match subtype {
+            ItemSubType::WearableGem(WearableGemSubType::GemOfTeleportation) => " of teleportation",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfResistCold) => " of resist cold",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfResistAcid) => " of resist acid",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfSeeInvisible) => " of see invisible",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfStealth) => " of stealth",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfSlowDigestion) => " of slow digestion",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfProtectFire) => " of lordly protection (FIRE)",
+            _ => "",
+        }))
     }
 
     parts.join("")

@@ -178,22 +178,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 if item.is_identified() { "of gems" } else { "" }
             ))
         }
-        ItemType::WearableGem => {
-            let attribute = match item.subval {
-                1 => "of teleportation",
-                2 => "of resist cold",
-                3 => "of resist acid",
-                4 => "of see invisible",
-                5 => "of stealth",
-                6 => "of slow digestation",
-                7 => "of lordly protection (FIRE)",
-                _ => "of ???",
-            };
-            Cow::from(format!(
-                "Finely cut %R{}",
-                if item.is_identified() { attribute } else { "" }
-            ))
-        }
         ItemType::SoftArmor => Cow::from(match item.subval {
             1 => "Robe",
             2 => "Soft leather armor",
@@ -426,18 +410,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             60 => Cow::from("Finely wrought mithril necklace"),
             _ => Cow::from("%A Alien amulet"),
         },
-        ItemType::MiscUsable => Cow::from(match item.subval {
-            14 => "%A Statue",
-            15 => "Broken set of teeth",
-            16 => "Silver cross",
-            17 => "Gold cross",
-            18 => "Mithril cross",
-            19 => "%M cross",
-            20 => "%M cross",
-            21 => "Corked bottle",
-            22 => "Holy hand grenade of Antioch",
-            _ => "Alien thing",
-        }),
         ItemType::Chime => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -786,6 +758,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::Jewelry => subtypes::jewelry(item),
         ItemType::Gem => subtypes::gem(item),
         ItemType::Bag => subtypes::bag(item),
+        ItemType::WearableGem => subtypes::wearable_gem(item),
         ItemType::LightSource => subtypes::light_source(item),
         _ => generic_item(item),
     }
