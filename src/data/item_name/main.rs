@@ -819,6 +819,10 @@ fn generic_item(item: &Item) -> String {
 
 pub fn generate(item: &Item) -> String {
     match item.item_type() {
+        ItemType::MiscObject => subtypes::misc_object(item),
+        ItemType::Chest => subtypes::chest(item),
+        ItemType::MiscUsable => subtypes::misc_usable(item),
+        ItemType::Jewelry => subtypes::jewelry(item),
         ItemType::LightSource => subtypes::light_source(item),
         _ => generic_item(item),
     }
@@ -827,10 +831,7 @@ pub fn generate(item: &Item) -> String {
 #[cfg(test)]
 mod test {
 
-    use crate::generate_item::{
-        self,
-        template::{FoodTemplate, LightSourceTemplate},
-    };
+    use crate::generate_item::{self, template::FoodTemplate};
 
     use super::*;
 
@@ -844,50 +845,5 @@ mod test {
 
         item.number = 5;
         assert_eq!(generate(&item), "5 rations of food");
-    }
-
-    #[test]
-    fn test_light_sources() {
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(LightSourceTemplate::WoodenTorch),
-                0
-            )),
-            "wooden torch with 4000 turns of light"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(LightSourceTemplate::BrassLantern),
-                0
-            )),
-            "brass lantern with 7500 turns of light"
-        );
-
-        let mut magic_torch = generate_item::generate(Box::new(LightSourceTemplate::MagicTorch), 0);
-        magic_torch.set_identified(true);
-        assert_eq!(
-            generate(&magic_torch),
-            "magic torch with 9000 turns of light"
-        );
-
-        magic_torch.set_identified(false);
-        assert_eq!(
-            generate(&magic_torch),
-            "magic torch with 9000 turns of light"
-        );
-
-        let mut magic_lantern =
-            generate_item::generate(Box::new(LightSourceTemplate::MagicLantern), 0);
-        magic_lantern.set_identified(true);
-        assert_eq!(
-            generate(&magic_lantern),
-            "magic lantern with 20000 turns of light"
-        );
-
-        magic_lantern.set_identified(false);
-        assert_eq!(
-            generate(&magic_lantern),
-            "magic lantern with 20000 turns of light"
-        );
     }
 }

@@ -10,6 +10,29 @@ pub(crate) fn number_of<'a>(item: &Item) -> Cow<'a, str> {
     }
 }
 
+pub(crate) fn no_more<'a>(item: &Item) -> Cow<'a, str> {
+    match item.number {
+        0 => Cow::from("no more "),
+        _ => Cow::from(""),
+    }
+}
+
+pub(crate) fn plural_s<'a>(item: &Item) -> Cow<'a, str> {
+    if item.number == 1 {
+        Cow::Borrowed("")
+    } else {
+        Cow::Borrowed("s")
+    }
+}
+
+pub(crate) fn plural_es<'a>(item: &Item) -> Cow<'a, str> {
+    if item.number == 1 {
+        Cow::Borrowed("")
+    } else {
+        Cow::Borrowed("es")
+    }
+}
+
 #[cfg(test)]
 mod test {
 

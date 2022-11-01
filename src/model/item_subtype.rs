@@ -81,6 +81,7 @@ pub enum MiscObjectSubType {
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ChestSubType {
+    //  DeadHumanBody,
     SmallWoodenChest,
     LargeWoodenChest,
     SmallIronChest,
