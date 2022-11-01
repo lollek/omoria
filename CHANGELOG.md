@@ -1,6 +1,23 @@
 # Changelog
 
+## 5.2.0-alpha
+
+25 October 2022
+
+* Lots of internal changes
+* Fix crash bug when viewing ones inventory
+* Add debug-feature to view one's inventory with both I and Alt-I, which have different code implementations. Will remove one after all code has been migrated.
+
+## 5.1.1-alpha
+
+13 February 2022
+
+* Only internal changes
+
 ## 5.1.0-alpha
+
+12 February 2022
+
 * Massive code changes to items. Added, removed and modified a lot of items.
   Also removed "colors". E.g. potions are now only "potions", not "red potion".
   This is not final, and there will be a lot of changes going forward.
