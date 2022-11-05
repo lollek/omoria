@@ -15,6 +15,9 @@ pancurses = "0.16"
 enum-iterator = "1.1"
 backtrace = "0.3.66"
 
+[dev-dependencies]
+serial_test = "0.4.0"
+
 [lib]
 name = "omoria"
 crate-type = ["staticlib"]

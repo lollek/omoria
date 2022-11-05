@@ -1,13 +1,80 @@
 use std::borrow::Cow;
 
-use crate::model::Item;
+use crate::{misc, model::Item};
 
+/**
+ * Returns the number of the given item. 1 returns an empty string
+ */
 pub(crate) fn number_of<'a>(item: &Item) -> Cow<'a, str> {
     match item.number {
         0 => Cow::from("no more "),
         1 => Cow::from(""),
         _ => Cow::from(item.number.to_string() + " "),
     }
+}
+
+/**
+ * Returns the number of the given item, including 1 if number is 1
+ */
+pub(crate) fn full_number_of<'a>(item: &Item) -> Cow<'a, str> {
+    match item.number {
+        0 => Cow::from("no more "),
+        _ => Cow::from(item.number.to_string() + " "),
+    }
+}
+
+/**
+ * Returns if there are no items left, or empty string
+ */
+pub(crate) fn no_more<'a>(item: &Item) -> Cow<'a, str> {
+    match item.number {
+        0 => Cow::from("no more "),
+        _ => Cow::from(""),
+    }
+}
+
+pub(crate) fn p1_plural_s<'a>(item: &Item) -> Cow<'a, str> {
+    if item.p1 == 1 {
+        Cow::Borrowed("")
+    } else {
+        Cow::Borrowed("s")
+    }
+}
+
+pub(crate) fn plural_s<'a>(item: &Item) -> Cow<'a, str> {
+    if item.number == 1 {
+        Cow::Borrowed("")
+    } else {
+        Cow::Borrowed("s")
+    }
+}
+
+pub(crate) fn plural_es<'a>(item: &Item) -> Cow<'a, str> {
+    if item.number == 1 {
+        Cow::Borrowed("")
+    } else {
+        Cow::Borrowed("es")
+    }
+}
+
+pub(crate) fn damage<'a>(item: &Item) -> Cow<'a, str> {
+    let raw_string = item.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
+    let damage_string = misc::c_array_to_rust_string(raw_string);
+    Cow::from(format!(" ({})", damage_string))
+}
+
+pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
+    let tohit_sign = if item.tohit > 0 { "+" } else { "" };
+    let todam_sign = if item.todam > 0 { "+" } else { "" };
+    Cow::from(format!(
+        " ({}{},{}{})",
+        tohit_sign, item.tohit, todam_sign, item.todam
+    ))
+}
+
+pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
+    let p1_sign = if item.p1 > 0 { "+" } else { "" };
+    Cow::from(format!(" ({}{})", p1_sign, item.p1))
 }
 
 #[cfg(test)]

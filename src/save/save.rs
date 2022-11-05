@@ -5,16 +5,15 @@ use std::io::{Read, Seek, Write};
 
 use serde_json;
 
-use crate::constants;
 use crate::debug;
+use crate::identification::IdentifiedSubTypes;
 use crate::master;
-use crate::model::{
-    DungeonRecord, IdentifiedRecord, InventoryItem, Item, MonsterRecord, PlayerRecord, TownRecord,
-};
+use crate::model::{DungeonRecord, InventoryItem, Item, MonsterRecord, PlayerRecord, TownRecord};
 use crate::ncurses;
 use crate::player;
 use crate::save;
 use crate::term;
+use crate::{constants, identification};
 
 #[derive(Serialize, Deserialize)]
 struct SaveRecord {
@@ -23,7 +22,7 @@ struct SaveRecord {
     equipment: Vec<Item>,
     town: TownRecord,
     dungeon: DungeonRecord,
-    identified: IdentifiedRecord,
+    identified: IdentifiedSubTypes,
     monsters: MonsterRecord,
 }
 
@@ -112,7 +111,7 @@ fn load_character(player_name: &str, player_uid: i64) -> Option<()> {
     save::equipment::set_record(records.equipment);
     save::town::set_record(records.town);
     save::dungeon::set_record(records.dungeon);
-    save::identified::set_record(records.identified);
+    identification::set_record(records.identified);
     save::monsters::set_record(records.monsters);
     Some(())
 }
@@ -143,7 +142,7 @@ fn save_character() -> Option<()> {
             equipment: save::equipment::record(),
             town: save::town::record(),
             dungeon: save::dungeon::record(),
-            identified: save::identified::record(),
+            identified: identification::record(),
             monsters: save::monsters::record(),
         },
     )?;

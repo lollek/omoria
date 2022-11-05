@@ -51,29 +51,39 @@ static long __calc_plus_to_hit(treas_rec const *missile,
  */
 static long __calc_damage(treas_rec const *missile,
                           enum _ranged_attack_t type) {
-  switch (type) {
-  case THROW:
+  if (type == THROW) {
     return damroll(missile->data.damage) + missile->data.todam;
-  case SHOOT: {
-    long base_damage = damroll(missile->data.damage) + missile->data.todam;
-    switch (equipment[Equipment_primary].p1) {
-    case 1: /*{ Sling and Bullet  }*/
+  }
+
+  // type == SHOOT, missile.tval should be 20 (ranged weapon)
+  long base_damage = damroll(missile->data.damage) + missile->data.todam;
+  switch (missile.subval) {
+    case 1: /*{ Short Bow and Arrow    }*/
       return base_damage + 2;
-    case 2: /*{ Short Bow and Arrow    }*/
-      return base_damage + 2;
-    case 3: /*{ Long Bow and Arrow     }*/
+    case 2: /*{ Hunters Bow and Arrow     }*/
       return base_damage + 3;
-    case 4: /*{ Composite Bow and Arrow}*/
+    case 3: /*{ Composite Bow and Arrow}*/
       return base_damage + 4;
-    case 5: /*{ Light Crossbow and Bolt}*/
+    case 4: /*{ War Bow and Arrow}*/
+      return base_damage + 5;
+    case 5: /*{ Double Bow and Arrow}*/
+      return base_damage + 6;
+    case 6: /*{ Siege Bow and Arrow}*/
+      return base_damage + 7;
+    case 7: /*{ Warded Bow and Arrow}*/
+      return base_damage + 8;
+    case 10: /*{ Light Crossbow and Bolt}*/
       return base_damage + 2;
-    case 6: /*{ Heavy Crossbow and Bolt}*/
+    case 11: /*{ Heavy Crossbow and Bolt}*/
       return base_damage + 4;
-    }
-    MSG(("__calc_damage fell through weapon switch"));
-    return base_damage;
+    case 12: /*{ Siege Crossbow and Bolt}*/
+      return base_damage + 6;
+    case 13: /*{ Ballista and Bolt}*/
+      return base_damage + 8;
+    case 20: /*{ Sling and Bullet  }*/
+      return base_damage + 2;
   }
-  }
+
   MSG(("__calc_damage fell through switch"));
   return 0;
 }

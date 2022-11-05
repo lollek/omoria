@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ItemSubType {
     MiscObject(MiscObjectSubType),
     Chest(ChestSubType),
@@ -64,7 +64,7 @@ pub enum ItemSubType {
     LodgingAtInn(LodgingAtInnSubType),
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum MiscObjectSubType {
     RatSkeleton,
     GiantCentipedeSkeleton,
@@ -79,8 +79,9 @@ pub enum MiscObjectSubType {
     BrokenStick,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ChestSubType {
+    //  DeadHumanBody,
     SmallWoodenChest,
     LargeWoodenChest,
     SmallIronChest,
@@ -89,7 +90,7 @@ pub enum ChestSubType {
     LargeSteelChest,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum MiscUsableSubType {
     FlaskOfOil,
     IronSpike,
@@ -101,7 +102,7 @@ pub enum MiscUsableSubType {
     CorkedBottle,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum JewelrySubType {
     SmallGoldPendant,
     SmallMithrilPendant,
@@ -109,7 +110,7 @@ pub enum JewelrySubType {
     SmallSilverPendant,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GemSubType {
     GemOfDetectMonsters,
     GemOfDispelEvil,
@@ -135,7 +136,7 @@ pub enum GemSubType {
     LargePouchOfDiamonds,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BagSubType {
     BagOfHolding250,
     BagOfHolding500,
@@ -144,7 +145,7 @@ pub enum BagSubType {
     BagOfDevouring,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum WearableGemSubType {
     GemOfTeleportation,
     GemOfResistCold,
@@ -155,28 +156,28 @@ pub enum WearableGemSubType {
     GemOfProtectFire,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SlingAmmoSubType {
     RoundedPebble,
     IronShot,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BoltSubType {
     Bolt,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ArrowSubType {
     Arrow,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SpikeSubType {
     IronSpike,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum LightSourceSubType {
     WoodenTorch,
     BrassLantern,
@@ -184,7 +185,7 @@ pub enum LightSourceSubType {
     MagicLantern,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum RangedWeaponSubType {
     Shortbow,
     HuntersBow,
@@ -200,7 +201,7 @@ pub enum RangedWeaponSubType {
     Sling,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum HaftedWeaponSubType {
     Balestarius,
     BattleAxe,
@@ -213,7 +214,7 @@ pub enum HaftedWeaponSubType {
     ChampionAxe,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PoleArmSubType {
     AwlPike,
     BeakedAxe,
@@ -229,7 +230,7 @@ pub enum PoleArmSubType {
     WarScythe,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum DaggerSubType {
     MainGauche,
     Misercorde,
@@ -244,7 +245,7 @@ pub enum DaggerSubType {
     SmallSword,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SwordSubType {
     Backsword,
     BastardSword,
@@ -262,7 +263,7 @@ pub enum SwordSubType {
     BrokenSword,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PickSubType {
     Pick,
     Shovel,
@@ -273,7 +274,7 @@ pub enum PickSubType {
     DwarvenShovel,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum MaulSubType {
     BallAndChain,
     WoodenClub,
@@ -287,10 +288,10 @@ pub enum MaulSubType {
     OgreMaul,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GemHelmSubType {}
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BootsSubType {
     SoftLeatherShoes,
     SoftLeatherBoots,
@@ -303,7 +304,7 @@ pub enum BootsSubType {
     WyrmhideBoot,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GlovesSubType {
     LeatherGloves,
     HeavyGloves,
@@ -317,7 +318,7 @@ pub enum GlovesSubType {
     WyrmhideGloves,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum CloakSubType {
     LightCloak,
     HeavyCloak,
@@ -326,7 +327,7 @@ pub enum CloakSubType {
     WyrmhideCloak,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum HelmSubType {
     ClothHat,
     SoftLeatherCap,
@@ -342,7 +343,7 @@ pub enum HelmSubType {
     JewelEncrustedCrown,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ShieldSubType {
     SmallLeatherShield,
     MediumLeatherShield,
@@ -355,7 +356,7 @@ pub enum ShieldSubType {
     WyrmhideShield,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum HardArmorSubType {
     AugmentedChainMail,
     BarChainMail,
@@ -375,7 +376,7 @@ pub enum HardArmorSubType {
     StonePlateArmor,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SoftArmorSubType {
     CoolSetOfThreads,
     DemonhideArmor,
@@ -396,7 +397,7 @@ pub enum SoftArmorSubType {
     LeatherBrigantineArmor,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BracersSubType {
     BracersOfProtection,
     BracersOfDefense,
@@ -418,7 +419,7 @@ pub enum BracersSubType {
     LamellarBracers,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BeltSubType {
     Sash,
     LightBelt,
@@ -430,7 +431,7 @@ pub enum BeltSubType {
     WyrmhideBelt,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AmuletSubType {
     AmuletOfAdornment1,
     AmuletOfAdornment2,
@@ -447,7 +448,7 @@ pub enum AmuletSubType {
     MithrilNecklace,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum RingSubType {
     RingOfGainStrength,
     RingOfGainDexterity,
@@ -484,7 +485,7 @@ pub enum RingSubType {
     RingOfGnomekind,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum StaffSubType {
     StaffOfLight,
     StaffOfDoorStairLocation,
@@ -512,10 +513,10 @@ pub enum StaffSubType {
     StaffOfIdentify,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum RodSubType {}
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum WandSubType {
     WandOfProbing,
     WandOfLight,
@@ -544,7 +545,7 @@ pub enum WandSubType {
     WandOfWonder,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Scroll1SubType {
     AggravateMonster,
     Blessing,
@@ -590,10 +591,10 @@ pub enum Scroll1SubType {
     WordOfRecall,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Scroll2SubType {}
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Potion1SubType {
     AppleJuice,
     Blindness,
@@ -642,15 +643,15 @@ pub enum Potion1SubType {
     Water,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Potion2SubType {}
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum FlaskOfOilSubType {
     FlaskOfOil,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum FoodSubType {
     Mushroom,
     MushroomOfPoison,
@@ -690,7 +691,7 @@ pub enum FoodSubType {
     EyeballOfNed,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum JunkFoodSubType {
     BoxOfPiranhaCrackers,
     CanOfOrcaCola,
@@ -707,7 +708,7 @@ pub enum JunkFoodSubType {
     PackOfKittenMcNuggets,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ChimeSubType {
     ChimeOfLight,
     ChimeOfDetectDoorsStairs,
@@ -727,7 +728,7 @@ pub enum ChimeSubType {
     ChimeOfDarkness,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum HornSubType {
     HornOfBubbles,
     HornOfCalling,
@@ -744,7 +745,7 @@ pub enum HornSubType {
     HornOfFog,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum MagicBookSubType {
     BeginnersMagic,
     Magic1,
@@ -752,7 +753,7 @@ pub enum MagicBookSubType {
     MagesGuideToPower,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PrayerBookSubType {
     BeginnersHandbook,
     WordsOfWisdom,
@@ -760,7 +761,7 @@ pub enum PrayerBookSubType {
     ExorcismAndDispelling,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum InstrumentSubType {
     PipesOfPeace,
     LyreOfNature,
@@ -768,7 +769,7 @@ pub enum InstrumentSubType {
     HarpOfTheDruids,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SongBookSubType {
     BeginnersHandbook,
     SongBook1,
@@ -776,7 +777,7 @@ pub enum SongBookSubType {
     GreaterSongBook,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum LodgingAtInnSubType {
     LodgingForOneDay,
     LodgingForThreeDays,

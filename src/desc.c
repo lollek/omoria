@@ -67,6 +67,7 @@ void rantitle(char *title) {
   strcat(title, "\"");
 }
 
+void identification_set_identified(treasure_type *item); // identification.rs
 void identify(treasure_type *item) {
   /*{ Something has been identified }*/
 
@@ -94,6 +95,8 @@ void identify(treasure_type *item) {
       known1(curse->data.name);
     }
   }
+
+  identification_set_identified(item);
 }
 
 void known1(char *object_str) {

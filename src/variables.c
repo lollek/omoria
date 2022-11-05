@@ -277,8 +277,6 @@ treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
 
 long mugging_chance; /* { Chance page gets mugged} */
 
-boolean object_ident[MAX_OBJECTS + 1]; /*(max_objects of false) */
-
 /*	{ Gold list (All types of gold and gems are defined here)	} */
 treasure_type gold_list[MAX_GOLD] = {{"& copper piece~", valuable_metal, 0, 0,
                                       0, 0, 2, 5, 420, 0, 0, 0, 0, " ", 2, 0},
