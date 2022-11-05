@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use crate::{model::Item, misc};
+use crate::{misc, model::Item};
 
 /**
  * Returns the number of the given item. 1 returns an empty string

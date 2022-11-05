@@ -3,12 +3,14 @@ use std::borrow::Cow;
 use crate::conversion::item_subtype::from_i64;
 use crate::identification;
 use crate::model::item_subtype::{
-    ChestSubType, GemSubType, ItemSubType, JewelrySubType, LightSourceSubType, MiscObjectSubType,
-    MiscUsableSubType, BagSubType, WearableGemSubType, SlingAmmoSubType, ArrowSubType, BoltSubType,
+    ArrowSubType, BagSubType, BoltSubType, ChestSubType, GemSubType, ItemSubType, JewelrySubType,
+    LightSourceSubType, MiscObjectSubType, MiscUsableSubType, SlingAmmoSubType, WearableGemSubType,
 };
 use crate::model::{Item, ItemType};
 
-use super::helpers::{no_more, number_of, p1_plural_s, plural_es, plural_s, damage, attack_bonus, full_number_of};
+use super::helpers::{
+    attack_bonus, damage, full_number_of, no_more, number_of, p1_plural_s, plural_es, plural_s,
+};
 
 pub(crate) fn misc_object(item: &Item) -> String {
     vec![
@@ -200,9 +202,7 @@ pub(crate) fn bag(item: &Item) -> String {
     let subtype = from_i64(ItemType::Bag, item.subval)
         .unwrap_or_else(|| panic!("Subtype for item is not a bag? {:?}", item));
 
-    let mut parts = vec![
-        Cow::from("bag")
-    ];
+    let mut parts = vec![Cow::from("bag")];
 
     if identification::is_identified(subtype) {
         parts.push(Cow::from(match subtype {
@@ -222,7 +222,6 @@ pub(crate) fn wearable_gem(item: &Item) -> String {
     let subtype = from_i64(ItemType::WearableGem, item.subval)
         .unwrap_or_else(|| panic!("Subtype for item is not a wearable gem? {:?}", item));
 
-
     let mut parts = vec![
         number_of(item),
         Cow::Borrowed(if identification::is_identified(subtype) {
@@ -239,8 +238,12 @@ pub(crate) fn wearable_gem(item: &Item) -> String {
             ItemSubType::WearableGem(WearableGemSubType::GemOfResistAcid) => " of resist acid",
             ItemSubType::WearableGem(WearableGemSubType::GemOfSeeInvisible) => " of see invisible",
             ItemSubType::WearableGem(WearableGemSubType::GemOfStealth) => " of stealth",
-            ItemSubType::WearableGem(WearableGemSubType::GemOfSlowDigestion) => " of slow digestion",
-            ItemSubType::WearableGem(WearableGemSubType::GemOfProtectFire) => " of lordly protection (FIRE)",
+            ItemSubType::WearableGem(WearableGemSubType::GemOfSlowDigestion) => {
+                " of slow digestion"
+            }
+            ItemSubType::WearableGem(WearableGemSubType::GemOfProtectFire) => {
+                " of lordly protection (FIRE)"
+            }
             _ => "",
         }))
     }
@@ -256,15 +259,9 @@ pub(crate) fn ammo(item: &Item) -> String {
                 ItemSubType::SlingAmmo(SlingAmmoSubType::RoundedPebble) => {
                     Cow::from("rounded pebble")
                 }
-                ItemSubType::SlingAmmo(SlingAmmoSubType::IronShot) => {
-                    Cow::from("iron shot")
-                }
-                ItemSubType::Arrow(ArrowSubType::Arrow) => {
-                    Cow::from("arrow")
-                }
-                ItemSubType::Bolt(BoltSubType::Bolt) => {
-                    Cow::from("bolt")
-                }
+                ItemSubType::SlingAmmo(SlingAmmoSubType::IronShot) => Cow::from("iron shot"),
+                ItemSubType::Arrow(ArrowSubType::Arrow) => Cow::from("arrow"),
+                ItemSubType::Bolt(BoltSubType::Bolt) => Cow::from("bolt"),
                 t => panic!("Expected ammo, got {:?}", t),
             },
             None => Cow::from("alien ammo"),
