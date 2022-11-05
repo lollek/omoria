@@ -134,10 +134,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             20 => "Sling",
             _ => "Alien ranged weapon",
         }),
-        ItemType::Arrow => Cow::from(format!("Arrow{}", plural_s())),
-        ItemType::Bolt => Cow::from(format!("Bolt{}", plural_s())),
-        ItemType::SlingAmmo => Cow::from(format!("Rounded pebble{}", plural_s())),
-        ItemType::Spike => Cow::from(format!("Iron spike{}", plural_s())),
         ItemType::Pick => Cow::from(match item.subval {
             1 => "Pick",
             2 => "Shovel",
@@ -749,6 +745,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::Arrow => subtypes::ammo(item),
         ItemType::Bolt => subtypes::ammo(item),
         ItemType::LightSource => subtypes::light_source(item),
+        ItemType::Spike => subtypes::numbered_misc_usable(item),
         _ => generic_item(item),
     }
 }

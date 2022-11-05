@@ -4,7 +4,8 @@ use crate::conversion::item_subtype::from_i64;
 use crate::identification;
 use crate::model::item_subtype::{
     ArrowSubType, BagSubType, BoltSubType, ChestSubType, GemSubType, ItemSubType, JewelrySubType,
-    LightSourceSubType, MiscObjectSubType, MiscUsableSubType, SlingAmmoSubType, WearableGemSubType,
+    LightSourceSubType, MiscObjectSubType, MiscUsableSubType, SlingAmmoSubType, SpikeSubType,
+    WearableGemSubType,
 };
 use crate::model::{Item, ItemType};
 
@@ -72,6 +73,22 @@ pub(crate) fn misc_usable(item: &Item) -> String {
             },
             None => "alien usable item",
         }),
+    ]
+    .join("")
+}
+
+pub(crate) fn numbered_misc_usable(item: &Item) -> String {
+    vec![
+        full_number_of(item),
+        match from_i64(item.item_type(), item.subval) {
+            Some(subtype) => match subtype {
+                ItemSubType::Spike(SpikeSubType::IronSpike) => {
+                    Cow::from(format!("iron spike{}", plural_s(item)))
+                }
+                t => panic!("Expected, got {:?}", t),
+            },
+            None => Cow::from("alien item"),
+        },
     ]
     .join("")
 }
