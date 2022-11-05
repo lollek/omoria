@@ -72,6 +72,11 @@ pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
     ))
 }
 
+pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
+    let p1_sign = if item.p1 > 0 { "+" } else { "" };
+    Cow::from(format!(" ({}{})", p1_sign, item.p1))
+}
+
 #[cfg(test)]
 mod test {
 

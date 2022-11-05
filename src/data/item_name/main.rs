@@ -746,6 +746,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::Bolt => subtypes::ammo(item),
         ItemType::LightSource => subtypes::light_source(item),
         ItemType::Spike => subtypes::numbered_misc_usable(item),
+        ItemType::RangedWeapon => subtypes::ranged_weapon(item),
         _ => generic_item(item),
     }
 }

@@ -49,10 +49,10 @@ impl ItemTemplate for CrossbowTemplate {
 
     fn p1(&self) -> i64 {
         match self {
-            CrossbowTemplate::SiegeCrossbow => 5,
-            CrossbowTemplate::Ballista => 6,
-            CrossbowTemplate::LightCrossbow => 6,
-            CrossbowTemplate::HeavyCrossbow => 7,
+            CrossbowTemplate::SiegeCrossbow => 6,
+            CrossbowTemplate::Ballista => 8,
+            CrossbowTemplate::LightCrossbow => 2,
+            CrossbowTemplate::HeavyCrossbow => 4,
         }
     }
 

@@ -4,13 +4,14 @@ use crate::conversion::item_subtype::from_i64;
 use crate::identification;
 use crate::model::item_subtype::{
     ArrowSubType, BagSubType, BoltSubType, ChestSubType, GemSubType, ItemSubType, JewelrySubType,
-    LightSourceSubType, MiscObjectSubType, MiscUsableSubType, SlingAmmoSubType, SpikeSubType,
-    WearableGemSubType,
+    LightSourceSubType, MiscObjectSubType, MiscUsableSubType, RangedWeaponSubType,
+    SlingAmmoSubType, SpikeSubType, WearableGemSubType,
 };
 use crate::model::{Item, ItemType};
 
 use super::helpers::{
-    attack_bonus, damage, full_number_of, no_more, number_of, p1_plural_s, plural_es, plural_s,
+    attack_bonus, damage, full_number_of, no_more, number_of, p1_bonus, p1_plural_s, plural_es,
+    plural_s,
 };
 
 pub(crate) fn misc_object(item: &Item) -> String {
@@ -321,4 +322,34 @@ pub(crate) fn light_source(item: &Item) -> String {
         )),
     ]
     .join("")
+}
+
+pub(crate) fn ranged_weapon(item: &Item) -> String {
+    let mut parts = vec![
+        number_of(item),
+        Cow::from(match from_i64(item.item_type(), item.subval) {
+            Some(subtype) => match subtype {
+                ItemSubType::RangedWeapon(RangedWeaponSubType::Sling) => "sling",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::Shortbow) => "shortbow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::HuntersBow) => "hunters bow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::CompositeBow) => "composite bow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::WarBow) => "war bow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::DoubleBow) => "double bow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeBow) => "siege bow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::WardedBow) => "warded bow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::LightCrossbow) => "light crossbow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::HeavyCrossbow) => "heavy crossbow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeCrossbow) => "siege crossbow",
+                ItemSubType::RangedWeapon(RangedWeaponSubType::Ballista) => "ballista",
+                t => panic!("Expected light source, got {:?}", t),
+            },
+            None => "alien lightsource",
+        }),
+        p1_bonus(item),
+    ];
+
+    if item.is_identified() {
+        parts.push(attack_bonus(item));
+    }
+    parts.join("")
 }

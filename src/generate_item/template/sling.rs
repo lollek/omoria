@@ -38,7 +38,7 @@ impl ItemTemplate for SlingTemplate {
 
     fn p1(&self) -> i64 {
         match self {
-            SlingTemplate::Sling => 1,
+            SlingTemplate::Sling => 2,
         }
     }
 
