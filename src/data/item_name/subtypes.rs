@@ -4,11 +4,11 @@ use crate::conversion::item_subtype::from_i64;
 use crate::identification;
 use crate::model::item_subtype::{
     ChestSubType, GemSubType, ItemSubType, JewelrySubType, LightSourceSubType, MiscObjectSubType,
-    MiscUsableSubType, BagSubType, WearableGemSubType,
+    MiscUsableSubType, BagSubType, WearableGemSubType, SlingAmmoSubType, ArrowSubType, BoltSubType,
 };
 use crate::model::{Item, ItemType};
 
-use super::helpers::{no_more, number_of, p1_plural_s, plural_es, plural_s};
+use super::helpers::{no_more, number_of, p1_plural_s, plural_es, plural_s, damage, attack_bonus, full_number_of};
 
 pub(crate) fn misc_object(item: &Item) -> String {
     vec![
@@ -245,6 +245,37 @@ pub(crate) fn wearable_gem(item: &Item) -> String {
         }))
     }
 
+    parts.join("")
+}
+
+pub(crate) fn ammo(item: &Item) -> String {
+    let mut parts = vec![
+        full_number_of(item),
+        match from_i64(item.item_type(), item.subval) {
+            Some(subtype) => match subtype {
+                ItemSubType::SlingAmmo(SlingAmmoSubType::RoundedPebble) => {
+                    Cow::from("rounded pebble")
+                }
+                ItemSubType::SlingAmmo(SlingAmmoSubType::IronShot) => {
+                    Cow::from("iron shot")
+                }
+                ItemSubType::Arrow(ArrowSubType::Arrow) => {
+                    Cow::from("arrow")
+                }
+                ItemSubType::Bolt(BoltSubType::Bolt) => {
+                    Cow::from("bolt")
+                }
+                t => panic!("Expected ammo, got {:?}", t),
+            },
+            None => Cow::from("alien ammo"),
+        },
+        plural_s(item),
+        damage(item),
+    ];
+
+    if item.is_identified() {
+        parts.push(attack_bonus(item));
+    }
     parts.join("")
 }
 

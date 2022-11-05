@@ -1,9 +1,10 @@
 use std::borrow::Cow;
 
 use crate::data;
-use crate::misc;
 use crate::model::{Item, ItemType};
 
+use super::helpers::attack_bonus;
+use super::helpers::damage;
 use super::helpers::number_of;
 use super::subtypes;
 
@@ -700,21 +701,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     }
 }
 
-fn damage<'a>(item: &Item) -> Cow<'a, str> {
-    let raw_string = item.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
-    let damage_string = misc::c_array_to_rust_string(raw_string);
-    Cow::from(format!(" ({})", damage_string))
-}
-
-fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    let tohit_sign = if item.tohit > 0 { "+" } else { "" };
-    let todam_sign = if item.todam > 0 { "+" } else { "" };
-    Cow::from(format!(
-        " ({}{},{}{})",
-        tohit_sign, item.tohit, todam_sign, item.todam
-    ))
-}
-
 fn armor_bonus<'a>(item: &Item) -> Cow<'a, str> {
     if item.ac == 0 && (!item.is_identified() || item.toac == 0) {
         return Cow::from("");
@@ -759,6 +745,9 @@ pub fn generate(item: &Item) -> String {
         ItemType::Gem => subtypes::gem(item),
         ItemType::Bag => subtypes::bag(item),
         ItemType::WearableGem => subtypes::wearable_gem(item),
+        ItemType::SlingAmmo => subtypes::ammo(item),
+        ItemType::Arrow => subtypes::ammo(item),
+        ItemType::Bolt => subtypes::ammo(item),
         ItemType::LightSource => subtypes::light_source(item),
         _ => generic_item(item),
     }
