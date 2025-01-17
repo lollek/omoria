@@ -1,42 +1,42 @@
-#ifndef MISC_H
-#define MISC_H
+#pragma once
 
 #include <curses.h>
-#include <time.h>
+// ReSharper disable once CppUnusedIncludeDirective
+#include <time.h> // time_t
 
 #include "types.h"
 
-/* with fake boolean values you cant really do a (bool1 != bool2) and expect it to work.  */
-boolean xor (long thing1, long thing2);
+/* with fake bool values you cant really do a (bool1 != bool2) and expect it to work.  */
+bool xor (long thing1, long thing2);
 
 /*{ Prompts for a direction                               -RAK-   }*/
-boolean d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
+bool d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
 long maxmin(long x, long y, long z);
 long minmax(long x, long y, long z);
 long bit_pos(unsigned long *test);
 long bit_pos64(unsigned long *high, unsigned long *low);
 long distance(long y1, long x1, long y2, long x2);
-void insert_str(char *object_str, char const *mtc_str, char const *insert_str);
-boolean in_bounds(long y, long x);
+void insert_str(const char *object_str, char const *mtc_str, char const *insert_str);
+bool in_bounds(long y, long x);
 long next_to4(long y, long x, obj_set group_set);
 long next_to8(long y, long x, obj_set group_set);
 long rotate_dir(long dir, long rot);
 long get_hexdecant(long dy, long dx);
-void tlink();
-void mlink();
+void tlink(void);
+void mlink(void);
 long damroll(char const *dice);
-boolean los(long y1, long x1, long y2, long x2);
+bool los(long y1, long x1, long y2, long x2);
 chtype get_loc_symbol(long y, long x);
 chtype loc_symbol(long y, long x);
-boolean test_light(long y, long x);
-void validate_monsters();
-void compact_monsters();
+bool test_light(long y, long x);
+void validate_monsters(void);
+void compact_monsters(void);
 void popm(long *x);
 void pushm(long x);
 long max_hp(char const *hp_str);
-void place_win_monster();
+void place_win_monster(void);
 void petrify(long amt);
-void compact_objects();
+void compact_objects(void);
 void popt(long *x);
 void pusht(long x);
 void place_open_door(long y, long x);
@@ -59,35 +59,35 @@ char *time_string(long hour, long sec, char result[134]);
 void time_diff(game_time_type a, game_time_type b, game_time_type *c);
 void add_days(game_time_type *ti, long d);
 char *full_date_string(game_time_type time, char result[134]);
-void adv_time(boolean flag);
-char *play_time(time_type *t, char result[134]);
+void adv_time(bool flag);
+char *play_time(const time_type *t, char result[134]);
 time_type *convert_seconds_to_time(time_t seconds, time_type *tim);
-time_t convert_time_to_seconds(time_type *tim);
+time_t convert_time_to_seconds(const time_type *tim);
 char *show_char_age(char result[134]);
 char *show_current_time(char result[134]);
 char *likert(long x, long y, char *result);
-unsigned char characters_sex();
-treas_rec *money_carry();
+unsigned char characters_sex(void);
+treas_rec *money_carry(void);
 char *cost_str(long amt, char result[134]);
-uint16_t max_allowable_weight();
-uint16_t min_allowable_weight();
+uint16_t max_allowable_weight(void);
+uint16_t min_allowable_weight(void);
 void add_money(long amount);
-void subtract_money(long amount, boolean make_change);
-boolean send_page(long to_bank);
+void subtract_money(long amount, bool make_change);
+bool send_page(long to_bank);
 void spell_chance(spl_rec *spell);
-boolean get_spell(spl_type spell, long num, long *sn, long *sc, char prompt[82],
-                  boolean *redraw);
+bool get_spell(spl_type spell, long num, long *sn, long *sc, char prompt[82],
+                  bool *redraw);
 long num_new_spells(long smarts);
-void learn_magic(boolean redraw);
-void gain_level();
-void insert_num(char *object_str, char *mtc_str, long number,
-                boolean show_sign);
+void learn_magic(bool redraw);
+void gain_level(void);
+void insert_num(const char *object_str, const char *mtc_str, long number,
+                bool show_sign);
 long attack_blows(long weight, long *wtohit);
-long critical_blow(long weight, long plus, boolean cs_sharp, boolean is_fired);
-boolean move_dir(long dir, long *y, long *x);
-boolean player_saves(long adjust);
-boolean player_spell_saves();
-void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence);
+long critical_blow(long weight, long plus, bool cs_sharp, bool is_fired);
+bool move_dir(long dir, long *y, long *x);
+bool player_saves(long adjust);
+bool player_spell_saves(void);
+void find_monster_name(char m_name[82], long ptr, bool begin_sentence);
 
 /**
  * Figure out what kind of coin is beign asked about
@@ -95,13 +95,13 @@ void find_monster_name(char m_name[82], const long ptr, boolean begin_sentence);
  * typ: Initial of coin metal
  * type_num: ???
  */
-boolean coin_stuff(char typ, long *type_num);
+bool coin_stuff(char typ, long *type_num);
 
 /*{ Deletes object from given location                    -RAK-   }*/
-boolean delete_object(long y, long x);
+bool delete_object(long y, long x);
 
 /*{ Tunneling through wall }*/
-boolean twall(long y, long x, long t1, long t2);
+bool twall(long y, long x, long t1, long t2);
 
 /**
  * Get a 'dir' from a roguelike command
@@ -120,6 +120,4 @@ int char_to_dir(char c);
 char dir_to_char(int dir);
 
 /*{ recomputes cash totals for player and bank }*/
-void reset_total_cash();
-
-#endif // MISC_H
+void reset_total_cash(void);

@@ -1,3 +1,4 @@
+#include "../io.h"
 #include "../player.h"
 #include "../types.h"
 #include "../variables.h"
@@ -9,34 +10,28 @@
 #include "../monsters.h"
 #include "../screen.h"
 
-boolean player_action_attack(long y, long x) {
+bool player_action_attack(const long y, const long x) {
 
-  long a_cptr;
-  long a_mptr;
-  long i3;
   long blows;
   long tot_tohit;
-  long crit_mult;
   char m_name[82];
-  char out_val[120];
-  boolean mean_jerk_flag;
-  boolean is_sharp;
-  boolean backstab_flag;
+  bool mean_jerk_flag;
+  bool backstab_flag;
 
-  obj_set mages_suck = {hafted_weapon, pole_arm, sword, maul, 0};
-  obj_set priests_suck = {hafted_weapon, pole_arm, dagger, sword, 0};
-  obj_set druids_suck = {hafted_weapon, pole_arm, sword, 0};
-  obj_set monks_suck = {hafted_weapon, pole_arm, maul, 0};
-  obj_set catch_this = {sling_ammo, bolt, arrow, 0};
+  const obj_set mages_suck = {hafted_weapon, pole_arm, sword, maul, 0};
+  const obj_set priests_suck = {hafted_weapon, pole_arm, dagger, sword, 0};
+  const obj_set druids_suck = {hafted_weapon, pole_arm, sword, 0};
+  const obj_set monks_suck = {hafted_weapon, pole_arm, maul, 0};
+  const obj_set catch_this = {sling_ammo, bolt, arrow, 0};
 
-  boolean return_value = false;
+  bool return_value = false;
 
   ENTER(("py_attack", "%d, %d", y, x));
 
-  a_cptr = cave[y][x].cptr;
-  a_mptr = m_list[a_cptr].mptr;
+  const long a_cptr = cave[y][x].cptr;
+  const long a_mptr = m_list[a_cptr].mptr;
 
-  if ((player_pclass == C_ROGUE) && (m_list[a_cptr].csleep != 0)) {
+  if (player_pclass == C_ROGUE && m_list[a_cptr].csleep != 0) {
     backstab_flag = true;
   } else {
     backstab_flag = false;
@@ -58,27 +53,27 @@ boolean player_action_attack(long y, long x) {
   }
 
   if (backstab_flag) {
-    tot_tohit += (player_lev / 4);
+    tot_tohit += player_lev / 4;
   }
 
   /*{ Adjust weapons for class }*/
   if (player_pclass == C_WARRIOR) {
-    tot_tohit += 1 + (player_lev / 2);
+    tot_tohit += 1 + player_lev / 2;
 
-  } else if ((player_pclass == C_MAGE) &&
-             (is_in(equipment[Equipment_primary].tval, mages_suck))) {
+  } else if (player_pclass == C_MAGE &&
+             is_in(equipment[Equipment_primary].tval, mages_suck)) {
     tot_tohit -= 5;
 
-  } else if ((player_pclass == C_PRIEST) &&
-             (is_in(equipment[Equipment_primary].tval, priests_suck))) {
+  } else if (player_pclass == C_PRIEST &&
+             is_in(equipment[Equipment_primary].tval, priests_suck)) {
     tot_tohit -= 4;
 
-  } else if ((player_pclass == C_DRUID) &&
-             (is_in(equipment[Equipment_primary].tval, druids_suck))) {
+  } else if (player_pclass == C_DRUID &&
+             is_in(equipment[Equipment_primary].tval, druids_suck)) {
     tot_tohit -= 4;
 
-  } else if ((player_pclass == C_MONK) &&
-             (is_in(equipment[Equipment_primary].tval, monks_suck))) {
+  } else if (player_pclass == C_MONK &&
+             is_in(equipment[Equipment_primary].tval, monks_suck)) {
     tot_tohit -= 3;
   }
 
@@ -89,8 +84,8 @@ boolean player_action_attack(long y, long x) {
   tot_tohit += player_ptohit;
 
   /*{ stopped from killing town creatures?? }*/
-  if (((monster_templates[a_mptr].cmove & 0x00004000) == 0) ||
-      (randint(100) < -player_rep)) {
+  if ((monster_templates[a_mptr].cmove & 0x00004000) == 0 ||
+      randint(100) < -player_rep) {
     mean_jerk_flag = true;
   } else {
     mean_jerk_flag = get_yes_no("Are you sure you want to?");
@@ -98,8 +93,11 @@ boolean player_action_attack(long y, long x) {
 
   /*{ Loop for number of blows, trying to hit the critter...        }*/
   if (mean_jerk_flag) {
+    long crit_mult;
+    long i3;
     /* with player_do; */
     do {
+      char out_val[120];
       if (player_test_hit(player_bth, player_lev, tot_tohit, monster_templates[a_mptr].ac,
                           false)) {
         if (backstab_flag) {
@@ -112,17 +110,18 @@ boolean player_action_attack(long y, long x) {
         /*{ Weapon?       }*/
         if (equipment[Equipment_primary].tval > 0) {
           i3 = damroll(equipment[Equipment_primary].damage);
-          i3 = tot_dam(&equipment[Equipment_primary], i3, &monster_templates[a_mptr]);
-          is_sharp =
-              (equipment[Equipment_primary].tval != bow_crossbow_or_sling) &&
-              ((equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0);
+          i3 = tot_dam(&equipment[Equipment_primary], i3,
+                       &monster_templates[a_mptr]);
+          const bool is_sharp =
+              equipment[Equipment_primary].tval != bow_crossbow_or_sling &&
+              (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0;
           crit_mult = critical_blow(equipment[Equipment_primary].weight,
                                     tot_tohit, is_sharp, false);
           if (backstab_flag) {
-            i3 *= ((player_lev / 7) + 1);
+            i3 *= player_lev / 7 + 1;
           }
           if (player_pclass == C_WARRIOR) {
-            i3 += (player_lev / 3);
+            i3 += player_lev / 3;
           }
           i3 += (i3 + 5) * crit_mult;
 
@@ -168,7 +167,7 @@ boolean player_action_attack(long y, long x) {
             equip_ctr--;
             inven_temp.data = equipment[Equipment_primary];
             equipment[Equipment_primary] = blank_treasure;
-            py_bonuses(&(inven_temp.data), -1);
+            py_bonuses(&inven_temp.data, -1);
           }
         }
       } else {

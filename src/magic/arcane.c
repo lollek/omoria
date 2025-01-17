@@ -1,10 +1,11 @@
 #include "../player.h"
+#include "../io.h"
 #include "../variables.h"
 #include "../spells.h"
 #include "../misc.h"
 #include "../random.h"
 
-void arcane_spell_effects(long effect) {
+void arcane_spell_effects(const long effect) {
   /*{ Spells...                                     }*/
 
   long i2;
@@ -74,7 +75,7 @@ void arcane_spell_effects(long effect) {
     break;
 
   case 12: /*{ Cure Poison }*/
-    cure_me(&(player_flags.poisoned));
+    cure_me(&player_flags.poisoned);
     break;
 
   case 13: /*{ Shadow Door }*/
@@ -194,7 +195,7 @@ void arcane_spell_effects(long effect) {
     break;
 
   case 36: /*{ Haste Self }*/
-    (player_flags).fast += randint(20) + player_lev;
+    player_flags.fast += randint(20) + player_lev;
     break;
 
   case 37: /*{ Fire Ball }*/

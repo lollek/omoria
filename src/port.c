@@ -2,28 +2,19 @@
 /* code to help port the vax pascal into linux c */
 
 #include <curses.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
+#include "io.h"
 
 static long malloc_calls = 0;
 static long malloc_bytes = 0;
 static long free_calls = 0;
 static long free_bytes = 0;
 
-void memory_error(int blocksize, char *message) {
+void memory_error(const int blocksize, char *message) {
   endwin();
   printf("\n\r\n\rMemory error (%d bytes)! Ref: %s.\n\r\n\r", blocksize,
          message);
@@ -36,7 +27,7 @@ void memory_error(int blocksize, char *message) {
   exit_game();
 }
 
-void *safe_malloc(int blocksize, char *message) {
+void *safe_malloc(const int blocksize, char *message) {
   void *new_pointer = malloc(blocksize);
 
   if (new_pointer == NULL) {
@@ -51,7 +42,7 @@ void *safe_malloc(int blocksize, char *message) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void dispose(void *ptr, int size, char *message) {
+void dispose(void *ptr, const int size, const char *message) {
   (void)message;
   free_calls++;
   free_bytes += size;
@@ -64,10 +55,9 @@ void dispose(void *ptr, int size, char *message) {
 
 char *chomp(char *input_line) {
   /* remove \n from the end of a string if there is one */
-  long x;
 
-  x = strlen(input_line);
-  if (x && (input_line[x - 1] == '\n')) {
+  const long x = strlen(input_line);
+  if (x && input_line[x - 1] == '\n') {
     input_line[x - 1] = 0;
   }
 
@@ -78,11 +68,11 @@ char *chomp(char *input_line) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-long min3(long i1, long i2, long i3) {
+long min3(const long i1, const long i2, const long i3) {
   if (i1 < i2) {
-    return (i1 < i3) ? i1 : i3;
+    return i1 < i3 ? i1 : i3;
   } else {
-    return (i2 < i3) ? i2 : i3;
+    return i2 < i3 ? i2 : i3;
   }
 }
 

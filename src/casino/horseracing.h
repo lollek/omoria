@@ -1,6 +1,3 @@
-#ifndef HORSERACING_H
-#define HORSERACING_H
+#pragma once
 
-void start_horse_racing();
-
-#endif /* HORSERACING_H */
+void start_horse_racing(void);

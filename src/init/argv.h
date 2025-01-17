@@ -1,5 +1,4 @@
-#ifndef INIT_ARGV_H
-#define INIT_ARGV_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -10,5 +9,3 @@
  * Will print information to stderr on failure
  */
 bool init__argv(int argc, char *argv[]);
-
-#endif /* INIT_ARGV_H */

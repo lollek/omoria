@@ -11,19 +11,13 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
+#include "io.h"
 #include "save.h"
 #include "term.h"
-#include "types.h"
-#include "variables.h"
 #include "unix.h"
+#include "variables.h"
 
 int command_count;
 int eof_flag;
@@ -50,7 +44,8 @@ static void minor_error(char const *error_message) {
   sleep(2);
 }
 
-void put_buffer_attr(const char *out_str, long row, long col, int attrs) {
+void put_buffer_attr(const char *out_str, const long row, const long col,
+                     const int attrs) {
   attr_t old_attr;
   short unused_pair;
   short unused_opts;
@@ -66,13 +61,12 @@ void put_buffer_attr(const char *out_str, long row, long col, int attrs) {
    consumes ^R to redraw the screen and reset the terminal, so that this
    operation can always be performed at any input prompt.  inkey() never
    returns ^R.	*/
-char inkey() {
-  int i;
+char inkey(void) {
 
   refresh();         /* Dump IO buffer		*/
   command_count = 0; /* Just to be safe -CJS- */
   while (TRUE) {
-    i = getch();
+    const int i = getch();
     /* some machines may not sign extend. */
     if (i == EOF) {
       eof_flag++;
@@ -100,35 +94,26 @@ char inkey() {
     }
     if (i != CTRL_('R')) {
       msg_flag = false;
-      return (char)i;
+      return i;
     }
     refresh();
   }
 }
 
 /* Flush the buffer					-RAK-	*/
-void flush() {
-  /* the code originally used ioctls, TIOCDRAIN, or TIOCGETP/TIOCSETP, or
-     TCGETA/TCSETAF, however this occasionally resulted in loss of output,
-     the happened especially often when rlogin from BSD to SYS_V machine,
-     using check_input makes the desired effect a bit clearer */
-  /* wierd things happen on EOF, don't try to flush input in that case */
-  if (!eof_flag)
-    while (check_input(0))
-      ;
-  /* used to call refresh() here to drain output, but it is not necessary
-   */
+void flush(void) {
+  refresh();
 }
 
 /* Clears given line of text				-RAK-	*/
-void Erase_Line(long row, long col) {
+void Erase_Line(const long row, const long col) {
   if (row == MSG_LINE && msg_flag)
     msg_print(CNIL);
-  (void)move((int)row, (int)col);
+  (void)move(row, col);
   clrtoeol();
 }
 
-void Clear_From(int row) {
+void Clear_From(const int row) {
   (void)move(row, 0);
   clrtobot();
 }
@@ -143,7 +128,7 @@ void Print(chtype const ch, int row, int col) {
 
   used_line[row + 1] = true;
 
-  if ((row > 24) || (row < 0) || (col > 79) || (col < 0)) {
+  if (row > 24 || row < 0 || col > 79 || col < 0) {
     sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
     minor_error(tmp_str);
   }
@@ -154,36 +139,34 @@ void Print(chtype const ch, int row, int col) {
   }
 }
 
-void prt2(char *str_buff1, char *str_buff2, int row, int col) {
+void prt2(char *str_buff1, char *str_buff2, const int row, const int col) {
   char temp[82];
   sprintf(temp, "%s%s", str_buff1, str_buff2);
   prt(temp, row, col);
 }
 
 /* move cursor to a given y, x position */
-void move_cursor(int row, int col) { (void)move(row, col); }
+void move_cursor(const int row, const int col) { (void)move(row, col); }
 
 /* Gets a string terminated by <RETURN>		*/
 /* Function returns false if <ESCAPE> is input	*/
-boolean Get_String(char *in_str, int row, int column, int slen) {
-  register int start_col, end_col, i;
-  char *p;
-  int flag, aborted;
+bool Get_String(char *in_str, const int row, int column, int slen) {
+  register int i;
 
-  aborted = FALSE;
-  flag = FALSE;
+  int aborted = FALSE;
+  int flag = FALSE;
   (void)move(row, column);
   for (i = slen; i > 0; i--)
     (void)addch(' ');
   (void)move(row, column);
-  start_col = column;
-  end_col = column + slen - 1;
+  const register int start_col = column;
+  register int end_col = column + slen - 1;
   if (end_col > 79) {
     /* TODO: slen below is unused. Should it be? */
     slen = 80 - column;
     end_col = 79;
   }
-  p = in_str;
+  char *p = in_str;
   do {
     i = inkey();
     switch (i) {
@@ -207,31 +190,31 @@ boolean Get_String(char *in_str, int row, int column, int slen) {
       if (!isprint(i) || column > end_col)
         bell();
       else {
-        mvaddch(row, column, (char)i);
+        mvaddch(row, column, i);
         *p++ = i;
         column++;
       }
       break;
     }
-  } while ((!flag) && (!aborted));
+  } while (!flag && !aborted);
   if (aborted)
-    return (FALSE);
+    return FALSE;
   /* Remove trailing blanks	*/
   while (p > in_str && p[-1] == ' ')
     p--;
   *p = '\0';
-  return (TRUE);
+  return TRUE;
 }
 
 /* Pauses for user response before returning		-RAK-	*/
-void Pause_Line(prt_line) int prt_line;
+void Pause_Line(const int prt_line)
 {
   prt_("[Press any key to continue.]", prt_line, 23);
   (void)inkey();
   Erase_Line(prt_line, 0);
 }
 
-void bell() {
+void bell(void) {
   refresh();
 
   /* The player can turn off beeps if he/she finds them annoying.  */

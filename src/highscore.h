@@ -1,8 +1,5 @@
-#ifndef HIGHSCORE_H
-#define HIGHSCORE_H
+#pragma once
 
 #include <stdint.h>
 
 void C_highscore(uint8_t max_highscores);
-
-#endif // HIGHSCORE_H

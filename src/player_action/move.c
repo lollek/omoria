@@ -3,48 +3,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
 #include "../creature.h"
 #include "../debug.h"
 #include "../desc.h"
 #include "../dungeon/light.h"
+#include "../io.h"
 #include "../inven.h"
-#include "../magic.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
 #include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
-#include "../term.h"
 #include "../traps.h"
 #include "../types.h"
 #include "../variables.h"
 
-boolean cave_flag = false; /*	{ Used in get_panel   } */
+bool cave_flag = false; /*	{ Used in get_panel   } */
 
 /*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
 /*{ on the TVAL of the object.  Traps are set off, money and most }*/
 /*{ objects are picked up.  Some objects, such as open doors, just}*/
 /*{ sit there...                                                  }*/
-static void carry(long y, long x) {
-
-  treas_rec *item_ptr;
-  char out_val[82];
-  char out2[120];
-  char page_char;
-  char inv_char;
-  treas_rec *tmp_ptr;
-  long count;
-  boolean money_flag;
+static void carry(const long y, const long x) {
 
   ENTER(("carry", "%d, %d", y, x));
 
-  money_flag = false;
   find_flag = false;
 
   /* with cave[y][x]. do; */
@@ -59,7 +46,14 @@ static void carry(long y, long x) {
 
     /*{ Attempt to pick up an object.         }*/
     if (inven_check_num()) {      /*{ Too many objects?     }*/
-      if (inven_check_weight()) { /*{ Weight limit check }*/
+      if (inven_check_weight()) {
+        bool money_flag = false;
+        char inv_char;
+        char page_char;
+        char out2[120];
+        char out_val[82];
+        treas_rec *item_ptr;
+        /*{ Weight limit check }*/
 
         /*{ Okay, pick it up      }*/
         pusht(cave[y][x].tptr);
@@ -82,8 +76,8 @@ static void carry(long y, long x) {
 
         } else {
 
-          count = 0;
-          tmp_ptr = inventory_list;
+          long count = 0;
+          const treas_rec *tmp_ptr = inventory_list;
 
           if (tmp_ptr->next == item_ptr->next) {
             count = 0;
@@ -94,12 +88,12 @@ static void carry(long y, long x) {
             } while (tmp_ptr->next != item_ptr->next);
           }
 
-          if ((count / 20) > 9) {
+          if (count / 20 > 9) {
             page_char = '*';
             inv_char = '*';
           } else {
-            page_char = ((count / 20) + 49);
-            inv_char = (count - (count / 20) * 20 + 97);
+            page_char = count / 20 + 49;
+            inv_char = count - count / 20 * 20 + 97;
           }
         }
         sprintf(out2, "You have %s. (%c%c)", out_val, page_char, inv_char);
@@ -117,11 +111,10 @@ static void carry(long y, long x) {
 /*        { Turns off Find_flag if something interesting appears  -RAK- * }*/
 /*        { BUG: Does not handle corridor/room corners, but I didn't * want }*/
 /*        {      to add a lot of checking for such a minor detail }*/
-static void area_affect(long dir, long y, long x) {
-  long z[4]; /*: array [1..3] of long;*/
-  long i1, row, col;
+static void area_affect(const long dir, const long y, const long x) {
+  long row, col;
   obj_set corridors = {4, 5, 6, 0};
-  obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
+  const obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
 
   if (cave[y][x].fval == corr_floor1.ftval) {
     if (next_to4(y, x, corridors) > 2) {
@@ -129,7 +122,8 @@ static void area_affect(long dir, long y, long x) {
     }
   }
 
-  if ((find_flag) && (player_flags.blind < 1)) {
+  if (find_flag && player_flags.blind < 1) {
+    long z[4];
 
     switch (dir) {
     case 1:
@@ -151,7 +145,7 @@ static void area_affect(long dir, long y, long x) {
       break;
     }
 
-    for (i1 = 1; i1 <= 3; i1++) {
+    for (long i1 = 1; i1 <= 3; i1++) {
       row = y;
       col = x;
       if (move_dir(z[i1], &row, &col)) {
@@ -168,16 +162,14 @@ static void area_affect(long dir, long y, long x) {
         if (find_flag) {
           if (player_light) {
             if (cave[row][col].tptr > 0) {
-              if (!(is_in(t_list[cave[row][col].tptr].tval,
-                          some_hidden_stuff))) {
+              if (!is_in(t_list[cave[row][col].tptr].tval, some_hidden_stuff)) {
                 find_flag = false;
               }
             }
-          } else if ((cave[row][col].tl) || (cave[row][col].pl) ||
-                     (cave[row][col].fm)) {
+          } else if (cave[row][col].tl || cave[row][col].pl ||
+                     cave[row][col].fm) {
             if (cave[row][col].tptr > 0) {
-              if (!(is_in(t_list[cave[row][col].tptr].tval,
-                          some_hidden_stuff))) {
+              if (!is_in(t_list[cave[row][col].tptr].tval, some_hidden_stuff)) {
                 find_flag = false;
               }
             }
@@ -186,7 +178,7 @@ static void area_affect(long dir, long y, long x) {
 
         /*{ Creatures             }*/
         if (find_flag) {
-          if ((cave[row][col].tl) || (cave[row][col].pl) || (player_light)) {
+          if (cave[row][col].tl || cave[row][col].pl || player_light) {
             if (cave[row][col].cptr > 1) {
               /* with */
               /* m_list[cave[row][col].cptr]
@@ -208,11 +200,11 @@ static void area_affect(long dir, long y, long x) {
  * -RAK-
  * s__panel_bounds() - Calculates current boundries
  */
-static void s__panel_bounds() {
-  panel_row_min = (trunc(panel_row * (SCREEN_HEIGHT / 2)) + 1);
+static void s__panel_bounds(void) {
+  panel_row_min = trunc(panel_row * (SCREEN_HEIGHT / 2)) + 1;
   panel_row_max = panel_row_min + SCREEN_HEIGHT - 1;
 
-  panel_col_min = (trunc(panel_col * (SCREEN_WIDTH / 2)) + 1);
+  panel_col_min = trunc(panel_col * (SCREEN_WIDTH / 2)) + 1;
   panel_col_max = panel_col_min + SCREEN_WIDTH - 1;
 
   panel_row_prt = panel_row_min - 2;
@@ -223,15 +215,14 @@ static void s__panel_bounds() {
 /*{ when a move off the screen has occurred and figures new borders}*/
 /* forceit forcses the panel bounds to be recalculated (show_location).
  */
-static boolean get_panel(long y, long x, boolean forceit) {
+static bool get_panel(const long y, const long x, const bool forceit) {
 
-  long prow, pcol;
-  boolean return_value;
+  bool return_value;
 
-  prow = panel_row;
-  pcol = panel_col;
+  long prow = panel_row;
+  long pcol = panel_col;
 
-  if (forceit || (y < panel_row_min + 2) || (y > panel_row_max - 2)) {
+  if (forceit || y < panel_row_min + 2 || y > panel_row_max - 2) {
     prow = trunc((y - 2) / (SCREEN_HEIGHT / 2));
     if (prow > max_panel_rows) {
       prow = max_panel_rows;
@@ -240,7 +231,7 @@ static boolean get_panel(long y, long x, boolean forceit) {
     }
   }
 
-  if (forceit || (x < panel_col_min + 3) || (x > panel_col_max - 3)) {
+  if (forceit || x < panel_col_min + 3 || x > panel_col_max - 3) {
     pcol = trunc((x - 3) / (SCREEN_WIDTH / 2));
     if (pcol > max_panel_cols) {
       pcol = max_panel_cols;
@@ -249,7 +240,7 @@ static boolean get_panel(long y, long x, boolean forceit) {
     }
   }
 
-  if ((prow != panel_row) || (pcol != panel_col) || !(cave_flag)) {
+  if (prow != panel_row || pcol != panel_col || !cave_flag) {
     panel_row = prow;
     panel_col = pcol;
     s__panel_bounds();
@@ -267,7 +258,7 @@ static boolean get_panel(long y, long x, boolean forceit) {
  *  pick_dir() - Picks new direction when in find mode
  *  @dir: Initial direction
  */
-static boolean pick_dir(long dir) {
+static bool pick_dir(const long dir) {
 
   long z[2];
 
@@ -295,7 +286,7 @@ static boolean pick_dir(long dir) {
     break;
   }
 
-  boolean return_value = false;
+  bool return_value = false;
   for (int i = 0; i < 2; i++) {
     long y = char_row;
     long x = char_col;
@@ -365,8 +356,8 @@ static void _move_char(long dir) {
   }
 
   /* Open floor spot */
-  if (find_flag && (is_in(cave[char_row][char_col].fval, earth_set) ==
-                    is_in(cave[test_row][test_col].fval, water_set))) {
+  if (find_flag && is_in(cave[char_row][char_col].fval, earth_set) ==
+                       is_in(cave[test_row][test_col].fval, water_set)) {
     find_flag = false;
     player_action_move(5);
     return;
@@ -397,7 +388,7 @@ static void _move_char(long dir) {
   /* A room of light should be lit... */
   if (cave[test_row][test_col].fval == lopen_floor.ftval) {
     if (player_flags.blind < 1) {
-      if (!(cave[test_row][test_col].pl)) {
+      if (!cave[test_row][test_col].pl) {
         dungeon_light_room(test_row, test_col);
       }
     }
@@ -421,7 +412,7 @@ static void _move_char(long dir) {
   char_col = test_col;
 }
 
-void player_action_move(long dir) {
+void player_action_move(const long dir) {
   ENTER(("move_char", "%d", dir));
   _move_char(dir);
   LEAVE("move_char", "m");

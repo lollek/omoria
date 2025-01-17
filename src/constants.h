@@ -1,7 +1,4 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
-
-#include "io.h"
+#pragma once
 
 /*	{ Dungeon size parameters					} */
 #define MAX_HEIGHT 66 /* { Multiple of 11; >= 22 } */
@@ -317,7 +314,5 @@
 #define print_null(r, c)                                                       \
   (move_cursor((r)-panel_row_prt - 1, (c)-panel_col_prt - 1))
 
-const char *imoria_version();
-const char *omoria_version();
-
-#endif /* CONSTANTS_H */
+const char *imoria_version(void);
+const char *omoria_version(void);

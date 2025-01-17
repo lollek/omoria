@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../io.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player_action.h"
@@ -16,7 +17,7 @@
  *  d__bash() - Bash open a door or chest
  * Note: Affected by strength and weight of character
  */
-void player_action_bash() {
+void player_action_bash(void) {
 
   long y = char_row;
   long x = char_col;
@@ -40,11 +41,11 @@ void player_action_bash() {
       strcpy(equipment[Equipment_primary].damage,
              equipment[Equipment_shield].damage);
       equipment[Equipment_primary].weight =
-          ((C_player_get_stat(STR) * 10) + 20) * 100;
+          (C_player_get_stat(STR) * 10 + 20) * 100;
       equipment[Equipment_primary].tval = 1;
 
       player_bth =
-          trunc((((C_player_get_stat(STR) * 10) + 20) / 5 + player_wt) / 6.0);
+          trunc(((C_player_get_stat(STR) * 10 + 20) / 5 + player_wt) / 6.0);
       player_ptohit = 0;
       player_ptodam = trunc(player_wt / 75.0) + 1;
 
@@ -57,7 +58,7 @@ void player_action_bash() {
       player_ptohit = old_ptohit;
       player_ptodam = old_ptodam;
       player_bth = old_bth;
-      if (randint(300) > (C_player_get_stat(DEX) * 10)) {
+      if (randint(300) > C_player_get_stat(DEX) * 10) {
         msg_print("You are off-balance.");
         player_flags.paralysis = randint(3);
       }
@@ -66,7 +67,7 @@ void player_action_bash() {
     if (t_list[cave[y][x].tptr].tval == closed_door) {
       const int from_str = C_player_get_stat(STR) * 10;
 
-      if (test_hit(player_wt + (from_str * from_str) / 500, 0, 0,
+      if (test_hit(player_wt + from_str * from_str / 500, 0, 0,
                    labs(t_list[cave[y][x].tptr].p1) + 150)) {
         msg_print("You smash into the door! "
                   "The door crashes open!");

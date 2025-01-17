@@ -1,14 +1,11 @@
-#ifndef WIZARD_H
-#define WIZARD_H
+#pragma once
 
-#include "boolean.h"
+#include <stdbool.h>
 
-void enter_wizard_mode(boolean ask_for_pass);
+void enter_wizard_mode(bool ask_for_pass);
 void wizard_command(void);
-void game_version();
-boolean check_pswd(char passw[134], boolean present);
-void wizard_light();
-void change_character();
-void wizard_create();
-
-#endif // WIZARD_H
+void game_version(void);
+bool check_pswd(char passw[134], bool present);
+void wizard_light(void);
+void change_character(void);
+void wizard_create(void);

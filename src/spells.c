@@ -3,13 +3,10 @@
 
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
 #include "creature.h"
 #include "debug.h"
@@ -19,6 +16,7 @@
 #include "generate_item/generate_item.h"
 #include "generate_monster.h"
 #include "inven.h"
+#include "io.h"
 #include "magic.h"
 #include "misc.h"
 #include "monsters.h"
@@ -27,7 +25,6 @@
 #include "player_action.h"
 #include "random.h"
 #include "screen.h"
-#include "term.h"
 #include "traps.h"
 #include "types.h"
 #include "variables.h"
@@ -103,12 +100,9 @@ static obj_set destroyed_by_sunray = {cloak,   scroll1, scroll2,
 /*{ Lose experience hack for lose_exp breath              -RAK-   }*/
 static void xp_loss(long amount) {
 
-  long i1, i2;
-  long av_hp, lose_hp;
-  long av_mn, lose_mn;
-  boolean flag;
+  long i1;
 
-  amount = (player_exp / 100) * MON_DRAIN_LIFE; /* passed val?  XXXX */
+  amount = player_exp / 100 * MON_DRAIN_LIFE; /* passed val?  XXXX */
 
   /* with player_do; */
   msg_print("You feel your life draining away!");
@@ -121,15 +115,15 @@ static void xp_loss(long amount) {
   for (i1 = 1; (long)(exp_per_level[i1] * player_expfact) <= player_exp;) {
     i1++;
   }
-  i2 = player_lev - i1;
+  long i2 = player_lev - i1;
 
-  for (; i2 > 0;) {
-    av_hp = (C_player_max_hp() / player_lev);
-    av_mn = (player_mana / player_lev);
+  while (i2 > 0) {
+    const long av_hp = C_player_max_hp() / player_lev;
+    const long av_mn = player_mana / player_lev;
     player_lev--;
     i2--;
-    lose_hp = randint(av_hp * 2 - 1);
-    lose_mn = randint(av_mn * 2 - 1);
+    const long lose_hp = randint(av_hp * 2 - 1);
+    const long lose_mn = randint(av_mn * 2 - 1);
     C_player_modify_max_hp(lose_hp);
     player_mana -= lose_mn;
     if (player_mana < 0) {
@@ -140,13 +134,13 @@ static void xp_loss(long amount) {
         C_player_uses_magic(M_NATURE) || C_player_uses_magic(M_SONG) ||
         C_player_uses_magic(M_CHAKRA)) {
       i1 = 32;
-      flag = false;
+      bool flag = false;
       do {
         i1--;
         if (C_player_knows_spell(i1)) {
           flag = true;
         }
-      } while (!((flag) || (i1 < 2)));
+      } while (!(flag || i1 < 2));
       if (flag) {
         C_player_set_knows_spell(i1, false);
         if (C_player_uses_magic(M_ARCANE)) {
@@ -173,7 +167,7 @@ static void xp_loss(long amount) {
   prt_stat_block();
 }
 
-static void get_flags(enum spell_effect_t typ, long *weapon_type,
+static void get_flags(const enum spell_effect_t typ, long *weapon_type,
                       long *harm_type, obj_set **destroy) {
   /*{ Return flags for given type area affect               -RAK-   }*/
 
@@ -240,8 +234,8 @@ static void get_flags(enum spell_effect_t typ, long *weapon_type,
   }
 }
 
-void lower_stat(enum stat_t tstat, char msg1[82]) {
-  C_player_modify_lost_stat((int16_t)tstat, 1);
+void lower_stat(const enum stat_t tstat, char msg1[82]) {
+  C_player_modify_lost_stat(tstat, 1);
   C_player_recalc_stats();
   if (strcmp(msg1, "X") == 0) {
     switch (tstat) {
@@ -272,10 +266,10 @@ void lower_stat(enum stat_t tstat, char msg1[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean lose_stat(enum stat_t tstat, char msg1[82], char msg2[82]) {
-  boolean return_value = true;
+bool lose_stat(const enum stat_t tstat, char msg1[82], char msg2[82]) {
+  const bool return_value = true;
 
-  if (!((player_flags).sustain[(int)tstat])) {
+  if (!player_flags.sustain[(int)tstat]) {
     lower_stat(tstat, msg1);
   } else {
     if (strcmp(msg2, "X") == 0) {
@@ -315,12 +309,12 @@ boolean lose_stat(enum stat_t tstat, char msg1[82], char msg2[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean restore_stat(enum stat_t tstat, char msg1[82]) {
+bool restore_stat(const enum stat_t tstat, char msg1[82]) {
   /*{stat adjusted by magic worn only}*/
-  boolean return_value = true;
+  const bool return_value = true;
 
-  if (C_player_has_lost_stat((int16_t)tstat)) {
-    C_player_reset_lost_stat((int16_t)tstat);
+  if (C_player_has_lost_stat(tstat)) {
+    C_player_reset_lost_stat(tstat);
     C_player_recalc_stats();
     if (strcmp(msg1, "X") == 0) {
       switch (tstat) {
@@ -354,28 +348,24 @@ boolean restore_stat(enum stat_t tstat, char msg1[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean cure_me(long *what_flag) {
-  boolean return_value = false;
-
+bool cure_me(int64_t *what_flag) {
   /*{player_flags:  confused, blind, poisoned, hoarse, afraid, image}*/
 
   if (*what_flag > 1) {
     *what_flag = 1;
-    return_value = true;
+    return true;
   }
-
-  return return_value;
+  return false;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean remove_curse() {
+bool remove_curse(void) {
   /*{ Removes curses from items in inventory		-RAK-	}*/
 
-  long i1;
-  boolean return_value = false;
+  bool return_value = false;
 
-  for (i1 = Equipment_primary; i1 <= Equipment_cloak; i1++) {
+  for (long i1 = Equipment_primary; i1 <= Equipment_cloak; i1++) {
     /* with equipment[i1] do; */
     if ((0x80000000 & equipment[i1].flags) != 0) {
       equipment[i1].flags &= 0x7FFFFFFF;
@@ -389,10 +379,10 @@ boolean remove_curse() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean hp_player(long num, char kind[82]) {
+bool hp_player(const long num, char kind[82]) {
   /*{ Change players hit points in some manner		-RAK-	}*/
 
-  boolean return_value = false;
+  bool return_value = false;
 
   /* with player_do; */
   if (num < 0) {
@@ -408,7 +398,7 @@ boolean hp_player(long num, char kind[82]) {
       C_player_reset_current_hp();
     prt_stat_block();
 
-    switch ((long)(num / 5)) {
+    switch (num / 5) {
     case 0:
       msg_print("You feel a little better.");
       break;
@@ -434,16 +424,15 @@ boolean hp_player(long num, char kind[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean aggravate_monster(long dis_affect) {
+bool aggravate_monster(const long dis_affect) {
   /*{ Get all the monsters on the level pissed off...	-RAK-	}*/
 
   /* I'm guessing that this was supposed to only return true if any
      monsters were in range of the effect, it used to always be true */
 
-  long i1;
-  boolean return_value = false;
+  bool return_value = false;
 
-  i1 = muptr;
+  long i1 = muptr;
   do {
     /* with m_list[i1] do; */
     m_list[i1].csleep = 0;
@@ -461,19 +450,19 @@ boolean aggravate_monster(long dis_affect) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
+bool explode(const enum spell_effect_t typ, const long y, const long x,
+                const long dam_hp,
                 const char *descrip) {
   long i1;
   long i2;
-  long dam;
-  long max_dis = 2;
+  const long max_dis = 2;
   long thit = 0;
   long tkill = 0;
   long weapon_type;
   long harm_type;
   obj_set *destroy;
   char out_val[82];
-  boolean return_value = true;
+  const bool return_value = true;
 
   get_flags(typ, &weapon_type, &harm_type, &destroy);
 
@@ -503,9 +492,9 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                 /* monster_templates[m_list[cave[i1][i2].cptr].mptr]
                  */
                 /* do; */
-                dam = dam_hp;
+                long dam = dam_hp;
 
-                if ((typ == SE_ILLUSION) || (typ == SE_JOKE)) {
+                if (typ == SE_ILLUSION || typ == SE_JOKE) {
                   if (mon_save(cave[i1][i2].cptr, 0, SC_MENTAL)) {
                     if (typ == SE_ILLUSION) {
                       dam = 0;
@@ -527,9 +516,9 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
                   dam /= 4;
                 }
 
-                dam = (long)(dam / (distance(i1, i2, y, x) + 1));
+                dam = dam / (distance(i1, i2, y, x) + 1);
 
-                if ((dam > 0) && (!mon_resists(cave[i1][i2].cptr))) {
+                if (dam > 0 && !mon_resists(cave[i1][i2].cptr)) {
                   thit++;
                   if (mon_take_hit(cave[i1][i2].cptr, dam) > 0) {
                     tkill++;
@@ -607,11 +596,10 @@ boolean explode(enum spell_effect_t typ, long y, long x, long dam_hp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mon_save(long a_cptr, long bonus, enum spell_class_t spell_class) {
-  long mon_level;
-  boolean return_value;
+bool mon_save(const long a_cptr, long bonus,
+                 const enum spell_class_t spell_class) {
 
-  mon_level = monster_templates[m_list[a_cptr].mptr].level;
+  const long mon_level = monster_templates[m_list[a_cptr].mptr].level;
 
   /* with m_list[a_cptr] do; */
   /* with monster_templates[mptr] do; */
@@ -630,35 +618,33 @@ boolean mon_save(long a_cptr, long bonus, enum spell_class_t spell_class) {
     }
   }
 
-  return_value = ((20 + mon_level + randint(mon_level) + 5 * bonus) >
-                  (randint(80) + randint(player_lev)));
+  const bool return_value = 20 + mon_level + randint(mon_level) + 5 * bonus >
+                         randint(80) + randint(player_lev);
   return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mon_resists(unsigned char a_cptr) {
-  long res_chance;
-  long delta_lev;
-  char out_val[82];
-  boolean return_value;
+bool mon_resists(const unsigned char a_cptr) {
+  bool return_value;
 
   /* with m_list[a_cptr] do; */
   /* with monster_templates[m_list[a_cptr].mptr] do; */
 
-  res_chance = monster_templates[m_list[a_cptr].mptr].mr;
+  long res_chance = monster_templates[m_list[a_cptr].mptr].mr;
 
-  delta_lev = (player_lev + player_mr);
+  long delta_lev = player_lev + player_mr;
   if (delta_lev < 0) {
     delta_lev = 0;
   }
 
-  res_chance -= (5 * delta_lev);
+  res_chance -= 5 * delta_lev;
   if (res_chance < 0) {
     res_chance = 0;
   }
 
   if (res_chance >= randint(100)) {
+    char out_val[82];
     sprintf(out_val, "The %s is protected by a mysterious force.",
             monster_templates[m_list[a_cptr].mptr].name);
     msg_print(out_val);
@@ -670,8 +656,8 @@ boolean mon_resists(unsigned char a_cptr) {
   return return_value;
 }
 
-boolean do_stun(unsigned char a_cptr, long save_bonus, long time) {
-  long held;
+bool do_stun(const unsigned char a_cptr, const long save_bonus,
+                const long time) {
   char m_name[82];
   char out_val[100];
 
@@ -684,7 +670,7 @@ boolean do_stun(unsigned char a_cptr, long save_bonus, long time) {
   }
   sprintf(out_val, "%s appears stunned!", m_name);
   msg_print(out_val);
-  held = m_list[a_cptr].stunned + 1 + randint(time);
+  const long held = m_list[a_cptr].stunned + 1 + randint(time);
   if (held > 24) {
     m_list[a_cptr].stunned = 24;
   } else {
@@ -695,15 +681,16 @@ boolean do_stun(unsigned char a_cptr, long save_bonus, long time) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean teleport_away(long monptr, long dis) {
+bool teleport_away(const long monptr, long dis) {
   /*{ Move the creature record to a new location            -RAK-   }*/
 
-  long yn, xn, ctr;
-  boolean return_value = false;
+  bool return_value = false;
 
   /* with m_list[monptr] do; */
   if (!mon_resists(monptr)) {
-    ctr = 0;
+    long xn;
+    long yn;
+    long ctr = 0;
     do {
       do {
         yn = m_list[monptr].fy + (randint(2 * dis + 1) - (dis + 1));
@@ -714,7 +701,7 @@ boolean teleport_away(long monptr, long dis) {
         ctr = 0;
         dis += 5;
       }
-    } while (!((cave[yn][xn].fopen) && (cave[yn][xn].cptr == 0)));
+    } while (!(cave[yn][xn].fopen && cave[yn][xn].cptr == 0));
 
     move_rec(m_list[monptr].fy, m_list[monptr].fx, yn, xn);
     if (test_light(m_list[monptr].fy, m_list[monptr].fx)) {
@@ -731,14 +718,14 @@ boolean teleport_away(long monptr, long dis) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean teleport_to(long ny, long nx) {
+bool teleport_to(const long ny, const long nx) {
   /*{ Teleport player to spell casting creature             -RAK-   }*/
 
-  long dis, ctr, y, x, i1, i2;
-  boolean return_value = true;
+  long y, x;
+  const bool return_value = true;
 
-  dis = 1;
-  ctr = 0;
+  long dis = 1;
+  long ctr = 0;
   do {
     do {
       y = ny + (randint(2 * dis + 1) - (dis + 1));
@@ -749,14 +736,14 @@ boolean teleport_to(long ny, long nx) {
       ctr = 0;
       dis++;
     }
-  } while (!((cave[y][x].fopen) && (cave[y][x].cptr < 2)));
+  } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
   move_rec(char_row, char_col, y, x);
-  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
+    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1][i2]. do; */
       cave[i1][i2].tl = false;
-      if (!(test_light(i1, i2))) {
+      if (!test_light(i1, i2)) {
         unlite_spot(i1, i2);
       }
     }
@@ -775,18 +762,19 @@ boolean teleport_to(long ny, long nx) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
+bool breath(const enum spell_effect_t typ, const long y, const long x,
+               const long dam_hp,
                char ddesc[82]) {
   /*{ Breath weapon works like a fire_ball, but affects the player. }*/
   /*{ Note the area affect....                              -RAK-   }*/
 
   long i1, i2;
-  long dam, max_dis;
+  long dam;
   long weapon_type, harm_type;
   obj_set *destroy;
-  boolean return_value = true;
+  const bool return_value = true;
 
-  max_dis = 2;
+  const long max_dis = 2;
   get_flags(typ, &weapon_type, &harm_type, &destroy);
   for (i1 = y - 2; i1 <= y + 2; i1++) {
     for (i2 = x - 2; i2 <= x + 2; i2++) {
@@ -828,7 +816,7 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
                    0) {
           dam = trunc(dam / 4.0);
         }
-        dam = (long)(dam / (distance(i1, i2, y, x) + 1));
+        dam = dam / (distance(i1, i2, y, x) + 1);
         if (!mon_resists(cave[i1][i2].cptr)) {
           m_list[cave[i1][i2].cptr].hp -= dam;
         }
@@ -868,8 +856,8 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
     }
   }
 
-  for (i1 = (y - 2); i1 <= (y + 2); i1++) {
-    for (i2 = (x - 2); i2 <= (x + 2); i2++) {
+  for (i1 = y - 2; i1 <= y + 2; i1++) {
+    for (i2 = x - 2; i2 <= x + 2; i2++) {
       if (!in_bounds(i1, i2))
         continue;
       if (!panel_contains(i1, i2))
@@ -898,13 +886,10 @@ boolean breath(enum spell_effect_t typ, long y, long x, long dam_hp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void lose_exp(long amount) {
+void lose_exp(const long amount) {
   /*{ Lose experience                                       -RAK-   }*/
 
-  long i1, i2;
-  long av_hp, lose_hp;
-  long av_mn, lose_mn;
-  boolean flag;
+  long i1;
 
   /* with player_do; */
   if (amount > player_exp) {
@@ -916,13 +901,13 @@ void lose_exp(long amount) {
   for (i1 = 1; trunc(exp_per_level[i1] * player_expfact) <= player_exp; i1++) {
   }
 
-  for (i2 = player_lev - i1; i2 > 0;) {
+  for (long i2 = player_lev - i1; i2 > 0;) {
     i2--;
     player_lev--;
-    av_hp = trunc(C_player_max_hp() / player_lev);
-    av_mn = trunc(player_mana / player_lev);
-    lose_hp = randint(av_hp * 2 - 1);
-    lose_mn = randint(av_mn * 2 - 1);
+    const long av_hp = trunc(C_player_max_hp() / player_lev);
+    const long av_mn = trunc(player_mana / player_lev);
+    const long lose_hp = randint(av_hp * 2 - 1);
+    const long lose_mn = randint(av_mn * 2 - 1);
     C_player_modify_max_hp(lose_hp);
     player_mana -= lose_mn;
     if (player_mana < 0) {
@@ -932,14 +917,14 @@ void lose_exp(long amount) {
     if (C_player_uses_magic(M_ARCANE) || C_player_uses_magic(M_DIVINE) ||
         C_player_uses_magic(M_NATURE) || C_player_uses_magic(M_SONG)) {
       i1 = 32;
-      flag = false;
+      bool flag = false;
 
       do {
         i1--;
         if (C_player_knows_spell(i1)) {
           flag = true;
         }
-      } while (!((flag) || (i1 < 2)));
+      } while (!(flag || i1 < 2));
 
       if (flag) {
         C_player_set_knows_spell(i1, false);
@@ -964,11 +949,11 @@ void lose_exp(long amount) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean gain_stat(enum stat_t tstat, char msg1[82]) {
-  if (C_player_has_lost_stat((int16_t)tstat)) {
-    C_player_reset_lost_stat((int16_t)tstat);
+bool gain_stat(const enum stat_t tstat, char msg1[82]) {
+  if (C_player_has_lost_stat(tstat)) {
+    C_player_reset_lost_stat(tstat);
   } else {
-    C_player_mod_perm_stat((int16_t)tstat, 1);
+    C_player_mod_perm_stat(tstat, 1);
   }
   C_player_recalc_stats();
 
@@ -1004,14 +989,14 @@ boolean gain_stat(enum stat_t tstat, char msg1[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean slow_poison() {
+bool slow_poison(void) {
   /*{ Slow Poison                                           -RAK-   }*/
-  boolean return_value = false;
+  bool return_value = false;
 
-  if ((player_flags).poisoned > 0) {
-    (player_flags).poisoned /= 2;
-    if ((player_flags).poisoned < 1) {
-      (player_flags).poisoned = 1;
+  if (player_flags.poisoned > 0) {
+    player_flags.poisoned /= 2;
+    if (player_flags.poisoned < 1) {
+      player_flags.poisoned = 1;
     }
     return_value = true;
     msg_print("The effects of the poison has been reduced.");
@@ -1022,11 +1007,11 @@ boolean slow_poison() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean restore_level() {
+bool restore_level(void) {
   /*{ Restores any drained experience                       -RAK-   }*/
 
   unsigned char max_level = 1;
-  boolean return_value = false;
+  bool return_value = false;
 
   while ((long)(exp_per_level[max_level] * player_expfact) <= player_max_exp) {
     max_level++;
@@ -1037,7 +1022,7 @@ boolean restore_level() {
     /* with player_do; */
     return_value = true;
     msg_print("You feel your life energies returning...");
-    for (; player_exp < player_max_exp;) {
+    while (player_exp < player_max_exp) {
       player_exp = player_max_exp;
       prt_stat_block();
     }
@@ -1051,14 +1036,13 @@ boolean restore_level() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_creatures(enum spell_effect_t typ) {
+bool detect_creatures(const enum spell_effect_t typ) {
   /*{ Display evil creatures on current panel               -RAK-   }*/
 
-  long i1;
-  boolean flag, found;
+  bool found;
 
-  flag = false;
-  i1 = muptr;
+  bool flag = false;
+  long i1 = muptr;
 
   do {
     /* with m_list[i1]. do; */
@@ -1115,36 +1099,35 @@ boolean detect_creatures(enum spell_effect_t typ) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_inv2(long amount) {
+bool detect_inv2(const long amount) {
   /*{ Detect Invisible for period of time                   -RAK-   }*/
 
-  (player_flags).detect_inv += amount;
+  player_flags.detect_inv += amount;
 
   return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_item(long typ) {
+bool detect_item(const long typ) {
   /*{ Detect treasure or object on current panel    -Steven-}*/
 
-  long i1, i2;
-  boolean show_it;
-  obj_set treasures = {valuable_jewelry, valuable_gems, valuable_metal, 0};
-  boolean flag = false;
+  bool show_it;
+  const obj_set treasures = {valuable_jewelry, valuable_gems, valuable_metal, 0};
+  bool flag = false;
 
-  for (i1 = panel_row_min; i1 <= panel_row_max; i1++) {
-    for (i2 = panel_col_min; i2 <= panel_col_max; i2++) {
+  for (long i1 = panel_row_min; i1 <= panel_row_max; i1++) {
+    for (long i2 = panel_col_min; i2 <= panel_col_max; i2++) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].tptr > 0) {
         if (typ == SE_TREASURE) {
           show_it = is_in(t_list[cave[i1][i2].tptr].tval, treasures);
         } else {
-          show_it = (t_list[cave[i1][i2].tptr].tval < valuable_metal);
+          show_it = t_list[cave[i1][i2].tptr].tval < valuable_metal;
         }
 
         if (show_it) {
-          if (!(test_light(i1, i2))) {
+          if (!test_light(i1, i2)) {
             lite_spot(i1, i2);
             cave[i1][i2].tl = true;
             flag = true;
@@ -1159,14 +1142,13 @@ boolean detect_item(long typ) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_trap() {
+bool detect_trap(void) {
   /*{ Locates and displays traps on current panel           -RAK-   }*/
 
-  long i1, i2;
-  boolean flag = false;
+  bool flag = false;
 
-  for (i1 = panel_row_min; i1 <= panel_row_max; i1++) {
-    for (i2 = panel_col_min; i2 <= panel_col_max; i2++) {
+  for (long i1 = panel_row_min; i1 <= panel_row_max; i1++) {
+    for (long i2 = panel_col_min; i2 <= panel_col_max; i2++) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].tptr > 0) {
         if (t_list[cave[i1][i2].tptr].tval == unseen_trap) {
@@ -1186,17 +1168,16 @@ boolean detect_trap() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_sdoor() {
+bool detect_sdoor(void) {
   /*{ Locates and displays all secret doors on current panel -RAK-  }*/
 
-  long i1, i2;
-  obj_set pick_a_stair = {up_staircase, down_staircase, up_steep_staircase,
+  const obj_set pick_a_stair = {up_staircase, down_staircase, up_steep_staircase,
                           down_steep_staircase, 0};
 
-  boolean flag = false;
+  bool flag = false;
 
-  for (i1 = panel_row_min; i1 <= panel_row_max; i1++) {
-    for (i2 = panel_col_min; i2 <= panel_col_max; i2++) {
+  for (long i1 = panel_row_min; i1 <= panel_row_max; i1++) {
+    for (long i2 = panel_col_min; i2 <= panel_col_max; i2++) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].tptr > 0) {
         /*{ Secret doors  }*/
@@ -1208,7 +1189,7 @@ boolean detect_sdoor() {
 
           /*{ Staircases    }*/
         } else if (is_in(t_list[cave[i1][i2].tptr].tval, pick_a_stair)) {
-          if (!(cave[i1][i2].fm)) {
+          if (!cave[i1][i2].fm) {
             cave[i1][i2].fm = true;
             lite_spot(i1, i2);
             flag = true;
@@ -1223,11 +1204,11 @@ boolean detect_sdoor() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean enchant(short *pluses) {
+bool enchant(short *pluses) {
   /*{ Enchants a plus onto an item...                       -RAK-   }*/
 
   long chance = 0;
-  boolean return_value = false;
+  bool return_value = false;
 
   if (*pluses > 0) {
     switch (*pluses) {
@@ -1274,32 +1255,30 @@ boolean enchant(short *pluses) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean bless(long amount) {
+bool bless(const long amount) {
   /*{ Bless                                                 -RAK-   }*/
 
-  (player_flags).blessed += amount;
+  player_flags.blessed += amount;
 
   return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean ident_spell() {
+bool ident_spell(void) {
   /*{ Identify an object                                    -RAK-   }*/
 
   treas_rec *item_ptr;
-  char out_val[82];
   char trash_char;
-  treas_rec *ptr;
   long count = 0;
-  boolean redraw = false;
-  boolean return_value = false;
+  bool redraw = false;
+  bool return_value = false;
 
   /*  change_all_ok_stats(true,true);*/
 
   /* only show things that need to be identified */
   change_all_ok_stats(false, false);
-  for (ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
+  for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (strchr(ptr->data.name, '^') || strchr(ptr->data.name, '|')) {
       ptr->ok = true;
       count++;
@@ -1313,8 +1292,9 @@ boolean ident_spell() {
 
     if (get_item(&item_ptr, "Item you wish identified?", &redraw, count,
                  &trash_char, false, false)) {
+      char out_val[82];
       /* with item_ptr->data. do; */
-      identify(&(item_ptr->data));
+      identify(&item_ptr->data);
       known2(item_ptr->data.name);
       objdes(out_val, item_ptr, true);
       msg_print(out_val);
@@ -1332,21 +1312,20 @@ boolean ident_spell() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean light_area(long y, long x) {
+bool light_area(const long y, const long x) {
   /*{ Light an area: 1.  If corridor then light immediate area -RAK-}*/
   /*{                2.  If room then light entire room.            }*/
 
-  long i1, i2;
-  obj_set room_floors = {1, 2, 17, 18, 0};
-  boolean flag = true;
+  const obj_set room_floors = {1, 2, 17, 18, 0};
+  const bool flag = true;
 
   msg_print("You are surrounded by a white light.");
 
-  if (is_in(cave[y][x].fval, room_floors) && (dun_level > 0)) {
+  if (is_in(cave[y][x].fval, room_floors) && dun_level > 0) {
     dungeon_light_room(y, x);
   } else {
-    for (i1 = y - 1; i1 <= y + 1; i1++) {
-      for (i2 = x - 1; i2 <= x + 1; i2++) {
+    for (long i1 = y - 1; i1 <= y + 1; i1++) {
+      for (long i2 = x - 1; i2 <= x + 1; i2++) {
         if (in_bounds(i1, i2)) {
           if (!test_light(i1, i2)) {
             lite_spot(i1, i2);
@@ -1362,34 +1341,32 @@ boolean light_area(long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean unlight_area(long y, long x) {
+bool unlight_area(const long y, const long x) {
   /*{ Darken an area, opposite of light area                -RAK-   }*/
 
-  long i1, i2, i3, tmp1, tmp2, ov_len;
-  long start_row, start_col;
-  long end_row, end_col;
-  char out_val[82];
-  obj_set room_floors = {1, 2, 17, 18, 0};
-  obj_set doors_and_corridors = {4, 5, 6, 0};
-  boolean flag = false;
+  long i1, i2;
+  const obj_set room_floors = {1, 2, 17, 18, 0};
+  const obj_set doors_and_corridors = {4, 5, 6, 0};
+  bool flag = false;
 
-  if (is_in(cave[y][x].fval, room_floors) && (dun_level > 0)) {
-    tmp1 = trunc(SCREEN_HEIGHT / 2);
-    tmp2 = trunc(SCREEN_WIDTH / 2);
-    start_row = trunc(y / tmp1) * tmp1 + 1;
-    start_col = trunc(x / tmp2) * tmp2 + 1;
-    end_row = start_row + tmp1 - 1;
-    end_col = start_col + tmp2 - 1;
+  if (is_in(cave[y][x].fval, room_floors) && dun_level > 0) {
+    char out_val[82];
+    const long tmp1 = trunc(SCREEN_HEIGHT / 2);
+    const long tmp2 = trunc(SCREEN_WIDTH / 2);
+    const long start_row = trunc(y / tmp1) * tmp1 + 1;
+    const long start_col = trunc(x / tmp2) * tmp2 + 1;
+    const long end_row = start_row + tmp1 - 1;
+    const long end_col = start_col + tmp2 - 1;
     for (i1 = start_row; i1 <= end_row; i1++) {
       out_val[0] = 0;
-      ov_len = 0;
-      i3 = 0;
+      long ov_len = 0;
+      long i3 = 0;
       for (i2 = start_col; i2 <= end_col; i2++) {
         /* with cave[i1][i2]; */
         if (is_in(cave[i1][i2].fval, room_floors)) {
           cave[i1][i2].pl = false;
           cave[i1][i2].fval = dopen_floor.ftval;
-          if (!(test_light(i1, i2))) {
+          if (!test_light(i1, i2)) {
             if (i3 == 0) {
               i3 = i2;
             }
@@ -1444,22 +1421,20 @@ boolean unlight_area(long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean map_area() {
+bool map_area(void) {
   /*{ Map the current area plus some                        -RAK-   }*/
 
-  long i1, i2, i3, i4, i5, i6, i7, i8;
+  const long i1 = panel_row_min - randint(10);
+  const long i2 = panel_row_max + randint(10);
+  const long i3 = panel_col_min - randint(20);
+  const long i4 = panel_col_max + randint(20);
 
-  i1 = panel_row_min - randint(10);
-  i2 = panel_row_max + randint(10);
-  i3 = panel_col_min - randint(20);
-  i4 = panel_col_max + randint(20);
-
-  for (i5 = i1; i5 <= i2; i5++) {
-    for (i6 = i3; i6 <= i4; i6++) {
+  for (long i5 = i1; i5 <= i2; i5++) {
+    for (long i6 = i3; i6 <= i4; i6++) {
       if (in_bounds(i5, i6)) {
         if (is_in(cave[i5][i6].fval, floor_set)) {
-          for (i7 = i5 - 1; i7 <= i5 + 1; i7++) {
-            for (i8 = i6 - 1; i8 <= i6 + 1; i8++) {
+          for (long i7 = i5 - 1; i7 <= i5 + 1; i7++) {
+            for (long i8 = i6 - 1; i8 <= i6 + 1; i8++) {
               /* with cave[i7][i8]. */
               /* do; */
               if (is_in(cave[i7][i8].fval, pwall_set)) {
@@ -1483,15 +1458,13 @@ boolean map_area() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean sleep_monsters1(long y, long x) {
+bool sleep_monsters1(const long y, const long x) {
   /*{ Sleep creatures adjacent to player                    -RAK-   }*/
 
-  long i1, i2;
-  char out_val[82];
-  boolean flag = false;
+  bool flag = false;
 
-  for (i1 = y - 1; i1 <= y + 1; i1++) {
-    for (i2 = x - 1; i2 <= x + 1; i2++) {
+  for (long i1 = y - 1; i1 <= y + 1; i1++) {
+    for (long i2 = x - 1; i2 <= x + 1; i2++) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].cptr > 1) {
         /* with m_list[cave[i1][i2].cptr]. do; */
@@ -1499,6 +1472,7 @@ boolean sleep_monsters1(long y, long x) {
          */
         /* do; */
         if (!mon_resists(cave[i1][i2].cptr)) {
+          char out_val[82];
           flag = true;
           if (mon_save(cave[i1][i2].cptr, 0, SC_MENTAL)) {
             sprintf(out_val, "The %s is unaffected.",
@@ -1518,13 +1492,11 @@ boolean sleep_monsters1(long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean trap_creation() {
+bool trap_creation(void) {
   /*{ Surround the fool with traps (chuckle)                -RAK-   }*/
 
-  long i1, i2;
-
-  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
+    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1][i2]. do; */
       if (is_in(cave[i1][i2].fval, floor_set)) {
         if (cave[i1][i2].tptr > 0) {
@@ -1540,15 +1512,15 @@ boolean trap_creation() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean door_creation() {
+bool door_creation(void) {
   /*{ Surround the player with doors...                     -RAK-   }*/
 
-  long i1, i2, i3;
-  boolean flag = true;
+  long i3;
+  const bool flag = true;
 
-  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
-      if ((i1 != char_row) || (i2 != char_col)) {
+  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
+    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+      if (i1 != char_row || i2 != char_col) {
         /* with cave[i1][i2]. do; */
         if (is_in(cave[i1][i2].fval, floor_set)) {
           popt(&i3);
@@ -1571,17 +1543,16 @@ boolean door_creation() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean td_destroy() {
+bool td_destroy(void) {
   /*{ Destroys any adjacent door(s)/trap(s)                 -RAK-   }*/
 
-  long i1, i2;
-  obj_set pick_a_door = {unseen_trap, seen_trap,   open_door,
+  const obj_set pick_a_door = {unseen_trap, seen_trap,   open_door,
                          closed_door, secret_door, 0};
 
-  boolean flag = false;
+  bool flag = false;
 
-  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
+    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1][i2]. do; */
       if (cave[i1][i2].tptr > 0) {
         if (is_in(t_list[cave[i1][i2].tptr].tval, pick_a_door)) {
@@ -1598,7 +1569,7 @@ boolean td_destroy() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean warding_glyph() {
+bool warding_glyph(void) {
   /*{ Leave a glyph of warding... Creatures will not pass over! -RAK-}*/
 
   long i1;
@@ -1615,29 +1586,29 @@ boolean warding_glyph() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean protect_evil() {
+bool protect_evil(void) {
   /*{ Evil creatures don't like this...                     -RAK-   }*/
 
-  (player_flags).protevil += randint(25) + 3 * player_lev;
+  player_flags.protevil += randint(25) + 3 * player_lev;
 
   return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean recharge(long num) {
+bool recharge(long num) {
   /*{ Recharge a wand, staff, or rod.  Sometimes the item breaks. -RAK-}*/
 
   treas_rec *item_ptr;
-  boolean redraw = false;
+  bool redraw = false;
   char trash_char;
   /* added valuable_gems to this set, which should include any item type
    */
   /* that */
   /* uses charges.  2/15/00 JEB */
-  obj_set batteries_not_included = {valuable_gems, staff, rod, wand,
+  const obj_set batteries_not_included = {valuable_gems, staff, rod, wand,
                                     chime,         horn,  0};
-  boolean return_value = false;
+  bool return_value = false;
 
   change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Recharge which item?", &redraw, inven_ctr,
@@ -1656,8 +1627,8 @@ boolean recharge(long num) {
           insert_str(item_ptr->data.name, " (%P1", "^ (%P1");
         }
       }
-    } else if ((item_ptr->data.tval == lamp_or_torch) &&
-               (item_ptr->data.subval == 17)) {
+    } else if (item_ptr->data.tval == lamp_or_torch &&
+               item_ptr->data.subval == 17) {
       if (randint(50) == 1) {
         return_value = true;
         msg_print("There is a bright flash of light...");
@@ -1670,8 +1641,8 @@ boolean recharge(long num) {
           insert_str(item_ptr->data.name, " (%P1", "^ (%P1");
         }
       }
-    } else if ((item_ptr->data.tval == lamp_or_torch) &&
-               (item_ptr->data.subval == 15)) {
+    } else if (item_ptr->data.tval == lamp_or_torch &&
+               item_ptr->data.subval == 15) {
       if (randint(15) == 1) {
         return_value = true;
         msg_print("There is a bright flash of light...");
@@ -1699,21 +1670,20 @@ boolean recharge(long num) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mass_genocide() {
+bool mass_genocide(void) {
   /*{ Delete all creatures within MAX_SIGHT distance        -RAK-   }*/
   /*{ NOTE : Winning creatures cannot be genocided                  }*/
 
-  long i1, i2;
-  boolean flag = false;
+  bool flag = false;
 
-  i1 = muptr; /* what happens if there are no monsters in the world? */
+  long i1 = muptr; /* what happens if there are no monsters in the world? */
   do {
     /* with m_list[i1]. do; */
     /* with monster_templates[m_list[i1].mptr]. do; */
-    i2 = m_list[i1].nptr;
+    const long i2 = m_list[i1].nptr;
     if (m_list[i1].cdis <= MAX_SIGHT) {
-      if (((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0) &&
-          (!mon_resists(i1))) {
+      if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
+          !mon_resists(i1)) {
         delete_monster(i1);
         flag = true;
       }
@@ -1726,27 +1696,26 @@ boolean mass_genocide() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean genocide() {
+bool genocide(void) {
   /*{ Delete all creatures of a given type from level.      -RAK-   }*/
   /*{ This does not keep creatures of type from appearing later.    }*/
 
-  long i1, i2;
   char typ;
-  char out_val[82];
-  boolean flag = true;
+  const bool flag = true;
 
-  i1 = muptr; /* what happens if there are no monsters in the world? */
+  long i1 = muptr; /* what happens if there are no monsters in the world? */
 
   if (get_com("Which type of creature do wish exterminated? ", &typ)) {
     do {
       /* with m_list[i1]. do; */
       /* with monster_templates[m_list[i1].mptr]. do; */
-      i2 = m_list[i1].nptr;
+      const long i2 = m_list[i1].nptr;
       if (typ == monster_templates[m_list[i1].mptr].cchar) {
-        if (((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0) &&
-            (!mon_resists(i1))) {
+        if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
+            !mon_resists(i1)) {
           delete_monster(i1);
         } else {
+          char out_val[82];
           sprintf(out_val, "The %s is unaffected.",
                   monster_templates[m_list[i1].mptr].name);
           msg_print(out_val);
@@ -1761,20 +1730,21 @@ boolean genocide() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean create_food(long t0, long t1, long t2, long t3, long t4) {
+bool create_food(const long t0, const long t1, const long t2, const long t3,
+                    const long t4) {
   /*{ Create food for the player.           -RAK-   }*/
 
-  long i1, i2, this_one, dist;
+  long this_one;
 
-  for (i1 = char_row - 2; i1 <= char_row + 2; i1++) {
-    for (i2 = char_col - 2; i2 <= char_col + 2; i2++) {
+  for (long i1 = char_row - 2; i1 <= char_row + 2; i1++) {
+    for (long i2 = char_col - 2; i2 <= char_col + 2; i2++) {
       /* with cave[i1][i2]. do; */
-      dist = labs(i1 - char_row) + labs(i2 - char_col);
-      if ((labs(i1 - char_row) == 2) || (labs(i2 - char_col) == 2)) {
+      long dist = labs(i1 - char_row) + labs(i2 - char_col);
+      if (labs(i1 - char_row) == 2 || labs(i2 - char_col) == 2) {
         dist++;
       }
 
-      if ((cave[i1][i2].fopen) && (cave[i1][i2].tptr == 0) && (dist < 5)) {
+      if (cave[i1][i2].fopen && cave[i1][i2].tptr == 0 && dist < 5) {
 
         switch (dist) {
         case 0:
@@ -1817,8 +1787,9 @@ boolean create_food(long t0, long t1, long t2, long t3, long t4) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
-  boolean hmm = false;
+bool za__did_it_work(const long monptr, const long cflag, const long dmge,
+                        const long typ) {
+  bool hmm = false;
 
   /* with m_list[i1]. do; */
   /* with monster_templates[m_list[i1].mptr]. do; */
@@ -1837,7 +1808,7 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
 
   case SE_SPEED:
     hmm = !mon_save(monster_templates[m_list[monptr].mptr].level, 0, SC_NULL) ||
-          (dmge > 0);
+          dmge > 0;
     break;
 
   case SE_TURN:
@@ -1857,13 +1828,14 @@ boolean za__did_it_work(long monptr, long cflag, long dmge, long typ) {
     break;
   }
 
-  return hmm && (!mon_resists(monptr));
+  return hmm && !mon_resists(monptr);
 }
 /*//////////////////////////////////////////////////////////////////// */
-void za__yes_it_did(long monptr, long dmge, enum spell_effect_t typ) {
+void za__yes_it_did(const long monptr, const long dmge,
+                    const enum spell_effect_t typ) {
   char out_val[82];
 
-  long mptr = m_list[monptr].mptr; /* monster might get deleted */
+  const long mptr = m_list[monptr].mptr; /* monster might get deleted */
 
   /* with m_list[i1]. do; */
 
@@ -1924,13 +1896,13 @@ void za__yes_it_did(long monptr, long dmge, enum spell_effect_t typ) {
   } /* end switch */
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean za__no_it_didnt(long monptr, long dmge, long typ) {
-  char out_val[82];
-  obj_set some_stuff = {SE_SLEEP, SE_CONFUSE, SE_SPEED, SE_HOLD, SE_JOKE, 0};
-  boolean flag = false;
+bool za__no_it_didnt(const long monptr, const long dmge, const long typ) {
+  const obj_set some_stuff = {SE_SLEEP, SE_CONFUSE, SE_SPEED, SE_HOLD, SE_JOKE, 0};
+  bool flag = false;
 
   /* with m_list[i1]. do; */
   if (is_in(typ, some_stuff)) {
+    char out_val[82];
     flag = true;
     if (typ == SE_JOKE) {
       sprintf(out_val, "The %s appears offended...",
@@ -1949,14 +1921,13 @@ boolean za__no_it_didnt(long monptr, long dmge, long typ) {
   return flag;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zap_area(long cflag, long dmge, long typ) {
-  long i1, m_next;
-  boolean flag = false;
+bool zap_area(const long cflag, const long dmge, const long typ) {
+  bool flag = false;
 
-  i1 = muptr; /* what if no monsters? */
+  long i1 = muptr; /* what if no monsters? */
 
   do {
-    m_next = m_list[i1].nptr;
+    const long m_next = m_list[i1].nptr;
     /* with m_list[i1]. do; */
     /* with monster_templates[m_list[i1].mptr] do; */
     if (m_list[i1].ml) {
@@ -1975,7 +1946,7 @@ boolean zap_area(long cflag, long dmge, long typ) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void da__replace_spot(long y, long x, long typ) {
+void da__replace_spot(const long y, const long x, const long typ) {
   /* with cave[y][x]. do; */
   switch (typ) {
   case 1:
@@ -2014,25 +1985,23 @@ void da__replace_spot(long y, long x, long typ) {
     delete_object(y, x);
   }
 
-  if ((cave[y][x].cptr > 1) && (!mon_resists(cave[y][x].cptr))) {
+  if (cave[y][x].cptr > 1 && !mon_resists(cave[y][x].cptr)) {
     delete_monster(cave[y][x].cptr);
   }
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean destroy_area(long y, long x) {
+bool destroy_area(const long y, const long x) {
   /*{ The spell of destruction...                           -RAK-   }*/
   /*{ NOTE : Winning creatures that are deleted will be considered  }*/
   /*{        as teleporting to another level.  This will NOT win the}*/
   /*{        game...                                                }*/
 
-  long i1, i2, i3;
-
   if (dun_level > 0) {
-    for (i1 = (y - 15); i1 <= (y + 15); i1++) {
-      for (i2 = (x - 15); i2 <= (x + 15); i2++) {
+    for (long i1 = y - 15; i1 <= y + 15; i1++) {
+      for (long i2 = x - 15; i2 <= x + 15; i2++) {
         if (in_bounds(i1, i2)) {
           if (cave[i1][i2].fval != boundry_wall.ftval) {
-            i3 = distance(i1, i2, y, x);
+            const long i3 = distance(i1, i2, y, x);
             if (i3 < 13) {
               da__replace_spot(i1, i2, randint(6));
             } else if (i3 < 16) {
@@ -2052,24 +2021,23 @@ boolean destroy_area(long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean earthquake() {
+bool earthquake(void) {
   /*{ This is a fun one.  In a given block, pick some walls and     }*/
   /*{ turn them into open spots.  Pick some open spots and turn     }*/
   /*{ them into walls.  An "Earthquake" effect...           -RAK-   }*/
 
-  long i1, i2;
   obj_set room_floors = {1, 2, 0};
 
-  for (i1 = char_row - 8; i1 <= char_row + 8; i1++) {
-    for (i2 = char_col - 8; i2 <= char_col + 8; i2++) {
-      if ((i1 != char_row) || (i2 != char_col)) {
+  for (long i1 = char_row - 8; i1 <= char_row + 8; i1++) {
+    for (long i2 = char_col - 8; i2 <= char_col + 8; i2++) {
+      if (i1 != char_row || i2 != char_col) {
         if (in_bounds(i1, i2)) {
           if (randint(8) == 1) {
             /* with cave[i1][i2]. do; */
             if (cave[i1][i2].tptr > 0) {
               delete_object(i1, i2);
             }
-            if ((cave[i1][i2].cptr > 1) && (!mon_resists(cave[i1][i2].cptr))) {
+            if (cave[i1][i2].cptr > 1 && !mon_resists(cave[i1][i2].cptr)) {
               mon_take_hit(cave[i1][i2].cptr, damroll("2d8"));
             }
             if (is_in(cave[i1][i2].fval, wall_set)) {
@@ -2130,24 +2098,23 @@ boolean earthquake() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean mass_poly() {
+bool mass_poly(void) {
   /*{ Polymorph any creature that player can see...         -RAK-   }*/
   /*{ NOTE: cannot polymorph a winning creature (BALROG)            }*/
 
-  long i1, i2, y, x;
-  boolean flag = false;
+  bool flag = false;
 
-  i1 = muptr;
+  long i1 = muptr;
 
   do {
     /* with m_list[i1]. do; */
-    i2 = m_list[i1].nptr;
+    const long i2 = m_list[i1].nptr;
     if (m_list[i1].cdis < MAX_SIGHT) {
       /* with monster_templates[m_list[i1].mptr]. do; */
-      if (((monster_templates[m_list[i1].mptr].cdefense & 0x80000000) == 0) &&
-          (!mon_resists(i1))) {
-        y = m_list[i1].fy;
-        x = m_list[i1].fx;
+      if ((monster_templates[m_list[i1].mptr].cdefense & 0x80000000) == 0 &&
+          !mon_resists(i1)) {
+        const long y = m_list[i1].fy;
+        const long x = m_list[i1].fx;
         delete_monster(i1);
         place_monster(y, x, randint(m_level[MAX_MONS_LEVEL]) + m_level[0],
                       false);
@@ -2163,22 +2130,18 @@ boolean mass_poly() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean light_line(long dir, long y, long x, long power) {
+bool light_line(const long dir, long y, long x, const long power) {
   /*{ Leave a line of light in given dir, blue light can sometimes  }*/
   /*{ hurt creatures...                                     -RAK-   }*/
 
-  long i1;
-  long i2;
-  char out_val[82];
-
   ENTER(("light_line", "%d, %d, %d, %d", dir, y, x, power));
 
-  for (; cave[y][x].fopen;) {
+  while (cave[y][x].fopen) {
     /* with cave[y][x]. do; */
 
     if (panel_contains(y, x)) {
 
-      if (!((cave[y][x].tl) || (cave[y][x].pl))) {
+      if (!(cave[y][x].tl || cave[y][x].pl)) {
         if (cave[y][x].fval == lopen_floor.ftval) {
           dungeon_light_room(y, x);
         } else {
@@ -2193,14 +2156,15 @@ boolean light_line(long dir, long y, long x, long power) {
         if (!mon_resists(cave[y][x].cptr)) {
           if (0x0100 &
               monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) {
+            char out_val[82];
 
             sprintf(out_val, "The %s wails out in pain!",
                     monster_templates[m_list[cave[y][x].cptr].mptr].name);
 
             msg_print(out_val);
 
-            i1 = 0;
-            for (i2 = 1; i2 <= power; i2++) {
+            long i1 = 0;
+            for (long i2 = 1; i2 <= power; i2++) {
               i1 += damroll("2d8");
             }
 
@@ -2226,12 +2190,10 @@ boolean light_line(long dir, long y, long x, long power) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean starlite(long y, long x) {
+bool starlite(const long y, const long x) {
   /*{ Light line in all directions                          -RAK-   }*/
 
-  long i1;
-
-  for (i1 = 1; i1 <= 9; i1++) {
+  for (long i1 = 1; i1 <= 9; i1++) {
     if (i1 != 5) {
       light_line(i1, y, x, 2);
     }
@@ -2243,9 +2205,9 @@ boolean starlite(long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean fb__ill_joke(long a_cptr, enum spell_effect_t typ, long dam, char *str,
+bool fb__ill_joke(const long a_cptr, const enum spell_effect_t typ,
+                     const long dam, char *str,
                      char *str2) {
-  long i2;
   char out_val[82];
 
   find_monster_name(str, a_cptr, false);
@@ -2254,7 +2216,7 @@ boolean fb__ill_joke(long a_cptr, enum spell_effect_t typ, long dam, char *str,
   /* with monster_templates[mptr] do; */
   if (!mon_save(a_cptr, 0, SC_MENTAL)) {
     m_list[a_cptr].confused = true;
-    i2 = mon_take_hit(a_cptr, dam);
+    const long i2 = mon_take_hit(a_cptr, dam);
     if (typ == SE_ILLUSION) {
       sprintf(out_val, "%s seems to believe the illusion...", str2);
       msg_print(out_val);
@@ -2291,32 +2253,30 @@ boolean fb__ill_joke(long a_cptr, enum spell_effect_t typ, long dam, char *str,
   return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
+bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x, long dam,
                   char bolt_typ[28]) {
   /*{ Shoot a bolt in a given direction                     -RAK-   }*/
 
   long dist;
-  long cptr;
-  long mptr;
   long weapon_type;
   long harm_type;
   obj_set *dummy;
-  char str[82];
-  char str2[82];
-  char out_val[120];
 
   get_flags(typ, &weapon_type, &harm_type, &dummy);
   dist = 0;
   if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
+    char str2[82];
+    char str[82];
     /* with cave[y][x]. do; */
-    if ((typ == SE_ILLUSION) || (typ == SE_JOKE)) {
+    if (typ == SE_ILLUSION || typ == SE_JOKE) {
       fb__ill_joke(cave[y][x].cptr, typ, dam, str, str2);
     } else {
       /* with m_list[cave[y][x].cptr]. do; */
       /* with monster_templates[m_list[cave[y][x].cptr].mptr]. do; */
-      cptr = cave[y][x].cptr;
-      mptr = m_list[cptr].mptr;
+      const long cptr = cave[y][x].cptr;
+      const long mptr = m_list[cptr].mptr;
       if (!mon_resists(cptr)) {
+        char out_val[120];
 
         find_monster_name(str, cptr, false);
         find_monster_name(str2, cptr, true);
@@ -2344,13 +2304,13 @@ boolean fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_ball(enum spell_effect_t typ, long dir, long y, long x,
-                  long dam_hp, char descrip[28]) {
+bool fire_ball(const enum spell_effect_t typ, const long dir, long y, long x,
+                  const long dam_hp, char descrip[28]) {
   /*{ Shoot a ball in a given direction.  Note that balls have an   }*/
   /*{ area affect....                                       -RAK-   }*/
 
   long dist = 0;
-  boolean flag = false;
+  bool flag = false;
 
   if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
     explode(typ, y, x, dam_hp, descrip);
@@ -2364,21 +2324,17 @@ boolean fire_ball(enum spell_effect_t typ, long dir, long y, long x,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean wall_to_mud(long dir, long y, long x) {
+bool wall_to_mud(const long dir, long y, long x) {
   /*{ Turn stone to mud, delete wall....                    -RAK-   }*/
 
-  long i1;
-  long cptr;
-  long mptr;
-  char out_val[82];
-  char out_val2[120];
-  boolean flag = false;
-  boolean return_value = false;
+  bool flag = false;
+  bool return_value = false;
 
   do {
     move_dir(dir, &y, &x);
     /* with cave[y][x]. do; */
     if (in_bounds(y, x)) {
+      char out_val[82];
       if (is_in(cave[y][x].fval, wall_set)) {
         flag = true;
         twall(y, x, 1, 0);
@@ -2388,11 +2344,12 @@ boolean wall_to_mud(long dir, long y, long x) {
         } else {
           unlite_spot(y, x);
         }
-      } else if ((cave[y][x].tptr > 0) && (!(cave[y][x].fopen))) {
+      } else if (cave[y][x].tptr > 0 && !cave[y][x].fopen) {
         /* kills doors? */
         flag = true;
         if (panel_contains(y, x)) {
           if (test_light(y, x)) {
+            char out_val2[120];
             inven_temp.data = t_list[cave[y][x].tptr];
             objdes(out_val, &inven_temp, false);
             sprintf(out_val2, "The %s turns into mud.", out_val);
@@ -2403,13 +2360,13 @@ boolean wall_to_mud(long dir, long y, long x) {
         delete_object(y, x);
       }
 
-      cptr = cave[y][x].cptr;
-      mptr = m_list[cptr].mptr;
+      const long cptr = cave[y][x].cptr;
+      const long mptr = m_list[cptr].mptr;
       if (cptr > 1) {
 
         if ((0x0200 &
              monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
-          i1 = mon_take_hit(cptr, 100);
+          const long i1 = mon_take_hit(cptr, 100);
           flag = true;
           if (m_list[cptr].ml) {
             if (i1 > 0) {
@@ -2437,12 +2394,12 @@ boolean wall_to_mud(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean td_destroy2(long dir, long y, long x) {
+bool td_destroy2(const long dir, long y, long x) {
   /*{ Destroy all traps and doors in a given direction      -RAK-   }*/
 
-  obj_set thump_stuff = {chest,       unseen_trap, seen_trap,
+  const obj_set thump_stuff = {chest,       unseen_trap, seen_trap,
                          closed_door, secret_door, 0};
-  boolean flag = false;
+  bool flag = false;
 
   do {
     move_dir(dir, &y, &x);
@@ -2465,20 +2422,18 @@ boolean td_destroy2(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean poly_monster(long dir, long y, long x) {
+bool poly_monster(const long dir, long y, long x) {
   /*{ Polymorph a monster                                   -RAK-   }*/
   /*{ NOTE: cannot polymorph a winning creature (BALROG)            }*/
 
-  char out_val[82];
-  long cptr;
   long dist = 0;
-  boolean flag = false;
-  boolean return_value = false;
+  bool flag = false;
+  bool return_value = false;
 
   do {
     if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, false)) {
       /* with cave[y][x]. do; */
-      cptr = cave[y][x].cptr;
+      const long cptr = cave[y][x].cptr;
       if (!mon_save(cptr, 0, SC_NULL)) {
         if (!mon_resists(cptr)) {
           flag = true;
@@ -2492,6 +2447,7 @@ boolean poly_monster(long dir, long y, long x) {
           }
         }
       } else {
+        char out_val[82];
         sprintf(out_val, "The %s is unaffected.",
                 monster_templates[m_list[cptr].mptr].name);
         msg_print(out_val);
@@ -2506,19 +2462,19 @@ boolean poly_monster(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean build_wall(long dir, long y, long x) {
+bool build_wall(const long dir, long y, long x) {
   /*{ Create a wall...                                      -RAK-   }*/
 
   long i1 = 0;
-  boolean flag = false;
+  bool flag = false;
 
   move_dir(dir, &y, &x);
-  for (; (cave[y][x].fopen) && (i1 < 10);) {
+  while (cave[y][x].fopen && i1 < 10) {
     /* with cave[y,x] do; */
     if (cave[y][x].tptr > 0) {
       delete_object(y, x);
     }
-    if ((cave[y][x].cptr > 1) && (!mon_resists(cave[y][x].cptr))) {
+    if (cave[y][x].cptr > 1 && !mon_resists(cave[y][x].cptr)) {
       mon_take_hit(cave[y][x].cptr, damroll("2d8"));
     }
     cave[y][x].fval = rock_wall2.ftval;
@@ -2537,10 +2493,10 @@ boolean build_wall(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean clone_monster(long dir, long y, long x) {
+bool clone_monster(const long dir, long y, long x) {
   /*{ Replicate a creature                                  -RAK-   }*/
 
-  boolean flag = false;
+  bool flag = false;
 
   if (move_to_creature(dir, &y, &x)) {
     /* with cave[y][x]. do; */
@@ -2558,19 +2514,18 @@ boolean clone_monster(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean disarm_all(long dir, long y, long x) {
+bool disarm_all(const long dir, long y, long x) {
   /*{ Disarms all traps/chests in a given direction         -RAK-   }*/
 
-  long oldy, oldx, tval;
-  char *achar;
-  boolean flag = false;
+  long oldy, oldx;
+  bool flag = false;
 
   do {
     /* with cave[y][x]. do; */
     if (cave[y][x].tptr > 0) {
       /* with t_list[tptr] do; */
-      tval = t_list[cave[y][x].tptr].tval;
-      if ((tval == unseen_trap) || (tval == seen_trap)) {
+      const long tval = t_list[cave[y][x].tptr].tval;
+      if (tval == unseen_trap || tval == seen_trap) {
         if (delete_object(y, x)) {
           flag = true;
         }
@@ -2587,7 +2542,7 @@ boolean disarm_all(long dir, long y, long x) {
           t_list[cave[y][x].tptr].flags &= 0xFFFFFE0F; /* detrap */
           t_list[cave[y][x].tptr].flags &= 0xFFFFFFFE; /* unlock */
           flag = true;
-          achar = strstr(t_list[cave[y][x].tptr].name, " (");
+          char *achar = strstr(t_list[cave[y][x].tptr].name, " (");
           if (achar != NULL) {
             *achar = 0;
           }
@@ -2599,19 +2554,19 @@ boolean disarm_all(long dir, long y, long x) {
     oldy = y;
     oldx = x;
     move_dir(dir, &y, &x);
-  } while ((cave[oldy][oldx].fopen));
+  } while (cave[oldy][oldx].fopen);
 
   return flag;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean teleport_monster(long dir, long y, long x) {
+bool teleport_monster(const long dir, long y, long x) {
   /*{ Teleport all creatures in a given direction away      -RAK-   }*/
 
-  boolean flag = false;
+  bool flag = false;
 
-  for (; move_to_creature(dir, &y, &x);) {
+  while (move_to_creature(dir, &y, &x)) {
     teleport_away(cave[y][x].cptr, MAX_SIGHT);
     flag = true;
   }
@@ -2621,9 +2576,9 @@ boolean teleport_monster(long dir, long y, long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-static boolean zm__did_it_work(enum spell_effect_t zaptype, long cptr,
-                               long aux) {
-  boolean flag;
+static bool zm__did_it_work(const enum spell_effect_t zaptype,
+                               const long cptr, const long aux) {
+  bool flag;
 
   /* with cave[y,x] do; */
   /* with monster_templates[m_list[cptr].mptr] do; */
@@ -2631,20 +2586,20 @@ static boolean zm__did_it_work(enum spell_effect_t zaptype, long cptr,
   switch (zaptype) {
   case SE_SLEEP:
   case SE_CONFUSE:
-    flag = ((!mon_save(cptr, 0, SC_MENTAL)) && (!mon_resists(cptr)));
+    flag = !mon_save(cptr, 0, SC_MENTAL) && !mon_resists(cptr);
     break;
 
   case SE_DRAIN:
-    flag = (((monster_templates[m_list[cptr].mptr].cdefense & 0x0008) == 0) &&
-            (!mon_resists(cptr)));
+    flag = (monster_templates[m_list[cptr].mptr].cdefense & 0x0008) == 0 &&
+           !mon_resists(cptr);
     break;
 
   case SE_SPEED:
-    flag = ((!mon_save(cptr, 0, SC_NULL)) && (!mon_resists(cptr))) || (aux > 0);
+    flag = (!mon_save(cptr, 0, SC_NULL) && !mon_resists(cptr)) || aux > 0;
     break;
 
   case SE_HOLD:
-    flag = ((!mon_save(cptr, 0, SC_HOLD)) && (!mon_resists(cptr)));
+    flag = !mon_save(cptr, 0, SC_HOLD) && !mon_resists(cptr);
     break;
 
   default:
@@ -2655,7 +2610,8 @@ static boolean zm__did_it_work(enum spell_effect_t zaptype, long cptr,
 }
 
 /*//////////////////////////////////////////////////////////////////// */
-void zm__yes_it_did(enum spell_effect_t zaptype, long cptr, long aux,
+void zm__yes_it_did(const enum spell_effect_t zaptype, const long cptr,
+                    const long aux,
                     char *str1, char *str2) {
   long i1;
   char out_val[82];
@@ -2715,16 +2671,15 @@ void zm__yes_it_did(enum spell_effect_t zaptype, long cptr, long aux,
   }
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zm__no_it_didnt(enum spell_effect_t zaptype, char *str1) {
+bool zm__no_it_didnt(const enum spell_effect_t zaptype, char *str1) {
   /*{ returns true for item idents }*/
 
-  obj_set things_you_can_know = {SE_ILLUSION, SE_SLEEP, SE_CONFUSE, 0};
-  char out_val[82];
-  boolean flag;
+  const obj_set things_you_can_know = {SE_ILLUSION, SE_SLEEP, SE_CONFUSE, 0};
 
-  flag = is_in(zaptype, things_you_can_know);
+  const bool flag = is_in(zaptype, things_you_can_know);
 
   if (zaptype != SE_DRAIN) {
+    char out_val[82];
     sprintf(out_val, "%s is unaffected.", str1);
     msg_print(out_val);
   }
@@ -2732,16 +2687,17 @@ boolean zm__no_it_didnt(enum spell_effect_t zaptype, char *str1) {
   return flag;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean zap_monster(long dir, long y, long x, long aux, long zaptype) {
+bool zap_monster(const long dir, long y, long x, const long aux,
+                    const long zaptype) {
   /*{ Contains all aimed spell effects that stop at first victim.  New
     spell effects should be put into constants.inc.  Aux is used for
     damage
     or speed change if used.}*/
 
-  boolean flag = false;
+  bool flag = false;
 
   if (move_to_creature(dir, &y, &x)) {
-    long cptr = cave[y][x].cptr;
+    const long cptr = cave[y][x].cptr;
     char str1[82];
     char str2[82];
 
@@ -2759,14 +2715,13 @@ boolean zap_monster(long dir, long y, long x, long aux, long zaptype) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
-                         boolean visable) {
-  boolean hit_creature = false;
-  long oldx, oldy;
+bool bolt_to_creature(const long dir, long *y, long *x, long *dist,
+                         const long max_dist, const bool visable) {
+  bool hit_creature = false;
 
   do {
-    oldy = *y;
-    oldx = *x;
+    const long oldy = *y;
+    const long oldx = *x;
     move_dir(dir, y, x);
     (*dist)++;
     if (visable) { /*{ erase bolt }*/
@@ -2779,8 +2734,8 @@ boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
     if (*dist <= max_dist) {
       /* with cave[y][x]. do; */
       if (cave[*y][*x].fopen) {
-        hit_creature = (cave[*y][*x].cptr > 1);
-        if (visable && (!hit_creature)) {
+        hit_creature = cave[*y][*x].cptr > 1;
+        if (visable && !hit_creature) {
           if (panel_contains(*y, *x)) {
             print('*', *y, *x); /*{ draw bolt }*/
             refresh();
@@ -2789,36 +2744,33 @@ boolean bolt_to_creature(long dir, long *y, long *x, long *dist, long max_dist,
         }
       }
     }
-  } while (!((!cave[*y][*x].fopen) || (*dist > max_dist) || hit_creature));
+  } while (!(!cave[*y][*x].fopen || *dist > max_dist || hit_creature));
 
   return hit_creature;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean move_to_creature(long dir, long *y, long *x) {
-  boolean hit_creature;
+bool move_to_creature(const long dir, long *y, long *x) {
   long dist = 0;
 
-  hit_creature = bolt_to_creature(dir, y, x, &dist, 999, false);
+  const bool hit_creature = bolt_to_creature(dir, y, x, &dist, 999, false);
   return hit_creature;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean am_i_dumb() { return player_lev < randint(randint(50)); }
+bool am_i_dumb(void) { return player_lev < randint(randint(50)); }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean lore_spell() {
+bool lore_spell(void) {
   /*{ Give name for most items in inventory -Cap'n- }*/
 
-  treas_rec *thingy;
-
-  thingy = inventory_list;
-  for (; thingy != NULL;) {
+  treas_rec *thingy = inventory_list;
+  while (thingy != NULL) {
     if (!am_i_dumb()) {
-      identify(&(thingy->data));
+      identify(&thingy->data);
       known2(thingy->data.name);
     }
     thingy = thingy->next;
@@ -2829,11 +2781,11 @@ boolean lore_spell() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_curse() {
+bool detect_curse(void) {
   char trash_char;
   treas_rec *item_ptr;
-  boolean redraw;
-  boolean flag = false;
+  bool redraw;
+  bool flag = false;
 
   redraw = false;
   change_all_ok_stats(true, true);
@@ -2858,23 +2810,23 @@ boolean detect_curse() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean detect_magic() {
+bool detect_magic(void) {
   /*{ Determine whether an item is magical or not           -Cap'n- }*/
 
   treas_rec *item_ptr;
   char trash_char;
-  boolean redraw, dumb, dumber;
-  boolean flag = false;
+  bool redraw;
+  bool flag = false;
 
   redraw = false;
-  dumb = am_i_dumb();
-  dumber = dumb && am_i_dumb();
+  const bool dumb = am_i_dumb();
+  const bool dumber = dumb && am_i_dumb();
   change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Item you wish to examine?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */
-    if ((((item_ptr->data.flags != 0) || (item_ptr->data.tohit > 0) ||
-          (item_ptr->data.todam > 0) || (item_ptr->data.toac > 0)) &&
+    if (((item_ptr->data.flags != 0 || item_ptr->data.tohit > 0 ||
+          item_ptr->data.todam > 0 || item_ptr->data.toac > 0) &&
          !dumb) ||
         dumber) {
       msg_print("The item seems magical!");
@@ -2893,7 +2845,7 @@ boolean detect_magic() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean create_water(__attribute__((unused)) long y,
+bool create_water(__attribute__((unused)) long y,
                      __attribute__((unused)) long x) {
   /*{ Creates an area of water on open floor                -Cap'n- }*/
   /* XXXX no code existed */
@@ -2902,7 +2854,7 @@ boolean create_water(__attribute__((unused)) long y,
 }
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean destroy_water(__attribute__((unused)) long y,
+bool destroy_water(__attribute__((unused)) long y,
                       __attribute((unused)) long x) {
   /*{ Makes an area of water into open floor                -Cap'n- }*/
   /* XXXX no code existed */
@@ -2911,7 +2863,7 @@ boolean destroy_water(__attribute__((unused)) long y,
 }
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean item_petrify() {
+bool item_petrify(void) {
   /*{ Does a petrify attack on the fool that used the bad item -Capn-}*/
   /* XXXX no code existed */
   return true;
@@ -2919,13 +2871,12 @@ boolean item_petrify() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
+bool creeping_doom(const long dir, long y, long x, const long dam_hp,
+                      const long range,
                       char ddesc[28]) {
   /*{ Creeping doom type spells, a missile, but with a set range    }*/
 
   long dist;
-  long cptr, mptr;
-  char out_val[82];
 
   dist = 0;
 
@@ -2933,10 +2884,11 @@ boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
     /* with cave[y,x] do; */
     /* with m_list[cptr] do; */
     /* with monster_templates[mptr] do; */
-    cptr = cave[y][x].cptr;
-    mptr = m_list[cptr].mptr;
+    const long cptr = cave[y][x].cptr;
+    const long mptr = m_list[cptr].mptr;
 
     if (!mon_resists(cptr)) {
+      char out_val[82];
       sprintf(out_val, "The %s hits the %s.", ddesc,
               monster_templates[mptr].name);
       msg_print(out_val);
@@ -2957,25 +2909,24 @@ boolean creeping_doom(long dir, long y, long x, long dam_hp, long range,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
+bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
                   long dam_hp, char descrip[28]) {
   /*{ Fire a spell that affects a line of monsters                  }*/
 
   long dist;
   long weapon_type, harm_type;
-  long cptr, mptr;
   obj_set *dummy;
-  char out_val[82];
 
   get_flags(typ, &weapon_type, &harm_type, &dummy);
   dist = 0;
-  for (; bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true);) {
+  while (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
     /* with cave[y,x] do; */
     /* with m_list[cptr] do; */
     /* with monster_templates[mptr] do; */
-    cptr = cave[y][x].cptr;
-    mptr = m_list[cptr].mptr;
+    const long cptr = cave[y][x].cptr;
+    const long mptr = m_list[cptr].mptr;
     if (!mon_resists(cptr)) {
+      char out_val[82];
       sprintf(out_val, "The %s strikes the %s.", descrip,
               monster_templates[mptr].name);
       msg_print(out_val);
@@ -3001,27 +2952,27 @@ boolean fire_line(enum spell_effect_t typ, long dir, long y, long x,
   return true;
 }
 
-void teleport(long dis) {
+void teleport(const long dis) {
 
-  long y, x, i1, i2;
+  long y, x;
 
   ENTER(("teleport", "%d", dis));
 
   do {
     y = randint(cur_height);
     x = randint(cur_width);
-    for (; distance(y, x, char_row, char_col) > dis;) {
+    while (distance(y, x, char_row, char_col) > dis) {
       y += trunc((char_row - y) / 2);
       x += trunc((char_col - x) / 2);
     }
-  } while (!((cave[y][x].fopen) && (cave[y][x].cptr < 2)));
+  } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
   move_rec(char_row, char_col, y, x);
-  for (i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
+    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1,i2] do; */
       cave[i1][i2].tl = false;
-      if (!(test_light(i1, i2))) {
+      if (!test_light(i1, i2)) {
         unlite_spot(i1, i2);
       }
     }

@@ -1,6 +1,3 @@
-#ifndef BLACKJACK_H
-#define BLACKJACK_H
+#pragma once
 
-void start_blackjack();
-
-#endif /* BLACKJACK_H */
+void start_blackjack(void);

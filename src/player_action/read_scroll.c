@@ -1,38 +1,32 @@
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
 #include "../death.h"
-#include "../debug.h"
 #include "../desc.h"
 #include "../generate_monster.h"
 #include "../inven.h"
-#include "../magic.h"
+#include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../term.h"
 #include "../types.h"
-#include "../generate_monster.h"
 #include "../variables.h"
 
-void rs__scroll_effect(long effect, boolean *idented, boolean *first,
+void rs__scroll_effect(long effect, bool *idented, bool *first,
                        treas_rec *item_ptr) {
-  long i2, i3, i4, randy;
+  long i3, i4, randy;
   long y, x;
   long tmp[9]; /*: array [1..8] of long;*/
   char out_val[82];
   char out_val2[120];
-  boolean ident, flag;
+  bool ident, flag;
   char dstr[20][82];
 
   ident = *idented;
@@ -47,7 +41,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
-      if (enchant(&(equipment[Equipment_primary].tohit))) {
+      if (enchant(&equipment[Equipment_primary].tohit)) {
         /*{Un-curse the object}*/ /* not(Cursed_worn_bit)*/
         equipment[Equipment_primary].flags &= 0x7FFFFFFF;
         py_bonuses(&blank_treasure, 0);
@@ -65,7 +59,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
-      if (enchant(&(equipment[Equipment_primary].todam))) {
+      if (enchant(&equipment[Equipment_primary].todam)) {
         /* not(Cursed_worn_bit)*/
         equipment[Equipment_primary].flags &= 0x7FFFFFFF;
         py_bonuses(&blank_treasure, 0);
@@ -141,7 +135,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       objdes(out_val, &inven_temp, false);
       sprintf(out_val2, "Your %s glows faintly!", out_val);
       msg_print(out_val2);
-      if (enchant(&(equipment[i4].toac))) {
+      if (enchant(&equipment[i4].toac)) {
         equipment[i4].flags &= 0x7FFFFFFF; /* not(Cursed_worn_bit)*/
         py_bonuses(&blank_treasure, 0);
       } else {
@@ -152,7 +146,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 4: /*{ Identify }*/
-    identify(&(item_ptr->data));
+    identify(&item_ptr->data);
     msg_print("This is an identify scroll");
     msg_print(" ");
     if (ident_spell()) {
@@ -266,7 +260,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 25: /*{ Recharge Item }*/
-    identify(&(item_ptr->data));
+    identify(&item_ptr->data);
     msg_print("This is a Recharge-Item scroll.");
     msg_print(" ");
     if (recharge(60)) {
@@ -312,13 +306,13 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       flag = false;
       randy = randint(2);
       for (i3 = 0; i3 < randy; i3++) {
-        if (enchant(&(equipment[Equipment_primary].tohit))) {
+        if (enchant(&equipment[Equipment_primary].tohit)) {
           flag = true;
         }
       }
       randy = randint(2);
       for (i3 = 0; i3 < randy; i3++) {
-        if (enchant(&(equipment[Equipment_primary].todam))) {
+        if (enchant(&equipment[Equipment_primary].todam)) {
           flag = true;
         }
       }
@@ -343,7 +337,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       equipment[Equipment_primary].tohit = -randint(5) - randint(5);
       equipment[Equipment_primary].todam = -randint(5) - randint(5);
       equipment[Equipment_primary].flags = Cursed_worn_bit;
-      py_bonuses(&(inven_temp.data), -1);
+      py_bonuses(&inven_temp.data, -1);
       ident = true;
     }
     break;
@@ -380,6 +374,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     }
 
     if (i3 > 0) {
+      long i2;
       /* with equipment[i3]. do; */
       inven_temp.data = equipment[i3];
       objdes(out_val, &inven_temp, false);
@@ -388,7 +383,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       flag = false;
       randy = randint(2);
       for (i2 = 0; i2 < randy; i2++) {
-        if (enchant(&(equipment[i3].toac))) {
+        if (enchant(&equipment[i3].toac)) {
           flag = true;
         }
       }
@@ -403,19 +398,19 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
     break;
 
   case 35:
-    if ((equipment[Equipment_armor].tval > 0) && (randint(4) == 1)) {
+    if (equipment[Equipment_armor].tval > 0 && randint(4) == 1) {
       i3 = Equipment_armor;
-    } else if ((equipment[Equipment_shield].tval > 0) && (randint(3) == 1)) {
+    } else if (equipment[Equipment_shield].tval > 0 && randint(3) == 1) {
       i3 = Equipment_shield;
-    } else if ((equipment[Equipment_cloak].tval > 0) && (randint(3) == 1)) {
+    } else if (equipment[Equipment_cloak].tval > 0 && randint(3) == 1) {
       i3 = Equipment_cloak;
-    } else if ((equipment[Equipment_helm].tval > 0) && (randint(3) == 1)) {
+    } else if (equipment[Equipment_helm].tval > 0 && randint(3) == 1) {
       i3 = Equipment_helm;
-    } else if ((equipment[Equipment_gloves].tval > 0) && (randint(3) == 1)) {
+    } else if (equipment[Equipment_gloves].tval > 0 && randint(3) == 1) {
       i3 = Equipment_gloves;
-    } else if ((equipment[Equipment_belt].tval > 0) && (randint(3) == 1)) {
+    } else if (equipment[Equipment_belt].tval > 0 && randint(3) == 1) {
       i3 = Equipment_belt;
-    } else if ((equipment[Equipment_bracers].tval > 0) && (randint(3) == 1)) {
+    } else if (equipment[Equipment_bracers].tval > 0 && randint(3) == 1) {
       i3 = Equipment_bracers;
     } else if (equipment[Equipment_armor].tval > 0) {
       i3 = Equipment_armor;
@@ -443,7 +438,7 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
       msg_print(out_val2);
       equipment[i3].flags = Cursed_worn_bit;
       equipment[i3].toac = -randint(5) - randint(5);
-      py_bonuses(&(inven_temp.data), -1);
+      py_bonuses(&inven_temp.data, -1);
       ident = true;
     }
     break;
@@ -554,14 +549,14 @@ void rs__scroll_effect(long effect, boolean *idented, boolean *first,
   *idented = ident;
 }
 
-void player_action_read_scroll() {
+void player_action_read_scroll(void) {
   unsigned long q1, q2;
-  long i3, i5;
+  long i3;
   treas_rec *i2;
   treas_rec *item_ptr;
   char trash_char;
-  boolean redraw, ident, first;
-  obj_set stuff_to_read = {scroll1, scroll2, 0};
+  bool redraw, ident, first;
+  const obj_set stuff_to_read = {scroll1, scroll2, 0};
 
   first = true;
   reset_flag = true;
@@ -587,8 +582,8 @@ void player_action_read_scroll() {
           q1 = item_ptr->data.flags;
           q2 = item_ptr->data.flags2;
           ident = false;
-          for (; q1 > 0 || q2 > 0;) {
-            i5 = bit_pos64(&q2, &q1) + 1;
+          while (q1 > 0 || q2 > 0) {
+            long i5 = bit_pos64(&q2, &q1) + 1;
 
             /*
              * It looks like scroll2 was
@@ -626,9 +621,9 @@ void player_action_read_scroll() {
             }
           }
 
-          if (!(reset_flag)) {
+          if (!reset_flag) {
             if (ident) {
-              identify(&(item_ptr->data));
+              identify(&item_ptr->data);
             }
             if (!first) {
               desc_remain(item_ptr);
@@ -639,7 +634,7 @@ void player_action_read_scroll() {
                 /* with py.misc
                  */
                 /* do; */
-                C_player_add_exp((item_ptr->data.level / (float)player_lev) +
+                C_player_add_exp(item_ptr->data.level / (float)player_lev +
                                  .5);
                 prt_stat_block();
               }

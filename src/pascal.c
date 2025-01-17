@@ -6,40 +6,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "magic.h"
 #include "pascal.h"
-#include "term.h"
 #include "types.h"
-#include "variables.h"
 
-long pindex(char *s1, char c1) {
+long pindex(const char *s1, const char c1) {
   /*
     pascal index function, return position of c1 in s1
 
     returns i if (s1[i-1] == c1), returns 0 if c1 not found
    */
 
-  char *c2;
-
-  c2 = strchr(s1, c1);
+  const char *c2 = strchr(s1, c1);
 
   if (c2 == NULL) {
     return 0;
   }
 
-  return (c2 - s1 + 1);
+  return c2 - s1 + 1;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean is_in(long const obj, obj_set const oset) {
+bool is_in(long const obj, obj_set const oset) {
 #if DO_DEBUG
 #endif
-  boolean return_value = false;
+  bool return_value = false;
 
 #if DO_DEBUG
   long prev = 0;
@@ -57,7 +50,7 @@ boolean is_in(long const obj, obj_set const oset) {
   }
 #endif
 
-  for (long i = 0; (i < MAX_OBJ_SET) && (oset[i] <= obj) && (!return_value);
+  for (long i = 0; i < MAX_OBJ_SET && oset[i] <= obj && !return_value;
        i++) {
     if (obj == oset[i]) {
       return_value = true;
@@ -66,7 +59,7 @@ boolean is_in(long const obj, obj_set const oset) {
   return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
-boolean is_vowel(char a_char) {
+bool is_vowel(const char a_char) {
   switch (a_char) {
   case 'a':
   case 'A':

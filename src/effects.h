@@ -1,7 +1,4 @@
-#ifndef EFFECTS_H
-#define EFFECTS_H
-
-#include "boolean.h"
+#pragma once
 
 /*{ Corrode the unsuspecting person's armor               -RAK-   }*/
 void corrode_gas(char kb_str[82]);
@@ -20,5 +17,3 @@ void cold_dam(long dam, char kb_str[82]);
 
 /*{ Lightning bolt the sucker away...                     -RAK-   }*/
 void light_dam(long dam, char kb_str[82]);
-
-#endif // EFFECTS_H

@@ -6,28 +6,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "kickout.h"
 #include "constants.h"
 #include "debug.h"
-#include "magic.h"
+#include "desc.h"
+#include "generate_item/generate_item.h"
+#include "inven.h"
+#include "io.h"
+#include "kickout.h"
+#include "misc.h"
 #include "pascal.h"
 #include "player.h"
+#include "player/hunger.h"
+#include "player/regeneration.h"
+#include "random.h"
+#include "screen.h"
 #include "stores.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "generate_item/generate_item.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "misc.h"
-#include "random.h"
-#include "player/hunger.h"
-#include "player/regeneration.h"
 
 typedef struct owner_type {
   char owner_name[82];
@@ -293,8 +291,8 @@ static long store_bribe[MAX_STORES + MAX_UNNAMED] = {
     0    /* 17 fortress */
 };
 
-static void __randomize_cash(long *amt, long target) {
-  *amt = (199 * (*amt) + randint(2 * target)) / 200;
+static void __randomize_cash(long *amt, const long target) {
+  *amt = (199 * *amt + randint(2 * target)) / 200;
 }
 
 /**
@@ -302,7 +300,7 @@ static void __randomize_cash(long *amt, long target) {
  * @store_num: Type of store
  * @item: Item to add
  */
-static boolean __store_has_space_for(enum store_t store_num,
+static bool __store_has_space_for(const enum store_t store_num,
                                      treas_rec const *const item) {
 
   ENTER(("__store_has_space_for", ""));
@@ -332,7 +330,7 @@ static boolean __store_has_space_for(enum store_t store_num,
  * __add_item_to_store() - Creates an item and inserts it into store's inven
  * @store_num: Type of store
  */
-static void __add_item_to_store(enum store_t store_num) {
+static void __add_item_to_store(const enum store_t store_num) {
 
   long cur_pos;
   popt(&cur_pos);
@@ -387,7 +385,7 @@ static void __add_item_to_store(enum store_t store_num) {
     if (__store_has_space_for(store_num, &inven_temp)) {
       if (t_list[cur_pos].cost > 0) { /*{ Item must be good	}*/
         if (t_list[cur_pos].cost <
-            (owners[stores[store_num].owner].max_cost * GOLD_VALUE)) {
+            owners[stores[store_num].owner].max_cost * GOLD_VALUE) {
           long dummy;
           store_carry(store_num, &dummy);
           break;
@@ -404,17 +402,18 @@ static void __add_item_to_store(enum store_t store_num) {
  * @item_val: ?
  * @one_of: If false, the entire slot is destroyed
  */
-static void __remove_item_from_store(enum store_t store_num, long item_val,
-                                     boolean one_of) {
+static void __remove_item_from_store(const enum store_t store_num,
+                                     const long item_val,
+                                     const bool one_of) {
 
   inven_temp.data = stores[store_num].store_inven[item_val].sitem;
-  if ((stores[store_num].store_inven[item_val].sitem.number > 1) &&
-      (stores[store_num].store_inven[item_val].sitem.subval < 512) &&
-      (one_of)) {
+  if (stores[store_num].store_inven[item_val].sitem.number > 1 &&
+      stores[store_num].store_inven[item_val].sitem.subval < 512 &&
+      one_of) {
     inven_temp.data.number = 1;
     stores[store_num].store_inven[item_val].sitem.number--;
   } else {
-    long store_ctr = stores[store_num].store_ctr;
+    const long store_ctr = stores[store_num].store_ctr;
     for (int i = item_val; i < store_ctr; i++) {
       stores[store_num].store_inven[i] = stores[store_num].store_inven[i + 1];
     }
@@ -430,8 +429,8 @@ static void __remove_item_from_store(enum store_t store_num, long item_val,
  * @pos:
  * @icost:
  */
-static void __insert_item_in_store(enum store_t store_num, long pos,
-                                   long icost) {
+static void __insert_item_in_store(const enum store_t store_num, const long pos,
+                                   const long icost) {
 
   for (long i = stores[store_num].store_ctr; i >= pos; i--) {
     stores[store_num].store_inven[i + 1] = stores[store_num].store_inven[i];
@@ -448,7 +447,7 @@ static void __insert_item_in_store(enum store_t store_num, long pos,
  * @store_type: Type of store
  * @item: Item to appraise
  */
-static long __calc_purchase_price(enum store_t store_type,
+static long __calc_purchase_price(const enum store_t store_type,
                                   treasure_type const *const item) {
   if (item->cost <= 0)
     return 1;
@@ -468,7 +467,7 @@ static long __calc_purchase_price(enum store_t store_type,
  * @store_type: Type of store
  * @item: Item to appraise
  */
-static long __calc_sell_price(enum store_t store_type,
+static long __calc_sell_price(const enum store_t store_type,
                               treasure_type const *const item) {
   if (item->cost <= 0)
     return 0;
@@ -488,11 +487,11 @@ static long __calc_sell_price(enum store_t store_type,
  * @store_type: Store type
  * @base_price: Base price of item to inflate
  */
-static long __store_max_inflated_price(enum store_t store_type,
-                                       long base_price) {
+static long __store_max_inflated_price(const enum store_t store_type,
+                                       const long base_price) {
   long max_price =
       trunc(base_price * (1 + owners[stores[store_type].owner].max_inflate));
-  max_price += (max_price * C_player_cost_modifier_from_charisma());
+  max_price += max_price * C_player_cost_modifier_from_charisma();
   if (max_price < 0) {
     max_price = 1;
   }
@@ -504,11 +503,11 @@ static long __store_max_inflated_price(enum store_t store_type,
  * @store_type: Store type
  * @base_price: Base price of item to inflate
  */
-static long __store_min_inflated_price(enum store_t store_type,
-                                       long base_price) {
+static long __store_min_inflated_price(const enum store_t store_type,
+                                       const long base_price) {
   long min_price =
       trunc(base_price * (1 + owners[stores[store_type].owner].min_inflate));
-  min_price += (min_price * C_player_cost_modifier_from_charisma());
+  min_price += min_price * C_player_cost_modifier_from_charisma();
   if (min_price < 0) {
     min_price = 1;
   }
@@ -520,11 +519,11 @@ static long __store_min_inflated_price(enum store_t store_type,
  * @store_type: Store type
  * @base_price: Base price of item to inflate
  */
-static long __store_max_deflated_price(enum store_t store_type,
-                                       long base_price) {
+static long __store_max_deflated_price(const enum store_t store_type,
+                                       const long base_price) {
   long max_price =
       trunc(base_price * (1 - owners[stores[store_type].owner].max_inflate));
-  max_price -= (max_price * C_player_cost_modifier_from_charisma());
+  max_price -= max_price * C_player_cost_modifier_from_charisma();
   if (max_price < 0) {
     max_price = 1;
   }
@@ -536,18 +535,18 @@ static long __store_max_deflated_price(enum store_t store_type,
  * @store_type: Store type
  * @base_price: Base price of item to inflate
  */
-static long __store_min_deflated_price(enum store_t store_type,
-                                       long base_price) {
+static long __store_min_deflated_price(const enum store_t store_type,
+                                       const long base_price) {
   long min_price =
       trunc(base_price * (1 - owners[stores[store_type].owner].min_inflate));
-  min_price -= (min_price * C_player_cost_modifier_from_charisma());
+  min_price -= min_price * C_player_cost_modifier_from_charisma();
   if (min_price < 0) {
     min_price = 1;
   }
   return min_price;
 }
 
-static void __tick_down(long time_spent, long *flag) {
+static void __tick_down(const long time_spent, long *flag) {
   if (*flag <= 1)
     return;
 
@@ -562,25 +561,25 @@ static void __tick_down(long time_spent, long *flag) {
  * @store_type: Type of store
  * @start: ???
  */
-static void __store_print_inventory(enum store_t store_type, long start) {
+static void __store_print_inventory(const enum store_t store_type, long start) {
   ENTER(("__store_print_inventory", ""));
 
-  long i = ((start - 1) % 12);
-  long stop = (((start - 1) / 12) + 1) * 12;
+  long i = (start - 1) % 12;
+  long stop = ((start - 1) / 12 + 1) * 12;
 
   if (stop > stores[store_type].store_ctr) {
     stop = stores[store_type].store_ctr;
   }
 
-  for (; (start <= stop);) {
+  while (start <= stop) {
     inven_temp.data = stores[store_type].store_inven[start].sitem;
-    if ((inven_temp.data.subval > 255) && (inven_temp.data.subval < 512)) {
+    if (inven_temp.data.subval > 255 && inven_temp.data.subval < 512) {
       inven_temp.data.number = 1;
     }
     char out_val1[82];
     objdes(out_val1, &inven_temp, true);
     char out_val2[85];
-    sprintf(out_val2, "%c) %s", (97 + (int)i), out_val1);
+    sprintf(out_val2, "%c) %s", 97 + (int)i, out_val1);
     prt(out_val2, i + 6, 1);
     if (stores[store_type].store_inven[start].scost < 0) {
       /*{quack}*/
@@ -596,7 +595,7 @@ static void __store_print_inventory(enum store_t store_type, long start) {
     start++;
   }
   if (i < 12) {
-    for (long j = 1; j <= (12 - i + 1); j++) {
+    for (long j = 1; j <= 12 - i + 1; j++) {
       prt("", j + i + 5, 1);
     }
   }
@@ -607,7 +606,7 @@ static void __store_print_inventory(enum store_t store_type, long start) {
 /**
  * __store_print_store_gold() - Displays player's gold in store
  */
-static void __store_print_store_gold() {
+static void __store_print_store_gold(void) {
 
   ENTER(("__store_print_store_gold", ""));
 
@@ -623,11 +622,11 @@ static void __store_print_store_gold() {
  * @store_type: Type of store
  * @pos: Item position in list
  */
-static void __store_redraw_cost(enum store_t store_type, long pos) {
+static void __store_redraw_cost(const enum store_t store_type, const long pos) {
 
   char out_val[82];
 
-  long i = ((pos - 1) % 12);
+  const long i = (pos - 1) % 12;
   if (stores[store_type].store_inven[pos].scost < 0) {
     long cost = labs(stores[store_type].store_inven[pos].scost);
     cost += (long)(cost * C_player_cost_modifier_from_charisma());
@@ -644,7 +643,7 @@ static void __store_redraw_cost(enum store_t store_type, long pos) {
  * __store_close() - Deny the player entrance to the store
  * @store_type: Type of store
  */
-static void __store_close(long store_type) {
+static void __store_close(const long store_type) {
   stores[store_type].store_open.year = player_cur_age.year;
   stores[store_type].store_open.month = player_cur_age.month;
   stores[store_type].store_open.day = player_cur_age.day;
@@ -670,7 +669,7 @@ static void __store_close(long store_type) {
  * __print_trade_accepted() - Print something the store keeper says to accept
  * the trade
  */
-static void __print_trade_accepted() {
+static void __print_trade_accepted(void) {
 
   msg_flag = false;
   switch (randint(15)) {
@@ -722,7 +721,8 @@ static void __print_trade_accepted() {
   }
 }
 
-static void prt_comment2(long offer, long asking, long final) {
+static void prt_comment2(const long offer, const long asking,
+                         const long final) {
   /*{ %A1 is offer, %A2 is asking...                }*/
 
   char comment[82];
@@ -802,7 +802,8 @@ static void prt_comment2(long offer, long asking, long final) {
   }
 }
 
-static void prt_comment3(long offer, long asking, long final) {
+static void prt_comment3(const long offer, const long asking,
+                         const long final) {
   char comment[82];
 
   if (final > 0) {
@@ -872,7 +873,7 @@ static void prt_comment3(long offer, long asking, long final) {
   msg_print(comment);
 }
 
-static void prt_comment4() {
+static void prt_comment4(void) {
   /*{ Kick 'da bum out...                                   -RAK-   }*/
 
   msg_flag = false;
@@ -910,7 +911,7 @@ static void prt_comment4() {
   msg_flag = false;
 }
 
-static void prt_comment5() {
+static void prt_comment5(void) {
   switch (randint(10)) {
   case 1:
     msg_print("You will have to do better than that!");
@@ -945,7 +946,7 @@ static void prt_comment5() {
   }
 }
 
-static void prt_comment6() {
+static void prt_comment6(void) {
   switch (randint(5)) {
   case 1:
     msg_print("I must of heard you wrong...");
@@ -965,7 +966,7 @@ static void prt_comment6() {
   }
 }
 
-static void __wizard_print_insult(enum store_t store_type) {
+static void __wizard_print_insult(const enum store_t store_type) {
   if (wizard1) {
     char out_val[82];
     sprintf(out_val, "Insult : %d / %d", stores[store_type].insult_cur,
@@ -980,7 +981,7 @@ static void __wizard_print_insult(enum store_t store_type) {
  * @store_type: Type of store
  * @return: True if you are now barred from the store
  */
-static boolean __store_get_insulted(enum store_t store_type) {
+static bool __store_get_insulted(const enum store_t store_type) {
 
   stores[store_type].insult_cur++;
 
@@ -1001,7 +1002,7 @@ static boolean __store_get_insulted(enum store_t store_type) {
  * __store_lower_insult_level() - Lower insult counter for shop
  * @store_type: Type of store
  */
-static void __store_lower_insult_level(enum store_t store_type) {
+static void __store_lower_insult_level(const enum store_t store_type) {
   /* with stores[store_type] do; */
   stores[store_type].insult_cur -= 2;
   if (stores[store_type].insult_cur < 0) {
@@ -1012,7 +1013,7 @@ static void __store_lower_insult_level(enum store_t store_type) {
 /**
  * __store_display_commands() - Display set of store commands
  */
-static void __store_display_commands() {
+static void __store_display_commands(void) {
   ENTER(("__store_display_commands", ""));
 
   prt("You may:", 21, 1);
@@ -1028,7 +1029,7 @@ static void __store_display_commands() {
 /**
  * __haggle_insults() - Have insulted while haggling
  */
-static boolean __haggle_insults(enum store_t store_num) {
+static bool __haggle_insults(const enum store_t store_num) {
 
   if (__store_get_insulted(store_num)) {
     return true;
@@ -1038,9 +1039,10 @@ static boolean __haggle_insults(enum store_t store_num) {
   }
 }
 
-static enum trade_status_t __receive_offer(long store_num, char comment[82],
-                                           long *new_offer, long last_offer,
-                                           long factor) {
+static enum trade_status_t __receive_offer(const long store_num, char comment[82],
+                                           long *new_offer,
+                                           const long last_offer,
+                                           const long factor) {
 
   long const comment_len = strlen(comment) + 1;
   for (;;) {
@@ -1064,7 +1066,7 @@ static enum trade_status_t __receive_offer(long store_num, char comment[82],
 
     *new_offer = player_input_as_long;
 
-    if ((*new_offer * factor) >= (last_offer * factor)) {
+    if (*new_offer * factor >= last_offer * factor) {
       break;
     }
 
@@ -1082,16 +1084,16 @@ static enum trade_status_t __receive_offer(long store_num, char comment[82],
  * @item: Item to purchase
  * @returns: Trade result
  */
-static trade_result_t __purchase_blitz(enum store_t store_type,
+static trade_result_t __purchase_blitz(const enum store_t store_type,
                                        treasure_type const *item) {
   long const base_price = __calc_purchase_price(store_type, item);
   long const max_price = __store_max_inflated_price(store_type, base_price);
   long const min_price = __store_min_inflated_price(store_type, base_price);
 
   long const max_min_diff = max_price - min_price;
-  long const last_offer = min_price + (max_min_diff / 4);
-  long price = last_offer + ((stores[store_type].insult_cur * max_min_diff) /
-                             owners[stores[store_type].owner].insult_max);
+  long const last_offer = min_price + max_min_diff / 4;
+  const long price = last_offer + stores[store_type].insult_cur * max_min_diff /
+                                owners[stores[store_type].owner].insult_max;
   msg_printf("In a hurry, eh?  It's yours for a mere %ld       ", price);
   msg_print(" ");
   prt("", 2, 1);
@@ -1102,7 +1104,8 @@ static trade_result_t __purchase_blitz(enum store_t store_type,
 /**
  * __purchase_haggle() - Haggling routine
  */
-static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *item) {
+static trade_result_t __purchase_haggle(const enum store_t store_num,
+                                        const treasure_type *item) {
 
   msg_flag = false;
 
@@ -1115,7 +1118,7 @@ static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *i
 
   long cur_ask = max_price;
   long const final_ask = min_price;
-  long min_offer = max_buy;
+  const long min_offer = max_buy;
   long last_offer = min_offer;
 
   char comment[82];
@@ -1133,7 +1136,7 @@ static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *i
     char out_val[100];
     sprintf(out_val, "%s%ld          ", comment, cur_ask);
     put_buffer(out_val, 2, 1);
-    enum trade_status_t offer_result = __receive_offer(
+    const enum trade_status_t offer_result = __receive_offer(
         store_num, "What do you offer? ", &new_offer, last_offer, 1);
 
     if (offer_result == TS_ABORTED)
@@ -1163,8 +1166,8 @@ static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *i
         x1 = max_per;
       }
     }
-    float x2 = (x1 + (randint(5) - 3) / 100.0);
-    long x3 = trunc((cur_ask - new_offer) * x2) + 1;
+    const float x2 = x1 + (randint(5) - 3) / 100.0;
+    const long x3 = trunc((cur_ask - new_offer) * x2) + 1;
     cur_ask -= x3;
     if (cur_ask < final_ask) {
       cur_ask = final_ask;
@@ -1195,8 +1198,9 @@ static trade_result_t __purchase_haggle(enum store_t store_num, treasure_type *i
  * @blitz: Are we blitz-buying?
  * @return: Selected item index, or -1 if we changed our mind
  */
-static int __store_purchase_select_item(enum store_t store_type, long cur_top,
-                                        boolean blitz) {
+static int __store_purchase_select_item(const enum store_t store_type,
+                                        const long cur_top,
+                                        const bool blitz) {
   int objects_shown_on_screen;
   if (cur_top == 13) {
     objects_shown_on_screen = stores[store_type].store_ctr - 12;
@@ -1218,7 +1222,7 @@ static int __store_purchase_select_item(enum store_t store_type, long cur_top,
   int selected_item = -1;
   while (selected_item < 1 || objects_shown_on_screen < selected_item) {
     prt(prt_buf, 1, 1);
-    char command = inkey();
+    const char command = inkey();
     switch (command) {
     case 3:
     case 25:
@@ -1245,22 +1249,22 @@ break_outer:
  * @cur_top: ???
  * @blitz: If we are blitz-buying
  */
-static boolean __store_purchase(enum store_t store_type, long *cur_top,
-                                boolean blitz) {
+static bool __store_purchase(const enum store_t store_type, long *cur_top,
+                                const bool blitz) {
 
   if (stores[store_type].store_ctr < 1) {
     msg_print("I am currently out of stock.");
     return false;
   }
 
-  int selected_item = __store_purchase_select_item(store_type, *cur_top, blitz);
+  const int selected_item = __store_purchase_select_item(store_type, *cur_top, blitz);
   if (selected_item == -1)
     return false;
 
   inven_temp.data = stores[store_type].store_inven[selected_item].sitem;
 
   long save_number;
-  if ((inven_temp.data.subval > 255) && (inven_temp.data.subval < 512)) {
+  if (inven_temp.data.subval > 255 && inven_temp.data.subval < 512) {
     save_number = inven_temp.data.number;
     inven_temp.data.number = 1;
   } else {
@@ -1300,20 +1304,20 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
     return true;
   }
 
-  long price = trade_result.price;
+  const long price = trade_result.price;
 
   // Check if we can pay for it
-  boolean could_pay;
+  bool could_pay;
   if (player_money[TOTAL_] >= trade_result.price) {
     subtract_money(trade_result.price * GOLD_VALUE, true);
     could_pay = true;
   } else {
-    long to_bank = price - player_money[TOTAL_];
+    const long to_bank = price - player_money[TOTAL_];
     could_pay = send_page(to_bank);
   }
 
   if (!could_pay) {
-    boolean barred_from_store = __store_get_insulted(store_type);
+    const bool barred_from_store = __store_get_insulted(store_type);
     if (barred_from_store) {
       prt("", 2, 1);
       return true;
@@ -1326,7 +1330,7 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
 
   __print_trade_accepted();
   __store_lower_insult_level(store_type);
-  boolean return_value;
+  bool return_value;
   if (store_type == S_INN) {
     if (stores[store_type].store_inven[selected_item].scost < 0) {
       stores[store_type].store_inven[selected_item].scost = price * GOLD_VALUE;
@@ -1342,7 +1346,7 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
     return_value = true;
   } else {
     __remove_item_from_store(store_type, selected_item, true);
-    treas_rec *item_new = inven_carry();
+    const treas_rec *item_new = inven_carry();
     char out_val[82];
     objdes(out_val, item_new, true);
     char out2[100];
@@ -1375,15 +1379,15 @@ static boolean __store_purchase(enum store_t store_type, long *cur_top,
  * @item: Item to sell
  * @return: Agreed sell price
  */
-static long __sell_blitz(enum store_t store_type, treasure_type const *item) {
+static long __sell_blitz(const enum store_t store_type, treasure_type const *item) {
   long const cost = __calc_sell_price(store_type, item);
   long const max_buy = __store_max_deflated_price(store_type, cost);
   long const min_buy = __store_min_deflated_price(store_type, cost);
 
-  long const min_max_diff = (min_buy - max_buy);
-  long last_offer = min_buy - (min_max_diff / 7);
-  long price = last_offer - ((stores[store_type].insult_cur * min_max_diff) /
-                             owners[stores[store_type].owner].insult_max);
+  long const min_max_diff = min_buy - max_buy;
+  const long last_offer = min_buy - min_max_diff / 7;
+  const long price = last_offer - stores[store_type].insult_cur * min_max_diff /
+                                owners[stores[store_type].owner].insult_max;
   msg_printf("Need cash quick?  I'll pay you %ld   ", price);
   msg_print(" ");
   prt(" ", 2, 1);
@@ -1399,11 +1403,12 @@ static long __sell_blitz(enum store_t store_type, treasure_type const *item) {
  * @blitz:
  * @return: 0 = Sold, 2 = Aborted, 3 or 4 = Owner will not buy
  */
-static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item) {
+static trade_result_t __sell_haggle(const enum store_t store_type,
+                                    const treasure_type *item) {
 
   msg_flag = false;
 
-  long cost = __calc_sell_price(store_type, item);
+  const long cost = __calc_sell_price(store_type, item);
   if (cost < 1) {
     return (trade_result_t){.status = TS_REFUSED_TRASH, .price = 0};
   }
@@ -1415,7 +1420,7 @@ static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item
   long const max_sell = __store_max_inflated_price(store_type, cost);
   long const max_buy = __store_max_deflated_price(store_type, cost);
   long const min_buy = __store_min_deflated_price(store_type, cost);
-  float const min_per = (owners[stores[store_type].owner]).haggle_per;
+  float const min_per = owners[stores[store_type].owner].haggle_per;
   float const max_per = min_per * 3.0;
 
   // Haggling
@@ -1445,7 +1450,7 @@ static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item
     strcpy(comment, "Offer : ");
   }
 
-  long min_offer = max_sell;
+  const long min_offer = max_sell;
   long last_offer = min_offer;
   if (cur_ask < 1) {
     cur_ask = 1;
@@ -1456,7 +1461,7 @@ static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item
     char out_val[100];
     sprintf(out_val, "%s%ld       ", comment, cur_ask);
     put_buffer(out_val, 2, 1);
-    enum trade_status_t offer_result = __receive_offer(store_type, "What price do you ask? ",
+    const enum trade_status_t offer_result = __receive_offer(store_type, "What price do you ask? ",
         &new_offer, last_offer, -1);
 
     if (offer_result == TS_ABORTED)
@@ -1486,8 +1491,8 @@ static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item
         x1 = max_per;
       }
     }
-    float x2 = (x1 + (randint(5) - 3) / 100.0);
-    long x3 = trunc((new_offer - cur_ask) * x2) + 1;
+    const float x2 = x1 + (randint(5) - 3) / 100.0;
+    const long x3 = trunc((new_offer - cur_ask) * x2) + 1;
     cur_ask += x3;
     if (cur_ask > final_ask) {
       cur_ask = final_ask;
@@ -1517,8 +1522,8 @@ static trade_result_t __sell_haggle(enum store_t store_type, treasure_type *item
  * @cur_top: ???
  * @blitz: If we are blitz-selling
  */
-static boolean __store_sell(enum store_t store_type, long cur_top,
-                            boolean blitz) {
+static bool __store_sell(const enum store_t store_type, const long cur_top,
+                            const bool blitz) {
 
   ENTER(("__store_sell", ""));
 
@@ -1537,8 +1542,8 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
     return false;
   }
 
-  boolean return_value = false;
-  boolean redraw = false;
+  bool return_value = false;
+  bool redraw = false;
   char trash_char;
   if (!get_item(&item_ptr, foo, &redraw, count, &trash_char, false, false)) {
     if (redraw) {
@@ -1552,7 +1557,7 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
     display_store(store_type, cur_top);
   }
   inven_temp.data = item_ptr->data;
-  if ((inven_temp.data.subval > 255) && (inven_temp.data.subval < 512)) {
+  if (inven_temp.data.subval > 255 && inven_temp.data.subval < 512) {
     inven_temp.data.number = 1; /*{But why????}*/
   }
 
@@ -1633,14 +1638,14 @@ static boolean __store_sell(enum store_t store_type, long cur_top,
  * __store_enter() - Entering a store
  * @store_type: type of store
  */
-static void __store_enter(enum store_t store_type) {
+static void __store_enter(const enum store_t store_type) {
 
   ENTER(("__store_enter", ""));
 
   treas_rec *trash_ptr;
 
   long tics = 1;
-  boolean exit_flag = false;
+  bool exit_flag = false;
   long cur_top = 1;
 
   display_store(store_type, cur_top);
@@ -1734,7 +1739,7 @@ static void __store_enter(enum store_t store_type) {
   LEAVE("__store_enter", "");
 }
 
-void store_maint() {
+void store_maint(void) {
 
   while (stores[S_BLACK_MARKET].store_ctr > 0) {
     __remove_item_from_store(S_BLACK_MARKET, stores[S_BLACK_MARKET].store_ctr,
@@ -1747,22 +1752,22 @@ void store_maint() {
     long num_things_in_store = stores[i].store_ctr;
     if (num_things_in_store > STORE_MAX_INVEN) {
       // Clean up if too much stuff
-      for (int j = 0, cnt = (num_things_in_store - STORE_MAX_INVEN + 2);
+      for (int j = 0, cnt = num_things_in_store - STORE_MAX_INVEN + 2;
            j < cnt; j++) {
         __remove_item_from_store(i, randint(stores[i].store_ctr), false);
       }
     } else if (num_things_in_store < STORE_MIN_INVEN) {
       // Add new stuff if needed
-      for (int j = 0, cnt = (STORE_MIN_INVEN - num_things_in_store + 2);
+      for (int j = 0, cnt = STORE_MIN_INVEN - num_things_in_store + 2;
            j < cnt; j++) {
         __add_item_to_store(i);
       }
     } else {
       // Change the stock a bit
-      for (int j = 0, cnt = (1 + randint(STORE_TURN_AROUND)); j < cnt; j++) {
+      for (int j = 0, cnt = 1 + randint(STORE_TURN_AROUND); j < cnt; j++) {
         __remove_item_from_store(i, randint(stores[i].store_ctr), true);
       }
-      for (int j = 0, cnt = (1 + randint(STORE_TURN_AROUND)); j < cnt; j++) {
+      for (int j = 0, cnt = 1 + randint(STORE_TURN_AROUND); j < cnt; j++) {
         __add_item_to_store(i);
       }
     }
@@ -1780,38 +1785,39 @@ void store_maint() {
     }
   }
 
-  __randomize_cash(&(bank[IRON]), 500000);
-  __randomize_cash(&(bank[COPPER]), 200000);
-  __randomize_cash(&(bank[SILVER]), 100000);
-  __randomize_cash(&(bank[GOLD]), 50000);
-  __randomize_cash(&(bank[PLATINUM]), 5000);
-  __randomize_cash(&(bank[MITHRIL]), 1000);
+  __randomize_cash(&bank[IRON], 500000);
+  __randomize_cash(&bank[COPPER], 200000);
+  __randomize_cash(&bank[SILVER], 100000);
+  __randomize_cash(&bank[GOLD], 50000);
+  __randomize_cash(&bank[PLATINUM], 5000);
+  __randomize_cash(&bank[MITHRIL], 1000);
   bank[TOTAL_] =
       (bank[MITHRIL] * MITHRIL_VALUE + bank[PLATINUM] * PLATINUM_VALUE) /
           GOLD_VALUE +
       bank[GOLD];
 }
 
-void store_carry(enum store_t store_num, long *ipos) {
+void store_carry(const enum store_t store_num, long *ipos) {
 
   // TODO: Stop using inven_temp
   *ipos = 0;
-  identify(&(inven_temp.data));
+  identify(&inven_temp.data);
   unquote(inven_temp.data.name);
   known1(inven_temp.data.name);
   known2(inven_temp.data.name);
 
-  long item_base_price = __calc_purchase_price(store_num, &inven_temp.data);
-  long max_price = __store_max_inflated_price(store_num, item_base_price);
+  const long item_base_price =
+      __calc_purchase_price(store_num, &inven_temp.data);
+  const long max_price = __store_max_inflated_price(store_num, item_base_price);
 
   if (max_price <= 0)
     return;
 
   long item_val = 0;
-  long item_num = inven_temp.data.number;
-  long typ = inven_temp.data.tval;
-  long subt = inven_temp.data.subval;
-  boolean flag = false;
+  const long item_num = inven_temp.data.number;
+  const long typ = inven_temp.data.tval;
+  const long subt = inven_temp.data.subval;
+  bool flag = false;
 
   do {
     item_val++;
@@ -1832,8 +1838,8 @@ void store_carry(enum store_t store_num, long *ipos) {
       *ipos = item_val;
     }
     /* end of thrid with */
-  } while (!((item_val >= stores[store_num].store_ctr) || (flag)));
-  if (!(flag)) { /*{ Becomes last item in list	}*/
+  } while (!(item_val >= stores[store_num].store_ctr || flag));
+  if (!flag) { /*{ Becomes last item in list	}*/
     __insert_item_in_store(store_num, stores[store_num].store_ctr + 1,
                            max_price);
     *ipos = stores[store_num].store_ctr;
@@ -1879,9 +1885,9 @@ long item_value(treasure_type const *const item) {
         } else if (item->toac < 0) {
           return_value = 0;
         } else {
-          return_value = ((item->cost / GOLD_VALUE +
-                           (item->tohit + item->todam + item->toac) * 100) *
-                          item->number);
+          return_value = (item->cost / GOLD_VALUE +
+                          (item->tohit + item->todam + item->toac) * 100) *
+                         item->number;
         }
         break;
 
@@ -1890,7 +1896,7 @@ long item_value(treasure_type const *const item) {
           return_value = 0;
         } else {
           return_value =
-              ((item->cost / GOLD_VALUE + item->toac * 100) * item->number);
+              (item->cost / GOLD_VALUE + item->toac * 100) * item->number;
         }
         break;
       }
@@ -1904,7 +1910,7 @@ long item_value(treasure_type const *const item) {
   case spike:
 
     if (strstr(item->name, "^") != NULL) {
-      return_value *= (item->number);
+      return_value *= item->number;
     } else {
       if (item->tohit < 0) {
         return_value = 0;
@@ -1913,9 +1919,9 @@ long item_value(treasure_type const *const item) {
       } else if (item->toac < 0) {
         return_value = 0;
       } else {
-        return_value = ((item->cost / GOLD_VALUE +
-                         (item->tohit + item->todam + item->toac) * 10) *
-                        (item->number));
+        return_value = (item->cost / GOLD_VALUE +
+                        (item->tohit + item->todam + item->toac) * 10) *
+                       item->number;
       }
     }
     break;
@@ -1960,13 +1966,13 @@ long item_value(treasure_type const *const item) {
         break;
       }
     } else if (strstr(item->name, "^") != NULL) {
-      return_value = (item->cost > 0) ? (item->cost / GOLD_VALUE) : 0;
+      return_value = item->cost > 0 ? item->cost / GOLD_VALUE : 0;
     } else {
       return_value =
-          (item->cost > 0)
-              ? ((item->cost / GOLD_VALUE) +
-                 trunc(item->cost / COST_ADJ / 20.0) *
-                     (item->tohit + item->todam + item->toac + 2 * item->p1))
+          item->cost > 0
+              ? item->cost / GOLD_VALUE +
+                    trunc(item->cost / COST_ADJ / 20.0) *
+                        (item->tohit + item->todam + item->toac + 2 * item->p1)
               : 0;
     }
     break;
@@ -1985,8 +1991,8 @@ long item_value(treasure_type const *const item) {
         break;
       }
     } else if (strstr(item->name, "^") == NULL) {
-      return_value = ((item->cost / GOLD_VALUE) +
-                      trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
+      return_value = item->cost / GOLD_VALUE +
+                     trunc(item->cost / COST_ADJ / 20.0) * item->p1;
     }
     break;
 
@@ -2008,8 +2014,8 @@ long item_value(treasure_type const *const item) {
         break;
       }
     } else if (strstr(item->name, "^") == NULL) {
-      return_value = ((item->cost / GOLD_VALUE) +
-                      trunc(item->cost / COST_ADJ / 20.0) * (item->p1));
+      return_value = item->cost / GOLD_VALUE +
+                     trunc(item->cost / COST_ADJ / 20.0) * item->p1;
     }
     break;
 
@@ -2027,7 +2033,7 @@ long item_value(treasure_type const *const item) {
         break;
       }
     } else if (strstr(item->name, "^") == NULL) {
-      return_value = (item->cost / GOLD_VALUE);
+      return_value = item->cost / GOLD_VALUE;
     }
     break;
   }
@@ -2035,23 +2041,23 @@ long item_value(treasure_type const *const item) {
   return return_value;
 }
 
-boolean check_store_hours(enum store_t store_type, long store_visual) {
-  boolean is_open;
+bool check_store_hours(const enum store_t store_type, long store_visual) {
+  bool is_open;
 
   ENTER(("check_store_hours", ""));
 
   if (store_visual != -1) {
     is_open =
-        ((player_cur_age.year > stores[store_visual].store_open.year) ||
-         ((player_cur_age.year == stores[store_visual].store_open.year) &&
-          ((player_cur_age.month > stores[store_visual].store_open.month) ||
-           ((player_cur_age.month == stores[store_visual].store_open.month) &&
-            ((player_cur_age.day > stores[store_visual].store_open.day) ||
-             ((player_cur_age.day == stores[store_visual].store_open.day) &&
-              ((player_cur_age.hour > stores[store_visual].store_open.hour) ||
-               ((player_cur_age.hour == stores[store_visual].store_open.hour) &&
-                ((player_cur_age.secs >
-                  stores[store_visual].store_open.secs))))))))));
+        player_cur_age.year > stores[store_visual].store_open.year ||
+        (player_cur_age.year == stores[store_visual].store_open.year &&
+         (player_cur_age.month > stores[store_visual].store_open.month ||
+          (player_cur_age.month == stores[store_visual].store_open.month &&
+           (player_cur_age.day > stores[store_visual].store_open.day ||
+            (player_cur_age.day == stores[store_visual].store_open.day &&
+             (player_cur_age.hour > stores[store_visual].store_open.hour ||
+              (player_cur_age.hour == stores[store_visual].store_open.hour &&
+               player_cur_age.secs >
+                   stores[store_visual].store_open.secs)))))));
   } else {
     is_open = true;
     store_visual = store_type;
@@ -2063,7 +2069,7 @@ boolean check_store_hours(enum store_t store_type, long store_visual) {
     return false;
   }
 
-  char availability = store_hours[store_visual][player_cur_age.day % 7 + 0]
+  const char availability = store_hours[store_visual][player_cur_age.day % 7 + 0]
                                  [player_cur_age.hour / 2 + 0];
   switch (availability) {
   case ' ':
@@ -2132,7 +2138,8 @@ boolean check_store_hours(enum store_t store_type, long store_visual) {
   }
 }
 
-void check_store_hours_and_enter(enum store_t type, long store_visual) {
+void check_store_hours_and_enter(const enum store_t type,
+                                 const long store_visual) {
 
   ENTER(("check_store_hours_and_enter", ""));
 
@@ -2142,18 +2149,18 @@ void check_store_hours_and_enter(enum store_t type, long store_visual) {
   LEAVE("check_store_hours_and_enter", "");
 }
 
-void spend_time(long days_spent, char place[82], boolean whole_days) {
+void spend_time(long days_spent, char place[82], const bool whole_days) {
 
   long const turns_today = player_cur_age.hour * 400 + player_cur_age.secs;
 
   long mornings;
   long time_spent;
-  boolean new_screen;
+  bool new_screen;
   if (!whole_days) {
     time_spent = days_spent; /*{if a 6:00 threshold is passed}*/
 
-    new_screen = ((turns_today + time_spent + 2400) / 4800) >
-                 ((turns_today + 2400) / 4800);
+    new_screen = (turns_today + time_spent + 2400) / 4800 >
+                 (turns_today + 2400) / 4800;
 
     mornings =
         (turns_today + time_spent - 2400) / 9600 - (turns_today - 2400) / 9600;
@@ -2169,7 +2176,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
     player_cur_age.secs += time_spent;
     player_cur_age.hour += player_cur_age.secs / 400;
     player_cur_age.secs = player_cur_age.secs % 400;
-    add_days(&(player_cur_age), player_cur_age.hour / 24);
+    add_days(&player_cur_age, player_cur_age.hour / 24);
     player_cur_age.hour = player_cur_age.hour % 24;
     break;
 
@@ -2180,14 +2187,14 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
       msg_print(out_val);
       player_cur_age.hour = 8; /*{why get up before shops open?}*/
       player_cur_age.secs = randint(400) - 1;
-      time_spent = (time_spent - DAY_LENGTH + 400 * player_cur_age.hour +
-                    player_cur_age.secs);
+      time_spent = time_spent - DAY_LENGTH + 400 * player_cur_age.hour +
+                   player_cur_age.secs;
     } else {
       char out_val[82];
       sprintf(out_val, "You spend the night %s", place);
       msg_print(out_val);
       player_cur_age.hour = 8;
-      add_days(&(player_cur_age), 1);
+      add_days(&player_cur_age, 1);
       player_cur_age.secs = randint(400) - 1;
       time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
     }
@@ -2199,7 +2206,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
      */
     /* this context? */
     /*    add_days(&(player_cur_age),28+randint(3)); */
-    add_days(&(player_cur_age), 3);
+    add_days(&player_cur_age, 3);
     player_cur_age.hour = 8 + randint(4);
     player_cur_age.secs = randint(400) - 1;
     time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
@@ -2207,7 +2214,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
 
   case 7:
     msg_print("You spend the week in the inn.");
-    add_days(&(player_cur_age), 7);
+    add_days(&player_cur_age, 7);
     player_cur_age.hour = 8 + randint(4);
     player_cur_age.secs = randint(400) - 1;
     time_spent += 400 * player_cur_age.hour + player_cur_age.secs;
@@ -2222,7 +2229,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
     sleep(1);
   }
 
-  for (long i = time_spent; (player_flags.poisoned > 0) && (i > 0);) {
+  for (const long i = time_spent; player_flags.poisoned > 0 && i > 0;) {
     player_flags.poisoned--;
     time_spent--;
 
@@ -2299,7 +2306,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
   case 0:
   case 1:
     player_flags.foodc -= time_spent;
-    enum hunger_status_t hunger_status = player_hunger_status();
+    const enum hunger_status_t hunger_status = player_hunger_status();
     if (hunger_status < HUNGRY) {
       /* free food if you were hungry when you got here? */
       player_hunger_set_status(HUNGRY);
@@ -2335,7 +2342,7 @@ void spend_time(long days_spent, char place[82], boolean whole_days) {
   }
 }
 
-void display_store(enum store_t store_type, long cur_top) {
+void display_store(const enum store_t store_type, const long cur_top) {
   ENTER(("display_store", ""));
 
   C_clear_screen();

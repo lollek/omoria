@@ -1,10 +1,8 @@
-#ifndef PLAYER_ACTION
-#define PLAYER_ACTION
+#pragma once
 
-#include "boolean.h"
 #include "magic.h"
 
-boolean player_action_attack(long y, long x);
+bool player_action_attack(long y, long x);
 
 /**
  *  Moves player from one space to another
@@ -51,7 +49,7 @@ void player_action_quaff_potion(void);
 /**
  *  Cast a magic spell or use other magic ability
  *
- *  @param magic: Which type of magic is to be cast
+ *  @param magic_type: Which type of magic is to be cast
  */
 void player_action_use_magic(enum magic_t magic_type);
 
@@ -96,5 +94,3 @@ void player_action_disarm_trap(void);
 void player_action_ascend_stairs(void);
 
 void player_action_descend_stairs(void);
-
-#endif // PLAYER_ACTION

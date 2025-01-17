@@ -1,28 +1,20 @@
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
 
-#include "../configure.h"
 #include "../constants.h"
 #include "../currency.h"
-#include "../debug.h"
 #include "../inven.h"
 #include "../io.h"
 #include "../kickout.h"
-#include "../magic.h"
 #include "../misc.h"
-#include "../pascal.h"
 #include "../player.h"
 #include "../port.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../stores.h"
-#include "../term.h"
-#include "../types.h"
 #include "../variables.h"
 
 void eb__display_money(void);
@@ -30,18 +22,18 @@ void eb__display_store(const char *shop_owner);
 
 #define BANK_SKIM 0.95 /*{ Percent of money that really gets deposited} */
 
-static boolean eb__get_entry(char comment[82], long *num) {
+static bool eb__get_entry(char comment[82], long *num) {
   /*
    * Returns true if a number >= 0 is entered, false if escaped,
    * negative numbers not permitted.                      -MKC-
    * */
 
-  boolean return_value = false;
-  boolean valid;
-  char in_val[82];
+  bool return_value = false;
+  bool valid;
 
   *num = -1;
   do {
+    char in_val[82];
     valid = true;
     msg_print(comment);
     msg_flag = false;
@@ -62,14 +54,14 @@ static boolean eb__get_entry(char comment[82], long *num) {
   return return_value;
 }
 
-static void eb__dep_munny(long mon_type) {
+static void eb__dep_munny(const long mon_type) {
   long deposit;
-  char out_val[120];
 
   if (player_money[mon_type] <= 0) {
     return;
   }
   do {
+    char out_val[120];
     sprintf(out_val, "How much %s to deposit?", coin_name[mon_type]);
     if (eb__get_entry(out_val, &deposit)) {
       if (deposit > player_money[mon_type]) {
@@ -89,7 +81,7 @@ static void eb__dep_munny(long mon_type) {
   }
 }
 
-static void eb__deposit_money() {
+static void eb__deposit_money(void) {
   /*
    * Deposit a given number of mithril, platinum, and gold in the bank,
    * but the bank takes its percentage                      -ADW-MKC-
@@ -102,16 +94,13 @@ static void eb__deposit_money() {
   eb__display_money();
 }
 
-static void eb__withdraw_money() {
+static void eb__withdraw_money(void) {
   /*
    * Withdraw a given amount, in gold pieces, teller makes change.
    * Bank may not have enough!                              -MKC-
    */
 
-  boolean deliver, is_some;
-  long amt_given[MITHRIL + 1];
-  long mon_type, withdraw, weight_left;
-  char out_val[134];
+  long withdraw;
 
   /* get amount to withdraw */
   do {
@@ -129,17 +118,19 @@ static void eb__withdraw_money() {
    * how much the bank has, and how much the user can carry.
    */
   if (withdraw > 0) {
-    weight_left = (C_player_max_bulk() * 100) - inven_weight;
+    long mon_type;
+    long amt_given[MITHRIL + 1];
+    long weight_left = C_player_max_bulk() * 100 - inven_weight;
     for (mon_type = MITHRIL; mon_type >= GOLD; mon_type--) {
-      amt_given[mon_type] = min3((withdraw * GOLD_VALUE) / coin_value(mon_type),
+      amt_given[mon_type] = min3(withdraw * GOLD_VALUE / coin_value(mon_type),
                                  bank[mon_type], weight_left / COIN_WEIGHT);
       weight_left -= amt_given[mon_type] * COIN_WEIGHT;
       withdraw -= amt_given[mon_type] * (coin_value(mon_type) / GOLD_VALUE);
     } /* end for mon_type */
 
-    deliver = true;
-    is_some =
-        ((amt_given[MITHRIL] + amt_given[PLATINUM] + amt_given[GOLD]) > 0);
+    bool deliver = true;
+    const bool is_some =
+        amt_given[MITHRIL] + amt_given[PLATINUM] + amt_given[GOLD] > 0;
 
     if (withdraw > 0) {
       /*{ if unable to give the entire amount }*/
@@ -171,11 +162,12 @@ static void eb__withdraw_money() {
     if (deliver) {
       for (mon_type = MITHRIL; mon_type >= GOLD; mon_type--) {
         if (amt_given[mon_type] > 0) {
+          char out_val[134];
           sprintf(out_val,
                   "The teller gives you "
                   "%ld %s piece%s.",
                   amt_given[mon_type], coin_name[mon_type],
-                  (amt_given[mon_type] == 1) ? "" : "s");
+                  amt_given[mon_type] == 1 ? "" : "s");
           msg_print(out_val);
           player_money[mon_type] += amt_given[mon_type];
           bank[mon_type] -= amt_given[mon_type];
@@ -190,35 +182,35 @@ static void eb__withdraw_money() {
   }   /* end if withdraw */
 }
 
-static void eb__safe_deposit(__attribute__((unused)) boolean deposit) {
+static void eb__safe_deposit(__attribute__((unused)) bool deposit) {
   /* XXXX major work. I don't think it ever worked at the U */
   prt("The dwarves are still installing it, sorry.", 1, 1);
 }
 
-static void eb__change_money() {
+static void eb__change_money(void) {
   /* Changes money of one type to money of another type.        -JPS- */
 
-  boolean change_flag;   /*{ Did they enter a valid entry? }*/
+  bool change_flag;   /*{ Did they enter a valid entry? }*/
   long amount_from;      /*{ Amount before changing. }*/
-  long amount_to;        /*{ Amount remaining after changing. }*/
-  char key_in;           /*{ input character }*/
+                         /*{ Amount remaining after changing. }*/
+                         /*{ input character }*/
   long typ_from, typ_to; /*   { Types of money }*/
-  char prompt[134];      /*{ Prompt used.}*/
 
-  key_in = (char)get_money_type("Change what coin? ", &change_flag, false);
+  char key_in = get_money_type("Change what coin? ", &change_flag, false);
   if (change_flag) {
     coin_stuff(key_in, &typ_from);
     key_in = (char)get_money_type("Change to? ", &change_flag, true);
   }
   if (change_flag) {
+    char prompt[134];
     coin_stuff(key_in, &typ_to);
     sprintf(prompt, "Number of coins to change? (1-%ld)",
             player_money[typ_from]);
     change_flag = eb__get_entry(prompt, &amount_from);
   }
   if (change_flag) {
-    amount_to = (amount_from * coin_value(typ_from)) /
-                coin_value(typ_to); /*{NO surcharge}*/
+    const long amount_to = amount_from * coin_value(typ_from) /
+                     coin_value(typ_to); /*{NO surcharge}*/
     if (amount_to == 0) {
       msg_print("You don't have enough to trade for that "
                 "type of coin!");
@@ -227,7 +219,7 @@ static void eb__change_money() {
                 "of coin!");
     } else if (player_money[typ_from] < amount_from) {
       msg_print("You don't have enough of that coin!");
-    } else if ((inven_weight + COIN_WEIGHT * (amount_to - amount_from)) >
+    } else if (inven_weight + COIN_WEIGHT * (amount_to - amount_from) >
                C_player_max_bulk() * 100) {
       msg_print("You can't carry that much weight.");
     } else {
@@ -242,7 +234,7 @@ static void eb__change_money() {
   } /* endif change_flag */
 }
 
-static void eb__parse_command(boolean *exit_flag, char shop_owner[82]) {
+static void eb__parse_command(bool *exit_flag, char shop_owner[82]) {
   char command;
 
   *exit_flag = false;
@@ -280,8 +272,8 @@ static void eb__parse_command(boolean *exit_flag, char shop_owner[82]) {
   }
 }
 
-void enter_bank() {
-  boolean exit_flag = false;
+void enter_bank(void) {
+  bool exit_flag = false;
   long tics = 1;
   char shop_owner[82];
 

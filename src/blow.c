@@ -3,38 +3,32 @@
 
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "magic.h"
+#include "desc.h"
+#include "generate_monster.h"
+#include "inven.h"
+#include "io.h"
+#include "misc.h"
 #include "pascal.h"
 #include "player.h"
-#include "generate_monster.h"
-#include "term.h"
+#include "random.h"
+#include "screen.h"
+#include "spells.h"
 #include "types.h"
 #include "variables.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
 #include "wizard.h"
-#include "spells.h"
-#include "random.h"
-#include "misc.h"
 
-static void b__chime_and_horn_effects(long effect, boolean *idented) {
+static void b__chime_and_horn_effects(const long effect, bool *idented) {
   /*{ Chimes...				      }*/
 
-  boolean ident;
   long y, x;
   long i3;
 
-  ident = *idented;
+  bool ident = *idented;
 
   switch (effect) {
 
@@ -110,9 +104,9 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
 
   case 14: /*{ Chime of Curing }*/
     /* with player_flags do; */
-    ident = cure_me(&(player_flags).blind);
-    ident |= cure_me(&(player_flags).poisoned);
-    ident |= cure_me(&(player_flags).confused);
+    ident = cure_me(&player_flags.blind);
+    ident |= cure_me(&player_flags.poisoned);
+    ident |= cure_me(&player_flags.confused);
     break;
 
   case 15: /*{ Chime of Dispell Evil }*/
@@ -127,7 +121,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
 
   case 17: /*{ Horn of Bubbles }*/
     msg_print("Bubbles stream forth and surround you!");
-    player_flags.blind += (randint(20) + 5);
+    player_flags.blind += randint(20) + 5;
     ident = unlight_area(char_row, char_col);
     break;
 
@@ -169,7 +163,7 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
     break;
 
   case 24: /*{ Horn of Recall }*/
-    player_flags.word_recall = (randint(20) + 20);
+    player_flags.word_recall = randint(20) + 20;
     ident = true;
     break;
 
@@ -212,9 +206,9 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
     ident = true;
     msg_print("All of the seas of the world still (yeah, right)!");
     msg_print("The gods of the ocean hear you...");
-    (player_flags).blessed += randint(20);
-    cure_me(&(player_flags).blind);
-    cure_me(&(player_flags).poisoned);
+    player_flags.blessed += randint(20);
+    cure_me(&player_flags.blind);
+    cure_me(&player_flags.poisoned);
     break;
 
   case 29: /*{ Horn of Fog }*/
@@ -232,16 +226,15 @@ static void b__chime_and_horn_effects(long effect, boolean *idented) {
   *idented = ident;
 }
 
-static void b__misc_effects(long effect, boolean *idented,
+static void b__misc_effects(const long effect, bool *idented,
                             treas_rec *item_ptr) {
   long i3, i4, loss, dur;
   long dumy, y_dumy, x_dumy;
   long y, x;
   enum stat_t tstat;
-  boolean ident;
   char dir;
 
-  ident = *idented;
+  bool ident = *idented;
 
   switch (effect) {
   case 1: /*{Silver Cross}*/
@@ -255,15 +248,15 @@ static void b__misc_effects(long effect, boolean *idented,
     break;
 
   case 3: /*{Mithril Cross}*/
-    x = char_row;
-    y = char_col;
-    ident = summon_undead(&x, &y);
+    y = char_row;
+    x = char_col;
+    ident = summon_undead(&y, &x);
     break;
 
   case 4: /*{Cross}*/
-    x = char_row;
-    y = char_col;
-    ident = summon_demon(&x, &y);
+    y = char_row;
+    x = char_col;
+    ident = summon_demon(&y, &x);
     break;
 
   case 5: /*{Cross}*/
@@ -285,10 +278,10 @@ static void b__misc_effects(long effect, boolean *idented,
 
   case 6: /*{ Corked Bottle of Demons }*/
     msg_print("You release several demons!");
-    x = char_row;
-    y = char_col;
+    y = char_row;
+    x = char_col;
     for (i3 = 1; i3 <= 4; i3++) {
-      summon_demon(&x, &y);
+      summon_demon(&y, &x);
     }
     player_flags.paralysis += 2;
     strcat(item_ptr->data.name, "(Empty)");
@@ -305,20 +298,20 @@ static void b__misc_effects(long effect, boolean *idented,
 
   case 9:
     msg_print("Many Undead appear!");
-    x = char_row;
-    y = char_col;
+    y = char_row;
+    x = char_col;
     for (i3 = 1; i3 <= 8; i3++) {
-      ident = summon_undead(&x, &y);
+      ident = summon_undead(&y, &x);
     }
     player_flags.paralysis += 2;
     break;
 
   case 10:
     msg_print("Many Demons appear!");
-    x = char_row;
-    y = char_col;
+    y = char_row;
+    x = char_col;
     for (i3 = 1; i3 <= 8; i3++) {
-      ident = ident || summon_demon(&x, &y);
+      ident = ident || summon_demon(&y, &x);
     }
     player_flags.paralysis += 2;
     break;
@@ -334,14 +327,14 @@ static void b__misc_effects(long effect, boolean *idented,
       ident = true;
     }
     /* with player_flags do; */
-    if ((player_flags).slow > 0) {
+    if (player_flags.slow > 0) {
       ident = true;
-      (player_flags).slow = 1;
+      player_flags.slow = 1;
     }
     /* bitwise or, otherwise it shortcuts and not everything happens
      */
-    if (cure_me(&(player_flags).blind) | cure_me(&(player_flags).poisoned) |
-        cure_me(&(player_flags).confused) | cure_me(&(player_flags).afraid) |
+    if (cure_me(&player_flags.blind) | cure_me(&player_flags.poisoned) |
+        cure_me(&player_flags.confused) | cure_me(&player_flags.afraid) |
         restore_level()) {
       ident = true;
     }
@@ -358,8 +351,8 @@ static void b__misc_effects(long effect, boolean *idented,
   case 13:
     redraw = true;
     wizard_light();
-    for (i3 = (char_col + 1); i3 <= (char_col - 1); i3++) {
-      for (i4 = (char_row + 1); i4 <= (char_row - 1); i4++) {
+    for (i3 = char_col + 1; i3 <= char_col - 1; i3++) {
+      for (i4 = char_row + 1; i4 <= char_row - 1; i4++) {
         if (test_light(i4, i3)) {
           redraw = false;
         }
@@ -495,14 +488,14 @@ static void b__misc_effects(long effect, boolean *idented,
   *idented = ident;
 }
 
-void blow() {
+void blow(void) {
   unsigned long i1;
-  long i3, chance, i5;
+  long i3;
   treas_rec *i2;
   treas_rec *item_ptr;
   char trash_char;
-  boolean redraw, ident;
-  obj_set things_that_blow = {misc_usable, valuable_gems, chime, horn, 0};
+  bool redraw, ident;
+  const obj_set things_that_blow = {misc_usable, valuable_gems, chime, horn, 0};
 
   reset_flag = true;
   if (inven_ctr > 0) {
@@ -516,29 +509,29 @@ void blow() {
         }
         reset_flag = false;
         /* with player_do; */
-        chance = player_save + player_lev + C_player_mod_from_stat(CHR) -
-                 item_ptr->data.level - 5;
-        if (((player_flags.confused + player_flags.afraid) > 0) &&
-            ((item_ptr->data.tval == chime) || (item_ptr->data.tval == horn))) {
+        long chance = player_save + player_lev + C_player_mod_from_stat(CHR) -
+                      item_ptr->data.level - 5;
+        if (player_flags.confused + player_flags.afraid > 0 &&
+            (item_ptr->data.tval == chime || item_ptr->data.tval == horn)) {
           msg_print("you can not use the "
                     "instrument...");
         } else if (item_ptr->data.p1 > 0) {
           if (chance < 0) {
             chance = 0;
           }
-          if ((randint(chance) < USE_DEVICE) &&
-              ((item_ptr->data.tval != misc_usable) &&
-               (item_ptr->data.subval != 24))) {
+          if (randint(chance) < USE_DEVICE &&
+              (item_ptr->data.tval != misc_usable &&
+               item_ptr->data.subval != 24)) {
             msg_print("You failed to use "
                       "the item properly.");
           } else {
             i1 = item_ptr->data.flags;
             ident = false;
             item_ptr->data.p1--;
-            for (; i1 > 0;) {
-              i5 = bit_pos(&i1) + 1;
-              if ((item_ptr->data.tval == chime) ||
-                  (item_ptr->data.tval == horn)) {
+            while (i1 > 0) {
+              const long i5 = bit_pos(&i1) + 1;
+              if (item_ptr->data.tval == chime ||
+                  item_ptr->data.tval == horn) {
                 b__chime_and_horn_effects(i5, &ident);
               } else {
                 b__misc_effects(i5, &ident, item_ptr);
@@ -546,11 +539,11 @@ void blow() {
             }
 
             if (ident) {
-              identify(&(inven_temp.data));
+              identify(&inven_temp.data);
             }
             if (inven_temp.data.flags != 0) {
               /* with player_do; */
-              C_player_add_exp((item_ptr->data.level / (float)player_lev) + .5);
+              C_player_add_exp(item_ptr->data.level / (float)player_lev + .5);
               prt_stat_block();
             }
             desc_charges(item_ptr);

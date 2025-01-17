@@ -1,31 +1,22 @@
 #include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
-#include "../magic.h"
-#include "../pascal.h"
-#include "../player.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
 #include "../desc.h"
 #include "../inven.h"
+#include "../io.h"
+#include "../misc.h"
+#include "../player.h"
+#include "../player/hunger.h"
+#include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../misc.h"
-#include "../random.h"
-#include "../player/hunger.h"
+#include "../types.h"
+#include "../variables.h"
 
-static boolean __eat_eyeball_of_drong(void) {
+static bool eat_eyeball_of_drong(void) {
 
-  long damage = damroll("10d8") + 100;
+  const long damage = damroll("10d8") + 100;
   take_hit(damage, "the Wrath of Ned");
 
   cure_me(&player_flags.afraid);
@@ -60,7 +51,7 @@ static boolean __eat_eyeball_of_drong(void) {
   return true;
 }
 
-static treas_rec *__select_what_to_eat() {
+static treas_rec *select_what_to_eat(void) {
 
   if (inven_ctr <= 0) {
     msg_print("But you are not carrying anything.");
@@ -75,10 +66,10 @@ static treas_rec *__select_what_to_eat() {
     return NULL;
   }
 
-  boolean redraw = false;
+  bool redraw = false;
   treas_rec *item_ptr = NULL;
   char trash_char;
-  boolean select_ok = get_item(&item_ptr, "Eat what?", &redraw, count,
+  const bool select_ok = get_item(&item_ptr, "Eat what?", &redraw, count,
                                &trash_char, false, false);
 
   if (redraw)
@@ -90,13 +81,13 @@ static treas_rec *__select_what_to_eat() {
     return NULL;
 }
 
-static boolean __apply_food_effects(treas_rec *item_ptr) {
+static bool apply_food_effects(treas_rec *item_ptr) {
   if (item_ptr->data.tval == junk_food && item_ptr->data.subval == 270) {
-    return __eat_eyeball_of_drong();
+    return eat_eyeball_of_drong();
   }
 
   long dam_pts = 0;
-  boolean ident = false;
+  bool ident = false;
   for (unsigned long i = item_ptr->data.flags; i > 0;) {
     switch (bit_pos(&i) + 1) {
     case 1:
@@ -286,22 +277,22 @@ static boolean __apply_food_effects(treas_rec *item_ptr) {
   return ident;
 }
 
-void player_action_eat() {
+void player_action_eat(void) {
 
   reset_flag = true;
-  treas_rec *item_ptr = __select_what_to_eat();
+  treas_rec *item_ptr = select_what_to_eat();
   if (item_ptr == NULL)
     return;
 
   reset_flag = false;
-  boolean const identify_effect = __apply_food_effects(item_ptr);
+  bool const identify_effect = apply_food_effects(item_ptr);
 
   if (identify_effect) {
-    identify(&(item_ptr->data));
+    identify(&item_ptr->data);
   }
 
   if (item_ptr->data.flags != 0 && item_ptr->data.level > 0) {
-    C_player_add_exp(((float)item_ptr->data.level / (float)player_lev) + .5);
+    C_player_add_exp((float)item_ptr->data.level / (float)player_lev + .5);
     prt_stat_block();
   }
 

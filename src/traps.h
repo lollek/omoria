@@ -1,5 +1,4 @@
-#ifndef TRAPS_H
-#define TRAPS_H
+#pragma once
 
 /**
  * @brief
@@ -17,7 +16,7 @@ void change_trap(long y, long x);
  * @param y 
  * @param x 
  */
-void hit_trap(long *y, long *x);
+void hit_trap(const long *y, const long *x);
 
 /**
  * @brief Player triggered a trap by opening a chest or failing to disarm
@@ -44,5 +43,3 @@ void place_trap(long y, long x, long typ, long subval);
  * @param x coordinate
  */
 void place_rubble(long y, long x);
-
-#endif // TRAPS_H

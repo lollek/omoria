@@ -2,7 +2,7 @@
 
 #include "debug.h"
 
-void debug_init(); // Rust part
+void debug_init(void); // Rust part
 
 bool init__debug(void) {
 #if DO_DEBUG

@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "../debug.h"
+#include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
@@ -10,9 +11,10 @@
 
 #include "light.h"
 
-static boolean light_flag; /*	{ Used in MOVE_LIGHT  } */
+static bool light_flag; /*	{ Used in MOVE_LIGHT  } */
 
-static void ml__draw_block(long y1, long x1, long y2, long x2) {
+static void ml__draw_block(const long y1, const long x1, const long y2,
+                           const long x2) {
   /*{ Given two sets of points, draw the block		}*/
 
   long const topp = maxmin(y1, y2, panel_row_min);
@@ -39,20 +41,20 @@ static void ml__draw_block(long y1, long x1, long y2, long x2) {
     /*{ Leftmost to rightmost do}*/
     for (long x = left; x <= right; x++) {
       chtype tmp_char = ' ';
-      boolean flag;
+      bool flag;
 
       if (cave[y][x].pl || cave[y][x].fm) {
-        flag = ((y == y1 && x == x1) || (y == y2 && x == x2));
+        flag = (y == y1 && x == x1) || (y == y2 && x == x2);
         /* flag = true; */
       } else {
         flag = true;
-        if ((y >= new_topp && y <= new_bott) &&
+        if (y >= new_topp && y <= new_bott &&
             (x >= new_left && x <= new_righ) && cave[y][x].tl) {
           if (is_in(cave[y][x].fval, pwall_set)) {
             cave[y][x].pl = true;
           } else if (cave[y][x].tptr > 0 &&
                      is_in(t_list[cave[y][x].tptr].tval, light_set) &&
-                     !(cave[y][x].fm)) {
+                     !cave[y][x].fm) {
             cave[y][x].fm = true;
           }
         }
@@ -86,21 +88,22 @@ static void ml__draw_block(long y1, long x1, long y2, long x2) {
 
     if (xpos > 0) {
       /*{ Var for PRINT cannot be loop index}*/
-      long const y2 = y;
+      long const ypos = y;
       /*print(substr(floor_str,1,1+xmax-xpos),y2,xpos);*/
 
       if (1 + xmax - xpos + 1 > 80 || 1 + xmax - xpos + 1 < 0)
         MSG((": ERROR draw_block xmax-xpos is bad\n"));
 
       floor_str[1 + xmax - xpos + 1] = 0;
-      print_chstr(floor_str, y2, xpos);
+      print_chstr(floor_str, ypos, xpos);
     }
   }
 
   LEAVE("ml__draw_block", "m");
 }
 
-static void ml__sub1_move_light(long y1, long x1, long y2, long x2) {
+static void ml__sub1_move_light(const long y1, const long x1, const long y2,
+                                const long x2) {
   /*{ Normal movement                                   }*/
 
   ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
@@ -121,7 +124,8 @@ static void ml__sub1_move_light(long y1, long x1, long y2, long x2) {
   LEAVE("ml__sub1_move_light", "m");
 }
 
-static void ml__sub2_move_light(long y1, long x1, long y2, long x2) {
+static void ml__sub2_move_light(const long y1, const long x1, const long y2,
+                                const long x2) {
   /*{ When FIND_FLAG, light only permanent features     }*/
 
   ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
@@ -143,8 +147,8 @@ static void ml__sub2_move_light(long y1, long x1, long y2, long x2) {
     chtype tmp_char;
 
     for (long x = x2 - 1; x <= x2 + 1; x++) {
-      boolean flag = false;
-      if (!(cave[y][x].fm || (cave[y][x].pl))) {
+      bool flag = false;
+      if (!(cave[y][x].fm || cave[y][x].pl)) {
         tmp_char = ' ';
         if (player_light) {
           if (is_in(cave[y][x].fval, pwall_set)) {
@@ -168,8 +172,7 @@ static void ml__sub2_move_light(long y1, long x1, long y2, long x2) {
         if (xpos == 0)
           xpos = x;
         if (save_str[0] != 0) {
-          long i;
-          for (i = 0; i < save_str_len; ++i)
+          for (long i = 0; i < save_str_len; ++i)
             floor_str[floor_str_len++] = save_str[i];
           save_str[0] = 0;
           save_str_len = 0;
@@ -190,16 +193,15 @@ static void ml__sub2_move_light(long y1, long x1, long y2, long x2) {
   LEAVE("ml__sub2_move_light", "m");
 }
 
-static void ml__sub3_move_light(long y1, long x1, long y2, long x2) {
+static void ml__sub3_move_light(const long y1, const long x1, const long y2,
+                                const long x2) {
   /*{ When blinded, move only the player symbol...              }*/
 
   ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
   if (light_flag) {
-    long i1;
-    for (i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-      long i2;
-      for (i2 = x1 - 1; i2 <= x1 + 1; i2++) {
+    for (long i1 = y1 - 1; i1 <= y1 + 1; i1++) {
+      for (long i2 = x1 - 1; i2 <= x1 + 1; i2++) {
         cave[i1][i2].tl = false;
       }
     }
@@ -211,7 +213,8 @@ static void ml__sub3_move_light(long y1, long x1, long y2, long x2) {
   LEAVE("ml__sub3_move_light", "m");
 }
 
-static void ml__sub4_move_light(long y1, long x1, long y2, long x2) {
+static void ml__sub4_move_light(const long y1, const long x1, const long y2,
+                                const long x2) {
   /*{ With no light, movement becomes involved...               }*/
 
   ENTER(("ml__sub4_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
@@ -237,7 +240,8 @@ static void ml__sub4_move_light(long y1, long x1, long y2, long x2) {
   LEAVE("ml__sub4_move_light", "m");
 }
 
-void dungeon_light_move(long y1, long x1, long y2, long x2) {
+void dungeon_light_move(const long y1, const long x1, const long y2,
+                        const long x2) {
 
   if (player_flags.blind > 0) {
     ml__sub3_move_light(y1, x1, y2, x2); /* blind */
@@ -250,25 +254,22 @@ void dungeon_light_move(long y1, long x1, long y2, long x2) {
   }
 }
 
-static void lr__find_light(long y1, long x1, long y2, long x2) {
+static void lr__find_light(const long y1, const long x1, const long y2,
+                           const long x2) {
   obj_set room_floors;
-  long i1;
 
   memset(room_floors, 0, sizeof(room_floors));
   room_floors[0] = dopen_floor.ftval;
   room_floors[1] = lopen_floor.ftval;
   room_floors[2] = water2.ftval;
 
-  for (i1 = y1; i1 <= y2; i1++) {
-    long i2;
-    for (i2 = x1; i2 <= x2; i2++) {
-      long i3;
+  for (long i1 = y1; i1 <= y2; i1++) {
+    for (long i2 = x1; i2 <= x2; i2++) {
       if (!is_in(cave[i1][i2].fval, room_floors))
         continue;
 
-      for (i3 = i1 - 1; i3 <= i1 + 1; i3++) {
-        long i4;
-        for (i4 = i2 - 1; i4 <= i2 + 1; i4++)
+      for (long i3 = i1 - 1; i3 <= i1 + 1; i3++) {
+        for (long i4 = i2 - 1; i4 <= i2 + 1; i4++)
           cave[i3][i4].pl = true;
       }
 
@@ -284,27 +285,25 @@ static void lr__find_light(long y1, long x1, long y2, long x2) {
   }
 }
 
-void dungeon_light_room(long param_y, long param_x) {
+void dungeon_light_room(const long param_y, const long param_x) {
 
-  long const half_height = (long)(SCREEN_HEIGHT / 2);
-  long const half_width = (long)(SCREEN_WIDTH / 2);
-  long const start_row = (long)(param_y / half_height) * half_height + 1;
-  long const start_col = (long)(param_x / half_width) * half_width + 1;
+  long const half_height = SCREEN_HEIGHT / 2;
+  long const half_width = SCREEN_WIDTH / 2;
+  long const start_row = param_y / half_height * half_height + 1;
+  long const start_col = param_x / half_width * half_width + 1;
   long const end_row = start_row + half_height - 1;
   long const end_col = start_col + half_width - 1;
-  long y;
   long xpos = 0;
 
   ENTER(("light_room", "%d, %d", param_y, param_x));
 
   lr__find_light(start_row, start_col, end_row, end_col);
 
-  for (y = start_row; y <= end_row; y++) {
+  for (long y = start_row; y <= end_row; y++) {
     chtype floor_str[82] = {0};
     long floor_str_len = 0;
-    long x;
     long const ypos = y;
-    for (x = start_col; x <= end_col; x++) {
+    for (long x = start_col; x <= end_col; x++) {
       if (cave[y][x].pl || cave[y][x].fm) {
         if (floor_str_len == 0)
           xpos = x;

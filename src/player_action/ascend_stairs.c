@@ -1,5 +1,8 @@
+#include "../io.h"
 #include "../random.h"
 #include "../variables.h"
+
+#include <stdbool.h>
 
 void player_action_ascend_stairs(void) {
   if (cave[char_row][char_col].tptr > 0) {

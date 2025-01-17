@@ -1,5 +1,4 @@
-#ifndef MASTER_H
-#define MASTER_H
+#pragma once
 
 #include <stdint.h>
 
@@ -16,6 +15,3 @@ uint8_t mst__update_character(int64_t uid);
  * @returns: The unique uid for the specific character
  */
 int64_t mst__add_character(void);
-
-
-#endif /* MASTER_H */

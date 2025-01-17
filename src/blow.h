@@ -1,6 +1,3 @@
-#ifndef BLOW_H
-#define BLOW_H
+#pragma once
 
 void blow(void);
-
-#endif // BLOW_H

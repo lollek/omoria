@@ -1,6 +1,3 @@
-#ifndef QUEST_H
-#define QUEST_H
+#pragma once
 
-void enter_fortress();
-
-#endif // QUEST_H
+void enter_fortress(void);

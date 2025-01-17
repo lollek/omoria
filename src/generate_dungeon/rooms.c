@@ -1,39 +1,26 @@
 #include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
-#include "../magic.h"
-#include "../pascal.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
-#include "../misc.h"
 #include "../generate_monster.h"
+#include "../io.h"
+#include "../misc.h"
+#include "../pascal.h"
 #include "../random.h"
 #include "../traps.h"
-
-#include "models.h"
+#include "../types.h"
+#include "../variables.h"
 
 /*{ Place a trap with a given displacement of point	-RAK-	}*/
-static void gc__vault_trap(long y, long x, long yd, long xd, long num) {
+static void gc__vault_trap(const int64_t y, const int64_t x, const int64_t yd,
+                           const int64_t xd, const int64_t num) {
 
-  long count, y1, x1, i1;
-  boolean flag;
-
-  for (i1 = 1; i1 <= num; i1++) {
-    flag = false;
-    count = 0;
+  for (int64_t i = 1; i <= num; i++) {
+    bool flag = false;
+    int64_t count = 0;
 
     do {
-      y1 = y - yd - 1 + randint(2 * yd + 1);
-      x1 = x - xd - 1 + randint(2 * xd + 1);
+      const int64_t y1 = y - yd - 1 + randint(2 * yd + 1);
+      const int64_t x1 = x - xd - 1 + randint(2 * xd + 1);
       if (is_in(cave[y1][x1].fval, floor_set)) {
         if (cave[y1][x1].tptr == 0) {
           place_trap(y1, x1, 1, randint(MAX_TRAPA));
@@ -41,27 +28,22 @@ static void gc__vault_trap(long y, long x, long yd, long xd, long num) {
         }
       }
       count++;
-    } while (!((flag) || (count > 5)));
+    } while (!(flag || count > 5));
   }
 }
 
 /*{ Place a trap with a given displacement of point	-RAK-	}*/
-static void gc__vault_monster(long y, long x, long num) {
-  long i1, y1, x1;
-
-  for (i1 = 1; i1 <= num; i1++) {
-    y1 = y;
-    x1 = x;
+static void gc__vault_monster(const int64_t y, const int64_t x, const int64_t num) {
+  for (int64_t i1 = 1; i1 <= num; i1++) {
+    int64_t y1 = y;
+    int64_t x1 = x;
     summon_land_monster(&y1, &x1, true);
   }
 }
 
 /*{ Builds a room at a row,column coordinate		-RAK-	}*/
-void gc__build_room(long yval, long xval) {
+void gc__build_room(const int64_t yval, const int64_t xval) {
 
-  long y_height, y_depth;
-  long x_left, x_right;
-  long i1, i2;
   floor_type cur_floor;
 
   if (dun_level <= randint(25)) {
@@ -70,40 +52,38 @@ void gc__build_room(long yval, long xval) {
     cur_floor = dopen_floor; /*{ Dark floor		}*/
   }
 
-  y_height = yval - randint(4);
-  y_depth = yval + randint(3);
-  x_left = xval - randint(11);
-  x_right = xval + randint(11);
+  const int64_t y_height = yval - randint(4);
+  const int64_t y_depth = yval + randint(3);
+  const int64_t x_left = xval - randint(11);
+  const int64_t x_right = xval + randint(11);
 
-  for (i1 = y_height; i1 <= y_depth; i1++) {
-    for (i2 = x_left; i2 <= x_right; i2++) {
-      cave[i1][i2].fval = cur_floor.ftval;
-      cave[i1][i2].fopen = cur_floor.ftopen;
+  for (int64_t i = y_height; i <= y_depth; i++) {
+    for (int64_t i2 = x_left; i2 <= x_right; i2++) {
+      cave[i][i2].fval = cur_floor.ftval;
+      cave[i][i2].fopen = cur_floor.ftopen;
     }
   }
 
-  for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
-    cave[i1][x_left - 1].fval = rock_wall1.ftval;
-    cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
-    cave[i1][x_right + 1].fval = rock_wall1.ftval;
-    cave[i1][x_right + 1].fopen = rock_wall1.ftopen;
+  for (int64_t i = y_height - 1; i <= y_depth + 1; i++) {
+    cave[i][x_left - 1].fval = rock_wall1.ftval;
+    cave[i][x_left - 1].fopen = rock_wall1.ftopen;
+    cave[i][x_right + 1].fval = rock_wall1.ftval;
+    cave[i][x_right + 1].fopen = rock_wall1.ftopen;
   }
 
-  for (i1 = x_left; i1 <= x_right; i1++) {
-    cave[y_height - 1][i1].fval = rock_wall1.ftval;
-    cave[y_height - 1][i1].fopen = rock_wall1.ftopen;
-    cave[y_depth + 1][i1].fval = rock_wall1.ftval;
-    cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
+  for (int64_t i = x_left; i <= x_right; i++) {
+    cave[y_height - 1][i].fval = rock_wall1.ftval;
+    cave[y_height - 1][i].fopen = rock_wall1.ftopen;
+    cave[y_depth + 1][i].fval = rock_wall1.ftval;
+    cave[y_depth + 1][i].fopen = rock_wall1.ftopen;
   }
 }
 
 /* Builds a room at a row,column coordinate		-RAK-
    Type 1 unusual rooms are several overlapping rectangular ones */
-void gc__build_type1(long yval, long xval) {
+void gc__build_type1(const int64_t yval, const int64_t xval) {
 
-  long y_height, y_depth;
-  long x_left, x_right;
-  long i0, i1, i2;
+  int64_t i1;
   floor_type cur_floor;
 
   if (dun_level <= randint(25)) {
@@ -112,20 +92,20 @@ void gc__build_type1(long yval, long xval) {
     cur_floor = dopen_floor; /*{ Dark floor		}*/
   }
 
-  for (i0 = 1; i0 <= (1 + randint(2)); i0++) {
-    y_height = yval - randint(4);
-    y_depth = yval + randint(3);
-    x_left = xval - randint(11);
-    x_right = xval + randint(11);
+  for (int64_t i0 = 1; i0 <= 1 + randint(2); i0++) {
+    const int64_t y_height = yval - randint(4);
+    const int64_t y_depth = yval + randint(3);
+    const int64_t x_left = xval - randint(11);
+    const int64_t x_right = xval + randint(11);
 
     for (i1 = y_height; i1 <= y_depth; i1++) {
-      for (i2 = x_left; i2 <= x_right; i2++) {
+      for (int64_t i2 = x_left; i2 <= x_right; i2++) {
         cave[i1][i2].fval = cur_floor.ftval;
         cave[i1][i2].fopen = cur_floor.ftopen;
       }
     }
 
-    for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
+    for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
 
       if (cave[i1][x_left - 1].fval != cur_floor.ftval) {
         cave[i1][x_left - 1].fval = rock_wall1.ftval;
@@ -161,11 +141,10 @@ void gc__build_type1(long yval, long xval) {
      3 - An inner room with pillar(s) 
      4 - Inner room has a maze
      5 - A set of four inner rooms }*/
-void gc__build_type2(long yval, long xval) {
+void gc__build_type2(const int64_t yval, const int64_t xval) {
 
-  long y_height, y_depth;
-  long x_left, x_right;
-  long i1, i2;
+  int64_t i1;
+  int64_t i2;
   floor_type cur_floor;
 
   if (dun_level <= randint(30)) {
@@ -174,10 +153,10 @@ void gc__build_type2(long yval, long xval) {
     cur_floor = dopen_floor; /*{ Dark floor		}*/
   }
 
-  y_height = yval - 4;
-  y_depth = yval + 4;
-  x_left = xval - 11;
-  x_right = xval + 11;
+  int64_t y_height = yval - 4;
+  int64_t y_depth = yval + 4;
+  int64_t x_left = xval - 11;
+  int64_t x_right = xval + 11;
 
   for (i1 = y_height; i1 <= y_depth; i1++) {
     for (i2 = x_left; i2 <= x_right; i2++) {
@@ -186,7 +165,7 @@ void gc__build_type2(long yval, long xval) {
     }
   }
 
-  for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
+  for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
     cave[i1][x_left - 1].fval = rock_wall1.ftval;
     cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
     cave[i1][x_right + 1].fval = rock_wall1.ftval;
@@ -206,7 +185,7 @@ void gc__build_type2(long yval, long xval) {
   x_left += 2;
   x_right -= 2;
 
-  for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
+  for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
     cave[i1][x_left - 1].fval = 8;
     cave[i1][x_right + 1].fval = 8;
   }
@@ -404,7 +383,7 @@ void gc__build_type2(long yval, long xval) {
 
     for (i1 = y_height; i1 <= y_depth; i1++) {
       for (i2 = x_left; i2 <= x_right; i2++) {
-        if (((i2 + i1) & 1) == 1) {
+        if ((i2 + i1 & 1) == 1) {
           cave[i1][i2].fval = 8;
         }
       }
@@ -465,11 +444,9 @@ void gc__build_type2(long yval, long xval) {
 
 /* Builds a room at a row,column coordinate		-RAK-
     Type 3 unusual rooms are cross shaped	*/
-void gc__build_type3(long yval, long xval) {
+void gc__build_type3(const int64_t yval, const int64_t xval) {
 
-  long y_height, y_depth;
-  long x_left, x_right;
-  long i0, i1, i2;
+  int64_t i1, i2;
   floor_type cur_floor;
 
   if (dun_level <= randint(25)) {
@@ -478,11 +455,11 @@ void gc__build_type3(long yval, long xval) {
     cur_floor = dopen_floor; /*{ Dark floor		}*/
   }
 
-  i0 = 2 + randint(2);
-  y_height = yval - i0;
-  y_depth = yval + i0;
-  x_left = xval - 1;
-  x_right = xval + 1;
+  int64_t i0 = 2 + randint(2);
+  int64_t y_height = yval - i0;
+  int64_t y_depth = yval + i0;
+  int64_t x_left = xval - 1;
+  int64_t x_right = xval + 1;
 
   for (i1 = y_height; i1 <= y_depth; i1++) {
     for (i2 = x_left; i2 <= x_right; i2++) {
@@ -491,7 +468,7 @@ void gc__build_type3(long yval, long xval) {
     }
   }
 
-  for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
+  for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
     cave[i1][x_left - 1].fval = rock_wall1.ftval;
     cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
 
@@ -520,7 +497,7 @@ void gc__build_type3(long yval, long xval) {
     }
   }
 
-  for (i1 = (y_height - 1); i1 <= (y_depth + 1); i1++) {
+  for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
     if (cave[i1][x_left - 1].fval != cur_floor.ftval) {
       cave[i1][x_left - 1].fval = rock_wall1.ftval;
       cave[i1][x_left - 1].fopen = rock_wall1.ftopen;

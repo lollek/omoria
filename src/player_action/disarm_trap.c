@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../io.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../random.h"
@@ -9,10 +10,8 @@
 #include "../desc.h"
 #include "../player_action.h"
 
-void player_action_disarm_trap() {
+void player_action_disarm_trap(void) {
   long y, x, i1, tdir;
-  long tot, t1, t2, t3, t4, t5;
-  char *tmpc;
 
   y = char_row;
   x = char_col;
@@ -20,12 +19,12 @@ void player_action_disarm_trap() {
   if (d__get_dir("Which direction?", &tdir, &i1, &y, &x)) {
     /* with cave[y][x]. do; */
     if (cave[y][x].tptr > 0) {
-      t1 = player_disarm;                  /*{ Ability to disarm     }*/
-      t2 = player_lev;                     /*{ Level adjustment      }*/
-      t3 = 2 * C_player_disarm_from_dex(); /*{ Dexterity
+      const long t1 = player_disarm;                  /*{ Ability to disarm     }*/
+      const long t2 = player_lev;                     /*{ Level adjustment      }*/
+      const long t3 = 2 * C_player_disarm_from_dex(); /*{ Dexterity
                                               adjustment  }*/
-      t4 = C_player_mod_from_stat(INT);    /*{ Intelligence adjustment}*/
-      tot = t1 + t2 + t3 + t4;
+      const long t4 = C_player_mod_from_stat(INT);    /*{ Intelligence adjustment}*/
+      long tot = t1 + t2 + t3 + t4;
 
       if (player_flags.blind > 0) {
         tot /= 5;
@@ -38,11 +37,11 @@ void player_action_disarm_trap() {
       }
 
       i1 = t_list[cave[y][x].tptr].tval;
-      t5 = t_list[cave[y][x].tptr].level;
+      const long t5 = t_list[cave[y][x].tptr].level;
 
       if (i1 == seen_trap) { /* { Floor trap    } */
         /* with t_list[cave[y][x].tptr]. do; */
-        if ((tot - t5) > randint(100)) {
+        if (tot - t5 > randint(100)) {
           msg_print("You have disarmed the trap.");
           C_player_add_exp(t_list[cave[y][x].tptr].p1);
           cave[y][x].fm = false;
@@ -62,9 +61,9 @@ void player_action_disarm_trap() {
         if (strstr(t_list[cave[y][x].tptr].name, "^") != NULL) {
           msg_print("I don't see a trap...");
         } else if ((0x000001F0 & t_list[cave[y][x].tptr].flags) != 0) {
-          if ((tot - t5) > randint(100)) {
+          if (tot - t5 > randint(100)) {
             t_list[cave[y][x].tptr].flags &= 0xFFFFFE0F;
-            tmpc = strstr(t_list[cave[y][x].tptr].name, " (");
+            char *tmpc = strstr(t_list[cave[y][x].tptr].name, " (");
             if (tmpc != NULL) {
               *tmpc = 0;
             }

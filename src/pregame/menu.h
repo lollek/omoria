@@ -1,5 +1,4 @@
-#ifndef PREGAME_MENU_H
-#define PREGAME_MENU_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -11,5 +10,3 @@
  * * false if we should quit the game
  */
 bool pregame__menu(void);
-
-#endif /* PREGAME_MENU_H */

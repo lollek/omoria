@@ -8,6 +8,8 @@
 
 #include "kickout.h"
 
+#include "io.h"
+
 /**
  *  Operating hours for Moria
  *  X = Open
@@ -34,7 +36,7 @@ static bool is_inside_operating_hours(void) {
   return operating_hours[day][hour + 4] == 'X';
 }
 
-void kick__kickout_player_if_time() {
+void kick__kickout_player_if_time(void) {
   if (!kick__should_kickout()) return;
 
   find_flag = false;

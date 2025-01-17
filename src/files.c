@@ -5,23 +5,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "save.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
-#include "generate_item/generate_item.h"
 #include "desc.h"
+#include "generate_item/generate_item.h"
 #include "io.h"
 #include "misc.h"
+#include "player.h"
+#include "types.h"
+#include "variables.h"
 
 #include "files.h"
 
@@ -30,150 +23,135 @@
 #define OUTPAGE_WIDTH 99  /* { 100 columns of dungeon per section	} */
 
 
-void file_character() {
+void file_character(void) {
   /*{ Print the character to a file or device               -RAK-   }*/
 
-  long i1;
-  long i2;
-  long xbth;
-  long xbthb;
-  long xfos;
-  long xsrh;
-  long xstl;
-  long xdis;
-  long xsave;
-  long xdev;
-  long xswm;
-  long xrep;
-  char xinfra[82];
-  FILE *file1;
-  char out_val[300];
   char filename1[82];
-  char prt1[120];
-  char prt2[82];
-  char new_page = 12;
-  treas_rec *curse;
-  char s1[82];
-  char s2[82];
-  char s3[82];
-
   prt("File name: ", 1, 1);
   if (get_string(filename1, 1, 12, 64)) {
     if (filename1[0] == 0) {
       strcpy(filename1, "MORIACHR.DAT");
     }
-    file1 = (FILE *)fopen(filename1, "w");
-    if (file1 != NULL) {
+    FILE *file = fopen(filename1, "w");
+    if (file != NULL) {
+      char s3[82];
+      char s2[82];
+      char s1[82];
+      const char new_page = 12;
+      char prt1[120];
+      char out_val[300];
+      char xinfra[82];
+      long i1;
       prt("Writing character sheet...", 1, 1);
       refresh();
 
-      fprintf(file1, " \n \n \n");
-      fprintf(file1,
+      fprintf(file, " \n \n \n");
+      fprintf(file,
               "  Name  : %24s  Age         :%4d     "
               "Strength     : %d\n",
               player_name, player_age, C_player_get_stat(STR));
 
-      fprintf(file1,
+      fprintf(file,
               "  Race  : %24s  Height      :%4d     "
               "Intelligence : %d\n",
               player_race, player_ht, C_player_get_stat(INT));
 
-      fprintf(file1,
+      fprintf(file,
               "  Sex   : %24s  Weight      :%4d     "
               "Wisdom       : %d\n",
               player_sex, player_wt, C_player_get_stat(WIS));
 
-      fprintf(file1,
+      fprintf(file,
               "  Class : %24s  Social Class:%4d     "
               "Dexterity    : %d\n",
               player_tclass, player_sc, C_player_get_stat(DEX));
 
-      fprintf(file1,
+      fprintf(file,
               "          %24s                       "
               "Constitution : %d\n",
               "", C_player_get_stat(CON));
 
-      fprintf(file1,
+      fprintf(file,
               "          %24s              %4s      "
               "Charisma     : %d\n",
               "", "", C_player_get_stat(CHR));
 
-      fprintf(file1, " \n \n \n \n");
+      fprintf(file, " \n \n \n \n");
 
-      fprintf(file1,
+      fprintf(file,
               "  + To Hit    :%3d        Level      "
               ":%9d     Max Hit Points :%4d\n",
               player_dis_th, player_lev, C_player_max_hp());
 
-      fprintf(file1,
+      fprintf(file,
               "  + To Damage :%3d        Experience "
-              ":%9ld     Cur Hit Points :%4d\n",
+              ":%9lld     Cur Hit Points :%4d\n",
               player_dis_td, player_exp, C_player_current_hp());
 
-      fprintf(file1,
+      fprintf(file,
               "  + To AC     :%3d        Gold       "
-              ":%9ld     Max Mana       :%4d\n",
+              ":%9lld     Max Mana       :%4d\n",
               player_dis_tac, player_money[TOTAL_], player_mana);
 
-      fprintf(file1,
+      fprintf(file,
               "    Total AC  :%3d        Account    "
-              ":%9ld     Cur Mana       :%4d\n",
+              ":%9lld     Cur Mana       :%4d\n",
               player_dis_ac, player_account, player_mana);
 
-      fprintf(file1, " \n \n");
+      fprintf(file, " \n \n");
 
-      xbth =
+      const long xbth =
           player_bth + player_lev * BTH_LEV_ADJ + player_ptohit * BTH_PLUS_ADJ;
-      xbthb =
+      const long xbthb =
           player_bthb + player_lev * BTH_LEV_ADJ + player_ptohit * BTH_PLUS_ADJ;
-      xfos = 27 - player_fos;
+      long xfos = 27 - player_fos;
       if (xfos < 0) {
         xfos = 0;
       }
-      xsrh = C_player_curr_search_skill();
-      xstl = player_stl;
-      xdis = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-             C_player_mod_from_stat(INT);
-      xsave = player_save + player_lev + C_player_mod_from_stat(WIS);
-      xdev = player_save + player_lev + C_player_mod_from_stat(INT);
-      xswm = (player_flags).swim + 4;
-      xrep = 6 + player_rep / 25;
-      sprintf(xinfra, "%ld feet", (player_flags).see_infra);
+      const long xsrh = C_player_curr_search_skill();
+      const long xstl = player_stl;
+      const long xdis = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+                  C_player_mod_from_stat(INT);
+      const long xsave = player_save + player_lev + C_player_mod_from_stat(WIS);
+      const long xdev = player_save + player_lev + C_player_mod_from_stat(INT);
+      const long xswm = player_flags.swim + 4;
+      const long xrep = 6 + player_rep / 25;
+      sprintf(xinfra, "%lld feet", player_flags.see_infra);
 
-      fprintf(file1, "\n");
+      fprintf(file, "\n");
 
-      fprintf(file1, "%50s\n \n", "(Miscellaneous Abilities)");
+      fprintf(file, "%50s\n \n", "(Miscellaneous Abilities)");
 
-      fprintf(file1,
+      fprintf(file,
               "  Fighting    : %10s  Stealth     : "
               "%10s  Perception  : %10s\n",
               likert(xbth, 12, s1), likert(xstl, 1, s2), likert(xfos, 3, s3));
 
-      fprintf(file1,
+      fprintf(file,
               "  Throw/Bows  : %10s  Disarming   : "
               "%10s  Searching   : %10s\n",
               likert(xbthb, 12, s1), likert(xdis, 8, s2), likert(xsrh, 6, s3));
 
-      fprintf(file1,
+      fprintf(file,
               "  Saving Throw: %10s  Magic Device: "
               "%10s  Infra-Vision: %10s\n",
               likert(xsave, 6, s1), likert(xdev, 7, s2), xinfra);
 
-      fprintf(file1,
+      fprintf(file,
               "  Reputation  : %10s                   "
               "         Swimming    : %10s\n",
               likert(xrep, 1, s1), likert(xswm, 1, s3));
 
       /*{ Write out the character's history     }*/
 
-      fprintf(file1, " \n \n%45s\n", "Character Background");
+      fprintf(file, " \n \n%45s\n", "Character Background");
       for (i1 = 0; i1 < 5; i1++) {
-        fprintf(file1, "   %s\n", player_history[i1]);
+        fprintf(file, "   %s\n", player_history[i1]);
       }
 
       /*{ Write out the time stats              }*/
 
-      fprintf(file1, " \n \n");
+      fprintf(file, " \n \n");
 
       /* with player_birth. do; */
       day_of_week_string(player_birth.day, 10, out_val);
@@ -186,30 +164,31 @@ void file_character() {
         }
       }
 
-      fprintf(file1, "  You were born at %s on %s, %s the %s, %ld AH.\n",
+      fprintf(file, "  You were born at %s on %s, %s the %s, %lld AH.\n",
               time_string(player_birth.hour, player_birth.secs, s1), out_val,
               month_string(player_birth.month, s2),
               place_string(player_birth.day, s3), player_birth.year);
 
-      fprintf(file1, "  %s\n", show_char_age(s1));
-      fprintf(file1, "  The current time is %s.\n",
+      fprintf(file, "  %s\n", show_char_age(s1));
+      fprintf(file, "  The current time is %s.\n",
               full_date_string(player_cur_age, s1));
       if (player_flags.dead) {
-        fprintf(file1, "  You were killed by %s on level %ld.\n", died_from,
+        fprintf(file, "  You were killed by %s on level %ld.\n", died_from,
                 dun_level);
       }
-      fprintf(file1, "  Maximum depth was %d feet.\n", player_max_lev * 50);
+      fprintf(file, "  Maximum depth was %d feet.\n", player_max_lev * 50);
 
       /*{ Write out the equipment list...       }*/
-      fprintf(file1, " \n \n  [Character's Equipment List]\n \n \n");
-      i2 = 0;
+      fprintf(file, " \n \n  [Character's Equipment List]\n \n \n");
 
       if (equip_ctr == 0) {
-        fprintf(file1, "  Character has no equipment in use.\n");
+        fprintf(file, "  Character has no equipment in use.\n");
       } else {
+        long i2 = 0;
         for (i1 = Equipment_min; i1 < EQUIP_MAX; i1++) {
           /* with equipment[i1]. do; */
           if (equipment[i1].tval > 0) {
+            char prt2[82];
             switch (i1) {
             case Equipment_primary:
               strcpy(prt1, ") You are "
@@ -284,31 +263,31 @@ void file_character() {
             } else {
               sprintf(out_val, " (%c%s%s", (char)(i2 + 96), prt1, prt2);
             }
-            fprintf(file1, "%s\n", out_val);
+            fprintf(file, "%s\n", out_val);
           }
         } /* end for equipment */
       }   /* end else has equipment */
 
       /*{ Write out the character's inventory...        }*/
 
-      fprintf(file1, "%c \n \n \n  %s\n \n \n", new_page,
+      fprintf(file, "%c \n \n \n  %s\n \n \n", new_page,
               "[General Inventory List]");
 
       if (inven_ctr == 0) {
-        fprintf(file1, "  Character has no objects in "
+        fprintf(file, "  Character has no objects in "
                        "inventory.\n");
       } else {
         i1 = 1;
-        for (curse = inventory_list; curse != NULL; curse = curse->next) {
-          if ((i1 % 50) == 0) {
-            fprintf(file1,
+        for (const treas_rec *curse = inventory_list; curse != NULL; curse = curse->next) {
+          if (i1 % 50 == 0) {
+            fprintf(file,
                     "%c\n \n \n \n  "
                     "%s %ld]\n \n",
                     new_page,
                     "[General "
                     "Inventory "
                     "List, Page",
-                    (i1 / 50) + 1);
+                    i1 / 50 + 1);
           }
           inven_temp.data = curse->data;
           objdes(s1, &inven_temp, true);
@@ -337,54 +316,53 @@ void file_character() {
             strcat(out_val, s1);
           }
 
-          fprintf(file1, "%s\n", out_val);
+          fprintf(file, "%s\n", out_val);
           i1++;
         } /* end for inventory */
       }   /* end else inventory not null */
 
-      fclose(file1);
+      fclose(file);
       prt("Completed.", 1, 1);
     } /* end if file !NULL */
   }   /* end get_string */
 }
 
-void print_map() {
+void print_map(void) {
   /*{ Prints dungeon map to external file                       -RAK- }*/
 
-  long i1, i2, i3, i4, i5, i6, i7, i8;
-  char dun_line[OUTPAGE_WIDTH + 10];
   char filename1[81];
   char tmp;
-  FILE *file1;
 
   prt("File name: ", 1, 1);
   if (get_string(filename1, 1, 12, 64)) {
     if (strlen(filename1) == 0) {
       strcpy(filename1, "MORIAMAP.DAT");
     }
-    file1 = (FILE *)fopen(filename1, "w");
+    FILE *file1 = fopen(filename1, "w");
     if (file1 != NULL) {
+      long i6;
+      long i5;
       prt("Writing Moria Dungeon Map...", 1, 1);
       refresh();
-      i1 = 1;
-      i7 = 0;
+      long i1 = 1;
+      long i7 = 0;
       do {
-        i2 = 1;
-        i3 = i1 + OUTPAGE_HEIGHT - 1;
+        long i2 = 1;
+        long i3 = i1 + OUTPAGE_HEIGHT - 1;
         if (i3 > cur_height) {
           i3 = cur_height;
         }
         i7++;
-        i8 = 0;
+        long i8 = 0;
         do {
-          i4 = i2 + OUTPAGE_WIDTH - 1;
+          long i4 = i2 + OUTPAGE_WIDTH - 1;
           if (i4 > cur_width) {
             i4 = cur_width;
           }
           i8++;
           fprintf(file1, "%c", 12);
           fprintf(file1, "Section[%ld,%ld];     ", i7, i8);
-          fprintf(file1, "Depth : %ld (feet)\n", (dun_level * 50));
+          fprintf(file1, "Depth : %ld (feet)\n", dun_level * 50);
           fprintf(file1, " \n");
           fprintf(file1, "   ");
           for (i5 = i2; i5 <= i4; i5++) {
@@ -405,6 +383,7 @@ void print_map() {
           }
           fprintf(file1, "\n");
           for (i5 = i1; i5 < i3; i5++) {
+            char dun_line[OUTPAGE_WIDTH + 10];
             sprintf(dun_line, "%3ld", i5);
             for (i6 = i2; i6 <= i4; i6++) {
               if (test_light(i5, i6)) {
@@ -426,14 +405,13 @@ void print_map() {
   }
 }
 
-void print_objects() {
+void print_objects(void) {
   /*{ Prints a list of random objects to a file.  Note that   -RAK-  }*/
   /*{ the objects produced is a sampling of objects which            }*/
   /*{ be expected to appear on that level.                           }*/
 
-  long nobj, i1, i2, level;
-  char filename1[82], tmp_str[82];
-  FILE *file1;
+  long nobj, i2, level;
+  char tmp_str[82];
 
   level = 0;
   nobj = 0;
@@ -446,7 +424,8 @@ void print_objects() {
   if (get_string(tmp_str, 1, 28, 10)) {
     sscanf(tmp_str, "%ld", &nobj);
   }
-  if ((nobj > 0) && (level > -1) && (level < 1201)) {
+  if (nobj > 0 && level > -1 && level < 1201) {
+    char filename1[82];
     if (nobj > 99999) {
       nobj = 99999;
     }
@@ -455,7 +434,7 @@ void print_objects() {
       if (filename1[0] == 0) {
         strcpy(filename1, "MORIAOBJ.DAT");
       }
-      file1 = (FILE *)fopen(filename1, "w");
+      FILE *file1 = fopen(filename1, "w");
       if (file1 != NULL) {
         sprintf(tmp_str, "%ld random objects being produced...", nobj);
         prt(tmp_str, 1, 1);
@@ -466,7 +445,7 @@ void print_objects() {
         fprintf(file1, "*** For Level %ld\n\n\n", level);
         popt(&i2);
 
-        for (i1 = 1; i1 <= nobj; i1++) {
+        for (long i1 = 1; i1 <= nobj; i1++) {
           t_list[i2] = generate_item_for_dungeon_level(level);
           inven_temp.data = t_list[i2];
           /* with inven_temp->data. do; */
@@ -486,32 +465,30 @@ void print_objects() {
   }
 }
 
-void print_monsters() {
+void print_monsters(void) {
   /*{ Prints a listing of monsters                              -RAK- }*/
 
-  long i1, atype, adesc, acount, i5;
-  char out_val[82], filename1[82];
-  char attstr[82], attx[82], s1[82];
-  char *achar;
-  char damstr[36];
-  FILE *file1;
-  unsigned long cmove, cdefense, spells;
+  long atype, adesc, acount;
+  char filename1[82];
 
   prt("File name for monsters: ", 1, 1);
   if (get_string(filename1, 1, 25, 64)) {
     if (filename1[0] == 0) {
       strcpy(filename1, "MORIAMON.DAT");
     }
-    file1 = (FILE *)fopen(filename1, "w");
+    FILE *file1 = fopen(filename1, "w");
     if (file1 != NULL) {
+      char attx[82];
+      char attstr[82];
+      char out_val[82];
       prt("Writing Monster Dictionary...", 1, 1);
       refresh();
-      for (i1 = 1; i1 <= MAX_CREATURES; i1++) {
+      for (long i1 = 1; i1 <= MAX_CREATURES; i1++) {
         /* with monster_templates[i1]. do; */
 
-        cmove = monster_templates[i1].cmove;
-        cdefense = monster_templates[i1].cdefense;
-        spells = monster_templates[i1].spells;
+        const unsigned long cmove = monster_templates[i1].cmove;
+        const unsigned long cdefense = monster_templates[i1].cdefense;
+        const unsigned long spells = monster_templates[i1].spells;
 
         /*{ Begin writing to file }*/
         fprintf(file1, "-------------------------------"
@@ -522,7 +499,7 @@ void print_monsters() {
 
         fprintf(file1,
                 "     Speed =%2d  Level     "
-                "=%2d  Exp =%5ld\n",
+                "=%2d  Exp =%5lld\n",
                 monster_templates[i1].speed, monster_templates[i1].level, monster_templates[i1].mexp);
 
         fprintf(file1,
@@ -645,12 +622,12 @@ void print_monsters() {
                     "cast spells 1 "
                     "out of %ld "
                     "turns.\n",
-                    (0xF & spells));
+                    0xF & spells);
           } else {
             fprintf(file1,
                     "       Casts spells 1 "
                     "out of %ld turns.\n",
-                    (0xF & spells));
+                    0xF & spells);
           }
 
           if ((0x00000010 & spells) != 0) {
@@ -802,16 +779,17 @@ void print_monsters() {
         attx[0] = 0;
         strcpy(attstr, monster_templates[i1].damage);
 
-        for (; attstr[0] != 0;) {
+        while (attstr[0] != 0) {
+          char damstr[36];
 
           /* attstr looks like this: "1 32 4d4|2
            * 21 0d0" */
 
-          achar = strstr(attstr, "|");
+          char *achar = strstr(attstr, "|");
           if (achar != NULL) {
             strcpy(attx, attstr);
             achar = strstr(attx, "|");
-            (*achar) = 0;
+            *achar = 0;
             achar++;
             strcpy(attstr, achar);
           } else {
@@ -823,14 +801,15 @@ void print_monsters() {
           out_val[0] = 0;
 
           if ((achar = strstr(damstr, "-")) != NULL) {
-            (*achar) = ' ';
+            char s1[82];
+            *achar = ' ';
             sscanf(damstr, "%ld %s", &acount, s1);
             strcpy(damstr, s1);
           } else {
             acount = 1;
           }
 
-          for (i5 = 1; i5 <= acount; i5++) {
+          for (long i5 = 1; i5 <= acount; i5++) {
             switch (adesc) {
             case 0:
               strcpy(out_val, "       < No "
@@ -1139,23 +1118,22 @@ void print_monsters() {
 }
 
 
-char *center(char in_str[134], int str_len, char out_str[134]) {
-  int const in_str_len = strlen(in_str);
-  int const j = (str_len - in_str_len) / 2;
+char *center(char str[134], int len, char result[134]) {
+  int const in_str_len = strlen(str);
+  int const j = (len - in_str_len) / 2;
 
-  if (in_str_len >= str_len) {
-    strncpy(out_str, in_str, str_len);
+  if (in_str_len >= len) {
+    strncpy(result, str, len);
   } else {
-    snprintf(out_str, 134, "%*s%s%*s", j, "", in_str, str_len - in_str_len - j, "");
+    snprintf(result, 134, "%*s%s%*s", j, "", str, len - in_str_len - j, "");
   }
 
-  return out_str;
+  return result;
 }
 
-boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
+bool open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
                         FILE **f1, FILE **f2) {
-  char out_str[1026];
-  boolean flag = true;
+  bool flag = true;
 
   if (fnam1[0] == 0) {
     prt(prompt, 1, 1);
@@ -1163,8 +1141,9 @@ boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
   }
 
   if (flag) {
+    char out_str[1026];
 
-    *f1 = (FILE *)fopen(fnam1, "r");
+    *f1 = fopen(fnam1, "r");
     if (*f1 == NULL) {
       sprintf(out_str, "Error Opening> %s", fnam1);
       prt(out_str, 1, 1);
@@ -1176,7 +1155,7 @@ boolean open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
 
       if (flag) {
         if (strcmp(fnam1, fnam2) != 0) {
-          *f2 = (FILE *)fopen(fnam2, "w");
+          *f2 = fopen(fnam2, "w");
           if (*f2 == NULL) {
             sprintf(out_str, "Error Opening> %s", fnam2);
             prt(out_str, 1, 1);

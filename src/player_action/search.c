@@ -2,6 +2,7 @@
 #include <time.h>
 
 #include "../desc.h"
+#include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
@@ -11,20 +12,20 @@
 
 #include "search.h"
 
-void player_action_search(long player_y, long player_x, long chance) {
+void player_action_search(const long player_y, const long player_x, long chance) {
   if (player_flags.blind > 0) {
     msg_print("You are incapable of searching while blind.");
     return;
   }
 
-  if ((player_flags).confused + (player_flags).blind > 0) {
+  if (player_flags.confused + player_flags.blind > 0) {
     chance = trunc(chance / 10.0);
   } else if (player_has_no_light()) {
     chance = (long)(chance / 5.0);
   }
 
-  for (long y = (player_y - 1); y <= (player_y + 1); y++) {
-    for (long x = (player_x - 1); x <= (player_x + 1); x++) {
+  for (long y = player_y - 1; y <= player_y + 1; y++) {
+    for (long x = player_x - 1; x <= player_x + 1; x++) {
       if (!in_bounds(y, x)) {
         continue;
       }

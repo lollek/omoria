@@ -4,7 +4,7 @@ CFLAGS =	-Wall -Wextra -Werror -pedantic -Wno-stringop-overflow -Wno-format-trun
 LDFLAGS =	-lncurses -ltinfo -ltermcap -lm -Wl,--gc-sections -lpthread -ldl
 
 READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
-WRITEFILES =	data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
+WRITEFILES = data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
 
 RSFILES = $(shell find src/ -type f -name '*.rs')

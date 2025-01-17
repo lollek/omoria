@@ -5,22 +5,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
 #include "io.h"
+#include "player.h"
 #include "screen.h"
+#include "term.h"
+#include "variables.h"
 
-void help() {
+void help(void) {
   /*{ Help for available commands }*/
 
   C_clear_screen();
@@ -190,9 +186,9 @@ void moria_help(char help_level[82]) {
   /* printf("\nDisplay help for %s\n\r", help_level); */
 }
 
-void ident_char() {
+void ident_char(void) {
   char command;
-  boolean exit_flag, bleah_flag;
+  bool exit_flag, bleah_flag;
 
   do {
     exit_flag = false;

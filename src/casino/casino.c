@@ -3,23 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
+#include "../io.h"
 #include "../kickout.h"
-#include "../magic.h"
-#include "../pascal.h"
-#include "../player.h"
-#include "../save.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
-#include "../screen.h"
-#include "../random.h"
 #include "../misc.h"
+#include "../player.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../term.h"
+#include "../variables.h"
 
 #include "blackjack.h"
 #include "horseracing.h"
@@ -30,33 +24,32 @@
 long bet;
 long gld;
 long tics;
-boolean c_closed;
+bool c_closed;
 
-void c__display_gold() {
+void c__display_gold(void) {
   char out_val[82];
 
   sprintf(out_val, "gold remaining : %ld   ", gld);
   prt(out_val, 19, 22);
 }
 
-boolean c__get_response(char comment[82], long *num) {
-  long i1, clen;
-  char out_val[82];
-  boolean flag;
+bool c__get_response(char comment[82], long *num) {
+  long i1;
 
-  flag = true;
+  bool flag = true;
   i1 = 0;
-  clen = strlen(comment) + 2;
+  const long clen = strlen(comment) + 2;
 
   do {
+    char out_val[82];
     prt(comment, 1, 1);
     msg_flag = false;
-    if (!(get_string(out_val, 1, clen, 40))) {
+    if (!get_string(out_val, 1, clen, 40)) {
       flag = false;
       erase_line(msg_line, msg_line);
     }
     sscanf(out_val, "%ld", &i1);
-  } while (!((i1 != 0) || !(flag)));
+  } while (!(i1 != 0 || !flag));
 
   if (flag) {
     *num = i1;
@@ -65,10 +58,9 @@ boolean c__get_response(char comment[82], long *num) {
   return flag;
 }
 
-void c__change_money() {
-  int amount;
+void c__change_money(void) {
 
-  amount = labs(player_money[TOTAL_] - gld) * GOLD_VALUE;
+  const int amount = labs(player_money[TOTAL_] - gld) * GOLD_VALUE;
   if (gld > player_money[TOTAL_]) {
     add_money(amount);
   } else {
@@ -76,8 +68,8 @@ void c__change_money() {
   }
 }
 
-void c__check_casino_kickout() {
-  if ((tics % 2) == 1) {
+void c__check_casino_kickout(void) {
+  if (tics % 2 == 1) {
     if (kick__should_kickout()) {
       c__change_money();
       kick__kickout_player_if_time();
@@ -86,7 +78,7 @@ void c__check_casino_kickout() {
   tics++;
 }
 
-void c__display_casino() {
+void c__display_casino(void) {
   char shop_owner[82];
 
   C_clear_screen();
@@ -103,7 +95,7 @@ void c__display_casino() {
 }
 
 void c__play_game(char game) {
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   do {
     if (game == 0) {
@@ -141,9 +133,9 @@ void c__play_game(char game) {
   } while (!exit_flag);
 }
 
-void c__parse_command() {
+void c__parse_command(void) {
   char command;
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   do {
     if (get_com("", &command)) {
@@ -170,7 +162,7 @@ void c__parse_command() {
   } while (!(exit_flag || c_closed));
 }
 
-void c__exit_messages() {
+void c__exit_messages(void) {
   if (gld > 2 * player_money[TOTAL_] + 1000) {
     switch (randint(3)) {
     case 1:
@@ -205,7 +197,7 @@ void c__exit_messages() {
   /* msg_print(""); */
 }
 
-void enter_casino() {
+void enter_casino(void) {
   c_closed = false;
   tics = 1;
   gld = player_money[TOTAL_];

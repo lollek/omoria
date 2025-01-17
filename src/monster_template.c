@@ -842,8 +842,8 @@ monster_template const monster_templates[] = {
     {20, 125, "Balrog", 0xFF1F0300, 0x0281C743, 0x5404, 0, 55000, 4, 'B',
      "475d8", "5 1 10d12|1 17 8d12|24 5 0d0", 100, 255}};
 
-boolean monster_template_has_attribute(monster_template const *template,
-                                       monster_attribute attribute) {
+bool monster_template_has_attribute(monster_template const *template,
+                                       const monster_attribute attribute) {
   switch (attribute) {
   case ma_move_only_to_attack:
     return template->cmove & 0x00000001;
@@ -936,5 +936,5 @@ boolean monster_template_has_attribute(monster_template const *template,
   case ma_regenerates:
     return template->cdefense & 0x8000;
   }
-  return FALSE;
+  return false;
 }

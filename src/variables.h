@@ -1,5 +1,4 @@
-#ifndef VARIABLES_H
-#define VARIABLES_H
+#pragma once
 /* Ever feel the need for more global vars? */
 
 #include "types.h"
@@ -10,7 +9,6 @@
 #define DL_SECRET 2
 
 extern treas_rec *cur_inven;      /* { Current inven page  } */
-extern long player_max_exp;       /* { Max exp possible    } */
 extern unsigned long randes_seed; /* { For encoding colors } */
 extern unsigned long town_seed;   /* { Seed for town genera} */
 extern long cur_height;           /* { Cur dungeon size    } */
@@ -18,26 +16,26 @@ extern long cur_width;
 extern long dun_level;             /* { Cur dungeon level   } */
 extern long missle_ctr;            /* { Counter for missles } */
 extern long msg_line;              /* { Contains message txt} */
-extern boolean msg_flag;           /* { Set with first msg  } */
-extern boolean moria_flag;         /* { Next level when true  } */
-extern boolean cave_flag;          
-extern boolean reset_flag;         /* { Do not move creatures } */
-extern boolean search_flag;        /* { Player is searching   } */
-extern boolean teleport_flag;      /* { Handle telport traps  } */
+extern bool msg_flag;           /* { Set with first msg  } */
+extern bool moria_flag;         /* { Next level when true  } */
+extern bool cave_flag;
+extern bool reset_flag;         /* { Do not move creatures } */
+extern bool search_flag;        /* { Player is searching   } */
+extern bool teleport_flag;      /* { Handle telport traps  } */
 extern long quest[NUM_QUESTS + 1]; /* {quest data} */
 extern char old_msg[82];           /* { Last message	      } */
-extern boolean want_trap;          /* { True = trap messages} */
-extern boolean want_warn;          /* { True = water warning} */
-extern boolean death;              /*	{ True if died	      } */
+extern bool want_trap;          /* { True = trap messages} */
+extern bool want_warn;          /* { True = water warning} */
+extern bool death;              /*	{ True if died	      } */
 extern char died_from[82];         /*	{ What killed him     } */
 extern long turn_counter;          /*	{ Turns ellapsed      } */
-extern boolean find_flag;          /*	{ Used in MORIA	      } */
-extern boolean redraw;             /*	{ For redraw screen   } */
+extern bool find_flag;          /*	{ Used in MORIA	      } */
+extern bool redraw;             /*	{ For redraw screen   } */
 extern unsigned long print_stat;   /*	{ Flag for stats      } */
 extern long turn;                  /*	{ Cur trun of game    } */
-extern boolean wizard1;            /*	{ Wizard flag	      } */
-extern boolean wizard2;            /*	{ Wizard flag	      } */
-extern boolean used_line[24];      /* array [2..23] of boolean; */
+extern bool wizard1;            /*	{ Wizard flag	      } */
+extern bool wizard2;            /*	{ Wizard flag	      } */
+extern bool used_line[24];      /* array [2..23] of bool; */
 /*{neatness arrays} */
 extern unsigned char key_of[9];  /*  array [0..8] of unsigned char; */
 extern unsigned char oct_of[10]; /*  array [1..9] of unsigned char; */
@@ -88,12 +86,12 @@ extern obj_set stable_set;
 
 extern long exp_per_level[MAX_PLAYER_LEVEL + 1];
 extern char bare_hands[7];
-extern boolean msg_terse;
+extern bool msg_terse;
 extern long char_row;
 extern long char_col;
 extern long com_val;
 extern treasure_type yums[];
-extern boolean total_winner;
+extern bool total_winner;
 
 /*	{ Following are store definitions				} */
 extern store_type stores[MAX_STORES + 1];
@@ -126,5 +124,3 @@ extern unsigned char highScoreKey[8];
 extern unsigned char saveFileKey[8];
 
 extern int game_state;
-
-#endif /* VARIABLES_H */

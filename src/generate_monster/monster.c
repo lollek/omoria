@@ -2,6 +2,7 @@
 #include <string.h>
 #include <sys/param.h>
 
+#include "../io.h"
 #include "../creature.h"
 #include "../misc.h"
 #include "../monster_template.h"
@@ -16,9 +17,10 @@
 // One in X to spawn an out-of-depth monster
 static const long out_of_depth_chance = 50;
 
-static void generate_monster(obj_set alloc_set, long number_of_monsters,
-                             long min_distance_from_player, boolean is_sleeping,
-                             boolean water_monster) {
+static void generate_monster(obj_set alloc_set, const long number_of_monsters,
+                             const long min_distance_from_player,
+                             const bool is_sleeping,
+                             const bool water_monster) {
   long count = 0;
   long count2 = 0;
 
@@ -34,11 +36,7 @@ static void generate_monster(obj_set alloc_set, long number_of_monsters,
                cave[y][x].fopen &&
                distance(y, x, char_row, char_col) > min_distance_from_player));
 
-    for (;;) {
-
-      if (count++ > 10) {
-        break;
-      }
+    while (count++ <= 10) {
 
       long monster_i;
       if (dun_level == 0) {
@@ -50,7 +48,7 @@ static void generate_monster(obj_set alloc_set, long number_of_monsters,
         if (monster_i > MAX_MONS_LEVEL) {
           monster_i = MAX_MONS_LEVEL;
         }
-        long i3 = m_level[monster_i] - m_level[monster_i - 1];
+        const long i3 = m_level[monster_i] - m_level[monster_i - 1];
         monster_i = randint(i3) + m_level[monster_i - 1];
       } else {
         monster_i = randint(m_level[dun_level]) + m_level[0];
@@ -61,7 +59,7 @@ static void generate_monster(obj_set alloc_set, long number_of_monsters,
         continue;
       }
 
-      boolean ok_monster_found;
+      bool ok_monster_found;
       if (!water_monster) {
         ok_monster_found =
             monster_template_has_attribute(template, ma_land_based) ||
@@ -85,20 +83,22 @@ static void generate_monster(obj_set alloc_set, long number_of_monsters,
   }
 }
 
-void generate_land_monster(obj_set alloc_set, long number_of_monsters,
-                           long min_distance_from_player, boolean is_sleeping) {
+void generate_land_monster(obj_set alloc_set, const long number_of_monsters,
+                           const long min_distance_from_player,
+                           const bool is_sleeping) {
   generate_monster(alloc_set, number_of_monsters, min_distance_from_player,
                    is_sleeping, false);
 }
 
-void generate_water_monster(obj_set alloc_set, long number_of_monsters,
-                            long min_distance_from_player,
-                            boolean is_sleeping) {
+void generate_water_monster(obj_set alloc_set, const long number_of_monsters,
+                            const long min_distance_from_player,
+                            const bool is_sleeping) {
   generate_monster(alloc_set, number_of_monsters, min_distance_from_player,
                    is_sleeping, true);
 }
 
-void place_monster(long y, long x, long template, boolean is_asleep) {
+void place_monster(const long y, const long x, const long template,
+                   const bool is_asleep) {
 
   long cur_pos;
   popm(&cur_pos);
@@ -121,7 +121,7 @@ void place_monster(long y, long x, long template, boolean is_asleep) {
   m_list[cur_pos].stunned = 0;
 
   if (is_asleep) {
-    m_list[cur_pos].csleep = (monster->sleep / 5.0) + randint(monster->sleep);
+    m_list[cur_pos].csleep = monster->sleep / 5.0 + randint(monster->sleep);
   } else {
     m_list[cur_pos].csleep = 0;
   }
@@ -145,7 +145,7 @@ void place_monster(long y, long x, long template, boolean is_asleep) {
  * must apply to spawn the monster.
  * @return Was the monster successfully spawned?
  */
-static boolean summon_monster(long *y, long *x, boolean is_asleep,
+static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
                               obj_set const fval_set,
                               monster_attribute const **monster_attributes) {
   long const max_monster_level =
@@ -153,8 +153,8 @@ static boolean summon_monster(long *y, long *x, boolean is_asleep,
 
   // 10 attemps to spawn a monster
   for (int i = 0; i < 10; ++i) {
-    long monster_y = *y - 2 + randint(3);
-    long monster_x = *x - 2 + randint(3);
+    const long monster_y = *y - 2 + randint(3);
+    const long monster_x = *x - 2 + randint(3);
 
     // Position is outside the dungeon
     if (!in_bounds(monster_y, monster_x)) {
@@ -209,33 +209,33 @@ static boolean summon_monster(long *y, long *x, boolean is_asleep,
   return false;
 }
 
-boolean summon_land_monster(long *y, long *x, boolean is_asleep) {
+bool summon_land_monster(int64_t *y, int64_t *x, const bool is_asleep) {
   monster_attribute attr1 = ma_survives_on_land;
   monster_attribute const *attributes[] = {&attr1, NULL};
   return summon_monster(y, x, is_asleep, earth_set, attributes);
 }
 
-boolean summon_water_monster(long *y, long *x, boolean is_asleep) {
+bool summon_water_monster(int64_t *y, int64_t *x, const bool is_asleep) {
   monster_attribute attr1 = ma_survives_in_water;
   monster_attribute const *attributes[] = {&attr1, NULL};
   return summon_monster(y, x, is_asleep, water_set, attributes);
 }
 
-boolean summon_undead(long *y, long *x) {
+bool summon_undead(long *y, long *x) {
   obj_set const undead_set = {1, 2, 4, 5, 0};
   monster_attribute attr1 = ma_undead;
   monster_attribute const *attributes[] = {&attr1, NULL};
   return summon_monster(y, x, false, undead_set, attributes);
 }
 
-boolean summon_demon(long *y, long *x) {
+bool summon_demon(long *y, long *x) {
   obj_set const demon_set = {1, 2, 4, 5, 0};
   monster_attribute attr1 = ma_demon;
   monster_attribute const *attributes[] = {&attr1, NULL};
   return summon_monster(y, x, false, demon_set, attributes);
 }
 
-boolean summon_breed(long *y, long *x) {
+bool summon_breed(long *y, long *x) {
   // This used to summon the correct breeder for its floor type, but that was
   // such a hassle. Now it's ground only.
   monster_attribute attr1 = ma_multiplies;
@@ -243,22 +243,25 @@ boolean summon_breed(long *y, long *x) {
   return summon_monster(y, x, false, earth_set, attributes);
 }
 
-void monster_summon_by_name(long y, long x, char name[28], boolean present,
-                            boolean is_asleep) {
+void monster_summon_by_name(long y, long x, char name[28],
+                            const bool present, const bool is_asleep) {
 
-  long i1 = 0, i2, i3, i4;
+  long i2;
   char monster[28];
-  boolean junk;
+  bool junk;
 
   if (!present) {
     prt("Monster desired:  ", 1, 1);
-    junk = (get_string(monster, 1, 19, 26));
+    junk = get_string(monster, 1, 19, 26);
   } else {
     strcpy(monster, name);
     junk = true;
   }
 
   if (junk) {
+    long i4;
+    long i3;
+    long i1 = 0;
     i2 = 0;
     sscanf(monster, "%ld", &i2);
     if (i2 < 0) {
@@ -268,7 +271,7 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
       i2 = MAX_CREATURES;
     }
 
-    if ((i2 > 0) && (i2 <= MAX_CREATURES)) {
+    if (i2 > 0 && i2 <= MAX_CREATURES) {
       /* summon by number */
       i1 = 0;
       do {
@@ -290,8 +293,8 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
     } else {
       /* find by name, then summon */
       for (i2 = 1; i2 <= MAX_CREATURES; i2++) {
-        if ((strstr(monster_templates[i2].name, monster) != NULL) &&
-            (i1 != 10)) {
+        if (strstr(monster_templates[i2].name, monster) != NULL &&
+            i1 != 10) {
           i1 = 0;
           do {
             i3 = y - 2 + randint(3);
@@ -321,18 +324,18 @@ void monster_summon_by_name(long y, long x, char name[28], boolean present,
   }
 }
 
-void multiply_monster(long y, long x, long template, boolean is_asleep) {
-  long i1, i2, i3;
+void multiply_monster(const long y, const long x, const long template,
+                      const bool is_asleep) {
 
-  i1 = 0;
+  long i1 = 0;
 
   do {
-    i2 = y - 2 + randint(3);
-    i3 = x - 2 + randint(3);
+    const long i2 = y - 2 + randint(3);
+    const long i3 = x - 2 + randint(3);
 
     if (in_bounds(i2, i3)) {
       if (is_in(cave[i2][i3].fval, floor_set)) {
-        if ((cave[i2][i3].tptr == 0) && (cave[i2][i3].cptr != 1)) {
+        if (cave[i2][i3].tptr == 0 && cave[i2][i3].cptr != 1) {
           if (cave[i2][i3].cptr > 1) { /* { Creature there already?  }*/
             /*{ Some critters are * canabalistic!       }*/
             if ((monster_templates[template].cmove & 0x00080000) != 0) {

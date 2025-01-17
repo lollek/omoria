@@ -1,3 +1,4 @@
+#include "../io.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player_action.h"
@@ -5,10 +6,10 @@
 #include "../screen.h"
 #include "../variables.h"
 
-void player_action_tunnel() {
+void player_action_tunnel(void) {
   /*{ Must take into account: secret doors, special tools           }*/
 
-  long y, x, i1, tabil;
+  long y, x, i1;
 
   y = char_row;
   x = char_col;
@@ -18,7 +19,7 @@ void player_action_tunnel() {
 
     /*{ Compute the digging ability of player; based on       }*/
     /*{ strength, and type of tool used                       }*/
-    tabil = ((C_player_get_stat(STR) * 10) + 20) / 5;
+    long tabil = (C_player_get_stat(STR) * 10 + 20) / 5;
     if (equipment[Equipment_primary].tval > 0) {
       /* with equipment[Equipment_primary] do; */
       if ((Tunneling_worn_bit & equipment[Equipment_primary].flags) != 0) {

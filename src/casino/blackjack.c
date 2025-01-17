@@ -3,21 +3,13 @@
 
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
-#include "../constants.h"
-#include "../debug.h"
-#include "../magic.h"
-#include "../pascal.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
+#include "../io.h"
 #include "../random.h"
+#include "../term.h"
 
 #include "casino_local.h"
 #include "blackjack.h"
@@ -25,9 +17,9 @@
 typedef char drawcard[16][82];
 typedef long hand[16];
 
-static boolean deal_bust;
-static boolean card5_save;
-static boolean card5;
+static bool deal_bust;
+static bool card5_save;
+static bool card5;
 static drawcard dummy;
 static drawcard dummyd;
 static hand dealerh;
@@ -35,21 +27,21 @@ static hand playerh;
 static long vald;
 static long valp;
 static long save;
-static boolean bust_flag;
-static boolean bust_save;
-static boolean split_flag;
-static boolean already_split;
+static bool bust_flag;
+static bool bust_save;
+static bool split_flag;
+static bool already_split;
 static long py_index;
 static long hand_start;
-static boolean win_draw;
-static boolean blackjack;
-static boolean blackjack_save;
-static boolean pl_stay_flag;
-static boolean dl_ace_flag;
-static boolean double_flag;
-static boolean double_flag_save;
+static bool win_draw;
+static bool blackjack;
+static bool blackjack_save;
+static bool pl_stay_flag;
+static bool dl_ace_flag;
+static bool double_flag;
+static bool double_flag_save;
 
-static void bj__display_bj() {
+static void bj__display_bj(void) {
   clear_rc(21, 1);
   c__display_gold();
   prt("You may:", 22, 2);
@@ -57,7 +49,7 @@ static void bj__display_bj() {
   prt("^R) Redraw the screen.                 Esc) Exit from building.", 24, 2);
 }
 
-static void bj__display_bj_game() {
+static void bj__display_bj_game(void) {
   clear_rc(21, 1);
   prt("Your hand: ", 5, 1);
   prt("Dealer's hand: ", 12, 1);
@@ -68,7 +60,7 @@ static void bj__display_bj_game() {
   prt("^R) Redraw the screen.                 v) view the rules. ", 24, 2);
 }
 
-static void bj__opening_screen() {
+static void bj__opening_screen(void) {
   /*     1         2         3         4         5         6 */
   /*   890123456789012345678901234567890123456789012345678901234567890 */
   prt("____", 2, 45);
@@ -88,7 +80,7 @@ static void bj__opening_screen() {
   prt("----                                     X  X", 16, 19);
 }
 
-static void bj__display_rules() {
+static void bj__display_rules(void) {
   char command;
 
   C_clear_screen();
@@ -127,10 +119,9 @@ static void bj__display_rules() {
   get_com("", &command);
 }
 
-static void bj__initialize_hand() {
-  long i;
+static void bj__initialize_hand(void) {
 
-  for (i = 1; i <= 10; i++) {
+  for (long i = 1; i <= 10; i++) {
     dealerh[i] = 0;
     strcpy(dummy[i], " ");
     playerh[i] = 0;
@@ -149,15 +140,13 @@ static void bj__initialize_hand() {
   double_flag = false;
 }
 
-static void bj__evaluate_pl_hand() {
-  long i;
-  boolean py_ace_flag;
+static void bj__evaluate_pl_hand(void) {
 
   bust_flag = false;
-  py_ace_flag = false;
+  bool py_ace_flag = false;
   valp = 0;
 
-  for (i = hand_start; i <= hand_start + 4; i++) {
+  for (long i = hand_start; i <= hand_start + 4; i++) {
 
     if (playerh[i] == 14) { /* an ace is worth 1 or 11 */
       valp += 1;
@@ -169,23 +158,22 @@ static void bj__evaluate_pl_hand() {
     }
   }
 
-  if ((valp < 12) && (py_ace_flag)) {
+  if (valp < 12 && py_ace_flag) {
     valp += 10; /* turn an ace into an 11 */
   }
 
-  if ((valp > 21)) {
+  if (valp > 21) {
     bust_flag = true;
   }
 }
 
-static void bj__evaluate_dl_hand(long index) {
-  long i;
+static void bj__evaluate_dl_hand(const long index) {
 
   deal_bust = false;
   dl_ace_flag = false;
   vald = 0;
 
-  for (i = 1; i <= index; i++) {
+  for (long i = 1; i <= index; i++) {
     if (dealerh[i] == 14) {
       vald += 1;
     } else if (dealerh[i] > 10) {
@@ -194,11 +182,11 @@ static void bj__evaluate_dl_hand(long index) {
       vald += dealerh[i];
     }
 
-    if ((dealerh[i] == 14) && (vald < 12)) {
+    if (dealerh[i] == 14 && vald < 12) {
       dl_ace_flag = true;
       vald += 10;
     }
-    if ((vald > 21) && dl_ace_flag) {
+    if (vald > 21 && dl_ace_flag) {
       vald -= 10;
       dl_ace_flag = false;
     }
@@ -209,7 +197,7 @@ static void bj__evaluate_dl_hand(long index) {
   }
 }
 
-static void bj__hand_save() {
+static void bj__hand_save(void) {
   save = valp;
   bj__evaluate_pl_hand();
   pl_stay_flag = false;
@@ -229,12 +217,12 @@ static void bj__hand_save() {
   bust_flag = false;
 }
 
-static void bj__check_exit(boolean *exit_flag) {
+static void bj__check_exit(bool *exit_flag) {
   if (double_flag) {
     *exit_flag = true;
   }
 
-  if ((valp == 21) && ((py_index == 2) || (py_index == 7))) {
+  if (valp == 21 && (py_index == 2 || py_index == 7)) {
     *exit_flag = true;
     blackjack = true;
   }
@@ -243,7 +231,7 @@ static void bj__check_exit(boolean *exit_flag) {
     *exit_flag = true;
   }
 
-  if ((py_index == 5) || (py_index == 10)) {
+  if (py_index == 5 || py_index == 10) {
     *exit_flag = true;
     card5 = true;
   }
@@ -252,14 +240,14 @@ static void bj__check_exit(boolean *exit_flag) {
     *exit_flag = true;
   }
 
-  if (split_flag && (*exit_flag) && !already_split) {
+  if (split_flag && *exit_flag && !already_split) {
     bj__hand_save();
     msg_print("Now play the hand on the right.");
     *exit_flag = false;
   }
 }
 
-static void bj__get_first_dealc() {
+static void bj__get_first_dealc(void) {
   char draw[82];
 
   strcpy(draw, " ____");
@@ -274,15 +262,14 @@ static void bj__get_first_dealc() {
   put_buffer(draw, 17, 8);
 }
 
-static void bj__card_draw(long index, long r, char card[82]) {
-  long c;
-  char draw[82];
+static void bj__card_draw(const long index, const long r, char card[82]) {
 
   if (strcmp(card, " ")) {
-    if ((r == 13) && (index == 1) && (!win_draw)) {
+    if (r == 13 && index == 1 && !win_draw) {
       bj__get_first_dealc();
     } else {
-      c = 1 + 7 * index;
+      char draw[82];
+      const long c = 1 + 7 * index;
       sprintf(draw, " ____");
       put_buffer(draw, r, c);
       sprintf(draw, "|    |");
@@ -306,13 +293,12 @@ static void bj__card_draw(long index, long r, char card[82]) {
   }
 }
 
-static void bj__re_draw() {
-  long i;
+static void bj__re_draw(void) {
 
   C_clear_screen();
   prt("Your hand:", 5, 1);
   prt("Dealer's hand: ", 12, 1);
-  for (i = 1; i <= 10; i++) {
+  for (long i = 1; i <= 10; i++) {
     bj__card_draw(i, 6, dummy[i]);
     bj__card_draw(i, 13, dummyd[i]);
   }
@@ -323,7 +309,7 @@ static void bj__re_draw() {
   }
 }
 
-static void bj__get_dealer_card(long i) {
+static void bj__get_dealer_card(const long i) {
 
   dealerh[i] = randint(13) + 1;
 
@@ -372,7 +358,7 @@ static void bj__get_dealer_card(long i) {
   bj__evaluate_dl_hand(i);
 }
 
-static void bj__get_player_card(long i) {
+static void bj__get_player_card(const long i) {
   playerh[i] = randint(13) + 1;
   switch (playerh[i]) {
   case 2:
@@ -419,18 +405,18 @@ static void bj__get_player_card(long i) {
   bj__evaluate_pl_hand();
 }
 
-static void bj__get_dealer_hand() {
+static void bj__get_dealer_hand(void) {
   bj__get_dealer_card(1);
   bj__get_dealer_card(2);
 }
 
-static void bj__get_player_hand() {
+static void bj__get_player_hand(void) {
   bj__get_player_card(1);
   py_index = 2;
   bj__get_player_card(2);
 }
 
-static void bj__get_winning() {
+static void bj__get_winning(void) {
 
   if (deal_bust) {
     gld += 2 * bet;
@@ -472,15 +458,13 @@ static void bj__get_winning() {
   }
 }
 
-static void bj__play_dealer_hand() {
-  long i;
-  boolean stay_flag;
+static void bj__play_dealer_hand(void) {
 
-  stay_flag = false;
   win_draw = true;
   bj__card_draw(1, 13, dummyd[1]);
-  i = 3;
-  if (((vald == 17) && (dl_ace_flag)) || (vald < 17)) {
+  if ((vald == 17 && dl_ace_flag) || vald < 17) {
+    long i = 3;
+    bool stay_flag = false;
     do {
       refresh();
       sleep(1);
@@ -489,7 +473,7 @@ static void bj__play_dealer_hand() {
       if (vald > 16) {
         stay_flag = true;
       }
-      if ((vald == 17) && (dl_ace_flag)) {
+      if (vald == 17 && dl_ace_flag) {
         stay_flag = false;
       }
       if (i > 9) {
@@ -500,14 +484,14 @@ static void bj__play_dealer_hand() {
   bj__get_winning();
 }
 
-static void bj__double() {
+static void bj__double(void) {
   bet *= 2;
   py_index++;
   bj__get_player_card(py_index);
   double_flag = true;
 }
 
-static void bj__split() {
+static void bj__split(void) {
   playerh[6] = playerh[1];
   strcpy(dummy[6], dummy[1]);
   bj__card_draw(6, 6, dummy[6]);
@@ -516,7 +500,7 @@ static void bj__split() {
   split_flag = true;
 }
 
-static void bj__get_game_command() {
+static void bj__get_game_command(void) {
   char command;
 
   if (get_com("", &command)) {
@@ -541,7 +525,7 @@ static void bj__get_game_command() {
 
     case 100: /* double */
       if (gld >= bet) {
-        if ((py_index == 2) || (py_index == 7)) {
+        if (py_index == 2 || py_index == 7) {
           gld -= bet;
           c__display_gold();
           bj__double();
@@ -550,8 +534,8 @@ static void bj__get_game_command() {
       break;
 
     case 47: /* split */
-      if ((!split_flag) && (gld >= bet) && (py_index == 2) &&
-          (playerh[1] == playerh[2])) {
+      if (!split_flag && gld >= bet && py_index == 2 &&
+          playerh[1] == playerh[2]) {
         gld -= bet;
         c__display_gold();
         bj__split();
@@ -566,24 +550,23 @@ static void bj__get_game_command() {
   }
 }
 
-static void bj__play_hand() {
-  long num, i;
+static void bj__play_hand(void) {
 
-  num = 1;
+  long num = 1;
   if (split_flag) {
     msg_print("As for your second hand...");
     num = 2;
   }
 
-  for (i = 1; i <= num; i++) {
+  for (long i = 1; i <= num; i++) {
 
     if (i == 2) {
       msg_print("As for your first hand...");
     }
-    if ((i == 2) && double_flag) {
+    if (i == 2 && double_flag) {
       bet /= 2;
     }
-    if ((i == 2) && double_flag_save) {
+    if (i == 2 && double_flag_save) {
       bet *= 2;
     }
 
@@ -630,8 +613,8 @@ static void bj__play_hand() {
   bet = 0;
 }
 
-static void bj__play_bj() {
-  boolean exit_flag = false;
+static void bj__play_bj(void) {
+  bool exit_flag = false;
 
   C_clear_screen();
   bj__display_bj_game();
@@ -639,7 +622,7 @@ static void bj__play_bj() {
   bj__get_dealer_hand();
   bj__get_player_hand();
   do {
-    if (!((valp == 21) && ((py_index == 2) || (py_index == 7)))) {
+    if (!(valp == 21 && (py_index == 2 || py_index == 7))) {
       bj__get_game_command();
     }
     bj__check_exit(&exit_flag);
@@ -647,17 +630,17 @@ static void bj__play_bj() {
   bj__play_hand();
 }
 
-static void bj__get_bj_bet() {
+static void bj__get_bj_bet(void) {
   char comment[82];
   long num;
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   strcpy(comment, "How much would you like to bet(50 to 1000 gp)? ");
 
   do {
     if (c__get_response(comment, &num)) {
       bet = num;
-      if ((bet > 49) && (bet < 1001)) {
+      if (bet > 49 && bet < 1001) {
         exit_flag = true;
       } else {
         prt("Improper value.", 1, 1);
@@ -677,9 +660,9 @@ static void bj__get_bj_bet() {
   c__display_gold();
 }
 
-static void bj__blackjack_commands() {
+static void bj__blackjack_commands(void) {
   char command;
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   bet = 0;
   win_draw = false;
@@ -716,7 +699,7 @@ static void bj__blackjack_commands() {
   } while (!exit_flag);
 }
 
-void start_blackjack() {
+void start_blackjack(void) {
   C_clear_screen();
   bj__display_bj();
   bj__initialize_hand();

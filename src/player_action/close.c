@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../io.h"
 #include "../misc.h"
 #include "../screen.h"
 #include "../variables.h"
@@ -7,7 +8,6 @@
 void player_action_close(void) {
 
   long y, x, tmp;
-  char m_name[82];
 
   y = char_row;
   x = char_col;
@@ -26,6 +26,7 @@ void player_action_close(void) {
                       "be broken.");
           }
         } else {
+          char m_name[82];
           find_monster_name(m_name, cave[y][x].cptr, true);
           strcat(m_name, " is in your way!");
           msg_print(m_name);

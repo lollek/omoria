@@ -1,36 +1,29 @@
-#include <curses.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
 #include "../debug.h"
-#include "../magic.h"
+#include "../misc.h"
 #include "../pascal.h"
-#include "../term.h"
+#include "../random.h"
 #include "../types.h"
 #include "../variables.h"
-#include "../misc.h"
-#include "../random.h"
 
 #include "models.h"
 
 /*{ returns position of (this + dir) in gup or this if out of bounds }*/
-static boolean r__move_this(long dir, coords *this, coords *that) {
+static bool r__move_this(const long dir, const coords *this, coords *that) {
 
-  boolean return_value = false;
+  bool return_value = false;
 
   ENTER(("r__move_this", "r"));
 
   that->y = this->y + dy_of[dir];
   that->x = this->x + dx_of[dir];
 
-  if ((that->y >= 1) && (that->y <= RIVER_SIZE_Y) && (that->x >= 1) &&
-      (that->x <= RIVER_SIZE_X)) {
+  if (that->y >= 1 && that->y <= RIVER_SIZE_Y && that->x >= 1 &&
+      that->x <= RIVER_SIZE_X) {
     return_value = true;
   } else {
     /*{reset to legal value}*/
@@ -42,16 +35,15 @@ static boolean r__move_this(long dir, coords *this, coords *that) {
 }
 
 /*{make gup[this] unavailable (for later selection), decrement * a->num_left}*/
-static void r__remove_this(river_args *a, coords *this) {
-
-  s_l_type last;
+static void r__remove_this(river_args *a, const coords *this) {
 
   ENTER(("r__remove_this", "r"));
 
   /* with a->gup[this->y][this->x]. do; */
   if (a->gup[this->y][this->x].pos <= a->num_left) {
     /*{if gup[this].pos is still available}*/
-    last = a->s_list[a->num_left]; /*{switch gup[this].pos with top elmt}*/
+    const s_l_type last =
+        a->s_list[a->num_left]; /*{switch gup[this].pos with top elmt}*/
     a->s_list[a->num_left] = a->s_list[a->gup[this->y][this->x].pos];
     a->s_list[a->gup[this->y][this->x].pos] = last;
 
@@ -63,7 +55,8 @@ static void r__remove_this(river_args *a, coords *this) {
   LEAVE("r__remove_this", "r");
 }
 
-static void r__plot_water(long y, long x, long font, long tdir) {
+static void r__plot_water(const long y, const long x, const long font,
+                          const long tdir) {
   long num_dots;
   coords dots[6]; /*: array [1..5] of coords;*/
   long i1;
@@ -96,8 +89,8 @@ static void r__plot_water(long y, long x, long font, long tdir) {
   for (i1 = 1; i1 <= num_dots; i1++) {
     if (in_bounds(dots[i1].y, dots[i1].x)) {
       /* with cave[dots[i1].y][dots[i1].x]. do; */
-      if ((cave[dots[i1].y][dots[i1].x].fval == dopen_floor.ftval) ||
-          (cave[dots[i1].y][dots[i1].x].fval == lopen_floor.ftval)) {
+      if (cave[dots[i1].y][dots[i1].x].fval == dopen_floor.ftval ||
+          cave[dots[i1].y][dots[i1].x].fval == lopen_floor.ftval) {
         cave[dots[i1].y][dots[i1].x].fval = water2.ftval;
         cave[dots[i1].y][dots[i1].x].fopen = water2.ftopen;
       } else {
@@ -107,8 +100,8 @@ static void r__plot_water(long y, long x, long font, long tdir) {
 
       cave[dots[i1].y][dots[i1].x].h2o = 1;
 
-      if ((cave[dots[i1].y][dots[i1].x].tptr != 0) &&
-          (t_list[cave[dots[i1].y][dots[i1].x].tptr].tval > valuable_metal)) {
+      if (cave[dots[i1].y][dots[i1].x].tptr != 0 &&
+          t_list[cave[dots[i1].y][dots[i1].x].tptr].tval > valuable_metal) {
         pusht(cave[dots[i1].y][dots[i1].x].tptr);
         cave[dots[i1].y][dots[i1].x].tptr = 0;
       }
@@ -118,23 +111,24 @@ static void r__plot_water(long y, long x, long font, long tdir) {
   LEAVE("r__plot_water", "r");
 }
 
-static long pr__figure_out_path_of_water(long y, long x, long oy, long ox) {
-  long target_dy, target_dx, dist_squared;
-  long i1, dot_product, rand_num, chance;
+static long pr__figure_out_path_of_water(const long y, const long x,
+                                         const long oy, const long ox) {
+  long i1, chance;
   long start[9]; /*: array [0..8] of long;*/
-  boolean flag;
-  obj_set odds = {1, 3, 5, 7, 0};
+  bool flag;
+  const obj_set odds = {1, 3, 5, 7, 0};
   long return_value;
 
   ENTER(("pr__figure_out_path_of_water", "r"));
 
-  target_dy = y - oy;
-  target_dx = x - ox;
-  dist_squared = target_dy * target_dy + target_dx * target_dx;
+  const long target_dy = y - oy;
+  const long target_dx = x - ox;
+  const long dist_squared = target_dy * target_dy + target_dx * target_dx;
   start[0] = 1;
 
   for (i1 = 0; i1 <= 7; i1++) { /*{octant number}*/
-    dot_product = target_dy * dy_of[key_of[i1]] + target_dx * dx_of[key_of[i1]];
+    const long dot_product =
+        target_dy * dy_of[key_of[i1]] + target_dx * dx_of[key_of[i1]];
 
     /*{formula subtracts dist_squared to keep stream semi-normal}*/
     /*{diagonals give root2 inflated dot_products}*/
@@ -158,12 +152,12 @@ static long pr__figure_out_path_of_water(long y, long x, long oy, long ox) {
   } /* end for i1 */
 
   /*{choose random directions; chances partitioned by start[]}*/
-  rand_num = randint(start[8] - 1);
+  const long rand_num = randint(start[8] - 1);
 
   i1 = -1;
   do {
     i1++;
-    flag = (start[i1 + 1] > rand_num);
+    flag = start[i1 + 1] > rand_num;
   } while (!flag);
 
   return_value = key_of[i1];
@@ -173,30 +167,30 @@ static long pr__figure_out_path_of_water(long y, long x, long oy, long ox) {
 }
 
 /*{ A recursive procedure, starting at river mouth and moving upstream; connects the dots laid out by chart_river. }*/
-static void r__place_river(river_args *a, long dir, long next_dir, coords this,
+static void r__place_river(river_args *a, const long dir, const long next_dir,
+                           const coords this,
                     coords wiggle) {
 
-  long i1, i2, y, x, oy, ox;
-  long temp_dir, done_first; /*{ compute next direction }*/
+  long oy, ox;
+  long done_first; /*{ compute next direction }*/
   coords up1, up2;
-  long tflow;
-  long overflow;
-  obj_set even_nums = {2, 4, 6, 8, 0};
+  const obj_set even_nums = {2, 4, 6, 8, 0};
 
   ENTER(("r__place_river", "r"));
 
   r__move_this(dir, &this, &up1);     /*{up1 is upstream end of segment}*/
   r__move_this(next_dir, &up1, &up2); /*{up2 is upstream end of next segment}*/
 
-  tflow = (a->gup[up2.y][up2.x].flow - 1) / 2; /*{river size}*/
+  const long tflow = (a->gup[up2.y][up2.x].flow - 1) / 2; /*{river size}*/
 
   /*{aim (y,x) toward upstream end of segment, randomize slightly}*/
   oy = RIVER_SEGMENT_SIZE * this.y + wiggle.y;
   ox = RIVER_SEGMENT_SIZE * this.x + wiggle.x;
 
   if (dir != next_dir) {
-    i1 = oct_of[next_dir] - oct_of[dir]; /*{ (1=left, -1 = right) mod 8}*/
-    if ((oct_of[dir] % 2) == 0) {
+    long i2;
+    const long i1 = oct_of[next_dir] - oct_of[dir]; /*{ (1=left, -1 = right) mod 8}*/
+    if (oct_of[dir] % 2 == 0) {
       i2 = rotate_dir(next_dir, i1);
     } else {
       i2 = rotate_dir(next_dir, 2 * i1);
@@ -206,12 +200,12 @@ static void r__place_river(river_args *a, long dir, long next_dir, coords this,
   }
 
   /*{y,x=(upstream) destination of river}*/
-  y = RIVER_SEGMENT_SIZE * up1.y + wiggle.y;
-  x = RIVER_SEGMENT_SIZE * up1.x + wiggle.x;
+  const long y = RIVER_SEGMENT_SIZE * up1.y + wiggle.y;
+  const long x = RIVER_SEGMENT_SIZE * up1.x + wiggle.x;
 
-  overflow = 0;
-  for (; ((oy != y) || (ox != x)) && (overflow++ < 5000);) {
-    temp_dir = pr__figure_out_path_of_water(y, x, oy, ox);
+  long overflow = 0;
+  while ((oy != y || ox != x) && overflow++ < 5000) {
+    const long temp_dir = pr__figure_out_path_of_water(y, x, oy, ox);
     /*if ((temp_dir) in [2,4,6,8]) {*/
     if (is_in(temp_dir, even_nums)) {
       move_dir(temp_dir, &oy, &ox);
@@ -244,12 +238,11 @@ static void r__place_river(river_args *a, long dir, long next_dir, coords this,
 /*{determines next point(s) upstream depending on coordinates (this),
   previous direction (a->gup[this].out), and available positions. outputs
   # of branches}*/
-static long cr__choose_stream_dirs(river_args *a, coords *this, long dir,
-                            long that_dir[], boolean that_ok[], coords that[],
-                            boolean that_chosen[]) {
+static long cr__choose_stream_dirs(const river_args *a, coords *this, long dir,
+                            long that_dir[], bool that_ok[], coords that[],
+                            bool that_chosen[]) {
 
   long i1;
-  boolean done;
   long return_value = 0;
 
   ENTER(("cr__choose_stream_dirs", "r"));
@@ -259,26 +252,26 @@ static long cr__choose_stream_dirs(river_args *a, coords *this, long dir,
 
   for (i1 = 1; i1 <= 3; i1++) { /*{left,straight,right}*/
     that_dir[i1] = rotate_dir(dir, 2 - i1);
-    that_ok[i1] = r__move_this(that_dir[i1], this, &(that[i1]));
+    that_ok[i1] = r__move_this(that_dir[i1], this, &that[i1]);
     if (that_ok[i1]) {
       that_ok[i1] = a->gup[that[i1].y][that[i1].x].pos <= a->num_left;
     }
     that_chosen[i1] = false;
   }
 
-  done = false;
+  bool done = false;
 
-  if ((randint(3 * a->gup[this->y][this->x].flow) == 1) ||
+  if (randint(3 * a->gup[this->y][this->x].flow) == 1 ||
       !(that_ok[1] || that_ok[2] || that_ok[3])) {
     /*{end stream if blocked or small river and random}*/
     done = true;
     return_value = 0;
-  } else if (((randint(5) == 1) || !(that_ok[1] || that_ok[3])) && that_ok[2]) {
+  } else if ((randint(5) == 1 || !(that_ok[1] || that_ok[3])) && that_ok[2]) {
     /*{straight stream (1/5 and ok) or sides blocked}*/
     done = true;
     that_chosen[2] = true;
     return_value = 1;
-  } else if ((randint(5) == 1) && (that_ok[1] && that_ok[3])) {
+  } else if (randint(5) == 1 && (that_ok[1] && that_ok[3])) {
     /*{fork 1/5 and both sides ok}*/
     done = true;
     that_chosen[1] = true;
@@ -300,13 +293,13 @@ static long cr__choose_stream_dirs(river_args *a, coords *this, long dir,
 }
 
 /*{get highest unresolved river segment; a->s_l_top points to new segment if any is found. }*/
-static boolean cr__dequeue_s_list(river_args *a) {
+static bool cr__dequeue_s_list(river_args *a) {
 
-  boolean return_value;
+  bool return_value;
 
   ENTER(("cr__dequeue_s_list", "r"));
 
-  for (; ((a->s_l_top > a->num_left) && (!a->s_list[a->s_l_top].is_active));) {
+  while (a->s_l_top > a->num_left && !a->s_list[a->s_l_top].is_active) {
     a->s_l_top--;
   }
 
@@ -324,18 +317,18 @@ static boolean cr__dequeue_s_list(river_args *a) {
 /*{ recursively charts basic path of stream upstream }*/
 static void r__chart_river(river_args *a) {
 
-  long i1, i2, dir, branches;
-  long out_flow, in_flow;
+  long i1, dir;
+  long in_flow;
   coords this, thing;
   coords that[4];     /*     : array [1..3] of coords;*/
   long that_dir[4];   /*     : array [1..3] of long;*/
-  boolean that_ok[4]; /*     : array [1..3] of boolean;*/
-  boolean that_chosen[4];
-  boolean starting_river = true;
+  bool that_ok[4]; /*     : array [1..3] of bool;*/
+  bool that_chosen[4];
+  bool starting_river = true;
 
   ENTER(("r__chart_river", "r"));
 
-  r__remove_this(a, &(a->s_list[randint(a->num_left)].loc));
+  r__remove_this(a, &a->s_list[randint(a->num_left)].loc);
   /*{element is now a->s_l_top}*/
 
   a->s_list[a->s_l_top].is_active = true;
@@ -354,16 +347,16 @@ static void r__chart_river(river_args *a) {
       dir = 9;
     }
     i1++;
-    if (r__move_this(dir, &this, &(that[2]))) {
+    if (r__move_this(dir, &this, &that[2])) {
       that_chosen[2] = a->gup[that[2].y][that[2].x].pos <= a->num_left;
     }
-  } while (!((that_chosen[2]) || (i1 >= 10)));
+  } while (!(that_chosen[2] || i1 >= 10));
 
   that_dir[2] = dir;
   that_ok[2] = true;
-  branches = 1;
+  long branches = 1;
 
-  for (; cr__dequeue_s_list(a);) { /*{loop until river stops}*/
+  while (cr__dequeue_s_list(a)) { /*{loop until river stops}*/
     if (starting_river) {
       starting_river = false;
     } else {
@@ -391,11 +384,11 @@ static void r__chart_river(river_args *a) {
       }
     }
 
-    out_flow = a->gup[this.y][this.x].flow;
-    i2 = 1;
+    const long out_flow = a->gup[this.y][this.x].flow;
+    long i2 = 1;
 
     for (i1 = 1; i1 <= 3; i1++) {
-      if (that_chosen[i1] && (RIVER_TOTAL_SIZE - a->num_left < a->max_wet)) {
+      if (that_chosen[i1] && RIVER_TOTAL_SIZE - a->num_left < a->max_wet) {
         if (branches == 1) {
           in_flow = out_flow;
         } else {
@@ -423,7 +416,6 @@ static void r__chart_river(river_args *a) {
 }
 
 static void r__draw_river(river_args *a) {
-  long first_dir;
   coords wiggle, that;
 
   ENTER(("r__draw_river", "r"));
@@ -433,8 +425,8 @@ static void r__draw_river(river_args *a) {
 
   /*{XXX place whirlpool at RIVER_SEGMENT_SIZE*river + wiggle}*/
 
-  first_dir = a->gup[a->river_mouth.y][a->river_mouth.x].in1;
-  r__move_this(first_dir, &(a->river_mouth), &that);
+  const long first_dir = a->gup[a->river_mouth.y][a->river_mouth.x].in1;
+  r__move_this(first_dir, &a->river_mouth, &that);
 
   /* with a->gup[that.y][that.x]. do; */
   if (a->gup[that.y][that.x].in1 != 5) {
@@ -447,9 +439,9 @@ static void r__draw_river(river_args *a) {
   LEAVE("r__draw_river", "r");
 }
 
-void all_the_river_stuff() {
+void all_the_river_stuff(void) {
   river_args a;
-  long i1, i2;
+  long i1;
 
   ENTER(("all_the_river_stuff", "r"));
 
@@ -461,7 +453,7 @@ void all_the_river_stuff() {
   a.num_left = 0;
 
   for (i1 = 1; i1 <= RIVER_SIZE_Y; i1++) {
-    for (i2 = 1; i2 <= RIVER_SIZE_X; i2++) {
+    for (long i2 = 1; i2 <= RIVER_SIZE_X; i2++) {
       a.num_left++;
 
       /* with gup[i1][i2]. do; */
@@ -481,15 +473,15 @@ void all_the_river_stuff() {
   /*{remove borders of map}*/
   for (i1 = 1; i1 <= a.num_left; i1++) {
     /* with s_list[i1]. do; */
-    if ((a.s_list[i1].loc.y == 1) || (a.s_list[i1].loc.y == RIVER_SIZE_Y) ||
-        (a.s_list[i1].loc.x == 1) || (a.s_list[i1].loc.x == RIVER_SIZE_X)) {
-      r__remove_this(&a, &(a.s_list[i1].loc));
+    if (a.s_list[i1].loc.y == 1 || a.s_list[i1].loc.y == RIVER_SIZE_Y ||
+        a.s_list[i1].loc.x == 1 || a.s_list[i1].loc.x == RIVER_SIZE_X) {
+      r__remove_this(&a, &a.s_list[i1].loc);
     }
   }
 
   a.s_l_top = a.num_left;
 
-  for (; (RIVER_TOTAL_SIZE - a.num_left < a.max_wet);) {
+  while (- a.num_left < a.max_wet) {
     r__chart_river(&a);
     r__draw_river(&a);
   }

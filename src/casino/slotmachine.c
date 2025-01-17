@@ -3,22 +3,13 @@
 
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
-#include "../constants.h"
-#include "../debug.h"
-#include "../magic.h"
-#include "../pascal.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
-#include "../misc.h"
+#include "../io.h"
 #include "../random.h"
+#include "../term.h"
 
 #include "casino_local.h"
 #include "slotmachine.h"
@@ -41,7 +32,7 @@ typedef stype slot[4]; /* slot  = array[1..3] of stype;*/
 char *s_name[6] = {"jackpot", "cherry", "orange", "bell", "bar"};
 slot slotpos;
 
-static void sm__display_slot_options() {
+static void sm__display_slot_options(void) {
   prt(" -------------------------------------------           ", 2, 11);
   prt("|                                           |   _-_     ", 3, 11);
   prt("|                                           |  /   \\     ", 4, 11);
@@ -77,7 +68,7 @@ static void sm__position_adjust(long *c1, long *c2, long *c3) {
   /*  if (slotpos[3] > 1) { *c3 = 42; } */
 }
 
-static void sm__display_slots() {
+static void sm__display_slots(void) {
   char out_val[82];
   long c1, c2, c3;
 
@@ -93,7 +84,7 @@ static void sm__display_slots() {
   c__display_gold();
 }
 
-static void sm__display_prizes() {
+static void sm__display_prizes(void) {
   char command;
 
   C_clear_screen();
@@ -135,11 +126,10 @@ static void sm__display_prizes() {
   sm__display_slots();
 }
 
-static void sm__get_slots() {
-  long c;
+static void sm__get_slots(void) {
 
   /*  Wheel one  */
-  c = randint(20);
+  long c = randint(20);
   if (c >= 20) {
     slotpos[1] = S_JACKPOT;
   } else if (c >= 17) {
@@ -181,7 +171,7 @@ static void sm__get_slots() {
   }
 }
 
-static void sm__clearslots(long line) {
+static void sm__clearslots(const long line) {
   /*  clears a line of slots */
 
   char killpos[82];
@@ -192,16 +182,15 @@ static void sm__clearslots(long line) {
   put_buffer(killpos, line, 43);
 }
 
-static void sm__print_slots() {
+static void sm__print_slots(void) {
   /* Simulates wheel spinning  */
 
-  long i;
   long c1, c2, c3;
-  char out_val[82];
 
   sm__get_slots(); /*  {get new slots}  */
 
-  for (i = 1; i <= 9; i++) {
+  for (long i = 1; i <= 9; i++) {
+    char out_val[82];
     sm__clearslots(7);                  /*  {clear middle row}  */
     sm__position_adjust(&c1, &c2, &c3); /*  {center bar and bell} */
 
@@ -241,36 +230,34 @@ static void sm__print_slots() {
   }
 }
 
-static void sm__winnings() {
+static void sm__winnings(void) {
   /* calculates the amount won */ /* Currently, odds slightly favor  */
                                   /* the user.   Return of 101%      */
 
-  char out_val[300];
   char comment[82];
   char comment1[82];
-  long winning;
 
   strcpy(comment, "You have won ");
   strcpy(comment1, " gold pieces!");
 
-  winning = 0;
-  if ((slotpos[1] == slotpos[2]) && (slotpos[1] == S_CHERRY)) {
+  long winning = 0;
+  if (slotpos[1] == slotpos[2] && slotpos[1] == S_CHERRY) {
     winning = bet;
   }
   if (slotpos[1] == S_JACKPOT) {
     winning = bet * 2;
   }
-  if ((slotpos[2] == slotpos[3]) && (slotpos[2] == S_ORANGE)) {
+  if (slotpos[2] == slotpos[3] && slotpos[2] == S_ORANGE) {
     winning = 2 * bet;
   }
-  if ((slotpos[1] == slotpos[3]) && (slotpos[1] == S_BELL)) {
+  if (slotpos[1] == slotpos[3] && slotpos[1] == S_BELL) {
     winning = 4 * bet;
   }
-  if ((slotpos[2] == slotpos[3]) && (slotpos[2] == S_BAR)) {
+  if (slotpos[2] == slotpos[3] && slotpos[2] == S_BAR) {
     winning = 4 * bet;
   }
 
-  if ((slotpos[1] == slotpos[2]) && (slotpos[1] == slotpos[3])) {
+  if (slotpos[1] == slotpos[2] && slotpos[1] == slotpos[3]) {
     switch (slotpos[1]) {
     case S_JACKPOT:
       winning = 1000 * bet;
@@ -311,6 +298,7 @@ static void sm__winnings() {
     }
   } else {
     if (winning > bet) {
+      char out_val[300];
       switch (randint(5)) {
       case 1:
         msg_print("Hmmm...Maybe this system really works...");
@@ -338,17 +326,17 @@ static void sm__winnings() {
   }
 }
 
-static void sm__get_slots_bet() {
+static void sm__get_slots_bet(void) {
   char comment[82];
   long num;
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   strcpy(comment, "Which machine (1 to 10000 gp)? ");
 
   do {
     if (c__get_response(comment, &num)) {
       bet = num;
-      if ((bet > 0) && (bet < 10001)) {
+      if (bet > 0 && bet < 10001) {
         exit_flag = true;
       } else {
         prt("Improper value.", 1, 1);
@@ -365,9 +353,9 @@ static void sm__get_slots_bet() {
   }
 }
 
-static void sm__slot_commands() {
+static void sm__slot_commands(void) {
   char command;
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   bet = 0;
 
@@ -402,7 +390,7 @@ static void sm__slot_commands() {
   } while (!exit_flag);
 }
 
-void start_slot_machine() {
+void start_slot_machine(void) {
   C_clear_screen();
   slotpos[1] = S_JACKPOT;
   slotpos[2] = S_JACKPOT;

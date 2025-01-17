@@ -7,28 +7,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/file.h> /* for flock     */
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "kickout.h"
-#include "magic.h"
-#include "pascal.h"
-#include "player.h"
-#include "stores.h"
-#include "term.h"
-#include "trade.h"
-#include "types.h"
-#include "variables.h"
 #include "desc.h"
 #include "inven.h"
-#include "screen.h"
+#include "io.h"
+#include "kickout.h"
 #include "misc.h"
-#include "random.h"
-#include "unix.h"
+#include "player.h"
 #include "port.h"
+#include "random.h"
+#include "screen.h"
+#include "stores.h"
+#include "trade.h"
+#include "types.h"
+#include "unix.h"
+#include "variables.h"
 
 #define ROUND(x) ((long)((x) + .5))
 
@@ -80,9 +76,9 @@ typedef struct cash_record {
 } cash_record;
 
 typedef union trade_record_type {
-  struct profit_record pr;
-  struct for_sale_record fsr;
-  struct cash_record cr;
+  profit_record pr;
+  for_sale_record fsr;
+  cash_record cr;
 } trade_record_type;
 
 typedef struct pinven_record {
@@ -131,12 +127,11 @@ void check_list(pinven_ptr *inv, pinven_ptr *item)
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean trade_file_open(FILE **tf, boolean *busy) {
+bool trade_file_open(FILE **tf, bool *busy) {
   /* open the tradeing post db, returns true if file could be opened.
      if busy is true then the flock failed (tf will be null) */
 
-  int trys;
-  boolean return_value = false;
+  bool return_value = false;
 
   *tf = fopen(TRADE_FILE, "r+");
   *busy = true;
@@ -144,8 +139,8 @@ boolean trade_file_open(FILE **tf, boolean *busy) {
   if (*tf != NULL) {
     return_value = true;
 
-    for (trys = 0; (trys < 10) && *busy; trys++) {
-      if (flock((int)fileno(*tf), LOCK_EX | LOCK_NB) == 0) {
+    for (int trys = 0; trys < 10 && *busy; trys++) {
+      if (flock(fileno(*tf), LOCK_EX | LOCK_NB) == 0) {
         *busy = false;
       } else {
         sleep(1);
@@ -167,7 +162,7 @@ void trade_file_close(FILE **tf) {
   /* save changes and close the tradeing post db */
 
   if (*tf != NULL) {
-    flock((int)fileno(*tf), LOCK_UN);
+    flock(fileno(*tf), LOCK_UN);
     fclose(*tf);
     *tf = NULL;
   }
@@ -175,8 +170,8 @@ void trade_file_close(FILE **tf) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__open_trade_file(FILE **sales, boolean *exit_flag) {
-  boolean busy;
+void tp__open_trade_file(FILE **sales, bool *exit_flag) {
+  bool busy;
 
   *exit_flag = true;
 
@@ -224,7 +219,7 @@ void tp__set_player(trade_account_type *cur_player) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__display_gold() {
+void tp__display_gold(void) {
   char out_val[82];
   sprintf(out_val, "Gold Remaining : %ld", player_money[TOTAL_]);
   prt(out_val, 19, 18);
@@ -232,7 +227,7 @@ void tp__display_gold() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__display_commands() {
+void tp__display_commands(void) {
   prt("You may:", 21, 1);
   prt(" p) Bid on an item.            <space> browse store's inventory.", 22,
       1);
@@ -244,10 +239,9 @@ void tp__display_commands() {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__clear_display(long *cur_display_size, pinven_ptr cur_display[]) {
-  long index;
 
   *cur_display_size = 0;
-  for (index = 1; index <= T_DISPLAY_SIZE; index++) {
+  for (long index = 1; index <= T_DISPLAY_SIZE; index++) {
     cur_display[index] = NULL;
   }
 }
@@ -256,17 +250,14 @@ void tp__clear_display(long *cur_display_size, pinven_ptr cur_display[]) {
 /*//////////////////////////////////////////////////////////////////// */
 void tp__read_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
                   trade_record_type *profits) {
-  int got;
-  char out_val[134];
   pinven_ptr item = NULL;
-  boolean first, done;
 
   rewind(sales);
 
   *inv = NULL;
   *cur_top = NULL;
-  first = true;
-  done = false;
+  bool first = true;
+  bool done = false;
 
   profits->pr.trade_type = TT_PROFIT;
   profits->pr.money = 0;
@@ -274,11 +265,13 @@ void tp__read_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 
   while (!feof(sales) && !done) {
     item = (pinven_ptr)safe_malloc(sizeof(pinven_record), "tp__read_inv");
-    got = read((int)fileno(sales), &(item->data), sizeof(trade_record_type));
+    const int got =
+        read(fileno(sales), &item->data, sizeof(trade_record_type));
     if (got == 0) {
       done = true;
       dispose(item, sizeof(inven_record), "tp__read_inv: read 0");
     } else if (got != sizeof(trade_record_type)) {
+      char out_val[134];
       sprintf(out_val, "Error reading inventory: %d. %s", got,
               "Please report this!");
       msg_print(out_val);
@@ -311,13 +304,12 @@ void tp__read_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
-                   pinven_ptr *blegga, trade_record_type *profits,
+                   pinven_ptr *blegga, const trade_record_type *profits,
                    long *cur_display_size, pinven_ptr cur_display[]) {
-  boolean panic = false;
-  char out_val[82];
+  bool panic = false;
   pinven_ptr dead = NULL, item = NULL;
 
-  if (ftruncate((int)fileno(sales), 0) != 0) {
+  if (ftruncate(fileno(sales), 0) != 0) {
     msg_print("ftruncate failed");
   }
   fflush(sales);
@@ -332,7 +324,8 @@ void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 
   while (item != NULL) {
     if (!panic) {
-      if (fwrite(&(item->data), sizeof(trade_record_type), 1, sales) != 1) {
+      if (fwrite(&item->data, sizeof(trade_record_type), 1, sales) != 1) {
+        char out_val[82];
         panic = true;
         sprintf(out_val, "Error writing post "
                          "inventory. Please report "
@@ -355,12 +348,12 @@ void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
+void tp__display_inv(pinven_ptr start, const pinven_ptr *inv, pinven_ptr *blegga,
                      long *cur_display_size, pinven_ptr cur_display[]) {
   long count = 0;
   long old_display_size = *cur_display_size;
 
-  while ((start != NULL) && (count < T_DISPLAY_SIZE)) {
+  while (start != NULL && count < T_DISPLAY_SIZE) {
     if (start->data.fsr.trade_type == TT_FOR_SALE) {
       count++;
 
@@ -376,7 +369,7 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
         prt(out_val2, count + 5, 60);
 
         if (wizard2) {
-          sprintf(out_val2, "%9ld", item_value(&(start->data.fsr.object)));
+          sprintf(out_val2, "%9ld", item_value(&start->data.fsr.object));
           prt(out_val2, count + 5, 71);
         } else if (start->data.fsr.seller.claim_check == player_claim_check) {
           prt("your sale!", count + 5, 71);
@@ -405,8 +398,8 @@ void tp__display_inv(pinven_ptr start, pinven_ptr *inv, pinven_ptr *blegga,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__display_store(char shop_owner[82], pinven_ptr *inv, pinven_ptr *blegga,
-                       pinven_ptr *cur_top, long *cur_display_size,
+void tp__display_store(char shop_owner[82], const pinven_ptr *inv, pinven_ptr *blegga,
+                       const pinven_ptr *cur_top, long *cur_display_size,
                        pinven_ptr cur_display[])
 
 {
@@ -425,29 +418,29 @@ void tp__display_store(char shop_owner[82], pinven_ptr *inv, pinven_ptr *blegga,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean tp__find_money_order(trade_account_type *owner, pinven_ptr *item,
-                             pinven_ptr *inv) {
-  boolean looking = true;
+bool tp__find_money_order(const trade_account_type *owner, pinven_ptr *item,
+                             const pinven_ptr *inv) {
+  bool looking = true;
 
   *item = *inv;
 
   while (looking) {
     if (*item == NULL) {
       looking = FALSE;
-    } else if (((*item)->data.cr.trade_type == TT_CASH) &&
-               ((*item)->data.cr.owner.claim_check == owner->claim_check)) {
+    } else if ((*item)->data.cr.trade_type == TT_CASH &&
+               (*item)->data.cr.owner.claim_check == owner->claim_check) {
       looking = false;
     } else {
       *item = (*item)->next;
     }
   }
 
-  return (*item != NULL);
+  return *item != NULL;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__send_money(trade_account_type *owner, long amount, pinven_ptr *inv) {
+void tp__send_money(const trade_account_type *owner, const long amount, pinven_ptr *inv) {
   pinven_ptr item = NULL;
 
   if (tp__find_money_order(owner, &item, inv)) {
@@ -468,10 +461,10 @@ void tp__send_money(trade_account_type *owner, long amount, pinven_ptr *inv) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__made_profit(long amount, trade_record_type *profits) {
+void tp__made_profit(const long amount, trade_record_type *profits) {
   /*{ Try to trap so there isn't long overflow }*/
 
-  if ((999999999 - profits->pr.money) < amount) {
+  if (999999999 - profits->pr.money < amount) {
     profits->pr.money = 999999999;
   } else {
     profits->pr.money += amount;
@@ -486,7 +479,7 @@ void tp__delete_item(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top) {
   next = (*item)->next;
   if ((*item)->prev != NULL) {
     (*item)->prev->next = next;
-  } else if (*inv == (*item)) {
+  } else if (*inv == *item) {
     *inv = next;
   } else {
     msg_print("Something truly bizarre happened in delete_item.");
@@ -496,7 +489,7 @@ void tp__delete_item(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top) {
   if (next != NULL) {
     next->prev = (*item)->prev;
   }
-  if (*cur_top == (*item)) {
+  if (*cur_top == *item) {
     *cur_top = next;
   }
   (*item)->prev = NULL;
@@ -507,35 +500,33 @@ void tp__delete_item(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean tp__enough_time(long sale_time, long waiting_days, long waiting_hours) {
-  long cur_time;
-  double delta_time;
-  double wait_time;
-  boolean return_value;
+bool tp__enough_time(const long sale_time, const long waiting_days,
+                        const long waiting_hours) {
 
-  cur_time = time(NULL);
-  delta_time = cur_time - sale_time;
+  const long cur_time = time(NULL);
+  const double delta_time = cur_time - sale_time;
 
-  wait_time = (waiting_days * 24 * 60 * 60) + (waiting_hours * 60 * 60);
+  const double wait_time =
+      waiting_days * 24 * 60 * 60 + waiting_hours * 60 * 60;
 
-  return_value = delta_time > wait_time;
+  const bool return_value = delta_time > wait_time;
 
   return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */
 void tpd__post_outbids(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top,
-                       trade_record_type *profits, boolean *redisplay) {
+                       trade_record_type *profits, bool *redisplay) {
   /*   The best bidder bid less than 90% of the value of the object, so
        the storekeeper will bid 5% more than the best_bidder, sell the
        object to a "store", and make a nice profit. */
 
-  tp__send_money(&((*item)->data.fsr.best_bidder),
+  tp__send_money(&(*item)->data.fsr.best_bidder,
                  ROUND(T_REFUND_ON_BID * (*item)->data.fsr.best_bid), inv);
   (*item)->data.fsr.best_bid = ROUND((*item)->data.fsr.best_bid *
                                      T_BID_INCREMENT_FACTOR * T_REFUND_ON_SALE);
-  tp__send_money(&((*item)->data.fsr.seller),
+  tp__send_money(&(*item)->data.fsr.seller,
                  ROUND(T_REFUND_ON_SALE * (*item)->data.fsr.best_bid), inv);
-  tp__made_profit(item_value(&((*item)->data.fsr.object)) -
+  tp__made_profit(item_value(&(*item)->data.fsr.object) -
                       (*item)->data.fsr.best_bid,
                   profits);
   *redisplay = true;
@@ -544,21 +535,21 @@ void tpd__post_outbids(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top,
 /*//////////////////////////////////////////////////////////////////// */
 void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
                           pinven_ptr *cur_top, trade_record_type *profits,
-                          boolean *redisplay, boolean *weight_changed,
-                          boolean *exit_flag) {
-  char out_val1[82];
-  char out_val2[83];
-  treas_rec *temp_ptr = NULL;
+                          bool *redisplay, bool *weight_changed,
+                          bool *exit_flag) {
+  const treas_rec *temp_ptr = NULL;
 
   msg_print("Hmm, you're supposed to get something.");
   inven_temp.data = (*item)->data.fsr.object;
   if (inven_check_num() && inven_check_weight()) {
+    char out_val2[83];
+    char out_val1[82];
     temp_ptr = inven_carry();
     msg_print("You are now the proud owner of");
     objdes(out_val1, temp_ptr, true);
     sprintf(out_val2, "%s.", out_val1);
     msg_print(out_val2);
-    tp__send_money(&((*item)->data.fsr.seller),
+    tp__send_money(&(*item)->data.fsr.seller,
                    ROUND(T_REFUND_ON_SALE * (*item)->data.fsr.best_bid), inv);
     tp__made_profit(ROUND(T_PROFIT_FROM_SALE * (*item)->data.fsr.best_bid),
                     profits);
@@ -572,43 +563,43 @@ void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
   }
 }
 /*//////////////////////////////////////////////////////////////////// */
-void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
-                 trade_record_type *profits, trade_account_type *cur_player) {
-  boolean weight_changed, gold_changed, redisplay;
+void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, bool *exit_flag,
+                 trade_record_type *profits,
+                 const trade_account_type *cur_player) {
+  bool weight_changed, redisplay;
   pinven_ptr item = NULL; /*, next;*/
-  char out_val2[82];
   /*  treas_rec * temp_ptr; */
 
   weight_changed = false;
-  gold_changed = false;
+  bool gold_changed = false;
   redisplay = false;
   item = *inv;
 
-  while ((!*exit_flag) && (item != NULL)) {
+  while (!*exit_flag && item != NULL) {
 
     if (tp__enough_time(item->data.fsr.time, T_EXPIRE_TIME_DAYS,
                         T_EXPIRE_TIME_HOURS)) {
 
       if (item->data.fsr.trade_type == TT_FOR_SALE) {
         tp__send_money(
-            &(item->data.fsr.seller),
-            ROUND(item_value(&(item->data.fsr.object)) * T_REFUND_ON_SALE),
+            &item->data.fsr.seller,
+            ROUND(item_value(&item->data.fsr.object) * T_REFUND_ON_SALE),
             inv);
         tp__made_profit(
-            ROUND(item_value(&(item->data.fsr.object)) * T_PROFIT_FROM_SALE),
+            ROUND(item_value(&item->data.fsr.object) * T_PROFIT_FROM_SALE),
             profits);
         redisplay = true;
       }
       tp__delete_item(&item, inv, cur_top); /* XXXX safe to do? */
     } else if (item->data.fsr.trade_type == TT_FOR_SALE) {
 
-      if ((item->data.fsr.best_bidder.claim_check == player_claim_check) &&
-          (tp__enough_time(item->data.fsr.time, T_BID_WAIT_DAYS,
-                           T_BID_WAIT_HOURS))) {
+      if (item->data.fsr.best_bidder.claim_check == player_claim_check &&
+          tp__enough_time(item->data.fsr.time, T_BID_WAIT_DAYS,
+                          T_BID_WAIT_HOURS)) {
 
         if (item->data.fsr.best_bid <
             ROUND(T_TAKE_THE_MONEY_AND_RUN *
-                  item_value(&(item->data.fsr.object)))) {
+                  item_value(&item->data.fsr.object))) {
           tpd__post_outbids(&item, inv, cur_top, profits, &redisplay);
         } else {
           tpd__player_wins_bid(&item, inv, cur_top, profits, &redisplay,
@@ -624,6 +615,7 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
   } /* end while */
 
   while (tp__find_money_order(cur_player, &item, inv)) {
+    char out_val2[82];
     add_money(item->data.cr.amount * GOLD_VALUE);
     sprintf(out_val2, "The shopkeeper gave you %ld gold pieces.",
             item->data.cr.amount);
@@ -647,19 +639,19 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, boolean *exit_flag,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-boolean tp__get_store_item(long *command, char pmt[82], long i1, long i2) {
+bool tp__get_store_item(long *command, char pmt[82], const long i1,
+                           const long i2) {
   /*{ Get the ID of a store item and return it's value      -RAK-   }*/
 
   char out_val[82];
-  boolean flag;
 
   *command = 0;
-  flag = true;
+  bool flag = true;
 
   sprintf(out_val, "(Items %c-%c, Esc to exit) %s", (char)(i1 + 96),
           (char)(i2 + 96), pmt);
 
-  while (((*command < i1) || (*command > i2)) && (flag)) {
+  while ((*command < i1 || *command > i2) && flag) {
     prt(out_val, 1, 1);
     *command = inkey();
     switch (*command) {
@@ -670,7 +662,7 @@ boolean tp__get_store_item(long *command, char pmt[82], long i1, long i2) {
       flag = false;
       break;
     default:
-      (*command) -= 96;
+      *command -= 96;
       break;
     }
   }
@@ -683,12 +675,11 @@ boolean tp__get_store_item(long *command, char pmt[82], long i1, long i2) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__dump(char filename[82], pinven_ptr *inv) {
-  FILE *dump;
+void tp__dump(char filename[82], const pinven_ptr *inv) {
   pinven_ptr item = NULL;
   char out_val[82];
 
-  dump = (FILE *)fopen(filename, "w");
+  FILE *dump = fopen(filename, "w");
   if (dump == NULL) {
     sprintf(out_val, "Error opening %s", filename);
     msg_print(out_val);
@@ -739,17 +730,16 @@ void tp__dump(char filename[82], pinven_ptr *inv) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__bid(long *cur_display_size, trade_account_type *cur_player,
+void tp__bid(long *cur_display_size, const trade_account_type *cur_player,
              pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
              pinven_ptr cur_display[], trade_record_type *profits,
-             boolean *exit_flag) {
-  long offer, to_bank, which;
-  char out_val[82];
+             bool *exit_flag) {
+  long offer, which;
   pinven_ptr item = NULL;
-  boolean flag;
 
   if (*cur_display_size > 0) {
     if (tp__get_store_item(&which, "Which one?", 1, *cur_display_size)) {
+      char out_val[82];
       msg_print("How much do you offer? ");
       if (!get_string(out_val, 1, 24, 40)) {
         erase_line(1, 1);
@@ -757,22 +747,23 @@ void tp__bid(long *cur_display_size, trade_account_type *cur_player,
         offer = 0;
         sscanf(out_val, "%ld", &offer);
         if (offer <=
-            (cur_display[which]->data.fsr.best_bid * T_BID_INCREMENT_FACTOR)) {
+            cur_display[which]->data.fsr.best_bid * T_BID_INCREMENT_FACTOR) {
           msg_print("You'll have to do better "
                     "than that!");
         } else {
+          bool flag;
           if (player_money[TOTAL_] >= offer) {
             subtract_money(offer * GOLD_VALUE, true);
             flag = true;
           } else {
-            to_bank = offer - player_money[TOTAL_];
+            const long to_bank = offer - player_money[TOTAL_];
             flag = send_page(to_bank);
           }
 
           if (flag) {
             item = cur_display[which];
             if (item->data.fsr.best_bid > 0) {
-              tp__send_money(&(item->data.fsr.best_bidder),
+              tp__send_money(&item->data.fsr.best_bidder,
                              ROUND(T_REFUND_ON_BID * item->data.fsr.best_bid),
                              inv);
               /* tp__dump("NL:", inv);
@@ -800,14 +791,13 @@ void tp__bid(long *cur_display_size, trade_account_type *cur_player,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
-              trade_account_type *cur_player, long *cur_display_size,
+              const trade_account_type *cur_player, long *cur_display_size,
               pinven_ptr cur_display[], char shop_owner[82]) {
   treas_rec *item_ptr = NULL;
-  boolean redraw;
+  bool redraw;
   pinven_ptr item = NULL;
   char response[82];
-  long wgt;
-  treas_rec *temp_ptr = NULL;
+  const treas_rec *temp_ptr = NULL;
   char trash_char;
 
   redraw = false;
@@ -815,23 +805,23 @@ void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
   change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Which one? ", &redraw, inven_ctr, &trash_char, false,
                false)) {
-    wgt = 0;
+    long wgt = 0;
     temp_ptr = item_ptr->next;
     if ((item_ptr->data.flags2 & Holding_bit) != 0) {
-      while ((temp_ptr != NULL) && (temp_ptr->is_in)) {
+      while (temp_ptr != NULL && temp_ptr->is_in) {
         wgt += temp_ptr->data.weight * temp_ptr->data.number;
         temp_ptr = temp_ptr->next;
       }
     }
 
-    if ((strstr(item_ptr->data.name, "|") != NULL) ||
-        (strstr(item_ptr->data.name, "^") != NULL)) {
+    if (strstr(item_ptr->data.name, "|") != NULL ||
+        strstr(item_ptr->data.name, "^") != NULL) {
       strcpy(response, "I can't sell that!  Identify it first!");
     } else if (wgt != 0) {
       strcpy(response, "Hey that bag is full of items! Empty it first.");
     } else if (item_ptr->is_in) {
       strcpy(response, "You can't sell an item *IN* a bag of holding.");
-    } else if (item_value(&(item_ptr->data)) < T_ACCEPTABLE_ITEM_PRICE) {
+    } else if (item_value(&item_ptr->data) < T_ACCEPTABLE_ITEM_PRICE) {
       strcpy(response, "What is THAT?  I won't have that in my shop!");
     } else if ((item_ptr->data.flags2 & Blackmarket_bit) != 0) {
       strcpy(response, "Hmmm, I don't think I want that on the shelves.");
@@ -851,7 +841,7 @@ void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
       item->data.fsr.best_bidder.claim_check = 0;
       item->data.fsr.best_bidder.master_id = 0;
 
-      if ((*inv) != NULL) {
+      if (*inv != NULL) {
         (*inv)->prev = item;
       }
       *inv = item;
@@ -894,19 +884,19 @@ void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
           /* with cur_display[which]->data.fsr.;
            */
           tp__send_money(
-              &(cur_display[which]->data.fsr.best_bidder),
+              &cur_display[which]->data.fsr.best_bidder,
               ROUND(T_REFUND_ON_BID * cur_display[which]->data.fsr.best_bid),
               inv);
           tp__made_profit(
               ROUND(T_PROFIT_FROM_BID * cur_display[which]->data.fsr.best_bid),
               profits);
           tp__send_money(
-              &(cur_display[which]->data.fsr.seller),
-              ROUND(item_value(&(cur_display[which]->data.fsr.object)) *
+              &cur_display[which]->data.fsr.seller,
+              ROUND(item_value(&cur_display[which]->data.fsr.object) *
                     T_REFUND_ON_SALE),
               inv);
           tp__made_profit(
-              -ROUND(item_value(&(cur_display[which]->data.fsr.object)) *
+              -ROUND(item_value(&cur_display[which]->data.fsr.object) *
                      T_REFUND_ON_SALE),
               profits);
           break;
@@ -914,7 +904,7 @@ void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
         default:
           break;
         }
-        tp__delete_item(&(cur_display[which]), inv, cur_top);
+        tp__delete_item(&cur_display[which], inv, cur_top);
         cur_display[which] = NULL;
         tp__display_inv(*cur_top, inv, blegga, cur_display_size, cur_display);
       }
@@ -924,13 +914,14 @@ void tp__nuke_item(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__get_info(pinven_ptr *inv, pinven_ptr *blegga, pinven_ptr *cur_top,
+void tp__get_info(const pinven_ptr *inv, pinven_ptr *blegga,
+                  const pinven_ptr *cur_top,
                   long *cur_display_size, pinven_ptr cur_display[]) {
-  char out_val[82];
   long which;
 
   if (*cur_display_size > 0) {
     if (tp__get_store_item(&which, "Info on which?", 1, *cur_display_size)) {
+      char out_val[82];
       /* with cur_display[which]->data.fsr. do; */
       erase_line(8 + 6, 1);
       erase_line(9 + 6, 1);
@@ -940,7 +931,7 @@ void tp__get_info(pinven_ptr *inv, pinven_ptr *blegga, pinven_ptr *cur_top,
       sprintf(out_val, "%ld", cur_display[which]->data.fsr.time);
       prt2("Sale time : ", out_val, 9 + 6, 1);
       sprintf(out_val, "%ld",
-              item_value(&(cur_display[which]->data.fsr.object)));
+              item_value(&cur_display[which]->data.fsr.object));
       prt2("Item value : ", out_val, 9 + 6, 60);
       sprintf(out_val, "%s/%ld", cur_display[which]->data.fsr.seller.username,
               cur_display[which]->data.fsr.seller.claim_check);
@@ -967,9 +958,8 @@ void tp__get_info(pinven_ptr *inv, pinven_ptr *blegga, pinven_ptr *cur_top,
 void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
                        long *cur_display_size, pinven_ptr cur_display[],
                        trade_record_type *profits, char shop_owner[82],
-                       trade_account_type *cur_player, boolean *exit_flag) {
+                       const trade_account_type *cur_player, bool *exit_flag) {
   char command;
-  char out_val[82];
   treas_rec *trash_ptr = NULL;
 
   if (get_com("", &command)) {
@@ -996,6 +986,7 @@ void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 
     case 16: /* ^p */
       if (wizard2) {
+        char out_val[82];
         sprintf(out_val, "Profits made to date: %ld", profits->pr.money);
         msg_print(out_val);
         msg_print("");
@@ -1120,33 +1111,34 @@ void tp__set_shop_owner(char shop_owner[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void enter_trading_post() {
+void enter_trading_post(void) {
   FILE *sales;
   trade_record_type profits;
   trade_account_type cur_player;
   pinven_ptr inv = NULL;
   pinven_ptr cur_top = NULL;
   pinven_ptr blegga = NULL;
-  pinven_ptr cur_display[T_DISPLAY_SIZE + 1];
-  long tics = 1;
   long cur_display_size;
   char shop_owner[82];
-  boolean exit_flag, entered = false;
+  bool exit_flag;
 
   tp__set_shop_owner(shop_owner);
 
   tp__open_trade_file(&sales, &exit_flag);
 
   if (!exit_flag) {
+    bool entered = false;
+    pinven_ptr cur_display[T_DISPLAY_SIZE + 1];
     tp__set_player(&cur_player);
 
     tp__read_inv(sales, &inv, &cur_top, &profits);
     tp__deliver(&inv, &cur_top, &exit_flag, &profits, &cur_player);
     if (!exit_flag) {
+      long tics = 1;
       entered = true;
       tp__display_store(shop_owner, &inv, &blegga, &cur_top, &cur_display_size,
                         cur_display);
-      for (; !exit_flag;) {
+      while (!exit_flag) {
         tp__parse_command(&inv, &cur_top, &blegga, &cur_display_size,
                           cur_display, &profits, shop_owner, &cur_player,
                           &exit_flag);

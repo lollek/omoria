@@ -1,9 +1,7 @@
-#ifndef MONSTER_TEMPLATE_H
-#define MONSTER_TEMPLATE_H
+#pragma once
 
 #include <stdint.h>
-
-#include "boolean.h"
+#include <stdbool.h>
 
 #define MAX_CREATURES 415  /*{ Number of monster templates defined for univ    \
                               } */
@@ -76,7 +74,5 @@ typedef struct monster_template {
 extern const monster_template monster_templates[MAX_CREATURES + 1];
 extern long const m_level[MAX_MONS_LEVEL + 1];
 
-boolean monster_template_has_attribute(monster_template const *template,
+bool monster_template_has_attribute(monster_template const *template,
                                        monster_attribute attribute);
-
-#endif // MONSTER_TEMPLATE_H

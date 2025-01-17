@@ -1,27 +1,14 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
-#include "../configure.h"
-#include "../constants.h"
-#include "../debug.h"
+#include "../io.h"
 #include "../magic.h"
-#include "../pascal.h"
+#include "../misc.h"
 #include "../player.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
+#include "../player/hunger.h"
+#include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../misc.h"
-#include "../random.h"
-#include "../player/hunger.h"
+#include "../types.h"
 
-void chakra_spell_effects(long effect) {
+void chakra_spell_effects(const long effect) {
   /*{ Disciplines....}*/
   switch (effect + 1) {
 
@@ -56,7 +43,7 @@ void chakra_spell_effects(long effect) {
     break;
 
   case 8: /*{ Poison Immunity }*/
-    cure_me(&(player_flags.poisoned));
+    cure_me(&player_flags.poisoned);
     break;
 
   case 9: /*{ See Invisible } */
@@ -76,11 +63,11 @@ void chakra_spell_effects(long effect) {
     break;
 
   case 13: /*{ Free Action } */
-    player_flags.free_time += (randint(10) + player_lev);
+    player_flags.free_time += randint(10) + player_lev;
     break;
 
   case 14: /*{ Improved Speed }*/
-    (player_flags).fast += randint(20) + player_lev;
+    player_flags.fast += randint(20) + player_lev;
     break;
 
   default:

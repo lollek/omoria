@@ -1,25 +1,14 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
+#include "../io.h"
 #include "../magic.h"
-#include "../pascal.h"
+#include "../misc.h"
 #include "../player.h"
-#include "../term.h"
+#include "../random.h"
+#include "../spells.h"
 #include "../types.h"
 #include "../variables.h"
-#include "../spells.h"
-#include "../misc.h"
-#include "../random.h"
 
-void nature_spell_effects(long effect) {
+void nature_spell_effects(const long effect) {
   long i;
   long dir;
   long dumy;
@@ -68,7 +57,7 @@ void nature_spell_effects(long effect) {
     break;
 
   case 9: /*{ Battle Dance }*/
-    player_flags.hero += (randint(10) + 5);
+    player_flags.hero += randint(10) + 5;
     bless(randint(20) + 20);
     break;
 
@@ -143,9 +132,9 @@ void nature_spell_effects(long effect) {
 
   case 24: /*{ Dispel Magic }*/
     /* with player_flags do; */
-    cure_me(&(player_flags).blind);
-    cure_me(&(player_flags).poisoned);
-    cure_me(&(player_flags).afraid);
+    cure_me(&player_flags.blind);
+    cure_me(&player_flags.poisoned);
+    cure_me(&player_flags.afraid);
     break;
 
   case 25: /*{ Fire Stream }*/
@@ -157,9 +146,9 @@ void nature_spell_effects(long effect) {
 
   case 26: /*{ Protection from Nature }*/
     /* with player_flags do; */
-    (player_flags).resist_heat += randint(15) + 10;
-    (player_flags).resist_cold += randint(15) + 10;
-    (player_flags).resist_lght += randint(15) + 10;
+    player_flags.resist_heat += randint(15) + 10;
+    player_flags.resist_cold += randint(15) + 10;
+    player_flags.resist_lght += randint(15) + 10;
     break;
 
   case 27: /*{ Turn Stone to Mud }*/
@@ -203,7 +192,7 @@ void nature_spell_effects(long effect) {
     break;
 
   case 34: /*{ Protection from Monsters }*/
-    player_flags.protmon = (randint(20) + player_lev);
+    player_flags.protmon = randint(20) + player_lev;
     break;
 
   case 35: /*{ Control Temperature }*/
@@ -218,7 +207,7 @@ void nature_spell_effects(long effect) {
       } else {
         dir = 1;
       }
-    } while (!((dir == 1) || (dir == 2)));
+    } while (!(dir == 1 || dir == 2));
     break;
 
   case 36: /*{ Ring of Fire }*/
@@ -227,13 +216,13 @@ void nature_spell_effects(long effect) {
 
   case 37: /*{ Resist Charm }*/
     /* with player_flags do; */
-    (player_flags).free_time += randint(10) + player_lev;
-    (player_flags).magic_prot += randint(10) + player_lev;
+    player_flags.free_time += randint(10) + player_lev;
+    player_flags.magic_prot += randint(10) + player_lev;
     break;
 
   case 38: /*{ Battle Frenzy }*/
     bless(randint(30) + 30);
-    player_flags.shero = (randint(20) + 20); /* not cumulitive */
+    player_flags.shero = randint(20) + 20; /* not cumulitive */
     break;
 
   case 39: /*{ Dispel Monster }*/
