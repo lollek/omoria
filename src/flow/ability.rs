@@ -23,7 +23,7 @@ pub fn select_ability() -> bool {
             return true;
         }
         let index = (selection as u8 - 'a' as u8) as usize;
-        return use_ability(abilities[index as usize]);
+        return use_ability(abilities[index]);
     }
 }
 
@@ -49,7 +49,7 @@ pub fn rage() -> bool {
     player::set_raging(true);
     term::msg_print("You enter a rage");
     player::recalc_curr_stats();
-    return true;
+    true
 }
 
 pub fn check_passive_abilities() {

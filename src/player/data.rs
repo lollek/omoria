@@ -170,7 +170,7 @@ fn rage_rounds_from_level() -> i16 {
 
 // Max amount of health to gain each level up
 pub fn hitdie() -> u8 {
-    data::class::health_bonus(&self::class())
+    data::class::health_bonus(&class())
 }
 
 pub fn melee_tohit() -> i16 {
@@ -428,7 +428,7 @@ pub fn max_hp() -> i16 {
     PLAYER.try_write().unwrap().max_hp_last_calc = new_max_hp;
     modify_current_hp(hp_modifier as f32);
 
-    return new_max_hp;
+    new_max_hp
 }
 
 pub fn modify_max_hp(amount: i16) {
@@ -463,7 +463,7 @@ pub fn expfact() -> f32 {
 
 pub fn exp_to_next_level() -> i64 {
     if exp() >= max_exp() {
-        <i64>::max_value()
+        <i64>::MAX
     } else {
         (unsafe { exp_per_level[level() as usize] } as f64 * expfact() as f64) as i64 - exp()
     }

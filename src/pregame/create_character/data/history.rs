@@ -244,7 +244,7 @@ pub fn halfelf() -> Vec<Vec<History>> {
         },
     ]];
     history.append(&mut human());
-    return history;
+    history
 }
 
 pub fn elf() -> Vec<Vec<History>> {

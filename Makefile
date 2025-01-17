@@ -10,7 +10,7 @@ DATAFILES =	$(READFILES) $(WRITEFILES)
 RSFILES = $(shell find src/ -type f -name '*.rs')
 CFILES = $(shell find src/ -type f -name '*.c')
 HFILES = $(shell find src/ -type f -name '*.h')
-OBJFILES = $(shell find src/ -type f -name '*.o')
+OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 .PHONY: all
 all:	omoria

@@ -7,7 +7,7 @@ use crate::{
 fn test_spike() {
     let mut item = generate_item::generate(Box::new(MiscUsableTemplate::IronSpike), 0);
     item.number = 0;
-    assert_eq!(generate(&item), "no more iron spike");
+    assert_eq!(generate(&item), "no more iron spikes");
 
     item.number = 1;
     assert_eq!(generate(&item), "1 iron spike");

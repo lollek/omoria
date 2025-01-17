@@ -253,9 +253,9 @@ fn apply_stats_from_class() {
         player::player_mr = data::class::magic_resist(&player::class()).into();
 
         // Real values
-        player::player_ptodam = player::dmg_from_str() as i16;
-        player::player_ptohit = player::tohit_from_stats() as i16;
-        player::player_ptoac = player::ac_from_dex() as i16;
+        player::player_ptodam = player::dmg_from_str();
+        player::player_ptohit = player::tohit_from_stats();
+        player::player_ptoac = player::ac_from_dex();
         player::player_pac = 0;
 
         // Displayed values
