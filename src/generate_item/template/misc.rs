@@ -59,7 +59,7 @@ impl ItemTemplate for MiscTemplate {
     }
 
     fn item_type(&self) -> model::ItemType {
-        model::ItemType::MiscUsable
+        model::ItemType::MiscObject
     }
     fn flags1(&self) -> u64 {
         0

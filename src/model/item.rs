@@ -5,7 +5,7 @@ use crate::model::ItemType;
 use crate::model::{Damage, Name};
 
 #[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 // For more info. Se item_guide.txt
 // TODO: tval + subval needs bit for is_identified
 pub struct Item {

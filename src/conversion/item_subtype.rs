@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use crate::model::{item_subtype::ItemSubType, ItemType};
 
 pub mod amulet;
@@ -160,4 +162,13 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         }
         _ => panic!("Unhandled item type {:?}", item_type),
     }
+}
+
+pub fn from_i64(item_type: ItemType, item_subtype: i64) -> Option<ItemSubType> {
+    from_usize(
+        item_type,
+        item_subtype
+            .try_into()
+            .unwrap_or_else(|err| panic!("Failed to convert i64 to usize: {}", err)),
+    )
 }

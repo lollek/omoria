@@ -1,9 +1,10 @@
 use std::borrow::Cow;
 
 use crate::data;
-use crate::misc;
 use crate::model::{Item, ItemType};
 
+use super::helpers::attack_bonus;
+use super::helpers::damage;
 use super::helpers::number_of;
 use super::subtypes;
 
@@ -133,10 +134,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             20 => "Sling",
             _ => "Alien ranged weapon",
         }),
-        ItemType::Arrow => Cow::from(format!("Arrow{}", plural_s())),
-        ItemType::Bolt => Cow::from(format!("Bolt{}", plural_s())),
-        ItemType::SlingAmmo => Cow::from(format!("Rounded pebble{}", plural_s())),
-        ItemType::Spike => Cow::from(format!("Iron spike{}", plural_s())),
         ItemType::Pick => Cow::from(match item.subval {
             1 => "Pick",
             2 => "Shovel",
@@ -176,22 +173,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 "{}{}",
                 material,
                 if item.is_identified() { "of gems" } else { "" }
-            ))
-        }
-        ItemType::WearableGem => {
-            let attribute = match item.subval {
-                1 => "of teleportation",
-                2 => "of resist cold",
-                3 => "of resist acid",
-                4 => "of see invisible",
-                5 => "of stealth",
-                6 => "of slow digestation",
-                7 => "of lordly protection (FIRE)",
-                _ => "of ???",
-            };
-            Cow::from(format!(
-                "Finely cut %R{}",
-                if item.is_identified() { attribute } else { "" }
             ))
         }
         ItemType::SoftArmor => Cow::from(match item.subval {
@@ -426,18 +407,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             60 => Cow::from("Finely wrought mithril necklace"),
             _ => Cow::from("%A Alien amulet"),
         },
-        ItemType::MiscUsable => Cow::from(match item.subval {
-            14 => "%A Statue",
-            15 => "Broken set of teeth",
-            16 => "Silver cross",
-            17 => "Gold cross",
-            18 => "Mithril cross",
-            19 => "%M cross",
-            20 => "%M cross",
-            21 => "Corked bottle",
-            22 => "Holy hand grenade of Antioch",
-            _ => "Alien thing",
-        }),
         ItemType::Chime => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -724,62 +693,8 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("Holy Book{}{}", plural_s(), name))
         }
-        ItemType::Chest => Cow::from(match item.subval {
-            1 => "Small wooden chest",
-            4 => "Large wooden chest",
-            5 => "Dead human body",
-            7 => "Small iron chest",
-            10 => "Large iron chest",
-            13 => "Small steel chest",
-            16 => "Large steel chest",
-            _ => "Alien chest",
-        }),
-        ItemType::Bag => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    1 => " of Holding (250)",
-                    2 => " of Holding (500)",
-                    3 => " of Holding (1000)",
-                    //3 => "%N Bag of Holding (1500)",
-                    4 => " of Devouring",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("%N Bag{}", attribute))
-        }
-        ItemType::MiscObject => Cow::from(match item.subval {
-            1 => "Rat skeleton",
-            2 => "Giant centipede skeleton",
-            4 => "Empty bottle",
-            5 => "Broken set of pottery",
-            7 => "Human skeleton",
-            8 => "Dwarf skeleton",
-            9 => "Elf skeleton",
-            10 => "Gnome skeleton",
-            11 => "Broken set of teeth",
-            12 => "Large broken bone",
-            13 => "Broken stick",
-            _ => "Alien thing",
-        }),
         _ => Cow::from("Something alien"),
     }
-}
-
-fn damage<'a>(item: &Item) -> Cow<'a, str> {
-    let raw_string = item.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
-    let damage_string = misc::c_array_to_rust_string(raw_string);
-    Cow::from(format!(" ({})", damage_string))
-}
-
-fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    let tohit_sign = if item.tohit > 0 { "+" } else { "" };
-    let todam_sign = if item.todam > 0 { "+" } else { "" };
-    Cow::from(format!(
-        " ({}{},{}{})",
-        tohit_sign, item.tohit, todam_sign, item.todam
-    ))
 }
 
 fn armor_bonus<'a>(item: &Item) -> Cow<'a, str> {
@@ -819,7 +734,19 @@ fn generic_item(item: &Item) -> String {
 
 pub fn generate(item: &Item) -> String {
     match item.item_type() {
+        ItemType::MiscObject => subtypes::misc_object(item),
+        ItemType::Chest => subtypes::chest(item),
+        ItemType::MiscUsable => subtypes::misc_usable(item),
+        ItemType::Jewelry => subtypes::jewelry(item),
+        ItemType::Gem => subtypes::gem(item),
+        ItemType::Bag => subtypes::bag(item),
+        ItemType::WearableGem => subtypes::wearable_gem(item),
+        ItemType::SlingAmmo => subtypes::ammo(item),
+        ItemType::Arrow => subtypes::ammo(item),
+        ItemType::Bolt => subtypes::ammo(item),
         ItemType::LightSource => subtypes::light_source(item),
+        ItemType::Spike => subtypes::numbered_misc_usable(item),
+        ItemType::RangedWeapon => subtypes::ranged_weapon(item),
         _ => generic_item(item),
     }
 }
@@ -827,10 +754,7 @@ pub fn generate(item: &Item) -> String {
 #[cfg(test)]
 mod test {
 
-    use crate::generate_item::{
-        self,
-        template::{FoodTemplate, LightSourceTemplate},
-    };
+    use crate::generate_item::{self, template::FoodTemplate};
 
     use super::*;
 
@@ -844,50 +768,5 @@ mod test {
 
         item.number = 5;
         assert_eq!(generate(&item), "5 rations of food");
-    }
-
-    #[test]
-    fn test_light_sources() {
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(LightSourceTemplate::WoodenTorch),
-                0
-            )),
-            "wooden torch with 4000 turns of light"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(LightSourceTemplate::BrassLantern),
-                0
-            )),
-            "brass lantern with 7500 turns of light"
-        );
-
-        let mut magic_torch = generate_item::generate(Box::new(LightSourceTemplate::MagicTorch), 0);
-        magic_torch.set_identified(true);
-        assert_eq!(
-            generate(&magic_torch),
-            "magic torch with 9000 turns of light"
-        );
-
-        magic_torch.set_identified(false);
-        assert_eq!(
-            generate(&magic_torch),
-            "magic torch with 9000 turns of light"
-        );
-
-        let mut magic_lantern =
-            generate_item::generate(Box::new(LightSourceTemplate::MagicLantern), 0);
-        magic_lantern.set_identified(true);
-        assert_eq!(
-            generate(&magic_lantern),
-            "magic lantern with 20000 turns of light"
-        );
-
-        magic_lantern.set_identified(false);
-        assert_eq!(
-            generate(&magic_lantern),
-            "magic lantern with 20000 turns of light"
-        );
     }
 }
