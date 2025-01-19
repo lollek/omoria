@@ -1,5 +1,6 @@
 #include <curses.h>
 
+#include "../c.h"
 #include "../constants.h"
 #include "../generate_monster.h"
 #include "../io.h"
@@ -383,7 +384,7 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
 
     for (i1 = y_height; i1 <= y_depth; i1++) {
       for (i2 = x_left; i2 <= x_right; i2++) {
-        if ((i2 + i1 & 1) == 1) {
+        if (int_is_odd(i2 + i1)) {
           cave[i1][i2].fval = 8;
         }
       }

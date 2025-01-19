@@ -353,7 +353,7 @@ bool cc__input_field(char prompt[134], int64_t *num, const int64_t min,
   char out_val[134];
   bool return_value = false;
 
-  sprintf(out_val, "Current = %lld, %s", *num, prompt);
+  sprintf(out_val, "Current = %ld, %s", *num, prompt);
   int64_t len = strlen(out_val);
   prt(out_val, 1, 1);
 

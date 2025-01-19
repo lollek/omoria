@@ -85,17 +85,17 @@ void file_character(void) {
 
       fprintf(file,
               "  + To Damage :%3d        Experience "
-              ":%9lld     Cur Hit Points :%4d\n",
+              ":%9ld     Cur Hit Points :%4d\n",
               player_dis_td, player_exp, C_player_current_hp());
 
       fprintf(file,
               "  + To AC     :%3d        Gold       "
-              ":%9lld     Max Mana       :%4d\n",
+              ":%9ld     Max Mana       :%4d\n",
               player_dis_tac, player_money[TOTAL_], player_mana);
 
       fprintf(file,
               "    Total AC  :%3d        Account    "
-              ":%9lld     Cur Mana       :%4d\n",
+              ":%9ld     Cur Mana       :%4d\n",
               player_dis_ac, player_account, player_mana);
 
       fprintf(file, " \n \n");
@@ -116,7 +116,7 @@ void file_character(void) {
       const long xdev = player_save + player_lev + C_player_mod_from_stat(INT);
       const long xswm = player_flags.swim + 4;
       const long xrep = 6 + player_rep / 25;
-      sprintf(xinfra, "%lld feet", player_flags.see_infra);
+      sprintf(xinfra, "%ld feet", player_flags.see_infra);
 
       fprintf(file, "\n");
 
@@ -164,7 +164,7 @@ void file_character(void) {
         }
       }
 
-      fprintf(file, "  You were born at %s on %s, %s the %s, %lld AH.\n",
+      fprintf(file, "  You were born at %s on %s, %s the %s, %ld AH.\n",
               time_string(player_birth.hour, player_birth.secs, s1), out_val,
               month_string(player_birth.month, s2),
               place_string(player_birth.day, s3), player_birth.year);
@@ -499,7 +499,7 @@ void print_monsters(void) {
 
         fprintf(file1,
                 "     Speed =%2d  Level     "
-                "=%2d  Exp =%5lld\n",
+                "=%2d  Exp =%5ld\n",
                 monster_templates[i1].speed, monster_templates[i1].level, monster_templates[i1].mexp);
 
         fprintf(file1,

@@ -1400,7 +1400,7 @@ long distance(const long y1, const long x1, const long y2, const long x2) {
   if (dx < 0)
     dx = -dx;
 
-  return (dy + dx << 1) - (dy > dx ? dx : dy) >> 1;
+  return (((dy + dx) << 1) - (dy > dx ? dx : dy)) >> 1;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

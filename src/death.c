@@ -233,9 +233,9 @@ void make_tomb(char dstr[][82]) {
   ud__fill_str(str3, player_tclass);
   sprintf(temp, "Level : %d", player_lev);
   ud__fill_str(str4, temp);
-  sprintf(temp, "%lld Exp", player_exp);
+  sprintf(temp, "%ld Exp", player_exp);
   ud__fill_str(str5, temp);
-  sprintf(temp, "%lld Au", (player_account + player_money[TOTAL_]));
+  sprintf(temp, "%ld Au", (player_account + player_money[TOTAL_]));
   ud__fill_str(str6, temp);
   sprintf(temp, "Died on Level : %ld", dun_level);
   ud__fill_str(str7, temp);

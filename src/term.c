@@ -151,16 +151,14 @@ void move_cursor(const int row, const int col) { (void)move(row, col); }
 /* Gets a string terminated by <RETURN>		*/
 /* Function returns false if <ESCAPE> is input	*/
 bool Get_String(char *in_str, const int row, int column, int slen) {
-  register int i;
-
   int aborted = FALSE;
   int flag = FALSE;
   (void)move(row, column);
-  for (i = slen; i > 0; i--)
+  for (int i = slen; i > 0; i--)
     (void)addch(' ');
   (void)move(row, column);
-  const register int start_col = column;
-  register int end_col = column + slen - 1;
+  const int start_col = column;
+  int end_col = column + slen - 1;
   if (end_col > 79) {
     /* TODO: slen below is unused. Should it be? */
     slen = 80 - column;
@@ -168,7 +166,7 @@ bool Get_String(char *in_str, const int row, int column, int slen) {
   }
   char *p = in_str;
   do {
-    i = inkey();
+    int i = inkey();
     switch (i) {
     case ESCAPE:
       aborted = TRUE;

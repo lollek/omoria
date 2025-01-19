@@ -21,12 +21,12 @@ void player_action_toggle_light_source(void) {
   }
 
   if (player_flags.light_on) {
-    sprintf(out_val, "Light Off.  %lld turns left.",
+    sprintf(out_val, "Light Off.  %ld turns left.",
             equipment[Equipment_light].p1);
     player_flags.light_on = false;
     player_light = false;
   } else {
-    sprintf(out_val, "Light On.  %lld turns left.",
+    sprintf(out_val, "Light On.  %ld turns left.",
             equipment[Equipment_light].p1);
     player_flags.light_on = true;
     player_light = true;

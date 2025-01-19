@@ -26,7 +26,7 @@ static char msg_prev[MAX_MESSAGES + 1][82];
 static unsigned char record_ctr = 0;
 
 // ReSharper disable once CppParameterNeverUsed
-__unused static void signalexit(int unused __unused) {
+__attribute__((unused)) static void signalexit(__attribute__((unused)) int unused) {
   ENTER(("signalexit", ""));
   MSG(("Sorry, caught a core-dump signal."));
 
@@ -38,7 +38,7 @@ __unused static void signalexit(int unused __unused) {
 }
 
 // ReSharper disable once CppParameterNeverUsed
-static void signalquit(int unused __unused) {
+static void signalquit(__attribute__((unused)) int unused) {
   ENTER(("signalquit", ""));
   signal(SIGINT, signalquit);
   switch (game_state) {
