@@ -1,6 +1,3 @@
-#ifndef CASINO_H
-#define CASINO_H
+#pragma once
 
-void enter_casino();
-
-#endif /* CASINO_H */
+void enter_casino(void);

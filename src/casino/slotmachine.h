@@ -1,6 +1,3 @@
-#ifndef SLOTMACHINE_H
-#define SLOTMACHINE_H
+#pragma once
 
-void start_slot_machine();
-
-#endif /* SLOTMACHINE_H */
+void start_slot_machine(void);

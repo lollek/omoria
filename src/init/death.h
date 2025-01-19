@@ -1,5 +1,4 @@
-#ifndef INIT_DEATH_H
-#define INIT_DEATH_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -10,6 +9,3 @@
  * Will print information to stderr on failure
  */
 bool init__death(void);
-
-#endif /* INIT_DEATH_H */
-

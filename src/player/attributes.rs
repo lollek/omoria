@@ -20,10 +20,10 @@ pub fn is_fatigued() -> bool {
 
 pub fn set_infravision(new_value: i64) {
     unsafe {
-        player::player_flags.see_infra = new_value;
+        player_flags.see_infra = new_value;
     }
 }
 
 pub fn infravision() -> i64 {
-    unsafe { player::player_flags.see_infra }
+    unsafe { player_flags.see_infra }
 }

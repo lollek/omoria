@@ -334,10 +334,6 @@ impl ItemTemplate for RingTemplate {
     fn base_ac(&self) -> i16 {
         0
     }
-    fn damage(&self) -> &str {
-        "1d1"
-    }
-
     fn modifier_to_ac(&self) -> i16 {
         match self {
             RingTemplate::RingOfGainStrength => 0,
@@ -374,6 +370,10 @@ impl ItemTemplate for RingTemplate {
             RingTemplate::RingOfSlaying => 0,
             RingTemplate::RingOfGnomekind => 0,
         }
+    }
+
+    fn damage(&self) -> &str {
+        "1d1"
     }
 
     fn item_level(&self) -> u8 {

@@ -1,27 +1,16 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
+#include "../io.h"
 #include "../magic.h"
-#include "../pascal.h"
+#include "../misc.h"
 #include "../player.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
+#include "../player/hunger.h"
+#include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../misc.h"
-#include "../random.h"
-#include "../player/hunger.h"
+#include "../types.h"
+#include "../variables.h"
 
-void divine_spell_effects(long effect) {
+void divine_spell_effects(const long effect) {
 
   /*{ Prayers...                                    }*/
   long i2, dir;
@@ -101,16 +90,16 @@ void divine_spell_effects(long effect) {
 
   case 16: /*{ Resist Heat and Cold }*/
     /* with player_flags do; */
-    (player_flags).resist_heat += randint(10) + 10;
-    (player_flags).resist_cold += randint(10) + 10;
+    player_flags.resist_heat += randint(10) + 10;
+    player_flags.resist_cold += randint(10) + 10;
     break;
 
   case 17: /*{ Silence }*/
-    (player_flags).temp_stealth += (randint(20) + 15);
+    player_flags.temp_stealth += randint(20) + 15;
     break;
 
   case 18: /*{ Resist Petrification }*/
-    (player_flags).resist_petri += (randint(15) + 10);
+    player_flags.resist_petri += randint(15) + 10;
     break;
 
   case 19: /*{ Neutralize Poison }*/
@@ -169,7 +158,7 @@ void divine_spell_effects(long effect) {
     break;
 
   case 32: /*{ Resist Paralysis }*/
-    player_flags.free_time += (randint(20) + 15);
+    player_flags.free_time += randint(20) + 15;
     break;
 
   case 33: /*{ Blade Barrier }*/

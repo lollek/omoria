@@ -1,13 +1,12 @@
 #include <math.h>
 #include <string.h>
-#include <time.h>
 
+#include "../io.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
-#include "../types.h"
 #include "../variables.h"
 
 #include "hunger.h"
@@ -36,7 +35,7 @@ void player_hunger_recalculate(void) {
 
   // Hunger item causes perpetual hunger
   if (player_flags.hunger_item &&
-      player_flags.foodc > (PLAYER_FOOD_ALERT + 15)) {
+      player_flags.foodc > PLAYER_FOOD_ALERT + 15) {
     player_flags.foodc = PLAYER_FOOD_ALERT + 15;
   }
 
@@ -62,7 +61,7 @@ void player_hunger_recalculate(void) {
 
   // Player is getting weak from hunger
   if ((player_flags.status & IS_WEAK) == 0) {
-    player_flags.status |= (IS_WEAK | IS_HUNGERY);
+    player_flags.status |= IS_WEAK | IS_HUNGERY;
     msg_print("You are getting weak from hunger.");
     msg_flag = 0;
     rest_off();
@@ -104,15 +103,15 @@ void player_hunger_recalculate(void) {
   }
 }
 
-void player_hunger_set_status(enum hunger_status_t status) {
+void player_hunger_set_status(const enum hunger_status_t status) {
   switch (status) {
   case DYING:
     player_flags.foodc = PLAYER_FOOD_FAINT;
-    player_flags.status |= (IS_HUNGERY | IS_WEAK);
+    player_flags.status |= IS_HUNGERY | IS_WEAK;
     break;
   case WEAK:
     player_flags.foodc = PLAYER_FOOD_WEAK;
-    player_flags.status |= (IS_HUNGERY | IS_WEAK);
+    player_flags.status |= IS_HUNGERY | IS_WEAK;
     break;
   case HUNGRY:
     player_flags.foodc = PLAYER_FOOD_ALERT;
@@ -130,7 +129,7 @@ void player_hunger_set_status(enum hunger_status_t status) {
   }
 }
 
-void player_hunger_eat(long amount) {
+void player_hunger_eat(const long amount) {
   player_flags.status &= ~(IS_HUNGERY | IS_WEAK);
 
   if (player_flags.foodc < 0) {
@@ -139,10 +138,10 @@ void player_hunger_eat(long amount) {
 
   player_flags.foodc += amount;
 
-  enum hunger_status_t hunger_status = player_hunger_status();
+  const enum hunger_status_t hunger_status = player_hunger_status();
   if (hunger_status >= BLOATED) {
     msg_print("You're getting fat from eating so much.");
-    (player_flags).foodc = PLAYER_FOOD_MAX;
+    player_flags.foodc = PLAYER_FOOD_MAX;
     player_wt += trunc(player_wt * 0.1);
     if (player_wt > max_allowable_weight()) {
       msg_print("Oh no...  Now you've done it.");

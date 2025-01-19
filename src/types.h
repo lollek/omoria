@@ -1,10 +1,9 @@
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
-#include <stdint.h>
-
-#include "boolean.h"
 #include "constants.h"
+
+#include <stdbool.h>
+#include <stdint.h>
 
 typedef uint8_t obj_set[MAX_OBJ_SET];    /* = set of 0..255; */
 typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
@@ -122,9 +121,9 @@ typedef struct monster_type {
   uint8_t fx; /* X Pointer into map	 */
 
   int8_t stunned;   /* [bit(6),pos(104)] -32..31; Rounds stunned */
-  boolean ml;       /* [bit(1),pos(110)] boolean; On if shown   */
-  boolean confused; /* [bit(1),pos(111)] boolean; On if confused */
-  boolean moved;    /* [bit(1),pos(112)] boolean; On if water-moved */
+  bool ml;       /* [bit(1),pos(110)] bool; On if shown   */
+  bool confused; /* [bit(1),pos(111)] bool; On if confused */
+  bool moved;    /* [bit(1),pos(112)] bool; On if water-moved */
 } monster_type;
 
 typedef struct treasure_type {
@@ -148,9 +147,9 @@ typedef struct treasure_type {
 
 typedef struct treas_rec {
   treasure_type data;
-  boolean ok;
+  bool ok;
   uint16_t insides;
-  boolean is_in;
+  bool is_in;
   struct treas_rec *next;
 } treas_rec;
 
@@ -163,18 +162,18 @@ typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
 typedef struct floor_type {
   uint8_t ftval;  /*: [bit(7),pos(0)] 0..127; */
-  boolean ftopen; /*: [bit(1),pos(7)] boolean; */
+  bool ftopen; /*: [bit(1),pos(7)] bool; */
 } floor_type;
 
 typedef struct cave_type {
   uint8_t cptr;  /*	: unsigned char; */
   uint8_t tptr;  /*	: unsigned char; */
   uint8_t fval;  /*	: [bit(7),pos(16)] 0..127; */
-  boolean fopen; /*	: [bit(1),pos(23)] boolean; */
-  boolean fm;    /*	: [bit(1),pos(24)] boolean; */
-  boolean pl;    /*	: [bit(1),pos(25)] boolean; */
-  boolean tl;    /*	: [bit(1),pos(26)] boolean; */
-  boolean moved; /*	: [bit(1),pos(27)] boolean; */
+  bool fopen; /*	: [bit(1),pos(23)] bool; */
+  bool fm;    /*	: [bit(1),pos(24)] bool; */
+  bool pl;    /*	: [bit(1),pos(25)] bool; */
+  bool tl;    /*	: [bit(1),pos(26)] bool; */
+  bool moved; /*	: [bit(1),pos(27)] bool; */
   uint8_t oct;   /*	: [bit(3),pos(28)] 0..7; { octant direction } */
   uint8_t h2o;   /*	: [bit(4),pos(31)] 0..15; */
 } cave_type;
@@ -201,12 +200,10 @@ typedef struct store_type {
 typedef struct encrypt_state {
   uint8_t des_key[8];
   uint8_t des_ivec[8];
-  boolean doit;
+  bool doit;
 
-  boolean got_eof;  /* out of bytes and hit eof         */
+  bool got_eof;  /* out of bytes and hit eof         */
   int32_t buf_pos;  /* for read/write, current position */
   int32_t buf_size; /* for reading, bytes in buffer     */
   char data_buf[ENCRYPT_STAT_BUF_SIZE + 8];
 } encrypt_state;
-
-#endif /* TYPES_H */

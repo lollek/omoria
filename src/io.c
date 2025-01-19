@@ -6,21 +6,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
-#include "debug.h"
 #include "death.h"
+#include "debug.h"
 #include "graphics.h"
-#include "magic.h"
 #include "pascal.h"
 #include "save.h"
 #include "term.h"
 #include "types.h"
-#include "variables.h"
 #include "unix.h"
+#include "variables.h"
 
 #include "io.h"
 
@@ -28,7 +25,8 @@
 static char msg_prev[MAX_MESSAGES + 1][82];
 static unsigned char record_ctr = 0;
 
-void signalexit() {
+// ReSharper disable once CppParameterNeverUsed
+__attribute__((unused)) static void signalexit(__attribute__((unused)) int unused) {
   ENTER(("signalexit", ""));
   MSG(("Sorry, caught a core-dump signal."));
 
@@ -39,7 +37,8 @@ void signalexit() {
   LEAVE("signalexit", "");
 }
 
-void signalquit() {
+// ReSharper disable once CppParameterNeverUsed
+static void signalquit(__attribute__((unused)) int unused) {
   ENTER(("signalquit", ""));
   signal(SIGINT, signalquit);
   switch (game_state) {
@@ -59,12 +58,12 @@ void signalquit() {
   LEAVE("signalquit", "");
 }
 
-void signalsave() {
+void signalsave(void) {
   sav__save_character();
   exit_game();
 }
 
-void no_controly() {
+void no_controly(void) {
   /* { Turn off Control-Y					-RAK-	} */
   /* ok, this is unix not vms, so it turns off ^C and ^Z */
 
@@ -87,12 +86,12 @@ void no_controly() {
   LEAVE("no_controly", "");
 }
 
-void controly() {
+void controly(void) {
   /* { Turn on Control-Y					-RAK-	} */
   /* ok, this is unix not vms, so it turns on ^C and ^Z */
 }
 
-void exit_ncurses() {
+void exit_ncurses(void) {
   if (curses_is_running) {
     refresh(); /* { Dump any remaining buffer	} */
 
@@ -103,7 +102,7 @@ void exit_ncurses() {
   }
 }
 
-void exit_game() {
+void exit_game(void) {
   /*	{ Immediate exit from program } */
   controly(); /* { Turn control-Y back on	} */
   exit_ncurses();
@@ -111,12 +110,7 @@ void exit_game() {
   exit(0); /* { exit from game		} */
 }
 
-void msg_record(char message[82], boolean save) {
-  unsigned char count;
-  unsigned char temp_ctr;
-  char ic;
-  char fixed_string[134];
-
+void msg_record(char message[82], const bool save) {
   ENTER(("msg_record", "%s, %d", message, save));
 
   if (save) {
@@ -129,11 +123,12 @@ void msg_record(char message[82], boolean save) {
       msg_prev[record_ctr][74] = 0;
     }
   } else {
-    /*{pre-declaration of variables}*/
-    count = 0;
-    temp_ctr = record_ctr;
+    char ic;
+    unsigned char count = 0;
+    unsigned char temp_ctr = record_ctr;
 
     do {
+      char fixed_string[134];
       count++;
       /* XXXX pad, dec, what to do? */
       /*prt(pad(msg_prev[temp_ctr],' ',74) + ':' +
@@ -155,21 +150,17 @@ void msg_record(char message[82], boolean save) {
   LEAVE("msg_record", "i");
 }
 
-void inkey_delay(char *getchar, long delay) {
+void inkey_delay(char *getchar) {
   /* XXXX check_input consumes the input, so we never actually get data */
 
   refresh(); /*{ Dump the IO buffer		}*/
 
   *getchar = 0;
-
-  if (check_input(delay)) {
-    *getchar = 'a';
-  }
 }
 
 void inkey_flush(char *x) {
   refresh(); /*{ Dup the IO buffer	}*/
-  if (!(wizard1)) {
+  if (!wizard1) {
     flush();
   }
   *x = inkey();
@@ -177,12 +168,11 @@ void inkey_flush(char *x) {
 
 void clear_rc(long row, long col) {
   /*	{ Clears screen at given row, column }*/
-  long i1;
 
   row--;
   col--;
 
-  for (i1 = 2; i1 <= 23; i1++) {
+  for (long i1 = 2; i1 <= 23; i1++) {
     used_line[i1] = false;
   }
   move(row, col);
@@ -191,15 +181,15 @@ void clear_rc(long row, long col) {
   refresh(); /* dump the clear sequence */
 }
 
-boolean msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
+bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 {
-  boolean return_value = false;
-  long old_len = 0;
+  bool return_value = false;
   char ic = 0;
 
   ENTER(("msg_print", "%s", str_buff));
 
-  if ((msg_flag) && (!msg_terse)) {
+  if (msg_flag && !msg_terse) {
+    long old_len = 0;
     old_len = strlen(old_msg) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
@@ -239,7 +229,7 @@ void msg_printf(char const *const fmt, ...) {
 
   va_start(ap, fmt);
   char *buffer;
-  int result = vasprintf(&buffer, fmt, ap);
+  const int result = vasprintf(&buffer, fmt, ap);
   if (result == -1) {
     MSG(("ERROR: Failed to allocate a line for vasprintf!"));
     msg_print("<<Failed to allocate data for this line>>");
@@ -251,22 +241,21 @@ void msg_printf(char const *const fmt, ...) {
   va_end(ap);
 }
 
-boolean msg_print(char *str_buff) /* : varying[a] of char; */
+bool msg_print(char *str_buff) /* : varying[a] of char; */
 {
   /*{ Outputs message to top line of screen }*/
 
-  long old_len;
   char in_char = 0;
-  obj_set big_set = {3, 10, 13, 25, 26, 27, 32, 0};
-  obj_set small_set = {3, 25, 26, 27, 0};
-  boolean flag;
+  const obj_set big_set = {3, 10, 13, 25, 26, 27, 32, 0};
+  const obj_set small_set = {3, 25, 26, 27, 0};
+  bool flag;
 
-  if ((msg_flag) && (!msg_terse)) {
-    old_len = strlen(old_msg) + 1;
+  if (msg_flag && !msg_terse) {
+    const long old_len = strlen(old_msg) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
       in_char = inkey();
-    } while (!(is_in(in_char, big_set)));
+    } while (!is_in(in_char, big_set));
   }
 
   erase_line(msg_line, msg_line);
@@ -289,15 +278,13 @@ boolean msg_print(char *str_buff) /* : varying[a] of char; */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 
-boolean get_com(char const *prompt, char *command) {
-  boolean return_value;
-
+bool get_com(char const *prompt, char *command) {
   if (strlen(prompt) > 1) {
     prt(prompt, 1, 1);
   }
   *command = inkey();
 
-  return_value = !(*command == 3 || *command == 25 || *command == 27);
+  const bool return_value = !(*command == 3 || *command == 25 || *command == 27);
 
   erase_line(msg_line, msg_line);
   msg_flag = false;
@@ -323,7 +310,7 @@ void print_chstr(chtype const *str_buff, int row, int col) {
   mvaddchstr(row - 1, col - 1, str_buff);
 }
 
-boolean get_yes_no(char const *prompt) {
+bool get_yes_no(char const *prompt) {
   /*{ Gets response to a  Y/N question				}*/
   char const *question_suffix = " (y/n) ";
   char *buf = alloca(strlen(prompt) + strlen(question_suffix) + 1);
@@ -344,7 +331,7 @@ boolean get_yes_no(char const *prompt) {
   }
 }
 
-long get_hex_value(long row, long col, long slen) {
+long get_hex_value(const long row, const long col, const long slen) {
   long return_value = 0;
   char tmp_str[82];
 
@@ -357,10 +344,10 @@ long get_hex_value(long row, long col, long slen) {
   return return_value;
 }
 
-void print_hex_value(long num, long row, long col) {
+void print_hex_value(const long num, const long row, const long col) {
   char out_val[82];
   sprintf(out_val, "0x%08lx", num);
   prt(out_val, row, col);
 }
 
-void pause_game(long prt_line) { pause_line(prt_line); }
+void pause_game(const long prt_line) { pause_line(prt_line); }

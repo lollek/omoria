@@ -1,21 +1,17 @@
 /* traps.c */
 /* all sorts of nasty traps (stores too)! */
 
-#include <curses.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "casino/casino.h"
-#include "configure.h"
 #include "constants.h"
 #include "debug.h"
 #include "effects.h"
 #include "fighting.h"
 #include "generate_monster.h"
+#include "io.h"
 #include "magic.h"
 #include "misc.h"
 #include "pascal.h"
@@ -25,7 +21,6 @@
 #include "screen.h"
 #include "spells.h"
 #include "stores.h"
-#include "term.h"
 #include "town_level/enter_bank.h"
 #include "town_level/enter_house.h"
 #include "trade.h"
@@ -126,7 +121,7 @@ static treasure_type some_rubble = {
     "some rubble", rubble, 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0, 0, 0,
     "0d0",         0,      0};
 
-void place_trap(long y, long x, long typ, long subval) {
+void place_trap(const long y, const long x, const long typ, const long subval) {
 
   long cur_pos;
   treasure_type cur_trap;
@@ -142,20 +137,19 @@ void place_trap(long y, long x, long typ, long subval) {
   t_list[cur_pos] = cur_trap;
 }
 
-void change_trap(long y, long x) {
+void change_trap(const long y, const long x) {
 
-  long i3;
-  obj_set little_things = {unseen_trap, secret_door, 0};
+  const obj_set little_things = {unseen_trap, secret_door, 0};
 
   if (is_in(t_list[cave[y][x].tptr].tval, little_things)) {
-    i3 = cave[y][x].tptr;
+    const long i3 = cave[y][x].tptr;
     place_trap(y, x, 2, t_list[i3].subval);
     pusht(i3);
     lite_spot(y, x);
   }
 }
 
-void place_rubble(long y, long x) {
+void place_rubble(const long y, const long x) {
 
   long cur_pos;
 
@@ -167,7 +161,7 @@ void place_rubble(long y, long x) {
   t_list[cur_pos] = some_rubble;
 }
 
-static void ht__open_pit(long dam) {
+static void ht__open_pit(const long dam) {
   msg_print("You fell into a pit!");
   if (player_flags.ffall) {
     msg_print("You gently float down.");
@@ -176,7 +170,7 @@ static void ht__open_pit(long dam) {
   }
 }
 
-static void ht__arrow(long dam) {
+static void ht__arrow(const long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     take_hit(dam, "an arrow trap");
     msg_print("An arrow hits you.");
@@ -185,7 +179,7 @@ static void ht__arrow(long dam) {
   }
 }
 
-static void ht__covered_pit(long dam, long y, long x) {
+static void ht__covered_pit(const long dam, const long y, const long x) {
   msg_print("You fell into a covered pit.");
   if (player_flags.ffall) {
     msg_print("You gently float down.");
@@ -195,7 +189,7 @@ static void ht__covered_pit(long dam, long y, long x) {
   }
 }
 
-static void ht__trap_door(long dam) {
+static void ht__trap_door(const long dam) {
   msg_print("You fell through a trap door!");
   msg_print(" ");
   moria_flag = true;
@@ -220,14 +214,14 @@ static void ht__sleep_gas(void) {
   }
 }
 
-static void ht__hidden_object(long y, long x) {
+static void ht__hidden_object(const long y, const long x) {
   cave[y][x].fm = false;
   pusht(cave[y][x].tptr);
   place_object(y, x);
   msg_print("Hmmm, there was something under this rock.");
 }
 
-static void ht__str_dart(long dam) {
+static void ht__str_dart(const long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     if (lose_stat(STR, "", "A small dart hits you.")) {
       take_hit(dam, "a dart trap");
@@ -244,7 +238,7 @@ static void ht__teleport(void) {
   msg_print("You hit a teleport trap!");
 }
 
-static void ht__rockfall(long dam, long y, long x) {
+static void ht__rockfall(const long dam, const long y, const long x) {
   take_hit(dam, "falling rock");
   pusht(cave[y][x].tptr);
   place_rubble(y, x);
@@ -256,15 +250,14 @@ static void ht__corrode_gas(void) {
   msg_print("A strange red gas surrounds you.");
 }
 
-static void ht__summon_monster(long y, long x) {
-  long i1, ty, tx;
+static void ht__summon_monster(const long y, const long x) {
 
   cave[y][x].fm = false; /*{ Rune disappears...    }*/
   pusht(cave[y][x].tptr);
   cave[y][x].tptr = 0;
-  for (i1 = 1; i1 <= (2 + randint(3)); i1++) {
-    ty = char_row;
-    tx = char_col;
+  for (long i1 = 1; i1 <= 2 + randint(3); i1++) {
+    int64_t ty = char_row;
+    int64_t tx = char_col;
     if (is_in(cave[ty][tx].fval, water_set)) {
       summon_water_monster(&ty, &tx, false);
     } else {
@@ -273,42 +266,42 @@ static void ht__summon_monster(long y, long x) {
   }
 }
 
-static void ht__fire(long dam) {
+static void ht__fire(const long dam) {
   fire_dam(dam, "a fire trap.");
   msg_print("You are enveloped in flames!");
 }
 
-static void ht__acid(long dam) {
+static void ht__acid(const long dam) {
   acid_dam(dam, "an acid trap.");
   msg_print("You are splashed with acid!");
 }
 
-static void ht__poison_gas(long dam) {
+static void ht__poison_gas(const long dam) {
   poison_gas(dam, "a poison gas trap.");
   msg_print("A pungent green gas surrounds you!");
 }
 
 static void ht__blind_gas(void) {
   msg_print("A black gas surrounds you!");
-  (player_flags).blind += randint(50) + 50;
+  player_flags.blind += randint(50) + 50;
 }
 
 static void ht__confuse_gas(void) {
   msg_print("A gas of scintillating colors surrounds you!");
-  (player_flags).confused += randint(15) + 15;
+  player_flags.confused += randint(15) + 15;
 }
 
-static void ht__slow_dart(long dam) {
+static void ht__slow_dart(const long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     take_hit(dam, "a dart trap");
     msg_print("A small dart hits you!");
-    (player_flags).slow += randint(20) + 10;
+    player_flags.slow += randint(20) + 10;
   } else {
     msg_print("A small dart barely misses you.");
   }
 }
 
-static void ht__con_dart(long dam) {
+static void ht__con_dart(const long dam) {
   if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
     if (lose_stat(CON, "", "A small dart hits you.")) {
       take_hit(dam, "a dart trap");
@@ -322,7 +315,7 @@ static void ht__con_dart(long dam) {
 
 static void ht__secret_door(void) {}
 
-static void ht__chute(long dam) {
+static void ht__chute(const long dam) {
   msg_print("You fell down a chute!");
   msg_print(" ");
   moria_flag = true;
@@ -336,31 +329,27 @@ static void ht__chute(long dam) {
 
 static void ht__scare_monster(void) {}
 
-static void ht__whirlpool(long dam) {
+static void ht__whirlpool(const long dam) {
   msg_print("You are swept into a whirlpool!");
   msg_print(" ");
   moria_flag = true;
   do {
     dun_level++;
-    if (!(player_flags.ffall)) { /*{XXX...swimming_worn}*/
+    if (!player_flags.ffall) { /*{XXX...swimming_worn}*/
       msg_print("You are drowning!");
       take_hit(dam, "drowning");
     }
   } while (randint(2) != 1);
 }
 
-void hit_trap(long *y, long *x) {
-
-  long dam;
-
+void hit_trap(const long *y, const long *x) {
   ENTER(("hit_trap", ""));
 
   change_trap(*y, *x);
   lite_spot(char_row, char_col);
   find_flag = false;
 
-  dam = damroll(t_list[cave[*y][*x].tptr].damage);
-
+  const long dam = damroll(t_list[cave[*y][*x].tptr].damage);
   switch (t_list[cave[*y][*x].tptr].subval) {
 
   case 1:
@@ -546,14 +535,11 @@ void hit_trap(long *y, long *x) {
   LEAVE("hit_trap", "");
 }
 
-void trigger_trap(long y, long x) {
+void trigger_trap(const long y, const long x) {
   /*{ Chests have traps too...                              -RAK-   }*/
   /*{ Note: Chest traps are based on the FLAGS value                }*/
 
-  long i1, i2, i3;
-  unsigned long flags;
-
-  flags = t_list[cave[y][x].tptr].flags;
+  const unsigned long flags = t_list[cave[y][x].tptr].flags;
 
   /* with t_list[cave[y][x].tptr]. do; */
 
@@ -589,9 +575,9 @@ void trigger_trap(long y, long x) {
   }
 
   if ((0x00000100 & flags) != 0) {
-    for (i1 = 0; i1 < 3; i1++) {
-      i2 = y;
-      i3 = x;
+    for (long i1 = 0; i1 < 3; i1++) {
+      int64_t i2 = y;
+      int64_t i3 = x;
       if (is_in(cave[i2][i3].fval, water_set)) {
         summon_water_monster(&i2, &i3, false);
       } else {

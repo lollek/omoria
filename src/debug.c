@@ -1,28 +1,15 @@
-#include <stdarg.h>
 #include <stdio.h>
 #include <execinfo.h>
 
 #include <curses.h>
-#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
 #include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "term.h"
-#include "types.h"
-#include "variables.h"
 
 /* Toggleables */
-boolean const do_debug_funcall = true;
-boolean const do_debug_objdes = false;
-boolean const do_debug_magic_cast = true;
+bool const do_debug_funcall = true;
+bool const do_debug_objdes = false;
+bool const do_debug_magic_cast = true;
 
 /* Debug variables */
 FILE *debug_file = NULL;
@@ -59,7 +46,7 @@ void dbg__leave(char *routine_name, char *marker) {
   call_depth--;
 }
 
-void dbg__return_dbg(char *routine_name, char *marker, char typestr, char *descript,
+void dbg__return_dbg(char *routine_name, char *marker, const char typestr, char *descript,
                 void *valptr) {
   if (!do_debug_funcall)
     return;
@@ -72,17 +59,17 @@ void dbg__return_dbg(char *routine_name, char *marker, char typestr, char *descr
   case 'b':
     fprintf(debug_file, ":::%4d: RETUR %s | %s | %s = %s\n", call_depth,
             routine_name, marker, descript,
-            (*((boolean *)valptr)) == 0 ? "false" : "true");
+            *(bool *)valptr == 0 ? "false" : "true");
     break;
 
   case 'd':
     fprintf(debug_file, ":::%4d: RETUR %s | %s | %s = %ld\n", call_depth,
-            routine_name, marker, descript, *((long *)valptr));
+            routine_name, marker, descript, *(long *)valptr);
     break;
 
   case 'u':
     fprintf(debug_file, ":::%4d: RETUR %s | %s | %s = %lu\n", call_depth,
-            routine_name, marker, descript, *((unsigned long *)valptr));
+            routine_name, marker, descript, *(unsigned long *)valptr);
     break;
 
   case 's':
@@ -92,7 +79,7 @@ void dbg__return_dbg(char *routine_name, char *marker, char typestr, char *descr
 
   case 'y':
     fprintf(debug_file, ":::%4d: RETUR %s | %s | %s = %ld\n", call_depth,
-            routine_name, marker, descript, (long)(*((signed char *)valptr)));
+            routine_name, marker, descript, (long)*(signed char *)valptr);
     break;
 
   default:

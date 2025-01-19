@@ -1,5 +1,4 @@
-#ifndef INIT_STORES_H
-#define INIT_STORES_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -10,5 +9,3 @@
  * Will print information to stderr on failure
  */
 bool init__stores(void);
-
-#endif /* INIT_MONSTERS_H */

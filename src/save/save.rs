@@ -64,7 +64,7 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
         Ok(json) => Some(json),
         Err(e) => {
             debug::warn(format!("Failed to load save @from_str, (err: {})", e));
-            return None;
+            None
         }
     }
 }

@@ -16,6 +16,6 @@ pub enum Race {
 
 impl Race {
     pub fn iter() -> impl Iterator<Item = Race> {
-        return enum_iterator::all::<Race>();
+        enum_iterator::all::<Race>()
     }
 }

@@ -1,22 +1,22 @@
-#include "types.h"
-#include "variables.h"
+#include "desc.h"
+#include "io.h"
+#include "inven.h"
 #include "player.h"
 #include "random.h"
-#include "desc.h"
-#include "inven.h"
 #include "screen.h"
+#include "types.h"
+#include "variables.h"
 
-static boolean minus_ac(long typ_dam) {
+#include <stdbool.h>
+
+static bool minus_ac(const long typ_dam) {
   /*{ AC gets worse                                         -RAK-   }*/
   /*{ Note: This routine affects magical AC bonuse so that stores   }*/
   /*{       can detect the damage.                                  }*/
 
   long i1 = 0;
-  long i2;
   long tmp[9]; /*  : array [1..8] of long;*/
-  char out_str[120];
-  char out_val[82];
-  boolean return_value = false;
+  bool return_value = false;
 
   if (equipment[Equipment_armor].tval > 0) {
     i1++;
@@ -52,7 +52,9 @@ static boolean minus_ac(long typ_dam) {
   }
 
   if (i1 > 0) {
-    i2 = tmp[randint(i1)];
+    char out_val[82];
+    char out_str[120];
+    const long i2 = tmp[randint(i1)];
     inven_temp.data = equipment[i2];
     /* with equipment[i2] do; */
     if ((equipment[i2].flags & typ_dam) != 0) {
@@ -60,7 +62,7 @@ static boolean minus_ac(long typ_dam) {
       sprintf(out_str, "Your %s resists damage!", out_val);
       msg_print(out_str);
       return_value = true;
-    } else if ((equipment[i2].ac + equipment[i2].toac) > 0) {
+    } else if (equipment[i2].ac + equipment[i2].toac > 0) {
       objdes(out_val, &inven_temp, false);
       sprintf(out_str, "Your %s is damaged!", out_val);
       msg_print(out_str);
@@ -78,7 +80,7 @@ void corrode_gas(char kb_str[82]) {
   obj_set things_that_corrode = {dagger, sword,      gem_helm, helm,
                                  shield, hard_armor, wand,     0};
 
-  if (!(minus_ac(Resist_Acid_worn_bit))) {
+  if (!minus_ac(Resist_Acid_worn_bit)) {
     /* if nothing corrodes then take damage */
     take_hit(randint(8), kb_str);
   }
@@ -91,7 +93,7 @@ void corrode_gas(char kb_str[82]) {
   }
 }
 
-void poison_gas(long dam, char kb_str[82]) {
+void poison_gas(const long dam, char kb_str[82]) {
 
   take_hit(dam, kb_str);
   print_stat = 1;
@@ -131,7 +133,7 @@ void fire_dam(long dam, char kb_str[82]) {
   }
 }
 
-void acid_dam(long dam, char kb_str[82]) {
+void acid_dam(const long dam, char kb_str[82]) {
 
   long flag = 0;
   obj_set things_that_dilute = {
@@ -148,16 +150,16 @@ void acid_dam(long dam, char kb_str[82]) {
 
   switch (flag) {
   case 0:
-    take_hit((dam / 1), kb_str);
+    take_hit(dam / 1, kb_str);
     break;
   case 1:
-    take_hit((dam / 2), kb_str);
+    take_hit(dam / 2, kb_str);
     break;
   case 2:
-    take_hit((dam / 3), kb_str);
+    take_hit(dam / 3, kb_str);
     break;
   case 3:
-    take_hit((dam / 4), kb_str);
+    take_hit(dam / 4, kb_str);
     break;
   }
 

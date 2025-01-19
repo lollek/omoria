@@ -1,34 +1,22 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
 #include "../desc.h"
 #include "../generate_monster.h"
 #include "../inven.h"
-#include "../magic.h"
+#include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../term.h"
 #include "../types.h"
 #include "../variables.h"
 
-static void us__staff_effect(long effect, boolean *idented) {
+static void us__staff_effect(const long effect, bool *idented) {
   long i3, randnum;
   long y, x;
-  boolean ident;
 
-  ident = *idented;
+  bool ident = *idented;
 
   /*{ Staffs...                                             }*/
 
@@ -137,9 +125,9 @@ static void us__staff_effect(long effect, boolean *idented) {
 
   case 22:
     /* with player_flags do; */
-    ident = cure_me(&((player_flags).blind));
-    ident |= cure_me(&((player_flags).poisoned));
-    ident |= cure_me(&((player_flags).confused));
+    ident = cure_me(&player_flags.blind);
+    ident |= cure_me(&player_flags.poisoned);
+    ident |= cure_me(&player_flags.confused);
     break;
 
   case 23:
@@ -166,14 +154,14 @@ static void us__staff_effect(long effect, boolean *idented) {
   *idented = ident;
 }
 
-void player_action_use_staff() {
+void player_action_use_staff(void) {
   unsigned long i1;
-  long i3, chance, i4;
+  long i3;
   treas_rec *i2;
   treas_rec *item_ptr;
   char trash_char;
-  boolean redraw, ident;
-  obj_set this_be_a_staff = {staff, 0};
+  bool redraw, ident;
+  const obj_set this_be_a_staff = {staff, 0};
 
   reset_flag = true;
 
@@ -191,8 +179,8 @@ void player_action_use_staff() {
         reset_flag = false;
 
         /* with player_do; */
-        chance = player_save + player_lev + C_player_mod_from_stat(INT) -
-                 item_ptr->data.level - 5;
+        long chance = player_save + player_lev + C_player_mod_from_stat(INT) -
+                      item_ptr->data.level - 5;
 
         if (player_flags.confused > 0) {
           chance /= 2;
@@ -208,16 +196,16 @@ void player_action_use_staff() {
           i1 = item_ptr->data.flags;
           ident = false;
           item_ptr->data.p1--;
-          for (; i1 > 0;) {
-            i4 = bit_pos(&i1) + 1;
+          while (i1 > 0) {
+            const long i4 = bit_pos(&i1) + 1;
 
             us__staff_effect(i4, &ident);
           }
-          identify(&(item_ptr->data));
+          identify(&item_ptr->data);
           if (ident) {
             if (item_ptr->data.flags != 0) {
               /* with player_do; */
-              C_player_add_exp((item_ptr->data.level / (float)player_lev) + .5);
+              C_player_add_exp(item_ptr->data.level / (float)player_lev + .5);
               prt_stat_block();
             }
           }

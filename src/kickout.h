@@ -1,5 +1,4 @@
-#ifndef KICKOUT_H
-#define KICKOUT_H
+#pragma once
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -29,5 +28,3 @@ void kick__kickout_player_if_time(void);
  * Used for printin operating hours, or creating a new file
  */
 void kick__dump_operating_hours_to_file(FILE *file);
-
-#endif /* KICKOUT_H */

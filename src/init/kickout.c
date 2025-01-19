@@ -1,5 +1,4 @@
 #include <string.h>
-#include <stdio.h>
 
 #include "../configure.h"
 #include "../kickout.h"

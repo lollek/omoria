@@ -1,5 +1,4 @@
-#ifndef PLAYER_HUNGER_H
-#define PLAYER_HUNGER_H
+#pragma once
 
 enum hunger_status_t {
   DYING,   // Fainting, etc from lack of food
@@ -27,5 +26,3 @@ void player_hunger_set_status(enum hunger_status_t);
  * This function both recalculates values and gives feedback.
  */
 void player_hunger_eat(long amount);
-
-#endif // PLAYER_HUNGER_H

@@ -1,29 +1,28 @@
-#include "../variables.h"
-#include "../player.h"
-#include "../inven.h"
 #include "../desc.h"
+#include "../io.h"
+#include "../inven.h"
+#include "../player.h"
 #include "../screen.h"
+#include "../variables.h"
 
-void player_action_drop() {
+#include <stdbool.h>
+
+void player_action_drop(void) {
   treas_rec *com_ptr;
-  boolean redraw;
+  bool redraw;
   char trash_char;
-  char out_val[82];
-  char out_val2[120];
-  long temp;
-  long count;
 
   reset_flag = true;
 
   /* with player_do; */
-  temp = (player_money[6] + player_money[5] + player_money[4] +
-          player_money[3] + player_money[2] + player_money[1]);
+  const long temp = player_money[6] + player_money[5] + player_money[4] +
+              player_money[3] + player_money[2] + player_money[1];
 
-  if ((inven_ctr > 0) || (temp > 0)) {
-    count = change_all_ok_stats(true, false);
+  if (inven_ctr > 0 || temp > 0) {
+    long count = change_all_ok_stats(true, false);
     com_ptr = inventory_list;
-    for (; com_ptr != NULL;) {
-      if ((com_ptr->data.tval == bag_or_sack) && (com_ptr->insides != 0)) {
+    while (com_ptr != NULL) {
+      if (com_ptr->data.tval == bag_or_sack && com_ptr->insides != 0) {
         com_ptr->ok = false;
         count--;
       }
@@ -42,6 +41,8 @@ void player_action_drop() {
       if (cave[char_row][char_col].tptr > 0) {
         msg_print("There is something there already.");
       } else {
+        char out_val2[120];
+        char out_val[82];
         if (trash_char == '$') {
           inven_drop(com_ptr, char_row, char_col, true);
         } else {

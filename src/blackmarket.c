@@ -3,53 +3,49 @@
 
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
-#include "term.h"
+#include "random.h"
 #include "types.h"
 #include "variables.h"
-#include "random.h"
 
-static void bm__add_tohit(long a, long b, long c, long i, long *r) {
+static void bm__add_tohit(const long a, const long b, const long c,
+                          const long i, long *r) {
   *r = randint(a) + randint(b) + randint(c);
   t_list[i].tohit = *r;
 }
 
-static void bm__add_todam(long a, long b, long c, long i, long *r) {
+static void bm__add_todam(const long a, const long b, const long c,
+                          const long i, long *r) {
   *r = randint(a) + randint(b) + randint(c);
   t_list[i].todam = *r;
 }
 
-static void bm__add_ac(long a, long b, long c, long i, long *r) {
+static void bm__add_ac(const long a, const long b, const long c, const long i, long *r) {
   *r = randint(a) + randint(b) + randint(c);
   t_list[i].ac = *r;
 }
 
-static void bm__add_toac(long a, long b, long c, long i, long *r) {
+static void bm__add_toac(const long a, const long b, const long c, const long i, long *r) {
   *r = randint(a) + randint(b) + randint(c);
   t_list[i].toac = *r;
 }
 
-static void bm__add_p1(long a, long b, long c, long i, long *r) {
+static void bm__add_p1(const long a, const long b, const long c, const long i, long *r) {
   *r = a + randint(b) + randint(c);
   t_list[i].p1 = *r;
 }
 
-static void bm__add_p1_rods(long a, long b, long c, long i, long *r) {
+static void bm__add_p1_rods(const long a, const long b, const long c,
+                            const long i, long *r) {
   *r = a + randint(b) + c;
   t_list[i].p1 = *r;
 }
 
-void soup_up_black_market(long indx) {
+void soup_up_black_market(const long indx) {
   /*{ Soup-up the Black Market inventory - mwk}*/
 
   long r1, r2, r3, r4, r5;
@@ -107,7 +103,7 @@ void soup_up_black_market(long indx) {
 
     default:
       break;
-    };
+    }
 
     t_list[indx].number = 0;
     for (r1 = 1; r1 <= 7; r1++) {
@@ -394,7 +390,7 @@ void soup_up_black_market(long indx) {
 
     default:
       break;
-    };
+    }
     break;
   case shield:
   case hard_armor:

@@ -24,7 +24,7 @@ pub fn read_master() -> Result<Vec<MasterRecord>, Error> {
 pub fn update_character(uid: i64) -> Result<(), Error> {
     persistence::save_master(
         MasterRecord {
-            uid: uid,
+            uid,
             user_name: "-".to_string(),
             character_name: player::name(),
             points: player::calc_total_points(),
@@ -42,7 +42,7 @@ pub fn update_character(uid: i64) -> Result<(), Error> {
 pub fn add_character() -> Result<i64, Error> {
     let mut new_uid;
     loop {
-        new_uid = random::randint(<i64>::max_value() - 1);
+        new_uid = random::randint(<i64>::MAX - 1);
         if new_uid != 0 {
             break;
         }

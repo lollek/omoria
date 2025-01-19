@@ -1,27 +1,24 @@
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
 #include "debug.h"
-#include "magic.h"
+#include "misc.h"
 #include "pascal.h"
-#include "term.h"
+#include "random.h"
 #include "treasures.h"
 #include "types.h"
 #include "variables.h"
-#include "misc.h"
-#include "random.h"
 
 #include "desc.h"
 
+#include "io.h"
+
 /*{ Describe amount of item remaining...                  -RAK-   }*/
-void desc_remain(treas_rec *item_ptr) {
+void desc_remain(const treas_rec *item_ptr) {
 
   char out_val[82];
   char out_val2[120];
@@ -37,10 +34,10 @@ void desc_remain(treas_rec *item_ptr) {
 }
 
 /*{ Describe number of remaining charges...               -RAK-   }*/
-void desc_charges(treas_rec *item_ptr) {
-  char out_val[82];
+void desc_charges(const treas_rec *item_ptr) {
 
   if (strstr(item_ptr->data.name, "^") == NULL) {
+    char out_val[82];
     sprintf(out_val, "You have %ld charges remaining.", item_ptr->data.p1);
     msg_print(out_val);
   }
@@ -49,14 +46,12 @@ void desc_charges(treas_rec *item_ptr) {
 void rantitle(char *title) {
   /*{ Return random title						}*/
 
-  long i1, i2, i3, i4;
-
-  i3 = randint(2) + 1; /* two or three words */
+  const long i3 = randint(2) + 1; /* two or three words */
   strcpy(title, "Titled \"");
 
-  for (i1 = 0; i1 < i3; i1++) {
-    i4 = randint(2); /* one or two syllables each */
-    for (i2 = 0; i2 < i4; i2++) {
+  for (long i1 = 0; i1 < i3; i1++) {
+    const long i4 = randint(2); /* one or two syllables each */
+    for (long i2 = 0; i2 < i4; i2++) {
       strcat(title, syllables[randint(MAX_SYLLABLES) - 1]);
     }
 
@@ -99,14 +94,14 @@ void identify(treasure_type *item) {
   identification_set_identified(item);
 }
 
-void known1(char *object_str) {
+void known1(const char *object_str) {
   /*{ Remove 'Secret' symbol for identity of object
    * }*/
 
   insert_str(object_str, "|", "");
 }
 
-void known2(char *object_str) {
+void known2(const char *object_str) {
   /*{ Remove 'Secret' symbol for identity of pluses
    * }*/
 
@@ -116,17 +111,16 @@ void known2(char *object_str) {
 void unquote(char *object_str) {
   /*	{ Return string without quoted portion }*/
 
-  long pos0, pos1, pos2, olen;
-  char str1[82], str2[82];
-
-  pos0 = pindex(object_str, '"');
+  const long pos0 = pindex(object_str, '"');
   if (pos0 > 0) {
-    pos1 = pindex(object_str, '~');
-    pos2 = pindex(object_str, '|');
-    olen = strlen(object_str);
+    char str2[82];
+    char str1[82];
+    long pos1 = pindex(object_str, '~');
+    const long pos2 = pindex(object_str, '|');
+    const long olen = strlen(object_str);
     strncpy(str1, object_str, pos1);
     str1[pos1] = 0;
-    strncpy(str2, &(object_str[pos2]), olen - pos2);
+    strncpy(str2, &object_str[pos2], olen - pos2);
     str2[olen - pos2] = 0;
     sprintf(object_str, "%s%s", str1, str2);
   }
@@ -138,7 +132,7 @@ void unquote(char *object_str) {
  * @ptr: Pointer to the object to describe
  * @pref: ???
  */
-void objdes(char *out_val, treas_rec *ptr, boolean pref) {
+void objdes(char *out_val, const treas_rec *ptr, const bool pref) {
   char *cpos;
   char tmp_val[82];
 
@@ -251,26 +245,23 @@ void objdes(char *out_val, treas_rec *ptr, boolean pref) {
   LEAVE("objdes", "i");
 }
 
-char *bag_descrip(treas_rec *bag, char result[134]) /* was func */
+char *bag_descrip(const treas_rec *bag, char result[134]) /* was func */
 {
   /*{ Return description about the contents of a bag	-DMF-	}*/
 
-  long count, wgt;
-  treas_rec *ptr;
-
-  if ((bag->next == NULL) || (bag->next->is_in == false)) {
+  if (bag->next == NULL || bag->next->is_in == false) {
     sprintf(result, " (empty)");
   } else {
-    count = 0;
-    wgt = 0;
+    long count = 0;
+    long wgt = 0;
 
-    for (ptr = bag->next; (ptr != NULL) && (ptr->is_in); ptr = ptr->next) {
+    for (const treas_rec *ptr = bag->next; ptr != NULL && ptr->is_in; ptr = ptr->next) {
       count += ptr->data.number;
       wgt += ptr->data.weight * ptr->data.number;
     }
 
     sprintf(result, " (%ld%% full, containing %ld item%s)",
-            (wgt * 100 / bag->data.p1), count, ((count != 1) ? "s" : ""));
+            wgt * 100 / bag->data.p1, count, count != 1 ? "s" : "");
   }
   return result;
 }

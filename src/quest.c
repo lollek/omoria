@@ -3,27 +3,23 @@
 
 #include <curses.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "magic.h"
+#include "desc.h"
+#include "generate_item/generate_item.h"
+#include "inven.h"
+#include "io.h"
+#include "misc.h"
 #include "pascal.h"
 #include "player.h"
+#include "random.h"
+#include "screen.h"
 #include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "generate_item/generate_item.h"
-#include "desc.h"
-#include "inven.h"
-#include "screen.h"
-#include "misc.h"
-#include "random.h"
 
 static uint8_t const MAX_QUESTS =
     35; /*{ Maximum number of quests per game	} */
@@ -53,7 +49,7 @@ void q__display_gold()
 }
 */
 
-void q__reward_money(long reward) {
+void q__reward_money(const long reward) {
   char out_val[82];
 
   msg_print("I've sent your reward with a page to the bank.");
@@ -62,22 +58,20 @@ void q__reward_money(long reward) {
   player_account += reward;
 }
 
-void q__reward_item(long target) {
+void q__reward_item(const long target) {
   /* alloc several items, plus the money; */
 
 #define QUEST_ITEMS 9
 #define QUEST_ITEM_FREQUENCY 10
 
-  long i1, i2, i3;
+  long i1, i2;
   treasure_type rewards[QUEST_ITEMS];
   char command;
   char reward_names[QUEST_ITEMS][82];
   char out_val[89];
-  boolean flag;
 
-  long q1 = 15;                           /* allocs to attempt */
-  float q3 = (0.8 * target * GOLD_VALUE); /* value to stop at */
-  float q4 = (1.2 * target * GOLD_VALUE); /* value to stop at */
+  const float q3 = 0.8 * target * GOLD_VALUE; /* value to stop at */
+  const float q4 = 1.2 * target * GOLD_VALUE; /* value to stop at */
 
   obj_set wand_set = {staff, wand, 0};
   obj_set weapon_set = {
@@ -105,9 +99,10 @@ void q__reward_item(long target) {
   popt(&i1);
 
   for (i2 = 0; i2 < QUEST_ITEMS; i2++) {
+    const long q1 = 15;
     rewards[i2].cost = -1;
 
-    for (i3 = 0; (i3 < q1) && (rewards[i2].cost < q3);) {
+    for (long i3 = 0; i3 < q1 && rewards[i2].cost < q3;) {
 
       t_list[i1] = generate_item_for_item_level(player_max_lev + 10);
       if (is_in(t_list[i1].tval, *toys[i2])) {
@@ -139,9 +134,9 @@ void q__reward_item(long target) {
           target);
   prt(out_val, 3 + i2, 10);
 
-  for (flag = false; !flag;) {
+  for (bool flag = false; !flag;) {
     get_com("Pick an item for your reward: ", &command);
-    if ((command >= 'a') && ((command - 'a') <= QUEST_ITEMS)) {
+    if (command >= 'a' && command - 'a' <= QUEST_ITEMS) {
 
       command -= 'a';
 
@@ -170,15 +165,14 @@ void q__reward_item(long target) {
   clear_rc(3, 1);
 }
 
-void q__reward_quest() {
-  long reward;
+void q__reward_quest(void) {
   char out_val[120];
-  boolean redraw = false;
+  bool redraw = false;
 
-  reward = monster_templates[player_cur_quest].mexp * (randint(3) + 5) +
-           player_lev * (randint(2) * 100) +
-           (randint(100) + (C_player_get_stat(CHR) * 10)) * 2 +
-           (C_player_get_stat(INT) * 10) * randint(50) + 200;
+  const long reward = monster_templates[player_cur_quest].mexp * (randint(3) + 5) +
+                player_lev * (randint(2) * 100) +
+                (randint(100) + C_player_get_stat(CHR) * 10) * 2 +
+                C_player_get_stat(INT) * 10 * randint(50) + 200;
 
   sprintf(out_val, "Ah... %s, I was expecting you.", player_name);
   msg_print(out_val);
@@ -186,7 +180,7 @@ void q__reward_quest() {
           monster_templates[player_cur_quest].name);
   msg_print(out_val);
 
-  if (((player_quests % QUEST_ITEM_FREQUENCY) == 0)) {
+  if (player_quests % QUEST_ITEM_FREQUENCY == 0) {
     q__reward_item(reward);
     redraw = true;
   } else {
@@ -210,9 +204,9 @@ void q__reward_quest() {
   msg_print("Have a good day.  Perhaps you should rest a night at the inn.");
 }
 
-long q__select_quest() {
+long q__select_quest(void) {
   long count = 0;
-  boolean exit_flag = false;
+  bool exit_flag = false;
   long tmp_select = 0;
 
   do {
@@ -225,7 +219,7 @@ long q__select_quest() {
         if (tmp_select > MAX_CREATURES) {
           tmp_select = MAX_CREATURES - 1;
         }
-      } while ((!((monster_templates[tmp_select].cmove & 0x00008000) == 0)) &&
+      } while ((monster_templates[tmp_select].cmove & 0x00008000) != 0 &&
                tmp_select < MAX_CREATURES - 1);
     }
 
@@ -238,19 +232,18 @@ long q__select_quest() {
   return tmp_select;
 }
 
-void q__draw_fortress(boolean enter_flag) {
-  char shop_owner[82], out_val[82];
-  long count, count2, count3;
-  boolean exit_flag;
+void q__draw_fortress(const bool enter_flag) {
+  char shop_owner[82];
+  long count;
 
   if (!enter_flag) {
     for (count = 1; count <= NUM_QUESTS; count++) {
-      count3 = 0;
-      exit_flag = true;
+      long count3 = 0;
+      bool exit_flag = true;
       do {
         count3++;
         quest[count] = q__select_quest();
-        for (count2 = 1; count2 <= count - 1; count2++) {
+        for (long count2 = 1; count2 <= count - 1; count2++) {
           if (quest[count] == quest[count2]) {
             exit_flag = false;
           }
@@ -266,6 +259,7 @@ void q__draw_fortress(boolean enter_flag) {
   strcpy(shop_owner, "Leckin           (Arch-Mage)            Quests");
   prt(shop_owner, 4, 10);
   for (count = 1; count <= NUM_QUESTS; count++) {
+    char out_val[82];
     sprintf(out_val, "%c)     %s", (char)(count + 96),
             monster_templates[quest[count]].name);
     prt(out_val, 5 + count, 20);
@@ -276,10 +270,10 @@ void q__draw_fortress(boolean enter_flag) {
   prt("^R) Redraw the screen.          Esc) Exit from building.", 23, 2);
 }
 
-boolean q__completed_quest() {
-  boolean return_value = false;
+bool q__completed_quest(void) {
+  bool return_value = false;
 
-  if ((!player_flags.quested) && (player_cur_quest != 0)) {
+  if (!player_flags.quested && player_cur_quest != 0) {
     player_flags.quested = false; /* { not under quest          } */
     player_quests++;              /* { one more is now complete } */
     return_value = true;
@@ -288,10 +282,10 @@ boolean q__completed_quest() {
   return return_value;
 }
 
-boolean q__evaluate_char() {
-  boolean return_value;
+bool q__evaluate_char(void) {
+  bool return_value;
 
-  if ((player_flags.quested) || (player_lev > player_quests)) {
+  if (player_flags.quested || player_lev > player_quests) {
     return_value = true;
   } else {
     return_value = false;
@@ -300,7 +294,7 @@ boolean q__evaluate_char() {
   return return_value;
 }
 
-void q__reject_char() {
+void q__reject_char(void) {
   msg_print("A guard meets you at the entrance and says:");
   switch (randint(4)) {
   case 1:
@@ -320,12 +314,11 @@ void q__reject_char() {
   msg_print("");
 }
 
-boolean q__new_victim() {
-  return ((player_cur_quest == 0) && (player_quests == 0) &&
-          (!player_flags.quested));
+bool q__new_victim(void) {
+  return player_cur_quest == 0 && player_quests == 0 && !player_flags.quested;
 }
 
-void q__explain_quests() {
+void q__explain_quests(void) {
   C_clear_screen();
   prt("Home of Leckin the Arch-Mage", 2, 26);
   prt("Greetings, adventurer, and welcome to my humble quarters.", 6, 10);
@@ -365,7 +358,7 @@ void q__explain_quests() {
   inkey();
 }
 
-void q__repeat_quest() {
+void q__repeat_quest(void) {
   char out_val[82];
 
   msg_print("Hmmm. . .  I see you haven't completed your quest.");
@@ -375,9 +368,9 @@ void q__repeat_quest() {
   msg_print("");
 }
 
-void q__parse_command(boolean enter_flag) {
+void q__parse_command(const bool enter_flag) {
   char command;
-  boolean exit_flag = false;
+  bool exit_flag = false;
 
   do {
     if (get_com("", &command)) {
@@ -387,12 +380,12 @@ void q__parse_command(boolean enter_flag) {
       case 99:
       case 100:
       case 101: /*{a,b,c,d,e}*/
-        if ((turn_counter < QUEST_DELAY) && (!wizard1)) {
+        if (turn_counter < QUEST_DELAY && !wizard1) {
           msg_print("You were just in here... "
                     "Come back later.");
           msg_print(" ");
         } else {
-          if ((turn_counter < QUEST_DELAY) && wizard1) {
+          if (turn_counter < QUEST_DELAY && wizard1) {
 
             msg_print("Being a Wizard you "
                       "choose a quest "
@@ -429,13 +422,12 @@ void q__parse_command(boolean enter_flag) {
   } while (!exit_flag);
 }
 
-void enter_fortress() {
-  boolean complete_flag = false;
-  boolean enter_flag = false;
+void enter_fortress(void) {
 
   /*{gld = player_money[TOTAL_];}*/
   msg_line = 1;
   if (player_quests <= MAX_QUESTS) {
+    bool complete_flag = false;
     if (q__evaluate_char()) {
       if (q__completed_quest()) {
         q__reward_quest();
@@ -444,7 +436,8 @@ void enter_fortress() {
         if (q__new_victim()) {
           q__explain_quests();
         }
-        if ((q__new_victim()) || (player_cur_quest < 1)) {
+        if (q__new_victim() || player_cur_quest < 1) {
+          bool enter_flag = false;
           q__draw_fortress(enter_flag);
           enter_flag = true;
           q__parse_command(enter_flag);
@@ -459,7 +452,7 @@ void enter_fortress() {
       complete_flag = true;
     }
 
-    if ((!complete_flag) && (turn_counter > QUEST_DELAY)) {
+    if (!complete_flag && turn_counter > QUEST_DELAY) {
       turn_counter = 0;
     }
   }

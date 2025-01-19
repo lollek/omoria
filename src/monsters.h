@@ -1,14 +1,11 @@
-#ifndef MONSTERS_H
-#define MONSTERS_H
-
-#include "types.h"
+#pragma once
 
 /**
  * @brief Spawn loot on monster death
- * 
- * @param y 
- * @param x 
- * @param flags 
+ *
+ * @param y
+ * @param x
+ * @param flags
  */
 void monster_death(long y, long x, unsigned long flags);
 
@@ -27,5 +24,3 @@ long mon_take_hit(long monptr, long dam);
  * @param i2 
  */
 void delete_monster(long i2);
-
-#endif // MONSTERS_H

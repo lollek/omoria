@@ -1,4 +1,5 @@
 #include "../dungeon/light.h"
+#include "../io.h"
 #include "../player.h"
 #include "../types.h"
 #include "../screen.h"

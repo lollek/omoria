@@ -1,15 +1,15 @@
 #include <string.h>
-#include <time.h>
 
 #include "../debug.h"
+#include "../io.h"
 #include "../inven.h"
+#include "../magic.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
 #include "../variables.h"
-#include "../magic.h"
 
 static void nonmagic_song(void) {
   switch (C_player_mod_from_stat(CHR) + randint(4)) {
@@ -92,7 +92,7 @@ static void song_failure(void) {
   }
 }
 
-static void init_magic_books(enum magic_t magic_type, obj_set *magic_books,
+static void init_magic_books(const enum magic_t magic_type, obj_set *magic_books,
                              char const **book_name) {
 
   memset(*magic_books, 0, sizeof(*magic_books));
@@ -120,7 +120,7 @@ static void init_magic_books(enum magic_t magic_type, obj_set *magic_books,
   }
 }
 
-static boolean blind_check(enum magic_t magic_type) {
+static bool blind_check(const enum magic_t magic_type) {
   if (player_flags.blind > 0) {
     switch (magic_type) {
     case M_ARCANE:
@@ -140,7 +140,7 @@ static boolean blind_check(enum magic_t magic_type) {
   return true;
 }
 
-static boolean light_check(enum magic_t magic_type) {
+static bool light_check(const enum magic_t magic_type) {
   if (player_has_no_light()) {
     switch (magic_type) {
     case M_ARCANE:
@@ -156,7 +156,7 @@ static boolean light_check(enum magic_t magic_type) {
   return true;
 }
 
-static boolean hoarse_check(enum magic_t magic_type) {
+static bool hoarse_check(const enum magic_t magic_type) {
   if (player_flags.hoarse > 0) {
     switch (magic_type) {
     case M_ARCANE:
@@ -172,7 +172,7 @@ static boolean hoarse_check(enum magic_t magic_type) {
   return true;
 }
 
-static boolean scared_check(enum magic_t magic_type) {
+static bool scared_check(const enum magic_t magic_type) {
   if (player_flags.afraid > 0) {
     switch (magic_type) {
     case M_ARCANE:
@@ -188,7 +188,7 @@ static boolean scared_check(enum magic_t magic_type) {
   return true;
 }
 
-static boolean hallucinate_check(enum magic_t magic_type) {
+static bool hallucinate_check(const enum magic_t magic_type) {
   if (player_flags.image > 0) {
     switch (magic_type) {
     case M_ARCANE:
@@ -205,7 +205,7 @@ static boolean hallucinate_check(enum magic_t magic_type) {
   return true;
 }
 
-static boolean knowledge_check(enum magic_t magic_type) {
+static bool knowledge_check(const enum magic_t magic_type) {
   if (C_player_uses_magic(magic_type))
     return true;
 
@@ -227,7 +227,8 @@ static boolean knowledge_check(enum magic_t magic_type) {
   return false;
 }
 
-static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost) {
+static void drain_mana_failed(const enum magic_t magic_type,
+                              const uint8_t mana_cost) {
   player_cmana = 0;
 
   switch (magic_type) {
@@ -256,8 +257,8 @@ static void drain_mana_failed(enum magic_t magic_type, uint8_t mana_cost) {
   }
 }
 
-static void drain_mana(enum magic_t magic_type, long choice) {
-  uint8_t mana_cost = C_magic_spell_mana(choice);
+static void drain_mana(const enum magic_t magic_type, const long choice) {
+  const uint8_t mana_cost = C_magic_spell_mana(choice);
   if (mana_cost <= player_cmana)
     player_cmana -= mana_cost;
   else
@@ -266,28 +267,28 @@ static void drain_mana(enum magic_t magic_type, long choice) {
 }
 
 /*{ Return spell number and failure chance                -RAK-   }*/
-static boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn,
-                          long *sc, boolean *redraw) {
+static bool cast_spell(char prompt[82], const treas_rec *item_ptr, long *sn,
+                          long *sc, bool *redraw) {
 
   unsigned long i2, i4;
-  long i1, i3, num;
+  long num;
   spl_type aspell;
-  boolean flag = false;
+  bool flag = false;
 
-  i1 = num = 0;
+  long i1 = num = 0;
   i2 = item_ptr->data.flags;
   i4 = item_ptr->data.flags2;
 
   do {
-    i3 = bit_pos64(&i4, &i2) + 1;
+    long i3 = bit_pos64(&i4, &i2) + 1;
     /*{ Avoid the cursed bit like the plague -DMF-   }*/
     if (i3 > 31) {
       i3--;
     }
     if (i3 > 0) {
       i3--;
-      if ((C_magic_spell_level(i3) <= player_lev) &&
-          (C_player_knows_spell(i3))) {
+      if (C_magic_spell_level(i3) <= player_lev &&
+          C_player_knows_spell(i3)) {
         aspell[i1++].splnum = i3;
         num = i1;
       } else {
@@ -295,7 +296,7 @@ static boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn,
       }
     }
 
-  } while (!((i2 == 0) && (i4 == 0)));
+  } while (!(i2 == 0 && i4 == 0));
 
   if (num > 0) {
     flag = get_spell(aspell, num, sn, sc, prompt, redraw);
@@ -308,14 +309,14 @@ static boolean cast_spell(char prompt[82], treas_rec *item_ptr, long *sn,
   return flag;
 }
 
-static void _cast(enum magic_t magic_type) {
+static void _cast(const enum magic_t magic_type) {
   treas_rec *i1;
   treas_rec *item_ptr = &inven_temp;
   long choice;
   long chance;
   long i2;
   char trash_char;
-  boolean redraw;
+  bool redraw;
   obj_set magic_books;
   char const *magic_book_name = "???";
   char msg_buf[80];
@@ -357,9 +358,8 @@ static void _cast(enum magic_t magic_type) {
       return;
     }
   } else { /* Check non-book-user for magic knowledge */
-    boolean knows_magic = false;
-    int i;
-    for (i = 0; i < 40; ++i) {
+    bool knows_magic = false;
+    for (int i = 0; i < 40; ++i) {
       if (C_player_knows_spell(i)) {
         knows_magic = true;
         break;
@@ -442,7 +442,7 @@ static void _cast(enum magic_t magic_type) {
   drain_mana(magic_type, choice);
 }
 
-void player_action_use_magic(enum magic_t magic_type) {
+void player_action_use_magic(const enum magic_t magic_type) {
   ENTER(("cast", ""));
   _cast(magic_type);
   LEAVE("cast", "");

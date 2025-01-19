@@ -1,6 +1,3 @@
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#pragma once
 
 void C_commands_show_class_restrictions(void);
-
-#endif // COMMANDS_H

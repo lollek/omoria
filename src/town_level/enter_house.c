@@ -1,4 +1,5 @@
 #include "../generate_monster.h"
+#include "../io.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player/hunger.h"
@@ -6,9 +7,8 @@
 #include "../screen.h"
 #include "../stores.h"
 #include "../variables.h"
-#include "../wizard.h"
 
-static void call_wizards() {
+static void call_wizards(void) {
   msg_print("The mage calls for a Town Wizard to remove you.");
   monster_summon_by_name(char_row, char_col, "Town Wizard", true, false);
 }
@@ -23,9 +23,9 @@ static void call_guards(char const *who) {
   monster_summon_by_name(char_row, char_col, "Town Guard", true, false);
 }
 
-static void kicked_out() { msg_print("The owner kicks you out..."); }
+static void kicked_out(void) { msg_print("The owner kicks you out..."); }
 
-static void guild_or_not(boolean passed) {
+static void guild_or_not(const bool passed) {
   if (passed) {
     spend_time(600, "showing off your skills", false);
     msg_print("Good! You are invited to join the guild!");
@@ -43,12 +43,12 @@ static void guild_or_not(boolean passed) {
   }
 }
 
-static void brothel_game() {
+static void brothel_game(void) {
   if (get_yes_no("Do you accept?")) {
     change_rep(-3);
     /* with player_do; */
-    if ((player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-         C_player_mod_from_stat(INT)) > randint(100)) {
+    if (player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+            C_player_mod_from_stat(INT) > randint(100)) {
       msg_print("Good! You are invited to join the house!");
       C_player_add_exp(5);
       spend_time(600, "putting out for peasants", false);
@@ -59,17 +59,16 @@ static void brothel_game() {
   }
 }
 
-static void battle_game(long plus, char kb_str[82]) {
-  long score, i1, time;
-  char out_val[82];
+static void battle_game(const long plus, char kb_str[82]) {
 
   if (get_yes_no("Do you accept their invitation?")) {
+    char out_val[82];
     msg_print("Good for you!");
-    score = 0;
-    time = 10;
+    long score = 0;
+    long time = 10;
 
     /* with player_do; */
-    for (i1 = 1; i1 <= 7; i1++) {
+    for (long i1 = 1; i1 <= 7; i1++) {
       if (player_test_hit(player_bth, player_lev, plus, 20 * i1, false)) {
         score++;
         time = time * 2 + 10;
@@ -123,15 +122,14 @@ static void battle_game(long plus, char kb_str[82]) {
   }
 }
 
-static void thief_games() {
+static void thief_games(void) {
   if (randint(2) == 1) {
     msg_print("The thieves invite you to prove your ability to "
               "pick locks.");
     if (get_yes_no("Do you accept?")) {
       /* with player_do; */
-      guild_or_not((player_disarm + player_lev +
-                    2 * C_player_disarm_from_dex() +
-                    C_player_mod_from_stat(INT)) > randint(100));
+      guild_or_not(player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
+                       C_player_mod_from_stat(INT) > randint(100));
     }
   } else {
     msg_print("The thieves invite you to show your stealthiness.");
@@ -143,9 +141,9 @@ static void thief_games() {
 
 /*  returns 0 to 10 -- SD 2.4; */
 /*  x is average reaction for a 0 SC ugly half-troll*/
-static long react(long x) {
+static long react(const long x) {
 
-  long ans = (C_player_get_stat(CHR) * 10 + (player_rep * 2) + randint(200) +
+  long ans = (C_player_get_stat(CHR) * 10 + player_rep * 2 + randint(200) +
               randint(200) + randint(200)) /
                  50 +
              x - 4;
@@ -159,13 +157,12 @@ static long react(long x) {
   return ans;
 }
 
-static void eat_the_meal() {
-  long yummers, old_food;
+static void eat_the_meal(void) {
 
-  old_food = player_flags.foodc;
+  const long old_food = player_flags.foodc;
 
-  yummers = react(randint(8) - 2);
-  if ((yummers == 10) && (randint(2) == 1)) {
+  long yummers = react(randint(8) - 2);
+  if (yummers == 10 && randint(2) == 1) {
     yummers = 15;
   }
 
@@ -191,7 +188,7 @@ static void eat_the_meal() {
     break;
 
   default:
-    if ((yummers > 0) ||
+    if (yummers > 0 ||
         player_saves(player_lev + 5 * C_player_mod_from_stat(CON))) {
       msg_print("It was a boring meal, and you eat very little.");
       player_flags.foodc = old_food;
@@ -210,14 +207,14 @@ static void eat_the_meal() {
   }
 }
 
-static void invite_for_meal() {
+static void invite_for_meal(void) {
   msg_print("The occupants invite you in for a meal.");
   if (get_yes_no("Do you accept?")) {
     eat_the_meal();
   }
 }
 
-static void party() {
+static void party(void) {
   msg_print("The owner invites you to join the party!");
   if (get_yes_no("Do you accept?")) {
     spend_time(400 + randint(1600), "at a party", false);
@@ -258,10 +255,10 @@ static void party() {
 }
 
 static void spend_the_night(char who[82]) {
-  char out_str[82];
 
   msg_print("The occupant(s) invite you to rest in his house.");
   if (get_yes_no("Do you accept?")) {
+    char out_str[82];
     sprintf(out_str, "at the home of the %s.", who);
     spend_time(1, out_str, true);
     change_rep(2);
@@ -270,13 +267,12 @@ static void spend_the_night(char who[82]) {
   }
 }
 
-static void worship() {
-  long preachy, i1;
+static void worship(void) {
 
   msg_print("The priest invites you to participate in the service.");
 
   if (get_yes_no("Do you accept?")) {
-    preachy = randint(4);
+    const long preachy = randint(4);
 
     switch (preachy) {
     case 1:
@@ -301,7 +297,8 @@ static void worship() {
       if (player_money[TOTAL_] > 0) {
         msg_print("Bless you, dude!");
 
-        i1 = ((randint(12) * player_money[TOTAL_]) / 1000 + 20) * GOLD_VALUE;
+        long i1 =
+            (randint(12) * player_money[TOTAL_] / 1000 + 20) * GOLD_VALUE;
         if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
           i1 = player_money[TOTAL_] * GOLD_VALUE / 2;
         }
@@ -331,7 +328,7 @@ static void worship() {
 }
 
 /*
-static void beg_food() {
+static void beg_food(void) {
        var      i2              : long;
                 item_ptr        : treas_rec;*
        begin
@@ -358,8 +355,7 @@ static void beg_food() {
 }
 */
 
-static void beg_money() {
-  long i1;
+static void beg_money(void) {
 
   msg_print("The occupants beg you for money.");
 
@@ -368,7 +364,7 @@ static void beg_money() {
     if (player_money[TOTAL_] > 0) {
       msg_print("How kind of you!");
       spend_time(100, "giving handouts", false);
-      i1 = ((randint(12) * player_money[TOTAL_]) / 1000 + 20) * GOLD_VALUE;
+      long i1 = (randint(12) * player_money[TOTAL_] / 1000 + 20) * GOLD_VALUE;
       if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
         i1 = player_money[TOTAL_] * GOLD_VALUE / 2;
       }
@@ -388,7 +384,7 @@ static void beg_money() {
   }
 }
 
-void enter_house(long y, long x) {
+void enter_house(const long y, const long x) {
   switch (t_list[cave[y][x].tptr].p1) {
   case 1:
     msg_print("The building is empty.");

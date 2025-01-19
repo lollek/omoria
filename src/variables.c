@@ -6,15 +6,9 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
-#include "debug.h"
-#include "magic.h"
-#include "pascal.h"
 #include "screen.h"
 #include "term.h"
 #include "types.h"
@@ -28,25 +22,25 @@ long cur_width;
 long dun_level = 0;             /* { Cur dungeon level   } */
 long missle_ctr = 0;            /* { Counter for missles } */
 long msg_line = 1;              /* { Contains message txt} */
-boolean msg_flag;               /* { Set with first msg  } */
+bool msg_flag;               /* { Set with first msg  } */
 long quest[NUM_QUESTS + 1];     /* {quest data} */
 char old_msg[82] = "bogus msg"; /* { Last message	      } */
-boolean want_trap;              /* { True = trap messages} */
-boolean want_warn;              /* { True = water warning} */
-boolean death = false;          /*	{ True if died	      } */
+bool want_trap;              /* { True = trap messages} */
+bool want_warn;              /* { True = water warning} */
+bool death = false;          /*	{ True if died	      } */
 char died_from[82];             /*	{ What killed him     } */
 long turn_counter = 100000;     /*	{ Turns ellapsed      } */
-boolean find_flag;              /*	{ Used in MORIA	      } */
-boolean moria_flag;             /* { Next level when true  } */
-boolean reset_flag;             /* { Do not move creatures } */
-boolean search_flag;            /* { Player is searching   } */
-boolean teleport_flag;          /* { Handle telport traps  } */
-boolean redraw;                 /*	{ For redraw screen   } */
+bool find_flag;              /*	{ Used in MORIA	      } */
+bool moria_flag;             /* { Next level when true  } */
+bool reset_flag;             /* { Do not move creatures } */
+bool search_flag;            /* { Player is searching   } */
+bool teleport_flag;          /* { Handle telport traps  } */
+bool redraw;                 /*	{ For redraw screen   } */
 unsigned long print_stat = 0;   /*	{ Flag for stats      } */
 long turn = 0;                  /*	{ Cur trun of game    } */
-boolean wizard1 = false;        /*	{ Wizard flag	      } */
-boolean wizard2 = false;        /*	{ Wizard flag	      } */
-boolean used_line[24] =         /* 22 of false */
+bool wizard1 = false;        /*	{ Wizard flag	      } */
+bool wizard2 = false;        /*	{ Wizard flag	      } */
+bool used_line[24] =         /* 22 of false */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /*{neatness arrays} */
@@ -165,7 +159,7 @@ long exp_per_level[MAX_PLAYER_LEVEL + 1] = {
     35000,  50000,   75000,   100000,  150000, 200000, 300000, 400000, 500000,
     750000, 1500000, 2500000, 5000000, 9999999};
 char bare_hands[7] = "1d1";
-boolean msg_terse;
+bool msg_terse;
 long char_row = 0;
 long char_col = 0;
 long com_val;
@@ -217,7 +211,7 @@ treasure_type yums[] = {
      2, 2, 0, 0, 0, 0, "10d12", 20, 0}, /*{18} */
 };
 
-boolean total_winner = false;
+bool total_winner = false;
 
 /*	{ Following are store definitions				} */
 store_type stores[MAX_STORES + 1];

@@ -1,31 +1,21 @@
-#include <curses.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
 
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
 #include "../desc.h"
 #include "../inven.h"
-#include "../magic.h"
+#include "../io.h"
 #include "../misc.h"
-#include "../pascal.h"
 #include "../player.h"
 #include "../player/hunger.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../term.h"
 #include "../types.h"
 #include "../variables.h"
 
-static void q__potion_effect(long effect, boolean *idented) {
+static void q__potion_effect(const long effect, bool *idented) {
   long i4, i5;
-  boolean ident = false;
+  bool ident = false;
 
   /*{ Potions                                               }*/
   switch (effect) {
@@ -103,7 +93,7 @@ static void q__potion_effect(long effect, boolean *idented) {
 
   case 18: /*{ Gain Experience }*/
     /* with player_do; */
-    i5 = (player_exp / 2) + 10;
+    i5 = player_exp / 2 + 10;
     if (i5 > 100000) {
       i5 = 100000;
     }
@@ -114,7 +104,7 @@ static void q__potion_effect(long effect, boolean *idented) {
     break;
 
   case 19: /*{ Sleep }*/
-    if (!(player_flags.free_act)) {
+    if (!player_flags.free_act) {
       msg_print("You fall asleep.");
       player_flags.paralysis += randint(4) + 4;
       ident = true;
@@ -123,19 +113,19 @@ static void q__potion_effect(long effect, boolean *idented) {
 
   case 20: /*{ Darkness }*/
     msg_print("You are covered by a veil of darkness.");
-    (player_flags).blind += randint(100) + 100;
+    player_flags.blind += randint(100) + 100;
     ident = true;
     break;
 
   case 21: /*{ Confusion }*/
     msg_print("Hey!  This is good stuff!  * Hick! *");
-    (player_flags).confused += randint(20) + 12;
+    player_flags.confused += randint(20) + 12;
     ident = true;
     break;
 
   case 22: /*{ Poison }*/
     msg_print("You feel very sick.");
-    (player_flags).poisoned += randint(15) + 10;
+    player_flags.poisoned += randint(15) + 10;
     ident = true;
     break;
 
@@ -192,13 +182,13 @@ static void q__potion_effect(long effect, boolean *idented) {
 
   case 34: /*{ Salt Water }*/
     /* with player_flags do; */
-    (player_flags).poisoned = 0;
+    player_flags.poisoned = 0;
     player_flags.status &= ~IS_POISONED;
     prt_poisoned();
-    if ((player_flags).foodc > 150) {
-      (player_flags).foodc = 150;
+    if (player_flags.foodc > 150) {
+      player_flags.foodc = 150;
     }
-    (player_flags).paralysis = 4;
+    player_flags.paralysis = 4;
     msg_print("The potion makes you vomit!");
     ident = true;
     break;
@@ -228,11 +218,11 @@ static void q__potion_effect(long effect, boolean *idented) {
     break;
 
   case 40: /*{ Resist Heat }*/
-    (player_flags).resist_heat += randint(10) + 10;
+    player_flags.resist_heat += randint(10) + 10;
     break;
 
   case 41: /*{ Resist Cold }*/
-    (player_flags).resist_cold += randint(10) + 10;
+    player_flags.resist_cold += randint(10) + 10;
     break;
 
   case 42:
@@ -257,25 +247,25 @@ static void q__potion_effect(long effect, boolean *idented) {
     break;
 
   case 46: /*{ Infra-Vision }*/
-    (player_flags).tim_infra += 100 + randint(100);
+    player_flags.tim_infra += 100 + randint(100);
     ident = true;
     msg_print("Your eyes begin to tingle.");
     break;
 
   case 47: /* cure hallucination */
     msg_print("Pretty colors!");
-    (player_flags).confused += randint(5) + 5;
+    player_flags.confused += randint(5) + 5;
     ident = cure_me(&player_flags.image);
     break;
 
     /* case 48 moved up to 32 */
 
   case 49: /* reduce petrification */
-    if ((player_flags).petrification > 0) {
+    if (player_flags.petrification > 0) {
       ident = true;
-      (player_flags).petrification -= 100;
-      if ((player_flags).petrification < 0) {
-        (player_flags).petrification = 0;
+      player_flags.petrification -= 100;
+      if (player_flags.petrification < 0) {
+        player_flags.petrification = 0;
       }
     }
     break;
@@ -301,14 +291,14 @@ static void q__potion_effect(long effect, boolean *idented) {
   *idented = ident;
 }
 
-void player_action_quaff_potion() {
+void player_action_quaff_potion(void) {
   unsigned long q1, q2;
-  long i3, i6;
+  long i3;
   treas_rec *i2;
   treas_rec *item_ptr;
   char trash_char;
-  boolean redraw, ident;
-  obj_set stuff_to_drink = {potion1, potion2, 0};
+  bool redraw, ident;
+  const obj_set stuff_to_drink = {potion1, potion2, 0};
 
   reset_flag = true;
 
@@ -326,8 +316,8 @@ void player_action_quaff_potion() {
         q2 = item_ptr->data.flags2;
         ident = false;
 
-        for (; q1 > 0 || q2 > 0;) {
-          i6 = bit_pos64(&q2, &q1) + 1;
+        while (q1 > 0 || q2 > 0) {
+          long i6 = bit_pos64(&q2, &q1) + 1;
 
           /*
            * It looks like potion2 was created
@@ -350,11 +340,11 @@ void player_action_quaff_potion() {
         } /* end for */
 
         if (ident) {
-          identify(&(item_ptr->data));
+          identify(&item_ptr->data);
         }
 
         if (item_ptr->data.flags != 0) {
-          C_player_add_exp((item_ptr->data.level / (float)player_lev) + .5);
+          C_player_add_exp(item_ptr->data.level / (float)player_lev + .5);
           prt_stat_block();
         }
 

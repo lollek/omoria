@@ -1,16 +1,14 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include <time.h>
 
-#include "creature.h"
 #include "magic.h"
 #include "monster_template.h"
 #include "types.h"
 
 typedef struct p_flags {
-  boolean insured;              /* { Character insured   } */
-  boolean dead;                 /* { Currently restored  } */
+  bool insured;              /* { Character insured   } */
+  bool dead;                 /* { Currently restored  } */
   uint64_t status;              /* { Status of player    } */
   int64_t rest;                 /* { Rest counter	 } */
   int64_t blind;                /* { Blindness counter   } */
@@ -21,7 +19,7 @@ typedef struct p_flags {
   int64_t protection;           /* { Protection fr. evil } */
   int64_t speed;                /* { Cur speed adjust    } */
   int64_t speed_paral;          /* { Slow speed adjust   } */
-  boolean speed_flag;           /* { On if reset speed   } */
+  bool speed_flag;           /* { On if reset speed   } */
   int64_t paral_init;           /* { Init val for slow   } */
   int64_t move_rate;            /* { move_rate	         } */
   int64_t swim;                 /* { Cur swim adjust     } */
@@ -42,20 +40,20 @@ typedef struct p_flags {
   int64_t word_recall;          /* { Timed teleport level} */
   int64_t see_infra;            /* { See warm creatures  } */
   int64_t tim_infra;            /* { Timed infra vision  } */
-  boolean see_inv;              /* { Can see invisible   } */
-  boolean teleport;             /* { Random teleportation} */
-  boolean free_act;             /* { Never paralyzed     } */
-  boolean slow_digest;          /* { Lower food needs    } */
-  boolean aggravate;            /* { Agravate monsters   } */
-  boolean fire_resist;          /* { Resistance to fire  } */
-  boolean cold_resist;          /* { Resistance to cold  } */
-  boolean acid_resist;          /* { Resistance to acid  } */
-  boolean hunger_item;          /* { Resets food counter } */
-  boolean regenerate;           /* { Regenerate hit pts  } */
-  boolean lght_resist;          /* { Resistance to light } */
-  boolean ffall;                /* { No damage falling   } */
-  boolean sustain[STAT_T_SIZE]; /* { keep characteristic } */
-  boolean confuse_monster;      /* { Glowing hands...    } */
+  bool see_inv;              /* { Can see invisible   } */
+  bool teleport;             /* { Random teleportation} */
+  bool free_act;             /* { Never paralyzed     } */
+  bool slow_digest;          /* { Lower food needs    } */
+  bool aggravate;            /* { Agravate monsters   } */
+  bool fire_resist;          /* { Resistance to fire  } */
+  bool cold_resist;          /* { Resistance to cold  } */
+  bool acid_resist;          /* { Resistance to acid  } */
+  bool hunger_item;          /* { Resets food counter } */
+  bool regenerate;           /* { Regenerate hit pts  } */
+  bool lght_resist;          /* { Resistance to light } */
+  bool ffall;                /* { No damage falling   } */
+  bool sustain[STAT_T_SIZE]; /* { keep characteristic } */
+  bool confuse_monster;      /* { Glowing hands...    } */
   int64_t resist_lght;          /* { Timed lighting rst  } */
   int64_t free_time;            /* { Timed free action   } */
   int64_t ring_fire;            /* { Timed fire spell    } */
@@ -66,10 +64,10 @@ typedef struct p_flags {
   int64_t temp_stealth;         /* { Timed stealth       } */
   int64_t resist_petri;         /* { Timed resist petrify} */
   int64_t blade_ring;           /* { Timed blade spell   } */
-  boolean petri_resist;         /* { Resist Petrification} */
-  boolean quested;              /* { Performing a Quest  } {FUBAR} */
-  boolean light_on;             /* { Light source is active } */
-  boolean resting_till_full;
+  bool petri_resist;         /* { Resist Petrification} */
+  bool quested;              /* { Performing a Quest  } {FUBAR} */
+  bool light_on;             /* { Light source is active } */
+  bool resting_till_full;
 } p_flags;
 
 extern p_flags player_flags;
@@ -114,22 +112,22 @@ extern int16_t player_stl;            /* { Stealth factor} */
 extern float player_expfact;          /* { Experience factor} */
 extern float player_cmana;            /* { Cur mana pts  } */
 extern char player_history[5][82];    /* ;{ History record} */
-extern boolean player_cheated;        /*{ gone into wizard or god mode} */
+extern bool player_cheated;        /*{ gone into wizard or god mode} */
 extern int64_t player_mr;             /* { mag.res.lev.delta } */
 extern uint8_t player_quests;         /* { # completed } {FUBAR} */
 extern uint16_t player_cur_quest;     /* { creature # of quest } {FUBAR} */
 extern time_t player_creation_time;   /* used as key in master file */
 extern int64_t player_claim_check;    /* used to track trading post */
 extern int64_t player_uid;            /* Used in master file */
-extern boolean player_light;          /* { Player carrying light } */
+extern bool player_light;          /* { Player carrying light } */
 
 uint16_t C_player_max_bulk(void);
 int16_t C_player_dmg_from_str(void);
 int16_t C_player_disarm_from_dex(void);
 int16_t C_player_hp_from_con(void);
-boolean C_player_knows_spell(int32_t slot);
-void C_player_set_knows_spell(int32_t slot, boolean yn);
-boolean C_player_uses_magic(enum magic_t magic_type);
+bool C_player_knows_spell(int32_t slot);
+void C_player_set_knows_spell(int32_t slot, bool yn);
+bool C_player_uses_magic(enum magic_t magic_type);
 void C_player_add_exp(long num);
 int16_t C_player_roll_hp_for_levelup(void);
 void C_player_set_extra_bulk_carry(uint16_t new_value);
@@ -147,7 +145,7 @@ void C_player_recalc_stats(void);
 int16_t C_player_get_stat(enum stat_t attr);
 void C_player_modify_lost_stat(enum stat_t attr, int16_t amount);
 void C_player_reset_lost_stat(enum stat_t attr);
-boolean C_player_has_lost_stat(enum stat_t attr);
+bool C_player_has_lost_stat(enum stat_t attr);
 int16_t C_player_mod_from_stat(enum stat_t attr);
 int16_t C_player_tohit_from_stats(void);
 int16_t C_player_ac_from_dex(void);
@@ -156,9 +154,9 @@ float C_player_cost_modifier_from_charisma(void);
 void C_player_mod_stat(enum stat_t attr, int16_t modifier);
 void C_player_mod_perm_stat(enum stat_t attr, int16_t modifier);
 
-void search_off();
-void search_on();
-void rest_off();
+void search_off(void);
+void search_on(void);
+void rest_off(void);
 void take_hit(long damage, char hit_from[82]);
 void regenmana(float percent);
 
@@ -176,19 +174,17 @@ void change_speed(long num);
       { When an item is worn or taken off, this re-adjusts the player }
       { bonuses.  Factor=1 : wear; Factor=-1 : removed                }
 */
-void py_bonuses(treasure_type *tobj, long factor);
+void py_bonuses(const treasure_type *tobj, long factor);
 
 /**
  * @return True if player has no light
  */
-boolean player_has_no_light();
+bool player_has_no_light(void);
 
 void change_rep(long amt);
 
-boolean player_test_hit(long bth, long level, long pth, long ac,
-                        boolean was_fired);
+bool player_test_hit(long base_to_hit, long level, long plus_to_hit, long enemy_ac,
+                        bool was_fired);
 
-long tot_dam(treasure_type *item, long tdam, monster_template const *monster);
-void py_bonuses(treasure_type *tobj, long factor);
-
-#endif /* PLAYER_H */
+long tot_dam(const treasure_type *item, long tdam, monster_template const *monster);
+void py_bonuses(const treasure_type *tobj, long factor);

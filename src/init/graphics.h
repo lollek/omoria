@@ -1,5 +1,4 @@
-#ifndef INIT_GRAPHICS_H
-#define INIT_GRAPHICS_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -10,5 +9,3 @@
  * Will print information to stderr on failure
  */
 bool init__graphics(void);
-
-#endif /* INIT_GRAPHICS_H */

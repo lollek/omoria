@@ -1,6 +1,5 @@
 use libc;
 
-use std::mem;
 use std::ptr;
 
 use crate::inventory;
@@ -17,7 +16,7 @@ pub fn record() -> Vec<InventoryItem> {
 
 pub fn set_record(record: Vec<InventoryItem>) {
     fn mallocfn() -> *mut InventoryItem {
-        unsafe { libc::malloc(mem::size_of::<InventoryItem>()) as *mut InventoryItem }
+        unsafe { libc::malloc(size_of::<InventoryItem>()) as *mut InventoryItem }
     }
 
     let size = record.len();

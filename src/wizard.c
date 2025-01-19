@@ -6,23 +6,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
 #include "constants.h"
 #include "creature.h"
 #include "debug.h"
 #include "desc.h"
 #include "files.h"
 #include "generate_monster.h"
-#include "magic.h"
+#include "io.h"
 #include "misc.h"
-#include "monsters.h"
 #include "pascal.h"
 #include "player.h"
 #include "player_action.h"
-#include "random.h"
 #include "screen.h"
 #include "spells.h"
 #include "stores.h"
@@ -30,18 +26,17 @@
 #include "types.h"
 #include "variables.h"
 
-#define LOW_NUM -98765432
+#define LOW_NUM (-98765432)
 
 #define LOW_PASSWORD "fragrance"
 #define HIGH_PASSWORD "mopwillow"
 
 #define PB(x, y, z) put_buffer((x), (y), (z))
 
-static boolean became_wizard = false;
+static bool became_wizard = false;
 
-void game_version() {
+void game_version(void) {
   /*{ Print Moria credits					-RAK-	}*/
-
   /* why is this in the wizard code? */
 
   char tmp_str[82];
@@ -103,12 +98,10 @@ void game_version() {
 }
 #undef PB
 
-boolean check_pswd(char passwd[134], boolean present) {
-  long i1;
-  char x;
+bool check_pswd(char passwd[134], const bool present) {
   char tpw[134]; /*  : packed array [1..12] of char;*/
   /* account_type   account; */
-  boolean checked_out = false;
+  bool checked_out = false;
 
   /* perhaps crpyt() should be used?? */
   ENTER(("check_pswd", ""));
@@ -116,7 +109,8 @@ boolean check_pswd(char passwd[134], boolean present) {
   if (present) {
     strcpy(tpw, passwd);
   } else {
-    i1 = 0;
+    char x;
+    int64_t i1 = 0;
     prt("Password : ", 1, 1);
     do {
       x = inkey();
@@ -128,14 +122,14 @@ boolean check_pswd(char passwd[134], boolean present) {
         tpw[i1++] = x;
         break;
       }
-    } while (!((i1 == 12) || (x == 13) || (x == 10)));
+    } while (!(i1 == 12 || x == 13 || x == 10));
 
     tpw[i1] = 0;
   }
 
   MSG(("Login attempt: %s", tpw));
   /* lesser op password */
-  if (!(strcmp(tpw, LOW_PASSWORD))) {
+  if (!strcmp(tpw, LOW_PASSWORD)) {
     checked_out = true;
     wizard1 = true;
     /* full op password */
@@ -158,12 +152,11 @@ boolean check_pswd(char passwd[134], boolean present) {
   return checked_out;
 }
 
-void wizard_light() {
+void wizard_light(void) {
   /*{ Light up the dungeon					-RAK-
    * }*/
 
-  long i1, i2, i3, i4;
-  boolean flag;
+  bool flag;
 
   if (cave[char_row][char_col].pl) {
     flag = false;
@@ -171,13 +164,13 @@ void wizard_light() {
     flag = true;
   }
 
-  for (i1 = 0; i1 < cur_height; i1++) {
-    for (i2 = 0; i2 < cur_width; i2++) {
+  for (int64_t i1 = 0; i1 < cur_height; i1++) {
+    for (int64_t i2 = 0; i2 < cur_width; i2++) {
       if (is_in(cave[i1][i2].fval, floor_set)) {
-        for (i3 = i1 - 1; i3 <= i1 + 1; i3++) {
-          for (i4 = i2 - 1; i4 <= i2 + 1; i4++) {
+        for (int64_t i3 = i1 - 1; i3 <= i1 + 1; i3++) {
+          for (int64_t i4 = i2 - 1; i4 <= i2 + 1; i4++) {
             cave[i3][i4].pl = flag;
-            if (!(flag)) {
+            if (!flag) {
               cave[i3][i4].fm = false;
             }
           }
@@ -191,7 +184,7 @@ void wizard_light() {
   detect_sdoor();
 }
 
-void enter_wizard_mode(boolean ask_for_pass) {
+void enter_wizard_mode(const bool ask_for_pass) {
   if (wizard1) {
     msg_print("Wizard mode off.");
     wizard1 = false;
@@ -214,21 +207,20 @@ void enter_wizard_mode(boolean ask_for_pass) {
   }
 }
 
-void esf__display_commands() {
+void esf__display_commands(void) {
   prt("You may:", 21, 1);
   prt(" d) Delete an entry.              b) Browse to next page.", 22, 1);
   prt(" c) Change an entry.", 23, 1);
   prt(" q) Quit and save changes       Esc) Exit without saving.", 24, 1);
 }
 
-void esf__display_list(int start, char list[][134], int n1, int *blegga,
+void esf__display_list(int start, char list[][134], const int n1, int *blegga,
                        int *cur_display_size) {
-  long count, old_display_size;
+  int count;
+  int64_t old_display_size = *cur_display_size;
   char out_val[134];
 
-  old_display_size = *cur_display_size;
-
-  for (count = 0; (start <= n1) && (count < 15); start++) {
+  for (count = 0; start <= n1 && count < 15; start++) {
     count++;
 
     sprintf(out_val, "%c)%s", (char)(96 + count), list[start]);
@@ -239,7 +231,7 @@ void esf__display_list(int start, char list[][134], int n1, int *blegga,
   }
 
   *cur_display_size = count;
-  for (; (old_display_size > *cur_display_size); old_display_size--) {
+  for (; old_display_size > *cur_display_size; old_display_size--) {
     erase_line(old_display_size + 3, 1);
   }
 
@@ -250,7 +242,7 @@ void esf__display_list(int start, char list[][134], int n1, int *blegga,
   }
 }
 
-void esf__display_screen(int cur_top, char list[][134], int n1, int *blegga,
+void esf__display_screen(const int cur_top, char list[][134], const int n1, int *blegga,
                          int *cur_display_size) {
   C_clear_screen();
   *cur_display_size = 0;
@@ -264,19 +256,21 @@ void esf__display_screen(int cur_top, char list[][134], int n1, int *blegga,
   esf__display_commands();
 }
 
-boolean esf__get_list_entry(int *l_command, char pmt[82], int cur_top, int i1,
-                            int i2) {
+bool esf__get_list_entry(int *l_command, char pmt[82], const int cur_top,
+                            const int i1,
+                            const int i2) {
   char out_val[82];
-  boolean flag = true;
+  bool flag = true;
 
   *l_command = 0;
 
   sprintf(out_val, "(Entries %c-%c, Esc to exit) %s", (char)(i1 + 96),
           (char)(i2 + 96), pmt);
 
-  for (; (((*l_command < i1) || (*l_command > i2)) && (flag));) {
+  while ((*l_command < i1 || *l_command > i2) && flag) {
     prt(out_val, 1, 1);
-    *l_command = inkey();
+    const unsigned char l_command_inkey = inkey();
+    *l_command = l_command_inkey;
 
     switch (*l_command) {
     case 3:
@@ -286,7 +280,7 @@ boolean esf__get_list_entry(int *l_command, char pmt[82], int cur_top, int i1,
       flag = false;
       break;
     default:
-      (*l_command) += (cur_top - 97);
+      *l_command += cur_top - 97;
       break;
     }
   }
@@ -295,15 +289,15 @@ boolean esf__get_list_entry(int *l_command, char pmt[82], int cur_top, int i1,
   return flag;
 }
 
-void esf__delete_entry(int cur_top, char list[][134], int *n1,
-                       int cur_display_size) {
-  int which, i1;
+void esf__delete_entry(const int cur_top, char list[][134], int *n1,
+                       const int cur_display_size) {
+  int which;
 
   if (cur_display_size > 0) {
     if (esf__get_list_entry(&which, " Delete which one?", cur_top, 1,
                             cur_top + cur_display_size - 1)) {
 
-      for (i1 = which; i1 < *n1; i1++) {
+      for (int i1 = which; i1 < *n1; i1++) {
         strcpy(list[i1], list[i1 + 1]);
       }
       (*n1)--;
@@ -312,8 +306,8 @@ void esf__delete_entry(int cur_top, char list[][134], int *n1,
 }
 
 void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
-                        int *cur_display_size, boolean *exit_flag,
-                        boolean *want_save) {
+                        int *cur_display_size, bool *exit_flag,
+                        bool *want_save) {
   char command;
 
   if (get_com("", &command)) {
@@ -353,20 +347,19 @@ void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
   }
 }
 
-boolean cc__input_field(char prompt[134], long *num, long min, long max,
-                        boolean *ok) {
+bool cc__input_field(char prompt[134], int64_t *num, const int64_t min,
+                        const int64_t max,
+                        bool *ok) {
   char out_val[134];
-  long len;
-  boolean return_value = false;
+  bool return_value = false;
 
   sprintf(out_val, "Current = %ld, %s", *num, prompt);
-  len = strlen(out_val);
+  int64_t len = strlen(out_val);
   prt(out_val, 1, 1);
 
   if (get_string(out_val, 1, len + 1, 10)) {
-    len = -999;
-    sscanf(out_val, "%ld", &len);
-    if ((len >= min) && (len <= max)) {
+    len = strtol(out_val, NULL, 10);
+    if (min <= len && len <= max) {
       *ok = true;
       *num = len;
     } else {
@@ -378,17 +371,15 @@ boolean cc__input_field(char prompt[134], long *num, long min, long max,
   return return_value;
 }
 
-void change_character() {
+void change_character(void) {
   /*{ Wizard routine for gaining on stats                   -RAK-   }*/
 
-  long tmp_val;
-  char tmp_str[82];
-  enum stat_t tstat;
-  boolean flag = false;
-  boolean abort = false;
+  bool flag = false;
+  bool abort = false;
 
   /* with py.stat do; */
-  for (tstat = STR; (tstat <= CHR) && !abort; tstat++) {
+  for (enum stat_t tstat = STR; tstat <= CHR && !abort; tstat++) {
+    char tmp_str[82];
     switch (tstat) {
     case STR:
       prt("(0 - 250) Strength     = ", 1, 1);
@@ -415,19 +406,16 @@ void change_character() {
     }
 
     if (!abort) {
-      tmp_val = -999;
-      sscanf(tmp_str, "%ld", &tmp_val);
-      if (tmp_val != -999) {
-        C_player_mod_perm_stat((int16_t)tstat, tmp_val);
-        C_player_recalc_stats();
-        prt_stat_block();
-      }
+      const int64_t tmp_val = strtol(tmp_str, NULL, 10);
+      C_player_mod_perm_stat(tstat, tmp_val);
+      C_player_recalc_stats();
+      prt_stat_block();
     }
   }
 
   /* with player_do; */
   if (!abort) {
-    tmp_val = 0;
+    int64_t tmp_val = 0;
     if (cc__input_field("(1-32767) Hit points = ", &tmp_val, 1, 32767, &flag)) {
       if (flag) {
         C_player_modify_max_hp(tmp_val);
@@ -439,7 +427,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_mana;
+    int64_t tmp_val = player_mana;
     if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0, 32767, &flag)) {
       if (flag) {
         player_mana = tmp_val;
@@ -452,7 +440,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = 0;
+    int64_t tmp_val = 0;
     if (cc__input_field("(0-200) Searching = ", &tmp_val, 0, 200, &flag)) {
       C_player_mod_search_skill(tmp_val);
     } else {
@@ -461,7 +449,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_stl;
+    int64_t tmp_val = player_stl;
     if (cc__input_field("(0-10) Stealth = ", &tmp_val, 0, 10, &flag)) {
       player_stl = tmp_val;
     } else {
@@ -470,7 +458,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_disarm;
+    int64_t tmp_val = player_disarm;
     if (cc__input_field("(0-200) Disarming = ", &tmp_val, 0, 200, &flag)) {
       player_disarm = tmp_val;
     } else {
@@ -479,7 +467,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_save;
+    int64_t tmp_val = player_save;
     if (cc__input_field("(0-100) Save = ", &tmp_val, 0, 100, &flag)) {
       player_save = tmp_val;
     } else {
@@ -488,7 +476,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_bth;
+    int64_t tmp_val = player_bth;
     if (cc__input_field("(0-200) Base to hit = ", &tmp_val, 0, 200, &flag)) {
       player_bth = tmp_val;
     } else {
@@ -497,7 +485,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_bthb;
+    int64_t tmp_val = player_bthb;
     if (cc__input_field("(0-200) Bows/Throwing = ", &tmp_val, 0, 200, &flag)) {
       player_bthb = tmp_val;
     } else {
@@ -506,7 +494,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = player_money[TOTAL_];
+    int64_t tmp_val = player_money[TOTAL_];
     if (cc__input_field("Player Gold = ", &tmp_val, 0, 100000000, &flag)) {
       if (flag) {
         tmp_val = (tmp_val - player_money[TOTAL_]) * GOLD_VALUE;
@@ -530,7 +518,7 @@ void change_character() {
   }
 
   if (!abort) {
-    tmp_val = inven_weight;
+    int64_t tmp_val = inven_weight;
     if (cc__input_field("Current Weight (100/unit weight) = ", &tmp_val, 0,
                         900000, &flag)) {
       inven_weight = tmp_val;
@@ -542,18 +530,17 @@ void change_character() {
   py_bonuses(&blank_treasure, 0);
 }
 
-void wizard_create() {
+void wizard_create(void) {
   /*{ Wizard routine for creating objects                   -RAK-   }*/
 
-  long tmp_val;
+  int64_t tmp_val;
   char tmp_str[82];
-  boolean flag;
+  bool flag;
 
   msg_print("Warning: This routine can cause fatal error.");
   msg_print(" ");
   msg_flag = false;
 
-  /* with inven_temp->data do; */
   prt("Name   : ", 1, 1);
   if (get_string(tmp_str, 1, 10, 40)) {
     strcpy(inven_temp.data.name, tmp_str);
@@ -564,8 +551,7 @@ void wizard_create() {
   do {
     prt("Tval   : ", 1, 1);
     get_string(tmp_str, 1, 10, 10);
-    tmp_val = 0;
-    sscanf(tmp_str, "%ld", &tmp_val);
+    tmp_val = strtoll(tmp_str, NULL, 10);
     flag = true;
 
   } while (!flag);
@@ -580,56 +566,47 @@ void wizard_create() {
 
   prt("P1     : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.p1 = tmp_val;
 
   prt("Cost : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.cost = tmp_val;
 
   prt("Subval : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 1;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.subval = tmp_val;
 
   prt("Weight : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 1;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.weight = tmp_val;
 
   prt("Number : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 1;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.number = tmp_val;
 
   prt("+To hit: ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.tohit = tmp_val;
 
   prt("+To dam: ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.todam = tmp_val;
 
   prt("AC     : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.ac = tmp_val;
 
   prt("+To AC : ", 1, 1);
   get_string(tmp_str, 1, 10, 10);
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.toac = tmp_val;
 
   prt("Damage : ", 1, 1);
@@ -638,14 +615,15 @@ void wizard_create() {
 
   prt("Level  : ", 1, 1);         /* added code to specify item's */
   get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
-  tmp_val = 0;
-  sscanf(tmp_str, "%ld", &tmp_val);
+  tmp_val = strtoll(tmp_str, NULL, 10);
   if (tmp_val < 0)
     tmp_val = 0;
   inven_temp.data.level = tmp_val;
 
   if (get_yes_no("Allocate?")) {
-    popt(&tmp_val);
+    long tmp_popt;
+    popt(&tmp_popt);
+    tmp_val = tmp_popt;
     t_list[tmp_val] = inven_temp.data;
     /* with cave[char_row][char_col]. do; */
     if (cave[char_row][char_col].tptr > 0) {
@@ -662,7 +640,7 @@ void wizard_create() {
   creatures(false);
 }
 
-void wizard_help() {
+void wizard_help(void) {
   /*{ Help for available wizard commands                            }*/
 
   C_clear_screen();
@@ -694,7 +672,7 @@ void wizard_command(void) {
   char tmp_str[82];
   enum stat_t tstat;
   treas_rec *trash_ptr;
-  long y, x;
+  int64_t y, x;
 
   prt("Wizard command: ", 1, 1);
   switch (inkey()) {
@@ -703,17 +681,17 @@ void wizard_command(void) {
     player_cmana = player_mana;
     prt_stat_block();
     remove_curse();
-    cure_me(&((player_flags).blind));
-    cure_me(&((player_flags).hoarse));
-    cure_me(&((player_flags).afraid));
-    cure_me(&((player_flags).poisoned));
-    cure_me(&((player_flags).confused));
+    cure_me(&player_flags.blind);
+    cure_me(&player_flags.hoarse);
+    cure_me(&player_flags.afraid);
+    cure_me(&player_flags.poisoned);
+    cure_me(&player_flags.confused);
     for (tstat = STR; tstat <= CHR; tstat++)
       restore_stat(tstat, "");
-    if ((player_flags).slow > 1)
-      (player_flags).slow = 1;
-    if ((player_flags).image > 1)
-      (player_flags).image = 1;
+    if (player_flags.slow > 1)
+      player_flags.slow = 1;
+    if (player_flags.image > 1)
+      player_flags.image = 1;
     break;
   case 'b':
     print_objects();
@@ -722,8 +700,7 @@ void wizard_command(void) {
   case 'd': /* Change dungeon level */
     prt("Go to which level (0 -1200) ? ", 1, 1);
     if (get_string(tmp_str, 1, 31, 10)) {
-      long i1 = -1;
-      sscanf(tmp_str, "%ld", &i1);
+      const int64_t i1 = strtoll(tmp_str, NULL, 10);
       if (i1 > -1 || !strcmp(tmp_str, "*")) {
         dun_level = i1;
         if (dun_level > 1200) {
@@ -752,7 +729,7 @@ void wizard_command(void) {
   case 'i':
     msg_print("Poof!  Your items are all identifed!!!");
     for (trash_ptr = inventory_list; trash_ptr != NULL;) {
-      identify(&(trash_ptr->data));
+      identify(&trash_ptr->data);
       known2(trash_ptr->data.name);
       trash_ptr = trash_ptr->next;
     }

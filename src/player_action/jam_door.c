@@ -1,22 +1,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../io.h"
 #include "../types.h"
-#include "../player.h"
 #include "../variables.h"
 #include "../misc.h"
 #include "../inven.h"
 #include "../screen.h"
 
-void player_action_jam_door() {
+void player_action_jam_door(void) {
 
   treas_rec *i1;
   long y = char_row;
   long x = char_col;
   long i2;
   long tmp;
-  char m_name[82];
-  obj_set pick_a_spike = {spike, 0};
+  const obj_set pick_a_spike = {spike, 0};
 
   if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x)) {
     return;
@@ -42,6 +41,7 @@ void player_action_jam_door() {
         msg_print("But you have no spikes...");
       }
     } else {
+      char m_name[82];
       find_monster_name(m_name, cave[y][x].cptr, true);
       strcat(m_name, " is in your way!");
       msg_print(m_name);

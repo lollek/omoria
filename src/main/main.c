@@ -11,18 +11,15 @@
 
 #include "../pregame/main.h"
 
-#include "../configure.h"
-#include "../death.h"
 #include "../debug.h"
+#include "../io.h"
 #include "../kickout.h"
 #include "../player.h"
-#include "../save.h"
-#include "../stores.h"
 #include "../variables.h"
 
 #include "main_loop.h"
 
-int main(int argc, char *argv[]) {
+int main(const int argc, char *argv[]) {
 
   // Initialization
   game_state = GS_LOADING;

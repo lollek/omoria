@@ -7,7 +7,7 @@
 
 #include "argv.h"
 
-static void print_arg_usage() {
+static void print_arg_usage(void) {
   printf("\n\r"
          "Invalid Moria option!  Valid qualifiers are:\n"
          "  -w         Warn about hearing things in water.\n"
@@ -25,7 +25,7 @@ static void print_arg_usage() {
          "\n");
 }
 
-static void print_version_info() {
+static void print_version_info(void) {
   printf("\n\r"
          "Linux Omoria Version %s\n\r"
          "\n\r",
@@ -36,7 +36,7 @@ bool init__argv(int argc, char *argv[]) {
   bool print_usage = false;
 
   /* parse the command line arguments */
-  for (--argc, ++argv; (argc > 0) && (argv[0][0] == '-'); --argc, ++argv) {
+  for (--argc, ++argv; argc > 0 && argv[0][0] == '-'; --argc, ++argv) {
     switch (argv[0][1]) {
     case 'V':
       /* version info */
@@ -68,7 +68,7 @@ bool init__argv(int argc, char *argv[]) {
       if (argv[0][2] == 0) {
         check_pswd("", false);
       } else {
-        check_pswd(&(argv[0][2]), true);
+        check_pswd(&argv[0][2], true);
       }
       break;
 

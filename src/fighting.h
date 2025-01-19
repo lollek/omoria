@@ -1,6 +1,5 @@
-#ifndef FIGHTING_H
-#define FIGHTING_H
+#pragma once
 
-boolean test_hit(long bth, long level, long pth, long ac);
+#include <stdbool.h>
 
-#endif // FIGHTING_H
+bool test_hit(long bth, long level, long pth, long ac);

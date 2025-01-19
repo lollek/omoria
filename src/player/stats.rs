@@ -13,7 +13,7 @@ pub fn curr_stats() -> StatBlock {
         stats.strength += 4;
         stats.constitution += 4;
     }
-    return stats;
+    stats
 }
 
 pub fn recalc_curr_stats() {
@@ -72,7 +72,7 @@ pub fn lost_stats() -> StatBlock {
         stats.strength += 2;
         stats.constitution += 2;
     }
-    return stats;
+    stats
 }
 
 pub fn has_lost_stat(stat: Stat) -> bool {
@@ -88,5 +88,5 @@ pub fn ac_from_dex() -> i16 {
     if player::is_raging() {
         ac -= 2;
     }
-    return ac;
+    ac
 }

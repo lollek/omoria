@@ -1,12 +1,7 @@
-#ifndef FILES_H
-#define FILES_H
+#pragma once
 
-#include "boolean.h"
-
-void print_map();
-void print_objects();
-void print_monsters();
-void file_character();
+void print_map(void);
+void print_objects(void);
+void print_monsters(void);
+void file_character(void);
 char *center(char str[134], int len, char result[134]);
-
-#endif // FILES_H

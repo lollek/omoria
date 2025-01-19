@@ -1,5 +1,4 @@
-#ifndef DUNGEON_LIGHT_H
-#define DUNGEON_LIGHT_H
+#pragma once
 
 /*{ Package for moving the character's light about the screen     }*/
 /*{ Three cases : Normal, Finding, and Blind              -RAK-   }*/
@@ -8,5 +7,3 @@ void dungeon_light_move(long y1, long x1, long y2, long x2);
 
   /*{ Room is lit, make it appear                           -RAK-   }*/
 void dungeon_light_room(long y, long x);
-
-#endif // DUNGEON_LIGHT_H

@@ -6,25 +6,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#include "configure.h"
-#include "constants.h"
-#include "creature.h"
 #include "death.h"
 #include "debug.h"
-#include "magic.h"
+#include "io.h"
 #include "generate_monster.h"
 #include "misc.h"
 #include "pascal.h"
 #include "player.h"
 #include "random.h"
 #include "screen.h"
-#include "term.h"
 #include "types.h"
 #include "variables.h"
-#include "wizard.h"
 
 #include "monsters.h"
 
@@ -35,15 +29,14 @@ static float acc_exp = 0.0;       /*{ Accumulator for fractional exp} */
 /*{ BUG: Because of the range, objects can actually be placed into}*/
 /*{      areas closed off to the player, this is rarely noticable,}*/
 /*{      and never a problem to the game.                         }*/
-static void summon_object(long y, long x, long num, long typ) {
-
-  long i1, i2, i3;
+static void summon_object(const long y, const long x, long num,
+                          const long typ) {
 
   do {
-    i1 = 0;
+    long i1 = 0;
     do {
-      i2 = y - 3 + randint(5);
-      i3 = x - 3 + randint(5);
+      const long i2 = y - 3 + randint(5);
+      const long i3 = x - 3 + randint(5);
       if (in_bounds(i2, i3)) {
         if (los(y, x, i2, i3)) { /*{OOK!}*/
           /* with cave[i2][i3]. do; */
@@ -81,14 +74,14 @@ static void summon_object(long y, long x, long num, long typ) {
         }
       }
       i1++;
-    } while (!(i1 > 10));
+    } while (i1 <= 10);
     num--;
   } while (num != 0);
 }
 
-void monster_death(long y, long x, unsigned long flags) {
+void monster_death(const long y, const long x, const unsigned long flags) {
 
-  long i1 = (long)((flags & 0x03000000) / (0x01000000));
+  const long i1 = (flags & 0x03000000) / 0x01000000;
 
   if ((flags & 0x04000000) != 0) {
     if (randint(100) < 60) {
@@ -118,11 +111,9 @@ void monster_death(long y, long x, unsigned long flags) {
   }
 }
 
-long mon_take_hit(long monptr, long dam) {
+long mon_take_hit(const long monptr, const long dam) {
   /*{ (Picking on my babies...)                             -RAK-   }*/
 
-  float acc_tmp;
-  long i1 = 0;
   long return_value = 0;
 
   ENTER(("mon_take_hit", "%d, %d", monptr, dam));
@@ -131,12 +122,13 @@ long mon_take_hit(long monptr, long dam) {
   m_list[monptr].hp -= dam;
   m_list[monptr].csleep = 0;
   if (m_list[monptr].hp < 0) {
+    long i1 = 0;
 
     monster_death(m_list[monptr].fy, m_list[monptr].fx,
                   monster_templates[m_list[monptr].mptr].cmove);
 
-    if ((m_list[monptr].mptr == player_cur_quest) && ((player_flags).quested)) {
-      (player_flags).quested = false;
+    if (m_list[monptr].mptr == player_cur_quest && player_flags.quested) {
+      player_flags.quested = false;
       prt_quested();
       msg_print("*** QUEST COMPLETED ***");
       msg_print("Return to the surface and report to the "
@@ -145,14 +137,14 @@ long mon_take_hit(long monptr, long dam) {
 
     /* with monster_templates[m_list[monptr].mptr]. do; */
     /* with player_do; */
-    if (((monster_templates[m_list[monptr].mptr].cmove & 0x00004000) == 0) &&
-        (monster_templates[m_list[monptr].mptr].mexp > 0)) {
+    if ((monster_templates[m_list[monptr].mptr].cmove & 0x00004000) == 0 &&
+        monster_templates[m_list[monptr].mptr].mexp > 0) {
 
-      acc_tmp =
-          (monster_templates[m_list[monptr].mptr].mexp *
-           ((monster_templates[m_list[monptr].mptr].level + 0.1) / (float)player_lev));
-      i1 = (long)(acc_tmp);
-      acc_exp += (acc_tmp - i1);
+      const float acc_tmp = monster_templates[m_list[monptr].mptr].mexp *
+                      ((monster_templates[m_list[monptr].mptr].level + 0.1) /
+                       (float)player_lev);
+      i1 = (long)acc_tmp;
+      acc_exp += acc_tmp - i1;
       if (acc_exp > 1) {
         i1++;
         acc_exp -= 1.0;
@@ -198,16 +190,15 @@ long mon_take_hit(long monptr, long dam) {
   return return_value;
 }
 
-void delete_monster(long i2) {
-
-  long i1, i3;
+void delete_monster(const long i2) {
 
   ENTER(("delete_monster", "%d", i2));
 
-  i3 = m_list[i2].nptr;
+  const long i3 = m_list[i2].nptr;
   if (muptr == i2) {
     muptr = i3;
   } else {
+    long i1;
 
     for (i1 = muptr; m_list[i1].nptr != i2;) {
       i1 = m_list[i1].nptr;
@@ -219,8 +210,8 @@ void delete_monster(long i2) {
   cave[m_list[i2].fy][m_list[i2].fx].cptr = 0;
   if (m_list[i2].ml) {
     /* with cave[fy][fx]. do; */
-    if ((cave[m_list[i2].fy][m_list[i2].fx].pl) ||
-        (cave[m_list[i2].fy][m_list[i2].fx].tl)) {
+    if (cave[m_list[i2].fy][m_list[i2].fx].pl ||
+        cave[m_list[i2].fy][m_list[i2].fx].tl) {
       lite_spot(m_list[i2].fy, m_list[i2].fx);
     } else {
       unlite_spot(m_list[i2].fy, m_list[i2].fx);

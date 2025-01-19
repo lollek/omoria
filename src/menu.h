@@ -1,8 +1,5 @@
-#ifndef MENU_H
-#define MENU_H
+#pragma once
 
 /*	{ Chances the name of the character			-JWT- * } */
-void change_name();
-void create_character();
-
-#endif // MENU_H
+void change_name(void);
+void create_character(void);

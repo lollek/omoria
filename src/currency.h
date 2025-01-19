@@ -1,5 +1,4 @@
-#ifndef CURRENCY_H
-#define CURRENCY_H
+#pragma once
 
 #include <stdint.h>
 
@@ -10,5 +9,3 @@
  * @return value of currency 
  */
 int64_t coin_value(uint8_t currency);
-
-#endif // CURRENCY_H

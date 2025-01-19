@@ -7,7 +7,7 @@
 bool init__stores(void) {
   ENTER(("init__stores", ""));
 
-  int max_owners = MAX_OWNERS / MAX_STORES;
+  const int max_owners = MAX_OWNERS / MAX_STORES;
   for (int i = 0; i < MAX_STORES; i++) {
     stores[i].owner = MAX_STORES * (randint(max_owners) - 1) + i;
     stores[i].insult_cur = 0;

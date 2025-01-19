@@ -1,32 +1,19 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
-#include "../magic.h"
-#include "../pascal.h"
-#include "../player.h"
-#include "../term.h"
-#include "../types.h"
-#include "../variables.h"
 #include "../desc.h"
 #include "../inven.h"
+#include "../io.h"
+#include "../misc.h"
+#include "../player.h"
+#include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
-#include "../misc.h"
-#include "../random.h"
+#include "../types.h"
+#include "../variables.h"
 
-static void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
-                      long i4) {
-  boolean ident;
+static void aw__wand_effects(long effect, bool *idented, const long dir,
+                             const long i3, const long i4) {
 
-  ident = *idented;
+  bool ident = *idented;
 
   /*{ Wands							}*/
 
@@ -155,16 +142,16 @@ static void aw__wand_effects(long effect, boolean *idented, long dir, long i3,
   *idented = ident;
 }
 
-void player_action_aim_wand() {
+void player_action_aim_wand(void) {
   unsigned long i1;
-  long i3, i4, chance, i5;
+  long i3;
   long dir;
   treas_rec *i2;
   treas_rec *item_ptr;
   long dumy, y_dumy, x_dumy;
   char trash_char;
-  boolean redraw, ident;
-  obj_set give_me_a_wand = {wand, 0};
+  bool redraw, ident;
+  const obj_set give_me_a_wand = {wand, 0};
 
   redraw = false;
   reset_flag = true;
@@ -192,8 +179,8 @@ void player_action_aim_wand() {
           ident = false;
 
           /* with player_do; */
-          chance = player_save + player_lev + C_player_mod_from_stat(INT) -
-                   item_ptr->data.level;
+          long chance = player_save + player_lev + C_player_mod_from_stat(INT) -
+                        item_ptr->data.level;
 
           if (player_flags.confused > 0) {
             chance /= 2;
@@ -207,18 +194,18 @@ void player_action_aim_wand() {
                       "the wand properly.");
           } else if (item_ptr->data.p1 > 0) {
             item_ptr->data.p1--;
-            for (; i1 > 0;) {
-              i5 = bit_pos(&i1) + 1;
+            while (i1 > 0) {
+              const long i5 = bit_pos(&i1) + 1;
               i3 = char_row;
-              i4 = char_col;
+              const long i4 = char_col;
               aw__wand_effects(i5, &ident, dir, i3, i4);
             }
             if (ident) {
-              identify(&(item_ptr->data));
+              identify(&item_ptr->data);
             }
             if (item_ptr->data.flags != 0) {
               /* with player_do; */
-              C_player_add_exp((item_ptr->data.level / (float)player_lev) + .5);
+              C_player_add_exp(item_ptr->data.level / (float)player_lev + .5);
               prt_stat_block();
             }
 

@@ -1,10 +1,11 @@
 #include <string.h>
 
+#include "../io.h"
 #include "../player.h"
 #include "../screen.h"
 #include "../variables.h"
 
-void player_action_rest() {
+void player_action_rest(void) {
 
   long rest_num;
   char rest_str[82];
@@ -14,7 +15,7 @@ void player_action_rest() {
 
   if (!strcmp(rest_str, "*")) {
     rest_num = 20;
-    (player_flags).resting_till_full = true;
+    player_flags.resting_till_full = true;
   } else {
     rest_num = 0;
     sscanf(rest_str, "%ld", &rest_num);

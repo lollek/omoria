@@ -38,38 +38,38 @@ pub fn init_curses() {
 
     window.clear();
     window.refresh();
-    STDSCR.with(|stdscr| stdscr.replace(Some(window)));
+    STDSCR.replace(Some(window));
 
     pancurses::start_color();
     pancurses::init_pair(
-        pancurses::COLOR_RED,
-        pancurses::COLOR_RED,
-        pancurses::COLOR_BLACK,
+        COLOR_RED,
+        COLOR_RED,
+        COLOR_BLACK,
     );
     pancurses::init_pair(
-        pancurses::COLOR_GREEN,
-        pancurses::COLOR_GREEN,
-        pancurses::COLOR_BLACK,
+        COLOR_GREEN,
+        COLOR_GREEN,
+        COLOR_BLACK,
     );
     pancurses::init_pair(
-        pancurses::COLOR_YELLOW,
-        pancurses::COLOR_YELLOW,
-        pancurses::COLOR_BLACK,
+        COLOR_YELLOW,
+        COLOR_YELLOW,
+        COLOR_BLACK,
     );
     pancurses::init_pair(
-        pancurses::COLOR_BLUE,
-        pancurses::COLOR_BLUE,
-        pancurses::COLOR_BLACK,
+        COLOR_BLUE,
+        COLOR_BLUE,
+        COLOR_BLACK,
     );
     pancurses::init_pair(
-        pancurses::COLOR_MAGENTA,
-        pancurses::COLOR_MAGENTA,
-        pancurses::COLOR_BLACK,
+        COLOR_MAGENTA,
+        COLOR_MAGENTA,
+        COLOR_BLACK,
     );
     pancurses::init_pair(
-        pancurses::COLOR_CYAN,
-        pancurses::COLOR_CYAN,
-        pancurses::COLOR_BLACK,
+        COLOR_CYAN,
+        COLOR_CYAN,
+        COLOR_BLACK,
     );
 
     pancurses::cbreak();

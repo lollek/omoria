@@ -1,5 +1,4 @@
-#ifndef CONFIGURE_H
-#define CONFIGURE_H
+#pragma once
 
 // Where savegames are put
 #define SAVE_FILE_PATH "save"
@@ -45,6 +44,3 @@
  * with a curses that it does not currently work with please let me know!
  */
 #define USE_CURSES_ATTRS 1
-
-/* END FILE  configure.h */
-#endif /* CONFIGURE_H */

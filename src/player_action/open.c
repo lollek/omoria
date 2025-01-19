@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../io.h"
 #include "../misc.h"
 #include "../monsters.h"
 #include "../player.h"
@@ -10,11 +11,9 @@
 #include "../variables.h"
 
 
-void player_action_open() {
+void player_action_open(void) {
 
-  long y, x, tmp, temp_dun_level;
-  boolean flag;
-  char *tmpc;
+  long y, x, tmp;
 
   y = char_row;
   x = char_col;
@@ -35,7 +34,7 @@ void player_action_open() {
             msg_print("You are too "
                       "confused to pick "
                       "the lock.");
-          } else if ((tmp - t_list[cave[y][x].tptr].p1) > randint(100)) {
+          } else if (tmp - t_list[cave[y][x].tptr].p1 > randint(100)) {
             msg_print("You have picked the "
                       "lock.");
             C_player_add_exp(1);
@@ -63,13 +62,13 @@ void player_action_open() {
               C_player_mod_from_stat(INT);
 
         /* with t_list[tptr] do; */
-        flag = false;
+        bool flag = false;
         if ((0x00000001 & t_list[cave[y][x].tptr].flags) != 0) { /* locked? */
           if (player_flags.confused > 0) {
             msg_print("You are too "
                       "confused to pick "
                       "the lock.");
-          } else if ((tmp - (2 * t_list[cave[y][x].tptr].level)) >
+          } else if (tmp - 2 * t_list[cave[y][x].tptr].level >
                      randint(100)) {
             msg_print("You have picked the "
                       "lock.");
@@ -86,7 +85,7 @@ void player_action_open() {
 
         if (flag) {
           t_list[cave[y][x].tptr].flags &= 0xFFFFFFFE; /* unlock */
-          tmpc = strstr(t_list[cave[y][x].tptr].name, " (");
+          char *tmpc = strstr(t_list[cave[y][x].tptr].name, " (");
           if (tmpc != NULL) {
             *tmpc = 0;
           }
@@ -139,7 +138,7 @@ void player_action_open() {
            * change dun_level for the duration
            * of the chest's call to
            * monster_death().  2/16/00 JEB */
-          temp_dun_level = dun_level;
+          const long temp_dun_level = dun_level;
           dun_level = t_list[cave[y][x].tptr].p1;
           monster_death(y, x, t_list[cave[y][x].tptr].flags);
           dun_level = temp_dun_level;

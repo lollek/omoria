@@ -61,8 +61,8 @@ fn save_treasure() -> Vec<TreasureAndCoordinate> {
             if tile.tptr > 0 {
                 vec.push(TreasureAndCoordinate {
                     treasure: unsafe { t_list[tile.tptr as usize] }.to_owned(),
-                    y: y,
-                    x: x,
+                    y,
+                    x,
                 });
             }
         }

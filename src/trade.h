@@ -1,7 +1,4 @@
-#ifndef TRADE_H
-#define TRADE_H
+#pragma once
 /* routines to handle the trading post */
 
-void enter_trading_post();
-
-#endif /* TRADE_H */
+void enter_trading_post(void);

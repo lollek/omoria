@@ -1,7 +1,4 @@
-#ifndef GENERATE_H
-#define GENERATE_H
-
-#include "../boolean.h"
+#pragma once
 
 #define RIVER_SIZE_Y 10
 #define RIVER_SIZE_X 31
@@ -21,7 +18,7 @@ typedef struct river_deal {
 
 typedef struct s_l_type {
   coords loc;        // cross-ref back to river_deal
-  boolean is_active; // is still an unresolved river source
+  bool is_active; // is still an unresolved river source
 } s_l_type;
 
 typedef struct river_args {
@@ -34,5 +31,3 @@ typedef struct river_args {
   coords river_mouth;
 
 } river_args;
-
-#endif /* GENERATE_H */

@@ -52,10 +52,10 @@ pub(super) fn generate_player_stats() {
         player::player_stl = data::race::stealth_mod(&race) as i16;
         player::player_save = data::race::save_mod(&race) as i16;
         player::player_lev = 1;
-        player::player_ptodam = player::dmg_from_str() as i16;
-        player::player_ptohit = player::tohit_from_stats() as i16;
+        player::player_ptodam = player::dmg_from_str();
+        player::player_ptohit = player::tohit_from_stats();
         player::player_ptoac = 0;
-        player::player_pac = player::ac_from_dex() as i16;
+        player::player_pac = player::ac_from_dex();
         player::player_expfact = data::race::expfactor(&race);
     }
     player::set_infravision(data::race::infravision(&race) as i64);
@@ -149,9 +149,9 @@ pub(super) fn regenerate_player_ahw() {
 
     let mut player_age: GameTime = GameTime::new();
     player_age.year = unsafe { player::player_age } as i64 + player_birthdate.year;
-    player_age.month = player_birthdate.month as u8;
-    player_age.day = (player_birthdate.day + 1) as u8;
-    player_age.hour = 7 as u8;
+    player_age.month = player_birthdate.month;
+    player_age.day = player_birthdate.day + 1;
+    player_age.hour = 7u8;
     player_age.secs = (300 + random::randint(99)) as u16;
     player::set_age(player_age);
 

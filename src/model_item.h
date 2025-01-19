@@ -1,10 +1,7 @@
-#ifndef MODEL_ITEM_H
-#define MODEL_ITEM_H
+#pragma once
 
 #include <curses.h>
 
 #include "types.h"
 
 chtype C_item_get_tchar(const treasure_type *item);
-
-#endif // MODEL_ITEM_H

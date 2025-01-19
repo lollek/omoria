@@ -1,28 +1,17 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
-#include "../configure.h"
 #include "../constants.h"
-#include "../debug.h"
+#include "../io.h"
 #include "../magic.h"
-#include "../pascal.h"
+#include "../misc.h"
 #include "../player.h"
-#include "../term.h"
+#include "../random.h"
+#include "../spells.h"
 #include "../types.h"
 #include "../variables.h"
 #include "../wizard.h"
-#include "../spells.h"
-#include "../misc.h"
-#include "../random.h"
 
-void song_spell_effects(long effect) {
+void song_spell_effects(const long effect) {
   /*{ Songs....					}*/
-  long i2, i3, dir;
+  long i2, dir;
   long dumy, y_dumy, x_dumy;
 
   y_dumy = char_row;
@@ -66,7 +55,7 @@ void song_spell_effects(long effect) {
     break;
 
   case 9: /*{ Battle Dance }*/
-    player_flags.hero += (randint(10) + 5);
+    player_flags.hero += randint(10) + 5;
     bless(randint(20) + 20);
     break;
 
@@ -83,7 +72,7 @@ void song_spell_effects(long effect) {
     break;
 
   case 13: /*{ Cure Poison }*/
-    cure_me(&(player_flags.poisoned));
+    cure_me(&player_flags.poisoned);
     break;
 
   case 14: /*{ Invisibility }*/
@@ -150,9 +139,9 @@ void song_spell_effects(long effect) {
 
   case 28: /*{ Protection from Nature }*/
     /* with player_flags do; */
-    (player_flags).resist_heat += randint(15) + 10;
-    (player_flags).resist_cold += randint(15) + 10;
-    (player_flags).resist_lght += randint(15) + 10;
+    player_flags.resist_heat += randint(15) + 10;
+    player_flags.resist_cold += randint(15) + 10;
+    player_flags.resist_lght += randint(15) + 10;
     break;
 
   case 29: /*{ See Invisible }*/
@@ -183,8 +172,8 @@ void song_spell_effects(long effect) {
 
   case 34: /*{ Resist Charm }*/
     /* with player_flags do; */
-    (player_flags).free_time += randint(10) + player_lev;
-    (player_flags).magic_prot += randint(10) + player_lev;
+    player_flags.free_time += randint(10) + player_lev;
+    player_flags.magic_prot += randint(10) + player_lev;
     break;
 
   case 35: /*{ Item Lore }*/
@@ -192,7 +181,7 @@ void song_spell_effects(long effect) {
     break;
 
   case 36: /*{ Song of Protection }*/
-    player_flags.protmon = (randint(20) + player_lev);
+    player_flags.protmon = randint(20) + player_lev;
     protect_evil();
     bless(randint(24) + 24);
     break;
@@ -212,8 +201,8 @@ void song_spell_effects(long effect) {
   case 39: /*{ Clairvoyance }*/
     redraw = true;
     wizard_light();
-    for (i2 = (char_col + 1); i2 <= (char_col - 1); i2++) {
-      for (i3 = (char_row + 1); i3 <= (char_row - 1); i3++) {
+    for (i2 = char_col + 1; i2 <= char_col - 1; i2++) {
+      for (long i3 = char_row + 1; i3 <= char_row - 1; i3++) {
         if (test_light(i3, i2)) {
           redraw = false;
         }
@@ -226,7 +215,7 @@ void song_spell_effects(long effect) {
 
   case 40: /*{ Song of Power }*/
     zap_area(0x0006, 4 * player_lev, SE_HP);
-    cure_me(&(player_flags.poisoned));
+    cure_me(&player_flags.poisoned);
     hp_player(300, "a spell");
     cure_me(&player_flags.blind);
     break;
