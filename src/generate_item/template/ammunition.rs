@@ -47,16 +47,15 @@ impl ItemTemplate for AmmunitionTemplate {
     }
 
     fn flags1(&self) -> u64 {
+        0
+    }
+    fn flags2(&self) -> u64 {
         match self {
             AmmunitionTemplate::Arrow => 0x10000000,
             AmmunitionTemplate::Bolt => 0x10000000,
             AmmunitionTemplate::RoundedPebble => 0,
             AmmunitionTemplate::IronShot => 0,
         }
-    }
-
-    fn flags2(&self) -> u64 {
-        0
     }
     fn p1(&self) -> i64 {
         0

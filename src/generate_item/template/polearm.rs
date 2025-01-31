@@ -65,10 +65,10 @@ impl ItemTemplate for PolearmTemplate {
         model::ItemType::PoleArm
     }
     fn flags1(&self) -> u64 {
-        0x10000000
+        0
     }
     fn flags2(&self) -> u64 {
-        0
+        0x10000000
     }
     fn p1(&self) -> i64 {
         0

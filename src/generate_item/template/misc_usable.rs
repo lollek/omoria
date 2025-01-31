@@ -63,10 +63,6 @@ impl ItemTemplate for MiscUsableTemplate {
     }
 
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             MiscUsableTemplate::FlaskOfOil => 0x00040000,
             MiscUsableTemplate::IronSpike => 0,
@@ -77,6 +73,10 @@ impl ItemTemplate for MiscUsableTemplate {
             MiscUsableTemplate::Cross => 0,
             MiscUsableTemplate::CorkedBottle => 0,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

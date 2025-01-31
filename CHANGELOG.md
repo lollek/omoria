@@ -7,6 +7,7 @@
 * Fix issue were days and seconds sometimes switched places in game logic
 * Add helm names to new UI
 * Fix bug where cloaks became a kind of bracer
+* Fix critical bug when porting items to rust. flag1 and flag2 variables were switched, causing all manners of strange bugs.
 
 ## 5-alpha521
 

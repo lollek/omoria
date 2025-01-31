@@ -45,19 +45,19 @@ impl ItemTemplate for MagicBookTemplate {
 
     fn flags1(&self) -> u64 {
         match self {
-            MagicBookTemplate::BeginnersMagic => 0x00000000,
-            MagicBookTemplate::Magic1 => 0x00000000,
-            MagicBookTemplate::Magic2 => 0x00000000,
-            MagicBookTemplate::MagesGuideToPower => 0x000001FF,
+            MagicBookTemplate::BeginnersMagic => 0x0000007F,
+            MagicBookTemplate::Magic1 => 0x0007FF80,
+            MagicBookTemplate::Magic2 => 0x7FF80000,
+            MagicBookTemplate::MagesGuideToPower => 0x00000000,
         }
     }
 
     fn flags2(&self) -> u64 {
         match self {
-            MagicBookTemplate::BeginnersMagic => 0x0000007F,
-            MagicBookTemplate::Magic1 => 0x0007FF80,
-            MagicBookTemplate::Magic2 => 0x7FF80000,
-            MagicBookTemplate::MagesGuideToPower => 0x00000000,
+            MagicBookTemplate::BeginnersMagic => 0x00000000,
+            MagicBookTemplate::Magic1 => 0x00000000,
+            MagicBookTemplate::Magic2 => 0x00000000,
+            MagicBookTemplate::MagesGuideToPower => 0x000001FF,
         }
     }
 

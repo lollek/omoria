@@ -43,19 +43,19 @@ impl ItemTemplate for SongBookTemplate {
 
     fn flags1(&self) -> u64 {
         match self {
-            SongBookTemplate::BeginnersHandbook => 0,
-            SongBookTemplate::SongBook1 => 0,
-            SongBookTemplate::SongBook2 => 0,
-            SongBookTemplate::GreaterSongBook => 0x000001FF,
+            SongBookTemplate::BeginnersHandbook => 0x000007FF,
+            SongBookTemplate::SongBook1 => 0x000FF800,
+            SongBookTemplate::SongBook2 => 0x7FF00000,
+            SongBookTemplate::GreaterSongBook => 0,
         }
     }
 
     fn flags2(&self) -> u64 {
         match self {
-            SongBookTemplate::BeginnersHandbook => 0x000007FF,
-            SongBookTemplate::SongBook1 => 0x000FF800,
-            SongBookTemplate::SongBook2 => 0x7FF00000,
-            SongBookTemplate::GreaterSongBook => 0,
+            SongBookTemplate::BeginnersHandbook => 0,
+            SongBookTemplate::SongBook1 => 0,
+            SongBookTemplate::SongBook2 => 0,
+            SongBookTemplate::GreaterSongBook => 0x000001FF,
         }
     }
 

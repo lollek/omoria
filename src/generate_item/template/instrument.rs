@@ -43,19 +43,19 @@ impl ItemTemplate for InstrumentTemplate {
 
     fn flags1(&self) -> u64 {
         match self {
-            InstrumentTemplate::PipesOfPeace => 0,
-            InstrumentTemplate::LyreOfNature => 0,
-            InstrumentTemplate::LuteOfTheWoods => 0,
-            InstrumentTemplate::HarpOfTheDruids => 0x000001FF,
+            InstrumentTemplate::PipesOfPeace => 0x000003FF,
+            InstrumentTemplate::LyreOfNature => 0x000FFC00,
+            InstrumentTemplate::LuteOfTheWoods => 0x7FF00000,
+            InstrumentTemplate::HarpOfTheDruids => 0,
         }
     }
 
     fn flags2(&self) -> u64 {
         match self {
-            InstrumentTemplate::PipesOfPeace => 0x000003FF,
-            InstrumentTemplate::LyreOfNature => 0x000FFC00,
-            InstrumentTemplate::LuteOfTheWoods => 0x7FF00000,
-            InstrumentTemplate::HarpOfTheDruids => 0,
+            InstrumentTemplate::PipesOfPeace => 0,
+            InstrumentTemplate::LyreOfNature => 0,
+            InstrumentTemplate::LuteOfTheWoods => 0,
+            InstrumentTemplate::HarpOfTheDruids => 0x000001FF,
         }
     }
 

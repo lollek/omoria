@@ -128,10 +128,6 @@ impl ItemTemplate for RingTemplate {
         model::ItemType::Ring
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             RingTemplate::RingOfGainStrength => 0x00000001,
             RingTemplate::RingOfGainDexterity => 0x00000002,
@@ -167,6 +163,10 @@ impl ItemTemplate for RingTemplate {
             RingTemplate::RingOfSlaying => 0x00000000,
             RingTemplate::RingOfGnomekind => 0x00400088,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

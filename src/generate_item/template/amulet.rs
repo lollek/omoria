@@ -68,10 +68,6 @@ impl ItemTemplate for AmuletTemplate {
         model::ItemType::Amulet
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => 0,
             AmuletTemplate::AmuletOfAdornment2 => 0,
@@ -88,6 +84,11 @@ impl ItemTemplate for AmuletTemplate {
             AmuletTemplate::MithrilNecklace => 0,
         }
     }
+
+    fn flags2(&self) -> u64 {
+        0
+    }
+
 
     fn p1(&self) -> i64 {
         match self {

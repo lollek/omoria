@@ -45,6 +45,10 @@ impl ItemTemplate for BagTemplate {
     }
 
     fn flags1(&self) -> u64 {
+        0
+    }
+
+    fn flags2(&self) -> u64 {
         match self {
             BagTemplate::BagOfHolding250 => 0x04000000,
             BagTemplate::BagOfHolding500 => 0x04000000,
@@ -52,10 +56,6 @@ impl ItemTemplate for BagTemplate {
             BagTemplate::BagOfHolding1500 => 0x04000000,
             BagTemplate::BagOfDevouring => 0x0C000000,
         }
-    }
-
-    fn flags2(&self) -> u64 {
-        0
     }
 
     fn p1(&self) -> i64 {
