@@ -3,9 +3,9 @@
 pub struct GameTime {
     pub year: i64,
     pub month: u8,
+    pub day: u8,
     pub hour: u8,
     pub secs: u16,
-    pub day: u8,
 }
 
 impl GameTime {
