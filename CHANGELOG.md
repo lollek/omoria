@@ -8,6 +8,7 @@
 * Add helm names to new UI
 * Fix bug where cloaks became a kind of bracer
 * Fix critical bug when porting items to rust. flag1 and flag2 variables were switched, causing all manners of strange bugs.
+* Changes to how rivers are created, since they caused infinite loops and segfaults. Still, unsure if the code is correct.
 
 ## 5-alpha521
 

@@ -48,6 +48,6 @@ void generate_map(void) {
     max_panel_cols = cur_width / SCREEN_WIDTH * 2 - 2;
     panel_row = max_panel_rows;
     panel_col = max_panel_cols;
-    gc__cave_gen();
+    generate_dungeon();
   }
 }

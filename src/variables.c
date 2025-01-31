@@ -48,10 +48,6 @@ unsigned char key_of[9] = /*  array [0..8] of unsigned char; */
     {6, 9, 8, 7, 4, 1, 2, 3, 5};
 unsigned char oct_of[10] = /*  array [1..9] of unsigned char; */
     {0, 5, 6, 7, 4, 8, 0, 3, 2, 1};
-signed char dx_of[10] = /*  array [1..9] of signed char; */
-    {0, -1, 0, 1, -1, 0, 1, -1, 0, 1};
-signed char dy_of[10] = /*  array [1..9] of signed char; */
-    {0, 1, 1, 1, 0, 0, 0, -1, -1, -1};
 /*	{ Bit testing array						} */
 unsigned long bit_array[33] = /*  array [1..32] of unsigned; */
     {0,          0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,

@@ -6,6 +6,21 @@
 
 #include "types.h"
 
+enum keypad_direction_t {
+  KEYPAD_DOWN_LEFT = 1,
+  KEYPAD_DOWN = 2,
+  KEYPAD_DOWN_RIGHT = 3,
+  KEYPAD_LEFT = 4,
+  KEYPAD_NONE = 5,
+  KEYPAD_RIGHT = 6,
+  KEYPAD_UP_LEFT = 7,
+  KEYPAD_UP = 8,
+  KEYPAD_UP_RIGHT = 9,
+};
+
+long y_from_keypad_direction(enum keypad_direction_t keypad_direction);
+long x_from_keypad_direction(enum keypad_direction_t keypad_direction);
+
 /* with fake bool values you cant really do a (bool1 != bool2) and expect it to work.  */
 bool xor (long thing1, long thing2);
 
@@ -72,7 +87,7 @@ void gain_level(void);
 void insert_num(const char *object_str, const char *mtc_str, long number,
                 bool show_sign);
 long critical_blow(long weight, long plus, bool cs_sharp, bool is_fired);
-bool move_dir(long dir, long *y, long *x);
+bool move_dir(enum keypad_direction_t dir, long *y, long *x);
 bool player_saves(long adjust);
 bool player_spell_saves(void);
 void find_monster_name(char m_name[82], long ptr, bool begin_sentence);
