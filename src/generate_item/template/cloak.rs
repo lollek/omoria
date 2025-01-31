@@ -41,7 +41,7 @@ impl ItemTemplate for CloakTemplate {
     }
 
     fn item_type(&self) -> model::ItemType {
-        model::ItemType::Bracers
+        model::ItemType::Cloak
     }
 
     fn flags1(&self) -> u64 {
