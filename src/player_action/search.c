@@ -1,12 +1,12 @@
 #include <math.h>
 #include <time.h>
 
-#include "../desc.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
 #include "../random.h"
+#include "../text_lines.h"
 #include "../traps.h"
 #include "../variables.h"
 

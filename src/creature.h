@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 /* Returns number of monster in list specified by virtual_name */
 long find_mon(const char *virtual_name);
 

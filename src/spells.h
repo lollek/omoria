@@ -58,7 +58,12 @@ bool genocide(void);
 bool mass_poly(void);
 bool detect_creatures(enum spell_effect_t typ);
 bool hp_player(long num, char kind[82]);
-bool cure_me(int64_t *what_flag);
+/**
+ * @what_flag:  confused, blind, poisoned, hoarse, afraid, image
+ *
+ * Return if the player had the effect
+ */
+bool cure_player_status_effect(int64_t *what_flag);
 bool earthquake(void);
 bool protect_evil(void);
 bool create_food(long t0, long t1, long t2, long t3, long t4);
@@ -75,4 +80,4 @@ bool detect_inv2(long amount);
 bool destroy_area(long y, long x);
 bool enchant(short *pluses);
 bool remove_curse(void);
-bool restore_level(void);
+bool restore_player_drained_levels(void);

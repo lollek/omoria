@@ -8,7 +8,6 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "constants.h"
-#include "desc.h"
 #include "generate_item/generate_item.h"
 #include "inven.h"
 #include "io.h"
@@ -18,6 +17,7 @@
 #include "random.h"
 #include "screen.h"
 #include "term.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 

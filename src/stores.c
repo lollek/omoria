@@ -10,7 +10,6 @@
 
 #include "constants.h"
 #include "debug.h"
-#include "desc.h"
 #include "generate_item/generate_item.h"
 #include "inven.h"
 #include "io.h"
@@ -24,6 +23,7 @@
 #include "screen.h"
 #include "stores.h"
 #include "term.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 
@@ -1330,7 +1330,6 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
 
   __print_trade_accepted();
   __store_lower_insult_level(store_type);
-  bool return_value;
   if (store_type == S_INN) {
     if (stores[store_type].store_inven[selected_item].scost < 0) {
       stores[store_type].store_inven[selected_item].scost = price * GOLD_VALUE;
@@ -1343,7 +1342,6 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
       player_hunger_set_status(FULL);
       msg_print(" ");
     }
-    return_value = true;
   } else {
     __remove_item_from_store(store_type, selected_item, true);
     const treas_rec *item_new = inven_carry();
@@ -1370,7 +1368,7 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
   }
   prt("", 2, 1);
 
-  return return_value;
+  return true;
 }
 
 /**

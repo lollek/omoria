@@ -1,17 +1,15 @@
+#include "treasures.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../random.h"
+#include "../types.h"
+#include "../variables.h"
 #include <curses.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> /* for ftruncate, usleep */
-
-#include "constants.h"
-#include "debug.h"
-#include "random.h"
-#include "types.h"
-#include "variables.h"
-
-#include "treasures.h"
 
 long t_level[MAX_OBJ_LEVEL + 1];
 

@@ -1,15 +1,15 @@
 #include <string.h>
 
 #include "../configure.h"
+#include "../generate_map/generate_map.h"
 #include "../master.h"
+#include "../menu.h"
+#include "../misc.h"
 #include "../player.h"
 #include "../save.h"
-#include "../variables.h"
-#include "../generate_dungeon/generate_dungeon.h"
-#include "../menu.h"
 #include "../screen.h"
-#include "../misc.h"
 #include "../term.h"
+#include "../variables.h"
 
 #include "menu.h"
 
@@ -63,7 +63,7 @@ bool pregame__main(void) {
   prt_stat_block();
 
   if (generate) {
-    generate_cave();
+    generate_map();
   }
 
   return true;

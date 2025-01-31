@@ -10,15 +10,14 @@
 
 #include "constants.h"
 #include "debug.h"
-#include "desc.h"
 #include "effects.h"
-#include "fighting.h"
+#include "fighting/fighting.h"
 #include "generate_monster.h"
-#include "io.h"
+#include "generate_monster/monster_template.h"
 #include "inven.h"
+#include "io.h"
 #include "magic.h"
 #include "misc.h"
-#include "monster_template.h"
 #include "monsters.h"
 #include "pascal.h"
 #include "player.h"
@@ -26,6 +25,7 @@
 #include "random.h"
 #include "screen.h"
 #include "spells.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 
@@ -282,79 +282,79 @@ static bool c__check_for_hit(const long monptr, const long atype) {
 
   switch (atype) {
   case 1: /*{Normal attack  }*/
-    flag = test_hit(60, level, 0, armor_stuff);
+    flag = managed_to_hit(60, level, 0, armor_stuff);
     break;
 
   case 2: /*{Poison Strength}*/
-    flag = test_hit(-3, level, 0, armor_stuff);
+    flag = managed_to_hit(-3, level, 0, armor_stuff);
     break;
 
   case 3: /*{Confusion attack}*/
-    flag = test_hit(10, level, 0, armor_stuff);
+    flag = managed_to_hit(10, level, 0, armor_stuff);
     break;
 
   case 4: /*{Fear attack    }*/
-    flag = test_hit(10, level, 0, armor_stuff);
+    flag = managed_to_hit(10, level, 0, armor_stuff);
     break;
 
   case 5: /*{Fire attack    }*/
-    flag = test_hit(10, level, 0, armor_stuff);
+    flag = managed_to_hit(10, level, 0, armor_stuff);
     break;
 
   case 6: /*{Acid attack    }*/
-    flag = test_hit(0, level, 0, armor_stuff);
+    flag = managed_to_hit(0, level, 0, armor_stuff);
     break;
 
   case 7: /*{Cold attack    }*/
-    flag = test_hit(10, level, 0, armor_stuff);
+    flag = managed_to_hit(10, level, 0, armor_stuff);
     break;
 
   case 8: /*{Lightning attack}*/
-    flag = test_hit(10, level, 0, armor_stuff);
+    flag = managed_to_hit(10, level, 0, armor_stuff);
     break;
 
   case 9: /*{Corrosion attack}*/
-    flag = test_hit(0, level, 0, armor_stuff);
+    flag = managed_to_hit(0, level, 0, armor_stuff);
     break;
 
   case 10: /*{Blindness attack}*/
-    flag = test_hit(2, level, 0, armor_stuff);
+    flag = managed_to_hit(2, level, 0, armor_stuff);
     break;
 
   case 11: /*{Paralysis attack}*/
-    flag = test_hit(2, level, 0, armor_stuff);
+    flag = managed_to_hit(2, level, 0, armor_stuff);
     break;
 
   case 12: /*{Steal Money    }*/
-    flag = test_hit(5, level, 0, player_lev) && player_money[TOTAL_] > 0;
+    flag = managed_to_hit(5, level, 0, player_lev) && player_money[TOTAL_] > 0;
     break;
 
   case 13: /*{Steal Object   }*/
-    flag = test_hit(2, level, 0, player_lev) && inven_ctr > 0;
+    flag = managed_to_hit(2, level, 0, player_lev) && inven_ctr > 0;
     break;
 
   case 14: /*{Poison         }*/
-    flag = test_hit(5, level, 0, armor_stuff);
+    flag = managed_to_hit(5, level, 0, armor_stuff);
     break;
 
   case 15: /*{Lose dexterity}*/
-    flag = test_hit(0, level, 0, armor_stuff);
+    flag = managed_to_hit(0, level, 0, armor_stuff);
     break;
 
   case 16: /*{Lose constitution}*/
-    flag = test_hit(0, level, 0, armor_stuff);
+    flag = managed_to_hit(0, level, 0, armor_stuff);
     break;
 
   case 17: /*{Lose intelligence}*/
-    flag = test_hit(2, level, 0, armor_stuff);
+    flag = managed_to_hit(2, level, 0, armor_stuff);
     break;
 
   case 18: /*{Lose wisdom}*/
-    flag = test_hit(0, level, 0, armor_stuff);
+    flag = managed_to_hit(0, level, 0, armor_stuff);
     break;
 
   case 19: /*{Lose experience}*/
-    flag = test_hit(5, level, 0, armor_stuff);
+    flag = managed_to_hit(5, level, 0, armor_stuff);
     break;
 
   case 20: /*{Aggravate monsters}*/
@@ -362,31 +362,31 @@ static bool c__check_for_hit(const long monptr, const long atype) {
     break;
 
   case 21: /*{Disenchant        }*/
-    flag = test_hit(20, level, 0, armor_stuff);
+    flag = managed_to_hit(20, level, 0, armor_stuff);
     break;
 
   case 22: /*{Eat food          }*/
-    flag = test_hit(5, level, 0, armor_stuff);
+    flag = managed_to_hit(5, level, 0, armor_stuff);
     break;
 
   case 23: /*{Eat light         }*/
-    flag = test_hit(5, level, 0, armor_stuff);
+    flag = managed_to_hit(5, level, 0, armor_stuff);
     break;
 
   case 24: /*{Eat charges       }*/
-    flag = test_hit(15, level, 0, armor_stuff);
+    flag = managed_to_hit(15, level, 0, armor_stuff);
     break;
 
   case 25: /*{Lose charisma     }*/
-    flag = test_hit(2, level, 0, armor_stuff);
+    flag = managed_to_hit(2, level, 0, armor_stuff);
     break;
 
   case 26: /*{Petrification     }*/
-    flag = test_hit(10, level, 0, armor_stuff);
+    flag = managed_to_hit(10, level, 0, armor_stuff);
     break;
 
   case 27: /*{POISON poison     }*/
-    flag = test_hit(5, level, 0, armor_stuff);
+    flag = managed_to_hit(5, level, 0, armor_stuff);
     break;
 
   case 99: /* protevil or protmon repelled the attack */

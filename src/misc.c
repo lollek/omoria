@@ -1,15 +1,11 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
+#include "misc.h"
+#include "c.h"
 #include "constants.h"
 #include "currency.h"
 #include "death.h"
 #include "debug.h"
-#include "generate_item/generate_item.h"
+#include "io.h"
+#include "loot/loot.h"
 #include "magic.h"
 #include "model_class.h"
 #include "model_item.h"
@@ -20,86 +16,22 @@
 #include "stores.h"
 #include "term.h"
 #include "traps.h"
-#include "treasures.h"
 #include "types.h"
 #include "variables.h"
-
-#include "misc.h"
-
-#include "io.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
 void C_print_new_spell_line(uint8_t i, long slot, long failchance);
 
 static long tcptr; /* { Cur treasure heap ptr} */
 static long mfptr; /* { Cur free monster ptr	} */
-static treasure_type up_stair = {"an up staircase",
-                                 up_staircase,
-                                 0x00000000,
-                                 0x00000000,
-                                 0,
-                                 0,
-                                 1,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 "1d1",
-                                 0,
-                                 0};
-static treasure_type down_stair = {"a down staircase",
-                                   down_staircase,
-                                   0x00000000,
-                                   0x00000000,
-                                   0,
-                                   0,
-                                   1,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   "1d1",
-                                   0,
-                                   0};
-static treasure_type up_steep = {"a steep staircase",
-                                 up_steep_staircase,
-                                 0x00000000,
-                                 0x00000000,
-                                 0,
-                                 0,
-                                 1,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 "1d1",
-                                 0,
-                                 0};
-static treasure_type down_steep = {"a steep staircase",
-                                   down_steep_staircase,
-                                   0x00000000,
-                                   0x00000000,
-                                   0,
-                                   0,
-                                   1,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   0,
-                                   "1d1",
-                                   0,
-                                   0};
-static monster_type blank_monster = /* { Blank monster values	} */
+static const monster_type blank_monster = /* { Blank monster values	} */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false};
 
-static const long obj_great = 30; //  1/n Chance of item being a Great Item
 
 /* Print list of spells     -RAK- */
 static void print_new_spells(spl_type spell, long num, bool *redraw) {
@@ -1540,108 +1472,8 @@ void mlink(void) {
   muptr = 0;
   mfptr = MAX_MALLOC;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_gold(const long y, const long x) {
-  /*{ Places a treasure (Gold or Gems) at given row, column -RAK-	}*/
 
-  long cur_pos;
-
-  popt(&cur_pos);
-  long i1 = (2 + randint(dun_level + 4) + randint(dun_level + 4)) / 4;
-  if (randint(obj_great) == 1) {
-    i1 += randint(dun_level);
-  }
-  if (i1 > MAX_GOLD) {
-    i1 = MAX_GOLD + 1 - randint(randint(3));
-  }
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = gold_list[i1 - 1];
-
-  if (t_list[cur_pos].tval == valuable_metal) {
-    t_list[cur_pos].number =
-        randint(t_list[cur_pos].number) + t_list[cur_pos].number / 2;
-  }
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_a_staircase(const long y, const long x, const long typ) {
-  /*{ Place an up staircase at given y,x			-RAK-	}*/
-
-  long cur_pos;
-
-  if (cave[y][x].tptr != 0) {
-    pusht(cave[y][x].tptr);
-    cave[y][x].tptr = 0;
-    cave[y][x].fopen = true;
-  }
-
-  popt(&cur_pos);
-  cave[y][x].tptr = cur_pos;
-  switch (typ) {
-  case up_staircase:
-    t_list[cur_pos] = up_stair;
-    break;
-  case down_staircase:
-    t_list[cur_pos] = down_stair;
-    break;
-  case up_steep_staircase:
-    t_list[cur_pos] = up_steep;
-    break;
-  case down_steep_staircase:
-    t_list[cur_pos] = down_steep;
-    break;
-  }
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_stairs(const long typ, const long num, long walls) {
-  /*{ Places a staircase 1=up, 2=down			-RAK-	}*/
-
-  for (long i = 0; i < num; i++) {
-    bool has_placed_staircase = false;
-    while (!has_placed_staircase) {
-      for (int attempts = 0; attempts < 30 && !has_placed_staircase; attempts++) {
-        const long initial_y = randint(cur_height - 12);
-        const long initial_x = randint(cur_width - 12);
-        const long max_y = initial_y + 12;
-        const long max_x = initial_x + 12;
-        for (long y = initial_y; y <= max_y && !has_placed_staircase; y++) {
-          for (long x = initial_x; x <= max_x && !has_placed_staircase; x++) {
-            if (is_in(cave[y][x].fval, open_dry_floors)) {
-              if (cave[y][x].tptr == 0) {
-                if (next_to4(y, x, wall_set) >= walls) {
-                  has_placed_staircase = true;
-                  place_a_staircase(y, x, typ);
-                }
-              }
-            }
-          }
-        }
-      }
-      walls--;
-    }
-  }
-}
-
-void place_object(const long y, const long x) {
-  /*{ Places an object at given row, column co-ordinate	-RAK-	}*/
-  long cur_pos;
-
-  popt(&cur_pos);
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = generate_item_for_dungeon_level(dun_level);
-  magic_treasure(cur_pos, dun_level, false);
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
 long next_to4(const long y, const long x, obj_set group_set) {
-  /*{ Checks points north, south, east, and west for a type -RAK-	}*/
 
   long i1 = 0;
 
@@ -1673,7 +1505,6 @@ long next_to4(const long y, const long x, obj_set group_set) {
 }
 
 long next_to8(const long y, const long x, obj_set group_set) {
-  /*{ Checks all adjacent spots for elements		-RAK-	*/
 
   long i1 = 0;
   for (long i2 = y - 1; i2 <= y + 1; i2++) {
@@ -1734,8 +1565,6 @@ long damroll(char const *dice) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-#define max(xx, yy) (((xx) > (yy)) ? (xx) : (yy))
-#define min(xx, yy) (((xx) < (yy)) ? (xx) : (yy))
 
 long maxmin(const long x, const long y, const long z) {
   /* return max( min(x,y) - 1, z ) */
@@ -2009,54 +1838,6 @@ long rotate_dir(const long dir, long rot) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-long attack_blows(const long weight, long *wtohit) {
-  /*{ Weapon weight VS strength and dexterity               -RAK-   }*/
-
-  const long max_wield = C_player_max_bulk() / 10;
-  const int dex_mod = C_player_mod_from_stat(DEX);
-  const int approx_str_stat = (10 + C_player_mod_from_stat(STR) * 2) * 10;
-
-  long blows = 1;
-
-  *wtohit = 0;
-
-  /*{ make to-hit drop off gradually instead of being so abrupt -DCJ- }*/
-  if (max_wield < weight / 100) {
-    *wtohit = max_wield - weight / 100;
-    return blows;
-  }
-
-  blows = 5 + dex_mod;
-  blows = min(12, blows);
-  blows = max(3, blows);
-
-  const long lev_skill = C_class_melee_bonus(player_pclass) * (player_lev + 10);
-
-  /*{warriors 100-500, paladin 80-400, priest 60-300, mage
-   * 40-200}*/
-  blows = trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
-
-  /*{usually 3 for 18+ dex, 5 max except 6 for high level
-   * warriors}*/
-  const long adj_weight =
-      (long)((float)approx_str_stat / (float)(weight / 100) * 2.5);
-
-  if (adj_weight < 1) {
-    blows = 1;
-  } else if (adj_weight < 2) {
-    blows = blows / 3.00;
-  } else if (adj_weight < 3) {
-    blows = blows / 2.50;
-  } else if (adj_weight < 5) {
-    blows = blows / 2.00;
-  } else if (adj_weight < 10) {
-    blows = blows / 1.66;
-  } else {
-    blows = blows / 1.50;
-  }
-
-  return blows;
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -2202,45 +1983,6 @@ void petrify(const long amt) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void place_win_monster(void) {
-  /*{ Places a monster at given location                    -RAK-   }*/
-
-  long cur_pos;
-
-  if (!total_winner) {
-    long x;
-    long y;
-    popm(&cur_pos);
-    /* with m_list[cur_pos] do; */
-    do {
-      y = randint(cur_height - 2) + 1;
-      x = randint(cur_width - 2) + 1;
-    } while (!(is_in(cave[y][x].fval, open_dry_floors) &&
-               cave[y][x].cptr == 0 && cave[y][x].tptr == 0 &&
-               distance(y, x, char_row, char_col) > MAX_SIGHT));
-
-    m_list[cur_pos].fy = y;
-    m_list[cur_pos].fx = x;
-
-    m_list[cur_pos].mptr =
-        randint(WIN_MON_TOT) + m_level[MAX_MONS_LEVEL] + m_level[0];
-    m_list[cur_pos].nptr = muptr;
-    muptr = cur_pos;
-
-    if ((monster_templates[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
-      m_list[cur_pos].hp = max_hp(monster_templates[m_list[cur_pos].mptr].hd);
-    } else {
-      m_list[cur_pos].hp = damroll(monster_templates[m_list[cur_pos].mptr].hd);
-    }
-
-    m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
-    m_list[cur_pos].cspeed =
-        monster_templates[m_list[cur_pos].mptr].speed + player_flags.speed;
-    m_list[cur_pos].stunned = 0;
-    m_list[cur_pos].csleep = 0;
-    cave[y][x].cptr = cur_pos;
-  }
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
@@ -2270,157 +2012,12 @@ void alloc_object(obj_set alloc_set, const long typ, const long num) {
       place_gold(i1, i2);
       break;
     case 5:
-      place_object(i1, i2);
+      place_random_dungeon_item(i1, i2);
       break;
     }
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_open_door(const long y, const long x) {
-  long cur_pos;
 
-  popt(&cur_pos);
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[0];
-  cave[y][x].fval = corr_floor3.ftval;
-  cave[y][x].fopen = true;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_broken_door(const long y, const long x) {
-  long cur_pos;
-
-  popt(&cur_pos);
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[0];
-  cave[y][x].fval = corr_floor3.ftval;
-  cave[y][x].fopen = true;
-  t_list[cur_pos].p1 = 1;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_closed_door(const long y, const long x) {
-  long cur_pos;
-
-  popt(&cur_pos);
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
-  cave[y][x].fval = corr_floor3.ftval;
-  cave[y][x].fopen = false;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_locked_door(const long y, const long x) {
-  long cur_pos;
-
-  popt(&cur_pos);
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
-  cave[y][x].fval = corr_floor3.ftval;
-  cave[y][x].fopen = false;
-  t_list[cur_pos].p1 = randint(10) + 10;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_stuck_door(const long y, const long x) {
-  long cur_pos;
-
-  popt(&cur_pos);
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[1];
-  cave[y][x].fval = corr_floor3.ftval;
-  cave[y][x].fopen = false;
-  t_list[cur_pos].p1 = -randint(10) - 10;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_secret_door(const long y, const long x) {
-  long cur_pos;
-
-  popt(&cur_pos);
-
-  cave[y][x].tptr = cur_pos;
-  t_list[cur_pos] = door_list[2];
-  cave[y][x].fval = corr_floor4.ftval;
-  cave[y][x].fopen = false;
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void place_door(const long y, const long x) {
-
-  switch (randint(3)) {
-  case 1:
-    switch (randint(4)) {
-    case 1:
-      place_broken_door(y, x);
-      break;
-    default:
-      place_open_door(y, x);
-      break;
-    }
-    break;
-
-  case 2:
-    switch (randint(12)) {
-    case 1:
-    case 2:
-      place_locked_door(y, x);
-      break;
-    case 3:
-      place_stuck_door(y, x);
-      break;
-    default:
-      place_closed_door(y, x);
-      break;
-    }
-    break;
-
-  case 3:
-    place_secret_door(y, x);
-    break;
-  }
-}
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-void random_object(const long y, const long x, long num) {
-  /*{ Creates objects nearby the coordinates given          -RAK-   }*/
-
-  do {
-    long i1 = 0;
-    do {
-      const long i2 = y - 3 + randint(5);
-      const long i3 = x - 4 + randint(7);
-
-      /* with cave[i2][i3]. do; */
-      if (is_in(cave[i2][i3].fval, floor_set)) {
-        if (cave[i2][i3].tptr == 0) {
-          if (randint(100) < 75) {
-            place_object(i2, i3);
-          } else {
-            place_gold(i2, i3);
-          }
-          i1 = 9;
-        }
-      }
-      i1++;
-    } while (i1 <= 10);
-    num--;
-  } while (num != 0);
-}
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

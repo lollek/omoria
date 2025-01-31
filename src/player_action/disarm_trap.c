@@ -3,12 +3,12 @@
 #include "../io.h"
 #include "../misc.h"
 #include "../player.h"
+#include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
+#include "../text_lines.h"
 #include "../traps.h"
 #include "../variables.h"
-#include "../desc.h"
-#include "../player_action.h"
 
 void player_action_disarm_trap(void) {
   long y, x, i1, tdir;

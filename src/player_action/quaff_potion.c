@@ -1,7 +1,6 @@
 #include <math.h>
 
 #include "../constants.h"
-#include "../desc.h"
 #include "../inven.h"
 #include "../io.h"
 #include "../misc.h"
@@ -10,6 +9,7 @@
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
+#include "../text_lines.h"
 #include "../types.h"
 #include "../variables.h"
 
@@ -156,15 +156,15 @@ static void q__potion_effect(const long effect, bool *idented) {
     break;
 
   case 29: /*{ Cure Blindness }*/
-    cure_me(&player_flags.blind);
+    cure_player_status_effect(&player_flags.blind);
     break;
 
   case 30: /*{ Cure Confusion }*/
-    cure_me(&player_flags.confused);
+    cure_player_status_effect(&player_flags.confused);
     break;
 
   case 31: /*{ Cure Poison }*/
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 32: /*{ Learning }*/ /* 32 is the Cursed_worn_bit value */
@@ -209,11 +209,11 @@ static void q__potion_effect(const long effect, bool *idented) {
     break;
 
   case 38: /*{ Remove Fear }*/
-    ident = cure_me(&player_flags.afraid);
+    ident = cure_player_status_effect(&player_flags.afraid);
     break;
 
   case 39: /*{ Restore Level }*/
-    ident = restore_level();
+    ident = restore_player_drained_levels();
     player_hunger_eat(5000);
     break;
 
@@ -234,7 +234,7 @@ static void q__potion_effect(const long effect, bool *idented) {
     break;
 
   case 44: /*{ Cure Poison }*/
-    ident = cure_me(&player_flags.poisoned);
+    ident = cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 45: /*{ Restore Mana }*/
@@ -255,7 +255,7 @@ static void q__potion_effect(const long effect, bool *idented) {
   case 47: /* cure hallucination */
     msg_print("Pretty colors!");
     player_flags.confused += randint(5) + 5;
-    ident = cure_me(&player_flags.image);
+    ident = cure_player_status_effect(&player_flags.image);
     break;
 
     /* case 48 moved up to 32 */
@@ -349,7 +349,7 @@ void player_action_quaff_potion(void) {
         }
 
         player_hunger_eat(item_ptr->data.p1);
-        desc_remain(item_ptr);
+        msg_remaining_of_item(item_ptr);
         inven_destroy(item_ptr);
         prt_stat_block();
 

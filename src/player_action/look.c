@@ -1,9 +1,9 @@
 #include "../io.h"
-#include "../variables.h"
-#include "../player.h"
 #include "../misc.h"
-#include "../desc.h"
 #include "../pascal.h"
+#include "../player.h"
+#include "../text_lines.h"
+#include "../variables.h"
 
 void player_action_look(void) {
   /*{ Look at an object, trap, or monster                   -RAK-   }*/

@@ -1,18 +1,16 @@
-#include <stdlib.h>
-#include <string.h>
-#include <sys/param.h>
-
-#include "../io.h"
 #include "../creature.h"
+#include "../generate_monster.h"
+#include "../io.h"
 #include "../misc.h"
-#include "../monster_template.h"
 #include "../monsters.h"
 #include "../pascal.h"
 #include "../player.h"
 #include "../random.h"
 #include "../variables.h"
-
-#include "../generate_monster.h"
+#include "monster_template.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/param.h>
 
 // One in X to spawn an out-of-depth monster
 static const long out_of_depth_chance = 50;

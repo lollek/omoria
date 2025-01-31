@@ -9,9 +9,10 @@
 #include "constants.h"
 #include "debug.h"
 #include "effects.h"
-#include "fighting.h"
+#include "fighting/fighting.h"
 #include "generate_monster.h"
 #include "io.h"
+#include "loot/loot.h"
 #include "magic.h"
 #include "misc.h"
 #include "pascal.h"
@@ -171,7 +172,7 @@ static void ht__open_pit(const long dam) {
 }
 
 static void ht__arrow(const long dam) {
-  if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
+  if (managed_to_hit(125, 0, 0, player_pac + player_ptoac)) {
     take_hit(dam, "an arrow trap");
     msg_print("An arrow hits you.");
   } else {
@@ -217,12 +218,12 @@ static void ht__sleep_gas(void) {
 static void ht__hidden_object(const long y, const long x) {
   cave[y][x].fm = false;
   pusht(cave[y][x].tptr);
-  place_object(y, x);
+  place_random_dungeon_item(y, x);
   msg_print("Hmmm, there was something under this rock.");
 }
 
 static void ht__str_dart(const long dam) {
-  if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
+  if (managed_to_hit(125, 0, 0, player_pac + player_ptoac)) {
     if (lose_stat(STR, "", "A small dart hits you.")) {
       take_hit(dam, "a dart trap");
       print_stat |= 0x0001;
@@ -292,7 +293,7 @@ static void ht__confuse_gas(void) {
 }
 
 static void ht__slow_dart(const long dam) {
-  if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
+  if (managed_to_hit(125, 0, 0, player_pac + player_ptoac)) {
     take_hit(dam, "a dart trap");
     msg_print("A small dart hits you!");
     player_flags.slow += randint(20) + 10;
@@ -302,7 +303,7 @@ static void ht__slow_dart(const long dam) {
 }
 
 static void ht__con_dart(const long dam) {
-  if (test_hit(125, 0, 0, player_pac + player_ptoac)) {
+  if (managed_to_hit(125, 0, 0, player_pac + player_ptoac)) {
     if (lose_stat(CON, "", "A small dart hits you.")) {
       take_hit(dam, "a dart trap");
       print_stat |= 0x0004;

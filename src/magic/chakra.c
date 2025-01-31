@@ -17,7 +17,7 @@ void chakra_spell_effects(const long effect) {
     break;
 
   case 2: /*{ Courage } */
-    cure_me(&player_flags.afraid);
+    cure_player_status_effect(&player_flags.afraid);
     break;
 
   case 3: /*{ Slow Poison } */
@@ -43,7 +43,7 @@ void chakra_spell_effects(const long effect) {
     break;
 
   case 8: /*{ Poison Immunity }*/
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 9: /*{ See Invisible } */

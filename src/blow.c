@@ -8,7 +8,6 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "constants.h"
-#include "desc.h"
 #include "generate_monster.h"
 #include "inven.h"
 #include "io.h"
@@ -18,6 +17,7 @@
 #include "random.h"
 #include "screen.h"
 #include "spells.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 #include "wizard.h"
@@ -104,9 +104,9 @@ static void b__chime_and_horn_effects(const long effect, bool *idented) {
 
   case 14: /*{ Chime of Curing }*/
     /* with player_flags do; */
-    ident = cure_me(&player_flags.blind);
-    ident |= cure_me(&player_flags.poisoned);
-    ident |= cure_me(&player_flags.confused);
+    ident = cure_player_status_effect(&player_flags.blind);
+    ident |= cure_player_status_effect(&player_flags.poisoned);
+    ident |= cure_player_status_effect(&player_flags.confused);
     break;
 
   case 15: /*{ Chime of Dispell Evil }*/
@@ -207,8 +207,8 @@ static void b__chime_and_horn_effects(const long effect, bool *idented) {
     msg_print("All of the seas of the world still (yeah, right)!");
     msg_print("The gods of the ocean hear you...");
     player_flags.blessed += randint(20);
-    cure_me(&player_flags.blind);
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.blind);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 29: /*{ Horn of Fog }*/
@@ -331,11 +331,19 @@ static void b__misc_effects(const long effect, bool *idented,
       ident = true;
       player_flags.slow = 1;
     }
-    /* bitwise or, otherwise it shortcuts and not everything happens
-     */
-    if (cure_me(&player_flags.blind) | cure_me(&player_flags.poisoned) |
-        cure_me(&player_flags.confused) | cure_me(&player_flags.afraid) |
-        restore_level()) {
+    if (cure_player_status_effect(&player_flags.blind)) {
+      ident = true;
+    }
+    if (cure_player_status_effect(&player_flags.poisoned)) {
+      ident = true;
+    }
+    if (cure_player_status_effect(&player_flags.confused)) {
+      ident = true;
+    }
+    if (cure_player_status_effect(&player_flags.afraid)) {
+      ident = true;
+    }
+    if (restore_player_drained_levels()) {
       ident = true;
     }
     if (ident) {
@@ -546,7 +554,7 @@ void blow(void) {
               C_player_add_exp(item_ptr->data.level / (float)player_lev + .5);
               prt_stat_block();
             }
-            desc_charges(item_ptr);
+            msg_charges_remaining(item_ptr);
           }
         } /* end if p1 */
       } else {

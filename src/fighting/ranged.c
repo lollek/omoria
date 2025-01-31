@@ -1,18 +1,17 @@
+#include "../debug.h"
+#include "../inven.h"
+#include "../io.h"
+#include "../misc.h"
+#include "../model_item.h"
+#include "../monsters.h"
+#include "../player.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../text_lines.h"
+#include "../variables.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "debug.h"
-#include "desc.h"
-#include "inven.h"
-#include "io.h"
-#include "misc.h"
-#include "model_item.h"
-#include "monsters.h"
-#include "player.h"
-#include "random.h"
-#include "screen.h"
-#include "variables.h"
 
 enum ranged_attack_t { THROW, SHOOT };
 
@@ -443,7 +442,7 @@ static void ranged_attack(const enum ranged_attack_t type) {
   reset_flag = FALSE;
 
   // TODO: shouldn't this be moved a bit further down?
-  desc_remain(weapon);
+  msg_remaining_of_item(weapon);
 
   if (player_flags.confused > 0) {
     // Being confused causes us to throw in a random direction

@@ -62,7 +62,7 @@ void nature_spell_effects(const long effect) {
     break;
 
   case 10: /*{ Cure Poison }*/
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 11: /*{ Charm }*/
@@ -132,9 +132,9 @@ void nature_spell_effects(const long effect) {
 
   case 24: /*{ Dispel Magic }*/
     /* with player_flags do; */
-    cure_me(&player_flags.blind);
-    cure_me(&player_flags.poisoned);
-    cure_me(&player_flags.afraid);
+    cure_player_status_effect(&player_flags.blind);
+    cure_player_status_effect(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.afraid);
     break;
 
   case 25: /*{ Fire Stream }*/

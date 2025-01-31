@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "../c.h"
 #include "../constants.h"
 #include "../currency.h"
 #include "../inven.h"
@@ -11,7 +12,6 @@
 #include "../kickout.h"
 #include "../misc.h"
 #include "../player.h"
-#include "../port.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../stores.h"

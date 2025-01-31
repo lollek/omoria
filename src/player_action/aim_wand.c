@@ -1,5 +1,4 @@
 #include "../constants.h"
-#include "../desc.h"
 #include "../inven.h"
 #include "../io.h"
 #include "../misc.h"
@@ -7,6 +6,7 @@
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
+#include "../text_lines.h"
 #include "../types.h"
 #include "../variables.h"
 
@@ -209,7 +209,7 @@ void player_action_aim_wand(void) {
               prt_stat_block();
             }
 
-            desc_charges(item_ptr);
+            msg_charges_remaining(item_ptr);
 
           } /* end if have charges */
         }   /* end if get_dir */

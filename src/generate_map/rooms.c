@@ -1,15 +1,16 @@
-#include <curses.h>
-
 #include "../c.h"
 #include "../constants.h"
 #include "../generate_monster.h"
 #include "../io.h"
+#include "../loot/loot.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../random.h"
 #include "../traps.h"
 #include "../types.h"
 #include "../variables.h"
+#include "misc.h"
+#include <curses.h>
 
 /*{ Place a trap with a given displacement of point	-RAK-	}*/
 static void gc__vault_trap(const int64_t y, const int64_t x, const int64_t yd,
@@ -264,7 +265,7 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
       place_a_staircase(yval, xval, down_staircase);
       break;
     default:
-      place_object(yval, xval);
+      place_random_dungeon_item(yval, xval);
       break;
     }
 
@@ -353,11 +354,11 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
         }
 
         if (randint(3) == 1) {
-          place_object(yval, xval - 2);
+          place_random_dungeon_item(yval, xval - 2);
         }
 
         if (randint(3) == 1) {
-          place_object(yval, xval + 2);
+          place_random_dungeon_item(yval, xval + 2);
         }
 
         gc__vault_monster(yval, xval - 2, randint(2));
@@ -400,7 +401,7 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
 
     /*{ Mazes should have some treasure too.. }*/
     for (i1 = 1; i1 <= 3; i1++) {
-      random_object(yval, xval, 1);
+      place_random_loot_near(yval, xval, 1);
     }
     break;
 
@@ -432,7 +433,7 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
     }
 
     /*{ Treasure in each one...               }*/
-    random_object(yval, xval, 2 + randint(2));
+    place_random_loot_near(yval, xval, 2 + randint(2));
 
     /*{ Gotta have some monsters...           }*/
     gc__vault_monster(yval + 2, xval - 4, randint(2));
@@ -558,7 +559,7 @@ void gc__build_type3(const int64_t yval, const int64_t xval) {
     }
 
     /*{ Place a treasure in the vault		}*/
-    place_object(yval, xval);
+    place_random_dungeon_item(yval, xval);
 
     /*{ Let's gaurd the treasure well...	}*/
     gc__vault_monster(yval, xval, 2 + randint(2));
