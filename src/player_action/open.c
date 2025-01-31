@@ -5,11 +5,10 @@
 #include "../monsters.h"
 #include "../player.h"
 #include "../random.h"
-#include "../traps.h"
-#include "../desc.h"
 #include "../screen.h"
+#include "../text_lines.h"
+#include "../traps.h"
 #include "../variables.h"
-
 
 void player_action_open(void) {
 
@@ -123,7 +122,7 @@ void player_action_open(void) {
            * no way to pass a level
            * value from here, where the chest is
            * opened, all the way down into
-           * place_object() where a
+           * place_random_dungeon_item() where a
            * treasure/dungeon level is actually
            * used,
            * because the call stack

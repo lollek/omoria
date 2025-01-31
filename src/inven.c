@@ -1,13 +1,8 @@
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h> /* for ftruncate, usleep */
+#include "inven.h"
 
+#include "c.h"
 #include "constants.h"
 #include "debug.h"
-#include "desc.h"
 #include "io.h"
 #include "magic.h"
 #include "misc.h"
@@ -15,13 +10,18 @@
 #include "model_item.h"
 #include "pascal.h"
 #include "player.h"
-#include "port.h"
 #include "random.h"
 #include "screen.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 
-#include "inven.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
 #define DISPLAY_SIZE 20
 #define MITHRIL_POS (MAX_GOLD)
@@ -1728,7 +1728,7 @@ void delete_inven_item(treas_rec *ptr) {
 
     temp_ptr = inventory_list;
     inventory_list = ptr->next;
-    dispose(temp_ptr, sizeof(treasure_type), "delete_inven_item 1");
+    safe_free(temp_ptr, sizeof(treasure_type), "delete_inven_item 1");
     inven_ctr--;
 
   } else {
@@ -1743,7 +1743,7 @@ void delete_inven_item(treas_rec *ptr) {
 
     temp_ptr = ptr;
     curse->next = ptr->next;
-    dispose(temp_ptr, sizeof(treasure_type), "delete_inven_item 2");
+    safe_free(temp_ptr, sizeof(treasure_type), "delete_inven_item 2");
     inven_ctr--;
   }
 
@@ -2124,7 +2124,7 @@ void inven_drop(treas_rec *item_ptr, const long y, const long x,
   popt(&i1);
   t_list[i1] = inven_temp.data;
   cave[y][x].tptr = i1;
-  dispose(temp_ptr, sizeof(treas_rec), "inven_drop");
+  safe_free(temp_ptr, sizeof(treas_rec), "inven_drop");
 }
 
 bool find_range(obj_set const item_val, const bool inner, treas_rec **first,

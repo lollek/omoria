@@ -6,26 +6,23 @@
 
 #include "constants.h"
 #include "debug.h"
+#include "loot/treasures.h"
 #include "misc.h"
 #include "pascal.h"
 #include "random.h"
-#include "treasures.h"
 #include "types.h"
 #include "variables.h"
 
-#include "desc.h"
+#include "text_lines.h"
 
 #include "io.h"
 
-/*{ Describe amount of item remaining...                  -RAK-   }*/
-void desc_remain(const treas_rec *item_ptr) {
+void msg_remaining_of_item(const treas_rec *item_ptr) {
 
   char out_val[82];
   char out_val2[120];
 
   inven_temp.data = item_ptr->data;
-
-  /* with inven_temp->data do; */
 
   inven_temp.data.number--;
   objdes(out_val, &inven_temp, true);
@@ -33,8 +30,7 @@ void desc_remain(const treas_rec *item_ptr) {
   msg_print(out_val2);
 }
 
-/*{ Describe number of remaining charges...               -RAK-   }*/
-void desc_charges(const treas_rec *item_ptr) {
+void msg_charges_remaining(const treas_rec *item_ptr) {
 
   if (strstr(item_ptr->data.name, "^") == NULL) {
     char out_val[82];
@@ -43,28 +39,8 @@ void desc_charges(const treas_rec *item_ptr) {
   }
 }
 
-void rantitle(char *title) {
-  /*{ Return random title						}*/
-
-  const long i3 = randint(2) + 1; /* two or three words */
-  strcpy(title, "Titled \"");
-
-  for (long i1 = 0; i1 < i3; i1++) {
-    const long i4 = randint(2); /* one or two syllables each */
-    for (long i2 = 0; i2 < i4; i2++) {
-      strcat(title, syllables[randint(MAX_SYLLABLES) - 1]);
-    }
-
-    if (i1 != i3 - 1) {
-      strcat(title, " ");
-    }
-  }
-  strcat(title, "\"");
-}
-
 void identification_set_identified(treasure_type *item); // identification.rs
 void identify(treasure_type *item) {
-  /*{ Something has been identified }*/
 
 
   if (strstr(item->name, "|") == NULL)
@@ -95,21 +71,16 @@ void identify(treasure_type *item) {
 }
 
 void known1(const char *object_str) {
-  /*{ Remove 'Secret' symbol for identity of object
-   * }*/
 
   insert_str(object_str, "|", "");
 }
 
 void known2(const char *object_str) {
-  /*{ Remove 'Secret' symbol for identity of pluses
-   * }*/
 
   insert_str(object_str, "^", "");
 }
 
 void unquote(char *object_str) {
-  /*	{ Return string without quoted portion }*/
 
   const long pos0 = pindex(object_str, '"');
   if (pos0 > 0) {
@@ -126,12 +97,6 @@ void unquote(char *object_str) {
   }
 }
 
-/**
- * objdes() - Returns a description of item for inventory
- * @out_val: Where to put the return string
- * @ptr: Pointer to the object to describe
- * @pref: ???
- */
 void objdes(char *out_val, const treas_rec *ptr, const bool pref) {
   char *cpos;
   char tmp_val[82];
@@ -247,7 +212,6 @@ void objdes(char *out_val, const treas_rec *ptr, const bool pref) {
 
 char *bag_descrip(const treas_rec *bag, char result[134]) /* was func */
 {
-  /*{ Return description about the contents of a bag	-DMF-	}*/
 
   if (bag->next == NULL || bag->next->is_in == false) {
     sprintf(result, " (empty)");

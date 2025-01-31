@@ -1,7 +1,7 @@
-#include "../desc.h"
 #include "../inven.h"
 #include "../io.h"
 #include "../screen.h"
+#include "../text_lines.h"
 #include "../variables.h"
 
 #include <stdbool.h>
@@ -23,7 +23,7 @@ void player_action_refill_lamp(void) {
       if (equipment[Equipment_light].p1 > OBJ_LAMP_MAX) {
         equipment[Equipment_light].p1 = OBJ_LAMP_MAX;
       }
-      desc_remain(i1);
+      msg_remaining_of_item(i1);
       inven_destroy(i1);
       prt_stat_block();
     } else {

@@ -72,7 +72,7 @@ void song_spell_effects(const long effect) {
     break;
 
   case 13: /*{ Cure Poison }*/
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 14: /*{ Invisibility }*/
@@ -215,9 +215,9 @@ void song_spell_effects(const long effect) {
 
   case 40: /*{ Song of Power }*/
     zap_area(0x0006, 4 * player_lev, SE_HP);
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     hp_player(300, "a spell");
-    cure_me(&player_flags.blind);
+    cure_player_status_effect(&player_flags.blind);
     break;
 
   default:

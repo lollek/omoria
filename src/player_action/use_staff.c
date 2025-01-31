@@ -1,5 +1,4 @@
 #include "../constants.h"
-#include "../desc.h"
 #include "../generate_monster.h"
 #include "../inven.h"
 #include "../io.h"
@@ -9,6 +8,7 @@
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
+#include "../text_lines.h"
 #include "../types.h"
 #include "../variables.h"
 
@@ -125,9 +125,9 @@ static void us__staff_effect(const long effect, bool *idented) {
 
   case 22:
     /* with player_flags do; */
-    ident = cure_me(&player_flags.blind);
-    ident |= cure_me(&player_flags.poisoned);
-    ident |= cure_me(&player_flags.confused);
+    ident = cure_player_status_effect(&player_flags.blind);
+    ident |= cure_player_status_effect(&player_flags.poisoned);
+    ident |= cure_player_status_effect(&player_flags.confused);
     break;
 
   case 23:
@@ -209,7 +209,7 @@ void player_action_use_staff(void) {
               prt_stat_block();
             }
           }
-          desc_charges(item_ptr);
+          msg_charges_remaining(item_ptr);
         }
 
       } else {

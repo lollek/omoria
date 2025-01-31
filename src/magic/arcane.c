@@ -75,7 +75,7 @@ void arcane_spell_effects(const long effect) {
     break;
 
   case 12: /*{ Cure Poison }*/
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 13: /*{ Shadow Door }*/

@@ -2,7 +2,6 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "../constants.h"
-#include "../desc.h"
 #include "../inven.h"
 #include "../io.h"
 #include "../misc.h"
@@ -11,6 +10,7 @@
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
+#include "../text_lines.h"
 #include "../types.h"
 #include "../variables.h"
 
@@ -19,7 +19,7 @@ static bool eat_eyeball_of_drong(void) {
   const long damage = damroll("10d8") + 100;
   take_hit(damage, "the Wrath of Ned");
 
-  cure_me(&player_flags.afraid);
+  cure_player_status_effect(&player_flags.afraid);
   bless(randint(100) + 100);
   player_flags.hero += randint(100) + 100;
   player_flags.shero += randint(50) + 75;
@@ -118,11 +118,11 @@ static bool apply_food_effects(treas_rec *item_ptr) {
       break;
 
     case 6:
-      ident = cure_me(&player_flags.poisoned);
+      ident = cure_player_status_effect(&player_flags.poisoned);
       break;
 
     case 7:
-      ident = cure_me(&player_flags.blind);
+      ident = cure_player_status_effect(&player_flags.blind);
       break;
 
     case 8:
@@ -133,7 +133,7 @@ static bool apply_food_effects(treas_rec *item_ptr) {
       break;
 
     case 9:
-      ident = cure_me(&player_flags.confused);
+      ident = cure_player_status_effect(&player_flags.confused);
       break;
 
     case 10:
@@ -213,7 +213,7 @@ static bool apply_food_effects(treas_rec *item_ptr) {
       break;
 
     case 29:
-      ident = cure_me(&player_flags.hoarse);
+      ident = cure_player_status_effect(&player_flags.hoarse);
       break;
 
       /* fill player to full, then adds food value */
@@ -297,7 +297,7 @@ void player_action_eat(void) {
   }
 
   player_hunger_eat(item_ptr->data.p1);
-  desc_remain(item_ptr);
+  msg_remaining_of_item(item_ptr);
   inven_destroy(item_ptr);
   prt_stat_block();
 }

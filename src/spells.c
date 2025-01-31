@@ -1,22 +1,14 @@
-/* spells.c */
-/**/
-
-#include <curses.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
+#include "spells.h"
 #include "constants.h"
 #include "creature.h"
 #include "debug.h"
-#include "desc.h"
 #include "dungeon/light.h"
 #include "effects.h"
 #include "generate_item/generate_item.h"
 #include "generate_monster.h"
 #include "inven.h"
 #include "io.h"
+#include "loot/loot.h"
 #include "magic.h"
 #include "misc.h"
 #include "monsters.h"
@@ -25,11 +17,15 @@
 #include "player_action.h"
 #include "random.h"
 #include "screen.h"
+#include "text_lines.h"
 #include "traps.h"
 #include "types.h"
 #include "variables.h"
-
-#include "spells.h"
+#include <curses.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
 #define OBJ_BOLT_RANGE 18 /*{ Maximum range of bolts and balls	} */
 #define DRAW_BOLT_DELAY 50
@@ -345,11 +341,8 @@ bool restore_stat(const enum stat_t tstat, char msg1[82]) {
 
   return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-bool cure_me(int64_t *what_flag) {
-  /*{player_flags:  confused, blind, poisoned, hoarse, afraid, image}*/
+
+bool cure_player_status_effect(int64_t *what_flag) {
 
   if (*what_flag > 1) {
     *what_flag = 1;
@@ -1007,7 +1000,7 @@ bool slow_poison(void) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool restore_level(void) {
+bool restore_player_drained_levels(void) {
   /*{ Restores any drained experience                       -RAK-   }*/
 
   unsigned char max_level = 1;
@@ -1768,7 +1761,7 @@ bool create_food(const long t0, const long t1, const long t2, const long t3,
         }
 
         if (this_one != 0) {
-          place_object(i1, i2);
+          place_random_dungeon_item(i1, i2);
           if (this_one < 0) { /*{junk food.}*/
             t_list[cave[i1][i2].tptr] = generate_item_for_all_night_deli();
           } else { /*{good food}*/

@@ -34,7 +34,7 @@ void divine_spell_effects(const long effect) {
     break;
 
   case 4: /*{ Remove Fear }*/
-    cure_me(&player_flags.afraid);
+    cure_player_status_effect(&player_flags.afraid);
     break;
 
   case 5: /*{ Call Light }*/
@@ -103,7 +103,7 @@ void divine_spell_effects(const long effect) {
     break;
 
   case 19: /*{ Neutralize Poison }*/
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.poisoned);
     break;
 
   case 20: /*{ Cure Serious Wounds }*/
@@ -199,8 +199,8 @@ void divine_spell_effects(const long effect) {
 
   case 40: /*{ Holy Word }*/
     zap_area(0x0004, 6 * player_lev, SE_HOLY_WORD);
-    cure_me(&player_flags.afraid);
-    cure_me(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.afraid);
+    cure_player_status_effect(&player_flags.poisoned);
     hp_player(1000, "a prayer.");
     break;
 

@@ -72,15 +72,8 @@ bool is_vowel(const char a_char) {
   case 'u':
   case 'U':
     return true;
-    break;
 
   default:
     return false;
-    break;
   }
 }
-/*//////////////////////////////////////////////////////////////////// */
-
-/*//////////////////////////////////////////////////////////////////// */
-
-/* END FILE  pascal.c */

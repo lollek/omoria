@@ -1,4 +1,5 @@
 #include "../io.h"
+#include "../loot/loot.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player_action.h"
@@ -80,7 +81,7 @@ void player_action_tunnel(void) {
             msg_print("You have removed "
                       "the rubble.");
             if (randint(10) == 1) {
-              place_object(y, x);
+              place_random_dungeon_item(y, x);
               if (test_light(y, x)) {
                 msg_print("You have "
                           "found "

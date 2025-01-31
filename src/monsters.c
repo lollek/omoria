@@ -1,17 +1,12 @@
 /* monsters.c */
 /**/
 
-#include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h> /* for ftruncate, usleep */
-
+#include "monsters.h"
 #include "death.h"
 #include "debug.h"
-#include "io.h"
 #include "generate_monster.h"
+#include "io.h"
+#include "loot/loot.h"
 #include "misc.h"
 #include "pascal.h"
 #include "player.h"
@@ -19,8 +14,12 @@
 #include "screen.h"
 #include "types.h"
 #include "variables.h"
-
-#include "monsters.h"
+#include <curses.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h> /* for ftruncate, usleep */
 
 static float acc_exp = 0.0;       /*{ Accumulator for fractional exp} */
 
@@ -47,7 +46,7 @@ static void summon_object(const long y, const long x, long num,
                                 type of
                                 object }*/
               case 1:
-                place_object(i2, i3);
+                place_random_dungeon_item(i2, i3);
                 break;
 
               case 2:
@@ -56,7 +55,7 @@ static void summon_object(const long y, const long x, long num,
 
               case 3:
                 if (randint(100) < 50) {
-                  place_object(i2, i3);
+                  place_random_dungeon_item(i2, i3);
                 } else {
                   place_gold(i2, i3);
                 }

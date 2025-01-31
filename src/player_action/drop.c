@@ -1,8 +1,8 @@
-#include "../desc.h"
-#include "../io.h"
 #include "../inven.h"
+#include "../io.h"
 #include "../player.h"
 #include "../screen.h"
+#include "../text_lines.h"
 #include "../variables.h"
 
 #include <stdbool.h>

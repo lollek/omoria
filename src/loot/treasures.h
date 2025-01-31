@@ -1,6 +1,8 @@
 #pragma once
 
-#include "constants.h"
+#include "../constants.h"
+
+#include <stdbool.h>
 
 //  Descriptive constants
 #define MAX_SYLLABLES 156 // Used with scrolls

@@ -1,14 +1,13 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <time.h>
+#include "kickout.h"
 
 #include "configure.h"
+#include "io.h"
 #include "save.h"
 #include "variables.h"
 
-#include "kickout.h"
-
-#include "io.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <time.h>
 
 /**
  *  Operating hours for Moria

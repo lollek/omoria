@@ -13,8 +13,8 @@
 #include "../death.h"
 #include "../debug.h"
 #include "../dungeon/light.h"
-#include "../fighting_ranged.h"
-#include "../generate_dungeon/generate_dungeon.h"
+#include "../fighting/ranged.h"
+#include "../generate_map/generate_map.h"
 #include "../generate_monster.h"
 #include "../help.h"
 #include "../inven.h"
@@ -28,7 +28,7 @@
 #include "../player/hunger.h"
 #include "../player/regeneration.h"
 #include "../player_action.h"
-#include "../port.h"
+#include "../c.h"
 #include "../random.h"
 #include "../save.h"
 #include "../screen.h"
@@ -1486,6 +1486,6 @@ int main_loop(void) {
       }
     }
 
-    generate_cave();
+    generate_map();
   }
 }

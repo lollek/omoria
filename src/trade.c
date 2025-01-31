@@ -9,18 +9,18 @@
 #include <sys/file.h> /* for flock     */
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "c.h"
 #include "configure.h"
 #include "constants.h"
-#include "desc.h"
 #include "inven.h"
 #include "io.h"
 #include "kickout.h"
 #include "misc.h"
 #include "player.h"
-#include "port.h"
 #include "random.h"
 #include "screen.h"
 #include "stores.h"
+#include "text_lines.h"
 #include "trade.h"
 #include "types.h"
 #include "unix.h"
@@ -269,18 +269,18 @@ void tp__read_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
         read(fileno(sales), &item->data, sizeof(trade_record_type));
     if (got == 0) {
       done = true;
-      dispose(item, sizeof(inven_record), "tp__read_inv: read 0");
+      safe_free(item, sizeof(inven_record), "tp__read_inv: read 0");
     } else if (got != sizeof(trade_record_type)) {
       char out_val[134];
       sprintf(out_val, "Error reading inventory: %d. %s", got,
               "Please report this!");
       msg_print(out_val);
       msg_print("");
-      dispose(item, sizeof(inven_record), "tp__read_inv: bad read");
+      safe_free(item, sizeof(inven_record), "tp__read_inv: bad read");
     } else {
       if (item->data.pr.trade_type == TT_PROFIT) {
         profits->pr.money = item->data.pr.money;
-        dispose(item, sizeof(trade_record_type), "tp__read_inv: profit type");
+        safe_free(item, sizeof(trade_record_type), "tp__read_inv: profit type");
       } else if (first) {
         item->prev = NULL;
         *inv = item;
@@ -342,7 +342,7 @@ void tp__write_inv(FILE *sales, pinven_ptr *inv, pinven_ptr *cur_top,
     if (item != NULL) {
       item->prev = NULL;
     }
-    dispose(dead, sizeof(inven_record), "tp__write_inv: dead");
+    safe_free(dead, sizeof(inven_record), "tp__write_inv: dead");
   }
 }
 /*//////////////////////////////////////////////////////////////////// */
@@ -494,7 +494,7 @@ void tp__delete_item(pinven_ptr *item, pinven_ptr *inv, pinven_ptr *cur_top) {
   }
   (*item)->prev = NULL;
   (*item)->next = NULL;
-  dispose(*item, sizeof(inven_record), "tp__delete_item");
+  safe_free(*item, sizeof(inven_record), "tp__delete_item");
   *item = next;
 }
 /*//////////////////////////////////////////////////////////////////// */

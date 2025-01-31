@@ -1,14 +1,66 @@
+#include "../c.h"
+#include "../debug.h"
 #include "../io.h"
+#include "../misc.h"
+#include "../model_class.h"
+#include "../monsters.h"
+#include "../pascal.h"
 #include "../player.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../spells.h"
 #include "../types.h"
 #include "../variables.h"
-#include "../debug.h"
-#include "../misc.h"
-#include "../random.h"
-#include "../pascal.h"
-#include "../spells.h"
-#include "../monsters.h"
-#include "../screen.h"
+#include <math.h>
+
+static long attack_blows(const long weight, long *wtohit) {
+  /*{ Weapon weight VS strength and dexterity               -RAK-   }*/
+
+  const long max_wield = C_player_max_bulk() / 10;
+  const int dex_mod = C_player_mod_from_stat(DEX);
+  const int approx_str_stat = (10 + C_player_mod_from_stat(STR) * 2) * 10;
+
+  long blows = 1;
+
+  *wtohit = 0;
+
+  /*{ make to-hit drop off gradually instead of being so abrupt -DCJ- }*/
+  if (max_wield < weight / 100) {
+    *wtohit = max_wield - weight / 100;
+    return blows;
+  }
+
+  blows = 5 + dex_mod;
+  blows = min(12, blows);
+  blows = max(3, blows);
+
+  const long lev_skill = C_class_melee_bonus(player_pclass) * (player_lev + 10);
+
+  /*{warriors 100-500, paladin 80-400, priest 60-300, mage
+   * 40-200}*/
+  blows = trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
+
+  /*{usually 3 for 18+ dex, 5 max except 6 for high level
+   * warriors}*/
+  const long adj_weight =
+      (long)((float)approx_str_stat / (float)(weight / 100) * 2.5);
+
+  if (adj_weight < 1) {
+    blows = 1;
+  } else if (adj_weight < 2) {
+    blows = blows / 3.00;
+  } else if (adj_weight < 3) {
+    blows = blows / 2.50;
+  } else if (adj_weight < 5) {
+    blows = blows / 2.00;
+  } else if (adj_weight < 10) {
+    blows = blows / 1.66;
+  } else {
+    blows = blows / 1.50;
+  }
+
+  return blows;
+}
 
 bool player_action_attack(const long y, const long x) {
 

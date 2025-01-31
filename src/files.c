@@ -8,11 +8,11 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "constants.h"
-#include "desc.h"
 #include "generate_item/generate_item.h"
 #include "io.h"
 #include "misc.h"
 #include "player.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 

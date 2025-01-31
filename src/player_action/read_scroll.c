@@ -6,7 +6,6 @@
 
 #include "../constants.h"
 #include "../death.h"
-#include "../desc.h"
 #include "../generate_monster.h"
 #include "../inven.h"
 #include "../io.h"
@@ -16,6 +15,7 @@
 #include "../random.h"
 #include "../screen.h"
 #include "../spells.h"
+#include "../text_lines.h"
 #include "../types.h"
 #include "../variables.h"
 
@@ -626,7 +626,7 @@ void player_action_read_scroll(void) {
               identify(&item_ptr->data);
             }
             if (!first) {
-              desc_remain(item_ptr);
+              msg_remaining_of_item(item_ptr);
               inven_destroy(item_ptr);
               prt_stat_block();
 

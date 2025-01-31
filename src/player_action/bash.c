@@ -10,7 +10,7 @@
 #include "../screen.h"
 #include "../variables.h"
 #include "../spells.h"
-#include "../fighting.h"
+#include "../fighting/fighting.h"
 
 /**
  * -RAK-
@@ -67,7 +67,7 @@ void player_action_bash(void) {
     if (t_list[cave[y][x].tptr].tval == closed_door) {
       const int from_str = C_player_get_stat(STR) * 10;
 
-      if (test_hit(player_wt + from_str * from_str / 500, 0, 0,
+      if (managed_to_hit(player_wt + from_str * from_str / 500, 0, 0,
                    labs(t_list[cave[y][x].tptr].p1) + 150)) {
         msg_print("You smash into the door! "
                   "The door crashes open!");

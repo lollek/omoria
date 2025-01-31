@@ -11,7 +11,6 @@
 #include "constants.h"
 #include "creature.h"
 #include "debug.h"
-#include "desc.h"
 #include "files.h"
 #include "generate_monster.h"
 #include "io.h"
@@ -23,6 +22,7 @@
 #include "spells.h"
 #include "stores.h"
 #include "term.h"
+#include "text_lines.h"
 #include "types.h"
 #include "variables.h"
 
@@ -681,11 +681,11 @@ void wizard_command(void) {
     player_cmana = player_mana;
     prt_stat_block();
     remove_curse();
-    cure_me(&player_flags.blind);
-    cure_me(&player_flags.hoarse);
-    cure_me(&player_flags.afraid);
-    cure_me(&player_flags.poisoned);
-    cure_me(&player_flags.confused);
+    cure_player_status_effect(&player_flags.blind);
+    cure_player_status_effect(&player_flags.hoarse);
+    cure_player_status_effect(&player_flags.afraid);
+    cure_player_status_effect(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.confused);
     for (tstat = STR; tstat <= CHR; tstat++)
       restore_stat(tstat, "");
     if (player_flags.slow > 1)

@@ -2,7 +2,6 @@
 
 #include "../configure.h"
 #include "../kickout.h"
-#include "../port.h"
 
 #include "kickout.h"
 
@@ -64,7 +63,10 @@ static bool init_operating_hours(void) {
       return false;
     }
 
-    chomp(buf);
+    const long x = strlen(buf);
+    if (x && buf[x - 1] == '\n') {
+      buf[x - 1] = 0;
+    }
     strncpy(operating_hours[i], buf, sizeof(operating_hours[i]));
   }
 
