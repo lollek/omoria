@@ -1330,6 +1330,7 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
 
   __print_trade_accepted();
   __store_lower_insult_level(store_type);
+  bool exit_store = false;
   if (store_type == S_INN) {
     if (stores[store_type].store_inven[selected_item].scost < 0) {
       stores[store_type].store_inven[selected_item].scost = price * GOLD_VALUE;
@@ -1342,6 +1343,7 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
       player_hunger_set_status(FULL);
       msg_print(" ");
     }
+    exit_store = true;
   } else {
     __remove_item_from_store(store_type, selected_item, true);
     const treas_rec *item_new = inven_carry();
@@ -1368,7 +1370,7 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
   }
   prt("", 2, 1);
 
-  return true;
+  return exit_store;
 }
 
 /**
@@ -1643,7 +1645,7 @@ static void __store_enter(const enum store_t store_type) {
   treas_rec *trash_ptr;
 
   long tics = 1;
-  bool exit_flag = false;
+  bool exit_store = false;
   long cur_top = 1;
 
   display_store(store_type, cur_top);
@@ -1702,30 +1704,30 @@ static void __store_enter(const enum store_t store_type) {
         }
         break;
       case 'p':
-        exit_flag = __store_purchase(store_type, &cur_top, false);
+        exit_store = __store_purchase(store_type, &cur_top, false);
         break;
       case 'P':
-        exit_flag = __store_purchase(store_type, &cur_top, true);
+        exit_store = __store_purchase(store_type, &cur_top, true);
         break;
       case 's':
-        exit_flag = __store_sell(store_type, cur_top, false);
+        exit_store = __store_sell(store_type, cur_top, false);
         break;
       case 'S':
-        exit_flag = __store_sell(store_type, cur_top, true);
+        exit_store = __store_sell(store_type, cur_top, true);
         break;
       default:
         prt("Invalid Command.", 1, 1);
         break;
       } /* end switch */
     } else {
-      exit_flag = true;
+      exit_store = true;
     }
     adv_time(false);
     tics++;
     if (tics % 2 == 1) {
       kick__kickout_player_if_time();
     }
-  } while (!exit_flag);
+  } while (!exit_store);
 
   if (moria_flag) {
     clear_rc(1, 1);
