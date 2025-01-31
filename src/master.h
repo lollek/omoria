@@ -3,6 +3,13 @@
 #include <stdint.h>
 
 /**
+ * mst__init_masters() - Init masters database
+ *
+ * @returns: true on success, false on failure
+ */
+uint8_t mst__init_masters(void);
+
+/**
  * mst__update_character() - Update a character on the character list
  *
  * @returns: true on success, false on failure

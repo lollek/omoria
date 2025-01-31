@@ -17,6 +17,10 @@ pub struct MasterRecord {
     pub class: String,
 }
 
+pub fn init_master() -> Result<(), Error> {
+    persistence::init_masters()
+}
+
 pub fn read_master() -> Result<Vec<MasterRecord>, Error> {
     persistence::load_masters()
 }

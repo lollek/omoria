@@ -8,6 +8,7 @@ pub trait PersistenceEngine
 where
     Self: Sync + Send,
 {
+    fn init_masters(&mut self) -> Result<(), Error>;
     fn load_masters(&mut self) -> Result<Vec<MasterRecord>, Error>;
     fn save_master(&mut self, record: MasterRecord, allow_new: bool) -> Result<(), Error>;
 }
@@ -28,6 +29,13 @@ fn with_engine<T>(
         .as_deref_mut()
         .ok_or("No persistence engine assigned!")?;
     fun(engine)
+}
+
+/**
+ * init_masters() - Init masters for use
+ */
+pub fn init_masters() -> Result<(), Error> {
+    with_engine(|engine| engine.init_masters())
 }
 
 /**

@@ -1,5 +1,10 @@
 # Changelog
 
+## 5-alpha522
+ 
+* Give earlier error messages if master file is not found
+* Automatically create and initialize masters file if it does not exist
+
 ## 5-alpha521
 
 * Lots of automatic code cleanup. What could possibly go wrong
