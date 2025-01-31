@@ -13,11 +13,19 @@ static long malloc_bytes = 0;
 static long free_calls = 0;
 static long free_bytes = 0;
 
-bool int_is_even(int number) {
+bool int_is_even(const int number) {
     return (number & 1) == 0;
 }
 
-bool int_is_odd(int number) {
+bool long_is_even(const long number) {
+    return (number & 1) == 0;
+}
+
+bool int_is_odd(const int number) {
+    return (number & 1) == 1;
+}
+
+bool long_is_odd(const long number) {
     return (number & 1) == 1;
 }
 

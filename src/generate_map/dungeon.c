@@ -91,11 +91,11 @@ static void gc__place_streamer(const floor_type rock, const long treas_chance) {
   }
 
   /*{ Place streamer into dungeon			}*/
-  bool flag = false; /*{ Set to true when y,x are out-of-bounds}*/
+  bool is_out_of_bounds = false;
   const long t1 = 2 * DUN_STR_RNG + 1; /*{ Constants	}*/
   const long t2 = DUN_STR_RNG + 1;
 
-  do {
+  while (!is_out_of_bounds) {
     for (long _ = 1; _ < DUN_STR_DEN; _++) {
       const long ty = y + randint(t1) - t2;
       const long tx = x + randint(t1) - t2;
@@ -110,9 +110,9 @@ static void gc__place_streamer(const floor_type rock, const long treas_chance) {
       }
     }
     if (!move_dir(dir, &y, &x)) {
-      flag = true;
+      is_out_of_bounds = true;
     }
-  } while (!flag);
+  }
 }
 
 /**
@@ -265,10 +265,6 @@ static void gc__place_pool(const floor_type water) {
   /* XXXX place_pool does nothing useful */
 }
 
-static void gc__all_the_river_stuff(void) {
-  all_the_river_stuff(); /* in river.c */
-}
-
 static void gc__place_win_monster(void) {
 
   long cur_pos;
@@ -308,9 +304,7 @@ static void gc__place_win_monster(void) {
   }
 }
 
-void gc__cave_gen(void) {
-  /*{ Cave logic flow for generation of new dungeon		}*/
-
+void generate_dungeon(void) {
   coords doorstk[101];
   bool room_map[21][21]; /*: room_type;*/
   long doorptr = 0;
@@ -323,8 +317,6 @@ void gc__cave_gen(void) {
   obj_set allocSet4 = {1, 2, 0};       /* treasure things */
   obj_set allocSet5 = {1, 2, 4, 0};    /* treasure things */
 
-  long i3 = 0;
-
   const long row_rooms = 2 * (cur_height / SCREEN_HEIGHT);
   const long col_rooms = 2 * (cur_width / SCREEN_WIDTH);
 
@@ -334,45 +326,40 @@ void gc__cave_gen(void) {
     }
   }
 
-  if (1) {
-    for (long i = 1, roomCount = randnor(DUN_ROO_MEA, 2); i <= roomCount; i++) {
-      room_map[randint(row_rooms)][randint(col_rooms)] = true;
-    }
-  } else {
-    char_row = 17;
-    char_col = 50;
-    room_map[2][2] = true;
-    room_map[2][3] = true;
+  for (long i = 1, roomCount = randnor(DUN_ROO_MEA, 2); i <= roomCount; i++) {
+    room_map[randint(row_rooms)][randint(col_rooms)] = true;
   }
 
+  long num_rooms_created = 0;
   for (long y = 1; y <= row_rooms; y++) {
-    for (long i2 = 1; i2 <= col_rooms; i2++) {
-      if (room_map[y][i2]) {
-        i3++;
-        yloc[i3] = (y - 1) * (quart_height * 2 + 1) + quart_height + 1;
-        xloc[i3] = (i2 - 1) * (quart_width * 2 + 1) + quart_width + 1;
+    for (long x = 1; x <= col_rooms; x++) {
+      if (room_map[y][x]) {
+        num_rooms_created++;
+        const long current_room = num_rooms_created;
+        yloc[current_room] = (y - 1) * (quart_height * 2 + 1) + quart_height + 1;
+        xloc[current_room] = (x - 1) * (quart_width * 2 + 1) + quart_width + 1;
         if (dun_level > randint(dun_unusual)) {
           switch (randint(3)) {
           case 1:
-            gc__build_type1(yloc[i3], xloc[i3]);
+            gc__build_type1(yloc[current_room], xloc[current_room]);
             break;
           case 2:
-            gc__build_type2(yloc[i3], xloc[i3]);
+            gc__build_type2(yloc[current_room], xloc[current_room]);
             break;
           case 3:
-            gc__build_type3(yloc[i3], xloc[i3]);
+            gc__build_type3(yloc[current_room], xloc[current_room]);
             break;
           }
         } else {
-          gc__build_room(yloc[i3], xloc[i3]);
+          gc__build_room(yloc[current_room], xloc[current_room]);
         }
       }
     }
   }
 
-  for (long _ = 1; _ <= i3; _++) {
-    const long pick1 = randint(i3);
-    const long pick2 = randint(i3);
+  for (long _ = 1; _ <= num_rooms_created; _++) {
+    const long pick1 = randint(num_rooms_created);
+    const long pick2 = randint(num_rooms_created);
     const long y1 = yloc[pick1];
     const long x1 = xloc[pick1];
     yloc[pick1] = yloc[pick2];
@@ -381,7 +368,7 @@ void gc__cave_gen(void) {
     xloc[pick2] = x1;
   }
 
-  for (long i = 1; i < i3; i++) {
+  for (long i = 1; i < num_rooms_created; i++) {
     const long y1 = yloc[i];
     const long x1 = xloc[i];
     const long y2 = yloc[i + 1];
@@ -399,7 +386,7 @@ void gc__cave_gen(void) {
   }
 
   place_boundry();
-  gc__all_the_river_stuff();
+  generate_rivers();
 
   for (long _ = 1; _ <= DUN_POOLS; _++) {
     gc__place_pool(water1);

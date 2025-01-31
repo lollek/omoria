@@ -334,6 +334,46 @@ static bool learn_druid(bool *redraw) {
   return return_value;
 }
 
+long y_from_keypad_direction(const enum keypad_direction_t keypad_direction) {
+  switch (keypad_direction) {
+  case KEYPAD_DOWN_LEFT:
+  case KEYPAD_DOWN:
+  case KEYPAD_DOWN_RIGHT:
+    return 1;
+  case KEYPAD_LEFT:
+  case KEYPAD_NONE:
+  case KEYPAD_RIGHT:
+    return 0;
+  case KEYPAD_UP_LEFT:
+  case KEYPAD_UP:
+  case KEYPAD_UP_RIGHT:
+    return -1;
+  default:
+      MSG(("Cannot get y: Invalid keypad direction: %d", keypad_direction));
+      return 0;
+  }
+}
+
+long x_from_keypad_direction(const enum keypad_direction_t keypad_direction) {
+  switch (keypad_direction) {
+  case KEYPAD_DOWN_LEFT:
+  case KEYPAD_LEFT:
+  case KEYPAD_UP_LEFT:
+    return -1;
+  case KEYPAD_DOWN:
+  case KEYPAD_NONE:
+  case KEYPAD_UP:
+    return 0;
+  case KEYPAD_DOWN_RIGHT:
+  case KEYPAD_RIGHT:
+  case KEYPAD_UP_RIGHT:
+    return 1;
+  default:
+      MSG(("Cannot get x: Invalid keypad direction: %d", keypad_direction));
+      return 0;
+  }
+}
+
 char *cost_str(const long amt, char result[134]) {
   /*{ Return string describing how much the amount is worth	-DMF-
    * }*/
@@ -1049,22 +1089,20 @@ bool in_bounds(const long y, const long x) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool move_dir(const long dir, long *y, long *x) /* was move */
+bool move_dir(const enum keypad_direction_t dir, long *y, long *x) /* was move */
 {
   /*{ Given direction 'dir', returns new row, column location -RAK- }*/
 
-  bool return_value = false;
-
-  const long new_row = *y + dy_of[dir];
-  const long new_col = *x + dx_of[dir];
+  const long new_row = *y + y_from_keypad_direction(dir);
+  const long new_col = *x + x_from_keypad_direction(dir);
   if (new_row >= 1 && new_row <= cur_height) {
     if (new_col >= 1 && new_col <= cur_width) {
       *y = new_row;
       *x = new_col;
-      return_value = true;
+      return true;
     }
   }
-  return return_value;
+  return false;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
