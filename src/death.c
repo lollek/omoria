@@ -156,8 +156,7 @@ void upon_death(void) {
 
   /*  What happens upon dying...    -RAK- */
   if (!mst__update_character(player_uid)) {
-    msg_print("ERROR opening file MASTER. "
-              "Contact your local wizard.");
+    msg_print("ERROR opening file MASTER. Contact your local wizard.");
     msg_print(" ");
   }
   C_delete_character();

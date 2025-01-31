@@ -1,28 +1,26 @@
-#include <string.h>
-
+#include "../pregame/main.h"
+#include "../debug.h"
 #include "../init/argv.h"
 #include "../init/bank.h"
 #include "../init/death.h"
 #include "../init/debug.h"
 #include "../init/graphics.h"
 #include "../init/kickout.h"
+#include "../master.h"
 #include "../init/stores.h"
 #include "../init/trade.h"
-
-#include "../pregame/main.h"
-
-#include "../debug.h"
 #include "../io.h"
 #include "../kickout.h"
 #include "../player.h"
 #include "../variables.h"
-
 #include "main_loop.h"
 
 int main(const int argc, char *argv[]) {
 
   // Initialization
   game_state = GS_LOADING;
+  if (!mst__init_masters())
+    exit_game();
   if (!init__debug())
     exit_game();
   MSG(("%s", "Main - Initialization"));

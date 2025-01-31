@@ -39,7 +39,7 @@ pub fn restriction_info(class: &model::Class) -> &'static str {
     match class {
         model::Class::Druid => "Can only use the following weapons: Club, Dagger, Dart, Quarterstaff, Scimitar, Scythe, Sickle, Shortspear, Sling, Spear. For armor, shields and Misc. items: Cannot wear anything consisting of a lot of metal. Also can not use any large shields",
         model::Class::Barbarian => "Cannot use heavy armor",
-        _ => "No restrictions!",
+        _ => "No restrictions",
     }
 }
 

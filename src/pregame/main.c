@@ -1,7 +1,7 @@
-#include <string.h>
-
+#include "main.h"
 #include "../configure.h"
 #include "../generate_map/generate_map.h"
+#include "../io.h"
 #include "../master.h"
 #include "../menu.h"
 #include "../misc.h"
@@ -10,10 +10,8 @@
 #include "../screen.h"
 #include "../term.h"
 #include "../variables.h"
-
 #include "menu.h"
-
-#include "main.h"
+#include <string.h>
 
 static bool load_existing_character(void) {
     game_state = GS_IGNORE_CTRL_C;
@@ -25,19 +23,24 @@ static bool load_existing_character(void) {
 }
 
 static bool create_new_character(void) {
-    char save_file_name[82];
-    /* Create character */
-    create_character();
-    player_flags.light_on = false;
-    strcpy(save_file_name, SAVE_FILE_PATH "/");
-    strcat(save_file_name, player_name);
-    player_uid = mst__add_character();
+  char save_file_name[82];
 
-    learn_magic(false);
-    player_cmana = player_mana;
-    randes_seed = town_seed; // Unsure why the seed needs to be the same
+  create_character();
+  player_flags.light_on = false;
+  strcpy(save_file_name, SAVE_FILE_PATH "/");
+  strcat(save_file_name, player_name);
+  player_uid = mst__add_character();
+  if (player_uid == 0) {
+    msg_print("ERROR opening file MASTER. Contact your local wizard.");
+    msg_print(" ");
+    return false;
+  }
 
-    return true;
+  learn_magic(false);
+  player_cmana = player_mana;
+  randes_seed = town_seed; // Unsure why the seed needs to be the same
+
+  return true;
 }
 
 bool pregame__main(void) {
