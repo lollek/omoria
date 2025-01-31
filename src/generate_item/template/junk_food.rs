@@ -72,24 +72,6 @@ impl ItemTemplate for JunkFoodTemplate {
 
     fn flags1(&self) -> u64 {
         match self {
-            JunkFoodTemplate::BoxOfPiranhaCrackers => 0x00000001,
-            JunkFoodTemplate::CanOfOrcaCola => 0x00000002,
-            JunkFoodTemplate::TwelvePoundTrollBuger => 0x00000001,
-            JunkFoodTemplate::BagOfBrontosaurusChips => 0x00000001,
-            JunkFoodTemplate::SliceOfPurpleMushroomPizza => 0x00000001,
-            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => 0x00000001,
-            JunkFoodTemplate::DragonSteak => 0x00000001,
-            JunkFoodTemplate::VorpalBunnyThroatLozenge => 0x00000001,
-            JunkFoodTemplate::DeepFriedGiantCentipede => 0x00000001,
-            JunkFoodTemplate::PintOfBeetleJuice => 0x00000002,
-            JunkFoodTemplate::BownOfBatStew => 0x00000001,
-            JunkFoodTemplate::JarOfPickledLeeches => 0x00000001,
-            JunkFoodTemplate::PackOfKittenMcNuggets => 0x00000001,
-        }
-    }
-
-    fn flags2(&self) -> u64 {
-        match self {
             JunkFoodTemplate::BoxOfPiranhaCrackers => 0x40000000,
             JunkFoodTemplate::CanOfOrcaCola => 0x40000000,
             JunkFoodTemplate::TwelvePoundTrollBuger => 0x40000000,
@@ -103,6 +85,24 @@ impl ItemTemplate for JunkFoodTemplate {
             JunkFoodTemplate::BownOfBatStew => 0x40000000,
             JunkFoodTemplate::JarOfPickledLeeches => 0x40000000,
             JunkFoodTemplate::PackOfKittenMcNuggets => 0x40000000,
+        }
+    }
+
+    fn flags2(&self) -> u64 {
+        match self {
+            JunkFoodTemplate::BoxOfPiranhaCrackers => 0x00000001,
+            JunkFoodTemplate::CanOfOrcaCola => 0x00000002,
+            JunkFoodTemplate::TwelvePoundTrollBuger => 0x00000001,
+            JunkFoodTemplate::BagOfBrontosaurusChips => 0x00000001,
+            JunkFoodTemplate::SliceOfPurpleMushroomPizza => 0x00000001,
+            JunkFoodTemplate::PeanutButterAndGrapeJellySandwich => 0x00000001,
+            JunkFoodTemplate::DragonSteak => 0x00000001,
+            JunkFoodTemplate::VorpalBunnyThroatLozenge => 0x00000001,
+            JunkFoodTemplate::DeepFriedGiantCentipede => 0x00000001,
+            JunkFoodTemplate::PintOfBeetleJuice => 0x00000002,
+            JunkFoodTemplate::BownOfBatStew => 0x00000001,
+            JunkFoodTemplate::JarOfPickledLeeches => 0x00000001,
+            JunkFoodTemplate::PackOfKittenMcNuggets => 0x00000001,
         }
     }
 

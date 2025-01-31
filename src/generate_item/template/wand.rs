@@ -106,10 +106,6 @@ impl ItemTemplate for WandTemplate {
         model::ItemType::Wand
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             WandTemplate::WandOfProbing => 0x01000000,
             WandTemplate::WandOfLight => 0x00000001,
@@ -137,6 +133,10 @@ impl ItemTemplate for WandTemplate {
             WandTemplate::WandOfAcidBalls => 0x00400000,
             WandTemplate::WandOfWonder => 0x00800000,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

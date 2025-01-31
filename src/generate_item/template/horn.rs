@@ -68,10 +68,6 @@ impl ItemTemplate for HornTemplate {
         model::ItemType::Horn
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             HornTemplate::HornOfBubbles => 0x00010000,
             HornTemplate::HornOfCalling => 0x00020000,
@@ -87,6 +83,10 @@ impl ItemTemplate for HornTemplate {
             HornTemplate::HornOfTritons => 0x08000000,
             HornTemplate::HornOfFog => 0x10000000,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

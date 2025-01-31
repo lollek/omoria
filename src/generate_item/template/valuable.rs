@@ -167,10 +167,6 @@ impl ItemTemplate for ValuableTemplate {
     }
 
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             ValuableTemplate::GemOfTeleportation => 0x00000400,
             ValuableTemplate::GemOfResistCold => 0x00200000,
@@ -206,6 +202,10 @@ impl ItemTemplate for ValuableTemplate {
             ValuableTemplate::LargeMithrilGarterBelt => 0,
             ValuableTemplate::SmallSilverPendant => 0,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

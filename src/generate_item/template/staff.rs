@@ -105,10 +105,6 @@ impl ItemTemplate for StaffTemplate {
         model::ItemType::Staff
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             StaffTemplate::StaffOfLight => 0x00000001,
             StaffTemplate::StaffOfDoorStairLocation => 0x00000002,
@@ -135,6 +131,10 @@ impl ItemTemplate for StaffTemplate {
             StaffTemplate::StaffOfDarkness => 0x01000000,
             StaffTemplate::StaffOfIdentify => 0x02000000,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

@@ -47,19 +47,19 @@ impl ItemTemplate for PrayerBookTemplate {
 
     fn flags1(&self) -> u64 {
         match self {
-            PrayerBookTemplate::BeginnersHandbook => 0,
-            PrayerBookTemplate::WordsOfWisdom => 0,
-            PrayerBookTemplate::ChantsAndBlessings => 0x00000001,
-            PrayerBookTemplate::ExorcismAndDispelling => 0x000001FE,
+            PrayerBookTemplate::BeginnersHandbook => 0x000000FF,
+            PrayerBookTemplate::WordsOfWisdom => 0x0007FF00,
+            PrayerBookTemplate::ChantsAndBlessings => 0x7FF80000,
+            PrayerBookTemplate::ExorcismAndDispelling => 0,
         }
     }
 
     fn flags2(&self) -> u64 {
         match self {
-            PrayerBookTemplate::BeginnersHandbook => 0x000000FF,
-            PrayerBookTemplate::WordsOfWisdom => 0x0007FF00,
-            PrayerBookTemplate::ChantsAndBlessings => 0x7FF80000,
-            PrayerBookTemplate::ExorcismAndDispelling => 0,
+            PrayerBookTemplate::BeginnersHandbook => 0,
+            PrayerBookTemplate::WordsOfWisdom => 0,
+            PrayerBookTemplate::ChantsAndBlessings => 0x00000001,
+            PrayerBookTemplate::ExorcismAndDispelling => 0x000001FE,
         }
     }
 

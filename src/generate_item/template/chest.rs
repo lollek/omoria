@@ -47,10 +47,6 @@ impl ItemTemplate for ChestTemplate {
         model::ItemType::Chest
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             ChestTemplate::SmallWoodenChest => 0x0F000000,
             ChestTemplate::LargeWoodenChest => 0x15000000,
@@ -59,6 +55,10 @@ impl ItemTemplate for ChestTemplate {
             ChestTemplate::SmallSteelChest => 0x0F000000,
             ChestTemplate::LargeSteelChest => 0x23000000,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

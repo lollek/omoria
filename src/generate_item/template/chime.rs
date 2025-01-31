@@ -79,10 +79,6 @@ impl ItemTemplate for ChimeTemplate {
         model::ItemType::Chime
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             ChimeTemplate::ChimeOfLight => 0x00000001,
             ChimeTemplate::ChimeOfDetectDoorsStairs => 0x00000002,
@@ -101,6 +97,10 @@ impl ItemTemplate for ChimeTemplate {
             ChimeTemplate::ChimeOfDispelEvil => 0x00004000,
             ChimeTemplate::ChimeOfDarkness => 0x00008000,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {

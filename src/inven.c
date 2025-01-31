@@ -1522,9 +1522,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
       break;
 
     case 'x':
-      if (equipment[Equipment_primary].tval != 0) {
-        ic__switch_weapon(&scr_state);
-      } else if (equipment[Equipment_secondary].tval != 0) {
+      if (equipment[Equipment_primary].tval != 0 || equipment[Equipment_secondary].tval != 0) {
         ic__switch_weapon(&scr_state);
       } else {
         msg_print("But you are wielding no weapons.");

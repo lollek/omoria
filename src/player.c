@@ -351,7 +351,6 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
     item_flags2 = item_flags2 | equipment[i1].flags2;
   }
 
-  /* with player_flags do; */
   player_flags.slow_digest = (Slow_Digestion_worn_bit & item_flags) != 0;
   player_flags.aggravate = (Aggravation_worn_bit & item_flags) != 0;
   player_flags.teleport = (Teleportation_worn_bit & item_flags) != 0;
@@ -366,7 +365,6 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
   player_flags.ffall = (Feather_Fall_worn_bit & item_flags) != 0;
 
   for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
-    /* with equipment[i1] do; */
     if ((Sustain_Stat_worn_bit & equipment[i1].flags) != 0) {
       if (equipment[i1].p1 > 0 && equipment[i1].p1 < 7) {
         player_flags.sustain[equipment[i1].p1 - 1] = true;

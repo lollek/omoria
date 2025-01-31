@@ -146,10 +146,6 @@ impl ItemTemplate for FoodTemplate {
         model::ItemType::Food
     }
     fn flags1(&self) -> u64 {
-        0
-    }
-
-    fn flags2(&self) -> u64 {
         match self {
             FoodTemplate::Mushroom => 0,
             FoodTemplate::MushroomOfPoison => 0x00000001,
@@ -191,6 +187,10 @@ impl ItemTemplate for FoodTemplate {
             FoodTemplate::BerriesGoodberries2 => 0x30C00080,
             FoodTemplate::EyeballOfNed => 0x00000053,
         }
+    }
+
+    fn flags2(&self) -> u64 {
+        0
     }
 
     fn p1(&self) -> i64 {
