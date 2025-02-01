@@ -1,12 +1,22 @@
 use std::borrow::Cow;
 
 use crate::data;
+use crate::data::item_name::subtype::ammo::ammo;
+use crate::data::item_name::subtype::bag::bag;
+use crate::data::item_name::subtype::chest::chest;
+use crate::data::item_name::subtype::gem::gem;
+use crate::data::item_name::subtype::jewelry::jewelry;
+use crate::data::item_name::subtype::light_source::light_source;
+use crate::data::item_name::subtype::misc_object::misc_object;
+use crate::data::item_name::subtype::misc_usable::misc_usable;
+use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
+use crate::data::item_name::subtype::spike::spike;
+use crate::data::item_name::subtype::wearable_gem::wearable_gem;
 use crate::model::{Item, ItemType};
 
 use super::helpers::attack_bonus;
 use super::helpers::damage;
 use super::helpers::number_of;
-use super::subtypes;
 
 fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
@@ -732,26 +742,25 @@ fn generic_item(item: &Item) -> String {
 
 pub fn generate(item: &Item) -> String {
     match item.item_type() {
-        ItemType::MiscObject => subtypes::misc_object(item),
-        ItemType::Chest => subtypes::chest(item),
-        ItemType::MiscUsable => subtypes::misc_usable(item),
-        ItemType::Jewelry => subtypes::jewelry(item),
-        ItemType::Gem => subtypes::gem(item),
-        ItemType::Bag => subtypes::bag(item),
-        ItemType::WearableGem => subtypes::wearable_gem(item),
-        ItemType::SlingAmmo => subtypes::ammo(item),
-        ItemType::Arrow => subtypes::ammo(item),
-        ItemType::Bolt => subtypes::ammo(item),
-        ItemType::LightSource => subtypes::light_source(item),
-        ItemType::Spike => subtypes::numbered_misc_usable(item),
-        ItemType::RangedWeapon => subtypes::ranged_weapon(item),
+        ItemType::MiscObject => misc_object(item),
+        ItemType::Chest => chest(item),
+        ItemType::MiscUsable => misc_usable(item),
+        ItemType::Jewelry => jewelry(item),
+        ItemType::Gem => gem(item),
+        ItemType::Bag => bag(item),
+        ItemType::WearableGem => wearable_gem(item),
+        ItemType::SlingAmmo => ammo(item),
+        ItemType::Arrow => ammo(item),
+        ItemType::Bolt => ammo(item),
+        ItemType::LightSource => light_source(item),
+        ItemType::Spike => spike(item),
+        ItemType::RangedWeapon => ranged_weapon(item),
         _ => generic_item(item),
     }
 }
 
 #[cfg(test)]
 mod test {
-
     use crate::generate_item::{self, template::FoodTemplate};
 
     use super::*;
