@@ -1,12 +1,8 @@
-use std::borrow::Cow;
-use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::ChestTemplate},
-};
 use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::no_more;
-use crate::model::{Item, ItemType};
 use crate::model::item_subtype::{ChestSubType, ItemSubType};
+use crate::model::{Item, ItemType};
+use std::borrow::Cow;
 
 pub fn chest(item: &Item) -> String {
     vec![
@@ -24,12 +20,14 @@ pub fn chest(item: &Item) -> String {
             None => "alien chest",
         }),
     ]
-        .join("")
+    .join("")
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::ChestTemplate;
 
     #[test]
     fn test_chest_small_wooden_chest() {

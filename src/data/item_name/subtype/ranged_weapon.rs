@@ -2,13 +2,6 @@ use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{attack_bonus, number_of, p1_bonus};
 use crate::model::item_subtype::{ItemSubType, RangedWeaponSubType};
 use crate::model::Item;
-use crate::{
-    data::item_name::generate,
-    generate_item::{
-        self,
-        template::{BowTemplate, CrossbowTemplate, SlingTemplate},
-    },
-};
 use std::borrow::Cow;
 
 pub fn ranged_weapon(item: &Item) -> String {
@@ -43,6 +36,9 @@ pub fn ranged_weapon(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::{BowTemplate, CrossbowTemplate, SlingTemplate};
     use super::*;
 
     #[test]

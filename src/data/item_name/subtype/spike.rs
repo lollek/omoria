@@ -2,10 +2,6 @@ use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{full_number_of, plural_s};
 use crate::model::item_subtype::{ItemSubType, SpikeSubType};
 use crate::model::Item;
-use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::MiscUsableTemplate},
-};
 use std::borrow::Cow;
 
 pub fn spike(item: &Item) -> String {
@@ -26,7 +22,9 @@ pub fn spike(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::MiscUsableTemplate;
 
     #[test]
     fn test_spike() {

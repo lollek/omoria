@@ -2,8 +2,6 @@ use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{number_of, p1_plural_s, plural_es, plural_s};
 use crate::model::{Item, ItemType};
 use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::ValuableTemplate},
     identification,
     model::item_subtype::{GemSubType, ItemSubType},
 };
@@ -112,6 +110,9 @@ pub fn gem(item: &Item) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::ValuableTemplate;
 
     #[test]
     fn test_gem_of_detect_monster() {

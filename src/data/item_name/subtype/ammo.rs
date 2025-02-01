@@ -1,12 +1,8 @@
-use std::borrow::Cow;
-use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::AmmunitionTemplate},
-};
 use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{attack_bonus, damage, full_number_of, plural_s};
-use crate::model::Item;
 use crate::model::item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType};
+use crate::model::Item;
+use std::borrow::Cow;
 
 pub fn ammo(item: &Item) -> String {
     let mut parts = vec![
@@ -35,7 +31,9 @@ pub fn ammo(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::AmmunitionTemplate;
 
     #[test]
     fn test_rounded_pebble() {
