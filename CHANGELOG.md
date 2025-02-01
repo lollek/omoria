@@ -12,6 +12,7 @@ January 2025
 * Fix critical bug when porting items to rust. flag1 and flag2 variables were switched, causing all manners of strange bugs.
 * Changes to how rivers are created, since they caused infinite loops and segfaults. Still, unsure if the code is correct.
 * Capitalize light sources in equipment list
+* Make throwing more viable by making thrown objects fall to the ground even when hitting.
 
 ## 5-alpha521
 

@@ -8,6 +8,11 @@
 typedef uint8_t obj_set[MAX_OBJ_SET];    /* = set of 0..255; */
 typedef int64_t money_type[MITHRIL + 1]; /* = array[total$..mithril] of long; */
 
+typedef struct coords {
+  long y;
+  long x;
+} coords;
+
 #define STAT_T_SIZE 6 /* type stat_set is supposed to be 0..5 */
 enum stat_t { STR = 0, INT = 1, WIS = 2, DEX = 3, CON = 4, CHR = 5 };
 

@@ -6,7 +6,6 @@
 #include "../random.h"
 #include "../types.h"
 #include "../variables.h"
-#include "models.h"
 
 typedef struct river_deal {
   enum keypad_direction_t in1; // (keypad) directions; in is upstream
