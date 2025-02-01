@@ -9,3 +9,4 @@ mod misc_usable;
 mod ranged_weapon;
 mod spike;
 mod wearable_gem;
+mod wand;
