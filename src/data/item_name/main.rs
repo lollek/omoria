@@ -7,6 +7,7 @@ use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::jewelry::jewelry;
 use crate::data::item_name::subtype::light_source::light_source;
+use crate::data::item_name::subtype::melee_weapon::melee_weapon;
 use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
@@ -15,7 +16,7 @@ use crate::data::item_name::subtype::wand::wand;
 use crate::data::item_name::subtype::wearable_gem::wearable_gem;
 use crate::model::{Item, ItemType};
 
-use super::helpers::attack_bonus;
+use super::helpers::{armor_bonus, attack_bonus};
 use super::helpers::damage;
 use super::helpers::number_of;
 
@@ -104,12 +105,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             23 => "Zweihander",
             24 => "Broken sword",
             _ => "Alien sword",
-        }),
-        ItemType::HaftedWeapon => Cow::from(match item.subval {
-            1 => "Balestarius",
-            3 => "Battle axe",
-            4 => "Broad axe",
-            _ => "Alien hafted weapon",
         }),
         ItemType::Maul => Cow::from(match item.subval {
             2 => "Ball and chain",
@@ -671,18 +666,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     }
 }
 
-fn armor_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    if item.ac == 0 && (!item.is_identified() || item.toac == 0) {
-        return Cow::from("");
-    }
-
-    if !item.is_identified() {
-        return Cow::from(format!(" [{}]", item.ac));
-    }
-
-    let toac_sign = if item.toac > 0 { "+" } else { "" };
-    Cow::from(format!(" [{},{}{}]", item.ac, toac_sign, item.toac))
-}
 
 fn generic_item(item: &Item) -> String {
     let mut parts = Vec::new();
@@ -708,20 +691,21 @@ fn generic_item(item: &Item) -> String {
 
 pub fn generate(item: &Item) -> String {
     match item.item_type() {
-        ItemType::MiscObject => misc_object(item),
-        ItemType::Chest => chest(item),
-        ItemType::MiscUsable => misc_usable(item),
-        ItemType::Jewelry => jewelry(item),
-        ItemType::Gem => gem(item),
-        ItemType::Bag => bag(item),
-        ItemType::WearableGem => wearable_gem(item),
-        ItemType::SlingAmmo => ammo(item),
         ItemType::Arrow => ammo(item),
+        ItemType::Bag => bag(item),
         ItemType::Bolt => ammo(item),
+        ItemType::Chest => chest(item),
+        ItemType::Gem => gem(item),
+        ItemType::HaftedWeapon => melee_weapon(item),
+        ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),
-        ItemType::Spike => spike(item),
+        ItemType::MiscObject => misc_object(item),
+        ItemType::MiscUsable => misc_usable(item),
         ItemType::RangedWeapon => ranged_weapon(item),
+        ItemType::SlingAmmo => ammo(item),
+        ItemType::Spike => spike(item),
         ItemType::Wand => wand(item),
+        ItemType::WearableGem => wearable_gem(item),
         _ => generic_item(item),
     }
 }

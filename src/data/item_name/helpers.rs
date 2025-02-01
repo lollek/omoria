@@ -2,6 +2,19 @@ use std::borrow::Cow;
 
 use crate::{misc, model::Item};
 
+pub(crate) fn armor_bonus<'a>(item: &Item) -> Cow<'a, str> {
+    if item.ac == 0 && (!item.is_identified() || item.toac == 0) {
+        return Cow::from("");
+    }
+
+    if !item.is_identified() {
+        return Cow::from(format!(" [{}]", item.ac));
+    }
+
+    let toac_sign = if item.toac > 0 { "+" } else { "" };
+    Cow::from(format!(" [{},{}{}]", item.ac, toac_sign, item.toac))
+}
+
 /**
  * Returns the number of the given item. 1 returns an empty string
  */
