@@ -145,7 +145,7 @@ void place_monster(const long y, const long x, const long template,
  */
 static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
                               obj_set const fval_set,
-                              monster_attribute const **monster_attributes) {
+                              monster_attribute const *const *monster_attributes) {
   long const max_monster_level =
       MIN(dun_level + MON_SUMMON_ADJ, MAX_MONS_LEVEL);
 
@@ -175,7 +175,6 @@ static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
     }
 
     for (int counter = 0; counter < 11; counter++) {
-    continue_spawn_loop:;
       // Town level has separate creatures from the rest of the levels
       long monster_i = dun_level == 0
                            ? randint(m_level[0])
@@ -190,12 +189,8 @@ static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
         continue;
       }
 
-      for (monster_attribute const **attribute = monster_attributes;
-           *attribute != NULL; (*attribute)++) {
-        if (!monster_template_has_attribute(template, **attribute)) {
-          counter++;
-          goto continue_spawn_loop; // continue the outer loop
-        }
+      if (!monster_template_has_attributes(template, monster_attributes)) {
+        continue;
       }
 
       place_monster(monster_y, monster_x, monster_i, is_asleep);
