@@ -1,0 +1,12 @@
+pub mod ammo;
+pub mod bag;
+pub mod chest;
+pub mod gem;
+pub mod jewelry;
+pub mod light_source;
+pub mod misc_object;
+pub mod misc_usable;
+pub mod ranged_weapon;
+pub mod spike;
+pub mod wand;
+pub mod wearable_gem;
