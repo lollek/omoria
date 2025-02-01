@@ -2,10 +2,6 @@ use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::no_more;
 use crate::model::item_subtype::{ItemSubType, MiscObjectSubType};
 use crate::model::{Item, ItemType};
-use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::MiscTemplate},
-};
 use std::borrow::Cow;
 
 pub fn misc_object(item: &Item) -> String {
@@ -36,7 +32,9 @@ pub fn misc_object(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::MiscTemplate;
 
     #[test]
     fn test_misc_object_type_rat_skeleton() {

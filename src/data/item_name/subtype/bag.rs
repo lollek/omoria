@@ -1,12 +1,10 @@
-use std::borrow::Cow;
+use crate::conversion::item_subtype::from_i64;
+use crate::model::{Item, ItemType};
 use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::BagTemplate},
     identification,
     model::item_subtype::{BagSubType, ItemSubType},
 };
-use crate::conversion::item_subtype::from_i64;
-use crate::model::{Item, ItemType};
+use std::borrow::Cow;
 
 pub fn bag(item: &Item) -> String {
     let subtype = from_i64(ItemType::Bag, item.subval)
@@ -30,7 +28,10 @@ pub fn bag(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
+    use crate::data::item_name::generate;
     use super::*;
+    use crate::generate_item;
+    use crate::generate_item::template::BagTemplate;
 
     #[test]
     fn test_bag_of_holding250() {

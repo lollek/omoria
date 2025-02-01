@@ -2,10 +2,6 @@ use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{number_of, plural_s};
 use crate::model::item_subtype::{ItemSubType, JewelrySubType};
 use crate::model::{Item, ItemType};
-use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::ValuableTemplate},
-};
 use std::borrow::Cow;
 
 pub fn jewelry(item: &Item) -> String {
@@ -32,7 +28,9 @@ pub fn jewelry(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::ValuableTemplate;
 
     #[test]
     fn test_jewelry_small_gold_pendant() {

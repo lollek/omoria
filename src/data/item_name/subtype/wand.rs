@@ -1,10 +1,8 @@
-use crate::data::item_name::generate;
-use crate::generate_item;
-use crate::generate_item::template::WandTemplate;
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::WandTemplate;
 
     #[test]
     fn test_wand_unidentified() {

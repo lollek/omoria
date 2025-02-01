@@ -2,10 +2,6 @@ use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{number_of, p1_plural_s};
 use crate::model::item_subtype::{ItemSubType, LightSourceSubType};
 use crate::model::{Item, ItemType};
-use crate::{
-    data::item_name::generate,
-    generate_item::{self, template::LightSourceTemplate},
-};
 use std::borrow::Cow;
 
 pub fn light_source(item: &Item) -> String {
@@ -40,7 +36,9 @@ pub fn light_source(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::data::item_name::generate;
+    use crate::generate_item;
+    use crate::generate_item::template::LightSourceTemplate;
 
     #[test]
     fn test_light_source_wooden_torch() {
