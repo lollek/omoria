@@ -11,6 +11,7 @@ use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
 use crate::data::item_name::subtype::spike::spike;
+use crate::data::item_name::subtype::wand::wand;
 use crate::data::item_name::subtype::wearable_gem::wearable_gem;
 use crate::model::{Item, ItemType};
 
@@ -599,41 +600,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             Cow::from(format!("{} potion{}{}", material, plural_s(), attribute))
         }
         ItemType::FlaskOfOil => Cow::from(format!("Flask{} of Oil", plural_s())),
-        ItemType::Wand => {
-            if !item.is_identified() {
-                return Cow::from("Unknown wand");
-            }
-            let attribute = match item.subval {
-                1 => " of Light",
-                2 => " of Lightning Bolts",
-                3 => " of Frost Bolts",
-                4 => " of Fire Bolts",
-                5 => " of Stone-to-Mud",
-                6 => " of Polymorph",
-                7 => " of Heal Monster",
-                8 => " of Haste Monster",
-                9 => " of Slow Monster",
-                10 => " of Confuse Monster",
-                11 => " of Sleep Monster",
-                12 => " of Drain Life",
-                13 => " of Trap/Door destruction",
-                14 => " of Magic Missile",
-                15 => " of Wall Building",
-                16 => " of Clone Monster",
-                17 => " of Teleport Away",
-                18 => " of Disarming",
-                19 => " of Lightning Balls",
-                20 => " of Cold Balls",
-                21 => " of Fire Balls",
-                22 => " of Stinking Cloud",
-                23 => " of Acid Balls",
-                24 => " of Wonder",
-                25 => " of Probing",
-                _ => "of ???",
-            };
-            let charges = item.p1;
-            Cow::from(format!("Wand{attribute} ({charges} charges)"))
-        }
         ItemType::Staff => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -755,6 +721,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::LightSource => light_source(item),
         ItemType::Spike => spike(item),
         ItemType::RangedWeapon => ranged_weapon(item),
+        ItemType::Wand => wand(item),
         _ => generic_item(item),
     }
 }

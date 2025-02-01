@@ -39,7 +39,6 @@ mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
     use crate::generate_item::template::{BowTemplate, CrossbowTemplate, SlingTemplate};
-    use super::*;
 
     #[test]
     fn test_shortbow() {
