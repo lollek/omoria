@@ -147,43 +147,61 @@ static bool can_place_missile_in_coordinate(const long y, const long x) {
 }
 
 /**
+ * Takes a coordinate coord and checks nearby if we can put a missile there.
+ * If we can, coord will be updated with the suitable coordinates.
+ *
+ * @param coord in and out coordinates
+ * @return if we found a spot to put missile
+ */
+static bool find_missile_spot_on_ground(coords *coord) {
+  long place_missile_y = coord->y;
+  long place_missile_x = coord->x;
+
+  for (long attempt = 0; attempt < 10; ++attempt) {
+    if (can_place_missile_in_coordinate(place_missile_y, place_missile_x)) {
+      coord->y = place_missile_y;
+      coord->x = place_missile_x;
+      return true;
+    }
+
+    // try another spot next the the impact x/y
+    place_missile_y = coord->y + randint(3) - 2;
+    place_missile_x = coord->x + randint(3) - 2;
+  }
+  return false;
+}
+
+/**
  *missile_hit_ground() - Handle a missile hitting the ground
  * @y: y position where hit
  * @x: x position where hit
  */
 static void missile_hit_ground(const treas_rec *missile, const long y,
                                  const long x) {
-  long place_missile_y = y;
-  long place_missile_x = x;
   bool keep_missile = false;
+  coords place_missile_coords = {
+      .y = y,
+      .x = x,
+  };
 
   // 90% chance that we try to place the missile on the ground
   if (randint(10) > 1) {
-    for (long i = 0; i < 10; ++i) {
-      if (can_place_missile_in_coordinate(place_missile_y, place_missile_x)) {
-        keep_missile = true;
-        break;
-      }
-
-      // Try another spot next the the impact x/y
-      place_missile_y = y + randint(3) - 2;
-      place_missile_x = x + randint(3) - 2;
-    }
+    keep_missile = find_missile_spot_on_ground(&place_missile_coords);
   }
 
   if (keep_missile) {
     long cur_pos;
     popt(&cur_pos);
-    cave[place_missile_y][place_missile_x].tptr = cur_pos;
+    cave[place_missile_coords.y][place_missile_coords.x].tptr = cur_pos;
     t_list[cur_pos] = missile->data;
-    if (test_light(place_missile_y, place_missile_x)) {
-      lite_spot(place_missile_y, place_missile_x);
+    if (test_light(place_missile_coords.y, place_missile_coords.x)) {
+      lite_spot(place_missile_coords.y, place_missile_coords.x);
     }
   } else {
     char out_val[82];
     char out_val2[120];
     objdes(out_val, missile, false);
-    sprintf(out_val2, "The %s disappears.", out_val);
+    sprintf(out_val2, "The %s breaks.", out_val);
     msg_print(out_val2);
   }
 }
@@ -208,16 +226,19 @@ static bool missile_try_hit_creature(const treas_rec *missile,
   const int16_t monster_ac = monster_templates[m_list[cave[y][x].cptr].mptr].ac;
   const bool creature_was_hit =
       player_test_hit(base_to_hit, player_lev, plus_to_hit, monster_ac, true);
+  char monster_name_buf[82];
+  find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);
   if (!creature_was_hit) {
+    char text_buf[200];
+    sprintf(text_buf, "You miss %s.", monster_name_buf);
+    msg_print(text_buf);
     return false;
   }
 
   char missile_text_buf[82];
-  char monster_name_buf[82];
   char text_buf[200];
   const long monster_index = m_list[cave[y][x].cptr].mptr;
   objdes(missile_text_buf, missile, FALSE);
-  find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);
   sprintf(text_buf, "The %s hits %s.", missile_text_buf, monster_name_buf);
   msg_print(text_buf);
   damage = tot_dam(&missile->data, damage, &monster_templates[monster_index]);
@@ -244,7 +265,6 @@ static void missile_travel(const treas_rec *missile,
                              const long missile_travel_dir) {
   long const max_distance = calc_distance(missile, type);
 
-  bool missile_has_stopped = FALSE;
   long missile_y = char_row;
   long missile_x = char_col;
   long prev_missile_y = missile_y;
@@ -253,7 +273,7 @@ static void missile_travel(const treas_rec *missile,
 
   ENTER(("__missile_travel", ""));
 
-  while (!missile_has_stopped) {
+  while (true) {
     move_dir(missile_travel_dir, &missile_y, &missile_x);
     travel_distance++;
 
@@ -262,13 +282,14 @@ static void missile_travel(const treas_rec *missile,
       lite_spot(prev_missile_y, prev_missile_x);
     }
 
+    bool missile_has_stopped = false;
     if (travel_distance > max_distance) {
-      missile_has_stopped = TRUE;
+      missile_has_stopped = true;
     }
 
     // If something is in the way, stop
     if (!cave[missile_y][missile_x].fopen) {
-      missile_has_stopped = TRUE;
+      missile_has_stopped = true;
     }
 
     if (missile_has_stopped) {
@@ -281,6 +302,9 @@ static void missile_travel(const treas_rec *missile,
     if (cave[missile_y][missile_x].cptr > 1) {
       if (missile_try_hit_creature(missile, type, missile_y, missile_x,
                                      travel_distance)) {
+        if (type == THROW) {
+          missile_hit_ground(missile, missile_y, missile_x);
+        }
         LEAVE("missile_travel", "");
         return;
       }
@@ -294,8 +318,6 @@ static void missile_travel(const treas_rec *missile,
     prev_missile_y = missile_y;
     prev_missile_x = missile_x;
   }
-
-  LEAVE("missile_travel", "");
 }
 
 /**

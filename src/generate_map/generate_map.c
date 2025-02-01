@@ -10,7 +10,6 @@
 #include "../variables.h"
 #include "config.h"
 #include "misc.h"
-#include "models.h"
 #include "river.h"
 #include "rooms.h"
 #include "town.h"
