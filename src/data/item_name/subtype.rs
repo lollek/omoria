@@ -10,3 +10,4 @@ pub mod ranged_weapon;
 pub mod spike;
 pub mod wand;
 pub mod wearable_gem;
+pub mod melee_weapon;
