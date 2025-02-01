@@ -1,6 +1,8 @@
 # Changelog
 
 ## 5-alpha522
+
+January 2025
  
 * Give earlier error messages if master file is not found
 * Automatically create and initialize masters file if it does not exist
@@ -9,6 +11,7 @@
 * Fix bug where cloaks became a kind of bracer
 * Fix critical bug when porting items to rust. flag1 and flag2 variables were switched, causing all manners of strange bugs.
 * Changes to how rivers are created, since they caused infinite loops and segfaults. Still, unsure if the code is correct.
+* Capitalize light sources in equipment list
 
 ## 5-alpha521
 

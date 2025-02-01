@@ -300,16 +300,16 @@ pub(crate) fn light_source(item: &Item) -> String {
         match from_i64(ItemType::LightSource, item.subval) {
             Some(subtype) => match subtype {
                 ItemSubType::LightSource(LightSourceSubType::WoodenTorch) => {
-                    Cow::from("wooden torch")
+                    Cow::from("Wooden torch")
                 }
                 ItemSubType::LightSource(LightSourceSubType::BrassLantern) => {
-                    Cow::from("brass lantern")
+                    Cow::from("Brass lantern")
                 }
                 ItemSubType::LightSource(LightSourceSubType::MagicTorch) => {
-                    Cow::from("magic torch")
+                    Cow::from("Magic torch")
                 }
                 ItemSubType::LightSource(LightSourceSubType::MagicLantern) => {
-                    Cow::from("magic lantern")
+                    Cow::from("Magic lantern")
                 }
                 t => panic!("Expected light source, got {:?}", t),
             },
