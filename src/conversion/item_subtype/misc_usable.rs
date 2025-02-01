@@ -28,7 +28,7 @@ pub fn to_usize(misc_usable: MiscUsableSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

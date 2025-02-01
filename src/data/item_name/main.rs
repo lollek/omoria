@@ -760,7 +760,7 @@ pub fn generate(item: &Item) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use crate::generate_item::{self, template::FoodTemplate};
 
     use super::*;

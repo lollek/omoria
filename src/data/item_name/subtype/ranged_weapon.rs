@@ -42,7 +42,7 @@ pub fn ranged_weapon(item: &Item) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

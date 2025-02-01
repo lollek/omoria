@@ -22,7 +22,7 @@ pub fn to_usize(subtype: BagSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

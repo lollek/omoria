@@ -29,7 +29,7 @@ pub fn bag(item: &Item) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

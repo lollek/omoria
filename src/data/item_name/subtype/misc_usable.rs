@@ -28,7 +28,7 @@ pub fn misc_usable(item: &Item) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

@@ -20,7 +20,7 @@ pub fn to_usize(light_source: LightSourceSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

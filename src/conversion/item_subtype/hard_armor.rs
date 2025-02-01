@@ -44,7 +44,7 @@ pub fn to_usize(subtype: HardArmorSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

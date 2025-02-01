@@ -20,7 +20,7 @@ pub fn to_usize(subtype: SongBookSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
