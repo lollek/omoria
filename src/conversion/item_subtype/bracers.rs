@@ -48,7 +48,7 @@ pub fn to_usize(subtype: BracersSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

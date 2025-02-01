@@ -102,7 +102,7 @@ pub fn to_usize(subtype: Potion1SubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

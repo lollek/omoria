@@ -3,7 +3,7 @@ use crate::generate_item;
 use crate::generate_item::template::WandTemplate;
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

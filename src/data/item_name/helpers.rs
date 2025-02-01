@@ -78,7 +78,7 @@ pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 
     use crate::generate_item::{self, template::FoodTemplate};
 

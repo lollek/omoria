@@ -35,7 +35,7 @@ pub fn misc_object(item: &Item) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

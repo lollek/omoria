@@ -43,7 +43,7 @@ pub fn wearable_gem(item: &Item) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

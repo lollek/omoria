@@ -26,7 +26,7 @@ pub fn to_usize(subtype: PickSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

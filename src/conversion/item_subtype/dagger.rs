@@ -34,7 +34,7 @@ pub fn to_usize(subtype: DaggerSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

@@ -14,7 +14,7 @@ pub fn to_usize(subtype: FlaskOfOilSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

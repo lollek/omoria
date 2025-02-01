@@ -50,7 +50,7 @@ pub extern "C" fn identification_set_identified(item_ptr: *const Item) {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use serial_test::serial;
 
     use crate::model::item_subtype::FoodSubType;

@@ -78,7 +78,7 @@ pub fn to_usize(subtype: RingSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

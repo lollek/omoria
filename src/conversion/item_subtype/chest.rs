@@ -24,7 +24,7 @@ pub fn to_usize(chest: ChestSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

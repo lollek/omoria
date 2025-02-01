@@ -30,7 +30,7 @@ pub fn to_usize(subtype: HaftedWeaponSubType) -> usize {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
