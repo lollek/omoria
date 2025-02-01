@@ -13,6 +13,7 @@ January 2025
 * Changes to how rivers are created, since they caused infinite loops and segfaults. Still, unsure if the code is correct.
 * Capitalize light sources in equipment list
 * Make throwing more viable by making thrown objects fall to the ground even when hitting.
+* Fix infinite loop if we wanted a monster attribute which was not applied to any monster at that level
 
 ## 5-alpha521
 

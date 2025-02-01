@@ -76,3 +76,6 @@ extern long const m_level[MAX_MONS_LEVEL + 1];
 
 bool monster_template_has_attribute(monster_template const *template,
                                        monster_attribute attribute);
+bool monster_template_has_attributes(
+    monster_template const *template,
+    monster_attribute const *const *monster_attributes);

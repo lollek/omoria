@@ -1,5 +1,7 @@
 #include "monster_template.h"
 
+#include <stddef.h>
+
 long const m_level[MAX_MONS_LEVEL + 1] = {
     18,  14,  33,  51,  63,  77,  87,  97,  104, 114, 129, 135, 152, 162, 170,
     186, 196, 201, 208, 215, 229, 234, 239, 247, 252, 262, 269, 274, 282, 288,
@@ -936,4 +938,16 @@ bool monster_template_has_attribute(monster_template const *template,
     return template->cdefense & 0x8000;
   }
   return false;
+}
+
+bool monster_template_has_attributes(
+    monster_template const *template,
+    monster_attribute const *const *monster_attributes) {
+  for (monster_attribute const *attribute = *monster_attributes;
+       attribute != NULL; attribute++) {
+    if (!monster_template_has_attribute(template, *attribute)) {
+      return false;
+    }
+  }
+  return true;
 }
