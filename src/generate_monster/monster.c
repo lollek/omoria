@@ -323,24 +323,24 @@ void multiply_monster(const long y, const long x, const long template,
   long i1 = 0;
 
   do {
-    const long i2 = y - 2 + randint(3);
-    const long i3 = x - 2 + randint(3);
+    const long new_y = y - 2 + randint(3);
+    const long new_x = x - 2 + randint(3);
 
-    if (in_bounds(i2, i3)) {
-      if (is_in(cave[i2][i3].fval, floor_set)) {
-        if (cave[i2][i3].tptr == 0 && cave[i2][i3].cptr != 1) {
-          if (cave[i2][i3].cptr > 1) { /* { Creature there already?  }*/
+    if (in_bounds(new_y, new_x)) {
+      if (is_in(cave[new_y][new_x].fval, floor_set)) {
+        if (cave[new_y][new_x].tptr == 0 && cave[new_y][new_x].cptr != 1) {
+          if (cave[new_y][new_x].cptr > 1) { /* { Creature there already?  }*/
             /*{ Some critters are * canabalistic!       }*/
             if ((monster_templates[template].cmove & 0x00080000) != 0) {
-              delete_monster(cave[i2][i3].cptr);
-              place_monster(i2, i3, template, is_asleep);
-              check_mon_lite(i2, i3);
+              delete_monster(cave[new_y][new_x].cptr);
+              place_monster(new_y, new_x, template, is_asleep);
+              check_mon_lite(new_y, new_x);
               mon_tot_mult++;
             }
           } else {
             /*{ All clear, place a monster * }*/
-            place_monster(i2, i3, template, is_asleep);
-            check_mon_lite(i2, i3);
+            place_monster(new_y, new_x, template, is_asleep);
+            check_mon_lite(new_y, new_x);
             mon_tot_mult++;
           }
           i1 = 18;

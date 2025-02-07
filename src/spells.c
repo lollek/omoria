@@ -696,7 +696,7 @@ bool teleport_away(const long monptr, long dis) {
       }
     } while (!(cave[yn][xn].fopen && cave[yn][xn].cptr == 0));
 
-    move_rec(m_list[monptr].fy, m_list[monptr].fx, yn, xn);
+    move_creature(m_list[monptr].fy, m_list[monptr].fx, yn, xn);
     if (test_light(m_list[monptr].fy, m_list[monptr].fx)) {
       lite_spot(m_list[monptr].fy, m_list[monptr].fx);
     }
@@ -731,7 +731,7 @@ bool teleport_to(const long ny, const long nx) {
     }
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
-  move_rec(char_row, char_col, y, x);
+  move_creature(char_row, char_col, y, x);
   for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
     for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1][i2]. do; */
@@ -2960,7 +2960,7 @@ void teleport(const long dis) {
     }
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
-  move_rec(char_row, char_col, y, x);
+  move_creature(char_row, char_col, y, x);
   for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
     for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1,i2] do; */
