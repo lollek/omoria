@@ -1,5 +1,5 @@
+#include "generate_monster.h"
 #include "../creature.h"
-#include "../generate_monster.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../monsters.h"
@@ -109,9 +109,9 @@ void place_monster(const long y, const long x, const long template,
   monster_template const *monster = &monster_templates[template];
 
   if ((monster->cdefense & 0x4000) != 0) {
-    m_list[cur_pos].hp = max_hp(monster->hd);
+    m_list[cur_pos].hp = max_hp(monster->hit_die);
   } else {
-    m_list[cur_pos].hp = damroll(monster->hd);
+    m_list[cur_pos].hp = damroll(monster->hit_die);
   }
 
   m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
@@ -180,8 +180,8 @@ static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
                            ? randint(m_level[0])
                            : randint(m_level[max_monster_level]) + m_level[0];
 
-      if (monster_i > MAX_CREATURES) {
-        monster_i = MAX_CREATURES;
+      if (monster_i >= monster_template_size) {
+        monster_i = monster_template_size - 1;
       }
 
       monster_template const *template = &monster_templates[monster_i];
@@ -260,11 +260,11 @@ void monster_summon_by_name(long y, long x, char name[28],
     if (i2 < 0) {
       i2 = 1;
     }
-    if (i2 > MAX_CREATURES) {
-      i2 = MAX_CREATURES;
+    if (i2 >= monster_template_size) {
+      i2 = monster_template_size - 1;
     }
 
-    if (i2 > 0 && i2 <= MAX_CREATURES) {
+    if (i2 > 0 && i2 <= monster_template_size - 1) {
       /* summon by number */
       i1 = 0;
       do {
@@ -285,7 +285,7 @@ void monster_summon_by_name(long y, long x, char name[28],
       } while (i1 <= 8);
     } else {
       /* find by name, then summon */
-      for (i2 = 1; i2 <= MAX_CREATURES; i2++) {
+      for (i2 = 1; i2 <= monster_template_size -1; i2++) {
         if (strstr(monster_templates[i2].name, monster) != NULL &&
             i1 != 10) {
           i1 = 0;

@@ -1,4 +1,4 @@
-#include "../generate_monster.h"
+#include "../generate_monster/generate_monster.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../player.h"

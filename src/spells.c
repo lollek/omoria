@@ -5,7 +5,7 @@
 #include "dungeon/light.h"
 #include "effects.h"
 #include "generate_item/generate_item.h"
-#include "generate_monster.h"
+#include "generate_monster/generate_monster.h"
 #include "inven.h"
 #include "io.h"
 #include "loot/loot.h"
@@ -518,7 +518,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                   } else {
                     if (panel_contains(i1, i2)) {
                       print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
-                                .cchar,
+                                .symbol,
                             i1, i2);
                       m_list[cave[i1][i2].cptr].ml = true;
                     }
@@ -624,7 +624,7 @@ bool mon_resists(const unsigned char a_cptr) {
   /* with m_list[a_cptr] do; */
   /* with monster_templates[m_list[a_cptr].mptr] do; */
 
-  long res_chance = monster_templates[m_list[a_cptr].mptr].mr;
+  long res_chance = monster_templates[m_list[a_cptr].mptr].magic_resistance;
 
   long delta_lev = player_lev + player_mr;
   if (delta_lev < 0) {
@@ -1059,7 +1059,7 @@ bool detect_creatures(const enum spell_effect_t typ) {
 
       if (found) {
         m_list[i1].ml = true;
-        print(monster_templates[m_list[i1].mptr].cchar, m_list[i1].fy,
+        print(monster_templates[m_list[i1].mptr].symbol, m_list[i1].fy,
               m_list[i1].fx);
         flag = true;
       }
@@ -1703,7 +1703,7 @@ bool genocide(void) {
       /* with m_list[i1]. do; */
       /* with monster_templates[m_list[i1].mptr]. do; */
       const long i2 = m_list[i1].nptr;
-      if (typ == monster_templates[m_list[i1].mptr].cchar) {
+      if (typ == monster_templates[m_list[i1].mptr].symbol) {
         if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
             !mon_resists(i1)) {
           delete_monster(i1);
@@ -2285,7 +2285,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x, lo
           msg_print(out_val);
         } else {
           if (panel_contains(y, x)) {
-            print(monster_templates[mptr].cchar, y, x);
+            print(monster_templates[mptr].symbol, y, x);
             m_list[cptr].ml = true;
           }
         }
@@ -2891,7 +2891,7 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].cchar, y, x);
+          print(monster_templates[mptr].symbol, y, x);
           m_list[cptr].ml = true;
         }
       }
@@ -2935,7 +2935,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].cchar, y, x);
+          print(monster_templates[mptr].symbol, y, x);
           m_list[cptr].ml = true;
         }
       }

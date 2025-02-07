@@ -1,6 +1,7 @@
 #include "town.h"
 #include "../debug.h"
-#include "../generate_monster.h"
+#include "../generate_monster/generate_monster.h"
+#include "../loot/loot.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../random.h"
@@ -8,7 +9,6 @@
 #include "../stores.h"
 #include "../types.h"
 #include "../variables.h"
-#include "../loot/loot.h"
 #include "config.h"
 #include "misc.h"
 

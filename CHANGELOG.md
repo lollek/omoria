@@ -5,6 +5,8 @@
 February 2025
 
 * Add dagger names to new UI
+* Monster changes
+  * All spiders are now imps
 
 ## 5-alpha522
 

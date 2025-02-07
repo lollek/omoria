@@ -1,5 +1,5 @@
 #include "../debug.h"
-#include "../generate_monster.h"
+#include "../generate_monster/generate_monster.h"
 #include "../misc.h"
 #include "../pascal.h"
 #include "../player.h"
@@ -9,11 +9,11 @@
 #include "../types.h"
 #include "../variables.h"
 #include "config.h"
+#include "dungeon.h"
 #include "misc.h"
 #include "river.h"
 #include "rooms.h"
 #include "town.h"
-#include "dungeon.h"
 
 void generate_map(void) {
   panel_row_min = 0;

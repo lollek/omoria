@@ -12,7 +12,7 @@
 #include "creature.h"
 #include "debug.h"
 #include "files.h"
-#include "generate_monster.h"
+#include "generate_monster/generate_monster.h"
 #include "io.h"
 #include "misc.h"
 #include "pascal.h"

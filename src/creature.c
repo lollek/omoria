@@ -12,7 +12,7 @@
 #include "debug.h"
 #include "effects.h"
 #include "fighting/fighting.h"
-#include "generate_monster.h"
+#include "generate_monster/generate_monster.h"
 #include "generate_monster/monster_template.h"
 #include "inven.h"
 #include "io.h"
@@ -197,7 +197,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
   if (flag) {
     /*{ Light it up...        }*/
     if (!ML(monptr).ml) {
-      print(monster_templates[ML(monptr).mptr].cchar, MY(monptr), MX(monptr));
+      print(monster_templates[ML(monptr).mptr].symbol, MY(monptr), MX(monptr));
       ML(monptr).ml = true;
       if (search_flag) {
         search_off();
@@ -1721,12 +1721,12 @@ static bool mon_move(const long monptr, long *hear_count) {
     m_list[monptr].hp += randint(4);
   }
 
-  if (m_list[monptr].hp > max_hp(monster_templates[ML(monptr).mptr].hd)) {
-    m_list[monptr].hp = max_hp(monster_templates[ML(monptr).mptr].hd);
+  if (m_list[monptr].hp > max_hp(monster_templates[ML(monptr).mptr].hit_die)) {
+    m_list[monptr].hp = max_hp(monster_templates[ML(monptr).mptr].hit_die);
   }
 
   /*{ Does the critter multiply?                            }*/
-  if ((monster_templates[ML(monptr).mptr].cmove & 0x00200000) != 0) {
+  if (monster_templates[ML(monptr).mptr].attributes.multiplies) {
     if (MAX_MON_MULT >= mon_tot_mult) {
       if (player_flags.rest % mon_mult_adj == 0) {
         /* with m_list[monptr] do; */
@@ -1870,7 +1870,7 @@ void creatures(const bool attack) {
     }
 
     for (long _ = 1; _ <= num_moves; _++) {
-      const bool is_monster_close_enough_to_act = m_list[monster_i].cdis <= monster_templates[m_list[monster_i].mptr].aaf;
+      const bool is_monster_close_enough_to_act = m_list[monster_i].cdis <= monster_templates[m_list[monster_i].mptr].area_effect_radius;
       if (is_monster_close_enough_to_act || m_list[monster_i].ml) {
         if (m_list[monster_i].csleep > 0) {
           if (player_flags.aggravate) {
@@ -1919,7 +1919,7 @@ long find_mon(const char *virtual_name) {
   long count;
   bool maybe = false;
 
-  for (count = 1; count <= MAX_CREATURES && !maybe;) {
+  for (count = 1; count < monster_template_size && !maybe;) {
     if (!strcmp(virtual_name, monster_templates[count].name)) {
       maybe = true;
     } else {

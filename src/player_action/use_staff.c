@@ -1,5 +1,5 @@
 #include "../constants.h"
-#include "../generate_monster.h"
+#include "../generate_monster/generate_monster.h"
 #include "../inven.h"
 #include "../io.h"
 #include "../misc.h"

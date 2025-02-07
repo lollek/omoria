@@ -1,6 +1,6 @@
 #include "../c.h"
 #include "../constants.h"
-#include "../generate_monster.h"
+#include "../generate_monster/generate_monster.h"
 #include "../io.h"
 #include "../loot/loot.h"
 #include "../misc.h"
