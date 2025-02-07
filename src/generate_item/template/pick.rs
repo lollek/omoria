@@ -1,3 +1,4 @@
+use crate::generate_item::item_template::{WornFlag1, WornFlag2};
 use super::super::item_template::ItemTemplate;
 use crate::model::{
     self,
@@ -52,23 +53,26 @@ impl ItemTemplate for PickTemplate {
 
     fn flags1(&self) -> u64 {
         match self {
-            PickTemplate::Pick => 0x20000000,
-            PickTemplate::Shovel => 0x20000000,
-            PickTemplate::OrcishPick1 => 0x20000000,
-            PickTemplate::OrcishPick2 => 0x20100084,
-            PickTemplate::DwarvenPick => 0x20000000,
-            PickTemplate::GnomishShovel => 0x20000000,
-            PickTemplate::DwarvenShovel => 0x20000000,
+            PickTemplate::Pick |
+            PickTemplate::Shovel |
+            PickTemplate::OrcishPick1 |
+            PickTemplate::DwarvenPick |
+            PickTemplate::GnomishShovel |
+            PickTemplate::DwarvenShovel => WornFlag1::ImprovedTunneling as u64,
+            PickTemplate::OrcishPick2 => WornFlag1::ImprovedTunneling as u64 |
+                WornFlag1::ResistAcid as u64 |
+                WornFlag1::SlowDigestion as u64 |
+                WornFlag1::GivesConstitution as u64,
         }
     }
 
     fn flags2(&self) -> u64 {
         match self {
-            PickTemplate::Pick => 0x10000000,
+            PickTemplate::Pick => WornFlag2::ImprovedCarrying as u64,
             PickTemplate::Shovel => 0,
-            PickTemplate::OrcishPick1 => 0x10000000,
-            PickTemplate::OrcishPick2 => 0x10000000,
-            PickTemplate::DwarvenPick => 0x10000000,
+            PickTemplate::OrcishPick1 |
+            PickTemplate::OrcishPick2 |
+            PickTemplate::DwarvenPick => WornFlag2::ImprovedCarrying as u64,
             PickTemplate::GnomishShovel => 0,
             PickTemplate::DwarvenShovel => 0,
         }

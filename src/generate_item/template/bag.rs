@@ -1,3 +1,4 @@
+use crate::generate_item::item_template::WornFlag2;
 use super::super::item_template::ItemTemplate;
 use crate::model::{
     self,
@@ -50,11 +51,11 @@ impl ItemTemplate for BagTemplate {
 
     fn flags2(&self) -> u64 {
         match self {
-            BagTemplate::BagOfHolding250 => 0x04000000,
-            BagTemplate::BagOfHolding500 => 0x04000000,
-            BagTemplate::BagOfHolding1000 => 0x04000000,
-            BagTemplate::BagOfHolding1500 => 0x04000000,
-            BagTemplate::BagOfDevouring => 0x0C000000,
+            BagTemplate::BagOfHolding250 |
+            BagTemplate::BagOfHolding500 |
+            BagTemplate::BagOfHolding1000 |
+            BagTemplate::BagOfHolding1500 => WornFlag2::Holding as u64,
+            BagTemplate::BagOfDevouring => WornFlag2::Holding as u64 | WornFlag2::Swallowing as u64,
         }
     }
 

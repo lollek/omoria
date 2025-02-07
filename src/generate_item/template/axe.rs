@@ -1,3 +1,4 @@
+use crate::generate_item::item_template::WornFlag2;
 use super::super::item_template::ItemTemplate;
 use crate::model::{
     self,
@@ -59,7 +60,7 @@ impl ItemTemplate for AxeTemplate {
         0
     }
     fn flags2(&self) -> u64 {
-        0x10000000
+        WornFlag2::Sharp as u64
     }
     fn p1(&self) -> i64 {
         0
