@@ -8,7 +8,7 @@
  */
 void display_inventory(void);
 
-long change_all_ok_stats(bool nok, bool nin);
+long inventory_change_all_ok_stats(bool nok, bool nin);
 char cur_char1(void);
 char cur_char2(void);
 char cur_insure(void);

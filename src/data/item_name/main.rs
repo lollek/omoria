@@ -75,20 +75,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 })
             }
         }
-        ItemType::Dagger => Cow::from(match item.subval {
-            1 => "Main gauche",
-            2 => "Misercorde",
-            3 => "Stiletto",
-            4 => "Bodkin",
-            5 => "Broken dagger",
-            8 => "Bilbo",
-            9 => "Baselard",
-            16 => "Foil",
-            20 => "Rapier",
-            22 => "Small sword",
-            //5 => "Cat-O-Nine Tails",
-            _ => "Alien dagger",
-        }),
         ItemType::Sword => Cow::from(match item.subval {
             6 => "Backsword",
             7 => "Bastard sword",
@@ -696,7 +682,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::Bolt => ammo(item),
         ItemType::Chest => chest(item),
         ItemType::Gem => gem(item),
-        ItemType::HaftedWeapon => melee_weapon(item),
+        ItemType::HaftedWeapon | ItemType::Dagger => melee_weapon(item),
         ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),
         ItemType::MiscObject => misc_object(item),

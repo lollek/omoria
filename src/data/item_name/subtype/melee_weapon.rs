@@ -1,7 +1,7 @@
-use crate::conversion::item_subtype::hafted_weapon;
+use crate::conversion::item_subtype::{dagger, hafted_weapon};
 use crate::data;
 use crate::data::item_name::helpers::{armor_bonus, attack_bonus, damage, number_of};
-use crate::model::item_subtype::HaftedWeaponSubType;
+use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType};
 use crate::model::{Item, ItemType};
 use std::borrow::Cow;
 
@@ -19,6 +19,24 @@ pub fn melee_weapon(item: &Item) -> String {
 
 fn subtype_name(item: &Item) -> String {
     match item.item_type() {
+        ItemType::Dagger => {
+            match dagger::from_usize(item.subval as usize) {
+                None => "Alien dagger",
+                Some(subtype) => match subtype {
+                    DaggerSubType::MainGauche => "Main gauche",
+                    DaggerSubType::Misercorde => "Misercorde",
+                    DaggerSubType::Stiletto => "Stiletto",
+                    DaggerSubType::Bodkin => "Bodkin",
+                    DaggerSubType::BrokenDagger => "Broken dagger",
+                    DaggerSubType::CatONineTails => "Cat-o-nine tails",
+                    DaggerSubType::Bilbo => "Bilbo",
+                    DaggerSubType::Baselard => "Baselard",
+                    DaggerSubType::Foil => "Foil",
+                    DaggerSubType::Rapier => "Rapier",
+                    DaggerSubType::SmallSword => "Small sword",
+                },
+            }
+        }.to_string(),
         ItemType::HaftedWeapon => {
             match hafted_weapon::from_usize(item.subval as usize) {
                 None => "Alien hafted weapon",
@@ -44,7 +62,7 @@ fn subtype_name(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
-    use crate::generate_item::template::AxeTemplate;
+    use crate::generate_item::template::{AxeTemplate, DaggerTemplate};
 
     #[test]
     fn test_generic_attributes() {
@@ -117,6 +135,87 @@ mod tests {
                 0
             )),
             "Champion axe (5d3)"
+        );
+    }
+
+    #[test]
+    fn test_dagger_names() {
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::MainGauche),
+                0
+            )),
+            "Main gauche (1d5)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Misercorde),
+                0
+            )),
+            "Misercorde (1d4)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Stiletto),
+                0
+            )),
+            "Stiletto (1d4)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Bodkin),
+                0
+            )),
+            "Bodkin (1d4)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::BrokenDagger),
+                0
+            )),
+            "Broken dagger (1d1)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::CatONineTails),
+                0
+            )),
+            "Cat-o-nine tails (1d4)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Bilbo),
+                0
+            )),
+            "Bilbo (1d6)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Baselard),
+                0
+            )),
+            "Baselard (1d7)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Foil),
+                0
+            )),
+            "Foil (1d5)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::Rapier),
+                0
+            )),
+            "Rapier (1d6)"
+        );
+        assert_eq!(
+            generate(&generate_item::generate(
+                Box::new(DaggerTemplate::SmallSword),
+                0
+            )),
+            "Small sword (1d6)"
         );
     }
 }

@@ -324,7 +324,7 @@ static void missile_travel(const treas_rec *missile,
  *__count_things_to_throw() - Return num things we can throw
  */
 static long count_things_to_throw(void) {
-  long things_to_throw = change_all_ok_stats(TRUE, FALSE);
+  long things_to_throw = inventory_change_all_ok_stats(TRUE, FALSE);
   for (const treas_rec *item_ptr = inventory_list; item_ptr != NULL;
        item_ptr = item_ptr->next) {
     if ((item_ptr->data.flags2 & Holding_bit) != 0 &&
@@ -376,7 +376,7 @@ static long count_things_to_shoot(void) {
   long things_to_shoot = 0;
 
   // Count objects which can be used as ammo
-  change_all_ok_stats(FALSE, FALSE);
+  inventory_change_all_ok_stats(FALSE, FALSE);
   for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (ptr->data.tval != ammo_type) {
       continue;

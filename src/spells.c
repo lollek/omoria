@@ -1270,7 +1270,7 @@ bool ident_spell(void) {
   /*  change_all_ok_stats(true,true);*/
 
   /* only show things that need to be identified */
-  change_all_ok_stats(false, false);
+  inventory_change_all_ok_stats(false, false);
   for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (strchr(ptr->data.name, '^') || strchr(ptr->data.name, '|')) {
       ptr->ok = true;
@@ -1603,7 +1603,7 @@ bool recharge(long num) {
                                     chime,         horn,  0};
   bool return_value = false;
 
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Recharge which item?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */
@@ -2781,7 +2781,7 @@ bool detect_curse(void) {
   bool flag = false;
 
   redraw = false;
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Item you wish to examine?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */
@@ -2814,7 +2814,7 @@ bool detect_magic(void) {
   redraw = false;
   const bool dumb = am_i_dumb();
   const bool dumber = dumb && am_i_dumb();
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Item you wish to examine?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */

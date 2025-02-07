@@ -193,7 +193,7 @@ treas_rec *inven_carry(void) {
   return add_inven_item(inven_temp.data);
 }
 
-long change_all_ok_stats(const bool nok, const bool nin) {
+long inventory_change_all_ok_stats(const bool nok, const bool nin) {
   long count = 0;
 
   ENTER(("change_all_ok_stats", "%d, %d", nok, nin));
@@ -719,7 +719,7 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
     treas_rec *selected_item;
 
     ic__clear_display(cur_display, cur_display_size);
-    change_all_ok_stats(true, false);
+    inventory_change_all_ok_stats(true, false);
 
     { /* Filter item types before we show the list */
       const obj_set wearables = {valuable_gems_wear,
@@ -934,7 +934,7 @@ void ic__stats(treas_rec *cur_display[], const long *cur_display_size,
                     "exit) Statistics on which one ?");
     clear_rc(1, 1);
     item_ptr = NULL;
-    change_all_ok_stats(true, true);
+    inventory_change_all_ok_stats(true, true);
     ic__clear_display(cur_display, cur_display_size);
     exit_flag = !ic__show_inven(&item_ptr, true, false, scr_state, valid_flag,
                                 prompt, cur_display, cur_display_size);
@@ -1199,12 +1199,12 @@ void ic__put_inside(void) {
   bool redraw;
   char trash_char;
 
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
 
   if (get_item(&put_ptr, "Put which item?", &redraw, inven_ctr, &trash_char,
                false, true)) {
     long count = 0;
-    change_all_ok_stats(false, false);
+    inventory_change_all_ok_stats(false, false);
     treas_rec *temp_ptr = inventory_list;
 
     while (temp_ptr != NULL) {
@@ -1297,7 +1297,7 @@ void ic__take_out(void) {
   treas_rec *from_ptr;
   bool redraw;
   char trash_char;
-  const long count = change_all_ok_stats(false, true);
+  const long count = inventory_change_all_ok_stats(false, true);
 
   if (count <= 0) {
     msg_print("You have nothing to remove.");
@@ -1379,7 +1379,7 @@ static void ic__selective_inven(long *scr_state, bool *valid_flag, char prompt[8
   } while (!(exit_flag || pindex(out_pos, command) != 0));
 
   if (!exit_flag) {
-      change_all_ok_stats(false, false);
+      inventory_change_all_ok_stats(false, false);
       treas_rec *ptr = inventory_list;
       for (; ptr != NULL; ptr = ptr->next) {
           if ((char)C_item_get_tchar(&ptr->data) == command) {
@@ -1460,7 +1460,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
         clear_rc(1, 1);
         strcpy(tmp_prompt, "You are currently carrying: space for next page");
         ic__clear_display(cur_display, &cur_display_size);
-        change_all_ok_stats(true, true);
+        inventory_change_all_ok_stats(true, true);
         ic__show_inven(item_ptr, false, false, &scr_state, &valid_flag, tmp_prompt,
                        cur_display, &cur_display_size);
       }
@@ -1473,7 +1473,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
         clear_rc(1, 1);
         strcpy(tmp_prompt, "Warning: a-t/A-T DESTROYS that item: space for next page");
         ic__clear_display(cur_display, &cur_display_size);
-        change_all_ok_stats(true, true);
+        inventory_change_all_ok_stats(true, true);
         ic__show_inven(item_ptr, true, true, &scr_state, &valid_flag, tmp_prompt,
                        cur_display, &cur_display_size);
       }
@@ -2133,7 +2133,7 @@ bool find_range(obj_set const item_val, const bool inner, treas_rec **first,
   *count = 0;
   *first = NULL;
 
-  change_all_ok_stats(false, false);
+  inventory_change_all_ok_stats(false, false);
 
   for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
 

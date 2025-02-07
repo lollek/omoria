@@ -1,5 +1,8 @@
 # Changelog
 
+## 5-alpha523
+* Add dagger names to new UI
+
 ## 5-alpha522
 
 January 2025

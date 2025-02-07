@@ -19,7 +19,7 @@ void player_action_drop(void) {
               player_money[3] + player_money[2] + player_money[1];
 
   if (inven_ctr > 0 || temp > 0) {
-    long count = change_all_ok_stats(true, false);
+    long count = inventory_change_all_ok_stats(true, false);
     com_ptr = inventory_list;
     while (com_ptr != NULL) {
       if (com_ptr->data.tval == bag_or_sack && com_ptr->insides != 0) {
