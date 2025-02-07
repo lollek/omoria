@@ -54,6 +54,7 @@ typedef enum monster_attribute {
 
 typedef struct monster_attributes {
   bool multiplies;
+  bool can_move;
 } monster_attributes;
 
 typedef struct monster_template {
