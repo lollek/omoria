@@ -343,7 +343,7 @@ pub fn available_classes(race: &Race) -> Vec<Class> {
     }
 }
 
-pub fn weight_base(race: &Race, player_sex: Sex) -> u16 {
+pub fn weight_base(race: &Race, player_sex: &Sex) -> u16 {
     match race {
         Race::Human => match player_sex {
             Sex::Male => 180,
@@ -388,7 +388,7 @@ pub fn weight_base(race: &Race, player_sex: Sex) -> u16 {
     }
 }
 
-pub fn weight_modifier(race: &Race, player_sex: Sex) -> u16 {
+pub fn weight_modifier(race: &Race, player_sex: &Sex) -> u16 {
     match race {
         Race::Human => match player_sex {
             Sex::Male => 25,

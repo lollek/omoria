@@ -1,7 +1,7 @@
 use crate::model::{Race, Sex};
 use crate::random;
 
-pub fn generate(race: Race, sex: Sex) -> u16 {
+pub fn generate(race: &Race, sex: &Sex) -> u16 {
     match race {
         Race::Human => match sex {
             Sex::Male => random::randnor(72, 6) as u16,

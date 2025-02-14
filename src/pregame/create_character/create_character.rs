@@ -1,29 +1,18 @@
 use std::cmp::{max, min};
-use std::ptr::null;
 use std::str;
-
-use libc::{time, time_t};
 
 use crate::conversion;
 use crate::data;
-use crate::generate_item;
-use crate::generate_item::template::*;
 use crate::io;
 use crate::logic::menu;
 use crate::misc;
 use crate::player;
-use crate::random;
 use crate::screen;
 use crate::term;
 
-use crate::model::{Currency, InventoryItem, Item, Race, Sex, Stat};
-
 use super::logic::*;
-
-extern "C" {
-    fn add_money(amount: i64);
-    fn add_inven_item(item: Item) -> *mut InventoryItem;
-}
+use crate::model::{Class, Race, Sex, Stat};
+use crate::pregame::create_character::model::StatsFromRace;
 
 fn put_character(show_values: bool) {
     term::prt("Name      : ", 2, 2);
@@ -37,24 +26,6 @@ fn put_character(show_values: bool) {
         term::prt(data::sex::name(&player::sex()), 4, 14);
         term::prt(data::class::name(&player::class()), 5, 14);
     }
-}
-
-fn get_money() {
-    let player_stats = player::curr_stats();
-    let mut amount: i64 = 325 + random::randint(25)
-        // Social Class adj
-        + unsafe { player::player_sc } as i64 * 6
-        // Stat adj
-        - Stat::iter().fold(0, |sum: i64, tstat|
-            sum + player_stats.get(tstat) as i64)
-        // Charisma adj
-        + player_stats.get(Stat::Charisma) as i64;
-
-    // Minimum
-    amount = max(amount, 80);
-
-    let gold_value = data::currency::value(&Currency::Gold);
-    unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
 }
 
 fn put_stats() {
@@ -239,33 +210,6 @@ fn print_history() {
     }
 }
 
-fn apply_stats_from_class() {
-    player::modify_max_hp(player::hitdie() as i16);
-    player::reset_current_hp();
-    unsafe {
-        player::player_bth += ((data::class::melee_bonus(&player::class()) * 5) + 20) as i16;
-        player::player_bthb += ((data::class::ranged_bonus(&player::class()) * 5) + 20) as i16;
-        player::player_disarm += data::class::disarm_mod(&player::class()) as i16;
-        player::player_fos += data::class::search_freq(&player::class()) as i16;
-        player::player_stl += data::class::stealth_mod(&player::class()) as i16;
-        player::player_save += data::class::save_mod(&player::class()) as i16;
-        player::player_expfact += data::class::expfactor(&player::class());
-        player::player_mr = data::class::magic_resist(&player::class()).into();
-
-        // Real values
-        player::player_ptodam = player::dmg_from_str();
-        player::player_ptohit = player::tohit_from_stats();
-        player::player_ptoac = player::ac_from_dex();
-        player::player_pac = 0;
-
-        // Displayed values
-        player::player_dis_td = player::player_ptodam;
-        player::player_dis_th = player::player_ptohit;
-        player::player_dis_tac = player::player_ptoac;
-        player::player_dis_ac = player::player_pac;
-    }
-}
-
 // Display character on screen -RAK-
 fn display_char() {
     put_character(true);
@@ -305,7 +249,7 @@ fn choose_name() {
     term::clear_from(21);
 }
 
-fn choose_class() {
+fn choose_class() -> Class {
     let classes = data::race::available_classes(&player::race());
     let class_strings = classes.iter().map(data::class::name).collect::<Vec<&str>>();
     let mut index = 0;
@@ -321,8 +265,7 @@ fn choose_class() {
             'k' => index = if index == 0 { 0 } else { index - 1 },
             'j' => index = min(classes.len() as u8 - 1, index + 1),
             '\r' => {
-                player::set_class(classes[index as usize]);
-                return;
+                return classes[index as usize];
             }
             '?' => menu::draw_help(
                 data::class::name(&classes[index as usize]),
@@ -360,7 +303,7 @@ pub fn stats_info(race: &Race) -> Vec<String> {
     ]
 }
 
-fn choose_race() {
+fn choose_race() -> Race {
     let races = Race::iter()
         .map(|i| data::race::name(&Race::from(i)))
         .collect::<Vec<&str>>();
@@ -378,8 +321,7 @@ fn choose_race() {
             'k' => index = if index == 0 { 0 } else { index - 1 },
             'j' => index = min(races.len() as u8 - 1, index + 1),
             '\r' => {
-                player::set_race(conversion::race::from_usize(index as usize).unwrap());
-                return;
+                return conversion::race::from_usize(index as usize).unwrap();
             }
             '?' => menu::draw_help(
                 races[index as usize],
@@ -406,10 +348,9 @@ fn choose_race() {
     }
 }
 
-fn choose_sex() {
+fn choose_sex() -> Sex {
     if player::race() == Race::Dryad {
-        player::set_sex(Sex::Female);
-        return;
+        return Sex::Female;
     }
 
     let mut index = 0;
@@ -425,34 +366,32 @@ fn choose_sex() {
             'k' => index = 0,
             'j' => index = 1,
             '\r' => {
-                player::set_sex(if index == 0 { Sex::Male } else { Sex::Female });
-                return;
+                return if index == 0 { Sex::Male } else { Sex::Female };
             }
             _ => {}
         }
     }
 }
 
-fn choose_stats() {
-    regenerate_player_stats();
+fn choose_stats(race: &Race, sex: &Sex) -> StatsFromRace {
     loop {
-        let stats = player::curr_stats();
+        let stats = generate_stats_from_race(race, sex);
 
         menu::draw_menu(
             "Roll up your stats",
             &vec![
-                format!("Age:           {}", unsafe { player::player_age }),
-                format!("Height:        {}", unsafe { player::player_ht }),
-                format!("Weight:        {}", unsafe { player::player_wt }),
-                format!("Social Class:  {}", unsafe { player::player_sc }),
+                format!("Age:           {}", stats.age_plain),
+                format!("Height:        {}", stats.height),
+                format!("Weight:        {}", stats.weight),
+                format!("Social Class:  {}", stats.social_class),
                 "".to_string(),
                 "(Attributes):".to_owned(),
-                format!("Strength:      {}", stats.strength),
-                format!("Dexterity:     {}", stats.dexterity),
-                format!("Constitution:  {}", stats.constitution),
-                format!("Intelligence:  {}", stats.intelligence),
-                format!("Wisdom:        {}", stats.wisdom),
-                format!("Charisma:      {}", stats.charisma),
+                format!("Strength:      {}", stats.stat_block.strength),
+                format!("Dexterity:     {}", stats.stat_block.dexterity),
+                format!("Constitution:  {}", stats.stat_block.constitution),
+                format!("Intelligence:  {}", stats.stat_block.intelligence),
+                format!("Wisdom:        {}", stats.stat_block.wisdom),
+                format!("Charisma:      {}", stats.stat_block.charisma),
             ]
             .iter()
             .map(|it| it.as_ref())
@@ -461,11 +400,10 @@ fn choose_stats() {
             255,
         );
         match io::inkey_flush() as char {
-            'r' => regenerate_player_stats(),
-            '\r' => return,
+            'r' => continue,
+            '\r' => return stats,
             _ => {}
         }
-        put_misc1();
     }
 }
 
@@ -481,7 +419,7 @@ fn confirm_character() {
             format!("Class:         {}", data::class::name(&player::class())),
             "".to_string(),
             format!("Hit Points     {}", player::max_hp()),
-            format!("Mana           {}", unsafe { player::player_mana }),
+            format!("Mana           {}", player::max_mp()),
             "".to_string(),
             "(Attributes):".to_string(),
             format!("Strength:      {}", stats.strength),
@@ -507,50 +445,24 @@ fn confirm_character() {
     }
 }
 
-fn add_equipment() {
-    // General starting items
-    let mut general_starting_items = Vec::new();
-
-    let mut ration_of_food = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
-    ration_of_food.number = 5;
-    general_starting_items.push(ration_of_food);
-
-    let torch = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0);
-    general_starting_items.push(torch);
-    let light_cloak = generate_item::generate(Box::new(CloakTemplate::LightCloak), 0);
-    general_starting_items.push(light_cloak);
-    let soft_leather_armor = generate_item::generate(Box::new(ArmorTemplate::SoftLeatherArmor), 0);
-    general_starting_items.push(soft_leather_armor);
-
-    for item in general_starting_items {
-        unsafe {
-            add_inven_item(item);
-        }
-    }
-
-    // Class specific starting items
-    for item in data::class::starting_items(&player::class()) {
-        unsafe {
-            add_inven_item(item);
-        }
-    }
-}
-
 pub fn create_character() {
-    choose_race();
-    choose_sex();
-    choose_stats();
+    let race = choose_race();
+    player::set_race(race);
+
+    let sex = choose_sex();
+    player::set_sex(sex);
+
+    let stats_from_race = choose_stats(&race, &sex);
+    apply_stats_from_race(stats_from_race);
+
     print_history();
-    choose_class();
-    apply_stats_from_class();
 
-    unsafe {
-        player::player_creation_time = time(null::<time_t>() as *mut i64);
-        player::player_claim_check = 0;
-    }
+    let class = choose_class();
+    player::set_class(class);
+    apply_stats_from_class(&player::class());
 
-    get_money();
+    generate_and_apply_money();
 
     confirm_character(); // And choose name
-    add_equipment();
+    generate_and_apply_equipment();
 }

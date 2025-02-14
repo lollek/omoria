@@ -32,6 +32,7 @@ impl StatBlock {
             Stat::Charisma => self.charisma,
         }
     }
+
     pub fn set(&mut self, stat: Stat, new_value: i16) {
         match stat {
             Stat::Strength => self.strength = new_value,

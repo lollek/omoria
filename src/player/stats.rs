@@ -1,3 +1,4 @@
+use crate::logic::stat_modifiers;
 use crate::model::{Stat, StatBlock};
 
 use crate::player;
@@ -33,11 +34,11 @@ pub fn get_stat(stat: Stat) -> i16 {
 }
 
 pub fn tohit_from_stats() -> i16 {
-    (modifier_from_stat(Stat::Strength) + modifier_from_stat(Stat::Dexterity)) / 2
+    stat_modifiers::to_hit_bonus(&curr_stats())
 }
 
 pub fn disarm_from_dex() -> i16 {
-    modifier_from_stat(Stat::Dexterity)
+    stat_modifiers::disarm(&curr_stats())
 }
 
 pub fn modifier_from_stat(stat: Stat) -> i16 {
@@ -45,15 +46,15 @@ pub fn modifier_from_stat(stat: Stat) -> i16 {
 }
 
 pub fn dmg_from_str() -> i16 {
-    modifier_from_stat(Stat::Strength)
+    stat_modifiers::damage(&curr_stats())
 }
 
 pub fn hp_from_con() -> i16 {
-    modifier_from_stat(Stat::Constitution)
+    stat_modifiers::health(&curr_stats())
 }
 
 pub fn cost_modifier_from_charisma() -> f32 {
-    modifier_from_stat(Stat::Charisma) as f32 * -0.02
+    stat_modifiers::shop_prices(&curr_stats())
 }
 
 pub fn modify_lost_stat(stat: Stat, amount: i16) {
@@ -84,7 +85,7 @@ pub fn rage_rounds_from_con() -> i16 {
 }
 
 pub fn ac_from_dex() -> i16 {
-    let mut ac = modifier_from_stat(Stat::Dexterity);
+    let mut ac = stat_modifiers::ac(&curr_stats());
     if player::is_raging() {
         ac -= 2;
     }
