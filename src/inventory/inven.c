@@ -1,20 +1,20 @@
 #include "inven.h"
 
-#include "c.h"
-#include "constants.h"
-#include "debug.h"
-#include "io.h"
-#include "magic.h"
-#include "misc.h"
-#include "model_class.h"
-#include "model_item.h"
-#include "pascal.h"
-#include "player.h"
-#include "random.h"
-#include "screen.h"
-#include "text_lines.h"
-#include "types.h"
-#include "variables.h"
+#include "../c.h"
+#include "../constants.h"
+#include "../debug.h"
+#include "../io.h"
+#include "../magic.h"
+#include "../misc.h"
+#include "../model_class.h"
+#include "../model_item.h"
+#include "../pascal.h"
+#include "../player.h"
+#include "../random.h"
+#include "../screen.h"
+#include "../text_lines.h"
+#include "../types.h"
+#include "../variables.h"
 
 #include <curses.h>
 #include <math.h>
@@ -714,9 +714,6 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
   cur_inven = inventory_list;
 
   while (!exit_flag) {
-    long i1;
-    char out_val[200];
-    treas_rec *selected_item;
 
     ic__clear_display(cur_display, cur_display_size);
     inventory_change_all_ok_stats(true, false);
@@ -756,7 +753,7 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
                     "exit) Wear/Wield which one?");
     clear_rc(2, 1);
 
-    selected_item = inventory_list;
+    treas_rec *selected_item = inventory_list;
     bool item_was_selected =
         ic__show_inven(&selected_item, true, false, scr_state, valid_flag,
                        prompt, cur_display, cur_display_size);
@@ -772,9 +769,10 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
     reset_flag = false;
 
     /*{ Slot for equipment    }*/
+    long equipment_slot;
     switch (selected_item->data.tval) {
     case lamp_or_torch:
-      i1 = Equipment_light;
+      equipment_slot = Equipment_light;
       break;
 
     case bow_crossbow_or_sling:
@@ -784,49 +782,49 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
     case dagger:
     case maul:
     case pick_or_shovel:
-      i1 = Equipment_primary;
+      equipment_slot = Equipment_primary;
       break;
 
     case boots:
-      i1 = Equipment_boots;
+      equipment_slot = Equipment_boots;
       break;
 
     case gloves_and_gauntlets:
-      i1 = Equipment_gloves;
+      equipment_slot = Equipment_gloves;
       break;
 
     case cloak:
-      i1 = Equipment_cloak;
+      equipment_slot = Equipment_cloak;
       break;
 
     case helm:
     case gem_helm:
-      i1 = Equipment_helm;
+      equipment_slot = Equipment_helm;
       break;
 
     case shield:
-      i1 = Equipment_shield;
+      equipment_slot = Equipment_shield;
       break;
 
     case hard_armor:
     case soft_armor:
-      i1 = Equipment_armor;
+      equipment_slot = Equipment_armor;
       break;
 
     case amulet:
-      i1 = Equipment_amulet;
+      equipment_slot = Equipment_amulet;
       break;
 
     case bracers:
-      i1 = Equipment_bracers;
+      equipment_slot = Equipment_bracers;
       break;
 
     case belt:
-      i1 = Equipment_belt;
+      equipment_slot = Equipment_belt;
       break;
 
     case ring:
-      i1 = equipment[Equipment_right_ring].tval == 0 ? Equipment_right_ring
+      equipment_slot = equipment[Equipment_right_ring].tval == 0 ? Equipment_right_ring
                                                      : Equipment_left_ring;
       break;
 
@@ -839,46 +837,45 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
       msg_print("I don't see how you can use that.");
       msg_print("");
       item_was_selected = false;
-      i1 = 0;
+      equipment_slot = 0;
       break;
     } /* end switch */
 
-    const bool equip_cursed_item = item_was_selected && equipment[i1].tval > 0 &&
-                                Cursed_worn_bit & equipment[i1].flags;
+    const bool equip_cursed_item = item_was_selected && equipment[equipment_slot].tval > 0 &&
+                                Cursed_worn_bit & equipment[equipment_slot].flags;
     if (equip_cursed_item) {
       char const *const equip_way =
-          i1 == Equipment_primary ? "wielding" : "wearing";
+          equipment_slot == Equipment_primary ? "wielding" : "wearing";
       char out_val_tmp[82];
-      inven_temp.data = equipment[i1];
-      objdes(out_val, &inven_temp, false);
-      strcpy(out_val_tmp, out_val);
-      sprintf(out_val, "The %s you are %s appears to be cursed", out_val_tmp,
-              equip_way);
+      inven_temp.data = equipment[equipment_slot];
+      objdes(out_val_tmp, &inven_temp, false);
+      msg_printf("The %s you are %s appears to be cursed -more-", out_val_tmp, equip_way);
+      inkey();
       item_was_selected = false;
     }
 
     if (item_was_selected) {
-      const treasure_type unwear_obj = equipment[i1];
-      equipment[i1] = selected_item->data;
-      if (i1 == Equipment_light) {
+      const treasure_type unwear_obj = equipment[equipment_slot];
+      equipment[equipment_slot] = selected_item->data;
+      if (equipment_slot == Equipment_light) {
         player_flags.light_on = true;
       }
-      equipment[i1].number = 1;
+      equipment[equipment_slot].number = 1;
 
       /*{ Fix for weight        }*/
-      inven_weight += equipment[i1].weight * equipment[i1].number;
+      inven_weight += equipment[equipment_slot].weight * equipment[equipment_slot].number;
 
       /*{ Subtracts weight      }*/
       inven_destroy(selected_item);
       equip_ctr++;
-      py_bonuses(&equipment[i1], 1);
+      py_bonuses(&equipment[equipment_slot], 1);
       if (unwear_obj.tval > 0) {
         equipment[EQUIP_MAX - 1] = unwear_obj;
         ic__remove(EQUIP_MAX - 1, true);
       }
 
       char prt1[82];
-      switch (i1) {
+      switch (equipment_slot) {
       case Equipment_primary:
         strcpy(prt1, "You are wielding ");
         break;
@@ -890,7 +887,7 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
         break;
       }
 
-      inven_temp.data = equipment[i1];
+      inven_temp.data = equipment[equipment_slot];
       char prt2[82];
       objdes(prt2, &inven_temp, true);
       long i2 = 0;
@@ -900,10 +897,8 @@ static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, cha
         if (equipment[i3].tval > 0) {
           i2++;
         }
-      } while (i3 != i1);
-      sprintf(out_val, "%s%s (%c%c", prt1, prt2, (int)i2 + 96,
-              (int)cur_char2());
-      msg_print(out_val);
+      } while (i3 != equipment_slot);
+      msg_printf("%s%s (%c%c", prt1, prt2, (int)i2 + 96, (int)cur_char2());
     }
 
     if (*scr_state == 0) {
