@@ -9,7 +9,7 @@
 #include "../creature.h"
 #include "../debug.h"
 #include "../dungeon/light.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"

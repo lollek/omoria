@@ -12,7 +12,7 @@
 #include "c.h"
 #include "configure.h"
 #include "constants.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "kickout.h"
 #include "misc.h"

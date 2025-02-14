@@ -6,7 +6,7 @@
 #include "effects.h"
 #include "generate_item/generate_item.h"
 #include "generate_monster/generate_monster.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "loot/loot.h"
 #include "magic.h"

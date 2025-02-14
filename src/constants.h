@@ -137,6 +137,7 @@
 
 /*	{ Constants for equipment inventory items		-KRC-	} */
 
+#define Equipment_none -1
 #define Equipment_min 0
 #define Equipment_primary (Equipment_min)              /*  0 */
 #define Equipment_helm (Equipment_primary + 1)         /*  1 */

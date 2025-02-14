@@ -1,6 +1,8 @@
 #pragma once
 
-#include "types.h"
+#include "../types.h"
+
+#define INVEN_DISPLAY_SIZE 20
 
 /**
  * -OK- rust
@@ -34,10 +36,22 @@ treas_rec *ic__remove(long item_val, bool show_message);
  */
 void inv__equip_pos_string(char out_val[82], long equip_pos, long counter);
 
-bool find_range(obj_set const item_val, bool inner, treas_rec **first,
+typedef struct inventory_find_result_t {
+  treas_rec *first;
+  long count;
+} inventory_find_result_t;
+inventory_find_result_t inventory_find_wearables(void);
+bool inventory_find_range(obj_set const item_val, bool inner, treas_rec **first,
                    long *count);
 
 /**
  * Prompt for what type of money to use
  */
 long get_money_type(char prompt[134], bool *back, bool no_check);
+
+/*  { Displays inventory items, returns chosen item if want_back. }*/
+/*{ bool returns if chosen }*/
+bool ic__show_inven(treas_rec **ret_ptr, bool want_back, bool clean_flag,
+                    long *scr_state, bool *valid_flag, char const *prompt,
+                    treas_rec *cur_display[]);
+void ic__clear_display(treas_rec *cur_display[]);

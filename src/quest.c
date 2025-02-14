@@ -9,7 +9,7 @@
 
 #include "constants.h"
 #include "generate_item/generate_item.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "misc.h"
 #include "pascal.h"

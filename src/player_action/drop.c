@@ -1,4 +1,4 @@
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../player.h"
 #include "../screen.h"

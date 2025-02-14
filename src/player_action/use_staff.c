@@ -1,6 +1,6 @@
 #include "../constants.h"
 #include "../generate_monster/generate_monster.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
@@ -166,7 +166,7 @@ void player_action_use_staff(void) {
   reset_flag = true;
 
   if (inven_ctr > 0) {
-    if (find_range(this_be_a_staff, false, &i2, &i3)) {
+    if (inventory_find_range(this_be_a_staff, false, &i2, &i3)) {
 
       redraw = false;
       if (get_item(&item_ptr, "Use which staff?", &redraw, i3, &trash_char,

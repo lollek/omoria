@@ -5,7 +5,7 @@
 #include "../types.h"
 #include "../variables.h"
 #include "../misc.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../screen.h"
 
 void player_action_jam_door(void) {
@@ -28,7 +28,7 @@ void player_action_jam_door(void) {
 
   if (t_list[cave[y][x].tptr].tval == closed_door) {
     if (cave[y][x].cptr == 0) {
-      if (find_range(pick_a_spike, false, &i1, &i2)) {
+      if (inventory_find_range(pick_a_spike, false, &i1, &i2)) {
         msg_print("You jam the door with a spike.");
         if (i1->data.number > 1) {
           i1->data.number--;

@@ -18,7 +18,7 @@
 #include "../generate_map/generate_map.h"
 #include "../generate_monster/generate_monster.h"
 #include "../help.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../kickout.h"
 #include "../magic.h"

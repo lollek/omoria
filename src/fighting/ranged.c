@@ -1,5 +1,5 @@
 #include "../debug.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../model_item.h"

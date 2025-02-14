@@ -9,7 +9,7 @@
 
 #include "constants.h"
 #include "generate_monster/generate_monster.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "misc.h"
 #include "pascal.h"
@@ -507,7 +507,7 @@ void blow(void) {
 
   reset_flag = true;
   if (inven_ctr > 0) {
-    if (find_range(things_that_blow, false, &i2, &i3)) {
+    if (inventory_find_range(things_that_blow, false, &i2, &i3)) {
       redraw = false;
       if (get_item(&item_ptr, "Use which item?", &redraw, i3, &trash_char,
                    false, false)) {

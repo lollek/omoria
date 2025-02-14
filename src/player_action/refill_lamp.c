@@ -1,4 +1,4 @@
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../screen.h"
 #include "../text_lines.h"
@@ -16,7 +16,7 @@ void player_action_refill_lamp(void) {
   const long i3 = equipment[Equipment_light].subval;
 
   if (i3 > 0 && i3 < 10) {
-    if (find_range(this_be_oil, false, &i1, &i2)) {
+    if (inventory_find_range(this_be_oil, false, &i1, &i2)) {
       msg_print("Your lamp is full.");
       /* with equipment[Equipment_light]. do; */
       equipment[Equipment_light].p1 += i1->data.p1;

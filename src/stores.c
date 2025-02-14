@@ -11,7 +11,7 @@
 #include "constants.h"
 #include "debug.h"
 #include "generate_item/generate_item.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "kickout.h"
 #include "misc.h"
@@ -1536,7 +1536,7 @@ static bool __store_sell(const enum store_t store_type, const long cur_top,
 
   long count = 0;
   treas_rec *item_ptr = NULL;
-  if (!find_range(store_buy[store_type], false, &item_ptr, &count)) {
+  if (!inventory_find_range(store_buy[store_type], false, &item_ptr, &count)) {
     msg_print("You have nothing the store wishes to buy.");
     LEAVE("__store_sell", "");
     return false;

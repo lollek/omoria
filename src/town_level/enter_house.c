@@ -332,7 +332,7 @@ static void beg_food(void) {
        var      i2              : long;
                 item_ptr        : treas_rec;*
        begin
-        if (find_range([food],false,item_ptr,i2)) then
+        if (inventory_find_range([food],false,item_ptr,i2)) then
           begin
             msg_print("The occupants beg you for food.");
             if get_yes_no("Will you feed them?") then

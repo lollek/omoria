@@ -2,7 +2,7 @@
 
 #include "../debug.h"
 #include "../io.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../magic.h"
 #include "../misc.h"
 #include "../player.h"
@@ -345,7 +345,7 @@ static void _cast(const enum magic_t magic_type) {
 
   /* Check book users for books */
   if (magic_books[0] != 0) {
-    if (inven_ctr <= 0 || !find_range(magic_books, false, &i1, &i2)) {
+    if (inven_ctr <= 0 || !inventory_find_range(magic_books, false, &i1, &i2)) {
       sprintf(msg_buf, "But you are not carrying any %ss!", magic_book_name);
       msg_print(msg_buf);
       return;

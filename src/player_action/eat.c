@@ -2,7 +2,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "../constants.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../player.h"
@@ -61,7 +61,7 @@ static treas_rec *select_what_to_eat(void) {
   obj_set const things_to_eat = {Food, junk_food, 0};
   treas_rec *first;
   long count;
-  if (!find_range(things_to_eat, false, &first, &count)) {
+  if (!inventory_find_range(things_to_eat, false, &first, &count)) {
     msg_print("You are not carrying any food.");
     return NULL;
   }

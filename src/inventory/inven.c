@@ -15,6 +15,7 @@
 #include "../text_lines.h"
 #include "../types.h"
 #include "../variables.h"
+#include "equip.h"
 
 #include <curses.h>
 #include <math.h>
@@ -23,7 +24,6 @@
 #include <string.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#define DISPLAY_SIZE 20
 #define MITHRIL_POS (MAX_GOLD)
 #define PLATINUM_POS (MAX_GOLD - 1)
 #define GOLD_POS (MAX_GOLD - 2)
@@ -214,13 +214,11 @@ long inventory_change_all_ok_stats(const bool nok, const bool nin) {
   return count;
 }
 
-void ic__clear_display(treas_rec *cur_display[], const long *cur_display_size) {
+void ic__clear_display(treas_rec *cur_display[]) {
 
   ENTER(("ic__clear_display", "iu"));
 
-  cur_display_size = 0;
-  (void)cur_display_size;
-  for (long index = 1; index <= DISPLAY_SIZE; index++) {
+  for (long index = 1; index <= INVEN_DISPLAY_SIZE; index++) {
     cur_display[index] = 0;
   }
 
@@ -228,14 +226,14 @@ void ic__clear_display(treas_rec *cur_display[], const long *cur_display_size) {
 }
 
 /*{ start changes into start of next page; returns # items in page}*/
-static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
+static long ic__display_inv(treas_rec *cur_display[], char const * const prompt,
                      treas_rec *start, treas_rec **next_start) {
 
   ENTER(("ic__display_inv", "iu"));
 
   long count;
 
-  for (count = 0; start != NULL && count < DISPLAY_SIZE;) {
+  for (count = 0; start != NULL && count < INVEN_DISPLAY_SIZE;) {
     if (start->ok) {
       count++;
       if (cur_display[count] != start) {
@@ -264,7 +262,7 @@ static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
     start = start->next;
   } /* end for */
 
-  for (long i = count + 1; i <= DISPLAY_SIZE; i++) {
+  for (long i = count + 1; i <= INVEN_DISPLAY_SIZE; i++) {
     erase_line(i + 1, 1);
     cur_display[i] = NULL;
   }
@@ -296,10 +294,9 @@ static long ic__display_inv(treas_rec *cur_display[], char prompt[82],
 
 /*  { Displays inventory items, returns chosen item if want_back. }*/
 /*{ bool returns if chosen }*/
-static bool ic__show_inven(treas_rec **ret_ptr, const bool want_back,
-                              const bool clean_flag, long *scr_state, bool *valid_flag,
-                       char prompt[82], treas_rec *cur_display[],
-                              const long *cur_display_size) {
+bool ic__show_inven(treas_rec **ret_ptr, const bool want_back,
+                    const bool clean_flag, long *scr_state, bool *valid_flag,
+                    char const * const prompt, treas_rec *cur_display[]) {
 
   ENTER(("ic__show_inven", "iu"));
 
@@ -415,7 +412,7 @@ static bool ic__show_inven(treas_rec **ret_ptr, const bool want_back,
       for (long count2 = 1; count2 <= count; count2++) {
         inven_destroy(*ret_ptr);
       }
-      ic__clear_display(cur_display, cur_display_size);
+      ic__clear_display(cur_display);
       num_choices =
           ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
     } else {
@@ -655,268 +652,8 @@ void ic__unwear(long *scr_state) {
   }
 }
 
-static void ic__wear__gem(treas_rec *gem) {
-  long factor;
-  treasure_type *const worn_helm = &equipment[Equipment_helm];
-
-  if (worn_helm->tval != gem_helm) {
-    msg_print("I don't see how you can use that.");
-    msg_print("");
-    return;
-  }
-
-  if (worn_helm->p1 <= 0) {
-    msg_print("There is no more room on the helm.");
-    if (randint(2) == 1) {
-      msg_print("You lose your grip and the gem "
-                "falls to the floor.");
-      msg_print("The gem shatters!");
-      msg_print("");
-      inven_destroy(gem);
-    } else {
-      msg_print("You catch the gem in mid air");
-      msg_print("");
-    }
-    return;
-  }
-
-  msg_print("The gem adheres itself to your helm!");
-  py_bonuses(worn_helm, -1);
-  if (gem->data.flags2 & Negative_gem_bit) {
-    gem->data.flags2 &= 0xFF7FFFFF;
-    worn_helm->flags ^= gem->data.flags;
-    worn_helm->flags2 ^= gem->data.flags2;
-    factor = -1;
-  } else {
-    worn_helm->flags |= gem->data.flags;
-    worn_helm->flags2 |= gem->data.flags2;
-    factor = 1;
-  }
-
-  worn_helm->cost += factor * gem->data.cost;
-  worn_helm->weight += factor * gem->data.weight;
-  worn_helm->tohit += factor * gem->data.tohit;
-  worn_helm->todam += factor * gem->data.todam;
-  worn_helm->ac += factor * gem->data.ac;
-  worn_helm->toac += factor * gem->data.toac;
-  worn_helm->p1--;
-  inven_destroy(gem);
-  py_bonuses(worn_helm, 1);
-}
-
-/*{ Wear routine, wear or wield an item           -RAK-   }*/
-static void ic__wear(treas_rec *cur_display[], const long *cur_display_size, char prompt[82],
-              long *scr_state, bool *valid_flag) {
-
-  ENTER(("ic__wear", "i2"));
-
-  bool exit_flag = false;
-  cur_inven = inventory_list;
-
-  while (!exit_flag) {
-
-    ic__clear_display(cur_display, cur_display_size);
-    inventory_change_all_ok_stats(true, false);
-
-    { /* Filter item types before we show the list */
-      const obj_set wearables = {valuable_gems_wear,
-                                 lamp_or_torch,
-                                 bow_crossbow_or_sling,
-                                 hafted_weapon,
-                                 pole_arm,
-                                 dagger,
-                                 sword,
-                                 pick_or_shovel,
-                                 maul,
-                                 gem_helm,
-                                 boots,
-                                 gloves_and_gauntlets,
-                                 cloak,
-                                 helm,
-                                 shield,
-                                 hard_armor,
-                                 soft_armor,
-                                 bracers,
-                                 belt,
-                                 amulet,
-                                 ring,
-                                 0,
-                                 0,
-                                 0,
-                                 0};
-      treas_rec *ptr;
-      long count;
-      find_range(wearables, false, &ptr, &count);
-    }
-
-    sprintf(prompt, "Items a-%%N, space for next page, Esc to "
-                    "exit) Wear/Wield which one?");
-    clear_rc(2, 1);
-
-    treas_rec *selected_item = inventory_list;
-    bool item_was_selected =
-        ic__show_inven(&selected_item, true, false, scr_state, valid_flag,
-                       prompt, cur_display, cur_display_size);
-    if (!item_was_selected) {
-      break;
-    }
-    if (!C_class_can_use_item(player_pclass, &selected_item->data)) {
-      msg_print("You cannot wear that item type!");
-      return;
-    }
-
-    /*{ Player turn   }*/
-    reset_flag = false;
-
-    /*{ Slot for equipment    }*/
-    long equipment_slot;
-    switch (selected_item->data.tval) {
-    case lamp_or_torch:
-      equipment_slot = Equipment_light;
-      break;
-
-    case bow_crossbow_or_sling:
-    case hafted_weapon:
-    case pole_arm:
-    case sword:
-    case dagger:
-    case maul:
-    case pick_or_shovel:
-      equipment_slot = Equipment_primary;
-      break;
-
-    case boots:
-      equipment_slot = Equipment_boots;
-      break;
-
-    case gloves_and_gauntlets:
-      equipment_slot = Equipment_gloves;
-      break;
-
-    case cloak:
-      equipment_slot = Equipment_cloak;
-      break;
-
-    case helm:
-    case gem_helm:
-      equipment_slot = Equipment_helm;
-      break;
-
-    case shield:
-      equipment_slot = Equipment_shield;
-      break;
-
-    case hard_armor:
-    case soft_armor:
-      equipment_slot = Equipment_armor;
-      break;
-
-    case amulet:
-      equipment_slot = Equipment_amulet;
-      break;
-
-    case bracers:
-      equipment_slot = Equipment_bracers;
-      break;
-
-    case belt:
-      equipment_slot = Equipment_belt;
-      break;
-
-    case ring:
-      equipment_slot = equipment[Equipment_right_ring].tval == 0 ? Equipment_right_ring
-                                                     : Equipment_left_ring;
-      break;
-
-    case valuable_gems_wear:
-      ic__wear__gem(selected_item);
-      item_was_selected = false;
-      break;
-
-    default:
-      msg_print("I don't see how you can use that.");
-      msg_print("");
-      item_was_selected = false;
-      equipment_slot = 0;
-      break;
-    } /* end switch */
-
-    const bool equip_cursed_item = item_was_selected && equipment[equipment_slot].tval > 0 &&
-                                Cursed_worn_bit & equipment[equipment_slot].flags;
-    if (equip_cursed_item) {
-      char const *const equip_way =
-          equipment_slot == Equipment_primary ? "wielding" : "wearing";
-      char out_val_tmp[82];
-      inven_temp.data = equipment[equipment_slot];
-      objdes(out_val_tmp, &inven_temp, false);
-      msg_printf("The %s you are %s appears to be cursed -more-", out_val_tmp, equip_way);
-      inkey();
-      item_was_selected = false;
-    }
-
-    if (item_was_selected) {
-      const treasure_type unwear_obj = equipment[equipment_slot];
-      equipment[equipment_slot] = selected_item->data;
-      if (equipment_slot == Equipment_light) {
-        player_flags.light_on = true;
-      }
-      equipment[equipment_slot].number = 1;
-
-      /*{ Fix for weight        }*/
-      inven_weight += equipment[equipment_slot].weight * equipment[equipment_slot].number;
-
-      /*{ Subtracts weight      }*/
-      inven_destroy(selected_item);
-      equip_ctr++;
-      py_bonuses(&equipment[equipment_slot], 1);
-      if (unwear_obj.tval > 0) {
-        equipment[EQUIP_MAX - 1] = unwear_obj;
-        ic__remove(EQUIP_MAX - 1, true);
-      }
-
-      char prt1[82];
-      switch (equipment_slot) {
-      case Equipment_primary:
-        strcpy(prt1, "You are wielding ");
-        break;
-      case Equipment_light:
-        strcpy(prt1, "Your light source is ");
-        break;
-      default:
-        strcpy(prt1, "You are wearing ");
-        break;
-      }
-
-      inven_temp.data = equipment[equipment_slot];
-      char prt2[82];
-      objdes(prt2, &inven_temp, true);
-      long i2 = 0;
-      long i3 = Equipment_min - 1;
-      do { /*{ Get the right letter of equipment }*/
-        i3++;
-        if (equipment[i3].tval > 0) {
-          i2++;
-        }
-      } while (i3 != equipment_slot);
-      msg_printf("%s%s (%c%c", prt1, prt2, (int)i2 + 96, (int)cur_char2());
-    }
-
-    if (*scr_state == 0) {
-      exit_flag = true;
-    } else if (inven_ctr == 0) {
-      exit_flag = true;
-    }
-  }
-
-  if (*scr_state != 0) {
-    prt("You are currently carrying -", 1, 1);
-  }
-
-  LEAVE("ic__wear", "i2");
-}
-
-void ic__stats(treas_rec *cur_display[], const long *cur_display_size,
-               char prompt[82], long *scr_state, bool *valid_flag) {
+void ic__stats(treas_rec *cur_display[], char prompt[82], long *scr_state,
+               bool *valid_flag) {
   /*{ Statistics routine, get wizard info on an item        -DMF-   }*/
 
   treas_rec *item_ptr;
@@ -930,9 +667,9 @@ void ic__stats(treas_rec *cur_display[], const long *cur_display_size,
     clear_rc(1, 1);
     item_ptr = NULL;
     inventory_change_all_ok_stats(true, true);
-    ic__clear_display(cur_display, cur_display_size);
+    ic__clear_display(cur_display);
     exit_flag = !ic__show_inven(&item_ptr, true, false, scr_state, valid_flag,
-                                prompt, cur_display, cur_display_size);
+                                prompt, cur_display);
     if (item_ptr != NULL) {
       char out_val[82];
       clear_rc(1, 1);
@@ -1346,9 +1083,8 @@ void ic__take_out(void) {
 }
 
 /*{ Inventory of selective items, picked by character     -DMF-   }*/
-static void ic__selective_inven(long *scr_state, bool *valid_flag, char prompt[82],
-                         treas_rec *cur_display[],
-                                const long *cur_display_size) {
+static void ic__selective_inven(long *scr_state, bool *valid_flag,
+                                char prompt[82], treas_rec *cur_display[]) {
 
   char out[134];
   char *out_pos = &out[sizeof(out)];
@@ -1382,11 +1118,11 @@ static void ic__selective_inven(long *scr_state, bool *valid_flag, char prompt[8
           }
       }
 
-      ic__clear_display(cur_display, cur_display_size);
+      ic__clear_display(cur_display);
       clear_rc(1, 1);
       strcpy(prompt, "You are currently carrying: space for next page");
       ic__show_inven(&ptr, false, false, scr_state, valid_flag, prompt,
-              cur_display, cur_display_size);
+                     cur_display);
   }
 }
 
@@ -1433,7 +1169,6 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
 
   ENTER(("inven_command", "i"));
 
-  long cur_display_size;
   bool valid_flag = false;
   char tmp_prompt[82];
   bool return_value = false;
@@ -1445,7 +1180,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
   cur_inven = inventory_list;
 
   while (!exit_flag) {
-    treas_rec *cur_display[DISPLAY_SIZE + 1];
+    treas_rec *cur_display[INVEN_DISPLAY_SIZE + 1];
     switch (command) {
 
     case 'i': /*{ Inventory     }*/
@@ -1454,10 +1189,10 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
       } else {
         clear_rc(1, 1);
         strcpy(tmp_prompt, "You are currently carrying: space for next page");
-        ic__clear_display(cur_display, &cur_display_size);
+        ic__clear_display(cur_display);
         inventory_change_all_ok_stats(true, true);
-        ic__show_inven(item_ptr, false, false, &scr_state, &valid_flag, tmp_prompt,
-                       cur_display, &cur_display_size);
+        ic__show_inven(item_ptr, false, false, &scr_state, &valid_flag,
+                       tmp_prompt, cur_display);
       }
       break;
 
@@ -1467,10 +1202,10 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
       } else {
         clear_rc(1, 1);
         strcpy(tmp_prompt, "Warning: a-t/A-T DESTROYS that item: space for next page");
-        ic__clear_display(cur_display, &cur_display_size);
+        ic__clear_display(cur_display);
         inventory_change_all_ok_stats(true, true);
-        ic__show_inven(item_ptr, true, true, &scr_state, &valid_flag, tmp_prompt,
-                       cur_display, &cur_display_size);
+        ic__show_inven(item_ptr, true, true, &scr_state, &valid_flag,
+                       tmp_prompt, cur_display);
       }
       break;
 
@@ -1486,14 +1221,14 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
       break;
 
     case 's': /*{ Statistics of an item }*/
-      ic__clear_display(cur_display, &cur_display_size);
+      ic__clear_display(cur_display);
       if (!wizard1 && !wizard2 && 0) {
         msg_print("You *wish*, you sleazy scum-bag!");
       } else {
         if (inven_ctr == 0) {
           msg_print("You are not carrying anything.");
         } else {
-          ic__stats(cur_display, &cur_display_size, tmp_prompt, &scr_state, &valid_flag);
+          ic__stats(cur_display, tmp_prompt, &scr_state, &valid_flag);
         }
       }
       break;
@@ -1512,7 +1247,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
         msg_print("You are not carrying anything.");
       } else {
         /*{ May set scr_state to 1        }*/
-        ic__wear(cur_display, &cur_display_size, tmp_prompt, &scr_state, &valid_flag);
+        equip_item_screen(&scr_state, &valid_flag);
       }
       break;
 
@@ -1551,18 +1286,17 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
       } else {
-        ic__selective_inven(&scr_state, &valid_flag, tmp_prompt, cur_display,
-                            &cur_display_size);
+        ic__selective_inven(&scr_state, &valid_flag, tmp_prompt, cur_display);
       }
       break;
 
     /*{ Special function for other routines                   }*/
     case '?': /* { Displays part inven, returns  }*/
       cur_inven = inventory_list;
-      ic__clear_display(cur_display, &cur_display_size);
+      ic__clear_display(cur_display);
       return_value =
-          ic__show_inven(item_ptr, true, false, &scr_state, &valid_flag, tmp_prompt,
-                         cur_display, &cur_display_size);
+          ic__show_inven(item_ptr, true, false, &scr_state,
+                                    &valid_flag, tmp_prompt, cur_display);
 
       scr_state = 0; /*{ Clear screen state    }*/
       break;
@@ -2120,10 +1854,41 @@ void inven_drop(treas_rec *item_ptr, const long y, const long x,
   safe_free(temp_ptr, sizeof(treas_rec), "inven_drop");
 }
 
-bool find_range(obj_set const item_val, const bool inner, treas_rec **first,
+inventory_find_result_t inventory_find_wearables() {
+  const obj_set wearables = {valuable_gems_wear,
+                             lamp_or_torch,
+                             bow_crossbow_or_sling,
+                             hafted_weapon,
+                             pole_arm,
+                             dagger,
+                             sword,
+                             pick_or_shovel,
+                             maul,
+                             gem_helm,
+                             boots,
+                             gloves_and_gauntlets,
+                             cloak,
+                             helm,
+                             shield,
+                             hard_armor,
+                             soft_armor,
+                             bracers,
+                             belt,
+                             amulet,
+                             ring,
+                             0,
+                             0,
+                             0,
+                             0};
+  inventory_find_result_t result;
+  inventory_find_range(wearables, false, &result.first, &result.count);
+  return result;
+}
+
+bool inventory_find_range(obj_set const item_val, const bool inner, treas_rec **first,
                    long *count) {
 
-  ENTER(("find_range", ""));
+  ENTER(("inventory_find_range", ""));
 
   *count = 0;
   *first = NULL;
@@ -2149,7 +1914,7 @@ bool find_range(obj_set const item_val, const bool inner, treas_rec **first,
 
   MSG(("find: count=%ld\n", *count));
 
-  LEAVE("find_range", "");
+  LEAVE("inventory_find_range", "");
   return *count > 0;
 }
 

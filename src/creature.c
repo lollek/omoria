@@ -14,7 +14,7 @@
 #include "fighting/fighting.h"
 #include "generate_monster/generate_monster.h"
 #include "generate_monster/monster_template.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "magic.h"
 #include "misc.h"
@@ -851,7 +851,7 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
     break;
 
   case 22: /*{Eat food         }*/
-    if (find_range(food_stuffs, false, &item_ptr, &i2)) {
+    if (inventory_find_range(food_stuffs, false, &item_ptr, &i2)) {
       inven_destroy(item_ptr);
       prt_stat_block();
     }

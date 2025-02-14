@@ -7,7 +7,7 @@
 #include "../c.h"
 #include "../constants.h"
 #include "../currency.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../kickout.h"
 #include "../misc.h"
