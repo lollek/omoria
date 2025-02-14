@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use crate::data;
 use crate::data::item_name::subtype::ammo::ammo;
 use crate::data::item_name::subtype::bag::bag;
+use crate::data::item_name::subtype::boots::boots;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::jewelry::jewelry;
@@ -135,13 +136,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             6 => "Dwarven shovel",
             7 => "Orcish pick",
             _ => "Alien pick",
-        }),
-        ItemType::Boots => Cow::from(match item.subval {
-            1 => "Pair of soft leather shoes",
-            2 => "Pair of soft leather boots",
-            3 => "Pair of hard leather boots",
-            4 => "Pair of sandals",
-            _ => "Alien boots",
         }),
         ItemType::Helm => Cow::from(match item.subval {
             12 => "Cloth hat",
@@ -680,6 +674,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::Arrow => ammo(item),
         ItemType::Bag => bag(item),
         ItemType::Bolt => ammo(item),
+        ItemType::Boots => boots(item),
         ItemType::Chest => chest(item),
         ItemType::Gem => gem(item),
         ItemType::HaftedWeapon | ItemType::Dagger => melee_weapon(item),

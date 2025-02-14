@@ -7,7 +7,7 @@ pub fn wand(item: &Item) -> String {
         .unwrap_or_else(|| panic!("Subtype for item is not a wand? {:?}", item));
 
     if !identification::is_identified(subtype) {
-        return "Unknown wand".to_string();
+        return "unknown wand".to_string();
     }
     let attribute = match item.subval {
         1 => " of Light",
@@ -39,11 +39,11 @@ pub fn wand(item: &Item) -> String {
     };
 
     if !item.is_identified() {
-        return format!("Wand{attribute}");
+        return format!("wand{attribute}");
     }
 
     let charges = item.p1;
-    format!("Wand{attribute} ({charges} charges)")
+    format!("wand{attribute} ({charges} charges)")
 }
 
 #[cfg(test)]
@@ -61,7 +61,7 @@ mod tests {
 
         identification::set_identified(ItemSubType::Wand(WandSubType::WandOfCloneMonster), false);
         item.set_identified(false);
-        assert_eq!(generate(&item), "Unknown wand");
+        assert_eq!(generate(&item), "unknown wand");
     }
 
     #[test]
@@ -71,7 +71,7 @@ mod tests {
 
         identification::set_identified(ItemSubType::Wand(WandSubType::WandOfCloneMonster), true);
         item.set_identified(false);
-        assert_eq!(generate(&item), "Wand of Clone Monster");
+        assert_eq!(generate(&item), "wand of Clone Monster");
     }
 
     #[test]
@@ -82,6 +82,6 @@ mod tests {
         identification::set_identified(ItemSubType::Wand(WandSubType::WandOfCloneMonster), true);
         item.set_identified(true);
         item.p1 = 0;
-        assert_eq!(generate(&item), "Wand of Clone Monster (0 charges)");
+        assert_eq!(generate(&item), "wand of Clone Monster (0 charges)");
     }
 }

@@ -10,16 +10,16 @@ pub fn light_source(item: &Item) -> String {
         match from_i64(ItemType::LightSource, item.subval) {
             Some(subtype) => match subtype {
                 ItemSubType::LightSource(LightSourceSubType::WoodenTorch) => {
-                    Cow::from("Wooden torch")
+                    Cow::from("wooden torch")
                 }
                 ItemSubType::LightSource(LightSourceSubType::BrassLantern) => {
-                    Cow::from("Brass lantern")
+                    Cow::from("brass lantern")
                 }
                 ItemSubType::LightSource(LightSourceSubType::MagicTorch) => {
-                    Cow::from("Magic torch")
+                    Cow::from("magic torch")
                 }
                 ItemSubType::LightSource(LightSourceSubType::MagicLantern) => {
-                    Cow::from("Magic lantern")
+                    Cow::from("magic lantern")
                 }
                 t => panic!("Expected light source, got {:?}", t),
             },
@@ -43,10 +43,10 @@ mod tests {
     #[test]
     fn test_light_source_wooden_torch() {
         let mut item = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0);
-        assert_eq!(generate(&item), "Wooden torch with 4000 turns of light");
+        assert_eq!(generate(&item), "wooden torch with 4000 turns of light");
 
         item.p1 = 1;
-        assert_eq!(generate(&item), "Wooden torch with 1 turn of light");
+        assert_eq!(generate(&item), "wooden torch with 1 turn of light");
     }
 
     #[test]
@@ -56,7 +56,7 @@ mod tests {
                 Box::new(LightSourceTemplate::BrassLantern),
                 0
             )),
-            "Brass lantern with 7500 turns of light"
+            "brass lantern with 7500 turns of light"
         );
     }
 
@@ -66,13 +66,13 @@ mod tests {
         magic_torch.set_identified(true);
         assert_eq!(
             generate(&magic_torch),
-            "Magic torch with 9000 turns of light"
+            "magic torch with 9000 turns of light"
         );
 
         magic_torch.set_identified(false);
         assert_eq!(
             generate(&magic_torch),
-            "Magic torch with 9000 turns of light"
+            "magic torch with 9000 turns of light"
         );
     }
 
@@ -83,13 +83,13 @@ mod tests {
         magic_lantern.set_identified(true);
         assert_eq!(
             generate(&magic_lantern),
-            "Magic lantern with 20000 turns of light"
+            "magic lantern with 20000 turns of light"
         );
 
         magic_lantern.set_identified(false);
         assert_eq!(
             generate(&magic_lantern),
-            "Magic lantern with 20000 turns of light"
+            "magic lantern with 20000 turns of light"
         );
     }
 }
