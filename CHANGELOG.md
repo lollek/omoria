@@ -9,6 +9,7 @@ February 2025
   * All spiders are now imps
   * Removed some not-so-fun monsters
 * Fix bug where it was not clear that your current item was cursed
+* Starting items are much more generous
 
 ## 5-alpha522
 

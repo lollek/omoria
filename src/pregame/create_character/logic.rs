@@ -1,13 +1,11 @@
+use libc::{strcpy, time, time_t};
+use std::ptr::null;
 use std::{
     cmp::{max, min},
     ffi::CString,
 };
-use std::ptr::null;
-use libc::{strcpy, time, time_t};
 
-use crate::generate_item::template::{
-    ArmorTemplate, CloakTemplate, FoodTemplate, LightSourceTemplate,
-};
+use crate::generate_item::template::{CloakTemplate, FoodTemplate, LightSourceTemplate};
 use crate::logic::stat_modifiers;
 use crate::model::{Class, Currency, InventoryItem, Item, Sex};
 use crate::pregame::create_character::data::{height, weight};
@@ -110,9 +108,7 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
         player::player_dis_tac = player::player_ptoac;
         player::player_dis_ac = player::player_pac;
     }
-
 }
-
 
 pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace {
     let race_stats = data::race::stat_block(&race);
@@ -231,20 +227,17 @@ pub(crate) fn generate_and_apply_money() {
 
 pub(crate) fn generate_and_apply_equipment() {
     // General starting items
-    let mut general_starting_items = Vec::new();
 
     let mut ration_of_food = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
     ration_of_food.number = 5;
-    general_starting_items.push(ration_of_food);
 
-    let torch = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0);
-    general_starting_items.push(torch);
-    let light_cloak = generate_item::generate(Box::new(CloakTemplate::LightCloak), 0);
-    general_starting_items.push(light_cloak);
-    let soft_leather_armor = generate_item::generate(Box::new(ArmorTemplate::SoftLeatherArmor), 0);
-    general_starting_items.push(soft_leather_armor);
-
-    for item in general_starting_items {
+    for item in [
+        ration_of_food,
+        generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0),
+        generate_item::generate(Box::new(CloakTemplate::LightCloak), 0),
+        generate_item::generate_boots(10),
+        generate_item::generate_belt(10),
+    ] {
         unsafe {
             add_inven_item(item);
         }
