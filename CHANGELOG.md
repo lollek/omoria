@@ -4,7 +4,7 @@
 
 February 2025
 
-* Add dagger names to new UI
+* Add belt, boots, bracers & dagger names to new UI
 * Monster changes
   * All spiders are now imps
   * Removed some not-so-fun monsters

@@ -1,6 +1,6 @@
 use crate::conversion::item_subtype;
-use crate::model::{Item, ItemType};
 use crate::model::item_subtype::{BootsSubType, ItemSubType};
+use crate::model::{Item, ItemType};
 
 pub fn boots(item: &Item) -> String {
     match item_subtype::from_i64(ItemType::Boots, item.subval) {
@@ -26,7 +26,7 @@ pub fn boots(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
-    use crate::generate_item::template::{BootsTemplate, MiscUsableTemplate};
+    use crate::generate_item::template::BootsTemplate;
 
     #[test]
     fn test_names() {

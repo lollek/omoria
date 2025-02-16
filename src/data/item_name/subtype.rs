@@ -12,3 +12,5 @@ pub mod wand;
 pub mod wearable_gem;
 pub mod melee_weapon;
 pub mod boots;
+pub mod belt;
+pub mod bracers;

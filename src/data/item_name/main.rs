@@ -3,7 +3,9 @@ use std::borrow::Cow;
 use crate::data;
 use crate::data::item_name::subtype::ammo::ammo;
 use crate::data::item_name::subtype::bag::bag;
+use crate::data::item_name::subtype::belt::belt;
 use crate::data::item_name::subtype::boots::boots;
+use crate::data::item_name::subtype::bracers::bracers;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::jewelry::jewelry;
@@ -206,61 +208,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             2 => "Set of gauntlets",
             5 => "Set of cloth gloves",
             _ => "Alien gloves",
-        }),
-        ItemType::Bracers => match item.subval {
-            1 => Cow::from(format!(
-                "Set of bracers{}",
-                if item.is_identified() {
-                    " of protection"
-                } else {
-                    ""
-                }
-            )),
-            2 => Cow::from(format!(
-                "Set of bracers{}",
-                if item.is_identified() {
-                    " of defence"
-                } else {
-                    ""
-                }
-            )),
-            3 => Cow::from(format!(
-                "Set of bracers{}",
-                if item.is_identified() {
-                    " of shielding"
-                } else {
-                    ""
-                }
-            )),
-            4 => Cow::from("Set of mithril bracers"),
-            5 => Cow::from("Set of adamantite bracers"),
-            6 => Cow::from(format!(
-                "Set of bracers{}",
-                if item.is_identified() {
-                    " of weapon attraction"
-                } else {
-                    ""
-                }
-            )),
-            30 => Cow::from("Small silver bracelet"),
-            31 => Cow::from(format!(
-                "Small silver bracelet{}",
-                if item.is_identified() {
-                    " of warding"
-                } else {
-                    ""
-                }
-            )),
-            40 => Cow::from("Small gold bracelet"),
-            50 => Cow::from("Small platinum bracelet"),
-            _ => Cow::from("Alien bracers"),
-        },
-        ItemType::Belt => Cow::from(match item.subval {
-            1 => "Girdle",
-            10 => "Silver belt buckle",
-            11 => "Gold belt buckle",
-            13 => "Leather belt",
-            _ => "Alien belt",
         }),
         ItemType::Shield => Cow::from(match item.subval {
             1 => "Small leather shield",
@@ -675,6 +622,8 @@ pub fn generate(item: &Item) -> String {
         ItemType::Bag => bag(item),
         ItemType::Bolt => ammo(item),
         ItemType::Boots => boots(item),
+        ItemType::Belt => belt(item),
+        ItemType::Bracers => bracers(item),
         ItemType::Chest => chest(item),
         ItemType::Gem => gem(item),
         ItemType::HaftedWeapon | ItemType::Dagger => melee_weapon(item),
