@@ -14,3 +14,4 @@ pub mod melee_weapon;
 pub mod boots;
 pub mod belt;
 pub mod bracers;
+pub mod amulet;

@@ -2,6 +2,7 @@ use std::borrow::Cow;
 
 use crate::data;
 use crate::data::item_name::subtype::ammo::ammo;
+use crate::data::item_name::subtype::amulet::amulet;
 use crate::data::item_name::subtype::bag::bag;
 use crate::data::item_name::subtype::belt::belt;
 use crate::data::item_name::subtype::boots::boots;
@@ -261,88 +262,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("%R Ring{}", attribute))
         }
-        ItemType::Amulet => match item.subval {
-            5 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of wisdom"
-                } else {
-                    ""
-                }
-            )),
-            6 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of charisma"
-                } else {
-                    ""
-                }
-            )),
-            7 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of searching"
-                } else {
-                    ""
-                }
-            )),
-            8 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of teleportation"
-                } else {
-                    ""
-                }
-            )),
-            9 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of slow digestation"
-                } else {
-                    ""
-                }
-            )),
-            10 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of resist acid"
-                } else {
-                    ""
-                }
-            )),
-            11 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of adornment"
-                } else {
-                    ""
-                }
-            )),
-            12 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of adornment"
-                } else {
-                    ""
-                }
-            )),
-            13 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() {
-                    "of the magi"
-                } else {
-                    ""
-                }
-            )),
-            14 => Cow::from(format!(
-                "%A amulet{}",
-                if item.is_identified() { "of DOOM" } else { "" }
-            )),
-            30 => Cow::from("Finely wrought silver necklace"),
-            40 => Cow::from("Finely wrought gold necklace"),
-            60 => Cow::from("Finely wrought mithril necklace"),
-            _ => Cow::from("%A Alien amulet"),
-        },
         ItemType::Chime => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -618,7 +537,7 @@ fn generic_item(item: &Item) -> String {
 
 pub fn generate(item: &Item) -> String {
     match item.item_type() {
-        ItemType::Amulet => generic_item(item),
+        ItemType::Amulet => amulet(item),
         ItemType::Arrow => ammo(item),
         ItemType::Bag => bag(item),
         ItemType::Belt => belt(item),
