@@ -1,16 +1,15 @@
 use crate::conversion::item_subtype;
 use crate::data;
-use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of};
-use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType};
+use crate::data::item_name::helpers::{attack_bonus, damage, maybe_armor_bonus, maybe_number_of};
+use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, SwordSubType};
 use crate::model::Item;
-use std::borrow::Cow;
 
 pub fn melee_weapon(item: &Item) -> String {
     let mut parts = Vec::new();
     if let Some(number_of_string) = maybe_number_of(item) {
         parts.push(number_of_string);
     }
-    parts.push(Cow::from(subtype_name(item)));
+    parts.push(subtype_name(item).into());
     parts.push(damage(item));
     if data::item_type::has_attack_enhancement(&item.item_type()) && item.is_identified() {
         parts.push(attack_bonus(item));
@@ -27,43 +26,58 @@ fn subtype_name(item: &Item) -> String {
     };
 
     match subtype {
-        ItemSubType::Dagger(dagger_type) => {
-            match dagger_type {
-                DaggerSubType::MainGauche => "main gauche",
-                DaggerSubType::Misercorde => "misercorde",
-                DaggerSubType::Stiletto => "stiletto",
-                DaggerSubType::Bodkin => "bodkin",
-                DaggerSubType::BrokenDagger => "broken dagger",
-                DaggerSubType::CatONineTails => "cat-o-nine tails",
-                DaggerSubType::Bilbo => "bilbo",
-                DaggerSubType::Baselard => "baselard",
-                DaggerSubType::Foil => "foil",
-                DaggerSubType::Rapier => "rapier",
-                DaggerSubType::SmallSword => "small sword",
-            }
+        ItemSubType::Dagger(dagger_type) => match dagger_type {
+            DaggerSubType::MainGauche => "main gauche",
+            DaggerSubType::Misercorde => "misercorde",
+            DaggerSubType::Stiletto => "stiletto",
+            DaggerSubType::Bodkin => "bodkin",
+            DaggerSubType::BrokenDagger => "broken dagger",
+            DaggerSubType::CatONineTails => "cat-o-nine tails",
+            DaggerSubType::Bilbo => "bilbo",
+            DaggerSubType::Baselard => "baselard",
+            DaggerSubType::Foil => "foil",
+            DaggerSubType::Rapier => "rapier",
+            DaggerSubType::SmallSword => "small sword",
+        },
+        ItemSubType::HaftedWeapon(axe_type) => match axe_type {
+            HaftedWeaponSubType::Balestarius => "balestarius",
+            HaftedWeaponSubType::BattleAxe => "battle axe",
+            HaftedWeaponSubType::BroadAxe => "broad axe",
+            HaftedWeaponSubType::HandAxe => "hand axe",
+            HaftedWeaponSubType::WarAxe => "war axe",
+            HaftedWeaponSubType::LargeAxe => "large axe",
+            HaftedWeaponSubType::BeardedAxe => "bearded axe",
+            HaftedWeaponSubType::SilverEdgedAxe => "silver edged axe",
+            HaftedWeaponSubType::ChampionAxe => "champion axe",
+        },
+        ItemSubType::Sword(sword_type) => match sword_type {
+            SwordSubType::Backsword => "backsword",
+            SwordSubType::BastardSword => "bastard sword",
+            SwordSubType::Broadsword => "broadsword",
+            SwordSubType::Claymore => "claymore",
+            SwordSubType::Cutlass => "cutlass",
+            SwordSubType::Espadon => "espadon",
+            SwordSubType::ExecutionersSword => "executioners sword",
+            SwordSubType::Flamberge => "flamberge",
+            SwordSubType::Katana => "katana",
+            SwordSubType::Longsword => "longsword",
+            SwordSubType::Nodachi => "nodachi",
+            SwordSubType::Sabre => "sabre",
+            SwordSubType::Zweihander => "zweihander",
+            SwordSubType::BrokenSword => "broken sword",
         }
-        ItemSubType::HaftedWeapon(axe_type) => {
-            match axe_type {
-                HaftedWeaponSubType::Balestarius => "balestarius",
-                HaftedWeaponSubType::BattleAxe => "battle axe",
-                HaftedWeaponSubType::BroadAxe => "broad axe",
-                HaftedWeaponSubType::HandAxe => "hand axe",
-                HaftedWeaponSubType::WarAxe => "war axe",
-                HaftedWeaponSubType::LargeAxe => "large axe",
-                HaftedWeaponSubType::BeardedAxe => "bearded axe",
-                HaftedWeaponSubType::SilverEdgedAxe => "silver edged axe",
-                HaftedWeaponSubType::ChampionAxe => "champion axe",
-            }
-        }
-        _ => "alien weapon",
-    }.to_string()
+        _ => panic!("coding error, unexpected item type: {:?}", item.item_type()),
+    }
+    .to_string()
 }
 
 #[cfg(test)]
 mod tests {
     use crate::data::item_name::generate;
-    use crate::generate_item;
-    use crate::generate_item::template::{AxeTemplate, DaggerTemplate};
+    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, SwordTemplate};
+    use crate::generate_item::ItemTemplate;
+    use crate::{generate_item, identification};
+    use serial_test::serial;
 
     #[test]
     fn test_generic_attributes() {
@@ -85,132 +99,50 @@ mod tests {
     }
 
     #[test]
-    fn test_axe_names() {
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(AxeTemplate::Balestarius),
-                0
-            )),
-            "balestarius (2d8)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(AxeTemplate::BattleAxe),
-                0
-            )),
-            "battle axe (3d4)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(Box::new(AxeTemplate::BroadAxe), 0)),
-            "broad axe (2d6)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(Box::new(AxeTemplate::HandAxe), 0)),
-            "hand axe (1d4)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(Box::new(AxeTemplate::WarAxe), 0)),
-            "war axe (1d6)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(Box::new(AxeTemplate::LargeAxe), 0)),
-            "large axe (1d9)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(AxeTemplate::BeardedAxe),
-                0
-            )),
-            "bearded axe (2d5)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(AxeTemplate::SilverEdgedAxe),
-                0
-            )),
-            "silver edged axe (3d6)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(AxeTemplate::ChampionAxe),
-                0
-            )),
-            "champion axe (5d3)"
-        );
-    }
+    #[serial]
+    fn test_names_unidentified() {
+        let tests: Vec<(Box<dyn ItemTemplate>, &str)> = vec![
+            (Box::new(AxeTemplate::Balestarius), "balestarius (2d8)"),
+            (Box::new(AxeTemplate::BattleAxe), "battle axe (3d4)"),
+            (Box::new(AxeTemplate::BroadAxe), "broad axe (2d6)"),
+            (Box::new(AxeTemplate::HandAxe), "hand axe (1d4)"),
+            (Box::new(AxeTemplate::WarAxe), "war axe (1d6)"),
+            (Box::new(AxeTemplate::LargeAxe), "large axe (1d9)"),
+            (Box::new(AxeTemplate::BeardedAxe), "bearded axe (2d5)"),
+            (Box::new(AxeTemplate::SilverEdgedAxe), "silver edged axe (3d6)"),
+            (Box::new(AxeTemplate::ChampionAxe), "champion axe (5d3)"),
+            (Box::new(DaggerTemplate::MainGauche), "main gauche (1d5)"),
+            (Box::new(DaggerTemplate::Misercorde), "misercorde (1d4)"),
+            (Box::new(DaggerTemplate::Stiletto), "stiletto (1d4)"),
+            (Box::new(DaggerTemplate::Bodkin), "bodkin (1d4)"),
+            (Box::new(DaggerTemplate::BrokenDagger), "broken dagger (1d1)"),
+            (Box::new(DaggerTemplate::CatONineTails), "cat-o-nine tails (1d4)"),
+            (Box::new(DaggerTemplate::Bilbo), "bilbo (1d6)"),
+            (Box::new(DaggerTemplate::Baselard), "baselard (1d7)"),
+            (Box::new(DaggerTemplate::Foil), "foil (1d5)"),
+            (Box::new(DaggerTemplate::Rapier), "rapier (1d6)"),
+            (Box::new(DaggerTemplate::SmallSword), "small sword (1d6)"),
+            (Box::new(SwordTemplate::Backsword), "backsword (1d9)"),
+            (Box::new(SwordTemplate::BastardSword), "bastard sword (3d4)"),
+            (Box::new(SwordTemplate::Broadsword), "broadsword (2d5)"),
+            (Box::new(SwordTemplate::Claymore), "claymore (3d6)"),
+            (Box::new(SwordTemplate::Cutlass), "cutlass (1d7)"),
+            (Box::new(SwordTemplate::Espadon), "espadon (3d6)"),
+            (Box::new(SwordTemplate::ExecutionersSword), "executioners sword (4d5)"),
+            (Box::new(SwordTemplate::Flamberge), "flamberge (4d5)"),
+            (Box::new(SwordTemplate::Katana), "katana (3d4)"),
+            (Box::new(SwordTemplate::Longsword), "longsword (1d10)"),
+            (Box::new(SwordTemplate::Nodachi), "nodachi (4d4)"),
+            (Box::new(SwordTemplate::Sabre), "sabre (1d7)"),
+            (Box::new(SwordTemplate::Zweihander), "zweihander (4d6)"),
+            (Box::new(SwordTemplate::BrokenSword), "broken sword (1d4)"),
+        ];
 
-    #[test]
-    fn test_dagger_names() {
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::MainGauche),
-                0
-            )),
-            "main gauche (1d5)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Misercorde),
-                0
-            )),
-            "misercorde (1d4)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Stiletto),
-                0
-            )),
-            "stiletto (1d4)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Bodkin),
-                0
-            )),
-            "bodkin (1d4)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::BrokenDagger),
-                0
-            )),
-            "broken dagger (1d1)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::CatONineTails),
-                0
-            )),
-            "cat-o-nine tails (1d4)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(Box::new(DaggerTemplate::Bilbo), 0)),
-            "bilbo (1d6)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Baselard),
-                0
-            )),
-            "baselard (1d7)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(Box::new(DaggerTemplate::Foil), 0)),
-            "foil (1d5)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Rapier),
-                0
-            )),
-            "rapier (1d6)"
-        );
-        assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::SmallSword),
-                0
-            )),
-            "small sword (1d6)"
-        );
+        for (template, expected_name) in tests {
+            let subtype = template.subtype();
+            let item = generate_item::generate(template, 0);
+            identification::set_identified(subtype, false);
+            assert_eq!(generate(&item), expected_name);
+        }
     }
 }

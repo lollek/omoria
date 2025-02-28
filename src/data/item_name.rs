@@ -64,12 +64,11 @@ pub fn generate(item: &Item) -> String {
         | ItemType::SoftArmor
         | ItemType::SongBook
         | ItemType::Staff
-        | ItemType::Sword
         | ItemType::UnseenTrap
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
         | ItemType::Whirlpool => generic_item(item),
-        ItemType::Dagger | ItemType::HaftedWeapon => melee_weapon(item),
+        ItemType::Dagger | ItemType::HaftedWeapon | ItemType::Sword => melee_weapon(item),
         ItemType::Gem => gem(item),
         ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),

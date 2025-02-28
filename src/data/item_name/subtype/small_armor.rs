@@ -1,7 +1,7 @@
 use crate::conversion::item_subtype;
 use crate::data::item_name::helpers::{maybe_armor_bonus, maybe_p1_bonus};
 use crate::model::item_subtype::{BeltSubType, BootsSubType, BracersSubType, CloakSubType, GlovesSubType, HelmSubType, ItemSubType};
-use crate::model::{Item, ItemType};
+use crate::model::Item;
 use std::borrow::Cow;
 
 pub fn small_armor(item: &Item) -> String {
