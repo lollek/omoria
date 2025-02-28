@@ -1,15 +1,24 @@
 use crate::conversion::item_subtype;
 use crate::data;
-use crate::data::item_name::helpers::{attack_bonus, damage, maybe_armor_bonus, maybe_number_of};
-use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, SwordSubType};
+use crate::data::item_name::helpers::{attack_bonus, damage, maybe_armor_bonus, maybe_number_of, maybe_p1_bonus};
+use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, PickSubType, SwordSubType};
 use crate::model::Item;
 
 pub fn melee_weapon(item: &Item) -> String {
+    let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval) else {
+        return "alien weapon".to_string();
+    };
+
     let mut parts = Vec::new();
     if let Some(number_of_string) = maybe_number_of(item) {
         parts.push(number_of_string);
     }
-    parts.push(subtype_name(item).into());
+    parts.push(subtype_name(item, subtype).into());
+    if let ItemSubType::Pick(_) = subtype {
+        if let Some(p1_bonus_string) = maybe_p1_bonus(item) {
+            parts.push(p1_bonus_string);
+        }
+    }
     parts.push(damage(item));
     if data::item_type::has_attack_enhancement(&item.item_type()) && item.is_identified() {
         parts.push(attack_bonus(item));
@@ -20,11 +29,7 @@ pub fn melee_weapon(item: &Item) -> String {
     parts.join("")
 }
 
-fn subtype_name(item: &Item) -> String {
-    let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval) else {
-        return "alien weapon".to_string();
-    };
-
+fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
     match subtype {
         ItemSubType::Dagger(dagger_type) => match dagger_type {
             DaggerSubType::MainGauche => "main gauche",
@@ -50,6 +55,15 @@ fn subtype_name(item: &Item) -> String {
             HaftedWeaponSubType::SilverEdgedAxe => "silver edged axe",
             HaftedWeaponSubType::ChampionAxe => "champion axe",
         },
+        ItemSubType::Pick(pick_type) => match pick_type {
+            PickSubType::Pick => "pick",
+            PickSubType::Shovel => "shovel",
+            PickSubType::OrcishPick1 => "orcish pick",
+            PickSubType::OrcishPick2 => "orcish pick",
+            PickSubType::DwarvenPick => "dwarven pick",
+            PickSubType::GnomishShovel => "gnomish shovel",
+            PickSubType::DwarvenShovel => "dwarven shovel",
+        }
         ItemSubType::Sword(sword_type) => match sword_type {
             SwordSubType::Backsword => "backsword",
             SwordSubType::BastardSword => "bastard sword",
@@ -74,28 +88,27 @@ fn subtype_name(item: &Item) -> String {
 #[cfg(test)]
 mod tests {
     use crate::data::item_name::generate;
-    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, SwordTemplate};
+    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, PickTemplate, SwordTemplate};
     use crate::generate_item::ItemTemplate;
     use crate::{generate_item, identification};
     use serial_test::serial;
 
     #[test]
-    fn test_generic_attributes() {
-        let mut item = generate_item::generate(Box::new(AxeTemplate::Balestarius), 0);
-
-        item.set_identified(false);
-        assert_eq!(generate(&item), "balestarius (2d8)");
-
-        item.set_identified(true);
-        assert_eq!(generate(&item), "balestarius (2d8) (0,0)");
-
-        item.tohit = 1;
-        item.todam = 2;
-        assert_eq!(generate(&item), "balestarius (2d8) (+1,+2)");
-
-        item.tohit = -1;
-        item.todam = -2;
-        assert_eq!(generate(&item), "balestarius (2d8) (-1,-2)");
+    #[serial]
+    fn test_identified() {
+        let tests: Vec<(Box<dyn ItemTemplate>, i16, i16, &str)> = vec![
+            (Box::new(AxeTemplate::Balestarius), 0, 0, "balestarius (2d8) (0,0)"),
+            (Box::new(AxeTemplate::Balestarius), 1, 2, "balestarius (2d8) (+1,+2)"),
+            (Box::new(AxeTemplate::Balestarius), -1, -2, "balestarius (2d8) (-1,-2)"),
+            (Box::new(PickTemplate::DwarvenPick), 1, -2, "dwarven pick (+3) (1d4) (+1,-2)"),
+        ];
+        for (template, tohit, todam, expected_name) in tests {
+            let mut item = generate_item::generate(template, 0);
+            item.set_identified(true);
+            item.tohit = tohit;
+            item.todam = todam;
+            assert_eq!(generate(&item), expected_name);
+        }
     }
 
     #[test]
@@ -122,6 +135,13 @@ mod tests {
             (Box::new(DaggerTemplate::Foil), "foil (1d5)"),
             (Box::new(DaggerTemplate::Rapier), "rapier (1d6)"),
             (Box::new(DaggerTemplate::SmallSword), "small sword (1d6)"),
+            (Box::new(PickTemplate::Pick), "pick (1d3)"),
+            (Box::new(PickTemplate::Shovel), "shovel (1d2)"),
+            (Box::new(PickTemplate::OrcishPick1), "orcish pick (1d3)"),
+            (Box::new(PickTemplate::OrcishPick2), "orcish pick (2d3)"),
+            (Box::new(PickTemplate::DwarvenPick), "dwarven pick (1d4)"),
+            (Box::new(PickTemplate::GnomishShovel), "gnomish shovel (1d2)"),
+            (Box::new(PickTemplate::DwarvenShovel), "dwarven shovel (1d3)"),
             (Box::new(SwordTemplate::Backsword), "backsword (1d9)"),
             (Box::new(SwordTemplate::BastardSword), "bastard sword (3d4)"),
             (Box::new(SwordTemplate::Broadsword), "broadsword (2d5)"),
