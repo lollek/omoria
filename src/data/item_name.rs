@@ -47,7 +47,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::MagicBook
         | ItemType::Money
         | ItemType::OpenDoor
-        | ItemType::PoleArm
         | ItemType::Potion1
         | ItemType::Potion2
         | ItemType::PrayerBook
@@ -70,6 +69,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::HaftedWeapon
         | ItemType::Maul
         | ItemType::Pick
+        | ItemType::PoleArm
         | ItemType::Sword => melee_weapon(item),
         ItemType::Gem => gem(item),
         ItemType::Jewelry => jewelry(item),

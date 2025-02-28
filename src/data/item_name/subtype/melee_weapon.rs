@@ -1,7 +1,7 @@
 use crate::conversion::item_subtype;
 use crate::data;
 use crate::data::item_name::helpers::{attack_bonus, damage, maybe_armor_bonus, maybe_number_of, maybe_p1_bonus};
-use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, MaulSubType, PickSubType, SwordSubType};
+use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, MaulSubType, PickSubType, PoleArmSubType, SwordSubType};
 use crate::model::Item;
 
 pub fn melee_weapon(item: &Item) -> String {
@@ -75,7 +75,21 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
             PickSubType::DwarvenPick => "dwarven pick",
             PickSubType::GnomishShovel => "gnomish shovel",
             PickSubType::DwarvenShovel => "dwarven shovel",
-        }
+        },
+        ItemSubType::PoleArm(polearm_type) => match polearm_type {
+            PoleArmSubType::AwlPike => "awl-pike",
+            PoleArmSubType::BeakedAxe => "beaked axe",
+            PoleArmSubType::Fauchard => "fauchard",
+            PoleArmSubType::Glaive => "glaive",
+            PoleArmSubType::Halberd => "halberd",
+            PoleArmSubType::LucerneHammer => "lucerne hammer",
+            PoleArmSubType::Pike => "pike",
+            PoleArmSubType::Spike => "spike",
+            PoleArmSubType::Lance => "lance",
+            PoleArmSubType::Javelin => "javelin",
+            PoleArmSubType::Naginata => "naginata",
+            PoleArmSubType::WarScythe => "war scythe",
+        },
         ItemSubType::Sword(sword_type) => match sword_type {
             SwordSubType::Backsword => "backsword",
             SwordSubType::BastardSword => "bastard sword",
@@ -100,7 +114,7 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
 #[cfg(test)]
 mod tests {
     use crate::data::item_name::generate;
-    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, MaceTemplate, PickTemplate, SwordTemplate};
+    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, MaceTemplate, PickTemplate, PolearmTemplate, SwordTemplate};
     use crate::generate_item::ItemTemplate;
     use crate::{generate_item, identification};
     use serial_test::serial;
@@ -164,6 +178,18 @@ mod tests {
             (Box::new(PickTemplate::DwarvenPick), "dwarven pick (1d4)"),
             (Box::new(PickTemplate::GnomishShovel), "gnomish shovel (1d2)"),
             (Box::new(PickTemplate::DwarvenShovel), "dwarven shovel (1d3)"),
+            (Box::new(PolearmTemplate::AwlPike), "awl-pike (1d8)"),
+            (Box::new(PolearmTemplate::BeakedAxe), "beaked axe (2d6)"),
+            (Box::new(PolearmTemplate::Fauchard), "fauchard (1d10)"),
+            (Box::new(PolearmTemplate::Glaive), "glaive (2d6)"),
+            (Box::new(PolearmTemplate::Halberd), "halberd (3d3)"),
+            (Box::new(PolearmTemplate::LucerneHammer), "lucerne hammer (2d5)"),
+            (Box::new(PolearmTemplate::Pike), "pike (2d5)"),
+            (Box::new(PolearmTemplate::Spike), "spike (1d6)"),
+            (Box::new(PolearmTemplate::Lance), "lance (2d8)"),
+            (Box::new(PolearmTemplate::Javelin), "javelin (1d4)"),
+            (Box::new(PolearmTemplate::Naginata), "naginata (5d5)"),
+            (Box::new(PolearmTemplate::WarScythe), "war scythe (3d5)"),
             (Box::new(SwordTemplate::Backsword), "backsword (1d9)"),
             (Box::new(SwordTemplate::BastardSword), "bastard sword (3d4)"),
             (Box::new(SwordTemplate::Broadsword), "broadsword (2d5)"),
