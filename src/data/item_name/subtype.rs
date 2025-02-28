@@ -16,10 +16,9 @@ pub mod spike;
 pub mod wand;
 pub mod wearable_gem;
 pub mod melee_weapon;
-pub mod boots;
-pub mod belt;
 pub mod bracers;
 pub mod amulet;
+pub mod small_armor;
 
 fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
@@ -200,7 +199,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             16 => "Mithril plate armor",
             _ => "Alien hard armor",
         }),
-        ItemType::Cloak => Cow::from("Cloak"),
         ItemType::Gloves => Cow::from(match item.subval {
             1 => "Set of leather gloves",
             2 => "Set of gauntlets",

@@ -1,8 +1,6 @@
 use crate::data::item_name::subtype::ammo::ammo;
 use crate::data::item_name::subtype::amulet::amulet;
 use crate::data::item_name::subtype::bag::bag;
-use crate::data::item_name::subtype::belt::belt;
-use crate::data::item_name::subtype::boots::boots;
 use crate::data::item_name::subtype::bracers::bracers;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::gem::gem;
@@ -13,6 +11,7 @@ use crate::data::item_name::subtype::melee_weapon::melee_weapon;
 use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
+use crate::data::item_name::subtype::small_armor::small_armor;
 use crate::data::item_name::subtype::spike::spike;
 use crate::data::item_name::subtype::wand::wand;
 use crate::data::item_name::subtype::wearable_gem::wearable_gem;
@@ -26,13 +25,13 @@ pub fn generate(item: &Item) -> String {
         ItemType::Amulet => amulet(item),
         ItemType::Arrow => ammo(item),
         ItemType::Bag => bag(item),
-        ItemType::Belt => belt(item),
+        ItemType::Belt => small_armor(item),
         ItemType::Bolt => ammo(item),
-        ItemType::Boots => boots(item),
+        ItemType::Boots => small_armor(item),
         ItemType::Bracers => bracers(item),
         ItemType::Chest => chest(item),
         ItemType::Chime => generic_item(item),
-        ItemType::Cloak => generic_item(item),
+        ItemType::Cloak => small_armor(item),
         ItemType::ClosedDoor => generic_item(item),
         ItemType::DownStaircase => generic_item(item),
         ItemType::DownSteepStaircase => generic_item(item),
