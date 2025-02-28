@@ -1,16 +1,23 @@
+use std::borrow::Cow;
 use crate::conversion::item_subtype;
 use crate::data::item_name::helpers::armor_bonus;
-use crate::identification::is_identified;
 use crate::model::item_subtype::{BeltSubType, BootsSubType, CloakSubType, ItemSubType};
 use crate::model::Item;
 
 pub fn small_armor(item: &Item) -> String {
+    let mut parts = Vec::new();
+    parts.push(Cow::from(subtype_name(item)));
+    parts.push(armor_bonus(item));
+    parts.join("")
+}
+
+fn subtype_name(item: &Item) -> String {
     let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval)
     else {
         return "alien cloak".to_string();
     };
 
-    let name = match subtype {
+    match subtype {
         ItemSubType::Belt(belt_type) => {
             match belt_type {
                 BeltSubType::Sash => "sash",
@@ -46,12 +53,7 @@ pub fn small_armor(item: &Item) -> String {
             }
         },
         _ => panic!("coding error, unexpected item type: {:?}", item.item_type())
-    };
-
-    if is_identified(subtype) || item.is_identified() {
-        return format!("{}{}", name, armor_bonus(item));
-    }
-    name.to_string()
+    }.to_string()
 }
 
 #[cfg(test)]
@@ -66,33 +68,35 @@ mod tests {
     #[serial]
     fn test_unidentified() {
         let tests : Vec<(Box<dyn ItemTemplate>, &str)> = vec![
-            (Box::new(BeltTemplate::Sash), "sash"),
-            (Box::new(BeltTemplate::LightBelt), "light belt"),
-            (Box::new(BeltTemplate::Belt), "belt"),
-            (Box::new(BeltTemplate::HeavyBelt), "heavy belt"),
-            (Box::new(BeltTemplate::LightPlatedBelt), "light plated belt"),
-            (Box::new(BeltTemplate::SharkskinBelt), "sharkskin belt"),
-            (Box::new(BeltTemplate::DemonhideBelt), "demonhide belt"),
-            (Box::new(BeltTemplate::WyrmhideBelt), "wyrmhide belt"),
-            (Box::new(BootsTemplate::SoftLeatherShoes), "soft leather shoes"),
-            (Box::new(BootsTemplate::SoftLeatherBoots), "soft leather boots"),
-            (Box::new(BootsTemplate::HardLeatherBoots), "hard leather boots"),
-            (Box::new(BootsTemplate::Sandals), "sandals"),
-            (Box::new(BootsTemplate::ChainBoots), "chain boots"),
-            (Box::new(BootsTemplate::LightPlatedBoots), "light plated boots"),
-            (Box::new(BootsTemplate::SharkskinBoots), "sharkskin boots"),
-            (Box::new(BootsTemplate::DemonhideBoots), "demonhide boots"),
-            (Box::new(BootsTemplate::WyrmhideBoot), "wyrmhide boots"),
-            (Box::new(CloakTemplate::LightCloak), "light cloak"),
-            (Box::new(CloakTemplate::HeavyCloak), "heavy cloak"),
-            (Box::new(CloakTemplate::SharkskinCloak), "sharkskin cloak"),
-            (Box::new(CloakTemplate::DemonhideCloak), "demonhide cloak"),
-            (Box::new(CloakTemplate::WyrmhideCloak), "wyrmhide cloak"),
+            (Box::new(BeltTemplate::Sash), "sash [1]"),
+            (Box::new(BeltTemplate::LightBelt), "light belt [1]"),
+            (Box::new(BeltTemplate::Belt), "belt [1]"),
+            (Box::new(BeltTemplate::HeavyBelt), "heavy belt [1]"),
+            (Box::new(BeltTemplate::LightPlatedBelt), "light plated belt [1]"),
+            (Box::new(BeltTemplate::SharkskinBelt), "sharkskin belt [1]"),
+            (Box::new(BeltTemplate::DemonhideBelt), "demonhide belt [1]"),
+            (Box::new(BeltTemplate::WyrmhideBelt), "wyrmhide belt [1]"),
+            (Box::new(BootsTemplate::SoftLeatherShoes), "soft leather shoes [1]"),
+            (Box::new(BootsTemplate::SoftLeatherBoots), "soft leather boots [1]"),
+            (Box::new(BootsTemplate::HardLeatherBoots), "hard leather boots [1]"),
+            (Box::new(BootsTemplate::Sandals), "sandals [1]"),
+            (Box::new(BootsTemplate::ChainBoots), "chain boots [1]"),
+            (Box::new(BootsTemplate::LightPlatedBoots), "light plated boots [1]"),
+            (Box::new(BootsTemplate::SharkskinBoots), "sharkskin boots [1]"),
+            (Box::new(BootsTemplate::DemonhideBoots), "demonhide boots [1]"),
+            (Box::new(BootsTemplate::WyrmhideBoot), "wyrmhide boots [1]"),
+            (Box::new(CloakTemplate::LightCloak), "light cloak [1]"),
+            (Box::new(CloakTemplate::HeavyCloak), "heavy cloak [1]"),
+            (Box::new(CloakTemplate::SharkskinCloak), "sharkskin cloak [1]"),
+            (Box::new(CloakTemplate::DemonhideCloak), "demonhide cloak [1]"),
+            (Box::new(CloakTemplate::WyrmhideCloak), "wyrmhide cloak [1]"),
         ];
         for (template, expected_name) in tests {
-            let sub_type = template.subtype();
-            let item = generate_item::generate(template, 0);
-            identification::set_identified(sub_type, false);
+            let subtype = template.subtype();
+            let mut item = generate_item::generate(template, 0);
+            item.ac = 1;
+            item.toac = 1;
+            identification::set_identified(subtype, false);
             assert_eq!(generate(&item), expected_name);
         }
     }

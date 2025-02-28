@@ -1,8 +1,8 @@
-use crate::conversion::item_subtype::{dagger, hafted_weapon};
+use crate::conversion::item_subtype;
 use crate::data;
 use crate::data::item_name::helpers::{armor_bonus, attack_bonus, damage, number_of};
-use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType};
-use crate::model::{Item, ItemType};
+use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType};
+use crate::model::Item;
 use std::borrow::Cow;
 
 pub fn melee_weapon(item: &Item) -> String {
@@ -18,44 +18,41 @@ pub fn melee_weapon(item: &Item) -> String {
 }
 
 fn subtype_name(item: &Item) -> String {
-    match item.item_type() {
-        ItemType::Dagger => {
-            match dagger::from_usize(item.subval as usize) {
-                None => "alien dagger",
-                Some(subtype) => match subtype {
-                    DaggerSubType::MainGauche => "main gauche",
-                    DaggerSubType::Misercorde => "misercorde",
-                    DaggerSubType::Stiletto => "stiletto",
-                    DaggerSubType::Bodkin => "bodkin",
-                    DaggerSubType::BrokenDagger => "broken dagger",
-                    DaggerSubType::CatONineTails => "cat-o-nine tails",
-                    DaggerSubType::Bilbo => "bilbo",
-                    DaggerSubType::Baselard => "baselard",
-                    DaggerSubType::Foil => "foil",
-                    DaggerSubType::Rapier => "rapier",
-                    DaggerSubType::SmallSword => "small sword",
-                },
-            }
-        }.to_string(),
-        ItemType::HaftedWeapon => {
-            match hafted_weapon::from_usize(item.subval as usize) {
-                None => "alien hafted weapon",
-                Some(subtype) => match subtype {
-                    HaftedWeaponSubType::Balestarius => "balestarius",
-                    HaftedWeaponSubType::BattleAxe => "battle axe",
-                    HaftedWeaponSubType::BroadAxe => "broad axe",
-                    HaftedWeaponSubType::HandAxe => "hand axe",
-                    HaftedWeaponSubType::WarAxe => "war axe",
-                    HaftedWeaponSubType::LargeAxe => "large axe",
-                    HaftedWeaponSubType::BeardedAxe => "bearded axe",
-                    HaftedWeaponSubType::SilverEdgedAxe => "silver edged axe",
-                    HaftedWeaponSubType::ChampionAxe => "champion axe",
-                },
+    let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval) else {
+        return "alien weapon".to_string();
+    };
+
+    match subtype {
+        ItemSubType::Dagger(dagger_type) => {
+            match dagger_type {
+                DaggerSubType::MainGauche => "main gauche",
+                DaggerSubType::Misercorde => "misercorde",
+                DaggerSubType::Stiletto => "stiletto",
+                DaggerSubType::Bodkin => "bodkin",
+                DaggerSubType::BrokenDagger => "broken dagger",
+                DaggerSubType::CatONineTails => "cat-o-nine tails",
+                DaggerSubType::Bilbo => "bilbo",
+                DaggerSubType::Baselard => "baselard",
+                DaggerSubType::Foil => "foil",
+                DaggerSubType::Rapier => "rapier",
+                DaggerSubType::SmallSword => "small sword",
             }
         }
-        .to_string(),
-        _ => "alien weapon".to_string(),
-    }
+        ItemSubType::HaftedWeapon(axe_type) => {
+            match axe_type {
+                HaftedWeaponSubType::Balestarius => "balestarius",
+                HaftedWeaponSubType::BattleAxe => "battle axe",
+                HaftedWeaponSubType::BroadAxe => "broad axe",
+                HaftedWeaponSubType::HandAxe => "hand axe",
+                HaftedWeaponSubType::WarAxe => "war axe",
+                HaftedWeaponSubType::LargeAxe => "large axe",
+                HaftedWeaponSubType::BeardedAxe => "bearded axe",
+                HaftedWeaponSubType::SilverEdgedAxe => "silver edged axe",
+                HaftedWeaponSubType::ChampionAxe => "champion axe",
+            }
+        }
+        _ => "alien weapon",
+    }.to_string()
 }
 
 #[cfg(test)]
@@ -183,10 +180,7 @@ mod tests {
             "cat-o-nine tails (1d4)"
         );
         assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Bilbo),
-                0
-            )),
+            generate(&generate_item::generate(Box::new(DaggerTemplate::Bilbo), 0)),
             "bilbo (1d6)"
         );
         assert_eq!(
@@ -197,10 +191,7 @@ mod tests {
             "baselard (1d7)"
         );
         assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(DaggerTemplate::Foil),
-                0
-            )),
+            generate(&generate_item::generate(Box::new(DaggerTemplate::Foil), 0)),
             "foil (1d5)"
         );
         assert_eq!(
