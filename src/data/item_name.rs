@@ -45,7 +45,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::JunkFood
         | ItemType::LodgingAtInn
         | ItemType::MagicBook
-        | ItemType::Maul
         | ItemType::Money
         | ItemType::OpenDoor
         | ItemType::PoleArm
@@ -67,9 +66,11 @@ pub fn generate(item: &Item) -> String {
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
         | ItemType::Whirlpool => generic_item(item),
-        ItemType::Dagger | ItemType::HaftedWeapon | ItemType::Pick | ItemType::Sword => {
-            melee_weapon(item)
-        }
+        ItemType::Dagger
+        | ItemType::HaftedWeapon
+        | ItemType::Maul
+        | ItemType::Pick
+        | ItemType::Sword => melee_weapon(item),
         ItemType::Gem => gem(item),
         ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),

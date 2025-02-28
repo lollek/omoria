@@ -1,7 +1,7 @@
 use crate::conversion::item_subtype;
 use crate::data;
 use crate::data::item_name::helpers::{attack_bonus, damage, maybe_armor_bonus, maybe_number_of, maybe_p1_bonus};
-use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, PickSubType, SwordSubType};
+use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, MaulSubType, PickSubType, SwordSubType};
 use crate::model::Item;
 
 pub fn melee_weapon(item: &Item) -> String {
@@ -43,6 +43,18 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
             DaggerSubType::Foil => "foil",
             DaggerSubType::Rapier => "rapier",
             DaggerSubType::SmallSword => "small sword",
+        },
+        ItemSubType::Maul(maul_type) => match maul_type {
+            MaulSubType::BallAndChain => "ball and chain",
+            MaulSubType::WoodenClub => "wooden club",
+            MaulSubType::Flail => "flail",
+            MaulSubType::GreatFlail => "great flail",
+            MaulSubType::MorningStar => "morningstar",
+            MaulSubType::Mace => "mace",
+            MaulSubType::WarHammer => "war hammer",
+            MaulSubType::LeadFilledMace => "lead filled mace",
+            MaulSubType::IronShodQuarterstaff => "iron-shod quarterstaff",
+            MaulSubType::OgreMaul => "ogre maul",
         },
         ItemSubType::HaftedWeapon(axe_type) => match axe_type {
             HaftedWeaponSubType::Balestarius => "balestarius",
@@ -88,7 +100,7 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
 #[cfg(test)]
 mod tests {
     use crate::data::item_name::generate;
-    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, PickTemplate, SwordTemplate};
+    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, MaceTemplate, PickTemplate, SwordTemplate};
     use crate::generate_item::ItemTemplate;
     use crate::{generate_item, identification};
     use serial_test::serial;
@@ -135,6 +147,16 @@ mod tests {
             (Box::new(DaggerTemplate::Foil), "foil (1d5)"),
             (Box::new(DaggerTemplate::Rapier), "rapier (1d6)"),
             (Box::new(DaggerTemplate::SmallSword), "small sword (1d6)"),
+            (Box::new(MaceTemplate::BallAndChain), "ball and chain (2d4)"),
+            (Box::new(MaceTemplate::WoodenClub), "wooden club (1d3)"),
+            (Box::new(MaceTemplate::Flail), "flail (2d6)"),
+            (Box::new(MaceTemplate::GreatFlail), "great flail (3d6)"),
+            (Box::new(MaceTemplate::MorningStar), "morningstar (2d6)"),
+            (Box::new(MaceTemplate::Mace), "mace (2d4)"),
+            (Box::new(MaceTemplate::WarHammer), "war hammer (3d3)"),
+            (Box::new(MaceTemplate::LeadFilledMace), "lead filled mace (3d4)"),
+            (Box::new(MaceTemplate::IronShodQuarterstaff), "iron-shod quarterstaff (1d5)"),
+            (Box::new(MaceTemplate::OgreMaul), "ogre maul (3d9)"),
             (Box::new(PickTemplate::Pick), "pick (1d3)"),
             (Box::new(PickTemplate::Shovel), "shovel (1d2)"),
             (Box::new(PickTemplate::OrcishPick1), "orcish pick (1d3)"),
