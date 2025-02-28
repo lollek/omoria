@@ -25,7 +25,9 @@ pub fn generate(item: &Item) -> String {
         ItemType::Amulet => amulet(item),
         ItemType::Arrow | ItemType::Bolt | ItemType::SlingAmmo => ammo(item),
         ItemType::Bag => bag(item),
-        ItemType::Belt | ItemType::Boots | ItemType::Cloak => small_armor(item),
+        ItemType::Belt | ItemType::Boots | ItemType::Cloak | ItemType::Gloves | ItemType::Helm => {
+            small_armor(item)
+        }
         ItemType::Bracers => bracers(item),
         ItemType::Chest => chest(item),
         ItemType::Chime
@@ -36,9 +38,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::FlaskOfOil
         | ItemType::Food
         | ItemType::GemHelm
-        | ItemType::Gloves
         | ItemType::HardArmor
-        | ItemType::Helm
         | ItemType::Horn
         | ItemType::Instrument
         | ItemType::JunkFood

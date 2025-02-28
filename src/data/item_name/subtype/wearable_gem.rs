@@ -1,5 +1,5 @@
 use crate::conversion::item_subtype::from_i64;
-use crate::data::item_name::helpers::number_of;
+use crate::data::item_name::helpers::maybe_number_of;
 use crate::model::{Item, ItemType};
 use crate::{
     identification,
@@ -11,14 +11,16 @@ pub fn wearable_gem(item: &Item) -> String {
     let subtype = from_i64(ItemType::WearableGem, item.subval)
         .unwrap_or_else(|| panic!("Subtype for item is not a wearable gem? {:?}", item));
 
-    let mut parts = vec![
-        number_of(item),
-        Cow::Borrowed(if identification::is_identified(subtype) {
-            "gem"
-        } else {
-            "finely cut gem"
-        }),
-    ];
+    let mut parts = vec![];
+
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(Cow::Borrowed(if identification::is_identified(subtype) {
+        "gem"
+    } else {
+        "finely cut gem"
+    }));
 
     if identification::is_identified(subtype) {
         parts.push(Cow::from(match subtype {

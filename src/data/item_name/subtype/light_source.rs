@@ -1,37 +1,34 @@
 use crate::conversion::item_subtype::from_i64;
-use crate::data::item_name::helpers::{number_of, p1_plural_s};
+use crate::data::item_name::helpers::{maybe_number_of, p1_plural_s};
 use crate::model::item_subtype::{ItemSubType, LightSourceSubType};
 use crate::model::{Item, ItemType};
 use std::borrow::Cow;
 
 pub fn light_source(item: &Item) -> String {
-    vec![
-        number_of(item),
-        match from_i64(ItemType::LightSource, item.subval) {
-            Some(subtype) => match subtype {
-                ItemSubType::LightSource(LightSourceSubType::WoodenTorch) => {
-                    Cow::from("wooden torch")
-                }
-                ItemSubType::LightSource(LightSourceSubType::BrassLantern) => {
-                    Cow::from("brass lantern")
-                }
-                ItemSubType::LightSource(LightSourceSubType::MagicTorch) => {
-                    Cow::from("magic torch")
-                }
-                ItemSubType::LightSource(LightSourceSubType::MagicLantern) => {
-                    Cow::from("magic lantern")
-                }
-                t => panic!("Expected light source, got {:?}", t),
-            },
-            None => Cow::from("alien lightsource"),
+    let mut parts = vec![];
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(match from_i64(ItemType::LightSource, item.subval) {
+        Some(subtype) => match subtype {
+            ItemSubType::LightSource(LightSourceSubType::WoodenTorch) => Cow::from("wooden torch"),
+            ItemSubType::LightSource(LightSourceSubType::BrassLantern) => {
+                Cow::from("brass lantern")
+            }
+            ItemSubType::LightSource(LightSourceSubType::MagicTorch) => Cow::from("magic torch"),
+            ItemSubType::LightSource(LightSourceSubType::MagicLantern) => {
+                Cow::from("magic lantern")
+            }
+            t => panic!("Expected light source, got {:?}", t),
         },
-        Cow::from(format!(
-            " with {} turn{} of light",
-            item.p1,
-            p1_plural_s(item)
-        )),
-    ]
-    .join("")
+        None => Cow::from("alien lightsource"),
+    });
+    parts.push(Cow::from(format!(
+        " with {} turn{} of light",
+        item.p1,
+        p1_plural_s(item)
+    )));
+    parts.join("")
 }
 
 #[cfg(test)]

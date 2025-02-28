@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 use crate::data;
-use crate::data::item_name::helpers::{armor_bonus, attack_bonus, damage, number_of};
+use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of};
 use crate::model::{Item, ItemType};
 
 pub mod ammo;
@@ -510,7 +510,9 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
 
 pub fn generic_item(item: &Item) -> String {
     let mut parts = Vec::new();
-    parts.push(number_of(item));
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
     parts.push(subtype_name(item));
     if item.item_type() == ItemType::LightSource {
         let plural_s = if item.p1 == 0 { "" } else { "s" };
@@ -526,6 +528,8 @@ pub fn generic_item(item: &Item) -> String {
     if data::item_type::has_attack_enhancement(&item.item_type()) && item.is_identified() {
         parts.push(attack_bonus(item));
     }
-    parts.push(armor_bonus(item));
+    if let Some(armor_string) = maybe_armor_bonus(item) {
+        parts.push(armor_string);
+    }
     parts.join("")
 }
