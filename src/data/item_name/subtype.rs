@@ -16,7 +16,6 @@ pub mod spike;
 pub mod wand;
 pub mod wearable_gem;
 pub mod melee_weapon;
-pub mod bracers;
 pub mod amulet;
 pub mod small_armor;
 

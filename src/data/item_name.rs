@@ -1,7 +1,6 @@
 use crate::data::item_name::subtype::ammo::ammo;
 use crate::data::item_name::subtype::amulet::amulet;
 use crate::data::item_name::subtype::bag::bag;
-use crate::data::item_name::subtype::bracers::bracers;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::generic_item;
@@ -25,10 +24,12 @@ pub fn generate(item: &Item) -> String {
         ItemType::Amulet => amulet(item),
         ItemType::Arrow | ItemType::Bolt | ItemType::SlingAmmo => ammo(item),
         ItemType::Bag => bag(item),
-        ItemType::Belt | ItemType::Boots | ItemType::Cloak | ItemType::Gloves | ItemType::Helm => {
-            small_armor(item)
-        }
-        ItemType::Bracers => bracers(item),
+        ItemType::Belt
+        | ItemType::Boots
+        | ItemType::Bracers
+        | ItemType::Cloak
+        | ItemType::Gloves
+        | ItemType::Helm => small_armor(item),
         ItemType::Chest => chest(item),
         ItemType::Chime
         | ItemType::ClosedDoor
