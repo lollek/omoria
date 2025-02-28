@@ -417,6 +417,7 @@ bool ic__show_inven(treas_rec **ret_ptr, const bool want_back,
           ic__display_inv(cur_display, prompt, cur_inven, &next_inven);
     } else {
       msg_print("You must empty the bag of holding first.");
+      msg_print("");
     }
 
     if (num_choices == 0) {
@@ -555,6 +556,7 @@ treas_rec *ic__remove(const long item_val, const bool show_message) {
     objdes(prt2, &inven_temp, true);
     sprintf(out_val, "%s%s", prt1, prt2);
     msg_print(out_val);
+    msg_print("");
   }
 
   if (item_val != Equipment_secondary) { /* Secondary weapon already off */
@@ -625,6 +627,7 @@ void ic__unwear(long *scr_state) {
 
       if ((Cursed_worn_bit & equipment[i2].flags) != 0) {
         msg_print("Hmmm, it seems to be cursed...");
+        msg_print("");
         l_command = 0;
       } else {
         ic__remove(i2, true);
@@ -949,17 +952,19 @@ void ic__put_inside(void) {
 
     if (count == 0) {
       msg_print("You have nothing to put it into.");
+      msg_print("");
     } else {
       treas_rec *into_ptr;
       clear_rc(2, 1);
       if (get_item(&into_ptr, "Into which item?", &redraw, inven_ctr,
                    &trash_char, false, true)) {
         if (into_ptr == put_ptr) {
-          msg_print("You can't seem to fit it "
-                    "inside itself.");
+          msg_print("You can't seem to fit it inside itself.");
+          msg_print("");
         } else if ((put_ptr->data.flags2 & Holding_bit) != 0) {
           msg_print("Uh oh, now you've done it!");
           msg_print("You lose the items in both bags!");
+          msg_print("");
           ic__destroy_bag(put_ptr);
           ic__destroy_bag(into_ptr);
         } else {
@@ -990,10 +995,11 @@ void ic__put_inside(void) {
 
           inven_weight -= put_ptr->data.weight * put_ptr->data.number;
           msg_print("You stuff it inside");
+          msg_print("");
 
           if ((put_ptr->data.flags2 & Sharp_bit) != 0) {
-            msg_print("You poke a hole in "
-                      "the bag!");
+            msg_print("You poke a hole in the bag!");
+            msg_print("");
             blooey = true;
           }
 
@@ -1005,9 +1011,8 @@ void ic__put_inside(void) {
           }
 
           if (!blooey && wgt > into_ptr->data.p1) {
-            msg_print("The sides of the "
-                      "bag swell and "
-                      "burst!");
+            msg_print("The sides of the bag swell and burst!");
+            msg_print("");
             blooey = true;
           }
 
@@ -1033,6 +1038,7 @@ void ic__take_out(void) {
 
   if (count <= 0) {
     msg_print("You have nothing to remove.");
+    msg_print("");
     return;
   }
 
@@ -1073,10 +1079,12 @@ void ic__take_out(void) {
         if (inven_ctr=old_ctr) then}*/
       inven_ctr--;
       msg_print("You remove the item");
+      msg_print("");
 
     } else {
       msg_print("You make several attempts, but "
                 "cannot seem to get a grip on it.");
+      msg_print("");
       cur_inven = inventory_list;
     }
   }
@@ -1136,6 +1144,7 @@ void ic__switch_weapon(long *scr_state) {
     objdes(prt1, &inven_temp, false);
     sprintf(prt2, "The %s you are wielding appears to be cursed.", prt1);
     msg_print(prt2);
+    msg_print("");
   } else {
     /*{ Switch weapons        }*/
     reset_flag = false;
@@ -1150,6 +1159,7 @@ void ic__switch_weapon(long *scr_state) {
     py_bonuses(&equipment[Equipment_primary], 1);
 
     msg_print("Swapped main hand with backup");
+    msg_print("");
   }
 
   if (*scr_state != 0) {
@@ -1186,6 +1196,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'i': /*{ Inventory     }*/
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
         clear_rc(1, 1);
         strcpy(tmp_prompt, "You are currently carrying: space for next page");
@@ -1199,6 +1210,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'c':
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
         clear_rc(1, 1);
         strcpy(tmp_prompt, "Warning: a-t/A-T DESTROYS that item: space for next page");
@@ -1212,6 +1224,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'e': /*{ Equipment     }*/
       if (equip_ctr == 0) {
         msg_print("You are not using any equipment.");
+        msg_print("");
       } else if (scr_state != 2) {
         /*{ Sets scr_state to 2           }*/
         clear_rc(1, 1);
@@ -1227,6 +1240,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
       } else {
         if (inven_ctr == 0) {
           msg_print("You are not carrying anything.");
+          msg_print("");
         } else {
           ic__stats(cur_display, tmp_prompt, &scr_state, &valid_flag);
         }
@@ -1236,6 +1250,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 't': /*{ Take off      }*/
       if (equip_ctr == 0) {
         msg_print("You are not using any equipment.");
+        msg_print("");
       } else {
         /*{ May set scr_state to 2 }*/
         ic__unwear(&scr_state);
@@ -1245,6 +1260,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'w': /*{ Wear/wield    }*/
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
         /*{ May set scr_state to 1        }*/
         equip_item_screen(&scr_state, &valid_flag);
@@ -1256,6 +1272,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
         ic__switch_weapon(&scr_state);
       } else {
         msg_print("But you are wielding no weapons.");
+        msg_print("");
       }
       break;
 
@@ -1269,6 +1286,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'p':
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
         ic__put_inside();
       }
@@ -1277,6 +1295,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'r':
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
         ic__take_out();
       }
@@ -1285,6 +1304,7 @@ bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
     case 'I':
       if (inven_ctr == 0) {
         msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
         ic__selective_inven(&scr_state, &valid_flag, tmp_prompt, cur_display);
       }
@@ -1540,6 +1560,7 @@ bool drop_money(treas_rec **ptr, bool *clr) {
 
   if (cave[char_row][char_col].tptr > 0) {
     msg_print("There is something there already.");
+    msg_print("");
     *clr = true;
   } else {
     /* with player_do begin; */
@@ -1584,6 +1605,7 @@ bool drop_money(treas_rec **ptr, bool *clr) {
         }
         if (amt < 1) {
           msg_print("You don't have that much money.");
+          msg_print("");
           *clr = true;
         } else {
           long pos;
@@ -1740,6 +1762,7 @@ bool get_item(treas_rec **com_ptr, char const *pmt, bool *redraw,
           return_value = drop_money(com_ptr, &stay);
         } else {
           msg_print("You have no money to drop.");
+          msg_print("");
           return_value = false;
           stay = true;
         }
