@@ -1,7 +1,7 @@
 use libc::{strcpy, time, time_t};
 use std::ptr::null;
 use std::{
-    cmp::{max, min},
+    cmp::max,
     ffi::CString,
 };
 
@@ -85,14 +85,14 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
     player::modify_max_hp(player::hitdie() as i16);
     player::reset_current_hp();
     unsafe {
-        player::player_bth += ((data::class::melee_bonus(&player_class) * 5) + 20) as i16;
-        player::player_bthb += ((data::class::ranged_bonus(&player_class) * 5) + 20) as i16;
-        player::player_disarm += data::class::disarm_mod(&player_class) as i16;
-        player::player_fos += data::class::search_freq(&player_class) as i16;
-        player::player_stl += data::class::stealth_mod(&player_class) as i16;
-        player::player_save += data::class::save_mod(&player_class) as i16;
-        player::player_expfact += data::class::expfactor(&player_class);
-        player::player_mr = data::class::magic_resist(&player_class).into();
+        player::player_bth += ((data::class::melee_bonus(player_class) * 5) + 20) as i16;
+        player::player_bthb += ((data::class::ranged_bonus(player_class) * 5) + 20) as i16;
+        player::player_disarm += data::class::disarm_mod(player_class) as i16;
+        player::player_fos += data::class::search_freq(player_class) as i16;
+        player::player_stl += data::class::stealth_mod(player_class) as i16;
+        player::player_save += data::class::save_mod(player_class) as i16;
+        player::player_expfact += data::class::expfactor(player_class);
+        player::player_mr = data::class::magic_resist(player_class).into();
         player::player_creation_time = time(null::<time_t>() as *mut i64);
         player::player_claim_check = 0;
 
@@ -111,7 +111,7 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
 }
 
 pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace {
-    let race_stats = data::race::stat_block(&race);
+    let race_stats = data::race::stat_block(race);
     let stat_block = StatBlock {
         strength: random_starting_stat() + race_stats.get(Stat::Strength),
         intelligence: random_starting_stat() + race_stats.get(Stat::Intelligence),
@@ -134,7 +134,7 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
             }
         }
     }
-    social_class = min(max(social_class, 1), 100);
+    social_class = social_class.clamp(1, 100);
 
     let birthdate = GameTime {
         year: 500 + random::randint(50),
@@ -155,20 +155,20 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
             secs: (300 + random::randint(99)) as u16,
         },
         birthdate,
-        disarm_modifier: data::race::disarm_mod(&race) as i16 + stat_modifiers::disarm(&stat_block),
-        experience_factor: data::race::expfactor(&race),
-        height: height::generate(&race, &sex),
+        disarm_modifier: data::race::disarm_mod(race) as i16 + stat_modifiers::disarm(&stat_block),
+        experience_factor: data::race::expfactor(race),
+        height: height::generate(race, sex),
         history,
-        infravision: data::race::infravision(&race) as i64,
-        melee_bonus: data::race::melee_bonus(&race) as i16,
-        ranged_bonus: data::race::ranged_bonus(&race) as i16,
-        save_modifier: data::race::save_mod(&race) as i16,
-        search_frequency: data::race::search_freq(&race) as i16,
+        infravision: data::race::infravision(race) as i64,
+        melee_bonus: data::race::melee_bonus(race) as i16,
+        ranged_bonus: data::race::ranged_bonus(race) as i16,
+        save_modifier: data::race::save_mod(race) as i16,
+        search_frequency: data::race::search_freq(race) as i16,
         social_class,
         stat_block,
-        stealth_modifier: data::race::stealth_mod(&race) as i16,
-        swim_speed: data::race::swim_speed(&race) as i64,
-        weight: weight::generate(&race, &sex),
+        stealth_modifier: data::race::stealth_mod(race) as i16,
+        swim_speed: data::race::swim_speed(race) as i64,
+        weight: weight::generate(race, sex),
     }
 }
 

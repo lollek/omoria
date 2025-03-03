@@ -341,19 +341,16 @@ pub fn generate_item_for_item_level_of_category(item_level: u8, item_category: I
  */
 pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     let item_type = match rand::random::<u8>() % 100 {
-        0 | 1 | 2 | 3 | 4 => ItemCategory::Jewelry,
-        5 | 6 | 7 | 8 | 9 => ItemCategory::MagicItem,
-        10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 => ItemCategory::Scroll,
-        20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 => ItemCategory::Potion,
-        30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47
-        | 48 | 49 => ItemCategory::Armor,
-
-        50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60 | 61 | 62 | 63 | 64 | 65 | 66 | 67
-        | 68 | 69 => ItemCategory::Weapon,
-        70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 => {
+        0..=4 => ItemCategory::Jewelry,
+        5..=9 => ItemCategory::MagicItem,
+        10..=19 => ItemCategory::Scroll,
+        20..=29 => ItemCategory::Potion,
+        30..=49 => ItemCategory::Armor,
+        50..=69 => ItemCategory::Weapon,
+        70..=84 => {
             ItemCategory::Usable
         }
-        85 | 86 | 87 | 88 | 89 | 90 | 91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 => {
+        85..=99 => {
             ItemCategory::DungeonItems
         }
         _ => panic!("Rand out of range!"),
