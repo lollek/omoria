@@ -34,12 +34,7 @@
 
 static long old_chp;          /* { Detect change         } */
 static long old_cmana;        /* { Detect change         } */
-static bool save_msg_flag; /* { Msg flag after INKEY  } */
-static char s1[70];           /* { Summon item strings   } */
-static char s2[70];           /* { Summon item strings   } */
-static char s3[70];           /* { Summon item strings   } */
-static char s4[70];           /* { Summon item strings   } */
-static long i_summ_count;     /* { Summon item count	   } */
+static bool save_msg_flag;    /* { Msg flag after INKEY  } */
 
 static void d__set_coords(long *c_row, long *c_col) {
   /*{ Set up the character co-ords          }*/
@@ -850,13 +845,7 @@ bool water_move(void) {
 void main_loop__0(void) {
   ENTER(("main_loop", "d"));
 
-  s1[0] = 0;
-  s2[0] = 0;
-  s3[0] = 0;
-  s4[0] = 0;
-
   cur_inven = inventory_list;
-  i_summ_count = 0;
 
   /*{ Check light status for setup          }*/
   if (equipment[Equipment_light].p1 > 0 && player_flags.light_on) {
@@ -891,10 +880,6 @@ void main_loop__0(void) {
 
   /*{ Loop until dead, or new level 		}*/
   do {
-    /*{ Check for the AST's			-DMF-	}*/
-    /*if (want_trap) then dump_ast_mess; XXXX*/
-
-    /*{ Increment turn counter			}*/
     turn++;
 
     if (player_flags.speed > 0 ||
@@ -911,20 +896,17 @@ void main_loop__0(void) {
 
     d__check_hours();
 
-    /*{ Check for random wandering monster generation
-     * }*/
+    // Maybe spawn a new monster
     if (randint(MAX_MALLOC_CHANCE) == 1) {
       generate_land_monster(floor_set, 1, MAX_SIGHT, false);
     }
 
-    /*{ Screen may need updating, used mostly for stats}*/
+    //{ Screen may need updating, used mostly for stats
     d__print_updated_stats();
     prt_equipment();
     d__check_light_status();
 
-    /*{ Update counters and messages			}*/
-    /* with player_flags do; */
-
+    // Update counters and messages
     player_hunger_recalculate();
     d__eat_food();
     d__regenerate();
@@ -960,8 +942,9 @@ void main_loop__0(void) {
     d__update_hit_points();
     C_check_passive_abilities();
 
-    if (player_flags.paralysis < 1 && /*{ Accept a command? }*/
-        player_flags.rest < 1 && !death) {
+    const bool player_is_able_to_move_this_round =
+        player_flags.paralysis < 1 && player_flags.rest < 1 && !death;
+    if (player_is_able_to_move_this_round) {
 
       /*{ Accept a command and execute it }*/
       do {
@@ -995,9 +978,7 @@ void main_loop__0(void) {
         command(&com_val);
 
       } while (!(!reset_flag || moria_flag)); /* end command do */
-
-    } /* end if (able to do something) */
-    /*{ Teleport?                     }*/
+    }
     if (teleport_flag) {
       teleport(100);
     }
@@ -1006,8 +987,6 @@ void main_loop__0(void) {
     if (!moria_flag) {
       creatures(true);
     }
-
-    /*{ Exit when moria_flag is set   }*/
   } while (!moria_flag);
 
   if (search_flag) {

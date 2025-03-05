@@ -62,8 +62,7 @@ void command(long *command) {
     /* case  31  :     ^_                W1 */
 
   case 0:      /* \0 */
-  case CTRL_C: /* ^C signalquit in io.c handles this one, it calls d__quit
-                */
+  case CTRL_C: // ^C signalquit in io.c handles this one, it calls d__quit
   case '@':
     death_by_quitting();
     reset_flag = true;
