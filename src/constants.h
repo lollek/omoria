@@ -305,19 +305,5 @@
 #define GS_GET_COMMAND 3
 #define GS_HELP 4
 
-/* the unix code I took starts at 0,0 and the vms code starts at 1,1
- * If you change here, also edit:
- * print_chstr()
- */
-// vms_ functions are 1-indexed instead of 0-indexed and should be changed
-#define vms_erase_line(r, c) Erase_Line((r)-1, (c)-1)
-// vms_ functions are 1-indexed instead of 0-indexed and should be changed
-#define vms_print(s, r, c) Print((s), (r)-1, (c)-1)
-// vms_ functions are 1-indexed instead of 0-indexed and should be changed
-#define vms_get_string(s, r, c, l) Get_String((s), (r)-1, (c)-1, (l))
-// vms_ functions are 1-indexed instead of 0-indexed and should be changed
-#define vms_print_null(r, c)                                                       \
-  (move_cursor((r)-panel_row_prt - 1, (c)-panel_col_prt - 1))
-
 const char *imoria_version(void);
 const char *omoria_version(void);

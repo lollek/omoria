@@ -44,9 +44,9 @@ bool c__get_response(char comment[82], long *num) {
     char out_val[82];
     prt(comment, 1, 1);
     msg_flag = false;
-    if (!vms_get_string(out_val, 1, clen, 40)) {
+    if (!get_string(out_val, 1, clen, 40)) {
       flag = false;
-      vms_erase_line(msg_line, msg_line);
+      erase_line(msg_line, msg_line);
     }
     sscanf(out_val, "%ld", &i1);
   } while (!(i1 != 0 || !flag));

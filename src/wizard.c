@@ -141,7 +141,7 @@ bool check_pswd(char passwd[134], const bool present) {
 
   msg_flag = false;
   if (!present) {
-    vms_erase_line(msg_line, msg_line);
+    erase_line(msg_line, msg_line);
   }
 
   player_cheated |= checked_out;
@@ -232,7 +232,7 @@ void esf__display_list(int start, char list[][134], const int n1, int *blegga,
 
   *cur_display_size = count;
   for (; old_display_size > *cur_display_size; old_display_size--) {
-    vms_erase_line(old_display_size + 3, 1);
+    erase_line(old_display_size + 3, 1);
   }
 
   if (start > n1) {
@@ -285,7 +285,7 @@ bool esf__get_list_entry(int *l_command, char pmt[82], const int cur_top,
     }
   }
 
-  vms_erase_line(1, 1);
+  erase_line(1, 1);
   return flag;
 }
 
@@ -357,7 +357,7 @@ bool cc__input_field(char prompt[134], int64_t *num, const int64_t min,
   int64_t len = strlen(out_val);
   prt(out_val, 1, 1);
 
-  if (vms_get_string(out_val, 1, len + 1, 10)) {
+  if (get_string(out_val, 1, len + 1, 10)) {
     len = strtol(out_val, NULL, 10);
     if (min <= len && len <= max) {
       *ok = true;
@@ -401,7 +401,7 @@ void change_character(void) {
       break;
     }
 
-    if (!vms_get_string(tmp_str, 1, 26, 10)) {
+    if (!get_string(tmp_str, 1, 26, 10)) {
       abort = true;
     }
 
@@ -526,7 +526,7 @@ void change_character(void) {
     }
   }
 
-  vms_erase_line(msg_line, msg_line);
+  erase_line(msg_line, msg_line);
   py_bonuses(&blank_treasure, 0);
 }
 
@@ -542,7 +542,7 @@ void wizard_create(void) {
   msg_flag = false;
 
   prt("Name   : ", 1, 1);
-  if (vms_get_string(tmp_str, 1, 10, 40)) {
+  if (get_string(tmp_str, 1, 10, 40)) {
     strcpy(inven_temp.data.name, tmp_str);
   } else {
     strcpy(inven_temp.data.name, "& Wizard Object!");
@@ -550,7 +550,7 @@ void wizard_create(void) {
 
   do {
     prt("Tval   : ", 1, 1);
-    vms_get_string(tmp_str, 1, 10, 10);
+    get_string(tmp_str, 1, 10, 10);
     tmp_val = strtoll(tmp_str, NULL, 10);
     flag = true;
 
@@ -565,56 +565,56 @@ void wizard_create(void) {
   inven_temp.data.flags2 = get_hex_value(1, 18, 8);
 
   prt("P1     : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.p1 = tmp_val;
 
   prt("Cost : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.cost = tmp_val;
 
   prt("Subval : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.subval = tmp_val;
 
   prt("Weight : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.weight = tmp_val;
 
   prt("Number : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.number = tmp_val;
 
   prt("+To hit: ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.tohit = tmp_val;
 
   prt("+To dam: ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.todam = tmp_val;
 
   prt("AC     : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.ac = tmp_val;
 
   prt("+To AC : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 10);
+  get_string(tmp_str, 1, 10, 10);
   tmp_val = strtoll(tmp_str, NULL, 10);
   inven_temp.data.toac = tmp_val;
 
   prt("Damage : ", 1, 1);
-  vms_get_string(tmp_str, 1, 10, 5);
+  get_string(tmp_str, 1, 10, 5);
   strcpy(inven_temp.data.damage, tmp_str);
 
   prt("Level  : ", 1, 1);         /* added code to specify item's */
-  vms_get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
+  get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
   tmp_val = strtoll(tmp_str, NULL, 10);
   if (tmp_val < 0)
     tmp_val = 0;
@@ -699,7 +699,7 @@ void wizard_command(void) {
 
   case 'd': /* Change dungeon level */
     prt("Go to which level (0 -1200) ? ", 1, 1);
-    if (vms_get_string(tmp_str, 1, 31, 10)) {
+    if (get_string(tmp_str, 1, 31, 10)) {
       const int64_t i1 = strtoll(tmp_str, NULL, 10);
       if (i1 > -1 || !strcmp(tmp_str, "*")) {
         dun_level = i1;
@@ -710,10 +710,10 @@ void wizard_command(void) {
         }
         moria_flag = true;
       } else {
-        vms_erase_line(msg_line, msg_line);
+        erase_line(msg_line, msg_line);
       }
     } else {
-      vms_erase_line(msg_line, msg_line);
+      erase_line(msg_line, msg_line);
     }
     break;
   case 'e':

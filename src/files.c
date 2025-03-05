@@ -28,7 +28,7 @@ void file_character(void) {
 
   char filename1[82];
   prt("File name: ", 1, 1);
-  if (vms_get_string(filename1, 1, 12, 64)) {
+  if (get_string(filename1, 1, 12, 64)) {
     if (filename1[0] == 0) {
       strcpy(filename1, "MORIACHR.DAT");
     }
@@ -334,7 +334,7 @@ void print_map(void) {
   char tmp;
 
   prt("File name: ", 1, 1);
-  if (vms_get_string(filename1, 1, 12, 64)) {
+  if (get_string(filename1, 1, 12, 64)) {
     if (strlen(filename1) == 0) {
       strcpy(filename1, "MORIAMAP.DAT");
     }
@@ -417,11 +417,11 @@ void print_objects(void) {
   nobj = 0;
 
   prt("Produce objects on what level?: ", 1, 1);
-  if (vms_get_string(tmp_str, 1, 33, 10)) {
+  if (get_string(tmp_str, 1, 33, 10)) {
     sscanf(tmp_str, "%ld", &level);
   }
   prt("Produce how many objects?: ", 1, 1);
-  if (vms_get_string(tmp_str, 1, 28, 10)) {
+  if (get_string(tmp_str, 1, 28, 10)) {
     sscanf(tmp_str, "%ld", &nobj);
   }
   if (nobj > 0 && level > -1 && level < 1201) {
@@ -430,7 +430,7 @@ void print_objects(void) {
       nobj = 99999;
     }
     prt("File name: ", 1, 1);
-    if (vms_get_string(filename1, 1, 12, 64)) {
+    if (get_string(filename1, 1, 12, 64)) {
       if (filename1[0] == 0) {
         strcpy(filename1, "MORIAOBJ.DAT");
       }
@@ -472,7 +472,7 @@ void print_monsters(void) {
   char filename1[82];
 
   prt("File name for monsters: ", 1, 1);
-  if (vms_get_string(filename1, 1, 25, 64)) {
+  if (get_string(filename1, 1, 25, 64)) {
     if (filename1[0] == 0) {
       strcpy(filename1, "MORIAMON.DAT");
     }
@@ -1137,7 +1137,7 @@ bool open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
 
   if (fnam1[0] == 0) {
     prt(prompt, 1, 1);
-    flag = vms_get_string(fnam1, 1, strlen(prompt) + 1, 80);
+    flag = get_string(fnam1, 1, strlen(prompt) + 1, 80);
   }
 
   if (flag) {
@@ -1151,7 +1151,7 @@ bool open_crypt_file(char prompt[82], char fnam1[82], char fnam2[82],
       flag = false;
     } else {
       prt("Name of output file: ", 1, 1);
-      flag = vms_get_string(fnam2, 1, 21, 80);
+      flag = get_string(fnam2, 1, 21, 80);
 
       if (flag) {
         if (strcmp(fnam1, fnam2) != 0) {

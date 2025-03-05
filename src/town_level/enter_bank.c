@@ -37,7 +37,7 @@ static bool eb__get_entry(char comment[82], long *num) {
     valid = true;
     msg_print(comment);
     msg_flag = false;
-    if (vms_get_string(in_val, 1, strlen(comment) + 2, 40)) {
+    if (get_string(in_val, 1, strlen(comment) + 2, 40)) {
       *num = atoi(in_val);
       if (*num >= 0) {
         return_value = true;
@@ -47,7 +47,7 @@ static bool eb__get_entry(char comment[82], long *num) {
       }
     } else {
       /* user escaped out */
-      vms_erase_line(msg_line, msg_line);
+      erase_line(msg_line, msg_line);
     }
   } while (!valid);
 

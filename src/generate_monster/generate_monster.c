@@ -245,7 +245,7 @@ void monster_summon_by_name(long y, long x, char name[28],
 
   if (!present) {
     prt("Monster desired:  ", 1, 1);
-    junk = vms_get_string(monster, 1, 19, 26);
+    junk = get_string(monster, 1, 19, 26);
   } else {
     strcpy(monster, name);
     junk = true;
@@ -313,7 +313,7 @@ void monster_summon_by_name(long y, long x, char name[28],
   }   /* end if junk */
 
   if (!present) {
-    vms_erase_line(msg_line, msg_line);
+    erase_line(msg_line, msg_line);
   }
 }
 

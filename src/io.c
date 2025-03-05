@@ -203,7 +203,7 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
   if (str_buff && str_buff[0]) {
 
     /* put_buffer(cursor_erl+str_buff,msg_line,msg_line);*/
-    vms_erase_line(msg_line, msg_line);
+    erase_line(msg_line, msg_line);
     put_buffer(str_buff, msg_line, msg_line);
     strncpy(old_msg, str_buff, sizeof(char[82]));
     msg_record(str_buff, true);
@@ -257,7 +257,7 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
     } while (!is_in(in_char, big_set));
   }
 
-  vms_erase_line(msg_line, msg_line);
+  erase_line(msg_line, msg_line);
   put_buffer(str_buff, msg_line, msg_line);
 
   strcpy(old_msg, str_buff);
@@ -279,7 +279,7 @@ bool get_com(char const *prompt, char *command) {
 
   const bool return_value = !(*command == 3 || *command == 25 || *command == 27);
 
-  vms_erase_line(msg_line, msg_line);
+  erase_line(msg_line, msg_line);
   msg_flag = false;
 
   return return_value;
@@ -328,7 +328,7 @@ long get_hex_value(const long row, const long col, const long slen) {
   long return_value = 0;
   char tmp_str[82];
 
-  if (vms_get_string(tmp_str, row, col, slen)) {
+  if (get_string(tmp_str, row, col, slen)) {
     if (strlen(tmp_str) <= 8) {
       sscanf(tmp_str, "%ld", &return_value);
     }

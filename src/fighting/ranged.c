@@ -312,7 +312,7 @@ static void missile_travel(const treas_rec *missile,
 
     if (panel_contains(missile_y, missile_x) &&
         test_light(missile_y, missile_x)) {
-      vms_print(C_item_get_tchar(&missile->data), missile_y, missile_x);
+      print(C_item_get_tchar(&missile->data), missile_y, missile_x);
     }
 
     prev_missile_y = missile_y;

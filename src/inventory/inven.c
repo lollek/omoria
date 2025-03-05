@@ -263,7 +263,7 @@ static long ic__display_inv(treas_rec *cur_display[], char const * const prompt,
   } /* end for */
 
   for (long i = count + 1; i <= INVEN_DISPLAY_SIZE; i++) {
-    vms_erase_line(i + 1, 1);
+    erase_line(i + 1, 1);
     cur_display[i] = NULL;
   }
 
@@ -1598,7 +1598,7 @@ bool drop_money(treas_rec **ptr, bool *clr) {
       sprintf(out_val, "Drop how much %s (1-%ld), Esc to exit : ", mon_name,
               max);
       prt(out_val, 1, 1);
-      if (vms_get_string(out_val2, 1, strlen(out_val) + 1, 10)) {
+      if (get_string(out_val2, 1, strlen(out_val) + 1, 10)) {
         sscanf(out_val2, "%ld", &amt);
         if (amt > max) {
           amt = max;
@@ -1647,7 +1647,7 @@ bool drop_money(treas_rec **ptr, bool *clr) {
         }
 
       } else {
-        vms_erase_line(msg_line, msg_line);
+        erase_line(msg_line, msg_line);
       }
     }
   }
@@ -1846,7 +1846,7 @@ bool get_item(treas_rec **com_ptr, char const *pmt, bool *redraw,
   } while (!test_flag);
 
   if (!stay) {
-    vms_erase_line(msg_line, msg_line);
+    erase_line(msg_line, msg_line);
   }
 
   RETURN("get_item", "i", 'b', "got an item", &return_value);

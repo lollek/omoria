@@ -14,6 +14,8 @@ void put_buffer_attr(const char *out_str, long row, long col, int attrs);
 void Clear_From(int row);
 #define pause_line(r) Pause_Line((r)-1)
 void Pause_Line(int prt_line);
+#define print_null(r, c)                                                       \
+  (move_cursor((r)-panel_row_prt - 1, (c)-panel_col_prt - 1))
 void move_cursor(int row, int col);
 
 /* Dungeon size parameters					*/
