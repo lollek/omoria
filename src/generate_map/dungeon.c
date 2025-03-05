@@ -1,5 +1,5 @@
 #include "../debug.h"
-#include "../generate_monster.h"
+#include "../generate_monster/generate_monster.h"
 #include "../generate_monster/monster_template.h"
 #include "../loot/loot.h"
 #include "../misc.h"
@@ -289,9 +289,9 @@ static void gc__place_win_monster(void) {
     muptr = cur_pos;
 
     if ((monster_templates[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
-      m_list[cur_pos].hp = max_hp(monster_templates[m_list[cur_pos].mptr].hd);
+      m_list[cur_pos].hp = max_hp(monster_templates[m_list[cur_pos].mptr].hit_die);
     } else {
-      m_list[cur_pos].hp = damroll(monster_templates[m_list[cur_pos].mptr].hd);
+      m_list[cur_pos].hp = damroll(monster_templates[m_list[cur_pos].mptr].hit_die);
     }
 
     m_list[cur_pos].cdis = distance(char_row, char_col, y, x);

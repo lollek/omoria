@@ -1,5 +1,5 @@
 #include "../constants.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../player.h"
@@ -157,7 +157,7 @@ void player_action_aim_wand(void) {
   reset_flag = true;
 
   if (inven_ctr > 0) {
-    if (find_range(give_me_a_wand, false, &i2, &i3)) {
+    if (inventory_find_range(give_me_a_wand, false, &i2, &i3)) {
       if (get_item(&item_ptr, "Aim which wand?", &redraw, i3, &trash_char,
                    false, false)) {
         /* with item_ptr^.data do; */

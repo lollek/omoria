@@ -4,6 +4,7 @@ use super::item_template::ItemTemplate;
 use super::template::*;
 use crate::constants;
 use crate::model;
+use crate::model::ItemCategory;
 
 /**
  * Returns a random item from the received list. Will panic if list is is_empty
@@ -220,10 +221,82 @@ pub fn generate_item_for_dungeon_level(dungeon_level: u8) -> model::Item {
     generate_item_for_item_level(item_level)
 }
 
+pub fn generate_melee_weapon(item_level: u8) -> model::Item {
+    generate_item_for_item_level_of_category(item_level, ItemCategory::Weapon)
+}
+
+/**
+ * Main armor as in not boots, belts, etc
+*/
+pub fn generate_main_armor(item_level: u8) -> model::Item {
+    generate(get_random_from_list(ArmorTemplate::vec()), item_level)
+}
+
+pub fn generate_boots(item_level: u8) -> model::Item {
+    generate(get_random_from_list(BootsTemplate::vec()), item_level)
+}
+
+pub fn generate_belt(item_level: u8) -> model::Item {
+    generate(get_random_from_list(BeltTemplate::vec()), item_level)
+}
+
 /**
  * Generate an item which should have a given item level
  */
-pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
+pub fn generate_item_for_item_level_of_category(item_level: u8, item_category: ItemCategory) -> model::Item {
+    let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
+    match item_category {
+        ItemCategory::Armor => {
+            templates.extend(ArmorTemplate::vec());
+            templates.extend(BootsTemplate::vec());
+            templates.extend(BeltTemplate::vec());
+            templates.extend(BracersTemplate::vec());
+            templates.extend(CloakTemplate::vec());
+            templates.extend(GlovesTemplate::vec());
+            templates.extend(HelmTemplate::vec());
+            templates.extend(ShieldTemplate::vec());
+        }
+        ItemCategory::DungeonItems => {
+            templates.extend(ChestTemplate::vec());
+            templates.extend(MiscTemplate::vec());
+        }
+        ItemCategory::Jewelry => {
+            templates.extend(AmuletTemplate::vec());
+            templates.extend(ValuableTemplate::vec());
+            templates.extend(RingTemplate::vec());
+        }
+        ItemCategory::MagicItem => {
+            templates.extend(ChimeTemplate::vec());
+            templates.extend(HornTemplate::vec());
+            templates.extend(StaffTemplate::vec());
+            templates.extend(WandTemplate::vec());
+        }
+        ItemCategory::Potion => {
+            templates.extend(PotionTemplate::vec());
+        }
+        ItemCategory::Scroll => {
+            templates.extend(ScrollTemplate::vec());
+        }
+        ItemCategory::Usable => {
+            templates.extend(AmmunitionTemplate::vec());
+            templates.extend(BagTemplate::vec());
+            templates.extend(FoodTemplate::vec());
+            templates.extend(LightSourceTemplate::vec());
+            templates.extend(MiscUsableTemplate::vec());
+            templates.extend(PickTemplate::vec());
+        }
+        ItemCategory::Weapon => {
+            templates.extend(AxeTemplate::vec());
+            templates.extend(BowTemplate::vec());
+            templates.extend(CrossbowTemplate::vec());
+            templates.extend(DaggerTemplate::vec());
+            templates.extend(MaceTemplate::vec());
+            templates.extend(PolearmTemplate::vec());
+            templates.extend(SlingTemplate::vec());
+            templates.extend(SwordTemplate::vec());
+        }
+    }
+
     /* TODO #37
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
     let is_high_quality = if item_level > 15 {
@@ -259,90 +332,31 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     // TODO Implement magic_treasure()
     */
 
-    enum GenTreasureType {
-        Armor,        // Belt, Bracers, SoftArmor, HardArmor, Shield, Helm, Cloak, Gloves, Boots
-        DungeonItems, // MiscObject, Chest
-        Jewelry,      // Jewelry, Gems, Ring, Amulet
-        MagicItem,    // Wand, Rod, Staff, Chime, Horn
-        Potion,       // Potion1, Potion2
-        Scroll,       // Scroll1, Scroll2
-        Usable,       // FlaskOfOil, SlingAmmo, Bolt, Arrow, Spike, Bag, LightSource, MiscUsable
-        Weapon,       // RangedWeapon, HafterWeapon, PoleArm, Dagger, Sword, Pick, Maul
-    }
+    templates.retain(|x| x.item_level() <= item_level);
+    generate(get_random_from_list(templates), item_level)
+}
 
+/**
+ * Generate an item which should have a given item level
+ */
+pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
     let item_type = match rand::random::<u8>() % 100 {
-        0 | 1 | 2 | 3 | 4 => GenTreasureType::Jewelry,
-        5 | 6 | 7 | 8 | 9 => GenTreasureType::MagicItem,
-        10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 => GenTreasureType::Scroll,
-        20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 => GenTreasureType::Potion,
-        30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47
-        | 48 | 49 => GenTreasureType::Armor,
-
-        50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60 | 61 | 62 | 63 | 64 | 65 | 66 | 67
-        | 68 | 69 => GenTreasureType::Weapon,
-        70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 => {
-            GenTreasureType::Usable
+        0..=4 => ItemCategory::Jewelry,
+        5..=9 => ItemCategory::MagicItem,
+        10..=19 => ItemCategory::Scroll,
+        20..=29 => ItemCategory::Potion,
+        30..=49 => ItemCategory::Armor,
+        50..=69 => ItemCategory::Weapon,
+        70..=84 => {
+            ItemCategory::Usable
         }
-        85 | 86 | 87 | 88 | 89 | 90 | 91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 => {
-            GenTreasureType::DungeonItems
+        85..=99 => {
+            ItemCategory::DungeonItems
         }
         _ => panic!("Rand out of range!"),
     };
 
-    let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
-    match item_type {
-        GenTreasureType::Armor => {
-            templates.extend(ArmorTemplate::vec());
-            templates.extend(BootsTemplate::vec());
-            templates.extend(BeltTemplate::vec());
-            templates.extend(BracersTemplate::vec());
-            templates.extend(CloakTemplate::vec());
-            templates.extend(GlovesTemplate::vec());
-            templates.extend(HelmTemplate::vec());
-            templates.extend(ShieldTemplate::vec());
-        }
-        GenTreasureType::DungeonItems => {
-            templates.extend(ChestTemplate::vec());
-            templates.extend(MiscTemplate::vec());
-        }
-        GenTreasureType::Jewelry => {
-            templates.extend(AmuletTemplate::vec());
-            templates.extend(ValuableTemplate::vec());
-            templates.extend(RingTemplate::vec());
-        }
-        GenTreasureType::MagicItem => {
-            templates.extend(ChimeTemplate::vec());
-            templates.extend(HornTemplate::vec());
-            templates.extend(StaffTemplate::vec());
-            templates.extend(WandTemplate::vec());
-        }
-        GenTreasureType::Potion => {
-            templates.extend(PotionTemplate::vec());
-        }
-        GenTreasureType::Scroll => {
-            templates.extend(ScrollTemplate::vec());
-        }
-        GenTreasureType::Usable => {
-            templates.extend(AmmunitionTemplate::vec());
-            templates.extend(BagTemplate::vec());
-            templates.extend(FoodTemplate::vec());
-            templates.extend(LightSourceTemplate::vec());
-            templates.extend(MiscUsableTemplate::vec());
-            templates.extend(PickTemplate::vec());
-        }
-        GenTreasureType::Weapon => {
-            templates.extend(AxeTemplate::vec());
-            templates.extend(BowTemplate::vec());
-            templates.extend(CrossbowTemplate::vec());
-            templates.extend(DaggerTemplate::vec());
-            templates.extend(MaceTemplate::vec());
-            templates.extend(PolearmTemplate::vec());
-            templates.extend(SlingTemplate::vec());
-            templates.extend(SwordTemplate::vec());
-        }
-    }
-    templates.retain(|x| x.item_level() <= item_level);
-    generate(get_random_from_list(templates), item_level)
+    generate_item_for_item_level_of_category(item_level, item_type)
 }
 
 /**

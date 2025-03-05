@@ -1,3 +1,4 @@
+use crate::generate_item::item_template::WornFlag2;
 use super::super::item_template::ItemTemplate;
 use crate::model::{
     self,
@@ -51,8 +52,8 @@ impl ItemTemplate for AmmunitionTemplate {
     }
     fn flags2(&self) -> u64 {
         match self {
-            AmmunitionTemplate::Arrow => 0x10000000,
-            AmmunitionTemplate::Bolt => 0x10000000,
+            AmmunitionTemplate::Arrow => WornFlag2::Sharp as u64,
+            AmmunitionTemplate::Bolt => WornFlag2::Sharp as u64,
             AmmunitionTemplate::RoundedPebble => 0,
             AmmunitionTemplate::IronShot => 0,
         }

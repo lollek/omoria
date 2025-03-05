@@ -2,7 +2,7 @@
 
 #include "constants.h"
 #include "debug.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "misc.h"
 #include "player.h"

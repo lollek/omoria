@@ -12,7 +12,7 @@
 #include "c.h"
 #include "configure.h"
 #include "constants.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "kickout.h"
 #include "misc.h"
@@ -802,7 +802,7 @@ void tp__sell(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
 
   redraw = false;
   response[0] = 0;
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Which one? ", &redraw, inven_ctr, &trash_char, false,
                false)) {
     long wgt = 0;

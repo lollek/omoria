@@ -1,5 +1,16 @@
 # Changelog
 
+## 5-alpha523
+
+February 2025
+
+* Add lots of names to new UI
+* Monster changes
+  * All spiders are now imps
+  * Removed some not-so-fun monsters
+* Fix bug where it was not clear that your current item was cursed
+* Starting items are much more generous
+
 ## 5-alpha522
 
 January 2025

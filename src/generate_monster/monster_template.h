@@ -1,10 +1,8 @@
 #pragma once
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-#define MAX_CREATURES 415  /*{ Number of monster templates defined for univ    \
-                              } */
 #define MAX_MONS_LEVEL 100 /*{ Maximum level of creatures		} */
 
 typedef enum monster_attribute {
@@ -54,25 +52,32 @@ typedef enum monster_attribute {
   ma_regenerates,
 } monster_attribute;
 
+typedef struct monster_attributes {
+  bool multiplies;
+  bool can_move;
+} monster_attributes;
+
 typedef struct monster_template {
-  uint8_t aaf;       /*: [bit(7),pos(0)] 0..127; Area affect radius */
-  uint8_t ac;        /*: [bit(7),pos(8)] 0..127;	 AC */
-  char name[28];     /* Descrip of creature */
-  uint64_t cmove;    /*: unsigned;	Bit field */
-  uint64_t spells;   /*: unsigned;	Creature spells	 */
-  uint64_t cdefense; /*: unsigned;	Bit field */
-  int16_t sleep;     /* Inactive counter */
-  int64_t mexp;      /* Exp value for kill */
-  int8_t speed;      /* Movement speed */
-  char cchar;        /* Character rep. */
-  char hd[7];        /* Creatures hit die */
-  char damage[36];   /* Type attack and damage */
-  int8_t level;      /* Level of creature */
-  uint8_t mr;        /* Magic Resistance */
+  uint8_t area_effect_radius;       // Area affect radius
+  uint8_t ac;
+  char name[28];
+  uint64_t cmove;                   // Bit field
+  uint64_t spells;                  // Creature spells
+  uint64_t cdefense;                // Bit field
+  int16_t sleep;                    // Inactive counter when spawned
+  int64_t mexp;                     // Exp value for kill
+  int8_t speed;                     // Movement speed
+  char symbol;                      // Symbol on map
+  char hit_die[7];
+  char damage[36];                  // Type attack and damage
+  int8_t level;                     // Minimum level creature is found at
+  uint8_t magic_resistance;
+  monster_attributes attributes;
 } monster_template;
 
-extern const monster_template monster_templates[MAX_CREATURES + 1];
-extern long const m_level[MAX_MONS_LEVEL + 1];
+extern const monster_template monster_templates[];
+extern long const monster_template_size;
+extern long m_level[MAX_MONS_LEVEL + 1];
 
 bool monster_template_has_attribute(monster_template const *template,
                                        monster_attribute attribute);

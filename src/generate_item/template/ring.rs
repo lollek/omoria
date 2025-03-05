@@ -1,4 +1,5 @@
 use super::super::item_template::ItemTemplate;
+use crate::generate_item::item_template::WornFlag1;
 use crate::model::{
     self,
     item_subtype::{ItemSubType, RingSubType},
@@ -129,39 +130,44 @@ impl ItemTemplate for RingTemplate {
     }
     fn flags1(&self) -> u64 {
         match self {
-            RingTemplate::RingOfGainStrength => 0x00000001,
-            RingTemplate::RingOfGainDexterity => 0x00000002,
-            RingTemplate::RingOfGainConstitution => 0x00000004,
-            RingTemplate::RingOfGainIntelligence => 0x00000008,
-            RingTemplate::RingOfSpeed1 => 0x00001000,
-            RingTemplate::RingOfSpeed2 => 0x00001000,
-            RingTemplate::RingOfSearching => 0x00000040,
-            RingTemplate::RingOfTeleportation => 0x80000400,
-            RingTemplate::RingOfSlowDigestion => 0x00000080,
-            RingTemplate::RingOfResistFire => 0x00080000,
-            RingTemplate::RingOfResistCold => 0x00200000,
-            RingTemplate::RingOfFeatherFalling => 0x04000000,
-            RingTemplate::RingOfAdornment1 => 0x00000000,
-            RingTemplate::RingOfAdornment2 => 0x00000000,
-            RingTemplate::RingOfWeakness => 0x80000001,
-            RingTemplate::RingOfLordlyProtectionFire => 0x00080000,
-            RingTemplate::RingOfLordlyProtectionAcid => 0x00100000,
-            RingTemplate::RingOfLordlyProtectionCold => 0x00200000,
-            RingTemplate::RingOfWoe => 0x80000600,
-            RingTemplate::RingOfStupidity => 0x80000008,
-            RingTemplate::RingOfIncreaseDamage => 0x00000000,
-            RingTemplate::RingOfIncreaseToHit => 0x00000000,
-            RingTemplate::RingOfProtection => 0x00000000,
-            RingTemplate::RingOfAggravateMonsters => 0x80000200,
-            RingTemplate::RingOfSeeInvisible => 0x01000000,
-            RingTemplate::RingOfSustainStrength => 0x00400000,
-            RingTemplate::RingOfSustainIntelligence => 0x00400000,
-            RingTemplate::RingOfSustainWisdom => 0x00400000,
-            RingTemplate::RingOfSustainConstitution => 0x00400000,
-            RingTemplate::RingOfSustainDexterity => 0x00400000,
-            RingTemplate::RingOfSustainCharisma => 0x00400000,
-            RingTemplate::RingOfSlaying => 0x00000000,
-            RingTemplate::RingOfGnomekind => 0x00400088,
+            RingTemplate::RingOfGainStrength => WornFlag1::GivesStrength as u64,
+            RingTemplate::RingOfGainDexterity => WornFlag1::GivesDexterity as u64,
+            RingTemplate::RingOfGainConstitution => WornFlag1::GivesConstitution as u64,
+            RingTemplate::RingOfGainIntelligence => WornFlag1::GivesIntelligence as u64,
+            RingTemplate::RingOfSpeed1 |
+            RingTemplate::RingOfSpeed2 => WornFlag1::IncreasedSpeed as u64,
+            RingTemplate::RingOfSearching => WornFlag1::Searching as u64,
+            RingTemplate::RingOfTeleportation => WornFlag1::Searching as u64,
+            RingTemplate::RingOfSlowDigestion => WornFlag1::SlowDigestion as u64,
+            RingTemplate::RingOfResistFire => WornFlag1::ResistFire as u64,
+            RingTemplate::RingOfResistCold => WornFlag1::ResistCold as u64,
+            RingTemplate::RingOfFeatherFalling => WornFlag1::FeatherFall as u64,
+            RingTemplate::RingOfAdornment1 => 0,
+            RingTemplate::RingOfAdornment2 => 0,
+            RingTemplate::RingOfWeakness => WornFlag1::Cursed as u64 | WornFlag1::GivesStrength as u64,
+            RingTemplate::RingOfLordlyProtectionFire => WornFlag1::ResistFire as u64,
+            RingTemplate::RingOfLordlyProtectionAcid => WornFlag1::ResistAcid as u64,
+            RingTemplate::RingOfLordlyProtectionCold => WornFlag1::ResistCold as u64,
+            RingTemplate::RingOfWoe => WornFlag1::Cursed as u64 |
+                WornFlag1::AggravateMonsters as u64 |
+                WornFlag1::RandomTeleportation as u64,
+            RingTemplate::RingOfStupidity => WornFlag1::Cursed as u64 | WornFlag1::GivesIntelligence as u64,
+            RingTemplate::RingOfIncreaseDamage => 0,
+            RingTemplate::RingOfIncreaseToHit => 0,
+            RingTemplate::RingOfProtection => 0,
+            RingTemplate::RingOfAggravateMonsters => WornFlag1::Cursed as u64 |
+                WornFlag1::AggravateMonsters as u64,
+            RingTemplate::RingOfSeeInvisible => WornFlag1::SeeInvisible as u64,
+            RingTemplate::RingOfSustainStrength |
+            RingTemplate::RingOfSustainIntelligence |
+            RingTemplate::RingOfSustainWisdom |
+            RingTemplate::RingOfSustainConstitution |
+            RingTemplate::RingOfSustainDexterity |
+            RingTemplate::RingOfSustainCharisma => WornFlag1::ResistStatDrain as u64,
+            RingTemplate::RingOfSlaying => 0,
+            RingTemplate::RingOfGnomekind => WornFlag1::ResistStatDrain as u64 |
+                WornFlag1::SlowDigestion as u64 |
+                WornFlag1::GivesIntelligence as u64,
         }
     }
 

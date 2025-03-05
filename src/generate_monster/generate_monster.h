@@ -1,6 +1,6 @@
 #pragma once
 
-#include "variables.h"
+#include "../variables.h"
 
 /**
  * @brief Spawn a monster at a given location

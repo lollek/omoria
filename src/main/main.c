@@ -6,11 +6,12 @@
 #include "../init/debug.h"
 #include "../init/graphics.h"
 #include "../init/kickout.h"
-#include "../master.h"
+#include "../init/monsters.h"
 #include "../init/stores.h"
 #include "../init/trade.h"
 #include "../io.h"
 #include "../kickout.h"
+#include "../master.h"
 #include "../player.h"
 #include "../variables.h"
 #include "main_loop.h"
@@ -36,6 +37,8 @@ int main(const int argc, char *argv[]) {
     exit_game();
   }
 
+  if (!init__monsters())
+    exit_game();
   if (!init__stores())
     exit_game();
   if (!init__bank())

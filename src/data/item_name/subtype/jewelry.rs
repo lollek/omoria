@@ -1,13 +1,17 @@
 use crate::conversion::item_subtype::from_i64;
-use crate::data::item_name::helpers::{number_of, plural_s};
+use crate::data::item_name::helpers::{maybe_number_of, plural_s};
 use crate::model::item_subtype::{ItemSubType, JewelrySubType};
 use crate::model::{Item, ItemType};
 use std::borrow::Cow;
 
 pub fn jewelry(item: &Item) -> String {
-    vec![
-        number_of(item),
-        Cow::Borrowed(match from_i64(ItemType::Jewelry, item.subval) {
+    let mut parts = vec![];
+
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(Cow::Borrowed(
+        match from_i64(ItemType::Jewelry, item.subval) {
             Some(subtype) => match subtype {
                 ItemSubType::Jewelry(JewelrySubType::SmallGoldPendant) => "small gold pendant",
                 ItemSubType::Jewelry(JewelrySubType::SmallMithrilPendant) => {
@@ -20,10 +24,10 @@ pub fn jewelry(item: &Item) -> String {
                 t => panic!("Expected jewelry, got {:?}", t),
             },
             None => "alien jewelry",
-        }),
-        plural_s(item),
-    ]
-    .join("")
+        },
+    ));
+    parts.push(plural_s(item));
+    parts.join("")
 }
 
 #[cfg(test)]

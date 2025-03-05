@@ -6,8 +6,8 @@
 
 #include "../constants.h"
 #include "../death.h"
-#include "../generate_monster.h"
-#include "../inven.h"
+#include "../generate_monster/generate_monster.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
@@ -562,7 +562,7 @@ void player_action_read_scroll(void) {
   reset_flag = true;
 
   if (inven_ctr > 0) {
-    if (find_range(stuff_to_read, false, &i2, &i3)) {
+    if (inventory_find_range(stuff_to_read, false, &i2, &i3)) {
       if (player_flags.blind > 0) {
         msg_print("You can't see to read the scroll.");
       } else if (player_has_no_light()) {

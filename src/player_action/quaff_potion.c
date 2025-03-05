@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "../constants.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../player.h"
@@ -303,7 +303,7 @@ void player_action_quaff_potion(void) {
   reset_flag = true;
 
   if (inven_ctr > 0) {
-    if (find_range(stuff_to_drink, false, &i2, &i3)) {
+    if (inventory_find_range(stuff_to_drink, false, &i2, &i3)) {
       redraw = false;
       if (get_item(&item_ptr, "Quaff which potion?", &redraw, i3, &trash_char,
                    false, false)) {

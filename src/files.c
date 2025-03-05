@@ -483,7 +483,7 @@ void print_monsters(void) {
       char out_val[82];
       prt("Writing Monster Dictionary...", 1, 1);
       refresh();
-      for (long i1 = 1; i1 <= MAX_CREATURES; i1++) {
+      for (long i1 = 1; i1 < monster_template_size; i1++) {
         /* with monster_templates[i1]. do; */
 
         const unsigned long cmove = monster_templates[i1].cmove;
@@ -495,7 +495,7 @@ void print_monsters(void) {
                        "-------------\n");
 
         fprintf(file1, "%3ld  %30s     (%c)\n", i1, monster_templates[i1].name,
-                monster_templates[i1].cchar);
+                monster_templates[i1].symbol);
 
         fprintf(file1,
                 "     Speed =%2d  Level     "
@@ -505,7 +505,7 @@ void print_monsters(void) {
         fprintf(file1,
                 "     AC    =%2d  Eye-sight "
                 "=%2d  HD  =%5s\n",
-                monster_templates[i1].ac, monster_templates[i1].aaf, monster_templates[i1].hd);
+                monster_templates[i1].ac, monster_templates[i1].area_effect_radius, monster_templates[i1].hit_die);
 
         if ((0x80000000 & cmove) != 0) {
           fprintf(file1, "     Creature is a "
@@ -1090,17 +1090,17 @@ void print_monsters(void) {
         }   /* end for attstr */
 
         fprintf(file1, "   --Magic Resistance : ");
-        if (monster_templates[i1].mr == 0) {
+        if (monster_templates[i1].magic_resistance == 0) {
           fprintf(file1, "None\n");
-        } else if (monster_templates[i1].mr < 20) {
+        } else if (monster_templates[i1].magic_resistance < 20) {
           fprintf(file1, "Very Low\n");
-        } else if (monster_templates[i1].mr < 50) {
+        } else if (monster_templates[i1].magic_resistance < 50) {
           fprintf(file1, "Low\n");
-        } else if (monster_templates[i1].mr < 80) {
+        } else if (monster_templates[i1].magic_resistance < 80) {
           fprintf(file1, "Medium\n");
-        } else if (monster_templates[i1].mr < 110) {
+        } else if (monster_templates[i1].magic_resistance < 110) {
           fprintf(file1, "High\n");
-        } else if (monster_templates[i1].mr < 140) {
+        } else if (monster_templates[i1].magic_resistance < 140) {
           fprintf(file1, "Very High\n");
         } else {
           fprintf(file1, "Extreme\n");

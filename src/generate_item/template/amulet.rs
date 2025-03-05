@@ -1,4 +1,5 @@
 use super::super::item_template::ItemTemplate;
+use crate::generate_item::item_template::WornFlag1;
 use crate::model::{
     self,
     item_subtype::{AmuletSubType, ItemSubType},
@@ -71,14 +72,23 @@ impl ItemTemplate for AmuletTemplate {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => 0,
             AmuletTemplate::AmuletOfAdornment2 => 0,
-            AmuletTemplate::AmuletOfWisdom => 0x00000010,
-            AmuletTemplate::AmuletOfCharisma => 0x00000020,
-            AmuletTemplate::AmuletOfSearching => 0x00000040,
-            AmuletTemplate::AmuletOfTeleportation => 0x80000400,
-            AmuletTemplate::AmuletOfSlowDigestion => 0x00000080,
-            AmuletTemplate::AmuletOfResistAcid => 0x00100000,
-            AmuletTemplate::AmuletOfTheMagi => 0x01800040,
-            AmuletTemplate::AmuletOfDoom => 0x8000007F,
+            AmuletTemplate::AmuletOfWisdom => WornFlag1::GivesWisdom as u64,
+            AmuletTemplate::AmuletOfCharisma => WornFlag1::GivesCharisma as u64,
+            AmuletTemplate::AmuletOfSearching => WornFlag1::Searching as u64,
+            AmuletTemplate::AmuletOfTeleportation => WornFlag1::RandomTeleportation as u64,
+            AmuletTemplate::AmuletOfSlowDigestion => WornFlag1::SlowDigestion as u64,
+            AmuletTemplate::AmuletOfResistAcid => WornFlag1::ResistAcid as u64,
+            AmuletTemplate::AmuletOfTheMagi => WornFlag1::SeeInvisible as u64 |
+                WornFlag1::ResistParalysis as u64 |
+                WornFlag1::Searching as u64,
+            AmuletTemplate::AmuletOfDoom => WornFlag1::Cursed as u64 |
+                WornFlag1::Searching as u64 |
+                WornFlag1::GivesCharisma as u64 |
+                WornFlag1::GivesWisdom as u64 |
+                WornFlag1::GivesIntelligence as u64 |
+                WornFlag1::GivesConstitution as u64 |
+                WornFlag1::GivesDexterity as u64 |
+                WornFlag1::GivesStrength as u64,
             AmuletTemplate::SilverNecklace => 0,
             AmuletTemplate::GoldNecklace => 0,
             AmuletTemplate::MithrilNecklace => 0,

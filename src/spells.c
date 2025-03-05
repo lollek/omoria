@@ -5,8 +5,8 @@
 #include "dungeon/light.h"
 #include "effects.h"
 #include "generate_item/generate_item.h"
-#include "generate_monster.h"
-#include "inven.h"
+#include "generate_monster/generate_monster.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "loot/loot.h"
 #include "magic.h"
@@ -518,7 +518,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                   } else {
                     if (panel_contains(i1, i2)) {
                       print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
-                                .cchar,
+                                .symbol,
                             i1, i2);
                       m_list[cave[i1][i2].cptr].ml = true;
                     }
@@ -624,7 +624,7 @@ bool mon_resists(const unsigned char a_cptr) {
   /* with m_list[a_cptr] do; */
   /* with monster_templates[m_list[a_cptr].mptr] do; */
 
-  long res_chance = monster_templates[m_list[a_cptr].mptr].mr;
+  long res_chance = monster_templates[m_list[a_cptr].mptr].magic_resistance;
 
   long delta_lev = player_lev + player_mr;
   if (delta_lev < 0) {
@@ -696,7 +696,7 @@ bool teleport_away(const long monptr, long dis) {
       }
     } while (!(cave[yn][xn].fopen && cave[yn][xn].cptr == 0));
 
-    move_rec(m_list[monptr].fy, m_list[monptr].fx, yn, xn);
+    move_creature(m_list[monptr].fy, m_list[monptr].fx, yn, xn);
     if (test_light(m_list[monptr].fy, m_list[monptr].fx)) {
       lite_spot(m_list[monptr].fy, m_list[monptr].fx);
     }
@@ -731,7 +731,7 @@ bool teleport_to(const long ny, const long nx) {
     }
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
-  move_rec(char_row, char_col, y, x);
+  move_creature(char_row, char_col, y, x);
   for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
     for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1][i2]. do; */
@@ -1059,7 +1059,7 @@ bool detect_creatures(const enum spell_effect_t typ) {
 
       if (found) {
         m_list[i1].ml = true;
-        print(monster_templates[m_list[i1].mptr].cchar, m_list[i1].fy,
+        print(monster_templates[m_list[i1].mptr].symbol, m_list[i1].fy,
               m_list[i1].fx);
         flag = true;
       }
@@ -1270,7 +1270,7 @@ bool ident_spell(void) {
   /*  change_all_ok_stats(true,true);*/
 
   /* only show things that need to be identified */
-  change_all_ok_stats(false, false);
+  inventory_change_all_ok_stats(false, false);
   for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (strchr(ptr->data.name, '^') || strchr(ptr->data.name, '|')) {
       ptr->ok = true;
@@ -1603,7 +1603,7 @@ bool recharge(long num) {
                                     chime,         horn,  0};
   bool return_value = false;
 
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Recharge which item?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */
@@ -1703,7 +1703,7 @@ bool genocide(void) {
       /* with m_list[i1]. do; */
       /* with monster_templates[m_list[i1].mptr]. do; */
       const long i2 = m_list[i1].nptr;
-      if (typ == monster_templates[m_list[i1].mptr].cchar) {
+      if (typ == monster_templates[m_list[i1].mptr].symbol) {
         if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
             !mon_resists(i1)) {
           delete_monster(i1);
@@ -2285,7 +2285,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x, lo
           msg_print(out_val);
         } else {
           if (panel_contains(y, x)) {
-            print(monster_templates[mptr].cchar, y, x);
+            print(monster_templates[mptr].symbol, y, x);
             m_list[cptr].ml = true;
           }
         }
@@ -2781,7 +2781,7 @@ bool detect_curse(void) {
   bool flag = false;
 
   redraw = false;
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Item you wish to examine?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */
@@ -2814,7 +2814,7 @@ bool detect_magic(void) {
   redraw = false;
   const bool dumb = am_i_dumb();
   const bool dumber = dumb && am_i_dumb();
-  change_all_ok_stats(true, true);
+  inventory_change_all_ok_stats(true, true);
   if (get_item(&item_ptr, "Item you wish to examine?", &redraw, inven_ctr,
                &trash_char, false, false)) {
     /* with item_ptr->data. do; */
@@ -2891,7 +2891,7 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].cchar, y, x);
+          print(monster_templates[mptr].symbol, y, x);
           m_list[cptr].ml = true;
         }
       }
@@ -2935,7 +2935,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].cchar, y, x);
+          print(monster_templates[mptr].symbol, y, x);
           m_list[cptr].ml = true;
         }
       }
@@ -2960,7 +2960,7 @@ void teleport(const long dis) {
     }
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
-  move_rec(char_row, char_col, y, x);
+  move_creature(char_row, char_col, y, x);
   for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
     for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1,i2] do; */

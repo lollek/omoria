@@ -1,32 +1,34 @@
 use crate::conversion::item_subtype::from_i64;
-use crate::data::item_name::helpers::{attack_bonus, number_of, p1_bonus};
+use crate::data::item_name::helpers::{attack_bonus, maybe_number_of, p1_bonus};
 use crate::model::item_subtype::{ItemSubType, RangedWeaponSubType};
 use crate::model::Item;
 use std::borrow::Cow;
 
 pub fn ranged_weapon(item: &Item) -> String {
-    let mut parts = vec![
-        number_of(item),
-        Cow::from(match from_i64(item.item_type(), item.subval) {
-            Some(subtype) => match subtype {
-                ItemSubType::RangedWeapon(RangedWeaponSubType::Sling) => "sling",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::Shortbow) => "shortbow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::HuntersBow) => "hunters bow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::CompositeBow) => "composite bow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::WarBow) => "war bow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::DoubleBow) => "double bow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeBow) => "siege bow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::WardedBow) => "warded bow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::LightCrossbow) => "light crossbow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::HeavyCrossbow) => "heavy crossbow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeCrossbow) => "siege crossbow",
-                ItemSubType::RangedWeapon(RangedWeaponSubType::Ballista) => "ballista",
-                t => panic!("Expected light source, got {:?}", t),
-            },
-            None => "alien lightsource",
-        }),
-        p1_bonus(item),
-    ];
+    let mut parts = vec![];
+
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(Cow::from(match from_i64(item.item_type(), item.subval) {
+        Some(subtype) => match subtype {
+            ItemSubType::RangedWeapon(RangedWeaponSubType::Sling) => "sling",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::Shortbow) => "shortbow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::HuntersBow) => "hunters bow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::CompositeBow) => "composite bow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::WarBow) => "war bow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::DoubleBow) => "double bow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeBow) => "siege bow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::WardedBow) => "warded bow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::LightCrossbow) => "light crossbow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::HeavyCrossbow) => "heavy crossbow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::SiegeCrossbow) => "siege crossbow",
+            ItemSubType::RangedWeapon(RangedWeaponSubType::Ballista) => "ballista",
+            t => panic!("Expected light source, got {:?}", t),
+        },
+        None => "alien lightsource",
+    }));
+    parts.push(p1_bonus(item));
 
     if item.is_identified() {
         parts.push(attack_bonus(item));

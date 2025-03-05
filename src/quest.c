@@ -9,7 +9,7 @@
 
 #include "constants.h"
 #include "generate_item/generate_item.h"
-#include "inven.h"
+#include "inventory/inven.h"
 #include "io.h"
 #include "misc.h"
 #include "pascal.h"
@@ -216,15 +216,15 @@ long q__select_quest(void) {
       exit_flag = true;
       do {
         tmp_select = count + randint(80);
-        if (tmp_select > MAX_CREATURES) {
-          tmp_select = MAX_CREATURES - 1;
+        if (tmp_select >= monster_template_size) {
+          tmp_select = monster_template_size - 2;
         }
       } while ((monster_templates[tmp_select].cmove & 0x00008000) != 0 &&
-               tmp_select < MAX_CREATURES - 1);
+               tmp_select < monster_template_size - 2);
     }
 
-    if (count == MAX_CREATURES) {
-      tmp_select = MAX_CREATURES - 1;
+    if (count == monster_template_size -1) {
+      tmp_select = monster_template_size - 2;
       exit_flag = true;
     }
   } while (!exit_flag);

@@ -2,27 +2,27 @@ use std::borrow::Cow;
 
 use crate::{misc, model::Item};
 
-pub(crate) fn armor_bonus<'a>(item: &Item) -> Cow<'a, str> {
+pub(crate) fn maybe_armor_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
     if item.ac == 0 && (!item.is_identified() || item.toac == 0) {
-        return Cow::from("");
+        return None
     }
 
     if !item.is_identified() {
-        return Cow::from(format!(" [{}]", item.ac));
+        return Some(format!(" [{}]", item.ac).into());
     }
 
     let toac_sign = if item.toac > 0 { "+" } else { "" };
-    Cow::from(format!(" [{},{}{}]", item.ac, toac_sign, item.toac))
+    Some(format!(" [{},{}{}]", item.ac, toac_sign, item.toac).into())
 }
 
 /**
  * Returns the number of the given item. 1 returns an empty string
  */
-pub(crate) fn number_of<'a>(item: &Item) -> Cow<'a, str> {
+pub(crate) fn maybe_number_of<'a>(item: &Item) -> Option<Cow<'a, str>> {
     match item.number {
-        0 => Cow::from("no more "),
-        1 => Cow::from(""),
-        _ => Cow::from(item.number.to_string() + " "),
+        0 => Some("no more ".into()),
+        1 => None,
+        _ => Some((item.number.to_string() + " ").into()),
     }
 }
 
@@ -85,29 +85,15 @@ pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
     ))
 }
 
+pub fn maybe_p1_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
+    if item.is_identified() && item.p1 != 0 {
+        Some(p1_bonus(item))
+    } else {
+        None
+    }
+}
+
 pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
     let p1_sign = if item.p1 > 0 { "+" } else { "" };
     Cow::from(format!(" ({}{})", p1_sign, item.p1))
-}
-
-#[cfg(test)]
-mod tests {
-
-    use crate::generate_item::{self, template::FoodTemplate};
-
-    use super::*;
-
-    #[test]
-    fn test_number_of() {
-        let mut item = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
-
-        item.number = 0;
-        assert_eq!(number_of(&item).as_ref(), "no more ");
-
-        item.number = 1;
-        assert_eq!(number_of(&item).as_ref(), "");
-
-        item.number = 2;
-        assert_eq!(number_of(&item).as_ref(), "2 ");
-    }
 }

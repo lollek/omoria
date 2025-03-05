@@ -1,37 +1,34 @@
 use crate::conversion::item_subtype::from_i64;
-use crate::data::item_name::helpers::{number_of, p1_plural_s};
+use crate::data::item_name::helpers::{maybe_number_of, p1_plural_s};
 use crate::model::item_subtype::{ItemSubType, LightSourceSubType};
 use crate::model::{Item, ItemType};
 use std::borrow::Cow;
 
 pub fn light_source(item: &Item) -> String {
-    vec![
-        number_of(item),
-        match from_i64(ItemType::LightSource, item.subval) {
-            Some(subtype) => match subtype {
-                ItemSubType::LightSource(LightSourceSubType::WoodenTorch) => {
-                    Cow::from("Wooden torch")
-                }
-                ItemSubType::LightSource(LightSourceSubType::BrassLantern) => {
-                    Cow::from("Brass lantern")
-                }
-                ItemSubType::LightSource(LightSourceSubType::MagicTorch) => {
-                    Cow::from("Magic torch")
-                }
-                ItemSubType::LightSource(LightSourceSubType::MagicLantern) => {
-                    Cow::from("Magic lantern")
-                }
-                t => panic!("Expected light source, got {:?}", t),
-            },
-            None => Cow::from("alien lightsource"),
+    let mut parts = vec![];
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(match from_i64(ItemType::LightSource, item.subval) {
+        Some(subtype) => match subtype {
+            ItemSubType::LightSource(LightSourceSubType::WoodenTorch) => Cow::from("wooden torch"),
+            ItemSubType::LightSource(LightSourceSubType::BrassLantern) => {
+                Cow::from("brass lantern")
+            }
+            ItemSubType::LightSource(LightSourceSubType::MagicTorch) => Cow::from("magic torch"),
+            ItemSubType::LightSource(LightSourceSubType::MagicLantern) => {
+                Cow::from("magic lantern")
+            }
+            t => panic!("Expected light source, got {:?}", t),
         },
-        Cow::from(format!(
-            " with {} turn{} of light",
-            item.p1,
-            p1_plural_s(item)
-        )),
-    ]
-    .join("")
+        None => Cow::from("alien lightsource"),
+    });
+    parts.push(Cow::from(format!(
+        " with {} turn{} of light",
+        item.p1,
+        p1_plural_s(item)
+    )));
+    parts.join("")
 }
 
 #[cfg(test)]
@@ -43,10 +40,10 @@ mod tests {
     #[test]
     fn test_light_source_wooden_torch() {
         let mut item = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0);
-        assert_eq!(generate(&item), "Wooden torch with 4000 turns of light");
+        assert_eq!(generate(&item), "wooden torch with 4000 turns of light");
 
         item.p1 = 1;
-        assert_eq!(generate(&item), "Wooden torch with 1 turn of light");
+        assert_eq!(generate(&item), "wooden torch with 1 turn of light");
     }
 
     #[test]
@@ -56,7 +53,7 @@ mod tests {
                 Box::new(LightSourceTemplate::BrassLantern),
                 0
             )),
-            "Brass lantern with 7500 turns of light"
+            "brass lantern with 7500 turns of light"
         );
     }
 
@@ -66,13 +63,13 @@ mod tests {
         magic_torch.set_identified(true);
         assert_eq!(
             generate(&magic_torch),
-            "Magic torch with 9000 turns of light"
+            "magic torch with 9000 turns of light"
         );
 
         magic_torch.set_identified(false);
         assert_eq!(
             generate(&magic_torch),
-            "Magic torch with 9000 turns of light"
+            "magic torch with 9000 turns of light"
         );
     }
 
@@ -83,13 +80,13 @@ mod tests {
         magic_lantern.set_identified(true);
         assert_eq!(
             generate(&magic_lantern),
-            "Magic lantern with 20000 turns of light"
+            "magic lantern with 20000 turns of light"
         );
 
         magic_lantern.set_identified(false);
         assert_eq!(
             generate(&magic_lantern),
-            "Magic lantern with 20000 turns of light"
+            "magic lantern with 20000 turns of light"
         );
     }
 }

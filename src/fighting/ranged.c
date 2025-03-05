@@ -1,5 +1,5 @@
 #include "../debug.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../model_item.h"
@@ -324,7 +324,7 @@ static void missile_travel(const treas_rec *missile,
  *__count_things_to_throw() - Return num things we can throw
  */
 static long count_things_to_throw(void) {
-  long things_to_throw = change_all_ok_stats(TRUE, FALSE);
+  long things_to_throw = inventory_change_all_ok_stats(TRUE, FALSE);
   for (const treas_rec *item_ptr = inventory_list; item_ptr != NULL;
        item_ptr = item_ptr->next) {
     if ((item_ptr->data.flags2 & Holding_bit) != 0 &&
@@ -338,33 +338,33 @@ static long count_things_to_throw(void) {
 /**
  *_calculate_ammo_type() - Get ammo type used by current weapon
  */
-static uint8_t calculate_ammo_type(void) {
-  ENTER(("calculate_ammo_type", "d"));
+enum ammo_t {
+  AMMO_T_NONE = 0,
+  AMMO_T_SLING_AMMO = sling_ammo,
+  AMMO_T_ARROW = arrow,
+  AMMO_T_BOLT = bolt,
+};
+static enum ammo_t calculate_ammo_type(void) {
 
   if (equipment[Equipment_primary].tval != bow_crossbow_or_sling) {
-    LEAVE("calculate_ammo_type", "d");
-    return 0;
+    return AMMO_T_NONE;
   }
 
   switch (equipment[Equipment_primary].p1) {
   case 1:
-    LEAVE("calculate_ammo_type", "d");
-    return sling_ammo;
+    return AMMO_T_SLING_AMMO;
 
   case 2:
   case 3:
   case 4:
-    LEAVE("calculate_ammo_type", "d");
-    return arrow;
+    return AMMO_T_ARROW;
 
   case 5:
   case 6:
-    LEAVE("calculate_ammo_type", "d");
-    return bolt;
+    return AMMO_T_BOLT;
 
   default:
-    LEAVE("calculate_ammo_type", "d");
-    return 0;
+    return AMMO_T_NONE;
   }
 }
 
@@ -372,11 +372,11 @@ static uint8_t calculate_ammo_type(void) {
  * count_things_to_shoot() - Return num things we can shoot
  */
 static long count_things_to_shoot(void) {
-  uint8_t const ammo_type = calculate_ammo_type();
+  enum ammo_t const ammo_type = calculate_ammo_type();
   long things_to_shoot = 0;
 
   // Count objects which can be used as ammo
-  change_all_ok_stats(FALSE, FALSE);
+  inventory_change_all_ok_stats(FALSE, FALSE);
   for (treas_rec *ptr = inventory_list; ptr != NULL; ptr = ptr->next) {
     if (ptr->data.tval != ammo_type) {
       continue;

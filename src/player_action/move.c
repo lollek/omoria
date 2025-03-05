@@ -9,7 +9,7 @@
 #include "../creature.h"
 #include "../debug.h"
 #include "../dungeon/light.h"
-#include "../inven.h"
+#include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
@@ -364,7 +364,7 @@ static void _move_char(long dir) {
   }
 
   /* Move character record (-1) */
-  move_rec(char_row, char_col, test_row, test_col);
+  move_creature(char_row, char_col, test_row, test_col);
 
   /* Check for new panel */
   if (get_panel(test_row, test_col, false))

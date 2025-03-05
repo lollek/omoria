@@ -1,6 +1,5 @@
 use crate::generate_item;
 use crate::generate_item::template::*;
-use crate::generate_item::ItemTemplate;
 use crate::model;
 
 pub fn name(class: &model::Class) -> &'static str {
@@ -223,45 +222,59 @@ pub fn magic_type(class: &model::Class) -> Option<model::Magic> {
 }
 
 pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
-    let templates: Vec<Box<dyn ItemTemplate>> = match class {
-        model::Class::Fighter => vec![Box::new(DaggerTemplate::Stiletto)],
+    let item_level = 10;
+    match class {
+        model::Class::Fighter => vec![
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate_melee_weapon(item_level)
+        ],
         model::Class::Wizard => vec![
-            Box::new(DaggerTemplate::Stiletto),
-            Box::new(MagicBookTemplate::BeginnersMagic),
+            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level),
+            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level),
+            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level),
         ],
         model::Class::Cleric => vec![
-            Box::new(MaceTemplate::IronShodQuarterstaff),
-            Box::new(PrayerBookTemplate::BeginnersHandbook),
+            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level),
+            generate_item::generate(Box::new(ArmorTemplate::WovenCordArmor), item_level),
+            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level),
         ],
         model::Class::Rogue => vec![
-            Box::new(DaggerTemplate::Stiletto),
-            Box::new(SongBookTemplate::BeginnersHandbook),
+            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level),
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level),
         ],
         model::Class::Ranger => vec![
-            Box::new(DaggerTemplate::Stiletto),
-            Box::new(InstrumentTemplate::PipesOfPeace),
+            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level),
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate_melee_weapon(item_level),
         ],
         model::Class::Paladin => vec![
-            Box::new(DaggerTemplate::Stiletto),
-            Box::new(PrayerBookTemplate::BeginnersHandbook),
+            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level),
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate_melee_weapon(item_level),
         ],
         model::Class::Druid => vec![
-            Box::new(MaceTemplate::IronShodQuarterstaff),
-            Box::new(InstrumentTemplate::PipesOfPeace),
+            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level),
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level),
         ],
         model::Class::Bard => vec![
-            Box::new(DaggerTemplate::Stiletto),
-            Box::new(SongBookTemplate::BeginnersHandbook),
+            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level),
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate_boots(item_level),
+            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level),
         ],
         model::Class::Adventurer => vec![
-            Box::new(DaggerTemplate::Stiletto),
-            Box::new(MagicBookTemplate::BeginnersMagic),
+            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level),
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate_melee_weapon(item_level),
         ],
-        model::Class::Monk => vec![],
-        model::Class::Barbarian => vec![Box::new(DaggerTemplate::Stiletto)],
-    };
-    templates
-        .into_iter()
-        .map(|x| generate_item::generate(x, 0))
-        .collect()
+        model::Class::Monk => vec![
+            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level),
+        ],
+        model::Class::Barbarian => vec![
+            generate_item::generate_main_armor(item_level),
+            generate_item::generate_melee_weapon(item_level),
+        ],
+    }
 }

@@ -1,5 +1,5 @@
 use crate::conversion::item_subtype::from_i64;
-use crate::data::item_name::helpers::{number_of, p1_plural_s, plural_es, plural_s};
+use crate::data::item_name::helpers::{maybe_number_of, p1_plural_s, plural_es, plural_s};
 use crate::model::{Item, ItemType};
 use crate::{
     identification,
@@ -11,8 +11,11 @@ pub fn gem(item: &Item) -> String {
     let subtype = from_i64(ItemType::Gem, item.subval)
         .unwrap_or_else(|| panic!("Subtype for item is not a gem? {:?}", item));
 
-    let mut parts = vec![
-        number_of(item),
+    let mut parts = vec![];
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(
         match subtype {
             ItemSubType::Gem(GemSubType::GemOfDetectMonsters)
             | ItemSubType::Gem(GemSubType::GemOfDispelEvil)
@@ -66,7 +69,7 @@ pub fn gem(item: &Item) -> String {
             }
             t => panic!("Expected jewelry, got {:?}", t),
         },
-    ];
+    );
 
     if identification::is_identified(subtype) {
         parts.push(Cow::from(match subtype {
