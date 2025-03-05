@@ -246,9 +246,8 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
   /*{ Outputs message to top line of screen }*/
 
   char in_char = 0;
-  const obj_set big_set = {3, 10, 13, 25, 26, 27, 32, 0};
-  const obj_set small_set = {3, 25, 26, 27, 0};
-  bool flag;
+  const obj_set big_set = {3, '\n', '\r', 25, 26, ESCAPE, ' ', 0};
+  const obj_set small_set = {3, 25, 26, ESCAPE, 0};
 
   if (msg_flag && !msg_terse) {
     const long old_len = strlen(old_msg) + 1;
@@ -266,13 +265,7 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
 
   msg_flag = true;
 
-  if (is_in(in_char, small_set)) {
-    flag = true;
-  } else {
-    flag = false;
-  }
-
-  return flag;
+  return is_in(in_char, small_set);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

@@ -13,10 +13,10 @@ void msg_record(char message[82], bool save);
 void inkey_delay(char *getchar);
 void flush(void);
 void inkey_flush(char *x);
-/* use erase_line */
+#define erase_line(r, c) Erase_Line((r)-1, (c)-1)
 void Erase_Line(long row, long col);
 void clear_rc(long row, long col);
-/* use print */
+#define print(s, r, c) Print((s), (r)-1, (c)-1)
 void Print(chtype ch, int row, int col);
 void print_str(char const *str_buff, int row, int col);
 void print_chstr(chtype const *str_buff, int row, int col);
@@ -41,7 +41,7 @@ bool get_com(char const *prompt, char *command);
  */
 bool get_yes_no(char const *prompt);
 
-/* use get_string */
+#define get_string(s, r, c, l) Get_String((s), (r)-1, (c)-1, (l))
 bool Get_String(char *in_str, /* : varying[a] of char; */
                           int row, int column, int slen);
 long get_hex_value(long row, long col, long slen);

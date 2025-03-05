@@ -17,24 +17,24 @@ pub enum WornFlag1 {
     // + to search, - to perception (amount in p1)
     Searching = 0x00000040,
     SlowDigestion = 0x00000080,
-    Stealth = 0x00000100,
+    //Stealth = 0x00000100,
     AggravateMonsters = 0x00000200,
     RandomTeleportation = 0x00000400,
-    Regeneration = 0x00000800,
+    //Regeneration = 0x00000800,
     // Amount in p1
     IncreasedSpeed = 0x00001000,
     // Extra damage to dragons
-    SlayDragon = 0x00002000,
+    //SlayDragon = 0x00002000,
     // Extra damage to monsters
-    SlayMonster = 0x00004000,
+    //SlayMonster = 0x00004000,
     // Extra damage to evil creatures
-    SlayEvil = 0x00008000,
+    //SlayEvil = 0x00008000,
     // Extra damage to undead
-    SlayUndead = 0x00010000,
+    //SlayUndead = 0x00010000,
     // Extra damage to cold based creatures
-    SlayCold = 0x00020000,
+    //SlayCold = 0x00020000,
     // Extra damage to fire based creatures
-    SlayFire = 0x00040000,
+    //SlayFire = 0x00040000,
     ResistFire = 0x00080000,
     ResistAcid = 0x00100000,
     ResistCold = 0x00200000,
@@ -42,30 +42,30 @@ pub enum WornFlag1 {
     ResistStatDrain = 0x00400000,
     ResistParalysis = 0x00800000,
     SeeInvisible = 0x01000000,
-    ResistLightning = 0x02000000,
+    //ResistLightning = 0x02000000,
     FeatherFall = 0x04000000,
-    Blindness = 0x08000000,
-    Timidness = 0x10000000,
+    //Blindness = 0x08000000,
+    //Timidness = 0x10000000,
     // See p1 for amount
     ImprovedTunneling = 0x20000000,
-    Infravision = 0x40000000,
+    //Infravision = 0x40000000,
     Cursed = 0x80000000,
 }
 
 pub enum WornFlag2 {
-    SlayDemon = 0x00000001,
+    //SlayDemon = 0x00000001,
     // Lessed Slay Undead?
-    SoulSword = 0x00000002,
-    SlayRegenerators = 0x00000004,
+    //SoulSword = 0x00000002,
+    //SlayRegenerators = 0x00000004,
     // See p1 for amount
-    ImprovedSwimming = 0x00000008,
-    ImprovedSavingThrows = 0x00000010,
-    ImprovedDisarming = 0x00000020,
-    ImprovedCriticals = 0x00000040,
-    BadReputation = 0x00200000,
-    Hunger = 0x00400000,
+    //ImprovedSwimming = 0x00000008,
+    //ImprovedSavingThrows = 0x00000010,
+    //ImprovedDisarming = 0x00000020,
+    //ImprovedCriticals = 0x00000040,
+    //BadReputation = 0x00200000,
+    //Hunger = 0x00400000,
     // Removes flags for other worn gems (???)
-    NegativeGemFlags = 0x00800000,
+    //NegativeGemFlags = 0x00800000,
     ImprovedCarrying = 0x01000000,
     // Related to quivers and such (???)
     Holding = 0x04000000,
@@ -73,9 +73,9 @@ pub enum WornFlag2 {
     Swallowing = 0x08000000,
     // Destroys bags
     Sharp = 0x10000000,
-    Blackmarket = 0x20000000,
-    Insured = 0x40000000,
-    KnownCursed = 0x80000000,
+    //Blackmarket = 0x20000000,
+    //Insured = 0x40000000,
+    //KnownCursed = 0x80000000,
 }
 
 pub trait ItemTemplate {
