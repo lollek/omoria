@@ -124,7 +124,7 @@ void rest_off(void) {
   player_flags.status &= ~IS_RESTING;
   player_flags.resting_till_full = false;
   if (msg_flag) {
-    erase_line(1, 1);
+    vms_erase_line(1, 1);
   }
   prt_rest();
 }

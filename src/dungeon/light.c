@@ -207,8 +207,8 @@ static void ml__sub3_move_light(const long y1, const long x1, const long y2,
     }
     light_flag = false;
   }
-  print(' ', y1, x1);
-  print('@', y2, x2);
+  vms_print(' ', y1, x1);
+  vms_print('@', y2, x2);
 
   LEAVE("ml__sub3_move_light", "m");
 }
@@ -235,7 +235,7 @@ static void ml__sub4_move_light(const long y1, const long x1, const long y2,
   } else {
     unlite_spot(y1, x1);
   }
-  print('@', y2, x2);
+  vms_print('@', y2, x2);
 
   LEAVE("ml__sub4_move_light", "m");
 }

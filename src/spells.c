@@ -472,7 +472,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
             }
             if (cave[i1][i2].fopen) {
               if (panel_contains(i1, i2)) {
-                print('*', i1, i2);
+                vms_print('*', i1, i2);
                 refresh();
                 usleep(DRAW_BALL_DELAY);
               }
@@ -517,7 +517,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                     tkill++;
                   } else {
                     if (panel_contains(i1, i2)) {
-                      print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
+                      vms_print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
                                 .symbol,
                             i1, i2);
                       m_list[cave[i1][i2].cptr].ml = true;
@@ -786,7 +786,7 @@ bool breath(const enum spell_effect_t typ, const long y, const long x,
       */
 
       if (panel_contains(i1, i2)) {
-        print('*', i1, i2);
+        vms_print('*', i1, i2);
         refresh();
         usleep(DRAW_BOLT_DELAY);
       }
@@ -1059,7 +1059,7 @@ bool detect_creatures(const enum spell_effect_t typ) {
 
       if (found) {
         m_list[i1].ml = true;
-        print(monster_templates[m_list[i1].mptr].symbol, m_list[i1].fy,
+        vms_print(monster_templates[m_list[i1].mptr].symbol, m_list[i1].fy,
               m_list[i1].fx);
         flag = true;
       }
@@ -2285,7 +2285,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x, lo
           msg_print(out_val);
         } else {
           if (panel_contains(y, x)) {
-            print(monster_templates[mptr].symbol, y, x);
+            vms_print(monster_templates[mptr].symbol, y, x);
             m_list[cptr].ml = true;
           }
         }
@@ -2730,7 +2730,7 @@ bool bolt_to_creature(const long dir, long *y, long *x, long *dist,
         hit_creature = cave[*y][*x].cptr > 1;
         if (visable && !hit_creature) {
           if (panel_contains(*y, *x)) {
-            print('*', *y, *x); /*{ draw bolt }*/
+            vms_print('*', *y, *x); /*{ draw bolt }*/
             refresh();
             usleep(DRAW_BOLT_DELAY);
           }
@@ -2891,7 +2891,7 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].symbol, y, x);
+          vms_print(monster_templates[mptr].symbol, y, x);
           m_list[cptr].ml = true;
         }
       }
@@ -2935,7 +2935,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].symbol, y, x);
+          vms_print(monster_templates[mptr].symbol, y, x);
           m_list[cptr].ml = true;
         }
       }

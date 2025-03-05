@@ -1051,8 +1051,8 @@ static enum trade_status_t __receive_offer(const long store_num, char comment[82
     msg_flag = false;
 
     char player_input[82];
-    if (!get_string(player_input, 1, comment_len, 40)) {
-      erase_line(msg_line, msg_line);
+    if (!vms_get_string(player_input, 1, comment_len, 40)) {
+      vms_erase_line(msg_line, msg_line);
       return TS_ABORTED;
     }
 
@@ -1238,7 +1238,7 @@ static int __store_purchase_select_item(const enum store_t store_type,
 break_outer:
 
   msg_flag = false;
-  erase_line(msg_line, msg_line);
+  vms_erase_line(msg_line, msg_line);
 
   return selected_item + cur_top - 1;
 }

@@ -964,13 +964,13 @@ void main_loop__0(void) {
         }
 
         if (!find_flag) {
-          print_null(char_row, char_col);
+          vms_print_null(char_row, char_col);
           save_msg_flag = msg_flag;
           game_state = GS_GET_COMMAND;
           const char command = inkey();
           game_state = GS_IGNORE_CTRL_C;
           if (save_msg_flag) {
-            erase_line(msg_line, msg_line);
+            vms_erase_line(msg_line, msg_line);
           }
           com_val = (long)command;
         }

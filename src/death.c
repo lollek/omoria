@@ -210,7 +210,7 @@ void death_by_quitting(void) {
     }
   }
 
-  erase_line(1, 1);
+  vms_erase_line(1, 1);
   refresh();
 }
 
@@ -280,7 +280,7 @@ void write_tomb(char dstr[][82]) {
   bool flag = false;
   do {
     char fnam[82];
-    if (get_string(fnam, 1, 17, 60)) {
+    if (vms_get_string(fnam, 1, 17, 60)) {
       if (strlen(fnam) == 0) {
         strcpy(fnam, "MORIACHR.DIE");
       }

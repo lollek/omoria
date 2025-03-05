@@ -11,7 +11,7 @@ void player_action_rest(void) {
   char rest_str[82];
 
   prt("Rest for how long (or *) ? ", 1, 1);
-  get_string(rest_str, 1, 28, 10);
+  vms_get_string(rest_str, 1, 28, 10);
 
   if (!strcmp(rest_str, "*")) {
     rest_num = 20;
@@ -32,7 +32,7 @@ void player_action_rest(void) {
     msg_print("Press any key to wake up...");
     refresh();
   } else {
-    erase_line(msg_line, msg_line);
+    vms_erase_line(msg_line, msg_line);
     reset_flag = true;
   }
 }

@@ -384,7 +384,7 @@ void tp__display_inv(pinven_ptr start, const pinven_ptr *inv, pinven_ptr *blegga
 
   *cur_display_size = count;
   while (old_display_size > *cur_display_size) {
-    erase_line(old_display_size + 5, 1);
+    vms_erase_line(old_display_size + 5, 1);
     cur_display[old_display_size] = NULL;
     old_display_size--;
   }
@@ -668,7 +668,7 @@ bool tp__get_store_item(long *command, char pmt[82], const long i1,
   }
 
   msg_flag = false;
-  erase_line(msg_line, msg_line);
+  vms_erase_line(msg_line, msg_line);
 
   return flag;
 }
@@ -741,8 +741,8 @@ void tp__bid(long *cur_display_size, const trade_account_type *cur_player,
     if (tp__get_store_item(&which, "Which one?", 1, *cur_display_size)) {
       char out_val[82];
       msg_print("How much do you offer? ");
-      if (!get_string(out_val, 1, 24, 40)) {
-        erase_line(1, 1);
+      if (!vms_get_string(out_val, 1, 24, 40)) {
+        vms_erase_line(1, 1);
       } else {
         offer = 0;
         sscanf(out_val, "%ld", &offer);
@@ -923,11 +923,11 @@ void tp__get_info(const pinven_ptr *inv, pinven_ptr *blegga,
     if (tp__get_store_item(&which, "Info on which?", 1, *cur_display_size)) {
       char out_val[82];
       /* with cur_display[which]->data.fsr. do; */
-      erase_line(8 + 6, 1);
-      erase_line(9 + 6, 1);
-      erase_line(10 + 6, 1);
-      erase_line(11 + 6, 1);
-      erase_line(12 + 6, 1);
+      vms_erase_line(8 + 6, 1);
+      vms_erase_line(9 + 6, 1);
+      vms_erase_line(10 + 6, 1);
+      vms_erase_line(11 + 6, 1);
+      vms_erase_line(12 + 6, 1);
       sprintf(out_val, "%ld", cur_display[which]->data.fsr.time);
       prt2("Sale time : ", out_val, 9 + 6, 1);
       sprintf(out_val, "%ld",
@@ -998,7 +998,7 @@ void tp__parse_command(pinven_ptr *inv, pinven_ptr *cur_top, pinven_ptr *blegga,
             break;
           }
         }
-        erase_line(1, 1);
+        vms_erase_line(1, 1);
       }
       break;
 

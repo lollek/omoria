@@ -113,7 +113,7 @@ void prt_map(void) {
     panel_y++;
     if (used_line[panel_y]) {
       long const panel_x0 = 14;
-      erase_line(panel_y, panel_x0);
+      vms_erase_line(panel_y, panel_x0);
       used_line[panel_y] = false;
     }
 
@@ -273,13 +273,13 @@ void prt_quested(void) {
 
 void lite_spot(const long y, const long x) {
   if (panel_contains(y, x)) {
-    print(loc_symbol(y, x), y, x);
+    vms_print(loc_symbol(y, x), y, x);
   }
 }
 
 void unlite_spot(const long y, const long x) {
   if (panel_contains(y, x)) {
-    print(' ', y, x);
+    vms_print(' ', y, x);
   }
 }
 

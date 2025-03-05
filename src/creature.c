@@ -197,7 +197,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
   if (flag) {
     /*{ Light it up...        }*/
     if (!ML(monptr).ml) {
-      print(monster_templates[ML(monptr).mptr].symbol, MY(monptr), MX(monptr));
+      vms_print(monster_templates[ML(monptr).mptr].symbol, MY(monptr), MX(monptr));
       ML(monptr).ml = true;
       if (search_flag) {
         search_off();
