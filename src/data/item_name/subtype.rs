@@ -4,20 +4,21 @@ use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, m
 use crate::model::{Item, ItemType};
 
 pub mod ammo;
+pub mod amulet;
+pub mod armor;
 pub mod bag;
 pub mod chest;
 pub mod gem;
 pub mod jewelry;
 pub mod light_source;
+pub mod melee_weapon;
 pub mod misc_object;
 pub mod misc_usable;
 pub mod ranged_weapon;
+pub mod small_armor;
 pub mod spike;
 pub mod wand;
 pub mod wearable_gem;
-pub mod melee_weapon;
-pub mod amulet;
-pub mod small_armor;
 
 fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
@@ -86,42 +87,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 if item.is_identified() { "of gems" } else { "" }
             ))
         }
-        ItemType::SoftArmor => Cow::from(match item.subval {
-            1 => "Robe",
-            2 => "Soft leather armor",
-            3 => "Soft studded leather",
-            4 => "Hard leather armor",
-            5 => "Hard studded leather",
-            6 => "Woven cord armor",
-            7 => "Soft leather ring mail",
-            8 => "Hard leather ring mail",
-            9 => "Leather scale mail",
-            10 => "Leather bridantine armor",
-            11 => "Cool set of threads",
-            12 => "Filthy naga hide armor",
-            13 => "Elven chain mail",
-            99 => "Some filthy rags",
-            _ => "Alien soft armor",
-        }),
-        ItemType::HardArmor => Cow::from(match item.subval {
-            1 => "Metal scale mail",
-            2 => "Chain mail",
-            3 => "Rusty chain mail",
-            4 => "Double chain mail",
-            5 => "Augmented chain mail",
-            6 => "Bar chain mail",
-            7 => "Metal brindandine armor",
-            8 => "Laminated armor",
-            9 => "Partial plate armor",
-            10 => "Metal lamellar armor",
-            11 => "Full plate armor",
-            12 => "Ribbed plate armor",
-            13 => "Bronze plate mail",
-            14 => "Stone plate armor",
-            15 => "Mithril chain mail",
-            16 => "Mithril plate armor",
-            _ => "Alien hard armor",
-        }),
         ItemType::Shield => Cow::from(match item.subval {
             1 => "Small leather shield",
             2 => "Medium leather shield",

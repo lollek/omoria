@@ -1032,7 +1032,7 @@ bool restore_player_drained_levels(void) {
 bool detect_creatures(const enum spell_effect_t typ) {
   /*{ Display evil creatures on current panel               -RAK-   }*/
 
-  bool found_something_evil = false;
+  bool detected_something = false;
   for (long monster_i = muptr; monster_i != 0; monster_i = m_list[monster_i].nptr) {
     if (panel_contains(m_list[monster_i].fy, m_list[monster_i].fx)) {
       bool found;
@@ -1057,12 +1057,12 @@ bool detect_creatures(const enum spell_effect_t typ) {
         m_list[monster_i].ml = true;
         print(monster_templates[m_list[monster_i].mptr].symbol, m_list[monster_i].fy,
               m_list[monster_i].fx);
-        found_something_evil = true;
+        detected_something = true;
       }
     }
   }
 
-  if (found_something_evil) {
+  if (detected_something) {
     switch (typ) {
     case SE_EVIL:
       msg_print("You sense the presence of evil!");
@@ -1074,14 +1074,15 @@ bool detect_creatures(const enum spell_effect_t typ) {
       msg_print("You sense the presence of invisible creatures!");
       break;
     default:
-      msg_print("You don't sense anything");
       break;
     }
     msg_print(" ");
     msg_flag = false;
+  } else {
+      msg_print("You don't sense anything");
   }
 
-  return found_something_evil;
+  return detected_something;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

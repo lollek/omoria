@@ -85,6 +85,14 @@ pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
     ))
 }
 
+pub fn to_hit_if_exists<'a>(item: &Item) -> Option<Cow<'a, str>> {
+    match item.tohit {
+        x if x > 0 => Some(format!(" (+{})", item.tohit).into()),
+        x if x < 0 => Some(format!(" ({})", item.tohit).into()),
+        _ => None,
+    }
+}
+
 pub fn maybe_p1_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
     if item.is_identified() && item.p1 != 0 {
         Some(p1_bonus(item))
