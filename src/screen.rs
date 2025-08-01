@@ -208,8 +208,9 @@ fn print_stats_column() {
         GOLD_ROW,
         STAT_COL,
     );
+    let current_bulk = player::max_bulk() as i64 - player::current_bulk() as i64;
     print_field(
-        format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
+        format!("Bulk: {:>6}", current_bulk),
         BULK_ROW,
         STAT_COL,
     );

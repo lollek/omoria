@@ -3,12 +3,12 @@ use std::convert::TryInto;
 use std::ffi::CString;
 use std::sync::RwLock;
 
-use crate::constants;
-use crate::conversion;
+use crate::{conversion, debug};
 use crate::model::{
     Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time,
     Wallet,
 };
+use crate::constants;
 
 use crate::data;
 use crate::misc;
@@ -497,12 +497,18 @@ pub fn current_bulk() -> u16 {
 }
 
 pub fn max_bulk() -> u16 {
+    let min_base_bulk = 3000;
     let player_weight_modifier = 13;
-    min(
-        (30 + (player::curr_stats().strength * 10)) as u16 * player_weight_modifier
-            + current_weight(),
-        3000,
-    ) + extra_bulk_carry()
+    let player_carry_base_amount = (30 + (player::curr_stats().strength * 10)) as u16;
+    let base_bulk = min(
+        (player_carry_base_amount * player_weight_modifier) + current_weight(),
+        min_base_bulk);
+    let max_bulk: u32 = base_bulk as u32 + extra_bulk_carry() as u32;
+    if max_bulk > u16::MAX.into() {
+        debug::error("max_bulk exceeds u16::MAX");
+        return u16::MAX;
+    }
+    max_bulk as u16
 }
 
 pub fn set_birthdate(new_value: GameTime) {

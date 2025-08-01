@@ -8,6 +8,7 @@ August 2025
 * Tweak signal handling so more signals are ignored.
 * Move armor names to new UI
 * Change mana color to same as health since it was hard to see with a black background.
+* Fix crash if bulk was too large (i.e. caused by another bug)
 
 ## 5-alpha523
 
