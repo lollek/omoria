@@ -7,6 +7,7 @@ August 2025
 * Remove old ^P and move V to ^P. This means that you can no longer just see last messsage, but instead the last x messages.
 * Tweak signal handling so more signals are ignored.
 * Move armor names to new UI
+* Change mana color to same as health since it was hard to see with a black background.
 
 ## 5-alpha523
 

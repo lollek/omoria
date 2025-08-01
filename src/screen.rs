@@ -133,11 +133,11 @@ fn print_mana(row: u8, col: u8) {
     let current = player::current_mp();
     let max = player::max_mp();
     let color = if current >= max {
-        ncurses::color_pair(ncurses::COLOR_BLUE)
+        ncurses::color_pair(ncurses::COLOR_GREEN)
     } else if current >= max / 3 {
-        ncurses::color_pair(ncurses::COLOR_CYAN)
+        ncurses::color_pair(ncurses::COLOR_YELLOW)
     } else {
-        ncurses::color_pair(ncurses::COLOR_MAGENTA)
+        ncurses::color_pair(ncurses::COLOR_RED)
     };
 
     ncurses::attron(color);
