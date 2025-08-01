@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Serialize, Deserialize, Clone, Copy)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
 pub struct Time {
     pub years: u16,
     pub months: u16,

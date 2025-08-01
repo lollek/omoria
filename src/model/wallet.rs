@@ -1,6 +1,6 @@
 use crate::model::Currency;
 
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub struct Wallet {
     pub total: i64,
     pub iron: i64,

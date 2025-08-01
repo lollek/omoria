@@ -3,7 +3,7 @@ use libc;
 use crate::model::{Class, GameTime, Player, PlayerFlags, Race, Sex, Time, Wallet};
 
 #[repr(C)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct PlayerRecord {
     pub uid: i64,
     pub account: i64,

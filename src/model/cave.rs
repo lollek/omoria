@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub struct Cave {
     #[serde(skip_serializing, default)]
     pub cptr: u8,

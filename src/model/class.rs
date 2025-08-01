@@ -1,4 +1,4 @@
-#[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, Debug)]
 pub enum Class {
     Fighter,
     Wizard,

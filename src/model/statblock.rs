@@ -1,6 +1,6 @@
 use crate::model::Stat;
 
-#[derive(Serialize, Deserialize, Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct StatBlock {
     pub strength: i16,
     pub intelligence: i16,

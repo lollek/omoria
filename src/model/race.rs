@@ -1,6 +1,6 @@
 use enum_iterator;
 
-#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, enum_iterator::Sequence)]
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, enum_iterator::Sequence, Debug)]
 pub enum Race {
     Human,
     HalfElf,

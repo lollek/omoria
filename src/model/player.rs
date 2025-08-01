@@ -1,6 +1,6 @@
 use crate::model::StatBlock;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Player {
     pub spells_known: Vec<bool>,
     pub rage_rounds_spent: u8,

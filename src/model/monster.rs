@@ -6,7 +6,7 @@ extern "C" {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub struct Monster {
     pub hp: i16,     // Hit points
     pub csleep: i16, // Inactive counter

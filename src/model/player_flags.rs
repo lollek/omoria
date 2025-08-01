@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Serialize, Deserialize, Clone, Copy)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
 pub struct PlayerFlags {
     pub insured: u8,         /* { Character insured   } */
     pub dead: u8,            /* { Currently restored  } */

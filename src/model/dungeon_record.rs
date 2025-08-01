@@ -3,7 +3,7 @@ use libc;
 use crate::model::{Cave, TreasureAndCoordinate};
 
 #[repr(C)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct DungeonRecord {
     pub cur_height: libc::c_long,
     pub cur_width: libc::c_long,
