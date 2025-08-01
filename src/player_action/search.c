@@ -75,6 +75,6 @@ void player_action_search(const long player_y, const long player_x, long chance)
   }
 
   if (!found_something) {
-    msg_print("You search around you.");
+    msg_print("You look around.");
   }
 }
