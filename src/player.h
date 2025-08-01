@@ -130,7 +130,7 @@ void C_player_set_knows_spell(int32_t slot, bool yn);
 bool C_player_uses_magic(enum magic_t magic_type);
 void C_player_add_exp(long num);
 int16_t C_player_roll_hp_for_levelup(void);
-void C_player_set_extra_bulk_carry(uint16_t new_value);
+void C_player_change_extra_bulk_carry(int16_t new_value);
 void C_player_mod_search_skill(int16_t modifier);
 int16_t C_player_curr_search_skill(void);
 

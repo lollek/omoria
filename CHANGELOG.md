@@ -9,6 +9,7 @@ August 2025
 * Move armor names to new UI
 * Change mana color to same as health since it was hard to see with a black background.
 * Fix crash if bulk was too large (i.e. caused by another bug)
+* Fix bulk calculation which caused the game to crash
 
 ## 5-alpha523
 

@@ -11,7 +11,7 @@ pub struct Player {
     pub mod_stats: StatBlock,
     pub perm_stats: StatBlock,
     pub save_counter: u64,
-    pub extra_bulk_carry: u16,
+    pub extra_bulk_carry: i16,
     pub search_modifier: i16,
     pub max_hp_last_calc: i16, // Last time we checked, what was max hp?
     pub max_hp: i16,
