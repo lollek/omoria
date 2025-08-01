@@ -2,7 +2,7 @@
 
 ## 5-alpha524
 
-March 2025
+August 2025
 
 ## 5-alpha523
 
