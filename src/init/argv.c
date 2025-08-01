@@ -9,7 +9,7 @@
 
 static void print_arg_usage(void) {
   printf("\n\r"
-         "Invalid Moria option!  Valid qualifiers are:\n"
+         "Usage: omoria [options...]\n"
          "  -w         Warn about hearing things in water.\n"
          "  -s         List top 20 high scores.\n"
          "  -t num     List <num> high scores after death or for -s.\n"
