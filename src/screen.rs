@@ -1,12 +1,11 @@
-use libc;
-use std::borrow::Cow;
-use libc::c_char;
 use crate::data;
 use crate::equipment;
 use crate::model::Stat;
 use crate::ncurses;
 use crate::player;
 use crate::term;
+use libc;
+use std::borrow::Cow;
 
 // Stats Column
 const STAT_BLOCK_WIDTH: usize = 14;

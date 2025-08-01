@@ -1,10 +1,8 @@
+use crate::logic::menu::draw_help_vec;
+use crate::screen::draw_cave;
 use std::collections::LinkedList;
 use std::ffi::CStr;
 use std::sync::RwLock;
-use crate::io;
-use crate::logic::menu::{draw_help_vec, draw_quick_menu};
-use crate::screen::draw_cave;
-use crate::term_extern::prt_;
 
 lazy_static! {
     static ref MESSAGE_RECORD: RwLock<LinkedList<String>> =
