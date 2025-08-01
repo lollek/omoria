@@ -23,7 +23,9 @@ extern bool reset_flag;         /* { Do not move creatures } */
 extern bool search_flag;        /* { Player is searching   } */
 extern bool teleport_flag;      /* { Handle telport traps  } */
 extern long quest[NUM_QUESTS + 1]; /* {quest data} */
-extern char last_printed_message[82]; /* { Last message. Used to calculate when to break up the top bar into sentences. } */
+extern char
+    last_printed_message[82]; /* { Last message. Used to calculate when to break
+                                 up the top bar into sentences. } */
 extern bool want_trap;          /* { True = trap messages} */
 extern bool want_warn;          /* { True = water warning} */
 extern bool death;              /*	{ True if died	      } */

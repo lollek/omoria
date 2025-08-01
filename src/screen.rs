@@ -1,6 +1,6 @@
 use libc;
 use std::borrow::Cow;
-
+use libc::c_char;
 use crate::data;
 use crate::equipment;
 use crate::model::Stat;
@@ -38,6 +38,8 @@ const DEPTH_COL: u8 = 61;
 
 extern "C" {
     static dun_level: libc::c_long;
+    #[link_name = "draw_cave"]
+    pub fn draw_cave();
 }
 
 fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)

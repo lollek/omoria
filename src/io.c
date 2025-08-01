@@ -21,11 +21,8 @@
 
 #include "io.h"
 
+#include "messages.h"
 #include "screen.h"
-
-#define MAX_MESSAGES 25
-static char message_history[MAX_MESSAGES + 1][82] = { 0 };
-static unsigned char last_message_history_i = 0;
 
 // ReSharper disable once CppParameterNeverUsed
 __attribute__((unused)) static void signalexit(__attribute__((unused)) int unused) {
@@ -133,48 +130,6 @@ void exit_game(void) {
   exit(0); /* { exit from game		} */
 }
 
-void msg_record(char message[82], const bool save) {
-  ENTER(("msg_record", "%s, %d", message, save));
-
-
-  if (save) {
-    last_message_history_i++;
-    if (last_message_history_i > MAX_MESSAGES) {
-      last_message_history_i = 1;
-    }
-    strcpy(message_history[last_message_history_i], message);
-    if (strlen(message_history[last_message_history_i]) > 74) {
-      message_history[last_message_history_i][74] = 0;
-    }
-  } else {
-    unsigned char count = 0;
-    for (int i = last_message_history_i + 1; i <= MAX_MESSAGES; i++) {
-      const char * message_at_i = message_history[i];
-      if (message_at_i[0] == 0) {
-        continue;
-      }
-      char fixed_string[134];
-      sprintf(fixed_string, "%02d> %s", ++count, message_at_i);
-      prt(fixed_string, count, 1);
-    }
-    if (last_message_history_i > 0) {
-      for (int i = 1; i <= last_message_history_i; i++) {
-        const char *message_at_i = message_history[i];
-        if (message_at_i[0] == 0) {
-          continue;
-        }
-        char fixed_string[134];
-        sprintf(fixed_string, "%02d> %s", ++count, message_at_i);
-        prt(fixed_string, count, 1);
-      }
-    }
-    inkey();
-    draw_cave();
-  }
-
-  LEAVE("msg_record", "i");
-}
-
 void inkey_delay(char *getchar) {
   /* XXXX check_input consumes the input, so we never actually get data */
 
@@ -231,7 +186,7 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
     erase_line(msg_line, msg_line);
     put_buffer(str_buff, msg_line, msg_line);
     strncpy(last_printed_message, str_buff, sizeof(char[82]));
-    msg_record(str_buff, true);
+    record_message(str_buff);
 
     if (ic == 3 || ic == 25 || ic == 26 || ic == 27) {
       return_value = true;
@@ -289,7 +244,7 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
   size_t max_old_msg_size = sizeof(last_printed_message);
   strncpy(last_printed_message, str_buff, max_old_msg_size);
   last_printed_message[max_old_msg_size-1] = 0;
-  msg_record(str_buff, true);
+  record_message(str_buff);
 
   msg_flag = true;
 

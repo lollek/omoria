@@ -12,6 +12,7 @@ extern crate pancurses;
 extern crate serde;
 extern crate serde_json;
 
+mod town_level;
 mod pregame;
 
 pub mod commands;
@@ -28,6 +29,7 @@ pub mod io;
 pub mod logic;
 pub mod master;
 pub mod master_interop;
+pub mod message;
 pub mod misc;
 pub mod model;
 pub mod ncurses;
@@ -49,4 +51,3 @@ pub mod ncurses_extern;
 pub mod random_extern;
 pub mod screen_extern;
 pub mod term_extern;
-mod town_level;

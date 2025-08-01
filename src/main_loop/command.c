@@ -29,6 +29,8 @@
 
 #include "command.h"
 
+#include "../messages.h"
+
 void C_print_known_spells();
 
 void command(long *command) {
@@ -104,7 +106,7 @@ void command(long *command) {
     break;
 
   case CTRL_P:
-    msg_record("", false);
+    show_recorded_messages();
     reset_flag = true;
     break;
 

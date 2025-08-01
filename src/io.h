@@ -9,7 +9,6 @@ void exit_ncurses(void);
 void exit_game(void) __attribute__((noreturn));
 /* extern void inkey(char *getchar); */
 char inkey(void);
-void msg_record(char message[82], bool save);
 void inkey_delay(char *getchar);
 void flush(void);
 void inkey_flush(char *x);

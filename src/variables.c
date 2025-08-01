@@ -23,6 +23,7 @@ long dun_level = 0;             /* { Cur dungeon level   } */
 long missle_ctr = 0;            /* { Counter for missles } */
 long msg_line = 1;              /* { Contains message txt} */
 bool msg_flag;               /* { Set with first msg  } */
+char last_printed_message[82];
 long quest[NUM_QUESTS + 1];     /* {quest data} */
 bool want_trap;              /* { True = trap messages} */
 bool want_warn;              /* { True = water warning} */
