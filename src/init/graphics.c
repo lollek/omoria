@@ -7,7 +7,7 @@
 bool init__graphics(void) {
   C_init_curses();
   curses_is_running = true;
-  no_controly();
+  override_signals();
 
   return true;
 }

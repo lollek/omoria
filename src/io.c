@@ -21,9 +21,11 @@
 
 #include "io.h"
 
-#define MAX_MESSAGES 50
-static char msg_prev[MAX_MESSAGES + 1][82];
-static unsigned char record_ctr = 0;
+#include "screen.h"
+
+#define MAX_MESSAGES 25
+static char message_history[MAX_MESSAGES + 1][82] = { 0 };
+static unsigned char last_message_history_i = 0;
 
 // ReSharper disable once CppParameterNeverUsed
 __attribute__((unused)) static void signalexit(__attribute__((unused)) int unused) {
@@ -63,30 +65,51 @@ void signalsave(void) {
   exit_game();
 }
 
-void no_controly(void) {
+void override_signals(void) {
   /* { Turn off Control-Y					-RAK-	} */
   /* ok, this is unix not vms, so it turns off ^C and ^Z */
 
   ENTER(("no_controly", ""));
 
-  signal(SIGINT, signalquit);
-#if !DO_DEBUG
   signal(SIGHUP, signalsave);
-  signal(SIGTSTP, SIG_IGN);
+  signal(SIGINT, signalquit);
   signal(SIGQUIT, signalexit);
   signal(SIGILL, signalexit);
   signal(SIGTRAP, signalexit);
-  signal(SIGFPE, signalexit);
-  signal(SIGSEGV, signalexit);
   signal(SIGIOT, signalexit);
   signal(SIGABRT, signalexit);
+  signal(SIGEMT, signalexit);
+  signal(SIGFPE, signalexit);
+
   signal(SIGBUS, signalexit);
-  signal(SIGSYS, signalexit);
+#if !DO_DEBUG
+  signal(SIGSEGV, signalexit);
 #endif
+  signal(SIGSYS, signalexit);
+  signal(SIGPIPE, signalexit);
+  signal(SIGALRM, SIG_IGN);
+  signal(SIGTERM, signalexit);
+  signal(SIGURG, signalexit);
+  signal(SIGSTOP, SIG_IGN);
+  signal(SIGTSTP, SIG_IGN);
+  signal(SIGCONT, SIG_IGN);
+  signal(SIGCHLD, SIG_IGN);
+  signal(SIGTTIN, SIG_IGN);
+  signal(SIGTTOU, SIG_IGN);
+  signal(SIGIO, SIG_IGN);
+  signal(SIGXCPU, signalexit);
+  signal(SIGXFSZ, signalexit);
+  signal(SIGVTALRM, SIG_IGN);
+  signal(SIGPROF, SIG_IGN);
+  signal(SIGWINCH, SIG_IGN); // This should maybe recalc/redraw?
+  signal(SIGINFO, SIG_IGN);
+  signal(SIGUSR1, SIG_IGN);
+  signal(SIGUSR2, SIG_IGN);
+
   LEAVE("no_controly", "");
 }
 
-void controly(void) {
+void stop_override_signals(void) {
   /* { Turn on Control-Y					-RAK-	} */
   /* ok, this is unix not vms, so it turns on ^C and ^Z */
 }
@@ -104,7 +127,7 @@ void exit_ncurses(void) {
 
 void exit_game(void) {
   /*	{ Immediate exit from program } */
-  controly(); /* { Turn control-Y back on	} */
+  stop_override_signals(); /* { Turn control-Y back on	} */
   exit_ncurses();
   fflush(stdout);
   exit(0); /* { exit from game		} */
@@ -113,38 +136,40 @@ void exit_game(void) {
 void msg_record(char message[82], const bool save) {
   ENTER(("msg_record", "%s, %d", message, save));
 
+
   if (save) {
-    record_ctr++;
-    if (record_ctr > MAX_MESSAGES) {
-      record_ctr = 1;
+    last_message_history_i++;
+    if (last_message_history_i > MAX_MESSAGES) {
+      last_message_history_i = 1;
     }
-    strcpy(msg_prev[record_ctr], message);
-    if (strlen(msg_prev[record_ctr]) > 74) {
-      msg_prev[record_ctr][74] = 0;
+    strcpy(message_history[last_message_history_i], message);
+    if (strlen(message_history[last_message_history_i]) > 74) {
+      message_history[last_message_history_i][74] = 0;
     }
   } else {
-    char ic;
     unsigned char count = 0;
-    unsigned char temp_ctr = record_ctr;
-
-    do {
-      char fixed_string[134];
-      count++;
-      /* XXXX pad, dec, what to do? */
-      /*prt(pad(msg_prev[temp_ctr],' ',74) + ':' +
-       * dec(count,4,3),1,1);*/
-      sprintf(fixed_string, "%02d> %s", count, msg_prev[temp_ctr]);
-      /* prt(msg_prev[temp_ctr],1,1); */
-      prt(fixed_string, 1, 1);
-      temp_ctr--;
-      if (temp_ctr < 1) {
-        temp_ctr = MAX_MESSAGES;
+    for (int i = last_message_history_i + 1; i <= MAX_MESSAGES; i++) {
+      const char * message_at_i = message_history[i];
+      if (message_at_i[0] == 0) {
+        continue;
       }
-      ic = inkey();
-    } while (!(!(ic == 13 || ic == 32 || ic == 86) || count == MAX_MESSAGES));
-    msg_print("End of buffer. ");
-    /* XXXX another pad, what to do? */
-    /*msg_print(pad('End of buffer. ',' ',80));*/
+      char fixed_string[134];
+      sprintf(fixed_string, "%02d> %s", ++count, message_at_i);
+      prt(fixed_string, count, 1);
+    }
+    if (last_message_history_i > 0) {
+      for (int i = 1; i <= last_message_history_i; i++) {
+        const char *message_at_i = message_history[i];
+        if (message_at_i[0] == 0) {
+          continue;
+        }
+        char fixed_string[134];
+        sprintf(fixed_string, "%02d> %s", ++count, message_at_i);
+        prt(fixed_string, count, 1);
+      }
+    }
+    inkey();
+    draw_cave();
   }
 
   LEAVE("msg_record", "i");
@@ -190,7 +215,7 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 
   if (msg_flag && !msg_terse) {
     long old_len = 0;
-    old_len = strlen(old_msg) + 1;
+    old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
       ic = inkey();
@@ -205,7 +230,7 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
     /* put_buffer(cursor_erl+str_buff,msg_line,msg_line);*/
     erase_line(msg_line, msg_line);
     put_buffer(str_buff, msg_line, msg_line);
-    strncpy(old_msg, str_buff, sizeof(char[82]));
+    strncpy(last_printed_message, str_buff, sizeof(char[82]));
     msg_record(str_buff, true);
 
     if (ic == 3 || ic == 25 || ic == 26 || ic == 27) {
@@ -250,7 +275,7 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
   const obj_set small_set = {3, 25, 26, ESCAPE, 0};
 
   if (msg_flag && !msg_terse) {
-    const long old_len = strlen(old_msg) + 1;
+    const long old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
       in_char = inkey();
@@ -260,7 +285,10 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
   erase_line(msg_line, msg_line);
   put_buffer(str_buff, msg_line, msg_line);
 
-  strcpy(old_msg, str_buff);
+  // Since old_msg still has a size limit and str_buff doesn't
+  size_t max_old_msg_size = sizeof(last_printed_message);
+  strncpy(last_printed_message, str_buff, max_old_msg_size);
+  last_printed_message[max_old_msg_size-1] = 0;
   msg_record(str_buff, true);
 
   msg_flag = true;

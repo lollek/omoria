@@ -4,6 +4,9 @@
 
 August 2025
 
+* Remove old ^P and move V to ^P. This means that you can no longer just see last messsage, but instead the last x messages.
+* Tweak signal handling so more signals are ignored.
+
 ## 5-alpha523
 
 February 2025

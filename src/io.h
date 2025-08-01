@@ -3,8 +3,8 @@
 #include <curses.h>
 
 
-void no_controly(void);
-void controly(void);
+void override_signals(void);
+void stop_override_signals(void);
 void exit_ncurses(void);
 void exit_game(void) __attribute__((noreturn));
 /* extern void inkey(char *getchar); */

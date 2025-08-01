@@ -24,7 +24,6 @@ long missle_ctr = 0;            /* { Counter for missles } */
 long msg_line = 1;              /* { Contains message txt} */
 bool msg_flag;               /* { Set with first msg  } */
 long quest[NUM_QUESTS + 1];     /* {quest data} */
-char old_msg[82] = "bogus msg"; /* { Last message	      } */
 bool want_trap;              /* { True = trap messages} */
 bool want_warn;              /* { True = water warning} */
 bool death = false;          /*	{ True if died	      } */

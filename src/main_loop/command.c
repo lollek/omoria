@@ -104,7 +104,7 @@ void command(long *command) {
     break;
 
   case CTRL_P:
-    msg_print(old_msg);
+    msg_record("", false);
     reset_flag = true;
     break;
 
@@ -349,10 +349,6 @@ void command(long *command) {
   case 'U':
     find_flag = true;
     player_action_move(9);
-    break;
-  case 'V':
-    msg_record("", false);
-    reset_flag = true;
     break;
 
   case 'X':
