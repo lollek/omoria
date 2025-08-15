@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 use crate::conversion::item_subtype;
 use crate::data;
-use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of};
+use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of, plural_s};
 use crate::model::{Item, ItemType};
 use crate::model::item_subtype::{ItemSubType, LodgingAtInnSubType};
 
@@ -204,65 +204,65 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
         }
         ItemType::Potion1 => {
             let material = match item.subval {
-                281 => "Icky green",
-                282 => "Light brown",
-                283 => "Clear",
-                _ => "%C",
+                281 => "icky green ",
+                282 => "light brown ",
+                283 => "clear ",
+                _ => "",
             };
             let attribute = if item.is_identified() {
                 match item.subval {
-                    257 => " of Gain Strength",
-                    258 => " of Poison",
-                    259 => " of Restore Strength",
-                    260 => " of Gain Intelligence",
-                    261 => " of Lose Intelligence",
-                    262 => " of Restore Intelligence",
-                    263 => " of Gain Wisdom",
-                    264 => " of Lose Wisdom",
-                    265 => " of Restore Wisdom",
-                    266 => " of Charisma",
-                    267 => " of Ugliness",
-                    268 => " of Restore Charisma",
-                    269 => " of Cure Light Wounds",
-                    270 => " of Cure Serious Wounds",
-                    271 => " of Cure Critical Wounds",
-                    272 => " of Healing",
-                    273 => " of Gain Constitution",
-                    274 => " of Gain Experience",
-                    275 => " of Sleep",
-                    276 => " of Blindness",
-                    277 => " of Confusion",
-                    278 => " of Poison",
-                    279 => " of Haste item",
-                    280 => " of Slowness",
-                    281 => " of Slime Mold Juice",
-                    282 => " of Apple Juice",
-                    283 => " of Water",
-                    284 => " of Gain Dexterity",
-                    285 => " of Restore Dexterity",
-                    286 => " of Restore Constitution",
-                    287 => " of Learning",
-                    288 => " of Lose Memories",
-                    289 => " of Salt Water",
-                    290 => " of Invulnerability",
-                    291 => " of Heroism",
-                    292 => " of Super Heroism",
-                    293 => " of Boldliness",
-                    294 => " of Restore Life Levels",
-                    295 => " of Resist Heat",
-                    296 => " of Resist Cold",
-                    297 => " of Detect Invisible",
-                    298 => " of Slow Poison",
-                    299 => " of Neutralize Poison",
-                    300 => " of Restore Mana",
-                    301 => " of Infra-Vision",
-                    302 => " of Flea Bile",
+                    257 => " of gain strength",
+                    258 => " of poison",
+                    259 => " of restore strength",
+                    260 => " of gain intelligence",
+                    261 => " of lose intelligence",
+                    262 => " of restore intelligence",
+                    263 => " of gain wisdom",
+                    264 => " of lose wisdom",
+                    265 => " of restore wisdom",
+                    266 => " of charisma",
+                    267 => " of ugliness",
+                    268 => " of restore charisma",
+                    269 => " of cure light wounds",
+                    270 => " of cure serious Wounds",
+                    271 => " of cure critical Wounds",
+                    272 => " of healing",
+                    273 => " of gain constitution",
+                    274 => " of gain experience",
+                    275 => " of sleep",
+                    276 => " of blindness",
+                    277 => " of confusion",
+                    278 => " of poison",
+                    279 => " of haste item",
+                    280 => " of slowness",
+                    281 => " of slime mold juice",
+                    282 => " of apple juice",
+                    283 => " of water",
+                    284 => " of gain dexterity",
+                    285 => " of restore dexterity",
+                    286 => " of restore constitution",
+                    287 => " of learning",
+                    288 => " of lose memories",
+                    289 => " of salt water",
+                    290 => " of invulnerability",
+                    291 => " of heroism",
+                    292 => " of super heroism",
+                    293 => " of boldliness",
+                    294 => " of restore life Levels",
+                    295 => " of resist heat",
+                    296 => " of resist cold",
+                    297 => " of detect invisible",
+                    298 => " of slow poison",
+                    299 => " of neutralize poison",
+                    300 => " of restore mana",
+                    301 => " of infra-vision",
+                    302 => " of flea bile",
                     _ => " of ???",
                 }
             } else {
                 ""
             };
-            Cow::from(format!("{} potion{}{}", material, plural_s(), attribute))
+            Cow::from(format!("{}potion{}{}", material, plural_s(), attribute))
         }
         ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
         ItemType::Staff => {
@@ -304,7 +304,7 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("%W wand{}{}", attribute, charges))
         }
-        _ => Cow::from("Something alien"),
+        _ => Cow::from(format!("Something alien (tval {})", item.tval)),
     }
 }
 
@@ -323,6 +323,14 @@ pub fn lodging_at_inn(item: &Item) -> String {
     }.to_string()
 }
 
+pub fn money(item: &Item) -> String {
+    let mut parts = Vec::new();
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(format!("copper piece{}", plural_s(item)).into());
+    parts.join("")
+}
 
 pub fn generic_item(item: &Item) -> String {
     let mut parts = Vec::new();

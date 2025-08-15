@@ -6,7 +6,7 @@ use crate::data::item_name::subtype::book::book;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
-use crate::data::item_name::subtype::{generic_item, lodging_at_inn};
+use crate::data::item_name::subtype::{generic_item, lodging_at_inn, money};
 use crate::data::item_name::subtype::jewelry::jewelry;
 use crate::data::item_name::subtype::light_source::light_source;
 use crate::data::item_name::subtype::melee_weapon::melee_weapon;
@@ -62,7 +62,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::GemHelm
         | ItemType::Horn
         | ItemType::Instrument
-        | ItemType::Money
         | ItemType::OpenDoor
         | ItemType::Potion1
         | ItemType::Potion2
@@ -97,6 +96,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::SongBook => book(item),
         ItemType::MiscObject => misc_object(item),
         ItemType::MiscUsable => misc_usable(item),
+        ItemType::Money => money(item),
         ItemType::RangedWeapon => ranged_weapon(item),
         ItemType::Spike => spike(item),
         ItemType::Wand => wand(item),
