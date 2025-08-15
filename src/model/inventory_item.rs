@@ -7,7 +7,7 @@ use serde::{Deserializer, Serializer};
 use crate::model::Item;
 
 #[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub struct InventoryItem {
     //treas_rec
     pub data: Item,   // Real item

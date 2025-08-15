@@ -33,11 +33,12 @@ pub fn ammo(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
+    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::AmmunitionTemplate;
 
     #[test]
     fn test_rounded_pebble() {
-        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::RoundedPebble), 0);
+        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::RoundedPebble), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -64,7 +65,7 @@ mod tests {
 
     #[test]
     fn test_iron_shot() {
-        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::IronShot), 0);
+        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::IronShot), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -91,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_arrow() {
-        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::Arrow), 0);
+        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::Arrow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -118,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_bolt() {
-        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::Bolt), 0);
+        let mut item = generate_item::generate(Box::new(AmmunitionTemplate::Bolt), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 

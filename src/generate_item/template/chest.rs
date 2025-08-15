@@ -1,8 +1,13 @@
 use super::super::item_template::ItemTemplate;
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
 use crate::model::{
     self,
     item_subtype::{ChestSubType, ItemSubType},
+    ChestFlags1, Item,
 };
+use crate::random::randint;
+use std::cmp::max;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChestTemplate {
@@ -32,6 +37,33 @@ impl ChestTemplate {
 }
 
 impl ItemTemplate for ChestTemplate {
+    fn create(&self, item_quality: ItemQuality, item_level: u8) -> Item {
+        let mut item = default_create(self, item_quality);
+        /*
+         * Items inside the chest will be created as if
+         * found on dungeon level p1.
+         */
+        item.p1 = max(1, item_level as i64 + randint(10) - 5);
+        item.apply_chestflag1(ChestFlags1::Locked);
+        match randint(item_level as i64) + 4 {
+            1..=2 => {}
+            3..=4 => item.apply_chestflag1(ChestFlags1::PoisonNeedle1),
+            5..=6 => item.apply_chestflag1(ChestFlags1::PoisonNeedle2),
+            7..=9 => item.apply_chestflag1(ChestFlags1::GasTrap),
+            10..=11 => item.apply_chestflag1(ChestFlags1::ExplosiveTrap),
+            12..=14 => item.apply_chestflag1(ChestFlags1::SummoningRunes),
+            15..=17 => {
+                item.apply_chestflag1(ChestFlags1::PoisonNeedle1);
+                item.apply_chestflag1(ChestFlags1::PoisonNeedle2);
+                item.apply_chestflag1(ChestFlags1::GasTrap);
+            }
+            _ => {
+                item.apply_chestflag1(ChestFlags1::ExplosiveTrap);
+                item.apply_chestflag1(ChestFlags1::SummoningRunes);
+            }
+        }
+        item
+    }
     fn name(&self) -> &str {
         match self {
             ChestTemplate::SmallWoodenChest => "& Small wooden chest",

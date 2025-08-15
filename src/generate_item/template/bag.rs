@@ -1,9 +1,5 @@
-use crate::generate_item::item_template::WornFlag2;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{BagSubType, ItemSubType},
-};
+use crate::model::{self, item_subtype::{BagSubType, ItemSubType}, WornFlag2};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum BagTemplate {

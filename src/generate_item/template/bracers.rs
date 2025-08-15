@@ -56,6 +56,80 @@ impl BracersTemplate {
 }
 
 impl ItemTemplate for BracersTemplate {
+    /* TODO add fn create
+
+static void mt__gloves_and_gauntlets(treasure_type *treasure_ptr,
+                                     const long level, const bool is_magic,
+                                     const bool is_special,
+                                     const bool is_cursed,
+                                     const bool forceit) {
+  if (is_magic) {
+    treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
+    if (is_special) {
+      /* gloves_and_gauntlets 5 is "Set of Cloth Gloves" */
+      if (treasure_ptr->subval == 5 && randint(10) == 1) {
+        strcat(treasure_ptr->name, " of the Hive");
+        treasure_ptr->flags |= Dexterity_worn_bit;
+        treasure_ptr->p1 = 2;
+        treasure_ptr->cost += 50000;
+      } else {
+        switch (randint(5)) {
+        case 1:
+          strcat(treasure_ptr->name, " of Free Action");
+          treasure_ptr->flags |= Free_Action_worn_bit;
+          treasure_ptr->cost += 100000;
+          break;
+        case 2:
+          strcat(treasure_ptr->name, " of Slaying");
+          treasure_ptr->tohit = 1 + randint(3);
+          treasure_ptr->todam = 1 + randint(3);
+          treasure_ptr->cost +=
+              (treasure_ptr->tohit + treasure_ptr->todam) * 25000;
+          break;
+        case 3:
+          strcat(treasure_ptr->name, " of Thievery (%P1)");
+          treasure_ptr->flags2 |= Disarm_worn_bit;
+          treasure_ptr->flags |= Feather_Fall_worn_bit | See_Invisible_worn_bit;
+          treasure_ptr->p1 = mt__m_bonus(5, 50, level, forceit);
+          treasure_ptr->cost += 20000 + treasure_ptr->p1 * 5;
+          break;
+        case 4:
+        case 5:
+          strcat(treasure_ptr->name, " of Ogre Power");
+          treasure_ptr->flags |= Slow_Digestion_worn_bit | Strength_worn_bit;
+          treasure_ptr->p1 = randint(4);
+          treasure_ptr->cost += 150000;
+          break;
+        }
+      }
+    }
+  } else if (is_cursed) {
+    if (is_special) {
+      switch (randint(3)) {
+      case 1:
+        strcat(treasure_ptr->name, " of Clumsiness");
+        treasure_ptr->flags |= Cursed_worn_bit | Dexterity_worn_bit;
+        treasure_ptr->p1 = 1;
+        break;
+      case 2:
+        strcat(treasure_ptr->name, " of Weakness");
+        treasure_ptr->flags |= Cursed_worn_bit | Strength_worn_bit;
+        treasure_ptr->p1 = 1;
+        break;
+      case 3:
+        strcat(treasure_ptr->name, " of Ogre Intelligence");
+        treasure_ptr->flags |= Cursed_worn_bit | Intelligence_worn_bit;
+        treasure_ptr->p1 = 1;
+        break;
+      }
+    }
+    treasure_ptr->flags |= Cursed_worn_bit;
+    treasure_ptr->toac = -mt__m_bonus(1, 40, level, forceit);
+    treasure_ptr->p1 = -mt__m_bonus(1, 10, level, forceit);
+    treasure_ptr->cost = 0;
+  }
+}
+     */
     fn name(&self) -> &str {
         match self {
             BracersTemplate::BracersOfProtection => "Bracers^ of Protection [%P6,%P4]",

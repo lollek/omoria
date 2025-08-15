@@ -71,7 +71,7 @@ void help(void) {
       12, 1);
   prt(" p     Prayer / Play          |"
       " P     Print spell list       |"
-      "^P     Print last message     |"
+      "^P     Print last messages    |"
       "M-P    (Nothing)              ",
       13, 1);
   prt(" q     Quaff a potion         |"
@@ -95,7 +95,7 @@ void help(void) {
       "M-T    Show real world time   ",
       17, 1);
   prt(" v     Version and credits    |"
-      " V     Previous messages      |"
+      " V     (Nothing)              |"
       "^V     (Nothing               |"
       "M-V    (Nothing)              ",
       18, 1);

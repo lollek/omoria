@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Serialize, Deserialize, Clone, Copy)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
 pub struct PlayerFlags {
     pub insured: u8,         /* { Character insured   } */
     pub dead: u8,            /* { Currently restored  } */
@@ -65,7 +65,79 @@ pub struct PlayerFlags {
 }
 
 impl PlayerFlags {
+    pub fn new() -> Self {
+        PlayerFlags {
+            insured: 0,
+            dead: 0,
+            status: 0,
+            rest: 0,
+            blind: 0,
+            paralysis: 0,
+            confused: 0,
+            foodc: 0,
+            food_digested: 0,
+            protection: 0,
+            speed: 0,
+            speed_paral: 0,
+            speed_flag: 0,
+            paral_init: 0,
+            move_rate: 0,
+            swim: 0,
+            fast: 0,
+            slow: 0,
+            petrification: 0,
+            afraid: 0,
+            poisoned: 0,
+            image: 0,
+            protevil: 0,
+            invuln: 0,
+            hero: 0,
+            shero: 0,
+            blessed: 0,
+            resist_heat: 0,
+            resist_cold: 0,
+            word_recall: 0,
+            see_infra: 0,
+            detect_inv: 0,
+            tim_infra: 0,
+            see_inv: 0,
+            teleport: 0,
+            free_act: 0,
+            slow_digest: 0,
+            aggravate: 0,
+            fire_resist: 0,
+            cold_resist: 0,
+            acid_resist: 0,
+            hunger_item: 0,
+            regenerate: 0,
+            lght_resist: 0,
+            ffall: 0,
+            sustain: [0; 6],
+            confuse_monster: 0,
+            resist_lght: 0,
+            free_time: 0,
+            ring_fire: 0,
+            protmon: 0,
+            hoarse: 0,
+            magic_prot: 0,
+            ring_ice: 0,
+            temp_stealth: 0,
+            resist_petri: 0,
+            blade_ring: 0,
+            petri_resist: 0,
+            quested: 0,
+            light_on: 0,
+            resting_till_full: 0,
+        }
+    }
+
     pub fn leading_ones(self) -> u32 {
         self.detect_inv.leading_ones()
+    }
+}
+
+impl Default for PlayerFlags {
+    fn default() -> Self {
+        Self::new()
     }
 }

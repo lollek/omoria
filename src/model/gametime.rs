@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Serialize, Deserialize, Clone, Copy)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
 pub struct GameTime {
     pub year: i64,
     pub month: u8,

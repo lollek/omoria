@@ -2,9 +2,9 @@ use std::convert::TryInto;
 
 use libc;
 
-use crate::conversion;
 use crate::data;
 use crate::player;
+use crate::conversion;
 
 #[no_mangle]
 pub extern "C" fn C_player_knows_spell(slot: i32) -> u8 {
@@ -119,8 +119,8 @@ pub extern "C" fn C_player_roll_hp_for_levelup() -> i16 {
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_set_extra_bulk_carry(new_value: u16) {
-    player::set_extra_bulk_carry(new_value);
+pub extern "C" fn C_player_change_extra_bulk_carry(modifier: i16) {
+    player::modify_extra_bulk_carry(modifier);
 }
 
 #[no_mangle]

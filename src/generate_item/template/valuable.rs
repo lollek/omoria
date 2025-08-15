@@ -3,6 +3,7 @@ use crate::model::{
     self,
     item_subtype::{GemSubType, ItemSubType, JewelrySubType, WearableGemSubType},
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ValuableTemplate {
@@ -209,7 +210,27 @@ impl ItemTemplate for ValuableTemplate {
     }
 
     fn p1(&self) -> i64 {
-        0
+        match self {
+            ValuableTemplate::GemOfTeleportation => randint(10) + 10,
+            ValuableTemplate::GemOfResistCold => randint(5) + 2,
+            ValuableTemplate::GemOfResistAcid => randint(8) + 7,
+            ValuableTemplate::GemOfSeeInvisible => randint(3) + 3,
+            ValuableTemplate::GemOfStealth => randint(10) + 10,
+            ValuableTemplate::GemOfSlowDigestion => randint(5) + 5,
+            ValuableTemplate::GemOfProtectFire => randint(15) + 15,
+            ValuableTemplate::GemOfDetectMonsters => randint(10) + 10,
+            ValuableTemplate::GemOfDispelEvil => randint(5) + 2,
+            ValuableTemplate::GemOfDarkness => randint(8) + 7,
+            ValuableTemplate::GemOfAcidBalls => randint(3) + 3,
+            ValuableTemplate::GemOfDetectInvisible => randint(10) + 10,
+            ValuableTemplate::GemOfIdentify => randint(5) + 5,
+            ValuableTemplate::GemOfLight => randint(15) + 15,
+            ValuableTemplate::GemOfSummoning => randint(3) + 2,
+            ValuableTemplate::GemOfRemoveCurse => randint(5) + 3,
+            ValuableTemplate::GemOfAnnihilation => randint(3) + 2,
+            ValuableTemplate::GemOfRecall => randint(6) + 4,
+            _=> 0,
+        }
     }
 
     fn cost(&self) -> i64 {

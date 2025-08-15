@@ -6,25 +6,13 @@ use std::io::{Read, Seek, Write};
 use serde_json;
 
 use crate::debug;
-use crate::identification::IdentifiedSubTypes;
 use crate::master;
-use crate::model::{DungeonRecord, InventoryItem, Item, MonsterRecord, PlayerRecord, TownRecord};
 use crate::ncurses;
 use crate::player;
 use crate::save;
+use crate::save::save_record::SaveRecord;
 use crate::term;
 use crate::{constants, identification};
-
-#[derive(Serialize, Deserialize)]
-struct SaveRecord {
-    player: PlayerRecord,
-    inventory: Vec<InventoryItem>,
-    equipment: Vec<Item>,
-    town: TownRecord,
-    dungeon: DungeonRecord,
-    identified: IdentifiedSubTypes,
-    monsters: MonsterRecord,
-}
 
 fn savefile_name(player_name: &str, player_uid: i64) -> String {
     format!(
@@ -56,25 +44,33 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
     let mut buffer = String::new();
 
     if let Err(e) = f.read_to_string(&mut buffer) {
-        debug::warn(format!("Failed to load save @read_to_string, (err: {})", e));
+        debug::error(format!("Failed to load save @read_to_string, (err: {})", e));
         return None;
     }
 
     match serde_json::from_str(&buffer) {
         Ok(json) => Some(json),
         Err(e) => {
-            debug::warn(format!("Failed to load save @from_str, (err: {})", e));
+            debug::error(format!("Failed to load save @from_str, (err: {})", e));
             None
         }
     }
 }
 
 fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
+    let serialized_data = match serde_json::to_string(data) {
+        Ok(serialized_data) => serialized_data,
+        Err(e) => {
+            debug::error(format!("Failed to serialize data: {e}"));
+            debug::error(format!("Data in debug format: {:?}", data));
+            return None;
+        }
+    };
     if let Err(e) = f.seek(io::SeekFrom::Start(0)) {
         debug::error(&format!("Failed during seek: {}", e));
         return None;
     }
-    if let Err(e) = f.write_all(&serde_json::to_string(data).unwrap().into_bytes()) {
+    if let Err(e) = f.write_all(&serialized_data.into_bytes()) {
         debug::error(&format!("Failed to write file: {}", e));
         return None;
     }

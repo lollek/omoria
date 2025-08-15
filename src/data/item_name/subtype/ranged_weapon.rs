@@ -1,7 +1,7 @@
 use crate::conversion::item_subtype::from_i64;
 use crate::data::item_name::helpers::{attack_bonus, maybe_number_of, p1_bonus};
 use crate::model::item_subtype::{ItemSubType, RangedWeaponSubType};
-use crate::model::Item;
+use crate::model::{Item, WornFlag2};
 use std::borrow::Cow;
 
 pub fn ranged_weapon(item: &Item) -> String {
@@ -28,8 +28,10 @@ pub fn ranged_weapon(item: &Item) -> String {
         },
         None => "alien lightsource",
     }));
+    if item.is_identified() && item.has_wornflag2(WornFlag2::Sharp) {
+        parts.push(" of criticals".into());
+    }
     parts.push(p1_bonus(item));
-
     if item.is_identified() {
         parts.push(attack_bonus(item));
     }
@@ -39,12 +41,36 @@ pub fn ranged_weapon(item: &Item) -> String {
 #[cfg(test)]
 mod tests {
     use crate::data::item_name::generate;
-    use crate::generate_item;
     use crate::generate_item::template::{BowTemplate, CrossbowTemplate, SlingTemplate};
+    use crate::generate_item::{ItemQuality, ItemTemplate};
+    use crate::{generate_item, identification};
+
+    #[test]
+    fn test_special_of_criticals() {
+        let template = BowTemplate::Shortbow;
+        let mut item = generate_item::generate(Box::new(template), 0, ItemQuality::Normal);
+        template.apply_weapon_of_criticals(&mut item);
+        item.tohit = 1;
+        item.todam = 1;
+
+        item.set_identified(false);
+        identification::set_identified(template.subtype(), false);
+        assert_eq!(generate(&item), "shortbow (+2)".to_string());
+
+        identification::set_identified(template.subtype(), true);
+        assert_eq!(generate(&item), "shortbow (+2)".to_string());
+
+        item.set_identified(true);
+        assert_eq!(
+            generate(&item),
+            "shortbow of criticals (+2) (+1,+1)".to_string()
+        );
+    }
 
     #[test]
     fn test_shortbow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::Shortbow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::Shortbow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -68,7 +94,8 @@ mod tests {
 
     #[test]
     fn test_hunters_bow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::HuntersBow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::HuntersBow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -92,7 +119,8 @@ mod tests {
 
     #[test]
     fn test_composite_bow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::CompositeBow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::CompositeBow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -116,7 +144,8 @@ mod tests {
 
     #[test]
     fn test_war_bow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::WarBow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::WarBow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -140,7 +169,8 @@ mod tests {
 
     #[test]
     fn test_double_bow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::DoubleBow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::DoubleBow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -164,7 +194,8 @@ mod tests {
 
     #[test]
     fn test_siege_bow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::SiegeBow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::SiegeBow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -188,7 +219,8 @@ mod tests {
 
     #[test]
     fn test_warded_bow() {
-        let mut item = generate_item::generate(Box::new(BowTemplate::WardedBow), 0);
+        let mut item =
+            generate_item::generate(Box::new(BowTemplate::WardedBow), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -212,7 +244,8 @@ mod tests {
 
     #[test]
     fn test_sling() {
-        let mut item = generate_item::generate(Box::new(SlingTemplate::Sling), 0);
+        let mut item =
+            generate_item::generate(Box::new(SlingTemplate::Sling), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 
@@ -236,7 +269,11 @@ mod tests {
 
     #[test]
     fn test_light_crossbow() {
-        let mut item = generate_item::generate(Box::new(CrossbowTemplate::LightCrossbow), 0);
+        let mut item = generate_item::generate(
+            Box::new(CrossbowTemplate::LightCrossbow),
+            0,
+            ItemQuality::Normal,
+        );
         item.tohit = 12;
         item.todam = 24;
 
@@ -260,7 +297,11 @@ mod tests {
 
     #[test]
     fn test_heavy_crossbow() {
-        let mut item = generate_item::generate(Box::new(CrossbowTemplate::HeavyCrossbow), 0);
+        let mut item = generate_item::generate(
+            Box::new(CrossbowTemplate::HeavyCrossbow),
+            0,
+            ItemQuality::Normal,
+        );
         item.tohit = 12;
         item.todam = 24;
 
@@ -284,7 +325,11 @@ mod tests {
 
     #[test]
     fn test_siege_crossbow() {
-        let mut item = generate_item::generate(Box::new(CrossbowTemplate::SiegeCrossbow), 0);
+        let mut item = generate_item::generate(
+            Box::new(CrossbowTemplate::SiegeCrossbow),
+            0,
+            ItemQuality::Normal,
+        );
         item.tohit = 12;
         item.todam = 24;
 
@@ -308,7 +353,8 @@ mod tests {
 
     #[test]
     fn test_ballista() {
-        let mut item = generate_item::generate(Box::new(CrossbowTemplate::Ballista), 0);
+        let mut item =
+            generate_item::generate(Box::new(CrossbowTemplate::Ballista), 0, ItemQuality::Normal);
         item.tohit = 12;
         item.todam = 24;
 

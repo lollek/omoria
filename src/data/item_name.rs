@@ -1,5 +1,6 @@
 use crate::data::item_name::subtype::ammo::ammo;
 use crate::data::item_name::subtype::amulet::amulet;
+use crate::data::item_name::subtype::armor::armor;
 use crate::data::item_name::subtype::bag::bag;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::gem::gem;
@@ -39,7 +40,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::FlaskOfOil
         | ItemType::Food
         | ItemType::GemHelm
-        | ItemType::HardArmor
         | ItemType::Horn
         | ItemType::Instrument
         | ItemType::JunkFood
@@ -58,7 +58,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::SecretDoor
         | ItemType::SeenTrap
         | ItemType::Shield
-        | ItemType::SoftArmor
         | ItemType::SongBook
         | ItemType::Staff
         | ItemType::UnseenTrap
@@ -72,6 +71,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::PoleArm
         | ItemType::Sword => melee_weapon(item),
         ItemType::Gem => gem(item),
+        ItemType::HardArmor | ItemType::SoftArmor => armor(item),
         ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),
         ItemType::MiscObject => misc_object(item),
@@ -85,13 +85,13 @@ pub fn generate(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::generate_item::{self, template::FoodTemplate};
+    use crate::generate_item::{self, template::FoodTemplate, ItemQuality};
 
     use super::*;
 
     #[test]
     fn test_ration_of_food() {
-        let mut item = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
+        let mut item = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "ration of food");
 
         item.number = 0;

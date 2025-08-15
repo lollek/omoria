@@ -1,12 +1,11 @@
-use libc;
-use std::borrow::Cow;
-
 use crate::data;
 use crate::equipment;
 use crate::model::Stat;
 use crate::ncurses;
 use crate::player;
 use crate::term;
+use libc;
+use std::borrow::Cow;
 
 // Stats Column
 const STAT_BLOCK_WIDTH: usize = 14;
@@ -38,6 +37,8 @@ const DEPTH_COL: u8 = 61;
 
 extern "C" {
     static dun_level: libc::c_long;
+    #[link_name = "draw_cave"]
+    pub fn draw_cave();
 }
 
 fn prt_lost_stat<S>(stat_name: S, stat: i16, row: u8, col: u8)
@@ -132,11 +133,11 @@ fn print_mana(row: u8, col: u8) {
     let current = player::current_mp();
     let max = player::max_mp();
     let color = if current >= max {
-        ncurses::color_pair(ncurses::COLOR_BLUE)
+        ncurses::color_pair(ncurses::COLOR_GREEN)
     } else if current >= max / 3 {
-        ncurses::color_pair(ncurses::COLOR_CYAN)
+        ncurses::color_pair(ncurses::COLOR_YELLOW)
     } else {
-        ncurses::color_pair(ncurses::COLOR_MAGENTA)
+        ncurses::color_pair(ncurses::COLOR_RED)
     };
 
     ncurses::attron(color);
@@ -207,8 +208,9 @@ fn print_stats_column() {
         GOLD_ROW,
         STAT_COL,
     );
+    let current_bulk = player::max_bulk() as i64 - player::current_bulk() as i64;
     print_field(
-        format!("Bulk: {:>6}", player::max_bulk() - player::current_bulk()),
+        format!("Bulk: {:>6}", current_bulk),
         BULK_ROW,
         STAT_COL,
     );

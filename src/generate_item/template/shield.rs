@@ -1,8 +1,12 @@
 use super::super::item_template::ItemTemplate;
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
 use crate::model::{
     self,
     item_subtype::{ItemSubType, ShieldSubType},
+    Item,
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ShieldTemplate {
@@ -38,6 +42,27 @@ impl ShieldTemplate {
 }
 
 impl ItemTemplate for ShieldTemplate {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
+        let mut item = default_create(self, item_quality);
+        if item_quality == ItemQuality::Cursed {
+            item.set_cursed(true);
+            item.cost = 0;
+            item.toac = -randint(4) as i16;
+        } else if item_quality == ItemQuality::Magic {
+            item.toac = randint(3) as i16;
+        } else if item_quality == ItemQuality::Special {
+            item.toac = randint(3) as i16;
+            match randint(9) {
+                1 => self.apply_armor_resist(&mut item),
+                2 => self.apply_armor_resist_acid(&mut item),
+                3 | 4 => self.apply_armor_resist_fire(&mut item),
+                5 | 6 => self.apply_armor_resist_cold(&mut item),
+                7 | 8 | _ => self.apply_armor_resist_lightning(&mut item),
+            }
+        }
+        item
+    }
+
     fn name(&self) -> &str {
         match self {
             ShieldTemplate::SmallLeatherShield => "Small Leather Shield^ [%P6,%P4]",

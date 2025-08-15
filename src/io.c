@@ -21,9 +21,8 @@
 
 #include "io.h"
 
-#define MAX_MESSAGES 50
-static char msg_prev[MAX_MESSAGES + 1][82];
-static unsigned char record_ctr = 0;
+#include "messages.h"
+#include "screen.h"
 
 // ReSharper disable once CppParameterNeverUsed
 __attribute__((unused)) static void signalexit(__attribute__((unused)) int unused) {
@@ -63,30 +62,51 @@ void signalsave(void) {
   exit_game();
 }
 
-void no_controly(void) {
+void override_signals(void) {
   /* { Turn off Control-Y					-RAK-	} */
   /* ok, this is unix not vms, so it turns off ^C and ^Z */
 
   ENTER(("no_controly", ""));
 
-  signal(SIGINT, signalquit);
-#if !DO_DEBUG
   signal(SIGHUP, signalsave);
-  signal(SIGTSTP, SIG_IGN);
+  signal(SIGINT, signalquit);
   signal(SIGQUIT, signalexit);
   signal(SIGILL, signalexit);
   signal(SIGTRAP, signalexit);
-  signal(SIGFPE, signalexit);
-  signal(SIGSEGV, signalexit);
   signal(SIGIOT, signalexit);
   signal(SIGABRT, signalexit);
+  signal(SIGEMT, signalexit);
+  signal(SIGFPE, signalexit);
+
   signal(SIGBUS, signalexit);
-  signal(SIGSYS, signalexit);
+#if !DO_DEBUG
+  signal(SIGSEGV, signalexit);
 #endif
+  signal(SIGSYS, signalexit);
+  signal(SIGPIPE, signalexit);
+  signal(SIGALRM, SIG_IGN);
+  signal(SIGTERM, signalexit);
+  signal(SIGURG, signalexit);
+  signal(SIGSTOP, SIG_IGN);
+  signal(SIGTSTP, SIG_IGN);
+  signal(SIGCONT, SIG_IGN);
+  signal(SIGCHLD, SIG_IGN);
+  signal(SIGTTIN, SIG_IGN);
+  signal(SIGTTOU, SIG_IGN);
+  signal(SIGIO, SIG_IGN);
+  signal(SIGXCPU, signalexit);
+  signal(SIGXFSZ, signalexit);
+  signal(SIGVTALRM, SIG_IGN);
+  signal(SIGPROF, SIG_IGN);
+  signal(SIGWINCH, SIG_IGN); // This should maybe recalc/redraw?
+  signal(SIGINFO, SIG_IGN);
+  signal(SIGUSR1, SIG_IGN);
+  signal(SIGUSR2, SIG_IGN);
+
   LEAVE("no_controly", "");
 }
 
-void controly(void) {
+void stop_override_signals(void) {
   /* { Turn on Control-Y					-RAK-	} */
   /* ok, this is unix not vms, so it turns on ^C and ^Z */
 }
@@ -104,50 +124,10 @@ void exit_ncurses(void) {
 
 void exit_game(void) {
   /*	{ Immediate exit from program } */
-  controly(); /* { Turn control-Y back on	} */
+  stop_override_signals(); /* { Turn control-Y back on	} */
   exit_ncurses();
   fflush(stdout);
   exit(0); /* { exit from game		} */
-}
-
-void msg_record(char message[82], const bool save) {
-  ENTER(("msg_record", "%s, %d", message, save));
-
-  if (save) {
-    record_ctr++;
-    if (record_ctr > MAX_MESSAGES) {
-      record_ctr = 1;
-    }
-    strcpy(msg_prev[record_ctr], message);
-    if (strlen(msg_prev[record_ctr]) > 74) {
-      msg_prev[record_ctr][74] = 0;
-    }
-  } else {
-    char ic;
-    unsigned char count = 0;
-    unsigned char temp_ctr = record_ctr;
-
-    do {
-      char fixed_string[134];
-      count++;
-      /* XXXX pad, dec, what to do? */
-      /*prt(pad(msg_prev[temp_ctr],' ',74) + ':' +
-       * dec(count,4,3),1,1);*/
-      sprintf(fixed_string, "%02d> %s", count, msg_prev[temp_ctr]);
-      /* prt(msg_prev[temp_ctr],1,1); */
-      prt(fixed_string, 1, 1);
-      temp_ctr--;
-      if (temp_ctr < 1) {
-        temp_ctr = MAX_MESSAGES;
-      }
-      ic = inkey();
-    } while (!(!(ic == 13 || ic == 32 || ic == 86) || count == MAX_MESSAGES));
-    msg_print("End of buffer. ");
-    /* XXXX another pad, what to do? */
-    /*msg_print(pad('End of buffer. ',' ',80));*/
-  }
-
-  LEAVE("msg_record", "i");
 }
 
 void inkey_delay(char *getchar) {
@@ -190,7 +170,7 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 
   if (msg_flag && !msg_terse) {
     long old_len = 0;
-    old_len = strlen(old_msg) + 1;
+    old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
       ic = inkey();
@@ -205,8 +185,8 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
     /* put_buffer(cursor_erl+str_buff,msg_line,msg_line);*/
     erase_line(msg_line, msg_line);
     put_buffer(str_buff, msg_line, msg_line);
-    strncpy(old_msg, str_buff, sizeof(char[82]));
-    msg_record(str_buff, true);
+    strncpy(last_printed_message, str_buff, sizeof(char[82]));
+    record_message(str_buff);
 
     if (ic == 3 || ic == 25 || ic == 26 || ic == 27) {
       return_value = true;
@@ -246,12 +226,11 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
   /*{ Outputs message to top line of screen }*/
 
   char in_char = 0;
-  const obj_set big_set = {3, 10, 13, 25, 26, 27, 32, 0};
-  const obj_set small_set = {3, 25, 26, 27, 0};
-  bool flag;
+  const obj_set big_set = {3, '\n', '\r', 25, 26, ESCAPE, ' ', 0};
+  const obj_set small_set = {3, 25, 26, ESCAPE, 0};
 
   if (msg_flag && !msg_terse) {
-    const long old_len = strlen(old_msg) + 1;
+    const long old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
       in_char = inkey();
@@ -261,18 +240,15 @@ bool msg_print(char *str_buff) /* : varying[a] of char; */
   erase_line(msg_line, msg_line);
   put_buffer(str_buff, msg_line, msg_line);
 
-  strcpy(old_msg, str_buff);
-  msg_record(str_buff, true);
+  // Since old_msg still has a size limit and str_buff doesn't
+  size_t max_old_msg_size = sizeof(last_printed_message);
+  strncpy(last_printed_message, str_buff, max_old_msg_size);
+  last_printed_message[max_old_msg_size-1] = 0;
+  record_message(str_buff);
 
   msg_flag = true;
 
-  if (is_in(in_char, small_set)) {
-    flag = true;
-  } else {
-    flag = false;
-  }
-
-  return flag;
+  return is_in(in_char, small_set);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

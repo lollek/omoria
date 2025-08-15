@@ -290,7 +290,7 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
       i1 = 500;
       break;
     }
-    C_player_set_extra_bulk_carry(i1 * factor);
+    C_player_change_extra_bulk_carry(i1 * factor);
   }
 
   /* with player_do; */

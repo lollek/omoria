@@ -190,18 +190,18 @@ void enter_wizard_mode(const bool ask_for_pass) {
     wizard1 = false;
     wizard2 = false;
     reset_flag = true;
-    no_controly();
+    override_signals();
   } else {
     if (became_wizard || !ask_for_pass) {
       /*if (check_pswd("doublespeak",true)) {*/
       if (check_pswd(LOW_PASSWORD, true)) {
         msg_print("Wizard mode on.");
-        controly();
+        stop_override_signals();
       }
     } else {
       if (check_pswd("", false)) {
         msg_print("Wizard mode on.");
-        controly();
+        stop_override_signals();
       }
     }
   }

@@ -1,6 +1,6 @@
 use crate::model::Currency;
 
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub struct Wallet {
     pub total: i64,
     pub iron: i64,
@@ -12,6 +12,18 @@ pub struct Wallet {
 }
 
 impl Wallet {
+    pub fn new() -> Self {
+        Wallet {
+            total: 0,
+            iron: 0,
+            copper: 0,
+            silver: 0,
+            gold: 0,
+            platinum: 0,
+            mithril: 0,
+        }
+    }
+
     pub fn get_pos(&self, pos: Currency) -> i64 {
         match pos {
             Currency::Iron => self.iron,
@@ -21,5 +33,11 @@ impl Wallet {
             Currency::Platinum => self.platinum,
             Currency::Mithril => self.mithril,
         }
+    }
+}
+
+impl Default for Wallet {
+    fn default() -> Self {
+        Self::new()
     }
 }

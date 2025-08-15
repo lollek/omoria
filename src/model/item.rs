@@ -1,8 +1,104 @@
 use crate::thirdparty::serde::BigArray;
 
 use crate::conversion;
+use crate::misc::rs2item_name;
 use crate::model::ItemType;
 use crate::model::{Damage, Name};
+
+pub enum ChestFlags1 {
+    Locked = 0x00000001,
+    // 1d4 damage, may lose strength
+    PoisonNeedle1 = 0x00000010,
+    // 1d6 damage, poisons player
+    PoisonNeedle2 = 0x00000020,
+    GasTrap = 0x00000040,
+    // 5d8 damage, destroys chest
+    ExplosiveTrap = 0x00000080,
+    SummoningRunes = 0x00000100,
+}
+
+pub enum MiscUsableFlag1 {
+    Turning = 0x00000001,
+    DemonDispelling = 0x00000002,
+    SummonUndead = 0x00000004,
+    SummonDemon = 0x00000008,
+    ContainingDjinni = 0x00000010,
+    ContainingDemons = 0x00000020,
+    MajorSummonUndead = 0x00000100,
+    MajorSummonDemon = 0x00000200,
+    LifeGiving = 0x00000400,
+}
+
+pub enum WornFlag1 {
+    GivesStrength = 0x00000001,
+    GivesDexterity = 0x00000002,
+    GivesConstitution = 0x00000004,
+    GivesIntelligence = 0x00000008,
+    GivesWisdom = 0x00000010,
+    GivesCharisma = 0x00000020,
+    // + to search, - to perception (amount in p1)
+    Searching = 0x00000040,
+    SlowDigestion = 0x00000080,
+    Stealth = 0x00000100,
+    AggravateMonsters = 0x00000200,
+    RandomTeleportation = 0x00000400,
+    Regeneration = 0x00000800,
+    // Amount in p1
+    IncreasedSpeed = 0x00001000,
+    // Extra damage to dragons
+    SlayDragon = 0x00002000,
+    // Extra damage to monsters
+    SlayMonster = 0x00004000,
+    // Extra damage to evil creatures
+    SlayEvil = 0x00008000,
+    // Extra damage to undead
+    SlayUndead = 0x00010000,
+    // Extra damage to cold based creatures
+    SlayCold = 0x00020000,
+    // Extra damage to fire based creatures
+    SlayFire = 0x00040000,
+    ResistFire = 0x00080000,
+    ResistAcid = 0x00100000,
+    ResistCold = 0x00200000,
+    // See p1 for specific stat
+    ResistStatDrain = 0x00400000,
+    ResistParalysis = 0x00800000,
+    SeeInvisible = 0x01000000,
+    ResistLightning = 0x02000000,
+    FeatherFall = 0x04000000,
+    //Blindness = 0x08000000,
+    //Timidness = 0x10000000,
+    // See p1 for amount
+    ImprovedTunneling = 0x20000000,
+    //Infravision = 0x40000000,
+    Cursed = 0x80000000,
+}
+
+pub enum WornFlag2 {
+    SlayDemon = 0x00000001,
+    // Lessed Slay Undead?
+    SoulSword = 0x00000002,
+    SlayRegenerators = 0x00000004,
+    // See p1 for amount
+    //ImprovedSwimming = 0x00000008,
+    MagicProof = 0x00000010,
+    //ImprovedDisarming = 0x00000020,
+    //ImprovedCriticals = 0x00000040,
+    BadReputation = 0x00200000,
+    //Hunger = 0x00400000,
+    // Removes flags for other worn gems (???)
+    //NegativeGemFlags = 0x00800000,
+    ImprovedCarrying = 0x01000000,
+    // Related to quivers and such (???)
+    Holding = 0x04000000,
+    // Bag of devouring
+    Swallowing = 0x08000000,
+    // Destroys bags
+    Sharp = 0x10000000,
+    Blackmarket = 0x20000000,
+    //Insured = 0x40000000,
+    //KnownCursed = 0x80000000,
+}
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
@@ -70,11 +166,84 @@ impl Item {
             .unwrap_or_else(|| panic!("expected item type from tval {}", self.tval))
     }
 
+    pub fn apply_chestflag1(&mut self, flag: ChestFlags1) {
+        self.flags |= flag as u64;
+    }
+
+    pub fn apply_misc_usable_flag(&mut self, flag: MiscUsableFlag1) {
+        self.flags |= flag as u64;
+    }
+
+    pub fn has_misc_usable_flag(&self, flag: MiscUsableFlag1) -> bool {
+        self.flags & flag as u64 != 0
+    }
+
+    pub fn apply_wornflag1(&mut self, flag: WornFlag1) {
+        self.flags |= flag as u64;
+    }
+
+    pub fn has_wornflag1(&self, flag: WornFlag1) -> bool {
+        self.flags & flag as u64 != 0
+    }
+
+    pub fn apply_wornflag2(&mut self, flag: WornFlag2) {
+        self.flags2 |= flag as u64;
+    }
+
+    pub fn has_wornflag2(&self, flag: WornFlag2) -> bool {
+        self.flags2 & flag as u64 != 0
+    }
+
+    pub fn is_cursed(&self) -> bool {
+        self.flags & (WornFlag1::Cursed as u64) != 0
+    }
+
+    pub fn set_cursed(&mut self, yn: bool) {
+       if !yn {
+           panic!("Not implemented yet");
+       }
+        self.apply_wornflag1(WornFlag1::Cursed);
+    }
+
     pub fn is_identified(&self) -> bool {
         self.identified != 0
     }
 
     pub fn set_identified(&mut self, yn: bool) {
         self.identified = if yn { 255 } else { 0 };
+    }
+}
+
+impl Default for Item {
+    fn default() -> Self {
+        Item {
+            name: rs2item_name("Alien thing"),
+            tval: 0,
+            flags2: 0,
+            flags: 0,
+            p1: 0,
+            cost: 0,
+            subval: 0,
+            weight: 0,
+            number: 1,
+            tohit: 0,
+            todam: 0,
+            ac: 0,
+            toac: 0,
+            damage: Damage::default(),
+            level: 0,
+            identified: 0,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_serialize() {
+        let item = Item::default();
+        serde_json::to_string(&item).expect("Failed to serialize item");
     }
 }

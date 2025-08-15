@@ -6,10 +6,8 @@
 
 #include "constants.h"
 #include "debug.h"
-#include "loot/treasures.h"
 #include "misc.h"
 #include "pascal.h"
-#include "random.h"
 #include "types.h"
 #include "variables.h"
 

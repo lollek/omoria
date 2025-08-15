@@ -3,6 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ChimeSubType, ItemSubType},
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChimeTemplate {
@@ -104,7 +105,24 @@ impl ItemTemplate for ChimeTemplate {
     }
 
     fn p1(&self) -> i64 {
-        0
+        match self {
+            ChimeTemplate::ChimeOfLight => randint(20) + 12,
+            ChimeTemplate::ChimeOfDetectDoorsStairs => randint(8) + 6,
+            ChimeTemplate::ChimeOfDetectTraps => randint(5) + 6,
+            ChimeTemplate::ChimeOfTeleportation => randint(4) + 5,
+            ChimeTemplate::ChimeOfThunderblast => randint(5) + 3,
+            ChimeTemplate::ChimeOfSummonMonster => randint(3) + 1,
+            ChimeTemplate::ChimeOfDisarming => randint(10),
+            ChimeTemplate::ChimeOfAggravation => randint(10) + 12,
+            ChimeTemplate::ChimeOfSlowMonster => randint(5) + 6,
+            ChimeTemplate::ChimeOfSootheMonster => randint(5) + 6,
+            ChimeTemplate::ChimeOfCureLightWound => randint(5) + 6,
+            ChimeTemplate::ChimeOfChanging => randint(5) + 6,
+            ChimeTemplate::ChimeOfRemoveCurse => randint(3) + 4,
+            ChimeTemplate::ChimeOfCuring => randint(3) + 4,
+            ChimeTemplate::ChimeOfDispelEvil => randint(3) + 4,
+            ChimeTemplate::ChimeOfDarkness => randint(10) + 6,
+        }
     }
 
     fn cost(&self) -> i64 {

@@ -4,11 +4,11 @@ use std::ffi::CString;
 use std::sync::RwLock;
 
 use crate::constants;
-use crate::conversion;
 use crate::model::{
     Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time,
     Wallet,
 };
+use crate::conversion;
 
 use crate::data;
 use crate::misc;
@@ -484,11 +484,11 @@ pub fn current_weight() -> u16 {
     unsafe { player_wt }
 }
 
-pub fn set_extra_bulk_carry(new_value: u16) {
-    PLAYER.try_write().unwrap().extra_bulk_carry = new_value;
+pub fn modify_extra_bulk_carry(modifier: i16) {
+    PLAYER.try_write().unwrap().extra_bulk_carry += modifier;
 }
 
-pub fn extra_bulk_carry() -> u16 {
+pub fn extra_bulk_carry() -> i16 {
     PLAYER.try_read().unwrap().extra_bulk_carry
 }
 
@@ -497,12 +497,14 @@ pub fn current_bulk() -> u16 {
 }
 
 pub fn max_bulk() -> u16 {
+    let min_base_bulk = 3000;
     let player_weight_modifier = 13;
-    min(
-        (30 + (player::curr_stats().strength * 10)) as u16 * player_weight_modifier
-            + current_weight(),
-        3000,
-    ) + extra_bulk_carry()
+    let player_carry_base_amount = (30 + (player::curr_stats().strength * 10)) as u16;
+    let base_bulk = min(
+        (player_carry_base_amount * player_weight_modifier) + current_weight(),
+        min_base_bulk);
+    let max_bulk: i32 = base_bulk as i32 + extra_bulk_carry() as i32;
+    max_bulk.clamp(0, u16::MAX.into()) as u16
 }
 
 pub fn set_birthdate(new_value: GameTime) {

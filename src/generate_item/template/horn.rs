@@ -3,6 +3,7 @@ use crate::model::{
     self,
     item_subtype::{HornSubType, ItemSubType},
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -90,7 +91,21 @@ impl ItemTemplate for HornTemplate {
     }
 
     fn p1(&self) -> i64 {
-        0
+        match self {
+            HornTemplate::HornOfBubbles => randint(10) + 6,
+            HornTemplate::HornOfCalling => randint(6) + 3,
+            HornTemplate::HornOfSoftSounds => randint(5) + 6,
+            HornTemplate::HornOfBlasting => randint(3) + 1,
+            HornTemplate::HornOfCold => randint(3) + 4,
+            HornTemplate::HornOfHeat => randint(3) + 4,
+            HornTemplate::HornOfGas => randint(3) + 4,
+            HornTemplate::HornOfRecall => randint(10) + 3,
+            HornTemplate::HornOfChaos => randint(5) + 1,
+            HornTemplate::HornOfGlue => randint(3) + 1,
+            HornTemplate::HornOfValhalla => randint(3) + 4,
+            HornTemplate::HornOfTritons => randint(3) + 4,
+            HornTemplate::HornOfFog => randint(8) + 1,
+        }
     }
 
     fn cost(&self) -> i64 {

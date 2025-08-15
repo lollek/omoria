@@ -111,6 +111,16 @@ pub fn rs2item_name(name_string: &str) -> Name {
     name
 }
 
+pub fn item_name2rs(name: &Name) -> String {
+    String::from_utf8(name
+        .iter().
+        take_while(|char| char > &&0i8)
+        .cloned()
+        .map(|char| char as u8)
+        .collect::<Vec<u8>>())
+        .expect("Failed to create rust string from item name")
+}
+
 #[no_mangle]
 pub extern "C" fn reset_total_cash() {
     let mut player_money = player::wallet();

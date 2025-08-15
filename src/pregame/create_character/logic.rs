@@ -15,6 +15,7 @@ use crate::{
     model::{GameTime, Race, Stat, StatBlock},
     player, random,
 };
+use crate::generate_item::ItemQuality;
 
 extern "C" {
     fn add_inven_item(item: Item) -> *mut InventoryItem;
@@ -228,15 +229,15 @@ pub(crate) fn generate_and_apply_money() {
 pub(crate) fn generate_and_apply_equipment() {
     // General starting items
 
-    let mut ration_of_food = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
+    let mut ration_of_food = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0, ItemQuality::Normal);
     ration_of_food.number = 5;
 
     for item in [
         ration_of_food,
-        generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0),
-        generate_item::generate(Box::new(CloakTemplate::LightCloak), 0),
-        generate_item::generate_boots(10),
-        generate_item::generate_belt(10),
+        generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0, ItemQuality::Normal),
+        generate_item::generate(Box::new(CloakTemplate::LightCloak), 0, ItemQuality::Normal),
+        generate_item::generate_boots(10, ItemQuality::Normal),
+        generate_item::generate_belt(10, ItemQuality::Normal),
     ] {
         unsafe {
             add_inven_item(item);

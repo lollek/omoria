@@ -1032,24 +1032,20 @@ bool restore_player_drained_levels(void) {
 bool detect_creatures(const enum spell_effect_t typ) {
   /*{ Display evil creatures on current panel               -RAK-   }*/
 
-  bool found;
-
-  bool flag = false;
-  long i1 = muptr;
-
-  do {
-    /* with m_list[i1]. do; */
-    if (panel_contains(m_list[i1].fy, m_list[i1].fx)) {
+  bool detected_something = false;
+  for (long monster_i = muptr; monster_i != 0; monster_i = m_list[monster_i].nptr) {
+    if (panel_contains(m_list[monster_i].fy, m_list[monster_i].fx)) {
+      bool found;
 
       switch (typ) {
       case SE_EVIL:
-        found = (0x0004 & monster_templates[m_list[i1].mptr].cdefense) != 0;
+        found = (0x0004 & monster_templates[m_list[monster_i].mptr].cdefense) != 0;
         break;
       case SE_MONSTER:
-        found = (0x10000 & monster_templates[m_list[i1].mptr].cmove) == 0;
+        found = (0x10000 & monster_templates[m_list[monster_i].mptr].cmove) == 0;
         break;
       case SE_INVISIBLE:
-        found = (0x10000 & monster_templates[m_list[i1].mptr].cmove) != 0;
+        found = (0x10000 & monster_templates[m_list[monster_i].mptr].cmove) != 0;
         break;
       default:
         MSG(("Unknown typ in detect_creatures"));
@@ -1058,18 +1054,15 @@ bool detect_creatures(const enum spell_effect_t typ) {
       }
 
       if (found) {
-        m_list[i1].ml = true;
-        print(monster_templates[m_list[i1].mptr].symbol, m_list[i1].fy,
-              m_list[i1].fx);
-        flag = true;
+        m_list[monster_i].ml = true;
+        print(monster_templates[m_list[monster_i].mptr].symbol, m_list[monster_i].fy,
+              m_list[monster_i].fx);
+        detected_something = true;
       }
     }
+  }
 
-    i1 = m_list[i1].nptr;
-
-  } while (i1 != 0);
-
-  if (flag) {
+  if (detected_something) {
     switch (typ) {
     case SE_EVIL:
       msg_print("You sense the presence of evil!");
@@ -1085,9 +1078,11 @@ bool detect_creatures(const enum spell_effect_t typ) {
     }
     msg_print(" ");
     msg_flag = false;
+  } else {
+      msg_print("You don't sense anything");
   }
 
-  return flag;
+  return detected_something;
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

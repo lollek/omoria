@@ -1,9 +1,7 @@
-use crate::generate_item::item_template::WornFlag2;
+use crate::generate_item::item_template::create_melee_weapon;
+use crate::generate_item::ItemQuality;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{DaggerSubType, ItemSubType},
-};
+use crate::model::{self, item_subtype::{DaggerSubType, ItemSubType}, Item, WornFlag2};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum DaggerTemplate {
@@ -43,6 +41,10 @@ impl DaggerTemplate {
 }
 
 impl ItemTemplate for DaggerTemplate {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
+        create_melee_weapon(self, item_quality)
+    }
+
     fn name(&self) -> &str {
         match self {
             DaggerTemplate::MainGauche => "Main Gauche (%P0)^ (%P2,%P3)",

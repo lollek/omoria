@@ -310,17 +310,8 @@ static bool cast_spell(char prompt[82], const treas_rec *item_ptr, long *sn,
 }
 
 static void _cast(const enum magic_t magic_type) {
-  treas_rec *i1;
-  treas_rec *item_ptr = &inven_temp;
-  long choice;
-  long chance;
-  long i2;
-  char trash_char;
-  bool redraw;
   obj_set magic_books;
   char const *magic_book_name = "???";
-  char msg_buf[80];
-
   init_magic_books(magic_type, &magic_books, &magic_book_name);
 
   reset_flag = true;
@@ -342,6 +333,16 @@ static void _cast(const enum magic_t magic_type) {
     return;
   if (!hallucinate_check(magic_type))
     return;
+
+  treas_rec *i1;
+  treas_rec *item_ptr = &inven_temp;
+  long choice;
+  long chance;
+  long i2;
+  char trash_char;
+  bool redraw;
+  char msg_buf[80];
+
 
   /* Check book users for books */
   if (magic_books[0] != 0) {

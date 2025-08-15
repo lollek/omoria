@@ -1,8 +1,9 @@
+use crate::generate_item::item_template::{default_create, ItemQuality};
+use crate::misc::rs2item_name;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType},
-};
+use crate::model::{self, item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType}, Item};
+use crate::model::MiscUsableFlag1::{ContainingDemons, ContainingDjinni, DemonDispelling, LifeGiving, MajorSummonDemon, MajorSummonUndead, SummonDemon, SummonUndead, Turning};
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {
@@ -33,9 +34,106 @@ impl MiscUsableTemplate {
     pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         MiscUsableTemplate::vec().into_iter()
     }
+
+    pub fn apply_cross_of_turning(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of turning", self.name()));
+        item.apply_misc_usable_flag(Turning);
+        item.p1 = randint(item.p1 * 2) + 2;
+        item.cost = item.p1 * 20_000;
+    }
+
+    pub fn apply_cross_of_demon_dispelling(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of demon dispelling", self.name()));
+        item.apply_misc_usable_flag(DemonDispelling);
+        item.p1 = randint(9);
+        item.cost = item.p1 * 50_000;
+    }
+
+    pub fn apply_cross_of_summon_undead(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of summon undead", self.name()));
+        item.apply_misc_usable_flag(SummonUndead);
+        item.cost = 0;
+        item.p1 = 2;
+    }
+
+    pub fn apply_cross_of_summon_demon(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of summon demon", self.name()));
+        item.apply_misc_usable_flag(SummonDemon);
+        item.cost = 0;
+        item.p1 = 2;
+    }
+
+    pub fn apply_bottle_of_djinni(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} containing a djinni", self.name()));
+        item.apply_misc_usable_flag(ContainingDjinni);
+        item.cost = 200_000;
+        item.p1 = 1;
+    }
+
+    pub fn apply_bottle_of_demons(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} containing some demons", self.name()));
+        item.apply_misc_usable_flag(ContainingDemons);
+        item.cost = 0;
+        item.p1 = 1;
+    }
+
+    pub fn apply_statue_of_summon_undead(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} major of undead summoning", self.name()));
+        item.apply_misc_usable_flag(MajorSummonUndead);
+        item.cost = 0;
+        item.p1 = randint(4) + 2;
+    }
+
+    pub fn apply_statue_of_summon_demon(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} major of demon summoning", self.name()));
+        item.apply_misc_usable_flag(MajorSummonDemon);
+        item.cost = 0;
+        item.p1 = randint(3) + 1;
+    }
+
+    pub fn apply_statue_of_give_life(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} life giving", self.name()));
+        item.apply_misc_usable_flag(LifeGiving);
+        item.cost = 900000;
+        item.p1 = randint(5) + 3;
+    }
 }
 
 impl ItemTemplate for MiscUsableTemplate {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
+        let mut item = default_create(self, item_quality);
+        if item_quality == ItemQuality::Special {
+            match self {
+                MiscUsableTemplate::Statue => {
+                    match randint(3) {
+                        1 => self.apply_statue_of_summon_undead(&mut item),
+                        2 => self.apply_statue_of_summon_demon(&mut item),
+                        _ => self.apply_statue_of_give_life(&mut item),
+                    }
+                },
+                MiscUsableTemplate::SilverCross |
+                MiscUsableTemplate::GoldCross |
+                MiscUsableTemplate::MithrilCross |
+                MiscUsableTemplate::Cross => {
+                    match randint(4) {
+                        1 => self.apply_cross_of_turning(&mut item),
+                        2 => self.apply_cross_of_demon_dispelling(&mut item),
+                        3 => self.apply_cross_of_summon_undead(&mut item),
+                        _ => self.apply_cross_of_summon_demon(&mut item),
+                    }
+                },
+                MiscUsableTemplate::CorkedBottle => {
+                    match randint(3) {
+                        1 | 2 => self.apply_bottle_of_demons(&mut item),
+                        _ => self.apply_bottle_of_djinni(&mut item),
+                    }
+                }
+                _ => {}
+            }
+        }
+        item
+    }
+
     fn name(&self) -> &str {
         match self {
             MiscUsableTemplate::FlaskOfOil => "& Flask~ of Oil",

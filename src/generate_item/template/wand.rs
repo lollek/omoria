@@ -3,6 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, WandSubType},
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum WandTemplate {
@@ -140,7 +141,33 @@ impl ItemTemplate for WandTemplate {
     }
 
     fn p1(&self) -> i64 {
-        0
+        match self {
+            WandTemplate::WandOfProbing => randint(20) + 10,
+            WandTemplate::WandOfLight => randint(10) + 6,
+            WandTemplate::WandOfLightningBolts => randint(8) + 6,
+            WandTemplate::WandOfFrostBolts => randint(5) + 6,
+            WandTemplate::WandOfFireBolts => randint(8) + 6,
+            WandTemplate::WandOfStoneToMud => randint(4) + 3,
+            WandTemplate::WandOfPolymorph => randint(8) + 6,
+            WandTemplate::WandOfHealMonster => randint(20) + 12,
+            WandTemplate::WandOfHasteMonster => randint(20) + 12,
+            WandTemplate::WandOfSlowMonster => randint(10) + 6,
+            WandTemplate::WandOfConfuseMonster => randint(12) + 6,
+            WandTemplate::WandOfSleepMonster => randint(10) + 12,
+            WandTemplate::WandOfDrainLife => randint(3) + 3,
+            WandTemplate::WandOfTrapDoorDestruction => randint(8) + 6,
+            WandTemplate::WandOfMagicMissile => randint(10) + 6,
+            WandTemplate::WandOfWallBuilding => randint(5) + 3,
+            WandTemplate::WandOfCloneMonster => randint(5) + 3,
+            WandTemplate::WandOfTeleportAway => randint(5) + 6,
+            WandTemplate::WandOfDisarming => randint(5) + 4,
+            WandTemplate::WandOfLightningBalls => randint(8) + 4,
+            WandTemplate::WandOfColdBalls => randint(6) + 2,
+            WandTemplate::WandOfFireBalls => randint(4) + 2,
+            WandTemplate::WandOfStinkingCloud => randint(8) + 6,
+            WandTemplate::WandOfAcidBalls => randint(5) + 2,
+            WandTemplate::WandOfWonder => randint(12) + 12,
+        }
     }
 
     fn cost(&self) -> i64 {

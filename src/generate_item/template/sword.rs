@@ -1,9 +1,7 @@
-use crate::generate_item::item_template::WornFlag2;
+use crate::generate_item::item_template::create_melee_weapon;
+use crate::generate_item::ItemQuality;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{ItemSubType, SwordSubType},
-};
+use crate::model::{self, item_subtype::{ItemSubType, SwordSubType}, Item, WornFlag2};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SwordTemplate {
@@ -49,6 +47,10 @@ impl SwordTemplate {
 }
 
 impl ItemTemplate for SwordTemplate {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
+        create_melee_weapon(self, item_quality)
+    }
+
     fn name(&self) -> &str {
         match self {
             SwordTemplate::Backsword => "Backsword (%P0)^ (%P2,%P3)",

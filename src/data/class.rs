@@ -1,4 +1,5 @@
 use crate::generate_item;
+use crate::generate_item::ItemQuality;
 use crate::generate_item::template::*;
 use crate::model;
 
@@ -225,56 +226,56 @@ pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
     let item_level = 10;
     match class {
         model::Class::Fighter => vec![
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate_melee_weapon(item_level)
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal)
         ],
         model::Class::Wizard => vec![
-            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level),
-            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level),
-            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level),
+            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level, ItemQuality::Normal),
         ],
         model::Class::Cleric => vec![
-            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level),
-            generate_item::generate(Box::new(ArmorTemplate::WovenCordArmor), item_level),
-            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level),
+            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(ArmorTemplate::WovenCordArmor), item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level, ItemQuality::Normal),
         ],
         model::Class::Rogue => vec![
-            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level),
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level),
+            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level, ItemQuality::Normal),
         ],
         model::Class::Ranger => vec![
-            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level),
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate_melee_weapon(item_level),
+            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level, ItemQuality::Normal),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
         model::Class::Paladin => vec![
-            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level),
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate_melee_weapon(item_level),
+            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
         model::Class::Druid => vec![
-            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level),
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level),
+            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level, ItemQuality::Normal),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level, ItemQuality::Normal),
         ],
         model::Class::Bard => vec![
-            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level),
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate_boots(item_level),
-            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level),
+            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate_boots(item_level, ItemQuality::Normal),
+            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level, ItemQuality::Normal),
         ],
         model::Class::Adventurer => vec![
-            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level),
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate_melee_weapon(item_level),
+            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level, ItemQuality::Normal),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
         model::Class::Monk => vec![
-            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level),
+            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level, ItemQuality::Normal),
         ],
         model::Class::Barbarian => vec![
-            generate_item::generate_main_armor(item_level),
-            generate_item::generate_melee_weapon(item_level),
+            generate_item::generate_main_armor(item_level, ItemQuality::Normal),
+            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
     }
 }

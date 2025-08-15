@@ -1,9 +1,12 @@
 use super::super::item_template::ItemTemplate;
-use crate::generate_item::item_template::WornFlag1;
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
 use crate::model::{
     self,
     item_subtype::{AmuletSubType, ItemSubType},
+    Item, WornFlag1,
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {
@@ -47,6 +50,33 @@ impl AmuletTemplate {
 }
 
 impl ItemTemplate for AmuletTemplate {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
+        let mut item = default_create(self, item_quality);
+        match self {
+            AmuletTemplate::AmuletOfWisdom | AmuletTemplate::AmuletOfCharisma => {
+                if item_quality == ItemQuality::Cursed {
+                    item.set_cursed(true);
+                    item.p1 = randint(3);
+                    item.cost *= -1;
+                } else {
+                    item.p1 = randint(2);
+                    item.cost += item.p1 * 10_000;
+                }
+            }
+            AmuletTemplate::AmuletOfSearching => {
+                if item_quality == ItemQuality::Cursed {
+                    item.set_cursed(true);
+                    item.p1 *= -1;
+                    item.cost *= -1;
+                } else {
+                    item.cost += item.p1 * 10_000;
+                }
+            }
+            _ => {}
+        }
+        item
+    }
+
     fn name(&self) -> &str {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => "& Amulet| of Adornment^",
@@ -78,17 +108,21 @@ impl ItemTemplate for AmuletTemplate {
             AmuletTemplate::AmuletOfTeleportation => WornFlag1::RandomTeleportation as u64,
             AmuletTemplate::AmuletOfSlowDigestion => WornFlag1::SlowDigestion as u64,
             AmuletTemplate::AmuletOfResistAcid => WornFlag1::ResistAcid as u64,
-            AmuletTemplate::AmuletOfTheMagi => WornFlag1::SeeInvisible as u64 |
-                WornFlag1::ResistParalysis as u64 |
-                WornFlag1::Searching as u64,
-            AmuletTemplate::AmuletOfDoom => WornFlag1::Cursed as u64 |
-                WornFlag1::Searching as u64 |
-                WornFlag1::GivesCharisma as u64 |
-                WornFlag1::GivesWisdom as u64 |
-                WornFlag1::GivesIntelligence as u64 |
-                WornFlag1::GivesConstitution as u64 |
-                WornFlag1::GivesDexterity as u64 |
-                WornFlag1::GivesStrength as u64,
+            AmuletTemplate::AmuletOfTheMagi => {
+                WornFlag1::SeeInvisible as u64
+                    | WornFlag1::ResistParalysis as u64
+                    | WornFlag1::Searching as u64
+            }
+            AmuletTemplate::AmuletOfDoom => {
+                WornFlag1::Cursed as u64
+                    | WornFlag1::Searching as u64
+                    | WornFlag1::GivesCharisma as u64
+                    | WornFlag1::GivesWisdom as u64
+                    | WornFlag1::GivesIntelligence as u64
+                    | WornFlag1::GivesConstitution as u64
+                    | WornFlag1::GivesDexterity as u64
+                    | WornFlag1::GivesStrength as u64
+            }
             AmuletTemplate::SilverNecklace => 0,
             AmuletTemplate::GoldNecklace => 0,
             AmuletTemplate::MithrilNecklace => 0,
@@ -98,7 +132,6 @@ impl ItemTemplate for AmuletTemplate {
     fn flags2(&self) -> u64 {
         0
     }
-
 
     fn p1(&self) -> i64 {
         match self {

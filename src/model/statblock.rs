@@ -1,6 +1,6 @@
 use crate::model::Stat;
 
-#[derive(Serialize, Deserialize, Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct StatBlock {
     pub strength: i16,
     pub intelligence: i16,
@@ -42,5 +42,11 @@ impl StatBlock {
             Stat::Constitution => self.constitution = new_value,
             Stat::Charisma => self.charisma = new_value,
         }
+    }
+}
+
+impl Default for StatBlock {
+    fn default() -> Self {
+        Self::new(0)
     }
 }

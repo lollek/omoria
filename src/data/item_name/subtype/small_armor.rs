@@ -132,7 +132,7 @@ mod tests {
     use crate::generate_item::template::{
         BeltTemplate, BootsTemplate, BracersTemplate, CloakTemplate, GlovesTemplate, HelmTemplate,
     };
-    use crate::generate_item::ItemTemplate;
+    use crate::generate_item::{ItemQuality, ItemTemplate};
     use crate::{generate_item, identification};
     use serial_test::serial;
 
@@ -301,7 +301,7 @@ mod tests {
         ];
         for (template, expected_name) in tests {
             let subtype = template.subtype();
-            let mut item = generate_item::generate(template, 0);
+            let mut item = generate_item::generate(template, 0, ItemQuality::Normal);
             item.ac = 1;
             item.toac = 1;
             identification::set_identified(subtype, false);
@@ -360,7 +360,7 @@ mod tests {
         ];
         for (template, bonus, expected_name) in tests {
             let subtype = template.subtype();
-            let mut item = generate_item::generate(template, 0);
+            let mut item = generate_item::generate(template, 0, ItemQuality::Normal);
             item.ac = bonus;
             item.toac = bonus;
             identification::set_identified(subtype, true);
@@ -436,7 +436,7 @@ mod tests {
             ),
         ];
         for (template, ac_bonus, p1, expected_name) in tests {
-            let mut item = generate_item::generate(template, 0);
+            let mut item = generate_item::generate(template, 0, ItemQuality::Normal);
             item.ac = ac_bonus;
             item.toac = ac_bonus;
             item.p1 = p1;

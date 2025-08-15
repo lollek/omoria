@@ -1,8 +1,7 @@
+use crate::generate_item::item_template::create_ranged_weapon;
+use crate::generate_item::ItemQuality;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{ItemSubType, RangedWeaponSubType},
-};
+use crate::model::{self, item_subtype::{ItemSubType, RangedWeaponSubType}, Item};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CrossbowTemplate {
@@ -28,6 +27,10 @@ impl CrossbowTemplate {
 }
 
 impl ItemTemplate for CrossbowTemplate {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
+        create_ranged_weapon(self, item_quality)
+    }
+
     fn name(&self) -> &str {
         match self {
             CrossbowTemplate::SiegeCrossbow => "Siege Crossbow (%P0)^ (%P2,%P3)",
