@@ -1,7 +1,9 @@
 use std::borrow::Cow;
+use crate::conversion::item_subtype;
 use crate::data;
 use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of};
 use crate::model::{Item, ItemType};
+use crate::model::item_subtype::{ItemSubType, LodgingAtInnSubType};
 
 pub mod ammo;
 pub mod amulet;
@@ -26,57 +28,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
 
     match item.item_type() {
-        ItemType::Food => {
-            if 255 < item.subval && item.subval < 300 {
-                // Mushrooms
-                let attribute = match item.subval {
-                    256 => "",
-                    257 => " of poison",
-                    258 => " of blindness",
-                    259 => " of paranoia",
-                    260 => " of confusion",
-                    261 => " of hallucination",
-                    262 => " of cure poison",
-                    263 => " of cure blindness",
-                    264 => " of cure paranoia",
-                    265 => " of cure confusion",
-                    266 => " of weakness",
-                    267 => " of unhealth",
-                    268 => " of restore constitution",
-                    269 => " of first aid",
-                    270 => " of minor cures",
-                    271 => " of light cures",
-                    272 => " of restoring",
-                    273 => " of poison",
-                    274 => " of hallucination",
-                    275 => " of cure poison",
-                    276 => " of unhealth",
-                    277 => " of cure serious wounds",
-                    _ => "of ???",
-                };
-                Cow::from(format!(
-                    "%M mushroom{}{}",
-                    plural_s(),
-                    if item.is_identified() { attribute } else { "" }
-                ))
-            } else {
-                Cow::from(match item.subval {
-                    307 => format!("ration{} of food", plural_s()),
-                    309 => format!("hard biscuit{}", plural_s()),
-                    310 => format!("strip{} of beef jerky", plural_s()),
-                    311 => format!("pint{} of fine ale", plural_s()),
-                    312 => format!("pint{} of fine wine", plural_s()),
-                    313 => format!("piece{} of elvish waybread", plural_s()),
-                    314 => format!("stew{}", plural_s()),
-                    315 => format!("green jelly{}", plural_s()),
-                    316 => format!("handful{} of berries (poisonous)", plural_s()),
-                    317 => format!("handful{} of berries (smurfberries)", plural_s()),
-                    319 => format!("eyeball{} of Ned", plural_s()),
-                    252 => format!("pint{} of fine grade mush", plural_s()),
-                    _ => "alien food".to_string(),
-                })
-            }
-        }
         ItemType::GemHelm => {
             let material = match item.subval {
                 9 => "Iron helm",
@@ -355,6 +306,21 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
         }
         _ => Cow::from("Something alien"),
     }
+}
+
+pub fn lodging_at_inn(item: &Item) -> String {
+    let ItemSubType::LodgingAtInn(subtype) =
+        item_subtype::from_i64(ItemType::LodgingAtInn, item.subval)
+            .unwrap_or_else(|| panic!("Invalid item subtype for LodgingAtInn: {:?}", item)) else {
+        panic!("Invalid item subtype for LodgingAtInn: {:?}", item)
+    };
+
+    match subtype {
+        LodgingAtInnSubType::LodgingForOneDay => "one day of lodging",
+        LodgingAtInnSubType::LodgingForThreeDays => "three days of lodging",
+        LodgingAtInnSubType::LodgingForOneWeek => "one week of lodging",
+        LodgingAtInnSubType::RoomAndBoardForOneDay => "room and board for one day",
+    }.to_string()
 }
 
 

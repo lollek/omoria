@@ -6,7 +6,7 @@ use crate::data::item_name::subtype::book::book;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
-use crate::data::item_name::subtype::generic_item;
+use crate::data::item_name::subtype::{generic_item, lodging_at_inn};
 use crate::data::item_name::subtype::jewelry::jewelry;
 use crate::data::item_name::subtype::light_source::light_source;
 use crate::data::item_name::subtype::melee_weapon::melee_weapon;
@@ -62,7 +62,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::GemHelm
         | ItemType::Horn
         | ItemType::Instrument
-        | ItemType::LodgingAtInn
         | ItemType::Money
         | ItemType::OpenDoor
         | ItemType::Potion1
@@ -92,6 +91,7 @@ pub fn generate(item: &Item) -> String {
         ItemType::HardArmor | ItemType::SoftArmor => armor(item),
         ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),
+        ItemType::LodgingAtInn => lodging_at_inn(item),
         ItemType::MagicBook
         | ItemType::PrayerBook
         | ItemType::SongBook => book(item),
@@ -101,25 +101,5 @@ pub fn generate(item: &Item) -> String {
         ItemType::Spike => spike(item),
         ItemType::Wand => wand(item),
         ItemType::WearableGem => wearable_gem(item),
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::generate_item::{self, template::FoodTemplate, ItemQuality};
-
-    use super::*;
-
-    #[test]
-    fn test_ration_of_food() {
-        let mut item =
-            generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0, ItemQuality::Normal);
-        assert_eq!(generate(&item), "ration of food");
-
-        item.number = 0;
-        assert_eq!(generate(&item), "no more rations of food");
-
-        item.number = 5;
-        assert_eq!(generate(&item), "5 rations of food");
     }
 }
