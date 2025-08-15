@@ -78,7 +78,7 @@ pub fn generate_item_for_armorsmith() -> model::Item {
     templates.extend(ShieldTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -98,7 +98,7 @@ pub fn generate_item_for_weaponsmith() -> model::Item {
     templates.extend(SwordTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -110,7 +110,7 @@ pub fn generate_item_for_alchemist_store() -> model::Item {
     templates.extend(PotionTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -124,7 +124,7 @@ pub fn generate_item_for_magic_store() -> model::Item {
     templates.extend(ScrollTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -148,7 +148,7 @@ pub fn generate_item_for_library() -> model::Item {
     templates.extend(SongBookTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -161,7 +161,7 @@ pub fn generate_item_for_temple() -> model::Item {
     templates.extend(PrayerBookTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -176,7 +176,7 @@ pub fn generate_item_for_music_store() -> model::Item {
     templates.extend(HornTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -191,7 +191,7 @@ pub fn generate_item_for_gem_store() -> model::Item {
     templates.extend(ValuableTemplate::vec());
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
-    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL, false);
+    let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
     generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
 }
 
@@ -330,7 +330,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
         _ => panic!("Rand out of range!"),
     };
 
-    let item_quality = calculate_item_quality(item_level, true);
+    let item_quality = calculate_item_quality(item_level);
     generate_item_for_item_level_of_category(item_level, item_type, item_quality)
 }
 
@@ -343,12 +343,7 @@ pub fn generate(template: Box<dyn ItemTemplate>, item_level: u8, item_quality: I
     item
 }
 
-fn calculate_item_quality(item_level: u8, can_be_cursed: bool) -> ItemQuality {
-    // 5% odds of being cursed
-    if can_be_cursed && 5 > (rand::random::<u8>() % 100) {
-        return ItemQuality::Cursed;
-    }
-
+fn calculate_item_quality(item_level: u8) -> ItemQuality {
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
     let odds_for_high_quality = max(5, item_level.checked_sub(10).unwrap_or(0));
     if odds_for_high_quality > (rand::random::<u8>() % 100) {
