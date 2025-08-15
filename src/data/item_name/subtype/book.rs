@@ -46,16 +46,16 @@ pub fn book(item: &Item) -> String {
         },
         ItemType::PrayerBook => match subtype {
             ItemSubType::PrayerBook(PrayerBookSubType::BeginnersHandbook) => {
-                "of prayers I [beginners handbook]".to_string()
+                "prayer book I [beginners handbook]".to_string()
             }
             ItemSubType::PrayerBook(PrayerBookSubType::WordsOfWisdom) => {
-                "of prayers II [words of wisdom]".to_string()
+                "prayer book II [words of wisdom]".to_string()
             }
             ItemSubType::PrayerBook(PrayerBookSubType::ChantsAndBlessings) => {
-                "of prayers III [chants and blessings]".to_string()
+                "prayer book III [chants and blessings]".to_string()
             }
             ItemSubType::PrayerBook(PrayerBookSubType::ExorcismAndDispelling) => {
-                "of prayers IV [exorcism and dispelling]".to_string()
+                "prayer book IV [exorcism and dispelling]".to_string()
             }
             _ => panic!(
                 "Expected item subtype to be a prayer book, got {:?}",
