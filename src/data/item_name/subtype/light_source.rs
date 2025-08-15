@@ -41,6 +41,7 @@ mod tests {
     #[test]
     fn test_light_source_wooden_torch() {
         let mut item = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0, ItemQuality::Normal);
+        item.p1 = 4000;
         assert_eq!(generate(&item), "wooden torch with 4000 turns of light");
 
         item.p1 = 1;
@@ -49,12 +50,14 @@ mod tests {
 
     #[test]
     fn test_light_source_brass_lantern() {
+        let mut item = generate_item::generate(
+            Box::new(LightSourceTemplate::BrassLantern),
+            0,
+            ItemQuality::Normal
+        );
+        item.p1 = 7500;
         assert_eq!(
-            generate(&generate_item::generate(
-                Box::new(LightSourceTemplate::BrassLantern),
-                0,
-                ItemQuality::Normal
-            )),
+            generate(&item),
             "brass lantern with 7500 turns of light"
         );
     }
@@ -63,6 +66,7 @@ mod tests {
     fn test_light_source_magic_torch() {
         let mut magic_torch = generate_item::generate(Box::new(LightSourceTemplate::MagicTorch), 0, ItemQuality::Normal);
         magic_torch.set_identified(true);
+        magic_torch.p1 = 9000;
         assert_eq!(
             generate(&magic_torch),
             "magic torch with 9000 turns of light"
@@ -80,6 +84,7 @@ mod tests {
         let mut magic_lantern =
             generate_item::generate(Box::new(LightSourceTemplate::MagicLantern), 0, ItemQuality::Normal);
         magic_lantern.set_identified(true);
+        magic_lantern.p1 = 20000;
         assert_eq!(
             generate(&magic_lantern),
             "magic lantern with 20000 turns of light"

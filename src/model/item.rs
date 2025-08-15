@@ -1,6 +1,7 @@
 use crate::thirdparty::serde::BigArray;
 
 use crate::conversion;
+use crate::misc::rs2item_name;
 use crate::model::ItemType;
 use crate::model::{Damage, Name};
 
@@ -210,5 +211,39 @@ impl Item {
 
     pub fn set_identified(&mut self, yn: bool) {
         self.identified = if yn { 255 } else { 0 };
+    }
+}
+
+impl Default for Item {
+    fn default() -> Self {
+        Item {
+            name: rs2item_name("Alien thing"),
+            tval: 0,
+            flags2: 0,
+            flags: 0,
+            p1: 0,
+            cost: 0,
+            subval: 0,
+            weight: 0,
+            number: 1,
+            tohit: 0,
+            todam: 0,
+            ac: 0,
+            toac: 0,
+            damage: Damage::default(),
+            level: 0,
+            identified: 0,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_serialize() {
+        let item = Item::default();
+        serde_json::to_string(&item).expect("Failed to serialize item");
     }
 }

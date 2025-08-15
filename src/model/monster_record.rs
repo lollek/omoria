@@ -5,3 +5,11 @@ use crate::model::Monster;
 pub struct MonsterRecord {
     pub monsters: Vec<Monster>,
 }
+
+impl Default for MonsterRecord {
+    fn default() -> Self {
+        MonsterRecord {
+            monsters: Vec::new(),
+        }
+    }
+}

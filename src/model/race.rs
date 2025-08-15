@@ -19,3 +19,13 @@ impl Race {
         enum_iterator::all::<Race>()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_serialize() {
+        serde_json::to_string(&Race::Human).expect("Failed to serialize Race");
+    }
+}

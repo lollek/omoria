@@ -44,3 +44,9 @@ impl StatBlock {
         }
     }
 }
+
+impl Default for StatBlock {
+    fn default() -> Self {
+        Self::new(0)
+    }
+}

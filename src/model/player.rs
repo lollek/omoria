@@ -25,10 +25,10 @@ impl Player {
             rage_rounds_spent: 0,
             is_raging: false,
             rage_exhaustion_rounds_left: 0,
-            curr_stats: StatBlock::new(0),
-            lost_stats: StatBlock::new(0),
-            mod_stats: StatBlock::new(0),
-            perm_stats: StatBlock::new(0),
+            curr_stats: StatBlock::default(),
+            lost_stats: StatBlock::default(),
+            mod_stats: StatBlock::default(),
+            perm_stats: StatBlock::default(),
             save_counter: 0,
             extra_bulk_carry: 0,
             search_modifier: 0,
@@ -36,5 +36,11 @@ impl Player {
             max_hp: 0,
             current_hp: 0.0,
         }
+    }
+}
+
+impl Default for Player {
+    fn default() -> Self {
+        Self::new()
     }
 }

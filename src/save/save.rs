@@ -6,25 +6,13 @@ use std::io::{Read, Seek, Write};
 use serde_json;
 
 use crate::debug;
-use crate::identification::IdentifiedSubTypes;
 use crate::master;
-use crate::model::{DungeonRecord, InventoryItem, Item, MonsterRecord, PlayerRecord, TownRecord};
 use crate::ncurses;
 use crate::player;
 use crate::save;
+use crate::save::save_record::SaveRecord;
 use crate::term;
 use crate::{constants, identification};
-
-#[derive(Serialize, Deserialize, Debug)]
-struct SaveRecord {
-    player: PlayerRecord,
-    inventory: Vec<InventoryItem>,
-    equipment: Vec<Item>,
-    town: TownRecord,
-    dungeon: DungeonRecord,
-    identified: IdentifiedSubTypes,
-    monsters: MonsterRecord,
-}
 
 fn savefile_name(player_name: &str, player_uid: i64) -> String {
     format!(
@@ -70,10 +58,6 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
 }
 
 fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
-    if let Err(e) = f.seek(io::SeekFrom::Start(0)) {
-        debug::error(&format!("Failed during seek: {}", e));
-        return None;
-    }
     let serialized_data = match serde_json::to_string(data) {
         Ok(serialized_data) => serialized_data,
         Err(e) => {
@@ -82,6 +66,10 @@ fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
             return None;
         }
     };
+    if let Err(e) = f.seek(io::SeekFrom::Start(0)) {
+        debug::error(&format!("Failed during seek: {}", e));
+        return None;
+    }
     if let Err(e) = f.write_all(&serialized_data.into_bytes()) {
         debug::error(&format!("Failed to write file: {}", e));
         return None;
