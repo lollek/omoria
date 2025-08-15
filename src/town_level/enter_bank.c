@@ -22,7 +22,7 @@ void eb__display_store(const char *shop_owner);
 
 #define BANK_SKIM 0.95 /*{ Percent of money that really gets deposited} */
 
-static bool eb__get_entry(char comment[82], long *num) {
+static bool eb__get_entry(char const *const comment, long *num) {
   /*
    * Returns true if a number >= 0 is entered, false if escaped,
    * negative numbers not permitted.                      -MKC-

@@ -1,5 +1,11 @@
 # Changelog
 
+## 5-alpha526
+
+August 2025
+
+* Fix some compilation errors on Linux
+
 ## 5-alpha525
 
 August 2025

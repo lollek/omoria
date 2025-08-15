@@ -230,7 +230,7 @@ static void get_flags(const enum spell_effect_t typ, long *weapon_type,
   }
 }
 
-void lower_stat(const enum stat_t tstat, char msg1[82]) {
+void lower_stat(const enum stat_t tstat, char const *const msg1) {
   C_player_modify_lost_stat(tstat, 1);
   C_player_recalc_stats();
   if (strcmp(msg1, "X") == 0) {
@@ -262,7 +262,8 @@ void lower_stat(const enum stat_t tstat, char msg1[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool lose_stat(const enum stat_t tstat, char msg1[82], char msg2[82]) {
+bool lose_stat(const enum stat_t tstat, char const *const msg1,
+               char const *const msg2) {
   const bool return_value = true;
 
   if (!player_flags.sustain[(int)tstat]) {
@@ -305,7 +306,7 @@ bool lose_stat(const enum stat_t tstat, char msg1[82], char msg2[82]) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool restore_stat(const enum stat_t tstat, char msg1[82]) {
+bool restore_stat(const enum stat_t tstat, char const *const msg1) {
   /*{stat adjusted by magic worn only}*/
   const bool return_value = true;
 
@@ -372,7 +373,7 @@ bool remove_curse(void) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool hp_player(const long num, char kind[82]) {
+bool hp_player(const long num, char const *const kind) {
   /*{ Change players hit points in some manner		-RAK-	}*/
 
   bool return_value = false;
@@ -942,7 +943,7 @@ void lose_exp(const long amount) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool gain_stat(const enum stat_t tstat, char msg1[82]) {
+bool gain_stat(const enum stat_t tstat, char const *const msg1) {
   if (C_player_has_lost_stat(tstat)) {
     C_player_reset_lost_stat(tstat);
   } else {
@@ -2241,8 +2242,8 @@ bool fb__ill_joke(const long a_cptr, const enum spell_effect_t typ,
   return true;
 }
 /*//////////////////////////////////////////////////////////////////// */
-bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x, long dam,
-                  char bolt_typ[28]) {
+bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
+               long dam, char const *const bolt_typ) {
   /*{ Shoot a bolt in a given direction                     -RAK-   }*/
 
   long dist;
@@ -2293,7 +2294,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x, lo
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 bool fire_ball(const enum spell_effect_t typ, const long dir, long y, long x,
-                  const long dam_hp, char descrip[28]) {
+               const long dam_hp, char const *const descrip) {
   /*{ Shoot a ball in a given direction.  Note that balls have an   }*/
   /*{ area affect....                                       -RAK-   }*/
 
@@ -2860,8 +2861,7 @@ bool item_petrify(void) {
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 bool creeping_doom(const long dir, long y, long x, const long dam_hp,
-                      const long range,
-                      char ddesc[28]) {
+                   const long range, char const *const ddesc) {
   /*{ Creeping doom type spells, a missile, but with a set range    }*/
 
   long dist;
@@ -2898,7 +2898,7 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
-                  long dam_hp, char descrip[28]) {
+               long dam_hp, char const *const descrip) {
   /*{ Fire a spell that affects a line of monsters                  }*/
 
   long dist;

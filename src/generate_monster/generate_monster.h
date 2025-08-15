@@ -90,7 +90,7 @@ bool summon_breed(long *y, long *x);
  * @param present   If false, player is prompted to give a name, and variable "name" is ignored
  * @param is_asleep Should the monster be asleep
  */
-void monster_summon_by_name(long y, long x, char name[28], bool present,
+void monster_summon_by_name(long y, long x, char const *name, bool present,
                             bool is_asleep);
 
 /**

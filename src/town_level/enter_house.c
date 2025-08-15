@@ -59,7 +59,7 @@ static void brothel_game(void) {
   }
 }
 
-static void battle_game(const long plus, char kb_str[82]) {
+static void battle_game(const long plus, char const *const kb_str) {
 
   if (get_yes_no("Do you accept their invitation?")) {
     char out_val[82];
@@ -254,7 +254,7 @@ static void party(void) {
   }
 }
 
-static void spend_the_night(char who[82]) {
+static void spend_the_night(char const *const who) {
 
   msg_print("The occupant(s) invite you to rest in his house.");
   if (get_yes_no("Do you accept?")) {

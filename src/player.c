@@ -135,7 +135,7 @@ void regenmana(const float percent) {
   player_cmana += player_mana * percent + 0.0080;
 }
 
-void take_hit(long damage, char hit_from[82]) {
+void take_hit(long damage, char const *const hit_from) {
   /*{ Decreases players hit points and sets death flag if neccessary}*/
 
   ENTER(("take_hit", "%d, %s", damage, hit_from));

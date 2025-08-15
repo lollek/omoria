@@ -1039,10 +1039,8 @@ static bool __haggle_insults(const enum store_t store_num) {
   }
 }
 
-static enum trade_status_t __receive_offer(const long store_num, char comment[82],
-                                           long *new_offer,
-                                           const long last_offer,
-                                           const long factor) {
+static enum trade_status_t __receive_offer(const long store_num, char const *const comment,
+                long *new_offer, const long last_offer, const long factor) {
 
   long const comment_len = strlen(comment) + 1;
   for (;;) {
@@ -1461,8 +1459,8 @@ static trade_result_t __sell_haggle(const enum store_t store_type,
     char out_val[100];
     sprintf(out_val, "%s%ld       ", comment, cur_ask);
     put_buffer(out_val, 2, 1);
-    const enum trade_status_t offer_result = __receive_offer(store_type, "What price do you ask? ",
-        &new_offer, last_offer, -1);
+    const enum trade_status_t offer_result = __receive_offer(
+        store_type, "What price do you ask? ", &new_offer, last_offer, -1);
 
     if (offer_result == TS_ABORTED)
       return (trade_result_t){.status = TS_ABORTED, .price = 0};
@@ -2149,7 +2147,8 @@ void check_store_hours_and_enter(const enum store_t type,
   LEAVE("check_store_hours_and_enter", "");
 }
 
-void spend_time(long days_spent, char place[82], const bool whole_days) {
+void spend_time(long days_spent, char const *const place,
+                const bool whole_days) {
 
   long const turns_today = player_cur_age.hour * 400 + player_cur_age.secs;
 
