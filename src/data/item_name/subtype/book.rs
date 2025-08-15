@@ -6,7 +6,7 @@ use crate::model::{Item, ItemType};
 
 pub fn book(item: &Item) -> String {
     let subtype = item.item_subtype();
-    if !identification::is_identified(subtype) {
+    if !identification::is_identified(subtype) && !item.is_identified() {
         return "book".to_string();
     }
 
@@ -81,12 +81,16 @@ mod tests {
     #[test]
     #[serial]
     fn test_magic_book_2() {
-        let item =
+        let mut item =
             generate_item::generate(Box::new(MagicBookTemplate::Magic1), 0, ItemQuality::Normal);
         identification::set_identified(ItemSubType::MagicBook(MagicBookSubType::Magic1), false);
         assert_eq!(generate(&item), "book");
 
         identification::set_identified(ItemSubType::MagicBook(MagicBookSubType::Magic1), true);
+        assert_eq!(generate(&item), "magic book II [book of magic spells]");
+
+        identification::set_identified(ItemSubType::MagicBook(MagicBookSubType::Magic1), false);
+        item.set_identified(true);
         assert_eq!(generate(&item), "magic book II [book of magic spells]");
     }
 }

@@ -312,7 +312,7 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("{} potion{}{}", material, plural_s(), attribute))
         }
-        ItemType::FlaskOfOil => Cow::from(format!("Flask{} of Oil", plural_s())),
+        ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
         ItemType::Staff => {
             let attribute = if item.is_identified() {
                 match item.subval {

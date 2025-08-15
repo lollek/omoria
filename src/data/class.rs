@@ -224,7 +224,7 @@ pub fn magic_type(class: &model::Class) -> Option<model::Magic> {
 
 pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
     let item_level = 10;
-    match class {
+    let mut items = match class {
         model::Class::Fighter => vec![
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_melee_weapon(item_level, ItemQuality::Normal)
@@ -277,5 +277,7 @@ pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
-    }
+    };
+    items.iter_mut().for_each(|item| {item.set_identified(true)});
+    items
 }
