@@ -1159,7 +1159,6 @@ void ic__switch_weapon(long *scr_state) {
     py_bonuses(&equipment[Equipment_primary], 1);
 
     msg_print("Swapped main hand with backup");
-    msg_print("");
   }
 
   if (*scr_state != 0) {
