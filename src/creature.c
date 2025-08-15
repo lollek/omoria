@@ -917,7 +917,7 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
 }
 
 static void c__make_attack(const long monptr) {
-  /*{ Make an attack on the player (chuckle...)             -RAK-   }*/
+  /*{ Make an attack on the player                          -RAK-   }*/
 
   long atype;
   long adesc; /*,dam;*/
@@ -928,8 +928,6 @@ static void c__make_attack(const long monptr) {
   char ddesc[82];
 
   ENTER(("c__make_attack", "c"));
-  /* with m_list[monptr] do; */
-  /* with monster_templates[m_list[monptr].mptr]. do; */
 
   attstr[0] = 0;
   attx[0] = 0;
@@ -946,7 +944,7 @@ static void c__make_attack(const long monptr) {
   }
   strcpy(inven_temp.data.name, ddesc);
   inven_temp.data.number = 1;
-  item_name(ddesc, &inven_temp);
+  objdes(ddesc, &inven_temp, true);
   strcpy(died_from, ddesc);
   /*{ End DIED_FROM                 }*/
 

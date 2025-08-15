@@ -2,6 +2,11 @@
 
 ## 5-alpha526
 
+August 2025
+
+* Items can no longer be cursed.
+* Fix crash due to item name generation being used for monster attacks.
+
 ## 5-alpha525
 
 August 2025
