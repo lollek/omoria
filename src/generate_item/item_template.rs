@@ -1,103 +1,28 @@
 use crate::conversion::item_subtype;
 use crate::conversion::item_type;
 use crate::data;
+use crate::generate_item::template::MaceTemplate;
 use crate::misc;
-use crate::model::item_subtype::ItemSubType;
-use crate::model::Currency;
-use crate::model::Item;
+use crate::misc::rs2item_name;
+use crate::model::item_subtype::{ItemSubType, MaulSubType};
+use crate::model::{Item, WornFlag2};
 use crate::model::ItemType;
+use crate::model::{Currency, WornFlag1};
+use crate::random::randint;
 
-pub enum WornFlag1 {
-    GivesStrength = 0x00000001,
-    GivesDexterity = 0x00000002,
-    GivesConstitution = 0x00000004,
-    GivesIntelligence = 0x00000008,
-    GivesWisdom = 0x00000010,
-    GivesCharisma = 0x00000020,
-    // + to search, - to perception (amount in p1)
-    Searching = 0x00000040,
-    SlowDigestion = 0x00000080,
-    //Stealth = 0x00000100,
-    AggravateMonsters = 0x00000200,
-    RandomTeleportation = 0x00000400,
-    //Regeneration = 0x00000800,
-    // Amount in p1
-    IncreasedSpeed = 0x00001000,
-    // Extra damage to dragons
-    //SlayDragon = 0x00002000,
-    // Extra damage to monsters
-    //SlayMonster = 0x00004000,
-    // Extra damage to evil creatures
-    //SlayEvil = 0x00008000,
-    // Extra damage to undead
-    //SlayUndead = 0x00010000,
-    // Extra damage to cold based creatures
-    //SlayCold = 0x00020000,
-    // Extra damage to fire based creatures
-    //SlayFire = 0x00040000,
-    ResistFire = 0x00080000,
-    ResistAcid = 0x00100000,
-    ResistCold = 0x00200000,
-    // See p1 for specific stat
-    ResistStatDrain = 0x00400000,
-    ResistParalysis = 0x00800000,
-    SeeInvisible = 0x01000000,
-    //ResistLightning = 0x02000000,
-    FeatherFall = 0x04000000,
-    //Blindness = 0x08000000,
-    //Timidness = 0x10000000,
-    // See p1 for amount
-    ImprovedTunneling = 0x20000000,
-    //Infravision = 0x40000000,
-    Cursed = 0x80000000,
-}
-
-pub enum WornFlag2 {
-    //SlayDemon = 0x00000001,
-    // Lessed Slay Undead?
-    //SoulSword = 0x00000002,
-    //SlayRegenerators = 0x00000004,
-    // See p1 for amount
-    //ImprovedSwimming = 0x00000008,
-    //ImprovedSavingThrows = 0x00000010,
-    //ImprovedDisarming = 0x00000020,
-    //ImprovedCriticals = 0x00000040,
-    //BadReputation = 0x00200000,
-    //Hunger = 0x00400000,
-    // Removes flags for other worn gems (???)
-    //NegativeGemFlags = 0x00800000,
-    ImprovedCarrying = 0x01000000,
-    // Related to quivers and such (???)
-    Holding = 0x04000000,
-    // Bag of devouring
-    Swallowing = 0x08000000,
-    // Destroys bags
-    Sharp = 0x10000000,
-    //Blackmarket = 0x20000000,
-    //Insured = 0x40000000,
-    //KnownCursed = 0x80000000,
+#[derive(Copy, Clone, PartialEq)]
+pub enum ItemQuality {
+    LowQuality,
+    HighQuality,
+    Special,
+    Magic,
+    Normal,
+    Cursed,
 }
 
 pub trait ItemTemplate {
-    fn create(&self) -> Item {
-        Item {
-            name: misc::rs2item_name(self.name()),
-            tval: item_type::to_usize(self.item_type()) as u8,
-            flags: self.flags1(),
-            flags2: self.flags2(),
-            p1: self.p1(),
-            cost: self.cost() * data::currency::value(&Currency::Gold),
-            subval: item_subtype::to_usize(self.subtype()) as i64,
-            weight: self.weight(),
-            number: self.number(),
-            tohit: self.modifier_to_hit(),
-            todam: self.modifier_to_damage(),
-            ac: self.base_ac(),
-            toac: self.modifier_to_ac(),
-            damage: misc::rs2item_damage(self.damage()),
-            level: self.item_level() as i8,
-            identified: if self.is_identified() { 1 } else { 0 },
-        }
+    fn create(&self, item_quality: ItemQuality) -> Item {
+        default_create(self, item_quality)
     }
 
     fn name(&self) -> &str;
@@ -116,4 +41,287 @@ pub trait ItemTemplate {
     fn damage(&self) -> &str;
     fn item_level(&self) -> u8;
     fn is_identified(&self) -> bool;
+
+    fn apply_random_tier3_weapon(&self, item: &mut Item) {
+        match randint(5) {
+            1 => self.apply_weapon_holy_avenger(item),
+            2 => self.apply_weapon_defender(item),
+            3 => self.apply_weapon_demon_bane(item),
+            4 => self.apply_weapon_soul_sword(item),
+            _ => self.apply_weapon_vorpal_sword(item),
+        }
+    }
+
+    fn apply_random_tier2_weapon(&self, item: &mut Item) {
+        match randint(4) {
+            1 => self.apply_weapon_slay_monster(item),
+            2 => self.apply_weapon_slay_dragon(item),
+            3 => self.apply_weapon_slay_undead(item),
+            _ => self.apply_weapon_slay_regenerative(item),
+        }
+    }
+
+    fn apply_random_tier1_weapon(&self, item: &mut Item) {
+        match randint(4) {
+            1 => self.apply_weapon_flame_tongue(item),
+            2 => self.apply_weapon_frost_brand(item),
+            3 => self.apply_weapon_wizard_blade(item),
+            _ => self.apply_weapon_blessed_blade(item),
+        }
+    }
+
+    fn apply_weapon_of_criticals(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of Criticals", self.name()));
+        item.apply_wornflag2(WornFlag2::Sharp);
+        item.tohit += 5;
+        item.cost += 300_000;
+    }
+
+    fn apply_weapon_flame_tongue(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (FT)", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayFire);
+        item.tohit += 1;
+        item.todam += 3;
+        item.cost += 200_000;
+    }
+
+    fn apply_weapon_frost_brand(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (FB)", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayCold);
+        item.tohit += 1;
+        item.todam += 1;
+        item.cost += 120_000;
+    }
+
+    fn apply_weapon_wizard_blade(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (WB)", self.name()));
+        item.apply_wornflag2(WornFlag2::MagicProof);
+        item.weight = (item.weight * 4) / 5;
+        //TODO item.tval = ItemSubType::Dagger() Let mages use it
+        item.tohit += 3;
+        item.todam += 1;
+        item.cost += 80_000;
+    }
+
+    fn apply_weapon_blessed_blade(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (BB)", self.name()));
+        item.apply_wornflag2(WornFlag2::MagicProof);
+        //TODO item.tval = ItemSubType::Maul() Let priests use it
+        item.tohit += 2;
+        item.todam += 4;
+        item.cost += 80_000;
+    }
+
+    fn apply_weapon_slay_monster(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (SM)", self.name()));
+        item.apply_wornflag1(WornFlag1::SeeInvisible);
+        item.apply_wornflag1(WornFlag1::SlayMonster);
+        item.tohit += 3;
+        item.todam += 3;
+        item.cost += 500_000;
+    }
+
+    fn apply_weapon_slay_dragon(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (SD)", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayDragon);
+        item.tohit += 3;
+        item.todam += 3;
+        item.cost += 400_000;
+    }
+
+    fn apply_weapon_slay_undead(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (SU)", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayUndead);
+        item.tohit += 2;
+        item.todam += 2;
+        item.cost += 300_000;
+    }
+
+    fn apply_weapon_slay_regenerative(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (SR)", self.name()));
+        item.apply_wornflag2(WornFlag2::SlayRegenerators);
+        item.tohit += 2;
+        item.todam += 2;
+        item.cost += 150_000;
+    }
+
+    fn apply_weapon_holy_avenger(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (HA)", self.name()));
+        item.apply_wornflag1(WornFlag1::SeeInvisible);
+        item.apply_wornflag1(WornFlag1::ResistStatDrain);
+        item.apply_wornflag1(WornFlag1::ResistAcid);
+        item.apply_wornflag1(WornFlag1::ResistFire);
+        item.apply_wornflag1(WornFlag1::GivesStrength);
+        item.apply_wornflag1(WornFlag1::SlayUndead);
+        item.apply_wornflag1(WornFlag1::SlayEvil);
+        item.tohit += 5;
+        item.todam += 5;
+        item.toac = randint(4) as i16;
+        item.p1 = randint(4) -1;
+        item.cost += item.p1 * 50_000;
+        item.cost += 1_000_000;
+    }
+
+    fn apply_weapon_defender(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} [%P4] (DF)", self.name()));
+        item.apply_wornflag1(WornFlag1::FeatherFall);
+        item.apply_wornflag1(WornFlag1::Regeneration);
+        item.apply_wornflag1(WornFlag1::ResistAcid);
+        item.apply_wornflag1(WornFlag1::ResistCold);
+        item.apply_wornflag1(WornFlag1::ResistFire);
+        item.apply_wornflag1(WornFlag1::ResistLightning);
+        item.apply_wornflag1(WornFlag1::ResistParalysis);
+        item.apply_wornflag1(WornFlag1::SeeInvisible);
+        item.apply_wornflag1(WornFlag1::Stealth);
+        item.tohit += 3;
+        item.todam += 3;
+        item.toac = 5 + randint(5) as i16;
+        item.p1 = randint(3);
+        item.cost += item.p1 * 50_000;
+        item.cost += 750_000;
+    }
+
+    fn apply_weapon_demon_bane(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (DB)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistFire);
+        item.apply_wornflag2(WornFlag2::SlayDemon);
+        item.tohit += 3;
+        item.todam += 3;
+        item.cost += 500_000;
+    }
+
+    fn apply_weapon_soul_sword(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (SS)", self.name()));
+        item.apply_wornflag1(WornFlag1::GivesCharisma);
+        item.apply_wornflag1(WornFlag1::GivesIntelligence);
+        item.apply_wornflag1(WornFlag1::GivesWisdom);
+        item.apply_wornflag1(WornFlag1::Regeneration);
+        item.apply_wornflag1(WornFlag1::SeeInvisible);
+        item.apply_wornflag2(WornFlag2::BadReputation);
+        item.apply_wornflag2(WornFlag2::SoulSword);
+        item.tohit += 5;
+        item.todam += 10;
+        item.p1 = -randint(3) -2;
+        item.cost += 800_000 + item.p1 * 40_000;
+    }
+
+    fn apply_weapon_vorpal_sword(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (V)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistStatDrain);
+        item.apply_wornflag2(WornFlag2::Sharp);
+        item.tohit += 5;
+        item.todam += 5;
+        item.p1 = 1;
+        item.cost += 750_000;
+    }
+
+    fn apply_armor_resist(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (R)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistLightning);
+        item.apply_wornflag1(WornFlag1::ResistCold);
+        item.apply_wornflag1(WornFlag1::ResistAcid);
+        item.apply_wornflag1(WornFlag1::ResistFire);
+        item.toac += 5;
+        item.cost += 250_000;
+    }
+
+    fn apply_armor_resist_acid(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (RA)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistAcid);
+        item.cost += 100_000;
+    }
+
+    fn apply_armor_resist_fire(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (RF)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistFire);
+        item.cost += 60_000;
+    }
+
+    fn apply_armor_resist_cold(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (RC)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistCold);
+        item.cost += 60_000;
+    }
+
+    fn apply_armor_resist_lightning(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} (RL)", self.name()));
+        item.apply_wornflag1(WornFlag1::ResistLightning);
+        item.cost += 50_000;
+    }
+}
+
+pub(crate) fn default_create(
+    template: &(impl ItemTemplate + ?Sized),
+    _item_quality: ItemQuality,
+) -> Item {
+    Item {
+        name: rs2item_name(template.name()),
+        tval: item_type::to_usize(template.item_type()) as u8,
+        flags: template.flags1(),
+        flags2: template.flags2(),
+        p1: template.p1(),
+        cost: template.cost() * data::currency::value(&Currency::Gold),
+        subval: item_subtype::to_usize(template.subtype()) as i64,
+        weight: template.weight(),
+        number: template.number(),
+        tohit: template.modifier_to_hit(),
+        todam: template.modifier_to_damage(),
+        ac: template.base_ac(),
+        toac: template.modifier_to_ac(),
+        damage: misc::rs2item_damage(template.damage()),
+        level: template.item_level() as i8,
+        identified: if template.is_identified() { 1 } else { 0 },
+    }
+}
+
+pub(crate) fn create_melee_weapon(
+    template: &(impl ItemTemplate + ?Sized),
+    item_quality: ItemQuality,
+) -> Item {
+    let mut item = default_create(template, item_quality);
+    if item_quality == ItemQuality::Cursed {
+        item.set_cursed(true);
+        item.cost = 0;
+        item.tohit = -randint(5) as i16;
+        item.todam = -randint(5) as i16;
+    } else if item_quality == ItemQuality::Magic {
+        item.tohit = randint(4) as i16;
+        item.todam = randint(4) as i16;
+    } else if item_quality == ItemQuality::Special {
+        item.tohit = randint(4) as i16;
+        item.todam = randint(4) as i16;
+
+        if template.subtype() == ItemSubType::Maul(MaulSubType::WoodenClub) && randint(5) == 1 {
+            MaceTemplate::apply_club_of_trollkind(&mut item);
+        } else {
+            match randint(100) {
+                x if x < 61 => template.apply_random_tier1_weapon(&mut item),
+                x if x < 81 => template.apply_random_tier2_weapon(&mut item),
+                x if x < 96 => template.apply_random_tier3_weapon(&mut item),
+                _ => {
+                    template.apply_random_tier1_weapon(&mut item);
+                    template.apply_random_tier3_weapon(&mut item);
+                },
+            }
+        }
+    }
+    item
+}
+
+pub(crate) fn create_ranged_weapon(
+    template: &(impl ItemTemplate + ?Sized),
+    item_quality: ItemQuality,
+) -> Item {
+    let mut item = default_create(template, item_quality);
+    if item_quality == ItemQuality::Cursed {
+        item.set_cursed(true);
+        item.cost = 0;
+        item.tohit = -randint(5) as i16;
+    } else if item_quality == ItemQuality::Magic {
+        item.tohit = randint(3) as i16;
+    } else if item_quality == ItemQuality::Special {
+        item.tohit = randint(3) as i16;
+        template.apply_weapon_of_criticals(&mut item);
+    }
+    item
 }

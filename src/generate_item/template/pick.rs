@@ -1,9 +1,8 @@
-use crate::generate_item::item_template::{WornFlag1, WornFlag2};
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{ItemSubType, PickSubType},
-};
+use crate::model::{self, item_subtype::{ItemSubType, PickSubType}, Item, WornFlag1, WornFlag2};
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PickTemplate {
@@ -35,6 +34,19 @@ impl PickTemplate {
 }
 
 impl ItemTemplate for PickTemplate {
+    fn create(&self, item_quality: ItemQuality) -> Item {
+        let mut item = default_create(self, item_quality);
+        if item_quality == ItemQuality::Cursed {
+            item.set_cursed(true);
+            item.cost = 0;
+            item.p1 = -randint(3);
+        } else if item_quality == ItemQuality::Magic {
+            item.p1 += 2;
+            item.cost += self.p1() * 10_000;
+        }
+        item
+    }
+
     fn name(&self) -> &str {
         match self {
             PickTemplate::Pick => "& Pick (%P1) (%P2,%P3)",

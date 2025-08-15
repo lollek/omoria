@@ -87,6 +87,7 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 if item.is_identified() { "of gems" } else { "" }
             ))
         }
+        // TODO: Add same special attributes as armor has. E.g. (R)
         ItemType::Shield => Cow::from(match item.subval {
             1 => "Small leather shield",
             2 => "Medium leather shield",

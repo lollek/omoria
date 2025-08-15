@@ -3,6 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, StaffSubType},
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -138,7 +139,32 @@ impl ItemTemplate for StaffTemplate {
     }
 
     fn p1(&self) -> i64 {
-        0
+        match self {
+            StaffTemplate::StaffOfLight => randint(20) + 12,
+            StaffTemplate::StaffOfDoorStairLocation => randint(8) + 6,
+            StaffTemplate::StaffOfTrapLocation => randint(5) + 6,
+            StaffTemplate::StaffOfTreasureLocation => randint(20) + 12,
+            StaffTemplate::StaffOfObjectLocation => randint(15) + 6,
+            StaffTemplate::StaffOfTeleportation => randint(4) + 5,
+            StaffTemplate::StaffOfEarthquakes => randint(5) + 3,
+            StaffTemplate::StaffOfSummoning => randint(3) + 1,
+            StaffTemplate::StaffOfDestruction => randint(3) + 1,
+            StaffTemplate::StaffOfStarlite => randint(3) + 1,
+            StaffTemplate::StaffOfHasteMonsters => randint(5) + 6,
+            StaffTemplate::StaffOfSlowMonsters => randint(10) + 12,
+            StaffTemplate::StaffOfSleepMonsters => randint(5) + 6,
+            StaffTemplate::StaffOfCureLightWounds => randint(5) + 6,
+            StaffTemplate::StaffOfDetectInvisible => randint(5) + 6,
+            StaffTemplate::StaffOfSpeed => randint(10) + 12,
+            StaffTemplate::StaffOfSlowness => randint(3) + 4,
+            StaffTemplate::StaffOfMassPolymorph => randint(5) + 6,
+            StaffTemplate::StaffOfRemoveCurse => randint(5) + 6,
+            StaffTemplate::StaffOfDetectEvil => randint(3) + 4,
+            StaffTemplate::StaffOfCuring => randint(10) + 12,
+            StaffTemplate::StaffOfDispelEvil => randint(3) + 4,
+            StaffTemplate::StaffOfDarkness => randint(10) + 6,
+            StaffTemplate::StaffOfIdentify => randint(6) + 6,
+        }
     }
 
     fn cost(&self) -> i64 {

@@ -1,8 +1,7 @@
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{ChestSubType, ItemSubType},
-};
+use crate::model::{self, item_subtype::{ChestSubType, ItemSubType}, Item};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChestTemplate {

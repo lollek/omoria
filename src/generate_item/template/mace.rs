@@ -1,7 +1,14 @@
 use super::super::item_template::ItemTemplate;
+use crate::generate_item::item_template::create_melee_weapon;
+use crate::generate_item::ItemQuality;
+use crate::misc::{rs2item_damage, rs2item_name};
+use crate::model::WornFlag1::{
+    GivesCharisma, Regeneration, ResistAcid, ResistCold, Searching, Stealth,
+};
 use crate::model::{
     self,
     item_subtype::{ItemSubType, MaulSubType},
+    Item,
 };
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -37,9 +44,26 @@ impl MaceTemplate {
     pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         MaceTemplate::vec().into_iter()
     }
+
+    pub fn apply_club_of_trollkind(item: &mut Item) {
+        item.name = rs2item_name("Club of Trollkind");
+        item.apply_wornflag1(GivesCharisma); // Should give negative charisma
+        item.apply_wornflag1(Searching); // Should give negative searching
+        item.apply_wornflag1(Stealth); // Should give negative stealth
+        item.apply_wornflag1(Regeneration);
+        item.apply_wornflag1(ResistAcid);
+        item.apply_wornflag1(ResistCold);
+        item.p1 = -5;
+        item.cost = 120_000;
+        item.damage = rs2item_damage("3d4");
+    }
 }
 
 impl ItemTemplate for MaceTemplate {
+    fn create(&self, item_quality: ItemQuality) -> Item {
+        create_melee_weapon(self, item_quality)
+    }
+
     fn name(&self) -> &str {
         match self {
             MaceTemplate::BallAndChain => "Ball and Chain (%P0)^ (%P2,%P3)",

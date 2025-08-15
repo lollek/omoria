@@ -37,7 +37,6 @@ void place_random_dungeon_item(const long y, const long x) {
   popt(&cur_pos);
   cave[y][x].tptr = cur_pos;
   t_list[cur_pos] = generate_item_for_dungeon_level(dun_level);
-  magic_treasure(cur_pos, dun_level, false);
 }
 
 void place_random_loot_near(const long y, const long x, long max_items_to_place) {

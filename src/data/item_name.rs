@@ -85,13 +85,13 @@ pub fn generate(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::generate_item::{self, template::FoodTemplate};
+    use crate::generate_item::{self, template::FoodTemplate, ItemQuality};
 
     use super::*;
 
     #[test]
     fn test_ration_of_food() {
-        let mut item = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0);
+        let mut item = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "ration of food");
 
         item.number = 0;

@@ -34,11 +34,12 @@ pub fn jewelry(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
+    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::ValuableTemplate;
 
     #[test]
     fn test_jewelry_small_gold_pendant() {
-        let mut item = generate_item::generate(Box::new(ValuableTemplate::SmallGoldPendant), 0);
+        let mut item = generate_item::generate(Box::new(ValuableTemplate::SmallGoldPendant), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "small gold pendant");
 
         item.number = 0;
@@ -50,7 +51,7 @@ mod tests {
 
     #[test]
     fn test_jewelry_small_mithril_pendant() {
-        let mut item = generate_item::generate(Box::new(ValuableTemplate::SmallMithrilPendant), 0);
+        let mut item = generate_item::generate(Box::new(ValuableTemplate::SmallMithrilPendant), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "small mithril pendant");
 
         item.number = 0;
@@ -63,7 +64,7 @@ mod tests {
     #[test]
     fn test_jewelry_large_mithril_garter_belt() {
         let mut item =
-            generate_item::generate(Box::new(ValuableTemplate::LargeMithrilGarterBelt), 0);
+            generate_item::generate(Box::new(ValuableTemplate::LargeMithrilGarterBelt), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "large mithril garter belt");
 
         item.number = 0;
@@ -75,7 +76,7 @@ mod tests {
 
     #[test]
     fn test_jewelry_small_silver_pendant() {
-        let mut item = generate_item::generate(Box::new(ValuableTemplate::SmallSilverPendant), 0);
+        let mut item = generate_item::generate(Box::new(ValuableTemplate::SmallSilverPendant), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "small silver pendant");
 
         item.number = 0;

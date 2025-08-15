@@ -10,4 +10,3 @@
 extern char const *syllables[MAX_SYLLABLES];
 extern long t_level[MAX_OBJ_LEVEL + 1];
 
-void magic_treasure(long x, long level, bool forceit);

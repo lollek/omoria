@@ -1,7 +1,13 @@
 use crate::conversion::item_subtype;
 use crate::data;
-use crate::data::item_name::helpers::{attack_bonus, damage, maybe_armor_bonus, maybe_number_of, maybe_p1_bonus};
-use crate::model::item_subtype::{DaggerSubType, HaftedWeaponSubType, ItemSubType, MaulSubType, PickSubType, PoleArmSubType, SwordSubType};
+use crate::data::item_name::helpers::{
+    attack_bonus, damage, maybe_armor_bonus, maybe_number_of, maybe_p1_bonus,
+    maybe_special_attribute,
+};
+use crate::model::item_subtype::{
+    DaggerSubType, HaftedWeaponSubType, ItemSubType, MaulSubType, PickSubType, PoleArmSubType,
+    SwordSubType,
+};
 use crate::model::Item;
 
 pub fn melee_weapon(item: &Item) -> String {
@@ -25,6 +31,9 @@ pub fn melee_weapon(item: &Item) -> String {
     }
     if let Some(armor_string) = maybe_armor_bonus(item) {
         parts.push(armor_string);
+    }
+    if let Some(special_string) = maybe_special_attribute(item) {
+        parts.push(special_string);
     }
     parts.join("")
 }
@@ -105,7 +114,7 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
             SwordSubType::Sabre => "sabre",
             SwordSubType::Zweihander => "zweihander",
             SwordSubType::BrokenSword => "broken sword",
-        }
+        },
         _ => panic!("coding error, unexpected item type: {:?}", item.item_type()),
     }
     .to_string()
@@ -114,8 +123,10 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
 #[cfg(test)]
 mod tests {
     use crate::data::item_name::generate;
-    use crate::generate_item::template::{AxeTemplate, DaggerTemplate, MaceTemplate, PickTemplate, PolearmTemplate, SwordTemplate};
-    use crate::generate_item::ItemTemplate;
+    use crate::generate_item::template::{
+        AxeTemplate, DaggerTemplate, MaceTemplate, PickTemplate, PolearmTemplate, SwordTemplate,
+    };
+    use crate::generate_item::{ItemQuality, ItemTemplate};
     use crate::{generate_item, identification};
     use serial_test::serial;
 
@@ -123,13 +134,33 @@ mod tests {
     #[serial]
     fn test_identified() {
         let tests: Vec<(Box<dyn ItemTemplate>, i16, i16, &str)> = vec![
-            (Box::new(AxeTemplate::Balestarius), 0, 0, "balestarius (2d8) (0,0)"),
-            (Box::new(AxeTemplate::Balestarius), 1, 2, "balestarius (2d8) (+1,+2)"),
-            (Box::new(AxeTemplate::Balestarius), -1, -2, "balestarius (2d8) (-1,-2)"),
-            (Box::new(PickTemplate::DwarvenPick), 1, -2, "dwarven pick (+3) (1d4) (+1,-2)"),
+            (
+                Box::new(AxeTemplate::Balestarius),
+                0,
+                0,
+                "balestarius (2d8) (0,0)",
+            ),
+            (
+                Box::new(AxeTemplate::Balestarius),
+                1,
+                2,
+                "balestarius (2d8) (+1,+2)",
+            ),
+            (
+                Box::new(AxeTemplate::Balestarius),
+                -1,
+                -2,
+                "balestarius (2d8) (-1,-2)",
+            ),
+            (
+                Box::new(PickTemplate::DwarvenPick),
+                1,
+                -2,
+                "dwarven pick (+3) (1d4) (+1,-2)",
+            ),
         ];
         for (template, tohit, todam, expected_name) in tests {
-            let mut item = generate_item::generate(template, 0);
+            let mut item = generate_item::generate(template, 0, ItemQuality::Normal);
             item.set_identified(true);
             item.tohit = tohit;
             item.todam = todam;
@@ -148,14 +179,23 @@ mod tests {
             (Box::new(AxeTemplate::WarAxe), "war axe (1d6)"),
             (Box::new(AxeTemplate::LargeAxe), "large axe (1d9)"),
             (Box::new(AxeTemplate::BeardedAxe), "bearded axe (2d5)"),
-            (Box::new(AxeTemplate::SilverEdgedAxe), "silver edged axe (3d6)"),
+            (
+                Box::new(AxeTemplate::SilverEdgedAxe),
+                "silver edged axe (3d6)",
+            ),
             (Box::new(AxeTemplate::ChampionAxe), "champion axe (5d3)"),
             (Box::new(DaggerTemplate::MainGauche), "main gauche (1d5)"),
             (Box::new(DaggerTemplate::Misercorde), "misercorde (1d4)"),
             (Box::new(DaggerTemplate::Stiletto), "stiletto (1d4)"),
             (Box::new(DaggerTemplate::Bodkin), "bodkin (1d4)"),
-            (Box::new(DaggerTemplate::BrokenDagger), "broken dagger (1d1)"),
-            (Box::new(DaggerTemplate::CatONineTails), "cat-o-nine tails (1d4)"),
+            (
+                Box::new(DaggerTemplate::BrokenDagger),
+                "broken dagger (1d1)",
+            ),
+            (
+                Box::new(DaggerTemplate::CatONineTails),
+                "cat-o-nine tails (1d4)",
+            ),
             (Box::new(DaggerTemplate::Bilbo), "bilbo (1d6)"),
             (Box::new(DaggerTemplate::Baselard), "baselard (1d7)"),
             (Box::new(DaggerTemplate::Foil), "foil (1d5)"),
@@ -168,22 +208,37 @@ mod tests {
             (Box::new(MaceTemplate::MorningStar), "morningstar (2d6)"),
             (Box::new(MaceTemplate::Mace), "mace (2d4)"),
             (Box::new(MaceTemplate::WarHammer), "war hammer (3d3)"),
-            (Box::new(MaceTemplate::LeadFilledMace), "lead filled mace (3d4)"),
-            (Box::new(MaceTemplate::IronShodQuarterstaff), "iron-shod quarterstaff (1d5)"),
+            (
+                Box::new(MaceTemplate::LeadFilledMace),
+                "lead filled mace (3d4)",
+            ),
+            (
+                Box::new(MaceTemplate::IronShodQuarterstaff),
+                "iron-shod quarterstaff (1d5)",
+            ),
             (Box::new(MaceTemplate::OgreMaul), "ogre maul (3d9)"),
             (Box::new(PickTemplate::Pick), "pick (1d3)"),
             (Box::new(PickTemplate::Shovel), "shovel (1d2)"),
             (Box::new(PickTemplate::OrcishPick1), "orcish pick (1d3)"),
             (Box::new(PickTemplate::OrcishPick2), "orcish pick (2d3)"),
             (Box::new(PickTemplate::DwarvenPick), "dwarven pick (1d4)"),
-            (Box::new(PickTemplate::GnomishShovel), "gnomish shovel (1d2)"),
-            (Box::new(PickTemplate::DwarvenShovel), "dwarven shovel (1d3)"),
+            (
+                Box::new(PickTemplate::GnomishShovel),
+                "gnomish shovel (1d2)",
+            ),
+            (
+                Box::new(PickTemplate::DwarvenShovel),
+                "dwarven shovel (1d3)",
+            ),
             (Box::new(PolearmTemplate::AwlPike), "awl-pike (1d8)"),
             (Box::new(PolearmTemplate::BeakedAxe), "beaked axe (2d6)"),
             (Box::new(PolearmTemplate::Fauchard), "fauchard (1d10)"),
             (Box::new(PolearmTemplate::Glaive), "glaive (2d6)"),
             (Box::new(PolearmTemplate::Halberd), "halberd (3d3)"),
-            (Box::new(PolearmTemplate::LucerneHammer), "lucerne hammer (2d5)"),
+            (
+                Box::new(PolearmTemplate::LucerneHammer),
+                "lucerne hammer (2d5)",
+            ),
             (Box::new(PolearmTemplate::Pike), "pike (2d5)"),
             (Box::new(PolearmTemplate::Spike), "spike (1d6)"),
             (Box::new(PolearmTemplate::Lance), "lance (2d8)"),
@@ -196,7 +251,10 @@ mod tests {
             (Box::new(SwordTemplate::Claymore), "claymore (3d6)"),
             (Box::new(SwordTemplate::Cutlass), "cutlass (1d7)"),
             (Box::new(SwordTemplate::Espadon), "espadon (3d6)"),
-            (Box::new(SwordTemplate::ExecutionersSword), "executioners sword (4d5)"),
+            (
+                Box::new(SwordTemplate::ExecutionersSword),
+                "executioners sword (4d5)",
+            ),
             (Box::new(SwordTemplate::Flamberge), "flamberge (4d5)"),
             (Box::new(SwordTemplate::Katana), "katana (3d4)"),
             (Box::new(SwordTemplate::Longsword), "longsword (1d10)"),
@@ -208,7 +266,7 @@ mod tests {
 
         for (template, expected_name) in tests {
             let subtype = template.subtype();
-            let item = generate_item::generate(template, 0);
+            let item = generate_item::generate(template, 0, ItemQuality::Normal);
             identification::set_identified(subtype, false);
             assert_eq!(generate(&item), expected_name);
         }

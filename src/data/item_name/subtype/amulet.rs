@@ -105,7 +105,7 @@ pub fn amulet(item: &Item) -> String {
 mod test {
     use crate::data::item_name::generate;
     use crate::generate_item::template::AmuletTemplate;
-    use crate::generate_item::ItemTemplate;
+    use crate::generate_item::{ItemQuality, ItemTemplate};
     use crate::{generate_item, identification};
     use serial_test::serial;
 
@@ -130,7 +130,7 @@ mod test {
                 "mithril necklace",
             ),
         ] {
-            let item = generate_item::generate(template.clone(), 0);
+            let item = generate_item::generate(template.clone(), 0, ItemQuality::Normal);
             identification::set_identified(template.subtype(), false);
             assert_eq!(generate(&item), expected_name);
         }
@@ -150,7 +150,7 @@ mod test {
                 "2 mithril necklaces",
             ),
         ] {
-            let mut item = generate_item::generate(template.clone(), 0);
+            let mut item = generate_item::generate(template.clone(), 0, ItemQuality::Normal);
             item.number = 2;
             identification::set_identified(template.subtype(), false);
             assert_eq!(generate(&item), expected_name);
@@ -202,7 +202,7 @@ mod test {
                 "mithril necklace",
             ),
         ] {
-            let item = generate_item::generate(template.clone(), 0);
+            let item = generate_item::generate(template.clone(), 0, ItemQuality::Normal);
             identification::set_identified(template.subtype(), true);
             assert_eq!(generate(&item), expected_name);
         }
@@ -256,7 +256,7 @@ mod test {
                 "mithril necklace",
             ),
         ] {
-            let mut item = generate_item::generate(template.clone(), 0);
+            let mut item = generate_item::generate(template.clone(), 0, ItemQuality::Normal);
             item.p1 = 1;
             item.set_identified(true);
             assert_eq!(generate(&item), expected_name);

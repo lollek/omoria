@@ -3,6 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, LightSourceSubType},
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LightSourceTemplate {
@@ -48,12 +49,12 @@ impl ItemTemplate for LightSourceTemplate {
     }
 
     fn p1(&self) -> i64 {
-        match self {
+        randint(match self {
             LightSourceTemplate::WoodenTorch => 4000,
             LightSourceTemplate::BrassLantern => 7500,
             LightSourceTemplate::MagicTorch => 9000,
             LightSourceTemplate::MagicLantern => 20000,
-        }
+        })
     }
 
     fn cost(&self) -> i64 {

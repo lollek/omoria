@@ -1,9 +1,5 @@
 use super::super::item_template::ItemTemplate;
-use crate::generate_item::item_template::WornFlag1;
-use crate::model::{
-    self,
-    item_subtype::{AmuletSubType, ItemSubType},
-};
+use crate::model::{self, item_subtype::{AmuletSubType, ItemSubType}, WornFlag1};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {

@@ -35,11 +35,12 @@ pub fn light_source(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
+    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::LightSourceTemplate;
 
     #[test]
     fn test_light_source_wooden_torch() {
-        let mut item = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0);
+        let mut item = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "wooden torch with 4000 turns of light");
 
         item.p1 = 1;
@@ -51,7 +52,8 @@ mod tests {
         assert_eq!(
             generate(&generate_item::generate(
                 Box::new(LightSourceTemplate::BrassLantern),
-                0
+                0,
+                ItemQuality::Normal
             )),
             "brass lantern with 7500 turns of light"
         );
@@ -59,7 +61,7 @@ mod tests {
 
     #[test]
     fn test_light_source_magic_torch() {
-        let mut magic_torch = generate_item::generate(Box::new(LightSourceTemplate::MagicTorch), 0);
+        let mut magic_torch = generate_item::generate(Box::new(LightSourceTemplate::MagicTorch), 0, ItemQuality::Normal);
         magic_torch.set_identified(true);
         assert_eq!(
             generate(&magic_torch),
@@ -76,7 +78,7 @@ mod tests {
     #[test]
     fn test_light_source_magic_lantern() {
         let mut magic_lantern =
-            generate_item::generate(Box::new(LightSourceTemplate::MagicLantern), 0);
+            generate_item::generate(Box::new(LightSourceTemplate::MagicLantern), 0, ItemQuality::Normal);
         magic_lantern.set_identified(true);
         assert_eq!(
             generate(&magic_lantern),

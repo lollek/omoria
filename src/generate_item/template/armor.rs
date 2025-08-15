@@ -1,8 +1,12 @@
 use super::super::item_template::ItemTemplate;
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
 use crate::model::{
     self,
     item_subtype::{HardArmorSubType, ItemSubType, SoftArmorSubType},
+    Item,
 };
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ArmorTemplate {
@@ -86,6 +90,27 @@ impl ArmorTemplate {
 }
 
 impl ItemTemplate for ArmorTemplate {
+    fn create(&self, item_quality: ItemQuality) -> Item {
+        let mut item = default_create(self, item_quality);
+        if item_quality == ItemQuality::Cursed {
+            item.set_cursed(true);
+            item.cost = 0;
+            item.toac = -randint(4) as i16;
+        } else if item_quality == ItemQuality::Magic {
+            item.toac = randint(3) as i16;
+        } else if item_quality == ItemQuality::Special {
+            item.toac = randint(3) as i16;
+            match randint(9) {
+                1 => self.apply_armor_resist(&mut item),
+                2 => self.apply_armor_resist_acid(&mut item),
+                3 | 4 => self.apply_armor_resist_fire(&mut item),
+                5 | 6 => self.apply_armor_resist_cold(&mut item),
+                7 | 8 | _ => self.apply_armor_resist_lightning(&mut item),
+            }
+        }
+        item
+    }
+
     fn name(&self) -> &str {
         match self {
             ArmorTemplate::AugmentedChainMail => "Augmented Chain Mail^ [%P6,%P4]",
@@ -436,12 +461,12 @@ impl ItemTemplate for ArmorTemplate {
             ArmorTemplate::BarChainMail => 34,
             ArmorTemplate::BronzePlateMail => 32,
             ArmorTemplate::ChainMail => 26,
-            ArmorTemplate::CoolSetOfThreads => 255,
-            ArmorTemplate::DemonhideArmor => 255,
+            ArmorTemplate::CoolSetOfThreads => 7,
+            ArmorTemplate::DemonhideArmor => 40,
             ArmorTemplate::DoubleChainMail => 28,
             ArmorTemplate::DuskShroud => 30,
-            ArmorTemplate::ElvenChainMail => 255,
-            ArmorTemplate::FilthyNagaHideArmor => 255,
+            ArmorTemplate::ElvenChainMail => 30,
+            ArmorTemplate::FilthyNagaHideArmor => 5,
             ArmorTemplate::FilthyRags => 0,
             ArmorTemplate::FullPlateArmor => 48,
             ArmorTemplate::HardLeatherArmor => 5,
@@ -454,15 +479,15 @@ impl ItemTemplate for ArmorTemplate {
             ArmorTemplate::MetalBrigandineArmor => 36,
             ArmorTemplate::MetalLamellarArmor => 44,
             ArmorTemplate::MetalScaleMail => 24,
-            ArmorTemplate::MithrilChainMail => 255,
-            ArmorTemplate::MithrilPlateArmor => 255,
+            ArmorTemplate::MithrilChainMail => 50,
+            ArmorTemplate::MithrilPlateArmor => 50,
             ArmorTemplate::PartialPlateArmor => 42,
             ArmorTemplate::Robe => 1,
             ArmorTemplate::RustyChainMail => 26,
             ArmorTemplate::SoftLeatherArmor => 2,
             ArmorTemplate::SoftLeatherRingMail => 10,
             ArmorTemplate::SoftStuddedLeather => 3,
-            ArmorTemplate::StonePlateArmor => 255,
+            ArmorTemplate::StonePlateArmor => 10,
             ArmorTemplate::WovenCordArmor => 7,
             ArmorTemplate::WyrmhideArmor => 50,
         }

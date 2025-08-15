@@ -1,9 +1,9 @@
-use crate::generate_item::item_template::WornFlag2;
 use super::super::item_template::ItemTemplate;
-use crate::model::{
-    self,
-    item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType},
-};
+use crate::generate_item::item_template::default_create;
+use crate::generate_item::ItemQuality;
+use crate::misc::rs2item_name;
+use crate::model::{self, item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType}, Item, WornFlag1, WornFlag2};
+use crate::random::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {
@@ -26,9 +26,74 @@ impl AmmunitionTemplate {
     pub fn iter() -> impl Iterator<Item = Box<dyn ItemTemplate>> {
         AmmunitionTemplate::vec().into_iter()
     }
+
+    fn apply_ammo_flame_tongue(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of Fire", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayFire);
+        item.tohit += 2;
+        item.todam += 4;
+        item.cost += 2_500;
+    }
+
+    fn apply_ammo_slaying(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of Slaying", self.name()));
+        item.tohit += 5;
+        item.todam += 5;
+        item.cost += 2_000;
+    }
+
+    fn apply_ammo_slay_dragon(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of Dragon Slaying", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayDragon);
+        item.tohit += 10;
+        item.todam += 10;
+        item.cost += 3_500;
+    }
+
+    fn apply_ammo_slay_evil(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of Slay Evil", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayEvil);
+        item.tohit += 3;
+        item.todam += 3;
+        item.cost += 2_500;
+    }
+
+    fn apply_ammo_slay_monster(&self, item: &mut Item) {
+        item.name = rs2item_name(&format!("{} of Slay Monster", self.name()));
+        item.apply_wornflag1(WornFlag1::SlayMonster);
+        item.tohit += 2;
+        item.todam += 2;
+        item.cost += 3_000;
+    }
 }
 
 impl ItemTemplate for AmmunitionTemplate {
+    fn create(&self, item_quality: ItemQuality) -> Item {
+        let mut item = default_create(self, item_quality);
+        if self == &AmmunitionTemplate::Arrow || self == &AmmunitionTemplate::Bolt {
+            if item_quality == ItemQuality::Cursed {
+                item.set_cursed(true);
+                item.cost = 0;
+                item.tohit = -randint(5) as i16;
+                item.todam = -randint(5) as i16;
+            } else if item_quality == ItemQuality::Magic {
+                item.tohit = randint(4) as i16;
+                item.todam = randint(4) as i16;
+            } else if item_quality == ItemQuality::Special {
+                item.tohit = randint(4) as i16;
+                item.todam = randint(4) as i16;
+                match randint(10) {
+                    1..=3 => self.apply_ammo_slaying(&mut item),
+                    4..=5 => self.apply_ammo_flame_tongue(&mut item),
+                    6..=7 => self.apply_ammo_slay_evil(&mut item),
+                    8..=9 => self.apply_ammo_slay_monster(&mut item),
+                    10|_ => self.apply_ammo_slay_dragon(&mut item),
+                }
+            }
+        }
+        item
+    }
+
     fn name(&self) -> &str {
         match self {
             AmmunitionTemplate::Arrow => "& Arrow~^ (%P2,%P3)",
