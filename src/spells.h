@@ -34,13 +34,13 @@ bool detect_curse(void);
 bool detect_magic(void);
 bool lore_spell(void);
 bool fire_bolt(enum spell_effect_t typ, long dir, long y, long x, long dam,
-                  char bolt_typ[28]);
-bool fire_ball(enum spell_effect_t typ, long dir, long y, long x,
-                  long dam_hp, char descrip[28]);
+               char const *bolt_typ);
+bool fire_ball(enum spell_effect_t typ, long dir, long y, long x, long dam_hp,
+               char const *descrip);
 bool creeping_doom(long dir, long y, long x, long dam_hp, long range,
-                      char ddesc[28]);
-bool fire_line(enum spell_effect_t typ, long dir, long y, long x,
-                  long dam_hp, char descrip[28]);
+                   char const *ddesc);
+bool fire_line(enum spell_effect_t typ, long dir, long y, long x, long dam_hp,
+               char const *descrip);
 bool breath(enum spell_effect_t typ, long y, long x, long dam_hp,
                char ddesc[82]);
 bool recharge(long num);
@@ -57,7 +57,7 @@ bool mass_genocide(void);
 bool genocide(void);
 bool mass_poly(void);
 bool detect_creatures(enum spell_effect_t typ);
-bool hp_player(long num, char kind[82]);
+bool hp_player(long num, char const *kind);
 /**
  * @what_flag:  confused, blind, poisoned, hoarse, afraid, image
  *
@@ -69,10 +69,10 @@ bool protect_evil(void);
 bool create_food(long t0, long t1, long t2, long t3, long t4);
 bool zap_area(long cflag, long dmge, long typ);
 bool warding_glyph(void);
-void lower_stat(enum stat_t tstat, char msg1[82]);
-bool lose_stat(enum stat_t tstat, char msg1[82], char msg2[82]);
-bool restore_stat(enum stat_t tstat, char msg1[82]);
-bool gain_stat(enum stat_t tstat, char msg1[82]);
+void lower_stat(enum stat_t tstat, char const *msg1);
+bool lose_stat(enum stat_t tstat, char const *msg1, char const *msg2);
+bool restore_stat(enum stat_t tstat, char const *msg1);
+bool gain_stat(enum stat_t tstat, char const *msg1);
 void lose_exp(long amount);
 bool slow_poison(void);
 bool bless(long amount);

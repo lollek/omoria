@@ -98,7 +98,7 @@ void game_version(void) {
 }
 #undef PB
 
-bool check_pswd(char passwd[134], const bool present) {
+bool check_pswd(char const *const passwd, const bool present) {
   char tpw[134]; /*  : packed array [1..12] of char;*/
   /* account_type   account; */
   bool checked_out = false;
@@ -256,9 +256,8 @@ void esf__display_screen(const int cur_top, char list[][134], const int n1, int 
   esf__display_commands();
 }
 
-bool esf__get_list_entry(int *l_command, char pmt[82], const int cur_top,
-                            const int i1,
-                            const int i2) {
+bool esf__get_list_entry(int *l_command, char const *const pmt,
+                         const int cur_top, const int i1, const int i2) {
   char out_val[82];
   bool flag = true;
 
@@ -347,9 +346,8 @@ void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
   }
 }
 
-bool cc__input_field(char prompt[134], int64_t *num, const int64_t min,
-                        const int64_t max,
-                        bool *ok) {
+bool cc__input_field(char const *const prompt, int64_t *num, const int64_t min,
+                     const int64_t max, bool *ok) {
   char out_val[134];
   bool return_value = false;
 

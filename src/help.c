@@ -137,7 +137,7 @@ void help(void) {
   draw_cave();
 }
 
-void moria_help(char help_level[82]) {
+void moria_help(char const *const help_level) {
   char help_string[1026];
   pid_t help_pid;
   int status;

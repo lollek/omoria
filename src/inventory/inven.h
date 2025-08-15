@@ -14,7 +14,7 @@ long inventory_change_all_ok_stats(bool nok, bool nin);
 char cur_char1(void);
 char cur_char2(void);
 char cur_insure(void);
-bool inven_command(char command, treas_rec **item_ptr, char prompt[82]);
+bool inven_command(char command, treas_rec **item_ptr, char const *prompt);
 void delete_inven_item(treas_rec *ptr);
 void inven_destroy(treas_rec *item_ptr);
 void inven_drop(treas_rec *item_ptr, long y, long x, bool mon);
@@ -47,7 +47,7 @@ bool inventory_find_range(obj_set const item_val, bool inner, treas_rec **first,
 /**
  * Prompt for what type of money to use
  */
-long get_money_type(char prompt[134], bool *back, bool no_check);
+long get_money_type(char const *prompt, bool *back, bool no_check);
 
 /*  { Displays inventory items, returns chosen item if want_back. }*/
 /*{ bool returns if chosen }*/
