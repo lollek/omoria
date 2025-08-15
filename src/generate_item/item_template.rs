@@ -21,7 +21,7 @@ pub enum ItemQuality {
 }
 
 pub trait ItemTemplate {
-    fn create(&self, item_quality: ItemQuality, item_level: u8) -> Item {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
         default_create(self, item_quality)
     }
 

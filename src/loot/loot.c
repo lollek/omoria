@@ -6,7 +6,6 @@
 #include "../types.h"
 #include "../variables.h"
 #include "config.h"
-#include "treasures.h"
 
 void place_gold(const long y, const long x) {
   /*{ Places a treasure (Gold or Gems) at given row, column -RAK-	}*/
