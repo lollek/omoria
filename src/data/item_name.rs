@@ -4,6 +4,7 @@ use crate::data::item_name::subtype::armor::armor;
 use crate::data::item_name::subtype::bag::bag;
 use crate::data::item_name::subtype::book::book;
 use crate::data::item_name::subtype::chest::chest;
+use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::generic_item;
 use crate::data::item_name::subtype::jewelry::jewelry;
@@ -58,11 +59,9 @@ pub fn generate(item: &Item) -> String {
         | ItemType::DownSteepStaircase
         | ItemType::EntranceToStore
         | ItemType::FlaskOfOil
-        | ItemType::Food
         | ItemType::GemHelm
         | ItemType::Horn
         | ItemType::Instrument
-        | ItemType::JunkFood
         | ItemType::LodgingAtInn
         | ItemType::Money
         | ItemType::OpenDoor
@@ -87,6 +86,8 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Pick
         | ItemType::PoleArm
         | ItemType::Sword => melee_weapon(item),
+        ItemType::Food
+        | ItemType::JunkFood => food(item),
         ItemType::Gem => gem(item),
         ItemType::HardArmor | ItemType::SoftArmor => armor(item),
         ItemType::Jewelry => jewelry(item),
