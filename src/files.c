@@ -148,7 +148,7 @@ void print_objects(void) {
           unquote(inven_temp.data.name);
           known1(inven_temp.data.name);
           known2(inven_temp.data.name);
-          objdes(tmp_str, &inven_temp, true);
+          item_name(tmp_str, &inven_temp);
           fprintf(file1, "%s\n", tmp_str);
         }
         pusht(i2);

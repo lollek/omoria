@@ -58,12 +58,12 @@ static bool minus_ac(const long typ_dam) {
     inven_temp.data = equipment[i2];
     /* with equipment[i2] do; */
     if ((equipment[i2].flags & typ_dam) != 0) {
-      objdes(out_val, &inven_temp, false);
+      item_name(out_val, &inven_temp);
       sprintf(out_str, "Your %s resists damage!", out_val);
       msg_print(out_str);
       return_value = true;
     } else if (equipment[i2].ac + equipment[i2].toac > 0) {
-      objdes(out_val, &inven_temp, false);
+      item_name(out_val, &inven_temp);
       sprintf(out_str, "Your %s is damaged!", out_val);
       msg_print(out_str);
       equipment[i2].toac--;

@@ -67,7 +67,7 @@ static void carry(const long y, const long x) {
         }
 
         prt_stat_block();
-        objdes(out_val, item_ptr, true);
+        item_name(out_val, item_ptr);
 
         if (money_flag) {
 

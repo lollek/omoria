@@ -362,7 +362,7 @@ void tp__display_inv(pinven_ptr start, const pinven_ptr *inv, pinven_ptr *blegga
         char out_val2[85];
         cur_display[count] = start;
         inven_temp.data = start->data.fsr.object;
-        objdes(out_val1, &inven_temp, true);
+        item_name(out_val1, &inven_temp);
         sprintf(out_val2, "%c) %s", (char)(96 + count), out_val1);
         prt(out_val2, count + 5, 1);
         sprintf(out_val2, "%ld", start->data.fsr.best_bid);
@@ -546,7 +546,7 @@ void tpd__player_wins_bid(pinven_ptr *item, pinven_ptr *inv,
     char out_val1[82];
     temp_ptr = inven_carry();
     msg_print("You are now the proud owner of");
-    objdes(out_val1, temp_ptr, true);
+    item_name(out_val1, temp_ptr);
     sprintf(out_val2, "%s.", out_val1);
     msg_print(out_val2);
     tp__send_money(&(*item)->data.fsr.seller,
@@ -697,7 +697,7 @@ void tp__dump(char filename[82], const pinven_ptr *inv) {
         sprintf(out_val, "%ld", item->data.fsr.time);
         fprintf(dump, "  time:        %s\n", out_val);
         inven_temp.data = item->data.fsr.object;
-        objdes(out_val, &inven_temp, true);
+        item_name(out_val, &inven_temp);
         fprintf(dump, "  object:      %s\n", out_val);
         fprintf(dump, "  seller:      %s/%ld\n", item->data.fsr.seller.username,
                 item->data.fsr.seller.claim_check);

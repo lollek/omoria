@@ -142,7 +142,7 @@ static bool check_if_previous_worn_item_was_cursed(const long equipment_slot) {
       equipment_slot == Equipment_primary ? "wielding" : "wearing";
   char out_val_tmp[82];
   inven_temp.data = equipment[equipment_slot];
-  objdes(out_val_tmp, &inven_temp, false);
+  item_name(out_val_tmp, &inven_temp);
   msg_printf("The %s you are %s appears to be cursed!", out_val_tmp, equip_way);
   msg_print("");
   return false;
@@ -188,7 +188,7 @@ static void equip_new_item(const long equipment_slot,
 
   inven_temp.data = equipment[equipment_slot];
   char prt2[82];
-  objdes(prt2, &inven_temp, true);
+  item_name(prt2, &inven_temp);
   long i2 = 0;
   long i3 = Equipment_min - 1;
   do { /*{ Get the right letter of equipment }*/

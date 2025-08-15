@@ -7,6 +7,7 @@ pub mod ammo;
 pub mod amulet;
 pub mod armor;
 pub mod bag;
+pub mod book;
 pub mod chest;
 pub mod gem;
 pub mod jewelry;
@@ -196,13 +197,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             261 => "Harp of the Druids",
             _ => "Alien instrument",
         }),
-        ItemType::SongBook => Cow::from(match item.subval {
-            262 => "Book of Bard Lyrics [Beginners Handbook]",
-            263 => "Songs of Charming [Song Book I]",
-            264 => "Ballads of Knowledge [Song Book II]",
-            265 => "Epics of the Bards [Greater Song Book]",
-            _ => "Alien book",
-        }),
         ItemType::Scroll1 => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -357,34 +351,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 ""
             };
             Cow::from(format!("%W wand{}{}", attribute, charges))
-        }
-        ItemType::MagicBook => {
-            let name = if item.is_identified() {
-                match item.subval {
-                    257 => " of Magic Spells [Beginners-Magik]",
-                    258 => " of Magic Spells [Magik I]",
-                    259 => " of Magic Spells [Magik II]",
-                    261 => " of Magic Spells [The Mages Guide to Power]",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("Book{}{}", plural_s(), name))
-        }
-        ItemType::PrayerBook => {
-            let name = if item.is_identified() {
-                match item.subval {
-                    258 => " of Prayers [Beginners Handbook]",
-                    259 => " of Prayers [Words of Wisdom]",
-                    260 => " of Prayers [Chants and Blessings]",
-                    261 => " of Prayers [Exorcism and Dispelling]",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("Holy Book{}{}", plural_s(), name))
         }
         _ => Cow::from("Something alien"),
     }

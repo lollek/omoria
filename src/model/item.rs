@@ -4,6 +4,7 @@ use crate::conversion;
 use crate::misc::rs2item_name;
 use crate::model::ItemType;
 use crate::model::{Damage, Name};
+use crate::model::item_subtype::ItemSubType;
 
 pub enum ChestFlags1 {
     Locked = 0x00000001,
@@ -164,6 +165,11 @@ impl Item {
     pub fn item_type(&self) -> ItemType {
         conversion::item_type::from_usize(self.tval.into())
             .unwrap_or_else(|| panic!("expected item type from tval {}", self.tval))
+    }
+
+    pub fn item_subtype(&self) -> ItemSubType {
+        conversion::item_subtype::from_i64(self.item_type(), self.subval)
+            .unwrap_or_else(|| panic!("expected item subtype from item_subtype {:?}", self))
     }
 
     pub fn apply_chestflag1(&mut self, flag: ChestFlags1) {

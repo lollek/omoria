@@ -119,7 +119,7 @@ void q__reward_item(const long target) {
     known1(rewards[i2].name);
     known2(rewards[i2].name);
     inven_temp.data = rewards[i2];
-    objdes(reward_names[i2], &inven_temp, true);
+    item_name(reward_names[i2], &inven_temp);
   }
 
   pusht(i1);

@@ -577,7 +577,7 @@ static void __store_print_inventory(const enum store_t store_type, long start) {
       inven_temp.data.number = 1;
     }
     char out_val1[82];
-    objdes(out_val1, &inven_temp, true);
+    item_name(out_val1, &inven_temp);
     char out_val2[85];
     sprintf(out_val2, "%c) %s", 97 + (int)i, out_val1);
     prt(out_val2, i + 6, 1);
@@ -1348,7 +1348,7 @@ static bool __store_purchase(const enum store_t store_type, long *cur_top,
     __remove_item_from_store(store_type, selected_item, true);
     const treas_rec *item_new = inven_carry();
     char out_val[82];
-    objdes(out_val, item_new, true);
+    item_name(out_val, item_new);
     char out2[100];
     sprintf(out2, "You have %s", out_val);
     msg_print(out2);
@@ -1563,7 +1563,7 @@ static bool __store_sell(const enum store_t store_type, const long cur_top,
 
   char out_val[82];
   char out2[100];
-  objdes(out_val, &inven_temp, true);
+  item_name(out_val, &inven_temp);
   sprintf(out2, "Selling %s", out_val);
   msg_print(out2);
   msg_print(" ");

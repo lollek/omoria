@@ -240,7 +240,7 @@ static long ic__display_inv(treas_rec *cur_display[], char const * const prompt,
         cur_display[count] = start;
         inven_temp.data = start->data;
         char out_val[82];
-        objdes(out_val, &inven_temp, true);
+        item_name(out_val, &inven_temp);
         if ((start->data.flags2 & Holding_bit) != 0) {
           if (strstr(start->data.name, "|") == NULL) {
             char out_val3[82];
@@ -497,7 +497,7 @@ void inv__equip_pos_string(char out_val[82], const long equip_pos,
   char tmp_buf[82];
 
   inven_temp.data = equipment[equip_pos];
-  objdes(tmp_buf, &inven_temp, true);
+  item_name(tmp_buf, &inven_temp);
   snprintf(out_val, 82, "%c%c%c%s%s", cur_insure(), (char)('a' + counter - 1),
           cur_char2(), ic__equip_print_prefix(equip_pos), tmp_buf);
 }
@@ -553,7 +553,7 @@ treas_rec *ic__remove(const long item_val, const bool show_message) {
       break;
     }
 
-    objdes(prt2, &inven_temp, true);
+    item_name(prt2, &inven_temp);
     sprintf(out_val, "%s%s", prt1, prt2);
     msg_print(out_val);
     msg_print("");
@@ -697,7 +697,7 @@ void ic__stats(treas_rec *cur_display[], char prompt[82], long *scr_state,
       prt("Blackmarket : ", 19, 1);
       prt("Insured     : ", 20, 1);
       prt(item_ptr->data.name, 1, 15);
-      objdes(out_val, item_ptr, true);
+      item_name(out_val, item_ptr);
       prt(out_val, 2, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.tval);
       prt(out_val, 3, 15);
@@ -1141,7 +1141,7 @@ void ic__switch_weapon(long *scr_state) {
     char prt1[82];
     char prt2[200];
     inven_temp.data = equipment[Equipment_primary];
-    objdes(prt1, &inven_temp, false);
+    item_name(prt1, &inven_temp);
     sprintf(prt2, "The %s you are wielding appears to be cursed.", prt1);
     msg_print(prt2);
     msg_print("");

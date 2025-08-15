@@ -55,7 +55,7 @@ void player_action_look(void) {
           char out_val2[120];
           inven_temp.data = t_list[cave[y][x].tptr];
           inven_temp.data.number = 1;
-          objdes(out_val, &inven_temp, true);
+          item_name(out_val, &inven_temp);
           sprintf(out_val2, "You see %s.", out_val);
           msg_print(out_val2);
           flag = true;

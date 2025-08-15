@@ -946,7 +946,7 @@ static void c__make_attack(const long monptr) {
   }
   strcpy(inven_temp.data.name, ddesc);
   inven_temp.data.number = 1;
-  objdes(ddesc, &inven_temp, true);
+  item_name(ddesc, &inven_temp);
   strcpy(died_from, ddesc);
   /*{ End DIED_FROM                 }*/
 
@@ -1376,7 +1376,7 @@ static bool c__cast_spell(const long monptr, bool *took_turn) {
     }
     strcpy(inven_temp.data.name, ddesc);
     inven_temp.data.number = 1;
-    objdes(ddesc, &inven_temp, true);
+    item_name(ddesc, &inven_temp);
     /*{ End DIED_FROM                 }*/
 
     /*{ Extract all possible spells into spell_choice }*/

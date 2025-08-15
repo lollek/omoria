@@ -23,7 +23,7 @@ void msg_remaining_of_item(const treas_rec *item_ptr) {
   inven_temp.data = item_ptr->data;
 
   inven_temp.data.number--;
-  objdes(out_val, &inven_temp, true);
+  item_name(out_val, &inven_temp);
   sprintf(out_val2, "You have %s.", out_val);
   msg_print(out_val2);
 }
