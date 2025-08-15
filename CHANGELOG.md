@@ -1,5 +1,7 @@
 # Changelog
 
+## 5-alpha526
+
 ## 5-alpha525
 
 August 2025
