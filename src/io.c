@@ -221,7 +221,7 @@ void msg_printf(char const *const fmt, ...) {
   va_end(ap);
 }
 
-bool msg_print(char *str_buff) /* : varying[a] of char; */
+bool msg_print(const char *str_buff) /* : varying[a] of char; */
 {
   /*{ Outputs message to top line of screen }*/
 
@@ -294,7 +294,6 @@ bool get_yes_no(char const *prompt) {
 
   for (;;) {
     char command;
-    msg_print(" ");
     get_com(buf, &command);
     switch (command) {
     case 'y':

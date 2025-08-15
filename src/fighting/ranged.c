@@ -200,7 +200,7 @@ static void missile_hit_ground(const treas_rec *missile, const long y,
   } else {
     char out_val[82];
     char out_val2[120];
-    objdes(out_val, missile, false);
+    item_name(out_val, missile);
     sprintf(out_val2, "The %s breaks.", out_val);
     msg_print(out_val2);
   }
@@ -238,7 +238,7 @@ static bool missile_try_hit_creature(const treas_rec *missile,
   char missile_text_buf[82];
   char text_buf[200];
   const long monster_index = m_list[cave[y][x].cptr].mptr;
-  objdes(missile_text_buf, missile, FALSE);
+  item_name(missile_text_buf, missile);
   sprintf(text_buf, "The %s hits %s.", missile_text_buf, monster_name_buf);
   msg_print(text_buf);
   damage = tot_dam(&missile->data, damage, &monster_templates[monster_index]);

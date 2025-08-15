@@ -62,7 +62,7 @@ fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
         Ok(serialized_data) => serialized_data,
         Err(e) => {
             debug::error(format!("Failed to serialize data: {e}"));
-            debug::error(format!("Data in debug format: {:?}", data));
+            debug_serialize_save_record(data);
             return None;
         }
     };
@@ -75,6 +75,28 @@ fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
         return None;
     }
     Some(())
+}
+
+fn debug_serialize_save_record(save_record: &SaveRecord) {
+    fn serialize_status<'a>(value: impl serde::Serialize) -> &'a str {
+        match serde_json::to_string(&value) {
+            Ok(_) => "OK",
+            Err(_) => "ERROR",
+        }
+
+    }
+    debug::error("### DEBUG SERIALIZE SAVE RECORD START ###");
+    debug::error(&format!(
+        "Player: {}, Inventory: {}, Equipment: {}, Town: {}, Dungeon: {}, Identified: {}, Monsters: {}",
+        serialize_status(&save_record.player),
+        serialize_status(&save_record.inventory),
+        serialize_status(&save_record.equipment),
+        serialize_status(&save_record.town),
+        serialize_status(&save_record.dungeon),
+        serialize_status(&save_record.identified),
+        serialize_status(&save_record.monsters)
+    ));
+    debug::error("### DEBUG SERIALIZE SAVE RECORD END ###");
 }
 
 pub fn load_character_with_feedback(player_name: &str, player_uid: i64) -> Option<()> {

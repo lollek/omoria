@@ -1,13 +1,17 @@
 use std::borrow::Cow;
+use crate::conversion::item_subtype;
 use crate::data;
-use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of};
+use crate::data::item_name::helpers::{maybe_armor_bonus, attack_bonus, damage, maybe_number_of, plural_s};
 use crate::model::{Item, ItemType};
+use crate::model::item_subtype::{ItemSubType, LodgingAtInnSubType};
 
 pub mod ammo;
 pub mod amulet;
 pub mod armor;
 pub mod bag;
+pub mod book;
 pub mod chest;
+pub mod food;
 pub mod gem;
 pub mod jewelry;
 pub mod light_source;
@@ -24,57 +28,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
 
     match item.item_type() {
-        ItemType::Food => {
-            if 255 < item.subval && item.subval < 300 {
-                // Mushrooms
-                let attribute = match item.subval {
-                    256 => "",
-                    257 => " of poison",
-                    258 => " of blindness",
-                    259 => " of paranoia",
-                    260 => " of confusion",
-                    261 => " of hallucination",
-                    262 => " of cure poison",
-                    263 => " of cure blindness",
-                    264 => " of cure paranoia",
-                    265 => " of cure confusion",
-                    266 => " of weakness",
-                    267 => " of unhealth",
-                    268 => " of restore constitution",
-                    269 => " of first aid",
-                    270 => " of minor cures",
-                    271 => " of light cures",
-                    272 => " of restoring",
-                    273 => " of poison",
-                    274 => " of hallucination",
-                    275 => " of cure poison",
-                    276 => " of unhealth",
-                    277 => " of cure serious wounds",
-                    _ => "of ???",
-                };
-                Cow::from(format!(
-                    "%M mushroom{}{}",
-                    plural_s(),
-                    if item.is_identified() { attribute } else { "" }
-                ))
-            } else {
-                Cow::from(match item.subval {
-                    307 => format!("ration{} of food", plural_s()),
-                    309 => format!("hard biscuit{}", plural_s()),
-                    310 => format!("strip{} of beef jerky", plural_s()),
-                    311 => format!("pint{} of fine ale", plural_s()),
-                    312 => format!("pint{} of fine wine", plural_s()),
-                    313 => format!("piece{} of elvish waybread", plural_s()),
-                    314 => format!("stew{}", plural_s()),
-                    315 => format!("green jelly{}", plural_s()),
-                    316 => format!("handful{} of berries (poisonous)", plural_s()),
-                    317 => format!("handful{} of berries (smurfberries)", plural_s()),
-                    319 => format!("eyeball{} of Ned", plural_s()),
-                    252 => format!("pint{} of fine grade mush", plural_s()),
-                    _ => "alien food".to_string(),
-                })
-            }
-        }
         ItemType::GemHelm => {
             let material = match item.subval {
                 9 => "Iron helm",
@@ -196,13 +149,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             261 => "Harp of the Druids",
             _ => "Alien instrument",
         }),
-        ItemType::SongBook => Cow::from(match item.subval {
-            262 => "Book of Bard Lyrics [Beginners Handbook]",
-            263 => "Songs of Charming [Song Book I]",
-            264 => "Ballads of Knowledge [Song Book II]",
-            265 => "Epics of the Bards [Greater Song Book]",
-            _ => "Alien book",
-        }),
         ItemType::Scroll1 => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -258,67 +204,67 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
         }
         ItemType::Potion1 => {
             let material = match item.subval {
-                281 => "Icky green",
-                282 => "Light brown",
-                283 => "Clear",
-                _ => "%C",
+                281 => "icky green ",
+                282 => "light brown ",
+                283 => "clear ",
+                _ => "",
             };
             let attribute = if item.is_identified() {
                 match item.subval {
-                    257 => " of Gain Strength",
-                    258 => " of Poison",
-                    259 => " of Restore Strength",
-                    260 => " of Gain Intelligence",
-                    261 => " of Lose Intelligence",
-                    262 => " of Restore Intelligence",
-                    263 => " of Gain Wisdom",
-                    264 => " of Lose Wisdom",
-                    265 => " of Restore Wisdom",
-                    266 => " of Charisma",
-                    267 => " of Ugliness",
-                    268 => " of Restore Charisma",
-                    269 => " of Cure Light Wounds",
-                    270 => " of Cure Serious Wounds",
-                    271 => " of Cure Critical Wounds",
-                    272 => " of Healing",
-                    273 => " of Gain Constitution",
-                    274 => " of Gain Experience",
-                    275 => " of Sleep",
-                    276 => " of Blindness",
-                    277 => " of Confusion",
-                    278 => " of Poison",
-                    279 => " of Haste item",
-                    280 => " of Slowness",
-                    281 => " of Slime Mold Juice",
-                    282 => " of Apple Juice",
-                    283 => " of Water",
-                    284 => " of Gain Dexterity",
-                    285 => " of Restore Dexterity",
-                    286 => " of Restore Constitution",
-                    287 => " of Learning",
-                    288 => " of Lose Memories",
-                    289 => " of Salt Water",
-                    290 => " of Invulnerability",
-                    291 => " of Heroism",
-                    292 => " of Super Heroism",
-                    293 => " of Boldliness",
-                    294 => " of Restore Life Levels",
-                    295 => " of Resist Heat",
-                    296 => " of Resist Cold",
-                    297 => " of Detect Invisible",
-                    298 => " of Slow Poison",
-                    299 => " of Neutralize Poison",
-                    300 => " of Restore Mana",
-                    301 => " of Infra-Vision",
-                    302 => " of Flea Bile",
+                    257 => " of gain strength",
+                    258 => " of poison",
+                    259 => " of restore strength",
+                    260 => " of gain intelligence",
+                    261 => " of lose intelligence",
+                    262 => " of restore intelligence",
+                    263 => " of gain wisdom",
+                    264 => " of lose wisdom",
+                    265 => " of restore wisdom",
+                    266 => " of charisma",
+                    267 => " of ugliness",
+                    268 => " of restore charisma",
+                    269 => " of cure light wounds",
+                    270 => " of cure serious Wounds",
+                    271 => " of cure critical Wounds",
+                    272 => " of healing",
+                    273 => " of gain constitution",
+                    274 => " of gain experience",
+                    275 => " of sleep",
+                    276 => " of blindness",
+                    277 => " of confusion",
+                    278 => " of poison",
+                    279 => " of haste item",
+                    280 => " of slowness",
+                    281 => " of slime mold juice",
+                    282 => " of apple juice",
+                    283 => " of water",
+                    284 => " of gain dexterity",
+                    285 => " of restore dexterity",
+                    286 => " of restore constitution",
+                    287 => " of learning",
+                    288 => " of lose memories",
+                    289 => " of salt water",
+                    290 => " of invulnerability",
+                    291 => " of heroism",
+                    292 => " of super heroism",
+                    293 => " of boldliness",
+                    294 => " of restore life Levels",
+                    295 => " of resist heat",
+                    296 => " of resist cold",
+                    297 => " of detect invisible",
+                    298 => " of slow poison",
+                    299 => " of neutralize poison",
+                    300 => " of restore mana",
+                    301 => " of infra-vision",
+                    302 => " of flea bile",
                     _ => " of ???",
                 }
             } else {
                 ""
             };
-            Cow::from(format!("{} potion{}{}", material, plural_s(), attribute))
+            Cow::from(format!("{}potion{}{}", material, plural_s(), attribute))
         }
-        ItemType::FlaskOfOil => Cow::from(format!("Flask{} of Oil", plural_s())),
+        ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
         ItemType::Staff => {
             let attribute = if item.is_identified() {
                 match item.subval {
@@ -358,38 +304,33 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("%W wand{}{}", attribute, charges))
         }
-        ItemType::MagicBook => {
-            let name = if item.is_identified() {
-                match item.subval {
-                    257 => " of Magic Spells [Beginners-Magik]",
-                    258 => " of Magic Spells [Magik I]",
-                    259 => " of Magic Spells [Magik II]",
-                    261 => " of Magic Spells [The Mages Guide to Power]",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("Book{}{}", plural_s(), name))
-        }
-        ItemType::PrayerBook => {
-            let name = if item.is_identified() {
-                match item.subval {
-                    258 => " of Prayers [Beginners Handbook]",
-                    259 => " of Prayers [Words of Wisdom]",
-                    260 => " of Prayers [Chants and Blessings]",
-                    261 => " of Prayers [Exorcism and Dispelling]",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("Holy Book{}{}", plural_s(), name))
-        }
-        _ => Cow::from("Something alien"),
+        _ => Cow::from(format!("Something alien (tval {})", item.tval)),
     }
 }
 
+pub fn lodging_at_inn(item: &Item) -> String {
+    let ItemSubType::LodgingAtInn(subtype) =
+        item_subtype::from_i64(ItemType::LodgingAtInn, item.subval)
+            .unwrap_or_else(|| panic!("Invalid item subtype for LodgingAtInn: {:?}", item)) else {
+        panic!("Invalid item subtype for LodgingAtInn: {:?}", item)
+    };
+
+    match subtype {
+        LodgingAtInnSubType::LodgingForOneDay => "one day of lodging",
+        LodgingAtInnSubType::LodgingForThreeDays => "three days of lodging",
+        LodgingAtInnSubType::LodgingForOneWeek => "one week of lodging",
+        LodgingAtInnSubType::RoomAndBoardForOneDay => "room and board for one day",
+    }.to_string()
+}
+
+pub fn money(item: &Item) -> String {
+    let mut parts = Vec::new();
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+    parts.push(format!("copper piece{}", plural_s(item)).into());
+    parts.join("")
+}
 
 pub fn generic_item(item: &Item) -> String {
     let mut parts = Vec::new();

@@ -49,7 +49,7 @@ void player_action_drop(void) {
           inven_drop(com_ptr, char_row, char_col, false);
         }
         prt_stat_block();
-        objdes(out_val, &inven_temp, true);
+        item_name(out_val, &inven_temp);
         sprintf(out_val2, "Dropped %s.", out_val);
         msg_print(out_val2);
         reset_flag = false;

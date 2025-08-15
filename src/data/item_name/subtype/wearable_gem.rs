@@ -44,6 +44,7 @@ pub fn wearable_gem(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
+    use serial_test::serial;
     use super::*;
     use crate::data::item_name::generate;
     use crate::generate_item;
@@ -51,6 +52,7 @@ mod tests {
     use crate::generate_item::template::ValuableTemplate;
 
     #[test]
+    #[serial]
     fn test_gem_of_teleportation() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfTeleportation), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");
@@ -63,6 +65,7 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_gem_of_resist_cold() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfResistCold), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");
@@ -75,6 +78,7 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_gem_of_resist_acid() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfResistAcid), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");
@@ -87,6 +91,7 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_gem_of_see_invisible() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfSeeInvisible), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");
@@ -99,6 +104,7 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_gem_of_stealth() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfStealth), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");
@@ -111,6 +117,7 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_gem_of_slow_digestion() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfSlowDigestion), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");
@@ -123,6 +130,7 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_gem_of_lordly_protection_fire() {
         let item = generate_item::generate(Box::new(ValuableTemplate::GemOfProtectFire), 0, ItemQuality::Normal);
         assert_eq!(generate(&item), "finely cut gem");

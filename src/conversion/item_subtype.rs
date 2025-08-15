@@ -47,7 +47,7 @@ pub mod sword;
 pub mod wand;
 pub mod wearable_gem;
 
-pub fn to_usize(item_subtype: ItemSubType) -> usize {
+pub fn to_usize(item_subtype: &ItemSubType) -> usize {
     match item_subtype {
         ItemSubType::MiscObject(subtype) => misc_item::to_usize(subtype),
         ItemSubType::Chest(subtype) => chest::to_usize(subtype),

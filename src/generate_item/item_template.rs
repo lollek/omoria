@@ -261,7 +261,7 @@ pub(crate) fn default_create(
         flags2: template.flags2(),
         p1: template.p1(),
         cost: template.cost() * data::currency::value(&Currency::Gold),
-        subval: item_subtype::to_usize(template.subtype()) as i64,
+        subval: item_subtype::to_usize(&template.subtype()) as i64,
         weight: template.weight(),
         number: template.number(),
         tohit: template.modifier_to_hit(),

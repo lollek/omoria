@@ -1,5 +1,15 @@
 # Changelog
 
+## 5-alpha525
+
+August 2025
+
+* Make it possible to respawn on death.
+* Remove some print-to-file functionality on death (tombstone and character sheet). If I miss them in the future I'll add a command for them instead.
+* Now uses rust name generation logic by default.
+* Starting items are now always identified.
+* Fix bug where saving the game did not work if you had identified any items.
+
 ## 5-alpha524
 
 August 2025

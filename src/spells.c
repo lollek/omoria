@@ -1284,7 +1284,7 @@ bool ident_spell(void) {
       /* with item_ptr->data. do; */
       identify(&item_ptr->data);
       known2(item_ptr->data.name);
-      objdes(out_val, item_ptr, true);
+      item_name(out_val, item_ptr);
       msg_print(out_val);
 
       return_value = true;
@@ -2339,7 +2339,7 @@ bool wall_to_mud(const long dir, long y, long x) {
           if (test_light(y, x)) {
             char out_val2[120];
             inven_temp.data = t_list[cave[y][x].tptr];
-            objdes(out_val, &inven_temp, false);
+            item_name(out_val, &inven_temp);
             sprintf(out_val2, "The %s turns into mud.", out_val);
             msg_print(out_val2);
             return_value = true;

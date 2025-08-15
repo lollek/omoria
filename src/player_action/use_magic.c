@@ -270,33 +270,31 @@ static void drain_mana(const enum magic_t magic_type, const long choice) {
 static bool cast_spell(char prompt[82], const treas_rec *item_ptr, long *sn,
                           long *sc, bool *redraw) {
 
-  unsigned long i2, i4;
-  long num;
+  long num = 0;
   spl_type aspell;
   bool flag = false;
+  unsigned long flags_i = item_ptr->data.flags;
+  unsigned long flags2_i = item_ptr->data.flags2;
 
-  long i1 = num = 0;
-  i2 = item_ptr->data.flags;
-  i4 = item_ptr->data.flags2;
-
+  long i = 0;
   do {
-    long i3 = bit_pos64(&i4, &i2) + 1;
+    long joined_flags_i = bit_pos64(&flags2_i, &flags_i) + 1;
     /*{ Avoid the cursed bit like the plague -DMF-   }*/
-    if (i3 > 31) {
-      i3--;
+    if (joined_flags_i > 31) {
+      joined_flags_i--;
     }
-    if (i3 > 0) {
-      i3--;
-      if (C_magic_spell_level(i3) <= player_lev &&
-          C_player_knows_spell(i3)) {
-        aspell[i1++].splnum = i3;
-        num = i1;
+    if (joined_flags_i > 0) {
+      joined_flags_i--;
+      if (C_magic_spell_level(joined_flags_i) <= player_lev &&
+          C_player_knows_spell(joined_flags_i)) {
+        aspell[i++].splnum = joined_flags_i;
+        num = i;
       } else {
-        aspell[i1++].splnum = -1; /* leave gaps for unknown spells */
+        aspell[i++].splnum = -1; /* leave gaps for unknown spells */
       }
     }
 
-  } while (!(i2 == 0 && i4 == 0));
+  } while (!(flags_i == 0 && flags2_i == 0));
 
   if (num > 0) {
     flag = get_spell(aspell, num, sn, sc, prompt, redraw);

@@ -39,7 +39,7 @@ pub fn from_usize(subtype: usize) -> Option<RingSubType> {
     }
 }
 
-pub fn to_usize(subtype: RingSubType) -> usize {
+pub fn to_usize(subtype: &RingSubType) -> usize {
     match subtype {
         RingSubType::RingOfGainStrength => 1,
         RingSubType::RingOfGainDexterity => 2,
@@ -85,7 +85,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

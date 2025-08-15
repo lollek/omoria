@@ -17,7 +17,7 @@ pub fn from_usize(subtype: usize) -> Option<MiscObjectSubType> {
     }
 }
 
-pub fn to_usize(light_source: MiscObjectSubType) -> usize {
+pub fn to_usize(light_source: &MiscObjectSubType) -> usize {
     match light_source {
         MiscObjectSubType::RatSkeleton => 1,
         MiscObjectSubType::GiantCentipedeSkeleton => 2,
@@ -41,7 +41,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

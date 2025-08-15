@@ -13,7 +13,7 @@ pub fn from_usize(subtype: usize) -> Option<WearableGemSubType> {
     }
 }
 
-pub fn to_usize(subtype: WearableGemSubType) -> usize {
+pub fn to_usize(subtype: &WearableGemSubType) -> usize {
     match subtype {
         WearableGemSubType::GemOfTeleportation => 1,
         WearableGemSubType::GemOfResistCold => 2,
@@ -33,7 +33,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

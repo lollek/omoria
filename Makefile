@@ -1,7 +1,7 @@
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -Werror -pedantic -Wno-stringop-overflow -Wno-format-truncation -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1
-LDFLAGS =	-lncurses -ltinfo -ltermcap -lm -Wl,--gc-sections -lpthread -ldl
+CFLAGS =	-Wall -Wextra -Wno-format -Wno-incompatible-pointer-types -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1
+LDFLAGS =	-lncurses -ltermcap -lm -lpthread -ldl
 
 READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
 WRITEFILES = data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat

@@ -1,10 +1,10 @@
 #pragma once
 
+#include <stdbool.h>
+
 // Characters to list for highscore
 extern long max_score;
 
 void death_by_quitting(void);
-void upon_death(void);
+void upon_death(bool can_respawn);
 void make_tomb(char dstr[][82]);
-void write_tomb(char dstr[][82]);
-void print_dead_character(void);

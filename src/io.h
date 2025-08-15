@@ -28,7 +28,7 @@ void prt2(char *str_buff1, /*	: varying[a] of char; */
                  char *str_buff2, int row, int col);
 
 void msg_printf(char const *fmt, ...);
-bool msg_print(char *str_buff); /* : varying[a] of char); */
+bool msg_print(const char *str_buff); /* : varying[a] of char); */
 bool get_com(char const *prompt, char *command);
 
 /**

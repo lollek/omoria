@@ -14,7 +14,7 @@ pub fn from_usize(subtype: usize) -> Option<MiscUsableSubType> {
     }
 }
 
-pub fn to_usize(misc_usable: MiscUsableSubType) -> usize {
+pub fn to_usize(misc_usable: &MiscUsableSubType) -> usize {
     match misc_usable {
         MiscUsableSubType::FlaskOfOil => 257,
         MiscUsableSubType::IronSpike => 1,
@@ -35,7 +35,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }
