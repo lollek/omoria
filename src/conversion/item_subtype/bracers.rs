@@ -24,7 +24,7 @@ pub fn from_usize(subtype: usize) -> Option<BracersSubType> {
     }
 }
 
-pub fn to_usize(subtype: BracersSubType) -> usize {
+pub fn to_usize(subtype: &BracersSubType) -> usize {
     match subtype {
         BracersSubType::BracersOfProtection => 1,
         BracersSubType::BracersOfDefense => 2,
@@ -55,7 +55,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

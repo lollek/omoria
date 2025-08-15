@@ -1,3 +1,5 @@
+use crate::model::ItemType;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ItemSubType {
     MiscObject(MiscObjectSubType),
@@ -64,7 +66,62 @@ pub enum ItemSubType {
     LodgingAtInn(LodgingAtInnSubType),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+impl ItemSubType {
+    pub fn get_type(&self) -> ItemType {
+        match self {
+            ItemSubType::MiscObject(_) => ItemType::MiscObject,
+            ItemSubType::Chest(_) => ItemType::Chest,
+            ItemSubType::MiscUsable(_) => ItemType::MiscUsable,
+            ItemSubType::Jewelry(_) => ItemType::Jewelry,
+            ItemSubType::Gem(_) => ItemType::Gem,
+            ItemSubType::Bag(_) => ItemType::Bag,
+            ItemSubType::WearableGem(_) => ItemType::WearableGem,
+            ItemSubType::SlingAmmo(_) => ItemType::SlingAmmo,
+            ItemSubType::Bolt(_) => ItemType::Bolt,
+            ItemSubType::Arrow(_) => ItemType::Arrow,
+            ItemSubType::Spike(_) => ItemType::Spike,
+            ItemSubType::LightSource(_) => ItemType::LightSource,
+            ItemSubType::RangedWeapon(_) => ItemType::RangedWeapon,
+            ItemSubType::HaftedWeapon(_) => ItemType::HaftedWeapon,
+            ItemSubType::PoleArm(_) => ItemType::PoleArm,
+            ItemSubType::Dagger(_) => ItemType::Dagger,
+            ItemSubType::Sword(_) => ItemType::Sword,
+            ItemSubType::Pick(_) => ItemType::Pick,
+            ItemSubType::Maul(_) => ItemType::Maul,
+            ItemSubType::GemHelm(_) => ItemType::GemHelm,
+            ItemSubType::Boots(_) => ItemType::Boots,
+            ItemSubType::Gloves(_) => ItemType::Gloves,
+            ItemSubType::Cloak(_) => ItemType::Cloak,
+            ItemSubType::Helm(_) => ItemType::Helm,
+            ItemSubType::Shield(_) => ItemType::Shield,
+            ItemSubType::HardArmor(_) => ItemType::HardArmor,
+            ItemSubType::SoftArmor(_) => ItemType::SoftArmor,
+            ItemSubType::Bracers(_) => ItemType::Bracers,
+            ItemSubType::Belt(_) => ItemType::Belt,
+            ItemSubType::Amulet(_) => ItemType::Amulet,
+            ItemSubType::Ring(_) => ItemType::Ring,
+            ItemSubType::Staff(_) => ItemType::Staff,
+            ItemSubType::Rod(_) => ItemType::Rod,
+            ItemSubType::Wand(_) => ItemType::Wand,
+            ItemSubType::Scroll1(_) => ItemType::Scroll1,
+            ItemSubType::Scroll2(_) => ItemType::Scroll2,
+            ItemSubType::Potion1(_) => ItemType::Potion1,
+            ItemSubType::Potion2(_) => ItemType::Potion2,
+            ItemSubType::FlaskOfOil(_) => ItemType::FlaskOfOil,
+            ItemSubType::Food(_) => ItemType::Food,
+            ItemSubType::JunkFood(_) => ItemType::JunkFood,
+            ItemSubType::Chime(_) => ItemType::Chime,
+            ItemSubType::Horn(_) => ItemType::Horn,
+            ItemSubType::MagicBook(_) => ItemType::MagicBook,
+            ItemSubType::PrayerBook(_) => ItemType::PrayerBook,
+            ItemSubType::Instrument(_) => ItemType::Instrument,
+            ItemSubType::SongBook(_) => ItemType::SongBook,
+            ItemSubType::LodgingAtInn(_) => ItemType::LodgingAtInn,
+        }
+    }
+}
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum MiscObjectSubType {
     RatSkeleton,
     GiantCentipedeSkeleton,

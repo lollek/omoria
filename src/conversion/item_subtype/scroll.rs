@@ -48,7 +48,7 @@ pub fn from_usize(subtype: usize) -> Option<Scroll1SubType> {
     }
 }
 
-pub fn to_usize(subtype: Scroll1SubType) -> usize {
+pub fn to_usize(subtype: &Scroll1SubType) -> usize {
     match subtype {
         Scroll1SubType::AggravateMonster => 277,
         Scroll1SubType::Blessing => 262,
@@ -103,7 +103,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

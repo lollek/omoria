@@ -19,7 +19,7 @@ pub fn from_usize(subtype: usize) -> Option<HornSubType> {
     }
 }
 
-pub fn to_usize(subtype: HornSubType) -> usize {
+pub fn to_usize(subtype: &HornSubType) -> usize {
     match subtype {
         HornSubType::HornOfBubbles => 1,
         HornSubType::HornOfCalling => 2,
@@ -45,7 +45,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

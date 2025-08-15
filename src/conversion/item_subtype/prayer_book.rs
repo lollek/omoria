@@ -10,7 +10,7 @@ pub fn from_usize(subtype: usize) -> Option<PrayerBookSubType> {
     }
 }
 
-pub fn to_usize(subtype: PrayerBookSubType) -> usize {
+pub fn to_usize(subtype: &PrayerBookSubType) -> usize {
     match subtype {
         PrayerBookSubType::BeginnersHandbook => 258,
         PrayerBookSubType::WordsOfWisdom => 259,
@@ -27,7 +27,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

@@ -18,7 +18,7 @@ pub fn from_usize(subtype: usize) -> Option<RangedWeaponSubType> {
     }
 }
 
-pub fn to_usize(subtype: RangedWeaponSubType) -> usize {
+pub fn to_usize(subtype: &RangedWeaponSubType) -> usize {
     match subtype {
         RangedWeaponSubType::Shortbow => 1,
         RangedWeaponSubType::HuntersBow => 2,
@@ -43,7 +43,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }

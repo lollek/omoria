@@ -15,7 +15,7 @@ pub fn from_usize(subtype: usize) -> Option<BootsSubType> {
     }
 }
 
-pub fn to_usize(subtype: BootsSubType) -> usize {
+pub fn to_usize(subtype: &BootsSubType) -> usize {
     match subtype {
         BootsSubType::SoftLeatherShoes => 1,
         BootsSubType::SoftLeatherBoots => 2,
@@ -37,7 +37,7 @@ mod tests {
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(subtype));
+                assert_eq!(i, to_usize(&subtype));
             }
         })
     }
