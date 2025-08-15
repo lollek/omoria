@@ -170,7 +170,7 @@ long mon_take_hit(const long monptr, const long dam) {
                   "something about it.");
         msg_print(" ");
         strcpy(died_from, "The Wrath of God");
-        upon_death();
+        upon_death(false);
       }
     }
 

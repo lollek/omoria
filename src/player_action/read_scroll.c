@@ -509,8 +509,7 @@ void rs__scroll_effect(long effect, bool *idented, bool *first,
     msg_print(" ");
     strcpy(died_from, "an *EVIL SCROLL*");
     make_tomb(dstr);
-    write_tomb(dstr);
-    print_dead_character();
+    // print_dead_character();
     draw_cave();
     msg_print("Huh?  What happened???");
     player_flags.confused += randint(5) + 3;

@@ -7,7 +7,6 @@
 
 #include "configure.h"
 #include "constants.h"
-#include "files.h"
 #include "io.h"
 #include "master.h"
 #include "misc.h"
@@ -19,6 +18,8 @@
 
 #include "death.h"
 
+#include "spells.h"
+
 long max_score = 20;
 
 static char *ud__fill_str(char *centered_str, char *in_str) {
@@ -28,6 +29,12 @@ static char *ud__fill_str(char *centered_str, char *in_str) {
   const int j = 15 - i / 2;
   (void)sprintf(centered_str, "%*s%s%*s", j, "", in_str, 31 - i - j, "");
   return centered_str;
+}
+
+static void respawn(void) {
+  death = false;
+  dun_level = 0;
+  hp_player(damroll("3d3"), "a prayer.");
 }
 
 void dprint(char str[82], const long row) {
@@ -143,12 +150,16 @@ void ud__print_tomb(char dstr[][82]) {
       }
       fclose(f1);
     } /* endif f1 != NULL */
-  }   /* endif level > 10 */
+  } /* endif level > 10 */
   make_tomb(dstr);
-  write_tomb(dstr);
 }
 
-void upon_death(void) {
+void upon_death(const bool can_respawn) {
+  if (can_respawn && get_yes_no("Respawn in town?")) {
+    respawn();
+    return;
+  }
+
   /*  Handles the gravestone and top-twenty routines -RAK-  */
   char dstr[20][82];
 
@@ -167,15 +178,7 @@ void upon_death(void) {
     ud__kingly();
   }
   ud__print_tomb(dstr);
-  print_dead_character();
   exit_game();
-}
-
-void print_dead_character(void) {
-  /* Allow the bozo to print out his dead character... -KRC- */
-  if (get_yes_no("Print character sheet to file?")) {
-    file_character();
-  }
 }
 
 static void sc(char *out_str, const char *in_str) { strcpy(out_str, in_str); }
@@ -244,10 +247,12 @@ void make_tomb(char dstr[][82]) {
   sc(dstr[0], " ");
   sc(dstr[1], "               _______________________");
   sc(dstr[2], "              /                       \\         ___");
-  sc(dstr[3], "             /                         \\ ___   /   \\      ___");
+  sc(dstr[3],
+     "             /                         \\ ___   /   \\      ___");
   sc(dstr[4],
      "            /            RIP            \\   \\  :   :     /   \\");
-  sc(dstr[5], "           /                             \\  : _;,,,;_    :   :");
+  sc(dstr[5],
+     "           /                             \\  : _;,,,;_    :   :");
   si(dstr[6], "          /", str1, "\\,;_          _;,,,;_");
   sc(dstr[7], "         |                                 |   ___");
   si(dstr[8], "         | ", str2, " |  /   \\");
@@ -269,35 +274,4 @@ void make_tomb(char dstr[][82]) {
     dprint(dstr[i1], i1 + 1);
   }
   flush();
-}
-
-void write_tomb(char dstr[][82]) {
-
-  if (!get_yes_no("Print to file?"))
-    return;
-
-  prt("Enter Filename:", 1, 1);
-  bool flag = false;
-  do {
-    char fnam[82];
-    if (get_string(fnam, 1, 17, 60)) {
-      if (strlen(fnam) == 0) {
-        strcpy(fnam, "MORIACHR.DIE");
-      }
-      FILE *f1 = fopen(fnam, "w");
-      if (f1 == NULL) {
-        char out_str[120];
-        sprintf(out_str, "Error creating> %s", fnam);
-        prt(out_str, 2, 1);
-      } else {
-        flag = true;
-        for (long i1 = 0; i1 < 20; i1++) {
-          fprintf(f1, "%s\n", dstr[i1]);
-        }
-      }
-      fclose(f1);
-    } else {
-      flag = true;
-    }
-  } while (!flag);
 }

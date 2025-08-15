@@ -2015,7 +2015,7 @@ void petrify(const long amt) {
   } else {
     msg_print("You have turned to stone.");
     strcpy(died_from, "petrification");
-    upon_death();
+    upon_death(false);
   }
 }
 /*//////////////////////////////////////////////////////////////////// */

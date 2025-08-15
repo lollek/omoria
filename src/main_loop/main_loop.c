@@ -1003,7 +1003,7 @@ int main_loop(void) {
     main_loop__0();
     /* Character gets buried, or respawns */
     if (death) {
-      upon_death();
+      upon_death(true);
       if (death) {
 #if DO_DEBUG
         memory_error(0, "DEBUG_ON_EXIT");
