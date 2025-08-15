@@ -27,7 +27,7 @@ impl CrossbowTemplate {
 }
 
 impl ItemTemplate for CrossbowTemplate {
-    fn create(&self, item_quality: ItemQuality) -> Item {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
         create_ranged_weapon(self, item_quality)
     }
 

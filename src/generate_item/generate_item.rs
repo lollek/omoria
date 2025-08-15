@@ -338,7 +338,7 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
  * Create an item from a given type and item level
  */
 pub fn generate(template: Box<dyn ItemTemplate>, item_level: u8, item_quality: ItemQuality) -> model::Item {
-    let mut item = template.create(item_quality);
+    let mut item = template.create(item_quality, item_level);
     item.level = item_level.try_into().unwrap_or(i8::MAX);
     item
 }

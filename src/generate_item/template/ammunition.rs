@@ -68,7 +68,7 @@ impl AmmunitionTemplate {
 }
 
 impl ItemTemplate for AmmunitionTemplate {
-    fn create(&self, item_quality: ItemQuality) -> Item {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
         let mut item = default_create(self, item_quality);
         if self == &AmmunitionTemplate::Arrow || self == &AmmunitionTemplate::Bolt {
             if item_quality == ItemQuality::Cursed {

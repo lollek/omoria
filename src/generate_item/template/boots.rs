@@ -37,6 +37,69 @@ impl BootsTemplate {
 }
 
 impl ItemTemplate for BootsTemplate {
+    /* TODO add fn create
+
+static void mt__boots(treasure_type *treasure_ptr, const long level,
+                      const bool is_magic, const bool is_special,
+                      const bool is_cursed, const bool forceit) {
+  if (is_magic) {
+    treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
+    if (is_special) {
+      switch (randint(16)) {
+      case 1:
+        strcat(treasure_ptr->name, " of Speed");
+        treasure_ptr->flags |= Speed_worn_bit;
+        treasure_ptr->p1 = 1;
+        treasure_ptr->cost += 500000;
+        break;
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+        strcat(treasure_ptr->name, " of Stealth");
+        treasure_ptr->flags |= Stealth_worn_bit;
+        treasure_ptr->cost += 50000;
+        break;
+      default:
+        if (treasure_ptr->subval == 4 && randint(6) == 1) {
+          /* Pair of Sandals */
+          strcat(treasure_ptr->name, " of Dryadkind");
+          treasure_ptr->flags |= Charisma_worn_bit | Feather_Fall_worn_bit |
+                                 See_Invisible_worn_bit | Free_Action_worn_bit;
+          treasure_ptr->flags2 |= Magic_proof_worn_bit;
+          treasure_ptr->p1 = 3;
+          treasure_ptr->cost = 1; /*{see magi item}*/
+          break;
+        }
+      }
+    } else {
+      strcat(treasure_ptr->name, " of Slow descent");
+      treasure_ptr->flags |= Feather_Fall_worn_bit;
+      treasure_ptr->cost += 25000;
+    }
+  } else if (is_cursed) {
+    treasure_ptr->cost = 0;
+    treasure_ptr->ac = -mt__m_bonus(2, 45, level, forceit);
+
+    switch (randint(3)) {
+    case 1:
+      strcat(treasure_ptr->name, " of Slowness");
+      treasure_ptr->flags |= Cursed_worn_bit | Speed_worn_bit;
+      treasure_ptr->p1 = -1;
+      break;
+    case 2:
+      strcat(treasure_ptr->name, " of Noise");
+      treasure_ptr->flags |= Cursed_worn_bit | Aggravation_worn_bit;
+      break;
+    case 3:
+      strcat(treasure_ptr->name, " of Great Mass");
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->weight *= 5;
+      break;
+    }
+  }
+}
+     */
     fn name(&self) -> &str {
         match self {
             BootsTemplate::SoftLeatherShoes => "Soft Leather Shoes^ [%P6,%P4]",

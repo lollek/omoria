@@ -83,6 +83,104 @@ impl RingTemplate {
 }
 
 impl ItemTemplate for RingTemplate {
+    /* TODO add fn create
+
+static void mt__ring(treasure_type *treasure_ptr, const long level,
+                     const bool is_special, const bool is_cursed,
+                     const bool forceit) {
+  switch (treasure_ptr->subval) {
+  case 1: /* stat rings */
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->p1 = -mt__m_bonus(1, 20, level, forceit);
+      treasure_ptr->cost *= -1;
+    } else {
+      treasure_ptr->p1 = mt__m_bonus(1, 10, level, forceit);
+      treasure_ptr->cost += treasure_ptr->p1 * 10000;
+    }
+    break;
+
+  case 7: /* speed */
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->p1 = -randint(3);
+      treasure_ptr->cost *= -1;
+    } else {
+      treasure_ptr->p1 = 1;
+      if (is_special && randint(100) == 1) {
+        /* added a rare, faster ring STK */
+        treasure_ptr->p1 = 2;
+        treasure_ptr->cost *= 10;
+      }
+    }
+    break;
+
+  case 8: /* searching */
+    treasure_ptr->p1 = 5 * mt__m_bonus(1, 20, level, forceit);
+    treasure_ptr->cost += treasure_ptr->p1 * 10000;
+    break;
+
+  case 22: /* Increase damage */
+    treasure_ptr->todam = mt__m_bonus(1, 20, level, forceit);
+    treasure_ptr->cost += treasure_ptr->todam * 10000;
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->todam *= -1;
+      treasure_ptr->cost *= -1;
+    }
+    break;
+
+  case 23: /* Increase To-Hit */
+    treasure_ptr->tohit = mt__m_bonus(1, 20, level, forceit);
+    treasure_ptr->cost += treasure_ptr->tohit * 10000;
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->tohit *= -1;
+      treasure_ptr->cost *= -1;
+    }
+    break;
+
+  case 24: /* Protection */
+    treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
+    treasure_ptr->cost += treasure_ptr->toac * 10000;
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->toac *= -1;
+      treasure_ptr->cost *= -1;
+    }
+    break;
+
+  case 33: /* Slaying */
+    treasure_ptr->todam = mt__m_bonus(1, 25, level, forceit);
+    treasure_ptr->tohit = mt__m_bonus(1, 25, level, forceit);
+    treasure_ptr->cost += (treasure_ptr->tohit + treasure_ptr->todam) * 10000;
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->tohit *= -1;
+      treasure_ptr->todam *= -1;
+      treasure_ptr->cost *= -1;
+    }
+    break;
+
+  case 35: /* Speed -10 or worse */
+    treasure_ptr->p1 = -(10 + randint(10));
+    treasure_ptr->cost += 1000000 * treasure_ptr->p1;
+    if (is_cursed) {
+      treasure_ptr->flags |= Cursed_worn_bit;
+      treasure_ptr->flags2 &= ~Known_cursed_bit;
+    }
+    break;
+
+  default:
+    break;
+  }
+}
+     */
     fn name(&self) -> &str {
         match self {
             RingTemplate::RingOfGainStrength => "& Ring| of Gain Strength^ (%p1)",

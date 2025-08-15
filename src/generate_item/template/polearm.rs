@@ -43,7 +43,7 @@ impl PolearmTemplate {
 }
 
 impl ItemTemplate for PolearmTemplate {
-    fn create(&self, item_quality: ItemQuality) -> Item {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
         create_melee_weapon(self, item_quality)
     }
 

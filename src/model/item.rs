@@ -4,6 +4,18 @@ use crate::conversion;
 use crate::model::ItemType;
 use crate::model::{Damage, Name};
 
+pub enum ChestFlags1 {
+    Locked = 0x00000001,
+    // 1d4 damage, may lose strength
+    PoisonNeedle1 = 0x00000010,
+    // 1d6 damage, poisons player
+    PoisonNeedle2 = 0x00000020,
+    GasTrap = 0x00000040,
+    // 5d8 damage, destroys chest
+    ExplosiveTrap = 0x00000080,
+    SummoningRunes = 0x00000100,
+}
+
 pub enum MiscUsableFlag1 {
     Turning = 0x00000001,
     DemonDispelling = 0x00000002,
@@ -151,6 +163,10 @@ impl Item {
     pub fn item_type(&self) -> ItemType {
         conversion::item_type::from_usize(self.tval.into())
             .unwrap_or_else(|| panic!("expected item type from tval {}", self.tval))
+    }
+
+    pub fn apply_chestflag1(&mut self, flag: ChestFlags1) {
+        self.flags |= flag as u64;
     }
 
     pub fn apply_misc_usable_flag(&mut self, flag: MiscUsableFlag1) {

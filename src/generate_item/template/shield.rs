@@ -42,7 +42,7 @@ impl ShieldTemplate {
 }
 
 impl ItemTemplate for ShieldTemplate {
-    fn create(&self, item_quality: ItemQuality) -> Item {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
         let mut item = default_create(self, item_quality);
         if item_quality == ItemQuality::Cursed {
             item.set_cursed(true);

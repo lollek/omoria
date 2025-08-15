@@ -44,6 +44,150 @@ impl HelmTemplate {
 }
 
 impl ItemTemplate for HelmTemplate {
+    /* TODO add fn create
+static void mt__helms(treasure_type *treasure_ptr, const long level,
+                      const bool is_magic, const bool is_special,
+                      const bool is_cursed, const bool forceit) {
+  if (is_magic) {
+    treasure_ptr->toac = mt__m_bonus(1, 20, level, forceit);
+    if (is_special)
+      switch (treasure_ptr->subval) {
+      case 1:  case 2:  case 3:  case 4:  case 5:
+      case 12: case 13: case 14: case 15:
+      case 16: case 17: case 18:
+        switch (randint(3)) {
+        case 1:
+          strcat(treasure_ptr->name, " of Intelligence");
+          treasure_ptr->flags |= Intelligence_worn_bit;
+          treasure_ptr->p1 = randint(2);
+          treasure_ptr->cost += treasure_ptr->p1 * 50000;
+          break;
+        case 2:
+          strcat(treasure_ptr->name, " of Wisdom");
+          treasure_ptr->flags |= Wisdom_worn_bit;
+          treasure_ptr->p1 = randint(2);
+          treasure_ptr->cost += treasure_ptr->p1 * 50000;
+          break;
+        case 3:
+          strcat(treasure_ptr->name, " of Infra-Vision");
+          treasure_ptr->flags |= Infra_Vision_worn_bit;
+          treasure_ptr->p1 = 1 + randint(4);
+          treasure_ptr->cost += treasure_ptr->p1 * 25000;
+          break;
+        }
+        break;
+
+      case 6:  case 7:  case 8:  case 9:  case 10:
+      case 19: case 20: case 21: case 22: case 23:
+        switch (randint(6)) {
+        case 1:
+          strcat(treasure_ptr->name, " of Might");
+          treasure_ptr->flags |= Free_Action_worn_bit | Constitution_worn_bit |
+                                 Strength_worn_bit | Dexterity_worn_bit;
+          treasure_ptr->p1 = randint(3);
+          treasure_ptr->cost += 100000 + treasure_ptr->p1 * 50000;
+          break;
+        case 2:
+          strcat(treasure_ptr->name, " of Lordliness");
+          treasure_ptr->flags |= Wisdom_worn_bit | Charisma_worn_bit;
+          treasure_ptr->p1 = randint(3);
+          treasure_ptr->cost += 100000 + treasure_ptr->p1 * 50000;
+          break;
+        case 3:
+          strcat(treasure_ptr->name, " of the Magi");
+          treasure_ptr->flags |= Free_Action_worn_bit | Strength_worn_bit |
+                                 Constitution_worn_bit | Dexterity_worn_bit;
+          treasure_ptr->p1 = randint(3);
+          treasure_ptr->cost += 300000 + treasure_ptr->p1 * 50000;
+          break;
+        case 4:
+          strcat(treasure_ptr->name, " of Beauty");
+          treasure_ptr->flags |= Charisma_worn_bit;
+          treasure_ptr->p1 = randint(3);
+          treasure_ptr->cost += 75000;
+          break;
+        case 5:
+          strcat(treasure_ptr->name, " of Seeing");
+          treasure_ptr->flags |= See_Invisible_worn_bit | Searching_worn_bit;
+          treasure_ptr->p1 = 1 + randint(4);
+          treasure_ptr->cost += 100000 + treasure_ptr->p1 * 10000;
+          break;
+        case 6:
+          strcat(treasure_ptr->name, " of Regeneration");
+          treasure_ptr->flags |= Regeneration_worn_bit;
+          treasure_ptr->cost += 150000;
+          break;
+        }
+        break;
+      case 11:
+        strcat(treasure_ptr->name, " of Hobbitkind");
+        treasure_ptr->flags |= Infra_Vision_worn_bit | See_Invisible_worn_bit |
+                               Free_Action_worn_bit | Searching_worn_bit;
+        treasure_ptr->p1 = 5;
+        treasure_ptr->cost += 170000;
+        break;
+      }
+  } else if (is_cursed) {
+    treasure_ptr->flags |= Cursed_worn_bit;
+    treasure_ptr->toac = -mt__m_bonus(1, 45, level, forceit);
+    treasure_ptr->cost = 0;
+    if (is_special) {
+      switch (randint(15)) {
+      case 1:
+      case 2:
+        strcat(treasure_ptr->name, " of Stupidity");
+        treasure_ptr->flags |= Intelligence_worn_bit;
+        treasure_ptr->p1 = -1;
+        break;
+      case 3:
+      case 4:
+        strcat(treasure_ptr->name, " of Dullness");
+        treasure_ptr->flags |= Wisdom_worn_bit;
+        treasure_ptr->p1 = -1;
+        break;
+      case 5:
+      case 6:
+        strcat(treasure_ptr->name, " of Blindness");
+        treasure_ptr->flags |= Blindness_worn_bit;
+        break;
+      case 7:
+      case 8:
+        strcat(treasure_ptr->name, " of Timidness");
+        treasure_ptr->flags |= Timidness_worn_bit;
+        break;
+      case 9:
+      case 10:
+        strcat(treasure_ptr->name, " of Weakness");
+        treasure_ptr->flags |= Strength_worn_bit;
+        treasure_ptr->p1 = -1;
+        break;
+      case 11:
+      case 12:
+        strcat(treasure_ptr->name, " of Teleportation");
+        treasure_ptr->flags |= Teleportation_worn_bit;
+        break;
+      case 13:
+      case 14:
+        strcat(treasure_ptr->name, " of Ugliness");
+        treasure_ptr->flags |= Charisma_worn_bit;
+        treasure_ptr->p1 = -1;
+        break;
+      case 15:
+        strcat(treasure_ptr->name, " of **TOTAL DOOM**");
+        treasure_ptr->flags |=
+            Cursed_worn_bit | Strength_worn_bit | Dexterity_worn_bit |
+            Constitution_worn_bit | Intelligence_worn_bit | Wisdom_worn_bit |
+            Charisma_worn_bit | Stealth_worn_bit | Aggravation_worn_bit |
+            Teleportation_worn_bit | Blindness_worn_bit | Timidness_worn_bit;
+        treasure_ptr->flags2 |= Hunger_worn_bit | Known_cursed_bit;
+        treasure_ptr->p1 = -5;
+        break;
+      }
+      treasure_ptr->p1 *= randint(5);
+    }
+  }
+}
+     */
     fn name(&self) -> &str {
         match self {
             HelmTemplate::ClothHat => "Cloth Hat^ [%P6,%P4]",
