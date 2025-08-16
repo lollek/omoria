@@ -1,5 +1,9 @@
 # Changelog
 
+## 5-alpha528
+
+August 2025
+
 ## 5-alpha527
 
 August 2025
