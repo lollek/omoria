@@ -690,8 +690,8 @@ void subtract_money(const long amount, const bool make_change) {
   }
 }
 
-bool get_spell(spl_type spell, const long num, long *sn, long *sc, char prompt[82],
-                  bool *redraw) {
+bool get_spell(spl_type spell, const long num, long *sn, long *sc,
+               char const *const prompt, bool *redraw) {
   /*{ Returns spell pointer					-RAK-
    * }*/
 
@@ -1836,10 +1836,8 @@ char *full_date_string(const game_time_type time, char result[134]) {
 
   return result;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-char *show_current_time(char result[134]) {
+
+char *show_current_time(char result[82]) {
   /*{ Return current time in the game                       -DMF-   }*/
   /* Tue Jul 07 00:05:40 1998 */
 
@@ -1855,9 +1853,7 @@ char *show_current_time(char result[134]) {
 
   return result;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 long rotate_dir(const long dir, long rot) {
   long return_value;
 
@@ -2103,8 +2099,8 @@ char *likert(const long x, const long y, char *result) {
   return result;
 }
 
-bool d__get_dir(char prompt[82], long *dir, long *com_val, long *y,
-                   long *x) {
+bool d__get_dir(char const *const prompt, long *dir, long *com_val, long *y,
+                long *x) {
 
   char command;
   bool flag = false;

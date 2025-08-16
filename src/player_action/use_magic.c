@@ -267,8 +267,8 @@ static void drain_mana(const enum magic_t magic_type, const long choice) {
 }
 
 /*{ Return spell number and failure chance                -RAK-   }*/
-static bool cast_spell(char prompt[82], const treas_rec *item_ptr, long *sn,
-                          long *sc, bool *redraw) {
+static bool cast_spell(char const *const prompt, const treas_rec *item_ptr,
+                       long *sn, long *sc, bool *redraw) {
 
   long num = 0;
   spl_type aspell;

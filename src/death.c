@@ -37,7 +37,7 @@ static void respawn(void) {
   hp_player(damroll("3d3"), "a prayer.");
 }
 
-void dprint(char str[82], const long row) {
+void dprint(char const *const str, const long row) {
   /* Prints a line to the screen efficiently  -RAK- */
 
   char prt_str[82];

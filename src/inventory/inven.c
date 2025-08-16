@@ -1169,7 +1169,8 @@ void ic__switch_weapon(long *scr_state) {
   }
 }
 
-bool inven_command(char command, treas_rec **item_ptr, char prompt[82]) {
+bool inven_command(char command, treas_rec **item_ptr,
+                   char const *const prompt) {
   /* Comprehensive function block to handle all inventory      -RAK-
    * and equipment routines.  Five kinds of calls can take place.
    * Note that '?' is a special call for other routines to display
@@ -1940,8 +1941,8 @@ bool inventory_find_range(obj_set const item_val, const bool inner, treas_rec **
   return *count > 0;
 }
 
-static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
-                                            bool *commas) {
+static void s__get_money_type__prompt_money(char const *const astr,
+                                            char out_val[134], bool *commas) {
   if (*commas) {
     strcat(out_val, ", ");
   }
@@ -1949,7 +1950,7 @@ static void s__get_money_type__prompt_money(char astr[82], char out_val[134],
   *commas = true;
 }
 
-long get_money_type(char prompt[134], bool *back, const bool no_check) {
+long get_money_type(char const *const prompt, bool *back, const bool no_check) {
   bool comma_flag = false;
   bool test_flag = false;
   char out_val[134];

@@ -1,11 +1,17 @@
 # Changelog
 
-## 5-alpha526
+## 5-alpha527
 
 August 2025
 
 * Items can no longer be cursed.
 * Fix crash due to item name generation being used for monster attacks.
+
+## 5-alpha526
+
+August 2025
+
+* Fix some compilation errors on Linux
 
 ## 5-alpha525
 

@@ -44,7 +44,7 @@ void check_store_hours_and_enter(enum store_t type, long store_visual);
  *
  * if not whole_days then it is actually turns...
  */
-void spend_time(long days_spent, char place[82], bool whole_days);
+void spend_time(long days_spent, char const *place, bool whole_days);
 
 /**
  * display_store() - Print out a store

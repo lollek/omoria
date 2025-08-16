@@ -236,7 +236,7 @@ bool summon_breed(long *y, long *x) {
   return summon_monster(y, x, false, earth_set, attributes);
 }
 
-void monster_summon_by_name(long y, long x, char name[28],
+void monster_summon_by_name(long y, long x, char const * const name,
                             const bool present, const bool is_asleep) {
 
   long i2;

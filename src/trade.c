@@ -639,8 +639,8 @@ void tp__deliver(pinven_ptr *inv, pinven_ptr *cur_top, bool *exit_flag,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-bool tp__get_store_item(long *command, char pmt[82], const long i1,
-                           const long i2) {
+bool tp__get_store_item(long *command, char const *const pmt, const long i1,
+                        const long i2) {
   /*{ Get the ID of a store item and return it's value      -RAK-   }*/
 
   char out_val[82];
@@ -675,7 +675,7 @@ bool tp__get_store_item(long *command, char pmt[82], const long i1,
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */
-void tp__dump(char filename[82], const pinven_ptr *inv) {
+void tp__dump(char const *const filename, const pinven_ptr *inv) {
   pinven_ptr item = NULL;
   char out_val[82];
 

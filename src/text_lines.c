@@ -95,7 +95,7 @@ void unquote(char *object_str) {
   }
 }
 
-void objdes(char *out_val, const treas_rec *ptr, const bool pref) {
+void objdes(char out_val[82], const treas_rec *ptr, const bool pref) {
   char *cpos;
   char tmp_val[82];
 

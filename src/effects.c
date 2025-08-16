@@ -75,7 +75,7 @@ static bool minus_ac(const long typ_dam) {
   return return_value;
 }
 
-void corrode_gas(char kb_str[82]) {
+void corrode_gas(char const *const kb_str) {
 
   obj_set things_that_corrode = {dagger, sword,      gem_helm, helm,
                                  shield, hard_armor, wand,     0};
@@ -93,14 +93,14 @@ void corrode_gas(char kb_str[82]) {
   }
 }
 
-void poison_gas(const long dam, char kb_str[82]) {
+void poison_gas(const long dam, char const *const kb_str) {
 
   take_hit(dam, kb_str);
   print_stat = 1;
   player_flags.poisoned += 12 + randint(dam);
 }
 
-void fire_dam(long dam, char kb_str[82]) {
+void fire_dam(long dam, char const *const kb_str) {
 
   obj_set things_that_burn = {arrow,
                               bow_crossbow_or_sling,
@@ -133,7 +133,7 @@ void fire_dam(long dam, char kb_str[82]) {
   }
 }
 
-void acid_dam(const long dam, char kb_str[82]) {
+void acid_dam(const long dam, char const *const kb_str) {
 
   long flag = 0;
   obj_set things_that_dilute = {
@@ -171,7 +171,7 @@ void acid_dam(const long dam, char kb_str[82]) {
   }
 }
 
-void cold_dam(long dam, char kb_str[82]) {
+void cold_dam(long dam, char const *const kb_str) {
   obj_set things_that_freeze = {potion1, potion2, 0};
 
   if (player_flags.cold_resist) {
@@ -191,7 +191,7 @@ void cold_dam(long dam, char kb_str[82]) {
   }
 }
 
-void light_dam(long dam, char kb_str[82]) {
+void light_dam(long dam, char const *const kb_str) {
 
   if (player_flags.lght_resist) {
     dam /= 3;

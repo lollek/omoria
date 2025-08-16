@@ -25,7 +25,7 @@ long x_from_keypad_direction(enum keypad_direction_t keypad_direction);
 bool xor (long thing1, long thing2);
 
 /*{ Prompts for a direction                               -RAK-   }*/
-bool d__get_dir(char prompt[82], long *dir, long *com_val, long *y, long *x);
+bool d__get_dir(char const *prompt, long *dir, long *com_val, long *y, long *x);
 long maxmin(long x, long y, long z);
 long minmax(long x, long y, long z);
 long bit_pos(unsigned long *test);
@@ -68,7 +68,7 @@ char *play_time(const time_type *t, char result[134]);
 time_type *convert_seconds_to_time(time_t seconds, time_type *tim);
 time_t convert_time_to_seconds(const time_type *tim);
 char *show_char_age(char result[134]);
-char *show_current_time(char result[134]);
+char *show_current_time(char result[82]);
 char *likert(long x, long y, char *result);
 unsigned char characters_sex(void);
 treas_rec *money_carry(void);
@@ -79,8 +79,8 @@ void add_money(long amount);
 void subtract_money(long amount, bool make_change);
 bool send_page(long to_bank);
 void spell_chance(spl_rec *spell);
-bool get_spell(spl_type spell, long num, long *sn, long *sc, char prompt[82],
-                  bool *redraw);
+bool get_spell(spl_type spell, long num, long *sn, long *sc, char const *prompt,
+               bool *redraw);
 long num_new_spells(long smarts);
 void learn_magic(bool redraw);
 void gain_level(void);

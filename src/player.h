@@ -157,7 +157,7 @@ void C_player_mod_perm_stat(enum stat_t attr, int16_t modifier);
 void search_off(void);
 void search_on(void);
 void rest_off(void);
-void take_hit(long damage, char hit_from[82]);
+void take_hit(long damage, char const *hit_from);
 void regenmana(float percent);
 
 /*

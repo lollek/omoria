@@ -3,4 +3,4 @@
 void ident_char();
 void help();
 void wizard_help();
-void moria_help(char help_level[82]);
+void moria_help(char const *help_level);
