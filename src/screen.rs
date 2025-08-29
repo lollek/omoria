@@ -12,16 +12,18 @@ const STAT_BLOCK_WIDTH: usize = 14;
 const STAT_COL: u8 = 0;
 
 const RACE_ROW: u8 = 1;
-const CLASS_ROW: u8 = 2;
+const CLASS_ROW: u8 = RACE_ROW + 1;
 const HP_ROW: u8 = 5;
-const MANA_ROW: u8 = 6;
-const STAT_ROW: u8 = 8; // -> 13
+const MANA_ROW: u8 = HP_ROW + 1;
+
+const ATTACK_ROW: u8 = MANA_ROW + 2;
 
 const QUEST_ROW: u8 = 15;
-const AC_ROW: u8 = 16;
-const GOLD_ROW: u8 = 17;
-const BULK_ROW: u8 = 18;
-const TIME_ROW: u8 = 20;
+const AC_ROW: u8 = QUEST_ROW + 1;
+const GOLD_ROW: u8 = AC_ROW + 1;
+const BULK_ROW: u8 = GOLD_ROW + 1;
+
+const TIME_ROW: u8 = BULK_ROW + 2;
 
 // Equipment Column
 const EQUIP_COL: u8 = 81;
@@ -191,7 +193,7 @@ fn print_stats_column() {
     print_hp(HP_ROW, STAT_COL);
     print_mana(MANA_ROW, STAT_COL);
 
-    print_stats(STAT_ROW, STAT_COL);
+    print_attacks(ATTACK_ROW, STAT_COL);
 
     print_field(
         format!("QST : {:>6}", player::quests()),
@@ -216,6 +218,18 @@ fn print_stats_column() {
     );
 
     print_time(TIME_ROW, STAT_COL);
+}
+
+fn print_attacks(row: u8, col: u8) {
+    let attack = crate::player_action::attack::calculate_number_of_attacks();
+    let tohit_bonus = if attack.tohit_bonus > 0{
+        format!("(+{})", attack.tohit_bonus)
+    } else if attack.tohit_bonus < 0 {
+        format!("({})", attack.tohit_bonus)
+    } else {
+       "".into()
+    };
+    print_field(format!("Num Attacks: {}{}", attack.number_of_attacks, tohit_bonus), row, col);
 }
 
 fn print_status_row() {

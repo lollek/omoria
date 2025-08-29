@@ -4,6 +4,8 @@
 
 August 2025
 
+* Changes to number of attacks per round calculation
+
 ## 5-alpha527
 
 August 2025

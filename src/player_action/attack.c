@@ -13,54 +13,6 @@
 #include "../variables.h"
 #include <math.h>
 
-static long attack_blows(const long weight, long *wtohit) {
-  /*{ Weapon weight VS strength and dexterity               -RAK-   }*/
-
-  const long max_wield = C_player_max_bulk() / 10;
-  const int dex_mod = C_player_mod_from_stat(DEX);
-  const int approx_str_stat = (10 + C_player_mod_from_stat(STR) * 2) * 10;
-
-  long blows = 1;
-
-  *wtohit = 0;
-
-  /*{ make to-hit drop off gradually instead of being so abrupt -DCJ- }*/
-  if (max_wield < weight / 100) {
-    *wtohit = max_wield - weight / 100;
-    return blows;
-  }
-
-  blows = 5 + dex_mod;
-  blows = min(12, blows);
-  blows = max(3, blows);
-
-  const long lev_skill = C_class_melee_bonus(player_pclass) * (player_lev + 10);
-
-  /*{warriors 100-500, paladin 80-400, priest 60-300, mage
-   * 40-200}*/
-  blows = trunc(0.8 + (float)blows / 3.0 + (float)lev_skill / 350.0);
-
-  /*{usually 3 for 18+ dex, 5 max except 6 for high level
-   * warriors}*/
-  const long adj_weight =
-      (long)((float)approx_str_stat / (float)(weight / 100) * 2.5);
-
-  if (adj_weight < 1) {
-    blows = 1;
-  } else if (adj_weight < 2) {
-    blows = blows / 3.00;
-  } else if (adj_weight < 3) {
-    blows = blows / 2.50;
-  } else if (adj_weight < 5) {
-    blows = blows / 2.00;
-  } else if (adj_weight < 10) {
-    blows = blows / 1.66;
-  } else {
-    blows = blows / 1.50;
-  }
-
-  return blows;
-}
 
 static bool attack_lands_on_monster(const long a_cptr, const monster_template_t* const monster_template,
                                     const long tot_tohit, bool const is_backstab, bool const is_missile) {
@@ -125,11 +77,14 @@ static bool attack_lands_on_monster(const long a_cptr, const monster_template_t*
 }
 
 static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
-                                long const a_mptr, const long tot_tohit, bool const is_backstab,
-                                bool const is_missile) {
+                                long const a_mptr, const long tot_tohit, bool const is_backstab) {
   char m_name[82];
   find_monster_name(m_name, a_cptr, false);
   const monster_template_t *monster_template = &monster_templates[a_mptr];
+
+  /*{ Fix for arrows}*/
+  const obj_set catch_this = {sling_ammo, bolt, arrow, 0};
+  bool const is_missile = is_in(equipment[Equipment_primary].tval, catch_this);
 
   bool monster_is_hit_but_alive = false;
   for (; number_of_attacks >= 1; number_of_attacks--) {
@@ -165,9 +120,9 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
   return monster_is_hit_but_alive;
 }
 
+extern long C_calculate_number_of_attacks(long *to_hit);
 bool player_action_attack(const long y, const long x) {
 
-  long blows;
   long tot_tohit;
   bool player_is_mean_jerk;
   bool is_backstab;
@@ -184,18 +139,7 @@ bool player_action_attack(const long y, const long x) {
   }
   m_list[a_cptr].csleep = 0;
 
-
-  if (equipment[Equipment_primary].tval > 0) { /*  { Proper weapon }*/
-    blows = attack_blows(equipment[Equipment_primary].weight, &tot_tohit);
-  } else { /*{ Bare hands?   }*/
-    if (player_pclass == C_MONK) {
-      blows = attack_blows(12000, &tot_tohit) + 1; /* a bit heavy handed... */
-      tot_tohit = 0;
-    } else {
-      blows = 2;
-      tot_tohit = -3;
-    }
-  }
+  long const number_of_attacks = C_calculate_number_of_attacks(&tot_tohit);
 
   if (is_backstab) {
     tot_tohit += player_lev / 4;
@@ -206,14 +150,6 @@ bool player_action_attack(const long y, const long x) {
     tot_tohit += 1 + player_lev / 2;
   }
   tot_tohit += C_calculate_tohit_bonus_for_weapon_type(equipment[Equipment_primary].tval);
-
-
-  /*{ Fix for arrows}*/
-  const obj_set catch_this = {sling_ammo, bolt, arrow, 0};
-  bool const is_missile = is_in(equipment[Equipment_primary].tval, catch_this);
-  if (is_missile) {
-    blows = 1;
-  }
   tot_tohit += player_ptohit;
 
   /*{ stopped from killing town creatures?? }*/
@@ -227,7 +163,7 @@ bool player_action_attack(const long y, const long x) {
   /*{ Loop for number of blows, trying to hit the critter...        }*/
   bool monster_is_hit_but_alive = false;
   if (player_is_mean_jerk) {
-    monster_is_hit_but_alive = execute_all_attacks(blows, a_cptr, a_mptr, tot_tohit, is_backstab, is_missile);
+    monster_is_hit_but_alive = execute_all_attacks(number_of_attacks, a_cptr, a_mptr, tot_tohit, is_backstab);
   }
 
   RETURN("py_attack", "", 'b', "hit", &monster_is_hit_but_alive);
