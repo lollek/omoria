@@ -398,28 +398,21 @@ void change_rep(long amt) {
   }
 }
 
-bool player_test_hit(const long base_to_hit, const long level,
-                        const long plus_to_hit, const long enemy_ac,
-                        const bool was_fired) {
+extern long C_calculate_player_tohit(long base_to_hit, long plus_to_hit);
+bool player_test_hit(const long base_to_hit, const long plus_to_hit,
+                     const long enemy_ac) {
   if (search_flag) {
     search_off();
   }
   if (player_flags.rest > 0) {
     rest_off();
   }
-
-  long hit_value = base_to_hit + plus_to_hit * BTH_PLUS_ADJ;
-
-  if (was_fired) {
-    hit_value += level * C_class_ranged_bonus(player_pclass) / 2;
-  } else {
-    hit_value += level * C_class_melee_bonus(player_pclass) / 2;
-  }
-
+  long const hit_value = C_calculate_player_tohit(base_to_hit, plus_to_hit);
   return randint(hit_value) > enemy_ac || randint(20) == 1;
 }
 
-long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster) {
+long tot_dam(const treasure_type *item, long tdam,
+             monster_template_t const *monster) {
   /*{ Special damage due to magical abilities of object     -RAK-   }*/
 
   const obj_set stuff_that_goes_thump = {
@@ -460,8 +453,7 @@ long tot_dam(const treasure_type *item, long tdam, monster_template_t const *mon
       tdam *= 2;
 
       /*{ Slay Evil     }*/
-    } else if ((cdefense & 0x0004) != 0 &&
-               (flags & Slay_Evil_worn_bit) != 0) {
+    } else if ((cdefense & 0x0004) != 0 && (flags & Slay_Evil_worn_bit) != 0) {
       tdam *= 2;
 
       /*{ Soul Sword    }*/
@@ -470,13 +462,11 @@ long tot_dam(const treasure_type *item, long tdam, monster_template_t const *mon
       tdam *= 2;
     }
     /*{ Frost         }*/
-  } else if ((cdefense & 0x0010) != 0 &&
-             (flags & Cold_Brand_worn_bit) != 0) {
+  } else if ((cdefense & 0x0010) != 0 && (flags & Cold_Brand_worn_bit) != 0) {
     tdam *= 1.5;
 
     /*{ Fire          }*/
-  } else if ((cdefense & 0x0020) != 0 &&
-             (flags & Flame_Brand_worn_bit) != 0) {
+  } else if ((cdefense & 0x0020) != 0 && (flags & Flame_Brand_worn_bit) != 0) {
     tdam *= 1.5;
   }
 

@@ -39,7 +39,6 @@ pub mod persistence;
 pub mod player;
 pub mod random;
 pub mod save;
-pub mod screen;
 pub mod term;
 pub mod thirdparty;
 
@@ -51,5 +50,5 @@ pub mod identification;
 pub mod misc_extern;
 pub mod ncurses_extern;
 pub mod random_extern;
-pub mod screen_extern;
 pub mod term_extern;
+mod user_interface;

@@ -1,6 +1,7 @@
 #include "../generate_monster/generate_monster.h"
 #include "../io.h"
 #include "../misc.h"
+#include "../model_class.h"
 #include "../player.h"
 #include "../player/hunger.h"
 #include "../random.h"
@@ -48,7 +49,8 @@ static void brothel_game(void) {
     change_rep(-3);
     /* with player_do; */
     if (player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-            C_player_mod_from_stat(INT) > randint(100)) {
+            C_player_mod_from_stat(INT) >
+        randint(100)) {
       msg_print("Good! You are invited to join the house!");
       C_player_add_exp(5);
       spend_time(600, "putting out for peasants", false);
@@ -66,10 +68,12 @@ static void battle_game(const long plus, char const *const kb_str) {
     msg_print("Good for you!");
     long score = 0;
     long time = 10;
+    const long base_to_hit =
+        player_bth + player_lev * C_class_melee_bonus(player_pclass) / 2;
 
     /* with player_do; */
     for (long i1 = 1; i1 <= 7; i1++) {
-      if (player_test_hit(player_bth, player_lev, plus, 20 * i1, false)) {
+      if (player_test_hit(base_to_hit, plus, 20 * i1)) {
         score++;
         time = time * 2 + 10;
       }
@@ -129,7 +133,8 @@ static void thief_games(void) {
     if (get_yes_no("Do you accept?")) {
       /* with player_do; */
       guild_or_not(player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-                       C_player_mod_from_stat(INT) > randint(100));
+                       C_player_mod_from_stat(INT) >
+                   randint(100));
     }
   } else {
     msg_print("The thieves invite you to show your stealthiness.");
@@ -297,8 +302,7 @@ static void worship(void) {
       if (player_money[TOTAL_] > 0) {
         msg_print("Bless you, dude!");
 
-        long i1 =
-            (randint(12) * player_money[TOTAL_] / 1000 + 20) * GOLD_VALUE;
+        long i1 = (randint(12) * player_money[TOTAL_] / 1000 + 20) * GOLD_VALUE;
         if (i1 > player_money[TOTAL_] * GOLD_VALUE / 2) {
           i1 = player_money[TOTAL_] * GOLD_VALUE / 2;
         }

@@ -13,9 +13,9 @@
 #include "../variables.h"
 #include <math.h>
 
-
-static bool attack_lands_on_monster(const long a_cptr, const monster_template_t* const monster_template,
-                                    const long tot_tohit, bool const is_backstab, bool const is_missile) {
+static bool attack_lands_on_monster(
+    const long a_cptr, const monster_template_t *const monster_template,
+    const long tot_tohit, bool const is_backstab, bool const is_missile) {
   bool monster_is_alive = false;
   long damage;
 
@@ -77,7 +77,8 @@ static bool attack_lands_on_monster(const long a_cptr, const monster_template_t*
 }
 
 static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
-                                long const a_mptr, const long tot_tohit, bool const is_backstab) {
+                                long const a_mptr, const long tot_tohit,
+                                bool const is_backstab) {
   char m_name[82];
   find_monster_name(m_name, a_cptr, false);
   const monster_template_t *monster_template = &monster_templates[a_mptr];
@@ -88,8 +89,10 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
 
   bool monster_is_hit_but_alive = false;
   for (; number_of_attacks >= 1; number_of_attacks--) {
-    bool const did_hit = player_test_hit(player_bth, player_lev, tot_tohit,
-                                         monster_template->ac, false);
+    const long base_to_hit =
+        player_bth + player_lev * C_class_melee_bonus(player_pclass) / 2;
+    bool const did_hit =
+        player_test_hit(base_to_hit, tot_tohit, monster_template->ac);
     if (!did_hit) {
       switch (randint(10)) {
       case 1:
@@ -120,10 +123,10 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
   return monster_is_hit_but_alive;
 }
 
-extern long C_calculate_number_of_attacks(long *to_hit);
+extern long C_calculate_number_of_attacks();
+extern long C_calculate_player_tohit_melee(bool is_backstab);
 bool player_action_attack(const long y, const long x) {
 
-  long tot_tohit;
   bool player_is_mean_jerk;
   bool is_backstab;
 
@@ -139,18 +142,8 @@ bool player_action_attack(const long y, const long x) {
   }
   m_list[a_cptr].csleep = 0;
 
-  long const number_of_attacks = C_calculate_number_of_attacks(&tot_tohit);
-
-  if (is_backstab) {
-    tot_tohit += player_lev / 4;
-  }
-
-  /*{ Adjust weapons for class }*/
-  if (player_pclass == C_WARRIOR) {
-    tot_tohit += 1 + player_lev / 2;
-  }
-  tot_tohit += C_calculate_tohit_bonus_for_weapon_type(equipment[Equipment_primary].tval);
-  tot_tohit += player_ptohit;
+  long const number_of_attacks = C_calculate_number_of_attacks();
+  long const tot_tohit = C_calculate_player_tohit_melee(is_backstab);
 
   /*{ stopped from killing town creatures?? }*/
   if ((monster_templates[a_mptr].cmove & 0x00004000) == 0 ||
@@ -163,7 +156,8 @@ bool player_action_attack(const long y, const long x) {
   /*{ Loop for number of blows, trying to hit the critter...        }*/
   bool monster_is_hit_but_alive = false;
   if (player_is_mean_jerk) {
-    monster_is_hit_but_alive = execute_all_attacks(number_of_attacks, a_cptr, a_mptr, tot_tohit, is_backstab);
+    monster_is_hit_but_alive = execute_all_attacks(
+        number_of_attacks, a_cptr, a_mptr, tot_tohit, is_backstab);
   }
 
   RETURN("py_attack", "", 'b', "hit", &monster_is_hit_but_alive);
