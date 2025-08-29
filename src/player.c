@@ -293,7 +293,6 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
     C_player_change_extra_bulk_carry(i1 * factor);
   }
 
-  /* with player_do; */
   const long old_dis_ac = player_dis_ac;
   player_ptohit = C_player_tohit_from_stats();
   player_ptodam = C_player_dmg_from_str();
@@ -409,7 +408,6 @@ bool player_test_hit(const long base_to_hit, const long level,
     rest_off();
   }
 
-  /* compare player::melee_tohit()  and player::ranged_tohit() */
   long hit_value = base_to_hit + plus_to_hit * BTH_PLUS_ADJ;
 
   if (was_fired) {
@@ -418,17 +416,10 @@ bool player_test_hit(const long base_to_hit, const long level,
     hit_value += level * C_class_melee_bonus(player_pclass) / 2;
   }
 
-  /*{ hits if above ac or 1 in 20.  OOK! }*/
-  if (randint(hit_value) > enemy_ac) {
-    return true;
-  } else if (randint(20) == 1) {
-    return true;
-  } else {
-    return false;
-  }
+  return randint(hit_value) > enemy_ac || randint(20) == 1;
 }
 
-long tot_dam(const treasure_type *item, long tdam, monster_template const *monster) {
+long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster) {
   /*{ Special damage due to magical abilities of object     -RAK-   }*/
 
   const obj_set stuff_that_goes_thump = {

@@ -186,5 +186,5 @@ void change_rep(long amt);
 bool player_test_hit(long base_to_hit, long level, long plus_to_hit, long enemy_ac,
                         bool was_fired);
 
-long tot_dam(const treasure_type *item, long tdam, monster_template const *monster);
+long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster);
 void py_bonuses(const treasure_type *tobj, long factor);
