@@ -73,14 +73,14 @@ typedef struct monster_template {
   int8_t level;                     // Minimum level creature is found at
   uint8_t magic_resistance;
   monster_attributes attributes;
-} monster_template;
+} monster_template_t;
 
-extern const monster_template monster_templates[];
+extern const monster_template_t monster_templates[];
 extern long const monster_template_size;
 extern long m_level[MAX_MONS_LEVEL + 1];
 
-bool monster_template_has_attribute(monster_template const *template,
+bool monster_template_has_attribute(monster_template_t const *template,
                                        monster_attribute attribute);
 bool monster_template_has_attributes(
-    monster_template const *template,
+    monster_template_t const *template,
     monster_attribute const *const *monster_attributes);

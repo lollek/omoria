@@ -1,7 +1,9 @@
-use crate::generate_item;
+use crate::{generate_item, player};
+use crate::conversion::item_type;
 use crate::generate_item::ItemQuality;
 use crate::generate_item::template::*;
 use crate::model;
+use crate::model::ItemType;
 
 pub fn name(class: &model::Class) -> &'static str {
     match class {
@@ -280,4 +282,56 @@ pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
     };
     items.iter_mut().for_each(|item| {item.set_identified(true)});
     items
+}
+
+pub fn is_bad_with_weapon(class: &model::Class, item_type: &ItemType) -> bool {
+    match class {
+        model::Class::Fighter => false,
+        model::Class::Wizard => {
+            match item_type {
+                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => true,
+                _ => false,
+            }
+        },
+        model::Class::Cleric => {
+            match item_type {
+                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => true,
+                _ => false,
+            }
+        },
+        model::Class::Rogue => false,
+        model::Class::Ranger => false,
+        model::Class::Paladin => false,
+        model::Class::Druid => {
+            match item_type {
+                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword => true,
+                _ => false,
+            }
+        },
+        model::Class::Bard => false,
+        model::Class::Adventurer => false,
+        model::Class::Monk => {
+            match item_type {
+                ItemType::HaftedWeapon | ItemType::PoleArm => true,
+                _ => false,
+            }
+        },
+        model::Class::Barbarian => false,
+    }
+}
+
+#[allow(non_snake_case)]
+#[no_mangle]
+fn C_calculate_tohit_bonus_for_weapon_type(item_tval: u8) -> i8 {
+    let item_type = item_type::from_usize(item_tval as usize)
+        .expect("Failed to convert tval to item type");
+    calculate_tohit_bonus_for_weapon_type(&player::class(), &item_type)
+}
+
+pub fn calculate_tohit_bonus_for_weapon_type(class: &model::Class, item_type: &ItemType) -> i8 {
+    if is_bad_with_weapon(class, item_type) {
+        -5
+    } else {
+        0
+    }
 }

@@ -12,13 +12,15 @@ extern crate pancurses;
 extern crate serde;
 extern crate serde_json;
 
-mod town_level;
+mod player_action;
 mod pregame;
+mod town_level;
 
 pub mod commands;
 pub mod constants;
 pub mod conversion;
 pub mod data;
+#[macro_use]
 pub mod debug;
 pub mod equipment;
 pub mod error;
@@ -37,7 +39,6 @@ pub mod persistence;
 pub mod player;
 pub mod random;
 pub mod save;
-pub mod screen;
 pub mod term;
 pub mod thirdparty;
 
@@ -49,5 +50,5 @@ pub mod identification;
 pub mod misc_extern;
 pub mod ncurses_extern;
 pub mod random_extern;
-pub mod screen_extern;
 pub mod term_extern;
+mod user_interface;

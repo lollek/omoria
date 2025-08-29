@@ -1,5 +1,4 @@
 use crate::logic::menu::draw_help_vec;
-use crate::screen::draw_cave;
 use std::collections::LinkedList;
 use std::ffi::CStr;
 use std::sync::RwLock;
@@ -9,6 +8,11 @@ lazy_static! {
         RwLock::new(LinkedList::default());
 }
 const MAX_MESSAGES: usize = 50;
+
+extern "C" {
+    #[link_name = "draw_cave"]
+    pub fn draw_cave();
+}
 
 #[no_mangle]
 extern "C" fn _record_message(message: *const libc::c_char) {

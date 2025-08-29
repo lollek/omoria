@@ -56,6 +56,13 @@ where
         .expect("Failed to write to debug file");
 }
 
+#[macro_export]
+macro_rules! infof {
+    ($($arg:tt)*) => {
+        crate::debug::info(format!($($arg)*))
+    };
+}
+pub use infof;
 pub fn info<S>(msg: S)
 where
     S: AsRef<str>,
@@ -65,6 +72,13 @@ where
     }
 }
 
+#[macro_export]
+macro_rules! warnf {
+    ($($arg:tt)*) => {
+        crate::debug::warn(format!($($arg)*))
+    };
+}
+pub use warnf;
 pub fn warn<S>(msg: S)
 where
     S: AsRef<str>,
@@ -74,6 +88,13 @@ where
     }
 }
 
+#[macro_export]
+macro_rules! errorf {
+    ($($arg:tt)*) => {
+        crate::debug::error(format!($($arg)*))
+    };
+}
+pub use errorf;
 pub fn error<S>(msg: S)
 where
     S: AsRef<str>,
@@ -83,6 +104,13 @@ where
     }
 }
 
+#[macro_export]
+macro_rules! fatalf {
+    ($($arg:tt)*) => {
+        crate::debug::error(format!($($arg)*))
+    };
+}
+pub use fatalf;
 pub fn fatal<S>(msg: S) -> !
 where
     S: AsRef<str>,

@@ -52,7 +52,7 @@ static void generate_monster(obj_set alloc_set, const long number_of_monsters,
         monster_i = randint(m_level[dun_level]) + m_level[0];
       }
 
-      monster_template const *template = &monster_templates[monster_i];
+      monster_template_t const *template = &monster_templates[monster_i];
       if (monster_template_has_attribute(template, ma_unspawnable)) {
         continue;
       }
@@ -106,7 +106,7 @@ void place_monster(const long y, const long x, const long template,
   m_list[cur_pos].nptr = muptr;
   muptr = cur_pos;
 
-  monster_template const *monster = &monster_templates[template];
+  monster_template_t const *monster = &monster_templates[template];
 
   if ((monster->cdefense & 0x4000) != 0) {
     m_list[cur_pos].hp = max_hp(monster->hit_die);
@@ -184,7 +184,7 @@ static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
         monster_i = monster_template_size - 1;
       }
 
-      monster_template const *template = &monster_templates[monster_i];
+      monster_template_t const *template = &monster_templates[monster_i];
       if (monster_template_has_attribute(template, ma_unspawnable)) {
         continue;
       }

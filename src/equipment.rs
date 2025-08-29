@@ -72,6 +72,10 @@ pub fn slots_iter() -> impl Iterator<Item = usize> {
     (Slot::Primary as usize)..(Slot::Secondary as usize + 1)
 }
 
+pub unsafe fn get_item(slot: Slot) -> *const Item {
+    &equipment[slot as usize]
+}
+
 pub fn get_name(slot: Slot) -> String {
     let item = unsafe { equipment[slot as usize] };
     match item.tval {

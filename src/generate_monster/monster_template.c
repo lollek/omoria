@@ -4,7 +4,7 @@
 
 long m_level[MAX_MONS_LEVEL + 1] = {0};
 
-monster_template const monster_templates[] = {
+monster_template_t const monster_templates[] = {
   // Level 0
     {10, 1, "<<Placeholder>>", 0x0010C000, 0x00009F52, 0x3000, 25000, 50, 1, 'p', "20d8", "1 1 3d3", 0, 20, {.multiplies = false, .can_move = true}},
     {10, 1, "Town Wizard", 0x0010C000, 0x00009F52, 0x3000, 25000, 50, 1, 'p', "20d8", "1 1 3d3", 0, 20, {.multiplies = false, .can_move = true}},
@@ -451,7 +451,7 @@ monster_template const monster_templates[] = {
     {20, 125, "Balrog", 0xFF1F0300, 0x0281C743, 0x5404, 0, 55000, 4, 'B', "475d8", "5 1 10d12|1 17 8d12|24 5 0d0", 100, 255, {.multiplies = false, .can_move = true}},};
 long const monster_template_size = sizeof(monster_templates) / sizeof(monster_templates[0]);
 
-bool monster_template_has_attribute(monster_template const *template,
+bool monster_template_has_attribute(monster_template_t const *template,
                                        const monster_attribute attribute) {
   switch (attribute) {
   case ma_move_only_to_attack:
@@ -549,7 +549,7 @@ bool monster_template_has_attribute(monster_template const *template,
 }
 
 bool monster_template_has_attributes(
-    monster_template const *template,
+    monster_template_t const *template,
     monster_attribute const *const *monster_attributes) {
   for (monster_attribute const *attribute = *monster_attributes;
        attribute != NULL; attribute++) {
