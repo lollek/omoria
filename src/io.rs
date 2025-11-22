@@ -1,7 +1,7 @@
 use libc::{c_char, c_int};
 use std::ffi::CString;
 
-use crate::term;
+use crate::{ncurses, term};
 
 extern "C" {
     #[link_name = "inkey"]
@@ -17,7 +17,7 @@ extern "C" {
 pub const ESCAPE: u8 = 27;
 
 pub fn inkey_flush() -> u8 {
-    term::refresh_screen();
+    ncurses::refresh();
     unsafe {
         C_flush();
         C_inkey() as u8
@@ -46,7 +46,7 @@ where
 
 /* XXXX check_input consumes the input, so we never actually get data */
 pub fn inkey_delay(delay_in_ms: i32) -> u8 {
-    term::refresh_screen();
+    ncurses::refresh();
     if unsafe { C_check_input(delay_in_ms) != 0 } {
         'a' as u8
     } else {

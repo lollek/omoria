@@ -85,7 +85,6 @@ pub fn refresh() {
     });
 }
 
-// Use term::put_buffer instead of this directly
 pub fn mvaddstr<'a, S>(row: i32, col: i32, msg: S)
 where
     S: AsRef<str>,

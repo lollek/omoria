@@ -16,6 +16,8 @@
 #include "io.h"
 #include "save.h"
 #include "term.h"
+
+#include "debug.h"
 #include "unix.h"
 #include "variables.h"
 
@@ -33,16 +35,6 @@ FILE *highscore_fp;
    This software may be copied and distributed for educational, research, and
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
-
-static void minor_error(char const *error_message) {
-  abort();
-  /* clear msg_flag to avoid problems with unflushed messages */
-  msg_flag = 0;
-  prt_(error_message, 0, 0);
-  bell();
-  /* wait so user can see error */
-  sleep(2);
-}
 
 void put_buffer_attr(const char *out_str, const long row, const long col,
                      const int attrs) {
@@ -129,13 +121,13 @@ void Print(chtype const ch, int row, int col) {
   used_line[row + 1] = true;
 
   if (row > 24 || row < 0 || col > 79 || col < 0) {
-    sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
-    minor_error(tmp_str);
+    MSG(("error in print, row = %d col = %d\n", row, col));
+    abort();
   }
 
   if (mvaddch(row, col, ch) == ERR) {
-    sprintf(tmp_str, "error in print, row = %d col = %d\n", row, col);
-    minor_error(tmp_str);
+    MSG(("error in print, row = %d col = %d\n", row, col));
+    abort();
   }
 }
 

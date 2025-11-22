@@ -54,7 +54,9 @@ fn print_stat<S: AsRef<str>>(
     }
 
     let str = format!("{}{:<6}", stat_name.as_ref(), stat);
-    term::put_buffer(str, row.into(), col.into());
+    let row1 = row.into();
+    let col1 = col.into();
+    ncurses::mvaddstr(row1, col1, str);
 
     for attribute in attributes {
         ncurses::attroff(*attribute);

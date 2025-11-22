@@ -54,7 +54,9 @@ where
     S: AsRef<str>,
 {
     let msg_formatted = format!("{:<width$}", msg.as_ref(), width = STAT_BLOCK_WIDTH);
-    term::put_buffer(msg_formatted, row.into(), col.into());
+    let row1 = row.into();
+    let col1 = col.into();
+    ncurses::mvaddstr(row1, col1, msg_formatted);
 }
 
 fn print_hp(row: u8, col: u8) {
@@ -69,7 +71,10 @@ fn print_hp(row: u8, col: u8) {
     };
 
     ncurses::attron(color);
-    term::put_buffer(format!("HP  : {:>6}", current), row.into(), col.into());
+    let msg = format!("HP  : {:>6}", current);
+    let row1 = row.into();
+    let col1 = col.into();
+    ncurses::mvaddstr(row1, col1, msg);
     ncurses::attroff(color);
 }
 
@@ -89,7 +94,10 @@ fn print_mana(row: u8, col: u8) {
     };
 
     ncurses::attron(color);
-    term::put_buffer(format!("MANA: {:>6}", current), row.into(), col.into());
+    let msg = format!("MANA: {:>6}", current);
+    let row1 = row.into();
+    let col1 = col.into();
+    ncurses::mvaddstr(row1, col1, msg);
     ncurses::attroff(color);
 }
 
@@ -130,7 +138,9 @@ fn print_depth(row: u8, col: u8) {
         0 => Cow::from("Town Level      "),
         _ => Cow::from(format!("Depth: {} (feet)", depth)),
     };
-    term::put_buffer(string, row.into(), col.into());
+    let row1 = row.into();
+    let col1 = col.into();
+    ncurses::mvaddstr(row1, col1, string);
 }
 
 fn print_stats_column() {

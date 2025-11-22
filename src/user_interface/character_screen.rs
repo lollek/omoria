@@ -1,6 +1,6 @@
 use crate::model::Stat;
 use crate::user_interface::helpers;
-use crate::{data, misc, player, term};
+use crate::{data, misc, ncurses, player, term};
 use std::cmp::max;
 use crate::player_action::attack::{calculate_number_of_attacks, calculate_player_tohit2, AttackType, MeleeAttackType};
 
@@ -134,55 +134,26 @@ fn put_misc3() {
     let xinf: i64 = player::infravision() * 10;
 
     term::prt("(Miscellaneous Abilities)", 15, 23);
-    term::put_buffer(
-        format!("Fighting    : {}", misc::mod_to_string(xbth, 12)),
-        16,
-        1,
-    );
-    term::put_buffer(
-        format!("Bows/Throw  : {}", misc::mod_to_string(xbthb, 12)),
-        17,
-        1,
-    );
-    term::put_buffer(
-        format!("Saving Throw: {}", misc::mod_to_string(xsave, 6)),
-        18,
-        1,
-    );
-    term::put_buffer(
-        format!("Stealth     : {}", misc::mod_to_string(xstl, 1)),
-        16,
-        26,
-    );
-    term::put_buffer(
-        format!("Disarming   : {}", misc::mod_to_string(xdis, 8)),
-        17,
-        26,
-    );
-    term::put_buffer(
-        format!("Magic Device: {}", misc::mod_to_string(xdev, 7)),
-        18,
-        26,
-    );
-    term::put_buffer(
-        format!("Perception  : {}", misc::mod_to_string(xfos, 3)),
-        16,
-        51,
-    );
-    term::put_buffer(
-        format!("Searching   : {}", misc::mod_to_string(xsrh, 6)),
-        17,
-        51,
-    );
-    term::put_buffer(format!("Infra-Vision: {} feet", xinf), 18, 51);
-    term::put_buffer(
-        format!("Swimming    : {}", misc::mod_to_string(xswm, 1)),
-        19,
-        51,
-    );
-    term::put_buffer(
-        format!("Reputation  : {}", misc::mod_to_string(xrep, 1)),
-        19,
-        1,
-    );
+    let msg = format!("Fighting    : {}", misc::mod_to_string(xbth, 12));
+    ncurses::mvaddstr(16, 1, msg);
+    let msg = format!("Bows/Throw  : {}", misc::mod_to_string(xbthb, 12));
+    ncurses::mvaddstr(17, 1, msg);
+    let msg = format!("Saving Throw: {}", misc::mod_to_string(xsave, 6));
+    ncurses::mvaddstr(18, 1, msg);
+    let msg = format!("Stealth     : {}", misc::mod_to_string(xstl, 1));
+    ncurses::mvaddstr(16, 26, msg);
+    let msg = format!("Disarming   : {}", misc::mod_to_string(xdis, 8));
+    ncurses::mvaddstr(17, 26, msg);
+    let msg = format!("Magic Device: {}", misc::mod_to_string(xdev, 7));
+    ncurses::mvaddstr(18, 26, msg);
+    let msg = format!("Perception  : {}", misc::mod_to_string(xfos, 3));
+    ncurses::mvaddstr(16, 51, msg);
+    let msg = format!("Searching   : {}", misc::mod_to_string(xsrh, 6));
+    ncurses::mvaddstr(17, 51, msg);
+    let msg = format!("Infra-Vision: {} feet", xinf);
+    ncurses::mvaddstr(18, 51, msg);
+    let msg = format!("Swimming    : {}", misc::mod_to_string(xswm, 1));
+    ncurses::mvaddstr(19, 51, msg);
+    let msg = format!("Reputation  : {}", misc::mod_to_string(xrep, 1));
+    ncurses::mvaddstr(19, 1, msg);
 }

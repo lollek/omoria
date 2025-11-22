@@ -13,22 +13,18 @@ where
 {
     // Title
     let title_s = title.as_ref();
-    term::put_buffer(title_s, 0, 0);
+    ncurses::mvaddstr(0, 0, title_s);
 
     // Items
     for (index, item) in items.as_ref().iter().enumerate() {
         let character = ((index as u8) + b'a') as char;
-        term::put_buffer(
-            &format!(" {}) {:<width$}", character, item, width = 20),
-            index as i32 + 1,
-            0,
-        );
+        let msg = &format!(" {}) {:<width$}", character, item, width = 20);
+        let row = index as i32 + 1;
+        ncurses::mvaddstr(row, 0, msg);
     }
-    term::put_buffer(
-        &format!("    {:<width$}", "", width = 20),
-        items.len() as i32 + 1,
-        0,
-    );
+    let msg = &format!("    {:<width$}", "", width = 20);
+    let row = items.len() as i32 + 1;
+    ncurses::mvaddstr(row, 0, msg);
 }
 
 pub fn draw_menu<S1, S2>(title: S1, items: &[&str], commands: S2, selected: u8)
@@ -40,22 +36,23 @@ where
 
     // Title
     let title_s = title.as_ref();
-    term::put_buffer(&format!("{:*<width$}", "", width = WIDTH - 1), 0, 0);
-    term::put_buffer(
-        &format!(
-            "* {}{:<width$} *",
-            title_s,
-            "",
-            width = MAX_X - title_s.len()
-        ),
-        1,
-        0,
+    let msg = &format!("{:*<width$}", "", width = WIDTH - 1);
+    ncurses::mvaddstr(0, 0, msg);
+    let msg = &format!(
+        "* {}{:<width$} *",
+        title_s,
+        "",
+        width = MAX_X - title_s.len()
     );
-    term::put_buffer(&format!("{:*<width$}", "", width = WIDTH - 1), 2, 0);
+    ncurses::mvaddstr(1, 0, msg);
+    let msg = &format!("{:*<width$}", "", width = WIDTH - 1);
+    ncurses::mvaddstr(2, 0, msg);
 
     // Side markers
     for y in 3..(HEIGHT - 3) {
-        term::put_buffer(&format!("* {:<width$} *", "", width = MAX_X), y as i32, 0);
+        let msg = &format!("* {:<width$} *", "", width = MAX_X);
+        let row = y as i32;
+        ncurses::mvaddstr(row, 0, msg);
     }
 
     // Items
@@ -64,7 +61,8 @@ where
         if reverse {
             ncurses::attron(ncurses::A_REVERSE);
         }
-        term::put_buffer(item, index as i32 + 3, 2);
+        let row = index as i32 + 3;
+        ncurses::mvaddstr(row, 2, item);
 
         if reverse {
             ncurses::attroff(ncurses::A_REVERSE);
@@ -73,26 +71,20 @@ where
 
     // Bottom
     let commands_s = commands.as_ref();
-    term::put_buffer(
-        &format!("{:*<width$}", "", width = WIDTH - 1),
-        HEIGHT as i32 - 3,
-        0,
+    let msg = &format!("{:*<width$}", "", width = WIDTH - 1);
+    let row = HEIGHT as i32 - 3;
+    ncurses::mvaddstr(row, 0, msg);
+    let msg = &format!(
+        "* {:<width$}{} *",
+        "",
+        commands_s,
+        width = MAX_X - commands_s.len()
     );
-    term::put_buffer(
-        &format!(
-            "* {:<width$}{} *",
-            "",
-            commands_s,
-            width = MAX_X - commands_s.len()
-        ),
-        HEIGHT as i32 - 2,
-        0,
-    );
-    term::put_buffer(
-        &format!("{:*<width$}", "", width = WIDTH - 1),
-        HEIGHT as i32 - 1,
-        0,
-    );
+    let row = HEIGHT as i32 - 2;
+    ncurses::mvaddstr(row, 0, msg);
+    let msg = &format!("{:*<width$}", "", width = WIDTH - 1);
+    let row = HEIGHT as i32 - 1;
+    ncurses::mvaddstr(row, 0, msg);
 }
 
 pub fn draw_help_vec<S1>(title: S1, lines: &[&str])
