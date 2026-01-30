@@ -110,7 +110,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `flask.rs` - FlaskOfOil
 - [x] `shield.rs` - Shield
 - [x] `instrument.rs` - Instrument
-- [ ] `gem_helm.rs` - GemHelm
+- [x] `gem_helm.rs` - GemHelm
 - [ ] `ring.rs` - Ring
 - [ ] `potion.rs` - Potion1 (Potion2 removed)
 - [ ] `scroll.rs` - Scroll1 (Scroll2 removed)
@@ -150,6 +150,27 @@ Follow `melee_weapon.rs` as the reference:
 4. Update match arm in `generate()` to call new function
 5. Remove old logic from `subtype_name()` in `subtype.rs`
 6. Add tests covering identified/unidentified states
+
+## Convention: Avoid "magic" subtype numbers
+
+When a naming module depends on `item.subval`, prefer using a typed subtype enum rather than matching on raw integers.
+
+Pattern:
+
+1. Define/extend the subtype enum in `src/model/item_subtype.rs`.
+   - Example: `GemHelmSubType::{IronHelm, SteelHelm}` and `HelmSubType::{ClothHat, ...}`.
+
+2. Add a conversion module under `src/conversion/item_subtype/`.
+   - Example: `src/conversion/item_subtype/helm.rs` maps `12..=23` to `HelmSubType`.
+   - Example: `src/conversion/item_subtype/gem_helm.rs` maps `9/10` to `GemHelmSubType`.
+
+3. In the naming module, decode using `conversion::item_subtype::from_i64(item.item_type(), item.subval)` and match on `ItemSubType::{...}`.
+
+4. In tests, avoid hardcoded subtype numbers by computing `subval` from the typed subtype:
+
+   - `conversion::item_subtype::to_usize(&ItemSubType::GemHelm(GemHelmSubType::IronHelm)) as i64`
+
+This keeps the numeric mapping in one place and makes item-name logic easier to read and refactor.
 
 ## Notes
 

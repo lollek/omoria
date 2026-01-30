@@ -14,6 +14,7 @@ pub mod chest;
 pub mod flask;
 pub mod food;
 pub mod gem;
+pub mod gem_helm;
 pub mod instrument;
 pub mod jewelry;
 pub mod light_source;
@@ -31,18 +32,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
 
     match item.item_type() {
-        ItemType::GemHelm => {
-            let material = match item.subval {
-                9 => "Iron helm",
-                10 => "Steel helm",
-                _ => "Alien helm",
-            };
-            Cow::from(format!(
-                "{}{}",
-                material,
-                if item.is_identified() { "of gems" } else { "" }
-            ))
-        }
         ItemType::Ring => {
             let attribute = if item.is_identified() {
                 match item.subval {

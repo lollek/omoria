@@ -346,7 +346,10 @@ pub enum MaulSubType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum GemHelmSubType {}
+pub enum GemHelmSubType {
+    IronHelm,
+    SteelHelm,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BootsSubType {

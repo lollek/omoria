@@ -46,6 +46,7 @@ pub mod staff;
 pub mod sword;
 pub mod wand;
 pub mod wearable_gem;
+pub mod gem_helm;
 
 pub fn to_usize(item_subtype: &ItemSubType) -> usize {
     match item_subtype {
@@ -68,7 +69,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::Sword(subtype) => sword::to_usize(subtype),
         ItemSubType::Pick(subtype) => pick::to_usize(subtype),
         ItemSubType::Maul(subtype) => maul::to_usize(subtype),
-        ItemSubType::GemHelm(_) => panic!("ItemType Gem Helm has been removed"),
+        ItemSubType::GemHelm(subtype) => gem_helm::to_usize(subtype),
         ItemSubType::Boots(subtype) => boots::to_usize(subtype),
         ItemSubType::Gloves(subtype) => gloves::to_usize(subtype),
         ItemSubType::Cloak(subtype) => cloak::to_usize(subtype),
@@ -129,7 +130,7 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::Sword => sword::from_usize(item_subtype).map(ItemSubType::Sword),
         ItemType::Pick => pick::from_usize(item_subtype).map(ItemSubType::Pick),
         ItemType::Maul => maul::from_usize(item_subtype).map(ItemSubType::Maul),
-        ItemType::GemHelm => panic!("ItemType Gem Helm has been removed"),
+        ItemType::GemHelm => gem_helm::from_usize(item_subtype).map(ItemSubType::GemHelm),
         ItemType::Boots => boots::from_usize(item_subtype).map(ItemSubType::Boots),
         ItemType::Gloves => gloves::from_usize(item_subtype).map(ItemSubType::Gloves),
         ItemType::Cloak => cloak::from_usize(item_subtype).map(ItemSubType::Cloak),
