@@ -72,10 +72,10 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 #### Bug Fixes (existing code)
 
 - [x] **chime.rs**: Show remaining charges in the item name (e.g. `chime of light (3 charges)`) when appropriate
-- [ ] **melee_weapon.rs**: Fix `executioners sword` → `executioner's sword` (missing apostrophe)
-- [ ] **melee_weapon.rs**: Fix `nodachi` → `no-dachi` (missing hyphen)
-- [ ] **melee_weapon.rs**: Fix `great flail` → `two-handed great flail` (missing prefix)
-- [ ] **melee_weapon.rs**: Fix `cat-o-nine tails` → `cat-o'-nine-tails` (match template style)
+- [x] **melee_weapon.rs**: Fix `executioners sword` → `executioner's sword` (missing apostrophe)
+- [x] **melee_weapon.rs**: Fix `nodachi` → `no-dachi` (missing hyphen)
+- [x] **melee_weapon.rs**: Fix `great flail` → `two-handed great flail` (missing prefix)
+- [x] **melee_weapon.rs**: Fix `cat-o-nine tails` → `cat-o'-nine-tails` (match template style)
 - [ ] **armor.rs**: Fix `soft studded leather` → `soft studded armor` (wrong name)
 - [ ] **armor.rs**: Add `maybe_number_of()` for quantity handling
 
