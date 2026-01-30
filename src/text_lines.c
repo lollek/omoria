@@ -68,23 +68,6 @@ void identify(treasure_type *item) {
   identification_set_identified(item);
 }
 
-void unquote(char *object_str) {
-
-  const long pos0 = pindex(object_str, '"');
-  if (pos0 > 0) {
-    char str2[82];
-    char str1[82];
-    long pos1 = pindex(object_str, '~');
-    const long pos2 = pindex(object_str, '|');
-    const long olen = strlen(object_str);
-    strncpy(str1, object_str, pos1);
-    str1[pos1] = 0;
-    strncpy(str2, &object_str[pos2], olen - pos2);
-    str2[olen - pos2] = 0;
-    sprintf(object_str, "%s%s", str1, str2);
-  }
-}
-
 void objdes(char out_val[82], const treas_rec *ptr, const bool pref) {
   char *cpos;
   char tmp_val[82];
