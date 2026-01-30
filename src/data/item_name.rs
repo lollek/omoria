@@ -4,17 +4,28 @@ use crate::data::item_name::subtype::armor::armor;
 use crate::data::item_name::subtype::bag::bag;
 use crate::data::item_name::subtype::book::book;
 use crate::data::item_name::subtype::chest::chest;
+use crate::data::item_name::subtype::chime::chime;
+use crate::data::item_name::subtype::dungeon_feature::dungeon_feature;
+use crate::data::item_name::subtype::flask::flask;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
-use crate::data::item_name::subtype::{generic_item, lodging_at_inn, money};
+use crate::data::item_name::subtype::gem_helm::gem_helm;
+use crate::data::item_name::subtype::{lodging_at_inn, money};
+use crate::data::item_name::subtype::horn::horn;
+use crate::data::item_name::subtype::instrument::instrument;
 use crate::data::item_name::subtype::jewelry::jewelry;
 use crate::data::item_name::subtype::light_source::light_source;
 use crate::data::item_name::subtype::melee_weapon::melee_weapon;
 use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
+use crate::data::item_name::subtype::potion::potion;
+use crate::data::item_name::subtype::scroll::scroll;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
+use crate::data::item_name::subtype::ring::ring;
+use crate::data::item_name::subtype::shield::shield;
 use crate::data::item_name::subtype::small_armor::small_armor;
 use crate::data::item_name::subtype::spike::spike;
+use crate::data::item_name::subtype::staff::staff;
 use crate::data::item_name::subtype::wand::wand;
 use crate::data::item_name::subtype::wearable_gem::wearable_gem;
 use crate::model::{Item, ItemType};
@@ -53,31 +64,33 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Gloves
         | ItemType::Helm => small_armor(item),
         ItemType::Chest => chest(item),
-        ItemType::Chime
-        | ItemType::ClosedDoor
-        | ItemType::DownStaircase
-        | ItemType::DownSteepStaircase
-        | ItemType::EntranceToStore
-        | ItemType::FlaskOfOil
-        | ItemType::GemHelm
-        | ItemType::Horn
-        | ItemType::Instrument
+        ItemType::Rubble
         | ItemType::OpenDoor
-        | ItemType::Potion1
-        | ItemType::Potion2
-        | ItemType::Ring
-        | ItemType::Rod
-        | ItemType::Rubble
-        | ItemType::Scroll1
-        | ItemType::Scroll2
-        | ItemType::SecretDoor
-        | ItemType::SeenTrap
-        | ItemType::Shield
-        | ItemType::Staff
-        | ItemType::UnseenTrap
+        | ItemType::ClosedDoor
         | ItemType::UpStaircase
+        | ItemType::DownStaircase
+        | ItemType::SecretDoor
+        | ItemType::EntranceToStore
         | ItemType::UpSteepStaircase
-        | ItemType::Whirlpool => generic_item(item),
+        | ItemType::DownSteepStaircase
+        | ItemType::Whirlpool
+        | ItemType::SeenTrap
+        | ItemType::UnseenTrap => dungeon_feature(item),
+        ItemType::Potion2 | ItemType::Rod | ItemType::Scroll2 => {
+            panic!(
+                "ItemType {:?} is removed/unsupported and should not be named",
+                item.item_type()
+            )
+        }
+        ItemType::Horn => horn(item),
+        ItemType::Chime => chime(item),
+        ItemType::Scroll1 => scroll(item),
+        ItemType::Potion1 => potion(item),
+        ItemType::Ring => ring(item),
+        ItemType::GemHelm => gem_helm(item),
+        ItemType::Instrument => instrument(item),
+        ItemType::Shield => shield(item),
+        ItemType::FlaskOfOil => flask(item),
         ItemType::Dagger
         | ItemType::HaftedWeapon
         | ItemType::Maul
@@ -101,5 +114,6 @@ pub fn generate(item: &Item) -> String {
         ItemType::Spike => spike(item),
         ItemType::Wand => wand(item),
         ItemType::WearableGem => wearable_gem(item),
+        ItemType::Staff => staff(item),
     }
 }

@@ -12,8 +12,8 @@ pub(crate) fn maybe_armor_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
         return Some(format!(" [{}]", item.ac).into());
     }
 
-    let toac_sign = if item.toac > 0 { "+" } else { "" };
-    Some(format!(" [{},{}{}]", item.ac, toac_sign, item.toac).into())
+    // For armor, we show both AC and its (possibly signed) to-ac modifier.
+    Some(format!(" [{},{}]", item.ac, format_signed(item.toac)).into())
 }
 
 /**
@@ -78,11 +78,10 @@ pub(crate) fn damage<'a>(item: &Item) -> Cow<'a, str> {
 }
 
 pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    let tohit_sign = if item.tohit > 0 { "+" } else { "" };
-    let todam_sign = if item.todam > 0 { "+" } else { "" };
     Cow::from(format!(
-        " ({}{},{}{})",
-        tohit_sign, item.tohit, todam_sign, item.todam
+        " ({},{})",
+        format_signed(item.tohit),
+        format_signed(item.todam),
     ))
 }
 
@@ -121,6 +120,20 @@ pub fn maybe_special_attribute(item: &Item) -> Option<Cow<str>> {
 
 
 pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    let p1_sign = if item.p1 > 0 { "+" } else { "" };
-    Cow::from(format!(" ({}{})", p1_sign, item.p1))
+    Cow::from(format!(" ({})", format_signed(item.p1)))
+}
+
+pub(crate) fn toac_bonus<'a>(item: &Item) -> Cow<'a, str> {
+    Cow::from(format!(" [{}]", format_signed(item.toac)))
+}
+
+fn format_signed<T>(value: T) -> String
+where
+    T: std::fmt::Display + PartialOrd + From<i8> + Copy,
+{
+    if value > T::from(0) {
+        format!("+{}", value)
+    } else {
+        value.to_string()
+    }
 }
