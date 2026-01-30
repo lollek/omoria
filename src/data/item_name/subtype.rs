@@ -14,6 +14,7 @@ pub mod chest;
 pub mod flask;
 pub mod food;
 pub mod gem;
+pub mod instrument;
 pub mod jewelry;
 pub mod light_source;
 pub mod melee_weapon;
@@ -134,13 +135,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
             };
             Cow::from(format!("%H{}", attribute))
         }
-        ItemType::Instrument => Cow::from(match item.subval {
-            258 => "Pipes of Peace",
-            259 => "Lyre of Nature",
-            260 => "Lute of the Woods",
-            261 => "Harp of the Druids",
-            _ => "Alien instrument",
-        }),
         ItemType::Scroll1 => {
             let attribute = if item.is_identified() {
                 match item.subval {

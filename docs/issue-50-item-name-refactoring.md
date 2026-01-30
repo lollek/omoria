@@ -109,7 +109,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 
 - [x] `flask.rs` - FlaskOfOil
 - [x] `shield.rs` - Shield
-- [ ] `instrument.rs` - Instrument
+- [x] `instrument.rs` - Instrument
 - [ ] `gem_helm.rs` - GemHelm
 - [ ] `ring.rs` - Ring
 - [ ] `potion.rs` - Potion1 (Potion2 removed)
