@@ -36,5 +36,3 @@ void msg_charges_remaining(const treas_rec *item_ptr) {
     msg_print(out_val);
   }
 }
-
-void identification_set_identified(treasure_type *item); // identification.rs
