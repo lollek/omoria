@@ -1,0 +1,4 @@
+[env]
+# Ensure build.rs compiles the msg_print interception shim for `cargo test`.
+# This shim is only intended for unit tests.
+OMORIA_BUILD_TEST_SHIMS = "1"

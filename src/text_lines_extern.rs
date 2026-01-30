@@ -664,3 +664,101 @@ mod identify_core_tests {
         assert_eq!(called, 1);
     }
 }
+
+#[cfg(test)]
+extern "C" {
+    fn test_last_msg_print() -> *const c_char;
+    fn test_clear_last_msg_print();
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn msg_charges_remaining(item_ptr: *const InventoryItem) {
+    if item_ptr.is_null() {
+        return;
+    }
+
+    // Intent-based behavior: only show remaining charges when the item is identified.
+    // This is a deliberate divergence from the legacy '^' marker check.
+    let item = unsafe { &(*item_ptr).data };
+    if !item.is_identified() {
+        return;
+    }
+
+    // Call the C msg_print symbol directly so unit tests can intercept it.
+    // (Using term::msg_print would also work, but this keeps the dependency minimal.)
+    extern "C" {
+        fn msg_print(str_buff: *const c_char);
+    }
+
+    let mut out_val = [0 as c_char; 82];
+    libc::snprintf(
+        out_val.as_mut_ptr(),
+        out_val.len(),
+        b"You have %ld charges remaining.\0".as_ptr() as *const c_char,
+        item.p1,
+    );
+    msg_print(out_val.as_ptr());
+}
+
+#[cfg(test)]
+mod msg_charges_remaining_tests {
+    use super::*;
+    use serial_test::serial;
+
+    fn write_name(dst: &mut [i8], s: &[u8]) {
+        for (d, &b) in dst.iter_mut().zip(s.iter()) {
+            *d = b as i8;
+        }
+    }
+
+    unsafe fn last_msg_print() -> String {
+        let p = test_last_msg_print();
+        if p.is_null() {
+            return String::new();
+        }
+        CStr::from_ptr(p).to_string_lossy().into_owned()
+    }
+
+    fn mk_item(name: &[u8], charges: i64, is_identified: bool) -> InventoryItem {
+        let mut inv = InventoryItem {
+            data: Item::default(),
+            ok: 0,
+            insides: 0,
+            is_in: 0,
+            next: std::ptr::null_mut(),
+        };
+        inv.data.p1 = charges;
+        inv.data.set_identified(is_identified);
+        write_name(&mut inv.data.name, name);
+        inv
+    }
+
+    #[test]
+    #[serial]
+    fn msg_charges_remaining_prints_when_item_is_identified() {
+        unsafe { test_clear_last_msg_print() };
+
+        let inv = mk_item(b"staff of foo\0", 42, true);
+        unsafe { msg_charges_remaining(&inv as *const InventoryItem) };
+
+        assert_eq!(unsafe { last_msg_print() }, "You have 42 charges remaining.");
+
+        // Prevent cross-test leakage if other tests run after this one.
+        unsafe { test_clear_last_msg_print() };
+    }
+
+    #[test]
+    #[serial]
+    fn msg_charges_remaining_does_not_print_when_item_is_not_identified() {
+        unsafe { test_clear_last_msg_print() };
+
+        let inv = mk_item(b"staff of foo\0", 42, false);
+        unsafe { msg_charges_remaining(&inv as *const InventoryItem) };
+
+        // Ensure we don't see output, and also clear before assertion to avoid
+        // test order leakage if other tests printed.
+        assert_eq!(unsafe { last_msg_print() }, "");
+
+        unsafe { test_clear_last_msg_print() };
+    }
+}

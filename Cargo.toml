@@ -18,6 +18,9 @@ backtrace = "0.3.66"
 [dev-dependencies]
 serial_test = "3.2.0"
 
+[build-dependencies]
+cc = "1.0"
+
 [lib]
 name = "omoria"
 crate-type = ["staticlib"]

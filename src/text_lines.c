@@ -27,12 +27,3 @@ void msg_remaining_of_item(const treas_rec *item_ptr) {
   sprintf(out_val2, "You have %s.", out_val);
   msg_print(out_val2);
 }
-
-void msg_charges_remaining(const treas_rec *item_ptr) {
-
-  if (strstr(item_ptr->data.name, "^") == NULL) {
-    char out_val[82];
-    sprintf(out_val, "You have %ld charges remaining.", item_ptr->data.p1);
-    msg_print(out_val);
-  }
-}
