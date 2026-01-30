@@ -104,11 +104,11 @@ mod tests {
     #[serial]
     fn test_scroll_unidentified_unknown_subtype() {
         let mut item = base_item();
-        item.subval = subval(Scroll1SubType::Identify);
+        item.subval = subval(Scroll1SubType::RemoveCurse);
         item.number = 1;
         item.set_identified(false);
 
-        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::Identify), false);
+        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::RemoveCurse), false);
         assert_eq!(generate(&item), "unknown scroll");
     }
 
@@ -116,37 +116,37 @@ mod tests {
     #[serial]
     fn test_scroll_known_subtype_but_not_identified() {
         let mut item = base_item();
-        item.subval = subval(Scroll1SubType::Identify);
+        item.subval = subval(Scroll1SubType::RemoveCurse);
         item.number = 1;
         item.set_identified(false);
 
-        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::Identify), true);
-        assert_eq!(generate(&item), "scroll of identify");
+        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::RemoveCurse), true);
+        assert_eq!(generate(&item), "scroll of remove curse");
 
         // Avoid leaking global state.
-        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::Identify), false);
+        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::RemoveCurse), false);
     }
 
     #[test]
     #[serial]
     fn test_scroll_identified() {
         let mut item = base_item();
-        item.subval = subval(Scroll1SubType::Identify);
+        item.subval = subval(Scroll1SubType::RemoveCurse);
         item.number = 1;
         item.set_identified(true);
 
-        assert_eq!(generate(&item), "scroll of identify");
+        assert_eq!(generate(&item), "scroll of remove curse");
     }
 
     #[test]
     #[serial]
     fn test_scroll_multiple_prefix() {
         let mut item = base_item();
-        item.subval = subval(Scroll1SubType::Identify);
+        item.subval = subval(Scroll1SubType::RemoveCurse);
         item.number = 2;
         item.set_identified(false);
 
-        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::Identify), false);
+        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::RemoveCurse), false);
         assert_eq!(generate(&item), "2 unknown scrolls");
     }
 
@@ -154,11 +154,11 @@ mod tests {
     #[serial]
     fn test_scroll_none_prefix() {
         let mut item = base_item();
-        item.subval = subval(Scroll1SubType::Identify);
+        item.subval = subval(Scroll1SubType::RemoveCurse);
         item.number = 0;
         item.set_identified(false);
 
-        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::Identify), false);
+        identification::set_identified(ItemSubType::Scroll1(Scroll1SubType::RemoveCurse), false);
         assert_eq!(generate(&item), "no more unknown scrolls");
     }
 }
