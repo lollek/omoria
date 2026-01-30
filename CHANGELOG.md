@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 5-alpha528
+
 * Item names: rings are now named by the new item-name system.
 * Item names: "iron helm of gems" (and other gem helms) are now named by the new item-name system.
 * Item names: "pipes of peace" (and other instruments) are now named by the new item-name system.
@@ -13,6 +15,7 @@
 * Item names: horns are now named by the new item-name system.
 * Item names: staves are now named by the new item-name system.
 * Item names: dungeon features (doors, stairs, traps, etc.) are now named by the new item-name system.
+* Item names: fixed several melee weapon and armor names (apostrophes, hyphenation, and other naming tweaks).
 
 ## 5-alpha527
 
