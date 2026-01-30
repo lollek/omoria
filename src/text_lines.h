@@ -21,14 +21,6 @@ void unquote(char *object_str);
 void identify(treasure_type *item);
 
 /**
- * objdes() - Returns a description of item for inventory (old item names)
- * @out_val: Where to put the return string
- * @ptr: Pointer to the object to describe
- * @pref: ???
- */
-void objdes(char out_val[82], const treas_rec *ptr, bool pref);
-
-/**
  * item_name() - Returns a description of item for inventory (new item names)
  * @out_val: Where to put the return string
  * @ptr: Pointer to the object to describe
