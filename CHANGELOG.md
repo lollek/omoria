@@ -1,10 +1,30 @@
 # Changelog
 
-## 5-alpha528
+## Unreleased
+
+## 5-alpha529
 
 August 2025
 
 * Changes to number of attacks per round calculation
+
+
+## 5-alpha528
+
+January 2026
+
+* Item names: rings are now named by the new item-name system.
+* Item names: "iron helm of gems" (and other gem helms) are now named by the new item-name system.
+* Item names: "pipes of peace" (and other instruments) are now named by the new item-name system.
+* Item names: "small leather shield" (and other shields) are now named by the new item-name system.
+* Item names: "flask of oil" is now named by the new item-name system.
+* Item names: potions are now named by the new item-name system.
+* Item names: scrolls are now named by the new item-name system.
+* Item names: chimes are now named by the new item-name system.
+* Item names: horns are now named by the new item-name system.
+* Item names: staves are now named by the new item-name system.
+* Item names: dungeon features (doors, stairs, traps, etc.) are now named by the new item-name system.
+* Item names: fixed several melee weapon and armor names (apostrophes, hyphenation, and other naming tweaks).
 
 ## 5-alpha527
 
