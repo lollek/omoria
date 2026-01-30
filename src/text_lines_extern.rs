@@ -168,6 +168,118 @@ pub unsafe extern "C" fn bag_descrip(bag: *const InventoryItem, result: *mut c_c
     result
 }
 
+#[no_mangle]
+pub unsafe extern "C" fn identify(item_ptr: *mut Item) {
+    if item_ptr.is_null() {
+        return;
+    }
+
+    extern "C" {
+        static mut t_list: [Item; crate::constants::MAX_TALLOC + 1];
+        static mut equipment: [Item; crate::equipment::EQUIP_MAX];
+        static mut inventory_list: *mut InventoryItem;
+    }
+
+    // identification.rs
+    extern "C" {
+        fn identification_set_identified(item_ptr: *const Item);
+    }
+
+    // SAFETY: caller passes a valid pointer to a live `Item`.
+    let item = unsafe { &mut *item_ptr };
+
+    // SAFETY: we access raw pointers and build temporary slices.
+    let t_list_slice: &mut [Item] = unsafe {
+        std::slice::from_raw_parts_mut(
+            (&raw mut t_list) as *mut Item,
+            crate::constants::MAX_TALLOC + 1,
+        )
+    };
+    let equipment_slice: &mut [Item] = unsafe {
+        std::slice::from_raw_parts_mut(
+            (&raw mut equipment) as *mut Item,
+            crate::equipment::EQUIP_MAX,
+        )
+    };
+
+    identify_core(
+        item,
+        t_list_slice,
+        equipment_slice,
+        inventory_list,
+        &mut |it| {
+            identification_set_identified(it as *const Item);
+        },
+    );
+}
+
+/// Testable core for legacy `identify()`.
+///
+/// Contract (legacy parity):
+/// - If `item.name` does not contain a `|`, do nothing.
+/// - Otherwise, for each matching entry (same tval + subval):
+///   - apply `unquote` then `known1` to its name.
+/// - Finally, call `mark_identified(item)`.
+///
+/// Note: This function is intentionally `pub(crate)` so we can unit test it without
+/// linking against the C global variables.
+pub(crate) fn identify_core(
+    item: &mut Item,
+    t_list: &mut [Item],
+    equipment: &mut [Item],
+    inventory_list: *mut InventoryItem,
+    mark_identified: &mut dyn FnMut(&mut Item),
+) {
+    // SAFETY NOTE: We assume all `Item.name` buffers we touch are NUL-terminated.
+    // That matches the C code's expectations and is required for strstr/unquote/known1.
+
+    // Legacy guard: if item name does not contain the '|' marker, do nothing.
+    // (In C this was: `if (strstr(item->name, "|") == NULL) return;`)
+    let item_name_has_pipe = unsafe {
+        // SAFETY: `item.name` is a fixed-size C buffer; we expect it to be NUL-terminated.
+        let s = item.name.as_ptr();
+        !libc::strstr(s, b"|\0".as_ptr() as *const c_char).is_null()
+    };
+    if !item_name_has_pipe {
+        return;
+    }
+
+    // Helper: apply unquote() and known1() to the provided C string buffer.
+    unsafe fn unquote_then_known1(buf: *mut c_char) {
+        unquote(buf);
+        known1(buf);
+    }
+
+    // Update matching entries in t_list.
+    for t in t_list.iter_mut() {
+        if t.tval == item.tval && t.subval == item.subval {
+            unsafe { unquote_then_known1(t.name.as_mut_ptr()) };
+        }
+    }
+
+    // Update matching entries in equipment.
+    for e in equipment.iter_mut() {
+        if e.tval == item.tval && e.subval == item.subval {
+            unsafe { unquote_then_known1(e.name.as_mut_ptr()) };
+        }
+    }
+
+    // Update matching entries in the inventory linked list.
+    // This mirrors: `for (treas_rec *curse = inventory_list; curse != NULL; curse = curse->next)`.
+    let mut cursor = inventory_list;
+    while !cursor.is_null() {
+        // SAFETY: caller guarantees `inventory_list` is a valid list.
+        let node = unsafe { &mut *cursor };
+        if node.data.tval == item.tval && node.data.subval == item.subval {
+            unsafe { unquote_then_known1(node.data.name.as_mut_ptr()) };
+        }
+        cursor = node.next;
+    }
+
+    // Final legacy side effect.
+    mark_identified(item);
+}
+
 #[cfg(test)]
 mod tests {
     use std::ffi::CStr;
@@ -399,5 +511,156 @@ mod tests {
         // count = 3 + 2 = 5
         // weight = 3*5 + 2*7 = 29 => 29%
         assert_eq!(read_buf(&out), " (29% full, containing 5 items)");
+    }
+}
+
+#[cfg(test)]
+mod identify_core_tests {
+    use crate::conversion::item_type;
+    use crate::model::ItemType;
+    use super::*;
+
+    fn unquote_then_known1(buf: &mut [i8]) {
+        unsafe { unquote(buf.as_mut_ptr() as *mut c_char) };
+        unsafe { known1(buf.as_mut_ptr() as *mut c_char) };
+    }
+
+    fn write_name(dst: &mut [i8], s: &[u8]) {
+        for (d, &b) in dst.iter_mut().zip(s.iter()) {
+            *d = b as i8;
+        }
+    }
+
+    fn read_name(src: &[i8]) -> String {
+        unsafe { CStr::from_ptr(src.as_ptr()).to_string_lossy().into_owned() }
+    }
+
+    fn mk_item_with_pipe() -> Item {
+        let mut item = Item::default();
+        item.tval = item_type::to_usize(ItemType::Food) as u8;
+        item.subval = crate::model::item_subtype::FoodSubType::RationOfFood as i64;
+        write_name(&mut item.name, b"foo|bar\0");
+        item
+    }
+
+    fn mk_item_without_pipe() -> Item {
+        let mut item = Item::default();
+        item.tval = item_type::to_usize(ItemType::Food) as u8;
+        item.subval = crate::model::item_subtype::FoodSubType::RationOfFood as i64;
+        write_name(&mut item.name, b"foobar\0");
+        item
+    }
+
+    #[test]
+    fn identify_core_noops_when_item_name_has_no_pipe_marker() {
+        let mut item = mk_item_without_pipe();
+
+        let mut t_list = vec![Item::default(); 3];
+        let mut equipment = vec![Item::default(); 2];
+
+        let mut inv_a = Box::new(InventoryItem {
+            data: Item::default(),
+            ok: 0,
+            insides: 0,
+            is_in: 0,
+            next: std::ptr::null_mut(),
+        });
+        write_name(&mut inv_a.data.name, b"ab\"cd~EF|GHI\0");
+        let inv_head = &mut *inv_a as *mut InventoryItem;
+
+        let mut called = 0;
+        identify_core(
+            &mut item,
+            &mut t_list,
+            &mut equipment,
+            inv_head,
+            &mut |_it| called += 1,
+        );
+
+        assert_eq!(called, 0);
+        assert_eq!(read_name(&inv_a.data.name), "ab\"cd~EF|GHI");
+    }
+
+    #[test]
+    fn identify_core_mutates_matching_entries_and_calls_mark_identified_once() {
+        let mut item = mk_item_with_pipe();
+
+        let example_item_name_with_null = b"ab\"cd~EF|GHI\0";
+        let example_item_name = "ab\"cd~EF|GHI";
+
+        // Legacy: unquote then known1.
+        // For this input string, unquote yields "ab\"cd~GHI" (drops the EF segment),
+        // and known1 then does nothing because the '|' is already gone.
+        // Result should be "ab\"cd~GHI";
+
+        let mut expected = example_item_name_with_null.clone().map(|x| x as i8);
+        unquote_then_known1(&mut expected);
+
+        // t_list: entry 1 matches, entry 2 does not.
+        let mut t_list = vec![Item::default(); 3];
+        t_list[1].tval = item.tval;
+        t_list[1].subval = item.subval;
+        write_name(&mut t_list[1].name, example_item_name_with_null);
+
+        t_list[2].tval = item.tval;
+        t_list[2].subval = item.subval + 1;
+        write_name(&mut t_list[2].name, example_item_name_with_null);
+
+        // equipment: slot 0 matches, slot 1 does not.
+        let mut equipment = vec![Item::default(); 2];
+        equipment[0].tval = item.tval;
+        equipment[0].subval = item.subval;
+        write_name(&mut equipment[0].name, example_item_name_with_null);
+
+        equipment[1].tval = item.tval + 1;
+        equipment[1].subval = item.subval;
+        write_name(&mut equipment[1].name, example_item_name_with_null);
+
+        // inventory list: head matches, next does not.
+        let mut inv_next = Box::new(InventoryItem {
+            data: Item::default(),
+            ok: 0,
+            insides: 0,
+            is_in: 0,
+            next: std::ptr::null_mut(),
+        });
+        inv_next.data.tval = item.tval;
+        inv_next.data.subval = item.subval + 1;
+        write_name(&mut inv_next.data.name, example_item_name_with_null);
+
+        let mut inv_head = Box::new(InventoryItem {
+            data: Item::default(),
+            ok: 0,
+            insides: 0,
+            is_in: 0,
+            next: (&mut *inv_next) as *mut InventoryItem,
+        });
+        inv_head.data.tval = item.tval;
+        inv_head.data.subval = item.subval;
+        write_name(&mut inv_head.data.name, example_item_name_with_null);
+
+        let inv_head_ptr = (&mut *inv_head) as *mut InventoryItem;
+
+        let mut called = 0;
+        identify_core(
+            &mut item,
+            &mut t_list,
+            &mut equipment,
+            inv_head_ptr,
+            &mut |_it| called += 1,
+        );
+
+        assert_eq!(read_name(&t_list[1].name), read_name(&expected));
+        assert_eq!(read_name(&t_list[2].name), example_item_name);
+
+        assert_eq!(read_name(&equipment[0].name), read_name(&expected));
+        assert_eq!(read_name(&equipment[1].name), example_item_name);
+
+        unsafe {
+            assert_eq!(read_name(&(*inv_head_ptr).data.name), read_name(&expected));
+            assert_eq!(read_name(&(*(*inv_head_ptr).next).data.name), example_item_name);
+        }
+
+        assert_eq!(called, 1);
     }
 }

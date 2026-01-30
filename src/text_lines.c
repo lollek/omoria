@@ -38,32 +38,3 @@ void msg_charges_remaining(const treas_rec *item_ptr) {
 }
 
 void identification_set_identified(treasure_type *item); // identification.rs
-void identify(treasure_type *item) {
-
-
-  if (strstr(item->name, "|") == NULL)
-    return;
-
-  for (long i = 0; i < MAX_TALLOC; i++) {
-    if (t_list[i].tval == item->tval && t_list[i].subval == item->subval) {
-      unquote(t_list[i].name);
-      known1(t_list[i].name);
-    }
-  }
-
-  for (long i = Equipment_min; i <= Equipment_secondary; i++) {
-    if (equipment[i].tval == item->tval && equipment[i].subval == item->subval) {
-      unquote(equipment[i].name);
-      known1(equipment[i].name);
-    }
-  }
-
-  for (treas_rec *curse = inventory_list; curse != NULL; curse = curse->next) {
-    if (curse->data.tval == item->tval && curse->data.subval == item->subval) {
-      unquote(curse->data.name);
-      known1(curse->data.name);
-    }
-  }
-
-  identification_set_identified(item);
-}

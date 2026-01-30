@@ -9,10 +9,10 @@ void msg_remaining_of_item(const treas_rec *item_ptr);
 void msg_charges_remaining(const treas_rec *item_ptr);
 
 /*{ Remove 'Secret' symbol for identity of objects * }*/
-void known1(const char *object_str);
+void known1(char *object_str);
 
 /*{ Remove 'Secret' symbol for identity of pluses * }*/
-void known2(const char *object_str);
+void known2(char *object_str);
 
 /*	{ Return string without quoted portion }*/
 void unquote(char *object_str);
