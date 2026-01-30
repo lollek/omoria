@@ -48,7 +48,7 @@ Major C modules remaining:
 **Goal**: Migrate small, pure functions that are easy to test and have minimal dependencies.
 
 #### 1.1 Pascal Helper Functions
-- [ ] `pascal.c` → `pascal.rs`
+- [x] `pascal.c` → `pascal.rs`
   - `pindex()` - Pascal-style index function
   - `is_in()` - Set membership test
   - `is_vowel()` - Character test
@@ -57,7 +57,7 @@ Major C modules remaining:
   - **Testing**: Unit tests with edge cases
 
 #### 1.2 Random with RNG Injection
-- [ ] Enhance `random.rs` with `_with_rng` pattern
+- [x] Enhance `random.rs` with `_with_rng` pattern
   - Add `randint_with_rng()`, `rand_rep_with_rng()`, `randnor_with_rng()`
   - Keep existing functions as wrappers
   - **Complexity**: Low
@@ -257,6 +257,7 @@ For each module migration, follow this checklist:
 - [ ] Update Makefile if needed
 - [ ] Run full test suite (`cargo test`)
 - [ ] Update CHANGELOG.md
+- [ ] Mark the action as done in this migration plan
 - [ ] No new compiler warnings
 
 ---

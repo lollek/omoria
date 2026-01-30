@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Internal: started migrating small Pascal helper functions (`pindex`, vowel and set-membership checks) from C to Rust.
+* Internal: random helper functions can now accept an injected RNG (for deterministic tests).
 
 ## 5-alpha529
 
