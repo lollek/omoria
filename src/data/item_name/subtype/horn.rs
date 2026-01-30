@@ -108,7 +108,7 @@ mod tests {
         item.number = 1;
         item.set_identified(true);
 
-        assert_eq!(generate(&item), "horn of bubbles");
+        assert_eq!(generate(&item), "horn of bubbles (0 charges)");
     }
 
     #[test]
