@@ -7,6 +7,7 @@
 * Item names: "pipes of peace" (and other instruments) are now named by the new item-name system.
 * Item names: "small leather shield" (and other shields) are now named by the new item-name system.
 * Item names: "flask of oil" is now named by the new item-name system.
+* Item names: potions are now named by the new item-name system.
 
 ## 5-alpha527
 

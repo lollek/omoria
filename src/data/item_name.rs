@@ -15,6 +15,7 @@ use crate::data::item_name::subtype::light_source::light_source;
 use crate::data::item_name::subtype::melee_weapon::melee_weapon;
 use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
+use crate::data::item_name::subtype::potion::potion;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
 use crate::data::item_name::subtype::ring::ring;
 use crate::data::item_name::subtype::shield::shield;
@@ -65,7 +66,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::EntranceToStore
         | ItemType::Horn
         | ItemType::OpenDoor
-        | ItemType::Potion1
         | ItemType::Potion2
         | ItemType::Rod
         | ItemType::Rubble
@@ -78,6 +78,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
         | ItemType::Whirlpool => generic_item(item),
+        ItemType::Potion1 => potion(item),
         ItemType::Ring => ring(item),
         ItemType::GemHelm => gem_helm(item),
         ItemType::Instrument => instrument(item),

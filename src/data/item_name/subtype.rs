@@ -21,6 +21,7 @@ pub mod light_source;
 pub mod melee_weapon;
 pub mod misc_object;
 pub mod misc_usable;
+pub mod potion;
 pub mod ranged_weapon;
 pub mod ring;
 pub mod shield;
@@ -134,68 +135,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 ""
             };
             Cow::from(format!("Scroll{}{}", plural_s(), attribute))
-        }
-        ItemType::Potion1 => {
-            let material = match item.subval {
-                281 => "icky green ",
-                282 => "light brown ",
-                283 => "clear ",
-                _ => "",
-            };
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    257 => " of gain strength",
-                    258 => " of poison",
-                    259 => " of restore strength",
-                    260 => " of gain intelligence",
-                    261 => " of lose intelligence",
-                    262 => " of restore intelligence",
-                    263 => " of gain wisdom",
-                    264 => " of lose wisdom",
-                    265 => " of restore wisdom",
-                    266 => " of charisma",
-                    267 => " of ugliness",
-                    268 => " of restore charisma",
-                    269 => " of cure light wounds",
-                    270 => " of cure serious Wounds",
-                    271 => " of cure critical Wounds",
-                    272 => " of healing",
-                    273 => " of gain constitution",
-                    274 => " of gain experience",
-                    275 => " of sleep",
-                    276 => " of blindness",
-                    277 => " of confusion",
-                    278 => " of poison",
-                    279 => " of haste item",
-                    280 => " of slowness",
-                    281 => " of slime mold juice",
-                    282 => " of apple juice",
-                    283 => " of water",
-                    284 => " of gain dexterity",
-                    285 => " of restore dexterity",
-                    286 => " of restore constitution",
-                    287 => " of learning",
-                    288 => " of lose memories",
-                    289 => " of salt water",
-                    290 => " of invulnerability",
-                    291 => " of heroism",
-                    292 => " of super heroism",
-                    293 => " of boldliness",
-                    294 => " of restore life Levels",
-                    295 => " of resist heat",
-                    296 => " of resist cold",
-                    297 => " of detect invisible",
-                    298 => " of slow poison",
-                    299 => " of neutralize poison",
-                    300 => " of restore mana",
-                    301 => " of infra-vision",
-                    302 => " of flea bile",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("{}potion{}{}", material, plural_s(), attribute))
         }
         ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
         ItemType::Staff => {
