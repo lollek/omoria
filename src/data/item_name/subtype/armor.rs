@@ -1,5 +1,5 @@
 use crate::conversion::item_subtype;
-use crate::data::item_name::helpers::{maybe_armor_bonus, maybe_p1_bonus, maybe_special_attribute, to_hit_if_exists};
+use crate::data::item_name::helpers::{maybe_armor_bonus, maybe_number_of, maybe_p1_bonus, maybe_special_attribute, to_hit_if_exists};
 use crate::model::item_subtype::{HardArmorSubType, ItemSubType, SoftArmorSubType};
 use crate::model::Item;
 use std::borrow::Cow;
@@ -10,7 +10,19 @@ pub fn armor(item: &Item) -> String {
     };
 
     let mut parts = Vec::new();
-    parts.push(Cow::from(subtype_name(item, subtype)));
+    // Quantity prefix (e.g. "2 ", "no more ") should be consistent across item types.
+    if let Some(number_of_string) = maybe_number_of(item) {
+        parts.push(number_of_string);
+    }
+
+    let mut name = subtype_name(item, subtype);
+    if item.number != 1 {
+        // Keep this intentionally simple; if we need irregular plurals later, we'll
+        // add a helper and tests.
+        name.push('s');
+    }
+    parts.push(Cow::from(name));
+
     if let Some(to_hit) = to_hit_if_exists(item) {
         parts.push(to_hit);
     }
@@ -61,7 +73,7 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
             SoftArmorSubType::Robe => "robe",
             SoftArmorSubType::SoftLeatherArmor => "soft leather armor",
             SoftArmorSubType::SoftLeatherRingMail => "soft leather ring mail",
-            SoftArmorSubType::SoftStuddedLeather => "soft studded leather",
+            SoftArmorSubType::SoftStuddedLeather => "soft studded armor",
             SoftArmorSubType::WovenCordArmor => "woven cord armor",
             SoftArmorSubType::WyrmhideArmor => "wyrmhide armor",
             SoftArmorSubType::LeatherBrigantineArmor => "leather brigantine armor",
@@ -252,7 +264,7 @@ mod tests {
             ),
             (
                 Box::new(ArmorTemplate::SoftStuddedLeather),
-                "soft studded leather",
+                "soft studded armor",
             ),
             (
                 Box::new(ArmorTemplate::StonePlateArmor),
@@ -355,5 +367,25 @@ mod tests {
             item.set_identified(true);
             assert_eq!(generate(&item), expected_name);
         }
+    }
+
+    #[test]
+    #[serial]
+    fn test_unidentified_quantity_prefixes() {
+        let template = Box::new(ArmorTemplate::Robe);
+        let subtype = template.subtype();
+
+        let mut item = generate_item::generate(template, 0, ItemQuality::Normal);
+        item.ac = 1;
+        item.toac = 0;
+        item.tohit = 0;
+        item.set_identified(false);
+        identification::set_identified(subtype, false);
+
+        item.number = 2;
+        assert_eq!(generate(&item), "2 robes [1]");
+
+        item.number = 0;
+        assert_eq!(generate(&item), "no more robes [1]");
     }
 }

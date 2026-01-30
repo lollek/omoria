@@ -76,8 +76,8 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] **melee_weapon.rs**: Fix `nodachi` → `no-dachi` (missing hyphen)
 - [x] **melee_weapon.rs**: Fix `great flail` → `two-handed great flail` (missing prefix)
 - [x] **melee_weapon.rs**: Fix `cat-o-nine tails` → `cat-o'-nine-tails` (match template style)
-- [ ] **armor.rs**: Fix `soft studded leather` → `soft studded armor` (wrong name)
-- [ ] **armor.rs**: Add `maybe_number_of()` for quantity handling
+- [x] **armor.rs**: Fix `soft studded leather` → `soft studded armor` (wrong name)
+- [x] **armor.rs**: Add `maybe_number_of()` for quantity handling
 
 #### New Item Types
 
