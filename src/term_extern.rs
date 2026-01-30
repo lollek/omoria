@@ -1,7 +1,7 @@
 use libc;
 use std::ffi::CStr;
 
-use crate::term;
+use crate::{ncurses, term};
 
 #[no_mangle]
 pub extern "C" fn C_clear_screen() {
@@ -38,5 +38,5 @@ pub extern "C" fn put_buffer_(msg: *const libc::c_char, row: i32, col: i32) {
     }
     let rs_cstr = unsafe { CStr::from_ptr(msg) };
     let rs_str = rs_cstr.to_str().unwrap();
-    term::put_buffer(rs_str, row, col);
+    ncurses::mvaddstr(row, col, rs_str);
 }

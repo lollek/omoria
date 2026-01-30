@@ -1,7 +1,7 @@
 use libc::c_char;
 use std::ffi::CStr;
 
-use crate::player;
+use crate::{ncurses, player};
 use crate::term;
 
 extern "C" {
@@ -17,23 +17,32 @@ pub extern "C" fn eb__display_money() {
     term::prt(&format!(" Gold remaining : {}", wallet.total), 18, 18);
     term::prt(&format!(" Account : {}", player_account), 16, 20);
 
-    term::put_buffer("You have ", 5, 24);
-    term::put_buffer(&format!("Mithril  : {:10}", wallet.mithril), 7, 24);
-    term::put_buffer(&format!("Platinum : {:10}", wallet.platinum), 8, 24);
-    term::put_buffer(&format!("Gold     : {:10}", wallet.gold), 9, 24);
-    term::put_buffer(&format!("Silver   : {:10}", wallet.silver), 11, 24);
-    term::put_buffer(&format!("Copper   : {:10}", wallet.copper), 12, 24);
-    term::put_buffer(&format!("Iron     : {:10}", wallet.iron), 13, 24);
+    ncurses::mvaddstr(5, 24, "You have ");
+    let msg = &format!("Mithril  : {:10}", wallet.mithril);
+    ncurses::mvaddstr(7, 24, msg);
+    let msg = &format!("Platinum : {:10}", wallet.platinum);
+    ncurses::mvaddstr(8, 24, msg);
+    let msg = &format!("Gold     : {:10}", wallet.gold);
+    ncurses::mvaddstr(9, 24, msg);
+    let msg = &format!("Silver   : {:10}", wallet.silver);
+    ncurses::mvaddstr(11, 24, msg);
+    let msg = &format!("Copper   : {:10}", wallet.copper);
+    ncurses::mvaddstr(12, 24, msg);
+    let msg = &format!("Iron     : {:10}", wallet.iron);
+    ncurses::mvaddstr(13, 24, msg);
 
     if is_wizard2 {
         let bank_wallet = player::bank_wallet();
 
-        term::put_buffer("Bank has ", 5, 49);
-        term::put_buffer(&format!("{:10}", bank_wallet.mithril), 7, 49);
-        term::put_buffer(&format!("{:10}", bank_wallet.platinum), 8, 49);
-        term::put_buffer(&format!("{:10}", bank_wallet.gold), 9, 49);
+        ncurses::mvaddstr(5, 49, "Bank has ");
+        let msg = &format!("{:10}", bank_wallet.mithril);
+        ncurses::mvaddstr(7, 49, msg);
+        let msg = &format!("{:10}", bank_wallet.platinum);
+        ncurses::mvaddstr(8, 49, msg);
+        let msg = &format!("{:10}", bank_wallet.gold);
+        ncurses::mvaddstr(9, 49, msg);
     }
-    term::refresh_screen();
+    ncurses::refresh();
 }
 
 #[no_mangle]

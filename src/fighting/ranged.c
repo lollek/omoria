@@ -2,6 +2,7 @@
 #include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
+#include "../model_class.h"
 #include "../model_item.h"
 #include "../monsters.h"
 #include "../player.h"
@@ -33,7 +34,7 @@ static long calc_base_to_hit(const enum ranged_attack_t type) {
  *calc_plus_to_hit() - Calculate missile plus to hit something
  */
 static long calc_plus_to_hit(treas_rec const *missile,
-                               const enum ranged_attack_t type) {
+                             const enum ranged_attack_t type) {
   switch (type) {
   case THROW:
     return player_ptohit + missile->data.tohit;
@@ -49,7 +50,7 @@ static long calc_plus_to_hit(treas_rec const *missile,
  *calc_damage() - Calculate missile damage
  */
 static long calc_damage(treas_rec const *missile,
-                          const enum ranged_attack_t type) {
+                        const enum ranged_attack_t type) {
   if (type == THROW) {
     return damroll(missile->data.damage) + missile->data.todam;
   }
@@ -57,30 +58,30 @@ static long calc_damage(treas_rec const *missile,
   // type == SHOOT, missile.tval should be 20 (ranged weapon)
   const long base_damage = damroll(missile->data.damage) + missile->data.todam;
   switch (missile->data.subval) {
-    case 1: /*{ Short Bow and Arrow    }*/
-      return base_damage + 2;
-    case 2: /*{ Hunters Bow and Arrow     }*/
-      return base_damage + 3;
-    case 3: /*{ Composite Bow and Arrow}*/
-      return base_damage + 4;
-    case 4: /*{ War Bow and Arrow}*/
-      return base_damage + 5;
-    case 5: /*{ Double Bow and Arrow}*/
-      return base_damage + 6;
-    case 6: /*{ Siege Bow and Arrow}*/
-      return base_damage + 7;
-    case 7: /*{ Warded Bow and Arrow}*/
-      return base_damage + 8;
-    case 10: /*{ Light Crossbow and Bolt}*/
-      return base_damage + 2;
-    case 11: /*{ Heavy Crossbow and Bolt}*/
-      return base_damage + 4;
-    case 12: /*{ Siege Crossbow and Bolt}*/
-      return base_damage + 6;
-    case 13: /*{ Ballista and Bolt}*/
-      return base_damage + 8;
-    case 20: /*{ Sling and Bullet  }*/
-      return base_damage + 2;
+  case 1: /*{ Short Bow and Arrow    }*/
+    return base_damage + 2;
+  case 2: /*{ Hunters Bow and Arrow     }*/
+    return base_damage + 3;
+  case 3: /*{ Composite Bow and Arrow}*/
+    return base_damage + 4;
+  case 4: /*{ War Bow and Arrow}*/
+    return base_damage + 5;
+  case 5: /*{ Double Bow and Arrow}*/
+    return base_damage + 6;
+  case 6: /*{ Siege Bow and Arrow}*/
+    return base_damage + 7;
+  case 7: /*{ Warded Bow and Arrow}*/
+    return base_damage + 8;
+  case 10: /*{ Light Crossbow and Bolt}*/
+    return base_damage + 2;
+  case 11: /*{ Heavy Crossbow and Bolt}*/
+    return base_damage + 4;
+  case 12: /*{ Siege Crossbow and Bolt}*/
+    return base_damage + 6;
+  case 13: /*{ Ballista and Bolt}*/
+    return base_damage + 8;
+  case 20: /*{ Sling and Bullet  }*/
+    return base_damage + 2;
   }
 
   MSG(("calc_damage fell through switch"));
@@ -91,7 +92,7 @@ static long calc_damage(treas_rec const *missile,
  *calc_distance() - Calculate how long a missile can fly
  */
 static long calc_distance(treas_rec const *missile,
-                            const enum ranged_attack_t type) {
+                          const enum ranged_attack_t type) {
   long item_weight;
 
   if (missile->data.weight < 1) {
@@ -177,7 +178,7 @@ static bool find_missile_spot_on_ground(coords *coord) {
  * @x: x position where hit
  */
 static void missile_hit_ground(const treas_rec *missile, const long y,
-                                 const long x) {
+                               const long x) {
   bool keep_missile = false;
   coords place_missile_coords = {
       .y = y,
@@ -216,16 +217,17 @@ static void missile_hit_ground(const treas_rec *missile, const long y,
  * returns true if a creature was hit
  */
 static bool missile_try_hit_creature(const treas_rec *missile,
-                                          const enum ranged_attack_t type,
-                                          const long y, const long x,
-                                          const long travel_distance) {
-  long const base_to_hit = calc_base_to_hit(type) - travel_distance;
+                                     const enum ranged_attack_t type,
+                                     const long y, const long x,
+                                     const long travel_distance) {
+  long const base_to_hit = calc_base_to_hit(type) - travel_distance +
+                           player_lev * C_class_ranged_bonus(player_pclass) / 2;
   const long plus_to_hit = calc_plus_to_hit(missile, type);
   long damage = calc_damage(missile, type);
 
   const int16_t monster_ac = monster_templates[m_list[cave[y][x].cptr].mptr].ac;
   const bool creature_was_hit =
-      player_test_hit(base_to_hit, player_lev, plus_to_hit, monster_ac, true);
+      player_test_hit(base_to_hit, plus_to_hit, monster_ac);
   char monster_name_buf[82];
   find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);
   if (!creature_was_hit) {
@@ -261,8 +263,8 @@ static bool missile_try_hit_creature(const treas_rec *missile,
  * @missile_travel_dir
  */
 static void missile_travel(const treas_rec *missile,
-                             const enum ranged_attack_t type,
-                             const long missile_travel_dir) {
+                           const enum ranged_attack_t type,
+                           const long missile_travel_dir) {
   long const max_distance = calc_distance(missile, type);
 
   long missile_y = char_row;
@@ -301,7 +303,7 @@ static void missile_travel(const treas_rec *missile,
     // We hit some creature
     if (cave[missile_y][missile_x].cptr > 1) {
       if (missile_try_hit_creature(missile, type, missile_y, missile_x,
-                                     travel_distance)) {
+                                   travel_distance)) {
         if (type == THROW) {
           missile_hit_ground(missile, missile_y, missile_x);
         }
@@ -327,8 +329,7 @@ static long count_things_to_throw(void) {
   long things_to_throw = inventory_change_all_ok_stats(TRUE, FALSE);
   for (const treas_rec *item_ptr = inventory_list; item_ptr != NULL;
        item_ptr = item_ptr->next) {
-    if ((item_ptr->data.flags2 & Holding_bit) != 0 &&
-        item_ptr->insides > 0) {
+    if ((item_ptr->data.flags2 & Holding_bit) != 0 && item_ptr->insides > 0) {
       things_to_throw--;
     }
   }

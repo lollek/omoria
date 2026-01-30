@@ -2,7 +2,16 @@
 
 ## Unreleased
 
+## 5-alpha529
+
+August 2025
+
+* Changes to number of attacks per round calculation
+
+
 ## 5-alpha528
+
+January 2026
 
 * Item names: rings are now named by the new item-name system.
 * Item names: "iron helm of gems" (and other gem helms) are now named by the new item-name system.

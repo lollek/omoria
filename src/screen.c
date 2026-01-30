@@ -16,11 +16,6 @@
 #include <string.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
-#if DO_DEBUG
-static long win_equip_x = 81;
-static long win_equip_y = 16;
-#endif
-
 /*	{ Screen placement parameters					} */
 #define STAT_COLUMN 1
 #define RACE_ROW (STAT_COLUMN + 1)

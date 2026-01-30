@@ -31,10 +31,6 @@ pub fn clear_from(row: i32) {
     unsafe { C_Clear_From(row - 1) };
 }
 
-pub fn refresh_screen() {
-    ncurses::refresh();
-}
-
 pub fn msg_print<S>(out_str: S)
 where
     S: Into<Vec<u8>>,
@@ -61,23 +57,12 @@ pub fn get_string(row: i32, col: i32, slen: i32) -> String {
 }
 
 // put_buffer which clears the line first
-pub fn prt<S>(msg: S, row: i32, col: i32)
-where
-    S: AsRef<str>,
-{
+pub fn prt<S: AsRef<str>>(msg: S, row: i32, col: i32) {
     if row == -1 && has_msg_flag() {
         msg_print("");
     }
     ncurses::mov(row, col);
     ncurses::clrtoeol();
-    put_buffer(msg, row, col);
-}
-
-// Output text to coordinate. Basically a wrapper around ncurses::move_print
-pub fn put_buffer<S>(msg: S, row: i32, col: i32)
-where
-    S: AsRef<str>,
-{
     ncurses::mvaddstr(row, col, msg);
 }
 
