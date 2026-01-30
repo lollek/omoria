@@ -5,6 +5,7 @@ use crate::data::item_name::subtype::bag::bag;
 use crate::data::item_name::subtype::book::book;
 use crate::data::item_name::subtype::chest::chest;
 use crate::data::item_name::subtype::chime::chime;
+use crate::data::item_name::subtype::dungeon_feature::dungeon_feature;
 use crate::data::item_name::subtype::flask::flask;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
@@ -63,21 +64,21 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Gloves
         | ItemType::Helm => small_armor(item),
         ItemType::Chest => chest(item),
-        ItemType::ClosedDoor
-        | ItemType::DownStaircase
-        | ItemType::DownSteepStaircase
-        | ItemType::EntranceToStore
+        ItemType::Rubble
         | ItemType::OpenDoor
-        | ItemType::Potion2
-        | ItemType::Rod
-        | ItemType::Rubble
-        | ItemType::Scroll2
-        | ItemType::SecretDoor
-        | ItemType::SeenTrap
-        | ItemType::UnseenTrap
+        | ItemType::ClosedDoor
         | ItemType::UpStaircase
+        | ItemType::DownStaircase
+        | ItemType::SecretDoor
+        | ItemType::EntranceToStore
         | ItemType::UpSteepStaircase
-        | ItemType::Whirlpool => generic_item(item),
+        | ItemType::DownSteepStaircase
+        | ItemType::Whirlpool
+        | ItemType::SeenTrap
+        | ItemType::UnseenTrap => dungeon_feature(item),
+        ItemType::Potion2
+        | ItemType::Rod
+        | ItemType::Scroll2 => generic_item(item),
         ItemType::Horn => horn(item),
         ItemType::Chime => chime(item),
         ItemType::Scroll1 => scroll(item),

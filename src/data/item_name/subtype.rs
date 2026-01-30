@@ -12,6 +12,7 @@ pub mod bag;
 pub mod book;
 pub mod chest;
 pub mod chime;
+pub mod dungeon_feature;
 pub mod flask;
 pub mod food;
 pub mod gem;

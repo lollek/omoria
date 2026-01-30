@@ -12,6 +12,7 @@
 * Item names: chimes are now named by the new item-name system.
 * Item names: horns are now named by the new item-name system.
 * Item names: staves are now named by the new item-name system.
+* Item names: dungeon features (doors, stairs, traps, etc.) are now named by the new item-name system.
 
 ## 5-alpha527
 

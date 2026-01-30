@@ -117,7 +117,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `chime.rs` - Chime
 - [x] `horn.rs` - Horn
 - [x] `staff.rs` - Staff
-- [ ] `dungeon_feature.rs` - All dungeon features (doors, stairs, traps, etc.)
+- [x] `dungeon_feature.rs` - All dungeon features (doors, stairs, traps, etc.)
 
 #### Cleanup
 
@@ -135,7 +135,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 8. **`chime.rs`** - Medium, subtype-known vs item-identified behavior (unknown chimes)
 9. **`horn.rs`** - Medium, subtype-known vs item-identified behavior (unknown horns + charges)
 10. **`staff.rs`** - Medium, subtype-known vs item-identified behavior (unknown staves + charges)
-11. **`dungeon_feature.rs`** - Group all terrain/features last
+11. **`dungeon_feature.rs`** - Low, basic naming for doors/stairs/traps/features
 12. **Cleanup** - Remove `generic_item()` after all migrations
 
 ## Implementation Pattern
