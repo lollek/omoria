@@ -2,6 +2,10 @@ use std::ffi::CStr;
 
 use libc::c_char;
 
+use crate::model::{InventoryItem, Item};
+
+const BAG_DESCRIP_BUF_SIZE: usize = 134;
+
 /// Removes the first occurrence of `needle` from the nul-terminated C string at `s`.
 ///
 /// Safety: `s` must be a valid, writable nul-terminated string.
@@ -101,11 +105,105 @@ pub unsafe extern "C" fn unquote(object_str: *mut c_char) {
     }
 }
 
+/// C-compatible implementation of `bag_descrip` from `text_lines.c`.
+///
+/// Signature is maintained for C call sites:
+/// `char *bag_descrip(const treas_rec *bag, char result[134]);`
+#[no_mangle]
+pub unsafe extern "C" fn bag_descrip(bag: *const InventoryItem, result: *mut c_char) -> *mut c_char {
+    if result.is_null() {
+        return result;
+    }
+    if bag.is_null() {
+        // We expect callers to pass a valid bag; keep behavior defined for tests.
+        libc::strcpy(result, b" (empty)\0".as_ptr() as *const c_char);
+        return result;
+    }
+
+    let bag_node = &*bag;
+
+    // Empty if no next item, or next item exists but isn't in the bag.
+    if bag_node.next.is_null() || unsafe { &*bag_node.next }.is_in == 0 {
+        libc::strcpy(result, b" (empty)\0".as_ptr() as *const c_char);
+        return result;
+    }
+
+    let mut item_count: i64 = 0;
+    let mut total_weight: i64 = 0;
+
+    let mut cursor: *mut InventoryItem = bag_node.next;
+    while !cursor.is_null() {
+        let node = &*cursor;
+        if node.is_in == 0 {
+            break;
+        }
+        let n = node.data.number as i64;
+        item_count += n;
+        total_weight += (node.data.weight as i64) * n;
+        cursor = node.next;
+    }
+
+    let capacity = bag_node.data.p1;
+    let percent_full: i64 = if capacity > 0 {
+        (total_weight * 100) / capacity
+    } else {
+        0
+    };
+
+    // Provide a NUL-terminated suffix for `snprintf`.
+    let suffix_cstr: *const c_char = if item_count != 1 {
+        b"s\0".as_ptr() as *const c_char
+    } else {
+        b"\0".as_ptr() as *const c_char
+    };
+    // `result` is a fixed-size caller buffer in C; use snprintf to avoid overflow.
+    libc::snprintf(
+        result,
+        BAG_DESCRIP_BUF_SIZE,
+        b" (%ld%% full, containing %ld item%s)\0".as_ptr() as *const c_char,
+        percent_full,
+        item_count,
+        suffix_cstr,
+    );
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use std::ffi::CStr;
 
     use super::*;
+    fn item_default() -> Item {
+        // `Item` is `Copy`, so we can build a zeroed-ish default for tests.
+        Item {
+            name: [0; 70],
+            tval: 0,
+            flags2: 0,
+            flags: 0,
+            p1: 0,
+            cost: 0,
+            subval: 0,
+            weight: 0,
+            number: 0,
+            tohit: 0,
+            todam: 0,
+            ac: 0,
+            toac: 0,
+            damage: [0; 7],
+            level: 0,
+            identified: 0,
+        }
+    }
+
+    fn inventory_item_default() -> InventoryItem {
+        InventoryItem {
+            data: item_default(),
+            ok: 0,
+            insides: 0,
+            is_in: 0,
+            next: std::ptr::null_mut(),
+        }
+    }
 
     fn make_buf(s: &str) -> Vec<c_char> {
         let mut v = s.as_bytes().iter().map(|&b| b as c_char).collect::<Vec<_>>();
@@ -200,5 +298,106 @@ mod tests {
         // unquote must not touch them.
         assert_eq!(buf[82], 111 as c_char);
         assert_eq!(buf[83], 112 as c_char);
+    }
+
+    #[test]
+    fn bag_descrip_empty_when_bag_next_is_null() {
+        let bag = InventoryItem {
+            next: std::ptr::null_mut(),
+            ..inventory_item_default()
+        };
+
+        let mut out = vec![0 as c_char; BAG_DESCRIP_BUF_SIZE];
+        let ret = unsafe { bag_descrip(&bag as *const InventoryItem, out.as_mut_ptr()) };
+
+        assert_eq!(ret, out.as_mut_ptr());
+        assert_eq!(read_buf(&out), " (empty)");
+    }
+
+    #[test]
+    fn bag_descrip_empty_when_bag_next_is_not_in() {
+        let next = Box::new(InventoryItem {
+            is_in: 0,
+            ..inventory_item_default()
+        });
+        let bag = InventoryItem {
+            next: (&*next) as *const InventoryItem as *mut InventoryItem,
+            ..inventory_item_default()
+        };
+
+        let mut out = vec![0 as c_char; BAG_DESCRIP_BUF_SIZE];
+        let ret = unsafe { bag_descrip(&bag as *const InventoryItem, out.as_mut_ptr()) };
+
+        assert_eq!(ret, out.as_mut_ptr());
+        assert_eq!(read_buf(&out), " (empty)");
+    }
+
+    #[test]
+    fn bag_descrip_one_item_formats_singular_item_suffix() {
+        let item = Box::new(InventoryItem {
+            is_in: 1,
+            data: Item {
+                number: 1,
+                weight: 10,
+                ..item_default()
+            },
+            next: std::ptr::null_mut(),
+            ..inventory_item_default()
+        });
+
+        let bag = InventoryItem {
+            data: Item {
+                p1: 100, // capacity
+                ..item_default()
+            },
+            next: (&*item) as *const InventoryItem as *mut InventoryItem,
+            ..inventory_item_default()
+        };
+
+        let mut out = vec![0 as c_char; BAG_DESCRIP_BUF_SIZE];
+        unsafe { bag_descrip(&bag as *const InventoryItem, out.as_mut_ptr()) };
+
+        // wgt=10, capacity=100 => 10%
+        assert_eq!(read_buf(&out), " (10% full, containing 1 item)");
+    }
+
+    #[test]
+    fn bag_descrip_multiple_items_formats_plural_items_and_sums_weight_and_count() {
+        let item2 = Box::new(InventoryItem {
+            is_in: 1,
+            data: Item {
+                number: 2,
+                weight: 7,
+                ..item_default()
+            },
+            next: std::ptr::null_mut(),
+            ..inventory_item_default()
+        });
+        let item1 = Box::new(InventoryItem {
+            is_in: 1,
+            data: Item {
+                number: 3,
+                weight: 5,
+                ..item_default()
+            },
+            next: (&*item2) as *const InventoryItem as *mut InventoryItem,
+            ..inventory_item_default()
+        });
+
+        let bag = InventoryItem {
+            data: Item {
+                p1: 100, // capacity
+                ..item_default()
+            },
+            next: (&*item1) as *const InventoryItem as *mut InventoryItem,
+            ..inventory_item_default()
+        };
+
+        let mut out = vec![0 as c_char; BAG_DESCRIP_BUF_SIZE];
+        unsafe { bag_descrip(&bag as *const InventoryItem, out.as_mut_ptr()) };
+
+        // count = 3 + 2 = 5
+        // weight = 3*5 + 2*7 = 29 => 29%
+        assert_eq!(read_buf(&out), " (29% full, containing 5 items)");
     }
 }

@@ -180,23 +180,3 @@ void objdes(char out_val[82], const treas_rec *ptr, const bool pref) {
 
   LEAVE("objdes", "i");
 }
-
-char *bag_descrip(const treas_rec *bag, char result[134]) /* was func */
-{
-
-  if (bag->next == NULL || bag->next->is_in == false) {
-    sprintf(result, " (empty)");
-  } else {
-    long count = 0;
-    long wgt = 0;
-
-    for (const treas_rec *ptr = bag->next; ptr != NULL && ptr->is_in; ptr = ptr->next) {
-      count += ptr->data.number;
-      wgt += ptr->data.weight * ptr->data.number;
-    }
-
-    sprintf(result, " (%ld%% full, containing %ld item%s)",
-            wgt * 100 / bag->data.p1, count, count != 1 ? "s" : "");
-  }
-  return result;
-}
