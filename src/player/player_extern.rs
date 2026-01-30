@@ -6,6 +6,26 @@ use crate::data;
 use crate::player;
 use crate::conversion;
 
+extern "C" {
+    fn player_hunger_status() -> libc::c_int;
+
+    // Import the legacy C global flags so we can read rest/regenerate.
+    // This keeps the actual logic in safe, unit-tested Rust.
+    static mut player_flags: crate::model::PlayerFlags;
+}
+
+fn hunger_status_from_c(value: libc::c_int) -> player::regeneration::HungerStatus {
+    // Values come from `enum hunger_status_t` in `src/player/hunger.h`.
+    match value {
+        0 => player::regeneration::HungerStatus::Dying,
+        1 => player::regeneration::HungerStatus::Weak,
+        2 => player::regeneration::HungerStatus::Hungry,
+        3 => player::regeneration::HungerStatus::Full,
+        4 => player::regeneration::HungerStatus::Bloated,
+        _ => player::regeneration::HungerStatus::Full,
+    }
+}
+
 #[no_mangle]
 pub extern "C" fn C_player_knows_spell(slot: i32) -> u8 {
     match player::knows_spell(slot as usize) {
@@ -162,3 +182,34 @@ pub extern "C" fn C_player_modify_current_hp(modifier: libc::c_float) {
 pub extern "C" fn C_player_regen_hp(percent: libc::c_float) {
     player::regen_hp(percent);
 }
+
+#[no_mangle]
+pub extern "C" fn C_player_regeneration_get_amount() -> libc::c_float {
+    let hunger_status = unsafe { hunger_status_from_c(player_hunger_status()) };
+
+    let input = player::regeneration::RegenerationInput {
+        hunger_status,
+        has_regeneration: unsafe { player_flags.regenerate != 0 },
+        is_resting: unsafe { player_flags.rest > 0 },
+    };
+
+    player::regeneration::get_regeneration_amount(input) as libc::c_float
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hunger_status_from_c_defaults_to_full_for_unknown_values() {
+        assert_eq!(
+            hunger_status_from_c(12345),
+            player::regeneration::HungerStatus::Full
+        );
+        assert_eq!(
+            hunger_status_from_c(-1),
+            player::regeneration::HungerStatus::Full
+        );
+    }
+}
+

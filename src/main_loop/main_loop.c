@@ -19,7 +19,6 @@
 #include "../pascal.h"
 #include "../player.h"
 #include "../player/hunger.h"
-#include "../player/regeneration.h"
 #include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
@@ -174,7 +173,7 @@ static void d__eat_food(void) {
 }
 
 static void d__regenerate(void) {
-  float const regen_amount = player_regeneration_get_amount();
+  float const regen_amount = C_player_regeneration_get_amount();
   if (player_flags.poisoned < 1) {
     if (C_player_current_hp() < C_player_max_hp()) {
       C_player_regen_hp(regen_amount);
