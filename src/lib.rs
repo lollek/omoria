@@ -41,6 +41,7 @@ pub mod random;
 pub mod save;
 pub mod term;
 pub mod thirdparty;
+pub mod pascal;
 
 pub mod commands_extern;
 pub mod constants_extern;
