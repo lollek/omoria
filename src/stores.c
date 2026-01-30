@@ -18,7 +18,6 @@
 #include "pascal.h"
 #include "player.h"
 #include "player/hunger.h"
-#include "player/regeneration.h"
 #include "random.h"
 #include "screen.h"
 #include "stores.h"
@@ -2323,7 +2322,7 @@ void spend_time(long days_spent, char const *const place,
     store_maint();
   }
 
-  float regen_percent = player_regeneration_get_amount() * 2 * time_spent;
+  float regen_percent = C_player_regeneration_get_amount() * 2 * time_spent;
   if (regen_percent > 1.00)
     regen_percent = 1.00;
   if (C_player_current_hp() < C_player_max_hp())

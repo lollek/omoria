@@ -5,6 +5,7 @@ pub use self::stats::*;
 
 mod attributes;
 mod data;
+pub mod regeneration;
 mod skills;
 mod stats;
 

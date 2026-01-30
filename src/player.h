@@ -140,6 +140,7 @@ void C_player_reset_current_hp(void);
 void C_player_modify_max_hp(int16_t modifier);
 void C_player_modify_current_hp(float modifier);
 void C_player_regen_hp(float percent);
+float C_player_regeneration_get_amount(void);
 
 void C_player_recalc_stats(void);
 int16_t C_player_get_stat(enum stat_t attr);
