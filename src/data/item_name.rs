@@ -14,6 +14,7 @@ use crate::data::item_name::subtype::melee_weapon::melee_weapon;
 use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
+use crate::data::item_name::subtype::shield::shield;
 use crate::data::item_name::subtype::small_armor::small_armor;
 use crate::data::item_name::subtype::spike::spike;
 use crate::data::item_name::subtype::wand::wand;
@@ -72,12 +73,12 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Scroll2
         | ItemType::SecretDoor
         | ItemType::SeenTrap
-        | ItemType::Shield
         | ItemType::Staff
         | ItemType::UnseenTrap
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
         | ItemType::Whirlpool => generic_item(item),
+        ItemType::Shield => shield(item),
         ItemType::FlaskOfOil => flask(item),
         ItemType::Dagger
         | ItemType::HaftedWeapon

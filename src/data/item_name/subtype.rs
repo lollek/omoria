@@ -20,6 +20,7 @@ pub mod melee_weapon;
 pub mod misc_object;
 pub mod misc_usable;
 pub mod ranged_weapon;
+pub mod shield;
 pub mod small_armor;
 pub mod spike;
 pub mod wand;
@@ -41,16 +42,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 if item.is_identified() { "of gems" } else { "" }
             ))
         }
-        // TODO: Add same special attributes as armor has. E.g. (R)
-        ItemType::Shield => Cow::from(match item.subval {
-            1 => "Small leather shield",
-            2 => "Medium leather shield",
-            3 => "Large leather shield",
-            4 => "Small metal shield",
-            5 => "Medium metal shield",
-            6 => "Large metal shield",
-            _ => "Alien shield",
-        }),
         ItemType::Ring => {
             let attribute = if item.is_identified() {
                 match item.subval {
