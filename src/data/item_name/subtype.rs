@@ -22,6 +22,7 @@ pub mod melee_weapon;
 pub mod misc_object;
 pub mod misc_usable;
 pub mod ranged_weapon;
+pub mod ring;
 pub mod shield;
 pub mod small_armor;
 pub mod spike;
@@ -32,49 +33,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
 
     match item.item_type() {
-        ItemType::Ring => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    1 => " of gain strength",
-                    2 => " of gain dexterity",
-                    3 => " of gain constitution",
-                    4 => " of gain intelligence",
-                    7 => " of speed",
-                    8 => " of searching",
-                    9 => " of teleportation",
-                    10 => " of slow digestion",
-                    11 => " of resist fire",
-                    12 => " of resist cold",
-                    13 => " of feather falling",
-                    14 => " of adornment",
-                    15 => " of adornment",
-                    16 => " of weakness",
-                    17 => " of lordly protection (FIRE)",
-                    18 => " of lordly protection (ACID)",
-                    19 => " of lordly protection (COLD)",
-                    20 => " of WOE",
-                    21 => " of stupidity",
-                    22 => " of increase damage",
-                    23 => " of increase to-hit",
-                    24 => " of protection",
-                    25 => " of aggravate monster",
-                    26 => " of see invisible",
-                    27 => " of sustain strength",
-                    28 => " of sustain intelligence",
-                    29 => " of sustain wisdom",
-                    30 => " of sustain constitution",
-                    31 => " of sustain dexterity",
-                    32 => " of sustain charisma",
-                    33 => " of slaying",
-                    34 => " of gnomekind",
-                    35 => " of speed",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("%R Ring{}", attribute))
-        }
         ItemType::Chime => {
             let attribute = if item.is_identified() {
                 match item.subval {

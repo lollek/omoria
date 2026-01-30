@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Item names: rings are now named by the new item-name system.
 * Item names: "iron helm of gems" (and other gem helms) are now named by the new item-name system.
 * Item names: "pipes of peace" (and other instruments) are now named by the new item-name system.
 * Item names: "small leather shield" (and other shields) are now named by the new item-name system.
