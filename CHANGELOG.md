@@ -8,6 +8,7 @@
 * Item names: "small leather shield" (and other shields) are now named by the new item-name system.
 * Item names: "flask of oil" is now named by the new item-name system.
 * Item names: potions are now named by the new item-name system.
+* Item names: scrolls are now named by the new item-name system.
 
 ## 5-alpha527
 

@@ -23,6 +23,7 @@ pub mod misc_object;
 pub mod misc_usable;
 pub mod potion;
 pub mod ranged_weapon;
+pub mod scroll;
 pub mod ring;
 pub mod shield;
 pub mod small_armor;
@@ -82,59 +83,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
                 ""
             };
             Cow::from(format!("%H{}", attribute))
-        }
-        ItemType::Scroll1 => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    257 => " of Enchant Weapon To-Hit",
-                    258 => " of Enchant Weapon To-Dam",
-                    259 => " of Enchant Armor",
-                    260 => " of Identify",
-                    261 => " of Remove Curse",
-                    262 => " of Light",
-                    263 => " of Summon Monster",
-                    264 => " of Phase Door",
-                    265 => " of Teleport",
-                    266 => " of Teleport Level",
-                    267 => " of Monster Confusion",
-                    268 => " of Magic Mapping",
-                    269 => " of Sleep Monster",
-                    270 => " of Rune of Protection",
-                    271 => " of Treasure Detection",
-                    272 => " of Object Detection",
-                    273 => " of Trap Detection",
-                    274 => " of Door/Stair Location",
-                    275 => " of Mass Genocide",
-                    276 => " of Detect Invisible",
-                    277 => " of Aggravate Monster",
-                    278 => " of Trap Creation",
-                    279 => " of Trap/Door Destruction",
-                    280 => " of Door Creation",
-                    281 => " of Recharging",
-                    282 => " of Genocide",
-                    283 => " of Darkness",
-                    284 => " of Protection from Evil",
-                    285 => " of Create Food",
-                    286 => " of Dispel Undead",
-                    /* 257 => " of *Enchant Weapon*",
-                    258 => " of Curse Weapon",
-                    259 => " of *Enchant Armor*",
-                    260 => " of Curse Armor",
-                    261 => " of Summon Undead",
-                    262 => " of Blessing",
-                    263 => " of Holy Chant",
-                    264 => " of Holy Prayer",
-                    265 => " of Word-of-Recall",
-                    266 => " of *Destruction*",
-                    267 => " of Wishing",
-                    268 => " of Feign Death",
-                    269 => " of Make Munchies", */
-                    _ => "of ??",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("Scroll{}{}", plural_s(), attribute))
         }
         ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
         ItemType::Staff => {

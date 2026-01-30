@@ -84,7 +84,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 | `shield.rs` | Shield | Low | Simple subtype → name mapping + armor bonus |
 | `flask.rs` | FlaskOfOil | Very Low | Just "flask(s) of oil" |
 | `potion.rs` | Potion1, ~~Potion2~~ | Medium | Unknown potions show as "unknown potion" until subtype is known |
-| `scroll.rs` | Scroll1, ~~Scroll2~~ | Medium | Identification effects. Scroll2 is removed (empty enum). |
+| `scroll.rs` | Scroll1, ~~Scroll2~~ | Medium | Unknown scrolls show as "unknown scroll" until subtype is known |
 | `ring.rs` | Ring | Medium | Subtype-known vs item-identified behavior; shows [+toac] only when item is identified |
 | `staff.rs` | Staff | Medium | Uses `%W` prefix + charges + identification |
 | `chime.rs` | Chime | Medium | Uses `%M` prefix + identification |
@@ -113,7 +113,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `gem_helm.rs` - GemHelm
 - [x] `ring.rs` - Ring
 - [x] `potion.rs` - Potion1 (Potion2 removed)
-- [ ] `scroll.rs` - Scroll1 (Scroll2 removed)
+- [x] `scroll.rs` - Scroll1 (Scroll2 removed)
 - [ ] `chime.rs` - Chime
 - [ ] `horn.rs` - Horn
 - [ ] `staff.rs` - Staff
@@ -132,7 +132,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 4. **`gem_helm.rs`** - Simple with identification
 5. **`ring.rs`** - Medium, subtype-known vs item-identified behavior (no more %R placeholder)
 6. **`potion.rs`** - Medium, subtype-known vs item-identified behavior (unknown potions)
-7. **`scroll.rs`** - Medium, similar to potion
+7. **`scroll.rs`** - Medium, subtype-known vs item-identified behavior (unknown scrolls)
 8. **`chime.rs`** - Medium, uses `%M` prefix
 9. **`horn.rs`** - Medium, uses `%H` prefix
 10. **`staff.rs`** - Medium, has charges
