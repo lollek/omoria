@@ -11,6 +11,7 @@ pub mod armor;
 pub mod bag;
 pub mod book;
 pub mod chest;
+pub mod chime;
 pub mod flask;
 pub mod food;
 pub mod gem;
@@ -35,32 +36,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
 
     match item.item_type() {
-        ItemType::Chime => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    1 => " of light",
-                    2 => " of detect doors/stairs",
-                    3 => " of detect traps",
-                    4 => " of teleportation",
-                    5 => " of thunderblasts",
-                    6 => " of summon monster",
-                    7 => " of disarming",
-                    8 => " of aggravation",
-                    9 => " of slow monster",
-                    10 => " of soothe monster",
-                    11 => " of cure light wound",
-                    12 => " of changing",
-                    13 => " of remove curse",
-                    14 => " of curing",
-                    15 => " of dispel evil",
-                    16 => " of darkness",
-                    _ => " of ???",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("%M chime{}", attribute))
-        }
         ItemType::Horn => {
             let attribute = if item.is_identified() {
                 match item.subval {

@@ -87,7 +87,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 | `scroll.rs` | Scroll1, ~~Scroll2~~ | Medium | Unknown scrolls show as "unknown scroll" until subtype is known |
 | `ring.rs` | Ring | Medium | Subtype-known vs item-identified behavior; shows [+toac] only when item is identified |
 | `staff.rs` | Staff | Medium | Uses `%W` prefix + charges + identification |
-| `chime.rs` | Chime | Medium | Uses `%M` prefix + identification |
+| `chime.rs` | Chime | Medium | Unknown chimes show as "unknown chime" until subtype is known |
 | `horn.rs` | Horn | Medium | Uses `%H` prefix + identification |
 | `instrument.rs` | Instrument | Low | Fixed names per subtype |
 | `gem_helm.rs` | GemHelm | Low | Material + "of gems" when identified |
@@ -114,7 +114,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `ring.rs` - Ring
 - [x] `potion.rs` - Potion1 (Potion2 removed)
 - [x] `scroll.rs` - Scroll1 (Scroll2 removed)
-- [ ] `chime.rs` - Chime
+- [x] `chime.rs` - Chime
 - [ ] `horn.rs` - Horn
 - [ ] `staff.rs` - Staff
 - [ ] `rod.rs` - Rod
@@ -133,7 +133,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 5. **`ring.rs`** - Medium, subtype-known vs item-identified behavior (no more %R placeholder)
 6. **`potion.rs`** - Medium, subtype-known vs item-identified behavior (unknown potions)
 7. **`scroll.rs`** - Medium, subtype-known vs item-identified behavior (unknown scrolls)
-8. **`chime.rs`** - Medium, uses `%M` prefix
+8. **`chime.rs`** - Medium, subtype-known vs item-identified behavior (unknown chimes)
 9. **`horn.rs`** - Medium, uses `%H` prefix
 10. **`staff.rs`** - Medium, has charges
 11. **`rod.rs`** - Check what logic exists

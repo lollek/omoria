@@ -4,6 +4,7 @@ use crate::data::item_name::subtype::armor::armor;
 use crate::data::item_name::subtype::bag::bag;
 use crate::data::item_name::subtype::book::book;
 use crate::data::item_name::subtype::chest::chest;
+use crate::data::item_name::subtype::chime::chime;
 use crate::data::item_name::subtype::flask::flask;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
@@ -60,8 +61,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Gloves
         | ItemType::Helm => small_armor(item),
         ItemType::Chest => chest(item),
-        ItemType::Chime
-        | ItemType::ClosedDoor
+        ItemType::ClosedDoor
         | ItemType::DownStaircase
         | ItemType::DownSteepStaircase
         | ItemType::EntranceToStore
@@ -78,6 +78,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
         | ItemType::Whirlpool => generic_item(item),
+        ItemType::Chime => chime(item),
         ItemType::Scroll1 => scroll(item),
         ItemType::Potion1 => potion(item),
         ItemType::Ring => ring(item),
