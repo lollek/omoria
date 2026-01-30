@@ -24,6 +24,7 @@ use crate::data::item_name::subtype::ring::ring;
 use crate::data::item_name::subtype::shield::shield;
 use crate::data::item_name::subtype::small_armor::small_armor;
 use crate::data::item_name::subtype::spike::spike;
+use crate::data::item_name::subtype::staff::staff;
 use crate::data::item_name::subtype::wand::wand;
 use crate::data::item_name::subtype::wearable_gem::wearable_gem;
 use crate::model::{Item, ItemType};
@@ -73,7 +74,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Scroll2
         | ItemType::SecretDoor
         | ItemType::SeenTrap
-        | ItemType::Staff
         | ItemType::UnseenTrap
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
@@ -110,5 +110,6 @@ pub fn generate(item: &Item) -> String {
         ItemType::Spike => spike(item),
         ItemType::Wand => wand(item),
         ItemType::WearableGem => wearable_gem(item),
+        ItemType::Staff => staff(item),
     }
 }

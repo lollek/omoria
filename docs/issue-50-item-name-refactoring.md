@@ -86,7 +86,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 | `potion.rs` | Potion1, ~~Potion2~~ | Medium | Unknown potions show as "unknown potion" until subtype is known |
 | `scroll.rs` | Scroll1, ~~Scroll2~~ | Medium | Unknown scrolls show as "unknown scroll" until subtype is known |
 | `ring.rs` | Ring | Medium | Subtype-known vs item-identified behavior; shows [+toac] only when item is identified |
-| `staff.rs` | Staff | Medium | Shows remaining charges as `(x charges)` |
+| `staff.rs` | Staff | Medium | Shows remaining charges as `(x charges)` when item is identified |
 | `chime.rs` | Chime | Medium | Unknown chimes show as "unknown chime" until subtype is known |
 | `horn.rs` | Horn | Medium | Shows remaining charges as `(x charges)` when item is identified |
 | `instrument.rs` | Instrument | Low | Fixed names per subtype |
@@ -117,7 +117,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `scroll.rs` - Scroll1 (Scroll2 removed)
 - [x] `chime.rs` - Chime
 - [x] `horn.rs` - Horn
-- [ ] `staff.rs` - Staff
+- [x] `staff.rs` - Staff
 - [ ] `rod.rs` - Rod
 - [ ] `dungeon_feature.rs` - All dungeon features (doors, stairs, traps, etc.)
 
@@ -136,7 +136,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 7. **`scroll.rs`** - Medium, subtype-known vs item-identified behavior (unknown scrolls)
 8. **`chime.rs`** - Medium, subtype-known vs item-identified behavior (unknown chimes)
 9. **`horn.rs`** - Medium, subtype-known vs item-identified behavior (unknown horns + charges)
-10. **`staff.rs`** - Medium, has charges
+10. **`staff.rs`** - Medium, subtype-known vs item-identified behavior (unknown staves + charges)
 11. **`rod.rs`** - Check what logic exists
 12. **`dungeon_feature.rs`** - Group all terrain/features last
 13. **Cleanup** - Remove `generic_item()` after all migrations

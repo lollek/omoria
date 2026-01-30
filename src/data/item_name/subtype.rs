@@ -30,6 +30,7 @@ pub mod ring;
 pub mod shield;
 pub mod small_armor;
 pub mod spike;
+pub mod staff;
 pub mod wand;
 pub mod wearable_gem;
 
@@ -38,45 +39,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
 
     match item.item_type() {
         ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
-        ItemType::Staff => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    1 => " of Light",
-                    2 => " of Door/Stair Location",
-                    3 => " of Trap Location",
-                    4 => " of Treasure Location",
-                    5 => " of Object Location",
-                    6 => " of Teleportation",
-                    7 => " of Earthquakes",
-                    8 => " of Summoning",
-                    10 => " of *Destruction*",
-                    11 => " of Starlite",
-                    12 => " of Haste Monsters",
-                    13 => " of Slow Monsters",
-                    14 => " of Sleep Monsters",
-                    15 => " of Cure Light Wounds",
-                    16 => " of Detect Invisible",
-                    17 => " of Speed",
-                    18 => " of Slowness",
-                    19 => " of Mass Polymorph",
-                    20 => " of Remove Curse",
-                    21 => " of Detect Evil",
-                    22 => " of Curing",
-                    23 => " of Dispel Evil",
-                    25 => " of Darkness",
-                    26 => " of Identify",
-                    _ => "of ???",
-                }
-            } else {
-                ""
-            };
-            let charges = if item.is_identified() {
-                " (%P1 charges)"
-            } else {
-                ""
-            };
-            Cow::from(format!("%W wand{}{}", attribute, charges))
-        }
         _ => Cow::from(format!("Something alien (tval {})", item.tval)),
     }
 }
