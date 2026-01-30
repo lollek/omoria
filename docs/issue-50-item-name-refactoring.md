@@ -71,7 +71,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 
 #### Bug Fixes (existing code)
 
-- [ ] **chime.rs**: Show remaining charges in the item name (e.g. `chime of light (3 charges)`) when appropriate
+- [x] **chime.rs**: Show remaining charges in the item name (e.g. `chime of light (3 charges)`) when appropriate
 - [ ] **melee_weapon.rs**: Fix `executioners sword` → `executioner's sword` (missing apostrophe)
 - [ ] **melee_weapon.rs**: Fix `nodachi` → `no-dachi` (missing hyphen)
 - [ ] **melee_weapon.rs**: Fix `great flail` → `two-handed great flail` (missing prefix)

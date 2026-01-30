@@ -29,6 +29,11 @@ pub fn chime(item: &Item) -> String {
     parts.push(plural_s(item));
     parts.push(Cow::Borrowed(chime_suffix(chime_subtype)));
 
+    // Charge count should only be visible when the specific item is identified.
+    if item.is_identified() {
+        parts.push(Cow::from(format!(" ({} charges)", item.p1)));
+    }
+
     parts.join("")
 }
 
@@ -107,7 +112,7 @@ mod tests {
         item.number = 1;
         item.set_identified(true);
 
-        assert_eq!(generate(&item), "chime of light");
+        assert_eq!(generate(&item), "chime of light (0 charges)");
     }
 
     #[test]
@@ -132,5 +137,45 @@ mod tests {
 
         identification::set_identified(ItemSubType::Chime(ChimeSubType::ChimeOfLight), false);
         assert_eq!(generate(&item), "no more unknown chimes");
+    }
+
+    #[test]
+    #[serial]
+    fn test_chime_identified_includes_charges_even_zero() {
+        let mut item = base_item();
+        item.subval = subval(ChimeSubType::ChimeOfLight);
+        item.number = 1;
+        item.p1 = 0;
+        item.set_identified(true);
+
+        assert_eq!(generate(&item), "chime of light (0 charges)");
+    }
+
+    #[test]
+    #[serial]
+    fn test_chime_identified_includes_charges() {
+        let mut item = base_item();
+        item.subval = subval(ChimeSubType::ChimeOfLight);
+        item.number = 1;
+        item.p1 = 3;
+        item.set_identified(true);
+
+        assert_eq!(generate(&item), "chime of light (3 charges)");
+    }
+
+    #[test]
+    #[serial]
+    fn test_chime_known_subtype_does_not_show_charges_when_not_identified() {
+        let mut item = base_item();
+        item.subval = subval(ChimeSubType::ChimeOfLight);
+        item.number = 1;
+        item.p1 = 3;
+        item.set_identified(false);
+
+        identification::set_identified(ItemSubType::Chime(ChimeSubType::ChimeOfLight), true);
+        assert_eq!(generate(&item), "chime of light");
+
+        // Avoid leaking global state.
+        identification::set_identified(ItemSubType::Chime(ChimeSubType::ChimeOfLight), false);
     }
 }
