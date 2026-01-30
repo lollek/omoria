@@ -16,6 +16,7 @@ pub mod flask;
 pub mod food;
 pub mod gem;
 pub mod gem_helm;
+pub mod horn;
 pub mod instrument;
 pub mod jewelry;
 pub mod light_source;
@@ -36,29 +37,6 @@ fn subtype_name<'a>(item: &Item) -> Cow<'a, str> {
     let plural_s = || if item.number == 1 { "" } else { "s" };
 
     match item.item_type() {
-        ItemType::Horn => {
-            let attribute = if item.is_identified() {
-                match item.subval {
-                    1 => " of bubbles",
-                    2 => " of calling",
-                    3 => " of soft sounds",
-                    4 => " of *Blasting*",
-                    5 => " of cold",
-                    6 => " of heat",
-                    7 => " of gas",
-                    8 => " of recall",
-                    9 => " of *Chaos*",
-                    10 => " of glue",
-                    11 => " of valhalla",
-                    12 => " of tritons",
-                    13 => " of fog",
-                    _ => " of ???H",
-                }
-            } else {
-                ""
-            };
-            Cow::from(format!("%H{}", attribute))
-        }
         ItemType::FlaskOfOil => Cow::from(format!("flask{} of oil", plural_s())),
         ItemType::Staff => {
             let attribute = if item.is_identified() {

@@ -10,6 +10,7 @@ use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::gem_helm::gem_helm;
 use crate::data::item_name::subtype::{generic_item, lodging_at_inn, money};
+use crate::data::item_name::subtype::horn::horn;
 use crate::data::item_name::subtype::instrument::instrument;
 use crate::data::item_name::subtype::jewelry::jewelry;
 use crate::data::item_name::subtype::light_source::light_source;
@@ -65,7 +66,6 @@ pub fn generate(item: &Item) -> String {
         | ItemType::DownStaircase
         | ItemType::DownSteepStaircase
         | ItemType::EntranceToStore
-        | ItemType::Horn
         | ItemType::OpenDoor
         | ItemType::Potion2
         | ItemType::Rod
@@ -78,6 +78,7 @@ pub fn generate(item: &Item) -> String {
         | ItemType::UpStaircase
         | ItemType::UpSteepStaircase
         | ItemType::Whirlpool => generic_item(item),
+        ItemType::Horn => horn(item),
         ItemType::Chime => chime(item),
         ItemType::Scroll1 => scroll(item),
         ItemType::Potion1 => potion(item),

@@ -86,18 +86,19 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 | `potion.rs` | Potion1, ~~Potion2~~ | Medium | Unknown potions show as "unknown potion" until subtype is known |
 | `scroll.rs` | Scroll1, ~~Scroll2~~ | Medium | Unknown scrolls show as "unknown scroll" until subtype is known |
 | `ring.rs` | Ring | Medium | Subtype-known vs item-identified behavior; shows [+toac] only when item is identified |
-| `staff.rs` | Staff | Medium | Uses `%W` prefix + charges + identification |
+| `staff.rs` | Staff | Medium | Shows remaining charges as `(x charges)` |
 | `chime.rs` | Chime | Medium | Unknown chimes show as "unknown chime" until subtype is known |
-| `horn.rs` | Horn | Medium | Uses `%H` prefix + identification |
+| `horn.rs` | Horn | Medium | Shows remaining charges as `(x charges)` when item is identified |
 | `instrument.rs` | Instrument | Low | Fixed names per subtype |
 | `gem_helm.rs` | GemHelm | Low | Material + "of gems" when identified |
-| `rod.rs` | Rod | Unknown | Need to check if subtypes exist |
+| `rod.rs` | Rod | Unknown | Should show remaining charges as `(x charges)` |
 | `dungeon_feature.rs` | ClosedDoor, OpenDoor, SecretDoor, UpStaircase, DownStaircase, UpSteepStaircase, DownSteepStaircase, EntranceToStore, Rubble, Whirlpool, SeenTrap, UnseenTrap | Low | Dungeon features, rarely displayed as "items" |
 
 ### Task Checklist
 
 #### Bug Fixes (existing code)
 
+- [ ] **chime.rs**: Show remaining charges in the item name (e.g. `chime of light (3 charges)`) when appropriate
 - [ ] **melee_weapon.rs**: Fix `executioners sword` → `executioner's sword` (missing apostrophe)
 - [ ] **melee_weapon.rs**: Fix `nodachi` → `no-dachi` (missing hyphen)
 - [ ] **melee_weapon.rs**: Fix `great flail` → `two-handed great flail` (missing prefix)
@@ -115,7 +116,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `potion.rs` - Potion1 (Potion2 removed)
 - [x] `scroll.rs` - Scroll1 (Scroll2 removed)
 - [x] `chime.rs` - Chime
-- [ ] `horn.rs` - Horn
+- [x] `horn.rs` - Horn
 - [ ] `staff.rs` - Staff
 - [ ] `rod.rs` - Rod
 - [ ] `dungeon_feature.rs` - All dungeon features (doors, stairs, traps, etc.)
@@ -134,7 +135,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 6. **`potion.rs`** - Medium, subtype-known vs item-identified behavior (unknown potions)
 7. **`scroll.rs`** - Medium, subtype-known vs item-identified behavior (unknown scrolls)
 8. **`chime.rs`** - Medium, subtype-known vs item-identified behavior (unknown chimes)
-9. **`horn.rs`** - Medium, uses `%H` prefix
+9. **`horn.rs`** - Medium, subtype-known vs item-identified behavior (unknown horns + charges)
 10. **`staff.rs`** - Medium, has charges
 11. **`rod.rs`** - Check what logic exists
 12. **`dungeon_feature.rs`** - Group all terrain/features last
@@ -176,11 +177,5 @@ This keeps the numeric mapping in one place and makes item-name logic easier to 
 
 - `%R`, `%M`, `%H`, `%W` are placeholder patterns that get replaced elsewhere (likely material names for unidentified items)
 - `Potion2` and `Scroll2` have been removed from the game (empty enums that panic)
-- Some items have special display logic (charges, armor bonus, damage) - check `generic_item()` for what applies
-
-## Related Files
-
-- `src/data/item_name.rs` - Main dispatch function
-- `src/data/item_name/subtype.rs` - Current `generic_item()` and `subtype_name()`
-- `src/data/item_name/subtype/*.rs` - Individual category modules
-- `src/data/item_name/helpers.rs` - Shared helper functions
+- Some items have special display logic (charges, armor bonus, damage) - check `generic_item()` for what applies.
+  Remaining charges should be visible for **staff**, **wand**, **rod**, **chime**, and **horn** (e.g. `horn of bubbles (3 charges)`).

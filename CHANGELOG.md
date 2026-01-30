@@ -10,6 +10,7 @@
 * Item names: potions are now named by the new item-name system.
 * Item names: scrolls are now named by the new item-name system.
 * Item names: chimes are now named by the new item-name system.
+* Item names: horns are now named by the new item-name system.
 
 ## 5-alpha527
 
