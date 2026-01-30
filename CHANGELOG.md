@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Internal: started migrating small Pascal helper functions (`pindex`, vowel and set-membership checks) from C to Rust.
+
 ## 5-alpha529
 
 August 2025
