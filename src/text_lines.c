@@ -68,16 +68,6 @@ void identify(treasure_type *item) {
   identification_set_identified(item);
 }
 
-void known1(const char *object_str) {
-
-  insert_str(object_str, "|", "");
-}
-
-void known2(const char *object_str) {
-
-  insert_str(object_str, "^", "");
-}
-
 void unquote(char *object_str) {
 
   const long pos0 = pindex(object_str, '"');
