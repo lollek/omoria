@@ -107,7 +107,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 
 #### New Item Types
 
-- [ ] `flask.rs` - FlaskOfOil
+- [x] `flask.rs` - FlaskOfOil
 - [ ] `shield.rs` - Shield
 - [ ] `instrument.rs` - Instrument
 - [ ] `gem_helm.rs` - GemHelm

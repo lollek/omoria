@@ -11,6 +11,7 @@ pub mod armor;
 pub mod bag;
 pub mod book;
 pub mod chest;
+pub mod flask;
 pub mod food;
 pub mod gem;
 pub mod jewelry;

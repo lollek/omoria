@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Item names: "flask of oil" is now named by the new item-name system.
+
 ## 5-alpha527
 
 August 2025
