@@ -10,7 +10,7 @@ use crate::data::item_name::subtype::flask::flask;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::gem_helm::gem_helm;
-use crate::data::item_name::subtype::{generic_item, lodging_at_inn, money};
+use crate::data::item_name::subtype::{lodging_at_inn, money};
 use crate::data::item_name::subtype::horn::horn;
 use crate::data::item_name::subtype::instrument::instrument;
 use crate::data::item_name::subtype::jewelry::jewelry;
@@ -76,9 +76,12 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Whirlpool
         | ItemType::SeenTrap
         | ItemType::UnseenTrap => dungeon_feature(item),
-        ItemType::Potion2
-        | ItemType::Rod
-        | ItemType::Scroll2 => generic_item(item),
+        ItemType::Potion2 | ItemType::Rod | ItemType::Scroll2 => {
+            panic!(
+                "ItemType {:?} is removed/unsupported and should not be named",
+                item.item_type()
+            )
+        }
         ItemType::Horn => horn(item),
         ItemType::Chime => chime(item),
         ItemType::Scroll1 => scroll(item),

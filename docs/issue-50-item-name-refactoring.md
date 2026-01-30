@@ -43,35 +43,9 @@ The new Rust item name functions should:
 
 ## Item Types Currently Using `generic_item()`
 
-From `src/data/item_name.rs`:
-
-```rust
-ItemType::Chime
-| ItemType::ClosedDoor
-| ItemType::DownStaircase
-| ItemType::DownSteepStaircase
-| ItemType::EntranceToStore
-| ItemType::FlaskOfOil
-| ItemType::GemHelm
-| ItemType::Horn
-| ItemType::Instrument
-| ItemType::OpenDoor
-| ItemType::Potion1
-| ItemType::Potion2
-| ItemType::Ring
-| ItemType::Rod
-| ItemType::Rubble
-| ItemType::Scroll1
-| ItemType::Scroll2
-| ItemType::SecretDoor
-| ItemType::SeenTrap
-| ItemType::Shield
-| ItemType::Staff
-| ItemType::UnseenTrap
-| ItemType::UpStaircase
-| ItemType::UpSteepStaircase
-| ItemType::Whirlpool
-```
+- None. The legacy `generic_item()` helper has been removed.
+- Removed/unsupported item types (`Potion2`, `Scroll2`, and `Rod`) now **panic** in `src/data/item_name.rs` if name generation is attempted.
+- Remaining item types are dispatched to dedicated naming modules.
 
 ## Migration Plan
 
@@ -121,7 +95,7 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 
 #### Cleanup
 
-- [ ] Remove empty `generic_item()` and unused code from `subtype.rs`
+- [x] Remove empty `generic_item()` and unused code from `subtype.rs` (inlined panic in dispatcher)
 
 ### Suggested Order
 
