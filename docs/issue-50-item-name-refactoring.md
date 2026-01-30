@@ -91,7 +91,6 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 | `horn.rs` | Horn | Medium | Shows remaining charges as `(x charges)` when item is identified |
 | `instrument.rs` | Instrument | Low | Fixed names per subtype |
 | `gem_helm.rs` | GemHelm | Low | Material + "of gems" when identified |
-| `rod.rs` | Rod | Unknown | Should show remaining charges as `(x charges)` |
 | `dungeon_feature.rs` | ClosedDoor, OpenDoor, SecretDoor, UpStaircase, DownStaircase, UpSteepStaircase, DownSteepStaircase, EntranceToStore, Rubble, Whirlpool, SeenTrap, UnseenTrap | Low | Dungeon features, rarely displayed as "items" |
 
 ### Task Checklist
@@ -118,7 +117,6 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 - [x] `chime.rs` - Chime
 - [x] `horn.rs` - Horn
 - [x] `staff.rs` - Staff
-- [ ] `rod.rs` - Rod
 - [ ] `dungeon_feature.rs` - All dungeon features (doors, stairs, traps, etc.)
 
 #### Cleanup
@@ -137,9 +135,8 @@ Each task = one PR. Work in TDD style (RED → GREEN → REFACTOR).
 8. **`chime.rs`** - Medium, subtype-known vs item-identified behavior (unknown chimes)
 9. **`horn.rs`** - Medium, subtype-known vs item-identified behavior (unknown horns + charges)
 10. **`staff.rs`** - Medium, subtype-known vs item-identified behavior (unknown staves + charges)
-11. **`rod.rs`** - Check what logic exists
-12. **`dungeon_feature.rs`** - Group all terrain/features last
-13. **Cleanup** - Remove `generic_item()` after all migrations
+11. **`dungeon_feature.rs`** - Group all terrain/features last
+12. **Cleanup** - Remove `generic_item()` after all migrations
 
 ## Implementation Pattern
 
@@ -178,4 +175,4 @@ This keeps the numeric mapping in one place and makes item-name logic easier to 
 - `%R`, `%M`, `%H`, `%W` are placeholder patterns that get replaced elsewhere (likely material names for unidentified items)
 - `Potion2` and `Scroll2` have been removed from the game (empty enums that panic)
 - Some items have special display logic (charges, armor bonus, damage) - check `generic_item()` for what applies.
-  Remaining charges should be visible for **staff**, **wand**, **rod**, **chime**, and **horn** (e.g. `horn of bubbles (3 charges)`).
+  Remaining charges should be visible for **staff**, **wand**, **chime**, and **horn** (e.g. `horn of bubbles (3 charges)`).
