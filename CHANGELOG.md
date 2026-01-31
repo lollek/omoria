@@ -5,6 +5,7 @@
 * Internal: started migrating small Pascal helper functions (`pindex`, vowel and set-membership checks) from C to Rust.
 * Internal: random helper functions can now accept an injected RNG (for deterministic tests).
 * Internal: object-name marker cleanup (`|` / `^`) is now handled by the Rust text utility layer.
+* Internal: Messages about remaining item charges/quantity now use the Rust item naming implementation.
 
 ## 5-alpha529
 
