@@ -64,7 +64,7 @@ Major C modules remaining:
   - **Testing**: Deterministic tests with seeded RNG
 
 #### 1.3 Text/String Utilities
-- [ ] `text_lines.c` → port string utilities to Rust
+- [x] `text_lines.c` → port string utilities to Rust
   - Extract pure string manipulation functions
   - **Complexity**: Low-Medium
   - **Dependencies**: Minimal
