@@ -20,6 +20,7 @@ pub mod commands;
 pub mod constants;
 pub mod conversion;
 pub mod data;
+pub mod dungeon;
 #[macro_use]
 pub mod debug;
 pub mod equipment;
