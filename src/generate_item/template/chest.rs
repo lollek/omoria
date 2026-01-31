@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{ChestSubType, ItemSubType},
     ChestFlags1, Item,
 };
-use crate::random::randint;
+use crate::rng::randint;
 use std::cmp::max;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]

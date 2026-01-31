@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{HardArmorSubType, ItemSubType, SoftArmorSubType},
     Item,
 };
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ArmorTemplate {

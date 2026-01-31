@@ -1,6 +1,6 @@
 extern crate rand;
 
-use crate::random::rand::Rng;
+use rand::Rng;
 
 /// Returns a random integer in the range `[1, max_value]`.
 ///

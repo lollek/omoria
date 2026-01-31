@@ -2,7 +2,7 @@ use crate::generate_item::item_template::default_create;
 use crate::generate_item::ItemQuality;
 use super::super::item_template::ItemTemplate;
 use crate::model::{self, item_subtype::{CloakSubType, ItemSubType}, Item, WornFlag1};
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CloakTemplate {

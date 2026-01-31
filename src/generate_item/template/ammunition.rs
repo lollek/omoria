@@ -3,7 +3,7 @@ use crate::generate_item::item_template::default_create;
 use crate::generate_item::ItemQuality;
 use crate::misc::rs2item_name;
 use crate::model::{self, item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType}, Item, WornFlag1, WornFlag2};
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {

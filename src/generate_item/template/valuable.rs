@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{GemSubType, ItemSubType, JewelrySubType, WearableGemSubType},
 };
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ValuableTemplate {

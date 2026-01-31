@@ -3,7 +3,7 @@ use crate::misc::rs2item_name;
 use super::super::item_template::ItemTemplate;
 use crate::model::{self, item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType}, Item};
 use crate::model::MiscUsableFlag1::{ContainingDemons, ContainingDjinni, DemonDispelling, LifeGiving, MajorSummonDemon, MajorSummonUndead, SummonDemon, SummonUndead, Turning};
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {

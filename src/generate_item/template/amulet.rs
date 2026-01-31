@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{AmuletSubType, ItemSubType},
     Item, WornFlag1,
 };
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {

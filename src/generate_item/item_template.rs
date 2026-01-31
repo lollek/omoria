@@ -8,7 +8,7 @@ use crate::model::item_subtype::{ItemSubType, MaulSubType};
 use crate::model::{Item, WornFlag2};
 use crate::model::ItemType;
 use crate::model::{Currency, WornFlag1};
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum ItemQuality {
