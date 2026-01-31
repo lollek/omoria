@@ -101,7 +101,7 @@ pub fn maybe_p1_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
     }
 }
 
-pub fn maybe_special_attribute(item: &Item) -> Option<Cow<str>> {
+pub fn maybe_special_attribute(item: &'_ Item) -> Option<Cow<'_, str>> {
     if item.is_identified() {
         let item_name = item_name2rs(&item.name);
         let suffixes = [

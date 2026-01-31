@@ -72,7 +72,7 @@ impl ItemTemplate for CloakTemplate {
                     5..=8 => { // of Stealth
                         item.apply_wornflag1(WornFlag1::Stealth);
                         item.toac += 1 + randint(1) as i16;
-                        item.p1 = randint(3) as i64;
+                        item.p1 = randint(3);
                         item.cost += item.p1 * 50_000 + item.toac as i64 * 10_000
                     },
                     9|_ => { // of Elvenkind

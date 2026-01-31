@@ -39,7 +39,7 @@ pub fn misc_usable(item: &Item) -> String {
     parts.join("")
 }
 
-fn subtype_name(item: &Item) -> Cow<str> {
+fn subtype_name(item: &'_ Item) -> Cow<'_, str> {
     Cow::Borrowed(match from_i64(ItemType::MiscUsable, item.subval) {
         Some(subtype) => match subtype {
             ItemSubType::MiscUsable(MiscUsableSubType::Statue) => "statue",

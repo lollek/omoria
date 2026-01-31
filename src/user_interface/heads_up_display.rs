@@ -1,6 +1,3 @@
-use crate::player_action::attack::{
-    calculate_number_of_attacks, calculate_player_tohit2, AttackType, MeleeAttackType,
-};
 use crate::{data, equipment, ncurses, player, term};
 use std::borrow::Cow;
 

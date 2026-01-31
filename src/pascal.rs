@@ -163,20 +163,20 @@ mod tests {
     fn abi_pindex_matches_legacy_c_semantics_for_bytes() {
         let s = CString::new("abcd").unwrap();
         unsafe {
-            assert_eq!(super::pindex(s.as_ptr(), 'a' as libc::c_char), 1);
-            assert_eq!(super::pindex(s.as_ptr(), 'c' as libc::c_char), 3);
-            assert_eq!(super::pindex(s.as_ptr(), 'z' as libc::c_char), 0);
-            assert_eq!(super::pindex(std::ptr::null(), 'a' as libc::c_char), 0);
+            assert_eq!(pindex(s.as_ptr(), 'a' as libc::c_char), 1);
+            assert_eq!(pindex(s.as_ptr(), 'c' as libc::c_char), 3);
+            assert_eq!(pindex(s.as_ptr(), 'z' as libc::c_char), 0);
+            assert_eq!(pindex(std::ptr::null(), 'a' as libc::c_char), 0);
         }
     }
 
     #[test]
     fn abi_is_vowel_matches_legacy_ascii_rules() {
         unsafe {
-            assert!(super::is_vowel('a' as libc::c_char));
-            assert!(super::is_vowel('A' as libc::c_char));
-            assert!(!super::is_vowel('b' as libc::c_char));
-            assert!(!super::is_vowel('?' as libc::c_char));
+            assert!(is_vowel('a' as libc::c_char));
+            assert!(is_vowel('A' as libc::c_char));
+            assert!(!is_vowel('b' as libc::c_char));
+            assert!(!is_vowel('?' as libc::c_char));
         }
     }
 
@@ -189,12 +189,12 @@ mod tests {
         set[2] = 5;
 
         unsafe {
-            assert!(super::is_in(1, set.as_ptr()));
-            assert!(!super::is_in(2, set.as_ptr()));
-            assert!(!super::is_in(0, set.as_ptr()));
-            assert!(!super::is_in(-1, set.as_ptr()));
-            assert!(!super::is_in(256, set.as_ptr()));
-            assert!(!super::is_in(1, std::ptr::null()));
+            assert!(is_in(1, set.as_ptr()));
+            assert!(!is_in(2, set.as_ptr()));
+            assert!(!is_in(0, set.as_ptr()));
+            assert!(!is_in(-1, set.as_ptr()));
+            assert!(!is_in(256, set.as_ptr()));
+            assert!(!is_in(1, std::ptr::null()));
         }
     }
 }

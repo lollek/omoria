@@ -248,7 +248,6 @@ name = "omoria"
 version = "0.1.0"
 dependencies = [
  "backtrace",
- "cc",
  "enum-iterator",
  "lazy_static",
  "libc",
