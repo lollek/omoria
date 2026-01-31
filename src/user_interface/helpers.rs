@@ -1,5 +1,5 @@
 use crate::model::Stat;
-use crate::{ncurses, player, term};
+use crate::{ncurses, player};
 use pancurses::A_DIM;
 
 pub fn print_stats(row: u8, col: u8) {

@@ -88,8 +88,8 @@ pub unsafe extern "C" fn unquote(object_str: *mut c_char) {
         .map(|ix| ix + 1)
         .unwrap_or(0);
 
-    let tilde_off = tilde_pos1_based as usize;
-    let pipe_off = pipe_pos1_based as usize;
+    let tilde_off = tilde_pos1_based;
+    let pipe_off = pipe_pos1_based;
 
     if tilde_off >= bytes_with_nul.len() || pipe_off >= bytes_with_nul.len() {
         return;
