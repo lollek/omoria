@@ -1,9 +1,11 @@
 use std::ffi::CStr;
+use std::ffi::CString;
 
 use libc::c_char;
 
 use crate::term;
 use crate::model::{InventoryItem, Item};
+use crate::data::item_name;
 
 const BAG_DESCRIP_BUF_SIZE: usize = 134;
 
@@ -305,6 +307,29 @@ pub unsafe extern "C" fn msg_charges_remaining(item_ptr: *const InventoryItem) {
     // SAFETY: out_val is a valid NUL-terminated C string.
     let bytes = unsafe { CStr::from_ptr(out_val.as_ptr()) }.to_bytes();
     term::msg_print(bytes);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn msg_remaining_of_item(_item_ptr: *const InventoryItem) {
+    if _item_ptr.is_null() {
+        return;
+    }
+
+    // Legacy behavior (text_lines.c):
+    // - Copies `item_ptr->data` into a temporary item.
+    // - Decrements `number` *before* naming, so the message describes the remaining
+    //   stack after consuming/using one item.
+    // - Prints: "You have <item_name(tmp_item)>.".
+    //
+
+    let mut tmp_item = unsafe { (*_item_ptr).data };
+    tmp_item.number = tmp_item.number.saturating_sub(1);
+
+    let item_desc = item_name::generate(&tmp_item);
+    let msg = format!("You have {}.", item_desc);
+    // term::msg_print takes bytes; ensure NUL-free.
+    let c = CString::new(msg).expect("msg_remaining_of_item output must not contain NUL");
+    term::msg_print(c.as_bytes());
 }
 
 #[cfg(test)]
@@ -744,5 +769,54 @@ mod msg_charges_remaining_tests {
         assert_eq!(term::test_last_msg_print(), "");
 
         term::test_clear_last_msg_print();
+    }
+}
+
+#[cfg(test)]
+mod msg_remaining_of_item_tests {
+    use super::*;
+    use serial_test::serial;
+    use crate::identification;
+
+    #[test]
+    #[serial]
+    fn msg_remaining_of_item_prints_you_have_item_name_with_decremented_quantity() {
+        // Desired behavior (legacy parity):
+        // - copies the item into inven_temp
+        // - decrements number (e.g. from 2 to 1)
+        // - prints "You have <item_name(inven_temp)>."
+        term::test_clear_last_msg_print();
+
+        let mut inv = InventoryItem {
+            data: Item::default(),
+            ok: 0,
+            insides: 0,
+            is_in: 0,
+            next: std::ptr::null_mut(),
+        };
+        // Make this a valid staff so item_name::generate() can format it.
+        inv.data.tval = crate::conversion::item_type::to_usize(crate::model::ItemType::Staff) as u8;
+        inv.data.subval = crate::conversion::item_subtype::to_usize(
+            &crate::model::item_subtype::ItemSubType::Staff(
+                crate::model::item_subtype::StaffSubType::StaffOfLight,
+            ),
+        ) as i64;
+        inv.data.set_identified(true);
+        inv.data.p1 = 5;
+        inv.data.number = 2;
+
+        unsafe { msg_remaining_of_item(&inv as *const InventoryItem) };
+
+        // When number is decremented from 2 -> 1, typical item naming will switch
+        // from plural to singular, so we should see a singular item mention.
+        // This assertion is intentionally tight: it checks the full user-facing sentence.
+        // NOTE: This assertion is only stable if the subval maps correctly.
+        assert_eq!(term::test_last_msg_print(), "You have staff of light (5 charges).");
+
+        // Avoid leaking/depending on global subtype identification across tests.
+        let staff_light_subtype = crate::model::item_subtype::ItemSubType::Staff(
+            crate::model::item_subtype::StaffSubType::StaffOfLight,
+        );
+        identification::set_identified(staff_light_subtype, false);
     }
 }
