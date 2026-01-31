@@ -171,6 +171,11 @@ pub unsafe extern "C" fn bag_descrip(bag: *const InventoryItem, result: *mut c_c
     result
 }
 
+/// C-compatible implementation of `identify` from `text_lines.c`.
+///
+/// This is a thin wrapper around [`identify_core`] that wires in:
+/// - the C global item arrays / lists (`t_list`, `equipment`, `inventory_list`)
+/// - the legacy side effect of marking the type identified.
 #[no_mangle]
 pub unsafe extern "C" fn identify(item_ptr: *mut Item) {
     if item_ptr.is_null() {
@@ -283,6 +288,9 @@ pub(crate) fn identify_core(
     mark_identified(item);
 }
 
+/// C-compatible implementation of `msg_charges_remaining`.
+///
+/// Player-facing intent: show remaining charges only when the item is identified.
 #[no_mangle]
 pub unsafe extern "C" fn msg_charges_remaining(item_ptr: *const InventoryItem) {
     if item_ptr.is_null() {
@@ -309,18 +317,18 @@ pub unsafe extern "C" fn msg_charges_remaining(item_ptr: *const InventoryItem) {
     term::msg_print(bytes);
 }
 
+/// C-compatible implementation of `msg_remaining_of_item` from `text_lines.c`.
+///
+/// Legacy contract:
+/// - Copy `item_ptr->data` into a temporary item.
+/// - Decrement `number` *before* naming, so the message describes the remaining
+///   stack after consuming/using one item.
+/// - Print: `"You have <item_name(tmp_item)>."`.
 #[no_mangle]
 pub unsafe extern "C" fn msg_remaining_of_item(_item_ptr: *const InventoryItem) {
     if _item_ptr.is_null() {
         return;
     }
-
-    // Legacy behavior (text_lines.c):
-    // - Copies `item_ptr->data` into a temporary item.
-    // - Decrements `number` *before* naming, so the message describes the remaining
-    //   stack after consuming/using one item.
-    // - Prints: "You have <item_name(tmp_item)>.".
-    //
 
     let mut tmp_item = unsafe { (*_item_ptr).data };
     tmp_item.number = tmp_item.number.saturating_sub(1);
@@ -781,11 +789,13 @@ mod msg_remaining_of_item_tests {
     #[test]
     #[serial]
     fn msg_remaining_of_item_prints_you_have_item_name_with_decremented_quantity() {
-        // Desired behavior (legacy parity):
-        // - copies the item into inven_temp
-        // - decrements number (e.g. from 2 to 1)
-        // - prints "You have <item_name(inven_temp)>."
         term::test_clear_last_msg_print();
+
+        // Avoid leaking/depending on global subtype identification across tests.
+        let staff_light_subtype = crate::model::item_subtype::ItemSubType::Staff(
+            crate::model::item_subtype::StaffSubType::StaffOfLight,
+        );
+        identification::set_identified(staff_light_subtype, false);
 
         let mut inv = InventoryItem {
             data: Item::default(),
@@ -813,10 +823,11 @@ mod msg_remaining_of_item_tests {
         // NOTE: This assertion is only stable if the subval maps correctly.
         assert_eq!(term::test_last_msg_print(), "You have staff of light (5 charges).");
 
-        // Avoid leaking/depending on global subtype identification across tests.
-        let staff_light_subtype = crate::model::item_subtype::ItemSubType::Staff(
-            crate::model::item_subtype::StaffSubType::StaffOfLight,
-        );
+        // This looks odd at first, but it matches the legacy C behavior: the function
+        // decrements a *temporary copy* of the item for naming/printing ("remaining after
+        // consuming one"), and must not modify the caller's inventory record.
+        assert_eq!(inv.data.number, 2);
+
         identification::set_identified(staff_light_subtype, false);
     }
 }
