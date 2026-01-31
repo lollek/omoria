@@ -8,7 +8,6 @@
 
 /* Toggleables */
 bool const do_debug_funcall = true;
-bool const do_debug_objdes = false;
 bool const do_debug_magic_cast = true;
 
 /* Debug variables */

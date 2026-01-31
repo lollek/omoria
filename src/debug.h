@@ -5,7 +5,6 @@
 
 #if DO_DEBUG
 extern bool const do_debug_funcall;
-extern bool const do_debug_objdes;
 extern bool const do_debug_magic_cast;
 
 #define ENTER(args) dbg__enter args;

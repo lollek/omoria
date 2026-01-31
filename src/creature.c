@@ -916,6 +916,17 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
   LEAVE("c__apply_attack", "c");
 }
 
+static void c__describe_monster_with_article(char out[82], const long monptr) {
+  if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
+    /* Unique/"proper name" monsters: don't use article. */
+    sprintf(out, "The %s", monster_templates[m_list[monptr].mptr].name);
+  } else {
+    /* Default: behave like the legacy "& name" item-style prefixing: "a/an name". */
+    const char *name = monster_templates[m_list[monptr].mptr].name;
+    sprintf(out, "%s %s", is_vowel(name[0]) ? "an" : "a", name);
+  }
+}
+
 static void c__make_attack(const long monptr) {
   /*{ Make an attack on the player                          -RAK-   }*/
 
@@ -937,14 +948,7 @@ static void c__make_attack(const long monptr) {
   strcat(cdesc, " ");
 
   /*{ For "DIED_FROM" string        }*/
-  if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
-    sprintf(ddesc, "The %s", monster_templates[m_list[monptr].mptr].name);
-  } else {
-    sprintf(ddesc, "& %s", monster_templates[m_list[monptr].mptr].name);
-  }
-  strcpy(inven_temp.data.name, ddesc);
-  inven_temp.data.number = 1;
-  objdes(ddesc, &inven_temp, true);
+  c__describe_monster_with_article(ddesc, monptr);
   strcpy(died_from, ddesc);
   /*{ End DIED_FROM                 }*/
 
@@ -1367,14 +1371,7 @@ static bool c__cast_spell(const long monptr, bool *took_turn) {
     find_monster_name(cdesc, monptr, true);
     strcat(cdesc, " ");
     /*{ For "DIED_FROM" string  }*/
-    if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
-      sprintf(ddesc, "The %s", monster_templates[m_list[monptr].mptr].name);
-    } else {
-      sprintf(ddesc, "& %s", monster_templates[m_list[monptr].mptr].name);
-    }
-    strcpy(inven_temp.data.name, ddesc);
-    inven_temp.data.number = 1;
-    item_name(ddesc, &inven_temp);
+    c__describe_monster_with_article(ddesc, monptr);
     /*{ End DIED_FROM                 }*/
 
     /*{ Extract all possible spells into spell_choice }*/
