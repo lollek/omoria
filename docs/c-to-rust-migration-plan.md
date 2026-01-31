@@ -78,6 +78,7 @@ Major C modules remaining:
   - Static trap definitions (treasure_type arrays)
   - **Complexity**: Low (data only)
   - **Testing**: Validate data matches C definitions
+  - **Details**: See [traps-migration.md](migration/traps-migration.md)
 
 #### 2.2 Monster Templates
 - [ ] `generate_monster/monster_template.c` → Rust
@@ -208,7 +209,7 @@ Each player action file in `player_action/` can be migrated independently:
 ### Phase 9: Core Systems (Very High Risk)
 **Goal**: Port the remaining core systems. Do these last.
 
-- [ ] `traps.c` → Rust (trap activation logic)
+- [ ] `traps.c` → Rust (trap activation logic) - See [traps-migration.md](migration/traps-migration.md)
 - [ ] `misc.c` → Rust (2319 lines - break into smaller modules)
 - [ ] `io.c` → Rust
 - [ ] `screen.c` → Rust
