@@ -37,7 +37,7 @@ pub mod model;
 pub mod ncurses;
 pub mod persistence;
 pub mod player;
-pub mod random;
+pub mod rng;
 pub mod save;
 pub mod term;
 pub mod thirdparty;

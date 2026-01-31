@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, StaffSubType},
 };
-use crate::random::randint;
+use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {

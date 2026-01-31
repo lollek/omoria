@@ -3,7 +3,7 @@ use crate::debug;
 use crate::error::Error;
 use crate::persistence;
 use crate::player;
-use crate::random;
+use crate::rng;
 
 #[derive(Serialize, Deserialize)]
 pub struct MasterRecord {
@@ -46,7 +46,7 @@ pub fn update_character(uid: i64) -> Result<(), Error> {
 pub fn add_character() -> Result<i64, Error> {
     let mut new_uid;
     loop {
-        new_uid = random::randint(<i64>::MAX - 1);
+        new_uid = rng::randint(<i64>::MAX - 1);
         if new_uid != 0 {
             break;
         }

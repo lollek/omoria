@@ -62,6 +62,7 @@ Major C modules remaining:
   - Keep existing functions as wrappers
   - **Complexity**: Low
   - **Testing**: Deterministic tests with seeded RNG
+- [x] Reorganize `random.rs` → `rng/` module (matches target STRUCTURE.md)
 
 #### 1.3 Text/String Utilities
 - [x] `text_lines.c` → port string utilities to Rust

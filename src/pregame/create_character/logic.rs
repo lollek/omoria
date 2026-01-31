@@ -13,7 +13,7 @@ use crate::pregame::create_character::model::StatsFromRace;
 use crate::{
     data, generate_item,
     model::{GameTime, Race, Stat, StatBlock},
-    player, random,
+    player, rng,
 };
 use crate::generate_item::ItemQuality;
 
@@ -27,10 +27,10 @@ extern "C" {
  */
 fn random_starting_stat() -> i16 {
     let mut stats = vec![
-        random::randint(6),
-        random::randint(6),
-        random::randint(6),
-        random::randint(6),
+        rng::randint(6),
+        rng::randint(6),
+        rng::randint(6),
+        rng::randint(6),
     ];
     stats.sort();
     stats.iter().skip(1).fold(0, |sum, i| sum + i) as i16
@@ -38,16 +38,16 @@ fn random_starting_stat() -> i16 {
 
 fn generate_player_age(player_race: &Race) -> u16 {
     match player_race {
-        Race::Human => 12 + random::randint(6) as u16,
-        Race::HalfElf => 24 + random::randint(16) as u16,
-        Race::Elf => 75 + random::randint(75) as u16,
-        Race::Halfling => 21 + random::randint(12) as u16,
-        Race::Gnome => 50 + random::randint(40) as u16,
-        Race::Dwarf => 35 + random::randint(15) as u16,
-        Race::HalfOrc => 11 + random::randint(4) as u16,
-        Race::HalfTroll => 20 + random::randint(10) as u16,
-        Race::Phraint => 15 + random::randint(10) as u16,
-        Race::Dryad => 75 + random::randint(75) as u16,
+        Race::Human => 12 + rng::randint(6) as u16,
+        Race::HalfElf => 24 + rng::randint(16) as u16,
+        Race::Elf => 75 + rng::randint(75) as u16,
+        Race::Halfling => 21 + rng::randint(12) as u16,
+        Race::Gnome => 50 + rng::randint(40) as u16,
+        Race::Dwarf => 35 + rng::randint(15) as u16,
+        Race::HalfOrc => 11 + rng::randint(4) as u16,
+        Race::HalfTroll => 20 + rng::randint(10) as u16,
+        Race::Phraint => 15 + rng::randint(10) as u16,
+        Race::Dryad => 75 + rng::randint(75) as u16,
     }
 }
 
@@ -126,7 +126,7 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
     let mut social_class: i16 = 0;
 
     for list in super::data::history::for_race(player::race()).iter() {
-        let roll = random::randint(100) as u8;
+        let roll = rng::randint(100) as u8;
         for triple in list {
             if triple.chance >= roll {
                 history += triple.history;
@@ -138,11 +138,11 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
     social_class = social_class.clamp(1, 100);
 
     let birthdate = GameTime {
-        year: 500 + random::randint(50),
-        month: random::randint(13) as u8,
-        day: random::randint(28) as u8,
-        hour: (random::randint(24) - 1) as u8,
-        secs: (random::randint(400) - 1) as u16,
+        year: 500 + rng::randint(50),
+        month: rng::randint(13) as u8,
+        day: rng::randint(28) as u8,
+        hour: (rng::randint(24) - 1) as u8,
+        secs: (rng::randint(400) - 1) as u16,
     };
 
     let age_plain = generate_player_age(race);
@@ -153,7 +153,7 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
             month: birthdate.month,
             day: birthdate.day + 1,
             hour: 7,
-            secs: (300 + random::randint(99)) as u16,
+            secs: (300 + rng::randint(99)) as u16,
         },
         birthdate,
         disarm_modifier: data::race::disarm_mod(race) as i16 + stat_modifiers::disarm(&stat_block),
@@ -210,7 +210,7 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
 
 pub(crate) fn generate_and_apply_money() {
     let player_stats = player::curr_stats();
-    let mut amount: i64 = 325 + random::randint(25)
+    let mut amount: i64 = 325 + rng::randint(25)
         // Social Class adj
         + unsafe { player::player_sc } as i64 * 6
         // Stat adj
@@ -223,7 +223,7 @@ pub(crate) fn generate_and_apply_money() {
     amount = max(amount, 80);
 
     let gold_value = data::currency::value(&Currency::Gold);
-    unsafe { add_money((amount * gold_value) + random::randint(gold_value)) };
+    unsafe { add_money((amount * gold_value) + rng::randint(gold_value)) };
 }
 
 pub(crate) fn generate_and_apply_equipment() {

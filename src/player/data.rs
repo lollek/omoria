@@ -13,7 +13,7 @@ use crate::conversion;
 use crate::data;
 use crate::misc;
 use crate::player;
-use crate::random;
+use crate::rng;
 
 extern "C" {
     pub(super) static mut player_money: [i64; 7]; /* { Money on person	} */
@@ -125,7 +125,7 @@ pub fn set_class(class: Class) {
 }
 
 pub fn roll_hp_for_levelup() -> i16 {
-    random::randint(hitdie() as i64) as i16
+    rng::randint(hitdie() as i64) as i16
 }
 
 pub fn mod_stat(stat: Stat, modifier: i16) {
