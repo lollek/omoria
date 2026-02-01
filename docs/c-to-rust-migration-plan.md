@@ -74,8 +74,10 @@ Major C modules remaining:
 **Goal**: Migrate static data and configuration that doesn't change during gameplay.
 
 #### 2.1 Trap Definitions
-- [ ] Trap templates from `traps.c` → `data/traps.rs`
-  - Static trap definitions (treasure_type arrays)
+- [x] Trap templates from `traps.c` → `dungeon/trap/data.rs`
+  - Static trap definitions (unified `TRAP_LIST` array)
+  - Trap placement functions (`place_trap`, `change_trap`, `place_rubble`)
+  - C ABI wrappers for interop
   - **Complexity**: Low (data only)
   - **Testing**: Validate data matches C definitions
   - **Details**: See [traps-migration.md](migration/traps-migration.md)
