@@ -3,6 +3,7 @@ mod tests {
     use serial_test::serial;
     use crate::dungeon::trap::data::{TRAP_LIST_A, TRAP_LIST_B, TVAL_RUBBLE};
     use crate::dungeon::trap::{place_trap_global, place_trap_into_lists, TrapList};
+    use crate::dungeon::trap::place_rubble_global;
     use crate::dungeon::trap::test_support;
     use crate::misc::rs2item_damage;
     use crate::model::{Cave, Item};
@@ -227,6 +228,29 @@ mod tests {
             let old_item = test_support::read_item(INITIAL_INDEX);
             assert_eq!(old_item.tval, 0);
             assert_eq!(old_item.subval, 0);
+        }
+    }
+
+    #[test]
+    #[serial]
+    fn place_rubble_global_allocates_slot_sets_fopen_false_and_sets_rubble_item() {
+        const Y: usize = 8;
+        const X: usize = 9;
+        const ALLOC_INDEX: u8 = 20;
+
+        unsafe {
+            test_support::clear_tile(Y, X);
+            test_support::reset_side_effect_counters();
+            test_support::set_next_alloc_index(ALLOC_INDEX);
+
+            place_rubble_global(Y, X);
+
+            let tile = test_support::read_tile(Y, X);
+            assert_eq!(tile.tptr, ALLOC_INDEX);
+            assert_eq!(tile.fopen, 0);
+
+            let item = test_support::read_item(ALLOC_INDEX);
+            assert_item_matches_template(&item, &crate::dungeon::trap::data::RUBBLE);
         }
     }
 }
