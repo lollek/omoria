@@ -2,11 +2,11 @@
 //!
 //! Static trap definitions ported from `src/traps.c`.
 //!
-//! ## Legacy indexing
+//! ## Indexing
 //!
-//! - C defines these arrays as `MAX_TRAP* + 1` and keeps a "bogus" element at index 0.
-//! - Many call sites use 1-based random selection (e.g. `randint(MAX_TRAPA)`).
-//! - Rust code should generally use indices 1..=N, not 0.
+//! The C code uses 1-based indices for trap subvals (`randint(MAX_TRAPA)` returns 1..N).
+//! The Rust arrays here are 0-based and contain only real traps (no bogus padding).
+//! The `template_for` function in `placement.rs` handles the index translation.
 //!
 //! ## Simplified template struct
 //!
@@ -47,11 +47,10 @@ pub const RUBBLE: TrapTemplate = TrapTemplate {
     cost: 0,
 };
 
-/// Trap templates from `traps.c` (`trap_lista`).
+/// Trap templates from `traps.c` (`trap_lista`), without the bogus padding entry.
 ///
-/// Length is `MAX_TRAPA + 1` (20). Index 0 is a bogus padding entry.
+/// Length is `MAX_TRAPA` (19). C code passes 1-based subval; use `subval - 1` to index.
 pub const TRAP_LIST_A: &[TrapTemplate] = &[
-    TrapTemplate { name: "bogus trap a", tval: TVAL_SEEN_TRAP, level: 0, subval: 1, damage: "2d6", cost: -50 },
     TrapTemplate { name: "an open pit", tval: TVAL_SEEN_TRAP, level: 0, subval: 1, damage: "2d6", cost: -50 },
     TrapTemplate { name: "an arrow trap", tval: TVAL_UNSEEN_TRAP, level: 0, subval: 2, damage: "1d8", cost: 0 },
     TrapTemplate { name: "a covered pit", tval: TVAL_UNSEEN_TRAP, level: 0, subval: 3, damage: "2d6", cost: 0 },
@@ -73,15 +72,14 @@ pub const TRAP_LIST_A: &[TrapTemplate] = &[
     TrapTemplate { name: "a chute", tval: TVAL_UNSEEN_TRAP, level: 5, subval: 20, damage: "4d8", cost: 20 },
 ];
 
-/// Trap templates from `traps.c` (`trap_listb`).
+/// Trap templates from `traps.c` (`trap_listb`), without the bogus padding entry.
 ///
-/// Length is `MAX_TRAPB + 1` (21). Index 0 is a bogus padding entry.
+/// Length is `MAX_TRAPB` (20). C code passes 1-based subval; use `subval - 1` to index.
 ///
 /// For list B traps:
 /// - `level` represents the difficulty of disarming
 /// - `cost` represents experience gained when disarmed (can be negative)
 pub const TRAP_LIST_B: &[TrapTemplate] = &[
-    TrapTemplate { name: "bogus trap b", tval: TVAL_SEEN_TRAP, level: 0, subval: 1, damage: "2d6", cost: -50 },
     TrapTemplate { name: "an open pit", tval: TVAL_SEEN_TRAP, level: 1, subval: 1, damage: "2d6", cost: -50 },
     TrapTemplate { name: "an arrow trap", tval: TVAL_SEEN_TRAP, level: 3, subval: 2, damage: "1d8", cost: -10 },
     TrapTemplate { name: "a covered pit", tval: TVAL_SEEN_TRAP, level: 2, subval: 3, damage: "2d6", cost: -40 },

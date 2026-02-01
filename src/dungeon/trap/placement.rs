@@ -15,11 +15,16 @@ pub enum TrapList {
     B,
 }
 
-/// Look up a trap template by list type and subval index.
+/// Look up a trap template by list type and subval.
+///
+/// The `subval` parameter is 1-based (as passed from C code).
+/// This function translates to 0-based indexing for the Rust arrays.
 fn template_for(list: TrapList, subval: usize) -> &'static data::TrapTemplate {
+    // C uses 1-based subval; Rust arrays are 0-based.
+    let index = subval - 1;
     match list {
-        TrapList::A => &data::TRAP_LIST_A[subval],
-        TrapList::B => &data::TRAP_LIST_B[subval],
+        TrapList::A => &data::TRAP_LIST_A[index],
+        TrapList::B => &data::TRAP_LIST_B[index],
     }
 }
 
