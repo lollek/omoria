@@ -84,6 +84,8 @@ pub const TRAP_LIST_A: &[TrapTemplate] = &[
 /// Trap templates from `traps.c` (`trap_listb`).
 ///
 /// Length is `MAX_TRAPB + 1` (21). Index 0 is a bogus padding entry.
+/// Traps: Level represents the difficulty of disarming
+/// and P1 represents the experienced gained when disarmed
 pub const TRAP_LIST_B: &[TrapTemplate] = &[
     TrapTemplate { name: "bogus trap b", tval: TVAL_SEEN_TRAP, flags: 0x00000000, flags2: 0x00000000, level: 0, weight: 0, subval: 1, number: 0, tohit: 0, todam: 0, ac: 0, toac: 0, p1: 0, damage: "2d6", cost: -50, special: 0 },
     TrapTemplate { name: "an open pit", tval: TVAL_SEEN_TRAP, flags: 0x00000000, flags2: 0x00000000, level: 1, weight: 0, subval: 1, number: 0, tohit: 0, todam: 0, ac: 0, toac: 0, p1: 0, damage: "2d6", cost: -50, special: 0 },

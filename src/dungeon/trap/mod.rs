@@ -4,6 +4,9 @@ pub mod data;
 mod globals;
 mod placement;
 
+// Export C ABI wrappers for the parts of traps.c we've already ported.
+pub mod interop;
+
 #[cfg(test)]
 pub(crate) mod test_support;
 

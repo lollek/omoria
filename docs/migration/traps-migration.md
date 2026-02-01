@@ -416,14 +416,20 @@ pub extern "C" fn trigger_trap(flags: libc::c_ulong, y: libc::c_int, x: libc::c_
 
 ## Migration Checklist
 
-### Phase 2.1: Trap Data
-- [ ] Create `src/dungeon/trap/` directory structure
-- [ ] Port `TrapTemplate` struct
-- [ ] Port `TRAP_LIST_A` constant array
-- [ ] Port `TRAP_LIST_B` constant array  
-- [ ] Port `RUBBLE` constant
-- [ ] Write validation tests
-- [ ] Review with navigator
+### Phase 2.1: Trap Data (DONE)
+- [x] Create `src/dungeon/trap/` directory structure
+- [x] Port `TrapTemplate` struct
+- [x] Port `TRAP_LIST_A` constant array
+- [x] Port `TRAP_LIST_B` constant array
+- [x] Port `RUBBLE` constant
+- [x] Add supporting constants used by trap placement (`TVAL_*` incl. `secret_door`)
+- [x] Implement and test trap placement wrappers:
+  - [x] `place_trap_into_lists`
+  - [x] `place_trap_global` (unsafe global wrapper)
+  - [x] `change_trap_global` (unsafe global wrapper, incl. `secret_door`)
+  - [x] `place_rubble_global` (unsafe global wrapper)
+- [x] Write validation tests (deterministic; serial where globals are involved)
+- [x] Review with navigator
 
 ### Phase (later): Town Entrances
 - [ ] Create `src/town/entrance.rs`
@@ -433,15 +439,16 @@ pub extern "C" fn trigger_trap(flags: libc::c_ulong, y: libc::c_int, x: libc::c_
 - [ ] Review with navigator
 
 ### Phase 9: Trap Logic
-- [ ] Port `effect.rs` handlers (one at a time, TDD)
-- [ ] Port `placement.rs` functions
-- [ ] Port `chest.rs` trap logic
-- [ ] Port `hit_trap` dispatcher
-- [ ] Add C interop wrappers
-- [ ] Integration tests
-- [ ] Remove C code
-- [ ] Update Makefile
-- [ ] Update CHANGELOG.md
+ - [ ] Port `effect.rs` handlers (one at a time, TDD)
+ - [ ] Port `placement.rs` functions
+ - [ ] Port `chest.rs` trap logic
+ - [ ] Port `hit_trap` dispatcher
+ - [ ] Add C interop wrappers
+   - [x] Provide C ABI wrappers for `place_trap`, `change_trap`, and `place_rubble` (Rust: `dungeon::trap::interop`)
+ - [ ] Integration tests
+ - [ ] Remove C code
+ - [ ] Update Makefile
+ - [ ] Update CHANGELOG.md
 
 ## Notes
 
