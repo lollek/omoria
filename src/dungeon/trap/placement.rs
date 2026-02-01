@@ -6,15 +6,16 @@ use crate::model::{Cave, Item};
 
 /// Which legacy trap table to use.
 ///
-/// This maps to the `typ` parameter in the C version of `place_trap`:
-/// - `typ == 1` → `trap_lista` (A)
-/// - `typ == 2` → `trap_listb` (B)
+/// Maps to the `typ` parameter in the C `place_trap`:
+/// - `typ == 1` → `trap_lista` (`TrapList::A`)
+/// - `typ == 2` → `trap_listb` (`TrapList::B`)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TrapList {
     A,
     B,
 }
 
+/// Look up a trap template by list type and subval index.
 fn template_for(list: TrapList, subval: usize) -> &'static data::TrapTemplate {
     match list {
         TrapList::A => &data::TRAP_LIST_A[subval],
@@ -22,32 +23,32 @@ fn template_for(list: TrapList, subval: usize) -> &'static data::TrapTemplate {
     }
 }
 
+/// Copy all fields from a `TrapTemplate` into an `Item`.
+///
+/// This mirrors the C code's direct struct assignment (`t_list[cur_pos] = trap;`).
+/// Fields not stored in `TrapTemplate` (because they're always zero for traps)
+/// are explicitly set to zero here.
 pub(crate) fn apply_template_to_item(item: &mut Item, template: &data::TrapTemplate) {
-    // Port the legacy `treasure_type` assignment used by C `place_trap`.
-    // This intentionally does not try to “fix” any legacy truncations.
     debug_assert!(template.tval >= 0 && template.tval <= u8::MAX as i64);
     debug_assert!(template.level >= i8::MIN as i64 && template.level <= i8::MAX as i64);
-    debug_assert!(template.weight >= 0 && template.weight <= u16::MAX as i64);
-    debug_assert!(template.number >= 0 && template.number <= u16::MAX as i64);
-    debug_assert!(template.tohit >= i16::MIN as i64 && template.tohit <= i16::MAX as i64);
-    debug_assert!(template.todam >= i16::MIN as i64 && template.todam <= i16::MAX as i64);
-    debug_assert!(template.ac >= i16::MIN as i64 && template.ac <= i16::MAX as i64);
-    debug_assert!(template.toac >= i16::MIN as i64 && template.toac <= i16::MAX as i64);
 
+    // Fields from the template (these vary per trap).
     item.tval = template.tval as u8;
-    item.flags = template.flags as u64;
-    item.flags2 = template.flags2 as u64;
     item.level = template.level as i8;
-    item.weight = template.weight as u16;
     item.subval = template.subval;
-    item.number = template.number as u16;
-    item.tohit = template.tohit as i16;
-    item.todam = template.todam as i16;
-    item.ac = template.ac as i16;
-    item.toac = template.toac as i16;
-    item.p1 = template.p1;
-    item.cost = template.cost;
     item.damage = rs2item_damage(template.damage);
+    item.cost = template.cost;
+
+    // Fields always zero for traps (not stored in TrapTemplate).
+    item.flags = 0;
+    item.flags2 = 0;
+    item.weight = 0;
+    item.number = 0;
+    item.tohit = 0;
+    item.todam = 0;
+    item.ac = 0;
+    item.toac = 0;
+    item.p1 = 0;
 }
 
 /// Place a trap template into the provided cave tile and `t_list` slot.

@@ -130,14 +130,6 @@ unsafe fn lite_spot(y: usize, x: usize) {
     C_lite_spot(y as libc::c_long, x as libc::c_long);
 }
 
-unsafe fn place_template_global(y: usize, x: usize, alloc_index: u8, template: &data::TrapTemplate) {
-    let cave = cave_global();
-    let t_list = t_list_global();
-
-    cave[y][x].tptr = alloc_index;
-    apply_template_to_item(&mut t_list[alloc_index as usize], template);
-}
-
 /// Unsafe wrapper around the legacy global state + allocator (`popt`), mirroring the C `place_trap`.
 ///
 /// This is intentionally `unsafe` because it mutates global state (`cave`, `t_list`).
@@ -151,11 +143,16 @@ pub unsafe fn place_trap_global(y: usize, x: usize, list: TrapList, subval: usiz
 
 /// Unsafe wrapper mirroring the C `change_trap` behavior.
 ///
-/// C equivalent:
-/// - if `t_list[cave[y][x].tptr].tval` is `unseen_trap` or `secret_door`
-/// - replace it with the corresponding entry from `trap_listb` (B) using the same `subval`
-/// - push the old index back on the free list (pusht)
-/// - refresh the tile (lite_spot)
+/// Reveals a hidden trap or secret door by replacing it with its visible counterpart.
+///
+/// Does nothing if:
+/// - the tile has no object (`tptr == 0`)
+/// - the object's `tval` is not `unseen_trap` or `secret_door`
+///
+/// Otherwise:
+/// - places the corresponding `TRAP_LIST_B` entry at `(y, x)` using the same `subval`
+/// - pushes the old t_list index back on the free list (`pusht`)
+/// - refreshes the tile display (`lite_spot`)
 pub unsafe fn change_trap_global(y: usize, x: usize) {
     let cave = cave_global();
     let t_list = t_list_global();
@@ -185,8 +182,12 @@ pub unsafe fn change_trap_global(y: usize, x: usize) {
 pub unsafe fn place_rubble_global(y: usize, x: usize) {
     let alloc_index = popt_alloc_index();
 
-    place_template_global(y, x, alloc_index, &data::RUBBLE);
+    let cave = cave_global();
+    let t_list = t_list_global();
+
+    cave[y][x].tptr = alloc_index;
+    apply_template_to_item(&mut t_list[alloc_index as usize], &data::RUBBLE);
 
     // Rubble blocks the tile.
-    cave_global()[y][x].fopen = 0;
+    cave[y][x].fopen = 0;
 }

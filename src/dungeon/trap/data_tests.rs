@@ -19,28 +19,26 @@ mod tests {
     fn assert_item_matches_template(item: &Item, tpl: &crate::dungeon::trap::data::TrapTemplate) {
         assert_eq!(item.tval as i64, tpl.tval);
         assert_eq!(item.subval, tpl.subval);
-
-        assert_eq!(item.flags as u32, tpl.flags);
-        assert_eq!(item.flags2 as u32, tpl.flags2);
         assert_eq!(item.level as i64, tpl.level);
-        assert_eq!(item.weight as i64, tpl.weight);
-        assert_eq!(item.number as i64, tpl.number);
-        assert_eq!(item.tohit as i64, tpl.tohit);
-        assert_eq!(item.todam as i64, tpl.todam);
-        assert_eq!(item.ac as i64, tpl.ac);
-        assert_eq!(item.toac as i64, tpl.toac);
-        assert_eq!(item.p1, tpl.p1);
         assert_eq!(item.cost, tpl.cost);
         assert_eq!(item.damage, rs2item_damage(tpl.damage));
+
+        // These fields are always zero for traps (not stored in TrapTemplate).
+        assert_eq!(item.flags, 0);
+        assert_eq!(item.flags2, 0);
+        assert_eq!(item.weight, 0);
+        assert_eq!(item.number, 0);
+        assert_eq!(item.tohit, 0);
+        assert_eq!(item.todam, 0);
+        assert_eq!(item.ac, 0);
+        assert_eq!(item.toac, 0);
+        assert_eq!(item.p1, 0);
     }
 
-    /// Phase 2.1 (RED): pin down basic expectations from `src/traps.c`.
+    /// Validate that trap list counts match the legacy C arrays.
     ///
-    /// These counts should match the legacy arrays:
     /// - `trap_lista[MAX_TRAPA + 1]` where `MAX_TRAPA` is 19 → 20 entries (index 0 is "bogus").
     /// - `trap_listb[MAX_TRAPB + 1]` where `MAX_TRAPB` is 20 → 21 entries (index 0 is "bogus").
-    ///
-    /// This keeps our Rust port honest about legacy indexing.
     #[test]
     fn trap_template_lists_have_legacy_counts() {
         // MAX_TRAPA=19, MAX_TRAPB=20 in src/constants.h
@@ -48,16 +46,7 @@ mod tests {
         assert_eq!(TRAP_LIST_B.len(), MAX_TRAPB + 1);
     }
 
-    /// Phase 2.1 (next step, RED): port the standalone `some_rubble` template.
-    ///
-    /// In C (traps.c):
-    /// ```c
-    /// static treasure_type some_rubble = {
-    ///     "some rubble", rubble, 0x00000000, 0x00000000, 0, 0, 1, 0, 0, 0, 0, 0, 0,
-    ///     "0d0",         0,      0};
-    /// ```
-    ///
-    /// This test should fail until `RUBBLE` exists in `dungeon::trap::data`.
+    /// Validate that the standalone rubble template matches the C definition.
     #[test]
     fn rubble_template_matches_legacy_definition() {
         let rubble = crate::dungeon::trap::data::RUBBLE;
@@ -251,6 +240,53 @@ mod tests {
 
             let item = test_support::read_item(ALLOC_INDEX);
             assert_item_matches_template(&item, &crate::dungeon::trap::data::RUBBLE);
+        }
+    }
+
+    #[test]
+    #[serial]
+    fn change_trap_global_does_nothing_when_tile_has_no_object() {
+        const Y: usize = 10;
+        const X: usize = 11;
+
+        unsafe {
+            test_support::clear_tile(Y, X);
+            test_support::reset_side_effect_counters();
+
+            crate::dungeon::trap::change_trap_global(Y, X);
+
+            // Should be a no-op: no pusht, no lite_spot, tile unchanged.
+            assert_eq!(test_support::pusht_called(), 0);
+            assert_eq!(test_support::lite_spot_called(), 0);
+            assert_eq!(test_support::read_tile(Y, X).tptr, 0);
+        }
+    }
+
+    #[test]
+    #[serial]
+    fn change_trap_global_does_nothing_when_item_is_already_seen_trap() {
+        const Y: usize = 12;
+        const X: usize = 13;
+        const INDEX: u8 = 25;
+
+        unsafe {
+            test_support::clear_tile(Y, X);
+            test_support::reset_side_effect_counters();
+            test_support::set_tile_tptr(Y, X, INDEX);
+
+            // Seed an already-visible trap (TVAL_SEEN_TRAP) — should not trigger change.
+            test_support::write_item_tval_subval(
+                INDEX,
+                crate::dungeon::trap::data::TVAL_SEEN_TRAP as u8,
+                1,
+            );
+
+            crate::dungeon::trap::change_trap_global(Y, X);
+
+            // Should be a no-op.
+            assert_eq!(test_support::pusht_called(), 0);
+            assert_eq!(test_support::lite_spot_called(), 0);
+            assert_eq!(test_support::read_tile(Y, X).tptr, INDEX);
         }
     }
 }
