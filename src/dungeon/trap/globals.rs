@@ -2,7 +2,7 @@
 
 use crate::constants;
 use crate::dungeon::trap::data;
-use crate::dungeon::trap::placement::{apply_template_to_item, place_trap_into_lists, TrapList};
+use crate::dungeon::trap::placement::{apply_rubble_to_item, place_trap_into_lists, TrapList};
 use crate::model::{Cave, Item};
 
 #[cfg(not(test))]
@@ -186,7 +186,7 @@ pub unsafe fn place_rubble_global(y: usize, x: usize) {
     let t_list = t_list_global();
 
     cave[y][x].tptr = alloc_index;
-    apply_template_to_item(&mut t_list[alloc_index as usize], &data::RUBBLE);
+    apply_rubble_to_item(&mut t_list[alloc_index as usize]);
 
     // Rubble blocks the tile.
     cave[y][x].fopen = 0;

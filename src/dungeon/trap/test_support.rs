@@ -11,7 +11,7 @@ use crate::dungeon::trap::globals::{
 };
 use crate::model::{Cave, Item};
 
-use crate::dungeon::trap::data::TrapTemplate;
+use crate::dungeon::trap::data::{TrapTemplate, TVAL_UNSEEN_TRAP};
 use crate::dungeon::trap::placement::apply_template_to_item;
 
 /// Set the index that `popt_alloc_index()` will return next.
@@ -46,9 +46,9 @@ pub unsafe fn write_item_tval_subval(index: u8, tval: u8, subval: i64) {
     item.subval = subval;
 }
 
-/// Write a full item from a TrapTemplate into a t_list slot.
+/// Write a full item from a TrapTemplate into a t_list slot (using unseen tval).
 pub unsafe fn write_item_from_template(index: u8, tpl: &TrapTemplate) {
-    apply_template_to_item(&mut TEST_T_LIST[index as usize], tpl);
+    apply_template_to_item(&mut TEST_T_LIST[index as usize], tpl, TVAL_UNSEEN_TRAP);
 }
 
 /// Reset all side-effect counters (pusht, lite_spot) to zero.
