@@ -33,6 +33,7 @@ pub const TVAL_UNSEEN_TRAP: i64 = 101;
 pub const TVAL_SEEN_TRAP: i64 = 102;
 pub const TVAL_RUBBLE: i64 = 103;
 pub const TVAL_CLOSED_DOOR: i64 = 105;
+pub const TVAL_SECRET_DOOR: i64 = 109;
 
 /// Standalone rubble template from `traps.c` (`some_rubble`).
 pub const RUBBLE: TrapTemplate = TrapTemplate {

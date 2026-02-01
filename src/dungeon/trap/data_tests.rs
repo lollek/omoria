@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use serial_test::serial;
     use crate::dungeon::trap::data::{TRAP_LIST_A, TRAP_LIST_B, TVAL_RUBBLE};
     use crate::dungeon::trap::{place_trap_global, place_trap_into_lists, TrapList};
     use crate::dungeon::trap::test_support;
@@ -121,6 +122,111 @@ mod tests {
 
             assert_eq!(tile.tptr, ALLOC_INDEX);
             assert_item_matches_template(&item, tpl);
+        }
+    }
+
+    #[test]
+    #[serial]
+    fn change_trap_global_replaces_unseen_trap_with_seen_variant_and_restores_slot() {
+        // C change_trap:
+        // - if t_list[cave[y][x].tptr].tval is in {unseen_trap, secret_door}
+        // - it places the corresponding type-B trap at the same (y,x)
+        // - then pushes the old t_list index back (so it can be reused)
+        //
+        // We can assert:
+        // - tile's tptr changes to the newly allocated index
+        // - the new item matches TRAP_LIST_B[subval] (all fields)
+        // - pusht is called with the old t_list index (free-list restored)
+        // - lite_spot is called for the affected tile
+        // - the old slot is cleared (blank_treasure behavior)
+
+        const Y: usize = 4;
+        const X: usize = 5;
+        const INITIAL_INDEX: u8 = 10;
+        const NEW_INDEX: u8 = 11;
+
+        // Use an UNSEEN trap from list A (arrow trap has subval=2).
+        const SUBVAL_ARROW_TRAP: usize = 2;
+
+        unsafe {
+            // Arrange initial placement in the global arrays.
+            test_support::clear_tile(Y, X);
+            test_support::reset_side_effect_counters();
+
+            // Put an unseen trap in the existing slot.
+            let tpl_a = &TRAP_LIST_A[SUBVAL_ARROW_TRAP];
+            test_support::set_tile_tptr(Y, X, INITIAL_INDEX);
+            test_support::write_item_from_template(INITIAL_INDEX, tpl_a);
+
+            // Configure allocator to return a new slot.
+            test_support::set_next_alloc_index(NEW_INDEX);
+
+            // Act.
+            crate::dungeon::trap::change_trap_global(Y, X);
+
+            // Assert.
+            let tile = test_support::read_tile(Y, X);
+            assert_eq!(tile.tptr, NEW_INDEX);
+
+            let new_item = test_support::read_item(NEW_INDEX);
+            let tpl_b = &TRAP_LIST_B[SUBVAL_ARROW_TRAP];
+            assert_item_matches_template(&new_item, tpl_b);
+
+            assert_eq!(test_support::pusht_called(), 1);
+            assert_eq!(test_support::last_pusht_index(), INITIAL_INDEX);
+            assert_eq!(test_support::lite_spot_called(), 1);
+            assert_eq!(test_support::last_lite_spot_yx(), (Y, X));
+
+            // Old slot should be cleared by pusht (blank_treasure).
+            let old_item = test_support::read_item(INITIAL_INDEX);
+            assert_eq!(old_item.tval, 0);
+            assert_eq!(old_item.subval, 0);
+        }
+    }
+
+    #[test]
+    #[serial]
+    fn change_trap_global_replaces_secret_door_with_seen_variant_and_restores_slot() {
+        const Y: usize = 6;
+        const X: usize = 7;
+        const INITIAL_INDEX: u8 = 12;
+        const NEW_INDEX: u8 = 13;
+
+        // Subval must map into TRAP_LIST_B; any normal trap subval works.
+        const SUBVAL_ARROW_TRAP: usize = 2;
+
+        unsafe {
+            test_support::clear_tile(Y, X);
+            test_support::reset_side_effect_counters();
+
+            test_support::set_tile_tptr(Y, X, INITIAL_INDEX);
+
+            // Seed a "secret door" entry in t_list.
+            test_support::write_item_tval_subval(
+                INITIAL_INDEX,
+                crate::dungeon::trap::data::TVAL_SECRET_DOOR as u8,
+                TRAP_LIST_A[SUBVAL_ARROW_TRAP].subval,
+            );
+
+            test_support::set_next_alloc_index(NEW_INDEX);
+
+            crate::dungeon::trap::change_trap_global(Y, X);
+
+            let tile = test_support::read_tile(Y, X);
+            assert_eq!(tile.tptr, NEW_INDEX);
+
+            let new_item = test_support::read_item(NEW_INDEX);
+            let tpl_b = &TRAP_LIST_B[SUBVAL_ARROW_TRAP];
+            assert_item_matches_template(&new_item, tpl_b);
+
+            assert_eq!(test_support::pusht_called(), 1);
+            assert_eq!(test_support::last_pusht_index(), INITIAL_INDEX);
+            assert_eq!(test_support::lite_spot_called(), 1);
+            assert_eq!(test_support::last_lite_spot_yx(), (Y, X));
+
+            let old_item = test_support::read_item(INITIAL_INDEX);
+            assert_eq!(old_item.tval, 0);
+            assert_eq!(old_item.subval, 0);
         }
     }
 }

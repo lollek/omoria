@@ -22,7 +22,7 @@ fn template_for(list: TrapList, subval: usize) -> &'static data::TrapTemplate {
     }
 }
 
-fn apply_template_to_item(item: &mut Item, template: &data::TrapTemplate) {
+pub(crate) fn apply_template_to_item(item: &mut Item, template: &data::TrapTemplate) {
     // Port the legacy `treasure_type` assignment used by C `place_trap`.
     // This intentionally does not try to “fix” any legacy truncations.
     debug_assert!(template.tval >= 0 && template.tval <= u8::MAX as i64);
