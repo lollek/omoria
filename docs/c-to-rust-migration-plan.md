@@ -83,7 +83,7 @@ Major C modules remaining:
   - **Details**: See [traps-migration.md](migration/traps-migration.md)
 
 #### 2.2 Monster Templates
-- [ ] `generate_monster/monster_template.c` → Rust
+- [x] `generate_monster/monster_template.c` → Rust
   - Static creature definitions
   - **Complexity**: Low-Medium
   - **Dependencies**: Model types
