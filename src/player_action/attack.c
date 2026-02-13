@@ -20,37 +20,52 @@ static bool attack_lands_on_monster(
   long damage;
 
   if (equipment[Equipment_primary].tval > 0) {
-    damage = damroll(equipment[Equipment_primary].damage);
-    damage = tot_dam(&equipment[Equipment_primary], damage, monster_template);
+    long damage_from_weapon = damroll(equipment[Equipment_primary].damage);
+    damage_from_weapon = tot_dam(&equipment[Equipment_primary],
+                                 damage_from_weapon, monster_template);
     const bool is_sharp =
         equipment[Equipment_primary].tval != bow_crossbow_or_sling &&
         (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0;
     const long crit_mult = critical_blow(equipment[Equipment_primary].weight,
                                          tot_tohit, is_sharp, false);
+    long backstab_damage = 0;
     if (is_backstab) {
-      damage *= player_lev / 7 + 1;
+      backstab_damage = damage_from_weapon * (player_lev / 7 + 1);
     }
+    long damage_from_class = 0;
     if (player_pclass == C_WARRIOR) {
-      damage += player_lev / 3;
+      damage_from_class = player_lev / 3;
     }
-    damage += (damage + 5) * crit_mult;
+    const long crit_damage =
+        (damage_from_weapon + backstab_damage + damage_from_class + 5) *
+        crit_mult;
+    damage = damage_from_weapon + backstab_damage + damage_from_class +
+             crit_damage + player_ptodam;
+    MSG(("PlayerDamage: %ld (weapon) + %ld (backstab) + %ld (class) + %ld "
+         "(crit) + %ld (ptodam) = %ld",
+         damage_from_weapon, backstab_damage, damage_from_class, crit_damage, player_ptodam, damage));
 
   } else { /*{ Bare hands!?  }*/
     if (player_pclass == C_MONK) {
-      damage = randint((4 + 2 * player_lev) / 3);
+      const long damage_from_level = randint((4 + 2 * player_lev) / 3);
       const long crit_mult = critical_blow(12000, 0, false, false);
       if (randint(crit_mult + 2) > 2) {
         do_stun(a_cptr, -10, 2);
       }
-      damage += (damage + 5) * crit_mult;
+      const long crit_damage = (damage_from_level + 5) * crit_mult;
+
+      damage = damage_from_level + crit_damage + player_ptodam;
+      MSG(("PlayerDamage: %ld (level) + %ld (crit) + %ld (ptodam) = %ld", damage_from_level, crit_damage, player_ptodam, damage));
     } else {
-      damage = damroll(bare_hands);
+      const long damage_from_weapon = damroll(bare_hands);
       const long crit_mult = critical_blow(1, 0, false, false);
-      damage += (damage + 5) * crit_mult;
+      const long crit_damage = (damage_from_weapon + 5) * crit_mult;
+
+      damage = damage_from_weapon + crit_damage + player_ptodam;
+      MSG(("PlayerDamage: %ld (level) + %ld (crit) + %ld (ptodam) = %ld", damage_from_weapon, crit_damage, player_ptodam, damage));
     }
   }
 
-  damage += player_ptodam;
   if (damage < 0) {
     damage = 0;
   }
@@ -77,7 +92,7 @@ static bool attack_lands_on_monster(
 }
 
 static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
-                                long const a_mptr, const long tot_tohit,
+                                long const a_mptr, const long to_hit,
                                 bool const is_backstab) {
   char m_name[82];
   find_monster_name(m_name, a_cptr, false);
@@ -89,10 +104,7 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
 
   bool monster_is_hit_but_alive = false;
   for (; number_of_attacks >= 1; number_of_attacks--) {
-    const long base_to_hit =
-        player_bth + player_lev * C_class_melee_bonus(player_pclass) / 2;
-    bool const did_hit =
-        player_test_hit(base_to_hit, tot_tohit, monster_template->ac);
+    bool const did_hit = player_test_hit(to_hit, 0, monster_template->ac);
     if (!did_hit) {
       switch (randint(10)) {
       case 1:
@@ -113,7 +125,7 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
     }
 
     bool const monster_is_alive = attack_lands_on_monster(
-        a_cptr, monster_template, tot_tohit, is_backstab, is_missile);
+        a_cptr, monster_template, to_hit, is_backstab, is_missile);
     if (!monster_is_alive) {
       msg_printf("You have slain %s.", m_name);
       return false;
@@ -143,7 +155,7 @@ bool player_action_attack(const long y, const long x) {
   m_list[a_cptr].csleep = 0;
 
   long const number_of_attacks = C_calculate_number_of_attacks();
-  long const tot_tohit = C_calculate_player_tohit_melee(is_backstab);
+  long const to_hit = C_calculate_player_tohit_melee(is_backstab);
 
   /*{ stopped from killing town creatures?? }*/
   if ((monster_templates[a_mptr].cmove & 0x00004000) == 0 ||
@@ -156,8 +168,8 @@ bool player_action_attack(const long y, const long x) {
   /*{ Loop for number of blows, trying to hit the critter...        }*/
   bool monster_is_hit_but_alive = false;
   if (player_is_mean_jerk) {
-    monster_is_hit_but_alive = execute_all_attacks(
-        number_of_attacks, a_cptr, a_mptr, tot_tohit, is_backstab);
+    monster_is_hit_but_alive = execute_all_attacks(number_of_attacks, a_cptr,
+                                                   a_mptr, to_hit, is_backstab);
   }
 
   RETURN("py_attack", "", 'b', "hit", &monster_is_hit_but_alive);

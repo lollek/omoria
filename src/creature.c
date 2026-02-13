@@ -284,134 +284,70 @@ static void c__monster_eaten_message(char const *squash, char const *doesit,
 }
 
 static bool c__check_for_hit(const long monptr, const long atype) {
-  bool flag = false;
-
-  ENTER(("c__check_for_hit", "c"));
-
   const long level = monster_templates[m_list[monptr].mptr].level;
   const long armor_stuff = player_pac + player_ptoac;
 
   switch (atype) {
   case 1: /*{Normal attack  }*/
-    flag = managed_to_hit(60, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(60, level, 0, armor_stuff);
   case 2: /*{Poison Strength}*/
-    flag = managed_to_hit(-3, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(-3, level, 0, armor_stuff);
   case 3: /*{Confusion attack}*/
-    flag = managed_to_hit(10, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(10, level, 0, armor_stuff);
   case 4: /*{Fear attack    }*/
-    flag = managed_to_hit(10, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(10, level, 0, armor_stuff);
   case 5: /*{Fire attack    }*/
-    flag = managed_to_hit(10, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(10, level, 0, armor_stuff);
   case 6: /*{Acid attack    }*/
-    flag = managed_to_hit(0, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(0, level, 0, armor_stuff);
   case 7: /*{Cold attack    }*/
-    flag = managed_to_hit(10, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(10, level, 0, armor_stuff);
   case 8: /*{Lightning attack}*/
-    flag = managed_to_hit(10, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(10, level, 0, armor_stuff);
   case 9: /*{Corrosion attack}*/
-    flag = managed_to_hit(0, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(0, level, 0, armor_stuff);
   case 10: /*{Blindness attack}*/
-    flag = managed_to_hit(2, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(2, level, 0, armor_stuff);
   case 11: /*{Paralysis attack}*/
-    flag = managed_to_hit(2, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(2, level, 0, armor_stuff);
   case 12: /*{Steal Money    }*/
-    flag = managed_to_hit(5, level, 0, player_lev) && player_money[TOTAL_] > 0;
-    break;
-
+    return managed_to_hit(5, level, 0, player_lev) && player_money[TOTAL_] > 0;
   case 13: /*{Steal Object   }*/
-    flag = managed_to_hit(2, level, 0, player_lev) && inven_ctr > 0;
-    break;
-
+    return managed_to_hit(2, level, 0, player_lev) && inven_ctr > 0;
   case 14: /*{Poison         }*/
-    flag = managed_to_hit(5, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(5, level, 0, armor_stuff);
   case 15: /*{Lose dexterity}*/
-    flag = managed_to_hit(0, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(0, level, 0, armor_stuff);
   case 16: /*{Lose constitution}*/
-    flag = managed_to_hit(0, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(0, level, 0, armor_stuff);
   case 17: /*{Lose intelligence}*/
-    flag = managed_to_hit(2, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(2, level, 0, armor_stuff);
   case 18: /*{Lose wisdom}*/
-    flag = managed_to_hit(0, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(0, level, 0, armor_stuff);
   case 19: /*{Lose experience}*/
-    flag = managed_to_hit(5, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(5, level, 0, armor_stuff);
   case 20: /*{Aggravate monsters}*/
-    flag = true;
-    break;
-
+    return true;
   case 21: /*{Disenchant        }*/
-    flag = managed_to_hit(20, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(20, level, 0, armor_stuff);
   case 22: /*{Eat food          }*/
-    flag = managed_to_hit(5, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(5, level, 0, armor_stuff);
   case 23: /*{Eat light         }*/
-    flag = managed_to_hit(5, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(5, level, 0, armor_stuff);
   case 24: /*{Eat charges       }*/
-    flag = managed_to_hit(15, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(15, level, 0, armor_stuff);
   case 25: /*{Lose charisma     }*/
-    flag = managed_to_hit(2, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(2, level, 0, armor_stuff);
   case 26: /*{Petrification     }*/
-    flag = managed_to_hit(10, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(10, level, 0, armor_stuff);
   case 27: /*{POISON poison     }*/
-    flag = managed_to_hit(5, level, 0, armor_stuff);
-    break;
-
+    return managed_to_hit(5, level, 0, armor_stuff);
   case 99: /* protevil or protmon repelled the attack */
-    flag = true;
-    break;
-
+    return true;
   default:
-    flag = false;
-    break;
+    return false;
 
-  } /* end switch */
-
-  RETURN("c__check_for_hit", "c", 'b', "test hit:", &flag);
-  return flag;
+  }
 }
 
 static void c__print_attack(const long adesc, char *cdesc) {
@@ -592,22 +528,26 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
   switch (atype) {
   case 1: /*{Normal attack  }*/
     dam = damroll(damstr);
-    /* with player_do; */
-    dam -= (long)((player_pac + player_ptoac) / 200.0 * dam + .5);
+    const long reduction = (long)((player_pac + player_ptoac) / 200.0 * dam + .5);
+    MSG(("Damage (Normal): %ld - %ld = %ld", dam, reduction, dam - reduction));
+    dam -= reduction;
     take_hit(dam, ddesc);
     prt_stat_block();
     break;
 
   case 2: /*{Poison Strength}*/
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Poison Strength): %ld", dam));
+    take_hit(dam, ddesc);
     lose_stat(STR, "You feel weaker.",
               "You feel weaker for a moment, then it passes.");
     prt_stat_block();
     break;
 
   case 3: /*{Confusion attack}*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Confusion): %ld", dam));
+    take_hit(dam, ddesc);
     if (randint(2) == 1) {
       if (player_flags.confused < 1) {
         msg_print("You feel confused.");
@@ -619,8 +559,9 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
     break;
 
   case 4: /*{Fear attack    }*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Fear): %ld", dam));
+    take_hit(dam, ddesc);
     if (player_spell_saves()) {
       msg_print("You resist the effects!");
     } else if (player_flags.afraid < 1) {
@@ -655,13 +596,16 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
   case 9: /*{Corrosion attack}*/
     msg_print("A stinging red gas swirls about you.");
     corrode_gas(ddesc);
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Corrosion): %ld", dam));
+    take_hit(dam, ddesc);
     prt_stat_block();
     break;
 
   case 10: /*{Blindness attack}*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Blindness): %ld", dam));
+    take_hit(dam, ddesc);
     if (player_flags.blind < 1) {
       player_flags.blind += 10 + randint(level);
       msg_print("Your eyes begin to sting.");
@@ -673,8 +617,9 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
     break;
 
   case 11: /*{Paralysis attack}*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Paralysis): %ld", dam));
+    take_hit(dam, ddesc);
     if (player_spell_saves()) {
       msg_print("You resist the effects!");
     } else if (player_flags.paralysis < 1) {
@@ -691,7 +636,6 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
     break;
 
   case 12: /*{Steal Money     }*/
-    /* with player_do; */
     if (randint(256) < C_player_get_stat(DEX) * 10 &&
         player_flags.paralysis < 1) {
       msg_print("You quickly protect your money pouch!");
@@ -749,40 +693,45 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
     break;
 
   case 14: /*{Poison         }*/
-    /* with player_flags do ; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Poison): %ld", dam));
+    take_hit(dam, ddesc);
     prt_stat_block();
     msg_print("You feel very sick.");
     player_flags.poisoned += randint(level) + 5;
     break;
 
   case 15: /*{Lose dexterity }*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Lose Dexterity): %ld", dam));
+    take_hit(dam, ddesc);
     lose_stat(DEX, "You feel more clumsy",
               "You feel clumsy for a moment, then it passes.");
     prt_stat_block();
     break;
 
   case 16: /*{Lose constitution }*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Lose Constitution): %ld", dam));
+    take_hit(dam, ddesc);
     lose_stat(CON, "Your health is damaged!",
               "Your body resists the effects of the disease.");
     prt_stat_block();
     break;
 
   case 17: /*{Lose intelligence }*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Lose Intelligence): %ld", dam));
+    take_hit(dam, ddesc);
     lose_stat(INT, "You feel your memories fading.",
               "You feel your memories fade, then they are restored!");
     prt_stat_block();
     break;
 
   case 18: /*{Lose wisdom      }*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Lose Wisdom): %ld", dam));
+    take_hit(dam, ddesc);
     lose_stat(WIS, "Your wisdom is drained.", "Your wisdom is sustained.");
     prt_stat_block();
     break;
@@ -889,21 +838,22 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
     break;
 
   case 25: /*{Lose charisma   }*/
-    /* with player_flags do; */
-    take_hit(damroll(damstr), ddesc);
+    dam = damroll(damstr);
+    MSG(("Damage (Lose Charisma): %ld", dam));
+    take_hit(dam, ddesc);
     lose_stat(CHR, "Your skin starts to itch.",
               "Your skin starts to itch, but feels better now.");
     prt_stat_block();
     break;
 
   case 26: /*{Petrification  }*/
-    /* with player_flags do; */
     petrify(m_list[monptr].hp);
     break;
 
   case 27: /*{POISON Poison  }*/
-    /* with player_flags do; */
-    player_flags.poisoned += damroll(damstr);
+    dam = damroll(damstr);
+    MSG(("Damage (Poisoned): %ld", dam));
+    player_flags.poisoned += dam;
     msg_print("You feel very sick.");
     break;
 
@@ -912,7 +862,7 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
 
   default:
     break;
-  } /* end switch */
+  }
 
   LEAVE("c__apply_attack", "c");
 }
@@ -930,52 +880,48 @@ static void c__describe_monster_with_article(char out[82], const long monptr) {
 
 static void c__make_attack(const long monptr) {
   /*{ Make an attack on the player                          -RAK-   }*/
-
-  long atype;
-  long adesc; /*,dam;*/
-  long acount;
-  char attstr[82];
-  char attx[82];
-  char cdesc[82];
-  char ddesc[82];
-
   ENTER(("c__make_attack", "c"));
 
-  attstr[0] = 0;
-  attx[0] = 0;
+  char monster_template_damage[82];
+  monster_template_damage[0] = 0;
+  strcpy(monster_template_damage, monster_templates[m_list[monptr].mptr].damage);
 
-  strcpy(attstr, monster_templates[m_list[monptr].mptr].damage);
-  find_monster_name(cdesc, monptr, true);
-  strcat(cdesc, " ");
+  char monster_name_as_known_to_player[82];
+  find_monster_name(monster_name_as_known_to_player, monptr, true);
+  strcat(monster_name_as_known_to_player, " ");
 
-  /*{ For "DIED_FROM" string        }*/
-  c__describe_monster_with_article(ddesc, monptr);
-  strcpy(died_from, ddesc);
-  /*{ End DIED_FROM                 }*/
+  char monster_name_with_article[82];
+  c__describe_monster_with_article(monster_name_with_article, monptr);
+  strcpy(died_from, monster_name_with_article);
 
-  while (attstr[0] != 0) {
-    char damstr[36];
+  while (monster_template_damage[0] != 0) {
+    long num_attacks;
+    char this_attack[82];
+    this_attack[0] = 0;
+    long attack_type;
+    long attack_desc;
+    char damage_roll[36];
 
-    /* attstr looks like this: "1 32 4d4|2 21 0d0" */
-    char *achar = strchr(attstr, '|');
-    if (achar != NULL) {
-      strcpy(attx, attstr);
-      achar = strchr(attx, '|');
-      *achar = 0;
-      achar++;
-      strcpy(attstr, achar);
+    /* monster_template_damage looks like this: "1 32 4d4|2 21 0d0" */
+    char *damage_separator = strchr(monster_template_damage, '|');
+    if (damage_separator != NULL) {
+      strcpy(this_attack, monster_template_damage);
+      damage_separator = strchr(this_attack, '|');
+      *damage_separator = 0;
+      damage_separator++;
+      strcpy(monster_template_damage, damage_separator);
     } else {
-      strcpy(attx, attstr);
-      attstr[0] = 0;
+      strcpy(this_attack, monster_template_damage);
+      monster_template_damage[0] = 0;
     }
 
-    sscanf(attx, "%ld %ld %s", &atype, &adesc, damstr);
+    sscanf(this_attack, "%ld %ld %s", &attack_type, &attack_desc, damage_roll);
 
     if (player_flags.protevil > 0) {
       if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0004) != 0) {
         if (player_lev + 1 > monster_templates[m_list[monptr].mptr].level) {
-          atype = 99;
-          adesc = 99;
+          attack_type = 99;
+          attack_desc = 99;
         }
       }
     }
@@ -983,47 +929,42 @@ static void c__make_attack(const long monptr) {
     if (player_flags.protmon > 0) {
       if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0002) != 0) {
         if (player_lev + 1 > monster_templates[m_list[monptr].mptr].level) {
-          atype = 99;
-          adesc = 99;
+          attack_type = 99;
+          attack_desc = 99;
         }
       }
     }
 
-    if ((achar = strstr(damstr, "-")) != NULL) {
+    if ((damage_separator = strstr(damage_roll, "-")) != NULL) {
       char s1[82];
-      *achar = ' ';
-      sscanf(damstr, "%ld %s", &acount, s1);
-      strcpy(damstr, s1);
+      *damage_separator = ' ';
+      sscanf(damage_roll, "%ld %s", &num_attacks, s1);
+      strcpy(damage_roll, s1);
     } else {
-      acount = 1;
+      num_attacks = 1;
     }
 
-    /* with player_do; */
-    for (long i5 = 1; i5 <= acount; i5++) {
+    for (long i = 1; i <= num_attacks; i++) {
+      const bool did_hit = c__check_for_hit(monptr, attack_type);
 
-      const bool flag = c__check_for_hit(monptr, atype);
-
-      if (flag) {
-        c__print_attack(adesc, cdesc);
-        c__apply_attack(monptr, atype, ddesc, damstr);
+      if (did_hit) {
+        c__print_attack(attack_desc, monster_name_as_known_to_player);
+        c__apply_attack(monptr, attack_type, monster_name_with_article, damage_roll);
       } else {
-        char theattack[120];
-        switch (adesc) {
+        switch (attack_desc) {
         case 1:
         case 2:
         case 3:
         case 6:
-          /* normal, poison strength, confusion
-           * attack, acid attack */
-          sprintf(theattack, "%smisses you.", cdesc);
-          msg_print(theattack);
+          /* normal, poison strength, confusion attack, acid attack */
+          msg_printf("%smisses you.", monster_name_as_known_to_player);
           break;
         default:
           break;
         }
       }
-    } /* end for i5 */
-  } /* end for attstr != null */
+    }
+  }
 
   LEAVE("c__make_attack", "c");
 }
