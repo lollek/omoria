@@ -252,593 +252,591 @@ static void wizard_inspect_tile(void) {
   }
 }
 
-  void esf__display_commands(void) {
-    prt("You may:", 21, 1);
-    prt(" d) Delete an entry.              b) Browse to next page.", 22, 1);
-    prt(" c) Change an entry.", 23, 1);
-    prt(" q) Quit and save changes       Esc) Exit without saving.", 24, 1);
+void esf__display_commands(void) {
+  prt("You may:", 21, 1);
+  prt(" d) Delete an entry.              b) Browse to next page.", 22, 1);
+  prt(" c) Change an entry.", 23, 1);
+  prt(" q) Quit and save changes       Esc) Exit without saving.", 24, 1);
+}
+
+void esf__display_list(int start, char list[][134], const int n1, int *blegga,
+                       int *cur_display_size) {
+  int count;
+  int64_t old_display_size = *cur_display_size;
+  char out_val[134];
+
+  for (count = 0; start <= n1 && count < 15; start++) {
+    count++;
+
+    sprintf(out_val, "%c)%s", (char)(96 + count), list[start]);
+    if (strlen(out_val) > 80) {
+      out_val[79] = 0;
+    }
+    prt(out_val, count + 3, 1);
   }
 
-  void esf__display_list(int start, char list[][134], const int n1, int *blegga,
-                         int *cur_display_size) {
-    int count;
-    int64_t old_display_size = *cur_display_size;
-    char out_val[134];
-
-    for (count = 0; start <= n1 && count < 15; start++) {
-      count++;
-
-      sprintf(out_val, "%c)%s", (char)(96 + count), list[start]);
-      if (strlen(out_val) > 80) {
-        out_val[79] = 0;
-      }
-      prt(out_val, count + 3, 1);
-    }
-
-    *cur_display_size = count;
-    for (; old_display_size > *cur_display_size; old_display_size--) {
-      erase_line(old_display_size + 3, 1);
-    }
-
-    if (start > n1) {
-      *blegga = 1;
-    } else {
-      *blegga = start;
-    }
+  *cur_display_size = count;
+  for (; old_display_size > *cur_display_size; old_display_size--) {
+    erase_line(old_display_size + 3, 1);
   }
 
-  void esf__display_screen(const int cur_top, char list[][134], const int n1,
-                           int *blegga, int *cur_display_size) {
-    C_clear_screen();
-    *cur_display_size = 0;
-    put_buffer("  Username     Points  Diff    Character name    Level  "
-               "Race         Class",
-               2, 1);
-    put_buffer("  ____________ ________ _ ________________________ __ "
-               "__________ ______________",
-               3, 1);
-    esf__display_list(cur_top, list, n1, blegga, cur_display_size);
-    esf__display_commands();
+  if (start > n1) {
+    *blegga = 1;
+  } else {
+    *blegga = start;
   }
+}
 
-  bool esf__get_list_entry(int *l_command, char const *const pmt,
-                           const int cur_top, const int i1, const int i2) {
-    char out_val[82];
-    bool flag = true;
+void esf__display_screen(const int cur_top, char list[][134], const int n1,
+                         int *blegga, int *cur_display_size) {
+  C_clear_screen();
+  *cur_display_size = 0;
+  put_buffer("  Username     Points  Diff    Character name    Level  "
+             "Race         Class",
+             2, 1);
+  put_buffer("  ____________ ________ _ ________________________ __ "
+             "__________ ______________",
+             3, 1);
+  esf__display_list(cur_top, list, n1, blegga, cur_display_size);
+  esf__display_commands();
+}
 
-    *l_command = 0;
+bool esf__get_list_entry(int *l_command, char const *const pmt,
+                         const int cur_top, const int i1, const int i2) {
+  char out_val[82];
+  bool flag = true;
 
-    sprintf(out_val, "(Entries %c-%c, Esc to exit) %s", (char)(i1 + 96),
-            (char)(i2 + 96), pmt);
+  *l_command = 0;
 
-    while ((*l_command < i1 || *l_command > i2) && flag) {
-      prt(out_val, 1, 1);
-      const unsigned char l_command_inkey = inkey();
-      *l_command = l_command_inkey;
+  sprintf(out_val, "(Entries %c-%c, Esc to exit) %s", (char)(i1 + 96),
+          (char)(i2 + 96), pmt);
 
-      switch (*l_command) {
-      case 3:
-      case 25:
-      case 26:
-      case 27:
-        flag = false;
-        break;
-      default:
-        *l_command += cur_top - 97;
-        break;
-      }
-    }
-
-    erase_line(1, 1);
-    return flag;
-  }
-
-  void esf__delete_entry(const int cur_top, char list[][134], int *n1,
-                         const int cur_display_size) {
-    int which;
-
-    if (cur_display_size > 0) {
-      if (esf__get_list_entry(&which, " Delete which one?", cur_top, 1,
-                              cur_top + cur_display_size - 1)) {
-
-        for (int i1 = which; i1 < *n1; i1++) {
-          strcpy(list[i1], list[i1 + 1]);
-        }
-        (*n1)--;
-      }
-    }
-  }
-
-  void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
-                          int *cur_display_size, bool *exit_flag,
-                          bool *want_save) {
-    char command;
-
-    if (get_com("", &command)) {
-
-      switch (command) {
-
-      case 18: /*{^R}*/
-        esf__display_screen(*cur_top, list, *n1, blegga, cur_display_size);
-        break;
-
-      case 32: /*{ }*/
-      case 98: /*{b}*/
-        if (*cur_top == *blegga) {
-          prt("Entire list is displayed.", 1, 1);
-        } else {
-          *cur_top = *blegga;
-          esf__display_list(*cur_top, list, *n1, blegga, cur_display_size);
-        }
-        break;
-
-      case 100: /*{d}*/
-        esf__delete_entry(*cur_top, list, n1, *cur_display_size);
-        esf__display_list(*cur_top, list, *n1, blegga, cur_display_size);
-        break;
-
-      case 113: /*{q}*/
-        *exit_flag = true;
-        *want_save = true;
-        break;
-
-      default:
-        prt("Invalid command", 1, 1);
-        break;
-      }
-    } else {
-      *exit_flag = true;
-    }
-  }
-
-  bool cc__input_field(char const *const prompt, int64_t *num,
-                       const int64_t min, const int64_t max, bool *ok) {
-    char out_val[134];
-    bool return_value = false;
-
-    sprintf(out_val, "Current = %ld, %s", *num, prompt);
-    int64_t len = strlen(out_val);
+  while ((*l_command < i1 || *l_command > i2) && flag) {
     prt(out_val, 1, 1);
+    const unsigned char l_command_inkey = inkey();
+    *l_command = l_command_inkey;
 
-    if (get_string(out_val, 1, len + 1, 10)) {
-      len = strtol(out_val, NULL, 10);
-      if (min <= len && len <= max) {
-        *ok = true;
-        *num = len;
-      } else {
-        *ok = false;
-      }
-      return_value = true;
+    switch (*l_command) {
+    case 3:
+    case 25:
+    case 26:
+    case 27:
+      flag = false;
+      break;
+    default:
+      *l_command += cur_top - 97;
+      break;
     }
-
-    return return_value;
   }
 
-  void change_character(void) {
-    /*{ Wizard routine for gaining on stats                   -RAK-   }*/
+  erase_line(1, 1);
+  return flag;
+}
 
-    bool flag = false;
-    bool abort = false;
+void esf__delete_entry(const int cur_top, char list[][134], int *n1,
+                       const int cur_display_size) {
+  int which;
 
-    /* with py.stat do; */
-    for (enum stat_t tstat = STR; tstat <= CHR && !abort; tstat++) {
-      char tmp_str[82];
-      switch (tstat) {
-      case STR:
-        prt("(0 - 250) Strength     = ", 1, 1);
-        break;
-      case INT:
-        prt("(0 - 250) Intelligence = ", 1, 1);
-        break;
-      case WIS:
-        prt("(0 - 250) Wisdom       = ", 1, 1);
-        break;
-      case DEX:
-        prt("(0 - 250) Dexterity    = ", 1, 1);
-        break;
-      case CON:
-        prt("(0 - 250) Constitution = ", 1, 1);
-        break;
-      case CHR:
-        prt("(0 - 250) Charisma     = ", 1, 1);
-        break;
+  if (cur_display_size > 0) {
+    if (esf__get_list_entry(&which, " Delete which one?", cur_top, 1,
+                            cur_top + cur_display_size - 1)) {
+
+      for (int i1 = which; i1 < *n1; i1++) {
+        strcpy(list[i1], list[i1 + 1]);
       }
-
-      if (!get_string(tmp_str, 1, 26, 10)) {
-        abort = true;
-      }
-
-      if (!abort) {
-        const int64_t tmp_val = strtol(tmp_str, NULL, 10);
-        C_player_mod_perm_stat(tstat, tmp_val);
-        C_player_recalc_stats();
-        prt_stat_block();
-      }
+      (*n1)--;
     }
-
-    /* with player_do; */
-    if (!abort) {
-      int64_t tmp_val = 0;
-      if (cc__input_field("(1-32767) Hit points = ", &tmp_val, 1, 32767,
-                          &flag)) {
-        if (flag) {
-          C_player_modify_max_hp(tmp_val);
-          prt_stat_block();
-        }
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_mana;
-      if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0, 32767, &flag)) {
-        if (flag) {
-          player_mana = tmp_val;
-          player_cmana = player_mana;
-          prt_stat_block();
-        }
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = 0;
-      if (cc__input_field("(0-200) Searching = ", &tmp_val, 0, 200, &flag)) {
-        C_player_mod_search_skill(tmp_val);
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_stl;
-      if (cc__input_field("(0-10) Stealth = ", &tmp_val, 0, 10, &flag)) {
-        player_stl = tmp_val;
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_disarm;
-      if (cc__input_field("(0-200) Disarming = ", &tmp_val, 0, 200, &flag)) {
-        player_disarm = tmp_val;
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_save;
-      if (cc__input_field("(0-100) Save = ", &tmp_val, 0, 100, &flag)) {
-        player_save = tmp_val;
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_bth;
-      if (cc__input_field("(0-200) Base to hit = ", &tmp_val, 0, 200, &flag)) {
-        player_bth = tmp_val;
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_bthb;
-      if (cc__input_field("(0-200) Bows/Throwing = ", &tmp_val, 0, 200,
-                          &flag)) {
-        player_bthb = tmp_val;
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = player_money[TOTAL_];
-      if (cc__input_field("Player Gold = ", &tmp_val, 0, 100000000, &flag)) {
-        if (flag) {
-          tmp_val = (tmp_val - player_money[TOTAL_]) * GOLD_VALUE;
-          if (tmp_val > 0) {
-            add_money(tmp_val);
-          } else {
-            subtract_money(-tmp_val, true);
-          }
-          prt_stat_block();
-        }
-      } else {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      if (!cc__input_field("Account Gold = ", &player_account, 0, 1000000000,
-                           &flag)) {
-        abort = true;
-      }
-    }
-
-    if (!abort) {
-      int64_t tmp_val = inven_weight;
-      if (cc__input_field("Current Weight (100/unit weight) = ", &tmp_val, 0,
-                          900000, &flag)) {
-        inven_weight = tmp_val;
-        prt_stat_block();
-      }
-    }
-
-    erase_line(msg_line, msg_line);
-    py_bonuses(&blank_treasure, 0);
   }
+}
 
-  void wizard_create(void) {
-    /*{ Wizard routine for creating objects                   -RAK-   }*/
+void esf__parse_command(char list[][134], int *cur_top, int *n1, int *blegga,
+                        int *cur_display_size, bool *exit_flag,
+                        bool *want_save) {
+  char command;
 
-    int64_t tmp_val;
-    char tmp_str[82];
-    bool flag;
+  if (get_com("", &command)) {
 
-    msg_print("Warning: This routine can cause fatal error.");
-    msg_print(" ");
-    msg_flag = false;
+    switch (command) {
 
-    prt("Name   : ", 1, 1);
-    if (get_string(tmp_str, 1, 10, 40)) {
-      strcpy(inven_temp.data.name, tmp_str);
+    case 18: /*{^R}*/
+      esf__display_screen(*cur_top, list, *n1, blegga, cur_display_size);
+      break;
+
+    case 32: /*{ }*/
+    case 98: /*{b}*/
+      if (*cur_top == *blegga) {
+        prt("Entire list is displayed.", 1, 1);
+      } else {
+        *cur_top = *blegga;
+        esf__display_list(*cur_top, list, *n1, blegga, cur_display_size);
+      }
+      break;
+
+    case 100: /*{d}*/
+      esf__delete_entry(*cur_top, list, n1, *cur_display_size);
+      esf__display_list(*cur_top, list, *n1, blegga, cur_display_size);
+      break;
+
+    case 113: /*{q}*/
+      *exit_flag = true;
+      *want_save = true;
+      break;
+
+    default:
+      prt("Invalid command", 1, 1);
+      break;
+    }
+  } else {
+    *exit_flag = true;
+  }
+}
+
+bool cc__input_field(char const *const prompt, int64_t *num, const int64_t min,
+                     const int64_t max, bool *ok) {
+  char out_val[134];
+  bool return_value = false;
+
+  sprintf(out_val, "Current = %ld, %s", *num, prompt);
+  int64_t len = strlen(out_val);
+  prt(out_val, 1, 1);
+
+  if (get_string(out_val, 1, len + 1, 10)) {
+    len = strtol(out_val, NULL, 10);
+    if (min <= len && len <= max) {
+      *ok = true;
+      *num = len;
     } else {
-      strcpy(inven_temp.data.name, "& Wizard Object!");
+      *ok = false;
     }
-
-    do {
-      prt("Tval   : ", 1, 1);
-      get_string(tmp_str, 1, 10, 10);
-      tmp_val = strtoll(tmp_str, NULL, 10);
-      flag = true;
-
-    } while (!flag);
-
-    inven_temp.data.tval = tmp_val;
-
-    prt("Flags  (In HEX): ", 1, 1);
-    inven_temp.data.flags = get_hex_value(1, 18, 8);
-
-    prt("Flags2 (In HEX): ", 1, 1);
-    inven_temp.data.flags2 = get_hex_value(1, 18, 8);
-
-    prt("P1     : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.p1 = tmp_val;
-
-    prt("Cost : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.cost = tmp_val;
-
-    prt("Subval : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.subval = tmp_val;
-
-    prt("Weight : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.weight = tmp_val;
-
-    prt("Number : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.number = tmp_val;
-
-    prt("+To hit: ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.tohit = tmp_val;
-
-    prt("+To dam: ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.todam = tmp_val;
-
-    prt("AC     : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.ac = tmp_val;
-
-    prt("+To AC : ", 1, 1);
-    get_string(tmp_str, 1, 10, 10);
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    inven_temp.data.toac = tmp_val;
-
-    prt("Damage : ", 1, 1);
-    get_string(tmp_str, 1, 10, 5);
-    strcpy(inven_temp.data.damage, tmp_str);
-
-    prt("Level  : ", 1, 1);         /* added code to specify item's */
-    get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
-    tmp_val = strtoll(tmp_str, NULL, 10);
-    if (tmp_val < 0)
-      tmp_val = 0;
-    inven_temp.data.level = tmp_val;
-
-    if (get_yes_no("Allocate?")) {
-      long tmp_popt;
-      popt(&tmp_popt);
-      tmp_val = tmp_popt;
-      t_list[tmp_val] = inven_temp.data;
-      /* with cave[char_row][char_col]. do; */
-      if (cave[char_row][char_col].tptr > 0) {
-        delete_object(char_row, char_col);
-      }
-      cave[char_row][char_col].tptr = tmp_val;
-      msg_print("Allocated...");
-    } else {
-      msg_print("Aborted...");
-    }
-
-    inven_temp.data = blank_treasure;
-    player_action_move(5);
-    creatures(false);
+    return_value = true;
   }
 
-  void wizard_help(void) {
-    /*{ Help for available wizard commands                            }*/
+  return return_value;
+}
 
-    C_clear_screen();
-    prt(" ? -  Wizard Help.", 1, 1);
-    prt(" a -  Remove Curse and Cure all maladies.", 2, 1);
-    prt(" b -  Print random objects sample.", 3, 1);
-    prt(" d -  Down/Up n levels.", 4, 1);
-    prt(" e - *Change character.", 5, 1);
-    prt(" f - *Delete monsters.", 6, 1);
-    prt(" g - *Allocate treasures.", 7, 1);
-    prt(" i -  Identify.", 8, 1);
-    prt(" j - *Gain experience.", 9, 1);
-    prt(" k - *Summon monster.", 10, 1);
-    prt(" l -  Wizard light.", 11, 1);
-    prt(" n -  Print monster dictionary.", 12, 1);
-    prt(" o - *Summon monster by its name.", 13, 1);
-    prt(" p -  Wizard password on/off.", 14, 1);
-    prt(" s - *Statistics on item (in inventory screen).", 15, 1);
-    prt(" t -  Teleport player.", 16, 1);
-    prt(" u - *Roll up an item.", 17, 1);
-    prt(" v -  Restore lost character.", 18, 1);
-    prt(" w - *Create any object *CAN CAUSE FATAL ERROR*", 19, 1);
-    prt(" x - *Edit high score file", 20, 1);
-    prt(" I - Tile inspection", 21, 1);
-    pause_game(24);
-    draw_cave();
-  }
+void change_character(void) {
+  /*{ Wizard routine for gaining on stats                   -RAK-   }*/
 
-  void wizard_command(void) {
+  bool flag = false;
+  bool abort = false;
+
+  /* with py.stat do; */
+  for (enum stat_t tstat = STR; tstat <= CHR && !abort; tstat++) {
     char tmp_str[82];
-    enum stat_t tstat;
-    treas_rec *trash_ptr;
-    int64_t y, x;
+    switch (tstat) {
+    case STR:
+      prt("(0 - 250) Strength     = ", 1, 1);
+      break;
+    case INT:
+      prt("(0 - 250) Intelligence = ", 1, 1);
+      break;
+    case WIS:
+      prt("(0 - 250) Wisdom       = ", 1, 1);
+      break;
+    case DEX:
+      prt("(0 - 250) Dexterity    = ", 1, 1);
+      break;
+    case CON:
+      prt("(0 - 250) Constitution = ", 1, 1);
+      break;
+    case CHR:
+      prt("(0 - 250) Charisma     = ", 1, 1);
+      break;
+    }
 
-    prt("Wizard command: ", 1, 1);
-    switch (inkey()) {
-    case 'a':
-      hp_player(1000, "cheating");
-      player_cmana = player_mana;
+    if (!get_string(tmp_str, 1, 26, 10)) {
+      abort = true;
+    }
+
+    if (!abort) {
+      const int64_t tmp_val = strtol(tmp_str, NULL, 10);
+      C_player_mod_perm_stat(tstat, tmp_val);
+      C_player_recalc_stats();
       prt_stat_block();
-      remove_curse();
-      cure_player_status_effect(&player_flags.blind);
-      cure_player_status_effect(&player_flags.hoarse);
-      cure_player_status_effect(&player_flags.afraid);
-      cure_player_status_effect(&player_flags.poisoned);
-      cure_player_status_effect(&player_flags.confused);
-      for (tstat = STR; tstat <= CHR; tstat++)
-        restore_stat(tstat, "");
-      if (player_flags.slow > 1)
-        player_flags.slow = 1;
-      if (player_flags.image > 1)
-        player_flags.image = 1;
-      break;
-    case 'b':
-      print_objects();
-      break;
+    }
+  }
 
-    case 'd': /* Change dungeon level */
-      prt("Go to which level (0 -1200) ? ", 1, 1);
-      if (get_string(tmp_str, 1, 31, 10)) {
-        const int64_t i1 = strtoll(tmp_str, NULL, 10);
-        if (i1 > -1 || !strcmp(tmp_str, "*")) {
-          dun_level = i1;
-          if (dun_level > 1200) {
-            dun_level = 1200;
-          } else if (dun_level < 0) {
-            dun_level = player_max_lev;
-          }
-          moria_flag = true;
+  /* with player_do; */
+  if (!abort) {
+    int64_t tmp_val = 0;
+    if (cc__input_field("(1-32767) Hit points = ", &tmp_val, 1, 32767, &flag)) {
+      if (flag) {
+        C_player_modify_max_hp(tmp_val);
+        prt_stat_block();
+      }
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_mana;
+    if (cc__input_field("(0-32767) Mana = ", &tmp_val, 0, 32767, &flag)) {
+      if (flag) {
+        player_mana = tmp_val;
+        player_cmana = player_mana;
+        prt_stat_block();
+      }
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = 0;
+    if (cc__input_field("(0-200) Searching = ", &tmp_val, 0, 200, &flag)) {
+      C_player_mod_search_skill(tmp_val);
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_stl;
+    if (cc__input_field("(0-10) Stealth = ", &tmp_val, 0, 10, &flag)) {
+      player_stl = tmp_val;
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_disarm;
+    if (cc__input_field("(0-200) Disarming = ", &tmp_val, 0, 200, &flag)) {
+      player_disarm = tmp_val;
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_save;
+    if (cc__input_field("(0-100) Save = ", &tmp_val, 0, 100, &flag)) {
+      player_save = tmp_val;
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_bth;
+    if (cc__input_field("(0-200) Base to hit = ", &tmp_val, 0, 200, &flag)) {
+      player_bth = tmp_val;
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_bthb;
+    if (cc__input_field("(0-200) Bows/Throwing = ", &tmp_val, 0, 200, &flag)) {
+      player_bthb = tmp_val;
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = player_money[TOTAL_];
+    if (cc__input_field("Player Gold = ", &tmp_val, 0, 100000000, &flag)) {
+      if (flag) {
+        tmp_val = (tmp_val - player_money[TOTAL_]) * GOLD_VALUE;
+        if (tmp_val > 0) {
+          add_money(tmp_val);
         } else {
-          erase_line(msg_line, msg_line);
+          subtract_money(-tmp_val, true);
         }
+        prt_stat_block();
+      }
+    } else {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    if (!cc__input_field("Account Gold = ", &player_account, 0, 1000000000,
+                         &flag)) {
+      abort = true;
+    }
+  }
+
+  if (!abort) {
+    int64_t tmp_val = inven_weight;
+    if (cc__input_field("Current Weight (100/unit weight) = ", &tmp_val, 0,
+                        900000, &flag)) {
+      inven_weight = tmp_val;
+      prt_stat_block();
+    }
+  }
+
+  erase_line(msg_line, msg_line);
+  py_bonuses(&blank_treasure, 0);
+}
+
+void wizard_create(void) {
+  /*{ Wizard routine for creating objects                   -RAK-   }*/
+
+  int64_t tmp_val;
+  char tmp_str[82];
+  bool flag;
+
+  msg_print("Warning: This routine can cause fatal error.");
+  msg_print(" ");
+  msg_flag = false;
+
+  prt("Name   : ", 1, 1);
+  if (get_string(tmp_str, 1, 10, 40)) {
+    strcpy(inven_temp.data.name, tmp_str);
+  } else {
+    strcpy(inven_temp.data.name, "& Wizard Object!");
+  }
+
+  do {
+    prt("Tval   : ", 1, 1);
+    get_string(tmp_str, 1, 10, 10);
+    tmp_val = strtoll(tmp_str, NULL, 10);
+    flag = true;
+
+  } while (!flag);
+
+  inven_temp.data.tval = tmp_val;
+
+  prt("Flags  (In HEX): ", 1, 1);
+  inven_temp.data.flags = get_hex_value(1, 18, 8);
+
+  prt("Flags2 (In HEX): ", 1, 1);
+  inven_temp.data.flags2 = get_hex_value(1, 18, 8);
+
+  prt("P1     : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.p1 = tmp_val;
+
+  prt("Cost : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.cost = tmp_val;
+
+  prt("Subval : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.subval = tmp_val;
+
+  prt("Weight : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.weight = tmp_val;
+
+  prt("Number : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.number = tmp_val;
+
+  prt("+To hit: ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.tohit = tmp_val;
+
+  prt("+To dam: ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.todam = tmp_val;
+
+  prt("AC     : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.ac = tmp_val;
+
+  prt("+To AC : ", 1, 1);
+  get_string(tmp_str, 1, 10, 10);
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  inven_temp.data.toac = tmp_val;
+
+  prt("Damage : ", 1, 1);
+  get_string(tmp_str, 1, 10, 5);
+  strcpy(inven_temp.data.damage, tmp_str);
+
+  prt("Level  : ", 1, 1);         /* added code to specify item's */
+  get_string(tmp_str, 1, 10, 10); /* level.  --jb 2/5/00 */
+  tmp_val = strtoll(tmp_str, NULL, 10);
+  if (tmp_val < 0)
+    tmp_val = 0;
+  inven_temp.data.level = tmp_val;
+
+  if (get_yes_no("Allocate?")) {
+    long tmp_popt;
+    popt(&tmp_popt);
+    tmp_val = tmp_popt;
+    t_list[tmp_val] = inven_temp.data;
+    /* with cave[char_row][char_col]. do; */
+    if (cave[char_row][char_col].tptr > 0) {
+      delete_object(char_row, char_col);
+    }
+    cave[char_row][char_col].tptr = tmp_val;
+    msg_print("Allocated...");
+  } else {
+    msg_print("Aborted...");
+  }
+
+  inven_temp.data = blank_treasure;
+  player_action_move(5);
+  creatures(false);
+}
+
+void wizard_help(void) {
+  /*{ Help for available wizard commands                            }*/
+
+  C_clear_screen();
+  prt(" ? -  Wizard Help.", 1, 1);
+  prt(" a -  Remove Curse and Cure all maladies.", 2, 1);
+  prt(" b -  Print random objects sample.", 3, 1);
+  prt(" d -  Down/Up n levels.", 4, 1);
+  prt(" e - *Change character.", 5, 1);
+  prt(" f - *Delete monsters.", 6, 1);
+  prt(" g - *Allocate treasures.", 7, 1);
+  prt(" i -  Identify.", 8, 1);
+  prt(" j - *Gain experience.", 9, 1);
+  prt(" k - *Summon monster.", 10, 1);
+  prt(" l -  Wizard light.", 11, 1);
+  prt(" n -  Print monster dictionary.", 12, 1);
+  prt(" o - *Summon monster by its name.", 13, 1);
+  prt(" p -  Wizard password on/off.", 14, 1);
+  prt(" s - *Statistics on item (in inventory screen).", 15, 1);
+  prt(" t -  Teleport player.", 16, 1);
+  prt(" u - *Roll up an item.", 17, 1);
+  prt(" v -  Restore lost character.", 18, 1);
+  prt(" w - *Create any object *CAN CAUSE FATAL ERROR*", 19, 1);
+  prt(" x - *Edit high score file", 20, 1);
+  prt(" I - Tile inspection", 21, 1);
+  pause_game(24);
+  draw_cave();
+}
+
+void wizard_command(void) {
+  char tmp_str[82];
+  enum stat_t tstat;
+  treas_rec *trash_ptr;
+  int64_t y, x;
+
+  prt("Wizard command: ", 1, 1);
+  switch (inkey()) {
+  case 'a':
+    hp_player(1000, "cheating");
+    player_cmana = player_mana;
+    prt_stat_block();
+    remove_curse();
+    cure_player_status_effect(&player_flags.blind);
+    cure_player_status_effect(&player_flags.hoarse);
+    cure_player_status_effect(&player_flags.afraid);
+    cure_player_status_effect(&player_flags.poisoned);
+    cure_player_status_effect(&player_flags.confused);
+    for (tstat = STR; tstat <= CHR; tstat++)
+      restore_stat(tstat, "");
+    if (player_flags.slow > 1)
+      player_flags.slow = 1;
+    if (player_flags.image > 1)
+      player_flags.image = 1;
+    break;
+  case 'b':
+    print_objects();
+    break;
+
+  case 'd': /* Change dungeon level */
+    prt("Go to which level (0 -1200) ? ", 1, 1);
+    if (get_string(tmp_str, 1, 31, 10)) {
+      const int64_t i1 = strtoll(tmp_str, NULL, 10);
+      if (i1 > -1 || !strcmp(tmp_str, "*")) {
+        dun_level = i1;
+        if (dun_level > 1200) {
+          dun_level = 1200;
+        } else if (dun_level < 0) {
+          dun_level = player_max_lev;
+        }
+        moria_flag = true;
       } else {
         erase_line(msg_line, msg_line);
       }
-      break;
-    case 'e':
-      change_character();
-      break;
-    case 'f':
-      mass_genocide();
-      break;
-    case 'g': /* Treasure */
-      alloc_object(floor_set, 5, 25);
-      prt_map();
-      break;
-    case 'i':
-      msg_print("Poof!  Your items are all identifed!!!");
-      for (trash_ptr = inventory_list; trash_ptr != NULL;) {
-        identify(&trash_ptr->data);
-        known2(trash_ptr->data.name);
-        trash_ptr = trash_ptr->next;
-      }
-      break;
-    case 'j': /* Gain exp */
-      if (player_exp == 0) {
-        C_player_add_exp(1);
-      } else {
-        C_player_add_exp(player_exp);
-      }
-      prt_stat_block();
-      break;
-    case 'k': /* Summon monster */
-      y = char_row;
-      x = char_col;
-      if (is_in(cave[y][x].fval, water_set)) {
-        summon_water_monster(&y, &x, true);
-      } else {
-        summon_land_monster(&y, &x, true);
-      }
-      creatures(false);
-      break;
-    case 'l':
-      wizard_light();
-      break;
-    case 'n':
-      print_monsters();
-      break;
-
-    case 'o':
-      monster_summon_by_name(char_row, char_col, "", false, true);
-      creatures(false);
-      break;
-    case 't':
-      teleport(100);
-      break;
-
-    case 'w': /* create */
-      if (cave[char_row][char_col].tptr == 0) {
-        wizard_create();
-      } else {
-        msg_print("You are "
-                  "standing on "
-                  "something!");
-      }
-      break;
-    case 'I':
-      wizard_inspect_tile();
-      break;
-    case 27: /* ^3  Run store_maint */
-      store_maint();
-      msg_print("Stores updated.");
-      break;
-    case 31: /* ^_  Can you say security through obscurity?
-              */
-      if (wizard1 && search_flag && player_cheated) {
-        player_cheated = false;
-        msg_print("Cheat flag turned off.");
-      }
-      break;
-
-    case '?':
-      wizard_help();
-      break;
+    } else {
+      erase_line(msg_line, msg_line);
     }
+    break;
+  case 'e':
+    change_character();
+    break;
+  case 'f':
+    mass_genocide();
+    break;
+  case 'g': /* Treasure */
+    alloc_object(floor_set, 5, 25);
+    prt_map();
+    break;
+  case 'i':
+    msg_print("Poof!  Your items are all identifed!!!");
+    for (trash_ptr = inventory_list; trash_ptr != NULL;) {
+      identify(&trash_ptr->data);
+      known2(trash_ptr->data.name);
+      trash_ptr = trash_ptr->next;
+    }
+    break;
+  case 'j': /* Gain exp */
+    if (player_exp == 0) {
+      C_player_add_exp(1);
+    } else {
+      C_player_add_exp(player_exp);
+    }
+    prt_stat_block();
+    break;
+  case 'k': /* Summon monster */
+    y = char_row;
+    x = char_col;
+    if (is_in(cave[y][x].fval, water_set)) {
+      summon_water_monster(&y, &x, true);
+    } else {
+      summon_land_monster(&y, &x, true);
+    }
+    creatures(false);
+    break;
+  case 'l':
+    wizard_light();
+    break;
+  case 'n':
+    print_monsters();
+    break;
+
+  case 'o':
+    monster_summon_by_name(char_row, char_col, "", false, true);
+    creatures(false);
+    break;
+  case 't':
+    teleport(100);
+    break;
+
+  case 'w': /* create */
+    if (cave[char_row][char_col].tptr == 0) {
+      wizard_create();
+    } else {
+      msg_print("You are "
+                "standing on "
+                "something!");
+    }
+    break;
+  case 'I':
+    wizard_inspect_tile();
+    break;
+  case 27: /* ^3  Run store_maint */
+    store_maint();
+    msg_print("Stores updated.");
+    break;
+  case 31: /* ^_  Can you say security through obscurity?
+            */
+    if (wizard1 && search_flag && player_cheated) {
+      player_cheated = false;
+      msg_print("Cheat flag turned off.");
+    }
+    break;
+
+  case '?':
+    wizard_help();
+    break;
   }
+}
