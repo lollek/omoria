@@ -6,6 +6,7 @@
 * Internal: random helper functions can now accept an injected RNG (for deterministic tests).
 * Internal: object-name marker cleanup (`|` / `^`) is now handled by the Rust text utility layer.
 * Internal: Messages about remaining item charges/quantity now use the Rust item naming implementation.
+* Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
 
 ## 5-alpha529
 

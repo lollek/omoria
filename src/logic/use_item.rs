@@ -2,6 +2,9 @@ use crate::model::Class;
 use crate::model::{Item, ItemType};
 
 pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
+    let Some(item_type) = item.item_type() else {
+        return true; // bare hands
+    };
     match class {
         Class::Druid => {
             /* Weapons:
@@ -16,7 +19,7 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
              *
              * Need more: shortspear, spear, scimitar
              */
-            match item.item_type() {
+            match item_type {
                 // Utility:
                 ItemType::LightSource => true,
                 ItemType::Staff => true,
@@ -47,7 +50,7 @@ pub fn class_can_use_item(class: &Class, item: &Item) -> bool {
              * Armor:
              * light / medium.
              */
-            match item.item_type() {
+            match item_type {
                 // Utility:
                 ItemType::LightSource => true,
                 ItemType::Staff => true,

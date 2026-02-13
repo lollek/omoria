@@ -4,7 +4,8 @@ use crate::model::item_subtype::{InstrumentSubType, ItemSubType};
 use crate::model::Item;
 
 pub fn instrument(item: &Item) -> String {
-    let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval) else {
+    let item_type = item.item_type().expect("Item has no type");
+    let Some(subtype) = item_subtype::from_i64(item_type, item.subval) else {
         return "alien instrument".to_string();
     };
 
