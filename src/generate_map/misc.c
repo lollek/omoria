@@ -52,11 +52,11 @@ void try_to_place_stairs(const long stairs_type, const long number_of_stairs,
 }
 
 void fill_cave(const floor_type fill) {
-  const obj_set blank_floor_set = {0, 8, 9, 0, 0, 0, 0, 0,
-                                   0, 0, 0, 0, 0, 0, 0, 0};
+  const obj_set blank_floor_set = {8, 9, 0};
   for (long y = 2; y <= cur_height - 1; y++) {
     for (long x = 2; x <= cur_width - 1; x++) {
-      if (is_in(cave[y][x].fval, blank_floor_set)) {
+      const uint8_t fval = cave[y][x].fval;
+      if (fval == 0 || is_in(fval, blank_floor_set)) {
         cave[y][x].fval = fill.ftval;
         cave[y][x].fopen = fill.ftopen;
       }
