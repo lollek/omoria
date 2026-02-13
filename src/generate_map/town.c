@@ -311,18 +311,11 @@ static void gc__mixem(long rooms[], const long num) {
 
 
 void generate_town(void) {
-  long rooms[36];       /* array [0..35] of long;*/
-  bool roomdone[36]; /* array [0..35] of bool;*/
-
-  obj_set allocSet1 = {1, 2, 0};
-  obj_set allocSet2 = {16, 17, 18, 0};
-
-  /*  for (i1 = 0; i1 < MAX_MONS_LEVEL+1; i1++) { */
-  /*    printf ("\n m_level[%d] : %d",i1,m_level[i1]);  fflush(stdout); */
-  /*  } */
+  long rooms[36];
+  bool room_is_done[36];
 
   for (long i = 0; i < 36; i++) {
-    roomdone[i] = false;
+    room_is_done[i] = false;
   }
 
   const long center = 10 + randint(5);
@@ -330,7 +323,7 @@ void generate_town(void) {
   for (long i = -2; i <= 2; i++) {
     for (long j = -1; j <= 2; j++) {
       if ((i < 2 && i > -2) || (j > -1 && j < 2)) {
-        roomdone[center + i + j * 9] = true;
+        room_is_done[center + i + j * 9] = true;
         if (i != 0 || j == -1 || j == 2) { /*{not castle}*/
           rooms[i3] = center + i + j * 9;
           i3++;
@@ -358,7 +351,7 @@ void generate_town(void) {
 
   i3 = 0;
   for (long i = 0; i < 36; i++) {
-    if (!roomdone[i]) {
+    if (!room_is_done[i]) {
       rooms[i3] = i;
       i3++;
     }
@@ -391,6 +384,8 @@ void generate_town(void) {
 
   place_boundry();
 
+  obj_set floor_tiles = {1, 2, 0};
+  obj_set water_tiles = {16, 17, 18, 0};
   if (player_cur_age.hour > 17 || player_cur_age.hour < 6) {
     /*{ Night	}*/
 
@@ -407,8 +402,8 @@ void generate_town(void) {
     try_to_place_stairs(down_staircase, 2, 0);
     try_to_place_stairs(down_steep_staircase, 1, 0);
 
-    generate_land_monster(allocSet1, MIN_MALLOC_TN, 3, true);
-    generate_water_monster(allocSet2, 7, 0, true);
+    generate_land_monster(floor_tiles, MIN_MALLOC_TN, 3, true);
+    generate_water_monster(water_tiles, 7, 0, true);
     store_maint();
 
   } else {
@@ -424,8 +419,8 @@ void generate_town(void) {
     try_to_place_stairs(down_staircase, 2, 0);
     try_to_place_stairs(down_steep_staircase, 1, 0);
 
-    generate_land_monster(allocSet1, MIN_MALLOC_TD, 3, true);
-    generate_water_monster(allocSet2, 7, 0, true);
+    generate_land_monster(floor_tiles, MIN_MALLOC_TD, 3, true);
+    generate_water_monster(water_tiles, 7, 0, true);
     store_maint();
   }
 

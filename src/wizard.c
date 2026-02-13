@@ -207,6 +207,51 @@ void enter_wizard_mode(const bool ask_for_pass) {
   }
 }
 
+static void wizard_inspect_tile(void) {
+  long y = char_row;
+  long x = char_col;
+  long prev_y = y;
+  long prev_x = x;
+  prt("Enter on a tile to inspect it, or press Esc to exit.", 1, 1);
+  while (true) {
+    lite_spot(prev_y, prev_x);
+    prev_y = y;
+    prev_x = x;
+    if (in_bounds(y, x)) {
+      print('.' | A_DIM, y, x);
+    }
+    switch (inkey()) {
+    case 27:
+      return;
+    case '\r':
+      if (in_bounds(y, x)) {
+        const cave_type *pos = &cave[y][x];
+        msg_printf("cave[%d][%d]: { cptr=%d, tptr=%d, fval=%d, fopen=%d, "
+                   "fm=%d, pl=%d, tl=%d, moved=%d, oct=%d, h2o=%d }",
+                   y, x, pos->cptr, pos->tptr, pos->fval, pos->fopen, pos->fm,
+                   pos->pl, pos->tl, pos->moved, pos->oct, pos->h2o);
+      } else {
+        prt("Invalid tile.", 1, 1);
+      }
+      break;
+    case 'k':
+      y--;
+      break;
+    case 'j':
+      y++;
+      break;
+    case 'h':
+      x--;
+      break;
+    case 'l':
+      x++;
+      break;
+    default:
+      break;
+    }
+  }
+}
+
 void esf__display_commands(void) {
   prt("You may:", 21, 1);
   prt(" d) Delete an entry.              b) Browse to next page.", 22, 1);
@@ -242,8 +287,8 @@ void esf__display_list(int start, char list[][134], const int n1, int *blegga,
   }
 }
 
-void esf__display_screen(const int cur_top, char list[][134], const int n1, int *blegga,
-                         int *cur_display_size) {
+void esf__display_screen(const int cur_top, char list[][134], const int n1,
+                         int *blegga, int *cur_display_size) {
   C_clear_screen();
   *cur_display_size = 0;
   put_buffer("  Username     Points  Diff    Character name    Level  "
@@ -662,6 +707,7 @@ void wizard_help(void) {
   prt(" v -  Restore lost character.", 18, 1);
   prt(" w - *Create any object *CAN CAUSE FATAL ERROR*", 19, 1);
   prt(" x - *Edit high score file", 20, 1);
+  prt(" I - Tile inspection", 21, 1);
   pause_game(24);
   draw_cave();
 }
@@ -773,6 +819,9 @@ void wizard_command(void) {
                 "standing on "
                 "something!");
     }
+    break;
+  case 'I':
+    wizard_inspect_tile();
     break;
   case 27: /* ^3  Run store_maint */
     store_maint();

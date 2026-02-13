@@ -171,16 +171,16 @@ typedef struct floor_type {
 } floor_type;
 
 typedef struct cave_type {
-  uint8_t cptr;  /*	: unsigned char; */
-  uint8_t tptr;  /*	: unsigned char; */
-  uint8_t fval;  /*	: [bit(7),pos(16)] 0..127; */
-  bool fopen; /*	: [bit(1),pos(23)] bool; */
-  bool fm;    /*	: [bit(1),pos(24)] bool; */
-  bool pl;    /*	: [bit(1),pos(25)] bool; */
-  bool tl;    /*	: [bit(1),pos(26)] bool; */
-  bool moved; /*	: [bit(1),pos(27)] bool; */
-  uint8_t oct;   /*	: [bit(3),pos(28)] 0..7; { octant direction } */
-  uint8_t h2o;   /*	: [bit(4),pos(31)] 0..15; */
+  uint8_t cptr;  // creature ptr; index of creature in m_list. 1=player
+  uint8_t tptr;  // treasure ptr; index of treasure in t_list
+  uint8_t fval;  // cave type
+  bool fopen;    // if spot is unoccupied?
+  bool fm;       // "field mark". No idea what it means
+  bool pl;       // "put light"?? If it should be lit?
+  bool tl;       // "temp light"?? If it is lit by a temporary light source?
+  bool moved;    // unused?
+  uint8_t oct;   // octant direction. Unused?
+  uint8_t h2o;   // water
 } cave_type;
 
 typedef cave_type
