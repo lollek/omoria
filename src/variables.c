@@ -14,6 +14,9 @@
 #include "types.h"
 #include "variables.h"
 
+#include "floor.h"
+
+row_floor cave[MAX_HEIGHT + 1];
 treas_rec *cur_inven;      /* { Current inven page  } */
 unsigned long randes_seed; /* { For encoding colors } */
 unsigned long town_seed;   /* { Seed for town genera} */
@@ -66,30 +69,18 @@ long panel_row_min, panel_row_max;
 long panel_col_min, panel_col_max;
 long panel_col_prt, panel_row_prt;
 
-/*	{  Following are all floor definitions				} */
-row_floor cave[MAX_HEIGHT + 1];
-cave_type blank_floor = {0, 0, 0, false, false, false, false, false, 0, 0};
-floor_type dopen_floor = {1, true};  /*{ Dark open floor	} */
-floor_type lopen_floor = {2, true};  /*{ Light open floor	} */
-floor_type corr_floor1 = {4, true};  /*{ Corridor open floor	} */
-floor_type corr_floor2 = {5, true};  /*{ Room junction marker} */
-floor_type corr_floor3 = {6, true};  /*{ Door type floor	} */
-floor_type corr_floor4 = {7, false}; /*{ Secret door type floor} */
-/*{ Floor values 8 and 9 are used in generate		} */
-floor_type rock_wall1 = {10, false};   /*{ Granite rock wall	} */
-floor_type rock_wall2 = {11, false};   /*{ Magma rock wall	} */
-floor_type rock_wall3 = {12, false};   /*{ Quartz rock wall	} */
-floor_type water1 = {16, true};        /*{ Water on floor	} */
-floor_type water2 = {17, true};        /*{ Water on room floor} */
-floor_type water3 = {18, true};        /*{ Lit water on floor	} */
-floor_type boundry_wall = {15, false}; /*{ Indestructable wall} */
-
 /*	{  Following are set definitions				} */
-obj_set floor_set = {1, 2, 4, 5, 6, 7, 16, 17, 18, 0, 0, 0, 0, 0, 0, 0};
-obj_set open_dry_floors = {1, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-obj_set wall_set = {10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-obj_set pwall_set = {10, 11, 12, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-obj_set corr_set = {4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+obj_set floor_set = {ft_dark_open_floor,    ft_light_open_floor,
+                     ft_corr_open_floor,    ft_corr_room_junction,
+                     ft_corr_door,          ft_corr_secret_door,
+                     ft_water_on_floor,     ft_water_on_room_floor,
+                     ft_water_on_floor_lit, 0};
+obj_set open_dry_floors = {ft_dark_open_floor, ft_light_open_floor,
+                           ft_corr_open_floor, 0};
+obj_set wall_set = {ft_wall_granite, ft_wall_magma, ft_wall_quartz, 0};
+obj_set pwall_set = {ft_wall_granite, ft_wall_magma, ft_wall_quartz,
+                     ft_boundry_wall, 0};
+obj_set corr_set = {ft_corr_open_floor, ft_corr_room_junction, 0};
 obj_set trap_set = {unseen_trap, seen_trap, secret_door, entrance_to_store,
                     0,           0,         0,           0,
                     0,           0,         0,           0,
@@ -110,8 +101,14 @@ obj_set light_set = {seen_trap,
                      0,
                      0,
                      0};
-obj_set water_set = {16, 17, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-obj_set earth_set = {1, 2, 4, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+obj_set water_set = {ft_water_on_floor, ft_water_on_room_floor, ft_water_on_floor_lit, 0};
+obj_set earth_set = {ft_dark_open_floor,
+                     ft_light_open_floor,
+                     ft_corr_open_floor,
+                     ft_corr_room_junction,
+                     ft_corr_door,
+                     ft_corr_secret_door,
+                     0};
 obj_set float_set = {arrow,
                      lamp_or_torch,
                      bow_crossbow_or_sling,

@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "dungeon/light.h"
 #include "effects.h"
+#include "floor.h"
 #include "generate_item/generate_item.h"
 #include "generate_monster/generate_monster.h"
 #include "inventory/inven.h"
@@ -1171,7 +1172,7 @@ bool detect_sdoor(void) {
       if (cave[i1][i2].tptr > 0) {
         /*{ Secret doors  }*/
         if (t_list[cave[i1][i2].tptr].tval == secret_door) {
-          cave[i1][i2].fval = corr_floor3.ftval;
+          cave[i1][i2].fval = corr_door.ftval;
           change_trap(i1, i2);
           cave[i1][i2].fm = true;
           flag = true;
@@ -1354,7 +1355,7 @@ bool unlight_area(const long y, const long x) {
         /* with cave[i1][i2]; */
         if (is_in(cave[i1][i2].fval, room_floors)) {
           cave[i1][i2].pl = false;
-          cave[i1][i2].fval = dopen_floor.ftval;
+          cave[i1][i2].fval = ft_dark_open_floor;
           if (!test_light(i1, i2)) {
             if (i3 == 0) {
               i3 = i2;
@@ -1941,29 +1942,29 @@ void da__replace_spot(const long y, const long x, const long typ) {
   case 1:
   case 2:
   case 3:
-    cave[y][x].fval = corr_floor1.ftval;
-    cave[y][x].fopen = corr_floor1.ftopen;
+    cave[y][x].fval = corr_open_floor.ftval;
+    cave[y][x].fopen = corr_open_floor.ftopen;
     break;
 
   case 4:
   case 7:
   case 10:
-    cave[y][x].fval = rock_wall1.ftval;
-    cave[y][x].fopen = rock_wall1.ftopen;
+    cave[y][x].fval = wall_granite.ftval;
+    cave[y][x].fopen = wall_granite.ftopen;
     break;
 
   case 5:
   case 8:
   case 11:
-    cave[y][x].fval = rock_wall2.ftval;
-    cave[y][x].fopen = rock_wall2.ftopen;
+    cave[y][x].fval = wall_magma.ftval;
+    cave[y][x].fopen = wall_magma.ftopen;
     break;
 
   case 6:
   case 9:
   case 12:
-    cave[y][x].fval = rock_wall3.ftval;
-    cave[y][x].fopen = rock_wall3.ftopen;
+    cave[y][x].fval = wall_quartz.ftval;
+    cave[y][x].fopen = wall_quartz.ftopen;
     break;
   }
 
@@ -2031,11 +2032,11 @@ bool earthquake(void) {
             }
             if (is_in(cave[i1][i2].fval, wall_set)) {
               if (next_to4(i1, i2, room_floors) > 0) {
-                cave[i1][i2].fval = corr_floor2.ftval;
-                cave[i1][i2].fopen = corr_floor2.ftopen;
+                cave[i1][i2].fval = corr_room_junction.ftval;
+                cave[i1][i2].fopen = corr_room_junction.ftopen;
               } else {
-                cave[i1][i2].fval = corr_floor1.ftval;
-                cave[i1][i2].fopen = corr_floor1.ftopen;
+                cave[i1][i2].fval = corr_open_floor.ftval;
+                cave[i1][i2].fopen = corr_open_floor.ftopen;
               }
               if (test_light(i1, i2)) {
                 unlite_spot(i1, i2);
@@ -2053,21 +2054,21 @@ bool earthquake(void) {
               case 3:
               case 4:
               case 5:
-                cave[i1][i2].fval = rock_wall3.ftval;
-                cave[i1][i2].fopen = rock_wall3.ftopen;
+                cave[i1][i2].fval = wall_quartz.ftval;
+                cave[i1][i2].fopen = wall_quartz.ftopen;
                 break;
 
               case 6:
               case 7:
               case 8:
-                cave[i1][i2].fval = rock_wall2.ftval;
-                cave[i1][i2].fopen = rock_wall2.ftopen;
+                cave[i1][i2].fval = wall_magma.ftval;
+                cave[i1][i2].fopen = wall_magma.ftopen;
                 break;
 
               case 9:
               case 10:
-                cave[i1][i2].fval = rock_wall1.ftval;
-                cave[i1][i2].fopen = rock_wall1.ftopen;
+                cave[i1][i2].fval = wall_granite.ftval;
+                cave[i1][i2].fopen = wall_granite.ftopen;
               }
 
               cave[i1][i2].fm = false;
@@ -2131,7 +2132,7 @@ bool light_line(const long dir, long y, long x, const long power) {
     if (panel_contains(y, x)) {
 
       if (!(cave[y][x].tl || cave[y][x].pl)) {
-        if (cave[y][x].fval == lopen_floor.ftval) {
+        if (cave[y][x].fval == ft_light_open_floor) {
           dungeon_light_room(y, x);
         } else {
           lite_spot(y, x);
@@ -2466,8 +2467,8 @@ bool build_wall(const long dir, long y, long x) {
     if (cave[y][x].cptr > 1 && !mon_resists(cave[y][x].cptr)) {
       mon_take_hit(cave[y][x].cptr, damroll("2d8"));
     }
-    cave[y][x].fval = rock_wall2.ftval;
-    cave[y][x].fopen = rock_wall2.ftopen;
+    cave[y][x].fval = wall_magma.ftval;
+    cave[y][x].fopen = wall_magma.ftopen;
     cave[y][x].fm = false;
     if (test_light(y, x)) {
       lite_spot(y, x);
@@ -2521,7 +2522,7 @@ bool disarm_all(const long dir, long y, long x) {
       } else if (tval == closed_door) {
         t_list[cave[y][x].tptr].p1 = 0;
       } else if (tval == secret_door) {
-        cave[y][x].fval = corr_floor3.ftval;
+        cave[y][x].fval = corr_door.ftval;
         change_trap(y, x);
         cave[y][x].fm = true;
         flag = true;

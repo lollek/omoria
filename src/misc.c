@@ -4,6 +4,7 @@
 #include "currency.h"
 #include "death.h"
 #include "debug.h"
+#include "floor.h"
 #include "io.h"
 #include "loot/loot.h"
 #include "magic.h"
@@ -2210,7 +2211,7 @@ bool delete_object(const long y, const long x) {
 
   /* with cave[y,x] do; */
   if (t_list[cave[y][x].tptr].tval == secret_door) {
-    cave[y][x].fval = corr_floor3.ftval;
+    cave[y][x].fval = corr_door.ftval;
   }
   cave[y][x].fopen = true;
   pusht(cave[y][x].tptr);
@@ -2235,11 +2236,11 @@ bool twall(const long y, const long x, const long t1, const long t2) {
   /* with cave[y][x]. do; */
   if (t1 > t2) {
     if (next_to4(y, x, some_walls) > 0) {
-      cave[y][x].fval = corr_floor2.ftval;
-      cave[y][x].fopen = corr_floor2.ftopen;
+      cave[y][x].fval = corr_room_junction.ftval;
+      cave[y][x].fopen = corr_room_junction.ftopen;
     } else {
-      cave[y][x].fval = corr_floor1.ftval;
-      cave[y][x].fopen = corr_floor1.ftopen;
+      cave[y][x].fval = corr_open_floor.ftval;
+      cave[y][x].fopen = corr_open_floor.ftopen;
     }
 
     if (test_light(y, x)) {

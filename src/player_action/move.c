@@ -8,6 +8,7 @@
 #include "../constants.h"
 #include "../creature.h"
 #include "../debug.h"
+#include "../floor.h"
 #include "../dungeon/light.h"
 #include "../inventory/inven.h"
 #include "../io.h"
@@ -116,7 +117,7 @@ static void area_affect(const long dir, const long y, const long x) {
   obj_set corridors = {4, 5, 6, 0};
   const obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
 
-  if (cave[y][x].fval == corr_floor1.ftval) {
+  if (cave[y][x].fval == corr_open_floor.ftval) {
     if (next_to4(y, x, corridors) > 2) {
       find_flag = false;
     }
@@ -153,7 +154,7 @@ static void area_affect(const long dir, const long y, const long x) {
         /* with cave[row,col] do; */
 
         /* { Empty doorways        }*/
-        if (cave[row][col].fval == corr_floor2.ftval) {
+        if (cave[row][col].fval == corr_room_junction.ftval) {
           find_flag = false;
         }
 
@@ -386,7 +387,7 @@ static void _move_char(long dir) {
   dungeon_light_move(char_row, char_col, test_row, test_col);
 
   /* A room of light should be lit... */
-  if (cave[test_row][test_col].fval == lopen_floor.ftval) {
+  if (cave[test_row][test_col].fval == ft_light_open_floor) {
     if (player_flags.blind < 1) {
       if (!cave[test_row][test_col].pl) {
         dungeon_light_room(test_row, test_col);
@@ -394,12 +395,12 @@ static void _move_char(long dir) {
     }
 
     /* In doorway of light-room? */
-  } else if ((cave[test_row][test_col].fval == corr_floor2.ftval ||
-              cave[test_row][test_col].fval == corr_floor3.ftval) &&
+  } else if ((cave[test_row][test_col].fval == corr_room_junction.ftval ||
+              cave[test_row][test_col].fval == corr_door.ftval) &&
              player_flags.blind < 1) {
     for (long y = test_row - 1; y <= test_row + 1; y++) {
       for (long x = test_col - 1; x <= test_col + 1; x++) {
-        if (in_bounds(y, x) && cave[y][x].fval == lopen_floor.ftval &&
+        if (in_bounds(y, x) && cave[y][x].fval == ft_light_open_floor &&
             !cave[y][x].pl) {
           dungeon_light_room(y, x);
         }

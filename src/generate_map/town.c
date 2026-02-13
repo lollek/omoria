@@ -17,8 +17,8 @@
 
 static void gc__make_door(const long y, const long x, long *cur_pos,
                           const long store_num, const long house_type) {
-  cave[y][x].fval = corr_floor3.ftval;
-  cave[y][x].fopen = corr_floor3.ftopen;
+  cave[y][x].fval = corr_door.ftval;
+  cave[y][x].fopen = corr_door.ftopen;
   popt(cur_pos);
   cave[y][x].tptr = *cur_pos;
 
@@ -72,8 +72,8 @@ static void dr_castle(const long yval, const long xval, long dy, long dx,
 }
 
 static void gc__blank_square(const long dy, const long dx) {
-  cave[dy][dx].fopen = dopen_floor.ftopen;
-  cave[dy][dx].fval = dopen_floor.ftval;
+  cave[dy][dx].fopen = true;
+  cave[dy][dx].fval = ft_dark_open_floor;
 }
 
 static void gc__build_store(const enum store_t store_num, const long where) {
@@ -134,29 +134,29 @@ static void gc__build_store(const enum store_t store_num, const long where) {
 
   if (house_type == 4) {
     for (i2 = x_left; i2 <= x_right; i2++) {
-      cave[yval][i2].fval = dopen_floor.ftval;
-      cave[yval][i2].fopen = dopen_floor.ftopen;
+      cave[yval][i2].fval = ft_dark_open_floor;
+      cave[yval][i2].fopen = true;
     }
   }
 
   if (house_type == 5) {
-    dr_castle(yval, xval, 0, 5, water1);
-    dr_castle(yval, xval, 1, 5, water1);
-    dr_castle(yval, xval, 1, 6, water1);
-    dr_castle(yval, xval, 2, 6, water1);
-    dr_castle(yval, xval, 2, 7, water1);
-    dr_castle(yval, xval, 3, 7, water1);
-    dr_castle(yval, xval, 4, 7, water1);
-    dr_castle(yval, xval, 4, 6, water1);
-    dr_castle(yval, xval, 5, 6, water1);
-    dr_castle(yval, xval, 5, 5, water1);
-    dr_castle(yval, xval, 5, 4, water1);
-    dr_castle(yval, xval, 5, 3, water1);
-    dr_castle(yval, xval, 4, 3, water1);
-    dr_castle(yval, xval, 4, 2, water1);
-    dr_castle(yval, xval, 3, 2, water1);
-    dr_castle(yval, xval, 3, 1, water1);
-    dr_castle(yval, xval, 3, 0, water1);
+    dr_castle(yval, xval, 0, 5, water_on_floor);
+    dr_castle(yval, xval, 1, 5, water_on_floor);
+    dr_castle(yval, xval, 1, 6, water_on_floor);
+    dr_castle(yval, xval, 2, 6, water_on_floor);
+    dr_castle(yval, xval, 2, 7, water_on_floor);
+    dr_castle(yval, xval, 3, 7, water_on_floor);
+    dr_castle(yval, xval, 4, 7, water_on_floor);
+    dr_castle(yval, xval, 4, 6, water_on_floor);
+    dr_castle(yval, xval, 5, 6, water_on_floor);
+    dr_castle(yval, xval, 5, 5, water_on_floor);
+    dr_castle(yval, xval, 5, 4, water_on_floor);
+    dr_castle(yval, xval, 5, 3, water_on_floor);
+    dr_castle(yval, xval, 4, 3, water_on_floor);
+    dr_castle(yval, xval, 4, 2, water_on_floor);
+    dr_castle(yval, xval, 3, 2, water_on_floor);
+    dr_castle(yval, xval, 3, 1, water_on_floor);
+    dr_castle(yval, xval, 3, 0, water_on_floor);
     dr_castle(yval, xval, 3, 6, boundry_wall);
     dr_castle(yval, xval, 4, 5, boundry_wall);
     dr_castle(yval, xval, 4, 4, boundry_wall);
@@ -276,24 +276,24 @@ static void gc__build_fountain(const long where) {
       count++;
       switch (flr[count]) {
       case 1:
-        cave[y][x].fval = dopen_floor.ftval;
-        cave[y][x].fopen = dopen_floor.ftopen;
+        cave[y][x].fval = ft_dark_open_floor;
+        cave[y][x].fopen = true;
         break;
       case 2:
         cave[y][x].fval = boundry_wall.ftval;
         cave[y][x].fopen = boundry_wall.ftopen;
         break;
       case 3:
-        cave[y][x].fval = water1.ftval;
-        cave[y][x].fopen = water1.ftopen;
+        cave[y][x].fval = ft_water_on_floor;
+        cave[y][x].fopen = water_on_floor.ftopen;
         usleep(5);
         if (randint(12) == 1) {
           place_gold(y, x);
         }
         break;
       case 4:
-        cave[y][x].fval = rock_wall2.ftval;
-        cave[y][x].fopen = rock_wall2.ftopen;
+        cave[y][x].fval = wall_magma.ftval;
+        cave[y][x].fopen = wall_magma.ftopen;
         break;
       }
     }
@@ -373,7 +373,8 @@ void generate_town(void) {
     gc__build_house(2, rooms[10 + i]);
   }
 
-  fill_cave(dopen_floor);
+  floor_type const dark_open_floor = {ft_dark_open_floor, true};
+  fill_cave(dark_open_floor);
 
   long i1;
   long i2;
@@ -384,8 +385,8 @@ void generate_town(void) {
 
   place_boundry();
 
-  obj_set floor_tiles = {1, 2, 0};
-  obj_set water_tiles = {16, 17, 18, 0};
+  obj_set floor_tiles = {ft_dark_open_floor, ft_light_open_floor, 0};
+  obj_set water_tiles = {ft_water_on_floor, ft_water_on_room_floor, ft_water_on_floor_lit, 0};
   if (player_cur_age.hour > 17 || player_cur_age.hour < 6) {
     /*{ Night	}*/
 
@@ -393,7 +394,7 @@ void generate_town(void) {
 
     for (long y = 1; y <= cur_height; y++) {
       for (long x = 1; x <= cur_width; x++) {
-        if (cave[y][x].fval != dopen_floor.ftval) {
+        if (cave[y][x].fval != ft_dark_open_floor) {
           cave[y][x].pl = true;
         }
       }

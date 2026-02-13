@@ -1,6 +1,7 @@
 #include <math.h>
 #include <time.h>
 
+#include "../floor.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
@@ -56,7 +57,7 @@ void player_action_search(const long player_y, const long player_x, long chance)
       } else if (t_list[cave[y][x].tptr].tval == secret_door) {
         // Secret door
         msg_print("You have found a secret door.");
-        cave[y][x].fval = corr_floor2.ftval;
+        cave[y][x].fval = corr_room_junction.ftval;
         change_trap(y, x);
         find_flag = false;
         found_something = true;

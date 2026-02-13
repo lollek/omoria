@@ -8,6 +8,7 @@
 #define DL_CLOSED 1
 #define DL_SECRET 2
 
+extern row_floor cave[MAX_HEIGHT + 1];
 extern treas_rec *cur_inven;      /* { Current inven page  } */
 extern unsigned long randes_seed; /* { For encoding colors } */
 extern unsigned long town_seed;   /* { Seed for town genera} */
@@ -52,23 +53,6 @@ extern long panel_row, panel_col;
 extern long panel_row_min, panel_row_max;
 extern long panel_col_min, panel_col_max;
 extern long panel_col_prt, panel_row_prt;
-
-/*	{  Following are all floor definitions				} */
-extern row_floor cave[MAX_HEIGHT + 1];
-extern cave_type blank_floor;
-extern floor_type dopen_floor;
-extern floor_type lopen_floor;
-extern floor_type corr_floor1;
-extern floor_type corr_floor2;
-extern floor_type corr_floor3;
-extern floor_type corr_floor4;
-extern floor_type rock_wall1;
-extern floor_type rock_wall2;
-extern floor_type rock_wall3;
-extern floor_type water1;
-extern floor_type water2;
-extern floor_type water3;
-extern floor_type boundry_wall;
 
 /*	{  Following are set definitions				} */
 extern obj_set floor_set;
