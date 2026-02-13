@@ -11,7 +11,8 @@ use crate::model::item_subtype::{
 use crate::model::Item;
 
 pub fn melee_weapon(item: &Item) -> String {
-    let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval) else {
+    let item_type = item.item_type().expect("Item has no type");
+    let Some(subtype) = item_subtype::from_i64(item_type, item.subval) else {
         return "alien weapon".to_string();
     };
 
@@ -26,7 +27,7 @@ pub fn melee_weapon(item: &Item) -> String {
         }
     }
     parts.push(damage(item));
-    if data::item_type::has_attack_enhancement(&item.item_type()) && item.is_identified() {
+    if data::item_type::has_attack_enhancement(&item_type) && item.is_identified() {
         parts.push(attack_bonus(item));
     }
     if let Some(armor_string) = maybe_armor_bonus(item) {

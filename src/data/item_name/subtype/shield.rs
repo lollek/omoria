@@ -4,7 +4,8 @@ use crate::model::item_subtype::{ItemSubType, ShieldSubType};
 use crate::model::Item;
 
 pub fn shield(item: &Item) -> String {
-    let Some(subtype) = item_subtype::from_i64(item.item_type(), item.subval) else {
+    let item_type = item.item_type().expect("Item has no type");
+    let Some(subtype) = item_subtype::from_i64(item_type, item.subval) else {
         return "alien shield".to_string();
     };
 

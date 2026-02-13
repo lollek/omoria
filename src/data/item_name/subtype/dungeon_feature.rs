@@ -4,7 +4,7 @@ use crate::data::item_name::helpers::{maybe_number_of, plural_s};
 use crate::model::{Item, ItemType};
 
 pub fn dungeon_feature(item: &Item) -> String {
-    let base = match item.item_type() {
+    let base = match item.item_type().expect("Item has no type") {
         ItemType::ClosedDoor => "closed door",
         ItemType::UnseenTrap => "unseen trap",
 

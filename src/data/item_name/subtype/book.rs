@@ -5,12 +5,12 @@ use crate::model::item_subtype::{
 use crate::model::{Item, ItemType};
 
 pub fn book(item: &Item) -> String {
-    let subtype = item.item_subtype();
+    let subtype = item.item_subtype().expect("Item has no subtype");
     if !identification::is_identified(subtype) && !item.is_identified() {
         return "book".to_string();
     }
 
-    match item.item_type() {
+    match item.item_type().expect("Item has no type") {
         ItemType::SongBook => match subtype {
             ItemSubType::SongBook(SongBookSubType::BeginnersHandbook) => {
                 "song book I [book of bard lyrics]".to_string()
