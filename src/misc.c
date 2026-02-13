@@ -1585,20 +1585,16 @@ long damroll(char const *dice) {
   /*{	Normal input string will look like '2d6', '3d8'... etc. }*/
 
   char dice_copy[7];
-  long num = 0;
-  long sides = 0;
-  long return_value = 0;
-
-  ENTER(("damroll", "m"));
 
   strcpy(dice_copy, dice);
   char *ptr = strchr(dice_copy, 'd');
   if (ptr != NULL)
     *ptr = ' ';
+  long num = 0;
+  long sides = 0;
   sscanf(dice_copy, "%ld %ld", &num, &sides);
-  return_value = rand_rep(num, sides);
-
-  RETURN("damroll", "m", 'd', "damage", &return_value);
+  const long return_value = rand_rep(num, sides);
+  MSG(("DiceRoll: %dd%d = %d", num, sides, return_value));
   return return_value;
 }
 /*//////////////////////////////////////////////////////////////////// */

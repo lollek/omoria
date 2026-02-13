@@ -1,5 +1,6 @@
 #include "fighting.h"
 
+#include "../debug.h"
 #include "../player.h"
 #include "../random.h"
 #include "../variables.h"
@@ -13,12 +14,10 @@ bool managed_to_hit(const long bth, const long level, const long pth, const long
     rest_off();
   }
 
-  const long attack_value = bth + level * BTH_LEV_ADJ + pth * BTH_PLUS_ADJ;
-  const bool managed_to_hit = randint(attack_value) > ac;
-  if (managed_to_hit) {
-    return true;
-  }
-
-  // 1 in 20 for a random lucky hit
-  return randint(20) == 1;
+  const long max_possible_attack_value = bth + level * 3 + pth * 3;
+  MSG(("MonsterToHit: %d + %d*3 + %d*3 = %d", bth, level, pth, max_possible_attack_value));
+  const long attack_value = randint(max_possible_attack_value);
+  const bool managed_to_hit = (attack_value >= ac) || randint(20) == 1;
+  MSG(("MonsterHits? %d (of %d) vs %d - Hit? %d", attack_value, max_possible_attack_value, ac, managed_to_hit));
+  return managed_to_hit;
 }

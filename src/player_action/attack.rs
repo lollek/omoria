@@ -51,7 +51,7 @@ pub fn calculate_number_of_attacks() -> i16 {
     // [1-7]
     let number_of_attacks = attacks_from_class + attacks_from_level + attacks_from_dexterity;
     debug::infof!(
-        "Attacks: class {}, level {}, dex {} raw dex ({}|{}) => total {}",
+        "Attacks: class {} + level {} + dex {} (raw {}/{}) => total {}",
         attacks_from_class,
         attacks_from_level,
         attacks_from_dexterity,
@@ -87,26 +87,34 @@ pub fn calculate_player_tohit2(attack_type: &AttackType) -> i16 {
     let main_weapon = unsafe { *equipment::get_item(equipment::Slot::Primary) };
     match attack_type {
         AttackType::Melee(melee_attack_type) => {
-            let base_to_hit = unsafe { player::player_bth }
-                + (player::level() as i16 * class::melee_bonus(&player::class()) as i16) / 2;
-            let mut plus_to_hit = 0;
-            if main_weapon.tval == 0 && player::class() != Class::Monk {
-                plus_to_hit -= 3;
-            }
-            if player::max_bulk() < main_weapon.weight {
-                plus_to_hit -= (player::max_bulk() as i16 - main_weapon.weight as i16) / 10;
-            }
-            if melee_attack_type == &MeleeAttackType::Backstab {
-                plus_to_hit += player::level() as i16 / 4;
-            }
-            if player::class() == Class::Fighter {
-                plus_to_hit += 1 + player::level() as i16 / 2;
-            }
-            plus_to_hit +=
+            let base_to_hit = unsafe { player::player_bth };
+            let base_from_class_and_level = (player::level() as i16 * class::melee_bonus(&player::class()) as i16) / 2;
+
+            let plus_base = unsafe { player_ptohit };
+            let plus_bulk = if player::max_bulk() < main_weapon.weight {
+                -(player::max_bulk() as i16 - main_weapon.weight as i16) / 10
+            } else {
+                0
+            };
+            let mut plus_class = if melee_attack_type == &MeleeAttackType::Backstab {
+                player::level() as i16 / 4
+            } else {
+                0
+            };
+            plus_class +=
                 calculate_tohit_bonus_for_weapon_type(&player::class(), main_weapon.item_type())
                     as i16;
-            plus_to_hit += unsafe { player_ptohit };
-            calculate_player_tohit(base_to_hit, plus_to_hit)
+
+            let total = calculate_player_tohit(base_to_hit + base_from_class_and_level, plus_base + plus_bulk + plus_class);
+            debug::infof!("ToHit: (base {}, base level*class {}) + 3x(base {}, bulk {}, class {}) => total {}",
+                base_to_hit,
+                base_from_class_and_level,
+                        plus_base,
+                        plus_bulk,
+                        plus_class,
+                        total
+            );
+            total
         }
         AttackType::Ranged => panic!("unimplemented"),
         AttackType::Thrown => panic!("unimplemented"),

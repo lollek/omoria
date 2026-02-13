@@ -158,7 +158,6 @@ void take_hit(long damage, char const *const hit_from) {
 
   if (C_player_current_hp() <= -1) {
     if (!death) {
-      /*{ Hee, hee... Ain't I mean?     }*/
       death = true;
       strcpy(died_from, hit_from);
       total_winner = false;
@@ -407,8 +406,11 @@ bool player_test_hit(const long base_to_hit, const long plus_to_hit,
   if (player_flags.rest > 0) {
     rest_off();
   }
-  long const hit_value = C_calculate_player_tohit(base_to_hit, plus_to_hit);
-  return randint(hit_value) > enemy_ac || randint(20) == 1;
+  const long max_possible_attack_value = C_calculate_player_tohit(base_to_hit, plus_to_hit);
+  const long attack_value = randint(max_possible_attack_value);
+  const bool did_hit = (attack_value >= enemy_ac) || randint(20) == 1;
+  MSG(("PlayerHits? %d (of %d) vs %d - Hit? %d", attack_value, max_possible_attack_value, enemy_ac, did_hit));
+  return did_hit;
 }
 
 long tot_dam(const treasure_type *item, long tdam,

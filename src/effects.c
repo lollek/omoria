@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "inventory/inven.h"
 #include "io.h"
 #include "player.h"
@@ -82,7 +83,9 @@ void corrode_gas(char const *const kb_str) {
 
   if (!minus_ac(Resist_Acid_worn_bit)) {
     /* if nothing corrodes then take damage */
-    take_hit(randint(8), kb_str);
+    const long damage = randint(8);
+    MSG(("Damage (Corrosion Gas): %ld", damage));
+    take_hit(damage, kb_str);
   }
 
   print_stat = 1;
@@ -94,14 +97,14 @@ void corrode_gas(char const *const kb_str) {
 }
 
 void poison_gas(const long dam, char const *const kb_str) {
-
+  MSG(("Damage (Poison Gas): %ld", dam));
   take_hit(dam, kb_str);
   print_stat = 1;
   player_flags.poisoned += 12 + randint(dam);
 }
 
 void fire_dam(long dam, char const *const kb_str) {
-
+  const long initial_damage = dam;
   obj_set things_that_burn = {arrow,
                               bow_crossbow_or_sling,
                               hafted_weapon,
@@ -123,6 +126,8 @@ void fire_dam(long dam, char const *const kb_str) {
     dam /= 3;
   }
 
+  MSG(("Damage (Fire): %ld - %ld = %ld", initial_damage, initial_damage - dam,
+       dam));
   take_hit(dam, kb_str);
 
   print_stat = 1;
@@ -133,8 +138,8 @@ void fire_dam(long dam, char const *const kb_str) {
   }
 }
 
-void acid_dam(const long dam, char const *const kb_str) {
-
+void acid_dam(long dam, char const *const kb_str) {
+  const long initial_damage = dam;
   long flag = 0;
   obj_set things_that_dilute = {
       miscellaneous_object,  chest,         bolt,       arrow,
@@ -149,22 +154,24 @@ void acid_dam(const long dam, char const *const kb_str) {
   }
 
   switch (flag) {
-  case 0:
-    take_hit(dam / 1, kb_str);
-    break;
   case 1:
-    take_hit(dam / 2, kb_str);
+    dam = dam / 2;
     break;
   case 2:
-    take_hit(dam / 3, kb_str);
+    dam = dam / 3;
     break;
   case 3:
-    take_hit(dam / 4, kb_str);
+    dam = dam / 4;
+    break;
+  default:
     break;
   }
+  take_hit(dam, kb_str);
 
   print_stat = 1;
 
+  MSG(("Damage (Acid): %ld - %ld = %ld", initial_damage, initial_damage - dam,
+       dam));
   if (inven_damage(things_that_dilute, 3) > 0) {
     msg_print("There is an acrid smell coming from your pack!");
     prt_stat_block();
@@ -172,6 +179,7 @@ void acid_dam(const long dam, char const *const kb_str) {
 }
 
 void cold_dam(long dam, char const *const kb_str) {
+  const long initial_damage = dam;
   obj_set things_that_freeze = {potion1, potion2, 0};
 
   if (player_flags.cold_resist) {
@@ -181,6 +189,8 @@ void cold_dam(long dam, char const *const kb_str) {
     dam /= 3;
   }
 
+  MSG(("Damage (Cold): %ld - %ld = %ld", initial_damage, initial_damage - dam,
+       dam));
   take_hit(dam, kb_str);
 
   print_stat = 1;
@@ -192,6 +202,7 @@ void cold_dam(long dam, char const *const kb_str) {
 }
 
 void light_dam(long dam, char const *const kb_str) {
+  const long initial_damage = dam;
 
   if (player_flags.lght_resist) {
     dam /= 3;
@@ -200,6 +211,8 @@ void light_dam(long dam, char const *const kb_str) {
     dam /= 3;
   }
 
+  MSG(("Damage (Lightning): %ld - %ld = %ld", initial_damage,
+       initial_damage - dam, dam));
   take_hit(dam, kb_str);
 
   print_stat = 1;
