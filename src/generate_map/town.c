@@ -311,8 +311,8 @@ static void gc__mixem(long rooms[], const long num) {
 
 
 void generate_town(void) {
-  long rooms[36];       /* array [0..35] of long;*/
-  bool roomdone[36]; /* array [0..35] of bool;*/
+  long rooms[36];
+  bool roomdone[36];
 
   obj_set allocSet1 = {1, 2, 0};
   obj_set allocSet2 = {16, 17, 18, 0};
