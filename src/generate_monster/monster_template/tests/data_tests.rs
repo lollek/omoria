@@ -3,7 +3,7 @@
 //! These tests verify the Rust `MONSTER_TEMPLATES` array matches
 //! the C `monster_templates[]` array from `monster_template.c`.
 
-use super::super::{MonsterAttribute, MonsterTemplate, MONSTER_TEMPLATES};
+use super::super::{MonsterAttribute, MONSTER_TEMPLATES};
 
 // ============================================================================
 // Array size tests
