@@ -17,6 +17,7 @@
 
 mod attribute;
 mod data;
+pub mod interop;
 mod template;
 
 pub use attribute::MonsterAttribute;
