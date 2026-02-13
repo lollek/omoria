@@ -16,9 +16,11 @@
 //! access the Rust data and functions.
 
 mod attribute;
+mod data;
 mod template;
 
 pub use attribute::MonsterAttribute;
+pub use data::MONSTER_TEMPLATES;
 pub use template::MonsterTemplate;
 
 #[cfg(test)]

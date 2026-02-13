@@ -448,7 +448,8 @@ monster_template_t const monster_templates[] = {
   // Level 100
     {25, 100, "Emperor Faerie Dragon", 0x7D830302, 0x01811D12, 0x4001, 0, 25000, 5, 'F', "105d8", "4 8 14d5|3 3 2-7d8", 100, 0, {.multiplies = false, .can_move = true}},
     {20, 80, "Evil Iggy", 0x7F130300, 0x0201D713, 0x5004, 0, 18000, 3, 'p', "400d8", "2 1 4d6|13 19 0d0", 100, 175, {.multiplies = false, .can_move = true}},
-    {20, 125, "Balrog", 0xFF1F0300, 0x0281C743, 0x5404, 0, 55000, 4, 'B', "475d8", "5 1 10d12|1 17 8d12|24 5 0d0", 100, 255, {.multiplies = false, .can_move = true}},};
+    {20, 125, "Balrog", 0xFF1F0300, 0x0281C743, 0x5404, 0, 55000, 4, 'B', "475d8", "5 1 10d12|1 17 8d12|24 5 0d0", 100, 255, {.multiplies = false, .can_move = true}},
+};
 long const monster_template_size = sizeof(monster_templates) / sizeof(monster_templates[0]);
 
 bool monster_template_has_attribute(monster_template_t const *template,
