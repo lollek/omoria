@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Monster template data and attribute queries are now implemented in Rust.
 * Internal: Dungeon traps migration: trap template data and basic trap placement/visibility logic (including rubble placement) are now implemented in Rust.
 * Internal: started migrating small Pascal helper functions (`pindex`, vowel and set-membership checks) from C to Rust.
 * Internal: random helper functions can now accept an injected RNG (for deterministic tests).

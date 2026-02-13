@@ -47,6 +47,7 @@ pub mod pascal;
 pub mod commands_extern;
 pub mod constants_extern;
 pub mod generate_item;
+pub mod generate_monster;
 pub mod highscore_extern;
 pub mod identification;
 pub mod misc_extern;
