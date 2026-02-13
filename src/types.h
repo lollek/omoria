@@ -165,11 +165,6 @@ typedef struct spl_rec {
 
 typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
-typedef struct floor_type {
-  uint8_t ftval;  /*: [bit(7),pos(0)] 0..127; */
-  bool ftopen; /*: [bit(1),pos(7)] bool; */
-} floor_type;
-
 typedef struct cave_type {
   uint8_t cptr;  // creature ptr; index of creature in m_list. 1=player
   uint8_t tptr;  // treasure ptr; index of treasure in t_list

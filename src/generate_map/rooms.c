@@ -49,9 +49,9 @@ void gc__build_room(const int64_t yval, const int64_t xval) {
   floor_type cur_floor;
 
   if (dun_level <= randint(25)) {
-    cur_floor = lopen_floor; /*{ Floor with light	}*/
+    cur_floor = light_open_floor;
   } else {
-    cur_floor = dopen_floor; /*{ Dark floor		}*/
+    cur_floor = dark_open_floor;
   }
 
   const int64_t y_height = yval - randint(4);
@@ -67,17 +67,17 @@ void gc__build_room(const int64_t yval, const int64_t xval) {
   }
 
   for (int64_t i = y_height - 1; i <= y_depth + 1; i++) {
-    cave[i][x_left - 1].fval = rock_wall1.ftval;
-    cave[i][x_left - 1].fopen = rock_wall1.ftopen;
-    cave[i][x_right + 1].fval = rock_wall1.ftval;
-    cave[i][x_right + 1].fopen = rock_wall1.ftopen;
+    cave[i][x_left - 1].fval = wall_granite.ftval;
+    cave[i][x_left - 1].fopen = wall_granite.ftopen;
+    cave[i][x_right + 1].fval = wall_granite.ftval;
+    cave[i][x_right + 1].fopen = wall_granite.ftopen;
   }
 
   for (int64_t i = x_left; i <= x_right; i++) {
-    cave[y_height - 1][i].fval = rock_wall1.ftval;
-    cave[y_height - 1][i].fopen = rock_wall1.ftopen;
-    cave[y_depth + 1][i].fval = rock_wall1.ftval;
-    cave[y_depth + 1][i].fopen = rock_wall1.ftopen;
+    cave[y_height - 1][i].fval = wall_granite.ftval;
+    cave[y_height - 1][i].fopen = wall_granite.ftopen;
+    cave[y_depth + 1][i].fval = wall_granite.ftval;
+    cave[y_depth + 1][i].fopen = wall_granite.ftopen;
   }
 }
 
@@ -89,9 +89,9 @@ void gc__build_type1(const int64_t yval, const int64_t xval) {
   floor_type cur_floor;
 
   if (dun_level <= randint(25)) {
-    cur_floor = lopen_floor; /*{ Floor with light	}*/
+    cur_floor = light_open_floor;
   } else {
-    cur_floor = dopen_floor; /*{ Dark floor		}*/
+    cur_floor = dark_open_floor;
   }
 
   for (int64_t i0 = 1; i0 <= 1 + randint(2); i0++) {
@@ -110,26 +110,26 @@ void gc__build_type1(const int64_t yval, const int64_t xval) {
     for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
 
       if (cave[i1][x_left - 1].fval != cur_floor.ftval) {
-        cave[i1][x_left - 1].fval = rock_wall1.ftval;
-        cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
+        cave[i1][x_left - 1].fval = wall_granite.ftval;
+        cave[i1][x_left - 1].fopen = wall_granite.ftopen;
       }
 
       if (cave[i1][x_right + 1].fval != cur_floor.ftval) {
-        cave[i1][x_right + 1].fval = rock_wall1.ftval;
-        cave[i1][x_right + 1].fopen = rock_wall1.ftopen;
+        cave[i1][x_right + 1].fval = wall_granite.ftval;
+        cave[i1][x_right + 1].fopen = wall_granite.ftopen;
       }
     }
 
     for (i1 = x_left; i1 <= x_right; i1++) {
 
       if (cave[y_height - 1][i1].fval != cur_floor.ftval) {
-        cave[y_height - 1][i1].fval = rock_wall1.ftval;
-        cave[y_height - 1][i1].fopen = rock_wall1.ftopen;
+        cave[y_height - 1][i1].fval = wall_granite.ftval;
+        cave[y_height - 1][i1].fopen = wall_granite.ftopen;
       }
 
       if (cave[y_depth + 1][i1].fval != cur_floor.ftval) {
-        cave[y_depth + 1][i1].fval = rock_wall1.ftval;
-        cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
+        cave[y_depth + 1][i1].fval = wall_granite.ftval;
+        cave[y_depth + 1][i1].fopen = wall_granite.ftopen;
       }
     }
   }
@@ -150,9 +150,9 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
   floor_type cur_floor;
 
   if (dun_level <= randint(30)) {
-    cur_floor = lopen_floor; /*{ Floor with light	}*/
+    cur_floor = light_open_floor;
   } else {
-    cur_floor = dopen_floor; /*{ Dark floor		}*/
+    cur_floor = dark_open_floor;
   }
 
   int64_t y_height = yval - 4;
@@ -168,17 +168,17 @@ void gc__build_type2(const int64_t yval, const int64_t xval) {
   }
 
   for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
-    cave[i1][x_left - 1].fval = rock_wall1.ftval;
-    cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
-    cave[i1][x_right + 1].fval = rock_wall1.ftval;
-    cave[i1][x_right + 1].fopen = rock_wall1.ftopen;
+    cave[i1][x_left - 1].fval = wall_granite.ftval;
+    cave[i1][x_left - 1].fopen = wall_granite.ftopen;
+    cave[i1][x_right + 1].fval = wall_granite.ftval;
+    cave[i1][x_right + 1].fopen = wall_granite.ftopen;
   }
 
   for (i1 = x_left; i1 <= x_right; i1++) {
-    cave[y_height - 1][i1].fval = rock_wall1.ftval;
-    cave[y_height - 1][i1].fopen = rock_wall1.ftopen;
-    cave[y_depth + 1][i1].fval = rock_wall1.ftval;
-    cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
+    cave[y_height - 1][i1].fval = wall_granite.ftval;
+    cave[y_height - 1][i1].fopen = wall_granite.ftopen;
+    cave[y_depth + 1][i1].fval = wall_granite.ftval;
+    cave[y_depth + 1][i1].fopen = wall_granite.ftopen;
   }
 
   /*{ The inner room		}*/
@@ -452,9 +452,9 @@ void gc__build_type3(const int64_t yval, const int64_t xval) {
   floor_type cur_floor;
 
   if (dun_level <= randint(25)) {
-    cur_floor = lopen_floor; /*{ Floor with light	}*/
+    cur_floor = light_open_floor;
   } else {
-    cur_floor = dopen_floor; /*{ Dark floor		}*/
+    cur_floor = dark_open_floor;
   }
 
   int64_t i0 = 2 + randint(2);
@@ -471,19 +471,19 @@ void gc__build_type3(const int64_t yval, const int64_t xval) {
   }
 
   for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
-    cave[i1][x_left - 1].fval = rock_wall1.ftval;
-    cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
+    cave[i1][x_left - 1].fval = wall_granite.ftval;
+    cave[i1][x_left - 1].fopen = wall_granite.ftopen;
 
-    cave[i1][x_right + 1].fval = rock_wall1.ftval;
-    cave[i1][x_right + 1].fopen = rock_wall1.ftopen;
+    cave[i1][x_right + 1].fval = wall_granite.ftval;
+    cave[i1][x_right + 1].fopen = wall_granite.ftopen;
   }
 
   for (i1 = x_left; i1 <= x_right; i1++) {
-    cave[y_height - 1][i1].fval = rock_wall1.ftval;
-    cave[y_height - 1][i1].fopen = rock_wall1.ftopen;
+    cave[y_height - 1][i1].fval = wall_granite.ftval;
+    cave[y_height - 1][i1].fopen = wall_granite.ftopen;
 
-    cave[y_depth + 1][i1].fval = rock_wall1.ftval;
-    cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
+    cave[y_depth + 1][i1].fval = wall_granite.ftval;
+    cave[y_depth + 1][i1].fopen = wall_granite.ftopen;
   }
 
   i0 = 2 + randint(9);
@@ -501,26 +501,26 @@ void gc__build_type3(const int64_t yval, const int64_t xval) {
 
   for (i1 = y_height - 1; i1 <= y_depth + 1; i1++) {
     if (cave[i1][x_left - 1].fval != cur_floor.ftval) {
-      cave[i1][x_left - 1].fval = rock_wall1.ftval;
-      cave[i1][x_left - 1].fopen = rock_wall1.ftopen;
+      cave[i1][x_left - 1].fval = wall_granite.ftval;
+      cave[i1][x_left - 1].fopen = wall_granite.ftopen;
     }
 
     if (cave[i1][x_right + 1].fval != cur_floor.ftval) {
-      cave[i1][x_right + 1].fval = rock_wall1.ftval;
-      cave[i1][x_right + 1].fopen = rock_wall1.ftopen;
+      cave[i1][x_right + 1].fval = wall_granite.ftval;
+      cave[i1][x_right + 1].fopen = wall_granite.ftopen;
     }
   }
 
   for (i1 = x_left; i1 <= x_right; i1++) {
 
     if (cave[y_height - 1][i1].fval != cur_floor.ftval) {
-      cave[y_height - 1][i1].fval = rock_wall1.ftval;
-      cave[y_height - 1][i1].fopen = rock_wall1.ftopen;
+      cave[y_height - 1][i1].fval = wall_granite.ftval;
+      cave[y_height - 1][i1].fopen = wall_granite.ftopen;
     }
 
     if (cave[y_depth + 1][i1].fval != cur_floor.ftval) {
-      cave[y_depth + 1][i1].fval = rock_wall1.ftval;
-      cave[y_depth + 1][i1].fopen = rock_wall1.ftopen;
+      cave[y_depth + 1][i1].fval = wall_granite.ftval;
+      cave[y_depth + 1][i1].fopen = wall_granite.ftopen;
     }
   }
 

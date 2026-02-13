@@ -11,6 +11,7 @@
 #include "../death.h"
 #include "../debug.h"
 #include "../dungeon/light.h"
+#include "../floor.h"
 #include "../generate_map/generate_map.h"
 #include "../generate_monster/generate_monster.h"
 #include "../io.h"
@@ -67,7 +68,7 @@ static void d__sun_rise_or_set(void) {
     } else if (player_cur_age.hour == 18 && player_cur_age.secs == 0) {
       for (long i1 = 1; i1 <= cur_height; i1++) {
         for (long i2 = 1; i2 <= cur_width; i2++) {
-          if (cave[i1][i2].fval != dopen_floor.ftval) {
+          if (cave[i1][i2].fval != ft_dark_open_floor) {
             cave[i1][i2].pl = true;
           } else {
             cave[i1][i2].pl = false;

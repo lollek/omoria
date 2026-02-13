@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "../debug.h"
+#include "../floor.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../pascal.h"
@@ -259,9 +260,9 @@ static void lr__find_light(const long y1, const long x1, const long y2,
   obj_set room_floors;
 
   memset(room_floors, 0, sizeof(room_floors));
-  room_floors[0] = dopen_floor.ftval;
-  room_floors[1] = lopen_floor.ftval;
-  room_floors[2] = water2.ftval;
+  room_floors[0] = ft_dark_open_floor;
+  room_floors[1] = ft_light_open_floor;
+  room_floors[2] = ft_water_on_room_floor;
 
   for (long i1 = y1; i1 <= y2; i1++) {
     for (long i2 = x1; i2 <= x2; i2++) {
@@ -273,12 +274,12 @@ static void lr__find_light(const long y1, const long x1, const long y2,
           cave[i3][i4].pl = true;
       }
 
-      if (cave[i1][i2].fval == water2.ftval) {
+      if (cave[i1][i2].fval == ft_water_on_room_floor) {
         /* water on room floor */
-        cave[i1][i2].fval = water3.ftval;
+        cave[i1][i2].fval = water_on_floor_lit.ftval;
         /* lit rm water on floor */
       } else {
-        cave[i1][i2].fval = lopen_floor.ftval;
+        cave[i1][i2].fval = ft_light_open_floor;
         /* lit rm floor */
       }
     }

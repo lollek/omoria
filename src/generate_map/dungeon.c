@@ -99,7 +99,7 @@ static void gc__place_streamer(const floor_type rock, const long treas_chance) {
       const long ty = y + randint(t1) - t2;
       const long tx = x + randint(t1) - t2;
       if (in_bounds(ty, tx)) {
-        if (cave[ty][tx].fval == rock_wall1.ftval) {
+        if (cave[ty][tx].fval == wall_granite.ftval) {
           cave[ty][tx].fval = rock.ftval;
           cave[ty][tx].fopen = rock.ftopen;
           if (randint(treas_chance) == 1) {
@@ -147,8 +147,7 @@ static void gc__tunnel(long row1, long col1, const long row2, const long col2,
       tmp_col = col1 + col_dir;
     }
 
-    /* with cave[tmp_row][tmp_col]. do; */
-    if (cave[tmp_row][tmp_col].fval == rock_wall1.ftval) {
+    if (cave[tmp_row][tmp_col].fval == ft_wall_granite) {
       row1 = tmp_row;
       col1 = tmp_col;
       if (wallptr < 1000) {
@@ -166,7 +165,7 @@ static void gc__tunnel(long row1, long col1, const long row2, const long col2,
         }
       }
 
-    } else if (cave[tmp_row][tmp_col].fval == corr_floor1.ftval) {
+    } else if (cave[tmp_row][tmp_col].fval == ft_corr_open_floor) {
       row1 = tmp_row;
       col1 = tmp_col;
       if (!door_flag) {
@@ -198,8 +197,8 @@ static void gc__tunnel(long row1, long col1, const long row2, const long col2,
   } while (!((row1 == row2 && col1 == col2) || stop_flag));
 
   for (long i = 1; i <= tunptr; i++) {
-    cave[tunstk[i].y][tunstk[i].x].fval = corr_floor1.ftval;
-    cave[tunstk[i].y][tunstk[i].x].fopen = corr_floor1.ftopen;
+    cave[tunstk[i].y][tunstk[i].x].fval = corr_open_floor.ftval;
+    cave[tunstk[i].y][tunstk[i].x].fopen = corr_open_floor.ftopen;
   }
 
   for (long i = 1; i <= wallptr; i++) {
@@ -207,8 +206,8 @@ static void gc__tunnel(long row1, long col1, const long row2, const long col2,
       if (randint(100) < DUN_TUN_PEN) {
         place_random_door(wallstk[i].y, wallstk[i].x);
       } else {
-        cave[wallstk[i].y][wallstk[i].x].fval = corr_floor2.ftval;
-        cave[wallstk[i].y][wallstk[i].x].fopen = corr_floor2.ftopen;
+        cave[wallstk[i].y][wallstk[i].x].fval = corr_room_junction.ftval;
+        cave[wallstk[i].y][wallstk[i].x].fopen = corr_room_junction.ftopen;
       }
     }
   }
@@ -240,7 +239,7 @@ static bool gc__next_to(const long y, const long x) {
  */
 static void gc__try_door(const long y, const long x) {
   if (randint(100) > DUN_TUN_JCT) {
-    if (cave[y][x].fval == corr_floor1.ftval) {
+    if (cave[y][x].fval == corr_open_floor.ftval) {
       if (gc__next_to(y, x)) {
         place_random_door(y, x);
       }
@@ -310,11 +309,6 @@ void generate_dungeon(void) {
   short yloc[401]; /*: array [1..400] of short;*/
   short xloc[401]; /*: array [1..400] of short;*/
 
-  obj_set allocSet1 = {1, 2, 0};       /* land monsters */
-  obj_set allocSet2 = {16, 17, 18, 0}; /* water monsters */
-  obj_set allocSet3 = {4, 0};          /* treasure things */
-  obj_set allocSet4 = {1, 2, 0};       /* treasure things */
-  obj_set allocSet5 = {1, 2, 4, 0};    /* treasure things */
 
   const long row_rooms = 2 * (cur_height / SCREEN_HEIGHT);
   const long col_rooms = 2 * (cur_width / SCREEN_WIDTH);
@@ -375,20 +369,20 @@ void generate_dungeon(void) {
     gc__tunnel(y2, x2, y1, x1, &doorptr, doorstk);
   }
 
-  fill_cave(rock_wall1);
+  fill_cave(wall_granite);
 
   for (long _ = 1; _ <= DUN_STR_MAG; _++) {
-    gc__place_streamer(rock_wall2, dun_str_mc);
+    gc__place_streamer(wall_magma, dun_str_mc);
   }
   for (long _ = 1; _ <= DUN_STR_QUA; _++) {
-    gc__place_streamer(rock_wall3, dun_str_qc);
+    gc__place_streamer(wall_quartz, dun_str_qc);
   }
 
   place_boundry();
   generate_rivers();
 
   for (long _ = 1; _ <= DUN_POOLS; _++) {
-    gc__place_pool(water1);
+    gc__place_pool(water_on_floor);
   }
 
   /*{ Place intersection doors	}*/
@@ -411,13 +405,17 @@ void generate_dungeon(void) {
   try_to_place_stairs(up_steep_staircase, 1, 3);
   try_to_place_stairs(down_steep_staircase, 1, 3);
 
-  generate_land_monster(allocSet1, randint(8) + MIN_MALLOC_LEVEL + alloc_level,
+  obj_set land_tiles = {ft_dark_open_floor, ft_light_open_floor, 0};       /* land monsters */
+  generate_land_monster(land_tiles, randint(8) + MIN_MALLOC_LEVEL + alloc_level,
                      0, true);
-  generate_water_monster(allocSet2,
+  generate_water_monster(water_set,
                      (randint(8) + MIN_MALLOC_LEVEL + alloc_level) / 3, 0, true);
 
+  obj_set allocSet3 = {4, 0};          /* treasure things */
   alloc_object(allocSet3, 3, randint(alloc_level));
+  obj_set allocSet4 = {1, 2, 0};       /* treasure things */
   alloc_object(allocSet4, 5, randnor(treas_room_alloc, 3));
+  obj_set allocSet5 = {1, 2, 4, 0};    /* treasure things */
   alloc_object(allocSet5, 5, randnor(treas_any_alloc, 3));
   alloc_object(allocSet5, 4, randnor(treas_gold_alloc, 3));
   alloc_object(allocSet5, 1, randint(alloc_level));

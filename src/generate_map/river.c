@@ -2,6 +2,7 @@
 #include "../c.h"
 #include "../constants.h"
 #include "../debug.h"
+#include "../floor.h"
 #include "../misc.h"
 #include "../random.h"
 #include "../types.h"
@@ -117,13 +118,13 @@ static void r__plot_water(const long y, const long x, const long font,
 
   for (long i = 1; i <= num_dots; i++) {
     if (in_bounds(dots[i].y, dots[i].x)) {
-      if (cave[dots[i].y][dots[i].x].fval == dopen_floor.ftval ||
-          cave[dots[i].y][dots[i].x].fval == lopen_floor.ftval) {
-        cave[dots[i].y][dots[i].x].fval = water2.ftval;
-        cave[dots[i].y][dots[i].x].fopen = water2.ftopen;
+      if (cave[dots[i].y][dots[i].x].fval == ft_dark_open_floor ||
+          cave[dots[i].y][dots[i].x].fval == ft_light_open_floor) {
+        cave[dots[i].y][dots[i].x].fval = ft_water_on_room_floor;
+        cave[dots[i].y][dots[i].x].fopen = water_on_room_floor.ftopen;
       } else {
-        cave[dots[i].y][dots[i].x].fval = water1.ftval;
-        cave[dots[i].y][dots[i].x].fopen = water1.ftopen;
+        cave[dots[i].y][dots[i].x].fval = ft_water_on_floor;
+        cave[dots[i].y][dots[i].x].fopen = water_on_floor.ftopen;
       }
 
       cave[dots[i].y][dots[i].x].h2o = 1;
