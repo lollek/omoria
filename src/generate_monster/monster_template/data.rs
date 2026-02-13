@@ -2,9 +2,6 @@
 //!
 //! This module contains the `MONSTER_TEMPLATES` array ported from
 //! `monster_template.c`.
-//!
-//! **AUTO-GENERATED** by `scripts/convert_monster_templates.py`.
-//! Do not edit manually.
 
 use super::MonsterTemplate;
 
