@@ -22,7 +22,7 @@ pub fn calculate_number_of_attacks() -> i16 {
             }
         } else {
             match main_weapon.item_type() {
-                ItemType::SlingAmmo | ItemType::Bolt | ItemType::Arrow => {
+                Some(ItemType::SlingAmmo) | Some(ItemType::Bolt) | Some(ItemType::Arrow) => {
                     return 1;
                 }
                 _ => (0, main_weapon.weight as i16),
@@ -103,7 +103,7 @@ pub fn calculate_player_tohit2(attack_type: &AttackType) -> i16 {
                 plus_to_hit += 1 + player::level() as i16 / 2;
             }
             plus_to_hit +=
-                calculate_tohit_bonus_for_weapon_type(&player::class(), &main_weapon.item_type())
+                calculate_tohit_bonus_for_weapon_type(&player::class(), main_weapon.item_type())
                     as i16;
             plus_to_hit += unsafe { player_ptohit };
             calculate_player_tohit(base_to_hit, plus_to_hit)

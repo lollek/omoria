@@ -284,54 +284,58 @@ pub fn starting_items(class: &model::Class) -> Vec<model::Item> {
     items
 }
 
-pub fn is_bad_with_weapon(class: &model::Class, item_type: &ItemType) -> bool {
+pub fn is_proficient_with_weapon(class: &model::Class, maybe_item_type: Option<ItemType>) -> bool {
+    if maybe_item_type.is_none() {
+        return class == &model::Class::Monk;
+    }
+    let item_type = maybe_item_type.unwrap();
     match class {
-        model::Class::Fighter => false,
+        model::Class::Fighter => true,
         model::Class::Wizard => {
             match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => true,
-                _ => false,
+                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => false,
+                _ => true,
             }
         },
         model::Class::Cleric => {
             match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => true,
-                _ => false,
+                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => false,
+                _ => true,
             }
         },
-        model::Class::Rogue => false,
-        model::Class::Ranger => false,
-        model::Class::Paladin => false,
+        model::Class::Rogue => true,
+        model::Class::Ranger => true,
+        model::Class::Paladin => true,
         model::Class::Druid => {
             match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword => true,
-                _ => false,
+                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword => false,
+                _ => true,
             }
         },
-        model::Class::Bard => false,
-        model::Class::Adventurer => false,
+        model::Class::Bard => true,
+        model::Class::Adventurer => true,
         model::Class::Monk => {
             match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm => true,
-                _ => false,
+                ItemType::HaftedWeapon | ItemType::PoleArm => false,
+                _ => true,
             }
         },
-        model::Class::Barbarian => false,
+        model::Class::Barbarian => true,
     }
 }
+
 
 #[allow(non_snake_case)]
 #[no_mangle]
 fn C_calculate_tohit_bonus_for_weapon_type(item_tval: u8) -> i8 {
-    let item_type = item_type::from_usize(item_tval as usize)
-        .expect("Failed to convert tval to item type");
-    calculate_tohit_bonus_for_weapon_type(&player::class(), &item_type)
+    let item_type = item_type::from_usize(item_tval as usize);
+    calculate_tohit_bonus_for_weapon_type(&player::class(), item_type)
 }
 
-pub fn calculate_tohit_bonus_for_weapon_type(class: &model::Class, item_type: &ItemType) -> i8 {
-    if is_bad_with_weapon(class, item_type) {
-        -5
-    } else {
+pub fn calculate_tohit_bonus_for_weapon_type(class: &model::Class, item_type: Option<ItemType>) -> i8 {
+    if is_proficient_with_weapon(class, item_type) {
         0
+    } else {
+        -5
     }
 }

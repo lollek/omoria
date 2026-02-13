@@ -53,7 +53,7 @@ extern "C" fn item_name(out_val: *mut [libc::c_char; 82], item: *const Item) {
 }
 
 pub fn generate(item: &Item) -> String {
-    match item.item_type() {
+    match item.item_type().expect("Item has no type") {
         ItemType::Amulet => amulet(item),
         ItemType::Arrow | ItemType::Bolt | ItemType::SlingAmmo => ammo(item),
         ItemType::Bag => bag(item),

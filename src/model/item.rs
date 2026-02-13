@@ -162,14 +162,16 @@ pub struct Item {
 }
 
 impl Item {
-    pub fn item_type(&self) -> ItemType {
+    /// Returns None when there's no valid item in the slot (i.e. if there's allocated but unused memory)
+    /// If it's not a bug, it should represent your bare hands (i.e. no weapon).
+    pub fn item_type(&self) -> Option<ItemType> {
         conversion::item_type::from_usize(self.tval.into())
-            .unwrap_or_else(|| panic!("expected item type from tval {}", self.tval))
     }
 
-    pub fn item_subtype(&self) -> ItemSubType {
-        conversion::item_subtype::from_i64(self.item_type(), self.subval)
-            .unwrap_or_else(|| panic!("expected item subtype from item_subtype {:?}", self))
+    /// Returns None when there's no valid item in the slot (i.e. if there's allocated but unused memory)
+    /// If it's not a bug, it should represent your bare hands (i.e. no weapon).
+    pub fn item_subtype(&self) -> Option<ItemSubType> {
+        conversion::item_subtype::from_i64(self.item_type()?, self.subval)
     }
 
     pub fn apply_chestflag1(&mut self, flag: ChestFlags1) {

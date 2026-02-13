@@ -10,7 +10,8 @@ pub fn ranged_weapon(item: &Item) -> String {
     if let Some(number_of_string) = maybe_number_of(item) {
         parts.push(number_of_string);
     }
-    parts.push(Cow::from(match from_i64(item.item_type(), item.subval) {
+    let item_type = item.item_type().expect("Item has no type");
+    parts.push(Cow::from(match from_i64(item_type, item.subval) {
         Some(subtype) => match subtype {
             ItemSubType::RangedWeapon(RangedWeaponSubType::Sling) => "sling",
             ItemSubType::RangedWeapon(RangedWeaponSubType::Shortbow) => "shortbow",

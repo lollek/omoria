@@ -5,9 +5,10 @@ use crate::model::Item;
 use std::borrow::Cow;
 
 pub fn ammo(item: &Item) -> String {
+    let item_type = item.item_type().expect("Item has no type");
     let mut parts = vec![
         full_number_of(item),
-        match from_i64(item.item_type(), item.subval) {
+        match from_i64(item_type, item.subval) {
             Some(subtype) => match subtype {
                 ItemSubType::SlingAmmo(SlingAmmoSubType::RoundedPebble) => {
                     Cow::from("rounded pebble")
