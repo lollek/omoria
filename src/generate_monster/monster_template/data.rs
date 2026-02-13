@@ -356,7 +356,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 1
     MonsterTemplate {
         area_effect_radius: 6,
@@ -556,7 +555,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
-
     // Level 2
     MonsterTemplate {
         area_effect_radius: 6,
@@ -882,7 +880,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: true,
         can_move: false,
     },
-
     // Level 3
     MonsterTemplate {
         area_effect_radius: 6,
@@ -1172,7 +1169,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 4
     MonsterTemplate {
         area_effect_radius: 6,
@@ -1390,7 +1386,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 5
     MonsterTemplate {
         area_effect_radius: 20,
@@ -1626,7 +1621,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
-
     // Level 6
     MonsterTemplate {
         area_effect_radius: 35,
@@ -1790,7 +1784,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 7
     MonsterTemplate {
         area_effect_radius: 2,
@@ -1954,7 +1947,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 8
     MonsterTemplate {
         area_effect_radius: 10,
@@ -2064,7 +2056,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 9
     MonsterTemplate {
         area_effect_radius: 20,
@@ -2228,7 +2219,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 10
     MonsterTemplate {
         area_effect_radius: 4,
@@ -2482,7 +2472,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 11
     MonsterTemplate {
         area_effect_radius: 2,
@@ -2592,7 +2581,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 12
     MonsterTemplate {
         area_effect_radius: 8,
@@ -2900,7 +2888,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 13
     MonsterTemplate {
         area_effect_radius: 8,
@@ -3082,7 +3069,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: true,
         can_move: true,
     },
-
     // Level 14
     MonsterTemplate {
         area_effect_radius: 12,
@@ -3210,7 +3196,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 15
     MonsterTemplate {
         area_effect_radius: 12,
@@ -3500,7 +3485,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 16
     MonsterTemplate {
         area_effect_radius: 10,
@@ -3664,7 +3648,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 17
     MonsterTemplate {
         area_effect_radius: 20,
@@ -3756,7 +3739,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 18
     MonsterTemplate {
         area_effect_radius: 6,
@@ -3884,7 +3866,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 19
     MonsterTemplate {
         area_effect_radius: 12,
@@ -4012,7 +3993,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
-
     // Level 20
     MonsterTemplate {
         area_effect_radius: 10,
@@ -4248,7 +4228,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 21
     MonsterTemplate {
         area_effect_radius: 12,
@@ -4340,7 +4319,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 22
     MonsterTemplate {
         area_effect_radius: 12,
@@ -4432,7 +4410,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
-
     // Level 23
     MonsterTemplate {
         area_effect_radius: 10,
@@ -4578,7 +4555,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 24
     MonsterTemplate {
         area_effect_radius: 10,
@@ -4670,7 +4646,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 25
     MonsterTemplate {
         area_effect_radius: 20,
@@ -4852,7 +4827,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 26
     MonsterTemplate {
         area_effect_radius: 10,
@@ -4980,7 +4954,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 27
     MonsterTemplate {
         area_effect_radius: 14,
@@ -5072,7 +5045,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
-
     // Level 28
     MonsterTemplate {
         area_effect_radius: 20,
@@ -5218,7 +5190,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 29
     MonsterTemplate {
         area_effect_radius: 14,
@@ -5328,7 +5299,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: true,
         can_move: true,
     },
-
     // Level 30
     MonsterTemplate {
         area_effect_radius: 8,
@@ -5510,7 +5480,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: true,
         can_move: true,
     },
-
     // Level 31
     MonsterTemplate {
         area_effect_radius: 20,
@@ -5620,7 +5589,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 32
     MonsterTemplate {
         area_effect_radius: 10,
@@ -5748,7 +5716,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 33
     MonsterTemplate {
         area_effect_radius: 20,
@@ -5822,7 +5789,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 34
     MonsterTemplate {
         area_effect_radius: 20,
@@ -5914,7 +5880,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 35
     MonsterTemplate {
         area_effect_radius: 4,
@@ -6204,7 +6169,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 36
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6332,7 +6296,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 37
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6478,7 +6441,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 38
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6606,7 +6568,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 39
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6698,7 +6659,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 40
     MonsterTemplate {
         area_effect_radius: 15,
@@ -6880,7 +6840,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 42
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6918,7 +6877,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 45
     MonsterTemplate {
         area_effect_radius: 15,
@@ -6938,7 +6896,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 48
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6958,7 +6915,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 50
     MonsterTemplate {
         area_effect_radius: 60,
@@ -6996,7 +6952,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 56
     MonsterTemplate {
         area_effect_radius: 20,
@@ -7016,7 +6971,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 60
     MonsterTemplate {
         area_effect_radius: 5,
@@ -7054,7 +7008,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 64
     MonsterTemplate {
         area_effect_radius: 25,
@@ -7074,7 +7027,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 70
     MonsterTemplate {
         area_effect_radius: 20,
@@ -7094,7 +7046,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 80
     MonsterTemplate {
         area_effect_radius: 25,
@@ -7114,7 +7065,6 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-
     // Level 100
     MonsterTemplate {
         area_effect_radius: 25,
@@ -7171,6 +7121,3 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         can_move: true,
     },
 ];
-
-/// Number of monster templates (for C interop).
-pub const MONSTER_TEMPLATE_COUNT: usize = 392;

@@ -254,9 +254,15 @@ mod tests {
 
     #[test]
     fn test_monster_attribute_from_c_valid() {
-        assert_eq!(monster_attribute_from_c(0), Some(MonsterAttribute::MoveOnlyToAttack));
+        assert_eq!(
+            monster_attribute_from_c(0),
+            Some(MonsterAttribute::MoveOnlyToAttack)
+        );
         assert_eq!(monster_attribute_from_c(29), Some(MonsterAttribute::Evil));
-        assert_eq!(monster_attribute_from_c(41), Some(MonsterAttribute::Regenerates));
+        assert_eq!(
+            monster_attribute_from_c(41),
+            Some(MonsterAttribute::Regenerates)
+        );
     }
 
     #[test]
