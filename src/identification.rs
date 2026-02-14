@@ -2,7 +2,9 @@ use crate::conversion;
 use crate::model::item_subtype::ItemSubType;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::sync::RwLock;
+use crate::model::ItemType;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifiedSubTypes {
@@ -25,8 +27,8 @@ impl Serialize for IdentifiedSubTypes {
         self.inner
             .iter()
             .map(|(k, v)| {
-                let item_type = conversion::item_type::to_usize(k.get_type());
-                let item_subtype = conversion::item_subtype::to_usize(k);
+                let item_type: u8 = k.get_type().into();
+                let item_subtype: usize = conversion::item_subtype::to_usize(k);
                 (item_type, item_subtype, v.clone())
             })
             .collect::<Vec<_>>()
@@ -39,11 +41,11 @@ impl<'de> Deserialize<'de> for IdentifiedSubTypes {
     where
         D: serde::Deserializer<'de>,
     {
-        let vec: Vec<(usize, usize, bool)> = Deserialize::deserialize(deserializer)?;
+        let vec: Vec<(u8, usize, bool)> = Deserialize::deserialize(deserializer)?;
         let mut inner = HashMap::new();
         for (item_type_as_usize, item_subtype_as_usize, is_identified) in vec {
-            let item_type = conversion::item_type::from_usize(item_type_as_usize)
-                .unwrap_or_else(|| panic!("Invalid item type: {}", item_type_as_usize));
+            let item_type = ItemType::try_from(item_type_as_usize)
+                .unwrap_or_else(|_| panic!("Invalid item type: {}", item_type_as_usize));
             let item_subtype =
                 conversion::item_subtype::from_usize(item_type, item_subtype_as_usize)
                     .unwrap_or_else(|| {

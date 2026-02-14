@@ -39,13 +39,12 @@ pub fn dungeon_feature(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::conversion;
     use crate::data::item_name::generate;
     use crate::model::{Item, ItemType};
 
     fn base_item(item_type: ItemType) -> Item {
         let mut item = Item::default();
-        item.tval = conversion::item_type::to_usize(item_type) as u8;
+        item.tval = item_type.into();
         item
     }
 
