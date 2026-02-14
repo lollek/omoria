@@ -708,6 +708,7 @@ void wizard_help(void) {
   prt(" w - *Create any object *CAN CAUSE FATAL ERROR*", 19, 1);
   prt(" x - *Edit high score file", 20, 1);
   prt(" I - Tile inspection", 21, 1);
+  prt(" S - Update stores", 22, 1);
   pause_game(24);
   draw_cave();
 }
@@ -823,7 +824,7 @@ void wizard_command(void) {
   case 'I':
     wizard_inspect_tile();
     break;
-  case 27: /* ^3  Run store_maint */
+  case 'S': /* ^3  Run store_maint */
     store_maint();
     msg_print("Stores updated.");
     break;
