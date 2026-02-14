@@ -10,7 +10,7 @@ pub fn dungeon_feature(item: &Item) -> String {
 
         // Other dungeon features are wired here too; keep a sane fallback while we
         // gradually add tests.
-        ItemType::SeenTrap => "seen trap",
+        ItemType::SeenTrap => "trap",
         ItemType::OpenDoor => "open door",
         ItemType::SecretDoor => "secret door",
         ItemType::UpStaircase => "up staircase",

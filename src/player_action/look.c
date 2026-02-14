@@ -52,12 +52,10 @@ void player_action_look(void) {
         if (t_list[cave[y][x].tptr].tval == secret_door) {
           msg_print("You see a granite wall.");
         } else if (t_list[cave[y][x].tptr].tval != unseen_trap) {
-          char out_val2[120];
           inven_temp.data = t_list[cave[y][x].tptr];
           inven_temp.data.number = 1;
           item_name(out_val, &inven_temp);
-          sprintf(out_val2, "You see %s.", out_val);
-          msg_print(out_val2);
+          msg_printf("You see %s %s.", is_vowel(out_val[0]) ? "an" : "a", out_val);
           flag = true;
         }
       }
