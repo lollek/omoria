@@ -233,17 +233,6 @@ pub(crate) fn identify_core(
     // SAFETY NOTE: We assume all `Item.name` buffers we touch are NUL-terminated.
     // That matches the C code's expectations and is required for strstr/unquote/known1.
 
-    // Legacy guard: if item name does not contain the '|' marker, do nothing.
-    // (In C this was: `if (strstr(item->name, "|") == NULL) return;`)
-    let item_name_has_pipe = unsafe {
-        // SAFETY: `item.name` is a fixed-size C buffer; we expect it to be NUL-terminated.
-        let s = item.name.as_ptr();
-        !libc::strstr(s, b"|\0".as_ptr() as *const c_char).is_null()
-    };
-    if !item_name_has_pipe {
-        return;
-    }
-
     // Helper: apply unquote() and known1() to the provided C string buffer.
     unsafe fn unquote_then_known1(buf: *mut c_char) {
         unquote(buf);
@@ -276,7 +265,6 @@ pub(crate) fn identify_core(
         cursor = node.next;
     }
 
-    // Final legacy side effect.
     let subtype = item.item_subtype().expect("Item has no subtype");
     set_identified(subtype, true)
 }
@@ -609,7 +597,7 @@ mod identify_core_tests {
 
     #[serial]
     #[test]
-    fn identify_core_noops_when_item_name_has_no_pipe_marker() {
+    fn identify_core_still_identifies_when_item_name_has_no_pipe_marker() {
         let mut item = mk_item_without_pipe();
         let item_sub_type = item.item_subtype().unwrap();
         set_identified(item_sub_type, false);
@@ -635,7 +623,7 @@ mod identify_core_tests {
         );
 
         assert_eq!(read_name(&inv_a.data.name), "ab\"cd~EF|GHI");
-        assert_eq!(is_identified(item_sub_type), false);
+        assert_eq!(is_identified(item_sub_type), true);
 
         // Prevent cross-test leakage if other tests run after this one.
         set_identified(item_sub_type, false);
