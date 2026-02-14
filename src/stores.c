@@ -378,6 +378,7 @@ static void __add_item_to_store(const enum store_t store_num) {
     unquote(t_list[cur_pos].name);
     known1(t_list[cur_pos].name);
     known2(t_list[cur_pos].name);
+    t_list[cur_pos].identified = 255;
 
     // TODO: Stop using inven_temp
     inven_temp.data = t_list[cur_pos];
