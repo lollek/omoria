@@ -113,8 +113,6 @@ void Clear_From(const int row) {
 /* Outputs a char to a given interpolated y, x position	-RAK-	*/
 /* sign bit of a character used to indicate standout mode. -CJS */
 void Print(chtype const ch, int row, int col) {
-  char tmp_str[82];
-
   row -= panel_row_prt; /* Real co-ords convert to screen positions */
   col -= panel_col_prt;
 
