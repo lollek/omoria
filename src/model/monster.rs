@@ -21,7 +21,7 @@ pub struct Monster {
     pub fx: u8, // X Pointer into map
 
     pub stunned: i8,  // Rounds stunned
-    pub ml: u8,       // On if shown
+    pub is_seen: u8,  // On if shown
     pub confused: u8, // On if confused
     pub moved: u8,    // On if water-moved
 }
@@ -38,7 +38,7 @@ impl Default for Monster {
             fy: 0,
             fx: 0,
             stunned: 0,
-            ml: 0,
+            is_seen: 0,
             confused: 0,
             moved: 0,
         }

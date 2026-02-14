@@ -125,10 +125,10 @@ typedef struct monster_type {
   uint8_t fy; /* Y Pointer into map	 */
   uint8_t fx; /* X Pointer into map	 */
 
-  int8_t stunned;   /* [bit(6),pos(104)] -32..31; Rounds stunned */
-  bool ml;       /* [bit(1),pos(110)] bool; On if shown   */
-  bool confused; /* [bit(1),pos(111)] bool; On if confused */
-  bool moved;    /* [bit(1),pos(112)] bool; On if water-moved */
+  int8_t stunned;   // -32..31; Rounds stunned */
+  bool is_seen;     // Is seen by the player
+  bool confused;    // Is confused
+  bool moved;       // Is moved by water
 } monster_type;
 
 typedef struct treasure_type {

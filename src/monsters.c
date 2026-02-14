@@ -189,35 +189,35 @@ long mon_take_hit(const long monptr, const long dam) {
   return return_value;
 }
 
-void delete_monster(const long i2) {
+void delete_monster(const long cptr) {
 
   ENTER(("delete_monster", "%d", i2));
 
-  const long i3 = m_list[i2].nptr;
-  if (muptr == i2) {
+  const long i3 = m_list[cptr].nptr;
+  if (muptr == cptr) {
     muptr = i3;
   } else {
     long i1;
 
-    for (i1 = muptr; m_list[i1].nptr != i2;) {
+    for (i1 = muptr; m_list[i1].nptr != cptr;) {
       i1 = m_list[i1].nptr;
     }
     m_list[i1].nptr = i3;
   }
 
   /* with m_list[i2]. do; */
-  cave[m_list[i2].fy][m_list[i2].fx].cptr = 0;
-  if (m_list[i2].ml) {
+  cave[m_list[cptr].fy][m_list[cptr].fx].cptr = 0;
+  if (m_list[cptr].is_seen) {
     /* with cave[fy][fx]. do; */
-    if (cave[m_list[i2].fy][m_list[i2].fx].pl ||
-        cave[m_list[i2].fy][m_list[i2].fx].tl) {
-      lite_spot(m_list[i2].fy, m_list[i2].fx);
+    if (cave[m_list[cptr].fy][m_list[cptr].fx].pl ||
+        cave[m_list[cptr].fy][m_list[cptr].fx].tl) {
+      lite_spot(m_list[cptr].fy, m_list[cptr].fx);
     } else {
-      unlite_spot(m_list[i2].fy, m_list[i2].fx);
+      unlite_spot(m_list[cptr].fy, m_list[cptr].fx);
     }
   }
 
-  pushm(i2);
+  pushm(cptr);
   mon_tot_mult--;
 
   LEAVE("delete_monster", "c");

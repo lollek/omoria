@@ -115,6 +115,21 @@ static long movement_rate(const long cspeed, const long mon) {
   return return_value;
 }
 
+void c__monster_devour_monster(const uint8_t subject_cptr,
+                               const uint8_t victim_cptr) {
+  if (m_list[victim_cptr].is_seen) {
+    const uint16_t victim_mptr = m_list[victim_cptr].mptr;
+    monster_template_t const *const victim_template =
+        &monster_templates[victim_mptr];
+
+    const uint16_t subject_mptr = m_list[subject_cptr].mptr;
+    monster_template_t const *const subject_template =
+        &monster_templates[subject_mptr];
+    msg_printf("the %s devours the %s!", subject_template->name, victim_template->name);
+  }
+  delete_monster(victim_cptr);
+}
+
 uint8_t get_creature_at_location(coords const *coord) {
   return cave[coord->y][coord->x].cptr;
 }
@@ -138,10 +153,10 @@ void move_creature(const long from_y, const long from_x, const long to_y,
 void check_mon_lite(const long y, const long x) {
   const coords location = {.y = y, .x = x};
   if (is_monster_at_location(&location)) {
-    if (!m_list[cave[y][x].cptr].ml) { // if (!lit up)
+    if (!m_list[cave[y][x].cptr].is_seen) { // if (!lit up)
       if (cave[y][x].tl || cave[y][x].pl) {
         if (los(char_row, char_col, y, x)) {
-          m_list[cave[y][x].cptr].ml = true;
+          m_list[cave[y][x].cptr].is_seen = true;
           lite_spot(y, x);
         }
       }
@@ -197,9 +212,9 @@ static void c__update_mon(const long monptr, long *hear_count) {
 
   if (flag) {
     /*{ Light it up...        }*/
-    if (!ML(monptr).ml) {
+    if (!ML(monptr).is_seen) {
       print(monster_templates[ML(monptr).mptr].symbol, MY(monptr), MX(monptr));
-      ML(monptr).ml = true;
+      ML(monptr).is_seen = true;
       if (search_flag) {
         search_off();
       }
@@ -212,9 +227,9 @@ static void c__update_mon(const long monptr, long *hear_count) {
         player_action_move(5);
       }
     }
-  } else if (ML(monptr).ml) {
+  } else if (ML(monptr).is_seen) {
     /*{ Turn it off...        }*/
-    ML(monptr).ml = false;
+    ML(monptr).is_seen = false;
     if (cave[MY(monptr)][MX(monptr)].tl || cave[MY(monptr)][MX(monptr)].pl) {
       lite_spot(MY(monptr), MX(monptr));
     } else {
@@ -223,64 +238,6 @@ static void c__update_mon(const long monptr, long *hear_count) {
   }
 
   /*  LEAVE("c__update_mon", "c") */
-}
-
-static void c__monster_eaten_message(char const *squash, char const *doesit,
-                                     const long cptr) {
-  char out_val[1026];
-
-  ENTER(("c__monster_eaten_message", "c"));
-
-  switch (randint(10)) {
-  case 1:
-    sprintf(out_val, "Uh oh...it looks like the %s is in need of first aid.",
-            squash);
-    break;
-
-  case 2:
-    sprintf(out_val, "*splat* *crunch* *gobble* *BUUUUUUURP*");
-    break;
-
-  case 3:
-    sprintf(out_val, "Look out!  The %s is going to-- Eeeeew...never mind.",
-            doesit);
-    break;
-
-  case 4:
-    sprintf(out_val, "Ick...the %s has %s all over his toes.", doesit, squash);
-
-    break;
-
-  case 5:
-    sprintf(out_val, "The nice %s took out the %s for you.", doesit, squash);
-    break;
-
-  case 6:
-    sprintf(out_val, "WoWEE, Auggie Ben-Doggie!  The %s just got blatted!",
-            squash);
-    break;
-
-  case 7:
-    sprintf(out_val, "The %s Society will not appreciate this. . .", squash);
-    break;
-
-  case 8:
-    sprintf(out_val, "The %s is not amused.", squash);
-    break;
-
-  case 9:
-    sprintf(out_val, "The %s pauses to clean the %s off.", doesit, squash);
-    break;
-
-  case 10:
-    sprintf(out_val, "Aw, darn.  There goes %ld experience!",
-            monster_templates[m_list[cptr].mptr].mexp);
-    break;
-  }
-
-  msg_print(out_val);
-
-  LEAVE("c__monster_eaten_message", "c");
 }
 
 static bool c__check_for_hit(const long monptr, const long atype) {
@@ -346,7 +303,6 @@ static bool c__check_for_hit(const long monptr, const long atype) {
     return true;
   default:
     return false;
-
   }
 }
 
@@ -528,7 +484,8 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
   switch (atype) {
   case 1: /*{Normal attack  }*/
     dam = damroll(damstr);
-    const long reduction = (long)((player_pac + player_ptoac) / 200.0 * dam + .5);
+    const long reduction =
+        (long)((player_pac + player_ptoac) / 200.0 * dam + .5);
     MSG(("Damage (Normal): %ld - %ld = %ld", dam, reduction, dam - reduction));
     dam -= reduction;
     take_hit(dam, ddesc);
@@ -872,7 +829,8 @@ static void c__describe_monster_with_article(char out[82], const long monptr) {
     /* Unique/"proper name" monsters: don't use article. */
     sprintf(out, "The %s", monster_templates[m_list[monptr].mptr].name);
   } else {
-    /* Default: behave like the legacy "& name" item-style prefixing: "a/an name". */
+    /* Default: behave like the legacy "& name" item-style prefixing: "a/an
+     * name". */
     const char *name = monster_templates[m_list[monptr].mptr].name;
     sprintf(out, "%s %s", is_vowel(name[0]) ? "an" : "a", name);
   }
@@ -884,7 +842,8 @@ static void c__make_attack(const long monptr) {
 
   char monster_template_damage[82];
   monster_template_damage[0] = 0;
-  strcpy(monster_template_damage, monster_templates[m_list[monptr].mptr].damage);
+  strcpy(monster_template_damage,
+         monster_templates[m_list[monptr].mptr].damage);
 
   char monster_name_as_known_to_player[82];
   find_monster_name(monster_name_as_known_to_player, monptr, true);
@@ -949,7 +908,8 @@ static void c__make_attack(const long monptr) {
 
       if (did_hit) {
         c__print_attack(attack_desc, monster_name_as_known_to_player);
-        c__apply_attack(monptr, attack_type, monster_name_with_article, damage_roll);
+        c__apply_attack(monptr, attack_type, monster_name_with_article,
+                        damage_roll);
       } else {
         switch (attack_desc) {
         case 1:
@@ -969,260 +929,243 @@ static void c__make_attack(const long monptr) {
   LEAVE("c__make_attack", "c");
 }
 
-static bool c__make_move(const long monptr, mm_type mm, long *hear_count) {
-  /*{ Make the move if possible, five choices               -RAK-   }*/
-
-  long i2, newy, newx;
-  bool return_value = false;
-
-  ENTER(("c__make_move", "c"));
+// Return if the monster moved.
+static bool c__make_move(const long monster_cptr, mm_type mm,
+                         long *hear_count) {
+  uint16_t const monster_mptr = m_list[monster_cptr].mptr;
+  monster_template_t const *const monster_template =
+      &monster_templates[monster_mptr];
 
   long i1 = 1;
   bool flag = false;
-  const unsigned long movebits = monster_templates[m_list[monptr].mptr].cmove;
 
   do {
     /*{ Get new positon               }*/
-    newy = m_list[monptr].fy;
-    newx = m_list[monptr].fx;
-    move_dir(mm[i1], &newy, &newx);
-    /* with cave[newy][newx]. do; */
-    if (cave[newy][newx].fval != boundry_wall.ftval) {
-      bool tflag = false;
-      if (cave[newy][newx].cptr == 1) {
-        tflag = true;
-      } else if (cave[newy][newx].fopen) {
-        if (is_in(cave[newy][newx].fval, floor_set)) {
-          if ((movebits & 0x00000040) == 0) {
-            tflag = true;
-          } else if (!xor(is_in(cave[newy][newx].fval, earth_set),
-                          (movebits & 0x00000010) == 0)) {
-            tflag = true;
-          }
+    long tmp_y = m_list[monster_cptr].fy;
+    long tmp_x = m_list[monster_cptr].fx;
+    move_dir(mm[i1], &tmp_y, &tmp_x);
+    const long newy = tmp_y;
+    const long newx = tmp_x;
+
+    if (cave[newy][newx].fval == ft_boundry_wall) {
+      i1++;
+      continue;
+    }
+
+    bool can_make_a_move = false;
+
+    const uint8_t target_cptr = cave[newy][newx].cptr;
+    const bool target_is_player = target_cptr == 1;
+    const uint8_t target_tptr = cave[newy][newx].tptr;
+    if (target_is_player) {
+      can_make_a_move = true;
+    } else if (cave[newy][newx].fopen) {
+      // Open floor, open door, or secret door that has been opened
+      if (is_in(cave[newy][newx].fval, floor_set)) {
+        if (!monster_template_has_attribute(monster_template,
+                                            ma_dies_in_wrong_element)) {
+          can_make_a_move = true;
+        } else if (!xor(is_in(cave[newy][newx].fval, earth_set),
+                        monster_template_has_attribute(monster_template,
+                                                       ma_land_based))) {
+          can_make_a_move = true;
         }
-        /*{ Creature moves through walls? }*/
-      } else if ((movebits & 0x40000) != 0) {
-        tflag = true;
-        /*{ Creature can open doors?      }*/
-      } else if (cave[newy][newx].tptr > 0) {
-
-        /* with t_list[cave[newy][newx].tptr]. do; */
-        /* with m_list[monptr]. do; */
-        if ((movebits & 0x20000) != 0) {
-          /*{ Creature can open doors... }*/
-          switch (t_list[cave[newy][newx].tptr].tval) {
-          case closed_door:                              /*{ Closed doors...
-                                                            }*/
-            if (t_list[cave[newy][newx].tptr].p1 == 0) { /*{ Closed doors  }*/
-              tflag = true;
-              if (cave[newy][newx].fm) {
-                if (los(char_row, char_col, newy, newx)) {
-                  t_list[cave[newy][newx].tptr] = door_list[DL_OPEN];
-                  cave[newy][newx].fopen = true;
-                  lite_spot(newy, newx);
-                  tflag = false;
-                }
-              }
-            } else if (t_list[cave[newy][newx].tptr].p1 > 0) {
-              /*{ Locked doors  }*/
-              if (randint(100 - monster_templates[m_list[monptr].mptr].level) <
-                  5) {
-                t_list[cave[newy][newx].tptr].p1 = 0;
-              }
-            } else if (t_list[cave[newy][newx].tptr].p1 < 0) {
-              /*{ Stuck doors   }*/
-              if (randint(m_list[monptr].hp) >
-                  10 + labs(t_list[cave[newy][newx].tptr].p1)) {
-                t_list[cave[newy][newx].tptr].p1 = 0;
-              }
-            }
-            break;
-
-          case secret_door: /*{ Secret doors...
-                               }*/
-            tflag = true;
+      }
+    } else if (monster_template_has_attribute(monster_template,
+                                              ma_moves_through_wall)) {
+      can_make_a_move = true;
+    } else if (target_tptr > 0) {
+      if (monster_template_has_attribute(monster_template,
+                                         ma_moves_through_door)) {
+        // Creature can open doors
+        switch (t_list[target_tptr].tval) {
+        case closed_door: {
+          const bool stuck_door = t_list[target_tptr].p1 < 0;
+          const bool unlocked_door = t_list[target_tptr].p1 == 0;
+          const bool locked_door = t_list[target_tptr].p1 > 0;
+          if (unlocked_door) { /*{ Closed doors  }*/
+            can_make_a_move = true;
             if (cave[newy][newx].fm) {
               if (los(char_row, char_col, newy, newx)) {
-                t_list[cave[newy][newx].tptr] = door_list[DL_OPEN];
+                t_list[target_tptr] = door_list[DL_OPEN];
                 cave[newy][newx].fopen = true;
                 lite_spot(newy, newx);
-                tflag = false;
+                can_make_a_move = false;
               }
             }
-            break;
-
-          default:
-            break;
-          }
-        } else {
-          /*  { Creature can not open doors, must
-           * bash them   }*/
-          switch (t_list[cave[newy][newx].tptr].tval) {
-          case closed_door: /* { Closed doors...
-                               }*/
-            i2 = labs(t_list[cave[newy][newx].tptr].p1) + 20;
-            if (randint(m_list[monptr].hp) > i2) {
-              tflag = true;
-              if (cave[newy][newx].fm) {
-                if (los(char_row, char_col, newy, newx)) {
-                  t_list[cave[newy][newx].tptr] = door_list[DL_OPEN];
-                  t_list[cave[newy][newx].tptr].p1 = randint(2) - 1;
-                  cave[newy][newx].fopen = true;
-                  lite_spot(newy, newx);
-                  tflag = false;
+          } else {
+            if (locked_door) {
+              if (randint(100 -
+                          monster_templates[m_list[monster_cptr].mptr].level) <
+                  5) {
+                t_list[target_tptr].p1 = 0;
+              }
+            } else {
+              if (stuck_door) {
+                if (randint(m_list[monster_cptr].hp) >
+                    10 + labs(t_list[target_tptr].p1)) {
+                  t_list[target_tptr].p1 = 0;
                 }
               }
             }
-            break;
-
-          case secret_door: /* { Secret doors...
-                               }*/
-            break;
-
-          default:
-            break;
           }
-        }
-      }
+        } break;
 
-      /* { Glyph of warding present?     }*/
-      if (tflag) {
-        if (cave[newy][newx].tptr > 0) {
-          if (t_list[cave[newy][newx].tptr].tval == seen_trap) {
-            if (t_list[cave[newy][newx].tptr].subval == 99) {
-              if (randint(OBJ_RUNE_PROT) <
-                  monster_templates[m_list[monptr].mptr].level) {
-                if (newy == char_row && newx == char_col) {
-                  msg_print("Th"
-                            "e "
-                            "ru"
-                            "ne"
-                            " o"
-                            "f "
-                            "pr"
-                            "ot"
-                            "ec"
-                            "ti"
-                            "on"
-                            " i"
-                            "s "
-                            "br"
-                            "ok"
-                            "en"
-                            "!");
-                }
-                delete_object(newy, newx);
-              } else {
-                tflag = false;
+        case secret_door:
+          can_make_a_move = true;
+          if (cave[newy][newx].fm) {
+            if (los(char_row, char_col, newy, newx)) {
+              t_list[target_tptr] = door_list[DL_OPEN];
+              cave[newy][newx].fopen = true;
+              lite_spot(newy, newx);
+              can_make_a_move = false;
+            }
+          }
+          break;
+
+        default:
+          break;
+        }
+      } else {
+        // Creature can not open doors, must bash them
+        switch (t_list[target_tptr].tval) {
+        case closed_door: {
+          const long i2 = labs(t_list[target_tptr].p1) + 20;
+          if (randint(m_list[monster_cptr].hp) > i2) {
+            can_make_a_move = true;
+            if (cave[newy][newx].fm) {
+              if (los(char_row, char_col, newy, newx)) {
+                t_list[target_tptr] = door_list[DL_OPEN];
+                t_list[target_tptr].p1 = randint(2) - 1;
+                cave[newy][newx].fopen = true;
+                lite_spot(newy, newx);
+                can_make_a_move = false;
               }
             }
           }
+          break;
+        }
+        case secret_door:
+          break;
+
+        default:
+          break;
         }
       }
+    }
 
-      /* { Creature has attempted to move on player?     }*/
-      if (tflag) {
-        if (cave[newy][newx].cptr == 1) {
-
-          if (!m_list[monptr].ml) {
-            c__update_mon(monptr, hear_count);
-          }
-
-          if (find_flag) {
-            find_flag = false;
-            player_action_move(5);
-          }
-
-          c__make_attack(monptr);
-          /* { Player has read a Confuse Monster?
-           * }*/
-          /* { Monster gets a saving throw... }*/
-          if (player_flags.confuse_monster) {
-            char out_val[82];
-            /* with m_list[monptr] do; */
-            /* with */
-            /* monster_templates[m_list[monptr].mptr].
-             */
-            /* do; */
-            msg_print("Your hands stop glowing.");
-            player_flags.confuse_monster = false;
-            if (mon_save(monptr, 0, SC_MENTAL)) {
-              sprintf(out_val,
-                      "The %s is "
-                      "unaffected.",
-                      monster_templates[m_list[monptr].mptr].name);
-            } else {
-              sprintf(out_val,
-                      "The %s appears "
-                      "confused.",
-                      monster_templates[m_list[monptr].mptr].name);
-              m_list[monptr].confused = true;
-            }
-            msg_print(out_val);
-          }
-          tflag = false;
-          flag = true;
-
-        } else { /* cptr != 1 */
-
-          /*{ Creature is attempting to move on
-           * other creature?     }*/
-          if (cave[newy][newx].cptr > 1 &&
-              (newy != m_list[monptr].fy || newx != m_list[monptr].fx)) {
-
-            /*{ Creature eats other
-             * creatures?        }*/
-            if ((movebits & 0x80000) != 0) {
-              if (m_list[cave[newy][newx].cptr].ml) {
-                /*squash =
-                 * monster_templates[m_list[cptr].mptr].name;*/
-                /*doesit =
-                 * monster_templates[m_list[monptr].mptr].name;*/
-                c__monster_eaten_message(
-                    monster_templates[m_list[cave[newy][newx].cptr].mptr].name,
-                    monster_templates[m_list[monptr].mptr].name,
-                    cave[newy][newx].cptr);
+    /* { Glyph of warding present?     }*/
+    if (can_make_a_move) {
+      if (target_tptr > 0) {
+        if (t_list[target_tptr].tval == seen_trap) {
+          if (t_list[target_tptr].subval == 99) {
+            if (randint(OBJ_RUNE_PROT) <
+                monster_templates[m_list[monster_cptr].mptr].level) {
+              if (newy == char_row && newx == char_col) {
+                msg_print("Th"
+                          "e "
+                          "ru"
+                          "ne"
+                          " o"
+                          "f "
+                          "pr"
+                          "ot"
+                          "ec"
+                          "ti"
+                          "on"
+                          " i"
+                          "s "
+                          "br"
+                          "ok"
+                          "en"
+                          "!");
               }
-              delete_monster(cave[newy][newx].cptr);
-            } else {
-              tflag = false;
-            }
-          }
-        }
-      } /* end if tflag */
-
-      /*{ Creature has been allowed move...     }*/
-      if (tflag) {
-        /* with m_list[monptr] do */
-
-        /*{ Pick up or eat an object              }*/
-        if ((movebits & 0x100000) != 0) {
-          /* with cave[newy,newx] do; */
-          if (cave[newy][newx].tptr > 0) {
-            if (t_list[cave[newy][newx].tptr].tval < valuable_metal) {
               delete_object(newy, newx);
+            } else {
+              can_make_a_move = false;
             }
           }
         }
-
-        /*{ Move creature record                  }*/
-        move_creature(m_list[monptr].fy, m_list[monptr].fx, newy, newx);
-        m_list[monptr].fy = newy;
-        m_list[monptr].fx = newx;
-        flag = true;
-        return_value = true;
       }
+    }
+
+    if (can_make_a_move) {
+      if (target_is_player) {
+
+        if (!m_list[monster_cptr].is_seen) {
+          c__update_mon(monster_cptr, hear_count);
+        }
+
+        if (find_flag) {
+          find_flag = false;
+          player_action_move(5);
+        }
+
+        c__make_attack(monster_cptr);
+        /* { Player has read a Confuse Monster?
+         * }*/
+        /* { Monster gets a saving throw... }*/
+        if (player_flags.confuse_monster) {
+          char out_val[82];
+          msg_print("Your hands stop glowing.");
+          player_flags.confuse_monster = false;
+          if (mon_save(monster_cptr, 0, SC_MENTAL)) {
+            sprintf(out_val,
+                    "The %s is "
+                    "unaffected.",
+                    monster_templates[m_list[monster_cptr].mptr].name);
+          } else {
+            sprintf(out_val,
+                    "The %s appears "
+                    "confused.",
+                    monster_templates[m_list[monster_cptr].mptr].name);
+            m_list[monster_cptr].confused = true;
+          }
+          msg_print(out_val);
+        }
+        can_make_a_move = false;
+        flag = true;
+
+      } else {
+        // Creature is attempting to move on something other than the player
+        const bool target_is_not_self = (newy != m_list[monster_cptr].fy ||
+                                         newx != m_list[monster_cptr].fx);
+        if (target_cptr > 1 && target_is_not_self) {
+          if (monster_template_has_attribute(monster_template,
+                                             ma_moves_through_creatures)) {
+            c__monster_devour_monster(monster_cptr, target_cptr);
+          } else {
+            can_make_a_move = false;
+          }
+        }
+      }
+    }
+
+    /*{ Creature has been allowed move...     }*/
+    if (can_make_a_move) {
+      /*{ Pick up or eat an object              }*/
+      if (monster_template_has_attribute(monster_template, ma_picks_up_objects)) {
+        const uint8_t tptr = target_tptr;
+        if (tptr > 0 && t_list[tptr].tval < valuable_metal) {
+          delete_object(newy, newx);
+        }
+      }
+
+      /*{ Move creature record                  }*/
+      move_creature(m_list[monster_cptr].fy, m_list[monster_cptr].fx, newy,
+                    newx);
+      m_list[monster_cptr].fy = newy;
+      m_list[monster_cptr].fx = newx;
+      return true;
     }
     i1++;
     /*{ Up to 5 attempts at moving, then give up...   }*/
-  } while (!(flag || i1 > 5));
+  } while (!flag && i1 <= 5);
 
-  RETURN("c__make_move", "c", 'b', "moved", &return_value);
-  return return_value;
+  return false;
 }
 
 static bool c__move_confused(const long monptr, mm_type mm, long *hear_count) {
-  bool return_value;
 
   ENTER(("c__move_confused", "c"));
 
@@ -1231,7 +1174,7 @@ static bool c__move_confused(const long monptr, mm_type mm, long *hear_count) {
   mm[3] = randint(9);
   mm[4] = randint(9);
   mm[5] = randint(9);
-  return_value = c__make_move(monptr, mm, hear_count);
+  bool return_value = c__make_move(monptr, mm, hear_count);
 
   RETURN("c__move_confused", "c", 'b', "moved", &return_value);
   return return_value;
@@ -1767,9 +1710,9 @@ static void c__splash(const long m_list_i) {
 
 static void c__maybe_splash(const long m_list_i) {
   if (is_in(cave[m_list[m_list_i].fy][m_list[m_list_i].fx].fval, floor_set)) {
-    if (is_in(cave[m_list[m_list_i].fy][m_list[m_list_i].fx].fval,
-              water_set) != ((monster_templates[m_list[m_list_i].mptr].cmove &
-                              0x00000010) != 0) &&
+    if (is_in(cave[m_list[m_list_i].fy][m_list[m_list_i].fx].fval, water_set) !=
+            ((monster_templates[m_list[m_list_i].mptr].cmove & 0x00000010) !=
+             0) &&
         (monster_templates[m_list[m_list_i].mptr].cmove & 0x00000040) != 0) {
       c__splash(m_list_i);
     }
@@ -1789,7 +1732,8 @@ void creatures(const bool attack) {
   /*{ Process the monsters  }*/
   long hear_count = 0;
   long monster_i = muptr;
-  for (monster_i = muptr; monster_i != 0 && !moria_flag; monster_i = m_list[monster_i].nptr) {
+  for (monster_i = muptr; monster_i != 0 && !moria_flag;
+       monster_i = m_list[monster_i].nptr) {
     m_list[monster_i].cdis = distance(char_row, char_col, m_list[monster_i].fy,
                                       m_list[monster_i].fx);
     if (!attack) {
@@ -1807,8 +1751,10 @@ void creatures(const bool attack) {
     }
 
     for (long _ = 1; _ <= num_moves; _++) {
-      const bool is_monster_close_enough_to_act = m_list[monster_i].cdis <= monster_templates[m_list[monster_i].mptr].area_effect_radius;
-      if (is_monster_close_enough_to_act || m_list[monster_i].ml) {
+      const bool is_monster_close_enough_to_act =
+          m_list[monster_i].cdis <=
+          monster_templates[m_list[monster_i].mptr].area_effect_radius;
+      if (is_monster_close_enough_to_act || m_list[monster_i].is_seen) {
         if (m_list[monster_i].csleep > 0) {
           if (player_flags.aggravate) {
             m_list[monster_i].csleep = 0;
@@ -1825,8 +1771,8 @@ void creatures(const bool attack) {
           const long old_monster_y = m_list[monster_i].fy;
           const long old_monster_x = m_list[monster_i].fx;
           if (mon_move(monster_i, &hear_count)) {
-            if (m_list[monster_i].ml) {
-              m_list[monster_i].ml = false;
+            if (m_list[monster_i].is_seen) {
+              m_list[monster_i].is_seen = false;
               if (test_light(old_monster_y, old_monster_x)) {
                 lite_spot(old_monster_y, old_monster_x);
               } else {

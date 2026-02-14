@@ -1,9 +1,8 @@
-use crate::{generate_item, player};
-use crate::conversion::item_type;
-use crate::generate_item::ItemQuality;
 use crate::generate_item::template::*;
+use crate::generate_item::ItemQuality;
 use crate::model;
 use crate::model::{Class, ItemType};
+use crate::{generate_item, player};
 
 pub fn name(class: &Class) -> &'static str {
     match class {
