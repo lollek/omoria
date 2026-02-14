@@ -1,7 +1,5 @@
 use crate::conversion;
-use crate::conversion::item_subtype::from_i64;
 use crate::model::item_subtype::ItemSubType;
-use crate::model::Item;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::RwLock;
@@ -94,15 +92,6 @@ pub fn is_identified(subtype: ItemSubType) -> bool {
         .inner
         .get(&subtype)
         .unwrap_or(&false)
-}
-
-#[no_mangle]
-pub extern "C" fn identification_set_identified(item_ptr: *const Item) {
-    let item = unsafe { *item_ptr };
-    let item_type = item.item_type().expect("Item has no type");
-    let subtype = from_i64(item_type, item.subval)
-        .unwrap_or_else(|| panic!("Failed to convert {:?} to subval", item));
-    set_identified(subtype, true);
 }
 
 #[cfg(test)]
