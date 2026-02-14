@@ -657,8 +657,6 @@ void ic__unwear(long *scr_state) {
 
 void ic__stats(treas_rec *cur_display[], char prompt[82], long *scr_state,
                bool *valid_flag) {
-  /*{ Statistics routine, get wizard info on an item        -DMF-   }*/
-
   treas_rec *item_ptr;
   bool exit_flag;
 
@@ -676,31 +674,41 @@ void ic__stats(treas_rec *cur_display[], char prompt[82], long *scr_state,
     if (item_ptr != NULL) {
       char out_val[82];
       clear_rc(1, 1);
+      // Keys
       prt("Name        : ", 1, 1);
-      prt("Description : ", 2, 1);
-      prt("Value       : ", 3, 1);
-      prt("Type        : ", 4, 1);
-      prt("Character   : ", 5, 1);
-      prt("Flags       : ", 6, 1);
-      prt("Flags2      : ", 7, 1);
-      prt("P1          : ", 8, 1);
-      prt("Cost        : ", 9, 1);
-      prt("Subval      : ", 10, 1);
-      prt("Weight      : ", 11, 1);
-      prt("Number      : ", 12, 1);
-      prt("+ To hit    : ", 13, 1);
-      prt("+ To Damage : ", 14, 1);
-      prt("AC          : ", 15, 1);
-      prt("+ To AC     : ", 16, 1);
-      prt("Damage      : ", 17, 1);
-      prt("Level       : ", 18, 1);
-      prt("Blackmarket : ", 19, 1);
-      prt("Insured     : ", 20, 1);
-      prt(item_ptr->data.name, 1, 15);
+      prt("Type        : ", 2, 1);
+      prt("Character   : ", 3, 1);
+      prt("P1          : ", 4, 1);
+      prt("Cost        : ", 5, 1);
+      prt("Weight      : ", 6, 1);
+      prt("Number      : ", 7, 1);
+      prt("+ To hit    : ", 8, 1);
+      prt("+ To Damage : ", 9, 1);
+      prt("AC          : ", 10, 1);
+      prt("+ To AC     : ", 11, 1);
+      prt("Damage      : ", 12, 1);
+      prt("Level       : ", 13, 1);
+      prt("Blackmarket : ", 14, 1);
+      prt("Insured     : ", 15, 1);
+      if (wizard1) {
+        prt("Raw Name    : ", 16, 1);
+        prt("ItemType    : ", 17, 1);
+        prt("Flags       : ", 18, 1);
+        prt("Flags2      : ", 19, 1);
+        prt("Subval      : ", 20, 1);
+
+        prt(item_ptr->data.name, 16, 15);
+        sprintf(out_val, "%ld", (long)item_ptr->data.tval);
+        prt(out_val, 17, 15);
+        print_hex_value(item_ptr->data.flags, 18, 15);
+        print_hex_value(item_ptr->data.flags2, 19, 15);
+        sprintf(out_val, "%ld", item_ptr->data.subval);
+        prt(out_val, 20, 15);
+      }
+
+      // Values
       item_name(out_val, item_ptr);
-      prt(out_val, 2, 15);
-      sprintf(out_val, "%ld", (long)item_ptr->data.tval);
-      prt(out_val, 3, 15);
+      prt(out_val, 1, 15);
 
       switch (item_ptr->data.tval) {
       case miscellaneous_object:
@@ -845,44 +853,40 @@ void ic__stats(treas_rec *cur_display[], char prompt[82], long *scr_state,
         break;
       }
 
-      prt(out_val, 4, 15);
-      sprintf(out_val, "'%u'", C_item_get_tchar(&item_ptr->data));
-      prt(out_val, 5, 15);
-      print_hex_value(item_ptr->data.flags, 6, 15);
-      print_hex_value(item_ptr->data.flags2, 7, 15);
+      prt(out_val, 2, 15);
+      sprintf(out_val, "'%c'", C_item_get_tchar(&item_ptr->data));
+      prt(out_val, 3, 15);
       sprintf(out_val, "%ld", item_ptr->data.p1);
-      prt(out_val, 8, 15);
+      prt(out_val, 4, 15);
       sprintf(out_val, "%ld iron  (%ld gold)", item_ptr->data.cost,
               item_ptr->data.cost / GOLD_VALUE);
-      prt(out_val, 9, 15);
-      sprintf(out_val, "%ld", item_ptr->data.subval);
-      prt(out_val, 10, 15);
+      prt(out_val, 5, 15);
       if (item_ptr->data.weight < 100) {
-        sprintf(out_val, "%ld small", (long)item_ptr->data.weight);
+        sprintf(out_val, "%ld (small)", (long)item_ptr->data.weight);
       } else {
-        sprintf(out_val, "%ld large", (long)(item_ptr->data.weight / 100));
+        sprintf(out_val, "%ld (large)", (long)(item_ptr->data.weight / 100));
       }
-      prt(out_val, 11, 15);
+      prt(out_val, 6, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.number);
-      prt(out_val, 12, 15);
+      prt(out_val, 7, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.tohit);
-      prt(out_val, 13, 15);
+      prt(out_val, 8, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.todam);
-      prt(out_val, 14, 15);
+      prt(out_val, 9, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.ac);
-      prt(out_val, 15, 15);
+      prt(out_val, 10, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.toac);
-      prt(out_val, 16, 15);
-      prt(item_ptr->data.damage, 17, 15);
+      prt(out_val, 11, 15);
+      prt(item_ptr->data.damage, 12, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.level);
-      prt(out_val, 18, 15);
+      prt(out_val, 13, 15);
       sprintf(out_val, "%s",
               ((item_ptr->data.flags2 & Blackmarket_bit) != 0) ? "true"
                                                                : "false");
-      prt(out_val, 19, 15);
+      prt(out_val, 14, 15);
       sprintf(out_val, "%s",
               ((item_ptr->data.flags2 & Insured_bit) != 0) ? "true" : "false");
-      prt(out_val, 20, 15);
+      prt(out_val, 15, 15);
       prt("Hit any key to continue", 22, 29);
       inkey();
     }
@@ -1235,15 +1239,11 @@ bool inven_command(char command, treas_rec **item_ptr,
 
     case 's': /*{ Statistics of an item }*/
       ic__clear_display(cur_display);
-      if (!wizard1 && !wizard2 && 0) {
-        msg_print("You *wish*, you sleazy scum-bag!");
+      if (inven_ctr == 0) {
+        msg_print("You are not carrying anything.");
+        msg_print("");
       } else {
-        if (inven_ctr == 0) {
-          msg_print("You are not carrying anything.");
-          msg_print("");
-        } else {
-          ic__stats(cur_display, tmp_prompt, &scr_state, &valid_flag);
-        }
+        ic__stats(cur_display, tmp_prompt, &scr_state, &valid_flag);
       }
       break;
 
@@ -1332,13 +1332,7 @@ bool inven_command(char command, treas_rec **item_ptr,
 
     prt("<e>quip, <i>inven, <t>ake-off, <w>ear/wield, e<x>change, <M>oney, <c>lean.",
             23, 2);
-    if (wizard2) {
-        prt("<p>ut item into, <r>emove item from, <s> stats of item, <I>inven selective.",
-                24, 2);
-    } else {
-        prt("<p>ut item into, <r>emove item from, <I>inven selective, or Esc to exit.",
-                24, 2);
-    }
+    prt("<p>ut item into, <r>emove item from, <s> stats of item, <I>inven selective.", 24, 2);
     bool test_flag = false;
 
     do {
