@@ -1720,7 +1720,7 @@ char *show_char_age(char result[134]) {
   /*{ Return string for the age of the character            -DMF-   }*/
 
   game_time_type dif;
-  char out_val[82];
+  char out_val[134];
 
   time_diff(player_cur_age, player_birth, &dif);
 

@@ -35,8 +35,8 @@ void C_print_known_spells();
 
 void command(long *command) {
   treas_rec *trash_ptr;
-  char out_val[82];
-  char out2[82];
+  char out_val[134];
+  char out2[134];
 
   ENTER(("command", "%d, '%c'", *command, *command));
 

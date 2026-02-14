@@ -243,7 +243,7 @@ static long ic__display_inv(treas_rec *cur_display[], char const * const prompt,
         item_name(out_val, &inven_temp);
         if ((start->data.flags2 & Holding_bit) != 0) {
           if (strstr(start->data.name, "|") == NULL) {
-            char out_val3[82];
+            char out_val3[134];
             bag_descrip(start, out_val3);
             strcat(out_val, out_val3);
           }

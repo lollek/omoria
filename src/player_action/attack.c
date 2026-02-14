@@ -109,8 +109,10 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
       switch (randint(10)) {
       case 1:
         msg_printf("The %s evades your attack.", m_name);
+	break;
       case 2:
         msg_printf("You barely miss %s.", m_name);
+	break;
       default:
         msg_printf("You miss %s.", m_name);
         break;
