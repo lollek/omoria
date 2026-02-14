@@ -1,3 +1,4 @@
+use std::convert::TryFrom;
 use crate::thirdparty::serde::BigArray;
 
 use crate::conversion;
@@ -165,7 +166,7 @@ impl Item {
     /// Returns None when there's no valid item in the slot (i.e. if there's allocated but unused memory)
     /// If it's not a bug, it should represent your bare hands (i.e. no weapon).
     pub fn item_type(&self) -> Option<ItemType> {
-        conversion::item_type::from_usize(self.tval.into())
+        ItemType::try_from(self.tval).ok()
     }
 
     /// Returns None when there's no valid item in the slot (i.e. if there's allocated but unused memory)

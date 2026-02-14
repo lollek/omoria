@@ -78,7 +78,7 @@ mod tests {
 
     fn base_item() -> Item {
         let mut item = Item::default();
-        item.tval = conversion::item_type::to_usize(ItemType::Staff) as u8;
+        item.tval = ItemType::Staff.into();
         item
     }
 

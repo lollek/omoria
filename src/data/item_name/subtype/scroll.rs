@@ -92,7 +92,7 @@ mod tests {
 
     fn base_item() -> Item {
         let mut item = Item::default();
-        item.tval = conversion::item_type::to_usize(ItemType::Scroll1) as u8;
+        item.tval = ItemType::Scroll1.into();
         item
     }
 

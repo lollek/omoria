@@ -1,13 +1,12 @@
 use crate::conversion::item_subtype;
-use crate::conversion::item_type;
 use crate::data;
 use crate::generate_item::template::MaceTemplate;
 use crate::misc;
 use crate::misc::rs2item_name;
 use crate::model::item_subtype::{ItemSubType, MaulSubType};
-use crate::model::{Item, WornFlag2};
 use crate::model::ItemType;
 use crate::model::{Currency, WornFlag1};
+use crate::model::{Item, WornFlag2};
 use crate::rng::randint;
 
 #[derive(Copy, Clone, PartialEq)]
@@ -256,7 +255,7 @@ pub(crate) fn default_create(
 ) -> Item {
     Item {
         name: rs2item_name(template.name()),
-        tval: item_type::to_usize(template.item_type()) as u8,
+        tval: template.item_type().into(),
         flags: template.flags1(),
         flags2: template.flags2(),
         p1: template.p1(),

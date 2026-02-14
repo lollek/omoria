@@ -3,10 +3,10 @@ use std::ffi::CString;
 
 use libc::c_char;
 
-use crate::term;
-use crate::model::{InventoryItem, Item};
 use crate::data::item_name;
 use crate::identification::set_identified;
+use crate::model::{InventoryItem, Item};
+use crate::term;
 
 const BAG_DESCRIP_BUF_SIZE: usize = 134;
 
@@ -569,12 +569,12 @@ mod tests {
 
 #[cfg(test)]
 mod identify_core_tests {
-    use serial_test::serial;
-    use crate::conversion::{item_subtype, item_type};
+    use super::*;
+    use crate::conversion::item_subtype;
     use crate::identification::is_identified;
     use crate::model::item_subtype::FoodSubType;
     use crate::model::ItemType;
-    use super::*;
+    use serial_test::serial;
 
     fn unquote_then_known1(buf: &mut [i8]) {
         unsafe { unquote(buf.as_mut_ptr() as *mut c_char) };
@@ -593,7 +593,7 @@ mod identify_core_tests {
 
     fn mk_item_with_pipe() -> Item {
         let mut item = Item::default();
-        item.tval = item_type::to_usize(ItemType::Food) as u8;
+        item.tval = ItemType::Food.into();
         item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
         write_name(&mut item.name, b"foo|bar\0");
         item
@@ -601,7 +601,7 @@ mod identify_core_tests {
 
     fn mk_item_without_pipe() -> Item {
         let mut item = Item::default();
-        item.tval = item_type::to_usize(ItemType::Food) as u8;
+        item.tval = ItemType::Food.into();
         item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
         write_name(&mut item.name, b"foobar\0");
         item
@@ -787,7 +787,8 @@ mod msg_charges_remaining_tests {
 mod msg_remaining_of_item_tests {
     use super::*;
     use serial_test::serial;
-    use crate::identification;
+    use crate::model::item_subtype::{ItemSubType, StaffSubType};
+    use crate::model::ItemType;
 
     #[test]
     #[serial]
@@ -795,10 +796,10 @@ mod msg_remaining_of_item_tests {
         term::test_clear_last_msg_print();
 
         // Avoid leaking/depending on global subtype identification across tests.
-        let staff_light_subtype = crate::model::item_subtype::ItemSubType::Staff(
-            crate::model::item_subtype::StaffSubType::StaffOfLight,
+        let staff_light_subtype = ItemSubType::Staff(
+            StaffSubType::StaffOfLight,
         );
-        identification::set_identified(staff_light_subtype, false);
+        set_identified(staff_light_subtype, false);
 
         let mut inv = InventoryItem {
             data: Item::default(),
@@ -808,10 +809,10 @@ mod msg_remaining_of_item_tests {
             next: std::ptr::null_mut(),
         };
         // Make this a valid staff so item_name::generate() can format it.
-        inv.data.tval = crate::conversion::item_type::to_usize(crate::model::ItemType::Staff) as u8;
+        inv.data.tval = ItemType::Staff.into();
         inv.data.subval = crate::conversion::item_subtype::to_usize(
-            &crate::model::item_subtype::ItemSubType::Staff(
-                crate::model::item_subtype::StaffSubType::StaffOfLight,
+            &ItemSubType::Staff(
+                StaffSubType::StaffOfLight,
             ),
         ) as i64;
         inv.data.set_identified(true);
@@ -831,6 +832,6 @@ mod msg_remaining_of_item_tests {
         // consuming one"), and must not modify the caller's inventory record.
         assert_eq!(inv.data.number, 2);
 
-        identification::set_identified(staff_light_subtype, false);
+        set_identified(staff_light_subtype, false);
     }
 }
