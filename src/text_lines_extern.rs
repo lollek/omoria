@@ -6,6 +6,7 @@ use libc::c_char;
 use crate::term;
 use crate::model::{InventoryItem, Item};
 use crate::data::item_name;
+use crate::identification::set_identified;
 
 const BAG_DESCRIP_BUF_SIZE: usize = 134;
 
@@ -188,11 +189,6 @@ pub unsafe extern "C" fn identify(item_ptr: *mut Item) {
         static mut inventory_list: *mut InventoryItem;
     }
 
-    // identification.rs
-    extern "C" {
-        fn identification_set_identified(item_ptr: *const Item);
-    }
-
     // SAFETY: caller passes a valid pointer to a live `Item`.
     let item = unsafe { &mut *item_ptr };
 
@@ -215,9 +211,6 @@ pub unsafe extern "C" fn identify(item_ptr: *mut Item) {
         t_list_slice,
         equipment_slice,
         inventory_list,
-        &mut |it| {
-            identification_set_identified(it as *const Item);
-        },
     );
 }
 
@@ -236,7 +229,6 @@ pub(crate) fn identify_core(
     t_list: &mut [Item],
     equipment: &mut [Item],
     inventory_list: *mut InventoryItem,
-    mark_identified: &mut dyn FnMut(&mut Item),
 ) {
     // SAFETY NOTE: We assume all `Item.name` buffers we touch are NUL-terminated.
     // That matches the C code's expectations and is required for strstr/unquote/known1.
@@ -285,7 +277,8 @@ pub(crate) fn identify_core(
     }
 
     // Final legacy side effect.
-    mark_identified(item);
+    let subtype = item.item_subtype().expect("Item has no subtype");
+    set_identified(subtype, true)
 }
 
 /// C-compatible implementation of `msg_charges_remaining`.
@@ -576,7 +569,10 @@ mod tests {
 
 #[cfg(test)]
 mod identify_core_tests {
-    use crate::conversion::item_type;
+    use serial_test::serial;
+    use crate::conversion::{item_subtype, item_type};
+    use crate::identification::is_identified;
+    use crate::model::item_subtype::FoodSubType;
     use crate::model::ItemType;
     use super::*;
 
@@ -598,7 +594,7 @@ mod identify_core_tests {
     fn mk_item_with_pipe() -> Item {
         let mut item = Item::default();
         item.tval = item_type::to_usize(ItemType::Food) as u8;
-        item.subval = crate::model::item_subtype::FoodSubType::RationOfFood as i64;
+        item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
         write_name(&mut item.name, b"foo|bar\0");
         item
     }
@@ -606,14 +602,17 @@ mod identify_core_tests {
     fn mk_item_without_pipe() -> Item {
         let mut item = Item::default();
         item.tval = item_type::to_usize(ItemType::Food) as u8;
-        item.subval = crate::model::item_subtype::FoodSubType::RationOfFood as i64;
+        item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
         write_name(&mut item.name, b"foobar\0");
         item
     }
 
+    #[serial]
     #[test]
     fn identify_core_noops_when_item_name_has_no_pipe_marker() {
         let mut item = mk_item_without_pipe();
+        let item_sub_type = item.item_subtype().unwrap();
+        set_identified(item_sub_type, false);
 
         let mut t_list = vec![Item::default(); 3];
         let mut equipment = vec![Item::default(); 2];
@@ -628,22 +627,25 @@ mod identify_core_tests {
         write_name(&mut inv_a.data.name, b"ab\"cd~EF|GHI\0");
         let inv_head = &mut *inv_a as *mut InventoryItem;
 
-        let mut called = 0;
         identify_core(
             &mut item,
             &mut t_list,
             &mut equipment,
             inv_head,
-            &mut |_it| called += 1,
         );
 
-        assert_eq!(called, 0);
         assert_eq!(read_name(&inv_a.data.name), "ab\"cd~EF|GHI");
+        assert_eq!(is_identified(item_sub_type), false);
+
+        // Prevent cross-test leakage if other tests run after this one.
+        set_identified(item_sub_type, false);
     }
 
     #[test]
     fn identify_core_mutates_matching_entries_and_calls_mark_identified_once() {
         let mut item = mk_item_with_pipe();
+        let item_sub_type = item.item_subtype().unwrap();
+        set_identified(item_sub_type, false);
 
         let example_item_name_with_null = b"ab\"cd~EF|GHI\0";
         let example_item_name = "ab\"cd~EF|GHI";
@@ -701,13 +703,11 @@ mod identify_core_tests {
 
         let inv_head_ptr = (&mut *inv_head) as *mut InventoryItem;
 
-        let mut called = 0;
         identify_core(
             &mut item,
             &mut t_list,
             &mut equipment,
             inv_head_ptr,
-            &mut |_it| called += 1,
         );
 
         assert_eq!(read_name(&t_list[1].name), read_name(&expected));
@@ -721,7 +721,10 @@ mod identify_core_tests {
             assert_eq!(read_name(&(*(*inv_head_ptr).next).data.name), example_item_name);
         }
 
-        assert_eq!(called, 1);
+        assert_eq!(is_identified(item_sub_type), true);
+
+        // Prevent cross-test leakage if other tests run after this one.
+        set_identified(item_sub_type, false);
     }
 }
 
