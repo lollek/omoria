@@ -1,0 +1,56 @@
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum Potion1SubType {
+    AppleJuice,
+    Blindness,
+    Boldliness,
+    Charisma,
+    Confusion,
+    CureCriticalWounds,
+    CureLightWounds,
+    CureSeriousWounds,
+    DetectInvisible,
+    FleaBile,
+    GainConstitution,
+    GainDexterity,
+    GainExperience,
+    GainIntelligence,
+    GainStrength,
+    GainWisdom,
+    HasteSelf,
+    Healing,
+    Heroism,
+    InfraVision,
+    Invulnerability,
+    Learning,
+    LoseIntelligence,
+    LoseMemories,
+    LoseWisdom,
+    NeutralizePoison,
+    Poison,
+    ResistCold,
+    ResistHeat,
+    RestoreCharisma,
+    RestoreConstitution,
+    RestoreDexterity,
+    RestoreIntelligence,
+    RestoreLifeLevels,
+    RestoreMana,
+    RestoreStrength,
+    RestoreWisdom,
+    SaltWater,
+    Sleep,
+    SlimeMoldJuice,
+    SlowPoison,
+    Slowness,
+    SuperHeroism,
+    Ugliness,
+    Water,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum Potion2SubType {}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum FlaskOfOilSubType {
+    FlaskOfOil,
+}
