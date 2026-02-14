@@ -522,7 +522,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                       print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
                                 .symbol,
                             i1, i2);
-                      m_list[cave[i1][i2].cptr].ml = true;
+                      m_list[cave[i1][i2].cptr].is_seen = true;
                     }
                   }
                 }
@@ -546,7 +546,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
             } else if (cave[i1][i2].cptr == 1) {
               lite_spot(i1, i2);
             } else if (cave[i1][i2].cptr > 1) {
-              if (m_list[cave[i1][i2].cptr].ml) {
+              if (m_list[cave[i1][i2].cptr].is_seen) {
                 lite_spot(i1, i2);
               } else {
                 unlite_spot(i1, i2);
@@ -704,7 +704,7 @@ bool teleport_away(const long monptr, long dis) {
     }
     m_list[monptr].fy = yn;
     m_list[monptr].fx = xn;
-    m_list[monptr].ml = false;
+    m_list[monptr].is_seen = false;
     return_value = true;
   }
 
@@ -865,7 +865,7 @@ bool breath(const enum spell_effect_t typ, const long y, const long x,
       } else if (cave[i1][i2].cptr == 1) {
         lite_spot(i1, i2);
       } else if (cave[i1][i2].cptr > 1) {
-        if (m_list[cave[i1][i2].cptr].ml) {
+        if (m_list[cave[i1][i2].cptr].is_seen) {
           lite_spot(i1, i2);
         } else {
           unlite_spot(i1, i2);
@@ -1056,7 +1056,7 @@ bool detect_creatures(const enum spell_effect_t typ) {
       }
 
       if (found) {
-        m_list[monster_i].ml = true;
+        m_list[monster_i].is_seen = true;
         print(monster_templates[m_list[monster_i].mptr].symbol, m_list[monster_i].fy,
               m_list[monster_i].fx);
         detected_something = true;
@@ -1920,7 +1920,7 @@ bool zap_area(const long cflag, const long dmge, const long typ) {
     const long m_next = m_list[i1].nptr;
     /* with m_list[i1]. do; */
     /* with monster_templates[m_list[i1].mptr] do; */
-    if (m_list[i1].ml) {
+    if (m_list[i1].is_seen) {
       if (za__did_it_work(i1, cflag, dmge, typ)) {
         za__yes_it_did(i1, dmge, typ);
         flag = true;
@@ -2283,7 +2283,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
         } else {
           if (panel_contains(y, x)) {
             print(monster_templates[mptr].symbol, y, x);
-            m_list[cptr].ml = true;
+            m_list[cptr].is_seen = true;
           }
         }
       }
@@ -2358,7 +2358,7 @@ bool wall_to_mud(const long dir, long y, long x) {
              monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
           const long i1 = mon_take_hit(cptr, 100);
           flag = true;
-          if (m_list[cptr].ml) {
+          if (m_list[cptr].is_seen) {
             if (i1 > 0) {
               sprintf(out_val,
                       "The %s dies in a "
@@ -2493,7 +2493,7 @@ bool clone_monster(const long dir, long y, long x) {
     if (!mon_resists(cave[y][x].cptr)) {
       multiply_monster(y, x, m_list[cave[y][x].cptr].mptr, false);
       if (panel_contains(y, x)) {
-        if (m_list[cave[y][x].cptr].ml) {
+        if (m_list[cave[y][x].cptr].is_seen) {
           flag = true;
         }
       }
@@ -2888,7 +2888,7 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
       } else {
         if (panel_contains(y, x)) {
           print(monster_templates[mptr].symbol, y, x);
-          m_list[cptr].ml = true;
+          m_list[cptr].is_seen = true;
         }
       }
     }
@@ -2932,7 +2932,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
       } else {
         if (panel_contains(y, x)) {
           print(monster_templates[mptr].symbol, y, x);
-          m_list[cptr].ml = true;
+          m_list[cptr].is_seen = true;
         }
       }
     }

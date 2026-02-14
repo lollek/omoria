@@ -21,6 +21,6 @@ long mon_take_hit(long monptr, long dam);
 /**
  * @brief Deletes a monster entry from the level
  * 
- * @param i2 
+ * @param cptr 
  */
-void delete_monster(long i2);
+void delete_monster(long cptr);

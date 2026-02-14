@@ -20,8 +20,10 @@ typedef enum monster_attribute {
   // Unspawnable by normal means, but spawnable by events
   ma_unspawnable,
   ma_invisible_movement,
+  // The creature can open doors
   ma_moves_through_door,
   ma_moves_through_wall,
+  // The creature devours other creatures
   ma_moves_through_creatures,
   ma_picks_up_objects,
   ma_multiplies,

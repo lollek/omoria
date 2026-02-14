@@ -35,7 +35,7 @@ void player_action_look(void) {
     move_dir(dir, &y, &x);
     /* with cave[y][x]. do; */
     if (cave[y][x].cptr > 1) {
-      if (m_list[cave[y][x].cptr].ml) {
+      if (m_list[cave[y][x].cptr].is_seen) {
         const long i2 = m_list[cave[y][x].cptr].mptr;
         if (is_vowel(monster_templates[i2].name[0])) {
           sprintf(out_val, "You see an %s.", monster_templates[i2].name);

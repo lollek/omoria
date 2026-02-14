@@ -434,7 +434,7 @@ chtype get_loc_symbol(const long y, const long x) {
   else if (cave[y][x].cptr == 1 && !find_flag)
     return '@';
   else if (cave[y][x].cptr > 1)
-    return m_list[cave[y][x].cptr].ml ? loc_symbol(y, x) : ' ';
+    return m_list[cave[y][x].cptr].is_seen ? loc_symbol(y, x) : ' ';
   else
     return ' ';
 }
@@ -456,7 +456,7 @@ chtype loc_symbol(const long y, const long x) {
 
       /* with m_list[cptr] do; */
       unsigned short const mptr = m_list[cptr].mptr;
-      if (m_list[cptr].ml &&
+      if (m_list[cptr].is_seen &&
           (!is_in(fval, water_set) ||
            (is_in(fval, water_set) &&
             ((monster_templates[mptr].cmove & 0x00800000) != 0 ||
@@ -1937,7 +1937,7 @@ void find_monster_name(char m_name[82], const long ptr,
   /*{ Does the player know what he's fighting?      }*/
   if (((0x10000 & monster_templates[i2].cmove) != 0 &&
        !player_flags.see_inv) ||
-      player_flags.blind > 0 || !m_list[ptr].ml) {
+      player_flags.blind > 0 || !m_list[ptr].is_seen) {
     if (begin_sentence) {
       strcpy(m_name, "It");
     } else {

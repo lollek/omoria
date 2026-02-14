@@ -185,7 +185,7 @@ static void area_affect(const long dir, const long y, const long x) {
               /* m_list[cave[row][col].cptr]
                */
               /* do; */
-              if (m_list[cave[row][col].cptr].ml) {
+              if (m_list[cave[row][col].cptr].is_seen) {
                 find_flag = false;
               }
             }
