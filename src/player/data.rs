@@ -8,8 +8,7 @@ use crate::model::{
     Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time,
     Wallet,
 };
-use crate::conversion;
-
+use crate::conversion::{class, currency, race, sex};
 use crate::data;
 use crate::misc;
 use crate::player;
@@ -90,7 +89,7 @@ pub fn set_name(new_name: &str) {
 }
 
 pub fn race() -> Race {
-    conversion::race::from_usize(unsafe { player_prace } as usize).unwrap()
+    race::from_usize(unsafe { player_prace } as usize).unwrap()
 }
 
 pub fn set_race(race: Race) {
@@ -102,7 +101,7 @@ pub fn set_race(race: Race) {
 }
 
 pub fn sex() -> Sex {
-    conversion::sex::from_char(unsafe { player_sex[0] as u8 as char }).unwrap()
+    sex::from_char(unsafe { player_sex[0] as u8 as char }).unwrap()
 }
 
 pub fn set_sex(sex: Sex) {
@@ -113,7 +112,7 @@ pub fn set_sex(sex: Sex) {
 }
 
 pub fn class() -> Class {
-    conversion::class::from_usize(unsafe { player_pclass }.try_into().unwrap()).unwrap()
+    class::from_usize(unsafe { player_pclass }.try_into().unwrap()).unwrap()
 }
 
 pub fn set_class(class: Class) {
@@ -141,24 +140,24 @@ pub fn mod_perm_stat(stat: Stat, modifier: i16) {
 }
 
 pub fn wallet() -> Wallet {
-    conversion::wallet::from_int64(unsafe { player_money })
+    unsafe { player_money }.into()
 }
 
 pub fn set_wallet(wallet: &Wallet) {
     for currency in Currency::iter() {
-        let position = conversion::currency::to_usize(currency);
+        let position = currency::to_usize(currency);
         unsafe { player_money[position] = wallet.get_pos(currency) };
     }
     unsafe { player_money[0] = wallet.total };
 }
 
 pub fn bank_wallet() -> Wallet {
-    conversion::wallet::from_int64(unsafe { bank })
+    unsafe { bank }.into()
 }
 
 pub fn set_bank_wallet(wallet: &Wallet) {
     for currency in Currency::iter() {
-        let position = conversion::currency::to_usize(currency);
+        let position = currency::to_usize(currency);
         unsafe { bank[position] = wallet.get_pos(currency) };
     }
     unsafe { bank[0] = wallet.total };
