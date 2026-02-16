@@ -69,12 +69,12 @@ pub extern "C" fn C_player_disarm_from_dex() -> i16 {
 
 #[no_mangle]
 pub extern "C" fn C_player_get_stat(stat: u8) -> i16 {
-    player::get_stat(conversion::stat::from_usize(stat.into()).unwrap())
+    player::get_stat(stat.try_into().unwrap())
 }
 
 #[no_mangle]
 pub extern "C" fn C_player_mod_from_stat(stat: u8) -> i16 {
-    player::modifier_from_stat(conversion::stat::from_usize(stat.into()).unwrap())
+    player::modifier_from_stat(stat.try_into().unwrap())
 }
 
 #[no_mangle]
@@ -99,27 +99,27 @@ pub extern "C" fn C_player_ac_from_dex() -> i16 {
 
 #[no_mangle]
 pub extern "C" fn C_player_modify_lost_stat(stat: u8, amount: i16) {
-    player::modify_lost_stat(conversion::stat::from_usize(stat.into()).unwrap(), amount);
+    player::modify_lost_stat(stat.try_into().unwrap(), amount);
 }
 
 #[no_mangle]
 pub extern "C" fn C_player_reset_lost_stat(stat: u8) {
-    player::reset_lost_stat(conversion::stat::from_usize(stat.into()).unwrap());
+    player::reset_lost_stat(stat.try_into().unwrap());
 }
 
 #[no_mangle]
 pub extern "C" fn C_player_has_lost_stat(stat: u8) -> bool {
-    player::has_lost_stat(conversion::stat::from_usize(stat.into()).unwrap())
+    player::has_lost_stat(stat.try_into().unwrap())
 }
 
 #[no_mangle]
 pub extern "C" fn C_player_mod_stat(stat: u8, modifier: i16) {
-    player::mod_stat(conversion::stat::from_usize(stat.into()).unwrap(), modifier);
+    player::mod_stat(stat.try_into().unwrap(), modifier);
 }
 
 #[no_mangle]
 pub extern "C" fn C_player_mod_perm_stat(stat: u8, modifier: i16) {
-    player::mod_perm_stat(conversion::stat::from_usize(stat.into()).unwrap(), modifier);
+    player::mod_perm_stat(stat.try_into().unwrap(), modifier);
 }
 
 #[no_mangle]

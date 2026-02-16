@@ -6,6 +6,5 @@ pub mod magic;
 pub mod race;
 pub mod sex;
 pub mod spell;
-pub mod stat;
 
 mod interop;
