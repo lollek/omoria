@@ -160,7 +160,7 @@ bool player_action_attack(const long y, const long x) {
   long const to_hit = C_calculate_player_tohit_melee(is_backstab);
 
   /*{ stopped from killing town creatures?? }*/
-  if ((monster_templates[a_mptr].cmove & 0x00004000) == 0 ||
+  if (!monster_template_has_attribute(&monster_templates[a_mptr], ma_good_monster) ||
       randint(100) < -player_rep) {
     player_is_mean_jerk = true;
   } else {

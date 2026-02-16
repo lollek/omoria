@@ -222,3 +222,11 @@ void delete_monster(const long cptr) {
 
   LEAVE("delete_monster", "c");
 }
+
+char const * get_monster_name(const long mptr) {
+  if (mptr > 0) {
+    return monster_templates[m_list[mptr].mptr].name;
+  } else {
+    return "monster";
+  }
+}
