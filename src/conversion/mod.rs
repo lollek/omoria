@@ -7,6 +7,5 @@ pub mod race;
 pub mod sex;
 pub mod spell;
 pub mod stat;
-pub mod wallet;
 
 mod interop;

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: `Wallet` now uses idiomatic Rust `From`/`Into` conversions for its `[i64; 7]` interop.
 * Internal: Monster template data and attribute queries are now implemented in Rust.
 * Internal: Dungeon traps migration: trap template data and basic trap placement/visibility logic (including rubble placement) are now implemented in Rust.
 * Internal: started migrating small Pascal helper functions (`pindex`, vowel and set-membership checks) from C to Rust.
