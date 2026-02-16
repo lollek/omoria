@@ -24,3 +24,5 @@ long mon_take_hit(long monptr, long dam);
  * @param cptr 
  */
 void delete_monster(long cptr);
+
+char const * get_monster_name(long mptr);
