@@ -27,27 +27,19 @@ fn hunger_status_from_c(value: libc::c_int) -> player::regeneration::HungerStatu
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_knows_spell(slot: i32) -> u8 {
-    match player::knows_spell(slot as usize) {
-        true => 255,
-        false => 0,
-    }
+pub extern "C" fn C_player_knows_spell(slot: i32) -> bool {
+    player::knows_spell(slot as usize)
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_set_knows_spell(slot: i32, yn: u8) {
-    player::set_knows_spell(slot as usize, yn != 0);
+pub extern "C" fn C_player_set_knows_spell(slot: i32, yn: bool) {
+    player::set_knows_spell(slot as usize, yn);
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_uses_magic(magic_type: i32) -> u8 {
-    if data::class::magic_type(&player::class())
+pub extern "C" fn C_player_uses_magic(magic_type: i32) -> bool {
+    data::class::magic_type(&player::class())
         == Some(conversion::magic::from_usize(magic_type.try_into().unwrap()).unwrap())
-    {
-        255
-    } else {
-        0
-    }
 }
 
 #[no_mangle]
@@ -116,11 +108,8 @@ pub extern "C" fn C_player_reset_lost_stat(stat: u8) {
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_has_lost_stat(stat: u8) -> u8 {
-    match player::has_lost_stat(conversion::stat::from_usize(stat.into()).unwrap()) {
-        true => 255,
-        false => 0,
-    }
+pub extern "C" fn C_player_has_lost_stat(stat: u8) -> bool {
+    player::has_lost_stat(conversion::stat::from_usize(stat.into()).unwrap())
 }
 
 #[no_mangle]
