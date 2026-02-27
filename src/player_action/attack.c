@@ -40,10 +40,10 @@ static bool attack_lands_on_monster(
         (damage_from_weapon + backstab_damage + damage_from_class + 5) *
         crit_mult;
     damage = damage_from_weapon + backstab_damage + damage_from_class +
-             crit_damage + player_ptodam;
+             crit_damage + player_ptodam();
     MSG(("PlayerDamage: %ld (weapon) + %ld (backstab) + %ld (class) + %ld "
          "(crit) + %ld (ptodam) = %ld",
-         damage_from_weapon, backstab_damage, damage_from_class, crit_damage, player_ptodam, damage));
+         damage_from_weapon, backstab_damage, damage_from_class, crit_damage, player_ptodam(), damage));
 
   } else { /*{ Bare hands!?  }*/
     if (player_pclass == C_MONK) {
@@ -54,15 +54,15 @@ static bool attack_lands_on_monster(
       }
       const long crit_damage = (damage_from_level + 5) * crit_mult;
 
-      damage = damage_from_level + crit_damage + player_ptodam;
-      MSG(("PlayerDamage: %ld (level) + %ld (crit) + %ld (ptodam) = %ld", damage_from_level, crit_damage, player_ptodam, damage));
+      damage = damage_from_level + crit_damage + player_ptodam();
+      MSG(("PlayerDamage: %ld (level) + %ld (crit) + %ld (ptodam) = %ld", damage_from_level, crit_damage, player_ptodam(), damage));
     } else {
       const long damage_from_weapon = damroll(bare_hands);
       const long crit_mult = critical_blow(1, 0, false, false);
       const long crit_damage = (damage_from_weapon + 5) * crit_mult;
 
-      damage = damage_from_weapon + crit_damage + player_ptodam;
-      MSG(("PlayerDamage: %ld (level) + %ld (crit) + %ld (ptodam) = %ld", damage_from_weapon, crit_damage, player_ptodam, damage));
+      damage = damage_from_weapon + crit_damage + player_ptodam();
+      MSG(("PlayerDamage: %ld (level) + %ld (crit) + %ld (ptodam) = %ld", damage_from_weapon, crit_damage, player_ptodam(), damage));
     }
   }
 

@@ -36,7 +36,7 @@ fn put_stats() {
     for line in [
         format!("Num attacks:  {}", calculate_number_of_attacks()),
         format!("Melee to hit: {} + {} = {}", player::base_to_hit(), player::player_ptohit(), calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))),
-        format!("Damage:       {}", unsafe { player::player_dis_td }),
+        format!("Damage:       {} + {}", player::player_main_weapon().damage_string(), player::plus_to_damage()),
         format!("AC: {} + {}", unsafe { player::player_dis_ac }, unsafe { player::player_dis_tac }),
     ] {
         row += 1;

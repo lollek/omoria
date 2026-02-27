@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 use crate::thirdparty::serde::BigArray;
 
-use crate::conversion;
+use crate::{conversion, misc};
 use crate::misc::rs2item_name;
 use crate::model::ItemType;
 use crate::model::{Damage, Name};
@@ -212,6 +212,11 @@ impl Item {
            panic!("Not implemented yet");
        }
         self.apply_wornflag1(WornFlag1::Cursed);
+    }
+    
+    pub fn damage_string(&self) -> String {
+        let raw_string = self.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
+        misc::c_array_to_rust_string(raw_string)
     }
 
     pub fn is_identified(&self) -> bool {

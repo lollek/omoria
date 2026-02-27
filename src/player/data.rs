@@ -41,10 +41,8 @@ extern "C" {
     pub static mut player_fos: i16; /* { Frenq of search} */
     pub static mut player_bthb: i16; /* { BTH with bows	} */
     pub static mut player_mana: i16; /* { Mana points	} */
-    pub static mut player_ptodam: i16; /* { Pluses to dam	} */
     pub static mut player_pac: i16; /* { Total AC	} */
     pub static mut player_ptoac: i16; /* { Magical AC	} */
-    pub static mut player_dis_td: i16; /* { Display +ToDam} */
     pub static mut player_dis_ac: i16; /* { Display +ToAC } */
     pub static mut player_dis_tac: i16; /* { Display +ToTAC} */
     pub static mut player_disarm: i16; /* { % to Disarm	} */
@@ -218,6 +216,19 @@ pub fn plus_to_hit(attack_type: AttackType, weapon: &Item) -> i16 {
     plus_to_hit
 }
 
+#[no_mangle]
+pub fn player_ptodam() -> i16 {
+    let mut plus_to_dam: i16 = player::dmg_from_str();
+    equipment::items_iter().for_each(|item| {
+        plus_to_dam += item.todam;
+    });
+    plus_to_dam
+}
+
+pub fn plus_to_damage() -> i16 {
+    player_ptodam()
+}
+
 pub fn calc_total_points() -> i64 {
     (1000 * deepest_level() as i64) + exp()
 }
@@ -289,10 +300,8 @@ pub fn record() -> PlayerRecord {
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
-        ptodam: unsafe { player_ptodam },
         pac: unsafe { player_pac },
         ptoac: unsafe { player_ptoac },
-        dis_td: unsafe { player_dis_td },
         dis_ac: unsafe { player_dis_ac },
         dis_tac: unsafe { player_dis_tac },
         disarm: unsafe { player_disarm },
@@ -401,10 +410,8 @@ pub fn set_record(record: PlayerRecord) {
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
-        player_ptodam = record.ptodam;
         player_pac = record.pac;
         player_ptoac = record.ptoac;
-        player_dis_td = record.dis_td;
         player_dis_ac = record.dis_ac;
         player_dis_tac = record.dis_tac;
         player_disarm = record.disarm;

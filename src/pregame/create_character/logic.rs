@@ -97,12 +97,10 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
         player::player_claim_check = 0;
 
         // Real values
-        player::player_ptodam = player::dmg_from_str();
         player::player_ptoac = player::ac_from_dex();
         player::player_pac = 0;
 
         // Displayed values
-        player::player_dis_td = player::player_ptodam;
         player::player_dis_tac = player::player_ptoac;
         player::player_dis_ac = player::player_pac;
     }
@@ -180,7 +178,6 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
         player::player_stl = race_stats.stealth_modifier;
         player::player_save = race_stats.save_modifier;
         player::player_lev = 1;
-        player::player_ptodam = stat_modifiers::damage(&race_stats.stat_block);
         player::player_ptoac = 0;
         player::player_pac = stat_modifiers::ac(&race_stats.stat_block);
         player::player_expfact = race_stats.experience_factor;
@@ -190,7 +187,6 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
         player::player_ht = race_stats.height;
         player::player_wt = race_stats.weight;
         player::player_disarm = race_stats.disarm_modifier;
-        player::player_dis_td = stat_modifiers::damage(&race_stats.stat_block);
         player::player_dis_tac = stat_modifiers::ac(&race_stats.stat_block);
     }
     player::set_birthdate(race_stats.birthdate);

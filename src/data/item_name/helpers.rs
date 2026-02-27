@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
-use crate::{misc, model::Item};
 use crate::misc::item_name2rs;
+use crate::model::Item;
 
 pub(crate) fn maybe_armor_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
     if item.ac == 0 && (!item.is_identified() || item.toac == 0) {
@@ -72,9 +72,7 @@ pub(crate) fn plural_es<'a>(item: &Item) -> Cow<'a, str> {
 }
 
 pub(crate) fn damage<'a>(item: &Item) -> Cow<'a, str> {
-    let raw_string = item.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
-    let damage_string = misc::c_array_to_rust_string(raw_string);
-    Cow::from(format!(" ({})", damage_string))
+    Cow::from(format!(" ({})", item.damage_string()))
 }
 
 pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
