@@ -427,6 +427,7 @@ void command(long *command) {
     player_action_read_scroll();
     break;
   case 's': /* Search */
+    msg_print("You look around.");
     player_action_search(char_row, char_col, C_player_curr_search_skill());
     break;
   case 't': /* take off */

@@ -25,7 +25,6 @@ void player_action_search(const long player_y, const long player_x, long chance)
     chance = (long)(chance / 5.0);
   }
 
-  bool found_something = false;
   for (long y = player_y - 1; y <= player_y + 1; y++) {
     for (long x = player_x - 1; x <= player_x + 1; x++) {
       if (!in_bounds(y, x)) {
@@ -52,7 +51,6 @@ void player_action_search(const long player_y, const long player_x, long chance)
         msg_print(out_val);
         change_trap(y, x);
         find_flag = false;
-        found_something = true;
 
       } else if (t_list[cave[y][x].tptr].tval == secret_door) {
         // Secret door
@@ -60,7 +58,6 @@ void player_action_search(const long player_y, const long player_x, long chance)
         cave[y][x].fval = corr_room_junction.ftval;
         change_trap(y, x);
         find_flag = false;
-        found_something = true;
 
       } else if (t_list[cave[y][x].tptr].tval == chest) {
         if (t_list[cave[y][x].tptr].flags > 1) {
@@ -68,14 +65,9 @@ void player_action_search(const long player_y, const long player_x, long chance)
             // Chest is trapped
             known2(t_list[cave[y][x].tptr].name);
             msg_print("You have discovered a trap on the chest!");
-            found_something = true;
           }
         }
       }
     }
-  }
-
-  if (!found_something) {
-    msg_print("You look around.");
   }
 }
