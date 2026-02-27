@@ -87,7 +87,7 @@ pub fn calculate_player_tohit2(attack_type: &AttackType) -> i16 {
     let main_weapon = unsafe { *equipment::get_item(equipment::Slot::Primary) };
     match attack_type {
         AttackType::Melee(melee_attack_type) => {
-            let base_to_hit = unsafe { player::player_bth };
+            let base_to_hit = player::base_to_hit();
             let base_from_class_and_level = (player::level() as i16 * class::melee_bonus(&player::class()) as i16) / 2;
 
             let plus_base = unsafe { player_ptohit };

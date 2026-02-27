@@ -37,7 +37,6 @@ uint16_t player_wt = 0;
 uint16_t player_lev = 0;
 uint16_t player_max_lev = 0;
 int16_t player_fos = 0;
-int16_t player_bth = 0;
 int16_t player_bthb = 0;
 int16_t player_mana = 0;
 int16_t player_ptohit = 0;

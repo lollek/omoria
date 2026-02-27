@@ -519,15 +519,6 @@ void change_character(void) {
   }
 
   if (!abort) {
-    int64_t tmp_val = player_bth;
-    if (cc__input_field("(0-200) Base to hit = ", &tmp_val, 0, 200, &flag)) {
-      player_bth = tmp_val;
-    } else {
-      abort = true;
-    }
-  }
-
-  if (!abort) {
     int64_t tmp_val = player_bthb;
     if (cc__input_field("(0-200) Bows/Throwing = ", &tmp_val, 0, 200, &flag)) {
       player_bthb = tmp_val;

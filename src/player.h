@@ -92,7 +92,6 @@ extern uint16_t player_wt;            /* { Weight	} */
 extern uint16_t player_lev;           /* { Level		} */
 extern uint16_t player_max_lev;       /* { Max level explored} */
 extern int16_t player_fos;            /* { Frenq of search} */
-extern int16_t player_bth;            /* { Base to hit	} */
 extern int16_t player_bthb;           /* { BTH with bows	} */
 extern int16_t player_mana;           /* { Mana points	} */
 extern int16_t player_ptohit;         /* { Pluses to hit	} */
@@ -177,13 +176,13 @@ void change_speed(long num);
 */
 void py_bonuses(const treasure_type *tobj, long factor);
 
+void change_rep(long amt);
+
+int16_t player_bth(void);
 /**
  * @return True if player has no light
  */
 bool player_has_no_light(void);
-
-void change_rep(long amt);
-
 bool player_test_hit(long base_to_hit, long plus_to_hit, long enemy_ac);
 
 long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster);
