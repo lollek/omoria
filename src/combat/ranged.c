@@ -22,9 +22,9 @@ enum ranged_attack_t { THROW, SHOOT };
 static long calc_base_to_hit(const enum ranged_attack_t type) {
   switch (type) {
   case THROW:
-    return trunc(player_bthb * 0.75);
+    return player_btht();
   case SHOOT:
-    return player_bthb;
+    return player_bthb();
   }
   MSG(("calc_base_to_hit fell through switch"));
   return 0;

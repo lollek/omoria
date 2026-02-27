@@ -78,7 +78,7 @@ fn put_misc_abilities() {
     term::clear_from(14);
 
     let melee_to_hit: i64 = (player::base_to_hit() + player::plus_to_hit(AttackType::Melee(MeleeAttackType::Standard), player::player_main_weapon())).into();
-    let ranged_to_hit: i64 = (unsafe { player::player_bthb } + player::plus_to_hit(AttackType::Ranged, player::player_main_weapon())).into();
+    let ranged_to_hit: i64 = (player::base_to_hit_bows() + player::plus_to_hit(AttackType::Ranged, player::player_main_weapon())).into();
 
     let perception: i64 = max(27 - player::search_frequency(), 0).into();
     let searching: i64 = player::curr_search_skill().into();

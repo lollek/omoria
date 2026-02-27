@@ -8,7 +8,6 @@ pub(crate) struct StatsFromRace {
     pub height: u16,
     pub history: String,
     pub infravision: i64,
-    pub ranged_bonus: i16,
     pub save_modifier: i16,
     pub social_class: i16,
     pub stat_block: StatBlock,

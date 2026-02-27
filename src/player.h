@@ -91,7 +91,6 @@ extern uint16_t player_ht;            /* { Height	} */
 extern uint16_t player_wt;            /* { Weight	} */
 extern uint16_t player_lev;           /* { Level		} */
 extern uint16_t player_max_lev;       /* { Max level explored} */
-extern int16_t player_bthb;           /* { BTH with bows	} */
 extern int16_t player_mana;           /* { Mana points	} */
 extern int16_t player_disarm;         /* { % to Disarm	} */
 extern int16_t player_save;           /* { Saving throw	} */
@@ -165,6 +164,8 @@ void py_bonuses(const treasure_type *tobj, long factor);
 
 void change_rep(long amt);
 
+int16_t player_bthb(void);
+int16_t player_btht(void);
 int16_t player_bth(void);
 /**
  * @return True if player has no light
