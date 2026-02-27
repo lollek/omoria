@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Hit calculation (`managed_to_hit`) is now implemented in Rust.
 * Internal: `Wallet` now uses idiomatic Rust `From`/`Into` conversions for its `[i64; 7]` interop.
 * Internal: Monster template data and attribute queries are now implemented in Rust.
 * Internal: Dungeon traps migration: trap template data and basic trap placement/visibility logic (including rubble placement) are now implemented in Rust.

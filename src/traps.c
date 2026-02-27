@@ -217,6 +217,13 @@ static void ht__whirlpool(const long dam) {
 void hit_trap(const long *y, const long *x) {
   ENTER(("hit_trap", ""));
 
+  if (search_flag) {
+    search_off();
+  }
+  if (player_flags.rest > 0) {
+    rest_off();
+  }
+
   change_trap(*y, *x);
   lite_spot(char_row, char_col);
   find_flag = false;
