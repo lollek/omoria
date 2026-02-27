@@ -11,7 +11,6 @@ pub(crate) struct StatsFromRace {
     pub infravision: i64,
     pub ranged_bonus: i16,
     pub save_modifier: i16,
-    pub search_frequency: i16,
     pub social_class: i16,
     pub stat_block: StatBlock,
     pub swim_speed: i64,
