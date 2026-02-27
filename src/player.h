@@ -94,10 +94,8 @@ extern uint16_t player_max_lev;       /* { Max level explored} */
 extern int16_t player_fos;            /* { Frenq of search} */
 extern int16_t player_bthb;           /* { BTH with bows	} */
 extern int16_t player_mana;           /* { Mana points	} */
-extern int16_t player_ptodam;         /* { Pluses to dam	} */
 extern int16_t player_pac;            /* { Total AC	} */
 extern int16_t player_ptoac;          /* { Magical AC	} */
-extern int16_t player_dis_td;         /* { Display +ToDam} */
 extern int16_t player_dis_ac;         /* { Display +ToAC } */
 extern int16_t player_dis_tac;        /* { Display +ToTAC} */
 extern int16_t player_disarm;         /* { % to Disarm	} */
@@ -181,6 +179,7 @@ int16_t player_bth(void);
  */
 bool player_has_no_light(void);
 int16_t player_ptohit(void);
+int16_t player_ptodam(void);
 bool player_test_hit(long base_to_hit, long plus_to_hit, long enemy_ac);
 
 long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster);

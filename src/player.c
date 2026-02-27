@@ -39,10 +39,8 @@ uint16_t player_max_lev = 0;
 int16_t player_fos = 0;
 int16_t player_bthb = 0;
 int16_t player_mana = 0;
-int16_t player_ptodam = 0;
 int16_t player_pac = 0;
 int16_t player_ptoac = 0;
-int16_t player_dis_td = 0;
 int16_t player_dis_ac = 0;
 int16_t player_dis_tac = 0;
 int16_t player_disarm = 0;
@@ -290,10 +288,8 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
   }
 
   const long old_dis_ac = player_dis_ac;
-  player_ptodam = C_player_dmg_from_str();
   player_ptoac = C_player_ac_from_dex();
   player_pac = 0;                /*{ Real AC       } */
-  player_dis_td = player_ptodam; /*{ Display To Dam        } */
   player_dis_ac = 0;             /*{ Display To AC         } */
   player_dis_tac = player_ptoac; /*{ Display AC            } */
 
@@ -304,10 +300,8 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
         player_pac += equipment[i1].ac;
         player_dis_ac += equipment[i1].ac;
       }
-      player_ptodam += equipment[i1].todam;
       player_ptoac += equipment[i1].toac;
       if (strstr(equipment[i1].name, "^") == NULL) {
-        player_dis_td += equipment[i1].todam;
         player_dis_tac += equipment[i1].toac;
       }
     }
