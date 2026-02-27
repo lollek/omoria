@@ -1,6 +1,6 @@
 use libc;
 
-use crate::model::{Class, GameTime, Player, PlayerFlags, Race, Sex, Time, Wallet};
+use crate::model::{Class, GameTime, Player, PlayerFlags, Race, Sex, Wallet};
 
 #[repr(C)]
 #[derive(Serialize, Deserialize, Debug)]
@@ -13,7 +13,6 @@ pub struct PlayerRecord {
     pub cur_quest: u16,
     pub quests: u8,
     pub claim_check: i64,
-    pub play_tm: Time,
     pub name: String,
     pub race: Race,
     pub sex: Sex,
@@ -48,7 +47,6 @@ impl PlayerRecord {
             cur_quest: 0,
             quests: 0,
             claim_check: 0,
-            play_tm: Time::default(),
             name: "".to_string(),
             race: Race::Human,
             sex: Sex::Female,
