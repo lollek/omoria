@@ -41,7 +41,6 @@ extern "C" {
     pub static mut player_mana: i16; /* { Mana points	} */
     pub static mut player_disarm: i16; /* { % to Disarm	} */
     pub static mut player_save: i16; /* { Saving throw	} */
-    pub static mut player_expfact: libc::c_float; /* { Experience factor} */
     pub static mut player_cmana: libc::c_float; /* { Cur mana pts  } */
     pub static mut player_exp: i64; /* { Cur experienc	} */
     pub static mut player_account: i64; /* { Money in the bank	} */
@@ -358,7 +357,6 @@ pub fn record() -> PlayerRecord {
         rep: unsafe { player_rep },
         lev: level().into(),
         max_lev: unsafe { player_max_lev },
-        expfact: unsafe { player_expfact },
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
@@ -461,7 +459,6 @@ pub fn set_record(record: PlayerRecord) {
 
     unsafe {
         player_max_lev = record.max_lev;
-        player_expfact = record.expfact;
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
@@ -542,15 +539,22 @@ pub fn uses_mana() -> bool {
     class() != Class::Fighter
 }
 
-pub fn expfact() -> f32 {
-    unsafe { player_expfact }
+#[no_mangle]
+pub fn player_expfact() -> f32 {
+    experience_factor()
+}
+
+pub fn experience_factor() -> f32 {
+    let mut value = data::race::expfactor(&race());
+    value += data::class::expfactor(&class());
+    value
 }
 
 pub fn exp_to_next_level() -> i64 {
     if exp() >= max_exp() {
         <i64>::MAX
     } else {
-        (unsafe { exp_per_level[level() as usize] } as f64 * expfact() as f64) as i64 - exp()
+        (unsafe { exp_per_level[level() as usize] } as f64 * experience_factor() as f64) as i64 - exp()
     }
 }
 

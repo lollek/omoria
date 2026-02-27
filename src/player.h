@@ -97,12 +97,12 @@ extern int16_t player_disarm;         /* { % to Disarm	} */
 extern int16_t player_save;           /* { Saving throw	} */
 extern enum class_t player_pclass;    /* { # of class	} */
 extern uint8_t player_prace;          /* { # of race	} */
-extern float player_expfact;          /* { Experience factor} */
 extern float player_cmana;            /* { Cur mana pts  } */
 extern char player_history[5][82];    /* ;{ History record} */
 extern bool player_cheated;        /*{ gone into wizard or god mode} */
 extern int64_t player_mr;             /* { mag.res.lev.delta } */
 extern uint8_t player_quests;         /* { # completed } {FUBAR} */
+extern uint16_t player_cur_quest;
 extern time_t player_creation_time;   /* used as key in master file */
 extern int64_t player_claim_check;    /* used to track trading post */
 extern int64_t player_uid;            /* Used in master file */
@@ -170,6 +170,7 @@ int16_t player_bth(void);
  * @return True if player has no light
  */
 bool player_has_no_light(void);
+float player_expfact(void);
 int16_t player_fos(void);
 int16_t player_ptohit(void);
 int16_t player_ptodam(void);

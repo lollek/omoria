@@ -89,7 +89,6 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
         player::player_bthb += ((data::class::ranged_bonus(player_class) * 5) + 20) as i16;
         player::player_disarm += data::class::disarm_mod(player_class) as i16;
         player::player_save += data::class::save_mod(player_class) as i16;
-        player::player_expfact += data::class::expfactor(player_class);
         player::player_mr = data::class::magic_resist(player_class).into();
         player::player_creation_time = time(null::<time_t>() as *mut i64);
         player::player_claim_check = 0;
@@ -142,7 +141,6 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
         },
         birthdate,
         disarm_modifier: data::race::disarm_mod(race) as i16 + stat_modifiers::disarm(&stat_block),
-        experience_factor: data::race::expfactor(race),
         height: height::generate(race, sex),
         history,
         infravision: data::race::infravision(race) as i64,
@@ -164,7 +162,6 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
         player::player_bthb = race_stats.ranged_bonus;
         player::player_save = race_stats.save_modifier;
         player::player_lev = 1;
-        player::player_expfact = race_stats.experience_factor;
         player::player_rep = (50 - race_stats.social_class).into();
         player::set_social_class(race_stats.social_class);
         player::player_age = race_stats.age_plain;
