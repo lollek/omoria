@@ -99,7 +99,6 @@ extern int16_t player_save;           /* { Saving throw	} */
 extern int16_t player_sc;             /* { Social Class	} */
 extern enum class_t player_pclass;    /* { # of class	} */
 extern uint8_t player_prace;          /* { # of race	} */
-extern int16_t player_stl;            /* { Stealth factor} */
 extern float player_expfact;          /* { Experience factor} */
 extern float player_cmana;            /* { Cur mana pts  } */
 extern char player_history[5][82];    /* ;{ History record} */
@@ -178,6 +177,7 @@ int16_t player_ptohit(void);
 int16_t player_ptodam(void);
 int16_t player_ptoac(void);
 int16_t player_pac(void);
+int16_t player_stl(void);
 bool player_test_hit(long base_to_hit, long plus_to_hit, long enemy_ac);
 
 long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster);

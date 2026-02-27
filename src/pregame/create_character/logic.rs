@@ -89,7 +89,6 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
         player::player_bthb += ((data::class::ranged_bonus(player_class) * 5) + 20) as i16;
         player::player_disarm += data::class::disarm_mod(player_class) as i16;
         player::player_fos += data::class::search_freq(player_class) as i16;
-        player::player_stl += data::class::stealth_mod(player_class) as i16;
         player::player_save += data::class::save_mod(player_class) as i16;
         player::player_expfact += data::class::expfactor(player_class);
         player::player_mr = data::class::magic_resist(player_class).into();
@@ -153,7 +152,6 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
         search_frequency: data::race::search_freq(race) as i16,
         social_class,
         stat_block,
-        stealth_modifier: data::race::stealth_mod(race) as i16,
         swim_speed: data::race::swim_speed(race) as i64,
         weight: weight::generate(race, sex),
     }
@@ -167,7 +165,6 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
         player::player_rep = 0;
         player::player_bthb = race_stats.ranged_bonus;
         player::player_fos = race_stats.search_frequency;
-        player::player_stl = race_stats.stealth_modifier;
         player::player_save = race_stats.save_modifier;
         player::player_lev = 1;
         player::player_expfact = race_stats.experience_factor;

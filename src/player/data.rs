@@ -8,7 +8,7 @@ use crate::conversion::{class, currency, race, sex};
 use crate::data;
 use crate::data::class::calculate_tohit_bonus_for_weapon_type;
 use crate::misc;
-use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet};
+use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet, WornFlag1};
 use crate::player;
 use crate::player::ac_from_dex;
 use crate::player_action::attack::{AttackType, MeleeAttackType};
@@ -33,7 +33,6 @@ extern "C" {
     static mut player_sex: [libc::c_char; 82];
     static mut player_tclass: [libc::c_char; 82];
     static mut player_pclass: libc::c_int;
-    pub static mut player_stl: i16;
     pub static mut player_sc: i16; /* { Social Class	} */
     pub static mut player_age: u16; /* { Characters age} */
     pub static mut player_ht: u16; /* { Height	} */
@@ -260,6 +259,27 @@ pub fn plus_to_ac() -> i16 {
     ac
 }
 
+#[no_mangle]
+pub fn player_stl() -> i16 {
+    stealth()
+}
+
+pub fn stealth() -> i16 {
+    let mut stl = data::class::stealth_mod(&class()) as i16;
+    stl += data::race::stealth_mod(&race()) as i16;
+    for item in equipment::items_iter() {
+        if item.has_wornflag1(WornFlag1::Stealth) {
+            stl += item.p1 as i16;
+        }
+    }
+    unsafe {
+        if player_flags.temp_stealth > 0 {
+            stl += 3;
+        }
+    }
+    stl
+}
+
 pub fn calc_total_points() -> i64 {
     (1000 * deepest_level() as i64) + exp()
 }
@@ -327,7 +347,6 @@ pub fn record() -> PlayerRecord {
         max_lev: unsafe { player_max_lev },
         expfact: unsafe { player_expfact },
         fos: unsafe { player_fos },
-        stl: unsafe { player_stl },
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
@@ -433,7 +452,6 @@ pub fn set_record(record: PlayerRecord) {
         player_max_lev = record.max_lev;
         player_expfact = record.expfact;
         player_fos = record.fos;
-        player_stl = record.stl;
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
