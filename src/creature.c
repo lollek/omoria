@@ -1767,7 +1767,7 @@ void creatures(const bool attack) {
           if (player_flags.aggravate) {
             m_list[monster_i].csleep = 0;
           } else if (player_flags.rest < 1) {
-            if (randint(10) > player_stl) {
+            if (randint(10) > player_stl()) {
               m_list[monster_i].csleep -= (long)(75.0 / m_list[monster_i].cdis);
             }
           }

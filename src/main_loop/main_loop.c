@@ -295,12 +295,10 @@ static void d__update_stealth(void) {
   if (player_flags.temp_stealth > 0) {
     if ((IS_STEALTHY & player_flags.status) == 0) {
       player_flags.status |= IS_STEALTHY;
-      player_stl += 3;
     }
     player_flags.temp_stealth--;
     if (player_flags.temp_stealth == 0) {
       player_flags.status &= ~IS_STEALTHY;
-      player_stl -= 3;
       msg_print("The monsters can once again detect you with "
                 "ease.");
     }

@@ -44,7 +44,6 @@ int16_t player_save = 0;
 int16_t player_sc = 0;
 enum class_t player_pclass = 0;
 uint8_t player_prace = 0;
-int16_t player_stl = 0;
 float player_expfact = 0;
 float player_cmana = 0;
 char player_history[][82] = {"", "", "", "", ""};
@@ -226,9 +225,6 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
   if ((Searching_worn_bit & tobj->flags) != 0) {
     C_player_mod_search_skill(tobj->p1 * factor);
     player_fos -= tobj->p1 * factor;
-  }
-  if ((Stealth_worn_bit & tobj->flags) != 0) {
-    player_stl += tobj->p1 * factor + factor;
   }
   if ((Speed_worn_bit & tobj->flags) != 0) {
     i1 = tobj->p1 * factor;

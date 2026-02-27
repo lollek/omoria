@@ -139,7 +139,7 @@ static void thief_games(void) {
   } else {
     msg_print("The thieves invite you to show your stealthiness.");
     if (get_yes_no("Do you accept?")) {
-      guild_or_not(player_stl > randint(12));
+      guild_or_not(player_stl() > randint(12));
     }
   }
 }
