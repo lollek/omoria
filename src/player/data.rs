@@ -1,6 +1,7 @@
 use std::cmp::{max, min};
 use std::convert::TryInto;
 use std::ffi::CString;
+use std::ptr::addr_of_mut;
 use std::sync::RwLock;
 
 use crate::constants;
@@ -84,7 +85,7 @@ pub fn name() -> String {
 pub fn set_name(new_name: &str) {
     let cstr = CString::new(new_name).unwrap();
     unsafe {
-        libc::strcpy(player_name.as_mut_ptr() as *mut i8, cstr.as_ptr());
+        libc::strcpy(addr_of_mut!(player_name) as *mut i8, cstr.as_ptr());
     }
 }
 
@@ -96,7 +97,7 @@ pub fn set_race(race: Race) {
     let cstr = CString::new(data::race::name(&race)).unwrap();
     unsafe {
         player_prace = race as u8;
-        libc::strcpy(player_race.as_mut_ptr(), cstr.as_ptr());
+        libc::strcpy(addr_of_mut!(player_race) as *mut i8, cstr.as_ptr());
     }
 }
 
@@ -107,7 +108,7 @@ pub fn sex() -> Sex {
 pub fn set_sex(sex: Sex) {
     let cstr = CString::new(data::sex::name(&sex)).unwrap();
     unsafe {
-        libc::strcpy(player_sex.as_mut_ptr(), cstr.as_ptr());
+        libc::strcpy(addr_of_mut!(player_sex) as *mut i8, cstr.as_ptr());
     }
 }
 
@@ -119,7 +120,7 @@ pub fn set_class(class: Class) {
     let cstr = CString::new(data::class::name(&class)).unwrap();
     unsafe {
         player_pclass = class as i32;
-        libc::strcpy(player_tclass.as_mut_ptr(), cstr.as_ptr());
+        libc::strcpy(addr_of_mut!(player_tclass) as *mut i8, cstr.as_ptr());
     }
 }
 
