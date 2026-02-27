@@ -1,6 +1,6 @@
 use crate::model::Stat;
 use crate::user_interface::helpers;
-use crate::{data, misc, ncurses, player, term};
+use crate::{data, helper, misc, ncurses, player, term};
 use std::cmp::max;
 use crate::player_action::attack::{calculate_number_of_attacks, calculate_player_tohit, AttackType, MeleeAttackType};
 
@@ -35,9 +35,9 @@ fn put_combat_abilities() {
     let mut row = starting_row;
     for line in [
         format!("Num attacks:  {}", calculate_number_of_attacks()),
-        format!("Melee to hit: {} ({} + {})", calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard)), player::base_to_hit(), player::player_ptohit()),
-        format!("Damage:       {} + {}", player::player_main_weapon().damage_string(), player::plus_to_damage()),
-        format!("AC:           {} ({} + {})", player::base_ac() + player::plus_to_ac(), player::base_ac(), player::plus_to_ac()),
+        format!("Melee to hit: {} ({} {})", calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard)), player::base_to_hit(), helper::format_signed(player::player_ptohit())),
+        format!("Damage:       {} {}", player::player_main_weapon().damage_string(), helper::format_signed(player::plus_to_damage())),
+        format!("AC:           {} ({} {})", player::base_ac() + player::plus_to_ac(), player::base_ac(), helper::format_signed(player::plus_to_ac())),
     ] {
         row += 1;
         term::prt(line, row, left_column);
@@ -45,10 +45,10 @@ fn put_combat_abilities() {
 
     let mut row = starting_row;
     for line in [
-        format!("Level: {} ({} xp)", unsafe { player::player_lev } ,unsafe { player::player_exp }),
-        format!("Gold: {} (Bank: {})", player::wallet().total, unsafe { player::player_account }),
+        format!("Level:  {} ({} to next)", unsafe { player::player_lev } , player::exp_to_next_level()),
+        format!("Gold:   {} (Bank: {})", player::wallet().total, unsafe { player::player_account }),
         format!("Health: {}/{}", player::current_hp(), player::max_hp()),
-        format!("Mana: {}/{}", player::current_mp(), player::max_mp()),
+        format!("Mana:   {}/{}", player::current_mp(), player::max_mp()),
     ] {
         row += 1;
         term::prt(line, row, middle_column);

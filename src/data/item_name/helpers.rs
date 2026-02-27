@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-
+use crate::helper;
 use crate::misc::item_name2rs;
 use crate::model::Item;
 
@@ -13,7 +13,7 @@ pub(crate) fn maybe_armor_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
     }
 
     // For armor, we show both AC and its (possibly signed) to-ac modifier.
-    Some(format!(" [{},{}]", item.ac, format_signed(item.toac)).into())
+    Some(format!(" [{},{}]", item.ac, helper::format_signed(item.toac)).into())
 }
 
 /**
@@ -78,8 +78,8 @@ pub(crate) fn damage<'a>(item: &Item) -> Cow<'a, str> {
 pub(crate) fn attack_bonus<'a>(item: &Item) -> Cow<'a, str> {
     Cow::from(format!(
         " ({},{})",
-        format_signed(item.tohit),
-        format_signed(item.todam),
+        helper::format_signed(item.tohit),
+        helper::format_signed(item.todam),
     ))
 }
 
@@ -118,20 +118,9 @@ pub fn maybe_special_attribute(item: &'_ Item) -> Option<Cow<'_, str>> {
 
 
 pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    Cow::from(format!(" ({})", format_signed(item.p1)))
+    Cow::from(format!(" ({})", helper::format_signed(item.p1)))
 }
 
 pub(crate) fn toac_bonus<'a>(item: &Item) -> Cow<'a, str> {
-    Cow::from(format!(" [{}]", format_signed(item.toac)))
-}
-
-fn format_signed<T>(value: T) -> String
-where
-    T: std::fmt::Display + PartialOrd + From<i8> + Copy,
-{
-    if value > T::from(0) {
-        format!("+{}", value)
-    } else {
-        value.to_string()
-    }
+    Cow::from(format!(" [{}]", helper::format_signed(item.toac)))
 }
