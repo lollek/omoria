@@ -4,7 +4,6 @@
 
 use rand::Rng;
 
-use crate::model::PlayerFlags;
 use crate::rng::randint_with_rng;
 
 /// Determines whether an attack manages to hit the target.

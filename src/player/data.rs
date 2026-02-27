@@ -40,7 +40,6 @@ extern "C" {
     pub static mut player_wt: u16; /* { Weight	} */
     pub static mut player_lev: u16; /* { Level		} */
     pub static mut player_fos: i16; /* { Frenq of search} */
-    pub static mut player_bth: i16; /* { Base to hit	} */
     pub static mut player_bthb: i16; /* { BTH with bows	} */
     pub static mut player_mana: i16; /* { Mana points	} */
     pub static mut player_ptohit: i16; /* { Pluses to hit	} */
@@ -173,9 +172,31 @@ pub fn hitdie() -> u8 {
     data::class::health_bonus(&class())
 }
 
+#[no_mangle]
+fn player_bth() -> i16 {
+    base_to_hit()
+}
+
+pub fn base_to_hit() -> i16 {
+    let mut bth: i16 = data::race::melee_bonus(&race()).into();
+    bth += ((data::class::melee_bonus(&class()) * 5) + 20) as i16;
+    unsafe {
+        if player_flags.shero > 0 {
+            bth += 24;
+        }
+        if player_flags.hero > 0 {
+            bth += 12;
+        }
+        if player_flags.blessed > 0 {
+            bth += 5;
+        }
+    }
+    bth
+}
+
 pub fn melee_tohit() -> i16 {
     unsafe {
-        player_bth + (player_lev as i16 * misc::BTH_LEV_ADJ) + (player_ptohit * misc::BTH_PLUS_ADJ)
+        base_to_hit() + (player_lev as i16 * misc::BTH_LEV_ADJ) + (player_ptohit * misc::BTH_PLUS_ADJ)
     }
 }
 
@@ -253,7 +274,6 @@ pub fn record() -> PlayerRecord {
         expfact: unsafe { player_expfact },
         fos: unsafe { player_fos },
         stl: unsafe { player_stl },
-        bth: unsafe { player_bth },
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
@@ -368,7 +388,6 @@ pub fn set_record(record: PlayerRecord) {
         player_expfact = record.expfact;
         player_fos = record.fos;
         player_stl = record.stl;
-        player_bth = record.bth;
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;

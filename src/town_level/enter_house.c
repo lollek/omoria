@@ -69,7 +69,7 @@ static void battle_game(const long plus, char const *const kb_str) {
     long score = 0;
     long time = 10;
     const long base_to_hit =
-        player_bth + player_lev * C_class_melee_bonus(player_pclass) / 2;
+        player_bth() + player_lev * C_class_melee_bonus(player_pclass) / 2;
 
     /* with player_do; */
     for (long i1 = 1; i1 <= 7; i1++) {

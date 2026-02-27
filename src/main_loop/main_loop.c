@@ -635,7 +635,6 @@ static void d__update_heroism(void) {
       }
       /* with player_do; */
       C_player_modify_max_hp(10);
-      player_bth += 12;
       player_bthb += 12;
       msg_print("You feel like a HERO!");
       prt_stat_block();
@@ -651,7 +650,6 @@ static void d__update_heroism(void) {
       C_player_modify_current_hp(10);
       if (C_player_current_hp() > C_player_current_hp())
         C_player_reset_current_hp();
-      player_bth -= 12;
       player_bthb -= 12;
       msg_print("The heroism wears off.");
       prt_stat_block();
@@ -669,7 +667,6 @@ static void d__update_super_heroism(void) {
       }
       /* with player_do; */
       C_player_modify_max_hp(20);
-      player_bth += 24;
       player_bthb += 24;
       msg_print("You feel like a SUPER HERO!");
       prt_stat_block();
@@ -685,7 +682,6 @@ static void d__update_super_heroism(void) {
       C_player_modify_current_hp(20);
       if (C_player_current_hp() > C_player_current_hp())
         C_player_reset_current_hp();
-      player_bth -= 24;
       player_bthb -= 24;
       msg_print("The super heroism wears off.");
       prt_stat_block();
@@ -702,7 +698,6 @@ static void d__update_blessed(void) {
         player_action_move(5);
       }
       /* with player_do; */
-      player_bth += 5;
       player_bthb += 5;
       player_pac += 5;
       player_dis_ac += 5;
@@ -716,7 +711,6 @@ static void d__update_blessed(void) {
         player_action_move(5);
       }
       /* with player_do; */
-      player_bth -= 5;
       player_bthb -= 5;
       player_pac -= 5;
       player_dis_ac -= 5;

@@ -86,7 +86,6 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
     player::modify_max_hp(player::hitdie() as i16);
     player::reset_current_hp();
     unsafe {
-        player::player_bth += ((data::class::melee_bonus(player_class) * 5) + 20) as i16;
         player::player_bthb += ((data::class::ranged_bonus(player_class) * 5) + 20) as i16;
         player::player_disarm += data::class::disarm_mod(player_class) as i16;
         player::player_fos += data::class::search_freq(player_class) as i16;
@@ -161,7 +160,6 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
         height: height::generate(race, sex),
         history,
         infravision: data::race::infravision(race) as i64,
-        melee_bonus: data::race::melee_bonus(race) as i16,
         ranged_bonus: data::race::ranged_bonus(race) as i16,
         save_modifier: data::race::save_mod(race) as i16,
         search_frequency: data::race::search_freq(race) as i16,
@@ -179,7 +177,6 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
 
     unsafe {
         player::player_rep = 0;
-        player::player_bth = race_stats.melee_bonus;
         player::player_bthb = race_stats.ranged_bonus;
         player::player_fos = race_stats.search_frequency;
         player::player_stl = race_stats.stealth_modifier;
