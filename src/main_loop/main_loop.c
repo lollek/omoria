@@ -608,8 +608,6 @@ static void d__update_invulnerable(void) {
         player_action_move(5);
       }
       msg_print("Your skin turns into steel!");
-      player_pac += 100;
-      player_dis_ac += 100;
     }
     player_flags.invuln--;
     if (player_flags.invuln == 0) {
@@ -618,8 +616,6 @@ static void d__update_invulnerable(void) {
         player_action_move(5);
       }
       msg_print("Your skin returns to normal...");
-      player_pac -= 100;
-      player_dis_ac -= 100;
     }
     prt_stat_block();
   }
@@ -699,8 +695,6 @@ static void d__update_blessed(void) {
       }
       /* with player_do; */
       player_bthb += 5;
-      player_pac += 5;
-      player_dis_ac += 5;
       msg_print("You feel righteous!");
       prt_stat_block();
     }
@@ -712,8 +706,6 @@ static void d__update_blessed(void) {
       }
       /* with player_do; */
       player_bthb -= 5;
-      player_pac -= 5;
-      player_dis_ac -= 5;
       msg_print("The prayer has expired.");
       prt_stat_block();
     }

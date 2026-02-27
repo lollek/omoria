@@ -39,10 +39,6 @@ uint16_t player_max_lev = 0;
 int16_t player_fos = 0;
 int16_t player_bthb = 0;
 int16_t player_mana = 0;
-int16_t player_pac = 0;
-int16_t player_ptoac = 0;
-int16_t player_dis_ac = 0;
-int16_t player_dis_tac = 0;
 int16_t player_disarm = 0;
 int16_t player_save = 0;
 int16_t player_sc = 0;
@@ -287,46 +283,13 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
     C_player_change_extra_bulk_carry(i1 * factor);
   }
 
-  const long old_dis_ac = player_dis_ac;
-  player_ptoac = C_player_ac_from_dex();
-  player_pac = 0;                /*{ Real AC       } */
-  player_dis_ac = 0;             /*{ Display To AC         } */
-  player_dis_tac = player_ptoac; /*{ Display AC            } */
-
-  for (i1 = Equipment_min; i1 <= EQUIP_MAX - 2; i1++) {
-    /* with equipment[i1] do; */
-    if (equipment[i1].tval > 0) {
-      if ((Cursed_worn_bit & equipment[i1].flags) == 0) {
-        player_pac += equipment[i1].ac;
-        player_dis_ac += equipment[i1].ac;
-      }
-      player_ptoac += equipment[i1].toac;
-      if (strstr(equipment[i1].name, "^") == NULL) {
-        player_dis_tac += equipment[i1].toac;
-      }
-    }
-  }
-  player_dis_ac += player_dis_tac;
-
   /* { Add in temporary spell increases	}*/
-  /* with player_flags do; */
-  if (player_flags.invuln > 0) {
-    player_pac += 100;
-    player_dis_ac += 100;
-  }
-  if (player_flags.blessed > 0) {
-    player_pac += 5;
-    player_dis_ac += 5;
-  }
   if (player_flags.detect_inv > 0) {
     player_flags.see_inv =
         true; /* does this mean that if you put on/take off stuff
                  you are going to lose magic detect_inv ? */
   }
 
-  if (old_dis_ac != player_dis_ac) {
-    print_stat = 1;
-  }
   unsigned long item_flags2 = 0;
   unsigned long item_flags = 0;
 

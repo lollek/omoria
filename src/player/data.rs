@@ -10,6 +10,7 @@ use crate::data::class::calculate_tohit_bonus_for_weapon_type;
 use crate::misc;
 use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet};
 use crate::player;
+use crate::player::ac_from_dex;
 use crate::player_action::attack::{AttackType, MeleeAttackType};
 use crate::rng;
 use crate::{constants, equipment};
@@ -41,10 +42,6 @@ extern "C" {
     pub static mut player_fos: i16; /* { Frenq of search} */
     pub static mut player_bthb: i16; /* { BTH with bows	} */
     pub static mut player_mana: i16; /* { Mana points	} */
-    pub static mut player_pac: i16; /* { Total AC	} */
-    pub static mut player_ptoac: i16; /* { Magical AC	} */
-    pub static mut player_dis_ac: i16; /* { Display +ToAC } */
-    pub static mut player_dis_tac: i16; /* { Display +ToTAC} */
     pub static mut player_disarm: i16; /* { % to Disarm	} */
     pub static mut player_save: i16; /* { Saving throw	} */
     pub static mut player_expfact: libc::c_float; /* { Experience factor} */
@@ -229,6 +226,40 @@ pub fn plus_to_damage() -> i16 {
     player_ptodam()
 }
 
+#[no_mangle]
+pub fn player_pac() -> i16 {
+    base_ac()
+}
+
+pub fn base_ac() -> i16 {
+    let mut ac = ac_from_dex();
+    equipment::items_iter().for_each(|item| {
+        ac += item.ac;
+    });
+    unsafe {
+        if player_flags.invuln > 0 {
+            ac += 100;
+        }
+        if player_flags.blessed > 0 {
+            ac += 5;
+        }
+    }
+    ac
+}
+
+#[no_mangle]
+pub fn player_ptoac() -> i16 {
+    plus_to_ac()
+}
+
+pub fn plus_to_ac() -> i16 {
+    let mut ac = 0;
+    equipment::items_iter().for_each(|item| {
+        ac += item.toac;
+    });
+    ac
+}
+
 pub fn calc_total_points() -> i64 {
     (1000 * deepest_level() as i64) + exp()
 }
@@ -300,10 +331,6 @@ pub fn record() -> PlayerRecord {
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
-        pac: unsafe { player_pac },
-        ptoac: unsafe { player_ptoac },
-        dis_ac: unsafe { player_dis_ac },
-        dis_tac: unsafe { player_dis_tac },
         disarm: unsafe { player_disarm },
         save: unsafe { player_save },
         inven_weight: unsafe { inven_weight },
@@ -410,10 +437,6 @@ pub fn set_record(record: PlayerRecord) {
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
-        player_pac = record.pac;
-        player_ptoac = record.ptoac;
-        player_dis_ac = record.dis_ac;
-        player_dis_tac = record.dis_tac;
         player_disarm = record.disarm;
         player_save = record.save;
         inven_weight = record.inven_weight;

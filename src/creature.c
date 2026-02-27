@@ -242,7 +242,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
 
 static bool c__check_for_hit(const long monptr, const long atype) {
   const long level = monster_templates[m_list[monptr].mptr].level;
-  const long armor_stuff = player_pac + player_ptoac;
+  const long armor_stuff = player_pac() + player_ptoac();
 
   switch (atype) {
   case 1: /*{Normal attack  }*/
@@ -485,7 +485,7 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
   case 1: /*{Normal attack  }*/
     dam = damroll(damstr);
     const long reduction =
-        (long)((player_pac + player_ptoac) / 200.0 * dam + .5);
+        (long)((player_pac() + player_ptoac()) / 200.0 * dam + .5);
     MSG(("Damage (Normal): %ld - %ld = %ld", dam, reduction, dam - reduction));
     dam -= reduction;
     take_hit(dam, ddesc);
