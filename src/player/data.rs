@@ -7,18 +7,17 @@ use std::sync::RwLock;
 use crate::conversion::{class, currency, race, sex};
 use crate::data;
 use crate::data::class::calculate_tohit_bonus_for_weapon_type;
+use crate::logic::stat_modifiers;
 use crate::misc;
-use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet, WornFlag1, WornFlag2};
+use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Wallet, WornFlag1, WornFlag2};
 use crate::player;
 use crate::player::{ac_from_dex, curr_stats};
 use crate::player_action::attack::{AttackType, MeleeAttackType};
 use crate::rng;
 use crate::{constants, equipment};
-use crate::logic::stat_modifiers;
 
 extern "C" {
     pub(super) static mut player_money: [i64; 7]; /* { Money on person	} */
-    pub(super) static mut player_play_tm: Time; /* { Time spent in game	} */
     pub(super) static mut player_max_exp: i64; /* { Max experience} */
     pub(super) static mut player_max_lev: u16; /* { Max level explored} */
     pub(super) static mut player_cheated: u8; /*{ gone into wizard or god mode} */
@@ -396,7 +395,6 @@ pub fn record() -> PlayerRecord {
         cur_quest: unsafe { player_cur_quest },
         quests: unsafe { player_quests },
         claim_check: unsafe { player_claim_check },
-        play_tm: unsafe { player_play_tm },
         name: name(),
         race: race(),
         sex: sex(),
@@ -485,7 +483,6 @@ pub fn set_record(record: PlayerRecord) {
         player_cur_quest = record.cur_quest;
         player_quests = record.quests;
         player_claim_check = record.claim_check;
-        player_play_tm = record.play_tm;
     }
 
     set_name(&record.name);
