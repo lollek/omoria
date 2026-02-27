@@ -37,10 +37,6 @@ pub fn tohit_from_stats() -> i16 {
     stat_modifiers::to_hit_bonus(&curr_stats())
 }
 
-pub fn disarm_from_dex() -> i16 {
-    stat_modifiers::disarm(&curr_stats())
-}
-
 pub fn modifier_from_stat(stat: Stat) -> i16 {
     (get_stat(stat) - 10) / 2
 }

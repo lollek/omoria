@@ -8,12 +8,13 @@ use crate::conversion::{class, currency, race, sex};
 use crate::data;
 use crate::data::class::calculate_tohit_bonus_for_weapon_type;
 use crate::misc;
-use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet, WornFlag1};
+use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet, WornFlag1, WornFlag2};
 use crate::player;
-use crate::player::ac_from_dex;
+use crate::player::{ac_from_dex, curr_stats};
 use crate::player_action::attack::{AttackType, MeleeAttackType};
 use crate::rng;
 use crate::{constants, equipment};
+use crate::logic::stat_modifiers;
 
 extern "C" {
     pub(super) static mut player_money: [i64; 7]; /* { Money on person	} */
@@ -38,7 +39,6 @@ extern "C" {
     pub static mut player_wt: u16; /* { Weight	} */
     pub static mut player_lev: u16; /* { Level		} */
     pub static mut player_mana: i16; /* { Mana points	} */
-    pub static mut player_disarm: i16; /* { % to Disarm	} */
     pub static mut player_save: i16; /* { Saving throw	} */
     pub static mut player_cmana: libc::c_float; /* { Cur mana pts  } */
     pub static mut player_exp: i64; /* { Cur experienc	} */
@@ -308,6 +308,25 @@ pub fn stealth() -> i16 {
 }
 
 #[no_mangle]
+fn player_disarm() -> i16 {
+    disarm()
+}
+
+/// % to Disarm
+pub fn disarm() -> i16 {
+    let mut disarm = data::race::disarm_mod(&race()) as i16;
+    disarm += data::class::disarm_mod(&class()) as i16;
+    disarm += stat_modifiers::disarm(&curr_stats());
+    disarm += level() as i16;
+    for item in equipment::items_iter() {
+        if item.has_wornflag2(WornFlag2::ImprovedDisarming) {
+            disarm += item.p1 as i16;
+        }
+    }
+    disarm
+}
+
+#[no_mangle]
 fn player_fos() -> i16 {
     search_frequency()
 }
@@ -389,7 +408,6 @@ pub fn record() -> PlayerRecord {
         max_lev: unsafe { player_max_lev },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
-        disarm: unsafe { player_disarm },
         save: unsafe { player_save },
         inven_weight: unsafe { inven_weight },
         flags: unsafe { player_flags }.to_owned(),
@@ -490,7 +508,6 @@ pub fn set_record(record: PlayerRecord) {
         player_max_lev = record.max_lev;
         player_mana = record.mana;
         player_cmana = record.cmana;
-        player_disarm = record.disarm;
         player_save = record.save;
         inven_weight = record.inven_weight;
     }

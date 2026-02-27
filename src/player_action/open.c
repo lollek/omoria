@@ -26,8 +26,7 @@ void player_action_open(void) {
         /* with t_list[cave[y][x].tptr]. do; */
         if (t_list[cave[y][x].tptr].p1 > 0) { /*{ It's locked...        }*/
           /* with player_do; */
-          tmp = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-                C_player_mod_from_stat(INT);
+          tmp = player_disarm();
 
           if (player_flags.confused > 0) {
             msg_print("You are too "
@@ -57,8 +56,7 @@ void player_action_open(void) {
       } else if (t_list[cave[y][x].tptr].tval == chest) {
         /*{ Open a closed chest...                }*/
         /* with player_do; */
-        tmp = player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-              C_player_mod_from_stat(INT);
+        tmp = player_disarm();
 
         /* with t_list[tptr] do; */
         bool flag = false;

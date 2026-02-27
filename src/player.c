@@ -37,7 +37,6 @@ uint16_t player_wt = 0;
 uint16_t player_lev = 0;
 uint16_t player_max_lev = 0;
 int16_t player_mana = 0;
-int16_t player_disarm = 0;
 int16_t player_save = 0;
 enum class_t player_pclass = 0;
 uint8_t player_prace = 0;
@@ -214,9 +213,6 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
   }
   if ((Bad_repute_worn_bit & tobj->flags2) != 0) {
     change_rep(-100 * factor); /*{XXX hey!  this is bad! new variable!-ste}*/
-  }
-  if ((Disarm_worn_bit & tobj->flags2) != 0) {
-    player_disarm += tobj->p1 * factor;
   }
   if ((Speed_worn_bit & tobj->flags) != 0) {
     i1 = tobj->p1 * factor;

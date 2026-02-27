@@ -492,15 +492,6 @@ void change_character(void) {
   }
 
   if (!abort) {
-    int64_t tmp_val = player_disarm;
-    if (cc__input_field("(0-200) Disarming = ", &tmp_val, 0, 200, &flag)) {
-      player_disarm = tmp_val;
-    } else {
-      abort = true;
-    }
-  }
-
-  if (!abort) {
     int64_t tmp_val = player_save;
     if (cc__input_field("(0-100) Save = ", &tmp_val, 0, 100, &flag)) {
       player_save = tmp_val;

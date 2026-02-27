@@ -6,7 +6,7 @@ use std::{
 };
 
 use crate::generate_item::template::{CloakTemplate, FoodTemplate, LightSourceTemplate};
-use crate::logic::stat_modifiers;
+use crate::generate_item::ItemQuality;
 use crate::model::{Class, Currency, InventoryItem, Item, Sex};
 use crate::pregame::create_character::data::{height, weight};
 use crate::pregame::create_character::model::StatsFromRace;
@@ -15,7 +15,6 @@ use crate::{
     model::{GameTime, Race, Stat, StatBlock},
     player, rng,
 };
-use crate::generate_item::ItemQuality;
 
 extern "C" {
     fn add_inven_item(item: Item) -> *mut InventoryItem;
@@ -86,7 +85,6 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
     player::modify_max_hp(player::hitdie() as i16);
     player::reset_current_hp();
     unsafe {
-        player::player_disarm += data::class::disarm_mod(player_class) as i16;
         player::player_save += data::class::save_mod(player_class) as i16;
         player::player_mr = data::class::magic_resist(player_class).into();
         player::player_creation_time = time(null::<time_t>() as *mut i64);
@@ -139,7 +137,6 @@ pub(crate) fn generate_stats_from_race(race: &Race, sex: &Sex) -> StatsFromRace 
             secs: (300 + rng::randint(99)) as u16,
         },
         birthdate,
-        disarm_modifier: data::race::disarm_mod(race) as i16 + stat_modifiers::disarm(&stat_block),
         height: height::generate(race, sex),
         history,
         infravision: data::race::infravision(race) as i64,
@@ -164,7 +161,6 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
         player::player_age = race_stats.age_plain;
         player::player_ht = race_stats.height;
         player::player_wt = race_stats.weight;
-        player::player_disarm = race_stats.disarm_modifier;
     }
     player::set_birthdate(race_stats.birthdate);
     player::set_age(race_stats.age_game_time);

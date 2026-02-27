@@ -32,41 +32,53 @@ pub enum MiscUsableFlag1 {
 }
 
 pub enum WornFlag1 {
+    /// Gives strength (p1)
     GivesStrength = 0x00000001,
+    /// Gives dexterity (p1)
     GivesDexterity = 0x00000002,
+    /// Gives constitution (p1)
     GivesConstitution = 0x00000004,
+    /// Gives intelligence (p1)
     GivesIntelligence = 0x00000008,
+    /// Gives wisdom (p1)
     GivesWisdom = 0x00000010,
+    /// Gives charisma (p1)
     GivesCharisma = 0x00000020,
-    // + to search, - to perception (amount in p1)
+    /// + to search, - to perception (amount in p1)
     Searching = 0x00000040,
     SlowDigestion = 0x00000080,
+    /// Improved stealth skill (amount in p1)
     Stealth = 0x00000100,
     AggravateMonsters = 0x00000200,
     RandomTeleportation = 0x00000400,
     Regeneration = 0x00000800,
-    // Amount in p1
+    /// Amount in p1
     IncreasedSpeed = 0x00001000,
-    // Extra damage to dragons
+    /// *4 damage to dragons
     SlayDragon = 0x00002000,
-    // Extra damage to monsters
+    /// *2 damage to monsters
     SlayMonster = 0x00004000,
-    // Extra damage to evil creatures
+    /// *2 damage to evil creatures
     SlayEvil = 0x00008000,
-    // Extra damage to undead
+    /// *3 damage to undead
     SlayUndead = 0x00010000,
-    // Extra damage to cold based creatures
+    /// *1.5 damage to cold based creatures
     SlayCold = 0x00020000,
-    // Extra damage to fire based creatures
+    /// *1.5 damage to fire based creatures
     SlayFire = 0x00040000,
+    /// 1/3 damage from fire based attacks
     ResistFire = 0x00080000,
+    /// 1/3 damage from acid based attacks
     ResistAcid = 0x00100000,
+    /// 1/3 damage from cold based attacks
     ResistCold = 0x00200000,
-    // See p1 for specific stat
+    /// Protects (p1) stat from draining
     ResistStatDrain = 0x00400000,
     ResistParalysis = 0x00800000,
     SeeInvisible = 0x01000000,
+    /// 1/3 damage from lightning based attacks
     ResistLightning = 0x02000000,
+    /// No damage from falling
     FeatherFall = 0x04000000,
     //Blindness = 0x08000000,
     //Timidness = 0x10000000,
@@ -77,26 +89,35 @@ pub enum WornFlag1 {
 }
 
 pub enum WornFlag2 {
+    /// *3 damage to demons
     SlayDemon = 0x00000001,
-    // Lessed Slay Undead?
+    /// *2 damage to undead
     SoulSword = 0x00000002,
+    /// *3 damage to regenerating monsters
     SlayRegenerators = 0x00000004,
-    // See p1 for amount
-    //ImprovedSwimming = 0x00000008,
+    /// Improves swimming by p1
+    ImprovedSwimming = 0x00000008,
+    /// Improves saving throws
     MagicProof = 0x00000010,
-    //ImprovedDisarming = 0x00000020,
-    //ImprovedCriticals = 0x00000040,
+    /// Improved disarming skill
+    ImprovedDisarming = 0x00000020,
+    /// Improved chance of critical strike
+    ImprovedCriticals = 0x00000040,
+    /// Lowers the user's reputation
     BadReputation = 0x00200000,
-    //Hunger = 0x00400000,
+    /// Makes the user hungry immediately
+    Hunger = 0x00400000,
     // Removes flags for other worn gems (???)
     //NegativeGemFlags = 0x00800000,
+    /// Allows player to carry more weight
     ImprovedCarrying = 0x01000000,
-    // Related to quivers and such (???)
+    /// Related to quivers and such
     Holding = 0x04000000,
-    // Bag of devouring
+    /// Bag of devouring
     Swallowing = 0x08000000,
-    // Destroys bags
+    /// Destroys bags
     Sharp = 0x10000000,
+    /// Unsellable
     Blackmarket = 0x20000000,
     //Insured = 0x40000000,
     //KnownCursed = 0x80000000,
