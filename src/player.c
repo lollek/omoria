@@ -39,11 +39,9 @@ uint16_t player_max_lev = 0;
 int16_t player_fos = 0;
 int16_t player_bthb = 0;
 int16_t player_mana = 0;
-int16_t player_ptohit = 0;
 int16_t player_ptodam = 0;
 int16_t player_pac = 0;
 int16_t player_ptoac = 0;
-int16_t player_dis_th = 0;
 int16_t player_dis_td = 0;
 int16_t player_dis_ac = 0;
 int16_t player_dis_tac = 0;
@@ -292,11 +290,9 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
   }
 
   const long old_dis_ac = player_dis_ac;
-  player_ptohit = C_player_tohit_from_stats();
   player_ptodam = C_player_dmg_from_str();
   player_ptoac = C_player_ac_from_dex();
   player_pac = 0;                /*{ Real AC       } */
-  player_dis_th = player_ptohit; /*{ Display To Hit        } */
   player_dis_td = player_ptodam; /*{ Display To Dam        } */
   player_dis_ac = 0;             /*{ Display To AC         } */
   player_dis_tac = player_ptoac; /*{ Display AC            } */
@@ -308,11 +304,9 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
         player_pac += equipment[i1].ac;
         player_dis_ac += equipment[i1].ac;
       }
-      player_ptohit += equipment[i1].tohit;
       player_ptodam += equipment[i1].todam;
       player_ptoac += equipment[i1].toac;
       if (strstr(equipment[i1].name, "^") == NULL) {
-        player_dis_th += equipment[i1].tohit;
         player_dis_td += equipment[i1].todam;
         player_dis_tac += equipment[i1].toac;
       }
@@ -396,7 +390,6 @@ void change_rep(long amt) {
   }
 }
 
-extern long C_calculate_player_tohit(long base_to_hit, long plus_to_hit);
 bool player_test_hit(const long base_to_hit, const long plus_to_hit,
                      const long enemy_ac) {
   if (search_flag) {
@@ -405,7 +398,7 @@ bool player_test_hit(const long base_to_hit, const long plus_to_hit,
   if (player_flags.rest > 0) {
     rest_off();
   }
-  const long max_possible_attack_value = C_calculate_player_tohit(base_to_hit, plus_to_hit);
+  const long max_possible_attack_value = base_to_hit + plus_to_hit;
   const long attack_value = randint(max_possible_attack_value);
   const bool did_hit = (attack_value >= enemy_ac) || randint(20) == 1;
   MSG(("PlayerHits? %d (of %d) vs %d - Hit? %d", attack_value, max_possible_attack_value, enemy_ac, did_hit));

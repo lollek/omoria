@@ -88,11 +88,6 @@ pub extern "C" fn C_player_cost_modifier_from_charisma() -> libc::c_float {
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_tohit_from_stats() -> i16 {
-    player::tohit_from_stats()
-}
-
-#[no_mangle]
 pub extern "C" fn C_player_ac_from_dex() -> i16 {
     player::ac_from_dex()
 }

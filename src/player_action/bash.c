@@ -39,8 +39,7 @@ void player_action_bash(void) {
     } else {
       /*{ Save old values of attacking  }*/
       inven_temp.data = equipment[Equipment_primary];
-      const long old_ptodam = player_ptohit;
-      const long old_ptohit = player_ptodam;
+      const long old_ptodam = player_ptodam;
 
       /*{ Use these values              }*/
       equipment[Equipment_primary] = blank_treasure;
@@ -50,9 +49,10 @@ void player_action_bash(void) {
           (C_player_get_stat(STR) * 10 + 20) * 100;
       equipment[Equipment_primary].tval = 1;
 
-      // TODO: Try to implement this: player_bth = trunc(((C_player_get_stat(STR) * 10 + 20) / 5 + player_wt) / 6.0);
-      player_ptohit = 0;
-      player_ptodam = trunc(player_wt / 75.0) + 1;
+      // TODO: Try to implement these:
+      // player_bth = trunc(((C_player_get_stat(STR) * 10 + 20) / 5 + player_wt) / 6.0);
+      // player_ptohit = 0;
+      // player_ptodam = trunc(player_wt / 75.0) + 1;
 
       if (player_action_attack(y, x)) {
         do_stun(cave[y][x].cptr, -10, 2);
@@ -60,7 +60,6 @@ void player_action_bash(void) {
 
       /*{ Restore old values            }*/
       equipment[Equipment_primary] = inven_temp.data;
-      player_ptohit = old_ptohit;
       player_ptodam = old_ptodam;
       if (randint(300) > C_player_get_stat(DEX) * 10) {
         msg_print("You are off-balance.");

@@ -470,7 +470,7 @@ void enter_house(const long y, const long x) {
 
     default:
       msg_print("They ask you to demonstrate your fighting skill.");
-      battle_game(player_ptohit, "some drunken fighters");
+      battle_game(player_ptohit(), "some drunken fighters");
       break;
     }
     break;

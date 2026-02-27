@@ -1,7 +1,5 @@
 use crate::data::class;
-use crate::data::class::calculate_tohit_bonus_for_weapon_type;
 use crate::model::{Class, ItemType, Stat};
-use crate::player::player_ptohit;
 use crate::{debug, equipment, player};
 use libc::c_long;
 
@@ -62,12 +60,13 @@ pub fn calculate_number_of_attacks() -> i16 {
     number_of_attacks
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 pub enum MeleeAttackType {
     Standard,
     Backstab,
 }
 
+#[derive(PartialEq, Copy, Clone)]
 pub enum AttackType {
     Melee(MeleeAttackType),
     Ranged,
@@ -81,37 +80,19 @@ unsafe extern "C" fn C_calculate_player_tohit_melee(is_backstab: u8) -> c_long {
     } else {
         AttackType::Melee(MeleeAttackType::Standard)
     };
-    calculate_player_tohit2(&attack_type) as c_long
+    calculate_player_tohit(attack_type) as c_long
 }
-pub fn calculate_player_tohit2(attack_type: &AttackType) -> i16 {
-    let main_weapon = unsafe { *equipment::get_item(equipment::Slot::Primary) };
+
+pub fn calculate_player_tohit(attack_type: AttackType) -> i16 {
     match attack_type {
-        AttackType::Melee(melee_attack_type) => {
+        AttackType::Melee(_) => {
             let base_to_hit = player::base_to_hit();
-            let base_from_class_and_level = (player::level() as i16 * class::melee_bonus(&player::class()) as i16) / 2;
+            let plus_to_hit = player::plus_to_hit(attack_type, player::player_main_weapon());
 
-            let plus_base = unsafe { player_ptohit };
-            let plus_bulk = if player::max_bulk() < main_weapon.weight {
-                -(player::max_bulk() as i16 - main_weapon.weight as i16) / 10
-            } else {
-                0
-            };
-            let mut plus_class = if melee_attack_type == &MeleeAttackType::Backstab {
-                player::level() as i16 / 4
-            } else {
-                0
-            };
-            plus_class +=
-                calculate_tohit_bonus_for_weapon_type(&player::class(), main_weapon.item_type())
-                    as i16;
-
-            let total = calculate_player_tohit(base_to_hit + base_from_class_and_level, plus_base + plus_bulk + plus_class);
-            debug::infof!("ToHit: (base {}, base level*class {}) + 3x(base {}, bulk {}, class {}) => total {}",
+            let total = base_to_hit + plus_to_hit;
+            debug::infof!("ToHit: base {} + plus {} => total {}",
                 base_to_hit,
-                base_from_class_and_level,
-                        plus_base,
-                        plus_bulk,
-                        plus_class,
+                        plus_to_hit,
                         total
             );
             total
@@ -119,12 +100,4 @@ pub fn calculate_player_tohit2(attack_type: &AttackType) -> i16 {
         AttackType::Ranged => panic!("unimplemented"),
         AttackType::Thrown => panic!("unimplemented"),
     }
-}
-
-#[no_mangle]
-unsafe extern "C" fn C_calculate_player_tohit(base_to_hit: c_long, plus_to_hit: c_long) -> c_long {
-    calculate_player_tohit(base_to_hit as i16, plus_to_hit as i16) as c_long
-}
-pub fn calculate_player_tohit(base_to_hit: i16, plus_to_hit: i16) -> i16 {
-    base_to_hit + (plus_to_hit * 3)
 }
