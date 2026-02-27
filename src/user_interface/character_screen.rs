@@ -45,26 +45,20 @@ fn put_stats() {
 }
 
 fn put_misc1() {
-    term::prt(
-        format!("Age          : {}", unsafe { player::player_age }),
-        2,
-        39,
-    );
-    term::prt(
-        format!("Height       : {}", unsafe { player::player_ht }),
-        3,
-        39,
-    );
-    term::prt(
-        format!("Weight       : {}", unsafe { player::player_wt }),
-        4,
-        39,
-    );
-    term::prt(
-        format!("Social Class : {}", unsafe { player::player_sc }),
-        5,
-        39,
-    );
+    let column = 39;
+    let starting_row = 1;
+
+    let mut row = starting_row;
+    term::prt("(Physical Aspects)", row, column - 1);
+    for line in [
+        format!("Age:          {}", unsafe { player::player_age }),
+        format!("Height:       {}", unsafe { player::player_ht }),
+        format!("Height:       {}", unsafe { player::player_wt }),
+        format!("Social class: {}", unsafe { player::player_sc }),
+    ] {
+        row += 1;
+        term::prt(line, row, column);
+    }
 }
 
 fn put_misc2() {
