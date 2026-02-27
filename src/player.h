@@ -96,7 +96,6 @@ extern int16_t player_bthb;           /* { BTH with bows	} */
 extern int16_t player_mana;           /* { Mana points	} */
 extern int16_t player_disarm;         /* { % to Disarm	} */
 extern int16_t player_save;           /* { Saving throw	} */
-extern int16_t player_sc;             /* { Social Class	} */
 extern enum class_t player_pclass;    /* { # of class	} */
 extern uint8_t player_prace;          /* { # of race	} */
 extern float player_expfact;          /* { Experience factor} */
@@ -105,7 +104,6 @@ extern char player_history[5][82];    /* ;{ History record} */
 extern bool player_cheated;        /*{ gone into wizard or god mode} */
 extern int64_t player_mr;             /* { mag.res.lev.delta } */
 extern uint8_t player_quests;         /* { # completed } {FUBAR} */
-extern uint16_t player_cur_quest;     /* { creature # of quest } {FUBAR} */
 extern time_t player_creation_time;   /* used as key in master file */
 extern int64_t player_claim_check;    /* used to track trading post */
 extern int64_t player_uid;            /* Used in master file */
