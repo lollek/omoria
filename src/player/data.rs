@@ -37,7 +37,6 @@ extern "C" {
     pub static mut player_ht: u16; /* { Height	} */
     pub static mut player_wt: u16; /* { Weight	} */
     pub static mut player_lev: u16; /* { Level		} */
-    pub static mut player_bthb: i16; /* { BTH with bows	} */
     pub static mut player_mana: i16; /* { Mana points	} */
     pub static mut player_disarm: i16; /* { % to Disarm	} */
     pub static mut player_save: i16; /* { Saving throw	} */
@@ -161,6 +160,37 @@ pub fn hitdie() -> u8 {
 }
 
 #[no_mangle]
+fn player_btht() -> i16 {
+    base_to_hit_thrown()
+}
+
+fn base_to_hit_thrown() -> i16 {
+    (base_to_hit_bows() as f64 * 0.75) as i16
+}
+
+#[no_mangle]
+fn player_bthb() -> i16 {
+    base_to_hit_bows()
+}
+
+pub fn base_to_hit_bows() -> i16 {
+    let mut value: i16 = data::race::ranged_bonus(&race()) as i16;
+    value += ((data::class::ranged_bonus(&class()) * 5) + 20) as i16;
+    unsafe {
+        if player_flags.shero > 0 {
+            value += 24;
+        }
+        if player_flags.hero > 0 {
+            value += 12;
+        }
+        if player_flags.blessed > 0 {
+            value += 5;
+        }
+    }
+    value
+}
+
+#[no_mangle]
 fn player_bth() -> i16 {
     base_to_hit()
 }
@@ -210,7 +240,11 @@ pub fn plus_to_hit(attack_type: AttackType, weapon: &Item) -> i16 {
 }
 
 #[no_mangle]
-pub fn player_ptodam() -> i16 {
+fn player_ptodam() -> i16 {
+    plus_to_damage()
+}
+
+pub fn plus_to_damage() -> i16 {
     let mut plus_to_dam: i16 = player::dmg_from_str();
     equipment::items_iter().for_each(|item| {
         plus_to_dam += item.todam;
@@ -218,12 +252,8 @@ pub fn player_ptodam() -> i16 {
     plus_to_dam
 }
 
-pub fn plus_to_damage() -> i16 {
-    player_ptodam()
-}
-
 #[no_mangle]
-pub fn player_pac() -> i16 {
+fn player_pac() -> i16 {
     base_ac()
 }
 
@@ -244,7 +274,7 @@ pub fn base_ac() -> i16 {
 }
 
 #[no_mangle]
-pub fn player_ptoac() -> i16 {
+fn player_ptoac() -> i16 {
     plus_to_ac()
 }
 
@@ -257,7 +287,7 @@ pub fn plus_to_ac() -> i16 {
 }
 
 #[no_mangle]
-pub fn player_stl() -> i16 {
+fn player_stl() -> i16 {
     stealth()
 }
 
@@ -278,7 +308,7 @@ pub fn stealth() -> i16 {
 }
 
 #[no_mangle]
-pub fn player_fos() -> i16 {
+fn player_fos() -> i16 {
     search_frequency()
 }
 
@@ -357,7 +387,6 @@ pub fn record() -> PlayerRecord {
         rep: unsafe { player_rep },
         lev: level().into(),
         max_lev: unsafe { player_max_lev },
-        bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
         disarm: unsafe { player_disarm },
@@ -459,7 +488,6 @@ pub fn set_record(record: PlayerRecord) {
 
     unsafe {
         player_max_lev = record.max_lev;
-        player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
         player_disarm = record.disarm;
