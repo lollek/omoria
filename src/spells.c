@@ -109,7 +109,7 @@ static void xp_loss(long amount) {
     player_exp -= amount;
   }
 
-  for (i1 = 1; (long)(exp_per_level[i1] * player_expfact) <= player_exp;) {
+  for (i1 = 1; (long)(exp_per_level[i1] * player_expfact()) <= player_exp;) {
     i1++;
   }
   long i2 = player_lev - i1;
@@ -893,7 +893,7 @@ void lose_exp(const long amount) {
     player_exp -= amount;
   }
 
-  for (i1 = 1; trunc(exp_per_level[i1] * player_expfact) <= player_exp; i1++) {
+  for (i1 = 1; trunc(exp_per_level[i1] * player_expfact()) <= player_exp; i1++) {
   }
 
   for (long i2 = player_lev - i1; i2 > 0;) {
@@ -1008,7 +1008,7 @@ bool restore_player_drained_levels(void) {
   unsigned char max_level = 1;
   bool return_value = false;
 
-  while ((long)(exp_per_level[max_level] * player_expfact) <= player_max_exp) {
+  while ((long)(exp_per_level[max_level] * player_expfact()) <= player_max_exp) {
     max_level++;
   }
 

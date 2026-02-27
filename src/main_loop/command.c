@@ -166,7 +166,7 @@ void command(long *command) {
       reset_flag = true;
       break;
     case 'e':
-      sprintf(out_val, "Character Classes Experience %4.2f", player_expfact);
+      sprintf(out_val, "Character Classes Experience %4.2f", player_expfact());
       moria_help(out_val);
       draw_cave();
       reset_flag = true;

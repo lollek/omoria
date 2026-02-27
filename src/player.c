@@ -42,7 +42,6 @@ int16_t player_disarm = 0;
 int16_t player_save = 0;
 enum class_t player_pclass = 0;
 uint8_t player_prace = 0;
-float player_expfact = 0;
 float player_cmana = 0;
 char player_history[][82] = {"", "", "", "", ""};
 bool player_cheated = false;

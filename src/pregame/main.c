@@ -65,7 +65,7 @@ bool pregame__main(void) {
     strcpy(bare_hands, "2d2");
   }
 
-  player_max_exp = (long)(exp_per_level[MAX_PLAYER_LEVEL - 1] * player_expfact);
+  player_max_exp = (long)(exp_per_level[MAX_PLAYER_LEVEL - 1] * player_expfact());
   clear_from(1);
   prt_stat_block();
 

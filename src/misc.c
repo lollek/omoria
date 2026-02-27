@@ -1025,7 +1025,7 @@ void gain_level(void) {
   C_player_modify_max_hp(nhp);
   player_lev++;
 
-  const long need_exp = trunc(exp_per_level[player_lev] * player_expfact);
+  const long need_exp = trunc(exp_per_level[player_lev] * player_expfact());
   if (player_exp > need_exp) {
     const long dif_exp = player_exp - need_exp;
     player_exp = need_exp + dif_exp / 2;
