@@ -153,11 +153,6 @@ fn print_stats_column() {
         STAT_COL,
     );
     print_field(
-        format!("AC  : {:>6}", unsafe { player::player_dis_ac }),
-        AC_ROW,
-        STAT_COL,
-    );
-    print_field(
         format!("Gold: {:>6}", player::wallet().total),
         GOLD_ROW,
         STAT_COL,

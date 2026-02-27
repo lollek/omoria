@@ -1,7 +1,11 @@
 use crate::model::{Stat, StatBlock};
 
-fn modifier_from_stat(stat: Stat, stat_block: &StatBlock) -> i16 {
-    (stat_block.get(stat) - 10) / 2
+pub fn modifier_from_value(value: i16) -> i16 {
+    (value - 10) / 2
+}
+
+pub fn modifier_from_stat(stat: Stat, stat_block: &StatBlock) -> i16 {
+    modifier_from_value(stat_block.get(stat))
 }
 
 pub fn disarm(stat_block: &StatBlock) -> i16 {
