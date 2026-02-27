@@ -4,16 +4,15 @@ use std::ffi::CString;
 use std::ptr::addr_of_mut;
 use std::sync::RwLock;
 
-use crate::constants;
-use crate::model::{
-    Ability, Class, Currency, GameTime, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time,
-    Wallet,
-};
 use crate::conversion::{class, currency, race, sex};
 use crate::data;
+use crate::data::class::calculate_tohit_bonus_for_weapon_type;
 use crate::misc;
+use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Time, Wallet};
 use crate::player;
+use crate::player_action::attack::{AttackType, MeleeAttackType};
 use crate::rng;
+use crate::{constants, equipment};
 
 extern "C" {
     pub(super) static mut player_money: [i64; 7]; /* { Money on person	} */
@@ -42,11 +41,9 @@ extern "C" {
     pub static mut player_fos: i16; /* { Frenq of search} */
     pub static mut player_bthb: i16; /* { BTH with bows	} */
     pub static mut player_mana: i16; /* { Mana points	} */
-    pub static mut player_ptohit: i16; /* { Pluses to hit	} */
     pub static mut player_ptodam: i16; /* { Pluses to dam	} */
     pub static mut player_pac: i16; /* { Total AC	} */
     pub static mut player_ptoac: i16; /* { Magical AC	} */
-    pub static mut player_dis_th: i16; /* { Display +ToHit} */
     pub static mut player_dis_td: i16; /* { Display +ToDam} */
     pub static mut player_dis_ac: i16; /* { Display +ToAC } */
     pub static mut player_dis_tac: i16; /* { Display +ToTAC} */
@@ -178,7 +175,8 @@ fn player_bth() -> i16 {
 }
 
 pub fn base_to_hit() -> i16 {
-    let mut bth: i16 = data::race::melee_bonus(&race()).into();
+    let mut bth: i16 = level() as i16;
+    bth += data::race::melee_bonus(&race()) as i16;
     bth += ((data::class::melee_bonus(&class()) * 5) + 20) as i16;
     unsafe {
         if player_flags.shero > 0 {
@@ -194,16 +192,30 @@ pub fn base_to_hit() -> i16 {
     bth
 }
 
-pub fn melee_tohit() -> i16 {
-    unsafe {
-        base_to_hit() + (player_lev as i16 * misc::BTH_LEV_ADJ) + (player_ptohit * misc::BTH_PLUS_ADJ)
-    }
+pub fn player_main_weapon<'a>() -> &'a Item {
+    unsafe { &*equipment::get_item(equipment::Slot::Primary) }
 }
 
-pub fn ranged_tohit() -> i16 {
-    unsafe {
-        player_bthb + (player_lev as i16 * misc::BTH_LEV_ADJ) + (player_ptohit * misc::BTH_PLUS_ADJ)
-    }
+#[no_mangle]
+pub fn player_ptohit() -> i16 {
+    plus_to_hit(AttackType::Melee(MeleeAttackType::Standard), player_main_weapon())
+}
+
+pub fn plus_to_hit(attack_type: AttackType, weapon: &Item) -> i16 {
+    let mut plus_to_hit: i16 = player::tohit_from_stats();
+    equipment::items_iter().for_each(|item| {
+        plus_to_hit += item.tohit;
+    });
+    if max_bulk() < weapon.weight {
+        plus_to_hit -= (max_bulk() as i16 - weapon.weight as i16) / 10
+    };
+    if attack_type == AttackType::Melee(MeleeAttackType::Backstab) {
+        plus_to_hit += level() as i16 / 4
+    };
+    plus_to_hit +=
+        calculate_tohit_bonus_for_weapon_type(&player::class(), weapon.item_type())
+            as i16;
+    plus_to_hit
 }
 
 pub fn calc_total_points() -> i64 {
@@ -277,11 +289,9 @@ pub fn record() -> PlayerRecord {
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
-        ptohit: unsafe { player_ptohit },
         ptodam: unsafe { player_ptodam },
         pac: unsafe { player_pac },
         ptoac: unsafe { player_ptoac },
-        dis_th: unsafe { player_dis_th },
         dis_td: unsafe { player_dis_td },
         dis_ac: unsafe { player_dis_ac },
         dis_tac: unsafe { player_dis_tac },
@@ -391,11 +401,9 @@ pub fn set_record(record: PlayerRecord) {
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;
-        player_ptohit = record.ptohit;
         player_ptodam = record.ptodam;
         player_pac = record.pac;
         player_ptoac = record.ptoac;
-        player_dis_th = record.dis_th;
         player_dis_td = record.dis_td;
         player_dis_ac = record.dis_ac;
         player_dis_tac = record.dis_tac;

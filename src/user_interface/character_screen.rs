@@ -2,7 +2,7 @@ use crate::model::Stat;
 use crate::user_interface::helpers;
 use crate::{data, misc, ncurses, player, term};
 use std::cmp::max;
-use crate::player_action::attack::{calculate_number_of_attacks, calculate_player_tohit2, AttackType, MeleeAttackType};
+use crate::player_action::attack::{calculate_number_of_attacks, calculate_player_tohit, AttackType, MeleeAttackType};
 
 pub fn character_screen() {
     put_character(true);
@@ -28,32 +28,20 @@ fn put_character(show_values: bool) {
 
 fn put_stats() {
     helpers::print_stats(2, 64);
+    let column = 2;
+    let starting_row = 7;
 
-    term::prt(
-        format!("  Attacks  : {}", calculate_number_of_attacks()),
-        8,
-        3,
-    );
-    term::prt(
-        format!("  Melee atk: {}", calculate_player_tohit2(&AttackType::Melee(MeleeAttackType::Standard))),
-        9,
-        3,
-    );
-    term::prt(
-        format!("+ To Damage: {}", unsafe { player::player_dis_td }),
-        10,
-        3,
-    );
-    term::prt(
-        format!("+ To AC    : {}", unsafe { player::player_dis_tac }),
-        11,
-        3,
-    );
-    term::prt(
-        format!("  Total AC : {}", unsafe { player::player_dis_ac }),
-        12,
-        3,
-    );
+    let mut row = starting_row;
+    term::prt("(Combat Abilities)", row, column - 1);
+    for line in [
+        format!("Num attacks:  {}", calculate_number_of_attacks()),
+        format!("Melee to hit: {} + {} = {}", player::base_to_hit(), player::player_ptohit(), calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))),
+        format!("Damage:       {}", unsafe { player::player_dis_td }),
+        format!("AC: {} + {}", unsafe { player::player_dis_ac }, unsafe { player::player_dis_tac }),
+    ] {
+        row += 1;
+        term::prt(line, row, column);
+    }
 }
 
 fn put_misc1() {
@@ -113,8 +101,8 @@ fn put_misc2() {
 fn put_misc3() {
     term::clear_from(14);
 
-    let xbth: i64 = player::melee_tohit().into();
-    let xbthb: i64 = player::ranged_tohit().into();
+    let melee_to_hit: i64 = (player::base_to_hit() + player::plus_to_hit(AttackType::Melee(MeleeAttackType::Standard), player::player_main_weapon())).into();
+    let ranged_to_hit: i64 = (unsafe { player::player_bthb } + player::plus_to_hit(AttackType::Ranged, player::player_main_weapon())).into();
 
     let xfos: i64 = max(27 - unsafe { player::player_fos }, 0).into();
     let xsrh: i64 = player::curr_search_skill().into();
@@ -134,9 +122,9 @@ fn put_misc3() {
     let xinf: i64 = player::infravision() * 10;
 
     term::prt("(Miscellaneous Abilities)", 15, 23);
-    let msg = format!("Fighting    : {}", misc::mod_to_string(xbth, 12));
+    let msg = format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 12));
     ncurses::mvaddstr(16, 1, msg);
-    let msg = format!("Bows/Throw  : {}", misc::mod_to_string(xbthb, 12));
+    let msg = format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 12));
     ncurses::mvaddstr(17, 1, msg);
     let msg = format!("Saving Throw: {}", misc::mod_to_string(xsave, 6));
     ncurses::mvaddstr(18, 1, msg);

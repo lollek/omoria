@@ -72,6 +72,10 @@ pub fn slots_iter() -> impl Iterator<Item = usize> {
     (Slot::Primary as usize)..(Slot::Secondary as usize + 1)
 }
 
+pub fn items_iter() -> impl Iterator<Item = &'static mut Item> {
+    slots_iter().map(|slot| unsafe { &mut equipment[slot] })
+}
+
 pub unsafe fn get_item(slot: Slot) -> *const Item {
     &equipment[slot as usize]
 }

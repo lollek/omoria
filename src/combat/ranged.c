@@ -37,9 +37,9 @@ static long calc_plus_to_hit(treas_rec const *missile,
                              const enum ranged_attack_t type) {
   switch (type) {
   case THROW:
-    return player_ptohit + missile->data.tohit;
+    return player_ptohit() + missile->data.tohit;
   case SHOOT:
-    return player_ptohit + missile->data.tohit +
+    return player_ptohit() + missile->data.tohit +
            equipment[Equipment_primary].tohit;
   }
   MSG(("calc_plus_to_hit fell through switch"));

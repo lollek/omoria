@@ -94,11 +94,9 @@ extern uint16_t player_max_lev;       /* { Max level explored} */
 extern int16_t player_fos;            /* { Frenq of search} */
 extern int16_t player_bthb;           /* { BTH with bows	} */
 extern int16_t player_mana;           /* { Mana points	} */
-extern int16_t player_ptohit;         /* { Pluses to hit	} */
 extern int16_t player_ptodam;         /* { Pluses to dam	} */
 extern int16_t player_pac;            /* { Total AC	} */
 extern int16_t player_ptoac;          /* { Magical AC	} */
-extern int16_t player_dis_th;         /* { Display +ToHit} */
 extern int16_t player_dis_td;         /* { Display +ToDam} */
 extern int16_t player_dis_ac;         /* { Display +ToAC } */
 extern int16_t player_dis_tac;        /* { Display +ToTAC} */
@@ -147,7 +145,6 @@ void C_player_modify_lost_stat(enum stat_t attr, int16_t amount);
 void C_player_reset_lost_stat(enum stat_t attr);
 bool C_player_has_lost_stat(enum stat_t attr);
 int16_t C_player_mod_from_stat(enum stat_t attr);
-int16_t C_player_tohit_from_stats(void);
 int16_t C_player_ac_from_dex(void);
 float C_player_cost_modifier_from_charisma(void);
 
@@ -183,6 +180,7 @@ int16_t player_bth(void);
  * @return True if player has no light
  */
 bool player_has_no_light(void);
+int16_t player_ptohit(void);
 bool player_test_hit(long base_to_hit, long plus_to_hit, long enemy_ac);
 
 long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster);
