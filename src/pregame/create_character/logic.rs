@@ -169,7 +169,7 @@ pub(crate) fn apply_stats_from_race(race_stats: StatsFromRace) {
         player::player_lev = 1;
         player::player_expfact = race_stats.experience_factor;
         player::player_rep = (50 - race_stats.social_class).into();
-        player::player_sc = race_stats.social_class;
+        player::set_social_class(race_stats.social_class);
         player::player_age = race_stats.age_plain;
         player::player_ht = race_stats.height;
         player::player_wt = race_stats.weight;
@@ -187,7 +187,7 @@ pub(crate) fn generate_and_apply_money() {
     let player_stats = player::curr_stats();
     let mut amount: i64 = 325 + rng::randint(25)
         // Social Class adj
-        + unsafe { player::player_sc } as i64 * 6
+        + player::social_class() as i64 * 6
         // Stat adj
         - Stat::iter().fold(0, |sum: i64, tstat|
         sum + player_stats.get(tstat) as i64)

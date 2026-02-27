@@ -16,6 +16,7 @@ pub struct Player {
     pub max_hp_last_calc: i16, // Last time we checked, what was max hp?
     pub max_hp: i16,
     pub current_hp: f32,
+    pub social_class: i16,
 }
 
 impl Player {
@@ -35,6 +36,7 @@ impl Player {
             max_hp_last_calc: 0,
             max_hp: 0,
             current_hp: 0.0,
+            social_class: 0,
         }
     }
 }

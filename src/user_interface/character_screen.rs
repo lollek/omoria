@@ -67,7 +67,7 @@ fn put_physical_aspects() {
         format!("Age:          {}", unsafe { player::player_age }),
         format!("Height:       {}", unsafe { player::player_ht }),
         format!("Height:       {}", unsafe { player::player_wt }),
-        format!("Social class: {}", unsafe { player::player_sc }),
+        format!("Social class: {}", player::social_class()),
     ] {
         row += 1;
         term::prt(line, row, column);

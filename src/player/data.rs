@@ -33,7 +33,6 @@ extern "C" {
     static mut player_sex: [libc::c_char; 82];
     static mut player_tclass: [libc::c_char; 82];
     static mut player_pclass: libc::c_int;
-    pub static mut player_sc: i16; /* { Social Class	} */
     pub static mut player_age: u16; /* { Characters age} */
     pub static mut player_ht: u16; /* { Height	} */
     pub static mut player_wt: u16; /* { Weight	} */
@@ -339,7 +338,6 @@ pub fn record() -> PlayerRecord {
         age: unsafe { player_age },
         ht: unsafe { player_ht },
         wt: unsafe { player_wt },
-        sc: unsafe { player_sc },
         max_exp: unsafe { player_max_exp },
         exp: unsafe { player_exp },
         rep: unsafe { player_rep },
@@ -440,7 +438,6 @@ pub fn set_record(record: PlayerRecord) {
         player_age = record.age;
         player_ht = record.ht;
         player_wt = record.wt;
-        player_sc = record.sc;
         player_max_exp = record.max_exp;
         player_exp = record.exp;
         player_rep = record.rep;
@@ -606,4 +603,12 @@ pub fn age() -> GameTime {
 pub fn regen_hp(percent: f32) {
     let player_regen_hpbase = 0.022;
     modify_current_hp(player_regen_hpbase + max_hp() as f32 * percent);
+}
+
+pub fn social_class() -> i16 {
+    PLAYER.try_read().unwrap().social_class
+}
+
+pub fn set_social_class(new_value: i16) {
+    PLAYER.try_write().unwrap().social_class = new_value;
 }
