@@ -6,10 +6,9 @@ use crate::player_action::attack::{calculate_number_of_attacks, calculate_player
 
 pub fn character_screen() {
     put_character(true);
-    put_misc1();
-    put_stats();
-    put_misc2();
-    put_misc3();
+    put_physical_aspects();
+    put_combat_abilities();
+    put_misc_abilities();
 }
 
 fn put_character(show_values: bool) {
@@ -26,30 +25,44 @@ fn put_character(show_values: bool) {
     }
 }
 
-fn put_stats() {
-    helpers::print_stats(2, 64);
-    let column = 2;
+fn put_combat_abilities() {
+    let left_column = 2;
+    let middle_column = 30;
+    let right_column = 64;
     let starting_row = 7;
 
+    term::prt("(Combat Abilities)", starting_row, 23);
     let mut row = starting_row;
-    term::prt("(Combat Abilities)", row, column - 1);
     for line in [
         format!("Num attacks:  {}", calculate_number_of_attacks()),
-        format!("Melee to hit: {} + {} = {}", player::base_to_hit(), player::player_ptohit(), calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))),
+        format!("Melee to hit: {} ({} + {})", calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard)), player::base_to_hit(), player::player_ptohit()),
         format!("Damage:       {} + {}", player::player_main_weapon().damage_string(), player::plus_to_damage()),
-        format!("AC:           {} + {} = {}", player::base_ac(), player::plus_to_ac(), player::base_ac() + player::plus_to_ac()),
+        format!("AC:           {} ({} + {})", player::base_ac() + player::plus_to_ac(), player::base_ac(), player::plus_to_ac()),
     ] {
         row += 1;
-        term::prt(line, row, column);
+        term::prt(line, row, left_column);
     }
+
+    let mut row = starting_row;
+    for line in [
+        format!("Level: {} ({} xp)", unsafe { player::player_lev } ,unsafe { player::player_exp }),
+        format!("Gold: {} (Bank: {})", player::wallet().total, unsafe { player::player_account }),
+        format!("Health: {}/{}", player::current_hp(), player::max_hp()),
+        format!("Mana: {}/{}", player::current_mp(), player::max_mp()),
+    ] {
+        row += 1;
+        term::prt(line, row, middle_column);
+    }
+
+    helpers::print_stats(starting_row as u8 + 1, right_column);
 }
 
-fn put_misc1() {
+fn put_physical_aspects() {
     let column = 39;
     let starting_row = 1;
 
     let mut row = starting_row;
-    term::prt("(Physical Aspects)", row, column - 1);
+    term::prt("(Physical Aspects)", row, 23);
     for line in [
         format!("Age:          {}", unsafe { player::player_age }),
         format!("Height:       {}", unsafe { player::player_ht }),
@@ -61,81 +74,39 @@ fn put_misc1() {
     }
 }
 
-fn put_misc2() {
-    term::prt(
-        format!("Level      : {}", unsafe { player::player_lev }),
-        9,
-        30,
-    );
-    term::prt(
-        format!("Experience : {}", unsafe { player::player_exp }),
-        10,
-        30,
-    );
-    term::prt(format!("Gold       : {}", player::wallet().total), 11, 30);
-    term::prt(
-        format!("Account    : {}", unsafe { player::player_account }),
-        12,
-        30,
-    );
-    term::prt(format!("Max Hit Points : {}", player::max_hp()), 9, 53);
-    term::prt(format!("Cur Hit Points : {}", player::current_hp()), 10, 53);
-    term::prt(
-        format!("Max Mana       : {}", unsafe { player::player_mana }),
-        11,
-        53,
-    );
-    term::prt(
-        format!("Cur Mana       : {}", unsafe { player::player_cmana }),
-        12,
-        53,
-    );
-}
-
-fn put_misc3() {
+fn put_misc_abilities() {
     term::clear_from(14);
 
     let melee_to_hit: i64 = (player::base_to_hit() + player::plus_to_hit(AttackType::Melee(MeleeAttackType::Standard), player::player_main_weapon())).into();
     let ranged_to_hit: i64 = (unsafe { player::player_bthb } + player::plus_to_hit(AttackType::Ranged, player::player_main_weapon())).into();
 
-    let xfos: i64 = max(27 - unsafe { player::player_fos }, 0).into();
-    let xsrh: i64 = player::curr_search_skill().into();
-    let xstl: i64 = unsafe { player::player_stl }.into();
-    let xdis: i64 = unsafe { player::player_disarm } as i64
+    let perception: i64 = max(27 - unsafe { player::player_fos }, 0).into();
+    let searching: i64 = player::curr_search_skill().into();
+    let stealth: i64 = unsafe { player::player_stl }.into();
+    let disarming: i64 = unsafe { player::player_disarm } as i64
         + unsafe { player::player_lev } as i64
         + (2 * player::disarm_from_dex()) as i64
         + player::modifier_from_stat(Stat::Intelligence) as i64;
-    let xsave: i64 = unsafe { player::player_save } as i64
+    let saving_throw: i64 = unsafe { player::player_save } as i64
         + unsafe { player::player_lev } as i64
         + player::modifier_from_stat(Stat::Wisdom) as i64;
-    let xdev: i64 = unsafe { player::player_save } as i64
+    let magic_devices: i64 = unsafe { player::player_save } as i64
         + unsafe { player::player_lev } as i64
         + player::modifier_from_stat(Stat::Intelligence) as i64;
-    let xswm: i64 = player::swim_speed() + 4;
-    let xrep: i64 = 6 + (unsafe { player::player_rep } / 25);
-    let xinf: i64 = player::infravision() * 10;
+    let swimming: i64 = player::swim_speed() + 4;
+    let reputation: i64 = 6 + (unsafe { player::player_rep } / 25);
+    let infravision: i64 = player::infravision() * 10;
 
     term::prt("(Miscellaneous Abilities)", 15, 23);
-    let msg = format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 12));
-    ncurses::mvaddstr(16, 1, msg);
-    let msg = format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 12));
-    ncurses::mvaddstr(17, 1, msg);
-    let msg = format!("Saving Throw: {}", misc::mod_to_string(xsave, 6));
-    ncurses::mvaddstr(18, 1, msg);
-    let msg = format!("Stealth     : {}", misc::mod_to_string(xstl, 1));
-    ncurses::mvaddstr(16, 26, msg);
-    let msg = format!("Disarming   : {}", misc::mod_to_string(xdis, 8));
-    ncurses::mvaddstr(17, 26, msg);
-    let msg = format!("Magic Device: {}", misc::mod_to_string(xdev, 7));
-    ncurses::mvaddstr(18, 26, msg);
-    let msg = format!("Perception  : {}", misc::mod_to_string(xfos, 3));
-    ncurses::mvaddstr(16, 51, msg);
-    let msg = format!("Searching   : {}", misc::mod_to_string(xsrh, 6));
-    ncurses::mvaddstr(17, 51, msg);
-    let msg = format!("Infra-Vision: {} feet", xinf);
-    ncurses::mvaddstr(18, 51, msg);
-    let msg = format!("Swimming    : {}", misc::mod_to_string(xswm, 1));
-    ncurses::mvaddstr(19, 51, msg);
-    let msg = format!("Reputation  : {}", misc::mod_to_string(xrep, 1));
-    ncurses::mvaddstr(19, 1, msg);
+    ncurses::mvaddstr(16, 1, format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 12)));
+    ncurses::mvaddstr(17, 1, format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 12)));
+    ncurses::mvaddstr(18, 1, format!("Saving Throw: {}", misc::mod_to_string(saving_throw, 6)));
+    ncurses::mvaddstr(19, 1, format!("Reputation  : {}", misc::mod_to_string(reputation, 1)));
+    ncurses::mvaddstr(16, 26, format!("Stealth     : {}", misc::mod_to_string(stealth, 1)));
+    ncurses::mvaddstr(17, 26, format!("Disarming   : {}", misc::mod_to_string(disarming, 8)));
+    ncurses::mvaddstr(18, 26, format!("Magic Device: {}", misc::mod_to_string(magic_devices, 7)));
+    ncurses::mvaddstr(16, 51, format!("Perception  : {}", misc::mod_to_string(perception, 3)));
+    ncurses::mvaddstr(17, 51, format!("Searching   : {}", misc::mod_to_string(searching, 6)));
+    ncurses::mvaddstr(18, 51, format!("Infra-Vision: {} feet", infravision));
+    ncurses::mvaddstr(19, 51, format!("Swimming    : {}", misc::mod_to_string(swimming, 1)));
 }
