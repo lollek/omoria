@@ -376,7 +376,7 @@ static void _move_char(long dir) {
     area_affect(dir, test_row, test_col);
 
   /* Check to see if he notices something */
-  if (player_flags.blind < 1 && (randint(player_fos) == 1 || search_flag))
+  if (player_flags.blind < 1 && (randint(player_fos()) == 1 || search_flag))
     player_action_search(test_row, test_col, C_player_curr_search_skill());
 
   /* An object is beneath him? */

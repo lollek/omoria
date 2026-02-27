@@ -37,7 +37,6 @@ extern "C" {
     pub static mut player_ht: u16; /* { Height	} */
     pub static mut player_wt: u16; /* { Weight	} */
     pub static mut player_lev: u16; /* { Level		} */
-    pub static mut player_fos: i16; /* { Frenq of search} */
     pub static mut player_bthb: i16; /* { BTH with bows	} */
     pub static mut player_mana: i16; /* { Mana points	} */
     pub static mut player_disarm: i16; /* { % to Disarm	} */
@@ -279,6 +278,22 @@ pub fn stealth() -> i16 {
     stl
 }
 
+#[no_mangle]
+pub fn player_fos() -> i16 {
+    search_frequency()
+}
+
+pub fn search_frequency() -> i16 {
+    let mut search_freq = data::race::search_freq(&race()) as i16;
+    search_freq += data::class::search_freq(&class()) as i16;
+    for item in equipment::items_iter() {
+        if item.has_wornflag1(WornFlag1::Searching) {
+            search_freq -= item.p1 as i16;
+        }
+    }
+    search_freq
+}
+
 pub fn calc_total_points() -> i64 {
     (1000 * deepest_level() as i64) + exp()
 }
@@ -344,7 +359,6 @@ pub fn record() -> PlayerRecord {
         lev: level().into(),
         max_lev: unsafe { player_max_lev },
         expfact: unsafe { player_expfact },
-        fos: unsafe { player_fos },
         bthb: unsafe { player_bthb },
         mana: unsafe { player_mana },
         cmana: unsafe { player_cmana },
@@ -448,7 +462,6 @@ pub fn set_record(record: PlayerRecord) {
     unsafe {
         player_max_lev = record.max_lev;
         player_expfact = record.expfact;
-        player_fos = record.fos;
         player_bthb = record.bthb;
         player_mana = record.mana;
         player_cmana = record.cmana;

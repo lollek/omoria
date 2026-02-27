@@ -36,7 +36,6 @@ uint16_t player_ht = 0;
 uint16_t player_wt = 0;
 uint16_t player_lev = 0;
 uint16_t player_max_lev = 0;
-int16_t player_fos = 0;
 int16_t player_bthb = 0;
 int16_t player_mana = 0;
 int16_t player_disarm = 0;
@@ -220,10 +219,6 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
   }
   if ((Disarm_worn_bit & tobj->flags2) != 0) {
     player_disarm += tobj->p1 * factor;
-  }
-  if ((Searching_worn_bit & tobj->flags) != 0) {
-    C_player_mod_search_skill(tobj->p1 * factor);
-    player_fos -= tobj->p1 * factor;
   }
   if ((Speed_worn_bit & tobj->flags) != 0) {
     i1 = tobj->p1 * factor;
