@@ -16,6 +16,7 @@ mod player_action;
 mod pregame;
 mod town_level;
 
+pub mod combat;
 pub mod commands;
 pub mod constants;
 pub mod conversion;

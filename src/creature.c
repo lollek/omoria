@@ -840,6 +840,14 @@ static void c__make_attack(const long monptr) {
   /*{ Make an attack on the player                          -RAK-   }*/
   ENTER(("c__make_attack", "c"));
 
+  if (search_flag) {
+    search_off();
+  }
+  if (player_flags.rest > 0) {
+    rest_off();
+  }
+
+
   char monster_template_damage[82];
   monster_template_damage[0] = 0;
   strcpy(monster_template_damage,

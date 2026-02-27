@@ -23,6 +23,13 @@ void player_action_bash(void) {
   long x = char_col;
   long tmp;
 
+  if (search_flag) {
+    search_off();
+  }
+  if (player_flags.rest > 0) {
+    rest_off();
+  }
+
   if (!d__get_dir("Which direction?", &tmp, &tmp, &y, &x))
     return;
 
