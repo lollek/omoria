@@ -8,10 +8,10 @@
 #include <string.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "combat/fighting.h"
 #include "constants.h"
 #include "debug.h"
 #include "effects.h"
-#include "fighting/fighting.h"
 #include "floor.h"
 #include "generate_monster/generate_monster.h"
 #include "generate_monster/monster_template.h"

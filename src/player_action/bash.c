@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../combat/fighting.h"
 #include "../io.h"
 #include "../misc.h"
 #include "../player.h"
 #include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
-#include "../variables.h"
 #include "../spells.h"
-#include "../fighting/fighting.h"
+#include "../variables.h"
 
 /**
  * -RAK-

@@ -6,10 +6,10 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "casino/casino.h"
+#include "combat/fighting.h"
 #include "constants.h"
 #include "debug.h"
 #include "effects.h"
-#include "fighting/fighting.h"
 #include "generate_monster/generate_monster.h"
 #include "io.h"
 #include "loot/loot.h"
