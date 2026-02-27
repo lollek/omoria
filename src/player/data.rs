@@ -43,7 +43,6 @@ extern "C" {
     pub static mut player_cmana: libc::c_float; /* { Cur mana pts  } */
     pub static mut player_exp: i64; /* { Cur experienc	} */
     pub static mut player_account: i64; /* { Money in the bank	} */
-    pub static mut player_mr: i64; /* { mag.res.lev.delta } */
     pub static mut player_rep: i64; /* { XP from good creatures } */
     pub static mut player_claim_check: i64; /* used to track trading post */
     pub static mut inven_weight: libc::c_long; /* Inventory carry weight */
@@ -324,6 +323,15 @@ pub fn disarm() -> i16 {
         }
     }
     disarm
+}
+
+#[no_mangle]
+fn player_mr() -> i64 {
+    magic_resistance()
+}
+
+pub fn magic_resistance() -> i64 {
+    data::class::magic_resist(&class()).into()
 }
 
 #[no_mangle]

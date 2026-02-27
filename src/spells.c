@@ -617,18 +617,13 @@ bool mon_save(const long a_cptr, long bonus,
                          randint(80) + randint(player_lev);
   return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 bool mon_resists(const unsigned char a_cptr) {
   bool return_value;
 
-  /* with m_list[a_cptr] do; */
-  /* with monster_templates[m_list[a_cptr].mptr] do; */
-
   long res_chance = monster_templates[m_list[a_cptr].mptr].magic_resistance;
 
-  long delta_lev = player_lev + player_mr;
+  long delta_lev = player_lev + player_mr();
   if (delta_lev < 0) {
     delta_lev = 0;
   }

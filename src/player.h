@@ -98,7 +98,6 @@ extern uint8_t player_prace;          /* { # of race	} */
 extern float player_cmana;            /* { Cur mana pts  } */
 extern char player_history[5][82];    /* ;{ History record} */
 extern bool player_cheated;        /*{ gone into wizard or god mode} */
-extern int64_t player_mr;             /* { mag.res.lev.delta } */
 extern uint8_t player_quests;         /* { # completed } {FUBAR} */
 extern uint16_t player_cur_quest;
 extern time_t player_creation_time;   /* used as key in master file */
@@ -172,6 +171,7 @@ int16_t player_disarm(void);
 bool player_has_no_light(void);
 float player_expfact(void);
 int16_t player_fos(void);
+int64_t player_mr(void);
 int16_t player_ptohit(void);
 int16_t player_ptodam(void);
 int16_t player_ptoac(void);
