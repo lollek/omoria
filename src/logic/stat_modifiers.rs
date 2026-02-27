@@ -9,7 +9,7 @@ pub fn modifier_from_stat(stat: Stat, stat_block: &StatBlock) -> i16 {
 }
 
 pub fn disarm(stat_block: &StatBlock) -> i16 {
-    modifier_from_stat(Stat::Dexterity, stat_block)
+    modifier_from_stat(Stat::Intelligence, stat_block) + 2 * modifier_from_stat(Stat::Dexterity, stat_block)
 }
 
 pub fn ac(stat_block: &StatBlock) -> i16 {

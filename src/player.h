@@ -92,7 +92,6 @@ extern uint16_t player_wt;            /* { Weight	} */
 extern uint16_t player_lev;           /* { Level		} */
 extern uint16_t player_max_lev;       /* { Max level explored} */
 extern int16_t player_mana;           /* { Mana points	} */
-extern int16_t player_disarm;         /* { % to Disarm	} */
 extern int16_t player_save;           /* { Saving throw	} */
 extern enum class_t player_pclass;    /* { # of class	} */
 extern uint8_t player_prace;          /* { # of race	} */
@@ -109,7 +108,6 @@ extern bool player_light;          /* { Player carrying light } */
 
 uint16_t C_player_max_bulk(void);
 int16_t C_player_dmg_from_str(void);
-int16_t C_player_disarm_from_dex(void);
 int16_t C_player_hp_from_con(void);
 bool C_player_knows_spell(int32_t slot);
 void C_player_set_knows_spell(int32_t slot, bool yn);
@@ -167,6 +165,7 @@ void change_rep(long amt);
 int16_t player_bthb(void);
 int16_t player_btht(void);
 int16_t player_bth(void);
+int16_t player_disarm(void);
 /**
  * @return True if player has no light
  */

@@ -63,11 +63,6 @@ pub extern "C" fn C_player_dmg_from_str() -> i16 {
 }
 
 #[no_mangle]
-pub extern "C" fn C_player_disarm_from_dex() -> i16 {
-    player::disarm_from_dex()
-}
-
-#[no_mangle]
 pub extern "C" fn C_player_get_stat(stat: u8) -> i16 {
     player::get_stat(stat.try_into().unwrap())
 }

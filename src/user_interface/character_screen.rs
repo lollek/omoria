@@ -83,10 +83,7 @@ fn put_misc_abilities() {
     let perception: i64 = max(27 - player::search_frequency(), 0).into();
     let searching: i64 = player::curr_search_skill().into();
     let stealth: i64 = player::stealth().into();
-    let disarming: i64 = unsafe { player::player_disarm } as i64
-        + unsafe { player::player_lev } as i64
-        + (2 * player::disarm_from_dex()) as i64
-        + player::modifier_from_stat(Stat::Intelligence) as i64;
+    let disarming: i64 = player::disarm() as i64;
     let saving_throw: i64 = unsafe { player::player_save } as i64
         + unsafe { player::player_lev } as i64
         + player::modifier_from_stat(Stat::Wisdom) as i64;

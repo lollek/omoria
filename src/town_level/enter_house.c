@@ -47,10 +47,7 @@ static void guild_or_not(const bool passed) {
 static void brothel_game(void) {
   if (get_yes_no("Do you accept?")) {
     change_rep(-3);
-    /* with player_do; */
-    if (player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-            C_player_mod_from_stat(INT) >
-        randint(100)) {
+    if (player_disarm() > randint(100)) {
       msg_print("Good! You are invited to join the house!");
       C_player_add_exp(5);
       spend_time(600, "putting out for peasants", false);
@@ -131,10 +128,7 @@ static void thief_games(void) {
     msg_print("The thieves invite you to prove your ability to "
               "pick locks.");
     if (get_yes_no("Do you accept?")) {
-      /* with player_do; */
-      guild_or_not(player_disarm + player_lev + 2 * C_player_disarm_from_dex() +
-                       C_player_mod_from_stat(INT) >
-                   randint(100));
+      guild_or_not(player_disarm() > randint(100));
     }
   } else {
     msg_print("The thieves invite you to show your stealthiness.");
