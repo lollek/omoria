@@ -43,7 +43,6 @@ uint8_t player_prace = 0;
 float player_cmana = 0;
 char player_history[][82] = {"", "", "", "", ""};
 bool player_cheated = false;
-int64_t player_mr = 0;
 uint8_t player_quests = 0;
 uint16_t player_cur_quest = 0;
 time_t player_creation_time = 0;

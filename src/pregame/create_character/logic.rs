@@ -86,7 +86,6 @@ pub(crate) fn apply_stats_from_class(player_class: &Class) {
     player::reset_current_hp();
     unsafe {
         player::player_save += data::class::save_mod(player_class) as i16;
-        player::player_mr = data::class::magic_resist(player_class).into();
         player::player_creation_time = time(null::<time_t>() as *mut i64);
         player::player_claim_check = 0;
     }
