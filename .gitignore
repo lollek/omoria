@@ -1,5 +1,8 @@
-/data/*
-/save/*
+.idea
+.vscode
+
+data/*
+save/*
 !/save/.gitkeep
 *.o
 omoria
