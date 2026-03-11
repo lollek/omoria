@@ -11,6 +11,9 @@ thread_local! {
     static STDSCR: RefCell<Option<pancurses::Window>> = RefCell::new(None);
 }
 
+const MAX_Y: i32 = 25;
+const MAX_X: i32 = 150;
+
 fn with_stdscr<S>(fun: S)
 where
     S: Fn(&pancurses::Window),
@@ -30,7 +33,7 @@ pub fn init_curses() {
 
     let window = pancurses::initscr();
 
-    if window.get_max_y() < 24 || window.get_max_x() < 80 {
+    if window.get_max_y() < MAX_Y || window.get_max_x() < MAX_X {
         pancurses::endwin();
         println!("Screen is too small for moria!");
         process::exit(1);
@@ -89,9 +92,12 @@ pub fn mvaddstr<'a, S>(row: i32, col: i32, msg: S)
 where
     S: AsRef<str>,
 {
+    if row >= MAX_Y || col >= MAX_X {
+        panic!("Attempting to print out of bounds! row: {}, col: {}, msg: {}", row, col, msg.as_ref());
+    }
     with_stdscr(|stdscr| {
         if stdscr.mvaddstr(row, col, msg.as_ref()) != 0 {
-            panic!("mvaddstr returned ERR");
+            panic!("mvaddstr returned ERR, row: {}, col: {}, msg: {}", row, col, msg.as_ref());
         }
     });
 }
@@ -105,9 +111,12 @@ pub fn clrtoeol() {
 }
 
 pub fn mov(row: i32, col: i32) {
+    if row >= MAX_Y || col >= MAX_X {
+        panic!("Attempting to mov out of bounds! row: {}, col: {}", row, col);
+    }
     with_stdscr(|stdscr| {
         if stdscr.mv(row, col) != 0 {
-            panic!("move returned ERR");
+            panic!("move returned ERR, row: {}, col: {}", row, col);
         }
     });
 }

@@ -245,7 +245,7 @@ impl Item {
     }
 
     pub fn set_identified(&mut self, yn: bool) {
-        self.identified = if yn { 255 } else { 0 };
+        self.identified = if yn { 255} else { 0 };
     }
 }
 
