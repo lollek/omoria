@@ -102,7 +102,7 @@ fn show_highscore() {
 
     let lines = master.iter().map(|item| {
         format!(
-            "{:<20}  Level {}  {:>10}  {:>12}  {:>5}  {:>9}",
+            "{:<24}  Level {}  {:>10}  {:>9}  {:>5}  {:>9}",
             item.character_name,
             item.level,
             item.race,
