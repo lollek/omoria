@@ -86,7 +86,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "shortbow (+2) (0,0)");
+        assert_eq!(generate(&item), "shortbow (+2) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -111,7 +111,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "hunters bow (+3) (0,0)");
+        assert_eq!(generate(&item), "hunters bow (+3) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -136,7 +136,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "composite bow (+4) (0,0)");
+        assert_eq!(generate(&item), "composite bow (+4) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -161,7 +161,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "war bow (+5) (0,0)");
+        assert_eq!(generate(&item), "war bow (+5) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -186,7 +186,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "double bow (+6) (0,0)");
+        assert_eq!(generate(&item), "double bow (+6) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -211,7 +211,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "siege bow (+7) (0,0)");
+        assert_eq!(generate(&item), "siege bow (+7) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -236,7 +236,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "warded bow (+8) (0,0)");
+        assert_eq!(generate(&item), "warded bow (+8) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -261,7 +261,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "sling (+2) (0,0)");
+        assert_eq!(generate(&item), "sling (+2) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -289,7 +289,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "light crossbow (+2) (0,0)");
+        assert_eq!(generate(&item), "light crossbow (+2) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -317,7 +317,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "heavy crossbow (+4) (0,0)");
+        assert_eq!(generate(&item), "heavy crossbow (+4) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -345,7 +345,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "siege crossbow (+6) (0,0)");
+        assert_eq!(generate(&item), "siege crossbow (+6) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -370,7 +370,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "ballista (+8) (0,0)");
+        assert_eq!(generate(&item), "ballista (+8) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;

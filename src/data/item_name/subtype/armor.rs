@@ -340,7 +340,7 @@ mod tests {
                 Box::new(ArmorTemplate::AugmentedChainMail),
                 1,
                 0,
-                "augmented chain mail (-2) [1,0]",
+                "augmented chain mail (-2) [1,+0]",
             ),
             (
                 Box::new(ArmorTemplate::AugmentedChainMail),

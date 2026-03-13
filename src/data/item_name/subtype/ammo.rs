@@ -57,7 +57,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "2 rounded pebbles (3d2) (0,0)");
+        assert_eq!(generate(&item), "2 rounded pebbles (3d2) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -84,7 +84,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "2 iron shots (3d3) (0,0)");
+        assert_eq!(generate(&item), "2 iron shots (3d3) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -111,7 +111,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "2 arrows (3d4) (0,0)");
+        assert_eq!(generate(&item), "2 arrows (3d4) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
@@ -138,7 +138,7 @@ mod tests {
 
         item.tohit = 0;
         item.todam = 0;
-        assert_eq!(generate(&item), "2 bolts (3d5) (0,0)");
+        assert_eq!(generate(&item), "2 bolts (3d5) (+0,+0)");
 
         item.tohit = -1;
         item.todam = -2;
