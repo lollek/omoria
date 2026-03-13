@@ -594,7 +594,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
 bool mon_save(const long a_cptr, long bonus,
                  const enum spell_class_t spell_class) {
 
-  const long mon_level = monster_templates[m_list[a_cptr].mptr].level;
+  const long mon_level = monster_template_get_level(m_list[a_cptr].mptr);
 
   /* with m_list[a_cptr] do; */
   /* with monster_templates[mptr] do; */
@@ -621,7 +621,7 @@ bool mon_save(const long a_cptr, long bonus,
 bool mon_resists(const unsigned char a_cptr) {
   bool return_value;
 
-  long res_chance = monster_templates[m_list[a_cptr].mptr].magic_resistance;
+  long res_chance = monster_template_get_magic_resistance(m_list[a_cptr].mptr);
 
   long delta_lev = player_lev + player_mr();
   if (delta_lev < 0) {
@@ -636,7 +636,7 @@ bool mon_resists(const unsigned char a_cptr) {
   if (res_chance >= randint(100)) {
     char out_val[82];
     sprintf(out_val, "The %s is protected by a mysterious force.",
-            monster_templates[m_list[a_cptr].mptr].name);
+            monster_template_get_name(m_list[a_cptr].mptr));
     msg_print(out_val);
     return_value = true;
   } else {
@@ -1052,7 +1052,7 @@ bool detect_creatures(const enum spell_effect_t typ) {
 
       if (found) {
         m_list[monster_i].is_seen = true;
-        print(monster_templates[m_list[monster_i].mptr].symbol, m_list[monster_i].fy,
+        print(monster_template_get_symbol(m_list[monster_i].mptr), m_list[monster_i].fy,
               m_list[monster_i].fx);
         detected_something = true;
       }
@@ -1461,10 +1461,10 @@ bool sleep_monsters1(const long y, const long x) {
           flag = true;
           if (mon_save(cave[i1][i2].cptr, 0, SC_MENTAL)) {
             sprintf(out_val, "The %s is unaffected.",
-                    monster_templates[m_list[cave[i1][i2].cptr].mptr].name);
+                    monster_template_get_name(m_list[cave[i1][i2].cptr].mptr));
           } else {
             sprintf(out_val, "The %s falls asleep.",
-                    monster_templates[m_list[cave[i1][i2].cptr].mptr].name);
+                    monster_template_get_name(m_list[cave[i1][i2].cptr].mptr));
             m_list[cave[i1][i2].cptr].csleep = 500;
           }
           msg_print(out_val);
@@ -1695,14 +1695,14 @@ bool genocide(void) {
       /* with m_list[i1]. do; */
       /* with monster_templates[m_list[i1].mptr]. do; */
       const long i2 = m_list[i1].nptr;
-      if (typ == monster_templates[m_list[i1].mptr].symbol) {
+      if (typ == monster_template_get_symbol(m_list[i1].mptr)) {
         if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
             !mon_resists(i1)) {
           delete_monster(i1);
         } else {
           char out_val[82];
           sprintf(out_val, "The %s is unaffected.",
-                  monster_templates[m_list[i1].mptr].name);
+                  monster_template_get_name(m_list[i1].mptr));
           msg_print(out_val);
         }
       }
@@ -1792,7 +1792,7 @@ bool za__did_it_work(const long monptr, const long cflag, const long dmge,
     break;
 
   case SE_SPEED:
-    hmm = !mon_save(monster_templates[m_list[monptr].mptr].level, 0, SC_NULL) ||
+    hmm = !mon_save(monster_template_get_level(m_list[monptr].mptr), 0, SC_NULL) ||
           dmge > 0;
     break;
 
@@ -1827,7 +1827,7 @@ void za__yes_it_did(const long monptr, const long dmge,
   switch (typ) {
   case SE_CONFUSE:
   case SE_TURN:
-    sprintf(out_val, "The %s runs frantically!", monster_templates[mptr].name);
+    sprintf(out_val, "The %s runs frantically!", monster_template_get_name(mptr));
     msg_print(out_val);
     m_list[monptr].confused = true;
     break;
@@ -1855,18 +1855,18 @@ void za__yes_it_did(const long monptr, const long dmge,
     /* with monster_templates[m_list[i1].mptr]. do; */
     if (mon_take_hit(monptr, randint(dmge)) > 0) {
       if (typ == SE_JOKE) {
-        sprintf(out_val, "The %s dies laughing!", monster_templates[mptr].name);
+        sprintf(out_val, "The %s dies laughing!", monster_template_get_name(mptr));
       } else {
-        sprintf(out_val, "The %s dissolves!", monster_templates[mptr].name);
+        sprintf(out_val, "The %s dissolves!", monster_template_get_name(mptr));
       }
       msg_print(out_val);
     } else {
       if (typ == SE_JOKE) {
-        sprintf(out_val, "The %s chuckles.", monster_templates[mptr].name);
+        sprintf(out_val, "The %s chuckles.", monster_template_get_name(mptr));
         msg_print(out_val);
         m_list[monptr].confused = true;
       } else {
-        sprintf(out_val, "The %s shudders.", monster_templates[mptr].name);
+        sprintf(out_val, "The %s shudders.", monster_template_get_name(mptr));
         msg_print(out_val);
         if (typ == SE_HOLY_WORD) {
           if (do_stun(monptr, -4, 4 + randint(4))) {
@@ -1891,14 +1891,14 @@ bool za__no_it_didnt(const long monptr, const long dmge, const long typ) {
     flag = true;
     if (typ == SE_JOKE) {
       sprintf(out_val, "The %s appears offended...",
-              monster_templates[m_list[monptr].mptr].name);
+              monster_template_get_name(m_list[monptr].mptr));
       msg_print(out_val);
       if (mon_take_hit(monptr, randint(dmge) / 4) > 0) {
         msg_print("and dies from disgust!!!");
       }
     } else {
       sprintf(out_val, "The %s is unaffected...",
-              monster_templates[m_list[monptr].mptr].name);
+              monster_template_get_name(m_list[monptr].mptr));
       msg_print(out_val);
     }
   }
@@ -2144,7 +2144,7 @@ bool light_line(const long dir, long y, long x, const long power) {
             char out_val[82];
 
             sprintf(out_val, "The %s wails out in pain!",
-                    monster_templates[m_list[cave[y][x].cptr].mptr].name);
+                    monster_template_get_name(m_list[cave[y][x].cptr].mptr));
 
             msg_print(out_val);
 
@@ -2157,7 +2157,7 @@ bool light_line(const long dir, long y, long x, const long power) {
               sprintf(out_val,
                       "The %s dies in a "
                       "fit of agony.",
-                      monster_templates[m_list[cave[y][x].cptr].mptr].name);
+                      monster_template_get_name(m_list[cave[y][x].cptr].mptr));
               msg_print(out_val);
             }
           }
@@ -2277,7 +2277,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
           msg_print(out_val);
         } else {
           if (panel_contains(y, x)) {
-            print(monster_templates[mptr].symbol, y, x);
+            print(monster_template_get_symbol(mptr), y, x);
             m_list[cptr].is_seen = true;
           }
         }
@@ -2358,12 +2358,12 @@ bool wall_to_mud(const long dir, long y, long x) {
               sprintf(out_val,
                       "The %s dies in a "
                       "fit of agony.",
-                      monster_templates[mptr].name);
+                      monster_template_get_name(mptr));
             } else {
               sprintf(out_val,
                       "The %s wails out "
                       "in pain!.",
-                      monster_templates[mptr].name);
+                      monster_template_get_name(mptr));
             }
             msg_print(out_val);
           }
@@ -2434,7 +2434,7 @@ bool poly_monster(const long dir, long y, long x) {
       } else {
         char out_val[82];
         sprintf(out_val, "The %s is unaffected.",
-                monster_templates[m_list[cptr].mptr].name);
+                monster_template_get_name(m_list[cptr].mptr));
         msg_print(out_val);
       }
     } else {
@@ -2874,15 +2874,15 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
     if (!mon_resists(cptr)) {
       char out_val[82];
       sprintf(out_val, "The %s hits the %s.", ddesc,
-              monster_templates[mptr].name);
+              monster_template_get_name(mptr));
       msg_print(out_val);
       if (mon_take_hit(cptr, dam_hp) > 0) {
         sprintf(out_val, "The %s dies in a fit of agony.",
-                monster_templates[mptr].name);
+                monster_template_get_name(mptr));
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].symbol, y, x);
+          print(monster_template_get_symbol(mptr), y, x);
           m_list[cptr].is_seen = true;
         }
       }
@@ -2912,7 +2912,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
     if (!mon_resists(cptr)) {
       char out_val[82];
       sprintf(out_val, "The %s strikes the %s.", descrip,
-              monster_templates[mptr].name);
+              monster_template_get_name(mptr));
       msg_print(out_val);
       if ((harm_type & monster_templates[mptr].cdefense) != 0) {
         dam_hp *= 2;
@@ -2922,11 +2922,11 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
 
       if (mon_take_hit(cptr, dam_hp) > 0) {
         sprintf(out_val, "The %s dies in a fit of agony.",
-                monster_templates[mptr].name);
+                monster_template_get_name(mptr));
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_templates[mptr].symbol, y, x);
+          print(monster_template_get_symbol(mptr), y, x);
           m_list[cptr].is_seen = true;
         }
       }

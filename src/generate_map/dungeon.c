@@ -288,14 +288,14 @@ static void gc__place_win_monster(void) {
     muptr = cur_pos;
 
     if ((monster_templates[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
-      m_list[cur_pos].hp = max_hp(monster_templates[m_list[cur_pos].mptr].hit_die);
+      m_list[cur_pos].hp = max_hp(monster_template_get_hit_die(m_list[cur_pos].mptr));
     } else {
-      m_list[cur_pos].hp = damroll(monster_templates[m_list[cur_pos].mptr].hit_die);
+      m_list[cur_pos].hp = damroll(monster_template_get_hit_die(m_list[cur_pos].mptr));
     }
 
     m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
     m_list[cur_pos].cspeed =
-        monster_templates[m_list[cur_pos].mptr].speed + player_flags.speed;
+        monster_template_get_speed(m_list[cur_pos].mptr) + player_flags.speed;
     m_list[cur_pos].stunned = 0;
     m_list[cur_pos].csleep = 0;
     cave[y][x].cptr = cur_pos;

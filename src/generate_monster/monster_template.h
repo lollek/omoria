@@ -82,6 +82,18 @@ extern long m_level[MAX_MONS_LEVEL + 1];
 
 long monster_template_count(void);
 
+const char *monster_template_get_name(long index);
+char monster_template_get_symbol(long index);
+int8_t monster_template_get_level(long index);
+int8_t monster_template_get_speed(long index);
+uint8_t monster_template_get_ac(long index);
+int64_t monster_template_get_mexp(long index);
+int16_t monster_template_get_sleep(long index);
+uint8_t monster_template_get_area_effect_radius(long index);
+uint8_t monster_template_get_magic_resistance(long index);
+const char *monster_template_get_hit_die(long index);
+const char *monster_template_get_damage(long index);
+
 bool monster_template_has_attribute(monster_template_t const *template,
                                        monster_attribute attribute);
 bool monster_template_has_attributes(

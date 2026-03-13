@@ -324,7 +324,7 @@ void command(long *command) {
   case 'Q':
     if (player_flags.quested) {
       sprintf(out_val, "Current quest is to kill a %s",
-              monster_templates[player_cur_quest].name);
+              monster_template_get_name(player_cur_quest));
       msg_print(out_val);
     } else {
       msg_print("No quest currently.");
