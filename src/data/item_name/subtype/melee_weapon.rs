@@ -139,7 +139,7 @@ mod tests {
                 Box::new(AxeTemplate::Balestarius),
                 0,
                 0,
-                "balestarius (2d8) (0,0)",
+                "balestarius (2d8) (+0,+0)",
             ),
             (
                 Box::new(AxeTemplate::Balestarius),
