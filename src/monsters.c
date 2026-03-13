@@ -136,11 +136,12 @@ long mon_take_hit(const long monptr, const long dam) {
 
     /* with monster_templates[m_list[monptr].mptr]. do; */
     /* with player_do; */
+    const long mon_mexp = monster_template_get_mexp(m_list[monptr].mptr);
     if ((monster_templates[m_list[monptr].mptr].cmove & 0x00004000) == 0 &&
-        monster_templates[m_list[monptr].mptr].mexp > 0) {
+        mon_mexp > 0) {
 
-      const float acc_tmp = monster_templates[m_list[monptr].mptr].mexp *
-                      ((monster_templates[m_list[monptr].mptr].level + 0.1) /
+      const float acc_tmp = mon_mexp *
+                      ((monster_template_get_level(m_list[monptr].mptr) + 0.1) /
                        (float)player_lev);
       i1 = (long)acc_tmp;
       acc_exp += acc_tmp - i1;
@@ -150,9 +151,9 @@ long mon_take_hit(const long monptr, const long dam) {
       }
       C_player_add_exp(i1);
 
-    } else if (monster_templates[m_list[monptr].mptr].mexp > 0) {
+    } else if (mon_mexp > 0) {
 
-      change_rep(-monster_templates[m_list[monptr].mptr].mexp);
+      change_rep(-mon_mexp);
       if (player_rep > -250) {
         msg_print("The townspeople look at you sadly.");
         msg_print("They shake their heads at the "
@@ -223,9 +224,10 @@ void delete_monster(const long cptr) {
   LEAVE("delete_monster", "c");
 }
 
+// TODO: Can this be removed, since monster_template_get_name never returns NULL?
 char const * get_monster_name(const long mptr) {
   if (mptr > 0) {
-    return monster_templates[m_list[mptr].mptr].name;
+    return monster_template_get_name(m_list[mptr].mptr);
   } else {
     return "monster";
   }

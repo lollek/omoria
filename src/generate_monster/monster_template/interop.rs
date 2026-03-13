@@ -5,6 +5,17 @@
 
 use super::{MonsterAttribute, MonsterTemplate};
 
+use std::sync::LazyLock;
+
+/// Pre-computed C-compatible monster templates, built once from Rust data.
+/// Used to return `const char*` pointers to string fields.
+static TEMPLATES_C: LazyLock<Vec<MonsterTemplateC>> = LazyLock::new(|| {
+    super::MONSTER_TEMPLATES
+        .iter()
+        .map(|t| MonsterTemplateC::from_rust(t))
+        .collect()
+});
+
 /// C-compatible monster attributes struct.
 /// Must match `monster_attributes` in `monster_template.h`.
 #[repr(C)]
@@ -154,10 +165,137 @@ fn monster_attribute_from_c(attr: libc::c_int) -> Option<MonsterAttribute> {
 // C ABI exports
 // =============================================================================
 
+/// Fallback template returned for out-of-bounds access.
+/// A visible "Glitch" monster makes indexing bugs obvious in-game.
+static GLITCH_TEMPLATE_C: LazyLock<MonsterTemplateC> = LazyLock::new(|| {
+    MonsterTemplateC::from_rust(&MonsterTemplate {
+        area_effect_radius: 0,
+        ac: 0,
+        name: "Glitch",
+        cmove: 0,
+        spells: 0,
+        cdefense: 0,
+        sleep: 0,
+        mexp: 0,
+        speed: 0,
+        symbol: '?',
+        hit_die: "1d1",
+        damage: "",
+        level: 0,
+        magic_resistance: 0,
+        multiplies: false,
+        can_move: false,
+    })
+});
+
+/// Get the C-compatible template at `index`.
+///
+/// Returns the "Glitch" fallback template if `index` is out of bounds,
+/// so indexing bugs become visible in-game rather than silently returning zeros.
+fn get_template_c(index: libc::c_long) -> &'static MonsterTemplateC {
+    TEMPLATES_C
+        .get(index as usize)
+        .unwrap_or(&GLITCH_TEMPLATE_C)
+}
+
 /// Return the number of monster templates.
 #[no_mangle]
 pub extern "C" fn monster_template_count() -> libc::c_long {
     super::MONSTER_TEMPLATES.len() as libc::c_long
+}
+
+/// Return the name of the monster template at `index` as a C string.
+///
+/// Returns a pointer to a null-terminated string. The pointer is valid for the
+/// lifetime of the program. Falls back to the Glitch template if `index` is
+/// out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_name(index: libc::c_long) -> *const libc::c_char {
+    get_template_c(index).name.as_ptr()
+}
+
+/// Return the map symbol of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_symbol(index: libc::c_long) -> libc::c_char {
+    get_template_c(index).symbol
+}
+
+/// Return the level of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_level(index: libc::c_long) -> i8 {
+    get_template_c(index).level
+}
+
+/// Return the speed of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_speed(index: libc::c_long) -> i8 {
+    get_template_c(index).speed
+}
+
+/// Return the armor class of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_ac(index: libc::c_long) -> u8 {
+    get_template_c(index).ac
+}
+
+/// Return the experience value of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_mexp(index: libc::c_long) -> i64 {
+    get_template_c(index).mexp
+}
+
+/// Return the sleep/inactive counter of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_sleep(index: libc::c_long) -> i16 {
+    get_template_c(index).sleep
+}
+
+/// Return the area effect radius of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_area_effect_radius(index: libc::c_long) -> u8 {
+    get_template_c(index).area_effect_radius
+}
+
+/// Return the magic resistance of the monster template at `index`.
+///
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_magic_resistance(index: libc::c_long) -> u8 {
+    get_template_c(index).magic_resistance
+}
+
+/// Return the hit die string of the monster template at `index` as a C string.
+///
+/// Returns a pointer to a null-terminated string. The pointer is valid for the
+/// lifetime of the program. Falls back to the Glitch template if `index` is
+/// out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_hit_die(index: libc::c_long) -> *const libc::c_char {
+    get_template_c(index).hit_die.as_ptr()
+}
+
+/// Return the damage string of the monster template at `index` as a C string.
+///
+/// Returns a pointer to a null-terminated string. The pointer is valid for the
+/// lifetime of the program. Falls back to the Glitch template if `index` is
+/// out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_damage(index: libc::c_long) -> *const libc::c_char {
+    get_template_c(index).damage.as_ptr()
 }
 
 /// Check if a monster template has the given attribute.
@@ -282,5 +420,119 @@ mod tests {
     #[test]
     fn monster_template_count_returns_correct_value() {
         assert_eq!(monster_template_count(), 392);
+    }
+
+    // =========================================================================
+    // Scalar getter tests (Step 2)
+    // =========================================================================
+
+    #[test]
+    fn get_name_returns_expected_string() {
+        let name_ptr = monster_template_get_name(0);
+        let name = unsafe { std::ffi::CStr::from_ptr(name_ptr) }
+            .to_str()
+            .unwrap();
+        assert_eq!(name, "<<Placeholder>>");
+    }
+
+    #[test]
+    fn get_name_returns_town_wizard_at_index_1() {
+        let name_ptr = monster_template_get_name(1);
+        let name = unsafe { std::ffi::CStr::from_ptr(name_ptr) }
+            .to_str()
+            .unwrap();
+        assert_eq!(name, "Town Wizard");
+    }
+
+    #[test]
+    fn get_symbol_returns_expected_char() {
+        // Index 0: placeholder has symbol 'p'
+        assert_eq!(monster_template_get_symbol(0), b'p' as libc::c_char);
+    }
+
+    #[test]
+    fn get_level_returns_expected_value() {
+        // Index 0: placeholder is level 0
+        assert_eq!(monster_template_get_level(0), 0);
+        // Balrog is index 391, level 100
+        assert_eq!(monster_template_get_level(391), 100);
+    }
+
+    #[test]
+    fn get_speed_returns_expected_value() {
+        // Index 0: placeholder speed is 1
+        assert_eq!(
+            monster_template_get_speed(0),
+            super::super::MONSTER_TEMPLATES[0].speed
+        );
+    }
+
+    #[test]
+    fn get_ac_returns_expected_value() {
+        // Index 0: placeholder AC is 1
+        assert_eq!(monster_template_get_ac(0), 1);
+    }
+
+    #[test]
+    fn get_mexp_returns_expected_value() {
+        // Index 0: placeholder mexp is 50
+        assert_eq!(monster_template_get_mexp(0), 50);
+    }
+
+    #[test]
+    fn get_sleep_returns_expected_value() {
+        assert_eq!(
+            monster_template_get_sleep(0),
+            super::super::MONSTER_TEMPLATES[0].sleep
+        );
+    }
+
+    #[test]
+    fn get_area_effect_radius_returns_expected_value() {
+        // Index 0: placeholder area_effect_radius is 10
+        assert_eq!(monster_template_get_area_effect_radius(0), 10);
+    }
+
+    #[test]
+    fn get_magic_resistance_returns_expected_value() {
+        // Index 0: placeholder magic_resistance is 20
+        assert_eq!(monster_template_get_magic_resistance(0), 20);
+    }
+
+    #[test]
+    fn get_hit_die_returns_expected_string() {
+        let ptr = monster_template_get_hit_die(0);
+        let s = unsafe { std::ffi::CStr::from_ptr(ptr) }
+            .to_str()
+            .unwrap();
+        assert_eq!(s, super::super::MONSTER_TEMPLATES[0].hit_die);
+    }
+
+    #[test]
+    fn get_damage_returns_expected_string() {
+        let ptr = monster_template_get_damage(0);
+        let s = unsafe { std::ffi::CStr::from_ptr(ptr) }
+            .to_str()
+            .unwrap();
+        assert_eq!(s, super::super::MONSTER_TEMPLATES[0].damage);
+    }
+
+    #[test]
+    fn out_of_bounds_returns_glitch_name() {
+        let name_ptr = monster_template_get_name(9999);
+        let name = unsafe { std::ffi::CStr::from_ptr(name_ptr) }
+            .to_str()
+            .unwrap();
+        assert_eq!(name, "Glitch");
+    }
+
+    #[test]
+    fn out_of_bounds_returns_glitch_symbol() {
+        assert_eq!(monster_template_get_symbol(9999), b'?' as libc::c_char);
+    }
+
+    #[test]
+    fn out_of_bounds_returns_glitch_level() {
+        assert_eq!(monster_template_get_level(9999), 0);
     }
 }

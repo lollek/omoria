@@ -463,7 +463,7 @@ chtype loc_symbol(const long y, const long x) {
              distance(char_row, char_col, y, x) <= 5))) &&
           ((monster_templates[mptr].cmove & 0x00010000) == 0 ||
            player_flags.see_inv)) {
-        sym = monster_templates[mptr].symbol;
+        sym = monster_template_get_symbol(mptr);
       } else if (tptr > 0) {
         sym = C_item_get_tchar(&t_list[tptr]);
       } else if (is_in(fval, earth_set)) { /* 0, 3, 8 and 9
@@ -1945,9 +1945,9 @@ void find_monster_name(char m_name[82], const long ptr,
     }
   } else {
     if (begin_sentence) {
-      sprintf(m_name, "The %s", monster_templates[i2].name);
+      sprintf(m_name, "The %s", monster_template_get_name(i2));
     } else {
-      sprintf(m_name, "the %s", monster_templates[i2].name);
+      sprintf(m_name, "the %s", monster_template_get_name(i2));
     }
   }
 }

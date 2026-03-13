@@ -109,17 +109,18 @@ void place_monster(const long y, const long x, const long template,
   monster_template_t const *monster = &monster_templates[template];
 
   if ((monster->cdefense & 0x4000) != 0) {
-    m_list[cur_pos].hp = max_hp(monster->hit_die);
+    m_list[cur_pos].hp = max_hp(monster_template_get_hit_die(template));
   } else {
-    m_list[cur_pos].hp = damroll(monster->hit_die);
+    m_list[cur_pos].hp = damroll(monster_template_get_hit_die(template));
   }
 
   m_list[cur_pos].cdis = distance(char_row, char_col, y, x);
-  m_list[cur_pos].cspeed = monster->speed + player_flags.speed;
+  m_list[cur_pos].cspeed = monster_template_get_speed(template) + player_flags.speed;
   m_list[cur_pos].stunned = 0;
 
   if (is_asleep) {
-    m_list[cur_pos].csleep = monster->sleep / 5.0 + randint(monster->sleep);
+    const int16_t sleep = monster_template_get_sleep(template);
+    m_list[cur_pos].csleep = sleep / 5.0 + randint(sleep);
   } else {
     m_list[cur_pos].csleep = 0;
   }
@@ -286,7 +287,7 @@ void monster_summon_by_name(long y, long x, char const * const name,
     } else {
       /* find by name, then summon */
       for (i2 = 1; i2 <= monster_template_count() -1; i2++) {
-        if (strstr(monster_templates[i2].name, monster) != NULL &&
+        if (strstr(monster_template_get_name(i2), monster) != NULL &&
             i1 != 10) {
           i1 = 0;
           do {

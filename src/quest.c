@@ -169,7 +169,7 @@ void q__reward_quest(void) {
   char out_val[120];
   bool redraw = false;
 
-  const long reward = monster_templates[player_cur_quest].mexp * (randint(3) + 5) +
+  const long reward = monster_template_get_mexp(player_cur_quest) * (randint(3) + 5) +
                 player_lev * (randint(2) * 100) +
                 (randint(100) + C_player_get_stat(CHR) * 10) * 2 +
                 C_player_get_stat(INT) * 10 * randint(50) + 200;
@@ -177,7 +177,7 @@ void q__reward_quest(void) {
   sprintf(out_val, "Ah... %s, I was expecting you.", player_name);
   msg_print(out_val);
   sprintf(out_val, "I see you've killed the %s.  That's good.",
-          monster_templates[player_cur_quest].name);
+          monster_template_get_name(player_cur_quest));
   msg_print(out_val);
 
   if (player_quests % QUEST_ITEM_FREQUENCY == 0) {
@@ -212,7 +212,7 @@ long q__select_quest(void) {
   do {
     count++;
 
-    if (monster_templates[count].level > player_lev) {
+    if (monster_template_get_level(count) > player_lev) {
       exit_flag = true;
       do {
         tmp_select = count + randint(80);
@@ -261,7 +261,7 @@ void q__draw_fortress(const bool enter_flag) {
   for (count = 1; count <= NUM_QUESTS; count++) {
     char out_val[82];
     sprintf(out_val, "%c)     %s", (char)(count + 96),
-            monster_templates[quest[count]].name);
+            monster_template_get_name(quest[count]));
     prt(out_val, 5 + count, 20);
   }
   /*{                      q__display_gold;}*/
@@ -363,7 +363,7 @@ void q__repeat_quest(void) {
 
   msg_print("Hmmm. . .  I see you haven't completed your quest.");
   msg_print("Have you forgotten it already?");
-  sprintf(out_val, "Go kill a %s!", monster_templates[player_cur_quest].name);
+  sprintf(out_val, "Go kill a %s!", monster_template_get_name(player_cur_quest));
   msg_print(out_val);
   msg_print("");
 }

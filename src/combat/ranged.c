@@ -225,7 +225,7 @@ static bool missile_try_hit_creature(const treas_rec *missile,
   const long plus_to_hit = calc_plus_to_hit(missile, type);
   long damage = calc_damage(missile, type);
 
-  const int16_t monster_ac = monster_templates[m_list[cave[y][x].cptr].mptr].ac;
+  const int16_t monster_ac = monster_template_get_ac(m_list[cave[y][x].cptr].mptr);
   const bool creature_was_hit =
       player_test_hit(base_to_hit, plus_to_hit, monster_ac);
   char monster_name_buf[82];

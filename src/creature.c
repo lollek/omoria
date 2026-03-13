@@ -213,7 +213,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
   if (flag) {
     /*{ Light it up...        }*/
     if (!ML(monptr).is_seen) {
-      print(monster_templates[ML(monptr).mptr].symbol, MY(monptr), MX(monptr));
+      print(monster_template_get_symbol(ML(monptr).mptr), MY(monptr), MX(monptr));
       ML(monptr).is_seen = true;
       if (search_flag) {
         search_off();
@@ -241,7 +241,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
 }
 
 static bool c__check_for_hit(const long monptr, const long atype) {
-  const long level = monster_templates[m_list[monptr].mptr].level;
+  const long level = monster_template_get_level(m_list[monptr].mptr);
   const long armor_stuff = player_pac() + player_ptoac();
 
   switch (atype) {
@@ -479,7 +479,7 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
 
   ENTER(("c__apply_attack", "c"));
 
-  const long level = monster_templates[m_list[monptr].mptr].level;
+  const long level = monster_template_get_level(m_list[monptr].mptr);
 
   switch (atype) {
   case 1: /*{Normal attack  }*/
@@ -827,11 +827,11 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
 static void c__describe_monster_with_article(char out[82], const long monptr) {
   if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
     /* Unique/"proper name" monsters: don't use article. */
-    sprintf(out, "The %s", monster_templates[m_list[monptr].mptr].name);
+    sprintf(out, "The %s", monster_template_get_name(m_list[monptr].mptr));
   } else {
     /* Default: behave like the legacy "& name" item-style prefixing: "a/an
      * name". */
-    const char *name = monster_templates[m_list[monptr].mptr].name;
+    const char *name = monster_template_get_name(m_list[monptr].mptr);
     sprintf(out, "%s %s", is_vowel(name[0]) ? "an" : "a", name);
   }
 }
@@ -851,7 +851,7 @@ static void c__make_attack(const long monptr) {
   char monster_template_damage[82];
   monster_template_damage[0] = 0;
   strcpy(monster_template_damage,
-         monster_templates[m_list[monptr].mptr].damage);
+         monster_template_get_damage(m_list[monptr].mptr));
 
   char monster_name_as_known_to_player[82];
   find_monster_name(monster_name_as_known_to_player, monptr, true);
@@ -886,7 +886,7 @@ static void c__make_attack(const long monptr) {
 
     if (player_flags.protevil > 0) {
       if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0004) != 0) {
-        if (player_lev + 1 > monster_templates[m_list[monptr].mptr].level) {
+        if (player_lev + 1 > monster_template_get_level(m_list[monptr].mptr)) {
           attack_type = 99;
           attack_desc = 99;
         }
@@ -895,7 +895,7 @@ static void c__make_attack(const long monptr) {
 
     if (player_flags.protmon > 0) {
       if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0002) != 0) {
-        if (player_lev + 1 > monster_templates[m_list[monptr].mptr].level) {
+        if (player_lev + 1 > monster_template_get_level(m_list[monptr].mptr)) {
           attack_type = 99;
           attack_desc = 99;
         }
@@ -1004,7 +1004,7 @@ static bool c__make_move(const long monster_cptr, mm_type mm,
           } else {
             if (locked_door) {
               if (randint(100 -
-                          monster_templates[m_list[monster_cptr].mptr].level) <
+                          monster_template_get_level(m_list[monster_cptr].mptr)) <
                   5) {
                 t_list[target_tptr].p1 = 0;
               }
@@ -1068,7 +1068,7 @@ static bool c__make_move(const long monster_cptr, mm_type mm,
         if (t_list[target_tptr].tval == seen_trap) {
           if (t_list[target_tptr].subval == 99) {
             if (randint(OBJ_RUNE_PROT) <
-                monster_templates[m_list[monster_cptr].mptr].level) {
+                monster_template_get_level(m_list[monster_cptr].mptr)) {
               if (newy == char_row && newx == char_col) {
                 msg_print("Th"
                           "e "
@@ -1121,12 +1121,12 @@ static bool c__make_move(const long monster_cptr, mm_type mm,
             sprintf(out_val,
                     "The %s is "
                     "unaffected.",
-                    monster_templates[m_list[monster_cptr].mptr].name);
+                    monster_template_get_name(m_list[monster_cptr].mptr));
           } else {
             sprintf(out_val,
                     "The %s appears "
                     "confused.",
-                    monster_templates[m_list[monster_cptr].mptr].name);
+                    monster_template_get_name(m_list[monster_cptr].mptr));
             m_list[monster_cptr].confused = true;
           }
           msg_print(out_val);
@@ -1435,7 +1435,7 @@ static bool c__cast_spell(const long monptr, bool *took_turn) {
         sprintf(outval, "%sappears healthier...", cdesc);
         msg_print(outval);
         float r1 =
-            randint(monster_templates[m_list[monptr].mptr].level) / 2 + 1;
+            randint(monster_template_get_level(m_list[monptr].mptr)) / 2 + 1;
         if (r1 > player_cmana) {
           r1 = player_cmana;
         }
@@ -1573,7 +1573,7 @@ static bool c__cast_spell(const long monptr, bool *took_turn) {
       MSG(("ERROR: cast bad spell: i3 = %ld "
            "spell_choice[i3] = %ld\n       "
            "monster = >%s<\n",
-           i3, spell_choice[i3], monster_templates[m_list[monptr].mptr].name));
+           i3, spell_choice[i3], monster_template_get_name(m_list[monptr].mptr)));
       break;
     }
 
@@ -1609,8 +1609,8 @@ static bool mon_move(const long monptr, long *hear_count) {
     m_list[monptr].hp += randint(4);
   }
 
-  if (m_list[monptr].hp > max_hp(monster_templates[ML(monptr).mptr].hit_die)) {
-    m_list[monptr].hp = max_hp(monster_templates[ML(monptr).mptr].hit_die);
+  if (m_list[monptr].hp > max_hp(monster_template_get_hit_die(ML(monptr).mptr))) {
+    m_list[monptr].hp = max_hp(monster_template_get_hit_die(ML(monptr).mptr));
   }
 
   /*{ Does the critter multiply?                            }*/
@@ -1761,7 +1761,7 @@ void creatures(const bool attack) {
     for (long _ = 1; _ <= num_moves; _++) {
       const bool is_monster_close_enough_to_act =
           m_list[monster_i].cdis <=
-          monster_templates[m_list[monster_i].mptr].area_effect_radius;
+          monster_template_get_area_effect_radius(m_list[monster_i].mptr);
       if (is_monster_close_enough_to_act || m_list[monster_i].is_seen) {
         if (m_list[monster_i].csleep > 0) {
           if (player_flags.aggravate) {
@@ -1811,7 +1811,7 @@ long find_mon(const char *virtual_name) {
   bool maybe = false;
 
   for (count = 1; count < monster_template_count() && !maybe;) {
-    if (!strcmp(virtual_name, monster_templates[count].name)) {
+    if (!strcmp(virtual_name, monster_template_get_name(count))) {
       maybe = true;
     } else {
       count++;

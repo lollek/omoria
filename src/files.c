@@ -190,18 +190,18 @@ void print_monsters(void) {
         fprintf(file1, "-------------------------------"
                        "-------------\n");
 
-        fprintf(file1, "%3ld  %30s     (%c)\n", i1, monster_templates[i1].name,
-                monster_templates[i1].symbol);
+        fprintf(file1, "%3ld  %30s     (%c)\n", i1, monster_template_get_name(i1),
+                monster_template_get_symbol(i1));
 
         fprintf(file1,
                 "     Speed =%2d  Level     "
                 "=%2d  Exp =%5ld\n",
-                monster_templates[i1].speed, monster_templates[i1].level, monster_templates[i1].mexp);
+                monster_template_get_speed(i1), monster_template_get_level(i1), monster_template_get_mexp(i1));
 
         fprintf(file1,
                 "     AC    =%2d  Eye-sight "
                 "=%2d  HD  =%5s\n",
-                monster_templates[i1].ac, monster_templates[i1].area_effect_radius, monster_templates[i1].hit_die);
+                monster_template_get_ac(i1), monster_template_get_area_effect_radius(i1), monster_template_get_hit_die(i1));
 
         if ((0x80000000 & cmove) != 0) {
           fprintf(file1, "     Creature is a "
@@ -473,7 +473,7 @@ void print_monsters(void) {
         fprintf(file1, "   --Creature attacks =\n");
         attstr[0] = 0;
         attx[0] = 0;
-        strcpy(attstr, monster_templates[i1].damage);
+        strcpy(attstr, monster_template_get_damage(i1));
 
         while (attstr[0] != 0) {
           char damstr[36];
@@ -786,17 +786,17 @@ void print_monsters(void) {
         }   /* end for attstr */
 
         fprintf(file1, "   --Magic Resistance : ");
-        if (monster_templates[i1].magic_resistance == 0) {
+        if (monster_template_get_magic_resistance(i1) == 0) {
           fprintf(file1, "None\n");
-        } else if (monster_templates[i1].magic_resistance < 20) {
+        } else if (monster_template_get_magic_resistance(i1) < 20) {
           fprintf(file1, "Very Low\n");
-        } else if (monster_templates[i1].magic_resistance < 50) {
+        } else if (monster_template_get_magic_resistance(i1) < 50) {
           fprintf(file1, "Low\n");
-        } else if (monster_templates[i1].magic_resistance < 80) {
+        } else if (monster_template_get_magic_resistance(i1) < 80) {
           fprintf(file1, "Medium\n");
-        } else if (monster_templates[i1].magic_resistance < 110) {
+        } else if (monster_template_get_magic_resistance(i1) < 110) {
           fprintf(file1, "High\n");
-        } else if (monster_templates[i1].magic_resistance < 140) {
+        } else if (monster_template_get_magic_resistance(i1) < 140) {
           fprintf(file1, "Very High\n");
         } else {
           fprintf(file1, "Extreme\n");
