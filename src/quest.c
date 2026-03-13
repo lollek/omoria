@@ -219,7 +219,7 @@ long q__select_quest(void) {
         if (tmp_select >= monster_template_count()) {
           tmp_select = monster_template_count() - 2;
         }
-      } while ((monster_templates[tmp_select].cmove & 0x00008000) != 0 &&
+      } while (monster_template_has_attribute_at(tmp_select, ma_unspawnable) &&
                tmp_select < monster_template_count() - 2);
     }
 

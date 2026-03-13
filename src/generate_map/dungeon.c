@@ -287,7 +287,7 @@ static void gc__place_win_monster(void) {
     m_list[cur_pos].nptr = muptr;
     muptr = cur_pos;
 
-    if ((monster_templates[m_list[cur_pos].mptr].cdefense & 0x4000) != 0) {
+    if (monster_template_has_attribute_at(m_list[cur_pos].mptr, ma_max_hit_points)) {
       m_list[cur_pos].hp = max_hp(monster_template_get_hit_die(m_list[cur_pos].mptr));
     } else {
       m_list[cur_pos].hp = damroll(monster_template_get_hit_die(m_list[cur_pos].mptr));

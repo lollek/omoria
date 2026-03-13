@@ -80,9 +80,8 @@ static long movement_rate(const long cspeed, const long mon) {
   uint8_t const monster_x = m_list[mon].fx;
   if (xor(is_in(cave[monster_y][monster_x].fval, earth_set) ||
               is_in(cave[monster_y][monster_x].fval, pwall_set),
-          (monster_templates[m_list[mon].mptr].cmove & 0x00000010) == 0)) {
-    c_rate =
-        (long)((monster_templates[m_list[mon].mptr].cmove & 0x00000300) / 256);
+          monster_template_has_attribute_at(m_list[mon].mptr, ma_land_based))) {
+    c_rate = monster_template_movement_speed(m_list[mon].mptr);
   } else {
     c_rate = 3;
   }
@@ -119,13 +118,10 @@ void c__monster_devour_monster(const uint8_t subject_cptr,
                                const uint8_t victim_cptr) {
   if (m_list[victim_cptr].is_seen) {
     const uint16_t victim_mptr = m_list[victim_cptr].mptr;
-    monster_template_t const *const victim_template =
-        &monster_templates[victim_mptr];
-
     const uint16_t subject_mptr = m_list[subject_cptr].mptr;
-    monster_template_t const *const subject_template =
-        &monster_templates[subject_mptr];
-    msg_printf("the %s devours the %s!", subject_template->name, victim_template->name);
+    msg_printf("the %s devours the %s!",
+              monster_template_get_name(subject_mptr),
+              monster_template_get_name(victim_mptr));
   }
   delete_monster(victim_cptr);
 }
@@ -178,7 +174,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
   bool flag = false;
 
   if (is_in(cave[MY(monptr)][MX(monptr)].fval, water_set) &&
-      (monster_templates[ML(monptr).mptr].cmove & 0x00800000) == 0) {
+      !monster_template_has_attribute_at(ML(monptr).mptr, ma_flying)) {
     /*{in water, not flying}*/
     h_range = 10;
     s_range = 5;
@@ -192,14 +188,13 @@ static void c__update_mon(const long monptr, long *hear_count) {
       flag = true;
     } else if (ML(monptr).cdis <= s_range) {
       if (los(char_row, char_col, MY(monptr), MX(monptr))) {
-        /* with monster_templates[mptr] do; */
         if (cave[MY(monptr)][MX(monptr)].pl ||
             cave[MY(monptr)][MX(monptr)].tl) { /*{can see creature?}*/
           flag = player_flags.see_inv ||
-                 (0x10000 & monster_templates[ML(monptr).mptr].cmove) == 0;
+                 !monster_template_has_attribute_at(ML(monptr).mptr, ma_invisible_movement);
         } else if (player_flags.see_infra > 0) { /*{infravision?}*/
           flag = ML(monptr).cdis <= player_flags.see_infra &&
-                 (0x2000 & monster_templates[ML(monptr).mptr].cdefense) != 0;
+                 monster_template_has_attribute_at(ML(monptr).mptr, ma_visible_with_infravision);
         }
       }
     }
@@ -825,7 +820,7 @@ static void c__apply_attack(const long monptr, const long atype, char ddesc[82],
 }
 
 static void c__describe_monster_with_article(char out[82], const long monptr) {
-  if ((0x80000000 & monster_templates[m_list[monptr].mptr].cmove) != 0) {
+  if (monster_template_has_attribute_at(m_list[monptr].mptr, ma_wins_the_game)) {
     /* Unique/"proper name" monsters: don't use article. */
     sprintf(out, "The %s", monster_template_get_name(m_list[monptr].mptr));
   } else {
@@ -885,7 +880,7 @@ static void c__make_attack(const long monptr) {
     sscanf(this_attack, "%ld %ld %s", &attack_type, &attack_desc, damage_roll);
 
     if (player_flags.protevil > 0) {
-      if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0004) != 0) {
+      if (monster_template_has_attribute_at(m_list[monptr].mptr, ma_evil)) {
         if (player_lev + 1 > monster_template_get_level(m_list[monptr].mptr)) {
           attack_type = 99;
           attack_desc = 99;
@@ -894,7 +889,7 @@ static void c__make_attack(const long monptr) {
     }
 
     if (player_flags.protmon > 0) {
-      if ((monster_templates[m_list[monptr].mptr].cdefense & 0x0002) != 0) {
+      if (monster_template_has_attribute_at(m_list[monptr].mptr, ma_monster)) {
         if (player_lev + 1 > monster_template_get_level(m_list[monptr].mptr)) {
           attack_type = 99;
           attack_desc = 99;
@@ -1599,7 +1594,7 @@ static bool mon_move(const long monptr, long *hear_count) {
   /* with monster_templates[m_list[monptr].mptr] do; */
 
   /*{ Does the creature regenerate?                         }*/
-  if ((monster_templates[ML(monptr).mptr].cdefense & 0x8000) != 0) {
+  if (monster_template_has_attribute_at(ML(monptr).mptr, ma_regenerates)) {
     m_list[monptr].hp += randint(4);
   }
 
@@ -1608,7 +1603,7 @@ static bool mon_move(const long monptr, long *hear_count) {
   }
 
   /*{ Does the critter multiply?                            }*/
-  if (monster_templates[ML(monptr).mptr].attributes.multiplies) {
+  if (monster_template_has_attribute_at(ML(monptr).mptr, ma_multiplies)) {
     if (MAX_MON_MULT >= mon_tot_mult) {
       if (player_flags.rest % mon_mult_adj == 0) {
         /* with m_list[monptr] do; */
@@ -1649,21 +1644,21 @@ static bool mon_move(const long monptr, long *hear_count) {
 
     /*{ 75% random movement                                   }*/
     if (randint(100) <= 75 &&
-        (monster_templates[ML(monptr).mptr].cmove & 0x00000008) != 0) {
+        monster_template_has_attribute_at(ML(monptr).mptr, ma_75pc_random_movement)) {
       return_value = c__move_confused(monptr, mm, hear_count);
 
       /*{ 40% random movement }*/
     } else if (randint(100) <= 40 &&
-               (monster_templates[ML(monptr).mptr].cmove & 0x00000004) != 0) {
+               monster_template_has_attribute_at(ML(monptr).mptr, ma_40pc_random_movement)) {
       return_value = c__move_confused(monptr, mm, hear_count);
 
       /*{ 20% random movement }*/
     } else if (randint(100) <= 20 &&
-               (monster_templates[ML(monptr).mptr].cmove & 0x00000002) != 0) {
+               monster_template_has_attribute_at(ML(monptr).mptr, ma_20pc_random_movement)) {
       return_value = c__move_confused(monptr, mm, hear_count);
 
       /*{ Normal movement }*/
-    } else if ((monster_templates[ML(monptr).mptr].cmove & 0x00000001) == 0) {
+    } else if (!monster_template_has_attribute_at(ML(monptr).mptr, ma_move_only_to_attack)) {
       if (randint(200) == 1) {
         return_value = c__move_confused(monptr, mm, hear_count);
       } else {
@@ -1687,8 +1682,7 @@ static bool mon_move(const long monptr, long *hear_count) {
 static void c__splash(const long m_list_i) {
 
   ENTER(("c__splash", "c"));
-  const long mon_swimming =
-      (monster_templates[m_list[m_list_i].mptr].cmove & 0x00000700) / 256;
+  const long mon_swimming = monster_template_swimming_level(m_list[m_list_i].mptr);
   long drown_dam = randint(OUT_OF_ENV_DAM);
 
   /*{ here will also be modifiers due to waterspeed,depth }*/
@@ -1703,7 +1697,7 @@ static void c__splash(const long m_list_i) {
 
   if (m_list[m_list_i].hp < 0) {
     monster_death(m_list[m_list_i].fy, m_list[m_list_i].fx,
-                  monster_templates[m_list[m_list_i].mptr].cmove);
+                  monster_template_get_cmove(m_list[m_list_i].mptr));
     delete_monster(cave[m_list[m_list_i].fy][m_list[m_list_i].fx].cptr);
   }
 
@@ -1713,9 +1707,8 @@ static void c__splash(const long m_list_i) {
 static void c__maybe_splash(const long m_list_i) {
   if (is_in(cave[m_list[m_list_i].fy][m_list[m_list_i].fx].fval, floor_set)) {
     if (is_in(cave[m_list[m_list_i].fy][m_list[m_list_i].fx].fval, water_set) !=
-            ((monster_templates[m_list[m_list_i].mptr].cmove & 0x00000010) !=
-             0) &&
-        (monster_templates[m_list[m_list_i].mptr].cmove & 0x00000040) != 0) {
+            monster_template_has_attribute_at(m_list[m_list_i].mptr, ma_water_based) &&
+        monster_template_has_attribute_at(m_list[m_list_i].mptr, ma_dies_in_wrong_element)) {
       c__splash(m_list_i);
     }
   }

@@ -305,6 +305,34 @@ pub extern "C" fn monster_template_get_spells_raw(index: libc::c_long) -> u64 {
     get_template_c(index).spells
 }
 
+/// Return the raw `cmove` bitfield of the monster template at `index`.
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_cmove(index: libc::c_long) -> u64 {
+    get_template_c(index).cmove
+}
+
+/// Return the raw `cdefense` bitfield of the monster template at `index`.
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_cdefense(index: libc::c_long) -> u64 {
+    get_template_c(index).cdefense
+}
+
+/// Return the movement speed (bits 8–9 of `cmove`, divided by 256).
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_movement_speed(index: libc::c_long) -> u8 {
+    ((get_template_c(index).cmove & 0x00000300) / 256) as u8
+}
+
+/// Return the swimming level (bits 8–10 of `cmove`, divided by 256).
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_swimming_level(index: libc::c_long) -> u8 {
+    ((get_template_c(index).cmove & 0x00000700) / 256) as u8
+}
+
 /// Whether the monster template at `index` has any spells (`spells > 0`).
 /// Falls back to the Glitch template if `index` is out of bounds.
 #[no_mangle]
@@ -629,5 +657,61 @@ mod tests {
     fn spell_choice_bits_balrog() {
         let balrog_template_idx = 391;
         assert_eq!(monster_template_spell_choice_bits(balrog_template_idx), 0x0281C740);
+    }
+
+    /// Balrog (index 391) has cmove = 0xFF1F0300.
+    #[test]
+    fn get_cmove_returns_expected_value() {
+        let balrog_template_idx = 391;
+        assert_eq!(monster_template_get_cmove(balrog_template_idx), 0xFF1F0300);
+    }
+
+    /// OOB returns zero for cmove.
+    #[test]
+    fn get_cmove_oob_returns_zero() {
+        let out_of_bounds_idx = 9999;
+        assert_eq!(monster_template_get_cmove(out_of_bounds_idx), 0);
+    }
+
+    /// Placeholder (index 0) has cdefense = 0x3000.
+    #[test]
+    fn get_cdefense_returns_expected_value() {
+        let placeholder_template_idx = 0;
+        assert_eq!(monster_template_get_cdefense(placeholder_template_idx), 0x3000);
+    }
+
+    /// OOB returns zero for cdefense.
+    #[test]
+    fn get_cdefense_oob_returns_zero() {
+        let out_of_bounds_idx = 9999;
+        assert_eq!(monster_template_get_cdefense(out_of_bounds_idx), 0);
+    }
+
+    /// Balrog (index 391, cmove=0xFF1F0300): movement_speed = (0x300 & 0x300) / 256 = 3.
+    #[test]
+    fn movement_speed_returns_expected_value() {
+        let balrog_template_idx = 391;
+        assert_eq!(monster_template_movement_speed(balrog_template_idx), 3);
+    }
+
+    /// Placeholder (index 0, cmove=0x0010C000): movement_speed = 0.
+    #[test]
+    fn movement_speed_zero_for_placeholder() {
+        let placeholder_template_idx = 0;
+        assert_eq!(monster_template_movement_speed(placeholder_template_idx), 0);
+    }
+
+    /// Balrog (index 391, cmove=0xFF1F0300): swimming_level = (0x300 & 0x700) / 256 = 3.
+    #[test]
+    fn swimming_level_returns_expected_value() {
+        let balrog_template_idx = 391;
+        assert_eq!(monster_template_swimming_level(balrog_template_idx), 3);
+    }
+
+    /// Placeholder (index 0, cmove=0x0010C000): swimming_level = 0.
+    #[test]
+    fn swimming_level_zero_for_placeholder() {
+        let placeholder_template_idx = 0;
+        assert_eq!(monster_template_swimming_level(placeholder_template_idx), 0);
     }
 }
