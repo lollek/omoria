@@ -298,6 +298,41 @@ pub extern "C" fn monster_template_get_damage(index: libc::c_long) -> *const lib
     get_template_c(index).damage.as_ptr()
 }
 
+/// Return the raw `spells` bitfield of the monster template at `index`.
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_get_spells_raw(index: libc::c_long) -> u64 {
+    get_template_c(index).spells
+}
+
+/// Whether the monster template at `index` has any spells (`spells > 0`).
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_has_spells(index: libc::c_long) -> bool {
+    get_template_c(index).spells > 0
+}
+
+/// Return the spell frequency (bits 0–3 of `spells`) for the template at `index`.
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_spell_frequency(index: libc::c_long) -> u8 {
+    (get_template_c(index).spells & 0x0000000F) as u8
+}
+
+/// Whether the spell frequency is inverted (bit 31 of `spells`).
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_spell_frequency_is_inverted(index: libc::c_long) -> bool {
+    (get_template_c(index).spells & 0x80000000) != 0
+}
+
+/// Return the spell choice bits (bits 4–27 of `spells`) for the template at `index`.
+/// Falls back to the Glitch template if `index` is out of bounds.
+#[no_mangle]
+pub extern "C" fn monster_template_spell_choice_bits(index: libc::c_long) -> u32 {
+    (get_template_c(index).spells & 0x0FFFFFF0) as u32
+}
+
 /// Check if the monster template at `index` has the given attribute.
 /// Falls back to the Glitch template if `index` is out of bounds.
 #[no_mangle]
@@ -513,5 +548,86 @@ mod tests {
     fn out_of_bounds_returns_glitch_level() {
         let out_of_bounds_idx = 9999;
         assert_eq!(monster_template_get_level(out_of_bounds_idx), 0);
+    }
+
+    /// Town Wizard (index 1) has spells (0x00009F52), so raw value is non-zero.
+    #[test]
+    fn get_spells_raw_returns_expected_value() {
+        let town_wizard_template_idx = 1;
+        assert_eq!(monster_template_get_spells_raw(town_wizard_template_idx), 0x00009F52);
+    }
+
+    /// Index 2 has spells == 0, so raw value is zero.
+    #[test]
+    fn get_spells_raw_returns_zero_for_no_spells() {
+        let no_spells_template_idx = 2;
+        assert_eq!(monster_template_get_spells_raw(no_spells_template_idx), 0);
+    }
+
+    /// OOB returns zero for spells.
+    #[test]
+    fn get_spells_raw_oob_returns_zero() {
+        let out_of_bounds_idx = 9999;
+        assert_eq!(monster_template_get_spells_raw(out_of_bounds_idx), 0);
+    }
+
+    /// Town Wizard (index 1, spells=0x00009F52) has spells.
+    #[test]
+    fn has_spells_true_for_town_wizard() {
+        let town_wizard_template_idx = 1;
+        assert!(monster_template_has_spells(town_wizard_template_idx));
+    }
+
+    /// Index 2 (spells=0) has no spells.
+    #[test]
+    fn has_spells_false_when_no_spells() {
+        let no_spells_template_idx = 2;
+        assert!(!monster_template_has_spells(no_spells_template_idx));
+    }
+
+    /// Town Wizard (index 1, spells=0x00009F52): frequency = 0x2.
+    #[test]
+    fn spell_frequency_returns_expected_value() {
+        let town_wizard_template_idx = 1;
+        assert_eq!(monster_template_spell_frequency(town_wizard_template_idx), 2);
+    }
+
+    /// Balrog (index 391, spells=0x0281C743): frequency = 0x3.
+    #[test]
+    fn spell_frequency_balrog() {
+        let balrog_template_idx = 391;
+        assert_eq!(monster_template_spell_frequency(balrog_template_idx), 3);
+    }
+
+    /// Town Wizard (index 1, spells=0x00009F52): bit 31 is not set.
+    #[test]
+    fn spell_frequency_not_inverted_for_town_wizard() {
+        let town_wizard_template_idx = 1;
+        assert!(!monster_template_spell_frequency_is_inverted(town_wizard_template_idx));
+    }
+
+    /// Find a monster whose spells field has bit 31 set (inverted frequency).
+    #[test]
+    fn spell_frequency_inverted_when_bit31_set() {
+        // Search for a template with the inverted flag set
+        let inverted_idx = super::super::MONSTER_TEMPLATES
+            .iter()
+            .position(|t| t.spells & 0x80000000 != 0)
+            .expect("at least one template should have inverted spell frequency");
+        assert!(monster_template_spell_frequency_is_inverted(inverted_idx as libc::c_long));
+    }
+
+    /// Town Wizard (index 1, spells=0x00009F52): choice bits = 0x9F50.
+    #[test]
+    fn spell_choice_bits_returns_expected_value() {
+        let town_wizard_template_idx = 1;
+        assert_eq!(monster_template_spell_choice_bits(town_wizard_template_idx), 0x00009F50);
+    }
+
+    /// Balrog (index 391, spells=0x0281C743): choice bits = 0x0281C740.
+    #[test]
+    fn spell_choice_bits_balrog() {
+        let balrog_template_idx = 391;
+        assert_eq!(monster_template_spell_choice_bits(balrog_template_idx), 0x0281C740);
     }
 }

@@ -184,7 +184,7 @@ void print_monsters(void) {
 
         const unsigned long cmove = monster_templates[i1].cmove;
         const unsigned long cdefense = monster_templates[i1].cdefense;
-        const unsigned long spells = monster_templates[i1].spells;
+        const unsigned long spells = monster_template_get_spells_raw(i1);
 
         /*{ Begin writing to file }*/
         fprintf(file1, "-------------------------------"

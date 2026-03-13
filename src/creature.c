@@ -1222,12 +1222,8 @@ static bool c__cast_spell(const long monptr, bool *took_turn) {
   bool return_value;
 
   ENTER(("c__cast_spell", "c"));
-  /* with m_list[monptr] do; */
-  /* with monster_templates[m_list[monptr].mptr] do; */
-  const long chance =
-      monster_templates[m_list[monptr].mptr].spells & 0x0000000F;
-  const long chance2 =
-      monster_templates[m_list[monptr].mptr].spells & 0x80000000;
+  const long chance = monster_template_spell_frequency(m_list[monptr].mptr);
+  const long chance2 = monster_template_spell_frequency_is_inverted(m_list[monptr].mptr);
 
   /*{ 1 in x chance of casting spell                }*/
   /*{ if chance2 is true then 1 in x of not casting }*/
@@ -1266,7 +1262,7 @@ static bool c__cast_spell(const long monptr, bool *took_turn) {
     /*{ End DIED_FROM                 }*/
 
     /*{ Extract all possible spells into spell_choice }*/
-    i1 = monster_templates[m_list[monptr].mptr].spells & 0x0FFFFFF0;
+    i1 = monster_template_spell_choice_bits(m_list[monptr].mptr);
     long i3 = 0;
     while (i1 != 0) {
       const long i2 = bit_pos(&i1) + 1;
@@ -1644,7 +1640,7 @@ static bool mon_move(const long monptr, long *hear_count) {
     return_value = c__move_confused(monptr, mm, hear_count);
     m_list[monptr].confused = randint(8) != 1;
     move_test = true;
-  } else if (monster_templates[ML(monptr).mptr].spells > 0) {
+  } else if (monster_template_has_spells(ML(monptr).mptr)) {
     /*{ Creature may cast a spell                             }*/
     return_value = c__cast_spell(monptr, &move_test);
   }
