@@ -108,17 +108,17 @@ impl ItemTemplate for DaggerTemplate {
 
     fn weight(&self) -> u16 {
         match self {
-            DaggerTemplate::MainGauche => 30,
-            DaggerTemplate::Misercorde => 15,
+            DaggerTemplate::MainGauche => 40,
+            DaggerTemplate::Misercorde => 32,
             DaggerTemplate::Stiletto => 12,
-            DaggerTemplate::Bodkin => 20,
+            DaggerTemplate::Bodkin => 13,
             DaggerTemplate::BrokenDagger => 15,
-            DaggerTemplate::CatONineTails => 40,
-            DaggerTemplate::Bilbo => 80,
-            DaggerTemplate::Baselard => 100,
+            DaggerTemplate::CatONineTails => 37,
+            DaggerTemplate::Bilbo => 110,
+            DaggerTemplate::Baselard => 34,
             DaggerTemplate::Foil => 30,
-            DaggerTemplate::Rapier => 40,
-            DaggerTemplate::SmallSword => 75,
+            DaggerTemplate::Rapier => 110,
+            DaggerTemplate::SmallSword => 45,
         }
     }
 

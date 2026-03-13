@@ -113,18 +113,18 @@ impl ItemTemplate for PolearmTemplate {
 
     fn weight(&self) -> u16 {
         match self {
-            PolearmTemplate::AwlPike => 160,
-            PolearmTemplate::BeakedAxe => 180,
-            PolearmTemplate::Fauchard => 170,
-            PolearmTemplate::Glaive => 190,
-            PolearmTemplate::Halberd => 190,
-            PolearmTemplate::LucerneHammer => 120,
-            PolearmTemplate::Pike => 160,
-            PolearmTemplate::Spike => 50,
+            PolearmTemplate::AwlPike => 290,
+            PolearmTemplate::BeakedAxe => 240,
+            PolearmTemplate::Fauchard => 230,
+            PolearmTemplate::Glaive => 250,
+            PolearmTemplate::Halberd => 280,
+            PolearmTemplate::LucerneHammer => 250,
+            PolearmTemplate::Pike => 350,
+            PolearmTemplate::Spike => 100,
             PolearmTemplate::Lance => 300,
-            PolearmTemplate::Javelin => 30,
-            PolearmTemplate::Naginata => 250,
-            PolearmTemplate::WarScythe => 210,
+            PolearmTemplate::Javelin => 130,
+            PolearmTemplate::Naginata => 210,
+            PolearmTemplate::WarScythe => 230,
         }
     }
 

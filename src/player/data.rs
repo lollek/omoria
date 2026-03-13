@@ -640,8 +640,11 @@ pub fn max_bulk() -> u16 {
     let player_weight_modifier = 13;
     // [60-280]
     let player_carry_base_amount = (30 + (player::curr_stats().strength * 10)) as u16;
+    // [47-350]
+    let weight = current_weight();
+    // [800-3000]
     let base_bulk = min(
-        (player_carry_base_amount * player_weight_modifier) + current_weight(),
+        (player_carry_base_amount * player_weight_modifier) + weight,
         min_base_bulk);
     let max_bulk: i32 = base_bulk as i32 + extra_bulk_carry() as i32;
     max_bulk.clamp(0, u16::MAX.into()) as u16
