@@ -359,7 +359,7 @@ mod tests {
     }
 
     #[test]
-    fn get_name_returns_town_wizard_at_index_1() {
+    fn get_name_returns_warden_occultist_at_index_1() {
         let name_ptr = monster_template_get_name(1);
         let name = unsafe { std::ffi::CStr::from_ptr(name_ptr) }
             .to_str()
