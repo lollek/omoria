@@ -864,7 +864,7 @@ void ic__stats(treas_rec *cur_display[], char prompt[82], long *scr_state,
       if (item_ptr->data.weight < 100) {
         sprintf(out_val, "%ld (small)", (long)item_ptr->data.weight);
       } else {
-        sprintf(out_val, "%ld (large)", (long)(item_ptr->data.weight / 100));
+        sprintf(out_val, "%ld (large)", (long)item_ptr->data.weight);
       }
       prt(out_val, 6, 15);
       sprintf(out_val, "%ld", (long)item_ptr->data.number);
