@@ -35,7 +35,7 @@ void player_action_look(void) {
     if (cptr > 1) {
       if (m_list[cptr].is_seen) {
         const long mptr = m_list[cptr].mptr;
-        char const * const monster_name = get_monster_name(mptr);
+        char const * const monster_name = monster_template_get_name(mptr);
         if (is_vowel(monster_name[0])) {
           msg_printf("You see an %s.", monster_name);
         } else {
