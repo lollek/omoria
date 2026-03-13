@@ -506,8 +506,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                          .cdefense) != 0) {
                   dam *= 2;
                 } else if ((weapon_type &
-                            monster_templates[m_list[cave[i1][i2].cptr].mptr]
-                                .spells) != 0) {
+                            monster_template_get_spells_raw(m_list[cave[i1][i2].cptr].mptr)) != 0) {
                   dam /= 4;
                 }
 
@@ -802,8 +801,7 @@ bool breath(const enum spell_effect_t typ, const long y, const long x,
              monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
           dam *= 2;
         } else if ((weapon_type &
-                    monster_templates[m_list[cave[i1][i2].cptr].mptr].spells) !=
-                   0) {
+                    monster_template_get_spells_raw(m_list[cave[i1][i2].cptr].mptr)) != 0) {
           dam = trunc(dam / 4.0);
         }
         dam = dam / (distance(i1, i2, y, x) + 1);
@@ -2259,7 +2257,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
         msg_print(out_val);
         if ((harm_type & monster_templates[mptr].cdefense) != 0) {
           dam *= 2;
-        } else if ((weapon_type & monster_templates[mptr].spells) != 0) {
+        } else if ((weapon_type & monster_template_get_spells_raw(mptr)) != 0) {
           dam /= 4;
         }
         if (mon_take_hit(cptr, dam) > 0) {
@@ -2895,7 +2893,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
       msg_print(out_val);
       if ((harm_type & monster_templates[mptr].cdefense) != 0) {
         dam_hp *= 2;
-      } else if ((weapon_type & monster_templates[mptr].spells) != 0) {
+      } else if ((weapon_type & monster_template_get_spells_raw(mptr)) != 0) {
         dam_hp /= 4;
       }
 

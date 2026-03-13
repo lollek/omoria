@@ -94,6 +94,12 @@ uint8_t monster_template_get_magic_resistance(long index);
 const char *monster_template_get_hit_die(long index);
 const char *monster_template_get_damage(long index);
 
+uint64_t monster_template_get_spells_raw(long index);
+bool monster_template_has_spells(long index);
+uint8_t monster_template_spell_frequency(long index);
+bool monster_template_spell_frequency_is_inverted(long index);
+uint32_t monster_template_spell_choice_bits(long index);
+
 bool monster_template_has_attribute_at(long index, monster_attribute attribute);
 bool monster_template_has_attributes_at(
     long index, monster_attribute const *const *monster_attributes);
