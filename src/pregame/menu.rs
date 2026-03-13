@@ -97,8 +97,8 @@ fn print_banner() {
 fn show_highscore() {
     let mut master = master::read_master().unwrap();
     master.sort_unstable_by(|a, b| b.points.cmp(&a.points));
-    println!("Username     Points   Alive    Character name    Level  Race         Class");
-    println!("____________ ________ _____ ________________________ __ __________ ________________");
+    // println!("Username     Points   Alive    Character name    Level  Race         Class");
+    // println!("____________ ________ _____ ________________________ __ __________ ________________");
 
     let lines = master.iter().map(|item| {
         format!(
