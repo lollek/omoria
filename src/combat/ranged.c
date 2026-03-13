@@ -243,7 +243,7 @@ static bool missile_try_hit_creature(const treas_rec *missile,
   item_name(missile_text_buf, missile);
   sprintf(text_buf, "The %s hits %s.", missile_text_buf, monster_name_buf);
   msg_print(text_buf);
-  damage = tot_dam(&missile->data, damage, &monster_templates[monster_index]);
+  damage = tot_dam(&missile->data, damage, monster_index);
   const long crit_mult = critical_blow(
       missile->data.weight, plus_to_hit,
       (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0, true);

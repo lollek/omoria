@@ -345,7 +345,7 @@ bool player_test_hit(const long base_to_hit, const long plus_to_hit,
 }
 
 long tot_dam(const treasure_type *item, long tdam,
-             monster_template_t const *monster) {
+             long monster_index) {
   /*{ Special damage due to magical abilities of object     -RAK-   }*/
 
   const obj_set stuff_that_goes_thump = {
@@ -353,7 +353,7 @@ long tot_dam(const treasure_type *item, long tdam,
       hafted_weapon, pole_arm, dagger, sword,         maul,
       flask_of_oil,  0};
 
-  const unsigned long cdefense = monster->cdefense;
+  const unsigned long cdefense = monster_template_get_cdefense(monster_index);
   const unsigned long flags = item->flags;
   const unsigned long flags2 = item->flags2;
 
