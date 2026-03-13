@@ -45,7 +45,7 @@ fn put_combat_abilities() {
 
     let mut row = starting_row;
     for line in [
-        format!("Level:  {} ({} to next)", unsafe { player::player_lev } , player::exp_to_next_level()),
+        format!("Level:  {} ({} xp to next)", unsafe { player::player_lev } , player::exp_to_next_level()),
         format!("Gold:   {} (Bank: {})", player::wallet().total, unsafe { player::player_account }),
         format!("Health: {}/{}", player::current_hp(), player::max_hp()),
         format!("Mana:   {}/{}", player::current_mp(), player::max_mp()),
