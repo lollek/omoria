@@ -134,8 +134,6 @@ long mon_take_hit(const long monptr, const long dam) {
                 "Arch-Wizard.");
     }
 
-    /* with monster_templates[m_list[monptr].mptr]. do; */
-    /* with player_do; */
     const long mon_mexp = monster_template_get_mexp(m_list[monptr].mptr);
     if ((monster_templates[m_list[monptr].mptr].cmove & 0x00004000) == 0 &&
         mon_mexp > 0) {

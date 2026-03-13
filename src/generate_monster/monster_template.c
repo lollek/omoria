@@ -451,12 +451,11 @@ monster_template_t const monster_templates[] = {
     {20, 125, "Balrog", 0xFF1F0300, 0x0281C743, 0x5404, 0, 55000, 4, 'B', "475d8", "5 1 10d12|1 17 8d12|24 5 0d0", 100, 255, {.multiplies = false, .can_move = true}},
 };
 
-bool monster_template_has_attributes(
-    monster_template_t const *template,
-    monster_attribute const *const *monster_attributes) {
+bool monster_template_has_attributes_at(
+    long index, monster_attribute const *const *monster_attributes) {
   for (monster_attribute const *attribute = *monster_attributes;
        attribute != NULL; attribute++) {
-    if (!monster_template_has_attribute(template, *attribute)) {
+    if (!monster_template_has_attribute_at(index, *attribute)) {
       return false;
     }
   }

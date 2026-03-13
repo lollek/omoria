@@ -94,8 +94,6 @@ uint8_t monster_template_get_magic_resistance(long index);
 const char *monster_template_get_hit_die(long index);
 const char *monster_template_get_damage(long index);
 
-bool monster_template_has_attribute(monster_template_t const *template,
-                                       monster_attribute attribute);
-bool monster_template_has_attributes(
-    monster_template_t const *template,
-    monster_attribute const *const *monster_attributes);
+bool monster_template_has_attribute_at(long index, monster_attribute attribute);
+bool monster_template_has_attributes_at(
+    long index, monster_attribute const *const *monster_attributes);

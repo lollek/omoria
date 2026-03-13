@@ -298,81 +298,20 @@ pub extern "C" fn monster_template_get_damage(index: libc::c_long) -> *const lib
     get_template_c(index).damage.as_ptr()
 }
 
-/// Check if a monster template has the given attribute.
-///
-/// # Safety
-/// The `template` pointer must be valid and point to a `MonsterTemplateC`.
+/// Check if the monster template at `index` has the given attribute.
+/// Falls back to the Glitch template if `index` is out of bounds.
 #[no_mangle]
-pub unsafe extern "C" fn monster_template_has_attribute(
-    template: *const MonsterTemplateC,
+pub extern "C" fn monster_template_has_attribute_at(
+    index: libc::c_long,
     attribute: libc::c_int,
 ) -> bool {
-    if template.is_null() {
-        return false;
-    }
-
-    let template = &*template;
     let attr = match monster_attribute_from_c(attribute) {
         Some(a) => a,
         None => return false,
     };
-
-    // Convert C template to Rust for attribute checking
-    // We can check directly using the bit fields
-    match attr {
-        MonsterAttribute::MoveOnlyToAttack => !template.attributes.can_move,
-        MonsterAttribute::Multiplies => template.attributes.multiplies,
-        MonsterAttribute::RandomMovement20pc => (template.cmove & 0x00000002) != 0,
-        MonsterAttribute::RandomMovement40pc => (template.cmove & 0x00000004) != 0,
-        MonsterAttribute::RandomMovement75pc => (template.cmove & 0x00000008) != 0,
-        MonsterAttribute::WaterBased => (template.cmove & 0x00000010) != 0,
-        MonsterAttribute::LandBased => (template.cmove & 0x00000010) == 0,
-        MonsterAttribute::DiesInWrongElement => (template.cmove & 0x00000040) != 0,
-        MonsterAttribute::GoodMonster => (template.cmove & 0x00004000) != 0,
-        MonsterAttribute::Unspawnable => (template.cmove & 0x00008000) != 0,
-        MonsterAttribute::InvisibleMovement => (template.cmove & 0x00010000) != 0,
-        MonsterAttribute::MovesThroughDoor => (template.cmove & 0x00020000) != 0,
-        MonsterAttribute::MovesThroughWall => (template.cmove & 0x00040000) != 0,
-        MonsterAttribute::MovesThroughCreatures => (template.cmove & 0x00080000) != 0,
-        MonsterAttribute::PicksUpObjects => (template.cmove & 0x00100000) != 0,
-        MonsterAttribute::AnchorsInWater => (template.cmove & 0x00400000) != 0,
-        MonsterAttribute::Flying => (template.cmove & 0x00800000) != 0,
-        MonsterAttribute::CarriesObjects => (template.cmove & 0x01000000) != 0,
-        MonsterAttribute::CarriesGold => (template.cmove & 0x02000000) != 0,
-        MonsterAttribute::Carries60pc => (template.cmove & 0x04000000) != 0,
-        MonsterAttribute::Carries90pc => (template.cmove & 0x08000000) != 0,
-        MonsterAttribute::Carries1d2Things => (template.cmove & 0x10000000) != 0,
-        MonsterAttribute::Carries2d2Things => (template.cmove & 0x20000000) != 0,
-        MonsterAttribute::Carries4d2Things => (template.cmove & 0x40000000) != 0,
-        MonsterAttribute::WinsTheGame => (template.cmove & 0x80000000) != 0,
-        MonsterAttribute::Dragon => (template.cdefense & 0x0001) != 0,
-        MonsterAttribute::Monster => (template.cdefense & 0x0002) != 0,
-        MonsterAttribute::Evil => (template.cdefense & 0x0004) != 0,
-        MonsterAttribute::Undead => (template.cdefense & 0x0008) != 0,
-        MonsterAttribute::Demon => (template.cdefense & 0x0400) != 0,
-        MonsterAttribute::VulnerableToFrost => (template.cdefense & 0x0010) != 0,
-        MonsterAttribute::VulnerableToFire => (template.cdefense & 0x0020) != 0,
-        MonsterAttribute::VulnerableToPoison => (template.cdefense & 0x0040) != 0,
-        MonsterAttribute::VulnerableToAcid => (template.cdefense & 0x0080) != 0,
-        MonsterAttribute::VulnerableToLightning => (template.cdefense & 0x0100) != 0,
-        MonsterAttribute::VulnerableToStoneToMud => (template.cdefense & 0x0200) != 0,
-        MonsterAttribute::Uncharmable => (template.cdefense & 0x1000) != 0,
-        MonsterAttribute::VisibleWithInfravision => (template.cdefense & 0x2000) != 0,
-        MonsterAttribute::MaxHitPoints => (template.cdefense & 0x4000) != 0,
-        MonsterAttribute::Regenerates => (template.cdefense & 0x8000) != 0,
-        // Compound attributes
-        MonsterAttribute::SurvivesInWater => {
-            let water_based = (template.cmove & 0x00000010) != 0;
-            let dies_in_wrong = (template.cmove & 0x00000040) != 0;
-            let flying = (template.cmove & 0x00800000) != 0;
-            water_based || !dies_in_wrong || flying
-        }
-        MonsterAttribute::SurvivesOnLand => {
-            let land_based = (template.cmove & 0x00000010) == 0;
-            let dies_in_wrong = (template.cmove & 0x00000040) != 0;
-            let flying = (template.cmove & 0x00800000) != 0;
-            land_based || !dies_in_wrong || flying
-        }
+    match super::MONSTER_TEMPLATES.get(index as usize) {
+        Some(t) => t.has_attribute(attr),
+        None => false,
     }
 }
 
@@ -421,10 +360,6 @@ mod tests {
     fn monster_template_count_returns_correct_value() {
         assert_eq!(monster_template_count(), 392);
     }
-
-    // =========================================================================
-    // Scalar getter tests (Step 2)
-    // =========================================================================
 
     #[test]
     fn get_name_returns_expected_string() {
@@ -518,8 +453,50 @@ mod tests {
     }
 
     #[test]
+    fn has_attribute_at_balrog_is_evil() {
+        let balrog_template_idx = 391;
+        assert!(monster_template_has_attribute_at(balrog_template_idx, MonsterAttribute::Evil as libc::c_int));
+    }
+
+    #[test]
+    fn has_attribute_at_balrog_wins_the_game() {
+        let balrog_template_idx = 391;
+        assert!(monster_template_has_attribute_at(
+            balrog_template_idx,
+            MonsterAttribute::WinsTheGame as libc::c_int,
+        ));
+    }
+
+    #[test]
+    fn has_attribute_at_balrog_does_not_multiply() {
+        let balrog_template_idx = 391;
+        assert!(!monster_template_has_attribute_at(
+            balrog_template_idx,
+            MonsterAttribute::Multiplies as libc::c_int,
+        ));
+    }
+
+    #[test]
+    fn has_attribute_at_oob_returns_false() {
+        let out_of_bounds_idx = 9999;
+        assert!(!monster_template_has_attribute_at(
+            out_of_bounds_idx,
+            MonsterAttribute::Evil as libc::c_int,
+        ));
+    }
+
+    /// Invalid attribute enum value returns false.
+    #[test]
+    fn has_attribute_at_invalid_attribute_returns_false() {
+        let balrog_template_idx = 391;
+        let out_of_bounds_idx = 999;
+        assert!(!monster_template_has_attribute_at(balrog_template_idx, out_of_bounds_idx));
+    }
+
+    #[test]
     fn out_of_bounds_returns_glitch_name() {
-        let name_ptr = monster_template_get_name(9999);
+        let out_of_bounds_idx = 9999;
+        let name_ptr = monster_template_get_name(out_of_bounds_idx);
         let name = unsafe { std::ffi::CStr::from_ptr(name_ptr) }
             .to_str()
             .unwrap();
@@ -528,11 +505,13 @@ mod tests {
 
     #[test]
     fn out_of_bounds_returns_glitch_symbol() {
-        assert_eq!(monster_template_get_symbol(9999), b'?' as libc::c_char);
+        let out_of_bounds_idx = 9999;
+        assert_eq!(monster_template_get_symbol(out_of_bounds_idx), b'?' as libc::c_char);
     }
 
     #[test]
     fn out_of_bounds_returns_glitch_level() {
-        assert_eq!(monster_template_get_level(9999), 0);
+        let out_of_bounds_idx = 9999;
+        assert_eq!(monster_template_get_level(out_of_bounds_idx), 0);
     }
 }
