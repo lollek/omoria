@@ -450,7 +450,7 @@ monster_template_t const monster_templates[] = {
     {20, 80, "Evil Iggy", 0x7F130300, 0x0201D713, 0x5004, 0, 18000, 3, 'p', "400d8", "2 1 4d6|13 19 0d0", 100, 175, {.multiplies = false, .can_move = true}},
     {20, 125, "Balrog", 0xFF1F0300, 0x0281C743, 0x5404, 0, 55000, 4, 'B', "475d8", "5 1 10d12|1 17 8d12|24 5 0d0", 100, 255, {.multiplies = false, .can_move = true}},
 };
-long const monster_template_size = sizeof(monster_templates) / sizeof(monster_templates[0]);
+// monster_template_size removed — use monster_template_count() instead (implemented in Rust).
 
 bool monster_template_has_attributes(
     monster_template_t const *template,

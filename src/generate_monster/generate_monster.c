@@ -180,8 +180,8 @@ static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
                            ? randint(m_level[0])
                            : randint(m_level[max_monster_level]) + m_level[0];
 
-      if (monster_i >= monster_template_size) {
-        monster_i = monster_template_size - 1;
+      if (monster_i >= monster_template_count()) {
+        monster_i = monster_template_count() - 1;
       }
 
       monster_template_t const *template = &monster_templates[monster_i];
@@ -260,11 +260,11 @@ void monster_summon_by_name(long y, long x, char const * const name,
     if (i2 < 0) {
       i2 = 1;
     }
-    if (i2 >= monster_template_size) {
-      i2 = monster_template_size - 1;
+    if (i2 >= monster_template_count()) {
+      i2 = monster_template_count() - 1;
     }
 
-    if (i2 > 0 && i2 <= monster_template_size - 1) {
+    if (i2 > 0 && i2 <= monster_template_count() - 1) {
       /* summon by number */
       i1 = 0;
       do {
@@ -285,7 +285,7 @@ void monster_summon_by_name(long y, long x, char const * const name,
       } while (i1 <= 8);
     } else {
       /* find by name, then summon */
-      for (i2 = 1; i2 <= monster_template_size -1; i2++) {
+      for (i2 = 1; i2 <= monster_template_count() -1; i2++) {
         if (strstr(monster_templates[i2].name, monster) != NULL &&
             i1 != 10) {
           i1 = 0;

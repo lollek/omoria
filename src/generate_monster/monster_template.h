@@ -78,8 +78,9 @@ typedef struct monster_template {
 } monster_template_t;
 
 extern const monster_template_t monster_templates[];
-extern long const monster_template_size;
 extern long m_level[MAX_MONS_LEVEL + 1];
+
+long monster_template_count(void);
 
 bool monster_template_has_attribute(monster_template_t const *template,
                                        monster_attribute attribute);

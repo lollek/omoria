@@ -154,6 +154,12 @@ fn monster_attribute_from_c(attr: libc::c_int) -> Option<MonsterAttribute> {
 // C ABI exports
 // =============================================================================
 
+/// Return the number of monster templates.
+#[no_mangle]
+pub extern "C" fn monster_template_count() -> libc::c_long {
+    super::MONSTER_TEMPLATES.len() as libc::c_long
+}
+
 /// Check if a monster template has the given attribute.
 ///
 /// # Safety
@@ -270,5 +276,11 @@ mod tests {
         assert_eq!(monster_attribute_from_c(-1), None);
         assert_eq!(monster_attribute_from_c(42), None);
         assert_eq!(monster_attribute_from_c(100), None);
+    }
+
+    /// `monster_template_count()` returns the correct count via C ABI.
+    #[test]
+    fn monster_template_count_returns_correct_value() {
+        assert_eq!(monster_template_count(), 392);
     }
 }
