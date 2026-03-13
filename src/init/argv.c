@@ -2,7 +2,6 @@
 
 #include "../variables.h"
 #include "../death.h"
-#include "../highscore.h"
 #include "../wizard.h"
 
 #include "argv.h"
@@ -11,8 +10,6 @@ static void print_arg_usage(void) {
   printf("\n\r"
          "Usage: omoria [options...]\n"
          "  -w         Warn about hearing things in water.\n"
-         "  -s         List top 20 high scores.\n"
-         "  -t num     List <num> high scores after death or for -s.\n"
          "  -V         Print version info.\n"
          "\n"
          "\n");
@@ -42,21 +39,6 @@ bool init__argv(int argc, char *argv[]) {
       /* version info */
       print_version_info();
       return false;
-
-    case 's':
-      /* print the high scores */
-      C_highscore(max_score);
-      return false;
-
-    case 't':
-      /* number of scores to show */
-      if (--argc) {
-        sscanf((++argv)[0], "%ld", &max_score);
-      } else {
-        printf("Missing <num> for -t\n\r");
-        print_usage = true;
-      }
-      break;
 
     case 'w':
       /* warn about things in the water */

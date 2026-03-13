@@ -4,6 +4,7 @@ use std::fs;
 use crate::constants;
 use crate::io;
 use crate::logic::menu;
+use crate::master;
 use crate::player;
 use crate::term;
 
@@ -21,15 +22,16 @@ pub extern "C" fn pregame__menu_rs() {
     }
 }
 
-/**
- * main_menu() - Select character to load, or create new
- *
- * @returns
- * - Some(Character) to load a character
- * - None to create a new character
- */
+///
+/// Select character to load, or create new
+///
+/// Returns
+/// - `Some(Character)` to load a character
+/// - `None` to create a new character
+///
 fn main_menu() -> Option<Character> {
     print_banner();
+    show_highscore();
 
     let characters = load_characters();
     let char_names: Vec<&str> = characters.iter().map(|it| it.name.as_str()).collect();
@@ -89,6 +91,31 @@ fn print_banner() {
     );
 
     io::inkey_flush();
+    term::clear_screen();
+}
+
+fn show_highscore() {
+    let mut master = master::read_master().unwrap();
+    master.sort_unstable_by(|a, b| b.points.cmp(&a.points));
+    println!("Username     Points   Alive    Character name    Level  Race         Class");
+    println!("____________ ________ _____ ________________________ __ __________ ________________");
+
+    let lines = master.iter().map(|item| {
+        format!(
+            "{:<20}  Level {}  {:>10}  {:>12}  {:>5}  {:>9}",
+            item.character_name,
+            item.level,
+            item.race,
+            item.class,
+            if item.alive { "alive" } else { "dead" },
+            item.points,
+        )
+    }).collect::<Vec<String>>();
+    menu::draw_help_vec(
+        "Highscore",
+        &lines.iter().map(|s| s.as_str()).collect::<Vec<&str>>(),
+    );
+
     term::clear_screen();
 }
 
