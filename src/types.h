@@ -117,7 +117,7 @@ typedef struct monster_type {
   int16_t hp;     /* Hit points		*/
   int16_t csleep; /* Inactive counter	*/
   int16_t cdis;   /* Cur dis from player	*/
-  uint16_t mptr;  /* Pointer into creature	*/
+  uint16_t mptr;  /* monster template index	*/
   uint16_t nptr;  /* Pointer to next block	*/
   int8_t cspeed;  /* Movement speed	*/
 

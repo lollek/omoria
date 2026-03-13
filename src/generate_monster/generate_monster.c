@@ -52,21 +52,20 @@ static void generate_monster(obj_set alloc_set, const long number_of_monsters,
         monster_i = randint(m_level[dun_level]) + m_level[0];
       }
 
-      monster_template_t const *template = &monster_templates[monster_i];
-      if (monster_template_has_attribute(template, ma_unspawnable)) {
+      if (monster_template_has_attribute_at(monster_i, ma_unspawnable)) {
         continue;
       }
 
       bool ok_monster_found;
       if (!water_monster) {
         ok_monster_found =
-            monster_template_has_attribute(template, ma_land_based) ||
-            !monster_template_has_attribute(template,
-                                            ma_dies_in_wrong_element) ||
-            monster_template_has_attribute(template, ma_flying);
+            monster_template_has_attribute_at(monster_i, ma_land_based) ||
+            !monster_template_has_attribute_at(monster_i,
+                                              ma_dies_in_wrong_element) ||
+            monster_template_has_attribute_at(monster_i, ma_flying);
       } else {
         ok_monster_found =
-            monster_template_has_attribute(template, ma_water_based);
+            monster_template_has_attribute_at(monster_i, ma_water_based);
       }
 
       if (!ok_monster_found) {
@@ -185,12 +184,11 @@ static bool summon_monster(int64_t *y, int64_t *x, const bool is_asleep,
         monster_i = monster_template_count() - 1;
       }
 
-      monster_template_t const *template = &monster_templates[monster_i];
-      if (monster_template_has_attribute(template, ma_unspawnable)) {
+      if (monster_template_has_attribute_at(monster_i, ma_unspawnable)) {
         continue;
       }
 
-      if (!monster_template_has_attributes(template, monster_attributes)) {
+      if (!monster_template_has_attributes_at(monster_i, monster_attributes)) {
         continue;
       }
 

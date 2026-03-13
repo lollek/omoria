@@ -1692,8 +1692,6 @@ bool genocide(void) {
 
   if (get_com("Which type of creature do wish exterminated? ", &typ)) {
     do {
-      /* with m_list[i1]. do; */
-      /* with monster_templates[m_list[i1].mptr]. do; */
       const long i2 = m_list[i1].nptr;
       if (typ == monster_template_get_symbol(m_list[i1].mptr)) {
         if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
@@ -1852,7 +1850,6 @@ void za__yes_it_did(const long monptr, const long dmge,
   case SE_JOKE:
   case SE_DRAIN:
   case SE_HOLY_WORD:
-    /* with monster_templates[m_list[i1].mptr]. do; */
     if (mon_take_hit(monptr, randint(dmge)) > 0) {
       if (typ == SE_JOKE) {
         sprintf(out_val, "The %s dies laughing!", monster_template_get_name(mptr));
@@ -1880,12 +1877,11 @@ void za__yes_it_did(const long monptr, const long dmge,
     break;
   } /* end switch */
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 bool za__no_it_didnt(const long monptr, const long dmge, const long typ) {
   const obj_set some_stuff = {SE_SLEEP, SE_CONFUSE, SE_SPEED, SE_HOLD, SE_JOKE, 0};
   bool flag = false;
 
-  /* with m_list[i1]. do; */
   if (is_in(typ, some_stuff)) {
     char out_val[82];
     flag = true;
@@ -1905,7 +1901,7 @@ bool za__no_it_didnt(const long monptr, const long dmge, const long typ) {
 
   return flag;
 }
-/*//////////////////////////////////////////////////////////////////// */
+
 bool zap_area(const long cflag, const long dmge, const long typ) {
   bool flag = false;
 
@@ -2135,9 +2131,6 @@ bool light_line(const long dir, long y, long x, const long power) {
       }
 
       if (cave[y][x].cptr > 1) {
-        /* with m_list[cave[y][x].cptr]. do; */
-        /* with monster_templates[m_list[cave[y][x].cptr].mptr]. */
-        /* do; */
         if (!mon_resists(cave[y][x].cptr)) {
           if (0x0100 &
               monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) {
@@ -2252,12 +2245,9 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
   if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
     char str2[82];
     char str[82];
-    /* with cave[y][x]. do; */
     if (typ == SE_ILLUSION || typ == SE_JOKE) {
       fb__ill_joke(cave[y][x].cptr, typ, dam, str, str2);
     } else {
-      /* with m_list[cave[y][x].cptr]. do; */
-      /* with monster_templates[m_list[cave[y][x].cptr].mptr]. do; */
       const long cptr = cave[y][x].cptr;
       const long mptr = m_list[cptr].mptr;
       if (!mon_resists(cptr)) {
@@ -2286,9 +2276,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
   }
   return true;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 bool fire_ball(const enum spell_effect_t typ, const long dir, long y, long x,
                const long dam_hp, char const *const descrip) {
   /*{ Shoot a ball in a given direction.  Note that balls have an   }*/
@@ -2417,7 +2405,6 @@ bool poly_monster(const long dir, long y, long x) {
 
   do {
     if (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, false)) {
-      /* with cave[y][x]. do; */
       const long cptr = cave[y][x].cptr;
       if (!mon_save(cptr, 0, SC_NULL)) {
         if (!mon_resists(cptr)) {
@@ -2444,9 +2431,7 @@ bool poly_monster(const long dir, long y, long x) {
 
   return return_value;
 }
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
-/*//////////////////////////////////////////////////////////////////// */
+
 bool build_wall(const long dir, long y, long x) {
   /*{ Create a wall...                                      -RAK-   }*/
 
@@ -2865,9 +2850,6 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
   dist = 0;
 
   if (bolt_to_creature(dir, &y, &x, &dist, range, true)) {
-    /* with cave[y,x] do; */
-    /* with m_list[cptr] do; */
-    /* with monster_templates[mptr] do; */
     const long cptr = cave[y][x].cptr;
     const long mptr = m_list[cptr].mptr;
 
@@ -2904,9 +2886,6 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
   get_flags(typ, &weapon_type, &harm_type, &dummy);
   dist = 0;
   while (bolt_to_creature(dir, &y, &x, &dist, OBJ_BOLT_RANGE, true)) {
-    /* with cave[y,x] do; */
-    /* with m_list[cptr] do; */
-    /* with monster_templates[mptr] do; */
     const long cptr = cave[y][x].cptr;
     const long mptr = m_list[cptr].mptr;
     if (!mon_resists(cptr)) {

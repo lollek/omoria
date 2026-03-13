@@ -941,8 +941,6 @@ static void c__make_attack(const long monptr) {
 static bool c__make_move(const long monster_cptr, mm_type mm,
                          long *hear_count) {
   uint16_t const monster_mptr = m_list[monster_cptr].mptr;
-  monster_template_t const *const monster_template =
-      &monster_templates[monster_mptr];
 
   long i1 = 1;
   bool flag = false;
@@ -970,21 +968,21 @@ static bool c__make_move(const long monster_cptr, mm_type mm,
     } else if (cave[newy][newx].fopen) {
       // Open floor, open door, or secret door that has been opened
       if (is_in(cave[newy][newx].fval, floor_set)) {
-        if (!monster_template_has_attribute(monster_template,
-                                            ma_dies_in_wrong_element)) {
+        if (!monster_template_has_attribute_at(monster_mptr,
+                                               ma_dies_in_wrong_element)) {
           can_make_a_move = true;
         } else if (!xor(is_in(cave[newy][newx].fval, earth_set),
-                        monster_template_has_attribute(monster_template,
-                                                       ma_land_based))) {
+                        monster_template_has_attribute_at(monster_mptr,
+                                                         ma_land_based))) {
           can_make_a_move = true;
         }
       }
-    } else if (monster_template_has_attribute(monster_template,
-                                              ma_moves_through_wall)) {
+    } else if (monster_template_has_attribute_at(monster_mptr,
+                                                ma_moves_through_wall)) {
       can_make_a_move = true;
     } else if (target_tptr > 0) {
-      if (monster_template_has_attribute(monster_template,
-                                         ma_moves_through_door)) {
+      if (monster_template_has_attribute_at(monster_mptr,
+                                           ma_moves_through_door)) {
         // Creature can open doors
         switch (t_list[target_tptr].tval) {
         case closed_door: {
@@ -1139,8 +1137,8 @@ static bool c__make_move(const long monster_cptr, mm_type mm,
         const bool target_is_not_self = (newy != m_list[monster_cptr].fy ||
                                          newx != m_list[monster_cptr].fx);
         if (target_cptr > 1 && target_is_not_self) {
-          if (monster_template_has_attribute(monster_template,
-                                             ma_moves_through_creatures)) {
+          if (monster_template_has_attribute_at(monster_mptr,
+                                               ma_moves_through_creatures)) {
             c__monster_devour_monster(monster_cptr, target_cptr);
           } else {
             can_make_a_move = false;
@@ -1152,7 +1150,7 @@ static bool c__make_move(const long monster_cptr, mm_type mm,
     /*{ Creature has been allowed move...     }*/
     if (can_make_a_move) {
       /*{ Pick up or eat an object              }*/
-      if (monster_template_has_attribute(monster_template, ma_picks_up_objects)) {
+      if (monster_template_has_attribute_at(monster_mptr, ma_picks_up_objects)) {
         const uint8_t tptr = target_tptr;
         if (tptr > 0 && t_list[tptr].tval < valuable_metal) {
           delete_object(newy, newx);
