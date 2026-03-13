@@ -502,8 +502,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                 }
 
                 if ((harm_type &
-                     monster_templates[m_list[cave[i1][i2].cptr].mptr]
-                         .cdefense) != 0) {
+                     monster_template_get_cdefense(m_list[cave[i1][i2].cptr].mptr)) != 0) {
                   dam *= 2;
                 } else if ((weapon_type &
                             monster_template_get_spells_raw(m_list[cave[i1][i2].cptr].mptr)) != 0) {
@@ -518,8 +517,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                     tkill++;
                   } else {
                     if (panel_contains(i1, i2)) {
-                      print(monster_templates[m_list[cave[i1][i2].cptr].mptr]
-                                .symbol,
+                      print(monster_template_get_symbol(m_list[cave[i1][i2].cptr].mptr),
                             i1, i2);
                       m_list[cave[i1][i2].cptr].is_seen = true;
                     }
@@ -595,9 +593,7 @@ bool mon_save(const long a_cptr, long bonus,
 
   const long mon_level = monster_template_get_level(m_list[a_cptr].mptr);
 
-  /* with m_list[a_cptr] do; */
-  /* with monster_templates[mptr] do; */
-  if ((0x1000 & monster_templates[m_list[a_cptr].mptr].cdefense) != 0) {
+  if (monster_template_has_attribute_at(m_list[a_cptr].mptr, ma_uncharmable)) {
     switch (spell_class) {
     case SC_HOLD:
       bonus += 4;
@@ -788,17 +784,9 @@ bool breath(const enum spell_effect_t typ, const long y, const long x,
       }
 
       if (cave[i1][i2].cptr > 1) {
-        /* with */
-        /* m_list[cave[i1][i2].cptr].
-         */
-        /* do; */
-        /* with */
-        /* monster_templates[m_list[cave[i1][i2].cptr].mptr].
-         */
-        /* do; */
         dam = dam_hp;
         if ((harm_type &
-             monster_templates[m_list[cave[i1][i2].cptr].mptr].cdefense) != 0) {
+             monster_template_get_cdefense(m_list[cave[i1][i2].cptr].mptr)) != 0) {
           dam *= 2;
         } else if ((weapon_type &
                     monster_template_get_spells_raw(m_list[cave[i1][i2].cptr].mptr)) != 0) {
@@ -812,7 +800,7 @@ bool breath(const enum spell_effect_t typ, const long y, const long x,
         if (m_list[cave[i1][i2].cptr].hp < 0) {
           monster_death(
               m_list[cave[i1][i2].cptr].fy, m_list[cave[i1][i2].cptr].fx,
-              monster_templates[m_list[cave[i1][i2].cptr].mptr].cmove);
+              monster_template_get_cmove(m_list[cave[i1][i2].cptr].mptr));
           delete_monster(cave[i1][i2].cptr);
         }
       } else if (cave[i1][i2].cptr == 1) {
@@ -1034,13 +1022,13 @@ bool detect_creatures(const enum spell_effect_t typ) {
 
       switch (typ) {
       case SE_EVIL:
-        found = (0x0004 & monster_templates[m_list[monster_i].mptr].cdefense) != 0;
+        found = monster_template_has_attribute_at(m_list[monster_i].mptr, ma_evil);
         break;
       case SE_MONSTER:
-        found = (0x10000 & monster_templates[m_list[monster_i].mptr].cmove) == 0;
+        found = !monster_template_has_attribute_at(m_list[monster_i].mptr, ma_invisible_movement);
         break;
       case SE_INVISIBLE:
-        found = (0x10000 & monster_templates[m_list[monster_i].mptr].cmove) != 0;
+        found = monster_template_has_attribute_at(m_list[monster_i].mptr, ma_invisible_movement);
         break;
       default:
         MSG(("Unknown typ in detect_creatures"));
@@ -1661,11 +1649,9 @@ bool mass_genocide(void) {
 
   long i1 = muptr; /* what happens if there are no monsters in the world? */
   do {
-    /* with m_list[i1]. do; */
-    /* with monster_templates[m_list[i1].mptr]. do; */
     const long i2 = m_list[i1].nptr;
     if (m_list[i1].cdis <= MAX_SIGHT) {
-      if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
+      if (!monster_template_has_attribute_at(m_list[i1].mptr, ma_wins_the_game) &&
           !mon_resists(i1)) {
         delete_monster(i1);
         flag = true;
@@ -1692,7 +1678,7 @@ bool genocide(void) {
     do {
       const long i2 = m_list[i1].nptr;
       if (typ == monster_template_get_symbol(m_list[i1].mptr)) {
-        if ((monster_templates[m_list[i1].mptr].cmove & 0x80000000) == 0 &&
+        if (!monster_template_has_attribute_at(m_list[i1].mptr, ma_wins_the_game) &&
             !mon_resists(i1)) {
           delete_monster(i1);
         } else {
@@ -1793,15 +1779,15 @@ bool za__did_it_work(const long monptr, const long cflag, const long dmge,
     break;
 
   case SE_TURN:
-    hmm = (monster_templates[m_list[monptr].mptr].cdefense & 0x0008) != 0;
+    hmm = monster_template_has_attribute_at(m_list[monptr].mptr, ma_undead);
     break;
 
   case SE_DRAIN:
-    hmm = (monster_templates[m_list[monptr].mptr].cdefense & 0x0008) == 0;
+    hmm = !monster_template_has_attribute_at(m_list[monptr].mptr, ma_undead);
     break;
 
   case SE_HP:
-    hmm = (monster_templates[m_list[monptr].mptr].cdefense & cflag) != 0;
+    hmm = (monster_template_get_cdefense(m_list[monptr].mptr) & cflag) != 0;
     break;
 
   default:
@@ -2090,7 +2076,7 @@ bool mass_poly(void) {
     const long i2 = m_list[i1].nptr;
     if (m_list[i1].cdis < MAX_SIGHT) {
       /* with monster_templates[m_list[i1].mptr]. do; */
-      if ((monster_templates[m_list[i1].mptr].cdefense & 0x80000000) == 0 &&
+      if ((monster_template_get_cdefense(m_list[i1].mptr) & 0x80000000) == 0 &&
           !mon_resists(i1)) {
         const long y = m_list[i1].fy;
         const long x = m_list[i1].fx;
@@ -2131,7 +2117,7 @@ bool light_line(const long dir, long y, long x, const long power) {
       if (cave[y][x].cptr > 1) {
         if (!mon_resists(cave[y][x].cptr)) {
           if (0x0100 &
-              monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) {
+              monster_template_get_cdefense(m_list[cave[y][x].cptr].mptr)) {
             char out_val[82];
 
             sprintf(out_val, "The %s wails out in pain!",
@@ -2255,7 +2241,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
         find_monster_name(str2, cptr, true);
         sprintf(out_val, "The %s strikes %s.", bolt_typ, str);
         msg_print(out_val);
-        if ((harm_type & monster_templates[mptr].cdefense) != 0) {
+        if ((harm_type & monster_template_get_cdefense(mptr)) != 0) {
           dam *= 2;
         } else if ((weapon_type & monster_template_get_spells_raw(mptr)) != 0) {
           dam /= 4;
@@ -2336,7 +2322,7 @@ bool wall_to_mud(const long dir, long y, long x) {
       if (cptr > 1) {
 
         if ((0x0200 &
-             monster_templates[m_list[cave[y][x].cptr].mptr].cdefense) != 0) {
+             monster_template_get_cdefense(m_list[cave[y][x].cptr].mptr)) != 0) {
           const long i1 = mon_take_hit(cptr, 100);
           flag = true;
           if (m_list[cptr].is_seen) {
@@ -2558,7 +2544,7 @@ static bool zm__did_it_work(const enum spell_effect_t zaptype,
     break;
 
   case SE_DRAIN:
-    flag = (monster_templates[m_list[cptr].mptr].cdefense & 0x0008) == 0 &&
+    flag = !monster_template_has_attribute_at(m_list[cptr].mptr, ma_undead) &&
            !mon_resists(cptr);
     break;
 
@@ -2891,7 +2877,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
       sprintf(out_val, "The %s strikes the %s.", descrip,
               monster_template_get_name(mptr));
       msg_print(out_val);
-      if ((harm_type & monster_templates[mptr].cdefense) != 0) {
+      if ((harm_type & monster_template_get_cdefense(mptr)) != 0) {
         dam_hp *= 2;
       } else if ((weapon_type & monster_template_get_spells_raw(mptr)) != 0) {
         dam_hp /= 4;

@@ -459,9 +459,9 @@ chtype loc_symbol(const long y, const long x) {
       if (m_list[cptr].is_seen &&
           (!is_in(fval, water_set) ||
            (is_in(fval, water_set) &&
-            ((monster_templates[mptr].cmove & 0x00800000) != 0 ||
+            (monster_template_has_attribute_at(mptr, ma_flying) ||
              distance(char_row, char_col, y, x) <= 5))) &&
-          ((monster_templates[mptr].cmove & 0x00010000) == 0 ||
+          (!monster_template_has_attribute_at(mptr, ma_invisible_movement) ||
            player_flags.see_inv)) {
         sym = monster_template_get_symbol(mptr);
       } else if (tptr > 0) {
@@ -1935,7 +1935,7 @@ void find_monster_name(char m_name[82], const long ptr,
   const long i2 = m_list[ptr].mptr;
 
   /*{ Does the player know what he's fighting?      }*/
-  if (((0x10000 & monster_templates[i2].cmove) != 0 &&
+  if ((monster_template_has_attribute_at(i2, ma_invisible_movement) &&
        !player_flags.see_inv) ||
       player_flags.blind > 0 || !m_list[ptr].is_seen) {
     if (begin_sentence) {

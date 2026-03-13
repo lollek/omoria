@@ -100,6 +100,11 @@ uint8_t monster_template_spell_frequency(long index);
 bool monster_template_spell_frequency_is_inverted(long index);
 uint32_t monster_template_spell_choice_bits(long index);
 
+uint64_t monster_template_get_cmove(long index);
+uint64_t monster_template_get_cdefense(long index);
+uint8_t monster_template_movement_speed(long index);
+uint8_t monster_template_swimming_level(long index);
+
 bool monster_template_has_attribute_at(long index, monster_attribute attribute);
 bool monster_template_has_attributes_at(
     long index, monster_attribute const *const *monster_attributes);

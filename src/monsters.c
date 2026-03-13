@@ -124,7 +124,7 @@ long mon_take_hit(const long monptr, const long dam) {
     long i1 = 0;
 
     monster_death(m_list[monptr].fy, m_list[monptr].fx,
-                  monster_templates[m_list[monptr].mptr].cmove);
+                  monster_template_get_cmove(m_list[monptr].mptr));
 
     if (m_list[monptr].mptr == player_cur_quest && player_flags.quested) {
       player_flags.quested = false;
@@ -135,7 +135,7 @@ long mon_take_hit(const long monptr, const long dam) {
     }
 
     const long mon_mexp = monster_template_get_mexp(m_list[monptr].mptr);
-    if ((monster_templates[m_list[monptr].mptr].cmove & 0x00004000) == 0 &&
+    if (!monster_template_has_attribute_at(m_list[monptr].mptr, ma_good_monster) &&
         mon_mexp > 0) {
 
       const float acc_tmp = mon_mexp *

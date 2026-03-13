@@ -105,9 +105,7 @@ void place_monster(const long y, const long x, const long template,
   m_list[cur_pos].nptr = muptr;
   muptr = cur_pos;
 
-  monster_template_t const *monster = &monster_templates[template];
-
-  if ((monster->cdefense & 0x4000) != 0) {
+  if (monster_template_has_attribute_at(template, ma_max_hit_points)) {
     m_list[cur_pos].hp = max_hp(monster_template_get_hit_die(template));
   } else {
     m_list[cur_pos].hp = damroll(monster_template_get_hit_die(template));
@@ -330,7 +328,7 @@ void multiply_monster(const long y, const long x, const long template,
         if (cave[new_y][new_x].tptr == 0 && cave[new_y][new_x].cptr != 1) {
           if (cave[new_y][new_x].cptr > 1) { /* { Creature there already?  }*/
             /*{ Some critters are * canabalistic!       }*/
-            if ((monster_templates[template].cmove & 0x00080000) != 0) {
+            if (monster_template_has_attribute_at(template, ma_moves_through_creatures)) {
               delete_monster(cave[new_y][new_x].cptr);
               place_monster(new_y, new_x, template, is_asleep);
               check_mon_lite(new_y, new_x);
