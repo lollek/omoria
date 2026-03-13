@@ -221,7 +221,7 @@ void equip_item_screen(long *scr_state, bool *valid_flag) {
       break;
     }
 
-    if (!C_class_can_use_item(player_pclass, &selected_item->data)) {
+    if (!class_can_use_item(player_pclass, &selected_item->data)) {
       msg_print("You cannot wear that item type!");
       return;
     }

@@ -221,12 +221,3 @@ void delete_monster(const long cptr) {
 
   LEAVE("delete_monster", "c");
 }
-
-// TODO: Can this be removed, since monster_template_get_name never returns NULL?
-char const * get_monster_name(const long mptr) {
-  if (mptr > 0) {
-    return monster_template_get_name(m_list[mptr].mptr);
-  } else {
-    return "monster";
-  }
-}

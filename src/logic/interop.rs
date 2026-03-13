@@ -3,7 +3,7 @@ use crate::logic::use_item;
 use crate::model::Item;
 
 #[no_mangle]
-pub extern "C" fn C_class_can_use_item(class: libc::c_int, item: *const Item) -> bool {
+pub extern "C" fn class_can_use_item(class: libc::c_int, item: *const Item) -> bool {
     use_item::class_can_use_item(
         &conversion::class::from_usize(class as usize).unwrap(),
         unsafe { &*item })
