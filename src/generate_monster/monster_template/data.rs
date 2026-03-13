@@ -1,16 +1,35 @@
 //! Static monster template data.
 //!
-//! This module contains the `MONSTER_TEMPLATES` array ported from
-//! `monster_template.c`.
+//! This module contains the `MONSTER_TEMPLATES` array, organized into thematic
+//! zones by dungeon depth.
+//!
+//! ## Zones
+//!
+//! | Zone | Levels | Tone | Indices |
+//! |------|--------|------|---------|
+//! | Town | 0 | Worn down sanctuary | 0–18 |
+//! | Shallows | 1–5 | Corruption spreading | 19–88 |
+//! | Gothic | 6–12 | Gothic horror | 89–158 |
+//! | Demonic | 13–20 | Demonic invasion | 159–232 |
+//! | Hellscape | 21–30 | The burning deep | 233–301 |
+//! | Abyss | 31–40 | Eldritch cosmic horror | 302–376 |
+//! | Endgame | 42–100 | Apex predators | 377–391 |
 
 use super::MonsterTemplate;
 
 /// Static array of all monster templates.
 ///
-/// Ported from C `monster_templates[]` in `monster_template.c`.
 /// Order and indices must match exactly for C interop.
 pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
-    // Level 0
+// =============================================================================
+// Zone: Town (Level 0) — Worn down sanctuary
+//
+// A worn down settlement clinging to existence. 
+// Town Guards keep an uneasy order.
+//
+// 19 creatures (indices 0–18)
+// =============================================================================
+    // Level 0 - Town level
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 1,
@@ -86,7 +105,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 20,
-        name: "Goldfish",
+        name: "Pond Fish",
         cmove: 0x00004054,
         spells: 0x00000000,
         cdefense: 0x00F0,
@@ -158,7 +177,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 10,
-        name: "Stray Kitten",
+        name: "Mangy Cat",
         cmove: 0x00004348,
         spells: 0x00000000,
         cdefense: 0x20F0,
@@ -353,11 +372,20 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
+// =============================================================================
+// Zone: Shallows (Levels 1–5) — Corruption spreading
+//
+// The upper dungeon festers with the first signs of demonic taint. Fallen ones
+// (once-kobolds), wretched imps, blight crawlers, and plague-carrying vermin
+// infest these tunnels. Corrupt humanoids and twisted fungi block the way.
+//
+// 70 creatures (indices 19–88)
+// =============================================================================
     // Level 1
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 5,
-        name: "Brown Imp",
+        name: "Wretched Imp",
         cmove: 0x00000204,
         spells: 0x00000000,
         cdefense: 0x00F6,
@@ -375,7 +403,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Mimic",
+        name: "Lesser Mimic",
         cmove: 0x00000041,
         spells: 0x00000028,
         cdefense: 0x0000,
@@ -393,7 +421,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Grey Mushroom patch",
+        name: "Blight Fungus",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -411,7 +439,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 12,
-        name: "Giant Yellow Centipede",
+        name: "Blight Crawler",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -429,7 +457,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 7,
         ac: 10,
-        name: "Giant White Centipede",
+        name: "Pale Crawler",
         cmove: 0x00000042,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -447,7 +475,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 4,
-        name: "White Rat-Man",
+        name: "Plague Ratkin",
         cmove: 0x00000202,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -465,7 +493,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 35,
-        name: "Large Brown Snake",
+        name: "Brown Pit Viper",
         cmove: 0x00000142,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -483,7 +511,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 30,
-        name: "Large White Snake",
+        name: "Pale Pit Viper",
         cmove: 0x00000144,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -501,7 +529,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 16,
-        name: "Kobold",
+        name: "Fallen One",
         cmove: 0x07020200,
         spells: 0x00000000,
         cdefense: 0x2032,
@@ -519,7 +547,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 1,
-        name: "White Worm mass",
+        name: "Writhing Grubs",
         cmove: 0x00000148,
         spells: 0x00000000,
         cdefense: 0x01B0,
@@ -537,7 +565,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 6,
-        name: "Floating Eye",
+        name: "Watcher Eye",
         cmove: 0x00800000,
         spells: 0x0001000D,
         cdefense: 0x2102,
@@ -556,7 +584,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 5,
-        name: "Black Imp",
+        name: "Dark Imp",
         cmove: 0x00000204,
         spells: 0x00000000,
         cdefense: 0x00F6,
@@ -574,7 +602,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Shrieker Mushroom patch",
+        name: "Shrieking Fungus",
         cmove: 0x00000000,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -592,7 +620,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 4,
-        name: "Metallic Green Centipede",
+        name: "Verdigris Crawler",
         cmove: 0x00000144,
         spells: 0x00000000,
         cdefense: 0x0000,
@@ -610,7 +638,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 1,
         ac: 1,
-        name: "Glowing Chartreuse Potion",
+        name: "Venom Flask",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x11F2,
@@ -628,7 +656,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 16,
-        name: "Novice Bard",
+        name: "Corrupt Minstrel",
         cmove: 0x07020200,
         spells: 0x0000040C,
         cdefense: 0x2070,
@@ -646,7 +674,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 16,
-        name: "Novice Warrior",
+        name: "Dark Militia",
         cmove: 0x07020200,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -664,7 +692,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 12,
-        name: "Novice Rogue",
+        name: "Corrupt Rogue",
         cmove: 0x07020200,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -682,7 +710,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 10,
-        name: "Novice Priest",
+        name: "Fallen Acolyte",
         cmove: 0x07020200,
         spells: 0x0000108C,
         cdefense: 0x2070,
@@ -700,7 +728,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 6,
-        name: "Novice Mage",
+        name: "Corrupt Apprentice",
         cmove: 0x07020200,
         spells: 0x0000089C,
         cdefense: 0x2070,
@@ -718,7 +746,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Yellow Mushroom patch",
+        name: "Toxic Fungus",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -736,7 +764,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "White Jelly",
+        name: "Pale Ooze",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x01A0,
@@ -754,7 +782,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 8,
-        name: "Giant Green Frog",
+        name: "Marsh Lurker",
         cmove: 0x00001212,
         spells: 0x00000000,
         cdefense: 0x0082,
@@ -772,7 +800,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 20,
-        name: "Giant Black Ant",
+        name: "Burrowing Scarab",
         cmove: 0x00000142,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -790,7 +818,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 16,
-        name: "White Harpy",
+        name: "Carrion Harpy",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -808,7 +836,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 14,
-        name: "Blue Yeek",
+        name: "Fallen Grunt",
         cmove: 0x07020240,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -826,7 +854,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 7,
         ac: 3,
-        name: "Green Worm mass",
+        name: "Plague Grubs",
         cmove: 0x00000148,
         spells: 0x00000000,
         cdefense: 0x01B0,
@@ -844,7 +872,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 38,
-        name: "Large Black Snake",
+        name: "Black Pit Viper",
         cmove: 0x00000142,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -862,7 +890,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 10,
-        name: "Giant Kelp",
+        name: "Strangling Kelp",
         cmove: 0x00400012,
         spells: 0x00000000,
         cdefense: 0x1030,
@@ -881,7 +909,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 10,
-        name: "Fire Imp",
+        name: "Ember Imp",
         cmove: 0x00000208,
         spells: 0x00000000,
         cdefense: 0x00D6,
@@ -917,7 +945,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 6,
-        name: "Metallic Blue Centipede",
+        name: "Azure Crawler",
         cmove: 0x00000144,
         spells: 0x00000000,
         cdefense: 0x0000,
@@ -935,7 +963,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 1,
         ac: 1,
-        name: "Scroll Titled \\\"taf naed\\",
+        name: "Cursed Scroll",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x1010,
@@ -953,7 +981,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 40,
-        name: "Black Naga",
+        name: "Shadow Naga",
         cmove: 0x07100302,
         spells: 0x00000000,
         cdefense: 0x20E6,
@@ -971,7 +999,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Spotted Mushroom patch",
+        name: "Blighted Fungus",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -989,7 +1017,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Yellow Jelly",
+        name: "Bile Ooze",
         cmove: 0x0B000040,
         spells: 0x0001000F,
         cdefense: 0x01A0,
@@ -1007,7 +1035,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 8,
-        name: "Scruffy looking Hobbit",
+        name: "Wretched Halfling",
         cmove: 0x05020200,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -1025,7 +1053,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 12,
-        name: "Huge Brown Bat",
+        name: "Dusk Bat",
         cmove: 0x00800308,
         spells: 0x00000000,
         cdefense: 0x2160,
@@ -1043,7 +1071,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 16,
-        name: "Giant White Ant",
+        name: "Bone Scarab",
         cmove: 0x00000140,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -1061,7 +1089,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 10,
-        name: "Yellow Mold",
+        name: "Bile Mold",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -1079,7 +1107,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 9,
-        name: "Metallic Red Centipede",
+        name: "Crimson Crawler",
         cmove: 0x00000142,
         spells: 0x00000000,
         cdefense: 0x0092,
@@ -1097,7 +1125,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 7,
         ac: 4,
-        name: "Yellow Worm mass",
+        name: "Bile Grubs",
         cmove: 0x00000148,
         spells: 0x00000000,
         cdefense: 0x01B0,
@@ -1115,7 +1143,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 40,
-        name: "Large Grey Snake",
+        name: "Ashen Viper",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -1133,7 +1161,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 6,
-        name: "Radiation Eye",
+        name: "Blighted Eye",
         cmove: 0x00800300,
         spells: 0x0001000B,
         cdefense: 0x2102,
@@ -1151,7 +1179,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 22,
-        name: "Drooling Harpy",
+        name: "Shrieking Harpy",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -1170,7 +1198,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 10,
-        name: "Ice Imp",
+        name: "Frost Imp",
         cmove: 0x00000204,
         spells: 0x00000000,
         cdefense: 0x00E6,
@@ -1188,7 +1216,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 5,
-        name: "Silver Rat-Man",
+        name: "Pale Ratkin",
         cmove: 0x00000202,
         spells: 0x00000000,
         cdefense: 0x2072,
@@ -1206,7 +1234,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 10,
-        name: "Pirhana",
+        name: "Blood Piranha",
         cmove: 0x00000050,
         spells: 0x00000000,
         cdefense: 0x00F0,
@@ -1224,7 +1252,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Black Mushroom patch",
+        name: "Death Cap Fungus",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -1242,7 +1270,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Blue Jelly",
+        name: "Frost Ooze",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x01A0,
@@ -1260,7 +1288,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 3,
         ac: 24,
-        name: "Creeping Copper Coins",
+        name: "Cursed Coppers",
         cmove: 0x06000300,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -1278,7 +1306,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 7,
-        name: "Giant White Rat",
+        name: "Plague Rat",
         cmove: 0x00000202,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -1296,7 +1324,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 20,
-        name: "Giant Black Centipede",
+        name: "Shadow Crawler",
         cmove: 0x00000248,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -1314,7 +1342,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 20,
-        name: "Giant Blue Centipede",
+        name: "Storm Crawler",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -1332,7 +1360,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 7,
         ac: 12,
-        name: "Blue Worm mass",
+        name: "Frost Grubs",
         cmove: 0x00000248,
         spells: 0x00000000,
         cdefense: 0x01B0,
@@ -1350,7 +1378,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 41,
-        name: "Large Grey Snake",
+        name: "Ash Viper",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -1368,7 +1396,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 16,
-        name: "Jackal",
+        name: "Dire Jackal",
         cmove: 0x00000204,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -1387,7 +1415,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Green Naga",
+        name: "Venom Naga",
         cmove: 0x07100302,
         spells: 0x00000000,
         cdefense: 0x2066,
@@ -1405,7 +1433,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 20,
-        name: "Green Glutton Ghost",
+        name: "Glutton Wraith",
         cmove: 0x0F950300,
         spells: 0x0000003F,
         cdefense: 0x100C,
@@ -1423,7 +1451,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "White Mushroom patch",
+        name: "Corpse Fungus",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -1441,7 +1469,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Green Jelly",
+        name: "Toxic Ooze",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x01A0,
@@ -1459,7 +1487,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 26,
-        name: "Skeleton Kobold",
+        name: "Fallen Bones",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x000C,
@@ -1477,7 +1505,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 25,
-        name: "Silver Jelly",
+        name: "Quicksilver Ooze",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -1495,7 +1523,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 18,
-        name: "Giant Warty Frog",
+        name: "Marsh Stalker",
         cmove: 0x00000312,
         spells: 0x00000000,
         cdefense: 0x00A2,
@@ -1513,7 +1541,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 10,
-        name: "Disenchanter Eye",
+        name: "Nullifying Eye",
         cmove: 0x00800303,
         spells: 0x00010009,
         cdefense: 0x2102,
@@ -1531,7 +1559,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 16,
-        name: "Black Yeek",
+        name: "Fallen Savage",
         cmove: 0x07020240,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -1549,7 +1577,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 7,
         ac: 12,
-        name: "Red Worm mass",
+        name: "Blood Grubs",
         cmove: 0x00000148,
         spells: 0x00000000,
         cdefense: 0x21B0,
@@ -1567,7 +1595,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 16,
-        name: "Giant House Fly",
+        name: "Carrion Fly",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x0062,
@@ -1585,7 +1613,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 20,
-        name: "Copperhead Snake",
+        name: "Copperhead Viper",
         cmove: 0x00000244,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -1603,7 +1631,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 30,
-        name: "Rot Jelly",
+        name: "Festering Ooze",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -1618,11 +1646,20 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
+// =============================================================================
+// Zone: Gothic (Levels 6–12) — Gothic horror
+//
+// Deeper corridors echo with the moans of the undead. Blood raiders (orc-kind)
+// patrol in packs. Phase hounds blink through walls. Haunted blades drift
+// through the air. Dark priests and corrupt minstrels serve powers below.
+//
+// 70 creatures (indices 89–158)
+// =============================================================================
     // Level 6
     MonsterTemplate {
         area_effect_radius: 35,
         ac: 80,
-        name: "Swirling Red Vapor",
+        name: "Crimson Wisp",
         cmove: 0x00800308,
         spells: 0x00000000,
         cdefense: 0x1100,
@@ -1640,7 +1677,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 16,
-        name: "Blink Dog",
+        name: "Phase Hound",
         cmove: 0x00000304,
         spells: 0x00000013,
         cdefense: 0x2030,
@@ -1658,7 +1695,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Purple Mushroom patch",
+        name: "Nethercap Fungus",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -1676,7 +1713,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 12,
-        name: "Brown Mold",
+        name: "Rot Mold",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -1694,7 +1731,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 15,
-        name: "Giant Brown Bat",
+        name: "Dusk Wing",
         cmove: 0x00800306,
         spells: 0x00000000,
         cdefense: 0x2160,
@@ -1712,7 +1749,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 30,
-        name: "Creeping Silver Coins",
+        name: "Cursed Silver",
         cmove: 0x0A000300,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -1730,7 +1767,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 32,
-        name: "Orc",
+        name: "Blood Raider",
         cmove: 0x0B020200,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -1748,7 +1785,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 20,
-        name: "Grey Harpy",
+        name: "Ashen Harpy",
         cmove: 0x00800310,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -1766,7 +1803,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 24,
-        name: "Rattlesnake",
+        name: "Venom Rattler",
         cmove: 0x00000244,
         spells: 0x00000000,
         cdefense: 0x00B0,
@@ -1803,7 +1840,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Red Naga",
+        name: "Blood Naga",
         cmove: 0x07100302,
         spells: 0x00000000,
         cdefense: 0x20E6,
@@ -1821,7 +1858,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Red Jelly",
+        name: "Blood Ooze",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x01A0,
@@ -1839,7 +1876,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 16,
-        name: "Giant Red Frog",
+        name: "Crimson Toad",
         cmove: 0x00000312,
         spells: 0x00000000,
         cdefense: 0x00A2,
@@ -1857,7 +1894,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 14,
-        name: "Zombie Kobold",
+        name: "Fallen Zombie",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x002E,
@@ -1911,7 +1948,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 14,
-        name: "Greedy little Gnome",
+        name: "Thieving Gnome",
         cmove: 0x0B020240,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -1929,7 +1966,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 14,
-        name: "Giant Green Fly",
+        name: "Plague Fly",
         cmove: 0x00800308,
         spells: 0x00000000,
         cdefense: 0x0062,
@@ -1948,7 +1985,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 25,
-        name: "Red Faerie Dragon",
+        name: "Ember Drake",
         cmove: 0x11820302,
         spells: 0x00008496,
         cdefense: 0x4001,
@@ -1966,7 +2003,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 18,
-        name: "Brown Yeek",
+        name: "Fallen Marauder",
         cmove: 0x07020240,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -1984,7 +2021,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 14,
-        name: "Green Mold",
+        name: "Blight Mold",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -2002,7 +2039,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 36,
-        name: "Skeleton Orc",
+        name: "Raider Bones",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x100C,
@@ -2020,7 +2057,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 26,
-        name: "Seedy looking Human",
+        name: "Shady Drifter",
         cmove: 0x13020200,
         spells: 0x00000000,
         cdefense: 0x2034,
@@ -2057,7 +2094,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 25,
-        name: "Giant Squid",
+        name: "Kraken Spawn",
         cmove: 0x00000250,
         spells: 0x00000000,
         cdefense: 0x0042,
@@ -2093,7 +2130,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 12,
-        name: "Giant Grey Rat",
+        name: "Grey Plague Rat",
         cmove: 0x00000202,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -2111,7 +2148,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 22,
-        name: "Black Harpy",
+        name: "Night Harpy",
         cmove: 0x00800302,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -2129,7 +2166,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 18,
-        name: "Giant Black Bat",
+        name: "Shadow Bat",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2060,
@@ -2147,7 +2184,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 24,
-        name: "Clear Yeek",
+        name: "Phantom Fallen",
         cmove: 0x07030240,
         spells: 0x00000000,
         cdefense: 0x0030,
@@ -2165,7 +2202,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 15,
-        name: "Orc Shaman",
+        name: "Raider Shaman",
         cmove: 0x0B020200,
         spells: 0x00008085,
         cdefense: 0x2036,
@@ -2183,7 +2220,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 34,
-        name: "Giant Red Ant",
+        name: "Fire Scarab",
         cmove: 0x00000140,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -2220,7 +2257,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 1,
-        name: "Clear Mushroom patch",
+        name: "Phantom Fungus",
         cmove: 0x00010040,
         spells: 0x00000000,
         cdefense: 0x00A0,
@@ -2238,7 +2275,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 40,
-        name: "Giant White Tick",
+        name: "Bloat Tick",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0022,
@@ -2256,7 +2293,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 15,
-        name: "Hairy Mold",
+        name: "Creeping Mold",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -2274,7 +2311,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 20,
-        name: "Disenchanter Mold",
+        name: "Nullifying Mold",
         cmove: 0x0B000040,
         spells: 0x0001000B,
         cdefense: 0x10A0,
@@ -2292,7 +2329,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 26,
-        name: "Giant Red Centipede",
+        name: "Fire Crawler",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0082,
@@ -2310,7 +2347,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 36,
-        name: "Creeping Gold Coins",
+        name: "Cursed Gold",
         cmove: 0x0E000300,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -2328,7 +2365,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 14,
-        name: "Giant Fruit Fly",
+        name: "Swarm Fly",
         cmove: 0x00800308,
         spells: 0x00000000,
         cdefense: 0x0062,
@@ -2346,7 +2383,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 85,
-        name: "Swirling Blue Vapor",
+        name: "Frost Wisp",
         cmove: 0x00800308,
         spells: 0x80C80001,
         cdefense: 0x1000,
@@ -2382,7 +2419,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 5,
-        name: "Nymph",
+        name: "Dark Nymph",
         cmove: 0x13120210,
         spells: 0x000004AA,
         cdefense: 0x1000,
@@ -2436,7 +2473,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 25,
-        name: "Alligator",
+        name: "Sewer Maw",
         cmove: 0x00000310,
         spells: 0x00000000,
         cdefense: 0x2022,
@@ -2454,7 +2491,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 10,
-        name: "Evil-Looking Man",
+        name: "Dark Cultist",
         cmove: 0x19000000,
         spells: 0x00010486,
         cdefense: 0x10F0,
@@ -2473,7 +2510,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 20,
-        name: "Giant Anemone",
+        name: "Devouring Anemone",
         cmove: 0x14400050,
         spells: 0x00000000,
         cdefense: 0x00B2,
@@ -2491,7 +2528,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 24,
-        name: "Orc Zombie",
+        name: "Raider Zombie",
         cmove: 0x00020100,
         spells: 0x00000000,
         cdefense: 0x102E,
@@ -2509,7 +2546,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 36,
-        name: "Orc Warrior",
+        name: "Raider Warrior",
         cmove: 0x0F020200,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -2527,7 +2564,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 10,
-        name: "Nasty little Gnome",
+        name: "Wicked Gnome",
         cmove: 0x0B020200,
         spells: 0x000020B5,
         cdefense: 0x2030,
@@ -2582,7 +2619,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 10,
-        name: "Unholy Pirhana",
+        name: "Bloodfin Piranha",
         cmove: 0x00000050,
         spells: 0x00000000,
         cdefense: 0x00F4,
@@ -2600,7 +2637,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 50,
-        name: "Water Moccasin",
+        name: "Swamp Viper",
         cmove: 0x00000210,
         spells: 0x00000000,
         cdefense: 0x00B2,
@@ -2636,7 +2673,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 1,
-        name: "Grape Jelly",
+        name: "Visceral Ooze",
         cmove: 0x0B000040,
         spells: 0x0001000B,
         cdefense: 0x01A0,
@@ -2654,7 +2691,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 18,
         ac: 24,
-        name: "Master Yeek",
+        name: "Fallen Champion",
         cmove: 0x07020240,
         spells: 0x00008018,
         cdefense: 0x2030,
@@ -2672,7 +2709,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 22,
-        name: "Priest",
+        name: "Dark Priest",
         cmove: 0x13020240,
         spells: 0x00000285,
         cdefense: 0x2030,
@@ -2690,7 +2727,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 22,
-        name: "Bard",
+        name: "Dark Minstrel",
         cmove: 0x13020200,
         spells: 0x00000285,
         cdefense: 0x2030,
@@ -2708,7 +2745,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 22,
-        name: "Monk",
+        name: "Dark Monk",
         cmove: 0x13020200,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -2726,7 +2763,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 60,
-        name: "Animated Sword",
+        name: "Haunted Blade",
         cmove: 0x008A0300,
         spells: 0x00000000,
         cdefense: 0x5000,
@@ -2744,7 +2781,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 40,
         ac: 90,
-        name: "Swirling Green Vapor",
+        name: "Plague Wisp",
         cmove: 0x00800308,
         spells: 0x80FE0001,
         cdefense: 0x5000,
@@ -2762,7 +2799,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 18,
-        name: "Giant Clear Ant",
+        name: "Phantom Scarab",
         cmove: 0x00010240,
         spells: 0x00000000,
         cdefense: 0x0102,
@@ -2798,7 +2835,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 30,
-        name: "Skeleton Human",
+        name: "Human Skeleton",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x100C,
@@ -2816,7 +2853,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 24,
-        name: "Human Zombie",
+        name: "Risen Corpse",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x102E,
@@ -2870,7 +2907,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 34,
-        name: "Swordsman",
+        name: "Dark Swordsman",
         cmove: 0x13020200,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -2885,11 +2922,21 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
+// =============================================================================
+// Zone: Demonic (Levels 13–20) — Demonic invasion
+//
+// The dungeon warps under infernal influence. Flesh renders (trolls) tear
+// through stone. Brutes and heretic mages command small armies. Shadowfang
+// beasts and gargoyles guard the deeper passages. Summoners call forth
+// reinforcements from the abyss.
+//
+// 74 creatures (indices 159–232)
+// =============================================================================
     // Level 13
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 75,
-        name: "Vorpal Bunny",
+        name: "Shadowfang Beast",
         cmove: 0x18000240,
         spells: 0x00000000,
         cdefense: 0x7000,
@@ -2907,7 +2954,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 10,
-        name: "Kracken",
+        name: "Kraken",
         cmove: 0x00000050,
         spells: 0x00000000,
         cdefense: 0x90F2,
@@ -2925,7 +2972,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 40,
-        name: "Killer Brown Beetle",
+        name: "Burrowing Beetle",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -2943,7 +2990,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 32,
-        name: "Ogre",
+        name: "Brute",
         cmove: 0x07020200,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -2961,7 +3008,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 20,
-        name: "Giant Red Speckled Frog",
+        name: "Crimson Marsh Beast",
         cmove: 0x00000312,
         spells: 0x00000000,
         cdefense: 0x00A2,
@@ -2979,7 +3026,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 10,
-        name: "Magic User",
+        name: "Heretic Mage",
         cmove: 0x13020200,
         spells: 0x00002413,
         cdefense: 0x2030,
@@ -2997,7 +3044,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 10,
-        name: "Ranger",
+        name: "Dark Ranger",
         cmove: 0x13020200,
         spells: 0x00000094,
         cdefense: 0x2030,
@@ -3015,7 +3062,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 36,
-        name: "Black Orc",
+        name: "Black Raider",
         cmove: 0x0B020200,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -3033,7 +3080,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 20,
-        name: "Giant Long-Eared Bat",
+        name: "Long-Eared Bat",
         cmove: 0x00800306,
         spells: 0x00000000,
         cdefense: 0x2160,
@@ -3051,7 +3098,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 4,
-        name: "Giant Gnat",
+        name: "Plague Gnat",
         cmove: 0x00800308,
         spells: 0x00000000,
         cdefense: 0x0062,
@@ -3070,7 +3117,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 45,
-        name: "Killer Green Beetle",
+        name: "Venomous Beetle",
         cmove: 0x00000244,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -3088,7 +3135,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 25,
-        name: "Giant Flea",
+        name: "Blood Flea",
         cmove: 0x00000248,
         spells: 0x00000000,
         cdefense: 0x0062,
@@ -3106,7 +3153,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 20,
-        name: "Giant White Dragon Fly",
+        name: "Frost Dragonfly",
         cmove: 0x00800304,
         spells: 0x0040000A,
         cdefense: 0x0060,
@@ -3142,7 +3189,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 34,
-        name: "Skeleton Hobgoblin",
+        name: "Hobgoblin Skeleton",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x100C,
@@ -3178,7 +3225,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 20,
-        name: "White Dragon Bat",
+        name: "Frost Dragon Bat",
         cmove: 0x00800304,
         spells: 0x00400004,
         cdefense: 0x2150,
@@ -3233,7 +3280,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 22,
-        name: "Giant Grey Bat",
+        name: "Ashen Bat",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2160,
@@ -3251,7 +3298,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 30,
-        name: "Giant Clear Centipede",
+        name: "Phantom Crawler",
         cmove: 0x00010240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -3269,7 +3316,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 48,
-        name: "Giant Yellow Tick",
+        name: "Bloated Tick",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0022,
@@ -3287,7 +3334,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 24,
-        name: "Giant Ebony Ant",
+        name: "Ebony Scarab",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -3341,7 +3388,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 20,
-        name: "Statue",
+        name: "Cursed Statue",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x0200,
@@ -3359,7 +3406,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 40,
         ac: 95,
-        name: "Swirling White Vapor",
+        name: "Pale Wisp",
         cmove: 0x00800320,
         spells: 0x8FFE0001,
         cdefense: 0x5000,
@@ -3395,7 +3442,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 7,
         ac: 12,
-        name: "Huge White Bat",
+        name: "Pale Bat Swarm",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2160,
@@ -3413,7 +3460,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 18,
-        name: "Giant Tan Bat",
+        name: "Tawny Bat",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2160,
@@ -3449,7 +3496,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 20,
-        name: "Giant Tarantula",
+        name: "Dread Tarantula",
         cmove: 0x00000100,
         spells: 0x00000000,
         cdefense: 0x0032,
@@ -3486,7 +3533,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 30,
-        name: "Red-Orange Faerie Dragon",
+        name: "Flame Drake",
         cmove: 0x19820302,
         spells: 0x00008C96,
         cdefense: 0x4001,
@@ -3504,7 +3551,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 3,
-        name: "Stone Fish",
+        name: "Stone Lurker",
         cmove: 0x00410050,
         spells: 0x00000000,
         cdefense: 0x0092,
@@ -3558,7 +3605,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 50,
-        name: "Giant Jelly Fish",
+        name: "Dread Jellyfish",
         cmove: 0x00000050,
         spells: 0x00000000,
         cdefense: 0x00F0,
@@ -3576,7 +3623,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 20,
-        name: "Giant Green Dragon Fly",
+        name: "Venom Dragonfly",
         cmove: 0x00800304,
         spells: 0x0010000A,
         cdefense: 0x0070,
@@ -3612,7 +3659,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 22,
-        name: "Green Dragon Bat",
+        name: "Venom Dragon Bat",
         cmove: 0x00800304,
         spells: 0x00100004,
         cdefense: 0x2150,
@@ -3649,7 +3696,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Troll",
+        name: "Flesh Render",
         cmove: 0x07020300,
         spells: 0x00000000,
         cdefense: 0xA026,
@@ -3667,7 +3714,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 30,
-        name: "Giant Water Imp",
+        name: "Abyssal Imp",
         cmove: 0x00400210,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -3703,7 +3750,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 44,
-        name: "Giant Brown Scorpion",
+        name: "Desert Scorpion",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -3740,7 +3787,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 6,
         ac: 25,
-        name: "Giant Black Widow",
+        name: "Black Widow",
         cmove: 0x00000200,
         spells: 0x00000000,
         cdefense: 0x0032,
@@ -3776,7 +3823,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 42,
-        name: "Urik-Hai Orc",
+        name: "Uruk Raider",
         cmove: 0x0B020200,
         spells: 0x00000000,
         cdefense: 0x2036,
@@ -3903,7 +3950,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 15,
-        name: "Disenchanter Ooze",
+        name: "Nullifying Ooze",
         cmove: 0x071A0248,
         spells: 0x00000000,
         cdefense: 0x00A2,
@@ -3921,7 +3968,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 20,
-        name: "Giant Spotted Rat",
+        name: "Spotted Plague Rat",
         cmove: 0x00000302,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -3939,7 +3986,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 24,
-        name: "Mummified Kobold",
+        name: "Fallen Mummy",
         cmove: 0x0B020300,
         spells: 0x00000000,
         cdefense: 0x102C,
@@ -3957,7 +4004,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 46,
-        name: "Killer Black Beetle",
+        name: "Dread Beetle",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -3975,7 +4022,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 16,
-        name: "Red Mold",
+        name: "Ember Mold",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x30A0,
@@ -3994,7 +4041,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 1,
-        name: "Quythulg",
+        name: "Summoner",
         cmove: 0x00010300,
         spells: 0x00002010,
         cdefense: 0x5000,
@@ -4084,7 +4131,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 24,
-        name: "Giant Red Bat",
+        name: "Crimson Bat",
         cmove: 0x00800302,
         spells: 0x00000000,
         cdefense: 0x2060,
@@ -4102,7 +4149,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 40,
         ac: 95,
-        name: "Swirling Clear Vapor",
+        name: "Phantom Wisp",
         cmove: 0x00800308,
         spells: 0x8FFE0001,
         cdefense: 0x5000,
@@ -4120,7 +4167,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Kobold Chieftain",
+        name: "Fallen Chieftain",
         cmove: 0x13120300,
         spells: 0x0000B145,
         cdefense: 0x3034,
@@ -4138,7 +4185,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "King Yeek",
+        name: "Fallen King",
         cmove: 0x13120300,
         spells: 0x00000324,
         cdefense: 0x3000,
@@ -4192,7 +4239,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 22,
-        name: "Giant Black Dragon Fly",
+        name: "Acid Dragonfly",
         cmove: 0x00800304,
         spells: 0x00200009,
         cdefense: 0x0072,
@@ -4225,11 +4272,21 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
+// =============================================================================
+// Zone: Hellscape (Levels 21–30) — The burning deep
+//
+// Reality buckles. Young wyrms nest in caverns of acid and flame. Frost renders
+// and venom scorpions hunt in darkness. Abyssal devourers tunnel through solid
+// rock. The dead walk in greater numbers — render skeletons, raider mummies,
+// and grave wights haunt every shadow.
+//
+// 69 creatures (indices 233–301)
+// =============================================================================
     // Level 21
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 24,
-        name: "Black Dragon Bat",
+        name: "Acid Dragon Bat",
         cmove: 0x00800304,
         spells: 0x00200004,
         cdefense: 0x2150,
@@ -4247,7 +4304,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 30,
         ac: 60,
-        name: "Immature Dragon",
+        name: "Broodling Dragon",
         cmove: 0x12820302,
         spells: 0x00000000,
         cdefense: 0x4001,
@@ -4265,7 +4322,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 26,
-        name: "Blue Dragon Bat",
+        name: "Storm Dragon Bat",
         cmove: 0x00800304,
         spells: 0x00080004,
         cdefense: 0x2150,
@@ -4283,7 +4340,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 28,
-        name: "Mummified Orc",
+        name: "Raider Mummy",
         cmove: 0x0B020300,
         spells: 0x00000000,
         cdefense: 0x102C,
@@ -4301,7 +4358,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 48,
-        name: "Killer Boring Beetle",
+        name: "Tunnel Beetle",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4320,7 +4377,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 50,
-        name: "Killer Stag Beetle",
+        name: "Stag Beetle",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4338,7 +4395,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 18,
-        name: "Black Mold",
+        name: "Shadow Mold",
         cmove: 0x0B000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -4374,7 +4431,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 38,
-        name: "Giant Yellow Scorpion",
+        name: "Venom Scorpion",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4392,7 +4449,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 5,
-        name: "Green Ooze",
+        name: "Toxic Sludge",
         cmove: 0x00200040,
         spells: 0x00000000,
         cdefense: 0x00B2,
@@ -4411,7 +4468,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 6,
-        name: "Green Slime",
+        name: "Plague Slime",
         cmove: 0x003A0044,
         spells: 0x0001000B,
         cdefense: 0x0192,
@@ -4429,7 +4486,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 6,
-        name: "Black Ooze",
+        name: "Shadow Sludge",
         cmove: 0x003A0044,
         spells: 0x0001000B,
         cdefense: 0x0192,
@@ -4447,7 +4504,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Warrior",
+        name: "Corrupt Warrior",
         cmove: 0x13120200,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -4465,7 +4522,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 28,
-        name: "Red Dragon Bat",
+        name: "Fire Dragon Bat",
         cmove: 0x00800004,
         spells: 0x00800004,
         cdefense: 0x2150,
@@ -4483,7 +4540,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 50,
-        name: "Killer Blue Beetle",
+        name: "Storm Beetle",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4501,7 +4558,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 38,
-        name: "Giant Silver Ant",
+        name: "Silver Scarab",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4537,7 +4594,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 35,
-        name: "Red Hag",
+        name: "Blood Hag",
         cmove: 0x09100202,
         spells: 0x00000295,
         cdefense: 0x2066,
@@ -4556,7 +4613,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 35,
-        name: "Orange Faerie Dragon",
+        name: "Inferno Drake",
         cmove: 0x21820302,
         spells: 0x00000E96,
         cdefense: 0x4001,
@@ -4592,7 +4649,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 20,
-        name: "Berzerker",
+        name: "Berserker",
         cmove: 0x07020200,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -4610,7 +4667,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 34,
-        name: "Mummified Human",
+        name: "Bound Mummy",
         cmove: 0x0B020200,
         spells: 0x00000000,
         cdefense: 0x102C,
@@ -4647,7 +4704,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Giant Troll",
+        name: "Greater Flesh Render",
         cmove: 0x0F020200,
         spells: 0x00000000,
         cdefense: 0xA026,
@@ -4665,7 +4722,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 50,
-        name: "Giant Brown Tick",
+        name: "Greater Blood Tick",
         cmove: 0x00000144,
         spells: 0x00000000,
         cdefense: 0x0022,
@@ -4683,7 +4740,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 80,
-        name: "Hobgoblin Chief",
+        name: "Hobgoblin Warlord",
         cmove: 0x12020300,
         spells: 0x00000888,
         cdefense: 0x3004,
@@ -4701,7 +4758,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 10,
-        name: "Nymph Princess",
+        name: "Dark Nymph Queen",
         cmove: 0x15130210,
         spells: 0x000084F4,
         cdefense: 0x3000,
@@ -4719,7 +4776,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 12,
-        name: "Mimic",
+        name: "Greater Mimic",
         cmove: 0x06000040,
         spells: 0x00000000,
         cdefense: 0x3020,
@@ -4737,7 +4794,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 50,
-        name: "Killer Red Beetle",
+        name: "Fire Beetle",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4755,7 +4812,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 2,
         ac: 50,
-        name: "Wooden Mold",
+        name: "Ironwood Mold",
         cmove: 0x00000040,
         spells: 0x00000000,
         cdefense: 0x10A0,
@@ -4773,7 +4830,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 24,
-        name: "Giant Blue Dragon Fly",
+        name: "Storm Dragonfly",
         cmove: 0x00800310,
         spells: 0x00080009,
         cdefense: 0x0030,
@@ -4791,7 +4848,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 15,
-        name: "Hippo",
+        name: "Bog Beast",
         cmove: 0x00000210,
         spells: 0x00000000,
         cdefense: 0x20F2,
@@ -4809,7 +4866,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 45,
-        name: "Orc Lord",
+        name: "Raider Lord",
         cmove: 0x13000300,
         spells: 0x00000000,
         cdefense: 0x4000,
@@ -4828,7 +4885,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 40,
-        name: "Giant Grey Ant Lion",
+        name: "Grey Antlion",
         cmove: 0x00080242,
         spells: 0x00000000,
         cdefense: 0x0032,
@@ -4846,7 +4903,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 24,
-        name: "Disenchanter Bat",
+        name: "Nullifying Bat",
         cmove: 0x00800304,
         spells: 0x00000000,
         cdefense: 0x2060,
@@ -4864,7 +4921,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 54,
-        name: "Giant Fire Tick",
+        name: "Fire Tick",
         cmove: 0x00000142,
         spells: 0x00000000,
         cdefense: 0x2012,
@@ -4900,7 +4957,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "White Wraith",
+        name: "Pale Wraith",
         cmove: 0x0F020302,
         spells: 0x00000000,
         cdefense: 0x112E,
@@ -4918,7 +4975,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 50,
-        name: "Giant Black Scorpion",
+        name: "Shadow Scorpion",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -4936,7 +4993,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 14,
-        name: "Clear Ooze",
+        name: "Phantom Sludge",
         cmove: 0x000B0148,
         spells: 0x00000000,
         cdefense: 0x00B2,
@@ -4955,7 +5012,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 45,
-        name: "Killer Fire Beetle",
+        name: "Infernal Beetle",
         cmove: 0x00000144,
         spells: 0x00000000,
         cdefense: 0x2012,
@@ -4973,7 +5030,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 45,
-        name: "Gluhtyuq",
+        name: "Dread Summoner",
         cmove: 0x17010300,
         spells: 0x04000001,
         cdefense: 0x0000,
@@ -5009,7 +5066,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 24,
-        name: "Giant Red Dragon Fly",
+        name: "Fire Dragonfly",
         cmove: 0x00800304,
         spells: 0x00800008,
         cdefense: 0x2050,
@@ -5064,7 +5121,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 30,
-        name: "Mage",
+        name: "Dark Mage",
         cmove: 0x13020200,
         spells: 0x00002C73,
         cdefense: 0x2030,
@@ -5082,7 +5139,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Master Bard",
+        name: "Dark Troubadour",
         cmove: 0x13020200,
         spells: 0x13001A93,
         cdefense: 0x2030,
@@ -5100,7 +5157,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 30,
-        name: "Druid",
+        name: "Heretic Druid",
         cmove: 0x13020200,
         spells: 0x13080503,
         cdefense: 0x2030,
@@ -5118,7 +5175,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Master Monk",
+        name: "Dark Master Monk",
         cmove: 0x13020200,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -5136,7 +5193,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 46,
-        name: "Ice Troll",
+        name: "Frost Render",
         cmove: 0x0F020200,
         spells: 0x00000000,
         cdefense: 0x8026,
@@ -5172,7 +5229,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 50,
-        name: "Demon Sword",
+        name: "Demon Blade",
         cmove: 0x00880310,
         spells: 0x80FA0001,
         cdefense: 0x5404,
@@ -5191,7 +5248,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 65,
-        name: "Giant Purple Worm",
+        name: "Abyssal Devourer",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x2030,
@@ -5209,7 +5266,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Young Blue Dragon",
+        name: "Young Storm Wyrm",
         cmove: 0x1F000202,
         spells: 0x0008100B,
         cdefense: 0x2005,
@@ -5227,7 +5284,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Young White Dragon",
+        name: "Young Frost Wyrm",
         cmove: 0x1F000202,
         spells: 0x0040100B,
         cdefense: 0x2005,
@@ -5245,7 +5302,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Young Green Dragon",
+        name: "Young Venom Wyrm",
         cmove: 0x1F000202,
         spells: 0x0010100B,
         cdefense: 0x2005,
@@ -5263,7 +5320,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 30,
-        name: "Giant Fire Bat",
+        name: "Ember Bat",
         cmove: 0x00800310,
         spells: 0x00000000,
         cdefense: 0x2050,
@@ -5281,7 +5338,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 8,
         ac: 24,
-        name: "Giant Glowing Rat",
+        name: "Glowing Plague Rat",
         cmove: 0x00000302,
         spells: 0x00000000,
         cdefense: 0x2070,
@@ -5318,7 +5375,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 55,
-        name: "Skeleton Troll",
+        name: "Render Skeleton",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x500C,
@@ -5336,7 +5393,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 34,
-        name: "Giant Lightning Bat",
+        name: "Lightning Bat",
         cmove: 0x00800302,
         spells: 0x00000000,
         cdefense: 0x2042,
@@ -5354,7 +5411,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 40,
-        name: "Giant Static Ant",
+        name: "Static Scarab",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -5372,7 +5429,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 30,
         ac: 80,
-        name: "Swirling Black Vapor",
+        name: "Void Wisp",
         cmove: 0x00800308,
         spells: 0x8FFE0001,
         cdefense: 0xD100,
@@ -5426,7 +5483,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 55,
-        name: "Killer Slicer Beetle",
+        name: "Slicer Beetle",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0012,
@@ -5444,7 +5501,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 45,
-        name: "Giant White Ant Lion",
+        name: "White Antlion",
         cmove: 0x00080042,
         spells: 0x00000000,
         cdefense: 0x0022,
@@ -5462,7 +5519,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 4,
-        name: "Tunneling Worm Mass",
+        name: "Burrowing Grubs",
         cmove: 0x00060344,
         spells: 0x00000000,
         cdefense: 0x21B2,
@@ -5477,6 +5534,17 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: true,
         can_move: true,
     },
+// =============================================================================
+// Zone: Abyss (Levels 31–40) — Eldritch and cosmic horror
+//
+// The deepest reaches of the dungeon defy comprehension. Ancient wyrms of
+// every element lair here. The Eye of the Void gazes from impossible angles.
+// Lich Sovereigns command armies of the dead. Prismatic elder wyrms shimmer
+// with reality-bending power. Shadow hags and nether wraiths guard the path
+// to the final confrontation.
+//
+// 75 creatures (indices 302–376)
+// =============================================================================
     // Level 31
     MonsterTemplate {
         area_effect_radius: 20,
@@ -5499,7 +5567,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 45,
-        name: "Giant Black Ant Lion",
+        name: "Shadow Antlion",
         cmove: 0x00080042,
         spells: 0x00000000,
         cdefense: 0x0032,
@@ -5517,7 +5585,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 60,
-        name: "Death Watch Beetle",
+        name: "Deathwatch Beetle",
         cmove: 0x00000042,
         spells: 0x00000000,
         cdefense: 0x0012,
@@ -5590,7 +5658,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 40,
-        name: "Yellow Faerie Dragon",
+        name: "Lightning Drake",
         cmove: 0x31820302,
         spells: 0x01000E93,
         cdefense: 0x4001,
@@ -5608,7 +5676,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 48,
-        name: "Two-Headed Troll",
+        name: "Two-Headed Render",
         cmove: 0x0F020300,
         spells: 0x00000000,
         cdefense: 0xE026,
@@ -5626,7 +5694,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Ice Demon",
+        name: "Frost Demon",
         cmove: 0x0F020300,
         spells: 0x00010106,
         cdefense: 0x7444,
@@ -5662,7 +5730,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 16,
         ac: 40,
-        name: "Giant Hunter Ant",
+        name: "Hunter Scarab",
         cmove: 0x00000240,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -5680,7 +5748,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 65,
-        name: "Ninja",
+        name: "Shadow Assassin",
         cmove: 0x0F020200,
         spells: 0x00000000,
         cdefense: 0x6030,
@@ -5698,7 +5766,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 20,
-        name: "Brontosaurus",
+        name: "Ancient Behemoth",
         cmove: 0x000A0312,
         spells: 0x00000000,
         cdefense: 0x6012,
@@ -5735,7 +5803,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 48,
-        name: "Skeleton 2-Headed Troll",
+        name: "Two-Headed Skeleton",
         cmove: 0x00020300,
         spells: 0x00000000,
         cdefense: 0x500C,
@@ -5808,7 +5876,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 55,
-        name: "Master Vampire",
+        name: "Elder Vampire",
         cmove: 0x17000300,
         spells: 0x00001307,
         cdefense: 0x512E,
@@ -5826,7 +5894,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 56,
-        name: "Spirit Troll",
+        name: "Spectral Render",
         cmove: 0x00040300,
         spells: 0x00000000,
         cdefense: 0x402E,
@@ -5844,7 +5912,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 12,
         ac: 50,
-        name: "Giant Red Scorpion",
+        name: "Crimson Scorpion",
         cmove: 0x00000242,
         spells: 0x00000000,
         cdefense: 0x0002,
@@ -5881,7 +5949,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 4,
         ac: 65,
-        name: "Giant Remora",
+        name: "Abyssal Leech",
         cmove: 0x00000050,
         spells: 0x00000C47,
         cdefense: 0xE002,
@@ -5899,7 +5967,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 55,
-        name: "Young Black Dragon",
+        name: "Young Acid Wyrm",
         cmove: 0x1F000202,
         spells: 0x0020100B,
         cdefense: 0x6005,
@@ -5917,7 +5985,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 60,
-        name: "Young Red Dragon",
+        name: "Young Flame Wyrm",
         cmove: 0x1F000102,
         spells: 0x0080100A,
         cdefense: 0x6015,
@@ -5953,7 +6021,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "High Priest",
+        name: "High Priest of Ruin",
         cmove: 0x13020200,
         spells: 0x02024322,
         cdefense: 0x7004,
@@ -5971,7 +6039,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 65,
-        name: "Troll King",
+        name: "Render King",
         cmove: 0x17020300,
         spells: 0x00003365,
         cdefense: 0xF004,
@@ -5989,7 +6057,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Heirophant Druid",
+        name: "Hierophant of Blight",
         cmove: 0x13020200,
         spells: 0x00880522,
         cdefense: 0x7000,
@@ -6043,7 +6111,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 29,
         ac: 38,
-        name: "Mummified Troll",
+        name: "Render Mummy",
         cmove: 0x0F020300,
         spells: 0x00000000,
         cdefense: 0x502C,
@@ -6061,7 +6129,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 48,
-        name: "Giant Red Ant Lion",
+        name: "Crimson Antlion",
         cmove: 0x00080142,
         spells: 0x00000000,
         cdefense: 0x0032,
@@ -6079,7 +6147,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 65,
-        name: "Mature White Dragon",
+        name: "Mature Frost Wyrm",
         cmove: 0x2F000202,
         spells: 0x0040100A,
         cdefense: 0x4005,
@@ -6115,7 +6183,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 25,
         ac: 60,
-        name: "Cerebus",
+        name: "Cerberus",
         cmove: 0x00000304,
         spells: 0x00001048,
         cdefense: 0x7002,
@@ -6133,7 +6201,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 9,
         ac: 25,
-        name: "Mako Shark",
+        name: "Abyssal Shark",
         cmove: 0x00080050,
         spells: 0x00000000,
         cdefense: 0xC000,
@@ -6151,7 +6219,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 80,
-        name: "Shadow Dragon",
+        name: "Shadow Wyrm",
         cmove: 0x23050300,
         spells: 0x00035702,
         cdefense: 0x510D,
@@ -6188,7 +6256,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 14,
         ac: 50,
-        name: "Giant Mottled Ant Lion",
+        name: "Mottled Antlion",
         cmove: 0x00080242,
         spells: 0x00000000,
         cdefense: 0x0032,
@@ -6206,7 +6274,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Grey Wraith",
+        name: "Ashen Wraith",
         cmove: 0x0F020302,
         spells: 0x00011308,
         cdefense: 0x512E,
@@ -6224,7 +6292,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 55,
-        name: "Young Multi-Hued Dragon",
+        name: "Prismatic Wyrmling",
         cmove: 0x7F000202,
         spells: 0x00F81005,
         cdefense: 0x6005,
@@ -6242,7 +6310,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 75,
-        name: "Mature Blue Dragon",
+        name: "Mature Storm Wyrm",
         cmove: 0x2F000202,
         spells: 0x00081009,
         cdefense: 0x6005,
@@ -6278,7 +6346,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 70,
-        name: "Mature Green Dragon",
+        name: "Mature Venom Wyrm",
         cmove: 0x1F000202,
         spells: 0x0010100A,
         cdefense: 0x6005,
@@ -6369,7 +6437,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 65,
-        name: "King Vampire",
+        name: "Vampire Lord",
         cmove: 0x17000300,
         spells: 0x00001307,
         cdefense: 0x512E,
@@ -6387,7 +6455,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 65,
-        name: "King Lich",
+        name: "Arch Lich",
         cmove: 0x1F020300,
         spells: 0x00019F73,
         cdefense: 0x500C,
@@ -6405,7 +6473,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 80,
-        name: "Mature Red Dragon",
+        name: "Mature Flame Wyrm",
         cmove: 0x2F000302,
         spells: 0x00801808,
         cdefense: 0x6015,
@@ -6423,7 +6491,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 55,
-        name: "Mature Black Dragon",
+        name: "Mature Acid Wyrm",
         cmove: 0x2F000302,
         spells: 0x00201009,
         cdefense: 0x6005,
@@ -6442,7 +6510,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 65,
-        name: "Mature Multi-Hued Dragon",
+        name: "Prismatic Wyrm",
         cmove: 0x7F000302,
         spells: 0x00F81A05,
         cdefense: 0x6005,
@@ -6460,7 +6528,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 80,
-        name: "Ancient White Dragon",
+        name: "Ancient Frost Wyrm",
         cmove: 0x4F000300,
         spells: 0x00401A08,
         cdefense: 0x4005,
@@ -6514,7 +6582,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 40,
-        name: "Beholder",
+        name: "Eye of the Void",
         cmove: 0x00820302,
         spells: 0x8101B7C6,
         cdefense: 0x7106,
@@ -6532,7 +6600,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 40,
         ac: 90,
-        name: "Swirling Multi-Hued Vapor",
+        name: "Prismatic Wisp",
         cmove: 0x00800304,
         spells: 0x80FFE001,
         cdefense: 0xD000,
@@ -6587,7 +6655,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 50,
-        name: "Sorcerer",
+        name: "Dark Sorcerer",
         cmove: 0x13020300,
         spells: 0x0200FF73,
         cdefense: 0x6030,
@@ -6605,7 +6673,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 90,
-        name: "Ancient Blue Dragon",
+        name: "Ancient Storm Wyrm",
         cmove: 0x4F000300,
         spells: 0x00081A08,
         cdefense: 0x6005,
@@ -6623,7 +6691,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 85,
-        name: "Ancient Green Dragon",
+        name: "Ancient Venom Wyrm",
         cmove: 0x4F000300,
         spells: 0x00101A09,
         cdefense: 0x6005,
@@ -6641,7 +6709,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 90,
-        name: "Ancient Black Dragon",
+        name: "Ancient Acid Wyrm",
         cmove: 0x4F000300,
         spells: 0x00201A07,
         cdefense: 0x6005,
@@ -6660,7 +6728,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 50,
-        name: "Green Faerie Dragon",
+        name: "Venom Drake",
         cmove: 0x41820302,
         spells: 0x01001E93,
         cdefense: 0x4001,
@@ -6678,7 +6746,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 15,
         ac: 45,
-        name: "Giant Crocodile",
+        name: "Abyssal Crocodile",
         cmove: 0x00000310,
         spells: 0x00000000,
         cdefense: 0xC000,
@@ -6696,7 +6764,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 40,
-        name: "Great White Shark",
+        name: "Dread Shark",
         cmove: 0x00080050,
         spells: 0x00000000,
         cdefense: 0x9022,
@@ -6732,7 +6800,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 5,
-        name: "Disenchanter Worms",
+        name: "Nullifying Worms",
         cmove: 0x00200248,
         spells: 0x00000000,
         cdefense: 0x01B0,
@@ -6750,7 +6818,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 1,
-        name: "Rotting Quythulg",
+        name: "Rotting Summoner",
         cmove: 0x00010340,
         spells: 0x00004010,
         cdefense: 0x5000,
@@ -6768,7 +6836,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 100,
-        name: "Ancient Red Dragon",
+        name: "Ancient Flame Wyrm",
         cmove: 0x7F000300,
         spells: 0x00801E06,
         cdefense: 0x6015,
@@ -6804,7 +6872,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 75,
-        name: "Emperor Lich",
+        name: "Lich Sovereign",
         cmove: 0x2F020300,
         spells: 0x00019F72,
         cdefense: 0x500C,
@@ -6822,7 +6890,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 100,
-        name: "Ancient Multi-Hued Dragon",
+        name: "Prismatic Elder Wyrm",
         cmove: 0x7F000300,
         spells: 0x00F89E05,
         cdefense: 0x6005,
@@ -6837,6 +6905,16 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
+// =============================================================================
+// Zone: Endgame (Levels 42–100) — Apex predators
+//
+// Only the most powerful beings survive at these depths. Drake sovereigns
+// command dragonkind. The Defiler schemes in the darkness. Ancient devourers
+// consume all in their path. And at the very bottom, the Balrog awaits —
+// the final challenge that determines the fate of the world.
+//
+// 15 creatures (indices 377–391)
+// =============================================================================
     // Level 42
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6897,7 +6975,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 60,
-        name: "Blue Faerie Dragon",
+        name: "Storm Drake",
         cmove: 0x49820302,
         spells: 0x01801E93,
         cdefense: 0x4001,
@@ -6934,7 +7012,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 10,
         ac: 45,
-        name: "Tyranosaurus Rex",
+        name: "Ancient Devourer",
         cmove: 0x000A0200,
         spells: 0x00000000,
         cdefense: 0xE022,
@@ -6953,7 +7031,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 70,
-        name: "Indigo Faerie Dragon",
+        name: "Shadow Drake",
         cmove: 0x51820302,
         spells: 0x01801F13,
         cdefense: 0x4001,
@@ -6972,7 +7050,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 5,
         ac: 40,
-        name: "Longsword  +7,+7  of Doom",
+        name: "Doom Blade",
         cmove: 0x00880310,
         spells: 0x80FA0001,
         cdefense: 0x5404,
@@ -7009,7 +7087,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 25,
         ac: 80,
-        name: "Purple Faerie Dragon",
+        name: "Void Drake",
         cmove: 0x61820302,
         spells: 0x01811D12,
         cdefense: 0x4001,
@@ -7028,7 +7106,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 100,
-        name: "Chromatic Hydra  7-headed ",
+        name: "Prismatic Hydra",
         cmove: 0x7F000300,
         spells: 0x01E89C05,
         cdefense: 0x6005,
@@ -7047,7 +7125,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 25,
         ac: 90,
-        name: "Noble Faerie Dragon",
+        name: "Elder Drake",
         cmove: 0x71830302,
         spells: 0x01811D12,
         cdefense: 0x4001,
@@ -7066,7 +7144,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 25,
         ac: 100,
-        name: "Emperor Faerie Dragon",
+        name: "Drake Sovereign",
         cmove: 0x7D830302,
         spells: 0x01811D12,
         cdefense: 0x4001,
@@ -7084,7 +7162,7 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
     MonsterTemplate {
         area_effect_radius: 20,
         ac: 80,
-        name: "Evil Iggy",
+        name: "The Defiler",
         cmove: 0x7F130300,
         spells: 0x0201D713,
         cdefense: 0x5004,

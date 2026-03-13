@@ -35,7 +35,7 @@ fn monster_template_index_0_placeholder() {
 
 /// Index 1: Town Wizard (level 0)
 #[test]
-fn monster_template_index_1_town_wizard() {
+fn monster_template_index_1_warden_occultist() {
     let m = &MONSTER_TEMPLATES[1];
     assert_eq!(m.name, "Town Wizard");
     assert_eq!(m.level, 0);
@@ -44,7 +44,7 @@ fn monster_template_index_1_town_wizard() {
 
 /// Index 2: Town Guard (level 0)
 #[test]
-fn monster_template_index_2_town_guard() {
+fn monster_template_index_2_dark_sentinel() {
     let m = &MONSTER_TEMPLATES[2];
     assert_eq!(m.name, "Town Guard");
     assert_eq!(m.level, 0);
@@ -53,33 +53,33 @@ fn monster_template_index_2_town_guard() {
     assert_eq!(m.damage, "1 1 4d4|1 1 4d4");
 }
 
-/// Index 19: Brown Imp - first level 1 monster, first that multiplies
+/// Index 19: Wretched Imp - first level 1 monster, first that multiplies
 #[test]
-fn monster_template_index_19_brown_imp() {
+fn monster_template_index_19_wretched_imp() {
     let m = &MONSTER_TEMPLATES[19];
-    assert_eq!(m.name, "Brown Imp");
+    assert_eq!(m.name, "Wretched Imp");
     assert_eq!(m.level, 1);
     assert_eq!(m.symbol, 'i');
     assert!(m.multiplies);
     assert!(m.can_move);
 }
 
-/// Index 21: Grey Mushroom patch - stationary monster (can_move = false)
+/// Index 21: Blight Fungus - stationary monster (can_move = false)
 #[test]
-fn monster_template_index_21_grey_mushroom() {
+fn monster_template_index_21_blight_fungus() {
     let m = &MONSTER_TEMPLATES[21];
-    assert_eq!(m.name, "Grey Mushroom patch");
+    assert_eq!(m.name, "Blight Fungus");
     assert_eq!(m.level, 1);
     assert_eq!(m.symbol, ',');
     assert!(!m.can_move);
     assert!(m.has_attribute(MonsterAttribute::MoveOnlyToAttack));
 }
 
-/// Index 27: Kobold - classic early game monster
+/// Index 27: Fallen One - classic early game monster
 #[test]
-fn monster_template_index_27_kobold() {
+fn monster_template_index_27_fallen_one() {
     let m = &MONSTER_TEMPLATES[27];
-    assert_eq!(m.name, "Kobold");
+    assert_eq!(m.name, "Fallen One");
     assert_eq!(m.level, 1);
     assert_eq!(m.symbol, 'k');
     assert_eq!(m.hit_die, "3d7");
@@ -103,20 +103,20 @@ fn monster_template_last_is_balrog() {
     assert!(m.has_attribute(MonsterAttribute::Demon));
 }
 
-/// Second to last: Evil Iggy (index 390, level 100)
+/// Second to last: The Defiler (index 390, level 100)
 #[test]
-fn monster_template_index_299_evil_iggy() {
+fn monster_template_index_390_the_defiler() {
     let m = &MONSTER_TEMPLATES[390];
-    assert_eq!(m.name, "Evil Iggy");
+    assert_eq!(m.name, "The Defiler");
     assert_eq!(m.level, 100);
     assert_eq!(m.magic_resistance, 175);
 }
 
-/// Emperor Faerie Dragon (index 389, level 100)
+/// Drake Sovereign (index 389, level 100)
 #[test]
-fn monster_template_index_298_emperor_faerie_dragon() {
+fn monster_template_index_389_drake_sovereign() {
     let m = &MONSTER_TEMPLATES[389];
-    assert_eq!(m.name, "Emperor Faerie Dragon");
+    assert_eq!(m.name, "Drake Sovereign");
     assert_eq!(m.level, 100);
     assert_eq!(m.symbol, 'F');
 }
