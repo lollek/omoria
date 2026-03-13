@@ -5,6 +5,7 @@
 #include "../io.h"
 #include "../model_class.h"
 #include "../player.h"
+#include "../player_action/attack.h"
 #include "../random.h"
 #include "../text_lines.h"
 #include "../types.h"
@@ -199,6 +200,11 @@ static void equip_new_item(const long equipment_slot,
   } while (i3 != equipment_slot);
   msg_printf("%s%s (%c%c", prt1, prt2, (int)i2 + 96, (int)cur_char2());
   msg_print("");
+
+  if (equipment_slot == Equipment_primary && C_calculate_number_of_attacks() < 1) {
+    msg_print("That weapon is too heavy for you to use effectively!");
+    msg_print("");
+  }
 }
 
 void equip_item_screen(long *scr_state, bool *valid_flag) {

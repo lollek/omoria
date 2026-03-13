@@ -11,6 +11,7 @@
 #include "../spells.h"
 #include "../types.h"
 #include "../variables.h"
+#include "attack.h"
 #include <math.h>
 
 static bool attack_lands_on_monster(
@@ -101,6 +102,11 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
   const obj_set catch_this = {sling_ammo, bolt, arrow, 0};
   bool const is_missile = is_in(equipment[Equipment_primary].tval, catch_this);
 
+  if (number_of_attacks < 1) {
+    msg_print("Your weapon is too heavy for you to attack with!");
+    return false;
+  }
+
   bool monster_is_hit_but_alive = false;
   for (; number_of_attacks >= 1; number_of_attacks--) {
     bool const did_hit = player_test_hit(to_hit, 0, monster_template_get_ac(a_mptr));
@@ -136,7 +142,6 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
   return monster_is_hit_but_alive;
 }
 
-extern long C_calculate_number_of_attacks();
 extern long C_calculate_player_tohit_melee(bool is_backstab);
 bool player_action_attack(const long y, const long x) {
 
