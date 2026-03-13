@@ -1810,7 +1810,7 @@ long find_mon(const char *virtual_name) {
   long count;
   bool maybe = false;
 
-  for (count = 1; count < monster_template_size && !maybe;) {
+  for (count = 1; count < monster_template_count() && !maybe;) {
     if (!strcmp(virtual_name, monster_templates[count].name)) {
       maybe = true;
     } else {

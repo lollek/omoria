@@ -179,7 +179,7 @@ void print_monsters(void) {
       char out_val[82];
       prt("Writing Monster Dictionary...", 1, 1);
       refresh();
-      for (long i1 = 1; i1 < monster_template_size; i1++) {
+      for (long i1 = 1; i1 < monster_template_count(); i1++) {
         /* with monster_templates[i1]. do; */
 
         const unsigned long cmove = monster_templates[i1].cmove;

@@ -11,7 +11,7 @@ static bool init__m_level(void) {
 
   int8_t current_level = 0;
   long current_count_for_level = 0;
-  for (int i = 0; i < monster_template_size; i++) {
+  for (int i = 0; i < monster_template_count(); i++) {
     monster_template_t const *monster = &monster_templates[i];
     while (current_level < monster->level) {
       const bool current_level_was_town_level = current_level == 0;
