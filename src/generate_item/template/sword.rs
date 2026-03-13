@@ -123,18 +123,18 @@ impl ItemTemplate for SwordTemplate {
 
     fn weight(&self) -> u16 {
         match self {
-            SwordTemplate::Backsword => 95,
+            SwordTemplate::Backsword => 110,
             SwordTemplate::BastardSword => 140,
             SwordTemplate::Broadsword => 150,
-            SwordTemplate::Claymore => 200,
-            SwordTemplate::Cutlass => 110,
-            SwordTemplate::Espadon => 180,
-            SwordTemplate::ExecutionersSword => 260,
-            SwordTemplate::Flamberge => 240,
+            SwordTemplate::Claymore => 250,
+            SwordTemplate::Cutlass => 75,
+            SwordTemplate::Espadon => 250,
+            SwordTemplate::ExecutionersSword => 200,
+            SwordTemplate::Flamberge => 340,
             SwordTemplate::Katana => 120,
             SwordTemplate::Longsword => 130,
-            SwordTemplate::Nodachi => 200,
-            SwordTemplate::Sabre => 50,
+            SwordTemplate::Nodachi => 160,
+            SwordTemplate::Sabre => 80,
             SwordTemplate::Zweihander => 280,
             SwordTemplate::BrokenSword => 75,
         }
