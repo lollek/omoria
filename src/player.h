@@ -178,5 +178,5 @@ int16_t player_pac(void);
 int16_t player_stl(void);
 bool player_test_hit(long base_to_hit, long plus_to_hit, long enemy_ac);
 
-long tot_dam(const treasure_type *item, long tdam, monster_template_t const *monster);
+long tot_dam(const treasure_type *item, long tdam, long monster_index);
 void py_bonuses(const treasure_type *tobj, long factor);

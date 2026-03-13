@@ -14,7 +14,7 @@
 #include <math.h>
 
 static bool attack_lands_on_monster(
-    const long a_cptr, const monster_template_t *const monster_template,
+    const long a_cptr, const long a_mptr,
     const long tot_tohit, bool const is_backstab, bool const is_missile) {
   bool monster_is_alive = false;
   long damage;
@@ -22,7 +22,7 @@ static bool attack_lands_on_monster(
   if (equipment[Equipment_primary].tval > 0) {
     long damage_from_weapon = damroll(equipment[Equipment_primary].damage);
     damage_from_weapon = tot_dam(&equipment[Equipment_primary],
-                                 damage_from_weapon, monster_template);
+                                 damage_from_weapon, a_mptr);
     const bool is_sharp =
         equipment[Equipment_primary].tval != bow_crossbow_or_sling &&
         (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0;
@@ -96,7 +96,6 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
                                 bool const is_backstab) {
   char m_name[82];
   find_monster_name(m_name, a_cptr, false);
-  const monster_template_t *monster_template = &monster_templates[a_mptr];
 
   /*{ Fix for arrows}*/
   const obj_set catch_this = {sling_ammo, bolt, arrow, 0};
@@ -127,7 +126,7 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
     }
 
     bool const monster_is_alive = attack_lands_on_monster(
-        a_cptr, monster_template, to_hit, is_backstab, is_missile);
+        a_cptr, a_mptr, to_hit, is_backstab, is_missile);
     if (!monster_is_alive) {
       msg_printf("You have slain %s.", m_name);
       return false;

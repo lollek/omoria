@@ -54,30 +54,6 @@ typedef enum monster_attribute {
   ma_regenerates,
 } monster_attribute;
 
-typedef struct monster_attributes {
-  bool multiplies;
-  bool can_move;
-} monster_attributes;
-
-typedef struct monster_template {
-  uint8_t area_effect_radius;       // Area affect radius
-  uint8_t ac;
-  char name[28];
-  uint64_t cmove;                   // Bit field
-  uint64_t spells;                  // Creature spells
-  uint64_t cdefense;                // Bit field
-  int16_t sleep;                    // Inactive counter when spawned
-  int64_t mexp;                     // Exp value for kill
-  int8_t speed;                     // Movement speed
-  char symbol;                      // Symbol on map
-  char hit_die[7];
-  char damage[36];                  // Type attack and damage
-  int8_t level;                     // Minimum level creature is found at
-  uint8_t magic_resistance;
-  monster_attributes attributes;
-} monster_template_t;
-
-extern const monster_template_t monster_templates[];
 extern long m_level[MAX_MONS_LEVEL + 1];
 
 long monster_template_count(void);
