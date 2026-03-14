@@ -68,7 +68,7 @@ static void battle_game(const long plus, char const *const kb_str) {
     long time = 10;
 
     for (long i1 = 1; i1 <= 7; i1++) {
-      if (player_test_hit(C_calculate_player_tohit_melee(false), plus, 20 * i1)) {
+      if (player_test_hit(C_calculate_player_tohit_melee(false), 20 * i1)) {
         score++;
         time = time * 2 + 10;
       }
