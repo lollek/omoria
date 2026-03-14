@@ -4,6 +4,7 @@
 #include "../model_class.h"
 #include "../player.h"
 #include "../player/hunger.h"
+#include "../player_action/attack.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../stores.h"
@@ -65,12 +66,9 @@ static void battle_game(const long plus, char const *const kb_str) {
     msg_print("Good for you!");
     long score = 0;
     long time = 10;
-    const long base_to_hit =
-        player_bth() + player_lev * C_class_melee_bonus(player_pclass) / 2;
 
-    /* with player_do; */
     for (long i1 = 1; i1 <= 7; i1++) {
-      if (player_test_hit(base_to_hit, plus, 20 * i1)) {
+      if (player_test_hit(C_calculate_player_tohit_melee(false), plus, 20 * i1)) {
         score++;
         time = time * 2 + 10;
       }
@@ -464,7 +462,7 @@ void enter_house(const long y, const long x) {
 
     default:
       msg_print("They ask you to demonstrate your fighting skill.");
-      battle_game(player_ptohit(), "some drunken fighters");
+      battle_game(0, "some drunken fighters");
       break;
     }
     break;

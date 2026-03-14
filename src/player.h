@@ -160,9 +160,6 @@ void py_bonuses(const treasure_type *tobj, long factor);
 
 void change_rep(long amt);
 
-int16_t player_bthb(void);
-int16_t player_btht(void);
-int16_t player_bth(void);
 int16_t player_disarm(void);
 /**
  * @return True if player has no light
@@ -171,7 +168,6 @@ bool player_has_no_light(void);
 float player_expfact(void);
 int16_t player_fos(void);
 int64_t player_mr(void);
-int16_t player_ptohit(void);
 int16_t player_ptodam(void);
 int16_t player_ptoac(void);
 int16_t player_pac(void);

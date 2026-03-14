@@ -6,6 +6,7 @@
 #include "../model_item.h"
 #include "../monsters.h"
 #include "../player.h"
+#include "../player_action/attack.h"
 #include "../random.h"
 #include "../screen.h"
 #include "../text_lines.h"
@@ -16,35 +17,6 @@
 
 enum ranged_attack_t { THROW, SHOOT };
 
-/**
- *calc_base_to_hit() - Calculate missile base to hit something
- */
-static long calc_base_to_hit(const enum ranged_attack_t type) {
-  switch (type) {
-  case THROW:
-    return player_btht();
-  case SHOOT:
-    return player_bthb();
-  }
-  MSG(("calc_base_to_hit fell through switch"));
-  return 0;
-}
-
-/**
- *calc_plus_to_hit() - Calculate missile plus to hit something
- */
-static long calc_plus_to_hit(treas_rec const *missile,
-                             const enum ranged_attack_t type) {
-  switch (type) {
-  case THROW:
-    return player_ptohit() + missile->data.tohit;
-  case SHOOT:
-    return player_ptohit() + missile->data.tohit +
-           equipment[Equipment_primary].tohit;
-  }
-  MSG(("calc_plus_to_hit fell through switch"));
-  return 0;
-}
 
 /**
  *calc_damage() - Calculate missile damage
@@ -220,14 +192,17 @@ static bool missile_try_hit_creature(const treas_rec *missile,
                                      const enum ranged_attack_t type,
                                      const long y, const long x,
                                      const long travel_distance) {
-  long const base_to_hit = calc_base_to_hit(type) - travel_distance +
-                           player_lev * C_class_ranged_bonus(player_pclass) / 2;
-  const long plus_to_hit = calc_plus_to_hit(missile, type);
-  long damage = calc_damage(missile, type);
-
+  long attack_rating = 0;
+  if (type == THROW) {
+    attack_rating = C_calculate_player_tohit_thrown();
+    attack_rating -= travel_distance;
+  } else {
+    attack_rating = C_calculate_player_tohit_ranged();
+  }
   const int16_t monster_ac = monster_template_get_ac(m_list[cave[y][x].cptr].mptr);
   const bool creature_was_hit =
-      player_test_hit(base_to_hit, plus_to_hit, monster_ac);
+      player_test_hit(attack_rating, 0, monster_ac);
+
   char monster_name_buf[82];
   find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);
   if (!creature_was_hit) {
@@ -243,9 +218,10 @@ static bool missile_try_hit_creature(const treas_rec *missile,
   item_name(missile_text_buf, missile);
   sprintf(text_buf, "The %s hits %s.", missile_text_buf, monster_name_buf);
   msg_print(text_buf);
+  long damage = calc_damage(missile, type);
   damage = tot_dam(&missile->data, damage, monster_index);
   const long crit_mult = critical_blow(
-      missile->data.weight, plus_to_hit,
+      missile->data.weight, 0,
       (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0, true);
   damage += (5 + damage) * crit_mult;
 

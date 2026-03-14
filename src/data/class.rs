@@ -2,7 +2,7 @@ use crate::generate_item::template::*;
 use crate::generate_item::ItemQuality;
 use crate::model;
 use crate::model::{Class, ItemType};
-use crate::{generate_item, player};
+use crate::generate_item;
 
 pub fn name(class: &Class) -> &'static str {
     match class {
@@ -293,12 +293,14 @@ pub fn is_proficient_with_weapon(class: &Class, maybe_item_type: Option<ItemType
         Class::Wizard => {
             match item_type {
                 ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => false,
+                ItemType::RangedWeapon => false,
                 _ => true,
             }
         },
         Class::Cleric => {
             match item_type {
                 ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => false,
+                ItemType::RangedWeapon => false,
                 _ => true,
             }
         },
@@ -316,20 +318,10 @@ pub fn is_proficient_with_weapon(class: &Class, maybe_item_type: Option<ItemType
         Class::Monk => {
             match item_type {
                 ItemType::HaftedWeapon | ItemType::PoleArm => false,
+                ItemType::RangedWeapon => false,
                 _ => true,
             }
         },
         Class::Barbarian => true,
     }
-}
-
-pub fn calculate_tohit_bonus_for_weapon_type(class: &Class, item_type: Option<ItemType>) -> i8 {
-    let mut plus_to_hit = 0;
-    if player::class() == Class::Fighter {
-        plus_to_hit += 1 + player::level() as i8 / 2;
-    }
-    if !is_proficient_with_weapon(class, item_type) {
-        plus_to_hit -= 5;
-    }
-    plus_to_hit
 }
