@@ -201,7 +201,7 @@ static bool missile_try_hit_creature(const treas_rec *missile,
   }
   const int16_t monster_ac = monster_template_get_ac(m_list[cave[y][x].cptr].mptr);
   const bool creature_was_hit =
-      player_test_hit(attack_rating, 0, monster_ac);
+      player_test_hit(attack_rating, monster_ac);
 
   char monster_name_buf[82];
   find_monster_name(monster_name_buf, cave[y][x].cptr, FALSE);

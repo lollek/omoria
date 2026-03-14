@@ -329,18 +329,16 @@ void change_rep(long amt) {
   }
 }
 
-bool player_test_hit(const long base_to_hit, const long plus_to_hit,
-                     const long enemy_ac) {
+bool player_test_hit(const long attack_rating, const long enemy_ac) {
   if (search_flag) {
     search_off();
   }
   if (player_flags.rest > 0) {
     rest_off();
   }
-  const long max_possible_attack_value = base_to_hit + plus_to_hit;
-  const long attack_value = randint(max_possible_attack_value);
-  const bool did_hit = (attack_value >= enemy_ac) || randint(20) == 1;
-  MSG(("PlayerHits? %d (of %d) vs %d - Hit? %d", attack_value, max_possible_attack_value, enemy_ac, did_hit));
+  const long boosted_attack_rating = attack_rating + randint(20);
+  const bool did_hit = (boosted_attack_rating >= enemy_ac) || randint(20) == 1;
+  MSG(("PlayerHits? %d (from %d) vs %d - Hit? %d", boosted_attack_rating, attack_rating, enemy_ac, did_hit));
   return did_hit;
 }
 

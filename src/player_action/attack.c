@@ -109,7 +109,7 @@ static bool execute_all_attacks(long number_of_attacks, long const a_cptr,
 
   bool monster_is_hit_but_alive = false;
   for (; number_of_attacks >= 1; number_of_attacks--) {
-    bool const did_hit = player_test_hit(to_hit, 0, monster_template_get_ac(a_mptr));
+    bool const did_hit = player_test_hit(to_hit, monster_template_get_ac(a_mptr));
     if (!did_hit) {
       switch (randint(10)) {
       case 1:
