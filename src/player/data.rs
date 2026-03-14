@@ -6,13 +6,11 @@ use std::sync::RwLock;
 
 use crate::conversion::{class, currency, race, sex};
 use crate::data;
-use crate::data::class::calculate_tohit_bonus_for_weapon_type;
 use crate::logic::stat_modifiers;
 use crate::misc;
 use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Wallet, WornFlag1, WornFlag2};
 use crate::player;
 use crate::player::{ac_from_dex, curr_stats};
-use crate::player_action::attack::{AttackType, MeleeAttackType};
 use crate::rng;
 use crate::{constants, equipment};
 
@@ -157,84 +155,8 @@ pub fn hitdie() -> u8 {
     data::class::health_bonus(&class())
 }
 
-#[no_mangle]
-fn player_btht() -> i16 {
-    base_to_hit_thrown()
-}
-
-fn base_to_hit_thrown() -> i16 {
-    (base_to_hit_bows() as f64 * 0.75) as i16
-}
-
-#[no_mangle]
-fn player_bthb() -> i16 {
-    base_to_hit_bows()
-}
-
-pub fn base_to_hit_bows() -> i16 {
-    let mut value: i16 = data::race::ranged_bonus(&race()) as i16;
-    value += ((data::class::ranged_bonus(&class()) * 5) + 20) as i16;
-    unsafe {
-        if player_flags.shero > 0 {
-            value += 24;
-        }
-        if player_flags.hero > 0 {
-            value += 12;
-        }
-        if player_flags.blessed > 0 {
-            value += 5;
-        }
-    }
-    value
-}
-
-#[no_mangle]
-fn player_bth() -> i16 {
-    base_to_hit()
-}
-
-pub fn base_to_hit() -> i16 {
-    let mut bth: i16 = level() as i16;
-    bth += data::race::melee_bonus(&race()) as i16;
-    bth += ((data::class::melee_bonus(&class()) * 5) + 20) as i16;
-    unsafe {
-        if player_flags.shero > 0 {
-            bth += 24;
-        }
-        if player_flags.hero > 0 {
-            bth += 12;
-        }
-        if player_flags.blessed > 0 {
-            bth += 5;
-        }
-    }
-    bth
-}
-
 pub fn player_main_weapon<'a>() -> &'a Item {
     unsafe { &*equipment::get_item(equipment::Slot::Primary) }
-}
-
-#[no_mangle]
-pub fn player_ptohit() -> i16 {
-    plus_to_hit(AttackType::Melee(MeleeAttackType::Standard), player_main_weapon())
-}
-
-pub fn plus_to_hit(attack_type: AttackType, weapon: &Item) -> i16 {
-    let mut plus_to_hit: i16 = player::tohit_from_stats();
-    equipment::items_iter().for_each(|item| {
-        plus_to_hit += item.tohit;
-    });
-    if max_bulk() < weapon.weight {
-        plus_to_hit -= (max_bulk() as i16 - weapon.weight as i16) / 10
-    };
-    if attack_type == AttackType::Melee(MeleeAttackType::Backstab) {
-        plus_to_hit += level() as i16 / 4
-    };
-    plus_to_hit +=
-        calculate_tohit_bonus_for_weapon_type(&player::class(), weapon.item_type())
-            as i16;
-    plus_to_hit
 }
 
 #[no_mangle]

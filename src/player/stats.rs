@@ -33,10 +33,6 @@ pub fn get_stat(stat: Stat) -> i16 {
     curr_stats().get(stat)
 }
 
-pub fn tohit_from_stats() -> i16 {
-    stat_modifiers::to_hit_bonus(&curr_stats())
-}
-
 pub fn modifier_from_stat(stat: Stat) -> i16 {
     (get_stat(stat) - 10) / 2
 }

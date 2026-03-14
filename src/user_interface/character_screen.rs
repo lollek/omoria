@@ -35,7 +35,7 @@ fn put_combat_abilities() {
     let mut row = starting_row;
     for line in [
         format!("Num attacks:  {}", calculate_number_of_attacks()),
-        format!("Melee to hit: {} ({} {})", calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard)), player::base_to_hit(), helper::format_signed(player::player_ptohit())),
+        format!("Melee to hit: {}", calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))),
         format!("Damage:       {} {}", player::player_main_weapon().damage_string(), helper::format_signed(player::plus_to_damage())),
         format!("AC:           {} ({} {})", player::base_ac() + player::plus_to_ac(), player::base_ac(), helper::format_signed(player::plus_to_ac())),
     ] {
@@ -77,8 +77,8 @@ fn put_physical_aspects() {
 fn put_misc_abilities() {
     term::clear_from(14);
 
-    let melee_to_hit: i64 = (player::base_to_hit() + player::plus_to_hit(AttackType::Melee(MeleeAttackType::Standard), player::player_main_weapon())).into();
-    let ranged_to_hit: i64 = (player::base_to_hit_bows() + player::plus_to_hit(AttackType::Ranged, player::player_main_weapon())).into();
+    let melee_to_hit: i64 = (calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))) as i64;
+    let ranged_to_hit: i64 = (calculate_player_tohit(AttackType::Ranged)) as i64;
 
     let perception: i64 = max(27 - player::search_frequency(), 0).into();
     let searching: i64 = player::curr_search_skill().into();
@@ -95,8 +95,8 @@ fn put_misc_abilities() {
     let infravision: i64 = player::infravision() * 10;
 
     term::prt("(Miscellaneous Abilities)", 15, 23);
-    ncurses::mvaddstr(16, 1, format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 12)));
-    ncurses::mvaddstr(17, 1, format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 12)));
+    ncurses::mvaddstr(16, 1, format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 1)));
+    ncurses::mvaddstr(17, 1, format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 1)));
     ncurses::mvaddstr(18, 1, format!("Saving Throw: {}", misc::mod_to_string(saving_throw, 6)));
     ncurses::mvaddstr(19, 1, format!("Reputation  : {}", misc::mod_to_string(reputation, 1)));
     ncurses::mvaddstr(16, 26, format!("Stealth     : {}", misc::mod_to_string(stealth, 1)));

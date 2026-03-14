@@ -16,10 +16,6 @@ pub fn ac(stat_block: &StatBlock) -> i16 {
     modifier_from_stat(Stat::Dexterity, stat_block)
 }
 
-pub fn to_hit_bonus(stat_block: &StatBlock) -> i16 {
-    (modifier_from_stat(Stat::Dexterity, stat_block) + modifier_from_stat(Stat::Strength, stat_block)) / 2
-}
-
 pub fn damage(stat_block: &StatBlock) -> i16 {
     modifier_from_stat(Stat::Strength, stat_block)
 }
