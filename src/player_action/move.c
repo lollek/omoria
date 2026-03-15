@@ -167,7 +167,7 @@ static void area_affect(const long dir, const long y, const long x) {
                 find_flag = false;
               }
             }
-          } else if (cave[row][col].is_temporarily_lit || cave[row][col].pl ||
+          } else if (cave[row][col].is_temporarily_lit || cave[row][col].is_permanently_lit ||
                      cave[row][col].fm) {
             if (cave[row][col].tptr > 0) {
               if (!is_in(t_list[cave[row][col].tptr].tval, some_hidden_stuff)) {
@@ -179,7 +179,7 @@ static void area_affect(const long dir, const long y, const long x) {
 
         /*{ Creatures             }*/
         if (find_flag) {
-          if (cave[row][col].is_temporarily_lit || cave[row][col].pl || player_light) {
+          if (cave[row][col].is_temporarily_lit || cave[row][col].is_permanently_lit || player_light) {
             if (cave[row][col].cptr > 1) {
               /* with */
               /* m_list[cave[row][col].cptr]
@@ -389,7 +389,7 @@ static void _move_char(long dir) {
   /* A room of light should be lit... */
   if (cave[test_row][test_col].fval == ft_light_open_floor) {
     if (player_flags.blind < 1) {
-      if (!cave[test_row][test_col].pl) {
+      if (!cave[test_row][test_col].is_permanently_lit) {
         dungeon_light_room(test_row, test_col);
       }
     }
@@ -401,7 +401,7 @@ static void _move_char(long dir) {
     for (long y = test_row - 1; y <= test_row + 1; y++) {
       for (long x = test_col - 1; x <= test_col + 1; x++) {
         if (in_bounds(y, x) && cave[y][x].fval == ft_light_open_floor &&
-            !cave[y][x].pl) {
+            !cave[y][x].is_permanently_lit) {
           dungeon_light_room(y, x);
         }
       }

@@ -395,7 +395,7 @@ void generate_town(void) {
     for (long y = 1; y <= cur_height; y++) {
       for (long x = 1; x <= cur_width; x++) {
         if (cave[y][x].fval != ft_dark_open_floor) {
-          cave[y][x].pl = true;
+          cave[y][x].is_permanently_lit = true;
         }
       }
     }
@@ -413,7 +413,7 @@ void generate_town(void) {
     mugging_chance = DAY_MUGGING;
     for (long y = 1; y <= cur_height; y++) {
       for (long x = 1; x <= cur_width; x++) {
-        cave[y][x].pl = true;
+        cave[y][x].is_permanently_lit = true;
       }
     }
 

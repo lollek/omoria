@@ -150,7 +150,7 @@ void check_mon_lite(const long y, const long x) {
   const coords location = {.y = y, .x = x};
   if (is_monster_at_location(&location)) {
     if (!m_list[cave[y][x].cptr].is_seen) { // if (!lit up)
-      if (cave[y][x].is_temporarily_lit || cave[y][x].pl) {
+      if (cave[y][x].is_temporarily_lit || cave[y][x].is_permanently_lit) {
         if (los(char_row, char_col, y, x)) {
           m_list[cave[y][x].cptr].is_seen = true;
           lite_spot(y, x);
@@ -188,7 +188,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
       flag = true;
     } else if (ML(monptr).cdis <= s_range) {
       if (los(char_row, char_col, MY(monptr), MX(monptr))) {
-        if (cave[MY(monptr)][MX(monptr)].pl ||
+        if (cave[MY(monptr)][MX(monptr)].is_permanently_lit ||
             cave[MY(monptr)][MX(monptr)].is_temporarily_lit) { /*{can see creature?}*/
           flag = player_flags.see_inv ||
                  !monster_template_has_attribute_at(ML(monptr).mptr, ma_invisible_movement);
@@ -225,7 +225,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
   } else if (ML(monptr).is_seen) {
     /*{ Turn it off...        }*/
     ML(monptr).is_seen = false;
-    if (cave[MY(monptr)][MX(monptr)].is_temporarily_lit || cave[MY(monptr)][MX(monptr)].pl) {
+    if (cave[MY(monptr)][MX(monptr)].is_temporarily_lit || cave[MY(monptr)][MX(monptr)].is_permanently_lit) {
       lite_spot(MY(monptr), MX(monptr));
     } else {
       unlite_spot(MY(monptr), MX(monptr));
