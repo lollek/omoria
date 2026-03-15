@@ -158,7 +158,7 @@ void wizard_light(void) {
 
   bool flag;
 
-  if (cave[char_row][char_col].pl) {
+  if (cave[char_row][char_col].is_permanently_lit) {
     flag = false;
   } else {
     flag = true;
@@ -169,7 +169,7 @@ void wizard_light(void) {
       if (is_in(cave[i1][i2].fval, floor_set)) {
         for (int64_t i3 = i1 - 1; i3 <= i1 + 1; i3++) {
           for (int64_t i4 = i2 - 1; i4 <= i2 + 1; i4++) {
-            cave[i3][i4].pl = flag;
+            cave[i3][i4].is_permanently_lit = flag;
             if (!flag) {
               cave[i3][i4].fm = false;
             }
@@ -227,9 +227,9 @@ static void wizard_inspect_tile(void) {
       if (in_bounds(y, x)) {
         const cave_type *pos = &cave[y][x];
         msg_printf("cave[%d][%d]: { cptr=%d, tptr=%d, fval=%d, fopen=%d, "
-                   "fm=%d, pl=%d, is_temporarily_lit=%d, moved=%d, oct=%d, h2o=%d }",
+                   "fm=%d, is_permanently_lit=%d, is_temporarily_lit=%d, moved=%d, oct=%d, h2o=%d }",
                    y, x, pos->cptr, pos->tptr, pos->fval, pos->fopen, pos->fm,
-                   pos->pl, pos->is_temporarily_lit, pos->moved, pos->oct, pos->h2o);
+                   pos->is_permanently_lit, pos->is_temporarily_lit, pos->moved, pos->oct, pos->h2o);
       } else {
         prt("Invalid tile.", 1, 1);
       }

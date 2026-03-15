@@ -306,7 +306,7 @@ void py_bonuses(const treasure_type *tobj, const long factor) {
 bool player_has_no_light(void) {
 
   if (!cave[char_row][char_col].is_temporarily_lit) {
-    if (!cave[char_row][char_col].pl) {
+    if (!cave[char_row][char_col].is_permanently_lit) {
       return true;
     }
   }

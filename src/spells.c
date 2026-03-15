@@ -1301,7 +1301,7 @@ bool light_area(const long y, const long x) {
           if (!test_light(i1, i2)) {
             lite_spot(i1, i2);
           }
-          cave[i1][i2].pl = true;
+          cave[i1][i2].is_permanently_lit = true;
         }
       }
     }
@@ -1335,7 +1335,7 @@ bool unlight_area(const long y, const long x) {
       for (i2 = start_col; i2 <= end_col; i2++) {
         /* with cave[i1][i2]; */
         if (is_in(cave[i1][i2].fval, room_floors)) {
-          cave[i1][i2].pl = false;
+          cave[i1][i2].is_permanently_lit = false;
           cave[i1][i2].fval = ft_dark_open_floor;
           if (!test_light(i1, i2)) {
             if (i3 == 0) {
@@ -1373,8 +1373,8 @@ bool unlight_area(const long y, const long x) {
         if (in_bounds(i1, i2)) {
           /* with cave[i1][i2]. do; */
           if (is_in(cave[i1][i2].fval, doors_and_corridors)) {
-            if (cave[i1][i2].pl) {
-              cave[i1][i2].pl = false;
+            if (cave[i1][i2].is_permanently_lit) {
+              cave[i1][i2].is_permanently_lit = false;
               flag = true;
             }
           }
@@ -1409,7 +1409,7 @@ bool map_area(void) {
               /* with cave[i7][i8]. */
               /* do; */
               if (is_in(cave[i7][i8].fval, pwall_set)) {
-                cave[i7][i8].pl = true;
+                cave[i7][i8].is_permanently_lit = true;
               } else if (cave[i7][i8].tptr > 0) {
                 if (is_in(t_list[cave[i7][i8].tptr].tval, light_set)) {
                   cave[i7][i8].fm = true;
@@ -1943,7 +1943,7 @@ void da__replace_spot(const long y, const long x, const long typ) {
     break;
   }
 
-  cave[y][x].pl = false;
+  cave[y][x].is_permanently_lit = false;
   cave[y][x].fm = false;
 
   if (cave[y][x].tptr > 0) {
@@ -2016,7 +2016,7 @@ bool earthquake(void) {
               if (test_light(i1, i2)) {
                 unlite_spot(i1, i2);
               }
-              cave[i1][i2].pl = false;
+              cave[i1][i2].is_permanently_lit = false;
               cave[i1][i2].fm = false;
               if (cave[i1][i2].is_temporarily_lit) {
                 lite_spot(i1, i2);
@@ -2106,7 +2106,7 @@ bool light_line(const long dir, long y, long x, const long power) {
 
     if (panel_contains(y, x)) {
 
-      if (!(cave[y][x].is_temporarily_lit || cave[y][x].pl)) {
+      if (!(cave[y][x].is_temporarily_lit || cave[y][x].is_permanently_lit)) {
         if (cave[y][x].fval == ft_light_open_floor) {
           dungeon_light_room(y, x);
         } else {
@@ -2141,7 +2141,7 @@ bool light_line(const long dir, long y, long x, const long power) {
         }
       }
     }
-    cave[y][x].pl = true;
+    cave[y][x].is_permanently_lit = true;
 
     move_dir(dir, &y, &x);
   }

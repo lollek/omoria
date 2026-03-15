@@ -166,16 +166,16 @@ typedef struct spl_rec {
 typedef spl_rec spl_type[MAX_SPELLS]; /* array [1..max_spells] of spl_rec; */
 
 typedef struct cave_type {
-  uint8_t cptr;  // creature ptr; index of creature in m_list. 1=player
-  uint8_t tptr;  // treasure ptr; index of treasure in t_list
-  uint8_t fval;  // cave type
-  bool fopen;    // if spot is unoccupied?
-  bool fm;       // "field mark". No idea what it means
-  bool pl;       // permaneny lit
-  bool is_temporarily_lit;       // temporarily lit (e.g. by player's light source)
-  bool moved;    // unused?
-  uint8_t oct;   // octant direction. Unused?
-  uint8_t h2o;   // water
+  uint8_t cptr;             // creature ptr; index of creature in m_list. 1=player
+  uint8_t tptr;             // treasure ptr; index of treasure in t_list
+  uint8_t fval;             // cave type
+  bool fopen;               // if spot is unoccupied?
+  bool fm;                  // "field mark". No idea what it means
+  bool is_permanently_lit;  // permaneny lit
+  bool is_temporarily_lit;  // temporarily lit (e.g. by player's light source)
+  bool moved;               // unused?
+  uint8_t oct;              // octant direction. Unused?
+  uint8_t h2o;              // water
 } cave_type;
 
 typedef cave_type

@@ -44,7 +44,7 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
       chtype tmp_char = ' ';
       bool flag;
 
-      if (cave[y][x].pl || cave[y][x].fm) {
+      if (cave[y][x].is_permanently_lit || cave[y][x].fm) {
         flag = (y == y1 && x == x1) || (y == y2 && x == x2);
         /* flag = true; */
       } else {
@@ -52,7 +52,7 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
         if (y >= new_topp && y <= new_bott &&
             (x >= new_left && x <= new_righ) && cave[y][x].is_temporarily_lit) {
           if (is_in(cave[y][x].fval, pwall_set)) {
-            cave[y][x].pl = true;
+            cave[y][x].is_permanently_lit = true;
           } else if (cave[y][x].tptr > 0 &&
                      is_in(t_list[cave[y][x].tptr].tval, light_set) &&
                      !cave[y][x].fm) {
@@ -61,7 +61,7 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
         }
       }
 
-      if (cave[y][x].pl || cave[y][x].is_temporarily_lit || cave[y][x].fm)
+      if (cave[y][x].is_permanently_lit || cave[y][x].is_temporarily_lit || cave[y][x].fm)
         tmp_char = loc_symbol(y, x);
       if (player_flags.image > 0 && randint(12) == 1)
         tmp_char = (char)(randint(95) + 31);
@@ -149,12 +149,12 @@ static void ml__sub2_move_light(const long y1, const long x1, const long y2,
 
     for (long x = x2 - 1; x <= x2 + 1; x++) {
       bool flag = false;
-      if (!(cave[y][x].fm || cave[y][x].pl)) {
+      if (!(cave[y][x].fm || cave[y][x].is_permanently_lit)) {
         tmp_char = ' ';
         if (player_light) {
           if (is_in(cave[y][x].fval, pwall_set)) {
             /* Turn on perm light */
-            cave[y][x].pl = true;
+            cave[y][x].is_permanently_lit = true;
             tmp_char = loc_symbol(y, x);
             flag = true;
           } else if (cave[y][x].tptr > 0 &&
@@ -271,7 +271,7 @@ static void lr__find_light(const long y1, const long x1, const long y2,
 
       for (long i3 = i1 - 1; i3 <= i1 + 1; i3++) {
         for (long i4 = i2 - 1; i4 <= i2 + 1; i4++)
-          cave[i3][i4].pl = true;
+          cave[i3][i4].is_permanently_lit = true;
       }
 
       if (cave[i1][i2].fval == ft_water_on_room_floor) {
@@ -305,7 +305,7 @@ void dungeon_light_room(const long param_y, const long param_x) {
     long floor_str_len = 0;
     long const ypos = y;
     for (long x = start_col; x <= end_col; x++) {
-      if (cave[y][x].pl || cave[y][x].fm) {
+      if (cave[y][x].is_permanently_lit || cave[y][x].fm) {
         if (floor_str_len == 0)
           xpos = x;
         floor_str[floor_str_len++] = loc_symbol(y, x);

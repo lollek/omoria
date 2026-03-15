@@ -60,7 +60,7 @@ static void d__sun_rise_or_set(void) {
     if (player_cur_age.hour == 6 && player_cur_age.secs == 0) {
       for (long i1 = 1; i1 <= cur_height; i1++) {
         for (long i2 = 1; i2 <= cur_width; i2++) {
-          cave[i1][i2].pl = true;
+          cave[i1][i2].is_permanently_lit = true;
         }
       }
       store_maint();
@@ -69,9 +69,9 @@ static void d__sun_rise_or_set(void) {
       for (long i1 = 1; i1 <= cur_height; i1++) {
         for (long i2 = 1; i2 <= cur_width; i2++) {
           if (cave[i1][i2].fval != ft_dark_open_floor) {
-            cave[i1][i2].pl = true;
+            cave[i1][i2].is_permanently_lit = true;
           } else {
-            cave[i1][i2].pl = false;
+            cave[i1][i2].is_permanently_lit = false;
           }
         }
       }
