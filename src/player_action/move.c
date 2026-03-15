@@ -167,7 +167,7 @@ static void area_affect(const long dir, const long y, const long x) {
                 find_flag = false;
               }
             }
-          } else if (cave[row][col].tl || cave[row][col].pl ||
+          } else if (cave[row][col].is_temporarily_lit || cave[row][col].pl ||
                      cave[row][col].fm) {
             if (cave[row][col].tptr > 0) {
               if (!is_in(t_list[cave[row][col].tptr].tval, some_hidden_stuff)) {
@@ -179,7 +179,7 @@ static void area_affect(const long dir, const long y, const long x) {
 
         /*{ Creatures             }*/
         if (find_flag) {
-          if (cave[row][col].tl || cave[row][col].pl || player_light) {
+          if (cave[row][col].is_temporarily_lit || cave[row][col].pl || player_light) {
             if (cave[row][col].cptr > 1) {
               /* with */
               /* m_list[cave[row][col].cptr]

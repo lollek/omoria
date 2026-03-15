@@ -227,9 +227,9 @@ static void wizard_inspect_tile(void) {
       if (in_bounds(y, x)) {
         const cave_type *pos = &cave[y][x];
         msg_printf("cave[%d][%d]: { cptr=%d, tptr=%d, fval=%d, fopen=%d, "
-                   "fm=%d, pl=%d, tl=%d, moved=%d, oct=%d, h2o=%d }",
+                   "fm=%d, pl=%d, is_temporarily_lit=%d, moved=%d, oct=%d, h2o=%d }",
                    y, x, pos->cptr, pos->tptr, pos->fval, pos->fopen, pos->fm,
-                   pos->pl, pos->tl, pos->moved, pos->oct, pos->h2o);
+                   pos->pl, pos->is_temporarily_lit, pos->moved, pos->oct, pos->h2o);
       } else {
         prt("Invalid tile.", 1, 1);
       }

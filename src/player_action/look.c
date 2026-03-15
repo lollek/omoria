@@ -45,7 +45,7 @@ void player_action_look(void) {
       }
     }
 
-    if (cave[y][x].tl || cave[y][x].pl || cave[y][x].fm) {
+    if (cave[y][x].is_temporarily_lit || cave[y][x].pl || cave[y][x].fm) {
       if (cave[y][x].tptr > 0) {
         if (t_list[cave[y][x].tptr].tval == secret_door) {
           msg_print("You see a granite wall.");

@@ -50,7 +50,7 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
       } else {
         flag = true;
         if (y >= new_topp && y <= new_bott &&
-            (x >= new_left && x <= new_righ) && cave[y][x].tl) {
+            (x >= new_left && x <= new_righ) && cave[y][x].is_temporarily_lit) {
           if (is_in(cave[y][x].fval, pwall_set)) {
             cave[y][x].pl = true;
           } else if (cave[y][x].tptr > 0 &&
@@ -61,7 +61,7 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
         }
       }
 
-      if (cave[y][x].pl || cave[y][x].tl || cave[y][x].fm)
+      if (cave[y][x].pl || cave[y][x].is_temporarily_lit || cave[y][x].fm)
         tmp_char = loc_symbol(y, x);
       if (player_flags.image > 0 && randint(12) == 1)
         tmp_char = (char)(randint(95) + 31);
@@ -114,11 +114,11 @@ static void ml__sub1_move_light(const long y1, const long x1, const long y2,
   /* Turn off lamp light */
   for (long i = y1 - 1; i <= y1 + 1; i++)
     for (long j = x1 - 1; j <= x1 + 1; j++)
-      cave[i][j].tl = false;
+      cave[i][j].is_temporarily_lit = false;
 
   for (long i = y2 - 1; i <= y2 + 1; i++)
     for (long j = x2 - 1; j <= x2 + 1; j++)
-      cave[i][j].tl = true;
+      cave[i][j].is_temporarily_lit = true;
 
   ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
 
@@ -134,7 +134,7 @@ static void ml__sub2_move_light(const long y1, const long x1, const long y2,
   if (light_flag) {
     for (long y = y1 - 1; y <= y1 + 1; y++)
       for (long x = x1 - 1; x <= x1 + 1; x++)
-        cave[y][x].tl = false;
+        cave[y][x].is_temporarily_lit = false;
     ml__draw_block(y1, x1, y1, x1);
     light_flag = false;
   }
@@ -203,7 +203,7 @@ static void ml__sub3_move_light(const long y1, const long x1, const long y2,
   if (light_flag) {
     for (long i1 = y1 - 1; i1 <= y1 + 1; i1++) {
       for (long i2 = x1 - 1; i2 <= x1 + 1; i2++) {
-        cave[i1][i2].tl = false;
+        cave[i1][i2].is_temporarily_lit = false;
       }
     }
     light_flag = false;
@@ -221,10 +221,10 @@ static void ml__sub4_move_light(const long y1, const long x1, const long y2,
   ENTER(("ml__sub4_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
   light_flag = true;
-  if (cave[y1][x1].tl) {
+  if (cave[y1][x1].is_temporarily_lit) {
     for (long i1 = y1 - 1; i1 <= y1 + 1; i1++) {
       for (long i2 = x1 - 1; i2 <= x1 + 1; i2++) {
-        cave[i1][i2].tl = false;
+        cave[i1][i2].is_temporarily_lit = false;
         if (test_light(i1, i2))
           lite_spot(i1, i2);
         else

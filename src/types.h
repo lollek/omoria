@@ -171,8 +171,8 @@ typedef struct cave_type {
   uint8_t fval;  // cave type
   bool fopen;    // if spot is unoccupied?
   bool fm;       // "field mark". No idea what it means
-  bool pl;       // "put light"?? If it should be lit?
-  bool tl;       // "temp light"?? If it is lit by a temporary light source?
+  bool pl;       // permaneny lit
+  bool is_temporarily_lit;       // temporarily lit (e.g. by player's light source)
   bool moved;    // unused?
   uint8_t oct;   // octant direction. Unused?
   uint8_t h2o;   // water
