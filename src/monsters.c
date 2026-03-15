@@ -209,7 +209,7 @@ void delete_monster(const long cptr) {
   if (m_list[cptr].is_seen) {
     /* with cave[fy][fx]. do; */
     if (cave[m_list[cptr].fy][m_list[cptr].fx].pl ||
-        cave[m_list[cptr].fy][m_list[cptr].fx].tl) {
+        cave[m_list[cptr].fy][m_list[cptr].fx].is_temporarily_lit) {
       lite_spot(m_list[cptr].fy, m_list[cptr].fx);
     } else {
       unlite_spot(m_list[cptr].fy, m_list[cptr].fx);

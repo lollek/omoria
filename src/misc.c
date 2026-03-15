@@ -1346,7 +1346,7 @@ void compact_objects(void) {
 /*//////////////////////////////////////////////////////////////////// */
 bool test_light(const long y, const long x) {
   /*{ Tests a spot for light or field mark status		-RAK-	}*/
-  return cave[y][x].pl || cave[y][x].fm || cave[y][x].tl;
+  return cave[y][x].pl || cave[y][x].fm || cave[y][x].is_temporarily_lit;
 }
 
 /*//////////////////////////////////////////////////////////////////// */

@@ -727,7 +727,7 @@ bool teleport_to(const long ny, const long nx) {
   for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
     for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1][i2]. do; */
-      cave[i1][i2].tl = false;
+      cave[i1][i2].is_temporarily_lit = false;
       if (!test_light(i1, i2)) {
         unlite_spot(i1, i2);
       }
@@ -1100,7 +1100,7 @@ bool detect_item(const long typ) {
         if (show_it) {
           if (!test_light(i1, i2)) {
             lite_spot(i1, i2);
-            cave[i1][i2].tl = true;
+            cave[i1][i2].is_temporarily_lit = true;
             flag = true;
           }
         }
@@ -2018,7 +2018,7 @@ bool earthquake(void) {
               }
               cave[i1][i2].pl = false;
               cave[i1][i2].fm = false;
-              if (cave[i1][i2].tl) {
+              if (cave[i1][i2].is_temporarily_lit) {
                 lite_spot(i1, i2);
               }
             } else if (is_in(cave[i1][i2].fval, floor_set)) {
@@ -2106,7 +2106,7 @@ bool light_line(const long dir, long y, long x, const long power) {
 
     if (panel_contains(y, x)) {
 
-      if (!(cave[y][x].tl || cave[y][x].pl)) {
+      if (!(cave[y][x].is_temporarily_lit || cave[y][x].pl)) {
         if (cave[y][x].fval == ft_light_open_floor) {
           dungeon_light_room(y, x);
         } else {
@@ -2918,7 +2918,7 @@ void teleport(const long dis) {
   for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
     for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
       /* with cave[i1,i2] do; */
-      cave[i1][i2].tl = false;
+      cave[i1][i2].is_temporarily_lit = false;
       if (!test_light(i1, i2)) {
         unlite_spot(i1, i2);
       }
