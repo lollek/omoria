@@ -1,9 +1,9 @@
 use crate::model::PlayerFlags;
+use crate::model::{ItemType, Stat};
 use crate::player_action::attack::attacks_per_round::calculate_number_of_attacks_pure;
 use crate::player_action::attack::attacks_per_round::NumberOfAttacksInputs;
 use crate::player_action::attack::attacks_per_round::WeaponState;
 use crate::player_action::attack::to_hit::calculate_player_tohit_melee_pure;
-use crate::model::{ItemType, Stat};
 use crate::player_action::attack::to_hit::calculate_player_tohit_ranged_pure;
 use crate::player_action::attack::to_hit::calculate_player_tohit_thrown_pure;
 use crate::{debug, equipment, player};
@@ -27,7 +27,9 @@ pub fn calculate_number_of_attacks() -> i16 {
                 Some(ItemType::SlingAmmo) | Some(ItemType::Bolt) | Some(ItemType::Arrow) => {
                     WeaponState::Ammo
                 }
-                _ => WeaponState::Weapon { weight: main_weapon.weight as i16 },
+                _ => WeaponState::Weapon {
+                    weight: main_weapon.weight as i16,
+                },
             }
         }
     };
@@ -89,16 +91,18 @@ pub fn calculate_player_tohit(attack_type: AttackType) -> i16 {
         plus_to_hit += item.tohit;
     });
     let result = match attack_type {
-        AttackType::Melee(melee_type) => calculate_player_tohit_melee_pure(&to_hit::ToHitMeleeInputs {
-            attack_type: melee_type,
-            maybe_item_type: player::player_main_weapon().item_type(),
-            class: player::class(),
-            level: player::level(),
-            dex_modifier: player::modifier_from_stat(Stat::Dexterity),
-            strength_modifier: player::modifier_from_stat(Stat::Strength),
-            player_flags: unsafe { player_flags },
-            bonus_from_equipment: plus_to_hit,
-        }),
+        AttackType::Melee(melee_type) => {
+            calculate_player_tohit_melee_pure(&to_hit::ToHitMeleeInputs {
+                attack_type: melee_type,
+                maybe_item_type: player::player_main_weapon().item_type(),
+                class: player::class(),
+                level: player::level(),
+                dex_modifier: player::modifier_from_stat(Stat::Dexterity),
+                strength_modifier: player::modifier_from_stat(Stat::Strength),
+                player_flags: unsafe { player_flags },
+                bonus_from_equipment: plus_to_hit,
+            })
+        }
         AttackType::Ranged => calculate_player_tohit_ranged_pure(&to_hit::ToHitRangedInputs {
             maybe_item_type: player::player_main_weapon().item_type(),
             class: player::class(),

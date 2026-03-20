@@ -7,7 +7,8 @@ use crate::model::item_subtype::{ItemSubType, StaffSubType};
 use crate::model::{Item, ItemType};
 
 pub fn staff(item: &Item) -> String {
-    let Some(ItemSubType::Staff(staff_subtype)) = item_subtype::from_i64(ItemType::Staff, item.subval)
+    let Some(ItemSubType::Staff(staff_subtype)) =
+        item_subtype::from_i64(ItemType::Staff, item.subval)
     else {
         return "alien staff".to_string();
     };

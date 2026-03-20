@@ -24,6 +24,31 @@ pub enum InstrumentSubType {
     HarpOfTheDruids,
 }
 
+impl From<InstrumentSubType> for usize {
+    fn from(value: InstrumentSubType) -> usize {
+        match value {
+            InstrumentSubType::PipesOfPeace => 258,
+            InstrumentSubType::LyreOfNature => 259,
+            InstrumentSubType::LuteOfTheWoods => 260,
+            InstrumentSubType::HarpOfTheDruids => 261,
+        }
+    }
+}
+
+impl TryFrom<usize> for InstrumentSubType {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            258 => Ok(InstrumentSubType::PipesOfPeace),
+            259 => Ok(InstrumentSubType::LyreOfNature),
+            260 => Ok(InstrumentSubType::LuteOfTheWoods),
+            261 => Ok(InstrumentSubType::HarpOfTheDruids),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SongBookSubType {
     BeginnersHandbook,
@@ -61,6 +86,7 @@ impl TryFrom<usize> for SongBookSubType {
 mod tests {
     use std::convert::TryFrom;
 
+    use super::InstrumentSubType;
     use super::SongBookSubType;
 
     #[test]
@@ -100,5 +126,44 @@ mod tests {
         assert_eq!(book_1, 263);
         assert_eq!(book_2, 264);
         assert_eq!(greater, 265);
+    }
+
+    #[test]
+    fn test_instrument_subtype_try_from_usize_accepts_known_values() {
+        assert_eq!(
+            InstrumentSubType::try_from(258usize).unwrap(),
+            InstrumentSubType::PipesOfPeace
+        );
+        assert_eq!(
+            InstrumentSubType::try_from(259usize).unwrap(),
+            InstrumentSubType::LyreOfNature
+        );
+        assert_eq!(
+            InstrumentSubType::try_from(260usize).unwrap(),
+            InstrumentSubType::LuteOfTheWoods
+        );
+        assert_eq!(
+            InstrumentSubType::try_from(261usize).unwrap(),
+            InstrumentSubType::HarpOfTheDruids
+        );
+    }
+
+    #[test]
+    fn test_instrument_subtype_try_from_usize_rejects_unknown_values() {
+        assert!(InstrumentSubType::try_from(257usize).is_err());
+        assert!(InstrumentSubType::try_from(262usize).is_err());
+    }
+
+    #[test]
+    fn test_instrument_subtype_into_usize_returns_expected_codes() {
+        let pipes: usize = InstrumentSubType::PipesOfPeace.into();
+        let lyre: usize = InstrumentSubType::LyreOfNature.into();
+        let lute: usize = InstrumentSubType::LuteOfTheWoods.into();
+        let harp: usize = InstrumentSubType::HarpOfTheDruids.into();
+
+        assert_eq!(pipes, 258);
+        assert_eq!(lyre, 259);
+        assert_eq!(lute, 260);
+        assert_eq!(harp, 261);
     }
 }

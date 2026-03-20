@@ -1,8 +1,8 @@
 use libc::c_char;
 use std::ffi::CStr;
 
-use crate::{ncurses, player};
 use crate::term;
+use crate::{ncurses, player};
 
 extern "C" {
     static wizard2: i8;

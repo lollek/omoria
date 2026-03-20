@@ -1,5 +1,5 @@
-use std::convert::TryInto;
 use std::convert::TryFrom;
+use std::convert::TryInto;
 
 use libc;
 
@@ -39,8 +39,7 @@ pub extern "C" fn C_player_set_knows_spell(slot: i32, yn: bool) {
 
 #[no_mangle]
 pub extern "C" fn C_player_uses_magic(magic_type: i32) -> bool {
-    data::class::magic_type(&player::class())
-    == Some(Magic::try_from(magic_type).unwrap())
+    data::class::magic_type(&player::class()) == Some(Magic::try_from(magic_type).unwrap())
 }
 
 #[no_mangle]
@@ -192,4 +191,3 @@ mod tests {
         );
     }
 }
-

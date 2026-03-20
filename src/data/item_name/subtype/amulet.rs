@@ -11,7 +11,8 @@ pub fn amulet(item: &Item) -> String {
         return "alien amulet".to_string();
     };
 
-    let known_type = identification::is_identified(ItemSubType::Amulet(amulet_subtype)) || item.is_identified();
+    let known_type =
+        identification::is_identified(ItemSubType::Amulet(amulet_subtype)) || item.is_identified();
     if !known_type {
         return match amulet_subtype {
             AmuletSubType::AmuletOfAdornment1

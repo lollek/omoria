@@ -27,12 +27,16 @@ pub fn chest(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
-    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::ChestTemplate;
+    use crate::generate_item::ItemQuality;
 
     #[test]
     fn test_chest_small_wooden_chest() {
-        let mut item = generate_item::generate(Box::new(ChestTemplate::SmallWoodenChest), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(ChestTemplate::SmallWoodenChest),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "small wooden chest");
 
         item.number = 0;
@@ -41,7 +45,11 @@ mod tests {
 
     #[test]
     fn test_chest_large_wooden_chest() {
-        let mut item = generate_item::generate(Box::new(ChestTemplate::LargeWoodenChest), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(ChestTemplate::LargeWoodenChest),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "large wooden chest");
 
         item.number = 0;
@@ -50,7 +58,11 @@ mod tests {
 
     #[test]
     fn test_chest_small_iron_chest() {
-        let mut item = generate_item::generate(Box::new(ChestTemplate::SmallIronChest), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(ChestTemplate::SmallIronChest),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "small iron chest");
 
         item.number = 0;
@@ -59,7 +71,11 @@ mod tests {
 
     #[test]
     fn test_chest_large_iron_chest() {
-        let mut item = generate_item::generate(Box::new(ChestTemplate::LargeIronChest), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(ChestTemplate::LargeIronChest),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "large iron chest");
 
         item.number = 0;
@@ -68,7 +84,11 @@ mod tests {
 
     #[test]
     fn test_chest_small_steel_chest() {
-        let mut item = generate_item::generate(Box::new(ChestTemplate::SmallSteelChest), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(ChestTemplate::SmallSteelChest),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "small steel chest");
 
         item.number = 0;
@@ -77,7 +97,11 @@ mod tests {
 
     #[test]
     fn test_chest_large_steel_chest() {
-        let mut item = generate_item::generate(Box::new(ChestTemplate::LargeSteelChest), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(ChestTemplate::LargeSteelChest),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "large steel chest");
 
         item.number = 0;

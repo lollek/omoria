@@ -7,7 +7,10 @@ use std::sync::RwLock;
 use crate::data;
 use crate::logic::stat_modifiers;
 use crate::misc;
-use crate::model::{Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat, Wallet, WornFlag1, WornFlag2};
+use crate::model::{
+    Ability, Class, Currency, GameTime, Item, Player, PlayerFlags, PlayerRecord, Race, Sex, Stat,
+    Wallet, WornFlag1, WornFlag2,
+};
 use crate::player;
 use crate::player::{ac_from_dex, curr_stats};
 use crate::rng;
@@ -525,7 +528,8 @@ pub fn exp_to_next_level() -> i64 {
     if exp() >= max_exp() {
         <i64>::MAX
     } else {
-        (unsafe { exp_per_level[level() as usize] } as f64 * experience_factor() as f64) as i64 - exp()
+        (unsafe { exp_per_level[level() as usize] } as f64 * experience_factor() as f64) as i64
+            - exp()
     }
 }
 
@@ -566,7 +570,8 @@ pub fn max_bulk() -> u16 {
     // [800-3000]
     let base_bulk = min(
         (player_carry_base_amount * player_weight_modifier) + weight,
-        min_base_bulk);
+        min_base_bulk,
+    );
     let max_bulk: i32 = base_bulk as i32 + extra_bulk_carry() as i32;
     max_bulk.clamp(0, u16::MAX.into()) as u16
 }

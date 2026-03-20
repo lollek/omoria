@@ -1,7 +1,11 @@
+use super::super::item_template::ItemTemplate;
 use crate::generate_item::item_template::create_ranged_weapon;
 use crate::generate_item::ItemQuality;
-use super::super::item_template::ItemTemplate;
-use crate::model::{self, item_subtype::{ItemSubType, RangedWeaponSubType}, Item};
+use crate::model::{
+    self,
+    item_subtype::{ItemSubType, RangedWeaponSubType},
+    Item,
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SlingTemplate {

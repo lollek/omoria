@@ -1,6 +1,9 @@
 use crate::conversion::item_subtype;
 use crate::data::item_name::helpers::{maybe_armor_bonus, maybe_p1_bonus};
-use crate::model::item_subtype::{BeltSubType, BootsSubType, BracersSubType, CloakSubType, GlovesSubType, HelmSubType, ItemSubType};
+use crate::model::item_subtype::{
+    BeltSubType, BootsSubType, BracersSubType, CloakSubType, GlovesSubType, HelmSubType,
+    ItemSubType,
+};
 use crate::model::Item;
 use std::borrow::Cow;
 
@@ -19,7 +22,9 @@ pub fn small_armor(item: &Item) -> String {
         parts.push(p1_bonus_string);
     }
 
-    if item.is_identified() && subtype == ItemSubType::Bracers(BracersSubType::SilverBraceletOfWarding) {
+    if item.is_identified()
+        && subtype == ItemSubType::Bracers(BracersSubType::SilverBraceletOfWarding)
+    {
         parts.push(Cow::Borrowed(" (R)"));
     }
 
@@ -50,33 +55,43 @@ fn subtype_name(item: &Item, subtype: ItemSubType) -> String {
             BootsSubType::WyrmhideBoot => "wyrmhide boots",
         },
         ItemSubType::Bracers(bracers_type) => match bracers_type {
-            BracersSubType::BracersOfProtection => if item.is_identified() {
-                "bracers of protection"
-            } else {
-                "bracers"
-            },
-            BracersSubType::BracersOfDefense => if item.is_identified() {
-                "bracers of defense"
-            } else {
-                "bracers"
-            },
-            BracersSubType::BracersOfShielding => if item.is_identified() {
-                "bracers of shielding"
-            } else {
-                "bracers"
-            },
+            BracersSubType::BracersOfProtection => {
+                if item.is_identified() {
+                    "bracers of protection"
+                } else {
+                    "bracers"
+                }
+            }
+            BracersSubType::BracersOfDefense => {
+                if item.is_identified() {
+                    "bracers of defense"
+                } else {
+                    "bracers"
+                }
+            }
+            BracersSubType::BracersOfShielding => {
+                if item.is_identified() {
+                    "bracers of shielding"
+                } else {
+                    "bracers"
+                }
+            }
             BracersSubType::MithrilBracers => "mithril bracers",
             BracersSubType::AdamantiteBracers => "adamantite bracers",
-            BracersSubType::BracersOfWeaponAttraction => if item.is_identified() {
-                "bracers of weapon attraction"
-            } else {
-                "bracers"
-            },
-            BracersSubType::SilverBraceletOfWarding => if item.is_identified() {
-                "silver bracelet of warding"
-            } else {
-                "silver bracelet"
-            },
+            BracersSubType::BracersOfWeaponAttraction => {
+                if item.is_identified() {
+                    "bracers of weapon attraction"
+                } else {
+                    "bracers"
+                }
+            }
+            BracersSubType::SilverBraceletOfWarding => {
+                if item.is_identified() {
+                    "silver bracelet of warding"
+                } else {
+                    "silver bracelet"
+                }
+            }
             BracersSubType::SilverBracelet => "silver bracelet",
             BracersSubType::GoldBracelet => "gold bracelet",
             BracersSubType::PlatinumBracelet => "platinum bracelet",
@@ -179,7 +194,10 @@ mod tests {
                 "demonhide boots [1]",
             ),
             (Box::new(BootsTemplate::WyrmhideBoot), "wyrmhide boots [1]"),
-            (Box::new(BracersTemplate::BracersOfProtection), "bracers [1]"),
+            (
+                Box::new(BracersTemplate::BracersOfProtection),
+                "bracers [1]",
+            ),
             (Box::new(BracersTemplate::BracersOfDefense), "bracers [1]"),
             (Box::new(BracersTemplate::BracersOfShielding), "bracers [1]"),
             (
@@ -345,7 +363,11 @@ mod tests {
                 1,
                 "silver bracelet [1]",
             ),
-            (Box::new(BracersTemplate::SilverBracelet), 1, "silver bracelet [1]"),
+            (
+                Box::new(BracersTemplate::SilverBracelet),
+                1,
+                "silver bracelet [1]",
+            ),
             (Box::new(CloakTemplate::LightCloak), 1, "light cloak [1]"),
             (Box::new(CloakTemplate::HeavyCloak), 0, "heavy cloak"),
             (
@@ -380,12 +402,42 @@ mod tests {
                 0,
                 "soft leather shoes [1,+1]",
             ),
-            (Box::new(BracersTemplate::BracersOfProtection), 1, 0, "bracers of protection [1,+1]"),
-            (Box::new(BracersTemplate::BracersOfDefense), -1, 0, "bracers of defense [-1,-1]"),
-            (Box::new(BracersTemplate::BracersOfShielding), 1, 0, "bracers of shielding [1,+1]"),
-            (Box::new(BracersTemplate::BracersOfWeaponAttraction), -1, 0, "bracers of weapon attraction [-1,-1]"),
-            (Box::new(BracersTemplate::SilverBraceletOfWarding), 1, 0, "silver bracelet of warding [1,+1] (R)"),
-            (Box::new(BracersTemplate::SilverBracelet), 1, 0, "silver bracelet [1,+1]"),
+            (
+                Box::new(BracersTemplate::BracersOfProtection),
+                1,
+                0,
+                "bracers of protection [1,+1]",
+            ),
+            (
+                Box::new(BracersTemplate::BracersOfDefense),
+                -1,
+                0,
+                "bracers of defense [-1,-1]",
+            ),
+            (
+                Box::new(BracersTemplate::BracersOfShielding),
+                1,
+                0,
+                "bracers of shielding [1,+1]",
+            ),
+            (
+                Box::new(BracersTemplate::BracersOfWeaponAttraction),
+                -1,
+                0,
+                "bracers of weapon attraction [-1,-1]",
+            ),
+            (
+                Box::new(BracersTemplate::SilverBraceletOfWarding),
+                1,
+                0,
+                "silver bracelet of warding [1,+1] (R)",
+            ),
+            (
+                Box::new(BracersTemplate::SilverBracelet),
+                1,
+                0,
+                "silver bracelet [1,+1]",
+            ),
             (
                 Box::new(CloakTemplate::LightCloak),
                 1,

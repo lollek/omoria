@@ -1,12 +1,15 @@
 #[cfg(test)]
 mod tests {
-    use serial_test::serial;
-    use crate::dungeon::trap::data::{TRAP_LIST, TVAL_RUBBLE, TVAL_UNSEEN_TRAP, TVAL_SEEN_TRAP, TVAL_CLOSED_DOOR, SUBVAL_CLOSED_DOOR};
-    use crate::dungeon::trap::{place_trap_global, place_trap_into_lists, TrapList};
+    use crate::dungeon::trap::data::{
+        SUBVAL_CLOSED_DOOR, TRAP_LIST, TVAL_CLOSED_DOOR, TVAL_RUBBLE, TVAL_SEEN_TRAP,
+        TVAL_UNSEEN_TRAP,
+    };
     use crate::dungeon::trap::place_rubble_global;
     use crate::dungeon::trap::test_support;
+    use crate::dungeon::trap::{place_trap_global, place_trap_into_lists, TrapList};
     use crate::misc::rs2item_damage;
     use crate::model::{Cave, Item};
+    use serial_test::serial;
 
     const TLEN: usize = 10;
 
@@ -19,7 +22,11 @@ mod tests {
     const INDEX_CLOSED_DOOR: usize = SUBVAL_CLOSED_DOOR as usize - 1;
 
     /// Assert item fields match the template, given an expected tval.
-    fn assert_item_matches_template_with_tval(item: &Item, tpl: &crate::dungeon::trap::data::TrapTemplate, expected_tval: i64) {
+    fn assert_item_matches_template_with_tval(
+        item: &Item,
+        tpl: &crate::dungeon::trap::data::TrapTemplate,
+        expected_tval: i64,
+    ) {
         assert_eq!(item.tval as i64, expected_tval, "tval mismatch");
         assert_eq!(item.subval, tpl.subval);
         assert_eq!(item.level as i64, tpl.level);
@@ -64,7 +71,13 @@ mod tests {
         let mut tile = Cave::default();
         let mut t_list = vec![Item::default(); TLEN];
 
-        place_trap_into_lists(&mut tile, &mut t_list, ALLOC_INDEX, TrapList::A, SUBVAL_ARROW_TRAP);
+        place_trap_into_lists(
+            &mut tile,
+            &mut t_list,
+            ALLOC_INDEX,
+            TrapList::A,
+            SUBVAL_ARROW_TRAP,
+        );
 
         assert_eq!(tile.tptr, ALLOC_INDEX);
 
@@ -84,7 +97,13 @@ mod tests {
         let mut tile = Cave::default();
         let mut t_list = vec![Item::default(); TLEN];
 
-        place_trap_into_lists(&mut tile, &mut t_list, ALLOC_INDEX, TrapList::B, SUBVAL_ARROW_TRAP);
+        place_trap_into_lists(
+            &mut tile,
+            &mut t_list,
+            ALLOC_INDEX,
+            TrapList::B,
+            SUBVAL_ARROW_TRAP,
+        );
 
         assert_eq!(tile.tptr, ALLOC_INDEX);
 
@@ -103,14 +122,32 @@ mod tests {
         let mut t_list = vec![Item::default(); TLEN];
 
         // Place as list A (would normally be unseen)
-        place_trap_into_lists(&mut tile, &mut t_list, ALLOC_INDEX_A, TrapList::A, SUBVAL_OPEN_PIT);
+        place_trap_into_lists(
+            &mut tile,
+            &mut t_list,
+            ALLOC_INDEX_A,
+            TrapList::A,
+            SUBVAL_OPEN_PIT,
+        );
         let item_a = &t_list[ALLOC_INDEX_A as usize];
-        assert_eq!(item_a.tval as i64, TVAL_SEEN_TRAP, "open pit should be visible even in list A");
+        assert_eq!(
+            item_a.tval as i64, TVAL_SEEN_TRAP,
+            "open pit should be visible even in list A"
+        );
 
         // Place as list B (seen)
-        place_trap_into_lists(&mut tile, &mut t_list, ALLOC_INDEX_B, TrapList::B, SUBVAL_OPEN_PIT);
+        place_trap_into_lists(
+            &mut tile,
+            &mut t_list,
+            ALLOC_INDEX_B,
+            TrapList::B,
+            SUBVAL_OPEN_PIT,
+        );
         let item_b = &t_list[ALLOC_INDEX_B as usize];
-        assert_eq!(item_b.tval as i64, TVAL_SEEN_TRAP, "open pit should be visible in list B");
+        assert_eq!(
+            item_b.tval as i64, TVAL_SEEN_TRAP,
+            "open pit should be visible in list B"
+        );
     }
 
     #[test]
@@ -122,12 +159,24 @@ mod tests {
         let mut t_list = vec![Item::default(); TLEN];
 
         // Place as list A (unseen)
-        place_trap_into_lists(&mut tile, &mut t_list, ALLOC_INDEX_A, TrapList::A, SUBVAL_CLOSED_DOOR as usize);
+        place_trap_into_lists(
+            &mut tile,
+            &mut t_list,
+            ALLOC_INDEX_A,
+            TrapList::A,
+            SUBVAL_CLOSED_DOOR as usize,
+        );
         let item_a = &t_list[ALLOC_INDEX_A as usize];
         assert_eq!(item_a.tval as i64, TVAL_CLOSED_DOOR);
 
         // Place as list B (seen)
-        place_trap_into_lists(&mut tile, &mut t_list, ALLOC_INDEX_B, TrapList::B, SUBVAL_CLOSED_DOOR as usize);
+        place_trap_into_lists(
+            &mut tile,
+            &mut t_list,
+            ALLOC_INDEX_B,
+            TrapList::B,
+            SUBVAL_CLOSED_DOOR as usize,
+        );
         let item_b = &t_list[ALLOC_INDEX_B as usize];
         assert_eq!(item_b.tval as i64, TVAL_CLOSED_DOOR);
     }
@@ -279,7 +328,11 @@ mod tests {
             assert_eq!(tile.fopen, 0);
 
             let item = test_support::read_item(ALLOC_INDEX);
-            assert_item_matches_template_with_tval(&item, &crate::dungeon::trap::data::RUBBLE, TVAL_RUBBLE);
+            assert_item_matches_template_with_tval(
+                &item,
+                &crate::dungeon::trap::data::RUBBLE,
+                TVAL_RUBBLE,
+            );
         }
     }
 

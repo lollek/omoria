@@ -1,7 +1,11 @@
+use super::super::item_template::ItemTemplate;
 use crate::generate_item::item_template::create_melee_weapon;
 use crate::generate_item::ItemQuality;
-use super::super::item_template::ItemTemplate;
-use crate::model::{self, item_subtype::{HaftedWeaponSubType, ItemSubType}, Item, WornFlag2};
+use crate::model::{
+    self,
+    item_subtype::{HaftedWeaponSubType, ItemSubType},
+    Item, WornFlag2,
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AxeTemplate {

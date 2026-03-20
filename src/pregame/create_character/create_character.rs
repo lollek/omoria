@@ -1,14 +1,14 @@
-use std::convert::TryFrom;
 use std::cmp::min;
+use std::convert::TryFrom;
 use std::str;
 
-use crate::user_interface;
 use crate::data;
 use crate::io;
 use crate::logic::menu;
 use crate::misc;
 use crate::player;
 use crate::term;
+use crate::user_interface;
 
 use super::logic::*;
 use crate::model::{Class, Race, Sex};
@@ -157,12 +157,10 @@ fn choose_race() -> Race {
             ),
             'c' => menu::draw_help_vec(
                 races[index as usize],
-                &data::race::available_classes(
-                    &Race::try_from(index as usize).unwrap(),
-                )
-                .iter()
-                .map(data::class::name)
-                .collect::<Vec<&str>>(),
+                &data::race::available_classes(&Race::try_from(index as usize).unwrap())
+                    .iter()
+                    .map(data::class::name)
+                    .collect::<Vec<&str>>(),
             ),
             _ => {}
         }

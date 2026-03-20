@@ -1,4 +1,8 @@
-use crate::{data::class::{self}, model::{ Class, ItemType, PlayerFlags}, player_action::attack::MeleeAttackType};
+use crate::{
+    data::class::{self},
+    model::{Class, ItemType, PlayerFlags},
+    player_action::attack::MeleeAttackType,
+};
 
 /// Pure inputs for `calculate_player_tohit_melee_pure`.
 #[derive(Debug, Clone)]
@@ -28,7 +32,8 @@ pub(crate) struct ToHitRangedInputs {
 // TODO Racial bonus
 pub(crate) fn calculate_player_tohit_melee_pure(inputs: &ToHitMeleeInputs) -> i16 {
     // [0-40]
-    let from_class_and_level = ((class::melee_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
+    let from_class_and_level =
+        ((class::melee_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
 
     let from_stats = inputs.dex_modifier + inputs.strength_modifier;
 
@@ -55,14 +60,20 @@ pub(crate) fn calculate_player_tohit_melee_pure(inputs: &ToHitMeleeInputs) -> i1
     if inputs.player_flags.blessed > 0 {
         from_flags += 5;
     }
-    from_class_and_level + from_stats + from_backstab + non_proficiency_penalty + from_flags + inputs.bonus_from_equipment
+    from_class_and_level
+        + from_stats
+        + from_backstab
+        + non_proficiency_penalty
+        + from_flags
+        + inputs.bonus_from_equipment
 }
 
 // TODO Racial bonus
 // TODO Missile .tohit should be added
 pub(crate) fn calculate_player_tohit_ranged_pure(inputs: &ToHitRangedInputs) -> i16 {
     // [0-40]
-    let from_class_and_level = ((class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
+    let from_class_and_level =
+        ((class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
 
     let from_stats = inputs.dex_modifier + inputs.strength_modifier;
 
@@ -81,7 +92,11 @@ pub(crate) fn calculate_player_tohit_ranged_pure(inputs: &ToHitRangedInputs) -> 
     if inputs.player_flags.blessed > 0 {
         from_flags += 5;
     }
-    from_class_and_level + from_stats + non_proficiency_penalty + from_flags + inputs.bonus_from_equipment
+    from_class_and_level
+        + from_stats
+        + non_proficiency_penalty
+        + from_flags
+        + inputs.bonus_from_equipment
 }
 
 // TODO Racial bonus
@@ -89,7 +104,8 @@ pub(crate) fn calculate_player_tohit_ranged_pure(inputs: &ToHitRangedInputs) -> 
 // TODO: proficiency seems off
 pub(crate) fn calculate_player_tohit_thrown_pure(inputs: &ToHitRangedInputs) -> i16 {
     // [0-40]
-    let from_class_and_level = ((class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
+    let from_class_and_level =
+        ((class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
 
     let from_stats = inputs.dex_modifier + inputs.strength_modifier;
 
@@ -108,7 +124,11 @@ pub(crate) fn calculate_player_tohit_thrown_pure(inputs: &ToHitRangedInputs) -> 
     if inputs.player_flags.blessed > 0 {
         from_flags += 5;
     }
-    from_class_and_level + from_stats + non_proficiency_penalty + from_flags + inputs.bonus_from_equipment
+    from_class_and_level
+        + from_stats
+        + non_proficiency_penalty
+        + from_flags
+        + inputs.bonus_from_equipment
 }
 
 #[cfg(test)]
@@ -145,8 +165,8 @@ mod melee_tests {
         inputs.attack_type = MeleeAttackType::Backstab;
         let cases = [
             (1, 1),
-            (4, 5), // +1 from backstab at level 4
-            (8, 10), // +2 from backstab at level 8
+            (4, 5),   // +1 from backstab at level 4
+            (8, 10),  // +2 from backstab at level 8
             (12, 15), // +3 from backstab at level 12
             (16, 20), // +4 from backstab at level 16
             (20, 25), // +5 from backstab at level 20
@@ -210,20 +230,20 @@ mod melee_tests {
         //   Paladin=8, Druid=4, Bard=5, Adventurer=6, Monk=8, Barbarian=10
         let cases: &[(Class, u8, i16)] = &[
             // --- level 1 ---
-            (Class::Fighter, 1, 1),    // 10, Fighter / Barbarian -> 1
-            (Class::Paladin, 1, 0),    // 8, Paladin / Monk -> 0
-            (Class::Cleric, 1, 0),     // 6, Cleric / Adventurer / Rogue / Ranger -> 0
-            (Class::Bard, 1, 0),       // 5, Bard -> 0
-            (Class::Wizard, 1, 0),     // 4, Wizard / Druid -> 0
+            (Class::Fighter, 1, 1), // 10, Fighter / Barbarian -> 1
+            (Class::Paladin, 1, 0), // 8, Paladin / Monk -> 0
+            (Class::Cleric, 1, 0),  // 6, Cleric / Adventurer / Rogue / Ranger -> 0
+            (Class::Bard, 1, 0),    // 5, Bard -> 0
+            (Class::Wizard, 1, 0),  // 4, Wizard / Druid -> 0
             // --- level 5 ---
-            (Class::Fighter, 5, 5),    // 10, Fighter / Barbarian -> 5
-            (Class::Monk, 5, 4),       // 8, Paladin / Monk -> 4
-            (Class::Cleric, 5, 3),     // 6, Cleric / Adventurer / Rogue / Ranger -> 3
-            (Class::Bard, 5, 2),       // 5, Bard -> 2
-            (Class::Wizard, 5, 2),     // 4, Wizard / Druid -> 2
+            (Class::Fighter, 5, 5), // 10, Fighter / Barbarian -> 5
+            (Class::Monk, 5, 4),    // 8, Paladin / Monk -> 4
+            (Class::Cleric, 5, 3),  // 6, Cleric / Adventurer / Rogue / Ranger -> 3
+            (Class::Bard, 5, 2),    // 5, Bard -> 2
+            (Class::Wizard, 5, 2),  // 4, Wizard / Druid -> 2
             // --- level 10 ---
-            (Class::Fighter, 10, 10),    // 10*10/10 = 10
-            (Class::Barbarian, 10, 10),  // 10*10/10 = 10
+            (Class::Fighter, 10, 10),   // 10*10/10 = 10
+            (Class::Barbarian, 10, 10), // 10*10/10 = 10
             (Class::Paladin, 10, 8),    //  8*10/10 = 8
             (Class::Monk, 10, 8),       //  8*10/10 = 8
             (Class::Cleric, 10, 6),     //  6*10/10 = 6
@@ -234,11 +254,11 @@ mod melee_tests {
             (Class::Wizard, 10, 4),     //  4*10/10 = 4
             (Class::Druid, 10, 4),      //  4*10/10 = 4
             // --- level 40 ---
-            (Class::Fighter, 40, 40),    // 10, Fighter / Barbarian -> 40
-            (Class::Monk, 40, 32),       // 8, Paladin / Monk -> 32
-            (Class::Cleric, 40, 24),     // 6, Cleric / Adventurer / Rogue / Ranger -> 24
-            (Class::Bard, 40, 20),       // 5, Bard -> 20
-            (Class::Wizard, 40, 16),     // 4, Wizard / Druid -> 16
+            (Class::Fighter, 40, 40), // 10, Fighter / Barbarian -> 40
+            (Class::Monk, 40, 32),    // 8, Paladin / Monk -> 32
+            (Class::Cleric, 40, 24),  // 6, Cleric / Adventurer / Rogue / Ranger -> 24
+            (Class::Bard, 40, 20),    // 5, Bard -> 20
+            (Class::Wizard, 40, 16),  // 4, Wizard / Druid -> 16
         ];
 
         for (class, level, expected) in cases {
@@ -323,17 +343,17 @@ mod ranged_tests {
         //
         let cases: &[(Class, u8, i16)] = &[
             // --- level 1 ---
-            (Class::Fighter, 1, 1),    // 10, Fighter / Barbarian / Ranger / Rogue
-            (Class::Druid, 1, 0),      // 7, Druid
-            (Class::Paladin, 1, 0),    // 6, Paladin / Bard / Adventurer / Monk
-            (Class::Cleric, 1, 0-5),     // 5, Cleric
-            (Class::Wizard, 1, 0-5),     // 4, Wizard
+            (Class::Fighter, 1, 1), // 10, Fighter / Barbarian / Ranger / Rogue
+            (Class::Druid, 1, 0),   // 7, Druid
+            (Class::Paladin, 1, 0), // 6, Paladin / Bard / Adventurer / Monk
+            (Class::Cleric, 1, 0 - 5), // 5, Cleric
+            (Class::Wizard, 1, 0 - 5), // 4, Wizard
             // --- level 5 ---
             (Class::Fighter, 5, 5),
             (Class::Druid, 5, 3),
             (Class::Paladin, 5, 3),
-            (Class::Cleric, 5, 2-5),
-            (Class::Wizard, 5, 2-5),
+            (Class::Cleric, 5, 2 - 5),
+            (Class::Wizard, 5, 2 - 5),
             // --- level 10 ---
             (Class::Fighter, 10, 10),
             (Class::Barbarian, 10, 10),
@@ -341,17 +361,17 @@ mod ranged_tests {
             (Class::Ranger, 10, 10),
             (Class::Druid, 10, 7),
             (Class::Paladin, 10, 6),
-            (Class::Monk, 10, 6-5),
+            (Class::Monk, 10, 6 - 5),
             (Class::Adventurer, 10, 6),
             (Class::Bard, 10, 6),
-            (Class::Cleric, 10, 5-5),
-            (Class::Wizard, 10, 4-5),
+            (Class::Cleric, 10, 5 - 5),
+            (Class::Wizard, 10, 4 - 5),
             // --- level 40 ---
             (Class::Fighter, 40, 40),
             (Class::Druid, 40, 28),
             (Class::Paladin, 40, 24),
-            (Class::Cleric, 40, 20-5),
-            (Class::Wizard, 40, 16-5),
+            (Class::Cleric, 40, 20 - 5),
+            (Class::Wizard, 40, 16 - 5),
         ];
 
         for (class, level, expected) in cases {
@@ -437,11 +457,11 @@ mod thrown_tests {
         //
         let cases: &[(Class, u8, i16)] = &[
             // --- level 1 ---
-            (Class::Fighter, 1, 1),    // 10, Fighter / Barbarian / Ranger / Rogue
-            (Class::Druid, 1, 0),      // 7, Druid
-            (Class::Paladin, 1, 0),    // 6, Paladin / Bard / Adventurer / Monk
-            (Class::Cleric, 1, 0),     // 5, Cleric
-            (Class::Wizard, 1, 0),     // 4, Wizard
+            (Class::Fighter, 1, 1), // 10, Fighter / Barbarian / Ranger / Rogue
+            (Class::Druid, 1, 0),   // 7, Druid
+            (Class::Paladin, 1, 0), // 6, Paladin / Bard / Adventurer / Monk
+            (Class::Cleric, 1, 0),  // 5, Cleric
+            (Class::Wizard, 1, 0),  // 4, Wizard
             // --- level 5 ---
             (Class::Fighter, 5, 5),
             (Class::Druid, 5, 3),

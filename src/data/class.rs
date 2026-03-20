@@ -1,8 +1,8 @@
+use crate::generate_item;
 use crate::generate_item::template::*;
 use crate::generate_item::ItemQuality;
 use crate::model;
 use crate::model::{Class, ItemType};
-use crate::generate_item;
 
 pub fn name(class: &Class) -> &'static str {
     match class {
@@ -228,58 +228,120 @@ pub fn starting_items(class: &Class) -> Vec<model::Item> {
     let mut items = match class {
         Class::Fighter => vec![
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
-            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal)
+            generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
         Class::Wizard => vec![
-            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(MagicBookTemplate::BeginnersMagic),
+                item_level,
+                ItemQuality::Normal,
+            ),
+            generate_item::generate(
+                Box::new(ArmorTemplate::Robe),
+                item_level,
+                ItemQuality::Normal,
+            ),
+            generate_item::generate(
+                Box::new(DaggerTemplate::Stiletto),
+                item_level,
+                ItemQuality::Normal,
+            ),
         ],
         Class::Cleric => vec![
-            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(ArmorTemplate::WovenCordArmor), item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(PrayerBookTemplate::BeginnersHandbook),
+                item_level,
+                ItemQuality::Normal,
+            ),
+            generate_item::generate(
+                Box::new(ArmorTemplate::WovenCordArmor),
+                item_level,
+                ItemQuality::Normal,
+            ),
+            generate_item::generate(
+                Box::new(MaceTemplate::IronShodQuarterstaff),
+                item_level,
+                ItemQuality::Normal,
+            ),
         ],
         Class::Rogue => vec![
-            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(SongBookTemplate::BeginnersHandbook),
+                item_level,
+                ItemQuality::Normal,
+            ),
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(DaggerTemplate::Stiletto),
+                item_level,
+                ItemQuality::Normal,
+            ),
         ],
         Class::Ranger => vec![
-            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(InstrumentTemplate::PipesOfPeace),
+                item_level,
+                ItemQuality::Normal,
+            ),
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
         Class::Paladin => vec![
-            generate_item::generate(Box::new(PrayerBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(PrayerBookTemplate::BeginnersHandbook),
+                item_level,
+                ItemQuality::Normal,
+            ),
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
         Class::Druid => vec![
-            generate_item::generate(Box::new(InstrumentTemplate::PipesOfPeace), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(InstrumentTemplate::PipesOfPeace),
+                item_level,
+                ItemQuality::Normal,
+            ),
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(MaceTemplate::IronShodQuarterstaff), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(MaceTemplate::IronShodQuarterstaff),
+                item_level,
+                ItemQuality::Normal,
+            ),
         ],
         Class::Bard => vec![
-            generate_item::generate(Box::new(SongBookTemplate::BeginnersHandbook), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(SongBookTemplate::BeginnersHandbook),
+                item_level,
+                ItemQuality::Normal,
+            ),
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_boots(item_level, ItemQuality::Normal),
-            generate_item::generate(Box::new(DaggerTemplate::Stiletto), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(DaggerTemplate::Stiletto),
+                item_level,
+                ItemQuality::Normal,
+            ),
         ],
         Class::Adventurer => vec![
-            generate_item::generate(Box::new(MagicBookTemplate::BeginnersMagic), item_level, ItemQuality::Normal),
+            generate_item::generate(
+                Box::new(MagicBookTemplate::BeginnersMagic),
+                item_level,
+                ItemQuality::Normal,
+            ),
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
-        Class::Monk => vec![
-            generate_item::generate(Box::new(ArmorTemplate::Robe), item_level, ItemQuality::Normal),
-        ],
+        Class::Monk => vec![generate_item::generate(
+            Box::new(ArmorTemplate::Robe),
+            item_level,
+            ItemQuality::Normal,
+        )],
         Class::Barbarian => vec![
             generate_item::generate_main_armor(item_level, ItemQuality::Normal),
             generate_item::generate_melee_weapon(item_level, ItemQuality::Normal),
         ],
     };
-    items.iter_mut().for_each(|item| {item.set_identified(true)});
+    items.iter_mut().for_each(|item| item.set_identified(true));
     items
 }
 
@@ -290,37 +352,31 @@ pub fn is_proficient_with_weapon(class: &Class, maybe_item_type: Option<ItemType
     let item_type = maybe_item_type.unwrap();
     match class {
         Class::Fighter => true,
-        Class::Wizard => {
-            match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => false,
-                ItemType::RangedWeapon => false,
-                _ => true,
-            }
+        Class::Wizard => match item_type {
+            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => false,
+            ItemType::RangedWeapon => false,
+            _ => true,
         },
-        Class::Cleric => {
-            match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => false,
-                ItemType::RangedWeapon => false,
-                _ => true,
+        Class::Cleric => match item_type {
+            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => {
+                false
             }
+            ItemType::RangedWeapon => false,
+            _ => true,
         },
         Class::Rogue => true,
         Class::Ranger => true,
         Class::Paladin => true,
-        Class::Druid => {
-            match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword => false,
-                _ => true,
-            }
+        Class::Druid => match item_type {
+            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword => false,
+            _ => true,
         },
         Class::Bard => true,
         Class::Adventurer => true,
-        Class::Monk => {
-            match item_type {
-                ItemType::HaftedWeapon | ItemType::PoleArm => false,
-                ItemType::RangedWeapon => false,
-                _ => true,
-            }
+        Class::Monk => match item_type {
+            ItemType::HaftedWeapon | ItemType::PoleArm => false,
+            ItemType::RangedWeapon => false,
+            _ => true,
         },
         Class::Barbarian => true,
     }

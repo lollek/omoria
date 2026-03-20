@@ -63,7 +63,11 @@ pub fn generate_item_for_general_store() -> model::Item {
         Box::new(CloakTemplate::LightCloak),
     ];
     let random_template = get_random_from_list(templates_to_choose_from);
-    generate(random_template, constants::STORE_ITEM_LEVEL, ItemQuality::Normal)
+    generate(
+        random_template,
+        constants::STORE_ITEM_LEVEL,
+        ItemQuality::Normal,
+    )
 }
 
 /**
@@ -79,7 +83,11 @@ pub fn generate_item_for_armorsmith() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -99,7 +107,11 @@ pub fn generate_item_for_weaponsmith() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -111,7 +123,11 @@ pub fn generate_item_for_alchemist_store() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -125,7 +141,11 @@ pub fn generate_item_for_magic_store() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -135,7 +155,11 @@ pub fn generate_item_for_inn() -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
 
     templates.extend(LodgingAtInnTemplate::vec());
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, ItemQuality::Normal)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        ItemQuality::Normal,
+    )
 }
 
 /**
@@ -149,7 +173,11 @@ pub fn generate_item_for_library() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -162,7 +190,11 @@ pub fn generate_item_for_temple() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -177,7 +209,11 @@ pub fn generate_item_for_music_store() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -192,7 +228,11 @@ pub fn generate_item_for_gem_store() -> model::Item {
 
     templates.retain(|x| x.item_level() <= constants::STORE_MAX_ITEM_LEVEL);
     let item_quality = calculate_item_quality(constants::STORE_ITEM_LEVEL);
-    generate(get_random_from_list(templates), constants::STORE_ITEM_LEVEL, item_quality)
+    generate(
+        get_random_from_list(templates),
+        constants::STORE_ITEM_LEVEL,
+        item_quality,
+    )
 }
 
 /**
@@ -238,21 +278,37 @@ pub fn generate_melee_weapon(item_level: u8, item_quality: ItemQuality) -> model
  * Main armor as in not boots, belts, etc
 */
 pub fn generate_main_armor(item_level: u8, item_quality: ItemQuality) -> model::Item {
-    generate(get_random_from_list(ArmorTemplate::vec()), item_level, item_quality)
+    generate(
+        get_random_from_list(ArmorTemplate::vec()),
+        item_level,
+        item_quality,
+    )
 }
 
 pub fn generate_boots(item_level: u8, item_quality: ItemQuality) -> model::Item {
-    generate(get_random_from_list(BootsTemplate::vec()), item_level, item_quality)
+    generate(
+        get_random_from_list(BootsTemplate::vec()),
+        item_level,
+        item_quality,
+    )
 }
 
 pub fn generate_belt(item_level: u8, item_quality: ItemQuality) -> model::Item {
-    generate(get_random_from_list(BeltTemplate::vec()), item_level, item_quality)
+    generate(
+        get_random_from_list(BeltTemplate::vec()),
+        item_level,
+        item_quality,
+    )
 }
 
 /**
  * Generate an item which should have a given item level
  */
-pub fn generate_item_for_item_level_of_category(item_level: u8, item_category: ItemCategory, item_quality: ItemQuality) -> model::Item {
+pub fn generate_item_for_item_level_of_category(
+    item_level: u8,
+    item_category: ItemCategory,
+    item_quality: ItemQuality,
+) -> model::Item {
     let mut templates: Vec<Box<dyn ItemTemplate>> = Vec::new();
     match item_category {
         ItemCategory::Armor => {
@@ -321,12 +377,8 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
         20..=29 => ItemCategory::Potion,
         30..=49 => ItemCategory::Armor,
         50..=69 => ItemCategory::Weapon,
-        70..=84 => {
-            ItemCategory::Usable
-        }
-        85..=99 => {
-            ItemCategory::DungeonItems
-        }
+        70..=84 => ItemCategory::Usable,
+        85..=99 => ItemCategory::DungeonItems,
         _ => panic!("Rand out of range!"),
     };
 
@@ -337,7 +389,11 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
 /**
  * Create an item from a given type and item level
  */
-pub fn generate(template: Box<dyn ItemTemplate>, item_level: u8, item_quality: ItemQuality) -> model::Item {
+pub fn generate(
+    template: Box<dyn ItemTemplate>,
+    item_level: u8,
+    item_quality: ItemQuality,
+) -> model::Item {
     let mut item = template.create(item_quality, item_level);
     item.level = item_level.try_into().unwrap_or(i8::MAX);
     item
@@ -347,13 +403,13 @@ fn calculate_item_quality(item_level: u8) -> ItemQuality {
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
     let odds_for_high_quality = max(5, item_level.checked_sub(10).unwrap_or(0));
     if odds_for_high_quality > (rand::random::<u8>() % 100) {
-        return ItemQuality::HighQuality
+        return ItemQuality::HighQuality;
     }
 
     // 50%, 40%, 30%, 20%, 10%, 5%, 5%, 5%...
     let odds_for_low_quality = max(5, 6_u8.checked_sub(item_level).unwrap_or(0) * 10);
     if odds_for_low_quality > (rand::random::<u8>() % 100) {
-        return ItemQuality::LowQuality
+        return ItemQuality::LowQuality;
     }
 
     // [0-5]: 0%, [5-10]: 5%, [10+]: 10%

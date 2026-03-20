@@ -4,8 +4,7 @@ use std::ffi::CStr;
 use std::sync::RwLock;
 
 lazy_static! {
-    static ref MESSAGE_RECORD: RwLock<LinkedList<String>> =
-        RwLock::new(LinkedList::default());
+    static ref MESSAGE_RECORD: RwLock<LinkedList<String>> = RwLock::new(LinkedList::default());
 }
 const MAX_MESSAGES: usize = 50;
 
@@ -36,9 +35,11 @@ pub fn record_message(message: String) {
 #[no_mangle]
 pub extern "C" fn show_recorded_messages() {
     let guard = MESSAGE_RECORD.read().expect("RwLock poisoned");
-    let items = guard.iter().rev().map(String::as_ref).collect::<Vec<&str>>();
+    let items = guard
+        .iter()
+        .rev()
+        .map(String::as_ref)
+        .collect::<Vec<&str>>();
     draw_help_vec("Messages", &items);
-    unsafe {
-        draw_cave()
-    }
+    unsafe { draw_cave() }
 }

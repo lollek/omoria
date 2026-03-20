@@ -7,7 +7,9 @@ use crate::model::item_subtype::{ChimeSubType, ItemSubType};
 use crate::model::{Item, ItemType};
 
 pub fn chime(item: &Item) -> String {
-    let Some(ItemSubType::Chime(chime_subtype)) = item_subtype::from_i64(ItemType::Chime, item.subval) else {
+    let Some(ItemSubType::Chime(chime_subtype)) =
+        item_subtype::from_i64(ItemType::Chime, item.subval)
+    else {
         return "alien chime".to_string();
     };
 

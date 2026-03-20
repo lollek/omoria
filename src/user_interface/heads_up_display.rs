@@ -124,7 +124,6 @@ fn print_equipment(row: u8, col: u8) {
     }
 }
 
-
 fn print_status_row() {
     print_depth(STATUS_ROW, DEPTH_COL);
 }

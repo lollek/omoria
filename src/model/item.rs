@@ -1,11 +1,11 @@
-use std::convert::TryFrom;
 use crate::thirdparty::serde::BigArray;
+use std::convert::TryFrom;
 
-use crate::{conversion, misc};
 use crate::misc::rs2item_name;
+use crate::model::item_subtype::ItemSubType;
 use crate::model::ItemType;
 use crate::model::{Damage, Name};
-use crate::model::item_subtype::ItemSubType;
+use crate::{conversion, misc};
 
 pub enum ChestFlags1 {
     Locked = 0x00000001,
@@ -229,12 +229,12 @@ impl Item {
     }
 
     pub fn set_cursed(&mut self, yn: bool) {
-       if !yn {
-           panic!("Not implemented yet");
-       }
+        if !yn {
+            panic!("Not implemented yet");
+        }
         self.apply_wornflag1(WornFlag1::Cursed);
     }
-    
+
     pub fn damage_string(&self) -> String {
         let raw_string = self.damage.iter().map(|&i| i as u8).collect::<Vec<u8>>();
         misc::c_array_to_rust_string(raw_string)
@@ -245,7 +245,7 @@ impl Item {
     }
 
     pub fn set_identified(&mut self, yn: bool) {
-        self.identified = if yn { 255} else { 0 };
+        self.identified = if yn { 255 } else { 0 };
     }
 }
 

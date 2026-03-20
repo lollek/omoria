@@ -1,8 +1,10 @@
 use crate::model::Stat;
+use crate::player_action::attack::{
+    calculate_number_of_attacks, calculate_player_tohit, AttackType, MeleeAttackType,
+};
 use crate::user_interface::helpers;
 use crate::{data, helper, misc, ncurses, player, term};
 use std::cmp::max;
-use crate::player_action::attack::{calculate_number_of_attacks, calculate_player_tohit, AttackType, MeleeAttackType};
 
 pub fn character_screen() {
     put_character(true);
@@ -35,9 +37,21 @@ fn put_combat_abilities() {
     let mut row = starting_row;
     for line in [
         format!("Num attacks:  {}", calculate_number_of_attacks()),
-        format!("Melee to hit: {}", calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))),
-        format!("Damage:       {} {}", player::player_main_weapon().damage_string(), helper::format_signed(player::plus_to_damage())),
-        format!("AC:           {} ({} {})", player::base_ac() + player::plus_to_ac(), player::base_ac(), helper::format_signed(player::plus_to_ac())),
+        format!(
+            "Melee to hit: {}",
+            calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))
+        ),
+        format!(
+            "Damage:       {} {}",
+            player::player_main_weapon().damage_string(),
+            helper::format_signed(player::plus_to_damage())
+        ),
+        format!(
+            "AC:           {} ({} {})",
+            player::base_ac() + player::plus_to_ac(),
+            player::base_ac(),
+            helper::format_signed(player::plus_to_ac())
+        ),
     ] {
         row += 1;
         term::prt(line, row, left_column);
@@ -45,8 +59,14 @@ fn put_combat_abilities() {
 
     let mut row = starting_row;
     for line in [
-        format!("Level:  {} ({} xp to next)", unsafe { player::player_lev } , player::exp_to_next_level()),
-        format!("Gold:   {} (Bank: {})", player::wallet().total, unsafe { player::player_account }),
+        format!(
+            "Level:  {} ({} xp to next)",
+            unsafe { player::player_lev },
+            player::exp_to_next_level()
+        ),
+        format!("Gold:   {} (Bank: {})", player::wallet().total, unsafe {
+            player::player_account
+        }),
         format!("Health: {}/{}", player::current_hp(), player::max_hp()),
         format!("Mana:   {}/{}", player::current_mp(), player::max_mp()),
     ] {
@@ -77,7 +97,8 @@ fn put_physical_aspects() {
 fn put_misc_abilities() {
     term::clear_from(14);
 
-    let melee_to_hit: i64 = (calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))) as i64;
+    let melee_to_hit: i64 =
+        (calculate_player_tohit(AttackType::Melee(MeleeAttackType::Standard))) as i64;
     let ranged_to_hit: i64 = (calculate_player_tohit(AttackType::Ranged)) as i64;
 
     let perception: i64 = max(27 - player::search_frequency(), 0).into();
@@ -95,15 +116,55 @@ fn put_misc_abilities() {
     let infravision: i64 = player::infravision() * 10;
 
     term::prt("(Miscellaneous Abilities)", 15, 23);
-    ncurses::mvaddstr(16, 1, format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 1)));
-    ncurses::mvaddstr(17, 1, format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 1)));
-    ncurses::mvaddstr(18, 1, format!("Saving Throw: {}", misc::mod_to_string(saving_throw, 6)));
-    ncurses::mvaddstr(19, 1, format!("Reputation  : {}", misc::mod_to_string(reputation, 1)));
-    ncurses::mvaddstr(16, 26, format!("Stealth     : {}", misc::mod_to_string(stealth, 1)));
-    ncurses::mvaddstr(17, 26, format!("Disarming   : {}", misc::mod_to_string(disarming, 8)));
-    ncurses::mvaddstr(18, 26, format!("Magic Device: {}", misc::mod_to_string(magic_devices, 7)));
-    ncurses::mvaddstr(16, 51, format!("Perception  : {}", misc::mod_to_string(perception, 3)));
-    ncurses::mvaddstr(17, 51, format!("Searching   : {}", misc::mod_to_string(searching, 6)));
+    ncurses::mvaddstr(
+        16,
+        1,
+        format!("Fighting    : {}", misc::mod_to_string(melee_to_hit, 1)),
+    );
+    ncurses::mvaddstr(
+        17,
+        1,
+        format!("Bows/Throw  : {}", misc::mod_to_string(ranged_to_hit, 1)),
+    );
+    ncurses::mvaddstr(
+        18,
+        1,
+        format!("Saving Throw: {}", misc::mod_to_string(saving_throw, 6)),
+    );
+    ncurses::mvaddstr(
+        19,
+        1,
+        format!("Reputation  : {}", misc::mod_to_string(reputation, 1)),
+    );
+    ncurses::mvaddstr(
+        16,
+        26,
+        format!("Stealth     : {}", misc::mod_to_string(stealth, 1)),
+    );
+    ncurses::mvaddstr(
+        17,
+        26,
+        format!("Disarming   : {}", misc::mod_to_string(disarming, 8)),
+    );
+    ncurses::mvaddstr(
+        18,
+        26,
+        format!("Magic Device: {}", misc::mod_to_string(magic_devices, 7)),
+    );
+    ncurses::mvaddstr(
+        16,
+        51,
+        format!("Perception  : {}", misc::mod_to_string(perception, 3)),
+    );
+    ncurses::mvaddstr(
+        17,
+        51,
+        format!("Searching   : {}", misc::mod_to_string(searching, 6)),
+    );
     ncurses::mvaddstr(18, 51, format!("Infra-Vision: {} feet", infravision));
-    ncurses::mvaddstr(19, 51, format!("Swimming    : {}", misc::mod_to_string(swimming, 1)));
+    ncurses::mvaddstr(
+        19,
+        51,
+        format!("Swimming    : {}", misc::mod_to_string(swimming, 1)),
+    );
 }

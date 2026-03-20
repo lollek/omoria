@@ -1,6 +1,6 @@
 pub use self::generate_item::*;
-pub use self::item_template::ItemTemplate;
 pub use self::item_template::ItemQuality;
+pub use self::item_template::ItemTemplate;
 
 pub mod template;
 

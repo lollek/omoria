@@ -9,7 +9,8 @@ use crate::model::{Cave, Item};
 use libc;
 
 #[cfg(not(test))]
-unsafe fn cave_global() -> &'static mut [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1] {
+unsafe fn cave_global() -> &'static mut [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1]
+{
     extern "C" {
         static mut cave: [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1];
     }
@@ -54,9 +55,18 @@ pub(crate) static mut TEST_LAST_LITE_SPOT_YX: (usize, usize) = (0, 0);
 
 #[cfg(test)]
 pub(crate) static mut TEST_CAVE: [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1] =
-    [[Cave { cptr: 0, tptr: 0, fval: 0, fopen: 0, fm: 0, pl: 0, tl: 0, moved: 0, oct: 0, h2o: 0 };
-        constants::MAX_WIDTH + 1];
-        constants::MAX_HEIGHT + 1];
+    [[Cave {
+        cptr: 0,
+        tptr: 0,
+        fval: 0,
+        fopen: 0,
+        fm: 0,
+        pl: 0,
+        tl: 0,
+        moved: 0,
+        oct: 0,
+        h2o: 0,
+    }; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1];
 
 #[cfg(test)]
 pub(crate) static mut TEST_T_LIST: [Item; constants::MAX_TALLOC + 1] = [Item {
@@ -80,7 +90,8 @@ pub(crate) static mut TEST_T_LIST: [Item; constants::MAX_TALLOC + 1] = [Item {
     constants::MAX_TALLOC + 1];
 
 #[cfg(test)]
-unsafe fn cave_global() -> &'static mut [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1] {
+unsafe fn cave_global() -> &'static mut [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1]
+{
     &mut *(&raw mut TEST_CAVE)
 }
 
@@ -165,9 +176,7 @@ pub unsafe fn change_trap_global(y: usize, x: usize) {
     let old_item = &t_list[old_index as usize];
     let tval = old_item.tval as i64;
 
-    if tval != data::TVAL_UNSEEN_TRAP
-        && tval != data::TVAL_SECRET_DOOR
-    {
+    if tval != data::TVAL_UNSEEN_TRAP && tval != data::TVAL_SECRET_DOOR {
         return;
     }
 

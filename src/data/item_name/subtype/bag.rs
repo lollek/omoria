@@ -28,17 +28,21 @@ pub fn bag(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use serial_test::serial;
-    use crate::data::item_name::generate;
     use super::*;
+    use crate::data::item_name::generate;
     use crate::generate_item;
-    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::BagTemplate;
+    use crate::generate_item::ItemQuality;
+    use serial_test::serial;
 
     #[test]
     #[serial]
     fn test_bag_of_holding250() {
-        let item = generate_item::generate(Box::new(BagTemplate::BagOfHolding250), 0, ItemQuality::Normal);
+        let item = generate_item::generate(
+            Box::new(BagTemplate::BagOfHolding250),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "bag");
 
         identification::set_identified(ItemSubType::Bag(BagSubType::BagOfHolding250), true);
@@ -48,7 +52,11 @@ mod tests {
     #[test]
     #[serial]
     fn test_bag_of_holding500() {
-        let item = generate_item::generate(Box::new(BagTemplate::BagOfHolding500), 0, ItemQuality::Normal);
+        let item = generate_item::generate(
+            Box::new(BagTemplate::BagOfHolding500),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "bag");
 
         identification::set_identified(ItemSubType::Bag(BagSubType::BagOfHolding500), true);
@@ -58,7 +66,11 @@ mod tests {
     #[test]
     #[serial]
     fn test_bag_of_holding1000() {
-        let item = generate_item::generate(Box::new(BagTemplate::BagOfHolding1000), 0, ItemQuality::Normal);
+        let item = generate_item::generate(
+            Box::new(BagTemplate::BagOfHolding1000),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "bag");
 
         identification::set_identified(ItemSubType::Bag(BagSubType::BagOfHolding1000), true);
@@ -68,7 +80,11 @@ mod tests {
     #[test]
     #[serial]
     fn test_bag_of_holding1500() {
-        let item = generate_item::generate(Box::new(BagTemplate::BagOfHolding1500), 0, ItemQuality::Normal);
+        let item = generate_item::generate(
+            Box::new(BagTemplate::BagOfHolding1500),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "bag");
 
         identification::set_identified(ItemSubType::Bag(BagSubType::BagOfHolding1500), true);
@@ -78,7 +94,11 @@ mod tests {
     #[test]
     #[serial]
     fn test_bag_of_devouring() {
-        let item = generate_item::generate(Box::new(BagTemplate::BagOfDevouring), 0, ItemQuality::Normal);
+        let item = generate_item::generate(
+            Box::new(BagTemplate::BagOfDevouring),
+            0,
+            ItemQuality::Normal,
+        );
         assert_eq!(generate(&item), "bag");
 
         identification::set_identified(ItemSubType::Bag(BagSubType::BagOfDevouring), true);

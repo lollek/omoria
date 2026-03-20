@@ -229,7 +229,7 @@ impl ItemTemplate for ValuableTemplate {
             ValuableTemplate::GemOfRemoveCurse => randint(5) + 3,
             ValuableTemplate::GemOfAnnihilation => randint(3) + 2,
             ValuableTemplate::GemOfRecall => randint(6) + 4,
-            _=> 0,
+            _ => 0,
         }
     }
 

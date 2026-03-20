@@ -1,6 +1,6 @@
-use std::convert::TryFrom;
 use crate::data;
 use crate::model::{Class, Item, ItemType};
+use std::convert::TryFrom;
 
 #[no_mangle]
 pub extern "C" fn C_class_melee_bonus(class: i32) -> i8 {

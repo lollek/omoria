@@ -69,7 +69,11 @@ pub unsafe extern "C" fn unquote(object_str: *mut c_char) {
     let bytes_with_nul = CStr::from_ptr(object_str).to_bytes_with_nul();
 
     // pindex('"') > 0 gate.
-    if bytes_with_nul.iter().take(bytes_with_nul.len() - 1).all(|&b| b != b'"') {
+    if bytes_with_nul
+        .iter()
+        .take(bytes_with_nul.len() - 1)
+        .all(|&b| b != b'"')
+    {
         return;
     }
 
@@ -114,7 +118,10 @@ pub unsafe extern "C" fn unquote(object_str: *mut c_char) {
 /// Signature is maintained for C call sites:
 /// `char *bag_descrip(const treas_rec *bag, char result[134]);`
 #[no_mangle]
-pub unsafe extern "C" fn bag_descrip(bag: *const InventoryItem, result: *mut c_char) -> *mut c_char {
+pub unsafe extern "C" fn bag_descrip(
+    bag: *const InventoryItem,
+    result: *mut c_char,
+) -> *mut c_char {
     if result.is_null() {
         return result;
     }
@@ -206,12 +213,7 @@ pub unsafe extern "C" fn identify(item_ptr: *mut Item) {
         )
     };
 
-    identify_core(
-        item,
-        t_list_slice,
-        equipment_slice,
-        inventory_list,
-    );
+    identify_core(item, t_list_slice, equipment_slice, inventory_list);
 }
 
 /// Testable core for legacy `identify()`.
@@ -359,7 +361,11 @@ mod tests {
     }
 
     fn make_buf(s: &str) -> Vec<c_char> {
-        let mut v = s.as_bytes().iter().map(|&b| b as c_char).collect::<Vec<_>>();
+        let mut v = s
+            .as_bytes()
+            .iter()
+            .map(|&b| b as c_char)
+            .collect::<Vec<_>>();
         v.push(0);
         v
     }
@@ -615,12 +621,7 @@ mod identify_core_tests {
         write_name(&mut inv_a.data.name, b"ab\"cd~EF|GHI\0");
         let inv_head = &mut *inv_a as *mut InventoryItem;
 
-        identify_core(
-            &mut item,
-            &mut t_list,
-            &mut equipment,
-            inv_head,
-        );
+        identify_core(&mut item, &mut t_list, &mut equipment, inv_head);
 
         assert_eq!(read_name(&inv_a.data.name), "ab\"cd~EF|GHI");
         assert_eq!(is_identified(item_sub_type), true);
@@ -691,12 +692,7 @@ mod identify_core_tests {
 
         let inv_head_ptr = (&mut *inv_head) as *mut InventoryItem;
 
-        identify_core(
-            &mut item,
-            &mut t_list,
-            &mut equipment,
-            inv_head_ptr,
-        );
+        identify_core(&mut item, &mut t_list, &mut equipment, inv_head_ptr);
 
         assert_eq!(read_name(&t_list[1].name), read_name(&expected));
         assert_eq!(read_name(&t_list[2].name), example_item_name);
@@ -706,7 +702,10 @@ mod identify_core_tests {
 
         unsafe {
             assert_eq!(read_name(&(*inv_head_ptr).data.name), read_name(&expected));
-            assert_eq!(read_name(&(*(*inv_head_ptr).next).data.name), example_item_name);
+            assert_eq!(
+                read_name(&(*(*inv_head_ptr).next).data.name),
+                example_item_name
+            );
         }
 
         assert_eq!(is_identified(item_sub_type), true);
@@ -749,7 +748,10 @@ mod msg_charges_remaining_tests {
         let inv = mk_item(b"staff of foo\0", 42, true);
         unsafe { msg_charges_remaining(&inv as *const InventoryItem) };
 
-        assert_eq!(term::test_last_msg_print(), "You have 42 charges remaining.");
+        assert_eq!(
+            term::test_last_msg_print(),
+            "You have 42 charges remaining."
+        );
 
         // Prevent cross-test leakage if other tests run after this one.
         term::test_clear_last_msg_print();
@@ -774,9 +776,9 @@ mod msg_charges_remaining_tests {
 #[cfg(test)]
 mod msg_remaining_of_item_tests {
     use super::*;
-    use serial_test::serial;
     use crate::model::item_subtype::{ItemSubType, StaffSubType};
     use crate::model::ItemType;
+    use serial_test::serial;
 
     #[test]
     #[serial]
@@ -784,9 +786,7 @@ mod msg_remaining_of_item_tests {
         term::test_clear_last_msg_print();
 
         // Avoid leaking/depending on global subtype identification across tests.
-        let staff_light_subtype = ItemSubType::Staff(
-            StaffSubType::StaffOfLight,
-        );
+        let staff_light_subtype = ItemSubType::Staff(StaffSubType::StaffOfLight);
         set_identified(staff_light_subtype, false);
 
         let mut inv = InventoryItem {
@@ -798,11 +798,9 @@ mod msg_remaining_of_item_tests {
         };
         // Make this a valid staff so item_name::generate() can format it.
         inv.data.tval = ItemType::Staff.into();
-        inv.data.subval = crate::conversion::item_subtype::to_usize(
-            &ItemSubType::Staff(
-                StaffSubType::StaffOfLight,
-            ),
-        ) as i64;
+        inv.data.subval = crate::conversion::item_subtype::to_usize(&ItemSubType::Staff(
+            StaffSubType::StaffOfLight,
+        )) as i64;
         inv.data.set_identified(true);
         inv.data.p1 = 5;
         inv.data.number = 2;
@@ -813,7 +811,10 @@ mod msg_remaining_of_item_tests {
         // from plural to singular, so we should see a singular item mention.
         // This assertion is intentionally tight: it checks the full user-facing sentence.
         // NOTE: This assertion is only stable if the subval maps correctly.
-        assert_eq!(term::test_last_msg_print(), "You have staff of light (5 charges).");
+        assert_eq!(
+            term::test_last_msg_print(),
+            "You have staff of light (5 charges)."
+        );
 
         // This looks odd at first, but it matches the legacy C behavior: the function
         // decrements a *temporary copy* of the item for naming/printing ("remaining after

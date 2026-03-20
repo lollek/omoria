@@ -13,4 +13,3 @@ pub(crate) struct StatsFromRace {
     pub swim_speed: i64,
     pub weight: u16,
 }
-

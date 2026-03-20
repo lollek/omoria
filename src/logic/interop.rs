@@ -1,12 +1,10 @@
-use std::convert::TryFrom;
 use crate::logic::use_item;
 use crate::model::{Class, Item};
+use std::convert::TryFrom;
 
 #[no_mangle]
 pub extern "C" fn class_can_use_item(class: libc::c_int, item: *const Item) -> bool {
-    use_item::class_can_use_item(
-    &Class::try_from(class).unwrap(),
-        unsafe { &*item })
+    use_item::class_can_use_item(&Class::try_from(class).unwrap(), unsafe { &*item })
 }
 
 #[no_mangle]
