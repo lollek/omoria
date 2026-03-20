@@ -37,6 +37,10 @@ format:
 	@rustfmt $(RSFILES)
 	#@clang-format -i $(CFILES) $(HFILES)
 
+.PHONY: format-changed
+format-changed:
+	@rustfmt $$(git diff --cached --name-only | grep ".*\.rs$$")
+
 .PHONY: nodata
 nodata ::
 	$(RM) data/hours.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP

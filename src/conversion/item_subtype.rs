@@ -97,7 +97,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::PrayerBook(subtype) => prayer_book::to_usize(subtype),
         ItemSubType::Instrument(subtype) => instrument::to_usize(subtype),
         ItemSubType::SongBook(subtype) => song_book::to_usize(subtype),
-        ItemSubType::LodgingAtInn(subtype) => lodging_at_inn::to_usize(subtype),
+        ItemSubType::LodgingAtInn(subtype) => usize::from(*subtype),
     }
 }
 
@@ -171,7 +171,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::Instrument => instrument::from_usize(item_subtype).map(ItemSubType::Instrument),
         ItemType::SongBook => song_book::from_usize(item_subtype).map(ItemSubType::SongBook),
         ItemType::LodgingAtInn => {
-            lodging_at_inn::from_usize(item_subtype).map(ItemSubType::LodgingAtInn)
+            crate::model::item_subtype::LodgingAtInnSubType::try_from(item_subtype)
+                .ok()
+                .map(ItemSubType::LodgingAtInn)
         }
         _ => panic!("Unhandled item type {:?}", item_type),
     }

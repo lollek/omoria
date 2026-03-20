@@ -1,22 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::LodgingAtInnSubType;
 
+/// Converts a usize to a LodgingAtInnSubType.
+/// Prefer using `LodgingAtInnSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<LodgingAtInnSubType> {
-    match subtype {
-        300 => Some(LodgingAtInnSubType::LodgingForOneDay),
-        302 => Some(LodgingAtInnSubType::LodgingForThreeDays),
-        301 => Some(LodgingAtInnSubType::LodgingForOneWeek),
-        303 => Some(LodgingAtInnSubType::RoomAndBoardForOneDay),
-        _ => None,
-    }
+    LodgingAtInnSubType::try_from(subtype).ok()
 }
 
+/// Converts a LodgingAtInnSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &LodgingAtInnSubType) -> usize {
-    match subtype {
-        LodgingAtInnSubType::LodgingForOneDay => 300,
-        LodgingAtInnSubType::LodgingForThreeDays => 302,
-        LodgingAtInnSubType::LodgingForOneWeek => 301,
-        LodgingAtInnSubType::RoomAndBoardForOneDay => 303,
-    }
+    (*subtype).into()
 }
 
 #[cfg(test)]
@@ -24,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
