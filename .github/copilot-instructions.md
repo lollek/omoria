@@ -112,9 +112,14 @@ Interoperability with existing code:
 - After changes, run the relevant checks when available:
   - Rust: `cargo test` (and `cargo fmt` if formatting changes are needed).
   - C: use the repo’s build steps (e.g., Makefile targets) if relevant to the change.
+- If terminal output is garbled or truncated, verify outcomes using this order of trust:
+  1. `get_errors` diagnostics on touched files/folders.
+  2. Targeted source checks (`rg`/reads) confirming expected call patterns and symbols.
+  3. Changed-files/diff review to ensure edits match intent.
 - Don’t leave the workspace in a broken build/test state unless the navigator explicitly asks.
 
 ## Communication expectations
 - Always state which phase you are in: **RED**, **GREEN**, or **REFACTOR**.
 - After completing a phase, stop and ask for navigator review.
+  - Exception: if the navigator explicitly requests autonomous continuation, proceed through phases without pausing while still labeling phase boundaries in updates.
 - If repo conventions are unclear, search the codebase and follow existing patterns.

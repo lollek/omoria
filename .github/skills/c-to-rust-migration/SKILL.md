@@ -59,6 +59,7 @@ Follow existing module organization (domain-vertical slicing):
 3. If the function uses RNG, test the `_with_rng` variant with seeded `StdRng`.
 4. Add stubs so it compiles but fails.
 5. **Stop — ask for navigator review.**
+    - If the navigator explicitly asks for autonomous execution, continue to GREEN without pausing and clearly mark the phase transition.
 
 ### Step 4: GREEN — minimal implementation
 
@@ -67,6 +68,7 @@ Follow existing module organization (domain-vertical slicing):
 3. If C code calls this function, add an `extern "C"` wrapper in `interop.rs`.
 4. Make all tests pass.
 5. **Stop — ask for navigator review.**
+    - If the navigator explicitly asks for autonomous execution, continue to REFACTOR without pausing and clearly mark the phase transition.
 
 ### Step 5: REFACTOR — cleanup
 
@@ -75,6 +77,7 @@ Follow existing module organization (domain-vertical slicing):
 3. Reduce duplication between similar functions.
 4. All tests must stay green.
 5. **Stop — ask for navigator review.**
+    - If the navigator explicitly asks for autonomous execution, proceed to finalization and report phase completion.
 
 ### Step 6: Finalize
 
