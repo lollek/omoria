@@ -1,7 +1,8 @@
+use std::convert::TryFrom;
 use std::cmp::min;
 use std::str;
 
-use crate::{conversion, user_interface};
+use crate::user_interface;
 use crate::data;
 use crate::io;
 use crate::logic::menu;
@@ -141,15 +142,15 @@ fn choose_race() -> Race {
             'k' => index = if index == 0 { 0 } else { index - 1 },
             'j' => index = min(races.len() as u8 - 1, index + 1),
             '\r' => {
-                return conversion::race::from_usize(index as usize).unwrap();
+                return Race::try_from(index as usize).unwrap();
             }
             '?' => menu::draw_help(
                 races[index as usize],
-                data::race::info(&conversion::race::from_usize(index as usize).unwrap()),
+                data::race::info(&Race::try_from(index as usize).unwrap()),
             ),
             's' => menu::draw_help_vec(
                 races[index as usize],
-                &stats_info(&conversion::race::from_usize(index as usize).unwrap())
+                &stats_info(&Race::try_from(index as usize).unwrap())
                     .iter()
                     .map(|it| it.as_ref())
                     .collect::<Vec<&str>>(),
@@ -157,7 +158,7 @@ fn choose_race() -> Race {
             'c' => menu::draw_help_vec(
                 races[index as usize],
                 &data::race::available_classes(
-                    &conversion::race::from_usize(index as usize).unwrap(),
+                    &Race::try_from(index as usize).unwrap(),
                 )
                 .iter()
                 .map(data::class::name)
