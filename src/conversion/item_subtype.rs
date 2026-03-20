@@ -58,7 +58,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::Bag(subtype) => bag::to_usize(subtype),
         ItemSubType::WearableGem(subtype) => wearable_gem::to_usize(subtype),
         ItemSubType::SlingAmmo(subtype) => sling_ammo::to_usize(subtype),
-        ItemSubType::Bolt(subtype) => bolt::to_usize(subtype),
+        ItemSubType::Bolt(subtype) => usize::from(*subtype),
         ItemSubType::Arrow(subtype) => usize::from(*subtype),
         ItemSubType::Spike(subtype) => spike::to_usize(subtype),
         ItemSubType::LightSource(subtype) => light_source::to_usize(subtype),
@@ -113,7 +113,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
             wearable_gem::from_usize(item_subtype).map(ItemSubType::WearableGem)
         }
         ItemType::SlingAmmo => sling_ammo::from_usize(item_subtype).map(ItemSubType::SlingAmmo),
-        ItemType::Bolt => bolt::from_usize(item_subtype).map(ItemSubType::Bolt),
+        ItemType::Bolt => crate::model::item_subtype::BoltSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Bolt),
         ItemType::Arrow => crate::model::item_subtype::ArrowSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Arrow),
