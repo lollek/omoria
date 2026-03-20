@@ -8,12 +8,62 @@ pub enum MagicBookSubType {
     MagesGuideToPower,
 }
 
+impl From<MagicBookSubType> for usize {
+    fn from(value: MagicBookSubType) -> usize {
+        match value {
+            MagicBookSubType::BeginnersMagic => 257,
+            MagicBookSubType::Magic1 => 258,
+            MagicBookSubType::Magic2 => 259,
+            MagicBookSubType::MagesGuideToPower => 261,
+        }
+    }
+}
+
+impl TryFrom<usize> for MagicBookSubType {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            257 => Ok(MagicBookSubType::BeginnersMagic),
+            258 => Ok(MagicBookSubType::Magic1),
+            259 => Ok(MagicBookSubType::Magic2),
+            261 => Ok(MagicBookSubType::MagesGuideToPower),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PrayerBookSubType {
     BeginnersHandbook,
     WordsOfWisdom,
     ChantsAndBlessings,
     ExorcismAndDispelling,
+}
+
+impl From<PrayerBookSubType> for usize {
+    fn from(value: PrayerBookSubType) -> usize {
+        match value {
+            PrayerBookSubType::BeginnersHandbook => 258,
+            PrayerBookSubType::WordsOfWisdom => 259,
+            PrayerBookSubType::ChantsAndBlessings => 260,
+            PrayerBookSubType::ExorcismAndDispelling => 261,
+        }
+    }
+}
+
+impl TryFrom<usize> for PrayerBookSubType {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            258 => Ok(PrayerBookSubType::BeginnersHandbook),
+            259 => Ok(PrayerBookSubType::WordsOfWisdom),
+            260 => Ok(PrayerBookSubType::ChantsAndBlessings),
+            261 => Ok(PrayerBookSubType::ExorcismAndDispelling),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -87,6 +137,8 @@ mod tests {
     use std::convert::TryFrom;
 
     use super::InstrumentSubType;
+    use super::MagicBookSubType;
+    use super::PrayerBookSubType;
     use super::SongBookSubType;
 
     #[test]
@@ -165,5 +217,84 @@ mod tests {
         assert_eq!(lyre, 259);
         assert_eq!(lute, 260);
         assert_eq!(harp, 261);
+    }
+
+    #[test]
+    fn test_prayer_book_subtype_try_from_usize_accepts_known_values() {
+        assert_eq!(
+            PrayerBookSubType::try_from(258usize).unwrap(),
+            PrayerBookSubType::BeginnersHandbook
+        );
+        assert_eq!(
+            PrayerBookSubType::try_from(259usize).unwrap(),
+            PrayerBookSubType::WordsOfWisdom
+        );
+        assert_eq!(
+            PrayerBookSubType::try_from(260usize).unwrap(),
+            PrayerBookSubType::ChantsAndBlessings
+        );
+        assert_eq!(
+            PrayerBookSubType::try_from(261usize).unwrap(),
+            PrayerBookSubType::ExorcismAndDispelling
+        );
+    }
+
+    #[test]
+    fn test_prayer_book_subtype_try_from_usize_rejects_unknown_values() {
+        assert!(PrayerBookSubType::try_from(257usize).is_err());
+        assert!(PrayerBookSubType::try_from(262usize).is_err());
+    }
+
+    #[test]
+    fn test_prayer_book_subtype_into_usize_returns_expected_codes() {
+        let beginners: usize = PrayerBookSubType::BeginnersHandbook.into();
+        let wisdom: usize = PrayerBookSubType::WordsOfWisdom.into();
+        let chants: usize = PrayerBookSubType::ChantsAndBlessings.into();
+        let exorcism: usize = PrayerBookSubType::ExorcismAndDispelling.into();
+
+        assert_eq!(beginners, 258);
+        assert_eq!(wisdom, 259);
+        assert_eq!(chants, 260);
+        assert_eq!(exorcism, 261);
+    }
+
+    #[test]
+    fn test_magic_book_subtype_try_from_usize_accepts_known_values() {
+        assert_eq!(
+            MagicBookSubType::try_from(257usize).unwrap(),
+            MagicBookSubType::BeginnersMagic
+        );
+        assert_eq!(
+            MagicBookSubType::try_from(258usize).unwrap(),
+            MagicBookSubType::Magic1
+        );
+        assert_eq!(
+            MagicBookSubType::try_from(259usize).unwrap(),
+            MagicBookSubType::Magic2
+        );
+        assert_eq!(
+            MagicBookSubType::try_from(261usize).unwrap(),
+            MagicBookSubType::MagesGuideToPower
+        );
+    }
+
+    #[test]
+    fn test_magic_book_subtype_try_from_usize_rejects_unknown_values() {
+        assert!(MagicBookSubType::try_from(256usize).is_err());
+        assert!(MagicBookSubType::try_from(260usize).is_err());
+        assert!(MagicBookSubType::try_from(262usize).is_err());
+    }
+
+    #[test]
+    fn test_magic_book_subtype_into_usize_returns_expected_codes() {
+        let beginners: usize = MagicBookSubType::BeginnersMagic.into();
+        let magic_1: usize = MagicBookSubType::Magic1.into();
+        let magic_2: usize = MagicBookSubType::Magic2.into();
+        let guide: usize = MagicBookSubType::MagesGuideToPower.into();
+
+        assert_eq!(beginners, 257);
+        assert_eq!(magic_1, 258);
+        assert_eq!(magic_2, 259);
+        assert_eq!(guide, 261);
     }
 }

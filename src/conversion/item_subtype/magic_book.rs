@@ -1,22 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::MagicBookSubType;
 
+/// Converts a usize to a MagicBookSubType.
+/// Prefer using `MagicBookSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<MagicBookSubType> {
-    match subtype {
-        257 => Some(MagicBookSubType::BeginnersMagic),
-        258 => Some(MagicBookSubType::Magic1),
-        259 => Some(MagicBookSubType::Magic2),
-        261 => Some(MagicBookSubType::MagesGuideToPower),
-        _ => None,
-    }
+    MagicBookSubType::try_from(subtype).ok()
 }
 
+/// Converts a MagicBookSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &MagicBookSubType) -> usize {
-    match subtype {
-        MagicBookSubType::BeginnersMagic => 257,
-        MagicBookSubType::Magic1 => 258,
-        MagicBookSubType::Magic2 => 259,
-        MagicBookSubType::MagesGuideToPower => 261,
-    }
+    (*subtype).into()
 }
 
 #[cfg(test)]
@@ -24,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {

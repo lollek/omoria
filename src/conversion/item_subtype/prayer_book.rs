@@ -1,22 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::PrayerBookSubType;
 
+/// Converts a usize to a PrayerBookSubType.
+/// Prefer using `PrayerBookSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<PrayerBookSubType> {
-    match subtype {
-        258 => Some(PrayerBookSubType::BeginnersHandbook),
-        259 => Some(PrayerBookSubType::WordsOfWisdom),
-        260 => Some(PrayerBookSubType::ChantsAndBlessings),
-        261 => Some(PrayerBookSubType::ExorcismAndDispelling),
-        _ => None,
-    }
+    PrayerBookSubType::try_from(subtype).ok()
 }
 
+/// Converts a PrayerBookSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &PrayerBookSubType) -> usize {
-    match subtype {
-        PrayerBookSubType::BeginnersHandbook => 258,
-        PrayerBookSubType::WordsOfWisdom => 259,
-        PrayerBookSubType::ChantsAndBlessings => 260,
-        PrayerBookSubType::ExorcismAndDispelling => 261,
-    }
+    (*subtype).into()
 }
 
 #[cfg(test)]
@@ -24,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
