@@ -2,52 +2,6 @@ use std::convert::{TryFrom, TryInto};
 
 use crate::model::{item_subtype::ItemSubType, ItemType};
 
-pub mod amulet;
-pub mod arrow;
-pub mod bag;
-pub mod belt;
-pub mod bolt;
-pub mod boots;
-pub mod bracers;
-pub mod chest;
-pub mod chime;
-pub mod cloak;
-pub mod dagger;
-pub mod flask_of_oil;
-pub mod food;
-pub mod gem;
-pub mod gem_helm;
-pub mod gloves;
-pub mod hafted_weapon;
-pub mod hard_armor;
-pub mod helm;
-pub mod horn;
-pub mod instrument;
-pub mod jewelry;
-pub mod junk_food;
-pub mod light_source;
-pub mod lodging_at_inn;
-pub mod magic_book;
-pub mod maul;
-pub mod misc_item;
-pub mod misc_usable;
-pub mod pick;
-pub mod polearm;
-pub mod potion;
-pub mod prayer_book;
-pub mod ranged_weapon;
-pub mod ring;
-pub mod scroll;
-pub mod shield;
-pub mod sling_ammo;
-pub mod soft_armor;
-pub mod song_book;
-pub mod spike;
-pub mod staff;
-pub mod sword;
-pub mod wand;
-pub mod wearable_gem;
-
 pub fn to_usize(item_subtype: &ItemSubType) -> usize {
     match item_subtype {
         ItemSubType::MiscObject(subtype) => usize::from(*subtype),

@@ -51,9 +51,9 @@ omoria: $(OBJFILES) $(RSFILES)
 
 .PHONY: pre-commit
 pre-commit:
-	rustfmt --check $$(git diff --cached --name-only | grep ".*\.rs$$")
-	#clang-format -i $$(git diff --cached --name-only | grep ".*\.[ch]$$")
-	cargo test
+	@rustfmt --check $$(git diff --cached --name-status | awk '!/^D/{print $$2}' | grep ".*\.rs$$")
+	@#clang-format -i $$(git diff --cached --name-only | grep ".*\.[ch]$$")
+	@cargo test --quiet
 
 .PHONY: prepare
 prepare:

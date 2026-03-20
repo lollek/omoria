@@ -563,8 +563,8 @@ mod tests {
 
 #[cfg(test)]
 mod identify_core_tests {
+
     use super::*;
-    use crate::conversion::item_subtype;
     use crate::identification::is_identified;
     use crate::model::item_subtype::FoodSubType;
     use crate::model::ItemType;
@@ -588,7 +588,7 @@ mod identify_core_tests {
     fn mk_item_with_pipe() -> Item {
         let mut item = Item::default();
         item.tval = ItemType::Food.into();
-        item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
+        item.subval = usize::from(FoodSubType::RationOfFood) as i64;
         write_name(&mut item.name, b"foo|bar\0");
         item
     }
@@ -596,7 +596,7 @@ mod identify_core_tests {
     fn mk_item_without_pipe() -> Item {
         let mut item = Item::default();
         item.tval = ItemType::Food.into();
-        item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
+        item.subval = usize::from(FoodSubType::RationOfFood) as i64;
         write_name(&mut item.name, b"foobar\0");
         item
     }
