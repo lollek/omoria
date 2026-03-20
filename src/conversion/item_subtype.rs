@@ -88,7 +88,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::Scroll2(_) => panic!("ItemType Scroll2 has been removed"),
         ItemSubType::Potion1(subtype) => potion::to_usize(subtype),
         ItemSubType::Potion2(_) => panic!("ItemType Potion2 has been removed"),
-        ItemSubType::FlaskOfOil(subtype) => flask_of_oil::to_usize(subtype),
+        ItemSubType::FlaskOfOil(subtype) => usize::from(*subtype),
         ItemSubType::Food(subtype) => food::to_usize(subtype),
         ItemSubType::JunkFood(subtype) => junk_food::to_usize(subtype),
         ItemSubType::Chime(subtype) => chime::to_usize(subtype),
@@ -157,7 +157,11 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::Scroll2 => panic!("ItemType Scroll2 has been removed"),
         ItemType::Potion1 => potion::from_usize(item_subtype).map(ItemSubType::Potion1),
         ItemType::Potion2 => panic!("ItemType Potion2 has been removed"),
-        ItemType::FlaskOfOil => flask_of_oil::from_usize(item_subtype).map(ItemSubType::FlaskOfOil),
+        ItemType::FlaskOfOil => {
+            crate::model::item_subtype::FlaskOfOilSubType::try_from(item_subtype)
+                .ok()
+                .map(ItemSubType::FlaskOfOil)
+        }
         ItemType::Food => food::from_usize(item_subtype).map(ItemSubType::Food),
         ItemType::JunkFood => junk_food::from_usize(item_subtype).map(ItemSubType::JunkFood),
         ItemType::Chime => chime::from_usize(item_subtype).map(ItemSubType::Chime),

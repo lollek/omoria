@@ -1,16 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::FlaskOfOilSubType;
 
+/// Converts a usize to a FlaskOfOilSubType.
+/// Prefer using `FlaskOfOilSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<FlaskOfOilSubType> {
-    match subtype {
-        1 => Some(FlaskOfOilSubType::FlaskOfOil),
-        _ => None,
-    }
+    FlaskOfOilSubType::try_from(subtype).ok()
 }
 
+/// Converts a FlaskOfOilSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &FlaskOfOilSubType) -> usize {
-    match subtype {
-        FlaskOfOilSubType::FlaskOfOil => 1,
-    }
+    (*subtype).into()
 }
 
 #[cfg(test)]
@@ -18,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
