@@ -18,34 +18,6 @@ all:	omoria
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
-omoria: $(OBJFILES) $(RSFILES)
-	cargo build
-	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
-
-.PHONY: run
-run: omoria
-	>debug_rust.out
-	RUST_BACKTRACE=1 ./omoria
-
-.PHONY: pre-commit
-pre-commit:
-	rustfmt $$(git diff --cached --name-only | grep ".*\.rs$$")
-	#clang-format -i $$(git diff --cached --name-only | grep ".*\.[ch]$$")
-	cargo test
-
-.PHONY: test
-test:
-	cargo test
-
-.PHONY: debug
-debug: omoria
-	>debug_rust.out
-	RUST_BACKTRACE=1 rust-gdb ./omoria
-
-.PHONY: nodata
-nodata ::
-	$(RM) data/hours.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
-
 .PHONY: clean
 clean ::
 	$(RM) $(OBJFILES) core omoria
@@ -55,10 +27,39 @@ ctags:
 	@ctags -R . --exclude .git
 	@rusty-tags vi
 
+.PHONY: debug
+debug: omoria
+	>debug_rust.out
+	RUST_BACKTRACE=1 rust-gdb ./omoria
+
 .PHONY: format
 format:
 	@rustfmt $(RSFILES)
 	#@clang-format -i $(CFILES) $(HFILES)
 
-.PHONY: spotless
-spotless : nodata clean
+.PHONY: nodata
+nodata ::
+	$(RM) data/hours.dat data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat data/moria_gcustom.mst data/TRADE.DUMP
+
+omoria: $(OBJFILES) $(RSFILES)
+	cargo build
+	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
+
+.PHONY: pre-commit
+pre-commit:
+	rustfmt --check $$(git diff --cached --name-only | grep ".*\.rs$$")
+	#clang-format -i $$(git diff --cached --name-only | grep ".*\.[ch]$$")
+	cargo test
+
+.PHONY: prepare
+prepare:
+	./scripts/install-git-hooks.sh
+
+.PHONY: run
+run: omoria
+	>debug_rust.out
+	RUST_BACKTRACE=1 ./omoria
+
+.PHONY: test
+test:
+	cargo test
