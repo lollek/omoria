@@ -6,6 +6,27 @@ pub enum SlingAmmoSubType {
     IronShot,
 }
 
+impl From<SlingAmmoSubType> for usize {
+    fn from(value: SlingAmmoSubType) -> usize {
+        match value {
+            SlingAmmoSubType::RoundedPebble => 1,
+            SlingAmmoSubType::IronShot => 2,
+        }
+    }
+}
+
+impl TryFrom<usize> for SlingAmmoSubType {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            1 => Ok(SlingAmmoSubType::RoundedPebble),
+            2 => Ok(SlingAmmoSubType::IronShot),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BoltSubType {
     Bolt,
@@ -84,6 +105,7 @@ mod tests {
 
     use super::ArrowSubType;
     use super::BoltSubType;
+    use super::SlingAmmoSubType;
     use super::SpikeSubType;
 
     #[test]
@@ -105,7 +127,10 @@ mod tests {
 
     #[test]
     fn test_bolt_subtype_try_from_usize_accepts_known_value() {
-        assert_eq!(BoltSubType::try_from(1usize).unwrap(), super::BoltSubType::Bolt);
+        assert_eq!(
+            BoltSubType::try_from(1usize).unwrap(),
+            super::BoltSubType::Bolt
+        );
     }
 
     #[test]
@@ -122,7 +147,10 @@ mod tests {
 
     #[test]
     fn test_spike_subtype_try_from_usize_accepts_known_value() {
-        assert_eq!(SpikeSubType::try_from(1usize).unwrap(), SpikeSubType::IronSpike);
+        assert_eq!(
+            SpikeSubType::try_from(1usize).unwrap(),
+            SpikeSubType::IronSpike
+        );
     }
 
     #[test]
@@ -135,5 +163,32 @@ mod tests {
     fn test_spike_subtype_into_usize_returns_expected_code() {
         let code: usize = SpikeSubType::IronSpike.into();
         assert_eq!(code, 1);
+    }
+
+    #[test]
+    fn test_sling_ammo_subtype_try_from_usize_accepts_known_values() {
+        assert_eq!(
+            SlingAmmoSubType::try_from(1usize).unwrap(),
+            SlingAmmoSubType::RoundedPebble
+        );
+        assert_eq!(
+            SlingAmmoSubType::try_from(2usize).unwrap(),
+            SlingAmmoSubType::IronShot
+        );
+    }
+
+    #[test]
+    fn test_sling_ammo_subtype_try_from_usize_rejects_unknown_values() {
+        assert!(SlingAmmoSubType::try_from(0usize).is_err());
+        assert!(SlingAmmoSubType::try_from(3usize).is_err());
+    }
+
+    #[test]
+    fn test_sling_ammo_subtype_into_usize_returns_expected_codes() {
+        let rounded_pebble: usize = SlingAmmoSubType::RoundedPebble.into();
+        let iron_shot: usize = SlingAmmoSubType::IronShot.into();
+
+        assert_eq!(rounded_pebble, 1);
+        assert_eq!(iron_shot, 2);
     }
 }

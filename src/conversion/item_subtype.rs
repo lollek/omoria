@@ -16,6 +16,7 @@ pub mod dagger;
 pub mod flask_of_oil;
 pub mod food;
 pub mod gem;
+pub mod gem_helm;
 pub mod gloves;
 pub mod hafted_weapon;
 pub mod hard_armor;
@@ -46,7 +47,6 @@ pub mod staff;
 pub mod sword;
 pub mod wand;
 pub mod wearable_gem;
-pub mod gem_helm;
 
 pub fn to_usize(item_subtype: &ItemSubType) -> usize {
     match item_subtype {
@@ -57,7 +57,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::Gem(subtype) => gem::to_usize(subtype),
         ItemSubType::Bag(subtype) => bag::to_usize(subtype),
         ItemSubType::WearableGem(subtype) => wearable_gem::to_usize(subtype),
-        ItemSubType::SlingAmmo(subtype) => sling_ammo::to_usize(subtype),
+        ItemSubType::SlingAmmo(subtype) => usize::from(*subtype),
         ItemSubType::Bolt(subtype) => usize::from(*subtype),
         ItemSubType::Arrow(subtype) => usize::from(*subtype),
         ItemSubType::Spike(subtype) => usize::from(*subtype),
@@ -112,7 +112,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::WearableGem => {
             wearable_gem::from_usize(item_subtype).map(ItemSubType::WearableGem)
         }
-        ItemType::SlingAmmo => sling_ammo::from_usize(item_subtype).map(ItemSubType::SlingAmmo),
+        ItemType::SlingAmmo => crate::model::item_subtype::SlingAmmoSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::SlingAmmo),
         ItemType::Bolt => crate::model::item_subtype::BoltSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Bolt),
