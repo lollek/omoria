@@ -17,6 +17,7 @@
 * Internal: `Sex` now uses model-layer Rust `From`/`TryFrom` conversions for C character codes, with conversion wrappers kept as deprecated compatibility shims.
 * Internal: Item subtype migration started in model layer: `ArrowSubType` now uses Rust `From`/`TryFrom` conversions, with compatibility wrappers still available.
 * Internal: Item subtype migration: `BoltSubType` now uses model-layer `From`/`TryFrom` conversions, with compatibility wrappers still available.
+* Internal: Item subtype migration: `SpikeSubType` now uses model-layer `From`/`TryFrom` conversions, with compatibility wrappers still available.
 * Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
 * Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
 

@@ -60,7 +60,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::SlingAmmo(subtype) => sling_ammo::to_usize(subtype),
         ItemSubType::Bolt(subtype) => usize::from(*subtype),
         ItemSubType::Arrow(subtype) => usize::from(*subtype),
-        ItemSubType::Spike(subtype) => spike::to_usize(subtype),
+        ItemSubType::Spike(subtype) => usize::from(*subtype),
         ItemSubType::LightSource(subtype) => light_source::to_usize(subtype),
         ItemSubType::RangedWeapon(subtype) => ranged_weapon::to_usize(subtype),
         ItemSubType::HaftedWeapon(subtype) => hafted_weapon::to_usize(subtype),
@@ -119,7 +119,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::Arrow => crate::model::item_subtype::ArrowSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Arrow),
-        ItemType::Spike => spike::from_usize(item_subtype).map(ItemSubType::Spike),
+        ItemType::Spike => crate::model::item_subtype::SpikeSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Spike),
         ItemType::LightSource => {
             light_source::from_usize(item_subtype).map(ItemSubType::LightSource)
         }
