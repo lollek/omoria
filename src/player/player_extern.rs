@@ -1,10 +1,11 @@
 use std::convert::TryInto;
+use std::convert::TryFrom;
 
 use libc;
 
 use crate::data;
+use crate::model::Magic;
 use crate::player;
-use crate::conversion;
 
 extern "C" {
     fn player_hunger_status() -> libc::c_int;
@@ -39,7 +40,7 @@ pub extern "C" fn C_player_set_knows_spell(slot: i32, yn: bool) {
 #[no_mangle]
 pub extern "C" fn C_player_uses_magic(magic_type: i32) -> bool {
     data::class::magic_type(&player::class())
-        == Some(conversion::magic::from_usize(magic_type.try_into().unwrap()).unwrap())
+    == Some(Magic::try_from(magic_type).unwrap())
 }
 
 #[no_mangle]

@@ -13,6 +13,7 @@
 * Internal: `Currency` now uses model-layer Rust `From`/`TryFrom` conversions, with conversion wrappers kept as deprecated compatibility shims.
 * Internal: `Class` now uses model-layer Rust `From`/`TryFrom` conversions, with conversion wrappers kept as deprecated compatibility shims.
 * Internal: `Race` now uses model-layer Rust `From`/`TryFrom` conversions, with conversion wrappers kept as deprecated compatibility shims.
+* Internal: `Magic` now uses model-layer Rust `From`/`TryFrom` conversions, with conversion wrappers kept as deprecated compatibility shims.
 * Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
 * Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
 
