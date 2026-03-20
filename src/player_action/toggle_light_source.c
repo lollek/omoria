@@ -25,11 +25,13 @@ void player_action_toggle_light_source(void) {
             equipment[Equipment_light].p1);
     player_flags.light_on = false;
     player_light = false;
+    light_radius = 1;
   } else {
     sprintf(out_val, "Light On.  %ld turns left.",
             equipment[Equipment_light].p1);
     player_flags.light_on = true;
     player_light = true;
+    light_radius = 3;
   }
   prt_light_on();
   msg_print(out_val);

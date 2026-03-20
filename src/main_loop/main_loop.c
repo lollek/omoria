@@ -116,6 +116,7 @@ static void d__check_light_status(void) {
         msg_print("Your light has gone out!");
         player_flags.light_on = false;
         player_light = false;
+        light_radius = 1;
         find_flag = false;
         dungeon_light_move(char_row, char_col, char_row, char_col);
       } else if (equipment[Equipment_light].p1 < 40) {
@@ -130,12 +131,14 @@ static void d__check_light_status(void) {
     } else {
       player_flags.light_on = false;
       player_light = false;
+      light_radius = 1;
       find_flag = false;
       dungeon_light_move(char_row, char_col, char_row, char_col);
     }
   } else if (equipment[Equipment_light].p1 > 0 && player_flags.light_on) {
     equipment[Equipment_light].p1--;
     player_light = true;
+    light_radius = 3;
     dungeon_light_move(char_row, char_col, char_row, char_col);
   }
 
@@ -826,8 +829,10 @@ void main_loop__0(void) {
   /*{ Check light status for setup          }*/
   if (equipment[Equipment_light].p1 > 0 && player_flags.light_on) {
     player_light = true;
+    light_radius = 3;
   } else {
     player_light = false;
+    light_radius = 1;
   }
 
   /*{ Check for a maximum level             }*/

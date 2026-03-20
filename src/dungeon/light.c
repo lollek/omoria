@@ -22,10 +22,10 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
   long const bott = minmax(y1, y2, panel_row_max);
   long const left = maxmin(x1, x2, panel_col_min);
   long const right = minmax(x1, x2, panel_col_max);
-  long const new_topp = y2 - 1; /*{ Margins for new things to appear}*/
-  long const new_bott = y2 + 1;
-  long const new_left = x2 - 1;
-  long const new_righ = x2 + 1;
+  long const new_topp = y2 - light_radius; /*{ Margins for new things to appear}*/
+  long const new_bott = y2 + light_radius;
+  long const new_left = x2 - light_radius;
+  long const new_righ = x2 + light_radius;
 
   long xmax = 0;
 
@@ -112,13 +112,15 @@ static void ml__sub1_move_light(const long y1, const long x1, const long y2,
   light_flag = true;
 
   /* Turn off lamp light */
-  for (long i = y1 - 1; i <= y1 + 1; i++)
-    for (long j = x1 - 1; j <= x1 + 1; j++)
-      cave[i][j].is_temporarily_lit = false;
+  for (long i = y1 - light_radius; i <= y1 + light_radius; i++)
+    for (long j = x1 - light_radius; j <= x1 + light_radius; j++)
+      if (in_bounds(i, j))
+        cave[i][j].is_temporarily_lit = false;
 
-  for (long i = y2 - 1; i <= y2 + 1; i++)
-    for (long j = x2 - 1; j <= x2 + 1; j++)
-      cave[i][j].is_temporarily_lit = true;
+  for (long i = y2 - light_radius; i <= y2 + light_radius; i++)
+    for (long j = x2 - light_radius; j <= x2 + light_radius; j++)
+      if (in_bounds(i, j) && los(y2, x2, i, j))
+        cave[i][j].is_temporarily_lit = true;
 
   ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
 
@@ -132,14 +134,15 @@ static void ml__sub2_move_light(const long y1, const long x1, const long y2,
   ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
   if (light_flag) {
-    for (long y = y1 - 1; y <= y1 + 1; y++)
-      for (long x = x1 - 1; x <= x1 + 1; x++)
-        cave[y][x].is_temporarily_lit = false;
+    for (long y = y1 - light_radius; y <= y1 + light_radius; y++)
+      for (long x = x1 - light_radius; x <= x1 + light_radius; x++)
+        if (in_bounds(y, x))
+          cave[y][x].is_temporarily_lit = false;
     ml__draw_block(y1, x1, y1, x1);
     light_flag = false;
   }
 
-  for (long y = y2 - 1; y <= y2 + 1; y++) {
+  for (long y = y2 - light_radius; y <= y2 + light_radius; y++) {
     chtype floor_str[82] = {0};
     chtype save_str[82] = {0};
     long floor_str_len = 0;
@@ -147,7 +150,9 @@ static void ml__sub2_move_light(const long y1, const long x1, const long y2,
     long xpos = 0;
     chtype tmp_char;
 
-    for (long x = x2 - 1; x <= x2 + 1; x++) {
+    for (long x = x2 - light_radius; x <= x2 + light_radius; x++) {
+      if (!in_bounds(y, x))
+        continue;
       bool flag = false;
       if (!(cave[y][x].fm || cave[y][x].is_permanently_lit)) {
         tmp_char = ' ';
@@ -201,9 +206,10 @@ static void ml__sub3_move_light(const long y1, const long x1, const long y2,
   ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
   if (light_flag) {
-    for (long i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-      for (long i2 = x1 - 1; i2 <= x1 + 1; i2++) {
-        cave[i1][i2].is_temporarily_lit = false;
+    for (long i1 = y1 - light_radius; i1 <= y1 + light_radius; i1++) {
+      for (long i2 = x1 - light_radius; i2 <= x1 + light_radius; i2++) {
+        if (in_bounds(i1, i2))
+          cave[i1][i2].is_temporarily_lit = false;
       }
     }
     light_flag = false;
@@ -222,8 +228,10 @@ static void ml__sub4_move_light(const long y1, const long x1, const long y2,
 
   light_flag = true;
   if (cave[y1][x1].is_temporarily_lit) {
-    for (long i1 = y1 - 1; i1 <= y1 + 1; i1++) {
-      for (long i2 = x1 - 1; i2 <= x1 + 1; i2++) {
+    for (long i1 = y1 - light_radius; i1 <= y1 + light_radius; i1++) {
+      for (long i2 = x1 - light_radius; i2 <= x1 + light_radius; i2++) {
+        if (!in_bounds(i1, i2))
+          continue;
         cave[i1][i2].is_temporarily_lit = false;
         if (test_light(i1, i2))
           lite_spot(i1, i2);

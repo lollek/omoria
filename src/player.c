@@ -48,6 +48,7 @@ time_t player_creation_time = 0;
 int64_t player_claim_check = 0;
 int64_t player_uid = 0;
 bool player_light;
+long light_radius = 1;
 
 /*	{ Following are player variables				} */
 p_flags player_flags = {

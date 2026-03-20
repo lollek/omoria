@@ -724,9 +724,11 @@ bool teleport_to(const long ny, const long nx) {
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
   move_creature(char_row, char_col, y, x);
-  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+  for (long i1 = char_row - light_radius; i1 <= char_row + light_radius; i1++) {
+    for (long i2 = char_col - light_radius; i2 <= char_col + light_radius; i2++) {
       /* with cave[i1][i2]. do; */
+      if (!in_bounds(i1, i2))
+        continue;
       cave[i1][i2].is_temporarily_lit = false;
       if (!test_light(i1, i2)) {
         unlite_spot(i1, i2);
@@ -2915,9 +2917,11 @@ void teleport(const long dis) {
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
   move_creature(char_row, char_col, y, x);
-  for (long i1 = char_row - 1; i1 <= char_row + 1; i1++) {
-    for (long i2 = char_col - 1; i2 <= char_col + 1; i2++) {
+  for (long i1 = char_row - light_radius; i1 <= char_row + light_radius; i1++) {
+    for (long i2 = char_col - light_radius; i2 <= char_col + light_radius; i2++) {
       /* with cave[i1,i2] do; */
+      if (!in_bounds(i1, i2))
+        continue;
       cave[i1][i2].is_temporarily_lit = false;
       if (!test_light(i1, i2)) {
         unlite_spot(i1, i2);

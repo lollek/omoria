@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+* Torch light now illuminates a larger area (radius 3 instead of 1), making exploration more comfortable. Light does not bleed through walls or closed doors.
+* Internal: Added `light_radius` variable to control torch light radius; loops in `dungeon/light.c` and `spells.c` now use this variable instead of hardcoded `1`. All light-setting loops include `in_bounds()` and line-of-sight (`los()`) guards.
 * Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
 * Internal: Hit calculation (`managed_to_hit`) is now implemented in Rust.
 * Internal: `Wallet` now uses idiomatic Rust `From`/`Into` conversions for its `[i64; 7]` interop.

@@ -103,6 +103,7 @@ extern time_t player_creation_time;   /* used as key in master file */
 extern int64_t player_claim_check;    /* used to track trading post */
 extern int64_t player_uid;            /* Used in master file */
 extern bool player_light;          /* { Player carrying light } */
+extern long light_radius;          /* { Torch light radius (default 1) } */
 
 uint16_t C_player_max_bulk(void);
 int16_t C_player_dmg_from_str(void);
