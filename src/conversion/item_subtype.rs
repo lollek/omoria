@@ -96,7 +96,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::MagicBook(subtype) => magic_book::to_usize(subtype),
         ItemSubType::PrayerBook(subtype) => prayer_book::to_usize(subtype),
         ItemSubType::Instrument(subtype) => instrument::to_usize(subtype),
-        ItemSubType::SongBook(subtype) => song_book::to_usize(subtype),
+        ItemSubType::SongBook(subtype) => usize::from(*subtype),
         ItemSubType::LodgingAtInn(subtype) => usize::from(*subtype),
     }
 }
@@ -169,7 +169,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::MagicBook => magic_book::from_usize(item_subtype).map(ItemSubType::MagicBook),
         ItemType::PrayerBook => prayer_book::from_usize(item_subtype).map(ItemSubType::PrayerBook),
         ItemType::Instrument => instrument::from_usize(item_subtype).map(ItemSubType::Instrument),
-        ItemType::SongBook => song_book::from_usize(item_subtype).map(ItemSubType::SongBook),
+        ItemType::SongBook => crate::model::item_subtype::SongBookSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::SongBook),
         ItemType::LodgingAtInn => {
             crate::model::item_subtype::LodgingAtInnSubType::try_from(item_subtype)
                 .ok()
