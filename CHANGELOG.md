@@ -32,6 +32,7 @@
 * Internal: Item subtype migration: `GemHelmSubType` now uses model-layer `From`/`TryFrom` conversions, with compatibility wrappers still available.
 * Internal: Item subtype migration: `AmuletSubType` now uses model-layer `From`/`TryFrom` conversions, with compatibility wrappers still available.
 * Internal: Item subtype migration: `LightSourceSubType` now uses model-layer `From`/`TryFrom` conversions, with compatibility wrappers still available.
+* Internal: Item subtype migration: remaining armor, weapon, food, utility, ring, staff, wand, scroll, potion, chime, and horn subtype mappings now use model-layer `From`/`TryFrom` conversions; the central dispatcher now routes through those trait impls.
 * Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
 * Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
 

@@ -1,24 +1,15 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::CloakSubType;
 
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<CloakSubType> {
-    match subtype {
-        1 => Some(CloakSubType::LightCloak),
-        2 => Some(CloakSubType::HeavyCloak),
-        3 => Some(CloakSubType::SharkskinCloak),
-        4 => Some(CloakSubType::DemonhideCloak),
-        5 => Some(CloakSubType::WyrmhideCloak),
-        _ => None,
-    }
+    CloakSubType::try_from(subtype).ok()
 }
 
+#[deprecated]
 pub fn to_usize(subtype: &CloakSubType) -> usize {
-    match subtype {
-        CloakSubType::LightCloak => 1,
-        CloakSubType::HeavyCloak => 2,
-        CloakSubType::SharkskinCloak => 3,
-        CloakSubType::DemonhideCloak => 4,
-        CloakSubType::WyrmhideCloak => 5,
-    }
+    usize::from(*subtype)
 }
 
 #[cfg(test)]
@@ -26,6 +17,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {

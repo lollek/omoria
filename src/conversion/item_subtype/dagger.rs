@@ -1,36 +1,15 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::DaggerSubType;
 
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<DaggerSubType> {
-    match subtype {
-        1 => Some(DaggerSubType::MainGauche),
-        2 => Some(DaggerSubType::Misercorde),
-        3 => Some(DaggerSubType::Stiletto),
-        4 => Some(DaggerSubType::Bodkin),
-        5 => Some(DaggerSubType::BrokenDagger),
-        6 => Some(DaggerSubType::CatONineTails),
-        8 => Some(DaggerSubType::Bilbo),
-        9 => Some(DaggerSubType::Baselard),
-        16 => Some(DaggerSubType::Foil),
-        20 => Some(DaggerSubType::Rapier),
-        22 => Some(DaggerSubType::SmallSword),
-        _ => None,
-    }
+    DaggerSubType::try_from(subtype).ok()
 }
 
+#[deprecated]
 pub fn to_usize(subtype: &DaggerSubType) -> usize {
-    match subtype {
-        DaggerSubType::MainGauche => 1,
-        DaggerSubType::Misercorde => 2,
-        DaggerSubType::Stiletto => 3,
-        DaggerSubType::Bodkin => 4,
-        DaggerSubType::BrokenDagger => 5,
-        DaggerSubType::CatONineTails => 6,
-        DaggerSubType::Bilbo => 8,
-        DaggerSubType::Baselard => 9,
-        DaggerSubType::Foil => 16,
-        DaggerSubType::Rapier => 20,
-        DaggerSubType::SmallSword => 22,
-    }
+    usize::from(*subtype)
 }
 
 #[cfg(test)]
@@ -38,6 +17,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {

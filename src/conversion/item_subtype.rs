@@ -50,11 +50,11 @@ pub mod wearable_gem;
 
 pub fn to_usize(item_subtype: &ItemSubType) -> usize {
     match item_subtype {
-        ItemSubType::MiscObject(subtype) => misc_item::to_usize(subtype),
+        ItemSubType::MiscObject(subtype) => usize::from(*subtype),
         ItemSubType::Chest(subtype) => usize::from(*subtype),
-        ItemSubType::MiscUsable(subtype) => misc_usable::to_usize(subtype),
+        ItemSubType::MiscUsable(subtype) => usize::from(*subtype),
         ItemSubType::Jewelry(subtype) => usize::from(*subtype),
-        ItemSubType::Gem(subtype) => gem::to_usize(subtype),
+        ItemSubType::Gem(subtype) => usize::from(*subtype),
         ItemSubType::Bag(subtype) => usize::from(*subtype),
         ItemSubType::WearableGem(subtype) => usize::from(*subtype),
         ItemSubType::SlingAmmo(subtype) => usize::from(*subtype),
@@ -62,37 +62,37 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::Arrow(subtype) => usize::from(*subtype),
         ItemSubType::Spike(subtype) => usize::from(*subtype),
         ItemSubType::LightSource(subtype) => usize::from(*subtype),
-        ItemSubType::RangedWeapon(subtype) => ranged_weapon::to_usize(subtype),
-        ItemSubType::HaftedWeapon(subtype) => hafted_weapon::to_usize(subtype),
-        ItemSubType::PoleArm(subtype) => polearm::to_usize(subtype),
-        ItemSubType::Dagger(subtype) => dagger::to_usize(subtype),
-        ItemSubType::Sword(subtype) => sword::to_usize(subtype),
-        ItemSubType::Pick(subtype) => pick::to_usize(subtype),
-        ItemSubType::Maul(subtype) => maul::to_usize(subtype),
+        ItemSubType::RangedWeapon(subtype) => usize::from(*subtype),
+        ItemSubType::HaftedWeapon(subtype) => usize::from(*subtype),
+        ItemSubType::PoleArm(subtype) => usize::from(*subtype),
+        ItemSubType::Dagger(subtype) => usize::from(*subtype),
+        ItemSubType::Sword(subtype) => usize::from(*subtype),
+        ItemSubType::Pick(subtype) => usize::from(*subtype),
+        ItemSubType::Maul(subtype) => usize::from(*subtype),
         ItemSubType::GemHelm(subtype) => usize::from(*subtype),
-        ItemSubType::Boots(subtype) => boots::to_usize(subtype),
-        ItemSubType::Gloves(subtype) => gloves::to_usize(subtype),
-        ItemSubType::Cloak(subtype) => cloak::to_usize(subtype),
-        ItemSubType::Helm(subtype) => helm::to_usize(subtype),
-        ItemSubType::Shield(subtype) => shield::to_usize(subtype),
-        ItemSubType::HardArmor(subtype) => hard_armor::to_usize(subtype),
-        ItemSubType::SoftArmor(subtype) => soft_armor::to_usize(subtype),
-        ItemSubType::Bracers(subtype) => bracers::to_usize(subtype),
-        ItemSubType::Belt(subtype) => belt::to_usize(subtype),
+        ItemSubType::Boots(subtype) => usize::from(*subtype),
+        ItemSubType::Gloves(subtype) => usize::from(*subtype),
+        ItemSubType::Cloak(subtype) => usize::from(*subtype),
+        ItemSubType::Helm(subtype) => usize::from(*subtype),
+        ItemSubType::Shield(subtype) => usize::from(*subtype),
+        ItemSubType::HardArmor(subtype) => usize::from(*subtype),
+        ItemSubType::SoftArmor(subtype) => usize::from(*subtype),
+        ItemSubType::Bracers(subtype) => usize::from(*subtype),
+        ItemSubType::Belt(subtype) => usize::from(*subtype),
         ItemSubType::Amulet(subtype) => usize::from(*subtype),
-        ItemSubType::Ring(subtype) => ring::to_usize(subtype),
-        ItemSubType::Staff(subtype) => staff::to_usize(subtype),
+        ItemSubType::Ring(subtype) => usize::from(*subtype),
+        ItemSubType::Staff(subtype) => usize::from(*subtype),
         ItemSubType::Rod(_) => panic!("ItemType Rod has been removed"),
-        ItemSubType::Wand(subtype) => wand::to_usize(subtype),
-        ItemSubType::Scroll1(subtype) => scroll::to_usize(subtype),
+        ItemSubType::Wand(subtype) => usize::from(*subtype),
+        ItemSubType::Scroll1(subtype) => usize::from(*subtype),
         ItemSubType::Scroll2(_) => panic!("ItemType Scroll2 has been removed"),
-        ItemSubType::Potion1(subtype) => potion::to_usize(subtype),
+        ItemSubType::Potion1(subtype) => usize::from(*subtype),
         ItemSubType::Potion2(_) => panic!("ItemType Potion2 has been removed"),
         ItemSubType::FlaskOfOil(subtype) => usize::from(*subtype),
-        ItemSubType::Food(subtype) => food::to_usize(subtype),
-        ItemSubType::JunkFood(subtype) => junk_food::to_usize(subtype),
-        ItemSubType::Chime(subtype) => chime::to_usize(subtype),
-        ItemSubType::Horn(subtype) => horn::to_usize(subtype),
+        ItemSubType::Food(subtype) => usize::from(*subtype),
+        ItemSubType::JunkFood(subtype) => usize::from(*subtype),
+        ItemSubType::Chime(subtype) => usize::from(*subtype),
+        ItemSubType::Horn(subtype) => usize::from(*subtype),
         ItemSubType::MagicBook(subtype) => usize::from(*subtype),
         ItemSubType::PrayerBook(subtype) => usize::from(*subtype),
         ItemSubType::Instrument(subtype) => usize::from(*subtype),
@@ -103,15 +103,25 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
 
 pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubType> {
     match item_type {
-        ItemType::MiscObject => misc_item::from_usize(item_subtype).map(ItemSubType::MiscObject),
+        ItemType::MiscObject => {
+            crate::model::item_subtype::MiscObjectSubType::try_from(item_subtype)
+                .ok()
+                .map(ItemSubType::MiscObject)
+        }
         ItemType::Chest => crate::model::item_subtype::ChestSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Chest),
-        ItemType::MiscUsable => misc_usable::from_usize(item_subtype).map(ItemSubType::MiscUsable),
+        ItemType::MiscUsable => {
+            crate::model::item_subtype::MiscUsableSubType::try_from(item_subtype)
+                .ok()
+                .map(ItemSubType::MiscUsable)
+        }
         ItemType::Jewelry => crate::model::item_subtype::JewelrySubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Jewelry),
-        ItemType::Gem => gem::from_usize(item_subtype).map(ItemSubType::Gem),
+        ItemType::Gem => crate::model::item_subtype::GemSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Gem),
         ItemType::Bag => crate::model::item_subtype::BagSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Bag),
@@ -138,48 +148,98 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
                 .map(ItemSubType::LightSource)
         }
         ItemType::RangedWeapon => {
-            ranged_weapon::from_usize(item_subtype).map(ItemSubType::RangedWeapon)
+            crate::model::item_subtype::RangedWeaponSubType::try_from(item_subtype)
+                .ok()
+                .map(ItemSubType::RangedWeapon)
         }
         ItemType::HaftedWeapon => {
-            hafted_weapon::from_usize(item_subtype).map(ItemSubType::HaftedWeapon)
+            crate::model::item_subtype::HaftedWeaponSubType::try_from(item_subtype)
+                .ok()
+                .map(ItemSubType::HaftedWeapon)
         }
-        ItemType::PoleArm => polearm::from_usize(item_subtype).map(ItemSubType::PoleArm),
-        ItemType::Dagger => dagger::from_usize(item_subtype).map(ItemSubType::Dagger),
-        ItemType::Sword => sword::from_usize(item_subtype).map(ItemSubType::Sword),
-        ItemType::Pick => pick::from_usize(item_subtype).map(ItemSubType::Pick),
-        ItemType::Maul => maul::from_usize(item_subtype).map(ItemSubType::Maul),
+        ItemType::PoleArm => crate::model::item_subtype::PoleArmSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::PoleArm),
+        ItemType::Dagger => crate::model::item_subtype::DaggerSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Dagger),
+        ItemType::Sword => crate::model::item_subtype::SwordSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Sword),
+        ItemType::Pick => crate::model::item_subtype::PickSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Pick),
+        ItemType::Maul => crate::model::item_subtype::MaulSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Maul),
         ItemType::GemHelm => crate::model::item_subtype::GemHelmSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::GemHelm),
-        ItemType::Boots => boots::from_usize(item_subtype).map(ItemSubType::Boots),
-        ItemType::Gloves => gloves::from_usize(item_subtype).map(ItemSubType::Gloves),
-        ItemType::Cloak => cloak::from_usize(item_subtype).map(ItemSubType::Cloak),
-        ItemType::Helm => helm::from_usize(item_subtype).map(ItemSubType::Helm),
-        ItemType::Shield => shield::from_usize(item_subtype).map(ItemSubType::Shield),
-        ItemType::HardArmor => hard_armor::from_usize(item_subtype).map(ItemSubType::HardArmor),
-        ItemType::SoftArmor => soft_armor::from_usize(item_subtype).map(ItemSubType::SoftArmor),
-        ItemType::Bracers => bracers::from_usize(item_subtype).map(ItemSubType::Bracers),
-        ItemType::Belt => belt::from_usize(item_subtype).map(ItemSubType::Belt),
+        ItemType::Boots => crate::model::item_subtype::BootsSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Boots),
+        ItemType::Gloves => crate::model::item_subtype::GlovesSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Gloves),
+        ItemType::Cloak => crate::model::item_subtype::CloakSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Cloak),
+        ItemType::Helm => crate::model::item_subtype::HelmSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Helm),
+        ItemType::Shield => crate::model::item_subtype::ShieldSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Shield),
+        ItemType::HardArmor => crate::model::item_subtype::HardArmorSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::HardArmor),
+        ItemType::SoftArmor => crate::model::item_subtype::SoftArmorSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::SoftArmor),
+        ItemType::Bracers => crate::model::item_subtype::BracersSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Bracers),
+        ItemType::Belt => crate::model::item_subtype::BeltSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Belt),
         ItemType::Amulet => crate::model::item_subtype::AmuletSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::Amulet),
-        ItemType::Ring => ring::from_usize(item_subtype).map(ItemSubType::Ring),
-        ItemType::Staff => staff::from_usize(item_subtype).map(ItemSubType::Staff),
+        ItemType::Ring => crate::model::item_subtype::RingSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Ring),
+        ItemType::Staff => crate::model::item_subtype::StaffSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Staff),
         ItemType::Rod => panic!("ItemType Rod has been removed"),
-        ItemType::Wand => wand::from_usize(item_subtype).map(ItemSubType::Wand),
-        ItemType::Scroll1 => scroll::from_usize(item_subtype).map(ItemSubType::Scroll1),
+        ItemType::Wand => crate::model::item_subtype::WandSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Wand),
+        ItemType::Scroll1 => crate::model::item_subtype::Scroll1SubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Scroll1),
         ItemType::Scroll2 => panic!("ItemType Scroll2 has been removed"),
-        ItemType::Potion1 => potion::from_usize(item_subtype).map(ItemSubType::Potion1),
+        ItemType::Potion1 => crate::model::item_subtype::Potion1SubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Potion1),
         ItemType::Potion2 => panic!("ItemType Potion2 has been removed"),
         ItemType::FlaskOfOil => {
             crate::model::item_subtype::FlaskOfOilSubType::try_from(item_subtype)
                 .ok()
                 .map(ItemSubType::FlaskOfOil)
         }
-        ItemType::Food => food::from_usize(item_subtype).map(ItemSubType::Food),
-        ItemType::JunkFood => junk_food::from_usize(item_subtype).map(ItemSubType::JunkFood),
-        ItemType::Chime => chime::from_usize(item_subtype).map(ItemSubType::Chime),
-        ItemType::Horn => horn::from_usize(item_subtype).map(ItemSubType::Horn),
+        ItemType::Food => crate::model::item_subtype::FoodSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Food),
+        ItemType::JunkFood => crate::model::item_subtype::JunkFoodSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::JunkFood),
+        ItemType::Chime => crate::model::item_subtype::ChimeSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Chime),
+        ItemType::Horn => crate::model::item_subtype::HornSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Horn),
         ItemType::MagicBook => crate::model::item_subtype::MagicBookSubType::try_from(item_subtype)
             .ok()
             .map(ItemSubType::MagicBook),
