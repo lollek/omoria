@@ -1,10 +1,11 @@
 use std::cmp::{max, min};
 use std::convert::TryInto;
+use std::convert::TryFrom;
 use std::ffi::CString;
 use std::ptr::addr_of_mut;
 use std::sync::RwLock;
 
-use crate::conversion::{class, race, sex};
+use crate::conversion::{race, sex};
 use crate::data;
 use crate::logic::stat_modifiers;
 use crate::misc;
@@ -95,7 +96,7 @@ pub fn set_sex(sex: Sex) {
 }
 
 pub fn class() -> Class {
-    class::from_usize(unsafe { player_pclass }.try_into().unwrap()).unwrap()
+    Class::try_from(unsafe { player_pclass }).unwrap()
 }
 
 pub fn set_class(class: Class) {

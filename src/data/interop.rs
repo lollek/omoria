@@ -1,16 +1,15 @@
 use std::convert::TryFrom;
-use crate::conversion;
 use crate::data;
-use crate::model::{Item, ItemType};
+use crate::model::{Class, Item, ItemType};
 
 #[no_mangle]
 pub extern "C" fn C_class_melee_bonus(class: i32) -> i8 {
-    data::class::melee_bonus(&conversion::class::from_usize(class as usize).unwrap())
+    data::class::melee_bonus(&Class::try_from(class).unwrap())
 }
 
 #[no_mangle]
 pub extern "C" fn C_class_ranged_bonus(class: i32) -> i8 {
-    data::class::ranged_bonus(&conversion::class::from_usize(class as usize).unwrap())
+    data::class::ranged_bonus(&Class::try_from(class).unwrap())
 }
 
 #[no_mangle]
