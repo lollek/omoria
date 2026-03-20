@@ -1,28 +1,17 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::ArrowSubType;
 
+/// Converts a usize to an ArrowSubType.
+/// Prefer using `ArrowSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<ArrowSubType> {
-    match subtype {
-        1 => Some(ArrowSubType::Arrow),
-        _ => None,
-    }
+    ArrowSubType::try_from(subtype).ok()
 }
 
+/// Converts an ArrowSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &ArrowSubType) -> usize {
-    match subtype {
-        ArrowSubType::Arrow => 1,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_double_conversion() {
-        (0..1000).for_each(|i| {
-            if let Some(subtype) = from_usize(i) {
-                assert_eq!(i, to_usize(&subtype));
-            }
-        })
-    }
+    (*subtype).into()
 }

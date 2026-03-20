@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
 
 use crate::model::{item_subtype::ItemSubType, ItemType};
 
@@ -59,7 +59,7 @@ pub fn to_usize(item_subtype: &ItemSubType) -> usize {
         ItemSubType::WearableGem(subtype) => wearable_gem::to_usize(subtype),
         ItemSubType::SlingAmmo(subtype) => sling_ammo::to_usize(subtype),
         ItemSubType::Bolt(subtype) => bolt::to_usize(subtype),
-        ItemSubType::Arrow(subtype) => arrow::to_usize(subtype),
+        ItemSubType::Arrow(subtype) => usize::from(*subtype),
         ItemSubType::Spike(subtype) => spike::to_usize(subtype),
         ItemSubType::LightSource(subtype) => light_source::to_usize(subtype),
         ItemSubType::RangedWeapon(subtype) => ranged_weapon::to_usize(subtype),
@@ -114,7 +114,9 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         }
         ItemType::SlingAmmo => sling_ammo::from_usize(item_subtype).map(ItemSubType::SlingAmmo),
         ItemType::Bolt => bolt::from_usize(item_subtype).map(ItemSubType::Bolt),
-        ItemType::Arrow => arrow::from_usize(item_subtype).map(ItemSubType::Arrow),
+        ItemType::Arrow => crate::model::item_subtype::ArrowSubType::try_from(item_subtype)
+            .ok()
+            .map(ItemSubType::Arrow),
         ItemType::Spike => spike::from_usize(item_subtype).map(ItemSubType::Spike),
         ItemType::LightSource => {
             light_source::from_usize(item_subtype).map(ItemSubType::LightSource)
