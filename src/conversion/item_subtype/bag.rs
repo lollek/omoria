@@ -1,24 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::BagSubType;
 
+/// Converts a usize to a BagSubType.
+/// Prefer using `BagSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<BagSubType> {
-    match subtype {
-        1 => Some(BagSubType::BagOfHolding250),
-        2 => Some(BagSubType::BagOfHolding500),
-        3 => Some(BagSubType::BagOfHolding1000),
-        4 => Some(BagSubType::BagOfDevouring),
-        5 => Some(BagSubType::BagOfHolding1500),
-        _ => None,
-    }
+    BagSubType::try_from(subtype).ok()
 }
 
+/// Converts a BagSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &BagSubType) -> usize {
-    match subtype {
-        BagSubType::BagOfHolding250 => 1,
-        BagSubType::BagOfHolding500 => 2,
-        BagSubType::BagOfHolding1000 => 3,
-        BagSubType::BagOfDevouring => 4,
-        BagSubType::BagOfHolding1500 => 5,
-    }
+    (*subtype).into()
 }
 
 #[cfg(test)]
@@ -26,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {

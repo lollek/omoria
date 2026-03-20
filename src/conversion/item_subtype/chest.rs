@@ -1,26 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::ChestSubType;
 
+/// Converts a usize to a ChestSubType.
+/// Prefer using `ChestSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<ChestSubType> {
-    match subtype {
-        1 => Some(ChestSubType::SmallWoodenChest),
-        4 => Some(ChestSubType::LargeWoodenChest),
-        7 => Some(ChestSubType::SmallIronChest),
-        10 => Some(ChestSubType::LargeIronChest),
-        13 => Some(ChestSubType::SmallSteelChest),
-        16 => Some(ChestSubType::LargeSteelChest),
-        _ => None,
-    }
+    ChestSubType::try_from(subtype).ok()
 }
 
+/// Converts a ChestSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(chest: &ChestSubType) -> usize {
-    match chest {
-        ChestSubType::SmallWoodenChest => 1,
-        ChestSubType::LargeWoodenChest => 4,
-        ChestSubType::SmallIronChest => 7,
-        ChestSubType::LargeIronChest => 10,
-        ChestSubType::SmallSteelChest => 13,
-        ChestSubType::LargeSteelChest => 16,
-    }
+    (*chest).into()
 }
 
 #[cfg(test)]
@@ -28,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {

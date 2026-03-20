@@ -1,7 +1,30 @@
+use std::convert::TryFrom;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GemHelmSubType {
     IronHelm,
     SteelHelm,
+}
+
+impl From<GemHelmSubType> for usize {
+    fn from(value: GemHelmSubType) -> usize {
+        match value {
+            GemHelmSubType::IronHelm => 9,
+            GemHelmSubType::SteelHelm => 10,
+        }
+    }
+}
+
+impl TryFrom<usize> for GemHelmSubType {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            9 => Ok(GemHelmSubType::IronHelm),
+            10 => Ok(GemHelmSubType::SteelHelm),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -142,4 +165,35 @@ pub enum BeltSubType {
     SharkskinBelt,
     DemonhideBelt,
     WyrmhideBelt,
+}
+
+#[cfg(test)]
+mod tests {
+    use std::convert::TryFrom;
+
+    use super::GemHelmSubType;
+
+    #[test]
+    fn test_gem_helm_subtype_try_from_usize_accepts_known_values() {
+        assert_eq!(
+            GemHelmSubType::try_from(9usize).unwrap(),
+            GemHelmSubType::IronHelm
+        );
+        assert_eq!(
+            GemHelmSubType::try_from(10usize).unwrap(),
+            GemHelmSubType::SteelHelm
+        );
+    }
+
+    #[test]
+    fn test_gem_helm_subtype_try_from_usize_rejects_unknown_values() {
+        assert!(GemHelmSubType::try_from(8usize).is_err());
+        assert!(GemHelmSubType::try_from(11usize).is_err());
+    }
+
+    #[test]
+    fn test_gem_helm_subtype_into_usize_returns_expected_codes() {
+        assert_eq!(usize::from(GemHelmSubType::IronHelm), 9);
+        assert_eq!(usize::from(GemHelmSubType::SteelHelm), 10);
+    }
 }

@@ -1,18 +1,19 @@
+use std::convert::TryFrom;
+
 use crate::model::item_subtype::GemHelmSubType;
 
+/// Converts a usize to a GemHelmSubType.
+/// Prefer using `GemHelmSubType::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(subtype: usize) -> Option<GemHelmSubType> {
-    match subtype {
-        9 => Some(GemHelmSubType::IronHelm),
-        10 => Some(GemHelmSubType::SteelHelm),
-        _ => None,
-    }
+    GemHelmSubType::try_from(subtype).ok()
 }
 
+/// Converts a GemHelmSubType to a usize.
+/// Prefer using `usize::from(subtype)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(subtype: &GemHelmSubType) -> usize {
-    match subtype {
-        GemHelmSubType::IronHelm => 9,
-        GemHelmSubType::SteelHelm => 10,
-    }
+    (*subtype).into()
 }
 
 #[cfg(test)]
@@ -20,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(deprecated)]
     fn test_double_conversion() {
         (0..1000).for_each(|i| {
             if let Some(subtype) = from_usize(i) {
