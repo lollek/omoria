@@ -267,7 +267,9 @@ pub(crate) fn identify_core(
         cursor = node.next;
     }
 
-    let subtype = item.item_subtype().expect("Item has no subtype");
+    let subtype = item
+        .item_subtype()
+        .unwrap_or_else(|| panic!("Item has no subtype: {:?}", item));
     set_identified(subtype, true)
 }
 
