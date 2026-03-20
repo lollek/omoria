@@ -5,7 +5,6 @@ use std::ffi::CString;
 use std::ptr::addr_of_mut;
 use std::sync::RwLock;
 
-use crate::conversion::sex;
 use crate::data;
 use crate::logic::stat_modifiers;
 use crate::misc;
@@ -85,7 +84,7 @@ pub fn set_race(race: Race) {
 }
 
 pub fn sex() -> Sex {
-    sex::from_char(unsafe { player_sex[0] as u8 as char }).unwrap()
+    Sex::try_from(unsafe { player_sex[0] as u8 as char }).unwrap()
 }
 
 pub fn set_sex(sex: Sex) {
