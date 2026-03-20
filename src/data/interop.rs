@@ -22,5 +22,5 @@ pub extern "C" fn C_item_get_tchar(item_ptr: *const Item) -> pancurses::chtype {
 
 #[no_mangle]
 pub extern "C" fn coin_value(currency: u8) -> i64 {
-    data::currency::value(&conversion::currency::from_usize(currency.into()).unwrap())
+    data::currency::value(&crate::model::Currency::try_from(currency as usize).unwrap())
 }

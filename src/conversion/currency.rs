@@ -1,24 +1,17 @@
+use std::convert::TryFrom;
+
 use crate::model::Currency;
 
+/// Converts a usize to a Currency.
+/// Prefer using `Currency::try_from(value).ok()` directly in new code.
+#[deprecated]
 pub fn from_usize(value: usize) -> Option<Currency> {
-    match value {
-        1 => Some(Currency::Iron),
-        2 => Some(Currency::Copper),
-        3 => Some(Currency::Silver),
-        4 => Some(Currency::Gold),
-        5 => Some(Currency::Platinum),
-        6 => Some(Currency::Mithril),
-        _ => None,
-    }
+    Currency::try_from(value).ok()
 }
 
+/// Converts a Currency to a usize.
+/// Prefer using `usize::from(currency)` or `.into()` directly in new code.
+#[deprecated]
 pub fn to_usize(value: Currency) -> usize {
-    match value {
-        Currency::Iron => 1,
-        Currency::Copper => 2,
-        Currency::Silver => 3,
-        Currency::Gold => 4,
-        Currency::Platinum => 5,
-        Currency::Mithril => 6,
-    }
+    value.into()
 }

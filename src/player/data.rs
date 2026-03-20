@@ -4,7 +4,7 @@ use std::ffi::CString;
 use std::ptr::addr_of_mut;
 use std::sync::RwLock;
 
-use crate::conversion::{class, currency, race, sex};
+use crate::conversion::{class, race, sex};
 use crate::data;
 use crate::logic::stat_modifiers;
 use crate::misc;
@@ -128,7 +128,7 @@ pub fn wallet() -> Wallet {
 
 pub fn set_wallet(wallet: &Wallet) {
     for currency in Currency::iter() {
-        let position = currency::to_usize(currency);
+        let position = usize::from(currency);
         unsafe { player_money[position] = wallet.get_pos(currency) };
     }
     unsafe { player_money[0] = wallet.total };
@@ -140,7 +140,7 @@ pub fn bank_wallet() -> Wallet {
 
 pub fn set_bank_wallet(wallet: &Wallet) {
     for currency in Currency::iter() {
-        let position = currency::to_usize(currency);
+        let position = usize::from(currency);
         unsafe { bank[position] = wallet.get_pos(currency) };
     }
     unsafe { bank[0] = wallet.total };
