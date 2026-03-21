@@ -76,8 +76,6 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
 
   long xmax = 0;
 
-  ENTER(("ml__draw_block", "%d, %d, %d, %d", y1, x2, y2, x2));
-
   /*{ From uppermost to bottom most lines player was on...  }*/
   /*{ Points are guaranteed to be on the screen (I hope...) }*/
 
@@ -146,15 +144,11 @@ static void ml__draw_block(const long y1, const long x1, const long y2,
       print_chstr(floor_str, ypos, xpos);
     }
   }
-
-  LEAVE("ml__draw_block", "m");
 }
 
 static void ml__sub1_move_light(const long y1, const long x1, const long y2,
                                 const long x2) {
   /*{ Normal movement                                   }*/
-
-  ENTER(("ml__sub1_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
   light_flag = true;
 
@@ -163,15 +157,11 @@ static void ml__sub1_move_light(const long y1, const long x1, const long y2,
   ml__set_temporary_light_box_with_los(y2, x2);
 
   ml__draw_block(y1, x1, y2, x2); /*{ Redraw area           }*/
-
-  LEAVE("ml__sub1_move_light", "m");
 }
 
 static void ml__sub2_move_light(const long y1, const long x1, const long y2,
                                 const long x2) {
   /*{ When FIND_FLAG, light only permanent features     }*/
-
-  ENTER(("ml__sub2_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
   long new_top, new_bottom, new_left, new_right;
   ml__radius_bounds(y2, x2, &new_top, &new_bottom, &new_left, &new_right);
@@ -234,15 +224,11 @@ static void ml__sub2_move_light(const long y1, const long x1, const long y2,
       print_chstr(floor_str, tmp_y, xpos);
     }
   } /* end for y */
-
-  LEAVE("ml__sub2_move_light", "m");
 }
 
 static void ml__sub3_move_light(const long y1, const long x1, const long y2,
                                 const long x2) {
   /*{ When blinded, move only the player symbol...              }*/
-
-  ENTER(("ml__sub3_move_light", "%d, %d, %d, %d", y1, x1, y2, x1));
 
   if (light_flag) {
     ml__clear_temporary_light_box(y1, x1);
@@ -250,15 +236,11 @@ static void ml__sub3_move_light(const long y1, const long x1, const long y2,
   }
   print(' ', y1, x1);
   print('@', y2, x2);
-
-  LEAVE("ml__sub3_move_light", "m");
 }
 
 static void ml__sub4_move_light(const long y1, const long x1, const long y2,
                                 const long x2) {
   /*{ With no light, movement becomes involved...               }*/
-
-  ENTER(("ml__sub4_move_light", "%d, %d, %d, %d", y1, x1, y2, x2));
 
   light_flag = true;
   if (cave[y1][x1].is_temporarily_lit) {
@@ -269,8 +251,6 @@ static void ml__sub4_move_light(const long y1, const long x1, const long y2,
     unlite_spot(y1, x1);
   }
   print('@', y2, x2);
-
-  LEAVE("ml__sub4_move_light", "m");
 }
 
 void dungeon_light_move(const long y1, const long x1, const long y2,
@@ -328,8 +308,6 @@ void dungeon_light_room(const long param_y, const long param_x) {
   long const end_col = start_col + half_width - 1;
   long xpos = 0;
 
-  ENTER(("light_room", "%d, %d", param_y, param_x));
-
   lr__find_light(start_row, start_col, end_row, end_col);
 
   for (long y = start_row; y <= end_row; y++) {
@@ -355,8 +333,6 @@ void dungeon_light_room(const long param_y, const long param_x) {
       print_chstr(floor_str, ypos, xpos);
     }
   }
-
-  LEAVE("light_room", "");
 }
 
 void dungeon_light_clear_temporary_light_box_and_redraw(const long center_row,

@@ -31,7 +31,7 @@ pub fn should_light_cell(
     bresenham_los(player_row, player_col, target_row, target_col, &is_open)
 }
 
-/// Pure Rust port of the Bresenham-style `los()` from `src/misc.c` (~line 1379).
+/// Pure Rust port of the Bresenham-style line-of-sight
 ///
 /// Returns `true` if there is no opaque cell between
 /// `(source_row, source_col)` and `(target_row, target_col)`.
@@ -167,7 +167,6 @@ mod tests {
     }
 
     /// Radius 2: a wall at (5,6) blocks the cell at (5,7) behind it.
-    /// This is the key behaviour that the stub FAILS — the RED test.
     #[test]
     fn radius_2_does_not_light_cell_behind_wall() {
         assert!(
