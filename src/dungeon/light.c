@@ -59,22 +59,6 @@ static void ml__set_temporary_light_box_with_los(const long player_row,
         cave[row][col].is_temporarily_lit = true;
 }
 
-static void ml__clear_temporary_light_box_and_redraw(const long center_row,
-                                                     const long center_col) {
-  long top, bottom, left, right;
-  ml__radius_bounds(center_row, center_col, &top, &bottom, &left, &right);
-
-  for (long row = top; row <= bottom; row++) {
-    for (long col = left; col <= right; col++) {
-      cave[row][col].is_temporarily_lit = false;
-      if (test_light(row, col))
-        lite_spot(row, col);
-      else
-        unlite_spot(row, col);
-    }
-  }
-}
-
 static void ml__draw_block(const long y1, const long x1, const long y2,
                            const long x2) {
   /*{ Given two sets of points, draw the block		}*/
@@ -276,7 +260,7 @@ static void ml__sub4_move_light(const long y1, const long x1, const long y2,
 
   light_flag = true;
   if (cave[y1][x1].is_temporarily_lit) {
-    ml__clear_temporary_light_box_and_redraw(y1, x1);
+    dungeon_light_clear_temporary_light_box_and_redraw(y1, x1);
   } else if (test_light(y1, x1)) {
     lite_spot(y1, x1);
   } else {
@@ -371,4 +355,20 @@ void dungeon_light_room(const long param_y, const long param_x) {
   }
 
   LEAVE("light_room", "");
+}
+
+void dungeon_light_clear_temporary_light_box_and_redraw(const long center_row,
+                                                     const long center_col) {
+  long top, bottom, left, right;
+  ml__radius_bounds(center_row, center_col, &top, &bottom, &left, &right);
+
+  for (long row = top; row <= bottom; row++) {
+    for (long col = left; col <= right; col++) {
+      cave[row][col].is_temporarily_lit = false;
+      if (test_light(row, col))
+        lite_spot(row, col);
+      else
+        unlite_spot(row, col);
+    }
+  }
 }

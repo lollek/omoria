@@ -724,32 +724,7 @@ bool teleport_to(const long ny, const long nx) {
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
   move_creature(char_row, char_col, y, x);
-  long top = char_row - LIGHT_RADIUS;
-  long bottom = char_row + LIGHT_RADIUS;
-  long left = char_col - LIGHT_RADIUS;
-  long right = char_col + LIGHT_RADIUS;
-  if (top < 1)
-    top = 1;
-  if (left < 1)
-    left = 1;
-  if (bottom > cur_height)
-    bottom = cur_height;
-  if (right > cur_width)
-    right = cur_width;
-
-  for (long i1 = top; i1 <= bottom; i1++) {
-    for (long i2 = left; i2 <= right; i2++) {
-      /* with cave[i1][i2]. do; */
-      cave[i1][i2].is_temporarily_lit = false;
-      if (!test_light(i1, i2)) {
-        unlite_spot(i1, i2);
-      }
-    }
-  }
-
-  if (test_light(char_row, char_col)) {
-    lite_spot(char_row, char_col);
-  }
+  dungeon_light_clear_temporary_light_box_and_redraw(char_row, char_col);
   char_row = y;
   char_col = x;
   player_action_move(5);
@@ -2928,33 +2903,7 @@ void teleport(const long dis) {
   } while (!(cave[y][x].fopen && cave[y][x].cptr < 2));
 
   move_creature(char_row, char_col, y, x);
-  long top = char_row - LIGHT_RADIUS;
-  long bottom = char_row + LIGHT_RADIUS;
-  long left = char_col - LIGHT_RADIUS;
-  long right = char_col + LIGHT_RADIUS;
-  if (top < 1)
-    top = 1;
-  if (left < 1)
-    left = 1;
-  if (bottom > cur_height)
-    bottom = cur_height;
-  if (right > cur_width)
-    right = cur_width;
-
-  for (long i1 = top; i1 <= bottom; i1++) {
-    for (long i2 = left; i2 <= right; i2++) {
-      /* with cave[i1,i2] do; */
-      cave[i1][i2].is_temporarily_lit = false;
-      if (!test_light(i1, i2)) {
-        unlite_spot(i1, i2);
-      }
-    }
-  }
-
-  if (test_light(char_row, char_col)) {
-    lite_spot(char_row, char_col);
-  }
-
+  dungeon_light_clear_temporary_light_box_and_redraw(char_row, char_col);
   char_row = y;
   char_col = x;
   player_action_move(5);
