@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: torch lighting now uses a `LIGHT_RADIUS` constant (starting at 1) and Rust-backed LOS checks to prevent light bleeding through walls at larger radii.
 * Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
 * Internal: Hit calculation (`managed_to_hit`) is now implemented in Rust.
 * Internal: `Wallet` now uses idiomatic Rust `From`/`Into` conversions for its `[i64; 7]` interop.
