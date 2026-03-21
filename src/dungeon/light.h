@@ -1,6 +1,6 @@
 #pragma once
 
-#define LIGHT_RADIUS 1
+#define LIGHT_RADIUS 3
 
 /*{ Package for moving the character's light about the screen     }*/
 /*{ Three cases : Normal, Finding, and Blind              -RAK-   }*/

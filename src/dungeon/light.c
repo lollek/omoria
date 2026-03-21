@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../c.h"
 #include "../debug.h"
 #include "../floor.h"
 #include "../io.h"
@@ -59,14 +60,15 @@ static void ml__set_temporary_light_box_with_los(const long player_row,
         cave[row][col].is_temporarily_lit = true;
 }
 
+// Given two sets of points, draw the block
 static void ml__draw_block(const long y1, const long x1, const long y2,
                            const long x2) {
-  /*{ Given two sets of points, draw the block		}*/
 
-  long const topp = maxmin(y1, y2, panel_row_min);
-  long const bott = minmax(y1, y2, panel_row_max);
-  long const left = maxmin(x1, x2, panel_col_min);
-  long const right = minmax(x1, x2, panel_col_max);
+  /* Redraw the union of old/new light boxes so larger radii repaint fully. */
+  long const topp = max(min(y1, y2) - LIGHT_RADIUS, panel_row_min);
+  long const bott = min(max(y1, y2) + LIGHT_RADIUS, panel_row_max);
+  long const left = max(min(x1, x2) - LIGHT_RADIUS, panel_col_min);
+  long const right = min(max(x1, x2) + LIGHT_RADIUS, panel_col_max);
   long const new_topp = y2 - LIGHT_RADIUS; /*{ Margins for new things to appear}*/
   long const new_bott = y2 + LIGHT_RADIUS;
   long const new_left = x2 - LIGHT_RADIUS;
