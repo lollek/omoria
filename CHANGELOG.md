@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: torch lighting now uses a `LIGHT_RADIUS` constant (starting at 3) and Rust-backed LOS checks to prevent light bleeding through walls at larger radii.
 * Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
 * Internal: Hit calculation (`managed_to_hit`) is now implemented in Rust.
 * Internal: `Wallet` now uses idiomatic Rust `From`/`Into` conversions for its `[i64; 7]` interop.
@@ -35,6 +36,7 @@
 * Internal: Item subtype migration: remaining armor, weapon, food, utility, ring, staff, wand, scroll, potion, chime, and horn subtype mappings now use model-layer `From`/`TryFrom` conversions; the central dispatcher now routes through those trait impls.
 * Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
 * Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
+* Changed line-of-sight to 3.
 
 ## 5-alpha529
 
