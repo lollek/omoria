@@ -120,11 +120,14 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_get_set_identification() {
         let subtype = ItemSubType::Food(FoodSubType::RationOfFood);
+        set_identified(subtype, false);
         assert!(!is_identified(subtype));
         set_identified(subtype, true);
         assert!(is_identified(subtype));
+        set_identified(subtype, false);
     }
 
     #[test]
