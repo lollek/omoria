@@ -96,12 +96,21 @@ Acceptance checks:
 
 ### PA3. Ascend and Descend Stairs (fan-out)
 
-Status: open. Depends on: PA1.
+Status: implemented. Depends on: PA1.
 Size: S. Complexity: Low. Agent: light.
 
-Owns: [ascend_stairs.c](../../../src/player_action/ascend_stairs.c),
-[descend_stairs.c](../../../src/player_action/descend_stairs.c), one new Rust
-module, registration line.
+Implemented in [stairs.rs](../../../src/player_action/stairs.rs), using the
+PA1 bounded cell access. The Rust module exports both C symbols
+(`player_action_ascend_stairs`, `player_action_descend_stairs`) through a thin
+interop wrapper, so the C callers in `command.c` are unchanged. Rust tests
+cover normal and steep moves, the steep clamp at level zero, the single d3
+roll for steep stairs, and the missing or wrong-stair message. Dispatch from
+the `<` and `>` keys and real terminal output remain unverified by a headless
+C-caller scenario.
+
+Owns: a new Rust stairs module (with `globals.rs` and `interop.rs`) and
+registration line. The C files `ascend_stairs.c` and `descend_stairs.c` are
+deleted.
 
 Behavior: no prompt. Checks the stair tile, changes `dun_level`, sets
 `moria_flag`, and rolls `randint(3)` for steep stairs. Keep both C symbols.
