@@ -75,16 +75,18 @@ Acceptance checks:
 
 ### 2. Persistence Injection (L0/L1, Then L2)
 
-Status: master-engine injection (2a) is done. Master operations use caller-owned
-engines in tests, with shared record-update rules and JSON encoding. Character
-saves also use the JSON codec, but still read and write files directly; their
-storage boundary and in-memory fixture checks remain the next handoff (2b).
+Status: master-engine injection (2a) and character storage injection (2b) are
+done. Caller-owned engines exercise typed character loading, writing, deletion,
+and listing with in-memory JSON fixture tests and distinct missing-save errors.
+The character menu uses the same listing boundary. Production remains
+file-backed; real disk failures, C callers, global record application, and
+terminal workflows have not been exercised by these tests.
 
 Start at [PersistenceEngine](../src/persistence/main.rs) and
 [FileStorageEngine](../src/persistence/filestorage.rs). The current trait covers
-master records; character JSON still uses direct file I/O in the save module.
-Make master-engine injection one handoff, then connect character save I/O in a
-small follow-up rather than assuming the trait already covers both.
+master records and character saves. The existing empty-list navigation bug is
+tracked in [the bug note](bugs/character-menu-empty-list.md); atomic writes and
+invalid identification-entry panics remain separate work.
 
 Acceptance checks:
 

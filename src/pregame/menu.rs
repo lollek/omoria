@@ -1,24 +1,25 @@
 use std::cmp::min;
-use std::fs;
 
 use crate::constants;
+use crate::debug;
 use crate::io;
 use crate::logic::menu;
 use crate::master;
+use crate::persistence::{self, CharacterStorageError, SaveKey};
 use crate::player;
 use crate::term;
 
 #[derive(Clone, Debug)]
 struct Character {
     pub name: String,
-    pub uid: String,
+    pub uid: i64,
 }
 
 #[no_mangle]
 pub extern "C" fn pregame__menu_rs() {
     if let Some(character) = main_menu() {
         player::set_name(&character.name);
-        player::set_uid(character.uid.parse::<i64>().unwrap());
+        player::set_uid(character.uid);
     }
 }
 
@@ -123,18 +124,69 @@ fn show_highscore() {
 }
 
 fn load_characters() -> Vec<Character> {
-    let res = fs::read_dir(constants::SAVE_FOLDER)
-        .unwrap()
-        .map(|it| it.unwrap().file_name().into_string().unwrap().to_owned())
-        .filter(|it| it.find(".json").is_some())
-        .map(|it| it.replace(".json", ""))
-        .map(|it| {
-            let (name, uid) = it.split_at(it.rfind("-").unwrap());
-            Character {
-                name: name.to_string(),
-                uid: uid[1..uid.len()].to_string(),
-            }
-        })
-        .collect();
-    res
+    characters_from_saves(persistence::list_saves(), debug::error)
+}
+
+fn characters_from_saves(
+    result: Result<Vec<SaveKey>, CharacterStorageError>,
+    mut log: impl FnMut(String),
+) -> Vec<Character> {
+    match result {
+        Ok(keys) => keys
+            .into_iter()
+            .map(|key| Character {
+                name: key.name,
+                uid: key.uid,
+            })
+            .collect(),
+        Err(err) => {
+            log(format!("Failed to list saves: {}", err));
+            Vec::new()
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::persistence::{list_saves_with_engine, memory::InMemoryEngine};
+
+    #[test]
+    fn character_menu_list_error_logs_and_returns_empty_list() {
+        let mut engine = InMemoryEngine {
+            fail_list: true,
+            ..Default::default()
+        };
+        let mut messages = Vec::new();
+        let characters = characters_from_saves(list_saves_with_engine(&mut engine), |message| {
+            messages.push(message)
+        });
+        assert!(characters.is_empty());
+        assert_eq!(
+            messages,
+            vec!["Failed to list saves: injected list failure"]
+        );
+        assert_eq!(engine.character_calls, vec![("list", None)]);
+    }
+
+    #[test]
+    fn character_menu_uses_typed_uid_without_parsing() {
+        let mut engine = InMemoryEngine::default();
+        engine.saves.insert(
+            SaveKey {
+                name: "Fixture-With-Hyphens".into(),
+                uid: -42,
+            },
+            String::new(),
+        );
+        let mut messages = Vec::new();
+        let characters = characters_from_saves(list_saves_with_engine(&mut engine), |message| {
+            messages.push(message)
+        });
+        assert_eq!(characters.len(), 1);
+        assert_eq!(characters[0].name, "Fixture-With-Hyphens");
+        assert_eq!(characters[0].uid, -42);
+        assert!(messages.is_empty());
+        assert_eq!(engine.character_calls, vec![("list", None)]);
+    }
 }
