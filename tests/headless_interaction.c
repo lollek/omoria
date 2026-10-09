@@ -253,9 +253,58 @@ static void assert_close_target_scenario(uint8_t tval, long broken,
   end_pickup_scenario();
 }
 
+static void assert_toggle_light_scenario(uint8_t tval, long fuel, bool on,
+                                         const char *expected_message) {
+  begin_pickup_scenario();
+  equipment[Equipment_light].tval = tval;
+  equipment[Equipment_light].p1 = fuel;
+  const treasure_type original_light = equipment[Equipment_light];
+  player_flags.light_on = on;
+  player_light = !on;
+  player_flags.blind = 0;
+  player_flags.status = 0;
+  for (long row = char_row - 1; row <= char_row + 1; row++) {
+    for (long col = char_col - 1; col <= char_col + 1; col++) {
+      cave[row][col].is_temporarily_lit = on;
+    }
+  }
+  const size_t drawing_before = headless_terminal_counts().drawing;
+
+  player_action_toggle_light_source();
+
+  const bool toggled = tval > 0 && fuel > 0;
+  assert(reset_flag);
+  assert(player_flags.light_on == (toggled ? !on : on));
+  assert(player_light == !on);
+  assert_same_item(&equipment[Equipment_light], &original_light);
+  assert(char_row == 39 && char_col == 140);
+  assert(turn == 1 && turn_counter == 100);
+  for (long row = char_row - 1; row <= char_row + 1; row++) {
+    for (long col = char_col - 1; col <= char_col + 1; col++) {
+      assert(cave[row][col].is_temporarily_lit == (toggled ? !on : on));
+    }
+  }
+  assert(C_message_capture_count() == 1);
+  char message[120];
+  assert(C_message_capture_get(0, message, sizeof(message)));
+  assert(strcmp(message, expected_message) == 0);
+  if (toggled) {
+    assert(headless_terminal_counts().drawing > drawing_before);
+  } else {
+    assert(headless_terminal_counts().drawing == drawing_before);
+  }
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(10);
   for (int repeat = 0; repeat < 2; repeat++) {
+    assert_toggle_light_scenario(15, 123, false, "Light On.  123 turns left.");
+    assert_toggle_light_scenario(15, 123, true, "Light Off.  123 turns left.");
+    assert_toggle_light_scenario(0, 123, true, "You are not carrying a light.");
+    assert_toggle_light_scenario(0, 0, false, "You are not carrying a light.");
+    assert_toggle_light_scenario(15, 0, true, "Your light has gone out!");
+    assert_toggle_light_scenario(15, -1, false, "Your light has gone out!");
     assert_ration_pickup_scenario();
     assert_close_target_scenario(open_door, 0, 0, false, NULL);
     assert_close_target_scenario(open_door, 1, 2, false, "It is in your way!");

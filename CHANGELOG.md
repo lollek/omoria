@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported light-source toggling to Rust with headless checks for flags, messages, and dungeon lighting.
 * Internal: Ported stair movement to Rust, keeping the C entry points.
 * Internal: Reused the shared C-style text helper for door-closing monster names.
 * Item names containing non-ASCII bytes no longer hide special-attribute suffixes.
