@@ -40,6 +40,14 @@ fn open_savefile(player_name: &str, player_uid: i64, to_write: bool) -> Option<F
     }
 }
 
+fn parse_save(json: &str) -> serde_json::Result<SaveRecord> {
+    serde_json::from_str(json)
+}
+
+fn serialize_save(data: &SaveRecord) -> serde_json::Result<String> {
+    serde_json::to_string(data)
+}
+
 fn read_save(mut f: &File) -> Option<SaveRecord> {
     let mut buffer = String::new();
 
@@ -48,7 +56,7 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
         return None;
     }
 
-    match serde_json::from_str(&buffer) {
+    match parse_save(&buffer) {
         Ok(json) => Some(json),
         Err(e) => {
             debug::error(format!("Failed to load save @from_str, (err: {})", e));
@@ -58,7 +66,7 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
 }
 
 fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
-    let serialized_data = match serde_json::to_string(data) {
+    let serialized_data = match serialize_save(data) {
         Ok(serialized_data) => serialized_data,
         Err(e) => {
             debug::error(format!("Failed to serialize data: {e}"));
@@ -173,5 +181,182 @@ pub fn delete_character() -> Option<()> {
             debug::error(&format!("Failed to delete save (err: {})", e));
             None
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::error::Category;
+    use serde_json::Value;
+
+    use super::*;
+    use crate::model::item_subtype::{FoodSubType, ItemSubType};
+    use crate::model::{Class, Race, Sex};
+
+    const FIXTURE: &str = include_str!("../../tests/fixtures/save_record_v1.json");
+
+    // Debug-build SaveRecord deserialization overflows the 2 MiB default test-thread stack.
+    fn with_large_stack<F: FnOnce() + Send + 'static>(test: F) {
+        let handle = std::thread::Builder::new()
+            .name(std::thread::current().name().unwrap_or("test").into())
+            .stack_size(8 * 1024 * 1024)
+            .spawn(test)
+            .expect("failed to spawn test thread");
+        if let Err(panic) = handle.join() {
+            std::panic::resume_unwind(panic);
+        }
+    }
+
+    fn fixture_record() -> SaveRecord {
+        parse_save(FIXTURE).expect("fixture should deserialize")
+    }
+
+    // Identified entries come from a HashMap, so their serialized order is unspecified.
+    fn normalize(mut value: Value) -> Value {
+        if let Some(Value::Array(entries)) = value.get_mut("identified") {
+            entries.sort_by_key(|entry| entry.to_string());
+        }
+        value
+    }
+
+    #[test]
+    fn fixture_player_fields_are_loaded() {
+        with_large_stack(|| {
+            let player = fixture_record().player;
+
+            assert_eq!(player.name, "Fixture");
+            assert_eq!(player.uid, 1);
+            assert_eq!(player.race, Race::Elf);
+            assert_eq!(player.sex, Sex::Male);
+            assert_eq!(player.class, Class::Wizard);
+            assert_eq!(player.lev, 2);
+            assert_eq!(player.money.total, 513);
+            assert_eq!(player.money.mithril, 9);
+            assert_eq!((player.char_row, player.char_col), (39, 140));
+        });
+    }
+
+    #[test]
+    fn fixture_inventory_and_equipment_are_loaded() {
+        with_large_stack(|| {
+            let record = fixture_record();
+
+            assert_eq!(record.inventory.len(), 7);
+            let first = &record.inventory[0].data;
+            let name: Vec<u8> = first
+                .name
+                .iter()
+                .take_while(|&&c| c != 0)
+                .map(|&c| c as u8)
+                .collect();
+            assert_eq!(name, b"& Book of Magic Spells [Beginners-Magik]".to_vec());
+            assert_eq!(
+                (first.tval, first.subval, first.cost),
+                (90, 257, 6000),
+                "first inventory item should be the starting spell book"
+            );
+
+            assert_eq!(record.equipment.len(), 15);
+            assert_eq!(
+                (record.equipment[0].tval, record.equipment[0].subval),
+                (23, 3),
+                "wielded weapon should be loaded into the first equipment slot"
+            );
+        });
+    }
+
+    #[test]
+    fn fixture_dungeon_state_is_loaded() {
+        with_large_stack(|| {
+            let dungeon = fixture_record().dungeon;
+
+            assert_eq!((dungeon.cur_height, dungeon.cur_width), (66, 198));
+            assert_eq!(dungeon.cave.len(), 66 * 198);
+            assert_eq!(dungeon.treasure.len(), 64);
+            assert_eq!(dungeon.dun_level, 1);
+            assert_eq!(dungeon.turn, 1973);
+        });
+    }
+
+    #[test]
+    fn fixture_town_identification_and_monsters_are_loaded() {
+        with_large_stack(|| {
+            let record = fixture_record();
+
+            assert_eq!(record.town.stores.len(), 13);
+            let identified = serde_json::to_value(&record.identified).unwrap();
+            assert_eq!(identified.as_array().map(Vec::len), Some(136));
+            let ration = ItemSubType::Food(FoodSubType::RationOfFood);
+            assert_eq!(record.identified.get(ration), Some(true));
+            let mushroom = ItemSubType::Food(FoodSubType::Mushroom2);
+            assert_eq!(record.identified.get(mushroom), None);
+
+            assert_eq!(record.monsters.monsters.len(), 18);
+            let monster = &record.monsters.monsters[0];
+            assert_eq!(
+                (monster.hp, monster.fy, monster.fx),
+                (2, 39, 142),
+                "first monster should keep its hit points and position"
+            );
+        });
+    }
+
+    #[test]
+    fn fixture_round_trips_without_semantic_changes() {
+        with_large_stack(|| {
+            let serialized = serialize_save(&fixture_record()).expect("record should serialize");
+            parse_save(&serialized).expect("serialized record should parse again");
+
+            let original = normalize(serde_json::from_str(FIXTURE).unwrap());
+            let round_tripped = normalize(serde_json::from_str(&serialized).unwrap());
+            let (original, round_tripped) = (
+                original.as_object().unwrap(),
+                round_tripped.as_object().unwrap(),
+            );
+            assert_eq!(
+                original.keys().collect::<Vec<_>>(),
+                round_tripped.keys().collect::<Vec<_>>()
+            );
+            // Compare per section so a failure doesn't dump the whole save.
+            for (section, value) in original {
+                assert!(
+                    value == &round_tripped[section],
+                    "section `{}` changed after round trip",
+                    section
+                );
+            }
+        });
+    }
+
+    #[test]
+    fn truncated_save_is_an_eof_error() {
+        with_large_stack(|| {
+            let truncated = &FIXTURE[..FIXTURE.len() / 2];
+
+            let err = parse_save(truncated).expect_err("truncated save should fail");
+            assert_eq!(err.classify(), Category::Eof);
+        });
+    }
+
+    #[test]
+    fn malformed_save_is_a_syntax_error() {
+        let err = parse_save("{\"player\": nope}").expect_err("malformed save should fail");
+        assert_eq!(err.classify(), Category::Syntax);
+    }
+
+    #[test]
+    fn save_missing_required_section_is_a_data_error() {
+        with_large_stack(|| {
+            let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+            value.as_object_mut().unwrap().remove("dungeon");
+
+            let err = parse_save(&value.to_string()).expect_err("missing dungeon should fail");
+            assert_eq!(err.classify(), Category::Data);
+            assert!(
+                err.to_string().contains("missing field `dungeon`"),
+                "unexpected error: {}",
+                err
+            );
+        });
     }
 }

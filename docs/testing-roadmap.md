@@ -49,9 +49,12 @@ Do not combine these tasks into a wholesale game-state or loop rewrite.
 
 ### 1. Existing Save JSON Compatibility (L2)
 
+Status: done. Fixture: `tests/fixtures/save_record_v1.json`; tests are inline in
+[save.rs](../src/save/save.rs). Known gap: invalid `identified` entries panic
+during deserialization instead of returning an error.
+
 Start at [SaveRecord](../src/save/save_record.rs) and the
-[save reader/writer](../src/save/save.rs). The existing test only serializes a
-default record; it does not establish compatibility with existing save JSON.
+[save reader/writer](../src/save/save.rs).
 
 Acceptance checks:
 
