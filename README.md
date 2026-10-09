@@ -33,8 +33,10 @@ make check # Check formatting, Clippy, Rust tests, and the C/Rust build
 ```
 
 The `make check` contract is `cargo fmt --check`, `cargo clippy --all-targets`,
-`cargo test`, and a full C/Rust build and link. It verifies unit-tested logic and
-that the game links; it does **not** prove gameplay or run headless turn tests.
+`cargo test`, a full C/Rust build and link, `make test-movement`, and
+`make test-messages`. The C boundary tests run without a terminal; message tests
+use controlled input/drawing doubles. This verifies tested logic and that the
+game links; it does **not** prove gameplay or run headless turn tests.
 The gate passes locally on macOS. Existing Clippy warnings remain non-blocking,
 and six legacy denied lints have scoped allowances to preserve existing behavior.
 CI runs the same gate on macOS and Linux; runner results still need confirmation.

@@ -169,10 +169,11 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 {
   bool return_value = false;
   char ic = 0;
+  const bool capturing = message_capture_active();
 
   ENTER(("msg_print", "%s", str_buff));
 
-  if (msg_flag && !msg_terse) {
+  if (!capturing && msg_flag && !msg_terse) {
     long old_len = 0;
     old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
@@ -187,8 +188,10 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
   if (str_buff && str_buff[0]) {
 
     /* put_buffer(cursor_erl+str_buff,msg_line,msg_line);*/
-    erase_line(msg_line, msg_line);
-    put_buffer(str_buff, msg_line, msg_line);
+    if (!capturing) {
+      erase_line(msg_line, msg_line);
+      put_buffer(str_buff, msg_line, msg_line);
+    }
     strncpy(last_printed_message, str_buff, sizeof(char[82]));
     record_message(str_buff);
 
@@ -232,8 +235,9 @@ bool msg_print(const char *str_buff) /* : varying[a] of char; */
   char in_char = 0;
   const obj_set big_set = {3, '\n', '\r', 25, 26, ESCAPE, ' ', 0};
   const obj_set small_set = {3, 25, 26, ESCAPE, 0};
+  const bool capturing = message_capture_active();
 
-  if (msg_flag && !msg_terse) {
+  if (!capturing && msg_flag && !msg_terse) {
     const long old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
@@ -241,8 +245,10 @@ bool msg_print(const char *str_buff) /* : varying[a] of char; */
     } while (!is_in(in_char, big_set));
   }
 
-  erase_line(msg_line, msg_line);
-  put_buffer(str_buff, msg_line, msg_line);
+  if (!capturing) {
+    erase_line(msg_line, msg_line);
+    put_buffer(str_buff, msg_line, msg_line);
+  }
 
   // Since old_msg still has a size limit and str_buff doesn't
   size_t max_old_msg_size = sizeof(last_printed_message);
