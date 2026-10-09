@@ -172,7 +172,7 @@ Out of scope: wiring the transition into the C adapter (production keeps
 
 ### MV2. C Caller: Successful Open-Floor Move (L1)
 
-Status: blocked on HT1. Depends on: HT1.
+Status: done. Verified by `make test-movement` with HT1 terminal doubles. Depends on: HT1.
 
 Owns: [tests/movement_ffi.c](../tests/movement_ffi.c) and the `test-movement`
 recipe in the `Makefile`.

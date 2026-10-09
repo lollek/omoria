@@ -3,9 +3,12 @@
 #include <string.h>
 
 #include "../src/constants.h"
+#include "../src/floor.h"
 #include "../src/player.h"
 #include "../src/player_action.h"
+#include "../src/screen.h"
 #include "../src/variables.h"
+#include "support/terminal.h"
 
 static void reset_movement_state(void) {
   memset(cave, 0, sizeof(cave));
@@ -50,6 +53,63 @@ static void assert_edge_move_stops_find_without_consuming_turn(void) {
   }
 }
 
+/* Blindness skips the search RNG roll and room lighting; an empty target skips
+ * carry. Running/search are disabled and the panel is already current, avoiding
+ * area checks and map redraw. Real blind lighting still draws twice via HT1.
+ * This standalone process serializes the globals; assertion failure ends it. */
+static void assert_open_floor_move_updates_position_and_occupancy(void) {
+  const long saved_panels[] = {
+      panel_row, panel_col, max_panel_rows, max_panel_cols,
+      panel_row_min, panel_row_max, panel_col_min, panel_col_max,
+      panel_row_prt, panel_col_prt};
+  const bool saved_cave_flag = cave_flag;
+  const bool saved_search_flag = search_flag;
+  bool saved_lines[sizeof(used_line) / sizeof(used_line[0])];
+  memcpy(saved_lines, used_line, sizeof(used_line));
+
+  reset_movement_state();
+  headless_terminal_reset();
+  headless_terminal_allow_drawing(true);
+  player_flags.blind = 1;
+  search_flag = false;
+  cave[2][3].fopen = true;
+  cave[2][3].fval = ft_dark_open_floor;
+  panel_row = panel_col = 0;
+  max_panel_rows = max_panel_cols = 0;
+  panel_row_min = panel_col_min = 1;
+  panel_row_max = SCREEN_HEIGHT;
+  panel_col_max = SCREEN_WIDTH;
+  panel_row_prt = -1;
+  panel_col_prt = -14;
+  cave_flag = true;
+  memset(used_line, 0, sizeof(used_line));
+
+  player_action_move(6);
+
+  assert(char_row == 2 && char_col == 3);
+  assert(cave[2][2].cptr == 0 && cave[2][3].cptr == 1);
+  assert(!reset_flag && !find_flag);
+  assert(turn_counter == 100);
+  const struct headless_terminal_counts counts = headless_terminal_counts();
+  assert(counts.drawing == 2 && counts.erasure == 0 && counts.input == 0);
+  assert(used_line[3]);
+  headless_terminal_reset();
+  reset_movement_state();
+  panel_row = saved_panels[0];
+  panel_col = saved_panels[1];
+  max_panel_rows = saved_panels[2];
+  max_panel_cols = saved_panels[3];
+  panel_row_min = saved_panels[4];
+  panel_row_max = saved_panels[5];
+  panel_col_min = saved_panels[6];
+  panel_col_max = saved_panels[7];
+  panel_row_prt = saved_panels[8];
+  panel_col_prt = saved_panels[9];
+  cave_flag = saved_cave_flag;
+  search_flag = saved_search_flag;
+  memcpy(used_line, saved_lines, sizeof(used_line));
+}
+
 static void assert_abi_results_match_cave_records(void) {
   reset_movement_state();
   cave[2][3].fopen = true;
@@ -77,6 +137,7 @@ int main(void) {
     assert_blocked_wall_keeps_position();
     assert_edge_move_stops_find_without_consuming_turn();
     assert_abi_results_match_cave_records();
+    assert_open_floor_move_updates_position_and_occupancy();
   }
   puts("Movement C caller checks passed.");
   return 0;

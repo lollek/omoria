@@ -48,7 +48,8 @@ test:
 .PHONY: test-movement
 test-movement: $(filter-out src/main.o,$(OBJFILES))
 	cargo build
-	$(CC) $(CFLAGS) tests/movement_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
+	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/movement-light.o
+	$(CC) $(CFLAGS) tests/movement_ffi.c tests/support/terminal.c target/debug/movement-light.o $(filter-out src/main.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
 	./target/debug/movement-ffi-test
 
 .PHONY: test-messages
