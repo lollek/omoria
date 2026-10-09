@@ -402,7 +402,10 @@ Acceptance checks:
 
 ### HL3. Headless Interaction Scenario (L3)
 
-Status: open. Depends on: HL2. Can run in parallel with HL4.
+Status: done. Verified by `make test-headless-interaction`; picks up a ration of
+food with `l` on a fixed floor and checks position, inventory count and weight,
+free-list restore, and the single expected message. Covers only this one
+interaction. Depends on: HL2. Can run in parallel with HL4.
 
 Owns: `tests/headless_interaction.c` (new) and its own `Makefile` target. It
 reads, but does not edit, HL2's `tests/support/headless_scenario.*`.
