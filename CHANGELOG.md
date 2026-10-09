@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Loading saves with unknown identified item entries now reports a data error instead of crashing.
 * Internal: Scoped message capture now bypasses C message rendering and prompts, with terminal-free C caller checks.
 * Character selection skips malformed save filenames and logs unreadable save folders instead of panicking while listing saves.
 * Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
