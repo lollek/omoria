@@ -8,14 +8,34 @@ mod globals;
 #[cfg(not(test))]
 mod interop;
 
+/// Dungeon access, inventory selection, and UI effects needed to spike a door.
+///
+/// The game implementation bridges C globals and UI calls; tests use an
+/// in-memory map and inventory. A successful spike lookup selects the stack
+/// used by subsequent count updates or destruction.
 trait JamContext {
+    /// Returns copies of the cell at row `y`, column `x` and its item.
+    ///
+    /// The outer `None` means the cell is outside the accessible map. The inner
+    /// `None` means there is no item or its index is invalid.
     fn read(&mut self, y: i64, x: i64) -> Option<(Cave, Option<Item>)>;
+    /// Stores the cell and replaces the item referenced by `cell.tptr`.
+    ///
+    /// Does nothing if the coordinates or item index are invalid; does not redraw.
     fn write(&mut self, y: i64, x: i64, cell: Cave, item: Item);
+    /// Selects an inventory spike stack and returns its quantity, or `None` if absent.
     fn find_spike(&mut self) -> Option<u16>;
+    /// Sets the quantity of the stack selected by a successful `find_spike` call.
     fn set_spike_count(&mut self, count: u16);
+    /// Consumes one spike from the selected stack and clears the selection.
+    ///
+    /// Called after a successful `find_spike` when the stack contains its last spike.
     fn destroy_spike(&mut self);
+    /// Formats a monster instance's name for the start of a sentence.
     fn monster_name(&mut self, index: u8) -> String;
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
+    /// Refreshes the player stat display after consuming a spike.
     fn redraw_stats(&mut self);
 }
 

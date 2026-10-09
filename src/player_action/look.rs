@@ -7,12 +7,26 @@ mod interop;
 
 const MAX_SIGHT: usize = 20;
 
+/// Dungeon observations and player messages needed to look along a direction.
+///
+/// The game implementation reads C globals; tests supply an in-memory map.
+/// Cell and item reads are snapshots, so describing an item does not change it.
 trait LookContext {
+    /// Returns whether blindness prevents the player from looking.
     fn blind(&mut self) -> bool;
+    /// Advances `(y, x)` one tile in the given numeric-keypad direction.
     fn step(&mut self, direction: i64, y: &mut i64, x: &mut i64);
+    /// Returns copies of the dungeon cell at row `y`, column `x` and its item.
+    ///
+    /// The outer `None` means the coordinates cannot be read. The inner `None`
+    /// means the cell has no item or its item index is invalid. No lighting or
+    /// visibility filtering is applied here; the look action handles that.
     fn read(&mut self, y: i64, x: i64) -> Option<(Cave, Option<Item>)>;
+    /// Returns the monster's name only if its instance index is valid and it is seen.
     fn monster_name(&mut self, index: u8) -> Option<String>;
+    /// Formats the supplied item snapshot for display, without a leading article.
     fn item_name(&mut self, item: Item) -> String;
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
 }
 

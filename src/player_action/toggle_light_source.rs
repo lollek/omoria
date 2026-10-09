@@ -3,13 +3,25 @@ mod globals;
 #[cfg(not(test))]
 mod interop;
 
+/// Equipped-light state and display effects needed to toggle the player's light.
+///
+/// The game implementation bridges C equipment, flags, and UI calls; tests keep
+/// light state and event records in memory. Toggling does not consume fuel.
 trait LightContext {
+    /// Marks the command as not consuming a game turn, including rejected toggles.
     fn reset_turn(&mut self);
+    /// Returns the equipped light's raw item type (`tval`) and remaining fuel turns.
+    /// A nonpositive type means no light; nonpositive fuel means it has gone out.
     fn light_source(&self) -> (i64, i64);
+    /// Returns whether the player's light is switched on.
     fn light_on(&self) -> bool;
+    /// Updates both the light-on flag and the player's active-light state.
     fn set_light(&mut self, on: bool);
+    /// Refreshes the light's on/off status indicator after changing its state.
     fn status(&mut self);
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
+    /// Recalculates and displays dungeon lighting at the player's current position.
     fn redraw(&mut self);
 }
 

@@ -6,11 +6,25 @@ mod globals;
 #[cfg(not(test))]
 mod interop;
 
+/// Dungeon access and discovery effects needed to search nearby tiles.
+///
+/// The game implementation bridges C globals and UI calls; tests use an
+/// in-memory map. Search chance and random rolls are supplied separately.
 trait SearchContext {
+    /// Returns copies of the cell at row `y`, column `x` and its item.
+    ///
+    /// The outer `None` means the cell is outside the accessible map. The inner
+    /// `None` means there is no item or its index is invalid.
     fn read(&mut self, y: i64, x: i64) -> Option<(Cave, Option<Item>)>;
+    /// Stores the cell and replaces the item referenced by `cell.tptr`.
+    ///
+    /// Does nothing if the coordinates or item index are invalid; does not redraw.
     fn write(&mut self, y: i64, x: i64, cell: Cave, item: Item);
+    /// Converts a hidden trap or secret door to its revealed form and updates its display.
     fn reveal(&mut self, y: i64, x: i64);
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
+    /// Cancels automatic running after a trap or secret door is discovered.
     fn stop_running(&mut self);
 }
 

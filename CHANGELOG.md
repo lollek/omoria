@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Documented player-action context traits and their method contracts.
 * Internal: Clarified dungeon-level accessor names in stair movement.
 * Internal: Ported door jamming to Rust while keeping the direction prompt in C.
 * Cancelling the rest prompt no longer reads an unfinished input buffer or starts resting.

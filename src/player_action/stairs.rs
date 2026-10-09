@@ -40,11 +40,21 @@ impl Direction {
     }
 }
 
+/// Tile inspection, dungeon depth, and transition effects needed to take stairs.
+///
+/// The game implementation bridges C globals and messages; tests keep the map
+/// and depth in memory. Random steep-stair distance is supplied separately.
 trait StairsContext {
+    /// Returns the raw item type (`tval`) on the player's current tile.
+    /// Returns `None` if the cell cannot be read or has no valid item.
     fn tile_tval(&mut self) -> Option<u8>;
+    /// Returns the current dungeon depth, where zero is the town level.
     fn dungeon_level(&mut self) -> i64;
+    /// Updates dungeon depth without generating or displaying the destination level.
     fn set_dungeon_level(&mut self, level: i64);
+    /// Signals the main loop to leave the current level after a stair transition.
     fn set_moria_flag(&mut self);
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
 }
 

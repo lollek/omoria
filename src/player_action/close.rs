@@ -8,12 +8,27 @@ mod globals;
 #[cfg(not(test))]
 mod interop;
 
+/// Dungeon access, door templates, and display effects needed to close a door.
+///
+/// The game implementation bridges C globals and UI calls; tests use an
+/// in-memory map. Changes to cell and item snapshots take effect only on write.
 trait CloseContext {
+    /// Returns copies of the cell at row `y`, column `x` and its item.
+    ///
+    /// The outer `None` means the cell is outside the accessible map. The inner
+    /// `None` means there is no item or its index is invalid.
     fn read(&mut self, y: i64, x: i64) -> Option<(Cave, Option<Item>)>;
+    /// Stores the cell and replaces the item referenced by `cell.tptr`.
+    ///
+    /// Does nothing if the coordinates or item index are invalid; does not redraw.
     fn write(&mut self, y: i64, x: i64, cell: Cave, item: Item);
+    /// Returns a copy of the closed-door template used to replace an open door.
     fn closed_door(&mut self) -> Item;
+    /// Formats a monster instance's name for the start of a sentence.
     fn monster_name(&mut self, index: u8) -> String;
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
+    /// Refreshes the displayed tile at row `y`, column `x` after a successful write.
     fn redraw(&mut self, y: i64, x: i64);
 }
 

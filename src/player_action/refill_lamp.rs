@@ -72,11 +72,24 @@ mod interop {
     }
 }
 
+/// Inventory selection and UI effects needed to refill the equipped lamp.
+///
+/// The lamp itself is passed separately to the action. The game implementation
+/// uses C inventory and UI calls; tests keep fuel and event records in memory.
+/// A successful oil lookup selects the stack used by `remaining` and `destroy`.
 trait RefillContext {
+    /// Selects an oil stack and returns one flask's fuel amount, not its quantity.
+    /// Returns `None` when no flask is available.
     fn find_oil(&mut self) -> Option<i64>;
+    /// Sends a player-facing message to the game's message display.
     fn message(&mut self, message: &str);
+    /// Reports how many flasks will remain after consuming one from the selected stack.
+    /// Called after a successful `find_oil`, before `destroy` changes the inventory.
     fn remaining(&mut self);
+    /// Consumes one flask from the selected stack and clears the selection.
+    /// Requires a preceding successful `find_oil` call.
     fn destroy(&mut self);
+    /// Refreshes the player stat display after updating lamp fuel and inventory.
     fn redraw(&mut self);
 }
 
