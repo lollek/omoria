@@ -11,6 +11,29 @@ bool player_action_attack(long y, long x);
  */
 void player_action_move(long dir);
 
+enum player_move_kind {
+	PLAYER_MOVE_OUT_OF_BOUNDS = 0,
+	PLAYER_MOVE_ATTACK = 1,
+	PLAYER_MOVE_BLOCKED = 2,
+	PLAYER_MOVE_OPEN = 3,
+};
+
+struct player_move_direction {
+	long dir;
+	long scrambled;
+};
+
+struct player_move_result {
+	long row;
+	long col;
+	long kind;
+	long obstacle;
+	long consumes_turn;
+};
+
+struct player_move_direction C_player_move_direction(long dir, long confused);
+struct player_move_result C_player_move_resolve(long dir, long row, long col);
+
 /**
  * @brief Searches for hidden things
  *

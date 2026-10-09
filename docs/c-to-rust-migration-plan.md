@@ -33,6 +33,7 @@ The following modules are already in Rust (partially or fully):
 - `combat/fighting.rs` - `managed_to_hit` and injectable hit calculation; ranged combat remains in C
 - `dungeon/trap/` - Trap data and placement only; activation remains in `traps.c`
 - `equipment.rs` - Equipment handling
+- `player_action/movement/` - Step decisions and injectable confusion RNG; movement side effects remain in C
 
 ### Still in C (87 files)
 Count: `rg --files src -g '*.c' | wc -l`. This counts remaining source files,
@@ -155,6 +156,8 @@ Each player action file in `player_action/` can be migrated independently:
 
 #### 4.2 Movement & Navigation
 - [ ] `move.c` → port to Rust
+  - Partial: step decisions and confusion rolls are in Rust; C still applies movement and UI effects
+  - Tests: explicit-state Rust checks and terminal-free C caller checks for blocked walls and map edges
 - [ ] `ascend_stairs.c` → port to Rust
 - [ ] `descend_stairs.c` → port to Rust
 
