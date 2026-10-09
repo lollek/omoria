@@ -80,7 +80,8 @@ test-headless-interaction: $(filter-out src/main.o src/io.o src/screen.o src/dun
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/main_loop.c -o target/debug/headless-loop.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/command.c -o target/debug/headless-command.o
-	$(CC) $(CFLAGS) tests/headless_interaction.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-interaction-test
+	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -Dheadless_get_string=headless_rest_get_string -c src/player_action/rest.c -o target/debug/headless-rest.o
+	$(CC) $(CFLAGS) tests/headless_interaction.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o target/debug/headless-rest.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o src/player_action/rest.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-interaction-test
 	./target/debug/headless-interaction-test
 
 .PHONY: test-headless-persistence

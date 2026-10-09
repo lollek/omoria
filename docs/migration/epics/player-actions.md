@@ -177,22 +177,38 @@ Acceptance checks:
 
 ### PA6. Rest (fan-out)
 
-Status: open. Depends on: none.
+Status: implemented. Depends on: none.
 Size: S. Complexity: Low. Agent: standard.
+
+Implemented in [rest.rs](../../../src/player_action/rest.rs), with local
+global access and a thin interop wrapper. The C entry point retains the prompt
+and terminal presentation; Rust returns whether rest started. Rust tests cover
+exact `*` and C-style decimal prefixes. Repeated L1 checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) exercise the
+production C/Rust input boundary, search shutdown, rest state, turn count,
+status bits, nonpositive input rejection, and preservation of the rest-until-full
+flag. Prompt-double checks call the production C shim and cover aborted prompts,
+successful rest messages, and headless redraw delivery. Aborted prompts now
+delegate an empty string instead of an unfinished buffer.
+Real interactive input, terminal rendering, save/reload during rest, and waking
+up remain unverified by these checks.
 
 Owns: [rest.c](../../../src/player_action/rest.c), a new Rust module,
 registration line.
 
 Behavior: C keeps the `get_string` prompt and passes the string to Rust.
 Rust parses `*` (rest until full, 20 turns) or a number, then sets rest
-state, `turn_counter`, and the resting status, or sets `reset_flag` on zero.
+state, `turn_counter`, and the resting status, or sets `reset_flag` on nonpositive
+or invalid input. The C shim retains terminal presentation and safely handles
+an aborted prompt.
 
 Acceptance checks:
 
 * L0: parsing `*`, a number, zero, and junk gives the same results as C
   `sscanf`, including leading digits.
 * L1: a positive count turns search off and sets rest fields.
-* `rest.c` contains only the prompt shim.
+* L1: an aborted prompt leaves rest/search state unchanged and sets `reset_flag`.
+* `rest.c` contains only the prompt and terminal-presentation shim.
 
 ### PA7. Look (fan-out)
 

@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+* Cancelling the rest prompt no longer reads an unfinished input buffer or starts resting.
+* Internal: Ported rest parsing and state changes to Rust while keeping prompts and display in C.
 * Internal: Ported looking to Rust while keeping the direction prompt in C.
 * Internal: Ported lamp refilling to Rust with headless inventory and message checks.
 * Internal: Ported light-source toggling to Rust with headless checks for flags, messages, and dungeon lighting.

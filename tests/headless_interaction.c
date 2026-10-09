@@ -454,6 +454,95 @@ static void assert_look_boundary_scenario(void) {
   end_pickup_scenario();
 }
 
+static void assert_rest_input_scenario(const char *input, long expected_turns,
+                                     bool was_until_full, bool searching) {
+  begin_pickup_scenario();
+  player_flags.rest = 3;
+  player_flags.resting_till_full = was_until_full;
+  player_flags.status = IS_BLIND | (searching ? IS_SEARCHING : 0);
+  player_flags.speed = searching ? 1 : 0;
+  search_flag = searching;
+  find_flag = searching;
+  bool started = C_player_action_rest_input(input);
+  assert(started == (expected_turns > 0));
+  if (started) {
+    assert(player_flags.rest == expected_turns);
+    assert(turn_counter == 100 + expected_turns);
+    assert(player_flags.status == (IS_BLIND | IS_RESTING));
+    assert(player_flags.resting_till_full ==
+           (was_until_full || strcmp(input, "*") == 0));
+    assert(!search_flag && !find_flag);
+    assert(player_flags.speed == 0);
+    assert(!reset_flag);
+  } else {
+    assert(player_flags.rest == 3);
+    assert(turn_counter == 100);
+    assert(player_flags.status == (IS_BLIND | (searching ? IS_SEARCHING : 0)));
+    assert(player_flags.resting_till_full == was_until_full);
+    assert(search_flag == searching && find_flag == searching);
+    assert(player_flags.speed == (searching ? 1 : 0));
+    assert(reset_flag);
+  }
+  assert(turn == 1);
+  assert(C_message_capture_count() == 0);
+  end_pickup_scenario();
+}
+
+static const char *rest_prompt_text;
+static bool rest_prompt_completed;
+static size_t rest_prompt_calls;
+
+bool headless_rest_get_string(char *text, int row, int col, int length) {
+  assert(row == 0 && col == 27 && length == 10);
+  assert(strlen(rest_prompt_text) <= (size_t)length);
+  rest_prompt_calls++;
+  if (rest_prompt_completed) {
+    strcpy(text, rest_prompt_text);
+  } else {
+    memset(text, '7', length);
+    memcpy(text, rest_prompt_text, strlen(rest_prompt_text));
+  }
+  return rest_prompt_completed;
+}
+
+static void assert_rest_prompt_scenario(const char *text, bool completed) {
+  begin_pickup_scenario();
+  rest_prompt_text = text;
+  rest_prompt_completed = completed;
+  rest_prompt_calls = 0;
+  player_flags.rest = 3;
+  player_flags.resting_till_full = false;
+  player_flags.status = IS_BLIND | IS_SEARCHING;
+  player_flags.speed = 1;
+  search_flag = find_flag = true;
+  player_action_rest();
+  assert(rest_prompt_calls == 1);
+  if (completed) {
+    const long turns = strcmp(text, "*") == 0 ? 20 : 12;
+    assert(player_flags.rest == turns && turn_counter == 100 + turns);
+    assert(player_flags.resting_till_full == (strcmp(text, "*") == 0));
+    assert(player_flags.status == (IS_BLIND | IS_RESTING));
+    assert(player_flags.speed == 0 && !search_flag && !find_flag);
+    assert(!reset_flag);
+    assert(C_message_capture_count() == 1);
+    char message[120];
+    assert(C_message_capture_get(0, message, sizeof(message)));
+    assert(strcmp(message, "Press any key to wake up...") == 0);
+    assert(headless_terminal_counts().drawing > 1);
+  } else {
+    assert(reset_flag);
+    assert(player_flags.rest == 3 && turn_counter == 100);
+    assert(!player_flags.resting_till_full);
+    assert(player_flags.status == (IS_BLIND | IS_SEARCHING));
+    assert(player_flags.speed == 1 && search_flag && find_flag);
+    assert(C_message_capture_count() == 0);
+    assert(headless_terminal_counts().drawing == 1);
+    assert(headless_terminal_counts().erasure == 1);
+  }
+  assert(turn == 1);
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -473,6 +562,19 @@ int main(void) {
     assert_refill_refused(10, true, false, "But you are not using a lamp.");
     assert_refill_refused(1, false, false, "You have no oil.");
     assert_refill_refused(1, true, true, "You have no oil.");
+    assert_rest_prompt_scenario("", false);
+    assert_rest_prompt_scenario("12", false);
+    assert_rest_prompt_scenario("*", true);
+    assert_rest_prompt_scenario("12junk", true);
+    assert_rest_input_scenario("*", 20, false, true);
+    assert_rest_input_scenario("12junk", 12, false, true);
+    assert_rest_input_scenario("12junk", 12, true, true);
+    assert_rest_input_scenario(" +7", 7, false, false);
+    assert_rest_input_scenario("0", 0, false, true);
+    assert_rest_input_scenario("0", 0, true, true);
+    assert_rest_input_scenario("-4", -4, true, false);
+    assert_rest_input_scenario("junk", 0, true, true);
+    assert_rest_input_scenario("", 0, false, false);
     assert_close_target_scenario(open_door, 0, 0, false, NULL);
     assert_close_target_scenario(open_door, 1, 2, false, "It is in your way!");
     assert_close_target_scenario(open_door, 1, 0, false,
