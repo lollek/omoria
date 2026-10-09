@@ -51,6 +51,7 @@ where
 {
     // In unit tests we avoid calling into ncurses/C and capture the last printed message.
     let s = String::from_utf8_lossy(&out_str.into()).into_owned();
+    crate::message::record_message(s.clone());
     let mut guard = TEST_LAST_MSG_PRINT.lock().unwrap();
     *guard = s;
 }
