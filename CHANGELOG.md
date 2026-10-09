@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported light-source toggling to Rust with headless checks for flags, messages, and dungeon lighting.
 * Internal: Reused the shared C-style text helper for door-closing monster names.
 * Item names containing non-ASCII bytes no longer hide special-attribute suffixes.
 * Internal: Ported door closing to Rust while keeping the direction prompt in C.

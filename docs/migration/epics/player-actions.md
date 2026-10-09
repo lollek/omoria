@@ -115,11 +115,18 @@ Acceptance checks:
 
 ### PA4. Toggle Light Source (fan-out)
 
-Status: open. Depends on: none.
+Status: implemented. Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
-Owns: [toggle_light_source.c](../../../src/player_action/toggle_light_source.c),
-a new Rust module, registration line.
+Implemented in [toggle_light_source.rs](../../../src/player_action/toggle_light_source.rs)
+with local globals and interop modules and a registration line in
+`player_action.rs`. The C implementation was deleted; the C symbol and
+signature are unchanged. Rust tests cover both toggle directions, refusal
+precedence, unchanged flags on refusal, and callback ordering. Repeated
+headless C caller checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) cover flags,
+messages, unchanged fuel and position, and C dungeon-lighting effects.
+Real terminal rendering and toggle-specific save restoration remain unverified.
 
 Behavior: no prompt or RNG. Toggles `player_flags.light_on` and
 `player_light` based on the light slot, then calls C `prt_light_on`,
