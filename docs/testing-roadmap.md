@@ -345,7 +345,7 @@ empty list leaves the index at zero.
 
 ### HL1. Bounded Main-Loop Entry (L1)
 
-Status: open. Depends on: SEAM1, HT1, RNG1.
+Status: done. Verified by `make test-headless`: turn budgets, command exhaustion (including retries), cleanup, and dependency restoration; not L3 gameplay coverage. Depends on: SEAM1, HT1, RNG1.
 
 Owns: [main_loop.c](../src/main_loop/main_loop.c), `main_loop.h`, a new
 `tests/headless_turn.c`, and a new `test-headless` target in the `Makefile`.
