@@ -48,6 +48,7 @@ void player_action_search(long y, long x, long chance);
  *
  */
 void player_action_jam_door(void);
+void C_player_action_jam_door_target(long y, long x);
 
 /**
  * @brief Look at something

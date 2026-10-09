@@ -1,5 +1,6 @@
 pub(crate) mod attack;
 mod close;
+mod jam_door;
 mod look;
 mod movement;
 mod refill_lamp;

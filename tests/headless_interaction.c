@@ -543,6 +543,78 @@ static void assert_rest_prompt_scenario(const char *text, bool completed) {
   end_pickup_scenario();
 }
 
+static void assert_jam_target_scenario(uint8_t tval, long strength,
+                                      uint8_t monster, uint16_t spikes,
+                                      bool inside_bag,
+                                      const char *expected_message) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  const long slot = ration_slot;
+  t_list[slot] = door_list[1];
+  t_list[slot].tval = tval;
+  t_list[slot].p1 = strength;
+  cave[row][col].fopen = tval == open_door;
+  cave[row][col].cptr = monster;
+  cave[row][col].tptr = tval == 0 ? 0 : slot;
+  memset(&m_list[2], 0, sizeof(m_list[2]));
+
+  treasure_type spike_item;
+  memset(&spike_item, 0, sizeof(spike_item));
+  strcpy(spike_item.name, "& Iron Spike~");
+  spike_item.tval = spike;
+  spike_item.subval = 1;
+  spike_item.number = spikes;
+  spike_item.weight = 3;
+  if (spikes > 0) {
+    treas_rec *spike_ptr = add_inven_item(spike_item);
+    spike_ptr->is_in = inside_bag;
+    cur_inven = spike_ptr;
+  }
+
+  const cave_type original_cell = cave[row][col];
+  treasure_type expected_item = t_list[slot];
+  const bool success =
+      strcmp(expected_message, "You jam the door with a spike.") == 0;
+  const size_t drawing_before = headless_terminal_counts().drawing;
+  C_player_action_jam_door_target(row, col);
+
+  if (success) {
+    expected_item.p1 = -(strength < 0 ? -strength : strength) - 20;
+    assert(headless_terminal_counts().drawing > drawing_before);
+    if (spikes == 1) {
+      assert(inventory_list == NULL && cur_inven == NULL);
+      assert(inven_ctr == 0 && inven_weight == 0);
+      assert_same_item(&inven_temp.data, &spike_item);
+    } else {
+      assert(inventory_list != NULL && inventory_list->next == NULL);
+      spike_item.number--;
+      assert_same_item(&inventory_list->data, &spike_item);
+      assert(inventory_list->ok && !inventory_list->is_in);
+      assert(inven_ctr == 1 && inven_weight == spikes * spike_item.weight);
+    }
+  } else {
+    assert(headless_terminal_counts().drawing == drawing_before);
+    if (spikes > 0) {
+      assert(inventory_list != NULL && inventory_list->next == NULL);
+      assert_same_item(&inventory_list->data, &spike_item);
+      assert(inventory_list->is_in == inside_bag);
+      assert(!inventory_list->ok);
+      assert(inven_ctr == 1 && inven_weight == spikes * spike_item.weight);
+    } else {
+      assert(inventory_list == NULL && inven_ctr == 0 && inven_weight == 0);
+    }
+  }
+  assert_same_item(&t_list[slot], &expected_item);
+  assert(memcmp(&cave[row][col], &original_cell, sizeof(original_cell)) == 0);
+  assert(C_message_capture_count() == 1);
+  char message[120];
+  assert(C_message_capture_get(0, message, sizeof(message)));
+  assert(strcmp(message, expected_message) == 0);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -595,6 +667,22 @@ int main(void) {
     assert_look_prompt_scenario(false, true);
     assert_look_prompt_scenario(true, false);
     assert_look_prompt_scenario(true, true);
+    assert_jam_target_scenario(closed_door, 0, 0, 2, false,
+                              "You jam the door with a spike.");
+    assert_jam_target_scenario(closed_door, 7, 0, 300, false,
+                              "You jam the door with a spike.");
+    assert_jam_target_scenario(closed_door, -40, 0, 1, false,
+                              "You jam the door with a spike.");
+    assert_jam_target_scenario(closed_door, 7, 0, 0, false,
+                              "But you have no spikes...");
+    assert_jam_target_scenario(closed_door, 7, 0, 2, true,
+                              "But you have no spikes...");
+    assert_jam_target_scenario(open_door, 0, 2, 2, false,
+                              "The door must be closed first.");
+    assert_jam_target_scenario(closed_door, 0, 2, 2, false,
+                              "It is in your way!");
+    assert_jam_target_scenario(Food, 0, 2, 2, false, "That isn't a door!");
+    assert_jam_target_scenario(0, 0, 0, 2, false, "That isn't a door!");
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;

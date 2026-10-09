@@ -239,15 +239,28 @@ Acceptance checks:
 
 ### PA8. Jam Door (fan-out)
 
-Status: open. Depends on: PA2.
+Status: implemented. Depends on: PA2.
 Size: S. Complexity: Medium. Agent: standard.
+
+Implemented in [jam_door.rs](../../../src/player_action/jam_door.rs), with
+local inventory and monster-name FFI in `globals.rs` and a thin target wrapper
+in `interop.rs`. The C entry point retains only the direction prompt. Shared
+door helpers classify the target, and Rust preserves C's messages, branch
+ordering, spike consumption, stat redraw, and `p1 = -abs(p1) - 20` update.
+Rust tests cover success, refusals, side-effect order, and invalid targets.
+Repeated L1 checks in [headless_interaction.c](../../../tests/headless_interaction.c)
+exercise production C/Rust target calls, 16-bit spike stacks, final-spike
+deletion, bag filtering, unchanged cave/item fields, and redraw delivery.
+Interactive direction prompting, command-key dispatch, real terminal rendering,
+and persistence of jammed doors remain unverified by a PA8-specific scenario.
 
 Owns: [jam_door.c](../../../src/player_action/jam_door.c), a new Rust module,
 registration line.
 
 Behavior: C keeps the direction prompt. Rust uses the F-DIR-EDGE door helpers,
 consumes one spike through local `inventory_find_range`/`inven_destroy`
-declarations, and increments the door's `p1`.
+declarations, and makes the door's `p1` more negative by 20 after negating
+its absolute value.
 
 Acceptance checks:
 
