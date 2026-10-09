@@ -230,7 +230,7 @@ Acceptance checks:
 
 ### RNG1. Seedable C-Facing RNG (L1)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: `src/rng/` and [random_extern.rs](../src/random_extern.rs), plus
 `src/random.h` if a C API is added.
@@ -246,7 +246,8 @@ Acceptance checks:
 * The same seed gives identical sequences through the public `randint`,
   `rand_rep`, and `randnor`.
 * The default is restored after the guard drops, including on panic. Nesting
-  works. Tests that share the override are serialized.
+  works. The override is thread-local, so tests that share it need no
+  serialization.
 * The `*_with_rng` functions and their callers are unchanged.
 
 Out of scope: upgrading rand, migrating callers, `time()` calls.
