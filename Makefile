@@ -45,12 +45,19 @@ pre-commit:
 test:
 	cargo test
 
+.PHONY: test-movement
+test-movement: $(filter-out src/main.o,$(OBJFILES))
+	cargo build
+	$(CC) $(CFLAGS) tests/movement_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
+	./target/debug/movement-ffi-test
+
 .PHONY: check
 check:
 	cargo fmt --check
 	cargo clippy --all-targets
 	cargo test
 	$(MAKE) omoria
+	$(MAKE) test-movement
 
 .PHONY: debug
 debug: omoria

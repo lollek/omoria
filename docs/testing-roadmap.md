@@ -13,10 +13,12 @@ cargo fmt --check
 cargo clippy --all-targets
 cargo test
 make
+make test-movement
 ```
 
 This checks formatting, Rust linting and tests, and the full C/Rust build and
-link. It proves the unit-tested logic and link, not gameplay or headless turns.
+link, plus terminal-free C movement boundary checks. It proves the tested slices
+and link, not full gameplay or headless turns.
 The clean gate passes locally on macOS. CI runner results remain unverified.
 Existing Clippy warnings are non-blocking. Six scoped legacy lint allowances
 preserve behavior; they are not evidence that those paths are safe. See the
@@ -140,6 +142,23 @@ Acceptance checks:
   change is separately approved; do not assert flaky statistical thresholds.
 
 ### 5. Minimal State Slice (L0/L1)
+
+Status: decision slice implemented in
+[movement/step.rs](../src/player_action/movement/step.rs). Explicit player
+coordinates and a borrowed map resolve keypad steps, monster precedence,
+blocked obstacles, and turn consumption. Confusion uses an injectable RNG with
+legacy roll parity. Independent states/maps are covered by Rust tests.
+The C adapter preserves the existing side-effect sequence; `make test-movement`
+exercises the real C caller for walls and map edges, and checks the ABI against
+C cave/item records without curses. Edge moves now cancel find mode and request
+another command instead of letting monsters act.
+
+Approved scope is decision-only: `consumes_turn` models command completion;
+`turn_counter` remains in the main loop and still counts command attempts.
+Successful position/occupancy mutation, full find/run behavior, attacks,
+search/pickup/traps, lighting, persistence, and terminal output are not covered
+end to end. The full owned-state transition in the acceptance checks below
+remains a follow-up; this is not headless turn-loop coverage.
 
 Start with the state used by one chosen command in the
 [current main loop](../src/main_loop/main_loop.c), not every global variable.

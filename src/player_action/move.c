@@ -306,20 +306,25 @@ static void _move_char(long dir) {
   if (dir == 5)
     find_flag = false;
 
-  /* Confused causes random movement 75% of the time */
-  if (player_flags.confused > 0 && dir != 5 && randint(4) > 1) {
-    dir = randint(9);
+  const struct player_move_direction direction =
+      C_player_move_direction(dir, player_flags.confused);
+  dir = direction.dir;
+  if (direction.scrambled) {
     find_flag = false;
   }
 
-  /* Legal move? */
-  long test_row = char_row;
-  long test_col = char_col;
-  if (!move_dir(dir, &test_row, &test_col))
+  const struct player_move_result step =
+      C_player_move_resolve(dir, char_row, char_col);
+  if (step.kind == PLAYER_MOVE_OUT_OF_BOUNDS) {
+    find_flag = false;
+    reset_flag = !step.consumes_turn;
     return;
+  }
+  const long test_row = step.row;
+  const long test_col = step.col;
 
   /* Creature in the way? Attack! */
-  if (cave[test_row][test_col].cptr >= 2) {
+  if (step.kind == PLAYER_MOVE_ATTACK) {
     if (find_flag) {
       find_flag = false;
       dungeon_light_move(char_row, char_col, char_row, char_col);
@@ -334,7 +339,7 @@ static void _move_char(long dir) {
   }
 
   /* Can't move onto floor space? */
-  if (!cave[test_row][test_col].fopen) {
+  if (step.kind == PLAYER_MOVE_BLOCKED) {
     /* Try a new direction if in find mode */
     if (pick_dir(dir))
       return;
@@ -345,13 +350,10 @@ static void _move_char(long dir) {
       return;
     }
 
-    reset_flag = true;
-    if (cave[test_row][test_col].tptr <= 0)
-      return;
-
-    if (t_list[cave[test_row][test_col].tptr].tval == rubble)
+    reset_flag = !step.consumes_turn;
+    if (step.obstacle == rubble)
       msg_print("There is rubble blocking your way.");
-    else if (t_list[cave[test_row][test_col].tptr].tval == closed_door)
+    else if (step.obstacle == closed_door)
       msg_print("There is a closed door blocking your way.");
     return;
   }
