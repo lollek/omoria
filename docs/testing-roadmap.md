@@ -147,7 +147,7 @@ pick them up at any time.
 
 ### MV1. Owned Successful-Move Transition (L0)
 
-Status: open. Depends on: none. This closes the remaining task 5 acceptance
+Status: done. Depends on: none. This closes the remaining task 5 acceptance
 check.
 
 Owns: [step.rs](../src/player_action/movement/step.rs) and

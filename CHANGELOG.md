@@ -2,6 +2,7 @@
 
 ## Unreleased
 * Empty character lists no longer crash when moving the selection down.
+* Internal: Added a tested successful-move state transition.
 * Internal: Save records can be applied to globals and verified through C/Rust boundary checks.
 * Internal: Added a scoped seeded RNG override with C begin/end calls for deterministic tests.
 * Internal: Documented headless-turn blockers and a deterministic pickup scenario for future gameplay tests.

@@ -133,6 +133,28 @@ pub fn resolve_step(map: &impl MoveMap, state: MoveState, dir: i64) -> StepOutco
     }
 }
 
+#[cfg(test)]
+pub trait Occupancy {
+    fn set_occupied(&mut self, row: i64, col: i64, occupied: bool);
+}
+
+/// Only `Moved` changes state. `outcome` must come from `resolve_step` on `state`,
+/// and the player must occupy `state`.
+#[cfg(test)]
+pub fn apply_step(
+    state: &mut MoveState,
+    occupancy: &mut impl Occupancy,
+    outcome: StepOutcome,
+) -> bool {
+    if let StepOutcome::Moved { row, col } = outcome {
+        // Clear before occupying so a stay-in-place move keeps its cell occupied.
+        occupancy.set_occupied(state.row, state.col, false);
+        occupancy.set_occupied(row, col, true);
+        *state = MoveState { row, col };
+    }
+    outcome.consumes_turn()
+}
+
 #[cfg(not(test))]
 pub fn resolve_direction(dir: i64, confused: i64) -> (i64, bool) {
     resolve_direction_with_rng(&mut rand::thread_rng(), dir, confused)
@@ -153,6 +175,7 @@ mod tests {
 
     struct Map {
         cells: [[MoveCell; 4]; 4],
+        occupied: [[bool; 4]; 4],
     }
 
     impl Map {
@@ -163,7 +186,14 @@ mod tests {
                     monster: false,
                     obstacle: None,
                 }; 4]; 4],
+                occupied: [[false; 4]; 4],
             }
+        }
+    }
+
+    impl Occupancy for Map {
+        fn set_occupied(&mut self, row: i64, col: i64, occupied: bool) {
+            self.occupied[row as usize][col as usize] = occupied;
         }
     }
 
@@ -397,5 +427,138 @@ mod tests {
             ),
             StepOutcome::OutOfBounds
         );
+    }
+
+    struct RecordingOccupancy {
+        writes: Vec<(i64, i64, bool)>,
+    }
+
+    impl Occupancy for RecordingOccupancy {
+        fn set_occupied(&mut self, row: i64, col: i64, occupied: bool) {
+            self.writes.push((row, col, occupied));
+        }
+    }
+
+    fn occupied_cells(map: &Map) -> Vec<(i64, i64)> {
+        let mut cells = Vec::new();
+        for (row, line) in map.occupied.iter().enumerate() {
+            for (col, &occupied) in line.iter().enumerate() {
+                if occupied {
+                    cells.push((row as i64, col as i64));
+                }
+            }
+        }
+        cells
+    }
+
+    #[test]
+    fn successful_move_updates_position_and_occupancy() {
+        let mut map = Map::open();
+        map.occupied[2][2] = true;
+        let mut state = MoveState { row: 2, col: 2 };
+        let outcome = resolve_step(&map, state, 6);
+        assert!(apply_step(&mut state, &mut map, outcome));
+        assert_eq!(state, MoveState { row: 2, col: 3 });
+        assert_eq!(occupied_cells(&map), vec![(2, 3)]);
+    }
+
+    #[test]
+    fn repeated_moves_keep_exactly_one_occupied_cell() {
+        let mut map = Map::open();
+        map.occupied[2][2] = true;
+        let mut state = MoveState { row: 2, col: 2 };
+        for (dir, row, col) in [(4, 2, 1), (8, 1, 1), (6, 1, 2), (2, 2, 2)] {
+            let outcome = resolve_step(&map, state, dir);
+            assert!(apply_step(&mut state, &mut map, outcome));
+            assert_eq!(state, MoveState { row, col });
+            assert_eq!(occupied_cells(&map), vec![(row, col)]);
+        }
+        assert_eq!(state, MoveState { row: 2, col: 2 });
+    }
+
+    #[test]
+    fn non_move_outcomes_leave_state_and_occupancy_unchanged() {
+        let start = MoveState { row: 2, col: 2 };
+        let mut monster = Map::open();
+        monster.cells[2][3].monster = true;
+        let mut door = Map::open();
+        door.cells[2][3] = MoveCell {
+            open: false,
+            monster: false,
+            obstacle: Some(Obstacle::ClosedDoor),
+        };
+        for (map, from, dir, expected, consumes_turn) in [
+            (
+                Map::open(),
+                MoveState { row: 1, col: 2 },
+                8,
+                StepOutcome::OutOfBounds,
+                false,
+            ),
+            (
+                monster,
+                start,
+                6,
+                StepOutcome::Attack { row: 2, col: 3 },
+                true,
+            ),
+            (
+                door,
+                start,
+                6,
+                StepOutcome::Blocked {
+                    row: 2,
+                    col: 3,
+                    obstacle: Some(Obstacle::ClosedDoor),
+                },
+                false,
+            ),
+        ] {
+            let outcome = resolve_step(&map, from, dir);
+            assert_eq!(outcome, expected);
+            let mut state = from;
+            let mut occupancy = RecordingOccupancy { writes: Vec::new() };
+            assert_eq!(
+                apply_step(&mut state, &mut occupancy, outcome),
+                consumes_turn
+            );
+            assert_eq!(state, from);
+            assert!(occupancy.writes.is_empty());
+        }
+    }
+
+    #[test]
+    fn staying_in_place_keeps_the_player_occupying_its_cell() {
+        let mut map = Map::open();
+        map.occupied[2][2] = true;
+        let mut state = MoveState { row: 2, col: 2 };
+        let outcome = resolve_step(&map, state, 5);
+        assert_eq!(outcome, StepOutcome::Moved { row: 2, col: 2 });
+        assert!(apply_step(&mut state, &mut map, outcome));
+        assert_eq!(state, MoveState { row: 2, col: 2 });
+        assert_eq!(occupied_cells(&map), vec![(2, 2)]);
+    }
+
+    #[test]
+    fn independent_moves_do_not_affect_each_other() {
+        let mut first_map = Map::open();
+        first_map.occupied[2][2] = true;
+        let mut second_map = Map::open();
+        second_map.occupied[1][1] = true;
+        let mut first = MoveState { row: 2, col: 2 };
+        let mut second = MoveState { row: 1, col: 1 };
+
+        let outcome = resolve_step(&first_map, first, 6);
+        apply_step(&mut first, &mut first_map, outcome);
+        assert_eq!(second, MoveState { row: 1, col: 1 });
+        assert_eq!(occupied_cells(&second_map), vec![(1, 1)]);
+
+        let outcome = resolve_step(&second_map, second, 2);
+        apply_step(&mut second, &mut second_map, outcome);
+
+        assert_eq!(first, MoveState { row: 2, col: 3 });
+        assert_eq!(second, MoveState { row: 2, col: 1 });
+        assert_eq!(occupied_cells(&first_map), vec![(2, 3)]);
+        assert_eq!(occupied_cells(&second_map), vec![(2, 1)]);
     }
 }
