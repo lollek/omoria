@@ -73,6 +73,11 @@ Acceptance checks:
 
 ### 2. Persistence Injection (L0/L1, Then L2)
 
+Status: master-engine injection (2a) is done. Master operations use caller-owned
+engines in tests, with shared record-update rules and JSON encoding. Character
+saves also use the JSON codec, but still read and write files directly; their
+storage boundary and in-memory fixture checks remain the next handoff (2b).
+
 Start at [PersistenceEngine](../src/persistence/main.rs) and
 [FileStorageEngine](../src/persistence/filestorage.rs). The current trait covers
 master records; character JSON still uses direct file I/O in the save module.

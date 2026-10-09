@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+* Serialization failures no longer truncate existing character saves or the master list.
+* Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
 * Internal: Link the Linux build against wide-character ncurses.
 * Internal: Added save-file compatibility tests using a sanitized save fixture.
 * Internal: Cleaned up Clippy and compiler warnings without changing gameplay behavior.

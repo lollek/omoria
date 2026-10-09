@@ -1,12 +1,11 @@
 use std::fs;
 use std::io::{Read, Seek, SeekFrom, Write};
 
-use serde_json;
-
 use crate::constants;
 use crate::error::Error;
 use crate::master::MasterRecord;
 use crate::persistence;
+use crate::persistence::{json, main::upsert_master};
 
 pub struct FileStorageEngine;
 
@@ -14,6 +13,7 @@ pub struct FileStorageEngine;
 // Will probably never to this since I'm the only intended user for this program
 impl persistence::PersistenceEngine for FileStorageEngine {
     fn init_masters(&mut self) -> Result<(), Error> {
+        let empty_masters = json::encode(&Vec::<MasterRecord>::new())?;
         let mut file = fs::OpenOptions::new()
             .read(true)
             .write(true)
@@ -27,9 +27,8 @@ impl persistence::PersistenceEngine for FileStorageEngine {
 
         // Create empty masters file
         if file_bytes == 0 {
-            let records = Vec::<MasterRecord>::new();
             return file
-                .write_all(&serde_json::to_string(&records).unwrap().into_bytes())
+                .write_all(empty_masters.as_bytes())
                 .map_err(|e| Error::from(format!("Failed to write file: {}", e).as_str()));
         }
         Ok(())
@@ -47,26 +46,15 @@ impl persistence::PersistenceEngine for FileStorageEngine {
         file.read_to_string(&mut buffer).map_err(|e| {
             Error::from(format!("Either master was empty, or corrupt: {}", e).as_str())
         })?;
-        serde_json::from_str(&buffer).map_err(|e| {
+        json::decode(&buffer).map_err(|e| {
             Error::from(format!("Either master was empty, or corrupt: {}", e).as_str())
         })
     }
 
     fn save_master(&mut self, record: MasterRecord, allow_new: bool) -> Result<(), Error> {
         let mut records = self.load_masters()?;
-
-        match records.iter().position(|i| i.uid == record.uid) {
-            Some(pos) => {
-                records[pos] = record;
-            }
-            None => {
-                if !allow_new {
-                    return Err(Error::from("Master file did not contain the player"));
-                }
-
-                records.push(record);
-            }
-        }
+        upsert_master(&mut records, record, allow_new)?;
+        let encoded = json::encode(&records)?;
 
         let mut file = fs::OpenOptions::new()
             .read(false)
@@ -75,7 +63,7 @@ impl persistence::PersistenceEngine for FileStorageEngine {
             .truncate(true)
             .open(master_file_path())
             .map_err(|e| Error::from(format!("failed to open master: {}", e).as_str()))?;
-        file.write_all(&serde_json::to_string(&records).unwrap().into_bytes())
+        file.write_all(encoded.as_bytes())
             .map_err(|e| Error::from(format!("Failed to write file: {}", e).as_str()))
     }
 }

@@ -1,13 +1,12 @@
 use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io;
-use std::io::{Read, Seek, Write};
-
-use serde_json;
+use std::io::{Read, Write};
 
 use crate::debug;
 use crate::master;
 use crate::ncurses;
+use crate::persistence::json;
 use crate::player;
 use crate::save;
 use crate::save::save_record::SaveRecord;
@@ -40,14 +39,6 @@ fn open_savefile(player_name: &str, player_uid: i64, to_write: bool) -> Option<F
     }
 }
 
-fn parse_save(json: &str) -> serde_json::Result<SaveRecord> {
-    serde_json::from_str(json)
-}
-
-fn serialize_save(data: &SaveRecord) -> serde_json::Result<String> {
-    serde_json::to_string(data)
-}
-
 fn read_save(mut f: &File) -> Option<SaveRecord> {
     let mut buffer = String::new();
 
@@ -56,7 +47,7 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
         return None;
     }
 
-    match parse_save(&buffer) {
+    match json::decode(&buffer) {
         Ok(json) => Some(json),
         Err(e) => {
             debug::error(format!("Failed to load save @from_str, (err: {})", e));
@@ -65,29 +56,21 @@ fn read_save(mut f: &File) -> Option<SaveRecord> {
     }
 }
 
-fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
-    let serialized_data = match serialize_save(data) {
-        Ok(serialized_data) => serialized_data,
-        Err(e) => {
-            debug::error(format!("Failed to serialize data: {e}"));
-            debug_serialize_save_record(data);
-            return None;
-        }
-    };
-    if let Err(e) = f.seek(io::SeekFrom::Start(0)) {
-        debug::error(format!("Failed during seek: {}", e));
-        return None;
-    }
-    if let Err(e) = f.write_all(&serialized_data.into_bytes()) {
-        debug::error(format!("Failed to write file: {}", e));
-        return None;
-    }
-    Some(())
+fn write_save_bytes(mut writer: impl Write, json: &str) -> io::Result<()> {
+    writer.write_all(json.as_bytes())
+}
+
+fn encode_before_open<T: serde::Serialize + ?Sized, Output>(
+    record: &T,
+    open: impl FnOnce() -> Output,
+) -> Result<(String, Output), crate::error::Error> {
+    let encoded = json::encode(record)?;
+    Ok((encoded, open()))
 }
 
 fn debug_serialize_save_record(save_record: &SaveRecord) {
     fn serialize_status<'a>(value: impl serde::Serialize) -> &'a str {
-        match serde_json::to_string(&value) {
+        match json::encode(&value) {
             Ok(_) => "OK",
             Err(_) => "ERROR",
         }
@@ -158,19 +141,30 @@ fn save_character() -> Option<()> {
     }
     player::increase_save_counter();
 
-    let file = open_savefile(&player::name(), player::uid(), true)?;
-    write_save(
-        &file,
-        &SaveRecord {
-            player: player::record(),
-            inventory: save::inventory::record(),
-            equipment: save::equipment::record(),
-            town: save::town::record(),
-            dungeon: save::dungeon::record(),
-            identified: identification::record(),
-            monsters: save::monsters::record(),
-        },
-    )?;
+    let record = SaveRecord {
+        player: player::record(),
+        inventory: save::inventory::record(),
+        equipment: save::equipment::record(),
+        town: save::town::record(),
+        dungeon: save::dungeon::record(),
+        identified: identification::record(),
+        monsters: save::monsters::record(),
+    };
+    let (encoded, file) = match encode_before_open(&record, || {
+        open_savefile(&player::name(), player::uid(), true)
+    }) {
+        Ok(prepared) => prepared,
+        Err(err) => {
+            debug::error(format!("Failed to serialize data: {}", err));
+            debug_serialize_save_record(&record);
+            return None;
+        }
+    };
+    let file = file?;
+    if let Err(err) = write_save_bytes(&file, &encoded) {
+        debug::error(format!("Failed to write file: {}", err));
+        return None;
+    }
     Some(())
 }
 
@@ -186,7 +180,6 @@ pub fn delete_character() -> Option<()> {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::error::Category;
     use serde_json::Value;
 
     use super::*;
@@ -194,6 +187,91 @@ mod tests {
     use crate::model::{Class, Race, Sex};
 
     const FIXTURE: &str = include_str!("../../tests/fixtures/save_record_v1.json");
+
+    #[test]
+    fn failed_serialization_does_not_open_save_storage() {
+        struct FailingRecord;
+
+        impl serde::Serialize for FailingRecord {
+            fn serialize<S: serde::Serializer>(&self, _serializer: S) -> Result<S::Ok, S::Error> {
+                Err(serde::ser::Error::custom("injected serialization failure"))
+            }
+        }
+
+        let mut opened = false;
+        let result = encode_before_open(&FailingRecord, || opened = true);
+        assert!(
+            !opened,
+            "serialization failure must not open or truncate storage"
+        );
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "injected serialization failure"
+        );
+    }
+
+    #[test]
+    fn successful_serialization_opens_storage_once() {
+        let mut opens = 0;
+        let (encoded, writer) = encode_before_open(&vec![1, 2, 3], || {
+            opens += 1;
+            Vec::<u8>::new()
+        })
+        .unwrap();
+        assert_eq!(opens, 1);
+        assert_eq!(encoded, "[1,2,3]");
+        assert!(writer.is_empty());
+    }
+
+    #[test]
+    fn storage_open_failure_is_preserved() {
+        let (encoded, writer) = encode_before_open(&vec![1], || None::<Vec<u8>>).unwrap();
+        assert_eq!(encoded, "[1]");
+        assert!(writer.is_none());
+    }
+
+    #[test]
+    fn save_writer_writes_all_encoded_bytes() {
+        struct ShortWriter(Vec<u8>);
+
+        impl Write for ShortWriter {
+            fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+                let count = bytes.len().min(3);
+                self.0.extend_from_slice(&bytes[..count]);
+                Ok(count)
+            }
+
+            fn flush(&mut self) -> io::Result<()> {
+                Ok(())
+            }
+        }
+
+        let mut writer = ShortWriter(Vec::new());
+        write_save_bytes(&mut writer, FIXTURE).unwrap();
+        assert_eq!(writer.0, FIXTURE.as_bytes());
+    }
+
+    #[test]
+    fn save_writer_propagates_write_failure() {
+        struct FailingWriter;
+
+        impl Write for FailingWriter {
+            fn write(&mut self, _bytes: &[u8]) -> io::Result<usize> {
+                Err(io::Error::new(
+                    io::ErrorKind::PermissionDenied,
+                    "injected write failure",
+                ))
+            }
+
+            fn flush(&mut self) -> io::Result<()> {
+                Ok(())
+            }
+        }
+
+        let err = write_save_bytes(FailingWriter, FIXTURE).unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::PermissionDenied);
+        assert_eq!(err.to_string(), "injected write failure");
+    }
 
     // Debug-build SaveRecord deserialization overflows the 2 MiB default test-thread stack.
     fn with_large_stack<F: FnOnce() + Send + 'static>(test: F) {
@@ -208,7 +286,7 @@ mod tests {
     }
 
     fn fixture_record() -> SaveRecord {
-        parse_save(FIXTURE).expect("fixture should deserialize")
+        json::decode(FIXTURE).expect("fixture should deserialize")
     }
 
     // Identified entries come from a HashMap, so their serialized order is unspecified.
@@ -304,8 +382,8 @@ mod tests {
     #[test]
     fn fixture_round_trips_without_semantic_changes() {
         with_large_stack(|| {
-            let serialized = serialize_save(&fixture_record()).expect("record should serialize");
-            parse_save(&serialized).expect("serialized record should parse again");
+            let serialized = json::encode(&fixture_record()).expect("record should serialize");
+            json::decode::<SaveRecord>(&serialized).expect("serialized record should parse again");
 
             let original = normalize(serde_json::from_str(FIXTURE).unwrap());
             let round_tripped = normalize(serde_json::from_str(&serialized).unwrap());
@@ -333,15 +411,21 @@ mod tests {
         with_large_stack(|| {
             let truncated = &FIXTURE[..FIXTURE.len() / 2];
 
-            let err = parse_save(truncated).expect_err("truncated save should fail");
-            assert_eq!(err.classify(), Category::Eof);
+            let err =
+                json::decode::<SaveRecord>(truncated).expect_err("truncated save should fail");
+            assert!(err.to_string().contains("EOF"), "unexpected error: {}", err);
         });
     }
 
     #[test]
     fn malformed_save_is_a_syntax_error() {
-        let err = parse_save("{\"player\": nope}").expect_err("malformed save should fail");
-        assert_eq!(err.classify(), Category::Syntax);
+        let err = json::decode::<SaveRecord>("{\"player\": nope}")
+            .expect_err("malformed save should fail");
+        assert!(
+            err.to_string().contains("expected"),
+            "unexpected error: {}",
+            err
+        );
     }
 
     #[test]
@@ -350,8 +434,8 @@ mod tests {
             let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
             value.as_object_mut().unwrap().remove("dungeon");
 
-            let err = parse_save(&value.to_string()).expect_err("missing dungeon should fail");
-            assert_eq!(err.classify(), Category::Data);
+            let err = json::decode::<SaveRecord>(&value.to_string())
+                .expect_err("missing dungeon should fail");
             assert!(
                 err.to_string().contains("missing field `dungeon`"),
                 "unexpected error: {}",
