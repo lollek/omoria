@@ -115,6 +115,7 @@ impl PersistenceEngine for InMemoryEngine {
     }
 }
 
+#[cfg(test)]
 pub(crate) fn record(uid: i64, points: i64) -> MasterRecord {
     MasterRecord {
         uid,
@@ -128,11 +129,65 @@ pub(crate) fn record(uid: i64, points: i64) -> MasterRecord {
     }
 }
 
+#[cfg(test)]
 pub(crate) fn engine_with_records(records: &[MasterRecord]) -> InMemoryEngine {
     InMemoryEngine {
         masters: Some(json::encode(records).unwrap()),
         ..Default::default()
     }
+}
+
+#[cfg(feature = "save-test-support")]
+#[no_mangle]
+pub extern "C" fn C_save_test_memory_begin() -> bool {
+    let player = crate::player::record();
+    let master = MasterRecord {
+        uid: player.uid,
+        user_name: "-".into(),
+        character_name: player.name,
+        points: crate::player::calc_total_points(),
+        alive: !crate::player::is_dead(),
+        level: crate::player::level(),
+        race: crate::data::race::name(&crate::player::race()).into(),
+        class: crate::data::class::name(&crate::player::class()).into(),
+    };
+    let engine = InMemoryEngine {
+        masters: Some(json::encode(&vec![master]).expect("test master should serialize")),
+        ..Default::default()
+    };
+    crate::persistence::replace_engine_for_test(Box::new(engine)).is_ok()
+}
+
+#[cfg(feature = "save-test-support")]
+#[no_mangle]
+pub extern "C" fn C_save_test_memory_save_character() -> bool {
+    crate::save::save_character_for_test()
+}
+
+#[cfg(feature = "save-test-support")]
+#[no_mangle]
+pub extern "C" fn C_save_test_memory_load_character() -> bool {
+    let player = crate::player::record();
+    let expected = match crate::persistence::load_save(&player.name, player.uid) {
+        Ok(record) => record.player,
+        Err(_) => return false,
+    };
+    if !crate::save::load_character_for_test(&player.name, player.uid) {
+        return false;
+    }
+    match (
+        serde_json::to_value(expected),
+        serde_json::to_value(crate::player::record()),
+    ) {
+        (Ok(expected), Ok(actual)) => actual == expected,
+        _ => false,
+    }
+}
+
+#[cfg(feature = "save-test-support")]
+#[no_mangle]
+pub extern "C" fn C_save_test_memory_end() -> bool {
+    crate::persistence::restore_file_engine_for_test().is_ok()
 }
 
 #[cfg(test)]

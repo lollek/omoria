@@ -69,6 +69,11 @@ fn load_character(player_name: &str, player_uid: i64) -> Option<()> {
     Some(())
 }
 
+#[cfg(feature = "save-test-support")]
+pub(crate) fn load_character_for_test(player_name: &str, player_uid: i64) -> bool {
+    load_character(player_name, player_uid).is_some()
+}
+
 fn apply_record(records: SaveRecord) {
     player::set_record(records.player);
     save::inventory::set_record(records.inventory);
@@ -222,6 +227,11 @@ fn save_character() -> Option<()> {
             None
         }
     }
+}
+
+#[cfg(feature = "save-test-support")]
+pub(crate) fn save_character_for_test() -> bool {
+    save_character().is_some()
 }
 
 pub fn delete_character() -> Option<()> {

@@ -413,7 +413,7 @@ expected messages in order.
 
 ### HL4. Headless Save/Reload Scenario (L3)
 
-Status: open. Depends on: HL2 and PS1. Can run in parallel with HL3.
+Status: done. Verified by `make test-headless-persistence`. Depends on: HL2 and PS1. Can run in parallel with HL3.
 
 Owns: `tests/headless_persistence.c` (new), its own `Makefile` target, and
 `src/persistence/memory.rs` together with its `cfg` gate in

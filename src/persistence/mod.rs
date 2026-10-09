@@ -8,11 +8,13 @@ pub(crate) use self::main::{delete_save, list_saves, load_save, write_save};
 pub(crate) use self::main::{
     delete_save_with_engine, list_saves_with_engine, load_save_with_engine, write_save_with_engine,
 };
+#[cfg(feature = "save-test-support")]
+pub(crate) use self::main::{replace_engine_for_test, restore_file_engine_for_test};
 pub(crate) use self::main::{CharacterStorageError, PersistenceEngine, SaveKey};
 
 mod main;
 
 mod filestorage;
 pub(crate) mod json;
-#[cfg(test)]
+#[cfg(any(test, feature = "save-test-support"))]
 pub(crate) mod memory;
