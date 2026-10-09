@@ -54,6 +54,7 @@ void player_action_jam_door(void);
  *
  */
 void player_action_look(void);
+void C_player_action_look_direction(long direction);
 
 /**
  * @brief Open a closed door or chest

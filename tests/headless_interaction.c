@@ -374,8 +374,88 @@ static void assert_toggle_light_scenario(uint8_t tval, long fuel, bool on,
   end_pickup_scenario();
 }
 
+static void assert_look_message(size_t index, const char *expected) {
+  char message[120];
+  assert(C_message_capture_get(index, message, sizeof(message)));
+  assert(strcmp(message, expected) == 0);
+}
+
+static void assert_look_direction_scenario(bool blind, bool monster,
+                                           bool object) {
+  begin_pickup_scenario();
+  player_flags.blind = blind ? 1 : 0;
+  cave[char_row][char_col + 1].tptr = object ? ration_slot : 0;
+  cave[char_row][char_col + 1].is_permanently_lit = true;
+  t_list[ration_slot].number = 5;
+  memset(&m_list[2], 0, sizeof(m_list[2]));
+  m_list[2].mptr = 2;
+  m_list[2].is_seen = monster;
+  cave[char_row][char_col + 1].cptr = 2;
+  const cave_type original_cell = cave[char_row][char_col + 1];
+  const treasure_type original_item = t_list[ration_slot];
+  const size_t drawing_before = headless_terminal_counts().drawing;
+
+  C_player_action_look_direction(6);
+
+  if (blind) {
+    assert(C_message_capture_count() == 1);
+    assert_look_message(0, "You can't see a damn thing!");
+  } else if (monster || object) {
+    assert(C_message_capture_count() == (size_t)monster + (size_t)object);
+    if (monster) {
+      assert_look_message(0, "You see a Town Guard.");
+    }
+    if (object) {
+      assert_look_message(monster ? 1 : 0, "You see a ration of food.");
+    }
+  } else {
+    assert(C_message_capture_count() == 1);
+    assert_look_message(0, "You see nothing of interest in that direction.");
+  }
+  assert_same_item(&t_list[ration_slot], &original_item);
+  assert(memcmp(&cave[char_row][char_col + 1], &original_cell,
+                sizeof(original_cell)) == 0);
+  assert(char_row == 39 && char_col == 140);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  assert(headless_terminal_counts().drawing == drawing_before);
+  end_pickup_scenario();
+}
+
+static void assert_look_prompt_scenario(bool cancel, bool blind) {
+  begin_pickup_scenario();
+  player_flags.blind = blind ? 1 : 0;
+  cave[char_row][char_col + 1].is_permanently_lit = true;
+  headless_terminal_script(cancel ? "\033" : "l", 1);
+  player_action_look();
+  assert(headless_terminal_counts().input == 1);
+  assert(C_message_capture_count() == (cancel ? 0 : 1));
+  if (!cancel) {
+    assert_look_message(0, blind ? "You can't see a damn thing!"
+                                : "You see a ration of food.");
+  }
+  assert(reset_flag == cancel);
+  assert(char_row == 39 && char_col == 140);
+  assert(turn == 1 && turn_counter == 100);
+  headless_terminal_reset();
+  end_pickup_scenario();
+}
+
+static void assert_look_boundary_scenario(void) {
+  begin_pickup_scenario();
+  player_flags.blind = 0;
+  char_col = 2;
+  cave[char_row][1].fval = ft_boundry_wall;
+  cave[char_row][1].fopen = false;
+  cave[char_row][1].is_permanently_lit = true;
+  C_player_action_look_direction(4);
+  assert(C_message_capture_count() == 1);
+  assert_look_message(0, "You see a granite wall.");
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
 int main(void) {
-  alarm(10);
+  alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
   assert(debug_file != NULL);
   for (int repeat = 0; repeat < 2; repeat++) {
@@ -403,6 +483,16 @@ int main(void) {
                                 "I do not see anything you can close there.");
     assert_close_target_scenario(open_door, 0, 0, true,
                                 "I do not see anything you can close there.");
+    assert_look_direction_scenario(false, true, true);
+    assert_look_direction_scenario(false, true, false);
+    assert_look_direction_scenario(false, false, true);
+    assert_look_direction_scenario(false, false, false);
+    assert_look_direction_scenario(true, true, true);
+    assert_look_boundary_scenario();
+    assert_look_prompt_scenario(false, false);
+    assert_look_prompt_scenario(false, true);
+    assert_look_prompt_scenario(true, false);
+    assert_look_prompt_scenario(true, true);
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;

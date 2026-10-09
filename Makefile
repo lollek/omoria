@@ -75,7 +75,7 @@ test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o
 .PHONY: test-headless-interaction
 test-headless-interaction: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES))
 	cargo build --features save-test-support
-	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -c src/io.c -o target/debug/headless-io.o
+	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -Dprt=headless_prt -c src/io.c -o target/debug/headless-io.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/main_loop.c -o target/debug/headless-loop.o

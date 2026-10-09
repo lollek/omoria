@@ -196,8 +196,18 @@ Acceptance checks:
 
 ### PA7. Look (fan-out)
 
-Status: open. Depends on: PA2.
+Status: implemented. Depends on: PA2.
 Size: S. Complexity: Medium. Agent: standard.
+
+Implemented in [look.rs](../../../src/player_action/look.rs), with local global
+access and a thin interop wrapper. The C entry point retains only the direction
+prompt. Rust tests cover ray traversal, visibility, message ordering, blindness,
+terrain, and the legacy sight limit. Repeated L1 checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) exercise production
+C/Rust calls, existing name helpers, unchanged item stacks and turn state, boundary
+walls, and scripted prompting/cancellation (including blindness after prompting).
+Real terminal rendering and interactive gameplay remain unverified; no look-specific
+save/reload scenario was added.
 
 Owns: [look.c](../../../src/player_action/look.c), a new Rust module,
 registration line.
