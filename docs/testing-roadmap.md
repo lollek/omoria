@@ -52,8 +52,10 @@ Do not combine these tasks into a wholesale game-state or loop rewrite.
 ### 1. Existing Save JSON Compatibility (L2)
 
 Status: done. Fixture: `tests/fixtures/save_record_v1.json`; tests are inline in
-[save.rs](../src/save/save.rs). Known gap: invalid `identified` entries panic
-during deserialization instead of returning an error.
+[save.rs](../src/save/save.rs). Invalid `identified` item types and subtypes,
+including removed and non-item types, now return decode errors rather than
+panicking; subtype conversion returns `None` for unsupported values. C callers
+and terminal error display remain unverified.
 
 Start at [SaveRecord](../src/save/save_record.rs) and the
 [save reader/writer](../src/save/save.rs).

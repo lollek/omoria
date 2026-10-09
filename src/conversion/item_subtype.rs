@@ -143,12 +143,12 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::Amulet => amulet::from_usize(item_subtype).map(ItemSubType::Amulet),
         ItemType::Ring => ring::from_usize(item_subtype).map(ItemSubType::Ring),
         ItemType::Staff => staff::from_usize(item_subtype).map(ItemSubType::Staff),
-        ItemType::Rod => panic!("ItemType Rod has been removed"),
+        ItemType::Rod => None,
         ItemType::Wand => wand::from_usize(item_subtype).map(ItemSubType::Wand),
         ItemType::Scroll1 => scroll::from_usize(item_subtype).map(ItemSubType::Scroll1),
-        ItemType::Scroll2 => panic!("ItemType Scroll2 has been removed"),
+        ItemType::Scroll2 => None,
         ItemType::Potion1 => potion::from_usize(item_subtype).map(ItemSubType::Potion1),
-        ItemType::Potion2 => panic!("ItemType Potion2 has been removed"),
+        ItemType::Potion2 => None,
         ItemType::FlaskOfOil => flask_of_oil::from_usize(item_subtype).map(ItemSubType::FlaskOfOil),
         ItemType::Food => food::from_usize(item_subtype).map(ItemSubType::Food),
         ItemType::JunkFood => junk_food::from_usize(item_subtype).map(ItemSubType::JunkFood),
@@ -161,15 +161,32 @@ pub fn from_usize(item_type: ItemType, item_subtype: usize) -> Option<ItemSubTyp
         ItemType::LodgingAtInn => {
             lodging_at_inn::from_usize(item_subtype).map(ItemSubType::LodgingAtInn)
         }
-        _ => panic!("Unhandled item type {:?}", item_type),
+        _ => None,
     }
 }
 
 pub fn from_i64(item_type: ItemType, item_subtype: i64) -> Option<ItemSubType> {
-    from_usize(
-        item_type,
-        item_subtype
-            .try_into()
-            .unwrap_or_else(|err| panic!("Failed to convert i64 to usize: {}", err)),
-    )
+    from_usize(item_type, item_subtype.try_into().ok()?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn from_usize_returns_none_for_removed_item_types() {
+        assert_eq!(from_usize(ItemType::Rod, 0), None);
+        assert_eq!(from_usize(ItemType::Scroll2, 0), None);
+        assert_eq!(from_usize(ItemType::Potion2, 0), None);
+    }
+
+    #[test]
+    fn from_usize_returns_none_for_non_item_types() {
+        assert_eq!(from_usize(ItemType::Money, 0), None);
+    }
+
+    #[test]
+    fn from_i64_returns_none_for_negative_subtypes() {
+        assert_eq!(from_i64(ItemType::Food, -1), None);
+    }
 }

@@ -1,6 +1,7 @@
 use crate::conversion;
 use crate::model::item_subtype::ItemSubType;
 use crate::model::ItemType;
+use serde::de::Error as _;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::convert::TryFrom;
@@ -43,16 +44,18 @@ impl<'de> Deserialize<'de> for IdentifiedSubTypes {
         let vec: Vec<(u8, usize, bool)> = Deserialize::deserialize(deserializer)?;
         let mut inner = HashMap::new();
         for (item_type_as_usize, item_subtype_as_usize, is_identified) in vec {
-            let item_type = ItemType::try_from(item_type_as_usize)
-                .unwrap_or_else(|_| panic!("Invalid item type: {}", item_type_as_usize));
+            let item_type = ItemType::try_from(item_type_as_usize).map_err(|_| {
+                D::Error::custom(format!("Invalid item type: {}", item_type_as_usize))
+            })?;
             let item_subtype =
-                conversion::item_subtype::from_usize(item_type, item_subtype_as_usize)
-                    .unwrap_or_else(|| {
-                        panic!(
+                conversion::item_subtype::from_usize(item_type, item_subtype_as_usize).ok_or_else(
+                    || {
+                        D::Error::custom(format!(
                             "Invalid item subtype: {} for type {}",
                             item_subtype_as_usize, item_type_as_usize
-                        )
-                    });
+                        ))
+                    },
+                )?;
             inner.insert(item_subtype, is_identified);
         }
         Ok(IdentifiedSubTypes { inner })
@@ -152,5 +155,34 @@ mod tests {
             .inner
             .get(&subtype_false)
             .expect("subtype_false not found"));
+    }
+
+    #[test]
+    fn deserialize_unknown_item_type_returns_an_error() {
+        let err = serde_json::from_str::<IdentifiedSubTypes>("[[255,0,true]]")
+            .expect_err("unknown item type should fail deserialization");
+
+        assert!(err.to_string().contains("255"));
+        assert!(err.to_string().contains("item type"));
+    }
+
+    #[test]
+    fn deserialize_unknown_item_subtype_returns_an_error() {
+        let food_type = u8::from(ItemType::Food);
+        let encoded = format!("[[{food_type},9999,true]]");
+        let err = serde_json::from_str::<IdentifiedSubTypes>(&encoded)
+            .expect_err("unknown item subtype should fail deserialization");
+
+        assert!(err.to_string().contains("9999"));
+        assert!(err.to_string().contains(&food_type.to_string()));
+        assert!(err.to_string().contains("item subtype"));
+    }
+
+    #[test]
+    fn deserialize_removed_item_type_returns_an_error() {
+        let err = serde_json::from_str::<IdentifiedSubTypes>("[[60,0,true]]")
+            .expect_err("removed item type should fail deserialization");
+
+        assert!(err.to_string().contains("60"));
     }
 }

@@ -299,4 +299,23 @@ pub(crate) mod tests {
             );
         });
     }
+
+    #[test]
+    fn save_with_invalid_identified_entry_is_a_data_error() {
+        with_large_stack(|| {
+            let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+            value["identified"]
+                .as_array_mut()
+                .expect("identified should be an array")
+                .push(serde_json::json!([255, 0, true]));
+
+            let err = json::decode::<SaveRecord>(&value.to_string())
+                .expect_err("invalid identified entry should fail save decoding");
+            assert!(
+                err.to_string().contains("item type") && err.to_string().contains("255"),
+                "unexpected error: {}",
+                err
+            );
+        });
+    }
 }
