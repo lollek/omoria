@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Added a scoped seeded RNG override with C begin/end calls for deterministic tests.
 * Internal: Documented headless-turn blockers and a deterministic pickup scenario for future gameplay tests.
 * Loading saves with unknown identified item entries now reports a data error instead of crashing.
 * Internal: Scoped message capture now bypasses C message rendering and prompts, with terminal-free C caller checks.
