@@ -1,8 +1,10 @@
 # Testing Roadmap
 
 Status: tasks 1–5 are done, as are cards SEAM1, RNG1, PS1–PS3, MV1, MV2, UI1,
-HT1, and HL1. A bounded main-loop entry exists, but headless gameplay coverage
-is **not implemented** (HL2–HL5 are open). Open work is split into parallel task
+HT1, and HL1–HL5. Bounded headless gameplay coverage exists for scripted
+movement, ration pickup, and save/reload scenarios. It does not cover a complete
+gameplay workflow, general combat or creature interactions, interactive
+terminal input, or real disk persistence. Open work is split into parallel task
 cards in [Open Task Cards](#open-task-cards). Existing unit tests and successful linking
 are useful evidence, but do not establish that a player can complete a gameplay
 workflow.
@@ -20,12 +22,16 @@ make test-movement
 make test-messages
 make test-save
 make test-headless
+make test-headless-interaction
+make test-headless-persistence
 ```
 
 This checks formatting, Rust linting and tests, and the full C/Rust build and
 link, plus terminal-free C checks for movement, messages, save-record apply,
-and bounded main-loop control. It proves the tested slices and link, not
-gameplay through headless turns. Clippy does not build the
+bounded main-loop control, scripted movement, ration pickup, and save/reload.
+These provide bounded headless gameplay evidence for those scenarios, not a
+complete gameplay workflow. Interactive terminal input and real disk persistence
+remain unverified. Clippy does not build the
 `save-test-support` feature, so the PS1 check functions are not linted.
 The clean gate passes locally on macOS. CI runner results remain unverified.
 Existing Clippy warnings are non-blocking. Six scoped legacy lint allowances
@@ -429,7 +435,9 @@ and personal files are never touched.
 
 ### HL5. Repeatability and Gate (L3)
 
-Status: open. Depends on: HL3, HL4.
+Status: done. Verified by `make check`; HL2 movement, HL3 pickup, and HL4
+save/reload scenarios each run twice in one process with identical results.
+Depends on: HL3, HL4.
 
 Owns: the `Makefile` `check` target and the claim in this roadmap's **Status**
 section that bounded headless gameplay coverage exists.
