@@ -33,16 +33,16 @@ pub fn randnor(mean: i64, std_dev: i64) -> i64 {
 /// Returns a random integer in the range `[1, max_value]` using the provided RNG.
 ///
 /// For compatibility with legacy behavior, returns `0` when `max_value <= 0`.
-pub fn randint_with_rng(rng: &mut impl Rng, max_value: i64) -> i64 {
+pub fn randint_with_rng<R: Rng + ?Sized>(mut rng: &mut R, max_value: i64) -> i64 {
     if max_value > 0 {
-        rng.gen_range(0, max_value) + 1
+        (&mut rng).gen_range(0, max_value) + 1
     } else {
         0
     }
 }
 
 /// Rolls `num_rolls` times a die with range `[1, die_sides]` using the provided RNG and sums the result.
-pub fn rand_rep_with_rng(rng: &mut impl Rng, num_rolls: i64, die_sides: i64) -> i64 {
+pub fn rand_rep_with_rng<R: Rng + ?Sized>(rng: &mut R, num_rolls: i64, die_sides: i64) -> i64 {
     (0..num_rolls).fold(0, |sum, _| sum + randint_with_rng(rng, die_sides))
 }
 
@@ -50,7 +50,7 @@ pub fn rand_rep_with_rng(rng: &mut impl Rng, num_rolls: i64, die_sides: i64) -> 
 ///
 /// This is a direct port of the legacy implementation, but with RNG injection.
 #[allow(clippy::approx_constant)] // Exact legacy rounding depends on 6.283 rather than TAU.
-pub fn randnor_with_rng(rng: &mut impl Rng, mean: i64, std_dev: i64) -> i64 {
+pub fn randnor_with_rng<R: Rng + ?Sized>(rng: &mut R, mean: i64, std_dev: i64) -> i64 {
     // Match the legacy approach: two independent uniform draws in (0, 1).
     // NOTE: randint_with_rng(9_999_999) yields [1, 9_999_999], so division gives (0, 1).
     let u1 = randint_with_rng(rng, 9_999_999) as f64 / 10_000_000.0;
@@ -120,5 +120,17 @@ mod tests {
 
         assert_eq!(randint_with_rng(&mut rng, 0), 0);
         assert_eq!(randint_with_rng(&mut rng, -3), 0);
+    }
+
+    #[test]
+    fn injected_helpers_accept_a_rng_trait_object() {
+        use rand::{SeedableRng, StdRng};
+
+        let mut seeded = StdRng::from_seed(&[4, 3, 2, 1][..]);
+        let rng: &mut dyn Rng = &mut seeded;
+
+        assert!((1..=10).contains(&randint_with_rng(rng, 10)));
+        assert!((3..=15).contains(&rand_rep_with_rng(rng, 3, 5)));
+        assert!((-100..=100).contains(&randnor_with_rng(rng, 0, 10)));
     }
 }

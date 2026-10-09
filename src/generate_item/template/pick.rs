@@ -6,7 +6,6 @@ use crate::model::{
     item_subtype::{ItemSubType, PickSubType},
     Item, WornFlag1, WornFlag2,
 };
-use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PickTemplate {
@@ -38,15 +37,11 @@ impl PickTemplate {
 }
 
 impl ItemTemplate for PickTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
-        if item_quality == ItemQuality::Cursed {
-            item.set_cursed(true);
-            item.cost = 0;
-            item.p1 = -randint(3);
-        } else if item_quality == ItemQuality::Magic {
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
+        if item_quality == ItemQuality::Magic {
             item.p1 += 2;
-            item.cost += self.p1() * 10_000;
+            item.cost += self.p1(rng) * 10_000;
         }
         item
     }
@@ -96,7 +91,7 @@ impl ItemTemplate for PickTemplate {
         }
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         match self {
             PickTemplate::Pick => 1,
             PickTemplate::Shovel => 0,

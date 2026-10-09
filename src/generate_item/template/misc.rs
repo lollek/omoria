@@ -67,7 +67,7 @@ impl ItemTemplate for MiscTemplate {
     fn flags2(&self) -> u64 {
         0
     }
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
     fn cost(&self) -> i64 {

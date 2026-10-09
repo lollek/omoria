@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, WandSubType},
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum WandTemplate {
@@ -140,33 +140,33 @@ impl ItemTemplate for WandTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, rng: &mut dyn rand::Rng) -> i64 {
         match self {
-            WandTemplate::WandOfProbing => randint(20) + 10,
-            WandTemplate::WandOfLight => randint(10) + 6,
-            WandTemplate::WandOfLightningBolts => randint(8) + 6,
-            WandTemplate::WandOfFrostBolts => randint(5) + 6,
-            WandTemplate::WandOfFireBolts => randint(8) + 6,
-            WandTemplate::WandOfStoneToMud => randint(4) + 3,
-            WandTemplate::WandOfPolymorph => randint(8) + 6,
-            WandTemplate::WandOfHealMonster => randint(20) + 12,
-            WandTemplate::WandOfHasteMonster => randint(20) + 12,
-            WandTemplate::WandOfSlowMonster => randint(10) + 6,
-            WandTemplate::WandOfConfuseMonster => randint(12) + 6,
-            WandTemplate::WandOfSleepMonster => randint(10) + 12,
-            WandTemplate::WandOfDrainLife => randint(3) + 3,
-            WandTemplate::WandOfTrapDoorDestruction => randint(8) + 6,
-            WandTemplate::WandOfMagicMissile => randint(10) + 6,
-            WandTemplate::WandOfWallBuilding => randint(5) + 3,
-            WandTemplate::WandOfCloneMonster => randint(5) + 3,
-            WandTemplate::WandOfTeleportAway => randint(5) + 6,
-            WandTemplate::WandOfDisarming => randint(5) + 4,
-            WandTemplate::WandOfLightningBalls => randint(8) + 4,
-            WandTemplate::WandOfColdBalls => randint(6) + 2,
-            WandTemplate::WandOfFireBalls => randint(4) + 2,
-            WandTemplate::WandOfStinkingCloud => randint(8) + 6,
-            WandTemplate::WandOfAcidBalls => randint(5) + 2,
-            WandTemplate::WandOfWonder => randint(12) + 12,
+            WandTemplate::WandOfProbing => randint_with_rng(rng, 20) + 10,
+            WandTemplate::WandOfLight => randint_with_rng(rng, 10) + 6,
+            WandTemplate::WandOfLightningBolts => randint_with_rng(rng, 8) + 6,
+            WandTemplate::WandOfFrostBolts => randint_with_rng(rng, 5) + 6,
+            WandTemplate::WandOfFireBolts => randint_with_rng(rng, 8) + 6,
+            WandTemplate::WandOfStoneToMud => randint_with_rng(rng, 4) + 3,
+            WandTemplate::WandOfPolymorph => randint_with_rng(rng, 8) + 6,
+            WandTemplate::WandOfHealMonster => randint_with_rng(rng, 20) + 12,
+            WandTemplate::WandOfHasteMonster => randint_with_rng(rng, 20) + 12,
+            WandTemplate::WandOfSlowMonster => randint_with_rng(rng, 10) + 6,
+            WandTemplate::WandOfConfuseMonster => randint_with_rng(rng, 12) + 6,
+            WandTemplate::WandOfSleepMonster => randint_with_rng(rng, 10) + 12,
+            WandTemplate::WandOfDrainLife => randint_with_rng(rng, 3) + 3,
+            WandTemplate::WandOfTrapDoorDestruction => randint_with_rng(rng, 8) + 6,
+            WandTemplate::WandOfMagicMissile => randint_with_rng(rng, 10) + 6,
+            WandTemplate::WandOfWallBuilding => randint_with_rng(rng, 5) + 3,
+            WandTemplate::WandOfCloneMonster => randint_with_rng(rng, 5) + 3,
+            WandTemplate::WandOfTeleportAway => randint_with_rng(rng, 5) + 6,
+            WandTemplate::WandOfDisarming => randint_with_rng(rng, 5) + 4,
+            WandTemplate::WandOfLightningBalls => randint_with_rng(rng, 8) + 4,
+            WandTemplate::WandOfColdBalls => randint_with_rng(rng, 6) + 2,
+            WandTemplate::WandOfFireBalls => randint_with_rng(rng, 4) + 2,
+            WandTemplate::WandOfStinkingCloud => randint_with_rng(rng, 8) + 6,
+            WandTemplate::WandOfAcidBalls => randint_with_rng(rng, 5) + 2,
+            WandTemplate::WandOfWonder => randint_with_rng(rng, 12) + 12,
         }
     }
 

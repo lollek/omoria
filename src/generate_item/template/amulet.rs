@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{AmuletSubType, ItemSubType},
     Item, WornFlag1,
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmuletTemplate {
@@ -50,27 +50,15 @@ impl AmuletTemplate {
 }
 
 impl ItemTemplate for AmuletTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
         match self {
             AmuletTemplate::AmuletOfWisdom | AmuletTemplate::AmuletOfCharisma => {
-                if item_quality == ItemQuality::Cursed {
-                    item.set_cursed(true);
-                    item.p1 = randint(3);
-                    item.cost *= -1;
-                } else {
-                    item.p1 = randint(2);
-                    item.cost += item.p1 * 10_000;
-                }
+                item.p1 = randint_with_rng(rng, 2);
+                item.cost += item.p1 * 10_000;
             }
             AmuletTemplate::AmuletOfSearching => {
-                if item_quality == ItemQuality::Cursed {
-                    item.set_cursed(true);
-                    item.p1 *= -1;
-                    item.cost *= -1;
-                } else {
-                    item.cost += item.p1 * 10_000;
-                }
+                item.cost += item.p1 * 10_000;
             }
             _ => {}
         }
@@ -133,7 +121,7 @@ impl ItemTemplate for AmuletTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         match self {
             AmuletTemplate::AmuletOfAdornment1 => 0,
             AmuletTemplate::AmuletOfAdornment2 => 0,

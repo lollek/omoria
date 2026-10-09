@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{ChestSubType, ItemSubType},
     ChestFlags1, Item,
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 use std::cmp::max;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -37,15 +37,15 @@ impl ChestTemplate {
 }
 
 impl ItemTemplate for ChestTemplate {
-    fn create(&self, item_quality: ItemQuality, item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
+    fn create(&self, item_quality: ItemQuality, item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
         /*
          * Items inside the chest will be created as if
          * found on dungeon level p1.
          */
-        item.p1 = max(1, item_level as i64 + randint(10) - 5);
+        item.p1 = max(1, item_level as i64 + randint_with_rng(rng, 10) - 5);
         item.apply_chestflag1(ChestFlags1::Locked);
-        match randint(item_level as i64) + 4 {
+        match randint_with_rng(rng, item_level as i64) + 4 {
             1..=2 => {}
             3..=4 => item.apply_chestflag1(ChestFlags1::PoisonNeedle1),
             5..=6 => item.apply_chestflag1(ChestFlags1::PoisonNeedle2),
@@ -93,7 +93,7 @@ impl ItemTemplate for ChestTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
 

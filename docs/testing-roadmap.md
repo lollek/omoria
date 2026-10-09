@@ -123,6 +123,12 @@ Acceptance checks:
 
 ### 4. Item Generation RNG Injection (L0)
 
+Status: done. Dungeon-level item generation now threads rand 0.4 RNG through
+level, category, template, quality, and item creation rolls. Tests cover seeded
+repeatability, allowed item types, item levels, counts/charges, zero dungeon
+level, and zero tries. Zero dungeon level deliberately returns item level zero
+without consuming RNG or attempting the legacy full-table roll.
+
 Start at [item generation](../src/generate_item/generate_item.rs) and
 [template quality/magic application](../src/generate_item/item_template.rs).
 The project currently uses rand 0.4; use its supported RNG APIs, not examples

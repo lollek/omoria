@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{GemSubType, ItemSubType, JewelrySubType, WearableGemSubType},
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ValuableTemplate {
@@ -209,26 +209,26 @@ impl ItemTemplate for ValuableTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, rng: &mut dyn rand::Rng) -> i64 {
         match self {
-            ValuableTemplate::GemOfTeleportation => randint(10) + 10,
-            ValuableTemplate::GemOfResistCold => randint(5) + 2,
-            ValuableTemplate::GemOfResistAcid => randint(8) + 7,
-            ValuableTemplate::GemOfSeeInvisible => randint(3) + 3,
-            ValuableTemplate::GemOfStealth => randint(10) + 10,
-            ValuableTemplate::GemOfSlowDigestion => randint(5) + 5,
-            ValuableTemplate::GemOfProtectFire => randint(15) + 15,
-            ValuableTemplate::GemOfDetectMonsters => randint(10) + 10,
-            ValuableTemplate::GemOfDispelEvil => randint(5) + 2,
-            ValuableTemplate::GemOfDarkness => randint(8) + 7,
-            ValuableTemplate::GemOfAcidBalls => randint(3) + 3,
-            ValuableTemplate::GemOfDetectInvisible => randint(10) + 10,
-            ValuableTemplate::GemOfIdentify => randint(5) + 5,
-            ValuableTemplate::GemOfLight => randint(15) + 15,
-            ValuableTemplate::GemOfSummoning => randint(3) + 2,
-            ValuableTemplate::GemOfRemoveCurse => randint(5) + 3,
-            ValuableTemplate::GemOfAnnihilation => randint(3) + 2,
-            ValuableTemplate::GemOfRecall => randint(6) + 4,
+            ValuableTemplate::GemOfTeleportation => randint_with_rng(rng, 10) + 10,
+            ValuableTemplate::GemOfResistCold => randint_with_rng(rng, 5) + 2,
+            ValuableTemplate::GemOfResistAcid => randint_with_rng(rng, 8) + 7,
+            ValuableTemplate::GemOfSeeInvisible => randint_with_rng(rng, 3) + 3,
+            ValuableTemplate::GemOfStealth => randint_with_rng(rng, 10) + 10,
+            ValuableTemplate::GemOfSlowDigestion => randint_with_rng(rng, 5) + 5,
+            ValuableTemplate::GemOfProtectFire => randint_with_rng(rng, 15) + 15,
+            ValuableTemplate::GemOfDetectMonsters => randint_with_rng(rng, 10) + 10,
+            ValuableTemplate::GemOfDispelEvil => randint_with_rng(rng, 5) + 2,
+            ValuableTemplate::GemOfDarkness => randint_with_rng(rng, 8) + 7,
+            ValuableTemplate::GemOfAcidBalls => randint_with_rng(rng, 3) + 3,
+            ValuableTemplate::GemOfDetectInvisible => randint_with_rng(rng, 10) + 10,
+            ValuableTemplate::GemOfIdentify => randint_with_rng(rng, 5) + 5,
+            ValuableTemplate::GemOfLight => randint_with_rng(rng, 15) + 15,
+            ValuableTemplate::GemOfSummoning => randint_with_rng(rng, 3) + 2,
+            ValuableTemplate::GemOfRemoveCurse => randint_with_rng(rng, 5) + 3,
+            ValuableTemplate::GemOfAnnihilation => randint_with_rng(rng, 3) + 2,
+            ValuableTemplate::GemOfRecall => randint_with_rng(rng, 6) + 4,
             _ => 0,
         }
     }

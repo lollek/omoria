@@ -249,7 +249,7 @@ impl ItemTemplate for ScrollTemplate {
         }
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
 
