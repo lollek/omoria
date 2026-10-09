@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Added a bounded main-loop entry with injected commands and terminal-free loop-control checks.
 * Internal: Added reusable headless terminal doubles with scripted input and fail-fast prompt checks.
 * Empty character lists no longer crash when moving the selection down.
 * Internal: Added a tested successful-move state transition.

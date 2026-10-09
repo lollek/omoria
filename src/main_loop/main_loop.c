@@ -818,7 +818,8 @@ bool water_move(void) {
   return flag;
 }
 
-void main_loop__0(void) {
+static void run_main_loop(main_loop_command_source source, void *context,
+                          size_t max_turns) {
   ENTER(("main_loop", "d"));
 
   cur_inven = inventory_list;
@@ -855,7 +856,14 @@ void main_loop__0(void) {
   creatures(false);
 
   /*{ Loop until dead, or new level 		}*/
+  size_t turns_run = 0;
   do {
+    if (source != NULL) {
+      if (turns_run == max_turns) {
+        break;
+      }
+      turns_run++;
+    }
     turn++;
 
     if (player_flags.speed > 0 ||
@@ -943,12 +951,23 @@ void main_loop__0(void) {
           print_null(char_row, char_col);
           save_msg_flag = msg_flag;
           game_state = GS_GET_COMMAND;
-          const char command = inkey();
+          char next_command;
+          if (source != NULL) {
+            const bool available = source(context, &next_command);
+            game_state = GS_IGNORE_CTRL_C;
+            if (!available) {
+              goto cleanup;
+            }
+            command_count = 0;
+            msg_flag = false;
+          } else {
+            next_command = inkey();
+          }
           game_state = GS_IGNORE_CTRL_C;
           if (save_msg_flag) {
             erase_line(msg_line, msg_line);
           }
-          com_val = (long)command;
+          com_val = (long)next_command;
         }
 
         command(&com_val);
@@ -965,11 +984,24 @@ void main_loop__0(void) {
     }
   } while (!moria_flag);
 
+cleanup:
   if (search_flag) {
     search_off(); /*{ Fixed "SLOW" bug; 06-11-86 RAK     }*/
   }
 
   LEAVE("main_loop", "d");
+}
+
+void main_loop_with_commands(main_loop_command_source source, void *context,
+                             size_t max_turns) {
+  if (source == NULL || max_turns == 0) {
+    return;
+  }
+  run_main_loop(source, context, max_turns);
+}
+
+void main_loop__0(void) {
+  run_main_loop(NULL, NULL, 0);
 }
 
 int main_loop(void) {
