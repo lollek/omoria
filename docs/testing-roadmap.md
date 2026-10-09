@@ -308,7 +308,7 @@ Acceptance checks:
 
 ### PS3. Atomic Character-Save Writes (L1)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: [filestorage.rs](../src/persistence/filestorage.rs).
 

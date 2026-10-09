@@ -9,6 +9,7 @@
 * Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
 * Walking beyond the map edge no longer gives monsters a turn and stops running.
 * Internal: Added isolated movement decisions with injectable confusion RNG and C caller checks.
+* Character saves are now replaced atomically, so failed writes preserve the previous save.
 * Serialization failures no longer truncate existing character saves or the master list.
 * Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
 * Internal: Link the Linux build against wide-character ncurses.
