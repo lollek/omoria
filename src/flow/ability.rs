@@ -7,6 +7,7 @@ use crate::term;
 
 // Let the player select an action
 // Returns true if the turn was free (i.e. don't take a turn)
+#[allow(clippy::never_loop)] // Preserve the legacy one-shot input path until it has isolated tests.
 pub fn select_ability() -> bool {
     let abilities = player::abilities();
     let abilities_str = abilities

@@ -1,13 +1,13 @@
 use std::cmp::min;
 use std::str;
 
-use crate::{conversion, user_interface};
 use crate::data;
 use crate::io;
 use crate::logic::menu;
 use crate::misc;
 use crate::player;
 use crate::term;
+use crate::{conversion, user_interface};
 
 use super::logic::*;
 use crate::model::{Class, Race, Sex};

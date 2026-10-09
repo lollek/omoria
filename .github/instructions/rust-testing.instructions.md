@@ -59,3 +59,12 @@ Use `snake_case` names that describe the behavior being tested:
 ## One behavior per test
 
 Each test should verify a single behavior or edge case. Prefer multiple small tests over one large test with many assertions.
+
+## Shared state
+
+- Every test that reads or writes shared globals must use `#[serial_test::serial]`, including callers in other test modules.
+- Initialize all state the scenario depends on before assertions and restore or reset it afterward.
+- A mutex around individual accesses does not isolate a multi-step test scenario.
+- Prefer caller-owned state over globals. Keep tests against pure input structs parallel.
+- Verify isolation with repeated `cargo test` runs using the default thread count, not `--test-threads=1`.
+- Run focused tests during development and `make check` before reporting completion.

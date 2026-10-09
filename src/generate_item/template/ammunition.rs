@@ -2,7 +2,11 @@ use super::super::item_template::ItemTemplate;
 use crate::generate_item::item_template::default_create;
 use crate::generate_item::ItemQuality;
 use crate::misc::rs2item_name;
-use crate::model::{self, item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType}, Item, WornFlag1, WornFlag2};
+use crate::model::{
+    self,
+    item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType},
+    Item, WornFlag1, WornFlag2,
+};
 use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -87,7 +91,7 @@ impl ItemTemplate for AmmunitionTemplate {
                     4..=5 => self.apply_ammo_flame_tongue(&mut item),
                     6..=7 => self.apply_ammo_slay_evil(&mut item),
                     8..=9 => self.apply_ammo_slay_monster(&mut item),
-                    10|_ => self.apply_ammo_slay_dragon(&mut item),
+                    10 | _ => self.apply_ammo_slay_dragon(&mut item),
                 }
             }
         }

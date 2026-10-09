@@ -21,16 +21,16 @@ Convert the specified function from direct `rand::thread_rng()` / `rand::random(
   ```
 - Assert invariants (ranges, properties), not exact values — unless testing determinism itself.
 - Add a minimal stub of the `_with_rng` function signature so the test compiles but fails.
-- **Stop and ask for navigator review.**
+- Run the focused test, record its expected failure, and proceed to GREEN.
 
 ### 3. GREEN phase — extract RNG parameter
 - Create `fn foo_with_rng(rng: &mut impl Rng, ...) -> ...` with the real logic.
 - Change the original `fn foo(...)` to call `foo_with_rng(&mut rand::thread_rng(), ...)`.
 - If the function is `extern "C"`, keep the C wrapper calling the non-`_with_rng` version.
-- **Stop and ask for navigator review.**
+- Run the focused tests successfully and proceed to REFACTOR.
 
 ### 4. REFACTOR phase
 - Clean up any redundancy.
 - Add doc comments to both functions (wrapper references the `_with_rng` variant).
-- Verify all tests pass with `cargo test --lib`.
-- **Stop and ask for navigator review.**
+- Verify the full gate with `make check`.
+- Report RED evidence, changed files, gate results, and unverified integration boundaries.

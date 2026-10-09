@@ -83,7 +83,6 @@ fn debug_serialize_save_record(save_record: &SaveRecord) {
             Ok(_) => "OK",
             Err(_) => "ERROR",
         }
-
     }
     debug::error("### DEBUG SERIALIZE SAVE RECORD START ###");
     debug::error(&format!(

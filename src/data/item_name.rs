@@ -10,7 +10,6 @@ use crate::data::item_name::subtype::flask::flask;
 use crate::data::item_name::subtype::food::food;
 use crate::data::item_name::subtype::gem::gem;
 use crate::data::item_name::subtype::gem_helm::gem_helm;
-use crate::data::item_name::subtype::{lodging_at_inn, money};
 use crate::data::item_name::subtype::horn::horn;
 use crate::data::item_name::subtype::instrument::instrument;
 use crate::data::item_name::subtype::jewelry::jewelry;
@@ -19,15 +18,16 @@ use crate::data::item_name::subtype::melee_weapon::melee_weapon;
 use crate::data::item_name::subtype::misc_object::misc_object;
 use crate::data::item_name::subtype::misc_usable::misc_usable;
 use crate::data::item_name::subtype::potion::potion;
-use crate::data::item_name::subtype::scroll::scroll;
 use crate::data::item_name::subtype::ranged_weapon::ranged_weapon;
 use crate::data::item_name::subtype::ring::ring;
+use crate::data::item_name::subtype::scroll::scroll;
 use crate::data::item_name::subtype::shield::shield;
 use crate::data::item_name::subtype::small_armor::small_armor;
 use crate::data::item_name::subtype::spike::spike;
 use crate::data::item_name::subtype::staff::staff;
 use crate::data::item_name::subtype::wand::wand;
 use crate::data::item_name::subtype::wearable_gem::wearable_gem;
+use crate::data::item_name::subtype::{lodging_at_inn, money};
 use crate::model::{Item, ItemType};
 
 mod helpers;
@@ -97,16 +97,13 @@ pub fn generate(item: &Item) -> String {
         | ItemType::Pick
         | ItemType::PoleArm
         | ItemType::Sword => melee_weapon(item),
-        ItemType::Food
-        | ItemType::JunkFood => food(item),
+        ItemType::Food | ItemType::JunkFood => food(item),
         ItemType::Gem => gem(item),
         ItemType::HardArmor | ItemType::SoftArmor => armor(item),
         ItemType::Jewelry => jewelry(item),
         ItemType::LightSource => light_source(item),
         ItemType::LodgingAtInn => lodging_at_inn(item),
-        ItemType::MagicBook
-        | ItemType::PrayerBook
-        | ItemType::SongBook => book(item),
+        ItemType::MagicBook | ItemType::PrayerBook | ItemType::SongBook => book(item),
         ItemType::MiscObject => misc_object(item),
         ItemType::MiscUsable => misc_usable(item),
         ItemType::Money => money(item),

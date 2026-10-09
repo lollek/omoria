@@ -100,17 +100,20 @@ fn show_highscore() {
     // println!("Username     Points   Alive    Character name    Level  Race         Class");
     // println!("____________ ________ _____ ________________________ __ __________ ________________");
 
-    let lines = master.iter().map(|item| {
-        format!(
-            "{:<24}  Level {}  {:>10}  {:>9}  {:>5}  {:>9}",
-            item.character_name,
-            item.level,
-            item.race,
-            item.class,
-            if item.alive { "alive" } else { "dead" },
-            item.points,
-        )
-    }).collect::<Vec<String>>();
+    let lines = master
+        .iter()
+        .map(|item| {
+            format!(
+                "{:<24}  Level {}  {:>10}  {:>9}  {:>5}  {:>9}",
+                item.character_name,
+                item.level,
+                item.race,
+                item.class,
+                if item.alive { "alive" } else { "dead" },
+                item.points,
+            )
+        })
+        .collect::<Vec<String>>();
     menu::draw_help_vec(
         "Highscore",
         &lines.iter().map(|s| s.as_str()).collect::<Vec<&str>>(),

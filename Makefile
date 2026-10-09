@@ -1,6 +1,6 @@
 CC =		gcc
 
-CFLAGS =	-Wall -Wextra -Wno-format -Wno-incompatible-pointer-types -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1
+CFLAGS =	-Wall -Wextra -Wno-format -Wno-incompatible-pointer-types -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1 -MMD -MP
 LDFLAGS =	-lncurses -ltermcap -lm -lpthread -ldl
 
 READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
@@ -11,6 +11,10 @@ RSFILES = $(shell find src/ -type f -name '*.rs')
 CFILES = $(shell find src/ -type f -name '*.c')
 HFILES = $(shell find src/ -type f -name '*.h')
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
+DEPFILES = $(OBJFILES:.o=.d)
+
+.DEFAULT_GOAL := all
+-include $(DEPFILES)
 
 .PHONY: all
 all:	omoria
@@ -18,7 +22,7 @@ all:	omoria
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
-omoria: $(OBJFILES) $(RSFILES)
+omoria: $(OBJFILES) $(RSFILES) Cargo.toml Cargo.lock
 	cargo build
 	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
 
@@ -37,6 +41,13 @@ pre-commit:
 test:
 	cargo test
 
+.PHONY: check
+check:
+	cargo fmt --check
+	cargo clippy --all-targets
+	cargo test
+	$(MAKE) omoria
+
 .PHONY: debug
 debug: omoria
 	>debug_rust.out
@@ -48,7 +59,7 @@ nodata ::
 
 .PHONY: clean
 clean ::
-	$(RM) $(OBJFILES) core omoria
+	$(RM) $(OBJFILES) $(DEPFILES) core omoria
 
 .PHONY: ctags
 ctags:

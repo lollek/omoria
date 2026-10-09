@@ -1,5 +1,7 @@
 use crate::conversion::item_subtype;
-use crate::data::item_name::helpers::{maybe_armor_bonus, maybe_number_of, maybe_p1_bonus, maybe_special_attribute, to_hit_if_exists};
+use crate::data::item_name::helpers::{
+    maybe_armor_bonus, maybe_number_of, maybe_p1_bonus, maybe_special_attribute, to_hit_if_exists,
+};
 use crate::model::item_subtype::{HardArmorSubType, ItemSubType, SoftArmorSubType};
 use crate::model::Item;
 use std::borrow::Cow;

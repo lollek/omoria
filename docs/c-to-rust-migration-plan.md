@@ -12,33 +12,45 @@ This document outlines a controlled, incremental strategy for migrating the omor
 
 ## Current State Overview
 
+This plan is the source of truth for migration status. The inventory below was
+checked against local source on 2026-10-09; a Rust module's presence does not mean
+its whole subsystem has been migrated.
+
 ### Already Migrated to Rust
 The following modules are already in Rust (partially or fully):
 - `model/` - Core data structures (Item, Player, Monster, etc.)
 - `data/` - Static data (currency values, class info, race info)
 - `conversion/` - Type conversions between C and Rust
 - `logic/` - Some game logic (wallet, level_up, stat_modifiers, use_item)
-- `random.rs` - RNG functions (but without `_with_rng` variants yet)
+- `rng/random.rs` - RNG functions with `randint_with_rng`, `rand_rep_with_rng`, and `randnor_with_rng`
 - `identification.rs` - Item identification system
 - `save/`, `persistence/` - Save/load system
 - `player/` - Partial player logic (attributes, stats, skills, regeneration)
 - `inventory/` - Partial (display_inventory.rs)
-- `highscore.rs` - High score system
+- `pregame/menu.rs` - Menu and high-score display; there is no standalone `highscore.rs`
+- `pregame/create_character/` - Rust character creation modules; pregame still includes C wiring
+- `town_level/enter_bank.rs` - Bank display helpers only; bank operations remain in C
+- `combat/fighting.rs` - `managed_to_hit` and injectable hit calculation; ranged combat remains in C
+- `dungeon/trap/` - Trap data and placement only; activation remains in `traps.c`
 - `equipment.rs` - Equipment handling
 
-### Still in C (89 files)
+### Still in C (87 files)
+Count: `rg --files src -g '*.c' | wc -l`. This counts remaining source files,
+including partially migrated modules, not wholly unported subsystems.
+
 Major C modules remaining:
 - **Core game loop**: `main.c`, `main_loop/`, `variables.c`
-- **Combat**: `fighting/`, `spells.c`, `blow.c`
+- **Combat**: `combat/ranged.c`, `spells.c`, `blow.c` (hit calculation is Rust)
 - **Map generation**: `generate_map/`, `dungeon/`
 - **Monsters**: `creature.c`, `monsters.c`, `generate_monster/`
 - **Player actions**: `player_action/` (22 files)
 - **UI/IO**: `io.c`, `screen.c`, `term.c`, `graphics.c`
 - **Stores/Trading**: `stores.c`, `trade.c`, `blackmarket.c`
-- **Misc**: `misc.c` (2319 lines), `pascal.c`, `traps.c`, `effects.c`
+- **Misc**: `misc.c`, `traps.c`, `effects.c` (`pascal.c` has been removed)
 - **Casino**: `casino/` (4 files)
 - **Magic**: `magic/` (5 files)
-- **Init**: `init/` (10 files)
+- **Init**: `init/` (remaining C initialization)
+- **Pregame/Bank**: `pregame/main.c`, `pregame/menu.c`, `town_level/enter_bank.c` (partial Rust ports)
 
 ---
 
@@ -57,7 +69,7 @@ Major C modules remaining:
   - **Testing**: Unit tests with edge cases
 
 #### 1.2 Random with RNG Injection
-- [x] Enhance `random.rs` with `_with_rng` pattern
+- [x] Enhance RNG helpers (now `rng/random.rs`) with `_with_rng` pattern
   - Add `randint_with_rng()`, `rand_rep_with_rng()`, `randnor_with_rng()`
   - Keep existing functions as wrappers
   - **Complexity**: Low
@@ -78,7 +90,7 @@ Major C modules remaining:
   - Static trap definitions (unified `TRAP_LIST` array)
   - Trap placement functions (`place_trap`, `change_trap`, `place_rubble`)
   - C ABI wrappers for interop
-  - **Complexity**: Low (data only)
+  - **Scope**: Data and placement complete; trap effects, chest traps, and activation dispatcher remain in C
   - **Testing**: Validate data matches C definitions
   - **Details**: See [traps-migration.md](migration/traps-migration.md)
 
@@ -154,6 +166,7 @@ Each player action file in `player_action/` can be migrated independently:
 - [ ] `use_staff.c` → port to Rust
 - [ ] `refill_lamp.c` → port to Rust
 - [ ] `toggle_light_source.c` → port to Rust
+- [ ] `use_magic.c` → port to Rust (magic-use action dispatcher)
 
 #### 4.4 Combat Actions
 - [ ] `attack.c` → port to Rust (partial - already has `attack.rs`)
@@ -181,8 +194,8 @@ Each player action file in `player_action/` can be migrated independently:
 ### Phase 6: Combat & Creatures (High Risk)
 **Goal**: Port the combat system and creature AI.
 
-- [ ] `fighting/fighting.c` → Rust
-- [ ] `fighting/ranged.c` → Rust
+- [x] Hit calculation → `combat/fighting.rs` (`managed_to_hit`, `managed_to_hit_with_rng`)
+- [ ] `combat/ranged.c` → Rust
 - [ ] `creature.c` → Rust (creature AI and movement)
 - [ ] `monsters.c` → Rust (monster data/handling)
 - [ ] `generate_monster/generate_monster.c` → Rust
@@ -204,7 +217,7 @@ Each player action file in `player_action/` can be migrated independently:
 - [ ] `stores.c` → Rust
 - [ ] `trade.c` → Rust
 - [ ] `blackmarket.c` → Rust
-- [ ] `town_level/enter_bank.c` → Rust
+- [ ] `town_level/enter_bank.c` → Rust (partial: display helpers in `town_level/enter_bank.rs`; operations remain C)
 - [ ] `town_level/enter_house.c` → Rust
 - [ ] `loot/loot.c` → Rust
 
@@ -212,7 +225,7 @@ Each player action file in `player_action/` can be migrated independently:
 **Goal**: Port the remaining core systems. Do these last.
 
 - [ ] `traps.c` → Rust (trap activation logic) - See [traps-migration.md](migration/traps-migration.md)
-- [ ] `misc.c` → Rust (2319 lines - break into smaller modules)
+- [ ] `misc.c` → Rust (break remaining code into smaller modules)
 - [ ] `io.c` → Rust
 - [ ] `screen.c` → Rust
 - [ ] `graphics.c` → Rust
@@ -224,7 +237,7 @@ Each player action file in `player_action/` can be migrated independently:
 **Goal**: Port the startup and main game loop.
 
 - [ ] `init/` → Rust (all initialization)
-- [ ] `pregame/` → Rust (character creation, menus)
+- [ ] Finish `pregame/` → Rust (menu/high-score display and character creation modules exist; `main.c` and `menu.c` remain)
 - [ ] `main_loop/` → Rust
 - [ ] `main.c` → Rust
 
@@ -279,7 +292,7 @@ main.c
 Game Systems:
 ├── player.c ←──────────────────┐
 ├── creature.c                   │
-├── fighting/ ←── spells.c ←── blow.c
+├── combat/ ←── spells.c ←── blow.c
 ├── inventory/ ←── effects.c    │
 ├── stores.c ←── trade.c        │
 ├── generate_map/ ←── generate_monster/

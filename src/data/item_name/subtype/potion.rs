@@ -7,7 +7,9 @@ use crate::model::item_subtype::{ItemSubType, Potion1SubType};
 use crate::model::{Item, ItemType};
 
 pub fn potion(item: &Item) -> String {
-    let Some(ItemSubType::Potion1(potion_subtype)) = item_subtype::from_i64(ItemType::Potion1, item.subval) else {
+    let Some(ItemSubType::Potion1(potion_subtype)) =
+        item_subtype::from_i64(ItemType::Potion1, item.subval)
+    else {
         return "alien potion".to_string();
     };
 

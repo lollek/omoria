@@ -7,7 +7,8 @@ use crate::model::item_subtype::{ItemSubType, RingSubType};
 use crate::model::{Item, ItemType};
 
 pub fn ring(item: &Item) -> String {
-    let Some(ItemSubType::Ring(ring_subtype)) = item_subtype::from_i64(ItemType::Ring, item.subval) else {
+    let Some(ItemSubType::Ring(ring_subtype)) = item_subtype::from_i64(ItemType::Ring, item.subval)
+    else {
         return "alien ring".to_string();
     };
 

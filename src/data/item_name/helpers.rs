@@ -1,11 +1,11 @@
-use std::borrow::Cow;
 use crate::helper;
 use crate::misc::item_name2rs;
 use crate::model::Item;
+use std::borrow::Cow;
 
 pub(crate) fn maybe_armor_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
     if item.ac == 0 && (!item.is_identified() || item.toac == 0) {
-        return None
+        return None;
     }
 
     if !item.is_identified() {
@@ -104,7 +104,7 @@ pub fn maybe_special_attribute(item: &'_ Item) -> Option<Cow<'_, str>> {
         let item_name = item_name2rs(&item.name);
         let suffixes = [
             "R", "RA", "RF", "RC", "RL", "FT", "FB", "WB", "BB", "SM", "SD", "SU", "SR", "HA",
-            "DF", "DB", "SS", "V"
+            "DF", "DB", "SS", "V",
         ];
         for suffix in suffixes.iter() {
             let formatted_suffix = format!("({})", suffix);
@@ -115,7 +115,6 @@ pub fn maybe_special_attribute(item: &'_ Item) -> Option<Cow<'_, str>> {
     }
     None
 }
-
 
 pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
     Cow::from(format!(" ({})", helper::format_signed(item.p1)))

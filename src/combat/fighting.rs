@@ -46,7 +46,13 @@ pub extern "C" fn managed_to_hit(
     plus_to_hit: libc::c_long,
     enemy_ac: libc::c_long,
 ) -> bool {
-    managed_to_hit_with_rng(&mut rand::thread_rng(), base_to_hit, level, plus_to_hit, enemy_ac)
+    managed_to_hit_with_rng(
+        &mut rand::thread_rng(),
+        base_to_hit,
+        level,
+        plus_to_hit,
+        enemy_ac,
+    )
 }
 
 #[cfg(test)]
@@ -102,4 +108,3 @@ mod tests {
         assert!(result, "Expected hit with high attack vs low AC");
     }
 }
-

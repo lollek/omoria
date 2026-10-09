@@ -1,9 +1,6 @@
 use libc::{strcpy, time, time_t};
 use std::ptr::null;
-use std::{
-    cmp::max,
-    ffi::CString,
-};
+use std::{cmp::max, ffi::CString};
 
 use crate::generate_item::template::{CloakTemplate, FoodTemplate, LightSourceTemplate};
 use crate::generate_item::ItemQuality;
@@ -190,12 +187,17 @@ pub(crate) fn generate_and_apply_money() {
 pub(crate) fn generate_and_apply_equipment() {
     // General starting items
 
-    let mut ration_of_food = generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0, ItemQuality::Normal);
+    let mut ration_of_food =
+        generate_item::generate(Box::new(FoodTemplate::RationOfFood), 0, ItemQuality::Normal);
     ration_of_food.number = 5;
 
     for item in [
         ration_of_food,
-        generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0, ItemQuality::Normal),
+        generate_item::generate(
+            Box::new(LightSourceTemplate::WoodenTorch),
+            0,
+            ItemQuality::Normal,
+        ),
         generate_item::generate(Box::new(CloakTemplate::LightCloak), 0, ItemQuality::Normal),
         generate_item::generate_boots(10, ItemQuality::Normal),
         generate_item::generate_belt(10, ItemQuality::Normal),

@@ -1,5 +1,5 @@
-use std::convert::TryFrom;
 use enum_iterator;
+use std::convert::TryFrom;
 
 #[derive(Copy, Clone, Debug, PartialEq, enum_iterator::Sequence)]
 pub enum Stat {
@@ -48,8 +48,8 @@ impl TryFrom<u8> for Stat {
 
 #[cfg(test)]
 mod test {
-    use std::convert::TryFrom;
     use super::Stat;
+    use std::convert::TryFrom;
 
     #[test]
     fn test_stat_iter() {

@@ -16,6 +16,7 @@ pub mod dagger;
 pub mod flask_of_oil;
 pub mod food;
 pub mod gem;
+pub mod gem_helm;
 pub mod gloves;
 pub mod hafted_weapon;
 pub mod hard_armor;
@@ -46,7 +47,6 @@ pub mod staff;
 pub mod sword;
 pub mod wand;
 pub mod wearable_gem;
-pub mod gem_helm;
 
 pub fn to_usize(item_subtype: &ItemSubType) -> usize {
     match item_subtype {

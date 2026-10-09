@@ -5,6 +5,7 @@ data/*
 save/*
 !/save/.gitkeep
 *.o
+*.d
 omoria
 tags
 debug.out

@@ -20,7 +20,11 @@ macro_rules! str_to_c_array {
     ($s:expr, $n:literal) => {{
         let mut arr = [0i8; $n];
         let bytes = $s.as_bytes();
-        let len = if bytes.len() < ($n - 1) { bytes.len() } else { $n - 1 };
+        let len = if bytes.len() < ($n - 1) {
+            bytes.len()
+        } else {
+            $n - 1
+        };
         let mut i = 0;
         while i < len {
             arr[i] = bytes[i] as i8;
@@ -83,9 +87,8 @@ static GLITCH_TEMPLATE: MonsterTemplate = MonsterTemplate {
 };
 
 /// Fallback string cache for out-of-bounds access.
-static GLITCH_STRING_CACHE: LazyLock<CStringCache> = LazyLock::new(|| {
-    CStringCache::from_template(&GLITCH_TEMPLATE)
-});
+static GLITCH_STRING_CACHE: LazyLock<CStringCache> =
+    LazyLock::new(|| CStringCache::from_template(&GLITCH_TEMPLATE));
 
 // =============================================================================
 // Helpers
@@ -417,25 +420,24 @@ mod tests {
     #[test]
     fn get_hit_die_returns_expected_string() {
         let ptr = monster_template_get_hit_die(0);
-        let s = unsafe { std::ffi::CStr::from_ptr(ptr) }
-            .to_str()
-            .unwrap();
+        let s = unsafe { std::ffi::CStr::from_ptr(ptr) }.to_str().unwrap();
         assert_eq!(s, super::super::MONSTER_TEMPLATES[0].hit_die);
     }
 
     #[test]
     fn get_damage_returns_expected_string() {
         let ptr = monster_template_get_damage(0);
-        let s = unsafe { std::ffi::CStr::from_ptr(ptr) }
-            .to_str()
-            .unwrap();
+        let s = unsafe { std::ffi::CStr::from_ptr(ptr) }.to_str().unwrap();
         assert_eq!(s, super::super::MONSTER_TEMPLATES[0].damage);
     }
 
     #[test]
     fn has_attribute_at_balrog_is_evil() {
         let balrog_template_idx = 391;
-        assert!(monster_template_has_attribute_at(balrog_template_idx, MonsterAttribute::Evil as libc::c_int));
+        assert!(monster_template_has_attribute_at(
+            balrog_template_idx,
+            MonsterAttribute::Evil as libc::c_int
+        ));
     }
 
     #[test]
@@ -470,7 +472,10 @@ mod tests {
     fn has_attribute_at_invalid_attribute_returns_false() {
         let balrog_template_idx = 391;
         let out_of_bounds_idx = 999;
-        assert!(!monster_template_has_attribute_at(balrog_template_idx, out_of_bounds_idx));
+        assert!(!monster_template_has_attribute_at(
+            balrog_template_idx,
+            out_of_bounds_idx
+        ));
     }
 
     #[test]
@@ -486,7 +491,10 @@ mod tests {
     #[test]
     fn out_of_bounds_returns_glitch_symbol() {
         let out_of_bounds_idx = 9999;
-        assert_eq!(monster_template_get_symbol(out_of_bounds_idx), b'?' as libc::c_char);
+        assert_eq!(
+            monster_template_get_symbol(out_of_bounds_idx),
+            b'?' as libc::c_char
+        );
     }
 
     #[test]
@@ -499,7 +507,10 @@ mod tests {
     #[test]
     fn get_spells_raw_returns_expected_value() {
         let town_wizard_template_idx = 1;
-        assert_eq!(monster_template_get_spells_raw(town_wizard_template_idx), 0x00009F52);
+        assert_eq!(
+            monster_template_get_spells_raw(town_wizard_template_idx),
+            0x00009F52
+        );
     }
 
     /// Index 2 has spells == 0, so raw value is zero.
@@ -534,7 +545,10 @@ mod tests {
     #[test]
     fn spell_frequency_returns_expected_value() {
         let town_wizard_template_idx = 1;
-        assert_eq!(monster_template_spell_frequency(town_wizard_template_idx), 2);
+        assert_eq!(
+            monster_template_spell_frequency(town_wizard_template_idx),
+            2
+        );
     }
 
     /// Balrog (index 391, spells=0x0281C743): frequency = 0x3.
@@ -548,7 +562,9 @@ mod tests {
     #[test]
     fn spell_frequency_not_inverted_for_town_wizard() {
         let town_wizard_template_idx = 1;
-        assert!(!monster_template_spell_frequency_is_inverted(town_wizard_template_idx));
+        assert!(!monster_template_spell_frequency_is_inverted(
+            town_wizard_template_idx
+        ));
     }
 
     /// Find a monster whose spells field has bit 31 set (inverted frequency).
@@ -558,21 +574,29 @@ mod tests {
             .iter()
             .position(|t| t.spells & 0x80000000 != 0)
             .expect("at least one template should have inverted spell frequency");
-        assert!(monster_template_spell_frequency_is_inverted(inverted_idx as libc::c_long));
+        assert!(monster_template_spell_frequency_is_inverted(
+            inverted_idx as libc::c_long
+        ));
     }
 
     /// Town Wizard (index 1, spells=0x00009F52): choice bits = 0x9F50.
     #[test]
     fn spell_choice_bits_returns_expected_value() {
         let town_wizard_template_idx = 1;
-        assert_eq!(monster_template_spell_choice_bits(town_wizard_template_idx), 0x00009F50);
+        assert_eq!(
+            monster_template_spell_choice_bits(town_wizard_template_idx),
+            0x00009F50
+        );
     }
 
     /// Balrog (index 391, spells=0x0281C743): choice bits = 0x0281C740.
     #[test]
     fn spell_choice_bits_balrog() {
         let balrog_template_idx = 391;
-        assert_eq!(monster_template_spell_choice_bits(balrog_template_idx), 0x0281C740);
+        assert_eq!(
+            monster_template_spell_choice_bits(balrog_template_idx),
+            0x0281C740
+        );
     }
 
     /// Balrog (index 391) has cmove = 0xFF1F0300.
@@ -593,7 +617,10 @@ mod tests {
     #[test]
     fn get_cdefense_returns_expected_value() {
         let placeholder_template_idx = 0;
-        assert_eq!(monster_template_get_cdefense(placeholder_template_idx), 0x3000);
+        assert_eq!(
+            monster_template_get_cdefense(placeholder_template_idx),
+            0x3000
+        );
     }
 
     /// OOB returns zero for cdefense.

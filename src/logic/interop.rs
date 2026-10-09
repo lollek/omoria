@@ -6,7 +6,8 @@ use crate::model::Item;
 pub extern "C" fn class_can_use_item(class: libc::c_int, item: *const Item) -> bool {
     use_item::class_can_use_item(
         &conversion::class::from_usize(class as usize).unwrap(),
-        unsafe { &*item })
+        unsafe { &*item },
+    )
 }
 
 #[no_mangle]

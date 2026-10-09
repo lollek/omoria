@@ -25,12 +25,16 @@ pub fn spike(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
-    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::MiscUsableTemplate;
+    use crate::generate_item::ItemQuality;
 
     #[test]
     fn test_spike() {
-        let mut item = generate_item::generate(Box::new(MiscUsableTemplate::IronSpike), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(MiscUsableTemplate::IronSpike),
+            0,
+            ItemQuality::Normal,
+        );
         item.number = 0;
         assert_eq!(generate(&item), "no more iron spikes");
 

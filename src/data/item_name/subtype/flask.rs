@@ -19,24 +19,33 @@ mod tests {
 
     #[test]
     fn test_flask_of_oil_single() {
-        let mut item =
-            generate_item::generate(Box::new(MiscUsableTemplate::FlaskOfOil), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(MiscUsableTemplate::FlaskOfOil),
+            0,
+            ItemQuality::Normal,
+        );
         item.number = 1;
         assert_eq!(generate(&item), "flask of oil");
     }
 
     #[test]
     fn test_flask_of_oil_multiple() {
-        let mut item =
-            generate_item::generate(Box::new(MiscUsableTemplate::FlaskOfOil), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(MiscUsableTemplate::FlaskOfOil),
+            0,
+            ItemQuality::Normal,
+        );
         item.number = 2;
         assert_eq!(generate(&item), "2 flasks of oil");
     }
 
     #[test]
     fn test_flask_of_oil_none() {
-        let mut item =
-            generate_item::generate(Box::new(MiscUsableTemplate::FlaskOfOil), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(MiscUsableTemplate::FlaskOfOil),
+            0,
+            ItemQuality::Normal,
+        );
         item.number = 0;
         assert_eq!(generate(&item), "no more flasks of oil");
     }

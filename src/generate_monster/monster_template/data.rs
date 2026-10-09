@@ -21,14 +21,14 @@ use super::MonsterTemplate;
 ///
 /// Order and indices must match exactly for C interop.
 pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
-// =============================================================================
-// Zone: Town (Level 0) — Worn down sanctuary
-//
-// A worn down settlement clinging to existence. 
-// Town Guards keep an uneasy order.
-//
-// 19 creatures (indices 0–18)
-// =============================================================================
+    // =============================================================================
+    // Zone: Town (Level 0) — Worn down sanctuary
+    //
+    // A worn down settlement clinging to existence.
+    // Town Guards keep an uneasy order.
+    //
+    // 19 creatures (indices 0–18)
+    // =============================================================================
     // Level 0 - Town level
     MonsterTemplate {
         area_effect_radius: 10,
@@ -372,15 +372,15 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-// =============================================================================
-// Zone: Shallows (Levels 1–5) — Corruption spreading
-//
-// The upper dungeon festers with the first signs of demonic taint. Fallen ones
-// (once-kobolds), wretched imps, blight crawlers, and plague-carrying vermin
-// infest these tunnels. Corrupt humanoids and twisted fungi block the way.
-//
-// 70 creatures (indices 19–88)
-// =============================================================================
+    // =============================================================================
+    // Zone: Shallows (Levels 1–5) — Corruption spreading
+    //
+    // The upper dungeon festers with the first signs of demonic taint. Fallen ones
+    // (once-kobolds), wretched imps, blight crawlers, and plague-carrying vermin
+    // infest these tunnels. Corrupt humanoids and twisted fungi block the way.
+    //
+    // 70 creatures (indices 19–88)
+    // =============================================================================
     // Level 1
     MonsterTemplate {
         area_effect_radius: 6,
@@ -1646,15 +1646,15 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: false,
     },
-// =============================================================================
-// Zone: Gothic (Levels 6–12) — Gothic horror
-//
-// Deeper corridors echo with the moans of the undead. Blood raiders (orc-kind)
-// patrol in packs. Phase hounds blink through walls. Haunted blades drift
-// through the air. Dark priests and corrupt minstrels serve powers below.
-//
-// 70 creatures (indices 89–158)
-// =============================================================================
+    // =============================================================================
+    // Zone: Gothic (Levels 6–12) — Gothic horror
+    //
+    // Deeper corridors echo with the moans of the undead. Blood raiders (orc-kind)
+    // patrol in packs. Phase hounds blink through walls. Haunted blades drift
+    // through the air. Dark priests and corrupt minstrels serve powers below.
+    //
+    // 70 creatures (indices 89–158)
+    // =============================================================================
     // Level 6
     MonsterTemplate {
         area_effect_radius: 35,
@@ -2922,16 +2922,16 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-// =============================================================================
-// Zone: Demonic (Levels 13–20) — Demonic invasion
-//
-// The dungeon warps under infernal influence. Flesh renders (trolls) tear
-// through stone. Brutes and heretic mages command small armies. Shadowfang
-// beasts and gargoyles guard the deeper passages. Summoners call forth
-// reinforcements from the abyss.
-//
-// 74 creatures (indices 159–232)
-// =============================================================================
+    // =============================================================================
+    // Zone: Demonic (Levels 13–20) — Demonic invasion
+    //
+    // The dungeon warps under infernal influence. Flesh renders (trolls) tear
+    // through stone. Brutes and heretic mages command small armies. Shadowfang
+    // beasts and gargoyles guard the deeper passages. Summoners call forth
+    // reinforcements from the abyss.
+    //
+    // 74 creatures (indices 159–232)
+    // =============================================================================
     // Level 13
     MonsterTemplate {
         area_effect_radius: 8,
@@ -4272,16 +4272,16 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-// =============================================================================
-// Zone: Hellscape (Levels 21–30) — The burning deep
-//
-// Reality buckles. Young wyrms nest in caverns of acid and flame. Frost renders
-// and venom scorpions hunt in darkness. Abyssal devourers tunnel through solid
-// rock. The dead walk in greater numbers — render skeletons, raider mummies,
-// and grave wights haunt every shadow.
-//
-// 69 creatures (indices 233–301)
-// =============================================================================
+    // =============================================================================
+    // Zone: Hellscape (Levels 21–30) — The burning deep
+    //
+    // Reality buckles. Young wyrms nest in caverns of acid and flame. Frost renders
+    // and venom scorpions hunt in darkness. Abyssal devourers tunnel through solid
+    // rock. The dead walk in greater numbers — render skeletons, raider mummies,
+    // and grave wights haunt every shadow.
+    //
+    // 69 creatures (indices 233–301)
+    // =============================================================================
     // Level 21
     MonsterTemplate {
         area_effect_radius: 12,
@@ -5534,17 +5534,17 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: true,
         can_move: true,
     },
-// =============================================================================
-// Zone: Abyss (Levels 31–40) — Eldritch and cosmic horror
-//
-// The deepest reaches of the dungeon defy comprehension. Ancient wyrms of
-// every element lair here. The Eye of the Void gazes from impossible angles.
-// Lich Sovereigns command armies of the dead. Prismatic elder wyrms shimmer
-// with reality-bending power. Shadow hags and nether wraiths guard the path
-// to the final confrontation.
-//
-// 75 creatures (indices 302–376)
-// =============================================================================
+    // =============================================================================
+    // Zone: Abyss (Levels 31–40) — Eldritch and cosmic horror
+    //
+    // The deepest reaches of the dungeon defy comprehension. Ancient wyrms of
+    // every element lair here. The Eye of the Void gazes from impossible angles.
+    // Lich Sovereigns command armies of the dead. Prismatic elder wyrms shimmer
+    // with reality-bending power. Shadow hags and nether wraiths guard the path
+    // to the final confrontation.
+    //
+    // 75 creatures (indices 302–376)
+    // =============================================================================
     // Level 31
     MonsterTemplate {
         area_effect_radius: 20,
@@ -6905,16 +6905,16 @@ pub const MONSTER_TEMPLATES: &[MonsterTemplate] = &[
         multiplies: false,
         can_move: true,
     },
-// =============================================================================
-// Zone: Endgame (Levels 42–100) — Apex predators
-//
-// Only the most powerful beings survive at these depths. Drake sovereigns
-// command dragonkind. The Defiler schemes in the darkness. Ancient devourers
-// consume all in their path. And at the very bottom, the Balrog awaits —
-// the final challenge that determines the fate of the world.
-//
-// 15 creatures (indices 377–391)
-// =============================================================================
+    // =============================================================================
+    // Zone: Endgame (Levels 42–100) — Apex predators
+    //
+    // Only the most powerful beings survive at these depths. Drake sovereigns
+    // command dragonkind. The Defiler schemes in the darkness. Ancient devourers
+    // consume all in their path. And at the very bottom, the Balrog awaits —
+    // the final challenge that determines the fate of the world.
+    //
+    // 15 creatures (indices 377–391)
+    // =============================================================================
     // Level 42
     MonsterTemplate {
         area_effect_radius: 20,

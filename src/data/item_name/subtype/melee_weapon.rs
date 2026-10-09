@@ -205,7 +205,10 @@ mod tests {
             (Box::new(MaceTemplate::BallAndChain), "ball and chain (2d4)"),
             (Box::new(MaceTemplate::WoodenClub), "wooden club (1d3)"),
             (Box::new(MaceTemplate::Flail), "flail (2d6)"),
-            (Box::new(MaceTemplate::GreatFlail), "two-handed great flail (3d6)"),
+            (
+                Box::new(MaceTemplate::GreatFlail),
+                "two-handed great flail (3d6)",
+            ),
             (Box::new(MaceTemplate::MorningStar), "morningstar (2d6)"),
             (Box::new(MaceTemplate::Mace), "mace (2d4)"),
             (Box::new(MaceTemplate::WarHammer), "war hammer (3d3)"),

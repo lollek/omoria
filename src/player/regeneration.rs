@@ -57,58 +57,98 @@ mod tests {
     #[test]
     fn base_regeneration_when_full() {
         let amount = get_regeneration_amount(input(HungerStatus::Full, false, false));
-        assert!((amount - 0.003).abs() < 0.0001, "Expected 0.003, got {}", amount);
+        assert!(
+            (amount - 0.003).abs() < 0.0001,
+            "Expected 0.003, got {}",
+            amount
+        );
     }
 
     #[test]
     fn base_regeneration_when_hungry() {
         let amount = get_regeneration_amount(input(HungerStatus::Hungry, false, false));
-        assert!((amount - 0.003).abs() < 0.0001, "Expected 0.003, got {}", amount);
+        assert!(
+            (amount - 0.003).abs() < 0.0001,
+            "Expected 0.003, got {}",
+            amount
+        );
     }
 
     #[test]
     fn base_regeneration_when_bloated() {
         let amount = get_regeneration_amount(input(HungerStatus::Bloated, false, false));
-        assert!((amount - 0.003).abs() < 0.0001, "Expected 0.003, got {}", amount);
+        assert!(
+            (amount - 0.003).abs() < 0.0001,
+            "Expected 0.003, got {}",
+            amount
+        );
     }
 
     #[test]
     fn reduced_regeneration_when_weak() {
         let amount = get_regeneration_amount(input(HungerStatus::Weak, false, false));
-        assert!((amount - 0.0015).abs() < 0.0001, "Expected 0.0015, got {}", amount);
+        assert!(
+            (amount - 0.0015).abs() < 0.0001,
+            "Expected 0.0015, got {}",
+            amount
+        );
     }
 
     #[test]
     fn minimal_regeneration_when_dying() {
         let amount = get_regeneration_amount(input(HungerStatus::Dying, false, false));
-        assert!((amount - 0.0005).abs() < 0.0001, "Expected 0.0005, got {}", amount);
+        assert!(
+            (amount - 0.0005).abs() < 0.0001,
+            "Expected 0.0005, got {}",
+            amount
+        );
     }
 
     #[test]
     fn regeneration_ability_multiplies_by_1_5() {
         let amount = get_regeneration_amount(input(HungerStatus::Full, true, false));
         let expected = 0.003 * 1.5;
-        assert!((amount - expected).abs() < 0.0001, "Expected {}, got {}", expected, amount);
+        assert!(
+            (amount - expected).abs() < 0.0001,
+            "Expected {}, got {}",
+            expected,
+            amount
+        );
     }
 
     #[test]
     fn resting_doubles_regeneration() {
         let amount = get_regeneration_amount(input(HungerStatus::Full, false, true));
         let expected = 0.003 * 2.0;
-        assert!((amount - expected).abs() < 0.0001, "Expected {}, got {}", expected, amount);
+        assert!(
+            (amount - expected).abs() < 0.0001,
+            "Expected {}, got {}",
+            expected,
+            amount
+        );
     }
 
     #[test]
     fn regeneration_and_resting_stack_multiplicatively() {
         let amount = get_regeneration_amount(input(HungerStatus::Full, true, true));
         let expected = 0.003 * 1.5 * 2.0;
-        assert!((amount - expected).abs() < 0.0001, "Expected {}, got {}", expected, amount);
+        assert!(
+            (amount - expected).abs() < 0.0001,
+            "Expected {}, got {}",
+            expected,
+            amount
+        );
     }
 
     #[test]
     fn dying_with_regeneration_and_resting() {
         let amount = get_regeneration_amount(input(HungerStatus::Dying, true, true));
         let expected = 0.0005 * 1.5 * 2.0;
-        assert!((amount - expected).abs() < 0.0001, "Expected {}, got {}", expected, amount);
+        assert!(
+            (amount - expected).abs() < 0.0001,
+            "Expected {}, got {}",
+            expected,
+            amount
+        );
     }
 }

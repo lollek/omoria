@@ -75,6 +75,7 @@ pub fn test_clear_last_msg_print() {
 }
 
 /* Gets a string terminated by <RETURN>		*/
+#[allow(clippy::while_immutable_condition)] // C mutates this buffer; its pointer contract still needs an isolated test.
 pub fn get_string(row: i32, col: i32, slen: i32) -> String {
     let tmp_str: [u8; 134] = [0; 134];
 

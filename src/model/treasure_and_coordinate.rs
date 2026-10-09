@@ -21,6 +21,7 @@ mod tests {
             y: 0,
             x: 0,
         };
-        serde_json::to_string(&treasure_and_coordinate).expect("Failed to serialize TreasureAndCoordinate");
+        serde_json::to_string(&treasure_and_coordinate)
+            .expect("Failed to serialize TreasureAndCoordinate");
     }
 }

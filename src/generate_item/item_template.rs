@@ -156,7 +156,7 @@ pub trait ItemTemplate {
         item.tohit += 5;
         item.todam += 5;
         item.toac = randint(4) as i16;
-        item.p1 = randint(4) -1;
+        item.p1 = randint(4) - 1;
         item.cost += item.p1 * 50_000;
         item.cost += 1_000_000;
     }
@@ -200,7 +200,7 @@ pub trait ItemTemplate {
         item.apply_wornflag2(WornFlag2::SoulSword);
         item.tohit += 5;
         item.todam += 10;
-        item.p1 = -randint(3) -2;
+        item.p1 = -randint(3) - 2;
         item.cost += 800_000 + item.p1 * 40_000;
     }
 
@@ -300,7 +300,7 @@ pub(crate) fn create_melee_weapon(
                 _ => {
                     template.apply_random_tier1_weapon(&mut item);
                     template.apply_random_tier3_weapon(&mut item);
-                },
+                }
             }
         }
     }

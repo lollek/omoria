@@ -48,6 +48,10 @@ UI → Game Logic → Model
 - **UI** depends on game logic and model, handles I/O
 - **main** wires everything together
 
+These are design goals, not enforced dependency boundaries. Current Rust modules
+still use C globals, terminal I/O, and cross-domain calls; module layout alone does
+not guarantee isolation or a pure core.
+
 ## Module Overview
 
 ### Core Modules
@@ -224,12 +228,22 @@ Since we're mid-migration from C → Rust:
 
 ## RNG Pattern (Deterministic Testing)
 
-All game logic that uses randomness should follow this pattern:
+All game logic that uses randomness should follow this pattern. These snippets
+use the repository's `rand = "0.4"` API; `gen_range(low, high)` excludes `high`.
 
 ```rust
+use rand::Rng;
+
+struct Weapon {
+    min_damage: u32,
+    max_damage: u32,
+}
+
 // Injectable version (for testing)
 fn roll_damage_with_rng(rng: &mut impl Rng, weapon: &Weapon) -> u32 {
-    rng.gen_range(weapon.min_damage..=weapon.max_damage)
+    assert!(weapon.min_damage <= weapon.max_damage);
+    let high = weapon.max_damage.checked_add(1).expect("damage upper bound must fit");
+    rng.gen_range(weapon.min_damage, high)
 }
 
 // Convenience wrapper (for production)
@@ -240,9 +254,12 @@ fn roll_damage(weapon: &Weapon) -> u32 {
 
 Tests use a seeded RNG for deterministic results:
 ```rust
+use rand::SeedableRng;
+
 #[test]
 fn test_damage_is_in_range() {
-    let mut rng = StdRng::seed_from_u64(42);
+    let seed: &[usize] = &[42];
+    let mut rng = rand::StdRng::from_seed(seed);
     let weapon = Weapon { min_damage: 1, max_damage: 6 };
     let damage = roll_damage_with_rng(&mut rng, &weapon);
     assert!(damage >= 1 && damage <= 6);
@@ -256,4 +273,21 @@ This structure is the **target state**. Current code is a mix of:
 - Partially migrated Rust modules
 - Some modules already following the new structure
 
-See `CHANGELOG.md` for migration progress.
+### Current-to-Target Mapping
+
+| Current locations | Target domain | Migration boundary |
+|-------------------|---------------|--------------------|
+| `main_loop/`, `commands.rs`, `player_action/` | `game/`, domain actions | C loop and many actions remain |
+| `combat/fighting.rs`, `combat/ranged.c` | `combat/` | Hit calculation is Rust; ranged is C |
+| `generate_map/`, `dungeon/` | `dungeon/` | Trap data/placement are Rust; generation and activation still include C |
+| `generate_monster/`, `creature.c`, `monsters.c` | `creature/` | Rust templates coexist with C generation and AI |
+| `town_level/`, `stores.c`, `trade.c`, `blackmarket.c` | `town/` | Bank display helpers are Rust; operations remain C |
+| `equipment.rs`, `logic/use_item.rs`, `inventory/` | `inventory/` | Responsibilities are not consolidated yet |
+| `io.rs`, `term.rs`, `ncurses.rs`, `message.rs`, `user_interface/` | `ui/` | Rust and C UI coexist |
+| `pregame/`, `init/` | `pregame/`, `init/` | Rust menu/character creation coexist with C startup |
+| `rng/random.rs` | `rng/` | Injectable helpers already exist |
+| Domain `interop.rs`, root `*_extern.rs` | Domain bridges or optional `interop/` | Consolidation is optional, not current layout |
+
+See the [migration plan](c-to-rust-migration-plan.md) for authoritative status and
+the [changelog](../CHANGELOG.md) for recorded changes. The directory tree above
+is illustrative target design, not a list of existing files or completed ports.

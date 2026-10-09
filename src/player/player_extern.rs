@@ -2,9 +2,9 @@ use std::convert::TryInto;
 
 use libc;
 
+use crate::conversion;
 use crate::data;
 use crate::player;
-use crate::conversion;
 
 extern "C" {
     fn player_hunger_status() -> libc::c_int;
@@ -191,4 +191,3 @@ mod tests {
         );
     }
 }
-

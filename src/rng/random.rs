@@ -49,6 +49,7 @@ pub fn rand_rep_with_rng(rng: &mut impl Rng, num_rolls: i64, die_sides: i64) -> 
 /// Returns a normally distributed integer with mean `mean` and standard deviation `std_dev`.
 ///
 /// This is a direct port of the legacy implementation, but with RNG injection.
+#[allow(clippy::approx_constant)] // Exact legacy rounding depends on 6.283 rather than TAU.
 pub fn randnor_with_rng(rng: &mut impl Rng, mean: i64, std_dev: i64) -> i64 {
     // Match the legacy approach: two independent uniform draws in (0, 1).
     // NOTE: randint_with_rng(9_999_999) yields [1, 9_999_999], so division gives (0, 1).

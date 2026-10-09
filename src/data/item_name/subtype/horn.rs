@@ -7,7 +7,8 @@ use crate::model::item_subtype::{HornSubType, ItemSubType};
 use crate::model::{Item, ItemType};
 
 pub fn horn(item: &Item) -> String {
-    let Some(ItemSubType::Horn(horn_subtype)) = item_subtype::from_i64(ItemType::Horn, item.subval) else {
+    let Some(ItemSubType::Horn(horn_subtype)) = item_subtype::from_i64(ItemType::Horn, item.subval)
+    else {
         return "alien horn".to_string();
     };
 

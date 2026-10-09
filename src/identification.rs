@@ -1,10 +1,10 @@
 use crate::conversion;
 use crate::model::item_subtype::ItemSubType;
+use crate::model::ItemType;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::sync::RwLock;
-use crate::model::ItemType;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifiedSubTypes {
@@ -120,11 +120,14 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_get_set_identification() {
         let subtype = ItemSubType::Food(FoodSubType::RationOfFood);
+        set_identified(subtype, false);
         assert!(!is_identified(subtype));
         set_identified(subtype, true);
         assert!(is_identified(subtype));
+        set_identified(subtype, false);
     }
 
     #[test]
@@ -142,7 +145,13 @@ mod tests {
             serde_json::from_str(&serialized).expect("Failed to deserialize Identification");
 
         assert_eq!(deserialized, identification);
-        assert!(deserialized.inner.get(&subtype_true).expect("subtype_true not found"));
-        assert!(!deserialized.inner.get(&subtype_false).expect("subtype_false not found"));
+        assert!(deserialized
+            .inner
+            .get(&subtype_true)
+            .expect("subtype_true not found"));
+        assert!(!deserialized
+            .inner
+            .get(&subtype_false)
+            .expect("subtype_false not found"));
     }
 }

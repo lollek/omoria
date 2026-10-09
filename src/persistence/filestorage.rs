@@ -21,14 +21,16 @@ impl persistence::PersistenceEngine for FileStorageEngine {
             .truncate(false)
             .open(master_file_path())
             .map_err(|e| Error::from(format!("Failed to create masters file: {}", e).as_str()))?;
-        let file_bytes = file.seek(SeekFrom::End(0))
-            .map_err(|e| Error::from(format!("Failed to seek in masters file: {}", e.to_string())))?;
+        let file_bytes = file.seek(SeekFrom::End(0)).map_err(|e| {
+            Error::from(format!("Failed to seek in masters file: {}", e.to_string()))
+        })?;
 
         // Create empty masters file
         if file_bytes == 0 {
             let records = Vec::<MasterRecord>::new();
-            return file.write_all(&serde_json::to_string(&records).unwrap().into_bytes())
-                .map_err(|e| Error::from(format!("Failed to write file: {}", e).as_str()))
+            return file
+                .write_all(&serde_json::to_string(&records).unwrap().into_bytes())
+                .map_err(|e| Error::from(format!("Failed to write file: {}", e).as_str()));
         }
         Ok(())
     }

@@ -1,8 +1,8 @@
 use crate::conversion::item_subtype;
 use crate::data::item_name::helpers::{maybe_number_of, plural_s};
+use crate::model::item_subtype::{ItemSubType, LodgingAtInnSubType};
 use crate::model::Item;
 use crate::model::ItemType;
-use crate::model::item_subtype::{ItemSubType, LodgingAtInnSubType};
 
 pub mod ammo;
 pub mod amulet;
@@ -25,8 +25,8 @@ pub mod misc_object;
 pub mod misc_usable;
 pub mod potion;
 pub mod ranged_weapon;
-pub mod scroll;
 pub mod ring;
+pub mod scroll;
 pub mod shield;
 pub mod small_armor;
 pub mod spike;
@@ -37,7 +37,8 @@ pub mod wearable_gem;
 pub fn lodging_at_inn(item: &Item) -> String {
     let ItemSubType::LodgingAtInn(subtype) =
         item_subtype::from_i64(ItemType::LodgingAtInn, item.subval)
-            .unwrap_or_else(|| panic!("Invalid item subtype for LodgingAtInn: {:?}", item)) else {
+            .unwrap_or_else(|| panic!("Invalid item subtype for LodgingAtInn: {:?}", item))
+    else {
         panic!("Invalid item subtype for LodgingAtInn: {:?}", item)
     };
 
@@ -46,7 +47,8 @@ pub fn lodging_at_inn(item: &Item) -> String {
         LodgingAtInnSubType::LodgingForThreeDays => "three days of lodging",
         LodgingAtInnSubType::LodgingForOneWeek => "one week of lodging",
         LodgingAtInnSubType::RoomAndBoardForOneDay => "room and board for one day",
-    }.to_string()
+    }
+    .to_string()
 }
 
 pub fn money(item: &Item) -> String {

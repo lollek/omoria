@@ -1,5 +1,198 @@
 # Traps Migration Plan
 
+The [main migration plan](../c-to-rust-migration-plan.md) is the source of truth
+for status. This document records the trap-specific boundaries verified against
+[traps.c](../../src/traps.c), [traps.h](../../src/traps.h), and the current Rust
+modules on 2026-10-09. This is a **partial port**, not completed trap activation.
+
+## Current Status
+
+| Concern | Current implementation | Status |
+|---------|------------------------|--------|
+| Templates and rubble | [data.rs](../../src/dungeon/trap/data.rs) | Ported |
+| Placement into supplied tile/item lists | [placement.rs](../../src/dungeon/trap/placement.rs) | Ported |
+| Global placement, visibility, rubble | [globals.rs](../../src/dungeon/trap/globals.rs) | Ported |
+| C placement ABI | [interop.rs](../../src/dungeon/trap/interop.rs) | Ported |
+| Effect handlers (`ht__*`) | [traps.c](../../src/traps.c) | Pending |
+| Activation dispatcher (`hit_trap`) | [traps.c](../../src/traps.c) | Pending |
+| Chest activation (`trigger_trap`) | [traps.c](../../src/traps.c) | Pending |
+| Town/special-tile dispatch | Cases in C `hit_trap` | Pending |
+
+```text
+src/dungeon/trap/
+├── mod.rs           # Existing public API and re-exports
+├── data.rs          # TrapTemplate, TRAP_LIST, RUBBLE, constants
+├── placement.rs     # TrapList and place_trap_into_lists
+├── globals.rs       # Unsafe wrappers around dungeon globals
+├── interop.rs       # place_trap, change_trap, place_rubble C ABI
+├── data_tests.rs    # Template and placement tests
+└── test_support.rs  # Shared test helpers
+```
+
+`effect.rs`, `chest.rs`, and a separate town entrance module are possible future
+homes, not existing implementations. Their design must be reviewed before porting.
+
+## Completed Data and Placement
+
+The historical `trap_lista` / `trap_listb` data is represented by one
+`TRAP_LIST` of 20 `TrapTemplate` entries plus standalone `RUBBLE`.
+`TrapTemplate` stores `name`, `level`, `subval`, `damage`, and `cost`.
+Placement sets the item fields and clears the fields that are constant for traps.
+
+`TrapList::A` selects unseen traps and `TrapList::B` selects seen traps, except:
+
+- Subval 1 (open pit) is always `TVAL_SEEN_TRAP`.
+- Subval 19 (closed door) is always `TVAL_CLOSED_DOOR`.
+
+Placement subvals are **1-based**: `template_for` uses `subval - 1` to index the
+zero-based Rust slice. Valid template inputs are 1 through 20; zero and out-of-range
+inputs are not validated by the current placement API. Activation values such as
+99 and 101-123 are not indices into `TRAP_LIST`.
+
+Existing [data_tests.rs](../../src/dungeon/trap/data_tests.rs) covers template
+values, tval selection, item copying, and global placement/visibility behavior.
+It does not establish parity for unported activation.
+
+## ABI Contracts
+
+Keep these declarations from [traps.h](../../src/traps.h) unchanged during an
+activation port:
+
+```c
+void hit_trap(const long *y, const long *x);
+void trigger_trap(long y, long x);
+void place_trap(long y, long x, long typ, long subval);
+void change_trap(long y, long x);
+void place_rubble(long y, long x);
+```
+
+- `hit_trap` takes pointers to C `long`, not integer coordinates by value. A future
+  Rust export must preserve `*const libc::c_long` parameters and explicitly handle
+  pointer validity before dereferencing. It is still defined by C today.
+- `trigger_trap` takes only two coordinates. It reads chest flags from
+  `t_list[cave[y][x].tptr].flags`; there is no flags argument in its ABI.
+- Existing Rust placement exports use `libc::c_long` for every argument, not
+  `c_int`. `typ == 1` selects `TrapList::A`; other values select `TrapList::B`.
+- The current wrappers cast coordinates/subvals to `usize` and mutate C global
+  state through unsafe helpers. They do not validate negative coordinates or
+  invalid template indices. Do not describe them as checked safe interfaces.
+- Do not add duplicate Rust activation exports while C still defines those symbols.
+
+## Pending Activation: Preserve C Dispatch
+
+Before dispatch, C `hit_trap` stops active searching/resting, calls `change_trap`,
+refreshes the player's tile, clears `find_flag`, and rolls damage from the item's
+damage string. These side effects are part of the behavior to characterize.
+
+### Dungeon and Special Traps
+
+| Subval | Current C handler |
+|--------|-------------------|
+| 1 | `ht__open_pit` |
+| 2 | `ht__arrow` |
+| 3 | `ht__covered_pit` |
+| 4 | `ht__trap_door` |
+| 5 | `ht__sleep_gas` |
+| 6 | `ht__hidden_object` |
+| 7 | `ht__str_dart` |
+| 8 | `ht__teleport` |
+| 9 | `ht__rockfall` |
+| 10 | `ht__corrode_gas` |
+| 11 | `ht__summon_monster` |
+| 12 | `ht__fire` |
+| 13 | `ht__acid` |
+| 14 | `ht__poison_gas` |
+| 15 | `ht__blind_gas` |
+| 16 | `ht__confuse_gas` |
+| 17 | `ht__slow_dart` |
+| 18 | `ht__con_dart` |
+| 19 | `ht__secret_door` (empty handler; visibility handled earlier) |
+| 20 | `ht__chute` |
+| 99 | `ht__scare_monster` (empty handler for player activation) |
+| 123 | `ht__whirlpool` |
+
+For covered pits, C replaces the trap with `place_trap(y, x, 2, 1)` **only in the
+non-feather-fall branch**, after damage. Do not move replacement outside that branch
+or change the list argument while claiming behavior parity.
+
+### Town and Special Tiles
+
+| Subval | Current C behavior |
+|--------|--------------------|
+| 101 | General store |
+| 102 | Armory |
+| 103 | Weaponsmith |
+| 104 | Temple |
+| 105 | Alchemy shop |
+| 106 | Magic shop |
+| 107 | Inn |
+| 108 | Check trading-post hours, then `enter_trading_post` |
+| 109 | Library |
+| 110 | Music shop |
+| 111 | Insurance shop closed: message only |
+| 112 | Check bank hours, then `enter_bank` |
+| 113 | Gem shop |
+| 114 | Check money-changer hours, then redirect-to-bank message |
+| 115 | Check casino hours, then `enter_casino` |
+| 116 | Deli |
+| 117 | `enter_fortress` |
+| 118 | Black market |
+| 119 | No explicit case; falls through to unknown-value message |
+| 120, 121, 122 | `enter_house(*y, *x)` |
+| 123 | Whirlpool, not a store entrance |
+
+Ordinary shops above use `check_store_hours_and_enter`; special entrances have
+distinct paths. Do not replace all 101-123 values with one generic store operation.
+Unknown values print `You got lucky: unknown trap value.`
+
+### Chest Traps
+
+C `trigger_trap` reads the flags once and checks each bit independently, in order:
+
+| Flag | Current behavior |
+|------|------------------|
+| `0x10` | Strength-loss needle; damage if stat loss succeeds |
+| `0x20` | Poison needle damage and poisoned duration |
+| `0x40` | Paralysis gas, with free-action protection |
+| `0x80` | Delete chest and apply explosion damage |
+| `0x100` | Three summon attempts, selecting water/land by terrain |
+
+These are separate `if` branches, not an exclusive match. Preserve ordering and
+combined-flag behavior, including summons after an explosion.
+
+## Remaining Migration Order and Tests
+
+1. Characterize one C effect at a time with deterministic tests before porting.
+2. Introduce injectable RNG and explicit state/message dependencies for that effect.
+3. Characterize special-tile dispatch, including hours, closed insurance, houses,
+   missing case 119, and whirlpool behavior before extracting town logic.
+4. Port chest activation with combined flags, free action, terrain, and deletion tests.
+5. Port the dispatcher only after its prerequisites and pre-dispatch side effects
+   are covered; preserve the pointer-based C ABI and verify callers at the boundary.
+6. Remove replaced C definitions only after Rust behavior and full linking are verified.
+
+## Migration Checklist
+
+### Phase 2.1: Data and Placement
+
+- [x] Unified `TRAP_LIST`, `TrapTemplate`, and `RUBBLE`
+- [x] `TrapList`, tval selection, and `place_trap_into_lists`
+- [x] `place_trap_global`, `change_trap_global`, and `place_rubble_global`
+- [x] C ABI placement wrappers using `c_long`
+- [x] Data and placement tests
+
+### Later: Activation and Town Dispatch
+
+- [ ] Effect handlers, one behavior at a time
+- [ ] Town/special-tile dispatch and hours behavior
+- [ ] Chest activation and combined flags
+- [ ] `hit_trap` dispatcher and pre-dispatch state changes
+- [ ] Activation C ABI wrappers and integration tests
+- [ ] Remove replaced C code and update build inputs as needed
+- [ ] Full tests/link verification and changelog update for the actual port
+
+Data/placement completion must not be used to mark these activation tasks complete.# Traps Migration Plan
+
 This document details the migration of `src/traps.c` (590 lines) to Rust.
 
 ## Overview

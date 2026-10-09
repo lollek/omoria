@@ -48,17 +48,21 @@ pub fn wand(item: &Item) -> String {
 
 #[cfg(test)]
 mod tests {
-    use serial_test::serial;
     use crate::data::item_name::generate;
     use crate::generate_item::template::WandTemplate;
+    use crate::generate_item::ItemQuality;
     use crate::model::item_subtype::{ItemSubType, WandSubType};
     use crate::{generate_item, identification};
-    use crate::generate_item::ItemQuality;
+    use serial_test::serial;
 
     #[test]
     #[serial]
     fn test_wand_unidentified() {
-        let mut item = generate_item::generate(Box::new(WandTemplate::WandOfCloneMonster), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(WandTemplate::WandOfCloneMonster),
+            0,
+            ItemQuality::Normal,
+        );
 
         identification::set_identified(ItemSubType::Wand(WandSubType::WandOfCloneMonster), false);
         item.set_identified(false);
@@ -68,7 +72,11 @@ mod tests {
     #[test]
     #[serial]
     fn test_wand_type_identified() {
-        let mut item = generate_item::generate(Box::new(WandTemplate::WandOfCloneMonster), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(WandTemplate::WandOfCloneMonster),
+            0,
+            ItemQuality::Normal,
+        );
 
         identification::set_identified(ItemSubType::Wand(WandSubType::WandOfCloneMonster), true);
         item.set_identified(false);
@@ -78,7 +86,11 @@ mod tests {
     #[test]
     #[serial]
     fn test_wand_identified() {
-        let mut item = generate_item::generate(Box::new(WandTemplate::WandOfCloneMonster), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(WandTemplate::WandOfCloneMonster),
+            0,
+            ItemQuality::Normal,
+        );
 
         identification::set_identified(ItemSubType::Wand(WandSubType::WandOfCloneMonster), true);
         item.set_identified(true);

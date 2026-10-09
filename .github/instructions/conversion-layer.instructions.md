@@ -9,7 +9,9 @@ The `src/conversion/` module provides bidirectional mappings between C integer c
 
 ## Pattern
 
-Each conversion module provides two functions:
+Prefer `From` for infallible conversions and `TryFrom` for fallible conversions, following `item_type.rs` and `currency.rs`. Preserve existing caller APIs unless the task explicitly includes their migration.
+
+Legacy conversion modules provide two functions:
 
 ```rust
 use crate::model;
@@ -32,7 +34,7 @@ pub fn to_usize(value: model::MyType) -> usize {
 
 ## Rules
 
-- Return `Option` from `from_*` functions — C code may pass invalid values.
+- Return `Option` from legacy `from_*` functions, or `Result` from `TryFrom` — C code may pass invalid values.
 - The `to_*` direction is infallible (every Rust variant has a C value).
 - Keep match arms exhaustive — no wildcard `_` in `to_*` functions (compiler catches missing variants).
 - Use `usize` as the C-side type unless the domain uses something else (e.g., `i64` for signed values).

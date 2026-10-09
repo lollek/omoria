@@ -44,36 +44,12 @@ pub fn init_curses() {
     STDSCR.replace(Some(window));
 
     pancurses::start_color();
-    pancurses::init_pair(
-        COLOR_RED,
-        COLOR_RED,
-        COLOR_BLACK,
-    );
-    pancurses::init_pair(
-        COLOR_GREEN,
-        COLOR_GREEN,
-        COLOR_BLACK,
-    );
-    pancurses::init_pair(
-        COLOR_YELLOW,
-        COLOR_YELLOW,
-        COLOR_BLACK,
-    );
-    pancurses::init_pair(
-        COLOR_BLUE,
-        COLOR_BLUE,
-        COLOR_BLACK,
-    );
-    pancurses::init_pair(
-        COLOR_MAGENTA,
-        COLOR_MAGENTA,
-        COLOR_BLACK,
-    );
-    pancurses::init_pair(
-        COLOR_CYAN,
-        COLOR_CYAN,
-        COLOR_BLACK,
-    );
+    pancurses::init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
+    pancurses::init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
+    pancurses::init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
+    pancurses::init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+    pancurses::init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
+    pancurses::init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
 
     pancurses::cbreak();
     pancurses::noecho();
@@ -93,11 +69,21 @@ where
     S: AsRef<str>,
 {
     if row >= MAX_Y || col >= MAX_X {
-        panic!("Attempting to print out of bounds! row: {}, col: {}, msg: {}", row, col, msg.as_ref());
+        panic!(
+            "Attempting to print out of bounds! row: {}, col: {}, msg: {}",
+            row,
+            col,
+            msg.as_ref()
+        );
     }
     with_stdscr(|stdscr| {
         if stdscr.mvaddstr(row, col, msg.as_ref()) != 0 {
-            panic!("mvaddstr returned ERR, row: {}, col: {}, msg: {}", row, col, msg.as_ref());
+            panic!(
+                "mvaddstr returned ERR, row: {}, col: {}, msg: {}",
+                row,
+                col,
+                msg.as_ref()
+            );
         }
     });
 }
@@ -112,7 +98,10 @@ pub fn clrtoeol() {
 
 pub fn mov(row: i32, col: i32) {
     if row >= MAX_Y || col >= MAX_X {
-        panic!("Attempting to mov out of bounds! row: {}, col: {}", row, col);
+        panic!(
+            "Attempting to mov out of bounds! row: {}, col: {}",
+            row, col
+        );
     }
     with_stdscr(|stdscr| {
         if stdscr.mv(row, col) != 0 {

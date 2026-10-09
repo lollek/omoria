@@ -35,12 +35,16 @@ pub fn light_source(item: &Item) -> String {
 mod tests {
     use crate::data::item_name::generate;
     use crate::generate_item;
-    use crate::generate_item::ItemQuality;
     use crate::generate_item::template::LightSourceTemplate;
+    use crate::generate_item::ItemQuality;
 
     #[test]
     fn test_light_source_wooden_torch() {
-        let mut item = generate_item::generate(Box::new(LightSourceTemplate::WoodenTorch), 0, ItemQuality::Normal);
+        let mut item = generate_item::generate(
+            Box::new(LightSourceTemplate::WoodenTorch),
+            0,
+            ItemQuality::Normal,
+        );
         item.p1 = 4000;
         assert_eq!(generate(&item), "wooden torch with 4000 turns of light");
 
@@ -53,18 +57,19 @@ mod tests {
         let mut item = generate_item::generate(
             Box::new(LightSourceTemplate::BrassLantern),
             0,
-            ItemQuality::Normal
+            ItemQuality::Normal,
         );
         item.p1 = 7500;
-        assert_eq!(
-            generate(&item),
-            "brass lantern with 7500 turns of light"
-        );
+        assert_eq!(generate(&item), "brass lantern with 7500 turns of light");
     }
 
     #[test]
     fn test_light_source_magic_torch() {
-        let mut magic_torch = generate_item::generate(Box::new(LightSourceTemplate::MagicTorch), 0, ItemQuality::Normal);
+        let mut magic_torch = generate_item::generate(
+            Box::new(LightSourceTemplate::MagicTorch),
+            0,
+            ItemQuality::Normal,
+        );
         magic_torch.set_identified(true);
         magic_torch.p1 = 9000;
         assert_eq!(
@@ -81,8 +86,11 @@ mod tests {
 
     #[test]
     fn test_light_source_magic_lantern() {
-        let mut magic_lantern =
-            generate_item::generate(Box::new(LightSourceTemplate::MagicLantern), 0, ItemQuality::Normal);
+        let mut magic_lantern = generate_item::generate(
+            Box::new(LightSourceTemplate::MagicLantern),
+            0,
+            ItemQuality::Normal,
+        );
         magic_lantern.set_identified(true);
         magic_lantern.p1 = 20000;
         assert_eq!(

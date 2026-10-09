@@ -17,7 +17,7 @@ Guided workflow for porting C code to idiomatic Rust in the omoria roguelike, fo
 ## Reference documents
 
 - [Migration plan](./references/migration-plan-summary.md) — phases, priorities, and what's already done
-- [Completed port example](./references/trap-port-example.md) — how `traps.c` was ported
+- [Partial port example](./references/trap-port-example.md) — completed trap data and placement, with activation still in C
 
 ## Procedure
 
@@ -58,7 +58,7 @@ Follow existing module organization (domain-vertical slicing):
 2. Write `#[cfg(test)]` tests that describe each behavior.
 3. If the function uses RNG, test the `_with_rng` variant with seeded `StdRng`.
 4. Add stubs so it compiles but fails.
-5. **Stop — ask for navigator review.**
+5. Run the focused test and record its expected failure; proceed to GREEN.
 
 ### Step 4: GREEN — minimal implementation
 
@@ -66,7 +66,7 @@ Follow existing module organization (domain-vertical slicing):
 2. Use idiomatic Rust (enums, `Option`, pattern matching) but preserve semantics.
 3. If C code calls this function, add an `extern "C"` wrapper in `interop.rs`.
 4. Make all tests pass.
-5. **Stop — ask for navigator review.**
+5. Run the focused tests successfully; proceed to REFACTOR.
 
 ### Step 5: REFACTOR — cleanup
 
@@ -74,14 +74,16 @@ Follow existing module organization (domain-vertical slicing):
 2. Extract shared patterns (e.g., template structs for static data).
 3. Reduce duplication between similar functions.
 4. All tests must stay green.
-5. **Stop — ask for navigator review.**
+5. Rerun focused tests and proceed within the approved scope.
 
 ### Step 6: Finalize
 
-1. `cargo test --lib` — all tests pass.
+1. `make check` — formatting, Clippy, all Rust tests, and the C/Rust build pass.
 2. No new compiler warnings.
 3. Update `CHANGELOG.md` under `## Unreleased`.
 4. If the C function is now fully replaced, note which C code can be removed (but don't delete it without navigator approval).
+5. Update the main migration plan and its summary, distinguishing partial ports from completed behavior.
+6. Report RED evidence, final gate results, and boundaries that were not tested.
 
 ## Key patterns to follow
 

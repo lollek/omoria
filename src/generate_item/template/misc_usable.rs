@@ -1,8 +1,15 @@
+use super::super::item_template::ItemTemplate;
 use crate::generate_item::item_template::{default_create, ItemQuality};
 use crate::misc::rs2item_name;
-use super::super::item_template::ItemTemplate;
-use crate::model::{self, item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType}, Item};
-use crate::model::MiscUsableFlag1::{ContainingDemons, ContainingDjinni, DemonDispelling, LifeGiving, MajorSummonDemon, MajorSummonUndead, SummonDemon, SummonUndead, Turning};
+use crate::model::MiscUsableFlag1::{
+    ContainingDemons, ContainingDjinni, DemonDispelling, LifeGiving, MajorSummonDemon,
+    MajorSummonUndead, SummonDemon, SummonUndead, Turning,
+};
+use crate::model::{
+    self,
+    item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType},
+    Item,
+};
 use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -104,30 +111,24 @@ impl ItemTemplate for MiscUsableTemplate {
         let mut item = default_create(self, item_quality);
         if item_quality == ItemQuality::Special {
             match self {
-                MiscUsableTemplate::Statue => {
-                    match randint(3) {
-                        1 => self.apply_statue_of_summon_undead(&mut item),
-                        2 => self.apply_statue_of_summon_demon(&mut item),
-                        _ => self.apply_statue_of_give_life(&mut item),
-                    }
+                MiscUsableTemplate::Statue => match randint(3) {
+                    1 => self.apply_statue_of_summon_undead(&mut item),
+                    2 => self.apply_statue_of_summon_demon(&mut item),
+                    _ => self.apply_statue_of_give_life(&mut item),
                 },
-                MiscUsableTemplate::SilverCross |
-                MiscUsableTemplate::GoldCross |
-                MiscUsableTemplate::MithrilCross |
-                MiscUsableTemplate::Cross => {
-                    match randint(4) {
-                        1 => self.apply_cross_of_turning(&mut item),
-                        2 => self.apply_cross_of_demon_dispelling(&mut item),
-                        3 => self.apply_cross_of_summon_undead(&mut item),
-                        _ => self.apply_cross_of_summon_demon(&mut item),
-                    }
+                MiscUsableTemplate::SilverCross
+                | MiscUsableTemplate::GoldCross
+                | MiscUsableTemplate::MithrilCross
+                | MiscUsableTemplate::Cross => match randint(4) {
+                    1 => self.apply_cross_of_turning(&mut item),
+                    2 => self.apply_cross_of_demon_dispelling(&mut item),
+                    3 => self.apply_cross_of_summon_undead(&mut item),
+                    _ => self.apply_cross_of_summon_demon(&mut item),
                 },
-                MiscUsableTemplate::CorkedBottle => {
-                    match randint(3) {
-                        1 | 2 => self.apply_bottle_of_demons(&mut item),
-                        _ => self.apply_bottle_of_djinni(&mut item),
-                    }
-                }
+                MiscUsableTemplate::CorkedBottle => match randint(3) {
+                    1 | 2 => self.apply_bottle_of_demons(&mut item),
+                    _ => self.apply_bottle_of_djinni(&mut item),
+                },
                 _ => {}
             }
         }

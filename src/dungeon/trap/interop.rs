@@ -6,7 +6,12 @@
 use crate::dungeon::trap::{change_trap_global, place_rubble_global, place_trap_global, TrapList};
 
 #[no_mangle]
-pub extern "C" fn place_trap(y: libc::c_long, x: libc::c_long, typ: libc::c_long, subval: libc::c_long) {
+pub extern "C" fn place_trap(
+    y: libc::c_long,
+    x: libc::c_long,
+    typ: libc::c_long,
+    subval: libc::c_long,
+) {
     let list = if typ == 1 { TrapList::A } else { TrapList::B };
     // Mirrors the C behavior: this mutates global dungeon state.
     unsafe {

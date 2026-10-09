@@ -44,4 +44,7 @@ pub extern "C" fn c_function_name(arg: libc::c_long) -> libc::c_long {
 ## Safety
 
 - Minimize `unsafe` blocks. Prefer safe Rust in the domain module.
-- When `unsafe` is required (e.g., global state mutation), keep it in the interop layer and document why.
+- Match the actual C header exactly: integer widths, pointer arguments, constness, and return types.
+- Document pointer validity and lifetime requirements; null checks alone do not establish validity.
+- When `unsafe` is required, isolate it at the boundary. Existing trap code keeps global access in `globals.rs` and thin delegation in `interop.rs`; reuse that pattern.
+- Existing monster string accessors use `LazyLock` caches. Reuse the owning module's established storage rather than replacing it with `lazy_static!`.

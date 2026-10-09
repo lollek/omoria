@@ -7,7 +7,7 @@
 
 ## Pair programming contract (driver/navigator)
 - You (Copilot) act as the **driver**: implement exactly what the navigator asks for.
-- The human is the **navigator**: they decide scope, review each phase, and approve moving forward.
+- The human is the **navigator**: they decide scope and review completed changes.
 - Work in **small increments**:
   - Prefer a single focused behavior per change.
   - If a request seems large (touches many files / subsystems), propose a breakdown into smaller steps before coding.
@@ -20,19 +20,19 @@ Default to **red-green-refactor**.
 - It’s OK to add minimal scaffolding/stubs needed to compile, but **do not implement the real logic** yet.
 - Keep the test tight: one behavior, clear assertion, deterministic.
 - **RED means tests + scaffolding only. Do not implement production logic in this phase.**
-- **Stop after RED** and ask the navigator to review before proceeding to GREEN.
+- Run the focused test and record its expected failure before proceeding to GREEN.
 
 ### GREEN phase rules (minimal implementation)
 - Implement the **smallest** change that makes the test pass.
 - Avoid refactoring/cleanup in GREEN unless it’s required to make the change.
 - **GREEN means “make it pass”, not “make it nice”. Do not refactor except what’s required for correctness.**
-- **Stop after GREEN** and ask the navigator to review before proceeding to REFACTOR.
+- Run the focused test successfully before proceeding to REFACTOR.
 
 ### REFACTOR phase rules (cleanup with tests green)
 - Improve structure, naming, duplication, safety, and readability.
 - Keep behavior identical (tests must stay green).
 - **REFACTOR means cleanup only. Do not add new behavior; only restructure.**
-- **Stop after REFACTOR** and ask the navigator to review before starting a new behavior.
+- Rerun the focused test and `make check`; continue within the approved scope without phase approval stops.
 
 ## Testing requirements (non-negotiable)
 - **All new production code must be tested**.
@@ -48,14 +48,24 @@ Default to **red-green-refactor**.
 A change is considered done only when all of these are true:
 - **Tests:** All new/changed production code has tests.
   - Prefer Rust unit tests unless impossible or it makes the code unnecessarily complex.
-- **Green:** The full test suite runs green locally (at least `cargo test`).
+- **Green:** `make check` passes: formatting, Clippy, all Rust tests, and the mixed C/Rust build.
 - **Warnings:** Don’t introduce new compiler warnings in Rust or C.
   - The repo may already have known warnings; **do not add new warnings attributable to your change**.
   - If new warnings appear in build output due to your change, fix them in the same change (or don’t proceed).
 - **Clarity:** If the logic is tricky/non-obvious, add a short comment explaining *why* (not restating *what*).
-- **Changelog:** Update `CHANGELOG.md` with a short, player-facing bullet describing the change.
+- **Changelog:** Update `CHANGELOG.md` with a short bullet describing the change.
   - Add it under **Unreleased**.
   - Keep wording simple and avoid internal/implementation details.
+  - Prefix non-player-facing infrastructure or migration changes with `Internal:`.
+
+## Delegated task contract
+- State the single behavior, acceptance tests, allowed files, and excluded scope before delegation.
+- Delegate independent file ownership; do not let agents edit the same files concurrently.
+- Complete RED, GREEN, and REFACTOR without review stops unless scope or requirements change.
+- Return the focused test command and expected RED failure, the GREEN result, and the final `make check` result.
+- Report modified files, new warnings, and an explicit list of unverified boundaries (C callers, persistence, terminal UI).
+- Pure Rust tests and a successful link do not prove end-to-end gameplay. Do not claim headless or C-caller coverage unless those tests actually ran.
+- Docs/configuration-only changes need relevant structural checks, not artificial failing gameplay tests.
 
 ## RNG / testing pattern (deterministic by default)
 Roguelike code uses randomness heavily; tests must stay deterministic.
@@ -72,16 +82,16 @@ This keeps production code simple while making unit tests deterministic.
 Guidelines:
 - **Do not call** `rand::random()` or `rand::thread_rng()` directly inside logic that you want to unit test.
   - Instead, pass an RNG into that logic.
-- Prefer the standard trait bound: `&mut impl rand::Rng` (or `rand::RngCore` if you only need bytes).
+- Prefer the standard trait bound: `&mut impl rand::Rng`; the project uses rand 0.4, not the modern `RngCore` API.
 - Keep RNG usage near the edges (generation steps, roll functions), not scattered through domain logic.
 
 Testing approach:
-- In tests, use a deterministic RNG (e.g., `rand::rngs::StdRng` seeded with `SeedableRng`).
+- In tests, use `rand::{SeedableRng, StdRng}` and `StdRng::from_seed(&[1, 2, 3, 4][..])` (rand 0.4).
 - Prefer asserting **invariants** (ranges, ordering, distribution constraints, etc.) over exact sequences.
 - If exact sequences matter, lock the seed and assert only a small, stable set of outputs.
 
 Interoperability with existing code:
-- The repo currently has `src/random.rs` helpers (e.g., `randint`, `randnor`).
+- The repo currently has `src/rng/random.rs` helpers (e.g., `randint`, `randnor`).
 - Legacy Rust code may call `rand::random()` / `rand::thread_rng()` directly.
   - When touching those areas, prefer migrating to the `_with_rng` + wrapper pattern incrementally.
 - When porting/rewriting small parts, prefer adding *_with_rng variants (e.g. `randint_with_rng(rng, max)`)
@@ -110,11 +120,12 @@ Interoperability with existing code:
 
 ## Quality gates
 - After changes, run the relevant checks when available:
-  - Rust: `cargo test` (and `cargo fmt` if formatting changes are needed).
-  - C: use the repo’s build steps (e.g., Makefile targets) if relevant to the change.
+  - Focused tests after each substantive edit.
+  - `make check` before completion; use `make clean && make check` when validating a clean C build.
+  - Existing Clippy warnings remain visible; do not add new ones or broaden lint allowances.
 - Don’t leave the workspace in a broken build/test state unless the navigator explicitly asks.
 
 ## Communication expectations
 - Always state which phase you are in: **RED**, **GREEN**, or **REFACTOR**.
-- After completing a phase, stop and ask for navigator review.
+- Report phase evidence and continue through the approved scope; stop only for blockers or scope decisions.
 - If repo conventions are unclear, search the codebase and follow existing patterns.

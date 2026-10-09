@@ -17,6 +17,7 @@ pub extern "C" fn prt(msg: *const libc::c_char, row: i32, col: i32) {
 }
 
 #[no_mangle]
+#[allow(clippy::not_unsafe_ptr_arg_deref)] // Keep the legacy Rust signature until caller contracts are tested.
 pub extern "C" fn prt_(msg: *const libc::c_char, row: i32, col: i32) {
     if msg.is_null() {
         panic!("Null string received");
@@ -32,6 +33,7 @@ pub extern "C" fn put_buffer(msg: *const libc::c_char, row: i32, col: i32) {
 }
 
 #[no_mangle]
+#[allow(clippy::not_unsafe_ptr_arg_deref)] // Keep the legacy Rust signature until caller contracts are tested.
 pub extern "C" fn put_buffer_(msg: *const libc::c_char, row: i32, col: i32) {
     if msg.is_null() {
         panic!("Null string received");

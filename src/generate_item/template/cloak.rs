@@ -1,7 +1,11 @@
+use super::super::item_template::ItemTemplate;
 use crate::generate_item::item_template::default_create;
 use crate::generate_item::ItemQuality;
-use super::super::item_template::ItemTemplate;
-use crate::model::{self, item_subtype::{CloakSubType, ItemSubType}, Item, WornFlag1};
+use crate::model::{
+    self,
+    item_subtype::{CloakSubType, ItemSubType},
+    Item, WornFlag1,
+};
 use crate::rng::randint;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -35,7 +39,8 @@ impl ItemTemplate for CloakTemplate {
         match item_quality {
             ItemQuality::Cursed => {
                 match randint(3) {
-                    1 => { // of Irritation
+                    1 => {
+                        // of Irritation
                         item.set_cursed(true);
                         item.apply_wornflag1(WornFlag1::AggravateMonsters);
                         item.ac = 0;
@@ -43,18 +48,20 @@ impl ItemTemplate for CloakTemplate {
                         item.tohit = -randint(1) as i16;
                         item.todam = -randint(1) as i16;
                         item.cost = 0;
-                    },
-                    2 => {  // of Vulnerability
+                    }
+                    2 => {
+                        // of Vulnerability
                         item.set_cursed(true);
                         item.ac = 0;
                         item.toac = -randint(10) as i16;
                         item.cost = 0;
-                    },
-                    3|_ => { // of Enveloping
+                    }
+                    3 | _ => {
+                        // of Enveloping
                         item.set_cursed(true);
                         item.toac = -randint(1) as i16;
-                        item.tohit = -1 -randint(3) as i16;
-                        item.todam = -1 -randint(3) as i16;
+                        item.tohit = -1 - randint(3) as i16;
+                        item.todam = -1 - randint(3) as i16;
                         item.cost = 0;
                     }
                 }
@@ -65,17 +72,20 @@ impl ItemTemplate for CloakTemplate {
             }
             ItemQuality::Special => {
                 match randint(9) {
-                    1..=4 => { // of Protection
+                    1..=4 => {
+                        // of Protection
                         item.toac += 1 + randint(3) as i16;
                         item.cost += 25_000 + item.toac as i64 * 10_000;
-                    },
-                    5..=8 => { // of Stealth
+                    }
+                    5..=8 => {
+                        // of Stealth
                         item.apply_wornflag1(WornFlag1::Stealth);
                         item.toac += 1 + randint(1) as i16;
                         item.p1 = randint(3);
                         item.cost += item.p1 * 50_000 + item.toac as i64 * 10_000
-                    },
-                    9|_ => { // of Elvenkind
+                    }
+                    9 | _ => {
+                        // of Elvenkind
                         item.apply_wornflag1(WornFlag1::GivesCharisma);
                         item.apply_wornflag1(WornFlag1::ResistStatDrain);
                         item.apply_wornflag1(WornFlag1::SeeInvisible);

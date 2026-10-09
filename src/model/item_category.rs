@@ -8,4 +8,3 @@ pub enum ItemCategory {
     Usable,       // FlaskOfOil, SlingAmmo, Bolt, Arrow, Spike, Bag, LightSource, MiscUsable
     Weapon,       // RangedWeapon, HafterWeapon, PoleArm, Dagger, Sword, Pick, Maul
 }
-

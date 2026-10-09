@@ -1,3 +1,13 @@
+STATUS: Historical reference, preserved as written below. Legacy filenames,
+types, and rules may no longer describe the current game. Current sources:
+
+Item naming: [src/data/item_name.rs](../../src/data/item_name.rs)
+Item templates: [src/generate_item/item_template.rs](../../src/generate_item/item_template.rs)
+Template definitions: [src/generate_item/template](../../src/generate_item/template)
+Item model: [src/model/item.rs](../../src/model/item.rs)
+C/Rust conversions: [src/conversion/item_type.rs](../../src/conversion/item_type.rs)
+Subtype conversions: [src/conversion/item_subtype.rs](../../src/conversion/item_subtype.rs)
+
 			  the wizard's guide to items:
       (everything you wanted to know about items but were afraid to ask)
 
