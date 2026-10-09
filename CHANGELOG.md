@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+* Character selection skips malformed save filenames and logs unreadable save folders instead of panicking while listing saves.
+* Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
 * Serialization failures no longer truncate existing character saves or the master list.
 * Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
 * Internal: Link the Linux build against wide-character ncurses.

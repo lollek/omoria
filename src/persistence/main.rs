@@ -3,14 +3,83 @@ use std::sync::RwLock;
 
 use crate::master::MasterRecord;
 use crate::persistence::FileStorageEngine;
+use crate::save::SaveRecord;
 
-pub trait PersistenceEngine
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) struct SaveKey {
+    pub name: String,
+    pub uid: i64,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum CharacterStorageError {
+    NotFound,
+    Io(String),
+    Codec(String),
+}
+
+impl std::fmt::Display for CharacterStorageError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::NotFound => formatter.write_str("Character save not found"),
+            Self::Io(message) | Self::Codec(message) => formatter.write_str(message),
+        }
+    }
+}
+
+impl From<&'static str> for CharacterStorageError {
+    fn from(message: &'static str) -> Self {
+        Self::Io(message.into())
+    }
+}
+
+pub(crate) trait PersistenceEngine
 where
     Self: Sync + Send,
 {
     fn init_masters(&mut self) -> Result<(), Error>;
     fn load_masters(&mut self) -> Result<Vec<MasterRecord>, Error>;
     fn save_master(&mut self, record: MasterRecord, allow_new: bool) -> Result<(), Error>;
+    fn load_save(&mut self, name: &str, uid: i64) -> Result<SaveRecord, CharacterStorageError>;
+    fn write_save(
+        &mut self,
+        name: &str,
+        uid: i64,
+        record: &SaveRecord,
+    ) -> Result<(), CharacterStorageError>;
+    fn delete_save(&mut self, name: &str, uid: i64) -> Result<(), CharacterStorageError>;
+    fn list_saves(&mut self) -> Result<Vec<SaveKey>, CharacterStorageError>;
+}
+
+pub(crate) fn load_save_with_engine(
+    engine: &mut dyn PersistenceEngine,
+    name: &str,
+    uid: i64,
+) -> Result<SaveRecord, CharacterStorageError> {
+    engine.load_save(name, uid)
+}
+
+pub(crate) fn write_save_with_engine(
+    engine: &mut dyn PersistenceEngine,
+    name: &str,
+    uid: i64,
+    record: &SaveRecord,
+) -> Result<(), CharacterStorageError> {
+    engine.write_save(name, uid, record)
+}
+
+pub(crate) fn delete_save_with_engine(
+    engine: &mut dyn PersistenceEngine,
+    name: &str,
+    uid: i64,
+) -> Result<(), CharacterStorageError> {
+    engine.delete_save(name, uid)
+}
+
+pub(crate) fn list_saves_with_engine(
+    engine: &mut dyn PersistenceEngine,
+) -> Result<Vec<SaveKey>, CharacterStorageError> {
+    engine.list_saves()
 }
 
 pub(super) fn upsert_master(
@@ -53,16 +122,36 @@ lazy_static! {
     static ref ENGINE: RwLock<Option<Box<dyn PersistenceEngine>>> = RwLock::new(Some(Box::new(FileStorageEngine)));
 }
 
-pub(crate) fn with_engine<T>(
-    fun: impl FnOnce(&mut dyn PersistenceEngine) -> Result<T, Error>,
-) -> Result<T, Error> {
+pub(crate) fn with_engine<T, E: From<&'static str>>(
+    fun: impl FnOnce(&mut dyn PersistenceEngine) -> Result<T, E>,
+) -> Result<T, E> {
     let mut lock = ENGINE
         .try_write()
-        .map_err(|_| "Error in persistence engine")?;
+        .map_err(|_| E::from("Error in persistence engine"))?;
     let engine = lock
         .as_deref_mut()
-        .ok_or("No persistence engine assigned!")?;
+        .ok_or_else(|| E::from("No persistence engine assigned!"))?;
     fun(engine)
+}
+
+pub(crate) fn load_save(name: &str, uid: i64) -> Result<SaveRecord, CharacterStorageError> {
+    with_engine(|engine| load_save_with_engine(engine, name, uid))
+}
+
+pub(crate) fn write_save(
+    name: &str,
+    uid: i64,
+    record: &SaveRecord,
+) -> Result<(), CharacterStorageError> {
+    with_engine(|engine| write_save_with_engine(engine, name, uid, record))
+}
+
+pub(crate) fn delete_save(name: &str, uid: i64) -> Result<(), CharacterStorageError> {
+    with_engine(|engine| delete_save_with_engine(engine, name, uid))
+}
+
+pub(crate) fn list_saves() -> Result<Vec<SaveKey>, CharacterStorageError> {
+    with_engine(list_saves_with_engine)
 }
 
 /**
@@ -92,6 +181,35 @@ pub fn save_master(record: MasterRecord, allow_new: bool) -> Result<(), Error> {
 mod tests {
     use super::*;
     use crate::persistence::memory::{engine_with_records, record, InMemoryEngine};
+
+    #[test]
+    fn character_engine_access_errors_are_io_errors() {
+        for message in [
+            "Error in persistence engine",
+            "No persistence engine assigned!",
+        ] {
+            assert_eq!(
+                CharacterStorageError::from(message),
+                CharacterStorageError::Io(message.into())
+            );
+        }
+    }
+
+    #[test]
+    fn character_storage_errors_display_their_diagnostics() {
+        assert_eq!(
+            CharacterStorageError::NotFound.to_string(),
+            "Character save not found"
+        );
+        assert_eq!(
+            CharacterStorageError::Io("denied".into()).to_string(),
+            "denied"
+        );
+        assert_eq!(
+            CharacterStorageError::Codec("invalid JSON".into()).to_string(),
+            "invalid JSON"
+        );
+    }
 
     #[test]
     fn upsert_replaces_existing_uid_without_reordering_other_records() {
