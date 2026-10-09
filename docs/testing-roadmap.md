@@ -333,7 +333,7 @@ in `main.rs`, stop and present options. That file is not owned by this card.
 
 ### UI1. Character Menu Empty-List Navigation (L0)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: [menu.rs](../src/pregame/menu.rs) and
 [the bug note](bugs/character-menu-empty-list.md).

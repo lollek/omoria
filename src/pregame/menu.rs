@@ -40,7 +40,7 @@ fn main_menu() -> Option<Character> {
     let mut retval = None;
 
     loop {
-        menu::draw_menu(
+        menu::draw_menu_with_selection(
             "Select your adventurer",
             &char_names,
             "j=down, k=up, enter=select, n=new",
@@ -49,13 +49,13 @@ fn main_menu() -> Option<Character> {
 
         match io::inkey_flush() as char {
             'k' => index = if index == 0 { 0 } else { index - 1 },
-            'j' => index = min(characters.len() as u8 - 1, index + 1),
+            'j' => index = move_selection_down(index, characters.len()),
             'n' | 'N' => break,
             '\r' => {
                 if characters.is_empty() {
                     continue;
                 }
-                retval = Some(characters[index as usize].to_owned());
+                retval = Some(characters[index].to_owned());
                 break;
             }
             _ => {}
@@ -64,6 +64,14 @@ fn main_menu() -> Option<Character> {
 
     term::clear_screen();
     retval
+}
+
+fn move_selection_down(index: usize, length: usize) -> usize {
+    if length == 0 {
+        0
+    } else {
+        min(index.saturating_add(1), length - 1)
+    }
 }
 
 fn print_banner() {
@@ -150,6 +158,31 @@ fn characters_from_saves(
 mod tests {
     use super::*;
     use crate::persistence::{list_saves_with_engine, memory::InMemoryEngine};
+
+    #[test]
+    fn moving_down_in_an_empty_character_list_keeps_selection_at_zero() {
+        assert_eq!(move_selection_down(0, 0), 0);
+    }
+
+    #[test]
+    fn moving_down_in_a_single_character_list_keeps_selection_at_zero() {
+        assert_eq!(move_selection_down(0, 1), 0);
+    }
+
+    #[test]
+    fn moving_down_from_the_first_character_advances_selection() {
+        assert_eq!(move_selection_down(0, 3), 1);
+    }
+
+    #[test]
+    fn moving_down_from_the_last_character_keeps_selection_at_the_last_entry() {
+        assert_eq!(move_selection_down(2, 3), 2);
+    }
+
+    #[test]
+    fn moving_down_in_a_list_larger_than_255_entries_does_not_truncate() {
+        assert_eq!(move_selection_down(255, 300), 256);
+    }
 
     #[test]
     fn character_menu_list_error_logs_and_returns_empty_list() {
