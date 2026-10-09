@@ -134,6 +134,22 @@ pub(crate) fn with_engine<T, E: From<&'static str>>(
     fun(engine)
 }
 
+#[cfg(feature = "save-test-support")]
+pub(crate) fn replace_engine_for_test(
+    engine: Box<dyn PersistenceEngine>,
+) -> Result<(), &'static str> {
+    let mut lock = ENGINE
+        .try_write()
+        .map_err(|_| "Error in persistence engine")?;
+    *lock = Some(engine);
+    Ok(())
+}
+
+#[cfg(feature = "save-test-support")]
+pub(crate) fn restore_file_engine_for_test() -> Result<(), &'static str> {
+    replace_engine_for_test(Box::new(FileStorageEngine))
+}
+
 pub(crate) fn load_save(name: &str, uid: i64) -> Result<SaveRecord, CharacterStorageError> {
     with_engine(|engine| load_save_with_engine(engine, name, uid))
 }
