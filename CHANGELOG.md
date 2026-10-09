@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported lamp refilling to Rust with headless inventory and message checks.
 * Internal: Ported light-source toggling to Rust with headless checks for flags, messages, and dungeon lighting.
 * Internal: Ported stair movement to Rust, keeping the C entry points.
 * Internal: Reused the shared C-style text helper for door-closing monster names.

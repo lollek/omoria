@@ -151,11 +151,19 @@ Out of scope: porting `dungeon/light.c`.
 
 ### PA5. Refill Lamp (fan-out)
 
-Status: open. Depends on: none.
+Status: implemented. Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
-Owns: [refill_lamp.c](../../../src/player_action/refill_lamp.c), a new Rust
-module, registration line.
+Implemented in [refill_lamp.rs](../../../src/player_action/refill_lamp.rs),
+with a registration line in `player_action.rs`. The C implementation was
+deleted; the no-argument `player_action_refill_lamp` symbol is unchanged.
+Rust tests cover fuel addition and capping, refusal messages, and callback
+ordering. Repeated L1 checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) cover real
+inventory lookup, stacked and final-flask consumption, inventory weight,
+remaining-count messages, contained-oil exclusion, and redraw delivery.
+Command-loop refill dispatch, refill-specific save restoration, and real
+terminal rendering remain unverified.
 
 Behavior: no prompt. Finds a flask with `inventory_find_range`, caps lamp fuel,
 destroys the flask with `inven_destroy`, and reports the remaining count.
