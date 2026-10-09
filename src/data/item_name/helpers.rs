@@ -1,5 +1,5 @@
 use crate::helper;
-use crate::misc::item_name2rs;
+use crate::misc::c_string_lossy;
 use crate::model::Item;
 use std::borrow::Cow;
 
@@ -101,7 +101,7 @@ pub fn maybe_p1_bonus<'a>(item: &Item) -> Option<Cow<'a, str>> {
 
 pub fn maybe_special_attribute(item: &'_ Item) -> Option<Cow<'_, str>> {
     if item.is_identified() {
-        let item_name = item_name2rs(&item.name);
+        let item_name = c_string_lossy(&item.name);
         let suffixes = [
             "R", "RA", "RF", "RC", "RL", "FT", "FB", "WB", "BB", "SM", "SD", "SU", "SR", "HA",
             "DF", "DB", "SS", "V",
@@ -122,4 +122,52 @@ pub(crate) fn p1_bonus<'a>(item: &Item) -> Cow<'a, str> {
 
 pub(crate) fn toac_bonus<'a>(item: &Item) -> Cow<'a, str> {
     Cow::from(format!(" [{}]", helper::format_signed(item.toac)))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn identified_item(bytes: &[u8]) -> Item {
+        let mut item = Item {
+            name: [0; 70],
+            identified: 1,
+            ..Item::default()
+        };
+        for (target, byte) in item.name.iter_mut().zip(bytes) {
+            *target = *byte as libc::c_char;
+        }
+        item
+    }
+
+    #[test]
+    fn special_attribute_finds_ascii_suffix() {
+        let item = identified_item(b"a sword (RF)");
+        assert_eq!(maybe_special_attribute(&item).as_deref(), Some(" (RF)"));
+    }
+
+    #[test]
+    fn special_attribute_finds_suffix_after_utf8_bytes() {
+        let item = identified_item(b"a \xc3\xa9 sword (RF)");
+        assert_eq!(maybe_special_attribute(&item).as_deref(), Some(" (RF)"));
+    }
+
+    #[test]
+    fn special_attribute_finds_suffix_after_invalid_utf8() {
+        let item = identified_item(b"a \xff sword (RF)");
+        assert_eq!(maybe_special_attribute(&item).as_deref(), Some(" (RF)"));
+    }
+
+    #[test]
+    fn special_attribute_ignores_suffix_after_nul() {
+        let item = identified_item(b"a sword\0 (RF)");
+        assert_eq!(maybe_special_attribute(&item), None);
+    }
+
+    #[test]
+    fn special_attribute_ignores_unidentified_items() {
+        let mut item = identified_item(b"a sword (RF)");
+        item.identified = 0;
+        assert_eq!(maybe_special_attribute(&item), None);
+    }
 }
