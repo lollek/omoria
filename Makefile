@@ -1,7 +1,11 @@
 CC =		gcc
 
 CFLAGS =	-Wall -Wextra -Wno-format -Wno-incompatible-pointer-types -Werror=implicit-function-declaration -std=gnu99 -g3 -DDO_DEBUG=1 -MMD -MP
+ifeq ($(shell uname -s),Linux)
+LDFLAGS =	-lncursesw -lm -lpthread -ldl
+else
 LDFLAGS =	-lncurses -ltermcap -lm -lpthread -ldl
+endif
 
 READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
 WRITEFILES = data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
