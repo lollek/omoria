@@ -252,7 +252,7 @@ Out of scope: upgrading rand, migrating callers, `time()` calls.
 
 ### HT1. Headless C Terminal Doubles (L1)
 
-Status: open. Depends on: SEAM1.
+Status: done. Support: [tests/support](../tests/support/README.md); verified by `make test-messages`. Depends on: SEAM1.
 
 Owns: `tests/support/` (new), [tests/message_ffi.c](../tests/message_ffi.c),
 and the `test-messages` recipe in the `Makefile`.

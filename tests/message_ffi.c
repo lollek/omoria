@@ -6,43 +6,11 @@
 #include "../src/io.h"
 #include "../src/messages.h"
 #include "../src/variables.h"
+#include "support/terminal.h"
 
 bool msg_print_pass_one(char *message);
 
-static bool allow_terminal = false;
-static size_t input_calls = 0;
-static size_t drawing_calls = 0;
-static size_t erasure_calls = 0;
-
-char message_test_inkey(void) {
-  if (!allow_terminal) {
-    fputs("Unexpected interactive message input\n", stderr);
-    abort();
-  }
-  input_calls++;
-  return 27;
-}
-
-void message_test_put_buffer(const char *message, int row, int col) {
-  (void)message;
-  (void)row;
-  (void)col;
-  if (!allow_terminal) {
-    fputs("Unexpected message drawing\n", stderr);
-    abort();
-  }
-  drawing_calls++;
-}
-
-void message_test_erase_line(long row, long col) {
-  (void)row;
-  (void)col;
-  if (!allow_terminal) {
-    fputs("Unexpected message erasure\n", stderr);
-    abort();
-  }
-  erasure_calls++;
-}
+void assert_headless_terminal(void);
 
 static void assert_message(size_t index, const char *expected) {
   char buffer[256];
@@ -119,19 +87,20 @@ static void assert_last_drop_restores_interactive_path(void) {
   assert(!message_capture_active());
   msg_flag = false;
   msg_terse = false;
-  input_calls = 0;
-  drawing_calls = 0;
-  erasure_calls = 0;
-  allow_terminal = true;
+  headless_terminal_reset();
+  headless_terminal_allow_drawing(true);
+  headless_terminal_script("\033\033", 2);
   assert(!msg_print("First interactive"));
   assert(msg_print("Second interactive"));
   assert(msg_print_pass_one("Pass one interactive"));
-  assert(input_calls == 2 && drawing_calls == 5 && erasure_calls == 3);
+  const struct headless_terminal_counts counts = headless_terminal_counts();
+  assert(counts.input == 2 && counts.drawing == 5 && counts.erasure == 3);
   assert(msg_flag && strcmp(last_printed_message, "Pass one interactive") == 0);
-  allow_terminal = false;
+  headless_terminal_reset();
 }
 
 int main(void) {
+  assert_headless_terminal();
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_captured_messages_skip_terminal();
     assert_nested_captures_restore_outer();

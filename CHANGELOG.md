@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Added reusable headless terminal doubles with scripted input and fail-fast prompt checks.
 * Empty character lists no longer crash when moving the selection down.
 * Internal: Added a tested successful-move state transition.
 * Internal: Save records can be applied to globals and verified through C/Rust boundary checks.
