@@ -22,3 +22,6 @@ serial_test = "3.2.0"
 name = "omoria"
 crate-type = ["staticlib"]
 path = "src/lib.rs"
+
+[features]
+save-test-support = []
