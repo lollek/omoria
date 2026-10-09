@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+* Serialization failures no longer truncate existing character saves or the master list.
+* Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
 * Internal: Link the Linux build against wide-character ncurses.
 * Internal: Added scoped message-stream capture and tests without changing message history retention.
 * Internal: Added save-file compatibility tests using a sanitized save fixture.
