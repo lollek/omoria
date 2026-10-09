@@ -93,6 +93,7 @@ void player_action_drop(void);
  *
  */
 void player_action_close(void);
+void C_player_action_close_target(long y, long x);
 
 /**
  * @brief Toggles active light source on or off

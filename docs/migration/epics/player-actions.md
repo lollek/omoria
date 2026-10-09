@@ -62,8 +62,18 @@ Out of scope: refactoring existing trap or movement accessors.
 
 ### PA2. Close Door (pathfinder: F-DIR-EDGE)
 
-Status: open. Depends on: PA1.
+Status: implemented. Depends on: PA1.
 Size: S. Complexity: Low. Agent: strong.
+
+Implemented in [close.rs](../../../src/player_action/close.rs) and
+[door.rs](../../../src/dungeon/door.rs), using the PA1 bounded cell access.
+The C entry point retains only the direction prompt and delegates its target
+through a thin Rust interop wrapper. Rust tests cover transitions, refusal
+messages, redraw ordering, and invalid targets. Repeated L1 checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) exercise the
+production C/Rust target boundary, item replacement, cave state, messages,
+and redraw delivery. Interactive prompting and real terminal rendering
+remain unverified.
 
 Owns: [close.c](../../../src/player_action/close.c), a new Rust close module,
 a new shared door module (for example `src/dungeon/door.rs`), and

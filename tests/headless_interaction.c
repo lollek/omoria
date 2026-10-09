@@ -11,6 +11,7 @@
 #include "../src/messages.h"
 #include "../src/misc.h"
 #include "../src/player.h"
+#include "../src/player_action.h"
 #include "../src/random.h"
 #include "../src/screen.h"
 #include "../src/variables.h"
@@ -180,10 +181,92 @@ static void assert_ration_pickup_scenario(void) {
   end_pickup_scenario();
 }
 
+static void assert_same_item(const treasure_type *actual,
+                             const treasure_type *expected) {
+  assert(memcmp(actual->name, expected->name, sizeof(actual->name)) == 0);
+  assert(actual->tval == expected->tval);
+  assert(actual->flags2 == expected->flags2);
+  assert(actual->flags == expected->flags);
+  assert(actual->p1 == expected->p1);
+  assert(actual->cost == expected->cost);
+  assert(actual->subval == expected->subval);
+  assert(actual->weight == expected->weight);
+  assert(actual->number == expected->number);
+  assert(actual->tohit == expected->tohit);
+  assert(actual->todam == expected->todam);
+  assert(actual->ac == expected->ac);
+  assert(actual->toac == expected->toac);
+  assert(memcmp(actual->damage, expected->damage, sizeof(actual->damage)) == 0);
+  assert(actual->level == expected->level);
+  assert(actual->identified == expected->identified);
+}
+
+static void assert_close_target_scenario(uint8_t tval, long broken,
+                                        uint8_t monster, bool empty,
+                                        const char *expected_message) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  const long slot = ration_slot;
+  t_list[slot] = door_list[0];
+  strcpy(t_list[slot].name, "old door");
+  t_list[slot].tval = tval;
+  t_list[slot].p1 = broken;
+  t_list[slot].flags2 = 7;
+  t_list[slot].flags = 9;
+  t_list[slot].cost = 11;
+  t_list[slot].subval = 13;
+  t_list[slot].weight = 15;
+  t_list[slot].number = 17;
+  t_list[slot].tohit = -2;
+  t_list[slot].todam = -3;
+  t_list[slot].ac = 4;
+  t_list[slot].toac = 5;
+  strcpy(t_list[slot].damage, "2d3");
+  t_list[slot].level = 6;
+  t_list[slot].identified = true;
+  cave[row][col].cptr = monster;
+  cave[row][col].fm = true;
+  cave[row][col].tptr = empty ? 0 : slot;
+  memset(&m_list[2], 0, sizeof(m_list[2]));
+
+  cave_type expected_cell = cave[row][col];
+  const treasure_type original_item = t_list[slot];
+  const size_t drawing_before = headless_terminal_counts().drawing;
+  C_player_action_close_target(row, col);
+
+  if (expected_message == NULL) {
+    expected_cell.fopen = false;
+    assert_same_item(&t_list[slot], &door_list[1]);
+    assert(C_message_capture_count() == 0);
+    assert(headless_terminal_counts().drawing > drawing_before);
+  } else {
+    assert_same_item(&t_list[slot], &original_item);
+    assert(C_message_capture_count() == 1);
+    char message[120];
+    assert(C_message_capture_get(0, message, sizeof(message)));
+    assert(strcmp(message, expected_message) == 0);
+    assert(headless_terminal_counts().drawing == drawing_before);
+  }
+  assert(memcmp(&cave[row][col], &expected_cell, sizeof(expected_cell)) == 0);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(10);
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_ration_pickup_scenario();
+    assert_close_target_scenario(open_door, 0, 0, false, NULL);
+    assert_close_target_scenario(open_door, 1, 2, false, "It is in your way!");
+    assert_close_target_scenario(open_door, 1, 0, false,
+                                "The door appears to be broken.");
+    assert_close_target_scenario(open_door, -1, 0, false,
+                                "The door appears to be broken.");
+    assert_close_target_scenario(closed_door, 0, 2, false,
+                                "I do not see anything you can close there.");
+    assert_close_target_scenario(open_door, 0, 0, true,
+                                "I do not see anything you can close there.");
   }
   alarm(0);
   puts("Headless interaction checks passed.");

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported door closing to Rust while keeping the direction prompt in C.
 * Internal: Ported searching to Rust with deterministic checks and bounded dungeon-cell access.
 * Internal: Verify repeatable headless movement, interaction, and save/reload scenarios in the check gate.
 * Internal: Added fixture-backed headless ration pickup checks covering position, inventory, and the pickup message.
