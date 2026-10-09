@@ -30,6 +30,8 @@ make test-headless-persistence
 This checks formatting, Rust linting and tests, and the full C/Rust build and
 link, plus terminal-free C checks for movement, messages, save-record apply,
 bounded main-loop control, scripted movement, ration pickup, and save/reload.
+The interaction harness also verifies close-door targets through the production
+C/Rust boundary with isolated globals, captured messages, and headless drawing.
 Clippy does not build the `save-test-support` feature, so the test-support
 functions behind it are not linted. The clean gate passes locally on macOS.
 CI runner results remain unverified. Existing Clippy warnings are
@@ -93,7 +95,7 @@ substitute for a behavioral assertion.
   ([main_loop.h](../src/main_loop/main_loop.h)) runs the main loop with an
   injected command source and a turn limit. `make test-headless` covers loop
   control and movement ([headless_turn.c](../tests/headless_turn.c)),
-  `make test-headless-interaction` a ration pickup
+  `make test-headless-interaction` a ration pickup and L1 close-door targets
   ([headless_interaction.c](../tests/headless_interaction.c)), and
   `make test-headless-persistence` save/reload through the in-memory engine
   ([headless_persistence.c](../tests/headless_persistence.c)). Each runs twice

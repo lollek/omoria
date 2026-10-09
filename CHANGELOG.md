@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported door closing to Rust while keeping the direction prompt in C.
 * Internal: Added reusable C-style text helpers to simplify searching.
 * Internal: Ported searching to Rust with deterministic checks and bounded dungeon-cell access.
 * Internal: Verify repeatable headless movement, interaction, and save/reload scenarios in the check gate.
