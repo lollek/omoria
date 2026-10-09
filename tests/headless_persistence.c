@@ -36,6 +36,14 @@ struct inventory_snapshot {
   bool is_in;
 };
 
+struct scenario_result {
+  long row;
+  long col;
+  int16_t hp;
+  long inventory_count;
+  struct inventory_snapshot *inventory;
+};
+
 static bool next_command(void *context, char *key) {
   struct command_script *script = context;
   assert(game_state == GS_GET_COMMAND);
@@ -65,6 +73,21 @@ static void assert_item_data_equal(const treasure_type *actual,
   assert(memcmp(actual->damage, expected->damage, sizeof(actual->damage)) == 0);
   assert(actual->level == expected->level);
   assert(actual->identified == expected->identified);
+}
+
+static void assert_scenario_results_equal(const struct scenario_result *actual,
+                                          const struct scenario_result *expected) {
+  assert(actual->row == expected->row);
+  assert(actual->col == expected->col);
+  assert(actual->hp == expected->hp);
+  assert(actual->inventory_count == expected->inventory_count);
+  for (size_t i = 0; i < (size_t)actual->inventory_count; i++) {
+    assert_item_data_equal(&actual->inventory[i].data,
+                           &expected->inventory[i].data);
+    assert(actual->inventory[i].ok == expected->inventory[i].ok);
+    assert(actual->inventory[i].insides == expected->inventory[i].insides);
+    assert(actual->inventory[i].is_in == expected->inventory[i].is_in);
+  }
 }
 
 static void begin_scenario(void) {
@@ -126,7 +149,7 @@ static void begin_scenario(void) {
   game_state = GS_IGNORE_CTRL_C;
 }
 
-static void assert_move_save_reload(void) {
+static void assert_move_save_reload(struct scenario_result *result) {
   begin_scenario();
 
   struct command_script script = {"l", 1, 0, 0};
@@ -181,7 +204,11 @@ static void assert_move_save_reload(void) {
     item = item->next;
   }
   assert(item == NULL);
-  free(saved_inventory);
+  result->row = saved_row;
+  result->col = saved_col;
+  result->hp = saved_hp;
+  result->inventory_count = saved_inventory_count;
+  result->inventory = saved_inventory;
   assert(headless_terminal_counts().input == 0);
   assert(C_save_test_memory_end());
 
@@ -193,8 +220,13 @@ static void assert_move_save_reload(void) {
 
 int main(void) {
   alarm(10);
-  assert_move_save_reload();
-  assert_move_save_reload();
+  struct scenario_result first;
+  struct scenario_result second;
+  assert_move_save_reload(&first);
+  assert_move_save_reload(&second);
+  assert_scenario_results_equal(&second, &first);
+  free(first.inventory);
+  free(second.inventory);
   alarm(0);
   puts("Headless save/reload C checks passed.");
   return 0;
