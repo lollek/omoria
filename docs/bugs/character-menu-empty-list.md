@@ -1,6 +1,6 @@
 # Character Menu Crashes On Down With No Saves
 
-Status: open. Identified by code inspection; terminal reproduction has not been run.
+Status: fixed in code; terminal reproduction has not been run.
 
 In [the character menu](../../src/pregame/menu.rs), pressing `j` computes
 `characters.len() as u8 - 1`. With no characters, subtraction underflows:
@@ -14,9 +14,9 @@ This is a pre-existing navigation bug, not fixed by persistence injection.
 To reproduce: open character selection with no selectable saves, then press `j`.
 Do not remove personal saves to reproduce it; use isolated test storage.
 
-A bounded follow-up should extract selection movement into pure logic and test
-empty, single-entry, first-entry, and last-entry lists before changing the menu.
-Down on an empty list must leave the index at zero. Also cover lists larger than
-255 entries: the current `u8` length/index conversion can truncate them.
+Selection movement is extracted into `next_index` and `previous_index` in
+[the character menu](../../src/pregame/menu.rs) and tested for empty,
+single-entry, first and last entries, and lists larger than 255 entries.
+Down on an empty list leaves the index at zero.
 
 No end-to-end terminal coverage is claimed.

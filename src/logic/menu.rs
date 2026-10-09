@@ -27,7 +27,7 @@ where
     ncurses::mvaddstr(row, 0, msg);
 }
 
-pub fn draw_menu<S1, S2>(title: S1, items: &[&str], commands: S2, selected: u8)
+pub fn draw_menu<S1, S2>(title: S1, items: &[&str], commands: S2, selected: usize)
 where
     S1: AsRef<str>,
     S2: AsRef<str>,
@@ -57,7 +57,7 @@ where
 
     // Items
     for (index, item) in items.as_ref().iter().enumerate() {
-        let reverse = selected == index as u8;
+        let reverse = selected == index;
         if reverse {
             ncurses::attron(ncurses::A_REVERSE);
         }

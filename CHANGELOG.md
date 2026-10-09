@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Fix character selection panicking when pressing down with no saves.
 * Character selection skips malformed save filenames and logs unreadable save folders instead of panicking while listing saves.
 * Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
 * Walking beyond the map edge no longer gives monsters a turn and stops running.

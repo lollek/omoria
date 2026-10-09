@@ -82,17 +82,17 @@ fn choose_class() -> Class {
         );
         match io::inkey_flush() as char {
             'k' => index = if index == 0 { 0 } else { index - 1 },
-            'j' => index = min(classes.len() as u8 - 1, index + 1),
+            'j' => index = min(classes.len() - 1, index + 1),
             '\r' => {
-                return classes[index as usize];
+                return classes[index];
             }
             '?' => menu::draw_help(
-                data::class::name(&classes[index as usize]),
-                data::class::info(&classes[index as usize]),
+                data::class::name(&classes[index]),
+                data::class::info(&classes[index]),
             ),
             'r' => menu::draw_help(
-                data::class::name(&classes[index as usize]),
-                data::class::restriction_info(&classes[index as usize]),
+                data::class::name(&classes[index]),
+                data::class::restriction_info(&classes[index]),
             ),
             _ => {}
         }
@@ -138,29 +138,27 @@ fn choose_race() -> Race {
 
         match io::inkey_flush() as char {
             'k' => index = if index == 0 { 0 } else { index - 1 },
-            'j' => index = min(races.len() as u8 - 1, index + 1),
+            'j' => index = min(races.len() - 1, index + 1),
             '\r' => {
-                return conversion::race::from_usize(index as usize).unwrap();
+                return conversion::race::from_usize(index).unwrap();
             }
             '?' => menu::draw_help(
-                races[index as usize],
-                data::race::info(&conversion::race::from_usize(index as usize).unwrap()),
+                races[index],
+                data::race::info(&conversion::race::from_usize(index).unwrap()),
             ),
             's' => menu::draw_help_vec(
-                races[index as usize],
-                &stats_info(&conversion::race::from_usize(index as usize).unwrap())
+                races[index],
+                &stats_info(&conversion::race::from_usize(index).unwrap())
                     .iter()
                     .map(|it| it.as_ref())
                     .collect::<Vec<&str>>(),
             ),
             'c' => menu::draw_help_vec(
-                races[index as usize],
-                &data::race::available_classes(
-                    &conversion::race::from_usize(index as usize).unwrap(),
-                )
-                .iter()
-                .map(data::class::name)
-                .collect::<Vec<&str>>(),
+                races[index],
+                &data::race::available_classes(&conversion::race::from_usize(index).unwrap())
+                    .iter()
+                    .map(data::class::name)
+                    .collect::<Vec<&str>>(),
             ),
             _ => {}
         }

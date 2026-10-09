@@ -48,14 +48,14 @@ fn main_menu() -> Option<Character> {
         );
 
         match io::inkey_flush() as char {
-            'k' => index = if index == 0 { 0 } else { index - 1 },
-            'j' => index = min(characters.len() as u8 - 1, index + 1),
+            'k' => index = previous_index(index),
+            'j' => index = next_index(index, characters.len()),
             'n' | 'N' => break,
             '\r' => {
                 if characters.is_empty() {
                     continue;
                 }
-                retval = Some(characters[index as usize].to_owned());
+                retval = Some(characters[index].to_owned());
                 break;
             }
             _ => {}
@@ -146,6 +146,17 @@ fn characters_from_saves(
     }
 }
 
+fn next_index(index: usize, len: usize) -> usize {
+    if len == 0 {
+        return 0;
+    }
+    min(index + 1, len - 1)
+}
+
+fn previous_index(index: usize) -> usize {
+    index.saturating_sub(1)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -188,5 +199,45 @@ mod tests {
         assert_eq!(characters[0].uid, -42);
         assert!(messages.is_empty());
         assert_eq!(engine.character_calls, vec![("list", None)]);
+    }
+
+    #[test]
+    fn character_menu_down_on_empty_list_keeps_index_zero() {
+        assert_eq!(next_index(0, 0), 0);
+    }
+
+    #[test]
+    fn character_menu_down_on_single_entry_keeps_index_zero() {
+        assert_eq!(next_index(0, 1), 0);
+    }
+
+    #[test]
+    fn character_menu_down_moves_to_next_entry() {
+        assert_eq!(next_index(0, 3), 1);
+    }
+
+    #[test]
+    fn character_menu_down_stops_at_last_entry() {
+        assert_eq!(next_index(2, 3), 2);
+    }
+
+    #[test]
+    fn character_menu_up_stops_at_first_entry() {
+        assert_eq!(previous_index(0), 0);
+    }
+
+    #[test]
+    fn character_menu_up_moves_to_previous_entry() {
+        assert_eq!(previous_index(2), 1);
+    }
+
+    #[test]
+    fn character_menu_down_moves_past_index_255_in_large_list() {
+        assert_eq!(next_index(255, 300), 256);
+    }
+
+    #[test]
+    fn character_menu_down_stops_at_last_entry_in_large_list() {
+        assert_eq!(next_index(299, 300), 299);
     }
 }
