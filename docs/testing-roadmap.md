@@ -116,6 +116,7 @@ graph LR
   SEAM1 --> HT1
   SEAM1 --> HL1
   HT1 --> HL1
+  HT1 --> MV2
   RNG1 --> HL1
   HL1 --> HL2
   PS1 --> HL2
@@ -132,9 +133,9 @@ graph LR
 
 | Wave | Cards that can run concurrently |
 | --- | --- |
-| 1 | SEAM1, RNG1, PS1, PS2, PS3, MV1, MV2, UI1 |
+| 1 | SEAM1, RNG1, PS1, PS2, PS3, MV1, UI1 |
 | 2 | HT1 |
-| 3 | HL1 |
+| 3 | HL1, MV2 |
 | 4 | HL2 |
 | 5 | HL3, HL4 |
 | 6 | HL5 |
@@ -171,7 +172,7 @@ Out of scope: wiring the transition into the C adapter (production keeps
 
 ### MV2. C Caller: Successful Open-Floor Move (L1)
 
-Status: open. Depends on: none.
+Status: blocked on HT1. Depends on: HT1.
 
 Owns: [tests/movement_ffi.c](../tests/movement_ffi.c) and the `test-movement`
 recipe in the `Makefile`.
@@ -187,10 +188,16 @@ Acceptance checks:
 * The setup avoids incidental side effects and documents why. For example,
   `player_flags.blind >= 1` skips the `randint(player_fos())` search roll and
   room lighting in [move.c](../src/player_action/move.c), and a target cell with
-  no item skips `carry`.
+  no item skips `carry`. Blind does not skip `dungeon_light_move`, which prints
+  in every branch (see Blocker).
 
-If the success path needs curses (panel or light drawing) to run, stop and
-report the exact calls. Terminal doubles belong to HT1.
+Blocker: `dungeon_light_move` runs on every successful move
+([move.c](../src/player_action/move.c)). Its blind branch calls `print(' ')` and
+`print('@')`, normal light calls `print_chstr` through `ml__draw_block`, and no
+light calls `lite_spot`/`unlite_spot` and `print('@')`
+([light.c](../src/dungeon/light.c)). `Print` ([term.c](../src/term.c)) calls
+`abort()` when `mvaddch` fails, and this harness has no `initscr`. Run this
+check only after HT1 provides terminal doubles.
 
 ### SEAM1. Headless-Turn Seam Inventory (Research)
 
@@ -264,7 +271,7 @@ Acceptance checks:
 
 ### PS1. Apply a Save Record to Globals (L1/L2)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: `src/save/`, a new C harness under `tests/`, and its own `Makefile`
 target.
@@ -308,7 +315,7 @@ Acceptance checks:
 
 ### PS3. Atomic Character-Save Writes (L1)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: [filestorage.rs](../src/persistence/filestorage.rs).
 

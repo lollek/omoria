@@ -2,6 +2,7 @@
 
 ## Unreleased
 * Internal: Added a tested successful-move state transition.
+* Internal: Save records can be applied to globals and verified through C/Rust boundary checks.
 * Internal: Added a scoped seeded RNG override with C begin/end calls for deterministic tests.
 * Internal: Documented headless-turn blockers and a deterministic pickup scenario for future gameplay tests.
 * Loading saves with unknown identified item entries now reports a data error instead of crashing.
@@ -10,6 +11,7 @@
 * Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
 * Walking beyond the map edge no longer gives monsters a turn and stops running.
 * Internal: Added isolated movement decisions with injectable confusion RNG and C caller checks.
+* Character saves are now replaced atomically, so failed writes preserve the previous save.
 * Serialization failures no longer truncate existing character saves or the master list.
 * Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
 * Internal: Link the Linux build against wide-character ncurses.
