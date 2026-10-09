@@ -20,11 +20,11 @@ impl StairsContext for GlobalStairs {
         }
     }
 
-    fn dun_level(&mut self) -> i64 {
+    fn dungeon_level(&mut self) -> i64 {
         unsafe { dun_level }
     }
 
-    fn set_dun_level(&mut self, level: i64) {
+    fn set_dungeon_level(&mut self, level: i64) {
         unsafe { dun_level = level }
     }
 

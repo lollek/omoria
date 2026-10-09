@@ -42,19 +42,19 @@ impl Direction {
 
 trait StairsContext {
     fn tile_tval(&mut self) -> Option<u8>;
-    fn dun_level(&mut self) -> i64;
-    fn set_dun_level(&mut self, level: i64);
+    fn dungeon_level(&mut self) -> i64;
+    fn set_dungeon_level(&mut self, level: i64);
     fn set_moria_flag(&mut self);
     fn message(&mut self, message: &str);
 }
 
 fn take_stairs(context: &mut impl StairsContext, direction: Direction, roll: impl FnOnce() -> i64) {
     let (normal, steep) = direction.tvals();
-    let level = context.dun_level();
-    let (long_maze, next_level) = match context.tile_tval() {
-        Some(tval) if tval == normal => (false, level + direction.sign()),
+    let dungeon_level = context.dungeon_level();
+    let (is_long_maze, next_dungeon_level) = match context.tile_tval() {
+        Some(tval) if tval == normal => (false, dungeon_level + direction.sign()),
         Some(tval) if tval == steep => {
-            let next = level + direction.sign() * (roll() + 1);
+            let next = dungeon_level + direction.sign() * (roll() + 1);
             match direction {
                 Direction::Up => (true, next.max(0)),
                 Direction::Down => (true, next),
@@ -65,9 +65,9 @@ fn take_stairs(context: &mut impl StairsContext, direction: Direction, roll: imp
             return;
         }
     };
-    context.set_dun_level(next_level);
+    context.set_dungeon_level(next_dungeon_level);
     context.set_moria_flag();
-    let kind = if long_maze { "long maze" } else { "maze" };
+    let kind = if is_long_maze { "long maze" } else { "maze" };
     context.message(&format!(
         "You enter a {kind} of {} staircases.",
         direction.word()
@@ -83,20 +83,20 @@ mod tests {
 
     struct Context {
         map: TestMap,
-        level: i64,
+        dungeon_level: i64,
         moria_flag: bool,
         messages: Vec<String>,
     }
 
     impl Context {
-        fn on_tile(tile: Option<ItemType>, level: i64) -> Self {
+        fn on_tile(tile: Option<ItemType>, dungeon_level: i64) -> Self {
             let mut map = TestMap::reset();
             if let Some(tile) = tile {
                 map.put(3, 3, 1, u8::from(tile), b"a staircase");
             }
             Self {
                 map,
-                level,
+                dungeon_level,
                 moria_flag: false,
                 messages: Vec::new(),
             }
@@ -111,11 +111,11 @@ mod tests {
                 .and_then(|(_, item)| item)
                 .map(|item| item.tval)
         }
-        fn dun_level(&mut self) -> i64 {
-            self.level
+        fn dungeon_level(&mut self) -> i64 {
+            self.dungeon_level
         }
-        fn set_dun_level(&mut self, level: i64) {
-            self.level = level;
+        fn set_dungeon_level(&mut self, level: i64) {
+            self.dungeon_level = level;
         }
         fn set_moria_flag(&mut self) {
             self.moria_flag = true;
@@ -133,7 +133,7 @@ mod tests {
     fn up_staircase_moves_one_level_without_rolling() {
         let mut context = Context::on_tile(Some(ItemType::UpStaircase), 5);
         take_stairs(&mut context, Direction::Up, no_roll);
-        assert_eq!(context.level, 4);
+        assert_eq!(context.dungeon_level, 4);
         assert!(context.moria_flag);
         assert_eq!(
             context.messages,
@@ -148,7 +148,7 @@ mod tests {
     fn down_staircase_moves_one_level_without_rolling() {
         let mut context = Context::on_tile(Some(ItemType::DownStaircase), 5);
         take_stairs(&mut context, Direction::Down, no_roll);
-        assert_eq!(context.level, 6);
+        assert_eq!(context.dungeon_level, 6);
         assert!(context.moria_flag);
         assert_eq!(
             context.messages,
@@ -163,14 +163,14 @@ mod tests {
     fn normal_up_staircase_does_not_clamp_at_level_zero() {
         let mut context = Context::on_tile(Some(ItemType::UpStaircase), 0);
         take_stairs(&mut context, Direction::Up, no_roll);
-        assert_eq!(context.level, -1, "C only clamps steep up stairs");
+        assert_eq!(context.dungeon_level, -1, "C only clamps steep up stairs");
     }
 
     #[test]
     fn steep_up_staircase_subtracts_roll_plus_one_and_clamps_at_zero() {
         let mut context = Context::on_tile(Some(ItemType::UpSteepStaircase), 2);
         take_stairs(&mut context, Direction::Up, || 3);
-        assert_eq!(context.level, 0);
+        assert_eq!(context.dungeon_level, 0);
         assert!(context.moria_flag);
         assert_eq!(
             context.messages,
@@ -185,14 +185,14 @@ mod tests {
     fn steep_up_staircase_above_zero_is_not_clamped() {
         let mut context = Context::on_tile(Some(ItemType::UpSteepStaircase), 10);
         take_stairs(&mut context, Direction::Up, || 2);
-        assert_eq!(context.level, 7);
+        assert_eq!(context.dungeon_level, 7);
     }
 
     #[test]
     fn steep_down_staircase_adds_roll_plus_one() {
         let mut context = Context::on_tile(Some(ItemType::DownSteepStaircase), 5);
         take_stairs(&mut context, Direction::Down, || 2);
-        assert_eq!(context.level, 8);
+        assert_eq!(context.dungeon_level, 8);
         assert!(context.moria_flag);
         assert_eq!(
             context.messages,
@@ -212,7 +212,7 @@ mod tests {
         take_stairs(&mut context, Direction::Down, || {
             crate::rng::randint_with_rng(&mut rng, 3)
         });
-        assert_eq!(context.level, 5 + step);
+        assert_eq!(context.dungeon_level, 5 + step);
         assert_eq!(
             rng.gen::<u64>(),
             expected.gen::<u64>(),
@@ -227,7 +227,7 @@ mod tests {
             for tile in [None, Some(ItemType::Chest)] {
                 let mut context = Context::on_tile(tile, 5);
                 take_stairs(&mut context, direction, no_roll);
-                assert_eq!(context.level, 5);
+                assert_eq!(context.dungeon_level, 5);
                 assert!(!context.moria_flag);
                 assert_eq!(
                     context.messages,
@@ -241,7 +241,7 @@ mod tests {
     fn opposite_direction_stairs_are_not_taken() {
         let mut context = Context::on_tile(Some(ItemType::DownSteepStaircase), 5);
         take_stairs(&mut context, Direction::Up, no_roll);
-        assert_eq!(context.level, 5);
+        assert_eq!(context.dungeon_level, 5);
         assert!(!context.moria_flag);
         assert_eq!(context.messages, ["I see no up staircase here."]);
     }
