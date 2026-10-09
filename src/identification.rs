@@ -19,6 +19,13 @@ impl Default for IdentifiedSubTypes {
     }
 }
 
+#[cfg(test)]
+impl IdentifiedSubTypes {
+    pub(crate) fn get(&self, subtype: ItemSubType) -> Option<bool> {
+        self.inner.get(&subtype).copied()
+    }
+}
+
 impl Serialize for IdentifiedSubTypes {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
