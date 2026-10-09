@@ -32,6 +32,14 @@ where
     S1: AsRef<str>,
     S2: AsRef<str>,
 {
+    draw_menu_with_selection(title, items, commands, selected as usize);
+}
+
+pub fn draw_menu_with_selection<S1, S2>(title: S1, items: &[&str], commands: S2, selected: usize)
+where
+    S1: AsRef<str>,
+    S2: AsRef<str>,
+{
     term::clear_screen();
 
     // Title
@@ -57,7 +65,7 @@ where
 
     // Items
     for (index, item) in items.as_ref().iter().enumerate() {
-        let reverse = selected == index as u8;
+        let reverse = selected == index;
         if reverse {
             ncurses::attron(ncurses::A_REVERSE);
         }
