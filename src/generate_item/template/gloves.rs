@@ -65,7 +65,7 @@ impl ItemTemplate for GlovesTemplate {
     fn flags2(&self) -> u64 {
         0
     }
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
 

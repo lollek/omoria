@@ -60,12 +60,21 @@ mod tests {
     use crate::generate_item::template::MiscUsableTemplate;
     use crate::generate_item::{ItemQuality, ItemTemplate};
     use crate::{generate_item, identification};
+    use rand::{SeedableRng, StdRng};
+
+    fn seeded_rng() -> StdRng {
+        StdRng::from_seed(&[1, 2, 3, 4][..])
+    }
 
     #[test]
     fn test_statue_of_summon_undead() {
         let template = MiscUsableTemplate::Statue;
         let mut item = generate_item::generate(Box::new(template), 0, ItemQuality::Normal);
-        MiscUsableTemplate::apply_statue_of_summon_undead(&template, &mut item);
+        MiscUsableTemplate::apply_statue_of_summon_undead_with_rng(
+            &template,
+            &mut seeded_rng(),
+            &mut item,
+        );
 
         item.set_identified(false);
         identification::set_identified(template.subtype(), false);
@@ -82,7 +91,11 @@ mod tests {
     fn test_statue_of_summon_demon() {
         let template = MiscUsableTemplate::Statue;
         let mut item = generate_item::generate(Box::new(template), 0, ItemQuality::Normal);
-        MiscUsableTemplate::apply_statue_of_summon_demon(&template, &mut item);
+        MiscUsableTemplate::apply_statue_of_summon_demon_with_rng(
+            &template,
+            &mut seeded_rng(),
+            &mut item,
+        );
 
         item.set_identified(false);
         identification::set_identified(template.subtype(), false);
@@ -99,7 +112,11 @@ mod tests {
     fn test_statue_of_give_life() {
         let template = MiscUsableTemplate::Statue;
         let mut item = generate_item::generate(Box::new(template), 0, ItemQuality::Normal);
-        MiscUsableTemplate::apply_statue_of_give_life(&template, &mut item);
+        MiscUsableTemplate::apply_statue_of_give_life_with_rng(
+            &template,
+            &mut seeded_rng(),
+            &mut item,
+        );
 
         item.set_identified(false);
         identification::set_identified(template.subtype(), false);
@@ -116,7 +133,11 @@ mod tests {
     fn test_cross_of_turning() {
         let template = MiscUsableTemplate::Cross;
         let mut item = generate_item::generate(Box::new(template), 0, ItemQuality::Normal);
-        MiscUsableTemplate::apply_cross_of_turning(&template, &mut item);
+        MiscUsableTemplate::apply_cross_of_turning_with_rng(
+            &template,
+            &mut seeded_rng(),
+            &mut item,
+        );
 
         item.set_identified(false);
         identification::set_identified(template.subtype(), false);
@@ -133,7 +154,11 @@ mod tests {
     fn test_cross_of_demon_dispelling() {
         let template = MiscUsableTemplate::Cross;
         let mut item = generate_item::generate(Box::new(template), 0, ItemQuality::Normal);
-        MiscUsableTemplate::apply_cross_of_demon_dispelling(&template, &mut item);
+        MiscUsableTemplate::apply_cross_of_demon_dispelling_with_rng(
+            &template,
+            &mut seeded_rng(),
+            &mut item,
+        );
 
         item.set_identified(false);
         identification::set_identified(template.subtype(), false);

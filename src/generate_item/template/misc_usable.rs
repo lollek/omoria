@@ -10,7 +10,8 @@ use crate::model::{
     item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType},
     Item,
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
+use rand::Rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MiscUsableTemplate {
@@ -43,16 +44,24 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_cross_of_turning(&self, item: &mut Item) {
+        self.apply_cross_of_turning_with_rng(&mut rand::thread_rng(), item);
+    }
+
+    pub fn apply_cross_of_turning_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
         item.name = rs2item_name(&format!("{} of turning", self.name()));
         item.apply_misc_usable_flag(Turning);
-        item.p1 = randint(item.p1 * 2) + 2;
+        item.p1 = randint_with_rng(rng, item.p1 * 2) + 2;
         item.cost = item.p1 * 20_000;
     }
 
     pub fn apply_cross_of_demon_dispelling(&self, item: &mut Item) {
+        self.apply_cross_of_demon_dispelling_with_rng(&mut rand::thread_rng(), item);
+    }
+
+    pub fn apply_cross_of_demon_dispelling_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
         item.name = rs2item_name(&format!("{} of demon dispelling", self.name()));
         item.apply_misc_usable_flag(DemonDispelling);
-        item.p1 = randint(9);
+        item.p1 = randint_with_rng(rng, 9);
         item.cost = item.p1 * 50_000;
     }
 
@@ -85,47 +94,59 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_statue_of_summon_undead(&self, item: &mut Item) {
+        self.apply_statue_of_summon_undead_with_rng(&mut rand::thread_rng(), item);
+    }
+
+    pub fn apply_statue_of_summon_undead_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
         item.name = rs2item_name(&format!("{} major of undead summoning", self.name()));
         item.apply_misc_usable_flag(MajorSummonUndead);
         item.cost = 0;
-        item.p1 = randint(4) + 2;
+        item.p1 = randint_with_rng(rng, 4) + 2;
     }
 
     pub fn apply_statue_of_summon_demon(&self, item: &mut Item) {
+        self.apply_statue_of_summon_demon_with_rng(&mut rand::thread_rng(), item);
+    }
+
+    pub fn apply_statue_of_summon_demon_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
         item.name = rs2item_name(&format!("{} major of demon summoning", self.name()));
         item.apply_misc_usable_flag(MajorSummonDemon);
         item.cost = 0;
-        item.p1 = randint(3) + 1;
+        item.p1 = randint_with_rng(rng, 3) + 1;
     }
 
     pub fn apply_statue_of_give_life(&self, item: &mut Item) {
+        self.apply_statue_of_give_life_with_rng(&mut rand::thread_rng(), item);
+    }
+
+    pub fn apply_statue_of_give_life_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
         item.name = rs2item_name(&format!("{} life giving", self.name()));
         item.apply_misc_usable_flag(LifeGiving);
         item.cost = 900000;
-        item.p1 = randint(5) + 3;
+        item.p1 = randint_with_rng(rng, 5) + 3;
     }
 }
 
 impl ItemTemplate for MiscUsableTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
         if item_quality == ItemQuality::Special {
             match self {
-                MiscUsableTemplate::Statue => match randint(3) {
-                    1 => self.apply_statue_of_summon_undead(&mut item),
-                    2 => self.apply_statue_of_summon_demon(&mut item),
-                    _ => self.apply_statue_of_give_life(&mut item),
+                MiscUsableTemplate::Statue => match randint_with_rng(rng, 3) {
+                    1 => self.apply_statue_of_summon_undead_with_rng(rng, &mut item),
+                    2 => self.apply_statue_of_summon_demon_with_rng(rng, &mut item),
+                    _ => self.apply_statue_of_give_life_with_rng(rng, &mut item),
                 },
                 MiscUsableTemplate::SilverCross
                 | MiscUsableTemplate::GoldCross
                 | MiscUsableTemplate::MithrilCross
-                | MiscUsableTemplate::Cross => match randint(4) {
-                    1 => self.apply_cross_of_turning(&mut item),
-                    2 => self.apply_cross_of_demon_dispelling(&mut item),
+                | MiscUsableTemplate::Cross => match randint_with_rng(rng, 4) {
+                    1 => self.apply_cross_of_turning_with_rng(rng, &mut item),
+                    2 => self.apply_cross_of_demon_dispelling_with_rng(rng, &mut item),
                     3 => self.apply_cross_of_summon_undead(&mut item),
                     _ => self.apply_cross_of_summon_demon(&mut item),
                 },
-                MiscUsableTemplate::CorkedBottle => match randint(3) {
+                MiscUsableTemplate::CorkedBottle => match randint_with_rng(rng, 3) {
                     1 | 2 => self.apply_bottle_of_demons(&mut item),
                     _ => self.apply_bottle_of_djinni(&mut item),
                 },
@@ -178,7 +199,7 @@ impl ItemTemplate for MiscUsableTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         match self {
             MiscUsableTemplate::FlaskOfOil => 7500,
             MiscUsableTemplate::IronSpike => 0,

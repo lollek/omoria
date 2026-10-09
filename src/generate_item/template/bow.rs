@@ -37,8 +37,8 @@ impl BowTemplate {
 }
 
 impl ItemTemplate for BowTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        create_ranged_weapon(self, item_quality)
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        create_ranged_weapon(self, item_quality, rng)
     }
 
     fn name(&self) -> &str {
@@ -63,7 +63,7 @@ impl ItemTemplate for BowTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         match self {
             BowTemplate::Shortbow => 2,
             BowTemplate::HuntersBow => 3,

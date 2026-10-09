@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{HornSubType, ItemSubType},
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum HornTemplate {
@@ -90,21 +90,21 @@ impl ItemTemplate for HornTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, rng: &mut dyn rand::Rng) -> i64 {
         match self {
-            HornTemplate::HornOfBubbles => randint(10) + 6,
-            HornTemplate::HornOfCalling => randint(6) + 3,
-            HornTemplate::HornOfSoftSounds => randint(5) + 6,
-            HornTemplate::HornOfBlasting => randint(3) + 1,
-            HornTemplate::HornOfCold => randint(3) + 4,
-            HornTemplate::HornOfHeat => randint(3) + 4,
-            HornTemplate::HornOfGas => randint(3) + 4,
-            HornTemplate::HornOfRecall => randint(10) + 3,
-            HornTemplate::HornOfChaos => randint(5) + 1,
-            HornTemplate::HornOfGlue => randint(3) + 1,
-            HornTemplate::HornOfValhalla => randint(3) + 4,
-            HornTemplate::HornOfTritons => randint(3) + 4,
-            HornTemplate::HornOfFog => randint(8) + 1,
+            HornTemplate::HornOfBubbles => randint_with_rng(rng, 10) + 6,
+            HornTemplate::HornOfCalling => randint_with_rng(rng, 6) + 3,
+            HornTemplate::HornOfSoftSounds => randint_with_rng(rng, 5) + 6,
+            HornTemplate::HornOfBlasting => randint_with_rng(rng, 3) + 1,
+            HornTemplate::HornOfCold => randint_with_rng(rng, 3) + 4,
+            HornTemplate::HornOfHeat => randint_with_rng(rng, 3) + 4,
+            HornTemplate::HornOfGas => randint_with_rng(rng, 3) + 4,
+            HornTemplate::HornOfRecall => randint_with_rng(rng, 10) + 3,
+            HornTemplate::HornOfChaos => randint_with_rng(rng, 5) + 1,
+            HornTemplate::HornOfGlue => randint_with_rng(rng, 3) + 1,
+            HornTemplate::HornOfValhalla => randint_with_rng(rng, 3) + 4,
+            HornTemplate::HornOfTritons => randint_with_rng(rng, 3) + 4,
+            HornTemplate::HornOfFog => randint_with_rng(rng, 8) + 1,
         }
     }
 

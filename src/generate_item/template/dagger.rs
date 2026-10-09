@@ -45,8 +45,8 @@ impl DaggerTemplate {
 }
 
 impl ItemTemplate for DaggerTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        create_melee_weapon(self, item_quality)
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        create_melee_weapon(self, item_quality, rng)
     }
 
     fn name(&self) -> &str {
@@ -74,7 +74,7 @@ impl ItemTemplate for DaggerTemplate {
     fn flags2(&self) -> u64 {
         WornFlag2::Sharp as u64
     }
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
 

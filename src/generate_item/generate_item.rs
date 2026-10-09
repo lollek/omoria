@@ -6,23 +6,43 @@ use super::template::*;
 use crate::constants;
 use crate::model;
 use crate::model::{ItemCategory, WornFlag2};
+use rand::Rng;
 
 /**
  * Returns a random item from the received list. Will panic if list is is_empty
  */
-fn get_random_from_list(mut list: Vec<Box<dyn ItemTemplate>>) -> Box<dyn ItemTemplate> {
+fn get_random_from_list(list: Vec<Box<dyn ItemTemplate>>) -> Box<dyn ItemTemplate> {
+    get_random_from_list_with_rng(&mut rand::thread_rng(), list)
+}
+
+fn get_random_from_list_with_rng(
+    rng: &mut impl Rng,
+    mut list: Vec<Box<dyn ItemTemplate>>,
+) -> Box<dyn ItemTemplate> {
     if list.is_empty() {
         panic!("List contains 0 items!");
     }
-    list.remove(rand::random::<usize>() % list.len())
+    list.remove(rng.gen::<usize>() % list.len())
 }
 
 /**
  * Generate an item level based around which dungeon level it should drop on
  */
 pub fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8 {
+    generate_item_level_for_dungeon_level_with_rng(&mut rand::thread_rng(), dungeon_level, tries)
+}
+
+pub fn generate_item_level_for_dungeon_level_with_rng(
+    rng: &mut impl Rng,
+    dungeon_level: u8,
+    tries: u8,
+) -> u8 {
+    if dungeon_level == 0 {
+        return 0;
+    }
+
     // 1 / N times, we roll for the full treasure table
-    let max_item_level = if rand::random::<u8>().is_multiple_of(30) {
+    let max_item_level = if rng.gen::<u8>().is_multiple_of(30) {
         u8::MAX
     } else {
         dungeon_level
@@ -35,7 +55,7 @@ pub fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8
      */
     let mut item_level = 0;
     for _ in 0..tries {
-        let curr_item_level = rand::random::<u8>() % max_item_level;
+        let curr_item_level = rng.gen::<u8>() % max_item_level;
         if curr_item_level > item_level {
             item_level = curr_item_level;
         }
@@ -266,8 +286,15 @@ pub fn generate_item_for_black_market() -> model::Item {
  * Generate an item suitably dropped at a given dungeon level
  */
 pub fn generate_item_for_dungeon_level(dungeon_level: u8) -> model::Item {
-    let item_level = generate_item_level_for_dungeon_level(dungeon_level, 3);
-    generate_item_for_item_level(item_level)
+    generate_item_for_dungeon_level_with_rng(&mut rand::thread_rng(), dungeon_level)
+}
+
+pub fn generate_item_for_dungeon_level_with_rng(
+    rng: &mut impl Rng,
+    dungeon_level: u8,
+) -> model::Item {
+    let item_level = generate_item_level_for_dungeon_level_with_rng(rng, dungeon_level, 3);
+    generate_item_for_item_level_with_rng(rng, item_level)
 }
 
 pub fn generate_melee_weapon(item_level: u8, item_quality: ItemQuality) -> model::Item {
@@ -305,6 +332,20 @@ pub fn generate_belt(item_level: u8, item_quality: ItemQuality) -> model::Item {
  * Generate an item which should have a given item level
  */
 pub fn generate_item_for_item_level_of_category(
+    item_level: u8,
+    item_category: ItemCategory,
+    item_quality: ItemQuality,
+) -> model::Item {
+    generate_item_for_item_level_of_category_with_rng(
+        &mut rand::thread_rng(),
+        item_level,
+        item_category,
+        item_quality,
+    )
+}
+
+fn generate_item_for_item_level_of_category_with_rng(
+    rng: &mut impl Rng,
     item_level: u8,
     item_category: ItemCategory,
     item_quality: ItemQuality,
@@ -363,14 +404,19 @@ pub fn generate_item_for_item_level_of_category(
     }
 
     templates.retain(|x| x.item_level() <= item_level);
-    generate(get_random_from_list(templates), item_level, item_quality)
+    let template = get_random_from_list_with_rng(rng, templates);
+    generate_with_rng(rng, template, item_level, item_quality)
 }
 
 /**
  * Generate an item which should have a given item level
  */
 pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
-    let item_type = match rand::random::<u8>() % 100 {
+    generate_item_for_item_level_with_rng(&mut rand::thread_rng(), item_level)
+}
+
+fn generate_item_for_item_level_with_rng(rng: &mut impl Rng, item_level: u8) -> model::Item {
+    let item_type = match rng.gen::<u8>() % 100 {
         0..=4 => ItemCategory::Jewelry,
         5..=9 => ItemCategory::MagicItem,
         10..=19 => ItemCategory::Scroll,
@@ -382,8 +428,8 @@ pub fn generate_item_for_item_level(item_level: u8) -> model::Item {
         _ => panic!("Rand out of range!"),
     };
 
-    let item_quality = calculate_item_quality(item_level);
-    generate_item_for_item_level_of_category(item_level, item_type, item_quality)
+    let item_quality = calculate_item_quality_with_rng(rng, item_level);
+    generate_item_for_item_level_of_category_with_rng(rng, item_level, item_type, item_quality)
 }
 
 /**
@@ -394,34 +440,219 @@ pub fn generate(
     item_level: u8,
     item_quality: ItemQuality,
 ) -> model::Item {
-    let mut item = template.create(item_quality, item_level);
+    generate_with_rng(&mut rand::thread_rng(), template, item_level, item_quality)
+}
+
+fn generate_with_rng(
+    rng: &mut impl Rng,
+    template: Box<dyn ItemTemplate>,
+    item_level: u8,
+    item_quality: ItemQuality,
+) -> model::Item {
+    let mut item = template.create(item_quality, item_level, rng);
     item.level = item_level.try_into().unwrap_or(i8::MAX);
     item
 }
 
 fn calculate_item_quality(item_level: u8) -> ItemQuality {
+    calculate_item_quality_with_rng(&mut rand::thread_rng(), item_level)
+}
+
+fn calculate_item_quality_with_rng(rng: &mut impl Rng, item_level: u8) -> ItemQuality {
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
     let odds_for_high_quality = max(5, item_level.saturating_sub(10));
-    if odds_for_high_quality > (rand::random::<u8>() % 100) {
+    if odds_for_high_quality > (rng.gen::<u8>() % 100) {
         return ItemQuality::HighQuality;
     }
 
     // 50%, 40%, 30%, 20%, 10%, 5%, 5%, 5%...
     let odds_for_low_quality = max(5, 6_u8.saturating_sub(item_level) * 10);
-    if odds_for_low_quality > (rand::random::<u8>() % 100) {
+    if odds_for_low_quality > (rng.gen::<u8>() % 100) {
         return ItemQuality::LowQuality;
     }
 
     // [0-5]: 0%, [5-10]: 5%, [10+]: 10%
     let odds_for_magic = min(10, (item_level / 5) * 5);
-    let is_magic = odds_for_magic > (rand::random::<u8>() % 100);
+    let is_magic = odds_for_magic > (rng.gen::<u8>() % 100);
 
     // 10% of magic is unique
-    let is_unique = is_magic && 10 > (rand::random::<u8>() % 100);
+    let is_unique = is_magic && 10 > (rng.gen::<u8>() % 100);
 
     if is_unique {
         ItemQuality::Special
     } else {
         ItemQuality::Magic
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rand::{SeedableRng, StdRng};
+
+    fn seeded_rng(seed: usize) -> StdRng {
+        StdRng::from_seed(&[seed, seed.wrapping_add(1), 2, 3][..])
+    }
+
+    fn is_allowed_dungeon_item_type(item_type: model::ItemType) -> bool {
+        use model::ItemType::*;
+
+        matches!(
+            item_type,
+            MiscObject
+                | Chest
+                | MiscUsable
+                | Jewelry
+                | Gem
+                | WearableGem
+                | Bag
+                | SlingAmmo
+                | Bolt
+                | Arrow
+                | Spike
+                | LightSource
+                | RangedWeapon
+                | HaftedWeapon
+                | PoleArm
+                | Dagger
+                | Sword
+                | Pick
+                | Maul
+                | Boots
+                | Gloves
+                | Cloak
+                | Helm
+                | Shield
+                | HardArmor
+                | SoftArmor
+                | Bracers
+                | Belt
+                | Amulet
+                | Ring
+                | Staff
+                | Wand
+                | Scroll1
+                | Scroll2
+                | Potion1
+                | Potion2
+                | FlaskOfOil
+                | Food
+                | JunkFood
+                | Chime
+                | Horn
+        )
+    }
+
+    #[test]
+    fn injected_dungeon_item_generation_is_deterministic() {
+        let mut saw_charge_item = false;
+        for seed in 0..64 {
+            let mut rng_a = seeded_rng(seed);
+            let mut rng_b = seeded_rng(seed);
+            let item_a = generate_item_for_dungeon_level_with_rng(&mut rng_a, 20);
+            let item_b = generate_item_for_dungeon_level_with_rng(&mut rng_b, 20);
+
+            assert_eq!(
+                serde_json::to_value(item_a).unwrap(),
+                serde_json::to_value(item_b).unwrap(),
+                "seed {} should produce the same item",
+                seed
+            );
+            let item_type = item_a
+                .item_type()
+                .expect("generated item should have a valid type");
+            assert!(
+                is_allowed_dungeon_item_type(item_type),
+                "seed {} produced item type {:?} outside the dungeon categories",
+                seed,
+                item_type
+            );
+            assert!(
+                item_a.number >= 1,
+                "seed {} produced an invalid item count",
+                seed
+            );
+            assert!(
+                (0..=i8::MAX).contains(&item_a.level),
+                "seed {} produced an invalid item level",
+                seed
+            );
+            if matches!(
+                item_type,
+                model::ItemType::Gem
+                    | model::ItemType::WearableGem
+                    | model::ItemType::LightSource
+                    | model::ItemType::Staff
+                    | model::ItemType::Wand
+                    | model::ItemType::Chime
+                    | model::ItemType::Horn
+            ) {
+                saw_charge_item = true;
+                let valid_charges = if item_type == model::ItemType::LightSource {
+                    (1..=20_000).contains(&item_a.p1)
+                } else {
+                    (0..=32).contains(&item_a.p1)
+                };
+                assert!(valid_charges, "seed {} produced invalid charges", seed);
+            }
+        }
+        assert!(
+            saw_charge_item,
+            "the fixed seeds should exercise charge-bearing items"
+        );
+    }
+
+    #[test]
+    fn zero_dungeon_level_generates_level_zero_without_panicking() {
+        for seed in 0..16 {
+            let mut rng = seeded_rng(seed);
+            let item = generate_item_for_dungeon_level_with_rng(&mut rng, 0);
+            assert_eq!(
+                item.level, 0,
+                "seed {} should keep a town item at level zero",
+                seed
+            );
+        }
+    }
+
+    #[test]
+    fn zero_dungeon_level_and_zero_tries_return_zero() {
+        for seed in 0..16 {
+            let mut rng = seeded_rng(seed);
+            let mut untouched_rng = seeded_rng(seed);
+            assert_eq!(
+                generate_item_level_for_dungeon_level_with_rng(&mut rng, 0, 3),
+                0
+            );
+            assert_eq!(rng.gen::<u8>(), untouched_rng.gen::<u8>());
+            assert_eq!(
+                generate_item_level_for_dungeon_level_with_rng(&mut rng, 20, 0),
+                0
+            );
+        }
+    }
+
+    #[test]
+    fn dungeon_item_level_stays_within_the_legacy_roll_bound() {
+        for seed in 0..16 {
+            let mut bound_rng = seeded_rng(seed);
+            let max_item_level = if bound_rng.gen::<u8>().is_multiple_of(30) {
+                u8::MAX
+            } else {
+                20
+            };
+            let mut rng = seeded_rng(seed);
+            let item_level = generate_item_level_for_dungeon_level_with_rng(&mut rng, 20, 3);
+            assert!(
+                item_level <= 254,
+                "seed {} exceeded the full-table cap",
+                seed
+            );
+            assert!(
+                item_level < max_item_level,
+                "seed {} exceeded the selected item-level bound",
+                seed
+            );
+        }
     }
 }

@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{HardArmorSubType, ItemSubType, SoftArmorSubType},
     Item,
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ArmorTemplate {
@@ -90,17 +90,13 @@ impl ArmorTemplate {
 }
 
 impl ItemTemplate for ArmorTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
-        if item_quality == ItemQuality::Cursed {
-            item.set_cursed(true);
-            item.cost = 0;
-            item.toac = -randint(4) as i16;
-        } else if item_quality == ItemQuality::Magic {
-            item.toac = randint(3) as i16;
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
+        if item_quality == ItemQuality::Magic {
+            item.toac = randint_with_rng(rng, 3) as i16;
         } else if item_quality == ItemQuality::Special {
-            item.toac = randint(3) as i16;
-            match randint(9) {
+            item.toac = randint_with_rng(rng, 3) as i16;
+            match randint_with_rng(rng, 9) {
                 1 => self.apply_armor_resist(&mut item),
                 2 => self.apply_armor_resist_acid(&mut item),
                 3 | 4 => self.apply_armor_resist_fire(&mut item),
@@ -193,7 +189,7 @@ impl ItemTemplate for ArmorTemplate {
     fn flags2(&self) -> u64 {
         0
     }
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
     fn cost(&self) -> i64 {

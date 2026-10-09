@@ -59,7 +59,7 @@ impl ItemTemplate for BagTemplate {
         }
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         match self {
             BagTemplate::BagOfHolding250 => 25000,
             BagTemplate::BagOfHolding500 => 50000,

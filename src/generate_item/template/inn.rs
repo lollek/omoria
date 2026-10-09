@@ -47,7 +47,7 @@ impl ItemTemplate for LodgingAtInnTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         match self {
             LodgingAtInnTemplate::LodgingForOneDay => 1,
             LodgingAtInnTemplate::LodgingForThreeDays => 3,
