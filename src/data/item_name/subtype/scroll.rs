@@ -91,9 +91,10 @@ mod tests {
     use serial_test::serial;
 
     fn base_item() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Scroll1.into();
-        item
+        Item {
+            tval: ItemType::Scroll1.into(),
+            ..Item::default()
+        }
     }
 
     fn subval(t: Scroll1SubType) -> i64 {

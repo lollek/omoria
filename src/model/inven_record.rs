@@ -1,19 +1,10 @@
 use crate::model::Item;
 
 #[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug, Default)]
 pub struct InvenRecord {
     pub scost: i64,
     pub sitem: Item,
-}
-
-impl Default for InvenRecord {
-    fn default() -> Self {
-        InvenRecord {
-            scost: 0,
-            sitem: Item::default(),
-        }
-    }
 }
 
 #[cfg(test)]

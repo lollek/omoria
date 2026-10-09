@@ -96,7 +96,7 @@ fn print_banner() {
 
 fn show_highscore() {
     let mut master = master::read_master().unwrap();
-    master.sort_unstable_by(|a, b| b.points.cmp(&a.points));
+    master.sort_unstable_by_key(|item| std::cmp::Reverse(item.points));
     // println!("Username     Points   Alive    Character name    Level  Race         Class");
     // println!("____________ ________ _____ ________________________ __ __________ ________________");
 
@@ -126,7 +126,7 @@ fn load_characters() -> Vec<Character> {
     let res = fs::read_dir(constants::SAVE_FOLDER)
         .unwrap()
         .map(|it| it.unwrap().file_name().into_string().unwrap().to_owned())
-        .filter(|it| it.find(".json") != None)
+        .filter(|it| it.find(".json").is_some())
         .map(|it| it.replace(".json", ""))
         .map(|it| {
             let (name, uid) = it.split_at(it.rfind("-").unwrap());

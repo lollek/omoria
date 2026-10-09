@@ -43,9 +43,10 @@ mod tests {
     use crate::model::{Item, ItemType};
 
     fn base_item(item_type: ItemType) -> Item {
-        let mut item = Item::default();
-        item.tval = item_type.into();
-        item
+        Item {
+            tval: item_type.into(),
+            ..Item::default()
+        }
     }
 
     #[test]

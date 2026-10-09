@@ -236,13 +236,7 @@ mod tests {
         let dex_baseline = 1; // attacks_from_dex with dex=0, str=0, weight=20
 
         for &(ref class, level, expected_from_level) in cases {
-            let inputs = make_inputs(
-                WeaponState::Weapon { weight: 20 },
-                class.clone(),
-                level,
-                0,
-                0,
-            );
+            let inputs = make_inputs(WeaponState::Weapon { weight: 20 }, *class, level, 0, 0);
             let total = calculate_number_of_attacks_pure(&inputs);
             assert_eq!(
                 total,

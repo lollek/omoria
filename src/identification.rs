@@ -6,17 +6,9 @@ use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct IdentifiedSubTypes {
     inner: HashMap<ItemSubType, bool>,
-}
-
-impl Default for IdentifiedSubTypes {
-    fn default() -> Self {
-        IdentifiedSubTypes {
-            inner: HashMap::new(),
-        }
-    }
 }
 
 #[cfg(test)]
@@ -36,7 +28,7 @@ impl Serialize for IdentifiedSubTypes {
             .map(|(k, v)| {
                 let item_type: u8 = k.get_type().into();
                 let item_subtype: usize = conversion::item_subtype::to_usize(k);
-                (item_type, item_subtype, v.clone())
+                (item_type, item_subtype, *v)
             })
             .collect::<Vec<_>>()
             .serialize(serializer)

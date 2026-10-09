@@ -21,9 +21,9 @@ impl persistence::PersistenceEngine for FileStorageEngine {
             .truncate(false)
             .open(master_file_path())
             .map_err(|e| Error::from(format!("Failed to create masters file: {}", e).as_str()))?;
-        let file_bytes = file.seek(SeekFrom::End(0)).map_err(|e| {
-            Error::from(format!("Failed to seek in masters file: {}", e.to_string()))
-        })?;
+        let file_bytes = file
+            .seek(SeekFrom::End(0))
+            .map_err(|e| Error::from(format!("Failed to seek in masters file: {}", e)))?;
 
         // Create empty masters file
         if file_bytes == 0 {
@@ -55,7 +55,7 @@ impl persistence::PersistenceEngine for FileStorageEngine {
     fn save_master(&mut self, record: MasterRecord, allow_new: bool) -> Result<(), Error> {
         let mut records = self.load_masters()?;
 
-        match records.iter().position(|ref i| i.uid == record.uid) {
+        match records.iter().position(|i| i.uid == record.uid) {
             Some(pos) => {
                 records[pos] = record;
             }

@@ -33,7 +33,7 @@ pub(crate) struct ToHitRangedInputs {
 pub(crate) fn calculate_player_tohit_melee_pure(inputs: &ToHitMeleeInputs) -> i16 {
     // [0-40]
     let from_class_and_level =
-        ((class::melee_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
+        (class::melee_bonus(&inputs.class) as i16 * inputs.level as i16) / 10;
 
     let from_stats = inputs.dex_modifier + inputs.strength_modifier;
 
@@ -73,7 +73,7 @@ pub(crate) fn calculate_player_tohit_melee_pure(inputs: &ToHitMeleeInputs) -> i1
 pub(crate) fn calculate_player_tohit_ranged_pure(inputs: &ToHitRangedInputs) -> i16 {
     // [0-40]
     let from_class_and_level =
-        ((class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
+        (class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10;
 
     let from_stats = inputs.dex_modifier + inputs.strength_modifier;
 
@@ -105,7 +105,7 @@ pub(crate) fn calculate_player_tohit_ranged_pure(inputs: &ToHitRangedInputs) -> 
 pub(crate) fn calculate_player_tohit_thrown_pure(inputs: &ToHitRangedInputs) -> i16 {
     // [0-40]
     let from_class_and_level =
-        ((class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10) as i16;
+        (class::ranged_bonus(&inputs.class) as i16 * inputs.level as i16) / 10;
 
     let from_stats = inputs.dex_modifier + inputs.strength_modifier;
 

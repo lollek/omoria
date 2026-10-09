@@ -30,7 +30,7 @@ where
     S: AsRef<str>,
 {
     let prompt_yn = CString::new(format!("{} (y/n) ", prompt.as_ref())).unwrap();
-    let ref mut command: c_char = 0;
+    let command: &mut c_char = &mut 0;
     loop {
         term::msg_print(" ");
         unsafe {
@@ -48,7 +48,7 @@ where
 pub fn inkey_delay(delay_in_ms: i32) -> u8 {
     ncurses::refresh();
     if unsafe { C_check_input(delay_in_ms) != 0 } {
-        'a' as u8
+        b'a'
     } else {
         0
     }

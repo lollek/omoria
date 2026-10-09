@@ -82,10 +82,11 @@ mod tests {
     use serial_test::serial;
 
     fn base_item() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Ring.into();
-        item.toac = 2;
-        item
+        Item {
+            tval: ItemType::Ring.into(),
+            toac: 2,
+            ..Item::default()
+        }
     }
 
     fn subval(t: RingSubType) -> i64 {

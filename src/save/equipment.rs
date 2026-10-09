@@ -18,7 +18,7 @@ pub fn record() -> Vec<Item> {
 
 pub fn set_record(record: Vec<Item>) {
     if record.len() != EQUIP_MAX {
-        debug::fatal(&format!(
+        debug::fatal(format!(
             "equipment.len and EQUIP_MAX differ!: {} vs {}",
             record.len(),
             EQUIP_MAX

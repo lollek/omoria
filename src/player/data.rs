@@ -358,7 +358,7 @@ pub fn knows_any_spell() -> bool {
 }
 
 pub fn knows_spell(slot: usize) -> bool {
-    PLAYER.try_read().unwrap().spells_known[slot].clone()
+    PLAYER.try_read().unwrap().spells_known[slot]
 }
 
 pub fn set_knows_spell(slot: usize, yn: bool) {
@@ -391,7 +391,7 @@ pub fn set_rage_exhaustion_rounds_left(new_value: u8) {
 pub fn abilities() -> Vec<Ability> {
     data::class::abilities(&class())
         .into_iter()
-        .chain(data::race::abilities(&race()).into_iter())
+        .chain(data::race::abilities(&race()))
         .collect()
 }
 

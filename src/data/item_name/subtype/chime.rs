@@ -70,9 +70,10 @@ mod tests {
     use serial_test::serial;
 
     fn base_item() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Chime.into();
-        item
+        Item {
+            tval: ItemType::Chime.into(),
+            ..Item::default()
+        }
     }
 
     fn subval(t: ChimeSubType) -> i64 {

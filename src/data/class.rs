@@ -352,32 +352,35 @@ pub fn is_proficient_with_weapon(class: &Class, maybe_item_type: Option<ItemType
     let item_type = maybe_item_type.unwrap();
     match class {
         Class::Fighter => true,
-        Class::Wizard => match item_type {
-            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Maul => false,
-            ItemType::RangedWeapon => false,
-            _ => true,
-        },
-        Class::Cleric => match item_type {
-            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword | ItemType::Dagger => {
-                false
-            }
-            ItemType::RangedWeapon => false,
-            _ => true,
-        },
+        Class::Wizard => !matches!(
+            item_type,
+            ItemType::HaftedWeapon
+                | ItemType::PoleArm
+                | ItemType::Sword
+                | ItemType::Maul
+                | ItemType::RangedWeapon
+        ),
+        Class::Cleric => !matches!(
+            item_type,
+            ItemType::HaftedWeapon
+                | ItemType::PoleArm
+                | ItemType::Sword
+                | ItemType::Dagger
+                | ItemType::RangedWeapon
+        ),
         Class::Rogue => true,
         Class::Ranger => true,
         Class::Paladin => true,
-        Class::Druid => match item_type {
-            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword => false,
-            _ => true,
-        },
+        Class::Druid => !matches!(
+            item_type,
+            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::Sword
+        ),
         Class::Bard => true,
         Class::Adventurer => true,
-        Class::Monk => match item_type {
-            ItemType::HaftedWeapon | ItemType::PoleArm => false,
-            ItemType::RangedWeapon => false,
-            _ => true,
-        },
+        Class::Monk => !matches!(
+            item_type,
+            ItemType::HaftedWeapon | ItemType::PoleArm | ItemType::RangedWeapon
+        ),
         Class::Barbarian => true,
     }
 }

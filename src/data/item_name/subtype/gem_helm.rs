@@ -48,11 +48,12 @@ mod tests {
     use crate::model::item_subtype::{GemHelmSubType, ItemSubType};
 
     fn base_item() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::GemHelm.into();
-        item.ac = 1;
-        item.toac = 2;
-        item
+        Item {
+            tval: ItemType::GemHelm.into(),
+            ac: 1,
+            toac: 2,
+            ..Item::default()
+        }
     }
 
     fn subval(t: GemHelmSubType) -> i64 {

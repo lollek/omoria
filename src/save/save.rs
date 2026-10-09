@@ -34,7 +34,7 @@ fn open_savefile(player_name: &str, player_uid: i64, to_write: bool) -> Option<F
     {
         Ok(file) => Some(file),
         Err(e) => {
-            debug::error(&format!("failed to open save file: {}", e));
+            debug::error(format!("failed to open save file: {}", e));
             None
         }
     }
@@ -75,11 +75,11 @@ fn write_save(mut f: &File, data: &SaveRecord) -> Option<()> {
         }
     };
     if let Err(e) = f.seek(io::SeekFrom::Start(0)) {
-        debug::error(&format!("Failed during seek: {}", e));
+        debug::error(format!("Failed during seek: {}", e));
         return None;
     }
     if let Err(e) = f.write_all(&serialized_data.into_bytes()) {
-        debug::error(&format!("Failed to write file: {}", e));
+        debug::error(format!("Failed to write file: {}", e));
         return None;
     }
     Some(())
@@ -93,7 +93,7 @@ fn debug_serialize_save_record(save_record: &SaveRecord) {
         }
     }
     debug::error("### DEBUG SERIALIZE SAVE RECORD START ###");
-    debug::error(&format!(
+    debug::error(format!(
         "Player: {}, Inventory: {}, Equipment: {}, Town: {}, Dungeon: {}, Identified: {}, Monsters: {}",
         serialize_status(&save_record.player),
         serialize_status(&save_record.inventory),
@@ -178,7 +178,7 @@ pub fn delete_character() -> Option<()> {
     match fs::remove_file(savefile_name(&player::name(), player::uid())) {
         Ok(_) => Some(()),
         Err(e) => {
-            debug::error(&format!("Failed to delete save (err: {})", e));
+            debug::error(format!("Failed to delete save (err: {})", e));
             None
         }
     }

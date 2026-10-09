@@ -79,7 +79,7 @@ pub fn print_known_spells() {
             "false"
         };
         term::prt(
-            &format!(
+            format!(
                 "    {:30}{:2}      {:2}   {}",
                 spell.name, spell.level, spell.mana, player_knows_spell
             ),

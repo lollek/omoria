@@ -22,7 +22,7 @@ fn get_random_from_list(mut list: Vec<Box<dyn ItemTemplate>>) -> Box<dyn ItemTem
  */
 pub fn generate_item_level_for_dungeon_level(dungeon_level: u8, tries: u8) -> u8 {
     // 1 / N times, we roll for the full treasure table
-    let max_item_level = if rand::random::<u8>() % 30 == 0 {
+    let max_item_level = if rand::random::<u8>().is_multiple_of(30) {
         u8::MAX
     } else {
         dungeon_level
@@ -401,13 +401,13 @@ pub fn generate(
 
 fn calculate_item_quality(item_level: u8) -> ItemQuality {
     // 1: 5%, 2: 5%...10: 5%, 15: 5%, 16: 6%, 17: 7%
-    let odds_for_high_quality = max(5, item_level.checked_sub(10).unwrap_or(0));
+    let odds_for_high_quality = max(5, item_level.saturating_sub(10));
     if odds_for_high_quality > (rand::random::<u8>() % 100) {
         return ItemQuality::HighQuality;
     }
 
     // 50%, 40%, 30%, 20%, 10%, 5%, 5%, 5%...
-    let odds_for_low_quality = max(5, 6_u8.checked_sub(item_level).unwrap_or(0) * 10);
+    let odds_for_low_quality = max(5, 6_u8.saturating_sub(item_level) * 10);
     if odds_for_low_quality > (rand::random::<u8>() % 100) {
         return ItemQuality::LowQuality;
     }

@@ -1,15 +1,7 @@
 use crate::model::Monster;
 
 #[repr(C)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct MonsterRecord {
     pub monsters: Vec<Monster>,
-}
-
-impl Default for MonsterRecord {
-    fn default() -> Self {
-        MonsterRecord {
-            monsters: Vec::new(),
-        }
-    }
 }

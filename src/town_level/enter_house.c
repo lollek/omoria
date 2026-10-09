@@ -60,6 +60,7 @@ static void brothel_game(void) {
 }
 
 static void battle_game(const long plus, char const *const kb_str) {
+  (void)plus;
 
   if (get_yes_no("Do you accept their invitation?")) {
     char out_val[82];

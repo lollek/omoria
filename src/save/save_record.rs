@@ -1,7 +1,7 @@
 use crate::identification::IdentifiedSubTypes;
 use crate::model::{DungeonRecord, InventoryItem, Item, MonsterRecord, PlayerRecord, TownRecord};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub(crate) struct SaveRecord {
     pub(crate) player: PlayerRecord,
     pub(crate) inventory: Vec<InventoryItem>,
@@ -10,20 +10,6 @@ pub(crate) struct SaveRecord {
     pub(crate) dungeon: DungeonRecord,
     pub(crate) identified: IdentifiedSubTypes,
     pub(crate) monsters: MonsterRecord,
-}
-
-impl Default for SaveRecord {
-    fn default() -> Self {
-        SaveRecord {
-            player: PlayerRecord::default(),
-            inventory: Vec::default(),
-            equipment: Vec::default(),
-            town: TownRecord::default(),
-            dungeon: DungeonRecord::default(),
-            identified: IdentifiedSubTypes::default(),
-            monsters: MonsterRecord::default(),
-        }
-    }
 }
 
 #[cfg(test)]

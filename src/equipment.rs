@@ -76,6 +76,11 @@ pub fn items_iter() -> impl Iterator<Item = &'static mut Item> {
     slots_iter().map(|slot| unsafe { &mut equipment[slot] })
 }
 
+/// Returns a pointer to the equipped item in `slot`.
+///
+/// # Safety
+/// The equipment global must be initialized and not concurrently mutated while
+/// the returned pointer is being read.
 pub unsafe fn get_item(slot: Slot) -> *const Item {
     &equipment[slot as usize]
 }

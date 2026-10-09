@@ -30,7 +30,7 @@ pub extern "C" fn C_print_new_spell_line(i: u8, slot: libc::c_long, failchance: 
         let spell = conversion::spell::from_usize_or_blank(player::class(), slot as usize);
         format!(
             "{}) {:30} {:3}    {:3}      {:2}",
-            (('a' as u8) + i) as char,
+            (b'a' + i) as char,
             spell.name,
             spell.level,
             spell.mana,

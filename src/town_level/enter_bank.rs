@@ -14,8 +14,8 @@ pub extern "C" fn eb__display_money() {
     let player_account = unsafe { player::player_account };
     let wallet = player::wallet();
 
-    term::prt(&format!(" Gold remaining : {}", wallet.total), 18, 18);
-    term::prt(&format!(" Account : {}", player_account), 16, 20);
+    term::prt(format!(" Gold remaining : {}", wallet.total), 18, 18);
+    term::prt(format!(" Account : {}", player_account), 16, 20);
 
     ncurses::mvaddstr(5, 24, "You have ");
     let msg = &format!("Mithril  : {:10}", wallet.mithril);
