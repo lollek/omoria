@@ -14,10 +14,11 @@ cargo clippy --all-targets
 cargo test
 make
 make test-movement
+make test-messages
 ```
 
 This checks formatting, Rust linting and tests, and the full C/Rust build and
-link, plus terminal-free C movement boundary checks. It proves the tested slices
+link, plus terminal-free C movement and message boundary checks. It proves the tested slices
 and link, not full gameplay or headless turns.
 The clean gate passes locally on macOS. CI runner results remain unverified.
 Existing Clippy warnings are non-blocking. Six scoped legacy lint allowances
@@ -101,7 +102,7 @@ Acceptance checks:
 
 ### 3. Message Stream Capture (L0/L1)
 
-Status: partial. Rust recording capture is implemented in
+Status: done. Rust recording capture is implemented in
 [message.rs](../src/message.rs) with serialized inline tests. `capture_messages()`
 returns a guard with an ordered, unbounded `messages()` snapshot, including empty
 and space-only messages; the separate history still retains only the last 50.
@@ -109,11 +110,22 @@ Capture is process-wide: the newest live guard receives messages, and dropping
 it restores the previous live capture or history-only recording, including on
 panic. Tests sharing recording or capture must serialize and restore history.
 The Rust terminal test stub also feeds recording while preserving its last-message
-helper. Capture does not disable interactive output: the C rendering/input bypass
-in `io.c` is deferred to task 6. C callers and terminal behavior remain unverified.
+helper. Any live capture now bypasses rendering and ` -more-` input in both C
+message functions, while preserving recording and message-state updates; captured
+calls return false (no input abort). `msg_print` records empty strings, while
+`msg_print_pass_one` retains its legacy empty/null clearing behavior without
+recording them. C-owned captures use explicit paired begin/end calls; Rust guards
+also restore output on panic. The final capture's removal restores interactive
+dispatch by default.
+
+`make test-messages` exercises the production C source with terminal-call doubles
+that fail if captured messages attempt input or drawing. It checks order, empty
+streams, nesting, repeated scenarios, bounded C copies, and restored interactive
+dispatch with scripted Escape responses. Actual curses rendering, other input
+prompts, and full gameplay remain unverified; capture does not bypass those prompts.
 
 Start at [message recording](../src/message.rs) and the C message path in
-[io.c](../src/io.c). Recording history alone does not bypass terminal rendering.
+[io.c](../src/io.c). Reading message history alone does not bypass terminal rendering.
 
 Acceptance checks:
 

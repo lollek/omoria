@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Scoped message capture now bypasses C message rendering and prompts, with terminal-free C caller checks.
 * Character selection skips malformed save filenames and logs unreadable save folders instead of panicking while listing saves.
 * Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
 * Walking beyond the map edge no longer gives monsters a turn and stops running.
