@@ -58,6 +58,12 @@ test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES))
 	$(CC) $(CFLAGS) tests/message_ffi.c target/debug/message-io.o $(filter-out src/main.o src/io.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
 	./target/debug/message-ffi-test
 
+.PHONY: test-save
+test-save: $(filter-out src/main.o,$(OBJFILES))
+	cargo build --features save-test-support
+	$(CC) $(CFLAGS) tests/save_apply_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/save-apply-ffi-test
+	./target/debug/save-apply-ffi-test
+
 .PHONY: check
 check:
 	cargo fmt --check
@@ -66,6 +72,7 @@ check:
 	$(MAKE) omoria
 	$(MAKE) test-movement
 	$(MAKE) test-messages
+	$(MAKE) test-save
 
 .PHONY: debug
 debug: omoria

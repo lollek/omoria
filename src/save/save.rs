@@ -59,6 +59,17 @@ fn load_character(player_name: &str, player_uid: i64) -> Option<()> {
             return None;
         }
     };
+    if let Err(save_uid) = apply_record_for_uid(records, player_uid) {
+        debug::error(format!(
+            "Save UID {} does not match selected character {}",
+            save_uid, player_uid
+        ));
+        return None;
+    }
+    Some(())
+}
+
+fn apply_record(records: SaveRecord) {
     player::set_record(records.player);
     save::inventory::set_record(records.inventory);
     save::equipment::set_record(records.equipment);
@@ -66,7 +77,119 @@ fn load_character(player_name: &str, player_uid: i64) -> Option<()> {
     save::dungeon::set_record(records.dungeon);
     identification::set_record(records.identified);
     save::monsters::set_record(records.monsters);
-    Some(())
+}
+
+fn apply_record_for_uid(records: SaveRecord, requested_uid: i64) -> Result<(), i64> {
+    let record_uid = records.player.uid;
+    if record_uid != requested_uid {
+        return Err(record_uid);
+    }
+    apply_record(records);
+    Ok(())
+}
+
+fn current_record() -> SaveRecord {
+    SaveRecord {
+        player: player::record(),
+        inventory: save::inventory::record(),
+        equipment: save::equipment::record(),
+        town: save::town::record(),
+        dungeon: save::dungeon::record(),
+        identified: identification::record(),
+        monsters: save::monsters::record(),
+    }
+}
+
+#[cfg(feature = "save-test-support")]
+fn normalized_record(record: &SaveRecord) -> Option<serde_json::Value> {
+    let mut value = serde_json::to_value(record).ok()?;
+    if let Some(serde_json::Value::Array(entries)) = value.get_mut("identified") {
+        entries.sort_by_key(|entry| entry.to_string());
+    }
+    Some(value)
+}
+
+#[cfg(feature = "save-test-support")]
+fn test_reset_record(history_rows: usize) -> SaveRecord {
+    let mut record = SaveRecord::default();
+    // Item contains only integer scalars and fixed byte arrays, so zero is a blank slot.
+    let empty_item = unsafe { std::mem::zeroed::<crate::model::Item>() };
+    record.equipment = vec![empty_item; save::equipment::record().len()];
+    record.player.history = vec![String::new(); history_rows];
+    record
+}
+
+#[cfg(feature = "save-test-support")]
+pub(crate) fn test_reset() -> bool {
+    let expected = normalized_record(&test_reset_record(5));
+    let reset = test_reset_record(0);
+    apply_record(reset);
+    expected.is_some() && normalized_record(&current_record()) == expected
+}
+
+#[cfg(feature = "save-test-support")]
+pub(crate) fn test_reject_mismatched_uid_preserves_state() -> bool {
+    let fixture = include_str!("../../tests/fixtures/save_record_v1.json");
+    let mut record = match json::decode::<SaveRecord>(fixture) {
+        Ok(record) => record,
+        Err(_) => return false,
+    };
+    let requested_uid = record.player.uid;
+    record.player.uid += 1;
+
+    let before = normalized_record(&current_record());
+    match apply_record_for_uid(record, requested_uid) {
+        Err(_) => normalized_record(&current_record()) == before,
+        Ok(()) => false,
+    }
+}
+
+#[cfg(feature = "save-test-support")]
+pub(crate) fn test_apply_fixture_and_verify() -> bool {
+    let fixture = include_str!("../../tests/fixtures/save_record_v1.json");
+    let expected_record = match json::decode::<SaveRecord>(fixture) {
+        Ok(record) => record,
+        Err(_) => return false,
+    };
+    let expected = match normalized_record(&expected_record) {
+        Some(value) => value,
+        None => return false,
+    };
+
+    apply_record(expected_record);
+
+    let actual = match normalized_record(&current_record()) {
+        Some(value) => value,
+        None => return false,
+    };
+    if actual != expected {
+        if let (Some(expected_sections), Some(actual_sections)) =
+            (expected.as_object(), actual.as_object())
+        {
+            for (section, expected_value) in expected_sections {
+                if actual_sections.get(section) != Some(expected_value) {
+                    if section == "player" {
+                        if let (Some(expected_fields), Some(actual_fields)) = (
+                            expected_value.as_object(),
+                            actual_sections
+                                .get(section)
+                                .and_then(serde_json::Value::as_object),
+                        ) {
+                            for (field, expected_field) in expected_fields {
+                                if actual_fields.get(field) != Some(expected_field) {
+                                    eprintln!("Save apply roundtrip differs in `player.{}`", field);
+                                }
+                            }
+                        }
+                    } else {
+                        eprintln!("Save apply roundtrip differs in `{}`", section);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    true
 }
 
 pub fn save_character_with_feedback() -> Option<()> {
@@ -86,15 +209,7 @@ fn save_character() -> Option<()> {
     }
     player::increase_save_counter();
 
-    let record = SaveRecord {
-        player: player::record(),
-        inventory: save::inventory::record(),
-        equipment: save::equipment::record(),
-        town: save::town::record(),
-        dungeon: save::dungeon::record(),
-        identified: identification::record(),
-        monsters: save::monsters::record(),
-    };
+    let record = current_record();
     match persistence::write_save(&player::name(), player::uid(), &record) {
         Ok(()) => Some(()),
         Err(err @ CharacterStorageError::Codec(_)) => {

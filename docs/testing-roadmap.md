@@ -272,7 +272,7 @@ Acceptance checks:
 
 ### PS1. Apply a Save Record to Globals (L1/L2)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: `src/save/`, a new C harness under `tests/`, and its own `Makefile`
 target.

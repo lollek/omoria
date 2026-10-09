@@ -397,6 +397,7 @@ pub fn abilities() -> Vec<Ability> {
 
 pub fn set_record(record: PlayerRecord) {
     unsafe {
+        player_uid = record.uid;
         player_account = record.account;
     }
 
@@ -415,6 +416,9 @@ pub fn set_record(record: PlayerRecord) {
     set_sex(record.sex);
     set_class(record.class);
 
+    unsafe {
+        player_history = [[0; 82]; 5];
+    }
     for (i, line) in record.history.iter().enumerate() {
         let cstr = CString::new(line.to_string()).unwrap();
         unsafe {
