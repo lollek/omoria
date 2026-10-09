@@ -33,6 +33,7 @@ partial ports. See the main plan for details; this summary does not supersede it
 - `conversion/` — C-Rust type mappings
 - `combat/fighting.rs` — `managed_to_hit` hit calculation
 - `player/` — Partial (attributes, stats, skills, regeneration)
+- `player_action/movement/` — Step decisions and confusion RNG only; movement effects remain C
 - `save/`, `persistence/` — Save/load system
 - `inventory/` — Partial (display)
 - `equipment.rs`, `identification.rs`

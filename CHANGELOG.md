@@ -3,10 +3,14 @@
 ## Unreleased
 * Character selection skips malformed save filenames and logs unreadable save folders instead of panicking while listing saves.
 * Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
+* Walking beyond the map edge no longer gives monsters a turn and stops running.
+* Internal: Added isolated movement decisions with injectable confusion RNG and C caller checks.
 * Serialization failures no longer truncate existing character saves or the master list.
 * Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
 * Internal: Link the Linux build against wide-character ncurses.
 * Internal: Added scoped message-stream capture and tests without changing message history retention.
+* Fix item generation crashing when the dungeon level is zero.
+* Internal: Dungeon item generation now supports injected RNGs; removed unreachable cursed item-quality branches.
 * Internal: Added save-file compatibility tests using a sanitized save fixture.
 * Internal: Cleaned up Clippy and compiler warnings without changing gameplay behavior.
 * Internal: Added automated C/Rust verification, isolated shared-state tests, and refreshed migration guidance for delegated tasks.

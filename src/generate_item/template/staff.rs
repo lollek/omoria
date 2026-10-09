@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, StaffSubType},
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum StaffTemplate {
@@ -138,32 +138,32 @@ impl ItemTemplate for StaffTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, rng: &mut dyn rand::Rng) -> i64 {
         match self {
-            StaffTemplate::StaffOfLight => randint(20) + 12,
-            StaffTemplate::StaffOfDoorStairLocation => randint(8) + 6,
-            StaffTemplate::StaffOfTrapLocation => randint(5) + 6,
-            StaffTemplate::StaffOfTreasureLocation => randint(20) + 12,
-            StaffTemplate::StaffOfObjectLocation => randint(15) + 6,
-            StaffTemplate::StaffOfTeleportation => randint(4) + 5,
-            StaffTemplate::StaffOfEarthquakes => randint(5) + 3,
-            StaffTemplate::StaffOfSummoning => randint(3) + 1,
-            StaffTemplate::StaffOfDestruction => randint(3) + 1,
-            StaffTemplate::StaffOfStarlite => randint(3) + 1,
-            StaffTemplate::StaffOfHasteMonsters => randint(5) + 6,
-            StaffTemplate::StaffOfSlowMonsters => randint(10) + 12,
-            StaffTemplate::StaffOfSleepMonsters => randint(5) + 6,
-            StaffTemplate::StaffOfCureLightWounds => randint(5) + 6,
-            StaffTemplate::StaffOfDetectInvisible => randint(5) + 6,
-            StaffTemplate::StaffOfSpeed => randint(10) + 12,
-            StaffTemplate::StaffOfSlowness => randint(3) + 4,
-            StaffTemplate::StaffOfMassPolymorph => randint(5) + 6,
-            StaffTemplate::StaffOfRemoveCurse => randint(5) + 6,
-            StaffTemplate::StaffOfDetectEvil => randint(3) + 4,
-            StaffTemplate::StaffOfCuring => randint(10) + 12,
-            StaffTemplate::StaffOfDispelEvil => randint(3) + 4,
-            StaffTemplate::StaffOfDarkness => randint(10) + 6,
-            StaffTemplate::StaffOfIdentify => randint(6) + 6,
+            StaffTemplate::StaffOfLight => randint_with_rng(rng, 20) + 12,
+            StaffTemplate::StaffOfDoorStairLocation => randint_with_rng(rng, 8) + 6,
+            StaffTemplate::StaffOfTrapLocation => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfTreasureLocation => randint_with_rng(rng, 20) + 12,
+            StaffTemplate::StaffOfObjectLocation => randint_with_rng(rng, 15) + 6,
+            StaffTemplate::StaffOfTeleportation => randint_with_rng(rng, 4) + 5,
+            StaffTemplate::StaffOfEarthquakes => randint_with_rng(rng, 5) + 3,
+            StaffTemplate::StaffOfSummoning => randint_with_rng(rng, 3) + 1,
+            StaffTemplate::StaffOfDestruction => randint_with_rng(rng, 3) + 1,
+            StaffTemplate::StaffOfStarlite => randint_with_rng(rng, 3) + 1,
+            StaffTemplate::StaffOfHasteMonsters => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfSlowMonsters => randint_with_rng(rng, 10) + 12,
+            StaffTemplate::StaffOfSleepMonsters => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfCureLightWounds => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfDetectInvisible => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfSpeed => randint_with_rng(rng, 10) + 12,
+            StaffTemplate::StaffOfSlowness => randint_with_rng(rng, 3) + 4,
+            StaffTemplate::StaffOfMassPolymorph => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfRemoveCurse => randint_with_rng(rng, 5) + 6,
+            StaffTemplate::StaffOfDetectEvil => randint_with_rng(rng, 3) + 4,
+            StaffTemplate::StaffOfCuring => randint_with_rng(rng, 10) + 12,
+            StaffTemplate::StaffOfDispelEvil => randint_with_rng(rng, 3) + 4,
+            StaffTemplate::StaffOfDarkness => randint_with_rng(rng, 10) + 6,
+            StaffTemplate::StaffOfIdentify => randint_with_rng(rng, 6) + 6,
         }
     }
 

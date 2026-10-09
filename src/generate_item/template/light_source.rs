@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ItemSubType, LightSourceSubType},
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum LightSourceTemplate {
@@ -48,13 +48,16 @@ impl ItemTemplate for LightSourceTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
-        randint(match self {
-            LightSourceTemplate::WoodenTorch => 4000,
-            LightSourceTemplate::BrassLantern => 7500,
-            LightSourceTemplate::MagicTorch => 9000,
-            LightSourceTemplate::MagicLantern => 20000,
-        })
+    fn p1(&self, rng: &mut dyn rand::Rng) -> i64 {
+        randint_with_rng(
+            rng,
+            match self {
+                LightSourceTemplate::WoodenTorch => 4000,
+                LightSourceTemplate::BrassLantern => 7500,
+                LightSourceTemplate::MagicTorch => 9000,
+                LightSourceTemplate::MagicLantern => 20000,
+            },
+        )
     }
 
     fn cost(&self) -> i64 {

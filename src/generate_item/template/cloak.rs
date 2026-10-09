@@ -6,7 +6,7 @@ use crate::model::{
     item_subtype::{CloakSubType, ItemSubType},
     Item, WornFlag1,
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CloakTemplate {
@@ -34,54 +34,25 @@ impl CloakTemplate {
 }
 
 impl ItemTemplate for CloakTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
         match item_quality {
-            ItemQuality::Cursed => {
-                match randint(3) {
-                    1 => {
-                        // of Irritation
-                        item.set_cursed(true);
-                        item.apply_wornflag1(WornFlag1::AggravateMonsters);
-                        item.ac = 0;
-                        item.toac = -randint(1) as i16;
-                        item.tohit = -randint(1) as i16;
-                        item.todam = -randint(1) as i16;
-                        item.cost = 0;
-                    }
-                    2 => {
-                        // of Vulnerability
-                        item.set_cursed(true);
-                        item.ac = 0;
-                        item.toac = -randint(10) as i16;
-                        item.cost = 0;
-                    }
-                    _ => {
-                        // of Enveloping
-                        item.set_cursed(true);
-                        item.toac = -randint(1) as i16;
-                        item.tohit = -1 - randint(3) as i16;
-                        item.todam = -1 - randint(3) as i16;
-                        item.cost = 0;
-                    }
-                }
-            }
             ItemQuality::Magic => {
-                item.toac = randint(2) as i16;
+                item.toac = randint_with_rng(rng, 2) as i16;
                 item.cost += item.toac as i64 * 10_000;
             }
             ItemQuality::Special => {
-                match randint(9) {
+                match randint_with_rng(rng, 9) {
                     1..=4 => {
                         // of Protection
-                        item.toac += 1 + randint(3) as i16;
+                        item.toac += 1 + randint_with_rng(rng, 3) as i16;
                         item.cost += 25_000 + item.toac as i64 * 10_000;
                     }
                     5..=8 => {
                         // of Stealth
                         item.apply_wornflag1(WornFlag1::Stealth);
-                        item.toac += 1 + randint(1) as i16;
-                        item.p1 = randint(3);
+                        item.toac += 1 + randint_with_rng(rng, 1) as i16;
+                        item.p1 = randint_with_rng(rng, 3);
                         item.cost += item.p1 * 50_000 + item.toac as i64 * 10_000
                     }
                     _ => {
@@ -120,7 +91,7 @@ impl ItemTemplate for CloakTemplate {
     fn flags2(&self) -> u64 {
         0
     }
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
 

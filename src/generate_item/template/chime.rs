@@ -3,7 +3,7 @@ use crate::model::{
     self,
     item_subtype::{ChimeSubType, ItemSubType},
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum ChimeTemplate {
@@ -104,24 +104,24 @@ impl ItemTemplate for ChimeTemplate {
         0
     }
 
-    fn p1(&self) -> i64 {
+    fn p1(&self, rng: &mut dyn rand::Rng) -> i64 {
         match self {
-            ChimeTemplate::ChimeOfLight => randint(20) + 12,
-            ChimeTemplate::ChimeOfDetectDoorsStairs => randint(8) + 6,
-            ChimeTemplate::ChimeOfDetectTraps => randint(5) + 6,
-            ChimeTemplate::ChimeOfTeleportation => randint(4) + 5,
-            ChimeTemplate::ChimeOfThunderblast => randint(5) + 3,
-            ChimeTemplate::ChimeOfSummonMonster => randint(3) + 1,
-            ChimeTemplate::ChimeOfDisarming => randint(10),
-            ChimeTemplate::ChimeOfAggravation => randint(10) + 12,
-            ChimeTemplate::ChimeOfSlowMonster => randint(5) + 6,
-            ChimeTemplate::ChimeOfSootheMonster => randint(5) + 6,
-            ChimeTemplate::ChimeOfCureLightWound => randint(5) + 6,
-            ChimeTemplate::ChimeOfChanging => randint(5) + 6,
-            ChimeTemplate::ChimeOfRemoveCurse => randint(3) + 4,
-            ChimeTemplate::ChimeOfCuring => randint(3) + 4,
-            ChimeTemplate::ChimeOfDispelEvil => randint(3) + 4,
-            ChimeTemplate::ChimeOfDarkness => randint(10) + 6,
+            ChimeTemplate::ChimeOfLight => randint_with_rng(rng, 20) + 12,
+            ChimeTemplate::ChimeOfDetectDoorsStairs => randint_with_rng(rng, 8) + 6,
+            ChimeTemplate::ChimeOfDetectTraps => randint_with_rng(rng, 5) + 6,
+            ChimeTemplate::ChimeOfTeleportation => randint_with_rng(rng, 4) + 5,
+            ChimeTemplate::ChimeOfThunderblast => randint_with_rng(rng, 5) + 3,
+            ChimeTemplate::ChimeOfSummonMonster => randint_with_rng(rng, 3) + 1,
+            ChimeTemplate::ChimeOfDisarming => randint_with_rng(rng, 10),
+            ChimeTemplate::ChimeOfAggravation => randint_with_rng(rng, 10) + 12,
+            ChimeTemplate::ChimeOfSlowMonster => randint_with_rng(rng, 5) + 6,
+            ChimeTemplate::ChimeOfSootheMonster => randint_with_rng(rng, 5) + 6,
+            ChimeTemplate::ChimeOfCureLightWound => randint_with_rng(rng, 5) + 6,
+            ChimeTemplate::ChimeOfChanging => randint_with_rng(rng, 5) + 6,
+            ChimeTemplate::ChimeOfRemoveCurse => randint_with_rng(rng, 3) + 4,
+            ChimeTemplate::ChimeOfCuring => randint_with_rng(rng, 3) + 4,
+            ChimeTemplate::ChimeOfDispelEvil => randint_with_rng(rng, 3) + 4,
+            ChimeTemplate::ChimeOfDarkness => randint_with_rng(rng, 10) + 6,
         }
     }
 

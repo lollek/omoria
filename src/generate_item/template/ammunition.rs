@@ -7,7 +7,7 @@ use crate::model::{
     item_subtype::{ArrowSubType, BoltSubType, ItemSubType, SlingAmmoSubType},
     Item, WornFlag1, WornFlag2,
 };
-use crate::rng::randint;
+use crate::rng::randint_with_rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum AmmunitionTemplate {
@@ -72,21 +72,16 @@ impl AmmunitionTemplate {
 }
 
 impl ItemTemplate for AmmunitionTemplate {
-    fn create(&self, item_quality: ItemQuality, _item_level: u8) -> Item {
-        let mut item = default_create(self, item_quality);
+    fn create(&self, item_quality: ItemQuality, _item_level: u8, rng: &mut dyn rand::Rng) -> Item {
+        let mut item = default_create(self, item_quality, rng);
         if self == &AmmunitionTemplate::Arrow || self == &AmmunitionTemplate::Bolt {
-            if item_quality == ItemQuality::Cursed {
-                item.set_cursed(true);
-                item.cost = 0;
-                item.tohit = -randint(5) as i16;
-                item.todam = -randint(5) as i16;
-            } else if item_quality == ItemQuality::Magic {
-                item.tohit = randint(4) as i16;
-                item.todam = randint(4) as i16;
+            if item_quality == ItemQuality::Magic {
+                item.tohit = randint_with_rng(rng, 4) as i16;
+                item.todam = randint_with_rng(rng, 4) as i16;
             } else if item_quality == ItemQuality::Special {
-                item.tohit = randint(4) as i16;
-                item.todam = randint(4) as i16;
-                match randint(10) {
+                item.tohit = randint_with_rng(rng, 4) as i16;
+                item.todam = randint_with_rng(rng, 4) as i16;
+                match randint_with_rng(rng, 10) {
                     1..=3 => self.apply_ammo_slaying(&mut item),
                     4..=5 => self.apply_ammo_flame_tongue(&mut item),
                     6..=7 => self.apply_ammo_slay_evil(&mut item),
@@ -127,7 +122,7 @@ impl ItemTemplate for AmmunitionTemplate {
             AmmunitionTemplate::IronShot => 0,
         }
     }
-    fn p1(&self) -> i64 {
+    fn p1(&self, _rng: &mut dyn rand::Rng) -> i64 {
         0
     }
 
