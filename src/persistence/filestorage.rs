@@ -1,5 +1,6 @@
 use std::fs;
 use std::io::{Read, Seek, SeekFrom, Write};
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use crate::constants;
 use crate::debug;
@@ -114,16 +115,13 @@ impl persistence::PersistenceEngine for FileStorageEngine {
         uid: i64,
         record: &SaveRecord,
     ) -> Result<(), CharacterStorageError> {
-        let (encoded, file) = encode_before_open(record, || {
-            fs::OpenOptions::new()
-                .write(true)
-                .create(true)
-                .truncate(true)
-                .open(save_file_path(name, uid))
+        let path = save_file_path(name, uid);
+        encode_then_write(record, |encoded| {
+            atomic_write_save_with(std::path::Path::new(&path), |file| {
+                write_save_bytes(file, encoded)
+            })
+            .map_err(character_io_error)
         })
-        .map_err(|err| CharacterStorageError::Codec(err.to_string()))?;
-        let file = file.map_err(character_io_error)?;
-        write_save_bytes(file, &encoded).map_err(character_io_error)
     }
 
     fn delete_save(&mut self, name: &str, uid: i64) -> Result<(), CharacterStorageError> {
@@ -147,12 +145,56 @@ fn write_save_bytes(mut writer: impl Write, json: &str) -> std::io::Result<()> {
     writer.write_all(json.as_bytes())
 }
 
-fn encode_before_open<T: serde::Serialize + ?Sized, Output>(
+static NEXT_TEMP_FILE_ID: AtomicU64 = AtomicU64::new(0);
+
+fn atomic_write_save_with(
+    path: &std::path::Path,
+    write: impl FnOnce(&mut fs::File) -> std::io::Result<()>,
+) -> std::io::Result<()> {
+    let parent = path.parent().unwrap_or_else(|| std::path::Path::new("."));
+    let file_name = path.file_name().ok_or_else(|| {
+        std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "save path has no filename",
+        )
+    })?;
+
+    let (temporary_path, mut temporary_file) = loop {
+        let mut temporary_name = std::ffi::OsString::from(".");
+        temporary_name.push(file_name);
+        temporary_name.push(format!(
+            ".{}.{}.tmp",
+            std::process::id(),
+            NEXT_TEMP_FILE_ID.fetch_add(1, Ordering::Relaxed)
+        ));
+        let temporary_path = parent.join(temporary_name);
+        match fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary_path)
+        {
+            Ok(file) => break (temporary_path, file),
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(error) => return Err(error),
+        }
+    };
+
+    let write_result = write(&mut temporary_file).and_then(|()| temporary_file.sync_all());
+    drop(temporary_file);
+    let result = write_result.and_then(|()| fs::rename(&temporary_path, path));
+    if result.is_err() {
+        let _ = fs::remove_file(temporary_path);
+    }
+    result
+}
+
+fn encode_then_write<T: serde::Serialize + ?Sized>(
     record: &T,
-    open: impl FnOnce() -> Output,
-) -> Result<(String, Output), Error> {
-    let encoded = json::encode(record)?;
-    Ok((encoded, open()))
+    write: impl FnOnce(&str) -> Result<(), CharacterStorageError>,
+) -> Result<(), CharacterStorageError> {
+    let encoded =
+        json::encode(record).map_err(|error| CharacterStorageError::Codec(error.to_string()))?;
+    write(&encoded)
 }
 
 fn master_file_path() -> String {
@@ -165,9 +207,69 @@ mod tests {
     use crate::save::test_support::FIXTURE;
     use std::ffi::OsString;
     use std::io;
+    use std::path::PathBuf;
+    use std::sync::atomic::{AtomicU64, Ordering};
+
+    struct TestDirectory(PathBuf);
+
+    impl TestDirectory {
+        fn new() -> Self {
+            static NEXT_ID: AtomicU64 = AtomicU64::new(0);
+            loop {
+                let path = std::env::temp_dir().join(format!(
+                    "omoria-ps3-{}-{}",
+                    std::process::id(),
+                    NEXT_ID.fetch_add(1, Ordering::Relaxed)
+                ));
+                match fs::create_dir(&path) {
+                    Ok(()) => return Self(path),
+                    Err(error) if error.kind() == io::ErrorKind::AlreadyExists => continue,
+                    Err(error) => panic!("failed to create test directory: {}", error),
+                }
+            }
+        }
+    }
+
+    impl Drop for TestDirectory {
+        fn drop(&mut self) {
+            fs::remove_dir_all(&self.0).expect("failed to remove test directory");
+        }
+    }
 
     #[test]
-    fn failed_serialization_does_not_open_save_storage() {
+    fn atomic_save_write_replaces_existing_file_and_leaves_no_temporary_file() {
+        let directory = TestDirectory::new();
+        let path = directory.0.join("character-1.json");
+        fs::write(&path, b"previous save").unwrap();
+
+        atomic_write_save_with(&path, |file| file.write_all(b"replacement save")).unwrap();
+
+        assert_eq!(fs::read(&path).unwrap(), b"replacement save");
+        assert_eq!(fs::read_dir(&directory.0).unwrap().count(), 1);
+    }
+
+    #[test]
+    fn failed_atomic_save_write_preserves_existing_file_and_cleans_temporary_file() {
+        let directory = TestDirectory::new();
+        let path = directory.0.join("character-1.json");
+        fs::write(&path, b"previous save").unwrap();
+
+        let error = atomic_write_save_with(&path, |file| {
+            file.write_all(b"partial save")?;
+            Err(io::Error::new(
+                io::ErrorKind::WriteZero,
+                "injected write failure",
+            ))
+        })
+        .unwrap_err();
+
+        assert_eq!(error.to_string(), "injected write failure");
+        assert_eq!(fs::read(&path).unwrap(), b"previous save");
+        assert_eq!(fs::read_dir(&directory.0).unwrap().count(), 1);
+    }
+
+    #[test]
+    fn failed_serialization_does_not_write_save_storage() {
         struct FailingRecord;
 
         impl serde::Serialize for FailingRecord {
@@ -177,11 +279,11 @@ mod tests {
         }
 
         let mut opened = false;
-        let result = encode_before_open(&FailingRecord, || opened = true);
-        assert!(
-            !opened,
-            "serialization failure must not open or truncate storage"
-        );
+        let result = encode_then_write(&FailingRecord, |_| {
+            opened = true;
+            Ok(())
+        });
+        assert!(!opened, "serialization failure must not write to storage");
         assert_eq!(
             result.unwrap_err().to_string(),
             "injected serialization failure"
@@ -189,23 +291,29 @@ mod tests {
     }
 
     #[test]
-    fn successful_serialization_opens_storage_once() {
-        let mut opens = 0;
-        let (encoded, writer) = encode_before_open(&vec![1, 2, 3], || {
-            opens += 1;
-            Vec::<u8>::new()
+    fn successful_serialization_writes_encoded_data_once() {
+        let mut writes = 0;
+        let mut encoded = String::new();
+        encode_then_write(&vec![1, 2, 3], |json| {
+            writes += 1;
+            encoded = json.to_string();
+            Ok(())
         })
         .unwrap();
-        assert_eq!(opens, 1);
+        assert_eq!(writes, 1);
         assert_eq!(encoded, "[1,2,3]");
-        assert!(writer.is_empty());
     }
 
     #[test]
-    fn storage_open_failure_is_preserved() {
-        let (encoded, writer) = encode_before_open(&vec![1], || None::<Vec<u8>>).unwrap();
-        assert_eq!(encoded, "[1]");
-        assert!(writer.is_none());
+    fn save_write_failure_is_preserved() {
+        let error = encode_then_write(&vec![1], |_| {
+            Err(CharacterStorageError::Io("injected write failure".into()))
+        })
+        .unwrap_err();
+        assert_eq!(
+            error,
+            CharacterStorageError::Io("injected write failure".into())
+        );
     }
 
     #[test]
