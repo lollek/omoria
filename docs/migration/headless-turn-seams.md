@@ -1,5 +1,10 @@
 # Headless-Turn Seam Inventory (SEAM1)
 
+> **Historical.** This is the pre-implementation research. The headless
+> harnesses have since landed (`make test-headless*`; see the
+> [testing guide](../testing.md)). **R**/**A** markers and
+> "not executed" claims reflect the state when it was written.
+
 Research only. No headless harness or production seam is implemented by this
 document. **R** means verified by source reading; **A** means an assumption
 requiring an executable harness check. Line numbers refer to this checkout.

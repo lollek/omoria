@@ -1,7 +1,7 @@
 ---
 description: "Implement a task end-to-end: TDD, verification, self-review, branch, commit, PR."
 agent: "agent"
-argument-hint: "What to implement (e.g. HL2 from docs/testing-roadmap.md)"
+argument-hint: "What to implement (e.g. PA1 from docs/migration/backlog.md)"
 ---
 
 Implement the given task end-to-end and autonomously.

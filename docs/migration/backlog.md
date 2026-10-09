@@ -1,8 +1,8 @@
 # Migration Backlog
 
 The source of truth for the C-to-Rust port: epics, stories, dependencies, and
-status. Test-infrastructure work stays in the
-[testing roadmap](../testing-roadmap.md).
+status. Test coverage and gaps are in the
+[testing guide](../testing.md).
 
 Facts below were checked by reading source on 2026-10-09. Size and complexity
 ratings are estimates. Re-check a card's facts before starting it.
@@ -67,7 +67,7 @@ Out of scope: adjacent behavior that stays in C.
 ```
 
 Verification levels L0-L3 are defined in the
-[testing roadmap](../testing-roadmap.md#verification-levels).
+[testing guide](../testing.md#verification-levels).
 
 ### Size, Complexity, and Agent Choice
 
@@ -107,7 +107,7 @@ If a story feels too large when picked up, split it and give the parts new IDs
     your own functions.
   * Backlog and epic files: update only your card's `Status:` line. The
     coordinator updates graphs and the Foundations table.
-  * Do not edit the testing roadmap.
+  * Do not edit the testing guide.
 * The `Makefile` finds C sources with `find`, so deleting a `.c` file needs no
   Makefile edit. Its stale `.o` survives `make clean`; delete it by hand or
   run a clean checkout before `make check`.
@@ -192,8 +192,8 @@ Planning notes for epics that are not yet planned:
   call it. `creature.c` and `monsters.c` share interfaces; coordinate them.
 * **CM:** port combat for parity. The
   [combat proposal](../proposals/combat-system-specification.md) is a redesign
-  and is not the port target. Movement continues from the testing roadmap's
-  MV1/MV2.
+  and is not the port target. Movement builds on
+  `player_action/movement/step.rs` and `make test-movement`.
 * **CORE:** `damroll` (77 call sites), `take_hit` (53), `inven_destroy` (21),
   `get_item` (18), and `py_bonuses` (19) have high fan-in. Consumers wrap them
   first (F-DMG, F-ITEM); port the C bodies last.

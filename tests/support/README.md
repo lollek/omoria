@@ -7,7 +7,7 @@ the behavior under test is caller-side C macro redirection.
 ## Linking a Harness
 
 Compile `terminal.c` normally and link it into the harness. Compile caller
-objects such as `screen.c`, `dungeon/light.c`, and a future bounded-loop object
+objects such as `screen.c`, `dungeon/light.c`, and `main_loop/main_loop.c`
 with `-include tests/support/terminal_redirects.h`. Exclude those objects' normal
 production versions from the harness link. The screen redirects include the
 two Rust HUD entry points, which otherwise call ncurses directly.
@@ -35,8 +35,8 @@ callers rather than invoking them through this object.
   `msg_flag`. Exhaustion, including after reset, prints a diagnostic and exits
   with `EXIT_FAILURE`, never returning a synthesized gameplay command.
 * Script only explicitly expected low-level prompt keys, such as `-more-`
-  acknowledgments. Future HL1 command injection must use its own command source,
-  not this script. Selection, confirmation, and string prompts are unsupported:
+  acknowledgments. Gameplay commands go through the HL1 command source
+  (`main_loop_with_commands` in `main_loop.h`), not this script. Selection, confirmation, and string prompts are unsupported:
   their doubles fail even if keys remain in the low-level script.
 * `headless_inkey_delay()` models the current production nonblocking poll: it
   refreshes through a double, returns no key, and consumes no scripted input.
@@ -48,5 +48,5 @@ passed fail-fast check. Rendering scenarios repeat twice and restore their
 fixture globals before the original message tests run.
 
 This is terminal-boundary coverage, including real screen and blind-light
-callers, not a bounded main-loop or end-to-end gameplay test. Other production
+callers. Bounded main-loop scenarios are in the `test-headless*` targets. Other production
 objects and direct Rust ncurses callers are not automatically intercepted.
