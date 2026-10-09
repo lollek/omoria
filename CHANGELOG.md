@@ -2,6 +2,7 @@
 
 ## Unreleased
 * Internal: Ported searching to Rust with deterministic checks and bounded dungeon-cell access.
+* Internal: Verify repeatable headless movement, interaction, and save/reload scenarios in the check gate.
 * Internal: Added fixture-backed headless ration pickup checks covering position, inventory, and the pickup message.
 * Internal: Added a bounded main-loop entry with injected commands and terminal-free loop-control checks.
 * Internal: Added headless C caller checks for successful movement onto open floor.

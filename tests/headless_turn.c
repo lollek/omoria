@@ -197,6 +197,7 @@ static void assert_exhaustion(size_t count) {
 
 static void assert_movement_scenarios(void) {
   struct headless_scenario_result moved;
+  struct headless_scenario_result moved_again;
   headless_scenario_run("l", 1, false, &moved);
   assert(moved.start_row == 39 && moved.start_col == 140);
   assert(moved.row == 39 && moved.col == 141);
@@ -207,6 +208,7 @@ static void assert_movement_scenarios(void) {
   assert(moved.drawing_count > 0 && moved.input_count == 0);
 
   struct headless_scenario_result blocked;
+  struct headless_scenario_result blocked_again;
   headless_scenario_run("h", 1, true, &blocked);
   assert(blocked.start_row == 39 && blocked.start_col == 140);
   assert(blocked.row == 39 && blocked.col == 140);
@@ -215,6 +217,11 @@ static void assert_movement_scenarios(void) {
   assert(blocked.turn == 2 && blocked.turn_counter == 102);
   assert(blocked.message_count == 0);
   assert(blocked.drawing_count > 0 && blocked.input_count == 0);
+
+  headless_scenario_run("l", 1, false, &moved_again);
+  headless_scenario_run("h", 1, true, &blocked_again);
+  assert(memcmp(&moved, &moved_again, sizeof(moved)) == 0);
+  assert(memcmp(&blocked, &blocked_again, sizeof(blocked)) == 0);
 }
 
 int main(void) {
