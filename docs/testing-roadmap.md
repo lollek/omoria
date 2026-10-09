@@ -1,8 +1,9 @@
 # Testing Roadmap
 
-Status: tasks 1–4 and the decision part of task 5 are done. A headless gameplay
-harness is **not implemented**. Open work is split into parallel task cards in
-[Open Task Cards](#open-task-cards). Existing unit tests and successful linking
+Status: tasks 1–5 are done, as are cards SEAM1, RNG1, PS1–PS3, MV1, MV2, UI1,
+HT1, and HL1. A bounded main-loop entry exists, but headless gameplay coverage
+is **not implemented** (HL2–HL5 are open). Open work is split into parallel task
+cards in [Open Task Cards](#open-task-cards). Existing unit tests and successful linking
 are useful evidence, but do not establish that a player can complete a gameplay
 workflow.
 
@@ -17,11 +18,15 @@ cargo test
 make
 make test-movement
 make test-messages
+make test-save
+make test-headless
 ```
 
 This checks formatting, Rust linting and tests, and the full C/Rust build and
-link, plus terminal-free C movement and message boundary checks. It proves the tested slices
-and link, not full gameplay or headless turns.
+link, plus terminal-free C checks for movement, messages, save-record apply,
+and bounded main-loop control. It proves the tested slices and link, not
+gameplay through headless turns. Clippy does not build the
+`save-test-support` feature, so the PS1 check functions are not linted.
 The clean gate passes locally on macOS. CI runner results remain unverified.
 Existing Clippy warnings are non-blocking. Six scoped legacy lint allowances
 preserve behavior; they are not evidence that those paths are safe. See the
@@ -63,8 +68,7 @@ which gaps remain. Gaps that have a task card below reference its ID.
   typed character load/write/delete/list; production stays file-backed
   ([filestorage.rs](../src/persistence/filestorage.rs)). The JSON-backed
   in-memory engine ([memory.rs](../src/persistence/memory.rs)) is
-  `#[cfg(test)]` only. Gaps: applying records to globals (PS1), non-atomic
-  writes (PS3), empty character-menu navigation (UI1).
+  `#[cfg(test)]` only. Follow-ups PS1, PS3, and UI1 are done.
 * **3. Message stream capture (L0/L1).** [message.rs](../src/message.rs)
   provides `capture_messages()` (Rust guard) and the
   `C_message_capture_begin`/`end`/`count`/`get` C API. Capture is process-wide:
@@ -81,9 +85,10 @@ which gaps remain. Gaps that have a task card below reference its ID.
   steps, monster precedence, obstacles, and `consumes_turn` against explicit
   state and a borrowed map. Confusion uses an injected RNG with legacy parity.
   The C caller ([move.c](../src/player_action/move.c)) keeps its side-effect
-  order. `make test-movement` covers walls and map edges. `turn_counter` stays
-  in the main loop and counts command attempts. Gaps: owned successful-move
-  transition (MV1), C-caller successful move (MV2).
+  order. `make test-movement` covers walls, map edges, and a successful
+  open-floor move (MV2). `turn_counter` stays in the main loop and counts
+  command attempts. MV1's `apply_step` transition is `#[cfg(test)]` only and
+  not used by production.
 
 ## Delegating Open Tasks
 
@@ -99,13 +104,19 @@ Rules for parallel agents:
   stop and report it as a scope change. Do not edit another card's files.
 * **Shared files have fixed rules:**
   * `CHANGELOG.md`: add one bullet under **Unreleased**. When merging, keep
-    both sides of any conflict.
-  * This roadmap: update only your own card's `Status:` line.
+    both sides of any conflict. Player-visible behavior changes must not use
+    the `Internal:` prefix.
+  * This roadmap: update only your own card's `Status:` line. The coordinator
+    keeps **Status** and **Current Verification** current after each merge.
   * `Makefile`: add only your own target and its single line in `check`. Do
     not change other recipes.
 * **Report** the RED failure, the GREEN result, `make check`, and any
   unverified boundaries, as the prompt requires. The coordinator merges one
   branch at a time and reruns `make check` after each merge.
+* **Scope check before merge.** The coordinator compares `git diff --stat`
+  with the card's owned files. Any other file needs a reported scope change.
+  If a card requires unchanged production behavior, the report must name the
+  test or reasoning that shows it.
 * **Be honest about coverage.** No card except HL5 may claim headless gameplay
   coverage.
 
@@ -147,8 +158,8 @@ pick them up at any time.
 
 ### MV1. Owned Successful-Move Transition (L0)
 
-Status: done. Depends on: none. This closes the remaining task 5 acceptance
-check.
+Status: done. `apply_step` and `Occupancy` are `#[cfg(test)]` only; wiring into
+production is future work. Depends on: none.
 
 Owns: [step.rs](../src/player_action/movement/step.rs) and
 `src/player_action/movement/mod.rs`.
@@ -271,7 +282,11 @@ Acceptance checks:
 
 ### PS1. Apply a Save Record to Globals (L1/L2)
 
-Status: done. Depends on: none.
+Status: done. Also changed production loading, beyond the card: saves whose UID
+differs from the selected character are rejected, and `set_record` now sets
+`player_uid` and clears history. `make test-save` checks the rejection through
+`apply_record_for_uid`; `load_character` itself remains untested.
+Depends on: none.
 
 Owns: `src/save/`, a new C harness under `tests/`, and its own `Makefile`
 target.
@@ -411,8 +426,8 @@ and personal files are never touched.
 
 Status: open. Depends on: HL3, HL4.
 
-Owns: the `Makefile` `check` target and the **Status** and
-**Current Verification** sections of this roadmap.
+Owns: the `Makefile` `check` target and the claim in this roadmap's **Status**
+section that bounded headless gameplay coverage exists.
 
 Acceptance checks:
 
