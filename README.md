@@ -44,7 +44,7 @@ CI runs the same gate on macOS and Linux; runner results still need confirmation
 ## Documentation
 
 * [Source structure](docs/STRUCTURE.md)
-* [C-to-Rust migration plan](docs/c-to-rust-migration-plan.md)
+* [C-to-Rust migration backlog](docs/migration/backlog.md)
 * [Testing roadmap and verification levels](docs/testing-roadmap.md)
 * [Combat proposal (not implemented)](docs/proposals/combat-system-specification.md)
 * [Historical item guide](docs/legacy/item_guide.txt)

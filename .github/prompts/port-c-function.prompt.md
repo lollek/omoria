@@ -11,7 +11,7 @@ Port the specified C function to Rust following the project's strict TDD workflo
 ### 1. Analyze the C code
 - Read the C source to understand the function's behavior, inputs, outputs, and edge cases.
 - Identify dependencies (other C functions called, globals accessed, types used).
-- Check [docs/c-to-rust-migration-plan.md](../../docs/c-to-rust-migration-plan.md) for context on where this fits.
+- Check the [migration backlog](../../docs/migration/backlog.md) and its epic files for the story card that covers this code.
 
 ### 2. Choose the Rust target location
 - Follow existing module organization (domain-vertical slicing).
@@ -39,4 +39,4 @@ Port the specified C function to Rust following the project's strict TDD workflo
 - Run `make check` to verify formatting, Clippy, all Rust tests, and the C/Rust build.
 - Check for new compiler warnings.
 - Update CHANGELOG.md under `## Unreleased` with a brief entry (prefix with "Internal:" for non-player-facing changes).
-- Update the migration plan and summary; report RED evidence and untested integration boundaries.
+- Update your story card's `Status:` line in the backlog; report RED evidence and untested integration boundaries.

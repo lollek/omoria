@@ -2,8 +2,8 @@
 
 The `traps.c` migration demonstrates a **partial port**: data and placement are
 Rust, while activation remains C. See the authoritative
-[migration plan](../../../../docs/c-to-rust-migration-plan.md) and
-[trap details](../../../../docs/migration/traps-migration.md).
+[migration backlog](../../../../docs/migration/backlog.md) and
+[trap activation epic](../../../../docs/migration/epics/trap-activation.md).
 
 ## C source: `traps.c`
 

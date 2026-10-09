@@ -16,7 +16,7 @@ Guided workflow for porting C code to idiomatic Rust in the omoria roguelike, fo
 
 ## Reference documents
 
-- [Migration plan](./references/migration-plan-summary.md) — phases, priorities, and what's already done
+- [Migration backlog](../../../docs/migration/backlog.md) — epics, story cards, dependencies, foundations, and what's already done
 - [Partial port example](./references/trap-port-example.md) — completed trap data and placement, with activation still in C
 
 ## Procedure
@@ -27,7 +27,7 @@ Guided workflow for porting C code to idiomatic Rust in the omoria roguelike, fo
    - What functions exist and what they do
    - Dependencies (includes, globals, other C functions called)
    - Which functions are pure vs. side-effectful
-2. Check the [migration plan](./references/migration-plan-summary.md) for context on priority and phase.
+2. Find the story card in the [migration backlog](../../../docs/migration/backlog.md) and follow its owned files, dependencies, and foundations.
 3. Propose a **breakdown** if the file has multiple concerns (data, logic, interop). Use the traps example as a model:
    - `data.rs` — static definitions / templates
    - `logic.rs` or domain-named file — pure business logic
@@ -82,7 +82,7 @@ Follow existing module organization (domain-vertical slicing):
 2. No new compiler warnings.
 3. Update `CHANGELOG.md` under `## Unreleased`.
 4. If the C function is now fully replaced, note which C code can be removed (but don't delete it without navigator approval).
-5. Update the main migration plan and its summary, distinguishing partial ports from completed behavior.
+5. Update your story card's `Status:` line, distinguishing partial ports from completed behavior.
 6. Report RED evidence, final gate results, and boundaries that were not tested.
 
 ## Key patterns to follow
