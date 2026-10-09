@@ -1,3 +1,4 @@
+use crate::misc::{c_string_lossy, remove_first_c_string_byte};
 use crate::model::{Cave, Item};
 
 #[cfg(not(test))]
@@ -69,16 +70,7 @@ fn search(
             };
             match item.tval as i64 {
                 crate::dungeon::trap::data::TVAL_UNSEEN_TRAP => {
-                    let name = item
-                        .name
-                        .iter()
-                        .take_while(|byte| **byte != 0)
-                        .map(|byte| *byte as u8)
-                        .collect::<Vec<_>>();
-                    context.message(&format!(
-                        "You have found {}.",
-                        String::from_utf8_lossy(&name)
-                    ));
+                    context.message(&format!("You have found {}.", c_string_lossy(&item.name)));
                     context.reveal(y, x);
                     context.stop_running();
                 }
@@ -90,22 +82,11 @@ fn search(
                     context.stop_running();
                 }
                 tval if tval == u8::from(crate::model::ItemType::Chest) as i64
-                    && item.flags > 1 =>
+                    && item.flags > 1
+                    && remove_first_c_string_byte(&mut item.name, b'^') =>
                 {
-                    let name_len = item
-                        .name
-                        .iter()
-                        .position(|byte| *byte == 0)
-                        .unwrap_or(item.name.len());
-                    if let Some(position) = item.name[..name_len]
-                        .iter()
-                        .position(|byte| *byte as u8 == b'^')
-                    {
-                        item.name.copy_within(position + 1..name_len, position);
-                        item.name[name_len - 1] = 0;
-                        context.write(y, x, cell, item);
-                        context.message("You have discovered a trap on the chest!");
-                    }
+                    context.write(y, x, cell, item);
+                    context.message("You have discovered a trap on the chest!");
                 }
                 _ => {}
             }
