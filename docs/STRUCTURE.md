@@ -288,6 +288,6 @@ This structure is the **target state**. Current code is a mix of:
 | `rng/random.rs` | `rng/` | Injectable helpers already exist |
 | Domain `interop.rs`, root `*_extern.rs` | Domain bridges or optional `interop/` | Consolidation is optional, not current layout |
 
-See the [migration plan](c-to-rust-migration-plan.md) for authoritative status and
+See the [migration backlog](migration/backlog.md) for authoritative status and
 the [changelog](../CHANGELOG.md) for recorded changes. The directory tree above
 is illustrative target design, not a list of existing files or completed ports.
