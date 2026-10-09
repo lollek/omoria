@@ -94,9 +94,10 @@ mod tests {
     use serial_test::serial;
 
     fn base_item() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Potion1.into();
-        item
+        Item {
+            tval: ItemType::Potion1.into(),
+            ..Item::default()
+        }
     }
 
     fn subval(t: Potion1SubType) -> i64 {

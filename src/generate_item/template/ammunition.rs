@@ -91,7 +91,7 @@ impl ItemTemplate for AmmunitionTemplate {
                     4..=5 => self.apply_ammo_flame_tongue(&mut item),
                     6..=7 => self.apply_ammo_slay_evil(&mut item),
                     8..=9 => self.apply_ammo_slay_monster(&mut item),
-                    10 | _ => self.apply_ammo_slay_dragon(&mut item),
+                    _ => self.apply_ammo_slay_dragon(&mut item),
                 }
             }
         }

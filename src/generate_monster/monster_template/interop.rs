@@ -57,7 +57,7 @@ impl CStringCache {
 static STRING_CACHE: LazyLock<Vec<CStringCache>> = LazyLock::new(|| {
     super::MONSTER_TEMPLATES
         .iter()
-        .map(|t| CStringCache::from_template(t))
+        .map(CStringCache::from_template)
         .collect()
 });
 

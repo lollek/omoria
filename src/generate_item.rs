@@ -4,6 +4,7 @@ pub use self::item_template::ItemTemplate;
 
 pub mod template;
 
+#[allow(clippy::module_inception)]
 mod generate_item;
 mod interop;
 mod item_template;

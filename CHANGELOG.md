@@ -3,6 +3,7 @@
 ## Unreleased
 * Internal: Link the Linux build against wide-character ncurses.
 * Internal: Added save-file compatibility tests using a sanitized save fixture.
+* Internal: Cleaned up Clippy and compiler warnings without changing gameplay behavior.
 * Internal: Added automated C/Rust verification, isolated shared-state tests, and refreshed migration guidance for delegated tasks.
 * Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
 * Internal: Hit calculation (`managed_to_hit`) is now implemented in Rust.

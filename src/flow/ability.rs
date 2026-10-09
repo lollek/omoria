@@ -23,7 +23,7 @@ pub fn select_ability() -> bool {
         if selection < 'a' || selection >= max_selection {
             return true;
         }
-        let index = (selection as u8 - 'a' as u8) as usize;
+        let index = (selection as u8 - b'a') as usize;
         return use_ability(abilities[index]);
     }
 }

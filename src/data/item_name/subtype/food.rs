@@ -11,7 +11,7 @@ pub fn food(item: &Item) -> String {
     parts.join("")
 }
 
-fn subtype_name<'a>(item: &Item) -> String {
+fn subtype_name(item: &Item) -> String {
     match item.item_subtype().expect("Item has no subtype") {
         ItemSubType::Food(subtype) => match subtype {
             FoodSubType::Mushroom

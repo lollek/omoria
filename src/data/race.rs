@@ -418,8 +418,6 @@ pub fn weight_modifier(race: &Race, player_sex: &Sex) -> u16 {
     }
 }
 
-pub fn abilities(race: &Race) -> Vec<Ability> {
-    match race {
-        _ => Vec::new(),
-    }
+pub fn abilities(_race: &Race) -> Vec<Ability> {
+    Vec::new()
 }

@@ -65,11 +65,11 @@ pub fn symbol(item_type: &ItemType, subval: i64) -> pancurses::chtype {
         .into(),
         ItemType::MiscUsable => {
             match subval {
-                14 => '~',                     // Statue
-                15 => 's',                     // Broken teeth
-                16 | 17 | 18 | 19 | 20 => '~', // Metal cross
-                21 => '!',                     // Bottle
-                24 => '~',                     // Holy hand grenade
+                14 => '~',      // Statue
+                15 => 's',      // Broken teeth
+                16..=20 => '~', // Metal cross
+                21 => '!',      // Bottle
+                24 => '~',      // Holy hand grenade
                 _ => panic!(),
             }
         }
@@ -125,8 +125,8 @@ pub fn symbol(item_type: &ItemType, subval: i64) -> pancurses::chtype {
 
         ItemType::Amulet => {
             match subval {
-                268 | 269 | 270 => '*', // Fancy stuff
-                _ => '"',               // Magic stuff
+                268..=270 => '*', // Fancy stuff
+                _ => '"',         // Magic stuff
             }
         }
         .into(),

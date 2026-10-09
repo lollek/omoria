@@ -8,7 +8,7 @@ pub use pancurses::{
 };
 
 thread_local! {
-    static STDSCR: RefCell<Option<pancurses::Window>> = RefCell::new(None);
+    static STDSCR: RefCell<Option<pancurses::Window>> = const { RefCell::new(None) };
 }
 
 const MAX_Y: i32 = 25;
@@ -64,7 +64,7 @@ pub fn refresh() {
     });
 }
 
-pub fn mvaddstr<'a, S>(row: i32, col: i32, msg: S)
+pub fn mvaddstr<S>(row: i32, col: i32, msg: S)
 where
     S: AsRef<str>,
 {

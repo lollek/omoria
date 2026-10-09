@@ -32,9 +32,8 @@ fn print_history() {
     );
 
     loop {
-        match io::inkey_flush() as char {
-            '\r' => return,
-            _ => {}
+        if io::inkey_flush() as char == '\r' {
+            return;
         }
     }
 }
@@ -125,7 +124,7 @@ pub fn stats_info(race: &Race) -> Vec<String> {
 
 fn choose_race() -> Race {
     let races = Race::iter()
-        .map(|i| data::race::name(&Race::from(i)))
+        .map(|i| data::race::name(&i))
         .collect::<Vec<&str>>();
     let mut index = 0;
 
@@ -177,7 +176,7 @@ fn choose_sex() -> Sex {
     loop {
         menu::draw_menu(
             "Choose your sex",
-            &vec!["Male", "Female"],
+            &["Male", "Female"],
             "j=up, k=down, enter=select",
             index,
         );
@@ -199,7 +198,7 @@ fn choose_stats(race: &Race, sex: &Sex) -> StatsFromRace {
 
         menu::draw_menu(
             "Roll up your stats",
-            &vec![
+            &[
                 format!("Age:           {}", stats.age_plain),
                 format!("Height:        {}", stats.height),
                 format!("Weight:        {}", stats.weight),

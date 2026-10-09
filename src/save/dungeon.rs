@@ -47,7 +47,7 @@ fn load_cave(data: Vec<Cave>) {
     }
 
     if data.len() != i {
-        debug::fatal(&format!("load_cave: leftover data: {}", data.len() - i))
+        debug::fatal(format!("load_cave: leftover data: {}", data.len() - i))
     }
 }
 

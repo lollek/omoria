@@ -2,6 +2,8 @@
 //!
 //! Static definition of a monster type, mirroring `monster_template_t` from C.
 
+#![allow(clippy::tabs_in_doc_comments)]
+
 use super::MonsterAttribute;
 
 /// Monster template (static definition).
@@ -17,6 +19,7 @@ pub struct MonsterTemplate {
     /// Monster name (e.g., "Kobold", "Balrog").
     pub name: &'static str,
     /// Movement/behavior bit field.
+    /// ```text
     ///	00000001	Move only to attack
     ///	00000002	20% random movement
     ///	00000004	40% random movement
@@ -46,8 +49,10 @@ pub struct MonsterTemplate {
     ///	=	20000000	2d2 objects/gold.
     ///	=	40000000	4d2 objects/gold.
     /// Special ~	80000000	Win-the-Game creature.
+    /// ```
     pub cmove: u64,
     /// Spell bit field.
+    /// ```text
     /// Frequency	00000001    1	  These add up to x.  Then
     /// (1 in x).	00000002    2	  if RANDINT(X) = 1 the
     ///	00000004    4	  creature casts a spell.
@@ -77,8 +82,10 @@ pub struct MonsterTemplate {
     /// =	04000000  Summon Multiplying Monster (heh heh)
     /// =	08000000  Gaze from distance for petrification
     /// .	80000000  makes no casting 1 in x (instead of casting 1 in x)
+    /// ```
     pub spells: u64,
     /// Defense/vulnerability bit field.
+    /// ```text
     ///	0001	Hurt by Slay Dragon.
     ///	0002	Hurt by Slay Monster.
     ///	0004	Hurt by Slay Evil.
@@ -95,6 +102,7 @@ pub struct MonsterTemplate {
     ///	2000	Can be seen with infra-vision.
     ///	4000	Max Hit points.
     ///	8000	Regenerates.
+    /// ```
     pub cdefense: u64,
     /// Inactive counter when spawned.
     /// A measure in turns of how fast creature will notice player (on the average).
@@ -110,6 +118,7 @@ pub struct MonsterTemplate {
     /// Attack damage string (e.g., "1 1 3d3|1 1 4d4").
     ///
     /// Attack types:
+    /// ```text
     ///	1	Normal attack
     ///	2	Lose Strength
     ///	3	Confusion attack
@@ -175,6 +184,7 @@ pub struct MonsterTemplate {
     ///	35	barks at you.
     ///	36	rubs against your leg.
     ///	99	is repelled.
+    /// ```
     pub damage: &'static str,
     /// Minimum dungeon level where monster appears.
     pub level: i8,

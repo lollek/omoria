@@ -6,7 +6,7 @@ extern "C" {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug, Default)]
 pub struct Monster {
     pub hp: i16,     // Hit points
     pub csleep: i16, // Inactive counter
@@ -24,25 +24,6 @@ pub struct Monster {
     pub is_seen: u8,  // On if shown
     pub confused: u8, // On if confused
     pub moved: u8,    // On if water-moved
-}
-
-impl Default for Monster {
-    fn default() -> Self {
-        Monster {
-            hp: 0,
-            csleep: 0,
-            cdis: 0,
-            mptr: 0,
-            nptr: 0,
-            cspeed: 0,
-            fy: 0,
-            fx: 0,
-            stunned: 0,
-            is_seen: 0,
-            confused: 0,
-            moved: 0,
-        }
-    }
 }
 
 #[cfg(test)]

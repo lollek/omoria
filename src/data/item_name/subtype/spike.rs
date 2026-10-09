@@ -6,7 +6,7 @@ use std::borrow::Cow;
 
 pub fn spike(item: &Item) -> String {
     let item_type = item.item_type().expect("Item has no type");
-    vec![
+    [
         full_number_of(item),
         match from_i64(item_type, item.subval) {
             Some(subtype) => match subtype {

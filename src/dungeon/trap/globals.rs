@@ -14,7 +14,7 @@ unsafe fn cave_global() -> &'static mut [[Cave; constants::MAX_WIDTH + 1]; const
     extern "C" {
         static mut cave: [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1];
     }
-    &mut *(&raw mut cave)
+    &mut *std::ptr::addr_of_mut!(cave)
 }
 
 #[cfg(not(test))]
@@ -22,7 +22,7 @@ unsafe fn t_list_global() -> &'static mut [Item; constants::MAX_TALLOC + 1] {
     extern "C" {
         static mut t_list: [Item; constants::MAX_TALLOC + 1];
     }
-    &mut *(&raw mut t_list)
+    &mut *std::ptr::addr_of_mut!(t_list)
 }
 
 #[cfg(not(test))]
@@ -92,12 +92,12 @@ pub(crate) static mut TEST_T_LIST: [Item; constants::MAX_TALLOC + 1] = [Item {
 #[cfg(test)]
 unsafe fn cave_global() -> &'static mut [[Cave; constants::MAX_WIDTH + 1]; constants::MAX_HEIGHT + 1]
 {
-    &mut *(&raw mut TEST_CAVE)
+    &mut *std::ptr::addr_of_mut!(TEST_CAVE)
 }
 
 #[cfg(test)]
 unsafe fn t_list_global() -> &'static mut [Item; constants::MAX_TALLOC + 1] {
-    &mut *(&raw mut TEST_T_LIST)
+    &mut *std::ptr::addr_of_mut!(TEST_T_LIST)
 }
 
 #[cfg(test)]
@@ -144,6 +144,10 @@ unsafe fn lite_spot(y: usize, x: usize) {
 /// Unsafe wrapper around the legacy global state + allocator (`popt`), mirroring the C `place_trap`.
 ///
 /// This is intentionally `unsafe` because it mutates global state (`cave`, `t_list`).
+///
+/// # Safety
+/// `y` and `x` must be within the cave bounds. The legacy globals must be
+/// initialized, and no other code may access them concurrently.
 pub unsafe fn place_trap_global(y: usize, x: usize, list: TrapList, subval: usize) {
     let alloc_index = popt_alloc_index();
 
@@ -164,6 +168,10 @@ pub unsafe fn place_trap_global(y: usize, x: usize, list: TrapList, subval: usiz
 /// - places the corresponding `TRAP_LIST_B` entry at `(y, x)` using the same `subval`
 /// - pushes the old t_list index back on the free list (`pusht`)
 /// - refreshes the tile display (`lite_spot`)
+///
+/// # Safety
+/// `y` and `x` must be within the cave bounds. The legacy globals must be
+/// initialized, and no other code may access them concurrently.
 pub unsafe fn change_trap_global(y: usize, x: usize) {
     let cave = cave_global();
     let t_list = t_list_global();
@@ -188,6 +196,10 @@ pub unsafe fn change_trap_global(y: usize, x: usize) {
 }
 
 /// Unsafe wrapper mirroring the C `place_rubble` behavior.
+///
+/// # Safety
+/// `y` and `x` must be within the cave bounds. The legacy globals must be
+/// initialized, and no other code may access them concurrently.
 pub unsafe fn place_rubble_global(y: usize, x: usize) {
     let alloc_index = popt_alloc_index();
 

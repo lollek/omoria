@@ -2,7 +2,6 @@
 ///
 /// Determines how much health/mana the player regenerates per tick,
 /// based on hunger status, regeneration ability, and rest status.
-
 /// Hunger status levels that affect regeneration.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HungerStatus {

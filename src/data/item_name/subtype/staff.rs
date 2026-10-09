@@ -78,9 +78,10 @@ mod tests {
     use serial_test::serial;
 
     fn base_item() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Staff.into();
-        item
+        Item {
+            tval: ItemType::Staff.into(),
+            ..Item::default()
+        }
     }
 
     fn subval(t: StaffSubType) -> i64 {

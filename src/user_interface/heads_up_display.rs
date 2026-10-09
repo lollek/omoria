@@ -117,7 +117,7 @@ fn print_time(row: u8, col: u8) {
 fn print_equipment(row: u8, col: u8) {
     for (index, slot_i) in equipment::slots_iter().enumerate() {
         let slot = equipment::Slot::from(slot_i);
-        let index_char = ('a' as u8 + index as u8) as char;
+        let index_char = (b'a' + index as u8) as char;
         let item_name = equipment::get_name(slot);
         let msg = format!("{}) {:<13}: {}", index_char, slot.name(), item_name);
         term::prt(msg, (row + index as u8).into(), col.into());

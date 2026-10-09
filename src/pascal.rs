@@ -56,6 +56,8 @@ pub fn is_vowel_char(ch: char) -> bool {
 // IMPORTANT: to avoid duplicate symbols at link time, `src/pascal.c` must not
 // be compiled/linked when these are enabled (see Makefile).
 
+/// # Safety
+/// If non-null, `s1` must point to a valid NUL-terminated C string.
 #[no_mangle]
 pub unsafe extern "C" fn pindex(s1: *const libc::c_char, c1: libc::c_char) -> libc::c_long {
     if s1.is_null() {
@@ -73,7 +75,7 @@ pub unsafe extern "C" fn pindex(s1: *const libc::c_char, c1: libc::c_char) -> li
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn is_vowel(a_char: libc::c_char) -> bool {
+pub extern "C" fn is_vowel(a_char: libc::c_char) -> bool {
     // Preserve legacy semantics: only ASCII vowels count.
     matches!(
         a_char as u8,
@@ -81,6 +83,8 @@ pub unsafe extern "C" fn is_vowel(a_char: libc::c_char) -> bool {
     )
 }
 
+/// # Safety
+/// If non-null, `oset` must point to at least 25 readable bytes.
 #[no_mangle]
 pub unsafe extern "C" fn is_in(obj: libc::c_long, oset: *const u8) -> bool {
     if oset.is_null() {
@@ -172,12 +176,10 @@ mod tests {
 
     #[test]
     fn abi_is_vowel_matches_legacy_ascii_rules() {
-        unsafe {
-            assert!(is_vowel('a' as libc::c_char));
-            assert!(is_vowel('A' as libc::c_char));
-            assert!(!is_vowel('b' as libc::c_char));
-            assert!(!is_vowel('?' as libc::c_char));
-        }
+        assert!(is_vowel('a' as libc::c_char));
+        assert!(is_vowel('A' as libc::c_char));
+        assert!(!is_vowel('b' as libc::c_char));
+        assert!(!is_vowel('?' as libc::c_char));
     }
 
     #[test]

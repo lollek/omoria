@@ -59,7 +59,7 @@ where
 #[macro_export]
 macro_rules! infof {
     ($($arg:tt)*) => {
-        crate::debug::info(format!($($arg)*))
+        $crate::debug::info(format!($($arg)*))
     };
 }
 pub use infof;
@@ -75,7 +75,7 @@ where
 #[macro_export]
 macro_rules! warnf {
     ($($arg:tt)*) => {
-        crate::debug::warn(format!($($arg)*))
+        $crate::debug::warn(format!($($arg)*))
     };
 }
 pub use warnf;
@@ -91,7 +91,7 @@ where
 #[macro_export]
 macro_rules! errorf {
     ($($arg:tt)*) => {
-        crate::debug::error(format!($($arg)*))
+        $crate::debug::error(format!($($arg)*))
     };
 }
 pub use errorf;
@@ -107,7 +107,7 @@ where
 #[macro_export]
 macro_rules! fatalf {
     ($($arg:tt)*) => {
-        crate::debug::error(format!($($arg)*))
+        $crate::debug::error(format!($($arg)*))
     };
 }
 pub use fatalf;

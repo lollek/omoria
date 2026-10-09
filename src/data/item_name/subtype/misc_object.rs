@@ -5,7 +5,7 @@ use crate::model::{Item, ItemType};
 use std::borrow::Cow;
 
 pub fn misc_object(item: &Item) -> String {
-    vec![
+    [
         no_more(item),
         Cow::Borrowed(match from_i64(ItemType::MiscObject, item.subval) {
             Some(subtype) => match subtype {

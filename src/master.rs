@@ -76,7 +76,7 @@ pub fn character_exists(uid: i64) -> bool {
         return false;
     }
 
-    match records.unwrap().iter().position(|ref i| i.uid == uid) {
+    match records.unwrap().iter().position(|i| i.uid == uid) {
         Some(_) => true,
         None => {
             debug::warn("Master file did not contain the player");

@@ -57,7 +57,7 @@ impl ItemTemplate for ShieldTemplate {
                 2 => self.apply_armor_resist_acid(&mut item),
                 3 | 4 => self.apply_armor_resist_fire(&mut item),
                 5 | 6 => self.apply_armor_resist_cold(&mut item),
-                7 | 8 | _ => self.apply_armor_resist_lightning(&mut item),
+                _ => self.apply_armor_resist_lightning(&mut item),
             }
         }
         item

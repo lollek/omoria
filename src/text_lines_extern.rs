@@ -39,6 +39,9 @@ unsafe fn remove_first_marker_in_place(s: *mut c_char, needle: u8) {
 /// C-compatible implementation of `known1` from `text_lines.c`.
 ///
 /// Removes the first occurrence of the `|` marker from the string, if present.
+///
+/// # Safety
+/// If non-null, `object_str` must point to a writable, NUL-terminated C string.
 #[no_mangle]
 pub unsafe extern "C" fn known1(object_str: *mut c_char) {
     remove_first_marker_in_place(object_str, b'|');
@@ -47,6 +50,9 @@ pub unsafe extern "C" fn known1(object_str: *mut c_char) {
 /// C-compatible implementation of `known2` from `text_lines.c`.
 ///
 /// Removes the first occurrence of the `^` marker from the string, if present.
+///
+/// # Safety
+/// If non-null, `object_str` must point to a writable, NUL-terminated C string.
 #[no_mangle]
 pub unsafe extern "C" fn known2(object_str: *mut c_char) {
     remove_first_marker_in_place(object_str, b'^');
@@ -60,6 +66,9 @@ pub unsafe extern "C" fn known2(object_str: *mut c_char) {
 ///
 /// This is based on the original C implementation, which uses `pindex` (1-based)
 /// but then applies the returned positions as if they were 0-based indices.
+///
+/// # Safety
+/// If non-null, `object_str` must point to a writable, NUL-terminated C string.
 #[no_mangle]
 pub unsafe extern "C" fn unquote(object_str: *mut c_char) {
     if object_str.is_null() {
@@ -117,6 +126,10 @@ pub unsafe extern "C" fn unquote(object_str: *mut c_char) {
 ///
 /// Signature is maintained for C call sites:
 /// `char *bag_descrip(const treas_rec *bag, char result[134]);`
+///
+/// # Safety
+/// If non-null, `bag` must point to a valid item and linked list, and `result`
+/// must point to at least 134 writable bytes.
 #[no_mangle]
 pub unsafe extern "C" fn bag_descrip(
     bag: *const InventoryItem,
@@ -184,6 +197,11 @@ pub unsafe extern "C" fn bag_descrip(
 /// This is a thin wrapper around [`identify_core`] that wires in:
 /// - the C global item arrays / lists (`t_list`, `equipment`, `inventory_list`)
 /// - the legacy side effect of marking the type identified.
+///
+/// # Safety
+/// If non-null, `item_ptr` must point to a valid writable `Item` whose name is
+/// NUL-terminated. The legacy globals must be initialized and not concurrently
+/// accessed while this function runs.
 #[no_mangle]
 pub unsafe extern "C" fn identify(item_ptr: *mut Item) {
     if item_ptr.is_null() {
@@ -274,6 +292,9 @@ pub(crate) fn identify_core(
 /// C-compatible implementation of `msg_charges_remaining`.
 ///
 /// Player-facing intent: show remaining charges only when the item is identified.
+///
+/// # Safety
+/// If non-null, `item_ptr` must point to a valid, readable `InventoryItem`.
 #[no_mangle]
 pub unsafe extern "C" fn msg_charges_remaining(item_ptr: *const InventoryItem) {
     if item_ptr.is_null() {
@@ -307,6 +328,9 @@ pub unsafe extern "C" fn msg_charges_remaining(item_ptr: *const InventoryItem) {
 /// - Decrement `number` *before* naming, so the message describes the remaining
 ///   stack after consuming/using one item.
 /// - Print: `"You have <item_name(tmp_item)>."`.
+///
+/// # Safety
+/// If non-null, `_item_ptr` must point to a valid, readable `InventoryItem`.
 #[no_mangle]
 pub unsafe extern "C" fn msg_remaining_of_item(_item_ptr: *const InventoryItem) {
     if _item_ptr.is_null() {
@@ -586,17 +610,21 @@ mod identify_core_tests {
     }
 
     fn mk_item_with_pipe() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Food.into();
-        item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
+        let mut item = Item {
+            tval: ItemType::Food.into(),
+            subval: item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64,
+            ..Item::default()
+        };
         write_name(&mut item.name, b"foo|bar\0");
         item
     }
 
     fn mk_item_without_pipe() -> Item {
-        let mut item = Item::default();
-        item.tval = ItemType::Food.into();
-        item.subval = item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64;
+        let mut item = Item {
+            tval: ItemType::Food.into(),
+            subval: item_subtype::food::to_usize(&FoodSubType::RationOfFood) as i64,
+            ..Item::default()
+        };
         write_name(&mut item.name, b"foobar\0");
         item
     }
@@ -624,7 +652,7 @@ mod identify_core_tests {
         identify_core(&mut item, &mut t_list, &mut equipment, inv_head);
 
         assert_eq!(read_name(&inv_a.data.name), "ab\"cd~EF|GHI");
-        assert_eq!(is_identified(item_sub_type), true);
+        assert!(is_identified(item_sub_type));
 
         // Prevent cross-test leakage if other tests run after this one.
         set_identified(item_sub_type, false);
@@ -645,7 +673,7 @@ mod identify_core_tests {
         // and known1 then does nothing because the '|' is already gone.
         // Result should be "ab\"cd~GHI";
 
-        let mut expected = example_item_name_with_null.clone().map(|x| x as i8);
+        let mut expected = (*example_item_name_with_null).map(|x| x as i8);
         unquote_then_known1(&mut expected);
 
         // t_list: entry 1 matches, entry 2 does not.
@@ -709,7 +737,7 @@ mod identify_core_tests {
             );
         }
 
-        assert_eq!(is_identified(item_sub_type), true);
+        assert!(is_identified(item_sub_type));
 
         // Prevent cross-test leakage if other tests run after this one.
         set_identified(item_sub_type, false);

@@ -56,7 +56,7 @@ impl ItemTemplate for CloakTemplate {
                         item.toac = -randint(10) as i16;
                         item.cost = 0;
                     }
-                    3 | _ => {
+                    _ => {
                         // of Enveloping
                         item.set_cursed(true);
                         item.toac = -randint(1) as i16;
@@ -84,7 +84,7 @@ impl ItemTemplate for CloakTemplate {
                         item.p1 = randint(3);
                         item.cost += item.p1 * 50_000 + item.toac as i64 * 10_000
                     }
-                    9 | _ => {
+                    _ => {
                         // of Elvenkind
                         item.apply_wornflag1(WornFlag1::GivesCharisma);
                         item.apply_wornflag1(WornFlag1::ResistStatDrain);

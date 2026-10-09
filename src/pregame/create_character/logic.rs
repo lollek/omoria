@@ -22,14 +22,14 @@ extern "C" {
  * Returns a random starting stat value. i.e. in the range [3, 18]
  */
 fn random_starting_stat() -> i16 {
-    let mut stats = vec![
+    let mut stats = [
         rng::randint(6),
         rng::randint(6),
         rng::randint(6),
         rng::randint(6),
     ];
     stats.sort();
-    stats.iter().skip(1).fold(0, |sum, i| sum + i) as i16
+    stats.iter().skip(1).sum::<i64>() as i16
 }
 
 fn generate_player_age(player_race: &Race) -> u16 {
@@ -55,8 +55,8 @@ fn unsafe_apply_history(race_stats: StatsFromRace) {
 
     let mut i: usize = 0;
     let mut tmp_str: String = String::new();
-    let mut history_words_iter = race_stats.history.split_whitespace();
-    while let Some(word) = history_words_iter.next() {
+    let history_words_iter = race_stats.history.split_whitespace();
+    for word in history_words_iter {
         let tmp_str_len = tmp_str.len();
         let word_len = word.len();
 
