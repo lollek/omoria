@@ -51,6 +51,13 @@ test-movement: $(filter-out src/main.o,$(OBJFILES))
 	$(CC) $(CFLAGS) tests/movement_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
 	./target/debug/movement-ffi-test
 
+.PHONY: test-messages
+test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES))
+	cargo build
+	$(CC) $(CFLAGS) -Dinkey=message_test_inkey -Dput_buffer=message_test_put_buffer -DErase_Line=message_test_erase_line -c src/io.c -o target/debug/message-io.o
+	$(CC) $(CFLAGS) tests/message_ffi.c target/debug/message-io.o $(filter-out src/main.o src/io.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
+	./target/debug/message-ffi-test
+
 .PHONY: check
 check:
 	cargo fmt --check
@@ -58,6 +65,7 @@ check:
 	cargo test
 	$(MAKE) omoria
 	$(MAKE) test-movement
+	$(MAKE) test-messages
 
 .PHONY: debug
 debug: omoria

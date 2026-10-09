@@ -8,8 +8,65 @@ type MessageStream = Arc<Mutex<Vec<String>>>;
 lazy_static! {
     static ref MESSAGE_RECORD: RwLock<LinkedList<String>> = RwLock::new(LinkedList::default());
     static ref MESSAGE_CAPTURES: Mutex<Vec<MessageStream>> = Mutex::new(Vec::new());
+    static ref C_MESSAGE_CAPTURES: Mutex<Vec<MessageCapture>> = Mutex::new(Vec::new());
 }
 const MAX_MESSAGES: usize = 50;
+
+#[no_mangle]
+pub extern "C" fn message_capture_active() -> bool {
+    !MESSAGE_CAPTURES.lock().expect("Mutex poisoned").is_empty()
+}
+
+#[no_mangle]
+pub extern "C" fn C_message_capture_begin() {
+    C_MESSAGE_CAPTURES
+        .lock()
+        .expect("Mutex poisoned")
+        .push(capture_messages());
+}
+
+#[no_mangle]
+pub extern "C" fn C_message_capture_end() {
+    C_MESSAGE_CAPTURES.lock().expect("Mutex poisoned").pop();
+}
+
+#[no_mangle]
+pub extern "C" fn C_message_capture_count() -> libc::size_t {
+    C_MESSAGE_CAPTURES
+        .lock()
+        .expect("Mutex poisoned")
+        .last()
+        .map_or(0, |capture| {
+            capture.messages.lock().expect("Mutex poisoned").len()
+        })
+}
+
+/// # Safety
+/// A non-null buffer must be writable for length bytes.
+#[no_mangle]
+pub unsafe extern "C" fn C_message_capture_get(
+    index: libc::size_t,
+    buffer: *mut libc::c_char,
+    length: libc::size_t,
+) -> bool {
+    if buffer.is_null() || length == 0 {
+        return false;
+    }
+    let captures = C_MESSAGE_CAPTURES.lock().expect("Mutex poisoned");
+    let Some(capture) = captures.last() else {
+        return false;
+    };
+    let messages = capture.messages.lock().expect("Mutex poisoned");
+    let Some(message) = messages.get(index) else {
+        return false;
+    };
+    let count = message.len().min(length - 1);
+    unsafe {
+        std::ptr::copy_nonoverlapping(message.as_ptr(), buffer.cast(), count);
+        *buffer.add(count) = 0;
+    }
+    true
+}
 
 #[must_use]
 pub struct MessageCapture {
@@ -125,6 +182,27 @@ pub(crate) mod tests {
         let history: Vec<String> = MESSAGE_RECORD.read().unwrap().iter().cloned().collect();
         assert_eq!(history, ["Original message"]);
         assert_eq!(term::test_last_msg_print(), "Original message");
+    }
+
+    #[test]
+    #[serial]
+    fn capture_active_tracks_live_guards_and_panic_cleanup() {
+        let _state = TestState::new();
+        assert!(!message_capture_active());
+        let outer = capture_messages();
+        assert!(message_capture_active());
+        let inner = capture_messages();
+        drop(outer);
+        assert!(message_capture_active());
+        drop(inner);
+        assert!(!message_capture_active());
+        let result = std::panic::catch_unwind(|| {
+            let _capture = capture_messages();
+            assert!(message_capture_active());
+            panic!("Scoped capture failure");
+        });
+        assert!(result.is_err());
+        assert!(!message_capture_active());
     }
 
     #[test]
