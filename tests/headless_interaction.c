@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "../src/constants.h"
+#include "../src/debug.h"
 #include "../src/floor.h"
 #include "../src/inventory/inven.h"
 #include "../src/main_loop/main_loop.h"
@@ -253,10 +254,96 @@ static void assert_close_target_scenario(uint8_t tval, long broken,
   end_pickup_scenario();
 }
 
+static void assert_refill_message(size_t index, const char *expected) {
+  char message[120];
+  assert(C_message_capture_get(index, message, sizeof(message)));
+  assert(strcmp(message, expected) == 0);
+}
+
+static treas_rec *add_oil_flasks(uint16_t number) {
+  treasure_type oil;
+  memset(&oil, 0, sizeof(oil));
+  strcpy(oil.name, "& Flask~ of Oil");
+  oil.tval = flask_of_oil;
+  oil.subval = 257;
+  oil.p1 = 7500;
+  oil.number = number;
+  oil.weight = 10;
+  treas_rec *flasks = add_inven_item(oil);
+  assert(flasks != NULL);
+  return flasks;
+}
+
+static void assert_refill_scenario(long subval, long fuel, long expected_fuel,
+                                   uint16_t number) {
+  begin_pickup_scenario();
+  equipment[Equipment_light].subval = subval;
+  equipment[Equipment_light].p1 = fuel;
+  treasure_type expected_lamp = equipment[Equipment_light];
+  expected_lamp.p1 = expected_fuel;
+  treas_rec *flasks = add_oil_flasks(number);
+  const size_t drawing_before = headless_terminal_counts().drawing;
+
+  player_action_refill_lamp();
+
+  assert_same_item(&equipment[Equipment_light], &expected_lamp);
+  assert(inven_weight == (number - 1) * 10);
+  if (number > 1) {
+    assert(inven_ctr == 1 && inventory_list == flasks);
+    assert(flasks->data.number == number - 1 && flasks->next == NULL);
+  } else {
+    assert(inven_ctr == 0 && inventory_list == NULL);
+  }
+  assert(C_message_capture_count() == 2);
+  assert_refill_message(0, "Your lamp is full.");
+  assert_refill_message(1, number > 1 ? "You have flask of oil."
+                                     : "You have no more flasks of oil.");
+  assert(headless_terminal_counts().drawing > drawing_before);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static void assert_refill_refused(long subval, bool has_oil, bool contained,
+                                const char *expected_message) {
+  begin_pickup_scenario();
+  equipment[Equipment_light].subval = subval;
+  equipment[Equipment_light].p1 = 123;
+  const treasure_type original_lamp = equipment[Equipment_light];
+  treas_rec *flasks = has_oil ? add_oil_flasks(2) : NULL;
+  if (flasks != NULL) {
+    flasks->is_in = contained;
+  }
+  const size_t drawing_before = headless_terminal_counts().drawing;
+
+  player_action_refill_lamp();
+
+  assert_same_item(&equipment[Equipment_light], &original_lamp);
+  assert(inventory_list == flasks);
+  assert(inven_ctr == (has_oil ? 1 : 0));
+  assert(inven_weight == (has_oil ? 20 : 0));
+  if (flasks != NULL) {
+    assert(flasks->data.number == 2 && flasks->is_in == contained);
+  }
+  assert(C_message_capture_count() == 1);
+  assert_refill_message(0, expected_message);
+  assert(headless_terminal_counts().drawing == drawing_before);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(10);
+  debug_file = fopen("target/debug/headless-interaction.log", "w");
+  assert(debug_file != NULL);
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_ration_pickup_scenario();
+    assert_refill_scenario(1, 100, 7600, 2);
+    assert_refill_scenario(9, 14000, 15000, 1);
+    assert_refill_scenario(1, 15000, 15000, 2);
+    assert_refill_refused(0, true, false, "But you are not using a lamp.");
+    assert_refill_refused(10, true, false, "But you are not using a lamp.");
+    assert_refill_refused(1, false, false, "You have no oil.");
+    assert_refill_refused(1, true, true, "You have no oil.");
     assert_close_target_scenario(open_door, 0, 0, false, NULL);
     assert_close_target_scenario(open_door, 1, 2, false, "It is in your way!");
     assert_close_target_scenario(open_door, 1, 0, false,
@@ -268,6 +355,8 @@ int main(void) {
     assert_close_target_scenario(open_door, 0, 0, true,
                                 "I do not see anything you can close there.");
   }
+  assert(fclose(debug_file) == 0);
+  debug_file = NULL;
   alarm(0);
   puts("Headless interaction checks passed.");
   return 0;
