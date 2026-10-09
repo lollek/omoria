@@ -32,12 +32,7 @@ impl CloseContext for GlobalClose {
         }
         let mut name = [0; 82];
         unsafe { find_monster_name(name.as_mut_ptr(), index.into(), true) }
-        let bytes = name
-            .iter()
-            .take_while(|byte| **byte != 0)
-            .map(|byte| *byte as u8)
-            .collect::<Vec<_>>();
-        String::from_utf8_lossy(&bytes).into_owned()
+        crate::misc::c_string_lossy(&name)
     }
 
     fn message(&mut self, message: &str) {

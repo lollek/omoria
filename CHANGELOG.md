@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Reused the shared C-style text helper for door-closing monster names.
 * Item names containing non-ASCII bytes no longer hide special-attribute suffixes.
 * Internal: Ported door closing to Rust while keeping the direction prompt in C.
 * Internal: Added reusable C-style text helpers to simplify searching.
