@@ -92,6 +92,17 @@ Acceptance checks:
 
 ### 3. Message Stream Capture (L0/L1)
 
+Status: partial. Rust recording capture is implemented in
+[message.rs](../src/message.rs) with serialized inline tests. `capture_messages()`
+returns a guard with an ordered, unbounded `messages()` snapshot, including empty
+and space-only messages; the separate history still retains only the last 50.
+Capture is process-wide: the newest live guard receives messages, and dropping
+it restores the previous live capture or history-only recording, including on
+panic. Tests sharing recording or capture must serialize and restore history.
+The Rust terminal test stub also feeds recording while preserving its last-message
+helper. Capture does not disable interactive output: the C rendering/input bypass
+in `io.c` is deferred to task 6. C callers and terminal behavior remain unverified.
+
 Start at [message recording](../src/message.rs) and the C message path in
 [io.c](../src/io.c). Recording history alone does not bypass terminal rendering.
 

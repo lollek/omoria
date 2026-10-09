@@ -772,7 +772,7 @@ mod msg_charges_remaining_tests {
     #[test]
     #[serial]
     fn msg_charges_remaining_prints_when_item_is_identified() {
-        term::test_clear_last_msg_print();
+        let _message_state = crate::message::tests::TestState::new();
 
         let inv = mk_item(b"staff of foo\0", 42, true);
         unsafe { msg_charges_remaining(&inv as *const InventoryItem) };
@@ -781,24 +781,17 @@ mod msg_charges_remaining_tests {
             term::test_last_msg_print(),
             "You have 42 charges remaining."
         );
-
-        // Prevent cross-test leakage if other tests run after this one.
-        term::test_clear_last_msg_print();
     }
 
     #[test]
     #[serial]
     fn msg_charges_remaining_does_not_print_when_item_is_not_identified() {
-        term::test_clear_last_msg_print();
+        let _message_state = crate::message::tests::TestState::new();
 
         let inv = mk_item(b"staff of foo\0", 42, false);
         unsafe { msg_charges_remaining(&inv as *const InventoryItem) };
 
-        // Ensure we don't see output, and also clear before assertion to avoid
-        // test order leakage if other tests printed.
         assert_eq!(term::test_last_msg_print(), "");
-
-        term::test_clear_last_msg_print();
     }
 }
 
@@ -812,7 +805,7 @@ mod msg_remaining_of_item_tests {
     #[test]
     #[serial]
     fn msg_remaining_of_item_prints_you_have_item_name_with_decremented_quantity() {
-        term::test_clear_last_msg_print();
+        let _message_state = crate::message::tests::TestState::new();
 
         // Avoid leaking/depending on global subtype identification across tests.
         let staff_light_subtype = ItemSubType::Staff(StaffSubType::StaffOfLight);
