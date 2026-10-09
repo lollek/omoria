@@ -54,8 +54,10 @@ test-movement: $(filter-out src/main.o,$(OBJFILES))
 .PHONY: test-messages
 test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES))
 	cargo build
-	$(CC) $(CFLAGS) -Dinkey=message_test_inkey -Dput_buffer=message_test_put_buffer -DErase_Line=message_test_erase_line -c src/io.c -o target/debug/message-io.o
-	$(CC) $(CFLAGS) tests/message_ffi.c target/debug/message-io.o $(filter-out src/main.o src/io.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
+	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -c src/io.c -o target/debug/message-io.o
+	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
+	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
+	$(CC) $(CFLAGS) tests/message_ffi.c tests/support/terminal.c tests/support/terminal_test.c target/debug/message-io.o target/debug/headless-screen.o target/debug/headless-light.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
 	./target/debug/message-ffi-test
 
 .PHONY: test-save
