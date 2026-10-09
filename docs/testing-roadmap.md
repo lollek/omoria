@@ -54,7 +54,10 @@ which gaps remain. Gaps that have a task card below reference its ID.
   `tests/fixtures/save_record_v1.json`; pure `parse_save`/`serialize_save`
   tests are inline in [save.rs](../src/save/save.rs). Debug-build `SaveRecord`
   deserialization needs more than 2 MiB of stack (tests use
-  `with_large_stack`). Gap: invalid `identified` entries panic (PS2).
+  `with_large_stack`). Invalid `identified` item types and subtypes,
+  including removed and non-item types, now return decode errors rather than
+  panicking (PS2); subtype conversion returns `None` for unsupported values.
+  C callers and terminal error display remain unverified.
 * **2. Persistence injection (L0/L1).** Crate-private
   [PersistenceEngine](../src/persistence/main.rs) covers master records and
   typed character load/write/delete/list; production stays file-backed
@@ -82,19 +85,7 @@ which gaps remain. Gaps that have a task card below reference its ID.
   in the main loop and counts command attempts. Gaps: owned successful-move
   transition (MV1), C-caller successful move (MV2).
 
-<<<<<<< Updated upstream
-Status: done. Fixture: `tests/fixtures/save_record_v1.json`; tests are inline in
-[save.rs](../src/save/save.rs). Invalid `identified` item types and subtypes,
-including removed and non-item types, now return decode errors rather than
-panicking; subtype conversion returns `None` for unsupported values. C callers
-and terminal error display remain unverified.
-||||||| Stash base
-Status: done. Fixture: `tests/fixtures/save_record_v1.json`; tests are inline in
-[save.rs](../src/save/save.rs). Known gap: invalid `identified` entries panic
-during deserialization instead of returning an error.
-=======
 ## Delegating Open Tasks
->>>>>>> Stashed changes
 
 The open work is split into task cards with stable IDs. Each card states its
 dependencies, the files it owns, and its acceptance checks. Hand one card to
@@ -203,7 +194,7 @@ report the exact calls. Terminal doubles belong to HT1.
 
 ### SEAM1. Headless-Turn Seam Inventory (Research)
 
-Status: open. Depends on: none. Research only, no code changes.
+Status: done. Inventory: [headless-turn-seams.md](migration/headless-turn-seams.md). Depends on: none. Research only, no code changes.
 
 Owns: `docs/migration/headless-turn-seams.md` (new).
 
@@ -230,7 +221,7 @@ Acceptance checks:
 
 ### RNG1. Seedable C-Facing RNG (L1)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: `src/rng/` and [random_extern.rs](../src/random_extern.rs), plus
 `src/random.h` if a C API is added.
@@ -246,7 +237,8 @@ Acceptance checks:
 * The same seed gives identical sequences through the public `randint`,
   `rand_rep`, and `randnor`.
 * The default is restored after the guard drops, including on panic. Nesting
-  works. Tests that share the override are serialized.
+  works. The override is thread-local, so tests that share it need no
+  serialization.
 * The `*_with_rng` functions and their callers are unchanged.
 
 Out of scope: upgrading rand, migrating callers, `time()` calls.
@@ -300,12 +292,12 @@ Note that deserialization in a debug build needs a large stack (see task 1).
 
 ### PS2. Invalid Identified Entries Return Errors (L0)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none. C callers and terminal error display remain unverified.
 
 Owns: [identification.rs](../src/identification.rs).
 
-Behavior: the `IdentifiedSubTypes` `Deserialize` implementation panics on an
-invalid type or subtype. It should return a serde error instead.
+Behavior: the `IdentifiedSubTypes` `Deserialize` implementation returns a
+serde error for an invalid type or subtype instead of panicking.
 
 Acceptance checks:
 
@@ -316,7 +308,7 @@ Acceptance checks:
 
 ### PS3. Atomic Character-Save Writes (L1)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 
 Owns: [filestorage.rs](../src/persistence/filestorage.rs).
 
