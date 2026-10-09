@@ -3,6 +3,7 @@
 ## Unreleased
 * Internal: Added a bounded main-loop entry with injected commands and terminal-free loop-control checks.
 * Internal: Added headless C caller checks for successful movement onto open floor.
+* Internal: Added fixture-backed headless movement and blocked-retry scenario checks.
 * Internal: Added reusable headless terminal doubles with scripted input and fail-fast prompt checks.
 * Empty character lists no longer crash when moving the selection down.
 * Internal: Added a tested successful-move state transition.

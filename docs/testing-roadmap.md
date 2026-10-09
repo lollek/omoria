@@ -383,7 +383,9 @@ Out of scope: rewriting the `d__update_*` chain or porting the loop to Rust.
 
 ### HL2. Headless Movement Scenario (L3)
 
-Status: open. Depends on: HL1, PS1, MV2.
+Status: done. Verified by `make test-headless`; applies the sanitized save fixture
+and checks successful and blocked movement through production command dispatch.
+Depends on: HL1, PS1, MV2.
 
 Owns: `tests/headless_turn.c`, `tests/support/headless_scenario.{c,h}` (new),
 and `tests/fixtures/headless_*.json` (new).

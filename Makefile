@@ -63,13 +63,13 @@ test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES))
 
 .PHONY: test-headless
 test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES))
-	cargo build
+	cargo build --features save-test-support
 	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -c src/io.c -o target/debug/headless-io.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/main_loop.c -o target/debug/headless-loop.o
 	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/command.c -o target/debug/headless-command.o
-	$(CC) $(CFLAGS) tests/headless_turn.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-turn-test
+	$(CC) $(CFLAGS) tests/headless_turn.c tests/support/headless_scenario.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-turn-test
 	./target/debug/headless-turn-test
 
 .PHONY: test-save

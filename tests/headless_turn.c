@@ -11,6 +11,7 @@
 #include "../src/player.h"
 #include "../src/random.h"
 #include "../src/variables.h"
+#include "support/headless_scenario.h"
 #include "support/terminal.h"
 
 struct command_script {
@@ -194,6 +195,28 @@ static void assert_exhaustion(size_t count) {
   end_scenario();
 }
 
+static void assert_movement_scenarios(void) {
+  struct headless_scenario_result moved;
+  headless_scenario_run("l", 1, false, &moved);
+  assert(moved.start_row == 39 && moved.start_col == 140);
+  assert(moved.row == 39 && moved.col == 141);
+  assert(moved.origin_occupant == 0 && moved.destination_occupant == 1);
+  assert(moved.command_calls == 1 && moved.commands_consumed == 1);
+  assert(moved.turn == 2 && moved.turn_counter == 101);
+  assert(moved.message_count == 0);
+  assert(moved.drawing_count > 0 && moved.input_count == 0);
+
+  struct headless_scenario_result blocked;
+  headless_scenario_run("h", 1, true, &blocked);
+  assert(blocked.start_row == 39 && blocked.start_col == 140);
+  assert(blocked.row == 39 && blocked.col == 140);
+  assert(blocked.origin_occupant == 1 && blocked.destination_occupant == 0);
+  assert(blocked.command_calls == 2 && blocked.commands_consumed == 1);
+  assert(blocked.turn == 2 && blocked.turn_counter == 102);
+  assert(blocked.message_count == 0);
+  assert(blocked.drawing_count > 0 && blocked.input_count == 0);
+}
+
 int main(void) {
   alarm(10);
   for (int repeat = 0; repeat < 2; repeat++) {
@@ -218,6 +241,7 @@ int main(void) {
     C_message_capture_end();
     C_seeded_rng_end();
   }
+  assert_movement_scenarios();
   alarm(0);
   puts("Bounded main-loop C checks passed.");
   return 0;
