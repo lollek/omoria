@@ -31,12 +31,12 @@ graph LR
 
 ### PA1. Search (pathfinder: F-CELL)
 
-Status: open. Depends on: none.
+Status: implemented. Depends on: none.
 Size: S. Complexity: Medium. Agent: strong.
 
-Owns: [search.c](../../../src/player_action/search.c), a new Rust search
-module under `src/player_action/`, a new `src/dungeon/cell.rs` (or similar),
-and one registration line each in `player_action.rs` and `dungeon/mod.rs`.
+Implemented in [search.rs](../../../src/player_action/search.rs) and
+[cell.rs](../../../src/dungeon/cell.rs), with one registration line each in
+`player_action.rs` and `dungeon/mod.rs`. The C search implementation was removed.
 Must not touch: `dungeon/trap/globals.rs`, `player_action/movement/globals.rs`.
 
 Behavior: port `player_action_search(y, x, chance)` and keep its C symbol and
