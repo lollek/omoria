@@ -270,8 +270,27 @@ Acceptance checks:
 
 ### PA9. Open Door or Chest (fan-out)
 
-Status: open. Depends on: PA2. Recommended: TR6.
+Status: implemented. Depends on: PA2. Recommended: TR6.
 Size: M. Complexity: High. Agent: strong.
+
+Implemented in [open.rs](../../../src/player_action/open.rs), with local C
+global access in `open/globals.rs` and a thin target wrapper in
+`open/interop.rs`. The C entry point retains only the direction prompt.
+Rust preserves lockpicking rolls, confusion and stuck-door messages,
+experience and redraw ordering, chest name cleanup, and trap/treasure order.
+Chest names are bounded and NUL-terminated instead of overflowing the buffer.
+Trap activation and treasure generation remain C calls; dungeon level is
+temporarily set to the chest's stored level and restored after treasure.
+Rust tests cover refusals, strict seeded lockpicking thresholds, empty chests,
+byte-preserving names, and trap deletion. Repeated L1 checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) exercise the
+production C/Rust target, locked and stuck doors, locked/trapped/empty chests,
+messages, experience, redraw delivery, item treasure, and level restoration.
+A seeded gold-drop comparison with C verifies treasure uses the chest level.
+Exact item drops are not deterministic under the C RNG override because item
+generation uses a separate thread RNG. Interactive direction prompting,
+command-key dispatch, real terminal rendering, opened-target save/reload, and
+trap outcomes other than free-action yellow gas remain unverified at L1.
 
 Owns: [open.c](../../../src/player_action/open.c), a new Rust module,
 registration line.

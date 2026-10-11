@@ -3,6 +3,7 @@ mod close;
 mod jam_door;
 mod look;
 mod movement;
+mod open;
 mod refill_lamp;
 mod rest;
 mod search;

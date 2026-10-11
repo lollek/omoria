@@ -185,6 +185,24 @@ pub struct Item {
 }
 
 impl Item {
+    /// Returns the item name as bytes up to the first NUL, or the full buffer if unterminated.
+    pub fn name_bytes(&self) -> Vec<u8> {
+        self.name
+            .iter()
+            .take_while(|&&byte| byte != 0)
+            .map(|&byte| byte as u8)
+            .collect()
+    }
+
+    /// Replaces the item name with bytes, reserving space for a trailing NUL.
+    pub fn set_name_bytes(&mut self, bytes: &[u8]) {
+        self.name.fill(0);
+        let length = self.name.len() - 1;
+        for (target, &byte) in self.name[..length].iter_mut().zip(bytes) {
+            *target = byte as libc::c_char;
+        }
+    }
+
     /// Returns None when there's no valid item in the slot (i.e. if there's allocated but unused memory)
     /// If it's not a bug, it should represent your bare hands (i.e. no weapon).
     pub fn item_type(&self) -> Option<ItemType> {
@@ -281,5 +299,38 @@ mod tests {
     fn test_serialize() {
         let item = Item::default();
         serde_json::to_string(&item).expect("Failed to serialize item");
+    }
+
+    #[test]
+    fn name_bytes_stops_at_nul_and_preserves_unterminated_bytes() {
+        let mut item = Item::default();
+        item.name.fill(b'x' as libc::c_char);
+        item.name[0] = b'&' as libc::c_char;
+        item.name[1] = 0;
+        item.name[2] = 0xE9_u8 as libc::c_char;
+
+        assert_eq!(item.name_bytes(), b"&");
+
+        item.name[1] = 0xE9_u8 as libc::c_char;
+        item.name[2] = 0;
+        assert_eq!(item.name_bytes(), [b'&', 0xE9]);
+
+        item.name.fill(b'x' as libc::c_char);
+        assert_eq!(item.name_bytes(), vec![b'x'; item.name.len()]);
+    }
+
+    #[test]
+    fn set_name_bytes_preserves_bytes_and_terminates_within_the_buffer() {
+        let mut item = Item::default();
+        item.name.fill(b'x' as libc::c_char);
+
+        item.set_name_bytes(&[b'&', 0xE9]);
+
+        assert_eq!(item.name_bytes(), [b'&', 0xE9]);
+        assert!(item.name[2..].iter().all(|&byte| byte == 0));
+
+        item.set_name_bytes(&[b'y'; 80]);
+        assert_eq!(item.name_bytes(), vec![b'y'; item.name.len() - 1]);
+        assert_eq!(item.name[item.name.len() - 1], 0);
     }
 }

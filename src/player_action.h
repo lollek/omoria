@@ -62,6 +62,7 @@ void C_player_action_look_direction(long direction);
  *
  */
 void player_action_open(void);
+void C_player_action_open_target(long y, long x);
 
 void player_action_aim_wand(void);
 

@@ -11,6 +11,7 @@
 #include "../src/main_loop/main_loop.h"
 #include "../src/messages.h"
 #include "../src/misc.h"
+#include "../src/monsters.h"
 #include "../src/player.h"
 #include "../src/player_action.h"
 #include "../src/random.h"
@@ -615,6 +616,184 @@ static void assert_jam_target_scenario(uint8_t tval, long strength,
   end_pickup_scenario();
 }
 
+static void assert_open_messages(const char *first, const char *second,
+                                 const char *third) {
+  const char *expected[] = {first, second, third};
+  size_t count = 0;
+  while (count < 3 && expected[count] != NULL) {
+    char message[120];
+    assert(C_message_capture_get(count, message, sizeof(message)));
+    assert(strcmp(message, expected[count]) == 0);
+    count++;
+  }
+  assert(C_message_capture_count() == count);
+}
+
+static void seed_for_open_roll(long skill, bool success) {
+  assert(skill > 2);
+  C_seeded_rng_end();
+  for (uint64_t seed = 1; seed < 10000; seed++) {
+    C_seeded_rng_begin(seed);
+    const long roll = randint(100);
+    C_seeded_rng_end();
+    if ((skill - 1 > roll) == success) {
+      C_seeded_rng_begin(seed);
+      return;
+    }
+  }
+  assert(false && "Could not find a deterministic lockpick seed");
+}
+
+static void assert_open_door_scenario(long strength, bool confused,
+                                      bool success, const char *message) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  const long slot = ration_slot;
+  t_list[slot] = door_list[1];
+  t_list[slot].p1 = strength;
+  cave[row][col].fopen = false;
+  cave[row][col].cptr = 2;
+  player_flags.confused = confused;
+  if (strength > 0 && !confused) {
+    seed_for_open_roll(player_disarm(), success);
+  }
+  const int64_t exp_before = player_exp;
+  const cave_type original_cell = cave[row][col];
+  treasure_type expected_item = t_list[slot];
+  const size_t drawing_before = headless_terminal_counts().drawing;
+  C_player_action_open_target(row, col);
+  if (success) {
+    expected_item = door_list[0];
+    assert(cave[row][col].fopen);
+    assert(headless_terminal_counts().drawing > drawing_before);
+  } else {
+    assert(!cave[row][col].fopen);
+    assert(headless_terminal_counts().drawing == drawing_before);
+  }
+  assert_same_item(&t_list[slot], &expected_item);
+  cave_type expected_cell = original_cell;
+  expected_cell.fopen = success;
+  assert(memcmp(&cave[row][col], &expected_cell, sizeof(expected_cell)) == 0);
+  assert(player_exp == exp_before + (success && strength > 0 ? 1 : 0));
+  assert_open_messages(message, NULL, NULL);
+  assert(dun_level == 1 && turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static size_t count_chest_drops(long row, long col, long slot) {
+  size_t drops = 0;
+  for (long drop_row = row - 2; drop_row <= row + 2; drop_row++) {
+    for (long drop_col = col - 2; drop_col <= col + 2; drop_col++) {
+      if (cave[drop_row][drop_col].tptr > 0 &&
+          cave[drop_row][drop_col].tptr != slot) {
+        drops++;
+      }
+    }
+  }
+  return drops;
+}
+
+static void assert_open_chest_scenario(bool locked, bool confused,
+                                       bool success, bool trapped,
+                                       bool has_treasure) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  const long slot = ration_slot;
+  treasure_type *item = &t_list[slot];
+  memset(item, 0, sizeof(*item));
+  strcpy(item->name, "& Small^ chest (Locked)");
+  item->tval = chest;
+  item->number = 1;
+  item->level = 1;
+  item->p1 = 12;
+  item->cost = 50;
+  item->flags = (locked ? 1 : 0) | (trapped ? 0x40 : 0) |
+                (has_treasure ? 0x11000000 : 0);
+  player_flags.confused = confused;
+  player_flags.free_act = true;
+  if (locked && !confused) {
+    seed_for_open_roll(player_disarm() - 1, success);
+  }
+  const treasure_type original_item = *item;
+  const cave_type original_cell = cave[row][col];
+  const int64_t exp_before = player_exp;
+  const long original_level = dun_level;
+  const size_t drawing_before = headless_terminal_counts().drawing;
+  C_player_action_open_target(row, col);
+  assert(dun_level == original_level);
+  assert(cave[row][col].tptr == slot);
+  assert(memcmp(&cave[row][col], &original_cell, sizeof(original_cell)) == 0);
+  if (success) {
+    assert(strcmp(item->name, "& Small chest (Empty)") == 0);
+    assert(item->flags == 0 && item->cost == 0 && item->p1 == 12);
+    assert(player_exp == exp_before + (locked ? item->level : 0));
+    if (locked) {
+      assert(headless_terminal_counts().drawing > drawing_before);
+    }
+    assert_open_messages(locked ? "You have picked the lock." :
+                         trapped ? "A puff of yellow gas surrounds you!" : NULL,
+                         trapped && locked ? "A puff of yellow gas surrounds you!" :
+                         trapped ? "You are unaffected." : NULL,
+                         trapped && locked ? "You are unaffected." : NULL);
+    const size_t drops = count_chest_drops(row, col, slot);
+    assert(has_treasure ? drops > 0 : drops == 0);
+    C_player_action_open_target(row, col);
+    assert(dun_level == original_level && item->flags == 0);
+    assert(count_chest_drops(row, col, slot) == drops);
+  } else {
+    assert_same_item(item, &original_item);
+    assert(player_exp == exp_before);
+    assert(headless_terminal_counts().drawing == drawing_before);
+    assert_open_messages(confused ? "You are too confused to pick the lock." :
+                         "You failed to pick the lock.", NULL, NULL);
+  }
+  assert(player_flags.paralysis == 0);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static void assert_open_treasure_matches_c_at_chest_level(void) {
+  treasure_type expected_drops[5][5];
+  bool has_drop[5][5];
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  t_list[ration_slot].tval = chest;
+  t_list[ration_slot].p1 = 12;
+  t_list[ration_slot].flags = 0x12000000;
+  C_player_action_open_target(row, col);
+  assert(dun_level == 1);
+  assert(count_chest_drops(row, col, ration_slot) > 0);
+  for (long offset_row = 0; offset_row < 5; offset_row++) {
+    for (long offset_col = 0; offset_col < 5; offset_col++) {
+      const long index = cave[row + offset_row - 2][col + offset_col - 2].tptr;
+      has_drop[offset_row][offset_col] = index > 0 && index != ration_slot;
+      if (has_drop[offset_row][offset_col]) {
+        expected_drops[offset_row][offset_col] = t_list[index];
+      }
+    }
+  }
+  end_pickup_scenario();
+
+  begin_pickup_scenario();
+  t_list[ration_slot].tval = chest;
+  dun_level = 12;
+  monster_death(row, col, 0x12000000);
+  for (long offset_row = 0; offset_row < 5; offset_row++) {
+    for (long offset_col = 0; offset_col < 5; offset_col++) {
+      const long index = cave[row + offset_row - 2][col + offset_col - 2].tptr;
+      const bool actual_drop = index > 0 && index != ration_slot;
+      assert(actual_drop == has_drop[offset_row][offset_col]);
+      if (actual_drop) {
+        assert_same_item(&t_list[index], &expected_drops[offset_row][offset_col]);
+      }
+    }
+  }
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -683,6 +862,18 @@ int main(void) {
                               "It is in your way!");
     assert_jam_target_scenario(Food, 0, 2, 2, false, "That isn't a door!");
     assert_jam_target_scenario(0, 0, 0, 2, false, "That isn't a door!");
+    assert_open_door_scenario(0, false, true, NULL);
+    assert_open_door_scenario(1, false, true, "You have picked the lock.");
+    assert_open_door_scenario(1, false, false, "You failed to pick the lock.");
+    assert_open_door_scenario(-20, false, false, "It appears to be stuck.");
+    assert_open_door_scenario(1, true, false, "You are too confused to pick the lock.");
+    assert_open_chest_scenario(true, false, true, false, false);
+    assert_open_chest_scenario(true, false, false, true, true);
+    assert_open_chest_scenario(true, true, false, true, true);
+    assert_open_chest_scenario(true, false, true, true, true);
+    assert_open_chest_scenario(false, false, true, true, true);
+    assert_open_chest_scenario(false, true, true, false, false);
+    assert_open_treasure_matches_c_at_chest_level();
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;
