@@ -363,7 +363,7 @@ Acceptance checks:
 
 ### PA12. Bash (fan-out)
 
-Status: open. Depends on: PA2.
+Status: done. Depends on: PA2.
 Size: S. Complexity: High. Agent: strong.
 
 Owns: [bash.c](../../../src/player_action/bash.c), a new Rust module,
@@ -378,5 +378,14 @@ Acceptance checks:
 
 * L1: seeded door bash success, failure with stun, and chest outcomes match
   C.
-* L1: a monster target delegates to attack without other state changes.
+* L1: a monster target delegates to attack with the legacy temporary shield
+  weapon, restores equipment, and preserves stun and off-balance effects.
 * `bash.c` contains only the prompt shim.
+
+Implemented in `src/player_action/bash.rs`, with C-global access and combat
+calls isolated in `bash/globals.rs` and a thin `bash/interop.rs` export.
+Seeded Rust tests cover doors, chests, fear, equipment restoration, and
+off-balance paralysis. Headless C-caller checks cover chest outcomes, fear,
+direction dispatch, and cancellation. Door RNG and live C combat/stun are
+not covered by the headless bash scenarios; persistence and real terminal
+rendering remain outside this task.

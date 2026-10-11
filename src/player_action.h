@@ -84,6 +84,7 @@ void player_action_use_magic(enum magic_t magic_type);
  *
  */
 void player_action_bash(void);
+void C_player_action_bash_target(long y, long x);
 
 /**
  * @brief Drop something being carried

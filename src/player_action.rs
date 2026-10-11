@@ -1,4 +1,5 @@
 pub(crate) mod attack;
+mod bash;
 mod close;
 mod disarm_trap;
 mod jam_door;

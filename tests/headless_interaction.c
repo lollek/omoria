@@ -1027,6 +1027,81 @@ static void assert_tunnel_border_messages(void) {
   end_pickup_scenario();
 }
 
+static void seed_for_bash_chest(bool destroyed, bool unlocked) {
+  C_seeded_rng_end();
+  for (uint64_t seed = 1; seed < 10000; seed++) {
+    C_seeded_rng_begin(seed);
+    const bool first = randint(10) == 1;
+    const bool second = randint(10) == 1;
+    C_seeded_rng_end();
+    if (first == destroyed && second == unlocked) {
+      C_seeded_rng_begin(seed);
+      return;
+    }
+  }
+  assert(false && "Could not find a deterministic chest bash seed");
+}
+
+static void assert_bash_chest_scenario(bool destroyed, bool unlocked,
+                                      bool locked) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  treasure_type *item = &t_list[ration_slot];
+  strcpy(item->name, "& Small^ chest (Locked)");
+  item->tval = chest;
+  item->flags = locked ? UINT64_MAX : 0x11000040;
+  item->flags2 = 42;
+  item->cost = 50;
+  treasure_type expected = *item;
+  const cave_type original_cell = cave[row][col];
+  const int64_t original_exp = player_exp;
+  const size_t drawing_before = headless_terminal_counts().drawing;
+  seed_for_bash_chest(destroyed, unlocked);
+  C_player_action_bash_target(row, col);
+  if (destroyed) {
+    strcpy(expected.name, "& ruined chest");
+    expected.flags = 0;
+    assert_open_messages("You have destroyed the chest...",
+                         "and its contents!", NULL);
+  } else if (locked && unlocked) {
+    expected.flags &= 0xFFFFFFFE;
+    assert_open_messages("The lock breaks open!", NULL, NULL);
+  } else {
+    assert_open_messages(NULL, NULL, NULL);
+  }
+  assert_same_item(item, &expected);
+  assert(memcmp(&cave[row][col], &original_cell, sizeof(original_cell)) == 0);
+  assert(headless_terminal_counts().drawing == drawing_before);
+  assert(player_flags.paralysis == 0 && player_exp == original_exp);
+  assert(dun_level == 1 && turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static void assert_bash_prompt_scenario(bool cancel, bool afraid) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  cave[row][col].cptr = afraid ? 2 : 0;
+  player_flags.afraid = afraid ? 1 : 0;
+  const cave_type original_cell = cave[row][col];
+  const treasure_type original_item = t_list[ration_slot];
+  const treasure_type original_weapon = equipment[Equipment_primary];
+  headless_terminal_script(cancel ? "\033" : "l", 1);
+  player_action_bash();
+  assert(headless_terminal_counts().input == 1);
+  assert_open_messages(cancel ? NULL : afraid ? "You are afraid!" :
+                       "I do not see anything you can bash there.", NULL, NULL);
+  assert(reset_flag == cancel);
+  assert_same_item(&t_list[ration_slot], &original_item);
+  assert_same_item(&equipment[Equipment_primary], &original_weapon);
+  assert(memcmp(&cave[row][col], &original_cell, sizeof(original_cell)) == 0);
+  assert(player_flags.paralysis == 0 && char_row == row && char_col == col - 1);
+  assert(turn == 1 && turn_counter == 100);
+  headless_terminal_reset();
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -1133,6 +1208,14 @@ int main(void) {
     assert_tunnel_target_message(1, 0, 0, "Tunnel through what?  Empty air???");
     assert_tunnel_target_message(1, secret_door, 0, "You tunnel into the granite wall.");
     assert_tunnel_border_messages();
+    assert_bash_chest_scenario(true, false, true);
+    assert_bash_chest_scenario(true, false, false);
+    assert_bash_chest_scenario(false, true, true);
+    assert_bash_chest_scenario(false, false, true);
+    assert_bash_chest_scenario(false, true, false);
+    assert_bash_prompt_scenario(true, false);
+    assert_bash_prompt_scenario(false, false);
+    assert_bash_prompt_scenario(false, true);
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;
