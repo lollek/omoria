@@ -134,8 +134,8 @@ If unsure, ask the navigator.
 
 | ID | What | Built by | Reused by | Status |
 | --- | --- | --- | --- | --- |
-| F-CELL | Typed Rust access to `cave`/`t_list` cells, bounds checks, plus a locked, resettable test map. Existing module-local accessors in `dungeon/trap/globals.rs` and `player_action/movement/globals.rs` stay as they are. | PA1 | PA, TR, LF4, later MAP | planned |
-| F-DIR-EDGE | Prompt-at-edge pattern for directional actions, plus shared door state transitions. | PA2 | PA7-PA12, IU4 | planned |
+| F-CELL | Typed Rust access to `cave`/`t_list` cells, bounds checks, plus a locked, resettable test map ([dungeon/cell.rs](../../src/dungeon/cell.rs)). Existing module-local accessors in `dungeon/trap/globals.rs` and `player_action/movement/globals.rs` stay as they are. | PA1 | PA2-PA12; later TR, LF4, MAP | built |
+| F-DIR-EDGE | Prompt-at-edge pattern for directional actions, plus shared door state transitions ([dungeon/door.rs](../../src/dungeon/door.rs): close, jam classification). | PA2 | Prompt pattern: PA7-PA12. Door helpers: PA8 only; open and bash write the open-door transition directly. Later IU4 | built |
 | F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts. | SE1 | SE2, TR, later MG, SP | planned |
 | F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files forwarding to C. | TR1 | TR2-TR6 | planned |
 | F-ITEM | Handle to a C-selected inventory item, plus the consume lifecycle (identify, destroy one, remaining message). | IU1 | IU2-IU6, later MG, ST | planned |
@@ -150,31 +150,33 @@ seedable C-facing RNG ([rng/](../../src/rng/)), headless terminal doubles
 ([equipment.rs](../../src/equipment.rs)), and player data accessors
 ([player/data.rs](../../src/player/data.rs)).
 
-Known gap: some Rust code calls `thread_rng()` directly (`managed_to_hit`,
-movement confusion), so the seeded C-facing RNG does not control those rolls.
-The first story that needs deterministic results there should add a
-`_with_rng` path.
+Known gap: production `managed_to_hit`, movement confusion, and item
+generation call `thread_rng()` directly, so the seeded C-facing RNG does not
+control those rolls in headless C checks (for example door bashing and chest
+or rubble loot). `managed_to_hit_with_rng` exists for Rust tests. XC1 and XC2
+route the production wrappers through the seeded RNG.
 
 ## Epics
 
-| ID | Epic | C files | Size | Detail |
-| --- | --- | --- | --- | --- |
-| PA | Simple player actions | `player_action/` search, close, stairs, light, refill, rest, look, jam, open, disarm, tunnel, bash | 12 x S-M | [player-actions.md](epics/player-actions.md) |
-| TR | Trap activation | `traps.c` | L | [trap-activation.md](epics/trap-activation.md) |
-| SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | [status-effects.md](epics/status-effects.md) |
-| IU | Item use | eat, quaff, read, aim, use staff, drop | 6 x S-L | [item-use.md](epics/item-use.md) |
-| CA | Casino | `casino/` | 4 files, M-L | [casino.md](epics/casino.md) |
-| LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | [leaf-modules.md](epics/leaf-modules.md) |
-| MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not yet planned |
-| SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not yet planned |
-| TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not yet planned |
-| MO | Monsters | `generate_monster.c`, `monsters.c`, `creature.c` | M, S, XL | Not yet planned |
-| MAP | Map generation | `generate_map/*.c`, `dungeon/light.c` | 6 x S-M | Not yet planned |
-| CM | Combat & movement | `combat/ranged.c`, `attack.c`, `move.c` | 3 x M | Not yet planned |
-| CORE | Player & inventory core | `player.c`, `inventory/inven.c`, `equip.c`, `misc.c` | M, XL, M, XL | Not yet planned |
-| ST | Stores & economy | `stores.c`, `trade.c`, `blackmarket.c` | XL, L, M | Not yet planned |
-| TU | Terminal & UI | `io.c`, `screen.c`, `term.c` | 3 x M | Not yet planned |
-| ML | Main loop & startup | `main_loop/`, `main.c`, `init/`, `pregame/*.c`, `death.c`, `files.c`, `wizard.c`, `c.c`, `debug.c` | Mixed, `wizard.c` XL | Not yet planned |
+| ID | Epic | C files | Size | Status | Detail |
+| --- | --- | --- | --- | --- | --- |
+| PA | Simple player actions | `player_action/` search, close, stairs, light, refill, rest, look, jam, open, disarm, tunnel, bash | 12 x S-M | **Done** (2026-10-11) | [player-actions.md](epics/player-actions.md) |
+| TR | Trap activation | `traps.c` | L | Open | [trap-activation.md](epics/trap-activation.md) |
+| SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | Open | [status-effects.md](epics/status-effects.md) |
+| IU | Item use | eat, quaff, read, aim, use staff, drop | 6 x S-L | Open | [item-use.md](epics/item-use.md) |
+| CA | Casino | `casino/` | 4 files, M-L | Open | [casino.md](epics/casino.md) |
+| LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
+| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper) | 4 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
+| MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
+| SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
+| TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |
+| MO | Monsters | `generate_monster.c`, `monsters.c`, `creature.c` | M, S, XL | Not planned | |
+| MAP | Map generation | `generate_map/*.c`, `dungeon/light.c` | 6 x S-M | Not planned | |
+| CM | Combat & movement | `combat/ranged.c`, `attack.c`, `move.c` | 3 x M | Not planned | |
+| CORE | Player & inventory core | `player.c`, `inventory/inven.c`, `equip.c`, `misc.c` | M, XL, M, XL | Not planned | |
+| ST | Stores & economy | `stores.c`, `trade.c`, `blackmarket.c` | XL, L, M | Not planned | |
+| TU | Terminal & UI | `io.c`, `screen.c`, `term.c` | 3 x M | Not planned | |
+| ML | Main loop & startup | `main_loop/`, `main.c`, `init/`, `pregame/*.c`, `death.c`, `files.c`, `wizard.c`, `c.c`, `debug.c` | Mixed, `wizard.c` XL | Not planned | |
 
 Planning notes for epics that are not yet planned:
 
@@ -204,10 +206,11 @@ Planning notes for epics that are not yet planned:
 
 Solid arrows are hard dependencies. Dashed arrows reuse a foundation and are
 recommended, but the later epic can start by calling retained C instead.
+Green epics are done.
 
 ```mermaid
 graph LR
-  PA -.->|F-CELL| TR
+  PA[PA done] -.->|F-CELL| TR
   SE -.->|F-DMG| TR
   PA -.->|F-DIR-EDGE| IU
   SE -.-> IU
@@ -230,12 +233,16 @@ graph LR
   ST --> ML
   TS --> ML
   LF
+  XC
+  classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
+  class PA done
 ```
 
 ### Story Waves
 
 Stories in the same wave can run concurrently. A wave starts per story as soon
 as that story's solid dependencies are done; waves are not global barriers.
+All PA stories are done.
 
 | Wave | Stories |
 | --- | --- |
@@ -244,7 +251,14 @@ as that story's solid dependencies are done; waves are not global barriers.
 | 3 | PA7-PA12, TR2-TR6, IU4, IU5, CA5, CA6 |
 | 4 | TR7, CA7; plan MG, CM, and TS in detail |
 
+Cross-cutting stories XC1-XC3 have no solid dependencies and can join any
+wave. XC4 is deferred.
+
 ## Completed Work
+
+* **PA epic** (2026-10-11): all twelve simple player actions are Rust;
+  directional and text prompts remain as C shims. See
+  [player-actions.md](epics/player-actions.md) for remaining gaps.
 
 Ported before this backlog existed. A Rust module's presence does not mean its
 subsystem is fully migrated.
@@ -273,3 +287,9 @@ accessed from Rust through `extern` declarations. Wrap them behind typed
 accessors as foundations are built, and pass state explicitly where a port
 allows it. Do not move ownership of a global to Rust until its C writers are
 ported.
+
+PA ports declare the same globals and C helpers locally in each
+`globals.rs` (`player_flags`, `door_list`, `lite_spot`, `equipment`). Do not
+consolidate these piecemeal; decide a shared home (for example typed accessors
+next to `dungeon/cell.rs` and `equipment.rs`) when the next epic needs the
+same declarations, then migrate PA modules in one mechanical story.

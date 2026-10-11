@@ -1,4 +1,4 @@
-# Epic PA: Simple Player Actions
+# Epic PA: Simple Player Actions (Done)
 
 Ports the self-contained commands in `src/player_action/`. Attack, movement,
 item use, and drop are in other epics. Back to the [backlog](../backlog.md).
@@ -7,6 +7,23 @@ All actions are called from [command.c](../../../src/main_loop/command.c).
 `search` is also called from `move.c` and `tunnel.c`. Rust modules register
 in [player_action.rs](../../../src/player_action.rs); C prototypes are in
 [player_action.h](../../../src/player_action.h).
+
+Epic status: done (2026-10-11). All twelve stories are implemented and
+`make check` passed. Prompt shims remain in C until the Terminal & UI and Main
+Loop epics replace them.
+
+Known gaps across the epic (follow-ups are
+[cross-cutting epic](cross-cutting.md)):
+
+* No headless C-caller check covers search (PA1) or stairs (PA3) directly
+  (XC3); command-key dispatch is unverified for most actions.
+* Production `managed_to_hit` and item generation use `thread_rng`, so the
+  seeded C-facing RNG does not control door bashing (XC1) or chest and rubble
+  loot (XC2).
+* Open (PA9) and bash (PA12) each write the open-door transition directly
+  instead of through a shared helper in [door.rs](../../../src/dungeon/door.rs)
+  (XC4, deferred).
+* Real terminal rendering and action-specific save/reload are unverified.
 
 ## Story Graph
 
@@ -25,6 +42,8 @@ graph LR
   PA4[PA4 toggle light]
   PA5[PA5 refill lamp]
   PA6[PA6 rest]
+  classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
+  class PA1,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,PA10,PA11,PA12 done
 ```
 
 ## Stories
@@ -309,10 +328,16 @@ Acceptance checks:
 
 ### PA10. Disarm Trap (fan-out)
 
-Status: completed; Rust owns floor and chest disarm outcomes, with seeded
-Rust and headless C-caller checks. C retains the direction prompt, movement,
-and trap activation. Depends on: PA1, PA2.
+Status: implemented. Depends on: PA1, PA2.
 Size: S. Complexity: High. Agent: strong.
+
+Implemented in [disarm_trap.rs](../../../src/player_action/disarm_trap.rs),
+with local globals and a thin interop wrapper. Rust owns floor and chest disarm
+outcomes; C retains the direction prompt, movement, and trap activation.
+Chest name suffixes are truncated to fit the name buffer instead of
+overflowing it. Seeded Rust tests and headless C-caller checks in
+[headless_interaction.c](../../../tests/headless_interaction.c) cover success,
+failure, set-off, and blind/no-light/confused penalties.
 
 Owns: [disarm_trap.c](../../../src/player_action/disarm_trap.c), a new Rust
 module, registration line.
@@ -330,10 +355,10 @@ Acceptance checks:
 
 ### PA11. Tunnel (fan-out)
 
-Status: complete (L1). Depends on: PA1, PA2.
+Status: implemented. Depends on: PA1, PA2.
 Size: S. Complexity: High. Agent: strong.
 
-Rust owns the tunnel decisions; C retains only the direction prompt and the
+Implemented in [tunnel.rs](../../../src/player_action/tunnel.rs). Rust owns the tunnel decisions; C retains only the direction prompt and the
 wall, loot, and lighting helpers. Deterministic Rust tests cover terrain
 difficulty, tool bonuses, rubble thresholds and effect order, secret-door
 search delegation, and target messages. `make test-headless-interaction`
@@ -363,8 +388,17 @@ Acceptance checks:
 
 ### PA12. Bash (fan-out)
 
-Status: done. Depends on: PA2.
+Status: implemented. Depends on: PA2.
 Size: S. Complexity: High. Agent: strong.
+
+Implemented in [bash.rs](../../../src/player_action/bash.rs), with C-global
+access and combat calls isolated in `bash/globals.rs` and a thin
+`bash/interop.rs` export. The C entry point keeps the direction prompt and
+the pre-prompt `search_off`/`rest_off` calls. Seeded Rust tests cover doors,
+chests, fear, equipment restoration, and off-balance paralysis. Headless
+C-caller checks cover chest outcomes, fear, direction dispatch, and
+cancellation. Door RNG and live C combat/stun are not covered by the headless
+bash scenarios; persistence and real terminal rendering remain unverified.
 
 Owns: [bash.c](../../../src/player_action/bash.c), a new Rust module,
 registration line.
@@ -381,11 +415,3 @@ Acceptance checks:
 * L1: a monster target delegates to attack with the legacy temporary shield
   weapon, restores equipment, and preserves stun and off-balance effects.
 * `bash.c` contains only the prompt shim.
-
-Implemented in `src/player_action/bash.rs`, with C-global access and combat
-calls isolated in `bash/globals.rs` and a thin `bash/interop.rs` export.
-Seeded Rust tests cover doors, chests, fear, equipment restoration, and
-off-balance paralysis. Headless C-caller checks cover chest outcomes, fear,
-direction dispatch, and cancellation. Door RNG and live C combat/stun are
-not covered by the headless bash scenarios; persistence and real terminal
-rendering remain outside this task.
