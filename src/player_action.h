@@ -118,6 +118,7 @@ void player_action_refill_lamp(void);
 void player_action_eat(void);
 
 void player_action_disarm_trap(void);
+void C_player_action_disarm_target(long y, long x, long direction);
 
 void player_action_ascend_stairs(void);
 

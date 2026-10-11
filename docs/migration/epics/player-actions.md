@@ -309,7 +309,9 @@ Acceptance checks:
 
 ### PA10. Disarm Trap (fan-out)
 
-Status: open. Depends on: PA1, PA2.
+Status: completed; Rust owns floor and chest disarm outcomes, with seeded
+Rust and headless C-caller checks. C retains the direction prompt, movement,
+and trap activation. Depends on: PA1, PA2.
 Size: S. Complexity: High. Agent: strong.
 
 Owns: [disarm_trap.c](../../../src/player_action/disarm_trap.c), a new Rust

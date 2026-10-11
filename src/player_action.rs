@@ -1,5 +1,6 @@
 pub(crate) mod attack;
 mod close;
+mod disarm_trap;
 mod jam_door;
 mod look;
 mod movement;

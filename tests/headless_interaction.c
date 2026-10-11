@@ -794,6 +794,95 @@ static void assert_open_treasure_matches_c_at_chest_level(void) {
   end_pickup_scenario();
 }
 
+static void seed_for_disarm_outcome(long skill, long level, int outcome) {
+  C_seeded_rng_end();
+  for (uint64_t seed = 1; seed < 10000; seed++) {
+    C_seeded_rng_begin(seed);
+    const int actual = skill - level > randint(100) ? 0 :
+                       randint(skill) > 5 ? 1 : 2;
+    C_seeded_rng_end();
+    if (actual == outcome) {
+      C_seeded_rng_begin(seed);
+      return;
+    }
+  }
+  assert(false && "Could not find a deterministic disarm seed");
+}
+
+static void assert_disarm_scenario(bool is_chest, int outcome,
+                                  bool blind, bool confused, bool no_light) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long old_col = char_col;
+  const long col = old_col + 1;
+  const long slot = ration_slot;
+  treasure_type *item = &t_list[slot];
+  memset(item, 0, sizeof(*item));
+  strcpy(item->name, is_chest ? "a chest (Gas Trap)|" : "a trap");
+  strcpy(item->damage, "0d1");
+  item->tval = is_chest ? chest : seen_trap;
+  item->flags = is_chest ? 0x80000041 : 0;
+  item->number = 1;
+  item->level = 1;
+  item->p1 = 12;
+  cave[row][col].fm = true;
+  player_flags.blind = blind;
+  player_flags.confused = confused;
+  player_flags.free_act = true;
+  cave[row][old_col].is_permanently_lit = !no_light;
+  long skill = player_disarm();
+  if (blind) {
+    skill /= 5;
+  } else if (no_light) {
+    skill /= 2;
+  }
+  if (confused) {
+    skill /= 3;
+  }
+  seed_for_disarm_outcome(skill, item->level, outcome);
+  const treasure_type original = *item;
+  const int64_t exp_before = player_exp;
+  C_player_action_disarm_target(row, col, 6);
+  if (is_chest) {
+    assert(char_row == row && char_col == old_col);
+    assert(cave[row][col].tptr == slot && cave[row][col].fm);
+    if (outcome == 0) {
+      assert(item->flags == 0x80000001);
+      assert(strcmp(item->name, "a chest (Locked)") == 0);
+      assert(player_exp == exp_before + 1);
+      assert_open_messages("You have disarmed the chest.", NULL, NULL);
+    } else {
+      assert_same_item(item, &original);
+      assert(player_exp == exp_before);
+      assert_open_messages(outcome == 1 ? "You failed to disarm the chest." :
+                           "You set a trap off!",
+                           outcome == 2 ? "A puff of yellow gas surrounds you!" : NULL,
+                           outcome == 2 ? "You are unaffected." : NULL);
+    }
+    assert(player_flags.paralysis == 0);
+  } else if (outcome == 0) {
+    assert(cave[row][col].tptr == 0 && !cave[row][col].fm);
+    assert(char_row == row && char_col == col);
+    assert(player_exp == exp_before + 12);
+    assert_open_messages("You have disarmed the trap.", NULL, NULL);
+    long freed = 0;
+    popt(&freed);
+    assert(freed == slot);
+    pusht(freed);
+  } else {
+    assert(cave[row][col].tptr == slot && cave[row][col].fm);
+    assert_same_item(item, &original);
+    assert(player_exp == exp_before);
+    assert(char_row == row && char_col == (outcome == 1 ? old_col : col));
+    assert_open_messages(outcome == 1 ? "You failed to disarm the trap." :
+                         "You set the trap off!",
+                         outcome == 2 ? "You got lucky: unknown trap value." : NULL,
+                         NULL);
+  }
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -874,6 +963,16 @@ int main(void) {
     assert_open_chest_scenario(false, false, true, true, true);
     assert_open_chest_scenario(false, true, true, false, false);
     assert_open_treasure_matches_c_at_chest_level();
+    assert_disarm_scenario(false, 0, false, false, false);
+    assert_disarm_scenario(false, 1, false, false, false);
+    assert_disarm_scenario(false, 2, false, false, false);
+    assert_disarm_scenario(true, 0, false, false, false);
+    assert_disarm_scenario(true, 1, false, false, false);
+    assert_disarm_scenario(true, 2, false, false, false);
+    assert_disarm_scenario(true, 1, true, false, false);
+    assert_disarm_scenario(true, 2, true, true, true);
+    assert_disarm_scenario(true, 1, false, true, false);
+    assert_disarm_scenario(true, 1, false, false, true);
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;
