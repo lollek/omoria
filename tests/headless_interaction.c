@@ -19,8 +19,8 @@
 #include "../src/variables.h"
 #include "support/terminal.h"
 
-bool C_save_test_reset(void);
-bool C_save_test_apply_fixture_and_verify(void);
+void C_save_test_apply_blank(void);
+bool C_save_test_apply_fixture(void);
 
 #define RATION_SUBVAL 307
 #define RATION_WEIGHT 10
@@ -76,8 +76,8 @@ static void place_ration_east_of_player(void) {
 }
 
 static void begin_pickup_scenario(void) {
-  assert(C_save_test_reset());
-  assert(C_save_test_apply_fixture_and_verify());
+  C_save_test_apply_blank();
+  assert(C_save_test_apply_fixture());
   assert(char_row == 39 && char_col == 140);
 
   headless_terminal_reset();
@@ -144,7 +144,7 @@ static void end_pickup_scenario(void) {
   C_seeded_rng_end();
   C_message_capture_end();
   headless_terminal_reset();
-  assert(C_save_test_reset());
+  C_save_test_apply_blank();
 }
 
 static void assert_ration_pickup_scenario(void) {

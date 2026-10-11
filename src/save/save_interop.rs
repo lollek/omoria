@@ -37,6 +37,18 @@ pub extern "C" fn C_save_test_reject_mismatched_uid_preserves_state() -> bool {
 
 #[cfg(feature = "save-test-support")]
 #[no_mangle]
+pub extern "C" fn C_save_test_apply_blank() {
+    save::test_apply_blank();
+}
+
+#[cfg(feature = "save-test-support")]
+#[no_mangle]
+pub extern "C" fn C_save_test_apply_fixture() -> bool {
+    save::test_apply_fixture()
+}
+
+#[cfg(feature = "save-test-support")]
+#[no_mangle]
 pub extern "C" fn C_save_test_apply_fixture_and_verify() -> bool {
     save::test_apply_fixture_and_verify()
 }

@@ -125,10 +125,14 @@ fn test_reset_record(history_rows: usize) -> SaveRecord {
 }
 
 #[cfg(feature = "save-test-support")]
+pub(crate) fn test_apply_blank() {
+    apply_record(test_reset_record(0));
+}
+
+#[cfg(feature = "save-test-support")]
 pub(crate) fn test_reset() -> bool {
     let expected = normalized_record(&test_reset_record(5));
-    let reset = test_reset_record(0);
-    apply_record(reset);
+    test_apply_blank();
     expected.is_some() && normalized_record(&current_record()) == expected
 }
 
@@ -146,6 +150,19 @@ pub(crate) fn test_reject_mismatched_uid_preserves_state() -> bool {
     match apply_record_for_uid(record, requested_uid) {
         Err(_) => normalized_record(&current_record()) == before,
         Ok(()) => false,
+    }
+}
+
+// Skips the round-trip check of test_apply_fixture_and_verify, which dominates harness runtime.
+#[cfg(feature = "save-test-support")]
+pub(crate) fn test_apply_fixture() -> bool {
+    let fixture = include_str!("../../tests/fixtures/save_record_v1.json");
+    match json::decode::<SaveRecord>(fixture) {
+        Ok(record) => {
+            apply_record(record);
+            true
+        }
+        Err(_) => false,
     }
 }
 

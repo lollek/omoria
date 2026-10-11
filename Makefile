@@ -7,6 +7,9 @@ else
 LDFLAGS =	-lncurses -ltermcap -lm -lpthread -ldl
 endif
 
+# Linking with -g makes clang run dsymutil on macOS, which is slow; harness links drop it.
+LINKCFLAGS =	$(filter-out -g3,$(CFLAGS))
+
 READFILES =	data/hours.dat data/monsters.dat data/moria_gcustom.mst
 WRITEFILES = data/death.log data/moriamas.dat data/moriatop.dat data/moriatrd.dat
 DATAFILES =	$(READFILES) $(WRITEFILES)
@@ -45,60 +48,69 @@ pre-commit:
 test:
 	cargo test
 
+HDIR =	target/debug
+HREDIRECT =	-include tests/support/terminal_redirects.h
+HIODEFS =	-Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line
+HLOOPOBJS =	$(HDIR)/headless-loop.o $(HDIR)/headless-command.o
+
+$(HDIR):
+	mkdir -p $@
+
+$(HDIR)/headless-io.o: src/io.c $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HIODEFS) -c src/io.c -o $@
+
+$(HDIR)/headless-io-prt.o: src/io.c $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HIODEFS) -Dprt=headless_prt -c src/io.c -o $@
+
+$(HDIR)/headless-screen.o: src/screen.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -c src/screen.c -o $@
+
+$(HDIR)/headless-light.o: src/dungeon/light.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -c src/dungeon/light.c -o $@
+
+$(HDIR)/headless-loop.o: src/main_loop/main_loop.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -c src/main_loop/main_loop.c -o $@
+
+$(HDIR)/headless-command.o: src/main_loop/command.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -c src/main_loop/command.c -o $@
+
+$(HDIR)/headless-rest.o: src/player_action/rest.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -Dheadless_get_string=headless_rest_get_string -c src/player_action/rest.c -o $@
+
 .PHONY: test-movement
-test-movement: $(filter-out src/main.o,$(OBJFILES))
+test-movement: $(filter-out src/main.o,$(OBJFILES)) $(HDIR)/headless-light.o
 	cargo build
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/movement-light.o
-	$(CC) $(CFLAGS) tests/movement_ffi.c tests/support/terminal.c target/debug/movement-light.o $(filter-out src/main.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
+	$(CC) $(LINKCFLAGS) tests/movement_ffi.c tests/support/terminal.c $(HDIR)/headless-light.o $(filter-out src/main.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
 	./target/debug/movement-ffi-test
 
 .PHONY: test-messages
-test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES))
+test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o
 	cargo build
-	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -c src/io.c -o target/debug/message-io.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
-	$(CC) $(CFLAGS) tests/message_ffi.c tests/support/terminal.c tests/support/terminal_test.c target/debug/message-io.o target/debug/headless-screen.o target/debug/headless-light.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
+	$(CC) $(LINKCFLAGS) tests/message_ffi.c tests/support/terminal.c tests/support/terminal_test.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
 	./target/debug/message-ffi-test
 
 .PHONY: test-headless
-test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES))
+test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS)
 	cargo build --features save-test-support
-	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -c src/io.c -o target/debug/headless-io.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/main_loop.c -o target/debug/headless-loop.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/command.c -o target/debug/headless-command.o
-	$(CC) $(CFLAGS) tests/headless_turn.c tests/support/headless_scenario.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-turn-test
+	$(CC) $(LINKCFLAGS) tests/headless_turn.c tests/support/headless_scenario.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS) $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-turn-test
 	./target/debug/headless-turn-test
 
 .PHONY: test-headless-interaction
-test-headless-interaction: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES))
+test-headless-interaction: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io-prt.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS) $(HDIR)/headless-rest.o
 	cargo build --features save-test-support
-	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -Dprt=headless_prt -c src/io.c -o target/debug/headless-io.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/main_loop.c -o target/debug/headless-loop.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/command.c -o target/debug/headless-command.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -Dheadless_get_string=headless_rest_get_string -c src/player_action/rest.c -o target/debug/headless-rest.o
-	$(CC) $(CFLAGS) tests/headless_interaction.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o target/debug/headless-rest.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o src/player_action/rest.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-interaction-test
+	$(CC) $(LINKCFLAGS) tests/headless_interaction.c tests/support/terminal.c $(HDIR)/headless-io-prt.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS) $(HDIR)/headless-rest.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o src/player_action/rest.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-interaction-test
 	./target/debug/headless-interaction-test
 
 .PHONY: test-headless-persistence
-test-headless-persistence: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES))
+test-headless-persistence: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS)
 	cargo build --features save-test-support
-	$(CC) $(CFLAGS) -Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line -c src/io.c -o target/debug/headless-io.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/screen.c -o target/debug/headless-screen.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/dungeon/light.c -o target/debug/headless-light.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/main_loop.c -o target/debug/headless-loop.o
-	$(CC) $(CFLAGS) -include tests/support/terminal_redirects.h -c src/main_loop/command.c -o target/debug/headless-command.o
-	$(CC) $(CFLAGS) tests/headless_persistence.c tests/support/terminal.c target/debug/headless-io.o target/debug/headless-screen.o target/debug/headless-light.o target/debug/headless-loop.o target/debug/headless-command.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-persistence-test
+	$(CC) $(LINKCFLAGS) tests/headless_persistence.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS) $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-persistence-test
 	./target/debug/headless-persistence-test
 
 .PHONY: test-save
 test-save: $(filter-out src/main.o,$(OBJFILES))
 	cargo build --features save-test-support
-	$(CC) $(CFLAGS) tests/save_apply_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/save-apply-ffi-test
+	$(CC) $(LINKCFLAGS) tests/save_apply_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/save-apply-ffi-test
 	./target/debug/save-apply-ffi-test
 
 .PHONY: check
