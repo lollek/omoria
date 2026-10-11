@@ -24,6 +24,10 @@ pub struct Cave {
 }
 
 impl Cave {
+    pub fn has_monster(&self) -> bool {
+        self.cptr >= 2
+    }
+
     // `fm` is a legacy "field mark" flag; its meaning is unknown but it counts as lit.
     pub fn is_lit(&self) -> bool {
         self.pl != 0 || self.tl != 0 || self.fm != 0

@@ -22,8 +22,8 @@ pub struct MoveCell {
 impl MoveCell {
     pub fn from_cave(cell: &Cave, item_tval: u8) -> Self {
         Self {
-            open: cell.fopen != 0,
-            monster: cell.cptr >= 2,
+            open: cell.is_open(),
+            monster: cell.has_monster(),
             obstacle: if cell.tptr == 0 {
                 None
             } else {
