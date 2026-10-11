@@ -1,4 +1,4 @@
-use crate::model::{Cave, Item, ItemType};
+use crate::model::{Cave, FloorType, Item, ItemType};
 
 #[cfg(not(test))]
 mod globals;
@@ -51,7 +51,7 @@ fn look(context: &mut impl LookContext, direction: i64, mut y: i64, mut x: i64) 
             }
         }
 
-        if cell.tl != 0 || cell.pl != 0 || cell.fm != 0 {
+        if cell.is_lit() {
             if let Some(mut item) = item {
                 match item.item_type() {
                     Some(ItemType::SecretDoor) => context.message("You see a granite wall."),
@@ -66,20 +66,26 @@ fn look(context: &mut impl LookContext, direction: i64, mut y: i64, mut x: i64) 
                 }
             }
 
-            if cell.fopen == 0 {
+            if !cell.is_open() {
                 seen = true;
-                match cell.fval {
-                    10 | 15 => context.message("You see a granite wall."),
-                    11 => context.message("You see some dark rock."),
-                    12 => context.message("You see a quartz vein."),
+                match cell.floor_type() {
+                    Some(FloorType::WallGranite | FloorType::BoundaryWall) => {
+                        context.message("You see a granite wall.")
+                    }
+                    Some(FloorType::WallMagma) => context.message("You see some dark rock."),
+                    Some(FloorType::WallQuartz) => context.message("You see a quartz vein."),
                     _ => {}
                 }
-            } else if matches!(cell.fval, 16 | 17) {
+            } else if matches!(
+                cell.floor_type(),
+                // Legacy look does not report WaterOnFloorLit.
+                Some(FloorType::WaterOnFloor | FloorType::WaterOnRoomFloor)
+            ) {
                 seen = true;
                 context.message("You see some water.");
             }
         }
-        if cell.fopen == 0 {
+        if !cell.is_open() {
             break;
         }
     }
