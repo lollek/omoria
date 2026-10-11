@@ -109,6 +109,7 @@ void player_action_toggle_light_source(void);
  * 
  */
 void player_action_tunnel(void);
+void C_player_action_tunnel_target(long y, long x);
 
 void player_action_rest(void);
 bool C_player_action_rest_input(const char *input);

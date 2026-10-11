@@ -330,8 +330,22 @@ Acceptance checks:
 
 ### PA11. Tunnel (fan-out)
 
-Status: open. Depends on: PA1, PA2.
+Status: complete (L1). Depends on: PA1, PA2.
 Size: S. Complexity: High. Agent: strong.
+
+Rust owns the tunnel decisions; C retains only the direction prompt and the
+wall, loot, and lighting helpers. Deterministic Rust tests cover terrain
+difficulty, tool bonuses, rubble thresholds and effect order, secret-door
+search delegation, and target messages. `make test-headless-interaction`
+checks seeded granite, magma, and quartz success/failure against C `twall`,
+rubble removal and item-slot freeing, visible/hidden loot, monster and door
+messages, permanent walls on all four map borders, and blind secret-door
+search through the real C/Rust boundary.
+
+Exact rubble loot attributes remain unverified because item generation uses
+a separate thread RNG. Interactive direction prompting, command-key dispatch,
+real terminal rendering, secret-door discovery through tunnel, and tunneled
+terrain save/reload remain unverified at L1.
 
 Owns: [tunnel.c](../../../src/player_action/tunnel.c), a new Rust module,
 registration line.

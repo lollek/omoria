@@ -2,7 +2,7 @@ use crate::misc::{c_string_lossy, remove_first_c_string_byte};
 use crate::model::{Cave, Item};
 
 #[cfg(not(test))]
-mod globals;
+pub(super) mod globals;
 #[cfg(not(test))]
 mod interop;
 

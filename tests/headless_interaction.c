@@ -623,6 +623,10 @@ static void assert_open_messages(const char *first, const char *second,
   while (count < 3 && expected[count] != NULL) {
     char message[120];
     assert(C_message_capture_get(count, message, sizeof(message)));
+    if (strcmp(message, expected[count]) != 0) {
+      fprintf(stderr, "Message %zu: expected '%s', got '%s'\n",
+              count, expected[count], message);
+    }
     assert(strcmp(message, expected[count]) == 0);
     count++;
   }
@@ -883,6 +887,146 @@ static void assert_disarm_scenario(bool is_chest, int outcome,
   end_pickup_scenario();
 }
 
+static long tunnel_ability(void) {
+  return (C_player_get_stat(STR) * 10 + 20) / 5 + 125;
+}
+
+static void equip_tunnel_tool(void) {
+  equipment[Equipment_primary].tval = 1;
+  equipment[Equipment_primary].flags = Tunneling_worn_bit;
+  equipment[Equipment_primary].p1 = 2;
+}
+
+static uint64_t seed_for_tunnel(long max, long offset, bool success, int loot) {
+  const long ability = tunnel_ability();
+  C_seeded_rng_end();
+  for (uint64_t seed = 1; seed < 10000; seed++) {
+    C_seeded_rng_begin(seed);
+    const long difficulty = randint(max) + offset;
+    const bool drops = success && max == 180 && randint(10) == 1;
+    C_seeded_rng_end();
+    if ((ability > difficulty) == success &&
+        (loot < 0 || drops == (loot != 0))) {
+      C_seeded_rng_begin(seed);
+      return seed;
+    }
+  }
+  assert(false && "Could not find a deterministic tunnel seed");
+  return 0;
+}
+
+static void assert_tunnel_wall_matches_c(uint8_t terrain, bool success) {
+  begin_pickup_scenario();
+  equip_tunnel_tool();
+  const long row = char_row;
+  const long col = char_col + 1;
+  cave[row][col].fval = terrain;
+  cave[row][col].fopen = false;
+  cave[row][col].fm = true;
+  cave[row][col].is_permanently_lit = true;
+  cave[row][col].cptr = 2;
+  const cave_type original = cave[row][col];
+  const treasure_type original_item = t_list[ration_slot];
+  const long max = terrain == 10 ? 1200 : terrain == 11 ? 600 : 400;
+  const long offset = terrain == 10 ? 80 : 10;
+  const uint64_t seed = seed_for_tunnel(max, offset, success, -1);
+  assert(twall(row, col, tunnel_ability(), randint(max) + offset) == success);
+  const cave_type expected = cave[row][col];
+  cave[row][col] = original;
+  C_message_capture_end();
+  C_message_capture_begin();
+  C_seeded_rng_end();
+  C_seeded_rng_begin(seed);
+  C_player_action_tunnel_target(row, col);
+  assert(memcmp(&cave[row][col], &expected, sizeof(expected)) == 0);
+  assert_same_item(&t_list[ration_slot], &original_item);
+  const char *message = success ? "You have finished the tunnel." :
+      terrain == 10 ? "You tunnel into the granite wall." :
+      terrain == 11 ? "You tunnel into the magma intrusion." :
+                      "You tunnel into the quartz vein.";
+  assert_open_messages(success ? "You have found something!" : message,
+                       success ? message : NULL, NULL);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static void assert_tunnel_rubble_scenario(bool success, bool loot, bool lit) {
+  begin_pickup_scenario();
+  equip_tunnel_tool();
+  const long row = char_row;
+  const long col = char_col + 1;
+  t_list[ration_slot].tval = rubble;
+  cave[row][col].fopen = false;
+  cave[row][col].fm = true;
+  cave[row][col].is_permanently_lit = lit;
+  const cave_type original = cave[row][col];
+  const treasure_type original_item = t_list[ration_slot];
+  seed_for_tunnel(180, 0, success, loot);
+  const size_t drawing = headless_terminal_counts().drawing;
+  C_player_action_tunnel_target(row, col);
+  if (success) {
+    assert(cave[row][col].fopen && !cave[row][col].fm);
+    assert((cave[row][col].tptr > 0) == loot);
+    assert(headless_terminal_counts().drawing > drawing);
+    if (loot) {
+      assert(t_list[cave[row][col].tptr].tval != rubble);
+    } else {
+      long freed = 0;
+      popt(&freed);
+      assert(freed == ration_slot);
+      pusht(freed);
+    }
+    assert_open_messages("You have removed the rubble.",
+                         loot && lit ? "You have found something!" : NULL, NULL);
+  } else {
+    assert(memcmp(&cave[row][col], &original, sizeof(original)) == 0);
+    assert_same_item(&t_list[ration_slot], &original_item);
+    assert(headless_terminal_counts().drawing == drawing);
+    assert_open_messages("You dig in the rubble...", NULL, NULL);
+  }
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static void assert_tunnel_target_message(uint8_t terrain, uint8_t tval,
+                                         uint8_t monster, const char *message) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  t_list[ration_slot].tval = tval;
+  cave[row][col].fval = terrain;
+  cave[row][col].cptr = monster;
+  if (tval == 0) {
+    cave[row][col].tptr = 0;
+  }
+  const cave_type original = cave[row][col];
+  C_player_action_tunnel_target(row, col);
+  assert(memcmp(&cave[row][col], &original, sizeof(original)) == 0);
+  assert_open_messages(message, tval == secret_door ?
+                       "You are incapable of searching while blind." : NULL, NULL);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
+static void assert_tunnel_border_messages(void) {
+  begin_pickup_scenario();
+  const long targets[4][2] = {{1, char_col}, {cur_height, char_col},
+                             {char_row, 1}, {char_row, cur_width}};
+  for (size_t target = 0; target < 4; target++) {
+    const long row = targets[target][0];
+    const long col = targets[target][1];
+    cave[row][col].fval = 15;
+    const cave_type original = cave[row][col];
+    C_message_capture_end();
+    C_message_capture_begin();
+    C_player_action_tunnel_target(row, col);
+    assert_open_messages("This seems to be permanent rock.", NULL, NULL);
+    assert(memcmp(&cave[row][col], &original, sizeof(original)) == 0);
+  }
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -973,6 +1117,22 @@ int main(void) {
     assert_disarm_scenario(true, 2, true, true, true);
     assert_disarm_scenario(true, 1, false, true, false);
     assert_disarm_scenario(true, 1, false, false, true);
+    for (uint8_t terrain = 10; terrain <= 12; terrain++) {
+      assert_tunnel_wall_matches_c(terrain, true);
+      assert_tunnel_wall_matches_c(terrain, false);
+    }
+    assert_tunnel_rubble_scenario(false, false, true);
+    assert_tunnel_rubble_scenario(true, false, true);
+    assert_tunnel_rubble_scenario(true, true, true);
+    assert_tunnel_rubble_scenario(true, true, false);
+    assert_tunnel_target_message(15, 0, 0, "This seems to be permanent rock.");
+    assert_tunnel_target_message(16, 0, 0, "You can't tunnel through water!");
+    assert_tunnel_target_message(5, closed_door, 0, "You can't tunnel through that.");
+    assert_tunnel_target_message(5, closed_door, 2, "You can't tunnel through that.");
+    assert_tunnel_target_message(1, 0, 2, "Tunnel through what?  Empty air???");
+    assert_tunnel_target_message(1, 0, 0, "Tunnel through what?  Empty air???");
+    assert_tunnel_target_message(1, secret_door, 0, "You tunnel into the granite wall.");
+    assert_tunnel_border_messages();
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;

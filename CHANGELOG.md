@@ -2,6 +2,10 @@
 
 ## Unreleased
 * Internal: Ported floor and chest disarming to Rust while keeping the direction prompt in C.
+* Internal: Clarified weapon checks and terrain names in tunneling.
+* Internal: Ported tunneling to Rust while keeping the direction prompt and dungeon helpers in C.
+* Internal: Ported opening doors and chests to Rust while keeping the direction prompt in C.
+* Internal: Named cave lighting, openness, and floor-type helpers used by look.
 * Internal: Documented player-action context traits and their method contracts.
 * Internal: Clarified dungeon-level accessor names in stair movement.
 * Internal: Ported door jamming to Rust while keeping the direction prompt in C.

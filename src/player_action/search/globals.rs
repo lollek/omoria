@@ -31,7 +31,7 @@ impl SearchContext for GlobalSearch {
     }
 }
 
-pub(super) fn search_global(y: i64, x: i64, chance: i64) {
+pub(in crate::player_action) fn search_global(y: i64, x: i64, chance: i64) {
     extern "C" {
         static mut player_flags: PlayerFlags;
         fn player_has_no_light() -> bool;
