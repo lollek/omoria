@@ -1,7 +1,7 @@
 use super::super::basic::TrapEffects;
 use crate::{
     dungeon::cell::with_global_cells,
-    model::{Item, PlayerFlags},
+    model::{ActivationKind, Item, PlayerFlags, StoreKind},
 };
 
 extern "C" {
@@ -64,12 +64,13 @@ impl GlobalTrap {
         TrapEffects::message(self, message);
     }
 
-    pub(super) fn store(&mut self, store: libc::c_int) {
+    pub(super) fn store(&mut self, kind: StoreKind) {
+        let store = libc::c_int::from(kind);
         unsafe { check_store_hours_and_enter(store, i64::from(store)) }
     }
 
-    pub(super) fn store_open(&mut self, store: libc::c_int) -> bool {
-        unsafe { check_store_hours(store, -1) }
+    pub(super) fn store_open(&mut self, kind: StoreKind) -> bool {
+        unsafe { check_store_hours(libc::c_int::from(kind), -1) }
     }
 
     pub(super) fn trading_post(&mut self) {
@@ -153,5 +154,11 @@ pub(in crate::dungeon::trap) unsafe fn hit_trap_global(
         ));
         return;
     };
-    super::dispatch(&mut GlobalTrap, item.subval, damage, y, x);
+    super::dispatch(
+        &mut GlobalTrap,
+        ActivationKind::from(item.subval),
+        damage,
+        y,
+        x,
+    );
 }

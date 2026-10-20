@@ -23,6 +23,8 @@
 //! `TrapTemplate` only stores fields that actually vary; `apply_template_to_item` sets
 //! the constant fields (flags, weight, tohit, etc.) to zero when copying.
 
+use crate::model::ActivationKind;
+
 /// Trap template with only the fields that vary across trap definitions.
 ///
 /// When applied to an `Item`, the omitted fields (flags, flags2, weight, number,
@@ -74,147 +76,147 @@ pub const TRAP_LIST: &[TrapTemplate] = &[
     TrapTemplate {
         name: "an open pit",
         level: 1,
-        subval: 1,
+        subval: ActivationKind::OpenPit.subval(),
         damage: "2d6",
         cost: -50,
     },
     TrapTemplate {
         name: "an arrow trap",
         level: 3,
-        subval: 2,
+        subval: ActivationKind::Arrow.subval(),
         damage: "1d8",
         cost: -10,
     },
     TrapTemplate {
         name: "a covered pit",
         level: 2,
-        subval: 3,
+        subval: ActivationKind::CoveredPit.subval(),
         damage: "2d6",
         cost: -40,
     },
     TrapTemplate {
         name: "a trap door",
         level: 5,
-        subval: 4,
+        subval: ActivationKind::TrapDoor.subval(),
         damage: "2d8",
         cost: -25,
     },
     TrapTemplate {
         name: "a gas trap",
         level: 3,
-        subval: 5,
+        subval: ActivationKind::SleepGas.subval(),
         damage: "1d4",
         cost: 5,
     },
     TrapTemplate {
         name: "a loose rock",
         level: 0,
-        subval: 6,
+        subval: ActivationKind::HiddenObject.subval(),
         damage: "0d0",
         cost: -90,
     },
     TrapTemplate {
         name: "a dart trap",
         level: 5,
-        subval: 7,
+        subval: ActivationKind::StrengthDart.subval(),
         damage: "1d4",
         cost: 10,
     },
     TrapTemplate {
         name: "a strange rune",
         level: 5,
-        subval: 8,
+        subval: ActivationKind::Teleport.subval(),
         damage: "0d0",
         cost: -10,
     },
     TrapTemplate {
         name: "some loose rock",
         level: 5,
-        subval: 9,
+        subval: ActivationKind::Rockfall.subval(),
         damage: "2d6",
         cost: -10,
     },
     TrapTemplate {
         name: "a gas trap",
         level: 10,
-        subval: 10,
+        subval: ActivationKind::CorrodeGas.subval(),
         damage: "1d4",
         cost: 5,
     },
     TrapTemplate {
         name: "a strange rune",
         level: 5,
-        subval: 11,
+        subval: ActivationKind::SummonMonster.subval(),
         damage: "0d0",
         cost: -10,
     },
     TrapTemplate {
         name: "a blackened spot",
         level: 10,
-        subval: 12,
+        subval: ActivationKind::Fire.subval(),
         damage: "4d6",
         cost: 10,
     },
     TrapTemplate {
         name: "some corroded rock",
         level: 10,
-        subval: 13,
+        subval: ActivationKind::Acid.subval(),
         damage: "4d6",
         cost: 10,
     },
     TrapTemplate {
         name: "a gas trap",
         level: 5,
-        subval: 14,
+        subval: ActivationKind::PoisonGas.subval(),
         damage: "2d6",
         cost: 5,
     },
     TrapTemplate {
         name: "a gas trap",
         level: 5,
-        subval: 15,
+        subval: ActivationKind::BlindGas.subval(),
         damage: "1d4",
         cost: 10,
     },
     TrapTemplate {
         name: "a gas trap",
         level: 5,
-        subval: 16,
+        subval: ActivationKind::ConfuseGas.subval(),
         damage: "1d8",
         cost: 5,
     },
     TrapTemplate {
         name: "a dart trap",
         level: 5,
-        subval: 17,
+        subval: ActivationKind::SlowDart.subval(),
         damage: "1d8",
         cost: 10,
     },
     TrapTemplate {
         name: "a dart trap",
         level: 5,
-        subval: 18,
+        subval: ActivationKind::ConstitutionDart.subval(),
         damage: "1d8",
         cost: 10,
     },
     TrapTemplate {
         name: "a closed door",
         level: 0,
-        subval: 19,
+        subval: ActivationKind::SecretDoor.subval(),
         damage: "1d1",
         cost: 0,
     },
     TrapTemplate {
         name: "a chute",
         level: 5,
-        subval: 20,
+        subval: ActivationKind::Chute.subval(),
         damage: "4d8",
         cost: 20,
     },
 ];
 
 /// Subval for the open pit entry (always visible, uses TVAL_SEEN_TRAP).
-pub const SUBVAL_OPEN_PIT: i64 = 1;
+pub const SUBVAL_OPEN_PIT: i64 = ActivationKind::OpenPit.subval();
 
 /// Subval for the closed door entry (special case with different tval).
-pub const SUBVAL_CLOSED_DOOR: i64 = 19;
+pub const SUBVAL_CLOSED_DOOR: i64 = ActivationKind::SecretDoor.subval();

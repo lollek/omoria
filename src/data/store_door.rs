@@ -1,35 +1,7 @@
-use crate::model::{Item, Name};
+use crate::model::{ActivationKind, Item, Name};
 
 const STORE_DOOR_COUNT: usize =
     crate::constants::MAX_STORES + crate::constants::MAX_UNNAMED + 5 + 1;
-
-enum StoreDoorKind {
-    GeneralStore = 101,
-    Armory = 102,
-    WeaponSmiths = 103,
-    Temple = 104,
-    AlchemyShop = 105,
-    MagicShop = 106,
-    Inn = 107,
-    TradingPost = 108,
-    Library = 109,
-    MusicShop = 110,
-    InsuranceShop = 111,
-    Bank = 112,
-    GemStore = 113,
-    MoneyExchange = 114,
-    Casino = 115,
-    AllNiteDeli = 116,
-    Fortress = 117,
-    BlackMarket = 118,
-    // Preserve the distinct legacy codes; traps.c handles 120-122 as houses.
-    House120 = 120,
-    House121 = 121,
-    House122 = 122,
-    // Despite their building names, 123 triggers a whirlpool and 124 is unhandled.
-    Whirlpool = 123,
-    Unknown124 = 124,
-}
 
 const fn name_bytes(value: &str) -> Name {
     let mut name = [0; 70];
@@ -44,7 +16,7 @@ const fn name_bytes(value: &str) -> Name {
     name
 }
 
-const fn door_record(name: &str, kind: StoreDoorKind) -> Item {
+const fn door_record(name: &str, kind: ActivationKind) -> Item {
     Item {
         name: name_bytes(name),
         tval: 110,
@@ -52,7 +24,7 @@ const fn door_record(name: &str, kind: StoreDoorKind) -> Item {
         flags: 0,
         p1: 0,
         cost: 0,
-        subval: kind as i64,
+        subval: kind.subval(),
         weight: 0,
         number: 0,
         tohit: 0,
@@ -96,51 +68,51 @@ const EMPTY_ITEM: Item = Item {
 pub static mut store_door: [Item; STORE_DOOR_COUNT] = [
     door_record(
         "the entrance to the General Store",
-        StoreDoorKind::GeneralStore,
+        ActivationKind::GeneralStore,
     ),
-    door_record("the entrance to the Armory", StoreDoorKind::Armory),
+    door_record("the entrance to the Armory", ActivationKind::Armory),
     door_record(
         "the entrance to the Weapon Smiths",
-        StoreDoorKind::WeaponSmiths,
+        ActivationKind::WeaponSmiths,
     ),
-    door_record("the entrance to the Temple", StoreDoorKind::Temple),
+    door_record("the entrance to the Temple", ActivationKind::Temple),
     door_record(
         "the entrance to the Alchemy Shop",
-        StoreDoorKind::AlchemyShop,
+        ActivationKind::AlchemyShop,
     ),
-    door_record("the entrance to the Magic Shop", StoreDoorKind::MagicShop),
-    door_record("the entrance to the Inn", StoreDoorKind::Inn),
-    door_record("the entrance to the Library", StoreDoorKind::Library),
-    door_record("the entrance to the Music Shop", StoreDoorKind::MusicShop),
-    door_record("the entrance to the Gem Store", StoreDoorKind::GemStore),
+    door_record("the entrance to the Magic Shop", ActivationKind::MagicShop),
+    door_record("the entrance to the Inn", ActivationKind::Inn),
+    door_record("the entrance to the Library", ActivationKind::Library),
+    door_record("the entrance to the Music Shop", ActivationKind::MusicShop),
+    door_record("the entrance to the Gem Store", ActivationKind::GemStore),
     door_record(
         "the entrance to the All-Nite Deli",
-        StoreDoorKind::AllNiteDeli,
+        ActivationKind::AllNiteDeli,
     ),
-    door_record("the entrance to a building", StoreDoorKind::BlackMarket),
+    door_record("the entrance to a building", ActivationKind::BlackMarket),
     door_record(
         "the entrance to the Trading Post",
-        StoreDoorKind::TradingPost,
+        ActivationKind::TradingPost,
     ),
     door_record(
         "the entrance to the Insurance Shop",
-        StoreDoorKind::InsuranceShop,
+        ActivationKind::InsuranceShop,
     ),
-    door_record("the entrance to the Bank", StoreDoorKind::Bank),
+    door_record("the entrance to the Bank", ActivationKind::Bank),
     door_record(
         "the entrance to the Money Exchange",
-        StoreDoorKind::MoneyExchange,
+        ActivationKind::MoneyExchange,
     ),
-    door_record("the entrance to the Casino", StoreDoorKind::Casino),
+    door_record("the entrance to the Casino", ActivationKind::Casino),
     door_record(
         "the entrance to a strange building",
-        StoreDoorKind::Fortress,
+        ActivationKind::Fortress,
     ),
-    door_record("the entrance to a building", StoreDoorKind::House120),
-    door_record("the entrance to a building", StoreDoorKind::House121),
-    door_record("the entrance to a building", StoreDoorKind::House122),
-    door_record("the entrance to a building", StoreDoorKind::Whirlpool),
-    door_record("the entrance to a building", StoreDoorKind::Unknown124),
+    door_record("the entrance to a building", ActivationKind::House120),
+    door_record("the entrance to a building", ActivationKind::House121),
+    door_record("the entrance to a building", ActivationKind::House122),
+    door_record("the entrance to a building", ActivationKind::Whirlpool),
+    door_record("the entrance to a building", ActivationKind::Unknown(124)),
     EMPTY_ITEM,
 ];
 
@@ -151,29 +123,29 @@ mod tests {
     #[test]
     fn door_record_converts_typed_kind_to_legacy_subval() {
         let cases = [
-            (StoreDoorKind::GeneralStore, 101),
-            (StoreDoorKind::Armory, 102),
-            (StoreDoorKind::WeaponSmiths, 103),
-            (StoreDoorKind::Temple, 104),
-            (StoreDoorKind::AlchemyShop, 105),
-            (StoreDoorKind::MagicShop, 106),
-            (StoreDoorKind::Inn, 107),
-            (StoreDoorKind::TradingPost, 108),
-            (StoreDoorKind::Library, 109),
-            (StoreDoorKind::MusicShop, 110),
-            (StoreDoorKind::InsuranceShop, 111),
-            (StoreDoorKind::Bank, 112),
-            (StoreDoorKind::GemStore, 113),
-            (StoreDoorKind::MoneyExchange, 114),
-            (StoreDoorKind::Casino, 115),
-            (StoreDoorKind::AllNiteDeli, 116),
-            (StoreDoorKind::Fortress, 117),
-            (StoreDoorKind::BlackMarket, 118),
-            (StoreDoorKind::House120, 120),
-            (StoreDoorKind::House121, 121),
-            (StoreDoorKind::House122, 122),
-            (StoreDoorKind::Whirlpool, 123),
-            (StoreDoorKind::Unknown124, 124),
+            (ActivationKind::GeneralStore, 101),
+            (ActivationKind::Armory, 102),
+            (ActivationKind::WeaponSmiths, 103),
+            (ActivationKind::Temple, 104),
+            (ActivationKind::AlchemyShop, 105),
+            (ActivationKind::MagicShop, 106),
+            (ActivationKind::Inn, 107),
+            (ActivationKind::TradingPost, 108),
+            (ActivationKind::Library, 109),
+            (ActivationKind::MusicShop, 110),
+            (ActivationKind::InsuranceShop, 111),
+            (ActivationKind::Bank, 112),
+            (ActivationKind::GemStore, 113),
+            (ActivationKind::MoneyExchange, 114),
+            (ActivationKind::Casino, 115),
+            (ActivationKind::AllNiteDeli, 116),
+            (ActivationKind::Fortress, 117),
+            (ActivationKind::BlackMarket, 118),
+            (ActivationKind::House120, 120),
+            (ActivationKind::House121, 121),
+            (ActivationKind::House122, 122),
+            (ActivationKind::Whirlpool, 123),
+            (ActivationKind::Unknown(124), 124),
         ];
 
         for (kind, expected_subval) in cases {

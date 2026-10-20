@@ -174,6 +174,16 @@ forward to the remaining C handlers; TR2-TR5 can replace their own group
 without editing the dispatcher. Secret-door and scare-monster activation
 remain no-ops. The C chest dispatcher is unchanged.
 
+Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
+both dungeon-trap and entrance subvals. Template data encodes these names
+into the unchanged numeric item fields, and the global adapter decodes the
+post-`damroll` subval before typed dispatch. Unhandled values (including 119
+and the legacy building template 124) remain `Unknown(value)` and keep the
+unknown-trap message. [StoreKind](../../../src/model/store.rs) names the
+separate C `store_t` identifiers; only the C callback boundary converts them
+to integers. Physical open/closed/secret door states remain `ItemType`
+values, not activation kinds.
+
 The pointer adapter rejects null coordinates, invalid/empty cells, invalid
 hidden-trap template values, and unterminated damage strings with error
 logging. Valid activations preserve the C prelude order and read the

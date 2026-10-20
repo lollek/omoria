@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Named shared trap and entrance activations and kept store identifiers separate, without changing legacy data.
 * Internal: Ported trap dispatch, open pits, and arrows to Rust while preserving C entrances and other trap effects.
 * Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.
 * Internal: Moved store door data to a Rust static with named door kinds, preserving the legacy C layout and values.

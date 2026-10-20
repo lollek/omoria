@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -291,7 +292,8 @@ static void assert_special_hours(void) {
 }
 
 static void assert_special_tiles(void) {
-  const long subvals[] = {111, 117, 119, 120, 121, 122, 0, 124, 999};
+  const long subvals[] = {111, 117, 119, 120, 121, 122, 0,
+                          124, 999, -1, LONG_MIN, LONG_MAX};
   const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, ROUTE};
   for (size_t i = 0; i < sizeof(subvals) / sizeof(subvals[0]); i++) {
     const long subval = subvals[i];
