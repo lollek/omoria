@@ -6,6 +6,7 @@
 #if defined(__linux__) && defined(TRAP_TEST_GNU_WRAP)
 
 #include "../src/constants.h"
+#include "../src/combat/fighting.h"
 #include "../src/io.h"
 #include "../src/messages.h"
 #include "../src/player.h"
@@ -27,7 +28,6 @@ enum event {
   LIGHT,
   ROLL,
   ROUTE,
-  TO_HIT,
   LOSE_STAT,
   DAMAGE
 };
@@ -36,7 +36,7 @@ static enum event events[16];
 static size_t event_count;
 static long trap_y = 7, trap_x = 9;
 static const long rolled_damage = 23;
-static bool store_open, arrow_hits;
+static bool store_open;
 static enum store_t expected_store;
 static long expected_subval;
 static long subval_after_roll;
@@ -85,6 +85,9 @@ long __wrap_damroll(const char *dice) {
   assert(!find_flag);
   assert(strcmp(dice, "3d7") == 0);
   record(ROLL);
+  /* Keep arrow hit checks sensitive to damage-roll ordering. */
+  if (expected_subval == 2)
+    (void)randint(1000000);
   if (subval_after_roll != 0) {
     t_list[3] = t_list[2];
     t_list[3].subval = subval_after_roll;
@@ -130,7 +133,6 @@ void __wrap_take_hit(long damage, const char *cause) {
   assert(expected_cause != NULL && strcmp(cause, expected_cause) == 0);
   assert(event_count > 0);
   assert(events[event_count - 1] == ROLL ||
-         events[event_count - 1] == TO_HIT ||
          events[event_count - 1] == LOSE_STAT);
   record(DAMAGE);
 }
@@ -146,16 +148,6 @@ bool __wrap_lose_stat(enum stat_t stat, const char *message,
   if (player_flags.sustain[stat])
     msg_print(sustain_message);
   return true;
-}
-
-bool __wrap_managed_to_hit(long base, long level, long plus, long ac) {
-  if (base != 125 || level != 0 || plus != 0 || ac != 22)
-    fprintf(stderr, "Unexpected trap attack: base=%ld level=%ld plus=%ld ac=%ld\n",
-            base, level, plus, ac);
-  assert(base == 125 && level == 0 && plus == 0 && ac == 22);
-  assert(event_count > 0 && events[event_count - 1] == ROLL);
-  record(TO_HIT);
-  return arrow_hits;
 }
 
 /* These doubles verify the exact surviving C handler signatures, including
@@ -227,9 +219,16 @@ static void reset_case(long subval, bool searching, bool resting) {
 }
 
 static void assert_events(const enum event *expected, size_t count) {
+  if (event_count != count)
+    fprintf(stderr, "Trap %ld: expected %zu events, got %zu\n",
+            expected_subval, count, event_count);
   assert(event_count == count);
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
+    if (events[i] != expected[i])
+      fprintf(stderr, "Trap %ld, event %zu: expected %d, got %d\n",
+              expected_subval, i, expected[i], events[i]);
     assert(events[i] == expected[i]);
+  }
 }
 
 static void assert_message(const char *expected) {
@@ -358,17 +357,29 @@ static void assert_open_pit(void) {
 }
 
 static void assert_arrow(void) {
-  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT,
-                                 ROLL, TO_HIT, DAMAGE};
-  for (int hit = 0; hit < 2; hit++) {
+  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, DAMAGE};
+  size_t hits = 0, misses = 0;
+  for (unsigned long long seed = 0; seed < 64; seed++) {
     reset_case(2, true, true);
-    arrow_hits = hit;
+    C_seeded_rng_begin(seed);
+    (void)randint(1000000);
+    const bool hit = managed_to_hit(125, 0, 0, 22);
+    const long next_roll = randint(1000000);
+    C_seeded_rng_end();
     expected_cause = "an arrow trap";
+    C_seeded_rng_begin(seed);
     hit_trap(&trap_y, &trap_x);
-    assert_events(expected, hit ? 7 : 6);
+    assert(randint(1000000) == next_roll);
+    C_seeded_rng_end();
+    assert_events(expected, hit ? 6 : 5);
     assert_message(hit ? "An arrow hits you." : "An arrow barely misses you.");
+    if (hit)
+      hits++;
+    else
+      misses++;
     finish_case();
   }
+  assert(hits > 0 && misses > 0);
 }
 
 static void force_trap_hit(void) {

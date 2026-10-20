@@ -197,9 +197,11 @@ explicitly skips non-Linux hosts. Real entrance UI, interactive trap gameplay,
 trap-specific save/reload, and non-Linux C-caller characterization remain
 unverified.
 
-The harness initializes real equipment/armor state rather than wrapping the
-Rust-owned armor accessors: GNU `--wrap` does not redirect references resolved
-within the same object, which can vary with incremental code generation.
+The harness initializes real equipment/armor state and uses seeded real hit
+rolls rather than wrapping the Rust-owned armor accessors or `managed_to_hit`:
+GNU `--wrap` does not redirect references resolved within the same object,
+which can vary with architecture and incremental code generation. Arrow
+checks cover hits, misses, and the RNG position after the hit check.
 `CARGO_INCREMENTAL=0 make test-traps` exercises the non-incremental CI case.
 
 ### TR2. Status Traps (fan-out)
