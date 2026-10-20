@@ -1,7 +1,9 @@
 ---
+name: delegated-task
 description: "Complete one bounded task with recorded test evidence and the repository verification gate."
-agent: "agent"
 argument-hint: "Behavior, allowed files, acceptance tests, and excluded scope"
+user-invocable: true
+disable-model-invocation: true
 ---
 
 Complete the specified task within its approved scope.
