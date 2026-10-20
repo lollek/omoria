@@ -30,11 +30,14 @@ pub fn min_allowable_weight() -> u16 {
 // Hack for converting c-array of chars to rust string
 pub fn c_char_array_to_rust_string(array: Vec<libc::c_char>) -> String {
     let safe_array = array
-        .to_owned()
-        .iter_mut()
-        .map(|i| i.to_owned())
+        .iter()
+        .map(|&byte| c_char_to_u8(byte))
         .collect::<Vec<u8>>();
     c_array_to_rust_string(safe_array)
+}
+
+pub fn c_char_to_u8(byte: libc::c_char) -> u8 {
+    byte.to_ne_bytes()[0]
 }
 
 // Hack for converting c-array of chars to rust string
@@ -60,7 +63,7 @@ pub fn c_string_lossy(buffer: &[libc::c_char]) -> String {
     let bytes = buffer
         .iter()
         .take_while(|byte| **byte != 0)
-        .copied()
+        .map(|&byte| c_char_to_u8(byte))
         .collect::<Vec<_>>();
     String::from_utf8_lossy(&bytes).into_owned()
 }
@@ -72,7 +75,10 @@ pub fn remove_first_c_string_byte(buffer: &mut [libc::c_char], byte: u8) -> bool
         .iter()
         .position(|byte| *byte == 0)
         .unwrap_or(buffer.len());
-    let Some(position) = buffer[..len].iter().position(|value| *value == byte) else {
+    let Some(position) = buffer[..len]
+        .iter()
+        .position(|&value| c_char_to_u8(value) == byte)
+    else {
         return false;
     };
     buffer.copy_within(position + 1..len, position);
@@ -150,7 +156,14 @@ pub extern "C" fn reset_total_cash() {
 
 #[cfg(test)]
 mod tests {
-    use super::{c_string_lossy, remove_first_c_string_byte};
+    use super::{c_char_to_u8, c_string_lossy, remove_first_c_string_byte};
+
+    #[test]
+    fn c_char_to_u8_preserves_all_byte_values() {
+        for byte in u8::MIN..=u8::MAX {
+            assert_eq!(c_char_to_u8(libc::c_char::from_ne_bytes([byte])), byte);
+        }
+    }
 
     #[test]
     fn c_string_lossy_stops_at_first_nul() {

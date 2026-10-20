@@ -66,7 +66,7 @@ pub unsafe extern "C" fn pindex(s1: *const libc::c_char, c1: libc::c_char) -> li
 
     // Legacy C matches bytes, not Unicode scalar values.
     let bytes = CStr::from_ptr(s1).to_bytes();
-    let needle = c1;
+    let needle = crate::misc::c_char_to_u8(c1);
 
     match bytes.iter().position(|&b| b == needle) {
         Some(ix) => (ix as libc::c_long) + 1,
@@ -78,7 +78,7 @@ pub unsafe extern "C" fn pindex(s1: *const libc::c_char, c1: libc::c_char) -> li
 pub extern "C" fn is_vowel(a_char: libc::c_char) -> bool {
     // Preserve legacy semantics: only ASCII vowels count.
     matches!(
-        a_char,
+        crate::misc::c_char_to_u8(a_char),
         b'a' | b'A' | b'e' | b'E' | b'i' | b'I' | b'o' | b'O' | b'u' | b'U'
     )
 }

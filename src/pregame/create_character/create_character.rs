@@ -15,10 +15,7 @@ use crate::pregame::create_character::model::StatsFromRace;
 
 fn print_history() {
     let history = (0..5)
-        .map(|i| {
-            let c_hist: Vec<u8> = unsafe { player::player_history[i] }.to_vec();
-            misc::c_array_to_rust_string(c_hist)
-        })
+        .map(|i| misc::c_char_array_to_rust_string(unsafe { player::player_history[i] }.to_vec()))
         .collect::<Vec<String>>();
 
     menu::draw_menu(

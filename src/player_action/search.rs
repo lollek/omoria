@@ -238,8 +238,17 @@ mod tests {
         context.map.put(2, 3, 2, 2, b"a ^locked chest");
         context.map.items[2].flags = 1;
         context.search(101, SearchState::default());
-        assert_eq!(context.map.items[1].name[..9].to_vec(), b"a ch^est\0");
-        assert_eq!(context.map.items[2].name[2], b'^');
+        assert_eq!(
+            context.map.items[1].name[..9]
+                .iter()
+                .map(|&byte| crate::misc::c_char_to_u8(byte))
+                .collect::<Vec<_>>(),
+            b"a ch^est\0"
+        );
+        assert_eq!(
+            crate::misc::c_char_to_u8(context.map.items[2].name[2]),
+            b'^'
+        );
         assert_eq!(
             context.messages,
             ["You have discovered a trap on the chest!"]
@@ -343,7 +352,7 @@ mod tests {
             context.search(chance, state);
             assert_eq!(context.messages.len(), expected);
             assert_eq!(
-                context.map.items[1].name[0] != b'^',
+                crate::misc::c_char_to_u8(context.map.items[1].name[0]) != b'^',
                 crate::rng::randint_with_rng(&mut StdRng::from_seed(&[1, 2, 3, 4][..]), 100)
                     < adjusted
             );
@@ -420,7 +429,10 @@ mod tests {
         context.map.items[2].flags = 16;
         context.search(101, SearchState::default());
         assert!(context.messages.is_empty());
-        assert_eq!(context.map.items[2].name[0], b'^');
+        assert_eq!(
+            crate::misc::c_char_to_u8(context.map.items[2].name[0]),
+            b'^'
+        );
         assert!(context.running);
     }
 }

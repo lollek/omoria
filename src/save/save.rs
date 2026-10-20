@@ -319,12 +319,7 @@ pub(crate) mod tests {
 
             assert_eq!(record.inventory.len(), 7);
             let first = &record.inventory[0].data;
-            let name: Vec<u8> = first
-                .name
-                .iter()
-                .take_while(|&&c| c != 0)
-                .copied()
-                .collect();
+            let name = first.name_bytes();
             assert_eq!(name, b"& Book of Magic Spells [Beginners-Magik]".to_vec());
             assert_eq!(
                 (first.tval, first.subval, first.cost),

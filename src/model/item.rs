@@ -190,7 +190,7 @@ impl Item {
         self.name
             .iter()
             .take_while(|&&byte| byte != 0)
-            .copied()
+            .map(|&byte| misc::c_char_to_u8(byte))
             .collect()
     }
 
@@ -255,7 +255,11 @@ impl Item {
     }
 
     pub fn damage_string(&self) -> String {
-        let raw_string = self.damage.to_vec();
+        let raw_string = self
+            .damage
+            .iter()
+            .map(|&byte| misc::c_char_to_u8(byte))
+            .collect();
         misc::c_array_to_rust_string(raw_string)
     }
 
