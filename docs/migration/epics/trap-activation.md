@@ -316,7 +316,8 @@ Acceptance checks:
   fixed seed.
 * `open.c` and `disarm_trap.c` still link without changes.
 
-Implemented in [chest.rs](../../../src/dungeon/trap/chest.rs). The C ABI
+Implemented in [chest.rs](../../../src/dungeon/trap/chest.rs). Raw item flags
+are decoded into a typed `ChestTraps` snapshot before applying effects. The C ABI
 wrapper is in [interop.rs](../../../src/dungeon/trap/interop.rs); `traps.c`
 no longer defines `trigger_trap`. Rust unit tests cover each flag, resistance,
 and combined-effect ordering. The C-caller check exercises the ABI, seeded

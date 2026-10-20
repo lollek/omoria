@@ -1,5 +1,29 @@
-use crate::rng::{rand_rep_with_rng, randint_with_rng};
+use crate::{
+    model::ChestFlags1,
+    rng::{rand_rep_with_rng, randint_with_rng},
+};
 use rand::Rng;
+
+#[derive(Debug, Default, PartialEq, Eq)]
+struct ChestTraps {
+    strength_needle: bool,
+    poison_needle: bool,
+    paralysis_gas: bool,
+    explosion: bool,
+    summoning_runes: bool,
+}
+
+impl From<u64> for ChestTraps {
+    fn from(flags: u64) -> Self {
+        Self {
+            strength_needle: flags & ChestFlags1::PoisonNeedle1 as u64 != 0,
+            poison_needle: flags & ChestFlags1::PoisonNeedle2 as u64 != 0,
+            paralysis_gas: flags & ChestFlags1::GasTrap as u64 != 0,
+            explosion: flags & ChestFlags1::ExplosiveTrap as u64 != 0,
+            summoning_runes: flags & ChestFlags1::SummoningRunes as u64 != 0,
+        }
+    }
+}
 
 trait ChestTrapEffects {
     fn message(&mut self, message: &'static str);
@@ -16,12 +40,12 @@ trait ChestTrapEffects {
 
 fn trigger_chest_trap_with_rng<R: Rng + ?Sized>(
     rng: &mut R,
-    flags: u64,
+    traps: ChestTraps,
     y: i64,
     x: i64,
     effects: &mut impl ChestTrapEffects,
 ) {
-    if flags & 0x10 != 0 {
+    if traps.strength_needle {
         effects.message("A small needle has pricked you!");
         if effects.lose_strength() {
             effects.damage(rand_rep_with_rng(rng, 1, 4), "a poison needle");
@@ -30,13 +54,13 @@ fn trigger_chest_trap_with_rng<R: Rng + ?Sized>(
         }
     }
 
-    if flags & 0x20 != 0 {
+    if traps.poison_needle {
         effects.message("A small needle has pricked you!");
         effects.damage(rand_rep_with_rng(rng, 1, 6), "a poison needle.");
         effects.add_poisoned(10 + randint_with_rng(rng, 20));
     }
 
-    if flags & 0x40 != 0 {
+    if traps.paralysis_gas {
         effects.message("A puff of yellow gas surrounds you!");
         if effects.free_action() {
             effects.message("You are unaffected.");
@@ -46,13 +70,13 @@ fn trigger_chest_trap_with_rng<R: Rng + ?Sized>(
         }
     }
 
-    if flags & 0x80 != 0 {
+    if traps.explosion {
         effects.message("There is a sudden explosion!");
         effects.delete_chest(y, x);
         effects.damage(rand_rep_with_rng(rng, 5, 8), "an exploding chest");
     }
 
-    if flags & 0x100 != 0 {
+    if traps.summoning_runes {
         for _ in 0..3 {
             effects.summon_monster(y, x, effects.is_water(y, x));
         }
@@ -164,7 +188,7 @@ pub(super) unsafe fn trigger_trap_global(y: libc::c_long, x: libc::c_long) {
     crate::rng::with_active_rng(|rng| {
         trigger_chest_trap_with_rng(
             rng,
-            flags,
+            ChestTraps::from(flags),
             coordinate_as_i64(y),
             coordinate_as_i64(x),
             &mut GlobalChestTrap,
@@ -174,7 +198,7 @@ pub(super) unsafe fn trigger_trap_global(y: libc::c_long, x: libc::c_long) {
 
 #[cfg(test)]
 mod tests {
-    use super::{trigger_chest_trap_with_rng, ChestTrapEffects};
+    use super::{trigger_chest_trap_with_rng, ChestTrapEffects, ChestTraps};
     use rand::{SeedableRng, StdRng};
 
     #[derive(Default)]
@@ -246,7 +270,69 @@ mod tests {
     fn run(flags: u64, effects: &mut Effects) {
         let seed: &[_] = &[1, 2, 3, 4];
         let mut rng = StdRng::from_seed(seed);
-        trigger_chest_trap_with_rng(&mut rng, flags, 7, 9, effects);
+        trigger_chest_trap_with_rng(&mut rng, ChestTraps::from(flags), 7, 9, effects);
+    }
+
+    #[test]
+    fn chest_traps_decode_each_legacy_flag_and_ignore_unrelated_bits() {
+        let cases = [
+            (
+                0x10,
+                ChestTraps {
+                    strength_needle: true,
+                    ..ChestTraps::default()
+                },
+            ),
+            (
+                0x20,
+                ChestTraps {
+                    poison_needle: true,
+                    ..ChestTraps::default()
+                },
+            ),
+            (
+                0x40,
+                ChestTraps {
+                    paralysis_gas: true,
+                    ..ChestTraps::default()
+                },
+            ),
+            (
+                0x80,
+                ChestTraps {
+                    explosion: true,
+                    ..ChestTraps::default()
+                },
+            ),
+            (
+                0x100,
+                ChestTraps {
+                    summoning_runes: true,
+                    ..ChestTraps::default()
+                },
+            ),
+        ];
+
+        for (flag, expected) in cases {
+            assert_eq!(ChestTraps::from(flag), expected);
+            assert_eq!(ChestTraps::from(flag | !0x1f0), expected);
+        }
+        assert_eq!(ChestTraps::from(0), ChestTraps::default());
+        assert_eq!(ChestTraps::from(!0x1f0), ChestTraps::default());
+    }
+
+    #[test]
+    fn chest_traps_decode_combined_legacy_flags() {
+        assert_eq!(
+            ChestTraps::from(0x1f0),
+            ChestTraps {
+                strength_needle: true,
+                poison_needle: true,
+                paralysis_gas: true,
+                explosion: true,
+                summoning_runes: true,
+            }
+        );
     }
 
     #[test]
