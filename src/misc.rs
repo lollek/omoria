@@ -32,7 +32,7 @@ pub fn c_char_array_to_rust_string(array: Vec<libc::c_char>) -> String {
     let safe_array = array
         .to_owned()
         .iter_mut()
-        .map(|i| i.to_owned() as u8)
+        .map(|i| i.to_owned())
         .collect::<Vec<u8>>();
     c_array_to_rust_string(safe_array)
 }
@@ -60,7 +60,7 @@ pub fn c_string_lossy(buffer: &[libc::c_char]) -> String {
     let bytes = buffer
         .iter()
         .take_while(|byte| **byte != 0)
-        .map(|byte| *byte as u8)
+        .copied()
         .collect::<Vec<_>>();
     String::from_utf8_lossy(&bytes).into_owned()
 }
@@ -72,7 +72,7 @@ pub fn remove_first_c_string_byte(buffer: &mut [libc::c_char], byte: u8) -> bool
         .iter()
         .position(|byte| *byte == 0)
         .unwrap_or(buffer.len());
-    let Some(position) = buffer[..len].iter().position(|value| *value as u8 == byte) else {
+    let Some(position) = buffer[..len].iter().position(|value| *value == byte) else {
         return false;
     };
     buffer.copy_within(position + 1..len, position);

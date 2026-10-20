@@ -395,10 +395,7 @@ mod tests {
         context.open();
         let expected = b"& \xE9 chest^ (Empty)\0";
         assert_eq!(
-            context.map.items[1].name[..expected.len()]
-                .iter()
-                .map(|&byte| byte as u8)
-                .collect::<Vec<_>>(),
+            context.map.items[1].name[..expected.len()].to_vec(),
             expected
         );
     }

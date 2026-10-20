@@ -323,7 +323,7 @@ pub(crate) mod tests {
                 .name
                 .iter()
                 .take_while(|&&c| c != 0)
-                .map(|&c| c as u8)
+                .copied()
                 .collect();
             assert_eq!(name, b"& Book of Magic Spells [Beginners-Magik]".to_vec());
             assert_eq!(

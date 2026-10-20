@@ -313,14 +313,8 @@ mod tests {
                 context.disarm();
                 let name = &context.map.items[1].name;
                 let prefix_len = name.len() - suffix.len() - 1;
-                assert!(name[..prefix_len].iter().all(|&byte| byte as u8 == 0xFF));
-                assert_eq!(
-                    name[prefix_len..name.len() - 1]
-                        .iter()
-                        .map(|&byte| byte as u8)
-                        .collect::<Vec<_>>(),
-                    suffix
-                );
+                assert!(name[..prefix_len].iter().all(|&byte| byte == 0xFF));
+                assert_eq!(name[prefix_len..name.len() - 1].to_vec(), suffix);
                 assert_eq!(name[name.len() - 1], 0);
                 assert_eq!(context.map.items[1].flags, flags & !0x1F0);
                 assert_eq!(context.exp, 7);
@@ -391,13 +385,7 @@ mod tests {
         assert_eq!(context.exp, 7);
         let name = &context.map.items[1].name;
         let expected = b"& \xffchest (Locked)";
-        assert_eq!(
-            name[..expected.len()]
-                .iter()
-                .map(|&byte| byte as u8)
-                .collect::<Vec<_>>(),
-            expected
-        );
+        assert_eq!(name[..expected.len()].to_vec(), expected);
         assert_eq!(name[expected.len()], 0);
         assert_eq!(context.events, ["write", "message", "exp", "stats"]);
     }
