@@ -3,6 +3,10 @@
 ## Unreleased
 * Internal: Clarified potion interfaces without changing potion behavior.
 * Internal: Ported potion drinking to Rust while keeping item selection in C, with seeded effect and inventory checks.
+* Internal: Made trap C-caller checks independent of incremental Rust builds by initializing real armor state.
+* Internal: Named the arrow trap's base attack score and kept damage causes as Rust strings until the C boundary.
+* Internal: Named shared trap and entrance activations and kept store identifiers separate, without changing legacy data.
+* Internal: Ported trap dispatch, open pits, and arrows to Rust while preserving C entrances and other trap effects.
 * Internal: Routed item generation through the seeded RNG, with repeatable Rust and headless rubble-loot checks.
 * Internal: Routed hit and confusion rolls through the seeded RNG, with repeatable Rust and headless bash checks.
 * Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.

@@ -5,6 +5,17 @@
 
 use crate::dungeon::trap::{change_trap_global, place_rubble_global, place_trap_global, TrapList};
 
+/// Activates the trap at the supplied coordinates.
+///
+/// # Safety
+/// Non-null pointers must be aligned and readable for one C long during the call.
+/// C globals must be initialized and exclusively accessed on the game thread.
+#[cfg(not(test))]
+#[no_mangle]
+pub unsafe extern "C" fn hit_trap(y: *const libc::c_long, x: *const libc::c_long) {
+    super::activation::hit_trap_global(y, x);
+}
+
 #[no_mangle]
 pub extern "C" fn place_trap(
     y: libc::c_long,

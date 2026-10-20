@@ -1,6 +1,6 @@
 # Epic TR: Trap Activation
 
-Ports the rest of [traps.c](../../../src/traps.c) (467 lines): the `hit_trap`
+Ports the rest of [traps.c](../../../src/traps.c): the `hit_trap`
 dispatcher, 22 `ht__*` handlers, town tile dispatch, and chest traps
 (`trigger_trap`). Templates and placement are already Rust in
 [dungeon/trap/](../../../src/dungeon/trap/). The C behavior every story must
@@ -134,7 +134,8 @@ after an explosion.
 
 ### TR1. Rust Trap Dispatcher (pathfinder: F-TRAP-DISPATCH)
 
-Status: open. Depends on: PA1. Recommended: SE1.
+Status: implemented (dispatcher and two effects; remaining effects still in C).
+Depends on: PA1. Recommended: SE1.
 Size: M. Complexity: High. Agent: strong.
 
 Owns: `traps.c` (dispatcher removal, making handlers non-static),
@@ -164,6 +165,43 @@ Acceptance checks:
 * Null pointers are rejected without dereferencing.
 
 Out of scope: porting store, bank, casino, fortress, or house entry.
+
+Implemented in [activation.rs](../../../src/dungeon/trap/activation.rs),
+[activation/globals.rs](../../../src/dungeon/trap/activation/globals.rs), and
+[basic.rs](../../../src/dungeon/trap/basic.rs), using F-CELL and F-DMG.
+The `status.rs`, `element.rs`, `movement.rs`, and `spawn.rs` group files
+forward to the remaining C handlers; TR2-TR5 can replace their own group
+without editing the dispatcher. Secret-door and scare-monster activation
+remain no-ops. The C chest dispatcher is unchanged.
+
+Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
+both dungeon-trap and entrance subvals. Template data encodes these names
+into the unchanged numeric item fields, and the global adapter decodes the
+post-`damroll` subval before typed dispatch. Unhandled values (including 119
+and the legacy building template 124) remain `Unknown(value)` and keep the
+unknown-trap message. [StoreKind](../../../src/model/store.rs) names the
+separate C `store_t` identifiers; only the C callback boundary converts them
+to integers. Physical open/closed/secret door states remain `ItemType`
+values, not activation kinds.
+
+The pointer adapter rejects null coordinates, invalid/empty cells, invalid
+hidden-trap template values, and unterminated damage strings with error
+logging. Valid activations preserve the C prelude order and read the
+replacement item after reveal.
+
+Evidence: inline Rust tests cover pit damage/feather fall and arrow hit/miss
+message order. [trap_dispatch_ffi.c](../../../tests/trap_dispatch_ffi.c)
+characterizes the legacy dispatcher and checks the Rust C ABI, prelude,
+forwarding arguments, and town routes with link-time doubles. `make test-traps`
+is included in `make check`; this harness uses GNU linker wrapping and
+explicitly skips non-Linux hosts. Real entrance UI, interactive trap gameplay,
+trap-specific save/reload, and non-Linux C-caller characterization remain
+unverified.
+
+The harness initializes real equipment/armor state rather than wrapping the
+Rust-owned armor accessors: GNU `--wrap` does not redirect references resolved
+within the same object, which can vary with incremental code generation.
+`CARGO_INCREMENTAL=0 make test-traps` exercises the non-incremental CI case.
 
 ### TR2. Status Traps (fan-out)
 

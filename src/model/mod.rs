@@ -2,6 +2,7 @@ pub type Damage = [libc::c_char; 7];
 pub type Name = [libc::c_char; 70];
 
 pub use self::ability::*;
+pub use self::activation_kind::*;
 pub use self::cave::*;
 pub use self::class::*;
 pub use self::currency::*;
@@ -33,6 +34,7 @@ pub use self::wallet::*;
 pub mod item_subtype;
 
 mod ability;
+mod activation_kind;
 mod cave;
 mod class;
 mod currency;
