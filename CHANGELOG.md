@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported acid and corrosion effects to Rust with seeded armor and headless damage checks.
 * Internal: Sped up `make check` by linking test harnesses without debug info, sharing harness objects, and skipping save round-trip checks in the interaction harness.
 * Internal: Ported floor and chest disarming to Rust while keeping the direction prompt in C.
 * Internal: Clarified weapon checks and terrain names in tunneling.

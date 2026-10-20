@@ -10,92 +10,6 @@
 
 #include <stdbool.h>
 
-static bool minus_ac(const long typ_dam) {
-  /*{ AC gets worse                                         -RAK-   }*/
-  /*{ Note: This routine affects magical AC bonuse so that stores   }*/
-  /*{       can detect the damage.                                  }*/
-
-  long i1 = 0;
-  long tmp[9]; /*  : array [1..8] of long;*/
-  bool return_value = false;
-
-  if (equipment[Equipment_armor].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_armor;
-  }
-  if (equipment[Equipment_shield].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_shield;
-  }
-  if (equipment[Equipment_cloak].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_cloak;
-  }
-  if (equipment[Equipment_gloves].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_gloves;
-  }
-  if (equipment[Equipment_helm].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_helm;
-  }
-  if (equipment[Equipment_boots].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_boots;
-  }
-  if (equipment[Equipment_belt].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_belt;
-  }
-  if (equipment[Equipment_bracers].tval > 0) {
-    i1++;
-    tmp[i1] = Equipment_bracers;
-  }
-
-  if (i1 > 0) {
-    char out_val[82];
-    char out_str[120];
-    const long i2 = tmp[randint(i1)];
-    inven_temp.data = equipment[i2];
-    /* with equipment[i2] do; */
-    if ((equipment[i2].flags & typ_dam) != 0) {
-      item_name(out_val, &inven_temp);
-      sprintf(out_str, "Your %s resists damage!", out_val);
-      msg_print(out_str);
-      return_value = true;
-    } else if (equipment[i2].ac + equipment[i2].toac > 0) {
-      item_name(out_val, &inven_temp);
-      sprintf(out_str, "Your %s is damaged!", out_val);
-      msg_print(out_str);
-      equipment[i2].toac--;
-      py_bonuses(&blank_treasure, 0);
-      return_value = true;
-    }
-  }
-
-  return return_value;
-}
-
-void corrode_gas(char const *const kb_str) {
-
-  obj_set things_that_corrode = {dagger, sword,      gem_helm, helm,
-                                 shield, hard_armor, wand,     0};
-
-  if (!minus_ac(Resist_Acid_worn_bit)) {
-    /* if nothing corrodes then take damage */
-    const long damage = randint(8);
-    MSG(("Damage (Corrosion Gas): %ld", damage));
-    take_hit(damage, kb_str);
-  }
-
-  print_stat = 1;
-
-  if (inven_damage(things_that_corrode, 5) > 0) {
-    msg_print("There is an acrid smell coming from your pack.");
-    prt_stat_block();
-  }
-}
-
 void poison_gas(const long dam, char const *const kb_str) {
   MSG(("Damage (Poison Gas): %ld", dam));
   take_hit(dam, kb_str);
@@ -134,46 +48,6 @@ void fire_dam(long dam, char const *const kb_str) {
 
   if (inven_damage(things_that_burn, 3) > 0) {
     msg_print("There is smoke coming from your pack!");
-    prt_stat_block();
-  }
-}
-
-void acid_dam(long dam, char const *const kb_str) {
-  const long initial_damage = dam;
-  long flag = 0;
-  obj_set things_that_dilute = {
-      miscellaneous_object,  chest,         bolt,       arrow,
-      bow_crossbow_or_sling, hafted_weapon, pole_arm,   boots,
-      gloves_and_gauntlets,  cloak,         soft_armor, 0};
-
-  if (minus_ac(Resist_Acid_worn_bit)) {
-    flag = 1;
-  }
-  if (player_flags.acid_resist) {
-    flag += 2;
-  }
-
-  switch (flag) {
-  case 1:
-    dam = dam / 2;
-    break;
-  case 2:
-    dam = dam / 3;
-    break;
-  case 3:
-    dam = dam / 4;
-    break;
-  default:
-    break;
-  }
-  take_hit(dam, kb_str);
-
-  print_stat = 1;
-
-  MSG(("Damage (Acid): %ld - %ld = %ld", initial_damage, initial_damage - dam,
-       dam));
-  if (inven_damage(things_that_dilute, 3) > 0) {
-    msg_print("There is an acrid smell coming from your pack!");
     prt_stat_block();
   }
 }

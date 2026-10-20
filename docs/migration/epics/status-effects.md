@@ -22,7 +22,7 @@ graph LR
 
 ### SE1. Acid and Corrosion (pathfinder: F-DMG)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 Size: M. Complexity: Medium. Agent: strong.
 
 Owns: `minus_ac`, `corrode_gas`, and `acid_dam` in `effects.c`; a new Rust
@@ -45,6 +45,13 @@ Acceptance checks:
 * L1: acid damage with and without resistance gives the C HP change and
   messages.
 * `creature.c`, `spells.c`, and `traps.c` still link.
+
+Implemented in `src/effects/` with F-DMG wrappers in `src/player/damage.rs`.
+Evidence: `cargo test effects::tests` and `make test-effects` cover seeded
+armor selection, snapshots, resistance, HP, messages, inventory destruction,
+stat redraws, invulnerability, and death flags. Interactive death, full gameplay,
+and persistence are not verified by these checks. The other effects remain in C
+for SE2.
 
 ### SE2. Fire, Cold, Light, and Poison (fan-out)
 

@@ -24,6 +24,7 @@ pub mod data;
 pub mod dungeon;
 #[macro_use]
 pub mod debug;
+pub mod effects;
 pub mod equipment;
 pub mod error;
 pub mod flow;
