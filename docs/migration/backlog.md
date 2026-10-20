@@ -145,6 +145,8 @@ If unsure, ask the navigator.
 | F-CASINO-RULES | Pattern for pure casino rules with injected RNG, called from the C UI. | CA1 | CA2, CA3 | planned |
 | F-CASINO-IO | Injectable casino input and drawing seam, plus shared `bet`/`gld` session state. | CA4 | CA5-CA7 | planned |
 | F-CLOCK | Injectable wall clock for operating-hours checks. | LF6 | later ML | planned |
+| F-LAYOUT | Terminal layout model (Split, Classic, TooSmall rects), the current layout, and the pure panel-renderer pattern. | SL1 | SL2-SL7, SL9-SL11, later TU | planned |
+| F-MOUSE | Mouse event queue, screen-to-map/panel hit testing, and handler registration. | SL11 | SL12-SL14, SL16 | planned |
 
 Already available: message capture ([message.rs](../../src/message.rs)),
 seedable C-facing RNG ([rng/](../../src/rng/)), headless terminal doubles
@@ -167,6 +169,7 @@ the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 | CA | Casino | `casino/` | 4 files, M-L | Open | [casino.md](epics/casino.md) |
 | LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
 | XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations) | 6 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
+| SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [split-screen.md](epics/split-screen.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
 | TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |
@@ -201,6 +204,10 @@ Planning notes for epics that are not yet planned:
   first (F-DMG, F-ITEM); port the C bodies last.
 * **TU/ML:** the input seam built here removes the C prompt shims left by
   earlier epics.
+* **SL vs TU:** SL is a feature epic. It changes the screen layout and adds
+  mouse input without porting `io.c`, `screen.c`, or `term.c` wholesale. TU
+  should build on F-LAYOUT and F-MOUSE, and its prompt seam can later move
+  prompts off the fixed row 1 that SL keeps.
 
 ### Epic Dependency Graph
 
@@ -232,6 +239,8 @@ graph LR
   MAP --> ML
   ST --> ML
   TS --> ML
+  PA -.->|F-CELL| SL
+  SL -.->|F-LAYOUT, F-MOUSE| TU
   LF
   XC
   classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
@@ -242,17 +251,16 @@ graph LR
 
 Stories in the same wave can run concurrently. A wave starts per story as soon
 as that story's solid dependencies are done; waves are not global barriers.
-All PA and SE stories are done.
+Completed stories are removed from the table.
 
 | Wave | Stories |
 | --- | --- |
-| 1 | PA1, PA4, PA5, PA6, SE1, SE3, IU1, CA1, LF1-LF7 |
-| 2 | PA2, PA3, TR1, SE2, SE4, IU2, IU3, IU6, CA2, CA3, CA4 |
-| 3 | PA7-PA12, TR2-TR6, IU4, IU5, CA5, CA6 |
-| 4 | TR7, CA7; plan MG, CM, and TS in detail |
-
-Cross-cutting stories XC1-XC3, XC5, and XC6 have no solid dependencies and
-can join any wave. XC4 is deferred.
+| 1 | CA1, LF2-LF7, SL1, SL8, SL15 |
+| 2 | IU3, IU6, CA2, CA3, CA4, SL2, SL3, SL4 |
+| 3 | TR5, TR6, IU4, IU5, CA5, CA6, SL5, SL7, SL9 |
+| 4 | TR7, CA7, SL6, SL11; plan MG, CM, and TS in detail |
+| 5 | SL10, SL12, SL14, SL16 |
+| 6 | SL13 |
 
 ## Completed Work
 

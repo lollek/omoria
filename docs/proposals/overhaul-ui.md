@@ -5,12 +5,7 @@ I'm unsure how much we need to connect the GUI with the "server", or if it's pos
 
 ## Terminal split screen
 
-Have the terminal be split into parts, upper left is the game (dungeon). Possibly keep the single line of info there
-Below we have an action log, with some kind of scrolling history. Maybe move the single line of info currently at the top of the screen here as well.
-To the upper right we have a list of equipped items.
-Below that we have the inventory listed.
-Below that maybe we have a list of visible monsters, so we dont have to 'look' as much.
-Example: https://www.amirrorclear.net/flowers/game/sil/screen4.png
+Planned as [Epic SL: Split-Screen Layout](../migration/epics/split-screen.md).
 
 ## Modern UI
 
