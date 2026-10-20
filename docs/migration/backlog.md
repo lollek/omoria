@@ -150,11 +150,9 @@ seedable C-facing RNG ([rng/](../../src/rng/)), headless terminal doubles
 ([equipment.rs](../../src/equipment.rs)), and player data accessors
 ([player/data.rs](../../src/player/data.rs)).
 
-Known gap: production `managed_to_hit`, movement confusion, and item
-generation call `thread_rng()` directly, so the seeded C-facing RNG does not
-control those rolls in headless C checks (for example door bashing and chest
-or rubble loot). `managed_to_hit_with_rng` exists for Rust tests. XC1 and XC2
-route the production wrappers through the seeded RNG.
+XC1 routes the production hit and confusion wrappers through the seeded RNG;
+XC2 routes dungeon item generation and randomized misc-usable helpers through
+the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 
 ## Epics
 

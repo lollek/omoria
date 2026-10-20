@@ -1,7 +1,7 @@
 use crate::constants;
 use crate::model::Item;
 use crate::model::{Cave, ItemType};
-use crate::rng::randint_with_rng;
+use crate::rng::{randint_with_rng, with_active_rng};
 use rand::Rng;
 use std::convert::TryFrom;
 
@@ -155,12 +155,15 @@ pub fn apply_step(
     outcome.consumes_turn()
 }
 
-#[cfg(not(test))]
 pub fn resolve_direction(dir: i64, confused: i64) -> (i64, bool) {
-    resolve_direction_with_rng(&mut rand::thread_rng(), dir, confused)
+    with_active_rng(|rng| resolve_direction_with_rng(rng, dir, confused))
 }
 
-pub fn resolve_direction_with_rng(rng: &mut impl Rng, dir: i64, confused: i64) -> (i64, bool) {
+pub fn resolve_direction_with_rng<R: Rng + ?Sized>(
+    rng: &mut R,
+    dir: i64,
+    confused: i64,
+) -> (i64, bool) {
     if confused > 0 && dir != 5 && randint_with_rng(rng, 4) > 1 {
         (randint_with_rng(rng, 9), true)
     } else {
@@ -172,6 +175,16 @@ pub fn resolve_direction_with_rng(rng: &mut impl Rng, dir: i64, confused: i64) -
 mod tests {
     use super::*;
     use rand::{SeedableRng, StdRng};
+
+    #[test]
+    fn resolve_direction_uses_the_seeded_active_rng() {
+        fn outcomes(seed: u64) -> Vec<(i64, bool)> {
+            let _guard = crate::rng::use_seeded_rng(seed);
+            (0..64).map(|_| resolve_direction(6, 1)).collect()
+        }
+
+        assert_eq!(outcomes(42), outcomes(42));
+    }
 
     struct Map {
         cells: [[MoveCell; 4]; 4],

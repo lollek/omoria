@@ -10,7 +10,7 @@ use crate::model::{
     item_subtype::{FlaskOfOilSubType, ItemSubType, MiscUsableSubType, SpikeSubType},
     Item,
 };
-use crate::rng::randint_with_rng;
+use crate::rng::{randint_with_rng, with_active_rng};
 use rand::Rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
@@ -44,7 +44,7 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_cross_of_turning(&self, item: &mut Item) {
-        self.apply_cross_of_turning_with_rng(&mut rand::thread_rng(), item);
+        with_active_rng(|rng| self.apply_cross_of_turning_with_rng(rng, item));
     }
 
     pub fn apply_cross_of_turning_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
@@ -55,7 +55,7 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_cross_of_demon_dispelling(&self, item: &mut Item) {
-        self.apply_cross_of_demon_dispelling_with_rng(&mut rand::thread_rng(), item);
+        with_active_rng(|rng| self.apply_cross_of_demon_dispelling_with_rng(rng, item));
     }
 
     pub fn apply_cross_of_demon_dispelling_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
@@ -94,7 +94,7 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_statue_of_summon_undead(&self, item: &mut Item) {
-        self.apply_statue_of_summon_undead_with_rng(&mut rand::thread_rng(), item);
+        with_active_rng(|rng| self.apply_statue_of_summon_undead_with_rng(rng, item));
     }
 
     pub fn apply_statue_of_summon_undead_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
@@ -105,7 +105,7 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_statue_of_summon_demon(&self, item: &mut Item) {
-        self.apply_statue_of_summon_demon_with_rng(&mut rand::thread_rng(), item);
+        with_active_rng(|rng| self.apply_statue_of_summon_demon_with_rng(rng, item));
     }
 
     pub fn apply_statue_of_summon_demon_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
@@ -116,7 +116,7 @@ impl MiscUsableTemplate {
     }
 
     pub fn apply_statue_of_give_life(&self, item: &mut Item) {
-        self.apply_statue_of_give_life_with_rng(&mut rand::thread_rng(), item);
+        with_active_rng(|rng| self.apply_statue_of_give_life_with_rng(rng, item));
     }
 
     pub fn apply_statue_of_give_life_with_rng(&self, rng: &mut dyn Rng, item: &mut Item) {
@@ -303,5 +303,51 @@ impl ItemTemplate for MiscUsableTemplate {
 
     fn is_identified(&self) -> bool {
         false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rand::{SeedableRng, StdRng};
+
+    fn seeded_wrapper_results(seed: u64) -> [i64; 5] {
+        let _guard = crate::rng::use_seeded_rng(seed);
+        let mut setup_rng = StdRng::from_seed(&[1, 2, 3, 4][..]);
+
+        let mut cross = default_create(
+            &MiscUsableTemplate::Cross,
+            ItemQuality::Normal,
+            &mut setup_rng,
+        );
+        cross.p1 = 10;
+        MiscUsableTemplate::Cross.apply_cross_of_turning(&mut cross);
+        let turning = cross.p1;
+        MiscUsableTemplate::Cross.apply_cross_of_demon_dispelling(&mut cross);
+
+        let mut statue = default_create(
+            &MiscUsableTemplate::Statue,
+            ItemQuality::Normal,
+            &mut setup_rng,
+        );
+        MiscUsableTemplate::Statue.apply_statue_of_summon_undead(&mut statue);
+        let summon_undead = statue.p1;
+        MiscUsableTemplate::Statue.apply_statue_of_summon_demon(&mut statue);
+        let summon_demon = statue.p1;
+        MiscUsableTemplate::Statue.apply_statue_of_give_life(&mut statue);
+
+        [turning, cross.p1, summon_undead, summon_demon, statue.p1]
+    }
+
+    #[test]
+    fn seeded_misc_usable_wrappers_repeat_random_attributes() {
+        for seed in 0..16 {
+            assert_eq!(
+                seeded_wrapper_results(seed),
+                seeded_wrapper_results(seed),
+                "seed {} should repeat randomized misc-usable attributes",
+                seed
+            );
+        }
     }
 }

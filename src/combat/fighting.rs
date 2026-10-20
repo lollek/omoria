@@ -4,7 +4,7 @@
 
 use rand::Rng;
 
-use crate::rng::randint_with_rng;
+use crate::rng::{randint_with_rng, with_active_rng};
 
 /// Determines whether an attack manages to hit the target.
 ///
@@ -24,8 +24,8 @@ use crate::rng::randint_with_rng;
 /// The maximum attack value is: `base_to_hit + level*3 + plus_to_hit*3`
 /// A random value in `[1, max]` is rolled.
 /// The attack hits if `attack_value >= enemy_ac` OR a natural 1 is rolled on d20.
-pub fn managed_to_hit_with_rng(
-    rng: &mut impl Rng,
+pub fn managed_to_hit_with_rng<R: Rng + ?Sized>(
+    rng: &mut R,
     base_to_hit: i64,
     level: i64,
     plus_to_hit: i64,
@@ -46,19 +46,23 @@ pub extern "C" fn managed_to_hit(
     plus_to_hit: libc::c_long,
     enemy_ac: libc::c_long,
 ) -> bool {
-    managed_to_hit_with_rng(
-        &mut rand::thread_rng(),
-        base_to_hit,
-        level,
-        plus_to_hit,
-        enemy_ac,
-    )
+    with_active_rng(|rng| managed_to_hit_with_rng(rng, base_to_hit, level, plus_to_hit, enemy_ac))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use rand::{SeedableRng, StdRng};
+
+    #[test]
+    fn managed_to_hit_uses_the_seeded_active_rng() {
+        fn outcomes(seed: u64) -> Vec<bool> {
+            let _guard = crate::rng::use_seeded_rng(seed);
+            (0..64).map(|_| managed_to_hit(1, 0, 0, 500)).collect()
+        }
+
+        assert_eq!(outcomes(42), outcomes(42));
+    }
 
     #[test]
     fn managed_to_hit_sometimes_hits_via_natural_one_on_d20() {

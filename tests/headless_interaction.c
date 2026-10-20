@@ -961,7 +961,7 @@ static void assert_tunnel_rubble_scenario(bool success, bool loot, bool lit) {
   cave[row][col].is_permanently_lit = lit;
   const cave_type original = cave[row][col];
   const treasure_type original_item = t_list[ration_slot];
-  seed_for_tunnel(180, 0, success, loot);
+  const uint64_t seed = seed_for_tunnel(180, 0, success, loot);
   const size_t drawing = headless_terminal_counts().drawing;
   C_player_action_tunnel_target(row, col);
   if (success) {
@@ -985,6 +985,26 @@ static void assert_tunnel_rubble_scenario(bool success, bool loot, bool lit) {
     assert_open_messages("You dig in the rubble...", NULL, NULL);
   }
   assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  if (success && loot) {
+    const treasure_type generated_item = t_list[cave[row][col].tptr];
+    end_pickup_scenario();
+
+    begin_pickup_scenario();
+    equip_tunnel_tool();
+    const long replay_row = char_row;
+    const long replay_col = char_col + 1;
+    t_list[ration_slot].tval = rubble;
+    cave[replay_row][replay_col].fopen = false;
+    cave[replay_row][replay_col].fm = true;
+    cave[replay_row][replay_col].is_permanently_lit = lit;
+    C_seeded_rng_end();
+    C_seeded_rng_begin(seed);
+    C_player_action_tunnel_target(replay_row, replay_col);
+    assert(cave[replay_row][replay_col].tptr > 0);
+    assert_same_item(&t_list[cave[replay_row][replay_col].tptr], &generated_item);
+    end_pickup_scenario();
+    return;
+  }
   end_pickup_scenario();
 }
 
@@ -1078,6 +1098,46 @@ static void assert_bash_chest_scenario(bool destroyed, bool unlocked,
   end_pickup_scenario();
 }
 
+static bool run_bash_door_scenario(uint64_t seed) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  treasure_type *item = &t_list[ration_slot];
+  strcpy(item->name, "a closed door");
+  item->tval = closed_door;
+  item->p1 = 0;
+  cave[row][col].fopen = false;
+
+  C_seeded_rng_end();
+  C_seeded_rng_begin(seed);
+  C_player_action_bash_target(row, col);
+
+  const bool opened = cave[row][col].fopen;
+  assert_open_messages(opened ? "You smash into the door! The door crashes open!"
+                              : "You smash into the door! The door holds firm.",
+                       NULL, NULL);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+  return opened;
+}
+
+static void assert_bash_door_seeded_outcomes(void) {
+  uint64_t success_seed = 0;
+  uint64_t failure_seed = 0;
+  for (uint64_t seed = 1; seed < 256 && (!success_seed || !failure_seed);
+       seed++) {
+    const bool opened = run_bash_door_scenario(seed);
+    if (opened && !success_seed) {
+      success_seed = seed;
+    } else if (!opened && !failure_seed) {
+      failure_seed = seed;
+    }
+  }
+  assert(success_seed && failure_seed);
+  assert(run_bash_door_scenario(success_seed));
+  assert(!run_bash_door_scenario(failure_seed));
+}
+
 static void assert_bash_prompt_scenario(bool cancel, bool afraid) {
   begin_pickup_scenario();
   const long row = char_row;
@@ -1099,6 +1159,70 @@ static void assert_bash_prompt_scenario(bool cancel, bool afraid) {
   assert(player_flags.paralysis == 0 && char_row == row && char_col == col - 1);
   assert(turn == 1 && turn_counter == 100);
   headless_terminal_reset();
+  end_pickup_scenario();
+}
+
+static void assert_search_scenario(bool blind) {
+  begin_pickup_scenario();
+  player_flags.blind = blind ? 1 : 0;
+
+  const long row = char_row;
+  const long trap_col = char_col - 1;
+  const long door_col = char_col + 1;
+  long door_slot = 0;
+  popt(&door_slot);
+  assert(door_slot > 0);
+
+  cave[row][char_col + 1].tptr = 0;
+  cave[row][trap_col].tptr = ration_slot;
+  t_list[ration_slot].tval = unseen_trap;
+  t_list[ration_slot].subval = 2;
+  strcpy(t_list[ration_slot].name, "an arrow trap");
+
+  cave[row][door_col].tptr = door_slot;
+  t_list[door_slot].tval = secret_door;
+  t_list[door_slot].subval = 2;
+  strcpy(t_list[door_slot].name, "a secret door");
+
+  player_action_search(row, char_col, 1000);
+
+  if (blind) {
+    assert_open_messages("You are incapable of searching while blind.",
+                         NULL, NULL);
+    assert(cave[row][trap_col].tptr == ration_slot);
+    assert(cave[row][door_col].tptr == door_slot);
+    assert(t_list[ration_slot].tval == unseen_trap);
+    assert(t_list[door_slot].tval == secret_door);
+  } else {
+    assert_open_messages("You have found an arrow trap.",
+                         "You have found a secret door.", NULL);
+    assert(t_list[cave[row][trap_col].tptr].tval == seen_trap);
+    assert(t_list[cave[row][door_col].tptr].tval == seen_trap);
+    assert(cave[row][door_col].fval == 5);
+  }
+
+  end_pickup_scenario();
+}
+
+static void assert_stairs_scenario(bool ascend, uint8_t tile,
+                                   long expected_level, bool expected_transition,
+                                   const char *first_message,
+                                   const char *second_message) {
+  begin_pickup_scenario();
+  dun_level = 5;
+  cave[char_row][char_col].tptr = ration_slot;
+  t_list[ration_slot].tval = tile;
+
+  if (ascend) {
+    player_action_ascend_stairs();
+  } else {
+    player_action_descend_stairs();
+  }
+
+  assert(dun_level == expected_level);
+  assert(moria_flag == expected_transition);
+  assert_open_messages(first_message, second_message, NULL);
+  moria_flag = false;
   end_pickup_scenario();
 }
 
@@ -1213,9 +1337,22 @@ int main(void) {
     assert_bash_chest_scenario(false, true, true);
     assert_bash_chest_scenario(false, false, true);
     assert_bash_chest_scenario(false, true, false);
+    assert_bash_door_seeded_outcomes();
     assert_bash_prompt_scenario(true, false);
     assert_bash_prompt_scenario(false, false);
     assert_bash_prompt_scenario(false, true);
+    assert_search_scenario(false);
+    assert_search_scenario(true);
+    assert_stairs_scenario(true, up_staircase, 4, true,
+                           "You enter a maze of up staircases.",
+                           "You pass through a one-way door.");
+    assert_stairs_scenario(false, down_staircase, 6, true,
+                           "You enter a maze of down staircases.",
+                           "You pass through a one-way door.");
+    assert_stairs_scenario(true, down_staircase, 5, false,
+                           "I see no up staircase here.", NULL);
+    assert_stairs_scenario(false, up_staircase, 5, false,
+                           "I see no down staircase here.", NULL);
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;
