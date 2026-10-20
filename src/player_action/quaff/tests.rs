@@ -44,8 +44,11 @@ impl QuaffContext for Context {
         assert!(!self.destroyed, "must not read a freed inventory node");
         self.item
     }
-    fn flags(&mut self) -> &mut PlayerFlags {
-        &mut self.flags
+    fn flags(&self) -> PlayerFlags {
+        self.flags
+    }
+    fn modify_flags(&mut self, modify: impl FnOnce(&mut PlayerFlags)) {
+        modify(&mut self.flags);
     }
     fn experience(&mut self) -> i64 {
         self.exp
@@ -100,7 +103,85 @@ impl QuaffContext for Context {
 
 fn effect(effect: u32, context: &mut Context) -> bool {
     let mut rng = StdRng::from_seed(&[1, 2, 3, 4][..]);
-    effect_with_roll(effect, context, &mut |max| randint_with_rng(&mut rng, max))
+    effect_with_roll(
+        PotionEffect::from_legacy_code(effect),
+        context,
+        &mut |max| randint_with_rng(&mut rng, max),
+    )
+}
+
+#[test]
+fn legacy_effect_codes_decode_to_named_effects() {
+    use PotionEffect::*;
+    use Stat::*;
+    let expected = [
+        GainStat(Strength),
+        LoseStat(Strength),
+        RestoreStat(Strength),
+        GainStat(Intelligence),
+        LoseStat(Intelligence),
+        RestoreStat(Intelligence),
+        GainStat(Wisdom),
+        LoseStat(Wisdom),
+        RestoreStat(Wisdom),
+        GainStat(Charisma),
+        LoseStat(Charisma),
+        RestoreStat(Charisma),
+        HealLight,
+        HealSerious,
+        HealCritical,
+        HealFully,
+        GainStat(Constitution),
+        GainExperience,
+        Sleep,
+        Blindness,
+        Confusion,
+        Poison,
+        Haste,
+        Slowness,
+        DetectCreatures,
+        GainStat(Dexterity),
+        RestoreStat(Dexterity),
+        RestoreStat(Constitution),
+        CureUnidentified(Status::Blind),
+        CureUnidentified(Status::Confused),
+        CureUnidentified(Status::Poisoned),
+        LearnMagic,
+        LoseMemories,
+        SaltWater,
+        Invulnerability,
+        Heroism,
+        SuperHeroism,
+        Cure(Status::Afraid),
+        RestoreLevel,
+        ResistHeat,
+        ResistCold,
+        DetectInvisible,
+        SlowPoison,
+        Cure(Status::Poisoned),
+        RestoreMana,
+        InfraVision,
+        CureHallucination,
+        LearnMagic,
+        ReducePetrification,
+    ];
+    for (code, expected) in (1..=49).zip(expected) {
+        assert_eq!(
+            PotionEffect::from_legacy_code(code),
+            expected,
+            "code {code}"
+        );
+    }
+}
+
+#[test]
+fn unassigned_legacy_effect_codes_decode_to_explicit_noop() {
+    for code in std::iter::once(0)
+        .chain(50..=127)
+        .chain(std::iter::once(u32::MAX))
+    {
+        assert_eq!(PotionEffect::from_legacy_code(code), PotionEffect::Unused);
+    }
 }
 
 #[test]
@@ -225,9 +306,11 @@ fn timed_effects_add_the_legacy_seeded_duration_and_messages() {
 fn free_action_prevents_sleep_without_drawing_rng() {
     let mut context = Context::default();
     context.flags.free_act = 1;
-    assert!(!effect_with_roll(19, &mut context, &mut |_| panic!(
-        "unexpected roll"
-    )));
+    assert!(!effect_with_roll(
+        PotionEffect::Sleep,
+        &mut context,
+        &mut |_| panic!("unexpected roll")
+    ));
     assert_eq!(context.flags.paralysis, 0);
     assert!(context.events.is_empty());
 }
@@ -382,9 +465,11 @@ fn petrification_reduction_clamps_to_zero_and_identifies_only_when_positive() {
 fn unused_effects_are_unidentified_noops() {
     for number in [0, 50, 62, 64, 95, 127] {
         let mut context = Context::default();
-        assert!(!effect_with_roll(number, &mut context, &mut |_| panic!(
-            "unexpected roll"
-        )));
+        assert!(!effect_with_roll(
+            PotionEffect::from_legacy_code(number),
+            &mut context,
+            &mut |_| panic!("unexpected roll")
+        ));
         assert!(context.events.is_empty());
     }
 }

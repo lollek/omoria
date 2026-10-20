@@ -29,8 +29,12 @@ impl QuaffContext for Context {
             .item()
     }
 
-    fn flags(&mut self) -> &mut PlayerFlags {
-        unsafe { &mut *addr_of_mut!(player_flags) }
+    fn flags(&self) -> PlayerFlags {
+        unsafe { player_flags }
+    }
+
+    fn modify_flags(&mut self, modify: impl FnOnce(&mut PlayerFlags)) {
+        unsafe { modify(&mut *addr_of_mut!(player_flags)) };
     }
 
     fn experience(&mut self) -> i64 {
@@ -62,9 +66,9 @@ impl QuaffContext for Context {
                 }
                 Spell::Heal(amount) => spells::hp_player(amount, b"a potion.\0".as_ptr().cast()),
                 Spell::DetectCreatures => spells::detect_creatures(spells::SE_MONSTER),
-                Spell::Cure(status) => {
-                    spells::cure_player_status_effect(status.counter(self.flags()))
-                }
+                Spell::Cure(status) => spells::cure_player_status_effect(
+                    status.counter(&mut *addr_of_mut!(player_flags)),
+                ),
                 Spell::Learn => {
                     learn_magic(true);
                     false

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Clarified potion interfaces without changing potion behavior.
 * Internal: Ported potion drinking to Rust while keeping item selection in C, with seeded effect and inventory checks.
 * Internal: Routed item generation through the seeded RNG, with repeatable Rust and headless rubble-loot checks.
 * Internal: Routed hit and confusion rolls through the seeded RNG, with repeatable Rust and headless bash checks.
