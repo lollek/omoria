@@ -131,10 +131,10 @@ void __wrap_take_hit(long damage, const char *cause) {
   record(DAMAGE);
 }
 
-int16_t __wrap_player_pac(void) { return 17; }
-int16_t __wrap_player_ptoac(void) { return 5; }
-
 bool __wrap_managed_to_hit(long base, long level, long plus, long ac) {
+  if (base != 125 || level != 0 || plus != 0 || ac != 22)
+    fprintf(stderr, "Unexpected trap attack: base=%ld level=%ld plus=%ld ac=%ld\n",
+            base, level, plus, ac);
   assert(base == 125 && level == 0 && plus == 0 && ac == 22);
   assert(event_count > 0 && events[event_count - 1] == ROLL);
   record(TO_HIT);
@@ -188,6 +188,11 @@ static void reset_case(long subval, bool searching, bool resting) {
   memset(cave, 0, sizeof(cave));
   memset(t_list, 0, sizeof(t_list));
   memset(&player_flags, 0, sizeof(player_flags));
+  memset(equipment, 0, sizeof(equipment));
+  /* Rust-owned accessors cannot reliably be intercepted with GNU --wrap. */
+  equipment[Equipment_armor].ac = 17 - C_player_ac_from_dex();
+  equipment[Equipment_armor].toac = 5;
+  assert(player_pac() == 17 && player_ptoac() == 5);
   char_row = 3;
   char_col = 4;
   cur_height = 20;

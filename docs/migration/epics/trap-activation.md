@@ -198,6 +198,11 @@ explicitly skips non-Linux hosts. Real entrance UI, interactive trap gameplay,
 trap-specific save/reload, and non-Linux C-caller characterization remain
 unverified.
 
+The harness initializes real equipment/armor state rather than wrapping the
+Rust-owned armor accessors: GNU `--wrap` does not redirect references resolved
+within the same object, which can vary with incremental code generation.
+`CARGO_INCREMENTAL=0 make test-traps` exercises the non-incremental CI case.
+
 ### TR2. Status Traps (fan-out)
 
 Status: open. Depends on: TR1.

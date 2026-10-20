@@ -1,7 +1,7 @@
 pub(super) trait TrapEffects {
     fn feather_fall(&self) -> bool;
     fn arrow_hits(&mut self) -> bool;
-    fn damage(&mut self, damage: i64, cause: &'static std::ffi::CStr);
+    fn damage(&mut self, damage: i64, cause: &str);
     fn message(&mut self, message: &'static str);
 }
 
@@ -10,19 +10,13 @@ pub(super) fn open_pit(context: &mut impl TrapEffects, damage: i64) {
     if context.feather_fall() {
         context.message("You gently float down.");
     } else {
-        context.damage(
-            damage,
-            std::ffi::CStr::from_bytes_with_nul(b"an open pit\0").unwrap(),
-        );
+        context.damage(damage, "an open pit");
     }
 }
 
 pub(super) fn arrow(context: &mut impl TrapEffects, damage: i64) {
     if context.arrow_hits() {
-        context.damage(
-            damage,
-            std::ffi::CStr::from_bytes_with_nul(b"an arrow trap\0").unwrap(),
-        );
+        context.damage(damage, "an arrow trap");
         context.message("An arrow hits you.");
     } else {
         context.message("An arrow barely misses you.");
@@ -50,9 +44,8 @@ mod tests {
             self.arrow_hits
         }
 
-        fn damage(&mut self, damage: i64, cause: &'static std::ffi::CStr) {
-            self.events
-                .push(format!("damage {damage}: {}", cause.to_str().unwrap()));
+        fn damage(&mut self, damage: i64, cause: &str) {
+            self.events.push(format!("damage {damage}: {cause}"));
         }
 
         fn message(&mut self, message: &'static str) {

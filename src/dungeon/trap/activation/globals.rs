@@ -4,6 +4,8 @@ use crate::{
     model::{ActivationKind, Item, PlayerFlags, StoreKind},
 };
 
+const TRAP_BASE_TO_HIT: libc::c_long = 125;
+
 extern "C" {
     static mut search_flag: bool;
     static mut find_flag: bool;
@@ -42,7 +44,7 @@ impl TrapEffects for GlobalTrap {
     fn arrow_hits(&mut self) -> bool {
         unsafe {
             managed_to_hit(
-                125,
+                TRAP_BASE_TO_HIT,
                 0,
                 0,
                 i64::from(player_pac()) + i64::from(player_ptoac()),
@@ -50,7 +52,8 @@ impl TrapEffects for GlobalTrap {
         }
     }
 
-    fn damage(&mut self, damage: i64, cause: &'static std::ffi::CStr) {
+    fn damage(&mut self, damage: i64, cause: &str) {
+        let cause = std::ffi::CString::new(cause).expect("trap damage causes contain no NUL bytes");
         unsafe { crate::player::damage::take_hit(damage, cause.as_ptr()) }
     }
 
