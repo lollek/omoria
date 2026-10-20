@@ -1,0 +1,26 @@
+{
+  // Shared with the headless workers in docker/compose.yml (see docs/agents/containers.md).
+  "name": "omoria",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "dev",
+  "containerEnv": {
+    "GH_TOKEN": "${localEnv:GH_TOKEN}",
+    "COPILOT_GITHUB_TOKEN": "${localEnv:COPILOT_GITHUB_TOKEN}"
+  },
+  "mounts": [
+    "source=omoria-cargo-registry,target=/usr/local/cargo/registry,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "ms-vscode.cpptools",
+        "GitHub.copilot-chat"
+      ]
+    }
+  },
+  "postCreateCommand": "cargo fetch"
+}
