@@ -72,7 +72,7 @@ Acceptance checks:
 
 ### SE3. Hunger Status and Eating (fan-out)
 
-Status: partial (SE3 complete). Depends on: none.
+Status: done. Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: `player_hunger_status`, `player_hunger_set_status`, and
