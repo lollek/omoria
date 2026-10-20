@@ -9,7 +9,6 @@
 #include "combat/fighting.h"
 #include "constants.h"
 #include "debug.h"
-#include "effects.h"
 #include "generate_monster/generate_monster.h"
 #include "io.h"
 #include "loot/loot.h"
@@ -75,11 +74,6 @@ void ht__rockfall(const long dam, const long y, const long x) {
   msg_print("You are hit by falling rock");
 }
 
-void ht__corrode_gas(void) {
-  corrode_gas("corrosion gas.");
-  msg_print("A strange red gas surrounds you.");
-}
-
 void ht__summon_monster(const long y, const long x) {
 
   cave[y][x].fm = false; /*{ Rune disappears...    }*/
@@ -94,21 +88,6 @@ void ht__summon_monster(const long y, const long x) {
       summon_land_monster(&ty, &tx, false);
     }
   }
-}
-
-void ht__fire(const long dam) {
-  fire_dam(dam, "a fire trap.");
-  msg_print("You are enveloped in flames!");
-}
-
-void ht__acid(const long dam) {
-  acid_dam(dam, "an acid trap.");
-  msg_print("You are splashed with acid!");
-}
-
-void ht__poison_gas(const long dam) {
-  poison_gas(dam, "a poison gas trap.");
-  msg_print("A pungent green gas surrounds you!");
 }
 
 void ht__chute(const long dam) {

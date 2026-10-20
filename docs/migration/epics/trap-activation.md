@@ -170,7 +170,7 @@ Implemented in [activation.rs](../../../src/dungeon/trap/activation.rs),
 [activation/globals.rs](../../../src/dungeon/trap/activation/globals.rs), and
 [basic.rs](../../../src/dungeon/trap/basic.rs), using F-CELL and F-DMG.
 The `status.rs`, `element.rs`, `movement.rs`, and `spawn.rs` group files
-isolate handler behavior; TR3-TR5 still forward to C. Secret-door and
+isolate handler behavior; TR4-TR5 still forward to C. Secret-door and
 scare-monster activation remain no-ops. The C chest dispatcher is unchanged.
 
 Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
@@ -230,7 +230,7 @@ from `traps.c`.
 
 ### TR3. Element Traps (fan-out)
 
-Status: open. Depends on: TR1. Recommended: SE2.
+Status: implemented in Rust using SE2 effect functions. Depends on: TR1. Recommended: SE2.
 Size: S. Complexity: Low. Agent: standard.
 
 Owns: the element-trap handler file and the matching `ht__*` functions.
@@ -241,6 +241,11 @@ Behavior: port fire, acid, corrode gas, and poison gas. Each calls an
 Acceptance checks:
 
 * L1: each trap calls its effect with the C damage and message.
+
+Implemented in [element.rs](../../../src/dungeon/trap/element.rs). Rust unit
+tests verify each effect's damage/cause arguments and message order; the
+`trap_dispatch_ffi.c` C-caller check validates the activated effect calls and
+messages. The four `ht__*` handlers were removed from `traps.c` and `traps.h`.
 
 ### TR4. Movement and Level Traps (fan-out)
 
