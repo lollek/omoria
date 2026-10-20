@@ -8,7 +8,7 @@ mod tests {
     use crate::dungeon::trap::test_support;
     use crate::dungeon::trap::{place_trap_global, place_trap_into_lists, TrapList};
     use crate::misc::rs2item_damage;
-    use crate::model::{Cave, Item};
+    use crate::model::{ActivationKind, Cave, Item};
     use serial_test::serial;
 
     const TLEN: usize = 10;
@@ -49,6 +49,40 @@ mod tests {
     #[test]
     fn trap_template_list_has_correct_count() {
         assert_eq!(TRAP_LIST.len(), MAX_TRAP);
+    }
+
+    #[test]
+    fn trap_template_subvals_match_shared_activation_kinds() {
+        use ActivationKind::*;
+        let kinds: Vec<_> = TRAP_LIST
+            .iter()
+            .map(|template| ActivationKind::from(template.subval))
+            .collect();
+        assert_eq!(
+            kinds,
+            [
+                OpenPit,
+                Arrow,
+                CoveredPit,
+                TrapDoor,
+                SleepGas,
+                HiddenObject,
+                StrengthDart,
+                Teleport,
+                Rockfall,
+                CorrodeGas,
+                SummonMonster,
+                Fire,
+                Acid,
+                PoisonGas,
+                BlindGas,
+                ConfuseGas,
+                SlowDart,
+                ConstitutionDart,
+                SecretDoor,
+                Chute,
+            ]
+        );
     }
 
     /// Validate that the standalone rubble template matches the C definition.

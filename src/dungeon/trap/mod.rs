@@ -1,23 +1,34 @@
 //! Trap system.
 //!
-//! This module contains trap-related data and placement logic ported from `src/traps.c`.
+//! Trap data, placement, and activation dispatch ported from `src/traps.c`.
 //!
 //! ## Ported functionality
 //!
 //! - **Trap templates**: `TRAP_LIST_A`, `TRAP_LIST_B`, `RUBBLE` (static data)
 //! - **Placement**: `place_trap_global`, `change_trap_global`, `place_rubble_global`
-//! - **C ABI wrappers**: `place_trap`, `change_trap`, `place_rubble` (in `interop`)
+//! - **Activation**: `hit_trap`, open pits, arrows, and town entrance routing
+//! - **C ABI wrappers**: placement and `hit_trap` (in `interop`)
 //!
 //! ## Not yet ported
 //!
-//! - Trap effect handlers (`ht__*` functions)
-//! - `hit_trap` dispatcher
+//! - Other trap effects (forwarded to C by the per-group handler modules)
 //! - `trigger_trap` (chest traps)
-//! - Town entrance logic (cases 101-123)
+//! - Town entrance implementations
 
+#[cfg(not(test))]
+mod activation;
+mod basic;
 pub mod data;
+#[cfg(not(test))]
+mod element;
 mod globals;
+#[cfg(not(test))]
+mod movement;
 mod placement;
+#[cfg(not(test))]
+mod spawn;
+#[cfg(not(test))]
+mod status;
 
 // Export C ABI wrappers for the parts of traps.c we've already ported.
 pub mod interop;

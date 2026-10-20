@@ -136,8 +136,8 @@ If unsure, ask the navigator.
 | --- | --- | --- | --- | --- |
 | F-CELL | Typed Rust access to `cave`/`t_list` cells, bounds checks, plus a locked, resettable test map ([dungeon/cell.rs](../../src/dungeon/cell.rs)). Existing module-local accessors in `dungeon/trap/globals.rs` and `player_action/movement/globals.rs` stay as they are. | PA1 | PA2-PA12; later TR, LF4, MAP | built |
 | F-DIR-EDGE | Prompt-at-edge pattern for directional actions, plus shared door state transitions ([dungeon/door.rs](../../src/dungeon/door.rs): close, jam classification). | PA2 | Prompt pattern: PA7-PA12. Door helpers: PA8 only; open and bash write the open-door transition directly. Later IU4 | built |
-| F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts ([player/damage.rs](../../src/player/damage.rs)). | SE1 | SE2; later TR, MG, SP | built |
-| F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files forwarding to C. | TR1 | TR2-TR6 | planned |
+| F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts ([player/damage.rs](../../src/player/damage.rs)). | SE1 | SE2, TR; later MG, SP | built |
+| F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files forwarding to C. | TR1 | TR2-TR6 | built |
 | F-ITEM | Handle to a C-selected inventory item, plus the consume lifecycle (identify, destroy one, remaining message). | IU1 | IU2-IU6, later MG, ST | planned |
 | F-SPELLS | Rust `extern "C"` declarations for the `spells.h` APIs that ports call. | IU1 | IU, later MG | planned |
 | F-CASINO-RULES | Pattern for pure casino rules with injected RNG, called from the C UI. | CA1 | CA2, CA3 | planned |
