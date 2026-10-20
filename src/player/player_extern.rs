@@ -7,8 +7,6 @@ use crate::data;
 use crate::player;
 
 extern "C" {
-    fn player_hunger_status() -> libc::c_int;
-
     // Import the legacy C global flags so we can read rest/regenerate.
     // This keeps the actual logic in safe, unit-tested Rust.
     static mut player_flags: crate::model::PlayerFlags;
@@ -164,7 +162,7 @@ pub extern "C" fn C_player_regen_hp(percent: libc::c_float) {
 
 #[no_mangle]
 pub extern "C" fn C_player_regeneration_get_amount() -> libc::c_float {
-    let hunger_status = unsafe { hunger_status_from_c(player_hunger_status()) };
+    let hunger_status = hunger_status_from_c(crate::player::hunger::player_hunger_status());
 
     let input = player::regeneration::RegenerationInput {
         hunger_status,

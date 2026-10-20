@@ -112,7 +112,7 @@ fn seed_words(seed: u64) -> [usize; 2] {
 }
 
 /// Calls `draw` with the newest seeded RNG on this thread, or the thread RNG when none is active.
-fn with_active_rng<T>(draw: impl FnOnce(&mut dyn Rng) -> T) -> T {
+pub(crate) fn with_active_rng<T>(draw: impl FnOnce(&mut dyn Rng) -> T) -> T {
     let seeded = SEEDED_RNGS.with(|stack| stack.borrow().last().cloned());
     match seeded {
         Some(rng) => draw(&mut *rng.borrow_mut()),

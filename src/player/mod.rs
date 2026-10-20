@@ -7,6 +7,7 @@ mod attributes;
 #[cfg(not(test))]
 pub(crate) mod damage;
 mod data;
+pub mod hunger;
 pub mod regeneration;
 mod skills;
 mod stats;
