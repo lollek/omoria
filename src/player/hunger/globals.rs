@@ -1,7 +1,6 @@
 use super::{
     player_flags, prt_hunger, recalculate, report_death, RecalculationContext, C_PLAYER_WT,
 };
-use crate::model::PlayerFlags;
 
 extern "C" {
     static mut msg_flag: bool;
@@ -13,16 +12,32 @@ extern "C" {
 struct GlobalHunger;
 
 impl RecalculationContext for GlobalHunger {
-    fn flags(&self) -> PlayerFlags {
-        unsafe { player_flags }
+    fn has_hunger_item(&self) -> bool {
+        unsafe { player_flags.hunger_item != 0 }
     }
 
-    fn set_foodc(&mut self, foodc: i64) {
-        unsafe { player_flags.foodc = foodc };
+    fn food_level(&self) -> i64 {
+        unsafe { player_flags.foodc }
     }
 
-    fn add_status(&mut self, flags: u64) {
-        unsafe { player_flags.status |= flags };
+    fn is_hungry(&self) -> bool {
+        unsafe { player_flags.status & super::IS_HUNGERY != 0 }
+    }
+
+    fn is_weak(&self) -> bool {
+        unsafe { player_flags.status & super::IS_WEAK != 0 }
+    }
+
+    fn set_food_level(&mut self, food_level: i64) {
+        unsafe { player_flags.foodc = food_level };
+    }
+
+    fn mark_hungry(&mut self) {
+        unsafe { player_flags.status |= super::IS_HUNGERY };
+    }
+
+    fn mark_weak(&mut self) {
+        unsafe { player_flags.status |= super::IS_WEAK };
     }
 
     fn weight(&self) -> u16 {

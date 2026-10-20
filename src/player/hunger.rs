@@ -43,9 +43,13 @@ struct EatOutcome {
 }
 
 trait RecalculationContext {
-    fn flags(&self) -> PlayerFlags;
-    fn set_foodc(&mut self, foodc: i64);
-    fn add_status(&mut self, flags: u64);
+    fn has_hunger_item(&self) -> bool;
+    fn food_level(&self) -> i64;
+    fn is_hungry(&self) -> bool;
+    fn is_weak(&self) -> bool;
+    fn set_food_level(&mut self, food_level: i64);
+    fn mark_hungry(&mut self);
+    fn mark_weak(&mut self);
     fn weight(&self) -> u16;
     fn set_weight(&mut self, weight: u16);
     fn min_weight(&self) -> u16;
@@ -62,23 +66,24 @@ fn recalculate_with_rng(rng: &mut impl Rng, context: &mut impl RecalculationCont
 }
 
 fn recalculate(context: &mut impl RecalculationContext, roll: &mut impl FnMut(i64) -> i64) {
-    if context.flags().hunger_item != 0 && context.flags().foodc > PLAYER_FOOD_ALERT + 15 {
-        context.set_foodc(PLAYER_FOOD_ALERT + 15);
+    if context.has_hunger_item() && context.food_level() > PLAYER_FOOD_ALERT + 15 {
+        context.set_food_level(PLAYER_FOOD_ALERT + 15);
     }
-    if context.flags().foodc >= PLAYER_FOOD_ALERT {
+    if context.food_level() >= PLAYER_FOOD_ALERT {
         return;
     }
-    if context.flags().foodc >= PLAYER_FOOD_WEAK {
-        if context.flags().status & IS_HUNGERY == 0 {
-            context.add_status(IS_HUNGERY);
+    if context.food_level() >= PLAYER_FOOD_WEAK {
+        if !context.is_hungry() {
+            context.mark_hungry();
             context.message("You are getting hungry.");
             context.interrupt();
             context.redraw();
         }
         return;
     }
-    if context.flags().status & IS_WEAK == 0 {
-        context.add_status(IS_WEAK | IS_HUNGERY);
+    if !context.is_weak() {
+        context.mark_hungry();
+        context.mark_weak();
         context.message("You are getting weak from hunger.");
         context.interrupt();
         context.redraw();
@@ -91,12 +96,12 @@ fn recalculate(context: &mut impl RecalculationContext, roll: &mut impl FnMut(i6
         }
     }
     // Preserve the legacy nesting: even the second fainting roll requires negative food.
-    if context.flags().foodc < 0 {
+    if context.food_level() < 0 {
         if roll(5) == 1 {
             context.add_paralysis(roll(3));
             context.message("You faint from the lack of food.");
             context.interrupt();
-        } else if context.flags().foodc < PLAYER_FOOD_FAINT && roll(8) == 1 {
+        } else if context.food_level() < PLAYER_FOOD_FAINT && roll(8) == 1 {
             context.add_paralysis(roll(5));
             context.message("You faint from the lack of food.");
             context.interrupt();
@@ -297,14 +302,26 @@ mod tests {
     }
 
     impl RecalculationContext for RecalculationFixture {
-        fn flags(&self) -> PlayerFlags {
-            self.flags
+        fn has_hunger_item(&self) -> bool {
+            self.flags.hunger_item != 0
         }
-        fn set_foodc(&mut self, foodc: i64) {
-            self.flags.foodc = foodc;
+        fn food_level(&self) -> i64 {
+            self.flags.foodc
         }
-        fn add_status(&mut self, flags: u64) {
-            self.flags.status |= flags;
+        fn is_hungry(&self) -> bool {
+            self.flags.status & IS_HUNGERY != 0
+        }
+        fn is_weak(&self) -> bool {
+            self.flags.status & IS_WEAK != 0
+        }
+        fn set_food_level(&mut self, food_level: i64) {
+            self.flags.foodc = food_level;
+        }
+        fn mark_hungry(&mut self) {
+            self.flags.status |= IS_HUNGERY;
+        }
+        fn mark_weak(&mut self) {
+            self.flags.status |= IS_WEAK;
         }
         fn weight(&self) -> u16 {
             self.weight
@@ -332,6 +349,23 @@ mod tests {
         fn starve(&mut self) {
             self.events.push("starve".to_string());
         }
+    }
+
+    #[test]
+    fn recalculation_context_reports_hunger_state_semantically() {
+        let mut context = RecalculationFixture::new(1234, 0x80);
+        context.flags.hunger_item = 42;
+
+        assert!(context.has_hunger_item());
+        assert_eq!(context.food_level(), 1234);
+        assert!(!context.is_hungry());
+        assert!(!context.is_weak());
+
+        context.flags.hunger_item = 0;
+        context.flags.status |= IS_HUNGERY | IS_WEAK;
+        assert!(!context.has_hunger_item());
+        assert!(context.is_hungry());
+        assert!(context.is_weak());
     }
 
     #[test]
