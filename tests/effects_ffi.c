@@ -5,6 +5,7 @@
 
 #include "../src/debug.h"
 #include "../src/effects.h"
+#include "../src/constants.h"
 #include "../src/messages.h"
 #include "../src/player.h"
 #include "../src/random.h"
@@ -297,6 +298,112 @@ static void assert_inventory_damage(bool corrosion) {
   }
 }
 
+static unsigned long long effect_inventory_seed(long chance, bool destroyed) {
+  for (unsigned long long seed = 1; seed <= 65536; seed++) {
+    C_seeded_rng_begin(seed);
+    const bool roll_destroys = randint(100) < chance;
+    C_seeded_rng_end();
+    if (roll_destroys == destroyed)
+      return seed;
+  }
+  assert(false);
+  return 0;
+}
+
+static treas_rec *effect_inventory_item(long tval) {
+  treas_rec *item = calloc(1, sizeof(*item));
+  assert(item != NULL);
+  item->data = armor_fixture();
+  item->data.tval = tval;
+  inventory_list = cur_inven = item;
+  inven_ctr = 1;
+  inven_weight = item->data.weight;
+  return item;
+}
+
+static void assert_fire_effect(void) {
+  reset_case();
+  treas_rec *item = effect_inventory_item(arrow);
+  const unsigned long long seed = effect_inventory_seed(3, true);
+  C_seeded_rng_begin(seed);
+  fire_dam(19, "fire test");
+  C_seeded_rng_end();
+  assert(C_player_current_hp() == 81 && print_stat == 1);
+  assert(inventory_list == NULL && cur_inven == NULL && inven_ctr == 0);
+  assert_message(0, "There is smoke coming from your pack!");
+  finish_case(1, 1 + 2 * stat_drawing);
+
+  reset_case();
+  item = effect_inventory_item(arrow);
+  const unsigned long long resisted_seed = effect_inventory_seed(3, false);
+  player_flags.fire_resist = true;
+  player_flags.resist_heat = 1;
+  C_seeded_rng_begin(resisted_seed);
+  fire_dam(19, "resisted fire test");
+  C_seeded_rng_end();
+  assert(C_player_current_hp() == 98 && print_stat == 1);
+  assert(inventory_list == item && item->data.tval == arrow);
+  finish_case(0, 1 + stat_drawing);
+  inventory_list = cur_inven = NULL;
+  free(item);
+}
+
+static void assert_cold_effect(void) {
+  reset_case();
+  treas_rec *item = effect_inventory_item(potion1);
+  const unsigned long long seed = effect_inventory_seed(5, true);
+  C_seeded_rng_begin(seed);
+  cold_dam(19, "cold test");
+  C_seeded_rng_end();
+  assert(C_player_current_hp() == 81 && print_stat == 1);
+  assert(inventory_list == NULL && cur_inven == NULL && inven_ctr == 0);
+  assert_message(0, "Something shatters inside your pack!");
+  finish_case(1, 1 + 2 * stat_drawing);
+
+  reset_case();
+  item = effect_inventory_item(potion2);
+  const unsigned long long resisted_seed = effect_inventory_seed(5, false);
+  player_flags.cold_resist = true;
+  player_flags.resist_cold = 1;
+  C_seeded_rng_begin(resisted_seed);
+  cold_dam(19, "resisted cold test");
+  C_seeded_rng_end();
+  assert(C_player_current_hp() == 98 && print_stat == 1);
+  assert(inventory_list == item && item->data.tval == potion2);
+  finish_case(0, 1 + stat_drawing);
+  inventory_list = cur_inven = NULL;
+  free(item);
+}
+
+static void assert_light_effect(void) {
+  reset_case();
+  light_dam(19, "lightning test");
+  assert(C_player_current_hp() == 81 && print_stat == 1);
+  finish_case(0, 1 + stat_drawing);
+
+  reset_case();
+  player_flags.lght_resist = true;
+  player_flags.resist_lght = 1;
+  light_dam(19, "resisted lightning test");
+  assert(C_player_current_hp() == 98 && print_stat == 1);
+  finish_case(0, 1 + stat_drawing);
+}
+
+static void assert_poison_effect(void) {
+  reset_case();
+  player_flags.poisoned = 4;
+  const unsigned long long seed = 173;
+  C_seeded_rng_begin(seed);
+  const long expected_poison = 4 + 12 + randint(19);
+  C_seeded_rng_end();
+  C_seeded_rng_begin(seed);
+  poison_gas(19, "poison gas test");
+  C_seeded_rng_end();
+  assert(C_player_current_hp() == 81 && print_stat == 1);
+  assert(player_flags.poisoned == expected_poison);
+  finish_case(0, 1 + stat_drawing);
+}
+
 static void assert_take_hit_boundaries(void) {
   reset_case();
   player_flags.invuln = 1;
@@ -349,10 +456,14 @@ int main(void) {
     assert_acid_divisors();
     assert_inventory_damage(false);
     assert_inventory_damage(true);
+    assert_fire_effect();
+    assert_cold_effect();
+    assert_light_effect();
+    assert_poison_effect();
     assert_take_hit_boundaries();
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;
-  puts("Effects C acceptance checks passed (SE1 armor/acid/corrosion, F-DMG)");
+  puts("Effects C acceptance checks passed (SE1/SE2, F-DMG)");
   return 0;
 }

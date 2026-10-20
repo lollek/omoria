@@ -11,6 +11,12 @@ extern "C" {
     fn item_name(out: *mut [libc::c_char; 82], item: *const Item);
 }
 
+fn request_stat_block_redraw() {
+    unsafe {
+        print_stat = 1;
+    }
+}
+
 fn minus_ac() -> bool {
     let before = unsafe { equipment };
     let mut after = before;
@@ -47,8 +53,8 @@ pub(super) fn corrode_gas(cause: *const libc::c_char) {
         crate::debug::info(format!("Damage (Corrosion Gas): {}", hp_damage));
         unsafe { damage::take_hit(hp_damage, cause) };
     }
+    request_stat_block_redraw();
     unsafe {
-        print_stat = 1;
         if damage::damage_inventory(
             &[
                 ItemType::Dagger,
@@ -73,10 +79,8 @@ pub(super) fn acid_dam(initial_damage: libc::c_long, cause: *const libc::c_char)
     let resistant = unsafe { player_flags.acid_resist != 0 };
     let divisor = 1 + i64::from(armor_absorbed) + 2 * i64::from(resistant);
     let hp_damage = initial_damage / divisor;
-    unsafe {
-        damage::take_hit(hp_damage, cause);
-        print_stat = 1;
-    }
+    unsafe { damage::take_hit(hp_damage, cause) };
+    request_stat_block_redraw();
     crate::debug::info(format!(
         "Damage (Acid): {} - {} = {}",
         initial_damage,
@@ -105,4 +109,96 @@ pub(super) fn acid_dam(initial_damage: libc::c_long, cause: *const libc::c_char)
             damage::redraw_stats();
         }
     }
+}
+
+pub(super) fn poison_gas(damage_amount: libc::c_long, cause: *const libc::c_char) {
+    crate::debug::info(format!("Damage (Poison Gas): {}", damage_amount));
+    unsafe { damage::take_hit(damage_amount, cause) };
+    request_stat_block_redraw();
+    let poison_increase = 12 + crate::rng::randint(damage_amount);
+    unsafe {
+        player_flags.poisoned += poison_increase;
+    }
+}
+
+pub(super) fn fire_dam(initial_damage: libc::c_long, cause: *const libc::c_char) {
+    let flags = unsafe { player_flags };
+    let damage_amount = super::damage_after_resistance(
+        initial_damage,
+        flags.fire_resist != 0,
+        flags.resist_heat > 0,
+    );
+    crate::debug::info(format!(
+        "Damage (Fire): {} - {} = {}",
+        initial_damage,
+        initial_damage - damage_amount,
+        damage_amount
+    ));
+    unsafe { damage::take_hit(damage_amount, cause) };
+    request_stat_block_redraw();
+    if unsafe {
+        damage::damage_inventory(
+            &[
+                ItemType::Arrow,
+                ItemType::RangedWeapon,
+                ItemType::HaftedWeapon,
+                ItemType::PoleArm,
+                ItemType::Maul,
+                ItemType::Boots,
+                ItemType::Gloves,
+                ItemType::Cloak,
+                ItemType::SoftArmor,
+                ItemType::Staff,
+                ItemType::Scroll1,
+                ItemType::Scroll2,
+            ],
+            3,
+        )
+    } > 0
+    {
+        crate::term::msg_print("There is smoke coming from your pack!");
+        unsafe {
+            damage::redraw_stats();
+        }
+    }
+}
+
+pub(super) fn cold_dam(initial_damage: libc::c_long, cause: *const libc::c_char) {
+    let flags = unsafe { player_flags };
+    let damage_amount = super::damage_after_resistance(
+        initial_damage,
+        flags.cold_resist != 0,
+        flags.resist_cold > 0,
+    );
+    crate::debug::info(format!(
+        "Damage (Cold): {} - {} = {}",
+        initial_damage,
+        initial_damage - damage_amount,
+        damage_amount
+    ));
+    unsafe { damage::take_hit(damage_amount, cause) };
+    request_stat_block_redraw();
+    if unsafe { damage::damage_inventory(&[ItemType::Potion1, ItemType::Potion2], 5) } > 0 {
+        crate::term::msg_print("Something shatters inside your pack!");
+        unsafe {
+            damage::redraw_stats();
+        }
+    }
+}
+
+pub(super) fn light_dam(initial_damage: libc::c_long, cause: *const libc::c_char) {
+    let flags = unsafe { player_flags };
+    let damage_amount = super::damage_after_resistance(
+        initial_damage,
+        flags.lght_resist != 0,
+        flags.resist_lght > 0,
+    );
+    crate::debug::info(format!(
+        "Damage (Lightning): {} - {} = {}",
+        initial_damage,
+        initial_damage - damage_amount,
+        damage_amount
+    ));
+    unsafe { damage::take_hit(damage_amount, cause) };
+    request_stat_block_redraw();
 }

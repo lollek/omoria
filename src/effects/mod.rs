@@ -14,6 +14,21 @@ enum ArmorDamage {
     Absent,
 }
 
+fn damage_after_resistance(
+    damage: libc::c_long,
+    permanent_resistance: bool,
+    timed_resistance: bool,
+) -> libc::c_long {
+    let mut damage = damage;
+    if permanent_resistance {
+        damage /= 3;
+    }
+    if timed_resistance {
+        damage /= 3;
+    }
+    damage
+}
+
 #[cfg(test)]
 fn minus_ac_with_rng(
     equipment: &mut [Item; EQUIP_MAX],
@@ -66,6 +81,14 @@ mod tests {
     use super::*;
     use crate::rng::randint_with_rng;
     use rand::{SeedableRng, StdRng};
+
+    #[test]
+    fn damage_is_reduced_by_each_matching_resistance() {
+        assert_eq!(damage_after_resistance(19, false, false), 19);
+        assert_eq!(damage_after_resistance(19, true, false), 6);
+        assert_eq!(damage_after_resistance(19, false, true), 6);
+        assert_eq!(damage_after_resistance(19, true, true), 2);
+    }
 
     #[test]
     fn seeded_selection_matches_c_slot_order_and_lowers_bonus() {
