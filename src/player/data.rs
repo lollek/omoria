@@ -63,8 +63,7 @@ lazy_static! {
 }
 
 pub fn name() -> String {
-    let string: Vec<u8> = unsafe { player_name }.iter().map(|&i| i as u8).collect();
-    misc::c_array_to_rust_string(string)
+    misc::c_char_array_to_rust_string(unsafe { player_name }.to_vec())
 }
 
 pub fn set_name(new_name: &str) {
@@ -93,7 +92,7 @@ pub fn set_race(race: Race) {
 }
 
 pub fn sex() -> Sex {
-    sex::from_char(unsafe { player_sex[0] as u8 as char }).unwrap()
+    sex::from_char(char::from(misc::c_char_to_u8(unsafe { player_sex[0] }))).unwrap()
 }
 
 pub fn set_sex(sex: Sex) {

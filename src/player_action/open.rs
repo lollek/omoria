@@ -397,7 +397,7 @@ mod tests {
         assert_eq!(
             context.map.items[1].name[..expected.len()]
                 .iter()
-                .map(|&byte| byte as u8)
+                .map(|&byte| crate::misc::c_char_to_u8(byte))
                 .collect::<Vec<_>>(),
             expected
         );

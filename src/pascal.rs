@@ -66,7 +66,7 @@ pub unsafe extern "C" fn pindex(s1: *const libc::c_char, c1: libc::c_char) -> li
 
     // Legacy C matches bytes, not Unicode scalar values.
     let bytes = CStr::from_ptr(s1).to_bytes();
-    let needle = c1 as u8;
+    let needle = crate::misc::c_char_to_u8(c1);
 
     match bytes.iter().position(|&b| b == needle) {
         Some(ix) => (ix as libc::c_long) + 1,
@@ -78,7 +78,7 @@ pub unsafe extern "C" fn pindex(s1: *const libc::c_char, c1: libc::c_char) -> li
 pub extern "C" fn is_vowel(a_char: libc::c_char) -> bool {
     // Preserve legacy semantics: only ASCII vowels count.
     matches!(
-        a_char as u8,
+        crate::misc::c_char_to_u8(a_char),
         b'a' | b'A' | b'e' | b'E' | b'i' | b'I' | b'o' | b'O' | b'u' | b'U'
     )
 }
@@ -167,19 +167,19 @@ mod tests {
     fn abi_pindex_matches_legacy_c_semantics_for_bytes() {
         let s = CString::new("abcd").unwrap();
         unsafe {
-            assert_eq!(pindex(s.as_ptr(), 'a' as libc::c_char), 1);
-            assert_eq!(pindex(s.as_ptr(), 'c' as libc::c_char), 3);
-            assert_eq!(pindex(s.as_ptr(), 'z' as libc::c_char), 0);
-            assert_eq!(pindex(std::ptr::null(), 'a' as libc::c_char), 0);
+            assert_eq!(pindex(s.as_ptr(), b'a' as libc::c_char), 1);
+            assert_eq!(pindex(s.as_ptr(), b'c' as libc::c_char), 3);
+            assert_eq!(pindex(s.as_ptr(), b'z' as libc::c_char), 0);
+            assert_eq!(pindex(std::ptr::null(), b'a' as libc::c_char), 0);
         }
     }
 
     #[test]
     fn abi_is_vowel_matches_legacy_ascii_rules() {
-        assert!(is_vowel('a' as libc::c_char));
-        assert!(is_vowel('A' as libc::c_char));
-        assert!(!is_vowel('b' as libc::c_char));
-        assert!(!is_vowel('?' as libc::c_char));
+        assert!(is_vowel(b'a' as libc::c_char));
+        assert!(is_vowel(b'A' as libc::c_char));
+        assert!(!is_vowel(b'b' as libc::c_char));
+        assert!(!is_vowel(b'?' as libc::c_char));
     }
 
     #[test]

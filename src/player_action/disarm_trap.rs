@@ -313,11 +313,13 @@ mod tests {
                 context.disarm();
                 let name = &context.map.items[1].name;
                 let prefix_len = name.len() - suffix.len() - 1;
-                assert!(name[..prefix_len].iter().all(|&byte| byte as u8 == 0xFF));
+                assert!(name[..prefix_len]
+                    .iter()
+                    .all(|&byte| crate::misc::c_char_to_u8(byte) == 0xFF));
                 assert_eq!(
                     name[prefix_len..name.len() - 1]
                         .iter()
-                        .map(|&byte| byte as u8)
+                        .map(|&byte| crate::misc::c_char_to_u8(byte))
                         .collect::<Vec<_>>(),
                     suffix
                 );
@@ -394,7 +396,7 @@ mod tests {
         assert_eq!(
             name[..expected.len()]
                 .iter()
-                .map(|&byte| byte as u8)
+                .map(|&byte| crate::misc::c_char_to_u8(byte))
                 .collect::<Vec<_>>(),
             expected
         );

@@ -36,9 +36,9 @@ where
         unsafe {
             C_get_com(prompt_yn.as_ptr(), command);
         }
-        if *command == 'y' as c_char || *command == 'Y' as c_char {
+        if *command == b'y' as c_char || *command == b'Y' as c_char {
             return true;
-        } else if *command == 'n' as c_char || *command == 'N' as c_char {
+        } else if *command == b'n' as c_char || *command == b'N' as c_char {
             return false;
         }
     }
