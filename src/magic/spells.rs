@@ -38,4 +38,8 @@ extern "C" {
     pub(crate) fn detect_inv2(amount: libc::c_long) -> bool;
     /// Halves active poison (minimum one), reports it, and returns whether active.
     pub(crate) fn slow_poison() -> bool;
+    /// Increases the player's blessing duration.
+    pub(crate) fn bless(amount: libc::c_long) -> bool;
+    /// Wakes nearby monsters and moves them toward the player.
+    pub(crate) fn aggravate_monster(distance: libc::c_long) -> bool;
 }

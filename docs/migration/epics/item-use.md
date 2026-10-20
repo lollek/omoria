@@ -55,14 +55,14 @@ Acceptance checks:
 
 ### IU2. Eat (fan-out)
 
-Status: open. Depends on: IU1. Recommended: SE3.
+Status: implemented. Depends on: IU1. Recommended: SE3.
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: [eat.c](../../../src/player_action/eat.c), a new Rust eat module,
 registration line.
 
 Behavior: C keeps item selection. Rust applies food effects, including the
-Eyeball of Drong, and calls hunger eating (Rust if SE3 is done).
+Eyeball of Drong, and calls hunger eating in Rust.
 
 Acceptance checks:
 
