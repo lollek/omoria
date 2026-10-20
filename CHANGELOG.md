@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported food effects and eating to Rust while keeping selection in C.
 * Internal: Clarified potion interfaces without changing potion behavior.
 * Internal: Ported potion drinking to Rust while keeping item selection in C, with seeded effect and inventory checks.
 * Internal: Made trap C-caller checks independent of incremental Rust builds by initializing real armor state.

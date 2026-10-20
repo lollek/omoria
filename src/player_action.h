@@ -121,6 +121,7 @@ bool C_player_action_rest_input(const char *input);
 void player_action_refill_lamp(void);
 
 void player_action_eat(void);
+void C_player_action_eat_selected(treas_rec *item);
 
 void player_action_disarm_trap(void);
 void C_player_action_disarm_target(long y, long x, long direction);

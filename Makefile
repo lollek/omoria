@@ -113,6 +113,12 @@ test-quaff: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o sr
 	$(CC) $(LINKCFLAGS) tests/quaff_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(HDIR)/headless-inven.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o src/inventory/inven.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/quaff-ffi-test
 	./target/debug/quaff-ffi-test
 
+.PHONY: test-eat
+test-eat: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o src/inventory/inven.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(HDIR)/headless-inven.o
+	cargo build
+	$(CC) $(LINKCFLAGS) tests/eat_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(HDIR)/headless-inven.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o src/inventory/inven.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/eat-ffi-test
+	./target/debug/eat-ffi-test
+
 .PHONY: test-headless
 test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS)
 	cargo build --features save-test-support
@@ -170,6 +176,7 @@ check:
 	$(MAKE) test-effects
 	$(MAKE) test-hunger
 	$(MAKE) test-quaff
+	$(MAKE) test-eat
 	$(MAKE) test-save
 	$(MAKE) test-traps
 	$(MAKE) test-headless

@@ -2,6 +2,7 @@ pub(crate) mod attack;
 mod bash;
 mod close;
 mod disarm_trap;
+mod eat;
 mod jam_door;
 mod look;
 mod movement;
