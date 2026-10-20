@@ -38,7 +38,7 @@ Out of scope: changing hit formulas or RNG call order.
 
 ### XC2. Seeded RNG for Item Generation (fan-out)
 
-Status: open. Depends on: none. Recommended: XC1 (same helper).
+Status: done (2026-10-20). Depends on: none. Recommended: XC1 (same helper).
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: [generate_item.rs](../../../src/generate_item/generate_item.rs),
@@ -55,9 +55,10 @@ unchanged without a seeded override.
 Acceptance checks:
 
 * L0: with `use_seeded_rng`, `generate_item_for_dungeon_level` returns the
-  same item for the same seed.
+  same item for the same seed. Done with `seeded_dungeon_item_generation_repeats_through_production_wrapper`.
 * L1: a seeded headless open of a treasure chest, or tunnel through rubble,
-  produces the same item attributes on repeated runs.
+  produces the same item attributes on repeated runs. Done with the rubble
+  replay assertion in `test-headless-interaction`.
 
 Out of scope: changing item tables or generation rules.
 
