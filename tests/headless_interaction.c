@@ -1162,6 +1162,70 @@ static void assert_bash_prompt_scenario(bool cancel, bool afraid) {
   end_pickup_scenario();
 }
 
+static void assert_search_scenario(bool blind) {
+  begin_pickup_scenario();
+  player_flags.blind = blind ? 1 : 0;
+
+  const long row = char_row;
+  const long trap_col = char_col - 1;
+  const long door_col = char_col + 1;
+  long door_slot = 0;
+  popt(&door_slot);
+  assert(door_slot > 0);
+
+  cave[row][char_col + 1].tptr = 0;
+  cave[row][trap_col].tptr = ration_slot;
+  t_list[ration_slot].tval = unseen_trap;
+  t_list[ration_slot].subval = 2;
+  strcpy(t_list[ration_slot].name, "an arrow trap");
+
+  cave[row][door_col].tptr = door_slot;
+  t_list[door_slot].tval = secret_door;
+  t_list[door_slot].subval = 2;
+  strcpy(t_list[door_slot].name, "a secret door");
+
+  player_action_search(row, char_col, 1000);
+
+  if (blind) {
+    assert_open_messages("You are incapable of searching while blind.",
+                         NULL, NULL);
+    assert(cave[row][trap_col].tptr == ration_slot);
+    assert(cave[row][door_col].tptr == door_slot);
+    assert(t_list[ration_slot].tval == unseen_trap);
+    assert(t_list[door_slot].tval == secret_door);
+  } else {
+    assert_open_messages("You have found an arrow trap.",
+                         "You have found a secret door.", NULL);
+    assert(t_list[cave[row][trap_col].tptr].tval == seen_trap);
+    assert(t_list[cave[row][door_col].tptr].tval == seen_trap);
+    assert(cave[row][door_col].fval == 5);
+  }
+
+  end_pickup_scenario();
+}
+
+static void assert_stairs_scenario(bool ascend, uint8_t tile,
+                                   long expected_level, bool expected_transition,
+                                   const char *first_message,
+                                   const char *second_message) {
+  begin_pickup_scenario();
+  dun_level = 5;
+  cave[char_row][char_col].tptr = ration_slot;
+  t_list[ration_slot].tval = tile;
+
+  if (ascend) {
+    player_action_ascend_stairs();
+  } else {
+    player_action_descend_stairs();
+  }
+
+  assert(dun_level == expected_level);
+  assert(moria_flag == expected_transition);
+  assert_open_messages(first_message, second_message, NULL);
+  moria_flag = false;
+  end_pickup_scenario();
+}
+
 int main(void) {
   alarm(30);
   debug_file = fopen("target/debug/headless-interaction.log", "w");
@@ -1277,6 +1341,18 @@ int main(void) {
     assert_bash_prompt_scenario(true, false);
     assert_bash_prompt_scenario(false, false);
     assert_bash_prompt_scenario(false, true);
+    assert_search_scenario(false);
+    assert_search_scenario(true);
+    assert_stairs_scenario(true, up_staircase, 4, true,
+                           "You enter a maze of up staircases.",
+                           "You pass through a one-way door.");
+    assert_stairs_scenario(false, down_staircase, 6, true,
+                           "You enter a maze of down staircases.",
+                           "You pass through a one-way door.");
+    assert_stairs_scenario(true, down_staircase, 5, false,
+                           "I see no up staircase here.", NULL);
+    assert_stairs_scenario(false, up_staircase, 5, false,
+                           "I see no down staircase here.", NULL);
   }
   assert(fclose(debug_file) == 0);
   debug_file = NULL;
