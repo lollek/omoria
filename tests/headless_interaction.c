@@ -1078,6 +1078,46 @@ static void assert_bash_chest_scenario(bool destroyed, bool unlocked,
   end_pickup_scenario();
 }
 
+static bool run_bash_door_scenario(uint64_t seed) {
+  begin_pickup_scenario();
+  const long row = char_row;
+  const long col = char_col + 1;
+  treasure_type *item = &t_list[ration_slot];
+  strcpy(item->name, "a closed door");
+  item->tval = closed_door;
+  item->p1 = 0;
+  cave[row][col].fopen = false;
+
+  C_seeded_rng_end();
+  C_seeded_rng_begin(seed);
+  C_player_action_bash_target(row, col);
+
+  const bool opened = cave[row][col].fopen;
+  assert_open_messages(opened ? "You smash into the door! The door crashes open!"
+                              : "You smash into the door! The door holds firm.",
+                       NULL, NULL);
+  assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  end_pickup_scenario();
+  return opened;
+}
+
+static void assert_bash_door_seeded_outcomes(void) {
+  uint64_t success_seed = 0;
+  uint64_t failure_seed = 0;
+  for (uint64_t seed = 1; seed < 256 && (!success_seed || !failure_seed);
+       seed++) {
+    const bool opened = run_bash_door_scenario(seed);
+    if (opened && !success_seed) {
+      success_seed = seed;
+    } else if (!opened && !failure_seed) {
+      failure_seed = seed;
+    }
+  }
+  assert(success_seed && failure_seed);
+  assert(run_bash_door_scenario(success_seed));
+  assert(!run_bash_door_scenario(failure_seed));
+}
+
 static void assert_bash_prompt_scenario(bool cancel, bool afraid) {
   begin_pickup_scenario();
   const long row = char_row;
@@ -1213,6 +1253,7 @@ int main(void) {
     assert_bash_chest_scenario(false, true, true);
     assert_bash_chest_scenario(false, false, true);
     assert_bash_chest_scenario(false, true, false);
+    assert_bash_door_seeded_outcomes();
     assert_bash_prompt_scenario(true, false);
     assert_bash_prompt_scenario(false, false);
     assert_bash_prompt_scenario(false, true);
