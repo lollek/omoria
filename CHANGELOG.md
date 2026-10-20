@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported potion drinking to Rust while keeping item selection in C, with seeded effect and inventory checks.
 * Internal: Routed item generation through the seeded RNG, with repeatable Rust and headless rubble-loot checks.
 * Internal: Routed hit and confusion rolls through the seeded RNG, with repeatable Rust and headless bash checks.
 * Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.

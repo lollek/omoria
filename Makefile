@@ -71,6 +71,9 @@ $(HDIR)/headless-light.o: src/dungeon/light.c tests/support/terminal_redirects.h
 $(HDIR)/headless-player.o: src/player.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -c src/player.c -o $@
 
+$(HDIR)/headless-inven.o: src/inventory/inven.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -c src/inventory/inven.c -o $@
+
 $(HDIR)/headless-loop.o: src/main_loop/main_loop.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -c src/main_loop/main_loop.c -o $@
 
@@ -103,6 +106,12 @@ test-hunger: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o s
 	cargo build
 	$(CC) $(LINKCFLAGS) tests/hunger_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/hunger-ffi-test
 	./target/debug/hunger-ffi-test
+
+.PHONY: test-quaff
+test-quaff: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o src/inventory/inven.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(HDIR)/headless-inven.o
+	cargo build
+	$(CC) $(LINKCFLAGS) tests/quaff_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(HDIR)/headless-inven.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o src/inventory/inven.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/quaff-ffi-test
+	./target/debug/quaff-ffi-test
 
 .PHONY: test-headless
 test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS)
@@ -138,6 +147,7 @@ check:
 	$(MAKE) test-messages
 	$(MAKE) test-effects
 	$(MAKE) test-hunger
+	$(MAKE) test-quaff
 	$(MAKE) test-save
 	$(MAKE) test-headless
 	$(MAKE) test-headless-interaction

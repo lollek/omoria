@@ -138,8 +138,8 @@ If unsure, ask the navigator.
 | F-DIR-EDGE | Prompt-at-edge pattern for directional actions, plus shared door state transitions ([dungeon/door.rs](../../src/dungeon/door.rs): close, jam classification). | PA2 | Prompt pattern: PA7-PA12. Door helpers: PA8 only; open and bash write the open-door transition directly. Later IU4 | built |
 | F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts ([player/damage.rs](../../src/player/damage.rs)). | SE1 | SE2; later TR, MG, SP | built |
 | F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files forwarding to C. | TR1 | TR2-TR6 | planned |
-| F-ITEM | Handle to a C-selected inventory item, plus the consume lifecycle (identify, destroy one, remaining message). | IU1 | IU2-IU6, later MG, ST | planned |
-| F-SPELLS | Rust `extern "C"` declarations for the `spells.h` APIs that ports call. | IU1 | IU, later MG | planned |
+| F-ITEM | Handle to a C-selected inventory item, plus the consume lifecycle (identify, destroy one, remaining message), in [inventory/selected.rs](../../src/inventory/selected.rs). | IU1 | IU2-IU6, later MG, ST | built |
+| F-SPELLS | Rust `extern "C"` declarations for the `spells.h` APIs quaff uses, in [magic/spells.rs](../../src/magic/spells.rs). Later ports add their own declarations. | IU1 | IU, later MG | built |
 | F-CASINO-RULES | Pattern for pure casino rules with injected RNG, called from the C UI. | CA1 | CA2, CA3 | planned |
 | F-CASINO-IO | Injectable casino input and drawing seam, plus shared `bet`/`gld` session state. | CA4 | CA5-CA7 | planned |
 | F-CLOCK | Injectable wall clock for operating-hours checks. | LF6 | later ML | planned |

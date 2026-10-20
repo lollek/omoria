@@ -6,6 +6,7 @@ mod jam_door;
 mod look;
 mod movement;
 mod open;
+mod quaff;
 mod refill_lamp;
 mod rest;
 mod search;
