@@ -18,7 +18,7 @@ use std::sync::LazyLock;
 /// Copies a `&str` into a fixed-size `[c_char; N]` with a NUL terminator.
 macro_rules! str_to_c_array {
     ($s:expr, $n:literal) => {{
-        let mut arr = [0i8; $n];
+        let mut arr: [libc::c_char; $n] = [0; $n];
         let bytes = $s.as_bytes();
         let len = if bytes.len() < ($n - 1) {
             bytes.len()
@@ -27,7 +27,7 @@ macro_rules! str_to_c_array {
         };
         let mut i = 0;
         while i < len {
-            arr[i] = bytes[i] as i8;
+            arr[i] = bytes[i] as libc::c_char;
             i += 1;
         }
         arr
@@ -320,9 +320,9 @@ mod tests {
 
     #[test]
     fn str_to_c_array_macro_null_terminates() {
-        let arr: [i8; 28] = str_to_c_array!("Kobold", 28);
-        assert_eq!(arr[0], b'K' as i8);
-        assert_eq!(arr[5], b'd' as i8);
+        let arr: [libc::c_char; 28] = str_to_c_array!("Kobold", 28);
+        assert_eq!(arr[0], b'K' as libc::c_char);
+        assert_eq!(arr[5], b'd' as libc::c_char);
         assert_eq!(arr[6], 0); // null terminator
     }
 

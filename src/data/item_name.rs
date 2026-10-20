@@ -41,7 +41,7 @@ extern "C" fn item_name(out_val: *mut [libc::c_char; 82], item: *const Item) {
         let item_name = generate(&*item);
         let mut characters_written = 0;
         for (index, c) in item_name.chars().take(OUT_VAL_SIZE - 1).enumerate() {
-            (*out_val)[index] = c as i8;
+            (*out_val)[index] = c as libc::c_char;
             characters_written += 1;
         }
         while characters_written < OUT_VAL_SIZE {

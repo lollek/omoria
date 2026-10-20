@@ -28,7 +28,7 @@ pub fn min_allowable_weight() -> u16 {
 }
 
 // Hack for converting c-array of chars to rust string
-pub fn c_i8_array_to_rust_string(array: Vec<i8>) -> String {
+pub fn c_char_array_to_rust_string(array: Vec<libc::c_char>) -> String {
     let safe_array = array
         .to_owned()
         .iter_mut()
@@ -120,9 +120,9 @@ pub fn print_known_spells() {
 pub fn rs2item_damage(damage_string: &str) -> Damage {
     const DAMAGE_SIZE: usize = 7;
 
-    let mut damage: [i8; DAMAGE_SIZE] = [0; DAMAGE_SIZE];
+    let mut damage: Damage = [0; DAMAGE_SIZE];
     for (index, c) in damage_string.chars().take(DAMAGE_SIZE - 1).enumerate() {
-        damage[index] = c as i8;
+        damage[index] = c as libc::c_char;
     }
     damage
 }
@@ -130,9 +130,9 @@ pub fn rs2item_damage(damage_string: &str) -> Damage {
 pub fn rs2item_name(name_string: &str) -> Name {
     const NAME_SIZE: usize = 70;
 
-    let mut name: [i8; NAME_SIZE] = [0; NAME_SIZE];
+    let mut name: Name = [0; NAME_SIZE];
     for (index, c) in name_string.chars().take(NAME_SIZE - 1).enumerate() {
-        name[index] = c as i8;
+        name[index] = c as libc::c_char;
     }
     name
 }
