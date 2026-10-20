@@ -21,6 +21,8 @@ cargo test
 make
 make test-movement
 make test-messages
+make test-effects
+make test-hunger
 make test-save
 make test-headless
 make test-headless-interaction
@@ -28,8 +30,9 @@ make test-headless-persistence
 ```
 
 This checks formatting, Rust linting and tests, and the full C/Rust build and
-link, plus terminal-free C checks for movement, messages, save-record apply,
-bounded main-loop control, scripted movement, ration pickup, and save/reload.
+link, plus terminal-free C checks for movement, messages, damage effects,
+hunger recalculation, save-record apply, bounded main-loop control, scripted
+movement, ration pickup, and save/reload.
 The interaction harness also verifies close-door targets through the production
 C/Rust boundary with isolated globals, captured messages, and headless drawing.
 Clippy does not build the `save-test-support` feature, so the test-support
@@ -89,6 +92,18 @@ substitute for a behavioral assertion.
   resolves steps against explicit state; `make test-movement`
   ([movement_ffi.c](../tests/movement_ffi.c)) runs the C caller for walls, map
   edges, and an open-floor move.
+* **Damage effects (L0/L1).** Armor selection and resistance divisors are
+  tested inline in [effects/mod.rs](../src/effects/mod.rs). `make test-effects`
+  ([effects_ffi.c](../tests/effects_ffi.c)) calls the six C-facing effects
+  (acid, corrosion, fire, cold, lightning, poison) with the seeded RNG and
+  checks HP, armor damage, inventory destruction, messages, stat redraws,
+  invulnerability, and death flags through the F-DMG wrappers
+  ([damage.rs](../src/player/damage.rs)).
+* **Hunger (L0/L1).** Thresholds, eating, and recalculation are tested inline
+  in [hunger.rs](../src/player/hunger.rs) against explicit state.
+  `make test-hunger` ([hunger_ffi.c](../tests/hunger_ffi.c)) calls
+  `player_hunger_recalculate` from C and checks messages, rest/run
+  interruption, stationary movement, paralysis, and starvation.
 * **Headless terminal doubles.** Scripted input, drawing counters, and
   fail-fast prompts; see [tests/support](../tests/support/README.md).
 * **Headless scenarios (L3).** `main_loop_with_commands`
@@ -118,5 +133,13 @@ substitute for a behavioral assertion.
 * `headless_interaction.c` duplicates setup and command scripting instead of
   reusing `tests/support/headless_scenario.*`, and checks its two runs against
   fixed expectations rather than comparing them.
-* The three headless Make targets share `target/debug/headless-*.o`; do not
-  run them concurrently with `make -j`.
+* `player_hunger_eat`, `player_hunger_set_status`, and `player_hunger_status`
+  are not run through their C symbols, so their global writes, hunger redraw,
+  and gluttony death flags are unverified (XC5 in the
+  [cross-cutting epic](migration/epics/cross-cutting.md)).
+* `effects_ffi.c` destroys one item type per effect, so the full destroyable
+  item sets are checked only by review. No test reaches the effects through
+  their real callers in `creature.c`, `spells.c`, or `traps.c`.
+* All seven C harness targets (`test-movement` through
+  `test-headless-persistence`) share `target/debug/headless-*.o`; do not run
+  them concurrently with `make -j`.
