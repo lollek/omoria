@@ -136,7 +136,7 @@ If unsure, ask the navigator.
 | --- | --- | --- | --- | --- |
 | F-CELL | Typed Rust access to `cave`/`t_list` cells, bounds checks, plus a locked, resettable test map ([dungeon/cell.rs](../../src/dungeon/cell.rs)). Existing module-local accessors in `dungeon/trap/globals.rs` and `player_action/movement/globals.rs` stay as they are. | PA1 | PA2-PA12; later TR, LF4, MAP | built |
 | F-DIR-EDGE | Prompt-at-edge pattern for directional actions, plus shared door state transitions ([dungeon/door.rs](../../src/dungeon/door.rs): close, jam classification). | PA2 | Prompt pattern: PA7-PA12. Door helpers: PA8 only; open and bash write the open-door transition directly. Later IU4 | built |
-| F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts. | SE1 | SE2, TR, later MG, SP | done |
+| F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts ([player/damage.rs](../../src/player/damage.rs)). | SE1 | SE2, TR; later MG, SP | built |
 | F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files forwarding to C. | TR1 | TR2-TR6 | built |
 | F-ITEM | Handle to a C-selected inventory item, plus the consume lifecycle (identify, destroy one, remaining message). | IU1 | IU2-IU6, later MG, ST | planned |
 | F-SPELLS | Rust `extern "C"` declarations for the `spells.h` APIs that ports call. | IU1 | IU, later MG | planned |
@@ -162,11 +162,11 @@ route the production wrappers through the seeded RNG.
 | --- | --- | --- | --- | --- | --- |
 | PA | Simple player actions | `player_action/` search, close, stairs, light, refill, rest, look, jam, open, disarm, tunnel, bash | 12 x S-M | **Done** (2026-10-11) | [player-actions.md](epics/player-actions.md) |
 | TR | Trap activation | `traps.c` | L | Open | [trap-activation.md](epics/trap-activation.md) |
-| SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | Open | [status-effects.md](epics/status-effects.md) |
+| SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | **Done** (2026-10-20) | [status-effects.md](epics/status-effects.md) |
 | IU | Item use | eat, quaff, read, aim, use staff, drop | 6 x S-L | Open | [item-use.md](epics/item-use.md) |
 | CA | Casino | `casino/` | 4 files, M-L | Open | [casino.md](epics/casino.md) |
 | LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
-| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper) | 4 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
+| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations) | 6 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
 | TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |
@@ -211,7 +211,7 @@ Green epics are done.
 ```mermaid
 graph LR
   PA[PA done] -.->|F-CELL| TR
-  SE -.->|F-DMG| TR
+  SE[SE done] -.->|F-DMG| TR
   PA -.->|F-DIR-EDGE| IU
   SE -.-> IU
   IU -->|F-ITEM, F-SPELLS| MG
@@ -235,14 +235,14 @@ graph LR
   LF
   XC
   classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
-  class PA done
+  class PA,SE done
 ```
 
 ### Story Waves
 
 Stories in the same wave can run concurrently. A wave starts per story as soon
 as that story's solid dependencies are done; waves are not global barriers.
-All PA stories are done.
+All PA and SE stories are done.
 
 | Wave | Stories |
 | --- | --- |
@@ -251,14 +251,19 @@ All PA stories are done.
 | 3 | PA7-PA12, TR2-TR6, IU4, IU5, CA5, CA6 |
 | 4 | TR7, CA7; plan MG, CM, and TS in detail |
 
-Cross-cutting stories XC1-XC3 have no solid dependencies and can join any
-wave. XC4 is deferred.
+Cross-cutting stories XC1-XC3, XC5, and XC6 have no solid dependencies and
+can join any wave. XC4 is deferred.
 
 ## Completed Work
 
 * **PA epic** (2026-10-11): all twelve simple player actions are Rust;
   directional and text prompts remain as C shims. See
   [player-actions.md](epics/player-actions.md) for remaining gaps.
+* **SE epic** (2026-10-20): `effects.c` and `player/hunger.c` are deleted;
+  all six damage effects and all hunger functions are Rust behind the
+  unchanged C ABI, with F-DMG built for later epics. See
+  [status-effects.md](epics/status-effects.md#remaining-gaps) for follow-ups
+  (XC5, XC6).
 
 Ported before this backlog existed. A Rust module's presence does not mean its
 subsystem is fully migrated.
@@ -288,8 +293,10 @@ accessors as foundations are built, and pass state explicitly where a port
 allows it. Do not move ownership of a global to Rust until its C writers are
 ported.
 
-PA ports declare the same globals and C helpers locally in each
-`globals.rs` (`player_flags`, `door_list`, `lite_spot`, `equipment`). Do not
-consolidate these piecemeal; decide a shared home (for example typed accessors
-next to `dungeon/cell.rs` and `equipment.rs`) when the next epic needs the
-same declarations, then migrate PA modules in one mechanical story.
+PA and SE ports declare the same globals and C helpers locally
+(`player_flags`, `door_list`, `lite_spot`, `equipment`). Do not consolidate
+these piecemeal. SE needed `player_flags` and `equipment` and added more
+copies, so the shared home is now
+[XC6](epics/cross-cutting.md#xc6-shared-c-global-declarations-fan-out): one
+mechanical story next to `player/data.rs` and `equipment.rs`. New ports should
+use the shared declarations once XC6 lands.

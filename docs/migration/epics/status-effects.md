@@ -1,10 +1,12 @@
 # Epic SE: Status Effects
 
-Ports [effects.c](../../../src/effects.c) (219 lines) and
-[player/hunger.rs](../../../src/player/hunger.rs) (formerly `player/hunger.c`).
-The two halves
-are independent and can run in parallel. Back to the
-[backlog](../backlog.md).
+Status: **done** (2026-10-20). Back to the [backlog](../backlog.md).
+
+Ported `effects.c` (219 lines) to [effects/](../../../src/effects/) and
+`player/hunger.c` to [player/hunger.rs](../../../src/player/hunger.rs). Both C
+sources are deleted; [effects.h](../../../src/effects.h) and
+[hunger.h](../../../src/player/hunger.h) remain for C callers. The two halves
+were independent.
 
 Callers that must keep linking: `effects` functions are called from
 `creature.c`, `spells.c`, and `traps.c`. Hunger functions are called from
@@ -17,6 +19,8 @@ Callers that must keep linking: `effects` functions are called from
 graph LR
   SE1[SE1 acid and corrosion] --> SE2[SE2 fire, cold, light, poison]
   SE3[SE3 hunger status and eat] --> SE4[SE4 hunger recalculation]
+  classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
+  class SE1,SE2,SE3,SE4 done
 ```
 
 ## Stories
@@ -56,7 +60,7 @@ for SE2.
 
 ### SE2. Fire, Cold, Light, and Poison (fan-out)
 
-Status: open. Depends on: SE1.
+Status: done. Depends on: SE1.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: the remaining functions in `effects.c`, its header, and the Rust
@@ -70,6 +74,17 @@ Acceptance checks:
 * L1: each effect, with and without the matching resistance, gives the C
   damage, inventory damage call, and messages for a fixed seed.
 * `effects.c` is deleted; callers still link.
+
+Implemented in `src/effects/` on the F-DMG wrappers, with no F-DMG signature
+changes. The shared resistance rule (each permanent or timed resistance divides
+damage by 3) is `damage_after_resistance`. Evidence: `cargo test
+effects::tests` covers the resistance divisors. `make test-effects` (in
+`make check`) calls the C symbols for fire, cold, lightning, and poison with
+and without resistance, checking HP, `print_stat`, seeded inventory damage and
+its pack message, poison duration from the seeded roll, and stat redraws.
+Only one item type per destroyable set is exercised; the sets were checked
+against the deleted C by review. Real callers in `creature.c`, `spells.c`, and
+`traps.c`, interactive death, and gameplay turns are not verified.
 
 ### SE3. Hunger Status and Eating (fan-out)
 
@@ -130,3 +145,21 @@ rest/run interruption, stationary movement, paralysis, and starvation flags/caus
 It also checks seeded RNG reentry through sighted stationary movement.
 The harness runs in `make check`. Full hunger gameplay turns, interactive
 terminal rendering, and hunger-specific save restoration are not verified.
+
+## Remaining Gaps
+
+Closing review (2026-10-20): all four stories are ported and match the deleted
+C, and `make check` passes. Follow-ups:
+
+* `player_hunger_eat`, `player_hunger_set_status`, and `player_hunger_status`
+  are only tested in Rust against an explicit state struct. No test runs their
+  global glue (`player_flags`, `player_wt`, `prt_hunger`, death flags) through
+  the C symbols. Tracked as [XC5](cross-cutting.md#xc5-c-caller-checks-for-hunger-eating-and-status-fan-out).
+* SE repeated local `extern` declarations of `player_flags` and `equipment`
+  in `effects/globals.rs` and `player/hunger.rs`, although the backlog says to
+  choose a shared home when the next epic needs them. Tracked as
+  [XC6](cross-cutting.md#xc6-shared-c-global-declarations-fan-out).
+* Out of scope and left for later epics: per-turn food consumption in
+  `main_loop.c` (ML), the F-DMG C bodies `take_hit`, `py_bonuses`, and
+  `inven_damage` (CORE), and checks through the real effect callers in
+  `creature.c`, `spells.c`, and `traps.c` (TR, MO, SP).
