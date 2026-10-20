@@ -128,6 +128,28 @@ test-save: $(filter-out src/main.o,$(OBJFILES))
 	$(CC) $(LINKCFLAGS) tests/save_apply_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/save-apply-ffi-test
 	./target/debug/save-apply-ffi-test
 
+# Set to 0 only when characterizing the legacy C dispatcher (static handlers,
+# unchecked pointers). The normal check gate covers migrated forwarding/nulls.
+TRAP_TEST_MIGRATED ?= 1
+TRAP_WRAPS = search_off rest_off change_trap lite_spot damroll take_hit \
+	player_pac player_ptoac managed_to_hit check_store_hours_and_enter \
+	check_store_hours enter_trading_post enter_bank enter_casino enter_fortress \
+	enter_house ht__covered_pit ht__trap_door ht__sleep_gas ht__hidden_object \
+	ht__str_dart ht__teleport ht__rockfall ht__corrode_gas ht__summon_monster \
+	ht__fire ht__acid ht__poison_gas ht__blind_gas ht__confuse_gas \
+	ht__slow_dart ht__con_dart ht__chute ht__whirlpool
+
+.PHONY: test-traps
+ifeq ($(shell uname -s),Linux)
+test-traps: $(filter-out src/main.o,$(OBJFILES))
+	cargo build
+	$(CC) $(LINKCFLAGS) -DTRAP_TEST_GNU_WRAP=1 -DTRAP_TEST_MIGRATED=$(TRAP_TEST_MIGRATED) tests/trap_dispatch_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(foreach symbol,$(TRAP_WRAPS),-Wl,--wrap=$(symbol)) $(LDFLAGS) -o target/debug/trap-dispatch-ffi-test
+	./target/debug/trap-dispatch-ffi-test
+else
+test-traps:
+	@echo "SKIP test-traps: C caller doubles require Linux GNU ld --wrap; Rust tests and mixed build remain enabled."
+endif
+
 .PHONY: check
 check:
 	cargo fmt --check
@@ -139,6 +161,7 @@ check:
 	$(MAKE) test-effects
 	$(MAKE) test-hunger
 	$(MAKE) test-save
+	$(MAKE) test-traps
 	$(MAKE) test-headless
 	$(MAKE) test-headless-interaction
 	$(MAKE) test-headless-persistence

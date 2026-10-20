@@ -13,8 +13,11 @@ void change_trap(long y, long x);
 /**
  * @brief Player hit a trap
  * 
- * @param y 
- * @param x 
+ * Null pointers are rejected. Non-null pointers must each point to a readable,
+ * aligned long. Call on the game thread with initialized globals.
+ *
+ * @param y
+ * @param x
  */
 void hit_trap(const long *y, const long *x);
 
@@ -43,3 +46,23 @@ void place_trap(long y, long x, long typ, long subval);
  * @param x coordinate
  */
 void place_rubble(long y, long x);
+
+/* Temporary C effect entry points forwarded by Rust until TR2-TR5 are ported. */
+void ht__covered_pit(long dam, long y, long x);
+void ht__trap_door(long dam);
+void ht__sleep_gas(void);
+void ht__hidden_object(long y, long x);
+void ht__str_dart(long dam);
+void ht__teleport(void);
+void ht__rockfall(long dam, long y, long x);
+void ht__corrode_gas(void);
+void ht__summon_monster(long y, long x);
+void ht__fire(long dam);
+void ht__acid(long dam);
+void ht__poison_gas(long dam);
+void ht__blind_gas(void);
+void ht__confuse_gas(void);
+void ht__slow_dart(long dam);
+void ht__con_dart(long dam);
+void ht__chute(long dam);
+void ht__whirlpool(long dam);

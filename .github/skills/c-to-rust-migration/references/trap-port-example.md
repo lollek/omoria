@@ -1,7 +1,8 @@
 # Trap Partial-Port Example
 
-The `traps.c` migration demonstrates a **partial port**: data and placement are
-Rust, while activation remains C. See the authoritative
+The `traps.c` migration demonstrates a **partial port**: data, placement,
+activation dispatch, open pits, and arrows are Rust. Other effects remain C
+behind per-group forwarding files. See the authoritative
 [migration backlog](../../../../docs/migration/backlog.md) and
 [trap activation epic](../../../../docs/migration/epics/trap-activation.md).
 
@@ -19,6 +20,14 @@ src/dungeon/trap/
 ├── placement.rs     # place_trap, change_trap logic (TrapList enum, tval_for, apply_template_to_item)
 ├── globals.rs       # Functions that mutate global dungeon state (unsafe wrappers)
 ├── interop.rs       # extern "C" shims: place_trap, change_trap, place_rubble
+├── activation.rs    # hit_trap dispatch, including town entrance routing
+├── activation/
+│   └── globals.rs   # Checked pointer adapter and C callback boundary
+├── basic.rs         # Open pit and arrow effects with an injectable context
+├── status.rs        # TR2 forwarding boundary
+├── element.rs       # TR3 forwarding boundary
+├── movement.rs      # TR4 forwarding boundary
+├── spawn.rs         # TR5 forwarding boundary
 └── test_support.rs  # Shared test helpers
 ```
 
@@ -66,13 +75,13 @@ Activation values such as 99 and 101-123 are not template indices.
 
 ## What's NOT yet ported
 
-- Trap effect handlers (`ht__*` functions)
-- `hit_trap` dispatcher
+- Trap effect handlers other than open pit and arrow (`ht__*` functions)
 - `trigger_trap` (chest traps)
-- Town/special-tile dispatch (101-122; 119 has no explicit case)
+- Town entrance implementations (routing is Rust; 119 is still unknown)
 - Whirlpool activation (123)
 
-The remaining C ABI is `hit_trap(const long *y, const long *x)` and
-`trigger_trap(long y, long x)`. A future Rust export must preserve the pointer
-arguments for `hit_trap`; `trigger_trap` reads chest flags from the item, not an
-extra flags parameter. These are future work, not existing Rust exports.
+Rust now exports `hit_trap(const long *y, const long *x)` with null checks and
+bounded cell access, preserving its pointer ABI. Non-null pointers must still
+be aligned and readable; calls require exclusive access to initialized game
+globals. `trigger_trap(long y, long x)` remains C and reads chest flags from
+the item, not an extra flags parameter.
