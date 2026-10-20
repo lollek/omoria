@@ -170,7 +170,7 @@ Implemented in [activation.rs](../../../src/dungeon/trap/activation.rs),
 [activation/globals.rs](../../../src/dungeon/trap/activation/globals.rs), and
 [basic.rs](../../../src/dungeon/trap/basic.rs), using F-CELL and F-DMG.
 The `status.rs`, `element.rs`, `movement.rs`, and `spawn.rs` group files
-isolate handler behavior; TR4-TR5 still forward to C. Secret-door and
+isolate handler behavior; TR5 still forwards to C. Secret-door and
 scare-monster activation remain no-ops. The C chest dispatcher is unchanged.
 
 Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
@@ -249,7 +249,7 @@ messages. The four `ht__*` handlers were removed from `traps.c` and `traps.h`.
 
 ### TR4. Movement and Level Traps (fan-out)
 
-Status: open. Depends on: TR1.
+Status: complete. Depends on: TR1.
 Size: S. Complexity: High. Agent: strong.
 
 Owns: the movement-trap handler file and the matching `ht__*` functions.
@@ -264,6 +264,14 @@ Acceptance checks:
 * L1: each trap's level, flag, and position changes match C, with and without
   feather fall.
 * L1: the covered pit is replaced only in the non-feather-fall branch.
+
+Implemented in [movement.rs](../../../src/dungeon/trap/movement.rs), with
+injectable effects and the shared active RNG. Rust tests cover both feather-fall
+branches, message/effect order, d6 descent, and repeated whirlpool descent.
+The [C-caller checks](../../../tests/trap_dispatch_ffi.c) exercise all five
+handlers through `hit_trap`, checking globals, unchanged player position,
+damage causes, messages, seeded RNG consumption, and actual covered-pit
+replacement. The five matching `ht__*` functions and declarations were removed.
 
 ### TR5. Spawning Traps (fan-out)
 

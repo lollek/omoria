@@ -48,11 +48,6 @@ void place_trap(long y, long x, long typ, long subval);
 void place_rubble(long y, long x);
 
 /* Temporary C effect entry points forwarded by Rust until remaining groups are ported. */
-void ht__covered_pit(long dam, long y, long x);
-void ht__trap_door(long dam);
 void ht__hidden_object(long y, long x);
-void ht__teleport(void);
 void ht__rockfall(long dam, long y, long x);
 void ht__summon_monster(long y, long x);
-void ht__chute(long dam);
-void ht__whirlpool(long dam);
