@@ -1,6 +1,7 @@
 #pragma once
 
 #include "magic.h"
+#include "types.h"
 
 bool player_action_attack(long y, long x);
 
@@ -71,6 +72,8 @@ void player_action_use_staff(void);
 void player_action_read_scroll(void);
 
 void player_action_quaff_potion(void);
+/* Selected node must stay live until this call; the last potion frees it. */
+void C_player_action_quaff_selected(treas_rec *item);
 
 /**
  *  Cast a magic spell or use other magic ability
