@@ -11,7 +11,7 @@
 //!
 //! ## Not yet ported
 //!
-//! - Other trap groups (forwarded to C by the per-group handler modules)
+//! - Remaining trap groups
 //! - `trigger_trap` (chest traps)
 //! - Town entrance implementations
 

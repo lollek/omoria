@@ -7,7 +7,10 @@
 
 #include "../src/constants.h"
 #include "../src/combat/fighting.h"
+#include "../src/floor.h"
+#include "../src/generate_monster/generate_monster.h"
 #include "../src/io.h"
+#include "../src/loot/loot.h"
 #include "../src/messages.h"
 #include "../src/misc.h"
 #include "../src/player.h"
@@ -30,7 +33,11 @@ enum event {
   ROLL,
   ROUTE,
   LOSE_STAT,
-  DAMAGE
+  DAMAGE,
+  PUSH,
+  ITEM,
+  LAND_SUMMON,
+  WATER_SUMMON
 };
 
 static enum event events[128];
@@ -44,6 +51,11 @@ static long subval_after_roll;
 static const char *expected_cause;
 static long expected_damage = rolled_damage;
 static long expected_movement_level;
+static size_t pushed_count;
+static long pushed_index;
+static size_t dungeon_item_count;
+static long dungeon_item_y, dungeon_item_x;
+static size_t land_summon_count, water_summon_count;
 
 static void record(enum event event) {
   assert(event_count < sizeof(events) / sizeof(events[0]));
@@ -155,6 +167,38 @@ void __wrap_take_hit(long damage, const char *cause) {
   record(DAMAGE);
 }
 
+void __real_pusht(long index);
+void __real_place_random_dungeon_item(long y, long x);
+
+void __wrap_pusht(long index) {
+  record(PUSH);
+  pushed_count++;
+  pushed_index = index;
+  __real_pusht(index);
+}
+
+void __wrap_place_random_dungeon_item(long y, long x) {
+  record(ITEM);
+  dungeon_item_count++;
+  dungeon_item_y = y;
+  dungeon_item_x = x;
+  __real_place_random_dungeon_item(y, x);
+}
+
+bool __wrap_summon_land_monster(int64_t *y, int64_t *x, bool asleep) {
+  assert(*y == char_row && *x == char_col && !asleep);
+  record(LAND_SUMMON);
+  land_summon_count++;
+  return true;
+}
+
+bool __wrap_summon_water_monster(int64_t *y, int64_t *x, bool asleep) {
+  assert(*y == char_row && *x == char_col && !asleep);
+  record(WATER_SUMMON);
+  water_summon_count++;
+  return true;
+}
+
 bool __wrap_lose_stat(enum stat_t stat, const char *message,
                       const char *sustain_message) {
   assert(event_count > 0 && events[event_count - 1] == ROLL);
@@ -167,24 +211,6 @@ bool __wrap_lose_stat(enum stat_t stat, const char *message,
     msg_print(sustain_message);
   return true;
 }
-
-/* These doubles verify the exact surviving C handler signatures, including
- * damage and coordinates. They are unreachable in the legacy static object. */
-#define FORWARD_COORDS(name, subval)                                             \
-  void __wrap_ht__##name(long y, long x) {                                      \
-    assert(expected_subval == subval && y == trap_y && x == trap_x);             \
-    handler();                                                                \
-  }
-#define FORWARD_ALL(name, subval)                                                \
-  void __wrap_ht__##name(long damage, long y, long x) {                         \
-    assert(expected_subval == subval && damage == rolled_damage);               \
-    assert(y == trap_y && x == trap_x);                                         \
-    handler();                                                                \
-  }
-
-FORWARD_COORDS(hidden_object, 6)
-FORWARD_ALL(rockfall, 9)
-FORWARD_COORDS(summon_monster, 11)
 
 static void reset_case(long subval, bool searching, bool resting) {
   memset(cave, 0, sizeof(cave));
@@ -218,6 +244,13 @@ static void reset_case(long subval, bool searching, bool resting) {
   teleport_flag = false;
   print_stat = 0;
   event_count = 0;
+  pushed_count = 0;
+  pushed_index = 0;
+  dungeon_item_count = 0;
+  dungeon_item_y = 0;
+  dungeon_item_x = 0;
+  land_summon_count = 0;
+  water_summon_count = 0;
   C_message_capture_begin();
 }
 
@@ -527,21 +560,79 @@ static void assert_element_traps(void) {
   }
 }
 
-static void assert_migrated_forwarding(void) {
-  const long subvals[] = {6, 9, 11};
-  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, ROUTE};
-  for (size_t i = 0; i < sizeof(subvals) / sizeof(subvals[0]); i++) {
-    reset_case(subvals[i], true, true);
-    hit_trap(&trap_y, &trap_x);
-    assert_events(expected, sizeof(expected) / sizeof(expected[0]));
-    assert(C_message_capture_count() == 0);
-    finish_case();
-  }
-  reset_case(99, true, true);
+static void assert_hidden_object_trap(void) {
+  reset_case(6, true, true);
+  cave[trap_y][trap_x].fm = true;
+  C_seeded_rng_begin(42);
   hit_trap(&trap_y, &trap_x);
-  assert_events(expected, 5);
-  assert(C_message_capture_count() == 0);
+  C_seeded_rng_end();
+  const enum event expected[] = {
+      SEARCH, REST, CHANGE, LIGHT, ROLL, PUSH, ITEM};
+  assert_events(expected, sizeof(expected) / sizeof(expected[0]));
+  assert(!cave[trap_y][trap_x].fm);
+  assert(pushed_count == 1 && pushed_index == 2);
+  assert(dungeon_item_count == 1);
+  assert(dungeon_item_y == trap_y && dungeon_item_x == trap_x);
+  assert(cave[trap_y][trap_x].tptr == 2);
+  assert(t_list[2].tval != 0);
+  assert_message("Hmmm, there was something under this rock.");
   finish_case();
+}
+
+static void assert_rockfall_trap(void) {
+  reset_case(9, true, true);
+  expected_cause = "falling rock";
+  cave[trap_y][trap_x].fopen = true;
+  hit_trap(&trap_y, &trap_x);
+  const enum event expected[] = {
+      SEARCH, REST, CHANGE, LIGHT, ROLL, DAMAGE, PUSH};
+  assert_events(expected, sizeof(expected) / sizeof(expected[0]));
+  assert(pushed_count == 1 && pushed_index == 2);
+  assert(cave[trap_y][trap_x].tptr != 0);
+  assert(t_list[cave[trap_y][trap_x].tptr].tval == rubble);
+  assert(!cave[trap_y][trap_x].fopen);
+  assert_message("You are hit by falling rock");
+  finish_case();
+}
+
+static void assert_summon_monster_trap(void) {
+  bool saw_single = false, saw_multiple = false;
+  for (int water = 0; water < 2; water++) {
+    for (unsigned long long seed = 0; seed < 64; seed++) {
+      reset_case(11, true, true);
+      cave[char_row][char_col].fval =
+          water ? water_set[0] : ft_dark_open_floor;
+
+      C_seeded_rng_begin(seed);
+      long expected_summons = 0;
+      for (long i = 1; i <= 2 + randint(3); i++)
+        expected_summons++;
+      const long next_roll = randint(1000000);
+      C_seeded_rng_end();
+      saw_single |= expected_summons == 3;
+      saw_multiple |= expected_summons > 1;
+
+      C_seeded_rng_begin(seed);
+      hit_trap(&trap_y, &trap_x);
+      assert(randint(1000000) == next_roll);
+      C_seeded_rng_end();
+
+      const size_t expected_count = (size_t)expected_summons;
+      assert(land_summon_count == (water ? 0 : expected_count));
+      assert(water_summon_count == (water ? expected_count : 0));
+      assert(pushed_count == 1 && pushed_index == 2);
+      assert(cave[trap_y][trap_x].tptr == 0);
+      assert(!cave[trap_y][trap_x].fm);
+      const enum event prelude[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, PUSH};
+      for (size_t i = 0; i < sizeof(prelude) / sizeof(prelude[0]); i++)
+        assert(events[i] == prelude[i]);
+      for (size_t i = sizeof(prelude) / sizeof(prelude[0]);
+           i < event_count; i++)
+        assert(events[i] == (water ? WATER_SUMMON : LAND_SUMMON));
+      finish_case();
+    }
+  }
+  assert(saw_single && saw_multiple);
 }
 
 static void assert_migrated_null_rejection(void) {
@@ -713,7 +804,9 @@ int main(void) {
       assert_status_traps();
       assert_element_traps();
       assert_movement_traps();
-      assert_migrated_forwarding();
+      assert_hidden_object_trap();
+      assert_rockfall_trap();
+      assert_summon_monster_trap();
       assert_migrated_null_rejection();
       assert_migrated_dispatch_reads_after_roll();
       assert_migrated_input_guards();
