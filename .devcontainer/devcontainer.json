@@ -1,0 +1,24 @@
+{
+  // Shared image with the headless workers in docker/compose.yml (see docs/agents/containers.md).
+  // Only the Copilot-scoped token is forwarded. Git credential and SSH agent forwarding are
+  // controlled by VS Code user settings on the host; the docs list the ones to change.
+  "name": "omoria",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "dev",
+  "containerEnv": {
+    "COPILOT_GITHUB_TOKEN": "${localEnv:COPILOT_GITHUB_TOKEN}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "ms-vscode.cpptools",
+        "GitHub.copilot-chat"
+      ]
+    }
+  },
+  "postCreateCommand": "cargo fetch"
+}

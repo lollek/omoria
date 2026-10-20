@@ -594,18 +594,18 @@ mod identify_core_tests {
     use crate::model::ItemType;
     use serial_test::serial;
 
-    fn unquote_then_known1(buf: &mut [i8]) {
+    fn unquote_then_known1(buf: &mut [c_char]) {
         unsafe { unquote(buf.as_mut_ptr() as *mut c_char) };
         unsafe { known1(buf.as_mut_ptr() as *mut c_char) };
     }
 
-    fn write_name(dst: &mut [i8], s: &[u8]) {
+    fn write_name(dst: &mut [c_char], s: &[u8]) {
         for (d, &b) in dst.iter_mut().zip(s.iter()) {
-            *d = b as i8;
+            *d = b as c_char;
         }
     }
 
-    fn read_name(src: &[i8]) -> String {
+    fn read_name(src: &[c_char]) -> String {
         unsafe { CStr::from_ptr(src.as_ptr()).to_string_lossy().into_owned() }
     }
 
@@ -673,7 +673,7 @@ mod identify_core_tests {
         // and known1 then does nothing because the '|' is already gone.
         // Result should be "ab\"cd~GHI";
 
-        let mut expected = (*example_item_name_with_null).map(|x| x as i8);
+        let mut expected = (*example_item_name_with_null).map(|x| x as c_char);
         unquote_then_known1(&mut expected);
 
         // t_list: entry 1 matches, entry 2 does not.
@@ -749,9 +749,9 @@ mod msg_charges_remaining_tests {
     use super::*;
     use serial_test::serial;
 
-    fn write_name(dst: &mut [i8], s: &[u8]) {
+    fn write_name(dst: &mut [c_char], s: &[u8]) {
         for (d, &b) in dst.iter_mut().zip(s.iter()) {
-            *d = b as i8;
+            *d = b as c_char;
         }
     }
 

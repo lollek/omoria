@@ -1,7 +1,9 @@
 ---
+name: add-rng-injection
 description: "Add RNG injection to an existing Rust function that calls rand directly, converting it to the _with_rng pattern."
-agent: "agent"
 argument-hint: "Which function to add RNG injection to"
+user-invocable: true
+disable-model-invocation: true
 ---
 
 Convert the specified function from direct `rand::thread_rng()` / `rand::random()` usage to the injectable `_with_rng` + wrapper pattern.

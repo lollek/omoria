@@ -1,0 +1,20 @@
+# Headless agent workers. Start tasks with scripts/delegate.sh rather than `up`.
+name: omoria-agents
+
+services:
+  worker:
+    image: omoria-agent:dev
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    entrypoint: ["agent-worker"]
+    labels:
+      omoria.agent: worker
+    # Only the Copilot-scoped token is forwarded; GH_TOKEN/GITHUB_TOKEN never are.
+    environment:
+      COPILOT_GITHUB_TOKEN:
+      COPILOT_MODEL:
+      COPILOT_MAX_AI_CREDITS:
+      OMORIA_REPO_URL:
+      OMORIA_GIT_NAME:
+      OMORIA_GIT_EMAIL:

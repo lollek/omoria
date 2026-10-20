@@ -13,7 +13,7 @@ ratings are estimates. Re-check a card's facts before starting it.
   own file under [epics/](epics/) once its stories are planned.
 * A **story** ports one C file, or one cohesive part of a large file, and is
   handed to one agent with the
-  [delegated-task prompt](../../.github/prompts/delegated-task.prompt.md).
+  [delegated-task skill](../../.github/skills/delegated-task/SKILL.md).
 * Only the next few waves are planned in detail. Later epics stay one table row
   until they are about to start.
 
