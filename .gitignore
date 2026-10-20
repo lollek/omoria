@@ -14,3 +14,4 @@ debug_rust.out
 /target
 **/*.rs.bk
 rusty-tags.vi
+agent-results/

@@ -49,6 +49,7 @@ CI runs the same gate on macOS and Linux (x86_64 and ARM64); runner results stil
 * [Source structure](docs/STRUCTURE.md)
 * [C-to-Rust migration backlog](docs/migration/backlog.md)
 * [Testing and verification levels](docs/testing.md)
+* [Agent containers (Dev Container and headless workers)](docs/agents/containers.md)
 * [Combat proposal (not implemented)](docs/proposals/combat-system-specification.md)
 * [Historical item guide](docs/legacy/item_guide.txt)
 
