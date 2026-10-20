@@ -41,6 +41,7 @@ static enum store_t expected_store;
 static long expected_subval;
 static long subval_after_roll;
 static const char *expected_cause;
+static long expected_damage = rolled_damage;
 
 static void record(enum event event) {
   assert(event_count < sizeof(events) / sizeof(events[0]));
@@ -129,7 +130,7 @@ void __wrap_enter_house(long y, long x) {
 }
 
 void __wrap_take_hit(long damage, const char *cause) {
-  assert(damage == rolled_damage);
+  assert(damage == expected_damage);
   assert(expected_cause != NULL && strcmp(cause, expected_cause) == 0);
   assert(event_count > 0);
   assert(events[event_count - 1] == ROLL ||
@@ -179,11 +180,7 @@ FORWARD_DAMAGE(trap_door, 4)
 FORWARD_COORDS(hidden_object, 6)
 FORWARD_NONE(teleport, 8)
 FORWARD_ALL(rockfall, 9)
-FORWARD_NONE(corrode_gas, 10)
 FORWARD_COORDS(summon_monster, 11)
-FORWARD_DAMAGE(fire, 12)
-FORWARD_DAMAGE(acid, 13)
-FORWARD_DAMAGE(poison_gas, 14)
 FORWARD_DAMAGE(chute, 20)
 FORWARD_DAMAGE(whirlpool, 123)
 
@@ -213,6 +210,7 @@ static void reset_case(long subval, bool searching, bool resting) {
   expected_subval = subval;
   subval_after_roll = 0;
   expected_cause = NULL;
+  expected_damage = rolled_damage;
   print_stat = 0;
   event_count = 0;
   C_message_capture_begin();
@@ -489,8 +487,43 @@ static void assert_status_traps(void) {
   finish_case();
 }
 
+static void assert_element_traps(void) {
+  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, DAMAGE};
+  const struct {
+    long subval;
+    const char *cause;
+    const char *message;
+  } traps[] = {
+      {10, "corrosion gas.", "A strange red gas surrounds you."},
+      {12, "a fire trap.", "You are enveloped in flames!"},
+      {13, "an acid trap.", "You are splashed with acid!"},
+      {14, "a poison gas trap.", "A pungent green gas surrounds you!"},
+  };
+
+  for (size_t i = 0; i < sizeof(traps) / sizeof(traps[0]); i++) {
+    reset_case(traps[i].subval, true, true);
+
+    expected_cause = traps[i].cause;
+    if (traps[i].subval == 10) {
+      C_seeded_rng_begin(42);
+      expected_damage = randint(8);
+      C_seeded_rng_end();
+    }
+
+    C_seeded_rng_begin(42);
+    hit_trap(&trap_y, &trap_x);
+    C_seeded_rng_end();
+    assert_events(expected, sizeof(expected) / sizeof(expected[0]));
+    assert(print_stat == 1);
+    if (traps[i].subval == 14)
+      assert(player_flags.poisoned >= 13 && player_flags.poisoned <= 35);
+    assert_message(traps[i].message);
+    finish_case();
+  }
+}
+
 static void assert_migrated_forwarding(void) {
-  const long subvals[] = {3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 20, 123};
+  const long subvals[] = {3, 4, 6, 8, 9, 11, 20, 123};
   const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, ROUTE};
   for (size_t i = 0; i < sizeof(subvals) / sizeof(subvals[0]); i++) {
     reset_case(subvals[i], true, true);
@@ -586,6 +619,7 @@ int main(void) {
     assert_arrow();
     if (TRAP_TEST_MIGRATED) {
       assert_status_traps();
+      assert_element_traps();
       assert_migrated_forwarding();
       assert_migrated_null_rejection();
       assert_migrated_dispatch_reads_after_roll();

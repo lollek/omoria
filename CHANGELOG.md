@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported fire, acid, corrosion-gas, and poison-gas traps to Rust.
 * Internal: Made arrow trap checks use seeded hit rolls instead of build-dependent linker wrapping.
 * Internal: Ported sleep, blindness, confusion, slowing, strength, and constitution traps to Rust.
 * Internal: Clarified potion interfaces without changing potion behavior.

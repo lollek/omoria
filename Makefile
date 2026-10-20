@@ -144,8 +144,7 @@ TRAP_WRAPS = search_off rest_off change_trap lite_spot damroll take_hit lose_sta
 	check_store_hours_and_enter \
 	check_store_hours enter_trading_post enter_bank enter_casino enter_fortress \
 	enter_house ht__covered_pit ht__trap_door ht__hidden_object \
-	ht__teleport ht__rockfall ht__corrode_gas ht__summon_monster \
-	ht__fire ht__acid ht__poison_gas \
+	ht__teleport ht__rockfall ht__summon_monster \
 	ht__chute ht__whirlpool
 
 .PHONY: test-traps
