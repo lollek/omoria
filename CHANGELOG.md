@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-* Internal: Moved store door data to a Rust static with the legacy C layout and values.
+* Internal: Moved store door data to a Rust static with named door kinds, preserving the legacy C layout and values.
 * Internal: Ported fire, cold, light, and poison effects to Rust with seeded C-caller checks.
 * Internal: Added a Docker Dev Container and headless Copilot agent workers for delegating tasks.
 * Internal: Ported acid and corrosion effects to Rust with seeded armor and headless damage checks.
