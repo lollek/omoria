@@ -40,5 +40,5 @@ Port the specified C function to Rust following the project's strict TDD workflo
 ### 6. Finish
 - Run `make check` to verify formatting, Clippy, all Rust tests, and the C/Rust build.
 - Check for new compiler warnings.
-- Update CHANGELOG.md under `## Unreleased` with a brief entry (prefix with "Internal:" for non-player-facing changes).
+- Update `CHANGELOG.md` under `## Unreleased` only if observable runtime behavior changes, following the [project changelog policy](../../copilot-instructions.md#definition-of-done-per-change--per-behavior). Behavior-preserving ports do not need an entry.
 - Update your story card's `Status:` line in the backlog; report RED evidence and untested integration boundaries.

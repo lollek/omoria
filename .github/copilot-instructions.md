@@ -53,10 +53,9 @@ A change is considered done only when all of these are true:
   - The repo may already have known warnings; **do not add new warnings attributable to your change**.
   - If new warnings appear in build output due to your change, fix them in the same change (or don’t proceed).
 - **Clarity:** If the logic is tricky/non-obvious, add a short comment explaining *why* (not restating *what*).
-- **Changelog:** Update `CHANGELOG.md` with a short bullet describing the change.
-  - Add it under **Unreleased**.
-  - Keep wording simple and avoid internal/implementation details.
-  - Prefix non-player-facing infrastructure or migration changes with `Internal:`.
+- **Changelog:** Update `CHANGELOG.md` only when observable runtime behavior changes (gameplay, output, save/load behavior, bug fixes, or meaningful performance changes).
+  - Add a short bullet under **Unreleased** describing the observable difference, not implementation details.
+  - Skip entries for behavior-preserving ports, refactors, tests, tooling, documentation, and instruction changes.
 
 ## Delegated task contract
 - State the single behavior, acceptance tests, allowed files, and excluded scope before delegation.

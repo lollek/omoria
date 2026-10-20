@@ -80,7 +80,7 @@ Follow existing module organization (domain-vertical slicing):
 
 1. `make check` — formatting, Clippy, all Rust tests, and the C/Rust build pass.
 2. No new compiler warnings.
-3. Update `CHANGELOG.md` under `## Unreleased`.
+3. Update `CHANGELOG.md` under `## Unreleased` only if observable runtime behavior changes, following the [project changelog policy](../../copilot-instructions.md#definition-of-done-per-change--per-behavior). Behavior-preserving ports do not need an entry.
 4. If the C function is now fully replaced, note which C code can be removed (but don't delete it without navigator approval).
 5. Update your story card's `Status:` line, distinguishing partial ports from completed behavior.
 6. Report RED evidence, final gate results, and boundaries that were not tested.

@@ -97,8 +97,9 @@ If a story feels too large when picked up, split it and give the parts new IDs
 * **Keep every C ABI.** Exported names, argument types, and pointer contracts
   stay the same, so unported callers are unaffected.
 * **Shared files:**
-  * `CHANGELOG.md`: one bullet under **Unreleased**, prefixed `Internal:`
-    unless player-visible. Keep both sides on merge conflicts.
+  * `CHANGELOG.md`: add a short bullet under **Unreleased** only for observable
+    runtime behavior changes, following the [project changelog policy](../../.github/copilot-instructions.md#definition-of-done-per-change--per-behavior).
+    Behavior-preserving ports do not need an entry. Keep both sides on merge conflicts.
   * Module registration (`lib.rs`, `player_action.rs`, `mod.rs`): add only
     your own `mod`/`pub use` lines.
   * C headers: remove prototypes only for functions you ported. Never change
@@ -122,7 +123,8 @@ If a story feels too large when picked up, split it and give the parts new IDs
 3. GREEN: port with behavior parity. Add `extern "C"` wrappers for C callers.
 4. REFACTOR with tests green.
 5. Delete the ported C functions, or reduce the file to a prompt shim.
-6. `make check`, changelog bullet, update your `Status:` line.
+6. `make check`, changelog bullet only if observable runtime behavior changes,
+   update your `Status:` line.
 
 ### Behavior Changes
 
