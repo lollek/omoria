@@ -42,7 +42,7 @@ scenarios; they do **not** prove complete gameplay workflows. See the
 [testing guide](docs/testing.md) for what remains unverified.
 The gate passes locally on macOS. Existing Clippy warnings remain non-blocking,
 and six legacy denied lints have scoped allowances to preserve existing behavior.
-CI runs the same gate on macOS and Linux; runner results still need confirmation.
+CI runs the same gate on macOS and Linux (x86_64 and ARM64); runner results still need confirmation.
 
 ## Documentation
 

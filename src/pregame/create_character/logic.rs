@@ -50,7 +50,7 @@ fn generate_player_age(player_race: &Race) -> u16 {
 fn unsafe_apply_history(race_stats: StatsFromRace) {
     // Process block of history text for pretty output
     for i in 0..5 {
-        unsafe { player::player_history[i][0] = '\0' as i8 };
+        unsafe { player::player_history[i][0] = 0 };
     }
 
     let mut i: usize = 0;
