@@ -6,14 +6,17 @@
 #if defined(__linux__) && defined(TRAP_TEST_GNU_WRAP)
 
 #include "../src/constants.h"
+#include "../src/combat/fighting.h"
+#include "../src/io.h"
 #include "../src/messages.h"
 #include "../src/player.h"
+#include "../src/random.h"
+#include "../src/spells.h"
 #include "../src/stores.h"
 #include "../src/traps.h"
 #include "../src/variables.h"
 
-/* Legacy hit_trap calls static handlers in its own object, bypassing --wrap.
- * The default exercises the migrated forwarding boundary and checked ABI. */
+/* The default exercises the migrated dispatcher, C ABI, and effect boundary. */
 #ifndef TRAP_TEST_MIGRATED
 #define TRAP_TEST_MIGRATED 1
 #endif
@@ -25,7 +28,7 @@ enum event {
   LIGHT,
   ROLL,
   ROUTE,
-  TO_HIT,
+  LOSE_STAT,
   DAMAGE
 };
 
@@ -33,7 +36,7 @@ static enum event events[16];
 static size_t event_count;
 static long trap_y = 7, trap_x = 9;
 static const long rolled_damage = 23;
-static bool store_open, arrow_hits;
+static bool store_open;
 static enum store_t expected_store;
 static long expected_subval;
 static long subval_after_roll;
@@ -82,6 +85,9 @@ long __wrap_damroll(const char *dice) {
   assert(!find_flag);
   assert(strcmp(dice, "3d7") == 0);
   record(ROLL);
+  /* Keep arrow hit checks sensitive to damage-roll ordering. */
+  if (expected_subval == 2)
+    (void)randint(1000000);
   if (subval_after_roll != 0) {
     t_list[3] = t_list[2];
     t_list[3].subval = subval_after_roll;
@@ -127,18 +133,21 @@ void __wrap_take_hit(long damage, const char *cause) {
   assert(expected_cause != NULL && strcmp(cause, expected_cause) == 0);
   assert(event_count > 0);
   assert(events[event_count - 1] == ROLL ||
-         events[event_count - 1] == TO_HIT);
+         events[event_count - 1] == LOSE_STAT);
   record(DAMAGE);
 }
 
-bool __wrap_managed_to_hit(long base, long level, long plus, long ac) {
-  if (base != 125 || level != 0 || plus != 0 || ac != 22)
-    fprintf(stderr, "Unexpected trap attack: base=%ld level=%ld plus=%ld ac=%ld\n",
-            base, level, plus, ac);
-  assert(base == 125 && level == 0 && plus == 0 && ac == 22);
+bool __wrap_lose_stat(enum stat_t stat, const char *message,
+                      const char *sustain_message) {
   assert(event_count > 0 && events[event_count - 1] == ROLL);
-  record(TO_HIT);
-  return arrow_hits;
+  assert(message != NULL && strcmp(message, "") == 0);
+  assert(sustain_message != NULL &&
+         strcmp(sustain_message, "A small dart hits you.") == 0);
+  assert(stat == STR || stat == CON);
+  record(LOSE_STAT);
+  if (player_flags.sustain[stat])
+    msg_print(sustain_message);
+  return true;
 }
 
 /* These doubles verify the exact surviving C handler signatures, including
@@ -167,9 +176,7 @@ bool __wrap_managed_to_hit(long base, long level, long plus, long ac) {
 
 FORWARD_ALL(covered_pit, 3)
 FORWARD_DAMAGE(trap_door, 4)
-FORWARD_NONE(sleep_gas, 5)
 FORWARD_COORDS(hidden_object, 6)
-FORWARD_DAMAGE(str_dart, 7)
 FORWARD_NONE(teleport, 8)
 FORWARD_ALL(rockfall, 9)
 FORWARD_NONE(corrode_gas, 10)
@@ -177,10 +184,6 @@ FORWARD_COORDS(summon_monster, 11)
 FORWARD_DAMAGE(fire, 12)
 FORWARD_DAMAGE(acid, 13)
 FORWARD_DAMAGE(poison_gas, 14)
-FORWARD_NONE(blind_gas, 15)
-FORWARD_NONE(confuse_gas, 16)
-FORWARD_DAMAGE(slow_dart, 17)
-FORWARD_DAMAGE(con_dart, 18)
 FORWARD_DAMAGE(chute, 20)
 FORWARD_DAMAGE(whirlpool, 123)
 
@@ -210,14 +213,22 @@ static void reset_case(long subval, bool searching, bool resting) {
   expected_subval = subval;
   subval_after_roll = 0;
   expected_cause = NULL;
+  print_stat = 0;
   event_count = 0;
   C_message_capture_begin();
 }
 
 static void assert_events(const enum event *expected, size_t count) {
+  if (event_count != count)
+    fprintf(stderr, "Trap %ld: expected %zu events, got %zu\n",
+            expected_subval, count, event_count);
   assert(event_count == count);
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
+    if (events[i] != expected[i])
+      fprintf(stderr, "Trap %ld, event %zu: expected %d, got %d\n",
+              expected_subval, i, expected[i], events[i]);
     assert(events[i] == expected[i]);
+  }
 }
 
 static void assert_message(const char *expected) {
@@ -225,6 +236,15 @@ static void assert_message(const char *expected) {
   assert(C_message_capture_count() == 1);
   assert(C_message_capture_get(0, message, sizeof(message)));
   assert(strcmp(message, expected) == 0);
+}
+
+static void assert_messages(const char *const *expected, size_t count) {
+  char message[256];
+  assert(C_message_capture_count() == count);
+  for (size_t i = 0; i < count; i++) {
+    assert(C_message_capture_get(i, message, sizeof(message)));
+    assert(strcmp(message, expected[i]) == 0);
+  }
 }
 
 static void finish_case(void) {
@@ -337,22 +357,140 @@ static void assert_open_pit(void) {
 }
 
 static void assert_arrow(void) {
-  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT,
-                                 ROLL, TO_HIT, DAMAGE};
-  for (int hit = 0; hit < 2; hit++) {
+  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, DAMAGE};
+  size_t hits = 0, misses = 0;
+  for (unsigned long long seed = 0; seed < 64; seed++) {
     reset_case(2, true, true);
-    arrow_hits = hit;
+    C_seeded_rng_begin(seed);
+    (void)randint(1000000);
+    const bool hit = managed_to_hit(125, 0, 0, 22);
+    const long next_roll = randint(1000000);
+    C_seeded_rng_end();
     expected_cause = "an arrow trap";
+    C_seeded_rng_begin(seed);
     hit_trap(&trap_y, &trap_x);
-    assert_events(expected, hit ? 7 : 6);
+    assert(randint(1000000) == next_roll);
+    C_seeded_rng_end();
+    assert_events(expected, hit ? 6 : 5);
     assert_message(hit ? "An arrow hits you." : "An arrow barely misses you.");
+    if (hit)
+      hits++;
+    else
+      misses++;
     finish_case();
   }
+  assert(hits > 0 && misses > 0);
+}
+
+static void force_trap_hit(void) {
+  equipment[Equipment_armor].ac = -C_player_ac_from_dex();
+  equipment[Equipment_armor].toac = 0;
+}
+
+static void assert_status_traps(void) {
+  const enum event prelude[] = {SEARCH, REST, CHANGE, LIGHT, ROLL};
+  const char *sleep_resisted[] = {
+      "A strange white mist surrounds you!", "You are unaffected."};
+  const char *sleep_unresisted[] = {
+      "A strange white mist surrounds you!", "You fall asleep."};
+  const char *blind[] = {"A black gas surrounds you!"};
+  const char *confused[] = {"A gas of scintillating colors surrounds you!"};
+  const char *dart_hit[] = {"A small dart hits you!"};
+  const char *dart_weakened[] = {
+      "A small dart hits you.", "A small dart weakens you!"};
+
+  reset_case(5, true, true);
+  player_flags.free_act = true;
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  assert_events(prelude, sizeof(prelude) / sizeof(prelude[0]));
+  assert(player_flags.paralysis == 0);
+  assert_messages(sleep_resisted, 2);
+  finish_case();
+
+  reset_case(5, true, true);
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  assert_events(prelude, sizeof(prelude) / sizeof(prelude[0]));
+  assert(player_flags.paralysis >= 5 && player_flags.paralysis <= 14);
+  assert_messages(sleep_unresisted, 2);
+  finish_case();
+
+  reset_case(5, true, true);
+  player_flags.paralysis = 3;
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  assert_events(prelude, sizeof(prelude) / sizeof(prelude[0]));
+  assert(player_flags.paralysis == 3);
+  assert(C_message_capture_count() == 0);
+  finish_case();
+
+  reset_case(15, true, true);
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  assert_events(prelude, sizeof(prelude) / sizeof(prelude[0]));
+  assert(player_flags.blind >= 51 && player_flags.blind <= 100);
+  assert_messages(blind, 1);
+  finish_case();
+
+  reset_case(16, true, true);
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  assert_events(prelude, sizeof(prelude) / sizeof(prelude[0]));
+  assert(player_flags.confused >= 16 && player_flags.confused <= 30);
+  assert_messages(confused, 1);
+  finish_case();
+
+  reset_case(17, true, true);
+  force_trap_hit();
+  expected_cause = "a dart trap";
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  const enum event slow_events[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, DAMAGE};
+  assert_events(slow_events, sizeof(slow_events) / sizeof(slow_events[0]));
+  assert(player_flags.slow >= 11 && player_flags.slow <= 30);
+  assert_messages(dart_hit, 1);
+  finish_case();
+
+  reset_case(7, true, true);
+  force_trap_hit();
+  player_flags.sustain[STR] = true;
+  expected_cause = "a dart trap";
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  const enum event strength_events[] = {
+      SEARCH, REST, CHANGE, LIGHT, ROLL, LOSE_STAT, DAMAGE};
+  assert_events(strength_events,
+                sizeof(strength_events) / sizeof(strength_events[0]));
+  assert((print_stat & 0x0001) != 0);
+  assert_messages(dart_weakened, 2);
+  finish_case();
+
+  reset_case(18, true, true);
+  force_trap_hit();
+  player_flags.sustain[CON] = true;
+  expected_cause = "a dart trap";
+  C_seeded_rng_begin(42);
+  hit_trap(&trap_y, &trap_x);
+  C_seeded_rng_end();
+  const enum event constitution_events[] = {
+      SEARCH, REST, CHANGE, LIGHT, ROLL, LOSE_STAT, DAMAGE};
+  assert_events(constitution_events,
+                sizeof(constitution_events) / sizeof(constitution_events[0]));
+  assert((print_stat & 0x0004) != 0);
+  assert_messages(dart_weakened, 2);
+  finish_case();
 }
 
 static void assert_migrated_forwarding(void) {
-  const long subvals[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-                          13, 14, 15, 16, 17, 18, 20, 123};
+  const long subvals[] = {3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 20, 123};
   const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, ROUTE};
   for (size_t i = 0; i < sizeof(subvals) / sizeof(subvals[0]); i++) {
     reset_case(subvals[i], true, true);
@@ -447,6 +585,7 @@ int main(void) {
     assert_open_pit();
     assert_arrow();
     if (TRAP_TEST_MIGRATED) {
+      assert_status_traps();
       assert_migrated_forwarding();
       assert_migrated_null_rejection();
       assert_migrated_dispatch_reads_after_roll();

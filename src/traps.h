@@ -47,12 +47,10 @@ void place_trap(long y, long x, long typ, long subval);
  */
 void place_rubble(long y, long x);
 
-/* Temporary C effect entry points forwarded by Rust until TR2-TR5 are ported. */
+/* Temporary C effect entry points forwarded by Rust until remaining groups are ported. */
 void ht__covered_pit(long dam, long y, long x);
 void ht__trap_door(long dam);
-void ht__sleep_gas(void);
 void ht__hidden_object(long y, long x);
-void ht__str_dart(long dam);
 void ht__teleport(void);
 void ht__rockfall(long dam, long y, long x);
 void ht__corrode_gas(void);
@@ -60,9 +58,5 @@ void ht__summon_monster(long y, long x);
 void ht__fire(long dam);
 void ht__acid(long dam);
 void ht__poison_gas(long dam);
-void ht__blind_gas(void);
-void ht__confuse_gas(void);
-void ht__slow_dart(long dam);
-void ht__con_dart(long dam);
 void ht__chute(long dam);
 void ht__whirlpool(long dam);

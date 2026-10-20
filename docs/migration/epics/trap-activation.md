@@ -170,9 +170,8 @@ Implemented in [activation.rs](../../../src/dungeon/trap/activation.rs),
 [activation/globals.rs](../../../src/dungeon/trap/activation/globals.rs), and
 [basic.rs](../../../src/dungeon/trap/basic.rs), using F-CELL and F-DMG.
 The `status.rs`, `element.rs`, `movement.rs`, and `spawn.rs` group files
-forward to the remaining C handlers; TR2-TR5 can replace their own group
-without editing the dispatcher. Secret-door and scare-monster activation
-remain no-ops. The C chest dispatcher is unchanged.
+isolate handler behavior; TR3-TR5 still forward to C. Secret-door and
+scare-monster activation remain no-ops. The C chest dispatcher is unchanged.
 
 Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
 both dungeon-trap and entrance subvals. Template data encodes these names
@@ -198,14 +197,16 @@ explicitly skips non-Linux hosts. Real entrance UI, interactive trap gameplay,
 trap-specific save/reload, and non-Linux C-caller characterization remain
 unverified.
 
-The harness initializes real equipment/armor state rather than wrapping the
-Rust-owned armor accessors: GNU `--wrap` does not redirect references resolved
-within the same object, which can vary with incremental code generation.
+The harness initializes real equipment/armor state and uses seeded real hit
+rolls rather than wrapping the Rust-owned armor accessors or `managed_to_hit`:
+GNU `--wrap` does not redirect references resolved within the same object,
+which can vary with architecture and incremental code generation. Arrow
+checks cover hits, misses, and the RNG position after the hit check.
 `CARGO_INCREMENTAL=0 make test-traps` exercises the non-incremental CI case.
 
 ### TR2. Status Traps (fan-out)
 
-Status: open. Depends on: TR1.
+Status: implemented in Rust. Depends on: TR1.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: the status-trap handler file and the matching `ht__*` functions in
@@ -219,6 +220,13 @@ Acceptance checks:
 
 * L1: each trap, with and without its resistance, sets the same flags and
   messages as C for a fixed seed.
+
+Implemented in [status.rs](../../../src/dungeon/trap/status.rs). Rust unit
+tests cover seeded duration ranges, free action, existing paralysis, hit/miss,
+and sustained strength/constitution messages. `make test-traps` exercises the
+global C ABI for all six activations and their flags/messages. C's `lose_stat`
+remains the stat-loss operation; the six `ht__*` implementations were removed
+from `traps.c`.
 
 ### TR3. Element Traps (fan-out)
 
