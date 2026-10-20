@@ -68,9 +68,6 @@ $(HDIR)/headless-screen.o: src/screen.c tests/support/terminal_redirects.h $(HFI
 $(HDIR)/headless-light.o: src/dungeon/light.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -c src/dungeon/light.c -o $@
 
-$(HDIR)/headless-effects.o: src/effects.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
-	$(CC) $(CFLAGS) $(HREDIRECT) -c src/effects.c -o $@
-
 $(HDIR)/headless-player.o: src/player.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -c src/player.c -o $@
 
@@ -96,9 +93,9 @@ test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES)) $(HDIR)/headless-io
 	./target/debug/message-ffi-test
 
 .PHONY: test-effects
-test-effects: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/effects.o src/player.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-effects.o $(HDIR)/headless-player.o
+test-effects: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o
 	cargo build
-	$(CC) $(LINKCFLAGS) tests/effects_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-effects.o $(HDIR)/headless-player.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/effects.o src/player.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/effects-ffi-test
+	$(CC) $(LINKCFLAGS) tests/effects_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/effects-ffi-test
 	./target/debug/effects-ffi-test
 
 .PHONY: test-headless
