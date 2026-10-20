@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.
 * Internal: Moved store door data to a Rust static with named door kinds, preserving the legacy C layout and values.
 * Internal: Ported hunger status and eating to Rust while keeping the C ABI.
 * Internal: Ported fire, cold, light, and poison effects to Rust with seeded C-caller checks.

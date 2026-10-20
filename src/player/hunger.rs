@@ -4,6 +4,11 @@ use std::ffi::CString;
 use super::regeneration::HungerStatus;
 use crate::model::PlayerFlags;
 
+#[cfg(not(test))]
+mod globals;
+#[cfg(not(test))]
+mod interop;
+
 const PLAYER_FOOD_MAX: i64 = 15000;
 const PLAYER_FOOD_FULL: i64 = 10000;
 const PLAYER_FOOD_ALERT: i64 = 2000;
@@ -35,6 +40,68 @@ struct EatOutcome {
     messages: Vec<&'static str>,
     redraw_hunger: bool,
     death_cause: Option<&'static str>,
+}
+
+trait RecalculationContext {
+    fn flags(&self) -> PlayerFlags;
+    fn set_foodc(&mut self, foodc: i64);
+    fn add_status(&mut self, flags: u64);
+    fn weight(&self) -> u16;
+    fn set_weight(&mut self, weight: u16);
+    fn min_weight(&self) -> u16;
+    fn add_paralysis(&mut self, turns: i64);
+    fn message(&mut self, message: &'static str);
+    fn interrupt(&mut self);
+    fn redraw(&mut self);
+    fn starve(&mut self);
+}
+
+#[cfg(test)]
+fn recalculate_with_rng(rng: &mut impl Rng, context: &mut impl RecalculationContext) {
+    recalculate(context, &mut |max| crate::rng::randint_with_rng(rng, max));
+}
+
+fn recalculate(context: &mut impl RecalculationContext, roll: &mut impl FnMut(i64) -> i64) {
+    if context.flags().hunger_item != 0 && context.flags().foodc > PLAYER_FOOD_ALERT + 15 {
+        context.set_foodc(PLAYER_FOOD_ALERT + 15);
+    }
+    if context.flags().foodc >= PLAYER_FOOD_ALERT {
+        return;
+    }
+    if context.flags().foodc >= PLAYER_FOOD_WEAK {
+        if context.flags().status & IS_HUNGERY == 0 {
+            context.add_status(IS_HUNGERY);
+            context.message("You are getting hungry.");
+            context.interrupt();
+            context.redraw();
+        }
+        return;
+    }
+    if context.flags().status & IS_WEAK == 0 {
+        context.add_status(IS_WEAK | IS_HUNGERY);
+        context.message("You are getting weak from hunger.");
+        context.interrupt();
+        context.redraw();
+        let weight = context.weight();
+        context.set_weight(weight - (f64::from(weight) * 0.015).trunc() as u16);
+        context.message("Your clothes seem to be getting loose.");
+        if context.weight() < context.min_weight() {
+            context.message("Oh no...  Now you've done it.");
+            context.starve();
+        }
+    }
+    // Preserve the legacy nesting: even the second fainting roll requires negative food.
+    if context.flags().foodc < 0 {
+        if roll(5) == 1 {
+            context.add_paralysis(roll(3));
+            context.message("You faint from the lack of food.");
+            context.interrupt();
+        } else if context.flags().foodc < PLAYER_FOOD_FAINT && roll(8) == 1 {
+            context.add_paralysis(roll(5));
+            context.message("You faint from the lack of food.");
+            context.interrupt();
+        }
+    }
 }
 
 fn status(foodc: i64) -> HungerStatus {
@@ -142,21 +209,25 @@ fn store_global_state(state: HungerState) {
     }
 }
 
+fn report_death(cause: &str) {
+    unsafe {
+        death = true;
+        moria_flag = true;
+        total_winner = false;
+        let cause = CString::new(cause).unwrap();
+        libc::strcpy(
+            std::ptr::addr_of_mut!(died_from).cast::<libc::c_char>(),
+            cause.as_ptr(),
+        );
+    }
+}
+
 fn report_eating(outcome: EatOutcome) {
     for message in outcome.messages {
         crate::term::msg_print(message);
     }
     if let Some(cause) = outcome.death_cause {
-        unsafe {
-            death = true;
-            moria_flag = true;
-            total_winner = false;
-            let cause = CString::new(cause).unwrap();
-            libc::strcpy(
-                std::ptr::addr_of_mut!(died_from).cast::<libc::c_char>(),
-                cause.as_ptr(),
-            );
-        }
+        report_death(cause);
     } else if outcome.redraw_hunger {
         unsafe { prt_hunger() };
     }
@@ -199,6 +270,201 @@ pub extern "C" fn player_hunger_eat(amount: libc::c_long) {
 mod tests {
     use super::*;
     use rand::{SeedableRng, StdRng};
+
+    struct RecalculationFixture {
+        flags: PlayerFlags,
+        weight: u16,
+        min_weight: u16,
+        events: Vec<String>,
+    }
+
+    impl RecalculationFixture {
+        fn new(foodc: i64, status: u64) -> Self {
+            let mut flags = PlayerFlags::new();
+            flags.foodc = foodc;
+            flags.status = status;
+            Self {
+                flags,
+                weight: 100,
+                min_weight: 50,
+                events: Vec::new(),
+            }
+        }
+
+        fn recalculate(&mut self) {
+            recalculate_with_rng(&mut StdRng::from_seed(&[1, 2, 3, 4][..]), self);
+        }
+    }
+
+    impl RecalculationContext for RecalculationFixture {
+        fn flags(&self) -> PlayerFlags {
+            self.flags
+        }
+        fn set_foodc(&mut self, foodc: i64) {
+            self.flags.foodc = foodc;
+        }
+        fn add_status(&mut self, flags: u64) {
+            self.flags.status |= flags;
+        }
+        fn weight(&self) -> u16 {
+            self.weight
+        }
+        fn set_weight(&mut self, weight: u16) {
+            self.weight = weight;
+            self.events.push(format!("weight:{weight}"));
+        }
+        fn min_weight(&self) -> u16 {
+            self.min_weight
+        }
+        fn add_paralysis(&mut self, turns: i64) {
+            self.flags.paralysis += turns;
+            self.events.push(format!("paralysis:{turns}"));
+        }
+        fn message(&mut self, message: &'static str) {
+            self.events.push(message.to_string());
+        }
+        fn interrupt(&mut self) {
+            self.events.push("interrupt".to_string());
+        }
+        fn redraw(&mut self) {
+            self.events.push("redraw".to_string());
+        }
+        fn starve(&mut self) {
+            self.events.push("starve".to_string());
+        }
+    }
+
+    #[test]
+    fn recalculation_hunger_item_caps_only_food_above_alert_plus_fifteen() {
+        for (foodc, expected) in [(2016, 2015), (2015, 2015), (2000, 2000)] {
+            let mut context = RecalculationFixture::new(foodc, 0x80);
+            context.flags.hunger_item = 1;
+            context.recalculate();
+            assert_eq!(context.flags.foodc, expected);
+            assert_eq!(context.flags.status, 0x80);
+            assert!(context.events.is_empty());
+        }
+        let mut context = RecalculationFixture::new(3000, 0);
+        context.recalculate();
+        assert_eq!(context.flags.foodc, 3000);
+    }
+
+    #[test]
+    fn recalculation_hungry_thresholds_interrupt_and_redraw_only_on_transition() {
+        for foodc in [1000, 1001, 1999, 2000, 2001] {
+            let mut context = RecalculationFixture::new(foodc, 0x80);
+            context.recalculate();
+            if foodc < 2000 {
+                assert_eq!(context.flags.status, 0x80 | IS_HUNGERY);
+                assert_eq!(
+                    context.events,
+                    ["You are getting hungry.", "interrupt", "redraw"]
+                );
+            } else {
+                assert_eq!(context.flags.status, 0x80);
+                assert!(context.events.is_empty());
+            }
+            context.events.clear();
+            context.recalculate();
+            assert!(context.events.is_empty());
+            assert_eq!(context.flags.foodc, foodc);
+            assert_eq!(context.weight, 100);
+        }
+    }
+
+    #[test]
+    fn recalculation_weak_transition_truncates_weight_loss_once() {
+        for (weight, expected) in [(0, 0), (66, 66), (67, 66), (100, 99), (200, 197)] {
+            let mut context = RecalculationFixture::new(999, 0x80);
+            context.weight = weight;
+            context.min_weight = 0;
+            context.recalculate();
+            assert_eq!(context.flags.status, 0x80 | IS_HUNGERY | IS_WEAK);
+            assert_eq!(context.flags.foodc, 999);
+            assert_eq!(context.weight, expected);
+            assert_eq!(
+                context.events,
+                [
+                    "You are getting weak from hunger.".to_string(),
+                    "interrupt".to_string(),
+                    "redraw".to_string(),
+                    format!("weight:{expected}"),
+                    "Your clothes seem to be getting loose.".to_string(),
+                ]
+            );
+            context.events.clear();
+            context.recalculate();
+            assert_eq!(context.weight, expected);
+            assert!(context.events.is_empty());
+        }
+    }
+
+    #[test]
+    fn recalculation_starves_only_below_minimum_weight_on_weak_transition() {
+        for (weight, dies) in [(99, true), (100, false), (101, false)] {
+            let mut context = RecalculationFixture::new(0, 0);
+            context.weight = weight;
+            context.min_weight = 99;
+            context.recalculate();
+            assert_eq!(context.events.iter().any(|event| event == "starve"), dies);
+            if dies {
+                assert_eq!(
+                    &context.events[5..],
+                    ["Oh no...  Now you've done it.", "starve"]
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn recalculation_does_not_faint_at_nonnegative_food_even_below_faint_threshold() {
+        for foodc in [0, 1, 299, 300, 301, 999] {
+            let mut context = RecalculationFixture::new(foodc, IS_HUNGERY | IS_WEAK);
+            context.recalculate();
+            assert_eq!(context.flags.paralysis, 0);
+            assert!(context.events.is_empty(), "foodc={}", foodc);
+        }
+    }
+
+    #[test]
+    fn recalculation_seeded_fainting_matches_both_legacy_roll_paths_and_no_faint() {
+        let mut covered = [false; 3];
+        for seed in 1..=256 {
+            let seed = [seed, 2, 3, 4];
+            let mut expected_rng = StdRng::from_seed(&seed[..]);
+            let (path, turns) = if crate::rng::randint_with_rng(&mut expected_rng, 5) == 1 {
+                (0, crate::rng::randint_with_rng(&mut expected_rng, 3))
+            } else if crate::rng::randint_with_rng(&mut expected_rng, 8) == 1 {
+                (1, crate::rng::randint_with_rng(&mut expected_rng, 5))
+            } else {
+                (2, 0)
+            };
+            let mut context = RecalculationFixture::new(-1, IS_HUNGERY | IS_WEAK);
+            context.flags.paralysis = 7;
+            let mut rng = StdRng::from_seed(&seed[..]);
+            recalculate_with_rng(&mut rng, &mut context);
+            assert_eq!(context.flags.paralysis, 7 + turns);
+            assert_eq!(
+                crate::rng::randint_with_rng(&mut rng, 1000),
+                crate::rng::randint_with_rng(&mut expected_rng, 1000),
+                "RNG consumption differs for seed {seed:?}"
+            );
+            if turns > 0 {
+                assert_eq!(
+                    context.events,
+                    [
+                        format!("paralysis:{turns}"),
+                        "You faint from the lack of food.".to_string(),
+                        "interrupt".to_string(),
+                    ]
+                );
+            } else {
+                assert!(context.events.is_empty());
+            }
+            covered[path] = true;
+        }
+        assert!(covered.iter().all(|covered| *covered), "all fainting paths");
+    }
 
     #[test]
     fn status_matches_every_threshold_boundary() {
