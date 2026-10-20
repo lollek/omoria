@@ -1,5 +1,7 @@
 {
-  // Shared with the headless workers in docker/compose.yml (see docs/agents/containers.md).
+  // Shared image with the headless workers in docker/compose.yml (see docs/agents/containers.md).
+  // Only the Copilot-scoped token is forwarded. Git credential and SSH agent forwarding are
+  // controlled by VS Code user settings on the host; the docs list the ones to change.
   "name": "omoria",
   "build": {
     "dockerfile": "Dockerfile",
@@ -7,12 +9,8 @@
   },
   "remoteUser": "dev",
   "containerEnv": {
-    "GH_TOKEN": "${localEnv:GH_TOKEN}",
     "COPILOT_GITHUB_TOKEN": "${localEnv:COPILOT_GITHUB_TOKEN}"
   },
-  "mounts": [
-    "source=omoria-cargo-registry,target=/usr/local/cargo/registry,type=volume"
-  ],
   "customizations": {
     "vscode": {
       "extensions": [

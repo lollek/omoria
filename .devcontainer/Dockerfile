@@ -1,6 +1,7 @@
 # Shared image for the omoria Dev Container and headless agent workers.
 # Mirrors the CI toolchain (.github/workflows/ci.yml): stable Rust + rustfmt/clippy,
 # a C toolchain and ncurses, plus git, gh and the Copilot CLI for delegated work.
+# Agents run autopilot here, so the image grants no root access (no sudo).
 # Build context is the repository root.
 FROM node:22-bookworm-slim AS node
 
@@ -20,7 +21,6 @@ RUN apt-get update \
         jq \
         less \
         libncurses-dev \
-        sudo \
     && install -d -m 0755 /etc/apt/keyrings \
     && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
         -o /etc/apt/keyrings/githubcli-archive-keyring.gpg \
@@ -42,8 +42,6 @@ RUN rustup component add rustfmt clippy
 
 RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
     && useradd --uid "${USER_UID}" --gid "${USER_GID}" -m -s /bin/bash "${USERNAME}" \
-    && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}" \
-    && chmod 0440 "/etc/sudoers.d/${USERNAME}" \
     && chown -R "${USERNAME}:${USERNAME}" "${CARGO_HOME}"
 
 COPY scripts/agent-worker.sh /usr/local/bin/agent-worker
@@ -52,7 +50,7 @@ RUN chmod 0755 /usr/local/bin/agent-worker
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
-# Pre-fetch crates so fresh clones build without hitting crates.io for every worker.
+# Pre-fetch crates into the image so each container builds from its own copy.
 COPY --chown=${USERNAME}:${USERNAME} Cargo.toml Cargo.lock /tmp/omoria-deps/
 RUN mkdir -p /tmp/omoria-deps/src \
     && touch /tmp/omoria-deps/src/lib.rs \
