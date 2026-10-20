@@ -27,15 +27,19 @@ impl EatContext for Context {
             .item()
     }
 
-    fn modify_flags(&mut self, modify: impl FnOnce(&mut PlayerFlags)) {
-        unsafe { modify(&mut *addr_of_mut!(player_flags)) };
+    fn add_status_duration(&mut self, status: Status, turns: i64) {
+        unsafe { *status.counter(&mut *addr_of_mut!(player_flags)) += turns };
     }
 
-    fn set_flags2(&mut self, flags2: u64) {
+    fn set_paralysis(&mut self, turns: i64) {
+        unsafe { player_flags.paralysis = turns };
+    }
+
+    fn clear_secondary_flag(&mut self, flag: u64) {
         self.selected
             .as_mut()
             .expect("selected food is live")
-            .set_flags2(flags2);
+            .clear_secondary_flag(flag);
     }
 
     fn cure(&mut self, status: Status) -> bool {
@@ -70,12 +74,14 @@ impl EatContext for Context {
         }
     }
 
-    fn hp_player(&mut self, amount: i64, cause: &'static [u8]) -> bool {
-        unsafe { spells::hp_player(amount, cause.as_ptr().cast()) }
+    fn hp_player(&mut self, amount: i64, cause: &str) -> bool {
+        let cause = CString::new(cause).expect("food damage causes contain no NUL bytes");
+        unsafe { spells::hp_player(amount, cause.as_ptr()) }
     }
 
-    fn take_hit(&mut self, amount: i64, cause: &'static [u8]) {
-        unsafe { crate::player::damage::take_hit(amount, cause.as_ptr().cast()) };
+    fn take_hit(&mut self, amount: i64, cause: &str) {
+        let cause = CString::new(cause).expect("food damage causes contain no NUL bytes");
+        unsafe { crate::player::damage::take_hit(amount, cause.as_ptr()) };
     }
 
     fn bless(&mut self, amount: i64) {

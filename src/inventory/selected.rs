@@ -21,10 +21,10 @@ impl SelectedItem {
         unsafe { self.node.as_ref().data }
     }
 
-    /// Updates the selected item's secondary flags without retaining a borrow
-    /// across calls into C.
-    pub(crate) fn set_flags2(&mut self, flags2: u64) {
-        unsafe { self.node.as_mut().data.flags2 = flags2 };
+    /// Clears a secondary flag without replacing unrelated item attributes or
+    /// retaining a borrow across calls into C.
+    pub(crate) fn clear_secondary_flag(&mut self, flag: u64) {
+        unsafe { self.node.as_mut().data.flags2 &= !flag };
     }
 
     /// Identifies the item and matching inventory subtypes via the shared API.

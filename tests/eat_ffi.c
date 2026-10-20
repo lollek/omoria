@@ -128,10 +128,72 @@ static void assert_poison_food_consumes_last_item_through_c_boundary(void) {
   finish_case(1);
 }
 
+static void assert_status_updates_preserve_other_player_flags(void) {
+  C_seeded_rng_begin(73);
+  const long poison = randint(10) + 3;
+  const long fear = randint(10) + 3;
+  const long confusion = randint(10) + 3;
+  const long hallucination = randint(200) + 25 * 3 + 200;
+  const long next = randint(1000);
+  C_seeded_rng_end();
+  reset_case();
+  treas_rec *item = food(257, 1 | (1UL << 2) | (1UL << 3) | (1UL << 4),
+                        2, 50, 3);
+  player_flags.poisoned = 5;
+  player_flags.afraid = 7;
+  player_flags.confused = 9;
+  player_flags.image = 11;
+  player_flags.blind = 13;
+  player_flags.hero = 15;
+  player_flags.paralysis = 17;
+
+  C_seeded_rng_begin(73);
+  C_player_action_eat_selected(item);
+  assert(randint(1000) == next);
+  C_seeded_rng_end();
+
+  assert(player_flags.poisoned == 5 + poison);
+  assert(player_flags.afraid == 7 + fear);
+  assert(player_flags.confused == 9 + confusion);
+  assert(player_flags.image == 11 + hallucination);
+  assert(player_flags.blind == 13 && player_flags.hero == 15);
+  assert(player_flags.paralysis == 17);
+  assert_message(0, "You feel terrified!");
+  assert_message(1, "You feel drugged.");
+  assert_message(2, "You have mushroom.");
+  finish_case(3);
+}
+
+static void assert_flavor_clears_only_the_selected_secondary_flag(void) {
+  static const char *messages[] = {"*munch* *munch*", "*crunch* *crunch*",
+                                   "*munch* *crunch*", "*crunch* *munch*"};
+  C_seeded_rng_begin(73);
+  const long flavor = randint(4);
+  const long next = randint(1000);
+  C_seeded_rng_end();
+  reset_case();
+  treas_rec *item = food(307, 1UL << 30, 2, 50, 0);
+  item->data.flags2 = (1UL << 63) | 3;
+
+  C_seeded_rng_begin(73);
+  C_player_action_eat_selected(item);
+  assert(randint(1000) == next);
+  C_seeded_rng_end();
+
+  assert(item->data.flags2 == ((1UL << 63) | 2));
+  assert(item->data.flags == (1UL << 30));
+  assert(item->data.number == 1 && inven_weight == 3);
+  assert_message(0, messages[flavor - 1]);
+  assert_message(1, "You have ration of food.");
+  finish_case(2);
+}
+
 int main(void) {
   assert(debug_file == NULL);
   assert_stack_consumption_updates_hunger_and_inventory();
   assert_poison_food_consumes_last_item_through_c_boundary();
+  assert_status_updates_preserve_other_player_flags();
+  assert_flavor_clears_only_the_selected_secondary_flag();
   puts("Eat C caller checks passed.");
   return 0;
 }

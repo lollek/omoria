@@ -1,80 +1,12 @@
 # Changelog
 
 ## Unreleased
-* Internal: Ported food effects and eating to Rust while keeping selection in C.
-* Internal: Clarified potion interfaces without changing potion behavior.
-* Internal: Ported potion drinking to Rust while keeping item selection in C, with seeded effect and inventory checks.
-* Internal: Made trap C-caller checks independent of incremental Rust builds by initializing real armor state.
-* Internal: Named the arrow trap's base attack score and kept damage causes as Rust strings until the C boundary.
-* Internal: Named shared trap and entrance activations and kept store identifiers separate, without changing legacy data.
-* Internal: Ported trap dispatch, open pits, and arrows to Rust while preserving C entrances and other trap effects.
-* Internal: Routed item generation through the seeded RNG, with repeatable Rust and headless rubble-loot checks.
-* Internal: Routed hit and confusion rolls through the seeded RNG, with repeatable Rust and headless bash checks.
-* Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.
-* Internal: Moved store door data to a Rust static with named door kinds, preserving the legacy C layout and values.
-* Internal: Ported hunger status and eating to Rust while keeping the C ABI.
-* Internal: Ported fire, cold, light, and poison effects to Rust with seeded C-caller checks.
-* Internal: Added a Docker Dev Container and headless Copilot agent workers for delegating tasks.
-* Internal: Ported acid and corrosion effects to Rust with seeded armor and headless damage checks.
-* Internal: Sped up `make check` by linking test harnesses without debug info, sharing harness objects, and skipping save round-trip checks in the interaction harness.
-* Internal: Ported floor and chest disarming to Rust while keeping the direction prompt in C.
-* Internal: Clarified weapon checks and terrain names in tunneling.
-* Internal: Ported tunneling to Rust while keeping the direction prompt and dungeon helpers in C.
-* Internal: Ported bashing to Rust while keeping direction prompts and combat calls in C.
-* Internal: Ported opening doors and chests to Rust while keeping the direction prompt in C.
-* Internal: Named cave lighting, openness, and floor-type helpers used by look.
-* Internal: Documented player-action context traits and their method contracts.
-* Internal: Clarified dungeon-level accessor names in stair movement.
-* Internal: Ported door jamming to Rust while keeping the direction prompt in C.
-* Cancelling the rest prompt no longer reads an unfinished input buffer or starts resting.
-* Internal: Ported rest parsing and state changes to Rust while keeping prompts and display in C.
-* Internal: Ported looking to Rust while keeping the direction prompt in C.
-* Internal: Ported lamp refilling to Rust with headless inventory and message checks.
-* Internal: Ported light-source toggling to Rust with headless checks for flags, messages, and dungeon lighting.
-* Internal: Ported stair movement to Rust, keeping the C entry points.
-* Internal: Reused the shared C-style text helper for door-closing monster names.
-* Item names containing non-ASCII bytes no longer hide special-attribute suffixes.
-* Internal: Ported door closing to Rust while keeping the direction prompt in C.
-* Internal: Added reusable C-style text helpers to simplify searching.
-* Internal: Ported searching to Rust with deterministic checks and bounded dungeon-cell access.
-* Internal: Verify repeatable headless movement, interaction, and save/reload scenarios in the check gate.
-* Internal: Added fixture-backed headless ration pickup checks covering position, inventory, and the pickup message.
-* Internal: Added a bounded main-loop entry with injected commands and terminal-free loop-control checks.
-* Internal: Added headless C caller checks for successful movement onto open floor.
-* Internal: Added fixture-backed headless movement and blocked-retry scenario checks.
-* Internal: Added a headless save/reload scenario using in-memory persistence.
-* Internal: Added a migration backlog with epics, sized stories, and dependency graphs for parallel porting.
-* Internal: Added reusable headless terminal doubles with scripted input and fail-fast prompt checks.
-* Empty character lists no longer crash when moving the selection down.
-* Internal: Added a tested successful-move state transition.
-* Internal: Save records can be applied to globals and verified through C/Rust boundary checks.
-* Internal: Added a scoped seeded RNG override with C begin/end calls for deterministic tests.
-* Internal: Documented headless-turn blockers and a deterministic pickup scenario for future gameplay tests.
-* Loading saves with unknown identified item entries now reports a data error instead of crashing.
-* Internal: Scoped message capture now bypasses C message rendering and prompts, with terminal-free C caller checks.
-* Character selection skips malformed save filenames and logs unreadable save folders instead of panicking while listing saves.
-* Internal: Character save loading, writing, deletion, and listing use injectable persistence with in-memory fixture tests.
+* Internal: Narrowed food state updates and documented eating interfaces without changing behavior.
 * Walking beyond the map edge no longer gives monsters a turn and stops running.
-* Internal: Added isolated movement decisions with injectable confusion RNG and C caller checks.
 * Character saves are now replaced atomically, so failed writes preserve the previous save.
 * Serialization failures no longer truncate existing character saves or the master list.
-* Internal: Shared JSON encoding for saves and added injectable master persistence with in-memory tests.
-* Internal: Link the Linux build against wide-character ncurses.
-* Internal: Added scoped message-stream capture and tests without changing message history retention.
 * Fix item generation crashing when the dungeon level is zero.
-* Internal: Dungeon item generation now supports injected RNGs; removed unreachable cursed item-quality branches.
-* Internal: Added save-file compatibility tests using a sanitized save fixture.
-* Internal: Cleaned up Clippy and compiler warnings without changing gameplay behavior.
-* Internal: Added automated C/Rust verification, isolated shared-state tests, and refreshed migration guidance for delegated tasks.
 * Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
-* Internal: Hit calculation (`managed_to_hit`) is now implemented in Rust.
-* Internal: `Wallet` now uses idiomatic Rust `From`/`Into` conversions for its `[i64; 7]` interop.
-* Internal: Monster template data and attribute queries are now implemented in Rust.
-* Internal: Dungeon traps migration: trap template data and basic trap placement/visibility logic (including rubble placement) are now implemented in Rust.
-* Internal: started migrating small Pascal helper functions (`pindex`, vowel and set-membership checks) from C to Rust.
-* Internal: random helper functions can now accept an injected RNG (for deterministic tests).
-* Internal: object-name marker cleanup (`|` / `^`) is now handled by the Rust text utility layer.
-* Internal: Messages about remaining item charges/quantity now use the Rust item naming implementation.
 * Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
 * Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
 

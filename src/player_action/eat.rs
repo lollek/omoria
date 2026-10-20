@@ -6,6 +6,9 @@ use crate::model::InventoryItem;
 #[cfg(not(test))]
 mod globals;
 
+// Drong has no typed JunkFoodSubType entry; keep its legacy code local.
+const EYEBALL_OF_DRONG_SUBTYPE: i64 = 270;
+
 #[derive(Clone, Copy, Debug)]
 enum Status {
     Poisoned,
@@ -13,6 +16,10 @@ enum Status {
     Afraid,
     Confused,
     Hoarse,
+    Heroism,
+    SuperHeroism,
+    Invulnerability,
+    Hallucination,
 }
 
 impl Status {
@@ -23,6 +30,10 @@ impl Status {
             Self::Afraid => &mut flags.afraid,
             Self::Confused => &mut flags.confused,
             Self::Hoarse => &mut flags.hoarse,
+            Self::Heroism => &mut flags.hero,
+            Self::SuperHeroism => &mut flags.shero,
+            Self::Invulnerability => &mut flags.invuln,
+            Self::Hallucination => &mut flags.image,
         }
     }
 }
@@ -94,11 +105,25 @@ impl FoodEffect {
     }
 }
 
+/// Player, spell, inventory, and display boundaries for eating selected food.
+///
+/// Implementations operate on caller-owned test state or exclusive game-thread
+/// globals. No player or item borrow may span a spell or other C callback.
+/// The selected node remains live through `remaining`; `destroy` invalidates it.
 trait EatContext {
+    /// Copies the selected item; must not be called after `destroy`.
     fn item(&mut self) -> Item;
-    fn modify_flags(&mut self, modify: impl FnOnce(&mut PlayerFlags));
-    fn set_flags2(&mut self, flags2: u64);
+    /// Adds turns to only the selected status counter, preserving other flags.
+    fn add_status_duration(&mut self, status: Status, turns: i64);
+    /// Replaces the paralysis duration, rather than adding to it.
+    fn set_paralysis(&mut self, turns: i64);
+    /// Clears the selected secondary flag without replacing other item flags.
+    fn clear_secondary_flag(&mut self, flag: u64);
+    /// Reduces the selected status counter to one if above one; returns whether
+    /// it changed. This does not print the end-of-status message.
     fn cure(&mut self, status: Status) -> bool;
+    /// Runs the C stat spell and returns its identification result. `"X"`
+    /// selects default messages; an empty string retains C's empty-message use.
     fn stat_effect(
         &mut self,
         effect: StatEffect,
@@ -106,19 +131,35 @@ trait EatContext {
         message: &'static str,
         second_message: &'static str,
     ) -> bool;
-    fn hp_player(&mut self, amount: i64, cause: &'static [u8]) -> bool;
-    fn take_hit(&mut self, amount: i64, cause: &'static [u8]);
+    /// Applies a signed HP change through the healing spell and returns its
+    /// identification result. `cause` describes negative amounts and has no NUL.
+    fn hp_player(&mut self, amount: i64, cause: &str) -> bool;
+    /// Applies damage through the player damage path, including death and UI
+    /// side effects. `cause` is a Rust string without embedded NUL bytes.
+    fn take_hit(&mut self, amount: i64, cause: &str);
+    /// Adds turns to the blessing counter through the C spell.
     fn bless(&mut self, amount: i64);
+    /// Activates the C aggravation spell for the given distance.
     fn aggravate_monsters(&mut self, distance: i64);
+    /// Sets the hunger subsystem to full before the item's nutrition is added.
     fn set_full(&mut self);
+    /// Reads the current level for discovery-experience rounding.
     fn player_level(&self) -> u16;
+    /// Awards experience through normal player progression.
     fn add_experience(&mut self, amount: i64);
+    /// Applies nutrition through the hunger subsystem, including its messages.
     fn eat(&mut self, amount: i64);
+    /// Prints one message, retaining C's flush behavior for an empty string.
     fn message(&mut self, message: &'static str);
+    /// Refreshes the cave after blindness is applied.
     fn draw_cave(&mut self);
+    /// Refreshes the player stat block.
     fn redraw_stats(&mut self);
+    /// Identifies the live selection and matching item subtypes.
     fn identify(&mut self);
+    /// Reports the post-consumption count while the selected node is still live.
     fn remaining(&mut self);
+    /// Consumes the selection exactly once, potentially freeing its last node.
     fn destroy(&mut self);
 }
 
@@ -128,20 +169,21 @@ fn apply_eyeball_effects_with_roll(
 ) -> bool {
     context.take_hit(
         100 + (0..10).map(|_| roll(8)).sum::<i64>(),
-        b"the Wrath of Ned\0",
+        "the Wrath of Ned",
     );
     context.cure(Status::Afraid);
     context.bless(roll(100) + 100);
-    context.modify_flags(|flags| {
-        flags.hero += roll(100) + 100;
-        flags.shero += roll(50) + 75;
-        flags.invuln += roll(15) + 10;
-        flags.image += roll(500) + roll(500) + roll(1000) + 5000;
-        flags.poisoned += roll(100) + 150;
-        flags.confused += roll(30) + 50;
-        flags.blind += roll(3) + 10;
-        flags.paralysis = 4;
-    });
+    context.add_status_duration(Status::Heroism, roll(100) + 100);
+    context.add_status_duration(Status::SuperHeroism, roll(50) + 75);
+    context.add_status_duration(Status::Invulnerability, roll(15) + 10);
+    context.add_status_duration(
+        Status::Hallucination,
+        roll(500) + roll(500) + roll(1000) + 5000,
+    );
+    context.add_status_duration(Status::Poisoned, roll(100) + 150);
+    context.add_status_duration(Status::Confused, roll(30) + 50);
+    context.add_status_duration(Status::Blind, roll(3) + 10);
+    context.set_paralysis(4);
 
     context.message("You hear a distant rumble of laughter...");
     context.message("You throw back your head and laugh back!");
@@ -171,7 +213,7 @@ fn apply_food_effects_with_roll(
     context: &mut impl EatContext,
     roll: &mut impl FnMut(i64) -> i64,
 ) -> bool {
-    if item.tval == u8::from(ItemType::JunkFood) && item.subval == 270 {
+    if item.tval == u8::from(ItemType::JunkFood) && item.subval == EYEBALL_OF_DRONG_SUBTYPE {
         return apply_eyeball_effects_with_roll(context, roll);
     }
 
@@ -183,40 +225,39 @@ fn apply_food_effects_with_roll(
         flags &= flags - 1;
         match FoodEffect::from_legacy_code(code) {
             Some(FoodEffect::Poison) => {
-                context.modify_flags(|player| player.poisoned += roll(10) + i64::from(item.level));
+                context.add_status_duration(Status::Poisoned, roll(10) + i64::from(item.level));
                 identified = true;
             }
             Some(FoodEffect::Blind) => {
-                context.modify_flags(|player| {
-                    player.blind += roll(250) + 10 * i64::from(item.level) + 100
-                });
+                context.add_status_duration(
+                    Status::Blind,
+                    roll(250) + 10 * i64::from(item.level) + 100,
+                );
                 context.draw_cave();
                 context.message("A veil of darkness surrounds you.");
                 identified = true;
             }
             Some(FoodEffect::Afraid) => {
-                context.modify_flags(|player| player.afraid += roll(10) + i64::from(item.level));
+                context.add_status_duration(Status::Afraid, roll(10) + i64::from(item.level));
                 context.message("You feel terrified!");
                 identified = true;
             }
             Some(FoodEffect::Confused) => {
-                context.modify_flags(|player| player.confused += roll(10) + i64::from(item.level));
+                context.add_status_duration(Status::Confused, roll(10) + i64::from(item.level));
                 context.message("You feel drugged.");
             }
             Some(FoodEffect::Hallucination) => {
-                context.modify_flags(|player| {
-                    player.image += roll(200) + 25 * i64::from(item.level) + 200
-                });
+                context.add_status_duration(
+                    Status::Hallucination,
+                    roll(200) + 25 * i64::from(item.level) + 200,
+                );
             }
             Some(FoodEffect::CurePoison) => identified = context.cure(Status::Poisoned),
             Some(FoodEffect::CureBlind) => identified = context.cure(Status::Blind),
             Some(FoodEffect::CureAfraid) => {
-                context.modify_flags(|player| {
-                    if player.afraid > 1 {
-                        player.afraid = 1;
-                        identified = true;
-                    }
-                });
+                if context.cure(Status::Afraid) {
+                    identified = true;
+                }
             }
             Some(FoodEffect::CureConfused) => identified = context.cure(Status::Confused),
             Some(FoodEffect::LoseStat(stat)) => {
@@ -243,13 +284,12 @@ fn apply_food_effects_with_roll(
                 context.message("Yum!");
             }
             Some(FoodEffect::Flavor) => {
-                let mut flags2 = item.flags2;
+                let flags2 = item.flags2;
                 let flavor = if flags2 == 0 {
                     0
                 } else {
                     let index = flags2.trailing_zeros();
-                    flags2 &= flags2 - 1;
-                    context.set_flags2(flags2);
+                    context.clear_secondary_flag(1_u64 << index);
                     index + 1
                 };
                 match flavor {
@@ -279,7 +319,7 @@ fn apply_food_effects_with_roll(
         }
 
         if damage != 0 {
-            identified = context.hp_player(damage, b"poisonous food.\0");
+            identified = context.hp_player(damage, "poisonous food.");
         }
     }
     identified
@@ -346,12 +386,16 @@ mod tests {
             self.item
         }
 
-        fn modify_flags(&mut self, modify: impl FnOnce(&mut PlayerFlags)) {
-            modify(&mut self.flags);
+        fn add_status_duration(&mut self, status: Status, turns: i64) {
+            *status.counter(&mut self.flags) += turns;
         }
 
-        fn set_flags2(&mut self, flags2: u64) {
-            self.item.flags2 = flags2;
+        fn set_paralysis(&mut self, turns: i64) {
+            self.flags.paralysis = turns;
+        }
+
+        fn clear_secondary_flag(&mut self, flag: u64) {
+            self.item.flags2 &= !flag;
         }
 
         fn cure(&mut self, status: Status) -> bool {
@@ -377,19 +421,13 @@ mod tests {
             true
         }
 
-        fn hp_player(&mut self, amount: i64, cause: &'static [u8]) -> bool {
-            self.record(format!(
-                "hp {amount} {}",
-                String::from_utf8_lossy(&cause[..cause.len() - 1])
-            ));
+        fn hp_player(&mut self, amount: i64, cause: &str) -> bool {
+            self.record(format!("hp {amount} {cause}"));
             self.hp_identified
         }
 
-        fn take_hit(&mut self, amount: i64, cause: &'static [u8]) {
-            self.record(format!(
-                "damage {amount} {}",
-                String::from_utf8_lossy(&cause[..cause.len() - 1])
-            ));
+        fn take_hit(&mut self, amount: i64, cause: &str) {
+            self.record(format!("damage {amount} {cause}"));
         }
 
         fn bless(&mut self, amount: i64) {
@@ -552,7 +590,7 @@ mod tests {
     fn eyeball_of_drong_applies_its_effects_and_identifies() {
         let item = Item {
             tval: ItemType::JunkFood.into(),
-            subval: 270,
+            subval: EYEBALL_OF_DRONG_SUBTYPE,
             number: 1,
             ..Item::default()
         };
@@ -615,6 +653,47 @@ mod tests {
         assert!(!identified);
         assert_eq!(context.item.flags2, 0b10);
         assert_eq!(context.events, ["*crunch* *crunch*"]);
+    }
+
+    #[test]
+    fn curing_fear_does_not_erase_an_earlier_identification() {
+        for fear in [0, 1, 7] {
+            let item = Item {
+                tval: ItemType::Food.into(),
+                flags: 1 | (1 << 7),
+                ..Item::default()
+            };
+            let mut context = Context::new(item);
+            context.flags.afraid = fear;
+
+            let identified = apply_food_effects_with_roll(item, &mut context, &mut |_| 1);
+
+            assert!(
+                identified,
+                "curing fear must preserve poison identification"
+            );
+            assert_eq!(context.flags.afraid, fear.min(1));
+        }
+    }
+
+    #[test]
+    fn eyeball_effects_require_both_the_junk_food_type_and_drong_subtype() {
+        for (item_type, subval) in [(ItemType::Food, 270), (ItemType::JunkFood, 269)] {
+            let item = Item {
+                tval: item_type.into(),
+                subval,
+                ..Item::default()
+            };
+            let mut context = Context::new(item);
+
+            assert!(!apply_food_effects_with_roll(
+                item,
+                &mut context,
+                &mut |_| { panic!("ordinary food must not roll eyeball effects") }
+            ));
+            assert!(context.events.is_empty());
+            assert_eq!(context.flags.paralysis, 0);
+        }
     }
 
     #[test]
