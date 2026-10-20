@@ -11,7 +11,7 @@ ABI before starting.
 
 ### LF1. Store Door Data
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: the `store_door` definition in [variables.c](../../../src/variables.c)
