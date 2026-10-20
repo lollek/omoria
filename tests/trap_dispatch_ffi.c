@@ -9,6 +9,7 @@
 #include "../src/combat/fighting.h"
 #include "../src/io.h"
 #include "../src/messages.h"
+#include "../src/misc.h"
 #include "../src/player.h"
 #include "../src/random.h"
 #include "../src/spells.h"
@@ -32,7 +33,7 @@ enum event {
   DAMAGE
 };
 
-static enum event events[16];
+static enum event events[128];
 static size_t event_count;
 static long trap_y = 7, trap_x = 9;
 static const long rolled_damage = 23;
@@ -42,6 +43,7 @@ static long expected_subval;
 static long subval_after_roll;
 static const char *expected_cause;
 static long expected_damage = rolled_damage;
+static long expected_movement_level;
 
 static void record(enum event event) {
   assert(event_count < sizeof(events) / sizeof(events[0]));
@@ -134,7 +136,22 @@ void __wrap_take_hit(long damage, const char *cause) {
   assert(expected_cause != NULL && strcmp(cause, expected_cause) == 0);
   assert(event_count > 0);
   assert(events[event_count - 1] == ROLL ||
-         events[event_count - 1] == LOSE_STAT);
+         events[event_count - 1] == LOSE_STAT ||
+         (expected_subval == 123 && events[event_count - 1] == DAMAGE));
+  if (expected_subval == 3) {
+    assert(!moria_flag && !teleport_flag && dun_level == 12);
+    assert(cave[trap_y][trap_x].tptr == 2);
+    assert(t_list[MAX_TALLOC].p1 == MAX_TALLOC - 1);
+    assert(C_message_capture_count() == 1);
+  } else if (expected_subval == 4 || expected_subval == 20) {
+    assert(moria_flag && !teleport_flag);
+    assert(dun_level == expected_movement_level);
+    assert(C_message_capture_count() == 2);
+  } else if (expected_subval == 123) {
+    assert(moria_flag && !teleport_flag);
+    assert(dun_level == 12 + (long)event_count - 4);
+    assert(C_message_capture_count() == event_count - 2);
+  }
   record(DAMAGE);
 }
 
@@ -153,16 +170,6 @@ bool __wrap_lose_stat(enum stat_t stat, const char *message,
 
 /* These doubles verify the exact surviving C handler signatures, including
  * damage and coordinates. They are unreachable in the legacy static object. */
-#define FORWARD_DAMAGE(name, subval)                                             \
-  void __wrap_ht__##name(long damage) {                                         \
-    assert(expected_subval == subval && damage == rolled_damage);               \
-    handler();                                                                \
-  }
-#define FORWARD_NONE(name, subval)                                               \
-  void __wrap_ht__##name(void) {                                                \
-    assert(expected_subval == subval);                                         \
-    handler();                                                                \
-  }
 #define FORWARD_COORDS(name, subval)                                             \
   void __wrap_ht__##name(long y, long x) {                                      \
     assert(expected_subval == subval && y == trap_y && x == trap_x);             \
@@ -175,18 +182,13 @@ bool __wrap_lose_stat(enum stat_t stat, const char *message,
     handler();                                                                \
   }
 
-FORWARD_ALL(covered_pit, 3)
-FORWARD_DAMAGE(trap_door, 4)
 FORWARD_COORDS(hidden_object, 6)
-FORWARD_NONE(teleport, 8)
 FORWARD_ALL(rockfall, 9)
 FORWARD_COORDS(summon_monster, 11)
-FORWARD_DAMAGE(chute, 20)
-FORWARD_DAMAGE(whirlpool, 123)
 
 static void reset_case(long subval, bool searching, bool resting) {
   memset(cave, 0, sizeof(cave));
-  memset(t_list, 0, sizeof(t_list));
+  tlink();
   memset(&player_flags, 0, sizeof(player_flags));
   memset(equipment, 0, sizeof(equipment));
   /* Rust-owned accessors cannot reliably be intercepted with GNU --wrap. */
@@ -211,6 +213,9 @@ static void reset_case(long subval, bool searching, bool resting) {
   subval_after_roll = 0;
   expected_cause = NULL;
   expected_damage = rolled_damage;
+  dun_level = 12;
+  moria_flag = false;
+  teleport_flag = false;
   print_stat = 0;
   event_count = 0;
   C_message_capture_begin();
@@ -523,7 +528,7 @@ static void assert_element_traps(void) {
 }
 
 static void assert_migrated_forwarding(void) {
-  const long subvals[] = {3, 4, 6, 8, 9, 11, 20, 123};
+  const long subvals[] = {6, 9, 11};
   const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, ROUTE};
   for (size_t i = 0; i < sizeof(subvals) / sizeof(subvals[0]); i++) {
     reset_case(subvals[i], true, true);
@@ -554,11 +559,14 @@ static void assert_migrated_null_rejection(void) {
 static void assert_migrated_dispatch_reads_after_roll(void) {
   reset_case(19, true, true);
   subval_after_roll = expected_subval = 3;
+  player_flags.ffall = true;
   hit_trap(&trap_y, &trap_x);
-  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL, ROUTE};
+  const enum event expected[] = {SEARCH, REST, CHANGE, LIGHT, ROLL};
   assert_events(expected, sizeof(expected) / sizeof(expected[0]));
   assert(cave[trap_y][trap_x].tptr == 3);
-  assert(C_message_capture_count() == 0);
+  const char *messages[] = {
+      "You fell into a covered pit.", "You gently float down."};
+  assert_messages(messages, 2);
   finish_case();
 }
 
@@ -609,6 +617,90 @@ static void assert_migrated_input_guards(void) {
   C_message_capture_end();
 }
 
+static void assert_movement_traps(void) {
+  const struct {
+    long subval;
+    const char *message;
+    const char *cause;
+  } traps[] = {
+      {3, "You fell into a covered pit.", "a covered pit"},
+      {4, "You fell through a trap door!", "a trap door"},
+      {8, "You hit a teleport trap!", NULL},
+      {20, "You fell down a chute!", "chute landing"},
+      {123, "You are swept into a whirlpool!", "drowning"},
+  };
+  bool saw_single = false, saw_multiple = false;
+  bool saw_shallow_chute = false, saw_deep_chute = false;
+  for (size_t i = 0; i < sizeof(traps) / sizeof(traps[0]); i++) {
+    const long subval = traps[i].subval;
+    for (int feather = 0; feather < 2; feather++) {
+      for (unsigned long long seed = 0; seed < 64; seed++) {
+        reset_case(subval, true, true);
+        player_flags.ffall = feather;
+        expected_cause = traps[i].cause;
+        long levels = subval == 4 ? 1 : 0;
+        C_seeded_rng_begin(seed);
+        if (subval == 20) {
+          levels = randint(6);
+          saw_shallow_chute |= levels == 1;
+          saw_deep_chute |= levels == 6;
+        } else if (subval == 123) {
+          do {
+            levels++;
+          } while (randint(2) != 1);
+          saw_single |= levels == 1;
+          saw_multiple |= levels > 1;
+        }
+        const long next_roll = randint(1000000);
+        C_seeded_rng_end();
+        expected_movement_level = 12 + levels;
+        C_seeded_rng_begin(seed);
+        hit_trap(&trap_y, &trap_x);
+        assert(randint(1000000) == next_roll);
+        C_seeded_rng_end();
+        assert(dun_level == expected_movement_level);
+        assert(moria_flag == (subval == 4 || subval == 20 || subval == 123));
+        assert(teleport_flag == (subval == 8));
+        assert(char_row == 3 && char_col == 4);
+        assert(cave[char_row][char_col].tptr == 0);
+        const bool replaces = subval == 3 && !feather;
+        assert(cave[trap_y][trap_x].tptr == (replaces ? MAX_TALLOC : 2));
+        assert(t_list[cave[trap_y][trap_x].tptr].subval ==
+               (replaces ? 1 : subval));
+        if (replaces) {
+          assert(t_list[MAX_TALLOC].tval == seen_trap);
+          assert(strcmp(t_list[MAX_TALLOC].damage, "2d6") == 0);
+        }
+        const long damages = feather || subval == 8 ? 0 :
+                             subval == 123 ? levels : 1;
+        assert(event_count == 5 + (size_t)damages);
+        const enum event prelude[] = {SEARCH, REST, CHANGE, LIGHT, ROLL};
+        for (size_t j = 0; j < 5; j++)
+          assert(events[j] == prelude[j]);
+        for (size_t j = 5; j < event_count; j++)
+          assert(events[j] == DAMAGE);
+        const char *messages[128];
+        size_t count = 0;
+        messages[count++] = traps[i].message;
+        if (subval == 4 || subval == 20 || subval == 123)
+          messages[count++] = " ";
+        if (feather && subval != 8 && subval != 123)
+          messages[count++] = subval == 20 ? "You gently slide down." :
+                                            "You gently float down.";
+        if (subval == 123 && !feather)
+          for (long j = 0; j < levels; j++) {
+            assert(count < sizeof(messages) / sizeof(messages[0]));
+            messages[count++] = "You are drowning!";
+          }
+        assert_messages(messages, count);
+        finish_case();
+      }
+    }
+  }
+  assert(saw_single && saw_multiple);
+  assert(saw_shallow_chute && saw_deep_chute);
+}
+
 int main(void) {
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_prelude_conditionals();
@@ -620,6 +712,7 @@ int main(void) {
     if (TRAP_TEST_MIGRATED) {
       assert_status_traps();
       assert_element_traps();
+      assert_movement_traps();
       assert_migrated_forwarding();
       assert_migrated_null_rejection();
       assert_migrated_dispatch_reads_after_roll();

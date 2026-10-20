@@ -33,38 +33,11 @@ void place_trap(long y, long x, long typ, long subval);
 void change_trap(long y, long x);
 void place_rubble(long y, long x);
 
-void ht__covered_pit(const long dam, const long y, const long x) {
-  msg_print("You fell into a covered pit.");
-  if (player_flags.ffall) {
-    msg_print("You gently float down.");
-  } else {
-    take_hit(dam, "a covered pit");
-    place_trap(y, x, 2, 1);
-  }
-}
-
-void ht__trap_door(const long dam) {
-  msg_print("You fell through a trap door!");
-  msg_print(" ");
-  moria_flag = true;
-  dun_level++;
-  if (player_flags.ffall) {
-    msg_print("You gently float down.");
-  } else {
-    take_hit(dam, "a trap door");
-  }
-}
-
 void ht__hidden_object(const long y, const long x) {
   cave[y][x].fm = false;
   pusht(cave[y][x].tptr);
   place_random_dungeon_item(y, x);
   msg_print("Hmmm, there was something under this rock.");
-}
-
-void ht__teleport(void) {
-  teleport_flag = true;
-  msg_print("You hit a teleport trap!");
 }
 
 void ht__rockfall(const long dam, const long y, const long x) {
@@ -88,31 +61,6 @@ void ht__summon_monster(const long y, const long x) {
       summon_land_monster(&ty, &tx, false);
     }
   }
-}
-
-void ht__chute(const long dam) {
-  msg_print("You fell down a chute!");
-  msg_print(" ");
-  moria_flag = true;
-  dun_level += randint(6);
-  if (player_flags.ffall) {
-    msg_print("You gently slide down.");
-  } else {
-    take_hit(dam, "chute landing");
-  }
-}
-
-void ht__whirlpool(const long dam) {
-  msg_print("You are swept into a whirlpool!");
-  msg_print(" ");
-  moria_flag = true;
-  do {
-    dun_level++;
-    if (!player_flags.ffall) { /*{XXX...swimming_worn}*/
-      msg_print("You are drowning!");
-      take_hit(dam, "drowning");
-    }
-  } while (randint(2) != 1);
 }
 
 void trigger_trap(const long y, const long x) {
