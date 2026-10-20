@@ -3,7 +3,8 @@
 Follow-ups found while closing epics that do not belong to a single epic.
 Back to the [backlog](../backlog.md).
 
-XC1-XC3 have no solid dependencies and can join any wave. XC4 is deferred.
+XC1-XC3, XC5, and XC6 have no solid dependencies and can join any wave. XC4
+is deferred.
 XC1, XC2, and XC3 all edit
 [headless_interaction.c](../../../tests/headless_interaction.c); run them one
 at a time or coordinate edits to that file.
@@ -102,3 +103,65 @@ Acceptance checks:
 * Existing open and bash Rust and headless checks stay green unchanged.
 
 Out of scope: lockpicking, stuck doors, and bash hit rolls.
+
+### XC5. C-Caller Checks for Hunger Eating and Status (fan-out)
+
+Status: open. Depends on: none (SE3 done).
+Size: S. Complexity: Low. Agent: light.
+
+Owns: [hunger_ffi.c](../../../tests/hunger_ffi.c).
+
+Behavior: tests only. SE3 tests `eat_with_rng` and `set_status` against an
+explicit `HungerState`, but the global glue in
+[hunger.rs](../../../src/player/hunger.rs) (reading and writing `player_flags`
+and `player_wt`, `max_allowable_weight`, `prt_hunger`, and the death flags) is
+not exercised through the C symbols. `make test-hunger` covers only
+`player_hunger_recalculate`.
+
+Acceptance checks:
+
+* L1: seeded `player_hunger_eat` past `PLAYER_FOOD_FULL` caps `foodc`, adds
+  10% weight, prints the fat message plus the seeded burp message, and redraws
+  hunger; eating into `FULL` prints "You are full."; negative `foodc` is reset
+  to 0 before adding; `IS_HUNGERY`/`IS_WEAK` are cleared.
+* L1: overeating past `max_allowable_weight` sets `death`, `moria_flag`,
+  clears `total_winner`, sets `died_from` to "gluttony", and skips the hunger
+  redraw.
+* L1: `player_hunger_set_status` for each `enum hunger_status_t` sets the C
+  food value and flags, and leaves unrelated status bits; `player_hunger_status`
+  returns the expected enum on each threshold boundary.
+
+Out of scope: production code changes and main-loop food consumption.
+
+### XC6. Shared C Global Declarations (fan-out)
+
+Status: open. Depends on: none. Recommended: before TR and IU fan-outs add
+more copies.
+Size: S. Complexity: Low. Agent: standard.
+
+Owns: [player/data.rs](../../../src/player/data.rs),
+[equipment.rs](../../../src/equipment.rs), and the modules that redeclare
+`player_flags` or `equipment`: `player_action/` (toggle light, disarm, bash,
+search, attack, open, rest, refill lamp), `effects/globals.rs`,
+`player/hunger.rs`, `player/player_extern.rs`, `text_lines_extern.rs`, and
+`save/equipment.rs`.
+Must not touch: files owned by open TR or IU stories.
+
+Behavior: about 13 Rust modules declare `static mut player_flags` and 6
+declare `static mut equipment` locally. The backlog's
+[Global Variables](../backlog.md#global-variables) rule says to choose a shared
+home when the next epic needs them; SE needed them and added more copies.
+Give each global a single crate-visible declaration (next to
+`player/data.rs` and `equipment.rs`) and migrate the existing users in one
+mechanical change. No behavior change; C ABI unchanged.
+
+Acceptance checks:
+
+* `rg 'static mut (player_flags|equipment)\b' src` finds one declaration per
+  global.
+* `make check` passes unchanged, including `test-effects`, `test-hunger`, and
+  the headless PA checks.
+
+Out of scope: typed accessors beyond what existing callers need, and other
+globals (`cave`, `door_list`, `print_stat`), unless the same pass finds them
+trivially.
