@@ -3,6 +3,8 @@
 ## Unreleased
 * Internal: Made arrow trap checks use seeded hit rolls instead of build-dependent linker wrapping.
 * Internal: Ported sleep, blindness, confusion, slowing, strength, and constitution traps to Rust.
+* Internal: Clarified potion interfaces without changing potion behavior.
+* Internal: Ported potion drinking to Rust while keeping item selection in C, with seeded effect and inventory checks.
 * Internal: Made trap C-caller checks independent of incremental Rust builds by initializing real armor state.
 * Internal: Named the arrow trap's base attack score and kept damage causes as Rust strings until the C boundary.
 * Internal: Named shared trap and entrance activations and kept store identifiers separate, without changing legacy data.

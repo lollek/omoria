@@ -5,8 +5,9 @@ C `spells.c` and are called through F-SPELLS, so `spells.c` is not a
 prerequisite. `use_magic.c` and `blow.c` belong to the MG epic. Back to the
 [backlog](../backlog.md).
 
-Rust item-use coverage today is only class eligibility in
-[logic/use_item.rs](../../../src/logic/use_item.rs).
+Rust item-use coverage includes class eligibility in
+[logic/use_item.rs](../../../src/logic/use_item.rs) and potion drinking in
+[player_action/quaff](../../../src/player_action/quaff/).
 
 ## Story Graph
 
@@ -25,7 +26,10 @@ graph LR
 
 ### IU1. Quaff Potion (pathfinder: F-ITEM, F-SPELLS)
 
-Status: open. Depends on: none.
+Status: implemented. Depends on: none. Potion effects and the selected-item
+lifecycle are in Rust; C keeps selection and prompt redraw. Seeded Rust tests
+cover effects 1-49 with spell doubles and the legacy identification/flag-offset
+quirks. C-caller checks cover real spell, inventory, and prompt boundaries.
 Size: M. Complexity: Medium. Agent: strong.
 
 Owns: [quaff_potion.c](../../../src/player_action/quaff_potion.c), a new Rust

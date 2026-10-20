@@ -31,6 +31,8 @@ pub mod flow;
 pub mod inventory;
 pub mod io;
 pub mod logic;
+#[cfg(not(test))]
+mod magic;
 pub mod master;
 pub mod master_interop;
 pub mod message;
