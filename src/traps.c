@@ -9,7 +9,6 @@
 #include "combat/fighting.h"
 #include "constants.h"
 #include "debug.h"
-#include "effects.h"
 #include "generate_monster/generate_monster.h"
 #include "io.h"
 #include "loot/loot.h"
@@ -56,36 +55,11 @@ void ht__trap_door(const long dam) {
   }
 }
 
-void ht__sleep_gas(void) {
-
-  if (player_flags.paralysis == 0) {
-    msg_print("A strange white mist surrounds you!");
-    if (player_flags.free_act) {
-      msg_print("You are unaffected.");
-    } else {
-      msg_print("You fall asleep.");
-      player_flags.paralysis += randint(10) + 4;
-    }
-  }
-}
-
 void ht__hidden_object(const long y, const long x) {
   cave[y][x].fm = false;
   pusht(cave[y][x].tptr);
   place_random_dungeon_item(y, x);
   msg_print("Hmmm, there was something under this rock.");
-}
-
-void ht__str_dart(const long dam) {
-  if (managed_to_hit(125, 0, 0, player_pac() + player_ptoac())) {
-    if (lose_stat(STR, "", "A small dart hits you.")) {
-      take_hit(dam, "a dart trap");
-      print_stat |= 0x0001;
-      msg_print("A small dart weakens you!");
-    }
-  } else {
-    msg_print("A small dart barely misses you.");
-  }
 }
 
 void ht__teleport(void) {
@@ -98,11 +72,6 @@ void ht__rockfall(const long dam, const long y, const long x) {
   pusht(cave[y][x].tptr);
   place_rubble(y, x);
   msg_print("You are hit by falling rock");
-}
-
-void ht__corrode_gas(void) {
-  corrode_gas("corrosion gas.");
-  msg_print("A strange red gas surrounds you.");
 }
 
 void ht__summon_monster(const long y, const long x) {
@@ -118,53 +87,6 @@ void ht__summon_monster(const long y, const long x) {
     } else {
       summon_land_monster(&ty, &tx, false);
     }
-  }
-}
-
-void ht__fire(const long dam) {
-  fire_dam(dam, "a fire trap.");
-  msg_print("You are enveloped in flames!");
-}
-
-void ht__acid(const long dam) {
-  acid_dam(dam, "an acid trap.");
-  msg_print("You are splashed with acid!");
-}
-
-void ht__poison_gas(const long dam) {
-  poison_gas(dam, "a poison gas trap.");
-  msg_print("A pungent green gas surrounds you!");
-}
-
-void ht__blind_gas(void) {
-  msg_print("A black gas surrounds you!");
-  player_flags.blind += randint(50) + 50;
-}
-
-void ht__confuse_gas(void) {
-  msg_print("A gas of scintillating colors surrounds you!");
-  player_flags.confused += randint(15) + 15;
-}
-
-void ht__slow_dart(const long dam) {
-  if (managed_to_hit(125, 0, 0, player_pac() + player_ptoac())) {
-    take_hit(dam, "a dart trap");
-    msg_print("A small dart hits you!");
-    player_flags.slow += randint(20) + 10;
-  } else {
-    msg_print("A small dart barely misses you.");
-  }
-}
-
-void ht__con_dart(const long dam) {
-  if (managed_to_hit(125, 0, 0, player_pac() + player_ptoac())) {
-    if (lose_stat(CON, "", "A small dart hits you.")) {
-      take_hit(dam, "a dart trap");
-      print_stat |= 0x0004;
-      msg_print("A small dart weakens you!");
-    }
-  } else {
-    msg_print("A small dart barely misses you.");
   }
 }
 

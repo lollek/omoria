@@ -70,7 +70,7 @@ Cover all of these. Skip a section explicitly ("Nothing to flag") rather than si
 - **Performance** — Unnecessary allocations or cloning in per-turn or per-tile hot paths (game loop, dungeon generation, lighting, monster AI). Watch for repeated FFI round-trips in tight loops.
 - **Refactoring opportunities** — Duplication, overly complex functions, poor naming, dead code left behind after a port (C functions now unused). Flag only changes that clearly improve the code. Avoid over-engineering and scope creep.
 - **Readability & maintainability** — Clear naming, function size/ordering, and comments that explain *why* for non-obvious logic (especially intentional legacy quirks).
-- **Definition of Done & scope** — `CHANGELOG.md` has a short bullet under **Unreleased**. Internal or migration changes start with `Internal:`. The wording is simple and avoids implementation detail. No new Rust or C warnings. `make check` would pass. Flag changes unrelated to the stated purpose.
+- **Definition of Done & scope** — Require a short `CHANGELOG.md` bullet under **Unreleased** only for observable runtime behavior changes, following the project changelog policy. Do not require entries for behavior-preserving ports, refactors, tests, tooling, documentation, or instruction changes. The wording describes the observable difference, not implementation details. No new Rust or C warnings. `make check` would pass. Flag changes unrelated to the stated purpose.
 
 ## Output Format
 

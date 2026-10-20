@@ -6,20 +6,21 @@
 //!
 //! - **Trap templates**: `TRAP_LIST_A`, `TRAP_LIST_B`, `RUBBLE` (static data)
 //! - **Placement**: `place_trap_global`, `change_trap_global`, `place_rubble_global`
-//! - **Activation**: `hit_trap`, open pits, arrows, and town entrance routing
+//! - **Activation**: `hit_trap`, open pits, arrows, elemental traps, and town entrance routing
 //! - **C ABI wrappers**: placement and `hit_trap` (in `interop`)
 //!
 //! ## Not yet ported
 //!
-//! - Other trap effects (forwarded to C by the per-group handler modules)
+//! - Other trap groups (forwarded to C by the per-group handler modules)
 //! - `trigger_trap` (chest traps)
 //! - Town entrance implementations
+
+const TRAP_BASE_TO_HIT: i64 = 125;
 
 #[cfg(not(test))]
 mod activation;
 mod basic;
 pub mod data;
-#[cfg(not(test))]
 mod element;
 mod globals;
 #[cfg(not(test))]
@@ -27,7 +28,6 @@ mod movement;
 mod placement;
 #[cfg(not(test))]
 mod spawn;
-#[cfg(not(test))]
 mod status;
 
 // Export C ABI wrappers for the parts of traps.c we've already ported.
