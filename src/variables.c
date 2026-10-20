@@ -209,59 +209,6 @@ bool total_winner = false;
 /*	{ Following are store definitions				} */
 store_type stores[MAX_STORES + 1];
 
-/*	{ Stores are just special traps			} */
-treasure_type store_door[MAX_STORES + MAX_UNNAMED + 5 + 1] = {
-    {"the entrance to the General Store", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 101, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Armory", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 102, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Weapon Smiths", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 103, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Temple", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 104, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Alchemy Shop", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 105, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Magic Shop", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 106, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Inn", entrance_to_store, 0x00000000, 0x00000000, 0, 0,
-     107, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Library", entrance_to_store, 0x00000000, 0x00000000,
-     0, 0, 109, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Music Shop", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 110, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Gem Store", entrance_to_store, 0x00000000, 0x00000000,
-     0, 0, 113, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the All-Nite Deli", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 116, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    /* this is the black market, it looks like a normal door */
-    {"the entrance to a building", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 118, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Trading Post", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 108, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Insurance Shop", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 111, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Bank", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 112, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Money Exchange", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 114, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to the Casino", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 115, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-
-    {"the entrance to a strange building", entrance_to_store, 0x00000000,
-     0x00000000, 0, 0, 117, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to a building", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 120, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to a building", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 121, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to a building", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 122, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to a building", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 123, 0, 0, 0, 0, 0, 0, "0d0", 0, 0},
-    {"the entrance to a building", entrance_to_store, 0x00000000, 0x00000000, 0,
-     0, 124, 0, 0, 0, 0, 0, 0, "0d0", 0, 0}
-
-};
-
 long mugging_chance; /* { Chance page gets mugged} */
 
 /*	{ Gold list (All types of gold and gems are defined here)	} */
