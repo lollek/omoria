@@ -27,7 +27,7 @@ src/dungeon/trap/
 ├── status.rs        # TR2 forwarding boundary
 ├── element.rs       # TR3 forwarding boundary
 ├── movement.rs      # Covered pit, trap door, teleport, chute, and whirlpool effects
-├── spawn.rs         # TR5 forwarding boundary
+├── spawn.rs         # TR5 spawn and rockfall effects
 └── test_support.rs  # Shared test helpers
 ```
 
@@ -75,9 +75,11 @@ Activation values such as 99 and 101-123 are not template indices.
 
 ## What's NOT yet ported
 
-- Remaining C trap effect handlers (`ht__*` functions)
 - `trigger_trap` (chest traps)
 - Town entrance implementations (routing is Rust; 119 is still unknown)
+
+TR5's effect handlers are Rust. Item placement and monster summoning still call
+their C implementations through FFI.
 
 Rust now exports `hit_trap(const long *y, const long *x)` with null checks and
 bounded cell access, preserving its pointer ABI. Non-null pointers must still

@@ -272,8 +272,8 @@ subsystem is fully migrated.
 * RNG with `_with_rng` variants and a seedable C-facing override →
   [rng/](../../src/rng/).
 * Text utilities from `text_lines.c` → `text_lines_extern.rs`.
-* Trap templates and placement → [dungeon/trap/](../../src/dungeon/trap/); activation remains
-  in C (see the [trap activation epic](epics/trap-activation.md)).
+* Trap templates, placement, and activation dispatch → [dungeon/trap/](../../src/dungeon/trap/);
+  remaining trap effects are tracked in the [trap activation epic](epics/trap-activation.md).
 * Monster templates → `generate_monster/` (the C file is compatibility glue).
 * Hit calculation (`managed_to_hit`) → [combat/fighting.rs](../../src/combat/fighting.rs).
 * Movement step decisions and confusion → `player_action/movement/`; C keeps

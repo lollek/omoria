@@ -134,7 +134,8 @@ after an explosion.
 
 ### TR1. Rust Trap Dispatcher (pathfinder: F-TRAP-DISPATCH)
 
-Status: implemented (dispatcher and two effects; remaining effects still in C).
+Status: implemented; TR1-TR5 are complete, with chest traps and final dispatch
+cleanup still open.
 Depends on: PA1. Recommended: SE1.
 Size: M. Complexity: High. Agent: strong.
 
@@ -150,9 +151,9 @@ redraw the tile, clear `find_flag`, then roll the item's damage with C
 fortress, house) dispatch to their C entry functions. Port `ht__open_pit` and
 `ht__arrow` to prove the handler pattern.
 
-Foundation: F-TRAP-DISPATCH. Create group files for TR2-TR5 that forward to
-the remaining C handlers, so fan-outs never edit the dispatcher. Use F-DMG
-for damage if SE1 is done; otherwise declare `take_hit` locally.
+Foundation: F-TRAP-DISPATCH. Group files for TR2-TR5 keep effect fan-outs
+independent of the dispatcher. Use F-DMG for damage if SE1 is done; otherwise
+declare `take_hit` locally.
 
 Acceptance checks:
 
@@ -170,8 +171,9 @@ Implemented in [activation.rs](../../../src/dungeon/trap/activation.rs),
 [activation/globals.rs](../../../src/dungeon/trap/activation/globals.rs), and
 [basic.rs](../../../src/dungeon/trap/basic.rs), using F-CELL and F-DMG.
 The `status.rs`, `element.rs`, `movement.rs`, and `spawn.rs` group files
-isolate handler behavior; TR5 still forwards to C. Secret-door and
-scare-monster activation remain no-ops. The C chest dispatcher is unchanged.
+isolate handler behavior. TR5 is ported; its item placement and monster
+summoning operations remain C boundaries. Secret-door and scare-monster
+activation remain no-ops. The C chest dispatcher is unchanged.
 
 Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
 both dungeon-trap and entrance subvals. Template data encodes these names
@@ -275,7 +277,7 @@ replacement. The five matching `ht__*` functions and declarations were removed.
 
 ### TR5. Spawning Traps (fan-out)
 
-Status: open. Depends on: TR1.
+Status: implemented in Rust. Depends on: TR1.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: the spawn-trap handler file and the matching `ht__*` functions.
@@ -289,6 +291,12 @@ Acceptance checks:
 * L1: seeded summon count and calls match C; use link-time doubles for
   monster placement.
 * L1: hidden object and rockfall leave the cell and `t_list` as in C.
+
+Implemented in [spawn.rs](../../../src/dungeon/trap/spawn.rs). The C effect
+handlers were removed; Rust retains the C item-placement and monster-summon
+boundaries, while rockfall uses Rust `place_rubble`. The C-caller test verifies
+trap-cell updates, item-list operations, messages, damage ordering, water/land
+summon routing, and seeded summon counts.
 
 ### TR6. Chest Traps (fan-out)
 

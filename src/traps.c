@@ -33,36 +33,6 @@ void place_trap(long y, long x, long typ, long subval);
 void change_trap(long y, long x);
 void place_rubble(long y, long x);
 
-void ht__hidden_object(const long y, const long x) {
-  cave[y][x].fm = false;
-  pusht(cave[y][x].tptr);
-  place_random_dungeon_item(y, x);
-  msg_print("Hmmm, there was something under this rock.");
-}
-
-void ht__rockfall(const long dam, const long y, const long x) {
-  take_hit(dam, "falling rock");
-  pusht(cave[y][x].tptr);
-  place_rubble(y, x);
-  msg_print("You are hit by falling rock");
-}
-
-void ht__summon_monster(const long y, const long x) {
-
-  cave[y][x].fm = false; /*{ Rune disappears...    }*/
-  pusht(cave[y][x].tptr);
-  cave[y][x].tptr = 0;
-  for (long i1 = 1; i1 <= 2 + randint(3); i1++) {
-    int64_t ty = char_row;
-    int64_t tx = char_col;
-    if (is_in(cave[ty][tx].fval, water_set)) {
-      summon_water_monster(&ty, &tx, false);
-    } else {
-      summon_land_monster(&ty, &tx, false);
-    }
-  }
-}
-
 void trigger_trap(const long y, const long x) {
   /*{ Chests have traps too...                              -RAK-   }*/
   /*{ Note: Chest traps are based on the FLAGS value                }*/

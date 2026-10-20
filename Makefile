@@ -149,7 +149,8 @@ TRAP_TEST_MIGRATED ?= 1
 TRAP_WRAPS = search_off rest_off change_trap lite_spot damroll take_hit lose_stat \
 	check_store_hours_and_enter \
 	check_store_hours enter_trading_post enter_bank enter_casino enter_fortress \
-	enter_house ht__hidden_object ht__rockfall ht__summon_monster
+	enter_house pusht place_random_dungeon_item summon_land_monster \
+	summon_water_monster
 
 .PHONY: test-traps
 ifeq ($(shell uname -s),Linux)
