@@ -12,7 +12,7 @@ at a time or coordinate edits to that file.
 
 ### XC1. Seeded RNG for Hit and Confusion Rolls (fan-out)
 
-Status: open. Depends on: none.
+Status: done (2026-10-20). Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: [rng/random.rs](../../../src/rng/random.rs),
@@ -22,10 +22,9 @@ Owns: [rng/random.rs](../../../src/rng/random.rs),
 Must not touch: `generate_item/` (XC2).
 
 Behavior: the production wrappers `managed_to_hit` and `resolve_direction`
-call `thread_rng()` directly, so `begin_c_seeded_rng` does not control them.
-Route both through the active RNG used by `randint` (expose the existing
-`with_active_rng` as `pub(crate)`). Without a seeded override this still uses
-the thread RNG, so gameplay is unchanged. Keep the C ABI of `managed_to_hit`.
+route through the active RNG used by `randint`. Without a seeded override this
+still uses the thread RNG, so gameplay is unchanged. The C ABI of
+`managed_to_hit` is unchanged.
 
 Acceptance checks:
 

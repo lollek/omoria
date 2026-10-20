@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Routed hit and confusion rolls through the seeded RNG, with repeatable Rust and headless bash checks.
 * Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.
 * Internal: Moved store door data to a Rust static with named door kinds, preserving the legacy C layout and values.
 * Internal: Ported hunger status and eating to Rust while keeping the C ABI.
