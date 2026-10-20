@@ -1,7 +1,8 @@
 # Epic SE: Status Effects
 
 Ports [effects.c](../../../src/effects.c) (219 lines) and
-[player/hunger.c](../../../src/player/hunger.c) (175 lines). The two halves
+[player/hunger.rs](../../../src/player/hunger.rs) (formerly `player/hunger.c`).
+The two halves
 are independent and can run in parallel. Back to the
 [backlog](../backlog.md).
 
@@ -90,15 +91,15 @@ Acceptance checks:
 * L1: eating near each boundary updates `foodc`, status, and messages as C
   for a fixed seed.
 
-Implemented in `src/player/hunger.rs`; recalculation remains in C for SE4.
+Implemented in `src/player/hunger.rs`; recalculation is also ported in SE4.
 Evidence: focused Rust tests cover threshold boundaries, flag transitions,
 negative food recovery, fullness messages, bloating, and gluttony. The C ABI
 symbols remain available. Full hunger recalculation and gameplay turns are
-not verified by these checks.
+not verified by these SE3 checks.
 
 ### SE4. Hunger Recalculation (fan-out)
 
-Status: open. Depends on: SE3.
+Status: done. Depends on: SE3.
 Size: S. Complexity: High. Agent: strong.
 
 Owns: the rest of `hunger.c`, its header, and the Rust hunger module.
@@ -114,3 +115,18 @@ Acceptance checks:
 * `hunger.c` is deleted; `main_loop.c` still links.
 
 Out of scope: running the main loop.
+
+Implemented in `src/player/hunger.rs` with game-thread global access and the
+unchanged C symbol in `src/player/hunger/`. The C source is removed; its
+header remains for callers. Per-turn food consumption remains in `main_loop.c`.
+Legacy behavior is preserved: weight loss happens only on entering weakness,
+and both fainting paths require negative food.
+
+Evidence: `cargo test player::hunger::tests` covers recalculation thresholds,
+the hunger-item cap, truncated weight loss, starvation boundaries, and seeded
+fainting/RNG consumption. `make test-hunger` passes against both the original C
+implementation and the Rust port, checking real C callers, hunger messages,
+rest/run interruption, stationary movement, paralysis, and starvation flags/cause.
+It also checks seeded RNG reentry through sighted stationary movement.
+The harness runs in `make check`. Full hunger gameplay turns, interactive
+terminal rendering, and hunger-specific save restoration are not verified.

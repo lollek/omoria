@@ -98,6 +98,12 @@ test-effects: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o 
 	$(CC) $(LINKCFLAGS) tests/effects_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/effects-ffi-test
 	./target/debug/effects-ffi-test
 
+.PHONY: test-hunger
+test-hunger: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o
+	cargo build
+	$(CC) $(LINKCFLAGS) tests/hunger_ffi.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-player.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/player.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/hunger-ffi-test
+	./target/debug/hunger-ffi-test
+
 .PHONY: test-headless
 test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS)
 	cargo build --features save-test-support
@@ -131,6 +137,7 @@ check:
 	$(MAKE) test-movement
 	$(MAKE) test-messages
 	$(MAKE) test-effects
+	$(MAKE) test-hunger
 	$(MAKE) test-save
 	$(MAKE) test-headless
 	$(MAKE) test-headless-interaction

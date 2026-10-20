@@ -11,8 +11,8 @@ enum hunger_status_t {
 enum hunger_status_t player_hunger_status(void);
 
 /*
- * Recalculate player hunger level.
- * This function both recalculates values and gives feedback.
+ * Update hunger warnings, weight loss, fainting, and starvation (Rust).
+ * Per-turn food consumption is handled by the caller.
  */
 void player_hunger_recalculate(void);
 

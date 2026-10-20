@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported hunger recalculation to Rust with seeded fainting, starvation, and C-caller checks.
 * Internal: Ported hunger status and eating to Rust while keeping the C ABI.
 * Internal: Ported fire, cold, light, and poison effects to Rust with seeded C-caller checks.
 * Internal: Added a Docker Dev Container and headless Copilot agent workers for delegating tasks.
