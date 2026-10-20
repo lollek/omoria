@@ -72,7 +72,7 @@ Acceptance checks:
 
 ### SE3. Hunger Status and Eating (fan-out)
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: `player_hunger_status`, `player_hunger_set_status`, and
@@ -89,6 +89,12 @@ Acceptance checks:
 * L0: every threshold boundary maps to the same status as C.
 * L1: eating near each boundary updates `foodc`, status, and messages as C
   for a fixed seed.
+
+Implemented in `src/player/hunger.rs`; recalculation remains in C for SE4.
+Evidence: focused Rust tests cover threshold boundaries, flag transitions,
+negative food recovery, fullness messages, bloating, and gluttony. The C ABI
+symbols remain available. Full hunger recalculation and gameplay turns are
+not verified by these checks.
 
 ### SE4. Hunger Recalculation (fan-out)
 
