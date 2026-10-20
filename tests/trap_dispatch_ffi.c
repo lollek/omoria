@@ -56,6 +56,9 @@ static long pushed_index;
 static size_t dungeon_item_count;
 static long dungeon_item_y, dungeon_item_x;
 static size_t land_summon_count, water_summon_count;
+static bool chest_trap_mode;
+static long chest_damage_values[3];
+static size_t chest_damage_count;
 
 static void record(enum event event) {
   assert(event_count < sizeof(events) / sizeof(events[0]));
@@ -144,6 +147,25 @@ void __wrap_enter_house(long y, long x) {
 }
 
 void __wrap_take_hit(long damage, const char *cause) {
+  if (chest_trap_mode) {
+    if (strcmp(cause, "a poison needle") == 0)
+      assert(damage >= 1 && damage <= 4);
+    else if (strcmp(cause, "a poison needle.") == 0)
+      assert(damage >= 1 && damage <= 6);
+    else {
+      assert(strcmp(cause, "an exploding chest") == 0);
+      assert(damage >= 5 && damage <= 40);
+      assert(cave[trap_y][trap_x].tptr == 0);
+    }
+    assert(chest_damage_count < sizeof(chest_damage_values) /
+                                    sizeof(chest_damage_values[0]));
+    chest_damage_values[chest_damage_count++] = damage;
+    if (event_count > 0)
+      assert(events[event_count - 1] == LOSE_STAT ||
+             events[event_count - 1] == DAMAGE || events[event_count - 1] == PUSH);
+    record(DAMAGE);
+    return;
+  }
   assert(damage == expected_damage);
   assert(expected_cause != NULL && strcmp(cause, expected_cause) == 0);
   assert(event_count > 0);
@@ -186,14 +208,16 @@ void __wrap_place_random_dungeon_item(long y, long x) {
 }
 
 bool __wrap_summon_land_monster(int64_t *y, int64_t *x, bool asleep) {
-  assert(*y == char_row && *x == char_col && !asleep);
+  assert(*y == (chest_trap_mode ? trap_y : char_row));
+  assert(*x == (chest_trap_mode ? trap_x : char_col) && !asleep);
   record(LAND_SUMMON);
   land_summon_count++;
   return true;
 }
 
 bool __wrap_summon_water_monster(int64_t *y, int64_t *x, bool asleep) {
-  assert(*y == char_row && *x == char_col && !asleep);
+  assert(*y == (chest_trap_mode ? trap_y : char_row));
+  assert(*x == (chest_trap_mode ? trap_x : char_col) && !asleep);
   record(WATER_SUMMON);
   water_summon_count++;
   return true;
@@ -201,6 +225,16 @@ bool __wrap_summon_water_monster(int64_t *y, int64_t *x, bool asleep) {
 
 bool __wrap_lose_stat(enum stat_t stat, const char *message,
                       const char *sustain_message) {
+  if (chest_trap_mode) {
+    assert(stat == STR);
+    assert(message != NULL && strcmp(message, "") == 0);
+    assert(sustain_message != NULL &&
+           strcmp(sustain_message, "You are unaffected.") == 0);
+    record(LOSE_STAT);
+    if (player_flags.sustain[stat])
+      msg_print(sustain_message);
+    return true;
+  }
   assert(event_count > 0 && events[event_count - 1] == ROLL);
   assert(message != NULL && strcmp(message, "") == 0);
   assert(sustain_message != NULL &&
@@ -251,6 +285,8 @@ static void reset_case(long subval, bool searching, bool resting) {
   dungeon_item_x = 0;
   land_summon_count = 0;
   water_summon_count = 0;
+  chest_trap_mode = false;
+  chest_damage_count = 0;
   C_message_capture_begin();
 }
 
@@ -661,6 +697,138 @@ static void assert_migrated_dispatch_reads_after_roll(void) {
   finish_case();
 }
 
+static void assert_chest_traps(void) {
+  const struct {
+    unsigned long flag;
+    const char *const *messages;
+    size_t message_count;
+  } cases[] = {
+      {0x10, (const char *const[]){"A small needle has pricked you!",
+                                   "You feel weakened!"}, 2},
+      {0x20, (const char *const[]){"A small needle has pricked you!"}, 1},
+      {0x40, (const char *const[]){"A puff of yellow gas surrounds you!",
+                                   "You choke and pass out."}, 2},
+      {0x80, (const char *const[]){"There is a sudden explosion!"}, 1},
+      {0x100, NULL, 0},
+  };
+  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+    for (int water = 0; water < 2; water++) {
+      long expected_damage[3] = {0};
+      size_t expected_damage_count = 0;
+      long expected_poison = 0, expected_paralysis = 0;
+      C_seeded_rng_begin(42);
+      if (cases[i].flag == 0x10)
+        expected_damage[expected_damage_count++] = randint(4);
+      if (cases[i].flag == 0x20) {
+        expected_damage[expected_damage_count++] = randint(6);
+        expected_poison = 10 + randint(20);
+      }
+      if (cases[i].flag == 0x40)
+        expected_paralysis = 10 + randint(20);
+      if (cases[i].flag == 0x80) {
+        long damage = 0;
+        for (int die = 0; die < 5; die++)
+          damage += randint(8);
+        expected_damage[expected_damage_count++] = damage;
+      }
+      const long expected_next_rng = randint(1000000);
+      C_seeded_rng_end();
+
+      reset_case(119, false, false);
+      chest_trap_mode = true;
+      find_flag = false;
+      cave[trap_y][trap_x].tptr = 2;
+      cave[trap_y][trap_x].fval = water ? water_set[0] : 0;
+      t_list[2].flags = cases[i].flag;
+      C_seeded_rng_begin(42);
+      trigger_trap(trap_y, trap_x);
+      assert(randint(1000000) == expected_next_rng);
+      C_seeded_rng_end();
+      assert(chest_damage_count == expected_damage_count);
+      for (size_t damage = 0; damage < expected_damage_count; damage++)
+        assert(chest_damage_values[damage] == expected_damage[damage]);
+      assert_messages(cases[i].messages, cases[i].message_count);
+      if (cases[i].flag == 0x10)
+        assert(player_flags.sustain[STR] == 0 && print_stat == 1);
+      if (cases[i].flag == 0x20)
+        assert(player_flags.poisoned == expected_poison);
+      if (cases[i].flag == 0x40)
+        assert(player_flags.paralysis == expected_paralysis);
+      if (cases[i].flag == 0x80)
+        assert(cave[trap_y][trap_x].tptr == 0);
+      if (cases[i].flag == 0x100) {
+        assert(water ? water_summon_count == 3 : land_summon_count == 3);
+        assert(C_message_capture_count() == 0);
+      }
+      if (cases[i].flag == 0x10)
+        assert(event_count == 2 && events[0] == LOSE_STAT &&
+               events[1] == DAMAGE);
+      if (cases[i].flag == 0x20)
+        assert(event_count == 1 && events[0] == DAMAGE);
+      if (cases[i].flag == 0x80)
+        assert(event_count == 1 && events[0] == DAMAGE);
+      finish_case();
+    }
+  }
+
+  reset_case(119, false, false);
+  chest_trap_mode = true;
+  find_flag = false;
+  cave[trap_y][trap_x].tptr = 2;
+  t_list[2].flags = 0x1f0;
+  long combined_damage[3];
+  C_seeded_rng_begin(42);
+  combined_damage[0] = randint(4);
+  combined_damage[1] = randint(6);
+  const long combined_poison = 10 + randint(20);
+  const long combined_paralysis = 10 + randint(20);
+  combined_damage[2] = 0;
+  for (int die = 0; die < 5; die++)
+    combined_damage[2] += randint(8);
+  const long combined_next_rng = randint(1000000);
+  C_seeded_rng_end();
+  C_seeded_rng_begin(42);
+  trigger_trap(trap_y, trap_x);
+  assert(randint(1000000) == combined_next_rng);
+  C_seeded_rng_end();
+  const char *combined_messages[] = {
+      "A small needle has pricked you!", "You feel weakened!",
+      "A small needle has pricked you!", "A puff of yellow gas surrounds you!",
+      "You choke and pass out.", "There is a sudden explosion!"};
+  assert_messages(combined_messages,
+                  sizeof(combined_messages) / sizeof(combined_messages[0]));
+  assert(player_flags.poisoned == combined_poison);
+  assert(player_flags.paralysis == combined_paralysis);
+  assert(chest_damage_count == 3);
+  for (size_t damage = 0; damage < chest_damage_count; damage++)
+    assert(chest_damage_values[damage] == combined_damage[damage]);
+  assert(print_stat == 1 && cave[trap_y][trap_x].tptr == 0);
+  assert(land_summon_count == 3 && water_summon_count == 0);
+  assert(event_count == 7);
+  assert(events[0] == LOSE_STAT && events[1] == DAMAGE);
+  assert(events[2] == DAMAGE && events[3] == DAMAGE);
+  assert(events[4] == LAND_SUMMON && events[5] == LAND_SUMMON &&
+         events[6] == LAND_SUMMON);
+  finish_case();
+
+  reset_case(119, false, false);
+  chest_trap_mode = true;
+  find_flag = false;
+  trigger_trap(-1, trap_x);
+  assert(C_message_capture_count() == 0 && event_count == 0);
+  assert(player_flags.poisoned == 0 && cave[trap_y][trap_x].tptr == 1);
+  C_message_capture_end();
+
+  reset_case(119, false, false);
+  chest_trap_mode = true;
+  find_flag = false;
+  cave[trap_y][trap_x].tptr = UCHAR_MAX;
+  trigger_trap(trap_y, trap_x);
+  assert(C_message_capture_count() == 0 && event_count == 0);
+  assert(player_flags.poisoned == 0 && cave[trap_y][trap_x].tptr == UCHAR_MAX);
+  C_message_capture_end();
+}
+
 static void assert_guard_rejected(void) {
   hit_trap(&trap_y, &trap_x);
   assert(event_count == 0);
@@ -807,6 +975,7 @@ int main(void) {
       assert_hidden_object_trap();
       assert_rockfall_trap();
       assert_summon_monster_trap();
+      assert_chest_traps();
       assert_migrated_null_rejection();
       assert_migrated_dispatch_reads_after_roll();
       assert_migrated_input_guards();

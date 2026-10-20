@@ -17,6 +17,12 @@ pub unsafe extern "C" fn hit_trap(y: *const libc::c_long, x: *const libc::c_long
 }
 
 #[no_mangle]
+#[cfg(not(test))]
+pub extern "C" fn trigger_trap(y: libc::c_long, x: libc::c_long) {
+    unsafe { super::chest::trigger_trap_global(y, x) }
+}
+
+#[no_mangle]
 pub extern "C" fn place_trap(
     y: libc::c_long,
     x: libc::c_long,
