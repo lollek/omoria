@@ -219,8 +219,7 @@ mod tests {
                 assert_eq!(item.name_bytes(), name.as_bytes());
                 assert_eq!(item.tval, 110);
                 assert_eq!(item.subval, *subval);
-                assert_eq!(&item.damage[..3], b"0d0");
-                assert_eq!(&item.damage[3..], &[0; 4]);
+                assert_eq!(item.damage.map(i16::from), b"0d0\0\0\0\0".map(i16::from));
                 assert_eq!(item.flags2, 0);
                 assert_eq!(item.flags, 0);
                 assert_eq!(item.p1, 0);
