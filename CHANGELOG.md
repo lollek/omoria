@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Internal: Ported sleep, blindness, confusion, slowing, strength, and constitution traps to Rust.
 * Internal: Made trap C-caller checks independent of incremental Rust builds by initializing real armor state.
 * Internal: Named the arrow trap's base attack score and kept damage causes as Rust strings until the C boundary.
 * Internal: Named shared trap and entrance activations and kept store identifiers separate, without changing legacy data.

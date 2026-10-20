@@ -1,10 +1,8 @@
-use super::super::basic::TrapEffects;
+use super::super::{basic::TrapEffects, TRAP_BASE_TO_HIT};
 use crate::{
     dungeon::cell::with_global_cells,
     model::{ActivationKind, Item, PlayerFlags, StoreKind},
 };
-
-const TRAP_BASE_TO_HIT: libc::c_long = 125;
 
 extern "C" {
     static mut search_flag: bool;

@@ -15,6 +15,8 @@
 //! - `trigger_trap` (chest traps)
 //! - Town entrance implementations
 
+const TRAP_BASE_TO_HIT: i64 = 125;
+
 #[cfg(not(test))]
 mod activation;
 mod basic;
@@ -27,7 +29,6 @@ mod movement;
 mod placement;
 #[cfg(not(test))]
 mod spawn;
-#[cfg(not(test))]
 mod status;
 
 // Export C ABI wrappers for the parts of traps.c we've already ported.

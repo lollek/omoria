@@ -128,16 +128,16 @@ test-save: $(filter-out src/main.o,$(OBJFILES))
 	$(CC) $(LINKCFLAGS) tests/save_apply_ffi.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/save-apply-ffi-test
 	./target/debug/save-apply-ffi-test
 
-# Set to 0 only when characterizing the legacy C dispatcher (static handlers,
-# unchecked pointers). The normal check gate covers migrated forwarding/nulls.
+# Set to 0 only when characterizing the legacy C dispatcher (unchecked
+# pointers). The normal check gate covers migrated effects and null rejection.
 TRAP_TEST_MIGRATED ?= 1
-TRAP_WRAPS = search_off rest_off change_trap lite_spot damroll take_hit \
+TRAP_WRAPS = search_off rest_off change_trap lite_spot damroll take_hit lose_stat \
 	managed_to_hit check_store_hours_and_enter \
 	check_store_hours enter_trading_post enter_bank enter_casino enter_fortress \
-	enter_house ht__covered_pit ht__trap_door ht__sleep_gas ht__hidden_object \
-	ht__str_dart ht__teleport ht__rockfall ht__corrode_gas ht__summon_monster \
-	ht__fire ht__acid ht__poison_gas ht__blind_gas ht__confuse_gas \
-	ht__slow_dart ht__con_dart ht__chute ht__whirlpool
+	enter_house ht__covered_pit ht__trap_door ht__hidden_object \
+	ht__teleport ht__rockfall ht__corrode_gas ht__summon_monster \
+	ht__fire ht__acid ht__poison_gas \
+	ht__chute ht__whirlpool
 
 .PHONY: test-traps
 ifeq ($(shell uname -s),Linux)
