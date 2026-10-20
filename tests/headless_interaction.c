@@ -961,7 +961,7 @@ static void assert_tunnel_rubble_scenario(bool success, bool loot, bool lit) {
   cave[row][col].is_permanently_lit = lit;
   const cave_type original = cave[row][col];
   const treasure_type original_item = t_list[ration_slot];
-  seed_for_tunnel(180, 0, success, loot);
+  const uint64_t seed = seed_for_tunnel(180, 0, success, loot);
   const size_t drawing = headless_terminal_counts().drawing;
   C_player_action_tunnel_target(row, col);
   if (success) {
@@ -985,6 +985,26 @@ static void assert_tunnel_rubble_scenario(bool success, bool loot, bool lit) {
     assert_open_messages("You dig in the rubble...", NULL, NULL);
   }
   assert(turn == 1 && turn_counter == 100 && !reset_flag);
+  if (success && loot) {
+    const treasure_type generated_item = t_list[cave[row][col].tptr];
+    end_pickup_scenario();
+
+    begin_pickup_scenario();
+    equip_tunnel_tool();
+    const long replay_row = char_row;
+    const long replay_col = char_col + 1;
+    t_list[ration_slot].tval = rubble;
+    cave[replay_row][replay_col].fopen = false;
+    cave[replay_row][replay_col].fm = true;
+    cave[replay_row][replay_col].is_permanently_lit = lit;
+    C_seeded_rng_end();
+    C_seeded_rng_begin(seed);
+    C_player_action_tunnel_target(replay_row, replay_col);
+    assert(cave[replay_row][replay_col].tptr > 0);
+    assert_same_item(&t_list[cave[replay_row][replay_col].tptr], &generated_item);
+    end_pickup_scenario();
+    return;
+  }
   end_pickup_scenario();
 }
 
