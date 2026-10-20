@@ -16,8 +16,8 @@ max_workers=${MAX_WORKERS:-5}
 
 [[ $task_id =~ ^[A-Za-z0-9._-]+$ ]] || { echo "invalid task id: $task_id" >&2; exit 2; }
 [[ -r $task_file ]] || { echo "task file not readable: $task_file" >&2; exit 2; }
-[[ -n ${GH_TOKEN:-}${COPILOT_GITHUB_TOKEN:-} ]] || {
-    echo "export GH_TOKEN (or COPILOT_GITHUB_TOKEN) first; see docs/agents/containers.md" >&2
+[[ -n ${COPILOT_GITHUB_TOKEN:-} ]] || {
+    echo "export COPILOT_GITHUB_TOKEN (a Copilot-only token) first; see docs/agents/containers.md" >&2
     exit 2
 }
 
@@ -47,11 +47,16 @@ fi
 mkdir -p "$results"
 cp "$task_file" "$results/task.md"
 
+OMORIA_GIT_NAME=${OMORIA_GIT_NAME:-$(git -C "$repo_root" config user.name || true)}
+OMORIA_GIT_EMAIL=${OMORIA_GIT_EMAIL:-$(git -C "$repo_root" config user.email || true)}
+export OMORIA_GIT_NAME OMORIA_GIT_EMAIL
+
 "${compose[@]}" run -d --rm --name "$container" \
     -v "$results:/results" \
     worker "$task_id" /results/task.md "$base_branch" >/dev/null
 
-echo "Started $container on branch agent/$task_id (base $base_branch)."
+echo "Started $container on branch agent/$task_id (base $base_branch, max ${COPILOT_MAX_AI_CREDITS:-500} AI credits)."
 echo "  follow:  tail -f $results/worker.log"
 echo "  status:  cat $results/status.json   (written when the worker exits)"
+echo "  import:  scripts/agent-import.sh $task_id   (after it finishes)"
 echo "  stop:    docker stop $container"

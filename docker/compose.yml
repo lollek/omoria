@@ -10,17 +10,11 @@ services:
     entrypoint: ["agent-worker"]
     labels:
       omoria.agent: worker
+    # Only the Copilot-scoped token is forwarded; GH_TOKEN/GITHUB_TOKEN never are.
     environment:
       COPILOT_GITHUB_TOKEN:
-      GH_TOKEN:
       COPILOT_MODEL:
       COPILOT_MAX_AI_CREDITS:
       OMORIA_REPO_URL:
       OMORIA_GIT_NAME:
       OMORIA_GIT_EMAIL:
-    volumes:
-      - cargo-registry:/usr/local/cargo/registry
-
-volumes:
-  cargo-registry:
-    name: omoria-cargo-registry
