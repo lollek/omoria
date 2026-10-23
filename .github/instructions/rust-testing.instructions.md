@@ -46,7 +46,7 @@ let result = managed_to_hit_with_rng(&mut rng, base_to_hit, level, plus_to_hit, 
   assert!((1..=100).contains(&value));
   assert!(hits > 0, "Expected at least one hit via natural 1");
   ```
-- Use exact assertions only when testing determinism itself (two identical seeds produce identical output).
+- Use exact assertions for deterministic output contracts, including rendered text, spacing, and field positions. For RNG-dependent results, reserve exact assertions for determinism itself (two identical seeds produce identical output).
 - Always include a failure message for non-obvious assertions.
 
 ## Test naming
@@ -59,6 +59,10 @@ Use `snake_case` names that describe the behavior being tested:
 ## One behavior per test
 
 Each test should verify a single behavior or edge case. Prefer multiple small tests over one large test with many assertions.
+
+## Running focused tests
+
+- If the IDE test tool reports "No tests found" for Rust tests, switch to `cargo test <test_name_or_module_path> --lib` rather than retrying the same discovery mechanism.
 
 ## Shared state
 
