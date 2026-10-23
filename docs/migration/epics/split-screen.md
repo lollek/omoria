@@ -373,7 +373,7 @@ Acceptance checks:
 
 ### SL5. Inventory Panel (fan-out)
 
-Status: open. Depends on: SL4.
+Status: implemented; sidebar tests and `make check` pass. Depends on: SL4.
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: the sidebar module.
@@ -381,6 +381,9 @@ Owns: the sidebar module.
 Behavior:
 * A read-only inventory list in the Split sidebar, using the same letters as
   the inventory command.
+* The first two rows of the inventory rect are a blank separator and an
+  `Inventory` heading, leaving eight rows for items without changing layout
+  geometry or minimum terminal size.
 * Names are truncated to the panel width. When the list does not fit, the
   last line reads "...N more".
 * Redraws with the equipment panel every tick.
@@ -391,6 +394,17 @@ Acceptance checks:
 * L1: the panel snapshot is read from the C inventory list without mutating
   it.
 * Changelog entry.
+
+Implementation notes:
+
+* [sidebar.rs](../../../src/user_interface/sidebar.rs) uses the existing
+  inventory clone and item-name helpers without changing selection flags,
+  container metadata, or list links.
+* The equipment tick hook also redraws the Split inventory rect, including
+  blank rows to clear removed items. Classic does not draw an inventory panel.
+* Rust tests cover fitted lines, overflow counts, redraws, and an ABI-compatible
+  `inventory_list` fixture. Live terminal drawing and the inventory panel's
+  C caller path have not been exercised end to end.
 
 ### SL6. Visible Monsters Panel (fan-out)
 
