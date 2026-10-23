@@ -9,4 +9,5 @@ applyTo: "src/user_interface/**/*.rs,src/term*.rs,src/term.c,src/io.c,src/messag
 - Test the state visible while waiting for the next command, not just immediately after printing. For message-log styling, cover player messages, monster responses, turn advancement, status updates, redraws, and the next accepted command; assert the style of every affected line. Keep prompt acknowledgments separate from command boundaries.
 - When adding label/value fields, match the neighboring value-start column rather than inserting a single space after each label. Preserve existing label and colon conventions.
 - Test the production renderer's exact text, including padding, so the tests detect value-column misalignment. Compare the expected value-start position with existing fields in the same column.
+- When preserving an existing Classic display, derive expected lines from the legacy formatting (including label padding and empty values) instead of approximating spacing by eye.
 - Keep text-formatting evidence separate from terminal-drawing evidence: passing string assertions does not verify live screen placement or visibility.
