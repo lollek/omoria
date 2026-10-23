@@ -1,4 +1,4 @@
-use super::layout::{current_layout, draw_lines, render_lines, Layout, Rect};
+use super::layout::{current_layout, draw_lines, render_lines, Layout, LayoutKind, Rect};
 use crate::{data::item_name, equipment, inventory::not_safe::inventory_clone, ncurses};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -54,10 +54,24 @@ fn draw_inventory_panel(layout: Layout, draw: impl FnMut(i32, i32, &str)) {
     }
 }
 
+fn draw_equipment_panel(
+    layout: Layout,
+    slots: &[EquipmentSlot],
+    mut draw: impl FnMut(i32, i32, &str),
+) {
+    if let Some(rect) = layout.equipment {
+        if layout.kind == LayoutKind::Split {
+            // The sidebar's row zero is beside, not inside, the prompt line.
+            let heading = Rect::new(rect.row - 1, rect.col, rect.width, 1);
+            draw_lines(heading, &["Equipment"], &mut draw);
+        }
+        draw_lines(rect, &render_equipment_panel(rect, slots), draw);
+    }
+}
+
 #[no_mangle]
 pub extern "C" fn C_print_equipment_block() {
     let layout = current_layout();
-    let rect = layout.equipment.expect("equipment panel unavailable");
     let slots: Vec<_> = equipment::slots_iter()
         .map(|slot_index| {
             let slot = equipment::Slot::from(slot_index);
@@ -67,8 +81,7 @@ pub extern "C" fn C_print_equipment_block() {
             }
         })
         .collect();
-    let lines = render_equipment_panel(rect, &slots);
-    draw_lines(rect, &lines, |row, col, line| {
+    draw_equipment_panel(layout, &slots, |row, col, line| {
         ncurses::mvaddstr(row, col, line);
     });
     draw_inventory_panel(layout, |row, col, line| {
@@ -304,6 +317,80 @@ mod tests {
                 panic!("inventory must only draw in Split");
             });
         }
+    }
+
+    #[test]
+    fn split_equipment_heading_preserves_all_slots_and_stays_beside_the_prompt() {
+        let layout = compute_layout(SPLIT_MIN_ROWS, CLASSIC_MIN_COLS);
+        let rect = layout.equipment.unwrap();
+        let prompt = layout.prompt.unwrap();
+        let slots: Vec<_> = equipment::slots_iter()
+            .map(|index| EquipmentSlot {
+                name: equipment::Slot::from(index).name(),
+                item_name: String::new(),
+            })
+            .collect();
+        let mut draws = Vec::new();
+
+        draw_equipment_panel(layout, &slots, |row, col, line| {
+            draws.push((row, col, line.to_string()));
+        });
+
+        assert_eq!(draws.len(), slots.len() + 1);
+        assert_eq!((draws[0].0, draws[0].1), (0, rect.col));
+        assert_eq!(draws[0].2.trim_end(), "Equipment");
+        assert!(draws[0].1 >= prompt.col + prompt.width);
+        assert_eq!(draws[0].2.len(), rect.width as usize);
+        for (index, line) in render_equipment_panel(rect, &slots).iter().enumerate() {
+            assert_eq!(
+                draws[index + 1],
+                (rect.row + index as i32, rect.col, line.clone())
+            );
+        }
+        assert!(draws.last().unwrap().2.starts_with("n) Backup weapon: "));
+    }
+
+    #[test]
+    fn classic_equipment_drawing_has_no_heading_and_matches_existing_lines() {
+        let layout = compute_layout(25, CLASSIC_MIN_COLS);
+        let rect = layout.equipment.unwrap();
+        let slots = [EquipmentSlot {
+            name: "Main hand",
+            item_name: "Long Sword".to_string(),
+        }];
+        let mut draws = Vec::new();
+
+        draw_equipment_panel(layout, &slots, |row, col, line| {
+            draws.push((row, col, line.to_string()));
+        });
+
+        let expected: Vec<_> = render_equipment_panel(rect, &slots)
+            .into_iter()
+            .enumerate()
+            .map(|(index, line)| (rect.row + index as i32, rect.col, line))
+            .collect();
+        assert_eq!(draws, expected);
+    }
+
+    #[test]
+    fn split_equipment_heading_is_fitted_to_sidebar_width() {
+        let mut layout = compute_layout(SPLIT_MIN_ROWS, CLASSIC_MIN_COLS);
+        layout.equipment.as_mut().unwrap().width = 5;
+        let mut draws = Vec::new();
+
+        draw_equipment_panel(layout, &[], |_, _, line| {
+            draws.push(line.to_string());
+        });
+
+        assert_eq!(draws.first().map(String::as_str), Some("Equip"));
+        assert!(draws.iter().all(|line| line.len() == 5));
+    }
+
+    #[test]
+    fn equipment_panel_does_not_draw_without_a_drawable_layout() {
+        draw_equipment_panel(compute_layout(24, CLASSIC_MIN_COLS), &[], |_, _, _| {
+            panic!("equipment must not draw without a panel");
+        });
     }
 
     #[test]

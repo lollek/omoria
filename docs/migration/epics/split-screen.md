@@ -362,6 +362,9 @@ Behavior:
   rect. `C_print_equipment_block` keeps its symbol and becomes the per-tick
   sidebar entry point.
 * Item names are truncated to the rect width, and empty slots are kept.
+* Split draws an `Equipment` heading at row 0 in the sidebar, beside the
+  reserved prompt area. It matches the inventory heading without moving or
+  hiding any of the 14 equipment slots.
 * Classic draws exactly as today.
 
 Acceptance checks:
@@ -369,6 +372,8 @@ Acceptance checks:
 * L0: the renderer output for a fixed equipment snapshot, including
   truncation.
 * L0: the Classic output matches today's lines.
+* L0: the Split heading is fitted to the sidebar width, stays outside the
+  prompt area, and leaves all equipment rows unchanged.
 * Changelog: only if Split shows something different from today.
 
 ### SL5. Inventory Panel (fan-out)
