@@ -3,6 +3,18 @@
 Follow-ups found while closing epics that do not belong to a single epic.
 Back to the [backlog](../backlog.md).
 
+## Story Status
+
+| Story | Status |
+|-------|--------|
+| XC1. Seeded RNG for Hit and Confusion Rolls | Done |
+| XC2. Seeded RNG for Item Generation | Done |
+| XC3. Headless C-Caller Checks for Search and Stairs | Open |
+| XC4. Shared Open-Door Transition | Deferred |
+| XC5. C-Caller Checks for Hunger Eating and Status | Open |
+| XC6. Shared C Global Declarations | Open |
+| XC7. Remove Legacy Trap Test Mode | Open |
+
 XC1-XC3 and XC5-XC7 have no solid dependencies and can join any wave. XC4
 is deferred.
 XC1, XC2, and XC3 all edit
