@@ -3,7 +3,7 @@
 Follow-ups found while closing epics that do not belong to a single epic.
 Back to the [backlog](../backlog.md).
 
-XC1-XC3, XC5, and XC6 have no solid dependencies and can join any wave. XC4
+XC1-XC3 and XC5-XC7 have no solid dependencies and can join any wave. XC4
 is deferred.
 XC1, XC2, and XC3 all edit
 [headless_interaction.c](../../../tests/headless_interaction.c); run them one
@@ -135,22 +135,24 @@ Out of scope: production code changes and main-loop food consumption.
 
 ### XC6. Shared C Global Declarations (fan-out)
 
-Status: open. Depends on: none. Recommended: before TR and IU fan-outs add
-more copies.
+Status: open. Depends on: none. Recommended: before IU fan-outs add more
+copies.
 Size: S. Complexity: Low. Agent: standard.
 
 Owns: [player/data.rs](../../../src/player/data.rs),
 [equipment.rs](../../../src/equipment.rs), and the modules that redeclare
 `player_flags` or `equipment`: `player_action/` (toggle light, disarm, bash,
 search, attack, open, rest, refill lamp), `effects/globals.rs`,
-`player/hunger.rs`, `player/player_extern.rs`, `text_lines_extern.rs`, and
-`save/equipment.rs`.
-Must not touch: files owned by open TR or IU stories.
+`player/hunger.rs`, `player/player_extern.rs`, `text_lines_extern.rs`,
+`save/equipment.rs`, and `dungeon/trap/` (`status.rs`, `movement.rs`,
+`chest.rs`, `activation/globals.rs`).
+Must not touch: files owned by open IU stories.
 
-Behavior: about 13 Rust modules declare `static mut player_flags` and 6
+Behavior: 17 Rust modules declare `static mut player_flags` and 6
 declare `static mut equipment` locally. The backlog's
 [Global Variables](../backlog.md#global-variables) rule says to choose a shared
-home when the next epic needs them; SE needed them and added more copies.
+home when the next epic needs them; SE and TR needed them and added more
+copies.
 Give each global a single crate-visible declaration (next to
 `player/data.rs` and `equipment.rs`) and migrate the existing users in one
 mechanical change. No behavior change; C ABI unchanged.
@@ -159,9 +161,28 @@ Acceptance checks:
 
 * `rg 'static mut (player_flags|equipment)\b' src` finds one declaration per
   global.
-* `make check` passes unchanged, including `test-effects`, `test-hunger`, and
-  the headless PA checks.
+* `make check` passes unchanged, including `test-effects`, `test-hunger`,
+  `test-traps` (Linux), and the headless PA checks.
 
 Out of scope: typed accessors beyond what existing callers need, and other
-globals (`cave`, `door_list`, `print_stat`), unless the same pass finds them
-trivially.
+globals (`cave`, `door_list`, `print_stat`, `dun_level`), unless the same pass
+finds them trivially.
+
+### XC7. Remove Legacy Trap Test Mode (finish)
+
+Status: open. Depends on: none.
+Size: S. Complexity: Low. Agent: light.
+
+Owns: the `TRAP_TEST_MIGRATED` lines in the `Makefile` and
+[trap_dispatch_ffi.c](../../../tests/trap_dispatch_ffi.c).
+
+Behavior: `TRAP_TEST_MIGRATED=0` characterized the C `hit_trap` dispatcher,
+which TR7 deleted. It now runs the same Rust dispatcher with most checks
+skipped. Remove the switch and the legacy branch so the harness always runs
+every check. Test-only change; no gameplay or C ABI change.
+
+Acceptance checks:
+
+* `rg TRAP_TEST_MIGRATED` finds nothing.
+* `make check` on Linux still prints the trap C-caller success line and runs
+  every trap assertion group.

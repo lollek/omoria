@@ -1,16 +1,18 @@
-# Trap Partial-Port Example
+# Trap Port Example
 
-The `traps.c` migration demonstrates a **partial port**: data, placement,
-activation dispatch, open pits, arrows, and movement traps are Rust. Remaining
-effect groups use per-group forwarding files. See the authoritative
+The `traps.c` migration is a **complete port** done in stages: data and
+placement first, then a Rust dispatcher (TR1) with per-group handler files
+that later stories (TR2-TR6) filled in, and finally deletion of the emptied C
+file (TR7). See the authoritative
 [migration backlog](../../../../docs/migration/backlog.md) and
 [trap activation epic](../../../../docs/migration/epics/trap-activation.md).
 
-## C source: `traps.c`
+## C source: `traps.c` (deleted)
 
 Mixed concerns: static data, placement logic, effect handlers, and town entrance dispatch.
+[traps.h](../../../../src/traps.h) remains so C callers keep linking.
 
-## Current Rust modules: `src/dungeon/trap/`
+## Rust modules: `src/dungeon/trap/`
 
 ```
 src/dungeon/trap/
@@ -19,15 +21,16 @@ src/dungeon/trap/
 ├── data_tests.rs    # Data validation tests
 ├── placement.rs     # place_trap, change_trap logic (TrapList enum, tval_for, apply_template_to_item)
 ├── globals.rs       # Functions that mutate global dungeon state (unsafe wrappers)
-├── interop.rs       # extern "C" shims: place_trap, change_trap, place_rubble
+├── interop.rs       # extern "C" shims: hit_trap, trigger_trap, place_trap, change_trap, place_rubble
 ├── activation.rs    # hit_trap dispatch, including town entrance routing
 ├── activation/
 │   └── globals.rs   # Checked pointer adapter and C callback boundary
 ├── basic.rs         # Open pit and arrow effects with an injectable context
-├── status.rs        # TR2 forwarding boundary
-├── element.rs       # TR3 forwarding boundary
+├── status.rs        # Sleep, blind, and confuse gas; slow, strength, and constitution darts
+├── element.rs       # Fire, acid, corrosion-gas, and poison-gas traps
 ├── movement.rs      # Covered pit, trap door, teleport, chute, and whirlpool effects
-├── spawn.rs         # TR5 spawn and rockfall effects
+├── spawn.rs         # Hidden object, rockfall, and summon monster effects
+├── chest.rs         # Chest traps (trigger_trap) decoded from item flags
 └── test_support.rs  # Shared test helpers
 ```
 
@@ -54,9 +57,10 @@ pub struct TrapTemplate {
 
 ### Interop layer
 Thin C ABI wrappers in [interop.rs](../../../../src/dungeon/trap/interop.rs)
-export `place_trap`, `change_trap`, and `place_rubble`, using `libc::c_long`.
-The current wrapper below is not a checked interface: it casts inputs to `usize`
-and relies on valid coordinates and template indices.
+export `hit_trap`, `trigger_trap`, `place_trap`, `change_trap`, and
+`place_rubble`, using `libc::c_long`. The placement wrapper below is not a
+checked interface: it casts inputs to `usize` and relies on valid coordinates
+and template indices.
 
 ```rust
 use crate::dungeon::trap::{place_trap_global, TrapList};
@@ -73,16 +77,18 @@ Placement uses 1-based subvals (1 through 20). Rust `template_for` translates
 with `let index = subval - 1;`; the open pit is `TRAP_LIST[0]`, not `[1]`.
 Activation values such as 99 and 101-123 are not template indices.
 
-## What's NOT yet ported
+### Pointer ABI
 
-- `trigger_trap` (chest traps)
-- Town entrance implementations (routing is Rust; 119 is still unknown)
-
-TR5's effect handlers are Rust. Item placement and monster summoning still call
-their C implementations through FFI.
-
-Rust now exports `hit_trap(const long *y, const long *x)` with null checks and
+Rust exports `hit_trap(const long *y, const long *x)` with null checks and
 bounded cell access, preserving its pointer ABI. Non-null pointers must still
 be aligned and readable; calls require exclusive access to initialized game
-globals. `trigger_trap(long y, long x)` remains C and reads chest flags from
-the item, not an extra flags parameter.
+globals. `trigger_trap(long y, long x)` reads chest flags from the item, not
+an extra flags parameter, and decodes them into a typed `ChestTraps` snapshot.
+
+## What stays in C
+
+Handlers call retained C through FFI, owned by later epics: `take_hit` and
+`damroll`, `lose_stat`, item placement (`place_random_dungeon_item`, `pusht`,
+`delete_object`), monster summons, and store, bank, casino, fortress, and
+house entry. Town tile routing is Rust; subval 119 still falls through to the
+unknown-trap message.

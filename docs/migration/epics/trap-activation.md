@@ -1,15 +1,18 @@
 # Epic TR: Trap Activation
 
-Ports the rest of [traps.c](../../../src/traps.c): the `hit_trap`
-dispatcher, 22 `ht__*` handlers, town tile dispatch, and chest traps
-(`trigger_trap`). Templates and placement are already Rust in
-[dungeon/trap/](../../../src/dungeon/trap/). The C behavior every story must
-preserve is in [C Behavior to Preserve](#c-behavior-to-preserve). Back to the
-[backlog](../backlog.md).
+Status: **done** (2026-10-23). Back to the [backlog](../backlog.md).
+
+Ported the rest of `traps.c` (deleted in TR7): the `hit_trap` dispatcher,
+22 `ht__*` handlers, town tile dispatch, and chest traps (`trigger_trap`).
+Templates and placement were already Rust; everything now lives in
+[dungeon/trap/](../../../src/dungeon/trap/). The C behavior the stories
+preserved is in [C Behavior to Preserve](#c-behavior-to-preserve). Follow-ups
+are in [Remaining Gaps](#remaining-gaps).
 
 Callers: `hit_trap` from [move.c](../../../src/player_action/move.c);
-`trigger_trap` from `open.c` and `disarm_trap.c`. Both ABIs stay unchanged,
-including `hit_trap(const long *y, const long *x)`.
+`trigger_trap` from the Rust open and disarm actions (PA9, PA10), which still
+call it through its C symbol. Both ABIs are unchanged, including
+`hit_trap(const long *y, const long *x)`.
 
 ## Story Graph
 
@@ -39,7 +42,7 @@ prelude and town dispatch before replacing it.
 
 ## C Behavior to Preserve
 
-Verified against [traps.c](../../../src/traps.c) and
+Verified against `traps.c` (since deleted) and
 [traps.h](../../../src/traps.h) on 2026-10-09.
 
 ### ABI Contracts
@@ -134,8 +137,7 @@ after an explosion.
 
 ### TR1. Rust Trap Dispatcher (pathfinder: F-TRAP-DISPATCH)
 
-Status: implemented; TR1-TR5 are complete, with chest traps and final dispatch
-cleanup still open.
+Status: implemented.
 Depends on: PA1. Recommended: SE1.
 Size: M. Complexity: High. Agent: strong.
 
@@ -171,9 +173,8 @@ Implemented in [activation.rs](../../../src/dungeon/trap/activation.rs),
 [activation/globals.rs](../../../src/dungeon/trap/activation/globals.rs), and
 [basic.rs](../../../src/dungeon/trap/basic.rs), using F-CELL and F-DMG.
 The `status.rs`, `element.rs`, `movement.rs`, and `spawn.rs` group files
-isolate handler behavior. TR5 is ported; its item placement and monster
-summoning operations remain C boundaries. Secret-door and scare-monster
-activation remain no-ops. The C chest dispatcher is unchanged.
+isolate handler behavior; TR2-TR5 later filled them in, and TR6 added
+`chest.rs`. Secret-door and scare-monster activation remain no-ops.
 
 Shared [ActivationKind](../../../src/model/activation_kind.rs) values name
 both dungeon-trap and entrance subvals. Template data encodes these names
@@ -342,6 +343,43 @@ Implemented: `traps.c` is deleted. By TR7 it held only includes and prototypes
 for Rust-defined functions, and the stale `traps.o` was removed by `make clean`
 before deletion. [traps.h](../../../src/traps.h) keeps the prototypes for C
 callers. `make clean && make check` passed with 773 Rust tests and the C
-harnesses. `test-traps` skips on non-Linux hosts, so the GNU `--wrap` C-caller
-checks did not run here. The linked binary defines each trap entry point once
-and contains no `ht__` symbols.
+harnesses on macOS, where `test-traps` skips. The merged change (#151) then
+passed `make check` in CI on `ubuntu-latest` and `ubuntu-24.04-arm`, including
+the GNU `--wrap` C-caller checks. The linked binary defines each trap entry
+point once and contains no `ht__` symbols.
+
+## Remaining Gaps
+
+Closing review (2026-10-23): all seven stories are ported, `traps.c` is
+deleted, and no story changed observable gameplay. Deviations from the cards,
+all without behavior change:
+
+* TR1 added the shared [ActivationKind](../../../src/model/activation_kind.rs)
+  and [StoreKind](../../../src/model/store.rs) types and moved
+  [store_door.rs](../../../src/data/store_door.rs) onto them, beyond its listed
+  files.
+* The Rust `hit_trap` also rejects invalid cells, invalid hidden-trap
+  templates, and unterminated damage strings with error logging, where C had
+  undefined behavior. Valid activations are unchanged.
+* Arrow checks use real seeded hit rolls instead of link-time doubles,
+  because GNU `--wrap` cannot redirect calls resolved inside the Rust archive.
+
+Follow-ups:
+
+* TR added more local `extern` declarations of `player_flags` (in
+  `status.rs`, `movement.rs`, `chest.rs`, and `activation/globals.rs`) and
+  `dun_level` (in `movement.rs`). Tracked as
+  [XC6](cross-cutting.md#xc6-shared-c-global-declarations-fan-out).
+* `TRAP_TEST_MIGRATED=0` in the `Makefile` and the legacy mode of
+  [trap_dispatch_ffi.c](../../../tests/trap_dispatch_ffi.c) characterized the
+  deleted C dispatcher; it now only skips checks. Tracked as
+  [XC7](cross-cutting.md#xc7-remove-legacy-trap-test-mode-finish).
+* The Rust open and disarm actions call `trigger_trap` through an `extern "C"`
+  declaration of the Rust-defined symbol. Calling the Rust chest-trap function
+  directly is optional cleanup for whoever next touches those modules.
+* Retained C boundaries belong to later epics: `take_hit` and `damroll`
+  (CORE), `lose_stat` (SP), `place_random_dungeon_item`, `pusht`, and
+  `delete_object` (CORE), monster summons (MO), and store, bank, casino,
+  fortress, and house entry (ST, TS, CA).
+* Not verified: real entrance UI, interactive trap gameplay, save/reload after
+  a trap fires, and the C-caller checks on non-Linux hosts.

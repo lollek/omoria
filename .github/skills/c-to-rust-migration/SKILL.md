@@ -17,7 +17,7 @@ Guided workflow for porting C code to idiomatic Rust in the omoria roguelike, fo
 ## Reference documents
 
 - [Migration backlog](../../../docs/migration/backlog.md) — epics, story cards, dependencies, foundations, and what's already done
-- [Partial port example](./references/trap-port-example.md) — completed trap data and placement, with activation still in C
+- [Trap port example](./references/trap-port-example.md) — completed port of `traps.c`: data, placement, dispatch, per-group handlers, and C ABI wrappers
 
 ## Procedure
 

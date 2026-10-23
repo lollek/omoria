@@ -9,7 +9,8 @@ sources are deleted; [effects.h](../../../src/effects.h) and
 were independent.
 
 Callers that must keep linking: `effects` functions are called from
-`creature.c`, `spells.c`, and `traps.c`. Hunger functions are called from
+`creature.c`, `spells.c`, and `traps.c` (since ported to Rust by TR). Hunger
+functions are called from
 `main_loop.c`, `stores.c`, `eat.c`, `quaff_potion.c`, `chakra.c`,
 `divine.c`, `enter_house.c`, and Rust `player/player_extern.rs`.
 
@@ -162,4 +163,5 @@ C, and `make check` passes. Follow-ups:
 * Out of scope and left for later epics: per-turn food consumption in
   `main_loop.c` (ML), the F-DMG C bodies `take_hit`, `py_bonuses`, and
   `inven_damage` (CORE), and checks through the real effect callers in
-  `creature.c`, `spells.c`, and `traps.c` (TR, MO, SP).
+  `creature.c` and `spells.c` (MO, SP). The trap caller (TR, formerly
+  `traps.c`) is now covered by `test-traps` on Linux.
