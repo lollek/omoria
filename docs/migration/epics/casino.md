@@ -4,7 +4,8 @@ Ports [casino/](../../../src/casino/). The old plan called it isolated; it is
 only partly so. Each game interleaves its rules with terminal drawing and
 input, and all games share `bet`/`gld` session state in
 [casino_local.h](../../../src/casino/casino_local.h). The only external caller
-is `enter_casino`, from `traps.c`. Back to the [backlog](../backlog.md).
+is `enter_casino`, from the Rust trap dispatcher (formerly `traps.c`). Back to
+the [backlog](../backlog.md).
 
 The approach is rules first: extract pure rules with injected RNG and have
 the C UI call them. Port the UI loops only after an IO seam exists. The HT1
@@ -143,7 +144,7 @@ Owns: [casino.c](../../../src/casino/casino.c), `casino_local.h`, and the
 casino Rust module.
 
 Behavior: port `enter_casino`, the menu, money exchange, and kickout check,
-keeping the `enter_casino` symbol for `traps.c`.
+keeping the `enter_casino` symbol for the Rust trap dispatcher.
 
 Acceptance checks:
 

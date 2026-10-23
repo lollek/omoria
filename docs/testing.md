@@ -138,8 +138,10 @@ substitute for a behavioral assertion.
   and gluttony death flags are unverified (XC5 in the
   [cross-cutting epic](migration/epics/cross-cutting.md)).
 * `effects_ffi.c` destroys one item type per effect, so the full destroyable
-  item sets are checked only by review. No test reaches the effects through
-  their real callers in `creature.c`, `spells.c`, or `traps.c`.
+  item sets are checked only by review. `test-traps` (Linux only) reaches the
+  fire, acid, corrosion-gas, and poison-gas effects through `hit_trap`, with
+  `take_hit` stubbed; no test reaches them through their real callers in
+  `creature.c` or `spells.c`.
 * All seven C harness targets (`test-movement` through
   `test-headless-persistence`) share `target/debug/headless-*.o`; do not run
   them concurrently with `make -j`.

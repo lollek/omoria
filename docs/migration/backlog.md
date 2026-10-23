@@ -104,7 +104,7 @@ If a story feels too large when picked up, split it and give the parts new IDs
     your own `mod`/`pub use` lines.
   * C headers: remove prototypes only for functions you ported. Never change
     signatures.
-  * C files shared by several stories (for example `traps.c`): delete only
+  * C files shared by several stories (for example `spells.c`): delete only
     your own functions.
   * Backlog and epic files: update only your card's `Status:` line. The
     coordinator updates graphs and the Foundations table.
@@ -139,7 +139,7 @@ If unsure, ask the navigator.
 | F-CELL | Typed Rust access to `cave`/`t_list` cells, bounds checks, plus a locked, resettable test map ([dungeon/cell.rs](../../src/dungeon/cell.rs)). Existing module-local accessors in `dungeon/trap/globals.rs` and `player_action/movement/globals.rs` stay as they are. | PA1 | PA2-PA12; later TR, LF4, MAP | built |
 | F-DIR-EDGE | Prompt-at-edge pattern for directional actions, plus shared door state transitions ([dungeon/door.rs](../../src/dungeon/door.rs): close, jam classification). | PA2 | Prompt pattern: PA7-PA12. Door helpers: PA8 only; open and bash write the open-door transition directly. Later IU4 | built |
 | F-DMG | Rust wrappers around C `take_hit`, `py_bonuses`, `prt_stat_block`, and `inven_damage` with documented contracts ([player/damage.rs](../../src/player/damage.rs)). | SE1 | SE2, TR; later MG, SP | built |
-| F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files forwarding to C. | TR1 | TR2-TR6 | built |
+| F-TRAP-DISPATCH | Rust `hit_trap` dispatcher with per-group handler files ([dungeon/trap/](../../src/dungeon/trap/)); all handlers are now Rust. | TR1 | TR2-TR6 | built |
 | F-ITEM | Handle to a C-selected inventory item, plus the consume lifecycle (identify, destroy one, remaining message), in [inventory/selected.rs](../../src/inventory/selected.rs). | IU1 | IU2-IU6, later MG, ST | built |
 | F-SPELLS | Rust `extern "C"` declarations for the `spells.h` APIs quaff uses, in [magic/spells.rs](../../src/magic/spells.rs). Later ports add their own declarations. | IU1 | IU, later MG | built |
 | F-CASINO-RULES | Pattern for pure casino rules with injected RNG, called from the C UI. | CA1 | CA2, CA3 | planned |
@@ -163,12 +163,12 @@ the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 | ID | Epic | C files | Size | Status | Detail |
 | --- | --- | --- | --- | --- | --- |
 | PA | Simple player actions | `player_action/` search, close, stairs, light, refill, rest, look, jam, open, disarm, tunnel, bash | 12 x S-M | **Done** (2026-10-11) | [player-actions.md](epics/player-actions.md) |
-| TR | Trap activation | `traps.c` | L | Open | [trap-activation.md](epics/trap-activation.md) |
+| TR | Trap activation | `traps.c` | L | **Done** (2026-10-23) | [trap-activation.md](epics/trap-activation.md) |
 | SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | **Done** (2026-10-20) | [status-effects.md](epics/status-effects.md) |
 | IU | Item use | eat, quaff, read, aim, use staff, drop | 6 x S-L | Open | [item-use.md](epics/item-use.md) |
 | CA | Casino | `casino/` | 4 files, M-L | Open | [casino.md](epics/casino.md) |
 | LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
-| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations) | 6 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
+| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations, legacy trap test mode) | 7 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
 | SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [split-screen.md](epics/split-screen.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
@@ -217,7 +217,7 @@ Green epics are done.
 
 ```mermaid
 graph LR
-  PA[PA done] -.->|F-CELL| TR
+  PA[PA done] -.->|F-CELL| TR[TR done]
   SE[SE done] -.->|F-DMG| TR
   PA -.->|F-DIR-EDGE| IU
   SE -.-> IU
@@ -244,7 +244,7 @@ graph LR
   LF
   XC
   classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
-  class PA,SE done
+  class PA,SE,TR done
 ```
 
 ### Story Waves
@@ -257,8 +257,8 @@ Completed stories are removed from the table.
 | --- | --- |
 | 1 | CA1, LF2-LF7, SL1, SL8, SL15 |
 | 2 | IU3, IU6, CA2, CA3, CA4, SL2, SL3, SL4 |
-| 3 | TR5, TR6, IU4, IU5, CA5, CA6, SL5, SL7, SL9 |
-| 4 | TR7, CA7, SL6, SL11; plan MG, CM, and TS in detail |
+| 3 | IU4, IU5, CA5, CA6, SL5, SL7, SL9 |
+| 4 | CA7, SL6, SL11; plan MG, CM, and TS in detail |
 | 5 | SL10, SL12, SL14, SL16 |
 | 6 | SL13 |
 
@@ -272,6 +272,11 @@ Completed stories are removed from the table.
   unchanged C ABI, with F-DMG built for later epics. See
   [status-effects.md](epics/status-effects.md#remaining-gaps) for follow-ups
   (XC5, XC6).
+* **TR epic** (2026-10-23): `traps.c` is deleted; `hit_trap`, all 22 dungeon
+  trap handlers, town tile routing, and chest traps (`trigger_trap`) are Rust
+  behind the unchanged C ABI. Store and other entrance screens stay C. See
+  [trap-activation.md](epics/trap-activation.md#remaining-gaps) for
+  follow-ups (XC6, XC7).
 
 Ported before this backlog existed. A Rust module's presence does not mean its
 subsystem is fully migrated.
@@ -280,8 +285,8 @@ subsystem is fully migrated.
 * RNG with `_with_rng` variants and a seedable C-facing override →
   [rng/](../../src/rng/).
 * Text utilities from `text_lines.c` → `text_lines_extern.rs`.
-* Trap templates, placement, and activation dispatch → [dungeon/trap/](../../src/dungeon/trap/);
-  remaining trap effects are tracked in the [trap activation epic](epics/trap-activation.md).
+* Trap templates and placement → [dungeon/trap/](../../src/dungeon/trap/);
+  activation was ported later by the [TR epic](epics/trap-activation.md).
 * Monster templates → `generate_monster/` (the C file is compatibility glue).
 * Hit calculation (`managed_to_hit`) → [combat/fighting.rs](../../src/combat/fighting.rs).
 * Movement step decisions and confusion → `player_action/movement/`; C keeps
