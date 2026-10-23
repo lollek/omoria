@@ -325,7 +325,7 @@ damage and durations, chest deletion, terrain-specific summons, and messages.
 
 ### TR7. Remove traps.c (finish)
 
-Status: open. Depends on: TR2-TR6.
+Status: implemented. Depends on: TR2-TR6.
 Size: S. Complexity: Low. Agent: light.
 
 Owns: `traps.c`, `traps.h`, and the forwarding code.
@@ -337,3 +337,11 @@ Acceptance checks:
 
 * `make check` passes after a clean build.
 * No `ht__` symbols remain in C.
+
+Implemented: `traps.c` is deleted. By TR7 it held only includes and prototypes
+for Rust-defined functions, and the stale `traps.o` was removed by `make clean`
+before deletion. [traps.h](../../../src/traps.h) keeps the prototypes for C
+callers. `make clean && make check` passed with 773 Rust tests and the C
+harnesses. `test-traps` skips on non-Linux hosts, so the GNU `--wrap` C-caller
+checks did not run here. The linked binary defines each trap entry point once
+and contains no `ht__` symbols.

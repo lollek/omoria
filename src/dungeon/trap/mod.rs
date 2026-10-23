@@ -29,7 +29,7 @@ mod placement;
 mod spawn;
 mod status;
 
-// Export C ABI wrappers for the parts of traps.c we've already ported.
+// C ABI wrappers for C callers of trap activation and placement.
 pub mod interop;
 
 #[cfg(test)]
