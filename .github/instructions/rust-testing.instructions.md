@@ -1,5 +1,5 @@
 ---
-description: "Use when writing or editing Rust tests, adding test modules, or making code testable. Covers deterministic RNG, inline test modules, and assertion patterns for omoria."
+description: "Use when writing, editing, or running Rust tests, using cargo test, handling IDE test discovery or No tests found, adding test modules, or making code testable. Covers deterministic RNG, inline test modules, and assertion patterns for omoria."
 ---
 
 # Rust Testing Conventions
