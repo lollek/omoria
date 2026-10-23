@@ -1,7 +1,7 @@
 //! C ABI wrapper functions for trap-related operations.
 //!
-//! These functions exist to let the C code call into the Rust implementation during the
-//! migration, so we can delete the corresponding implementations from `src/traps.c`.
+//! These exports let remaining C callers reach the Rust trap implementation. Their
+//! prototypes live in `src/traps.h`.
 
 use crate::dungeon::trap::{change_trap_global, place_rubble_global, place_trap_global, TrapList};
 
