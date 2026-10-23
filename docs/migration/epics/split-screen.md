@@ -71,8 +71,8 @@ The constraints the stories depend on:
   shows race, class, level and XP, HP, mana, AC, and gold. It does not show
   quests, bulk, or game time.
 * The current code has no monster memory/recall system and no pathfinding.
-* Panel state and message history are not saved, so save files are
-  unaffected.
+* Panel state and message history are not currently saved. SL17 adds message
+  history to character saves; other stories leave the save format unaffected.
 * HT1 headless doubles in
   [terminal_redirects.h](../../../tests/support/terminal_redirects.h) redirect
   the screen and HUD entry points. New drawing entry points called from C
@@ -172,6 +172,7 @@ graph LR
   SL5 --> SL14
   SL15[SL15 pathfinding] --> SL16[SL16 click to travel]
   SL11 --> SL16
+  SL3 --> SL17[SL17 persist message history]
 ```
 
 Ordering notes:
@@ -186,6 +187,8 @@ Ordering notes:
   Other stories read their rects. A story that needs a different rect size
   stops and reports a scope change.
 * SL8 and SL15 have no dependencies and can start at any time.
+* SL17 needs SL3 but does not wait for SL9. SL9 and SL17 share message history
+  code and must not be implemented concurrently.
 
 ## Stories
 
@@ -659,11 +662,52 @@ Acceptance checks:
 
 Out of scope: travel to unknown cells, auto-explore.
 
+### SL17. Persist Message History (fan-out)
+
+Status: open. Depends on: SL3.
+Size: M. Complexity: High. Agent: strong.
+
+Owns: message history in [message.rs](../../../src/message.rs), the log panel
+restore path, and the character save schema and save/load integration in
+[save/](../../../src/save/) and [persistence/](../../../src/persistence/).
+
+Behavior:
+* Save raw message text and game-turn stamps with the character. Preserve
+  ordering and every repeated entry within the current history limit (50
+  messages, or 1000 after SL9); never persist display-collapsed counts.
+* On successful load, replace the previous character's history and rebuild
+  the visible log from the restored records. Classic message recall uses the
+  same restored history.
+* Restored messages are already seen, so loading does not trigger `-more-`.
+  New messages use the normal unseen-line budget.
+* Older saves without message history load successfully with an empty
+  history. Starting a new character also clears history and the visible log.
+* Persist only message records, not rendered lines, panel geometry, scroll
+  position, unseen counters, or capture streams. Active capture streams
+  receive no synthetic messages while history is restored.
+* Keep existing save validation and atomic replacement guarantees. A failed
+  load must not replace the current history.
+
+Acceptance checks:
+* L0: message records round-trip with exact text, turn stamps, ordering,
+  repeats, and the current retention limit.
+* L0: saves without the history field default to empty history; malformed
+  history reports a load error without changing the current history.
+* L0: rebuilding the log preserves wrapping, repeat counts, and turn dimming,
+  and restored messages do not consume the unseen-line budget.
+* L1: a headless save/load scenario restores history and the visible log,
+  verifies the first new messages do not pause prematurely, and confirms raw
+  capture is unaffected by restoration.
+* L1: loading another character or starting a new one never leaks the
+  previous character's messages; failed loads preserve the current history.
+* Changelog entry.
+
+Out of scope: increasing the history limit (SL9), persisting UI state, and
+separate message-log files.
+
 ## Remaining Gaps
 
 * Prompt callers still write row 0 directly. A prompt seam belongs to the TU
   epic.
 * Full-screen overlays (inventory menus, stores, help, casino) keep their own
   fixed 80x24-style drawing. They are not panels.
-* Message history is lost on save and load. Keeping it would change the save
-  format.
