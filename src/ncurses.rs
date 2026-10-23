@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::process;
 
+use crate::layout::{compute_layout, set_current_layout, LayoutKind};
 use pancurses;
 pub use pancurses::{
     A_DIM, A_REVERSE, COLOR_BLACK, COLOR_BLUE, COLOR_CYAN, COLOR_GREEN, COLOR_MAGENTA, COLOR_RED,
@@ -11,8 +12,24 @@ thread_local! {
     static STDSCR: RefCell<Option<pancurses::Window>> = const { RefCell::new(None) };
 }
 
-const MAX_Y: i32 = 25;
-const MAX_X: i32 = 150;
+fn position_in_bounds(row: i32, col: i32, rows: i32, cols: i32) -> bool {
+    row >= 0 && col >= 0 && row < rows && col < cols
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn drawing_bounds_follow_terminal_dimensions() {
+        assert!(position_in_bounds(24, 149, 25, 150));
+        assert!(position_in_bounds(34, 199, 35, 200));
+        for (row, col) in [(-1, 0), (0, -1), (35, 0), (0, 200)] {
+            assert!(!position_in_bounds(row, col, 35, 200));
+        }
+        assert!(!position_in_bounds(0, 0, 0, 0));
+    }
+}
 
 fn with_stdscr<S>(fun: S)
 where
@@ -33,12 +50,14 @@ pub fn init_curses() {
 
     let window = pancurses::initscr();
 
-    if window.get_max_y() < MAX_Y || window.get_max_x() < MAX_X {
+    let layout = compute_layout(window.get_max_y(), window.get_max_x());
+    if layout.kind == LayoutKind::TooSmall {
         pancurses::endwin();
         println!("Screen is too small for moria!");
         process::exit(1);
     }
 
+    set_current_layout(layout);
     window.clear();
     window.refresh();
     STDSCR.replace(Some(window));
@@ -68,15 +87,15 @@ pub fn mvaddstr<S>(row: i32, col: i32, msg: S)
 where
     S: AsRef<str>,
 {
-    if row >= MAX_Y || col >= MAX_X {
-        panic!(
-            "Attempting to print out of bounds! row: {}, col: {}, msg: {}",
-            row,
-            col,
-            msg.as_ref()
-        );
-    }
     with_stdscr(|stdscr| {
+        if !position_in_bounds(row, col, stdscr.get_max_y(), stdscr.get_max_x()) {
+            panic!(
+                "Attempting to print out of bounds! row: {}, col: {}, msg: {}",
+                row,
+                col,
+                msg.as_ref()
+            );
+        }
         if stdscr.mvaddstr(row, col, msg.as_ref()) != 0 {
             panic!(
                 "mvaddstr returned ERR, row: {}, col: {}, msg: {}",
@@ -97,13 +116,13 @@ pub fn clrtoeol() {
 }
 
 pub fn mov(row: i32, col: i32) {
-    if row >= MAX_Y || col >= MAX_X {
-        panic!(
-            "Attempting to mov out of bounds! row: {}, col: {}",
-            row, col
-        );
-    }
     with_stdscr(|stdscr| {
+        if !position_in_bounds(row, col, stdscr.get_max_y(), stdscr.get_max_x()) {
+            panic!(
+                "Attempting to mov out of bounds! row: {}, col: {}",
+                row, col
+            );
+        }
         if stdscr.mv(row, col) != 0 {
             panic!("move returned ERR, row: {}, col: {}", row, col);
         }
