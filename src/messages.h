@@ -19,3 +19,5 @@ bool C_message_log_print(const char *message,
                          void (*draw)(const char *, int, int, bool),
                          bool (*more)(void));
 void C_message_log_input(void);
+/* Only accepted gameplay commands age log lines; prompt input does not. */
+void C_message_log_command(void);

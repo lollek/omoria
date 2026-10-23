@@ -59,5 +59,9 @@ objects and direct Rust ncurses callers are not automatically intercepted.
 The message target enables `terminal-test-support` to select Classic or Split
 geometry without curses. Split draws through callbacks compiled with the
 attributed-buffer redirect above. Tests cover log placement, repeat collapse,
-long-message pagination, input/turn acknowledgment, abort results, and capture
-bypassing all drawing and prompts. These are not interactive terminal tests.
+long-message pagination, input/turn acknowledgment, command-cycle brightness,
+abort results, and capture bypassing all drawing and prompts.
+`C_message_log_command()` signals an accepted gameplay command separately from
+`headless_inkey()`: the main loop emits this signal for both terminal and scripted
+command sources. Low-level prompt input does not age the current bright batch.
+These are not interactive terminal tests.

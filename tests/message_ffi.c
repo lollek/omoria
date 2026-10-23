@@ -14,6 +14,41 @@ void assert_headless_terminal(void);
 void C_terminal_test_layout(int rows, int cols);
 static void assert_message(size_t index, const char *expected);
 
+static bool log_dim[10];
+
+static void observe_log_line(const char *text, int row, int col, bool dim) {
+  assert(strlen(text) == 81 && col == 0 && row >= 25 && row < 35);
+  log_dim[row - 25] = dim;
+}
+
+static bool unexpected_more(void) {
+  assert(0 && "Unexpected -more- in command brightness scenario");
+  return false;
+}
+
+static void assert_split_command_cycle_brightness(void) {
+  C_terminal_test_layout(35, 150);
+  C_message_log_command();
+  turn = 1000;
+  assert(!C_message_log_print("Player action", observe_log_line, unexpected_more));
+  turn++;
+  assert(!C_message_log_print("Monster action", observe_log_line, unexpected_more));
+  turn++;
+  assert(!C_message_log_print("Status update", observe_log_line, unexpected_more));
+  assert(!log_dim[7] && !log_dim[8] && !log_dim[9]);
+
+  C_message_log_input();
+  turn++;
+  assert(!C_message_log_print("More feedback", observe_log_line, unexpected_more));
+  assert(!log_dim[6] && !log_dim[7] && !log_dim[8] && !log_dim[9]);
+
+  C_message_log_command();
+  assert(!C_message_log_print("Next action", observe_log_line, unexpected_more));
+  assert(log_dim[5] && log_dim[6] && log_dim[7] && log_dim[8]);
+  assert(!log_dim[9]);
+  C_terminal_test_layout(25, 150);
+}
+
 static void assert_split_log_overflow_and_capture(void) {
   C_terminal_test_layout(35, 150);
   turn = 100;
@@ -183,6 +218,7 @@ static void assert_last_drop_restores_interactive_path(void) {
 
 int main(void) {
   assert_headless_terminal();
+  assert_split_command_cycle_brightness();
   assert_split_log_overflow_and_capture();
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_captured_messages_skip_terminal();
