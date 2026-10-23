@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Split layout now shows a read-only inventory list beneath equipment, separated by a blank row and an Inventory heading, with inventory letters, names fitted to the panel width, and a count of items that do not fit.
 * Split layout now shows a wrapped message log below the map, keeps all messages since the last player command bright until the next command, collapses repeated messages, and pauses only before unseen lines would scroll away. Classic messages and raw message capture are unchanged.
 * Split layout now shows current/max HP and mana with status indicators beneath the map, and the character screen includes quest count, bulk, and game time aligned with the existing value columns.
 * Cancelling the rest prompt no longer reads an unfinished input buffer or starts resting.
