@@ -256,7 +256,7 @@ Implementation notes:
 
 ### SL2. Stat Bar and Status Row (fan-out)
 
-Status: open. Depends on: SL1.
+Status: implemented; Rust renderer tests and `make check` pass. L1 character-screen drawing and Split-specific C status callbacks remain unverified. Depends on: SL1.
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: the stat and status functions in `heads_up_display.rs`, the status
