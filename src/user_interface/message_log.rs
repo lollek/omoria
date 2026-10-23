@@ -17,7 +17,62 @@ pub(crate) struct MessageLog {
     turn: Option<libc::c_long>,
 }
 
+#[derive(Default)]
+pub(crate) struct Scrollback {
+    offset: usize,
+}
+
+impl Scrollback {
+    pub(crate) fn offset(&self) -> usize {
+        self.offset
+    }
+
+    pub(crate) fn should_close(key: u8) -> bool {
+        key == crate::io::ESCAPE || key == (b'P' & 0x1f)
+    }
+
+    pub(crate) fn handle_key(&mut self, key: u8, line_count: usize, page_height: usize) {
+        let maximum = line_count.saturating_sub(page_height);
+        self.offset = self.offset.min(maximum);
+        match key {
+            b'8' => self.offset = self.offset.saturating_add(1).min(maximum),
+            b'2' => self.offset = self.offset.saturating_sub(1),
+            crate::key_translation::KEY_PAGE_UP => {
+                self.offset = self.offset.saturating_add(page_height).min(maximum);
+            }
+            crate::key_translation::KEY_PAGE_DOWN => {
+                self.offset = self.offset.saturating_sub(page_height);
+            }
+            crate::key_translation::KEY_HOME => self.offset = maximum,
+            crate::key_translation::KEY_END => self.offset = 0,
+            _ => {}
+        }
+    }
+
+    pub(crate) fn run(
+        page_height: usize,
+        mut render: impl FnMut(usize) -> (usize, Vec<LogLine>),
+        mut read_key: impl FnMut() -> u8,
+        mut draw: impl FnMut(&[LogLine]),
+    ) {
+        let mut scrollback = Self::default();
+        loop {
+            let (line_count, lines) = render(scrollback.offset());
+            draw(&lines);
+            let key = read_key();
+            if Self::should_close(key) {
+                return;
+            }
+            scrollback.handle_key(key, line_count, page_height);
+        }
+    }
+}
+
 impl MessageLog {
+    pub(crate) fn line_count(&self) -> usize {
+        self.lines.len()
+    }
+
     pub fn command_read(&mut self) {
         self.input_read();
         for line in &mut self.lines {
@@ -31,11 +86,18 @@ impl MessageLog {
     }
 
     pub fn render(&self, rect: Rect) -> Vec<LogLine> {
+        self.render_scrollback(rect, 0)
+    }
+
+    pub(crate) fn render_scrollback(&self, rect: Rect, offset: usize) -> Vec<LogLine> {
         assert!(rect.width > 0 && rect.height > 0, "empty log rectangle");
         let height = rect.height as usize;
         let width = rect.width as usize;
-        let skip = self.lines.len().saturating_sub(height);
-        let blanks = height.saturating_sub(self.lines.len());
+        let max_offset = self.lines.len().saturating_sub(height);
+        let end = self.lines.len().saturating_sub(offset.min(max_offset));
+        let start = end.saturating_sub(height);
+        let visible_count = end - start;
+        let blanks = height - visible_count;
         std::iter::repeat_n(
             LogLine {
                 text: " ".repeat(width),
@@ -43,14 +105,20 @@ impl MessageLog {
             },
             blanks,
         )
-        .chain(self.lines.iter().skip(skip).map(|line| {
-            let mut text: String = line.text.chars().take(width).collect();
-            text.extend(std::iter::repeat_n(' ', width - text.chars().count()));
-            LogLine {
-                text,
-                dim: line.dim,
-            }
-        }))
+        .chain(
+            self.lines
+                .iter()
+                .skip(start)
+                .take(visible_count)
+                .map(|line| {
+                    let mut text: String = line.text.chars().take(width).collect();
+                    text.extend(std::iter::repeat_n(' ', width - text.chars().count()));
+                    LogLine {
+                        text,
+                        dim: line.dim,
+                    }
+                }),
+        )
         .collect()
     }
 
@@ -292,6 +360,124 @@ mod tests {
         assert!(lines[..10].iter().all(|line| line == "   "));
         assert_eq!(lines[10], "10 ");
         assert_eq!(lines[59], "59 ");
+    }
+
+    #[test]
+    fn scrollback_renders_the_requested_window_and_clamps_offset() {
+        let rect = Rect::new(1, 0, 3, 3);
+        let mut log = MessageLog::default();
+        for index in 0..6 {
+            print(&mut log, &index.to_string(), index, rect);
+        }
+
+        assert_eq!(
+            texts(&log, rect),
+            ["3  ", "4  ", "5  "],
+            "ordinary log rendering stays anchored to the newest lines"
+        );
+        assert_eq!(
+            log.render_scrollback(rect, 1)
+                .into_iter()
+                .map(|line| line.text)
+                .collect::<Vec<_>>(),
+            ["2  ", "3  ", "4  "]
+        );
+        assert_eq!(
+            log.render_scrollback(rect, usize::MAX)
+                .into_iter()
+                .map(|line| line.text)
+                .collect::<Vec<_>>(),
+            ["0  ", "1  ", "2  "]
+        );
+    }
+
+    #[test]
+    fn scrollback_navigation_moves_by_lines_pages_and_endpoints() {
+        let mut scrollback = Scrollback::default();
+        let line_count = 100;
+        let page_height = 10;
+
+        scrollback.handle_key(crate::key_translation::KEY_PAGE_UP, line_count, page_height);
+        assert_eq!(scrollback.offset(), 10);
+        scrollback.handle_key(b'8', line_count, page_height);
+        assert_eq!(scrollback.offset(), 11);
+        scrollback.handle_key(crate::key_translation::KEY_HOME, line_count, page_height);
+        assert_eq!(scrollback.offset(), 90);
+        scrollback.handle_key(
+            crate::key_translation::KEY_PAGE_DOWN,
+            line_count,
+            page_height,
+        );
+        assert_eq!(scrollback.offset(), 80);
+        scrollback.handle_key(crate::key_translation::KEY_END, line_count, page_height);
+        assert_eq!(scrollback.offset(), 0);
+        scrollback.handle_key(b'2', line_count, page_height);
+        assert_eq!(scrollback.offset(), 0);
+    }
+
+    #[test]
+    fn scrollback_navigation_clamps_when_history_fits_in_view() {
+        let mut scrollback = Scrollback::default();
+        scrollback.handle_key(crate::key_translation::KEY_HOME, 2, 10);
+        assert_eq!(scrollback.offset(), 0);
+    }
+
+    #[test]
+    fn scrollback_closes_on_escape_or_control_p() {
+        assert!(Scrollback::should_close(crate::io::ESCAPE));
+        assert!(Scrollback::should_close(b'P' & 0x1f));
+        assert!(!Scrollback::should_close(crate::key_translation::KEY_END));
+    }
+
+    #[test]
+    fn scrollback_runs_scripted_navigation_and_closes_on_escape() {
+        let rect = Rect::new(1, 0, 16, 3);
+        let mut log = MessageLog::default();
+        print(&mut log, "Old", 1, rect);
+        print(&mut log, "Repeated", 1, rect);
+        log.command_read();
+        print(&mut log, "Repeated", 2, rect);
+        for index in 2..7 {
+            print(&mut log, &index.to_string(), index, rect);
+        }
+
+        let keys = [
+            crate::key_translation::KEY_PAGE_UP,
+            b'8',
+            crate::key_translation::KEY_PAGE_DOWN,
+            crate::key_translation::KEY_END,
+            crate::key_translation::KEY_HOME,
+            crate::io::ESCAPE,
+            b'2',
+        ];
+        let mut consumed = 0;
+        let mut frames = Vec::new();
+        Scrollback::run(
+            rect.height as usize,
+            |offset| (log.line_count(), log.render_scrollback(rect, offset)),
+            || {
+                let key = keys[consumed];
+                consumed += 1;
+                key
+            },
+            |lines| frames.push(lines.to_vec()),
+        );
+
+        assert_eq!(consumed, 6, "keys after Escape must remain for the game");
+        assert_eq!(frames.len(), 6);
+        assert_eq!(frames[0][0].text.trim(), "4");
+        assert_eq!(frames[0][2].text.trim(), "6");
+        assert_eq!(frames[1][0].text.trim(), "Repeated (x2)");
+        assert_eq!(frames[1][2].text.trim(), "3");
+        assert_eq!(frames[2][0].text.trim(), "Old");
+        assert!(frames[2][0].dim);
+        assert_eq!(frames[2][1].text.trim(), "Repeated (x2)");
+        assert!(!frames[2][1].dim);
+        assert_eq!(frames[3][0].text.trim(), "3");
+        assert_eq!(frames[3][2].text.trim(), "5");
+        assert_eq!(frames[4][0].text.trim(), "4");
+        assert_eq!(frames[4][2].text.trim(), "6");
+        assert_eq!(frames[5][0].text.trim(), "Old");
     }
 
     #[test]

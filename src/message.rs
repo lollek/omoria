@@ -155,14 +155,18 @@ fn record_message_at_turn(message: String, turn: libc::c_long) {
 
 #[no_mangle]
 pub extern "C" fn show_recorded_messages() {
-    let guard = MESSAGE_RECORD.read().expect("RwLock poisoned");
-    let items = guard
-        .iter()
-        .rev()
-        .map(|record| record.text.as_str())
-        .collect::<Vec<&str>>();
-    draw_help_vec("Messages", &items);
-    unsafe { draw_cave() }
+    if crate::layout::current_layout().kind == crate::layout::LayoutKind::Split {
+        crate::term::show_message_scrollback();
+    } else {
+        let guard = MESSAGE_RECORD.read().expect("RwLock poisoned");
+        let items = guard
+            .iter()
+            .rev()
+            .map(|record| record.text.as_str())
+            .collect::<Vec<&str>>();
+        draw_help_vec("Messages", &items);
+        unsafe { draw_cave() }
+    }
 }
 
 #[cfg(test)]
@@ -261,6 +265,7 @@ pub(crate) mod tests {
     fn capture_is_unbounded_while_history_keeps_last_fifty() {
         let _state = TestState::new();
         let capture = capture_messages();
+        assert_eq!(MAX_MESSAGES, 50);
         let messages: Vec<String> = (0..MAX_MESSAGES + 2)
             .map(|index| format!("Message {index}"))
             .collect();

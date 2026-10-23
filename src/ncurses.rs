@@ -285,6 +285,54 @@ mod tests {
 
     #[test]
     #[serial_test::serial]
+    fn split_scrollback_preserves_prompt_and_sidebar_and_redraws_on_close() {
+        let _screen = TestScreen::new(35, 150);
+        let layout = compute_layout(35, 150);
+        assert_eq!(layout.kind, LayoutKind::Split);
+        set_current_layout(layout);
+        let rect = crate::layout::Rect::new(
+            1,
+            0,
+            layout.log.unwrap().width,
+            layout.log.unwrap().row + layout.log.unwrap().height - 1,
+        );
+        mvaddstr(0, 0, "PROMPT");
+        mvaddstr(1, rect.width, "SIDEBAR");
+        mvaddstr(34, rect.width, "BOTTOM");
+
+        let mut key_reads = 0;
+        let mut redrawn = false;
+        crate::term::show_message_scrollback_with(
+            || {
+                key_reads += 1;
+                with_stdscr(|window| {
+                    assert_eq!(window.mvinch(0, 0), 'P' as pancurses::chtype);
+                    assert_eq!(window.mvinch(1, rect.width), 'S' as pancurses::chtype);
+                    assert_eq!(window.mvinch(34, rect.width), 'B' as pancurses::chtype);
+                    assert_eq!(window.mvinch(34, rect.width - 1), ' ' as pancurses::chtype);
+                });
+                crate::io::ESCAPE
+            },
+            || {
+                mvaddstr(0, 0, "PROMPT");
+                mvaddstr(1, rect.width, "SIDEBAR");
+                mvaddstr(34, rect.width, "BOTTOM");
+                redrawn = true;
+            },
+        );
+
+        assert_eq!(key_reads, 1);
+        assert!(redrawn, "closing scrollback should redraw the screen");
+        with_stdscr(|window| {
+            assert_eq!(window.mvinch(0, 0), 'P' as pancurses::chtype);
+            assert_eq!(window.mvinch(1, rect.width), 'S' as pancurses::chtype);
+            assert_eq!(window.mvinch(34, rect.width), 'B' as pancurses::chtype);
+        });
+        crate::layout::reset_current_layout();
+    }
+
+    #[test]
+    #[serial_test::serial]
     fn empty_strings_and_control_characters_keep_curses_behavior() {
         let _screen = TestScreen::new(35, 150);
         mvaddstr(1, 1, "");

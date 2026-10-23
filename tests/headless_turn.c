@@ -21,6 +21,10 @@ struct command_script {
   size_t calls;
 };
 
+static size_t recorded_message_views;
+
+void headless_show_recorded_messages(void) { recorded_message_views++; }
+
 static bool next_command(void *context, char *key) {
   struct command_script *script = context;
   assert(game_state == GS_GET_COMMAND);
@@ -88,6 +92,7 @@ static void begin_scenario(void) {
   reset_flag = msg_flag = false;
   print_stat = command_count = 0;
   game_state = GS_IGNORE_CTRL_C;
+  recorded_message_views = 0;
 }
 
 static void end_scenario(void) {
@@ -136,6 +141,18 @@ static void assert_turn_limit_with_commands(void) {
   assert(player_flags.blind == 98);
   assert(C_message_capture_count() == 2);
   assert(headless_terminal_counts().erasure > 0);
+  end_scenario();
+}
+
+static void assert_message_history_does_not_consume_turn(void) {
+  begin_scenario();
+  const char keys[] = {CTRL_P, '.', '\0'};
+  struct command_script script = {keys, 2, 0, 0};
+  main_loop_with_commands(command_with_creature_marker, &script, 1);
+  assert(recorded_message_views == 1);
+  assert(script.calls == 2 && script.consumed == 2);
+  assert(turn == 2 && turn_counter == 102);
+  assert(player_flags.move_rate != -1234);
   end_scenario();
 }
 
@@ -235,6 +252,7 @@ int main(void) {
     assert_zero_budget();
     assert_turn_limit_without_input();
     assert_turn_limit_with_commands();
+    assert_message_history_does_not_consume_turn();
     assert_turn_limit_while_resting();
     assert_turn_limit_while_running();
     assert_turn_limit_cleans_up_search();

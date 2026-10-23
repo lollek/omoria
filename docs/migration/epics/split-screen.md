@@ -527,7 +527,7 @@ Acceptance checks:
 
 ### SL9. Log Scrollback (fan-out)
 
-Status: open. Depends on: SL3, SL8.
+Status: complete. Depends on: SL3, SL8.
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: the log panel module, `show_recorded_messages` and `MAX_MESSAGES` in
@@ -535,8 +535,8 @@ Owns: the log panel module, `show_recorded_messages` and `MAX_MESSAGES` in
 [command.c](../../../src/main_loop/command.c).
 
 Behavior:
-* History grows from 50 to 1000 messages. The Classic `^P` overlay keeps
-  paging through all of them.
+* History remains limited to the newest 50 messages. The Classic `^P` overlay
+  keeps paging through them.
 * In Split, `^P` expands the log over the map, stat bar, and status rects
   (everything left of the sidebar, below the prompt line). It shows history
   with the same dimming and collapsing as the log.
@@ -549,7 +549,7 @@ Acceptance checks:
 
 * L0: the scroll offset clamps to the history length and the expanded rect
   height, and paging lands on whole pages.
-* L0: the history keeps the newest 1000 messages and drops the oldest.
+* L0: the history keeps the newest 50 messages and drops the oldest.
 * L1: scripted keys open, scroll, and close the view without consuming a
   turn.
 * Changelog entry.
@@ -718,8 +718,8 @@ restore path, and the character save schema and save/load integration in
 
 Behavior:
 * Save raw message text and game-turn stamps with the character. Preserve
-  ordering and every repeated entry within the current history limit (50
-  messages, or 1000 after SL9); never persist display-collapsed counts.
+  ordering and every repeated entry within the current history limit of 50
+  messages; never persist display-collapsed counts.
 * On successful load, replace the previous character's history and rebuild
   the visible log from the restored records. Classic message recall uses the
   same restored history.

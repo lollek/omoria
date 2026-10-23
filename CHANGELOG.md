@@ -8,6 +8,7 @@
 * Split layout now labels the equipment list with an Equipment heading matching the Inventory heading, while keeping all equipment slots visible.
 * Split layout now shows a read-only inventory list beneath equipment, separated by a blank row and an Inventory heading, with inventory letters, names fitted to the panel width, and a count of items that do not fit.
 * Split layout now shows a wrapped message log below the map, keeps all messages since the last player command bright until the next command, collapses repeated messages, and pauses only before unseen lines would scroll away. Classic messages and raw message capture are unchanged.
+* Split layout's `^P` now opens scrollable message history with arrow, page, Home, and End navigation; opening and browsing history do not give monsters a turn, and history remains capped at 50 messages.
 * Split layout now shows current/max HP and mana with status indicators beneath the map, and the character screen includes quest count, bulk, and game time aligned with the existing value columns.
 * Cancelling the rest prompt no longer reads an unfinished input buffer or starts resting.
 * Item names containing non-ASCII bytes no longer hide special-attribute suffixes.

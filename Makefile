@@ -81,6 +81,9 @@ $(HDIR)/headless-loop.o: src/main_loop/main_loop.c tests/support/terminal_redire
 $(HDIR)/headless-command.o: src/main_loop/command.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -c src/main_loop/command.c -o $@
 
+$(HDIR)/headless-command-turn.o: src/main_loop/command.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
+	$(CC) $(CFLAGS) $(HREDIRECT) -Dshow_recorded_messages=headless_show_recorded_messages -c src/main_loop/command.c -o $@
+
 $(HDIR)/headless-rest.o: src/player_action/rest.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -Dheadless_get_string=headless_rest_get_string -c src/player_action/rest.c -o $@
 
@@ -121,9 +124,9 @@ test-eat: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/
 	./target/debug/eat-ffi-test
 
 .PHONY: test-headless
-test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS)
+test-headless: $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-loop.o $(HDIR)/headless-command-turn.o
 	cargo build --features save-test-support
-	$(CC) $(LINKCFLAGS) tests/headless_turn.c tests/support/headless_scenario.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HLOOPOBJS) $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-turn-test
+	$(CC) $(LINKCFLAGS) tests/headless_turn.c tests/support/headless_scenario.c tests/support/terminal.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(HDIR)/headless-loop.o $(HDIR)/headless-command-turn.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o src/main_loop/main_loop.o src/main_loop/command.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/headless-turn-test
 	./target/debug/headless-turn-test
 
 .PHONY: test-headless-interaction

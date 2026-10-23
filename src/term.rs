@@ -3,11 +3,11 @@ use libc;
 #[cfg(test)]
 use std::sync::Mutex;
 
-use crate::layout::current_layout;
+use crate::layout::{current_layout, LayoutKind, Rect};
 use crate::message::current_turn;
 use crate::misc;
 use crate::ncurses;
-use crate::user_interface::message_log::{LogLine, MessageLog};
+use crate::user_interface::message_log::{LogLine, MessageLog, Scrollback};
 use std::ffi::{CStr, CString};
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Mutex as LogMutex;
@@ -82,14 +82,55 @@ pub fn redraw_message_log() {
             apply_pending_command(&mut state.0);
             state.0.render(rect)
         };
-        for (offset, LogLine { text, dim }) in lines.iter().enumerate() {
-            if *dim {
-                ncurses::attron(ncurses::A_DIM);
-            }
-            ncurses::mvaddstr(rect.row + offset as i32, rect.col, text);
-            if *dim {
-                ncurses::attroff(ncurses::A_DIM);
-            }
+        draw_log_lines(rect, &lines);
+    }
+}
+
+pub fn show_message_scrollback() {
+    show_message_scrollback_with(crate::io::inkey_flush, || unsafe { C_draw_cave() });
+}
+
+pub(crate) fn show_message_scrollback_with(
+    mut read_key: impl FnMut() -> u8,
+    mut redraw: impl FnMut(),
+) {
+    let layout = current_layout();
+    assert_eq!(
+        layout.kind,
+        LayoutKind::Split,
+        "scrollback requires Split layout"
+    );
+    let log_rect = layout.log.expect("Split log rectangle unavailable");
+    let rect = Rect::new(1, 0, log_rect.width, log_rect.row + log_rect.height - 1);
+    Scrollback::run(
+        rect.height as usize,
+        |offset| {
+            let mut state = MESSAGE_LOG.lock().expect("message log lock poisoned");
+            apply_pending_command(&mut state.0);
+            (
+                state.0.line_count(),
+                state.0.render_scrollback(rect, offset),
+            )
+        },
+        &mut read_key,
+        |lines| draw_scrollback_frame(rect, lines),
+    );
+    redraw();
+}
+
+fn draw_scrollback_frame(rect: Rect, lines: &[LogLine]) {
+    draw_log_lines(rect, lines);
+    ncurses::refresh();
+}
+
+fn draw_log_lines(rect: Rect, lines: &[LogLine]) {
+    for (offset, LogLine { text, dim }) in lines.iter().enumerate() {
+        if *dim {
+            ncurses::attron(ncurses::A_DIM);
+        }
+        ncurses::mvaddstr(rect.row + offset as i32, rect.col, text);
+        if *dim {
+            ncurses::attroff(ncurses::A_DIM);
         }
     }
 }
@@ -98,6 +139,9 @@ pub fn redraw_message_log() {
 use lazy_static::lazy_static;
 
 extern "C" {
+    #[link_name = "draw_cave"]
+    fn C_draw_cave();
+
     #[link_name = "msg_flag"]
     static C_msg_flag: u8;
 
