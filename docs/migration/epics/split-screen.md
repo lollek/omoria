@@ -413,7 +413,7 @@ Implementation notes:
 
 ### SL6. Visible Monsters Panel (fan-out)
 
-Status: open. Depends on: SL5.
+Status: implemented; sidebar/accessor tests and `make check` pass. Depends on: SL5.
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: the sidebar module and a Rust read accessor for seen monsters in
@@ -423,6 +423,8 @@ Behavior:
 * Lists the monsters the player currently sees, grouped by name with a
   count. Each entry shows the map symbol and the name.
 * Sorted by distance to the player, nearest first.
+* A blank separator row precedes the `Visible monsters` heading, matching
+  Inventory without changing panel geometry or minimum terminal size.
 * Hallucination and blindness hide the panel contents, the same way the map
   hides them.
 
@@ -433,6 +435,24 @@ Acceptance checks:
   list.
 * L1: the accessor reads `is_seen` from a prepared `m_list`.
 * Changelog entry.
+
+Implementation notes:
+
+* The equipment tick hook also redraws the Split monsters rect, including a
+  blank separator, a `Visible monsters` heading and blank rows to clear disappeared or hidden
+  entries. Classic remains unchanged.
+* The read accessor copies seen monsters from the active `muptr`/`nptr` chain
+  without mutating `m_list`. Template names and symbols come from the existing
+  Rust monster templates; ordering uses the instances' cached player distances.
+* Groups show `symbol name (count)` and sort by their nearest member, with
+  alphabetical ties. Text and excess rows are clipped to the rect.
+* Rust tests cover grouping, ordering, fitting, blindness/hallucination,
+  redraws, and a C-compatible `m_list` fixture. Live terminal drawing and the
+  panel's C caller path have not been exercised end to end. No persistence
+  changes are made.
+* File-backed curses regression tests cover drawing and clearing the terminal's
+  bottom-right cell without scrolling, preserving attributes and reporting
+  actual overflow errors.
 
 ### SL7. Dynamic Map Viewport (fan-out)
 

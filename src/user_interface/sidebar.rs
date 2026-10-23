@@ -1,10 +1,74 @@
 use super::layout::{current_layout, draw_lines, render_lines, Layout, LayoutKind, Rect};
 use crate::{data::item_name, equipment, inventory::not_safe::inventory_clone, ncurses};
+use std::collections::BTreeMap;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct EquipmentSlot {
     pub name: &'static str,
     pub item_name: String,
+}
+
+#[derive(Clone, Debug)]
+struct SeenMonster {
+    name: String,
+    symbol: char,
+    distance: i16,
+}
+
+fn monster_snapshot(monsters: &[crate::model::Monster]) -> Vec<SeenMonster> {
+    monsters
+        .iter()
+        .map(|monster| {
+            let template = crate::generate_monster::monster_template::MONSTER_TEMPLATES
+                .get(monster.mptr as usize)
+                .expect("seen monster has an invalid template index");
+            SeenMonster {
+                name: template.name.to_string(),
+                symbol: template.symbol,
+                distance: monster.cdis,
+            }
+        })
+        .collect()
+}
+
+fn render_monsters_panel(
+    rect: Rect,
+    monsters: &[SeenMonster],
+    blind: bool,
+    hallucinating: bool,
+) -> Vec<String> {
+    let mut lines = vec![String::new(), "Visible monsters".to_string()];
+    if !blind && !hallucinating {
+        let mut groups = BTreeMap::new();
+        for monster in monsters {
+            let (nearest, count) = groups.entry(monster.name.as_str()).or_insert((monster, 0));
+            *count += 1;
+            if monster.distance < nearest.distance {
+                *nearest = monster;
+            }
+        }
+        let mut groups: Vec<_> = groups.into_values().collect();
+        groups.sort_by_key(|(monster, _)| (monster.distance, monster.name.as_str()));
+        lines.extend(
+            groups
+                .into_iter()
+                .map(|(monster, count)| format!("{} {} ({})", monster.symbol, monster.name, count)),
+        );
+    }
+    render_lines(rect, &lines)
+}
+
+fn draw_monsters_panel(
+    layout: Layout,
+    monsters: &[SeenMonster],
+    blind: bool,
+    hallucinating: bool,
+    draw: impl FnMut(i32, i32, &str),
+) {
+    if let Some(rect) = layout.monsters {
+        let lines = render_monsters_panel(rect, monsters, blind, hallucinating);
+        draw_lines(rect, &lines, draw);
+    }
 }
 
 pub(crate) fn render_equipment_panel(rect: Rect, slots: &[EquipmentSlot]) -> Vec<String> {
@@ -87,6 +151,22 @@ pub extern "C" fn C_print_equipment_block() {
     draw_inventory_panel(layout, |row, col, line| {
         ncurses::mvaddstr(row, col, line);
     });
+    if layout.monsters.is_some() {
+        extern "C" {
+            static player_flags: crate::model::PlayerFlags;
+        }
+        let flags = unsafe { player_flags };
+        let monsters = monster_snapshot(&crate::model::seen_monsters());
+        draw_monsters_panel(
+            layout,
+            &monsters,
+            flags.blind > 0,
+            flags.image > 0,
+            |row, col, line| {
+                ncurses::mvaddstr(row, col, line);
+            },
+        );
+    }
 }
 
 #[cfg(test)]
@@ -97,6 +177,144 @@ mod tests {
         compute_layout, CLASSIC_MIN_COLS, EQUIPMENT_HEIGHT, SPLIT_MIN_ROWS,
     };
     use std::ptr;
+
+    fn seen(name: &str, symbol: char, distance: i16) -> SeenMonster {
+        SeenMonster {
+            name: name.to_string(),
+            symbol,
+            distance,
+        }
+    }
+
+    #[test]
+    fn monsters_panel_groups_names_and_orders_by_the_nearest_member() {
+        let monsters = [
+            seen("Orc", 'o', 9),
+            seen("Troll", 'T', 4),
+            seen("Orc", 'o', 1),
+            seen("Bat", 'b', 6),
+        ];
+        let lines = render_monsters_panel(Rect::new(25, 81, 20, 5), &monsters, false, false);
+        assert_eq!(
+            lines.iter().map(|s| s.trim_end()).collect::<Vec<_>>(),
+            [
+                "",
+                "Visible monsters",
+                "o Orc (2)",
+                "T Troll (1)",
+                "b Bat (1)",
+            ]
+        );
+    }
+
+    #[test]
+    fn monsters_panel_orders_equal_distances_by_name() {
+        let monsters = [seen("Troll", 'T', 2), seen("Bat", 'b', 2)];
+        let lines = render_monsters_panel(Rect::new(25, 81, 20, 4), &monsters, false, false);
+        assert_eq!(lines[2].trim_end(), "b Bat (1)");
+        assert_eq!(lines[3].trim_end(), "T Troll (1)");
+    }
+
+    #[test]
+    fn monsters_panel_fits_names_and_rows_to_the_rectangle() {
+        let monsters = [
+            seen("\u{e9}normous bat", 'b', 1),
+            seen("Orc", 'o', 2),
+            seen("Troll", 'T', 3),
+        ];
+        assert_eq!(
+            render_monsters_panel(Rect::new(25, 81, 8, 3), &monsters, false, false),
+            ["        ", "Visible ", "b \u{e9}normo"]
+        );
+        assert!(render_monsters_panel(Rect::new(25, 81, 8, 0), &monsters, false, false).is_empty());
+        assert_eq!(
+            render_monsters_panel(Rect::new(25, 81, 0, 2), &monsters, false, false),
+            ["", ""]
+        );
+    }
+
+    #[test]
+    fn monsters_panel_hides_all_entries_when_blind_or_hallucinating() {
+        let monsters = [seen("Orc", 'o', 1)];
+        for (blind, hallucinating) in [(true, false), (false, true), (true, true)] {
+            assert_eq!(
+                render_monsters_panel(Rect::new(25, 81, 16, 3), &monsters, blind, hallucinating),
+                ["                ", "Visible monsters", "                "]
+            );
+        }
+        assert_eq!(
+            render_monsters_panel(Rect::new(25, 81, 16, 3), &[], false, false),
+            ["                ", "Visible monsters", "                "]
+        );
+    }
+
+    #[test]
+    fn monster_snapshot_uses_template_symbols_names_and_instance_distances() {
+        let monster = crate::model::Monster {
+            mptr: 0,
+            cdis: 7,
+            is_seen: 1,
+            ..Default::default()
+        };
+        let snapshot = monster_snapshot(&[monster]);
+        assert_eq!(snapshot.len(), 1);
+        assert_eq!(snapshot[0].name, "<<Placeholder>>");
+        assert_eq!(snapshot[0].symbol, 'p');
+        assert_eq!(snapshot[0].distance, 7);
+    }
+
+    #[test]
+    #[should_panic(expected = "seen monster has an invalid template index")]
+    fn monster_snapshot_rejects_an_invalid_template_index() {
+        monster_snapshot(&[crate::model::Monster {
+            mptr: u16::MAX,
+            ..Default::default()
+        }]);
+    }
+
+    #[test]
+    fn monsters_panel_redraws_its_rect_and_clears_disappearing_entries() {
+        let layout = compute_layout(SPLIT_MIN_ROWS, CLASSIC_MIN_COLS);
+        let rect = layout.monsters.unwrap();
+        let monsters = [seen("Orc", 'o', 1)];
+        for (entries, blind, hallucinating) in [
+            (&monsters[..], false, false),
+            (&[][..], false, false),
+            (&monsters[..], true, false),
+            (&monsters[..], false, true),
+        ] {
+            let mut draws = Vec::new();
+            draw_monsters_panel(layout, entries, blind, hallucinating, |row, col, line| {
+                draws.push((row, col, line.to_string()));
+            });
+            assert_eq!(draws.len(), rect.height as usize);
+            assert!(draws[0].2.trim().is_empty());
+            assert_eq!(draws[1].2.trim_end(), "Visible monsters");
+            assert!(draws.iter().enumerate().all(|(index, (row, col, line))| {
+                *row == rect.row + index as i32
+                    && *col == rect.col
+                    && line.len() == rect.width as usize
+            }));
+            if entries.is_empty() || blind || hallucinating {
+                assert!(draws[2..].iter().all(|(_, _, line)| line.trim().is_empty()));
+            } else {
+                assert_eq!(draws[2].2.trim_end(), "o Orc (1)");
+            }
+        }
+    }
+
+    #[test]
+    fn monsters_panel_does_not_draw_in_classic_or_too_small_layouts() {
+        for rows in [24, 25] {
+            draw_monsters_panel(
+                compute_layout(rows, CLASSIC_MIN_COLS),
+                &[seen("Orc", 'o', 1)],
+                false,
+                false,
+                |_, _, _| panic!("monsters must only draw in Split"),
+            );
+        }
+    }
 
     #[export_name = "inventory_list"]
     static mut INVENTORY_LIST: *mut InventoryItem = ptr::null_mut();

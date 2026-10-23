@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+* Fix a crash when the Split monsters panel draws or clears the terminal's bottom-right cell.
+* Split layout now lists visible monsters beneath inventory with a blank separator before the heading, grouped by name with symbols and counts and ordered nearest first. Blindness and hallucination hide the list contents.
 * Split layout now labels the equipment list with an Equipment heading matching the Inventory heading, while keeping all equipment slots visible.
 * Split layout now shows a read-only inventory list beneath equipment, separated by a blank row and an Inventory heading, with inventory letters, names fitted to the panel width, and a count of items that do not fit.
 * Split layout now shows a wrapped message log below the map, keeps all messages since the last player command bright until the next command, collapses repeated messages, and pauses only before unseen lines would scroll away. Classic messages and raw message capture are unchanged.
