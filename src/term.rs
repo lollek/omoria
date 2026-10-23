@@ -1,12 +1,86 @@
 use libc;
-#[cfg(not(test))]
-use std::ffi::CString;
 
 #[cfg(test)]
 use std::sync::Mutex;
 
+use crate::layout::current_layout;
+use crate::message::current_turn;
 use crate::misc;
 use crate::ncurses;
+use crate::user_interface::message_log::{LogLine, MessageLog};
+use std::ffi::{CStr, CString};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Mutex as LogMutex;
+
+lazy_static! {
+    static ref MESSAGE_LOG: LogMutex<(MessageLog, usize)> =
+        LogMutex::new((MessageLog::default(), 0));
+}
+static INPUT_GENERATION: AtomicUsize = AtomicUsize::new(0);
+
+pub type LogDraw = extern "C" fn(*const libc::c_char, libc::c_int, libc::c_int, bool);
+pub type LogMore = extern "C" fn() -> bool;
+
+pub fn message_input_read() {
+    // Input can be read by a -more- callback while the log is being displayed.
+    INPUT_GENERATION.fetch_add(1, Ordering::Relaxed);
+}
+
+/// # Safety
+/// `message` must point to a live NUL-terminated string.
+pub unsafe fn print_log_message(
+    message: *const libc::c_char,
+    draw: LogDraw,
+    more: LogMore,
+) -> bool {
+    let rect = current_layout()
+        .log
+        .expect("Split log rectangle unavailable");
+    let text = unsafe { CStr::from_ptr(message) }
+        .to_str()
+        .expect("Invalid message UTF-8");
+    if text.is_empty() {
+        return false;
+    }
+    let mut state = MESSAGE_LOG.lock().expect("message log lock poisoned");
+    let (log, generation) = &mut *state;
+    if *generation != INPUT_GENERATION.load(Ordering::Relaxed) {
+        log.input_read();
+    }
+    let aborted = log.print(
+        text,
+        current_turn(),
+        rect,
+        |lines| {
+            for (offset, line) in lines.iter().enumerate() {
+                let text = CString::new(line.text.as_str()).expect("NUL in rendered message");
+                draw(text.as_ptr(), rect.row + offset as i32, rect.col, line.dim);
+            }
+        },
+        || more(),
+    );
+    *generation = INPUT_GENERATION.load(Ordering::Relaxed);
+    aborted
+}
+
+pub fn redraw_message_log() {
+    if let Some(rect) = current_layout().log {
+        let lines = MESSAGE_LOG
+            .lock()
+            .expect("message log lock poisoned")
+            .0
+            .render(rect, current_turn());
+        for (offset, LogLine { text, dim }) in lines.iter().enumerate() {
+            if *dim {
+                ncurses::attron(ncurses::A_DIM);
+            }
+            ncurses::mvaddstr(rect.row + offset as i32, rect.col, text);
+            if *dim {
+                ncurses::attroff(ncurses::A_DIM);
+            }
+        }
+    }
+}
 
 #[cfg(test)]
 use lazy_static::lazy_static;
@@ -108,4 +182,5 @@ pub fn clear_screen() {
         msg_print("");
     }
     ncurses::clear();
+    redraw_message_log();
 }

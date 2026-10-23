@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Split layout now shows a wrapped message log below the map, dims older turns, collapses repeated messages, and pauses only before unseen lines would scroll away. Classic messages and raw message capture are unchanged.
 * Split layout now shows current/max HP and mana with status indicators beneath the map, and the character screen includes quest count, bulk, and game time aligned with the existing value columns.
 * Cancelling the rest prompt no longer reads an unfinished input buffer or starts resting.
 * Item names containing non-ASCII bytes no longer hide special-attribute suffixes.

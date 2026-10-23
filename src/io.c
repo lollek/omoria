@@ -165,15 +165,34 @@ void clear_rc(long row, long col) {
   refresh(); /* dump the clear sequence */
 }
 
+static void draw_message_log_line(const char *text, int row, int col, bool dim) {
+  put_buffer_attr(text, row + 1, col + 1, dim ? A_DIM : 0);
+}
+
+static bool message_log_more(void) {
+  const obj_set accepted = {3, '\n', '\r', 25, 26, ESCAPE, ' ', 0};
+  const obj_set aborted = {3, 25, 26, ESCAPE, 0};
+  char key;
+  if (msg_terse)
+    return false;
+  put_buffer(" -more-", msg_line, msg_line);
+  do {
+    key = inkey();
+  } while (!is_in(key, accepted));
+  erase_line(msg_line, msg_line);
+  return is_in(key, aborted);
+}
+
 bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
 {
   bool return_value = false;
   char ic = 0;
   const bool capturing = message_capture_active();
+  const bool split = C_layout_is_split();
 
   ENTER(("msg_print", "%s", str_buff));
 
-  if (!capturing && msg_flag && !msg_terse) {
+  if (!capturing && !split && msg_flag && !msg_terse) {
     long old_len = 0;
     old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
@@ -188,14 +207,17 @@ bool msg_print_pass_one(char *str_buff) /* : varying[a] of char; */
   if (str_buff && str_buff[0]) {
 
     /* put_buffer(cursor_erl+str_buff,msg_line,msg_line);*/
-    if (!capturing) {
+    if (!capturing && split) {
+      return_value = C_message_log_print(str_buff, draw_message_log_line, message_log_more);
+    } else if (!capturing) {
       erase_line(msg_line, msg_line);
       put_buffer(str_buff, msg_line, msg_line);
     }
     strncpy(last_printed_message, str_buff, sizeof(char[82]));
+    last_printed_message[sizeof(last_printed_message) - 1] = 0;
     record_message(str_buff);
 
-    if (ic == 3 || ic == 25 || ic == 26 || ic == 27) {
+    if (return_value || ic == 3 || ic == 25 || ic == 26 || ic == 27) {
       return_value = true;
     } else {
       return_value = false;
@@ -236,8 +258,10 @@ bool msg_print(const char *str_buff) /* : varying[a] of char; */
   const obj_set big_set = {3, '\n', '\r', 25, 26, ESCAPE, ' ', 0};
   const obj_set small_set = {3, 25, 26, ESCAPE, 0};
   const bool capturing = message_capture_active();
+  const bool split = C_layout_is_split();
+  bool log_aborted = false;
 
-  if (!capturing && msg_flag && !msg_terse) {
+  if (!capturing && !split && msg_flag && !msg_terse) {
     const long old_len = strlen(last_printed_message) + 1;
     put_buffer(" -more-", msg_line, old_len);
     do {
@@ -245,7 +269,9 @@ bool msg_print(const char *str_buff) /* : varying[a] of char; */
     } while (!is_in(in_char, big_set));
   }
 
-  if (!capturing) {
+  if (!capturing && split) {
+    log_aborted = C_message_log_print(str_buff, draw_message_log_line, message_log_more);
+  } else if (!capturing) {
     erase_line(msg_line, msg_line);
     put_buffer(str_buff, msg_line, msg_line);
   }
@@ -258,7 +284,7 @@ bool msg_print(const char *str_buff) /* : varying[a] of char; */
 
   msg_flag = true;
 
-  return is_in(in_char, small_set);
+  return log_aborted || is_in(in_char, small_set);
 }
 /*//////////////////////////////////////////////////////////////////// */
 /*//////////////////////////////////////////////////////////////////// */

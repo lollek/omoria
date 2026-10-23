@@ -5,12 +5,19 @@ use std::sync::{Arc, Mutex, RwLock};
 
 type MessageStream = Arc<Mutex<Vec<String>>>;
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MessageRecord {
+    pub text: String,
+    pub turn: libc::c_long,
+}
+
 lazy_static! {
-    static ref MESSAGE_RECORD: RwLock<LinkedList<String>> = RwLock::new(LinkedList::default());
+    static ref MESSAGE_RECORD: RwLock<LinkedList<MessageRecord>> =
+        RwLock::new(LinkedList::default());
     static ref MESSAGE_CAPTURES: Mutex<Vec<MessageStream>> = Mutex::new(Vec::new());
     static ref C_MESSAGE_CAPTURES: Mutex<Vec<MessageCapture>> = Mutex::new(Vec::new());
 }
-const MAX_MESSAGES: usize = 50;
+pub(crate) const MAX_MESSAGES: usize = 50;
 
 #[no_mangle]
 pub extern "C" fn message_capture_active() -> bool {
@@ -114,12 +121,33 @@ extern "C" fn _record_message(message: *const libc::c_char) {
     record_message(message);
 }
 pub fn record_message(message: String) {
+    record_message_at_turn(message, current_turn());
+}
+
+pub fn current_turn() -> libc::c_long {
+    #[cfg(not(test))]
+    {
+        extern "C" {
+            static turn: libc::c_long;
+        }
+        unsafe { turn }
+    }
+    #[cfg(test)]
+    {
+        0
+    }
+}
+
+fn record_message_at_turn(message: String, turn: libc::c_long) {
     let mut guard = MESSAGE_RECORD.write().expect("RwLock poisoned");
     // Holding the history lock keeps concurrent stream and history writes in the same order.
     if let Some(stream) = MESSAGE_CAPTURES.lock().expect("Mutex poisoned").last() {
         stream.lock().expect("Mutex poisoned").push(message.clone());
     }
-    guard.push_back(message);
+    guard.push_back(MessageRecord {
+        text: message,
+        turn,
+    });
     if guard.len() > MAX_MESSAGES {
         guard.pop_front();
     }
@@ -131,7 +159,7 @@ pub extern "C" fn show_recorded_messages() {
     let items = guard
         .iter()
         .rev()
-        .map(String::as_ref)
+        .map(|record| record.text.as_str())
         .collect::<Vec<&str>>();
     draw_help_vec("Messages", &items);
     unsafe { draw_cave() }
@@ -144,7 +172,7 @@ pub(crate) mod tests {
     use serial_test::serial;
 
     pub(crate) struct TestState {
-        history: LinkedList<String>,
+        history: LinkedList<MessageRecord>,
         last_message: String,
     }
 
@@ -179,7 +207,12 @@ pub(crate) mod tests {
             panic!("Test failure");
         });
         assert!(result.is_err());
-        let history: Vec<String> = MESSAGE_RECORD.read().unwrap().iter().cloned().collect();
+        let history: Vec<String> = MESSAGE_RECORD
+            .read()
+            .unwrap()
+            .iter()
+            .map(|entry| entry.text.clone())
+            .collect();
         assert_eq!(history, ["Original message"]);
         assert_eq!(term::test_last_msg_print(), "Original message");
     }
@@ -235,7 +268,12 @@ pub(crate) mod tests {
             record_message(message.clone());
         }
         assert_eq!(capture.messages(), messages);
-        let history: Vec<String> = MESSAGE_RECORD.read().unwrap().iter().cloned().collect();
+        let history: Vec<String> = MESSAGE_RECORD
+            .read()
+            .unwrap()
+            .iter()
+            .map(|entry| entry.text.clone())
+            .collect();
         assert_eq!(history, messages[2..]);
     }
 
@@ -274,7 +312,12 @@ pub(crate) mod tests {
         drop(capture);
         record_message("History only".into());
         assert_eq!(*stream.lock().unwrap(), ["Captured"]);
-        let history: Vec<String> = MESSAGE_RECORD.read().unwrap().iter().cloned().collect();
+        let history: Vec<String> = MESSAGE_RECORD
+            .read()
+            .unwrap()
+            .iter()
+            .map(|entry| entry.text.clone())
+            .collect();
         assert_eq!(history, ["Captured", "History only"]);
     }
 
@@ -337,5 +380,29 @@ pub(crate) mod tests {
         term::msg_print("Rust message");
         assert_eq!(capture.messages(), ["Rust message"]);
         assert_eq!(term::test_last_msg_print(), "Rust message");
+    }
+
+    #[test]
+    #[serial]
+    fn history_stamps_each_raw_repeat_with_its_turn_but_capture_stays_text() {
+        let _state = TestState::new();
+        let capture = capture_messages();
+        record_message_at_turn("Miss".into(), 12);
+        record_message_at_turn("Miss".into(), 13);
+        let history: Vec<MessageRecord> = MESSAGE_RECORD.read().unwrap().iter().cloned().collect();
+        assert_eq!(
+            history,
+            [
+                MessageRecord {
+                    text: "Miss".into(),
+                    turn: 12
+                },
+                MessageRecord {
+                    text: "Miss".into(),
+                    turn: 13
+                },
+            ]
+        );
+        assert_eq!(capture.messages(), ["Miss", "Miss"]);
     }
 }

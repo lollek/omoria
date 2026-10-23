@@ -105,6 +105,9 @@ static void assert_rendering_leaves(void) {
   assert(headless_terminal_counts().drawing == 1);
   headless_put_buffer_attr("Attribute", 1, 1, A_BOLD);
   assert(headless_terminal_counts().drawing == 2);
+  const struct headless_attributed_draw attributed = headless_terminal_last_attributed_draw();
+  assert(strcmp(attributed.text, "Attribute") == 0);
+  assert(attributed.row == 1 && attributed.col == 1 && attributed.attrs == A_BOLD);
   headless_prt("Status", 1, 1);
   assert(headless_terminal_counts().drawing == 3);
   panel_row_prt = 0;

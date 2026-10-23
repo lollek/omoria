@@ -15,7 +15,8 @@ two Rust HUD entry points, which otherwise call ncurses directly.
 Do **not** force-include the redirects in `terminal.c`, `io.c`, or `term.c`:
 these files define some of the symbols being redirected. For the message
 caller object, use only `-Dinkey=headless_inkey`,
-`-Dput_buffer=headless_put_buffer`, and `-DErase_Line=headless_erase_line`,
+`-Dput_buffer=headless_put_buffer`, `-DErase_Line=headless_erase_line`, and
+`-Dput_buffer_attr=headless_put_buffer_attr`,
 as shown in the Makefile. This io object is not a general headless io layer;
 unredirected prompts and other helpers can still reach curses. Redirect their
 callers rather than invoking them through this object.
@@ -26,13 +27,17 @@ callers rather than invoking them through this object.
   scripts and counters and forbids drawing. It does not reset gameplay globals.
   The support is process-global and must not be used concurrently.
 * Enable drawing explicitly with `headless_terminal_allow_drawing(true)`.
-  Drawing is counted, not rendered. Glyph and map-string calls preserve
+  Drawing is counted, not rendered. `headless_terminal_last_attributed_draw()`
+  also exposes the latest attributed text (truncated to 255 bytes), coordinates,
+  and attributes. The `more` counter counts explicit `-more-` prompts.
+  Glyph and map-string calls preserve
   `used_line` updates; invalid map rows fail. Screen clearing and message-row
   `prt` preserve empty-message effects, so use real message capture when needed.
 * `headless_terminal_script(keys, count)` installs a **borrowed** byte sequence;
   keep it alive until reset or replacement. It need not be NUL-terminated.
   Each `headless_inkey()` consumes one key and clears `command_count` and
-  `msg_flag`. Exhaustion, including after reset, prints a diagnostic and exits
+  `msg_flag`, and acknowledges unseen log lines like production input.
+  Exhaustion, including after reset, prints a diagnostic and exits
   with `EXIT_FAILURE`, never returning a synthesized gameplay command.
 * Script only explicitly expected low-level prompt keys, such as `-more-`
   acknowledgments. Gameplay commands go through the HL1 command source
@@ -50,3 +55,9 @@ fixture globals before the original message tests run.
 This is terminal-boundary coverage, including real screen and blind-light
 callers. Bounded main-loop scenarios are in the `test-headless*` targets. Other production
 objects and direct Rust ncurses callers are not automatically intercepted.
+
+The message target enables `terminal-test-support` to select Classic or Split
+geometry without curses. Split draws through callbacks compiled with the
+attributed-buffer redirect above. Tests cover log placement, repeat collapse,
+long-message pagination, input/turn acknowledgment, abort results, and capture
+bypassing all drawing and prompts. These are not interactive terminal tests.

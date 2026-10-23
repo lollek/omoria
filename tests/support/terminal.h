@@ -10,12 +10,21 @@ struct headless_terminal_counts {
   size_t input;
   size_t drawing;
   size_t erasure;
+  size_t more;
+};
+
+struct headless_attributed_draw {
+  char text[256];
+  long row;
+  long col;
+  int attrs;
 };
 
 void headless_terminal_reset(void);
 void headless_terminal_allow_drawing(bool allow);
 void headless_terminal_script(const char *keys, size_t count);
 struct headless_terminal_counts headless_terminal_counts(void);
+struct headless_attributed_draw headless_terminal_last_attributed_draw(void);
 char headless_inkey(void);
 void headless_put_buffer(const char *message, int row, int col);
 void headless_erase_line(long row, long col);

@@ -64,6 +64,7 @@ struct StatusState {
 #[no_mangle]
 pub extern "C" fn C_print_stat_block() {
     print_stat_block();
+    term::redraw_message_log();
 }
 
 #[no_mangle]

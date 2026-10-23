@@ -3,6 +3,28 @@ use std::ffi::CStr;
 
 use crate::{ncurses, term};
 
+/// # Safety
+/// `message` must point to a live NUL-terminated string; callbacks must remain callable.
+#[no_mangle]
+pub unsafe extern "C" fn C_message_log_print(
+    message: *const libc::c_char,
+    draw: term::LogDraw,
+    more: term::LogMore,
+) -> bool {
+    unsafe { term::print_log_message(message, draw, more) }
+}
+
+#[no_mangle]
+pub extern "C" fn C_message_log_input() {
+    term::message_input_read();
+}
+
+#[cfg(feature = "terminal-test-support")]
+#[no_mangle]
+pub extern "C" fn C_terminal_test_layout(rows: libc::c_int, cols: libc::c_int) {
+    crate::layout::set_current_layout(crate::layout::compute_layout(rows, cols));
+}
+
 #[no_mangle]
 pub extern "C" fn C_clear_screen() {
     term::clear_screen();

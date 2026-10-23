@@ -14,6 +14,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "io.h"
+#include "messages.h"
 #include "save.h"
 #include "term.h"
 
@@ -55,6 +56,7 @@ void put_buffer_attr(const char *out_str, const long row, const long col,
    returns ^R.	*/
 char inkey(void) {
 
+  C_message_log_input();
   refresh();         /* Dump IO buffer		*/
   command_count = 0; /* Just to be safe -CJS- */
   while (TRUE) {
