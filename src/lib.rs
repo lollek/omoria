@@ -30,6 +30,7 @@ pub mod error;
 pub mod flow;
 pub mod inventory;
 pub mod io;
+pub mod key_translation;
 pub mod logic;
 #[cfg(not(test))]
 mod magic;

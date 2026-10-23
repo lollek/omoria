@@ -26,6 +26,12 @@ void move_cursor(int row, int col);
 #define CTRL_(x) (x & 0x1F)
 #define DELETE 0x7f
 #define ESCAPE '\033' /* ESCAPE character -CJS-  */
+#define OMORIA_KEY_HOME ((char)0xf0)
+#define OMORIA_KEY_END ((char)0xf1)
+#define OMORIA_KEY_PAGE_UP ((char)0xf2)
+#define OMORIA_KEY_PAGE_DOWN ((char)0xf3)
+
+int C_translate_key_code(int key_code);
 
 /* message line location */
 #define MSG_LINE -1

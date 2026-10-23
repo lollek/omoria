@@ -87,9 +87,12 @@ char inkey(void) {
       }
       return ESCAPE;
     }
-    if (i != CTRL_('R')) {
+    const int translated = C_translate_key_code(i);
+    if (translated < 0)
+      continue;
+    if (translated != CTRL_('R')) {
       msg_flag = false;
-      return i;
+      return (char)translated;
     }
     refresh();
   }
@@ -177,7 +180,7 @@ bool Get_String(char *in_str, const int row, int column, int slen) {
       }
       break;
     default:
-      if (!isprint(i) || column > end_col)
+      if (!isprint((unsigned char)i) || column > end_col)
         bell();
       else {
         mvaddch(row, column, i);

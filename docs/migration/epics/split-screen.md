@@ -58,12 +58,11 @@ The constraints the stories depend on:
   redraw from the same hook.
 * `inkey` in [term.c](../../../src/term.c):
   * It returns `char` and silently consumes `^R`.
-  * Keypad mode is not enabled, so arrow keys arrive as raw escape
-    sequences.
-  * With keypad mode on, curses key codes above 255 would be truncated, for
-    example `KEY_UP` (259) becomes 3, which is `^C`. `KEY_RESIZE` and
-    `KEY_MOUSE` are also above 255. All of these must be handled before the
-    value is truncated.
+  * Keypad mode is enabled with a short Escape delay, and arrow keys map to
+    the existing direction keys before values are narrowed to `char`.
+  * Home, End, Page Up, and Page Down use named byte values. Unknown curses
+    key codes above 255, including `KEY_RESIZE` and `KEY_MOUSE`, are dropped
+    instead of being truncated to control characters.
 * [look.rs](../../../src/player_action/look.rs) already describes monsters and
   objects through a `LookContext` (`monster_name`, `item_name`).
 * The character screen
@@ -502,7 +501,7 @@ Out of scope: resizing while running.
 
 ### SL8. Keypad Input (fan-out)
 
-Status: open. Depends on: none.
+Status: complete. Depends on: none.
 Size: M. Complexity: High. Agent: strong.
 
 Owns: `init_curses` in [ncurses.rs](../../../src/ncurses.rs), `inkey` in

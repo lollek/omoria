@@ -58,6 +58,13 @@ pub fn init_curses() {
         process::exit(1);
     }
 
+    if window.keypad(true) != 0 {
+        panic!("keypad returned ERR");
+    }
+    if ::ncurses::set_escdelay(25) != 0 {
+        panic!("set_escdelay returned ERR");
+    }
+
     set_current_layout(layout);
     window.clear();
     window.refresh();
