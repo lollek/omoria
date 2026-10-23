@@ -2,6 +2,7 @@ use crate::model::Stat;
 use crate::player_action::attack::{
     calculate_number_of_attacks, calculate_player_tohit, AttackType, MeleeAttackType,
 };
+use crate::user_interface::heads_up_display::format_game_time;
 use crate::user_interface::helpers;
 use crate::{data, helper, misc, ncurses, player, term};
 use std::cmp::max;
@@ -74,7 +75,30 @@ fn put_combat_abilities() {
         term::prt(line, row, middle_column);
     }
 
+    let summary = character_screen_summary(
+        player::quests(),
+        player::current_bulk(),
+        player::max_bulk(),
+        player::age(),
+    );
+    term::prt(&summary[0], 12, left_column);
+    term::prt(&summary[1], 13, left_column);
+    term::prt(&summary[2], 12, middle_column);
+
     helpers::print_stats(starting_row as u8 + 1, right_column);
+}
+
+fn character_screen_summary(
+    quests: u8,
+    current_bulk: u16,
+    max_bulk: u16,
+    game_time: crate::model::GameTime,
+) -> [String; 3] {
+    [
+        format!("Quests:       {}", quests),
+        format!("Bulk:         {}/{}", current_bulk, max_bulk),
+        format!("Time:   {}", format_game_time(game_time).trim()),
+    ]
 }
 
 fn put_physical_aspects() {
@@ -167,4 +191,34 @@ fn put_misc_abilities() {
         51,
         format!("Swimming    : {}", misc::mod_to_string(swimming, 1)),
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn character_screen_summary_includes_quests_bulk_and_day_time() {
+        let lines = character_screen_summary(
+            3,
+            120,
+            250,
+            crate::model::GameTime {
+                year: 1,
+                month: 1,
+                day: 5,
+                hour: 9,
+                secs: 7,
+            },
+        );
+
+        assert_eq!(
+            lines,
+            [
+                "Quests:       3",
+                "Bulk:         120/250",
+                "Time:   Starday 09:00"
+            ]
+        );
+    }
 }

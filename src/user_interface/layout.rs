@@ -91,6 +91,7 @@ pub fn compute_layout(rows: i32, cols: i32) -> Layout {
 
     if rows >= SPLIT_MIN_ROWS && cols >= SPLIT_MIN_COLS {
         layout.kind = LayoutKind::Split;
+        layout.stat_column = None;
         layout.log = Some(Rect::new(25, 0, 81, rows - 25));
         let inventory_row = 1 + EQUIPMENT_HEIGHT;
         layout.inventory = Some(Rect::new(inventory_row, 81, cols - 81, INVENTORY_HEIGHT));
@@ -229,7 +230,7 @@ mod tests {
                 let classic = compute_layout(CLASSIC_MIN_ROWS, cols);
                 assert_eq!(layout.prompt, classic.prompt);
                 assert_eq!(layout.map, Some(Rect::new(1, 14, 66, 22)));
-                assert_eq!(layout.stat_column, classic.stat_column);
+                assert_eq!(layout.stat_column, None);
                 assert_eq!(layout.status_rows, classic.status_rows);
                 assert_eq!(layout.equipment, classic.equipment);
                 assert_eq!(layout.log, Some(Rect::new(25, 0, 81, rows - 25)));
@@ -254,6 +255,14 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn split_keeps_stat_and_status_rows_below_the_map() {
+        let layout = compute_layout(SPLIT_MIN_ROWS, SPLIT_MIN_COLS);
+
+        assert_eq!(layout.stat_column, None);
+        assert_eq!(layout.status_rows, Some(Rect::new(23, 0, 81, 2)));
     }
 
     #[test]
