@@ -35,18 +35,11 @@ void generate_map(void) {
   if (dun_level == 0) {
     cur_height = SCREEN_HEIGHT * 2;
     cur_width = SCREEN_WIDTH * 2;
-    max_panel_rows = cur_height / SCREEN_HEIGHT * 2 - 2;
-    max_panel_cols = cur_width / SCREEN_WIDTH * 2 - 2;
-    panel_row = 0;
-    panel_col = 0;
     generate_town();
   } else {
     cur_height = MAX_HEIGHT;
     cur_width = MAX_WIDTH;
-    max_panel_rows = cur_height / SCREEN_HEIGHT * 2 - 2;
-    max_panel_cols = cur_width / SCREEN_WIDTH * 2 - 2;
-    panel_row = max_panel_rows;
-    panel_col = max_panel_cols;
     generate_dungeon();
   }
+  C_init_viewport(dun_level != 0);
 }

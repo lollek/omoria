@@ -16,6 +16,7 @@ pub const EQUIPMENT_HEIGHT: i32 = 14;
 pub const INVENTORY_HEIGHT: i32 = 10;
 pub const LOG_MIN_HEIGHT: i32 = 10;
 pub const MONSTERS_MIN_HEIGHT: i32 = 10;
+pub const SIDEBAR_WIDTH: i32 = 69;
 pub const SPLIT_MIN_ROWS: i32 = {
     let log_bottom = CLASSIC_MIN_ROWS + LOG_MIN_HEIGHT;
     let sidebar_bottom = 1 + EQUIPMENT_HEIGHT + INVENTORY_HEIGHT + MONSTERS_MIN_HEIGHT;
@@ -91,12 +92,33 @@ pub fn compute_layout(rows: i32, cols: i32) -> Layout {
 
     if rows >= SPLIT_MIN_ROWS && cols >= SPLIT_MIN_COLS {
         layout.kind = LayoutKind::Split;
+        let sidebar_col = cols - SIDEBAR_WIDTH;
+        let map_width = sidebar_col;
+        let map_height = rows - 13;
         layout.stat_column = None;
-        layout.log = Some(Rect::new(25, 0, 81, rows - 25));
+        layout.map = Some(Rect::new(1, 0, map_width, map_height));
+        layout.status_rows = Some(Rect::new(rows - 12, 0, map_width, 2));
+        layout.log = Some(Rect::new(
+            rows - LOG_MIN_HEIGHT,
+            0,
+            map_width,
+            LOG_MIN_HEIGHT,
+        ));
         let inventory_row = 1 + EQUIPMENT_HEIGHT;
-        layout.inventory = Some(Rect::new(inventory_row, 81, cols - 81, INVENTORY_HEIGHT));
+        layout.equipment = Some(Rect::new(1, sidebar_col, SIDEBAR_WIDTH, EQUIPMENT_HEIGHT));
+        layout.inventory = Some(Rect::new(
+            inventory_row,
+            sidebar_col,
+            SIDEBAR_WIDTH,
+            INVENTORY_HEIGHT,
+        ));
         let monsters_row = inventory_row + INVENTORY_HEIGHT;
-        layout.monsters = Some(Rect::new(monsters_row, 81, cols - 81, rows - monsters_row));
+        layout.monsters = Some(Rect::new(
+            monsters_row,
+            sidebar_col,
+            SIDEBAR_WIDTH,
+            rows - monsters_row,
+        ));
         debug_assert!(rows - monsters_row >= MONSTERS_MIN_HEIGHT);
     }
     layout
@@ -228,19 +250,35 @@ mod tests {
             for cols in SPLIT_MIN_COLS..=200 {
                 let layout = compute_layout(rows, cols);
                 let classic = compute_layout(CLASSIC_MIN_ROWS, cols);
+                let map_width = cols - SIDEBAR_WIDTH;
+                let sidebar_col = map_width;
                 assert_eq!(layout.prompt, classic.prompt);
-                assert_eq!(layout.map, Some(Rect::new(1, 14, 66, 22)));
+                assert_eq!(layout.map, Some(Rect::new(1, 0, map_width, rows - 13)));
                 assert_eq!(layout.stat_column, None);
-                assert_eq!(layout.status_rows, classic.status_rows);
-                assert_eq!(layout.equipment, classic.equipment);
-                assert_eq!(layout.log, Some(Rect::new(25, 0, 81, rows - 25)));
+                assert_eq!(
+                    layout.status_rows,
+                    Some(Rect::new(rows - 12, 0, map_width, 2))
+                );
+                assert_eq!(
+                    layout.equipment,
+                    Some(Rect::new(1, sidebar_col, SIDEBAR_WIDTH, EQUIPMENT_HEIGHT))
+                );
+                assert_eq!(
+                    layout.log,
+                    Some(Rect::new(
+                        rows - LOG_MIN_HEIGHT,
+                        0,
+                        map_width,
+                        LOG_MIN_HEIGHT
+                    ))
+                );
                 assert_eq!(
                     layout.inventory,
-                    Some(Rect::new(15, 81, cols - 81, INVENTORY_HEIGHT))
+                    Some(Rect::new(15, sidebar_col, SIDEBAR_WIDTH, INVENTORY_HEIGHT))
                 );
                 assert_eq!(
                     layout.monsters,
-                    Some(Rect::new(25, 81, cols - 81, rows - 25))
+                    Some(Rect::new(25, sidebar_col, SIDEBAR_WIDTH, rows - 25))
                 );
 
                 let rects = areas(layout);
@@ -263,6 +301,29 @@ mod tests {
 
         assert_eq!(layout.stat_column, None);
         assert_eq!(layout.status_rows, Some(Rect::new(23, 0, 81, 2)));
+    }
+
+    #[test]
+    fn split_map_and_bottom_panels_fill_space_left_of_fixed_sidebar() {
+        for (rows, cols) in [(35, 150), (50, 180)] {
+            let layout = compute_layout(rows, cols);
+            let map_width = cols - (CLASSIC_MIN_COLS - 81);
+            let map_height = rows - 13;
+            let sidebar_col = cols - (CLASSIC_MIN_COLS - 81);
+
+            assert_eq!(layout.map, Some(Rect::new(1, 0, map_width, map_height)));
+            assert_eq!(
+                layout.status_rows,
+                Some(Rect::new(rows - 12, 0, map_width, 2))
+            );
+            assert_eq!(layout.log, Some(Rect::new(rows - 10, 0, map_width, 10)));
+            assert_eq!(layout.equipment, Some(Rect::new(1, sidebar_col, 69, 14)));
+            assert_eq!(layout.inventory, Some(Rect::new(15, sidebar_col, 69, 10)));
+            assert_eq!(
+                layout.monsters,
+                Some(Rect::new(25, sidebar_col, 69, rows - 25))
+            );
+        }
     }
 
     #[test]

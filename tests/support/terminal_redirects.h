@@ -11,6 +11,8 @@
 #define Print headless_print
 #define print_str headless_print_str
 #define print_chstr headless_print_chstr
+#undef mvhline
+#define mvhline headless_mvhline
 #define move_cursor headless_move_cursor
 #define C_print_equipment_block headless_print_equipment_block
 #define C_print_stat_block headless_print_stat_block

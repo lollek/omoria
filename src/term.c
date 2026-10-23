@@ -15,6 +15,7 @@
 
 #include "io.h"
 #include "messages.h"
+#include "screen.h"
 #include "save.h"
 #include "term.h"
 
@@ -118,12 +119,11 @@ void Print(chtype const ch, int row, int col) {
   row -= panel_row_prt; /* Real co-ords convert to screen positions */
   col -= panel_col_prt;
 
-  used_line[row + 1] = true;
-
-  if (row > 24 || row < 0 || col > 79 || col < 0) {
+  if (!C_viewport_screen_contains(row, col)) {
     MSG(("error in print, row = %d col = %d\n", row, col));
     abort();
   }
+  used_line[row + 1] = true;
 
   if (mvaddch(row, col, ch) == ERR) {
     MSG(("error in print, row = %d col = %d\n", row, col));

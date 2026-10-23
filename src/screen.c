@@ -13,6 +13,7 @@
 #include <curses.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
@@ -89,24 +90,27 @@ void draw_cave(void) {
 }
 
 void prt_map(void) {
-  long panel_y = 1;         /* Used for erasing dirty lines */
+  const struct viewport_state viewport =
+      C_viewport_get(panel_row, panel_col, cur_height, cur_width);
+  chtype *floor_str = malloc(sizeof(*floor_str) * (viewport.map_width + 1));
+  if (floor_str == NULL)
+    abort();
 
   ENTER(("prt_map", ""));
 
   redraw = false; /*{ Screen has been redrawn	   }*/
   for (long y = panel_row_min; y <= panel_row_max; y++) {
-    chtype floor_str[82] = {0}; /* string to be printed */
     long floor_str_len = 0;     /* floor_str length counter */
     long isp = 0;               /* Number of blanks encountered */
     bool flag = false;       /* False until floor_str <> '' */
     long xpos = 0;
+    const long screen_row = viewport.screen_row + y - viewport.world_top;
 
     /* Clean line if dirty */
-    panel_y++;
-    if (used_line[panel_y]) {
-      long const panel_x0 = 14;
-      erase_line(panel_y, panel_x0);
-      used_line[panel_y] = false;
+    if (used_line[screen_row + 1]) {
+      if (mvhline(screen_row, viewport.map_col, ' ', viewport.map_width) == ERR)
+        abort();
+      used_line[screen_row + 1] = false;
     }
 
     for (long x = panel_col_min; x <= panel_col_max; x++) {
@@ -149,6 +153,7 @@ void prt_map(void) {
       print_chstr(floor_str, y, xpos);
     }
   }
+  free(floor_str);
   LEAVE("prt_map", "");
 }
 

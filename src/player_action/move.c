@@ -25,6 +25,29 @@
 
 bool cave_flag = false; /*	{ Used in get_panel   } */
 
+static void apply_viewport_state(const struct viewport_state state) {
+  panel_row = state.panel_row;
+  panel_col = state.panel_col;
+  panel_row_min = state.world_top;
+  panel_row_max = state.world_bottom;
+  panel_col_min = state.world_left;
+  panel_col_max = state.world_right;
+  panel_row_prt = state.panel_row_prt;
+  panel_col_prt = state.panel_col_prt;
+  max_panel_rows = state.max_panel_rows;
+  max_panel_cols = state.max_panel_cols;
+}
+
+void C_init_viewport(const bool at_end) {
+  const struct viewport_state initial =
+      C_viewport_get(0, 0, cur_height, cur_width);
+  panel_row = at_end ? initial.max_panel_rows : 0;
+  panel_col = at_end ? initial.max_panel_cols : 0;
+  apply_viewport_state(
+      C_viewport_get(panel_row, panel_col, cur_height, cur_width));
+  cave_flag = true;
+}
+
 /*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
 /*{ on the TVAL of the object.  Traps are set off, money and most }*/
 /*{ objects are picked up.  Some objects, such as open doors, just}*/
@@ -201,57 +224,20 @@ static void area_affect(const long dir, const long y, const long x) {
  * -RAK-
  * s__panel_bounds() - Calculates current boundries
  */
-static void s__panel_bounds(void) {
-  panel_row_min = trunc(panel_row * (SCREEN_HEIGHT / 2)) + 1;
-  panel_row_max = panel_row_min + SCREEN_HEIGHT - 1;
-
-  panel_col_min = trunc(panel_col * (SCREEN_WIDTH / 2)) + 1;
-  panel_col_max = panel_col_min + SCREEN_WIDTH - 1;
-
-  panel_row_prt = panel_row_min - 2;
-  panel_col_prt = panel_col_min - 15;
-}
-
 /*{ Given an row (y) and col (x), this routine detects  -RAK-     }*/
 /*{ when a move off the screen has occurred and figures new borders}*/
 /* forceit forcses the panel bounds to be recalculated (show_location).
  */
 static bool get_panel(const long y, const long x, const bool forceit) {
-
-  bool return_value;
-
-  long prow = panel_row;
-  long pcol = panel_col;
-
-  if (forceit || y < panel_row_min + 2 || y > panel_row_max - 2) {
-    prow = trunc((y - 2) / (SCREEN_HEIGHT / 2));
-    if (prow > max_panel_rows) {
-      prow = max_panel_rows;
-    } else if (prow < 0) {
-      prow = 0;
-    }
-  }
-
-  if (forceit || x < panel_col_min + 3 || x > panel_col_max - 3) {
-    pcol = trunc((x - 3) / (SCREEN_WIDTH / 2));
-    if (pcol > max_panel_cols) {
-      pcol = max_panel_cols;
-    } else if (pcol < 0) {
-      pcol = 0;
-    }
-  }
-
-  if (prow != panel_row || pcol != panel_col || !cave_flag) {
-    panel_row = prow;
-    panel_col = pcol;
-    s__panel_bounds();
+  const bool uninitialized = !cave_flag;
+  const struct viewport_state state = C_viewport_update(
+      panel_row, panel_col, cur_height, cur_width, y, x, forceit || uninitialized);
+  const bool changed = state.changed || uninitialized;
+  if (changed) {
+    apply_viewport_state(state);
     cave_flag = true;
-    return_value = true;
-  } else {
-    return_value = false;
   }
-
-  return return_value;
+  return changed;
 }
 
 /**

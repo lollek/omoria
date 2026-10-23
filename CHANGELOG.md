@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* The Split map now fills the space left of the sidebar, grows with the terminal, and centers small maps in the viewport.
 * Fix a crash when the Split monsters panel draws or clears the terminal's bottom-right cell.
 * Split layout now lists visible monsters beneath inventory with a blank separator before the heading, grouped by name with symbols and counts and ordered nearest first. Blindness and hallucination hide the list contents.
 * Split layout now labels the equipment list with an Equipment heading matching the Inventory heading, while keeping all equipment slots visible.

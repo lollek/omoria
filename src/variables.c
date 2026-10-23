@@ -43,8 +43,7 @@ unsigned long print_stat = 0;   /*	{ Flag for stats      } */
 long turn = 0;                  /*	{ Cur trun of game    } */
 bool wizard1 = false;        /*	{ Wizard flag	      } */
 bool wizard2 = false;        /*	{ Wizard flag	      } */
-bool used_line[24] =         /* 22 of false */
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool used_line[MAX_TERMINAL_ROWS];
 
 /*{neatness arrays} */
 unsigned char key_of[9] = /*  array [0..8] of unsigned char; */

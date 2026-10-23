@@ -5,6 +5,34 @@
 #define SCREEN_WIDTH 66
 #include <stdbool.h>
 
+struct viewport_state {
+    long panel_row;
+    long panel_col;
+    long world_top;
+    long world_bottom;
+    long world_left;
+    long world_right;
+    long screen_row;
+    long screen_col;
+    long map_row;
+    long map_col;
+    long map_height;
+    long map_width;
+    long panel_row_prt;
+    long panel_col_prt;
+    long max_panel_rows;
+    long max_panel_cols;
+    bool changed;
+};
+
+struct viewport_state C_viewport_get(long panel_row, long panel_col,
+                                                                         long world_height, long world_width);
+struct viewport_state C_viewport_update(long panel_row, long panel_col,
+                                                                                long world_height, long world_width,
+                                                                                long y, long x, bool force);
+bool C_viewport_screen_contains(long row, long col);
+void C_init_viewport(bool at_end);
+
 /**
  *  Draws equipment screen on the right
  */

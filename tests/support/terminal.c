@@ -122,6 +122,17 @@ void headless_print_chstr(const chtype *message, int row, int col) {
   mark_line(row - panel_row_prt);
 }
 
+int headless_mvhline(int row, int col, chtype ch, int width) {
+  (void)row;
+  (void)col;
+  (void)ch;
+  (void)width;
+  if (!drawing_allowed)
+    fail("Unexpected headless terminal erasure");
+  counts.erasure++;
+  return 0;
+}
+
 void headless_move_cursor(int row, int col) {
   (void)row;
   (void)col;

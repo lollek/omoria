@@ -38,7 +38,8 @@ extern unsigned long print_stat;   /*	{ Flag for stats      } */
 extern long turn;                  /*	{ Cur trun of game    } */
 extern bool wizard1;            /*	{ Wizard flag	      } */
 extern bool wizard2;            /*	{ Wizard flag	      } */
-extern bool used_line[24];      /* array [2..23] of bool; */
+#define MAX_TERMINAL_ROWS 32768
+extern bool used_line[MAX_TERMINAL_ROWS];
 /*{neatness arrays} */
 extern unsigned char key_of[9];  /*  array [0..8] of unsigned char; */
 extern unsigned char oct_of[10]; /*  array [1..9] of unsigned char; */

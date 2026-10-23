@@ -456,7 +456,7 @@ Implementation notes:
 
 ### SL7. Dynamic Map Viewport (fan-out)
 
-Status: open. Depends on: SL2, SL3, SL4.
+Status: implemented; viewport tests, headless movement harness, and `make check` pass. Depends on: SL2, SL3, SL4.
 Size: M. Complexity: High. Agent: strong.
 
 Owns:

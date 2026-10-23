@@ -33,6 +33,7 @@ void headless_prt(const char *message, int row, int col);
 void headless_print(chtype ch, int row, int col);
 void headless_print_str(const char *message, int row, int col);
 void headless_print_chstr(const chtype *message, int row, int col);
+int headless_mvhline(int row, int col, chtype ch, int width);
 void headless_move_cursor(int row, int col);
 void headless_print_equipment_block(void);
 void headless_print_stat_block(void);

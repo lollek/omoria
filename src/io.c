@@ -156,9 +156,7 @@ void clear_rc(long row, long col) {
   row--;
   col--;
 
-  for (long i1 = 2; i1 <= 23; i1++) {
-    used_line[i1] = false;
-  }
+  memset(used_line + 2, 0, sizeof(used_line) - 2 * sizeof(used_line[0]));
   move(row, col);
   clrtobot();
   /*  put_buffer(cursor_erp, row, col); */
