@@ -11,6 +11,88 @@
 bool msg_print_pass_one(char *message);
 
 void assert_headless_terminal(void);
+void C_terminal_test_layout(int rows, int cols);
+static void assert_message(size_t index, const char *expected);
+
+static void assert_split_log_overflow_and_capture(void) {
+  C_terminal_test_layout(35, 150);
+  turn = 100;
+  msg_flag = false;
+  msg_terse = false;
+  headless_terminal_reset();
+  headless_terminal_allow_drawing(true);
+  for (int i = 0; i < 10; i++) {
+    char message[40];
+    snprintf(message, sizeof(message), "Split message %d", i);
+    assert(!msg_print(message));
+  }
+  assert(headless_terminal_counts().input == 0);
+  assert(headless_terminal_counts().more == 0);
+  const struct headless_attributed_draw line = headless_terminal_last_attributed_draw();
+  assert(line.row == 35 && line.col == 1 && line.attrs == 0);
+  assert(strlen(line.text) == 81 && strncmp(line.text, "Split message 9", 15) == 0);
+  /* Empty output still enters raw history but must not page or add a log row. */
+  assert(!msg_print(""));
+  assert(!msg_print_pass_one(""));
+  assert(!msg_print_pass_one(NULL));
+  assert(headless_terminal_counts().more == 0);
+  headless_terminal_script("\033", 1);
+  assert(msg_print_pass_one("Overflow"));
+  assert(headless_terminal_counts().input == 1 && headless_terminal_counts().more == 1);
+
+  /* A normal command acknowledges pending lines without advancing the turn. */
+  headless_terminal_script("a", 1);
+  assert(headless_inkey() == 'a');
+  assert(!msg_print("After command"));
+  for (int i = 0; i < 20; i++)
+    assert(!msg_print("After command"));
+  assert(headless_terminal_counts().more == 1);
+  assert(strstr(headless_terminal_last_attributed_draw().text, "(x21)") != NULL);
+
+  /* A later turn starts its own unseen budget, even without command input. */
+  turn++;
+  for (int i = 0; i < 10; i++) {
+    char message[40];
+    snprintf(message, sizeof(message), "New turn %d", i);
+    assert(!msg_print_pass_one(message));
+  }
+  headless_terminal_script("\033", 1);
+  assert(msg_print("Primary overflow"));
+  assert(headless_terminal_counts().more == 2);
+
+  /* One oversized message pages twice, then retains its final line. */
+  turn++;
+  char long_message[81 * 21 + 1];
+  memset(long_message, 'L', sizeof(long_message) - 1);
+  long_message[sizeof(long_message) - 1] = '\0';
+  headless_terminal_script("  ", 2);
+  assert(!msg_print(long_message));
+  assert(headless_terminal_counts().more == 4);
+  assert(headless_terminal_last_attributed_draw().text[80] == 'L');
+  assert(last_printed_message[81] == '\0');
+
+  turn++;
+  msg_terse = true;
+  assert(!msg_print_pass_one(long_message));
+  assert(headless_terminal_counts().more == 4);
+  msg_terse = false;
+
+  C_message_capture_begin();
+  const struct headless_terminal_counts before = headless_terminal_counts();
+  for (int i = 0; i < 12; i++) {
+    msg_printf("Raw %s", "repeat");
+    assert(!msg_print_pass_one("Raw repeat"));
+  }
+  assert(C_message_capture_count() == 24);
+  for (int i = 0; i < 24; i++)
+    assert_message(i, "Raw repeat");
+  assert(headless_terminal_counts().drawing == before.drawing);
+  assert(headless_terminal_counts().input == before.input);
+  assert(headless_terminal_counts().erasure == before.erasure);
+  C_message_capture_end();
+  C_terminal_test_layout(25, 150);
+  headless_terminal_reset();
+}
 
 static void assert_message(size_t index, const char *expected) {
   char buffer[256];
@@ -101,6 +183,7 @@ static void assert_last_drop_restores_interactive_path(void) {
 
 int main(void) {
   assert_headless_terminal();
+  assert_split_log_overflow_and_capture();
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_captured_messages_skip_terminal();
     assert_nested_captures_restore_outer();

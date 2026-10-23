@@ -50,7 +50,7 @@ The constraints the stories depend on:
 * Prompts call `prt(prompt, 1, 1)` and `erase_line(msg_line, ...)` directly in
   many C files. Row 0 therefore stays a reserved prompt line in every layout.
 * Rust `MESSAGE_RECORD` in [message.rs](../../../src/message.rs) keeps the last
-  50 messages as plain strings. `^P` in
+  50 messages as text-and-turn records (SL3). Capture streams stay raw text. `^P` in
   [command.c](../../../src/main_loop/command.c) shows them in a paged
   full-screen overlay (`draw_help_vec`). Message capture bypasses drawing.
 * `prt_stat_block` and `prt_equipment` already run every tick from
@@ -288,7 +288,7 @@ Acceptance checks:
 
 ### SL3. Message Log Panel (fan-out)
 
-Status: open. Depends on: SL1.
+Status: implemented. Depends on: SL1.
 Size: L. Complexity: High. Agent: strong.
 
 Owns: `msg_print`, `msg_print_pass_one`, and `msg_printf` in
@@ -324,6 +324,19 @@ Acceptance checks:
 * Changelog entry.
 
 Out of scope: scrollback (SL9), moving prompts off row 0.
+
+Implementation notes:
+* [message_log.rs](../../../src/user_interface/message_log.rs) owns the pure,
+  bounded display model. Wrapped messages page before unseen lines are lost;
+  collapsed repeats are fitted to one row while raw history keeps every entry.
+* [term.rs](../../../src/term.rs) bridges the renderer to C drawing/input
+  callbacks. Input acknowledgment is reentrant during `-more-`.
+* The existing HUD tick hook and screen-clear path redraw the log, so earlier
+  turns dim even without a new message and overlays do not erase it permanently.
+* `make test-messages` enables the `terminal-test-support` feature for headless
+  layout selection. It covers Classic compatibility, Split overflow through
+  both message entry points, repeat counts, command/turn resets, long-message
+  pagination, empty prompt-clearing output, and unmodified raw capture.
 
 ### SL4. Equipment Panel (fan-out)
 

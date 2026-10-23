@@ -51,6 +51,7 @@ test:
 HDIR =	target/debug
 HREDIRECT =	-include tests/support/terminal_redirects.h
 HIODEFS =	-Dinkey=headless_inkey -Dput_buffer=headless_put_buffer -DErase_Line=headless_erase_line
+HIODEFS +=	-Dput_buffer_attr=headless_put_buffer_attr
 HLOOPOBJS =	$(HDIR)/headless-loop.o $(HDIR)/headless-command.o
 
 $(HDIR):
@@ -91,7 +92,7 @@ test-movement: $(filter-out src/main.o,$(OBJFILES)) $(HDIR)/headless-light.o
 
 .PHONY: test-messages
 test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o
-	cargo build
+	cargo build --features terminal-test-support
 	$(CC) $(LINKCFLAGS) tests/message_ffi.c tests/support/terminal.c tests/support/terminal_test.c $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o $(filter-out src/main.o src/io.o src/screen.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/message-ffi-test
 	./target/debug/message-ffi-test
 

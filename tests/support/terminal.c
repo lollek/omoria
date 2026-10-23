@@ -2,11 +2,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../../src/variables.h"
+#include "../../src/messages.h"
 
 static bool drawing_allowed;
 static struct headless_terminal_counts counts;
+static struct headless_attributed_draw attributed_draw;
 static const char *script;
 static size_t script_count;
 static size_t script_position;
@@ -32,6 +35,7 @@ static void mark_line(int row) {
 void headless_terminal_reset(void) {
   drawing_allowed = false;
   counts = (struct headless_terminal_counts){0};
+  attributed_draw = (struct headless_attributed_draw){0};
   script = NULL;
   script_count = 0;
   script_position = 0;
@@ -54,21 +58,27 @@ struct headless_terminal_counts headless_terminal_counts(void) {
   return counts;
 }
 
+struct headless_attributed_draw headless_terminal_last_attributed_draw(void) {
+  return attributed_draw;
+}
+
 char headless_inkey(void) {
   if (script_position == script_count) {
     fail("Headless terminal scripted input exhausted (unexpected prompt)");
   }
   counts.input++;
+  C_message_log_input();
   command_count = 0;
   msg_flag = false;
   return script[script_position++];
 }
 
 void headless_put_buffer(const char *message, int row, int col) {
-  (void)message;
   (void)row;
   (void)col;
   record_drawing();
+  if (strcmp(message, " -more-") == 0)
+    counts.more++;
 }
 
 void headless_erase_line(long row, long col) {
@@ -80,11 +90,11 @@ void headless_erase_line(long row, long col) {
 }
 
 void headless_put_buffer_attr(const char *message, long row, long col, int attrs) {
-  (void)message;
-  (void)row;
-  (void)col;
-  (void)attrs;
   record_drawing();
+  snprintf(attributed_draw.text, sizeof(attributed_draw.text), "%s", message);
+  attributed_draw.row = row;
+  attributed_draw.col = col;
+  attributed_draw.attrs = attrs;
 }
 
 void headless_prt(const char *message, int row, int col) {
