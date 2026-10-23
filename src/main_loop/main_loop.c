@@ -17,6 +17,7 @@
 #include "../io.h"
 #include "../kickout.h"
 #include "../misc.h"
+#include "../messages.h"
 #include "../pascal.h"
 #include "../player.h"
 #include "../player/hunger.h"
@@ -963,6 +964,7 @@ static void run_main_loop(main_loop_command_source source, void *context,
           } else {
             next_command = inkey();
           }
+          C_message_log_command();
           game_state = GS_IGNORE_CTRL_C;
           if (save_msg_flag) {
             erase_line(msg_line, msg_line);

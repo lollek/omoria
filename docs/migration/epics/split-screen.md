@@ -298,6 +298,8 @@ Owns: `msg_print`, `msg_print_pass_one`, and `msg_printf` in
 [io.c](../../../src/io.c), [message.rs](../../../src/message.rs),
 [term.rs](../../../src/term.rs), a new Rust log panel module, and the
 message part of `tests/support`.
+The command-accepted hook in
+[main_loop.c](../../../src/main_loop/main_loop.c) marks the brightness boundary.
 Must not touch: prompt callers that write row 0 directly.
 
 Behavior:
@@ -305,7 +307,10 @@ Behavior:
   printed on. Message capture streams stay raw text.
 * In Split, messages go to the log rect, newest at the bottom, wrapped to
   its width.
-* Messages from earlier turns are dimmed.
+* All messages since the last player command stay bright together, including
+  monster actions and status updates across internal game-turn boundaries.
+  They dim when the next command is accepted, not while waiting for it.
+  Prompt input and `-more-` acknowledgments do not dim messages.
 * Consecutive identical messages collapse into one line with a count, for
   example "You miss the orc. (x3)". The collapsing happens only when
   displaying; the history and capture streams keep every message.
@@ -318,7 +323,7 @@ Behavior:
 
 Acceptance checks:
 
-* L0: the log renderer wraps, truncates, dims earlier turns, collapses
+* L0: the log renderer wraps, truncates, dims earlier command cycles, collapses
   repeats, and keeps the newest lines visible.
 * L0: the overflow rule asks for `-more-` exactly when unseen lines exceed
   the log height. A collapsed repeat counts as one line.
@@ -334,12 +339,14 @@ Implementation notes:
   collapsed repeats are fitted to one row while raw history keeps every entry.
 * [term.rs](../../../src/term.rs) bridges the renderer to C drawing/input
   callbacks. Input acknowledgment is reentrant during `-more-`.
-* The existing HUD tick hook and screen-clear path redraw the log, so earlier
-  turns dim even without a new message and overlays do not erase it permanently.
+* The existing HUD tick hook and screen-clear path redraw the log, so overlays
+  do not erase it permanently. Dimming uses an explicit command-accepted signal
+  from the main loop, separate from internal game turns and prompt input.
 * `make test-messages` enables the `terminal-test-support` feature for headless
   layout selection. It covers Classic compatibility, Split overflow through
   both message entry points, repeat counts, command/turn resets, long-message
-  pagination, empty prompt-clearing output, and unmodified raw capture.
+  pagination, command-cycle brightness, empty prompt-clearing output, and
+  unmodified raw capture.
 
 ### SL4. Equipment Panel (fan-out)
 
@@ -678,7 +685,7 @@ Behavior:
 * On successful load, replace the previous character's history and rebuild
   the visible log from the restored records. Classic message recall uses the
   same restored history.
-* Restored messages are already seen, so loading does not trigger `-more-`.
+* Restored messages are dimmed as already seen, so loading does not trigger `-more-`.
   New messages use the normal unseen-line budget.
 * Older saves without message history load successfully with an empty
   history. Starting a new character also clears history and the visible log.
@@ -693,8 +700,8 @@ Acceptance checks:
   repeats, and the current retention limit.
 * L0: saves without the history field default to empty history; malformed
   history reports a load error without changing the current history.
-* L0: rebuilding the log preserves wrapping, repeat counts, and turn dimming,
-  and restored messages do not consume the unseen-line budget.
+* L0: rebuilding the log preserves wrapping and repeat counts, dims restored
+  records as already seen, and does not consume the unseen-line budget.
 * L1: a headless save/load scenario restores history and the visible log,
   verifies the first new messages do not pause prematurely, and confirms raw
   capture is unaffected by restoration.

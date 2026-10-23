@@ -9,7 +9,7 @@ pub(crate) struct LogLine {
 
 #[derive(Default)]
 pub(crate) struct MessageLog {
-    lines: VecDeque<(String, libc::c_long)>,
+    lines: VecDeque<LogLine>,
     group_sizes: VecDeque<usize>,
     last: Option<(String, usize)>,
     last_unseen: usize,
@@ -18,12 +18,19 @@ pub(crate) struct MessageLog {
 }
 
 impl MessageLog {
+    pub fn command_read(&mut self) {
+        self.input_read();
+        for line in &mut self.lines {
+            line.dim = true;
+        }
+    }
+
     pub fn input_read(&mut self) {
         self.unseen = 0;
         self.last_unseen = 0;
     }
 
-    pub fn render(&self, rect: Rect, turn: libc::c_long) -> Vec<LogLine> {
+    pub fn render(&self, rect: Rect) -> Vec<LogLine> {
         assert!(rect.width > 0 && rect.height > 0, "empty log rectangle");
         let height = rect.height as usize;
         let width = rect.width as usize;
@@ -36,12 +43,12 @@ impl MessageLog {
             },
             blanks,
         )
-        .chain(self.lines.iter().skip(skip).map(|(text, printed_turn)| {
-            let mut text: String = text.chars().take(width).collect();
+        .chain(self.lines.iter().skip(skip).map(|line| {
+            let mut text: String = line.text.chars().take(width).collect();
             text.extend(std::iter::repeat_n(' ', width - text.chars().count()));
             LogLine {
                 text,
-                dim: *printed_turn < turn,
+                dim: line.dim,
             }
         }))
         .collect()
@@ -90,15 +97,18 @@ impl MessageLog {
         let mut aborted = false;
         for line in lines {
             if self.unseen >= rect.height as usize && !aborted {
-                draw(&self.render(rect, turn));
+                draw(&self.render(rect));
                 aborted = more();
                 self.input_read();
             }
-            self.lines.push_back((line, turn));
+            self.lines.push_back(LogLine {
+                text: line,
+                dim: false,
+            });
             self.unseen += 1;
             self.last_unseen += 1;
         }
-        draw(&self.render(rect, turn));
+        draw(&self.render(rect));
         aborted
     }
 }
@@ -136,11 +146,8 @@ mod tests {
         assert!(!log.print(text, turn, rect, |_| {}, || panic!("Unexpected -more-")));
     }
 
-    fn texts(log: &MessageLog, rect: Rect, turn: libc::c_long) -> Vec<String> {
-        log.render(rect, turn)
-            .into_iter()
-            .map(|line| line.text)
-            .collect()
+    fn texts(log: &MessageLog, rect: Rect) -> Vec<String> {
+        log.render(rect).into_iter().map(|line| line.text).collect()
     }
 
     #[test]
@@ -149,21 +156,100 @@ mod tests {
         let mut log = MessageLog::default();
         print(&mut log, "Old", 1, rect);
         print(&mut log, "two abcdefgh", 2, rect);
-        assert_eq!(texts(&log, rect, 2), ["two   ", "abcdef", "gh    "]);
+        assert_eq!(texts(&log, rect), ["two   ", "abcdef", "gh    "]);
     }
 
     #[test]
-    fn pads_blank_rows_and_dims_only_earlier_turns() {
+    fn pads_blank_rows_and_dims_only_earlier_commands() {
         let rect = Rect::new(25, 0, 8, 3);
         let mut log = MessageLog::default();
         print(&mut log, "Old", 1, rect);
+        log.command_read();
         print(&mut log, "New", 2, rect);
-        let lines = log.render(rect, 2);
-        assert_eq!(texts(&log, rect, 2), ["        ", "Old     ", "New     "]);
+        let lines = log.render(rect);
+        assert_eq!(texts(&log, rect), ["        ", "Old     ", "New     "]);
         assert!(!lines[0].dim);
         assert!(lines[1].dim);
         assert!(!lines[2].dim);
-        assert!(log.render(rect, 3)[2].dim);
+    }
+
+    #[test]
+    fn current_command_messages_stay_bright_across_input_and_redraws() {
+        let rect = Rect::new(25, 0, 8, 3);
+        let mut log = MessageLog::default();
+        print(&mut log, "Old", 1, rect);
+        log.command_read();
+        print(&mut log, "New", 2, rect);
+        print(&mut log, "Also new", 2, rect);
+        for _ in 0..3 {
+            log.input_read();
+            let lines = log.render(rect);
+            assert!(lines[0].dim);
+            assert!(
+                !lines[1].dim,
+                "Latest messages dimmed without a newer message"
+            );
+            assert!(
+                !lines[2].dim,
+                "Latest messages dimmed without a newer message"
+            );
+        }
+    }
+
+    #[test]
+    fn next_command_dims_previous_messages_even_within_the_same_turn() {
+        let rect = Rect::new(25, 0, 8, 3);
+        let mut log = MessageLog::default();
+        print(&mut log, "First", 1, rect);
+        assert!(!log.render(rect)[2].dim);
+        log.command_read();
+        assert!(log.render(rect)[2].dim);
+        print(&mut log, "Next", 1, rect);
+        let lines = log.render(rect);
+        assert!(lines[1].dim);
+        assert!(!lines[2].dim);
+    }
+
+    #[test]
+    fn player_monster_and_status_messages_stay_bright_across_turn_numbers() {
+        let rect = Rect::new(25, 0, 14, 4);
+        let mut log = MessageLog::default();
+        print(&mut log, "Previous", 1, rect);
+        log.command_read();
+        print(&mut log, "Player action", 2, rect);
+        print(&mut log, "Monster action", 2, rect);
+        print(&mut log, "Status update", 3, rect);
+        let lines = log.render(rect);
+        assert!(lines[0].dim);
+        assert!(
+            lines[1..].iter().all(|line| !line.dim),
+            "All messages since the last command must remain bright"
+        );
+    }
+
+    #[test]
+    fn collapsed_repeat_stays_bright_after_prompt_input() {
+        let rect = Rect::new(25, 0, 12, 2);
+        let mut log = MessageLog::default();
+        print(&mut log, "Miss", 1, rect);
+        print(&mut log, "Miss", 2, rect);
+        log.input_read();
+        let lines = log.render(rect);
+        assert_eq!(lines[1].text, "Miss (x2)   ");
+        assert!(!lines[1].dim);
+    }
+
+    #[test]
+    fn repeating_a_dimmed_message_in_a_new_command_makes_it_bright() {
+        let rect = Rect::new(25, 0, 12, 2);
+        let mut log = MessageLog::default();
+        print(&mut log, "Miss", 1, rect);
+        log.command_read();
+        assert!(log.render(rect)[1].dim);
+        print(&mut log, "Miss", 1, rect);
+        let lines = log.render(rect);
+        assert_eq!(lines[1].text, "Miss (x2)   ");
+        assert!(!lines[1].dim);
     }
 
     #[test]
@@ -173,7 +259,7 @@ mod tests {
         for _ in 0..3 {
             print(&mut log, "You miss the orc.", 1, rect);
         }
-        assert_eq!(texts(&log, rect, 1), ["            ", "You mis (x3)"]);
+        assert_eq!(texts(&log, rect), ["            ", "You mis (x3)"]);
     }
 
     #[test]
@@ -183,7 +269,7 @@ mod tests {
         print(&mut log, "Older", 1, rect);
         print(&mut log, "You miss the orc.", 2, rect);
         print(&mut log, "You miss the orc.", 2, rect);
-        assert_eq!(texts(&log, rect, 2), ["Older       ", "You mis (x2)"]);
+        assert_eq!(texts(&log, rect), ["Older       ", "You mis (x2)"]);
     }
 
     #[test]
@@ -192,7 +278,7 @@ mod tests {
         let mut log = MessageLog::default();
         print(&mut log, "one\ntwo", 1, rect);
         print(&mut log, "one\ntwo", 1, rect);
-        assert_eq!(texts(&log, rect, 1), ["            ", "one two (x2)"]);
+        assert_eq!(texts(&log, rect), ["            ", "one two (x2)"]);
     }
 
     #[test]
@@ -202,14 +288,14 @@ mod tests {
         for index in 0..60 {
             print(&mut log, &index.to_string(), index, rect);
         }
-        let lines = texts(&log, rect, 60);
+        let lines = texts(&log, rect);
         assert!(lines[..10].iter().all(|line| line == "   "));
         assert_eq!(lines[10], "10 ");
         assert_eq!(lines[59], "59 ");
     }
 
     #[test]
-    fn only_consecutive_repeats_collapse_and_latest_turn_is_bright() {
+    fn only_consecutive_repeats_collapse_and_current_command_is_bright() {
         let rect = Rect::new(25, 0, 10, 4);
         let mut log = MessageLog::default();
         print(&mut log, "A", 1, rect);
@@ -217,10 +303,10 @@ mod tests {
         print(&mut log, "B", 2, rect);
         print(&mut log, "A", 2, rect);
         assert_eq!(
-            texts(&log, rect, 2),
+            texts(&log, rect),
             ["          ", "A (x2)    ", "B         ", "A         "]
         );
-        assert!(!log.render(rect, 2)[1].dim);
+        assert!(!log.render(rect)[1].dim);
     }
 
     #[test]
@@ -241,7 +327,7 @@ mod tests {
             }
         ));
         assert_eq!(prompts, 1);
-        assert_eq!(texts(&log, rect, 1), ["B         ", "C         "]);
+        assert_eq!(texts(&log, rect), ["B         ", "C         "]);
     }
 
     #[test]
@@ -263,7 +349,7 @@ mod tests {
         }
         log.input_read();
         print(&mut log, "Miss", 1, rect);
-        assert_eq!(texts(&log, rect, 1), ["Miss (x13)  "]);
+        assert_eq!(texts(&log, rect), ["Miss (x13)  "]);
         let mut prompts = 0;
         log.print(
             "Hit",
@@ -295,6 +381,7 @@ mod tests {
             }
         ));
         assert_eq!(prompts, 2);
+        assert!(frames.iter().flatten().all(|line| !line.dim));
         assert_eq!(
             frames[0]
                 .iter()
@@ -302,7 +389,7 @@ mod tests {
                 .collect::<Vec<_>>(),
             ["abcd", "efgh"]
         );
-        assert_eq!(texts(&log, rect, 1), ["mnop", "qrst"]);
+        assert_eq!(texts(&log, rect), ["mnop", "qrst"]);
     }
 
     #[test]
@@ -321,7 +408,7 @@ mod tests {
             }
         ));
         assert_eq!(prompts, 1);
-        assert_eq!(texts(&log, rect, 1), ["gh"]);
+        assert_eq!(texts(&log, rect), ["gh"]);
     }
 
     #[test]
@@ -329,12 +416,9 @@ mod tests {
         let rect = Rect::new(25, 0, 2, 4);
         let mut log = MessageLog::default();
         print(&mut log, "a\n\n\u{e9}\u{e9}\u{e9}", 1, rect);
-        assert_eq!(
-            texts(&log, rect, 1),
-            ["a ", "  ", "\u{e9}\u{e9}", "\u{e9} "]
-        );
+        assert_eq!(texts(&log, rect), ["a ", "  ", "\u{e9}\u{e9}", "\u{e9} "]);
         log.input_read();
         print(&mut log, "", 1, rect);
-        assert_eq!(texts(&log, rect, 1)[3], "  ");
+        assert_eq!(texts(&log, rect)[3], "  ");
     }
 }

@@ -9,7 +9,7 @@ use crate::misc;
 use crate::ncurses;
 use crate::user_interface::message_log::{LogLine, MessageLog};
 use std::ffi::{CStr, CString};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Mutex as LogMutex;
 
 lazy_static! {
@@ -17,9 +17,20 @@ lazy_static! {
         LogMutex::new((MessageLog::default(), 0));
 }
 static INPUT_GENERATION: AtomicUsize = AtomicUsize::new(0);
+static COMMAND_PENDING: AtomicBool = AtomicBool::new(false);
 
 pub type LogDraw = extern "C" fn(*const libc::c_char, libc::c_int, libc::c_int, bool);
 pub type LogMore = extern "C" fn() -> bool;
+
+pub fn message_command_read() {
+    COMMAND_PENDING.store(true, Ordering::Relaxed);
+}
+
+fn apply_pending_command(log: &mut MessageLog) {
+    if COMMAND_PENDING.swap(false, Ordering::Relaxed) {
+        log.command_read();
+    }
+}
 
 pub fn message_input_read() {
     // Input can be read by a -more- callback while the log is being displayed.
@@ -44,6 +55,7 @@ pub unsafe fn print_log_message(
     }
     let mut state = MESSAGE_LOG.lock().expect("message log lock poisoned");
     let (log, generation) = &mut *state;
+    apply_pending_command(log);
     if *generation != INPUT_GENERATION.load(Ordering::Relaxed) {
         log.input_read();
     }
@@ -65,11 +77,11 @@ pub unsafe fn print_log_message(
 
 pub fn redraw_message_log() {
     if let Some(rect) = current_layout().log {
-        let lines = MESSAGE_LOG
-            .lock()
-            .expect("message log lock poisoned")
-            .0
-            .render(rect, current_turn());
+        let lines = {
+            let mut state = MESSAGE_LOG.lock().expect("message log lock poisoned");
+            apply_pending_command(&mut state.0);
+            state.0.render(rect)
+        };
         for (offset, LogLine { text, dim }) in lines.iter().enumerate() {
             if *dim {
                 ncurses::attron(ncurses::A_DIM);

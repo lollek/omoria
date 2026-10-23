@@ -19,6 +19,11 @@ pub extern "C" fn C_message_log_input() {
     term::message_input_read();
 }
 
+#[no_mangle]
+pub extern "C" fn C_message_log_command() {
+    term::message_command_read();
+}
+
 #[cfg(feature = "terminal-test-support")]
 #[no_mangle]
 pub extern "C" fn C_terminal_test_layout(rows: libc::c_int, cols: libc::c_int) {
