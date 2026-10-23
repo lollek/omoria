@@ -350,7 +350,7 @@ Implementation notes:
 
 ### SL4. Equipment Panel (fan-out)
 
-Status: open. Depends on: SL1.
+Status: implemented; renderer tests and `make check` pass. Depends on: SL1.
 Size: S. Complexity: Low. Agent: standard.
 
 Owns: the equipment functions in `heads_up_display.rs` and a new sidebar

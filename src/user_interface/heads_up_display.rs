@@ -1,6 +1,6 @@
 use super::layout::{current_layout, Rect};
 use crate::model::GameTime;
-use crate::{data, equipment, ncurses, player, term};
+use crate::{data, ncurses, player, term};
 use pancurses::{A_BLINK, A_BOLD, A_DIM};
 use std::borrow::Cow;
 
@@ -94,17 +94,6 @@ pub fn print_stat_block() {
     }
 }
 
-#[no_mangle]
-pub extern "C" fn C_print_equipment_block() {
-    print_equipment_block();
-}
-pub fn print_equipment_block() {
-    let rect = current_layout()
-        .equipment
-        .expect("equipment panel unavailable");
-    print_equipment(rect.row, rect.col);
-}
-
 fn print_field<S>(msg: S, row: i32, rect: Rect)
 where
     S: AsRef<str>,
@@ -168,16 +157,6 @@ pub(super) fn format_game_time(player_age: GameTime) -> String {
 
 fn print_time(row: i32, rect: Rect) {
     print_field(format_game_time(player::age()), row, rect);
-}
-
-fn print_equipment(row: i32, col: i32) {
-    for (index, slot_i) in equipment::slots_iter().enumerate() {
-        let slot = equipment::Slot::from(slot_i);
-        let index_char = (b'a' + index as u8) as char;
-        let item_name = equipment::get_name(slot);
-        let msg = format!("{}) {:<13}: {}", index_char, slot.name(), item_name);
-        term::prt(msg, row + index as i32, col);
-    }
 }
 
 fn print_classic_status_row(rect: Rect) {
