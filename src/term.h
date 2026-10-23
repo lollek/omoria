@@ -32,6 +32,18 @@ void move_cursor(int row, int col);
 #define OMORIA_KEY_PAGE_DOWN ((char)0xf3)
 
 int C_translate_key_code(int key_code);
+#define C_MOUSE_INPUT (-2)
+int C_translate_terminal_input_code(int key_code);
+void C_mouse_event_push(int row, int col, unsigned long state);
+struct mouse_event {
+  int row;
+  int col;
+  int kind;
+  int button;
+};
+struct mouse_event C_mouse_event_pop(void);
+void C_mouse_dispatch_pending_events(long panel_row, long panel_col,
+                                     long world_height, long world_width);
 
 /* message line location */
 #define MSG_LINE -1

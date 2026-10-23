@@ -93,6 +93,12 @@ test-movement: $(filter-out src/main.o,$(OBJFILES)) $(HDIR)/headless-light.o
 	$(CC) $(LINKCFLAGS) tests/movement_ffi.c tests/support/terminal.c $(HDIR)/headless-light.o $(filter-out src/main.o src/dungeon/light.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/movement-ffi-test
 	./target/debug/movement-ffi-test
 
+.PHONY: test-mouse-input
+test-mouse-input: $(filter-out src/main.o,$(OBJFILES))
+	cargo build
+	$(CC) $(LINKCFLAGS) tests/mouse_input.c $(filter-out src/main.o,$(OBJFILES)) target/debug/libomoria.a $(LDFLAGS) -o target/debug/mouse-input-test
+	./target/debug/mouse-input-test
+
 .PHONY: test-messages
 test-messages: $(filter-out src/main.o src/io.o,$(OBJFILES)) $(HDIR)/headless-io.o $(HDIR)/headless-screen.o $(HDIR)/headless-light.o
 	cargo build --features terminal-test-support
@@ -174,6 +180,7 @@ check:
 	cargo test
 	$(MAKE) omoria
 	$(MAKE) test-movement
+	$(MAKE) test-mouse-input
 	$(MAKE) test-messages
 	$(MAKE) test-effects
 	$(MAKE) test-hunger

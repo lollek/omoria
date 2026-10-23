@@ -87,7 +87,15 @@ char inkey(void) {
       }
       return ESCAPE;
     }
-    const int translated = C_translate_key_code(i);
+    const int translated = C_translate_terminal_input_code(i);
+    if (translated == C_MOUSE_INPUT) {
+      MEVENT event;
+      if (getmouse(&event) == OK) {
+        C_mouse_event_push(event.y, event.x, (unsigned long)event.bstate);
+        C_mouse_dispatch_pending_events(panel_row, panel_col, cur_height, cur_width);
+      }
+      continue;
+    }
     if (translated < 0)
       continue;
     if (translated != CTRL_('R')) {

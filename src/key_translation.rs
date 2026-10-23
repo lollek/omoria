@@ -68,6 +68,7 @@ mod tests {
             b'a' as c_int,
             18,
             ncurses::KEY_RESIZE,
+            ncurses::KEY_MOUSE,
             b'Z' as c_int,
         ];
         let output: Vec<_> = input

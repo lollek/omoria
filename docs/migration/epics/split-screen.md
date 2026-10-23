@@ -583,7 +583,9 @@ Out of scope: correct redraws while a full-screen overlay is still open.
 
 ### SL11. Mouse Input (pathfinder: F-MOUSE)
 
-Status: open. Depends on: SL7, SL8.
+Status: implemented; Rust hit-test/queue tests, `make test-mouse-input`, and
+`make check` pass. Live mouse hardware and production handler registration
+remain unverified. Depends on: SL7, SL8.
 Size: M. Complexity: High. Agent: strong.
 
 Owns: `ncurses.rs`, `inkey` in `term.c`, and a new Rust mouse module.
@@ -607,6 +609,24 @@ Acceptance checks:
 * L1: a scripted input stream with mouse events yields the same key sequence
   as without them.
 * No changelog entry until a handler exists.
+
+Implementation notes:
+* `src/user_interface/mouse.rs` exposes `omoria::mouse`, the bounded event
+  queue, click and motion decoding, panel/map hit testing, and the handler
+  registration/dispatch hook. Consecutive motion events coalesce; at 64 queued
+  events the oldest is dropped. Events stay queued until a handler is
+  registered or a caller pops them.
+* `inkey` consumes `KEY_MOUSE`, reads the ncurses event, queues it, and dispatches
+  it against the active layout and viewport. Mouse input never becomes a
+  command byte. C callers can pop events; the C event kind is 1 for click, 2
+  for motion, and 0 for an empty queue.
+* Rust tests cover Classic/Split panel edges, scrolled and centered viewport
+  coordinates, queue bounds, motion coalescing, and handler dispatch.
+  `make test-mouse-input` uses a file-backed ncurses screen to verify that a
+  synthetic click is queued while the following key remains the returned
+  input. The harness does not exercise physical mouse hardware.
+* No production mouse handler is registered yet; SL12, SL13, SL14, and SL16
+  add consumers.
 
 ### SL12. Hover Map to Describe (fan-out)
 

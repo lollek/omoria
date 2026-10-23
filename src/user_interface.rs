@@ -3,6 +3,7 @@ mod heads_up_display;
 pub(crate) mod helpers;
 pub mod layout;
 pub(crate) mod message_log;
+pub mod mouse;
 mod sidebar;
 pub mod viewport;
 mod viewport_extern;

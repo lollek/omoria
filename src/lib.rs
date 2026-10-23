@@ -61,3 +61,4 @@ pub mod term_extern;
 pub mod text_lines_extern;
 mod user_interface;
 pub use user_interface::layout;
+pub use user_interface::mouse;

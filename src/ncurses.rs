@@ -61,6 +61,10 @@ pub fn init_curses() {
     if window.keypad(true) != 0 {
         panic!("keypad returned ERR");
     }
+    let requested_mouse_events =
+        (::ncurses::ALL_MOUSE_EVENTS | ::ncurses::REPORT_MOUSE_POSITION) as u32;
+    let mut supported_mouse_events = 0u32;
+    ::ncurses::mousemask(requested_mouse_events, Some(&mut supported_mouse_events));
     if ::ncurses::set_escdelay(25) != 0 {
         panic!("set_escdelay returned ERR");
     }
