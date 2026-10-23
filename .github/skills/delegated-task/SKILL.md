@@ -22,12 +22,12 @@ Then implement the minimum fix, rerun the same test, and refactor only with test
 Do not pause for phase reviews; ask only for blockers or scope changes.
 For docs/configuration changes, use relevant structural checks instead of artificial gameplay tests.
 
-Run `make check` before completion. A Rust unit test plus a successful C/Rust link does not prove gameplay, C callers, save restoration, or terminal interactions.
+Apply the Quality gates in [copilot-instructions.md](../../copilot-instructions.md), including the movement-only exception after a successful full gate. A Rust unit test plus a successful C/Rust link does not prove gameplay, C callers, save restoration, or terminal interactions.
 
 ## Completion Report
 
 - Changed files and behavior.
 - RED command and expected failure, or why RED is not applicable.
 - GREEN command and result.
-- Final `make check` result and new warnings.
+- Applicable final validation result (`make check`, or `cargo test` for the documented movement-only exception) and new warnings.
 - Explicit unverified boundaries and remaining blockers.

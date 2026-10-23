@@ -32,13 +32,13 @@ Default to **red-green-refactor**.
 - Improve structure, naming, duplication, safety, and readability.
 - Keep behavior identical (tests must stay green).
 - **REFACTOR means cleanup only. Do not add new behavior; only restructure.**
-- Rerun the focused test and `make check`; continue within the approved scope without phase approval stops.
+- Rerun the focused test and apply the Quality gates below; continue within the approved scope without phase approval stops.
 
 ## Testing requirements (non-negotiable)
 - **All new production code must be tested**.
 - Prefer **Rust tests** unless impossible or it makes the code unnecessarily complex.
 - Tests must be deterministic:
-  - Avoid real-time dependencies (clock), terminal state, or global RNG.
+  - Avoid real-time dependencies (clock), the user's live terminal state, or global RNG. Isolated, explicitly sized, file-backed curses screens are acceptable for drawing-boundary regression tests.
   - Inject RNG or use a seeded RNG in tests.
 - Prefer fast tests:
   - Unit tests for pure logic.
@@ -48,7 +48,7 @@ Default to **red-green-refactor**.
 A change is considered done only when all of these are true:
 - **Tests:** All new/changed production code has tests.
   - Prefer Rust unit tests unless impossible or it makes the code unnecessarily complex.
-- **Green:** `make check` passes: formatting, Clippy, all Rust tests, and the mixed C/Rust build.
+- **Green:** The applicable Quality gates below pass; behavior changes require `make check`.
 - **Warnings:** Don’t introduce new compiler warnings in Rust or C.
   - The repo may already have known warnings; **do not add new warnings attributable to your change**.
   - If new warnings appear in build output due to your change, fix them in the same change (or don’t proceed).
@@ -120,7 +120,8 @@ Interoperability with existing code:
 ## Quality gates
 - After changes, run the relevant checks when available:
   - Focused tests after each substantive edit.
-  - `make check` before completion; use `make clean && make check` when validating a clean C build.
+  - Run `make check` for production behavior changes; use `make clean && make check` when validating a clean C build.
+  - After a successful full gate, if subsequent edits only move existing Rust items within a file without changing their contents or behavior, run `cargo test` instead of repeating `make check`. Report which checks ran before and after the move.
   - Existing Clippy warnings remain visible; do not add new ones or broaden lint allowances.
 - Don’t leave the workspace in a broken build/test state unless the navigator explicitly asks.
 
