@@ -30,7 +30,7 @@ positions.
 | Map | 66x22 at rows 1-22, columns 14-79 | `SCREEN_WIDTH`/`SCREEN_HEIGHT` in [screen.h](../../../src/screen.h), `s__panel_bounds` in [move.c](../../../src/player_action/move.c) |
 | Equipment | Column 81 and up, from row 1 | `EQUIP_COL` in `heads_up_display.rs` |
 | Status rows | Rows 23-24: hunger, blind, confused, afraid, poisoned, searching/resting, quest, depth, light off | status `prt_*` in [screen.c](../../../src/screen.c), `print_depth` in `heads_up_display.rs` |
-| Minimum terminal | 150x25, otherwise exit | `MAX_X`/`MAX_Y` in [ncurses.rs](../../../src/ncurses.rs) |
+| Minimum terminal | 150x25, otherwise exit | `CLASSIC_MIN_COLS`/`CLASSIC_MIN_ROWS` in [layout.rs](../../../src/user_interface/layout.rs), checked by [ncurses.rs](../../../src/ncurses.rs) |
 
 The constraints the stories depend on:
 
@@ -191,12 +191,13 @@ Ordering notes:
 
 ### SL1. Layout Model (pathfinder: F-LAYOUT)
 
-Status: open. Depends on: none.
+Status: implemented. Depends on: none.
 Size: M. Complexity: Medium. Agent: strong.
 
 Owns: a new `src/user_interface/layout.rs`, `user_interface` module
 registration,
-[heads_up_display.rs](../../../src/user_interface/heads_up_display.rs).
+[heads_up_display.rs](../../../src/user_interface/heads_up_display.rs),
+and startup layout initialization/bounds in [ncurses.rs](../../../src/ncurses.rs).
 Must not touch: C files.
 
 Behavior:
@@ -230,6 +231,28 @@ Acceptance checks:
 * L0: the renderer pattern truncates and pads lines to the rect width.
 
 Out of scope: drawing anything new, resizing.
+
+Implementation notes:
+
+* [layout.rs](../../../src/user_interface/layout.rs) is exposed as
+  `omoria::layout`. `Rect` uses zero-based rows/columns and width/height;
+  unavailable panels are `None`, including every panel in TooSmall.
+* Classic starts at 150x25. Split starts at 150x35: the log has at least
+  10 rows, equipment has 14 rows, inventory has 10 rows, and monsters get
+  the remaining sidebar rows (at least 10). Log and monsters grow vertically;
+  the sidebar grows horizontally from column 81.
+* `current_layout`/`set_current_layout` share a process-wide layout, defaulting
+  to Classic 150x25 for callers without a terminal. Tests that change it use
+  `serial_test` and `reset_current_layout`.
+* Panel renderers take snapshots and use `render_lines` to truncate/pad to
+  their rect. `draw_lines` accepts an ncurses sink or a recording test sink.
+  Text must use single-cell characters; UTF-8 characters are not split.
+* [ncurses.rs](../../../src/ncurses.rs) initializes the layout from the actual
+  startup dimensions and checks drawing coordinates against the actual
+  terminal bounds. Startup below 150x25 still exits; live resize is deferred.
+* The HUD keeps its existing field text, colors, and relative offsets, but
+  reads panel origins and stat-column width from the layout. No new panels
+  are drawn, and no C files or ABI entry points change.
 
 ### SL2. Stat Bar and Status Row (fan-out)
 
