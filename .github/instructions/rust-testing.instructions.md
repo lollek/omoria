@@ -1,5 +1,6 @@
 ---
 description: "Use when writing, editing, or running Rust tests, using cargo test, handling IDE test discovery or No tests found, adding test modules, or making code testable. Covers deterministic RNG, inline test modules, and assertion patterns for omoria."
+applyTo: "**/*.rs"
 ---
 
 # Rust Testing Conventions
@@ -19,6 +20,9 @@ mod tests {
     }
 }
 ```
+
+Place the test module at the end of the file, after production code. Keep enums
+and structs near the top, before the functions that use them.
 
 For large data-driven test suites, a separate `*_tests.rs` file in the same directory is acceptable (e.g., `data_tests.rs`).
 
@@ -71,4 +75,4 @@ Each test should verify a single behavior or edge case. Prefer multiple small te
 - A mutex around individual accesses does not isolate a multi-step test scenario.
 - Prefer caller-owned state over globals. Keep tests against pure input structs parallel.
 - Verify isolation with repeated `cargo test` runs using the default thread count, not `--test-threads=1`.
-- Run focused tests during development and `make check` before reporting completion.
+- Run focused tests during development; use the Quality gates in `.github/copilot-instructions.md` for completion validation, including its movement-only exception.
