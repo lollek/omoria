@@ -128,3 +128,4 @@ Interoperability with existing code:
 - Always state which phase you are in: **RED**, **GREEN**, or **REFACTOR**.
 - Report phase evidence and continue through the approved scope; stop only for blockers or scope decisions.
 - If repo conventions are unclear, search the codebase and follow existing patterns.
+- If an explicitly requested skill returns "not found", check `.github/skills/<name>/SKILL.md` with file tools before declaring it unavailable. If present and accessible, read and follow it directly; distinguish a loader registration failure from a missing file. Never bypass content exclusion.
