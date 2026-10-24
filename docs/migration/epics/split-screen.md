@@ -70,7 +70,8 @@ The constraints the stories depend on:
   ([character_screen.rs](../../../src/user_interface/character_screen.rs))
   shows race, class, level and XP, HP, mana, AC, and gold. It does not show
   quests, bulk, or game time.
-* The current code has no monster memory/recall system and no pathfinding.
+* The current code has no monster memory/recall system. The SL15 pathfinding
+  foundation is implemented; click-to-travel remains unimplemented.
 * Panel state and message history are not currently saved. SL17 adds message
   history to character saves; other stories leave the save format unaffected.
 * HT1 headless doubles in
@@ -739,7 +740,10 @@ Implementation notes:
 
 ### SL15. Pathfinding (fan-out)
 
-Status: open. Depends on: none. Recommended: SL11 (consumer).
+Status: implemented; Rust pathfinding tests, production build, and `make check`
+pass. The macOS `test-traps` target is skipped because its C caller doubles
+require Linux GNU `ld --wrap`. Live travel remains unverified. Depends on:
+none. Recommended: SL11 (consumer).
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: a new Rust pathfinding module.
@@ -754,6 +758,20 @@ Acceptance checks:
 
 * L0: shortest paths on fixed grids, including no path, a start equal to the
   goal, and routing around a trap and a door.
+
+Implementation notes:
+* `src/pathfinding.rs` exposes a pure breadth-first shortest-path search over
+  a `PathMap` trait, with the production adapter reading typed cells through
+  F-CELL. Known cells are those marked lit or remembered; walls, seen traps,
+  and closed doors are not traversable. Diagonal steps match movement by
+  checking only the destination cell.
+* The global-state `find_path` entry point is unsafe and requires exclusive
+  game-thread access to C globals.
+* Eight deterministic Rust tests cover shortest paths, unknown cells, walls,
+  start-equals-goal, diagonal movement, F-CELL classification, and avoiding
+  known traps and closed doors. `cargo build` and `make check` pass without
+  new Rust warnings. Live C/global-map path calls and SL16 travel are not yet
+  exercised; `test-traps` is skipped on macOS as noted above.
 
 ### SL16. Click to Travel (fan-out)
 

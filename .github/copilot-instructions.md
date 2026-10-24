@@ -122,6 +122,7 @@ Interoperability with existing code:
 - After changes, run the relevant checks when available:
   - Focused tests after each substantive edit.
   - Run `make check` for production behavior changes; use `make clean && make check` when validating a clean C build.
+  - Do not pipe or redirect command output to `/tmp`. When output capture is needed, use the active repository's gitignored `target/` directory or tool-native capture.
   - After a successful full gate, if subsequent edits only move existing Rust items within a file without changing their contents or behavior, run `cargo test` instead of repeating `make check`. Report which checks ran before and after the move.
   - Existing Clippy warnings remain visible; do not add new ones or broaden lint allowances.
 - Don’t leave the workspace in a broken build/test state unless the navigator explicitly asks.

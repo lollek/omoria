@@ -41,6 +41,7 @@ pub mod misc;
 pub mod model;
 pub mod ncurses;
 pub mod pascal;
+pub mod pathfinding;
 pub mod persistence;
 pub mod player;
 pub mod rng;
