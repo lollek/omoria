@@ -4,6 +4,7 @@
 
 October 2026
 
+* Clicking an inventory or equipment item in the Split sidebar now shows its full known description on the prompt line without using a turn.
 * The displayed version now includes the compile timestamp.
 * Clicking a visible monster in the Split sidebar now shows its look description on the prompt line without using a turn.
 * Terminal resizing now switches between Classic and Split layouts, recenters and redraws the map, and waits for a usable size when the terminal is too small.

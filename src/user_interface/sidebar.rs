@@ -148,6 +148,59 @@ fn inventory_snapshot() -> Vec<String> {
         .collect()
 }
 
+fn full_item_description(item: &crate::model::Item) -> Option<String> {
+    item.item_type()?;
+    Some(item_name::generate(item))
+}
+
+pub(crate) fn inventory_item_description_for_panel_row(
+    items: &[crate::model::InventoryItem],
+    panel_height: i32,
+    panel_row: i32,
+) -> Option<String> {
+    if panel_row < 2 {
+        return None;
+    }
+    let item_rows = panel_height.saturating_sub(2).max(0) as usize;
+    let visible_items = if items.len() > item_rows {
+        item_rows.saturating_sub(1)
+    } else {
+        items.len()
+    };
+    let item_index = (panel_row - 2) as usize;
+    if item_index >= visible_items {
+        return None;
+    }
+    full_item_description(&items.get(item_index)?.data)
+}
+
+pub(crate) fn equipment_item_description_for_panel_row(
+    items: &[crate::model::Item],
+    panel_height: i32,
+    panel_row: i32,
+) -> Option<String> {
+    if panel_row < 0 || panel_row >= panel_height {
+        return None;
+    }
+    full_item_description(items.get(panel_row as usize)?)
+}
+
+#[cfg(not(test))]
+pub(crate) fn current_equipment_item_description_for_panel_row(panel_row: i32) -> Option<String> {
+    let rect = current_layout().equipment?;
+    let items: Vec<_> = equipment::slots_iter()
+        .map(|slot_index| unsafe { *equipment::get_item(equipment::Slot::from(slot_index)) })
+        .collect();
+    equipment_item_description_for_panel_row(&items, rect.height, panel_row)
+}
+
+#[cfg(not(test))]
+pub(crate) fn current_inventory_item_description_for_panel_row(panel_row: i32) -> Option<String> {
+    let rect = current_layout().inventory?;
+    let items = inventory_clone();
+    inventory_item_description_for_panel_row(&items, rect.height, panel_row)
+}
+
 fn draw_inventory_panel(layout: Layout, draw: impl FnMut(i32, i32, &str)) {
     if let Some(rect) = layout.inventory {
         let lines = render_inventory_panel(rect, &inventory_snapshot());
@@ -452,6 +505,64 @@ mod tests {
             is_in: 1,
             next: ptr::null_mut(),
         }
+    }
+
+    fn identified_weapon() -> Item {
+        let mut item = crate::generate_item::generate(
+            Box::new(crate::generate_item::template::AxeTemplate::Balestarius),
+            0,
+            crate::generate_item::ItemQuality::Normal,
+        );
+        item.set_identified(true);
+        item.tohit = 1;
+        item.todam = 2;
+        item
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn equipment_panel_rows_resolve_to_full_item_details() {
+        let items = [identified_weapon(), inventory_item(4).data];
+
+        assert_eq!(
+            equipment_item_description_for_panel_row(&items, 14, 0).as_deref(),
+            Some("balestarius (2d8) (+1,+2)")
+        );
+        assert_eq!(
+            equipment_item_description_for_panel_row(&items, 14, 1).as_deref(),
+            Some("empty bottle")
+        );
+        assert_eq!(
+            equipment_item_description_for_panel_row(&items, 14, -1),
+            None
+        );
+        assert_eq!(
+            equipment_item_description_for_panel_row(&items, 14, 14),
+            None
+        );
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn inventory_panel_rows_resolve_items_but_not_the_overflow_line() {
+        let items = [
+            inventory_item(1),
+            InventoryItem {
+                data: identified_weapon(),
+                ..inventory_item(4)
+            },
+            inventory_item(4),
+            inventory_item(1),
+        ];
+
+        assert_eq!(inventory_item_description_for_panel_row(&items, 5, 0), None);
+        assert_eq!(inventory_item_description_for_panel_row(&items, 5, 1), None);
+        assert_eq!(
+            inventory_item_description_for_panel_row(&items, 5, 3).as_deref(),
+            Some("balestarius (2d8) (+1,+2)")
+        );
+        assert_eq!(inventory_item_description_for_panel_row(&items, 5, 4), None);
+        assert_eq!(inventory_item_description_for_panel_row(&items, 5, 5), None);
     }
 
     #[test]

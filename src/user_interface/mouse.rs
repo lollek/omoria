@@ -5,6 +5,7 @@ use crate::layout::{Layout, Rect};
 use crate::user_interface::viewport::Viewport;
 
 mod hover;
+mod item_click;
 mod monster_list;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -205,6 +206,10 @@ pub fn register_hover_handler() {
 
 pub fn register_monster_list_handler() {
     monster_list::register();
+}
+
+pub fn register_item_click_handler() {
+    item_click::register();
 }
 
 pub fn clear_hover_prompt() {

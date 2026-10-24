@@ -709,7 +709,7 @@ Implementation notes:
 
 ### SL14. Click Item to Describe (fan-out)
 
-Status: open. Depends on: SL5, SL11.
+Status: implemented; item-row resolution and click-handler tests and `make check` pass. Physical mouse interaction and live prompt rendering remain unverified. Depends on: SL5, SL11.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: a new handler file in the mouse module.
@@ -722,6 +722,20 @@ Acceptance checks:
 * L0: the clicked row resolves to the right inventory slot or equipment slot,
   including the overflow line.
 * Changelog entry.
+
+Implementation notes:
+* Left-clicks in Split resolve inventory and equipment rows back to their
+  underlying items and show the full `item_name::generate` result on the
+  prompt line. Only identified properties are included by the shared item
+  formatter. Headings, separators, empty equipment slots, overflow rows, and
+  other click targets are ignored. Classic behavior is unchanged.
+* The handler is registered during curses initialization. Rust tests cover
+  equipment and inventory row mapping, full identified-item details, overflow
+  exclusion, non-left clicks, and the Classic-layout boundary.
+* `cargo test --lib user_interface:: --quiet` (99 passed) and `make check`
+  pass. Physical mouse interaction and live prompt rendering have not been
+  exercised end to end; `test-traps` is skipped on macOS because its C caller
+  doubles require Linux GNU `ld --wrap`.
 
 ### SL15. Pathfinding (fan-out)
 
