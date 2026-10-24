@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 5-alpha
+
+October 2026
+
 * Clicking a visible monster in the Split sidebar now shows its look description on the prompt line without using a turn.
 * Terminal resizing now switches between Classic and Split layouts, recenters and redraws the map, and waits for a usable size when the terminal is too small.
 * Arrow keys now move the character in their corresponding directions.
@@ -22,16 +25,21 @@
 * Character saves are now replaced atomically, so failed writes preserve the previous save.
 * Serialization failures no longer truncate existing character saves or the master list.
 * Fix item generation crashing when the dungeon level is zero.
-* Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
-* Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
-* Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
 
 ## 5-alpha529
+
+March 2026
+
+* Rethemed all dungeon creatures with a dark fantasy atmosphere. Town is now plague-touched, early dungeon has corrupted creatures and fallen humanoids, mid-game features gothic horror, and deep levels bring demonic and eldritch horrors.
+
+February 2026
+
+* Fix bug where game crashes if you are unarmed and try to attack something. This was caused by the fact that the game tried to print the name of your weapon, which did not exist.
+* Changed to-hit calculation. This will require a lot of tweaking in the future, since it's very messy.
 
 August 2025
 
 * Changes to number of attacks per round calculation
-
 
 ## 5-alpha528
 
