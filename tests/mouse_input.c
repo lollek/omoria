@@ -3,8 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../src/floor.h"
 #include "../src/io.h"
 #include "../src/dungeon/light.h"
+#include "../src/main_loop/command.h"
+#include "../src/messages.h"
 #include "../src/player.h"
 #include "../src/screen.h"
 #include "../src/term.h"
@@ -42,6 +45,7 @@ static void assert_travel_player_symbol_is_drawn(void) {
   memset(cave, 0, sizeof(cave));
   for (long row = 1; row <= 7; row++) {
     for (long col = 1; col <= 7; col++) {
+      cave[row][col].fval = ft_dark_open_floor;
       cave[row][col].fopen = true;
       cave[row][col].moved = true;
     }
@@ -89,6 +93,45 @@ static void assert_travel_player_symbol_is_drawn(void) {
   assert(mvinch(viewport.screen_row + 3 - viewport.world_top,
                 viewport.screen_col + 3 - viewport.world_left) != '@');
   C_mouse_travel_cancel();
+}
+
+static void assert_travel_cursor_follows_player(void) {
+  cur_height = cur_width = 7;
+  char_row = char_col = 3;
+  memset(cave, 0, sizeof(cave));
+  memset(&player_flags, 0, sizeof(player_flags));
+  player_flags.blind = 1;
+  player_light = false;
+  for (long row = 1; row <= 7; row++) {
+    for (long col = 1; col <= 7; col++) {
+      cave[row][col].fopen = true;
+      cave[row][col].moved = true;
+    }
+  }
+  cave[3][3].cptr = 1;
+
+  const struct viewport_state viewport = C_viewport_get(0, 0, 7, 7);
+  panel_row_min = viewport.world_top;
+  panel_row_max = viewport.world_bottom;
+  panel_col_min = viewport.world_left;
+  panel_col_max = viewport.world_right;
+  panel_row_prt = viewport.panel_row_prt;
+  panel_col_prt = viewport.panel_col_prt;
+
+  assert(C_mouse_travel_begin(5, 5));
+  long travel_command = OMORIA_KEY_TRAVEL;
+  C_message_capture_begin();
+  command(&travel_command);
+  C_message_capture_end();
+
+  int cursor_row;
+  int cursor_col;
+  getyx(stdscr, cursor_row, cursor_col);
+  assert(cursor_row == viewport.screen_row + char_row - viewport.world_top);
+  assert(cursor_col == viewport.screen_col + char_col - viewport.world_left);
+  assert(mvinch(cursor_row, cursor_col) == '@');
+  C_mouse_travel_cancel();
+  find_flag = false;
 }
 
 int main(void) {
@@ -166,6 +209,7 @@ int main(void) {
   assert(C_layout_is_split());
   assert(mvinch(0, 0) == ' ');
   assert_travel_player_symbol_is_drawn();
+  assert_travel_cursor_follows_player();
 
   cur_height = 66;
   cur_width = 198;

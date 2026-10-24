@@ -63,6 +63,7 @@ void command(long *command) {
       return;
     }
     player_action_move(direction);
+    print_null(char_row, char_col);
     refresh();
     C_MOUSE_TRAVEL_DELAY();
     if (C_mouse_travel_arrived(char_row, char_col)) {
