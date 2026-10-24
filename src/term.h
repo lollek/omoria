@@ -30,10 +30,12 @@ void move_cursor(int row, int col);
 #define OMORIA_KEY_END ((char)0xf1)
 #define OMORIA_KEY_PAGE_UP ((char)0xf2)
 #define OMORIA_KEY_PAGE_DOWN ((char)0xf3)
+#define OMORIA_KEY_TRAVEL ((char)0xf4)
 
 int C_translate_key_code(int key_code);
 #define C_MOUSE_INPUT (-2)
 int C_translate_terminal_input_code(int key_code);
+int C_terminal_poll_key(void);
 void C_wait_for_usable_terminal(void);
 void C_mouse_motion_fallback_start(void);
 void C_mouse_motion_fallback_stop(void);
@@ -47,6 +49,12 @@ struct mouse_event {
 struct mouse_event C_mouse_event_pop(void);
 void C_mouse_dispatch_pending_events(long panel_row, long panel_col,
                                      long world_height, long world_width);
+bool C_mouse_travel_begin(long goal_y, long goal_x);
+bool C_mouse_travel_is_active(void);
+long C_mouse_travel_next_direction(long current_y, long current_x, bool running,
+                                   bool key_pressed);
+bool C_mouse_travel_arrived(long current_y, long current_x);
+void C_mouse_travel_cancel(void);
 
 /* message line location */
 #define MSG_LINE -1

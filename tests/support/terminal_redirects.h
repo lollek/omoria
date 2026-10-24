@@ -3,6 +3,7 @@
 #include "terminal.h"
 
 #define inkey headless_inkey
+#define C_terminal_poll_key headless_terminal_poll_key
 #define inkey_delay headless_inkey_delay
 #define put_buffer headless_put_buffer
 #define put_buffer_attr headless_put_buffer_attr

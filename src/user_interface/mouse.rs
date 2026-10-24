@@ -7,6 +7,7 @@ use crate::user_interface::viewport::Viewport;
 mod hover;
 mod item_click;
 mod monster_list;
+mod travel;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MouseButton {
@@ -210,6 +211,10 @@ pub fn register_monster_list_handler() {
 
 pub fn register_item_click_handler() {
     item_click::register();
+}
+
+pub fn register_travel_handler() {
+    travel::register();
 }
 
 pub fn clear_hover_prompt() {

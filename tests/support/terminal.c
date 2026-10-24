@@ -13,6 +13,10 @@ static struct headless_attributed_draw attributed_draw;
 static const char *script;
 static size_t script_count;
 static size_t script_position;
+static bool key_pending;
+static const bool *poll_script;
+static size_t poll_script_count;
+static size_t poll_script_position;
 
 static void fail(const char *diagnostic) __attribute__((noreturn));
 static void fail(const char *diagnostic) {
@@ -39,6 +43,10 @@ void headless_terminal_reset(void) {
   script = NULL;
   script_count = 0;
   script_position = 0;
+  key_pending = false;
+  poll_script = NULL;
+  poll_script_count = 0;
+  poll_script_position = 0;
 }
 
 void headless_terminal_allow_drawing(bool allow) {
@@ -52,6 +60,15 @@ void headless_terminal_script(const char *keys, size_t count) {
   script = keys;
   script_count = count;
   script_position = 0;
+}
+
+void headless_terminal_poll_script(const bool *pending, size_t count) {
+  if (!pending && count != 0) {
+    fail("Invalid headless terminal poll script");
+  }
+  poll_script = pending;
+  poll_script_count = count;
+  poll_script_position = 0;
 }
 
 struct headless_terminal_counts headless_terminal_counts(void) {
@@ -72,6 +89,16 @@ char headless_inkey(void) {
   msg_flag = false;
   return script[script_position++];
 }
+
+int headless_terminal_poll_key(void) {
+  if (poll_script_position < poll_script_count)
+    return poll_script[poll_script_position++];
+  const bool pending = key_pending;
+  key_pending = false;
+  return pending;
+}
+
+void headless_terminal_set_key_pending(bool pending) { key_pending = pending; }
 
 void headless_put_buffer(const char *message, int row, int col) {
   (void)row;

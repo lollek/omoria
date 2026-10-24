@@ -14,6 +14,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "io.h"
+#include "constants.h"
 #include "messages.h"
 #include "screen.h"
 #include "save.h"
@@ -96,6 +97,42 @@ void C_terminal_resize(void (*redraw_screen)(void)) {
   }
 }
 
+int C_terminal_poll_key(void) {
+  if (nodelay(stdscr, TRUE) == ERR)
+    return 0;
+  const int input = getch();
+  if (nodelay(stdscr, FALSE) == ERR)
+    return 0;
+  if (input == ERR)
+    return 0;
+  if (input == KEY_RESIZE) {
+    C_terminal_resize(draw_cave);
+    return 0;
+  }
+  if (input == KEY_MOUSE) {
+    MEVENT event;
+    if (getmouse(&event) == OK) {
+      C_mouse_event_push(event.y, event.x, (unsigned long)event.bstate);
+      C_mouse_dispatch_pending_events(panel_row, panel_col, cur_height,
+                                      cur_width);
+    }
+    return 0;
+  }
+
+  const int translated = C_translate_terminal_input_code(input);
+  if (translated < 0)
+    return 0;
+  if (translated == CTRL_('R')) {
+    refresh();
+    return 0;
+  }
+  if (ungetch(input) == ERR) {
+    fputs("failed to preserve input while polling travel interruption\n", stderr);
+    abort();
+  }
+  return 1;
+}
+
 /* source/io.c: terminal I/O code, uses the curses package
 
    Copyright (c) 1989-94 James E. Wilson, Robert A. Koeneke
@@ -163,6 +200,12 @@ char inkey(void) {
       if (getmouse(&event) == OK) {
         C_mouse_event_push(event.y, event.x, (unsigned long)event.bstate);
         C_mouse_dispatch_pending_events(panel_row, panel_col, cur_height, cur_width);
+      }
+      if (C_mouse_travel_is_active()) {
+        if (game_state == GS_GET_COMMAND) {
+          return OMORIA_KEY_TRAVEL;
+        }
+        C_mouse_travel_cancel();
       }
       continue;
     }

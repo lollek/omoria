@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <curses.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../src/io.h"
 #include "../src/term.h"
@@ -57,6 +58,31 @@ int main(void) {
   assert(mouse.row == 4);
   assert(mouse.col == 9);
   assert(C_mouse_event_pop().kind == 0);
+
+  cur_height = cur_width = 7;
+  char_row = char_col = 3;
+  memset(cave, 0, sizeof(cave));
+  for (long row = 1; row <= 7; row++) {
+    for (long col = 1; col <= 7; col++) {
+      cave[row][col].fopen = true;
+      cave[row][col].is_permanently_lit = true;
+    }
+  }
+  assert(C_mouse_travel_begin(5, 5));
+
+  MEVENT motion = {.x = 12, .y = 8, .bstate = REPORT_MOUSE_POSITION};
+  assert(ungetmouse(&motion) == OK);
+  assert(ungetch('k') == OK);
+  assert(ungetch(KEY_MOUSE) == OK);
+  assert(C_terminal_poll_key() == 0);
+  assert(C_mouse_travel_is_active());
+  mouse = C_mouse_event_pop();
+  assert(mouse.kind == 2 && mouse.row == 8 && mouse.col == 12);
+
+  assert(C_terminal_poll_key() == 1);
+  assert(C_mouse_travel_is_active());
+  C_mouse_travel_cancel();
+  assert(inkey() == 'k');
 
   cur_height = 0;
   cur_width = 0;

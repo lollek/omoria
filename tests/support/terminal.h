@@ -23,9 +23,12 @@ struct headless_attributed_draw {
 void headless_terminal_reset(void);
 void headless_terminal_allow_drawing(bool allow);
 void headless_terminal_script(const char *keys, size_t count);
+void headless_terminal_poll_script(const bool *pending, size_t count);
 struct headless_terminal_counts headless_terminal_counts(void);
 struct headless_attributed_draw headless_terminal_last_attributed_draw(void);
 char headless_inkey(void);
+int headless_terminal_poll_key(void);
+void headless_terminal_set_key_pending(bool pending);
 void headless_put_buffer(const char *message, int row, int col);
 void headless_erase_line(long row, long col);
 void headless_put_buffer_attr(const char *message, long row, long col, int attrs);

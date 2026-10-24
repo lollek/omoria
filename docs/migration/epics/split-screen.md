@@ -71,7 +71,7 @@ The constraints the stories depend on:
   shows race, class, level and XP, HP, mana, AC, and gold. It does not show
   quests, bulk, or game time.
 * The current code has no monster memory/recall system. The SL15 pathfinding
-  foundation is implemented; click-to-travel remains unimplemented.
+  foundation and SL16 click-to-travel are implemented.
 * Panel state and message history are not currently saved. SL17 adds message
   history to character saves; other stories leave the save format unaffected.
 * HT1 headless doubles in
@@ -775,7 +775,7 @@ Implementation notes:
 
 ### SL16. Click to Travel (fan-out)
 
-Status: open. Depends on: SL11, SL15.
+Status: implemented; focused travel tests, file-backed active-motion/key-preservation test, headless travel/disturbance and same-turn key-retry scenarios, `make test-mouse-input`, and full `make check` pass with no new Rust/C warnings. Live mouse hardware, live key interruption during gameplay, and end-to-end travel remain unverified. Depends on: SL11, SL15.
 Size: L. Complexity: High. Agent: strong.
 
 Owns: a new handler file in the mouse module, a travel-state module, and the
@@ -798,6 +798,11 @@ Acceptance checks:
 * Changelog entry.
 
 Out of scope: travel to unknown cells, auto-explore.
+
+Implementation notes:
+* Left-clicking a map cell starts a travel state when a known path exists. The command loop replans each step and calls the existing movement action; running disturbances, arrival, blocked routes, and pending keys stop travel.
+* Rust tests cover keypad steps, replanning, and stop conditions. `make test-headless` verifies stopping on a seen monster and same-turn key cancellation/retry without an automated step; file-backed curses tests verify mouse motion does not stop active travel and a queued key remains available. `make test-mouse-input` passes.
+* Physical mouse events, live key interruption, and full gameplay travel have not been exercised end to end.
 
 ### SL17. Persist Message History (fan-out)
 

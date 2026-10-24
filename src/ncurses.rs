@@ -171,6 +171,7 @@ pub fn init_curses() {
     crate::user_interface::mouse::register_hover_handler();
     crate::user_interface::mouse::register_monster_list_handler();
     crate::user_interface::mouse::register_item_click_handler();
+    crate::user_interface::mouse::register_travel_handler();
     unsafe { C_wait_for_usable_terminal() };
     with_stdscr(|stdscr| {
         if stdscr.clear() != 0 || stdscr.refresh() != 0 {

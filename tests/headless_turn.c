@@ -10,6 +10,7 @@
 #include "../src/messages.h"
 #include "../src/player.h"
 #include "../src/random.h"
+#include "../src/term.h"
 #include "../src/variables.h"
 #include "support/headless_scenario.h"
 #include "support/terminal.h"
@@ -52,6 +53,7 @@ static bool command_while_running(void *context, char *key) {
 }
 
 static void begin_scenario(void) {
+  C_mouse_travel_cancel();
   headless_terminal_reset();
   headless_terminal_allow_drawing(true);
   C_message_capture_begin();
@@ -241,6 +243,58 @@ static void assert_movement_scenarios(void) {
   assert(memcmp(&blocked, &blocked_again, sizeof(blocked)) == 0);
 }
 
+static void assert_mouse_travel_stops_on_seen_monster(void) {
+  begin_scenario();
+  player_flags.blind = 0;
+  player_flags.status = 0;
+  player_light = false;
+  cur_height = cur_width = 7;
+  for (long row = 1; row <= 7; row++) {
+    for (long col = 1; col <= 7; col++) {
+      cave[row][col].fval = ft_dark_open_floor;
+      cave[row][col].fopen = true;
+      cave[row][col].is_permanently_lit = true;
+    }
+  }
+  cave[2][5].cptr = 2;
+  m_list[2].is_seen = true;
+
+  const char travel_key = OMORIA_KEY_TRAVEL;
+  struct command_script script = {&travel_key, 1, 0, 0};
+  assert(C_mouse_travel_begin(3, 6));
+  main_loop_with_commands(next_command, &script, 4);
+
+  assert(script.consumed == 1 && script.calls == 2);
+  assert(char_row == 2 && char_col == 4);
+  assert(!C_mouse_travel_is_active() && !find_flag);
+  end_scenario();
+}
+
+static void assert_mouse_travel_key_interrupts_without_an_extra_step(void) {
+  begin_scenario();
+  cur_height = cur_width = 7;
+  for (long row = 1; row <= 7; row++) {
+    for (long col = 1; col <= 7; col++) {
+      cave[row][col].fval = ft_dark_open_floor;
+      cave[row][col].fopen = true;
+      cave[row][col].is_permanently_lit = true;
+    }
+  }
+
+  const char keys[] = {OMORIA_KEY_TRAVEL, 'l'};
+  const bool pending[] = {false, true};
+  struct command_script script = {keys, sizeof(keys), 0, 0};
+  assert(C_mouse_travel_begin(3, 6));
+  headless_terminal_poll_script(pending, sizeof(pending) / sizeof(pending[0]));
+  main_loop_with_commands(next_command, &script, 2);
+
+  assert(script.consumed == 2 && script.calls == 2);
+  assert(char_row == 2 && char_col == 5);
+  assert(turn == 3 && turn_counter == 103);
+  assert(!C_mouse_travel_is_active() && !find_flag);
+  end_scenario();
+}
+
 int main(void) {
   alarm(10);
   for (int repeat = 0; repeat < 2; repeat++) {
@@ -267,6 +321,8 @@ int main(void) {
     C_seeded_rng_end();
   }
   assert_movement_scenarios();
+  assert_mouse_travel_stops_on_seen_monster();
+  assert_mouse_travel_key_interrupts_without_an_extra_step();
   alarm(0);
   puts("Bounded main-loop C checks passed.");
   return 0;

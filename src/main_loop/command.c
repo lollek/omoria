@@ -23,6 +23,7 @@
 #include "../player_action.h"
 #include "../save.h"
 #include "../screen.h"
+#include "../term.h"
 #include "../types.h"
 #include "../variables.h"
 #include "../wizard.h"
@@ -39,6 +40,31 @@ void command(long *command) {
   char out2[134];
 
   ENTER(("command", "%d, '%c'", *command, *command));
+
+  if (*command == OMORIA_KEY_TRAVEL && C_mouse_travel_is_active()) {
+    if (C_terminal_poll_key()) {
+      C_mouse_travel_cancel();
+      find_flag = false;
+      reset_flag = true;
+      return;
+    }
+    find_flag = true;
+    const long direction = C_mouse_travel_next_direction(
+        char_row, char_col, true, false);
+    if (direction == 0) {
+      find_flag = false;
+      reset_flag = true;
+      return;
+    }
+    player_action_move(direction);
+    if (!find_flag || C_mouse_travel_arrived(char_row, char_col)) {
+      find_flag = false;
+      C_mouse_travel_cancel();
+    }
+    return;
+  } else if (C_mouse_travel_is_active()) {
+    C_mouse_travel_cancel();
+  }
 
   switch (*command) {
 
