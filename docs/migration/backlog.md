@@ -170,6 +170,7 @@ the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 | LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
 | XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations, legacy trap test mode) | 7 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
 | SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [split-screen.md](epics/split-screen.md) |
+| PG | Pre-game menu (feature, not a port) | None; pregame Rust screens, `pregame/main.c`, `logic/menu.rs` | 5 x S-L | Open | [pregame-menu.md](epics/pregame-menu.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
 | TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |

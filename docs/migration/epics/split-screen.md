@@ -828,6 +828,7 @@ separate message-log files.
 
 * Prompt callers still write row 0 directly. A prompt seam belongs to the TU
   epic.
+* The pre-game menu redesign has its own epic: [pregame-menu.md](pregame-menu.md).
 * Full-screen overlays (inventory menus, stores, help, casino) keep their own
   fixed 80x24-style drawing. They are not panels.
 * Should we remove the classic mode and merge it into the new split mode?
