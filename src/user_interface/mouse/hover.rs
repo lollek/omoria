@@ -57,7 +57,7 @@ lazy_static! {
 }
 
 #[cfg(not(test))]
-fn show_prompt_overlay(description: &str) {
+pub(super) fn show_prompt_overlay(description: &str) {
     let mut overlay = PROMPT_OVERLAY.lock().expect("hover prompt lock poisoned");
     overlay.capture_if_missing(crate::ncurses::read_row(0));
     crate::ncurses::mov(0, 0);

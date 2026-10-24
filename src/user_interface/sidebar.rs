@@ -13,6 +13,8 @@ struct SeenMonster {
     name: String,
     symbol: char,
     distance: i16,
+    y: i64,
+    x: i64,
 }
 
 fn monster_snapshot(monsters: &[crate::model::Monster]) -> Vec<SeenMonster> {
@@ -26,9 +28,54 @@ fn monster_snapshot(monsters: &[crate::model::Monster]) -> Vec<SeenMonster> {
                 name: template.name.to_string(),
                 symbol: template.symbol,
                 distance: monster.cdis,
+                y: monster.fy.into(),
+                x: monster.fx.into(),
             }
         })
         .collect()
+}
+
+fn grouped_monsters(monsters: &[SeenMonster]) -> Vec<(&SeenMonster, usize)> {
+    let mut groups = BTreeMap::new();
+    for monster in monsters {
+        let (nearest, count) = groups.entry(monster.name.as_str()).or_insert((monster, 0));
+        *count += 1;
+        if monster.distance < nearest.distance {
+            *nearest = monster;
+        }
+    }
+    let mut groups: Vec<_> = groups.into_values().collect();
+    groups.sort_by_key(|(monster, _)| (monster.distance, monster.name.as_str()));
+    groups
+}
+
+fn monster_position_for_panel_row(
+    monsters: &[SeenMonster],
+    panel_row: i32,
+    blind: bool,
+    hallucinating: bool,
+) -> Option<(i64, i64)> {
+    if blind || hallucinating || panel_row < 2 {
+        return None;
+    }
+    grouped_monsters(monsters)
+        .get((panel_row - 2) as usize)
+        .map(|(monster, _)| (monster.y, monster.x))
+}
+
+#[cfg(not(test))]
+pub(crate) fn current_monster_position_for_panel_row(panel_row: i32) -> Option<(i64, i64)> {
+    let layout = current_layout();
+    let rect = layout.monsters?;
+    if panel_row >= rect.height {
+        return None;
+    }
+    extern "C" {
+        static player_flags: crate::model::PlayerFlags;
+    }
+    let flags = unsafe { player_flags };
+    let monsters = monster_snapshot(&crate::model::seen_monsters());
+    monster_position_for_panel_row(&monsters, panel_row, flags.blind > 0, flags.image > 0)
 }
 
 fn render_monsters_panel(
@@ -39,18 +86,8 @@ fn render_monsters_panel(
 ) -> Vec<String> {
     let mut lines = vec![String::new(), "Visible monsters".to_string()];
     if !blind && !hallucinating {
-        let mut groups = BTreeMap::new();
-        for monster in monsters {
-            let (nearest, count) = groups.entry(monster.name.as_str()).or_insert((monster, 0));
-            *count += 1;
-            if monster.distance < nearest.distance {
-                *nearest = monster;
-            }
-        }
-        let mut groups: Vec<_> = groups.into_values().collect();
-        groups.sort_by_key(|(monster, _)| (monster.distance, monster.name.as_str()));
         lines.extend(
-            groups
+            grouped_monsters(monsters)
                 .into_iter()
                 .map(|(monster, count)| format!("{} {} ({})", monster.symbol, monster.name, count)),
         );
@@ -183,7 +220,62 @@ mod tests {
             name: name.to_string(),
             symbol,
             distance,
+            y: 0,
+            x: 0,
         }
+    }
+
+    fn seen_at(name: &str, symbol: char, distance: i16, y: i64, x: i64) -> SeenMonster {
+        SeenMonster {
+            name: name.to_string(),
+            symbol,
+            distance,
+            y,
+            x,
+        }
+    }
+
+    #[test]
+    fn monster_panel_entry_rows_resolve_to_nearest_visible_group_member() {
+        let monsters = [
+            seen_at("Orc", 'o', 8, 8, 9),
+            seen_at("Troll", 'T', 4, 5, 6),
+            seen_at("Orc", 'o', 1, 2, 3),
+            seen_at("Bat", 'b', 6, 7, 8),
+        ];
+
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 0, false, false),
+            None
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 1, false, false),
+            None
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 2, false, false),
+            Some((2, 3))
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 3, false, false),
+            Some((5, 6))
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 4, false, false),
+            Some((7, 8))
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 5, false, false),
+            None
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 2, true, false),
+            None
+        );
+        assert_eq!(
+            monster_position_for_panel_row(&monsters, 2, false, true),
+            None
+        );
     }
 
     #[test]

@@ -5,6 +5,7 @@ use crate::layout::{Layout, Rect};
 use crate::user_interface::viewport::Viewport;
 
 mod hover;
+mod monster_list;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MouseButton {
@@ -200,6 +201,10 @@ pub fn register_handler(handler: MouseHandler) {
 
 pub fn register_hover_handler() {
     hover::register();
+}
+
+pub fn register_monster_list_handler() {
+    monster_list::register();
 }
 
 pub fn clear_hover_prompt() {

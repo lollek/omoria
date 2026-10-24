@@ -686,7 +686,7 @@ Implementation notes:
 
 ### SL13. Click Monster List to Recall (fan-out)
 
-Status: open. Depends on: SL6, SL12.
+Status: implemented; row-resolution and click-handler tests, `cargo check --lib`, and `make check` pass. Physical mouse interaction and live prompt rendering remain unverified. Depends on: SL6, SL12.
 Size: S. Complexity: Low. Agent: standard.
 
 Owns: a new handler file in the mouse module.
@@ -702,6 +702,10 @@ Acceptance checks:
 * Changelog entry.
 
 Out of scope: a monster memory/recall system.
+
+Implementation notes:
+* Click rows use the same grouping and nearest-first ordering as the panel, resolving each entry to its nearest visible monster before calling the SL12 description and prompt-overlay helpers.
+* Rust tests cover grouped-row resolution, separator/title rows, visibility filtering, and ignoring non-left clicks. The production handler is registered during curses initialization.
 
 ### SL14. Click Item to Describe (fan-out)
 
@@ -812,3 +816,4 @@ separate message-log files.
   epic.
 * Full-screen overlays (inventory menus, stores, help, casino) keep their own
   fixed 80x24-style drawing. They are not panels.
+* Should we remove the classic mode and merge it into the new split mode?

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Clicking a visible monster in the Split sidebar now shows its look description on the prompt line without using a turn.
 * Terminal resizing now switches between Classic and Split layouts, recenters and redraws the map, and waits for a usable size when the terminal is too small.
 * Arrow keys now move the character in their corresponding directions.
 * Hovering over a visible monster or lit object now shows its look description on the prompt line without recording a message or using a turn.

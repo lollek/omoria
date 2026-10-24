@@ -169,6 +169,7 @@ pub fn init_curses() {
 
     STDSCR.replace(Some(window));
     crate::user_interface::mouse::register_hover_handler();
+    crate::user_interface::mouse::register_monster_list_handler();
     unsafe { C_wait_for_usable_terminal() };
     with_stdscr(|stdscr| {
         if stdscr.clear() != 0 || stdscr.refresh() != 0 {
