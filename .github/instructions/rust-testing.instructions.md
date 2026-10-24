@@ -75,4 +75,6 @@ Each test should verify a single behavior or edge case. Prefer multiple small te
 - A mutex around individual accesses does not isolate a multi-step test scenario.
 - Prefer caller-owned state over globals. Keep tests against pure input structs parallel.
 - Verify isolation with repeated `cargo test` runs using the default thread count, not `--test-threads=1`.
+- When testing registered callbacks or FFI handlers, keep the handler function shared between production and tests. Exercise event enqueue, hit testing, and handler dispatch; substitute only the global/map/FFI state adapter with a deterministic fixture. Do not replace the handler itself under `cfg(test)`, which bypasses the behavior the dispatch test should verify.
+- Pathfinding fixtures backed by `dungeon::cell::Cells` must keep start and goal strictly inside the map (`1 < y < height`, `1 < x < width`) and initialize `fopen` plus a known-light field (`pl`, `tl`, or `fm`); C display-light flags alone do not make a Rust pathfinding cell known.
 - Run focused tests during development; use the Quality gates in `.github/copilot-instructions.md` for completion validation, including its movement-only exception.
