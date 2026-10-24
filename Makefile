@@ -82,7 +82,7 @@ $(HDIR)/headless-command.o: src/main_loop/command.c tests/support/terminal_redir
 	$(CC) $(CFLAGS) $(HREDIRECT) -c src/main_loop/command.c -o $@
 
 $(HDIR)/headless-command-turn.o: src/main_loop/command.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
-	$(CC) $(CFLAGS) $(HREDIRECT) -Dshow_recorded_messages=headless_show_recorded_messages -c src/main_loop/command.c -o $@
+	$(CC) $(CFLAGS) $(HREDIRECT) -Dshow_recorded_messages=headless_show_recorded_messages -DC_MOUSE_TRAVEL_DELAY=headless_travel_delay -c src/main_loop/command.c -o $@
 
 $(HDIR)/headless-rest.o: src/player_action/rest.c tests/support/terminal_redirects.h $(HFILES) | $(HDIR)
 	$(CC) $(CFLAGS) $(HREDIRECT) -Dheadless_get_string=headless_rest_get_string -c src/player_action/rest.c -o $@

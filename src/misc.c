@@ -431,7 +431,7 @@ chtype get_loc_symbol(const long y, const long x) {
 
   if (test_light(y, x))
     return loc_symbol(y, x);
-  else if (cave[y][x].cptr == 1 && !find_flag)
+  else if (cave[y][x].cptr == 1 && (!find_flag || C_mouse_travel_is_active()))
     return '@';
   else if (cave[y][x].cptr > 1)
     return m_list[cave[y][x].cptr].is_seen ? loc_symbol(y, x) : ' ';
@@ -446,7 +446,7 @@ chtype loc_symbol(const long y, const long x) {
 
   chtype sym;
 
-  if (cptr == 1 && !find_flag) {
+  if (cptr == 1 && (!find_flag || C_mouse_travel_is_active())) {
     sym = '@';
   } else if (player_flags.blind > 0) {
     sym = ' ';

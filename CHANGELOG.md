@@ -4,7 +4,7 @@
 
 October 2026
 
-* Clicking a known map cell starts turn-by-turn travel that replans around blocked cells and stops on disturbance, arrival, or key input.
+* Click-to-travel now shows the player at each step, moves at a visible pace, reaches the clicked destination through explored dark corridors, and reports travel outcomes.
 * Clicking an inventory or equipment item in the Split sidebar now shows its full known description on the prompt line without using a turn.
 * The displayed version now includes the compile timestamp.
 * Clicking a visible monster in the Split sidebar now shows its look description on the prompt line without using a turn.

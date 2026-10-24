@@ -117,7 +117,8 @@ void prt_map(void) {
       chtype tmp_char = ' ';
       if (test_light(y, x))
         tmp_char = loc_symbol(y, x);
-      else if (cave[y][x].cptr == 1 && !find_flag)
+      else if (cave[y][x].cptr == 1 &&
+           (!find_flag || C_mouse_travel_is_active()))
         tmp_char = '@';
       else if (cave[y][x].cptr > 1 && m_list[cave[y][x].cptr].is_seen)
         tmp_char = loc_symbol(y, x);

@@ -110,7 +110,12 @@ fn dispatch_travel_click(
 
 fn handle_click(event: MouseEvent, target: Option<MouseTarget>) {
     dispatch_travel_click(event, target, |goal| {
-        C_mouse_travel_begin(goal.y as libc::c_long, goal.x as libc::c_long);
+        let started = C_mouse_travel_begin(goal.y as libc::c_long, goal.x as libc::c_long);
+        if started {
+            crate::term::msg_print("Travel started.".to_string());
+        } else {
+            crate::term::msg_print("No known path to that location.".to_string());
+        }
     });
 }
 
@@ -367,8 +372,13 @@ mod tests {
     #[serial_test::serial]
     fn dispatched_left_map_click_starts_travel() {
         let _reset = ResetMouseDispatch;
+        let _messages = crate::message::tests::TestState::new();
         super::super::register_travel_handler();
-        super::super::C_mouse_event_push(1, 14, ncurses::BUTTON1_CLICKED as libc::c_ulong);
+        super::super::C_mouse_event_push(
+            1,
+            14,
+            (ncurses::BUTTON1_CLICKED | ncurses::BUTTON_SHIFT) as libc::c_ulong,
+        );
 
         let layout = crate::layout::compute_layout(25, 150);
         let viewport =
@@ -378,6 +388,28 @@ mod tests {
             *ACTIVE_TRAVEL.lock().unwrap(),
             Some(TravelState::new(coordinate(1, 1)))
         );
+        assert_eq!(crate::term::test_last_msg_print(), "Travel started.");
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn map_click_without_a_path_reports_feedback() {
+        let _reset = ResetMouseDispatch;
+        let _messages = crate::message::tests::TestState::new();
+        handle_click(
+            MouseEvent {
+                row: 8,
+                col: 20,
+                kind: MouseEventKind::Click(MouseButton::Left),
+            },
+            Some(MouseTarget::Map { y: 8, x: 8 }),
+        );
+
+        assert_eq!(
+            crate::term::test_last_msg_print(),
+            "No known path to that location."
+        );
+        assert!(ACTIVE_TRAVEL.lock().unwrap().is_none());
     }
 
     #[test]

@@ -2,6 +2,8 @@
 
 #include "terminal.h"
 
+void headless_travel_delay(void);
+
 #define inkey headless_inkey
 #define C_terminal_poll_key headless_terminal_poll_key
 #define inkey_delay headless_inkey_delay

@@ -4,6 +4,9 @@
 #include <string.h>
 
 #include "../src/io.h"
+#include "../src/dungeon/light.h"
+#include "../src/player.h"
+#include "../src/screen.h"
 #include "../src/term.h"
 #include "../src/variables.h"
 
@@ -33,6 +36,61 @@ static void record_redraw(void) {
   assert(panel_col == 3);
 }
 
+static void assert_travel_player_symbol_is_drawn(void) {
+  cur_height = cur_width = 7;
+  char_row = char_col = 3;
+  memset(cave, 0, sizeof(cave));
+  for (long row = 1; row <= 7; row++) {
+    for (long col = 1; col <= 7; col++) {
+      cave[row][col].fopen = true;
+      cave[row][col].moved = true;
+    }
+  }
+  cave[3][3].cptr = 1;
+
+  const struct viewport_state viewport = C_viewport_get(0, 0, 7, 7);
+  panel_row_min = viewport.world_top;
+  panel_row_max = viewport.world_bottom;
+  panel_col_min = viewport.world_left;
+  panel_col_max = viewport.world_right;
+  panel_row_prt = viewport.panel_row_prt;
+  panel_col_prt = viewport.panel_col_prt;
+
+  player_light = false;
+  find_flag = false;
+  prt_map();
+  refresh();
+  assert(mvinch(viewport.screen_row + 3 - viewport.world_top,
+                viewport.screen_col + 3 - viewport.world_left) == '@');
+
+  assert(C_mouse_travel_begin(5, 5));
+  find_flag = true;
+  cave[3][3].cptr = 0;
+  cave[4][4].cptr = 1;
+  char_row = char_col = 4;
+  dungeon_light_move(3, 3, 4, 4);
+  refresh();
+  assert(mvinch(viewport.screen_row + 3 - viewport.world_top,
+                viewport.screen_col + 3 - viewport.world_left) != '@');
+  assert(mvinch(viewport.screen_row + 4 - viewport.world_top,
+                viewport.screen_col + 4 - viewport.world_left) == '@');
+
+  cave[4][4].cptr = 0;
+  cave[5][5].cptr = 1;
+  char_row = char_col = 5;
+  dungeon_light_move(4, 4, 5, 5);
+  refresh();
+  assert(C_mouse_travel_arrived(5, 5));
+  find_flag = false;
+  assert(mvinch(viewport.screen_row + 5 - viewport.world_top,
+                viewport.screen_col + 5 - viewport.world_left) == '@');
+  assert(mvinch(viewport.screen_row + 4 - viewport.world_top,
+                viewport.screen_col + 4 - viewport.world_left) != '@');
+  assert(mvinch(viewport.screen_row + 3 - viewport.world_top,
+                viewport.screen_col + 3 - viewport.world_left) != '@');
+  C_mouse_travel_cancel();
+}
+
 int main(void) {
   FILE *input = tmpfile();
   FILE *output = tmpfile();
@@ -44,7 +102,9 @@ int main(void) {
   keypad(stdscr, TRUE);
   mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
-  MEVENT event = {.x = 9, .y = 4, .bstate = BUTTON1_CLICKED};
+  MEVENT event = {
+    .x = 9, .y = 4, .bstate = BUTTON1_CLICKED | BUTTON_SHIFT
+  };
   assert(ungetmouse(&event) == OK);
   assert(ungetch('q') == OK);
   assert(ungetch(KEY_MOUSE) == OK);
@@ -105,6 +165,7 @@ int main(void) {
   assert(resize_reads == 1);
   assert(C_layout_is_split());
   assert(mvinch(0, 0) == ' ');
+  assert_travel_player_symbol_is_drawn();
 
   cur_height = 66;
   cur_width = 198;

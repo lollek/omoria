@@ -173,7 +173,7 @@ typedef struct cave_type {
   bool fm;                  // "field mark". No idea what it means
   bool is_permanently_lit;  // permaneny lit
   bool is_temporarily_lit;  // temporarily lit (e.g. by player's light source)
-  bool moved;               // unused?
+  bool moved;               // remembers cells the player has entered
   uint8_t oct;              // octant direction. Unused?
   uint8_t h2o;              // water
 } cave_type;

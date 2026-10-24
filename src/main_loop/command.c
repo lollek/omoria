@@ -34,6 +34,10 @@
 
 void C_print_known_spells();
 
+#ifndef C_MOUSE_TRAVEL_DELAY
+#define C_MOUSE_TRAVEL_DELAY() usleep(150000)
+#endif
+
 void command(long *command) {
   treas_rec *trash_ptr;
   char out_val[134];
@@ -45,6 +49,7 @@ void command(long *command) {
     if (C_terminal_poll_key()) {
       C_mouse_travel_cancel();
       find_flag = false;
+      msg_print("Travel interrupted.");
       reset_flag = true;
       return;
     }
@@ -53,13 +58,20 @@ void command(long *command) {
         char_row, char_col, true, false);
     if (direction == 0) {
       find_flag = false;
+      msg_print("You cannot continue to that destination.");
       reset_flag = true;
       return;
     }
     player_action_move(direction);
-    if (!find_flag || C_mouse_travel_arrived(char_row, char_col)) {
+    refresh();
+    C_MOUSE_TRAVEL_DELAY();
+    if (C_mouse_travel_arrived(char_row, char_col)) {
       find_flag = false;
       C_mouse_travel_cancel();
+      msg_print("You have arrived at your destination.");
+    } else if (!find_flag) {
+      C_mouse_travel_cancel();
+      msg_print("Travel interrupted.");
     }
     return;
   } else if (C_mouse_travel_is_active()) {

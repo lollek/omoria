@@ -25,7 +25,7 @@ impl PathCell {
         );
 
         Self {
-            known: cave.is_lit(),
+            known: cave.is_lit() || cave.moved != 0 || cave.cptr == 1,
             passable: cave.is_open() && !blocked_object,
         }
     }
@@ -307,6 +307,36 @@ mod tests {
                 known: true,
                 passable: false
             })
+        );
+    }
+
+    #[test]
+    fn fcell_map_treats_walked_dark_cells_as_known_but_not_unvisited_cells() {
+        use crate::dungeon::cell::test_support::TestMap;
+
+        let mut test_map = TestMap::reset();
+        test_map.cave[2][2].fopen = 1;
+        test_map.cave[2][2].moved = 1;
+        test_map.cave[2][3].fopen = 1;
+
+        let cells = test_map.cells();
+        let map = FCellMap { cells: &cells };
+
+        assert_eq!(
+            map.cell(coordinate(2, 2)),
+            Some(PathCell {
+                known: true,
+                passable: true,
+            }),
+            "a previously walked dark cell should remain pathable"
+        );
+        assert_eq!(
+            map.cell(coordinate(2, 3)),
+            Some(PathCell {
+                known: false,
+                passable: true,
+            }),
+            "an unvisited dark cell must remain unknown"
         );
     }
 

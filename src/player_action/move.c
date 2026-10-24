@@ -18,6 +18,7 @@
 #include "../player_action.h"
 #include "../random.h"
 #include "../screen.h"
+#include "../term.h"
 #include "../text_lines.h"
 #include "../traps.h"
 #include "../types.h"
@@ -137,10 +138,11 @@ static void carry(const long y, const long x) {
 /*        {      to add a lot of checking for such a minor detail }*/
 static void area_affect(const long dir, const long y, const long x) {
   long row, col;
+  const bool travel_active = C_mouse_travel_is_active();
   obj_set corridors = {4, 5, 6, 0};
   const obj_set some_hidden_stuff = {unseen_trap, secret_door, 0};
 
-  if (cave[y][x].fval == corr_open_floor.ftval) {
+  if (!travel_active && cave[y][x].fval == corr_open_floor.ftval) {
     if (next_to4(y, x, corridors) > 2) {
       find_flag = false;
     }
@@ -177,7 +179,7 @@ static void area_affect(const long dir, const long y, const long x) {
         /* with cave[row,col] do; */
 
         /* { Empty doorways        }*/
-        if (cave[row][col].fval == corr_room_junction.ftval) {
+        if (!travel_active && cave[row][col].fval == corr_room_junction.ftval) {
           find_flag = false;
         }
 
@@ -354,6 +356,7 @@ static void _move_char(long dir) {
 
   /* Move character record (-1) */
   move_creature(char_row, char_col, test_row, test_col);
+  cave[test_row][test_col].moved = true;
 
   /* Check for new panel */
   if (get_panel(test_row, test_col, false))

@@ -8,6 +8,7 @@
 #include "../player.h"
 #include "../random.h"
 #include "../screen.h"
+#include "../term.h"
 #include "../variables.h"
 
 #include "light.h"
@@ -246,6 +247,11 @@ void dungeon_light_move(const long y1, const long x1, const long y2,
 
   if (player_flags.blind > 0) {
     ml__sub3_move_light(y1, x1, y2, x2); /* blind */
+  } else if (C_mouse_travel_is_active()) {
+    if (player_light)
+      ml__sub1_move_light(y1, x1, y2, x2);
+    else
+      ml__sub4_move_light(y1, x1, y2, x2);
   } else if (find_flag) {
     ml__sub2_move_light(y1, x1, y2, x2); /* searching */
   } else if (!player_light) {

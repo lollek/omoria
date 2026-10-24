@@ -23,6 +23,22 @@ struct command_script {
 };
 
 static size_t recorded_message_views;
+static size_t travel_delay_calls;
+
+chtype get_loc_symbol(const long y, const long x);
+
+void headless_travel_delay(void) { travel_delay_calls++; }
+
+static bool captured_message_contains(const char *expected) {
+  char message[128];
+  for (size_t index = 0; index < C_message_capture_count(); index++) {
+    if (C_message_capture_get(index, message, sizeof(message)) &&
+        strcmp(message, expected) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
 
 void headless_show_recorded_messages(void) { recorded_message_views++; }
 
@@ -95,6 +111,7 @@ static void begin_scenario(void) {
   print_stat = command_count = 0;
   game_state = GS_IGNORE_CTRL_C;
   recorded_message_views = 0;
+  travel_delay_calls = 0;
 }
 
 static void end_scenario(void) {
@@ -270,6 +287,78 @@ static void assert_mouse_travel_stops_on_seen_monster(void) {
   end_scenario();
 }
 
+static void assert_mouse_travel_reaches_clicked_room_corner(void) {
+  begin_scenario();
+  cur_height = cur_width = 20;
+  panel_row_min = panel_col_min = 1;
+  panel_row_max = panel_col_max = 20;
+  char_row = char_col = 5;
+  player_flags.blind = 0;
+  player_flags.status = 0;
+
+  for (long row = 1; row <= 20; row++) {
+    for (long col = 1; col <= 20; col++) {
+      cave[row][col].fval = ft_wall_granite;
+      cave[row][col].fopen = false;
+    }
+  }
+  for (long row = 2; row <= 8; row++) {
+    for (long col = 2; col <= 5; col++) {
+      cave[row][col].fval = ft_dark_open_floor;
+      cave[row][col].fopen = true;
+      cave[row][col].is_permanently_lit = true;
+    }
+    for (long col = 15; col <= 18; col++) {
+      cave[row][col].fval = ft_dark_open_floor;
+      cave[row][col].fopen = true;
+      cave[row][col].is_permanently_lit = true;
+    }
+  }
+  for (long col = 6; col <= 14; col++) {
+    cave[5][col].fval = col == 6 || col == 14
+                            ? ft_corr_room_junction
+                            : ft_corr_open_floor;
+    cave[5][col].fopen = true;
+    cave[5][col].is_permanently_lit = true;
+  }
+  cave[5][5].cptr = 1;
+
+  const char travel_key = OMORIA_KEY_TRAVEL;
+  struct command_script script = {&travel_key, 1, 0, 0};
+  assert(C_mouse_travel_begin(5, 15));
+  find_flag = true;
+  assert(get_loc_symbol(5, 5) == '@');
+  main_loop_with_commands(next_command, &script, 20);
+
+  assert(char_row == 5 && char_col == 15);
+  assert(!C_mouse_travel_is_active() && !find_flag);
+  assert(cave[5][5].cptr == 0 && cave[5][15].cptr == 1);
+  assert(travel_delay_calls == 10);
+  assert(captured_message_contains("You have arrived at your destination."));
+  assert(get_loc_symbol(5, 15) == '@');
+  end_scenario();
+}
+
+static void assert_mouse_travel_crosses_walked_dark_cells(void) {
+  begin_scenario();
+  cur_height = cur_width = 7;
+  const char manual_keys[] = {'l', 'l'};
+  struct command_script manual = {manual_keys, sizeof(manual_keys), 0, 0};
+  main_loop_with_commands(next_command, &manual, 2);
+
+  assert(char_row == 3 && char_col == 5);
+  assert(cave[3][3].moved && cave[3][4].moved && cave[3][5].moved);
+
+  const char travel_key = OMORIA_KEY_TRAVEL;
+  struct command_script travel = {&travel_key, 1, 0, 0};
+  assert(C_mouse_travel_begin(3, 3));
+  main_loop_with_commands(next_command, &travel, 5);
+
+  assert(char_row == 3 && char_col == 3);
+  assert(!C_mouse_travel_is_active() && !find_flag);
+  end_scenario();
+}
+
 static void assert_mouse_travel_key_interrupts_without_an_extra_step(void) {
   begin_scenario();
   cur_height = cur_width = 7;
@@ -292,6 +381,7 @@ static void assert_mouse_travel_key_interrupts_without_an_extra_step(void) {
   assert(char_row == 2 && char_col == 5);
   assert(turn == 3 && turn_counter == 103);
   assert(!C_mouse_travel_is_active() && !find_flag);
+  assert(captured_message_contains("Travel interrupted."));
   end_scenario();
 }
 
@@ -313,6 +403,8 @@ int main(void) {
     assert_exhaustion(0);
     assert_exhaustion(1);
     assert_exhaustion_cleans_up_search();
+    assert_mouse_travel_crosses_walked_dark_cells();
+    assert_mouse_travel_reaches_clicked_room_corner();
     assert(randint(1000000) == expected);
     assert(C_message_capture_count() == 0);
     msg_print("Outer capture restored.");
