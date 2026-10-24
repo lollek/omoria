@@ -4,6 +4,8 @@ use crate::model::{Cave, FloorType, Item, ItemType};
 mod globals;
 #[cfg(not(test))]
 mod interop;
+#[cfg(not(test))]
+pub(crate) use globals::describe_at_global;
 
 const MAX_SIGHT: usize = 20;
 
@@ -30,6 +32,44 @@ trait LookContext {
     fn message(&mut self, message: &str);
 }
 
+fn describe_at(context: &mut impl LookContext, y: i64, x: i64) -> Option<String> {
+    if context.blind() {
+        return None;
+    }
+    let (cell, item) = context.read(y, x)?;
+    let descriptions = describe_entities(context, cell, item);
+    (!descriptions.is_empty()).then(|| descriptions.join(" "))
+}
+
+fn describe_entities(
+    context: &mut impl LookContext,
+    cell: Cave,
+    item: Option<Item>,
+) -> Vec<String> {
+    let mut descriptions = Vec::new();
+    if cell.cptr > 1 {
+        if let Some(name) = context.monster_name(cell.cptr) {
+            let article = article(&name);
+            descriptions.push(format!("You see {article} {name}."));
+        }
+    }
+
+    if cell.is_lit() {
+        if let Some(mut item) = item {
+            if !matches!(
+                item.item_type(),
+                Some(ItemType::SecretDoor | ItemType::UnseenTrap)
+            ) {
+                item.number = 1;
+                let name = context.item_name(item);
+                let article = article(&name);
+                descriptions.push(format!("You see {article} {name}."));
+            }
+        }
+    }
+    descriptions
+}
+
 fn look(context: &mut impl LookContext, direction: i64, mut y: i64, mut x: i64) {
     if context.blind() {
         context.message("You can't see a damn thing!");
@@ -43,26 +83,20 @@ fn look(context: &mut impl LookContext, direction: i64, mut y: i64, mut x: i64) 
         let Some((cell, item)) = context.read(y, x) else {
             break;
         };
-        if cell.cptr > 1 {
-            if let Some(name) = context.monster_name(cell.cptr) {
-                let article = article(&name);
-                context.message(&format!("You see {article} {name}."));
-                seen = true;
+        let descriptions = describe_entities(context, cell, item);
+        if !descriptions.is_empty() {
+            for description in descriptions {
+                context.message(&description);
             }
+            seen = true;
         }
 
         if cell.is_lit() {
-            if let Some(mut item) = item {
+            if let Some(item) = item {
                 match item.item_type() {
                     Some(ItemType::SecretDoor) => context.message("You see a granite wall."),
                     Some(ItemType::UnseenTrap) => {}
-                    _ => {
-                        item.number = 1;
-                        let name = context.item_name(item);
-                        let article = article(&name);
-                        context.message(&format!("You see {article} {name}."));
-                        seen = true;
-                    }
+                    _ => {}
                 }
             }
 
@@ -343,5 +377,54 @@ mod tests {
             ["You see nothing of interest in that direction."]
         );
         assert_eq!(context.steps, 1);
+    }
+
+    #[test]
+    fn hover_description_reports_a_visible_monster() {
+        let mut context = Context::new();
+        context.map.cave[3][4].cptr = 2;
+
+        assert_eq!(
+            describe_at(&mut context, 3, 4),
+            Some("You see an orc.".to_owned())
+        );
+        assert!(context.messages.is_empty());
+    }
+
+    #[test]
+    fn hover_description_reports_a_lit_object() {
+        let mut context = Context::new();
+        context.map.put(3, 4, 1, 80, b"apple");
+        context.map.cave[3][4].pl = 1;
+        context.map.items[1].number = 5;
+
+        assert_eq!(
+            describe_at(&mut context, 3, 4),
+            Some("You see an apple.".to_owned())
+        );
+        assert_eq!(context.map.items[1].number, 5);
+        assert!(context.messages.is_empty());
+    }
+
+    #[test]
+    fn hover_description_reports_monster_and_object_together() {
+        let mut context = Context::new();
+        context.map.put(3, 4, 1, 80, b"apple");
+        context.map.cave[3][4].cptr = 2;
+        context.map.cave[3][4].pl = 1;
+
+        assert_eq!(
+            describe_at(&mut context, 3, 4),
+            Some("You see an orc. You see an apple.".to_owned())
+        );
+        assert!(context.messages.is_empty());
+    }
+
+    #[test]
+    fn hover_description_is_empty_when_nothing_is_visible() {
+        let mut context = Context::new();
+
+        assert_eq!(describe_at(&mut context, 3, 4), None);
+        assert!(context.messages.is_empty());
     }
 }

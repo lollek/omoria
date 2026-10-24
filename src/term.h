@@ -35,6 +35,8 @@ int C_translate_key_code(int key_code);
 #define C_MOUSE_INPUT (-2)
 int C_translate_terminal_input_code(int key_code);
 void C_wait_for_usable_terminal(void);
+void C_mouse_motion_fallback_start(void);
+void C_mouse_motion_fallback_stop(void);
 void C_mouse_event_push(int row, int col, unsigned long state);
 struct mouse_event {
   int row;

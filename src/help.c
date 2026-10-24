@@ -152,6 +152,7 @@ void moria_help(char const *const help_level) {
     nocbreak();
     C_clear_screen();
     refresh();
+    C_mouse_motion_fallback_stop();
     endwin();
     execlp(HELP_FILE_PATH, "mhelp.pl", help_string, (char *)0);
     printf("\n\rUnable to execute: %s\n\r", HELP_FILE_PATH);
@@ -177,6 +178,7 @@ void moria_help(char const *const help_level) {
 
     MSG(("child: %d  status 2: %d\n", help_pid, status));
 
+    C_mouse_motion_fallback_start();
     cbreak();
     noecho();
     C_clear_screen();

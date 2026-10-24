@@ -646,7 +646,7 @@ Implementation notes:
 
 ### SL12. Hover Map to Describe (fan-out)
 
-Status: open. Depends on: SL11.
+Status: implemented; focused look, hover, prompt-row restoration tests, production `cargo check --lib`, and `make check` pass. Physical mouse motion and terminal resize delivery remain unverified. Depends on: SL11.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: a new handler file in the mouse module and a shared description helper
@@ -663,6 +663,26 @@ Acceptance checks:
 * L0: description text for monster, object, both, and nothing, through a
   `LookContext` test double.
 * Changelog entry.
+
+Implementation notes:
+* `look::describe_at` shares visible monster and lit-object formatting with
+  directional look, without emitting messages. The registered hover handler
+  snapshots row 0 including attributes, draws and refreshes descriptions there,
+  and restores at most the current row width when motion leaves a describable
+  cell, a key is accepted, or the layout changes. Clicks do not change the
+  prompt. On xterm-family terminals without the `XM` terminfo capability,
+  motion reporting is enabled with xterm mode 1003 and disabled before curses
+  exits or hands off to the help program.
+* Rust tests cover monster, object, both, no visible entity, prompt clearing,
+  click filtering, exact prompt-row restoration, and a 150-to-80-cell bounded
+  restore case. `cargo test --lib
+  player_action::look::tests`, `cargo test --lib
+  user_interface::mouse::hover::tests`, `cargo test --lib
+  ncurses::tests::restoring_hover_overlay_preserves_prompt_text_and_attributes`,
+  `cargo test --lib
+  ncurses::tests::restoring_hover_overlay_after_terminal_narrows_stays_in_bounds`,
+  `cargo check --lib`, and `make check` pass. Physical mouse motion and actual
+  terminal resize delivery have not been exercised end to end.
 
 ### SL13. Click Monster List to Recall (fan-out)
 

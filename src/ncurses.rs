@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 #[cfg(test)]
 use crate::layout::{compute_layout, set_current_layout};
@@ -29,6 +30,45 @@ thread_local! {
     static STDSCR: RefCell<Option<pancurses::Window>> = const { RefCell::new(None) };
 }
 
+static XTERM_MOTION_FALLBACK: AtomicBool = AtomicBool::new(false);
+
+extern "C" {
+    #[link_name = "tigetstr"]
+    fn raw_tigetstr(capname: *const libc::c_char) -> *mut libc::c_char;
+}
+
+fn terminfo_capability_is_present(capability: *const libc::c_char) -> bool {
+    !capability.is_null() && capability != -1_isize as *const libc::c_char
+}
+
+fn needs_xterm_motion_fallback(term_name: &str, has_xm: bool) -> bool {
+    !has_xm && term_name.starts_with("xterm")
+}
+
+fn set_xterm_motion_reporting(enabled: bool) {
+    if !XTERM_MOTION_FALLBACK.load(Ordering::Relaxed) {
+        return;
+    }
+    let sequence = if enabled {
+        "\x1b[?1003h"
+    } else {
+        "\x1b[?1003l"
+    };
+    if ::ncurses::putp(sequence) != 0 || unsafe { libc::fflush(std::ptr::null_mut()) } != 0 {
+        panic!("failed to update xterm mouse motion mode");
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn C_mouse_motion_fallback_start() {
+    set_xterm_motion_reporting(true);
+}
+
+#[no_mangle]
+pub extern "C" fn C_mouse_motion_fallback_stop() {
+    set_xterm_motion_reporting(false);
+}
+
 fn position_in_bounds(row: i32, col: i32, rows: i32, cols: i32) -> bool {
     row >= 0 && col >= 0 && row < rows && col < cols
 }
@@ -47,8 +87,44 @@ pub fn color_pair(pair: i16) -> pancurses::chtype {
     pancurses::COLOR_PAIR(pair as pancurses::chtype)
 }
 
+pub fn read_row(row: i32) -> Vec<pancurses::chtype> {
+    let cells = RefCell::new(Vec::new());
+    with_stdscr(|stdscr| {
+        cells
+            .borrow_mut()
+            .extend((0..stdscr.get_max_x()).map(|col| stdscr.mvinch(row, col)));
+    });
+    cells.into_inner()
+}
+
+fn restore_row_cells(
+    cells: &[pancurses::chtype],
+    width: i32,
+    mut restore_cell: impl FnMut(i32, pancurses::chtype) -> i32,
+) {
+    for (col, cell) in cells
+        .iter()
+        .copied()
+        .take(width.max(0) as usize)
+        .enumerate()
+    {
+        if restore_cell(col as i32, cell) != 0 {
+            panic!("mvaddch returned ERR while restoring prompt row");
+        }
+    }
+}
+
+pub fn restore_row(row: i32, cells: &[pancurses::chtype]) {
+    with_stdscr(|stdscr| {
+        restore_row_cells(cells, stdscr.get_max_x(), |col, cell| {
+            stdscr.mvaddch(row, col, cell)
+        });
+    });
+}
+
 #[no_mangle]
 pub extern "C" fn C_terminal_layout_update(rows: libc::c_int, cols: libc::c_int) -> bool {
+    crate::user_interface::mouse::clear_hover_prompt();
     set_current_layout_for_dimensions(rows, cols).kind != LayoutKind::TooSmall
 }
 
@@ -66,8 +142,15 @@ pub fn init_curses() {
     }
     let requested_mouse_events =
         (::ncurses::ALL_MOUSE_EVENTS | ::ncurses::REPORT_MOUSE_POSITION) as u32;
-    let mut supported_mouse_events = 0u32;
-    ::ncurses::mousemask(requested_mouse_events, Some(&mut supported_mouse_events));
+    ::ncurses::mousemask(requested_mouse_events, None);
+    let term_name = ::ncurses::termname();
+    let xm_name = std::ffi::CString::new("XM").expect("XM has no NUL bytes");
+    let xm = unsafe { raw_tigetstr(xm_name.as_ptr()) };
+    if needs_xterm_motion_fallback(&term_name, terminfo_capability_is_present(xm)) {
+        // Some xterm terminfo entries omit XM, leaving ncurses in click-only mode.
+        XTERM_MOTION_FALLBACK.store(true, Ordering::Relaxed);
+        C_mouse_motion_fallback_start();
+    }
     if ::ncurses::set_escdelay(25) != 0 {
         panic!("set_escdelay returned ERR");
     }
@@ -85,6 +168,7 @@ pub fn init_curses() {
     pancurses::nonl();
 
     STDSCR.replace(Some(window));
+    crate::user_interface::mouse::register_hover_handler();
     unsafe { C_wait_for_usable_terminal() };
     with_stdscr(|stdscr| {
         if stdscr.clear() != 0 || stdscr.refresh() != 0 {
@@ -280,6 +364,49 @@ mod tests {
 
     #[test]
     #[serial_test::serial]
+    fn restoring_hover_overlay_preserves_prompt_text_and_attributes() {
+        let _screen = TestScreen::new(35, 150);
+        attron(pancurses::A_BOLD);
+        mvaddstr(0, 0, "Command:");
+        attroff(pancurses::A_BOLD);
+        let original = read_row(0);
+
+        mvaddstr(0, 0, "You see an orc.");
+        restore_row(0, &original);
+
+        assert_eq!(read_row(0), original);
+        with_stdscr(|window| {
+            for (col, ch) in "Command:".chars().enumerate() {
+                assert_eq!(
+                    window.mvinch(0, col as i32),
+                    ch as pancurses::chtype | pancurses::A_BOLD
+                );
+            }
+        });
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn restoring_hover_overlay_after_terminal_narrows_stays_in_bounds() {
+        let original = {
+            let _wide_screen = TestScreen::new(35, 150);
+            mvaddstr(0, 0, "Command:");
+            read_row(0)
+        };
+
+        let _narrow_screen = TestScreen::new(35, 80);
+        restore_row(0, &original);
+
+        with_stdscr(|window| {
+            assert_eq!(window.get_max_x(), 80);
+            for col in 0..80 {
+                assert_eq!(window.mvinch(0, col), original[col as usize]);
+            }
+        });
+    }
+
+    #[test]
+    #[serial_test::serial]
     fn shorter_last_row_text_does_not_shift_following_cells() {
         let _screen = TestScreen::new(35, 150);
         with_stdscr(|window| {
@@ -377,5 +504,27 @@ mod tests {
             assert!(!position_in_bounds(row, col, 35, 200));
         }
         assert!(!position_in_bounds(0, 0, 0, 0));
+    }
+
+    #[test]
+    fn xterm_without_xm_uses_motion_reporting_fallback() {
+        assert!(needs_xterm_motion_fallback("xterm-256color", false));
+    }
+
+    #[test]
+    fn missing_terminfo_capability_sentinels_are_not_dereferenced() {
+        assert!(!terminfo_capability_is_present(std::ptr::null()));
+        assert!(!terminfo_capability_is_present(
+            -1_isize as *const libc::c_char
+        ));
+        assert!(terminfo_capability_is_present(
+            b"capability\0".as_ptr() as *const libc::c_char
+        ));
+    }
+
+    #[test]
+    fn motion_fallback_is_not_used_when_xm_or_non_xterm_is_present() {
+        assert!(!needs_xterm_motion_fallback("xterm-256color", true));
+        assert!(!needs_xterm_motion_fallback("screen-256color", false));
     }
 }

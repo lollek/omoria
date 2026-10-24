@@ -4,6 +4,8 @@ use std::sync::Mutex;
 use crate::layout::{Layout, Rect};
 use crate::user_interface::viewport::Viewport;
 
+mod hover;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MouseButton {
     Left,
@@ -196,6 +198,14 @@ pub fn register_handler(handler: MouseHandler) {
         .push(handler);
 }
 
+pub fn register_hover_handler() {
+    hover::register();
+}
+
+pub fn clear_hover_prompt() {
+    hover::clear_prompt_overlay();
+}
+
 pub fn dispatch_pending_events(layout: Layout, viewport: Viewport) -> usize {
     let handlers = MOUSE_HANDLERS
         .lock()
@@ -252,7 +262,11 @@ pub extern "C" fn C_mouse_event_pop() -> CMouseEvent {
 
 #[no_mangle]
 pub extern "C" fn C_translate_terminal_input_code(code: libc::c_int) -> libc::c_int {
-    match translate_terminal_input(code) {
+    let input = translate_terminal_input(code);
+    if matches!(input, Some(TerminalInput::Key(_))) {
+        clear_hover_prompt();
+    }
+    match input {
         Some(TerminalInput::Key(byte)) => byte as libc::c_int,
         Some(TerminalInput::Mouse) => MOUSE_INPUT,
         None => -1,

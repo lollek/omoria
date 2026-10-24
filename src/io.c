@@ -119,6 +119,7 @@ void exit_ncurses(void) {
     refresh(); /* { Dump any remaining buffer	} */
 
     /* clean up the terminal */
+    C_mouse_motion_fallback_stop();
     echo();
     nocbreak();
     endwin();

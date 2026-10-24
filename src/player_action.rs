@@ -5,6 +5,8 @@ mod disarm_trap;
 mod eat;
 mod jam_door;
 mod look;
+#[cfg(not(test))]
+pub(crate) use look::describe_at_global;
 mod movement;
 mod open;
 mod quaff;

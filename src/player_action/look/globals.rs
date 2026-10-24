@@ -76,3 +76,7 @@ pub(super) fn look_global(direction: i64) {
     let (row, col) = unsafe { (char_row, char_col) };
     look(&mut GlobalLook, direction, row, col);
 }
+
+pub(crate) fn describe_at_global(y: i64, x: i64) -> Option<String> {
+    super::describe_at(&mut GlobalLook, y, x)
+}
