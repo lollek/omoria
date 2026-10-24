@@ -116,6 +116,7 @@ Interoperability with existing code:
 - Don’t rename or move symbols without explicit value.
 - Don’t change public APIs unless requested.
 - Keep diffs small and reviewable.
+- Keep searches within the relevant repository paths. When inspecting a dependency, resolve its exact package/version location first and inspect only the needed files; do not scan home or system directories or entire dependency caches.
 
 ## Quality gates
 - After changes, run the relevant checks when available:
