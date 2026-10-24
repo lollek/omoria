@@ -1,6 +1,6 @@
 pub static SAVE_FOLDER: &str = "save";
 pub static DATA_FOLDER: &str = "data";
-pub static OMORIA_VERSION: &str = "5-alpha529";
+pub static OMORIA_VERSION: &str = env!("OMORIA_VERSION");
 pub static IMORIA_VERSION: &str = "4.85.22";
 
 // Number of Cave tiles on y-axis
@@ -32,3 +32,22 @@ pub const STORE_ITEM_LEVEL: u8 = 7;
 pub const STORE_MAX_ITEM_LEVEL: u8 = 10;
 
 pub const MAX_PLAYER_LEVEL: usize = 40;
+
+#[cfg(test)]
+mod tests {
+    use super::OMORIA_VERSION;
+
+    #[test]
+    fn omoria_version_includes_a_compile_timestamp() {
+        let (prefix, timestamp) = OMORIA_VERSION
+            .rsplit_once('.')
+            .expect("version should separate its timestamp with a dot");
+
+        assert_eq!(prefix, "5-alpha", "version should retain the alpha prefix");
+        assert_eq!(timestamp.len(), 12, "timestamp should use YYYYMMDDHHMM");
+        assert!(
+            timestamp.bytes().all(|byte| byte.is_ascii_digit()),
+            "timestamp should contain only digits"
+        );
+    }
+}

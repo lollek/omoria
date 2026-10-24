@@ -29,7 +29,7 @@ all:	omoria
 .c.o:
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
 
-omoria: $(OBJFILES) $(RSFILES) Cargo.toml Cargo.lock
+omoria: $(OBJFILES) $(RSFILES) build.rs Cargo.toml Cargo.lock
 	cargo build
 	$(CC) $(OBJFILES) target/debug/libomoria.a $(LDFLAGS) -o $@
 

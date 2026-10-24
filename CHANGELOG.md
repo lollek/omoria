@@ -4,6 +4,7 @@
 
 October 2026
 
+* The displayed version now includes the compile timestamp.
 * Clicking a visible monster in the Split sidebar now shows its look description on the prompt line without using a turn.
 * Terminal resizing now switches between Classic and Split layouts, recenters and redraws the map, and waits for a usable size when the terminal is too small.
 * Arrow keys now move the character in their corresponding directions.
