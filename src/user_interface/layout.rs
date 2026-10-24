@@ -139,6 +139,12 @@ pub fn set_current_layout(layout: Layout) {
         .expect("current layout lock poisoned") = layout;
 }
 
+pub fn set_current_layout_for_dimensions(rows: i32, cols: i32) -> Layout {
+    let layout = compute_layout(rows, cols);
+    set_current_layout(layout);
+    layout
+}
+
 #[cfg(test)]
 pub fn reset_current_layout() {
     set_current_layout(compute_layout(CLASSIC_MIN_ROWS, CLASSIC_MIN_COLS));
@@ -389,5 +395,23 @@ mod tests {
         assert_eq!(current_layout().kind, LayoutKind::Split);
         reset_current_layout();
         assert_eq!(current_layout(), compute_layout(25, 150));
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn terminal_resize_updates_layout_through_all_size_modes() {
+        reset_current_layout();
+        for (rows, cols, expected_kind) in [
+            (24, 149, LayoutKind::TooSmall),
+            (25, 150, LayoutKind::Classic),
+            (35, 150, LayoutKind::Split),
+            (25, 150, LayoutKind::Classic),
+            (35, 150, LayoutKind::Split),
+        ] {
+            let layout = set_current_layout_for_dimensions(rows, cols);
+            assert_eq!(layout.kind, expected_kind);
+            assert_eq!(current_layout(), layout);
+        }
+        reset_current_layout();
     }
 }

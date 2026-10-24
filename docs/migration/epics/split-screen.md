@@ -30,7 +30,7 @@ positions.
 | Map | 66x22 at rows 1-22, columns 14-79 | `SCREEN_WIDTH`/`SCREEN_HEIGHT` in [screen.h](../../../src/screen.h), `s__panel_bounds` in [move.c](../../../src/player_action/move.c) |
 | Equipment | Column 81 and up, from row 1 | `EQUIP_COL` in `heads_up_display.rs` |
 | Status rows | Rows 23-24: hunger, blind, confused, afraid, poisoned, searching/resting, quest, depth, light off | status `prt_*` in [screen.c](../../../src/screen.c), `print_depth` in `heads_up_display.rs` |
-| Minimum terminal | 150x25, otherwise exit | `CLASSIC_MIN_COLS`/`CLASSIC_MIN_ROWS` in [layout.rs](../../../src/user_interface/layout.rs), checked by [ncurses.rs](../../../src/ncurses.rs) |
+| Minimum terminal | 150x25; below that, wait for resize | `CLASSIC_MIN_COLS`/`CLASSIC_MIN_ROWS` in [layout.rs](../../../src/user_interface/layout.rs), checked by [ncurses.rs](../../../src/ncurses.rs) and [term.c](../../../src/term.c) |
 
 The constraints the stories depend on:
 
@@ -57,12 +57,13 @@ The constraints the stories depend on:
   [main_loop.c](../../../src/main_loop/main_loop.c), so sidebar panels can
   redraw from the same hook.
 * `inkey` in [term.c](../../../src/term.c):
-  * It returns `char` and silently consumes `^R`.
+  * It returns `char` and silently consumes `^R` and `KEY_RESIZE`.
   * Keypad mode is enabled with a short Escape delay, and arrow keys map to
     the existing direction keys before values are narrowed to `char`.
   * Home, End, Page Up, and Page Down use named byte values. Unknown curses
-    key codes above 255, including `KEY_RESIZE` and `KEY_MOUSE`, are dropped
-    instead of being truncated to control characters.
+    key codes above 255 are dropped instead of being truncated to control
+    characters. `KEY_MOUSE` is handled separately and never reaches command
+    dispatch.
 * [look.rs](../../../src/player_action/look.rs) already describes monsters and
   objects through a `LookContext` (`monster_name`, `item_name`).
 * The character screen
@@ -86,8 +87,8 @@ The constraints the stories depend on:
 * **Split:** Classic plus panels in space that is free today. Used when the
   terminal fits the Split minimums set in SL1. There is no layout switch;
   the terminal size decides.
-* **TooSmall:** below 150x25. The game exits at startup as it does today,
-  until SL10 replaces that with a waiting screen.
+* **TooSmall:** below 150x25. Startup and resize wait until the terminal
+  reaches a usable size (SL10).
 
 ## Rollout: Grow From Classic
 
@@ -251,7 +252,8 @@ Implementation notes:
   Text must use single-cell characters; UTF-8 characters are not split.
 * [ncurses.rs](../../../src/ncurses.rs) initializes the layout from the actual
   startup dimensions and checks drawing coordinates against the actual
-  terminal bounds. Startup below 150x25 still exits; live resize is deferred.
+  terminal bounds. At SL1, startup below 150x25 still exited; SL10 later
+  replaced that behavior with a waiting screen.
 * The HUD keeps its existing field text, colors, and relative offsets, but
   reads panel origins and stat-column width from the layout. No new panels
   are drawn, and no C files or ABI entry points change.
@@ -556,7 +558,11 @@ Acceptance checks:
 
 ### SL10. Live Resize (fan-out)
 
-Status: open. Depends on: SL6, SL7, SL8. Starts after SL11 merges.
+Status: implemented; Rust layout transitions, TooSmall wait/recovery,
+recenter-before-redraw, `make test-mouse-input`, and `make check` pass.
+Physical SIGWINCH delivery, full `draw_cave` rendering after resize, and
+overlay-close redraw behavior remain unverified. Depends on: SL6, SL7, SL8.
+Started after SL11 merged.
 Size: M. Complexity: High. Agent: strong.
 
 Owns: `ncurses.rs`, `inkey` in `term.c`, and the current-layout setter.
@@ -572,12 +578,22 @@ Behavior:
   close.
 
 Acceptance checks:
-
 * L0: layout transitions for a sequence of sizes, including TooSmall and
   back.
 * L1: a resize key in a scripted input stream never reaches the command
   dispatcher.
 * Changelog entry.
+
+Implementation notes:
+* Startup and resize share the TooSmall warning-and-wait path. `KEY_RESIZE`
+  updates the layout, recenters the viewport on the player, then redraws
+  through `draw_cave`.
+* `override_signals` no longer suppresses ncurses' `SIGWINCH` handler.
+  `make test-mouse-input` uses a file-backed curses screen and scripted resize
+  callbacks to verify TooSmall recovery, Split/Classic transitions, recentering
+  before redraw dispatch, and that the following key alone reaches command
+  dispatch. It does not emulate physical terminal resizing or render the full
+  generated-character screen.
 
 Out of scope: correct redraws while a full-screen overlay is still open.
 

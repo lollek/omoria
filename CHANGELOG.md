@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Terminal resizing now switches between Classic and Split layouts, recenters and redraws the map, and waits for a usable size when the terminal is too small.
 * Arrow keys now move the character in their corresponding directions.
 * The Split map now fills the space left of the sidebar, grows with the terminal, and centers small maps in the viewport.
 * Fix a crash when the Split monsters panel draws or clears the terminal's bottom-right cell.

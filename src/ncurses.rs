@@ -1,7 +1,8 @@
 use std::cell::RefCell;
-use std::process;
 
-use crate::layout::{compute_layout, set_current_layout, LayoutKind};
+#[cfg(test)]
+use crate::layout::{compute_layout, set_current_layout};
+use crate::layout::{set_current_layout_for_dimensions, LayoutKind};
 use pancurses;
 pub use pancurses::{
     A_DIM, A_REVERSE, COLOR_BLACK, COLOR_BLUE, COLOR_CYAN, COLOR_GREEN, COLOR_MAGENTA, COLOR_RED,
@@ -46,17 +47,19 @@ pub fn color_pair(pair: i16) -> pancurses::chtype {
     pancurses::COLOR_PAIR(pair as pancurses::chtype)
 }
 
+#[no_mangle]
+pub extern "C" fn C_terminal_layout_update(rows: libc::c_int, cols: libc::c_int) -> bool {
+    set_current_layout_for_dimensions(rows, cols).kind != LayoutKind::TooSmall
+}
+
+extern "C" {
+    fn C_wait_for_usable_terminal();
+}
+
 pub fn init_curses() {
     println!("Attempting to start curses...");
 
     let window = pancurses::initscr();
-
-    let layout = compute_layout(window.get_max_y(), window.get_max_x());
-    if layout.kind == LayoutKind::TooSmall {
-        pancurses::endwin();
-        println!("Screen is too small for moria!");
-        process::exit(1);
-    }
 
     if window.keypad(true) != 0 {
         panic!("keypad returned ERR");
@@ -69,11 +72,6 @@ pub fn init_curses() {
         panic!("set_escdelay returned ERR");
     }
 
-    set_current_layout(layout);
-    window.clear();
-    window.refresh();
-    STDSCR.replace(Some(window));
-
     pancurses::start_color();
     pancurses::init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
     pancurses::init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
@@ -85,6 +83,14 @@ pub fn init_curses() {
     pancurses::cbreak();
     pancurses::noecho();
     pancurses::nonl();
+
+    STDSCR.replace(Some(window));
+    unsafe { C_wait_for_usable_terminal() };
+    with_stdscr(|stdscr| {
+        if stdscr.clear() != 0 || stdscr.refresh() != 0 {
+            panic!("screen initialization returned ERR");
+        }
+    });
 }
 
 pub fn refresh() {

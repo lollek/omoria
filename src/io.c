@@ -100,7 +100,6 @@ void override_signals(void) {
   signal(SIGXFSZ, signalexit);
   signal(SIGVTALRM, SIG_IGN);
   signal(SIGPROF, SIG_IGN);
-  signal(SIGWINCH, SIG_IGN); // This should maybe recalc/redraw?
 #ifdef SIGINFO
   signal(SIGINFO, SIG_IGN);
 #endif

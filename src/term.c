@@ -30,6 +30,72 @@ int sound_beep_flag;
 int panic_save;
 FILE *highscore_fp;
 
+extern bool C_terminal_layout_update(int rows, int cols);
+
+static int read_terminal_key(void) { return getch(); }
+
+static void read_terminal_size(int *rows, int *cols) {
+  getmaxyx(stdscr, *rows, *cols);
+}
+
+void C_wait_for_usable_terminal_with(
+    int rows, int cols, int (*read_key)(void),
+    void (*read_size)(int *rows, int *cols)) {
+  bool showed_warning = false;
+  while (!C_terminal_layout_update(rows, cols)) {
+    static const char warning[] =
+        "Terminal too small; resize to at least 150x25 to continue.";
+    clear();
+    if (rows > 0 && cols > 1) {
+      mvaddnstr(0, 0, warning, cols - 1);
+    }
+    refresh();
+    showed_warning = true;
+
+    int input;
+    do {
+      input = read_key();
+    } while (input != KEY_RESIZE);
+    read_size(&rows, &cols);
+  }
+
+  if (showed_warning) {
+    clear();
+    refresh();
+  }
+}
+
+void C_wait_for_usable_terminal(void) {
+  int rows, cols;
+  getmaxyx(stdscr, rows, cols);
+  C_wait_for_usable_terminal_with(rows, cols, read_terminal_key,
+                                  read_terminal_size);
+}
+
+static void recenter_viewport_on_player(void) {
+  const struct viewport_state state = C_viewport_update(
+      panel_row, panel_col, cur_height, cur_width, char_row, char_col, true);
+  panel_row = state.panel_row;
+  panel_col = state.panel_col;
+  panel_row_min = state.world_top;
+  panel_row_max = state.world_bottom;
+  panel_col_min = state.world_left;
+  panel_col_max = state.world_right;
+  panel_row_prt = state.panel_row_prt;
+  panel_col_prt = state.panel_col_prt;
+  max_panel_rows = state.max_panel_rows;
+  max_panel_cols = state.max_panel_cols;
+  cave_flag = true;
+}
+
+void C_terminal_resize(void (*redraw_screen)(void)) {
+  C_wait_for_usable_terminal();
+  if (cur_height > 0 && cur_width > 0) {
+    recenter_viewport_on_player();
+    redraw_screen();
+  }
+}
+
 /* source/io.c: terminal I/O code, uses the curses package
 
    Copyright (c) 1989-94 James E. Wilson, Robert A. Koeneke
@@ -62,6 +128,10 @@ char inkey(void) {
   command_count = 0; /* Just to be safe -CJS- */
   while (TRUE) {
     const int i = getch();
+    if (i == KEY_RESIZE) {
+      C_terminal_resize(draw_cave);
+      continue;
+    }
     /* some machines may not sign extend. */
     if (i == EOF) {
       eof_flag++;
