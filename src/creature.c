@@ -9,6 +9,7 @@
 #include <unistd.h> /* for ftruncate, usleep */
 
 #include "combat/fighting.h"
+#include "combat/diagnostics.h"
 #include "constants.h"
 #include "debug.h"
 #include "effects.h"
@@ -235,69 +236,78 @@ static void c__update_mon(const long monptr, long *hear_count) {
   /*  LEAVE("c__update_mon", "c") */
 }
 
-static bool c__check_for_hit(const long monptr, const long atype) {
+static managed_hit_result c__check_for_hit(const long monptr,
+                                           const long atype) {
   const long level = monster_template_get_level(m_list[monptr].mptr);
   const long armor_stuff = player_pac() + player_ptoac();
 
   switch (atype) {
   case 1: /*{Normal attack  }*/
-    return managed_to_hit(60, level, 0, armor_stuff);
+    return managed_to_hit_detailed(60, level, 0, armor_stuff);
   case 2: /*{Poison Strength}*/
-    return managed_to_hit(-3, level, 0, armor_stuff);
+    return managed_to_hit_detailed(-3, level, 0, armor_stuff);
   case 3: /*{Confusion attack}*/
-    return managed_to_hit(10, level, 0, armor_stuff);
+    return managed_to_hit_detailed(10, level, 0, armor_stuff);
   case 4: /*{Fear attack    }*/
-    return managed_to_hit(10, level, 0, armor_stuff);
+    return managed_to_hit_detailed(10, level, 0, armor_stuff);
   case 5: /*{Fire attack    }*/
-    return managed_to_hit(10, level, 0, armor_stuff);
+    return managed_to_hit_detailed(10, level, 0, armor_stuff);
   case 6: /*{Acid attack    }*/
-    return managed_to_hit(0, level, 0, armor_stuff);
+    return managed_to_hit_detailed(0, level, 0, armor_stuff);
   case 7: /*{Cold attack    }*/
-    return managed_to_hit(10, level, 0, armor_stuff);
+    return managed_to_hit_detailed(10, level, 0, armor_stuff);
   case 8: /*{Lightning attack}*/
-    return managed_to_hit(10, level, 0, armor_stuff);
+    return managed_to_hit_detailed(10, level, 0, armor_stuff);
   case 9: /*{Corrosion attack}*/
-    return managed_to_hit(0, level, 0, armor_stuff);
+    return managed_to_hit_detailed(0, level, 0, armor_stuff);
   case 10: /*{Blindness attack}*/
-    return managed_to_hit(2, level, 0, armor_stuff);
+    return managed_to_hit_detailed(2, level, 0, armor_stuff);
   case 11: /*{Paralysis attack}*/
-    return managed_to_hit(2, level, 0, armor_stuff);
-  case 12: /*{Steal Money    }*/
-    return managed_to_hit(5, level, 0, player_lev) && player_money[TOTAL_] > 0;
-  case 13: /*{Steal Object   }*/
-    return managed_to_hit(2, level, 0, player_lev) && inven_ctr > 0;
+    return managed_to_hit_detailed(2, level, 0, armor_stuff);
+  case 12: { /*{Steal Money    }*/
+    managed_hit_result result =
+        managed_to_hit_detailed(5, level, 0, player_lev);
+    result.hit = result.hit && player_money[TOTAL_] > 0;
+    return result;
+  }
+  case 13: { /*{Steal Object   }*/
+    managed_hit_result result =
+        managed_to_hit_detailed(2, level, 0, player_lev);
+    result.hit = result.hit && inven_ctr > 0;
+    return result;
+  }
   case 14: /*{Poison         }*/
-    return managed_to_hit(5, level, 0, armor_stuff);
+    return managed_to_hit_detailed(5, level, 0, armor_stuff);
   case 15: /*{Lose dexterity}*/
-    return managed_to_hit(0, level, 0, armor_stuff);
+    return managed_to_hit_detailed(0, level, 0, armor_stuff);
   case 16: /*{Lose constitution}*/
-    return managed_to_hit(0, level, 0, armor_stuff);
+    return managed_to_hit_detailed(0, level, 0, armor_stuff);
   case 17: /*{Lose intelligence}*/
-    return managed_to_hit(2, level, 0, armor_stuff);
+    return managed_to_hit_detailed(2, level, 0, armor_stuff);
   case 18: /*{Lose wisdom}*/
-    return managed_to_hit(0, level, 0, armor_stuff);
+    return managed_to_hit_detailed(0, level, 0, armor_stuff);
   case 19: /*{Lose experience}*/
-    return managed_to_hit(5, level, 0, armor_stuff);
+    return managed_to_hit_detailed(5, level, 0, armor_stuff);
   case 20: /*{Aggravate monsters}*/
-    return true;
+    return (managed_hit_result){.hit = true};
   case 21: /*{Disenchant        }*/
-    return managed_to_hit(20, level, 0, armor_stuff);
+    return managed_to_hit_detailed(20, level, 0, armor_stuff);
   case 22: /*{Eat food          }*/
-    return managed_to_hit(5, level, 0, armor_stuff);
+    return managed_to_hit_detailed(5, level, 0, armor_stuff);
   case 23: /*{Eat light         }*/
-    return managed_to_hit(5, level, 0, armor_stuff);
+    return managed_to_hit_detailed(5, level, 0, armor_stuff);
   case 24: /*{Eat charges       }*/
-    return managed_to_hit(15, level, 0, armor_stuff);
+    return managed_to_hit_detailed(15, level, 0, armor_stuff);
   case 25: /*{Lose charisma     }*/
-    return managed_to_hit(2, level, 0, armor_stuff);
+    return managed_to_hit_detailed(2, level, 0, armor_stuff);
   case 26: /*{Petrification     }*/
-    return managed_to_hit(10, level, 0, armor_stuff);
+    return managed_to_hit_detailed(10, level, 0, armor_stuff);
   case 27: /*{POISON poison     }*/
-    return managed_to_hit(5, level, 0, armor_stuff);
+    return managed_to_hit_detailed(5, level, 0, armor_stuff);
   case 99: /* protevil or protmon repelled the attack */
-    return true;
+    return (managed_hit_result){.hit = true};
   default:
-    return false;
+    return (managed_hit_result){0};
   }
 }
 
@@ -907,12 +917,22 @@ static void c__make_attack(const long monptr) {
     }
 
     for (long i = 1; i <= num_attacks; i++) {
-      const bool did_hit = c__check_for_hit(monptr, attack_type);
+      const managed_hit_result hit = c__check_for_hit(monptr, attack_type);
+      if (hit.was_rolled) {
+        combat_log_monster_roll(hit.attack_value, hit.max_attack_value,
+                                hit.enemy_ac, hit.hit);
+      }
 
-      if (did_hit) {
+      if (hit.hit) {
         c__print_attack(attack_desc, monster_name_as_known_to_player);
+        const bool log_hp_change = show_combat_calculations;
+        const long hp_before = log_hp_change ? C_player_current_hp() : 0;
         c__apply_attack(monptr, attack_type, monster_name_with_article,
                         damage_roll);
+        if (log_hp_change) {
+          const long hp_after = C_player_current_hp();
+          combat_log_hp_change(true, hp_before - hp_after, hp_before, hp_after);
+        }
       } else {
         switch (attack_desc) {
         case 1:

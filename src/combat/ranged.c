@@ -1,4 +1,5 @@
 #include "../debug.h"
+#include "diagnostics.h"
 #include "../inventory/inven.h"
 #include "../io.h"
 #include "../misc.h"
@@ -225,7 +226,13 @@ static bool missile_try_hit_creature(const treas_rec *missile,
       (equipment[Equipment_primary].flags2 & Sharp_worn_bit) != 0, true);
   damage += (5 + damage) * crit_mult;
 
-  if (mon_take_hit(cave[y][x].cptr, damage) > 0) {
+  const long monster_cptr = cave[y][x].cptr;
+  const long monster_hp_before = m_list[monster_cptr].hp;
+  const long monster_hp_after = monster_hp_before - damage;
+  const bool monster_was_killed = mon_take_hit(monster_cptr, damage) > 0;
+  combat_log_hp_change(false, monster_hp_before - monster_hp_after,
+                       monster_hp_before, monster_hp_after);
+  if (monster_was_killed) {
     sprintf(text_buf, "You have killed %s.", monster_name_buf);
     msg_print(text_buf);
   }

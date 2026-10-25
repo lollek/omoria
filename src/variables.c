@@ -152,6 +152,7 @@ long exp_per_level[MAX_PLAYER_LEVEL + 1] = {
     750000, 1500000, 2500000, 5000000, 9999999};
 char bare_hands[7] = "1d1";
 bool msg_terse;
+bool show_combat_calculations;
 long char_row = 0;
 long char_col = 0;
 long com_val;

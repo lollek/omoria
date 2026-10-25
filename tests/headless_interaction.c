@@ -8,6 +8,7 @@
 #include "../src/debug.h"
 #include "../src/floor.h"
 #include "../src/inventory/inven.h"
+#include "../src/main_loop/command.h"
 #include "../src/main_loop/main_loop.h"
 #include "../src/messages.h"
 #include "../src/misc.h"
@@ -372,6 +373,41 @@ static void assert_toggle_light_scenario(uint8_t tval, long fuel, bool on,
   } else {
     assert(headless_terminal_counts().drawing == drawing_before);
   }
+  end_pickup_scenario();
+}
+
+static void assert_toggle_combat_calculations_scenario(void) {
+  begin_pickup_scenario();
+  show_combat_calculations = false;
+
+  long command_key = 27;
+  headless_terminal_script("v", 1);
+  command(&command_key);
+
+  assert(command_key == 'v');
+  assert(show_combat_calculations);
+  assert(reset_flag);
+  assert(turn == 1 && turn_counter == 100);
+  assert(headless_terminal_counts().input == 1);
+  assert(C_message_capture_count() == 1);
+  char message[120];
+  assert(C_message_capture_get(0, message, sizeof(message)));
+  assert(strcmp(message, "Combat calculations enabled.") == 0);
+
+  command_key = 27;
+  headless_terminal_script("v", 1);
+  command(&command_key);
+
+  assert(command_key == 'v');
+  assert(!show_combat_calculations);
+  assert(reset_flag);
+  assert(turn == 1 && turn_counter == 100);
+  assert(headless_terminal_counts().input == 2);
+  assert(C_message_capture_count() == 2);
+  assert(C_message_capture_get(1, message, sizeof(message)));
+  assert(strcmp(message, "Combat calculations disabled.") == 0);
+
+  headless_terminal_reset();
   end_pickup_scenario();
 }
 
@@ -1232,6 +1268,7 @@ int main(void) {
   assert(debug_file != NULL);
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_toggle_light_scenario(15, 123, false, "Light On.  123 turns left.");
+    assert_toggle_combat_calculations_scenario();
     assert_toggle_light_scenario(15, 123, true, "Light Off.  123 turns left.");
     assert_toggle_light_scenario(0, 123, true, "You are not carrying a light.");
     assert_toggle_light_scenario(0, 0, false, "You are not carrying a light.");

@@ -72,6 +72,7 @@ extern obj_set stable_set;
 extern long exp_per_level[MAX_PLAYER_LEVEL + 1];
 extern char bare_hands[7];
 extern bool msg_terse;
+extern bool show_combat_calculations;
 extern long char_row;
 extern long char_col;
 extern long com_val;

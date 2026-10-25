@@ -1,4 +1,5 @@
 #include "../c.h"
+#include "../combat/diagnostics.h"
 #include "../debug.h"
 #include "../io.h"
 #include "../misc.h"
@@ -71,7 +72,12 @@ static bool attack_lands_on_monster(
     damage = 0;
   }
   /*{ See if we done it in... }*/
-  if (mon_take_hit(a_cptr, damage) > 0) {
+  const long monster_hp_before = m_list[a_cptr].hp;
+  const long monster_hp_after = monster_hp_before - damage;
+  const bool monster_was_killed = mon_take_hit(a_cptr, damage) > 0;
+  combat_log_hp_change(false, monster_hp_before - monster_hp_after,
+                       monster_hp_before, monster_hp_after);
+  if (monster_was_killed) {
     monster_is_alive = false;
   } else {
     monster_is_alive = true;

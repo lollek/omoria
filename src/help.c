@@ -97,7 +97,7 @@ void help(void) {
   prt(" v     Version and credits    |"
       " V     (Nothing)              |"
       "^V     (Nothing               |"
-      "M-V    (Nothing)              ",
+      "M-V    Toggle combat calcs    ",
       18, 1);
   prt(" w     Wear/Wield an item     |"
       " W     (Nothing)              |"

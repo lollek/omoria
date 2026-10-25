@@ -3,8 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../src/debug.h"
+#include "../src/combat/diagnostics.h"
+#include "../src/combat/fighting.h"
 #include "../src/io.h"
 #include "../src/messages.h"
+#include "../src/player.h"
+#include "../src/random.h"
 #include "../src/variables.h"
 #include "support/terminal.h"
 
@@ -13,6 +18,112 @@ bool msg_print_pass_one(char *message);
 void assert_headless_terminal(void);
 void C_terminal_test_layout(int rows, int cols);
 static void assert_message(size_t index, const char *expected);
+
+static void assert_player_hit_roll_diagnostic(void) {
+  char expected[120];
+  show_combat_calculations = false;
+  C_seeded_rng_begin(42);
+  const long roll = randint(20);
+  C_seeded_rng_end();
+
+  show_combat_calculations = true;
+  C_message_capture_begin();
+  C_seeded_rng_begin(42);
+  assert(player_test_hit(30, 20));
+  C_seeded_rng_end();
+  assert(C_message_capture_count() == 1);
+  snprintf(expected, sizeof(expected),
+           "Combat: You roll 30 + %ld = %ld vs AC 20: HIT.", roll,
+           30 + roll);
+  assert_message(0, expected);
+  C_message_capture_end();
+
+  show_combat_calculations = false;
+  C_message_capture_begin();
+  C_seeded_rng_begin(42);
+  assert(player_test_hit(30, 20));
+  C_seeded_rng_end();
+  assert(C_message_capture_count() == 0);
+  C_message_capture_end();
+}
+
+static void assert_player_natural_20_diagnostic(bool expected_hit) {
+  unsigned long long seed = 1;
+  long attack_roll = 0;
+  for (; seed < 10000; seed++) {
+    C_seeded_rng_begin(seed);
+    attack_roll = randint(20);
+    C_seeded_rng_end();
+    if ((attack_roll == 20) == expected_hit) {
+      break;
+    }
+  }
+  assert(seed < 10000);
+
+  C_seeded_rng_begin(seed);
+  (void)randint(20);
+  const long expected_next_roll = randint(100);
+  C_seeded_rng_end();
+
+  show_combat_calculations = true;
+  C_message_capture_begin();
+  C_seeded_rng_begin(seed);
+  assert(player_test_hit(1, 1000) == expected_hit);
+  const long actual_next_roll = randint(100);
+  C_seeded_rng_end();
+  assert(actual_next_roll == expected_next_roll);
+
+  char expected[120];
+  snprintf(expected, sizeof(expected),
+           "Combat: You roll 1 + %ld = %ld vs AC 1000: %s.",
+           attack_roll, 1 + attack_roll, expected_hit ? "HIT" : "MISS");
+  assert(C_message_capture_count() == 1);
+  assert_message(0, expected);
+  C_message_capture_end();
+  show_combat_calculations = false;
+}
+
+static void assert_combat_diagnostic_messages(void) {
+  show_combat_calculations = true;
+  C_message_capture_begin();
+  combat_log_player_roll(30, 13, 20, true);
+  combat_log_player_roll(10, 7, 30, true);
+  combat_log_monster_roll(41, 69, 50, false);
+  combat_log_monster_roll(1, 69, 50, true);
+  combat_log_hp_change(false, 9, 20, 11);
+  combat_log_hp_change(true, 4, 10, 6);
+  combat_log_hp_change(false, 0, 20, 20);
+  assert(C_message_capture_count() == 6);
+  assert_message(0, "Combat: You roll 30 + 13 = 43 vs AC 20: HIT.");
+  assert_message(1, "Combat: You roll 10 + 7 = 17 vs AC 30: HIT.");
+  assert_message(2, "Combat: Monster roll 41/69 vs AC 50: MISS.");
+  assert_message(3, "Combat: Monster roll 1/69 vs AC 50: HIT.");
+  assert_message(4, "Combat: Player hits Monster for 9 damage (HP 20 -> 11).");
+  assert_message(5, "Combat: Monster hits Player for 4 damage (HP 10 -> 6).");
+  C_message_capture_end();
+
+  show_combat_calculations = false;
+  C_message_capture_begin();
+  combat_log_player_roll(30, 13, 20, true);
+  combat_log_monster_roll(41, 69, 50, false);
+  combat_log_hp_change(false, 9, 20, 11);
+  assert(C_message_capture_count() == 0);
+  C_message_capture_end();
+}
+
+static void assert_detailed_monster_hit_ffi(void) {
+  C_seeded_rng_begin(42);
+  const managed_hit_result result = managed_to_hit_detailed(50, 10, 10, 1);
+  C_seeded_rng_end();
+
+  assert(result.base_to_hit == 50);
+  assert(result.level == 10);
+  assert(result.plus_to_hit == 10);
+  assert(result.max_attack_value == 110);
+  assert(result.attack_value >= 1 && result.attack_value <= 110);
+  assert(result.enemy_ac == 1);
+  assert(result.was_rolled && result.hit);
+}
 
 static bool log_dim[10];
 
@@ -217,9 +328,16 @@ static void assert_last_drop_restores_interactive_path(void) {
 }
 
 int main(void) {
+  debug_file = fopen("target/debug/message-ffi.log", "w");
+  assert(debug_file != NULL);
   assert_headless_terminal();
   assert_split_command_cycle_brightness();
   assert_split_log_overflow_and_capture();
+  assert_player_hit_roll_diagnostic();
+  assert_player_natural_20_diagnostic(true);
+  assert_player_natural_20_diagnostic(false);
+  assert_combat_diagnostic_messages();
+  assert_detailed_monster_hit_ffi();
   for (int repeat = 0; repeat < 2; repeat++) {
     assert_captured_messages_skip_terminal();
     assert_nested_captures_restore_outer();
@@ -227,5 +345,7 @@ int main(void) {
     assert_last_drop_restores_interactive_path();
   }
   puts("Message C boundary checks passed");
+  fclose(debug_file);
+  debug_file = NULL;
   return 0;
 }

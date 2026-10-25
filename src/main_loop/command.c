@@ -268,6 +268,12 @@ void command(long *command) {
       msg_print(out_val);
       reset_flag = true;
       break;
+    case 'v':
+      show_combat_calculations = !show_combat_calculations;
+      msg_print(show_combat_calculations ? "Combat calculations enabled."
+                                         : "Combat calculations disabled.");
+      reset_flag = true;
+      break;
     case 'u':
       player_action_move(9);
       break;

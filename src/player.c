@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h> /* for ftruncate, usleep */
 
+#include "combat/diagnostics.h"
 #include "constants.h"
 #include "debug.h"
 #include "io.h"
@@ -336,9 +337,14 @@ bool player_test_hit(const long attack_rating, const long enemy_ac) {
   if (player_flags.rest > 0) {
     rest_off();
   }
-  const long boosted_attack_rating = attack_rating + randint(20);
-  const bool did_hit = (boosted_attack_rating >= enemy_ac) || randint(20) == 1;
+  const long d20_roll = randint(20);
+  const long boosted_attack_rating = attack_rating + d20_roll;
+  bool did_hit = boosted_attack_rating >= enemy_ac;
+  if (!did_hit && d20_roll == 20) {
+    did_hit = true;
+  }
   MSG(("PlayerHits? %d (from %d) vs %d - Hit? %d", boosted_attack_rating, attack_rating, enemy_ac, did_hit));
+  combat_log_player_roll(attack_rating, d20_roll, enemy_ac, did_hit);
   return did_hit;
 }
 
