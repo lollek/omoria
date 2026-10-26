@@ -178,6 +178,9 @@ graph LR
   SL6 --> SL18[SL18 floor items panel]
   SL13 --> SL18
   SL14 --> SL18
+  SL18 --> SL19[SL19 optional panels]
+  SL19 --> SL20[SL20 collapsible layout]
+  SL20 --> SL21[SL21 remove Classic]
   classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
   class SL1,SL2,SL3,SL4,SL5,SL6,SL7,SL8,SL9,SL10,SL11,SL12,SL13,SL14,SL15,SL16 done
 ```
@@ -201,6 +204,9 @@ Ordering notes:
 * SL8 and SL15 have no dependencies and can start at any time.
 * SL17 needs SL3 but does not wait for SL9. SL9 and SL17 share message history
   code and must not be implemented concurrently.
+* SL19, SL20, and SL21 retire Classic. They run one after another after SL18,
+  because they edit `layout.rs`, the sidebar module, and the mouse handlers
+  that SL18 owns.
 
 ## Stories
 
@@ -920,6 +926,135 @@ Acceptance checks:
 Out of scope: a list of remembered items, picking up or traveling to an item
 on click, and filtering or sorting options.
 
+### SL19. Optional Panels (fan-out)
+
+Status: open. Depends on: SL18.
+Size: S. Complexity: Medium. Agent: standard.
+
+Owns: the layout consumers that unwrap panel rects:
+* the stat and status functions in
+  [heads_up_display.rs](../../../src/user_interface/heads_up_display.rs);
+* the message log redraw in [term.rs](../../../src/term.rs);
+* the sidebar module;
+* the hover, monster-click, item-click, and floor-item-click handlers;
+* the resize redraw in [ncurses.rs](../../../src/ncurses.rs).
+
+Must not touch: `compute_layout` and the layout constants (SL20).
+
+Behavior:
+* Every drawer and handler skips a panel whose rect is `None` instead of
+  panicking. This includes the equipment heading on row 0, which is drawn
+  only when the equipment rect exists.
+* Hit testing never resolves a row in a missing panel.
+* The current layouts always provide these rects, so the screen does not
+  change. No changelog entry.
+
+Acceptance checks:
+
+* L0: with hand-built Split layouts that leave out the log, sidebar, or
+  individual sidebar sections, each drawer draws nothing for the missing
+  panel and still draws the others.
+* L0: clicks and hovers over the area a missing panel would use resolve to
+  nothing.
+
+Out of scope: changing which panels `compute_layout` produces.
+
+### SL20. Collapsible Layout (fan-out)
+
+Status: open. Depends on: SL19.
+Size: M. Complexity: High. Agent: strong.
+
+Owns: `compute_layout`, the layout constants and default layout in
+[layout.rs](../../../src/user_interface/layout.rs), and the tests and
+harnesses that assume Classic geometry:
+* the layout and sidebar tests;
+* [mouse_input.c](../../../tests/mouse_input.c);
+* [message_ffi.c](../../../tests/message_ffi.c);
+* the headless movement and turn harnesses.
+
+Must not touch: Classic drawing code (SL21) and room-grid uses of
+`SCREEN_*`.
+
+Behavior:
+* `compute_layout` returns Split for every terminal of at least 80x24 and
+  TooSmall below that. It never returns Classic.
+* Rows, left of the sidebar: prompt on row 0, then the map, the stat bar
+  (1 row), the status row (1 row), and the log at the bottom.
+  * `remaining = rows - 3`.
+  * `log = clamp(remaining - MAP_MIN_ROWS, 1, LOG_MAX_HEIGHT)`, with
+    `MAP_MIN_ROWS = 20` and `LOG_MAX_HEIGHT = 10`.
+  * `map = remaining - log`.
+  * The map shrinks to its minimum first, and only then does the log shrink.
+    At 24 rows the map has 20 rows and the log 1. The log reaches 10 rows
+    at 33 rows. From 35 rows up, the result matches today's Split.
+* Columns: the sidebar keeps its fixed width of `SIDEBAR_WIDTH` (69). It is
+  shown only when the map stays at least 80 columns wide, so from 149
+  columns. Otherwise there is no sidebar, and the prompt, map, stat bar,
+  status row, and log use the full width.
+* Sidebar rows: sections stay in their order (equipment 14, inventory 10,
+  monsters at least 5, floor items at least 5) and share rows 1 and below.
+  When the visible sections' minimum heights do not fit, sections are hidden
+  in this order: inventory, equipment, floor items, monsters. The remaining
+  sections move up. Spare rows are shared between monsters and floor items
+  as in SL18.
+* A 1-line log keeps the SL3 overflow rule, so `-more-` appears whenever a
+  second unseen line would scroll out. Prompts stay on row 0.
+* Callers without a terminal default to the 80x24 layout instead of Classic
+  150x25.
+* Changelog: the screen adapts to terminals down to 80x24, and the Classic
+  layout is gone.
+
+Acceptance checks:
+
+* L0: rects for 80x24, 80x33, 148x40, 149x24, 149x34, 150x35, and a large
+  terminal. Rects never overlap and fill the terminal. The map is at least
+  80x20.
+* L0: each sidebar hiding step at the row count where it starts.
+* L0: the log height grows from 1 to 10 between 24 and 33 rows while the map
+  stays at 20 rows. After that, extra rows go to the map.
+* L1: every full-screen overlay (stores, inventory menus, help, character
+  screen, casino, and the `^P` expanded log) and the prompt row fit inside
+  80x24. If one does not, stop and report a scope change.
+* L3: the headless movement, turn, message, and mouse-input harnesses pass
+  on the new default layout. Classic-only assertions are replaced with their
+  Split equivalents.
+
+Out of scope: deleting Classic code paths (SL21) and a resizable sidebar
+width.
+
+### SL21. Remove Classic (fan-out)
+
+Status: open. Depends on: SL20.
+Size: M. Complexity: Medium. Agent: standard.
+
+Owns: the Classic-only code paths:
+* `LayoutKind::Classic`, `stat_column`, and the `CLASSIC_MIN_*` constants in
+  `layout.rs`;
+* `print_stats_column` and `print_classic_status_row` in
+  `heads_up_display.rs`;
+* the Classic branches of `msg_print` and `msg_printf` in
+  [io.c](../../../src/io.c) and of the status printing in
+  [screen.c](../../../src/screen.c);
+* `C_layout_is_split`, with its declarations and test doubles;
+* the Classic `^P` overlay path;
+* the Classic gating in the sidebar module and `item_click.rs`;
+* [tests/support/README.md](../../../tests/support/README.md) and the
+  `make test-messages` setup;
+* this epic's layout documentation.
+
+Behavior:
+* SL20 already makes these paths unreachable. Deleting them does not change
+  the screen. No changelog entry.
+* `CLASSIC_MIN_ROWS`/`CLASSIC_MIN_COLS` become `MIN_ROWS`/`MIN_COLS`.
+* Update the "Current Layout", "Layouts", and "Rollout" sections here. Drop
+  the Classic wording from the SL17 card.
+
+Acceptance checks:
+
+* `make check` and every headless harness pass with no new warnings.
+* No source, test, or harness reference to Classic or `C_layout_is_split`
+  remains.
+
 ## Remaining Gaps
 
 * Prompt callers still write row 0 directly. A prompt seam belongs to the TU
@@ -927,4 +1062,4 @@ on click, and filtering or sorting options.
 * The pre-game menu redesign has its own epic: [pregame-menu.md](pregame-menu.md).
 * Full-screen overlays (inventory menus, stores, help, casino) keep their own
   fixed 80x24-style drawing. They are not panels.
-* Should we remove the classic mode and merge it into the new split mode?
+* Classic is retired by SL19-SL21. Split collapses down to 80x24 instead.
