@@ -4,7 +4,8 @@ A feature epic, not a port. It reorganizes the terminal screen into panels:
 
 * The map sits in the upper left.
 * A compact stat bar, a status row, and a scrolling message log sit under it.
-* The right sidebar holds equipment, inventory, and visible monsters.
+* The right sidebar holds equipment, inventory, visible monsters, and visible
+  floor items.
 * Mouse input is added on top.
 
 The idea comes from the
@@ -119,8 +120,8 @@ col 0         14                          80 81
 |             |                            +-------------------------+
 |             |                            | Visible monsters        |
 +-------------+----------------------------+                         |
-| stat bar: HP 45/60  Mana 10/20  (row 23)  |                         |
-| status: Hungry Blind ... Depth (row 24)   |                         |
+| stat bar: HP 45/60  Mana 10/20  (row 23)  +-------------------------+
+| status: Hungry Blind ... Depth (row 24)   | Floor items (SL18)      |
 +-------------------------------------------+                         |
 | message log (row 25 and below)            |                         |
 +-------------------------------------------+-------------------------+
@@ -137,8 +138,8 @@ Final Split, after SL7:
 |      (all remaining rows and columns)      +-----------------------+
 |                                            | Visible monsters      |
 +--------------------------------------------+                       |
-| stat bar: HP, Mana                         |                       |
-| status: flags, depth, light                |                       |
+| stat bar: HP, Mana                         +-----------------------+
+| status: flags, depth, light                | Floor items (SL18)    |
 +--------------------------------------------+                       |
 | message log (fixed height)                 |                       |
 +--------------------------------------------+-----------------------+
@@ -174,7 +175,14 @@ graph LR
   SL15[SL15 pathfinding] --> SL16[SL16 click to travel]
   SL11 --> SL16
   SL3 --> SL17[SL17 persist message history]
+  SL6 --> SL18[SL18 floor items panel]
+  SL13 --> SL18
+  SL14 --> SL18
+  classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
+  class SL1,SL2,SL3,SL4,SL5,SL6,SL7,SL8,SL9,SL10,SL11,SL12,SL13,SL14,SL15,SL16 done
 ```
+
+Green nodes are implemented; white nodes are open.
 
 Ordering notes:
 
@@ -184,9 +192,12 @@ Ordering notes:
   surrounding panels are in their final places (the rollout invariant).
 * SL8, SL10, and SL11 all edit `inkey` and `ncurses.rs`. They never run at
   the same time: SL8 comes first, and SL10 starts after SL11 merges.
-* Only SL1, SL2, and SL7 edit `layout.rs`, and they run one after another.
-  Other stories read their rects. A story that needs a different rect size
-  stops and reports a scope change.
+* Only SL1, SL2, SL7, and SL18 edit `layout.rs`, and they run one after
+  another. Other stories read their rects. A story that needs a different rect
+  size stops and reports a scope change.
+* SL18 shrinks the SL6 monsters rect and changes the monster row resolution
+  that SL13 uses. It must not run at the same time as other sidebar or mouse
+  handler work.
 * SL8 and SL15 have no dependencies and can start at any time.
 * SL17 needs SL3 but does not wait for SL9. SL9 and SL17 share message history
   code and must not be implemented concurrently.
@@ -846,6 +857,68 @@ Acceptance checks:
 
 Out of scope: increasing the history limit (SL9), persisting UI state, and
 separate message-log files.
+
+### SL18. Visible Floor Items Panel (fan-out)
+
+Status: open. Depends on: SL6, SL13, SL14.
+Size: M. Complexity: Medium. Agent: standard.
+
+Owns: the sidebar module, the Split monsters and floor-items rects and their
+minimum-height constants in `layout.rs`, `SidebarPanel` and hit testing in
+[mouse.rs](../../../src/user_interface/mouse.rs), a new floor-item click
+handler in the mouse module, and a Rust read accessor for visible floor
+items.
+Must not touch: map drawing, and C files other than a read-only `los`
+binding if the accessor uses one.
+
+Behavior:
+* In Split, the SL6 monsters rect is divided. Visible monsters stay on top
+  and floor items go below. Each section gets at least 5 rows, and extra
+  rows are shared evenly between them. The Split minimum stays 150x35.
+* Lists pickable objects (`tval` from 1 through `valuable_metal`, the same
+  rule `move.c` uses for pickup) on cells the player currently sees:
+  * the cell is lit by the player's light or the room (`pl` or `tl`);
+  * it is in line of sight from the player and within `MAX_SIGHT`.
+
+  Cells that are only remembered (`fm`) are excluded. `Cave::is_lit()`
+  includes `fm`, so it is not enough on its own. Doors, stairs, traps,
+  rubble, and store entrances are never listed. A monster standing on the
+  item does not hide it.
+* Each entry shows the item's map symbol and its name with quantity.
+  Identical names are grouped with a count. Groups sort by their nearest
+  member, with alphabetical ties.
+* A blank separator row precedes the `Floor items` heading, matching the
+  other sidebar sections. When the list does not fit, the last line reads
+  "...N more".
+* Blindness hides the panel contents. Hallucination does not, because the
+  map still draws real object symbols while hallucinating.
+* Left-clicking an entry shows the full, untruncated name and known
+  properties of the group's nearest item on the prompt line, using the SL14
+  description helper. No game turn is used and nothing is recorded in the
+  message history. The heading, separator, overflow line, and non-left
+  clicks are ignored.
+* Redraws with the other sidebar panels every tick. Classic stays unchanged.
+
+Acceptance checks:
+
+* L0: Split rects do not overlap. The monsters and floor-items rects
+  together fill the old monsters area, each meets its minimum height at
+  150x35, and `SPLIT_MIN_ROWS` is unchanged.
+* L0: grouping, ordering, quantities, truncation, and the overflow line for
+  fixed floor-item snapshots.
+* L0: the visibility rule, through an injectable visibility test double.
+  Items on unlit, remembered-only, out-of-sight, and beyond-`MAX_SIGHT`
+  cells and non-pickable objects are excluded. Blindness hides the list and
+  hallucination does not.
+* L0: clicked rows resolve to the right floor-item group. Non-entry rows and
+  non-left clicks are ignored. SL13 monster rows still resolve in the
+  smaller monsters rect.
+* L1: the accessor reads a prepared cave and `t_list` fixture without
+  mutating it.
+* Changelog entry.
+
+Out of scope: a list of remembered items, picking up or traveling to an item
+on click, and filtering or sorting options.
 
 ## Remaining Gaps
 
