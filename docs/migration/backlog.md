@@ -147,7 +147,7 @@ If unsure, ask the navigator.
 | F-CLOCK | Injectable wall clock for operating-hours checks. | LF6 | later ML | planned |
 | F-LAYOUT | Terminal layout model (Split, Classic, TooSmall rects), the current layout, and the pure panel-renderer pattern. | SL1 | SL2-SL7, SL9-SL11, later TU | planned |
 | F-MOUSE | Mouse event queue, screen-to-map/panel hit testing, and handler registration. | SL11 | SL12-SL14, SL16 | planned |
-| F-MENU | Layout-aware menu frame with a pure renderer and draw sink, plus a shared pregame key model. | PG1 | PG2, PG4, PG5; later TU | planned |
+| F-MENU | Resizable pregame menu frame with a pure renderer and draw sink, help overlay, `MenuKey` key source (with resize and end of input), and a screen driver loop. | PG1 | PG2, PG4, PG5, PG6; later TU | planned |
 
 Already available: message capture ([message.rs](../../src/message.rs)),
 seedable C-facing RNG ([rng/](../../src/rng/)), headless terminal doubles
@@ -171,7 +171,7 @@ the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 | LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
 | XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations, legacy trap test mode) | 7 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
 | SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [split-screen.md](epics/split-screen.md) |
-| PG | Pre-game menu (feature, not a port) | None; pregame Rust screens, `pregame/main.c`, `logic/menu.rs` | 5 x S-L | Open | [pregame-menu.md](epics/pregame-menu.md) |
+| PG | Pre-game menu (feature, not a port) | None; pregame Rust screens, `pregame/main.c`, terminal gate in `term.c` | 6 x S-L, 8 decisions | Open | [pregame-menu.md](epics/pregame-menu.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
 | TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |
@@ -211,9 +211,11 @@ Planning notes for epics that are not yet planned:
   should build on F-LAYOUT and F-MOUSE, and its prompt seam can later move
   prompts off the fixed row 1 that SL keeps.
 * **PG:** reuses the SL layout renderer pattern and SL8 key mapping; PG5
-  also reuses SL10's warning-and-wait path. PG1 and PG3 can start together,
-  followed by PG2 and PG4. Sequence PG5 last, after SL10, because it moves
-  the terminal-size gate used by all pregame screens.
+  also reuses SL10's warning-and-wait path (SL10 is implemented). Decision
+  cards PGD1-PGD8 gate PG1, PG2, PG4, and PG6. PG3 needs no decision and can
+  start with PG1, followed by PG2 and PG4 in parallel, then PG6. Sequence PG5
+  last because it moves the terminal-size gate and relies on every pregame
+  screen reading keys through F-MENU.
 
 ### Epic Dependency Graph
 
@@ -265,10 +267,12 @@ Completed stories are removed from the table.
 | --- | --- |
 | 1 | CA1, LF2-LF7, SL1, SL8, SL15, PG1, PG3 |
 | 2 | IU3, IU6, CA2, CA3, CA4, SL2, SL3, SL4, PG2, PG4 |
-| 3 | IU4, IU5, CA5, CA6, SL5, SL7, SL9 |
-| 4 | CA7, SL6, SL11; plan MG, CM, and TS in detail |
+| 3 | IU4, IU5, CA5, CA6, SL5, SL7, SL9, PG6 |
+| 4 | CA7, SL6, SL11, PG5; plan MG, CM, and TS in detail |
 | 5 | SL10, SL12, SL14, SL16 |
-| 6 | SL13, PG5 |
+| 6 | SL13 |
+
+PG1, PG2, PG4, and PG6 also wait for their PG decision cards.
 
 ## Completed Work
 
