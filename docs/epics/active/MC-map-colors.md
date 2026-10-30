@@ -4,7 +4,9 @@ A feature epic, not a port. It colors the map and the visible-monsters
 sidebar:
 
 * Cave walls, floors, corridors, and town buildings get terrain colors.
-* Doors, stairs, rubble, traps, shop entrances, and items get colors by type.
+* Doors, stairs, rubble, traps, and shop entrances keep semantic fixture colors.
+  Portable items use subtype colors, overridden by meaningful quality and
+  special attributes.
 * Every monster template carries its own color, used on the map, in spell
   and missile animations, and in the sidebar.
 * The palette uses 256 colors where the terminal has them and falls back to
@@ -27,10 +29,11 @@ Checked against source on 2026-10-30.
 | Map glyph | `loc_symbol` returns one `chtype` per cell. Only water is colored (`` '`' `` with blue). Walls are `#`, floors `.`, unknown terrain `.` with `A_DIM`. | [misc.c](../../../src/misc.c) |
 | Terrain | `cave[y][x].fval` from `enum floor_types`; sets `water_set`, `earth_set`, `pwall_set` | [floor.h](../../../src/floor.h), [variables.c](../../../src/variables.c) |
 | Town buildings | `gc__build_store` fills the building with `ft_boundry_wall`, the same value as the town and dungeon border | [town.c](../../../src/generate_map/town.c) |
-| Item glyph | `symbol()` maps `ItemType` and subval to a `chtype`. Doors, stairs, rubble, traps, and shop entrances are `ItemType` values. Shop entrances already add `A_BOLD`. | [item_type.rs](../../../src/data/item_type.rs), `C_item_get_tchar` in [data/interop.rs](../../../src/data/interop.rs) |
-| Item glyph as text | `inven.c` formats the glyph with `%c` and compares it as `char` | [inven.c](../../../src/inventory/inven.c) |
+| Item glyph | `symbol()` returns the plain `chtype`; `C_item_get_glyph` adds the current ItemType-based role. Doors, stairs, rubble, traps, and shop entrances are `ItemType` values. Shop entrances already add `A_BOLD`. MC3 will replace portable-item category colors with semantic subtype/quality colors while leaving fixture roles unchanged. | [item_type.rs](../../../src/data/item_type.rs), [data/interop.rs](../../../src/data/interop.rs) |
+| Item glyph as text | `C_item_get_tchar` remains plain; `inven.c` formats the glyph with `%c` and compares it as `char` | [model_item.h](../../../src/model_item.h), [inven.c](../../../src/inventory/inven.c) |
 | Monster glyph | `monster_template_get_symbol` returns a plain `char`. `MonsterTemplate` has no color. About 390 literals in `data.rs`. | [monster_template/](../../../src/generate_monster/monster_template/) |
-| Direct monster prints | These call `print()` with the plain symbol, bypassing `loc_symbol` | `creature.c`, `spells.c`, and `ranged.c` (a missile item) |
+| Direct monster prints | These call `print()` with the plain symbol, bypassing `loc_symbol` | `creature.c`, `spells.c` |
+| Missile item glyph | Thrown missiles use `C_item_get_glyph`, the same colored-glyph path as map items | [ranged.c](../../../src/combat/ranged.c), [data/interop.rs](../../../src/data/interop.rs) |
 | Sidebar monsters | `render_monsters_panel` builds `"{symbol} {name} ({count})"` strings. `draw_lines` hands the sink a `&str` with no attributes. | [sidebar.rs](../../../src/user_interface/sidebar.rs), [layout.rs](../../../src/user_interface/layout.rs) |
 | Tests | HUD `stat_color` test; file-backed `TestScreen` tests in `ncurses.rs`; `get_loc_symbol` checks in `tests/headless_turn.c` (only for `@`). None checks map colors. | |
 
@@ -40,8 +43,8 @@ The constraints the stories depend on:
   through `loc_symbol`, `print`, and `print_chstr` (shop entrances use
   `A_BOLD`). Callers that need only the character must mask it:
   `files.c` already uses `& 0x7F`.
-* **`C_item_get_tchar` feeds text.** Adding color there would leak attribute
-  bits into inventory prompts, so the colored glyph is a new function.
+* **`C_item_get_tchar` feeds text.** It remains plain for inventory prompts;
+  map and missile drawing use `C_item_get_glyph` instead.
 * **Matching code needs the plain symbol.** `spells.c` compares a monster
   symbol to a typed character and `files.c` prints it in the monster
   recall. These keep `monster_template_get_symbol`.
@@ -67,10 +70,12 @@ The shape the stories build:
   8-color fallback (color plus optional bold). `init_map_colors(color_count)`
   picks the column from `COLORS()` and registers one pair per role from pair
   16 up. With no color support the attribute is empty.
-* **Pure mappings.** `fval` to role, `ItemType` and subval to role, and role
-  to colors are plain functions with no curses calls, so each is an L0 test.
-* **C asks through small shims.** `*_extern.rs` exports return a `chtype`
-  with the color bits ORed in. C never sees pair numbers.
+* **Pure mappings.** Terrain and full-item data resolve to semantic roles;
+  role-to-palette mapping is also pure. These are L0 tests with no curses
+  calls.
+* **C asks through small shims.** `C_item_get_glyph` returns a `chtype` with
+  attributes; `C_item_color_key` exposes the terminal-independent semantic
+  key for stack compatibility. C never sees pair numbers.
 * **Monsters own their color.** `MonsterTemplate.color` is data, set per
   monster. Map, animations, and sidebar read the same field.
 * **The sidebar draws cells, not just strings.** The monsters panel draws the
@@ -93,7 +98,9 @@ not derived from the symbol letter.
 ### MCD3. Scope
 
 Decision: walls, floors and corridors, town buildings and shop entrances,
-doors, stairs, rubble, traps, monsters, and items by type.
+doors, stairs, rubble, traps, monsters, and portable items. Portable items
+use subtype colors with quality and special-attribute overrides; fixtures keep
+their semantic roles.
 
 ### MCD4. Color Option
 
@@ -103,6 +110,30 @@ attributes.
 ### MCD5. Sidebar
 
 Decision: the visible-monsters panel uses the same colors as the map.
+
+### MCD6. Item Color Meaning
+
+Decision: portable-item colors are semantic, not random. Resolve one role in
+priority order: special attribute or explicit special-attribute combination,
+quality, subtype, then the existing family role. A combination selects one
+role through game logic; terminal color attributes are never combined. Colors
+reflect actual item properties even before identification.
+
+### MCD7. Item Color and Stack Identity
+
+Decision: derive the semantic color key from existing item fields (subtype,
+flags, and modifiers). Items with different keys do not merge into a stack;
+copies and split stacks retain their key. No random seed, `Item`/`treasure_type`
+field, C struct-layout change, or save migration is needed. Stack comparison is
+based on the semantic key, even if a limited terminal palette renders two keys
+with the same visible basic color.
+
+### MCD8. Item Palette Budget
+
+Decision: start with eight additional item color slots at pairs 48-55 and
+reserve pairs 48-63 for future expansion. Multiple semantic reasons may use
+the same slot. Preserve existing roles and pair numbers; 8-color fallbacks
+may be visually shared.
 
 ## Story Graph
 
@@ -222,56 +253,73 @@ Out of scope: items, doors, and monsters.
 
 ### MC3. Items and Fixtures (fan-out)
 
-Status: done (2026-10-30). Depends on: MC1, MC2 (for `misc.c` order).
-Size: M. Complexity: Medium. Agent: standard.
+Status: open (revised 2026-10-30). Depends on: MC1, MC2 (for `misc.c` order).
+Size: L. Complexity: High. Agent: standard.
 
-Owns: `color(item_type, subval)` in [item_type.rs](../../../src/data/item_type.rs),
-`C_item_get_glyph` in [data/interop.rs](../../../src/data/interop.rs), its C
-declaration, the item branches of `loc_symbol`, and the missile print in
-[ranged.c](../../../src/combat/ranged.c). Must not touch: `C_item_get_tchar`,
-`inven.c`, monster code.
+Owns: the pure semantic color resolver for full `Item` data (new
+`src/data/item_color.rs`), item palette roles in
+[map_colors.rs](../../../src/user_interface/map_colors.rs),
+`C_item_get_glyph` and `C_item_color_key` in
+[data/interop.rs](../../../src/data/interop.rs) and their declarations,
+portable-item branches of `loc_symbol`, the missile print in
+[ranged.c](../../../src/combat/ranged.c), and the stack-merge predicate in
+[inven.c](../../../src/inventory/inven.c). Must preserve the plain behavior of
+`C_item_get_tchar` and inventory text formatting; must not touch monster code.
 
 Behavior:
-* Map every `ItemType` to a role: doors (open and closed), up and down
-  stairs (steep included), rubble, traps (seen traps only; unseen traps and
-  secret doors keep the glyph they show today), each shop entrance, gold,
-  gems and jewelry, potions, scrolls and books, weapons, armor, food, and
-  the rest.
-* Shop entrances keep `A_BOLD` and gain a color.
-* `C_item_get_glyph` returns the glyph with the color attribute.
-  `C_item_get_tchar` stays unchanged for text callers.
-* `loc_symbol` and the thrown-missile print use the glyph variant.
+* Resolve portable-item color from the full item: special attributes or
+  explicit combinations first, then quality, subtype, and the current family
+  role as fallback. Use flags and modifiers that survive item copies and saves;
+  do not rely on transient `ItemQuality` or random per-instance seeds.
+* Resolve multiple special attributes to one documented semantic role. Do not
+  combine terminal color attributes. Use actual item properties even when the
+  item is unidentified.
+* Keep doors, stairs, rubble, seen traps, shop entrances, and other map
+  fixtures on their existing semantic roles. Unseen traps and secret doors
+  retain their current glyphs and remain uncolored.
+* `C_item_get_glyph` uses the resolved item role for map and missile drawing;
+  `C_item_get_tchar` remains unchanged for text callers.
+* `C_item_color_key` exposes the terminal-independent role to C inventory
+  stacking. Otherwise-stackable items merge only when their semantic keys
+  match; differently colored keys stay in separate stacks. Splitting copies
+  the key, so both resulting stacks retain the same color.
+* Add eight item palette slots initially, starting at pair 48. Keep existing
+  role and pair assignments stable; reserve pairs through 63 for later item
+  colors. Some semantic keys may share a palette slot, especially on 8-color
+  terminals.
+* Derive color from existing fields. Do not add a per-item color/seed field,
+  change the `Item`/`treasure_type` layout, or require save migration.
 
 Acceptance checks:
-* L0: every `ItemType` maps to a role (a test that fails when a variant is
-  added without one); door, stair, rubble, trap, and each shop entrance
-  subval give the expected role.
-* L0: `C_item_get_tchar` output is unchanged for every `ItemType`.
-* L2, C headless: `get_loc_symbol` for a cell holding a closed door, a
-  down staircase, and a potion returns the expected character and color bits.
-* Changelog entry: doors, stairs, traps, shops, and items are colored.
+* L0: exhaustive portable `ItemType` fallback coverage; table-driven subtype,
+  quality, special-attribute, and combined-attribute cases resolve to the
+  expected single role, including precedence and unknown-value fallback.
+* L0: color resolution is deterministic for the same item fields and does not
+  depend on identification state; a quality override can distinguish items
+  that share a broad `ItemType`.
+* L0: `C_item_get_tchar` remains plain and unchanged for every renderable
+  `ItemType`; fixture glyph roles and shop bold remain unchanged.
+* L1, C inventory boundary: otherwise-stackable items with the same semantic
+  key merge; different keys remain separate; splitting preserves the key.
+* L2, C headless: portable-item map glyphs return expected characters and
+  palette pairs; doors, stairs, rubble, traps, shops, unseen traps, and secret
+  doors retain their expected glyph and color behavior. Map and missile paths
+  use the same resolved key.
+* Changelog entry: portable item colors communicate subtype, quality, and
+  special attributes; stack behavior follows the same semantic color key.
 
-Out of scope: inventory and equipment text; item names.
+Out of scope: inventory and equipment text, item names, MC4/MC5, random
+per-instance colors, and changes to the persisted item layout.
 
-Implementation: `color` exhaustively maps item types to semantic roles, and
-`glyph` combines the unchanged plain symbol with the registered role
-attribute. Unseen traps and secret doors keep their current uncolored glyphs.
-`C_item_get_glyph` is a separate C API used by map and missile rendering;
-`C_item_get_tchar` remains the text-only API.
+The category-only MC3 implementation was completed and verified earlier, but
+is reopened because it gives every item in a broad type the same color and
+does not make stack merging aware of color semantics. Its prior tests and full
+check are historical evidence only; they do not satisfy this revised story.
 
-Verification: `cargo test --lib data::item_type::tests` checks role coverage,
-fixture roles, preserved glyph bytes, and shop bold. The interop test checks
-`C_item_get_tchar` against the plain symbol for every renderable item type
-(`Whirlpool` retains its existing non-renderable panic). `make test-headless`
-checks closed-door, downstairs, and potion glyph bytes and pair bits, as well
-as uncolored unseen traps and secret doors. `make check-fast` passed, and
-`CARGO_TERM_QUIET=true make -s check` passed (937 Rust tests and all available
-C/headless harnesses).
-
-Unverified: real-terminal color appearance and the in-game missile animation
-path; the headless harness verifies map rendering, while the missile caller is
-covered by compilation and linking. On macOS, `test-traps` was skipped because
-GNU `ld --wrap` is unavailable.
+Verification for the revised behavior is pending. Re-run the acceptance checks
+above, `make check-fast`, and `CARGO_TERM_QUIET=true make -s check` after
+implementation. Real-terminal appearance remains a manual check; on macOS,
+`test-traps` is skipped because GNU `ld --wrap` is unavailable.
 
 ### MC4. Monster Colors (fan-out)
 
