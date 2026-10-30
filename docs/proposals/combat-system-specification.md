@@ -1,9 +1,9 @@
-> Status: design proposal, not implemented. Current combat lives in
-> [Rust fighting logic](../../src/combat/fighting.rs),
-> [C monster combat](../../src/monsters.c), and
-> [C ranged combat](../../src/combat/ranged.c).
-> The original proposal below is preserved as written, not a specification of
-> current gameplay.
+**Status: Proposed (not implemented).**
+
+Current combat lives in [Rust fighting logic](../../src/combat/fighting.rs),
+[C monster combat](../../src/monsters.c), and
+[C ranged combat](../../src/combat/ranged.c). The original proposal below is
+preserved as written, not a specification of current gameplay.
 
 # Combat System Specification (v0.1)
 

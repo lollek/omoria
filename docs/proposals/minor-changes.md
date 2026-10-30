@@ -1,5 +1,7 @@
 ## Misc unrelated changes
 
+**Status: Proposed**
+
 - Should be possible to destroy doors with spells
 - Remove healing from arcane magic list
 

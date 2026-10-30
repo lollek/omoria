@@ -1,5 +1,7 @@
 # Dungeon Theme
 
+**Status: Proposed**
+
 ## Generic features
 
 * Elite packs (same groups, but stronger)

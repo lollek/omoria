@@ -13,7 +13,7 @@ Epic status: done (2026-10-11). All twelve stories are implemented and
 Loop epics replace them.
 
 Known gaps across the epic (follow-ups are
-[cross-cutting epic](cross-cutting.md)):
+[cross-cutting epic](../active/XC-cross-cutting.md)):
 
 * No headless C-caller check covers search (PA1) or stairs (PA3) directly
   (XC3); command-key dispatch is unverified for most actions.

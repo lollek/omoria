@@ -173,7 +173,7 @@ substitute for a behavioral assertion.
 * `player_hunger_eat`, `player_hunger_set_status`, and `player_hunger_status`
   are not run through their C symbols, so their global writes, hunger redraw,
   and gluttony death flags are unverified (XC5 in the
-  [cross-cutting epic](migration/epics/cross-cutting.md)).
+  [cross-cutting epic](epics/active/XC-cross-cutting.md)).
 * `effects_ffi.c` destroys one item type per effect, so the full destroyable
   item sets are checked only by review. `test-traps` (Linux only) reaches the
   fire, acid, corrosion-gas, and poison-gas effects through `hit_trap`, with

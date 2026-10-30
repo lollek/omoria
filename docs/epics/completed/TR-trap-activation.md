@@ -369,11 +369,11 @@ Follow-ups:
 * TR added more local `extern` declarations of `player_flags` (in
   `status.rs`, `movement.rs`, `chest.rs`, and `activation/globals.rs`) and
   `dun_level` (in `movement.rs`). Tracked as
-  [XC6](cross-cutting.md#xc6-shared-c-global-declarations-fan-out).
+  [XC6](../active/XC-cross-cutting.md#xc6-shared-c-global-declarations-fan-out).
 * `TRAP_TEST_MIGRATED=0` in the `Makefile` and the legacy mode of
   [trap_dispatch_ffi.c](../../../tests/trap_dispatch_ffi.c) characterized the
   deleted C dispatcher; it now only skips checks. Tracked as
-  [XC7](cross-cutting.md#xc7-remove-legacy-trap-test-mode-finish).
+  [XC7](../active/XC-cross-cutting.md#xc7-remove-legacy-trap-test-mode-finish).
 * The Rust open and disarm actions call `trigger_trap` through an `extern "C"`
   declaration of the Rust-defined symbol. Calling the Rust chest-trap function
   directly is optional cleanup for whoever next touches those modules.

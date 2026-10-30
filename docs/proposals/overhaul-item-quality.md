@@ -1,5 +1,7 @@
 ## Overhaul item quality
 
+**Status: Proposed**
+
 Related info:
 - src/generate_item/item_template.rs
 

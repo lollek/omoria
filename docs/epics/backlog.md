@@ -1,7 +1,7 @@
-# Migration Backlog
+# Epic Backlog
 
-The source of truth for the C-to-Rust port: epics, stories, dependencies, and
-status. Test coverage and gaps are in the
+The source of truth for epics, stories, dependencies, and status, including
+C-to-Rust work and feature epics. Test coverage and gaps are in the
 [testing guide](../testing.md).
 
 Facts below were checked by reading source on 2026-10-09. Size and complexity
@@ -9,11 +9,14 @@ ratings are estimates. Re-check a card's facts before starting it.
 
 ## How This Works
 
-* An **epic** is a subsystem, usually a few related C files. Each epic has its
-  own file under [epics/](epics/) once its stories are planned.
+* An **epic** is a subsystem or feature, usually a few related C files or
+  related implementation tasks. Each planned epic has its own file under
+  [active](active/) or [completed](completed/).
 * A **story** ports one C file, or one cohesive part of a large file, and is
   handed to one agent with the
   [delegated-task skill](../../.github/skills/delegated-task/SKILL.md).
+* The completed folder contains only epics whose full scope is done. Completed
+  stories remain in their parent epic while that epic is active.
 * Only the next few waves are planned in detail. Later epics stay one table row
   until they are about to start.
 
@@ -164,16 +167,16 @@ the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 
 | ID | Epic | C files | Size | Status | Detail |
 | --- | --- | --- | --- | --- | --- |
-| PA | Simple player actions | `player_action/` search, close, stairs, light, refill, rest, look, jam, open, disarm, tunnel, bash | 12 x S-M | **Done** (2026-10-11) | [player-actions.md](epics/player-actions.md) |
-| TR | Trap activation | `traps.c` | L | **Done** (2026-10-23) | [trap-activation.md](epics/trap-activation.md) |
-| SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | **Done** (2026-10-20) | [status-effects.md](epics/status-effects.md) |
-| IU | Item use | eat, quaff, read, aim, use staff, drop | 6 x S-L | Open | [item-use.md](epics/item-use.md) |
-| CA | Casino | `casino/` | 4 files, M-L | Open | [casino.md](epics/casino.md) |
-| LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [leaf-modules.md](epics/leaf-modules.md) |
-| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations, legacy trap test mode) | 7 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
-| SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [split-screen.md](epics/split-screen.md) |
-| PG | Pre-game menu (feature, not a port) | None; pregame Rust screens, `pregame/main.c`, terminal gate in `term.c` | 6 x S-L, 8 decisions | Open | [pregame-menu.md](epics/pregame-menu.md) |
-| MC | Map colors (feature, not a port) | None; `loc_symbol` in `misc.c`, item and monster glyphs, `ncurses.rs` palette, sidebar monsters panel | 5 x S-L | Open | [map-colors.md](epics/map-colors.md) |
+| PA | Simple player actions | `player_action/` search, close, stairs, light, refill, rest, look, jam, open, disarm, tunnel, bash | 12 x S-M | **Done** (2026-10-11) | [PA-player-actions.md](completed/PA-player-actions.md) |
+| TR | Trap activation | `traps.c` | L | **Done** (2026-10-23) | [TR-trap-activation.md](completed/TR-trap-activation.md) |
+| SE | Status effects | `effects.c`, `player/hunger.c` | 2 x M | **Done** (2026-10-20) | [SE-status-effects.md](completed/SE-status-effects.md) |
+| IU | Item use | eat, quaff, read, aim, use staff, drop | 6 x S-L | Open | [IU-item-use.md](active/IU-item-use.md) |
+| CA | Casino | `casino/` | 4 files, M-L | Open | [CA-casino.md](active/CA-casino.md) |
+| LF | Leaf modules | store doors, `floor.c`, `graphics.c`, `unix.c`, `loot.c`, `help.c`, `kickout.c` | 7 x S | Open | [LF-leaf-modules.md](active/LF-leaf-modules.md) |
+| XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations, legacy trap test mode) | 7 x S | Open | [XC-cross-cutting.md](active/XC-cross-cutting.md) |
+| SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [SL-split-screen.md](active/SL-split-screen.md) |
+| PG | Pre-game menu (feature, not a port) | None; pregame Rust screens, `pregame/main.c`, terminal gate in `term.c` | 6 x S-L, 8 decisions | Open | [PG-pregame-menu.md](active/PG-pregame-menu.md) |
+| MC | Map colors (feature, not a port) | None; `loc_symbol` in `misc.c`, item and monster glyphs, `ncurses.rs` palette, sidebar monsters panel | 5 x S-L | Open | [MC-map-colors.md](active/MC-map-colors.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
 | TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |
@@ -280,16 +283,16 @@ PG1, PG2, PG4, and PG6 also wait for their PG decision cards.
 
 * **PA epic** (2026-10-11): all twelve simple player actions are Rust;
   directional and text prompts remain as C shims. See
-  [player-actions.md](epics/player-actions.md) for remaining gaps.
+  [PA-player-actions.md](completed/PA-player-actions.md) for remaining gaps.
 * **SE epic** (2026-10-20): `effects.c` and `player/hunger.c` are deleted;
   all six damage effects and all hunger functions are Rust behind the
   unchanged C ABI, with F-DMG built for later epics. See
-  [status-effects.md](epics/status-effects.md#remaining-gaps) for follow-ups
+  [SE-status-effects.md](completed/SE-status-effects.md#remaining-gaps) for follow-ups
   (XC5, XC6).
 * **TR epic** (2026-10-23): `traps.c` is deleted; `hit_trap`, all 22 dungeon
   trap handlers, town tile routing, and chest traps (`trigger_trap`) are Rust
   behind the unchanged C ABI. Store and other entrance screens stay C. See
-  [trap-activation.md](epics/trap-activation.md#remaining-gaps) for
+  [TR-trap-activation.md](completed/TR-trap-activation.md#remaining-gaps) for
   follow-ups (XC6, XC7).
 
 Ported before this backlog existed. A Rust module's presence does not mean its
@@ -300,7 +303,7 @@ subsystem is fully migrated.
   [rng/](../../src/rng/).
 * Text utilities from `text_lines.c` → `text_lines_extern.rs`.
 * Trap templates and placement → [dungeon/trap/](../../src/dungeon/trap/);
-  activation was ported later by the [TR epic](epics/trap-activation.md).
+  activation was ported later by the [TR epic](completed/TR-trap-activation.md).
 * Monster templates → `generate_monster/` (the C file is compatibility glue).
 * Hit calculation (`managed_to_hit`) → [combat/fighting.rs](../../src/combat/fighting.rs).
 * Movement step decisions and confusion → `player_action/movement/`; C keeps
@@ -324,6 +327,6 @@ PA and SE ports declare the same globals and C helpers locally
 (`player_flags`, `door_list`, `lite_spot`, `equipment`). Do not consolidate
 these piecemeal. SE needed `player_flags` and `equipment` and added more
 copies, so the shared home is now
-[XC6](epics/cross-cutting.md#xc6-shared-c-global-declarations-fan-out): one
+[XC6](active/XC-cross-cutting.md#xc6-shared-c-global-declarations-fan-out): one
 mechanical story next to `player/data.rs` and `equipment.rs`. New ports should
 use the shared declarations once XC6 lands.

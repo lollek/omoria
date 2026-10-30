@@ -4,8 +4,8 @@ The `traps.c` migration is a **complete port** done in stages: data and
 placement first, then a Rust dispatcher (TR1) with per-group handler files
 that later stories (TR2-TR6) filled in, and finally deletion of the emptied C
 file (TR7). See the authoritative
-[migration backlog](../../../../docs/migration/backlog.md) and
-[trap activation epic](../../../../docs/migration/epics/trap-activation.md).
+[epic backlog](../../../../docs/epics/backlog.md) and
+[trap activation epic](../../../../docs/epics/completed/TR-trap-activation.md).
 
 ## C source: `traps.c` (deleted)
 

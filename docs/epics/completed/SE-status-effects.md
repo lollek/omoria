@@ -155,11 +155,11 @@ C, and `make check` passes. Follow-ups:
 * `player_hunger_eat`, `player_hunger_set_status`, and `player_hunger_status`
   are only tested in Rust against an explicit state struct. No test runs their
   global glue (`player_flags`, `player_wt`, `prt_hunger`, death flags) through
-  the C symbols. Tracked as [XC5](cross-cutting.md#xc5-c-caller-checks-for-hunger-eating-and-status-fan-out).
+  the C symbols. Tracked as [XC5](../active/XC-cross-cutting.md#xc5-c-caller-checks-for-hunger-eating-and-status-fan-out).
 * SE repeated local `extern` declarations of `player_flags` and `equipment`
   in `effects/globals.rs` and `player/hunger.rs`, although the backlog says to
   choose a shared home when the next epic needs them. Tracked as
-  [XC6](cross-cutting.md#xc6-shared-c-global-declarations-fan-out).
+  [XC6](../active/XC-cross-cutting.md#xc6-shared-c-global-declarations-fan-out).
 * Out of scope and left for later epics: per-turn food consumption in
   `main_loop.c` (ML), the F-DMG C bodies `take_hit`, `py_bonuses`, and
   `inven_damage` (CORE), and checks through the real effect callers in

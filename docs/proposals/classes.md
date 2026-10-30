@@ -1,6 +1,6 @@
 # Classes
 
-Work-in-progress
+**Status: In progress**
 
 ## Sorcerer
 

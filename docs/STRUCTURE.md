@@ -288,6 +288,9 @@ This structure is the **target state**. Current code is a mix of:
 | `rng/random.rs` | `rng/` | Injectable helpers already exist |
 | Domain `interop.rs`, root `*_extern.rs` | Domain bridges or optional `interop/` | Consolidation is optional, not current layout |
 
-See the [migration backlog](migration/backlog.md) for authoritative status and
-the [changelog](../CHANGELOG.md) for recorded changes. The directory tree above
-is illustrative target design, not a list of existing files or completed ports.
+See the [epic backlog](epics/backlog.md) for planned epics and authoritative
+status. Epics are grouped under `epics/active/` and `epics/completed/`, with
+stories kept in their epic files. Proposals remain in `proposals/` with an
+explicit status. See the [changelog](../CHANGELOG.md) for recorded changes.
+The directory tree above is illustrative target design, not a list of existing
+files or completed ports.

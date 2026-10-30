@@ -1059,7 +1059,7 @@ Acceptance checks:
 
 * Prompt callers still write row 0 directly. A prompt seam belongs to the TU
   epic.
-* The pre-game menu redesign has its own epic: [pregame-menu.md](pregame-menu.md).
+* The pre-game menu redesign has its own epic: [PG-pregame-menu.md](PG-pregame-menu.md).
 * Full-screen overlays (inventory menus, stores, help, casino) keep their own
   fixed 80x24-style drawing. They are not panels.
 * Classic is retired by SL19-SL21. Split collapses down to 80x24 instead.

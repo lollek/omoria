@@ -13,7 +13,7 @@ Port the specified C function to Rust following the project's strict TDD workflo
 ### 1. Analyze the C code
 - Read the C source to understand the function's behavior, inputs, outputs, and edge cases.
 - Identify dependencies (other C functions called, globals accessed, types used).
-- Check the [migration backlog](../../../docs/migration/backlog.md) and its epic files for the story card that covers this code.
+- Check the [epic backlog](../../../docs/epics/backlog.md) and its epic files for the story card that covers this code.
 
 ### 2. Choose the Rust target location
 - Follow existing module organization (domain-vertical slicing).

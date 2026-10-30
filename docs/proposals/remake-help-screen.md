@@ -1,4 +1,6 @@
-Help doesnt really work and just messes up the game. 
+**Status: Proposed**
+
+Help doesnt really work and just messes up the game.
 
 Remake help to make it more integrated to the game. It should be easier to see armor/weapon values, spell descriptions, etc
 

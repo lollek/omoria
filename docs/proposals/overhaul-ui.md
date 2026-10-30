@@ -1,3 +1,5 @@
+**Status: In progress**
+
 The user interface is old and limited to old computer terminals.
 Since we have more screen space we should make use of that to make the game more smooth.
 Some ideas below. Consider flexibility. It would be nice to make it possible to switch in the future if I change my mind.
@@ -5,7 +7,7 @@ I'm unsure how much we need to connect the GUI with the "server", or if it's pos
 
 ## Terminal split screen
 
-Planned as [Epic SL: Split-Screen Layout](../migration/epics/split-screen.md).
+Planned as [Epic SL: Split-Screen Layout](../epics/active/SL-split-screen.md).
 
 ## Modern UI
 

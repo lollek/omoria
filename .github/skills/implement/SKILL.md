@@ -1,7 +1,7 @@
 ---
 name: implement
 description: "Implement a task end-to-end: TDD, verification, self-review, and GitHub handoff."
-argument-hint: "What to implement (e.g. PA1 from docs/migration/backlog.md)"
+argument-hint: "What to implement (e.g. PA1 from docs/epics/backlog.md)"
 user-invocable: true
 disable-model-invocation: true
 ---

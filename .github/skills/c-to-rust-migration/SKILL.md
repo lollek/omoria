@@ -16,7 +16,7 @@ Guided workflow for porting C code to idiomatic Rust in the omoria roguelike, fo
 
 ## Reference documents
 
-- [Migration backlog](../../../docs/migration/backlog.md) — epics, story cards, dependencies, foundations, and what's already done
+- [Epic backlog](../../../docs/epics/backlog.md) — epics, story cards, dependencies, foundations, and what's already done
 - [Trap port example](./references/trap-port-example.md) — completed port of `traps.c`: data, placement, dispatch, per-group handlers, and C ABI wrappers
 
 ## Procedure
@@ -27,7 +27,7 @@ Guided workflow for porting C code to idiomatic Rust in the omoria roguelike, fo
    - What functions exist and what they do
    - Dependencies (includes, globals, other C functions called)
    - Which functions are pure vs. side-effectful
-2. Find the story card in the [migration backlog](../../../docs/migration/backlog.md) and follow its owned files, dependencies, and foundations.
+2. Find the story card in the [epic backlog](../../../docs/epics/backlog.md) and follow its owned files, dependencies, and foundations.
 3. Propose a **breakdown** if the file has multiple concerns (data, logic, interop). Use the traps example as a model:
    - `data.rs` — static definitions / templates
    - `logic.rs` or domain-named file — pure business logic

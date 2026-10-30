@@ -1,3 +1,5 @@
+**Status: Proposed**
+
 **Weapon and Armor Proficiency**
 - [x] Weapons: Club, Dagger, Dart, Quarterstaff, Scimitar, Scythe, Sickle, Shortspear, Sling, Spear
 - [x] Light Armor, Medium Armor - Prohibited from wearing metal. Padded, leather, hide = ok. Also ironwood is ok.

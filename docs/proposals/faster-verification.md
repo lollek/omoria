@@ -1,5 +1,7 @@
 # Faster verification
 
+**Status: In progress. Part A is implemented; Part B remains.**
+
 Stop running the full test suite on every change.
 
 ## Problem
