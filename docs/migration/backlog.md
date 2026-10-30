@@ -148,6 +148,7 @@ If unsure, ask the navigator.
 | F-LAYOUT | Terminal layout model (Split, Classic, TooSmall rects), the current layout, and the pure panel-renderer pattern. | SL1 | SL2-SL7, SL9-SL11, later TU | planned |
 | F-MOUSE | Mouse event queue, screen-to-map/panel hit testing, and handler registration. | SL11 | SL12-SL14, SL16 | planned |
 | F-MENU | Resizable pregame menu frame with a pure renderer and draw sink, help overlay, `MenuKey` key source (with resize and end of input), and a screen driver loop. | PG1 | PG2, PG4, PG5, PG6; later TU | planned |
+| F-PALETTE | Map color roles with a 256-color table and an 8-color fallback, plus `map_color_attr(role)` ([ncurses.rs](../../src/ncurses.rs)). | MC1 | MC2-MC5 | planned |
 
 Already available: message capture ([message.rs](../../src/message.rs)),
 seedable C-facing RNG ([rng/](../../src/rng/)), headless terminal doubles
@@ -172,6 +173,7 @@ the seeded RNG, so chest and rubble loot are repeatable in headless C checks.
 | XC | Cross-cutting follow-ups | None (seeded RNG wrappers, missing C-caller checks, shared door helper, shared global declarations, legacy trap test mode) | 7 x S | Open | [cross-cutting.md](epics/cross-cutting.md) |
 | SL | Split-screen layout (feature, not a port) | Viewport parts of `move.c`, `screen.c`, `io.c`, `term.c`; HUD and message Rust modules | 16 x S-L | Open | [split-screen.md](epics/split-screen.md) |
 | PG | Pre-game menu (feature, not a port) | None; pregame Rust screens, `pregame/main.c`, terminal gate in `term.c` | 6 x S-L, 8 decisions | Open | [pregame-menu.md](epics/pregame-menu.md) |
+| MC | Map colors (feature, not a port) | None; `loc_symbol` in `misc.c`, item and monster glyphs, `ncurses.rs` palette, sidebar monsters panel | 5 x S-L | Open | [map-colors.md](epics/map-colors.md) |
 | MG | Magic schools | `magic/*.c`, `use_magic.c`, `blow.c` | 5 x S-M, 2 x L | Not planned | |
 | SP | Spells | `spells.c` (2,939 lines, ~9 function groups) | XL | Not planned | |
 | TS | Town services | `town_level/enter_bank.c`, `enter_house.c`, `quest.c` | M-L | Not planned | |
