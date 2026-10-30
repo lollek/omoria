@@ -7,7 +7,7 @@ mod interop;
 #[cfg(not(test))]
 pub(crate) use globals::describe_at_global;
 
-const MAX_SIGHT: usize = 20;
+pub(crate) const MAX_SIGHT: usize = 20;
 
 /// Dungeon observations and player messages needed to look along a direction.
 ///

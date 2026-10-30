@@ -15,11 +15,13 @@ pub const CLASSIC_MIN_COLS: i32 = 150;
 pub const EQUIPMENT_HEIGHT: i32 = 14;
 pub const INVENTORY_HEIGHT: i32 = 10;
 pub const LOG_MIN_HEIGHT: i32 = 10;
-pub const MONSTERS_MIN_HEIGHT: i32 = 10;
+pub const MONSTERS_MIN_HEIGHT: i32 = 5;
+pub const FLOOR_ITEMS_MIN_HEIGHT: i32 = 5;
 pub const SIDEBAR_WIDTH: i32 = 69;
 pub const SPLIT_MIN_ROWS: i32 = {
     let log_bottom = CLASSIC_MIN_ROWS + LOG_MIN_HEIGHT;
-    let sidebar_bottom = 1 + EQUIPMENT_HEIGHT + INVENTORY_HEIGHT + MONSTERS_MIN_HEIGHT;
+    let sidebar_bottom =
+        1 + EQUIPMENT_HEIGHT + INVENTORY_HEIGHT + MONSTERS_MIN_HEIGHT + FLOOR_ITEMS_MIN_HEIGHT;
     if log_bottom > sidebar_bottom {
         log_bottom
     } else {
@@ -65,6 +67,7 @@ pub struct Layout {
     pub log: Option<Rect>,
     pub inventory: Option<Rect>,
     pub monsters: Option<Rect>,
+    pub floor_items: Option<Rect>,
 }
 
 pub fn compute_layout(rows: i32, cols: i32) -> Layout {
@@ -78,6 +81,7 @@ pub fn compute_layout(rows: i32, cols: i32) -> Layout {
         log: None,
         inventory: None,
         monsters: None,
+        floor_items: None,
     };
     if rows < CLASSIC_MIN_ROWS || cols < CLASSIC_MIN_COLS {
         return layout;
@@ -113,13 +117,24 @@ pub fn compute_layout(rows: i32, cols: i32) -> Layout {
             INVENTORY_HEIGHT,
         ));
         let monsters_row = inventory_row + INVENTORY_HEIGHT;
+        let sidebar_height = rows - monsters_row;
+        let extra_height = sidebar_height - MONSTERS_MIN_HEIGHT - FLOOR_ITEMS_MIN_HEIGHT;
+        let monsters_height = MONSTERS_MIN_HEIGHT + (extra_height + 1) / 2;
+        let floor_items_height = sidebar_height - monsters_height;
         layout.monsters = Some(Rect::new(
             monsters_row,
             sidebar_col,
             SIDEBAR_WIDTH,
-            rows - monsters_row,
+            monsters_height,
         ));
-        debug_assert!(rows - monsters_row >= MONSTERS_MIN_HEIGHT);
+        layout.floor_items = Some(Rect::new(
+            monsters_row + monsters_height,
+            sidebar_col,
+            SIDEBAR_WIDTH,
+            floor_items_height,
+        ));
+        debug_assert!(monsters_height >= MONSTERS_MIN_HEIGHT);
+        debug_assert!(floor_items_height >= FLOOR_ITEMS_MIN_HEIGHT);
     }
     layout
 }
@@ -194,6 +209,7 @@ mod tests {
             layout.log,
             layout.inventory,
             layout.monsters,
+            layout.floor_items,
         ]
         .iter()
         .filter_map(|rect| *rect)
@@ -219,6 +235,7 @@ mod tests {
         assert_eq!(layout.log, None);
         assert_eq!(layout.inventory, None);
         assert_eq!(layout.monsters, None);
+        assert_eq!(layout.floor_items, None);
     }
 
     #[test]
@@ -284,8 +301,26 @@ mod tests {
                 );
                 assert_eq!(
                     layout.monsters,
-                    Some(Rect::new(25, sidebar_col, SIDEBAR_WIDTH, rows - 25))
+                    Some(Rect::new(
+                        25,
+                        sidebar_col,
+                        SIDEBAR_WIDTH,
+                        MONSTERS_MIN_HEIGHT + ((rows - SPLIT_MIN_ROWS + 1) / 2),
+                    ))
                 );
+                let monsters = layout.monsters.unwrap();
+                let floor_items = layout.floor_items.unwrap();
+                assert_eq!(
+                    floor_items,
+                    Rect::new(
+                        monsters.row + monsters.height,
+                        sidebar_col,
+                        SIDEBAR_WIDTH,
+                        rows - 25 - monsters.height,
+                    )
+                );
+                assert!(monsters.height >= MONSTERS_MIN_HEIGHT);
+                assert!(floor_items.height >= FLOOR_ITEMS_MIN_HEIGHT);
 
                 let rects = areas(layout);
                 for (index, rect) in rects.iter().enumerate() {
@@ -298,6 +333,26 @@ mod tests {
                     }
                 }
             }
+        }
+    }
+
+    #[test]
+    fn split_sidebar_divides_monsters_area_and_shares_extra_rows() {
+        assert_eq!(SPLIT_MIN_ROWS, 35);
+        for (rows, monsters_height, floor_items_height) in
+            [(35, 5, 5), (36, 6, 5), (37, 6, 6), (38, 7, 6)]
+        {
+            let layout = compute_layout(rows, SPLIT_MIN_COLS);
+            let monsters = layout.monsters.unwrap();
+            let floor_items = layout.floor_items.unwrap();
+
+            assert_eq!(monsters.height, monsters_height);
+            assert_eq!(floor_items.height, floor_items_height);
+            assert_eq!(monsters.row + monsters.height, floor_items.row);
+            assert_eq!(monsters.row, 25);
+            assert_eq!(monsters.width, SIDEBAR_WIDTH);
+            assert_eq!(floor_items.width, SIDEBAR_WIDTH);
+            assert_eq!(floor_items.row + floor_items.height, rows);
         }
     }
 
@@ -327,7 +382,22 @@ mod tests {
             assert_eq!(layout.inventory, Some(Rect::new(15, sidebar_col, 69, 10)));
             assert_eq!(
                 layout.monsters,
-                Some(Rect::new(25, sidebar_col, 69, rows - 25))
+                Some(Rect::new(
+                    25,
+                    sidebar_col,
+                    69,
+                    MONSTERS_MIN_HEIGHT + ((rows - SPLIT_MIN_ROWS + 1) / 2)
+                ))
+            );
+            let monsters = layout.monsters.unwrap();
+            assert_eq!(
+                layout.floor_items,
+                Some(Rect::new(
+                    monsters.row + monsters.height,
+                    sidebar_col,
+                    69,
+                    rows - 25 - monsters.height
+                ))
             );
         }
     }
