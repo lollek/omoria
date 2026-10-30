@@ -37,7 +37,7 @@ fn handle_click(event: MouseEvent, target: Option<MouseTarget>) {
                     index,
                 )
             }
-            SidebarPanel::Monsters => None,
+            SidebarPanel::Monsters | SidebarPanel::FloorItems => None,
         },
     );
     if let Some(description) = description {

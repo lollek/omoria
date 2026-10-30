@@ -4,6 +4,7 @@ use std::sync::Mutex;
 use crate::layout::{Layout, Rect};
 use crate::user_interface::viewport::Viewport;
 
+mod floor_items;
 mod hover;
 mod item_click;
 mod monster_list;
@@ -53,6 +54,7 @@ pub enum SidebarPanel {
     Equipment,
     Inventory,
     Monsters,
+    FloorItems,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -87,6 +89,7 @@ pub fn hit_test(layout: Layout, viewport: Viewport, row: i32, col: i32) -> Optio
         (layout.equipment, SidebarPanel::Equipment),
         (layout.inventory, SidebarPanel::Inventory),
         (layout.monsters, SidebarPanel::Monsters),
+        (layout.floor_items, SidebarPanel::FloorItems),
     ]
     .iter()
     .find_map(|(rect, panel)| {
@@ -211,6 +214,7 @@ pub fn register_monster_list_handler() {
 
 pub fn register_item_click_handler() {
     item_click::register();
+    floor_items::register();
 }
 
 pub fn register_travel_handler() {
@@ -370,6 +374,13 @@ mod tests {
                 index: 0,
             })
         );
+        assert_eq!(
+            hit_test(layout, viewport, 30, 81),
+            Some(MouseTarget::Sidebar {
+                panel: SidebarPanel::FloorItems,
+                index: 0,
+            })
+        );
     }
 
     #[test]
@@ -390,10 +401,17 @@ mod tests {
             Some(MouseTarget::Map { y: 1, x: 81 })
         );
         assert_eq!(
-            hit_test(layout, viewport, 34, 81),
+            hit_test(layout, viewport, 29, 81),
             Some(MouseTarget::Sidebar {
                 panel: SidebarPanel::Monsters,
-                index: 9,
+                index: 4,
+            })
+        );
+        assert_eq!(
+            hit_test(layout, viewport, 34, 81),
+            Some(MouseTarget::Sidebar {
+                panel: SidebarPanel::FloorItems,
+                index: 4,
             })
         );
         assert_eq!(hit_test(layout, viewport, 35, 81), None);

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Split layout now lists visible floor items below monsters, grouped by name and clickable for full look descriptions without using a turn.
+
 ## 5-alpha
 
 October 2026

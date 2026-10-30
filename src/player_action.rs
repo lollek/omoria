@@ -7,6 +7,7 @@ mod jam_door;
 mod look;
 #[cfg(not(test))]
 pub(crate) use look::describe_at_global;
+pub(crate) use look::MAX_SIGHT;
 mod movement;
 mod open;
 mod quaff;

@@ -182,7 +182,7 @@ graph LR
   SL19 --> SL20[SL20 collapsible layout]
   SL20 --> SL21[SL21 remove Classic]
   classDef done fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
-  class SL1,SL2,SL3,SL4,SL5,SL6,SL7,SL8,SL9,SL10,SL11,SL12,SL13,SL14,SL15,SL16 done
+  class SL1,SL2,SL3,SL4,SL5,SL6,SL7,SL8,SL9,SL10,SL11,SL12,SL13,SL14,SL15,SL16,SL18 done
 ```
 
 Green nodes are implemented; white nodes are open.
@@ -866,7 +866,7 @@ separate message-log files.
 
 ### SL18. Visible Floor Items Panel (fan-out)
 
-Status: open. Depends on: SL6, SL13, SL14.
+Status: complete. Depends on: SL6, SL13, SL14.
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: the sidebar module, the Split monsters and floor-items rects and their
@@ -925,6 +925,18 @@ Acceptance checks:
 
 Out of scope: a list of remembered items, picking up or traveling to an item
 on click, and filtering or sorting options.
+
+Implementation and verification:
+* Added the Split floor-items panel, visibility-filtered read-only snapshot,
+  grouping, overflow, redraw, and left-click look behavior.
+* Verified with `cargo test user_interface:: --lib` (126 passed),
+  `make check-fast`, `make test-mouse-input test-messages`, and
+  `CARGO_TERM_QUIET=true make -s check` (957 Rust tests and all C checks
+  passed). The diff review found no significant issues.
+* Not manually verified in live gameplay: the production floor-item accessor
+  against the global C LOS/cave state or the interactive terminal panel.
+  Save/load behavior was not specifically exercised; this story does not
+  change persistence.
 
 ### SL19. Optional Panels (fan-out)
 

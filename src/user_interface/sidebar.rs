@@ -17,6 +17,42 @@ struct SeenMonster {
     x: i64,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct VisibleFloorItem {
+    name: String,
+    symbol: char,
+    distance: i64,
+    y: i64,
+    x: i64,
+}
+
+#[derive(Clone, Copy)]
+struct FloorItemCandidate {
+    item: crate::model::Item,
+    item_type: crate::model::ItemType,
+    y: i64,
+    x: i64,
+}
+
+const MAX_SIGHT: i64 = crate::player_action::MAX_SIGHT as i64;
+
+fn is_floor_item_type(item_type: crate::model::ItemType) -> bool {
+    !matches!(
+        item_type,
+        crate::model::ItemType::UnseenTrap
+            | crate::model::ItemType::SeenTrap
+            | crate::model::ItemType::Rubble
+            | crate::model::ItemType::OpenDoor
+            | crate::model::ItemType::ClosedDoor
+            | crate::model::ItemType::SecretDoor
+            | crate::model::ItemType::UpStaircase
+            | crate::model::ItemType::DownStaircase
+            | crate::model::ItemType::UpSteepStaircase
+            | crate::model::ItemType::DownSteepStaircase
+            | crate::model::ItemType::EntranceToStore
+    )
+}
+
 fn monster_snapshot(monsters: &[crate::model::Monster]) -> Vec<SeenMonster> {
     monsters
         .iter()
@@ -49,6 +85,125 @@ fn grouped_monsters(monsters: &[SeenMonster]) -> Vec<(&SeenMonster, usize)> {
     groups
 }
 
+fn legacy_distance(y1: i64, x1: i64, y2: i64, x2: i64) -> i64 {
+    let dy = (y1 - y2).abs();
+    let dx = (x1 - x2).abs();
+    ((dy + dx) * 2 - dy.min(dx)) / 2
+}
+
+fn floor_item_candidates_from_cells(
+    cells: &crate::dungeon::cell::Cells<'_>,
+) -> Vec<FloorItemCandidate> {
+    let mut candidates = Vec::new();
+    for y in 2..cells.height {
+        for x in 2..cells.width {
+            let Some((cell, Some(item))) = cells.read(y, x) else {
+                continue;
+            };
+            let Some(item_type) = item.item_type() else {
+                continue;
+            };
+            if item.tval == 0
+                || item.tval > u8::from(crate::model::ItemType::Money)
+                || !is_floor_item_type(item_type)
+                || (cell.pl == 0 && cell.tl == 0)
+            {
+                continue;
+            }
+            candidates.push(FloorItemCandidate {
+                item,
+                item_type,
+                y,
+                x,
+            });
+        }
+    }
+    candidates
+}
+
+fn visible_floor_items_from_candidates(
+    candidates: &[FloorItemCandidate],
+    player: (i64, i64),
+    blind: bool,
+    mut has_line_of_sight: impl FnMut(i64, i64, i64, i64) -> bool,
+) -> Vec<VisibleFloorItem> {
+    if blind {
+        return Vec::new();
+    }
+
+    let mut items = Vec::new();
+    for candidate in candidates {
+        let distance = legacy_distance(player.0, player.1, candidate.y, candidate.x);
+        if distance > MAX_SIGHT || !has_line_of_sight(player.0, player.1, candidate.y, candidate.x)
+        {
+            continue;
+        }
+        let item = candidate.item;
+        items.push(VisibleFloorItem {
+            name: item_name::generate(&item),
+            symbol: crate::data::item_type::symbol(&candidate.item_type, item.subval) as u8 as char,
+            distance,
+            y: candidate.y,
+            x: candidate.x,
+        });
+    }
+    items
+}
+
+#[cfg(test)]
+fn visible_floor_items_from_cells(
+    cells: &crate::dungeon::cell::Cells<'_>,
+    player: (i64, i64),
+    blind: bool,
+    has_line_of_sight: impl FnMut(i64, i64, i64, i64) -> bool,
+) -> Vec<VisibleFloorItem> {
+    if blind {
+        return Vec::new();
+    }
+    let candidates = floor_item_candidates_from_cells(cells);
+    visible_floor_items_from_candidates(&candidates, player, false, has_line_of_sight)
+}
+
+fn grouped_floor_items(items: &[VisibleFloorItem]) -> Vec<(&VisibleFloorItem, usize)> {
+    let mut groups = BTreeMap::new();
+    for item in items {
+        let (nearest, count) = groups.entry(item.name.as_str()).or_insert((item, 0));
+        *count += 1;
+        if item.distance < nearest.distance {
+            *nearest = item;
+        }
+    }
+    let mut groups: Vec<_> = groups.into_values().collect();
+    groups.sort_by_key(|(item, _)| (item.distance, item.name.as_str()));
+    groups
+}
+
+fn visible_floor_item_count(group_count: usize, panel_height: i32) -> usize {
+    let item_rows = panel_height.saturating_sub(2).max(0) as usize;
+    if group_count > item_rows {
+        item_rows.saturating_sub(1)
+    } else {
+        group_count
+    }
+}
+
+fn floor_item_position_for_panel_row(
+    items: &[VisibleFloorItem],
+    panel_height: i32,
+    panel_row: i32,
+    blind: bool,
+) -> Option<(i64, i64)> {
+    if blind || panel_row < 2 || panel_row >= panel_height {
+        return None;
+    }
+    let groups = grouped_floor_items(items);
+    let visible_count = visible_floor_item_count(groups.len(), panel_height);
+    groups
+        .get((panel_row - 2) as usize)
+        .filter(|_| ((panel_row - 2) as usize) < visible_count)
+        .map(|(item, _)| (item.y, item.x))
+}
+
 fn monster_position_for_panel_row(
     monsters: &[SeenMonster],
     panel_row: i32,
@@ -61,6 +216,50 @@ fn monster_position_for_panel_row(
     grouped_monsters(monsters)
         .get((panel_row - 2) as usize)
         .map(|(monster, _)| (monster.y, monster.x))
+}
+
+fn draw_floor_items_panel(
+    layout: Layout,
+    items: &[VisibleFloorItem],
+    blind: bool,
+    draw: impl FnMut(i32, i32, &str),
+) {
+    if let Some(rect) = layout.floor_items {
+        let lines = render_floor_items_panel(rect, items, blind);
+        draw_lines(rect, &lines, draw);
+    }
+}
+
+#[cfg(not(test))]
+fn current_floor_item_snapshot(blind: bool) -> Vec<VisibleFloorItem> {
+    extern "C" {
+        static char_row: libc::c_long;
+        static char_col: libc::c_long;
+    }
+    let player = unsafe { (char_row, char_col) };
+    if blind {
+        return Vec::new();
+    }
+    // `los` reads the C cave, so call it after releasing the mutable global-cell borrow.
+    let candidates = unsafe {
+        crate::dungeon::cell::with_global_cells(|cells| floor_item_candidates_from_cells(cells))
+    };
+    visible_floor_items_from_candidates(&candidates, player, false, global_line_of_sight)
+}
+
+#[cfg(not(test))]
+fn global_line_of_sight(y1: i64, x1: i64, y2: i64, x2: i64) -> bool {
+    extern "C" {
+        fn los(y1: libc::c_long, x1: libc::c_long, y2: libc::c_long, x2: libc::c_long) -> bool;
+    }
+    unsafe {
+        los(
+            y1 as libc::c_long,
+            x1 as libc::c_long,
+            y2 as libc::c_long,
+            x2 as libc::c_long,
+        )
+    }
 }
 
 #[cfg(not(test))]
@@ -78,6 +277,20 @@ pub(crate) fn current_monster_position_for_panel_row(panel_row: i32) -> Option<(
     monster_position_for_panel_row(&monsters, panel_row, flags.blind > 0, flags.image > 0)
 }
 
+#[cfg(not(test))]
+pub(crate) fn current_floor_item_position_for_panel_row(panel_row: i32) -> Option<(i64, i64)> {
+    let rect = current_layout().floor_items?;
+    if panel_row >= rect.height {
+        return None;
+    }
+    extern "C" {
+        static player_flags: crate::model::PlayerFlags;
+    }
+    let blind = unsafe { player_flags.blind > 0 };
+    let items = current_floor_item_snapshot(blind);
+    floor_item_position_for_panel_row(&items, rect.height, panel_row, blind)
+}
+
 fn render_monsters_panel(
     rect: Rect,
     monsters: &[SeenMonster],
@@ -91,6 +304,24 @@ fn render_monsters_panel(
                 .into_iter()
                 .map(|(monster, count)| format!("{} {} ({})", monster.symbol, monster.name, count)),
         );
+    }
+    render_lines(rect, &lines)
+}
+
+fn render_floor_items_panel(rect: Rect, items: &[VisibleFloorItem], blind: bool) -> Vec<String> {
+    let mut lines = vec![String::new(), "Floor items".to_string()];
+    if !blind {
+        let groups = grouped_floor_items(items);
+        let visible_count = visible_floor_item_count(groups.len(), rect.height);
+        lines.extend(
+            groups
+                .iter()
+                .take(visible_count)
+                .map(|(item, count)| format!("{} {} ({})", item.symbol, item.name, count)),
+        );
+        if groups.len() > visible_count {
+            lines.push(format!("...{} more", groups.len() - visible_count));
+        }
     }
     render_lines(rect, &lines)
 }
@@ -257,6 +488,17 @@ pub extern "C" fn C_print_equipment_block() {
             },
         );
     }
+    #[cfg(not(test))]
+    if layout.floor_items.is_some() {
+        extern "C" {
+            static player_flags: crate::model::PlayerFlags;
+        }
+        let blind = unsafe { player_flags.blind > 0 };
+        let items = current_floor_item_snapshot(blind);
+        draw_floor_items_panel(layout, &items, blind, |row, col, line| {
+            ncurses::mvaddstr(row, col, line);
+        });
+    }
 }
 
 #[cfg(test)]
@@ -286,6 +528,44 @@ mod tests {
             y,
             x,
         }
+    }
+
+    fn floor_item(name: &str, symbol: char, distance: i64, y: i64, x: i64) -> VisibleFloorItem {
+        VisibleFloorItem {
+            name: name.to_string(),
+            symbol,
+            distance,
+            y,
+            x,
+        }
+    }
+
+    fn put_floor_item(
+        cave: &mut [[crate::model::Cave; crate::constants::MAX_WIDTH + 1]],
+        items: &mut [Item],
+        index: usize,
+        position: (usize, usize),
+        tval: u8,
+        lighting: (u8, u8, u8),
+        cptr: u8,
+    ) {
+        let (y, x) = position;
+        let (pl, tl, fm) = lighting;
+        cave[y][x] = crate::model::Cave {
+            tptr: index as u8,
+            pl,
+            tl,
+            fm,
+            cptr,
+            ..Default::default()
+        };
+        items[index] = crate::dungeon::cell::test_support::blank_item();
+        items[index].tval = tval;
+        items[index].number = 1;
+    }
+
+    fn item_state(item: &Item) -> String {
+        format!("{item:?}")
     }
 
     #[test]
@@ -328,6 +608,229 @@ mod tests {
         assert_eq!(
             monster_position_for_panel_row(&monsters, 2, false, true),
             None
+        );
+    }
+
+    #[test]
+    fn floor_items_group_by_name_sort_by_nearest_then_name_and_resolve_nearest_member() {
+        let items = [
+            floor_item("3 rations of food", '!', 8, 9, 8),
+            floor_item("gold piece", '$', 3, 4, 7),
+            floor_item("3 rations of food", '!', 2, 4, 6),
+            floor_item("apple", 'a', 3, 4, 5),
+            floor_item("potion", '!', 4, 5, 4),
+        ];
+        let groups = grouped_floor_items(&items);
+
+        assert_eq!(
+            groups
+                .iter()
+                .map(|(item, count)| (item.name.as_str(), *count, item.y, item.x))
+                .collect::<Vec<_>>(),
+            [
+                ("3 rations of food", 2, 4, 6),
+                ("apple", 1, 4, 5),
+                ("gold piece", 1, 4, 7),
+                ("potion", 1, 5, 4),
+            ]
+        );
+        assert_eq!(
+            floor_item_position_for_panel_row(&items, 5, 2, false),
+            Some((4, 6))
+        );
+        assert_eq!(
+            floor_item_position_for_panel_row(&items, 5, 3, false),
+            Some((4, 5))
+        );
+        for row in [0, 1, 4, 5] {
+            assert_eq!(
+                floor_item_position_for_panel_row(&items, 5, row, false),
+                None
+            );
+        }
+    }
+
+    #[test]
+    fn floor_items_panel_fits_quantities_and_reports_overflow() {
+        let items = [
+            floor_item("3 rations of food", '!', 2, 4, 6),
+            floor_item("apple", 'a', 3, 4, 5),
+            floor_item("gold piece", '$', 3, 4, 7),
+            floor_item("potion", '!', 4, 5, 4),
+            floor_item("scroll", '?', 5, 6, 4),
+        ];
+
+        assert_eq!(
+            render_floor_items_panel(Rect::new(25, 81, 30, 5), &items, false)
+                .iter()
+                .map(|line| line.trim_end())
+                .collect::<Vec<_>>(),
+            [
+                "",
+                "Floor items",
+                "! 3 rations of food (1)",
+                "a apple (1)",
+                "...3 more"
+            ]
+        );
+    }
+
+    #[test]
+    fn floor_items_panel_truncates_entries_to_sidebar_width() {
+        let items = [floor_item("long floor item with quantity", '*', 1, 4, 5)];
+
+        assert_eq!(
+            render_floor_items_panel(Rect::new(25, 81, 9, 3), &items, false),
+            ["         ", "Floor ite", "* long fl"]
+        );
+    }
+
+    #[test]
+    fn floor_items_panel_hides_entries_when_blind_but_not_for_hallucination() {
+        let items = [floor_item("copper piece", '$', 1, 4, 5)];
+        let rect = Rect::new(25, 81, 24, 5);
+
+        assert_eq!(
+            render_floor_items_panel(rect, &items, false)[2].trim_end(),
+            "$ copper piece (1)"
+        );
+        assert_eq!(
+            render_floor_items_panel(rect, &items, true)
+                .iter()
+                .map(|line| line.trim_end())
+                .collect::<Vec<_>>(),
+            ["", "Floor items", "", "", ""]
+        );
+    }
+
+    #[test]
+    fn floor_items_panel_redraws_its_rect_and_clears_stale_entries() {
+        let layout = compute_layout(SPLIT_MIN_ROWS, CLASSIC_MIN_COLS);
+        let rect = layout.floor_items.unwrap();
+        let items = [floor_item("copper piece", '$', 1, 4, 5)];
+
+        for (entries, blind) in [(&items[..], false), (&[][..], true)] {
+            let mut draws = Vec::new();
+            draw_floor_items_panel(layout, entries, blind, |row, col, line| {
+                draws.push((row, col, line.to_string()));
+            });
+            assert_eq!(draws.len(), rect.height as usize);
+            assert_eq!(
+                draws[0],
+                (rect.row, rect.col, " ".repeat(rect.width as usize))
+            );
+            assert_eq!(
+                draws[1],
+                (
+                    rect.row + 1,
+                    rect.col,
+                    format!("{:<width$}", "Floor items", width = rect.width as usize)
+                )
+            );
+            assert_eq!(
+                draws[2],
+                (
+                    rect.row + 2,
+                    rect.col,
+                    if blind {
+                        " ".repeat(rect.width as usize)
+                    } else {
+                        format!(
+                            "{:<width$}",
+                            "$ copper piece (1)",
+                            width = rect.width as usize
+                        )
+                    }
+                )
+            );
+        }
+    }
+
+    #[test]
+    fn floor_items_accessor_requires_current_light_line_of_sight_and_pickable_items() {
+        let (height, width) = (32, 30);
+        let mut cave = vec![[crate::model::Cave::default(); crate::constants::MAX_WIDTH + 1]; 33];
+        let mut items = vec![crate::dungeon::cell::test_support::blank_item(); 20];
+        put_floor_item(&mut cave, &mut items, 1, (5, 4), 100, (1, 0, 0), 0);
+        items[1].number = 3;
+        put_floor_item(&mut cave, &mut items, 2, (4, 6), 100, (0, 1, 0), 0);
+        put_floor_item(&mut cave, &mut items, 3, (4, 5), 100, (1, 0, 0), 0);
+        put_floor_item(&mut cave, &mut items, 4, (4, 7), 100, (0, 0, 1), 0);
+        put_floor_item(&mut cave, &mut items, 5, (4, 8), 100, (0, 0, 0), 0);
+        put_floor_item(&mut cave, &mut items, 6, (25, 4), 100, (1, 0, 0), 0);
+        put_floor_item(&mut cave, &mut items, 7, (24, 4), 100, (1, 0, 0), 0);
+        put_floor_item(&mut cave, &mut items, 8, (6, 4), 100, (1, 0, 0), 2);
+        for (index, item_type, y, x) in [
+            (9, crate::model::ItemType::UnseenTrap, 5, 6),
+            (10, crate::model::ItemType::SeenTrap, 5, 7),
+            (11, crate::model::ItemType::Rubble, 5, 8),
+            (12, crate::model::ItemType::OpenDoor, 6, 5),
+            (13, crate::model::ItemType::ClosedDoor, 6, 6),
+            (14, crate::model::ItemType::SecretDoor, 6, 7),
+            (15, crate::model::ItemType::UpStaircase, 6, 8),
+            (16, crate::model::ItemType::DownStaircase, 7, 4),
+            (17, crate::model::ItemType::UpSteepStaircase, 7, 5),
+            (18, crate::model::ItemType::DownSteepStaircase, 7, 6),
+            (19, crate::model::ItemType::EntranceToStore, 7, 7),
+        ] {
+            put_floor_item(
+                &mut cave,
+                &mut items,
+                index,
+                (y, x),
+                u8::from(item_type),
+                (1, 0, 0),
+                0,
+            );
+        }
+        let cells = crate::dungeon::cell::Cells {
+            cave: &mut cave,
+            items: &mut items,
+            height,
+            width,
+        };
+        let before_cave: Vec<_> = cells
+            .cave
+            .iter()
+            .map(|row| {
+                row.iter()
+                    .map(|cell| format!("{cell:?}"))
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        let before_items: Vec<_> = cells.items.iter().map(item_state).collect();
+
+        let visible =
+            visible_floor_items_from_cells(&cells, (4, 4), false, |_, _, y, x| (y, x) != (4, 5));
+        assert_eq!(visible.len(), 4);
+        assert_eq!(
+            visible
+                .iter()
+                .map(|item| (item.y, item.x))
+                .collect::<Vec<_>>(),
+            [(4, 6), (5, 4), (6, 4), (24, 4)]
+        );
+        assert!(visible.iter().all(|item| item.symbol == '$'));
+        assert_eq!(visible[0].name, "copper piece");
+        assert_eq!(visible[1].name, "3 copper pieces");
+        assert_eq!(visible[3].distance, MAX_SIGHT);
+
+        let blind = visible_floor_items_from_cells(&cells, (4, 4), true, |_, _, _, _| true);
+        assert!(blind.is_empty());
+        assert_eq!(
+            cells
+                .cave
+                .iter()
+                .map(|row| row
+                    .iter()
+                    .map(|cell| format!("{cell:?}"))
+                    .collect::<Vec<_>>())
+                .collect::<Vec<_>>(),
+            before_cave
+        );
+        assert_eq!(
+            cells.items.iter().map(item_state).collect::<Vec<_>>(),
+            before_items
         );
     }
 
