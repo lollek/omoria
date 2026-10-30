@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use crate::data::item_name::helpers::{maybe_number_of, plural_s};
-use crate::model::{Item, ItemType};
+use crate::model::{ActivationKind, Item, ItemType};
 
 pub fn dungeon_feature(item: &Item) -> String {
     let base = match item.item_type().expect("Item has no type") {
@@ -17,7 +17,27 @@ pub fn dungeon_feature(item: &Item) -> String {
         ItemType::DownStaircase => "down staircase",
         ItemType::UpSteepStaircase => "up steep staircase",
         ItemType::DownSteepStaircase => "down steep staircase",
-        ItemType::EntranceToStore => "entrance to store",
+        ItemType::EntranceToStore => match ActivationKind::from(item.subval) {
+            ActivationKind::GeneralStore => "entrance to the General Store",
+            ActivationKind::Armory => "entrance to the Armory",
+            ActivationKind::WeaponSmiths => "entrance to the Weapon Smiths",
+            ActivationKind::Temple => "entrance to the Temple",
+            ActivationKind::AlchemyShop => "entrance to the Alchemy Shop",
+            ActivationKind::MagicShop => "entrance to the Magic Shop",
+            ActivationKind::Inn => "entrance to the Inn",
+            ActivationKind::TradingPost => "entrance to the Trading Post",
+            ActivationKind::Library => "entrance to the Library",
+            ActivationKind::MusicShop => "entrance to the Music Shop",
+            ActivationKind::InsuranceShop => "entrance to the Insurance Shop",
+            ActivationKind::Bank => "entrance to the Bank",
+            ActivationKind::GemStore => "entrance to the Gem Store",
+            ActivationKind::MoneyExchange => "entrance to the Money Exchange",
+            ActivationKind::Casino => "entrance to the Casino",
+            ActivationKind::AllNiteDeli => "entrance to the All-Nite Deli",
+            ActivationKind::Fortress => "entrance to the Fortress",
+            ActivationKind::BlackMarket => "entrance to the Black Market",
+            _ => "entrance to store",
+        },
         ItemType::Rubble => "rubble",
         ItemType::Whirlpool => "whirlpool",
         _ => "dungeon feature",
@@ -68,5 +88,34 @@ mod tests {
         let mut item = base_item(ItemType::UnseenTrap);
         item.number = 0;
         assert_eq!(generate(&item), "no more unseen traps");
+    }
+
+    #[test]
+    fn store_entrances_include_their_store_type() {
+        for (subval, expected) in [
+            (101, "entrance to the General Store"),
+            (102, "entrance to the Armory"),
+            (103, "entrance to the Weapon Smiths"),
+            (104, "entrance to the Temple"),
+            (105, "entrance to the Alchemy Shop"),
+            (106, "entrance to the Magic Shop"),
+            (107, "entrance to the Inn"),
+            (108, "entrance to the Trading Post"),
+            (109, "entrance to the Library"),
+            (110, "entrance to the Music Shop"),
+            (111, "entrance to the Insurance Shop"),
+            (112, "entrance to the Bank"),
+            (113, "entrance to the Gem Store"),
+            (114, "entrance to the Money Exchange"),
+            (115, "entrance to the Casino"),
+            (116, "entrance to the All-Nite Deli"),
+            (117, "entrance to the Fortress"),
+            (118, "entrance to the Black Market"),
+        ] {
+            let mut item = base_item(ItemType::EntranceToStore);
+            item.number = 1;
+            item.subval = subval;
+            assert_eq!(generate(&item), expected);
+        }
     }
 }

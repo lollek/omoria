@@ -5,6 +5,7 @@
 October 2026
 
 * Cave walls, floors, and town buildings now use terrain colors on terminals with color support.
+* Looking at a store entrance now identifies the store or business type.
 * Map fixtures keep their semantic colors, while portable items use subtype, quality, and special-attribute colors on the map and during missile animations; differently colored items stay in separate inventory stacks.
 * `M-V` now toggles combat calculation messages showing attack rolls versus AC and applied damage versus HP.
 * Click-to-travel now shows the player at each step, moves at a visible pace, reaches the clicked destination through explored dark corridors, and reports travel outcomes.

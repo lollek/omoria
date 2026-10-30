@@ -201,7 +201,9 @@ mod tests {
         }
         fn item_name(&mut self, item: Item) -> String {
             assert_eq!(item.number, 1);
-            if item.tval == 80 {
+            if item.item_type() == Some(ItemType::EntranceToStore) {
+                crate::data::item_name::generate(&item)
+            } else if item.tval == 80 {
                 "apple".to_owned()
             } else {
                 "sword".to_owned()
@@ -222,6 +224,16 @@ mod tests {
         look(&mut context, 6, 3, 3);
         assert_eq!(context.messages, ["You see an orc.", "You see an apple."]);
         assert_eq!(context.map.items[1].number, 5);
+    }
+
+    #[test]
+    fn reports_the_type_of_store_entrance() {
+        let mut context = Context::new();
+        context.map.put(3, 4, 1, 110, b"store");
+        context.map.items[1].subval = 106;
+        context.map.cave[3][4].pl = 1;
+        look(&mut context, 6, 3, 3);
+        assert_eq!(context.messages, ["You see an entrance to the Magic Shop."]);
     }
 
     #[test]
