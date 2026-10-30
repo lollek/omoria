@@ -53,6 +53,11 @@ void prt_equipment_args(long y, long x, long start, bool clear);
 void prt_map(void);
 
 /**
+ * @brief Clears stale cells and redraws the visible map viewport.
+ */
+void redraw_map(void);
+
+/**
  *   Print character stat in given row, column
  */
 void prt_stat(const char stat_name[82], unsigned char stat, long row,

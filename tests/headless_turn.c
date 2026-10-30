@@ -251,6 +251,8 @@ static void assert_turn_limit_without_input(void) {
   assert(turn == 3 && turn_counter == 100);
   assert(script.calls == 0 && script.consumed == 0);
   assert(player_flags.blind == 98);
+  assert(headless_terminal_counts().screen_clears == 0);
+  assert(headless_terminal_counts().erasure >= 22);
   assert(headless_terminal_counts().drawing > 0);
   end_scenario();
 }

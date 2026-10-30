@@ -169,6 +169,7 @@ void headless_move_cursor(int row, int col) {
 void headless_print_equipment_block(void) { record_drawing(); }
 void headless_print_stat_block(void) { record_drawing(); }
 void headless_clear_screen(void) {
+  counts.screen_clears++;
   record_drawing();
   if (msg_flag)
     msg_print("");

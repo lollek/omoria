@@ -856,6 +856,8 @@ static void run_main_loop(main_loop_command_source source, void *context,
   /*{ Light, but do not move critters       }*/
   creatures(false);
 
+  redraw_map();
+
   /*{ Loop until dead, or new level 		}*/
   size_t turns_run = 0;
   do {

@@ -158,6 +158,19 @@ void prt_map(void) {
   LEAVE("prt_map", "");
 }
 
+void redraw_map(void) {
+  const struct viewport_state viewport =
+      C_viewport_get(panel_row, panel_col, cur_height, cur_width);
+  for (long row = viewport.map_row;
+       row < viewport.map_row + viewport.map_height; row++) {
+    if (mvhline(row, viewport.map_col, ' ', viewport.map_width) == ERR)
+      abort();
+    used_line[row + 1] = false;
+  }
+  prt_map();
+  refresh();
+}
+
 void prt_num(char header[82], const long num, const long row,
              const long column) {
   char out_val[82];

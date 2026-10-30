@@ -10,6 +10,7 @@ struct headless_terminal_counts {
   size_t input;
   size_t drawing;
   size_t erasure;
+  size_t screen_clears;
   size_t more;
 };
 
