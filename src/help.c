@@ -49,7 +49,7 @@ void help(void) {
       "^F     (Nothing               |"
       "M-F    (Nothing)              ",
       8, 1);
-  prt(" g     (Nothing)              |"
+  prt(" g     Pick up an item        |"
       " G     (Nothing)              |"
       "^G     (Nothing               |"
       "M-G    (Nothing)              ",

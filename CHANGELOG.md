@@ -4,6 +4,7 @@
 
 October 2026
 
+* Items are no longer picked up automatically when stepped on; use `g` to pick them up, while money remains automatic.
 * Cave walls, floors, and town buildings now use terrain colors on terminals with color support.
 * Looking at a store entrance now identifies the store or business type.
 * Map fixtures keep their semantic colors, while portable items use subtype, quality, and special-attribute colors on the map and during missile animations; differently colored items stay in separate inventory stacks.

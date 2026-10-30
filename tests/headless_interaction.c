@@ -149,10 +149,24 @@ static void end_pickup_scenario(void) {
   C_save_test_apply_blank();
 }
 
-static void assert_ration_pickup_scenario(void) {
+static void assert_movement_leaves_ration_on_floor(void) {
   begin_pickup_scenario();
   struct command_script script = {"l", 1, 0, 0};
   main_loop_with_commands(next_command, &script, 1);
+
+  assert(char_row == 39 && char_col == 141);
+  assert(cave[39][140].cptr == 0 && cave[39][141].cptr == 1);
+  assert(cave[39][141].tptr == ration_slot);
+  assert(inven_ctr == 0 && inventory_list == NULL);
+  assert(C_message_capture_count() == 0);
+  assert(turn == 2 && turn_counter == 101);
+  end_pickup_scenario();
+}
+
+static void assert_pickup_command_collects_ration(void) {
+  begin_pickup_scenario();
+  struct command_script script = {"lg", 2, 0, 0};
+  main_loop_with_commands(next_command, &script, 2);
 
   assert(char_row == 39 && char_col == 141);
   assert(cave[39][140].cptr == 0 && cave[39][141].cptr == 1);
@@ -163,9 +177,9 @@ static void assert_ration_pickup_scenario(void) {
   assert(freed == ration_slot);
   pusht(freed);
 
-  assert(turn == 2 && turn_counter == 101);
+  assert(turn == 3 && turn_counter == 102);
   assert(!reset_flag);
-  assert(script.calls == 1 && script.consumed == 1);
+  assert(script.calls == 2 && script.consumed == 2);
 
   assert(inven_ctr == 1);
   assert(inven_weight == RATION_WEIGHT);
@@ -174,14 +188,38 @@ static void assert_ration_pickup_scenario(void) {
   assert(inventory_list->data.subval == RATION_SUBVAL);
   assert(inventory_list->data.number == 1);
 
-  assert(C_message_capture_count() == 1);
   char message[120];
-  assert(C_message_capture_get(0, message, sizeof(message)));
-  assert(strcmp(message, PICKUP_MESSAGE) == 0);
+  size_t pickup_messages = 0;
+  for (size_t index = 0; index < C_message_capture_count(); index++) {
+    assert(C_message_capture_get(index, message, sizeof(message)));
+    if (strcmp(message, PICKUP_MESSAGE) == 0) {
+      pickup_messages++;
+    }
+  }
+  assert(pickup_messages == 1);
 
   const struct headless_terminal_counts terminal = headless_terminal_counts();
   assert(terminal.drawing > 0 && terminal.input == 0);
 
+  end_pickup_scenario();
+}
+
+static void assert_money_is_still_auto_picked_up(void) {
+  begin_pickup_scenario();
+  t_list[ration_slot].tval = valuable_metal;
+  t_list[ration_slot].level = GOLD;
+  t_list[ration_slot].number = 1;
+  t_list[ration_slot].weight = 1;
+  strcpy(t_list[ration_slot].name, "& gold piece~");
+  const long gold_before = player_money[GOLD];
+
+  struct command_script script = {"l", 1, 0, 0};
+  main_loop_with_commands(next_command, &script, 1);
+
+  assert(cave[39][141].tptr == 0);
+  assert(player_money[GOLD] == gold_before + 1);
+  assert(inven_ctr == 0 && inventory_list == NULL);
+  assert(C_message_capture_count() == 1);
   end_pickup_scenario();
 }
 
@@ -1317,7 +1355,9 @@ int main(void) {
     assert_toggle_light_scenario(0, 0, false, "You are not carrying a light.");
     assert_toggle_light_scenario(15, 0, true, "Your light has gone out!");
     assert_toggle_light_scenario(15, -1, false, "Your light has gone out!");
-    assert_ration_pickup_scenario();
+    assert_movement_leaves_ration_on_floor();
+    assert_pickup_command_collects_ration();
+    assert_money_is_still_auto_picked_up();
     assert_color_key_stack_scenario();
     assert_refill_scenario(1, 100, 7600, 2);
     assert_refill_scenario(9, 14000, 15000, 1);

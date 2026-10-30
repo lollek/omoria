@@ -49,11 +49,8 @@ void C_init_viewport(const bool at_end) {
   cave_flag = true;
 }
 
-/*{ Player is on an object.  Many things can happen BASED -RAK-   }*/
-/*{ on the TVAL of the object.  Traps are set off, money and most }*/
-/*{ objects are picked up.  Some objects, such as open doors, just}*/
-/*{ sit there...                                                  }*/
-static void carry(const long y, const long x) {
+/* Traps are triggered and money is collected on movement. */
+static void carry(const long y, const long x, const bool pickup_objects) {
 
   ENTER(("carry", "%d, %d", y, x));
 
@@ -67,7 +64,9 @@ static void carry(const long y, const long x) {
 
   if (is_in(t_list[cave[y][x].tptr].tval, trap_set)) {
     hit_trap(&y, &x);
-  } else if (t_list[cave[y][x].tptr].tval <= valuable_metal) {
+  } else if (t_list[cave[y][x].tptr].tval == valuable_metal ||
+             (pickup_objects &&
+              t_list[cave[y][x].tptr].tval < valuable_metal)) {
 
     /*{ Attempt to pick up an object.         }*/
     if (inven_check_num()) {      /*{ Too many objects?     }*/
@@ -131,6 +130,22 @@ static void carry(const long y, const long x) {
     }
   }
   LEAVE("carry", "");
+}
+
+void player_action_pickup(void) {
+  const long y = char_row;
+  const long x = char_col;
+  const long item_index = cave[y][x].tptr;
+  find_flag = false;
+
+  if (item_index == 0 || is_in(t_list[item_index].tval, trap_set) ||
+      t_list[item_index].tval > valuable_metal) {
+    msg_print("There is nothing here to pick up.");
+    return;
+  }
+
+  carry(y, x, true);
+  draw_cave();
 }
 
 /*        { Turns off Find_flag if something interesting appears  -RAK- * }*/
@@ -372,7 +387,7 @@ static void _move_char(long dir) {
 
   /* An object is beneath him? */
   if (cave[test_row][test_col].tptr > 0)
-    carry(test_row, test_col);
+    carry(test_row, test_col, false);
 
   /* Move the light source */
   dungeon_light_move(char_row, char_col, test_row, test_col);

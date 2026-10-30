@@ -424,6 +424,9 @@ void command(long *command) {
   case 'f':
     player_action_bash();
     break;
+  case 'g':
+    player_action_pickup();
+    break;
   case 'h':
     player_action_move(4);
     break;

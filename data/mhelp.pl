@@ -973,8 +973,9 @@ __END__
  Most cursed items  have been placed there by evil  sorcerers, who
  enjoy a good joke when it gets you killed.
 .p
-      You pick up objects by moving on top of them.  You can carry
- as many different items in your backpack as you like, but you are
+      Use the 'g' command to pick up objects underfoot.  Money is
+ collected automatically when you move over it.  You can carry as
+ many different items in your backpack as you like, but you are
  restricted by the amount of weight your character can carry. Your
  character's  weight  limit  is  determined by his  Strength.  But
  there are magical items  to increase your  carrying capacity. Any

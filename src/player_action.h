@@ -12,6 +12,11 @@ bool player_action_attack(long y, long x);
  */
 void player_action_move(long dir);
 
+/**
+ * @brief Picks up an item beneath the player.
+ */
+void player_action_pickup(void);
+
 enum player_move_kind {
 	PLAYER_MOVE_OUT_OF_BOUNDS = 0,
 	PLAYER_MOVE_ATTACK = 1,
