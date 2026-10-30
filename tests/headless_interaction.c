@@ -1143,6 +1143,7 @@ static bool run_bash_door_scenario(uint64_t seed) {
   item->tval = closed_door;
   item->p1 = 0;
   cave[row][col].fopen = false;
+  player_wt = 200;
 
   C_seeded_rng_end();
   C_seeded_rng_begin(seed);
