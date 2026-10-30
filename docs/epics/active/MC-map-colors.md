@@ -347,7 +347,7 @@ unavailable.
 
 ### MC4. Monster Colors (fan-out)
 
-Status: open. Depends on: MC1, MC3 (for `misc.c` order).
+Status: done (2026-10-30). Depends on: MC1, MC3 (for `misc.c` order).
 Size: L. Complexity: Medium. Agent: standard.
 
 Owns: [monster_template/](../../../src/generate_monster/monster_template/)
@@ -379,6 +379,29 @@ Acceptance checks:
 * Changelog entry: monsters are colored.
 
 Out of scope: monster recall text; the sidebar.
+
+Implementation: `MonsterTemplate.color` is assigned explicitly for all 392
+templates; the Glitch fallback uses `MonsterMagenta`. The new
+`monster_template_get_glyph` combines each template's symbol and color
+attribute. `loc_symbol`, creature visibility redraws, and direct spell
+redraws use the colored glyph, while `monster_template_get_symbol` remains
+plain for matching and recall text.
+
+Verification: RED
+`cargo test --lib generate_monster::monster_template::interop::tests::get_glyph_keeps_symbol_for_each_template_and_oob`
+failed because the color field and glyph accessor did not exist. GREEN
+`cargo test --lib generate_monster::monster_template` passed (111 tests).
+`make test-headless` verifies visible and unseen map glyphs plus movement and
+spell redraw character/pair attributes on a file-backed 256-color screen.
+T1 `CARGO_TERM_QUIET=true make -s check-fast` and T2
+`CARGO_TERM_QUIET=true make -s check` passed (949 Rust tests and all
+available C harnesses). Existing Clippy warnings remain in mouse travel,
+viewport, and key translation; existing C signedness warnings remain in
+`headless_turn.c`.
+
+Unverified: real-terminal appearance; individual spell animation paths beyond
+the direct detect-creatures redraw were not exercised (they use the same
+colored-glyph accessor).
 
 ### MC5. Sidebar Monster Colors (fan-out)
 

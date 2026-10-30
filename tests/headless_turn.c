@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "../src/constants.h"
+#include "../src/creature.h"
 #include "../src/floor.h"
 #include "../src/map_colors.h"
 #include "../src/main_loop/main_loop.h"
@@ -12,6 +13,7 @@
 #include "../src/model_item.h"
 #include "../src/player.h"
 #include "../src/random.h"
+#include "../src/spells.h"
 #include "../src/term.h"
 #include "../src/variables.h"
 #include "support/headless_scenario.h"
@@ -222,7 +224,39 @@ static void assert_terrain_symbols_keep_glyphs_and_attributes(void) {
   memset(&m_list[2], 0, sizeof(m_list[2]));
   assert((loc_symbol(1, 1) & 0x7F) == '#');
   assert((loc_symbol(1, 1) & A_COLOR) == (COLOR_PAIR(17) & A_COLOR));
+  assert((get_loc_symbol(1, 1) & 0x7F) == '#');
+
+  cave[3][1].cptr = 2;
+  cave[3][1].fval = ft_dark_open_floor;
+  cave[3][1].is_permanently_lit = true;
+  m_list[2].mptr = 5;
+  m_list[2].is_seen = true;
+  const chtype monster_glyph = get_loc_symbol(3, 1);
+  assert((monster_glyph & 0x7F) == 'c');
+  assert((monster_glyph & A_COLOR) == (COLOR_PAIR(44) & A_COLOR));
   assert(get_loc_symbol(char_row, char_col) == '@');
+
+  cave[3][1].cptr = 0;
+  cave[3][4].cptr = 2;
+  cave[3][4].is_permanently_lit = true;
+  m_list[2].fy = 3;
+  m_list[2].fx = 4;
+  m_list[2].is_seen = false;
+  panel_col_prt = -11;
+  player_flags.blind = 0;
+  player_flags.status &= ~IS_BLIND;
+  muptr = 2;
+  creatures(false);
+  const chtype movement_glyph = mvinch(2, 14);
+  assert((movement_glyph & 0x7F) == 'c');
+  assert((movement_glyph & A_COLOR) == (COLOR_PAIR(44) & A_COLOR));
+
+  (void)mvaddch(2, 14, ' ');
+  assert(detect_creatures(SE_MONSTER));
+  const chtype spell_glyph = mvinch(2, 14);
+  assert((spell_glyph & 0x7F) == 'c');
+  assert((spell_glyph & A_COLOR) == (COLOR_PAIR(44) & A_COLOR));
+  muptr = 0;
   end_scenario();
 
   endwin();

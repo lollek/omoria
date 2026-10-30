@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <curses.h>
 
 #define MAX_MONS_LEVEL 100 /*{ Maximum level of creatures		} */
 
@@ -60,6 +61,12 @@ long monster_template_count(void);
 
 const char *monster_template_get_name(long index);
 char monster_template_get_symbol(long index);
+/**
+ * @brief Return the map glyph with the monster template's color attribute.
+ * @param index Monster template index.
+ * @return Colored map glyph, or the colored Glitch glyph for an invalid index.
+ */
+chtype monster_template_get_glyph(long index);
 int8_t monster_template_get_level(long index);
 int8_t monster_template_get_speed(long index);
 uint8_t monster_template_get_ac(long index);

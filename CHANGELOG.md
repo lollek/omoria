@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Monsters now keep their assigned colors on the map and during movement and spell animations.
+
 ## 5-alpha
 
 October 2026

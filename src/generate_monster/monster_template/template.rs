@@ -5,6 +5,7 @@
 #![allow(clippy::tabs_in_doc_comments)]
 
 use super::MonsterAttribute;
+use crate::user_interface::map_colors::MapColor;
 
 /// Monster template (static definition).
 ///
@@ -113,6 +114,8 @@ pub struct MonsterTemplate {
     pub speed: i8,
     /// Symbol displayed on map.
     pub symbol: char,
+    /// Map color used whenever this monster is drawn.
+    pub color: MapColor,
     /// Hit dice (e.g., "20d8").
     pub hit_die: &'static str,
     /// Attack damage string (e.g., "1 1 3d3|1 1 4d4").
