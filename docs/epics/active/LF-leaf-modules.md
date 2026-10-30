@@ -80,7 +80,7 @@ Acceptance checks:
 
 ### LF5. Help
 
-Status: open. Depends on: none.
+Status: done. Depends on: none.
 Size: S. Complexity: Medium. Agent: standard.
 
 Owns: [help.c](../../../src/help.c), a new Rust help module.
@@ -93,6 +93,17 @@ Acceptance checks:
 
 * L0: every `ident_char` key returns the same description as C.
 * L0: help pages match the C text.
+
+Implementation: Rust owns both help-page text/rows and the pure
+environment-and-character description lookup. C retains the terminal loops,
+prompts, dynamic player-name marker, and `moria_help` fork/curses flow.
+
+Verification: `cargo test help::tests --lib`, `make check-fast`,
+`make test-messages`, and `CARGO_TERM_QUIET=true make -s check` passed (951
+Rust tests and all C harnesses).
+
+Unverified: interactive help rendering and the `moria_help` subprocess path
+were not exercised; the C/Rust application link passed.
 
 ### LF6. Kickout Checks (pathfinder: F-CLOCK)
 
