@@ -1,15 +1,12 @@
 #include <curses.h>
-#include <math.h>
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/wait.h>
-#include <unistd.h> /* for ftruncate, usleep */
+#include <unistd.h>
 
 #include "configure.h"
-#include "constants.h"
 #include "debug.h"
+#include "help.h"
 #include "io.h"
 #include "player.h"
 #include "screen.h"
@@ -17,122 +14,20 @@
 #include "variables.h"
 
 void help(void) {
-  /*{ Help for available commands }*/
+  int line;
 
   C_clear_screen();
-  prt(" Movement keys: hjklyubn. Dot to wait one turn."
-      " ~ means a direction. Hold shift to run   ",
-      1, 1);
-
-  prt(" a     Aim projectile         |"
-      " A     Aim (throw) an item    |"
-      "^A     Special abilities      |"
-      "M-A    Armor (manual)         ",
-      4, 1);
-  prt(" c ~   Close a door           |"
-      " C     Display character      |"
-      "^C     Quit the game          |"
-      "M-C    Class restrictions     ",
-      5, 1);
-  prt(" d     Drop an item           |"
-      " D ~   Disarm a trap/chest    |"
-      "^D     Show game date         |"
-      "M-D    (Nothing)              ",
-      6, 1);
-  prt(" e     (Nothing)              |"
-      " E     Eat some food          |"
-      "^E     (Nothing               |"
-      "M-E    Experience (manual)    ",
-      7, 1);
-  prt(" f ~   Force / bash           |"
-      " F     Fill lamp with oil     |"
-      "^F     (Nothing               |"
-      "M-F    (Nothing)              ",
-      8, 1);
-  prt(" g     Pick up an item        |"
-      " G     (Nothing)              |"
-      "^G     (Nothing               |"
-      "M-G    (Nothing)              ",
-      9, 1);
-  prt(" i     Inventory list         |"
-      " I     Inven of one item type |"
-      "^I     Use instrument         |"
-      "M-I    Inventory list (old)   ",
-      10, 1);
-  prt(" m     Magic / Music / Monk   |"
-      " M     (Nothing)              |"
-      "^M     (Nothing)              |"
-      "M-M    Show manual            ",
-      11, 1);
-  prt(" o ~   Open a door or chest   |"
-      " O     (Nothing)              |"
-      "^O     (Nothing               |"
-      "M-O    (Nothing)              ",
-      12, 1);
-  prt(" p     Prayer / Play          |"
-      " P     Print spell list       |"
-      "^P     Print last messages    |"
-      "M-P    (Nothing)              ",
-      13, 1);
-  prt(" q     Quaff a potion         |"
-      " Q     See current quest      |"
-      "^Q     (Nothing               |"
-      "M-Q    (Nothing)              ",
-      14, 1);
-  prt(" r     Read a scroll          |"
-      " R     Rest for a while       |"
-      "^R     Redraw the screen      |"
-      "M-R    Toggle terse mode      ",
-      15, 1);
-  prt(" s     Search for hidden doors|"
-      " S     Search mode            |"
-      "^S ~   Spike a door           |"
-      "M-S    Save and quit          ",
-      16, 1);
-  prt(" t     Take off an item       |"
-      " T ~   Tunnel                 |"
-      "^T     (Nothing)              |"
-      "M-T    Show real world time   ",
-      17, 1);
-  prt(" v     Version and credits    |"
-      " V     (Nothing)              |"
-      "^V     (Nothing               |"
-      "M-V    Toggle combat calcs    ",
-      18, 1);
-  prt(" w     Wear/Wield an item     |"
-      " W     (Nothing)              |"
-      "^W     (Nothing               |"
-      "M-W    Weapons (manual)       ",
-      19, 1);
-  prt(" x     Exchange weapon        |"
-      " X     Toggle light source    |"
-      "^X     Examine a direction    |"
-      "M-X    (Nothing)              ",
-      20, 1);
-  prt(" z     Zap a wand             |"
-      " Z     Zap a staff            |"
-      "^Z     (Nothing               |"
-      "M-Z    (Nothing)              ",
-      21, 1);
-  prt(" <     Go up an up-staircase  |"
-      " >     Go down a down-staircase",
-      22, 1);
-  prt(" /     Identify a character   |"
-      " ?     Display this panel      ",
-      23, 1);
+  for (line = 0; line < C_help_page_line_count(HELP_PAGE_COMMANDS); ++line) {
+    prt(C_help_page_line_text(HELP_PAGE_COMMANDS, line),
+        C_help_page_line_row(HELP_PAGE_COMMANDS, line), 1);
+  }
   pause_game(24);
 
   C_clear_screen();
-  prt("Directory of Shops:                                ", 1, 1);
-  prt("     A   Alchemy Shop                M   Magic Shop", 3, 1);
-  prt("     B   Bank                        P   Trading Post", 4, 1);
-  prt("     C   Casino                      Q   Questor's Home", 5, 1);
-  prt("     D   All-Nite Deli               R   Armory", 6, 1);
-  prt("     G   General Store               T   Temple", 7, 1);
-  prt("     I   Inn                         U   Music Shop", 8, 1);
-  prt("     J   Gem Shop                    W   Weapon Smith", 9, 1);
-  prt("     L   Library                     X   Money Exchange", 10, 1);
-  prt("     +   Unknown", 11, 1);
+  for (line = 0; line < C_help_page_line_count(HELP_PAGE_SHOPS); ++line) {
+    prt(C_help_page_line_text(HELP_PAGE_SHOPS, line),
+        C_help_page_line_row(HELP_PAGE_SHOPS, line), 1);
+  }
   pause_game(24);
   draw_cave();
 }
@@ -189,7 +84,8 @@ void moria_help(char const *const help_level) {
 }
 
 void ident_char(void) {
-  char command;
+  char environment;
+  char character;
   bool exit_flag, bleah_flag;
 
   do {
@@ -197,8 +93,8 @@ void ident_char(void) {
     bleah_flag = true;
     msg_print("Identify letter for what environ? (<t>own, "
               "<d>ungeon, <w>ater) ");
-    if (get_com("", &command)) {
-      switch (command) {
+    if (get_com("", &environment)) {
+      switch (environment) {
       case 't':
       case 'd':
       case 'w':
@@ -211,389 +107,11 @@ void ident_char(void) {
     }
   } while (!exit_flag);
 
-  if (bleah_flag) {
-    switch (command) {
-    case 't':
-      if (get_com("Enter character to be identified : ", &command)) {
-        switch (command) {
-        case '#':
-          prt("# - A stone wall.", 1, 1);
-          break;
-        case '+':
-          prt("+ - Entrance to a building.", 1, 1);
-          break;
-        case '.':
-          prt(". - Ground.", 1, 1);
-          break;
-        case '>':
-          prt("> - A down staircase.", 1, 1);
-          break;
-        case '@':
-          prt(player_name, 1, 1);
-          break;
-        case 'p':
-          prt("p - A townsperson.", 1, 1);
-          break;
-        case 'A':
-          prt("A - Alchemy Shop.", 1, 1);
-          break;
-        case 'B':
-          prt("B - First Moria National Bank.", 1, 1);
-          break;
-        case 'C':
-          prt("C - Casino.", 1, 1);
-          break;
-        case 'D':
-          prt("D - All-Nite Deli", 1, 1);
-          break;
-        case 'G':
-          prt("G - General Store.", 1, 1);
-          break;
-        case 'I':
-          prt("I - Inn.", 1, 1);
-          break;
-        case 'J':
-          prt("J - Gem and Jewelry Store.", 1, 1);
-          break;
-        case 'L':
-          prt("L - Library.", 1, 1);
-          break;
-        case 'M':
-          prt("M - Magic Shop.", 1, 1);
-          break;
-        case 'N':
-          prt("N - Insurance Shop.", 1, 1);
-          break;
-        case 'P':
-          prt("P - Trading Post.", 1, 1);
-          break;
-        case 'Q':
-          prt("Q - Home of the Questor.", 1, 1);
-          break;
-        case 'R':
-          prt("R - Armory.", 1, 1);
-          break;
-        case 'T':
-          prt("T - Temple.", 1, 1);
-          break;
-        case 'U':
-          prt("U - Music Shop.", 1, 1);
-          break;
-        case 'W':
-          prt("W - Weapon Smith.", 1, 1);
-          break;
-        case 'X':
-          prt("X - Money Exchange.", 1, 1);
-          break;
-        default:
-          prt("Not normally used.", 1, 1);
-          break;
-        }
-      }
-      break;
-
-    case 'd':
-      if (get_com("Enter character to be identified : ", &command)) {
-        switch (command) {
-        case ' ':
-          prt("  - An open pit.", 1, 1);
-          break;
-        case '!':
-          prt("! - A potion.", 1, 1);
-          break;
-        case '"':
-          prt("\" - An amulet, periapt, or "
-              "necklace.",
-              1, 1);
-          break;
-        case '#':
-          prt("# - A stone wall.", 1, 1);
-          break;
-        case '$':
-          prt("$ - Treasure.", 1, 1);
-          break;
-        case '%':
-          prt("% - A musical instrument or song "
-              "book.",
-              1, 1);
-          break;
-        case '&':
-          prt("& - Treasure chest.", 1, 1);
-          break;
-        case '\'':
-          prt("' - An open door.", 1, 1);
-          break;
-        case '(':
-          prt("( - Soft armor.", 1, 1);
-          break;
-        case ')':
-          prt(") - A shield.", 1, 1);
-          break;
-        case '*':
-          prt("* - Gems or Jewelry.", 1, 1);
-          break;
-        case '+':
-          prt("+ - A closed door.", 1, 1);
-          break;
-        case ',':
-          prt(", - Food or mushroom patch.", 1, 1);
-          break;
-        case '-':
-          prt("- - A wand", 1, 1);
-          break;
-        case '.':
-          prt(". - Floor.", 1, 1);
-          break;
-        case '/':
-          prt("/ - A pole weapon.", 1, 1);
-          break;
-        case ':':
-          prt(": - Rubble.", 1, 1);
-          break;
-        case ';':
-          prt("; - A loose rock.", 1, 1);
-          break;
-        case '<':
-          prt("< - An up staircase.", 1, 1);
-          break;
-        case '=':
-          prt("= - A ring.", 1, 1);
-          break;
-        case '>':
-          prt("> - A down staircase.", 1, 1);
-          break;
-        case '?':
-          prt("? - A scroll.", 1, 1);
-          break;
-        case '@':
-          prt(player_name, 1, 1);
-          break;
-        case 'A':
-          prt("A - Giant Ant Lion.", 1, 1);
-          break;
-        case 'B':
-          prt("B - Demon.", 1, 1);
-          break;
-        case 'C':
-          prt("C - Gelentanious Cube.", 1, 1);
-          break;
-        case 'D':
-          prt("D - An Ancient Dragon (Beware).", 1, 1);
-          break;
-        case 'E':
-          prt("E - Elemental.", 1, 1);
-          break;
-        case 'F':
-          prt("F - Giant Fly or Faerie Dragon.", 1, 1);
-          break;
-        case 'G':
-          prt("G - Ghost.", 1, 1);
-          break;
-        case 'H':
-          prt("H - Hobgoblin.", 1, 1);
-          break;
-        case 'J':
-          prt("J - Jelly.", 1, 1);
-          break;
-        case 'K':
-          prt("K - Killer Beetle.", 1, 1);
-          break;
-        case 'L':
-          prt("L - Lich.", 1, 1);
-          break;
-        case 'M':
-          prt("M - Mummy.", 1, 1);
-          break;
-        case 'N':
-          prt("N - Nymph", 1, 1);
-          break;
-        case 'O':
-          prt("O - Ooze.", 1, 1);
-          break;
-        case 'P':
-          prt("P - Giant humanoid.", 1, 1);
-          break;
-        case 'Q':
-          prt("Q - Quylthulg (Pulsing Flesh "
-              "Mound).",
-              1, 1);
-          break;
-        case 'R':
-          prt("R - Reptile.", 1, 1);
-          break;
-        case 'S':
-          prt("S - Giant Scorpion/Sandgorgon.", 1, 1);
-          break;
-        case 'T':
-          prt("T - Troll.", 1, 1);
-          break;
-        case 'U':
-          prt("U - Umber Hulk.", 1, 1);
-          break;
-        case 'V':
-          prt("V - Vampire.", 1, 1);
-          break;
-        case 'W':
-          prt("W - Wight or Wraith.", 1, 1);
-          break;
-        case 'X':
-          prt("X - Xorn.", 1, 1);
-          break;
-        case 'Y':
-          prt("Y - Yeti.", 1, 1);
-          break;
-        case 'Z':
-          prt("Z - Nazgul", 1, 1);
-          break;
-        case '[':
-          prt("[ - Hard armor.", 1, 1);
-          break;
-        case '\\':
-          prt("\\ - A hafted weapon.", 1, 1);
-          break;
-        case ']':
-          prt("] - Misc. armor.", 1, 1);
-          break;
-        case '^':
-          prt("^ - A trap.", 1, 1);
-          break;
-        case '_':
-          prt("_ - A staff.", 1, 1);
-          break;
-        case '`':
-          prt("` - Water.", 1, 1);
-          break;
-        case 'a':
-          prt("a - Amphibian.", 1, 1);
-          break;
-        case 'b':
-          prt("b - Giant Bat.", 1, 1);
-          break;
-        case 'c':
-          prt("c - Insect.", 1, 1);
-          break;
-        case 'd':
-          prt("d - Dragon.", 1, 1);
-          break;
-        case 'e':
-          prt("e - Floating Eye.", 1, 1);
-          break;
-        case 'f':
-          prt("f - Fish.", 1, 1);
-          break;
-        case 'g':
-          prt("g - Golem.", 1, 1);
-          break;
-        case 'h':
-          prt("h - Harpy.", 1, 1);
-          break;
-        case 'i':
-          prt("i - Icky Thing.", 1, 1);
-          break;
-        case 'j':
-          prt("j - Canine.", 1, 1);
-          break;
-        case 'k':
-          prt("k - Kobold.", 1, 1);
-          break;
-        case 'l':
-          prt("l - Giant Lice.", 1, 1);
-          break;
-        case 'm':
-          prt("m - Mold.", 1, 1);
-          break;
-        case 'n':
-          prt("n - Naga.", 1, 1);
-          break;
-        case 'o':
-          prt("o - Orc or Ogre.", 1, 1);
-          break;
-        case 'p':
-          prt("p - Person (Humanoid).", 1, 1);
-          break;
-        case 'q':
-          prt("q - Quasit.", 1, 1);
-          break;
-        case 'r':
-          prt("r - Rodent.", 1, 1);
-          break;
-        case 's':
-          prt("s - Skeleton.", 1, 1);
-          break;
-        case 't':
-          prt("t - Giant tick.", 1, 1);
-          break;
-        case 'v':
-          prt("v - Swirling Vapor.", 1, 1);
-          break;
-        case 'w':
-          prt("w - Worm(s).", 1, 1);
-          break;
-        case 'x':
-          prt("x - Spider.", 1, 1);
-          break;
-        case 'y':
-          prt("y - Yeek.", 1, 1);
-          break;
-        case 'z':
-          prt("z - Zombie.", 1, 1);
-          break;
-        case '{':
-          prt("{ - Arrow, bolt, or bullet.", 1, 1);
-          break;
-        case '|':
-          prt("| - A sword or dagger.", 1, 1);
-          break;
-        case '}':
-          prt("} - Bow, crossbow, or sling.", 1, 1);
-          break;
-        case '~':
-          prt("~ - Miscellaneous item.", 1, 1);
-          break;
-        default:
-          prt("Not Used.", 1, 1);
-        }
-      }
-      break;
-
-    case 'w':
-      if (get_com("Enter character to be identified : ", &command)) {
-        switch (command) {
-        case 'a':
-          prt("a  - Amphibian.", 1, 1);
-          break;
-        case 'f':
-          prt("f  - Fish.", 1, 1);
-          break;
-        case 'l':
-          prt("l  - Leach.", 1, 1);
-          break;
-        case 'm':
-          prt("m  - Man-o-War.", 1, 1);
-          break;
-        case 'w':
-          prt("w  - Kelp.", 1, 1);
-          break;
-        case 'C':
-          prt("C  - Alligator or Crocodile.", 1, 1);
-          break;
-        case 'D':
-          prt("D  - Dinosaur.", 1, 1);
-          break;
-        case 'H':
-          prt("H  - Hippo.", 1, 1);
-          break;
-        case 'R':
-          prt("R  - Remora.", 1, 1);
-          break;
-        case 'S':
-          prt("S  - Shark.", 1, 1);
-          break;
-        default:
-          prt("Not Used.", 1, 1);
-        }
-      }
-      break;
+  if (bleah_flag && get_com("Enter character to be identified : ", &character)) {
+    if (character == '@') {
+      prt(player_name, 1, 1);
+    } else {
+      prt(C_ident_char_description(environment, character), 1, 1);
     }
   }
 }

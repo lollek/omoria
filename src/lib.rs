@@ -28,6 +28,7 @@ pub mod effects;
 pub mod equipment;
 pub mod error;
 pub mod flow;
+pub mod help;
 pub mod inventory;
 pub mod io;
 pub mod key_translation;
