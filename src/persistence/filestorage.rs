@@ -106,7 +106,7 @@ impl persistence::PersistenceEngine for FileStorageEngine {
 
     fn load_save(&mut self, name: &str, uid: i64) -> Result<SaveRecord, CharacterStorageError> {
         let encoded = fs::read_to_string(save_file_path(name, uid)).map_err(character_io_error)?;
-        json::decode(&encoded).map_err(|err| CharacterStorageError::Codec(err.to_string()))
+        json::decode_compact(&encoded).map_err(|err| CharacterStorageError::Codec(err.to_string()))
     }
 
     fn write_save(
@@ -116,7 +116,7 @@ impl persistence::PersistenceEngine for FileStorageEngine {
         record: &SaveRecord,
     ) -> Result<(), CharacterStorageError> {
         let path = save_file_path(name, uid);
-        encode_then_write(record, |encoded| {
+        encode_then_write(&CompactSave(record), |encoded| {
             atomic_write_save_with(std::path::Path::new(&path), |file| {
                 write_save_bytes(file, encoded)
             })
@@ -186,6 +186,17 @@ fn atomic_write_save_with(
         let _ = fs::remove_file(temporary_path);
     }
     result
+}
+
+struct CompactSave<'a>(&'a SaveRecord);
+
+impl serde::Serialize for CompactSave<'_> {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let encoded = json::encode_compact(self.0).map_err(serde::ser::Error::custom)?;
+        let value: serde_json::Value =
+            serde_json::from_str(&encoded).map_err(serde::ser::Error::custom)?;
+        value.serialize(serializer)
+    }
 }
 
 fn encode_then_write<T: serde::Serialize + ?Sized>(
