@@ -34,5 +34,6 @@ Convert the specified function from direct `rand::thread_rng()` / `rand::random(
 ### 4. REFACTOR phase
 - Clean up any redundancy.
 - Add doc comments to both functions (wrapper references the `_with_rng` variant).
-- Verify the full gate with `make check`.
-- Report RED evidence, changed files, gate results, and unverified integration boundaries.
+- Rerun the focused T0 test, then verify T1 with `make check-fast` and any C harnesses mapped to touched C boundaries in [testing.md](../../../docs/testing.md).
+- Run the full T2 gate with `make check` once before each commit/PR and always in CI.
+- Report RED evidence, changed files, T1/T2 results, and unverified integration boundaries.

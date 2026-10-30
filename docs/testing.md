@@ -18,21 +18,27 @@ The `make check` gate runs:
 cargo fmt --check
 cargo clippy --all-targets
 cargo test
-make
+make omoria
 make test-movement
+make test-mouse-input
 make test-messages
 make test-effects
 make test-hunger
+make test-quaff
+make test-eat
 make test-save
+make test-traps
 make test-headless
 make test-headless-interaction
 make test-headless-persistence
 ```
 
 This checks formatting, Rust linting and tests, and the full C/Rust build and
-link, plus terminal-free C checks for movement, messages, damage effects,
-hunger recalculation, save-record apply, bounded main-loop control, scripted
-movement, ration pickup, and save/reload.
+link, plus terminal-free C checks for movement, mouse input, messages, damage
+effects, hunger recalculation, potion use, eating, save-record apply, trap
+dispatch, bounded main-loop control, scripted movement, ration pickup, and
+save/reload. `test-traps` is skipped on macOS because its C caller doubles need
+Linux GNU ld `--wrap`.
 The interaction harness also verifies close-door targets through the production
 C/Rust boundary with isolated globals, captured messages, and headless drawing.
 Clippy does not build the `save-test-support` feature, so the test-support
@@ -45,6 +51,37 @@ Before changing the allowed legacy paths, add focused tests for ability input,
 flag-width assumptions, RNG rounding, terminal input-buffer validity, and C
 string-pointer contracts. In particular, terminal input currently casts an
 immutable buffer to a mutable C pointer; the allowance does not make that safe.
+
+## Change Verification Tiers
+
+Use the smallest tier that covers the current step. T0/T1/T2 describe how much
+to run; the L0-L3 levels below describe what kind of behavior a test covers.
+
+| Tier | When | Command | Scope |
+| --- | --- | --- | --- |
+| T0 focused | Each RED/GREEN/REFACTOR edit | `cargo test <module::filter>` | Focused tests for the touched Rust behavior. Docs/configuration-only edits use relevant structural checks instead of artificial gameplay tests. |
+| T1 fast | End of each behavior or delegated task | `make check-fast`, plus the mapped C harnesses for touched C boundaries | Formatting, Clippy, all Rust tests, and the full C/Rust application build; `check-fast` itself runs no C harnesses. |
+| T2 full | Once before each commit/PR, and always in CI | `make check` | The complete C harness suite and all T1 checks. |
+
+`make check` is not required for every behavior change; use T0 while editing and
+T1 at the end of the behavior. Select C harnesses by the source area touched:
+
+| Source area or boundary | C harness target(s) |
+| --- | --- |
+| Movement and step resolution | `test-movement` |
+| Mouse input | `test-mouse-input` |
+| Messages, terminal drawing, and layout | `test-messages` |
+| Damage effects | `test-effects`; `test-traps` when trap dispatch/effects are touched (Linux only) |
+| Hunger | `test-hunger` |
+| Potions and quaffing | `test-quaff` |
+| Food and eating | `test-eat` |
+| Save record application | `test-save` |
+| Main loop, commands, and bounded turns | `test-headless` |
+| Player interactions and scripted input | `test-headless-interaction` |
+| Save/reload through the main loop | `test-headless-persistence` |
+
+When a change crosses multiple listed boundaries, run each applicable harness.
+The table maps common ownership areas, not every possible C caller.
 
 ## Verification Levels
 

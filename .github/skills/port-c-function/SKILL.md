@@ -38,7 +38,8 @@ Port the specified C function to Rust following the project's strict TDD workflo
 - Rerun the focused tests; continue within the approved scope.
 
 ### 6. Finish
-- Run `make check` to verify formatting, Clippy, all Rust tests, and the C/Rust build.
+- Run T1: `make check-fast` plus the C harness targets mapped to touched C boundaries in [testing.md](../../../docs/testing.md).
+- Run T2 `make check` once before each commit/PR and always in CI; this verifies formatting, Clippy, all Rust tests, and the full C/Rust harness suite.
 - Check for new compiler warnings.
 - Update `CHANGELOG.md` under `## Unreleased` only if observable runtime behavior changes, following the [project changelog policy](../../copilot-instructions.md#definition-of-done-per-change--per-behavior). Behavior-preserving ports do not need an entry.
-- Update your story card's `Status:` line in the backlog; report RED evidence and untested integration boundaries.
+- Update your story card's `Status:` line in the backlog; report RED evidence, T1/T2 results, and untested integration boundaries.

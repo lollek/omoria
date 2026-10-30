@@ -173,7 +173,13 @@ test-traps:
 	@echo "SKIP test-traps: C caller doubles require Linux GNU ld --wrap; Rust tests and mixed build remain enabled."
 endif
 
-.PHONY: check
+.PHONY: check-fast check
+check-fast:
+	cargo fmt --check
+	cargo clippy --all-targets
+	cargo test
+	$(MAKE) omoria
+
 check:
 	cargo fmt --check
 	cargo clippy --all-targets

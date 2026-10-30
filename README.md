@@ -29,20 +29,19 @@ Run these commands from the repository root:
 ```sh
 make       # Build the C objects, Rust static library, and linked omoria executable
 make run   # Build if needed, then start the game in an interactive terminal
-make check # Check formatting, Clippy, Rust tests, and the C/Rust build
+make check-fast # Fast verification: formatting, Clippy, Rust tests, and C/Rust build
+make check      # Full verification suite, including C harnesses
 ```
 
-The `make check` contract is `cargo fmt --check`, `cargo clippy --all-targets`,
-`cargo test`, a full C/Rust build and link, `make test-movement`,
-`make test-messages`, `make test-save`, `make test-headless`,
-`make test-headless-interaction`, and `make test-headless-persistence`. The C
-tests run without a terminal, using controlled input/drawing doubles. The
-headless targets cover bounded movement, ration pickup, and save/reload
-scenarios; they do **not** prove complete gameplay workflows. See the
-[testing guide](docs/testing.md) for what remains unverified.
-The gate passes locally on macOS. Existing Clippy warnings remain non-blocking,
-and six legacy denied lints have scoped allowances to preserve existing behavior.
-CI runs the same gate on macOS and Linux (x86_64 and ARM64); runner results still need confirmation.
+Use T0 focused `cargo test <module::filter>` checks during each edit, then run
+T1 `make check-fast` at the end of each behavior or delegated task. Add only
+the C harnesses mapped to touched boundaries in the [testing guide](docs/testing.md).
+Run the full T2 `make check` once before each commit/PR and always in CI. The C
+tests use controlled input/drawing doubles without a terminal; headless targets
+cover bounded scenarios, not complete gameplay workflows. Existing Clippy
+warnings remain non-blocking, and six legacy denied lints have scoped
+allowances to preserve existing behavior. CI runs on macOS and Linux (x86_64
+and ARM64); runner results still need confirmation.
 
 ## Documentation
 

@@ -16,40 +16,19 @@
 Default to **red-green-refactor**.
 
 ### RED phase rules (tests first)
-- Write a **failing test** that describes the desired behavior.
-- It’s OK to add minimal scaffolding/stubs needed to compile, but **do not implement the real logic** yet.
-- Keep the test tight: one behavior, clear assertion, deterministic.
-- **RED means tests + scaffolding only. Do not implement production logic in this phase.**
-- Run the focused test and record its expected failure before proceeding to GREEN.
-
-### GREEN phase rules (minimal implementation)
+- Rerun focused tests, then apply T1 at the end of each behavior or delegated task as defined in Quality gates; continue within the approved scope without phase approval stops.
 - Implement the **smallest** change that makes the test pass.
 - Avoid refactoring/cleanup in GREEN unless it’s required to make the change.
-- **GREEN means “make it pass”, not “make it nice”. Do not refactor except what’s required for correctness.**
-- Run the focused test successfully before proceeding to REFACTOR.
-
-### REFACTOR phase rules (cleanup with tests green)
-- Improve structure, naming, duplication, safety, and readability.
-- Keep behavior identical (tests must stay green).
-- **REFACTOR means cleanup only. Do not add new behavior; only restructure.**
-- Rerun the focused test and apply the Quality gates below; continue within the approved scope without phase approval stops.
+- **Green:** Focused T0 checks pass during edits, and the applicable T1 checks pass at the end of each behavior or delegated task. T2 `make check` is required once before each commit/PR and always in CI.
 
 ## Testing requirements (non-negotiable)
-- **All new production code must be tested**.
-- Prefer **Rust tests** unless impossible or it makes the code unnecessarily complex.
-- Tests must be deterministic:
-  - Avoid real-time dependencies (clock), the user's live terminal state, or global RNG. Isolated, explicitly sized, file-backed curses screens are acceptable for drawing-boundary regression tests.
-  - Inject RNG or use a seeded RNG in tests.
+- Return the focused T0 command and RED/GREEN results, the final T1 result including applicable C harnesses, and the T2 result when this task is the pre-commit/PR gate.
 - Prefer fast tests:
   - Unit tests for pure logic.
-  - Small integration tests only when boundaries matter.
-
-## Definition of Done (per change / per behavior)
-A change is considered done only when all of these are true:
-- **Tests:** All new/changed production code has tests.
-  - Prefer Rust unit tests unless impossible or it makes the code unnecessarily complex.
-- **Green:** The applicable Quality gates below pass; behavior changes require `make check`.
-- **Warnings:** Don’t introduce new compiler warnings in Rust or C.
+- Use these verification tiers:
+-   - **T0 focused:** Run `cargo test <module::filter>` after each RED/GREEN/REFACTOR edit. For docs/configuration-only changes, use relevant structural checks rather than artificial gameplay tests.
+-   - **T1 fast:** At the end of each behavior or delegated task, run `make check-fast` (`cargo fmt --check`, `cargo clippy --all-targets`, `cargo test`, and `make omoria`), plus only the C harness targets mapped to touched C boundaries in [docs/testing.md](../docs/testing.md).
+-   - **T2 full:** Run `make check` once before each commit/PR and always in CI. Use `make clean && make check` when validating a clean C build. The `make check` target remains the complete suite.
   - The repo may already have known warnings; **do not add new warnings attributable to your change**.
   - If new warnings appear in build output due to your change, fix them in the same change (or don’t proceed).
 - **Clarity:** If the logic is tricky/non-obvious, add a short comment explaining *why* (not restating *what*).
