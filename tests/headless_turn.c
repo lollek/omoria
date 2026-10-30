@@ -163,22 +163,45 @@ static void assert_terrain_symbols_keep_glyphs_and_attributes(void) {
            (C_map_color_terrain_attr(terrain[index]) & A_COLOR));
   }
 
-  const uint8_t item_types[] = {closed_door, down_staircase, potion1};
-  const char item_glyphs[] = {'+', '>', '!'};
-  const chtype item_pairs[] = {COLOR_PAIR(23), COLOR_PAIR(24), COLOR_PAIR(30)};
+  const uint8_t item_types[] = {
+      closed_door, down_staircase, potion1, potion1,
+      valuable_gems_wear, rubble, seen_trap, entrance_to_store,
+  };
+  const int64_t item_subvals[] = {0, 0, 272, 258, 1, 0, 2, 101};
+  const uint64_t item_flags[] = {
+      0, 0, 0, 0, Teleportation_worn_bit, 0, 0, 0,
+  };
+  const char item_glyphs[] = {'+', '>', '!', '!', '*', ':', '^', 'G'};
+  const chtype item_pairs[] = {
+      COLOR_PAIR(23), COLOR_PAIR(24), COLOR_PAIR(48), COLOR_PAIR(49),
+      COLOR_PAIR(49), COLOR_PAIR(25), COLOR_PAIR(26), COLOR_PAIR(27),
+  };
+  int healing_color_key = -1;
+  int harmful_color_key = -1;
   for (size_t index = 0; index < sizeof(item_types) / sizeof(item_types[0]); index++) {
     const long row = 2;
     const long col = (long)index + 1;
     cave[row][col].tptr = 1;
     cave[row][col].is_permanently_lit = true;
     t_list[1].tval = item_types[index];
-    t_list[1].subval = 0;
+    t_list[1].subval = item_subvals[index];
+    t_list[1].flags = item_flags[index];
 
     const chtype plain_glyph = C_item_get_tchar(&t_list[1]);
     const chtype glyph = get_loc_symbol(row, col);
+    assert(glyph == C_item_get_glyph(&t_list[1]));
     assert((plain_glyph & 0x7F) == item_glyphs[index]);
     assert((glyph & 0x7F) == item_glyphs[index]);
     assert((glyph & A_COLOR) == (item_pairs[index] & A_COLOR));
+    assert((glyph & A_BOLD) == (index == 7 ? A_BOLD : 0));
+    if (index == 2) {
+      healing_color_key = C_item_color_key(&t_list[1]);
+    } else if (index == 3) {
+      assert(C_item_color_key(&t_list[1]) != healing_color_key);
+      harmful_color_key = C_item_color_key(&t_list[1]);
+    } else if (index == 4) {
+      assert(C_item_color_key(&t_list[1]) == harmful_color_key);
+    }
   }
 
   cave[2][4].tptr = 1;

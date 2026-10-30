@@ -11,6 +11,7 @@
 #include "../src/main_loop/command.h"
 #include "../src/main_loop/main_loop.h"
 #include "../src/messages.h"
+#include "../src/model_item.h"
 #include "../src/misc.h"
 #include "../src/monsters.h"
 #include "../src/player.h"
@@ -274,6 +275,47 @@ static treas_rec *add_oil_flasks(uint16_t number) {
   treas_rec *flasks = add_inven_item(oil);
   assert(flasks != NULL);
   return flasks;
+}
+
+static void assert_color_key_stack_scenario(void) {
+  begin_pickup_scenario();
+
+  treasure_type plain;
+  memset(&plain, 0, sizeof(plain));
+  strcpy(plain.name, "& Test Sword~");
+  plain.tval = sword;
+  plain.subval = 257;
+  plain.number = 2;
+  plain.weight = 4;
+  treas_rec *plain_stack = add_inven_item(plain);
+
+  treasure_type same_color = plain;
+  same_color.number = 3;
+  assert(C_item_color_key(&same_color) == C_item_color_key(&plain));
+  assert(add_inven_item(same_color) == plain_stack);
+  assert(plain_stack->data.number == 5);
+
+  treasure_type enhanced = plain;
+  enhanced.number = 4;
+  enhanced.tohit = 1;
+  assert(C_item_color_key(&enhanced) != C_item_color_key(&plain));
+  treas_rec *enhanced_stack = add_inven_item(enhanced);
+  assert(enhanced_stack != plain_stack);
+
+  treasure_type same_enhancement = enhanced;
+  same_enhancement.number = 1;
+  assert(add_inven_item(same_enhancement) == enhanced_stack);
+  assert(enhanced_stack->data.number == 5);
+  assert(plain_stack->next == enhanced_stack && enhanced_stack->next == NULL);
+  assert(inven_ctr == 2 && inven_weight == 40);
+
+    inven_destroy(enhanced_stack);
+    assert(enhanced_stack->data.number == 4);
+    assert(inven_temp.data.number == 1);
+    assert(C_item_color_key(&inven_temp.data) ==
+      C_item_color_key(&enhanced_stack->data));
+    assert(inven_weight == 36);
+  end_pickup_scenario();
 }
 
 static void assert_refill_scenario(long subval, long fuel, long expected_fuel,
@@ -1276,6 +1318,7 @@ int main(void) {
     assert_toggle_light_scenario(15, 0, true, "Your light has gone out!");
     assert_toggle_light_scenario(15, -1, false, "Your light has gone out!");
     assert_ration_pickup_scenario();
+    assert_color_key_stack_scenario();
     assert_refill_scenario(1, 100, 7600, 2);
     assert_refill_scenario(9, 14000, 15000, 1);
     assert_refill_scenario(1, 15000, 15000, 2);

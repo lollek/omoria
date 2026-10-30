@@ -99,12 +99,9 @@ treas_rec *add_inven_item(const treasure_type item) {
     do {
       if (typ == curse->data.tval) {
         if (subt == curse->data.subval) {
-          /* */
-          /* Items are of the same type and can be
-           */
-          /* combined */
-          /* */
-          if (subt > 255) {
+          /* Items are of the same type and can be combined */
+            if (subt > 255 &&
+              C_item_color_key(&item) == C_item_color_key(&curse->data)) {
             curse->data.number += item_num;
             inven_weight += wgt;
             return_value = curse;

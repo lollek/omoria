@@ -253,7 +253,7 @@ Out of scope: items, doors, and monsters.
 
 ### MC3. Items and Fixtures (fan-out)
 
-Status: open (revised 2026-10-30). Depends on: MC1, MC2 (for `misc.c` order).
+Status: done (2026-10-30). Depends on: MC1, MC2 (for `misc.c` order).
 Size: L. Complexity: High. Agent: standard.
 
 Owns: the pure semantic color resolver for full `Item` data (new
@@ -311,15 +311,39 @@ Acceptance checks:
 Out of scope: inventory and equipment text, item names, MC4/MC5, random
 per-instance colors, and changes to the persisted item layout.
 
-The category-only MC3 implementation was completed and verified earlier, but
-is reopened because it gives every item in a broad type the same color and
-does not make stack merging aware of color semantics. Its prior tests and full
-check are historical evidence only; they do not satisfy this revised story.
+Implementation: `item_color::color` resolves equipment and wearable-gem flags
+before quality modifiers, then typed subtype meaning, with the original family
+role as fallback. Overlapping special attributes resolve in the order harmful,
+combat, defense, then arcane; quality uses saved `p1`, `tohit`, `todam`, and
+`toac` values. Wearable gems use both their typed effect and persisted flags.
+Scroll template flags disambiguate Sleep Monster from Make Munchies, whose
+legacy `subval` is shared. Eight roles occupy pairs 48-55. The C glyph shim
+uses this role for map and missile glyphs, and inventory merging requires
+equal semantic keys. No item layout or save format changed.
 
-Verification for the revised behavior is pending. Re-run the acceptance checks
-above, `make check-fast`, and `CARGO_TERM_QUIET=true make -s check` after
-implementation. Real-terminal appearance remains a manual check; on macOS,
-`test-traps` is skipped because GNU `ld --wrap` is unavailable.
+Verification: RED `cargo test --lib data::item_color::tests::potion_subtypes_have_distinct_colors`
+failed because both subtypes resolved to `Potion`; the wearable-gem test failed
+on the generic `Gem` fallback, and the scroll test exposed the legacy shared
+subvalue. GREEN `cargo test --lib data::item_color` passed (9 tests),
+`cargo test --lib data::interop` passed (1 test), and
+`cargo test --lib user_interface::map_colors` passed (9 tests). T1
+`CARGO_TERM_QUIET=true make -s check-fast` passed (946 tests, format, Clippy,
+and build). Clippy reported existing warnings in mouse travel, viewport, and
+key translation, none in MC3 files. C headless `make test-headless` passed
+terrain, portable-item, wearable-gem, fixture, hidden-glyph, and pair
+assertions; `make test-headless-interaction` passed same-key merge,
+different-key separation, and production `inven_destroy` split key checks.
+Post-review T2 `CARGO_TERM_QUIET=true make -s check` passed with
+946 Rust tests, formatting, Clippy, build, and every available C harness.
+`test-traps` was skipped because macOS lacks GNU `ld --wrap`. Existing Clippy
+warnings remain in mouse travel, viewport, and key translation; macOS emitted
+its existing linker alignment warning.
+
+Unverified: real-terminal appearance and a live missile animation remain
+manual checks; the animation calls the same tested `C_item_get_glyph` shim.
+Save round-trip was not added because item fields and persistence layout are
+unchanged. On macOS, `test-traps` is skipped because GNU `ld --wrap` is
+unavailable.
 
 ### MC4. Monster Colors (fan-out)
 

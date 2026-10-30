@@ -38,6 +38,14 @@ pub enum MapColor {
     MonsterGray,
     MonsterPurple,
     MonsterPink,
+    ItemHealing,
+    ItemHarmful,
+    ItemArcane,
+    ItemCombat,
+    ItemDefense,
+    ItemNature,
+    ItemQualityGood,
+    ItemQualityBad,
 }
 
 pub(super) fn terrain_color(floor_type: FloorType) -> Option<MapColor> {
@@ -59,7 +67,7 @@ pub(super) fn terrain_color(floor_type: FloorType) -> Option<MapColor> {
 }
 
 impl MapColor {
-    pub const ALL: [MapColor; 32] = [
+    pub const ALL: [MapColor; 40] = [
         MapColor::Water,
         MapColor::Granite,
         MapColor::Magma,
@@ -92,6 +100,14 @@ impl MapColor {
         MapColor::MonsterGray,
         MapColor::MonsterPurple,
         MapColor::MonsterPink,
+        MapColor::ItemHealing,
+        MapColor::ItemHarmful,
+        MapColor::ItemArcane,
+        MapColor::ItemCombat,
+        MapColor::ItemDefense,
+        MapColor::ItemNature,
+        MapColor::ItemQualityGood,
+        MapColor::ItemQualityBad,
     ];
 }
 
@@ -153,6 +169,14 @@ pub fn color_spec(role: MapColor) -> ColorSpec {
         MapColor::MonsterGray => spec(246, COLOR_WHITE, false),
         MapColor::MonsterPurple => spec(93, COLOR_MAGENTA, true),
         MapColor::MonsterPink => spec(218, COLOR_MAGENTA, true),
+        MapColor::ItemHealing => spec(114, COLOR_GREEN, false),
+        MapColor::ItemHarmful => spec(196, COLOR_RED, true),
+        MapColor::ItemArcane => spec(117, COLOR_CYAN, false),
+        MapColor::ItemCombat => spec(208, COLOR_RED, true),
+        MapColor::ItemDefense => spec(33, COLOR_BLUE, true),
+        MapColor::ItemNature => spec(70, COLOR_GREEN, false),
+        MapColor::ItemQualityGood => spec(220, COLOR_YELLOW, true),
+        MapColor::ItemQualityBad => spec(160, COLOR_RED, false),
     }
 }
 
@@ -224,7 +248,7 @@ mod tests {
             assert_eq!(*role as usize, index, "{role:?} is out of order in ALL");
         }
         assert_eq!(
-            MapColor::MonsterPink as usize + 1,
+            MapColor::ItemQualityBad as usize + 1,
             MapColor::ALL.len(),
             "ALL is missing the last role"
         );

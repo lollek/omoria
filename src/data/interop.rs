@@ -23,8 +23,17 @@ pub extern "C" fn C_item_get_tchar(item_ptr: *const Item) -> pancurses::chtype {
 #[no_mangle]
 pub extern "C" fn C_item_get_glyph(item_ptr: *const Item) -> pancurses::chtype {
     let item = unsafe { *item_ptr };
-    let item_type = ItemType::try_from(item.tval).unwrap();
-    data::item_type::glyph(&item_type, item.subval)
+    data::item_color::glyph(&item)
+}
+
+#[no_mangle]
+/// Returns the terminal-independent color key used for item rendering and stacking.
+///
+/// # Safety
+/// `item_ptr` must be non-null and point to a valid `Item` for this call.
+pub extern "C" fn C_item_color_key(item_ptr: *const Item) -> libc::c_int {
+    let item = unsafe { *item_ptr };
+    data::item_color::color_key(&item)
 }
 
 #[no_mangle]
