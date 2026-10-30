@@ -209,7 +209,7 @@ static void c__update_mon(const long monptr, long *hear_count) {
   if (flag) {
     /*{ Light it up...        }*/
     if (!ML(monptr).is_seen) {
-      print(monster_template_get_symbol(ML(monptr).mptr), MY(monptr), MX(monptr));
+      print(monster_template_get_glyph(ML(monptr).mptr), MY(monptr), MX(monptr));
       ML(monptr).is_seen = true;
       if (search_flag) {
         search_off();

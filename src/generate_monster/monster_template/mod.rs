@@ -20,6 +20,8 @@ mod data;
 pub mod interop;
 mod template;
 
+use crate::user_interface::map_colors::MapColor;
+
 pub use attribute::MonsterAttribute;
 pub use data::MONSTER_TEMPLATES;
 pub use template::MonsterTemplate;

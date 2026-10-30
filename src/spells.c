@@ -517,7 +517,7 @@ bool explode(const enum spell_effect_t typ, const long y, const long x,
                     tkill++;
                   } else {
                     if (panel_contains(i1, i2)) {
-                      print(monster_template_get_symbol(m_list[cave[i1][i2].cptr].mptr),
+                      print(monster_template_get_glyph(m_list[cave[i1][i2].cptr].mptr),
                             i1, i2);
                       m_list[cave[i1][i2].cptr].is_seen = true;
                     }
@@ -1038,7 +1038,7 @@ bool detect_creatures(const enum spell_effect_t typ) {
 
       if (found) {
         m_list[monster_i].is_seen = true;
-        print(monster_template_get_symbol(m_list[monster_i].mptr), m_list[monster_i].fy,
+        print(monster_template_get_glyph(m_list[monster_i].mptr), m_list[monster_i].fy,
               m_list[monster_i].fx);
         detected_something = true;
       }
@@ -2251,7 +2251,7 @@ bool fire_bolt(const enum spell_effect_t typ, const long dir, long y, long x,
           msg_print(out_val);
         } else {
           if (panel_contains(y, x)) {
-            print(monster_template_get_symbol(mptr), y, x);
+            print(monster_template_get_glyph(mptr), y, x);
             m_list[cptr].is_seen = true;
           }
         }
@@ -2848,7 +2848,7 @@ bool creeping_doom(const long dir, long y, long x, const long dam_hp,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_template_get_symbol(mptr), y, x);
+          print(monster_template_get_glyph(mptr), y, x);
           m_list[cptr].is_seen = true;
         }
       }
@@ -2889,7 +2889,7 @@ bool fire_line(const enum spell_effect_t typ, const long dir, long y, long x,
         msg_print(out_val);
       } else {
         if (panel_contains(y, x)) {
-          print(monster_template_get_symbol(mptr), y, x);
+          print(monster_template_get_glyph(mptr), y, x);
           m_list[cptr].is_seen = true;
         }
       }

@@ -464,7 +464,7 @@ chtype loc_symbol(const long y, const long x) {
              distance(char_row, char_col, y, x) <= 5))) &&
           (!monster_template_has_attribute_at(mptr, ma_invisible_movement) ||
            player_flags.see_inv)) {
-        sym = monster_template_get_symbol(mptr);
+        sym = monster_template_get_glyph(mptr);
       } else if (tptr > 0) {
         sym = C_item_get_glyph(&t_list[tptr]);
       } else if (is_in(fval, earth_set)) { /* 0, 3, 8 and 9

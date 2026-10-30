@@ -7,7 +7,8 @@
 //! a pre-computed `CStringCache`.  Scalar getters read `MONSTER_TEMPLATES`
 //! directly.  Out-of-bounds access returns the "Glitch" fallback.
 
-use super::{MonsterAttribute, MonsterTemplate};
+use super::{MapColor, MonsterAttribute, MonsterTemplate};
+use crate::user_interface::map_colors::map_color_attr;
 
 use std::sync::LazyLock;
 
@@ -78,6 +79,7 @@ static GLITCH_TEMPLATE: MonsterTemplate = MonsterTemplate {
     mexp: 0,
     speed: 0,
     symbol: '?',
+    color: MapColor::MonsterMagenta,
     hit_die: "1d1",
     damage: "",
     level: 0,
@@ -193,6 +195,13 @@ pub extern "C" fn monster_template_get_damage(index: libc::c_long) -> *const lib
 #[no_mangle]
 pub extern "C" fn monster_template_get_symbol(index: libc::c_long) -> libc::c_char {
     get_template(index).symbol as libc::c_char
+}
+
+/// Return the map glyph, including its template color attribute.
+#[no_mangle]
+pub extern "C" fn monster_template_get_glyph(index: libc::c_long) -> pancurses::chtype {
+    let template = get_template(index);
+    template.symbol as pancurses::chtype | map_color_attr(template.color)
 }
 
 /// Return the level of the monster template at `index`.
@@ -373,6 +382,42 @@ mod tests {
     #[test]
     fn get_symbol_returns_expected_char() {
         assert_eq!(monster_template_get_symbol(0), b'p' as libc::c_char);
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn get_glyph_keeps_symbol_for_each_template_and_oob() {
+        for (index, template) in super::super::MONSTER_TEMPLATES.iter().enumerate() {
+            let glyph = monster_template_get_glyph(index as libc::c_long);
+            assert_eq!(glyph & 0x7f, template.symbol as pancurses::chtype & 0x7f);
+            assert!(
+                matches!(
+                    template.color,
+                    MapColor::MonsterWhite
+                        | MapColor::MonsterRed
+                        | MapColor::MonsterGreen
+                        | MapColor::MonsterYellow
+                        | MapColor::MonsterBlue
+                        | MapColor::MonsterMagenta
+                        | MapColor::MonsterCyan
+                        | MapColor::MonsterOrange
+                        | MapColor::MonsterBrown
+                        | MapColor::MonsterGray
+                        | MapColor::MonsterPurple
+                        | MapColor::MonsterPink
+                ),
+                "{} has a non-monster color",
+                template.name
+            );
+        }
+
+        let out_of_bounds_idx = 9999;
+        let glyph = monster_template_get_glyph(out_of_bounds_idx);
+        assert_eq!(
+            glyph & 0x7f,
+            monster_template_get_symbol(out_of_bounds_idx) as pancurses::chtype & 0x7f
+        );
+        assert_eq!(GLITCH_TEMPLATE.color, MapColor::MonsterMagenta);
     }
 
     #[test]

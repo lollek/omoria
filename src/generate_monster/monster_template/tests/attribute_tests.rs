@@ -1,6 +1,6 @@
 //! Tests for MonsterAttribute enum and has_attribute() method.
 
-use super::super::{MonsterAttribute, MonsterTemplate};
+use super::super::{MapColor, MonsterAttribute, MonsterTemplate};
 
 /// Verify the enum has the expected number of variants.
 /// This matches the C `monster_attribute` enum which has 42 variants.
@@ -73,6 +73,7 @@ fn make_template(cmove: u64, cdefense: u64, multiplies: bool, can_move: bool) ->
         mexp: 0,
         speed: 0,
         symbol: 'T',
+        color: MapColor::MonsterWhite,
         hit_die: "1d1",
         damage: "1 1 1d1",
         level: 0,
