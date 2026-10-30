@@ -148,7 +148,7 @@ pub fn color_spec(role: MapColor) -> ColorSpec {
         MapColor::Stairs => spec(231, COLOR_WHITE, true),
         MapColor::Rubble => spec(143, COLOR_YELLOW, false),
         MapColor::Trap => spec(196, COLOR_RED, true),
-        MapColor::ShopEntrance => spec(213, COLOR_MAGENTA, true),
+        MapColor::ShopEntrance => spec(172, COLOR_YELLOW, true),
         MapColor::Gold => spec(220, COLOR_YELLOW, true),
         MapColor::Gem => spec(51, COLOR_CYAN, true),
         MapColor::Potion => spec(129, COLOR_MAGENTA, false),
