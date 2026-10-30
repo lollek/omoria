@@ -176,7 +176,7 @@ pub fn color_spec(role: MapColor) -> ColorSpec {
         MapColor::ItemDefense => spec(33, COLOR_BLUE, true),
         MapColor::ItemNature => spec(70, COLOR_GREEN, false),
         MapColor::ItemQualityGood => spec(220, COLOR_YELLOW, true),
-        MapColor::ItemQualityBad => spec(160, COLOR_RED, false),
+        MapColor::ItemQualityBad => spec(247, COLOR_WHITE, false),
     }
 }
 

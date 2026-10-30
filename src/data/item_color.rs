@@ -387,7 +387,7 @@ fn subtype_color(subtype: ItemSubType) -> Option<MapColor> {
             | WandSubType::WandOfPolymorph,
         ) => Some(MapColor::ItemHarmful),
         ItemSubType::Wand(_) => Some(MapColor::ItemArcane),
-        ItemSubType::Sword(SwordSubType::BrokenSword) => Some(MapColor::ItemHarmful),
+        ItemSubType::Sword(SwordSubType::BrokenSword) => Some(MapColor::ItemQualityBad),
         ItemSubType::MiscUsable(MiscUsableSubType::IronSpike) => Some(MapColor::ItemCombat),
         ItemSubType::MiscUsable(
             MiscUsableSubType::SilverCross
