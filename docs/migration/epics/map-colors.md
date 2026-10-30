@@ -130,8 +130,17 @@ Ordering notes:
 
 ### MC1. Palette and Attribute Lookup (pathfinder: F-PALETTE)
 
-Status: open. Depends on: none.
+Status: done (2026-10-30). Depends on: none.
 Size: M. Complexity: Medium. Agent: strong.
+
+Implementation: `MapColor` (32 roles, including monster colors) and the role
+table are in [map_colors.rs](../../../src/user_interface/map_colors.rs);
+`init_curses` calls `init_map_colors`. Water in `loc_symbol` now uses the new
+`C_map_color_water_attr` shim (`map_colors.h`, `map_colors_extern.rs`), the
+only `misc.c` change. Water uses ANSI blue (index 4) so 256-color terminals
+match today's look. Verification: L0 and L1 tests (`cargo test --lib
+map_colors`, `ncurses::tests`). Unverified: C-level `loc_symbol` water output
+(left to MC2's L2 tests); real-terminal look.
 
 Owns: [ncurses.rs](../../../src/ncurses.rs), a new
 `src/user_interface/map_colors.rs` for the role table (and its module

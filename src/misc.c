@@ -8,6 +8,7 @@
 #include "io.h"
 #include "loot/loot.h"
 #include "magic.h"
+#include "map_colors.h"
 #include "model_class.h"
 #include "model_item.h"
 #include "pascal.h"
@@ -472,7 +473,7 @@ chtype loc_symbol(const long y, const long x) {
       } else if (is_in(fval, pwall_set)) {
         sym = '#';
       } else if (is_in(fval, water_set)) {
-        sym = '`' | COLOR_PAIR(COLOR_BLUE);
+        sym = '`' | C_map_color_water_attr();
       } else {
         /* unknown terrain type */
         sym = '.' | A_DIM;
@@ -486,7 +487,7 @@ chtype loc_symbol(const long y, const long x) {
              los(char_row, char_col, y, x))) {
           sym = C_item_get_tchar(&t_list[tptr]);
         } else {
-          sym = '`' | COLOR_PAIR(COLOR_BLUE);
+          sym = '`' | C_map_color_water_attr();
         }
       } else {
         sym = C_item_get_tchar(&t_list[tptr]);
@@ -498,7 +499,7 @@ chtype loc_symbol(const long y, const long x) {
     } else if (is_in(fval, pwall_set)) {
       sym = '#';
     } else if (is_in(fval, water_set)) {
-      sym = '`' | COLOR_PAIR(COLOR_BLUE);
+      sym = '`' | C_map_color_water_attr();
     } else {
       /* unknown terrain type */
       sym = '.' | A_DIM;

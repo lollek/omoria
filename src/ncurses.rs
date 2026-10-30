@@ -162,6 +162,11 @@ pub fn init_curses() {
     pancurses::init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
     pancurses::init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
     pancurses::init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
+    crate::user_interface::map_colors::init_map_colors(if pancurses::has_colors() {
+        pancurses::COLORS()
+    } else {
+        0
+    });
 
     pancurses::cbreak();
     pancurses::noecho();
@@ -289,10 +294,14 @@ mod tests {
 
     impl TestScreen {
         fn new(rows: i32, cols: i32) -> Self {
+            Self::with_term("xterm", rows, cols)
+        }
+
+        fn with_term(term: &str, rows: i32, cols: i32) -> Self {
             let output = unsafe { libc::tmpfile() };
             let input = unsafe { libc::tmpfile() };
             assert!(!output.is_null() && !input.is_null(), "tmpfile failed");
-            let screen = pancurses::newterm(Some("xterm"), output.cast(), input.cast());
+            let screen = pancurses::newterm(Some(term), output.cast(), input.cast());
             assert!(!screen.is_null(), "newterm failed");
             let guard = Self {
                 screen,
@@ -317,6 +326,74 @@ mod tests {
                 libc::fclose(self.input);
             }
         }
+    }
+
+    fn pair_colors(pair: i16) -> (i16, i16) {
+        let (mut fg, mut bg) = (0, 0);
+        assert_eq!(::ncurses::pair_content(pair, &mut fg, &mut bg), 0);
+        (fg, bg)
+    }
+
+    fn assert_map_colors_round_trip(term: &str, colors: i32) {
+        use crate::user_interface::map_colors::{
+            foreground, map_color_attr, pair_number, palette_for, MapColor,
+        };
+        let _screen = TestScreen::with_term(term, 35, 150);
+        pancurses::start_color();
+        assert_eq!(pancurses::COLORS(), colors);
+        crate::user_interface::map_colors::init_map_colors(pancurses::COLORS());
+        let palette = palette_for(colors).expect("terminal has colors");
+        for (col, role) in MapColor::ALL.iter().enumerate() {
+            let attr = map_color_attr(*role);
+            assert_ne!(attr, 0, "{role:?} has no attribute");
+            if *role == MapColor::Water {
+                assert_eq!(
+                    crate::user_interface::map_colors_extern::C_map_color_water_attr(),
+                    attr
+                );
+            }
+            with_stdscr(|window| {
+                assert_eq!(
+                    window.mvaddch(0, col as i32, 'x' as pancurses::chtype | attr),
+                    0
+                );
+                assert_eq!(
+                    window.mvinch(0, col as i32),
+                    'x' as pancurses::chtype | attr
+                );
+            });
+            assert_eq!(
+                pair_colors(pair_number(*role)),
+                (foreground(*role, palette), COLOR_BLACK),
+                "{role:?} pair"
+            );
+        }
+        crate::user_interface::map_colors::init_map_colors(0);
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn eight_color_terminal_reads_back_map_color_pairs() {
+        assert_map_colors_round_trip("xterm", 8);
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn terminal_with_256_colors_reads_back_map_color_pairs() {
+        assert_map_colors_round_trip("xterm-256color", 256);
+    }
+
+    #[test]
+    #[serial_test::serial]
+    fn existing_hud_color_pairs_survive_map_color_setup() {
+        let _screen = TestScreen::with_term("xterm", 35, 150);
+        pancurses::start_color();
+        pancurses::init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
+        pancurses::init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
+        crate::user_interface::map_colors::init_map_colors(pancurses::COLORS());
+        assert_eq!(pair_colors(COLOR_RED), (COLOR_RED, COLOR_BLACK));
+        assert_eq!(pair_colors(COLOR_CYAN), (COLOR_CYAN, COLOR_BLACK));
+        crate::user_interface::map_colors::init_map_colors(0);
     }
 
     #[test]
