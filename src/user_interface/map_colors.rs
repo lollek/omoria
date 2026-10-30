@@ -1,3 +1,4 @@
+use crate::model::FloorType;
 use pancurses::chtype;
 use std::sync::Mutex;
 
@@ -37,6 +38,24 @@ pub enum MapColor {
     MonsterGray,
     MonsterPurple,
     MonsterPink,
+}
+
+pub(super) fn terrain_color(floor_type: FloorType) -> Option<MapColor> {
+    match floor_type {
+        FloorType::DarkOpenFloor | FloorType::LightOpenFloor => Some(MapColor::RoomFloor),
+        FloorType::CorrOpenFloor
+        | FloorType::CorrRoomJunction
+        | FloorType::CorrDoor
+        | FloorType::CorrSecretDoor => Some(MapColor::Corridor),
+        FloorType::WallGranite => Some(MapColor::Granite),
+        FloorType::WallMagma => Some(MapColor::Magma),
+        FloorType::WallQuartz => Some(MapColor::Quartz),
+        FloorType::BoundaryWall => Some(MapColor::BoundaryWall),
+        FloorType::WaterOnFloor | FloorType::WaterOnRoomFloor | FloorType::WaterOnFloorLit => {
+            Some(MapColor::Water)
+        }
+        _ => None,
+    }
 }
 
 impl MapColor {
@@ -260,6 +279,30 @@ mod tests {
             pancurses::COLOR_BLUE
         );
         assert_eq!(foreground(MapColor::Water, Palette::Extended), 4);
+    }
+
+    #[test]
+    fn terrain_values_map_to_expected_roles() {
+        let cases = [
+            (FloorType::WallGranite, Some(MapColor::Granite)),
+            (FloorType::WallMagma, Some(MapColor::Magma)),
+            (FloorType::WallQuartz, Some(MapColor::Quartz)),
+            (FloorType::BoundaryWall, Some(MapColor::BoundaryWall)),
+            (FloorType::DarkOpenFloor, Some(MapColor::RoomFloor)),
+            (FloorType::LightOpenFloor, Some(MapColor::RoomFloor)),
+            (FloorType::CorrOpenFloor, Some(MapColor::Corridor)),
+            (FloorType::CorrRoomJunction, Some(MapColor::Corridor)),
+            (FloorType::CorrDoor, Some(MapColor::Corridor)),
+            (FloorType::CorrSecretDoor, Some(MapColor::Corridor)),
+            (FloorType::WaterOnFloor, Some(MapColor::Water)),
+            (FloorType::WaterOnRoomFloor, Some(MapColor::Water)),
+            (FloorType::WaterOnFloorLit, Some(MapColor::Water)),
+            (FloorType::BlankFloor, None),
+        ];
+
+        for (floor_type, expected) in cases {
+            assert_eq!(terrain_color(floor_type), expected, "{floor_type:?}");
+        }
     }
 
     #[test]

@@ -6,6 +6,7 @@
 
 #include "../src/constants.h"
 #include "../src/floor.h"
+#include "../src/map_colors.h"
 #include "../src/main_loop/main_loop.h"
 #include "../src/messages.h"
 #include "../src/player.h"
@@ -26,6 +27,7 @@ static size_t recorded_message_views;
 static size_t travel_delay_calls;
 
 chtype get_loc_symbol(const long y, const long x);
+chtype loc_symbol(const long y, const long x);
 
 void headless_travel_delay(void) { travel_delay_calls++; }
 
@@ -122,6 +124,56 @@ static void end_scenario(void) {
   C_message_capture_end();
   headless_terminal_reset();
   assert(headless_terminal_counts().drawing == 0);
+}
+
+static void assert_terrain_symbols_keep_glyphs_and_attributes(void) {
+  FILE *input = tmpfile();
+  FILE *output = tmpfile();
+  assert(input != NULL && output != NULL);
+  SCREEN *screen = newterm("xterm-256color", output, input);
+  assert(screen != NULL);
+  set_term(screen);
+  assert(start_color() == OK);
+  C_map_color_init(COLORS);
+
+  begin_scenario();
+  player_flags.blind = 0;
+  player_flags.status &= ~IS_BLIND;
+
+  const uint8_t terrain[] = {
+      ft_wall_granite, ft_wall_magma, ft_wall_quartz,
+      ft_dark_open_floor, ft_corr_open_floor, ft_boundry_wall,
+  };
+  const char glyphs[] = {'#', '#', '#', '.', '.', '#'};
+    const chtype pairs[] = {
+      COLOR_PAIR(17), COLOR_PAIR(18), COLOR_PAIR(19),
+      COLOR_PAIR(21), COLOR_PAIR(22), COLOR_PAIR(20),
+    };
+  for (size_t index = 0; index < sizeof(terrain) / sizeof(terrain[0]); index++) {
+    const long row = 1;
+    const long col = (long)index + 1;
+    cave[row][col].fval = terrain[index];
+    cave[row][col].is_permanently_lit = true;
+
+    const chtype symbol = get_loc_symbol(row, col);
+    assert((symbol & 0x7F) == glyphs[index]);
+    assert((symbol & A_COLOR) == (pairs[index] & A_COLOR));
+    assert((symbol & A_COLOR) ==
+           (C_map_color_terrain_attr(terrain[index]) & A_COLOR));
+  }
+
+  cave[1][1].cptr = 2;
+  memset(&m_list[2], 0, sizeof(m_list[2]));
+  assert((loc_symbol(1, 1) & 0x7F) == '#');
+  assert((loc_symbol(1, 1) & A_COLOR) == (COLOR_PAIR(17) & A_COLOR));
+  assert(get_loc_symbol(char_row, char_col) == '@');
+  end_scenario();
+
+  endwin();
+  delscreen(screen);
+  fclose(input);
+  fclose(output);
+  C_map_color_init(0);
 }
 
 static void assert_zero_budget(void) {
@@ -412,6 +464,7 @@ int main(void) {
     C_message_capture_end();
     C_seeded_rng_end();
   }
+  assert_terrain_symbols_keep_glyphs_and_attributes();
   assert_movement_scenarios();
   assert_mouse_travel_stops_on_seen_monster();
   assert_mouse_travel_key_interrupts_without_an_extra_step();

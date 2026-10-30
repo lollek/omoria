@@ -469,9 +469,9 @@ chtype loc_symbol(const long y, const long x) {
         sym = C_item_get_tchar(&t_list[tptr]);
       } else if (is_in(fval, earth_set)) { /* 0, 3, 8 and 9
                                               were here too */
-        sym = '.';
+        sym = '.' | C_map_color_terrain_attr(fval);
       } else if (is_in(fval, pwall_set)) {
-        sym = '#';
+        sym = '#' | C_map_color_terrain_attr(fval);
       } else if (is_in(fval, water_set)) {
         sym = '`' | C_map_color_water_attr();
       } else {
@@ -495,9 +495,9 @@ chtype loc_symbol(const long y, const long x) {
 
       /* 0, 3, 8 and 9 were here too */
     } else if (is_in(fval, earth_set)) {
-      sym = '.';
+      sym = '.' | C_map_color_terrain_attr(fval);
     } else if (is_in(fval, pwall_set)) {
-      sym = '#';
+      sym = '#' | C_map_color_terrain_attr(fval);
     } else if (is_in(fval, water_set)) {
       sym = '`' | C_map_color_water_attr();
     } else {

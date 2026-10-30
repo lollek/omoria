@@ -162,7 +162,7 @@ pub fn init_curses() {
     pancurses::init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
     pancurses::init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
     pancurses::init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
-    crate::user_interface::map_colors::init_map_colors(if pancurses::has_colors() {
+    crate::user_interface::map_colors_extern::C_map_color_init(if pancurses::has_colors() {
         pancurses::COLORS()
     } else {
         0
@@ -335,6 +335,7 @@ mod tests {
     }
 
     fn assert_map_colors_round_trip(term: &str, colors: i32) {
+        use crate::model::FloorType;
         use crate::user_interface::map_colors::{
             foreground, map_color_attr, pair_number, palette_for, MapColor,
         };
@@ -368,6 +369,26 @@ mod tests {
                 "{role:?} pair"
             );
         }
+        for (floor_type, role) in [
+            (FloorType::WallGranite, MapColor::Granite),
+            (FloorType::WallMagma, MapColor::Magma),
+            (FloorType::WallQuartz, MapColor::Quartz),
+            (FloorType::BoundaryWall, MapColor::BoundaryWall),
+            (FloorType::DarkOpenFloor, MapColor::RoomFloor),
+            (FloorType::CorrOpenFloor, MapColor::Corridor),
+            (FloorType::WaterOnFloor, MapColor::Water),
+        ] {
+            assert_eq!(
+                crate::user_interface::map_colors_extern::terrain_attr_for_type(floor_type),
+                map_color_attr(role),
+                "{floor_type:?} terrain attribute"
+            );
+        }
+        assert_eq!(
+            crate::user_interface::map_colors_extern::C_map_color_terrain_attr(u8::MAX),
+            0,
+            "unknown terrain has no color attribute"
+        );
         crate::user_interface::map_colors::init_map_colors(0);
     }
 

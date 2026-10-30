@@ -174,7 +174,7 @@ Out of scope: any `loc_symbol` change except the water re-expression.
 
 ### MC2. Terrain Colors (fan-out)
 
-Status: open. Depends on: MC1.
+Status: done (2026-10-30). Depends on: MC1.
 Size: S. Complexity: Low. Agent: standard.
 
 Owns: a new terrain-role function and its extern shim (module
@@ -198,6 +198,25 @@ Acceptance checks:
   and a boundary wall returns the expected character in the low byte and the
   expected pair bits, and still returns `@` for the player.
 * Changelog entry: cave walls, floors, and town buildings are colored.
+
+Implementation: `terrain_color(FloorType)` maps the existing typed terrain
+variants to semantic roles. `C_map_color_terrain_attr` converts the C byte with
+`FloorType::try_from` at the FFI boundary, keeping raw floor values out of the
+role mapping. The shim supplies attributes to `loc_symbol` for wall and floor
+glyphs; water keeps its existing shim and appearance. `C_map_color_init` shares
+palette initialization with C callers. Unknown terrain and glyph characters
+are unchanged.
+
+Verification: `cargo test --lib map_colors` covers every modeled terrain value
+in the wall, earth, and water sets. The file-backed 8-color and 256-color tests
+verify typed terrain attributes against registered role pairs; `make test-headless`
+verifies C glyph bytes and expected pair bits with a file-backed 256-color
+screen, including the hidden-monster terrain fallback and player glyph.
+`CARGO_TERM_QUIET=true make -s check` passed (933 Rust tests and all available
+C/headless checks).
+
+Unverified: real-terminal visual appearance; `test-traps` requires Linux GNU
+ld `--wrap` and was skipped on macOS.
 
 Out of scope: items, doors, and monsters.
 
