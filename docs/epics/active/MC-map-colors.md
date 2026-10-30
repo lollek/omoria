@@ -222,7 +222,7 @@ Out of scope: items, doors, and monsters.
 
 ### MC3. Items and Fixtures (fan-out)
 
-Status: open. Depends on: MC1, MC2 (for `misc.c` order).
+Status: done (2026-10-30). Depends on: MC1, MC2 (for `misc.c` order).
 Size: M. Complexity: Medium. Agent: standard.
 
 Owns: `color(item_type, subval)` in [item_type.rs](../../../src/data/item_type.rs),
@@ -252,6 +252,26 @@ Acceptance checks:
 * Changelog entry: doors, stairs, traps, shops, and items are colored.
 
 Out of scope: inventory and equipment text; item names.
+
+Implementation: `color` exhaustively maps item types to semantic roles, and
+`glyph` combines the unchanged plain symbol with the registered role
+attribute. Unseen traps and secret doors keep their current uncolored glyphs.
+`C_item_get_glyph` is a separate C API used by map and missile rendering;
+`C_item_get_tchar` remains the text-only API.
+
+Verification: `cargo test --lib data::item_type::tests` checks role coverage,
+fixture roles, preserved glyph bytes, and shop bold. The interop test checks
+`C_item_get_tchar` against the plain symbol for every renderable item type
+(`Whirlpool` retains its existing non-renderable panic). `make test-headless`
+checks closed-door, downstairs, and potion glyph bytes and pair bits, as well
+as uncolored unseen traps and secret doors. `make check-fast` passed, and
+`CARGO_TERM_QUIET=true make -s check` passed (937 Rust tests and all available
+C/headless harnesses).
+
+Unverified: real-terminal color appearance and the in-game missile animation
+path; the headless harness verifies map rendering, while the missile caller is
+covered by compilation and linking. On macOS, `test-traps` was skipped because
+GNU `ld --wrap` is unavailable.
 
 ### MC4. Monster Colors (fan-out)
 

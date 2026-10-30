@@ -5,6 +5,7 @@
 October 2026
 
 * Cave walls, floors, and town buildings now use terrain colors on terminals with color support.
+* Doors, stairs, rubble, traps, shop entrances, and item glyphs now use type colors on the map and during missile animations.
 * `M-V` now toggles combat calculation messages showing attack rolls versus AC and applied damage versus HP.
 * Click-to-travel now shows the player at each step, moves at a visible pace, reaches the clicked destination through explored dark corridors, and reports travel outcomes.
 * Clicking an inventory or equipment item in the Split sidebar now shows its full known description on the prompt line without using a turn.

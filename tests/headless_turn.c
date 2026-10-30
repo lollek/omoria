@@ -9,6 +9,7 @@
 #include "../src/map_colors.h"
 #include "../src/main_loop/main_loop.h"
 #include "../src/messages.h"
+#include "../src/model_item.h"
 #include "../src/player.h"
 #include "../src/random.h"
 #include "../src/term.h"
@@ -161,6 +162,38 @@ static void assert_terrain_symbols_keep_glyphs_and_attributes(void) {
     assert((symbol & A_COLOR) ==
            (C_map_color_terrain_attr(terrain[index]) & A_COLOR));
   }
+
+  const uint8_t item_types[] = {closed_door, down_staircase, potion1};
+  const char item_glyphs[] = {'+', '>', '!'};
+  const chtype item_pairs[] = {COLOR_PAIR(23), COLOR_PAIR(24), COLOR_PAIR(30)};
+  for (size_t index = 0; index < sizeof(item_types) / sizeof(item_types[0]); index++) {
+    const long row = 2;
+    const long col = (long)index + 1;
+    cave[row][col].tptr = 1;
+    cave[row][col].is_permanently_lit = true;
+    t_list[1].tval = item_types[index];
+    t_list[1].subval = 0;
+
+    const chtype plain_glyph = C_item_get_tchar(&t_list[1]);
+    const chtype glyph = get_loc_symbol(row, col);
+    assert((plain_glyph & 0x7F) == item_glyphs[index]);
+    assert((glyph & 0x7F) == item_glyphs[index]);
+    assert((glyph & A_COLOR) == (item_pairs[index] & A_COLOR));
+  }
+
+  cave[2][4].tptr = 1;
+  cave[2][4].is_permanently_lit = true;
+  t_list[1].tval = unseen_trap;
+  t_list[1].subval = 0;
+  assert((get_loc_symbol(2, 4) & 0x7F) == '.');
+  assert((get_loc_symbol(2, 4) & A_COLOR) == 0);
+
+  cave[2][5].tptr = 1;
+  cave[2][5].is_permanently_lit = true;
+  t_list[1].tval = secret_door;
+  t_list[1].subval = 0;
+  assert((get_loc_symbol(2, 5) & 0x7F) == '#');
+  assert((get_loc_symbol(2, 5) & A_COLOR) == 0);
 
   cave[1][1].cptr = 2;
   memset(&m_list[2], 0, sizeof(m_list[2]));

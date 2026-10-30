@@ -466,7 +466,7 @@ chtype loc_symbol(const long y, const long x) {
            player_flags.see_inv)) {
         sym = monster_template_get_symbol(mptr);
       } else if (tptr > 0) {
-        sym = C_item_get_tchar(&t_list[tptr]);
+        sym = C_item_get_glyph(&t_list[tptr]);
       } else if (is_in(fval, earth_set)) { /* 0, 3, 8 and 9
                                               were here too */
         sym = '.' | C_map_color_terrain_attr(fval);
@@ -485,12 +485,12 @@ chtype loc_symbol(const long y, const long x) {
         if (is_in(t_list[tptr].tval, float_set) ||
             (distance(char_row, char_col, y, x) <= 5 &&
              los(char_row, char_col, y, x))) {
-          sym = C_item_get_tchar(&t_list[tptr]);
+          sym = C_item_get_glyph(&t_list[tptr]);
         } else {
           sym = '`' | C_map_color_water_attr();
         }
       } else {
-        sym = C_item_get_tchar(&t_list[tptr]);
+        sym = C_item_get_glyph(&t_list[tptr]);
       }
 
       /* 0, 3, 8 and 9 were here too */
